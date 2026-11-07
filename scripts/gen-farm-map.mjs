@@ -139,12 +139,16 @@ function buildFarm(woodland) {
       block(x, y);
     }
 
-  // A patch of soil that can be tilled.
+  // The field: pale diggable earth that can be tilled (docs/design/67). It is a
+  // big open block in the middle, with green yards round the buildings. Standard
+  // fills the middle; Woodland keeps a smaller field inside its forest. Paths
+  // laid later take their tiles out of it.
   const [soilX0, soilX1, soilY0, soilY1] = woodland
-    ? [16, 23, 11, 15]
-    : [14, 25, 10, 17];
+    ? [12, 27, 8, 21]
+    : [11, 29, 2, 27];
   for (let y = soilY0; y <= soilY1; y++)
     for (let x = soilX0; x <= soilX1; x++) {
+      if (ground[idx(x, y)] === WATER) continue;
       ground[idx(x, y)] = SOIL;
       soil[idx(x, y)] = 1;
     }
@@ -178,6 +182,7 @@ function buildFarm(woodland) {
     if (!collision[idx(x, y)] && !objects[idx(x, y)]) {
       ground[idx(x, y)] = PATH;
       paths[idx(x, y)] = 1;
+      soil[idx(x, y)] = 0;
     }
   };
   for (let y = 6; y <= 21; y++) path(6, y);
