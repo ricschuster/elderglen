@@ -1,6 +1,6 @@
-# 67 Diggable earth and the start look (draft)
+# 67 Diggable earth and the start look
 
-Status: draft, 2026-11-07, revised the same day. File name kept from the first
+Status: settled and built 2026-11-07 (owner: yes to pale earth, and no tillable green grass on the farm). Built as a pale earth field of 475 tiles on Standard and 208 on Woodland, with green yards round the buildings. Earlier text: draft, revised the same day. File name kept from the first
 draft ("any grass"). The owner's playtest said "no tilled areas at start", and
 then, asked what the start should look like, "hoe works on any grass". After the
 Stardew check below the owner leaned to **pale earth** ("maybe the pale earth

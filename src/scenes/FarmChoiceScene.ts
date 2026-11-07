@@ -91,7 +91,7 @@ export class FarmChoiceScene extends Phaser.Scene {
     for (let ty = 0; ty < map.height; ty++)
       for (let tx = 0; tx < map.width; tx++) {
         const color = map.isTillable(tx, ty)
-          ? 0x8a6a3e
+          ? 0xd3c9b0
           : map.isBlocked(tx, ty)
             ? 0x555e66
             : 0x4e8f46;
