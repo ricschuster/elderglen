@@ -20,7 +20,7 @@ USB: plug the tablet in, accept the "Allow USB debugging" prompt, then run
 Wireless (Android 11 and later): on the tablet open Developer options, Wireless
 debugging, Pair device with pairing code. Then on this machine:
 
-```
+```bash
 ~/Android/Sdk/platform-tools/adb pair <ip>:<pairing port>
 ~/Android/Sdk/platform-tools/adb connect <ip>:<connect port>
 npm run android:install
