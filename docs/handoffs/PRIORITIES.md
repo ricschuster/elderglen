@@ -55,6 +55,11 @@ New leftovers: update `scripts/playtest/` for click doors, retire or repair the
 stale `gen-farm-map.mjs`, and decide whether other shop rows buy only from
 their buttons.
 
+Session g (2026-11-07, handoff 2026-11-07g) built the Android app (Capacitor,
+ADR 0008) and installed it on three tablets. New leftovers: play it on the
+tablets, repeat the performance spike in the WebView, replace the placeholder
+icon, and the tablet hosting plugin for M4.
+
 ## Remaining bundle work
 
 Issue #181: the Last Seat numbers, the second-year rule and pacing. Issue #201

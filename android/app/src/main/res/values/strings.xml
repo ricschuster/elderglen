@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Elderglen</string>
+    <string name="title_activity_main">Elderglen</string>
+    <string name="package_name">app.elderglen.game</string>
+    <string name="custom_url_scheme">app.elderglen.game</string>
+</resources>
