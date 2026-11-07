@@ -1,5 +1,5 @@
 {
-  "title": "Beaver Valley overview map",
+  "title": "Elderglen overview map",
   "note": "Design reference only. Positions are diagrammatic and decide nothing about tile sizes or real building spots (docs/design/56_valley_map.md). People are role labels from note 20, not names.",
   "expectedPeople": 30,
   "expectedCandidates": 14,
