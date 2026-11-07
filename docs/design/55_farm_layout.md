@@ -47,7 +47,8 @@ Read from the image, not from memory. Positions are as seen on screen.
    ("by the cave", "south pond") and so the map reads at a glance on a tablet.
 5. **Hand-placed clutter** (`32_farm_types.md`). Nothing is random on day 1.
 6. **Grass borders hold no crops.** The `soil` layer marks the field only, per
-   the map contract.
+   the map contract. Overridden 2026-11-07: the hoe works on any open grass
+   (`67_any_grass_tilling.md`, draft).
 
 ## Where each thing goes (draft)
 
