@@ -917,6 +917,8 @@ export class FarmScene extends Phaser.Scene {
       if (text) tags.push({ x: e.x + e.w / 2, y: e.y, text });
     }
     for (const s of this.map.services) {
+      // The furnace is only there once the smith has given it.
+      if (s.kind === "furnace" && !this.state.furnace.gifted) continue;
       const text = serviceLabel(s.kind, s.id);
       if (text) tags.push({ x: s.x + 0.5, y: s.y, text });
     }

@@ -48,18 +48,41 @@ export function sellAll(
   return sell(inv, wallet, id, inv.count(id), multiplier);
 }
 
-/** Seeds on sale in a season: those of crops that grow in it. */
-export function seedStock(season: Season): string[] {
-  return CROPS.filter((c) => c.seasons.includes(season)).map((c) =>
-    seedId(c.id),
+/** Cheapest first, then by name, so a shelf reads in a steady order. */
+export function byPrice(ids: string[]): string[] {
+  const def = (id: string) => itemById(id);
+  return [...ids].sort(
+    (a, b) =>
+      (def(a)?.buyPrice ?? 0) - (def(b)?.buyPrice ?? 0) ||
+      (def(a)?.name ?? a).localeCompare(def(b)?.name ?? b),
   );
 }
 
-/** Saplings on sale: every tree, all year, as Stardew's Pierre does. */
-export function saplingStock(): string[] {
-  return FRUIT_TREES.filter((t) =>
-    (SEASONS as readonly string[]).includes(t.season),
-  ).map((t) => saplingId(t.id));
+/** A to Z by name, for the lists of what the player holds. */
+export function byName(ids: string[]): string[] {
+  return [...ids].sort((a, b) =>
+    (itemById(a)?.name ?? a).localeCompare(itemById(b)?.name ?? b),
+  );
 }
 
-export { fertilizerStock } from "./fertilizer";
+/** Seeds on sale in a season: those of crops that grow in it, cheapest first. */
+export function seedStock(season: Season): string[] {
+  return byPrice(
+    CROPS.filter((c) => c.seasons.includes(season)).map((c) => seedId(c.id)),
+  );
+}
+
+/** Saplings on sale: every tree, all year, as Stardew's Pierre does. Cheapest first. */
+export function saplingStock(): string[] {
+  return byPrice(
+    FRUIT_TREES.filter((t) =>
+      (SEASONS as readonly string[]).includes(t.season),
+    ).map((t) => saplingId(t.id)),
+  );
+}
+
+import { fertilizerStock as allFertilizer } from "./fertilizer";
+
+/** Fertilizer on sale, cheapest first. */
+export const fertilizerStock = (day: number): string[] =>
+  byPrice(allFertilizer(day));

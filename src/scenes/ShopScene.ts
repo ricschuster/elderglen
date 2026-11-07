@@ -5,6 +5,7 @@ import type { GameState } from "../core/save";
 import { sellMultiplier } from "../core/professions";
 import {
   buy,
+  byName,
   sell,
   sellAll,
   seedStock,
@@ -138,7 +139,7 @@ export class ShopScene extends Phaser.Scene {
       const slot = g.inventory.slot(i);
       if (slot && !ids.includes(slot.id)) ids.push(slot.id);
     }
-    const sellRows: Row[] = ids.map((id) => {
+    const sellRows: Row[] = byName(ids).map((id) => {
       const def = itemById(id);
       const count = g.inventory.count(id);
       const mult = sellMultiplier(g.skills, id);
