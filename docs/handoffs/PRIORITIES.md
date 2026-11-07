@@ -48,6 +48,13 @@ achievements that wait for later systems, the axe ladder and the Hearthsilver
 grade, the mine hall's ore-only bin, Artisan Goods in the sim bot, festival maps
 in place of the festival screens, storms, and the fruit bat and mushroom art.
 
+Session f (2026-11-07, handoff 2026-11-07f) fixed the first browser playtest
+feedback: pickaxe repeat, click to open doors, name tags, the carpenter's Buy
+button, the pale earth field (note 67), the furnace label and a sorted shop.
+New leftovers: update `scripts/playtest/` for click doors, retire or repair the
+stale `gen-farm-map.mjs`, and decide whether other shop rows buy only from
+their buttons.
+
 ## Remaining bundle work
 
 Issue #181: the Last Seat numbers, the second-year rule and pacing. Issue #201
