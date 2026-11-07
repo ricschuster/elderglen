@@ -25,6 +25,8 @@ export interface MenuOptions {
   visible?: number;
   /** Called with the new cursor row whenever the cursor moves. */
   onCursor?: (row: number) => void;
+  /** When true, tapping a row only selects it; only a button press acts. For shops. */
+  buttonsOnly?: boolean;
 }
 
 /**
@@ -128,7 +130,7 @@ export class Menu {
         this.cursor = index;
         this.opts.onCursor?.(index);
         this.draw();
-        this.press(0);
+        if (!this.opts.buttonsOnly) this.press(0);
       });
       const alpha = row.dim ? 0.45 : 1;
       const label = this.scene.add
