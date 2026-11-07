@@ -42,6 +42,7 @@ export class CarpenterScene extends Phaser.Scene {
       y: 64,
       w: 912,
       title: "House and furniture",
+      buttonsOnly: true,
     });
     this.menu.setFocus(true);
     const kb = this.input.keyboard;

@@ -16,6 +16,7 @@ import { mapFiles, maps } from "../content/maps";
 import { START } from "../core/maps";
 import { farmMapOf, isFarmMap, resolveMapId } from "../core/farmtypes";
 import { exitOpen, FarmMap, type Exit } from "../core/map";
+import { exitLabel, serviceLabel } from "../core/labels";
 import {
   facingFrom,
   facingTile,
@@ -118,7 +119,7 @@ const PLAYER: Body = { hw: 5, h: 6 };
 /** The world is drawn at this zoom; the HUD is not. */
 const WORLD_ZOOM = 2;
 
-/** While Use is held with the axe, swing again this often, in milliseconds. */
+/** While Use is held with the axe or pickaxe, swing again this often, in milliseconds. */
 const REPEAT_MS = 400;
 
 /** Wheel movement that makes one slot step: one notch of a mouse wheel. */
@@ -169,7 +170,6 @@ export class FarmScene extends Phaser.Scene {
   private hat!: Phaser.GameObjects.Rectangle;
   private pos: Vec = { x: 0, y: 0 };
   private facing: Facing = "down";
-  private exitId: string | undefined;
   private heldMs = 0;
   /** Who aimed last: the cursor or the keys (note 46). Desktop only. */
   private mouseAim = false;
@@ -197,7 +197,6 @@ export class FarmScene extends Phaser.Scene {
       minesOpen(this.state.day.clock.day) ? ["mines-open"] : [],
     );
     if (this.state.cave.open) this.holds.add("cave-open");
-    this.exitId = undefined;
     this.heldMs = 0;
     this.mouseAim = false;
     this.mouseHeld = false;
@@ -244,6 +243,7 @@ export class FarmScene extends Phaser.Scene {
     this.sprites = this.add.container(0, 0);
     this.wash = this.add.graphics();
     world.push(this.ground, this.sprites, this.wash);
+    world.push(...this.drawLabels());
     let spawn: { x: number; y: number } = this.map.entry(this.entryName)!;
     // Coming up from below lands on the ladder that was taken down.
     const ladder = this.floorState?.ladder;
@@ -459,7 +459,7 @@ export class FarmScene extends Phaser.Scene {
         selected: this.selected,
         target: this.aimTile(),
         map: this.mapId,
-        exit: this.exitId ?? null,
+        exit: this.exitAtAim()?.id ?? null,
         zoom: this.cameras.main.zoom,
         energy: this.state.day.energy.current,
         plots: [...this.state.farm.each()].length,
@@ -531,13 +531,7 @@ export class FarmScene extends Phaser.Scene {
     if (down && here.x === down.x && here.y === down.y) {
       if (this.ladderArmed) return this.descend();
     } else this.ladderArmed = true;
-    const exit = this.map.exitAt(here.x, here.y);
-    if (exit?.id !== this.exitId) {
-      this.exitId = exit?.id;
-      this.message = exit && !exitOpen(exit, this.holds) ? "It is shut." : "";
-      this.render();
-      if (exit && exitOpen(exit, this.holds)) this.leave(exit);
-    }
+    // Doors open on a click or Action, not on a walk through (see `useDoor`).
   }
 
   /** A click turns the farmer toward the aim, on click only (note 46). */
@@ -581,19 +575,28 @@ export class FarmScene extends Phaser.Scene {
       this.render();
   }
 
-  /** Holding Use with the axe swings again every `REPEAT_MS` until the tile is clear. */
+  /**
+   * Holding Use swings again every `REPEAT_MS`: the axe until the tree is
+   * gone, the pickaxe until the rock is broken.
+   */
   private repeatUse(delta: number): void {
     const held = heldAt(this.state, this.selected);
-    const axe = held.kind === "tool" && held.tool === "axe";
     const front = this.aimTile();
     // Holding carries on from a felled tree to its stump, as Stardew's held
     // tool does. It stops once there is nothing left on the tile.
-    if (
-      !axe ||
-      !(
+    const axe =
+      held.kind === "tool" &&
+      held.tool === "axe" &&
+      !!(
         this.state.trees.at(front.x, front.y) ||
         this.state.fruitTrees.at(front.x, front.y)
-      ) ||
+      );
+    const pick =
+      held.kind === "tool" &&
+      held.tool === "pickaxe" &&
+      !!this.rocks()?.at(front.x, front.y);
+    if (
+      !(axe || pick) ||
       !(this.controls.useHeld() || this.hud.useHeld || this.mouseHeld)
     ) {
       this.heldMs = 0;
@@ -603,6 +606,29 @@ export class FarmScene extends Phaser.Scene {
     if (this.heldMs < REPEAT_MS) return;
     this.heldMs = 0;
     this.use();
+  }
+
+  /** The door on the faced tile, or the one under the player. */
+  private exitAtAim(): Exit | undefined {
+    const front = this.aimTile();
+    const here = tileOf(this.pos, PLAYER, this.map.tileSize);
+    return this.map.exitAt(front.x, front.y) ?? this.map.exitAt(here.x, here.y);
+  }
+
+  /**
+   * Open the door on the faced tile, or the one under the player. Returns
+   * false when there is no door there. A door that is not open yet says so.
+   */
+  private useDoor(): boolean {
+    if (this.leaving) return false;
+    const exit = this.exitAtAim();
+    if (!exit) return false;
+    if (exitOpen(exit, this.holds)) this.leave(exit);
+    else {
+      this.message = "It is shut.";
+      this.render();
+    }
+    return true;
   }
 
   private leave(exit: Exit): void {
@@ -672,6 +698,7 @@ export class FarmScene extends Phaser.Scene {
   /** Use the held tool on the tile the player faces. Services are Action's. */
   private use(): void {
     if (this.leaving) return;
+    if (this.useDoor()) return;
     const front = this.aimTile();
     if (this.map.serviceAt(front.x, front.y)) return;
     const held = heldAt(this.state, this.selected);
@@ -720,6 +747,7 @@ export class FarmScene extends Phaser.Scene {
    */
   private action(): void {
     if (this.leaving) return;
+    if (this.useDoor()) return;
     const front = this.aimTile();
     const service = this.map.serviceAt(front.x, front.y);
     if (service?.kind === "festival") return this.openFestival();
@@ -874,6 +902,35 @@ export class FarmScene extends Phaser.Scene {
     // The shipping summary comes first when the bin paid; it opens the report.
     this.open(report.shipped.lines.length > 0 ? "shipping" : "report", {
       report,
+    });
+  }
+
+  /**
+   * Placeholder name tags over the doors and counters, so the owner can tell
+   * what is what until the art pass (#58). Names come from `core/labels.ts`.
+   */
+  private drawLabels(): Phaser.GameObjects.Text[] {
+    const ts = this.map.tileSize;
+    const tags: { x: number; y: number; text: string }[] = [];
+    for (const e of this.map.exits) {
+      const text = exitLabel(e.id);
+      if (text) tags.push({ x: e.x + e.w / 2, y: e.y, text });
+    }
+    for (const s of this.map.services) {
+      const text = serviceLabel(s.kind, s.id);
+      if (text) tags.push({ x: s.x + 0.5, y: s.y, text });
+    }
+    return tags.map((t) => {
+      const label = this.add
+        .text(t.x * ts, t.y * ts - 2, t.text, {
+          fontSize: "8px",
+          color: "#ffffff",
+          backgroundColor: "#000000aa",
+          padding: { x: 2, y: 1 },
+        })
+        .setOrigin(0.5, 1)
+        .setDepth(900);
+      return label;
     });
   }
 
