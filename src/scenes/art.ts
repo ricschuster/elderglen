@@ -98,10 +98,10 @@ const TILE_PAINTERS: ((c: Ctx, ox: number) => void)[] = [
   },
   // pale untilled earth (the diggable field)
   (c, ox) => {
-    // Pale, flat, untilled earth. Lighter and greyer than the path and the
+    // Pale yellow, flat, untilled earth, the look of fertile land. Lighter than the path and the
     // furrowed brown of dug soil, so the field reads as diggable at a glance.
-    px(c, "#d3c9b0", ox, 0, SIZE, SIZE);
-    speckle(c, ox, 41, ["#c6bba1", "#ded5be", "#bfb497"], 34);
+    px(c, "#e0d08c", ox, 0, SIZE, SIZE);
+    speckle(c, ox, 41, ["#d3c27c", "#e9dca0", "#c8b672"], 34);
   },
   // tree (seen from above)
   (c, ox) => {
