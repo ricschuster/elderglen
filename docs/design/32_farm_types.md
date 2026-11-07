@@ -39,9 +39,6 @@ are reference only (ADR 0002); nothing is copied.
 
 ## The types
 
-Note 67 (draft, 2026-11-07) makes the hoe work on any open grass, so a type's
-size below means open grass at the start.
-
 Sizes are tillable tiles against Standard as 100 percent. The rough shape comes
 from the wiki's counts (`30_farm_types.md`). They are not targets until the
 tile size is settled.
