@@ -33,6 +33,7 @@ import { ForageField } from "../src/core/forage";
 import { deserialize, newGame, serialize } from "../src/core/save";
 import type { GameState } from "../src/core/save";
 import { FarmMap } from "../src/core/map";
+import { GREENHOUSE_SITE } from "../src/core/greenhouse";
 
 const MAP_ID = "farm";
 const map = (): FarmMap => maps.get(MAP_ID);
@@ -400,5 +401,38 @@ describe("saving sites", () => {
     });
     expect(b.sites.barn).toEqual({ x: 7, y: 2 });
     expect(saveAnimals(b).sites).toEqual({ barn: { x: 7, y: 2 } });
+  });
+});
+
+describe("the greenhouse's old site", () => {
+  for (const id of ["farm", "farm-woodland"]) {
+    it(`is tillable only after a move, on ${id}`, () => {
+      const base = maps.get(id);
+      const s = GREENHOUSE_SITE;
+      const tiles: { x: number; y: number }[] = [];
+      for (let y = s.y; y < s.y + s.h; y++)
+        for (let x = s.x; x < s.x + s.w; x++) tiles.push({ x, y });
+      const g = newGame();
+      const before = mapWithDoors(g, base, id);
+      for (const t of tiles) expect(before.isTillable(t.x, t.y)).toBe(false);
+      g.greenhouseSite = { x: s.x + 8, y: s.y + 6 };
+      const after = mapWithDoors(g, base, id);
+      for (const t of tiles) {
+        expect(after.isBlocked(t.x, t.y)).toBe(false);
+        expect(after.isTillable(t.x, t.y)).toBe(true);
+      }
+      const n = g.greenhouseSite;
+      for (let y = n.y; y < n.y + GREENHOUSE_SITE.h; y++)
+        for (let x = n.x; x < n.x + GREENHOUSE_SITE.w; x++)
+          expect(after.isTillable(x, y)).toBe(false);
+    });
+  }
+
+  it("stays untillable under an overlapping new footprint", () => {
+    const g = newGame();
+    g.greenhouseSite = { x: GREENHOUSE_SITE.x + 2, y: GREENHOUSE_SITE.y };
+    const m = mapWithDoors(g, maps.get("farm"), "farm");
+    expect(m.isTillable(GREENHOUSE_SITE.x + 3, GREENHOUSE_SITE.y)).toBe(false);
+    expect(m.isTillable(GREENHOUSE_SITE.x, GREENHOUSE_SITE.y)).toBe(true);
   });
 });
