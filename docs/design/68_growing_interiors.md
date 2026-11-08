@@ -179,4 +179,3 @@ whole barn shifting.
   that sits on any tier of the target map, since `from_cellar` lives on tier 2.
 - **Not a house map.** The cellar id is `cellar`, so `isHouseMap` is false: no
   furniture or chests there, and a house tier change does not reload it.
-
