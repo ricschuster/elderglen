@@ -75,8 +75,14 @@ const SEED_RESERVE = 1500;
 /** Young trees a day the bot cuts back. */
 const TIDY_TREES = 8;
 
-/** Gold kept back after buying an orchard tree. */
-const ORCHARD_RESERVE = 300;
+/** `SIM_ORCHARD_RESERVE`: gold kept back after buying an orchard tree (default 300). A high value buys the tree only when flush. */
+const ORCHARD_RESERVE = Number(
+  (
+    globalThis as unknown as {
+      process: { env: Record<string, string | undefined> };
+    }
+  ).process.env.SIM_ORCHARD_RESERVE ?? 300,
+);
 
 /** Machines the bot sets down on the farm as soon as it has crafted them. */
 const MACHINES_TO_RUN = ["preserves-jar", "bee-house"];
@@ -635,6 +641,23 @@ class Bot {
       return;
     this.walker.enter("farm");
     this.plantOrchard();
+    // Coal for the machines: the furnace trip stops once the Smith's is done, so buy it here.
+    const coalNeed = this.machineGaps().reduce(
+      (t, id) =>
+        t +
+        (recipeById(id)?.ingredients.find((i) => i.item === COAL)?.count ?? 0),
+      0,
+    );
+    const coalShort = coalNeed - g.inventory.count(COAL);
+    if (
+      coalShort > 0 &&
+      minesOpen(this.day) &&
+      g.money >= COAL_BUY_PRICE * coalShort + SEED_RESERVE &&
+      this.walker.goToService("mine", "smith")
+    ) {
+      buy(g.inventory, g, COAL, coalShort);
+      this.walker.enter("farm");
+    }
     // Craft what is in reach (at a workbench in the house, whose walk is ignored).
     for (const id of this.machineGaps()) {
       const r = recipeById(id);
