@@ -554,6 +554,13 @@ export function deserialize(text: string): GameState | undefined {
       campTaken: isCount(mines.campTaken)
         ? Math.floor(mines.campTaken)
         : undefined,
+      campDays: isObject(mines.campDays)
+        ? Object.fromEntries(
+            Object.entries(mines.campDays).filter(
+              ([n, d]) => Number.isInteger(Number(n)) && isCount(d),
+            ) as [string, number][],
+          )
+        : undefined,
       floors,
     });
   }

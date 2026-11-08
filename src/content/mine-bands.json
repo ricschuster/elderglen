@@ -1,0 +1,30 @@
+{
+  "topFloor": 120,
+  "bands": [
+    {
+      "name": "The Upper Galleries",
+      "floors": [1, 40],
+      "ores": [{ "kind": "copper", "share": 0.22 }]
+    },
+    {
+      "name": "The Cold Deeps",
+      "floors": [41, 80],
+      "ores": [
+        { "kind": "iron", "share": 0.22 },
+        { "kind": "copper", "share": 0.06 }
+      ]
+    },
+    {
+      "name": "The Ember Deeps",
+      "floors": [81, 120],
+      "ores": [
+        { "kind": "gold", "share": 0.2 },
+        { "kind": "iron", "share": 0.06 },
+        { "kind": "copper", "share": 0.04 }
+      ]
+    }
+  ],
+  "hearthsilver": { "fromFloor": 100, "nodes": 6 },
+  "coalShare": 0.08,
+  "campGiftOre": { "copper": 3, "iron": 3, "gold": 2 }
+}

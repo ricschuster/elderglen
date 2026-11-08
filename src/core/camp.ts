@@ -31,16 +31,16 @@ const fail = (reason: string): Outcome => ({ ok: false, reason });
  * few things to take, nothing can be put in (note 22). All or nothing, so a
  * full backpack leaves it for later.
  */
-export function takeCampGift(g: GameState): Outcome {
+export function takeCampGift(g: GameState, floor = 10): Outcome {
   const day = g.day.clock.day;
-  if (g.mines.campTaken === day) return fail("camp chest empty");
+  if (g.mines.campTakenOn(floor) === day) return fail("camp chest empty");
   const before = g.inventory.save();
-  const gift = campGift(day);
+  const gift = campGift(day, floor);
   for (const s of gift)
     if (!g.inventory.add(s.id, s.count)) {
       g.inventory.load(before);
       return fail("backpack full");
     }
-  g.mines.campTaken = day;
+  g.mines.takeCamp(floor, day);
   return { ok: true, item: gift[0]?.id };
 }

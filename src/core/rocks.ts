@@ -8,7 +8,15 @@ import type { Spot } from "./forage";
  * its own.
  */
 
-export type RockKind = "stone" | "copper" | "coal" | "quartz" | "geode";
+export type RockKind =
+  | "stone"
+  | "copper"
+  | "coal"
+  | "quartz"
+  | "geode"
+  | "iron"
+  | "gold"
+  | "hearthsilver";
 
 export interface Rock {
   x: number;
@@ -25,6 +33,9 @@ const SWINGS_BY_TIER: Record<RockKind, readonly number[]> = {
   coal: [3, 2, 2, 1],
   quartz: [1, 1, 1, 1],
   geode: [3, 3, 2, 1],
+  iron: [4, 3, 2, 1],
+  gold: [5, 4, 3, 2],
+  hearthsilver: [6, 5, 4, 3],
 };
 
 /** Swings to break a rock of a kind with a pickaxe of a grade. */
@@ -39,6 +50,9 @@ export const ROCK_KINDS: RockKind[] = [
   "coal",
   "quartz",
   "geode",
+  "iron",
+  "gold",
+  "hearthsilver",
 ];
 
 const key = (x: number, y: number) => `${x},${y}`;

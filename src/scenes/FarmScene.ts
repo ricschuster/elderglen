@@ -1137,7 +1137,7 @@ export class FarmScene extends Phaser.Scene {
     const service = this.map.serviceAt(front.x, front.y);
     if (service?.kind === "festival") return this.openFestival();
     if (service?.kind === "camp-chest")
-      return this.report(takeCampGift(this.state));
+      return this.report(takeCampGift(this.state, this.floor));
     if (service?.kind === "ore-bin") return this.open("bin", { oreOnly: true });
     if (service?.kind === "stairs")
       return this.travel(mineMapId(1), "from_above");

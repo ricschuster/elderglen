@@ -1,6 +1,14 @@
 import type { Outcome } from "./actions";
 import { GEODE_SHARE, geodeDrop, geodeKindForFloor } from "./geodes";
-import { COAL, COPPER_ORE, QUARTZ, STONE } from "./ore";
+import {
+  COAL,
+  COPPER_ORE,
+  GOLD_ORE,
+  HEARTHSILVER_ORE,
+  IRON_ORE,
+  QUARTZ,
+  STONE,
+} from "./ore";
 import { swingCost } from "./upgrades";
 import type { GameState } from "./save";
 import { swingsToBreak, type RockKind, type Rocks } from "./rocks";
@@ -15,6 +23,9 @@ export const ROCK_XP: Record<RockKind, number> = {
   coal: 4,
   quartz: 3,
   geode: 4,
+  iron: 7,
+  gold: 10,
+  hearthsilver: 14,
 };
 
 /** A node gives 1 ore, and this chance plus a bit a level that it gives 2 or 3 (note 22, placeholder). */
@@ -40,11 +51,20 @@ export function drops(
   if (kind === "geode") return { id: geodeDrop(floor, random), count: 1 };
   if (kind === "quartz") return { id: QUARTZ, count: 1 };
   if (kind === "coal") return { id: COAL, count: 1 + (random() < 0.3 ? 1 : 0) };
+  if (kind === "hearthsilver") {
+    // Hearthsilver gives 1 to 2 ore a node (note 22); Prospector adds one.
+    let n = random() < 0.5 ? 1 : 2;
+    if (prospector && random() < PROSPECTOR_CHANCE) n += 1;
+    return { id: HEARTHSILVER_ORE, count: n };
+  }
   let count = 1;
   if (random() < EXTRA_ORE_BASE + EXTRA_ORE_PER_LEVEL * miningLevel)
     count = random() < 0.5 ? 2 : 3;
   if (prospector && random() < PROSPECTOR_CHANCE) count += 1;
-  return { id: COPPER_ORE, count };
+  return {
+    id: kind === "iron" ? IRON_ORE : kind === "gold" ? GOLD_ORE : COPPER_ORE,
+    count,
+  };
 }
 
 const fail = (reason: string): Outcome => ({ ok: false, reason });
