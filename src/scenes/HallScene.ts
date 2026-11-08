@@ -6,7 +6,7 @@ import type { GameState } from "../core/save";
 import { endDue } from "../core/sleep";
 import { saveGame } from "../core/save";
 import { browserStore } from "./storage";
-import { frame, Menu, type Row } from "./panel";
+import { frame, Menu, TOUCH_ROW_H, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
 const name = (id: string) =>
@@ -58,7 +58,7 @@ export class HallScene extends Phaser.Scene {
       w: 400,
       title: "Bundles",
       visible: 5,
-      rowH: 48,
+      rowH: TOUCH_ROW_H,
       onCursor: () => this.refresh(),
     });
     this.detail = this.add.text(450, 64, "", {
@@ -72,8 +72,8 @@ export class HallScene extends Phaser.Scene {
       y: 262,
       w: 486,
       title: "Your backpack",
-      visible: 4,
-      rowH: 42,
+      visible: 3,
+      rowH: TOUCH_ROW_H,
     });
     const kb = this.input.keyboard;
     kb?.on("keydown-UP", () => this.active.move(-1));

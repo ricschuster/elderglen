@@ -13,7 +13,7 @@ import {
   saplingStock,
 } from "../core/shop";
 import { nextBackpack, upgradeBackpack } from "../core/upgrades";
-import { frame, Menu, type Row } from "./panel";
+import { frame, Menu, TOUCH_ROW_H, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
 /** Why a purchase was refused, in words for the player. */
@@ -61,6 +61,8 @@ export class ShopScene extends Phaser.Scene {
       w: 450,
       title: "Buy",
       buttonsOnly: true,
+      rowH: TOUCH_ROW_H,
+      visible: 7,
     });
     this.sellMenu = new Menu(this, {
       x: 490,
@@ -68,6 +70,8 @@ export class ShopScene extends Phaser.Scene {
       w: 446,
       title: "Sell",
       buttonsOnly: true,
+      rowH: TOUCH_ROW_H,
+      visible: 7,
     });
     const kb = this.input.keyboard;
     kb?.on("keydown-UP", () => this.active.move(-1));
