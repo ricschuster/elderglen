@@ -56,6 +56,7 @@ export class SmithScene extends Phaser.Scene {
       y: 64,
       w: 600,
       title: "Ore, coal and tools",
+      buttonsOnly: true,
     });
     const kb = this.input.keyboard;
     kb?.on("keydown-UP", () => this.menu.move(-1));

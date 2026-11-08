@@ -160,7 +160,13 @@ export class FestivalScene extends Phaser.Scene {
 
   private counterPanel(f: Festival): void {
     const unit = (e: CounterEntry) => (e.tokens ? " tokens" : "g");
-    const menu = new Menu(this, { x: 24, y: 196, w: 700, title: "Counter" });
+    const menu = new Menu(this, {
+      x: 24,
+      y: 196,
+      w: 700,
+      title: "Counter",
+      buttonsOnly: true,
+    });
     this.menu = menu;
     menu.setFocus(true);
     const rows = () =>
