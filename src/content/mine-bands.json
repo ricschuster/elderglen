@@ -4,7 +4,10 @@
     {
       "name": "The Upper Galleries",
       "floors": [1, 40],
-      "ores": [{ "kind": "copper", "share": 0.22 }]
+      "ores": [
+        { "kind": "copper", "share": 0.22 },
+        { "kind": "iron", "share": 0.06, "fromFloor": 26 }
+      ]
     },
     {
       "name": "The Cold Deeps",
