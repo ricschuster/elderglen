@@ -38,8 +38,9 @@ stonekeeper dwarf, whose job note 20 only called "bridges and stonework".
 7. **The stonekeeper dwarf lives in the Quarry** (owner, 2026-11-08: the dwarf
    equivalent of Stardew's Linus, a hermit who just lives there, no trade). This
    replaces the earlier draft, where he stayed at his yard on the Mountain. He is
-   a villager with a home spot, lines and gifts, and the Quarry needs a small
-   camp or hut for him. His likes, his lines and how a villager sits in a map
+   a villager with a home spot, lines and gifts (loves: stone, ore and forage,
+   owner 2026-11-08, round two), and the Quarry needs a small camp with a hut
+   and a fire for him. No heart events yet. His likes, his lines and how a villager sits in a map
    with no villager walks are open.
 8. **The horse rides here** (note 71, answer 10), with `rideable` true.
 

@@ -672,3 +672,4 @@ settled 2026-10-31). Slices 3 onward wait for build slice 3.
 - **The sling aims toward the pointer**, and on touch toward the tapped spot, from
   memory (SC-94). Built: it fires the faced way. A tablet check is needed.
 - **Creature names and the trainer's words stay placeholders** until art exists.
+- **The stonekeeper dwarf is a villager** with loves for stone, ore and forage (owner, 2026-11-08, round two; see note 78). No heart events yet.

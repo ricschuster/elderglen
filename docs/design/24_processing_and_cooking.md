@@ -233,7 +233,7 @@ Settled where the notes left gaps. All numbers are placeholders (note 07).
   **Changed 2026-11-08 (owner, Stardew dyes many items):** the vat takes any plant
   or flower, each with a colour. The six goods above are only the first rows.
   The full list of inputs and colours, and what the Dyer's bundle asks for, are
-  open design items. Cask days follow Stardew's, to be checked (SC-82).
+  open design items, waiting on the saved Dye Pot page (Stardew takes certain flowers, forage and gems, one colour each; unchecked, owner 2026-11-08 round two). Cask days follow Stardew's, to be checked (SC-82).
 - **The greenhouse is built** (`31_farm_growth.md`, "Built (#602)").
 
 ## Left for later

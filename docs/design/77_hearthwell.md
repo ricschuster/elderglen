@@ -217,3 +217,18 @@ Work packages: "Hearthwell part 1, the shell and moving the farm's doors" (step 
 ## Owner answer 2026-11-08m: the river layout
 
 The two arms **rejoin south of the town**, with the hall on the island between them. The layout, bridges, streets and the sawmill's wheel need their own design pass before the shell (#645) is built. Not designed yet.
+
+## River layout decided 2026-11-08n (owner, all the drafter's recommendations)
+
+- **Main arm:** runs north to south down the west of the island and curves once. The
+  west bank keeps the street grid and the Mountain road. The east arm is the wide
+  one that borders ring 2.
+- **Bridges:** three over the main arm, north, middle and south (draft rows at y 30,
+  62 and 92). The middle one is the cart road.
+- **The sawmill's mill wheel** turns in the main arm beside the carpenter's yard on
+  the west bank.
+- **The arms rejoin south of the festival green,** near the delta exit, so one
+  river leaves the map to the River delta.
+- The draft coordinates above stay placeholders. The curve moves the main arm off
+  x 56 to 62 in its bend, so the Tiled draft sets the final tiles. Streets, house
+  spots and landmarks still need the Tiled pass.
