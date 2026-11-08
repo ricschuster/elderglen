@@ -11,7 +11,10 @@ describe("toolbar", () => {
   it("starts with the tools, then the backpack", () => {
     const g = startGame();
     expect(heldAt(g, 0)).toEqual({ kind: "tool", tool: "hoe" });
-    expect(heldAt(g, TOOLS.length - 1)).toEqual({ kind: "tool", tool: "hand" });
+    expect(heldAt(g, TOOLS.length - 1)).toEqual({
+      kind: "tool",
+      tool: "pickaxe",
+    });
     expect(heldAt(g, TOOLS.length)).toMatchObject({
       kind: "item",
       id: "parsnip-seed",
@@ -38,13 +41,14 @@ describe("backpack rows", () => {
     const { toolbarSize, nextRow, rowOf } = await import("../src/core/toolbar");
     const g = startGame();
     expect(toolbarSize(g)).toBe(TOOLBAR_SIZE);
-    expect(nextRow(g, 5)).toBe(5);
+    const t = TOOLS.length;
+    expect(nextRow(g, t)).toBe(t);
     g.inventory.grow(24);
-    expect(toolbarSize(g)).toBe(29);
-    expect(nextRow(g, 6)).toBe(17);
-    expect(nextRow(g, 17)).toBe(5);
-    expect(rowOf(16)).toBe(0);
-    expect(rowOf(17)).toBe(1);
-    expect(cycle(28, 1, 29)).toBe(0);
+    expect(toolbarSize(g)).toBe(t + 24);
+    expect(nextRow(g, t + 1)).toBe(t + 12);
+    expect(nextRow(g, t + 12)).toBe(t);
+    expect(rowOf(t + 11)).toBe(0);
+    expect(rowOf(t + 12)).toBe(1);
+    expect(cycle(t + 23, 1, t + 24)).toBe(0);
   });
 });

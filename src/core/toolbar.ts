@@ -4,10 +4,10 @@ import { farmTypeById } from "./farmtypes";
 import { newGame, type GameState } from "./save";
 
 /** Tools that are always carried and never run out. */
-export const TOOLS = ["hoe", "can", "axe", "pickaxe", "hand"] as const;
+export const TOOLS = ["hoe", "can", "axe", "pickaxe"] as const;
 export type Tool = (typeof TOOLS)[number];
 
-/** One row of the toolbar: the four tools, then twelve backpack slots. */
+/** One row of the toolbar: the tools, then twelve backpack slots. */
 export const TOOLBAR_SIZE = TOOLS.length + SLOT_COUNT;
 
 /** Everything that can be selected: the tools and every backpack slot. */

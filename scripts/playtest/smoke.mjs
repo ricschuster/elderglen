@@ -195,7 +195,7 @@ await step("catalogue-place-and-copy", async () => {
     s.inventory.save().findIndex((x) => x && x.id === "furniture-catalogue"),
   );
   if (slot < 0) throw new Error("no catalogue in the backpack");
-  await bot.select(slot + 5); // five tools come first on the toolbar
+  await bot.select(slot + 4); // four tools come first on the toolbar
   await bot.refreshMap();
   let d = await bot.dbg();
   // Step into the room first: facing down at the door would walk out of it.

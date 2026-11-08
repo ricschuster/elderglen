@@ -32,7 +32,6 @@ function mapWith(soil: boolean): FarmMap {
 
 const hoe: Held = { kind: "tool", tool: "hoe" };
 const can: Held = { kind: "tool", tool: "can" };
-const hand: Held = { kind: "tool", tool: "hand" };
 
 describe("useHeld", () => {
   it("runs the plant, water, harvest loop", () => {
@@ -48,7 +47,7 @@ describe("useHeld", () => {
     }
     // Harvest quality rolls Math.random; pin it so the item is always normal.
     vi.spyOn(Math, "random").mockReturnValue(0.99);
-    const got = useHeld(g, map, hand, 0, 0);
+    const got = act(g, map, 0, 0);
     vi.restoreAllMocks();
     expect(got).toMatchObject({ ok: true, item: "parsnip" });
     expect(g.inventory.count("parsnip")).toBe(1);
@@ -75,16 +74,16 @@ describe("useHeld", () => {
     });
   });
 
-  it("picks forage with the hand", () => {
+  it("picks forage with Action", () => {
     const g = startGame();
     g.forage.respawn("spring", [{ x: 1, y: 0 }], () => 0.99);
     expect(g.forage.count).toBe(1);
-    const got = useHeld(g, mapWith(true), hand, 1, 0);
+    const got = act(g, mapWith(true), 1, 0);
     expect(got.ok).toBe(true);
     expect(g.forage.count).toBe(0);
   });
 
-  it("leaves picking to Action for every item but the hand tool", () => {
+  it("leaves picking to Action for every item", () => {
     const g = startGame();
     g.forage.respawn("spring", [{ x: 1, y: 0 }], () => 0.99);
     const item: Held = { kind: "item", id: "parsnip", count: 1 };
