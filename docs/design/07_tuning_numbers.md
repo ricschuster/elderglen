@@ -38,7 +38,7 @@ Crops (season, days to grow, seed price, sell price):
 - Potato: spring, 6 days, 50g, 80g. From memory.
 - Cauliflower: spring, 12 days, 80g, 175g. From memory.
 - Melon: summer, 12 days, 80g, 250g. From memory.
-- Tomato: summer, 11 days, 50g, 60g. From memory.
+- Tomato: summer, 11 days then regrows every 4, 50g, 60g. From memory.
 - Radish: summer, 6 days, 40g, 90g. From memory.
 - Green bean: spring, 10 days then regrows every 3, 60g, 40g. From memory.
 - Kale: spring, 6 days, 70g, 110g. From memory.
@@ -617,6 +617,47 @@ Source: `22_mines.md`. Code: `mines.ts`, `mining.ts`, `rocks.ts`, `ore.ts`.
   30 minutes, 2 hours and 5 hours of game time, one batch at a time.
 - The furnace gift needs 1 copper ore handed over once, and comes the next
   morning.
+
+## Placeholder check against the saved wiki pages (2026-11-08)
+
+Compared the "from memory" rows above with the saved Spring, Summer and Fall
+Crops pages, Skills, Inventory, Gold, Tools, Minerals and Artisan Goods pages.
+Reference only, nothing copied (ADR 0002).
+
+Checked, so "from memory" can become "checked":
+
+- Crop days, seed price, sell price and regrowth for parsnip, potato,
+  cauliflower, melon, tomato (regrows every 4, the line above was missing it,
+  the data already had it), radish, green bean, kale, garlic, hot pepper, corn,
+  red cabbage, wheat, pumpkin, eggplant, cranberry, artichoke and beet.
+- Crop energy for all of those, including melon 113, hot pepper 13 and
+  cranberry 38.
+- Total XP per level: 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000,
+  15000. Forage pickup is 7 XP.
+- A new game starts with 500g. Backpack 12, 24 (2000g) and 36 (10000g) slots.
+- Hoe tiers cost 2000g, 5000g and 10000g (copper, steel, gold). Stardew adds
+  bars and a fourth grade at 25000g, ours is decided in note 44.
+- Quartz sells for 25g. Quality multipliers: silver x1.25, gold x1.5, iridium
+  x2 (ours stops at gold, plus Hearthsilver, note 22).
+
+Differences, none of them a bug:
+
+- Stardew holds garlic, red cabbage and artichoke back to year two. Ours are
+  open in year one. Already decided for red cabbage and artichoke above, and
+  garlic follows the same rule. Garlic is the cheapest of the three and
+  changes little.
+- Stardew's second seed shop (JojaMart) charges more for the seeds seen on the
+  pages (eggplant 25g against 20g). We have one shop.
+
+Still unchecked, saved pages do not hold them:
+
+- Energy per swing (the Proficiency page is not saved), and the harvest XP
+  formula. Ours: `2 - 0.25 * tier - 0.1 * level` and `16 * ln(0.018 * price + 1)`.
+- Sweet potato (fall, 10 days, 60g seed, 160g), forage energy values and
+  the late-sleep penalty steps. Ask the owner to save the Sweet Potato, Proficiency
+  and Experience pages if they matter.
+- Fruit energy per fruit (SC-66) and the Grange bands (SC-53), already in the
+  register.
 
 ## Open questions for playtests
 
