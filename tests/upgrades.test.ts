@@ -202,3 +202,54 @@ describe("the smith's tool upgrades", () => {
     expect(e - g.day.energy.current).toBe(1.5);
   });
 });
+
+describe("the Hearthsilver grade", () => {
+  it("smelts 5 ore and 2 coal into a bar in 8 hours", async () => {
+    const { smelt, ready, minutesLeft } = await import("../src/core/furnace");
+    const g = newGame();
+    g.furnace.gifted = true;
+    g.inventory.add("hearthsilver-ore", 5);
+    g.inventory.add("coal", 1);
+    expect(smelt(g, "hearthsilver-bar")).toBe("not enough coal");
+    g.inventory.add("coal", 1);
+    expect(smelt(g, "hearthsilver-bar")).toBeUndefined();
+    expect(g.inventory.count("hearthsilver-ore")).toBe(0);
+    expect(g.inventory.count("coal")).toBe(0);
+    expect(minutesLeft(g)).toBe(480);
+    expect(ready(g)).toBe(false);
+  });
+
+  it("costs five bars and no gold, after the gold grade", () => {
+    const g = newGame();
+    g.toolTiers.axe = 3;
+    g.inventory.add("hearthsilver-bar", 5);
+    g.money = 0;
+    expect(upgradeCost(3)).toBe(0);
+    expect(orderUpgrade(g, "axe")).toBeUndefined();
+    expect(g.inventory.count("hearthsilver-bar")).toBe(0);
+    g.day.clock.day = 3;
+    expect(collectUpgrade(g)).toBe("axe");
+    expect(g.toolTiers.axe).toBe(4);
+    expect(orderUpgrade(g, "axe")).toBe("Already the best.");
+  });
+
+  it("cannot skip grades", () => {
+    const g = newGame();
+    g.inventory.add("hearthsilver-bar", 5);
+    expect(orderUpgrade(g, "hoe")).toBe("Not enough money.");
+  });
+
+  it("the top pickaxe breaks Hearthsilver in fewer swings", () => {
+    expect(swingsToBreak("hearthsilver", 4)).toBeLessThan(
+      swingsToBreak("hearthsilver", 3),
+    );
+    expect(swingsToBreak("stone", 4)).toBe(1);
+  });
+
+  it("the top tier survives a save and the top axe swings twice", () => {
+    const g = newGame();
+    g.toolTiers.can = 4;
+    expect(deserialize(serialize(g))!.toolTiers.can).toBe(4);
+    expect(swingCost(2, 4, 0)).toBe(1);
+  });
+});

@@ -209,7 +209,7 @@ export class SmithScene extends Phaser.Scene {
       }
       rows.push({
         label,
-        detail: `${TIER_NAMES[tier + 1]}: ${cost}g and ${UPGRADE_BARS} ${itemById(bar)?.name.toLowerCase()}s`,
+        detail: `${TIER_NAMES[tier + 1]}: ${cost > 0 ? `${cost}g and ` : ""}${UPGRADE_BARS} ${itemById(bar)?.name.toLowerCase()}s`,
         dim: orderProblem(g, tool) !== undefined,
         buttons: [
           {

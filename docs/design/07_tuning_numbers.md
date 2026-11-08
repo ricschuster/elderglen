@@ -359,6 +359,7 @@ are from memory and unchecked.
 - Professions at level 5: Prospector or Rockhound (mining), Steady or Nimble
   (combat).
 - Fifth tool tier: 5 Hearthsilver bars per tool, no gold. Any pickaxe digs it.
+  Built 2026-11-08 with placeholders: smelt time 8 hours (480 minutes, unsettled in note 22), bar sells 1000g, top pickaxe swings 1 (stone to iron), 1 (gold), 2 (Hearthsilver rock), top axe 2 per tree and 1 per stump (note 44).
 - Weapons: three families, four tiers each. The first build has the starter and
   copper tier of each.
 

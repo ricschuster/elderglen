@@ -7,7 +7,7 @@ import {
   type ArtisanKind,
 } from "./artisan";
 import { cropById } from "./crops";
-import { BARS, COAL, COAL_PER_BAR, ORE_PER_BAR, ORES } from "./ore";
+import { BARS, COAL, coalFor, ORE_PER_BAR } from "./ore";
 import { splitQuality } from "./quality";
 
 /**
@@ -113,7 +113,7 @@ export function processFor(
         }
       : undefined;
   if (machine === "furnace") {
-    const bar = ORES.some((o) => o.id === input) ? barOfOre(input) : undefined;
+    const bar = barOfOre(input);
     return bar
       ? {
           input,
@@ -121,7 +121,7 @@ export function processFor(
           output: bar.id,
           count: 1,
           minutes: bar.minutes,
-          also: { item: COAL, use: COAL_PER_BAR },
+          also: { item: COAL, use: coalFor(bar) },
         }
       : undefined;
   }

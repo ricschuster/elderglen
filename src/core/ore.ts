@@ -1,7 +1,7 @@
 /**
  * Mining goods (`docs/design/22_mines.md`, "Ore, coal and bars"). Data only:
- * stone, coal, three ores and their bars. Hearthsilver waits for the deep
- * floors. Sell prices are Stardew's as remembered (ore 5, 10 and 25, coal 15,
+ * stone, coal, three ores and their bars, plus the Hearthsilver bar (its ore
+ * is a geode good, `geodes.json`). Sell prices are Stardew's as remembered (ore 5, 10 and 25, coal 15,
  * bars 60, 120 and 250) and the smith's prices are the decided 2.5 times a
  * bar's value split over its five ore (placeholders, note 07).
  */
@@ -21,6 +21,8 @@ export interface BarDef {
   sellPrice: number;
   /** Game minutes in the furnace: 30 minutes, 2 hours and 5 hours (Stardew). */
   minutes: number;
+  /** Coal for one bar, if not COAL_PER_BAR (Hearthsilver takes 2, note 22). */
+  coal?: number;
 }
 
 /** Ore needed for one bar. */
@@ -74,7 +76,19 @@ export const BARS: BarDef[] = [
     sellPrice: 250,
     minutes: 300,
   },
+  // Placeholders (note 07): 8 hours, 2 coal, sells for 1000g.
+  {
+    id: "hearthsilver-bar",
+    name: "Hearthsilver bar",
+    ore: HEARTHSILVER_ORE,
+    sellPrice: 1000,
+    minutes: 480,
+    coal: 2,
+  },
 ];
+
+/** Coal one bar takes. */
+export const coalFor = (bar: BarDef): number => bar.coal ?? COAL_PER_BAR;
 
 export const barById = (id: string): BarDef | undefined =>
   BARS.find((b) => b.id === id);

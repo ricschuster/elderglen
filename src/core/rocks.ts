@@ -26,16 +26,16 @@ export interface Rock {
   hits: number;
 }
 
-/** Swings to break each kind at each pickaxe grade, Basic to Gold. Ours, placeholders (note 44): a better pickaxe needs fewer swings. */
+/** Swings to break each kind at each pickaxe grade, Basic to Hearthsilver. Ours, placeholders (note 44): a better pickaxe needs fewer swings. */
 const SWINGS_BY_TIER: Record<RockKind, readonly number[]> = {
-  stone: [2, 2, 1, 1],
-  copper: [3, 2, 2, 1],
-  coal: [3, 2, 2, 1],
-  quartz: [1, 1, 1, 1],
-  geode: [3, 3, 2, 1],
-  iron: [4, 3, 2, 1],
-  gold: [5, 4, 3, 2],
-  hearthsilver: [6, 5, 4, 3],
+  stone: [2, 2, 1, 1, 1],
+  copper: [3, 2, 2, 1, 1],
+  coal: [3, 2, 2, 1, 1],
+  quartz: [1, 1, 1, 1, 1],
+  geode: [3, 3, 2, 1, 1],
+  iron: [4, 3, 2, 1, 1],
+  gold: [5, 4, 3, 2, 1],
+  hearthsilver: [6, 5, 4, 3, 2],
 };
 
 /** Swings to break a rock of a kind with a pickaxe of a grade. */
