@@ -1,0 +1,4 @@
+{
+  "comment": "TEMPORARY stand-in (owner, 2026-11-08). The carpenter sells Hardwood because supply is gated (note 43). REMOVE when a real Hardwood supply exists (logs, Secret Woods, Mahogany, Mines hardwood): set enabled to false, or delete this file and src/core/carpenter.ts. Price is Stardew's 200g from memory, unchecked (the saved Carpenter page lists no Hardwood buy price).",
+  "hardwood": { "enabled": true, "price": 200 }
+}

@@ -230,6 +230,10 @@ it is a late goal, like the 10,000g tool tier. Hardwood supply is the open part
 (built 2026-11-07: 2 per large stump, note 43; the Woodland farm has 6 that regrow
 every 4 days, the Standard farm 3 that do not, so 100 is out of reach on Standard
 until the Secret Woods exists).
+Temporary stand-in (owner, 2026-11-08, note 43): the carpenter sells Hardwood at
+200g (Stardew's price from memory, unchecked). 100 hardwood is then 20,000g, so
+the stable's materials cost twice its coin price: costly but reachable. Remove it
+when a real supply exists.
 
 ## Backpack
 
