@@ -9,7 +9,7 @@ Start each session by asking which item to take.
 
 ## Open, in order
 
-1. **Window sized canvas, HUD anchoring and zoom** (ADR 0009). Designed in
+1. **Window sized canvas, HUD anchoring and zoom** (#520, ADR 0009). Designed in
    note 64 and settled on 2026-11-07 (world zoom 75 to 200 percent, UI size 75
    to 150, black bars around small maps, three window modes in the desktop ADR).
    Ready to build, not built. The game still draws a fixed 960 by 540 canvas,
@@ -22,7 +22,8 @@ Start each session by asking which item to take.
    (2026-11-06): nothing in slices 1 to 3 needs it, and it is only needed
    before slice 5 (note 33), alongside the heart events. Owner put it before art.
 4. **Art direction and audio plan.** Character art (note 15), ruined and
-   restored hall rooms (#335), and the placeholder swap. No audio note exists.
+   restored hall rooms (#335), and the placeholder swap. No audio note exists
+   (audio plan: #527).
 5. **Ring 2 shape and travel** (#20, M5). Parked until slice 3 is played.
 
 ## Build track (slice 1, note 33)
@@ -44,7 +45,7 @@ quartz and the quality sprinkler, pickaxe tiers and the smith's upgrades, crafte
 furnaces, chests and the workbench, Old Greencoat's door scene, the camp chest,
 geodes, and slice 1's achievements with the hatter.
 
-Smaller leftovers still open: the furniture catalogue (needs a design answer:
+Smaller leftovers still open (tracked in #522): the furniture catalogue (needs a design answer:
 where it is sold and its price, note 41), the hatter's letter, mail gifts and the
 achievements that wait for later systems, the axe ladder and the Hearthsilver
 grade, the mine hall's ore-only bin, Artisan Goods in the sim bot, festival maps
@@ -53,17 +54,17 @@ in place of the festival screens, storms, and the fruit bat and mushroom art.
 Session f (2026-11-07, handoff 2026-11-07f) fixed the first browser playtest
 feedback: pickaxe repeat, click to open doors, name tags, the carpenter's Buy
 button, the pale earth field (note 67), the furnace label and a sorted shop.
-New leftovers: update `scripts/playtest/` for click doors, retire or repair the
-stale `gen-farm-map.mjs`, and decide whether other shop rows buy only from
-their buttons.
+New leftovers (#524, and the shop rows in #522): update `scripts/playtest/` for
+click doors, retire or repair the stale `gen-farm-map.mjs`, and decide whether
+other shop rows buy only from their buttons.
 
 Session g (2026-11-07, handoff 2026-11-07g) built the Android app (Capacitor,
-ADR 0008) and installed it on three tablets. New leftovers: play it on the
+ADR 0008) and installed it on three tablets. New leftovers (#523): play it on the
 tablets, repeat the performance spike in the WebView, replace the placeholder
 icon, and the tablet hosting plugin for M4.
 
 Session h (2026-11-07, handoff 2026-11-07h) settled note 64 and answered most
-of the Stardew checks register. New leftovers, each from a register row: lift a
+of the Stardew checks register. New leftovers (#521), each from a register row: lift a
 sprinkler with any tool (SC-48), picking up a working machine returns the input
 (SC-50, SC-66), the bee house keeps its timer in winter (SC-50), fruit energy
 per fruit (SC-52, SC-66), fruit bats leave any fruit in any season with the
@@ -71,7 +72,8 @@ nightly counts on the Cave page (SC-55), push a full chest with the axe or
 pickaxe (SC-56), geode price per kind sold at the dwarf (SC-58, SC-67), and
 count all gold received for the cave mark and money achievements (SC-54,
 SC-61). Design open: how a growing barn, coop or farmhouse draws without showing
-unbuilt tiers (note 58, SC-36).
+unbuilt tiers (note 58, SC-36, #525). The house issues #421, #282 and #286 are
+on hold until it is settled. Open register rows: #526.
 
 ## Remaining bundle work
 
