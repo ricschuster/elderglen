@@ -66,6 +66,7 @@ import {
   type Floor,
 } from "../core/mines";
 import type { Rocks } from "../core/rocks";
+import { ROOMS, applyDecor, decorById, roomTiles } from "../core/decor";
 import {
   carryFurniture,
   furnitureById,
@@ -1100,6 +1101,10 @@ export class FarmScene extends Phaser.Scene {
     }
     if (isHouseMap(this.mapId)) {
       // In the house the held piece is stood down, and the hand takes one up.
+      if (held.kind === "item" && decorById(held.id))
+        return this.report(
+          applyDecor(this.state, this.mapId, front.x, front.y, held.id),
+        );
       if (held.kind === "item" && furnitureById(held.id))
         return this.report(
           placeFurniture(
@@ -1380,6 +1385,32 @@ export class FarmScene extends Phaser.Scene {
     });
   }
 
+  /** Tint each built room's floor and walls with its wallpaper and flooring (note 10). */
+  private drawDecor(): void {
+    const json = mapFiles[this.mapId];
+    if (!json) return;
+    const ts = this.map.tileSize;
+    for (const room of ROOMS) {
+      if (room.tier > this.state.houseTier) continue;
+      const cover = this.state.decor.get(room.id);
+      const floor = decorById(cover.floor);
+      const wall = decorById(cover.wallpaper);
+      if (!floor && !wall) continue;
+      const tiles = roomTiles(json, this.tier, room);
+      for (const [def, cells] of [
+        [floor, tiles.floor],
+        [wall, tiles.wall],
+      ] as const) {
+        if (!def) continue;
+        this.ground.fillStyle(
+          Phaser.Display.Color.HexStringToColor(def.color).color,
+          1,
+        );
+        for (const c of cells) this.ground.fillRect(c.x * ts, c.y * ts, ts, ts);
+      }
+    }
+  }
+
   /** Draw plots, crops and forage on the tiles. */
   private drawGround(): void {
     this.ground.clear();
@@ -1399,6 +1430,7 @@ export class FarmScene extends Phaser.Scene {
       const down = this.floorState?.ladder;
       if (down) put(down.x, down.y, LADDER_KEY);
     }
+    if (isHouseMap(this.mapId)) this.drawDecor();
     for (const p of this.state.furniture.each(this.mapId))
       put(p.x, p.y, furnitureKey(p.id));
     for (const s of this.map.services)

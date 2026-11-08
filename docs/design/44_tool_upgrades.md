@@ -30,7 +30,9 @@ below. Item and metal names are ours.
   meanwhile (her shop is in `22_mines.md`).
 - **Only one tool at a time?** The Stardew pages say nothing about a limit.
   Open.
-- **The can comes back refilled** after its upgrade (Stardew).
+- **The can comes back refilled** after its upgrade (Stardew). Built as true by
+  default: the can has no water level in our rules (it never runs dry), so there
+  is nothing to refill. Revisit if a water capacity is ever added.
 - **Order of gates:** the bars come from the mines or from bought ore smelted at
   the furnace. A player who never fights can still finish copper, steel and gold.
   Only Hearthsilver needs the deep mine (floors 100 to 120).

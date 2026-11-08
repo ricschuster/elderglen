@@ -10,6 +10,15 @@ times) and the design talk of 2026-10-27. Nothing here is built. It is outside
 the first playable, so it needs this note before any code (see CLAUDE.md,
 Scope). Target: M3 for the first slice, more later.
 
+Built 2026-11-08: wallpaper and flooring. Two of each (`src/content/decor.json`),
+200g each at the carpenter's (Stardew's price, placeholder, always on sale),
+backpack items that cannot be sold. Use on a faced tile of a built room covers
+that whole room (`src/content/house-rooms.json`, five rooms by house tier) and
+the item is used up; a new floor or wallpaper replaces the old one. Saved as
+`decor` per room (old saves have none). Drawn as a flat tint on the floor and
+wall tiles. Not built: hall bundle rewards that give wallpaper, other shops, and
+whether Stardew's general store should sell them instead (still not asked).
+
 ## Why
 
 Reader 1, a long-time Stardew Valley player, named decorating as a genre like,
