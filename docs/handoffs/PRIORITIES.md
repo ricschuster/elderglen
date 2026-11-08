@@ -9,22 +9,23 @@ Start each session by asking which item to take.
 
 ## Open, in order
 
-1. **Window sized canvas, HUD anchoring and zoom** (#520, ADR 0009). Designed in
-   note 64 and settled on 2026-11-07 (world zoom 75 to 200 percent, UI size 75
-   to 150, black bars around small maps, three window modes in the desktop ADR).
-   Ready to build, not built. The game still draws a fixed 960 by 540 canvas,
-   and the build touches every screen.
-2. **Completion tracker (#196).** Special Orders and seasonal debris were
-   designed in note 65 (2026-11-06), not built. The tracker is next.
-3. **Story spine.** The warden head and her staged reveal (#177), the sea elf
+1. **Completion tracker (#196).** Needs its own design note first (what counts,
+   weights, reward, where it shows). Not built.
+2. **Story spine.** The warden head and her staged reveal (#177), the sea elf
    and Homeward pin (#176), the hermit witch (#178) and the third community
    project (#5). Together they decide what the ending and the Last Seat mean. Below Special Orders
    (2026-11-06): nothing in slices 1 to 3 needs it, and it is only needed
    before slice 5 (note 33), alongside the heart events. Owner put it before art.
-4. **Art direction and audio plan.** Character art (note 15), ruined and
+3. **Art direction and audio plan.** Character art (note 15), ruined and
    restored hall rooms (#335), and the placeholder swap. No audio note exists
    (audio plan: #527).
-5. **Ring 2 shape and travel** (#20, M5). Parked until slice 3 is played.
+4. **Ring 2 shape and travel** (#20, M5). Parked until slice 3 is played.
+
+Built on 2026-11-07 (handoff 2026-11-07j): window canvas (#520), growing house
+interiors with tiers 2 and 3 and the cellar (#421, #286, #282), six parity fixes
+(#521), Special Orders and debris (note 65), axe ladder, ore bin and storms.
+Coop and barn (#531) wait on animals. Larger tier 2 kitchen and bedroom wait on
+an owner call. Follow-ups: #542, #543.
 
 ## Build track (slice 1, note 33)
 
@@ -78,8 +79,7 @@ issues: #421 first (the tier layer loader and the merged house map), then #286
 SC-68 to SC-70 wait for the owner. Open register rows: #526.
 
 Session i (2026-11-07, handoff 2026-11-07i) closed M2, filed the leftovers as
-issues and settled the growing interiors (note 68). Next builds: issue #520,
-then issue #421.
+issues and settled the growing interiors (note 68). Session j built the next items.
 
 ## Remaining bundle work
 
