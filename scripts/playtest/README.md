@@ -21,14 +21,14 @@ errors. The game's weather and forage are random, so reruns differ.
 
 5. `npm run playtest:tap` taps a tile, a tree and an unreachable spot in the
    tap-to-move scheme (about 15 seconds).
-5. `npm run playtest:touch` plays one short loop with touch events only, in a
+6. `npm run playtest:touch` plays one short loop with touch events only, in a
    tablet-sized touch browser (1200x700 CSS pixels, like the SM-T500): the
    stick, the toolbar, till, plant, water and harvest (with Action), a second finger on Use
    while the stick is held, hold Use to chop a tree and its stump, ground goods picked up by walking, the
    shop, the hall, the bed in the house, the report and Continue on the title
    screen. It also checks touch target sizes. About 85 seconds.
 
-6. `npm run playtest:controls` checks the input profiles (note 45): a mouse drag
+7. `npm run playtest:controls` checks the input profiles (note 45): a mouse drag
    does not move the player on desktop, the keyboard does not on touch, and a
    rebound key works. About 20 seconds.
 
@@ -38,14 +38,14 @@ errors. The game's weather and forage are random, so reruns differ.
    the slot and the page does not scroll, and holding the left button with the
    axe keeps chopping. About 15 seconds.
 
-7. `node scripts/playtest/bin.mjs` ships, takes back, ships part through the
+8. `node scripts/playtest/bin.mjs` ships, takes back, ships part through the
    prompt, sleeps, and checks the payout, summary and report. About 10 seconds.
 
-8. `node scripts/playtest/wood.mjs` plays a chopper: it fells the starting trees
+9. `node scripts/playtest/wood.mjs` plays a chopper: it fells the starting trees
    with a held key, sleeps when the energy is low, and reports the days, energy
    and wood to reach 450 wood (`WOOD_TARGET` changes it). About 3 minutes.
 
-9. `npm run sim -- <expert|intermediate|casual> [runs] [maxDay]` is not a browser
+10. `npm run sim -- <expert|intermediate|casual> [runs] [maxDay]` is not a browser
    run. It plays the rules in `src/core/` headless (`docs/design/46_headless_playtest.md`),
    charges game minutes for walking and key presses, and prints the days to each
    hall bundle over many seeds (the bot does not play Woodland, Artisan Goods or
