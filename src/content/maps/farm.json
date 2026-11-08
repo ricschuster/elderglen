@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 8,
-  "nextobjectid": 102,
+  "nextobjectid": 103,
   "properties": [{ "name": "placeholder", "type": "bool", "value": true }],
   "layers": [
     {
@@ -418,6 +418,22 @@
           "rotation": 0,
           "visible": true,
           "properties": [{ "name": "kind", "type": "string", "value": "shop" }]
+        },
+        {
+          "id": 102,
+          "name": "board",
+          "class": "service",
+          "type": "service",
+          "x": 568,
+          "y": 328,
+          "width": 0,
+          "height": 0,
+          "point": true,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            { "name": "kind", "type": "string", "value": "orders" }
+          ]
         },
         {
           "id": 11,

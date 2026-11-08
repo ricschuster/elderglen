@@ -26,6 +26,7 @@ const SERVICES: Record<string, string> = {
   "cave-dehydrator": "Dehydrator",
   "mushroom-box": "Mushroom Box",
   "camp-chest": "Camp Chest",
+  orders: "Orders Board",
 };
 
 /** Hall counters share the kind "hall", so they are named by id. */

@@ -25,6 +25,7 @@ import { CaveChoiceScene } from "./scenes/CaveChoiceScene";
 import { FurnaceScene } from "./scenes/FurnaceScene";
 import { ChestScene } from "./scenes/ChestScene";
 import { GreencoatScene } from "./scenes/GreencoatScene";
+import { OrdersScene } from "./scenes/OrdersScene";
 import { AchievementsScene } from "./scenes/AchievementsScene";
 import { centreMenus, UI_SIZE_KEY, WORLD_ZOOM_KEY } from "./scenes/panel";
 import { loadDeviceSettings } from "./scenes/storage";
@@ -60,6 +61,7 @@ const game = new Phaser.Game({
     ChestScene,
     GreencoatScene,
     AchievementsScene,
+    OrdersScene,
     CraftingScene,
     HatsScene,
     CaveChoiceScene,

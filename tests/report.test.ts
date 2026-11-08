@@ -13,6 +13,7 @@ const base: SleepReport = {
   achievements: [],
   caveOffer: false,
   shipped: { lines: [], total: 0 },
+  orders: { done: [], lapsed: [] },
   stuckTrees: [],
 };
 

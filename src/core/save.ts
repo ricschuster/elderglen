@@ -3,6 +3,8 @@ import { Farm } from "./farm";
 import { Trees, type Tree } from "./trees";
 import { GroundItems, type Pile } from "./ground";
 import { Weeds, type Weed } from "./weeds";
+import { Twigs, type Twig } from "./debris";
+import { Orders, orderById, type OrdersSave } from "./orders";
 import { Rocks, type Rock, ROCK_KINDS } from "./rocks";
 import { Mines, type MinesSave } from "./mines";
 import { FruitTrees, fruitTreeById, type PlacedFruitTree } from "./fruittrees";
@@ -57,6 +59,10 @@ export interface GameState {
   ground: GroundItems;
   /** Weeds on the farm. */
   weeds: Weeds;
+  /** Twigs on the farm, cleared with any tool for wood. */
+  twigs: Twigs;
+  /** Special Orders: the board, accepted orders and what is done. */
+  orders: Orders;
   /** Rocks on the farm, broken with the pickaxe. */
   rocks: Rocks;
   /** The mine: deepest floor, dry streak, today's floors. */
@@ -121,6 +127,8 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     trees: new Trees(farmMap.trees),
     ground: new GroundItems(),
     weeds: new Weeds(),
+    twigs: new Twigs(),
+    orders: new Orders(),
     rocks: new Rocks(farmMap.rocks),
     mines: new Mines(),
     sprinklers: new Sprinklers(),
@@ -167,6 +175,10 @@ interface SaveData {
   ground?: Pile[];
   /** Absent in saves made before weeds existed. */
   weeds?: Weed[];
+  /** Absent in saves made before seasonal debris. */
+  twigs?: Twig[];
+  /** Absent in saves made before Special Orders. */
+  orders?: OrdersSave;
   /** Absent in saves made before the mines: the map's starting rocks. */
   rocks?: Rock[];
   /** Absent in saves made before the mines. */
@@ -238,6 +250,8 @@ export function serialize(g: GameState): string {
     trees: g.trees.save(),
     ground: g.ground.save(),
     weeds: g.weeds.save(),
+    twigs: g.twigs.save(),
+    orders: g.orders.save(),
     rocks: g.rocks.save(),
     mines: g.mines.save(),
     sprinklers: g.sprinklers.save(),
@@ -302,6 +316,37 @@ function savedInput(raw: unknown): MachineJob["input"] {
       isObject(also) && typeof also.item === "string" && isCount(also.use)
         ? { item: also.item, use: also.use }
         : undefined,
+  };
+}
+
+/** The orders record in a save, if it is well formed. Anything else loads as a fresh board. */
+function savedOrders(raw: unknown): OrdersSave | undefined {
+  if (!isObject(raw) || typeof raw.opened !== "boolean") return undefined;
+  if (!Array.isArray(raw.active) || !Array.isArray(raw.owed)) return undefined;
+  if (!isObject(raw.done) || !Number.isInteger(raw.lastAcceptedWeek))
+    return undefined;
+  const counts = (o: unknown): o is Record<string, number> =>
+    isObject(o) && Object.values(o).every((n) => isCount(n));
+  const active = raw.active.filter(
+    (a): a is OrdersSave["active"][number] =>
+      isObject(a) &&
+      typeof a.id === "string" &&
+      orderById(a.id) !== undefined &&
+      isCount(a.accepted) &&
+      isCount(a.due) &&
+      counts(a.progress),
+  );
+  const owed = raw.owed.filter(
+    (r): r is { id: string; count: number } =>
+      isObject(r) && typeof r.id === "string" && isCount(r.count),
+  );
+  if (!counts(raw.done)) return undefined;
+  return {
+    opened: raw.opened,
+    active,
+    done: raw.done,
+    lastAcceptedWeek: raw.lastAcceptedWeek as number,
+    owed,
   };
 }
 
@@ -395,6 +440,16 @@ export function deserialize(text: string): GameState | undefined {
       ),
     );
   }
+  if (Array.isArray(raw.twigs)) {
+    g.twigs.load(
+      raw.twigs.filter(
+        (t): t is Twig =>
+          isObject(t) && Number.isInteger(t.x) && Number.isInteger(t.y),
+      ),
+    );
+  }
+  const saved = savedOrders(raw.orders);
+  if (saved) g.orders.load(saved);
   if (Array.isArray(raw.sprinklers)) {
     g.sprinklers.load(
       raw.sprinklers.filter(

@@ -11,6 +11,8 @@ import { orderReady, type Upgradable } from "./upgrades";
 import type { Settlement } from "./shipping";
 import { fruitTreeById } from "./fruittrees";
 import { CAVE_MAP } from "./cave";
+import { returnDebris } from "./debris";
+import { endDayOrders, type OrdersNews } from "./orders";
 import { maps } from "../content/maps";
 
 /**
@@ -26,6 +28,7 @@ export function blocksGrowth(g: GameState, x: number, y: number): boolean {
       const self = dx === 0 && dy === 0;
       if (
         g.weeds.at(tx, ty) ||
+        g.twigs.at(tx, ty) ||
         g.rocks.at(tx, ty) ||
         g.trees.at(tx, ty) ||
         (!self && g.fruitTrees.at(tx, ty)) ||
@@ -37,6 +40,14 @@ export function blocksGrowth(g: GameState, x: number, y: number): boolean {
       )
         return true;
     }
+  return false;
+}
+
+/** True when a fruit tree stands in the 3x3 around a tile. */
+function nearFruitTree(g: GameState, x: number, y: number): boolean {
+  for (let dy = -1; dy <= 1; dy++)
+    for (let dx = -1; dx <= 1; dx++)
+      if (g.fruitTrees.at(x + dx, y + dy)) return true;
   return false;
 }
 
@@ -65,6 +76,8 @@ export interface SleepReport {
   shipped: Settlement;
   /** True when tonight's sales passed the earnings mark and the villager will ask about the cave. */
   caveOffer: boolean;
+  /** Special Orders filled or run out overnight. */
+  orders: OrdersNews;
   /** Names of young fruit trees that could not grow, since something stood in their 3x3. */
   stuckTrees: string[];
 }
@@ -88,6 +101,7 @@ export function sleep(
   g.money -= moneyLost;
   // The bin pays after the pass-out cost, which takes cash carried only.
   const shipped = g.bin.settle(g);
+  const orders = endDayOrders(g, shipped.lines, g.day.clock.day);
   const caveOffer = g.cave.addEarnings(shipped.total, g.day.clock.day);
 
   const { season } = dateOf(g.day.clock.day);
@@ -106,6 +120,7 @@ export function sleep(
       !g.farm.plotAt(x, y) &&
       !g.forage.itemAt(x, y) &&
       !g.weeds.at(x, y) &&
+      !g.twigs.at(x, y) &&
       !g.rocks.at(x, y) &&
       !g.sprinklers.at(x, y) &&
       !g.machines.at(x, y) &&
@@ -126,11 +141,37 @@ export function sleep(
         !g.trees.at(x, y) &&
         !g.fruitTrees.at(x, y) &&
         !g.rocks.at(x, y) &&
+        !g.twigs.at(x, y) &&
         !g.sprinklers.at(x, y) &&
         !g.machines.at(x, y) &&
         !g.farm.plotAt(x, y)?.crop &&
         !g.forage.itemAt(x, y) &&
         g.ground.at(x, y).length === 0,
+      () => map.tillableTiles(),
+    );
+    // Rocks, twigs and the odd stump return, a few at a time (note 65).
+    returnDebris(
+      season,
+      today.dayOfSeason,
+      g.rocks,
+      g.twigs,
+      g.trees,
+      random,
+      (x, y) =>
+        map.isTillable(x, y) &&
+        !map.isBlocked(x, y) &&
+        !map.serviceAt(x, y) &&
+        !g.weeds.at(x, y) &&
+        !g.twigs.at(x, y) &&
+        !g.rocks.at(x, y) &&
+        !g.trees.at(x, y) &&
+        !g.sprinklers.at(x, y) &&
+        !g.machines.at(x, y) &&
+        !g.chests.onFarm(x, y) &&
+        !g.farm.plotAt(x, y) &&
+        !g.forage.itemAt(x, y) &&
+        g.ground.at(x, y).length === 0 &&
+        !nearFruitTree(g, x, y),
       () => map.tillableTiles(),
     );
   }
@@ -166,6 +207,7 @@ export function sleep(
     toolReady: g.toolOrder && orderReady(g) ? g.toolOrder.tool : undefined,
     shipped,
     caveOffer,
+    orders,
     stuckTrees: stuck.map((t) => fruitTreeById(t.id)?.name ?? t.id),
   };
 }

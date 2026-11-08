@@ -280,6 +280,10 @@
         "kind": "level",
         "skill": "farming",
         "level": 4
+      },
+      {
+        "kind": "order",
+        "order": "fine-vegetables"
       }
     ]
   },

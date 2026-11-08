@@ -436,6 +436,7 @@ function paintSeedIcon(scene: Phaser.Scene, cropId: string): void {
 // ---- trees and tree goods
 
 export const WEED_KEY = "weed";
+export const TWIG_KEY = "twig";
 
 /** The picture of a sprinkler, on the ground and in the backpack. */
 /** Fruit tree pictures: growth stages 0 to 4 and, over a mature crown, the fruit it holds. */
@@ -489,6 +490,14 @@ function paintTrees(scene: Phaser.Scene): void {
     px(c, "#5ab84a", 7, 6, 3, 2);
     px(c, "#5ab84a", 10, 8, 2, 2);
     px(c, "#2a5a20", 4, 14, 8, 1);
+  });
+  // A twig: two crossed bits of branch, flat enough to walk over.
+  draw(TWIG_KEY, (c) => {
+    px(c, "#6b4e2d", 3, 10, 9, 1);
+    px(c, "#8a6a40", 5, 9, 7, 1);
+    px(c, "#6b4e2d", 6, 8, 1, 4);
+    px(c, "#8a6a40", 10, 7, 1, 4);
+    px(c, "#4a3820", 4, 12, 7, 1);
   });
   // A seed in the ground: a pale mound and a speck.
   draw(treeKey(1, false), (c) => {

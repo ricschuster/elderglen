@@ -1,6 +1,7 @@
 import recipeData from "../content/recipes.json";
 import { BUNDLES } from "./bundles";
 import { itemById } from "./items";
+import { orderById } from "./orders";
 import type { Skill } from "./skills";
 import type { PlacedChest } from "./chests";
 import type { GameState } from "./save";
@@ -21,7 +22,9 @@ export type RecipeSource =
   | { kind: "start" }
   | { kind: "level"; skill: Skill; level: number }
   /** Known once the hall bundle is finished (note 34: a bundle gives its machine and recipe together). */
-  | { kind: "bundle"; bundle: string };
+  | { kind: "bundle"; bundle: string }
+  /** Known once a Special Order has been filled at least once (note 65). */
+  | { kind: "order"; order: string };
 
 export interface Recipe {
   id: string;
@@ -49,7 +52,9 @@ export function known(g: GameState, r: Recipe): boolean {
       ? true
       : s.kind === "level"
         ? g.skills.level(s.skill) >= s.level
-        : g.hall.complete(s.bundle),
+        : s.kind === "order"
+          ? g.orders.timesDone(s.order) > 0
+          : g.hall.complete(s.bundle),
   );
 }
 
@@ -60,6 +65,10 @@ export function sourceText(r: Recipe): string {
     if (s.kind === "bundle") {
       const name = BUNDLES.find((b) => b.id === s.bundle)?.name;
       return name ? [`the ${name} bundle`] : [];
+    }
+    if (s.kind === "order") {
+      const title = orderById(s.order)?.title;
+      return title ? [`the ${title} order`] : [];
     }
     return [];
   });

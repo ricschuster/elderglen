@@ -1,8 +1,8 @@
 # 65 Special Orders and seasonal debris (draft)
 
-Status: draft, 2026-11-06. The four forks below were decided with the owner.
+Status: draft, 2026-11-06. First build 2026-11-07, see "Built". The four forks below were decided with the owner.
 The order list, counts, rewards and debris numbers are the assistant's
-proposal, and every number is a placeholder. Nothing here is built. It settles
+proposal, and every number is a placeholder. It settles
 the Special Orders that note 57 reserved (SC-32) and the clutter that returns
 each season (SC-29, note 55). Stardew's saved Quests page was read as
 reference only, and its order list is not copied (ADR 0002): our orders have
@@ -99,6 +99,55 @@ are (note 29). All numbers are placeholders.
    note 57 build order step 5).
 3. Orders one at a time, as their systems arrive.
 4. Seasonal debris with the weeds work (`29_weeds.md`, slice 1 build 3).
+
+## Built (2026-11-07)
+
+Code: `src/core/orders.ts`, `src/core/debris.ts`, data in
+`src/content/orders.json`, scene `src/scenes/OrdersScene.ts`. Tests:
+`tests/orders.test.ts`, `tests/debris.test.ts`.
+
+- **The board stands by the shop on the farm map, not at the Outpost.** The
+  Outpost is not built (note 57), so a service tile `board` (kind `orders`)
+  sits in the shop building at tile (35, 20) on both farm maps. It moves when
+  the Outpost exists.
+- **The Fall 2 scene.** The first time the player is on the farm map on or
+  after day 58 (Fall 2, year one), in any weather, a short scene opens the
+  board (after waking, or on loading an old save past that day). It shows once.
+  Before it, the board is closed and nothing is posted.
+- **Draw.** One order is picked each week from a hash of the week number, among
+  those fit for the season. A pick stays posted until taken, done (no repeat),
+  out of season or replaced; the board shows the newest two (`BOARD_SIZE`).
+  The draw is a pure function of the date, so a reload gives the same board.
+- **Accept and clock.** One new order a week. The window runs from the day of
+  acceptance (`due = accepted + windowDays`), and the last day counts. An
+  accepted order can be dropped at the board at no cost.
+- **Fill.** Ship orders fill themselves when the bin pays at night, counting
+  only goods shipped on or after the acceptance day. Gold is paid at once. The
+  first time, the unique reward is a recipe (known through a new `order`
+  recipe source) or an item to collect at the board. Repeats pay gold only.
+  The morning report names orders filled and orders that ran out.
+- **Lapse.** A lapsed order costs nothing and is posted again. The two built
+  orders hold no goods, so there is nothing to return by mail (and there is no
+  mail yet).
+- **Orders built.** Only the two whose systems exist: Bumper Harvest (ship 100
+  of one crop in its season, not posted in winter) and Fine Vegetables (ship 25
+  gold quality vegetables, fruit does not count). The first rewards are
+  placeholders: a big chest stands in for the second shipping bin, and the
+  dehydrator recipe (also learnable at Farming level 4) stands in for a recipe.
+- **Debris.** On day 1 of spring, summer and fall, up to 8 rocks and 8 twigs
+  appear on free tillable farm tiles, a 10 percent chance of one stump, with a
+  standing cap of 25 rocks and 25 twigs. Winter brings none. Never on crops,
+  soil, objects, services, or the 3 by 3 round a fruit tree. Twigs are new: a
+  flat mark that any tool clears in one swing for 1 wood, and that blocks
+  tilling and planting like a weed. Rocks are plain stone and block walking as
+  rocks do. Old saves load with no twigs.
+- **Save.** `orders` and `twigs` are optional keys. An old save loads with a
+  closed board; a malformed `orders` record is ignored.
+- **Not built.** Grass spreading (no grass system), the completion tracker
+  (#196), the Help Wanted achievement count (no quests exist yet, only
+  `Orders.totalDone` is kept for it), the other eight orders, a journal row for
+  taken orders (no journal yet, the board lists them), and the mail return.
+  Placeholder numbers are in `07_tuning_numbers.md`.
 
 ## Still open
 
