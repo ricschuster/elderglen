@@ -31,12 +31,32 @@ the base coop, chickens only. Everything else here is still unbuilt.
   stands), since there is no scythe or grass tile yet. The carpenter sells 10
   hay for 500g as the backstop.
 - **Saves.** `animals` field, absent in old saves (no coop).
-- **Left out of slice 1:** other species, the barn, incubator, heater, big and
+- **Left out of slice 1** (slice 2 below builds the tiers, duck, rabbit and
+  auto-feeder): other species, the barn, incubator, heater, big and
   deluxe tiers (the coop interior does not grow yet, #531), professions,
   auto-collect, spouse feeding, the keeper, the Meadow start coop (the Meadow
   farm type is not built), a real scythe and grass, hearts art and animal art
   (animals are blocks), per animal interaction on the map (the bench opens a
   list).
+
+## Built, slice 2 (2026-11-08, #531 coop half)
+
+- **Tiers.** The carpenter upgrades the coop to big (10000g, 400 wood, 150 stone)
+  and deluxe (20000g, 500 wood, 200 stone), 3 days each, placeholders. One job at
+  a time with the house and any coop work. It lands overnight, the outside
+  footprint never changes. Holds 4, 8 and 12. The interior is one map that grows
+  right to 15 and 22 wide (note 68): animals and the bench keep their tiles,
+  unbuilt space is black void, the camera clamps. Slots 5 to 8 stand on the big
+  tier's new tiles, 9 to 12 on the deluxe tier's.
+- **Species.** Duck (big coop, 1200g, egg every 2 fed nights, a feather instead
+  of the egg 25 percent of the time at 4 hearts or more) and rabbit (deluxe coop,
+  8000g, wool every 4 fed nights). A night outside resets the clock. The
+  carpenter placeholder row sells each species once its tier is built. Save
+  loading drops a species the saved tier does not open.
+- **Auto-feeder.** At the deluxe tier the night tick feeds everyone inside from
+  the silo (hay still runs out). Drawn as a grey chute on the back wall.
+- **Left out:** the incubator (needs a hatch flow and eggs to hold, so it waits
+  for the barn slice), the heater, professions, the barn.
 
 ## Why
 

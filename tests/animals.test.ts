@@ -26,6 +26,21 @@ import {
   pet,
   rename,
 } from "../src/core/animals";
+import {
+  COOP_SLOTS,
+  COOP_UPGRADES,
+  FEATHER,
+  FEATHER_FRIENDSHIP,
+  SPECIES,
+  animalProblem,
+  buyAnimal,
+  coopCapacity,
+  coopUpgradeProblem,
+  coopVisibleTier,
+  orderCoopUpgrade,
+} from "../src/core/animals";
+import { FarmMap } from "../src/core/map";
+import { mapFiles } from "../src/content/maps";
 import { animalQuality } from "../src/core/quality";
 import { deserialize, newGame, serialize } from "../src/core/save";
 import { maps } from "../src/content/maps";
@@ -101,7 +116,7 @@ describe("coop building", () => {
 
   it("has an interior that joins the farm and a bench", () => {
     const coop = maps.get("coop");
-    expect(coop.width).toBe(11);
+    expect(coop.width).toBe(22);
     expect(coop.height).toBe(8);
     expect(coop.exits[0]).toMatchObject({ map: "farm", entry: "from_coop" });
     expect(coop.exits[0]!.x).toBe(1);
@@ -223,7 +238,7 @@ describe("the night", () => {
     const r = collect(g, a.id);
     expect("item" in r && r.item.startsWith("egg")).toBe(true);
     expect(a.product).toBeUndefined();
-    expect(collect(g, a.id)).toEqual({ problem: "No egg there." });
+    expect(collect(g, a.id)).toEqual({ problem: "Nothing to take there." });
   });
 
   it("collecting needs pack room", () => {
@@ -299,13 +314,13 @@ describe("the night", () => {
     feedAll(g);
     const r = sleep(g, [], () => 0);
     expect(r.animals.eggs).toBe(1);
-    expect(reportLines(r).join(" ")).toMatch(/egg in the coop/);
+    expect(reportLines(r).join(" ")).toMatch(/waiting in the coop/);
     expect(animalReportLines(r.animals, true)[0]).toMatch(/finished your coop/);
   });
 
   it("the coop lands on the sleep that ends its last day", () => {
     const g = newGame();
-    g.animals.build = { daysLeft: 1 };
+    g.animals.build = { daysLeft: 1, tier: 1 };
     const r = sleep(g, [], () => 0.5);
     expect(r.coopFinished).toBe(true);
     expect(g.animals.coopBuilt).toBe(true);
@@ -329,6 +344,7 @@ describe("saves", () => {
     const g = deserialize(JSON.stringify(raw))!;
     expect(g.animals).toEqual({
       coopBuilt: false,
+      tier: 1,
       build: undefined,
       animals: [],
       hay: 0,
@@ -353,5 +369,233 @@ describe("saves", () => {
     expect(a.friendship).toBe(1000);
     expect(a.mood).toBe(0);
     expect(a.name).not.toBe("");
+  });
+});
+
+/** A coop at a tier with money and materials. */
+function tierGame(tier: number) {
+  const g = coopGame();
+  g.animals.tier = tier;
+  g.money = 100000;
+  g.inventory.add("wood", 2000);
+  g.inventory.add("stone", 2000);
+  return g;
+}
+
+describe("coop tiers", () => {
+  it("capacity is 4, 8 and 12", () => {
+    expect([1, 2, 3].map(coopCapacity)).toEqual([4, 8, 12]);
+    expect(coopCapacity(9)).toBe(12);
+  });
+
+  it("an upgrade costs, takes three days, lands overnight and keeps the footprint", () => {
+    const g = tierGame(1);
+    expect(orderCoopUpgrade(g)).toBe(true);
+    expect(g.money).toBe(100000 - COOP_UPGRADES[2]!.coin);
+    expect(g.animals.tier).toBe(1);
+    expect(g.animals.build).toEqual({ daysLeft: COOP_BUILD_DAYS, tier: 2 });
+    for (let i = 0; i < COOP_BUILD_DAYS - 1; i++) {
+      expect(advanceCoop(g)).toBe(false);
+      expect(g.animals.tier).toBe(1);
+    }
+    expect(advanceCoop(g)).toBe(true);
+    expect(g.animals.tier).toBe(2);
+    expect(g.animals.build).toBeUndefined();
+    g.animals.tier = 3;
+    expect(coopUpgradeProblem(g)).toMatch(/as big/);
+    // The outside footprint is a constant, never per tier.
+    expect(COOP_SITES.farm).toBeDefined();
+  });
+
+  it("one job at a time with the house and the coop", () => {
+    const g = tierGame(1);
+    g.houseBuild = { tier: 1, daysLeft: 2 };
+    expect(coopUpgradeProblem(g)).toMatch(/house/);
+    g.houseBuild = undefined;
+    orderCoopUpgrade(g);
+    expect(coopUpgradeProblem(g)).toMatch(/already/);
+    expect(houseProblem(g)).toMatch(/coop/);
+  });
+
+  it("needs money and materials, and a coop", () => {
+    expect(coopUpgradeProblem(newGame())).toMatch(/coop first/);
+    const g = coopGame();
+    expect(coopUpgradeProblem(g)).toMatch(/more/);
+    expect(orderCoopUpgrade(g)).toBe(false);
+  });
+
+  it("species are gated by tier and capacity", () => {
+    const g = tierGame(1);
+    expect(animalProblem(g, "duck")).toMatch(/big coop/);
+    expect(buyAnimal(g, "duck", "")).toBeUndefined();
+    g.animals.tier = 2;
+    expect(animalProblem(g, "duck")).toBeUndefined();
+    expect(animalProblem(g, "rabbit")).toMatch(/deluxe/);
+    for (let i = 0; i < 8; i++) buyAnimal(g, "duck", "");
+    expect(g.animals.animals).toHaveLength(8);
+    expect(animalProblem(g, "duck")).toMatch(/full/);
+    g.animals.tier = 3;
+    expect(buyAnimal(g, "rabbit", "Bun")!.species).toBe("rabbit");
+    expect(g.money).toBe(
+      100000 - 8 * SPECIES.duck.price - SPECIES.rabbit.price,
+    );
+  });
+
+  it("a duck lays every second fed night, a rabbit every fourth", () => {
+    const g = tierGame(3);
+    const d = buyAnimal(g, "duck", "D")!;
+    const r = buyAnimal(g, "rabbit", "R")!;
+    d.age = GROW_DAYS;
+    r.age = GROW_DAYS;
+    const laid: [boolean, boolean][] = [];
+    for (let i = 0; i < 4; i++) {
+      d.product = undefined;
+      r.product = undefined;
+      addHay(g, 10);
+      pet(g, d.id);
+      pet(g, r.id);
+      feedAll(g);
+      d.fresh = false;
+      r.fresh = false;
+      endDay(g, () => 0.99);
+      laid.push([d.product !== undefined, r.product !== undefined]);
+    }
+    expect(laid).toEqual([
+      [false, false],
+      [true, false],
+      [false, false],
+      [true, true],
+    ]);
+    expect(collect(g, r.id)).toEqual({ item: "wool" });
+    expect(collect(g, d.id)).toEqual({ item: "duck-egg" });
+  });
+
+  it("a duck leaves a feather at high friendship only", () => {
+    const g = tierGame(2);
+    const d = buyAnimal(g, "duck", "D")!;
+    d.age = GROW_DAYS;
+    d.lay = 1;
+    d.friendship = FEATHER_FRIENDSHIP;
+    d.mood = 255;
+    d.petted = true;
+    d.fed = true;
+    d.fresh = false;
+    endDay(g, () => 0);
+    expect(d.item).toBe(FEATHER);
+    expect(collect(g, d.id)).toMatchObject({
+      item: expect.stringContaining("feather"),
+    });
+    d.lay = 1;
+    d.friendship = 100;
+    d.petted = true;
+    d.fed = true;
+    endDay(g, () => 0);
+    expect(d.item).toBeUndefined();
+  });
+
+  it("a night outside loses a duck's day", () => {
+    const g = tierGame(2);
+    const d = buyAnimal(g, "duck", "D")!;
+    d.age = GROW_DAYS;
+    d.fresh = false;
+    d.lay = 1;
+    d.fed = true;
+    d.outside = true;
+    endDay(g, () => 0);
+    expect(d.product).toBeUndefined();
+    expect(d.lay).toBe(0);
+  });
+
+  it("the deluxe auto-feeder feeds animals inside from the silo", () => {
+    for (const [tier, ate] of [
+      [2, false],
+      [3, true],
+    ] as const) {
+      const g = tierGame(tier);
+      const c = buyAnimal(g, "chicken", "C")!;
+      c.age = GROW_DAYS;
+      c.fresh = false;
+      c.petted = true;
+      addHay(g, 5);
+      const news = endDay(g, () => 0);
+      expect(news.unfed).toBe(ate ? 0 : 1);
+      expect(g.animals.hay).toBe(ate ? 4 : 5);
+    }
+  });
+
+  it("saves keep tier, build and species, and drop what the tier does not open", () => {
+    const g = tierGame(3);
+    buyAnimal(g, "rabbit", "Bun");
+    buyAnimal(g, "duck", "Quack");
+    const back = deserialize(serialize(g))!;
+    expect(back.animals).toEqual(g.animals);
+    const up = tierGame(1);
+    orderCoopUpgrade(up);
+    expect(deserialize(serialize(up))!.animals.build).toEqual({
+      daysLeft: 3,
+      tier: 2,
+    });
+    const raw = JSON.parse(serialize(tierGame(1)));
+    raw.animals.animals = [
+      { species: "rabbit" },
+      { species: "duck" },
+      { species: "chicken" },
+    ];
+    raw.animals.build = { daysLeft: 2, tier: 3 };
+    const fixed = deserialize(JSON.stringify(raw))!;
+    expect(fixed.animals.animals.map((a) => a.species)).toEqual(["chicken"]);
+    expect(fixed.animals.build).toBeUndefined();
+    raw.animals.tier = 99;
+    expect(deserialize(JSON.stringify(raw))!.animals.tier).toBe(3);
+  });
+
+  it("an old save with a coop in the build has tier 1 and builds it", () => {
+    const raw = JSON.parse(serialize(newGame()));
+    raw.animals = { coopBuilt: false, build: { daysLeft: 2 }, animals: [] };
+    const g = deserialize(JSON.stringify(raw))!;
+    expect(g.animals.build).toEqual({ daysLeft: 2, tier: 1 });
+    expect(g.animals.tier).toBe(1);
+  });
+});
+
+describe("coop interior growth", () => {
+  const json = mapFiles["coop"]!;
+  const at = (t: number) => FarmMap.fromTiled(json, coopVisibleTier(t));
+  const walkable = (m: FarmMap) => {
+    const out = new Set<string>();
+    for (let y = 0; y < m.height; y++)
+      for (let x = 0; x < m.width; x++)
+        if (!m.isBlocked(x, y)) out.add(`${x},${y}`);
+    return out;
+  };
+
+  it("is 11, 15 and 22 wide with depth 8 and clamps the camera", () => {
+    expect(json.height).toBe(8);
+    expect([1, 2, 3].map((t) => at(t).bounds)).toEqual([
+      { x: 0, y: 0, w: 11, h: 8 },
+      { x: 0, y: 0, w: 15, h: 8 },
+      { x: 0, y: 0, w: 22, h: 8 },
+    ]);
+  });
+
+  it("unbuilt space is void and a tier only adds walkable tiles", () => {
+    const [a, b, c] = [1, 2, 3].map((t) => walkable(at(t)));
+    expect(a!.has("12,4")).toBe(false);
+    expect(b!.has("12,4")).toBe(true);
+    expect(b!.has("17,4")).toBe(false);
+    expect(c!.has("17,4")).toBe(true);
+    for (const t of a!) expect(b!.has(t)).toBe(true);
+    for (const t of b!) expect(c!.has(t)).toBe(true);
+  });
+
+  it("the door and bench keep their tiles, and every slot is walkable at its tier", () => {
+    for (const t of [1, 2, 3]) {
+      const m = at(t);
+      expect(m.entry("door")).toMatchObject({ x: 1, y: 6 });
+      expect(m.services.filter((s) => s.kind === "coop-bench")).toHaveLength(4);
+      COOP_SLOTS.slice(0, coopCapacity(t)).forEach((s) =>
+        expect(m.isBlocked(s.x, s.y)).toBe(false),
+      );
+    }
   });
 });

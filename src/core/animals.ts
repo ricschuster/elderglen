@@ -2,6 +2,7 @@ import { dateOf } from "./calendar";
 import { festivalToday } from "./festivals";
 import { animalQuality, withQuality, type Quality } from "./quality";
 import type { GameState } from "./save";
+import { visibleTier } from "./map";
 import { isRaining } from "./weather";
 
 /**
@@ -10,8 +11,58 @@ import { isRaining } from "./weather";
  * placeholder for `07_tuning_numbers.md`.
  */
 
-/** The only species in slice 1. */
-export type Species = "chicken";
+export type Species = "chicken" | "duck" | "rabbit";
+
+/** One species of the coop: where it lives, what it costs, what it makes and how often. */
+export interface SpeciesInfo {
+  id: Species;
+  name: string;
+  /** The coop tier that opens it (1 base, 2 big, 3 deluxe). */
+  tier: number;
+  price: number;
+  /** Fed nights between products. */
+  days: number;
+  /** The item it makes. */
+  item: string;
+  /** Word for a grown one on the bench card. */
+  grown: string;
+}
+
+/** Placeholder prices after note 07 (chicken 800g, duck 1200g, rabbit 8000g). */
+export const SPECIES: Record<Species, SpeciesInfo> = {
+  chicken: {
+    id: "chicken",
+    name: "Chicken",
+    tier: 1,
+    price: 800,
+    days: 1,
+    item: "egg",
+    grown: "hen",
+  },
+  duck: {
+    id: "duck",
+    name: "Duck",
+    tier: 2,
+    price: 1200,
+    days: 2,
+    item: "duck-egg",
+    grown: "duck",
+  },
+  rabbit: {
+    id: "rabbit",
+    name: "Rabbit",
+    tier: 3,
+    price: 8000,
+    days: 4,
+    item: "wool",
+    grown: "rabbit",
+  },
+};
+export const SPECIES_ORDER: readonly Species[] = ["chicken", "duck", "rabbit"];
+/** The feather a duck may leave instead of an egg, at this friendship (4 hearts), with this chance. */
+export const FEATHER = "feather";
+export const FEATHER_FRIENDSHIP = 800;
+export const FEATHER_CHANCE = 0.25;
 
 /** Friendship runs 0 to 1000 (5 hearts of 200), mood 0 to 255, as in Stardew. */
 export const MAX_FRIENDSHIP = 1000;
@@ -20,6 +71,16 @@ export const FRIENDSHIP_PER_HEART = 200;
 
 /** Animals the base coop holds (note 23). */
 export const COOP_CAPACITY = 4;
+/** What a tier holds (index is tier, 1 to 3), and what its upgrade costs and takes (index is the tier reached). */
+export const COOP_CAPACITIES = [0, 4, 8, 12] as const;
+export const COOP_UPGRADES: Record<
+  number,
+  { name: string; coin: number; wood: number; stone: number }
+> = {
+  2: { name: "Big coop", coin: 10000, wood: 400, stone: 150 },
+  3: { name: "Deluxe coop", coin: 20000, wood: 500, stone: 200 },
+};
+export const COOP_MAX_TIER = 3;
 /** What the carpenter charges for the base coop, and the days he works (note 23, near Stardew). */
 export const COOP_COST = { coin: 4000, wood: 300, stone: 100 } as const;
 export const COOP_BUILD_DAYS = 3;
@@ -69,13 +130,35 @@ export const COOP_FOOTPRINT = { w: 6, h: 3 } as const;
 export const COOP_BUILT = "coop-built";
 /** The id of the coop interior map. */
 export const COOP_MAP = "coop";
-/** The tiles animals stand on inside the base coop, in order. */
+/**
+ * The tiles animals stand on inside the coop, in order. The first four are the
+ * base room, then four each for the big and the deluxe tier, so each tier's
+ * animals stand on tiles that tier added.
+ */
 export const COOP_SLOTS: readonly { x: number; y: number }[] = [
   { x: 2, y: 4 },
   { x: 4, y: 4 },
   { x: 6, y: 4 },
   { x: 8, y: 4 },
+  { x: 10, y: 4 },
+  { x: 12, y: 4 },
+  { x: 10, y: 6 },
+  { x: 12, y: 6 },
+  { x: 15, y: 4 },
+  { x: 17, y: 4 },
+  { x: 15, y: 6 },
+  { x: 17, y: 6 },
 ];
+
+/** The coop map tier layer to draw for a coop tier: tier 1 is the base layers. */
+export function coopVisibleTier(coopTier: number): number {
+  return visibleTier(coopTier - 1, COOP_MAX_TIER - 1);
+}
+
+/** What the coop at a tier holds. */
+export function coopCapacity(tier: number): number {
+  return COOP_CAPACITIES[clamp(Math.floor(tier), 1, COOP_MAX_TIER)]!;
+}
 
 export interface Animal {
   id: number;
@@ -92,16 +175,24 @@ export interface Animal {
   outside: boolean;
   /** Bought today: needs no feeding or petting the first night. */
   fresh: boolean;
-  /** An egg waiting in the coop, at its quality. */
+  /** Fed days since its last product, for species that make one every few days. */
+  lay: number;
+  /** A product waiting in the coop, at its quality. */
   product?: Quality;
+  /** What the waiting product is (an item id without quality). Absent means the species' own. */
+  item?: string;
 }
 
 export interface CoopBuild {
   daysLeft: number;
+  /** The tier being built: 1 for the coop itself, 2 or 3 for an upgrade. */
+  tier: number;
 }
 
 export interface AnimalsState {
   coopBuilt: boolean;
+  /** The coop's tier, 1 to 3. 1 until an upgrade lands. */
+  tier: number;
   /** The coop being built, if any. */
   build: CoopBuild | undefined;
   animals: Animal[];
@@ -111,7 +202,14 @@ export interface AnimalsState {
 }
 
 export function newAnimals(): AnimalsState {
-  return { coopBuilt: false, build: undefined, animals: [], hay: 0, nextId: 1 };
+  return {
+    coopBuilt: false,
+    tier: 1,
+    build: undefined,
+    animals: [],
+    hay: 0,
+    nextId: 1,
+  };
 }
 
 const clamp = (n: number, lo: number, hi: number) =>
@@ -120,6 +218,7 @@ const clamp = (n: number, lo: number, hi: number) =>
 export function saveAnimals(a: AnimalsState): AnimalsState {
   return {
     coopBuilt: a.coopBuilt,
+    tier: a.tier,
     build: a.build ? { ...a.build } : undefined,
     animals: a.animals.map((x) => ({ ...x })),
     hay: a.hay,
@@ -137,23 +236,32 @@ export function loadAnimals(raw: unknown): AnimalsState {
   const r = raw as Record<string, unknown>;
   out.coopBuilt = r.coopBuilt === true;
   const b = r.build as Record<string, unknown> | undefined;
-  if (
-    !out.coopBuilt &&
-    b &&
-    isNum(b.daysLeft) &&
-    b.daysLeft >= 1 &&
-    b.daysLeft <= COOP_BUILD_DAYS
-  )
-    out.build = { daysLeft: Math.floor(b.daysLeft) };
+  out.tier =
+    out.coopBuilt && isNum(r.tier)
+      ? clamp(Math.floor(r.tier), 1, COOP_MAX_TIER)
+      : 1;
+  if (b && isNum(b.daysLeft) && b.daysLeft >= 1) {
+    // An old save has no tier: a coop still being built is tier 1.
+    const tier = isNum(b.tier) ? Math.floor(b.tier) : 1;
+    const want = out.coopBuilt ? out.tier + 1 : 1;
+    if (tier === want && tier <= COOP_MAX_TIER)
+      out.build = {
+        daysLeft: Math.min(Math.floor(b.daysLeft), COOP_BUILD_DAYS),
+        tier,
+      };
+  }
   if (isNum(r.hay)) out.hay = clamp(Math.floor(r.hay), 0, SILO_CAPACITY);
   if (out.coopBuilt && Array.isArray(r.animals))
     for (const item of r.animals) {
-      if (out.animals.length >= COOP_CAPACITY) break;
+      if (out.animals.length >= coopCapacity(out.tier)) break;
       const a = item as Record<string, unknown> | null;
-      if (!a || typeof a !== "object" || a.species !== "chicken") continue;
+      if (!a || typeof a !== "object") continue;
+      const species = SPECIES_ORDER.find((x) => x === a.species);
+      // A species the saved tier does not open is dropped, not kept.
+      if (!species || SPECIES[species].tier > out.tier) continue;
       out.animals.push({
         id: isNum(a.id) ? Math.floor(a.id) : out.animals.length + 1,
-        species: "chicken",
+        species,
         name:
           typeof a.name === "string" && a.name.trim() !== ""
             ? a.name.slice(0, 16)
@@ -169,6 +277,8 @@ export function loadAnimals(raw: unknown): AnimalsState {
         petted: a.petted === true,
         outside: a.outside === true,
         fresh: a.fresh === true,
+        lay: isNum(a.lay) ? clamp(Math.floor(a.lay), 0, 99) : 0,
+        item: a.item === FEATHER && species === "duck" ? FEATHER : undefined,
         product:
           a.product === "normal" ||
           a.product === "silver" ||
@@ -249,7 +359,7 @@ export function orderCoop(g: GameState): boolean {
   g.money -= COOP_COST.coin;
   g.inventory.remove("wood", COOP_COST.wood);
   g.inventory.remove("stone", COOP_COST.stone);
-  g.animals.build = { daysLeft: COOP_BUILD_DAYS };
+  g.animals.build = { daysLeft: COOP_BUILD_DAYS, tier: 1 };
   return true;
 }
 
@@ -264,16 +374,61 @@ export function advanceCoop(g: GameState): boolean {
   if (b.daysLeft > 0) return false;
   g.animals.build = undefined;
   g.animals.coopBuilt = true;
+  g.animals.tier = b.tier;
   return true;
 }
 
-/** Why a chick cannot be bought now, or undefined if it can. */
-export function chickProblem(g: GameState): string | undefined {
+/** The upgrade the carpenter would build next, or undefined at the deluxe tier or with no coop. */
+export function nextCoopUpgrade(g: GameState) {
+  if (!g.animals.coopBuilt) return undefined;
+  return COOP_UPGRADES[g.animals.tier + 1];
+}
+
+/** Why the coop cannot be upgraded now, or undefined if it can. One job at a time. */
+export function coopUpgradeProblem(g: GameState): string | undefined {
   if (!g.animals.coopBuilt) return "You need a coop first.";
-  if (g.animals.animals.length >= COOP_CAPACITY) return "The coop is full.";
-  if (g.money < CHICKEN_PRICE)
-    return `You need ${CHICKEN_PRICE - g.money}g more.`;
+  const up = nextCoopUpgrade(g);
+  if (!up) return "The coop is as big as it gets.";
+  if (g.animals.build) return "The carpenter is already working on your coop.";
+  if (g.houseBuild) return "The carpenter is busy with your house.";
+  const missing: string[] = [];
+  if (g.money < up.coin) missing.push(`${up.coin - g.money}g more`);
+  const wood = g.inventory.count("wood");
+  if (wood < up.wood) missing.push(`${up.wood - wood} more wood`);
+  const stone = g.inventory.count("stone");
+  if (stone < up.stone) missing.push(`${up.stone - stone} more stone`);
+  return missing.length > 0 ? `You need ${missing.join(" and ")}.` : undefined;
+}
+
+/** Pay for the next coop tier. It lands overnight; the outside never changes. */
+export function orderCoopUpgrade(g: GameState): boolean {
+  if (coopUpgradeProblem(g) !== undefined) return false;
+  const up = nextCoopUpgrade(g)!;
+  g.money -= up.coin;
+  g.inventory.remove("wood", up.wood);
+  g.inventory.remove("stone", up.stone);
+  g.animals.build = { daysLeft: COOP_BUILD_DAYS, tier: g.animals.tier + 1 };
+  return true;
+}
+
+/** Why an animal cannot be bought now, or undefined if it can. */
+export function animalProblem(
+  g: GameState,
+  species: Species = "chicken",
+): string | undefined {
+  const info = SPECIES[species];
+  if (!g.animals.coopBuilt) return "You need a coop first.";
+  if (g.animals.tier < info.tier)
+    return `${info.name}s need the ${COOP_UPGRADES[info.tier]?.name.toLowerCase() ?? "coop"}.`;
+  if (g.animals.animals.length >= coopCapacity(g.animals.tier))
+    return "The coop is full.";
+  if (g.money < info.price) return `You need ${info.price - g.money}g more.`;
   return undefined;
+}
+
+/** Why a chick cannot be bought now (slice 1 name for the chicken case). */
+export function chickProblem(g: GameState): string | undefined {
+  return animalProblem(g, "chicken");
 }
 
 /** A name for the next animal when the player gives none. */
@@ -281,13 +436,17 @@ export function defaultName(g: GameState): string {
   return DEFAULT_NAMES[(g.animals.nextId - 1) % DEFAULT_NAMES.length]!;
 }
 
-/** Buy a young chicken and name it. Returns the animal, or undefined if refused. */
-export function buyChick(g: GameState, name: string): Animal | undefined {
-  if (chickProblem(g) !== undefined) return undefined;
-  g.money -= CHICKEN_PRICE;
+/** Buy a young animal and name it. Returns the animal, or undefined if refused. */
+export function buyAnimal(
+  g: GameState,
+  species: Species,
+  name: string,
+): Animal | undefined {
+  if (animalProblem(g, species) !== undefined) return undefined;
+  g.money -= SPECIES[species].price;
   const a: Animal = {
     id: g.animals.nextId++,
-    species: "chicken",
+    species,
     name: cleanName(name) || defaultName(g),
     age: 0,
     friendship: 0,
@@ -296,9 +455,15 @@ export function buyChick(g: GameState, name: string): Animal | undefined {
     petted: false,
     outside: false,
     fresh: true,
+    lay: 0,
   };
   g.animals.animals.push(a);
   return a;
+}
+
+/** Buy a young chicken and name it. */
+export function buyChick(g: GameState, name: string): Animal | undefined {
+  return buyAnimal(g, "chicken", name);
 }
 
 /** A trimmed name of at most 16 characters. */
@@ -400,8 +565,8 @@ export function collect(
   id: number,
 ): { item: string } | { problem: string } {
   const a = g.animals.animals.find((x) => x.id === id);
-  if (!a?.product) return { problem: "No egg there." };
-  const item = withQuality(EGG, a.product);
+  if (!a?.product) return { problem: "Nothing to take there." };
+  const item = withQuality(a.item ?? SPECIES[a.species].item, a.product);
   if (!g.inventory.add(item)) return { problem: "Your pack is full." };
   a.product = undefined;
   return { item };
@@ -409,7 +574,7 @@ export function collect(
 
 /** What the night did, for the morning report. */
 export interface AnimalNews {
-  /** Animals that made an egg tonight. */
+  /** Animals that made something tonight (eggs, feathers, wool). */
   eggs: number;
   /** Animals that went unfed. */
   unfed: number;
@@ -428,6 +593,8 @@ export interface AnimalNews {
  */
 export function endDay(g: GameState, random: () => number): AnimalNews {
   const news: AnimalNews = { eggs: 0, unfed: 0, outside: 0, grown: [] };
+  // The deluxe coop's auto-feeder puts hay out for everyone inside.
+  if (g.animals.tier >= COOP_MAX_TIER) feedAll(g);
   for (const a of g.animals.animals) {
     const ate = a.fed || a.fresh;
     if (!ate) {
@@ -451,11 +618,22 @@ export function endDay(g: GameState, random: () => number): AnimalNews {
         a.age += 1;
         if (isAdult(a)) news.grown.push(a.name);
       }
-    } else if (ate && !sleptOut && a.product === undefined) {
-      const chance = a.mood >= PRODUCT_MOOD ? 1 : a.mood / PRODUCT_MOOD;
-      if (random() < chance) {
-        a.product = animalQuality(a.friendship, a.mood);
-        news.eggs += 1;
+    } else if (ate) {
+      // The product clock runs on fed nights. A night outside loses the day.
+      a.lay = sleptOut ? 0 : a.lay + 1;
+      if (a.lay >= SPECIES[a.species].days && a.product === undefined) {
+        const chance = a.mood >= PRODUCT_MOOD ? 1 : a.mood / PRODUCT_MOOD;
+        if (random() < chance) {
+          a.product = animalQuality(a.friendship, a.mood);
+          a.item =
+            a.species === "duck" &&
+            a.friendship >= FEATHER_FRIENDSHIP &&
+            random() < FEATHER_CHANCE
+              ? FEATHER
+              : undefined;
+          a.lay = 0;
+          news.eggs += 1;
+        }
       }
     }
     a.fed = false;
@@ -477,8 +655,8 @@ export function animalReportLines(
   if (news.eggs > 0)
     lines.push(
       news.eggs === 1
-        ? "There is an egg in the coop."
-        : `There are ${news.eggs} eggs in the coop.`,
+        ? "There is something waiting in the coop."
+        : `There are ${news.eggs} things waiting in the coop.`,
     );
   if (news.unfed > 0)
     lines.push(

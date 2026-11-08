@@ -1,11 +1,13 @@
 import {
   COOP_BUILT,
+  COOP_MAX_TIER,
   COOP_FOOTPRINT,
   COOP_MAP,
   COOP_SLOTS,
   GROW_DAYS,
   coopBlocks,
   coopSite,
+  coopVisibleTier,
 } from "../core/animals";
 import { fertilizerById } from "../core/fertilizer";
 import Phaser from "phaser";
@@ -284,7 +286,7 @@ export class FarmScene extends Phaser.Scene {
     const json = mineLayout ? floorMapJson(mineLayout) : mapFiles[id]!;
     // The house is one map that grows: only the layers at or below the house
     // tier are read and drawn, and the rest is black void.
-    this.tier = isHouseMap(id) ? houseVisibleTier(this.state.houseTier) : 0;
+    this.tier = this.buildingTier(id);
     this.map = mineLayout ? FarmMap.fromTiled(json) : maps.get(id, this.tier);
     if (isHouseMap(id)) carryFurniture(this.state, this.map, id);
     if (this.floor !== undefined)
@@ -497,10 +499,7 @@ export class FarmScene extends Phaser.Scene {
         return this.travel("farm", "from_house");
       // A new house tier (the carpenter finished, or the debug menu) means
       // more rooms to draw: reload the house at its door.
-      if (
-        isHouseMap(this.mapId) &&
-        this.tier !== houseVisibleTier(this.state.houseTier)
-      ) {
+      if (this.tier !== this.buildingTier(this.mapId)) {
         const data: SceneData = { map: this.mapId, entry: "door" };
         this.scene.restart(data);
         return;
@@ -653,6 +652,13 @@ export class FarmScene extends Phaser.Scene {
       if (this.ladderArmed) return this.descend();
     } else this.ladderArmed = true;
     // Doors open on a click or Action, not on a walk through (see `useDoor`).
+  }
+
+  /** The tier layers a growing building map shows: the house rooms or the coop size built so far. */
+  private buildingTier(id: string): number {
+    if (isHouseMap(id)) return houseVisibleTier(this.state.houseTier);
+    if (id === COOP_MAP) return coopVisibleTier(this.state.animals.tier);
+    return 0;
   }
 
   /** True if the farmer cannot stand on the tile: a wall, tree, rock or machine. */
@@ -1738,12 +1744,21 @@ export class FarmScene extends Phaser.Scene {
     g.fillStyle(0x8a6a45, 1).fillRect(3 * ts, 2 * ts + 4, 4 * ts, ts - 4);
     g.fillStyle(0xe0c068, 1).fillRect(2 * ts + 2, 2 * ts + 3, ts - 4, ts - 3);
     g.fillStyle(0x6fa8d0, 1).fillRect(7 * ts + 2, 2 * ts + 5, ts - 4, ts - 5);
+    // The deluxe coop's auto-feeder: a metal chute on the back wall.
+    if (this.state.animals.tier >= COOP_MAX_TIER)
+      g.fillStyle(0x9aa3ad, 1).fillRect(9 * ts + 2, 2 * ts + 3, ts - 4, ts - 3);
     this.state.animals.animals.forEach((an, i) => {
       const s = COOP_SLOTS[i];
       if (!s) return;
       const grown = an.age >= GROW_DAYS;
       const size = grown ? ts - 4 : ts - 8;
-      g.fillStyle(grown ? 0xf4efe0 : 0xf2d95c, 1).fillRect(
+      const body =
+        an.species === "duck"
+          ? 0xb59a6a
+          : an.species === "rabbit"
+            ? 0xcfc6bd
+            : 0xf4efe0;
+      g.fillStyle(grown ? body : 0xf2d95c, 1).fillRect(
         s.x * ts + (ts - size) / 2,
         s.y * ts + ts - size - 1,
         size,

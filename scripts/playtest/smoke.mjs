@@ -279,6 +279,8 @@ await step("coop", async () => {
   await farm((g, f, s) => {
     s.animals.build = undefined;
     s.animals.coopBuilt = true;
+    // The deluxe interior (22 wide) loads and can be walked in.
+    s.animals.tier = 3;
   });
   await overlay("carpenter");
   await pickRow("carpenter", /is in the coop/);

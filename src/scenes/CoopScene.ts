@@ -11,6 +11,7 @@ import {
   pet,
   rename,
   SILO_CAPACITY,
+  SPECIES,
 } from "../core/animals";
 import { itemById } from "../core/items";
 import type { GameState } from "../core/save";
@@ -43,7 +44,7 @@ export class CoopScene extends Phaser.Scene {
     this.add.text(
       24,
       500,
-      "Up/Down: choose   Enter: pet or feed   Space: egg   3: out or in   4: name   Esc: close",
+      "Up/Down: choose   Enter: pet or feed   Space: take   3: out or in   4: name   Esc: close",
       { fontSize: "13px", color: "#ffffffaa" },
     );
     this.menu = new Menu(this, {
@@ -76,17 +77,18 @@ export class CoopScene extends Phaser.Scene {
       },
     ];
     for (const an of a.animals) {
+      const what = itemById(an.item ?? SPECIES[an.species].item)?.name;
       const egg = an.product
-        ? `, ${an.product === "normal" ? "" : `${an.product} `}egg waiting`
+        ? `, ${an.product === "normal" ? "" : `${an.product} `}${what?.toLowerCase() ?? "product"} waiting`
         : "";
       rows.push({
         label: an.name,
         detail:
-          `${isAdult(an) ? "hen" : "chick"}, ${hearts(an)}/5 hearts, ${moodWord(an)}` +
+          `${isAdult(an) ? SPECIES[an.species].grown : `young ${SPECIES[an.species].name.toLowerCase()}`}, ${hearts(an)}/5 hearts, ${moodWord(an)}` +
           `${an.fed ? ", fed" : ", hungry"}${an.outside ? ", outside" : ""}${egg}`,
         buttons: [
           { text: "Pet", run: () => this.pet(an.id) },
-          { text: "Egg", run: () => this.collect(an.id) },
+          { text: "Take", run: () => this.collect(an.id) },
           {
             text: an.outside ? "Bring in" : "Let out",
             run: () => this.toggle(an.id),
@@ -98,7 +100,7 @@ export class CoopScene extends Phaser.Scene {
     if (a.animals.length === 0)
       rows.push({
         label: "No animals yet",
-        detail: "The carpenter sells young chickens",
+        detail: "The carpenter sells young animals",
         dim: true,
         buttons: [],
       });
@@ -130,7 +132,7 @@ export class CoopScene extends Phaser.Scene {
     const r = collect(this.state, id);
     this.message.setText(
       "item" in r
-        ? `Took a ${itemById(r.item)?.name.toLowerCase() ?? "egg"}.`
+        ? `Took ${itemById(r.item)?.name.toLowerCase() ?? "it"}.`
         : r.problem,
     );
     this.refresh();
