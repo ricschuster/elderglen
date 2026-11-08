@@ -60,13 +60,15 @@ import {
   resolveMapId,
 } from "../core/farmtypes";
 import {
-  dismount,
+  dismountSafely,
+  horseBlocks,
   horseName,
   horseTile,
   mount,
   mountProblem,
   needsName,
-  nameHorse,
+  settleHorse,
+  type ParkWorld,
   rideable,
   speedFactor,
 } from "../core/horse";
@@ -269,6 +271,8 @@ export class FarmScene extends Phaser.Scene {
   private target!: Phaser.GameObjects.Rectangle;
   /** Placeholder hat drawn on the player. */
   private hat!: Phaser.GameObjects.Rectangle;
+  /** True while the naming dialog is open for the first ride. */
+  private namingHorse = false;
   /** The horse under the rider while mounted (a placeholder block). */
   private steed!: Phaser.GameObjects.Rectangle;
   private pos: Vec = { x: 0, y: 0 };
@@ -548,6 +552,10 @@ export class FarmScene extends Phaser.Scene {
     ) => {
       if (data?.sleep) return this.endDay();
       if (data?.goto) return this.travel(data.goto.map, data.goto.entry);
+      if (this.namingHorse) {
+        this.namingHorse = false;
+        return this.getOn();
+      }
       this.save();
       // A new day on a mine floor: the floor is gone, so wake at home.
       if (
@@ -577,6 +585,13 @@ export class FarmScene extends Phaser.Scene {
     };
     this.events.on("resume", resumed);
     this.events.once("shutdown", () => this.events.off("resume", resumed));
+    // A horse left here may now stand where it should not.
+    settleHorse(
+      this.state,
+      this.mapId,
+      this.parkWorld(),
+      tileOf(this.pos, PLAYER, this.map.tileSize),
+    );
     this.render();
 
     if (import.meta.env.DEV)
@@ -727,8 +742,42 @@ export class FarmScene extends Phaser.Scene {
     return 0;
   }
 
-  /** True if the farmer cannot stand on the tile: a wall, tree, rock or machine. */
+  /**
+   * True if the farmer cannot stand on the tile: a wall, tree, rock, machine or
+   * a horse left standing there (never one that is ridden or at the stable).
+   */
   private tileBlocked(x: number, y: number): boolean {
+    return (
+      this.tileBlockedNoHorse(x, y) || horseBlocks(this.state, this.mapId, x, y)
+    );
+  }
+
+  /** What the horse may and may not stand on here (note 59, "Blocking"). */
+  private parkWorld(): ParkWorld {
+    const home = stableHome(this.state, this.mapId);
+    const near = (x: number, y: number): boolean => {
+      for (let dy = -1; dy <= 1; dy++)
+        for (let dx = -1; dx <= 1; dx++) {
+          const [tx, ty] = [x + dx, y + dy];
+          if (
+            this.map.exitAt(tx, ty) ||
+            this.map.serviceAt(tx, ty) ||
+            this.map.entries.some((e) => e.x === tx && e.y === ty) ||
+            (home && home.x === tx && home.y === ty)
+          )
+            return true;
+        }
+      return false;
+    };
+    return {
+      width: this.map.width,
+      height: this.map.height,
+      blocked: (x, y) => this.tileBlockedNoHorse(x, y),
+      reserved: near,
+    };
+  }
+
+  private tileBlockedNoHorse(x: number, y: number): boolean {
     return (
       this.map.isBlocked(x, y) ||
       (this.map.hasSoil &&
@@ -1131,7 +1180,13 @@ export class FarmScene extends Phaser.Scene {
       !rideable(resolveMapId(map, this.state.farmType), FARM_MAP_IDS)
     ) {
       const here = tileOf(this.pos, PLAYER, this.map.tileSize);
-      dismount(this.state, this.mapId, here.x, here.y);
+      dismountSafely(
+        this.state,
+        this.mapId,
+        this.parkWorld(),
+        here,
+        facingTile(this.pos, PLAYER, this.facing, this.map.tileSize),
+      );
       this.save();
     }
     const data: SceneData = { map, entry };
@@ -1158,8 +1213,9 @@ export class FarmScene extends Phaser.Scene {
       return this.render();
     }
     if (needsName(this.state)) {
-      const asked = window.prompt?.("Name your horse", "Clover");
-      nameHorse(this.state, asked ?? "");
+      // The naming dialog resumes the farm, which finishes getting on.
+      this.namingHorse = true;
+      return this.open("name-horse");
     }
     mount(this.state, this.mapId, FARM_MAP_IDS);
     this.message = `You are riding ${horseName(this.state)}. Press Action to get off.`;
@@ -1170,8 +1226,16 @@ export class FarmScene extends Phaser.Scene {
   /** Get off where the rider stands. The horse waits there until morning. */
   private getOff(): void {
     const here = tileOf(this.pos, PLAYER, this.map.tileSize);
-    dismount(this.state, this.mapId, here.x, here.y);
-    this.message = `${horseName(this.state)} waits here.`;
+    const spot = dismountSafely(
+      this.state,
+      this.mapId,
+      this.parkWorld(),
+      here,
+      this.aimTile(),
+    );
+    this.message = spot
+      ? `${horseName(this.state)} waits here.`
+      : `${horseName(this.state)} trots back to the stable.`;
     this.save();
     this.render();
   }

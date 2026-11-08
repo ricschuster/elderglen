@@ -16,6 +16,14 @@ import {
 import { maps } from "../src/content/maps";
 import {
   HORSE_SPEED_FACTOR,
+  PARK_RANGE,
+  dismountSafely,
+  horseBlocks,
+  parkSpot,
+  parkable,
+  settleHorse,
+  typeName,
+  type ParkWorld,
   dismount,
   horseEndDay,
   horseTile,
@@ -50,7 +58,7 @@ const FARMS = ["farm", "farm-woodland"];
 function rich(): GameState {
   const g = newGame();
   g.money = 20000;
-  g.inventory.add("wood", 200);
+  g.inventory.add("hardwood", 200);
   g.inventory.add("iron-bar", 10);
   g.trees = new Trees([]);
   g.rocks = new Rocks([]);
@@ -82,7 +90,7 @@ function stabled(): GameState {
 }
 
 describe("the stable", () => {
-  it("costs gold, wood and iron bars, and nothing is paid until a spot is chosen", () => {
+  it("costs gold, hardwood and iron bars, and nothing is paid until a spot is chosen", () => {
     const g = rich();
     const m = maps.get("farm");
     const bad = placementBlockers(g, m, "farm", "stable", 0, 0);
@@ -92,7 +100,8 @@ describe("the stable", () => {
     const s = freeSpot(g);
     expect(orderBuildingAt(g, m, "farm", "stable", s.x, s.y)).toBe(true);
     expect(g.money).toBe(20000 - STABLE_COST.coin);
-    expect(g.inventory.count("wood")).toBe(200 - STABLE_COST.wood);
+    expect(g.inventory.count("hardwood")).toBe(200 - STABLE_COST.hardwood);
+    expect(g.inventory.count("wood")).toBe(0);
     expect(g.inventory.count("iron-bar")).toBe(10 - STABLE_COST.iron);
     expect(siteOf(g, "stable", "farm")).toEqual(s);
   });
@@ -103,6 +112,13 @@ describe("the stable", () => {
     expect(buildingProblem(g, "stable")).toContain("5 more iron bars");
     g.money = 0;
     expect(buildingProblem(g, "stable")).toContain("10000g more");
+  });
+
+  it("asks for hardwood, and wood does not stand in for it", () => {
+    const g = rich();
+    g.inventory.remove("hardwood", 150);
+    g.inventory.add("wood", 500);
+    expect(buildingProblem(g, "stable")).toContain("50 more hardwood");
   });
 
   it("takes two days and the horse comes with it", () => {
@@ -182,7 +198,13 @@ describe("the stable", () => {
     const g = stabled();
     nameHorse(g, "Dobbin");
     const r = refundOf(g, "stable");
-    expect(r).toEqual({ coin: 5000, wood: 50, stone: 0, iron: 2 });
+    expect(r).toEqual({
+      coin: 5000,
+      wood: 0,
+      stone: 0,
+      hardwood: 50,
+      iron: 2,
+    });
     const money = g.money;
     expect(removeProblem(g, "stable")).toBeUndefined();
     expect(removeBuilding(g, "stable")).toBe(true);
@@ -311,5 +333,180 @@ describe("saves", () => {
       parked: undefined,
     });
     expect(loadHorse(null)).toEqual({ name: "", parked: undefined });
+  });
+});
+
+/** A small world from rows: "#" is solid, "!" is a door, anything else is open. */
+function world(rows: string[]): ParkWorld {
+  const at = (x: number, y: number) => rows[y]?.[x];
+  const doors = (x: number, y: number) => {
+    for (let dy = -1; dy <= 1; dy++)
+      for (let dx = -1; dx <= 1; dx++)
+        if (at(x + dx, y + dy) === "!") return true;
+    return false;
+  };
+  return {
+    width: rows[0]!.length,
+    height: rows.length,
+    blocked: (x, y) => at(x, y) === "#" || at(x, y) === undefined,
+    reserved: doors,
+  };
+}
+
+describe("a parked horse blocks, and never traps the player", () => {
+  it("blocks only a parked horse: not while ridden, not at the stable", () => {
+    const g = stabled();
+    const home = stableHome(g, "farm")!;
+    expect(horseBlocks(g, "farm", home.x, home.y)).toBe(false);
+    mount(g, "farm", FARMS);
+    expect(horseBlocks(g, "farm", 5, 5)).toBe(false);
+    dismount(g, "farm", 5, 5);
+    expect(horseBlocks(g, "farm", 5, 5)).toBe(true);
+    expect(horseBlocks(g, "farm", 6, 5)).toBe(false);
+    expect(horseBlocks(g, "green", 5, 5)).toBe(false);
+    mount(g, "farm", FARMS);
+    expect(horseBlocks(g, "farm", 5, 5)).toBe(false);
+    dismount(g, "farm", 5, 5);
+    horseEndDay(g);
+    expect(horseBlocks(g, "farm", 5, 5)).toBe(false);
+  });
+
+  it("parks on the faced tile when it is free", () => {
+    const w = world(["......", "......", "......"]);
+    expect(parkSpot(w, { x: 2, y: 1 }, { x: 3, y: 1 })).toEqual({ x: 3, y: 1 });
+  });
+
+  it("never parks on the rider, a wall, a door or beside one", () => {
+    const w = world(["#####", "#.!.#", "#...#", "#####"]);
+    const from = { x: 1, y: 2 };
+    expect(parkable(w, from, from)).toBe(false);
+    expect(parkable(w, from, { x: 0, y: 0 })).toBe(false);
+    expect(parkable(w, from, { x: 2, y: 1 })).toBe(false);
+    expect(parkable(w, from, { x: 1, y: 1 })).toBe(false);
+    expect(parkable(w, from, { x: 3, y: 2 })).toBe(false);
+    expect(parkSpot(w, from, { x: 2, y: 1 })).toBeUndefined();
+  });
+
+  it("never parks where it would wall off part of the map", () => {
+    // A one tile corridor: the rider at the left, the way on to the right.
+    const w = world(["#####", "..#..", "#...#", "#####"].map((r) => r));
+    const from = { x: 0, y: 1 };
+    const front = { x: 1, y: 1 };
+    expect(parkable(w, from, front)).toBe(false);
+    const open = world(["#######", "#.....#", "#.....#", "#######"]);
+    expect(parkable(open, { x: 1, y: 1 }, { x: 2, y: 1 })).toBe(true);
+    // In a corridor with a bay, the bay is fine and the corridor is not.
+    const bay = world(["#######", "......#", "###.###", "#######"]);
+    expect(parkable(bay, { x: 0, y: 1 }, { x: 1, y: 1 })).toBe(false);
+    expect(parkable(bay, { x: 0, y: 1 }, { x: 3, y: 2 })).toBe(true);
+  });
+
+  it("parks on the nearest tile that works, and goes home if none does", () => {
+    const w = world(["#####", "#...#", "#####"]);
+    const from = { x: 1, y: 1 };
+    // Only two tiles to the right, and parking at either would cut one off
+    // the rider's side only if it sits in the middle.
+    expect(parkSpot(w, from, { x: 2, y: 1 })).toEqual({ x: 3, y: 1 });
+    expect(PARK_RANGE).toBeGreaterThan(2);
+    const g = stabled();
+    mount(g, "farm", FARMS);
+    const none = world(["###", "#.#", "###"]);
+    expect(
+      dismountSafely(g, "farm", none, { x: 1, y: 1 }, { x: 1, y: 1 }),
+    ).toBe(undefined);
+    expect(g.animals.mounted).toBe(false);
+    expect(g.animals.horse.parked).toBeUndefined();
+  });
+
+  it("dismounts onto a safe tile and the player can still walk everywhere", () => {
+    const g = stabled();
+    mount(g, "farm", FARMS);
+    const w = world(["#####", "#...#", "#...#", "#####"]);
+    const spot = dismountSafely(g, "farm", w, { x: 1, y: 1 }, { x: 2, y: 1 })!;
+    expect(spot).toEqual({ x: 2, y: 1 });
+    expect(g.animals.horse.parked).toEqual({ map: "farm", x: 2, y: 1 });
+    expect(horseBlocks(g, "farm", 2, 1)).toBe(true);
+  });
+
+  it("moves a horse found on a bad tile when the map is entered", () => {
+    const g = stabled();
+    const w = world(["#####", "#...#", "#...#", "#####"]);
+    // On the rider's own tile.
+    mount(g, "farm", FARMS);
+    dismount(g, "farm", 1, 1);
+    settleHorse(g, "farm", w, { x: 1, y: 1 });
+    expect(g.animals.horse.parked).not.toEqual({ map: "farm", x: 1, y: 1 });
+    expect(g.animals.horse.parked?.map).toBe("farm");
+    // On a wall.
+    dismount(g, "farm", 0, 0);
+    settleHorse(g, "farm", w, { x: 1, y: 1 });
+    const p = g.animals.horse.parked!;
+    expect(parkable(w, { x: 1, y: 1 }, p)).toBe(true);
+    // A good tile is left alone.
+    const keep = { ...p };
+    settleHorse(g, "farm", w, { x: 1, y: 1 });
+    expect(g.animals.horse.parked).toEqual(keep);
+    // Another map's horse is not touched.
+    g.animals.horse.parked = { map: "green", x: 0, y: 0 };
+    settleHorse(g, "farm", w, { x: 1, y: 1 });
+    expect(g.animals.horse.parked).toEqual({ map: "green", x: 0, y: 0 });
+  });
+
+  it("never leaves a horse on any exit, entry or counter of the real farm", () => {
+    const m = maps.get("farm");
+    const g = stabled();
+    const w: ParkWorld = {
+      width: m.width,
+      height: m.height,
+      blocked: (x, y) => m.isBlocked(x, y),
+      reserved: (x, y) => {
+        for (let dy = -1; dy <= 1; dy++)
+          for (let dx = -1; dx <= 1; dx++)
+            if (
+              m.exitAt(x + dx, y + dy) ||
+              m.serviceAt(x + dx, y + dy) ||
+              m.entries.some((e) => e.x === x + dx && e.y === y + dy)
+            )
+              return true;
+        return false;
+      },
+    };
+    for (const e of m.entries) {
+      const spot = parkSpot(w, { x: e.x, y: e.y }, { x: e.x, y: e.y + 1 });
+      if (spot) {
+        expect(m.exitAt(spot.x, spot.y)).toBeUndefined();
+        expect(m.serviceAt(spot.x, spot.y)).toBeUndefined();
+        expect(m.entries.some((n) => n.x === spot.x && n.y === spot.y)).toBe(
+          false,
+        );
+      }
+    }
+    expect(g.animals.stableBuilt).toBe(true);
+  });
+});
+
+describe("naming the horse", () => {
+  it("types letters, capitalises words, and stops at 16", () => {
+    let t = "";
+    for (const k of "pip the brave") t = typeName(t, k);
+    expect(t).toBe("Pip The Brave");
+    for (const k of "abcdefghij") t = typeName(t, k);
+    expect(t).toHaveLength(16);
+    expect(t).toBe("Pip The Braveabc");
+  });
+
+  it("deletes, and ignores stray keys, doubled and leading spaces", () => {
+    expect(typeName("Pip", "Backspace")).toBe("Pi");
+    expect(typeName("", "Backspace")).toBe("");
+    expect(typeName("Pip", "Shift")).toBe("Pip");
+    expect(typeName("Pip", "@")).toBe("Pip");
+    expect(typeName("", " ")).toBe("");
+    expect(typeName("Pip ", " ")).toBe("Pip ");
+    expect(typeName("Pip", "'")).toBe("Pip'");
+  });
+
+  it("an empty name is Clover", () => {
+    const g = stabled();
+    expect(nameHorse(g, "")).toBe("Clover");
   });
 });

@@ -1,7 +1,7 @@
 import { dateOf } from "./calendar";
 import { CROPS, cropById } from "./crops";
 import { farmTypeById } from "./farmtypes";
-import { cropOfSeed, itemById } from "./items";
+import { HARDWOOD, cropOfSeed, itemById } from "./items";
 import { fertilizerById, qualityLevelOf } from "./fertilizer";
 import { MAX_ENERGY } from "./energy";
 import { doubleForageChance, forageFloor } from "./professions";
@@ -219,14 +219,15 @@ const TREE_XP = 12;
 const STUMP_SAP = 1;
 const STUMP_XP = 1;
 /**
- * A large stump (Woodland) takes 3 more swings than a stump and gives 8 to 13
- * wood, standing in for hardwood until that exists, and 3 XP. Ours.
+ * A large stump takes 3 more swings than a stump (ours), gives 2 hardwood (the
+ * saved Hardwood page) and 3 XP (ours), and needs a copper axe or better
+ * (`docs/design/44_tool_upgrades.md`).
  */
 const LARGE_STUMP_EXTRA_SWINGS = 3;
-const LARGE_STUMP_WOOD = 8;
+const LARGE_STUMP_HARDWOOD = 2;
 const LARGE_STUMP_XP = 3;
-/** Regrow days if the farm type names none. Ours. */
-const DEFAULT_REGROW_DAYS = 4;
+/** The axe tier that clears a large stump: copper. */
+export const LARGE_STUMP_TIER = 1;
 
 /** What a finished chop gives: goods for the backpack and foraging XP. */
 interface Chop {
@@ -249,10 +250,7 @@ function planChop(
     if (t.regrow !== undefined) return undefined;
     return {
       swings: swingsToUproot(g.toolTiers.axe) + LARGE_STUMP_EXTRA_SWINGS,
-      goods: goods(
-        ["wood", LARGE_STUMP_WOOD + Math.floor(random() * 6)],
-        ["sap", STUMP_SAP],
-      ),
+      goods: goods([HARDWOOD, LARGE_STUMP_HARDWOOD]),
       xp: LARGE_STUMP_XP,
     };
   }
@@ -323,6 +321,8 @@ export function chop(
   const plan = planChop(g, x, y, random);
   const t = g.trees.at(x, y);
   if (!plan || !t) return fail("nothing to chop");
+  if (t.large && g.toolTiers.axe < LARGE_STUMP_TIER)
+    return fail("needs a better axe");
   g.day.act(
     swingCost(TOOL_ENERGY, g.toolTiers.axe, g.skills.level("foraging")),
     0,
@@ -340,8 +340,12 @@ export function chop(
     }
   }
   if (t.large) {
-    t.regrow = farmTypeById(g.farmType).stumpRegrowDays || DEFAULT_REGROW_DAYS;
-    t.hits = 0;
+    // A farm with no regrow days (Standard) loses the stump for good.
+    const days = farmTypeById(g.farmType).stumpRegrowDays;
+    if (days > 0) {
+      t.regrow = days;
+      t.hits = 0;
+    } else g.trees.remove(x, y);
   } else if (!t.stump && t.stage === MATURE_STAGE) {
     t.stump = true;
     t.hits = 0;

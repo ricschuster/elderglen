@@ -231,28 +231,31 @@ describe("house tiers 2 and 3", () => {
     expect(maps.problems()).toEqual([]);
   });
 
-  it("orders tier 2 for 65,000g and wood standing in for 100 hardwood, only after tier 1", () => {
+  it("orders tier 2 for 65,000g and 100 hardwood, only after tier 1", () => {
     const g = newGame();
     g.money = 200000;
-    g.inventory.add(WOOD, 600);
+    g.inventory.add(WOOD, 450);
+    g.inventory.add("hardwood", 150);
     expect(orderProblem(g)).toBeUndefined();
     g.houseTier = 1;
-    expect(nextUpgrade(1)).toEqual({ coin: 65000, wood: 100 });
+    expect(nextUpgrade(1)).toEqual({ coin: 65000, wood: 0, hardwood: 100 });
     g.money = 64999;
     expect(orderProblem(g)).toMatch(/1g more/);
     g.money = 65000;
-    g.inventory.remove(WOOD, 500);
+    g.inventory.remove("hardwood", 51);
+    expect(orderProblem(g)).toBe("You need 1 more hardwood.");
+    g.inventory.add("hardwood", 1);
     expect(orderProblem(g)).toBeUndefined();
     expect(orderUpgrade(g)).toBe(true);
     expect(g.money).toBe(0);
-    expect(g.inventory.count(WOOD)).toBe(0);
+    expect(g.inventory.count("hardwood")).toBe(0);
     expect(g.houseBuild).toEqual({ tier: 2, daysLeft: BUILD_DAYS });
   });
 
   it("orders tier 3 for 100,000g alone, only after tier 2, and nothing past it", () => {
     const g = newGame();
     g.money = 100000;
-    expect(nextUpgrade(2)).toEqual({ coin: 100000, wood: 0 });
+    expect(nextUpgrade(2)).toEqual({ coin: 100000, wood: 0, hardwood: 0 });
     g.houseTier = 2;
     expect(orderProblem(g)).toBeUndefined();
     expect(orderUpgrade(g)).toBe(true);

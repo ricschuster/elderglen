@@ -226,7 +226,10 @@ Source: `src/core/actions.ts` (`eat`), `energy` fields in the content files.
 
 Stable (decided 2026-11-06, `59_horse.md`): 10,000g, Hardwood 100, Iron Bar 5, two
 days, from the saved Stable page. Against the expert run above (7,322g on day 41)
-it is a late goal, like the 10,000g tool tier. Hardwood supply is the open part.
+it is a late goal, like the 10,000g tool tier. Hardwood supply is the open part
+(built 2026-11-07: 2 per large stump, note 43; the Woodland farm has 6 that regrow
+every 4 days, the Standard farm 3 that do not, so 100 is out of reach on Standard
+until the Secret Woods exists).
 
 ## Backpack
 
@@ -746,9 +749,9 @@ Source: `src/content/farm-types.json` and the farm map JSON.
   clearings. Rocks: 10 (Standard 16). Pond radius 2.4 (Standard 3.2).
 - Forage clearings: 3 circles, radius 3.2, with 24 forage spots in all
   (Standard has 14, across the whole map). Forage uses the valley tables.
-- Large stumps: 6 fixed spots, 3 tiles apart. A chop takes 8 swings at tier 0
-  (a stump's 5 plus 3), gives 8 to 13 wood and 1 sap (standing in for hardwood)
-  and 3 foraging XP. A chopped stump stands aside and regrows after 4 days. It
+- Large stumps: 6 fixed spots, 3 tiles apart. A chop takes a stump's swings plus 3
+  (7 with a copper axe, which it needs), gives 2 hardwood (2026-11-07, was 8 to
+  13 wood as a stand-in) and 3 foraging XP. A chopped stump stands aside and regrows after 4 days. It
   blocks movement only while whole and never spreads seeds.
 - Mixed seeds: sell 5g. A weed with no fiber (50 percent chance of fiber, as
   before) drops one at 5 percent on Standard (note 29) and always on Woodland. A mixed seed plants a random crop that
@@ -823,9 +826,8 @@ Source: `src/content/furniture.json`, `src/core/furniture.ts`.
 Source: `src/core/house.ts`. All three are Stardew's prices, untuned.
 
 - Tier 1: 10,000g and 450 wood.
-- Tier 2: 65,000g and 100 wood. Stardew asks for 100 hardwood. Hardwood is not
-  an item yet, so wood stands in for it (as for the large stump). Change the
-  item when hardwood exists.
+- Tier 2: 65,000g and 100 hardwood, as Stardew (changed from a wood stand-in on
+  2026-11-07, note 43). A tier 2 order already paid in wood is unaffected.
 - Tier 3: 100,000g, no wood. Adds the cellar stairs flag only (`houseHasCellar`,
   the cellar is #282).
 - Each tier needs the one before it, one order at a time, three working days

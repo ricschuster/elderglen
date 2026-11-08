@@ -127,6 +127,7 @@ export class DebugScene extends Phaser.Scene {
         ],
       },
       this.stackRow("Wood", "wood"),
+      this.stackRow("Hardwood", "hardwood"),
       this.stackRow("Stone", "stone"),
       {
         label: "Items",
@@ -325,6 +326,7 @@ export class DebugScene extends Phaser.Scene {
     return (
       !id.endsWith("-seed") &&
       id !== "wood" &&
+      id !== "hardwood" &&
       id !== "sap" &&
       id !== "fiber" &&
       !fertilizerById(id)

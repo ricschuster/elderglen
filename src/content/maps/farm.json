@@ -958,6 +958,45 @@
           "visible": true
         },
         {
+          "id": 901,
+          "name": "stump",
+          "class": "stump",
+          "type": "stump",
+          "x": 56,
+          "y": 168,
+          "width": 0,
+          "height": 0,
+          "point": true,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 902,
+          "name": "stump",
+          "class": "stump",
+          "type": "stump",
+          "x": 584,
+          "y": 264,
+          "width": 0,
+          "height": 0,
+          "point": true,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 903,
+          "name": "stump",
+          "class": "stump",
+          "type": "stump",
+          "x": 472,
+          "y": 424,
+          "width": 0,
+          "height": 0,
+          "point": true,
+          "rotation": 0,
+          "visible": true
+        },
+        {
           "id": 43,
           "name": "tree",
           "class": "tree",

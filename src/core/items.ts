@@ -126,6 +126,9 @@ for (const d of decorData)
 /** Tree goods (`docs/design/36_gathering_trees_sap_fiber.md`). Wood and sap sell as Stardew's do. */
 items.set("wood", { id: "wood", name: "Wood", sellPrice: 2 });
 items.set("sap", { id: "sap", name: "Sap", sellPrice: 2 });
+/** Hardwood comes from large stumps (`docs/design/43_wood_source.md`). Sells for 15g, as the saved Hardwood page. */
+export const HARDWOOD = "hardwood";
+items.set(HARDWOOD, { id: HARDWOOD, name: "Hardwood", sellPrice: 15 });
 /** Fiber comes from weeds and sells for 1g, as Stardew's (`29_weeds.md`). It is always normal quality. */
 items.set("fiber", { id: "fiber", name: "Fiber", sellPrice: 1 });
 /** Clay turns up when soil is tilled (note 23). Stardew's clay sells for 20g. */
@@ -261,7 +264,7 @@ const GROUPS: [string, string[]][] = [
     "Fish and rods",
     [...FISH, ...RODS, ...BAITS, ...LURES, ...TRINKETS].map((f) => f.id),
   ],
-  ["Wood and fibre", ["wood", "sap", "fiber", "clay", "hay"]],
+  ["Wood and fibre", ["wood", "hardwood", "sap", "fiber", "clay", "hay"]],
 ];
 for (const [group, ids] of GROUPS)
   for (const id of ids) {

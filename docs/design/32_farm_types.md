@@ -61,8 +61,8 @@ near the Hearthwell exit. No rule changes.
 
 The first non-Standard farm, because foraging is already built.
 
-- Large stumps regrow on a timer and drop hardwood. Hardwood waits for crafting
-  in M3 and the tool upgrade note, so stumps drop wood until then.
+- Large stumps regrow on a timer and drop hardwood (built 2026-11-07, note 43:
+  2 each, a copper axe or better).
 - Forage clearings are fixed spots on the map with seasonal forage, using the
   same tables as the valley (`forage.json`).
 - Special weeds always drop a mixed seed, in place of the 5 percent chance on

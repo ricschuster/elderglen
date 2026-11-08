@@ -15,6 +15,7 @@ import {
   type Building,
 } from "./animals";
 import { newHorse } from "./horse";
+import { HARDWOOD } from "./items";
 import type { FarmMap } from "./map";
 import type { GameState } from "./save";
 
@@ -337,9 +338,15 @@ export function moveBuilding(
 export function refundOf(
   g: GameState,
   b: Building,
-): { coin: number; wood: number; stone: number; iron: number } {
+): {
+  coin: number;
+  wood: number;
+  stone: number;
+  hardwood: number;
+  iron: number;
+} {
   const info = BUILDINGS[b];
-  const total = { iron: 0, ...info.cost };
+  const total = { iron: 0, hardwood: 0, ...info.cost };
   for (let t = 2; t <= tierOf(g.animals, b); t++) {
     const up = info.upgrades[t];
     if (!up) continue;
@@ -351,6 +358,7 @@ export function refundOf(
     coin: Math.floor(total.coin * REFUND_SHARE),
     wood: Math.floor(total.wood * REFUND_SHARE),
     stone: Math.floor(total.stone * REFUND_SHARE),
+    hardwood: Math.floor(total.hardwood * REFUND_SHARE),
     iron: Math.floor(total.iron * REFUND_SHARE),
   };
 }
@@ -369,11 +377,12 @@ export function removeProblem(g: GameState, b: Building): string | undefined {
   const r = refundOf(g, b);
   if (
     g.inventory.room("wood") < r.wood ||
+    g.inventory.room(HARDWOOD) < r.hardwood ||
     g.inventory.room("stone") < r.stone ||
     g.inventory.room(IRON_BAR) < r.iron
   )
     return b === "stable"
-      ? "Make room in your pack for the wood and iron bars."
+      ? "Make room in your pack for the hardwood and iron bars."
       : "Make room in your pack for the wood and stone.";
   return undefined;
 }
@@ -384,6 +393,7 @@ export function removeBuilding(g: GameState, b: Building): boolean {
   const r = refundOf(g, b);
   g.money += r.coin;
   g.inventory.add("wood", r.wood);
+  g.inventory.add(HARDWOOD, r.hardwood);
   g.inventory.add("stone", r.stone);
   g.inventory.add(IRON_BAR, r.iron);
   if (b === "coop") {

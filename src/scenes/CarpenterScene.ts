@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import type { GameState } from "../core/save";
+import { HARDWOOD } from "../core/items";
 import { DECOR, buyDecor, decorProblem } from "../core/decor";
 import {
   CATALOGUE_PRICE,
@@ -126,9 +127,11 @@ export class CarpenterScene extends Phaser.Scene {
       rows.push({
         label: HOUSE_UPGRADE_NAMES[g.houseTier] ?? "House upgrade",
         detail:
-          cost.wood > 0
-            ? `${cost.coin}g and ${cost.wood} wood (have ${g.inventory.count(WOOD)})`
-            : `${cost.coin}g`,
+          cost.hardwood > 0
+            ? `${cost.coin}g and ${cost.hardwood} hardwood (have ${g.inventory.count(HARDWOOD)})`
+            : cost.wood > 0
+              ? `${cost.coin}g and ${cost.wood} wood (have ${g.inventory.count(WOOD)})`
+              : `${cost.coin}g`,
         buttons: [{ text: "Order", run: () => this.order() }],
       });
     }
@@ -152,7 +155,7 @@ export class CarpenterScene extends Phaser.Scene {
           label: info.name,
           detail:
             id === "stable"
-              ? `${info.cost.coin}g, ${info.cost.wood} wood and ${info.cost.iron} iron bars (have ${g.inventory.count("wood")} wood and ${g.inventory.count(IRON_BAR)} iron), comes with a horse`
+              ? `${info.cost.coin}g, ${info.cost.hardwood} hardwood and ${info.cost.iron} iron bars (have ${g.inventory.count(HARDWOOD)} hardwood and ${g.inventory.count(IRON_BAR)} iron), comes with a horse`
               : `${info.cost.coin}g, ${info.cost.wood} wood and ${info.cost.stone} stone (${have})`,
           dim: buildingProblem(g, id) !== undefined,
           buttons: [{ text: "Place", run: () => this.orderBuilding(id) }],
@@ -171,7 +174,7 @@ export class CarpenterScene extends Phaser.Scene {
         label: `Take down the ${info.noun}`,
         detail:
           (gone ?? id === "stable")
-            ? `you get back ${back.coin}g, ${back.wood} wood and ${back.iron} iron bars, and the horse leaves`
+            ? `you get back ${back.coin}g, ${back.hardwood} hardwood and ${back.iron} iron bars, and the horse leaves`
             : `you get back ${back.coin}g, ${back.wood} wood and ${back.stone} stone`,
         dim: gone !== undefined,
         buttons: [
