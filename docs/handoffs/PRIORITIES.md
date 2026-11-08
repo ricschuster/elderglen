@@ -31,6 +31,9 @@ that. Filed work packages: #595 to #604 and #611.
    (audio plan: #527).
 4. **Ring 2 shape and travel** (#20, M5). Parked until slice 3 is played.
 
+Session 2026-11-08k (handoff 2026-11-08k): housekeeping, no design or build.
+Note 70 stays unbuilt until the owner says go. A crop wish list is not designed.
+
 Owner playtest, 2026-11-08 (after handoff 2026-11-08j): coop, barn, silo and
 cooking were played by hand and work as far as the owner can tell. The silo
 order that failed earlier now orders fine, so that report is closed. Not yet
