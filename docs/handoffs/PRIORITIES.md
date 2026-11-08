@@ -21,6 +21,11 @@ Start each session by asking which item to take.
    (audio plan: #527).
 4. **Ring 2 shape and travel** (#20, M5). Parked until slice 3 is played.
 
+Built on 2026-11-08 (handoff 2026-11-08a): tap-to-move as the default tablet
+scheme (#546), button-only shops (#545), tool reach 1 (#547). Queued from owner
+answers: larger tier 2 kitchen and bedroom (needs a note first), Artisan Goods
+calibration in the sim bot, and the placeholder comparison against Stardew.
+
 Built on 2026-11-07 (handoff 2026-11-07j): window canvas (#520), growing house
 interiors with tiers 2 and 3 and the cellar (#421, #286, #282), six parity fixes
 (#521), Special Orders and debris (note 65), axe ladder, ore bin and storms.
