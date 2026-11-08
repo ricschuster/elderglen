@@ -323,8 +323,13 @@
         },
         {
           "s": "decided",
-          "t": "Interiors (draft): 29 interior maps in total. Coop and barn are walked into, one full map per tier, no sealed earth (SC-36); the greenhouse is walked into; everyone outside Hearthwell with a shop or home gets one map (hermit's tower, farmstead, forge, fisher, Beach elf); the Outpost has two maps; the stonekeeper, trainer and Wanderer have none; the farmstead has visual-only paddocks outside; Stardew footprints coop 6x3, barn 7x4, greenhouse plot 12x10, interior sizes measured from screenshots, coop 11x8, 15x8, 22x8 and barn 17x13, 21x13, 24x13 (SC-38)",
+          "t": "Interiors (draft): 23 interior maps in total. Coop and barn are walked into and, like the farmhouse, each is one map that grows with its tier, unbuilt space black void (note 68, SC-36); the greenhouse is walked into; everyone outside Hearthwell with a shop or home gets one map (hermit's tower, farmstead, forge, fisher, Beach elf); the Outpost has two maps; the stonekeeper, trainer and Wanderer have none; the farmstead has visual-only paddocks outside; Stardew footprints coop 6x3, barn 7x4, greenhouse plot 12x10, interior sizes measured from screenshots, coop 11x8, 15x8, 22x8 and barn 17x13, 21x13, 24x13 (SC-38)",
           "ref": "58_interiors.md#Decisions (owner, 2026-11-06)"
+        },
+        {
+          "s": "decided",
+          "t": "Growing interiors (draft): farmhouse, coop and barn are each one map holding every tier, the start room never moves, unbuilt space is black void, the camera is clamped to the built rooms, an upgrade lands overnight, the coop door stays bottom left and the barn door moves by tier; storage in Stardew is not checked, so the rules are stated as what the player sees (SC-36)",
+          "ref": "68_growing_interiors.md#The player-visible rules (decided)"
         },
         {
           "s": "open",
