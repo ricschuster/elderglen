@@ -74,8 +74,8 @@ geodes are cracked.
 
 ## Open
 
-- Do minerals go in a collection, and a hall or museum room? Stardew donates
-  them for rewards. That belongs to the completion tracker (#196, note 39).
+- Minerals go in the library gallery (note 39, decided 2026-11-08, Stardew's
+  shape). Its donation list count and rewards wait for the final mineral lists.
 - Where clay comes from and what uses it.
 - Our artifacts: one per geode kind, from note 22's found things list.
 - Final mineral names and prices, and the count per pool.

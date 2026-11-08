@@ -208,6 +208,25 @@ scene is not checked.
   `61_friendship_and_gifts.md`: 8 hearts for people who can be courted until a
   bouquet, 10 for the rest.
 
+## Settled with the owner (2026-11-08)
+
+Each had a Stardew option, and the owner took the recommended one.
+
+- **Partial progress counts (Stardew).** A category adds its weight times its
+  progress, so half the recipes cooked is half of cooking's points. The saved
+  Perfection Tracker page shows 80.6 percent displayed as 80, which implies
+  decimals, but does not spell the rule out. Still unchecked (SC-74): confirm
+  in play.
+- **The valley total is the plain mean of the rings that exist.** Each ring keeps
+  its own 100 and the valley figure averages them, with the page saying that it
+  drops when a ring ships. Stardew has one total that needs its late region for
+  100, which we do not copy, so ring 1 stays finishable alone.
+- **The gallery list takes minerals, artifacts and found things (Stardew's
+  shape).** Stardew's museum takes 53 minerals and 42 artifacts. Ours takes the
+  geode and foraged minerals and one artifact per geode kind (note 69), plus the
+  lore found things (`22_mines.md`). The count is set when the mineral lists
+  are final, and the gallery's weight stays 5.
+
 ## Build notes
 
 - Data: a list of categories in a file under `src/content/`, each with an id,
@@ -223,7 +242,6 @@ scene is not checked.
 - The slayer goals' kill counts and reward items, at tuning.
 - Ring 2's weights and the collectible's name and look, in the ring 2 design
   (#20). Ring 3's total only if it is built.
-- Whether partial progress counts, as proposed, or only whole items.
 - The scene's actual lines and the lamp's art, with the voice sheets.
 
 Stardew details above come from the saved Perfection Tracker, Stardrop and
