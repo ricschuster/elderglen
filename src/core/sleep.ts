@@ -6,7 +6,7 @@ import type { GameState } from "./save";
 import type { FarmMap } from "./map";
 import { advanceBuild } from "./house";
 import {
-  advanceCoop,
+  advanceBuilding,
   endDay as animalsEndDay,
   type AnimalNews,
 } from "./animals";
@@ -76,6 +76,8 @@ export interface SleepReport {
   houseTier?: number;
   /** True when the carpenter finished the coop this morning. */
   coopFinished: boolean;
+  /** True when the carpenter finished the barn this morning. */
+  barnFinished: boolean;
   /** What the night did to the animals. */
   animals: AnimalNews;
   /** True when the smith left the furnace this morning. */
@@ -213,7 +215,7 @@ export function sleep(
   );
   g.cave.endDay(maps.get(CAVE_MAP).forageSpots, random);
   const houseFinished = advanceBuild(g);
-  const coopFinished = advanceCoop(g);
+  const animalJob = advanceBuilding(g);
   const animals = animalsEndDay(g, random);
   const furnaceGifted = deliverFurnace(g);
 
@@ -232,7 +234,8 @@ export function sleep(
     withered: cropsBefore - g.farm.cropCount,
     houseFinished,
     houseTier: houseFinished ? g.houseTier : undefined,
-    coopFinished,
+    coopFinished: animalJob === "coop",
+    barnFinished: animalJob === "barn",
     animals,
     furnaceGifted,
     achievements,

@@ -1,24 +1,37 @@
 import { dateOf } from "./calendar";
 import { festivalToday } from "./festivals";
-import { animalQuality, withQuality, type Quality } from "./quality";
+import {
+  animalQuality,
+  splitQuality,
+  withQuality,
+  type Quality,
+} from "./quality";
 import type { GameState } from "./save";
 import { visibleTier } from "./map";
 import { isRaining } from "./weather";
 
 /**
- * Animals, slice 1 (`docs/design/23_animals.md`): the base coop and young
- * chickens. Rules only, free of Phaser and the DOM. Every number here is a
+ * Animals (`docs/design/23_animals.md`): the coop and the barn, their tiers and
+ * species. Rules only, free of Phaser and the DOM. Every number here is a
  * placeholder for `07_tuning_numbers.md`.
  */
 
-export type Species = "chicken" | "duck" | "rabbit";
+export type Species =
+  "chicken" | "duck" | "rabbit" | "cow" | "goat" | "sheep" | "pig";
+
+/** The two animal buildings. The coop is built first in slice 1, the barn in slice 3. */
+export type Building = "coop" | "barn";
 
 /** One species of the coop: where it lives, what it costs, what it makes and how often. */
 export interface SpeciesInfo {
   id: Species;
   name: string;
-  /** The coop tier that opens it (1 base, 2 big, 3 deluxe). */
+  /** The building that houses it. */
+  building: Building;
+  /** The building tier that opens it (1 base, 2 big, 3 deluxe). */
   tier: number;
+  /** Makes its product only on a day it was let out (the pig's truffle). */
+  outdoors?: boolean;
   price: number;
   /** Fed nights between products. */
   days: number;
@@ -33,6 +46,7 @@ export const SPECIES: Record<Species, SpeciesInfo> = {
   chicken: {
     id: "chicken",
     name: "Chicken",
+    building: "coop",
     tier: 1,
     price: 800,
     days: 1,
@@ -42,6 +56,7 @@ export const SPECIES: Record<Species, SpeciesInfo> = {
   duck: {
     id: "duck",
     name: "Duck",
+    building: "coop",
     tier: 2,
     price: 1200,
     days: 2,
@@ -51,14 +66,76 @@ export const SPECIES: Record<Species, SpeciesInfo> = {
   rabbit: {
     id: "rabbit",
     name: "Rabbit",
+    building: "coop",
     tier: 3,
     price: 8000,
     days: 4,
     item: "wool",
     grown: "rabbit",
   },
+  cow: {
+    id: "cow",
+    name: "Cow",
+    building: "barn",
+    tier: 1,
+    price: 1500,
+    days: 1,
+    item: "milk",
+    grown: "cow",
+  },
+  goat: {
+    id: "goat",
+    name: "Goat",
+    building: "barn",
+    tier: 2,
+    price: 4000,
+    days: 2,
+    item: "goat-milk",
+    grown: "goat",
+  },
+  sheep: {
+    id: "sheep",
+    name: "Sheep",
+    building: "barn",
+    tier: 3,
+    price: 8000,
+    days: 3,
+    item: "wool",
+    grown: "sheep",
+  },
+  pig: {
+    id: "pig",
+    name: "Pig",
+    building: "barn",
+    tier: 3,
+    price: 16000,
+    days: 1,
+    item: "truffle",
+    grown: "pig",
+    outdoors: true,
+  },
 };
-export const SPECIES_ORDER: readonly Species[] = ["chicken", "duck", "rabbit"];
+export const SPECIES_ORDER: readonly Species[] = [
+  "chicken",
+  "duck",
+  "rabbit",
+  "cow",
+  "goat",
+  "sheep",
+  "pig",
+];
+/** The species a building can house, in shop order. */
+export function speciesOf(b: Building): Species[] {
+  return SPECIES_ORDER.filter((s) => SPECIES[s].building === b);
+}
+/**
+ * Moonwool (note 23): a sheep at this friendship (8 of 10 hearts on the note's
+ * scale, 800 of our 1000), fed and at 70 mood or more, leaves one beside its
+ * wool with this chance. The placeholder name is `moonwool`.
+ */
+export const MOONWOOL = "moonwool";
+export const MOONWOOL_FRIENDSHIP = 800;
+export const MOONWOOL_CHANCE = 0.05;
 /** The feather a duck may leave instead of an egg, at this friendship (4 hearts), with this chance. */
 export const FEATHER = "feather";
 export const FEATHER_FRIENDSHIP = 800;
@@ -84,6 +161,68 @@ export const COOP_MAX_TIER = 3;
 /** What the carpenter charges for the base coop, and the days he works (note 23, near Stardew). */
 export const COOP_COST = { coin: 4000, wood: 300, stone: 100 } as const;
 export const COOP_BUILD_DAYS = 3;
+/** The barn: same tiers, capacities, prices and days as the coop (note 23, placeholders). */
+export const BARN_CAPACITIES = [0, 4, 8, 12] as const;
+export const BARN_UPGRADES: Record<
+  number,
+  { name: string; coin: number; wood: number; stone: number }
+> = {
+  2: { name: "Big barn", coin: 10000, wood: 400, stone: 150 },
+  3: { name: "Deluxe barn", coin: 20000, wood: 500, stone: 200 },
+};
+export const BARN_MAX_TIER = 3;
+export const BARN_COST = { coin: 4000, wood: 300, stone: 100 } as const;
+export const BARN_BUILD_DAYS = 3;
+
+/** What differs between the two buildings. */
+export interface BuildingInfo {
+  id: Building;
+  /** Lower case word for messages. */
+  noun: string;
+  /** Name of the base building at the carpenter. */
+  name: string;
+  maxTier: number;
+  capacities: readonly number[];
+  cost: { coin: number; wood: number; stone: number };
+  upgrades: Record<
+    number,
+    { name: string; coin: number; wood: number; stone: number }
+  >;
+  days: number;
+}
+export const BUILDINGS: Record<Building, BuildingInfo> = {
+  coop: {
+    id: "coop",
+    noun: "coop",
+    name: "Chicken coop",
+    maxTier: COOP_MAX_TIER,
+    capacities: COOP_CAPACITIES,
+    cost: COOP_COST,
+    upgrades: COOP_UPGRADES,
+    days: COOP_BUILD_DAYS,
+  },
+  barn: {
+    id: "barn",
+    noun: "barn",
+    name: "Barn",
+    maxTier: BARN_MAX_TIER,
+    capacities: BARN_CAPACITIES,
+    cost: BARN_COST,
+    upgrades: BARN_UPGRADES,
+    days: BARN_BUILD_DAYS,
+  },
+};
+export const BUILDING_ORDER: readonly Building[] = ["coop", "barn"];
+
+/** The incubator at the big coop: one egg at a time, hatching after these nights (note 23, placeholder). */
+export const INCUBATE_DAYS = 6;
+export const INCUBATOR_TIER = 2;
+/** The eggs it takes, and the young animal each hatches. */
+export const HATCHES: Record<string, Species> = {
+  egg: "chicken",
+  "duck-egg": "duck",
+};
+
 /** Price of a young chicken at the placeholder shop row (the keeper is not built). */
 export const CHICKEN_PRICE = 800;
 /** Days a chick takes to grow up, if fed each day. */
@@ -126,6 +265,33 @@ export const COOP_SITES: Record<string, { x: number; y: number }> = {
   "farm-woodland": { x: 14, y: 11 },
 };
 export const COOP_FOOTPRINT = { w: 6, h: 3 } as const;
+/** Where the barn stands: the top left of its 7 by 4 footprint. The door is the bottom row, fourth tile. */
+export const BARN_SITES: Record<string, { x: number; y: number }> = {
+  farm: { x: 18, y: 9 },
+  "farm-woodland": { x: 21, y: 9 },
+};
+export const BARN_FOOTPRINT = { w: 7, h: 4 } as const;
+/** The condition the farm's barn door needs, and the id of the barn interior map. */
+export const BARN_BUILT = "barn-built";
+export const BARN_MAP = "barn";
+/**
+ * Animal tiles inside the barn: four for the base room, then four on the tiles
+ * each bigger tier adds. The barn is 17, 21 and 24 wide by 13 deep (note 68).
+ */
+export const BARN_SLOTS: readonly { x: number; y: number }[] = [
+  { x: 2, y: 4 },
+  { x: 5, y: 4 },
+  { x: 2, y: 7 },
+  { x: 14, y: 4 },
+  { x: 17, y: 4 },
+  { x: 19, y: 4 },
+  { x: 17, y: 7 },
+  { x: 19, y: 7 },
+  { x: 21, y: 4 },
+  { x: 22, y: 6 },
+  { x: 21, y: 8 },
+  { x: 22, y: 10 },
+];
 /** The condition the farm's coop door needs. */
 export const COOP_BUILT = "coop-built";
 /** The id of the coop interior map. */
@@ -155,9 +321,20 @@ export function coopVisibleTier(coopTier: number): number {
   return visibleTier(coopTier - 1, COOP_MAX_TIER - 1);
 }
 
+/** The barn map tier layer to draw for a barn tier. */
+export function barnVisibleTier(barnTier: number): number {
+  return visibleTier(barnTier - 1, BARN_MAX_TIER - 1);
+}
+
+/** What a building at a tier holds. */
+export function capacityOf(b: Building, tier: number): number {
+  const info = BUILDINGS[b];
+  return info.capacities[clamp(Math.floor(tier), 1, info.maxTier)]!;
+}
+
 /** What the coop at a tier holds. */
 export function coopCapacity(tier: number): number {
-  return COOP_CAPACITIES[clamp(Math.floor(tier), 1, COOP_MAX_TIER)]!;
+  return capacityOf("coop", tier);
 }
 
 export interface Animal {
@@ -177,24 +354,41 @@ export interface Animal {
   fresh: boolean;
   /** Fed days since its last product, for species that make one every few days. */
   lay: number;
+  /** Let out on the grass today (a pig digs a truffle only then). */
+  grazed: boolean;
   /** A product waiting in the coop, at its quality. */
   product?: Quality;
+  /** Moonwool waiting beside a sheep's wool, at its quality. */
+  bonus?: Quality;
   /** What the waiting product is (an item id without quality). Absent means the species' own. */
   item?: string;
 }
 
 export interface CoopBuild {
   daysLeft: number;
-  /** The tier being built: 1 for the coop itself, 2 or 3 for an upgrade. */
+  /** The tier being built: 1 for the building itself, 2 or 3 for an upgrade. */
   tier: number;
+  /** Which building the carpenter is working on. Old saves have the coop. */
+  building: Building;
+}
+
+/** The egg in the incubator and the nights it still needs. */
+export interface Incubator {
+  egg: string;
+  daysLeft: number;
 }
 
 export interface AnimalsState {
   coopBuilt: boolean;
   /** The coop's tier, 1 to 3. 1 until an upgrade lands. */
   tier: number;
-  /** The coop being built, if any. */
+  barnBuilt: boolean;
+  /** The barn's tier, 1 to 3. */
+  barnTier: number;
+  /** The coop or barn being built or upgraded, if any. One job at a time. */
   build: CoopBuild | undefined;
+  /** The egg being hatched at the big coop. */
+  incubator: Incubator | undefined;
   animals: Animal[];
   /** Hay in the silo. */
   hay: number;
@@ -205,7 +399,10 @@ export function newAnimals(): AnimalsState {
   return {
     coopBuilt: false,
     tier: 1,
+    barnBuilt: false,
+    barnTier: 1,
     build: undefined,
+    incubator: undefined,
     animals: [],
     hay: 0,
     nextId: 1,
@@ -219,7 +416,10 @@ export function saveAnimals(a: AnimalsState): AnimalsState {
   return {
     coopBuilt: a.coopBuilt,
     tier: a.tier,
+    barnBuilt: a.barnBuilt,
+    barnTier: a.barnTier,
     build: a.build ? { ...a.build } : undefined,
+    incubator: a.incubator ? { ...a.incubator } : undefined,
     animals: a.animals.map((x) => ({ ...x })),
     hay: a.hay,
     nextId: a.nextId,
@@ -235,30 +435,59 @@ export function loadAnimals(raw: unknown): AnimalsState {
   if (typeof raw !== "object" || raw === null) return out;
   const r = raw as Record<string, unknown>;
   out.coopBuilt = r.coopBuilt === true;
-  const b = r.build as Record<string, unknown> | undefined;
+  out.barnBuilt = r.barnBuilt === true;
   out.tier =
     out.coopBuilt && isNum(r.tier)
       ? clamp(Math.floor(r.tier), 1, COOP_MAX_TIER)
       : 1;
+  out.barnTier =
+    out.barnBuilt && isNum(r.barnTier)
+      ? clamp(Math.floor(r.barnTier), 1, BARN_MAX_TIER)
+      : 1;
+  const b = r.build as Record<string, unknown> | undefined;
   if (b && isNum(b.daysLeft) && b.daysLeft >= 1) {
+    // An old save has no building: a job in it is the coop's.
+    const building: Building = b.building === "barn" ? "barn" : "coop";
     // An old save has no tier: a coop still being built is tier 1.
     const tier = isNum(b.tier) ? Math.floor(b.tier) : 1;
-    const want = out.coopBuilt ? out.tier + 1 : 1;
-    if (tier === want && tier <= COOP_MAX_TIER)
+    const built = isBuilt(out, building);
+    const want = built ? tierOf(out, building) + 1 : 1;
+    if (tier === want && tier <= BUILDINGS[building].maxTier)
       out.build = {
-        daysLeft: Math.min(Math.floor(b.daysLeft), COOP_BUILD_DAYS),
+        daysLeft: Math.min(Math.floor(b.daysLeft), BUILDINGS[building].days),
         tier,
+        building,
       };
   }
+  const inc = r.incubator as Record<string, unknown> | undefined;
+  if (
+    inc &&
+    out.coopBuilt &&
+    out.tier >= INCUBATOR_TIER &&
+    typeof inc.egg === "string" &&
+    HATCHES[inc.egg] !== undefined &&
+    isNum(inc.daysLeft)
+  )
+    out.incubator = {
+      egg: inc.egg,
+      daysLeft: clamp(Math.floor(inc.daysLeft), 0, INCUBATE_DAYS),
+    };
   if (isNum(r.hay)) out.hay = clamp(Math.floor(r.hay), 0, SILO_CAPACITY);
-  if (out.coopBuilt && Array.isArray(r.animals))
+  if (Array.isArray(r.animals))
     for (const item of r.animals) {
-      if (out.animals.length >= coopCapacity(out.tier)) break;
       const a = item as Record<string, unknown> | null;
       if (!a || typeof a !== "object") continue;
       const species = SPECIES_ORDER.find((x) => x === a.species);
-      // A species the saved tier does not open is dropped, not kept.
-      if (!species || SPECIES[species].tier > out.tier) continue;
+      if (!species) continue;
+      const home = SPECIES[species].building;
+      // An animal whose building is gone, or too small, or full, is dropped.
+      if (!isBuilt(out, home) || SPECIES[species].tier > tierOf(out, home))
+        continue;
+      if (
+        out.animals.filter((x) => SPECIES[x.species].building === home)
+          .length >= capacityOf(home, tierOf(out, home))
+      )
+        continue;
       out.animals.push({
         id: isNum(a.id) ? Math.floor(a.id) : out.animals.length + 1,
         species,
@@ -277,14 +506,11 @@ export function loadAnimals(raw: unknown): AnimalsState {
         petted: a.petted === true,
         outside: a.outside === true,
         fresh: a.fresh === true,
+        grazed: a.grazed === true,
         lay: isNum(a.lay) ? clamp(Math.floor(a.lay), 0, 99) : 0,
         item: a.item === FEATHER && species === "duck" ? FEATHER : undefined,
-        product:
-          a.product === "normal" ||
-          a.product === "silver" ||
-          a.product === "gold"
-            ? a.product
-            : undefined,
+        product: quality(a.product),
+        bonus: species === "sheep" ? quality(a.bonus) : undefined,
       });
     }
   out.nextId =
@@ -292,6 +518,42 @@ export function loadAnimals(raw: unknown): AnimalsState {
       ? Math.floor(r.nextId)
       : out.animals.reduce((m, a) => Math.max(m, a.id), 0) + 1;
   return out;
+}
+
+function quality(v: unknown): Quality | undefined {
+  return v === "normal" || v === "silver" || v === "gold" ? v : undefined;
+}
+
+/** True if the building stands. */
+export function isBuilt(a: AnimalsState, b: Building): boolean {
+  return b === "coop" ? a.coopBuilt : a.barnBuilt;
+}
+
+/** The tier of a building, 1 to 3 (1 when it is not built). */
+export function tierOf(a: AnimalsState, b: Building): number {
+  return b === "coop" ? a.tier : a.barnTier;
+}
+
+/** The animals that live in a building, in the order they were bought. */
+export function animalsIn(g: GameState, b: Building): Animal[] {
+  return g.animals.animals.filter((a) => SPECIES[a.species].building === b);
+}
+
+/** The tile each animal of a building stands on. Each tier's animals stand on tiles that tier added. */
+export function animalSlots(
+  g: GameState,
+  b: Building,
+): { animal: Animal; x: number; y: number }[] {
+  const slots = b === "coop" ? COOP_SLOTS : BARN_SLOTS;
+  return animalsIn(g, b).flatMap((animal, i) => {
+    const s = slots[i];
+    return s ? [{ animal, x: s.x, y: s.y }] : [];
+  });
+}
+
+/** The barn site on a farm map id, if it has one. */
+export function barnSite(mapId: string) {
+  return BARN_SITES[mapId];
 }
 
 /** The coop site on a farm map id, if it has one. */
@@ -317,6 +579,24 @@ export function coopBlocks(
   );
 }
 
+/** True if a tile is part of the built barn's footprint on this map, other than its door tile. */
+export function barnBlocks(
+  g: GameState,
+  mapId: string,
+  x: number,
+  y: number,
+): boolean {
+  const s = BARN_SITES[mapId];
+  if (!s || !g.animals.barnBuilt) return false;
+  if (x === s.x + 3 && y === s.y + BARN_FOOTPRINT.h - 1) return false;
+  return (
+    x >= s.x &&
+    x < s.x + BARN_FOOTPRINT.w &&
+    y >= s.y &&
+    y < s.y + BARN_FOOTPRINT.h
+  );
+}
+
 export function isAdult(a: Animal): boolean {
   return a.age >= GROW_DAYS;
 }
@@ -337,79 +617,119 @@ export function moodWord(a: Animal): string {
         : "low";
 }
 
-/** Why the coop cannot be ordered now, or undefined if it can. */
-export function coopProblem(g: GameState): string | undefined {
-  if (g.animals.coopBuilt) return "You already have a coop.";
-  if (g.animals.build) return "The carpenter is already building your coop.";
-  if (g.houseBuild) return "The carpenter is busy with your house.";
+/** The words for what the carpenter lacks, or undefined if the buyer has it all. */
+function shortOf(
+  g: GameState,
+  cost: { coin: number; wood: number; stone: number },
+): string | undefined {
   const missing: string[] = [];
-  if (g.money < COOP_COST.coin)
-    missing.push(`${COOP_COST.coin - g.money}g more`);
+  if (g.money < cost.coin) missing.push(`${cost.coin - g.money}g more`);
   const wood = g.inventory.count("wood");
-  if (wood < COOP_COST.wood) missing.push(`${COOP_COST.wood - wood} more wood`);
+  if (wood < cost.wood) missing.push(`${cost.wood - wood} more wood`);
   const stone = g.inventory.count("stone");
-  if (stone < COOP_COST.stone)
-    missing.push(`${COOP_COST.stone - stone} more stone`);
+  if (stone < cost.stone) missing.push(`${cost.stone - stone} more stone`);
   return missing.length > 0 ? `You need ${missing.join(" and ")}.` : undefined;
 }
 
-/** Pay for the coop and start the build. Returns false if it cannot. */
-export function orderCoop(g: GameState): boolean {
-  if (coopProblem(g) !== undefined) return false;
-  g.money -= COOP_COST.coin;
-  g.inventory.remove("wood", COOP_COST.wood);
-  g.inventory.remove("stone", COOP_COST.stone);
-  g.animals.build = { daysLeft: COOP_BUILD_DAYS, tier: 1 };
+function pay(
+  g: GameState,
+  cost: { coin: number; wood: number; stone: number },
+) {
+  g.money -= cost.coin;
+  g.inventory.remove("wood", cost.wood);
+  g.inventory.remove("stone", cost.stone);
+}
+
+/** Why the base building cannot be ordered now, or undefined if it can. */
+export function buildingProblem(g: GameState, b: Building): string | undefined {
+  const info = BUILDINGS[b];
+  if (isBuilt(g.animals, b)) return `You already have a ${info.noun}.`;
+  if (g.animals.build)
+    return g.animals.build.building === b
+      ? `The carpenter is already building your ${info.noun}.`
+      : `The carpenter is busy with your ${g.animals.build.building}.`;
+  if (g.houseBuild) return "The carpenter is busy with your house.";
+  return shortOf(g, info.cost);
+}
+
+/** Pay for a base building and start the build. Returns false if it cannot. */
+export function orderBuilding(g: GameState, b: Building): boolean {
+  if (buildingProblem(g, b) !== undefined) return false;
+  pay(g, BUILDINGS[b].cost);
+  g.animals.build = { daysLeft: BUILDINGS[b].days, tier: 1, building: b };
   return true;
 }
 
 /**
- * One morning of the coop build, after the clock moved on. A festival day does
- * not count, as for the house. Returns true on the morning the coop opens.
+ * One morning of the carpenter's animal-building job, after the clock moved
+ * on. A festival day does not count, as for the house. Returns the building
+ * that opens this morning, if one does.
  */
-export function advanceCoop(g: GameState): boolean {
+export function advanceBuilding(g: GameState): Building | undefined {
   const b = g.animals.build;
-  if (!b || festivalToday(g.day.clock.day)) return false;
+  if (!b || festivalToday(g.day.clock.day)) return undefined;
   b.daysLeft -= 1;
-  if (b.daysLeft > 0) return false;
+  if (b.daysLeft > 0) return undefined;
   g.animals.build = undefined;
-  g.animals.coopBuilt = true;
-  g.animals.tier = b.tier;
-  return true;
+  if (b.building === "barn") {
+    g.animals.barnBuilt = true;
+    g.animals.barnTier = b.tier;
+  } else {
+    g.animals.coopBuilt = true;
+    g.animals.tier = b.tier;
+  }
+  return b.building;
 }
 
-/** The upgrade the carpenter would build next, or undefined at the deluxe tier or with no coop. */
-export function nextCoopUpgrade(g: GameState) {
-  if (!g.animals.coopBuilt) return undefined;
-  return COOP_UPGRADES[g.animals.tier + 1];
+/** The upgrade the carpenter would build next, or undefined at the deluxe tier or with no building. */
+export function nextBuildingUpgrade(g: GameState, b: Building) {
+  if (!isBuilt(g.animals, b)) return undefined;
+  return BUILDINGS[b].upgrades[tierOf(g.animals, b) + 1];
 }
 
-/** Why the coop cannot be upgraded now, or undefined if it can. One job at a time. */
-export function coopUpgradeProblem(g: GameState): string | undefined {
-  if (!g.animals.coopBuilt) return "You need a coop first.";
-  const up = nextCoopUpgrade(g);
-  if (!up) return "The coop is as big as it gets.";
-  if (g.animals.build) return "The carpenter is already working on your coop.";
+/** Why a building cannot be upgraded now, or undefined if it can. One job at a time. */
+export function upgradeProblem(g: GameState, b: Building): string | undefined {
+  const info = BUILDINGS[b];
+  if (!isBuilt(g.animals, b)) return `You need a ${info.noun} first.`;
+  const up = nextBuildingUpgrade(g, b);
+  if (!up) return `The ${info.noun} is as big as it gets.`;
+  if (g.animals.build)
+    return g.animals.build.building === b
+      ? `The carpenter is already working on your ${info.noun}.`
+      : `The carpenter is busy with your ${g.animals.build.building}.`;
   if (g.houseBuild) return "The carpenter is busy with your house.";
-  const missing: string[] = [];
-  if (g.money < up.coin) missing.push(`${up.coin - g.money}g more`);
-  const wood = g.inventory.count("wood");
-  if (wood < up.wood) missing.push(`${up.wood - wood} more wood`);
-  const stone = g.inventory.count("stone");
-  if (stone < up.stone) missing.push(`${up.stone - stone} more stone`);
-  return missing.length > 0 ? `You need ${missing.join(" and ")}.` : undefined;
+  return shortOf(g, up);
 }
 
-/** Pay for the next coop tier. It lands overnight; the outside never changes. */
-export function orderCoopUpgrade(g: GameState): boolean {
-  if (coopUpgradeProblem(g) !== undefined) return false;
-  const up = nextCoopUpgrade(g)!;
-  g.money -= up.coin;
-  g.inventory.remove("wood", up.wood);
-  g.inventory.remove("stone", up.stone);
-  g.animals.build = { daysLeft: COOP_BUILD_DAYS, tier: g.animals.tier + 1 };
+/** Pay for the next tier. It lands overnight; the outside never changes. */
+export function orderBuildingUpgrade(g: GameState, b: Building): boolean {
+  if (upgradeProblem(g, b) !== undefined) return false;
+  pay(g, nextBuildingUpgrade(g, b)!);
+  g.animals.build = {
+    daysLeft: BUILDINGS[b].days,
+    tier: tierOf(g.animals, b) + 1,
+    building: b,
+  };
   return true;
 }
+
+/** The coop forms of the above, from slice 1 and 2. */
+export const coopProblem = (g: GameState) => buildingProblem(g, "coop");
+export const orderCoop = (g: GameState) => orderBuilding(g, "coop");
+export const nextCoopUpgrade = (g: GameState) => nextBuildingUpgrade(g, "coop");
+export const coopUpgradeProblem = (g: GameState) => upgradeProblem(g, "coop");
+export const orderCoopUpgrade = (g: GameState) =>
+  orderBuildingUpgrade(g, "coop");
+/** Advance the carpenter's job. True on the morning a coop opens or grows. */
+export const advanceCoop = (g: GameState) => advanceBuilding(g) === "coop";
+
+/** The barn forms. */
+export const barnProblem = (g: GameState) => buildingProblem(g, "barn");
+export const orderBarn = (g: GameState) => orderBuilding(g, "barn");
+export const nextBarnUpgrade = (g: GameState) => nextBuildingUpgrade(g, "barn");
+export const barnUpgradeProblem = (g: GameState) => upgradeProblem(g, "barn");
+export const orderBarnUpgrade = (g: GameState) =>
+  orderBuildingUpgrade(g, "barn");
 
 /** Why an animal cannot be bought now, or undefined if it can. */
 export function animalProblem(
@@ -417,11 +737,14 @@ export function animalProblem(
   species: Species = "chicken",
 ): string | undefined {
   const info = SPECIES[species];
-  if (!g.animals.coopBuilt) return "You need a coop first.";
-  if (g.animals.tier < info.tier)
-    return `${info.name}s need the ${COOP_UPGRADES[info.tier]?.name.toLowerCase() ?? "coop"}.`;
-  if (g.animals.animals.length >= coopCapacity(g.animals.tier))
-    return "The coop is full.";
+  const home = BUILDINGS[info.building];
+  const tier = tierOf(g.animals, info.building);
+  if (!isBuilt(g.animals, info.building))
+    return `You need a ${home.noun} first.`;
+  if (tier < info.tier)
+    return `${info.name}s need the ${home.upgrades[info.tier]?.name.toLowerCase() ?? home.noun}.`;
+  if (animalsIn(g, info.building).length >= capacityOf(info.building, tier))
+    return `The ${home.noun} is full.`;
   if (g.money < info.price) return `You need ${info.price - g.money}g more.`;
   return undefined;
 }
@@ -455,6 +778,7 @@ export function buyAnimal(
     petted: false,
     outside: false,
     fresh: true,
+    grazed: false,
     lay: 0,
   };
   g.animals.animals.push(a);
@@ -481,7 +805,7 @@ export function rename(g: GameState, id: number, name: string): boolean {
 
 /** Put hay in the silo, up to its size. Returns how much went in. */
 export function addHay(g: GameState, n: number): number {
-  if (!g.animals.coopBuilt) return 0;
+  if (!g.animals.coopBuilt && !g.animals.barnBuilt) return 0;
   const put = Math.min(n, SILO_CAPACITY - g.animals.hay);
   g.animals.hay += put;
   return put;
@@ -489,7 +813,7 @@ export function addHay(g: GameState, n: number): number {
 
 /** Buy hay at the placeholder shop row. Returns the amount bought, 0 if refused. */
 export function buyHay(g: GameState, n: number): number {
-  if (!g.animals.coopBuilt) return 0;
+  if (!g.animals.coopBuilt && !g.animals.barnBuilt) return 0;
   const room = SILO_CAPACITY - g.animals.hay;
   const count = Math.min(n, room, Math.floor(g.money / HAY_PRICE));
   if (count <= 0) return 0;
@@ -498,11 +822,15 @@ export function buyHay(g: GameState, n: number): number {
   return count;
 }
 
-/** Put hay on the bench for every animal that is in and not yet fed. Returns how many ate and how many went without for lack of hay. */
-export function feedAll(g: GameState): { fed: number; short: number } {
+/** Put hay on the bench for every animal that is in and not yet fed, in one building or all. Returns how many ate and how many went without for lack of hay. */
+export function feedAll(
+  g: GameState,
+  building?: Building,
+): { fed: number; short: number } {
   let fed = 0;
   let short = 0;
   for (const a of g.animals.animals) {
+    if (building && SPECIES[a.species].building !== building) continue;
     if (a.fed || a.outside) continue;
     if (g.animals.hay > 0) {
       g.animals.hay -= 1;
@@ -543,6 +871,7 @@ export function letOut(g: GameState, id: number): boolean {
   if (letOutProblem(g, id) !== undefined) return false;
   const a = g.animals.animals.find((x) => x.id === id)!;
   a.outside = true;
+  a.grazed = true;
   if (!a.fed) {
     a.fed = true;
     a.friendship = clamp(a.friendship + GRASS_FRIENDSHIP, 0, MAX_FRIENDSHIP);
@@ -559,29 +888,89 @@ export function bringIn(g: GameState, id: number): boolean {
   return true;
 }
 
-/** Take the egg an animal left, into the pack. Returns the item id, or why not. */
+/**
+ * Take what an animal left into the pack: its product, then any Moonwool beside
+ * it. A full pack keeps whatever did not fit. Returns the item ids, or why not.
+ */
 export function collect(
   g: GameState,
   id: number,
-): { item: string } | { problem: string } {
+): { item: string; also?: string } | { problem: string } {
   const a = g.animals.animals.find((x) => x.id === id);
-  if (!a?.product) return { problem: "Nothing to take there." };
-  const item = withQuality(a.item ?? SPECIES[a.species].item, a.product);
-  if (!g.inventory.add(item)) return { problem: "Your pack is full." };
-  a.product = undefined;
-  return { item };
+  if (!a?.product && !a?.bonus) return { problem: "Nothing to take there." };
+  let item: string | undefined;
+  if (a.product) {
+    item = withQuality(a.item ?? SPECIES[a.species].item, a.product);
+    if (!g.inventory.add(item)) return { problem: "Your pack is full." };
+    a.product = undefined;
+  }
+  let also: string | undefined;
+  if (a.bonus) {
+    const moon = withQuality(MOONWOOL, a.bonus);
+    if (g.inventory.add(moon)) {
+      also = moon;
+      a.bonus = undefined;
+    } else if (!item) return { problem: "Your pack is full." };
+  }
+  return { item: item ?? also!, also: item ? also : undefined };
+}
+
+/** Why an egg cannot go in the incubator now, or undefined if it can. */
+export function incubatorProblem(
+  g: GameState,
+  egg: string,
+): string | undefined {
+  if (!g.animals.coopBuilt || g.animals.tier < INCUBATOR_TIER)
+    return "The incubator comes with the big coop.";
+  if (HATCHES[egg] === undefined) return "Only eggs hatch.";
+  if (g.animals.incubator) return "The incubator is already full.";
+  if (animalProblemRoom(g, HATCHES[egg]!) !== undefined)
+    return "The coop is full, so there is no room for a hatchling.";
+  if (!packEgg(g, egg)) return "You have no such egg.";
+  return undefined;
+}
+
+function animalProblemRoom(g: GameState, species: Species): string | undefined {
+  const b = SPECIES[species].building;
+  return animalsIn(g, b).length >= capacityOf(b, tierOf(g.animals, b))
+    ? "full"
+    : undefined;
+}
+
+/** The pack's id for an egg of this kind at any quality, if it holds one. */
+function packEgg(g: GameState, egg: string): string | undefined {
+  for (let i = 0; i < g.inventory.size; i++) {
+    const slot = g.inventory.slot(i);
+    if (slot && splitQuality(slot.id).base === egg) return slot.id;
+  }
+  return undefined;
+}
+
+/** Put an egg from the pack into the incubator. Returns false if it cannot. */
+export function putEgg(g: GameState, egg: string): boolean {
+  if (incubatorProblem(g, egg) !== undefined) return false;
+  const id = packEgg(g, egg)!;
+  g.inventory.remove(id, 1);
+  g.animals.incubator = { egg, daysLeft: INCUBATE_DAYS };
+  return true;
 }
 
 /** What the night did, for the morning report. */
 export interface AnimalNews {
-  /** Animals that made something tonight (eggs, feathers, wool). */
+  /** Coop animals that made something tonight (eggs, feathers, wool). */
   eggs: number;
+  /** Barn animals that made something tonight (milk, wool, truffles). */
+  barn: number;
   /** Animals that went unfed. */
   unfed: number;
   /** Animals that slept outside. */
   outside: number;
   /** Names of chicks that grew up tonight. */
   grown: string[];
+  /** Names of young animals hatched tonight. */
+  hatched: string[];
+  /** True if an egg is ready but the coop has no room. */
+  hatchWaiting: boolean;
 }
 
 /**
@@ -592,9 +981,19 @@ export interface AnimalNews {
  * quality from friendship and mood.
  */
 export function endDay(g: GameState, random: () => number): AnimalNews {
-  const news: AnimalNews = { eggs: 0, unfed: 0, outside: 0, grown: [] };
-  // The deluxe coop's auto-feeder puts hay out for everyone inside.
-  if (g.animals.tier >= COOP_MAX_TIER) feedAll(g);
+  const news: AnimalNews = {
+    eggs: 0,
+    barn: 0,
+    unfed: 0,
+    outside: 0,
+    grown: [],
+    hatched: [],
+    hatchWaiting: false,
+  };
+  // The deluxe coop's and barn's auto-feeders put hay out for everyone inside.
+  if (g.animals.tier >= COOP_MAX_TIER) feedAll(g, "coop");
+  if (g.animals.barnBuilt && g.animals.barnTier >= BARN_MAX_TIER)
+    feedAll(g, "barn");
   for (const a of g.animals.animals) {
     const ate = a.fed || a.fresh;
     if (!ate) {
@@ -621,7 +1020,10 @@ export function endDay(g: GameState, random: () => number): AnimalNews {
     } else if (ate) {
       // The product clock runs on fed nights. A night outside loses the day.
       a.lay = sleptOut ? 0 : a.lay + 1;
-      if (a.lay >= SPECIES[a.species].days && a.product === undefined) {
+      const info = SPECIES[a.species];
+      // A pig digs a truffle only on a day it was let out.
+      const ready = !info.outdoors || (a.grazed && !sleptOut);
+      if (a.lay >= info.days && a.product === undefined && ready) {
         const chance = a.mood >= PRODUCT_MOOD ? 1 : a.mood / PRODUCT_MOOD;
         if (random() < chance) {
           a.product = animalQuality(a.friendship, a.mood);
@@ -632,7 +1034,16 @@ export function endDay(g: GameState, random: () => number): AnimalNews {
               ? FEATHER
               : undefined;
           a.lay = 0;
-          news.eggs += 1;
+          if (info.building === "barn") news.barn += 1;
+          else news.eggs += 1;
+          // A well kept sheep may leave Moonwool beside its wool.
+          if (
+            a.species === "sheep" &&
+            a.friendship >= MOONWOOL_FRIENDSHIP &&
+            a.mood >= PRODUCT_MOOD &&
+            random() < MOONWOOL_CHANCE
+          )
+            a.bonus = a.product;
         }
       }
     }
@@ -640,18 +1051,61 @@ export function endDay(g: GameState, random: () => number): AnimalNews {
     a.petted = false;
     a.outside = false;
     a.fresh = false;
+    a.grazed = false;
   }
+  hatch(g, news);
   return news;
+}
+
+/** One night of the incubator: it hatches into a young animal if the coop has room. */
+function hatch(g: GameState, news: AnimalNews): void {
+  const inc = g.animals.incubator;
+  if (!inc) return;
+  inc.daysLeft = Math.max(0, inc.daysLeft - 1);
+  if (inc.daysLeft > 0) return;
+  const species = HATCHES[inc.egg];
+  if (!species || animalProblemRoom(g, species) !== undefined) {
+    news.hatchWaiting = true;
+    return;
+  }
+  const a: Animal = {
+    id: g.animals.nextId++,
+    species,
+    name: defaultName(g),
+    age: 0,
+    friendship: 0,
+    mood: START_MOOD,
+    fed: false,
+    petted: false,
+    outside: false,
+    fresh: true,
+    grazed: false,
+    lay: 0,
+  };
+  g.animals.animals.push(a);
+  g.animals.incubator = undefined;
+  news.hatched.push(a.name);
 }
 
 /** Lines for the morning report. */
 export function animalReportLines(
   news: AnimalNews,
   coopFinished: boolean,
+  barnFinished = false,
 ): string[] {
   const lines: string[] = [];
   if (coopFinished) lines.push("The carpenter has finished your coop.");
+  if (barnFinished) lines.push("The carpenter has finished your barn.");
   for (const n of news.grown) lines.push(`${n} has grown up.`);
+  for (const n of news.hatched) lines.push(`${n} hatched in the coop.`);
+  if (news.hatchWaiting)
+    lines.push("The egg in the incubator is ready, but the coop is full.");
+  if (news.barn > 0)
+    lines.push(
+      news.barn === 1
+        ? "There is something waiting in the barn."
+        : `There are ${news.barn} things waiting in the barn.`,
+    );
   if (news.eggs > 0)
     lines.push(
       news.eggs === 1
@@ -665,6 +1119,6 @@ export function animalReportLines(
         : `${news.unfed} of your animals went without hay.`,
     );
   if (news.outside > 0)
-    lines.push("Some animals slept outside. They are back in the coop.");
+    lines.push("Some animals slept outside. They are back inside.");
   return lines;
 }

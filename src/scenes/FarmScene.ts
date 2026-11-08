@@ -1,9 +1,17 @@
 import {
+  BARN_BUILT,
+  BARN_FOOTPRINT,
+  BARN_MAP,
+  BARN_MAX_TIER,
+  barnBlocks,
+  barnSite,
+  barnVisibleTier,
+  animalSlots,
   COOP_BUILT,
   COOP_MAX_TIER,
   COOP_FOOTPRINT,
+  INCUBATOR_TIER,
   COOP_MAP,
-  COOP_SLOTS,
   GROW_DAYS,
   coopBlocks,
   coopSite,
@@ -258,6 +266,7 @@ export class FarmScene extends Phaser.Scene {
     );
     if (this.state.cave.open) this.holds.add("cave-open");
     if (this.state.animals.coopBuilt) this.holds.add(COOP_BUILT);
+    if (this.state.animals.barnBuilt) this.holds.add(BARN_BUILT);
     for (const h of houseHolds(this.state.houseTier)) this.holds.add(h);
     this.heldMs = 0;
     this.mouseAim = false;
@@ -658,6 +667,7 @@ export class FarmScene extends Phaser.Scene {
   private buildingTier(id: string): number {
     if (isHouseMap(id)) return houseVisibleTier(this.state.houseTier);
     if (id === COOP_MAP) return coopVisibleTier(this.state.animals.tier);
+    if (id === BARN_MAP) return barnVisibleTier(this.state.animals.barnTier);
     return 0;
   }
 
@@ -670,11 +680,11 @@ export class FarmScene extends Phaser.Scene {
       !!this.rocks()?.at(x, y) ||
       this.furnaceAt(x, y) ||
       coopBlocks(this.state, this.mapId, x, y) ||
-      (this.mapId === COOP_MAP &&
-        this.state.animals.animals.some((_, i) => {
-          const s = COOP_SLOTS[i];
-          return !!s && s.x === x && s.y === y;
-        })) ||
+      barnBlocks(this.state, this.mapId, x, y) ||
+      ((this.mapId === COOP_MAP || this.mapId === BARN_MAP) &&
+        animalSlots(this.state, this.mapId === COOP_MAP ? "coop" : "barn").some(
+          (s) => s.x === x && s.y === y,
+        )) ||
       this.state.furniture.blocks(this.mapId, x, y) ||
       !!this.state.chests.at(this.mapId, x, y) ||
       this.map.serviceAt(x, y)?.kind === "camp-chest" ||
@@ -1705,68 +1715,138 @@ export class FarmScene extends Phaser.Scene {
       .fillRect(x + 7, y + 9, 3, 3);
   }
 
-  /** The coop on the farm: a plain barn block, scaffolding while it is built (note 23). */
-  private drawCoop(): void {
-    const site = coopSite(this.mapId);
-    if (!site) return;
-    const a = this.state.animals;
-    if (!a.coopBuilt && !a.build) return;
+  /** A coop or barn on the farm: a plain block, scaffolding while it is built (note 23). */
+  private drawFarmBuilding(
+    site: { x: number; y: number } | undefined,
+    size: { w: number; h: number },
+    doorX: number,
+    built: boolean,
+    building: boolean,
+    roof: number,
+  ): void {
+    if (!site || (!built && !building)) return;
     const ts = this.map.tileSize;
     const x = site.x * ts;
     const y = site.y * ts;
     const g = this.wash;
-    if (!a.coopBuilt) {
+    if (!built) {
       g.lineStyle(3, 0x8a6a45, 1);
-      for (let dx = 0; dx <= COOP_FOOTPRINT.w; dx += 2)
-        g.lineBetween(x + dx * ts, y, x + dx * ts, y + COOP_FOOTPRINT.h * ts);
+      for (let dx = 0; dx <= size.w; dx += 2)
+        g.lineBetween(x + dx * ts, y, x + dx * ts, y + size.h * ts);
       return;
     }
-    g.fillStyle(0xb5563c, 1).fillRect(x, y, COOP_FOOTPRINT.w * ts, ts);
+    g.fillStyle(roof, 1).fillRect(x, y, size.w * ts, ts);
     g.fillStyle(0xc9a26b, 1).fillRect(
       x,
       y + ts,
-      COOP_FOOTPRINT.w * ts,
-      (COOP_FOOTPRINT.h - 1) * ts,
+      size.w * ts,
+      (size.h - 1) * ts,
     );
     g.fillStyle(0x4a3220, 1).fillRect(
-      x + ts + 3,
-      y + (COOP_FOOTPRINT.h - 1) * ts + 2,
+      x + doorX * ts + 3,
+      y + (size.h - 1) * ts + 2,
       ts - 6,
       ts - 2,
     );
   }
 
-  /** Inside the coop: the feeding bench along the back wall and the animals as blocks. */
+  private drawCoop(): void {
+    const a = this.state.animals;
+    this.drawFarmBuilding(
+      coopSite(this.mapId),
+      COOP_FOOTPRINT,
+      1,
+      a.coopBuilt,
+      a.build?.building === "coop" && !a.coopBuilt,
+      0xb5563c,
+    );
+    this.drawFarmBuilding(
+      barnSite(this.mapId),
+      BARN_FOOTPRINT,
+      3,
+      a.barnBuilt,
+      a.build?.building === "barn" && !a.barnBuilt,
+      0x8f3b2e,
+    );
+  }
+
+  /** Inside the coop or barn: the feeding bench along the back wall and the animals as blocks. */
   private drawCoopInside(): void {
-    if (this.mapId !== COOP_MAP) return;
+    const coop = this.mapId === COOP_MAP;
+    if (!coop && this.mapId !== BARN_MAP) return;
     const ts = this.map.tileSize;
     const g = this.wash;
-    g.fillStyle(0x8a6a45, 1).fillRect(3 * ts, 2 * ts + 4, 4 * ts, ts - 4);
-    g.fillStyle(0xe0c068, 1).fillRect(2 * ts + 2, 2 * ts + 3, ts - 4, ts - 3);
-    g.fillStyle(0x6fa8d0, 1).fillRect(7 * ts + 2, 2 * ts + 5, ts - 4, ts - 5);
-    // The deluxe coop's auto-feeder: a metal chute on the back wall.
-    if (this.state.animals.tier >= COOP_MAX_TIER)
-      g.fillStyle(0x9aa3ad, 1).fillRect(9 * ts + 2, 2 * ts + 3, ts - 4, ts - 3);
-    this.state.animals.animals.forEach((an, i) => {
-      const s = COOP_SLOTS[i];
-      if (!s) return;
-      const grown = an.age >= GROW_DAYS;
-      const size = grown ? ts - 4 : ts - 8;
-      const body =
-        an.species === "duck"
-          ? 0xb59a6a
-          : an.species === "rabbit"
-            ? 0xcfc6bd
-            : 0xf4efe0;
-      g.fillStyle(grown ? body : 0xf2d95c, 1).fillRect(
-        s.x * ts + (ts - size) / 2,
-        s.y * ts + ts - size - 1,
-        size,
-        size,
+    const a = this.state.animals;
+    if (coop) {
+      g.fillStyle(0x8a6a45, 1).fillRect(3 * ts, 2 * ts + 4, 4 * ts, ts - 4);
+      g.fillStyle(0xe0c068, 1).fillRect(2 * ts + 2, 2 * ts + 3, ts - 4, ts - 3);
+      g.fillStyle(0x6fa8d0, 1).fillRect(7 * ts + 2, 2 * ts + 5, ts - 4, ts - 5);
+      // The deluxe coop's auto-feeder: a metal chute on the back wall.
+      if (a.tier >= COOP_MAX_TIER)
+        g.fillStyle(0x9aa3ad, 1).fillRect(
+          9 * ts + 2,
+          2 * ts + 3,
+          ts - 4,
+          ts - 3,
+        );
+      // The big coop's incubator: a warm box, with a glow while an egg is in.
+      if (a.tier >= INCUBATOR_TIER) {
+        g.fillStyle(0xd9944a, 1).fillRect(
+          12 * ts + 2,
+          2 * ts + 3,
+          ts - 4,
+          ts - 3,
+        );
+        if (a.incubator)
+          g.fillStyle(0xfff2b0, 1).fillRect(
+            12 * ts + 5,
+            2 * ts + 6,
+            ts - 10,
+            ts - 9,
+          );
+      }
+    } else {
+      g.fillStyle(0x8a6a45, 1).fillRect(4 * ts, 2 * ts + 4, 5 * ts, ts - 4);
+      g.fillStyle(0xe0c068, 1).fillRect(3 * ts + 2, 2 * ts + 3, ts - 4, ts - 3);
+      g.fillStyle(0x6fa8d0, 1).fillRect(9 * ts + 2, 2 * ts + 5, ts - 4, ts - 5);
+      if (a.barnTier >= BARN_MAX_TIER)
+        g.fillStyle(0x9aa3ad, 1).fillRect(
+          10 * ts + 2,
+          2 * ts + 3,
+          ts - 4,
+          ts - 3,
+        );
+      // The stall wing, bottom left: cosmetic only (note 23): straw on the floor.
+      g.fillStyle(0xd8c070, 1).fillRect(
+        ts + 3,
+        10 * ts + 4,
+        3 * ts - 6,
+        2 * ts - 8,
       );
+    }
+    const colours: Record<string, number> = {
+      chicken: 0xf4efe0,
+      duck: 0xb59a6a,
+      rabbit: 0xcfc6bd,
+      cow: 0xf0f0f0,
+      goat: 0xd8c8a8,
+      sheep: 0xe8e4d8,
+      pig: 0xe8a4a0,
+    };
+    for (const { animal: an, x, y } of animalSlots(
+      this.state,
+      coop ? "coop" : "barn",
+    )) {
+      const grown = an.age >= GROW_DAYS;
+      const big = an.species === "cow" || an.species === "pig";
+      const size = grown ? ts - (big ? 2 : 4) : ts - 8;
+      g.fillStyle(
+        grown ? (colours[an.species] ?? 0xffffff) : 0xf2d95c,
+        1,
+      ).fillRect(x * ts + (ts - size) / 2, y * ts + ts - size - 1, size, size);
       if (an.product)
-        g.fillStyle(0xffffff, 1).fillRect(s.x * ts + 6, s.y * ts + ts, 4, 3);
-    });
+        g.fillStyle(0xffffff, 1).fillRect(x * ts + 6, y * ts + ts, 4, 3);
+    }
   }
 
   private render(): void {

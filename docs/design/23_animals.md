@@ -55,8 +55,45 @@ the base coop, chickens only. Everything else here is still unbuilt.
   loading drops a species the saved tier does not open.
 - **Auto-feeder.** At the deluxe tier the night tick feeds everyone inside from
   the silo (hay still runs out). Drawn as a grey chute on the back wall.
-- **Left out:** the incubator (needs a hatch flow and eggs to hold, so it waits
-  for the barn slice), the heater, professions, the barn.
+- **Left out:** the incubator (built in slice 3), the heater, professions, the
+  barn (built in slice 3).
+
+## Built, slice 3 (2026-11-08, #531 barn half)
+
+- **Barn.** The carpenter builds and upgrades it like the coop (same
+  placeholders: 4000g, 300 wood, 100 stone, then big 10000g, 400 wood, 150 stone
+  and deluxe 20000g, 500 wood, 200 stone, 3 days each). One carpenter job at a
+  time across house, coop and barn (`build.building` names which). It stands on
+  the farm at a fixed site (7 by 4 tiles, door bottom row, fourth tile) and
+  opens as one growing interior, 17, 21 and 24 wide by 13 deep (note 68). It
+  holds 4, 8 and 12, counted apart from the coop. The silo and hay are shared.
+- **Species.** Cow (base barn, 1500g, milk every fed night), goat (big barn,
+  4000g, goat milk every 2 fed nights), sheep (deluxe barn, 8000g, wool every 3
+  fed nights) and pig (deluxe barn, 16000g, a truffle on each fed night it was
+  let out). Opening tiers follow the "Placeholder numbers" table below (cow at
+  the base barn); the species table above said "Big barn" for the cow, which
+  would leave the base barn with nothing to sell, so the cow opens at the base.
+- **Moonwool.** A sheep at friendship 800 or more, fed and at 70 mood or more,
+  has a 5 percent chance on a night it makes wool to leave one Moonwool beside
+  it (sells 1200g, placeholder). Friendship tops out at 1000 here (5 hearts), so
+  the "8 hearts" of the 2026-11-06 decision is read as 8 of 10, which is 800.
+  Taking the wool takes the Moonwool too; a full pack keeps it waiting.
+- **Pig.** Needs to be let out on a clear day outside winter (the existing
+  let-out rules), and brought in before night: a pig left out overnight finds
+  nothing, as for other products. None in rain or winter.
+- **Auto-feeder.** At the deluxe barn the night tick feeds every barn animal from
+  the silo, as for the deluxe coop.
+- **Stall wing.** Built in the bottom left as a small walled alcove with straw,
+  cosmetic only (SC-69), at every tier.
+- **Incubator.** Comes with the big coop, one egg at a time. Put a chicken egg
+  or duck egg of any quality in from the bench screen (it is a bench row, not a
+  tile on the map yet). It hatches after 6 nights into a young chicken or duck,
+  named by default (rename at the bench). With no room in the coop it waits and
+  the morning report says so. The Coopmaster's half time is not built.
+- **Bench screen.** `BarnScene` is the coop bench screen for the barn's animals.
+- **Left out:** the heater, professions, auto-collect, per-animal map
+  interaction, sheep regrowing wool a day sooner at high friendship, the keeper
+  selling animals, animal art.
 
 ## Why
 

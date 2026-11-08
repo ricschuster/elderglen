@@ -126,6 +126,11 @@ items.set("duck-egg", {
 });
 items.set("feather", { id: "feather", name: "Duck feather", sellPrice: 250 });
 items.set("wool", { id: "wool", name: "Wool", sellPrice: 340 });
+/** Barn goods (note 23, slice 3). Prices are placeholders, ours. Moonwool is never bought and not a bundle item. */
+items.set("milk", { id: "milk", name: "Milk", sellPrice: 125 });
+items.set("goat-milk", { id: "goat-milk", name: "Goat milk", sellPrice: 225 });
+items.set("truffle", { id: "truffle", name: "Truffle", sellPrice: 625 });
+items.set("moonwool", { id: "moonwool", name: "Moonwool", sellPrice: 1200 });
 /** Mixed seeds plant a random crop that suits the season. Sell price is ours. */
 items.set("mixed-seed", {
   id: "mixed-seed",
