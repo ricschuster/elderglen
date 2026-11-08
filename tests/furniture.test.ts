@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { maps } from "../src/content/maps";
 import {
+  CATALOGUE_PRICE,
   DAILY_STOCK,
+  buyCatalogue,
+  catalogueProblem,
   FURNITURE,
   buyFurniture,
   carryFurniture,
@@ -111,7 +114,7 @@ describe("the carpenter", () => {
     const seen = new Set<string>();
     for (let d = 1; d <= 30; d++) for (const f of dailyStock(d)) seen.add(f.id);
     expect(seen.size).toBe(
-      FURNITURE.filter((f) => !f.festival && !f.station).length,
+      FURNITURE.filter((f) => !f.festival && !f.station && !f.catalogue).length,
     );
     const differs = [2, 3, 4, 5].some(
       (d) =>
@@ -251,5 +254,37 @@ describe("house upgrade and save", () => {
     const odd = deserialize(JSON.stringify(raw))!;
     expect(odd.furniture.count).toBe(0);
     expect(odd.furniture.stash).toEqual([]);
+  });
+});
+
+describe("furniture catalogue", () => {
+  it("needs house tier 1 and the money, once", () => {
+    const g = newGame();
+    g.money = CATALOGUE_PRICE;
+    expect(catalogueProblem(g)).toMatch(/first house upgrade/);
+    g.houseTier = 1;
+    expect(buyCatalogue(g)).toBe(true);
+    expect(g.money).toBe(0);
+    expect(buyCatalogue(g)).toBe(false);
+    g.money = CATALOGUE_PRICE;
+    expect(catalogueProblem(g)).toMatch(/already/);
+  });
+  it("sells catalogue-only pieces only to owners", () => {
+    const g = newGame();
+    g.money = 10_000;
+    const only = FURNITURE.find((f) => f.catalogue)!;
+    expect(dailyStock(1).some((f) => f.catalogue)).toBe(false);
+    expect(buyFurniture(g, only.id)).toBe(false);
+    g.catalogue = true;
+    expect(buyFurniture(g, only.id)).toBe(true);
+    expect(g.inventory.count(only.id)).toBe(1);
+  });
+  it("saves, and an old save has no catalogue", () => {
+    const g = newGame();
+    g.catalogue = true;
+    expect(deserialize(serialize(g))?.catalogue).toBe(true);
+    const raw = JSON.parse(serialize(newGame()));
+    delete raw.catalogue;
+    expect(deserialize(JSON.stringify(raw))?.catalogue).toBe(false);
   });
 });

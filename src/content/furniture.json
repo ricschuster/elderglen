@@ -119,6 +119,49 @@
     "festival": true
   },
   {
+    "id": "pine-wardrobe",
+    "name": "Pine wardrobe",
+    "price": 520,
+    "color": "#b08a58",
+    "catalogue": true
+  },
+  {
+    "id": "writing-desk",
+    "name": "Writing desk",
+    "price": 480,
+    "color": "#7a5230",
+    "catalogue": true
+  },
+  {
+    "id": "window-bench",
+    "name": "Window bench",
+    "price": 340,
+    "color": "#a87a4a",
+    "catalogue": true
+  },
+  {
+    "id": "hanging-planter",
+    "name": "Hanging planter",
+    "price": 210,
+    "color": "#4f9a52",
+    "catalogue": true
+  },
+  {
+    "id": "stone-hearth-screen",
+    "name": "Hearth screen",
+    "price": 460,
+    "color": "#6a6a72",
+    "catalogue": true
+  },
+  {
+    "id": "braided-rug",
+    "name": "Braided rug",
+    "price": 260,
+    "color": "#8a5a7a",
+    "catalogue": true,
+    "rug": true
+  },
+  {
     "id": "workbench",
     "name": "Workbench",
     "price": 2000,
