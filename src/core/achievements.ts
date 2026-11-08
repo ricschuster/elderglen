@@ -1,6 +1,7 @@
 import achievementData from "../content/achievements.json";
 import { CROPS } from "./crops";
 import { hatById } from "./hats";
+import { FISH } from "./fishing";
 import { RECIPES, buildable } from "./crafting";
 import { splitQuality } from "./quality";
 import type { GameState } from "./save";
@@ -11,7 +12,7 @@ import { SKILLS } from "./skills";
  * list that the game can already measure: money, crafting, shipping, a skill
  * at level 10 and the house. Each unlocks one hat for sale at the hatter, who
  * is a counter on the achievements screen until the valley has a shop for
- * her. Checks run at day end and on load. The rest of note 38's list waits for
+ * her. Fishing goals count the fish landed (note 21). Checks run at day end and on load. The rest of note 38's list waits for
  * its systems. Content is `src/content/achievements.json`. Pure rules.
  */
 export type AchievementKind =
@@ -22,7 +23,10 @@ export type AchievementKind =
   | "shipOne"
   | "skill"
   | "house"
-  | "requests";
+  | "requests"
+  | "fishKinds"
+  | "fishTotal"
+  | "fishAll";
 
 export interface AchievementDef {
   id: string;
@@ -146,6 +150,15 @@ export function met(g: GameState, a: AchievementDef): boolean {
       return g.houseTier >= a.threshold;
     case "requests":
       return g.quests.completed >= a.threshold;
+    case "fishKinds":
+      return g.fishing.kinds >= a.threshold;
+    case "fishTotal":
+      return g.fishing.total >= a.threshold;
+    case "fishAll":
+      // Waits for the whole roster of note 21: a part roster never counts.
+      return (
+        FISH.length >= a.threshold && FISH.every((f) => g.fishing.has(f.id))
+      );
   }
 }
 

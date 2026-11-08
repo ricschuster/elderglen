@@ -7,9 +7,9 @@ import { harvestXp } from "./skills";
 import type { GameState } from "./save";
 
 /**
- * Fishing, slices 1 and 2 of note 21: a cast, a bite, the bar, the size roll
- * and the fishing skill. Bait, lures, pots, the cove and the legends are later
- * slices. Content is `src/content/fish.json` and `rods.json`. Numbers are
+ * Fishing, slices 1 to 3 of note 21: a cast, a bite, the bar, the size roll,
+ * the fishing skill, and bait and lures (`tackle.ts`). Pots, the other waters,
+ * the cove and the legends are later slices. Content is `src/content/fish.json` and `rods.json`. Numbers are
  * placeholders (`docs/design/07_tuning_numbers.md`). Pure rules, no Phaser.
  */
 export type Rarity = "common" | "uncommon" | "rare";
@@ -49,6 +49,10 @@ export interface RodDef {
   range: number;
   /** Lands common fish only (the Reed Pole). */
   commonOnly?: boolean;
+  /** Has a bait slot. */
+  bait: boolean;
+  /** Lure slots: none, one or two. */
+  lures: number;
 }
 
 export const RODS = rodData as RodDef[];
@@ -113,6 +117,22 @@ export function fishAvailable(water: Water, c: Conditions): FishDef[] {
   );
 }
 
+/** Odds multipliers from lures, among the fish the conditions allow (`tackle.ts`). */
+export interface Odds {
+  rare?: number;
+  night?: number;
+  rain?: number;
+}
+
+/** A fish's weight in the draw: its rarity weight times any lure that favours it. */
+export function fishWeight(f: FishDef, odds: Odds): number {
+  let w = RARITY_WEIGHT[f.rarity];
+  if (f.rarity === "rare") w *= odds.rare ?? 1;
+  if (f.time === "night") w *= odds.night ?? 1;
+  if (f.time === "rain") w *= odds.rain ?? 1;
+  return w;
+}
+
 export type Bite =
   | { kind: "none" }
   /** A fish took the line but is too much for the rod or the skill. */
@@ -137,6 +157,7 @@ export function bite(
   level: number,
   random: () => number,
   tutorial = false,
+  odds: Odds = {},
 ): Bite {
   let pool = fishAvailable(water, c);
   if (rod.commonOnly || tutorial)
@@ -146,11 +167,11 @@ export function bite(
     const stand = FISH.find((f) => f.water === water && f.rarity === "common");
     return stand ? { kind: "fish", fish: stand } : { kind: "none" };
   }
-  const total = pool.reduce((n, f) => n + RARITY_WEIGHT[f.rarity], 0);
+  const total = pool.reduce((n, f) => n + fishWeight(f, odds), 0);
   let pick = random() * total;
   let fish = pool[pool.length - 1] as FishDef;
   for (const f of pool) {
-    pick -= RARITY_WEIGHT[f.rarity];
+    pick -= fishWeight(f, odds);
     if (pick < 0) {
       fish = f;
       break;
@@ -243,9 +264,13 @@ export interface FightSetup {
   tutorial?: boolean;
 }
 
-/** The bar's height for a rod, widened by assist (note 07). */
-export function barWidth(rod: RodDef, assist: Assist): number {
-  return Math.min(rod.barWidth * (assist > 0 ? ASSIST_BAR : 1), 0.9);
+/**
+ * The bar's height for a rod, widened by assist (note 07) and by a lure's
+ * extra share. The two add together (note 21).
+ */
+export function barWidth(rod: RodDef, assist: Assist, extra = 0): number {
+  const share = 1 + (assist > 0 ? ASSIST_BAR - 1 : 0) + extra;
+  return Math.min(rod.barWidth * share, 0.9);
 }
 
 export type FightState = "playing" | "caught" | "lost";

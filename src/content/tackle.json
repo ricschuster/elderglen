@@ -1,0 +1,71 @@
+{
+  "baits": [
+    { "id": "plain-bait", "name": "Plain Bait", "price": 3, "wait": 0.7 },
+    { "id": "fine-bait", "name": "Fine Bait", "price": 12, "wait": 0.5 },
+    {
+      "id": "salted-bait",
+      "name": "Salted Bait",
+      "price": 8,
+      "wait": 0.5,
+      "sea": true
+    }
+  ],
+  "lures": [
+    {
+      "id": "glint-lure",
+      "name": "Glint Lure",
+      "price": 250,
+      "text": "Rare fish are twice as likely.",
+      "rare": 2
+    },
+    {
+      "id": "moth-lure",
+      "name": "Moth Lure",
+      "price": 150,
+      "text": "Night fish are three times as likely.",
+      "night": 3
+    },
+    {
+      "id": "storm-lure",
+      "name": "Storm Lure",
+      "price": 150,
+      "text": "Rain fish are three times as likely.",
+      "rain": 3
+    },
+    {
+      "id": "whirligig",
+      "name": "Whirligig",
+      "price": 200,
+      "text": "The wait for a bite is 30 percent shorter, on top of bait.",
+      "wait": 0.7
+    },
+    {
+      "id": "wide-float",
+      "name": "Wide Float",
+      "price": 200,
+      "text": "The bar is 15 percent wider.",
+      "bar": 0.15
+    },
+    {
+      "id": "magpie-hook",
+      "name": "Magpie Hook",
+      "price": 300,
+      "text": "One catch in five also brings up a small treasure.",
+      "treasure": true
+    },
+    {
+      "id": "sounding-float",
+      "name": "Sounding Float",
+      "price": 200,
+      "text": "Shows which fish is hooked.",
+      "sounding": true
+    }
+  ],
+  "trinkets": [
+    { "id": "tin-spoon", "name": "Tin Spoon", "sellPrice": 30 },
+    { "id": "glass-bead", "name": "Glass Bead", "sellPrice": 45 },
+    { "id": "brass-button", "name": "Brass Button", "sellPrice": 60 },
+    { "id": "cracked-locket", "name": "Cracked Locket", "sellPrice": 90 },
+    { "id": "ring-box", "name": "Ring Box", "sellPrice": 120 }
+  ]
+}

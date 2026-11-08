@@ -12,6 +12,7 @@ import {
   fertilizerStock,
   saplingStock,
   rodStock,
+  tackleStock,
 } from "../core/shop";
 import { nextBackpack, upgradeBackpack } from "../core/upgrades";
 import { frame, Menu, TOUCH_ROW_H, type Row } from "./panel";
@@ -109,6 +110,7 @@ export class ShopScene extends Phaser.Scene {
       ...saplingStock(),
       ...fertilizerStock(g.day.clock.day),
       ...rodStock(),
+      ...tackleStock(),
     ];
     const buyRows: Row[] = stock.map((id) => {
       const def = itemById(id)!;

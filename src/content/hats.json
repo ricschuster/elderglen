@@ -118,5 +118,25 @@
     "id": "hen-mask",
     "name": "Hen Mask",
     "color": "#c8883a"
+  },
+  {
+    "id": "oilskin-hat",
+    "name": "Oilskin Hat",
+    "color": "#d8b030"
+  },
+  {
+    "id": "harbour-cap",
+    "name": "Harbour Cap",
+    "color": "#2f5f8a"
+  },
+  {
+    "id": "spyglass-band",
+    "name": "Spyglass Band",
+    "color": "#8a6a3a"
+  },
+  {
+    "id": "dockside-band",
+    "name": "Dockside Band",
+    "color": "#4a7a8a"
   }
 ]

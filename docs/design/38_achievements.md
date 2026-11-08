@@ -130,10 +130,10 @@ goal. Ours does.
 
 | Goal | Achievement | Reward | Earnable |
 | --- | --- | --- | --- |
-| Catch 10 different fish | First Ten | Oilskin Hat, 1,000g | Slice 2 |
-| Catch 24 different fish | Harbour Hand | Harbour Cap, 2,000g | Slice 2 |
-| Catch every fish | Whole Roster | Spyglass Band, 5,000g, and a mail gift | Slice 2 |
-| Catch 100 fish | A Hundred Lines | Dockside Band, 1,000g | Slice 2 |
+| Catch 10 different fish | First Ten | Oilskin Hat, 1,000g | Built, needs 10 fish |
+| Catch 24 different fish | Harbour Hand | Harbour Cap, 2,000g | Built, needs 24 fish |
+| Catch every fish | Whole Roster | Spyglass Band, 5,000g, and a mail gift | Built (hat only), needs all 46 fish |
+| Catch 100 fish | A Hundred Lines | Dockside Band, 1,000g | Built |
 
 We have 46 fish (`21_fishing.md`), so "24 different" is a little over half and
 stands unless play says otherwise. Algae, weeds and jellies count toward these

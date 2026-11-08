@@ -208,5 +208,61 @@
       "color": "#c8883a",
       "price": 2000
     }
+  },
+  {
+    "id": "first-ten",
+    "name": "First Ten",
+    "goal": "Catch 10 different fish",
+    "kind": "fishKinds",
+    "threshold": 10,
+    "secret": false,
+    "hat": {
+      "id": "oilskin-hat",
+      "name": "Oilskin Hat",
+      "color": "#d8b030",
+      "price": 1000
+    }
+  },
+  {
+    "id": "harbour-hand",
+    "name": "Harbour Hand",
+    "goal": "Catch 24 different fish",
+    "kind": "fishKinds",
+    "threshold": 24,
+    "secret": false,
+    "hat": {
+      "id": "harbour-cap",
+      "name": "Harbour Cap",
+      "color": "#2f5f8a",
+      "price": 2000
+    }
+  },
+  {
+    "id": "whole-roster",
+    "name": "Whole Roster",
+    "goal": "Catch every fish",
+    "kind": "fishAll",
+    "threshold": 46,
+    "secret": false,
+    "hat": {
+      "id": "spyglass-band",
+      "name": "Spyglass Band",
+      "color": "#8a6a3a",
+      "price": 5000
+    }
+  },
+  {
+    "id": "a-hundred-lines",
+    "name": "A Hundred Lines",
+    "goal": "Catch 100 fish",
+    "kind": "fishTotal",
+    "threshold": 100,
+    "secret": false,
+    "hat": {
+      "id": "dockside-band",
+      "name": "Dockside Band",
+      "color": "#4a7a8a",
+      "price": 1000
+    }
   }
 ]

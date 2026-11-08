@@ -3,6 +3,7 @@ import { CROPS } from "./crops";
 import { FRUIT_TREES, saplingId } from "./fruittrees";
 import { itemById, seedId } from "./items";
 import { RODS } from "./fishing";
+import { BAITS, LURES } from "./tackle";
 import type { Inventory } from "./inventory";
 
 export interface Wallet {
@@ -87,6 +88,16 @@ export function saplingStock(): string[] {
  * (note 21), who does not exist yet: the general store sells them until she does.
  */
 export const rodStock = (): string[] => byPrice(RODS.map((r) => r.id));
+
+/**
+ * Bait and lures on sale, cheapest first, from the same stand in. Salted Bait
+ * waits for the sea, where it works.
+ */
+export const tackleStock = (): string[] =>
+  byPrice([
+    ...BAITS.filter((b) => !b.sea).map((b) => b.id),
+    ...LURES.map((l) => l.id),
+  ]);
 
 import { fertilizerStock as allFertilizer } from "./fertilizer";
 
