@@ -17,6 +17,7 @@ import {
 import {
   GREENHOUSE_FOOTPRINT,
   greenhouseRepaired,
+  GREENHOUSE_SITE,
   greenhouseSite,
 } from "./greenhouse";
 import { newHorse } from "./horse";
@@ -483,6 +484,10 @@ export function mapWithDoors(
   if (hasSites(mapId)) {
     const at = greenhouseSite(g);
     const door = doorAt("greenhouse", at.x, at.y);
+    // The ruin site is tillable once the greenhouse has moved off it. The
+    // current footprint is walled and made untillable just after.
+    if (at.x !== GREENHOUSE_SITE.x || at.y !== GREENHOUSE_SITE.y)
+      out = out.withSoil(GREENHOUSE_SITE);
     out = out
       .withDoor("greenhouse", "from_greenhouse", door)
       .withBuilding(footprintAt("greenhouse", at.x, at.y), door);
