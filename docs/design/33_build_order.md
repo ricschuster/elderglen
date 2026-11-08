@@ -5,6 +5,10 @@ designed systems (notes 16 to 32) into an order of build slices. It replaces
 the "M3 is one slice" idea in `13_m3_scope.md` and `26_seasons.md`. Nothing here
 is built. Where it differs from those two notes, this one wins.
 
+Update 2026-11-08 (ADR 0012): slices 2, 3 and the rest of 4 are milestone M3b,
+slice 5 is part of M3c, and multiplayer (M4) follows M3b. The table is in
+`03_milestones.md`.
+
 ## Why
 
 Design has run well ahead of the build. M2 is built, and notes 16 to 32 settle

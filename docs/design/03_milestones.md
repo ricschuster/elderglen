@@ -9,6 +9,10 @@ How to pick a payoff: choose the item that gets something playable sooner, or
 settles a decision that many other items wait on. Review this list at the start
 and end of each session, and update the status column.
 
+Order of work (ADR 0012, 2026-11-08): M3, M3b, M4, M3c, M3d, M5, M6. The letters
+split the old "vertical slice" into the rest of ring 1; M3c and M3d build on a
+multiplayer base.
+
 Ranking from the project brief: home valley is Must, the regions are Should,
 the dark edge is Could.
 
@@ -16,9 +20,12 @@ the dark edge is Could.
 | --- | --- | --- | --- | --- |
 | M1 | Define the first playable | The first playable's scope and done list are written below, and the audience, identity, core loop of a day and multiplayer questions are answered. | Done | None |
 | M2 | First playable | Day and energy cycle, farming, selling and a small centre 1 run in the home valley, with rough art. Engine chosen in an ADR. | Done (2026-11-07) | None |
-| M3 | Vertical slice | One full cycle of centre 1, near-final quality, built as five slices, one hall room each, starting with year one on the farm (`33_build_order.md`). | In progress | None (M2 closed) |
-| M4 | Multiplayer | Up to 8 players share one valley on one network, designed in `53_multiplayer.md` (ADR 0007, `docs/decisions/0007-multiplayer-milestone.md`). | Not started | M3, the wrapper ADR (done, ADR 0008), a hosting spike |
-| M5 | Ring 2 prototype | A haven and about 2 regions reachable from the home valley. Centre 2 in small form. | Not started | M4, ring 2 shape (#20) |
+| M3 | Vertical slice | Slice 1 and the work pulled forward from later slices (`33_build_order.md`). Done when the owner has played the coop, barn, machines and cooking by hand and the open issues are closed or moved. | In progress | The owner's hands-on play |
+| M3b | Ring 1 systems | Fishing and the Water room (slice 2), combat and the deeper mines (slice 3), friendship, the cast, gifts and heart events (slice 4), the horse, the cask and cellar, the dye vat and the greenhouse. Bundles 1 to 26 can be filled. | Not started | M3, the cast list (#136) |
+| M4 | Multiplayer | Up to 8 players share one valley on one network, designed in `53_multiplayer.md` (ADR 0007, `docs/decisions/0007-multiplayer-milestone.md`). Moved to follow M3b (ADR 0012). | Not started | M3b, the wrapper ADR (done, ADR 0008), a hosting spike |
+| M3c | Ring 1 story and ending | The story spine, the Last Seat (slice 5) and its numbers, the Forest and Mountain maps with tree types, the valley layout, the year two rules. Ring 1 plays from start to ending. | Not started | M4, the story spine design (#176 to #178) |
+| M3d | Ring 1 polish | Art, audio, onboarding, balance, minigames, packaging and the name register check. Ring 1 is releasable as a full game. | Not started | M3c |
+| M5 | Ring 2 prototype | A haven and about 2 regions reachable from the home valley. Centre 2 in small form. | Not started | M3d, ring 2 shape (#20) |
 | M6 | Ring 3 and centre 3 | A logistics-only frontier outpost. Optional, late. Only if M1 to M5 prove fun. | Not started | M5, centre 3 (#5) |
 
 ## First playable scope (draft, issue #12)
