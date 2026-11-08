@@ -9,9 +9,12 @@ Start each session by asking which item to take.
 
 ## Open, in order
 
-1. **Completion tracker (#196).** Designed in note 39 (decided 2026-10-31, open
-   points settled 2026-11-08). Not built. Seed 5 is settled (emberseed, 4 hearts, spring to
-   fall). Next: build it (counters, a content file, the collections page).
+1. **Completion tracker (#196). Built 2026-11-08 (PR #573).** Counters for
+   friends, fish, slayer, gallery and elderfruit are locked at 0 until their
+   systems exist, and nothing calls `noteCooked` yet. Left: a top-level menu
+   entry (it is reached through the achievements page), the day-end recheck,
+   the summit achievement, the hall scene and rewards, and a look at the layout
+   in a browser. Open: should "items crafted" count only buildable recipes.
 2. **Story spine.** The warden head and her staged reveal (#177), the sea elf
    and Homeward pin (#176), the hermit witch (#178) and the third community
    project (#5). Together they decide what the ending and the Last Seat mean. Below Special Orders
@@ -21,6 +24,15 @@ Start each session by asking which item to take.
    restored hall rooms (#335), and the placeholder swap. No audio note exists
    (audio plan: #527).
 4. **Ring 2 shape and travel** (#20, M5). Parked until slice 3 is played.
+
+Built on 2026-11-08 (handoff 2026-11-08f, build session, nothing designed):
+the completion tracker and collections page (#196, #573), geodes by band with
+per-kind pools and dwarf sales (note 69, #574), the furniture catalogue at the
+carpenter (200,000g after house tier 1, #575), festival maps for the Harvest
+Showing and Hollow Eve (#576), the mail system with the hatter's letter (note
+51, #577), mines floors 11 to 120 as digging only (#578), the Hearthsilver bar
+and fifth tool tier (#579), and flooring and wallpaper (#580). Many numbers are
+placeholders. Open questions are in the handoff.
 
 Designed on 2026-11-08 (handoff 2026-11-08e): geodes (note 69), festival maps
 (note 66 addendum), fruit energy (SC-66 closed) and the completion tracker's open
@@ -68,13 +80,17 @@ quartz and the quality sprinkler, pickaxe tiers and the smith's upgrades, crafte
 furnaces, chests and the workbench, Old Greencoat's door scene, the camp chest,
 geodes, and slice 1's achievements with the hatter.
 
-Smaller leftovers still open (tracked in #522): the furniture catalogue (needs a design answer:
-where it is sold and its price, note 41), the hatter's letter, mail gifts and the
-achievements that wait for later systems (mail system, note 51, unbuilt), the
-Hearthsilver grade (no design), festival maps in place of the festival screens
-(layout addendum to note 66 first), storm strikes (slice 3), and the fruit bat
-and mushroom art. The axe ladder, the mine hall's ore-only bin, Artisan Goods in
-the sim bot and weather-only storms are built.
+Smaller leftovers still open (tracked in #522): mail gifts for requests and
+the 10 and 40 requests achievements (request board, note 50, unbuilt),
+friendship mail, the Long Road and fish seed letters and the journal Mail
+section, the placeable 0g furniture catalogue (note 10; the shop version is
+built), festival maps beyond the first two (even-year maze and reward, the
+gap's tell, other festivals, villagers' spots; need the village map, note 56),
+storm strikes (slice 3), and the fruit bat and mushroom art. Done since: the
+hatter's letter, the furniture catalogue (shop version), Hearthsilver grade,
+and festival maps for the Harvest Showing and Hollow Eve. The axe ladder, the
+mine hall's ore-only bin, Artisan Goods in the sim bot and weather-only storms
+are built.
 
 Session f (2026-11-07, handoff 2026-11-07f) fixed the first browser playtest
 feedback: pickaxe repeat, click to open doors, name tags, the carpenter's Buy
