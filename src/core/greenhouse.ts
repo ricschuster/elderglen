@@ -26,3 +26,33 @@ export function greenhouseHolds(g: { hall: Hall }): string[] {
 
 /** Footprint of the greenhouse on the farm, in tiles, with the door on the bottom row. Same on every farm type. */
 export const GREENHOUSE_SITE = { x: 13, y: 2, w: 6, h: 4 } as const;
+
+/** The footprint of the greenhouse, and the door tile's offset from its top left on the bottom row. */
+export const GREENHOUSE_FOOTPRINT = {
+  w: GREENHOUSE_SITE.w,
+  h: GREENHOUSE_SITE.h,
+  doorX: 2,
+} as const;
+
+/**
+ * Where the greenhouse stands: the spot the player moved it to at the carpenter
+ * (`docs/design/60_building_placement.md`), else the ruin site every farm
+ * starts with. What is inside it never moves with it.
+ */
+export function greenhouseSite(g: {
+  greenhouseSite?: { x: number; y: number };
+}): { x: number; y: number } {
+  return g.greenhouseSite ?? { x: GREENHOUSE_SITE.x, y: GREENHOUSE_SITE.y };
+}
+
+/** True if a tile is under the greenhouse's walls, other than its door tile. */
+export function greenhouseBlocks(
+  g: { greenhouseSite?: { x: number; y: number } },
+  x: number,
+  y: number,
+): boolean {
+  const s = greenhouseSite(g);
+  const { w, h, doorX } = GREENHOUSE_FOOTPRINT;
+  if (x === s.x + doorX && y === s.y + h - 1) return false;
+  return x >= s.x && x < s.x + w && y >= s.y && y < s.y + h;
+}

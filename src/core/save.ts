@@ -1,5 +1,7 @@
 import { cropById } from "./crops";
+import { FARM_STORE, GREENHOUSE_STORE } from "./mapstore";
 import {
+  MAX_SITE,
   loadAnimals,
   newAnimals,
   saveAnimals,
@@ -83,10 +85,16 @@ export interface GameState {
   rocks: Rocks;
   /** The mine: deepest floor, dry streak, today's floors. */
   mines: Mines;
-  /** Sprinklers standing on the farm. */
+  /** Sprinklers standing on the farm (the open farm's store, `mapstore.ts`). */
   sprinklers: Sprinklers;
   /** Fruit trees planted on the farm. */
   fruitTrees: FruitTrees;
+  /** Sprinklers on the greenhouse border and in its plot. */
+  greenhouseSprinklers: Sprinklers;
+  /** Fruit trees planted in the greenhouse: they bear in any season. */
+  greenhouseFruitTrees: FruitTrees;
+  /** Where the repaired greenhouse stands, once moved at the carpenter. Unset: its ruin site. */
+  greenhouseSite?: { x: number; y: number };
   /** Machines standing on the farm. */
   machines: Machines;
   /** The greenhouse's soil: grows in any season (note 31). */
@@ -170,6 +178,8 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     mines: new Mines(),
     sprinklers: new Sprinklers(),
     fruitTrees: new FruitTrees(),
+    greenhouseSprinklers: new Sprinklers(),
+    greenhouseFruitTrees: new FruitTrees(),
     machines: new Machines(),
     casks: new Casks(),
     furnace: new Furnace(),
@@ -229,10 +239,21 @@ interface SaveData {
   rocks?: Rock[];
   /** Absent in saves made before the mines. */
   mines?: MinesSave;
-  /** Absent in saves made before sprinklers. */
+  /**
+   * Sprinklers and fruit trees by map id (`mapstore.ts`). Absent in saves made
+   * before the greenhouse took them: those hold the farm's in `sprinklers` and
+   * `fruitTrees` below, which load as the farm's.
+   */
+  mapItems?: Record<
+    string,
+    { sprinklers?: PlacedSprinkler[]; fruitTrees?: PlacedFruitTree[] }
+  >;
+  /** Old saves only: the farm's sprinklers, before `mapItems`. */
   sprinklers?: PlacedSprinkler[];
-  /** Absent in saves made before fruit trees. */
+  /** Old saves only: the farm's fruit trees, before `mapItems`. */
   fruitTrees?: PlacedFruitTree[];
+  /** Absent until the greenhouse is moved. */
+  greenhouseSite?: { x: number; y: number };
   /** Absent in saves made before machines. */
   machines?: PlacedMachine[];
   /** Absent in saves made before the greenhouse. */
@@ -302,6 +323,42 @@ export interface SaveStore {
   write(text: string): void;
 }
 
+/** The sprinklers of a saved list that are well formed. */
+function validSprinklers(raw: unknown): PlacedSprinkler[] {
+  return Array.isArray(raw)
+    ? raw.filter(
+        (s): s is PlacedSprinkler =>
+          isObject(s) &&
+          Number.isInteger(s.x) &&
+          Number.isInteger(s.y) &&
+          typeof s.id === "string" &&
+          sprinklerById(s.id) !== undefined,
+      )
+    : [];
+}
+
+/** The fruit trees of a saved list that are well formed, with fruit and hits tidied. */
+function validFruitTrees(raw: unknown): PlacedFruitTree[] {
+  return Array.isArray(raw)
+    ? raw
+        .filter(
+          (t): t is PlacedFruitTree =>
+            isObject(t) &&
+            Number.isInteger(t.x) &&
+            Number.isInteger(t.y) &&
+            typeof t.id === "string" &&
+            fruitTreeById(t.id) !== undefined &&
+            Number.isInteger(t.age),
+        )
+        .map((t) => ({
+          ...t,
+          age: Math.max(t.age, 0),
+          fruit: Number.isInteger(t.fruit) ? Math.max(t.fruit, 0) : 0,
+          hits: 0,
+        }))
+    : [];
+}
+
 /** Save as text, including the time of day, so a reload mid day resumes it. */
 export function serialize(g: GameState): string {
   const data: SaveData = {
@@ -321,8 +378,17 @@ export function serialize(g: GameState): string {
     orders: g.orders.save(),
     rocks: g.rocks.save(),
     mines: g.mines.save(),
-    sprinklers: g.sprinklers.save(),
-    fruitTrees: g.fruitTrees.save(),
+    mapItems: {
+      [FARM_STORE]: {
+        sprinklers: g.sprinklers.save(),
+        fruitTrees: g.fruitTrees.save(),
+      },
+      [GREENHOUSE_STORE]: {
+        sprinklers: g.greenhouseSprinklers.save(),
+        fruitTrees: g.greenhouseFruitTrees.save(),
+      },
+    },
+    ...(g.greenhouseSite ? { greenhouseSite: { ...g.greenhouseSite } } : {}),
     machines: g.machines.save(),
     casks: g.casks.save(),
     furnace: g.furnace.save(),
@@ -545,18 +611,27 @@ export function deserialize(text: string): GameState | undefined {
   }
   const saved = savedOrders(raw.orders);
   if (saved) g.orders.load(saved);
-  if (Array.isArray(raw.sprinklers)) {
-    g.sprinklers.load(
-      raw.sprinklers.filter(
-        (s): s is PlacedSprinkler =>
-          isObject(s) &&
-          Number.isInteger(s.x) &&
-          Number.isInteger(s.y) &&
-          typeof s.id === "string" &&
-          sprinklerById(s.id) !== undefined,
-      ),
-    );
-  }
+  // Per-map items. An old save has the farm's two lists at the top level.
+  const items = isObject(raw.mapItems) ? raw.mapItems : {};
+  const farmItems = isObject(items[FARM_STORE])
+    ? items[FARM_STORE]
+    : { sprinklers: raw.sprinklers, fruitTrees: raw.fruitTrees };
+  const houseItems = isObject(items[GREENHOUSE_STORE])
+    ? items[GREENHOUSE_STORE]
+    : {};
+  g.sprinklers.load(validSprinklers(farmItems.sprinklers));
+  g.greenhouseSprinklers.load(validSprinklers(houseItems.sprinklers));
+  g.fruitTrees.load(validFruitTrees(farmItems.fruitTrees));
+  g.greenhouseFruitTrees.load(validFruitTrees(houseItems.fruitTrees));
+  if (
+    isObject(raw.greenhouseSite) &&
+    Number.isInteger(raw.greenhouseSite.x) &&
+    Number.isInteger(raw.greenhouseSite.y)
+  )
+    g.greenhouseSite = {
+      x: Math.min(Math.max(raw.greenhouseSite.x as number, 0), MAX_SITE),
+      y: Math.min(Math.max(raw.greenhouseSite.y as number, 0), MAX_SITE),
+    };
   if (Array.isArray(raw.machines)) {
     const valid: PlacedMachine[] = [];
     for (const m of raw.machines) {
@@ -613,26 +688,6 @@ export function deserialize(text: string): GameState | undefined {
       });
     }
     g.casks.load(valid.slice(0, CASK_LIMIT));
-  }
-  if (Array.isArray(raw.fruitTrees)) {
-    g.fruitTrees.load(
-      raw.fruitTrees
-        .filter(
-          (t): t is PlacedFruitTree =>
-            isObject(t) &&
-            Number.isInteger(t.x) &&
-            Number.isInteger(t.y) &&
-            typeof t.id === "string" &&
-            fruitTreeById(t.id) !== undefined &&
-            Number.isInteger(t.age),
-        )
-        .map((t) => ({
-          ...t,
-          age: Math.max(t.age, 0),
-          fruit: Number.isInteger(t.fruit) ? Math.max(t.fruit, 0) : 0,
-          hits: 0,
-        })),
-    );
   }
   if (Array.isArray(raw.rocks)) g.rocks.load(rocksFrom(raw.rocks));
   const mines = raw.mines;

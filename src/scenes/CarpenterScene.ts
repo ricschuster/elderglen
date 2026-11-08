@@ -56,6 +56,7 @@ import {
   refundOf,
   removeBuilding,
   removeProblem,
+  type Placeable,
 } from "../core/placement";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
@@ -206,6 +207,15 @@ export class CarpenterScene extends Phaser.Scene {
           buttons: [{ text: "Buy", run: () => this.buyAnimal(sp) }],
         });
     }
+    // The repaired greenhouse can be moved too, never removed (note 31).
+    if (moveProblem(g, "greenhouse") === undefined)
+      rows.push({
+        label: "Move the greenhouse",
+        detail: "free, and its soil, crops, sprinklers and trees come along",
+        buttons: [
+          { text: "Move", run: () => this.place("greenhouse", "move") },
+        ],
+      });
     if (g.animals.siloDays > 0)
       rows.push({
         label: "Silo work under way",
@@ -269,7 +279,7 @@ export class CarpenterScene extends Phaser.Scene {
   }
 
   /** Open the placement screen to put a new building down, or move the one that stands. */
-  private place(id: Building, mode: "order" | "move"): void {
+  private place(id: Placeable, mode: "order" | "move"): void {
     this.removing = undefined;
     if (mode === "move") {
       const problem = moveProblem(this.state, id);

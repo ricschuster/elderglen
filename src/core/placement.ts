@@ -14,6 +14,11 @@ import {
   buildingProblem,
   type Building,
 } from "./animals";
+import {
+  GREENHOUSE_FOOTPRINT,
+  greenhouseRepaired,
+  greenhouseSite,
+} from "./greenhouse";
 import { newHorse } from "./horse";
 import { HARDWOOD } from "./items";
 import type { FarmMap } from "./map";
@@ -25,6 +30,30 @@ import type { GameState } from "./save";
  * DOM. The carpenter's placement screen asks these and shows the answers. The
  * coop and the barn can be placed today; the stable, silo and well follow.
  */
+
+/**
+ * Everything the carpenter can stand somewhere: the three animal buildings and
+ * the greenhouse. The greenhouse is not built or removed, only moved, and it is
+ * the one that is not in the animals state.
+ */
+export type Placeable = Building | "greenhouse";
+
+const PLACEABLES: readonly Placeable[] = [
+  ...(Object.keys(BUILDINGS) as Building[]),
+  "greenhouse",
+];
+
+/** The footprint of a placeable, and its door tile's offset from the top left. */
+function footprintOf(b: Placeable): {
+  w: number;
+  h: number;
+  doorX: number;
+  door: boolean;
+} {
+  return b === "greenhouse"
+    ? { ...GREENHOUSE_FOOTPRINT, door: true }
+    : FOOTPRINTS[b];
+}
 
 /** One tile that stops a building standing where the player pointed, and why. */
 export interface Blocker {
@@ -47,21 +76,22 @@ const inRect = (r: Rect, x: number, y: number) =>
 export const REFUND_SHARE = 0.5;
 
 /** The names of the two buildings, for the words on the screen. */
-const NAME: Record<Building, string> = {
+const NAME: Record<Placeable, string> = {
   coop: "coop",
   barn: "barn",
   stable: "stable",
+  greenhouse: "greenhouse",
 };
 
 /** The footprint a building covers with its top left on a tile. */
-export function footprintAt(b: Building, x: number, y: number): Rect {
-  const f = FOOTPRINTS[b];
+export function footprintAt(b: Placeable, x: number, y: number): Rect {
+  const f = footprintOf(b);
   return { x, y, w: f.w, h: f.h };
 }
 
 /** The door tile of a building with its top left on a tile. It can be walked on. */
-export function doorAt(b: Building, x: number, y: number) {
-  const f = FOOTPRINTS[b];
+export function doorAt(b: Placeable, x: number, y: number) {
+  const f = footprintOf(b);
   return { x: x + f.doorX, y: y + f.h - 1 };
 }
 
@@ -73,15 +103,24 @@ function holdsSpot(g: GameState, b: Building): boolean {
 /** The footprint of a building that holds a spot on this map, if it does. */
 export function placedFootprint(
   g: GameState,
-  b: Building,
+  b: Placeable,
   mapId: string,
 ): Rect | undefined {
+  if (b === "greenhouse") {
+    if (!hasSites(mapId)) return undefined;
+    const at = greenhouseSite(g);
+    return footprintAt(b, at.x, at.y);
+  }
   const s = siteOf(g, b, mapId);
   return s && holdsSpot(g, b) ? footprintAt(b, s.x, s.y) : undefined;
 }
 
 /** Every door of the map's buildings, so the corridor and clutter rules skip them. */
-const BUILDING_EXITS: Record<string, Building> = { coop: "coop", barn: "barn" };
+const BUILDING_EXITS: Record<string, Placeable> = {
+  coop: "coop",
+  barn: "barn",
+  greenhouse: "greenhouse",
+};
 
 /**
  * The tiles a building may not cover: the exits of the map and one tile around
@@ -99,7 +138,11 @@ function reservedTiles(map: FarmMap): Map<string, string> {
   for (const e of map.exits)
     if (!(e.id in BUILDING_EXITS)) ring(e, "the way out of the farm");
   for (const e of map.entries)
-    if (!e.name.startsWith("from_coop") && !e.name.startsWith("from_barn"))
+    if (
+      !e.name.startsWith("from_coop") &&
+      !e.name.startsWith("from_barn") &&
+      !e.name.startsWith("from_greenhouse")
+    )
       ring({ x: e.x, y: e.y, w: 1, h: 1 }, "where you arrive", 0);
   for (const s of map.services)
     ring({ x: s.x, y: s.y, w: 1, h: 1 }, "a counter", 0);
@@ -131,7 +174,7 @@ export function placementBlockers(
   g: GameState,
   map: FarmMap,
   mapId: string,
-  b: Building,
+  b: Placeable,
   x: number,
   y: number,
 ): Blocker[] {
@@ -140,9 +183,10 @@ export function placementBlockers(
   const door = doorAt(b, x, y);
   const front = { x: door.x, y: door.y + 1 };
   const reserved = reservedTiles(map);
-  const others = (Object.keys(BUILDINGS) as Building[])
-    .filter((o) => o !== b)
-    .map((o) => ({ o, r: placedFootprint(g, o, mapId) }));
+  const others = PLACEABLES.filter((o) => o !== b).map((o) => ({
+    o,
+    r: placedFootprint(g, o, mapId),
+  }));
   const silo = SILO_SITES[mapId];
   const siloRect = silo
     ? { x: silo.x, y: silo.y, w: SILO_FOOTPRINT.w, h: SILO_FOOTPRINT.h }
@@ -181,17 +225,15 @@ function walkable(
   g: GameState,
   map: FarmMap,
   mapId: string,
-  except: Building,
+  except: Placeable,
   extra: Rect | undefined,
 ) {
-  const placed = (Object.keys(BUILDINGS) as Building[])
-    .filter((o) => o !== except)
-    .flatMap((o) => {
-      const r = placedFootprint(g, o, mapId);
-      return r
-        ? [{ r, d: FOOTPRINTS[o].door ? doorAt(o, r.x, r.y) : undefined }]
-        : [];
-    });
+  const placed = PLACEABLES.filter((o) => o !== except).flatMap((o) => {
+    const r = placedFootprint(g, o, mapId);
+    return r
+      ? [{ r, d: footprintOf(o).door ? doorAt(o, r.x, r.y) : undefined }]
+      : [];
+  });
   const silo = SILO_SITES[mapId];
   const siloRect =
     silo && g.animals.silo
@@ -245,14 +287,14 @@ function wallsOffAnExit(
   g: GameState,
   map: FarmMap,
   mapId: string,
-  b: Building,
+  b: Placeable,
   foot: Rect,
 ): string | undefined {
   const door = doorAt(b, foot.x, foot.y);
   const before = reach(map, walkable(g, map, mapId, b, undefined));
   const solid = walkable(g, map, mapId, b, foot);
   const after = reach(map, (x, y) =>
-    FOOTPRINTS[b].door && x === door.x && y === door.y
+    footprintOf(b).door && x === door.x && y === door.y
       ? !map.isBlocked(x, y)
       : solid(x, y),
   );
@@ -280,7 +322,7 @@ export function placementProblem(
   g: GameState,
   map: FarmMap,
   mapId: string,
-  b: Building,
+  b: Placeable,
   x: number,
   y: number,
 ): string | undefined {
@@ -311,7 +353,11 @@ export function orderBuildingAt(
 }
 
 /** Why a built building cannot be moved, or undefined if it can. */
-export function moveProblem(g: GameState, b: Building): string | undefined {
+export function moveProblem(g: GameState, b: Placeable): string | undefined {
+  if (b === "greenhouse")
+    return greenhouseRepaired(g)
+      ? undefined
+      : "The greenhouse is still a ruin. Finish the Larder bundles at the village hall first.";
   if (!isBuilt(g.animals, b))
     return g.animals.build?.building === b
       ? `The carpenter is still building your ${NAME[b]}.`
@@ -319,18 +365,23 @@ export function moveProblem(g: GameState, b: Building): string | undefined {
   return undefined;
 }
 
-/** Move a built building, free and at once. Its animals and contents stay in it. */
+/**
+ * Move a built building, free and at once. Its animals and contents stay in
+ * it. The greenhouse keeps its soil, crops, sprinklers and trees: they are
+ * stored by its own map, not by the farm's tiles.
+ */
 export function moveBuilding(
   g: GameState,
   map: FarmMap,
   mapId: string,
-  b: Building,
+  b: Placeable,
   x: number,
   y: number,
 ): boolean {
   if (moveProblem(g, b) !== undefined) return false;
   if (placementProblem(g, map, mapId, b, x, y) !== undefined) return false;
-  g.animals.sites[b] = { x, y };
+  if (b === "greenhouse") g.greenhouseSite = { x, y };
+  else g.animals.sites[b] = { x, y };
   return true;
 }
 
@@ -414,7 +465,8 @@ export function removeBuilding(g: GameState, b: Building): boolean {
 
 /**
  * The farm map with the coop and barn doors moved to where the buildings
- * stand. Every other map comes back as it is.
+ * stand, and the greenhouse walled off where it stands. Every other map comes
+ * back as it is.
  */
 export function mapWithDoors(
   g: GameState,
@@ -426,6 +478,14 @@ export function mapWithDoors(
     const s = siteOf(g, b, mapId);
     if (!s) continue;
     out = out.withDoor(b, `from_${b}`, doorAt(b, s.x, s.y));
+  }
+  // The greenhouse always stands, ruin or repaired: it walls off its footprint.
+  if (hasSites(mapId)) {
+    const at = greenhouseSite(g);
+    const door = doorAt("greenhouse", at.x, at.y);
+    out = out
+      .withDoor("greenhouse", "from_greenhouse", door)
+      .withBuilding(footprintAt("greenhouse", at.x, at.y), door);
   }
   return out;
 }

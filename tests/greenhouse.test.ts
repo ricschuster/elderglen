@@ -12,6 +12,7 @@ import {
   greenhouseRepaired,
 } from "../src/core/greenhouse";
 import { exitOpen } from "../src/core/map";
+import { mapWithDoors } from "../src/core/placement";
 import { seedId } from "../src/core/items";
 import { deserialize, newGame, serialize } from "../src/core/save";
 import { sleep } from "../src/core/sleep";
@@ -41,7 +42,12 @@ describe("the greenhouse map", () => {
 
   it("has a gated door on both farm types, under the ruin footprint", () => {
     for (const id of ["farm", "farm-woodland"]) {
-      const m = maps.get(id);
+      const raw = maps.get(id);
+      // The footprint is not in the map data: the greenhouse can be moved.
+      expect(raw.isBlocked(GREENHOUSE_SITE.x + 1, GREENHOUSE_SITE.y + 1)).toBe(
+        false,
+      );
+      const m = mapWithDoors(newGame(), raw, id);
       const e = m.exits.find((x) => x.id === "greenhouse")!;
       expect(e).toMatchObject({
         map: GREENHOUSE_MAP,
