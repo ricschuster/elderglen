@@ -1,6 +1,6 @@
 # 69 Geodes and minerals (draft)
 
-Status: draft, 2026-11-08. Settles where the four geode kinds drop and what
+Status: draft, built in part 2026-11-08. Settles where the four geode kinds drop and what
 each cracks into, so the deeper mine floors can be built against it. Nothing
 here is built. Closes the design part of SC-73 in note 54. Mineral names are
 ours and are placeholders; Stardew's names are not used (ADR 0002).
@@ -71,6 +71,14 @@ The gem list in note 22 and the Glimmerstone (floors 100 to 120 only, 0.2
 percent per geode) sit on top: the Glimmerstone stays out of the Omni pool
 until floor 100 is reached, as Stardew keeps its rarest gem back until 15 Omni
 geodes are cracked.
+
+Built: drop bands, the four contents pools (`src/content/geodes.json`,
+`src/core/geodes.ts`), the smith cracking every kind for 25g and the dwarf
+buying each kind at its sell price. Floors 41 and deeper are not built yet, so
+only plain geodes drop for now. The Glimmerstone, the crusher, a use for clay
+and the gallery are not built. Iron and gold gates use the deepest floor reached.
+Omni is 8 percent of geode nodes from floor 21 (placeholder). Hearthsilver ore is
+a placeholder item.
 
 ## Open
 

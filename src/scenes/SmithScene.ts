@@ -3,7 +3,8 @@ import { itemById } from "../core/items";
 import type { GameState } from "../core/save";
 import { buy } from "../core/shop";
 import { COPPER_ORE } from "../core/ore";
-import { crackGeode, CRACK_FEE, GEODE } from "../core/geodes";
+import { crackGeode, CRACK_FEE, GEODE_KINDS } from "../core/geodes";
+import { sell, sellAll } from "../core/shop";
 import { handOverCopper, SMITH_STOCK } from "../core/smith";
 import {
   collectUpgrade,
@@ -112,28 +113,51 @@ export class SmithScene extends Phaser.Scene {
           },
         ],
       });
-    rows.push({
-      label: "Crack a geode",
-      detail: `${CRACK_FEE}g  have ${g.inventory.count(GEODE)}`,
-      dim: g.inventory.count(GEODE) < 1,
-      buttons: [
-        {
-          text: "Crack",
-          run: () => {
-            const r = crackGeode(g);
-            this.say(
-              r.ok
-                ? `It splits open: ${r.count} ${itemById(r.item ?? "")?.name.toLowerCase()}.`
-                : r.reason === "no geode"
-                  ? "You have no geode."
+    for (const kind of GEODE_KINDS) {
+      const have = g.inventory.count(kind);
+      if (have < 1) continue;
+      const def = itemById(kind)!;
+      rows.push({
+        label: `Crack a ${def.name.toLowerCase()}`,
+        detail: `${CRACK_FEE}g  have ${have}`,
+        buttons: [
+          {
+            text: "Crack",
+            run: () => {
+              const r = crackGeode(g, Math.random, kind);
+              this.say(
+                r.ok
+                  ? `It splits open: ${r.count} ${itemById(r.item ?? "")?.name.toLowerCase()}.`
                   : r.reason === "backpack full"
                     ? "Your backpack is full."
                     : "Not enough money.",
-            );
+              );
+            },
           },
-        },
-      ],
-    });
+        ],
+      });
+      rows.push({
+        label: `Sell a ${def.name.toLowerCase()}`,
+        detail: `${def.sellPrice}g  have ${have}`,
+        buttons: [
+          {
+            text: "Sell 1",
+            run: () => this.say(`Sold for ${sell(g.inventory, g, kind, 1)}g.`),
+          },
+          {
+            text: "Sell all",
+            run: () => this.say(`Sold for ${sellAll(g.inventory, g, kind)}g.`),
+          },
+        ],
+      });
+    }
+    if (GEODE_KINDS.every((k) => g.inventory.count(k) < 1))
+      rows.push({
+        label: "Crack or sell a geode",
+        detail: "You have none",
+        dim: true,
+        buttons: [],
+      });
     rows.push(...this.toolRows());
     this.menu.setRows(rows);
   }
