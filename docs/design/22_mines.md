@@ -468,6 +468,8 @@ mines.
 
 ## Geodes, gems and found things
 
+Drop bands and contents per geode kind are in `69_geodes_and_minerals.md`.
+
 - **Geodes** come from nodes and some creatures. The smith dwarf cracks them
   for a small fee, and the result is a gem, a stone or a found thing.
 - **Gems** sell, and go in the lamp trade. A handful feed the Storyteller's
