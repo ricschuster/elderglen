@@ -72,6 +72,11 @@ Rules that keep them apart:
 - **One trader, placeholder name "the road trader".** A halfling or human
   outsider, not a villager and not a candidate for marriage. No lore tie to the
   wardens.
+- **A shop only (owner, 2026-11-08).** The player cannot talk to the trader.
+  No dialogue, no friendship, no gifts, and no place on the valley map. Only the
+  stall and the shop screen exist. They are not one of the 30 named people
+  (`20_ring1_cast.md`). Like Stardew's Traveling Cart merchant, from memory and
+  unchecked.
 - **Visits Wednesday and Saturday (decided 2026-11-06).** A season is 28 days,
   four clean weeks of seven (`26_seasons.md`). Never more than three days
   between visits. Stalls by the Outpost steps from morning to
