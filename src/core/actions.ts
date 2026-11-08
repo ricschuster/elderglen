@@ -10,6 +10,7 @@ import { cropQuality, forageQuality, withQuality } from "./quality";
 import { FORAGE_XP, harvestXp, type Skill } from "./skills";
 import type { GameState } from "./save";
 import type { FarmMap } from "./map";
+import type { Farm } from "./farm";
 import {
   MATURE_STAGE,
   SEED_STAGE,
@@ -70,17 +71,22 @@ export function till(
   x: number,
   y: number,
   random: () => number = Math.random,
+  /** The soil dug: the farm's, or the greenhouse's. */
+  soil: Farm = g.farm,
 ): Outcome {
   if (g.day.over) return fail("exhausted");
-  if (g.trees.at(x, y) || g.fruitTrees.at(x, y))
-    return fail("a tree is in the way");
-  if (g.weeds.at(x, y)) return fail("a weed is in the way");
-  if (g.twigs.at(x, y)) return fail("a twig is in the way");
-  if (g.sprinklers.at(x, y)) return fail("a sprinkler is in the way");
-  if (g.machines.at(x, y)) return fail("a machine is in the way");
-  if (g.chests.onFarm(x, y)) return fail("a chest is in the way");
-  if (!g.farm.till(x, y)) return fail("already tilled");
-  if (isRaining(g.weather)) g.farm.water(x, y);
+  // Trees, weeds and the rest stand on the farm's tiles, not the greenhouse's.
+  if (!soil.indoors) {
+    if (g.trees.at(x, y) || g.fruitTrees.at(x, y))
+      return fail("a tree is in the way");
+    if (g.weeds.at(x, y)) return fail("a weed is in the way");
+    if (g.twigs.at(x, y)) return fail("a twig is in the way");
+    if (g.sprinklers.at(x, y)) return fail("a sprinkler is in the way");
+    if (g.machines.at(x, y)) return fail("a machine is in the way");
+    if (g.chests.onFarm(x, y)) return fail("a chest is in the way");
+  }
+  if (!soil.till(x, y)) return fail("already tilled");
+  if (!soil.indoors && isRaining(g.weather)) soil.water(x, y);
   swing(g, "hoe");
   if (
     dateOf(g.day.clock.day).season === "winter" &&
@@ -97,12 +103,17 @@ export function till(
   return { ok: true };
 }
 
-export function water(g: GameState, x: number, y: number): Outcome {
+export function water(
+  g: GameState,
+  x: number,
+  y: number,
+  soil: Farm = g.farm,
+): Outcome {
   if (g.day.over) return fail("exhausted");
-  const plot = g.farm.plotAt(x, y);
+  const plot = soil.plotAt(x, y);
   if (!plot) return fail("nothing to water");
   if (plot.wateredToday) return fail("already watered");
-  g.farm.water(x, y);
+  soil.water(x, y);
   swing(g, "can");
   return { ok: true };
 }
@@ -114,19 +125,20 @@ export function plant(
   y: number,
   seed: string,
   random: () => number = Math.random,
+  soil: Farm = g.farm,
 ): Outcome {
   if (g.day.over) return fail("exhausted");
   const season = dateOf(g.day.clock.day).season;
-  // A mixed seed grows a random crop that suits the season.
-  const fits = CROPS.filter((c) => c.seasons.includes(season));
+  // A mixed seed grows a random crop that suits the season (any, indoors).
+  const fits = CROPS.filter((c) => soil.indoors || c.seasons.includes(season));
   const cropId =
     seed === MIXED_SEED
       ? fits[Math.floor(random() * fits.length)]?.id
       : cropOfSeed(seed);
   if (!cropId) return fail("not a seed");
   if (g.inventory.count(seed) < 1) return fail("no seeds");
-  if (g.weeds.at(x, y)) return fail("a weed is in the way");
-  if (!g.farm.plant(x, y, cropId, season)) return fail("cannot plant here");
+  if (!soil.indoors && g.weeds.at(x, y)) return fail("a weed is in the way");
+  if (!soil.plant(x, y, cropId, season)) return fail("cannot plant here");
   g.inventory.remove(seed);
   return { ok: true };
 }
@@ -137,11 +149,12 @@ export function fertilize(
   x: number,
   y: number,
   id: string,
+  soil: Farm = g.farm,
 ): Outcome {
   if (g.day.over) return fail("exhausted");
   if (!fertilizerById(id)) return fail("not a fertilizer");
   if (g.inventory.count(id) < 1) return fail("no fertilizer");
-  const why = g.farm.fertilize(x, y, id);
+  const why = soil.fertilize(x, y, id);
   if (why) return fail(why);
   g.inventory.remove(id);
   return { ok: true };
@@ -152,21 +165,22 @@ export function harvest(
   x: number,
   y: number,
   random: () => number = Math.random,
+  soil: Farm = g.farm,
 ): Outcome {
   if (g.day.over) return fail("exhausted");
-  const cropId = g.farm.plotAt(x, y)?.crop?.id;
-  if (!cropId || !g.farm.isRipe(x, y)) return fail("nothing ripe");
+  const cropId = soil.plotAt(x, y)?.crop?.id;
+  if (!cropId || !soil.isRipe(x, y)) return fail("nothing ripe");
   const item = withQuality(
     cropId,
     cropQuality(
       g.skills.level("farming"),
       random(),
-      qualityLevelOf(g.farm.plotAt(x, y)?.fertilizer),
+      qualityLevelOf(soil.plotAt(x, y)?.fertilizer),
     ),
   );
   const count = cropById(cropId)?.yield ?? 1;
   if (g.inventory.room(item) < count) return fail("backpack full");
-  g.farm.harvest(x, y);
+  soil.harvest(x, y);
   g.inventory.add(item, count);
   noteGathered(g, item, count);
   const price = cropById(cropId)?.sellPrice ?? 0;

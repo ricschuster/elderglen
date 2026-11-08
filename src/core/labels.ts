@@ -13,6 +13,7 @@ const EXITS: Record<string, string> = {
   cellar: "Cellar stairs",
   stairs: "Stairs up",
   coop: "Coop",
+  greenhouse: "Greenhouse",
   barn: "Barn",
 };
 

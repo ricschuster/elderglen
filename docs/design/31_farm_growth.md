@@ -139,3 +139,28 @@ part that is pure loss. Everything else is a reward the player chooses.
   dehydrator as in Stardew, and the dehydrator is a new machine
   (`66_fall_winter_festivals_and_farm_cave.md`, 2026-11-07).
 - Sap and fiber drops are settled in `36_gathering_trees_sap_fiber.md`.
+
+## Built: the greenhouse (#602, 2026-11-08)
+
+- **Where.** A ruin on the farm at tiles 13 to 18 by 2 to 5, left of centre in the
+  north (note 55), the same on every farm type. The door is the bottom row's third
+  tile (15, 5), entry below. It is drawn with a green wash and scaffold poles
+  until repaired. Using the door while it is a ruin says so.
+- **The reward.** Finishing the Larder room repairs it. There is no saved flag:
+  the `greenhouse-open` gate is read from `Hall.roomComplete("larder")`, and the
+  door checks it when used, so finishing at the hall opens it the same day.
+- **Interior.** `greenhouse.json`, 20 by 18 including walls (about 18 by 16 floor,
+  note 58). A 12 by 10 soil plot with a pale earth border ring and a margin to the
+  walls, door bottom centre. The map property `indoors` marks it. No night wash.
+- **Soil.** A second `Farm` in the game state (`greenhouse`, saved as an optional
+  `greenhouse` field, so old saves load with an empty one). The farm's trees, weeds,
+  rocks, sprinklers and machines are stored by tile for the farm map and never
+  show or block indoors. The hoe, can, seeds and fertilizer work it; the axe,
+  pickaxe and everything else do nothing there.
+- **Rules.** Any crop plants in any season, winter included, and never withers when
+  the season changes. Fertilizer stays through season changes. It still needs
+  watering (rain does not reach it) and multi-harvest crops regrow as outside.
+  Quality, retaining and speed fertilizer work as on the farm.
+- **Not built.** Sprinklers on the border and fruit trees indoors: both are
+  stored by farm tile, so they need a per-map store first. Moving the greenhouse
+  at the carpenter. Tracked as follow-ups on #602.

@@ -230,8 +230,7 @@ Settled where the notes left gaps. All numbers are placeholders (note 07).
   red, bramble berry to indigo, crocus to violet. Each dye sells for 120g. Dyes
   have no other use yet: tailoring (note 10) and bundle 29 will ask for them.
   The Dyer's bundle is built in the Hearth room (4 of 6, any quality).
-- **The greenhouse is not built.** It needs its own interior map, a walled
-  plot and year round growing rules (note 68), which is a PR of its own.
+- **The greenhouse is built** (`31_farm_growth.md`, "Built (#602)").
 
 ## Left for later
 
