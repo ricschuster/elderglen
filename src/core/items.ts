@@ -117,6 +117,15 @@ items.set("sap", { id: "sap", name: "Sap", sellPrice: 2 });
 items.set("fiber", { id: "fiber", name: "Fiber", sellPrice: 1 });
 /** Eggs from the coop (note 23). Sell price and energy are from memory, placeholders. */
 items.set("egg", { id: "egg", name: "Egg", sellPrice: 50, energy: 50 });
+/** Duck and rabbit goods (note 23, slice 2). Prices are placeholders, ours. */
+items.set("duck-egg", {
+  id: "duck-egg",
+  name: "Duck egg",
+  sellPrice: 95,
+  energy: 75,
+});
+items.set("feather", { id: "feather", name: "Duck feather", sellPrice: 250 });
+items.set("wool", { id: "wool", name: "Wool", sellPrice: 340 });
 /** Mixed seeds plant a random crop that suits the season. Sell price is ours. */
 items.set("mixed-seed", {
   id: "mixed-seed",

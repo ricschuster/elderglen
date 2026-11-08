@@ -237,4 +237,21 @@ the tile rule above. This is the one allowed break, and the last one.
   the layout 3 frame as before, then adds 2 to x for any layout under 4.
 - **Tests.** Tier 1 still shows no widened tile, and every tile walkable at tier 1
   is walkable at tier 2. A layout 3 save moves right by 2.
-- **Not done.** The coop and barn are unchanged.
+- **Not done.** The barn is unchanged. The coop is built (#531, below).
+
+## Built (coop, #531, 2026-11-08)
+
+- **One map, three tiers.** `coop.json` is 22 by 8. The base layers are tier 1
+  (11 wide). `ground-t1` and `collision-t1` add the big coop (to 15 wide) and
+  `ground-t2` and `collision-t2` the deluxe one (to 22). `bounds`, `bounds-t1`
+  and `bounds-t2` clamp the camera to 11, 15 and 22 by 8.
+- **The one wall that opens.** Each new tier turns the old east wall of the
+  floor rows into floor with an open tile (as the farmhouse doorways do) and
+  puts the new wall at the new east edge. No tile is moved. The door (1, 6) and
+  the bench stay.
+- **Tier mapping.** The coop's tier 1 to 3 is map layer tier 0 to 2
+  (`coopVisibleTier`). `FarmScene.buildingTier` picks the layer set for the
+  house or the coop and reloads the map when it changes.
+- **Animals.** `COOP_SLOTS` holds twelve tiles; the first four are the base room
+  and each new tier adds four on its own new tiles, so nobody moves on upgrade.
+- **Saves.** `animals.tier` and `build.tier`. Old saves load at tier 1.

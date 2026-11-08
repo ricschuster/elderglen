@@ -370,7 +370,12 @@ stone, 3 days, holds 4. Chicken 800g, grows in 4 fed days, one egg a night (50g,
 energy 50, from memory). Silo 240 hay, hay 50g each at the carpenter, a cut weed
 gives 2. Pet +15 friendship and +32 mood, grass +8 and 255 mood, unfed -20 and
 -100, unpetted -10 and -30, slept outside halves mood. Start friendship 0, mood
-128. The rest below is not built.
+128. Slice 2 (coop tiers) built, placeholders: big coop 10000g, 400 wood, 150 stone,
+deluxe 20000g, 500 wood, 200 stone, 3 days each, holds 8 and 12. Duck 1200g,
+egg (95g) every 2 fed nights, feather (250g) in place of the egg 25 percent of
+the time at friendship 800 or more. Rabbit 8000g, wool (340g) every 4 fed
+nights. Duck egg energy 75. Auto-feeder at the deluxe tier. Sell prices are
+ours. The barn and the rest below are not built.
 
 Source: `23_animals.md`. All of these are placeholders. Stardew facts were
 checked against the Stardew Valley Wiki on 2026-10-30.
