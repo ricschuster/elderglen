@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { itemById } from "../core/items";
+import { isOre } from "../core/ore";
 import { sellMultiplier } from "../core/professions";
 import type { GameState } from "../core/save";
 import { frame, Menu, type Row } from "./panel";
@@ -26,6 +27,8 @@ export class BinScene extends Phaser.Scene {
   private money!: Phaser.GameObjects.Text;
   private message!: Phaser.GameObjects.Text;
   private pays!: Phaser.GameObjects.Text;
+  /** True at the mine hall, where only raw ore can be shipped (note 22). */
+  private oreOnly = false;
   private column: 0 | 1 = 0;
   private prompt: Prompt | undefined;
   private promptObjects: Phaser.GameObjects.GameObject[] = [];
@@ -34,7 +37,8 @@ export class BinScene extends Phaser.Scene {
     super("bin");
   }
 
-  init(): void {
+  init(data?: { oreOnly?: boolean }): void {
+    this.oreOnly = data?.oreOnly === true;
     this.state = this.registry.get(STATE_KEY) as GameState;
     this.column = 0;
     this.prompt = undefined;
@@ -42,7 +46,11 @@ export class BinScene extends Phaser.Scene {
   }
 
   create(): void {
-    const { money, message } = frame(this, "Shipping bin", () => this.back());
+    const { money, message } = frame(
+      this,
+      this.oreOnly ? "Ore bin" : "Shipping bin",
+      () => this.back(),
+    );
     this.money = money;
     this.message = message;
     this.pays = this.add.text(24, 440, "", {
@@ -119,7 +127,10 @@ export class BinScene extends Phaser.Scene {
 
   private ship(id: string, n: number): void {
     const g = this.state;
-    const sent = g.bin.ship(g.inventory, id, n, sellMultiplier(g.skills, id));
+    const mult = sellMultiplier(g.skills, id);
+    const sent = this.oreOnly
+      ? g.bin.shipOre(g.inventory, id, n, mult)
+      : g.bin.ship(g.inventory, id, n, mult);
     this.say(
       sent > 0
         ? `Shipped ${sent} ${this.name(id)}.`
@@ -135,7 +146,8 @@ export class BinScene extends Phaser.Scene {
     const ids: string[] = [];
     for (let i = 0; i < g.inventory.size; i++) {
       const slot = g.inventory.slot(i);
-      if (slot && !ids.includes(slot.id)) ids.push(slot.id);
+      if (slot && !ids.includes(slot.id) && (!this.oreOnly || isOre(slot.id)))
+        ids.push(slot.id);
     }
     const packRows: Row[] = ids.map((id) => {
       const def = itemById(id);
@@ -159,7 +171,13 @@ export class BinScene extends Phaser.Scene {
     this.packMenu.setRows(
       packRows.length > 0
         ? packRows
-        : [{ label: "Nothing to ship.", dim: true, buttons: [] }],
+        : [
+            {
+              label: this.oreOnly ? "No ore to ship." : "Nothing to ship.",
+              dim: true,
+              buttons: [],
+            },
+          ],
     );
 
     const binRows: Row[] = g.bin.each().map((line, index) => ({

@@ -137,7 +137,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     furnace: new Furnace(),
     bin: new ShippingBin(),
     skills: new Skills(),
-    toolTiers: { hoe: 0, can: 0, pickaxe: 0 },
+    toolTiers: { hoe: 0, can: 0, pickaxe: 0, axe: 0 },
     toolOrder: undefined,
     hall: new Hall(),
     houseTier: 0,

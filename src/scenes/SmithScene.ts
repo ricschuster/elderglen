@@ -140,7 +140,12 @@ export class SmithScene extends Phaser.Scene {
   /** The tool upgrade rows: hand a tool over, or collect it (note 44). */
   private toolRows(): Row[] {
     const g = this.state;
-    const names = { hoe: "Hoe", can: "Watering can", pickaxe: "Pickaxe" };
+    const names = {
+      hoe: "Hoe",
+      can: "Watering can",
+      pickaxe: "Pickaxe",
+      axe: "Axe",
+    };
     const order = g.toolOrder;
     const rows: Row[] = [];
     if (order && orderReady(g))

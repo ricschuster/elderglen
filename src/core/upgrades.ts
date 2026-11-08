@@ -3,8 +3,8 @@ import { itemById } from "./items";
 import type { GameState } from "./save";
 import type { Wallet } from "./shop";
 
-/** The tools that can be upgraded, and what each tier is called. The axe has no ladder yet. */
-export const UPGRADABLE = ["hoe", "can", "pickaxe"] as const;
+/** The tools that can be upgraded, and what each tier is called. */
+export const UPGRADABLE = ["hoe", "can", "pickaxe", "axe"] as const;
 export type Upgradable = (typeof UPGRADABLE)[number];
 export const TIER_NAMES = ["Basic", "Copper", "Steel", "Gold"] as const;
 export const MAX_TIER = TIER_NAMES.length - 1;

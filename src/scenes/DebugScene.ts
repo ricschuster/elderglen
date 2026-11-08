@@ -165,6 +165,13 @@ export class DebugScene extends Phaser.Scene {
               this.say("");
             },
           },
+          {
+            text: "Storm",
+            run: () => {
+              setWeather(g, "stormy");
+              this.say("");
+            },
+          },
         ],
       },
       {

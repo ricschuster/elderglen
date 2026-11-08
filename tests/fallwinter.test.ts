@@ -8,7 +8,7 @@ import { FORAGE, ForageField, RARE_CHANCE } from "../src/core/forage";
 import { itemById, seedId } from "../src/core/items";
 import { newGame } from "../src/core/save";
 import { seedStock } from "../src/core/shop";
-import { rollWeather, SNOW_CHANCE } from "../src/core/weather";
+import { rollWeather, SNOW_CHANCE, STORM_SHARE } from "../src/core/weather";
 
 const dayOf = (season: string, d: number) =>
   SEASONS.indexOf(season as never) * DAYS_PER_SEASON + d;
@@ -41,9 +41,15 @@ describe("the four seasons", () => {
     expect(rollWeather("winter", 5, () => SNOW_CHANCE - 0.01)).toBe("snowy");
     expect(rollWeather("winter", 5, () => SNOW_CHANCE)).toBe("sunny");
     expect(rollWeather("winter", 5, () => 0)).not.toBe("rainy");
-    expect(rollWeather("fall", 5, () => 0)).toBe("rainy");
+    expect(rollWeather("fall", 5, seq(0, STORM_SHARE))).toBe("rainy");
   });
 });
+
+/** A random source that returns the given values in turn. */
+function seq(...values: number[]) {
+  let i = 0;
+  return () => values[i++] ?? 0;
+}
 
 describe("fall crops", () => {
   it("has the six fall crops and corn into fall", () => {

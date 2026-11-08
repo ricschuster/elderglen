@@ -17,6 +17,7 @@ const EXITS: Record<string, string> = {
 const SERVICES: Record<string, string> = {
   shop: "Shop",
   bin: "Shipping Bin",
+  "ore-bin": "Ore Bin",
   furnace: "Furnace",
   bed: "Bed",
   carpenter: "Carpenter",

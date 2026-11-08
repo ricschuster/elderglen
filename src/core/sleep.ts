@@ -1,6 +1,6 @@
 import { dateOf, type Season } from "./calendar";
 import { growthRate } from "./professions";
-import { rollWeather, type Weather } from "./weather";
+import { isRaining, rollWeather, type Weather } from "./weather";
 import type { Spot } from "./forage";
 import type { GameState } from "./save";
 import type { FarmMap } from "./map";
@@ -109,7 +109,7 @@ export function sleep(
   g.weather = g.tomorrow;
   const next = dateOf(g.day.clock.day + 1);
   g.tomorrow = rollWeather(next.season, next.dayOfSeason, random);
-  if (g.weather === "rainy") g.farm.waterAll();
+  if (isRaining(g.weather)) g.farm.waterAll();
   g.sprinklers.water(g.farm);
   g.trees.endDay(
     season,

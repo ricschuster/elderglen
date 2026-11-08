@@ -14,8 +14,8 @@ bars. The charcoal kiln is built as a machine (2026-11-07, note 24). The Smith's
 (2026-11-07, session e): a placeable machine, mining level 4, 20 copper ore and 25
 stone, 5 ore and 1 coal a bar. Old Greencoat's door scene (placeholder words, no
 portrait) and the camp chest on floor 10 (a daily gift, take only, no bench) are built
-(session e). Geodes are built (session e): a node that takes 3 swings, 5 percent of rocks on floors 1 to 10, cracked by the smith for 25g into a stone, ore, quartz, a placeholder gem or a found thing (`src/content/geodes.json`); Rockhound adds an extra geode from plain rock. The gem list, found things, clay and the Glimmerstone are not written. Not built: the mine hall's ore-only bin,
-and everything from slice 3 on. The mine hall and the mine door are placeholders
+(session e). Geodes are built (session e): a node that takes 3 swings, 5 percent of rocks on floors 1 to 10, cracked by the smith for 25g into a stone, ore, quartz, a placeholder gem or a found thing (`src/content/geodes.json`); Rockhound adds an extra geode from plain rock. The gem list, found things, clay and the Glimmerstone are not written. The mine hall's ore-only bin is built (#522): a service tile in `mine.json` that opens the shipping bin screen with raw ore only (copper, iron and gold ore; bars, stone and coal are refused, placeholder), into the same bin and nightly payment. Not built:
+everything from slice 3 on. The mine hall and the mine door are placeholders
 on the farm until the Mountain exists (note 19). Everything else is unbuilt. It answers the design half of the mines item in
 `16_bundles.md` and feeds the fifth tool tier (#194).
 

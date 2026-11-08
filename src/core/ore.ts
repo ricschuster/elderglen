@@ -74,3 +74,6 @@ export const BARS: BarDef[] = [
 
 export const barById = (id: string): BarDef | undefined =>
   BARS.find((b) => b.id === id);
+
+/** True for a raw ore, the only goods the mine hall's bin takes (note 22). Bars, stone and coal are not ore. */
+export const isOre = (id: string): boolean => ORES.some((o) => o.id === id);

@@ -1,4 +1,4 @@
-import type { Weather } from "./weather";
+import { isRaining, type Weather } from "./weather";
 
 /**
  * Weeds on the player's farm (`docs/design/29_weeds.md` and
@@ -89,12 +89,11 @@ export class Weeds {
       this.clear();
       return;
     }
-    const chance =
-      weather === "rainy"
-        ? RAIN_SPREAD_CHANCE
-        : season === "summer"
-          ? SUMMER_SPREAD_CHANCE
-          : SPREAD_CHANCE;
+    const chance = isRaining(weather)
+      ? RAIN_SPREAD_CHANCE
+      : season === "summer"
+        ? SUMMER_SPREAD_CHANCE
+        : SPREAD_CHANCE;
     const open = (x: number, y: number) => !this.at(x, y) && free(x, y);
     // A weed that spread tonight does not spread again tonight.
     for (const w of [...this.weeds.values()]) {

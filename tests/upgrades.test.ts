@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { till, TOOL_ENERGY } from "../src/core/actions";
+import { chop, till, TOOL_ENERGY } from "../src/core/actions";
 import { MAX_ENERGY } from "../src/core/energy";
 import { deserialize, newGame, serialize } from "../src/core/save";
 import {
@@ -48,6 +48,7 @@ describe("tool upgrades", () => {
       hoe: 0,
       can: 3,
       pickaxe: 0,
+      axe: 0,
     });
     const raw = JSON.parse(serialize(g));
     delete raw.toolTiers;
@@ -55,6 +56,7 @@ describe("tool upgrades", () => {
       hoe: 0,
       can: 0,
       pickaxe: 0,
+      axe: 0,
     });
   });
 });
@@ -171,5 +173,32 @@ describe("the smith's tool upgrades", () => {
     expect(mine(g, 4, 4, undefined, () => 0.9).ok).toBe(true);
     expect(g.rocks.at(4, 4)).toBeUndefined();
     expect(e - g.day.energy.current).toBe(1.25);
+  });
+
+  it("upgrades the axe through the smith and fells trees in fewer swings", () => {
+    const g = newGame();
+    g.money = 5000;
+    g.inventory.add("copper-bar", 5);
+    expect(orderUpgrade(g, "axe")).toBeUndefined();
+    expect(toolAway(g, "axe")).toBe(true);
+    g.day.clock.day += 2;
+    expect(collectUpgrade(g)).toBe("axe");
+    expect(g.toolTiers.axe).toBe(1);
+    g.trees.load([]);
+    g.trees.add(1, 0, 5);
+    for (let i = 0; i < 7; i++) chop(g, 1, 0, () => 0.99);
+    expect(g.inventory.count("wood")).toBe(0);
+    chop(g, 1, 0, () => 0.99);
+    expect(g.inventory.count("wood")).toBe(12);
+  });
+
+  it("swings the axe for less energy by grade", () => {
+    const g = newGame();
+    g.toolTiers.axe = 2;
+    g.trees.load([]);
+    g.trees.add(1, 0, 5);
+    const e = g.day.energy.current;
+    chop(g, 1, 0, () => 0.99);
+    expect(e - g.day.energy.current).toBe(1.5);
   });
 });
