@@ -2,7 +2,7 @@
 
 Status: proposed 2026-10-28. The structure, unlocks, rules and the Last Seat
 were decided with the owner in conversation. Every item, count and reward below
-is a placeholder to be tuned. Ten of the 30 are built in the game (2026-11-07, `35_bundle_pools.md`: bundles 1, 2, 4, 5, 7, 8, 9, 10, 12 and 19, some with stand-in pools); the rest are not. It answers
+is a placeholder to be tuned. Twelve of the 30 are built in the game (2026-11-07, `35_bundle_pools.md`: bundles 1, 2, 4, 5, 7, 8, 9, 10, 12 and 19, some with stand-in pools; and 11 and 21 on 2026-11-08, pools from `63_bundle_pools_part_two.md`, giving the cheese press and the loom); the rest are not. It answers
 issue #21 (bundle format for centre 1) and extends the five-bundle first
 playable described in `03_milestones.md` and `07_tuning_numbers.md`.
 

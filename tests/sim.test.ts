@@ -38,7 +38,12 @@ describe("headless sim", () => {
 
   it("names the bundles it does not play, all of which exist", () => {
     // Artisan Goods needs jar and bee house runs and an orchard the bot lacks.
-    expect(UNPLAYED_BUNDLES).toEqual(["artisan-goods"]);
+    // The bot keeps no animals, so the two animal bundles are unplayed too.
+    expect(UNPLAYED_BUNDLES).toEqual([
+      "artisan-goods",
+      "animal-goods",
+      "weavers",
+    ]);
     for (const id of UNPLAYED_BUNDLES)
       expect(
         BUNDLES.some((b) => b.id === id),

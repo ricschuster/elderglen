@@ -601,6 +601,27 @@ the farm growth section above; these are the rest.
   is in the data for when that bundle exists), basic fertilizer Farming 1, basic
   retaining soil Farming 4.
 
+## Animal-goods machines (2026-11-08, ours, placeholders)
+
+Source: `24_processing_and_cooking.md`. Code: `processing.ts`, `artisan.ts`.
+
+- Times (Stardew's minutes): cheese press 200, mayonnaise machine 180, loom 240,
+  oil maker 360 for a truffle and 1,000 for corn. One input, one output.
+- Goods: cheese 300g (milk 125), goat cheese 540g (goat milk 225), mayonnaise
+  150g (egg 50), duck mayonnaise 285g (duck egg 95), cloth 470g, truffle oil
+  1,250g (truffle 625), oil 100g. Quality is ignored, except wool.
+- Cloth: one wool makes 1 cloth, or 2 with a chance by wool quality: normal 0,
+  silver 25 percent, gold 50 percent. Moonwool is not loomed yet.
+- Machine sell prices: cheese press 200g, mayonnaise machine 200g, loom 250g,
+  oil maker 300g.
+- Craft costs: cheese press 45 wood, 45 stone, 1 copper bar; mayonnaise machine
+  15 wood, 15 stone, 1 quartz crystal, 1 copper bar; loom 60 wood, 30 fiber, 1
+  sap; oil maker 50 wood, 10 coal, 1 gold bar (Stardew's lists with our items
+  swapped in). Sources: farming 2 (mayonnaise), 6 (press), 7 (loom), 8 (oil
+  maker), and bundles 11 and 21 for the press and loom.
+- Bundle 11 (Animal Goods, larder): 4 of egg, duck egg, milk, goat milk, wool.
+  Bundle 21 (Weaver's, hearth): 8 wool and 20 fiber.
+
 ## Desktop mouse (2026-11-02)
 
 Placeholders, not checked against Stardew (`46_desktop_mouse.md`).

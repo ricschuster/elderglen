@@ -102,8 +102,12 @@ const BED_TIME = 24 * 60;
  * not the whole hall. Real play of the whole hall is covered by
  * `tests/bundles.test.ts`.
  */
-export const UNPLAYED_BUNDLES: readonly string[] =
-  ARTISAN_MODE === "off" ? ["artisan-goods"] : [];
+export const UNPLAYED_BUNDLES: readonly string[] = [
+  ...(ARTISAN_MODE === "off" ? ["artisan-goods"] : []),
+  // The bot keeps no animals, so it cannot fill the animal-goods bundles.
+  "animal-goods",
+  "weavers",
+];
 
 /** Share of a harvest that is silver or better at a farming level, with plain soil (`cropQuality`). Floored so early planning stays sane. */
 const silverShare = (level: number) =>

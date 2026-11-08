@@ -144,6 +144,7 @@ describe("crafting", () => {
       "basic-fertilizer",
       "chest",
       "stone-chest",
+      "mayonnaise-machine",
     ]);
   });
 

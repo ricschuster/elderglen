@@ -20,7 +20,7 @@ import { CATEGORY_NAMES, type ArtisanCategory } from "../src/core/artisan";
 import { fillHall } from "./hall-helpers";
 
 describe("bundle data", () => {
-  it("has the ten slice 1 bundles with known items and sane requirements", () => {
+  it("has the twelve built bundles with known items and sane requirements", () => {
     expect(BUNDLES.map((b) => b.id)).toEqual([
       "spring-foraging",
       "summer-foraging",
@@ -30,8 +30,10 @@ describe("bundle data", () => {
       "summer-crops",
       "autumn-crops",
       "quality-crops",
+      "animal-goods",
       "artisan-goods",
       "smiths",
+      "weavers",
     ]);
     for (const b of BUNDLES) {
       expect(b.required).toBeGreaterThanOrEqual(1);
@@ -464,6 +466,12 @@ describe("the slice 1 hall", () => {
       "jam",
       "pickles",
       "honey",
+      // Animal goods come from the coop and barn (note 23).
+      "egg",
+      "duck-egg",
+      "milk",
+      "goat-milk",
+      "wool",
     ]);
     for (const b of BUNDLES) {
       const fillable = b.items.filter((i) => supplied.has(i.id)).length;

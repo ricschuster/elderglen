@@ -11,7 +11,8 @@ import { splitQuality } from "./quality";
  * 2.25 x base, wild honey 100g, mead 300g. Input quality is ignored. Pure data.
  */
 export type ArtisanKind = "jam" | "pickles" | "wine" | "juice" | "dried";
-export type ArtisanCategory = ArtisanKind | "honey" | "mead";
+export type ArtisanCategory =
+  ArtisanKind | "honey" | "mead" | "cheese" | "mayonnaise" | "cloth" | "oil";
 
 export interface ArtisanDef {
   id: string;
@@ -34,6 +35,10 @@ export const CATEGORY_NAMES: Record<ArtisanCategory, string> = {
   honey: "Honey",
   mead: "Mead",
   dried: "Any dried goods",
+  cheese: "Any cheese",
+  mayonnaise: "Any mayonnaise",
+  cloth: "Cloth",
+  oil: "Any oil",
 };
 
 /** Price rule per kind, from the base price of the input. */
@@ -130,6 +135,38 @@ defs.set(HONEY, {
   sellPrice: 100,
 });
 defs.set(MEAD, { id: MEAD, name: "Mead", category: "mead", sellPrice: 300 });
+
+/**
+ * Animal goods and oil (note 24, slice 4): cheese, mayonnaise, cloth and oil.
+ * Prices are ours, placeholders (note 07): about 2.4 to 3 times the raw good.
+ */
+export const CHEESE = "cheese";
+export const GOAT_CHEESE = "goat-cheese";
+export const MAYONNAISE = "mayonnaise";
+export const DUCK_MAYONNAISE = "duck-mayonnaise";
+export const CLOTH = "cloth";
+export const TRUFFLE_OIL = "truffle-oil";
+export const OIL = "oil";
+for (const d of [
+  { id: CHEESE, name: "Cheese", category: "cheese", sellPrice: 300 },
+  { id: GOAT_CHEESE, name: "Goat cheese", category: "cheese", sellPrice: 540 },
+  {
+    id: MAYONNAISE,
+    name: "Mayonnaise",
+    category: "mayonnaise",
+    sellPrice: 150,
+  },
+  {
+    id: DUCK_MAYONNAISE,
+    name: "Duck mayonnaise",
+    category: "mayonnaise",
+    sellPrice: 285,
+  },
+  { id: CLOTH, name: "Cloth", category: "cloth", sellPrice: 470 },
+  { id: TRUFFLE_OIL, name: "Truffle oil", category: "oil", sellPrice: 1250 },
+  { id: OIL, name: "Oil", category: "oil", sellPrice: 100 },
+] satisfies ArtisanDef[])
+  defs.set(d.id, d);
 
 /** Every artisan good the game can make. */
 export const ARTISAN_GOODS: readonly ArtisanDef[] = [...defs.values()];
