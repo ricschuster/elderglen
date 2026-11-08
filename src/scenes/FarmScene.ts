@@ -380,6 +380,11 @@ export class FarmScene extends Phaser.Scene {
         openCraft: () => this.open("crafting"),
         openHats: () => this.open("hats"),
         endDay: () => this.endDay(),
+        toggleHints: () => {
+          settings.showHints = !settings.showHints;
+          this.hud.setHintsShown(settings.showHints);
+          saveSettings(browserSettingsStore, settings);
+        },
         openDebug: () => this.open("debug"),
         nextSlot: () =>
           this.select(cycle(this.selected, 1, toolbarSize(this.state))),
