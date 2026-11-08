@@ -1,5 +1,6 @@
 import { fertilizerById } from "../core/fertilizer";
 import Phaser from "phaser";
+import { saveSettings } from "../core/bindings";
 import { sleep } from "../core/sleep";
 import { stageOf as fruitStageOf } from "../core/fruittrees";
 import type { GameState } from "../core/save";
@@ -29,7 +30,11 @@ import {
 import { aimAt } from "../core/aim";
 import { createControls, type Controls } from "./controls";
 import { planTap, type TapPlan } from "../core/pathing";
-import { browserStore, loadDeviceSettings } from "./storage";
+import {
+  browserSettingsStore,
+  browserStore,
+  loadDeviceSettings,
+} from "./storage";
 import { saveGame } from "../core/save";
 import { absoluteMinutes } from "../core/furnace";
 import { jobDone, statusText } from "../core/machines";
@@ -93,7 +98,16 @@ import { giveItem, giveMoney } from "../core/debug";
 import { pickupRadius } from "../core/ground";
 import { Hud, HUD_FIT_W } from "./hud";
 import { UI_SIZE_KEY, WORLD_ZOOM_KEY } from "./panel";
-import { cameraBounds, cornerScroll, hudScale, worldZoom } from "../core/view";
+import {
+  cameraBounds,
+  cornerScroll,
+  hudScale,
+  pinchPercent,
+  stepPercent,
+  worldZoom,
+  ZOOM_MAX,
+  ZOOM_MIN,
+} from "../core/view";
 import {
   makePlaceholderTextures,
   PLAYER_KEY,
@@ -361,6 +375,8 @@ export class FarmScene extends Phaser.Scene {
       this.scale.off(Phaser.Scale.Events.RESIZE, relayout);
       this.events.off(Phaser.Scenes.Events.RESUME, relayout);
     });
+
+    this.initZoomControl();
 
     // The mouse (note 46): moving the cursor hands it the aim, left-click uses
     // the held tool, right-click is Action. Touch pointers never count, and
@@ -869,6 +885,66 @@ export class FarmScene extends Phaser.Scene {
 
   private leave(exit: Exit): void {
     this.travel(exit.map, exit.entry);
+  }
+
+  /**
+   * In game zoom (note 64): the minus and plus keys step it, and two fingers
+   * pinch it. Both apply at once and save for this device.
+   */
+  private initZoomControl(): void {
+    const current = (): number =>
+      (this.registry.get(WORLD_ZOOM_KEY) as number | undefined) ?? 100;
+    const apply = (percent: number, save: boolean): void => {
+      if (percent === current()) return;
+      this.registry.set(WORLD_ZOOM_KEY, percent);
+      this.layoutView();
+      if (save) {
+        const s = loadDeviceSettings();
+        s.worldZoom = percent;
+        saveSettings(browserSettingsStore, s);
+      }
+    };
+    const keys = this.input.keyboard;
+    const onKey = (e: KeyboardEvent): void => {
+      if (e.repeat) return;
+      if (e.code === "Minus" || e.code === "NumpadSubtract") {
+        apply(stepPercent(current(), -1, ZOOM_MIN, ZOOM_MAX), true);
+      } else if (e.code === "Equal" || e.code === "NumpadAdd") {
+        apply(stepPercent(current(), 1, ZOOM_MIN, ZOOM_MAX), true);
+      }
+    };
+    keys?.on("keydown", onKey);
+
+    let startDist = 0;
+    let startPercent = 100;
+    const fingers = (): Phaser.Input.Pointer[] =>
+      this.input.manager.pointers.filter((p) => p.isDown && p.wasTouch);
+    const onMove = (): void => {
+      const [a, b] = fingers();
+      if (!a || !b) return;
+      const dist = Phaser.Math.Distance.Between(a.x, a.y, b.x, b.y);
+      if (startDist === 0) {
+        startDist = dist;
+        startPercent = current();
+        return;
+      }
+      apply(pinchPercent(startPercent, startDist, dist), false);
+    };
+    const onUp = (): void => {
+      if (startDist > 0 && fingers().length < 2) {
+        startDist = 0;
+        const s = loadDeviceSettings();
+        s.worldZoom = current();
+        saveSettings(browserSettingsStore, s);
+      }
+    };
+    this.input.on("pointermove", onMove);
+    this.input.on("pointerup", onUp);
+    this.events.once("shutdown", () => {
+      keys?.off("keydown", onKey);
+      this.input.off("pointermove", onMove);
+      this.input.off("pointerup", onUp);
+    });
   }
 
   /**
