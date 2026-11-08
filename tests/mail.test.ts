@@ -32,7 +32,7 @@ describe("mail", () => {
     expect(new Set(LETTERS.map((l) => l.id)).size).toBe(LETTERS.length);
     for (const l of LETTERS) {
       expect(l.sender && l.title && l.body, l.id).toBeTruthy();
-      expect(`${l.title}${l.body}`).not.toContain("—");
+      expect(`${l.title}${l.body}`).not.toContain(String.fromCharCode(0x2014));
     }
   });
 
