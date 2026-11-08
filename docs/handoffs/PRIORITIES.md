@@ -21,9 +21,10 @@ Start each session by asking which item to take.
    (audio plan: #527).
 4. **Ring 2 shape and travel** (#20, M5). Parked until slice 3 is played.
 
-Next session (handoff 2026-11-08b): finish the Artisan Goods calibration in the
-sim bot (the bot plays it opt-in, the early orchard purchase disturbs other
-bundles), then build #550 (tier 2 widening, designed in note 68).
+Built on 2026-11-08 (handoff 2026-11-08c): Artisan Goods calibration in the sim
+bot (owner: accept year two, keep the 4000g sapling) and the tier 2 widening
+(#550). Next: pick from the list above, the completion tracker (#196) design
+note first. Tap-to-move on a tablet is still unplayed (#523).
 
 Built on 2026-11-08 (handoff 2026-11-08a): tap-to-move as the default tablet
 scheme (#546), button-only shops (#545), tool reach 1 (#547). Queued from owner
