@@ -66,6 +66,13 @@ export interface Row {
   buttons: RowButton[];
 }
 
+/**
+ * Row height that keeps rows and their buttons at or above the 40 px touch
+ * floor once the canvas is scaled down on a tablet (row box is this minus 4,
+ * button box this minus 6).
+ */
+export const TOUCH_ROW_H = 52;
+
 export interface MenuOptions {
   x: number;
   y: number;

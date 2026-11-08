@@ -3,7 +3,7 @@ import { itemById } from "../core/items";
 import { isOre } from "../core/ore";
 import { sellMultiplier } from "../core/professions";
 import type { GameState } from "../core/save";
-import { frame, Menu, type Row } from "./panel";
+import { frame, Menu, TOUCH_ROW_H, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 import { WINDOW_FILL } from "./panel";
 
@@ -68,14 +68,16 @@ export class BinScene extends Phaser.Scene {
       y: 64,
       w: 450,
       title: "Backpack",
-      visible: 8,
+      visible: 7,
+      rowH: TOUCH_ROW_H,
     });
     this.binMenu = new Menu(this, {
       x: 490,
       y: 64,
       w: 446,
       title: "Shipped today",
-      visible: 8,
+      visible: 7,
+      rowH: TOUCH_ROW_H,
     });
     const kb = this.input.keyboard;
     const free = (f: () => void) => () => {
