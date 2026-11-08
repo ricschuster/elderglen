@@ -183,6 +183,40 @@ Action. The free dehydrator lives in the cave as its own state, not in the
 farm's machine list, so it needs no map awareness in `Machines`. The villager's
 name is still open, so the screen says "a neighbour".
 
+## Layout addendum: festival maps (2026-11-08)
+
+Decided with the owner on 2026-11-08, each as Stardew does (saved Stardew
+Valley Fair and Spirit's Eve pages, read the same day). Not built: the festival
+screens stay until the maps exist.
+
+1. **The Harvest Showing uses the village green map, shops locked
+   (Stardew).** Stardew holds its fair in the town square with every home and
+   shop outside it locked. Ours does the same: the display table, the judge and
+   the prize counter stand on the green, and no new map is drawn for the
+   Showing. Villagers use festival spots. The player is returned to the farm
+   when they leave.
+2. **Hollow Eve has its own hedge map, beside the green (Stardew).** The player
+   goes to the green after dark and walks into the maze from there. A booth
+   stands at the maze entrance, as Pierre's does in Stardew, and sells the
+   fall decor (a carved gourd lamp and two furniture pieces).
+3. **Two mazes, by year (Stardew).** An odd-year maze that is small and simple,
+   and a larger one in even years. This brings back the second maze note 66
+   had parked. The current 19 by 15 grid in `src/content/maze.json` is the
+   odd-year maze. The even-year maze is new and larger, with a different
+   layout. The two prizes are two chests: the first-year unique reward in odd
+   years and a better one in even years (the even-year reward is open).
+4. **A hidden passage and a shortcut back (Stardew).** A gap in the hedge, found
+   by looking, leads to the chest room in each maze, and a shortcut after the
+   chest sends the player back to the entrance. Stardew's odd-year maze has
+   both. Our maze keeps its no-dead-end rule: the hidden gap is the shorter way,
+   not the only way, so nobody is stuck on a tablet.
+5. **Villagers stand inside the maze, one line each (Stardew).** A few at the
+   scares, as note 66 already says. The Showing's villagers stand on the green.
+
+Open: the even-year maze layout and reward, the hidden gap's tell (a lantern
+out of line is the proposal), festival spots for villagers on the green, and
+the green map's festival props. These need the village map from note 56.
+
 ## Still open
 
 - The villager who asks to use the cave, and the Hollow Eve first-time hat.
