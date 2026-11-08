@@ -13,6 +13,7 @@ import {
   pickFruit,
   plantTree,
   shake,
+  gatherMoss,
   till,
   water,
   type Outcome,
@@ -67,6 +68,11 @@ export function useHeld(
     g.machines.at(x, y)
   )
     return handOnMachine(g, x, y);
+  // Any tool gathers moss from a mossy mature tree in one use, no chop.
+  if (held.kind === "tool" && g.trees.at(x, y)?.moss) {
+    const moss = gatherMoss(g, x, y);
+    if (moss.ok || moss.reason !== "nothing to shake") return moss;
+  }
   if (held.kind === "tool" && held.tool === "pickaxe")
     return mine(g, x, y, floor);
   if (!map.hasSoil) return fail("nothing to do here");

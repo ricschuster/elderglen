@@ -15,6 +15,8 @@ import {
   MATURE_STAGE,
   SEED_STAGE,
   TREE_SEED,
+  MOSS_MIN,
+  MOSS_MAX,
   YOUNG_STAGE,
   swingsToFell,
   swingsToUproot,
@@ -486,9 +488,34 @@ export function clearSeedling(
   return { ok: true };
 }
 
-/** Shake a mature tree by hand. A loose seed falls, if the tree holds one. */
+/**
+ * Gather the moss from a mature tree with any tool or the hand: 1 to 2 moss in
+ * one use, no chopping (`docs/design/34_crafting.md`). The moss grows back
+ * later. Goods that do not fit the backpack are refused, so none are lost.
+ */
+export function gatherMoss(
+  g: GameState,
+  x: number,
+  y: number,
+  random: () => number = Math.random,
+): Outcome {
+  const t = g.trees.at(x, y);
+  if (!t || t.stump || t.stage !== MATURE_STAGE || !t.moss)
+    return fail("nothing to shake");
+  if (g.day.over) return fail("exhausted");
+  const n = MOSS_MIN + Math.floor(random() * (MOSS_MAX - MOSS_MIN + 1));
+  if (g.inventory.room("moss") < n) return fail("backpack full");
+  g.inventory.add("moss", n);
+  noteGathered(g, "moss", n);
+  delete t.moss;
+  return { ok: true, item: "moss" };
+}
+
+/** Shake a mature tree by hand. Moss comes first, else a loose seed falls. */
 export function shake(g: GameState, x: number, y: number): Outcome {
   const t = g.trees.at(x, y);
+  if (t?.moss && !t.stump && t.stage === MATURE_STAGE)
+    return gatherMoss(g, x, y);
   if (!t || t.stump || t.stage !== MATURE_STAGE || !t.seed)
     return fail("nothing to shake");
   if (g.inventory.room(TREE_SEED) < 1) return fail("backpack full");
