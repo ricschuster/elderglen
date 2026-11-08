@@ -191,10 +191,9 @@ scene is not checked.
   seed giver (5).
 - **Seed details (owner, 2026-11-08).** The seed is the **emberseed** and its
   fruit an **ember berry** (names final, plain English). The hermit gives it at
-  **4 hearts**. It grows in **spring, summer and fall** and not in winter. The
-  owner typed this season answer in place of the offered options, so the exact
-  rule is the assistant's reading: it can be planted and grown in those three
-  seasons, and a winter planting waits for spring. The days to grow are open,
+  **4 hearts**. It grows in **spring, summer and fall** and not in winter: it
+  can be planted and grown in those three seasons, and a winter planting waits
+  for spring (rule confirmed by the owner, 2026-11-08). The days to grow are open,
   and the Stardew comparison (SC-75) is unchecked: from memory its Rare Seed is
   bought at the Traveling Cart and grows in fall.
 - Only one elderfruit from a spouse, however many times the player marries or splits.
@@ -245,7 +244,7 @@ Each had a Stardew option, and the owner took the recommended one.
 
 ## Open
 
-- The emberseed's days to grow, and a check of the season rule with the owner.
+- The emberseed's days to grow.
 - The slayer goals' kill counts and reward items, at tuning.
 - Ring 2's weights and the collectible's name and look, in the ring 2 design
   (#20). Ring 3's total only if it is built.
