@@ -343,7 +343,7 @@
         },
         {
           "s": "decided",
-          "t": "View size: default 30 by 17 tiles (about 510), wider or squarer windows show more, player zoom setting plus pinch with a cap each way (placeholder 75 to 125 percent), HUD anchors to the edges, maps need border margins (ADR 0009, SC-42). Build plan: no cap on the extra view, menus keep a centred 960 by 540 box, separate UI size setting (note 64, SC-46)",
+          "t": "View size: default 30 by 17 tiles (about 510), wider or squarer windows show more, player zoom setting plus pinch with a cap each way (75 to 200 percent, as Stardew), HUD anchors to the edges, maps need border margins (ADR 0009, SC-42). Build plan: no cap on the extra view, menus keep a centred 960 by 540 box, separate UI size setting, 75 to 150 percent, black bars around small maps (note 64, SC-46, SC-63)",
           "ref": "64_window_canvas_and_hud.md"
         },
         {

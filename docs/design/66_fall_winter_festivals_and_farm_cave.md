@@ -108,8 +108,8 @@ The booth sells winter furniture from the build 8 list.
   of about 50 tiles, a single room, a lamp at the entrance. It is empty and the
   door is shut until the choice is made (checked on the saved page, which
   gives the entrance near the north edge and a floor of about 50 tiles).
-- **Trigger.** The game counts total earnings over the whole game (gold
-  from selling; whether bundle rewards count is not decided, SC-54). When the count passes 25,000g, a villager (name open,
+- **Trigger.** The game counts total earnings over the whole game (all gold
+  received, as Stardew, owner 2026-11-07, SC-54). When the count passes 25,000g, a villager (name open,
   a wildlife-minded one from notes 19 and 20) arrives the next morning and asks
   to use the cave. A short two-button panel asks the player to pick fruit bats
   or mushrooms. The choice is permanent. The panel shows what each does.
@@ -173,7 +173,7 @@ festival furniture and hats. Without a dish group the table tops out at 93
 points, so first place (85) needs five groups of top goods.
 
 The farm cave is built too (2026-11-07). Earnings from the bin and the shop
-count toward 25,000g (bundle rewards do not, SC-54 stays open). The villager
+count toward 25,000g. Decided later (SC-54, 2026-11-07): all gold received counts, so bundle rewards will too. The build still counts sales only, a leftover. The villager
 comes the next morning as a choice screen, once a morning until answered. The
 door sits at the north edge of every farm map (column 36), shut until the
 choice. Fruit bats and mushroom boxes follow the numbers above, picked with
