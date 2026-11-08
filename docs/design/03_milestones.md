@@ -15,8 +15,8 @@ the dark edge is Could.
 | # | Milestone | Payoff (done when) | Status | Main blocker |
 | --- | --- | --- | --- | --- |
 | M1 | Define the first playable | The first playable's scope and done list are written below, and the audience, identity, core loop of a day and multiplayer questions are answered. | Done | None |
-| M2 | First playable | Day and energy cycle, farming, selling and a small centre 1 run in the home valley, with rough art. Engine chosen in an ADR. | In progress | Real-tablet check |
-| M3 | Vertical slice | One full cycle of centre 1, near-final quality, built as five slices, one hall room each, starting with year one on the farm (`33_build_order.md`). | In progress | M2 (the real-tablet check) |
+| M2 | First playable | Day and energy cycle, farming, selling and a small centre 1 run in the home valley, with rough art. Engine chosen in an ADR. | Done (2026-11-07) | None |
+| M3 | Vertical slice | One full cycle of centre 1, near-final quality, built as five slices, one hall room each, starting with year one on the farm (`33_build_order.md`). | In progress | None (M2 closed) |
 | M4 | Multiplayer | Up to 8 players share one valley on one network, designed in `53_multiplayer.md` (ADR 0007, `docs/decisions/0007-multiplayer-milestone.md`). | Not started | M3, the wrapper ADR (done, ADR 0008), a hosting spike |
 | M5 | Ring 2 prototype | A haven and about 2 regions reachable from the home valley. Centre 2 in small form. | Not started | M4, ring 2 shape (#20) |
 | M6 | Ring 3 and centre 3 | A logistics-only frontier outpost. Optional, late. Only if M1 to M5 prove fun. | Not started | M5, centre 3 (#5) |
