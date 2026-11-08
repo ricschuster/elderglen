@@ -35,9 +35,7 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
    (#638), Lake cove (#644), Hearthwell shell (#645) and interiors (#646), Beach
    elf (#641, waits on the story spine). Changed order since the draft: the Quarry
    is new at step 4b and the maps moved up from M3c. Open design items left:
-   Hearthwell's river layout (two arms chosen, detail not designed), the Quarry's
-   four questions (note 78), and the cove treasure spot, which is a drafter's pick
-   and waits on the owner's veto.
+   Hearthwell's river layout (two arms chosen, detail not designed), the dwarf's camp in the Quarry (note 78). The cove treasure spot is settled.
 4. **Art direction and audio plan.** Character art (note 15), ruined and
    restored hall rooms (#335), and the placeholder swap. No audio note exists
    (audio plan: #527).
@@ -47,6 +45,8 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
 Hardwood sale (200g, `src/content/carpenter-standin.json`, note 43). It comes out
 in the Secret Woods work package, #639, when the six daily stumps exist (owner,
 2026-11-08). Mahogany stays off the map for now.
+
+Session 2026-11-08m (handoff 2026-11-08m): owner answers to the open fishing, mines and Quarry questions, recorded in notes 21, 22, 24, 60, 73, 74, 77 and 78. They create build work (see the handoff). The Quarry's four questions are closed.
 
 Session 2026-11-08l (handoff 2026-11-08l): a large building session (placement,
 fishing, horse, mines, greenhouse, moss) and then the map area answers. Next

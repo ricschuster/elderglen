@@ -467,6 +467,10 @@ Gaps the notes left open, settled with our own placeholders (every number is in
   whole or half by a coin flip, and the first lost stack comes back in the
   morning mail from the trainer (a letter written at the time, saved in the
   mailbox). The mail is the lost and found, so there is no counter in the hall.
+  **Changed 2026-11-08 (owner, Stardew, saved Guild page):** the trainer's counter
+  gives one lost stack back for a fee equal to its sell value, and the free letter
+  goes. Not built: the mail still returns the first stack, and the fee, the counter
+  and what happens to the other stacks are for the build issue.
 - **The dummy** is a counter tile in the entrance hall that shows the damage
   number and the swing timer, and never hurts. Only the "stand still" setting is
   built, the slow walking setting waits.
@@ -657,3 +661,14 @@ settled 2026-10-31). Slices 3 onward wait for build slice 3.
 - **How the completion tracker counts mine finds** (#196).
 - **Tablet check:** stick, swing button, sling aiming and health bar on a real
   device.
+
+## Decisions 2026-11-08m (owner answers)
+
+- **Food restores health too** (Stardew, saved Health page). The ratio is ours,
+  half the food's energy value, and Stardew's ratio is unchecked (SC-93).
+- **Defeat follows Stardew's recovery service:** some items are lost and one can
+  be bought back for its sell value (see the defeat rule above).
+- **Weapons are tools in the toolbar,** swung with Use, as built.
+- **The sling aims toward the pointer**, and on touch toward the tapped spot, from
+  memory (SC-94). Built: it fires the faced way. A tablet check is needed.
+- **Creature names and the trainer's words stay placeholders** until art exists.

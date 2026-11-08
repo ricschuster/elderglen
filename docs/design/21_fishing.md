@@ -312,10 +312,11 @@ fisher, and whether she also runs the ferry is left to the cast note.
 not gate species): the water, season, time and weather, as in decision 6, plus
 two gates of our own.
 
-- **Only the starter rod is limited.** The Reed Pole lands common fish only, as
-  in decision 5. Every other rod can hook any fish the conditions allow.
-- **Rare fish need fishing level 5.** Below that a rare bite is lost. This is
-  what stops a rich new player from buying a better rod and skipping the skill.
+- **No rod and no level limits the draw** (owner, 2026-11-08, Stardew: place,
+  time, weather and the bar are the only limits). This replaces the earlier two
+  rules: the Reed Pole lands common fish only, and rare fish need fishing level 5.
+  Every rod can hook any fish the conditions allow. Skill still helps through the
+  bar. Not yet built: the code still has both rules (issue filed with this note).
 - **Legends need the Hearthwell Rod** (decision 13), and the cove is open only
   after the Water room. There is no extra level gate.
 
@@ -491,12 +492,11 @@ and are in `07_tuning_numbers.md`.
   from 1 tile to the rod's range. A cast that lands on dry ground costs nothing
   and can be repeated. Assist fixes the cast to the middle of the water in range
   and needs only a press.
-- **A cast costs game time, not energy:** 20 minutes, whether or not a fish
-  bites. The clock stands still on the fishing screen, so this is the only cost.
+- **A cast costs game time, and (owner, 2026-11-08, Stardew) energy:** 20 minutes, whether or not a fish
+  bites, plus an energy cost that falls with fishing level (see "Decisions 2026-11-08m"; the build has no energy cost yet). The clock stands still on the fishing screen, so this is the only cost.
 - **Which fish.** Season, time slot (dawn before 8 am, dusk the two hours before
   nightfall, night after, day between) and weather (a rain fish bites only in
-  rain). Weights by rarity are 6, 3 and 1. **The Reed Pole only draws common fish**,
-  so it never loses a bite. Any other rod loses a rare bite below fishing level
+  rain). Weights by rarity are 6, 3 and 1. **Superseded 2026-11-08: no rod or level limit** (see "Decisions 2026-11-08m"). Built so far: the Reed Pole only draws common fish, and any other rod loses a rare bite below fishing level
   5 ("Something heavy took the line"). If nothing is in season the bite is
   "nothing is biting". Winter has only the Reedling by day.
 - **The bite and the bar.** A wait of 1.5 to 4.5 s, then a window of 1.4 s (3 s
@@ -597,3 +597,28 @@ Bait, lures and the fishing achievements. Numbers are placeholders and are in
   bar (needs a real device).
 - The fifth tool tier: its metal's name, the mine depth, the price and which
   tools use it.
+
+## Decisions 2026-11-08m (owner answers)
+
+Each followed Stardew, checked on the saved Fishing and Bait pages unless said.
+
+- **Bait is spent on every cast that lands in water**, even with no bite. Already
+  built, and now confirmed (saved Bait page: always single use).
+- **A cast costs energy**, falling with the fishing level. Stardew: 8 at level 0,
+  0.1 less per level, 7 from level 10 (saved Fishing page). Ours scales that to our
+  energy pool, a placeholder in note 07. Not built.
+- **A perfect catch lifts quality one grade only if the fish was already silver or
+  better**, so silver to gold for us (no iridium grade). Built as drafted.
+- **Winter keeps a thinned roster** (Stardew has fewer winter fish). The count in
+  Stardew is unchecked (SC-92).
+- **The Magpie Hook treasure appears as a chest in the bar** during the minigame
+  and must be caught as well as the fish (Stardew's treasure chest, saved page: it
+  shows 1 to 3 seconds in). This replaces "rolls on a landed fish". The one in five
+  is the chance a chest appears. Not built.
+- **The Wide Float adds to the bar with skill and the assist bar**, with a cap at
+  half the track (Stardew's bar bonuses add, saved page). Built.
+- **No rod or level limit on the draw** (above). The Reed Pole is a plain starter
+  rod with no bait slot.
+- **Secret Woods pond:** the unique fish is the **Mossback**, a shy mossy fish, a
+  working name. Its bar motion and price come with the roster (note 73).
+- **Cove treasure spot kept** (note 76).
