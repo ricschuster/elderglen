@@ -169,7 +169,10 @@ export class CarpenterScene extends Phaser.Scene {
     else if (!g.animals.silo)
       rows.push({
         label: "Silo",
-        detail: `${SILO_COST.coin}g, ${SILO_COST.stone} stone, ${SILO_COST.clay} clay and ${SILO_COST["copper-bar"]} copper bars (have ${g.inventory.count("clay")} clay and ${g.inventory.count("copper-bar")} bars), holds hay for the hoppers`,
+        // The reason it cannot be ordered, else the price. A dim row's button is off.
+        detail:
+          siloProblem(g) ??
+          `${SILO_COST.coin}g, ${SILO_COST.stone} stone, ${SILO_COST.clay} clay, ${SILO_COST["copper-bar"]} copper bars`,
         dim: siloProblem(g) !== undefined,
         buttons: [{ text: "Order", run: () => this.orderSilo() }],
       });
