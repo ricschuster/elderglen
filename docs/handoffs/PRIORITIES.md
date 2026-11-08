@@ -9,8 +9,9 @@ Start each session by asking which item to take.
 
 ## Open, in order
 
-1. **Completion tracker (#196).** Needs its own design note first (what counts,
-   weights, reward, where it shows). Not built.
+1. **Completion tracker (#196).** Designed in note 39 (decided 2026-10-31, open
+   points settled 2026-11-08). Not built. Next: the seed 5 name, heart level and
+   season, then build it (counters, a content file, the collections page).
 2. **Story spine.** The warden head and her staged reveal (#177), the sea elf
    and Homeward pin (#176), the hermit witch (#178) and the third community
    project (#5). Together they decide what the ending and the Last Seat mean. Below Special Orders
