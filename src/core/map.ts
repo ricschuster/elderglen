@@ -141,6 +141,9 @@ export function exitOpen(exit: Exit, holds: ReadonlySet<string>): boolean {
   return exit.requires === undefined || holds.has(exit.requires);
 }
 
+/** The id of the water tile in the ground layer (the tileset's fourth tile). */
+export const WATER_TILE = 4;
+
 /** Layers the game reads for rules; they are never drawn. */
 export const COLLISION_LAYER = "collision";
 /** Optional: a map without it has no tillable soil. */
@@ -216,7 +219,15 @@ export class FarmMap {
     readonly tier = 0,
     /** The built part of the map, in tiles: what the camera may show. */
     readonly bounds: TileRect = { x: 0, y: 0, w: width, h: height },
+    /** Water tiles, by cell index: the ground layer's water tile (`WATER_TILE`). */
+    private readonly water: boolean[] = [],
   ) {}
+
+  /** True for a water tile: fishable, and never walkable. */
+  isWater(x: number, y: number): boolean {
+    if (x < 0 || y < 0 || x >= this.width || y >= this.height) return false;
+    return this.water[y * this.width + x] === true;
+  }
 
   /**
    * Read a Tiled map as it stands at a building tier. Layers of a higher tier
@@ -272,6 +283,13 @@ export class FarmMap {
       });
       bounds = boundsAt(json, at, built);
     }
+
+    const water: boolean[] = new Array(cells).fill(false);
+    for (const layer of layers)
+      if (layerBase(layer.name) === GROUND_LAYER && layer.data)
+        layer.data.forEach((id, i) => {
+          if (id !== 0) water[i] = id === WATER_TILE;
+        });
 
     const entries: Entry[] = [];
     const exits: Exit[] = [];
@@ -360,6 +378,7 @@ export class FarmMap {
       rocks,
       at,
       bounds,
+      water,
     );
   }
 
@@ -390,6 +409,7 @@ export class FarmMap {
       this.rocks,
       this.tier,
       this.bounds,
+      this.water,
     );
   }
 

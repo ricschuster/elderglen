@@ -176,6 +176,8 @@ export interface Settings {
   uiSize: number;
   /** Whether the control hint box shows on the farm. */
   showHints: boolean;
+  /** Fishing assist: 0 off, 1 bigger bar and calmer fish, 2 skip the fight (note 21). */
+  fishingAssist: 0 | 1 | 2;
 }
 
 export const SETTINGS_VERSION = 1;
@@ -193,6 +195,7 @@ export function defaultSettings(coarsePointer = false): Settings {
     worldZoom: DEFAULT_PERCENT,
     uiSize: DEFAULT_PERCENT,
     showHints: true,
+    fishingAssist: 0,
   };
 }
 
@@ -248,6 +251,10 @@ export function deserializeSettings(
     uiSize: clampPercent(raw.uiSize ?? base.uiSize, UI_MIN, UI_MAX),
     showHints:
       typeof raw.showHints === "boolean" ? raw.showHints : base.showHints,
+    fishingAssist:
+      raw.fishingAssist === 1 || raw.fishingAssist === 2
+        ? raw.fishingAssist
+        : base.fishingAssist,
   };
 }
 

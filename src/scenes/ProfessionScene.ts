@@ -8,6 +8,7 @@ const SKILL_NAMES = {
   farming: "Farming",
   foraging: "Foraging",
   mining: "Mining",
+  fishing: "Fishing",
 } as const;
 
 /**

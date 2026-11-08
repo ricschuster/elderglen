@@ -7,7 +7,7 @@ import {
   valleyPercent,
   type RingDef,
 } from "../src/core/completion";
-import { MAX_LEVEL } from "../src/core/skills";
+import { MAX_LEVEL, SKILLS } from "../src/core/skills";
 import { CROPS } from "../src/core/crops";
 import { deserialize, newGame, serialize } from "../src/core/save";
 
@@ -57,7 +57,7 @@ describe("completion total", () => {
       (c) => c.id === "skills",
     )!;
     expect(skills.done).toBe(MAX_LEVEL);
-    expect(skills.points).toBeCloseTo(5 / 3, 5);
+    expect(skills.points).toBeCloseTo(5 / SKILLS.length, 5);
   });
 
   it("counts a shipped crop once, whatever the quality", () => {
@@ -74,7 +74,7 @@ describe("completion total", () => {
 
   it("locks the categories whose systems are unbuilt", () => {
     const cats = ringProgress(newGame())[0]!.categories;
-    for (const id of ["gallery", "slayer", "friends", "fish", "elderfruit"])
+    for (const id of ["gallery", "slayer", "friends", "elderfruit"])
       expect(cats.find((c) => c.id === id)!.locked, id).toBe(true);
   });
 

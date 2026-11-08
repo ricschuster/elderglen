@@ -38,6 +38,7 @@ import { Decor, type DecorSave } from "./decor";
 import { Furniture, migrateCatalogue, type FurnitureSave } from "./furniture";
 import { Mailbox, type MailEntry } from "./mail";
 import { Quests, type QuestsSave } from "./quests";
+import { FishLog, type FishingSave } from "./fishing";
 import { Wardrobe, type WardrobeSave } from "./hats";
 import {
   BUILD_DAYS,
@@ -128,6 +129,8 @@ export interface GameState {
   mail: Mailbox;
   /** Board requests taken and finished (note 50). */
   quests: Quests;
+  /** Fish caught, with the longest of each (note 21). */
+  fishing: FishLog;
   /** Wild goods on the ground today. Not saved: it respawns each morning. */
   forage: ForageField;
 }
@@ -176,6 +179,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     achievements: new Achievements(),
     mail: new Mailbox(),
     quests: new Quests(),
+    fishing: new FishLog(),
     forage: new ForageField(),
   };
 }
@@ -262,6 +266,8 @@ interface SaveData {
   mail?: MailEntry[];
   /** Absent in saves made before the request board. */
   quests?: QuestsSave;
+  /** Absent in saves made before fishing. */
+  fishing?: FishingSave;
 }
 
 /** Where saves live. The scene supplies one backed by the browser. */
@@ -317,6 +323,7 @@ export function serialize(g: GameState): string {
     achievements: g.achievements.save(),
     mail: g.mail.save(),
     quests: g.quests.save(),
+    fishing: g.fishing.save(),
   };
   return JSON.stringify(data);
 }
@@ -417,10 +424,12 @@ export function deserialize(text: string): GameState | undefined {
       return undefined;
     }
   }
-  // A save from before mining has no mining row.
+  // A save from before mining or fishing has no row for it.
   if (
     !SKILLS.every(
-      (k) => isCount(skills[k]) || (k === "mining" && skills[k] === undefined),
+      (k) =>
+        isCount(skills[k]) ||
+        ((k === "mining" || k === "fishing") && skills[k] === undefined),
     )
   )
     return undefined;
@@ -690,6 +699,7 @@ export function deserialize(text: string): GameState | undefined {
   g.achievements.load(raw.achievements);
   g.mail.load(raw.mail);
   g.quests.load(raw.quests);
+  g.fishing.load(raw.fishing);
   // Loading rechecks, so a goal met under an older save is granted (note 38).
   checkAchievements(g);
   return g;

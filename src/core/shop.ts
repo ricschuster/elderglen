@@ -2,6 +2,7 @@ import { SEASONS, type Season } from "./calendar";
 import { CROPS } from "./crops";
 import { FRUIT_TREES, saplingId } from "./fruittrees";
 import { itemById, seedId } from "./items";
+import { RODS } from "./fishing";
 import type { Inventory } from "./inventory";
 
 export interface Wallet {
@@ -80,6 +81,12 @@ export function saplingStock(): string[] {
     ).map((t) => saplingId(t.id)),
   );
 }
+
+/**
+ * Rods on sale, cheapest first. A stand in for the fisher at the River delta
+ * (note 21), who does not exist yet: the general store sells them until she does.
+ */
+export const rodStock = (): string[] => byPrice(RODS.map((r) => r.id));
 
 import { fertilizerStock as allFertilizer } from "./fertilizer";
 

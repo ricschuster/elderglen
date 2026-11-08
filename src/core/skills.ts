@@ -1,4 +1,4 @@
-export const SKILLS = ["farming", "foraging", "mining"] as const;
+export const SKILLS = ["farming", "foraging", "mining", "fishing"] as const;
 export type Skill = (typeof SKILLS)[number];
 
 /** Total XP needed to reach level 1 to 10. */
@@ -21,6 +21,7 @@ export class Skills {
     farming: 0,
     foraging: 0,
     mining: 0,
+    fishing: 0,
   };
   private chosen: Partial<Record<Skill, string>> = {};
 
@@ -53,7 +54,7 @@ export class Skills {
   }
 
   load(saved: Record<Skill, number>): void {
-    // A save from before mining has no mining row: it starts at 0.
+    // A save from before mining or fishing has no row for it: it starts at 0.
     this.xp = { ...saved };
     for (const k of SKILLS) this.xp[k] ??= 0;
   }

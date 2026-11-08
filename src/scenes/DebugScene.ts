@@ -1,6 +1,7 @@
 import { fertilizerById } from "../core/fertilizer";
 import Phaser from "phaser";
 import type { GameState } from "../core/save";
+import type { Skill } from "../core/skills";
 import {
   finishBuild,
   giveItem,
@@ -101,7 +102,7 @@ export class DebugScene extends Phaser.Scene {
         this.say("");
       },
     });
-    const xp = (skill: "farming" | "foraging" | "mining") => ({
+    const xp = (skill: Skill) => ({
       text: `+100 ${skill}`,
       run: () => {
         const level = giveXp(g, skill, 100);
@@ -144,7 +145,7 @@ export class DebugScene extends Phaser.Scene {
       },
       {
         label: "Skill XP",
-        buttons: [xp("farming"), xp("foraging"), xp("mining")],
+        buttons: [xp("farming"), xp("foraging"), xp("mining"), xp("fishing")],
       },
       {
         label: "Day",

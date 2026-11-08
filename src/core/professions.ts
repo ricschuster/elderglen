@@ -71,7 +71,10 @@ export function optionsFor(skill: Skill): ProfessionDef[] {
 /** A skill that has reached the choice level and has not chosen yet. */
 export function pendingChoice(skills: Skills): Skill | undefined {
   return skills.skills.find(
-    (s) => skills.level(s) >= PROFESSION_LEVEL && !skills.professionOf(s),
+    (s) =>
+      skills.level(s) >= PROFESSION_LEVEL &&
+      !skills.professionOf(s) &&
+      optionsFor(s).length > 0,
   );
 }
 

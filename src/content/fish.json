@@ -1,0 +1,110 @@
+[
+  {
+    "id": "reedling",
+    "name": "Reedling",
+    "water": "river",
+    "seasons": ["spring", "summer", "fall", "winter"],
+    "time": "day",
+    "rarity": "common",
+    "behaviour": "mixed",
+    "difficulty": 25,
+    "sellPrice": 40,
+    "length": [12, 30]
+  },
+  {
+    "id": "brookslip",
+    "name": "Brookslip",
+    "water": "river",
+    "seasons": ["spring"],
+    "time": "day",
+    "rarity": "common",
+    "behaviour": "dart",
+    "difficulty": 20,
+    "sellPrice": 45,
+    "length": [10, 25]
+  },
+  {
+    "id": "millrun",
+    "name": "Millrun",
+    "water": "river",
+    "seasons": ["summer"],
+    "time": "day",
+    "rarity": "common",
+    "behaviour": "mixed",
+    "difficulty": 30,
+    "sellPrice": 55,
+    "length": [15, 35]
+  },
+  {
+    "id": "ferrywhisker",
+    "name": "Ferrywhisker",
+    "water": "river",
+    "seasons": ["fall"],
+    "time": "any",
+    "rarity": "uncommon",
+    "behaviour": "sinker",
+    "difficulty": 40,
+    "sellPrice": 120,
+    "length": [25, 60]
+  },
+  {
+    "id": "salmon",
+    "name": "Salmon",
+    "water": "river",
+    "seasons": ["fall"],
+    "time": "day",
+    "rarity": "uncommon",
+    "behaviour": "mixed",
+    "difficulty": 50,
+    "sellPrice": 150,
+    "length": [40, 95]
+  },
+  {
+    "id": "hearthside-dace",
+    "name": "Hearthside Dace",
+    "water": "river",
+    "seasons": ["spring", "summer", "fall", "winter"],
+    "time": "dusk",
+    "rarity": "uncommon",
+    "behaviour": "dart",
+    "difficulty": 40,
+    "sellPrice": 110,
+    "length": [12, 28]
+  },
+  {
+    "id": "tallow-eel",
+    "name": "Tallow Eel",
+    "water": "river",
+    "seasons": ["winter"],
+    "time": "night",
+    "rarity": "uncommon",
+    "behaviour": "sinker",
+    "difficulty": 45,
+    "sellPrice": 170,
+    "length": [40, 110]
+  },
+  {
+    "id": "silverthread",
+    "name": "Silverthread",
+    "water": "river",
+    "seasons": ["spring", "summer", "fall", "winter"],
+    "time": "dawn",
+    "rarity": "rare",
+    "behaviour": "dart",
+    "difficulty": 70,
+    "sellPrice": 320,
+    "length": [20, 45]
+  },
+  {
+    "id": "old-mossback",
+    "name": "Old Mossback",
+    "water": "river",
+    "seasons": ["fall"],
+    "time": "rain",
+    "rarity": "rare",
+    "behaviour": "sinker",
+    "difficulty": 60,
+    "sellPrice": 280,
+    "length": [45, 120]
+  }
+]
