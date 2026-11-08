@@ -337,6 +337,8 @@ export class FarmScene extends Phaser.Scene {
   private wheelDelta = 0;
   /** Tap-to-move (note 27): the route still to walk, and what to do at the end. */
   private tapPath: Vec[] = [];
+  /** A tapped spot in the world the sling shoots at, for a moment. */
+  private tapShot?: { x: number; y: number; until: number };
   private tapAct?: Vec;
   /** The tile the last tap asked for, drawn as the target; red if no route. */
   private tapMark?: { x: number; y: number; bad: boolean; until: number };
@@ -930,6 +932,15 @@ export class FarmScene extends Phaser.Scene {
       over?: Phaser.GameObjects.GameObject[],
     ): boolean => !over?.length && !this.hud.covers(p.x, p.y) && !this.leaving;
     const aimAtTap = (p: Phaser.Input.Pointer, fresh: boolean): void => {
+      // With a sling held on a mine floor a tap shoots at the spot, no walking.
+      if (fresh && this.floorState && this.slingHeld()) {
+        const w = this.cameras.main.getWorldPoint(p.x, p.y);
+        this.cancelTap();
+        this.keyAim();
+        this.tapShot = { x: w.x, y: w.y, until: this.time.now + 300 };
+        this.use();
+        return;
+      }
       const tap = this.tileAtPointer(p);
       const here = tileOf(this.pos, PLAYER, this.map.tileSize);
       const dx = tap.x - here.x;
@@ -988,6 +999,15 @@ export class FarmScene extends Phaser.Scene {
       this.input.off("pointermove", onMove);
       this.input.off("pointerup", onUp);
     });
+  }
+
+  private slingHeld(): boolean {
+    const h = heldAt(this.state, this.selected);
+    return (
+      h.kind === "item" &&
+      isWeapon(h.id) &&
+      weaponById(h.id)?.family === "sling"
+    );
   }
 
   /** Act on a tile beside the farmer: the axe for a tree, the pickaxe for a rock. */
@@ -2427,6 +2447,12 @@ export class FarmScene extends Phaser.Scene {
     if (this.time.now < this.swingReady) return;
     this.swingReady = this.time.now + weapon.cooldown * 1000;
     const ts = this.map.tileSize;
+    // The sling shoots toward the mouse pointer, or the tapped spot on touch
+    // (note 22, SC-94). Everything else, and a sling with no aim, goes the faced way.
+    const aim = weapon.family === "sling" ? this.shotAim() : undefined;
+    if (aim) this.facing = facingFrom(aim, this.facing);
+    const aimLen = aim ? Math.hypot(aim.x, aim.y) : 0;
+    const unit = aim ? { x: aim.x / aimLen, y: aim.y / aimLen } : undefined;
     const f = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] }[
       this.facing
     ];
@@ -2435,12 +2461,21 @@ export class FarmScene extends Phaser.Scene {
     const mid = { x: this.pos.x, y: this.pos.y - 6 };
     const len =
       weapon.family === "sling" ? weapon.reach * ts : weapon.reach * ts * 0.8;
-    this.swingFx.fillRect(
-      mid.x + (f[0]! > 0 ? 0 : f[0]! < 0 ? -len : -len / 2),
-      mid.y + (f[1]! > 0 ? 0 : f[1]! < 0 ? -len : -len / 2),
-      f[0] !== 0 ? len : weapon.family === "sling" ? 3 : len,
-      f[1] !== 0 ? len : weapon.family === "sling" ? 3 : len,
-    );
+    if (unit) {
+      this.swingFx.lineStyle(3, 0xffffff, 0.35);
+      this.swingFx.lineBetween(
+        mid.x,
+        mid.y,
+        mid.x + unit.x * len,
+        mid.y + unit.y * len,
+      );
+    } else
+      this.swingFx.fillRect(
+        mid.x + (f[0]! > 0 ? 0 : f[0]! < 0 ? -len : -len / 2),
+        mid.y + (f[1]! > 0 ? 0 : f[1]! < 0 ? -len : -len / 2),
+        f[0] !== 0 ? len : weapon.family === "sling" ? 3 : len,
+        f[1] !== 0 ? len : weapon.family === "sling" ? 3 : len,
+      );
     this.time.delayedCall(90, () => this.swingFx.clear());
 
     // The dummy: in front, as far as the weapon reaches.
@@ -2465,6 +2500,7 @@ export class FarmScene extends Phaser.Scene {
       this.pos,
       floor.creatures,
       ts,
+      aim,
     );
     for (const c of hits) {
       const damage = swingDamage(c, weapon.damage, weapon.family, this.pos);
@@ -2486,6 +2522,23 @@ export class FarmScene extends Phaser.Scene {
         }
       }
     }
+  }
+
+  /**
+   * The direction from the farmer to where a sling shot is aimed, or undefined
+   * for the faced way: a fresh tap on touch, else the mouse pointer in mouse mode.
+   */
+  private shotAim(): Vec | undefined {
+    let w: Vec | undefined;
+    if (this.tapShot && this.time.now < this.tapShot.until) w = this.tapShot;
+    else if (this.mouseAim) {
+      const p = this.input.activePointer;
+      w = this.cameras.main.getWorldPoint(p.x, p.y);
+    }
+    this.tapShot = undefined;
+    if (!w) return undefined;
+    const aim = { x: w.x - this.pos.x, y: w.y - (this.pos.y - 6) };
+    return Math.hypot(aim.x, aim.y) < 1 ? undefined : aim;
   }
 
   /** A creature is beaten: its goods, the kill tally and a ladder roll. */

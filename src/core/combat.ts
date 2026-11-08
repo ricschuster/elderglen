@@ -130,7 +130,8 @@ const SHOT_WIDTH = 6;
 /**
  * The creatures one swing reaches, nearest first and no more than the weapon's
  * limit. A blade and a club hit the arc in front of the player. A sling shot
- * flies straight and hits the first creature on its line.
+ * flies straight and hits the first creature on its line, along `aim` (a
+ * direction from the player, any length) when given, else the faced way.
  */
 export function swingTargets(
   w: WeaponDef,
@@ -138,8 +139,13 @@ export function swingTargets(
   at: Vec,
   creatures: Creature[],
   tileSize = 16,
+  aim?: Vec,
 ): Creature[] {
-  const f = FACE[facing];
+  const len = aim ? Math.hypot(aim.x, aim.y) : 0;
+  const f =
+    w.family === "sling" && aim && len > 0
+      ? { x: aim.x / len, y: aim.y / len }
+      : FACE[facing];
   // The swing is centred on the body, a little above the feet.
   const from = { x: at.x, y: at.y - 6 };
   const hits: { c: Creature; d: number }[] = [];
