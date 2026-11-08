@@ -2,7 +2,8 @@
 // the carpenter (furniture, flooring, wallpaper), the village green and hedge
 // festival maps, the mailbox, mine floors beyond 10 and the request board. It
 // opens each, does one small thing, takes a screenshot and fails on any console
-// error or page error. About 30 seconds. Needs `npm run dev`.
+// error or page error. Also the hat box Collections row, buying the Furniture
+// Catalogue, placing it, taking a copy and the morning report. About 90 seconds. Needs `npm run dev`.
 import { launch, Bot, log, sleepMs, finding, findings, OUT } from "./lib.mjs";
 
 const { b, p, errs } = await launch({ fresh: true });
@@ -130,6 +131,115 @@ await step("requests", async () => {
   await close();
   await overlay("requests", { list: true });
   await close();
+});
+
+await step("hat-box-collections", async () => {
+  // Rows are hats, then Achievements, Collections, Requests: try each row.
+  let opened = false;
+  for (let n = 0; n < 12 && !opened; n++) {
+    await overlay("hats");
+    for (let i = 0; i < n; i++) {
+      await p.keyboard.press("ArrowDown");
+      await sleepMs(40);
+    }
+    await p.keyboard.press("Enter");
+    await sleepMs(300);
+    opened = (await active()).includes("collections");
+    if (!opened) await close();
+  }
+  if (!opened) throw new Error("no hat box row opened collections");
+  await shot("collections-from-hats");
+  await close();
+});
+
+await step("catalogue-buy", async () => {
+  await farm((g, f, s) => {
+    s.houseTier = 1;
+    s.money = Math.max(s.money, 300000);
+  });
+  await overlay("carpenter");
+  await pickRow("carpenter", /Bought\. Place it/);
+  const owned = await farm(
+    (g, f, s) => s.catalogue && s.inventory.count("furniture-catalogue"),
+  );
+  if (owned !== 1) finding(`catalogue buy: backpack holds ${owned}`);
+  await close();
+});
+
+await step("catalogue-place-and-copy", async () => {
+  await goMap("house", "door");
+  const slot = await farm((g, f, s) =>
+    s.inventory.save().findIndex((x) => x && x.id === "furniture-catalogue"),
+  );
+  if (slot < 0) throw new Error("no catalogue in the backpack");
+  await bot.select(slot + 5); // five tools come first on the toolbar
+  await bot.refreshMap();
+  let d = await bot.dbg();
+  // Step into the room first: facing down at the door would walk out of it.
+  await bot.hookWalk(d.tile.x, d.tile.y - 3);
+  await bot.refreshMap();
+  d = await bot.dbg();
+  let placed = false;
+  for (const dir of ["up", "left", "right"]) {
+    await bot.face(dir);
+    await bot.key("KeyC", 150);
+    placed = await farm((g, f, s) => s.furniture.has("furniture-catalogue"));
+    if (placed) {
+      await shot("catalogue-placed");
+      await bot.face(dir);
+      await bot.key("KeyX", 400);
+      break;
+    }
+  }
+  if (!placed) {
+    const sel = (await bot.snap()).selected;
+    throw new Error(
+      `could not place it from ${JSON.stringify(d.tile)}, slot ${slot}, selected ${sel}, scenes ${await active()}, map ${d.map}`,
+    );
+  }
+  if (!(await active()).includes("catalogue")) {
+    throw new Error(`Action did not open the catalogue: ${await active()}`);
+  }
+  await shot("catalogue-open");
+  const before = await farm(
+    (g, f, s) => s.inventory.save().filter(Boolean).length,
+  );
+  await p.keyboard.press("ArrowDown");
+  await sleepMs(60);
+  await p.keyboard.press("Enter");
+  await sleepMs(200);
+  const after = await farm(
+    (g, f, s) => s.inventory.save().filter(Boolean).length,
+  );
+  if (after <= before) finding(`catalogue copy: stacks ${before} -> ${after}`);
+  await shot("catalogue-copy");
+  await close();
+});
+
+await step("morning-report", async () => {
+  const day = await farm((g, f, s) => s.day.clock.day);
+  await goMap("house", "door");
+  await p.keyboard.press("z");
+  await sleepMs(600);
+  if ((await active()).includes("shipping")) {
+    await p.keyboard.press("Enter");
+    await sleepMs(500);
+  }
+  if (!(await active()).includes("report"))
+    throw new Error(`no report after sleeping: ${await active()}`);
+  await shot("morning-report");
+  const text = await p.evaluate(() =>
+    window.__game.scene
+      .getScene("report")
+      .children.list.filter((c) => c.text)
+      .map((c) => c.text)
+      .join(" | "),
+  );
+  log("report:", text.slice(0, 400));
+  await p.keyboard.press("Enter");
+  await sleepMs(500);
+  if ((await farm((g, f, s) => s.day.clock.day)) !== day + 1)
+    finding("the day did not advance");
 });
 
 await step("village-green", async () => {
