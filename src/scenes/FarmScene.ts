@@ -1580,10 +1580,29 @@ export class FarmScene extends Phaser.Scene {
     );
   }
 
+  /** The farm mailbox: a post and box, with the flag up while mail waits (note 51). */
+  private drawMailbox(): void {
+    const spot = this.map.services.find((s) => s.kind === "mailbox");
+    if (!spot) return;
+    const ts = this.map.tileSize;
+    const x = spot.x * ts;
+    const y = spot.y * ts;
+    const g = this.wash;
+    g.fillStyle(0x6f4a22, 1).fillRect(x + 7, y + 8, 2, ts - 8);
+    g.fillStyle(0x3f6f9a, 1).fillRect(x + 3, y + 3, 10, 6);
+    g.fillStyle(0x2a4a6a, 1).fillRect(x + 3, y + 3, 10, 1);
+    if (this.state.mail.flagUp)
+      g.fillStyle(0xd8483a, 1)
+        .fillRect(x + 12, y - 1, 2, 6)
+        .fillRect(x + 12, y - 1, 4, 2);
+    else g.fillStyle(0xd8483a, 1).fillRect(x + 12, y + 5, 3, 2);
+  }
+
   private render(): void {
     this.drawGround();
     this.drawRooms();
     this.drawFurnace();
+    this.drawMailbox();
     this.drawBuild();
     this.hud.update(this.state, this.selected, this.message);
   }

@@ -19,6 +19,7 @@ const SERVICES: Record<string, string> = {
   bin: "Shipping Bin",
   "ore-bin": "Ore Bin",
   furnace: "Furnace",
+  mailbox: "Mailbox",
   bed: "Bed",
   carpenter: "Carpenter",
   smith: "Smith",

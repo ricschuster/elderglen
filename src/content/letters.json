@@ -1,0 +1,9 @@
+[
+  {
+    "id": "hatters-letter",
+    "sender": "The hat-makers",
+    "title": "Hats for the valley",
+    "body": "Word has reached us that you have done something worth a hat. We make them for folk who do. Ask at the hatter's counter on your achievements page, and you will find the first one waiting. Wear it well.",
+    "trigger": { "kind": "first-achievement" }
+  }
+]

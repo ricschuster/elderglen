@@ -6,6 +6,7 @@ import type { GameState } from "./save";
 import type { FarmMap } from "./map";
 import { advanceBuild } from "./house";
 import { checkAchievements } from "./achievements";
+import { deliverAll } from "./mail";
 import { deliverFurnace } from "./smith";
 import { orderReady, type Upgradable } from "./upgrades";
 import type { Settlement } from "./shipping";
@@ -70,6 +71,8 @@ export interface SleepReport {
   furnaceGifted: boolean;
   /** Achievements earned by tonight's check, whose hats are now on sale. */
   achievements: string[];
+  /** Letters that arrived this morning. */
+  newMail: number;
   /** The tool the smith has finished, if it is ready to collect this morning. */
   toolReady: Upgradable | undefined;
   /** What the shipping bin paid tonight. */
@@ -193,6 +196,10 @@ export function sleep(
   const houseFinished = advanceBuild(g);
   const furnaceGifted = deliverFurnace(g);
 
+  const achievements = checkAchievements(g).map((a) => a.name);
+  // Tonight's triggers arrive on the morning of the next day, which has begun.
+  const newMail = deliverAll(g, g.day.clock.day);
+
   return {
     passedOut: end.passedOut,
     reason: end.passedOut ? end.reason : undefined,
@@ -203,7 +210,8 @@ export function sleep(
     houseFinished,
     houseTier: houseFinished ? g.houseTier : undefined,
     furnaceGifted,
-    achievements: checkAchievements(g).map((a) => a.name),
+    achievements,
+    newMail,
     toolReady: g.toolOrder && orderReady(g) ? g.toolOrder.tool : undefined,
     shipped,
     caveOffer,
