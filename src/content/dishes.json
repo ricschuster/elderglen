@@ -1,0 +1,84 @@
+[
+  {
+    "id": "fried-egg",
+    "name": "Fried egg",
+    "ingredients": [{ "item": "egg", "count": 1 }],
+    "energy": 75,
+    "sellPrice": 35,
+    "sources": [{ "kind": "start" }]
+  },
+  {
+    "id": "baked-potato",
+    "name": "Baked potato",
+    "ingredients": [{ "item": "potato", "count": 1 }],
+    "energy": 90,
+    "sellPrice": 70,
+    "sources": [{ "kind": "level", "skill": "farming", "level": 1 }]
+  },
+  {
+    "id": "garden-salad",
+    "name": "Garden salad",
+    "ingredients": [
+      { "item": "leek", "count": 1 },
+      { "item": "dandelion", "count": 1 }
+    ],
+    "energy": 110,
+    "sellPrice": 110,
+    "sources": [{ "kind": "level", "skill": "foraging", "level": 1 }]
+  },
+  {
+    "id": "hearty-omelette",
+    "name": "Hearty omelette",
+    "ingredients": [
+      { "item": "egg", "count": 2 },
+      { "item": "milk", "count": 1 }
+    ],
+    "energy": 125,
+    "sellPrice": 100,
+    "sources": [{ "kind": "level", "skill": "farming", "level": 2 }]
+  },
+  {
+    "id": "mushroom-stew",
+    "name": "Mushroom stew",
+    "ingredients": [
+      { "item": "field-mushroom", "count": 2 },
+      { "item": "potato", "count": 1 }
+    ],
+    "energy": 150,
+    "sellPrice": 190,
+    "sources": [{ "kind": "level", "skill": "foraging", "level": 2 }]
+  },
+  {
+    "id": "cheese-melt",
+    "name": "Cheese melt",
+    "ingredients": [
+      { "item": "cheese", "count": 1 },
+      { "item": "potato", "count": 1 }
+    ],
+    "energy": 160,
+    "sellPrice": 240,
+    "sources": [{ "kind": "level", "skill": "farming", "level": 3 }]
+  },
+  {
+    "id": "mayo-slaw",
+    "name": "Mayonnaise slaw",
+    "ingredients": [
+      { "item": "mayonnaise", "count": 1 },
+      { "item": "kale", "count": 1 }
+    ],
+    "energy": 140,
+    "sellPrice": 260,
+    "sources": [{ "kind": "level", "skill": "farming", "level": 4 }]
+  },
+  {
+    "id": "pumpkin-soup",
+    "name": "Pumpkin soup",
+    "ingredients": [
+      { "item": "pumpkin", "count": 1 },
+      { "item": "milk", "count": 1 }
+    ],
+    "energy": 200,
+    "sellPrice": 400,
+    "sources": [{ "kind": "level", "skill": "farming", "level": 5 }]
+  }
+]

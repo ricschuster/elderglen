@@ -244,13 +244,13 @@ Each had a Stardew option, and the owner took the recommended one.
 - Built (#196): `src/content/completion.json`, `src/core/completion.ts`, and
   the collections page (`CollectionsScene`, opened from the achievements page).
   Shipped items count crops and forage. Gallery, slayer, friends, elderfruit
-  and fish have no counter yet and show as locked at zero. Cooking has its save
-  counter (`cooked`) but no recipes, so it is locked too. Items crafted reuses
+  and fish have no counter yet and show as locked at zero. Cooking counts dishes cooked (see below). Items crafted reuses
   the existing crafted set. The summit reward and the valley summit are not
   built. Also built: a Collections row in the hat box menu, and a day-end
   recheck (the total is recomputed with the achievement check, and the morning
-  report says "Collections: N percent complete." on a night it rose). Nothing
-  calls `noteCooked` yet because no cooking action exists (note 24 is unbuilt).
+  report says "Collections: N percent complete." on a night it rose). Cooking
+  is built (2026-11-08, note 24): the stove calls `noteCooked`, and the cooking
+  counter now counts dishes cooked of the dish list, so it is no longer locked.
 
 ## Open
 

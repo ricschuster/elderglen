@@ -18,6 +18,7 @@ import decorData from "../content/decor.json";
 import furnitureData from "../content/furniture.json";
 import { ARTISAN_GOODS } from "./artisan";
 import { MACHINES } from "./processing";
+import { DISHES } from "./dishes";
 import { CHESTS } from "./chestdefs";
 import { GEODE_ITEMS } from "./geodes";
 import { ENERGY_MULTIPLIER, QUALITY_MULTIPLIER, splitQuality } from "./quality";
@@ -94,6 +95,14 @@ for (const a of ARTISAN_GOODS)
     name: a.name,
     sellPrice: a.sellPrice,
     energy: a.energy,
+  });
+/** Cooked dishes (note 24). Names, energy and prices are placeholders, see `dishes.json`. */
+for (const d of DISHES)
+  items.set(d.id, {
+    id: d.id,
+    name: d.name,
+    sellPrice: d.sellPrice,
+    energy: d.energy,
   });
 for (const m of MACHINES)
   items.set(m.id, { id: m.id, name: m.name, sellPrice: m.sellPrice });

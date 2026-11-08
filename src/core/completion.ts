@@ -3,6 +3,8 @@ import { CROPS } from "./crops";
 import { FORAGE } from "./forage";
 import { BUNDLES } from "./bundles";
 import { RECIPES, buildable } from "./crafting";
+import { cookable } from "./cooking";
+import { DISHES } from "./dishes";
 import { itemById } from "./items";
 import { shippedOf } from "./achievements";
 import { MAX_LEVEL, SKILLS } from "./skills";
@@ -88,9 +90,15 @@ export const COUNTERS: Record<string, Counter> = {
       missing: missing.map((r) => nameOf(r.result.item)),
     };
   },
-  // No recipe is cooked yet (note 24 is unbuilt), so the total is zero and the
-  // category stays locked until a recipe list gives it one.
-  cooking: (g) => ({ done: g.achievements.cookedCount, total: 0, missing: [] }),
+  cooking: (g) => {
+    const all = DISHES.filter(cookable);
+    const missing = all.filter((d) => !g.achievements.hasCooked(d.id));
+    return {
+      done: all.length - missing.length,
+      total: all.length,
+      missing: missing.map((d) => d.name),
+    };
+  },
 };
 
 export interface CategoryProgress {

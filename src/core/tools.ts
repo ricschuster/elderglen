@@ -198,6 +198,7 @@ const REASONS: Record<string, string> = {
     "Too close to another tree. Fruit trees need a clear 3x3.",
   "not a sapling": "That is not a sapling.",
   "no sapling": "Out of saplings.",
+  "no kitchen": "You need a kitchen to cook.",
   "not food": "That cannot be eaten.",
   "nothing to eat": "Select food to eat.",
   "not hungry": "You are not tired.",

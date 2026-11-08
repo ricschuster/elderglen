@@ -263,3 +263,7 @@ rest is mine and open to change.
   (carpenter and upgrade flow), both M2 and limited to tier 1, with tiers 2 and
   3 in #286 and #282 (cellar map), both M3. The M2 part is not yet
   placed in `33_build_order.md`.
+
+## Built: the stove (2026-11-08)
+
+The tier 1 kitchen has a stove at tile (5, 11) in `house.json` (a `cooking` service on the `markers-t1` layer), so it exists only once the first upgrade is built. It opens the cooking screen (note 24). The fridge and the sink are not built.
