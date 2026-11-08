@@ -65,6 +65,18 @@ export class HatsScene extends Phaser.Scene {
       ],
     });
     rows.push({
+      label: "Collections and the completion total",
+      buttons: [
+        {
+          text: "Open",
+          run: () => {
+            this.scene.stop();
+            this.scene.launch("collections");
+          },
+        },
+      ],
+    });
+    rows.push({
       label: "Open requests",
       buttons: [
         {
