@@ -123,6 +123,18 @@ async function tapLabel(scene, label, nth = 0) {
   await tap(all[nth].cx, all[nth].cy, 200);
 }
 
+/** Tap the button called `button` on the same row as the target `rowLabel`. */
+async function tapRowButton(scene, rowLabel, button) {
+  const all = await targets(scene);
+  const row = all.find((t) => t.label.startsWith(rowLabel));
+  if (!row) throw new Error(`no row "${rowLabel}" in ${scene}`);
+  const b = all.find(
+    (t) => t.label === button && Math.abs(t.cy - row.cy) < row.h / 2,
+  );
+  if (!b) throw new Error(`no "${button}" button on row "${rowLabel}"`);
+  await tap(b.cx, b.cy, 200);
+}
+
 /** Check target sizes of a screen against the comfortable minimum. */
 async function checkSizes(scene) {
   const small = (await targets(scene))
@@ -407,24 +419,18 @@ if (!(await sceneNow()).includes("shop"))
 else {
   await checkSizes("shop");
   const m = (await bot.snap()).money;
-  // Tapping a row does its main action; the buttons do the rest.
-  const buyRow = (await targets("shop")).find(
-    (t) => t.label === "Parsnip seeds",
-  );
-  await tap(buyRow.cx, buyRow.cy, 200);
+  // Shop rows are buttons only (#545): a row tap selects, the buttons act.
+  await tapRowButton("shop", "Parsnip seeds", "Buy 1");
   const m2 = (await bot.snap()).money;
-  if (m2 >= m) finding("tapping a buy row did not buy one");
+  if (m2 >= m) finding("tapping Buy 1 did not buy one");
   await tapLabel("shop", "Buy 5");
   const m3 = (await bot.snap()).money;
   if (m3 >= m2) finding("tapping Buy 5 did not spend money");
   const have = bot.countBase(await bot.snap(), "parsnip");
   if (have > 0) {
-    const sellRow = (await targets("shop")).find((t) =>
-      t.label.startsWith("Parsnip  x"),
-    );
-    await tap(sellRow.cx, sellRow.cy, 200);
+    await tapRowButton("shop", "Parsnip  x", "Sell 1");
     const m4 = (await bot.snap()).money;
-    if (m4 <= m3) finding("tapping a sell row did not sell one");
+    if (m4 <= m3) finding("tapping Sell 1 did not sell one");
     const rows = (await targets("shop")).filter((t) => t.label === "Sell all");
     if (rows.length) await tap(rows[0].cx, rows[0].cy, 200);
   }
