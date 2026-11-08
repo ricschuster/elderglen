@@ -12,7 +12,7 @@ The delta is open from the start and it is where fishing lives: the marsh lake
 rods, bait and lures (`21_fishing.md`, `20_ring1_cast.md`). Fishing slices 3 and 4
 (#596) cannot finish without it. It is also the ferry landing for the Lake cove
 and the home of the odd elf who sells the Homeward pin (`09_story_and_lore.md`,
-#176).
+issue 176).
 
 ## Decisions (draft)
 
