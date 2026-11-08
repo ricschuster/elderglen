@@ -38,12 +38,17 @@ import {
   defaultName,
   isBuilt,
   nextBuildingUpgrade,
-  orderBuilding,
   orderBuildingUpgrade,
   speciesOf,
   tierOf,
   upgradeProblem,
 } from "../core/animals";
+import {
+  moveProblem,
+  refundOf,
+  removeBuilding,
+  removeProblem,
+} from "../core/placement";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
@@ -57,6 +62,8 @@ export class CarpenterScene extends Phaser.Scene {
   private menu!: Menu;
   private money!: Phaser.GameObjects.Text;
   private message!: Phaser.GameObjects.Text;
+  /** The building the player pressed Remove on once, waiting for the second press. */
+  private removing: Building | undefined;
 
   constructor() {
     super("carpenter");
@@ -87,6 +94,11 @@ export class CarpenterScene extends Phaser.Scene {
     kb?.on("keydown-DOWN", () => this.menu.move(1));
     kb?.on("keydown-ENTER", () => this.menu.press(0));
     kb?.on("keydown-ESC", () => this.close());
+    // The placement screen reports back here, then the counter shows the result.
+    this.events.on("placed", (text: string) => {
+      if (text) this.message.setText(text);
+      this.refresh();
+    });
     this.refresh();
   }
 
@@ -139,10 +151,31 @@ export class CarpenterScene extends Phaser.Scene {
           label: info.name,
           detail: `${info.cost.coin}g, ${info.cost.wood} wood and ${info.cost.stone} stone (${have})`,
           dim: buildingProblem(g, id) !== undefined,
-          buttons: [{ text: "Order", run: () => this.orderBuilding(id) }],
+          buttons: [{ text: "Place", run: () => this.orderBuilding(id) }],
         });
         continue;
       }
+      const gone = removeProblem(g, id);
+      const back = refundOf(g, id);
+      rows.push({
+        label: `Move the ${info.noun}`,
+        detail: "free, and everything in it comes along",
+        dim: moveProblem(g, id) !== undefined,
+        buttons: [{ text: "Move", run: () => this.place(id, "move") }],
+      });
+      rows.push({
+        label: `Take down the ${info.noun}`,
+        detail:
+          gone ??
+          `you get back ${back.coin}g, ${back.wood} wood and ${back.stone} stone`,
+        dim: gone !== undefined,
+        buttons: [
+          {
+            text: this.removing === id ? "Sure?" : "Remove",
+            run: () => this.remove(id),
+          },
+        ],
+      });
       const up = nextBuildingUpgrade(g, id);
       if (up && g.animals.build?.building !== id)
         rows.push({
@@ -213,13 +246,44 @@ export class CarpenterScene extends Phaser.Scene {
     this.menu.setRows(rows);
   }
 
+  /** Open the placement screen to put a new building down, or move the one that stands. */
+  private place(id: Building, mode: "order" | "move"): void {
+    this.removing = undefined;
+    if (mode === "move") {
+      const problem = moveProblem(this.state, id);
+      if (problem !== undefined) {
+        this.message.setText(problem);
+        return this.refresh();
+      }
+    }
+    this.scene.launch("placement", { building: id, mode });
+    this.scene.pause();
+  }
+
   private orderBuilding(id: Building): void {
     const problem = buildingProblem(this.state, id);
+    if (problem !== undefined) {
+      this.message.setText(problem);
+      return this.refresh();
+    }
+    this.place(id, "order");
+  }
+
+  /** Two presses: the first asks, the second takes the building down and pays the refund. */
+  private remove(id: Building): void {
+    const problem = removeProblem(this.state, id);
     if (problem !== undefined) this.message.setText(problem);
-    else if (orderBuilding(this.state, id))
+    else if (this.removing !== id) {
+      this.removing = id;
       this.message.setText(
-        "Ordered. The carpenter starts tomorrow and takes three days.",
+        `Press Remove again to take down your ${BUILDINGS[id].noun}.`,
       );
+    } else if (removeBuilding(this.state, id)) {
+      this.removing = undefined;
+      this.message.setText(
+        `The ${BUILDINGS[id].noun} is down. The carpenter paid you back.`,
+      );
+    }
     this.refresh();
   }
 
