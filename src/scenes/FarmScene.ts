@@ -1862,9 +1862,10 @@ export class FarmScene extends Phaser.Scene {
 
   private render(): void {
     this.drawGround();
+    // drawRooms clears the wash layer, so everything else draws after it.
+    this.drawRooms();
     this.drawCoop();
     this.drawCoopInside();
-    this.drawRooms();
     this.drawFurnace();
     this.drawMailbox();
     this.drawRequestMark();
