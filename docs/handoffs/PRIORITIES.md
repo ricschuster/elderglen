@@ -7,6 +7,13 @@ list into handoffs; link here instead. Set by the owner on 2026-11-06 (handoff
 
 Start each session by asking which item to take.
 
+## Milestone order (ADR 0012, 2026-11-08)
+
+M3 (close out: the owner's play), M3b ring 1 systems (fishing, combat, villagers,
+horse, building placement #611, cask and greenhouse), M4 multiplayer, M3c story
+and ending, M3d polish, then M5 and M6. The list below is the design order within
+that. Filed work packages: #595 to #604 and #611.
+
 ## Open, in order
 
 1. **Completion tracker (#196). Built 2026-11-08 (PR #573).** Counters for
@@ -23,6 +30,9 @@ Start each session by asking which item to take.
    restored hall rooms (#335), and the placeholder swap. No audio note exists
    (audio plan: #527).
 4. **Ring 2 shape and travel** (#20, M5). Parked until slice 3 is played.
+
+Session 2026-11-08h (handoff 2026-11-08h): the M3 split, hint box, debug menu
+groups and the coop and barn drawing fix. No design work.
 
 Built on 2026-11-08 (handoff 2026-11-08g, build session, nothing designed): the
 collections menu row and day-end recheck (#586), the placeable furniture
