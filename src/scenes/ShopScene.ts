@@ -55,8 +55,20 @@ export class ShopScene extends Phaser.Scene {
       "Arrows: move   Enter: buy 1 / sell 1   Space: buy 5 / sell all   Esc: close",
       { fontSize: "13px", color: "#ffffffaa" },
     );
-    this.buyMenu = new Menu(this, { x: 24, y: 64, w: 450, title: "Buy" });
-    this.sellMenu = new Menu(this, { x: 490, y: 64, w: 446, title: "Sell" });
+    this.buyMenu = new Menu(this, {
+      x: 24,
+      y: 64,
+      w: 450,
+      title: "Buy",
+      buttonsOnly: true,
+    });
+    this.sellMenu = new Menu(this, {
+      x: 490,
+      y: 64,
+      w: 446,
+      title: "Sell",
+      buttonsOnly: true,
+    });
     const kb = this.input.keyboard;
     kb?.on("keydown-UP", () => this.active.move(-1));
     kb?.on("keydown-DOWN", () => this.active.move(1));
