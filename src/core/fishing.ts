@@ -47,8 +47,6 @@ export interface RodDef {
   barWidth: number;
   /** Cast range in tiles. */
   range: number;
-  /** Lands common fish only (the Reed Pole). */
-  commonOnly?: boolean;
   /** Has a bait slot. */
   bait: boolean;
   /** Lure slots: none, one or two. */
@@ -60,9 +58,6 @@ export const RODS = rodData as RodDef[];
 export function rodById(id: string | undefined): RodDef | undefined {
   return RODS.find((r) => r.id === id);
 }
-
-/** Fishing level needed to land a rare fish (note 21). */
-export const RARE_LEVEL = 5;
 
 /** Game minutes one cast takes, win or lose. A placeholder: note 21 is silent. */
 export const CAST_MINUTES = 20;
@@ -133,35 +128,22 @@ export function fishWeight(f: FishDef, odds: Odds): number {
   return w;
 }
 
-export type Bite =
-  | { kind: "none" }
-  /** A fish took the line but is too much for the rod or the skill. */
-  | { kind: "lost"; fish: FishDef }
-  | { kind: "fish"; fish: FishDef };
-
-/** Can this rod and skill land the fish? */
-export function canLand(fish: FishDef, rod: RodDef, level: number): boolean {
-  if (rod.commonOnly && fish.rarity !== "common") return false;
-  return fish.rarity !== "rare" || level >= RARE_LEVEL;
-}
+export type Bite = { kind: "none" } | { kind: "fish"; fish: FishDef };
 
 /**
- * What bites. The Reed Pole only draws common fish, so it never loses one.
- * Any rod below level 5 loses a rare bite. The first catch is the tutorial:
- * always a common fish, and a common one stands in if none is in season.
+ * What bites. Every rod can hook any fish the conditions allow, and no level
+ * gates rare fish (note 21). The first catch is the tutorial: always a common
+ * fish, and a common one stands in if none is in season.
  */
 export function bite(
   water: Water,
   c: Conditions,
-  rod: RodDef,
-  level: number,
   random: () => number,
   tutorial = false,
   odds: Odds = {},
 ): Bite {
   let pool = fishAvailable(water, c);
-  if (rod.commonOnly || tutorial)
-    pool = pool.filter((f) => f.rarity === "common");
+  if (tutorial) pool = pool.filter((f) => f.rarity === "common");
   if (pool.length === 0) {
     if (!tutorial) return { kind: "none" };
     const stand = FISH.find((f) => f.water === water && f.rarity === "common");
@@ -177,9 +159,7 @@ export function bite(
       break;
     }
   }
-  return canLand(fish, rod, level)
-    ? { kind: "fish", fish }
-    : { kind: "lost", fish };
+  return { kind: "fish", fish };
 }
 
 // ---- the cast

@@ -3,7 +3,6 @@ import {
   FISH,
   Fight,
   FishLog,
-  RARE_LEVEL,
   RODS,
   barWidth,
   bite,
@@ -63,8 +62,6 @@ describe("fish data", () => {
       expect(RODS[i]!.barWidth).toBeGreaterThan(RODS[i - 1]!.barWidth);
       expect(RODS[i]!.range).toBeGreaterThan(RODS[i - 1]!.range);
     }
-    expect(reed.commonOnly).toBe(true);
-    expect(hazel.commonOnly).toBeUndefined();
   });
 });
 
@@ -117,36 +114,25 @@ describe("what bites", () => {
       minutes: 22 * 60,
       raining: false,
     } as const;
-    expect(bite("river", night, hazel, 0, fixed(0)).kind).toBe("none");
+    expect(bite("river", night, fixed(0)).kind).toBe("none");
   });
 
-  it("limits the Reed Pole to common fish and never loses a bite", () => {
-    for (let i = 0; i < 40; i++) {
-      const b = bite("river", fall, reed, 0, fixed(i / 40));
-      expect(b.kind).toBe("fish");
-      if (b.kind === "fish") expect(b.fish.rarity).toBe("common");
-    }
-  });
-
-  it("lets a better rod hook an uncommon fish", () => {
+  it("hooks an uncommon fish", () => {
     const seen = new Set<string>();
     for (let i = 0; i < 40; i++) {
-      const b = bite("river", fall, hazel, 0, fixed(i / 40));
+      const b = bite("river", fall, fixed(i / 40));
       if (b.kind === "fish") seen.add(b.fish.rarity);
     }
     expect(seen.has("uncommon")).toBe(true);
   });
 
-  it("loses a rare bite below level 5 and lands it from level 5", () => {
+  it("hooks a rare fish at any level when the conditions allow", () => {
     const dawn = {
       season: "spring",
       minutes: 6.5 * 60,
       raining: false,
     } as const;
-    expect(bite("river", dawn, hazel, RARE_LEVEL - 1, fixed(0)).kind).toBe(
-      "lost",
-    );
-    const b = bite("river", dawn, hazel, RARE_LEVEL, fixed(0));
+    const b = bite("river", dawn, fixed(0));
     expect(b.kind === "fish" && b.fish.id).toBe("silverthread");
   });
 
@@ -156,21 +142,21 @@ describe("what bites", () => {
       minutes: 22 * 60,
       raining: false,
     } as const;
-    const b = bite("river", night, hazel, 0, fixed(0), true);
+    const b = bite("river", night, fixed(0), true);
     expect(b.kind === "fish" && b.fish.rarity).toBe("common");
     const dawn = {
       season: "spring",
       minutes: 6.5 * 60,
       raining: false,
     } as const;
-    const c = bite("river", dawn, hazel, 9, fixed(0), true);
+    const c = bite("river", dawn, fixed(0), true);
     expect(c.kind === "fish" && c.fish.rarity).toBe("common");
   });
 
   it("weights common fish over uncommon ones", () => {
     let common = 0;
     for (let i = 0; i < 100; i++) {
-      const b = bite("river", fall, hazel, 0, fixed(i / 100));
+      const b = bite("river", fall, fixed(i / 100));
       if (b.kind === "fish" && b.fish.rarity === "common") common++;
     }
     expect(common).toBeGreaterThan(30);
