@@ -188,28 +188,39 @@ describe("house upgrade and save", () => {
     const raw = JSON.parse(serialize(g));
     delete raw.houseLayout;
     const back = deserialize(JSON.stringify(raw))!;
-    // The old start room sat at the corner; it now sits at (9, 12).
-    expect(back.furniture.at("house", 12, 15)).toBe("armchair");
+    // The old start room sat at the corner; it now sits at (11, 12).
+    expect(back.furniture.at("house", 14, 15)).toBe("armchair");
     expect(back.furniture.at("house", 3, 3)).toBeUndefined();
-    expect(back.chests.at("house", 13, 15)).toBe("chest");
-    // The old tier 1 map keeps its columns and moves down by the band.
+    expect(back.chests.at("house", 15, 15)).toBe("chest");
+    // The old tier 1 map moves right by the widening and down by the band.
     carryFurniture(back, maps.get("house", 1), "house");
-    expect(back.furniture.at("house", 12, 16)).toBe("oak-chair");
+    expect(back.furniture.at("house", 14, 16)).toBe("oak-chair");
   });
 
-  it("moves a save in the 12 row frame (layout 2) down by the tier 2 band", () => {
+  it("moves a save in the 12 row frame (layout 2) down by the band and right by the widening", () => {
     const g = newGame();
     g.furniture.add("house", 12, 5, "armchair");
     g.chests.add("house", 13, 5, "chest");
     const raw = JSON.parse(serialize(g));
     raw.houseLayout = 2;
     const back = deserialize(JSON.stringify(raw))!;
-    expect(back.furniture.at("house", 12, 15)).toBe("armchair");
+    expect(back.furniture.at("house", 14, 15)).toBe("armchair");
     expect(back.furniture.at("house", 12, 5)).toBeUndefined();
-    expect(back.chests.at("house", 13, 15)).toBe("chest");
+    expect(back.chests.at("house", 15, 15)).toBe("chest");
     // Saving writes the current layout, so loading again does not move it twice.
     const again = deserialize(serialize(back))!;
-    expect(again.furniture.at("house", 12, 15)).toBe("armchair");
+    expect(again.furniture.at("house", 14, 15)).toBe("armchair");
+  });
+
+  it("moves a layout 3 save right by the widening", () => {
+    const g = newGame();
+    g.furniture.add("house", 12, 15, "armchair");
+    g.chests.add("house", 13, 15, "chest");
+    const raw = JSON.parse(serialize(g));
+    raw.houseLayout = 3;
+    const back = deserialize(JSON.stringify(raw))!;
+    expect(back.furniture.at("house", 14, 15)).toBe("armchair");
+    expect(back.chests.at("house", 15, 15)).toBe("chest");
   });
 
   it("does not move a save already in the new frame", () => {

@@ -28,22 +28,31 @@ export function houseVisibleTier(tier: number): number {
  * `houseLayout`. 1 (no field) is the old frame, where the start room sat at the
  * corner of its own map. 2 is the merged map of 12 rows (tier 1, #421). 3 is
  * the map with the tier 2 band above, 22 rows, so everything moved down by
- * `TIER_2_BAND` (#286). See `legacyHouseTile`.
+ * `TIER_2_BAND` (#286). 4 widens the map from 31 to 35 columns, so everything
+ * moved right by `TIER_2_WIDEN` (the larger tier 2 kitchen and bedroom, note 68).
+ * See `legacyHouseTile`.
  */
-export const HOUSE_LAYOUT = 3;
+export const HOUSE_LAYOUT = 4;
+
+/** Columns every house tile moved right by in layout 4, to make room for the wider kitchen. */
+export const TIER_2_WIDEN = 2;
 
 /** Rows the tier 2 band added above the tier 1 rooms in layout 3. */
 export const TIER_2_BAND = 10;
 
 /** Where the start room's corner sits in the merged house map, in tiles. */
-export const START_ROOM_AT = { x: 9, y: 2 + TIER_2_BAND } as const;
+export const START_ROOM_AT = {
+  x: 9 + TIER_2_WIDEN,
+  y: 2 + TIER_2_BAND,
+} as const;
 
 /**
  * Bring a tile saved under an older frame into the current one. `layout` is the
  * save's `houseLayout` (1 when absent). From layout 1, a piece on the old start
  * map moves by the start room's offset, and a piece on the old tier 1 map
  * (`house-1`) moves down by the band and goes to the one house map. From
- * layout 2 the house pieces move down by the band. Layout 3 is current.
+ * layout 2 the house pieces move down by the band. Every older layout then
+ * moves right by the widening (layout 4, current).
  */
 export function legacyHouseTile(
   map: string,
@@ -52,10 +61,14 @@ export function legacyHouseTile(
   layout = 1,
 ): { map: string; x: number; y: number } {
   if (layout >= HOUSE_LAYOUT) return { map, x, y };
-  if (layout === 2) return { map: HOUSE_MAP, x, y: y + TIER_2_BAND };
-  if (map === HOUSE_MAP)
-    return { map, x: x + START_ROOM_AT.x, y: y + START_ROOM_AT.y };
-  return { map: HOUSE_MAP, x, y: y + TIER_2_BAND };
+  let at = { map, x, y };
+  if (layout === 1) {
+    at =
+      map === HOUSE_MAP
+        ? { map, x: x + 9, y: y + 2 + TIER_2_BAND }
+        : { map: HOUSE_MAP, x, y: y + TIER_2_BAND };
+  } else if (layout === 2) at = { map: HOUSE_MAP, x, y: y + TIER_2_BAND };
+  return { ...at, x: at.x + TIER_2_WIDEN };
 }
 
 /** True once the house has its cellar stairs: tier 3. */

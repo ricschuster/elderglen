@@ -147,8 +147,7 @@ the tile rule above. This is the one allowed break, and the last one.
   unchanged apart from the offset.
 - **No wake line change.** The report already says the new rooms are ready.
   The waiting line about the spare room and nursery stays.
-- **Build issue to file:** `feat: tier 2 widens the kitchen and bedroom (note
-  68)`. Not built.
+- **Build issue:** #550, built (see "Built (#550)" below).
 
 ## Still open
 
@@ -221,3 +220,21 @@ the tile rule above. This is the one allowed break, and the last one.
   that sits on any tier of the target map, since `from_cellar` lives on tier 2.
 - **Not a house map.** The cellar id is `cellar`, so `isHouseMap` is false: no
   furniture or chests there, and a house tier change does not reload it.
+
+## Built (#550, 2026-11-08)
+
+- **The shift.** `house.json` is 35 by 22. Every tile and object moved right by
+  `TIER_2_WIDEN` (2), the bounds properties moved with them (`bounds` 11,12,11,10,
+  `bounds-t1` 2,10,31,12, `bounds-t2` 0,0,35,22). The start room's corner is
+  (11, 12) and the door (13, 21).
+- **Tier 2 layers.** `ground-t2` and `collision-t2` now draw the upper band across
+  all 35 columns (spare room 1 to 15, divider at 16, nursery 17 to 33), open the
+  old kitchen west wall (column 2) and bedroom east wall (column 32) with open
+  tiles, and add the new walls at columns 0 and 34. Kitchen interior is 9 wide
+  (1 to 9), bedroom 10 (24 to 33). The cellar stairs and `from_cellar` shifted
+  with everything.
+- **Saves.** `HOUSE_LAYOUT` is 4. `legacyHouseTile` brings layouts 1 and 2 to
+  the layout 3 frame as before, then adds 2 to x for any layout under 4.
+- **Tests.** Tier 1 still shows no widened tile, and every tile walkable at tier 1
+  is walkable at tier 2. A layout 3 save moves right by 2.
+- **Not done.** The coop and barn are unchanged.
