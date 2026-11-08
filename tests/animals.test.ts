@@ -433,6 +433,7 @@ describe("saves", () => {
       hay: 0,
       silo: false,
       siloDays: 0,
+      sites: {},
       nextId: 1,
     });
   });

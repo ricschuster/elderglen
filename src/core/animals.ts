@@ -410,6 +410,12 @@ export interface AnimalsState {
   silo: boolean;
   /** Days left on the silo job, 0 when none. One carpenter job at a time. */
   siloDays: number;
+  /**
+   * Where the player put the coop and the barn, the top left tile
+   * (`docs/design/60_building_placement.md`). Absent means the fixed site of
+   * the farm map, so old saves keep working.
+   */
+  sites: Partial<Record<Building, { x: number; y: number }>>;
   nextId: number;
 }
 
@@ -425,6 +431,7 @@ export function newAnimals(): AnimalsState {
     hay: 0,
     silo: false,
     siloDays: 0,
+    sites: {},
     nextId: 1,
   };
 }
@@ -444,6 +451,9 @@ export function saveAnimals(a: AnimalsState): AnimalsState {
     hay: a.hay,
     silo: a.silo,
     siloDays: a.siloDays,
+    sites: Object.fromEntries(
+      Object.entries(a.sites).map(([k, v]) => [k, { ...v }]),
+    ),
     nextId: a.nextId,
   };
 }
@@ -494,6 +504,22 @@ export function loadAnimals(raw: unknown): AnimalsState {
       egg: inc.egg,
       daysLeft: clamp(Math.floor(inc.daysLeft), 0, INCUBATE_DAYS),
     };
+  // A site is kept only for a building that exists or is being built. An old
+  // save has none, and the building stands at the fixed site of its map.
+  const sites = r.sites as Record<string, unknown> | undefined;
+  for (const b of ["coop", "barn"] as const) {
+    const v = sites?.[b] as Record<string, unknown> | undefined;
+    if (
+      v &&
+      isNum(v.x) &&
+      isNum(v.y) &&
+      (isBuilt(out, b) || out.build?.building === b)
+    )
+      out.sites[b] = {
+        x: clamp(Math.floor(v.x), 0, MAX_SITE),
+        y: clamp(Math.floor(v.y), 0, MAX_SITE),
+      };
+  }
   out.silo = r.silo === true;
   if (!out.silo && isNum(r.siloDays) && r.siloDays >= 1)
     out.siloDays = Math.min(Math.floor(r.siloDays), SILO_BUILD_DAYS);
@@ -578,14 +604,36 @@ export function animalSlots(
   });
 }
 
+/** The largest tile a saved site may hold. Placement keeps a site on the map. */
+export const MAX_SITE = 255;
+
+/** The footprint of the coop or the barn, and the door tile's offset from its top left. */
+export const FOOTPRINTS = {
+  coop: { w: COOP_FOOTPRINT.w, h: COOP_FOOTPRINT.h, doorX: 1 },
+  barn: { w: BARN_FOOTPRINT.w, h: BARN_FOOTPRINT.h, doorX: 3 },
+} as const;
+
+/**
+ * Where a building stands on a farm map: the site the player chose, else the
+ * fixed one of the map (every old save). Undefined on a map with no site.
+ */
+export function siteOf(
+  g: { animals: AnimalsState },
+  b: Building,
+  mapId: string,
+) {
+  const fixed = b === "coop" ? COOP_SITES[mapId] : BARN_SITES[mapId];
+  return fixed ? (g.animals.sites[b] ?? fixed) : undefined;
+}
+
 /** The barn site on a farm map id, if it has one. */
-export function barnSite(mapId: string) {
-  return BARN_SITES[mapId];
+export function barnSite(g: { animals: AnimalsState }, mapId: string) {
+  return siteOf(g, "barn", mapId);
 }
 
 /** The coop site on a farm map id, if it has one. */
-export function coopSite(mapId: string) {
-  return COOP_SITES[mapId];
+export function coopSite(g: { animals: AnimalsState }, mapId: string) {
+  return siteOf(g, "coop", mapId);
 }
 
 /** True if a tile is part of the built coop's footprint on this map, other than its door tile. */
@@ -595,7 +643,7 @@ export function coopBlocks(
   x: number,
   y: number,
 ): boolean {
-  const s = COOP_SITES[mapId];
+  const s = siteOf(g, "coop", mapId);
   if (!s || !g.animals.coopBuilt) return false;
   if (x === s.x + 1 && y === s.y + COOP_FOOTPRINT.h - 1) return false;
   return (
@@ -635,7 +683,7 @@ export function barnBlocks(
   x: number,
   y: number,
 ): boolean {
-  const s = BARN_SITES[mapId];
+  const s = siteOf(g, "barn", mapId);
   if (!s || !g.animals.barnBuilt) return false;
   if (x === s.x + 3 && y === s.y + BARN_FOOTPRINT.h - 1) return false;
   return (

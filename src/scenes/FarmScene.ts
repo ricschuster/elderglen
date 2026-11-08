@@ -47,6 +47,7 @@ import { NOTHING_TO_ACT_ON, act, reasonText, useHeld } from "../core/tools";
 import { cropById } from "../core/crops";
 import { mapFiles, maps } from "../content/maps";
 import { START } from "../core/maps";
+import { mapWithDoors } from "../core/placement";
 import { farmMapOf, isFarmMap, resolveMapId } from "../core/farmtypes";
 import { exitOpen, FarmMap, layersAtTier, type Exit } from "../core/map";
 import { exitLabel, serviceLabel } from "../core/labels";
@@ -297,6 +298,8 @@ export class FarmScene extends Phaser.Scene {
     // tier are read and drawn, and the rest is black void.
     this.tier = this.buildingTier(id);
     this.map = mineLayout ? FarmMap.fromTiled(json) : maps.get(id, this.tier);
+    // The coop and barn doors stand where the buildings were placed.
+    if (isFarmMap(id)) this.map = mapWithDoors(this.state, this.map, id);
     if (isHouseMap(id)) carryFurniture(this.state, this.map, id);
     if (this.floor !== undefined)
       this.floorState = this.state.mines.visit(this.floor, day);
@@ -1776,7 +1779,7 @@ export class FarmScene extends Phaser.Scene {
   private drawCoop(): void {
     const a = this.state.animals;
     this.drawFarmBuilding(
-      coopSite(this.mapId),
+      coopSite(this.state, this.mapId),
       COOP_FOOTPRINT,
       1,
       a.coopBuilt,
@@ -1784,7 +1787,7 @@ export class FarmScene extends Phaser.Scene {
       0xb5563c,
     );
     this.drawFarmBuilding(
-      barnSite(this.mapId),
+      barnSite(this.state, this.mapId),
       BARN_FOOTPRINT,
       3,
       a.barnBuilt,

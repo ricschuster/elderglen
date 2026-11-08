@@ -363,6 +363,36 @@ export class FarmMap {
     );
   }
 
+  /**
+   * A copy of this map with one door moved: the exit `exitId` to the tile
+   * `door`, and the entry `entryName` (where you land coming out) to the tile
+   * below it. Placed buildings move their doors this way
+   * (`docs/design/60_building_placement.md`). A name the map lacks is skipped.
+   */
+  withDoor(exitId: string, entryName: string, door: Spot): FarmMap {
+    return new FarmMap(
+      this.width,
+      this.height,
+      this.tileSize,
+      this.blocked,
+      this.soil,
+      this.entries.map((e) =>
+        e.name === entryName ? { ...e, x: door.x, y: door.y + 1 } : e,
+      ),
+      this.exits.map((e) =>
+        e.id === exitId ? { ...e, x: door.x, y: door.y } : e,
+      ),
+      this.forageSpots,
+      this.services,
+      this.regions,
+      this.trees,
+      this.paths,
+      this.rocks,
+      this.tier,
+      this.bounds,
+    );
+  }
+
   /** Outside the map counts as blocked. */
   isBlocked(x: number, y: number): boolean {
     return !this.inside(x, y) || this.blocked[y * this.width + x] === true;
