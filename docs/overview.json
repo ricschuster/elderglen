@@ -656,6 +656,11 @@
           "t": "Dangerous mode lever on floor 120, gated by reaching 120 and an errand from the warden head",
           "ref": "22_mines.md#Dangerous mode",
           "issue": 177
+        },
+        {
+          "s": "decided",
+          "t": "Geodes (draft): Geode, Frozen, Magma and Omni drop by depth band as Stardew does, each with its own mineral pool, Omni drawing from all; names and prices are placeholders",
+          "ref": "69_geodes_and_minerals.md"
         }
       ],
       "deps": [],
@@ -749,6 +754,12 @@
           "s": "decided",
           "t": "Seven elderfruit (+34 max energy each) from seven ring 1 sources: the Harvest Showing counter, the floor 120 chest, a spouse at 12.5 hearts, the hermit's high-price sale, a Secret Woods spirit for the fruit of the hermit's rare seed, the fish mail, and the full gallery set",
           "ref": "39_completion_total.md#Settled with the owner (2026-10-31)",
+          "issue": 196
+        },
+        {
+          "s": "decided",
+          "t": "Completion tracker details: partial progress counts, the valley total is the mean of the rings that exist, the gallery takes minerals, artifacts and found things; the rare seed is the emberseed, given by the hermit at 4 hearts, growing spring to fall",
+          "ref": "39_completion_total.md#Settled with the owner (2026-11-08)",
           "issue": 196
         },
         {
@@ -961,6 +972,11 @@
           "s": "decided",
           "t": "Fall and winter festivals and the farm cave (draft): Harvest Showing is a 9 good display scored for points, Hollow Eve a lantern maze with a prize chest, Frostday an ice sculpture day until fishing, the mushroom cave comes with a free dehydrator (a new machine)",
           "ref": "66_fall_winter_festivals_and_farm_cave.md"
+        },
+        {
+          "s": "decided",
+          "t": "Festival maps: the Harvest Showing uses the village green with shops locked; Hollow Eve has its own hedge map with two mazes by year, a hidden gap and a shortcut back, and villagers inside (all Stardew)",
+          "ref": "66_fall_winter_festivals_and_farm_cave.md#Layout addendum: festival maps (2026-11-08)"
         },
         {
           "s": "decided",

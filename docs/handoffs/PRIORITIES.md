@@ -22,6 +22,10 @@ Start each session by asking which item to take.
    (audio plan: #527).
 4. **Ring 2 shape and travel** (#20, M5). Parked until slice 3 is played.
 
+Designed on 2026-11-08 (handoff 2026-11-08e): geodes (note 69), festival maps
+(note 66 addendum), fruit energy (SC-66 closed) and the completion tracker's open
+points (note 39). Nothing built.
+
 Built on 2026-11-08 (handoff 2026-11-08d): menu rows at touch size (#542), zoom
 keys and pinch zoom (#543), playtest script fixes (#524), geode kinds as items
 (#521), and the device pixel ratio settled as not needed (SC-72). Design item
