@@ -942,7 +942,7 @@
         },
         {
           "s": "open",
-          "t": "House room sizes and floor plans, catalogue price and where flooring and wallpaper are sold",
+          "t": "House room sizes and floor plans; built with placeholders: catalogue at 200,000g and flooring and wallpaper at 200g at the carpenter (where they are sold is still open)",
           "ref": "41_house.md#Open"
         }
       ],
@@ -955,7 +955,7 @@
       "group": "systems",
       "pos": [500, 680],
       "built": "partial",
-      "builtNote": "All eight festivals are built as screens (2026-11-07): Harvest Showing table and token counter, Hollow Eve maze, Frostday sights, counters. No festival maps. The farm cave is built too (note 66).",
+      "builtNote": "All eight festivals are built as screens (2026-11-07): Harvest Showing table and token counter, Hollow Eve maze, Frostday sights, counters. Maps built 2026-11-08 for the Harvest Showing (village green) and Hollow Eve (hedge map, odd-year maze); other festival maps, the even-year maze and villager spots wait for the village map. The farm cave is built too (note 66).",
       "summary": "Two festivals a season; the Hat Parade comes first.",
       "items": [
         {
