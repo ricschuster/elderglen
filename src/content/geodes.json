@@ -1,6 +1,11 @@
 {
   "fee": 25,
   "geode": { "id": "geode", "name": "Geode", "sellPrice": 50 },
+  "kinds": [
+    { "id": "frozen-geode", "name": "Frozen Geode", "sellPrice": 100 },
+    { "id": "magma-geode", "name": "Magma Geode", "sellPrice": 150 },
+    { "id": "omni-geode", "name": "Omni Geode", "sellPrice": 300 }
+  ],
   "items": [
     {
       "id": "river-garnet",

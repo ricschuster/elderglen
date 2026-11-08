@@ -14,9 +14,15 @@ export const GEODE = geodeData.geode.id;
 export const CRACK_FEE = geodeData.fee;
 /** Share of rocks that are geode nodes on floors 1 to 10 (placeholder). */
 export const GEODE_SHARE = 0.05;
+/**
+ * The other geode kinds are items with sell prices only (SC-67). Where each
+ * drops and what it cracks into is unsettled, so they do not drop yet and the
+ * smith cracks only the plain geode.
+ */
 /** Items only geodes give, so `items.ts` can list them. */
 export const GEODE_ITEMS: { id: string; name: string; sellPrice: number }[] = [
   geodeData.geode,
+  ...geodeData.kinds,
   ...geodeData.items,
 ];
 
