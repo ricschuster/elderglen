@@ -4,7 +4,7 @@ import { FarmMap, type TiledMapJson } from "../src/core/map";
 import { deserialize, serialize } from "../src/core/save";
 import { sleep } from "../src/core/sleep";
 import { startGame, heldAt } from "../src/core/toolbar";
-import { useHeld } from "../src/core/tools";
+import { act, useHeld } from "../src/core/tools";
 import {
   Trees,
   SPREAD_CHANCE,
@@ -201,12 +201,12 @@ describe("tree tools", () => {
     });
   });
 
-  it("shakes a loose seed down by hand, once", () => {
+  it("shakes a loose seed down with Action, once", () => {
     const g = game([{ x: 1, y: 0, stage: 5 }]);
     expect(shake(g, 1, 0).ok).toBe(false);
     g.trees.at(1, 0)!.seed = true;
     const map = mapWithTrees();
-    expect(useHeld(g, map, { kind: "tool", tool: "hand" }, 1, 0).ok).toBe(true);
+    expect(act(g, map, 1, 0).ok).toBe(true);
     expect(g.inventory.count("tree-seed")).toBe(1);
     expect(shake(g, 1, 0).ok).toBe(false);
   });

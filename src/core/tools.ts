@@ -59,6 +59,13 @@ export function useHeld(
   // Any tool, or the empty hand, lifts a placed sprinkler (SC-48).
   if (held.kind === "tool" && g.sprinklers.at(x, y))
     return pickUpSprinkler(g, x, y);
+  // The axe or pickaxe takes a placed machine up, or collects from it (Stardew).
+  if (
+    held.kind === "tool" &&
+    (held.tool === "axe" || held.tool === "pickaxe") &&
+    g.machines.at(x, y)
+  )
+    return handOnMachine(g, x, y);
   if (held.kind === "tool" && held.tool === "pickaxe")
     return mine(g, x, y, floor);
   if (!map.hasSoil) return fail("nothing to do here");
@@ -82,10 +89,8 @@ export function useHeld(
       ? clearSeedling(g, x, y, "can", map)
       : water(g, x, y);
   if (g.machines.at(x, y)) {
-    // A machine takes the held item, or the hand collects from it.
+    // A machine takes the held item; Action collects from it.
     if (held.kind === "item") return loadMachine(g, x, y, held.id);
-    if (held.kind === "tool" && held.tool === "hand")
-      return handOnMachine(g, x, y);
     return fail("machine in the way");
   }
   if (held.kind === "item" && machineById(held.id))
@@ -101,9 +106,7 @@ export function useHeld(
     return plantTree(g, map, x, y);
   if (held.kind === "item" && treeOfSapling(held.id))
     return plantFruitTree(g, map, x, y, held.id);
-  // The hand tool keeps its pick-up job; every other item only has the Action
-  // button for that (note 47).
-  if (held.kind === "tool" && held.tool === "hand") return pick(g, x, y);
+  // Picking, shaking and harvesting are the Action button's job (note 47).
   return fail("nothing to do here");
 }
 

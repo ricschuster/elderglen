@@ -274,7 +274,7 @@ if (Math.abs(t3.pos.x - t2.pos.x) > 0.01)
   finding("the player kept moving after the finger lifted");
 log(`stick: moved ${(t1.pos.x - t0.pos.x).toFixed(0)}px in 0.5s`);
 
-// 2. Farming loop by touch. The toolbar is hoe, can, axe, pickaxe, hand, then the bag.
+// 2. Farming loop by touch. The toolbar is hoe, can, axe, pickaxe, then the bag.
 const PX = 16;
 await walkTo(PX, 12);
 await faceTo("up");
@@ -285,7 +285,7 @@ await useTool();
 let s = await bot.snap();
 if (!s.plots.some((q) => q.x === front.x && q.y === front.y && q.tilled))
   finding("Use with the hoe did not till the tile in front");
-const seedSlot = s.inv.findIndex((x) => x && x.id === "parsnip-seed") + 5;
+const seedSlot = s.inv.findIndex((x) => x && x.id === "parsnip-seed") + 4;
 await selectSlot(seedSlot);
 await useTool();
 s = await bot.snap();
@@ -305,7 +305,7 @@ await p.evaluate(
   },
   [front.x, front.y],
 );
-await selectSlot(4); // hand
+await selectSlot(0); // any tool: Action does the harvesting
 const before = (await bot.snap()).inv;
 await actTool();
 s = await bot.snap();

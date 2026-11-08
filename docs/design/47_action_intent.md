@@ -117,3 +117,6 @@ order is ours; Stardew's is not checked.
   off any object.
 - **Energy:** harvest and forage cost nothing today and stay so.
 - **The in-game menu and the journal** are designed in `49_menu_and_journal.md`.
+
+Update 2026-11-08: the Hand tool no longer exists. Action does its picking,
+shaking and harvesting. See `70_tools_in_the_backpack.md`.

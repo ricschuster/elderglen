@@ -93,7 +93,7 @@ describe("sprinklers", () => {
     expect(g.farm.plotAt(3, 2)?.crop?.daysGrown).toBe(1);
   });
 
-  it("are placed from the pack on clear ground and picked up by hand", () => {
+  it("are placed from the pack on clear ground and picked up with a tool", () => {
     const g = newGame();
     const map = soilMap();
     g.inventory.add("sprinkler");
@@ -102,8 +102,8 @@ describe("sprinklers", () => {
     expect(g.inventory.count("sprinkler")).toBe(0);
     expect(g.sprinklers.at(3, 3)).toBe("sprinkler");
     expect(till(g, 3, 3).ok).toBe(false);
-    const hand = { kind: "tool", tool: "hand" } as const;
-    expect(useHeld(g, map, hand, 3, 3).ok).toBe(true);
+    const hoe = { kind: "tool", tool: "hoe" } as const;
+    expect(useHeld(g, map, hoe, 3, 3).ok).toBe(true);
     expect(g.inventory.count("sprinkler")).toBe(1);
   });
 
@@ -178,9 +178,9 @@ describe("crafting", () => {
 });
 
 describe("lifting a sprinkler", () => {
-  it("works with any tool or the hand, and blocks the tool's usual job", () => {
+  it("works with any tool, and blocks the tool's usual job", () => {
     const map = soilMap();
-    for (const tool of ["hand", "axe", "pickaxe", "hoe", "can"] as const) {
+    for (const tool of ["axe", "pickaxe", "hoe", "can"] as const) {
       const g = newGame();
       g.sprinklers.add(2, 2, "sprinkler");
       const r = useHeld(g, map, { kind: "tool", tool }, 2, 2);

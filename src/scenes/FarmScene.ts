@@ -1139,23 +1139,21 @@ export class FarmScene extends Phaser.Scene {
     if (this.map.serviceAt(front.x, front.y)) return;
     if (this.useSilo(front.x, front.y)) return;
     const held = heldAt(this.state, this.selected);
-    // A chest is stood down from the backpack, and the hand takes an empty one up.
+    // A chest is stood down from the backpack, and the axe or pickaxe takes an empty one up.
     if (held.kind === "item" && chestById(held.id))
       return this.report(
         placeChest(this.state, this.map, this.mapId, front.x, front.y, held.id),
       );
-    if (
-      held.kind === "tool" &&
-      held.tool === "hand" &&
-      this.state.chests.at(this.mapId, front.x, front.y)
-    )
-      return this.report(pickUpChest(this.state, this.mapId, front.x, front.y));
-    // The axe or pickaxe pushes a chest with items in it one tile along (SC-56).
+    // The axe or pickaxe takes an empty chest up, and pushes one with items in
+    // it one tile along (SC-56).
     if (
       held.kind === "tool" &&
       (held.tool === "axe" || held.tool === "pickaxe") &&
       this.state.chests.at(this.mapId, front.x, front.y)
     ) {
+      const taken = pickUpChest(this.state, this.mapId, front.x, front.y);
+      if (taken.ok || taken.reason !== "chest not empty")
+        return this.report(taken);
       const step = PUSH[this.facing];
       return this.report(
         pushChest(
@@ -1170,7 +1168,7 @@ export class FarmScene extends Phaser.Scene {
       );
     }
     if (isHouseMap(this.mapId)) {
-      // In the house the held piece is stood down, and the hand takes one up.
+      // In the house the held piece is stood down, and the axe or pickaxe takes one up.
       if (held.kind === "item" && decorById(held.id))
         return this.report(
           applyDecor(this.state, this.mapId, front.x, front.y, held.id),
@@ -1188,7 +1186,7 @@ export class FarmScene extends Phaser.Scene {
         );
       if (
         held.kind === "tool" &&
-        held.tool === "hand" &&
+        (held.tool === "axe" || held.tool === "pickaxe") &&
         this.state.furniture.at(this.mapId, front.x, front.y)
       )
         return this.report(

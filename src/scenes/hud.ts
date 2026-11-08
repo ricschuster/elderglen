@@ -31,15 +31,13 @@ const TOOL_LABEL = {
   can: "Can",
   axe: "Axe",
   pickaxe: "Pickaxe",
-  hand: "Hand",
 } as const;
 
 /** Short text for a slot, until the art pass gives items icons. */
 function caption(held: Held, g: GameState): string {
   if (held.kind === "tool") {
     if (toolAway(g, held.tool)) return `${TOOL_LABEL[held.tool]} (smith)`;
-    const tier =
-      held.tool === "hand" ? 0 : g.toolTiers[held.tool as Upgradable];
+    const tier = g.toolTiers[held.tool as Upgradable];
     return tier > 0
       ? `${TIER_NAMES[tier]} ${TOOL_LABEL[held.tool].toLowerCase()}`
       : TOOL_LABEL[held.tool];
@@ -145,7 +143,7 @@ export class Hud {
         })
         .setOrigin(0.5, 1);
       const icon = scene.add
-        .image(x + SLOT / 2, BAR_Y + 15, TOOL_ICONS.hand)
+        .image(x + SLOT / 2, BAR_Y + 15, TOOL_ICONS.hoe)
         .setVisible(false);
       this.slots.push(box);
       this.captions.push(text);
@@ -347,6 +345,11 @@ export class Hud {
     this.rowText.setVisible(multiRow && this.touch);
     this.slots.forEach((box, i) => {
       const index = this.indexOf(i);
+      // The tools sit on the first row only; later rows show backpack slots.
+      const shown = this.row === 0 || i >= TOOLS.length;
+      box.setVisible(shown);
+      this.icons[i]!.setVisible(shown);
+      this.captions[i]!.setVisible(shown);
       const on = index === selected;
       box.setStrokeStyle(on ? 3 : 2, 0xffffff, on ? 1 : 0.3);
       box.setFillStyle(on ? 0xf2d16b : 0x000000, on ? 0.45 : 0.5);
@@ -358,7 +361,7 @@ export class Hud {
             ? itemIcon(held.id)
             : undefined;
       const icon = this.icons[i]!;
-      icon.setVisible(iconKey !== undefined);
+      icon.setVisible(shown && iconKey !== undefined);
       if (iconKey) icon.setTexture(iconKey);
       const quality =
         held.kind === "item" ? splitQuality(held.id).quality : "normal";

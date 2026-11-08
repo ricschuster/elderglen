@@ -380,7 +380,6 @@ export const TOOL_ICONS = {
   can: "icon-can",
   axe: "icon-axe",
   pickaxe: "icon-pickaxe",
-  hand: "icon-hand",
 };
 
 function paintToolIcons(scene: Phaser.Scene): void {
@@ -416,11 +415,6 @@ function paintToolIcons(scene: Phaser.Scene): void {
     px(c, "#8a8e96", 2, 5, 2, 2);
     px(c, "#8a8e96", 12, 5, 2, 2);
     px(c, "#d8dce4", 5, 3, 3, 1);
-  });
-  draw(TOOL_ICONS.hand, (c) => {
-    px(c, "#f0c8a0", 5, 7, 7, 6);
-    for (const x of [5, 7, 9, 11]) px(c, "#f0c8a0", x, 3, 1, 5);
-    px(c, "#d8a878", 5, 12, 7, 1);
   });
 }
 

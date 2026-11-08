@@ -110,12 +110,12 @@ describe("machines on the farm", () => {
     const r = useHeld(g, map, held, 3, 3);
     expect(r.ok).toBe(true);
     expect(g.inventory.count("melon@silver")).toBe(0);
-    const hand = { kind: "tool", tool: "hand" } as const;
+    const pickaxe = { kind: "tool", tool: "pickaxe" } as const;
     pass(g, map, 2);
     expect(jobDone(g, g.machines.get(3, 3)!)).toBe(false);
     pass(g, map, 1);
     expect(jobDone(g, g.machines.get(3, 3)!)).toBe(true);
-    expect(useHeld(g, map, hand, 3, 3).ok).toBe(true);
+    expect(useHeld(g, map, pickaxe, 3, 3).ok).toBe(true);
     expect(g.inventory.count("melon-jam")).toBe(1);
     expect(g.machines.get(3, 3)?.job).toBeUndefined();
   });
