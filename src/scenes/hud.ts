@@ -105,7 +105,6 @@ export class Hud {
     this.hint = scene.add.text(24, 122, "", {
       fontSize: "14px",
       color: "#ffffff",
-      wordWrap: { width: 640 },
     });
     this.hintBox = scene.add
       .rectangle(16, 116, 0, 0, 0x000000, 0.65)

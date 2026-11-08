@@ -236,9 +236,12 @@ export function createControls(
 /** The keyboard hint line for the desktop profile, from the bindings. */
 export function desktopHint(b: Bindings): string {
   const k = (a: string) => keyLabel(b[a]!);
-  return (
-    `Move: ${k("moveUp")}${k("moveLeft")}${k("moveDown")}${k("moveRight")} or arrows   ` +
-    `Use: ${k("use")}   Action: ${k("action")}   Eat: ${k("eat")}   Skills: ${k("skills")}   Craft: ${k("craft")}   ` +
-    `Sleep: bed or ${k("endDay")}   Tools: 1-9, ${k("nextSlot")}: next, ${k("nextRow")}: row   Hide hints: ${k("hints")}`
-  );
+  return [
+    `Move: ${k("moveUp")}${k("moveLeft")}${k("moveDown")}${k("moveRight")} or arrows`,
+    `Use: ${k("use")}   Action: ${k("action")}   Eat: ${k("eat")}`,
+    `Skills: ${k("skills")}   Craft: ${k("craft")}   Hats: ${k("hats")}`,
+    `Tools: 1-9, ${k("nextSlot")}: next, ${k("nextRow")}: row`,
+    `Sleep: bed or ${k("endDay")}`,
+    `Hide hints: ${k("hints")}`,
+  ].join("\n");
 }
