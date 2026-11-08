@@ -186,10 +186,17 @@ scene is not checked.
 | 7 | The full gallery set (`38_achievements.md`) | All 95 museum items |
 
 - Seed 5 (settled 2026-10-31): the hermit, our wizard, gives the player a rare
-  seed once the player is friendly enough (placeholder: 4 hearts). It grows
-  in one season, and the fruit goes to the spirit. The hermit therefore has
-  two roles, seller (4) and seed giver (5). The seed's name and the heart
-  level are open.
+  seed once the player is friendly enough. It grows in one season, and the
+  fruit goes to the spirit. The hermit therefore has two roles, seller (4) and
+  seed giver (5).
+- **Seed details (owner, 2026-11-08).** The seed is the **emberseed** and its
+  fruit an **ember berry** (names final, plain English). The hermit gives it at
+  **4 hearts**. It grows in **spring, summer and fall** and not in winter. The
+  owner typed this season answer in place of the offered options, so the exact
+  rule is the assistant's reading: it can be planted and grown in those three
+  seasons, and a winter planting waits for spring. The days to grow are open,
+  and the Stardew comparison (SC-75) is unchecked: from memory its Rare Seed is
+  bought at the Traveling Cart and grows in fall.
 - Only one elderfruit from a spouse, however many times the player marries or splits.
 - The Harvest Showing and hermit sales are gold sinks and are never missable.
 - The seven seeds are what the "Find every stardrop" achievement counts.
@@ -238,7 +245,7 @@ Each had a Stardew option, and the owner took the recommended one.
 
 ## Open
 
-- The rare seed's name, its heart level and its growing season (seed 5).
+- The emberseed's days to grow, and a check of the season rule with the owner.
 - The slayer goals' kill counts and reward items, at tuning.
 - Ring 2's weights and the collectible's name and look, in the ring 2 design
   (#20). Ring 3's total only if it is built.
