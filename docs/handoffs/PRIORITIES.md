@@ -77,6 +77,10 @@ issues: #421 first (the tier layer loader and the merged house map), then #286
 (tiers 2 and 3), #282 (cellar) and #531 (coop and barn). New register rows
 SC-68 to SC-70 wait for the owner. Open register rows: #526.
 
+Session i (2026-11-07, handoff 2026-11-07i) closed M2, filed the leftovers as
+issues and settled the growing interiors (note 68). Next builds: issue #520,
+then issue #421.
+
 ## Remaining bundle work
 
 Issue #181: the Last Seat numbers, the second-year rule and pacing. Issue #201
