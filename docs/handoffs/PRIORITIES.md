@@ -37,8 +37,8 @@ order that failed earlier now orders fine, so that report is closed. Not yet
 played: the new axe pick-ups. The playtest scripts edited for four tool slots
 are still unrun.
 Closed after it: #531 and #521, and the M3-vertical-slice milestone. The coop
-and barn leftovers (door tiles, art, heater, professions, incubator tile) are
-#618.
+and barn leftovers (door tiles, art, heater, professions, incubator tile) are in
+issue 618.
 
 Session 2026-11-08h (handoff 2026-11-08h): the M3 split, hint box, debug menu
 groups and the coop and barn drawing fix. No design work.
