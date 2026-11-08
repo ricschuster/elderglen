@@ -390,5 +390,129 @@
         "level": 6
       }
     ]
+  },
+  {
+    "id": "cheese-press",
+    "ingredients": [
+      {
+        "item": "wood",
+        "count": 45
+      },
+      {
+        "item": "stone",
+        "count": 45
+      },
+      {
+        "item": "copper-bar",
+        "count": 1
+      }
+    ],
+    "result": {
+      "item": "cheese-press",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "level",
+        "skill": "farming",
+        "level": 6
+      },
+      {
+        "kind": "bundle",
+        "bundle": "animal-goods"
+      }
+    ]
+  },
+  {
+    "id": "mayonnaise-machine",
+    "ingredients": [
+      {
+        "item": "wood",
+        "count": 15
+      },
+      {
+        "item": "stone",
+        "count": 15
+      },
+      {
+        "item": "quartz-crystal",
+        "count": 1
+      },
+      {
+        "item": "copper-bar",
+        "count": 1
+      }
+    ],
+    "result": {
+      "item": "mayonnaise-machine",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "level",
+        "skill": "farming",
+        "level": 2
+      }
+    ]
+  },
+  {
+    "id": "loom",
+    "ingredients": [
+      {
+        "item": "wood",
+        "count": 60
+      },
+      {
+        "item": "fiber",
+        "count": 30
+      },
+      {
+        "item": "sap",
+        "count": 1
+      }
+    ],
+    "result": {
+      "item": "loom",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "level",
+        "skill": "farming",
+        "level": 7
+      },
+      {
+        "kind": "bundle",
+        "bundle": "weavers"
+      }
+    ]
+  },
+  {
+    "id": "oil-maker",
+    "ingredients": [
+      {
+        "item": "wood",
+        "count": 50
+      },
+      {
+        "item": "coal",
+        "count": 10
+      },
+      {
+        "item": "gold-bar",
+        "count": 1
+      }
+    ],
+    "result": {
+      "item": "oil-maker",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "level",
+        "skill": "farming",
+        "level": 8
+      }
+    ]
   }
 ]

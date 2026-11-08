@@ -1,6 +1,13 @@
 import {
   artisanId,
+  CHEESE,
+  CLOTH,
+  DUCK_MAYONNAISE,
+  GOAT_CHEESE,
   HONEY,
+  MAYONNAISE,
+  OIL,
+  TRUFFLE_OIL,
   isMushroom,
   MEAD,
   produceOf,
@@ -8,7 +15,7 @@ import {
 } from "./artisan";
 import { cropById } from "./crops";
 import { BARS, COAL, coalFor, ORE_PER_BAR } from "./ore";
-import { splitQuality } from "./quality";
+import { splitQuality, type Quality } from "./quality";
 
 /**
  * Machine rules (`docs/design/24_processing_and_cooking.md`): what each
@@ -32,6 +39,11 @@ export const MACHINES: readonly MachineDef[] = [
   { id: "keg", name: "Keg", sellPrice: 250 },
   { id: "seed-maker", name: "Seed maker", sellPrice: 200 },
   { id: "dehydrator", name: "Dehydrator", sellPrice: 300 },
+  /** Animal-goods machines (note 24, slice 4). Sell prices are ours, placeholders. */
+  { id: "cheese-press", name: "Cheese press", sellPrice: 200 },
+  { id: "mayonnaise-machine", name: "Mayonnaise machine", sellPrice: 200 },
+  { id: "loom", name: "Loom", sellPrice: 250 },
+  { id: "oil-maker", name: "Oil maker", sellPrice: 300 },
   /** A crafted furnace, for more batches at once. The first is the smith's gift (`furnace.ts`). */
   { id: "furnace", name: "Furnace", sellPrice: 150 },
 ];
@@ -77,6 +89,27 @@ const KEG_MINUTES = { wine: 10000, juice: 6000 } as const;
 const MEAD_MINUTES = 600;
 const KILN_MINUTES = 30;
 const SEED_MINUTES = 20;
+/** Stardew's minutes: cheese 200, mayonnaise 180, loom 240 (note 24 says about 3 to 4 hours). */
+const CHEESE_MINUTES = 200;
+const MAYO_MINUTES = 180;
+const LOOM_MINUTES = 240;
+/** Oil maker: truffle 360, corn 1,000 (the note says 1 hour to 2 days). */
+const OIL_MINUTES = { truffle: 360, corn: 1000 } as const;
+/** Chance of 2 cloth from one wool, by its quality (ours, placeholder, note 07). */
+export const CLOTH_DOUBLE_CHANCE: Record<Quality, number> = {
+  normal: 0,
+  silver: 0.25,
+  gold: 0.5,
+};
+const CHEESE_OF: Record<string, string> = {
+  milk: CHEESE,
+  "goat-milk": GOAT_CHEESE,
+};
+const MAYO_OF: Record<string, string> = {
+  egg: MAYONNAISE,
+  "duck-egg": DUCK_MAYONNAISE,
+};
+
 /** The dehydrator takes 5 of one fruit or mushroom and dries them in a day. */
 export const DEHYDRATOR_USE = 5;
 export const DEHYDRATOR_MINUTES = MINUTES_PER_DAY;
@@ -91,7 +124,7 @@ export function processFor(
   item: string,
   random: () => number = Math.random,
 ): Process | undefined {
-  const input = splitQuality(item).base;
+  const { base: input, quality } = splitQuality(item);
   const one = { input, use: 1, count: 1 };
   if (machine === "charcoal-kiln")
     return input === "wood"
@@ -134,6 +167,30 @@ export function processFor(
       output: artisanId(input, "dried"),
       minutes: DEHYDRATOR_MINUTES,
     };
+  }
+  if (machine === "cheese-press")
+    return CHEESE_OF[input]
+      ? { ...one, output: CHEESE_OF[input]!, minutes: CHEESE_MINUTES }
+      : undefined;
+  if (machine === "mayonnaise-machine")
+    return MAYO_OF[input]
+      ? { ...one, output: MAYO_OF[input]!, minutes: MAYO_MINUTES }
+      : undefined;
+  if (machine === "loom")
+    return input === "wool"
+      ? {
+          ...one,
+          output: CLOTH,
+          count: random() < CLOTH_DOUBLE_CHANCE[quality] ? 2 : 1,
+          minutes: LOOM_MINUTES,
+        }
+      : undefined;
+  if (machine === "oil-maker") {
+    if (input === "truffle")
+      return { ...one, output: TRUFFLE_OIL, minutes: OIL_MINUTES.truffle };
+    if (input === "corn")
+      return { ...one, output: OIL, minutes: OIL_MINUTES.corn };
+    return undefined;
   }
   if (machine === "preserves-jar") {
     const produce = produceOf(input);

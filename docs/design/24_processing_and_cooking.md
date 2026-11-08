@@ -6,8 +6,7 @@ handoff). Machine numbers, dish lists and prices are our draft and are
 placeholders. Built 2026-11-07 (slice 1 build 7): the machine framework and five machines, the
 charcoal kiln, preserves jar, bee house, keg and seed maker, with jam, pickles,
 wine, juice, honey and mead (`src/core/machines.ts`, `processing.ts`,
-`artisan.ts`). The machine bundles (4, 5, 9, 10, 12) are in the hall data and give their machine and recipe (2026-11-07, note 35). Not built: the cheese press, mayonnaise machine, loom, oil maker,
-dye vat, fish smoker, crystalarium, flower honey, beer (no grain), cooking and
+`artisan.ts`). The machine bundles (4, 5, 9, 10, 12) are in the hall data and give their machine and recipe (2026-11-07, note 35). Built 2026-11-08 (animal goods): the cheese press, mayonnaise machine, loom and oil maker, with cheese, goat cheese, mayonnaise, duck mayonnaise, cloth, truffle oil and oil. The cheese press and loom come from bundles 11 and 21 or farming 6 and 7, the mayonnaise machine from farming 2 and the oil maker from farming 8 (sunflower oil waits for the crop). Cloth keeps wool quality (silver 25 percent, gold 50 percent for 2 cloth); moonwool has no machine yet. Numbers are in note 07. Not built: dye vat, fish smoker, crystalarium, flower honey, beer (no grain), cooking and
 the cask. Unchecked claims are SC-50 and SC-51. Stardew facts were checked against the
 saved wiki pages Artisan Goods and Cooking, read only (ADR 0002). No text or
 tables are copied, and the dish names below are ours.

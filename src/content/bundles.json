@@ -153,6 +153,20 @@
     "hint": "Five of three kinds, each one at least silver. Tend the soil, and fertilizer helps."
   },
   {
+    "id": "animal-goods",
+    "name": "Animal Goods",
+    "room": "larder",
+    "items": ["egg", "duck-egg", "milk", "goat-milk", "wool"],
+    "required": 4,
+    "reward": {
+      "item": {
+        "id": "cheese-press",
+        "count": 1
+      }
+    },
+    "hint": "Eggs from the coop and milk from the barn. Duck eggs, goat milk and wool come with the bigger buildings."
+  },
+  {
     "id": "artisan-goods",
     "name": "Artisan Goods",
     "room": "larder",
@@ -191,5 +205,27 @@
       }
     },
     "hint": "Bars from the furnace: ore from the mine or the smith, and coal to smelt it."
+  },
+  {
+    "id": "weavers",
+    "name": "Weaver's",
+    "room": "hearth",
+    "items": [
+      {
+        "id": "wool",
+        "count": 8
+      },
+      {
+        "id": "fiber",
+        "count": 20
+      }
+    ],
+    "reward": {
+      "item": {
+        "id": "loom",
+        "count": 1
+      }
+    },
+    "hint": "Wool from the sheep or rabbit, and plant fibre from the weeds."
   }
 ]

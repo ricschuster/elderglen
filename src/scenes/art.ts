@@ -633,6 +633,28 @@ function paintTrees(scene: Phaser.Scene): void {
         px(c, "#5a5a62", 3, 5, 10, 1);
         px(c, "#5a5a62", 3, 11, 10, 1);
         px(c, "#3a2a1a", 7, 8, 2, 2);
+      } else if (m.id === "cheese-press") {
+        px(c, "#8a6a3a", 3, 9, 10, 5);
+        px(c, "#f0d060", 4, 10, 8, 3);
+        px(c, "#6a6a72", 7, 2, 2, 7);
+        px(c, "#8a8a94", 4, 7, 8, 2);
+      } else if (m.id === "mayonnaise-machine") {
+        px(c, "#6a8aa8", 3, 6, 10, 8);
+        px(c, "#9ab8d0", 4, 3, 8, 4);
+        px(c, "#f4ecc8", 6, 9, 4, 4);
+        px(c, "#3a4a5a", 7, 4, 2, 1);
+      } else if (m.id === "loom") {
+        px(c, "#8a5a2a", 2, 3, 2, 11);
+        px(c, "#8a5a2a", 12, 3, 2, 11);
+        px(c, "#a8783c", 2, 3, 12, 2);
+        px(c, "#7a8ad0", 4, 6, 8, 6);
+        px(c, "#d8d8e8", 5, 7, 1, 5);
+        px(c, "#d8d8e8", 8, 7, 1, 5);
+      } else if (m.id === "oil-maker") {
+        px(c, "#5a5a62", 3, 5, 10, 9);
+        px(c, "#7a7a84", 5, 2, 6, 4);
+        px(c, "#c8a838", 6, 9, 4, 4);
+        px(c, "#c8a838", 7, 13, 2, 1);
       } else if (m.id === "furnace") {
         px(c, "#3a3a42", 3, 4, 10, 10);
         px(c, "#5a5a64", 4, 2, 8, 3);
@@ -657,6 +679,10 @@ function paintTrees(scene: Phaser.Scene): void {
     juice: "#e8a030",
     honey: "#f0c030",
     mead: "#d89a2a",
+    cheese: "#f0d060",
+    mayonnaise: "#f4ecc8",
+    cloth: "#7a8ad0",
+    oil: "#c8a838",
   };
   for (const [cat, colour] of Object.entries(goodColours))
     draw(`icon-artisan-${cat}`, (c) => {
