@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { maps } from "../src/content/maps";
 import {
+  CATALOGUE_ITEM,
   CATALOGUE_PRICE,
+  takeCatalogueCopy,
   DAILY_STOCK,
   buyCatalogue,
   catalogueProblem,
@@ -114,7 +116,9 @@ describe("the carpenter", () => {
     const seen = new Set<string>();
     for (let d = 1; d <= 30; d++) for (const f of dailyStock(d)) seen.add(f.id);
     expect(seen.size).toBe(
-      FURNITURE.filter((f) => !f.festival && !f.station && !f.catalogue).length,
+      FURNITURE.filter(
+        (f) => !f.festival && !f.station && !f.catalogue && !f.catalogueBook,
+      ).length,
     );
     const differs = [2, 3, 4, 5].some(
       (d) =>
@@ -269,15 +273,50 @@ describe("furniture catalogue", () => {
     g.money = CATALOGUE_PRICE;
     expect(catalogueProblem(g)).toMatch(/already/);
   });
-  it("sells catalogue-only pieces only to owners", () => {
+  it("buying gives the placeable catalogue item", () => {
+    const g = newGame();
+    g.money = CATALOGUE_PRICE;
+    g.houseTier = 1;
+    expect(buyCatalogue(g)).toBe(true);
+    expect(g.inventory.count(CATALOGUE_ITEM)).toBe(1);
+    expect(itemById(CATALOGUE_ITEM)?.sellPrice).toBe(0);
+    expect(
+      placeFurniture(g, room, "house", free.x, free.y, CATALOGUE_ITEM).ok,
+    ).toBe(true);
+    expect(g.furniture.at("house", free.x, free.y)).toBe(CATALOGUE_ITEM);
+  });
+  it("the shop never lists catalogue-only pieces or the book", () => {
     const g = newGame();
     g.money = 10_000;
     const only = FURNITURE.find((f) => f.catalogue)!;
-    expect(dailyStock(1).some((f) => f.catalogue)).toBe(false);
+    expect(dailyStock(1).some((f) => f.catalogue || f.catalogueBook)).toBe(
+      false,
+    );
     expect(buyFurniture(g, only.id)).toBe(false);
+    expect(buyFurniture(g, CATALOGUE_ITEM)).toBe(false);
+  });
+  it("copies are free, repeatable, and stop when the pack is full", () => {
+    const g = newGame();
+    const only = FURNITURE.find((f) => f.catalogue)!;
+    expect(takeCatalogueCopy(g, only.id).ok).toBe(true);
+    expect(takeCatalogueCopy(g, only.id).ok).toBe(true);
+    expect(g.inventory.count(only.id)).toBe(2);
+    expect(g.money).toBe(newGame().money);
+    expect(takeCatalogueCopy(g, CATALOGUE_ITEM).ok).toBe(false);
+    expect(takeCatalogueCopy(g, "wood").ok).toBe(false);
+  });
+  it("an old save with the flag is given the item once", () => {
+    const g = newGame();
     g.catalogue = true;
-    expect(buyFurniture(g, only.id)).toBe(true);
-    expect(g.inventory.count(only.id)).toBe(1);
+    const raw = JSON.parse(serialize(g));
+    const loaded = deserialize(JSON.stringify(raw))!;
+    expect(loaded.furniture.stash).toEqual([CATALOGUE_ITEM]);
+    expect(deserialize(serialize(loaded))!.furniture.stash).toEqual([
+      CATALOGUE_ITEM,
+    ]);
+    loaded.furniture.stash = [];
+    loaded.inventory.add(CATALOGUE_ITEM);
+    expect(deserialize(serialize(loaded))!.furniture.stash.length).toBe(0);
   });
   it("saves, and an old save has no catalogue", () => {
     const g = newGame();

@@ -27,6 +27,8 @@ export interface FurnitureDef {
   catalogue?: boolean;
   /** A crafting station: Action on it opens crafting with the chests beside it (note 34). Always sold, never in the daily pick. */
   station?: "workbench";
+  /** The Furniture Catalogue itself: placed in the house, Action on it gives copies at 0g. Bought once, never listed. */
+  catalogueBook?: boolean;
 }
 
 export const FURNITURE = furnitureData as FurnitureDef[];
@@ -46,7 +48,8 @@ export interface PlacedFurniture {
 
 const key = (map: string, x: number, y: number) => `${map}:${x},${y}`;
 
-/** The Furniture Catalogue: a one-time purchase at the carpenter's, after house tier 1 (notes 10 and 41). */
+/** The Furniture Catalogue item (note 10): bought once at the carpenter's after house tier 1, then placed in the house. */
+export const CATALOGUE_ITEM = "furniture-catalogue";
 export const CATALOGUE_PRICE = 200_000;
 export const CATALOGUE_MIN_TIER = 1;
 
@@ -105,6 +108,11 @@ export class Furniture {
       !furnitureById(this.at(map, x, y))?.rug &&
       this.at(map, x, y) !== undefined
     );
+  }
+
+  /** True if a piece with this id stands anywhere. */
+  has(id: string): boolean {
+    return [...this.placed.values()].some((p) => p.id === id);
   }
 
   get count(): number {
@@ -211,7 +219,7 @@ export function carryFurniture(
  */
 export function dailyStock(day: number): FurnitureDef[] {
   const scored = FURNITURE.filter(
-    (f) => !f.festival && !f.station && !f.catalogue,
+    (f) => !f.festival && !f.station && !f.catalogue && !f.catalogueBook,
   ).map((f, i) => ({
     f,
     score: Math.imul(day * 7919 + i * 104729 + 13, 2654435761) >>> 0,
@@ -226,7 +234,34 @@ export const stationStock = (): FurnitureDef[] =>
 
 /** Every piece the catalogue sells: the daily pool and the catalogue-only pieces. */
 export const catalogueStock = (): FurnitureDef[] =>
-  FURNITURE.filter((f) => !f.festival && !f.station);
+  FURNITURE.filter((f) => !f.festival && !f.station && !f.catalogueBook);
+
+/** True when the player's catalogue item is somewhere we can find it. */
+export function hasCatalogueItem(g: GameState): boolean {
+  return (
+    g.inventory.count(CATALOGUE_ITEM) > 0 ||
+    g.furniture.stash.includes(CATALOGUE_ITEM) ||
+    g.furniture.has(CATALOGUE_ITEM)
+  );
+}
+
+/**
+ * Old saves bought the catalogue as a shop unlock. Give those players the
+ * item instead, via the stash (it moves to the backpack when there is room).
+ */
+export function migrateCatalogue(g: GameState): void {
+  if (g.catalogue && !hasCatalogueItem(g))
+    g.furniture.stash.push(CATALOGUE_ITEM);
+}
+
+/** Take a free copy of a catalogue piece into the backpack (0g). Needs a catalogue placed in the house, which the caller checks. */
+export function takeCatalogueCopy(g: GameState, id: string): Outcome {
+  if (!catalogueStock().some((f) => f.id === id))
+    return fail("not in the catalogue");
+  if (g.inventory.room(id) < 1) return fail("backpack full");
+  g.inventory.add(id);
+  return { ok: true, item: id };
+}
 
 /** Why the catalogue cannot be bought now, or undefined if it can. */
 export function catalogueProblem(g: GameState): string | undefined {
@@ -243,16 +278,15 @@ export function buyCatalogue(g: GameState): boolean {
   if (catalogueProblem(g) !== undefined) return false;
   g.money -= CATALOGUE_PRICE;
   g.catalogue = true;
+  if (!g.inventory.add(CATALOGUE_ITEM)) g.furniture.stash.push(CATALOGUE_ITEM);
   return true;
 }
 
 /** Why a piece cannot be bought today, or undefined if it can. */
 export function furnitureProblem(g: GameState, id: string): string | undefined {
-  const def = [
-    ...stationStock(),
-    ...dailyStock(g.day.clock.day),
-    ...(g.catalogue ? catalogueStock() : []),
-  ].find((f) => f.id === id);
+  const def = [...stationStock(), ...dailyStock(g.day.clock.day)].find(
+    (f) => f.id === id,
+  );
   if (!def) return "The carpenter does not have that today.";
   if (g.money < def.price) return `You need ${def.price - g.money}g more.`;
   if (g.inventory.room(id) < 1) return "Your pack is full.";
