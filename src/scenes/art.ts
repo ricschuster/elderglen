@@ -555,6 +555,14 @@ function paintTrees(scene: Phaser.Scene): void {
     px(c, "#d9b27a", 2, 6, 1, 2);
     px(c, "#d9b27a", 2, 10, 1, 2);
   });
+  draw("icon-hardwood", (c) => {
+    px(c, "#4a2e18", 2, 5, 12, 3);
+    px(c, "#6a4426", 2, 5, 12, 1);
+    px(c, "#4a2e18", 2, 9, 12, 3);
+    px(c, "#6a4426", 2, 9, 12, 1);
+    px(c, "#b58a56", 2, 6, 1, 2);
+    px(c, "#b58a56", 2, 10, 1, 2);
+  });
   draw("icon-sap", (c) => {
     px(c, "#e0a030", 7, 3, 2, 2);
     px(c, "#e0a030", 6, 5, 4, 5);
@@ -967,7 +975,12 @@ export function iconKey(itemId: string): string | undefined {
   const category = categoryOf(base);
   if (category) return `icon-artisan-${category}`;
   if (MINE_ICON_IDS.includes(base)) return `icon-${base}`;
-  if (base === "wood" || base === "sap" || base === "fiber")
+  if (
+    base === "wood" ||
+    base === "hardwood" ||
+    base === "sap" ||
+    base === "fiber"
+  )
     return `icon-${base}`;
   if (base.endsWith("-seed")) return `icon-${base}`;
   if (CROPS.some((c) => c.id === base)) return cropKey(base, CROP_STAGES - 1);

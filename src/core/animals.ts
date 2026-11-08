@@ -1,7 +1,7 @@
 import { dateOf } from "./calendar";
 import { festivalToday } from "./festivals";
 import { loadHorse, newHorse, saveHorse, type Horse } from "./horse";
-import { itemById } from "./items";
+import { HARDWOOD, itemById } from "./items";
 import {
   animalQuality,
   splitQuality,
@@ -178,14 +178,13 @@ export const BARN_BUILD_DAYS = 3;
 
 /**
  * The stable (note 59, owner 2026-11-06): 10,000g, Hardwood 100 and Iron Bar 5
- * in Stardew, two days to build, 4 by 2 tiles. Hardwood does not exist yet, so
- * wood stands in for it as in the house upgrades (`house.ts`). The horse comes
- * with it.
+ * as Stardew, two days to build, 4 by 2 tiles. The horse comes with it.
  */
 export const STABLE_COST = {
   coin: 10000,
-  wood: 100,
+  wood: 0,
   stone: 0,
+  hardwood: 100,
   iron: 5,
 } as const;
 export const STABLE_BUILD_DAYS = 2;
@@ -197,7 +196,15 @@ export const STABLE_SITES: Record<string, { x: number; y: number }> = {
   farm: { x: 31, y: 9 },
   "farm-woodland": { x: 32, y: 9 },
 };
-/** What differs between the two buildings. */
+/** What a base building costs. Only the stable asks for hardwood and iron. */
+export interface BuildCost {
+  coin: number;
+  wood: number;
+  stone: number;
+  hardwood?: number;
+  iron?: number;
+}
+/** What differs between the buildings. */
 export interface BuildingInfo {
   id: Building;
   /** Lower case word for messages. */
@@ -206,7 +213,7 @@ export interface BuildingInfo {
   name: string;
   maxTier: number;
   capacities: readonly number[];
-  cost: { coin: number; wood: number; stone: number; iron?: number };
+  cost: BuildCost;
   upgrades: Record<
     number,
     { name: string; coin: number; wood: number; stone: number }
@@ -800,14 +807,14 @@ export function moodWord(a: Animal): string {
 }
 
 /** The words for what the carpenter lacks, or undefined if the buyer has it all. */
-function shortOf(
-  g: GameState,
-  cost: { coin: number; wood: number; stone: number; iron?: number },
-): string | undefined {
+function shortOf(g: GameState, cost: BuildCost): string | undefined {
   const missing: string[] = [];
   if (g.money < cost.coin) missing.push(`${cost.coin - g.money}g more`);
   const wood = g.inventory.count("wood");
   if (wood < cost.wood) missing.push(`${cost.wood - wood} more wood`);
+  const hardwood = g.inventory.count(HARDWOOD);
+  if (cost.hardwood !== undefined && hardwood < cost.hardwood)
+    missing.push(`${cost.hardwood - hardwood} more hardwood`);
   const stone = g.inventory.count("stone");
   if (stone < cost.stone) missing.push(`${cost.stone - stone} more stone`);
   const iron = g.inventory.count(IRON_BAR);
@@ -816,13 +823,11 @@ function shortOf(
   return missing.length > 0 ? `You need ${missing.join(" and ")}.` : undefined;
 }
 
-function pay(
-  g: GameState,
-  cost: { coin: number; wood: number; stone: number; iron?: number },
-) {
+function pay(g: GameState, cost: BuildCost) {
   if (cost.iron) g.inventory.remove(IRON_BAR, cost.iron);
   g.money -= cost.coin;
   g.inventory.remove("wood", cost.wood);
+  if (cost.hardwood) g.inventory.remove(HARDWOOD, cost.hardwood);
   g.inventory.remove("stone", cost.stone);
 }
 

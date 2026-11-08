@@ -8,6 +8,7 @@ import {
   isFarmMap,
   resolveMapId,
 } from "../src/core/farmtypes";
+import { MAX_ENERGY } from "../src/core/energy";
 import { maps } from "../src/content/maps";
 import { deserialize, newGame, serialize } from "../src/core/save";
 import { startGame } from "../src/core/toolbar";
@@ -64,7 +65,7 @@ describe("farm type data", () => {
     expect(maps.get("farm-woodland").forageSpots.length).toBeGreaterThan(
       maps.get("farm").forageSpots.length,
     );
-    expect(maps.get("farm").trees.some((t) => t.large)).toBe(false);
+    expect(maps.get("farm").trees.filter((t) => t.large)).toHaveLength(3);
     expect(maps.get("farm-woodland").trees.filter((t) => t.large)).toHaveLength(
       6,
     );
@@ -93,6 +94,7 @@ describe("a new game by farm type", () => {
 describe("saving the choice", () => {
   it("round trips the farm type and a chopped large stump", () => {
     const g = startGame("woodland");
+    g.toolTiers.axe = 1;
     const stump = farmMapOf(g).trees.find((t) => t.large)!;
     for (let i = 0; i < 8; i++) chop(g, stump.x, stump.y, () => 0.5);
     const back = deserialize(serialize(g))!;
@@ -116,14 +118,26 @@ describe("saving the choice", () => {
 });
 
 describe("large stumps", () => {
-  it("drop wood, then stand aside and regrow after the farm's days", () => {
+  it("need a copper axe, and the basic axe is refused", () => {
     const g = startGame("woodland");
+    const s = farmMapOf(g).trees.find((t) => t.large)!;
+    expect(chop(g, s.x, s.y)).toEqual({
+      ok: false,
+      reason: "needs a better axe",
+    });
+    expect(g.day.energy.current).toBe(MAX_ENERGY);
+  });
+
+  it("give 2 hardwood each, then stand aside and regrow after the farm's days", () => {
+    const g = startGame("woodland");
+    g.toolTiers.axe = 1;
     const map = farmMapOf(g);
     const s = map.trees.find((t) => t.large)!;
     expect(chop(g, s.x, s.y, () => 0.5).ok).toBe(true);
     expect(g.trees.at(s.x, s.y)?.regrow).toBeUndefined(); // more swings needed
     for (let i = 0; i < 12; i++) chop(g, s.x, s.y, () => 0.5);
-    expect(g.inventory.count("wood")).toBeGreaterThanOrEqual(8);
+    expect(g.inventory.count("hardwood")).toBe(2);
+    expect(g.inventory.count("wood")).toBe(0);
     expect(g.trees.blocks(s.x, s.y)).toBe(false);
     expect(chop(g, s.x, s.y)).toEqual({ ok: false, reason: "nothing to chop" });
     for (let day = 0; day < 4; day++) {
@@ -132,6 +146,20 @@ describe("large stumps", () => {
     }
     expect(g.trees.blocks(s.x, s.y)).toBe(true);
     expect(g.trees.at(s.x, s.y)?.regrow).toBeUndefined();
+  });
+
+  it("stay cleared on Standard, which has no regrow days", () => {
+    const g = startGame();
+    g.toolTiers.axe = 1;
+    const map = farmMapOf(g);
+    const s = map.trees.find((t) => t.large)!;
+    expect(g.trees.blocks(s.x, s.y)).toBe(true);
+    for (let i = 0; i < 8; i++) chop(g, s.x, s.y, () => 0.5);
+    expect(g.inventory.count("hardwood")).toBe(2);
+    expect(g.trees.at(s.x, s.y)).toBeUndefined();
+    for (let day = 0; day < 6; day++)
+      sleep(g, map.forageSpots, () => 0.99, map);
+    expect(g.trees.at(s.x, s.y)).toBeUndefined();
   });
 
   it("never spread seeds", () => {

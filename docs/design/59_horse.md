@@ -10,9 +10,9 @@ Numbers are placeholders for note 07.
 
 - **Stable.** A fifth carpenter row, placed with the placement screen of note 60
   (Place, Move, Take down). 4 by 2 tiles, all solid, no interior. 10,000g, 100
-  wood standing in for Hardwood (as the house tiers do) and 5 iron bars, two
+  Hardwood and 5 iron bars (real Hardwood since 2026-11-07, note 43), two
   days, horse included. One carpenter job at a time, like the coop and barn.
-  Taking it down returns half (5,000g, 50 wood, 2 iron bars) and the horse
+  Taking it down returns half (5,000g, 50 Hardwood, 2 iron bars) and the horse
   leaves with it, name and all.
 - **The horse** waits on the tile in front of the stable (the tile placement
   keeps free). The morning report says when the stable is finished.
@@ -20,21 +20,34 @@ Numbers are placeholders for note 07.
   Tools and fishing are refused while mounted. Speed is 6.6 over our run speed
   of 5, a factor of 1.32 (the saved Speed page). Terrain costs do not exist yet.
 - **Outdoors only.** Rideable maps are the farms and the village green. A door
-  or the Mines dismounts the rider and parks the horse where they stood. The
-  horse does not block movement (so it can never trap the player); it is only
-  something to face.
+  or the Mines dismounts the rider and parks the horse near where they stood.
+- **Blocking (owner, 2026-11-07, as Stardew).** A parked horse blocks the tile
+  it stands on. The rule that keeps it from ever trapping the player:
+  - It is not solid while ridden, and not while it waits at the stable.
+  - It is parked on the faced tile, else the nearest tile within 8, that is open
+    ground, is not the rider's tile, is not an exit, entry, bin or counter or
+    next to one (so the way to each stays open), and blocks no walkable tile
+    off from the rider (a four way search before and after must agree).
+  - If no tile qualifies, the horse goes back to the stable and says so.
+  - When a map loads, a horse left on a tile that is no longer safe (a chest,
+    a grown tree, the player's own tile) is moved the same way.
+  - Tap paths and movement use the same blocked test, so a parked horse is
+    walked around.
 - **Parking.** A horse left outside stays there for the day and is back at the
   stable each morning (the morning report says so). A mounted player who sleeps
   wakes on foot.
-- **Naming.** The first ride asks for a name (a browser prompt, like animals);
-  an empty answer takes "Clover". Names are trimmed and cut to 16 letters.
+- **Naming.** The first ride opens an in-game dialog (`NameScene`) with an on
+  screen keyboard, so touch and mouse work, and a physical keyboard types into it
+  too. Done or Esc with nothing typed takes "Clover". Letters, digits, space,
+  apostrophe and hyphen, at most 16 characters, capitalised by word. The ride
+  starts when the dialog closes.
 - **Saves.** `animals.stableBuilt`, `animals.horse` (name and parked spot) and
   `animals.sites.stable`. Old saves have none and load unchanged. Riding itself
   is not saved: a loaded game starts on foot.
 - **Not built:** the extras (carrot, horse book, flute, hats), the walk and run
   split, the horse and rider sprites (placeholder blocks), the Mines being
-  unrideable only by map name (no Mines ride exists), the gate rule for gaps
-  under two tiles, and the stump source of real Hardwood.
+  unrideable only by map name (no Mines ride exists), and the gate rule for gaps
+  under two tiles.
 
 ## Why
 

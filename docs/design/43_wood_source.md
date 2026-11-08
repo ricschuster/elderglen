@@ -100,6 +100,28 @@ is in the toolbar from tier 0. The tiers are #194.
   fixed places, regrowing when chopped, and some cosmetic trees that cannot be
   chopped, like the farm border.
 
+## Hardwood (built 2026-11-07, owner asked for the real item)
+
+Settled briefly where the notes left gaps. Numbers are placeholders (note 07).
+
+- **The item.** `hardwood`, sells 15g (the saved Hardwood page). It replaces
+  every wood stand-in in the build: the stable (100), house tier 2 (100) and
+  the large stump's yield. The cask (40 wood) and other crafting costs in notes
+  24 and 34 still use wood, because hardwood is scarce (below); they move when
+  there is more of it.
+- **Source today: large stumps.** 2 hardwood each, copper axe or better (note
+  44; a basic axe is refused with a message and costs no energy), swings are a
+  stump's plus 3 (ours), 3 foraging XP. The Woodland farm has 6 that regrow after
+  4 days (about 3 a day). The Standard farm has 3, hand placed on the soil, that
+  do not come back (`stumpRegrowDays` 0 now means the stump is removed, as note
+  44 says of the Standard farm). No sap from a large stump.
+- **Not built.** Large logs (steel axe), the Secret Woods with its six daily
+  stumps, Mahogany trees, the Mines floors 41 to 69 and the other Stardew
+  sources. Until the Secret Woods exists, 100 hardwood is out of reach on the
+  Standard farm (3 stumps give 6) and takes about 33 days of Woodland stumps.
+- **Saves.** Nothing new is saved. Large stumps and their regrow timers load as
+  before, and a stable or house order already paid in wood stays paid.
+
 ## Supply and demand (slice 1)
 
 | Source | Wood |

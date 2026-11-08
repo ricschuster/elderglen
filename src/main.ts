@@ -13,6 +13,7 @@ import { WitchWalkScene } from "./scenes/WitchWalkScene";
 import { OptionsScene } from "./scenes/OptionsScene";
 import { TitleScene } from "./scenes/TitleScene";
 import { FarmChoiceScene } from "./scenes/FarmChoiceScene";
+import { NameScene } from "./scenes/NameScene";
 import { ShopScene } from "./scenes/ShopScene";
 import { CatalogueScene } from "./scenes/CatalogueScene";
 import { CarpenterScene } from "./scenes/CarpenterScene";
@@ -94,6 +95,7 @@ const game = new Phaser.Game({
     // Dev builds only: Vite drops the debug menu from `npm run build`.
     ...(import.meta.env.DEV ? [DebugScene] : []),
     ProfessionScene,
+    NameScene,
     ...Object.values(tests).filter((t) => !first.includes(t)),
   ],
 });

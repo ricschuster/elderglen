@@ -1,5 +1,6 @@
 import { maps } from "../content/maps";
 import { festivalToday } from "./festivals";
+import { HARDWOOD } from "./items";
 import { visibleTier } from "./map";
 import type { GameState } from "./save";
 
@@ -110,17 +111,18 @@ export function isHouseMap(id: string): boolean {
 export interface HouseUpgrade {
   coin: number;
   wood: number;
+  /** Hardwood, from large stumps (`items.ts`). */
+  hardwood: number;
 }
 
 /**
  * Tiers 1, 2 and 3 in order. Stardew's prices, placeholders for
- * `07_tuning_numbers.md`. Tier 2 asks for 100 hardwood in Stardew; hardwood is
- * not an item yet (see `actions.ts`), so wood stands in for it.
+ * `07_tuning_numbers.md`. Tier 2 asks for 100 hardwood, as Stardew does.
  */
 export const HOUSE_UPGRADES: HouseUpgrade[] = [
-  { coin: 10000, wood: 450 },
-  { coin: 65000, wood: 100 },
-  { coin: 100000, wood: 0 },
+  { coin: 10000, wood: 450, hardwood: 0 },
+  { coin: 65000, wood: 0, hardwood: 100 },
+  { coin: 100000, wood: 0, hardwood: 0 },
 ];
 
 /** What each upgrade adds, for the carpenter's list. Index is the tier reached minus one. */
@@ -168,6 +170,9 @@ export function orderProblem(g: GameState): string | undefined {
   const have = g.inventory.count(WOOD);
   if (cost.wood > 0 && have < cost.wood)
     missing.push(`${cost.wood - have} more wood`);
+  const hard = g.inventory.count(HARDWOOD);
+  if (cost.hardwood > 0 && hard < cost.hardwood)
+    missing.push(`${cost.hardwood - hard} more hardwood`);
   return missing.length > 0 ? `You need ${missing.join(" and ")}.` : undefined;
 }
 
@@ -177,6 +182,7 @@ export function orderUpgrade(g: GameState): boolean {
   const cost = nextUpgrade(g.houseTier)!;
   g.money -= cost.coin;
   if (cost.wood > 0) g.inventory.remove(WOOD, cost.wood);
+  if (cost.hardwood > 0) g.inventory.remove(HARDWOOD, cost.hardwood);
   g.houseBuild = { tier: g.houseTier + 1, daysLeft: BUILD_DAYS };
   return true;
 }

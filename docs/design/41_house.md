@@ -168,7 +168,7 @@ lists the migration). The band is `ground-t2` and `collision-t2`: a spare room
 stairs at (4, 10) that open the kitchen's top wall. Both rooms are bare and
 tidy. Tier 3 has no layers, it shows tier 2 and `houseHasCellar(tier)` is
 true for the cellar (#282). The carpenter lists "Upper floor" (65,000g, 100
-wood standing in for hardwood) and "Cellar stairs" (100,000g), and says the
+hardwood, built 2026-11-07) and "Cellar stairs" (100,000g), and says the
 rooms are for later when tier 2 is ordered and when it lands. Not built: the
 larger kitchen and bedroom at tier 2 (the issue asked for them; the band is the
 part that is visible, and growing the rooms needs a wider map). The owner

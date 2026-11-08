@@ -154,6 +154,7 @@ const REASONS: Record<string, string> = {
   "nothing to do here": "Nothing to do here.",
   "nothing held": "Select a tool or item.",
   "nothing to chop": "Nothing to chop here.",
+  "needs a better axe": "A large stump needs a copper axe or better.",
   "a weed is in the way": "Clear the weed first.",
   "no weed": "No weed here.",
   "not a fertilizer": "That cannot be mixed into soil.",
