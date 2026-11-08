@@ -4,9 +4,7 @@ import {
   BUILDINGS,
   FOOTPRINTS,
   SILO_FOOTPRINT,
-  siteOf,
   SILO_SITES,
-  type Building,
 } from "../core/animals";
 import { farmTypeById } from "../core/farmtypes";
 import { layersAtTier } from "../core/map";
@@ -17,13 +15,14 @@ import {
   orderBuildingAt,
   placedFootprint,
   placementBlockers,
+  type Placeable,
 } from "../core/placement";
 import type { GameState } from "../core/save";
 import { STATE_KEY } from "./state";
 import { TILES_KEY, TILESET_NAME } from "./placeholder-textures";
 
 export interface PlacementData {
-  building: Building;
+  building: Placeable;
   /** Order a new building on the spot, or move the one that stands. */
   mode: "order" | "move";
 }
@@ -31,11 +30,19 @@ export interface PlacementData {
 /** The map is drawn at this scale so it fills the 540 high menu box. */
 const SCALE = 1.125;
 const PANEL_X = 730;
-const ROOF: Record<Building, number> = {
+const ROOF: Record<Placeable, number> = {
   coop: 0xb5563c,
   barn: 0x8f3b2e,
   stable: 0x7a5a3a,
+  greenhouse: 0x4f8f6a,
 };
+
+/** The words for a placeable: the carpenter's sign and the noun in a sentence. */
+function wordsOf(b: Placeable): { name: string; noun: string } {
+  return b === "greenhouse"
+    ? { name: "Greenhouse", noun: "greenhouse" }
+    : BUILDINGS[b];
+}
 
 /**
  * The carpenter's placement screen (`docs/design/60_building_placement.md`).
@@ -46,7 +53,7 @@ const ROOF: Record<Building, number> = {
  */
 export class PlacementScene extends Phaser.Scene {
   private state!: GameState;
-  private building: Building = "coop";
+  private building: Placeable = "coop";
   private mode: PlacementData["mode"] = "order";
   private mapId = "";
   private gx = 0;
@@ -84,7 +91,7 @@ export class PlacementScene extends Phaser.Scene {
     }
     this.gfx = this.add.graphics().setScale(SCALE);
 
-    const info = BUILDINGS[this.building];
+    const info = wordsOf(this.building);
     this.add.text(PANEL_X, 16, this.mode === "order" ? "Place" : "Move", {
       fontSize: "26px",
       color: "#ffffff",
@@ -110,7 +117,7 @@ export class PlacementScene extends Phaser.Scene {
     this.button(PANEL_X, 460, "Cancel", 0xa0482e, () => this.finish(""));
 
     // Start where the building stands, or in the middle of the farm.
-    const at = siteOf(this.state, this.building, this.mapId);
+    const at = placedFootprint(this.state, this.building, this.mapId);
     const fp = footprintAt(this.building, 0, 0);
     const start =
       this.mode === "move" && at
@@ -192,20 +199,13 @@ export class PlacementScene extends Phaser.Scene {
   private confirm(): void {
     if (!this.free) return;
     const map = maps.get(this.mapId);
-    const noun = BUILDINGS[this.building].noun;
-    if (this.mode === "order") {
-      if (
-        orderBuildingAt(
-          this.state,
-          map,
-          this.mapId,
-          this.building,
-          this.gx,
-          this.gy,
-        )
-      )
+    const noun = wordsOf(this.building).noun;
+    const b = this.building;
+    // The greenhouse is only ever moved: it is repaired, not ordered.
+    if (this.mode === "order" && b !== "greenhouse") {
+      if (orderBuildingAt(this.state, map, this.mapId, b, this.gx, this.gy))
         this.finish(
-          `Ordered. The carpenter starts tomorrow and takes ${BUILDINGS[this.building].days} days.`,
+          `Ordered. The carpenter starts tomorrow and takes ${BUILDINGS[b].days} days.`,
         );
     } else if (
       moveBuilding(this.state, map, this.mapId, this.building, this.gx, this.gy)
@@ -242,13 +242,13 @@ export class PlacementScene extends Phaser.Scene {
     for (const f of g.forage.each()) tile(f.x, f.y, 0xe8d36a, 0.9);
     for (const p of g.ground.each()) tile(p.x, p.y, 0xe8d36a, 0.9);
     for (const e of map.exits) {
-      if (e.id === "coop" || e.id === "barn") continue;
+      if (e.id === "coop" || e.id === "barn" || e.id === "greenhouse") continue;
       gfx
         .fillStyle(0xffffff, 0.25)
         .fillRect(e.x * ts, e.y * ts, e.w * ts, e.h * ts);
     }
     // The other buildings stand where they are.
-    for (const b of ["coop", "barn", "stable"] as const) {
+    for (const b of ["coop", "barn", "stable", "greenhouse"] as const) {
       if (b === this.building) continue;
       const r = placedFootprint(g, b, this.mapId);
       if (r) this.drawBuilding(b, r.x, r.y, 0.9);
@@ -291,7 +291,7 @@ export class PlacementScene extends Phaser.Scene {
           .lineStyle(2, 0xff2a1a, 1)
           .strokeRect(c.x * ts + 1, c.y * ts + 1, ts - 2, ts - 2);
     }
-    if (FOOTPRINTS[this.building].door)
+    if (this.building === "greenhouse" || FOOTPRINTS[this.building].door)
       gfx
         .fillStyle(0x4a3220, 0.9)
         .fillRect(door.x * ts + 3, door.y * ts + 2, ts - 6, ts - 2);
@@ -304,7 +304,7 @@ export class PlacementScene extends Phaser.Scene {
     this.confirmBox.setAlpha(this.free ? 1 : 0.35);
   }
 
-  private drawBuilding(b: Building, x: number, y: number, a: number): void {
+  private drawBuilding(b: Placeable, x: number, y: number, a: number): void {
     const ts = maps.get(this.mapId).tileSize;
     const f = footprintAt(b, x, y);
     this.gfx.fillStyle(ROOF[b], a).fillRect(f.x * ts, f.y * ts, f.w * ts, ts);

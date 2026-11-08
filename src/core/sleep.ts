@@ -25,6 +25,7 @@ import { returnDebris } from "./debris";
 import { endDayOrders, type OrdersNews } from "./orders";
 import { loseItems, type Lost } from "./combat";
 import { maps } from "../content/maps";
+import { storeOf } from "./mapstore";
 
 /**
  * True when something stands in the 3x3 around a tile that stops a young fruit
@@ -32,7 +33,14 @@ import { maps } from "../content/maps";
  * crop or forage item. Grass and bare or tilled soil do not count, and nor does
  * the tile's own tree (`docs/design/31_farm_growth.md`).
  */
-export function blocksGrowth(g: GameState, x: number, y: number): boolean {
+export function blocksGrowth(
+  g: GameState,
+  x: number,
+  y: number,
+  /** True for the greenhouse: only its own trees, sprinklers and crops count (`mapstore.ts`). */
+  indoors = false,
+): boolean {
+  if (indoors) return blocksGrowthIndoors(g, x, y);
   for (let dy = -1; dy <= 1; dy++)
     for (let dx = -1; dx <= 1; dx++) {
       const [tx, ty] = [x + dx, y + dy];
@@ -48,6 +56,21 @@ export function blocksGrowth(g: GameState, x: number, y: number): boolean {
         g.chests.onFarm(tx, ty) ||
         g.farm.plotAt(tx, ty)?.crop ||
         g.forage.itemAt(tx, ty)
+      )
+        return true;
+    }
+  return false;
+}
+
+function blocksGrowthIndoors(g: GameState, x: number, y: number): boolean {
+  const here = storeOf(g, true);
+  for (let dy = -1; dy <= 1; dy++)
+    for (let dx = -1; dx <= 1; dx++) {
+      const [tx, ty] = [x + dx, y + dy];
+      if (
+        (!(dx === 0 && dy === 0) && here.fruitTrees.at(tx, ty)) ||
+        here.sprinklers.at(tx, ty) ||
+        here.soil.plotAt(tx, ty)?.crop
       )
         return true;
     }
@@ -159,6 +182,7 @@ export function sleep(
   g.tomorrow = rollWeather(next.season, next.dayOfSeason, random);
   if (isRaining(g.weather)) g.farm.waterAll();
   g.sprinklers.water(g.farm);
+  g.greenhouseSprinklers.water(g.greenhouse);
   g.trees.endDay(
     season,
     random,
@@ -224,6 +248,14 @@ export function sleep(
     );
   }
   const stuck = g.fruitTrees.endDay(season, (x, y) => !blocksGrowth(g, x, y));
+  // Greenhouse trees grow and bear in any season.
+  stuck.push(
+    ...g.greenhouseFruitTrees.endDay(
+      season,
+      (x, y) => !blocksGrowth(g, x, y, true),
+      true,
+    ),
+  );
   g.forage.respawn(
     season,
     spots.filter(

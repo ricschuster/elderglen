@@ -417,6 +417,45 @@ export class FarmMap {
     );
   }
 
+  /**
+   * A copy of this map with a building's footprint walled off and made
+   * untillable, except its door tile. The greenhouse is the farm's one building
+   * that is not in the map data, so it can be moved
+   * (`docs/design/60_building_placement.md`).
+   */
+  withBuilding(
+    rect: { x: number; y: number; w: number; h: number },
+    door: Spot,
+  ): FarmMap {
+    const blocked = [...this.blocked];
+    const soil = [...this.soil];
+    for (let y = rect.y; y < rect.y + rect.h; y++)
+      for (let x = rect.x; x < rect.x + rect.w; x++) {
+        if (!this.inside(x, y) || (x === door.x && y === door.y)) continue;
+        blocked[y * this.width + x] = true;
+        soil[y * this.width + x] = false;
+      }
+    return new FarmMap(
+      this.width,
+      this.height,
+      this.tileSize,
+      blocked,
+      soil,
+      this.entries,
+      this.exits,
+      this.forageSpots,
+      this.services,
+      this.regions,
+      this.trees,
+      this.paths,
+      this.rocks,
+      this.tier,
+      this.bounds,
+      this.water,
+      this.indoors,
+    );
+  }
+
   /** Outside the map counts as blocked. */
   isBlocked(x: number, y: number): boolean {
     return !this.inside(x, y) || this.blocked[y * this.width + x] === true;

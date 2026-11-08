@@ -27,6 +27,7 @@ import { MIXED_SEED } from "./weeds";
 import { fertilizerById } from "./fertilizer";
 import { treeOfSapling } from "./fruittrees";
 import { sprinklerById } from "./sprinklers";
+import { storeOf } from "./mapstore";
 import { handOnMachine, loadMachine, placeMachine } from "./machines";
 import { machineById } from "./processing";
 import type { Held } from "./toolbar";
@@ -119,8 +120,9 @@ export function useHeld(
 
 /**
  * The greenhouse: the hoe, can, seeds and fertilizer work its own soil, and
- * nothing else does. The farm's trees, weeds, machines and sprinklers are
- * stored by tile and belong to the farm map, so they are never touched here.
+ * sprinklers and fruit trees stand in its own store (`mapstore.ts`). The farm's
+ * trees, weeds and machines are stored by tile and belong to the farm map, so
+ * they are never touched here.
  */
 function useInGreenhouse(
   g: GameState,
@@ -129,7 +131,14 @@ function useInGreenhouse(
   x: number,
   y: number,
 ): Outcome {
-  const soil = g.greenhouse;
+  const { soil, sprinklers, fruitTrees } = storeOf(g, true);
+  // Any tool, or the empty hand, lifts a placed sprinkler (SC-48).
+  if (held.kind === "tool" && sprinklers.at(x, y))
+    return pickUpSprinkler(g, x, y, sprinklers);
+  if (held.kind === "tool" && held.tool === "axe" && fruitTrees.at(x, y))
+    return chop(g, x, y, Math.random, map);
+  if (held.kind === "tool" && held.tool === "hoe" && fruitTrees.at(x, y))
+    return fail("a tree is in the way");
   if (held.kind === "tool" && held.tool === "hoe")
     return map.isTillable(x, y)
       ? till(g, x, y, Math.random, soil)
@@ -139,6 +148,10 @@ function useInGreenhouse(
     return plant(g, x, y, held.id, Math.random, soil);
   if (held.kind === "item" && fertilizerById(held.id))
     return fertilize(g, x, y, held.id, soil);
+  if (held.kind === "item" && sprinklerById(held.id))
+    return placeSprinkler(g, map, x, y, held.id);
+  if (held.kind === "item" && treeOfSapling(held.id))
+    return plantFruitTree(g, map, x, y, held.id);
   return fail("nothing to do here");
 }
 
@@ -154,6 +167,15 @@ function pick(g: GameState, x: number, y: number): Outcome {
   return g.forage.itemAt(x, y) ? forage(g, x, y) : harvest(g, x, y);
 }
 
+/** The greenhouse's tile: pick fruit, lift a sprinkler, or harvest its soil. */
+function pickIndoors(g: GameState, x: number, y: number): Outcome {
+  const here = storeOf(g, true);
+  if (here.fruitTrees.at(x, y)) return pickFruit(g, x, y, here.fruitTrees);
+  if (here.sprinklers.at(x, y))
+    return pickUpSprinkler(g, x, y, here.sprinklers);
+  return harvest(g, x, y, Math.random, here.soil);
+}
+
 /**
  * The Action button on one tile (note 47): shake a tree, pick forage or harvest
  * a ripe crop. It never reads the held slot. A tile with nothing to act on gives
@@ -164,9 +186,7 @@ function pick(g: GameState, x: number, y: number): Outcome {
  */
 export function act(g: GameState, map: FarmMap, x: number, y: number): Outcome {
   if (!map.hasSoil) return fail(NOTHING_TO_ACT_ON);
-  const result = map.indoors
-    ? harvest(g, x, y, Math.random, g.greenhouse)
-    : pick(g, x, y);
+  const result = map.indoors ? pickIndoors(g, x, y) : pick(g, x, y);
   if (result.ok) return result;
   return QUIET.has(result.reason) ? fail(NOTHING_TO_ACT_ON) : result;
 }

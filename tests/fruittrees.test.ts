@@ -174,6 +174,7 @@ describe("fruit trees on the farm", () => {
     });
     const old = JSON.parse(serialize(g));
     delete old.fruitTrees;
+    delete old.mapItems;
     expect(deserialize(JSON.stringify(old))!.fruitTrees.count).toBe(0);
   });
 });

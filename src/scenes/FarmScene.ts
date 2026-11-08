@@ -52,6 +52,7 @@ import { NOTHING_TO_ACT_ON, act, reasonText, useHeld } from "../core/tools";
 import { cropById } from "../core/crops";
 import { mapFiles, maps } from "../content/maps";
 import { START } from "../core/maps";
+import { storeOf } from "../core/mapstore";
 import { mapWithDoors } from "../core/placement";
 import {
   FARM_TYPES,
@@ -153,9 +154,10 @@ import {
 } from "../core/furniture";
 import { hatById } from "../core/hats";
 import {
-  GREENHOUSE_SITE,
+  GREENHOUSE_FOOTPRINT,
   greenhouseHolds,
   greenhouseRepaired,
+  greenhouseSite,
 } from "../core/greenhouse";
 import {
   CELLAR_MAP,
@@ -846,8 +848,8 @@ export class FarmScene extends Phaser.Scene {
   private tileBlockedNoHorse(x: number, y: number): boolean {
     return (
       this.map.isBlocked(x, y) ||
-      (this.outdoorSoil &&
-        (this.state.trees.blocks(x, y) || !!this.state.fruitTrees.at(x, y))) ||
+      (this.outdoorSoil && this.state.trees.blocks(x, y)) ||
+      !!this.store.fruitTrees.at(x, y) ||
       !!this.rocks()?.at(x, y) ||
       this.furnaceAt(x, y) ||
       coopBlocks(this.state, this.mapId, x, y) ||
@@ -862,9 +864,14 @@ export class FarmScene extends Phaser.Scene {
       (this.mapId === CELLAR_MAP && this.state.casks.at(x, y)) ||
       !!this.state.chests.at(this.mapId, x, y) ||
       this.map.serviceAt(x, y)?.kind === "camp-chest" ||
-      (this.outdoorSoil &&
-        (!!this.state.sprinklers.at(x, y) || !!this.state.machines.at(x, y)))
+      !!this.store.sprinklers.at(x, y) ||
+      (this.outdoorSoil && !!this.state.machines.at(x, y))
     );
+  }
+
+  /** The sprinklers, trees and soil of the map the player is on (`mapstore.ts`). */
+  private get store() {
+    return storeOf(this.state, this.map.indoors);
   }
 
   /** True on a map with the farm's soil: its trees, weeds, forage and machines live here. The greenhouse has its own soil. */
@@ -986,8 +993,8 @@ export class FarmScene extends Phaser.Scene {
   /** Act on a tile beside the farmer: the axe for a tree, the pickaxe for a rock. */
   private actOn(tile: Vec): void {
     const tree =
-      this.state.trees.at(tile.x, tile.y) ||
-      this.state.fruitTrees.at(tile.x, tile.y);
+      (!this.map.indoors && this.state.trees.at(tile.x, tile.y)) ||
+      this.store.fruitTrees.at(tile.x, tile.y);
     const rock = this.rocks()?.at(tile.x, tile.y);
     if (tree || rock) {
       this.select(TOOLS.indexOf(tree ? "axe" : "pickaxe"));
@@ -1086,8 +1093,8 @@ export class FarmScene extends Phaser.Scene {
       held.kind === "tool" &&
       held.tool === "axe" &&
       !!(
-        this.state.trees.at(front.x, front.y) ||
-        this.state.fruitTrees.at(front.x, front.y)
+        (!this.map.indoors && this.state.trees.at(front.x, front.y)) ||
+        this.store.fruitTrees.at(front.x, front.y)
       );
     const pick =
       held.kind === "tool" &&
@@ -1848,23 +1855,24 @@ export class FarmScene extends Phaser.Scene {
       const stage = stageOf(crop.daysGrown / def.growDays, soil.isRipe(x, y));
       put(x, y, cropKey(crop.id, stage));
     }
+    // Each map shows its own sprinklers and fruit trees.
+    const here = this.store;
+    for (const s of here.sprinklers.each()) put(s.x, s.y, sprinklerKey(s.id));
+    for (const t of here.fruitTrees.each()) {
+      put(t.x, t.y, fruitTreeKey(fruitStageOf(t.age)));
+      if (t.fruit > 0) put(t.x, t.y, fruitOnTreeKey(t.id));
+    }
     if (this.map.indoors) return;
     for (const { x, y, id } of this.state.forage.each())
       put(x, y, forageKey(id));
     for (const w of this.state.weeds.each()) put(w.x, w.y, WEED_KEY);
     for (const t of this.state.twigs.each()) put(t.x, t.y, TWIG_KEY);
-    for (const s of this.state.sprinklers.each())
-      put(s.x, s.y, sprinklerKey(s.id));
     for (const m of this.state.machines.each()) {
       put(m.x, m.y, machineKey(m.id));
       if (jobDone(this.state, m)) put(m.x, m.y, MACHINE_READY_KEY);
     }
     for (const t of this.state.trees.each())
       put(t.x, t.y, treeKey(t.stage, t.stump, t.large, t.regrow !== undefined));
-    for (const t of this.state.fruitTrees.each()) {
-      put(t.x, t.y, fruitTreeKey(fruitStageOf(t.age)));
-      if (t.fruit > 0) put(t.x, t.y, fruitOnTreeKey(t.id));
-    }
     for (const p of this.state.ground.each()) {
       const key = iconKey(p.id);
       if (key) put(p.x, p.y, key);
@@ -2079,16 +2087,37 @@ export class FarmScene extends Phaser.Scene {
       );
   }
 
-  /** The greenhouse on the farm: a vine-grown ruin with scaffold poles until the Larder is done. Placeholder. */
-  private drawGreenhouseRuin(): void {
-    if (!isFarmMap(this.mapId) || greenhouseRepaired(this.state)) return;
+  /**
+   * The greenhouse on the farm, where it stands (note 60): a vine-grown ruin
+   * with scaffold poles until the Larder is done, then a glass house. It is
+   * drawn here, not in the map, so it can be moved. Placeholder art.
+   */
+  private drawGreenhouse(): void {
+    if (!isFarmMap(this.mapId)) return;
     const ts = this.map.tileSize;
-    const { x, y, w, h } = GREENHOUSE_SITE;
+    const at = greenhouseSite(this.state);
+    const { w, h, doorX } = GREENHOUSE_FOOTPRINT;
+    const [x, y] = [at.x * ts, at.y * ts];
     const g = this.wash;
-    g.fillStyle(0x3a5a3a, 0.55).fillRect(x * ts, y * ts, w * ts, h * ts);
-    g.lineStyle(3, 0x8a6a45, 1);
-    for (let dx = 0; dx <= w; dx += 2)
-      g.lineBetween((x + dx) * ts, y * ts, (x + dx) * ts, (y + h) * ts);
+    if (greenhouseRepaired(this.state)) {
+      g.fillStyle(0x4f8f6a, 1).fillRect(x, y, w * ts, ts);
+      g.fillStyle(0xa9d8c6, 1).fillRect(x, y + ts, w * ts, (h - 1) * ts);
+      g.lineStyle(2, 0x3f6f55, 1);
+      for (let dx = 0; dx <= w; dx += 2)
+        g.lineBetween(x + dx * ts, y + ts, x + dx * ts, y + h * ts);
+    } else {
+      g.fillStyle(0x6e7a5c, 1).fillRect(x, y, w * ts, h * ts);
+      g.fillStyle(0x3a5a3a, 0.55).fillRect(x, y, w * ts, h * ts);
+      g.lineStyle(3, 0x8a6a45, 1);
+      for (let dx = 0; dx <= w; dx += 2)
+        g.lineBetween(x + dx * ts, y, x + dx * ts, y + h * ts);
+    }
+    g.fillStyle(0x4a3220, 1).fillRect(
+      x + doorX * ts + 3,
+      y + (h - 1) * ts + 2,
+      ts - 6,
+      ts - 2,
+    );
   }
 
   private drawCoop(): void {
@@ -2265,7 +2294,7 @@ export class FarmScene extends Phaser.Scene {
     // drawRooms clears the wash layer, so everything else draws after it.
     this.drawRooms();
     this.drawCoop();
-    this.drawGreenhouseRuin();
+    this.drawGreenhouse();
     this.drawCoopInside();
     this.drawFurnace();
     this.drawMailbox();

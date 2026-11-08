@@ -119,19 +119,24 @@ export class FruitTrees {
   /**
    * Overnight, in the season the new day is in. A young tree grows a day if
    * `clear` says its 3x3 is clear, and is returned as stuck if not. A mature
-   * tree ages every day and bears a fruit in its season, up to the limit.
-   * Returns the trees that could not grow.
+   * tree ages every day and bears a fruit in its season, up to the limit; with
+   * `anySeason` (the greenhouse) it bears every day. Returns the trees that
+   * could not grow.
    */
   endDay(
     season: string,
     clear: (x: number, y: number) => boolean,
+    anySeason = false,
   ): PlacedFruitTree[] {
     const stuck: PlacedFruitTree[] = [];
     for (const t of this.trees.values()) {
       t.hits = 0;
       if (isMature(t)) {
         t.age += 1;
-        if (fruitTreeById(t.id)?.season === season && t.fruit < MAX_FRUIT)
+        if (
+          (anySeason || fruitTreeById(t.id)?.season === season) &&
+          t.fruit < MAX_FRUIT
+        )
           t.fruit += 1;
       } else if (clear(t.x, t.y)) t.age += 1;
       else stuck.push(t);

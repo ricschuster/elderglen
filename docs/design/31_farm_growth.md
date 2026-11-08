@@ -161,6 +161,39 @@ part that is pure loss. Everything else is a reward the player chooses.
   the season changes. Fertilizer stays through season changes. It still needs
   watering (rain does not reach it) and multi-harvest crops regrow as outside.
   Quality, retaining and speed fertilizer work as on the farm.
-- **Not built.** Sprinklers on the border and fruit trees indoors: both are
-  stored by farm tile, so they need a per-map store first. Moving the greenhouse
-  at the carpenter. Tracked as follow-ups on #602.
+- **Not built (at #602).** Sprinklers on the border and fruit trees indoors, and
+  moving the greenhouse at the carpenter. Built in #634, below.
+
+## Built: the greenhouse follow-up (#634, 2026-11-08)
+
+- **Per-map store.** Sprinklers and fruit trees are kept by tile, and the farm
+  and the greenhouse share tile numbers, so each map has its own set
+  (`src/core/mapstore.ts`, `storeOf(g, indoors)`). The farm's stay in
+  `g.sprinklers` and `g.fruitTrees`; the greenhouse has `g.greenhouseSprinklers`
+  and `g.greenhouseFruitTrees`. A save holds them as `mapItems`, keyed `farm` and
+  `greenhouse`. An old save has the two top level lists, which load as the farm's,
+  and the greenhouse starts empty. The save version stays 2: every new field is
+  optional.
+- **Sprinklers indoors.** Any bare floor tile inside the walls takes one: the
+  margin (the border) or the soil plot. The hand and any tool lift it, as outside.
+  Overnight each waters its tiles in the greenhouse soil, in any season. A
+  sprinkler on the farm never reaches the greenhouse, nor the reverse. The plot
+  has a 3 tile margin, so a sprinkler on the margin reaches only an edge tile or
+  three, and the middle needs one inside the plot: the layout puzzle above.
+- **Fruit trees indoors.** Planted from the toolbar on any bare floor tile. The
+  3x3 rule is the same, but only the greenhouse's own trees, sprinklers and crops
+  count: the farm's weeds and rocks do not exist indoors. A tree grows in any
+  season and, once mature, bears one fruit every night up to 3, whatever its
+  season outside (note 31 above: "bear fruit every day after maturity"). Fruit
+  is picked with Action. The axe fells it as outside, but the felling is refused
+  with a full pack, because goods dropped indoors would land on the farm's ground.
+- **Moving it.** The repaired greenhouse is moved at the carpenter through the
+  placement screen (`60_building_placement.md`): a "Move the greenhouse" row,
+  free, instant, never removable. Its footprint (6 by 4, door third tile of the
+  bottom row) is no longer in the farm map data: the farm maps have no walls or art
+  at the ruin site, and `mapWithDoors` walls the footprint and moves the door and
+  entry to where it stands (`greenhouseSite`, saved only once moved, else the
+  ruin site). The scene draws the ruin and the glass house itself. The old site is
+  ordinary open ground again, though not tillable (the soil layer was never
+  marked there). What is inside never moves: it is stored by the greenhouse's own
+  map.

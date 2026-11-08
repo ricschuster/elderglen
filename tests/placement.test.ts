@@ -147,11 +147,13 @@ describe("where a building may stand", () => {
   it("keeps the exits, the entries and the counters clear", () => {
     const g = newGame();
     const m = map();
-    const exit = m.exits.find((e) => e.id !== "coop" && e.id !== "barn")!;
+    const exit = m.exits.find(
+      (e) => e.id !== "coop" && e.id !== "barn" && e.id !== "greenhouse",
+    )!;
     const found = placementBlockers(g, m, MAP_ID, "coop", exit.x, exit.y - 1);
     expect(found.length).toBeGreaterThan(0);
     for (const e of m.exits) {
-      if (e.id === "coop" || e.id === "barn") continue;
+      if (e.id === "coop" || e.id === "barn" || e.id === "greenhouse") continue;
       for (let y = e.y - 1; y <= e.y + e.h; y++)
         for (let x = e.x - 1; x <= e.x + e.w; x++)
           expect(

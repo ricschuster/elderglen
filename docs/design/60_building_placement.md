@@ -86,6 +86,14 @@ placeholders for note 07.
   and the real barn door tiles of #618. Tilled soil blocks a spot, which is ours
   and not from the saved page. Whether it should is for the owner.
 
+## Built: the greenhouse (issue #634)
+
+- The repaired greenhouse is a fourth placeable, move only: no order, no
+  removal. The carpenter shows "Move the greenhouse" once the Larder is done.
+  It uses the same ghost, blockers and exit rules as the coop and barn, and its
+  footprint is 6 by 4 with the door the third tile of the bottom row. Details
+  in `31_farm_growth.md`.
+
 ## Open
 
 - **Stable build time.** Two days for the stable (saved page). The coop and barn

@@ -22,8 +22,14 @@ import {
   swingsToUproot,
 } from "./trees";
 import { swingCost, type Upgradable } from "./upgrades";
-import { sprinklerById } from "./sprinklers";
-import { isMature, saplingId, treeOfSapling } from "./fruittrees";
+import { sprinklerById, type Sprinklers } from "./sprinklers";
+import { storeOf } from "./mapstore";
+import {
+  isMature,
+  saplingId,
+  treeOfSapling,
+  type FruitTrees,
+} from "./fruittrees";
 import { FIBER, FIBER_CHANCE, MIXED_SEED } from "./weeds";
 import { TWIG_WOOD } from "./debris";
 import { isRaining } from "./weather";
@@ -77,13 +83,15 @@ export function till(
   soil: Farm = g.farm,
 ): Outcome {
   if (g.day.over) return fail("exhausted");
+  // Each map has its own fruit trees and sprinklers (`mapstore.ts`).
+  const here = storeOf(g, soil.indoors);
+  if (here.fruitTrees.at(x, y)) return fail("a tree is in the way");
+  if (here.sprinklers.at(x, y)) return fail("a sprinkler is in the way");
   // Trees, weeds and the rest stand on the farm's tiles, not the greenhouse's.
   if (!soil.indoors) {
-    if (g.trees.at(x, y) || g.fruitTrees.at(x, y))
-      return fail("a tree is in the way");
+    if (g.trees.at(x, y)) return fail("a tree is in the way");
     if (g.weeds.at(x, y)) return fail("a weed is in the way");
     if (g.twigs.at(x, y)) return fail("a twig is in the way");
-    if (g.sprinklers.at(x, y)) return fail("a sprinkler is in the way");
     if (g.machines.at(x, y)) return fail("a machine is in the way");
     if (g.chests.onFarm(x, y)) return fail("a chest is in the way");
   }
@@ -337,7 +345,8 @@ export function chop(
   map?: FarmMap,
 ): Outcome {
   if (g.day.over) return fail("exhausted");
-  if (g.fruitTrees.at(x, y)) return chopFruitTree(g, x, y, map);
+  if (storeOf(g, !!map?.indoors).fruitTrees.at(x, y))
+    return chopFruitTree(g, x, y, map);
   const plan = planChop(g, x, y, random);
   const t = g.trees.at(x, y);
   if (!plan || !t) return fail("nothing to chop");
@@ -387,20 +396,31 @@ function chopFruitTree(
   y: number,
   map?: FarmMap,
 ): Outcome {
-  const t = g.fruitTrees.at(x, y);
+  const trees = storeOf(g, !!map?.indoors).fruitTrees;
+  const t = trees.at(x, y);
   if (!t) return fail("nothing to chop");
+  const mature = isMature(t);
+  const falls = !mature || t.hits + 1 >= swingsToFell(g.toolTiers.axe);
+  const woodNow = mature
+    ? TREE_WOOD + Math.min(g.skills.level("foraging"), TREE_WOOD_BONUS_MAX)
+    : YOUNG_WOOD;
+  // Nothing may be left on the ground indoors: the pile would land on the farm.
+  if (
+    falls &&
+    map?.indoors &&
+    (g.inventory.room("wood") < woodNow ||
+      g.inventory.room(saplingId(t.id)) < 1)
+  )
+    return fail("backpack full");
   g.day.act(
     swingCost(TOOL_ENERGY, g.toolTiers.axe, g.skills.level("foraging")),
     0,
   );
-  const mature = isMature(t);
-  if (mature && t.hits + 1 < swingsToFell(g.toolTiers.axe)) {
+  if (!falls) {
     t.hits += 1;
     return { ok: true };
   }
-  const wood = mature
-    ? TREE_WOOD + Math.min(g.skills.level("foraging"), TREE_WOOD_BONUS_MAX)
-    : YOUNG_WOOD;
+  const wood = woodNow;
   const sapling = saplingId(t.id);
   for (const [id, n] of [
     ["wood", wood],
@@ -413,7 +433,7 @@ function chopFruitTree(
       g.ground.drop(spot.x, spot.y, id, n - fits);
     }
   }
-  g.fruitTrees.remove(x, y);
+  trees.remove(x, y);
   return mature
     ? award(g, "foraging", TREE_XP, "wood")
     : { ok: true, item: "wood" };
@@ -437,25 +457,34 @@ export function plantFruitTree(
   if (g.inventory.count(id) < 1) return fail("no sapling");
   if (!map.canPlantTree(x, y) || !isClear(g, map, x, y))
     return fail("cannot plant tree here");
+  const { fruitTrees } = storeOf(g, map.indoors);
   for (let dy = -1; dy <= 1; dy++)
     for (let dx = -1; dx <= 1; dx++)
-      if (g.fruitTrees.at(x + dx, y + dy) || g.trees.blocks(x + dx, y + dy))
+      if (
+        fruitTrees.at(x + dx, y + dy) ||
+        (!map.indoors && g.trees.blocks(x + dx, y + dy))
+      )
         return fail("too close to another tree");
   g.inventory.remove(id);
-  g.fruitTrees.add(x, y, def.id);
+  fruitTrees.add(x, y, def.id);
   return { ok: true };
 }
 
 /** Shake the fruit off a mature tree by hand, all of it, at the tree's grade. */
-export function pickFruit(g: GameState, x: number, y: number): Outcome {
+export function pickFruit(
+  g: GameState,
+  x: number,
+  y: number,
+  trees: FruitTrees = g.fruitTrees,
+): Outcome {
   if (g.day.over) return fail("exhausted");
-  const ripe = g.fruitTrees.ripe(x, y);
+  const ripe = trees.ripe(x, y);
   if (!ripe) return fail("nothing ripe");
   const take = Math.min(ripe.count, g.inventory.room(ripe.item));
   if (take < 1) return fail("backpack full");
   g.inventory.add(ripe.item, take);
   noteGathered(g, ripe.item, take);
-  const t = g.fruitTrees.at(x, y);
+  const t = trees.at(x, y);
   if (t) t.fruit -= take;
   return { ok: true, item: ripe.item };
 }
@@ -631,6 +660,17 @@ export function isClear(
   x: number,
   y: number,
 ): boolean {
+  // The greenhouse: bare floor anywhere inside, border or plot, with its own
+  // sprinklers, trees and soil (`mapstore.ts`).
+  if (map.indoors) {
+    const here = storeOf(g, true);
+    return !(
+      !map.canPlantTree(x, y) ||
+      here.sprinklers.at(x, y) ||
+      here.fruitTrees.at(x, y) ||
+      here.soil.plotAt(x, y)
+    );
+  }
   return !(
     !map.isTillable(x, y) ||
     map.isBlocked(x, y) ||
@@ -667,17 +707,22 @@ export function placeSprinkler(
   if (g.inventory.count(id) < 1) return fail("no sprinkler");
   if (!isClear(g, map, x, y)) return fail("cannot place here");
   g.inventory.remove(id);
-  g.sprinklers.add(x, y, id);
+  storeOf(g, map.indoors).sprinklers.add(x, y, id);
   return { ok: true };
 }
 
 /** Take up a sprinkler by hand. It goes to the backpack, or the backpack is full and it stays. */
-export function pickUpSprinkler(g: GameState, x: number, y: number): Outcome {
+export function pickUpSprinkler(
+  g: GameState,
+  x: number,
+  y: number,
+  sprinklers: Sprinklers = g.sprinklers,
+): Outcome {
   if (g.day.over) return fail("exhausted");
-  const id = g.sprinklers.at(x, y);
+  const id = sprinklers.at(x, y);
   if (!id) return fail("no sprinkler here");
   if (g.inventory.room(id) < 1) return fail("backpack full");
-  g.sprinklers.remove(x, y);
+  sprinklers.remove(x, y);
   g.inventory.add(id);
   return { ok: true, item: id };
 }
