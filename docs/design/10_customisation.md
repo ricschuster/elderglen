@@ -3,7 +3,7 @@
 Built 2026-11-07: hats (wardrobe on H or the Hats button, a placeholder block on
 the player, hats from the Hat Parade gift and counter). Furniture is built the same day: ten one tile
 pieces sold from the carpenter's daily stock and placed in the house. The
-catalogue, wallpaper, floors, the hatter and achievement hats are not built.
+wallpaper, floors, the hatter and achievement hats are not built.
 
 Status: draft. Written from reader 1's feedback (decorating was raised three
 times) and the design talk of 2026-10-27. Nothing here is built. It is outside
@@ -78,7 +78,10 @@ and Hats pages.
   carpenter offers a random selection of furniture each day at fixed prices.
   After the first house upgrade the carpenter also sells a furniture catalogue.
   Once placed, using it gives unlimited copies at 0g. Furniture cannot be sold
-  or gifted. Slice 1 needs a pool big enough that a daily pick feels varied, so
+  or gifted. Built: the catalogue is a 200,000g one-time purchase after house
+  tier 1 that yields a placeable item. Stand it in the house; Action on it opens
+  a list of every piece to take at 0g, and the hand picks it up again. Old saves
+  that bought the shop unlock are given the item. Slice 1 needs a pool big enough that a daily pick feels varied, so
   the "five to ten pieces" the first slice once named is the floor, not the
   target. Prices and the pool size are open.
 - **One catalogue per people, later.** The owner wants a catalogue for each

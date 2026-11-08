@@ -68,6 +68,7 @@ import {
 import type { Rocks } from "../core/rocks";
 import { ROOMS, applyDecor, decorById, roomTiles } from "../core/decor";
 import {
+  CATALOGUE_ITEM,
   carryFurniture,
   furnitureById,
   pickUpFurniture,
@@ -1209,6 +1210,11 @@ export class FarmScene extends Phaser.Scene {
       return this.open("crafting", {
         bench: { mapId: this.mapId, x: front.x, y: front.y },
       });
+    if (
+      isHouseMap(this.mapId) &&
+      this.state.furniture.at(this.mapId, front.x, front.y) === CATALOGUE_ITEM
+    )
+      return this.open("catalogue");
     if (
       isHouseMap(this.mapId) &&
       this.state.furniture.at(this.mapId, front.x, front.y)

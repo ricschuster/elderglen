@@ -29,7 +29,7 @@ import { Inventory } from "./inventory";
 import { Skills, SKILLS, type Skill } from "./skills";
 import { professionById } from "./professions";
 import { Decor, type DecorSave } from "./decor";
-import { Furniture, type FurnitureSave } from "./furniture";
+import { Furniture, migrateCatalogue, type FurnitureSave } from "./furniture";
 import { Mailbox, type MailEntry } from "./mail";
 import { Quests, type QuestsSave } from "./quests";
 import { Wardrobe, type WardrobeSave } from "./hats";
@@ -671,6 +671,7 @@ export function deserialize(text: string): GameState | undefined {
   // Saves from an older house frame keep furniture and chests by that frame.
   const layout = isCount(raw.houseLayout) ? raw.houseLayout : 1;
   g.furniture.load(raw.furniture, layout);
+  migrateCatalogue(g);
   g.chests.load(raw.chests, layout);
   g.decor.load(raw.decor);
   g.achievements.load(raw.achievements);
