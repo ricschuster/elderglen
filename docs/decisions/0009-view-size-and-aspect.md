@@ -3,7 +3,7 @@
 ## Status
 
 Accepted (owner, 2026-11-06). Settles the open "minimum visible tile count" in
-`docs/design/06_map_style.md`. The zoom limits are placeholders to tune.
+`docs/design/06_map_style.md`. The zoom limits are Stardew's own, checked 2026-11-07 (SC-42): 75 to 200 percent. The 125 percent figures below are superseded.
 
 ## Context
 
@@ -23,7 +23,7 @@ expect to zoom in and out, on a tablet by pinching.
   touch, saved per device. Steps are fractions of the default zoom, so pixels are
   slightly uneven between steps (art stays 16 px tiles).
 - Zoom has a cap in both directions. Placeholder range: 75 percent (about 40 by
-  22 tiles) to 125 percent (about 24 by 14). Tune on the tablet.
+  22 tiles) to 125 percent (about 24 by 14; Stardew goes to 200, about 15 by 8). Tune on the tablet.
 - Every map must look right at the widest view (the zoom out cap on the widest
   window), so each map needs a border margin of scenery, not void. Update
   2026-11-06: the extra view has no cap (note 64), so a view bigger than a map

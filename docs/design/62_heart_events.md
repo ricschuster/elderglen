@@ -23,7 +23,7 @@ rest is Stardew's shape from the owner's play and memory, unchecked
    spot, not by menu. **A short warning comes first**, so no afternoon is lost
    without notice, as festivals already do (`14_festival_calendar.md`). The
    player may say "not now" and the event waits. One event a day, and none on a
-   festival day. Stardew gives no warning (unchecked), so this is ours.
+   festival day. The owner says Stardew also warns (checked in play 2026-11-07, SC-45; how it warns is not recorded), so ours matches.
 3. **Events may reward. Talks may not (`18_dialogue.md`).** An event can set a
    story flag, give an item, a recipe or a house keepsake. Choices in an event
    only change how fast hearts rise or which lines follow. They never take
@@ -33,8 +33,8 @@ rest is Stardew's shape from the owner's play and memory, unchecked
 4. **Events can be replayed from the journal.** Seen events are listed in the
    Social tab (`49_menu_and_journal.md`) and can be replayed without rewards. An
    event that has not been seen stays waiting. Nothing is lost for good. Stardew
-   lets some events be missed for good, and whether it has a replay is
-   unchecked (SC-45).
+   lets some events be missed for good. The owner says it also has a replay
+   (checked in play 2026-11-07, SC-45).
 
 ## Shape
 

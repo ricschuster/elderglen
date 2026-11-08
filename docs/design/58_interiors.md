@@ -20,6 +20,11 @@ map work is planned.
    So the coop has three maps and the barn three, sized by the table below. They
    share a template and furniture so the authoring stays light. Whether Stardew
    stores them this way is not checked (SC-36).
+   **Update 2026-11-07, not yet settled:** the owner now says to do it as
+   Stardew does (one room that grows with each tier, SC-36), and asked how to
+   draw it, since a tier that is not built must not show early. This reopens
+   the one map per tier choice above. Design this before building the barn,
+   coop or farmhouse tiers.
 2. **The greenhouse is walked into.** Note 31 already says "as in Stardew". It
    is one map, locked as a ruin until the Larder room reward.
 3. **Everyone outside Hearthwell with a shop or home gets an interior, and
