@@ -33,12 +33,15 @@ export const ACHIEVEMENTS = achievementData as AchievementDef[];
 export interface AchievementsSave {
   earned: string[];
   crafted: string[];
+  /** Absent in saves made before the completion tracker (note 39). */
+  cooked?: string[];
 }
 
 /** What has been earned, and the different things crafted so far. */
 export class Achievements {
   private earned: string[] = [];
   private crafted = new Set<string>();
+  private cooked = new Set<string>();
 
   has(id: string): boolean {
     return this.earned.includes(id);
@@ -61,6 +64,19 @@ export class Achievements {
     return this.crafted.has(id);
   }
 
+  /** Record that a cooking recipe has been cooked at least once (note 39). */
+  noteCooked(id: string): void {
+    this.cooked.add(id);
+  }
+
+  get cookedCount(): number {
+    return this.cooked.size;
+  }
+
+  hasCooked(id: string): boolean {
+    return this.cooked.has(id);
+  }
+
   /** Mark an achievement earned. False if unknown or already earned. */
   award(id: string): boolean {
     if (!ACHIEVEMENTS.some((a) => a.id === id) || this.has(id)) return false;
@@ -69,12 +85,17 @@ export class Achievements {
   }
 
   save(): AchievementsSave {
-    return { earned: [...this.earned], crafted: [...this.crafted] };
+    return {
+      earned: [...this.earned],
+      crafted: [...this.crafted],
+      cooked: [...this.cooked],
+    };
   }
 
   load(raw: unknown): void {
     this.earned = [];
     this.crafted = new Set();
+    this.cooked = new Set();
     if (typeof raw !== "object" || raw === null) return;
     const data = raw as Partial<AchievementsSave>;
     if (Array.isArray(data.earned))
@@ -82,11 +103,14 @@ export class Achievements {
     if (Array.isArray(data.crafted))
       for (const id of data.crafted)
         if (typeof id === "string") this.crafted.add(id);
+    if (Array.isArray(data.cooked))
+      for (const id of data.cooked)
+        if (typeof id === "string") this.cooked.add(id);
   }
 }
 
 /** How many of a base item have ever been shipped, whatever the quality. */
-function shippedOf(g: GameState, base: string): number {
+export function shippedOf(g: GameState, base: string): number {
   let n = 0;
   for (const [id, count] of Object.entries(g.bin.save().shipped))
     if (splitQuality(id).base === base) n += count;

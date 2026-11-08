@@ -60,6 +60,18 @@ export class AchievementsScene extends Phaser.Scene {
         },
       ],
     }));
+    rows.push({
+      label: "Collections and the completion total",
+      buttons: [
+        {
+          text: "Open",
+          run: () => {
+            this.scene.stop();
+            this.scene.launch("collections");
+          },
+        },
+      ],
+    });
     for (const a of ACHIEVEMENTS) {
       const earned = g.achievements.has(a.id);
       if (a.secret && !earned) continue;
