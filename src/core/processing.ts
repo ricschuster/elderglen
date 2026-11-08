@@ -2,6 +2,7 @@ import {
   artisanId,
   CHEESE,
   CLOTH,
+  dyeOf,
   DUCK_MAYONNAISE,
   GOAT_CHEESE,
   HONEY,
@@ -30,6 +31,8 @@ export interface MachineDef {
   sellPrice: number;
   /** True for a machine that makes goods with no input (the bee house). */
   auto?: boolean;
+  /** True for a machine that stands only in the cellar (the cask, `cask.ts`). */
+  cellar?: boolean;
 }
 
 export const MACHINES: readonly MachineDef[] = [
@@ -44,6 +47,9 @@ export const MACHINES: readonly MachineDef[] = [
   { id: "mayonnaise-machine", name: "Mayonnaise machine", sellPrice: 200 },
   { id: "loom", name: "Loom", sellPrice: 250 },
   { id: "oil-maker", name: "Oil maker", sellPrice: 300 },
+  /** The dye vat (note 24, bundle 23) and the cask (cellar only). Sell prices are ours, placeholders. */
+  { id: "dye-vat", name: "Dye vat", sellPrice: 250 },
+  { id: "cask", name: "Cask", sellPrice: 200, cellar: true },
   /** A crafted furnace, for more batches at once. The first is the smith's gift (`furnace.ts`). */
   { id: "furnace", name: "Furnace", sellPrice: 150 },
 ];
@@ -110,6 +116,9 @@ const MAYO_OF: Record<string, string> = {
   "duck-egg": DUCK_MAYONNAISE,
 };
 
+/** The dye vat makes one dye from one flower, berry or crop in a day (ours, placeholder, note 07). */
+export const DYE_MINUTES = MINUTES_PER_DAY;
+
 /** The dehydrator takes 5 of one fruit or mushroom and dries them in a day. */
 export const DEHYDRATOR_USE = 5;
 export const DEHYDRATOR_MINUTES = MINUTES_PER_DAY;
@@ -167,6 +176,10 @@ export function processFor(
       output: artisanId(input, "dried"),
       minutes: DEHYDRATOR_MINUTES,
     };
+  }
+  if (machine === "dye-vat") {
+    const dye = dyeOf(input);
+    return dye ? { ...one, output: dye, minutes: DYE_MINUTES } : undefined;
   }
   if (machine === "cheese-press")
     return CHEESE_OF[input]

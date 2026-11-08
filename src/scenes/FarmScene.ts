@@ -92,6 +92,15 @@ import {
 import { saveGame } from "../core/save";
 import { absoluteMinutes } from "../core/furnace";
 import { jobDone, statusText } from "../core/machines";
+import {
+  CASK,
+  caskDone,
+  caskStatus,
+  collectCask,
+  handOnCask,
+  loadCask,
+  placeCask,
+} from "../core/cask";
 import { chestById, pickUpChest, placeChest, pushChest } from "../core/chests";
 import { greencoatDue, takeCampGift } from "../core/camp";
 import {
@@ -735,6 +744,7 @@ export class FarmScene extends Phaser.Scene {
           (s) => s.x === x && s.y === y,
         )) ||
       this.state.furniture.blocks(this.mapId, x, y) ||
+      (this.mapId === CELLAR_MAP && this.state.casks.at(x, y)) ||
       !!this.state.chests.at(this.mapId, x, y) ||
       this.map.serviceAt(x, y)?.kind === "camp-chest" ||
       (this.map.hasSoil &&
@@ -1260,6 +1270,21 @@ export class FarmScene extends Phaser.Scene {
         ),
       );
     }
+    if (this.mapId === CELLAR_MAP) {
+      // Casks stand in the cellar: a held cask is stood down, a held good goes in,
+      // and the axe or pickaxe takes a good out, or an empty cask up.
+      const cask = this.state.casks.at(front.x, front.y);
+      if (held.kind === "item" && held.id === CASK && !cask)
+        return this.report(placeCask(this.state, this.map, front.x, front.y));
+      if (cask && held.kind === "item")
+        return this.report(loadCask(this.state, front.x, front.y, held.id));
+      if (
+        cask &&
+        held.kind === "tool" &&
+        (held.tool === "axe" || held.tool === "pickaxe")
+      )
+        return this.report(handOnCask(this.state, front.x, front.y));
+    }
     if (isHouseMap(this.mapId)) {
       // In the house the held piece is stood down, and the axe or pickaxe takes one up.
       if (held.kind === "item" && decorById(held.id))
@@ -1344,6 +1369,17 @@ export class FarmScene extends Phaser.Scene {
         service.kind,
         service.kind === "hall" ? { room: service.id } : undefined,
       );
+    if (this.mapId === CELLAR_MAP && this.state.casks.at(front.x, front.y)) {
+      // Action reads a cask and takes a gold good out. Taking one out early is
+      // the axe or pickaxe's job, so a stray press never resets the ageing.
+      const cask = this.state.casks.get(front.x, front.y)!;
+      if (!cask.job) return this.report({ ok: false, reason: "cask empty" });
+      if (!caskDone(this.state, cask)) {
+        this.message = caskStatus(this.state, front.x, front.y);
+        return this.render();
+      }
+      return this.report(collectCask(this.state, front.x, front.y));
+    }
     if (this.state.chests.at(this.mapId, front.x, front.y))
       return this.open("chest", {
         mapId: this.mapId,
@@ -1417,7 +1453,9 @@ export class FarmScene extends Phaser.Scene {
       this.message =
         result.reason === "machine busy"
           ? statusText(this.state, front.x, front.y)
-          : reasonText(result.reason);
+          : result.reason === "cask busy"
+            ? caskStatus(this.state, front.x, front.y)
+            : reasonText(result.reason);
     } else if (result.note) {
       this.message = result.note;
     } else if (result.ladder) {
@@ -1639,6 +1677,11 @@ export class FarmScene extends Phaser.Scene {
       if (s.kind === "camp-chest") put(s.x, s.y, chestKey("big-chest"));
     for (const c of this.state.chests.each(this.mapId))
       put(c.x, c.y, chestKey(c.id));
+    if (this.mapId === CELLAR_MAP)
+      for (const c of this.state.casks.each()) {
+        put(c.x, c.y, machineKey(CASK));
+        if (caskDone(this.state, c)) put(c.x, c.y, MACHINE_READY_KEY);
+      }
     if (this.mapId === CAVE_MAP) this.drawCave(put);
     if (isFestivalMap(this.mapId)) this.drawFestivalProps();
     if (!this.map.hasSoil) return;

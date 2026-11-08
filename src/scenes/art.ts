@@ -616,6 +616,16 @@ function paintTrees(scene: Phaser.Scene): void {
         px(c, "#a8784a", 4, 5, 8, 8);
         px(c, "#7a5a3a", 5, 2, 6, 2);
         px(c, "#d94a7a", 5, 7, 6, 4);
+      } else if (m.id === "cask") {
+        px(c, "#6a4a2a", 3, 3, 10, 11);
+        px(c, "#8a6234", 4, 4, 8, 9);
+        px(c, "#3a3a42", 3, 6, 10, 1);
+        px(c, "#3a3a42", 3, 11, 10, 1);
+        px(c, "#d94a7a", 7, 8, 2, 2);
+      } else if (m.id === "dye-vat") {
+        px(c, "#4a4a52", 3, 6, 10, 8);
+        px(c, "#6a6a74", 3, 5, 10, 2);
+        px(c, "#4a7ad9", 4, 6, 8, 3);
       } else if (m.id === "bee-house") {
         px(c, "#c89a3a", 4, 6, 8, 8);
         px(c, "#e8c050", 3, 3, 10, 3);

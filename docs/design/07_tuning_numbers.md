@@ -859,3 +859,13 @@ Source: `src/core/quests.ts`, `src/content/requests.json`.
   forage 3 to 8, wood, stone or fiber 10 to 40.
 - Errand achievements: 10 requests (Spotted Bow hat 1,000g, 500g letter) and 40
   (Hen Mask 2,000g, 2,500g letter), as note 38.
+
+## Cask and dye vat (#602, 2026-11-09, note 24, placeholders)
+
+- Cask: 40 wood, known at the cellar stairs (tier 3), sells for 200g, holds one
+  good, at most 33 in the cellar. Wine and mead reach silver at 14 days and gold
+  at 28. Cheese and goat cheese reach silver at 6 days and gold at 10 (SC-82).
+- Dye vat: 40 wood, 10 stone, 10 fiber, from the Dyer's bundle only. Sells for
+  250g. One input, one dye, 1 day (1,600 machine minutes). Every dye sells for
+  120g. Dyer's bundle: 4 of daffodil, sweet pea, red cabbage, cranberry, bramble
+  berry, crocus, in the Hearth room.

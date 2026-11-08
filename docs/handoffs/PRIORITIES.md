@@ -10,7 +10,7 @@ Start each session by asking which item to take.
 ## Milestone order (ADR 0012, 2026-11-08)
 
 M3 (close out: the owner's play), M3b ring 1 systems (fishing, combat, villagers,
-horse, building placement #611, cask and greenhouse), M4 multiplayer, M3c story
+horse, building placement #611, cask and dye vat built, greenhouse left), M4 multiplayer, M3c story
 and ending, M3d polish, then M5 and M6. The list below is the design order within
 that. Filed work packages: #595 to #604 and #611.
 
