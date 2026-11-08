@@ -10,7 +10,7 @@ plan. Stardew's behaviour is from the owner's memory only (SC-42, SC-46).
 1. **No cap on the extra view, as in Stardew.** A bigger window shows more
    world at the same zoom. Whether Stardew caps it is unknown (SC-42). This
    replaces the idea of a cap in ADR 0009's "Still open" list. The zoom steps
-   keep their own caps (75 to 200 percent, decision 5).
+   keep their own caps (75 to 200 percent, see the 2026-11-07 decisions).
 2. **Full-screen menus keep their layout.** The dim backdrop fills the whole
    window and the panel content stays a fixed 960 by 540 box in the centre.
    Every existing layout stays as drawn.
@@ -22,19 +22,19 @@ plan. Stardew's behaviour is from the owner's memory only (SC-42, SC-46).
 All four answers were "do what Stardew does", and the owner then checked each
 in the desktop game the same day (SC-42, SC-46, SC-63, SC-64, all done).
 
-4. **UI size is 75 to 150 percent**, as Stardew (SC-46, checked; the owner
+- **UI size is 75 to 150 percent**, as Stardew (SC-46, checked; the owner
    corrected the range from 125 to 150 the same day). Steps of 5 percent are
    from the owner's first answer. The HUD never drops below
    the note 27 touch target size, so on tablets the floor may lift the low end.
-5. **World zoom is 75 to 200 percent of the default**, as Stardew (SC-42,
+- **World zoom is 75 to 200 percent of the default**, as Stardew (SC-42,
    checked; corrected from 125 to 200 the same day), in 5 percent steps. This
    widens ADR 0009's 75 to 125 percent. If fractional steps shimmer on
    the tablets, fall back to whole steps.
-6. **Black bars where the view is bigger than the map** (SC-63, checked).
+- **Black bars where the view is bigger than the map** (SC-63, checked).
    This replaces the per area backdrop colour below: the camera centres the map
    and the rest is black, outdoors and indoors. Outdoor maps keep their 8 tile
    scenery margin.
-7. **Window mode is Windowed, Borderless Windowed and Fullscreen**, as Stardew
+- **Window mode is Windowed, Borderless Windowed and Fullscreen**, as Stardew
    (SC-64, checked). It is a desktop setting, so it goes in the desktop wrapper ADR
    when that is written. The browser and the tablet have no such choice.
 
@@ -60,7 +60,7 @@ With no cap, no map can promise enough scenery for every window. A 4K or
 ultrawide window can be wider than a whole interior or small area.
 
 - If the view is bigger than the map, the camera centres the map and the rest is
-  black (decision 6). No void shows through, and no map needs infinite margin.
+  black (2026-11-07 decisions). No void shows through, and no map needs infinite margin.
 - Outdoor maps still keep about 8 tiles of scenery margin, so ordinary windows
   at the zoom out cap never reach the backdrop.
 - Check at one wide and one square window, and at both zoom caps.
