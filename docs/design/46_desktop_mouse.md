@@ -42,8 +42,10 @@ The saved Controls page lists keys only, so none of them is checked.
   - Beyond it: the aim is the neighbour tile in the dominant axis toward the
     cursor, which is also what the farmer faces.
   - The cursor on the farmer's own tile aims at the faced tile.
-  - `reach` is a placeholder of 2 tiles. Add it to `07_tuning_numbers.md` when
-    built. Stardew's real value is not checked.
+  - `reach` is 1 tile (owner, 2026-11-08): tools at level 1 only affect the
+    cells next to the farmer, diagonals included. It was a placeholder of 2.
+    Stronger tool levels may widen their area later. Stardew's real value is
+    not checked.
 - **Facing follows the aim.** The 4-way facing (`Facing`) is set from the aimed
   tile's direction when a click happens, not on every cursor move, so the
   sprite does not spin while the cursor crosses the farm. It does not turn on

@@ -1,7 +1,7 @@
 import { facingFrom, type Facing, type Vec } from "./movement";
 
 /** How far from the farmer's tile a click still acts on the tile under the cursor. */
-export const AIM_REACH = 2;
+export const AIM_REACH = 1;
 
 export interface Aim {
   /** The tile a use or action lands on. */
