@@ -119,6 +119,12 @@ Settled briefly where the notes left gaps. Numbers are placeholders (note 07).
   stumps, Mahogany trees, the Mines floors 41 to 69 and the other Stardew
   sources. Until the Secret Woods exists, 100 hardwood is out of reach on the
   Standard farm (3 stumps give 6) and takes about 33 days of Woodland stumps.
+- **Temporary carpenter sale (owner, 2026-11-08).** The carpenter sells Hardwood
+  at 200g each (Stardew's price from memory, unchecked: the saved Carpenter page
+  lists none) so the stable and house tier 2 are reachable on the Standard farm.
+  REMOVE it when a real supply exists (logs, Secret Woods, Mahogany, Mines
+  hardwood): set `enabled` false in `src/content/carpenter-standin.json`, or
+  delete that file, `src/core/carpenter.ts` and the scene row.
 - **Saves.** Nothing new is saved. Large stumps and their regrow timers load as
   before, and a stable or house order already paid in wood stays paid.
 

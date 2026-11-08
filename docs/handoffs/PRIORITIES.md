@@ -31,6 +31,10 @@ that. Filed work packages: #595 to #604 and #611.
    (audio plan: #527).
 4. **Ring 2 shape and travel** (#20, M5). Parked until slice 3 is played.
 
+**Remove when real hardwood supply exists:** the carpenter's temporary Hardwood
+sale (200g, `src/content/carpenter-standin.json`, note 43). Take it out once logs,
+the Secret Woods, Mahogany or Mines hardwood give a real supply.
+
 Session 2026-11-08k (handoff 2026-11-08k): housekeeping, no design or build.
 Note 70 stays unbuilt until the owner says go. A crop wish list is not designed.
 
