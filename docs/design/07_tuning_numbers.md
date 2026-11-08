@@ -398,6 +398,21 @@ are from memory and unchecked.
   2 to 5 (band 1). Drops: Pebbleback stone (always, 1 to 2) and copper ore (30
   percent); Dustmoth moth dust (60 percent, sells 30g) and fibre (50 percent).
 
+- Built 2026-11-08 (part two of combat, note 22, all placeholders): creatures
+  by band. Band 1: Rock Crab 6 health, touch 5, sight 2, armoured front; Mossbeetle
+  5, touch 5, dash 120 px/s for 0.6 s; Gloop 3, touch 4, hops at 50 px/s, splits
+  into a 1 health small one. Band 2: Frostnibbler 5, touch 6; Icicle Hopper 6,
+  touch 7; Cave Bat 4, touch 8, dash 0.9 s; Nabbler 5, touch 6; Blue Gloop 5,
+  touch 7. Band 3: Cinder Pup 8, touch 10; Lanternmoth 6, touch 9, pulse reach 3.5
+  tiles; Old Digger 10, touch 12; Ember Gloop 8, touch 10. Wind ups 0.6 to 0.9 s.
+  XP per kill 2 to 5, 8 to 10, 14 to 18 by band. Slayer goals: Pebbleback 30,
+  Dustmoth 500, Rock Crab 60, Mossbeetle 80, Gloop 1000 (all colours), Frostnibbler
+  100, Icicle Hopper 100, Cave Bat 200, Nabbler 60, Cinder Pup 150, Lanternmoth
+  150, Old Digger 50. Steady +25 health, Nimble 2.5 s grace. Weapon damage by
+  tier (starter, copper, iron, gold, Hearthsilver): blade 2, 3, 5, 7, 10; club 3,
+  5, 8, 11, 15; sling 1, 2, 3, 5, 7. Forging: iron 4 bars and 400g, gold 4 bars
+  and 800g, Hearthsilver 5 bars and 1500g. Drop sell prices 5 to 50g.
+
 ## Animals (draft; slice 1 built 2026-11-08)
 
 Slice 1 built (`animals.ts`), all placeholders: base coop 4000g, 300 wood, 100

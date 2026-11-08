@@ -15,6 +15,7 @@ import {
 import { SPRINKLERS } from "./sprinklers";
 import { FRUIT_TREES, saplingId } from "./fruittrees";
 import decorData from "../content/decor.json";
+import creatureGoods from "../content/creature-goods.json";
 import weaponData from "../content/weapons.json";
 import furnitureData from "../content/furniture.json";
 import { ARTISAN_GOODS } from "./artisan";
@@ -186,6 +187,8 @@ for (const w of weaponData)
 /** Moth dust, a Dustmoth drop and a crafting good (note 22). Sell price is a placeholder, ours. */
 export const MOTH_DUST = "moth-dust";
 items.set(MOTH_DUST, { id: MOTH_DUST, name: "Moth dust", sellPrice: 30 });
+/** The other creature drops (note 22). Sell prices are placeholders, ours. Frost berry is food. */
+for (const g of creatureGoods) items.set(g.id, { ...g });
 
 /** Fish (note 21). Prices are placeholders in the bands of note 07. */
 for (const f of FISH)
@@ -268,7 +271,14 @@ const GROUPS: [string, string[]][] = [
       ...BARS.map((b) => b.id),
     ],
   ],
-  ["Weapons and creature drops", [...weaponData.map((w) => w.id), MOTH_DUST]],
+  [
+    "Weapons and creature drops",
+    [
+      ...weaponData.map((w) => w.id),
+      MOTH_DUST,
+      ...creatureGoods.map((g) => g.id),
+    ],
+  ],
   [
     "Fish and rods",
     [...FISH, ...RODS, ...BAITS, ...LURES, ...TRINKETS].map((f) => f.id),

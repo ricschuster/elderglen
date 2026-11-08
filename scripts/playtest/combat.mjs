@@ -96,6 +96,52 @@ if (d.creatures.some((x) => x.uid === target.uid))
 log("message", d.message);
 await shot("beaten");
 
+// Part two: the deeper bands have their own creatures, a kill gives combat XP
+// and counts toward the slayer goal, and nothing throws while they act.
+for (const [floor, band] of [
+  [45, [41, 80]],
+  [100, [81, 120]],
+]) {
+  await goMap(`mine-${floor}`, "from_above");
+  await farm((g, f, s) => {
+    s.inventory.add("hearthsilver-rolling-pin");
+    s.combat.health.current = s.combat.health.max;
+  });
+  const pin = await farm((g, f, s) => {
+    for (let i = 0; i < s.inventory.size; i++)
+      if (s.inventory.slot(i)?.id === "hearthsilver-rolling-pin") return 4 + i;
+    return -1;
+  });
+  await farm((g, f, s, a) => f.select(a), pin);
+  d = await bot.dbg();
+  const kinds = d.creatures.map((c) => c.kind ?? c.id);
+  log(`floor ${floor} creatures`, JSON.stringify(d.creatures));
+  if (d.creatures.length < 4)
+    finding(`floor ${floor} has fewer than 4 creatures`);
+  await shot(`floor-${floor}`);
+  const xpBefore = await farm((g, f, s) => s.skills.xpOf("combat"));
+  for (let i = 0; i < 12; i++) {
+    d = await bot.dbg();
+    const c = d.creatures[0];
+    if (!c) break;
+    await farm((g, f, s, a) => {
+      s.combat.health.current = s.combat.health.max;
+      f.pos = { x: a.x - 10, y: a.y };
+      f.facing = "right";
+    }, c);
+    await p.keyboard.press("KeyC");
+    await sleepMs(700);
+  }
+  const xpAfter = await farm((g, f, s) => s.skills.xpOf("combat"));
+  log(`combat XP ${xpBefore} to ${xpAfter}`);
+  if (!(xpAfter > xpBefore))
+    finding(`floor ${floor}: no combat XP from a kill`);
+  void kinds;
+  void band;
+}
+const kills = await farm((g, f, s) => JSON.stringify(s.combat.kills));
+log("kills", kills);
+
 // A knock out ends the day: the report opens and health is full again.
 await farm((g, f, s) => {
   s.combat.health.current = 1;

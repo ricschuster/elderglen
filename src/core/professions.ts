@@ -54,6 +54,18 @@ export const PROFESSIONS: ProfessionDef[] = [
     name: "Rockhound",
     text: "Geodes drop twice as often.",
   },
+  {
+    id: "steady",
+    skill: "combat",
+    name: "Steady",
+    text: "25 more health.",
+  },
+  {
+    id: "nimble",
+    skill: "combat",
+    name: "Nimble",
+    text: "A hit leaves 2.5 seconds of grace, not 1.5.",
+  },
 ];
 
 export const TILLER_BONUS = 0.1;

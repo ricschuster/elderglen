@@ -14,7 +14,7 @@ bars. The charcoal kiln is built as a machine (2026-11-07, note 24). The Smith's
 (2026-11-07, session e): a placeable machine, mining level 4, 20 copper ore and 25
 stone, 5 ore and 1 coal a bar. Old Greencoat's door scene (placeholder words, no
 portrait) and the camp chest on floor 10 (a daily gift, take only, no bench) are built
-(session e). Geodes are built (session e): a node that takes 3 swings, 5 percent of rocks on floors 1 to 10, cracked by the smith for 25g into a stone, ore, quartz, a placeholder gem or a found thing (`src/content/geodes.json`); Rockhound adds an extra geode from plain rock. The gem list, found things, clay and the Glimmerstone are not written. The mine hall's ore-only bin is built (#522): a service tile in `mine.json` that opens the shipping bin screen with raw ore only (copper, iron and gold ore; bars, stone and coal are refused, placeholder), into the same bin and nightly payment. **Built (2026-11-08): the deeper mine as digging only, floors 11 to 120** (`mine-bands.json`, `src/core/mines.ts`): the three bands of 40, iron nodes from floor 26 (owner decision 2026-11-08; a rare 6 percent share before floor 41, 22 percent from 41), gold from 81 with iron and copper rarer, Hearthsilver (6 nodes a floor, 1 to 2 ore) from floor 100, geodes in each band's kind, a camp chest on every 10th floor (emptied per camp, gift ore by band), the lift to every floor reached, no ladder on floor 120. **Built (2026-11-08): the Hearthsilver bar** (furnace, 5 ore and 2 coal, 8 hours placeholder) **and the fifth tool tier** at the smith (note 44). **Built (2026-11-08, build slice 3 part one, #597): gentle combat, first cut** (`src/core/combat.ts`, `creatures.ts`, `creatures.json`, `weapons.json`): the health bar, the six first weapons, the trainer and the dummy, the first two creatures on floors 1 to 40, defeat and the lost item by post, Assist and "no creatures" in the options. See "Settled in the part one build" below. Not built: the other ten creatures and bands 2 and 3 creatures, the combat skill and professions, rest camp changes, the slayer list, special floors, dangerous mode. Not built:
+(session e). Geodes are built (session e): a node that takes 3 swings, 5 percent of rocks on floors 1 to 10, cracked by the smith for 25g into a stone, ore, quartz, a placeholder gem or a found thing (`src/content/geodes.json`); Rockhound adds an extra geode from plain rock. The gem list, found things, clay and the Glimmerstone are not written. The mine hall's ore-only bin is built (#522): a service tile in `mine.json` that opens the shipping bin screen with raw ore only (copper, iron and gold ore; bars, stone and coal are refused, placeholder), into the same bin and nightly payment. **Built (2026-11-08): the deeper mine as digging only, floors 11 to 120** (`mine-bands.json`, `src/core/mines.ts`): the three bands of 40, iron nodes from floor 26 (owner decision 2026-11-08; a rare 6 percent share before floor 41, 22 percent from 41), gold from 81 with iron and copper rarer, Hearthsilver (6 nodes a floor, 1 to 2 ore) from floor 100, geodes in each band's kind, a camp chest on every 10th floor (emptied per camp, gift ore by band), the lift to every floor reached, no ladder on floor 120. **Built (2026-11-08): the Hearthsilver bar** (furnace, 5 ore and 2 coal, 8 hours placeholder) **and the fifth tool tier** at the smith (note 44). **Built (2026-11-08, build slice 3 part one, #597): gentle combat, first cut** (`src/core/combat.ts`, `creatures.ts`, `creatures.json`, `weapons.json`): the health bar, the six first weapons, the trainer and the dummy, the first two creatures on floors 1 to 40, defeat and the lost item by post, Assist and "no creatures" in the options. See "Settled in the part one build" below. **Built (2026-11-08, build slice 3 part two, #598): the other creatures and bands 2 and 3, the combat skill and professions, the iron, gold and Hearthsilver weapon tiers and the slayer counter** (see "Settled in the part two build" below). Not built: the lightning rod, battery packs and lamp-posts, slayer rewards and the wall list, the rare creatures, special floors, dangerous mode, the slow dummy setting. Not built:
 everything else from slice 3 on. The mine hall and the mine door are placeholders
 on the farm until the Mountain exists (note 19). Everything else is unbuilt. It answers the design half of the mines item in
 `16_bundles.md` and feeds the fifth tool tier (#194).
@@ -480,6 +480,54 @@ Gaps the notes left open, settled with our own placeholders (every number is in
   not saved with the game. Assist halves damage (rounded up, never to nothing),
   lengthens wind ups by half and loses no items on defeat. "No creatures" spawns
   and shows none, and hides the health bar.
+
+## Settled in the part two build (2026-11-08)
+
+Gaps settled with our own placeholders (numbers in `07_tuning_numbers.md`):
+
+- **All twelve kinds are built**, data in `creatures.json`. Gloop has three
+  entries (green, blue, Ember) so each band's colour hits harder, and the three
+  count as one slayer goal. Touch is 4 to 5 in band 1, 6 to 8 in band 2 and 9 to
+  12 in band 3. Band 2 and 3 floors hold 4 to 8.
+- **Four behaviours cover the roster.** A *shuffler* walks at you (Pebbleback,
+  Rock Crab, Old Digger). A *drifter* loops (Dustmoth, Lanternmoth). A *hopper*
+  moves in three 0.3 second hops and rests (Icicle Hopper, Gloop). A *dasher*
+  winds up, locks its direction at the end of the wind up, and makes one straight
+  dash at 110 to 125 pixels a second for about half a second, landing one hit if
+  the player is still in the line (Mossbeetle, Frostnibbler, Cave Bat, Nabbler,
+  Cinder Pup). Stepping aside dodges it, and a creature that has dashed rests and
+  steps back. The dash is the "fixed, shown dash" the fight rules allow.
+- **Simplifications.** The Cave Bat's dash is straight, not an arc, and it hangs
+  still until it sees you. The Lanternmoth's glow is a pulse that lands within 3.5
+  tiles after its wind up, not a travelling shot. The Old Digger does not fall
+  apart and reassemble. The Nabbler steals nothing. These are art and feel passes
+  for the tablet check.
+- **Rock Crab** plays dead (drawn dim) until you are within 2 tiles. **Armour**:
+  the crab halves blade and sling hits that land on its front, and the Mossbeetle
+  does so while curled (winding up or dashing). Halved is rounded up, never to
+  nothing. A club ignores armour, and so does a hit from behind a crab.
+- **Gloop splits once** on its first hit if it survives: a small one with 1
+  health appears beside it. The small one touches for half and gives half the XP,
+  and does not split. Every Gloop kill counts toward the 1,000 goal.
+- **Combat XP** is the creature's `xp` (2 to 5 in band 1, 8 to 10 in band 2, 14 to
+  18 in band 3). The skill uses the mining table. Health is 100 plus 5 a level.
+  **Steady** adds 25. **Nimble** makes the grace after a hit 2.5 seconds. A
+  profession choice opens when the level 5 kill lands.
+- **Weapons:** iron, gold and Hearthsilver tiers of all three families (15
+  weapons), forged at the smith for 4 bars and 400g (iron), 4 bars and 800g
+  (gold), 5 bars and 1500g (Hearthsilver). Every weapon is a kept good.
+- **New goods:** shell, moss, gloop jelly, frost berry (food, 30 energy), ice
+  shard, bat wing, pocket coin, warm ember and old tools (`creature-goods.json`).
+  Oil and the ores are the existing goods. Moss does not yet come from trees (note
+  34 says it should).
+- **Slayer counter:** the completion total's slayer category reads the kill tally
+  (`combat.kills`) against the goal counts of the slayer list. A goal is met at
+  its count. The wall list and the rewards need the warden head and the
+  equipment slot (`37_equipment.md`), so they wait.
+- **Left for later:** the lightning rod, battery packs and lamp-posts need a
+  placed object and a storm night roll (`34_crafting.md`); bat wing now exists to
+  build them. The rare creature per band, the dummy's slow walk, special floors,
+  dangerous mode and the rest camp beyond the chest it already has also wait.
 
 ## Opening the mines
 

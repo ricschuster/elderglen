@@ -26,7 +26,7 @@
           "id": "slayer",
           "name": "Slayer goals",
           "weight": 10,
-          "counter": null
+          "counter": "slayer"
         },
         { "id": "friends", "name": "Friends", "weight": 12, "counter": null },
         { "id": "skills", "name": "Skills", "weight": 5, "counter": "skills" },

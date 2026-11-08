@@ -19,8 +19,12 @@ export interface DropDef {
 export interface CreatureDef {
   id: string;
   name: string;
-  /** "shuffler" walks at the player, "drifter" floats in slow loops. */
-  behaviour: "shuffler" | "drifter";
+  /**
+   * "shuffler" walks at the player, "drifter" floats in slow loops, "hopper"
+   * moves in three short hops and rests, "dasher" winds up and then makes one
+   * straight, shown dash.
+   */
+  behaviour: "shuffler" | "drifter" | "hopper" | "dasher";
   /** The mine bands (1 to 3) the creature lives in. */
   bands: number[];
   hp: number;
@@ -37,6 +41,24 @@ export interface CreatureDef {
   /** Seconds of pause after a hit. */
   recover: number;
   drops: DropDef[];
+  /** Combat XP for a beaten one, by band (placeholder). */
+  xp: number;
+  /** Kills that meet its slayer goal (note 22). Kinds sharing a `group` share one goal. */
+  goal: number;
+  /** Slayer group, for kinds that count together (the Gloop colours). */
+  group?: string;
+  /** A dasher's fixed dash: pixels a second and seconds it lasts. */
+  dash?: { speed: number; time: number };
+  /** Plays dead as a rock until the player is within sight. */
+  sleeper?: boolean;
+  /** Splits once when first hit. */
+  splits?: boolean;
+  /**
+   * Armour: "front" halves blade and sling hits that come from the front,
+   * "rolled" does so while the creature is curled up (winding up or dashing).
+   * A club ignores it (note 22).
+   */
+  armour?: "front" | "rolled";
 }
 
 export const CREATURES = creatureData as CreatureDef[];
@@ -53,9 +75,18 @@ export const LOSE_SECONDS = 3;
 export const ASSIST_WINDUP = 1.5;
 /** Pixels a hit pushes the creature back, as a short step. */
 const STEP_BACK = 14;
+/** Tiles within which a dash lands its hit. */
+const DASH_HIT = 0.7;
+/** A hopper's cycle in seconds, and the three hops in it as [start, end] (note 22: a fixed three step pattern). */
+const HOP_CYCLE = 2.1;
+const HOPS = [
+  [0, 0.3],
+  [0.5, 0.8],
+  [1, 1.3],
+];
 
 export type CreatureState =
-  "wander" | "chase" | "windup" | "recover" | "stagger";
+  "wander" | "chase" | "windup" | "dash" | "recover" | "stagger";
 
 export interface Creature {
   uid: number;
@@ -71,6 +102,12 @@ export interface Creature {
   angle: number;
   /** Seconds the player has been out of range (loses interest at `LOSE_SECONDS`). */
   away: number;
+  /** Direction it faces, in radians, kept toward the player while it is awake. */
+  face: number;
+  /** A dash has already landed its hit. */
+  struck: boolean;
+  /** A small Gloop split from a bigger one. */
+  small?: boolean;
 }
 
 export interface CreatureSave {
@@ -79,6 +116,7 @@ export interface CreatureSave {
   x: number;
   y: number;
   hp: number;
+  small?: boolean;
 }
 
 /** The creatures of a band, in the order they are listed in the data. */
@@ -110,6 +148,8 @@ export function newCreature(
     t: 0,
     angle: 0,
     away: 0,
+    face: Math.PI / 2,
+    struck: false,
   };
 }
 
@@ -119,6 +159,7 @@ export const saveCreature = (c: Creature): CreatureSave => ({
   x: c.x,
   y: c.y,
   hp: c.hp,
+  ...(c.small ? { small: true } : {}),
 });
 
 export function loadCreature(s: CreatureSave): Creature | undefined {
@@ -126,6 +167,7 @@ export function loadCreature(s: CreatureSave): Creature | undefined {
   if (!def || !Number.isFinite(s.x) || !Number.isFinite(s.y)) return undefined;
   const c = newCreature(s.uid, s.kind, s.x, s.y);
   c.hp = Math.min(Math.max(Math.round(s.hp), 1), def.hp);
+  if (s.small === true) c.small = true;
   return c;
 }
 
@@ -200,11 +242,19 @@ export function stepCreature(
 ): StepResult {
   const def = creatureById(c.kind);
   if (!def) return {};
+  const touch = c.small ? Math.max(1, Math.ceil(def.touch / 2)) : def.touch;
   const d = dist(c, w.player);
   const dir =
     d > 0
       ? { x: (w.player.x - c.x) / d, y: (w.player.y - c.y) / d }
       : { x: 0, y: 0 };
+  if (
+    d > 0 &&
+    c.state !== "stagger" &&
+    c.state !== "recover" &&
+    c.state !== "dash"
+  )
+    c.face = Math.atan2(dir.y, dir.x);
   const go = (vx: number, vy: number) => {
     const next = w.walk(c, vx * dt, vy * dt);
     c.x = next.x;
@@ -220,15 +270,36 @@ export function stepCreature(
     return {};
   }
 
+  if (c.state === "dash" && def.dash) {
+    c.t -= dt;
+    const before = { x: c.x, y: c.y };
+    go(Math.cos(c.angle) * def.dash.speed, Math.sin(c.angle) * def.dash.speed);
+    const blocked = c.x === before.x && c.y === before.y;
+    const lands = d <= DASH_HIT * w.tileSize;
+    if (lands || blocked || c.t <= 0) {
+      c.state = "recover";
+      c.t = def.recover;
+      c.away = 0;
+    }
+    return lands ? { hit: touch } : {};
+  }
+
   if (c.state === "windup") {
     c.t -= dt;
     if (c.t > 0) return {};
+    if (def.behaviour === "dasher" && def.dash) {
+      // The dash is straight and locked at the end of the wind up: step aside.
+      c.state = "dash";
+      c.t = def.dash.time;
+      c.angle = Math.atan2(dir.y, dir.x);
+      return {};
+    }
     // The hit lands only if the player is still close: walk away from a wind up.
     const near = d <= (def.reach + 0.3) * w.tileSize;
     c.state = "recover";
     c.t = def.recover;
     c.away = 0;
-    return near ? { hit: def.touch } : {};
+    return near ? { hit: touch } : {};
   }
 
   // Wander or chase.
@@ -250,9 +321,21 @@ export function stepCreature(
     return {};
   }
 
-  if (def.behaviour === "shuffler") {
+  if (def.behaviour === "dasher") {
+    // Approaches slowly, or hangs still (a bat has no speed) until it dashes.
     if (c.state === "chase") go(dir.x * def.speed, dir.y * def.speed);
-    else {
+  } else if (def.behaviour === "hopper") {
+    // Still until it notices the player, then three hops toward them and a rest.
+    if (c.state === "chase") {
+      c.angle = (c.angle + dt) % HOP_CYCLE;
+      if (HOPS.some(([a, b]) => c.angle >= a! && c.angle < b!))
+        go(dir.x * def.speed, dir.y * def.speed);
+    }
+  } else if (def.behaviour === "shuffler") {
+    if (c.state === "chase") go(dir.x * def.speed, dir.y * def.speed);
+    else if (def.sleeper) {
+      // Plays dead as a rock until the player comes near.
+    } else {
       c.t -= dt;
       if (c.t <= 0) {
         c.t = 1 + w.random() * 1.5;
@@ -305,3 +388,73 @@ export const creatureTile = (c: Creature, tileSize = 16): Vec => ({
   x: Math.floor(c.x / tileSize),
   y: Math.floor((c.y - 1) / tileSize),
 });
+
+/** Damage a weapon family does to a creature: armour halves it (never to nothing) unless the club swings (note 22). */
+export function swingDamage(
+  c: Creature,
+  damage: number,
+  family: string,
+  from: Vec,
+): number {
+  const def = creatureById(c.kind);
+  if (!def?.armour || family === "club") return damage;
+  const covered =
+    def.armour === "rolled"
+      ? c.state === "windup" || c.state === "dash"
+      : Math.cos(c.face) * (from.x - c.x) + Math.sin(c.face) * (from.y - c.y) >
+        0;
+  return covered ? Math.max(1, Math.ceil(damage / 2)) : damage;
+}
+
+/**
+ * A Gloop that survives its first hit splits once: a small one with a single
+ * health appears beside it. Returns the new one, or undefined.
+ */
+export function splitOff(c: Creature, uid: number): Creature | undefined {
+  const def = creatureById(c.kind);
+  if (!def?.splits || c.small || c.hp <= 0) return undefined;
+  const small = newCreature(uid, c.kind, c.x + 10, c.y);
+  small.small = true;
+  small.hp = 1;
+  small.state = "stagger";
+  small.t = STAGGER;
+  return small;
+}
+
+/** Combat XP for a beaten creature: a small split-off gives half. */
+export function creatureXp(c: Creature): number {
+  const def = creatureById(c.kind);
+  if (!def) return 0;
+  return c.small ? Math.ceil(def.xp / 2) : def.xp;
+}
+
+/** The slayer goals, one per kind or group (note 22): the kinds that count together and the kills needed. */
+export interface SlayerGoal {
+  id: string;
+  name: string;
+  kinds: string[];
+  goal: number;
+}
+
+export const SLAYER_GOALS: SlayerGoal[] = (() => {
+  const out: SlayerGoal[] = [];
+  for (const c of CREATURES) {
+    const id = c.group ?? c.id;
+    const have = out.find((g) => g.id === id);
+    if (have) have.kinds.push(c.id);
+    else
+      out.push({
+        id,
+        name: c.group ? c.name.replace(/^\w+ /, "") : c.name,
+        kinds: [c.id],
+        goal: c.goal,
+      });
+  }
+  return out;
+})();
+
+/** Kills toward a slayer goal, all of its kinds added together. */
+export const slayerKills = (
+  goal: SlayerGoal,
+  kills: Record<string, number>,
+): number => goal.kinds.reduce((n, k) => n + (kills[k] ?? 0), 0);

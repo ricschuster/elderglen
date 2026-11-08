@@ -9,6 +9,7 @@ import { FISH } from "./fishing";
 import { itemById } from "./items";
 import { shippedOf } from "./achievements";
 import { MAX_LEVEL, SKILLS } from "./skills";
+import { SLAYER_GOALS, slayerKills } from "./creatures";
 import type { GameState } from "./save";
 
 /**
@@ -80,6 +81,18 @@ export const COUNTERS: Record<string, Counter> = {
       done: levels,
       total: SKILLS.length * MAX_LEVEL,
       missing: missing.map((s) => `${s} level ${MAX_LEVEL}`),
+    };
+  },
+  slayer: (g) => {
+    const missing = SLAYER_GOALS.filter(
+      (s) => slayerKills(s, g.combat.kills) < s.goal,
+    );
+    return {
+      done: SLAYER_GOALS.length - missing.length,
+      total: SLAYER_GOALS.length,
+      missing: missing.map(
+        (s) => `${s.name} (${slayerKills(s, g.combat.kills)} of ${s.goal})`,
+      ),
     };
   },
   crafting: (g) => {

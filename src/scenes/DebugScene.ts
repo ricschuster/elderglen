@@ -146,7 +146,13 @@ export class DebugScene extends Phaser.Scene {
       },
       {
         label: "Skill XP",
-        buttons: [xp("farming"), xp("foraging"), xp("mining"), xp("fishing")],
+        buttons: [
+          xp("farming"),
+          xp("foraging"),
+          xp("mining"),
+          xp("fishing"),
+          xp("combat"),
+        ],
       },
       {
         label: "Day",

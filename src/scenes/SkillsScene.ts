@@ -10,6 +10,7 @@ const NAMES = {
   foraging: "Foraging",
   mining: "Mining",
   fishing: "Fishing",
+  combat: "Combat",
 } as const;
 
 /** The skills screen, drawn over the paused farm: levels and progress. */
@@ -22,7 +23,7 @@ export class SkillsScene extends Phaser.Scene {
     const g = this.registry.get(STATE_KEY) as GameState;
     frame(this, "Skills", () => this.close());
     skillRows(g.skills).forEach((row, i) => {
-      const y = 100 + i * 92;
+      const y = 84 + i * 76;
       const pro = professionById(g.skills.professionOf(row.skill) ?? "");
       this.add.text(
         48,
@@ -45,8 +46,8 @@ export class SkillsScene extends Phaser.Scene {
     });
     this.add.text(
       24,
-      500,
-      "Better farming means better crop quality and cheaper tool swings. Better foraging means better forage quality. Better mining means cheaper pickaxe swings and more ore. Better fishing means bigger, better fish, and rare fish from level 5.   Esc: close",
+      486,
+      "Better farming means better crop quality and cheaper tool swings. Better foraging means better forage quality. Better mining means cheaper pickaxe swings and more ore. Better fishing means bigger, better fish, and rare fish from level 5. Better combat means more health.   Esc: close",
       { fontSize: "13px", color: "#ffffffaa", wordWrap: { width: 780 } },
     );
   }
