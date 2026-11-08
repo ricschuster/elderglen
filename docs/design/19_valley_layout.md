@@ -195,6 +195,15 @@ The Forest farmstead is part of the Forest map: the keeper's house and shop (one
 interior) and a few paddocks outside that are visual only, with no interaction
 (decided 2026-11-06, `58_interiors.md`).
 
+## Area designs
+
+Each unbuilt area now has its own note, and the cover note holds the build order,
+the map contract additions and the owner questions: `71_map_areas_overview.md`.
+Forest `72_forest.md`, Secret Woods `73_secret_woods.md`, Mountain
+`74_mountain.md`, River delta and Beach `75_river_delta_and_beach.md`, Lake cove
+`76_lake_cove.md`, Hearthwell `77_hearthwell.md`. Their sizes follow the table above.
+Question 8 in note 71 asks how the river sits in Hearthwell.
+
 ## Next steps
 
 1. Update `09_story_and_lore.md` for the waystation, and the overview map.
