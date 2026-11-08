@@ -74,7 +74,7 @@ describe("completion total", () => {
 
   it("locks the categories whose systems are unbuilt", () => {
     const cats = ringProgress(newGame())[0]!.categories;
-    for (const id of ["gallery", "slayer", "friends", "elderfruit"])
+    for (const id of ["gallery", "friends", "elderfruit"])
       expect(cats.find((c) => c.id === id)!.locked, id).toBe(true);
   });
 

@@ -23,7 +23,7 @@ import { fruitTreeById } from "./fruittrees";
 import { CAVE_MAP } from "./cave";
 import { returnDebris } from "./debris";
 import { endDayOrders, type OrdersNews } from "./orders";
-import { maxHealth, loseItems, type Lost } from "./combat";
+import { loseItems, type Lost } from "./combat";
 import { maps } from "../content/maps";
 
 /**
@@ -142,7 +142,7 @@ export function sleep(
     : [];
   g.combat.defeatPending = false;
   // Any night's sleep restores health.
-  g.combat.health.max = maxHealth();
+  g.combat.sync(g.skills);
   g.combat.health.fill();
   // The bin pays after the pass-out cost, which takes cash carried only.
   const shipped = g.bin.settle(g);

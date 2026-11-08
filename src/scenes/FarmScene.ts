@@ -102,10 +102,13 @@ import {
 import {
   creatureById,
   creatureTile,
+  creatureXp,
   floorHasCreatures,
   hurtCreature,
   rollDrops,
+  splitOff,
   stepCreature,
+  swingDamage,
   type Creature,
 } from "../core/creatures";
 import { absoluteMinutes } from "../core/furnace";
@@ -231,6 +234,18 @@ const CREATURE_BODY: Body = { hw: 5, h: 5 };
 const CREATURE_COLOURS: Record<string, number> = {
   pebbleback: 0x8c8c94,
   dustmoth: 0xd9c08a,
+  "rock-crab": 0x7a6a5a,
+  mossbeetle: 0x5f8f4a,
+  gloop: 0x6fd16f,
+  frostnibbler: 0xbfe6f5,
+  "icicle-hopper": 0x8fc8e8,
+  "cave-bat": 0x5a4a78,
+  nabbler: 0xc99a52,
+  "gloop-blue": 0x5f9fe8,
+  "cinder-pup": 0xe8703a,
+  lanternmoth: 0xf5d76e,
+  "old-digger": 0xe8e0cc,
+  "gloop-red": 0xe85a5a,
 };
 /** The player's feet box, in world pixels. */
 const PLAYER: Body = { hw: 5, h: 6 };
@@ -422,15 +437,8 @@ export class FarmScene extends Phaser.Scene {
     world.push(this.swingFx);
     this.creatureSprites = new Map();
     this.syncCombatSettings();
-    for (const c of this.floorState?.creatures ?? []) {
-      const block = this.add
-        .rectangle(c.x, c.y, 12, 10, CREATURE_COLOURS[c.kind] ?? 0xffffff)
-        .setOrigin(0.5, 1)
-        .setStrokeStyle(1, 0x000000, 0.6)
-        .setVisible(!this.state.combat.noCreatures);
-      this.creatureSprites.set(c.uid, block);
-      world.push(block);
-    }
+    for (const c of this.floorState?.creatures ?? [])
+      world.push(this.addCreatureSprite(c));
     const built = this.map.bounds;
     this.night = this.add
       .rectangle(
@@ -2263,6 +2271,7 @@ export class FarmScene extends Phaser.Scene {
       combat.health.grace > 0 && Math.floor(this.time.now / 90) % 2 ? 0.4 : 1,
     );
     if (!floor || combat.noCreatures) return;
+    combat.sync(this.state.skills);
     combat.health.tick(dt);
     const ts = this.map.tileSize;
     for (const c of floor.creatures) {
@@ -2293,6 +2302,23 @@ export class FarmScene extends Phaser.Scene {
     if (combat.health.down && !combat.defeatPending) this.knockedOut();
   }
 
+  /** One placeholder block for a creature, kept in `creatureSprites`. */
+  private addCreatureSprite(c: Creature): Phaser.GameObjects.Rectangle {
+    const block = this.add
+      .rectangle(
+        c.x,
+        c.y,
+        c.small ? 8 : 12,
+        c.small ? 7 : 10,
+        CREATURE_COLOURS[c.kind] ?? 0xffffff,
+      )
+      .setOrigin(0.5, 1)
+      .setStrokeStyle(1, 0x000000, 0.6)
+      .setVisible(!this.state.combat.noCreatures);
+    this.creatureSprites.set(c.uid, block);
+    return block;
+  }
+
   private drawCreature(c: Creature): void {
     const block = this.creatureSprites.get(c.uid);
     if (!block) return;
@@ -2307,7 +2333,9 @@ export class FarmScene extends Phaser.Scene {
           ? 0xffffff
           : (CREATURE_COLOURS[c.kind] ?? 0xffffff),
     );
-    block.setAlpha(c.state === "recover" ? 0.6 : 1);
+    // A sleeping rock crab looks like a dull rock until the player comes near.
+    const asleep = creatureById(c.kind)?.sleeper && c.state === "wander";
+    block.setAlpha(c.state === "recover" ? 0.6 : asleep ? 0.55 : 1);
   }
 
   /** Health ran out: the day ends and the defeat rule runs overnight (note 22). */
@@ -2382,8 +2410,24 @@ export class FarmScene extends Phaser.Scene {
       ts,
     );
     for (const c of hits) {
-      this.floatText(c.x, c.y - 12, `${weapon.damage}`, "#ffffff");
-      if (hurtCreature(c, weapon.damage)) this.beaten(c);
+      const damage = swingDamage(c, weapon.damage, weapon.family, this.pos);
+      this.floatText(
+        c.x,
+        c.y - 12,
+        damage < weapon.damage ? `${damage} (armour)` : `${damage}`,
+        "#ffffff",
+      );
+      if (hurtCreature(c, damage)) this.beaten(c);
+      else {
+        const next =
+          1 + floor.creatures.reduce((m, o) => Math.max(m, o.uid), 0);
+        const small = splitOff(c, next);
+        if (small) {
+          floor.creatures.push(small);
+          this.addCreatureSprite(small);
+          this.uiCamera.ignore(this.creatureSprites.get(small.uid)!);
+        }
+      }
     }
   }
 
@@ -2396,6 +2440,7 @@ export class FarmScene extends Phaser.Scene {
     this.creatureSprites.delete(c.uid);
     if (!def) return;
     this.state.combat.noteKill(c.kind);
+    const levelUp = this.state.skills.gain("combat", creatureXp(c));
     const got: string[] = [];
     let left = false;
     for (const d of rollDrops(def, Math.random)) {
@@ -2411,7 +2456,8 @@ export class FarmScene extends Phaser.Scene {
       tile.y,
       Math.random,
     );
-    this.message = `${def.name} beaten.${got.length ? ` Got ${got.join(", ")}.` : ""}${left ? " Your pack is full, so something was left behind." : ""}${ladder ? " A ladder is revealed!" : ""}`;
+    this.message = `${def.name} beaten.${levelUp ? ` Combat is now level ${levelUp}.` : ""}${got.length ? ` Got ${got.join(", ")}.` : ""}${left ? " Your pack is full, so something was left behind." : ""}${ladder ? " A ladder is revealed!" : ""}`;
     this.render();
+    if (levelUp && pendingChoice(this.state.skills)) this.open("profession");
   }
 }

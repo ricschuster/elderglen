@@ -20,6 +20,7 @@ import {
 import {
   ASSIST_WINDUP,
   CREATURES,
+  creaturesOfBand,
   LOSE_SECONDS,
   bandNumber,
   creatureById,
@@ -92,8 +93,8 @@ describe("health", () => {
     expect(healthShown(true, true)).toBe(false);
     expect(healthShown(false, false)).toBe(false);
     expect(floorHasCreatures(1)).toBe(true);
-    // Deeper bands have no creatures until part two.
-    expect(floorHasCreatures(60)).toBe(false);
+    expect(floorHasCreatures(60)).toBe(true);
+    expect(floorHasCreatures(120)).toBe(true);
   });
 
   it("food restores health as a share of its energy", () => {
@@ -118,8 +119,8 @@ describe("health", () => {
 });
 
 describe("weapons", () => {
-  it("has three families, a starter and a copper tier of each", () => {
-    expect(WEAPONS).toHaveLength(6);
+  it("has three families and five tiers of each", () => {
+    expect(WEAPONS).toHaveLength(15);
     expect(new Set(WEAPONS.map((w) => w.family))).toEqual(
       new Set(["blade", "club", "sling"]),
     );
@@ -128,7 +129,7 @@ describe("weapons", () => {
       "rolling-pin",
       "pocket-sling",
     ]);
-    expect(FORGED).toHaveLength(3);
+    expect(FORGED).toHaveLength(12);
     for (const w of WEAPONS) expect(itemById(w.id)?.keep).toBe(true);
   });
 
@@ -193,8 +194,10 @@ describe("weapons", () => {
 });
 
 describe("creatures", () => {
-  it("has the first two, each with a drop list", () => {
-    expect(CREATURES.map((c) => c.id)).toEqual(["pebbleback", "dustmoth"]);
+  it("has twelve kinds across the three bands, each with a drop list", () => {
+    expect(CREATURES).toHaveLength(14);
+    for (const band of [1, 2, 3])
+      expect(creaturesOfBand(band).length).toBeGreaterThanOrEqual(4);
     for (const c of CREATURES) {
       expect(c.speed).toBeLessThan(80);
       expect(c.windup).toBeGreaterThanOrEqual(0.6);
@@ -227,7 +230,13 @@ describe("creatures", () => {
         list.map((c) => c.x),
       );
     }
-    expect(floorCreatures(60, 9)).toEqual([]);
+    for (const floor of [41, 80, 81, 120]) {
+      const list = floorCreatures(floor, 9);
+      expect(list.length).toBeGreaterThanOrEqual(4);
+      expect(list.length).toBeLessThanOrEqual(8);
+      for (const c of list)
+        expect(creatureById(c.kind)!.bands).toContain(bandNumber(floor));
+    }
   });
 
   it("spawnCreatures spreads over open tiles only", () => {

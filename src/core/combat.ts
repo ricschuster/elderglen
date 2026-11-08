@@ -3,6 +3,7 @@ import { BUNDLES } from "./bundles";
 import { itemById } from "./items";
 import { splitQuality } from "./quality";
 import type { Creature } from "./creatures";
+import type { Skills } from "./skills";
 import type { Facing, Vec } from "./movement";
 import type { GameState } from "./save";
 import type { LetterDef } from "./mail";
@@ -13,7 +14,7 @@ import type { LetterDef } from "./mail";
  * rule. Pure rules, free of Phaser. Every number is a placeholder (note 07).
  */
 
-/** Health at the start, and per combat level (the skill itself waits for part two). */
+/** Health at the start, and per combat level. */
 export const BASE_HEALTH = 100;
 export const HEALTH_PER_LEVEL = 5;
 /** Seconds of grace after a hit, so a hit never chains (note 22). */
@@ -23,8 +24,21 @@ export const ASSIST_DAMAGE = 0.5;
 /** Health restored by food as a share of its energy value (placeholder, note 22 leaves the share open). */
 export const HEALTH_PER_ENERGY = 0.5;
 
+/** Extra health the Steady profession gives, and the grace Nimble gives (note 22). */
+export const STEADY_HEALTH = 25;
+export const NIMBLE_GRACE = 2.5;
+
 export const maxHealth = (combatLevel = 0): number =>
   BASE_HEALTH + HEALTH_PER_LEVEL * combatLevel;
+
+/** The most health the player can have: the combat level and the Steady profession. */
+export const healthFor = (skills: Skills): number =>
+  maxHealth(skills.level("combat")) +
+  (skills.has("steady") ? STEADY_HEALTH : 0);
+
+/** Seconds of grace after a hit: longer with the Nimble profession. */
+export const graceFor = (skills: Skills): number =>
+  skills.has("nimble") ? NIMBLE_GRACE : GRACE_SECONDS;
 
 /** The one health bar. Not saved with a clock: grace is a moment of play. */
 export class Health {
@@ -32,6 +46,8 @@ export class Health {
   max = BASE_HEALTH;
   /** Seconds of grace left. */
   grace = 0;
+  /** Seconds of grace a hit gives. */
+  graceLength = GRACE_SECONDS;
 
   /**
    * Take a hit. Nothing happens during grace. Assist halves the hit (rounded up,
@@ -44,7 +60,7 @@ export class Health {
       Math.max(1, Math.ceil(amount * (assist ? ASSIST_DAMAGE : 1))),
     );
     this.current -= lost;
-    this.grace = GRACE_SECONDS;
+    this.grace = this.graceLength;
     return lost;
   }
 
@@ -265,6 +281,13 @@ export class Combat {
   /** The "no creatures" setting, synced from the device settings. Never saved here. */
   noCreatures = false;
 
+  /** Take the health ceiling and grace from the skills. Never heals. */
+  sync(skills: Skills): void {
+    this.health.max = healthFor(skills);
+    this.health.current = Math.min(this.health.current, this.health.max);
+    this.health.graceLength = graceFor(skills);
+  }
+
   noteKill(kind: string): void {
     this.kills[kind] = (this.kills[kind] ?? 0) + 1;
   }
@@ -277,12 +300,13 @@ export class Combat {
     };
   }
 
-  load(saved: unknown): void {
+  load(saved: unknown, skills?: Skills): void {
     const raw =
       typeof saved === "object" && saved !== null
         ? (saved as Partial<CombatSave>)
         : undefined;
-    this.health.max = maxHealth();
+    this.health.max = skills ? healthFor(skills) : maxHealth();
+    this.health.graceLength = skills ? graceFor(skills) : GRACE_SECONDS;
     this.health.grace = 0;
     this.health.current =
       typeof raw?.health === "number"

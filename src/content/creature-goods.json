@@ -1,0 +1,11 @@
+[
+  { "id": "shell", "name": "Shell", "sellPrice": 25 },
+  { "id": "moss", "name": "Moss", "sellPrice": 5 },
+  { "id": "gloop-jelly", "name": "Gloop jelly", "sellPrice": 12 },
+  { "id": "frost-berry", "name": "Frost berry", "sellPrice": 40, "energy": 30 },
+  { "id": "ice-shard", "name": "Ice shard", "sellPrice": 20 },
+  { "id": "bat-wing", "name": "Bat wing", "sellPrice": 40 },
+  { "id": "pocket-coin", "name": "Pocket coin", "sellPrice": 15 },
+  { "id": "warm-ember", "name": "Warm ember", "sellPrice": 35 },
+  { "id": "old-tools", "name": "Old tools", "sellPrice": 50 }
+]

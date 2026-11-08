@@ -12,9 +12,21 @@
     "windup": 0.6,
     "recover": 1,
     "drops": [
-      { "id": "stone", "chance": 1, "min": 1, "max": 2 },
-      { "id": "copper-ore", "chance": 0.3, "min": 1, "max": 1 }
-    ]
+      {
+        "id": "stone",
+        "chance": 1,
+        "min": 1,
+        "max": 2
+      },
+      {
+        "id": "copper-ore",
+        "chance": 0.3,
+        "min": 1,
+        "max": 1
+      }
+    ],
+    "xp": 3,
+    "goal": 30
   },
   {
     "id": "dustmoth",
@@ -29,8 +41,385 @@
     "windup": 0.6,
     "recover": 1.2,
     "drops": [
-      { "id": "moth-dust", "chance": 0.6, "min": 1, "max": 1 },
-      { "id": "fiber", "chance": 0.5, "min": 1, "max": 2 }
+      {
+        "id": "moth-dust",
+        "chance": 0.6,
+        "min": 1,
+        "max": 1
+      },
+      {
+        "id": "fiber",
+        "chance": 0.5,
+        "min": 1,
+        "max": 2
+      }
+    ],
+    "xp": 2,
+    "goal": 500
+  },
+  {
+    "id": "rock-crab",
+    "name": "Rock Crab",
+    "behaviour": "shuffler",
+    "bands": [1],
+    "hp": 6,
+    "touch": 5,
+    "speed": 28,
+    "sight": 2,
+    "reach": 1.1,
+    "windup": 0.7,
+    "recover": 1.2,
+    "xp": 5,
+    "goal": 60,
+    "sleeper": true,
+    "armour": "front",
+    "drops": [
+      {
+        "id": "stone",
+        "chance": 1,
+        "min": 1,
+        "max": 2
+      },
+      {
+        "id": "shell",
+        "chance": 0.4,
+        "min": 1,
+        "max": 1
+      }
+    ]
+  },
+  {
+    "id": "mossbeetle",
+    "name": "Mossbeetle",
+    "behaviour": "dasher",
+    "bands": [1],
+    "hp": 5,
+    "touch": 5,
+    "speed": 20,
+    "sight": 4,
+    "reach": 3,
+    "windup": 0.7,
+    "recover": 1.4,
+    "xp": 5,
+    "goal": 80,
+    "dash": {
+      "speed": 120,
+      "time": 0.6
+    },
+    "armour": "rolled",
+    "drops": [
+      {
+        "id": "moss",
+        "chance": 0.8,
+        "min": 1,
+        "max": 2
+      },
+      {
+        "id": "fiber",
+        "chance": 0.3,
+        "min": 1,
+        "max": 1
+      }
+    ]
+  },
+  {
+    "id": "gloop",
+    "name": "Gloop",
+    "behaviour": "hopper",
+    "bands": [1],
+    "hp": 3,
+    "touch": 4,
+    "speed": 50,
+    "sight": 4,
+    "reach": 0.8,
+    "windup": 0.6,
+    "recover": 1,
+    "xp": 3,
+    "goal": 1000,
+    "splits": true,
+    "group": "gloop",
+    "drops": [
+      {
+        "id": "gloop-jelly",
+        "chance": 0.6,
+        "min": 1,
+        "max": 1
+      },
+      {
+        "id": "coal",
+        "chance": 0.2,
+        "min": 1,
+        "max": 1
+      }
+    ]
+  },
+  {
+    "id": "frostnibbler",
+    "name": "Frostnibbler",
+    "behaviour": "dasher",
+    "bands": [2],
+    "hp": 5,
+    "touch": 6,
+    "speed": 30,
+    "sight": 5,
+    "reach": 3.5,
+    "windup": 0.6,
+    "recover": 1.2,
+    "xp": 8,
+    "goal": 100,
+    "dash": {
+      "speed": 110,
+      "time": 0.7
+    },
+    "drops": [
+      {
+        "id": "iron-ore",
+        "chance": 0.3,
+        "min": 1,
+        "max": 1
+      },
+      {
+        "id": "frost-berry",
+        "chance": 0.3,
+        "min": 1,
+        "max": 1
+      }
+    ]
+  },
+  {
+    "id": "icicle-hopper",
+    "name": "Icicle Hopper",
+    "behaviour": "hopper",
+    "bands": [2],
+    "hp": 6,
+    "touch": 7,
+    "speed": 55,
+    "sight": 5,
+    "reach": 1,
+    "windup": 0.6,
+    "recover": 1.2,
+    "xp": 9,
+    "goal": 100,
+    "drops": [
+      {
+        "id": "ice-shard",
+        "chance": 0.5,
+        "min": 1,
+        "max": 1
+      }
+    ]
+  },
+  {
+    "id": "cave-bat",
+    "name": "Cave Bat",
+    "behaviour": "dasher",
+    "bands": [2],
+    "hp": 4,
+    "touch": 8,
+    "speed": 0,
+    "sight": 5,
+    "reach": 4.5,
+    "windup": 0.8,
+    "recover": 1.5,
+    "xp": 10,
+    "goal": 200,
+    "dash": {
+      "speed": 120,
+      "time": 0.9
+    },
+    "drops": [
+      {
+        "id": "bat-wing",
+        "chance": 0.6,
+        "min": 1,
+        "max": 1
+      },
+      {
+        "id": "coal",
+        "chance": 0.3,
+        "min": 1,
+        "max": 1
+      }
+    ]
+  },
+  {
+    "id": "nabbler",
+    "name": "Nabbler",
+    "behaviour": "dasher",
+    "bands": [2],
+    "hp": 5,
+    "touch": 6,
+    "speed": 35,
+    "sight": 5,
+    "reach": 3,
+    "windup": 0.6,
+    "recover": 1.4,
+    "xp": 8,
+    "goal": 60,
+    "dash": {
+      "speed": 120,
+      "time": 0.5
+    },
+    "drops": [
+      {
+        "id": "pocket-coin",
+        "chance": 0.5,
+        "min": 1,
+        "max": 1
+      }
+    ]
+  },
+  {
+    "id": "gloop-blue",
+    "name": "Blue Gloop",
+    "behaviour": "hopper",
+    "bands": [2],
+    "hp": 5,
+    "touch": 7,
+    "speed": 50,
+    "sight": 4,
+    "reach": 0.8,
+    "windup": 0.6,
+    "recover": 1,
+    "xp": 6,
+    "goal": 1000,
+    "splits": true,
+    "group": "gloop",
+    "drops": [
+      {
+        "id": "gloop-jelly",
+        "chance": 0.6,
+        "min": 1,
+        "max": 1
+      },
+      {
+        "id": "coal",
+        "chance": 0.2,
+        "min": 1,
+        "max": 1
+      }
+    ]
+  },
+  {
+    "id": "cinder-pup",
+    "name": "Cinder Pup",
+    "behaviour": "dasher",
+    "bands": [3],
+    "hp": 8,
+    "touch": 10,
+    "speed": 30,
+    "sight": 5,
+    "reach": 4,
+    "windup": 0.8,
+    "recover": 1.4,
+    "xp": 14,
+    "goal": 150,
+    "dash": {
+      "speed": 125,
+      "time": 0.8
+    },
+    "drops": [
+      {
+        "id": "coal",
+        "chance": 0.6,
+        "min": 1,
+        "max": 2
+      },
+      {
+        "id": "warm-ember",
+        "chance": 0.3,
+        "min": 1,
+        "max": 1
+      }
+    ]
+  },
+  {
+    "id": "lanternmoth",
+    "name": "Lanternmoth",
+    "behaviour": "drifter",
+    "bands": [3],
+    "hp": 6,
+    "touch": 9,
+    "speed": 25,
+    "sight": 5,
+    "reach": 3.5,
+    "windup": 0.8,
+    "recover": 1.5,
+    "xp": 14,
+    "goal": 150,
+    "drops": [
+      {
+        "id": "oil",
+        "chance": 0.3,
+        "min": 1,
+        "max": 1
+      },
+      {
+        "id": "gold-ore",
+        "chance": 0.2,
+        "min": 1,
+        "max": 1
+      }
+    ]
+  },
+  {
+    "id": "old-digger",
+    "name": "Old Digger",
+    "behaviour": "shuffler",
+    "bands": [3],
+    "hp": 10,
+    "touch": 12,
+    "speed": 22,
+    "sight": 5,
+    "reach": 1.2,
+    "windup": 0.9,
+    "recover": 1.6,
+    "xp": 18,
+    "goal": 50,
+    "drops": [
+      {
+        "id": "old-tools",
+        "chance": 0.4,
+        "min": 1,
+        "max": 1
+      },
+      {
+        "id": "gold-ore",
+        "chance": 0.3,
+        "min": 1,
+        "max": 1
+      }
+    ]
+  },
+  {
+    "id": "gloop-red",
+    "name": "Ember Gloop",
+    "behaviour": "hopper",
+    "bands": [3],
+    "hp": 8,
+    "touch": 10,
+    "speed": 50,
+    "sight": 4,
+    "reach": 0.8,
+    "windup": 0.6,
+    "recover": 1,
+    "xp": 10,
+    "goal": 1000,
+    "splits": true,
+    "group": "gloop",
+    "drops": [
+      {
+        "id": "gloop-jelly",
+        "chance": 0.6,
+        "min": 1,
+        "max": 2
+      },
+      {
+        "id": "coal",
+        "chance": 0.3,
+        "min": 1,
+        "max": 1
+      }
     ]
   }
 ]

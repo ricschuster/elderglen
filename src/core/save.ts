@@ -447,12 +447,13 @@ export function deserialize(text: string): GameState | undefined {
       return undefined;
     }
   }
-  // A save from before mining or fishing has no row for it.
+  // A save from before mining, fishing or combat has no row for it.
   if (
     !SKILLS.every(
       (k) =>
         isCount(skills[k]) ||
-        ((k === "mining" || k === "fishing") && skills[k] === undefined),
+        ((k === "mining" || k === "fishing" || k === "combat") &&
+          skills[k] === undefined),
     )
   )
     return undefined;
@@ -763,7 +764,7 @@ export function deserialize(text: string): GameState | undefined {
   g.quests.load(raw.quests);
   g.fishing.load(raw.fishing);
   g.tackle.load(raw.tackle);
-  g.combat.load(raw.combat);
+  g.combat.load(raw.combat, g.skills);
   // Loading rechecks, so a goal met under an older save is granted (note 38).
   checkAchievements(g);
   return g;
