@@ -13,7 +13,7 @@ export interface TiledObject {
   y: number;
   width?: number;
   height?: number;
-  /** Tiled custom properties. */
+  /** Tiled custom properties. A `tier` property puts the object on that tier. */
   properties?: { name: string; value: unknown }[];
 }
 
@@ -31,7 +31,65 @@ export interface TiledMapJson {
   tilewidth: number;
   tileheight: number;
   layers: TiledLayer[];
+  /** Tiled custom properties of the map, such as the camera `bounds` per tier. */
+  properties?: { name: string; value: unknown }[];
 }
+
+/** A rectangle of tiles. */
+export interface TileRect {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+/**
+ * Growing buildings keep every tier in one map (`docs/design/68_growing_interiors.md`).
+ * A layer named with a `-tN` suffix, such as `ground-t1`, belongs to tier N and
+ * is read and drawn only when the building is at tier N or higher. A layer with
+ * no suffix is tier 0. Higher tiers are drawn on top of lower ones.
+ */
+export function layerTier(name: string): number {
+  const m = /-t(\d+)$/.exec(name);
+  return m ? Number(m[1]) : 0;
+}
+
+/** A layer name without its tier suffix: `ground-t1` is `ground`. */
+export function layerBase(name: string): string {
+  return name.replace(/-t\d+$/, "");
+}
+
+/** The highest tier any layer of the map belongs to. Zero for a map that does not grow. */
+export function maxTierOf(json: TiledMapJson): number {
+  return json.layers.reduce((m, l) => Math.max(m, layerTier(l.name)), 0);
+}
+
+/** The tier a building at `tier` shows, kept between 0 and the map's highest. */
+export function visibleTier(tier: number, maxTier: number): number {
+  if (!Number.isFinite(tier)) return 0;
+  return Math.min(Math.max(0, Math.floor(tier)), Math.max(0, maxTier));
+}
+
+/**
+ * The layers at or below a tier, lowest tier first and in file order within a
+ * tier, so a higher tier lands on top.
+ */
+export function layersAtTier(json: TiledMapJson, tier: number): TiledLayer[] {
+  return json.layers
+    .map((layer, i) => ({ layer, i, t: layerTier(layer.name) }))
+    .filter((e) => e.t <= tier)
+    .sort((a, b) => a.t - b.t || a.i - b.i)
+    .map((e) => e.layer);
+}
+
+/**
+ * In a tier layer a collision tile with this id opens the cell (a doorway cut
+ * through a wall of a lower tier). Any other tile blocks it.
+ */
+export const OPEN_TILE = 2;
+
+/** The tile layer that says which cells are built. Cells it leaves empty are void. */
+export const GROUND_LAYER = "ground";
 
 /** A named place where the player can arrive, in tiles. */
 export interface Entry extends Spot {
@@ -102,6 +160,42 @@ const text = (o: TiledObject, key: string): string | undefined => {
   return typeof value === "string" && value !== "" ? value : undefined;
 };
 
+/**
+ * The camera rectangle at a tier, in tiles: the map property `bounds` for
+ * tier 0 and `bounds-tN` for tier N as "x,y,w,h", taking the highest one at or
+ * below the tier. Without one it is the bounding box of the built cells.
+ */
+function boundsAt(
+  json: TiledMapJson,
+  tier: number,
+  built: boolean[],
+): TileRect {
+  for (let t = tier; t >= 0; t--) {
+    const name = t === 0 ? "bounds" : `bounds-t${t}`;
+    const v = json.properties?.find((p) => p.name === name)?.value;
+    if (typeof v !== "string") continue;
+    const [x, y, w, h] = v.split(",").map((n) => Number(n.trim()));
+    if ([x, y, w, h].every((n) => Number.isInteger(n)) && w! > 0 && h! > 0)
+      return { x: x!, y: y!, w: w!, h: h! };
+  }
+  let x0 = json.width;
+  let y0 = json.height;
+  let x1 = -1;
+  let y1 = -1;
+  built.forEach((b, i) => {
+    if (!b) return;
+    const x = i % json.width;
+    const y = Math.floor(i / json.width);
+    x0 = Math.min(x0, x);
+    y0 = Math.min(y0, y);
+    x1 = Math.max(x1, x);
+    y1 = Math.max(y1, y);
+  });
+  return x1 < 0
+    ? { x: 0, y: 0, w: json.width, h: json.height }
+    : { x: x0, y: y0, w: x1 - x0 + 1, h: y1 - y0 + 1 };
+}
+
 /** What the rules need to know about a map, in tile units. */
 export class FarmMap {
   private constructor(
@@ -118,26 +212,66 @@ export class FarmMap {
     readonly trees: TreeSpot[] = [],
     private readonly paths: boolean[] = [],
     readonly rocks: Spot[] = [],
+    /** The building tier this map shows. Zero for a map that does not grow. */
+    readonly tier = 0,
+    /** The built part of the map, in tiles: what the camera may show. */
+    readonly bounds: TileRect = { x: 0, y: 0, w: width, h: height },
   ) {}
 
-  /** Read a Tiled map. Throws with a clear message if it breaks the contract. */
-  static fromTiled(json: TiledMapJson): FarmMap {
+  /**
+   * Read a Tiled map as it stands at a building tier. Layers of a higher tier
+   * are ignored, and on a map that grows, cells with no ground are void:
+   * blocked, and outside the camera bounds. Throws with a clear message if the
+   * map breaks the contract.
+   */
+  static fromTiled(json: TiledMapJson, tier = 0): FarmMap {
     const { width, height } = json;
     if (json.tilewidth !== json.tileheight)
       throw new Error("map tiles must be square");
     const size = json.tilewidth;
+    const maxTier = maxTierOf(json);
+    const at = visibleTier(tier, maxTier);
+    const layers = layersAtTier(json, at);
+    const cells = width * height;
+    /** The base layer must exist; a tier layer of the same name paints over it. */
     const grid = (name: string, optional = false): boolean[] => {
-      const layer = json.layers.find(
-        (l) => l.name === name && l.type === "tilelayer",
+      const found = layers.filter(
+        (l) => layerBase(l.name) === name && l.type === "tilelayer",
       );
-      if (!layer?.data && optional)
-        return new Array(width * height).fill(false);
-      if (!layer?.data) throw new Error(`map needs a tile layer "${name}"`);
-      if (layer.data.length !== width * height)
-        throw new Error(`layer "${name}" is not the size of the map`);
-      return layer.data.map((id) => id !== 0);
+      if (!found.some((l) => layerTier(l.name) === 0 && l.data)) {
+        if (optional && found.length === 0) return new Array(cells).fill(false);
+        throw new Error(`map needs a tile layer "${name}"`);
+      }
+      const out: boolean[] = new Array(cells).fill(false);
+      for (const layer of found) {
+        if (!layer.data) continue;
+        if (layer.data.length !== cells)
+          throw new Error(`layer "${name}" is not the size of the map`);
+        const over = layerTier(layer.name) > 0;
+        layer.data.forEach((id, i) => {
+          if (id === 0) return;
+          out[i] = !(over && name === COLLISION_LAYER && id === OPEN_TILE);
+        });
+      }
+      return out;
     };
     const tile = (px: number) => Math.floor(px / size);
+
+    const blocked = grid(COLLISION_LAYER);
+    let bounds: TileRect = { x: 0, y: 0, w: width, h: height };
+    if (maxTier > 0) {
+      // Cells with no ground are the black void: never walkable.
+      const built = new Array<boolean>(cells).fill(false);
+      for (const layer of layers)
+        if (layerBase(layer.name) === GROUND_LAYER && layer.data)
+          layer.data.forEach((id, i) => {
+            if (id !== 0) built[i] = true;
+          });
+      built.forEach((b, i) => {
+        if (!b) blocked[i] = true;
+      });
+      bounds = boundsAt(json, at, built);
+    }
 
     const entries: Entry[] = [];
     const exits: Exit[] = [];
@@ -146,12 +280,35 @@ export class FarmMap {
     const regions: Region[] = [];
     const trees: TreeSpot[] = [];
     const rocks: Spot[] = [];
-    for (const layer of json.layers) {
+    // A named entry, exit or service on a higher tier replaces the one of the
+    // same name on a lower tier (the barn door moves as the barn grows).
+    const kept = new Map<string, { tier: number; at: number }>();
+    const put = <T>(
+      list: T[],
+      kind: string,
+      name: string,
+      objTier: number,
+      item: T,
+    ) => {
+      const k = `${kind}:${name}`;
+      const prev = kept.get(k);
+      if (!prev) {
+        list.push(item);
+        kept.set(k, { tier: objTier, at: list.length - 1 });
+      } else if (objTier > prev.tier) {
+        list[prev.at] = item;
+        prev.tier = objTier;
+      } else if (objTier === prev.tier) list.push(item);
+    };
+    for (const layer of layers) {
       if (layer.type !== "objectgroup") continue;
       for (const o of layer.objects ?? []) {
+        const objTier = num(o, "tier") ?? layerTier(layer.name);
+        if (objTier > at) continue;
         const cls = objectClass(o);
         const spot = { x: tile(o.x), y: tile(o.y) };
-        if (cls === "entry") entries.push({ name: o.name, ...spot });
+        if (cls === "entry")
+          put(entries, "entry", o.name, objTier, { name: o.name, ...spot });
         else if (cls === "forage") forageSpots.push(spot);
         else if (cls === "rock") rocks.push(spot);
         else if (cls === "tree")
@@ -159,7 +316,11 @@ export class FarmMap {
         else if (cls === "stump")
           trees.push({ ...spot, stage: 5, large: true });
         else if (cls === "service")
-          services.push({ id: o.name, kind: text(o, "kind") ?? "", ...spot });
+          put(services, "service", o.name, objTier, {
+            id: o.name,
+            kind: text(o, "kind") ?? "",
+            ...spot,
+          });
         else if (cls === "region")
           regions.push({
             id: o.name,
@@ -171,7 +332,7 @@ export class FarmMap {
           const w = Math.max(1, Math.round((o.width ?? size) / size));
           const h = Math.max(1, Math.round((o.height ?? size) / size));
           const requires = text(o, "requires");
-          exits.push({
+          put(exits, "exit", o.name, objTier, {
             id: o.name,
             ...spot,
             w,
@@ -187,7 +348,7 @@ export class FarmMap {
       width,
       height,
       size,
-      grid(COLLISION_LAYER),
+      blocked,
       grid(SOIL_LAYER, true),
       entries,
       exits,
@@ -197,6 +358,8 @@ export class FarmMap {
       trees,
       grid(PATHS_LAYER, true),
       rocks,
+      at,
+      bounds,
     );
   }
 

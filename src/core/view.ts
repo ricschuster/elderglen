@@ -91,20 +91,24 @@ export interface Rect {
 }
 
 /**
- * Camera bounds in world pixels. A map bigger than the view scrolls inside
- * itself. A map smaller than the view is centred, and the rest is black.
+ * Camera bounds in world pixels, for the built part of a map (`built`, which
+ * starts at the map's corner unless a growing map has void around it). A built
+ * part bigger than the view scrolls inside itself. One smaller than the view is
+ * centred, and the rest is black, including any void next to it.
  */
 export function cameraBounds(
-  mapW: number,
-  mapH: number,
+  builtW: number,
+  builtH: number,
   viewW: number,
   viewH: number,
+  builtX = 0,
+  builtY = 0,
 ): Rect {
   return {
-    x: Math.min(0, (mapW - viewW) / 2),
-    y: Math.min(0, (mapH - viewH) / 2),
-    w: Math.max(mapW, viewW),
-    h: Math.max(mapH, viewH),
+    x: builtX + Math.min(0, (builtW - viewW) / 2),
+    y: builtY + Math.min(0, (builtH - viewH) / 2),
+    w: Math.max(builtW, viewW),
+    h: Math.max(builtH, viewH),
   };
 }
 

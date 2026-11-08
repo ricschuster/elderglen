@@ -1,7 +1,9 @@
 # 68 Growing interiors: farmhouse, coop and barn (draft)
 
 Status: draft, 2026-11-07. Decided with the owner today, except where marked
-as the assistant's proposal. Nothing here is built. This settles how a building
+as the assistant's proposal. The loader and the merged farmhouse map are built
+(#421, see "Built" below); the coop, barn, tier 2 and the cellar are not. This
+settles how a building
 that gains tiers is stored and drawn, so a tier that is not built never shows.
 It replaces note 58 decision 1 (one map per tier) and the "one interior map per
 tier" part of note 41.
@@ -65,8 +67,8 @@ separate layers.
   for every tier change, and the risk of drift, for no change the player can
   see. It stays a fallback: the rules above hold either way, and the loader is
   the only code that would change.
-- **Core stays free of Phaser.** `houseMapId(tier)` goes away. `core` exposes
-  `visibleTier(building)` and the scenes read the layers.
+- **Core stays free of Phaser.** `houseMapId(tier)` is gone. `core` exposes
+  `visibleTier(tier, maxTier)` and `houseVisibleTier(tier)` and the scenes read the layers.
 
 ## Per building
 
@@ -111,3 +113,37 @@ whole barn shifting.
 
 - The cellar stairs: a stairs object in the tier 2 layers, enabled at tier 3.
   Nothing blocks this until M3.
+
+## Built (#421, 2026-11-07)
+
+- **Layers.** `core/map.ts` reads a layer name's `-tN` suffix as its tier
+  (`layerTier`). `FarmMap.fromTiled(json, tier)` merges the layers at or below
+  the tier, and `MapRegistry.get(id, tier)` holds every tier of every map.
+  Layers are `ground`, `collision` and `markers` (objects), each with a `-t1`
+  version. This differs from the `floor`, `walls` and `objects` names above
+  because the existing maps already use `ground`.
+- **Merging.** A higher tier paints over a lower one, so it may change a tile
+  (the start room's bed tile becomes floor). In a `collision-tN` layer the tile
+  id `2` (`OPEN_TILE`) opens a cell that a lower tier blocked, which is how
+  the doorways are cut through the start room's walls. Any other tile blocks.
+- **Void.** On a map with tier layers, a cell with no ground at the current
+  tier is blocked, so it cannot be walked into or aimed at, and it is never
+  drawn.
+- **Bounds.** The map properties `bounds` (tier 0) and `bounds-t1` are strings
+  "x,y,w,h" in tiles. Without one, the box around the built cells is used.
+  `cameraBounds` takes the built rectangle, so a window bigger than the rooms
+  shows black bars centred on them. The night wash covers only the built part.
+- **Objects.** An object's tier is its layer's, or its own `tier` property. A
+  named entry, exit or service on a higher tier replaces the one of the same
+  name, so the tier 1 bed replaces the start room's, and a barn can move its
+  door by tier.
+- **The farmhouse frame.** The start room's corner sits at tile (9, 2), so the
+  kitchen can sit to its left. The tier 1 rooms keep the tiles of the old
+  `house-1` map (kitchen interior x 1 to 7, bedroom x 22 to 29, door at 11, 11).
+  A save from before this (no `houseLayout`) has furniture and chests by the old
+  frame: pieces on `house` move by (9, 2), pieces on `house-1` keep their tile
+  and go to `house` (`legacyHouseTile`). New saves write `houseLayout: 2`.
+- **Wake line.** The morning report already says "The carpenter has finished.
+  Your new rooms are ready." (`core/report.ts`), which covers SC-70.
+- **If the layers prove awkward in Tiled.** The fallback is still a map per tier
+  with only the loader changed. Nothing so far needs it.

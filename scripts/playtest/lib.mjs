@@ -10,7 +10,7 @@ fs.mkdirSync(`${OUT}/shots`, { recursive: true });
 export const GAME_URL = process.env.BASE_URL ?? "http://localhost:5173/";
 /** Every map by id, so the bot can path on whichever map it is standing in. */
 const MAPS = Object.fromEntries(
-  ["farm", "house", "house-1", "sawmill", "hall"].map((id) => {
+  ["farm", "house", "sawmill", "hall"].map((id) => {
     const map = JSON.parse(
       fs.readFileSync(`${ROOT}src/content/maps/${id}.json`, "utf8"),
     );
@@ -32,12 +32,21 @@ const MAPS = Object.fromEntries(
           (o.properties?.find((p) => p.name === "stage")?.value ?? 5) > 1
         )
           trees.add(`${Math.floor(o.x / 16)},${Math.floor(o.y / 16)}`);
+    // The bot plays at tier 0. On a map that grows (a layer named `-tN`), a
+    // cell with no tier 0 ground is black void, so it counts as blocked.
+    const col = [...map.layers.find((l) => l.name === "collision").data];
+    if (map.layers.some((l) => /-t\d+$/.test(l.name))) {
+      const ground = map.layers.find((l) => l.name === "ground").data;
+      ground.forEach((g, i) => {
+        if (g === 0) col[i] = 1;
+      });
+    }
     return [
       id,
       {
         W: map.width,
         H: map.height,
-        col: map.layers.find((l) => l.name === "collision").data,
+        col,
         exits,
         trees,
       },

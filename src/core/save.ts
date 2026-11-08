@@ -28,7 +28,12 @@ import { Skills, SKILLS, type Skill } from "./skills";
 import { professionById } from "./professions";
 import { Furniture, type FurnitureSave } from "./furniture";
 import { Wardrobe, type WardrobeSave } from "./hats";
-import { BUILD_DAYS, MAX_HOUSE_TIER, type HouseBuild } from "./house";
+import {
+  BUILD_DAYS,
+  HOUSE_LAYOUT,
+  MAX_HOUSE_TIER,
+  type HouseBuild,
+} from "./house";
 import {
   UPGRADABLE,
   MAX_TIER,
@@ -198,6 +203,8 @@ interface SaveData {
   cave?: CaveSave;
   /** Absent in saves made before hats. */
   wardrobe?: WardrobeSave;
+  /** The house map frame (`HOUSE_LAYOUT`). Absent in saves made before the house grew in one map. */
+  houseLayout?: number;
   /** Absent in saves made before furniture. */
   furniture?: FurnitureSave;
   /** Absent in saves made before chests. */
@@ -247,6 +254,7 @@ export function serialize(g: GameState): string {
     showTokens: { ...g.showTokens },
     cave: g.cave.save(),
     wardrobe: g.wardrobe.save(),
+    houseLayout: HOUSE_LAYOUT,
     furniture: g.furniture.save(),
     chests: g.chests.save(),
     achievements: g.achievements.save(),
@@ -543,8 +551,10 @@ export function deserialize(text: string): GameState | undefined {
     g.showTokens = { year: tokens.year, count: tokens.count };
   g.cave.load(raw.cave as Partial<CaveSave> | undefined);
   g.wardrobe.load(raw.wardrobe);
-  g.furniture.load(raw.furniture);
-  g.chests.load(raw.chests);
+  // Saves from before the merged house map keep furniture and chests by the old frame.
+  const legacyHouse = raw.houseLayout !== HOUSE_LAYOUT;
+  g.furniture.load(raw.furniture, legacyHouse);
+  g.chests.load(raw.chests, legacyHouse);
   g.achievements.load(raw.achievements);
   // Loading rechecks, so a goal met under an older save is granted (note 38).
   checkAchievements(g);

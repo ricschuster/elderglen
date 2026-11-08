@@ -615,11 +615,10 @@ const dir = "src/content/maps";
 mkdirSync(dir, { recursive: true });
 writeFileSync(`${dir}/farm.json`, JSON.stringify(farm));
 writeFileSync(`${dir}/farm-woodland.json`, JSON.stringify(buildFarm(true)));
-writeFileSync(`${dir}/house.json`, JSON.stringify(house));
-writeFileSync(`${dir}/house-1.json`, JSON.stringify(house1));
+// house.json is hand-authored now: one map with tier layers (note 68, #421).
 writeFileSync(`${dir}/sawmill.json`, JSON.stringify(sawmill));
 writeFileSync(`${dir}/hall.json`, JSON.stringify(hall));
 writeFileSync(`${dir}/mine.json`, JSON.stringify(mine));
 console.log(
-  `wrote the farm and the Woodland farm, house (start and tier 1), sawmill, mine hall and hall maps in ${dir} (placeholders)`,
+  `wrote the farm and the Woodland farm, sawmill, mine hall and hall maps in ${dir} (placeholders)`,
 );

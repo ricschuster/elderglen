@@ -1,7 +1,7 @@
 // The headless player: the real core rules, plus the two things the scene
 // supplies, a position on a map and the passing of game time (note 46).
 import { maps } from "../../src/content/maps";
-import { HOUSE_MAP, houseMapId } from "../../src/core/house";
+import { HOUSE_MAP, houseVisibleTier, isHouseMap } from "../../src/core/house";
 import { FarmMap } from "../../src/core/map";
 import {
   floorLayout,
@@ -62,7 +62,7 @@ export class Walker {
   minutesWalked = 0;
 
   constructor(private readonly g: GameState) {
-    this.mapId = houseMapId(g.houseTier);
+    this.mapId = HOUSE_MAP;
     this.pos = this.adjacentTo(this.map, bed(this.map));
   }
 
@@ -70,7 +70,11 @@ export class Walker {
 
   get map(): FarmMap {
     const floor = mineFloorOf(this.mapId);
-    if (floor === undefined) return maps.get(this.mapId);
+    if (floor === undefined)
+      return maps.get(
+        this.mapId,
+        isHouseMap(this.mapId) ? houseVisibleTier(this.g.houseTier) : 0,
+      );
     // A mine floor is made from the day and the floor, as the scene does.
     const day = this.g.day.clock.day;
     const key = `${floor}@${day}`;
@@ -206,17 +210,20 @@ export class Walker {
     if (!best) throw new Error(`exit ${exitId} unreachable on ${this.mapId}`);
     this.minutesWalked += this.walkMinutes(best.tiles);
     this.spend(this.walkMinutes(best.tiles) + TIME.transition);
-    const entry = maps.get(exit.map).entry(exit.entry);
+    const entry = maps
+      .get(
+        exit.map,
+        isHouseMap(exit.map) ? houseVisibleTier(this.g.houseTier) : 0,
+      )
+      .entry(exit.entry);
     if (!entry) throw new Error(`no entry ${exit.entry} on ${exit.map}`);
-    this.mapId =
-      exit.map === HOUSE_MAP ? houseMapId(this.g.houseTier) : exit.map;
+    this.mapId = exit.map;
     this.pos = { x: entry.x, y: entry.y };
   }
 
   /** Change to another map, through the farm, which joins them all. */
   enter(dest: string): void {
-    const target = dest === HOUSE_MAP ? houseMapId(this.g.houseTier) : dest;
-    if (this.mapId === target) return;
+    if (this.mapId === dest) return;
     // Climb out of the mine one floor at a time, by the ladder up.
     while (this.floor !== undefined) this.through("up");
     if (this.mapId !== "farm") {
@@ -244,7 +251,7 @@ export class Walker {
 
   /** Where the player wakes: beside the bed. Called when a day ends. */
   wake(): void {
-    this.mapId = houseMapId(this.g.houseTier);
+    this.mapId = HOUSE_MAP;
     this.pos = this.adjacentTo(this.map, bed(this.map));
   }
 }

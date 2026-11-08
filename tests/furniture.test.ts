@@ -144,35 +144,64 @@ describe("the carpenter", () => {
 });
 
 describe("house upgrade and save", () => {
-  it("carries pieces to the new map, or the pack, or the stash", () => {
+  it("leaves furniture where it is when the house grows", () => {
     const g = newGame();
-    const big = maps.get("house-1");
     g.furniture.add("house", free.x, free.y, "oak-chair");
-    g.furniture.add("house", 0, 0, "bookshelf"); // a wall tile in the new map
-    carryFurniture(g, big, "house-1");
-    // Nothing is left on the old map, and nothing is lost.
-    expect([...g.furniture.each("house")]).toEqual([]);
-    const placed = [...g.furniture.each("house-1")].map((p) => p.id);
-    const packed = ["oak-chair", "bookshelf"].filter(
-      (id) => g.inventory.count(id) > 0,
-    );
-    expect([...placed, ...packed].sort()).toEqual(["bookshelf", "oak-chair"]);
+    g.houseTier = 1;
+    carryFurniture(g, maps.get("house", 1), "house");
+    expect(g.furniture.at("house", free.x, free.y)).toBe("oak-chair");
+    expect(g.inventory.count("oak-chair")).toBe(0);
+    expect(g.furniture.stash).toEqual([]);
+  });
+
+  it("carries pieces from the old tier 1 map, or the pack, or the stash", () => {
+    const g = newGame();
+    const big = maps.get("house", 1);
+    g.furniture.add("house-1", free.x, free.y, "oak-chair");
+    g.furniture.add("house-1", 0, 0, "bookshelf"); // a wall tile
+    carryFurniture(g, big, "house");
+    expect([...g.furniture.each("house-1")]).toEqual([]);
+    expect(g.furniture.at("house", free.x, free.y)).toBe("oak-chair");
     // The wall tile cannot hold the bookshelf, so it went to the pack.
-    expect(g.furniture.at("house-1", 0, 0)).toBeUndefined();
+    expect(g.furniture.at("house", 0, 0)).toBeUndefined();
     expect(g.inventory.count("bookshelf")).toBe(1);
     expect(g.furniture.stash).toEqual([]);
   });
 
   it("keeps a piece in the stash while the pack is full", () => {
     const g = newGame();
-    g.furniture.add("house", 0, 0, "bookshelf");
+    g.furniture.add("house-1", 0, 0, "bookshelf");
     while (g.inventory.room("bookshelf") > 0) g.inventory.add("wood", 99);
-    carryFurniture(g, maps.get("house-1"), "house-1");
+    carryFurniture(g, maps.get("house", 1), "house");
     expect(g.furniture.stash).toEqual(["bookshelf"]);
     g.inventory.remove("wood", 99);
-    carryFurniture(g, maps.get("house-1"), "house-1");
+    carryFurniture(g, maps.get("house", 1), "house");
     expect(g.furniture.stash).toEqual([]);
     expect(g.inventory.count("bookshelf")).toBe(1);
+  });
+
+  it("moves a save from before the merged house map into its frame", () => {
+    const g = newGame();
+    g.furniture.add("house", 3, 3, "armchair");
+    g.furniture.add("house-1", 12, 6, "oak-chair");
+    g.chests.add("house", 4, 3, "chest");
+    const raw = JSON.parse(serialize(g));
+    delete raw.houseLayout;
+    const back = deserialize(JSON.stringify(raw))!;
+    // The old start room sat at the corner; it now sits at (9, 2).
+    expect(back.furniture.at("house", 12, 5)).toBe("armchair");
+    expect(back.furniture.at("house", 3, 3)).toBeUndefined();
+    expect(back.chests.at("house", 13, 5)).toBe("chest");
+    // The old tier 1 map shares the new frame, so the tile stays.
+    carryFurniture(back, maps.get("house", 1), "house");
+    expect(back.furniture.at("house", 12, 6)).toBe("oak-chair");
+  });
+
+  it("does not move a save already in the new frame", () => {
+    const g = newGame();
+    g.furniture.add("house", 12, 5, "armchair");
+    const back = deserialize(serialize(g))!;
+    expect(back.furniture.at("house", 12, 5)).toBe("armchair");
   });
 
   it("round trips, and old or bad saves load with none", () => {

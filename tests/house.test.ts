@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   BUILD_DAYS,
-  houseMapId,
+  houseVisibleTier,
   isHouseMap,
   MAX_HOUSE_TIER,
   orderProblem,
@@ -13,24 +13,31 @@ import { festivalToday } from "../src/core/festivals";
 import { deserialize, newGame, serialize } from "../src/core/save";
 import { sleep } from "../src/core/sleep";
 
-describe("house map per tier", () => {
-  it("uses the start map at tier 0 and the tier 1 map after", () => {
-    expect(houseMapId(0)).toBe("house");
-    expect(houseMapId(1)).toBe("house-1");
+describe("house tier shown", () => {
+  it("shows the start room at tier 0 and the new rooms at tier 1", () => {
+    expect(houseVisibleTier(0)).toBe(0);
+    expect(houseVisibleTier(1)).toBe(1);
   });
 
-  it("uses the tier 1 map for later tiers until their maps exist", () => {
-    expect(houseMapId(MAX_HOUSE_TIER)).toBe("house-1");
+  it("shows tier 1 for later tiers until their layers exist", () => {
+    expect(houseVisibleTier(MAX_HOUSE_TIER)).toBe(1);
   });
 
   it("clamps tiers out of range", () => {
-    expect(houseMapId(-1)).toBe("house");
+    expect(houseVisibleTier(-1)).toBe(0);
+    expect(houseVisibleTier(NaN)).toBe(0);
   });
 
   it("knows which maps are house interiors", () => {
     expect(isHouseMap("house")).toBe(true);
     expect(isHouseMap("house-1")).toBe(true);
     expect(isHouseMap("farm")).toBe(false);
+  });
+
+  it("has one house map that grows, with no map per tier", () => {
+    expect(maps.ids).toContain("house");
+    expect(maps.ids).not.toContain("house-1");
+    expect(maps.maxTier("house")).toBe(1);
   });
 });
 
@@ -59,19 +66,58 @@ describe("house tier in the save", () => {
 });
 
 describe("house maps", () => {
-  const start = () => maps.get(houseMapId(0));
-  const tier1 = () => maps.get(houseMapId(1));
+  const start = () => maps.get("house", 0);
+  const tier1 = () => maps.get("house", 1);
   const bed = (m: ReturnType<typeof start>) =>
     m.services.find((s) => s.kind === "bed")!;
 
-  it("has the planned sizes", () => {
-    expect([start().width, start().height]).toEqual([11, 10]);
+  it("is one 31 by 12 map at both tiers, with the start room 11 by 10 in it", () => {
+    expect([start().width, start().height]).toEqual([31, 12]);
     expect([tier1().width, tier1().height]).toEqual([31, 12]);
+    expect(start().bounds).toEqual({ x: 9, y: 2, w: 11, h: 10 });
+    expect(tier1().bounds).toEqual({ x: 0, y: 0, w: 31, h: 12 });
+  });
+
+  it("keeps the start room's walls, floor and door the same at every tier", () => {
+    const a = start().reachable(start().entry("door")!);
+    const b = tier1().reachable(tier1().entry("door")!);
+    expect(start().entry("door")).toEqual(tier1().entry("door"));
+    // Everything the start room offers is still there at tier 1.
+    for (let y = 3; y <= 10; y++)
+      for (let x = 10; x <= 18; x++)
+        if (a.has(`${x},${y}`) && !(x === 18 && y === 9))
+          expect(b.has(`${x},${y}`)).toBe(true);
+  });
+
+  it("shows nothing unbuilt at tier 0: the rest is void that cannot be walked", () => {
+    const m = start();
+    const walkable = m.reachable(m.entry("door")!);
+    for (const t of walkable) {
+      const [x, y] = t.split(",").map(Number) as [number, number];
+      expect(x >= 9 && x < 20 && y >= 2 && y < 12).toBe(true);
+    }
+    expect(m.isBlocked(4, 5)).toBe(true); // where the kitchen will be
+    expect(m.isBlocked(25, 5)).toBe(true); // where the bedroom will be
+    expect(walkable.has("4,5")).toBe(false);
+  });
+
+  it("moves the bed to the bedroom at tier 1", () => {
+    expect(bed(start())).toMatchObject({ x: 18, y: 9 });
+    expect(bed(tier1())).toMatchObject({ x: 25, y: 2 });
+    expect(tier1().services.filter((s) => s.kind === "bed")).toHaveLength(1);
+  });
+
+  it("cuts doorways through the start room's walls at tier 1 only", () => {
+    expect(start().isBlocked(9, 5)).toBe(true);
+    expect(start().isBlocked(19, 5)).toBe(true);
+    expect(tier1().isBlocked(9, 5)).toBe(false);
+    expect(tier1().isBlocked(19, 5)).toBe(false);
   });
 
   it("has no problems on either map", () => {
     expect(start().problems()).toEqual([]);
     expect(tier1().problems()).toEqual([]);
+    expect(maps.problems()).toEqual([]);
   });
 
   it("leads each door back to the farm's house entry", () => {

@@ -135,12 +135,14 @@ tiles. Width by depth, outer size including walls.
 | Tier 3 | same as tier 2, plus cellar stairs |
 | Cellar | about 19 by 16 |
 
-Built in #422: `house.json` is the start map at 11 by 10 and `house-1.json` is
-tier 1 at 31 by 12. Both are generated placeholders (`scripts/gen-farm-map.mjs`).
-`houseMapId(tier)` picks the map, tiers 2 and 3 use the tier 1 map until their
-maps exist, and a tier change while the player is inside reloads the scene on
-the new map at its door. In tier 1 the double bed in the bedroom is the bed
-that saves the day. The sizes may still move by a tile or two.
+Built in #421 (replacing the map per tier of #422): `house.json` is one 31 by
+12 map holding the start room (11 by 10, at tile 9, 2) and the tier 1 rooms in
+`-t1` layers (note 68). It is a hand-authored placeholder; the generator no
+longer writes it. `houseVisibleTier(tier)` picks the layers, tiers 2 and 3 show
+tier 1 until their layers exist, and a tier change while the player is inside
+(only the debug menu can do it) reloads the scene at the house door. In tier 1
+the double bed in the bedroom is the bed that saves the day, and the start
+room's bed tile becomes plain floor. The sizes may still move by a tile or two.
 
 Shapes, from the images:
 
