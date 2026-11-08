@@ -814,8 +814,8 @@
       "name": "Processing and animals",
       "group": "systems",
       "pos": [500, 520],
-      "built": "none",
-      "builtNote": "",
+      "built": "partial",
+      "builtNote": "Built 2026-11-08: coop and barn with tiers, chickens, ducks, rabbits, cow, goat, sheep, pig, incubator, hay silo, animal-goods machines and a first cooking pass (stove, eight placeholder dishes). Not built: heater, animal professions, keeper, animal art, most recipes.",
       "summary": "Machines, cooking, coops and bees. Needed by many bundles. Animals are designed in 23_animals.md; processing and cooking are not.",
       "items": [
         {
