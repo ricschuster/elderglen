@@ -85,6 +85,8 @@ export interface GameState {
   hall: Hall;
   /** House tier, 0 for the start room only. */
   houseTier: number;
+  /** Owns the Furniture Catalogue (note 41). */
+  catalogue: boolean;
   /** The map the last save was made on, kept only for the cellar (`resumeAt`). */
   resumeMap?: string;
   /** The upgrade the carpenter is building, if any. */
@@ -141,6 +143,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     toolOrder: undefined,
     hall: new Hall(),
     houseTier: 0,
+    catalogue: false,
     houseBuild: undefined,
     weather: "sunny",
     tomorrow: "sunny",
@@ -203,6 +206,8 @@ interface SaveData {
   toolOrder?: ToolOrder;
   /** Absent in saves made before the house had tiers. */
   houseTier?: number;
+  /** Absent in saves made before the catalogue. */
+  catalogue?: boolean;
   /** Absent unless the save was made in the cellar. */
   resumeMap?: string;
   /** Absent when no upgrade is being built, and in older saves. */
@@ -265,6 +270,7 @@ export function serialize(g: GameState): string {
     toolTiers: { ...g.toolTiers },
     toolOrder: g.toolOrder ? { ...g.toolOrder } : undefined,
     houseTier: g.houseTier,
+    catalogue: g.catalogue,
     resumeMap: g.resumeMap,
     houseBuild: g.houseBuild ? { ...g.houseBuild } : undefined,
     weather: g.weather,
@@ -604,6 +610,7 @@ export function deserialize(text: string): GameState | undefined {
     };
   if (isCount(raw.houseTier))
     g.houseTier = Math.min(Math.floor(raw.houseTier), MAX_HOUSE_TIER);
+  g.catalogue = raw.catalogue === true;
   if (raw.resumeMap === CELLAR_MAP) g.resumeMap = CELLAR_MAP;
   const build = raw.houseBuild;
   if (

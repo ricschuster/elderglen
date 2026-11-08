@@ -112,6 +112,9 @@ cozy hobbit home. This note settles both.
   not tied to a tier, which was wrong. The owner picked the Stardew option, so
   the Stardew behaviour stands. Furniture itself can be added at any time.
   Flooring and wallpaper can come from a shop or a catalogue.
+  Built: the catalogue is a one-time 200,000g row at the carpenter's after
+  tier 1 (`catalogue` save field). Owning it lists every carpenter piece plus six
+  catalogue-only pieces at their listed prices, in place of the daily pick.
 - **Empty rooms read as waiting.** The spouse room and the nursery are open,
   bare and tidy, with a short line from Old Greencoat or the carpenter that
   they are for later. They are not shown as broken or blocked, which matches

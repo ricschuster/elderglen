@@ -1,7 +1,11 @@
 import Phaser from "phaser";
 import type { GameState } from "../core/save";
 import {
+  CATALOGUE_PRICE,
+  buyCatalogue,
   buyFurniture,
+  catalogueProblem,
+  catalogueStock,
   dailyStock,
   furnitureProblem,
   stationStock,
@@ -89,9 +93,20 @@ export class CarpenterScene extends Phaser.Scene {
         buttons: [{ text: "Order", run: () => this.order() }],
       });
     }
+    if (!g.houseBuild && !g.catalogue && g.houseTier >= 1) {
+      rows.push({
+        label: "Furniture Catalogue",
+        detail: `${CATALOGUE_PRICE}g, all the carpenter's pieces`,
+        dim: catalogueProblem(g) !== undefined,
+        buttons: [{ text: "Buy", run: () => this.buyCat() }],
+      });
+    }
     if (!g.houseBuild) {
+      const owned = g.catalogue
+        ? catalogueStock()
+        : dailyStock(g.day.clock.day);
       // Today's furniture: a random pick that changes each day.
-      for (const f of [...stationStock(), ...dailyStock(g.day.clock.day)]) {
+      for (const f of [...stationStock(), ...owned]) {
         rows.push({
           label: f.name,
           detail: `${f.price}g${f.rug ? "  (rug)" : ""}`,
@@ -101,6 +116,14 @@ export class CarpenterScene extends Phaser.Scene {
       }
     }
     this.menu.setRows(rows);
+  }
+
+  private buyCat(): void {
+    const problem = catalogueProblem(this.state);
+    if (problem !== undefined) this.message.setText(problem);
+    else if (buyCatalogue(this.state))
+      this.message.setText("Bought. The whole catalogue is now on sale.");
+    this.refresh();
   }
 
   private buy(id: string): void {

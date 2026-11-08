@@ -23,6 +23,8 @@ export interface FurnitureDef {
   rug?: boolean;
   /** Sold only at a festival counter, never by the carpenter. */
   festival?: boolean;
+  /** Sold only from the Furniture Catalogue (note 41), never in the daily pick. */
+  catalogue?: boolean;
   /** A crafting station: Action on it opens crafting with the chests beside it (note 34). Always sold, never in the daily pick. */
   station?: "workbench";
 }
@@ -43,6 +45,10 @@ export interface PlacedFurniture {
 }
 
 const key = (map: string, x: number, y: number) => `${map}:${x},${y}`;
+
+/** The Furniture Catalogue: a one-time purchase at the carpenter's, after house tier 1 (notes 10 and 41). */
+export const CATALOGUE_PRICE = 200_000;
+export const CATALOGUE_MIN_TIER = 1;
 
 /** What the carpenter shows each day. */
 export const DAILY_STOCK = 4;
@@ -204,12 +210,12 @@ export function carryFurniture(
  * pick on other days. `DAILY_STOCK` of the pool, chosen by a hash of the day.
  */
 export function dailyStock(day: number): FurnitureDef[] {
-  const scored = FURNITURE.filter((f) => !f.festival && !f.station).map(
-    (f, i) => ({
-      f,
-      score: Math.imul(day * 7919 + i * 104729 + 13, 2654435761) >>> 0,
-    }),
-  );
+  const scored = FURNITURE.filter(
+    (f) => !f.festival && !f.station && !f.catalogue,
+  ).map((f, i) => ({
+    f,
+    score: Math.imul(day * 7919 + i * 104729 + 13, 2654435761) >>> 0,
+  }));
   scored.sort((a, b) => a.score - b.score);
   return scored.slice(0, DAILY_STOCK).map((s) => s.f);
 }
@@ -218,11 +224,35 @@ export function dailyStock(day: number): FurnitureDef[] {
 export const stationStock = (): FurnitureDef[] =>
   FURNITURE.filter((f) => f.station);
 
+/** Every piece the catalogue sells: the daily pool and the catalogue-only pieces. */
+export const catalogueStock = (): FurnitureDef[] =>
+  FURNITURE.filter((f) => !f.festival && !f.station);
+
+/** Why the catalogue cannot be bought now, or undefined if it can. */
+export function catalogueProblem(g: GameState): string | undefined {
+  if (g.catalogue) return "You already own the catalogue.";
+  if (g.houseTier < CATALOGUE_MIN_TIER)
+    return "The carpenter offers it after your first house upgrade.";
+  if (g.money < CATALOGUE_PRICE)
+    return `You need ${CATALOGUE_PRICE - g.money}g more.`;
+  return undefined;
+}
+
+/** Buy the catalogue once. */
+export function buyCatalogue(g: GameState): boolean {
+  if (catalogueProblem(g) !== undefined) return false;
+  g.money -= CATALOGUE_PRICE;
+  g.catalogue = true;
+  return true;
+}
+
 /** Why a piece cannot be bought today, or undefined if it can. */
 export function furnitureProblem(g: GameState, id: string): string | undefined {
-  const def = [...stationStock(), ...dailyStock(g.day.clock.day)].find(
-    (f) => f.id === id,
-  );
+  const def = [
+    ...stationStock(),
+    ...dailyStock(g.day.clock.day),
+    ...(g.catalogue ? catalogueStock() : []),
+  ].find((f) => f.id === id);
   if (!def) return "The carpenter does not have that today.";
   if (g.money < def.price) return `You need ${def.price - g.money}g more.`;
   if (g.inventory.room(id) < 1) return "Your pack is full.";
