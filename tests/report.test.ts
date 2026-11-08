@@ -10,6 +10,8 @@ const base: SleepReport = {
   houseFinished: false,
   coopFinished: false,
   barnFinished: false,
+  stableFinished: false,
+  horseWasOut: false,
   siloFinished: false,
   animals: {
     eggs: 0,

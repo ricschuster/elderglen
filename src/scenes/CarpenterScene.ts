@@ -22,6 +22,7 @@ import {
   BUILDINGS,
   BUILDING_ORDER,
   HAY_PRICE,
+  IRON_BAR,
   SPECIES,
   type Building,
   type Species,
@@ -143,13 +144,16 @@ export class CarpenterScene extends Phaser.Scene {
         buttons: [],
       });
     }
-    for (const id of BUILDING_ORDER) {
+    for (const id of [...BUILDING_ORDER, "stable" as const]) {
       const info = BUILDINGS[id];
       if (!isBuilt(g.animals, id)) {
         if (g.animals.build?.building === id) continue;
         rows.push({
           label: info.name,
-          detail: `${info.cost.coin}g, ${info.cost.wood} wood and ${info.cost.stone} stone (${have})`,
+          detail:
+            id === "stable"
+              ? `${info.cost.coin}g, ${info.cost.wood} wood and ${info.cost.iron} iron bars (have ${g.inventory.count("wood")} wood and ${g.inventory.count(IRON_BAR)} iron), comes with a horse`
+              : `${info.cost.coin}g, ${info.cost.wood} wood and ${info.cost.stone} stone (${have})`,
           dim: buildingProblem(g, id) !== undefined,
           buttons: [{ text: "Place", run: () => this.orderBuilding(id) }],
         });
@@ -166,8 +170,9 @@ export class CarpenterScene extends Phaser.Scene {
       rows.push({
         label: `Take down the ${info.noun}`,
         detail:
-          gone ??
-          `you get back ${back.coin}g, ${back.wood} wood and ${back.stone} stone`,
+          (gone ?? id === "stable")
+            ? `you get back ${back.coin}g, ${back.wood} wood and ${back.iron} iron bars, and the horse leaves`
+            : `you get back ${back.coin}g, ${back.wood} wood and ${back.stone} stone`,
         dim: gone !== undefined,
         buttons: [
           {

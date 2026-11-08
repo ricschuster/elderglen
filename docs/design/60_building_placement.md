@@ -1,7 +1,7 @@
 # 60 Building placement (draft)
 
-Status: draft. Decided with the owner on 2026-11-06. The coop and barn are built
-(issue #611, see Built below); the stable, silo, well and painting are not. It
+Status: draft. Decided with the owner on 2026-11-06. The coop, barn and stable are built
+(issues #611 and #601, see Built below); the silo, well and painting are not. It
 settles how the player places, moves and removes farm buildings: the stable
 (`59_horse.md`) first, and likely the coop and barn (`23_animals.md`).
 
@@ -81,7 +81,8 @@ placeholders for note 07.
   reason in words. Touch drags the ghost and presses Confirm; the mouse clicks
   to put it down and clicks it again, or presses Enter, to confirm. Arrows nudge
   it.
-- **Not built:** the stable, silo, well and bin as placeable buildings, painting,
+- **Stable (issue #601):** placeable with the same screen, 4 by 2, no door, and the tile in front stays free for the horse. Two days to build; removing pays half of the gold, wood and iron bars and takes the horse away (`59_horse.md`).
+- **Not built:** the silo, well and bin as placeable buildings, painting,
   and the real barn door tiles of #618. Tilled soil blocks a spot, which is ours
   and not from the saved page. Whether it should is for the owner.
 

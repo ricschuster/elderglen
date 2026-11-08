@@ -43,8 +43,11 @@ export function reportLines(r: SleepReport): string[] {
       r.coopFinished,
       r.barnFinished,
       r.siloFinished,
+      r.stableFinished,
     ),
   );
+  if (r.horseWasOut)
+    lines.push("Your horse spent the night outside and is back in the stable.");
   if (r.furnaceGifted) lines.push("The smith left a furnace by your house.");
   for (const name of r.achievements)
     lines.push(`Achievement: ${name}. The hatter has a new hat on sale.`);

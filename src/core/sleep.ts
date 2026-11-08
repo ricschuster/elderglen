@@ -5,6 +5,7 @@ import type { Spot } from "./forage";
 import type { GameState } from "./save";
 import type { FarmMap } from "./map";
 import { advanceBuild } from "./house";
+import { horseEndDay } from "./horse";
 import {
   advanceBuilding,
   advanceSilo,
@@ -79,6 +80,10 @@ export interface SleepReport {
   coopFinished: boolean;
   /** True when the carpenter finished the barn this morning. */
   barnFinished: boolean;
+  /** True when the carpenter finished the stable this morning. */
+  stableFinished: boolean;
+  /** True when the horse was left outside and is back at the stable. */
+  horseWasOut: boolean;
   /** True when the carpenter finished the silo this morning. */
   siloFinished: boolean;
   /** What the night did to the animals. */
@@ -221,6 +226,7 @@ export function sleep(
   const animalJob = advanceBuilding(g);
   const siloFinished = advanceSilo(g);
   const animals = animalsEndDay(g, random);
+  const horseWasOut = horseEndDay(g);
   const furnaceGifted = deliverFurnace(g);
 
   const achievements = checkAchievements(g).map((a) => a.name);
@@ -240,6 +246,8 @@ export function sleep(
     houseTier: houseFinished ? g.houseTier : undefined,
     coopFinished: animalJob === "coop",
     barnFinished: animalJob === "barn",
+    stableFinished: animalJob === "stable",
+    horseWasOut,
     siloFinished,
     animals,
     furnaceGifted,

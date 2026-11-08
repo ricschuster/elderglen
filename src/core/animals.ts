@@ -1,5 +1,6 @@
 import { dateOf } from "./calendar";
 import { festivalToday } from "./festivals";
+import { loadHorse, newHorse, saveHorse, type Horse } from "./horse";
 import { itemById } from "./items";
 import {
   animalQuality,
@@ -20,8 +21,8 @@ import { isRaining } from "./weather";
 export type Species =
   "chicken" | "duck" | "rabbit" | "cow" | "goat" | "sheep" | "pig";
 
-/** The two animal buildings. The coop is built first in slice 1, the barn in slice 3. */
-export type Building = "coop" | "barn";
+/** The farm buildings the carpenter places. The coop and barn house animals; the stable holds the horse (note 59). */
+export type Building = "coop" | "barn" | "stable";
 
 /** One species of the coop: where it lives, what it costs, what it makes and how often. */
 export interface SpeciesInfo {
@@ -175,6 +176,27 @@ export const BARN_MAX_TIER = 3;
 export const BARN_COST = { coin: 4000, wood: 300, stone: 100 } as const;
 export const BARN_BUILD_DAYS = 3;
 
+/**
+ * The stable (note 59, owner 2026-11-06): 10,000g, Hardwood 100 and Iron Bar 5
+ * in Stardew, two days to build, 4 by 2 tiles. Hardwood does not exist yet, so
+ * wood stands in for it as in the house upgrades (`house.ts`). The horse comes
+ * with it.
+ */
+export const STABLE_COST = {
+  coin: 10000,
+  wood: 100,
+  stone: 0,
+  iron: 5,
+} as const;
+export const STABLE_BUILD_DAYS = 2;
+export const STABLE_FOOTPRINT = { w: 4, h: 2 } as const;
+/** The item the stable asks for besides wood. */
+export const IRON_BAR = "iron-bar";
+/** Only used when a stable has no chosen site, which a placed stable always has. */
+export const STABLE_SITES: Record<string, { x: number; y: number }> = {
+  farm: { x: 31, y: 9 },
+  "farm-woodland": { x: 32, y: 9 },
+};
 /** What differs between the two buildings. */
 export interface BuildingInfo {
   id: Building;
@@ -184,7 +206,7 @@ export interface BuildingInfo {
   name: string;
   maxTier: number;
   capacities: readonly number[];
-  cost: { coin: number; wood: number; stone: number };
+  cost: { coin: number; wood: number; stone: number; iron?: number };
   upgrades: Record<
     number,
     { name: string; coin: number; wood: number; stone: number }
@@ -212,7 +234,18 @@ export const BUILDINGS: Record<Building, BuildingInfo> = {
     upgrades: BARN_UPGRADES,
     days: BARN_BUILD_DAYS,
   },
+  stable: {
+    id: "stable",
+    noun: "stable",
+    name: "Stable",
+    maxTier: 1,
+    capacities: [0],
+    cost: STABLE_COST,
+    upgrades: {},
+    days: STABLE_BUILD_DAYS,
+  },
 };
+/** The buildings in the carpenter's order. The stable has its own rows (it holds no animals). */
 export const BUILDING_ORDER: readonly Building[] = ["coop", "barn"];
 
 /** The incubator at the big coop: one egg at a time, hatching after these nights (note 23, placeholder). */
@@ -416,6 +449,12 @@ export interface AnimalsState {
    * the farm map, so old saves keep working.
    */
   sites: Partial<Record<Building, { x: number; y: number }>>;
+  /** True once the carpenter has built the stable. The horse comes with it (note 59). */
+  stableBuilt: boolean;
+  /** The horse: its name and where it was left today. */
+  horse: Horse;
+  /** True while the player rides. Not saved: a loaded game starts on foot. */
+  mounted: boolean;
   nextId: number;
 }
 
@@ -432,6 +471,9 @@ export function newAnimals(): AnimalsState {
     silo: false,
     siloDays: 0,
     sites: {},
+    stableBuilt: false,
+    horse: newHorse(),
+    mounted: false,
     nextId: 1,
   };
 }
@@ -454,6 +496,9 @@ export function saveAnimals(a: AnimalsState): AnimalsState {
     sites: Object.fromEntries(
       Object.entries(a.sites).map(([k, v]) => [k, { ...v }]),
     ),
+    stableBuilt: a.stableBuilt,
+    horse: saveHorse(a.horse),
+    mounted: false,
     nextId: a.nextId,
   };
 }
@@ -468,6 +513,8 @@ export function loadAnimals(raw: unknown): AnimalsState {
   const r = raw as Record<string, unknown>;
   out.coopBuilt = r.coopBuilt === true;
   out.barnBuilt = r.barnBuilt === true;
+  out.stableBuilt = r.stableBuilt === true;
+  out.horse = out.stableBuilt ? loadHorse(r.horse) : newHorse();
   out.tier =
     out.coopBuilt && isNum(r.tier)
       ? clamp(Math.floor(r.tier), 1, COOP_MAX_TIER)
@@ -479,7 +526,8 @@ export function loadAnimals(raw: unknown): AnimalsState {
   const b = r.build as Record<string, unknown> | undefined;
   if (b && isNum(b.daysLeft) && b.daysLeft >= 1) {
     // An old save has no building: a job in it is the coop's.
-    const building: Building = b.building === "barn" ? "barn" : "coop";
+    const building: Building =
+      b.building === "barn" || b.building === "stable" ? b.building : "coop";
     // An old save has no tier: a coop still being built is tier 1.
     const tier = isNum(b.tier) ? Math.floor(b.tier) : 1;
     const built = isBuilt(out, building);
@@ -507,7 +555,7 @@ export function loadAnimals(raw: unknown): AnimalsState {
   // A site is kept only for a building that exists or is being built. An old
   // save has none, and the building stands at the fixed site of its map.
   const sites = r.sites as Record<string, unknown> | undefined;
-  for (const b of ["coop", "barn"] as const) {
+  for (const b of ["coop", "barn", "stable"] as const) {
     const v = sites?.[b] as Record<string, unknown> | undefined;
     if (
       v &&
@@ -579,12 +627,16 @@ function quality(v: unknown): Quality | undefined {
 
 /** True if the building stands. */
 export function isBuilt(a: AnimalsState, b: Building): boolean {
-  return b === "coop" ? a.coopBuilt : a.barnBuilt;
+  return b === "coop"
+    ? a.coopBuilt
+    : b === "barn"
+      ? a.barnBuilt
+      : a.stableBuilt;
 }
 
 /** The tier of a building, 1 to 3 (1 when it is not built). */
 export function tierOf(a: AnimalsState, b: Building): number {
-  return b === "coop" ? a.tier : a.barnTier;
+  return b === "coop" ? a.tier : b === "barn" ? a.barnTier : 1;
 }
 
 /** The animals that live in a building, in the order they were bought. */
@@ -609,8 +661,15 @@ export const MAX_SITE = 255;
 
 /** The footprint of the coop or the barn, and the door tile's offset from its top left. */
 export const FOOTPRINTS = {
-  coop: { w: COOP_FOOTPRINT.w, h: COOP_FOOTPRINT.h, doorX: 1 },
-  barn: { w: BARN_FOOTPRINT.w, h: BARN_FOOTPRINT.h, doorX: 3 },
+  coop: { w: COOP_FOOTPRINT.w, h: COOP_FOOTPRINT.h, doorX: 1, door: true },
+  barn: { w: BARN_FOOTPRINT.w, h: BARN_FOOTPRINT.h, doorX: 3, door: true },
+  /** The stable has no interior and no door: the horse stands in front (note 59). */
+  stable: {
+    w: STABLE_FOOTPRINT.w,
+    h: STABLE_FOOTPRINT.h,
+    doorX: 1,
+    door: false,
+  },
 } as const;
 
 /**
@@ -622,7 +681,9 @@ export function siteOf(
   b: Building,
   mapId: string,
 ) {
-  const fixed = b === "coop" ? COOP_SITES[mapId] : BARN_SITES[mapId];
+  const fixed = (
+    b === "coop" ? COOP_SITES : b === "barn" ? BARN_SITES : STABLE_SITES
+  )[mapId];
   return fixed ? (g.animals.sites[b] ?? fixed) : undefined;
 }
 
@@ -676,6 +737,30 @@ export function siloBlocks(
   );
 }
 
+/** True if a tile is part of the built stable's footprint on this map. The whole of it blocks. */
+export function stableBlocks(
+  g: GameState,
+  mapId: string,
+  x: number,
+  y: number,
+): boolean {
+  const s = siteOf(g, "stable", mapId);
+  if (!s || !g.animals.stableBuilt) return false;
+  return (
+    x >= s.x &&
+    x < s.x + STABLE_FOOTPRINT.w &&
+    y >= s.y &&
+    y < s.y + STABLE_FOOTPRINT.h
+  );
+}
+
+/** Where the horse waits beside the stable: the tile in front of it. */
+export function stableHome(g: GameState, mapId: string) {
+  const s = siteOf(g, "stable", mapId);
+  if (!s || !g.animals.stableBuilt) return undefined;
+  return { x: s.x + FOOTPRINTS.stable.doorX, y: s.y + STABLE_FOOTPRINT.h };
+}
+
 /** True if a tile is part of the built barn's footprint on this map, other than its door tile. */
 export function barnBlocks(
   g: GameState,
@@ -717,7 +802,7 @@ export function moodWord(a: Animal): string {
 /** The words for what the carpenter lacks, or undefined if the buyer has it all. */
 function shortOf(
   g: GameState,
-  cost: { coin: number; wood: number; stone: number },
+  cost: { coin: number; wood: number; stone: number; iron?: number },
 ): string | undefined {
   const missing: string[] = [];
   if (g.money < cost.coin) missing.push(`${cost.coin - g.money}g more`);
@@ -725,13 +810,17 @@ function shortOf(
   if (wood < cost.wood) missing.push(`${cost.wood - wood} more wood`);
   const stone = g.inventory.count("stone");
   if (stone < cost.stone) missing.push(`${cost.stone - stone} more stone`);
+  const iron = g.inventory.count(IRON_BAR);
+  if (cost.iron !== undefined && iron < cost.iron)
+    missing.push(`${cost.iron - iron} more iron bars`);
   return missing.length > 0 ? `You need ${missing.join(" and ")}.` : undefined;
 }
 
 function pay(
   g: GameState,
-  cost: { coin: number; wood: number; stone: number },
+  cost: { coin: number; wood: number; stone: number; iron?: number },
 ) {
+  if (cost.iron) g.inventory.remove(IRON_BAR, cost.iron);
   g.money -= cost.coin;
   g.inventory.remove("wood", cost.wood);
   g.inventory.remove("stone", cost.stone);
@@ -772,6 +861,8 @@ export function advanceBuilding(g: GameState): Building | undefined {
   if (b.building === "barn") {
     g.animals.barnBuilt = true;
     g.animals.barnTier = b.tier;
+  } else if (b.building === "stable") {
+    g.animals.stableBuilt = true;
   } else {
     g.animals.coopBuilt = true;
     g.animals.tier = b.tier;
@@ -1255,11 +1346,16 @@ export function animalReportLines(
   coopFinished: boolean,
   barnFinished = false,
   siloFinished = false,
+  stableFinished = false,
 ): string[] {
   const lines: string[] = [];
   if (coopFinished) lines.push("The carpenter has finished your coop.");
   if (barnFinished) lines.push("The carpenter has finished your barn.");
   if (siloFinished) lines.push("The carpenter has finished your silo.");
+  if (stableFinished)
+    lines.push(
+      "The carpenter has finished your stable. Your horse is waiting.",
+    );
   for (const n of news.grown) lines.push(`${n} has grown up.`);
   for (const n of news.hatched) lines.push(`${n} hatched in the coop.`);
   if (news.hatchWaiting)

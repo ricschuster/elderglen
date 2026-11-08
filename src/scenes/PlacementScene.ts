@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { mapFiles, maps } from "../content/maps";
 import {
   BUILDINGS,
+  FOOTPRINTS,
   SILO_FOOTPRINT,
   siteOf,
   SILO_SITES,
@@ -30,7 +31,11 @@ export interface PlacementData {
 /** The map is drawn at this scale so it fills the 540 high menu box. */
 const SCALE = 1.125;
 const PANEL_X = 730;
-const ROOF: Record<Building, number> = { coop: 0xb5563c, barn: 0x8f3b2e };
+const ROOF: Record<Building, number> = {
+  coop: 0xb5563c,
+  barn: 0x8f3b2e,
+  stable: 0x7a5a3a,
+};
 
 /**
  * The carpenter's placement screen (`docs/design/60_building_placement.md`).
@@ -243,7 +248,7 @@ export class PlacementScene extends Phaser.Scene {
         .fillRect(e.x * ts, e.y * ts, e.w * ts, e.h * ts);
     }
     // The other buildings stand where they are.
-    for (const b of ["coop", "barn"] as const) {
+    for (const b of ["coop", "barn", "stable"] as const) {
       if (b === this.building) continue;
       const r = placedFootprint(g, b, this.mapId);
       if (r) this.drawBuilding(b, r.x, r.y, 0.9);
@@ -286,9 +291,10 @@ export class PlacementScene extends Phaser.Scene {
           .lineStyle(2, 0xff2a1a, 1)
           .strokeRect(c.x * ts + 1, c.y * ts + 1, ts - 2, ts - 2);
     }
-    gfx
-      .fillStyle(0x4a3220, 0.9)
-      .fillRect(door.x * ts + 3, door.y * ts + 2, ts - 6, ts - 2);
+    if (FOOTPRINTS[this.building].door)
+      gfx
+        .fillStyle(0x4a3220, 0.9)
+        .fillRect(door.x * ts + 3, door.y * ts + 2, ts - 6, ts - 2);
     const first = blockers[0];
     this.info.setText(
       this.free

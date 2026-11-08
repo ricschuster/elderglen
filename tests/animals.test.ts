@@ -434,6 +434,9 @@ describe("saves", () => {
       silo: false,
       siloDays: 0,
       sites: {},
+      stableBuilt: false,
+      horse: { name: "", parked: undefined },
+      mounted: false,
       nextId: 1,
     });
   });

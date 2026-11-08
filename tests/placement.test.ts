@@ -326,6 +326,7 @@ describe("ordering, moving and removing", () => {
       coin: COOP_COST.coin / 2,
       wood: COOP_COST.wood / 2,
       stone: COOP_COST.stone / 2,
+      iron: 0,
     });
     expect(removeBuilding(g, "coop")).toBe(true);
     expect(g.money).toBe(COOP_COST.coin / 2);
