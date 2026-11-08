@@ -7,7 +7,8 @@ Crab Pot, Recycling Machine, Fish Pond and Skills pages were read (reference
 only, ADR 0002) and the differences were settled with the owner; see "Catch
 details and Stardew differences". Numbers are placeholders.
 The open items at the end are not decided. It answers the design half of
-issue #181. Nothing here is built.
+issue #181. Slices 1 and 2 are built (see "Built in slices 1 and 2"); the
+rest is not.
 
 ## Why
 
@@ -472,6 +473,52 @@ Stardew's tree, checked against the Skills page.
 - Level 10 needs the choice screen for every skill (`24_processing_and_cooking.md`).
 - The level 5 and level 10 choices change `professions.ts`, its tests and the
   skills screen.
+
+## Built in slices 1 and 2 (2026-11-08, issue #595)
+
+What the build settled where the note was silent. All numbers are placeholders
+and are in `07_tuning_numbers.md`.
+
+- **One table, the farm pond.** Both farm maps have one pond (the ground
+  layer's water tile), so that pond is the fishable water, on the river table
+  (the nine River fish, `src/content/fish.json`). The other waters, the delta
+  fisher and the Water room bundles are slice 3 and later. The small east pond
+  of note 55 is not drawn yet, so the one pond is fishable.
+- **The rod is a backpack item**, not a fifth tool (the toolbar has four tool
+  slots). Use it facing water. All four rods are in data and sold at the general
+  store until the delta fisher exists. Slots, bait and lures do nothing yet.
+- **The cast.** Hold to charge (1.2 s to full) and release. The distance runs
+  from 1 tile to the rod's range. A cast that lands on dry ground costs nothing
+  and can be repeated. Assist fixes the cast to the middle of the water in range
+  and needs only a press.
+- **A cast costs game time, not energy:** 20 minutes, whether or not a fish
+  bites. The clock stands still on the fishing screen, so this is the only cost.
+- **Which fish.** Season, time slot (dawn before 8 am, dusk the two hours before
+  nightfall, night after, day between) and weather (a rain fish bites only in
+  rain). Weights by rarity are 6, 3 and 1. **The Reed Pole only draws common fish**,
+  so it never loses a bite. Any other rod loses a rare bite below fishing level
+  5 ("Something heavy took the line"). If nothing is in season the bite is
+  "nothing is biting". Winter has only the Reedling by day.
+- **The bite and the bar.** A wait of 1.5 to 4.5 s, then a window of 1.4 s (3 s
+  with assist) to press. The bar is the five motions of "Catch details" on a
+  track, with the fish's pace and swing set by its difficulty. Meter starts at
+  0.3, fills at 0.22 a second inside the bar and drains at 0.1 outside.
+- **Assist** is in the options: off, a bigger bar and calmer fish (bar x1.3,
+  fish pace x0.6, drain x0.5), or skip the fight (a normal size roll, never
+  perfect).
+- **The first catch** is the tutorial: a common fish, the meter never drains.
+  Every cast counts as the tutorial until one is landed.
+- **Quality and length** as in "Skill and quality, in numbers". A perfect catch
+  lifts silver to gold only (normal stays normal, gold stays gold). Length is the
+  fish's range scaled by the size roll. A full backpack drops the fish at the
+  player's feet. The fish log keeps a count and the longest of each kind.
+- **Professions at level 5 are not offered yet** (Fisher and Trapper wait for
+  pots), so a fishing level 5 asks for no choice.
+- **The completion tracker's Fish row is live** and counts the fish in the data.
+- **Not built:** the catch screen's "New record" and "First Catch" show in the
+  fishing message only, not in a collection page; the fishing achievements of
+  note 38 (they count 10, 24 and all 46 fish, so they wait for the roster);
+  water plants, jellies, trash and the recycler; the crown on a legend.
 
 ## Touch and accessibility
 

@@ -21,6 +21,7 @@ import { MACHINES } from "./processing";
 import { DISHES } from "./dishes";
 import { CHESTS } from "./chestdefs";
 import { GEODE_ITEMS } from "./geodes";
+import { FISH, RODS } from "./fishing";
 import { ENERGY_MULTIPLIER, QUALITY_MULTIPLIER, splitQuality } from "./quality";
 
 /** Item ids: a crop's produce uses the crop id, its seed uses `<id>-seed`. */
@@ -174,6 +175,19 @@ for (const o of ORES) items.set(o.id, { ...o });
 for (const b of BARS)
   items.set(b.id, { id: b.id, name: b.name, sellPrice: b.sellPrice });
 
+/** Fish (note 21). Prices are placeholders in the bands of note 07. */
+for (const f of FISH)
+  items.set(f.id, { id: f.id, name: f.name, sellPrice: f.sellPrice });
+/** Rods are bought and kept: they ride in the backpack and cannot be sold back. */
+for (const r of RODS)
+  items.set(r.id, {
+    id: r.id,
+    name: r.name,
+    sellPrice: 0,
+    buyPrice: r.price,
+    keep: true,
+  });
+
 /** Heading each item for the dev menu's picker, in the order the groups list. */
 const GROUPS: [string, string[]][] = [
   ["Crops", CROPS.map((c) => c.id)],
@@ -221,6 +235,7 @@ const GROUPS: [string, string[]][] = [
       ...BARS.map((b) => b.id),
     ],
   ],
+  ["Fish and rods", [...FISH, ...RODS].map((f) => f.id)],
   ["Wood and fibre", ["wood", "sap", "fiber", "clay", "hay"]],
 ];
 for (const [group, ids] of GROUPS)

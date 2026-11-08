@@ -256,9 +256,23 @@ so each tier stacks and sells separately. Bundles take any tier.
 - Wild seeds (decided 2026-10-31): forage is crafted into seasonal seeds that
   grow into forage goods and give foraging XP. Built in M3 with crafting.
 
-## Fishing (draft, not built)
+## Fishing (slices 1 and 2 built, the rest not)
 
 Source: `21_fishing.md`. All of these are ours and are placeholders.
+
+Built numbers (`src/core/fishing.ts`, `src/content/fish.json`, `rods.json`):
+
+- Cast: 1.2 s to full charge, 20 game minutes per cast, no energy. Bite wait 1.5
+  to 4.5 s, hook window 1.4 s (3 s with assist).
+- Odds weights by rarity: common 6, uncommon 3, rare 1. Dawn ends at 8 am, dusk
+  is the 2 hours before nightfall.
+- Bar: lift 3.2 and gravity 2.2 (track per second squared), meter starts 0.3,
+  gain 0.22 a second, loss 0.1 a second, fish pace `0.15 + 0.55 * difficulty / 100`
+  (smooth x0.7, dart x1.8, the sinker down and floater up x1.3). Assist: bar x1.3,
+  pace x0.6, loss x0.5.
+- River fish prices: Reedling 40, Brookslip 45, Millrun 55, Ferrywhisker 120,
+  Salmon 150, Hearthside Dace 110, Tallow Eel 170, Silverthread 320, Old Mossback
+  280.
 
 - Rods: Reed Pole 50g, Hazel Rod 400g, Heron Rod 1500g, Hearthwell Rod 4000g.
   Only the Reed Pole limits fish (common only). Rare fish need fishing level 5.

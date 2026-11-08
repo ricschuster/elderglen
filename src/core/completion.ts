@@ -5,6 +5,7 @@ import { BUNDLES } from "./bundles";
 import { RECIPES, buildable } from "./crafting";
 import { cookable } from "./cooking";
 import { DISHES } from "./dishes";
+import { FISH } from "./fishing";
 import { itemById } from "./items";
 import { shippedOf } from "./achievements";
 import { MAX_LEVEL, SKILLS } from "./skills";
@@ -88,6 +89,14 @@ export const COUNTERS: Record<string, Counter> = {
       done: all.length - missing.length,
       total: all.length,
       missing: missing.map((r) => nameOf(r.result.item)),
+    };
+  },
+  fish: (g) => {
+    const missing = FISH.filter((f) => !g.fishing.has(f.id));
+    return {
+      done: FISH.length - missing.length,
+      total: FISH.length,
+      missing: missing.map((f) => f.name),
     };
   },
   cooking: (g) => {

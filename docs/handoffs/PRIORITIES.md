@@ -17,8 +17,8 @@ that. Filed work packages: #595 to #604 and #611.
 ## Open, in order
 
 1. **Completion tracker (#196). Built 2026-11-08 (PR #573).** Counters for
-   friends, fish, slayer, gallery and elderfruit are locked at 0 until their
-   systems exist. The top-level menu entry and the day-end recheck are done
+   friends, slayer, gallery and elderfruit are locked at 0 until their
+   systems exist (fish went live with fishing slices 1 and 2, #595). The top-level menu entry and the day-end recheck are done
    (#586), and `noteCooked` is called now (#593). Left: the summit achievement, the hall scene and rewards, and a look at the layout
    in a browser. "Items crafted" counts only buildable recipes (owner, 2026-11-08).
 2. **Story spine.** The warden head and her staged reveal (#177), the sea elf

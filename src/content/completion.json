@@ -48,7 +48,7 @@
           "weight": 10,
           "counter": "crafting"
         },
-        { "id": "fish", "name": "Fish", "weight": 10, "counter": null }
+        { "id": "fish", "name": "Fish", "weight": 10, "counter": "fish" }
       ]
     }
   ]

@@ -19,6 +19,7 @@ import {
   UI_SIZE_KEY,
   WORLD_ZOOM_KEY,
 } from "./panel";
+import { ASSIST_NAMES, type Assist } from "../core/fishing";
 import { stepPercent, UI_MAX, UI_MIN, ZOOM_MAX, ZOOM_MIN } from "../core/view";
 import { browserSettingsStore, loadDeviceSettings } from "./storage";
 
@@ -186,6 +187,17 @@ export class OptionsScene extends Phaser.Scene {
           text: this.mark(s.showHints === on, on ? "On" : "Off"),
           run: () => {
             s.showHints = on;
+            this.refresh();
+          },
+        })),
+      },
+      {
+        label: "Fishing assist",
+        detail: "a bigger bar and calmer fish, or skip the fight",
+        buttons: ([0, 1, 2] as Assist[]).map((a) => ({
+          text: this.mark(s.fishingAssist === a, ASSIST_NAMES[a]),
+          run: () => {
+            s.fishingAssist = a;
             this.refresh();
           },
         })),

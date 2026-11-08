@@ -1,0 +1,31 @@
+[
+  {
+    "id": "reed-pole",
+    "name": "Reed Pole",
+    "price": 50,
+    "barWidth": 0.3,
+    "range": 4,
+    "commonOnly": true
+  },
+  {
+    "id": "hazel-rod",
+    "name": "Hazel Rod",
+    "price": 400,
+    "barWidth": 0.36,
+    "range": 6
+  },
+  {
+    "id": "heron-rod",
+    "name": "Heron Rod",
+    "price": 1500,
+    "barWidth": 0.42,
+    "range": 8
+  },
+  {
+    "id": "hearthwell-rod",
+    "name": "Hearthwell Rod",
+    "price": 4000,
+    "barWidth": 0.5,
+    "range": 10
+  }
+]

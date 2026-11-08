@@ -43,6 +43,7 @@ import {
 } from "../core/festivals";
 import { openChest } from "../core/maze";
 import { itemById } from "../core/items";
+import { rodById, waterAhead } from "../core/fishing";
 import { NOTHING_TO_ACT_ON, act, reasonText, useHeld } from "../core/tools";
 import { cropById } from "../core/crops";
 import { mapFiles, maps } from "../content/maps";
@@ -1142,6 +1143,7 @@ export class FarmScene extends Phaser.Scene {
     if (this.map.serviceAt(front.x, front.y)) return;
     if (this.useSilo(front.x, front.y)) return;
     const held = heldAt(this.state, this.selected);
+    if (held.kind === "item" && rodById(held.id)) return this.cast(held.id);
     // A chest is stood down from the backpack, and the axe or pickaxe takes an empty one up.
     if (held.kind === "item" && chestById(held.id))
       return this.report(
@@ -1199,6 +1201,21 @@ export class FarmScene extends Phaser.Scene {
     this.report(
       useHeld(this.state, this.map, held, front.x, front.y, this.floor),
     );
+  }
+
+  /** Use a rod: it needs water in front of the player within the rod's range (note 21). */
+  private cast(rodId: string): void {
+    const rod = rodById(rodId)!;
+    const here = tileOf(this.pos, PLAYER, this.map.tileSize);
+    const step = PUSH[this.facing];
+    const water = isFarmMap(this.mapId)
+      ? waterAhead(this.map, here.x, here.y, step.x, step.y, rod.range)
+      : [];
+    if (water.length === 0) {
+      this.message = "Face the water to fish.";
+      return this.render();
+    }
+    this.open("fishing", { rod: rodId, water, at: here });
   }
 
   /**
