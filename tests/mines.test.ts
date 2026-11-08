@@ -418,6 +418,14 @@ describe("Old Greencoat and the rest camp", () => {
 });
 
 describe("geodes", () => {
+  it("come in four kinds with their own sell prices", () => {
+    expect(itemById("geode")?.sellPrice).toBe(50);
+    expect(itemById("frozen-geode")?.sellPrice).toBe(100);
+    expect(itemById("magma-geode")?.sellPrice).toBe(150);
+    expect(itemById("omni-geode")?.sellPrice).toBe(300);
+    expect(itemById("omni-geode")?.name).toBe("Omni Geode");
+  });
+
   it("are dug from a node in three swings and sell for 50g", () => {
     const g = newGame();
     g.day.clock.day = 5;
