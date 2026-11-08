@@ -29,6 +29,7 @@ const SERVICES: Record<string, string> = {
   "mushroom-box": "Mushroom Box",
   "camp-chest": "Camp Chest",
   orders: "Orders Board",
+  requests: "Request Board",
   festival: "Village Green",
   "festival-leave": "Way Home",
   "hedge-chest": "Chest",

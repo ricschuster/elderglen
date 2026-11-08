@@ -7,6 +7,7 @@ import type { FarmMap } from "./map";
 import { advanceBuild } from "./house";
 import { checkAchievements } from "./achievements";
 import { deliverAll } from "./mail";
+import { endDayQuests } from "./quests";
 import { deliverFurnace } from "./smith";
 import { orderReady, type Upgradable } from "./upgrades";
 import type { Settlement } from "./shipping";
@@ -81,6 +82,8 @@ export interface SleepReport {
   caveOffer: boolean;
   /** Special Orders filled or run out overnight. */
   orders: OrdersNews;
+  /** Board requests that ran out overnight, as report lines. */
+  requestsLapsed: string[];
   /** Names of young fruit trees that could not grow, since something stood in their 3x3. */
   stuckTrees: string[];
 }
@@ -105,6 +108,7 @@ export function sleep(
   // The bin pays after the pass-out cost, which takes cash carried only.
   const shipped = g.bin.settle(g);
   const orders = endDayOrders(g, shipped.lines, g.day.clock.day);
+  const requestsLapsed = endDayQuests(g, g.day.clock.day);
   const caveOffer = g.cave.addEarnings(shipped.total, g.day.clock.day);
 
   const { season } = dateOf(g.day.clock.day);
@@ -216,6 +220,7 @@ export function sleep(
     shipped,
     caveOffer,
     orders,
+    requestsLapsed,
     stuckTrees: stuck.map((t) => fruitTreeById(t.id)?.name ?? t.id),
   };
 }

@@ -15,6 +15,7 @@ const base: SleepReport = {
   caveOffer: false,
   shipped: { lines: [], total: 0 },
   orders: { done: [], lapsed: [] },
+  requestsLapsed: [],
   stuckTrees: [],
 };
 

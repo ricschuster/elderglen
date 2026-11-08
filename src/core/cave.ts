@@ -1,4 +1,5 @@
 import type { Outcome } from "./actions";
+import { noteGathered } from "./quests";
 import { FORAGE, type Spot } from "./forage";
 import { FRUIT_TREES } from "./fruittrees";
 import { machineMinutes } from "./machines";
@@ -257,7 +258,9 @@ export function pickBatFruit(
   if (g.inventory.room(item) < 1) return fail("backpack full");
   g.cave.takeFruit(x, y);
   g.inventory.add(item);
-  if (random() < doubleForageChance(g.skills)) g.inventory.add(item);
+  noteGathered(g, item);
+  if (random() < doubleForageChance(g.skills) && g.inventory.add(item))
+    noteGathered(g, item);
   return award(g, BAT_XP, item);
 }
 

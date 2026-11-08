@@ -6,8 +6,8 @@ Built (2026-11-08): the pure mail core (`src/core/mail.ts`), letters as data
 (`src/content/letters.json`), the optional `mail` save field (no version bump),
 the farm mailbox at tile (4,6) with its flag, the reader page (`MailScene`, card
 plus a list of kept letters, standing in for the journal's Mail section), the
-"There is mail." report line, and the hatter's letter. Not built: request gifts
-(no request board), friendship, Long Road, fish seed and lost item letters, story
+"There is mail." report line, the hatter's letter, and the 500g and 2,500g
+request gift letters (note 50). Not built: friendship, Long Road, fish seed and lost item letters, story
 quests, and the journal section (no journal shell yet).
 Notes 38, 49 and 50 and the mine and bundle notes lean on letters: achievement
 gifts, the hatter's letter, request-count gifts, friendship mail and the Long

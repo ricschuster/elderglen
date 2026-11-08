@@ -1630,11 +1630,29 @@ export class FarmScene extends Phaser.Scene {
     else g.fillStyle(0xd8483a, 1).fillRect(x + 12, y + 5, 3, 2);
   }
 
+  /** A yellow mark over the request board while a request waits to be taken (note 50). */
+  private drawRequestMark(): void {
+    const spot = this.map.services.find((s) => s.kind === "requests");
+    if (
+      !spot ||
+      this.state.quests.posted(this.state.day.clock.day).length === 0
+    )
+      return;
+    const ts = this.map.tileSize;
+    const x = spot.x * ts;
+    const y = spot.y * ts - 12;
+    this.wash
+      .fillStyle(0xf2c94c, 1)
+      .fillRect(x + 7, y, 3, 7)
+      .fillRect(x + 7, y + 9, 3, 3);
+  }
+
   private render(): void {
     this.drawGround();
     this.drawRooms();
     this.drawFurnace();
     this.drawMailbox();
+    this.drawRequestMark();
     this.drawBuild();
     this.hud.update(this.state, this.selected, this.message);
   }

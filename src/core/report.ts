@@ -27,6 +27,7 @@ export function reportLines(r: SleepReport): string[] {
     );
   }
   lines.push(...ordersReportLines(r.orders));
+  lines.push(...r.requestsLapsed);
   for (const name of r.stuckTrees)
     lines.push(
       `Your ${name.toLowerCase()} tree cannot grow. Clear the ground around it.`,
