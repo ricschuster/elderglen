@@ -129,8 +129,8 @@ Mountain (`19_valley_layout.md`).
   whose elevator stops only at floors that are a multiple of 5 (checked, SC-23a). Note for tuning: it makes the
   deep floors cheap to reach each day, so the day clock and energy are the only
   limit.
-- **The entrance** is a hall with the lift, a lost-and-found counter for the
-  trainer's posted item, the trainer and the dummy, and a shipping bin for ore only.
+- **The entrance** is a hall with the lift, the trainer's lost-and-found counter (a fee to buy one lost stack back),
+  the trainer and the dummy, and a shipping bin for ore only.
 - **Rest camps.** Every 10th floor has a lamp-lit camp with a bench and a chest.
   The chest holds a few items to take (a gift from the old dwarf lamp-keepers,
   refilled each day), and cannot be used to stash things. No healing. The camp
@@ -403,11 +403,15 @@ When health reaches zero:
    a gold quality item, as in Stardew. Placeholder: each eligible stack has a 1
    in 3 chance, at most 3. A stack is lost whole or halved by a coin flip (our
    own choice).
-4. **One item comes back.** The trainer posts one lost stack in the morning
-   mail with a note. In Stardew, lost tools are mailed back the next day (not
-   fishing poles or weapons), and the guild owner sells back one lost item or
-   stack for its sell price. Stardew's gold loss is 5 to 25 percent up to 15,000g
-   (checked, SC-23j). Our version has the trainer be the helper. This is the soft part.
+4. **One item can be bought back.** The lost stacks wait at the trainer's
+   counter. She sells back one of them for a fee equal to its sell value
+   (no profession bonus, quality counted). Buying one means the others from that
+   defeat stay lost. Only the latest defeat is kept: a new defeat replaces the
+   counter. There is no time limit and no free letter. In Stardew, lost tools are
+   mailed back the next day (not fishing poles or weapons), and the guild owner
+   sells back one lost item or stack for its sell price. Stardew's gold loss is 5
+   to 25 percent up to 15,000g (checked, SC-23j). Our version has the trainer be
+   the helper. This is the soft part.
 5. **Energy** on waking is the pass-out value (`PASS_OUT_WAKE_ENERGY`).
 
 The loss is real and small, as the owner asked. A player who flees by ladder
@@ -424,7 +428,7 @@ mines.
   that teaches telegraphs. No loss, no reward but the lesson.
 - **The trainer** (a human woman, deep tier, `20_ring1_cast.md`) gives the first
   weapon free on the first visit, teaches the three weapon families on request,
-  and is the one who posts back the lost item. Her name and voice sheet wait
+  and is the one who sells back the lost item. Her name and voice sheet wait
   for the cast and dialogue notes (`18_dialogue.md`).
 - **A first fight is optional.** The player is never forced to fight. The
   trainer offers once and then waits to be asked.
@@ -464,13 +468,10 @@ Gaps the notes left open, settled with our own placeholders (every number is in
   with the pass-out energy), then takes up to 3 stacks. The safe types are weapons,
   seeds and saplings, bundle goods of any quality, and every kept item (rods, bait,
   furniture, chests, wallpaper). Tools are not in the pack. A taken stack is lost
-  whole or half by a coin flip, and the first lost stack comes back in the
-  morning mail from the trainer (a letter written at the time, saved in the
-  mailbox). The mail is the lost and found, so there is no counter in the hall.
-  **Changed 2026-11-08 (owner, Stardew, saved Guild page):** the trainer's counter
-  gives one lost stack back for a fee equal to its sell value, and the free letter
-  goes. Not built: the mail still returns the first stack, and the fee, the counter
-  and what happens to the other stacks are for the build issue.
+  whole or half by a coin flip, and the lost stacks wait at the
+  trainer's counter (see the defeat rule). **Built (2026-11-08, #656, owner, Stardew, saved Guild page):** the trainer's
+  counter lists the latest defeat's stacks, each with its fee, in the trainer
+  screen. Buying one clears the rest. The free letter is gone.
 - **The dummy** is a counter tile in the entrance hall that shows the damage
   number and the swing timer, and never hurts. Only the "stand still" setting is
   built, the slow walking setting waits.
@@ -627,7 +628,7 @@ settled 2026-10-31). Slices 3 onward wait for build slice 3.
 2. The smith dwarf's ore shop, the furnace gift, bars, and the Smith's bundle
    with the charcoal kiln.
 3. Health, the starter weapons of all three families, the trainer, the dummy, and
-   the first two creatures. Defeat and the lost item by post.
+   the first two creatures. Defeat and the lost item at the trainer's counter.
 4. Bands 2 and 3, the other creatures, the other weapon tiers, the combat skill
    and professions, the rest camps.
 5. The fifth tier, with the axe and pickaxe tier ladder (#194), and dangerous

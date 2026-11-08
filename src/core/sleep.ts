@@ -160,9 +160,7 @@ export function sleep(
   const end = g.day.end(g.money);
   const moneyLost = end.passedOut ? end.moneyLost : 0;
   g.money -= moneyLost;
-  const lost = defeated
-    ? loseItems(g, random, g.combat.assist, g.day.clock.day)
-    : [];
+  const lost = defeated ? loseItems(g, random, g.combat.assist) : [];
   g.combat.defeatPending = false;
   // Any night's sleep restores health.
   g.combat.sync(g.skills);
