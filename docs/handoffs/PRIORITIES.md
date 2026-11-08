@@ -25,7 +25,8 @@ Built on 2026-11-08 (handoff 2026-11-08d): menu rows at touch size (#542), zoom
 keys and pinch zoom (#543), playtest script fixes (#524), geode kinds as items
 (#521), and the device pixel ratio settled as not needed (SC-72). Design item
 added: a layout addendum to note 66 for the festival maps (Harvest Showing and
-Hollow Eve maze) before they are built.
+Hollow Eve maze) before they are built. Done 2026-11-08: the addendum is in
+note 66. Geode drops and contents are drafted in note 69.
 
 Built on 2026-11-08 (handoff 2026-11-08c): Artisan Goods calibration in the sim
 bot (owner: accept year two, keep the 4000g sapling) and the tier 2 widening
