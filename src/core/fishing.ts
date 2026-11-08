@@ -62,6 +62,18 @@ export function rodById(id: string | undefined): RodDef | undefined {
 /** Game minutes one cast takes, win or lose. A placeholder: note 21 is silent. */
 export const CAST_MINUTES = 20;
 
+/** Energy a cast costs: 8 at level 0, 0.1 less per level, 7 at level 10 (note 21, as Stardew). */
+export const CAST_ENERGY = 8;
+export const CAST_ENERGY_PER_LEVEL = 0.1;
+
+export function castEnergy(level: number): number {
+  const l = Math.min(Math.max(level, 0), 10);
+  return Math.round((CAST_ENERGY - CAST_ENERGY_PER_LEVEL * l) * 10) / 10;
+}
+
+/** The message when there is too little energy to cast. */
+export const TOO_TIRED_TO_CAST = "You are too tired to cast. Rest or eat.";
+
 /** Odds weights by rarity among the fish the conditions allow. Placeholders. */
 export const RARITY_WEIGHT: Record<Rarity, number> = {
   common: 6,

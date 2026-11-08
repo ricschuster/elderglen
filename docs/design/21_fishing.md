@@ -493,7 +493,7 @@ and are in `07_tuning_numbers.md`.
   and can be repeated. Assist fixes the cast to the middle of the water in range
   and needs only a press.
 - **A cast costs game time, and (owner, 2026-11-08, Stardew) energy:** 20 minutes, whether or not a fish
-  bites, plus an energy cost that falls with fishing level (see "Decisions 2026-11-08m"; the build has no energy cost yet). The clock stands still on the fishing screen, so this is the only cost.
+  bites, plus an energy cost that falls with fishing level (see "Decisions 2026-11-08m"; built). The clock stands still on the fishing screen, so this is the only cost.
 - **Which fish.** Season, time slot (dawn before 8 am, dusk the two hours before
   nightfall, night after, day between) and weather (a rain fish bites only in
   rain). Weights by rarity are 6, 3 and 1. **Superseded 2026-11-08: no rod or level limit** (see "Decisions 2026-11-08m"). Built (issue 653): no rod or level limit, and no lost bite. If nothing is in season the bite is
@@ -604,7 +604,8 @@ Each followed Stardew, checked on the saved Fishing and Bait pages unless said.
   built, and now confirmed (saved Bait page: always single use).
 - **A cast costs energy**, falling with the fishing level: 8 at level 0, 0.1 less
   per level, 7 from level 10 (saved Fishing page). Our pool is 270 like Stardew's,
-  so the numbers are used as they are (owner, 2026-11-08, round two). Not built.
+  so the numbers are used as they are (owner, 2026-11-08, round two). Built: a cast
+  is refused with a low-energy message when energy is below the cost.
 - **A perfect catch lifts quality one grade only if the fish was already silver or
   better**, so silver to gold for us (no iridium grade). Built as drafted.
 - **Winter keeps a thinned roster** (Stardew has fewer winter fish). The count in
