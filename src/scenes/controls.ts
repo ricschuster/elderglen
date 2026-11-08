@@ -200,6 +200,23 @@ class TouchControls implements Controls {
   }
 }
 
+/**
+ * The touch profile in tap-to-move (note 27): no stick and no buttons of its
+ * own. The scene reads the taps and walks the farmer by route, so this only
+ * reports no push and no held use.
+ */
+class TapControls implements Controls {
+  readonly profile = "touch";
+  readonly objects: Phaser.GameObjects.GameObject[] = [];
+  vector(): Vec {
+    return { x: 0, y: 0 };
+  }
+  useHeld(): boolean {
+    return false;
+  }
+  setUiScale(): void {}
+}
+
 /** The profile the settings ask for. */
 export function createControls(
   scene: Phaser.Scene,
@@ -207,9 +224,11 @@ export function createControls(
   intents: Intents = {},
   ignore: (p: Phaser.Input.Pointer) => boolean = () => false,
 ): Controls {
-  return settings.profile === "touch"
+  if (settings.profile !== "touch")
+    return new DesktopControls(scene, settings.bindings, intents);
+  return settings.touchScheme === "stick"
     ? new TouchControls(scene, ignore)
-    : new DesktopControls(scene, settings.bindings, intents);
+    : new TapControls();
 }
 
 /** The keyboard hint line for the desktop profile, from the bindings. */

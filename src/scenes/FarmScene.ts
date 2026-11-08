@@ -3,7 +3,7 @@ import Phaser from "phaser";
 import { sleep } from "../core/sleep";
 import { stageOf as fruitStageOf } from "../core/fruittrees";
 import type { GameState } from "../core/save";
-import { cycle, heldAt, nextRow, toolbarSize } from "../core/toolbar";
+import { TOOLS, cycle, heldAt, nextRow, toolbarSize } from "../core/toolbar";
 import { pendingChoice } from "../core/professions";
 import { eat, type Outcome } from "../core/actions";
 import { dateOf } from "../core/calendar";
@@ -28,6 +28,7 @@ import {
 } from "../core/movement";
 import { aimAt } from "../core/aim";
 import { createControls, type Controls } from "./controls";
+import { planTap, type TapPlan } from "../core/pathing";
 import { browserStore, loadDeviceSettings } from "./storage";
 import { saveGame } from "../core/save";
 import { absoluteMinutes } from "../core/furnace";
@@ -194,6 +195,14 @@ export class FarmScene extends Phaser.Scene {
   private mouseHeld = false;
   /** Wheel movement not yet turned into a slot step, so a trackpad is not too fast. */
   private wheelDelta = 0;
+  /** Tap-to-move (note 27): the route still to walk, and what to do at the end. */
+  private tapPath: Vec[] = [];
+  private tapAct?: Vec;
+  /** The tile the last tap asked for, drawn as the target; red if no route. */
+  private tapMark?: { x: number; y: number; bad: boolean; until: number };
+  private tapDown = false;
+  private tapSwinging = false;
+  private tapStuckMs = 0;
 
   constructor() {
     super("farm");
@@ -219,6 +228,12 @@ export class FarmScene extends Phaser.Scene {
     this.mouseAim = false;
     this.mouseHeld = false;
     this.wheelDelta = 0;
+    this.tapPath = [];
+    this.tapAct = undefined;
+    this.tapMark = undefined;
+    this.tapDown = false;
+    this.tapSwinging = false;
+    this.tapStuckMs = 0;
     this.message = "";
   }
 
@@ -406,6 +421,9 @@ export class FarmScene extends Phaser.Scene {
       });
     }
 
+    if (this.controls.profile === "touch" && settings.touchScheme === "tap")
+      this.initTapInput();
+
     this.cameras.main.fadeIn(FADE_MS);
     // The villager at the door asks about the cave, once a morning.
     const today = this.state.day.clock.day;
@@ -517,39 +535,45 @@ export class FarmScene extends Phaser.Scene {
             )
         : 0,
     );
-    const v = this.controls.vector();
+    const walking = this.tapPath.length > 0;
+    const v = walking ? this.tapVector(dt) : this.controls.vector();
+    if (!walking && (v.x !== 0 || v.y !== 0)) this.cancelTap();
     this.facing = facingFrom(v, this.facing);
     if (v.x !== 0 || v.y !== 0) this.keyAim();
     const ts = this.map.tileSize;
+    const before = { ...this.pos };
     for (let i = 0; i < DEV_SPEED; i++)
       this.pos = move(
         this.pos,
         { x: v.x * SPEED * dt, y: v.y * SPEED * dt },
         PLAYER,
         ts,
-        (x, y) =>
-          this.map.isBlocked(x, y) ||
-          (this.map.hasSoil &&
-            (this.state.trees.blocks(x, y) ||
-              !!this.state.fruitTrees.at(x, y))) ||
-          !!this.rocks()?.at(x, y) ||
-          this.furnaceAt(x, y) ||
-          this.state.furniture.blocks(this.mapId, x, y) ||
-          !!this.state.chests.at(this.mapId, x, y) ||
-          this.map.serviceAt(x, y)?.kind === "camp-chest" ||
-          (this.map.hasSoil &&
-            (!!this.state.sprinklers.at(x, y) ||
-              !!this.state.machines.at(x, y))),
+        (x, y) => this.tileBlocked(x, y),
       );
+    if (walking && this.tapPath.length > 0) {
+      const moved = Math.hypot(this.pos.x - before.x, this.pos.y - before.y);
+      this.tapStuckMs =
+        moved < SPEED * dt * 0.2 ? this.tapStuckMs + dt * 1000 : 0;
+      // A body in the way: give up after a short wait, as note 27 says.
+      if (this.tapStuckMs > 600) {
+        this.cancelTap();
+        this.tapMark = undefined;
+      }
+    }
     this.player.setPosition(this.pos.x, this.pos.y);
     this.drawHat();
     this.repeatUse(delta * DEV_SPEED);
     this.pickUp();
 
-    const front = this.aimTile();
+    const mark = this.tapMark;
+    if (mark && this.time.now > mark.until) this.tapMark = undefined;
+    const front = this.tapMark ?? this.aimTile();
     this.target.setPosition(front.x * ts, front.y * ts);
-    // Red when the mouse points at a tile that can never be used (note 46).
-    const blocked = this.mouseAim && this.map.isBlocked(front.x, front.y);
+    // Red when the mouse points at a tile that can never be used (note 46),
+    // or a tap found no route (note 27).
+    const blocked = this.tapMark
+      ? this.tapMark.bad
+      : this.mouseAim && this.map.isBlocked(front.x, front.y);
     this.target.setStrokeStyle(
       1,
       blocked ? 0xff4040 : 0xffffff,
@@ -562,6 +586,182 @@ export class FarmScene extends Phaser.Scene {
       if (this.ladderArmed) return this.descend();
     } else this.ladderArmed = true;
     // Doors open on a click or Action, not on a walk through (see `useDoor`).
+  }
+
+  /** True if the farmer cannot stand on the tile: a wall, tree, rock or machine. */
+  private tileBlocked(x: number, y: number): boolean {
+    return (
+      this.map.isBlocked(x, y) ||
+      (this.map.hasSoil &&
+        (this.state.trees.blocks(x, y) || !!this.state.fruitTrees.at(x, y))) ||
+      !!this.rocks()?.at(x, y) ||
+      this.furnaceAt(x, y) ||
+      this.state.furniture.blocks(this.mapId, x, y) ||
+      !!this.state.chests.at(this.mapId, x, y) ||
+      this.map.serviceAt(x, y)?.kind === "camp-chest" ||
+      (this.map.hasSoil &&
+        (!!this.state.sprinklers.at(x, y) || !!this.state.machines.at(x, y)))
+    );
+  }
+
+  /** The tile under a screen point, in the world. */
+  private tileAtPointer(p: Phaser.Input.Pointer): Vec {
+    const ts = this.map.tileSize;
+    const w = this.cameras.main.getWorldPoint(p.x, p.y);
+    return { x: Math.floor(w.x / ts), y: Math.floor(w.y / ts) };
+  }
+
+  /** Something a tap can act on: a thing that blocks the way, or a door. */
+  private tapObject(x: number, y: number): boolean {
+    if (this.map.isBlocked(x, y) && !this.map.serviceAt(x, y)) return false;
+    return true;
+  }
+
+  /** Plan a tap on a tile, or undefined when there is no route (red target). */
+  private planAt(tap: Vec): TapPlan | undefined {
+    const ts = this.map.tileSize;
+    const plan = planTap(
+      {
+        width: this.map.width,
+        height: this.map.height,
+        blocked: (x, y) => this.tileBlocked(x, y),
+      },
+      tileOf(this.pos, PLAYER, ts),
+      tap,
+      (x, y) => this.tapObject(x, y),
+    );
+    if (plan && !plan.act && this.map.exitAt(tap.x, tap.y)) plan.act = tap;
+    return plan;
+  }
+
+  /** Stop walking by route and forget what the last tap wanted. */
+  private cancelTap(): void {
+    this.tapPath = [];
+    this.tapAct = undefined;
+    this.tapSwinging = false;
+    this.tapStuckMs = 0;
+  }
+
+  /**
+   * Tap-to-move (note 27): tap a spot and the farmer walks there by the
+   * shortest route; tap an object and the farmer walks beside it and acts,
+   * with the right tool for a tree or rock. A tap on the tile beside the
+   * farmer faces it and uses the held tool, for careful tilling and placing.
+   * Holding a finger down makes the farmer follow it.
+   */
+  private initTapInput(): void {
+    const mine = (
+      p: Phaser.Input.Pointer,
+      over?: Phaser.GameObjects.GameObject[],
+    ): boolean => !over?.length && !this.hud.covers(p.x, p.y) && !this.leaving;
+    const aimAtTap = (p: Phaser.Input.Pointer, fresh: boolean): void => {
+      const tap = this.tileAtPointer(p);
+      const here = tileOf(this.pos, PLAYER, this.map.tileSize);
+      const dx = tap.x - here.x;
+      const dy = tap.y - here.y;
+      if (fresh && Math.abs(dx) + Math.abs(dy) === 1) {
+        // A tap beside the farmer: face it and use the held tool.
+        this.cancelTap();
+        this.keyAim();
+        this.facing = facingFrom({ x: dx, y: dy }, this.facing);
+        this.tapMark = { ...tap, bad: false, until: this.time.now + 300 };
+        if (this.tapObject(tap.x, tap.y) && this.tileBlocked(tap.x, tap.y))
+          this.actOn(tap);
+        else if (this.map.exitAt(tap.x, tap.y)) this.action();
+        else this.use();
+        return;
+      }
+      const plan = this.planAt(tap);
+      if (!plan) {
+        this.cancelTap();
+        this.tapMark = { ...tap, bad: true, until: this.time.now + 700 };
+        return;
+      }
+      this.tapPath = plan.path;
+      this.tapAct = plan.act;
+      this.tapSwinging = false;
+      this.tapStuckMs = 0;
+      this.tapMark = { ...tap, bad: false, until: Infinity };
+      if (plan.path.length === 0 && plan.act) this.arrive();
+    };
+    const onDown = (
+      p: Phaser.Input.Pointer,
+      over: Phaser.GameObjects.GameObject[],
+    ): void => {
+      if (!mine(p, over)) return;
+      this.tapDown = true;
+      aimAtTap(p, true);
+    };
+    let last = "";
+    const onMove = (p: Phaser.Input.Pointer): void => {
+      if (!this.tapDown || !p.isDown || this.hud.covers(p.x, p.y)) return;
+      const t = this.tileAtPointer(p);
+      const k = `${t.x},${t.y}`;
+      if (k === last) return;
+      last = k;
+      aimAtTap(p, false);
+    };
+    const onUp = (): void => {
+      this.tapDown = false;
+      last = "";
+    };
+    this.input.on("pointerdown", onDown);
+    this.input.on("pointermove", onMove);
+    this.input.on("pointerup", onUp);
+    this.events.once("shutdown", () => {
+      this.input.off("pointerdown", onDown);
+      this.input.off("pointermove", onMove);
+      this.input.off("pointerup", onUp);
+    });
+  }
+
+  /** Act on a tile beside the farmer: the axe for a tree, the pickaxe for a rock. */
+  private actOn(tile: Vec): void {
+    const tree =
+      this.state.trees.at(tile.x, tile.y) ||
+      this.state.fruitTrees.at(tile.x, tile.y);
+    const rock = this.rocks()?.at(tile.x, tile.y);
+    if (tree || rock) {
+      this.select(TOOLS.indexOf(tree ? "axe" : "pickaxe"));
+      this.tapSwinging = true;
+      this.heldMs = 0;
+      this.use();
+    } else this.action();
+  }
+
+  /** The farmer is where the route ended: face the target and act on it. */
+  private arrive(): void {
+    const act = this.tapAct;
+    this.tapAct = undefined;
+    this.tapMark = undefined;
+    if (!act) return;
+    const here = tileOf(this.pos, PLAYER, this.map.tileSize);
+    const dx = act.x - here.x;
+    const dy = act.y - here.y;
+    this.keyAim();
+    if (dx !== 0 || dy !== 0)
+      this.facing = facingFrom({ x: dx, y: dy }, this.facing);
+    if (dx === 0 && dy === 0) return void this.action();
+    this.actOn(act);
+  }
+
+  /** The push for this frame along the route, and the end of it on arrival. */
+  private tapVector(dt: number): Vec {
+    const next = this.tapPath[0];
+    if (!next) return { x: 0, y: 0 };
+    const ts = this.map.tileSize;
+    const tx = (next.x + 0.5) * ts;
+    const ty = (next.y + 0.5) * ts + PLAYER.h / 2;
+    const dx = tx - this.pos.x;
+    const dy = ty - this.pos.y;
+    const dist = Math.hypot(dx, dy);
+    if (dist <= Math.max(2, SPEED * dt)) {
+      this.tapPath.shift();
+      this.tapStuckMs = 0;
+      if (this.tapPath.length === 0) this.arrive();
+      return { x: 0, y: 0 };
+    }
+    return { x: dx / dist, y: dy / dist };
   }
 
   /** A click turns the farmer toward the aim, on click only (note 46). */
@@ -627,9 +827,15 @@ export class FarmScene extends Phaser.Scene {
       !!this.rocks()?.at(front.x, front.y);
     if (
       !(axe || pick) ||
-      !(this.controls.useHeld() || this.hud.useHeld || this.mouseHeld)
+      !(
+        this.controls.useHeld() ||
+        this.hud.useHeld ||
+        this.mouseHeld ||
+        this.tapSwinging
+      )
     ) {
       this.heldMs = 0;
+      if (!(axe || pick)) this.tapSwinging = false;
       return;
     }
     this.heldMs += delta;
