@@ -22,6 +22,7 @@ import { DISHES } from "./dishes";
 import { CHESTS } from "./chestdefs";
 import { GEODE_ITEMS } from "./geodes";
 import { FISH, RODS } from "./fishing";
+import { BAITS, LURES, TRINKETS } from "./tackle";
 import { ENERGY_MULTIPLIER, QUALITY_MULTIPLIER, splitQuality } from "./quality";
 
 /** Item ids: a crop's produce uses the crop id, its seed uses `<id>-seed`. */
@@ -188,6 +189,27 @@ for (const r of RODS)
     keep: true,
   });
 
+/** Bait is bought and spent. Lures are bought, fitted and worn out. Neither sells back. */
+for (const b of BAITS)
+  items.set(b.id, {
+    id: b.id,
+    name: b.name,
+    sellPrice: 0,
+    buyPrice: b.price,
+    keep: true,
+  });
+for (const l of LURES)
+  items.set(l.id, {
+    id: l.id,
+    name: l.name,
+    sellPrice: 0,
+    buyPrice: l.price,
+    keep: true,
+  });
+/** Trinkets from the Magpie Hook: sellable, giftable curios (note 21). */
+for (const t of TRINKETS)
+  items.set(t.id, { id: t.id, name: t.name, sellPrice: t.sellPrice });
+
 /** Heading each item for the dev menu's picker, in the order the groups list. */
 const GROUPS: [string, string[]][] = [
   ["Crops", CROPS.map((c) => c.id)],
@@ -235,7 +257,10 @@ const GROUPS: [string, string[]][] = [
       ...BARS.map((b) => b.id),
     ],
   ],
-  ["Fish and rods", [...FISH, ...RODS].map((f) => f.id)],
+  [
+    "Fish and rods",
+    [...FISH, ...RODS, ...BAITS, ...LURES, ...TRINKETS].map((f) => f.id),
+  ],
   ["Wood and fibre", ["wood", "sap", "fiber", "clay", "hay"]],
 ];
 for (const [group, ids] of GROUPS)

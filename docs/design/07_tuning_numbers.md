@@ -256,7 +256,7 @@ so each tier stacks and sells separately. Bundles take any tier.
 - Wild seeds (decided 2026-10-31): forage is crafted into seasonal seeds that
   grow into forage goods and give foraging XP. Built in M3 with crafting.
 
-## Fishing (slices 1 and 2 built, the rest not)
+## Fishing (slices 1 and 2 and the bait and lures of slice 3 built, the rest not)
 
 Source: `21_fishing.md`. All of these are ours and are placeholders.
 
@@ -283,6 +283,11 @@ Built numbers (`src/core/fishing.ts`, `src/content/fish.json`, `rods.json`):
   x0.7), Wide Float 200g (bar +15 percent), Sounding Float 200g (shows the hooked fish), Magpie Hook 300g (1 cast in 5 gives
   a small treasure: a coin purse of `40 + 15 * level` gold 6 times in 10, else a
   trinket worth 30 to 120g). The Heron Rod has one lure slot, the Hearthwell Rod two.
+- Built with bait and lures: a bite wait of 1.5 to 4.5 s is multiplied by bait and
+  the Whirligig, rare, night and rain weights multiply the draw, a Magpie Hook
+  treasure rolls 1 in 5 per landed fish (purse share 0.6), trinkets Tin Spoon 30g,
+  Glass Bead 45g, Brass Button 60g, Cracked Locket 90g, Ring Box 120g. Plain Bait,
+  Fine Bait and the seven lures are sold at the general store for now.
 - Fish sell prices by rarity: common 40 to 90g, uncommon 100 to 200g, rare 250
   to 500g, cove fish 400 to 700g. Legends: Hearthwell Carp 4000g, Valley King
   3500g, Moonlit Mother 3500g, Grandmother Hush 3000g, Great Hearthfin 3000g.

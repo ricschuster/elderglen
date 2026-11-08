@@ -5,27 +5,35 @@
     "price": 50,
     "barWidth": 0.3,
     "range": 4,
-    "commonOnly": true
+    "commonOnly": true,
+    "bait": false,
+    "lures": 0
   },
   {
     "id": "hazel-rod",
     "name": "Hazel Rod",
     "price": 400,
     "barWidth": 0.36,
-    "range": 6
+    "range": 6,
+    "bait": true,
+    "lures": 0
   },
   {
     "id": "heron-rod",
     "name": "Heron Rod",
     "price": 1500,
     "barWidth": 0.42,
-    "range": 8
+    "range": 8,
+    "bait": true,
+    "lures": 1
   },
   {
     "id": "hearthwell-rod",
     "name": "Hearthwell Rod",
     "price": 4000,
     "barWidth": 0.5,
-    "range": 10
+    "range": 10,
+    "bait": true,
+    "lures": 2
   }
 ]

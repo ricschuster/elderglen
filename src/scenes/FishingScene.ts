@@ -14,6 +14,20 @@ import {
   type CatchResult,
   type RodDef,
 } from "../core/fishing";
+import {
+  BAITS,
+  LURES,
+  baitById,
+  equipBait,
+  equipLure,
+  giveTreasure,
+  lureById,
+  removeBait,
+  removeLure,
+  rollTreasure,
+  treasureText,
+  type Effects,
+} from "../core/tackle";
 import { isRaining } from "../core/weather";
 import type { Quality } from "../core/quality";
 import type { GameState } from "../core/save";
@@ -34,7 +48,7 @@ type Phase = "aim" | "wait" | "hook" | "fight" | "result";
 
 /** Seconds the charge takes to reach full power. */
 const CHARGE_SECONDS = 1.2;
-/** The wait for a bite, in seconds. Bait will shorten it (a later slice). */
+/** The wait for a bite, in seconds, before bait and lures shorten it. */
 const WAIT: [number, number] = [1.5, 4.5];
 /** The window to hook a bite, in seconds, wider with assist. */
 const HOOK_WINDOW = [1.4, 3] as const;
@@ -67,6 +81,10 @@ export class FishingScene extends Phaser.Scene {
   private distance = 0;
   private fight: Fight | undefined;
   private tutorial = false;
+  /** What the rig did to the cast in flight. */
+  private effects!: Effects;
+  private rigText!: Phaser.GameObjects.Text;
+  private buttons: Phaser.GameObjects.Text[] = [];
   private text!: Phaser.GameObjects.Text;
   private info!: Phaser.GameObjects.Text;
   private meter!: Phaser.GameObjects.Graphics;
@@ -100,6 +118,15 @@ export class FishingScene extends Phaser.Scene {
       color: "#ffffffcc",
       wordWrap: { width: 500 },
     });
+    this.rigText = this.add.text(24, 250, "", {
+      fontSize: "16px",
+      color: "#cfe8ff",
+      wordWrap: { width: 500 },
+    });
+    this.buttons = [];
+    this.tackleButton(24, "Bait (B)", () => this.cycleBait());
+    this.tackleButton(150, "Add lure (L)", () => this.addLure());
+    this.tackleButton(300, "Drop lure (X)", () => this.dropLure());
     this.bang = this.add
       .text(480, 250, "!", { fontSize: "96px", color: "#ffe9a0" })
       .setOrigin(0.5)
@@ -107,15 +134,23 @@ export class FishingScene extends Phaser.Scene {
     this.add.text(
       24,
       510,
-      "Space or press and hold: charge and lift   Esc: stop fishing",
+      "Space or press and hold: charge and lift   B, L, X: bait and lures   Esc: stop fishing",
       { fontSize: "13px", color: "#ffffffaa" },
     );
     // A tap anywhere is the one input, held or released.
-    this.input.on("pointerdown", () => this.press());
+    this.input.on(
+      "pointerdown",
+      (_p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => {
+        if (over.length === 0) this.press();
+      },
+    );
     this.input.on("pointerup", () => this.release());
     const kb = this.input.keyboard;
     kb?.on("keydown-SPACE", () => this.press());
     kb?.on("keyup-SPACE", () => this.release());
+    kb?.on("keydown-B", () => this.cycleBait());
+    kb?.on("keydown-L", () => this.addLure());
+    kb?.on("keydown-X", () => this.dropLure());
     this.showAim();
   }
 
@@ -154,7 +189,109 @@ export class FishingScene extends Phaser.Scene {
         ? "Your first catch cannot get away. Keep the green bar over the fish while the meter fills."
         : "",
     );
+    this.showRig();
     this.draw();
+  }
+
+  private tackleButton(x: number, label: string, run: () => void): void {
+    const b = this.add
+      .text(x, 455, label, {
+        fontSize: "15px",
+        color: "#ffffff",
+        backgroundColor: "#2f5f8a",
+        padding: { x: 8, y: 4 },
+      })
+      .setInteractive({ useHandCursor: true });
+    b.on("pointerdown", run);
+    this.buttons.push(b);
+  }
+
+  /** Bait and lures change between casts only. */
+  private get fitting(): boolean {
+    return this.phase === "aim" || this.phase === "result";
+  }
+
+  private showRig(): void {
+    const rig = this.state.tackle.rig(this.rod.id);
+    const lines = [`${this.rod.name}`];
+    if (!this.rod.bait) lines.push("No bait or lure slots on this rod.");
+    else {
+      const b = rig.bait;
+      lines.push(
+        b
+          ? `Bait: ${baitById(b.id)?.name} x${b.count}`
+          : "Bait: none (B to fit some from your backpack)",
+      );
+      if (this.rod.lures === 0) lines.push("Lures: no lure slot on this rod.");
+      else {
+        const l = rig.lures.map(
+          (x) => `${lureById(x.id)?.name} (${x.left} casts)`,
+        );
+        lines.push(
+          `Lures ${rig.lures.length}/${this.rod.lures}: ${l.join(", ") || "none (L to fit one)"}`,
+        );
+      }
+    }
+    this.rigText.setText(lines.join("\n"));
+    const slots = this.rod.bait;
+    for (const b of this.buttons) b.setVisible(slots && this.fitting);
+  }
+
+  private fit(refusal: string | undefined, done: string): void {
+    this.info.setText(refusal ?? done);
+    this.showRig();
+  }
+
+  private cycleBait(): void {
+    if (!this.fitting || !this.rod.bait) return;
+    const g = this.state;
+    const rig = g.tackle.rig(this.rod.id);
+    const owned = BAITS.filter(
+      (b) => !b.sea && (g.inventory.count(b.id) > 0 || rig.bait?.id === b.id),
+    );
+    const at = owned.findIndex((b) => b.id === rig.bait?.id);
+    const next = owned[at + 1];
+    if (next) {
+      if (rig.bait?.id === next.id) return;
+      return this.fit(
+        equipBait(g.tackle, g.inventory, this.rod, next.id),
+        `${next.name} fitted.`,
+      );
+    }
+    if (at >= 0 || owned.length === 0)
+      this.fit(
+        removeBait(g.tackle, g.inventory, this.rod),
+        owned.length === 0
+          ? "You have no bait. The shop sells it."
+          : "Bait taken off.",
+      );
+  }
+
+  private addLure(): void {
+    if (!this.fitting || this.rod.lures === 0) return;
+    const g = this.state;
+    const rig = g.tackle.rig(this.rod.id);
+    const next = LURES.find(
+      (l) =>
+        g.inventory.count(l.id) > 0 && !rig.lures.some((x) => x.id === l.id),
+    );
+    if (!next)
+      return this.fit("You have no other lure. The shop sells them.", "");
+    this.fit(
+      equipLure(g.tackle, g.inventory, this.rod, next.id),
+      `${next.name} fitted: ${next.text}`,
+    );
+  }
+
+  private dropLure(): void {
+    if (!this.fitting || this.rod.lures === 0) return;
+    const g = this.state;
+    const rig = g.tackle.rig(this.rod.id);
+    if (rig.lures.length === 0) return;
+    this.fit(
+      removeLure(g.tackle, g.inventory, this.rod, rig.lures.length - 1),
+      "Lure taken off.",
+    );
   }
 
   private cast(): void {
@@ -173,6 +310,8 @@ export class FishingScene extends Phaser.Scene {
     const g = this.state;
     const { season } = dateOf(g.day.clock.day);
     this.tutorial = g.fishing.total === 0;
+    const fx = g.tackle.effects(this.rod.id);
+    this.effects = fx;
     this.pending = bite(
       "river",
       { season, minutes: g.day.clock.minutes, raining: isRaining(g.weather) },
@@ -180,14 +319,17 @@ export class FishingScene extends Phaser.Scene {
       g.skills.level("fishing"),
       Math.random,
       this.tutorial,
+      fx,
     );
-    // A cast takes game time, win or lose.
+    // A cast takes game time, win or lose, and spends the bait and a lure cast.
     g.day.act(0, CAST_MINUTES);
+    const gone = g.tackle.spend(this.rod.id);
     this.phase = "wait";
     const [lo, hi] = WAIT;
-    this.timer = lo + Math.random() * (hi - lo);
+    this.timer = (lo + Math.random() * (hi - lo)) * fx.wait;
     this.text.setText("Waiting for a bite...");
-    this.info.setText("");
+    this.info.setText(gone.length ? `${gone.join(" and ")} used up.` : "");
+    this.showRig();
     this.draw();
   }
 
@@ -199,13 +341,20 @@ export class FishingScene extends Phaser.Scene {
     this.phase = "hook";
     this.timer = HOOK_WINDOW[this.assist > 0 ? 1 : 0];
     this.bang.setVisible(true);
-    this.text.setText("A bite! Press now.");
+    const b = this.pending;
+    // The Sounding Float names what is on the line.
+    this.text.setText(
+      this.effects.sounding
+        ? `A bite! It feels like a ${b.fish.name}. Press now.`
+        : "A bite! Press now.",
+    );
   }
 
   /** Back to the cast after a miss. A short pause so the message can be read. */
   private rest(): void {
     this.phase = "result";
     this.bang.setVisible(false);
+    this.showRig();
     this.draw();
   }
 
@@ -228,7 +377,7 @@ export class FishingScene extends Phaser.Scene {
       {
         behaviour: b.fish.behaviour,
         difficulty: b.fish.difficulty,
-        width: barWidth(this.rod, this.assist),
+        width: barWidth(this.rod, this.assist, this.effects.bar),
         assist: this.assist,
         tutorial: this.tutorial,
       },
@@ -247,7 +396,15 @@ export class FishingScene extends Phaser.Scene {
       random: Math.random,
       at: this.cfg.at,
     });
-    this.text.setText(this.describe(r));
+    const prize = this.effects.treasure
+      ? rollTreasure(g.skills.level("fishing"), Math.random)
+      : undefined;
+    if (prize) giveTreasure(g, prize, this.cfg.at);
+    this.text.setText(
+      [this.describe(r), prize ? treasureText(prize) : ""]
+        .filter((l) => l)
+        .join("\n"),
+    );
     this.info.setText(
       this.state.fishing.total === 1 && r.first
         ? "The first catch is always an easy one. Cast again with Space."

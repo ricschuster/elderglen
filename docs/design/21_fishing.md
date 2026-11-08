@@ -7,8 +7,8 @@ Crab Pot, Recycling Machine, Fish Pond and Skills pages were read (reference
 only, ADR 0002) and the differences were settled with the owner; see "Catch
 details and Stardew differences". Numbers are placeholders.
 The open items at the end are not decided. It answers the design half of
-issue #181. Slices 1 and 2 are built (see "Built in slices 1 and 2"); the
-rest is not.
+issue #181. Slices 1 and 2 are built (see "Built in slices 1 and 2"), and the
+bait and lure half of slice 3 (see "Built in slice 3, part one"); the rest is not.
 
 ## Why
 
@@ -486,7 +486,7 @@ and are in `07_tuning_numbers.md`.
   of note 55 is not drawn yet, so the one pond is fishable.
 - **The rod is a backpack item**, not a fifth tool (the toolbar has four tool
   slots). Use it facing water. All four rods are in data and sold at the general
-  store until the delta fisher exists. Slots, bait and lures do nothing yet.
+  store until the delta fisher exists.
 - **The cast.** Hold to charge (1.2 s to full) and release. The distance runs
   from 1 tile to the rod's range. A cast that lands on dry ground costs nothing
   and can be repeated. Assist fixes the cast to the middle of the water in range
@@ -519,6 +519,50 @@ and are in `07_tuning_numbers.md`.
   fishing message only, not in a collection page; the fishing achievements of
   note 38 (they count 10, 24 and all 46 fish, so they wait for the roster);
   water plants, jellies, trash and the recycler; the crown on a legend.
+
+## Built in slice 3, part one: bait and lures (2026-11-08, issue #596)
+
+Bait, lures and the fishing achievements. Numbers are placeholders and are in
+`07_tuning_numbers.md`; content is `src/content/tackle.json`, rules are
+`src/core/tackle.ts`.
+
+- **Slots follow the rod table.** The Reed Pole has none, the Hazel Rod a bait
+  slot, the Heron Rod bait and one lure, the Hearthwell Rod bait and two. Each
+  rod keeps its own rig, so a swap of rods keeps what was fitted.
+- **Fitting happens on the fishing screen between casts** (B bait, L add a lure,
+  X drop a lure, or the three buttons for touch). Bait fits as the whole stack of
+  that kind from the backpack, and swapping returns the old stack. A lure takes
+  one from the backpack and lasts 20 casts. Taking off an unused lure gives it
+  back, a worn one is thrown away.
+- **Spent per cast, win or lose.** A cast that lands in water spends one bait and
+  one cast of every lure, even when nothing bites. A cast on dry ground costs
+  nothing.
+- **Effects** are as drafted: bait and the Whirligig shorten the bite wait (they
+  multiply), Glint, Moth and Storm weight the draw among fish the conditions
+  already allow, the Wide Float adds 15 percent to the bar and adds to the assist
+  bar (rod bar times `1 + 0.3 + 0.15` with both), the Sounding Float names the
+  hooked fish at the bite. No lure adds a fish, lifts the Reed Pole limit or
+  skips the level 5 gate for rare fish.
+- **The Magpie Hook rolls on a landed fish**, one in five, so a lost or missed
+  bite gives no treasure. A purse is 6 times in 10, else a trinket. It does not
+  break a perfect catch. The five trinkets are plain sellable items.
+- **Shop.** Plain and Fine Bait and all seven lures are sold at the general
+  store beside the rods, until the delta fisher exists. Salted Bait is in data
+  but not on sale, because it only works at the sea. Bait and lures cannot be
+  sold back.
+- **Fishing achievements** of note 38 are in data: First Ten (10 kinds), Harbour
+  Hand (24 kinds), Whole Roster (every fish, held back until the roster has all
+  46 so a part roster cannot earn it) and A Hundred Lines (100 fish). First Ten
+  needs the second water, since the farm pond has nine fish. Whole Roster's mail
+  gift is not built.
+- **Not built (the rest of slice 3 and slice 4):** the other waters and the maps
+  they sit in (forest lake, mountain lake, delta marsh lake, sea, the delta
+  fisher and her shop), the 37 fish of those waters, shellfish pots and the
+  Trapper and Fisher professions (they wait for pots, and Fisher's level 10
+  choices wait for the level 10 choice screen), Salted Bait in use, the cove and
+  the Water room reward, the five legends and the crown, water plants, trash and
+  the recycler, the Pearl Lobster, and bundles 13 to 18 and their rewards.
+  Issue #596 stays open for these.
 
 ## Touch and accessibility
 

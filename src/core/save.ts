@@ -39,6 +39,7 @@ import { Furniture, migrateCatalogue, type FurnitureSave } from "./furniture";
 import { Mailbox, type MailEntry } from "./mail";
 import { Quests, type QuestsSave } from "./quests";
 import { FishLog, type FishingSave } from "./fishing";
+import { Tackle, type TackleSave } from "./tackle";
 import { Wardrobe, type WardrobeSave } from "./hats";
 import {
   BUILD_DAYS,
@@ -131,6 +132,8 @@ export interface GameState {
   quests: Quests;
   /** Fish caught, with the longest of each (note 21). */
   fishing: FishLog;
+  /** Bait and lures on each rod (note 21). */
+  tackle: Tackle;
   /** Wild goods on the ground today. Not saved: it respawns each morning. */
   forage: ForageField;
 }
@@ -180,6 +183,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     mail: new Mailbox(),
     quests: new Quests(),
     fishing: new FishLog(),
+    tackle: new Tackle(),
     forage: new ForageField(),
   };
 }
@@ -268,6 +272,8 @@ interface SaveData {
   quests?: QuestsSave;
   /** Absent in saves made before fishing. */
   fishing?: FishingSave;
+  /** Absent in saves made before bait and lures. */
+  tackle?: TackleSave;
 }
 
 /** Where saves live. The scene supplies one backed by the browser. */
@@ -324,6 +330,7 @@ export function serialize(g: GameState): string {
     mail: g.mail.save(),
     quests: g.quests.save(),
     fishing: g.fishing.save(),
+    tackle: g.tackle.save(),
   };
   return JSON.stringify(data);
 }
@@ -700,6 +707,7 @@ export function deserialize(text: string): GameState | undefined {
   g.mail.load(raw.mail);
   g.quests.load(raw.quests);
   g.fishing.load(raw.fishing);
+  g.tackle.load(raw.tackle);
   // Loading rechecks, so a goal met under an older save is granted (note 38).
   checkAchievements(g);
   return g;
