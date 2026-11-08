@@ -126,6 +126,10 @@ items.set("wood", { id: "wood", name: "Wood", sellPrice: 2 });
 items.set("sap", { id: "sap", name: "Sap", sellPrice: 2 });
 /** Fiber comes from weeds and sells for 1g, as Stardew's (`29_weeds.md`). It is always normal quality. */
 items.set("fiber", { id: "fiber", name: "Fiber", sellPrice: 1 });
+/** Clay turns up when soil is tilled (note 23). Stardew's clay sells for 20g. */
+items.set("clay", { id: "clay", name: "Clay", sellPrice: 20 });
+/** Hay feeds animals and cannot be sold back (note 23). */
+items.set("hay", { id: "hay", name: "Hay", sellPrice: 0, keep: true });
 /** Eggs from the coop (note 23). Sell price and energy are from memory, placeholders. */
 items.set("egg", { id: "egg", name: "Egg", sellPrice: 50, energy: 50 });
 /** Duck and rabbit goods (note 23, slice 2). Prices are placeholders, ours. */
@@ -217,7 +221,7 @@ const GROUPS: [string, string[]][] = [
       ...BARS.map((b) => b.id),
     ],
   ],
-  ["Wood and fibre", ["wood", "sap", "fiber"]],
+  ["Wood and fibre", ["wood", "sap", "fiber", "clay", "hay"]],
 ];
 for (const [group, ids] of GROUPS)
   for (const id of ids) {

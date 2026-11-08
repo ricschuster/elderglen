@@ -37,7 +37,14 @@ export function reportLines(r: SleepReport): string[] {
     lines.push("The carpenter has finished. Your new rooms are ready.");
     if (r.houseTier === 2) lines.push(WAITING_ROOMS_LINE);
   }
-  lines.push(...animalReportLines(r.animals, r.coopFinished, r.barnFinished));
+  lines.push(
+    ...animalReportLines(
+      r.animals,
+      r.coopFinished,
+      r.barnFinished,
+      r.siloFinished,
+    ),
+  );
   if (r.furnaceGifted) lines.push("The smith left a furnace by your house.");
   for (const name of r.achievements)
     lines.push(`Achievement: ${name}. The hatter has a new hat on sale.`);

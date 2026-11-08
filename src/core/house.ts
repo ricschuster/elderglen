@@ -159,6 +159,8 @@ export function orderProblem(g: GameState): string | undefined {
   if (g.houseBuild) return "The carpenter is already at work on the house.";
   if (g.animals.build)
     return `The carpenter is busy building your ${g.animals.build.building}.`;
+  if (g.animals.siloDays > 0)
+    return "The carpenter is busy building your silo.";
   const cost = nextUpgrade(g.houseTier);
   if (!cost) return "There is no further upgrade yet.";
   const missing: string[] = [];

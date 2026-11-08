@@ -8,12 +8,20 @@ import {
   COOP_SITES,
   GROW_DAYS,
   SILO_CAPACITY,
-  addHay,
+  addHay as putInSilo,
   advanceCoop,
   animalReportLines,
   bringIn,
   buyChick,
   buyHay,
+  buildingProblem,
+  depositHay,
+  advanceSilo,
+  orderSilo,
+  siloBlocks,
+  siloProblem,
+  SILO_COST,
+  SILO_SITES,
   chickProblem,
   collect,
   coopBlocks,
@@ -47,6 +55,12 @@ import { maps } from "../src/content/maps";
 import { orderProblem as houseProblem } from "../src/core/house";
 import { sleep } from "../src/core/sleep";
 import { reportLines } from "../src/core/report";
+
+/** Put hay in the silo, standing one if there is none yet. */
+function addHay(g: ReturnType<typeof newGame>, n: number) {
+  g.animals.silo = true;
+  return putInSilo(g, n);
+}
 
 /** A game with a built coop and money. */
 function coopGame() {
@@ -155,27 +169,81 @@ describe("buying and care", () => {
     expect(feedAll(g)).toEqual({ fed: 0, short: 1 });
   });
 
-  it("fills the silo from cut weeds only once a coop stands, and holds a cap", () => {
-    const g = newGame();
-    g.weeds.add(1, 1);
-    clearWeed(g, 1, 1, "hoe", () => 0.99);
+  it("feeds from the pack when there is no silo", () => {
+    const { g } = withChick();
+    buyChick(g, "B");
+    g.inventory.add("hay", 1);
+    expect(feedAll(g)).toEqual({ fed: 1, short: 1 });
+    expect(g.inventory.count("hay")).toBe(0);
+  });
+
+  it("the hopper draws on the silo before the pack", () => {
+    const { g } = withChick();
+    addHay(g, 1);
+    g.inventory.add("hay", 3);
+    expect(feedAll(g)).toEqual({ fed: 1, short: 0 });
     expect(g.animals.hay).toBe(0);
+    expect(g.inventory.count("hay")).toBe(3);
+  });
+
+  it("cut weeds give no hay, and a silo holds a cap", () => {
+    const g = newGame();
     g.animals.coopBuilt = true;
     g.weeds.add(2, 2);
     clearWeed(g, 2, 2, "hoe", () => 0.99);
-    expect(g.animals.hay).toBeGreaterThan(0);
-    addHay(g, 9999);
+    expect(g.animals.hay).toBe(0);
+    expect(g.inventory.count("hay")).toBe(0);
+    expect(putInSilo(g, 5)).toBe(0);
+    g.animals.silo = true;
+    putInSilo(g, 9999);
     expect(g.animals.hay).toBe(SILO_CAPACITY);
-    g.money = 9999;
-    expect(buyHay(g, 10)).toBe(0);
   });
 
-  it("buys backstop hay with money", () => {
+  it("buys hay into the pack, not the silo", () => {
     const g = coopGame();
     g.money = 120;
     expect(buyHay(g, 10)).toBe(2);
     expect(g.money).toBe(20);
-    expect(g.animals.hay).toBe(2);
+    expect(g.inventory.count("hay")).toBe(2);
+    expect(g.animals.hay).toBe(0);
+  });
+
+  it("tips carried hay into the silo up to its room", () => {
+    const g = coopGame();
+    g.inventory.add("hay", 10);
+    expect(depositHay(g)).toBe(0);
+    g.animals.silo = true;
+    g.animals.hay = SILO_CAPACITY - 4;
+    expect(depositHay(g)).toBe(4);
+    expect(g.inventory.count("hay")).toBe(6);
+  });
+
+  it("orders a silo, which lands in two days and blocks the other carpenter jobs", () => {
+    const g = coopGame();
+    expect(siloProblem(g)).toMatch(/need/);
+    g.inventory.add("stone", SILO_COST.stone);
+    g.inventory.add("clay", SILO_COST.clay);
+    g.inventory.add("copper-bar", SILO_COST["copper-bar"]);
+    const before = g.money;
+    expect(orderSilo(g)).toBe(true);
+    expect(g.money).toBe(before - SILO_COST.coin);
+    expect(g.inventory.count("clay")).toBe(0);
+    expect(houseProblem(g)).toMatch(/silo/);
+    expect(buildingProblem(g, "barn")).toMatch(/silo/);
+    expect(advanceSilo(g)).toBe(false);
+    expect(g.animals.silo).toBe(false);
+    expect(advanceSilo(g)).toBe(true);
+    expect(g.animals.silo).toBe(true);
+    expect(siloProblem(g)).toMatch(/already/);
+  });
+
+  it("the silo blocks its footprint on the farm", () => {
+    const g = coopGame();
+    const s = SILO_SITES.farm!;
+    expect(siloBlocks(g, "farm", s.x, s.y)).toBe(false);
+    g.animals.silo = true;
+    expect(siloBlocks(g, "farm", s.x + 2, s.y + 2)).toBe(true);
+    expect(siloBlocks(g, "farm", s.x + 3, s.y)).toBe(false);
   });
 
   it("pets once a day for friendship and mood", () => {
@@ -363,6 +431,8 @@ describe("saves", () => {
       incubator: undefined,
       animals: [],
       hay: 0,
+      silo: false,
+      siloDays: 0,
       nextId: 1,
     });
   });
@@ -371,6 +441,7 @@ describe("saves", () => {
     const raw = JSON.parse(serialize(coopGame()));
     raw.animals = {
       coopBuilt: true,
+      silo: true,
       hay: 99999,
       animals: [
         { species: "dragon" },

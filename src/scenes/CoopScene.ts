@@ -17,7 +17,8 @@ import {
   pet,
   putEgg,
   rename,
-  SILO_CAPACITY,
+  siloCapacity,
+  depositHay,
   SPECIES,
 } from "../core/animals";
 import { itemById } from "../core/items";
@@ -84,14 +85,27 @@ export class CoopScene extends Phaser.Scene {
 
   private refresh(): void {
     const a = this.state.animals;
-    this.money.setText(`Hay ${a.hay}/${SILO_CAPACITY}`);
+    const carried = this.state.inventory.count("hay");
+    this.money.setText(
+      a.silo
+        ? `Silo ${a.hay}/${siloCapacity(this.state)}, pack ${carried}`
+        : `Pack ${carried} hay`,
+    );
     const rows: Row[] = [
       {
         label: "Feed the animals",
-        detail: `One hay each, from the silo (${a.hay} hay)`,
+        detail: a.silo
+          ? `One hay each, from the hopper (${a.hay} in the silo), then your pack (${carried})`
+          : `One hay each, from your pack (${carried}). A silo would feed the bench for you`,
         buttons: [{ text: "Feed", run: () => this.feed() }],
       },
     ];
+    if (a.silo)
+      rows.push({
+        label: "Hopper",
+        detail: `Tip the hay you carry (${carried}) into the silo`,
+        buttons: [{ text: "Fill", run: () => this.fill() }],
+      });
     if (this.building === "coop" && a.tier >= INCUBATOR_TIER)
       rows.push({
         label: "Incubator",
@@ -139,8 +153,18 @@ export class CoopScene extends Phaser.Scene {
       fed === 0 && short === 0
         ? "Everyone has eaten."
         : short > 0
-          ? `Fed ${fed}. The silo ran out, ${short} still hungry. The carpenter sells hay.`
+          ? `Fed ${fed}. Out of hay, ${short} still hungry. The carpenter sells hay.`
           : `Fed ${fed}.`,
+    );
+    this.refresh();
+  }
+
+  private fill(): void {
+    const n = depositHay(this.state);
+    this.message.setText(
+      n > 0
+        ? `${n} hay into the silo.`
+        : "No hay to tip in, or the silo is full.",
     );
     this.refresh();
   }

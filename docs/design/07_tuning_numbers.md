@@ -143,7 +143,7 @@ Source: `src/core/forage.ts`, `src/content/forage.json`.
 - Winter soil digging (decided 2026-10-31, as in Stardew's Winter page):
   tilling farm soil in winter has a small chance to turn up a frost root or a
   snow tuber. Placeholder: 3 percent a tile, two thirds frost root. Stardew's
-  chance is not in the saved page. The hoe gives no clay or ore on the farm.
+  chance is not in the saved page. Tilling any soil has a 3 percent chance of clay (placeholder, decided 2026-11-08, Stardew's Hoe page says tilling may yield clay but gives no chance). The hoe gives no ore on the farm.
 - Rare finds (bundle 6): morel 150g (spring), chanterelle 160g (fall, energy
   75), snowcap mushroom 140g (winter), wild ginger 120g (any season, energy 20)
   and cave mushroom 200g (mine floors 1 to 10). Ours, with morel and chanterelle

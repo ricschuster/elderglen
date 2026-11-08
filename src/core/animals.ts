@@ -1,5 +1,6 @@
 import { dateOf } from "./calendar";
 import { festivalToday } from "./festivals";
+import { itemById } from "./items";
 import {
   animalQuality,
   splitQuality,
@@ -227,10 +228,23 @@ export const HATCHES: Record<string, Species> = {
 export const CHICKEN_PRICE = 800;
 /** Days a chick takes to grow up, if fed each day. */
 export const GROW_DAYS = 4;
-/** Hay: the silo's size, what the backstop sells it for, and what a cut weed gives. */
+/** Hay is a pack item. One silo holds this much, and the carpenter sells hay at this price (note 23). */
+export const HAY = "hay";
 export const SILO_CAPACITY = 240;
 export const HAY_PRICE = 50;
-export const HAY_PER_WEED = 2;
+/** The silo: a farm building the carpenter makes, 3 by 3, as Stardew's (clay comes from tilling soil, note 23). */
+export const SILO_COST = {
+  coin: 100,
+  stone: 100,
+  clay: 10,
+  "copper-bar": 5,
+} as const;
+export const SILO_BUILD_DAYS = 2;
+export const SILO_FOOTPRINT = { w: 3, h: 3 } as const;
+export const SILO_SITES: Record<string, { x: number; y: number }> = {
+  farm: { x: 27, y: 9 },
+  "farm-woodland": { x: 28, y: 9 },
+};
 /** What a new animal's mood and friendship start at. */
 export const START_MOOD = 128;
 
@@ -390,8 +404,12 @@ export interface AnimalsState {
   /** The egg being hatched at the big coop. */
   incubator: Incubator | undefined;
   animals: Animal[];
-  /** Hay in the silo. */
+  /** Hay in the silo. Always 0 with no silo. */
   hay: number;
+  /** True once the carpenter has built the silo. */
+  silo: boolean;
+  /** Days left on the silo job, 0 when none. One carpenter job at a time. */
+  siloDays: number;
   nextId: number;
 }
 
@@ -405,6 +423,8 @@ export function newAnimals(): AnimalsState {
     incubator: undefined,
     animals: [],
     hay: 0,
+    silo: false,
+    siloDays: 0,
     nextId: 1,
   };
 }
@@ -422,6 +442,8 @@ export function saveAnimals(a: AnimalsState): AnimalsState {
     incubator: a.incubator ? { ...a.incubator } : undefined,
     animals: a.animals.map((x) => ({ ...x })),
     hay: a.hay,
+    silo: a.silo,
+    siloDays: a.siloDays,
     nextId: a.nextId,
   };
 }
@@ -472,7 +494,12 @@ export function loadAnimals(raw: unknown): AnimalsState {
       egg: inc.egg,
       daysLeft: clamp(Math.floor(inc.daysLeft), 0, INCUBATE_DAYS),
     };
-  if (isNum(r.hay)) out.hay = clamp(Math.floor(r.hay), 0, SILO_CAPACITY);
+  out.silo = r.silo === true;
+  if (!out.silo && isNum(r.siloDays) && r.siloDays >= 1)
+    out.siloDays = Math.min(Math.floor(r.siloDays), SILO_BUILD_DAYS);
+  // An old save kept hay with no silo. It cannot stay anywhere, so it is lost.
+  if (out.silo && isNum(r.hay))
+    out.hay = clamp(Math.floor(r.hay), 0, SILO_CAPACITY);
   if (Array.isArray(r.animals))
     for (const item of r.animals) {
       const a = item as Record<string, unknown> | null;
@@ -579,6 +606,28 @@ export function coopBlocks(
   );
 }
 
+/** Where the silo stands on this map, if it has a site. */
+export function siloSite(mapId: string) {
+  return SILO_SITES[mapId];
+}
+
+/** True if a tile is part of the built silo's footprint on this map. */
+export function siloBlocks(
+  g: GameState,
+  mapId: string,
+  x: number,
+  y: number,
+): boolean {
+  const s = SILO_SITES[mapId];
+  if (!s || !g.animals.silo) return false;
+  return (
+    x >= s.x &&
+    x < s.x + SILO_FOOTPRINT.w &&
+    y >= s.y &&
+    y < s.y + SILO_FOOTPRINT.h
+  );
+}
+
 /** True if a tile is part of the built barn's footprint on this map, other than its door tile. */
 export function barnBlocks(
   g: GameState,
@@ -649,6 +698,7 @@ export function buildingProblem(g: GameState, b: Building): string | undefined {
       ? `The carpenter is already building your ${info.noun}.`
       : `The carpenter is busy with your ${g.animals.build.building}.`;
   if (g.houseBuild) return "The carpenter is busy with your house.";
+  if (g.animals.siloDays > 0) return "The carpenter is busy with your silo.";
   return shortOf(g, info.cost);
 }
 
@@ -698,6 +748,7 @@ export function upgradeProblem(g: GameState, b: Building): string | undefined {
       ? `The carpenter is already working on your ${info.noun}.`
       : `The carpenter is busy with your ${g.animals.build.building}.`;
   if (g.houseBuild) return "The carpenter is busy with your house.";
+  if (g.animals.siloDays > 0) return "The carpenter is busy with your silo.";
   return shortOf(g, up);
 }
 
@@ -803,40 +854,103 @@ export function rename(g: GameState, id: number, name: string): boolean {
   return true;
 }
 
-/** Put hay in the silo, up to its size. Returns how much went in. */
+/** Hay the silo can hold: 0 until it is built. */
+export function siloCapacity(g: GameState): number {
+  return g.animals.silo ? SILO_CAPACITY : 0;
+}
+
+/** Put hay in the silo, up to its size. Returns how much went in; 0 with no silo. */
 export function addHay(g: GameState, n: number): number {
-  if (!g.animals.coopBuilt && !g.animals.barnBuilt) return 0;
-  const put = Math.min(n, SILO_CAPACITY - g.animals.hay);
+  const put = Math.max(0, Math.min(n, siloCapacity(g) - g.animals.hay));
   g.animals.hay += put;
   return put;
 }
 
-/** Buy hay at the placeholder shop row. Returns the amount bought, 0 if refused. */
-export function buyHay(g: GameState, n: number): number {
-  if (!g.animals.coopBuilt && !g.animals.barnBuilt) return 0;
-  const room = SILO_CAPACITY - g.animals.hay;
-  const count = Math.min(n, room, Math.floor(g.money / HAY_PRICE));
-  if (count <= 0) return 0;
-  g.money -= count * HAY_PRICE;
-  g.animals.hay += count;
-  return count;
+/** Move hay from the pack into the silo, up to what it has room for. Returns how many bales went in. */
+export function depositHay(g: GameState, n = Infinity): number {
+  const put = Math.min(
+    n,
+    g.inventory.count(HAY),
+    siloCapacity(g) - g.animals.hay,
+  );
+  if (put <= 0) return 0;
+  g.inventory.remove(HAY, put);
+  g.animals.hay += put;
+  return put;
 }
 
-/** Put hay on the bench for every animal that is in and not yet fed, in one building or all. Returns how many ate and how many went without for lack of hay. */
+/** Buy hay at the placeholder shop row, into the pack. Returns the amount bought, 0 if refused. */
+export function buyHay(g: GameState, n: number): number {
+  const count = Math.min(n, Math.floor(g.money / HAY_PRICE));
+  let got = 0;
+  while (got < count && g.inventory.add(HAY)) got += 1;
+  g.money -= got * HAY_PRICE;
+  return got;
+}
+
+/** Why the silo cannot be ordered now, or undefined if it can. */
+export function siloProblem(g: GameState): string | undefined {
+  if (g.animals.silo) return "You already have a silo.";
+  if (g.animals.siloDays > 0) return "The carpenter is already building it.";
+  if (g.animals.build)
+    return `The carpenter is busy with your ${g.animals.build.building}.`;
+  if (g.houseBuild) return "The carpenter is busy with your house.";
+  const missing: string[] = [];
+  if (g.money < SILO_COST.coin)
+    missing.push(`${SILO_COST.coin - g.money}g more`);
+  for (const id of ["stone", "clay", "copper-bar"] as const) {
+    const need = SILO_COST[id];
+    const have = g.inventory.count(id);
+    if (have < need)
+      missing.push(
+        `${need - have} more ${itemById(id)?.name.toLowerCase() ?? id}`,
+      );
+  }
+  return missing.length > 0 ? `You need ${missing.join(" and ")}.` : undefined;
+}
+
+/** Pay for the silo and start the job. Returns false if it cannot. */
+export function orderSilo(g: GameState): boolean {
+  if (siloProblem(g) !== undefined) return false;
+  g.money -= SILO_COST.coin;
+  for (const id of ["stone", "clay", "copper-bar"] as const)
+    g.inventory.remove(id, SILO_COST[id]);
+  g.animals.siloDays = SILO_BUILD_DAYS;
+  return true;
+}
+
+/** One morning of the silo job. A festival day does not count. True on the morning it opens. */
+export function advanceSilo(g: GameState): boolean {
+  if (g.animals.siloDays <= 0 || festivalToday(g.day.clock.day)) return false;
+  g.animals.siloDays -= 1;
+  if (g.animals.siloDays > 0) return false;
+  g.animals.silo = true;
+  return true;
+}
+
+/**
+ * Put hay out for every animal that is in and not yet fed, in one building or
+ * all. The hopper draws on the silo first. With `fromPack` the farmer drops
+ * hay from the pack when the silo has none; the night auto-feeder does not.
+ * Returns how many ate and how many went without for lack of hay.
+ */
 export function feedAll(
   g: GameState,
   building?: Building,
+  fromPack = true,
 ): { fed: number; short: number } {
   let fed = 0;
   let short = 0;
   for (const a of g.animals.animals) {
     if (building && SPECIES[a.species].building !== building) continue;
     if (a.fed || a.outside) continue;
-    if (g.animals.hay > 0) {
-      g.animals.hay -= 1;
-      a.fed = true;
-      fed += 1;
-    } else short += 1;
+    if (g.animals.hay > 0) g.animals.hay -= 1;
+    else if (!(fromPack && g.inventory.remove(HAY, 1))) {
+      short += 1;
+      continue;
+    }
+    a.fed = true;
+    fed += 1;
   }
   return { fed, short };
 }
@@ -991,9 +1105,9 @@ export function endDay(g: GameState, random: () => number): AnimalNews {
     hatchWaiting: false,
   };
   // The deluxe coop's and barn's auto-feeders put hay out for everyone inside.
-  if (g.animals.tier >= COOP_MAX_TIER) feedAll(g, "coop");
+  if (g.animals.tier >= COOP_MAX_TIER) feedAll(g, "coop", false);
   if (g.animals.barnBuilt && g.animals.barnTier >= BARN_MAX_TIER)
-    feedAll(g, "barn");
+    feedAll(g, "barn", false);
   for (const a of g.animals.animals) {
     const ate = a.fed || a.fresh;
     if (!ate) {
@@ -1092,10 +1206,12 @@ export function animalReportLines(
   news: AnimalNews,
   coopFinished: boolean,
   barnFinished = false,
+  siloFinished = false,
 ): string[] {
   const lines: string[] = [];
   if (coopFinished) lines.push("The carpenter has finished your coop.");
   if (barnFinished) lines.push("The carpenter has finished your barn.");
+  if (siloFinished) lines.push("The carpenter has finished your silo.");
   for (const n of news.grown) lines.push(`${n} has grown up.`);
   for (const n of news.hatched) lines.push(`${n} hatched in the coop.`);
   if (news.hatchWaiting)
