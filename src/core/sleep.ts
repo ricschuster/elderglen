@@ -5,6 +5,11 @@ import type { Spot } from "./forage";
 import type { GameState } from "./save";
 import type { FarmMap } from "./map";
 import { advanceBuild } from "./house";
+import {
+  advanceCoop,
+  endDay as animalsEndDay,
+  type AnimalNews,
+} from "./animals";
 import { checkAchievements } from "./achievements";
 import { ringProgress, valleyPercent } from "./completion";
 import { deliverAll } from "./mail";
@@ -69,6 +74,10 @@ export interface SleepReport {
   houseFinished: boolean;
   /** The tier that opened, when `houseFinished` is true. */
   houseTier?: number;
+  /** True when the carpenter finished the coop this morning. */
+  coopFinished: boolean;
+  /** What the night did to the animals. */
+  animals: AnimalNews;
   /** True when the smith left the furnace this morning. */
   furnaceGifted: boolean;
   /** Achievements earned by tonight's check, whose hats are now on sale. */
@@ -204,6 +213,8 @@ export function sleep(
   );
   g.cave.endDay(maps.get(CAVE_MAP).forageSpots, random);
   const houseFinished = advanceBuild(g);
+  const coopFinished = advanceCoop(g);
+  const animals = animalsEndDay(g, random);
   const furnaceGifted = deliverFurnace(g);
 
   const achievements = checkAchievements(g).map((a) => a.name);
@@ -221,6 +232,8 @@ export function sleep(
     withered: cropsBefore - g.farm.cropCount,
     houseFinished,
     houseTier: houseFinished ? g.houseTier : undefined,
+    coopFinished,
+    animals,
     furnaceGifted,
     achievements,
     completion,

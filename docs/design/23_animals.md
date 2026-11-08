@@ -6,6 +6,38 @@ numbers" are our draft and are listed under "Open". Every number is a
 placeholder. Nothing here is built. Stardew facts
 were checked against the Stardew Valley Wiki "Animals" page on 2026-10-30.
 
+## Built, slice 1 (2026-11-08, #531)
+
+A small vertical slice is built (`src/core/animals.ts`, `CoopScene`, `coop.json`):
+the base coop, chickens only. Everything else here is still unbuilt.
+
+- **Coop.** The carpenter builds it (placeholder 4000g, 300 wood, 100 stone, 3
+  days, one carpenter job at a time with the house). It stands on the farm map
+  at a fixed site (6 by 3 tiles, door bottom row, second tile) and opens as the
+  11 by 8 base interior, door bottom left, feeding bench on the back wall. It
+  lands overnight with a morning report line. Holds 4.
+- **Chicken.** Bought young at a placeholder carpenter row (800g) because the
+  Forest keeper does not exist yet. Named by the player (a text prompt for now,
+  default names if left blank). Grows up in 4 fed days. An unfed chick does not
+  grow, a new chick needs nothing the first night.
+- **Care.** Feed all from the silo, pet (once a day), let out (clear days, not
+  winter), collect eggs. Friendship 0 to 1000, mood 0 to 255, starting at 0 and
+  128. Petting +15 and +32 mood, grass +8 and full mood, unfed -20 and -100 mood
+  at night, unpetted -10 and -30, slept outside halves mood and loses the egg
+  only. A grown, fed hen in the coop lays one egg a night, chance mood / 70
+  under 70 mood. Quality: silver over a score of 0.5, gold over 0.75, normal
+  below 150 mood (`animalQuality`). An uncollected egg waits.
+- **Hay.** Silo of 240, filled by cutting weeds (2 hay each, once a coop
+  stands), since there is no scythe or grass tile yet. The carpenter sells 10
+  hay for 500g as the backstop.
+- **Saves.** `animals` field, absent in old saves (no coop).
+- **Left out of slice 1:** other species, the barn, incubator, heater, big and
+  deluxe tiers (the coop interior does not grow yet, #531), professions,
+  auto-collect, spouse feeding, the keeper, the Meadow start coop (the Meadow
+  farm type is not built), a real scythe and grass, hearts art and animal art
+  (animals are blocks), per animal interaction on the map (the bench opens a
+  list).
+
 ## Why
 
 Bundles 11, 25 and 27 already assume animal goods and a coop, and the loom, the

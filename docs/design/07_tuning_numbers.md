@@ -363,7 +363,14 @@ are from memory and unchecked.
 - Weapons: three families, four tiers each. The first build has the starter and
   copper tier of each.
 
-## Animals (draft, not built)
+## Animals (draft; slice 1 built 2026-11-08)
+
+Slice 1 built (`animals.ts`), all placeholders: base coop 4000g, 300 wood, 100
+stone, 3 days, holds 4. Chicken 800g, grows in 4 fed days, one egg a night (50g,
+energy 50, from memory). Silo 240 hay, hay 50g each at the carpenter, a cut weed
+gives 2. Pet +15 friendship and +32 mood, grass +8 and 255 mood, unfed -20 and
+-100, unpetted -10 and -30, slept outside halves mood. Start friendship 0, mood
+128. The rest below is not built.
 
 Source: `23_animals.md`. All of these are placeholders. Stardew facts were
 checked against the Stardew Valley Wiki on 2026-10-30.

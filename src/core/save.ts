@@ -1,3 +1,9 @@
+import {
+  loadAnimals,
+  newAnimals,
+  saveAnimals,
+  type AnimalsState,
+} from "./animals";
 import { Day } from "./day";
 import { Farm } from "./farm";
 import { Trees, type Tree } from "./trees";
@@ -94,6 +100,8 @@ export interface GameState {
   resumeMap?: string;
   /** The upgrade the carpenter is building, if any. */
   houseBuild: HouseBuild | undefined;
+  /** The coop, its animals and the hay silo (note 23). */
+  animals: AnimalsState;
   /** Today's weather. */
   weather: Weather;
   /** Tomorrow's weather, known a day ahead (the forecast). */
@@ -154,6 +162,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     houseTier: 0,
     catalogue: false,
     houseBuild: undefined,
+    animals: newAnimals(),
     weather: "sunny",
     tomorrow: "sunny",
     endSeen: false,
@@ -224,6 +233,8 @@ interface SaveData {
   resumeMap?: string;
   /** Absent when no upgrade is being built, and in older saves. */
   houseBuild?: HouseBuild;
+  /** Absent in saves made before animals. */
+  animals?: AnimalsState;
   weather: Weather;
   /** Absent in saves made before the forecast existed. */
   tomorrow?: Weather;
@@ -291,6 +302,7 @@ export function serialize(g: GameState): string {
     catalogue: g.catalogue,
     resumeMap: g.resumeMap,
     houseBuild: g.houseBuild ? { ...g.houseBuild } : undefined,
+    animals: saveAnimals(g.animals),
     weather: g.weather,
     tomorrow: g.tomorrow,
     endSeen: g.endSeen,
@@ -656,6 +668,7 @@ export function deserialize(text: string): GameState | undefined {
     )
       g.houseBuild = { tier, daysLeft };
   }
+  g.animals = loadAnimals(raw.animals);
   if (WEATHERS.includes(raw.tomorrow as Weather))
     g.tomorrow = raw.tomorrow as Weather;
   g.endSeen = raw.endSeen === true;

@@ -52,3 +52,16 @@ export function forageQuality(level: number, roll: number): Quality {
   if (roll < level / 15) return "silver";
   return "normal";
 }
+
+/**
+ * Animal product quality (note 23, after Stardew): a score of friendship / 1000
+ * minus (1 - mood / 225). Below 150 mood a product is always normal. Above it,
+ * a score over 0.5 is silver and over 0.75 is gold. No iridium tier exists here.
+ */
+export function animalQuality(friendship: number, mood: number): Quality {
+  if (mood < 150) return "normal";
+  const score = friendship / 1000 - (1 - mood / 225);
+  if (score > 0.75) return "gold";
+  if (score > 0.5) return "silver";
+  return "normal";
+}

@@ -1,3 +1,4 @@
+import { addHay, HAY_PER_WEED } from "./animals";
 import { dateOf } from "./calendar";
 import { CROPS, cropById } from "./crops";
 import { farmTypeById } from "./farmtypes";
@@ -518,6 +519,9 @@ export function clearWeed(
     );
   else swing(g, tool);
   g.weeds.remove(x, y);
+  // Cut grass fills the silo with hay once there is a coop. There is no scythe
+  // or grass tile yet, so a cut weed stands in (note 23).
+  addHay(g, HAY_PER_WEED);
   // Fiber at 50 percent. A weed that drops none may drop a mixed seed, at the
   // farm type's chance (notes 29 and 32).
   const drop =
