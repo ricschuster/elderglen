@@ -168,8 +168,8 @@ true for the cellar (#282). The carpenter lists "Upper floor" (65,000g, 100
 wood standing in for hardwood) and "Cellar stairs" (100,000g), and says the
 rooms are for later when tier 2 is ordered and when it lands. Not built: the
 larger kitchen and bedroom at tier 2 (the issue asked for them; the band is the
-part that is visible, and growing the rooms needs a wider map, so it waits for
-the owner's call).
+part that is visible, and growing the rooms needs a wider map). The owner
+settled it on 2026-11-08: widen both by 2 tiles, one last frame shift (note 68).
 
 Shapes, from the images:
 

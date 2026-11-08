@@ -109,6 +109,47 @@ whole barn shifting.
   ready", so the change is not missed. Whether Stardew shows anything is not
   checked (SC-70).
 
+## Tier 2 widens the kitchen and the bedroom (settled 2026-11-08)
+
+The owner chose the Stardew plan: at tier 2 both rooms grow wider, as the
+owner's tier 1 and tier 2 screenshots show (about 34 tiles wide against 31).
+The tier 1 kitchen has its wall on column 0, so growing it left cannot keep
+the tile rule above. This is the one allowed break, and the last one.
+
+- **The shift.** Every tile of the house map moves right by `TIER_2_WIDEN` (2)
+  columns, in all layers of every tier. The map goes from 31 to 35 wide, the
+  depth stays 22. The start room's corner moves from (9, 12) to (11, 12), the
+  door from (11, 21) to (13, 21). Tier 0 and tier 1 look the same as before,
+  with two more columns of void on the left, and the camera bounds move with
+  them (`bounds` 11,12,11,10 and `bounds-t1` 2,10,31,12).
+- **What tier 2 adds.** Kitchen interior 7 to 9 wide: the old west wall
+  (now column 2) becomes floor and a new wall stands at column 0. Bedroom
+  interior 8 to 10 wide: the old east wall (now column 32) becomes floor and
+  the wall moves to column 34. Depth is unchanged. The upper band widens to
+  match, so the spare room gains 2 columns on the left and the nursery 2 on
+  the right, and the divider between them stays where the shift puts it
+  (column 16).
+- **Furniture.** Nothing placed moves relative to the room. Pieces keep their
+  tile after the shift (`legacyHouseTile` adds 2 to x). Pieces against the old
+  west or east wall now stand one step in from the new wall, which is fine.
+  Kitchen fixtures (counter, fridge, sink) are on the north wall and do not
+  move. The cellar stairs of tier 3 shift with everything and stay in their
+  3 by 3 patch, now two tiles in from the corner (the rule: never move old
+  tiles).
+- **Saves.** `HOUSE_LAYOUT` becomes 4. A layout 3 save moves every house piece
+  (furniture and chests, map `house`) right by 2. Older layouts first go to
+  layout 3 by the existing steps, then add 2, so one chain covers all of them.
+  The tier number is the only other house state, and it needs no change.
+- **Authoring.** The shift is done by a one-off script over `house.json`
+  (move every tile and object right, grow the map width, edit the bounds
+  properties), not by hand in Tiled. Then `ground-t2` and `collision-t2` are
+  extended with the two wider rooms, with a test that the tier 1 view is
+  unchanged apart from the offset.
+- **No wake line change.** The report already says the new rooms are ready.
+  The waiting line about the spare room and nursery stays.
+- **Build issue to file:** `feat: tier 2 widens the kitchen and bedroom (note
+  68)`. Not built.
+
 ## Still open
 
 ## Built (#421, 2026-11-07)
@@ -165,7 +206,8 @@ whole barn shifting.
   and tidy, for later.") shows when tier 2 is ordered and in the morning report
   when it lands.
 - **Not built.** The larger kitchen and bedroom at tier 2: the map stays 31
-  wide, and widening it would move the tier 1 tiles again.
+  wide, and widening it would move the tier 1 tiles again. Settled in "Tier 2
+  widens the kitchen and the bedroom" above.
 
 ## Built (#282, 2026-11-07)
 
