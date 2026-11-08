@@ -88,12 +88,12 @@ export class MailScene extends Phaser.Scene {
     this.menu.setRows([]);
     const l = result.letter;
     this.card.push(
-      this.add.text(40, 70, l.title, { fontSize: "28px", color: "#ffe9a0" }),
-      this.add.text(40, 112, `From ${l.sender}`, {
+      this.add.text(40, 100, l.title, { fontSize: "28px", color: "#ffe9a0" }),
+      this.add.text(40, 142, `From ${l.sender}`, {
         fontSize: "18px",
         color: "#ffffffaa",
       }),
-      this.add.text(40, 150, l.body, {
+      this.add.text(40, 184, l.body, {
         fontSize: "20px",
         color: "#d8e8c8",
         lineSpacing: 8,

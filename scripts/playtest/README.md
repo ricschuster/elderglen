@@ -55,7 +55,10 @@ errors. The game's weather and forage are random, so reruns differ.
    two builds by running the same personas on both.
 
 Dev hooks the scripts can call: `window.farmGive(id, n)` adds items (returns
-`"ok"`, `"unknown"` or `"full"`), `window.farmMoney(n)` adds money. By hand, the
+`"ok"`, `"unknown"` or `"full"`), `window.farmMoney(n)` adds money,
+`window.farmWalk(x, y)` starts the tap route to a tile (false when there is no
+route; `farmDebug().walking` is true until it ends), `window.farmBlocked()` lists
+the tiles the farmer cannot stand on now. By hand, the
 debug menu (`docs/design/42_debug_menu.md`) opens with the backtick key or the
 DBG button. Both exist in dev builds only.
 
@@ -75,13 +78,11 @@ Settings, as environment variables:
   and the profession scene opens.
 - `MAX_DAY`: stop after this day, default 84 (the calendar wraps into year 2).
 - `SPEED`: run the world this many times faster (the dev build reads `?speed=N`,
-  see `FarmScene`). It scales walking, the clock tick and the axe repeat, and
-  the bot's stop tolerance and face tap scale with it. It is safe for scripts
-  that barely walk (`wood.mjs`: 3.6 times faster at 4, same results). It is
-  NOT usable for the persona runs at 4: the game moves whole frames, so the bot
-  cannot stop on a tile, and an 84 day expert run took 163 minutes with 67
-  failed walks (1x: 3 in 16 days). 2 is untested. Not checked with
-  `playtest:touch`. For rules and balance use `npm run sim`.
+  see `FarmScene`). It scales walking, the clock tick and the axe repeat. The
+  bot walks with the game's own tap route (`window.farmWalk`, see "Walking"
+  below), so it no longer times key holds and speeds up to 4 are reliable for
+  the persona runs (checked at 2 and 4, see "Walking"). Above 4 is untested.
+  Not checked with `playtest:touch`. For rules and balance use `npm run sim`.
 - `SEED`: a number that makes `Math.random` repeatable in the browser, so two
   builds see the same weather, forage and trees. Timing still varies, so runs
   are close, not identical. Compare final counts only: findings pile up on the
@@ -111,6 +112,54 @@ not that the game is broken. `useAt` and `walkTo` plan on the map the bot is on,
 so read it from the game first (`here = d.map` in `lib.mjs`). This bit after the
 hall became a walkable map.
 
+## Walking
+
+`Bot.walkTo` asks the game to walk (`farmWalk`) and waits until `farmDebug().walking`
+is false. If that fails it falls back to timed key holds (`holdAxis`), which is
+the old, unreliable path. Before it plans, the bot reads the game's blocked tiles
+(`farmBlocked`, in `refreshMap`), so rocks, machines, sprinklers and felled
+trees count as the game counts them.
+
+Why walking failed before (#333): the bot's own map knew only the walls and the
+trees in the map file. It did not know about rocks or other things placed on the
+farm, so it picked a stand tile (or a path) that the game had blocked, and no
+key hold could get there. The same tiles failed again and again for that reason.
+It was not frame timing. The key-hold timing was also fragile at speed, and the
+tap route replaces it. `tapVector` in `FarmScene` now allows for the larger step
+at `?speed=N`, so it does not step over a waypoint.
+
+Two more causes of stalls were in the bot, not the game:
+
+- The game opens the Greencoat (the morning the mines open, day 5), the cave
+  choice and the orders intro by itself. They pause the farm, so every walk
+  timed out. `Bot.dismissModals` closes them with Escape before each walk.
+- The shop rows were found by guessing the order (crop list order for seeds,
+  backpack order for sales). The game sorts them (seeds by price, goods by
+  name), so the bot bought and sold the wrong things. `rowOf` in `play.mjs` now
+  finds a row by its label (`window.farmItemName` gives the display name).
+
+Measured on 2026-11-08, to day 17, three or four runs at once on 48 cores:
+expert at 4x, 0 walk failures and 0 retries (9.4 minutes, was 163 minutes to
+day 84 with 67 failures); expert at 2x, 0 and 0; intermediate at 1x, 0 and 0
+(8.7 minutes); no findings in either full run. Real time per day at 4x is not a
+quarter of 1x, because the bot's polling and the game's own pauses do not
+scale. Casual at 4x still reports "energy never ran out during overdo" and
+"morning energy after pass-out": at 4x the clock reaches 2 am before the energy
+runs out, so that persona's pass-out checks are valid at 1x only.
+
+If a walk fails now, look at `farmBlocked()` and the plan first.
+
+## Smoke test
+
+`node scripts/playtest/smoke.mjs` (about 60 seconds) opens the newer scenes in a
+fresh game and fails on any console or page error: collections and achievements,
+the smith (cracks a geode), the carpenter list, the mailbox (one letter), the
+request board and the open requests list, the village green and hedge maps
+(walks a few tiles), and mine floors 11, 26, 45, 85, 100 and 120. Screenshots go
+to `playtest-out/shots/smoke-*.png`. It does not test festival play (the
+festival scene only opens on a festival day), buying furniture or decor, or
+walking in the mine.
+
 ## Personas
 
 - `expert`: knows every bundle, plants each bundle crop on day 1, forages every
@@ -131,6 +180,7 @@ all three after a change to prices, bundles, growth or energy.
 - `play.mjs`: the daily routine and the personas.
 - `late.mjs`: the stay-up-late test.
 - `wood.mjs`: the wood persona.
+- `smoke.mjs`: the smoke test of the newer scenes.
 - `touch.mjs`: the touch persona. It uses the Chrome DevTools protocol to send
   real multi-touch events. It is an emulator: it cannot judge how the targets
   feel under a finger, the frame rate, or Android Chrome's own behaviour.

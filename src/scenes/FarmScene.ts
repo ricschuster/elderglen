@@ -525,11 +525,41 @@ export class FarmScene extends Phaser.Scene {
         giveMoney(this.state, n);
         this.render();
       };
+    // Dev hook for the playtest bot (#333): walk to a tile by the tap route, so
+    // the bot does not time key holds. Returns false when there is no route.
+    if (import.meta.env.DEV)
+      (window as unknown as { farmWalk: unknown }).farmWalk = (
+        x: number,
+        y: number,
+      ) => {
+        this.cancelTap();
+        const plan = this.planAt({ x, y });
+        if (!plan) return false;
+        this.tapPath = plan.path;
+        return true;
+      };
+    // Dev hook for the playtest bot: an item's display name, to find its row
+    // in a shop list by label.
+    if (import.meta.env.DEV)
+      (window as unknown as { farmItemName: unknown }).farmItemName = (
+        id: string,
+      ) => itemById(id)?.name;
+    // Dev hook for the playtest bot (#333): every tile the farmer cannot stand
+    // on now (walls, trees, rocks, machines, furniture), as "x,y" strings.
+    if (import.meta.env.DEV)
+      (window as unknown as { farmBlocked: unknown }).farmBlocked = () => {
+        const out: string[] = [];
+        for (let y = 0; y < this.map.height; y++)
+          for (let x = 0; x < this.map.width; x++)
+            if (this.tileBlocked(x, y)) out.push(`${x},${y}`);
+        return out;
+      };
     if (import.meta.env.DEV)
       (window as unknown as { farmDebug: () => unknown }).farmDebug = () => ({
         pos: this.pos,
         tile: tileOf(this.pos, PLAYER, ts),
         facing: this.facing,
+        walking: this.tapPath.length > 0,
         selected: this.selected,
         target: this.aimTile(),
         map: this.mapId,
@@ -781,7 +811,7 @@ export class FarmScene extends Phaser.Scene {
     const dx = tx - this.pos.x;
     const dy = ty - this.pos.y;
     const dist = Math.hypot(dx, dy);
-    if (dist <= Math.max(2, SPEED * dt)) {
+    if (dist <= Math.max(2, SPEED * dt * DEV_SPEED)) {
       this.tapPath.shift();
       this.tapStuckMs = 0;
       if (this.tapPath.length === 0) this.arrive();
