@@ -42,7 +42,7 @@ in the desktop game the same day (SC-42, SC-46, SC-63, SC-64, all done).
 
 - **Canvas.** Phaser's scale mode becomes RESIZE, so the canvas is the window
   size. `src/main.ts` stops fixing 960 by 540. The device pixel ratio is
-  respected so text stays sharp.
+  left as it is (no dense canvas), settled in SC-72.
 - **World camera.** Zoom is the default zoom times the player's step. The
   default zoom is chosen so the window shows at least 30 by 17 tiles, and a
   bigger window shows more at the same zoom. The camera recalculates on resize.
@@ -97,13 +97,18 @@ two finger pinch scales it from where the fingers went down. Both clamp to 75 to
 200 percent, apply at once and save for this device (a pinch saves when a finger
 lifts). The keys are fixed, not rebindable. `pinchPercent` in `core/view.ts`.
 
+## Settled: device pixel ratio
+
+Not needed (SC-72, owner, 2026-11-08). Stardew's zoom and UI zoom are a plain
+zoom, with no sharp pixel rendering and no text sharpening at any step, so our
+current behaviour matches. Not checked on high-DPI or OS-scaled displays
+(desktop only). The canvas backing store stays the CSS size, with no dense
+canvas. Revisit only if soft text on dense screens becomes a real complaint
+(#543).
+
 ## Still open
 
 - Borderless Windowed needs the desktop wrapper.
-- Device pixel ratio is not used yet, so text is not crisper on dense screens.
-  Phaser 4 has no game level resolution, so the canvas backing store is the CSS
-  size. Crisper text means a denser canvas with every camera and the menu box
-  scaled to match, which is a design call before it is built (#543).
 - The scripted touch playtest maps clicks onto a fixed 960 by 540 canvas and
   needs updating (#524).
 
