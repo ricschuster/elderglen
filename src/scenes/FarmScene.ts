@@ -153,6 +153,11 @@ import {
 } from "../core/furniture";
 import { hatById } from "../core/hats";
 import {
+  GREENHOUSE_SITE,
+  greenhouseHolds,
+  greenhouseRepaired,
+} from "../core/greenhouse";
+import {
   CELLAR_MAP,
   HOUSE_MAP,
   houseHolds,
@@ -728,7 +733,7 @@ export class FarmScene extends Phaser.Scene {
     // Cap the step so a stalled frame cannot throw the player across the map.
     const dt = Math.min(delta, 50) / 1000;
     this.night.setAlpha(
-      this.map.hasSoil || festivalOfMap(this.mapId)?.activity === "maze"
+      this.outdoorSoil || festivalOfMap(this.mapId)?.activity === "maze"
         ? NIGHT_ALPHA *
             darkness(
               dateOf(this.state.day.clock.day).season,
@@ -841,7 +846,7 @@ export class FarmScene extends Phaser.Scene {
   private tileBlockedNoHorse(x: number, y: number): boolean {
     return (
       this.map.isBlocked(x, y) ||
-      (this.map.hasSoil &&
+      (this.outdoorSoil &&
         (this.state.trees.blocks(x, y) || !!this.state.fruitTrees.at(x, y))) ||
       !!this.rocks()?.at(x, y) ||
       this.furnaceAt(x, y) ||
@@ -857,9 +862,14 @@ export class FarmScene extends Phaser.Scene {
       (this.mapId === CELLAR_MAP && this.state.casks.at(x, y)) ||
       !!this.state.chests.at(this.mapId, x, y) ||
       this.map.serviceAt(x, y)?.kind === "camp-chest" ||
-      (this.map.hasSoil &&
+      (this.outdoorSoil &&
         (!!this.state.sprinklers.at(x, y) || !!this.state.machines.at(x, y)))
     );
+  }
+
+  /** True on a map with the farm's soil: its trees, weeds, forage and machines live here. The greenhouse has its own soil. */
+  private get outdoorSoil(): boolean {
+    return this.map.hasSoil && !this.map.indoors;
   }
 
   /** The tile under a screen point, in the world. */
@@ -1057,7 +1067,7 @@ export class FarmScene extends Phaser.Scene {
 
   /** Pull in goods lying on the ground near the player, as far as the bag has room. */
   private pickUp(): void {
-    if (!this.map.hasSoil || this.state.ground.count === 0) return;
+    if (!this.outdoorSoil || this.state.ground.count === 0) return;
     const here = tileOf(this.pos, PLAYER, this.map.tileSize);
     if (this.state.ground.collect(this.state.inventory, here, pickupRadius()))
       this.render();
@@ -1117,9 +1127,14 @@ export class FarmScene extends Phaser.Scene {
     if (this.leaving) return false;
     const exit = this.exitAtAim();
     if (!exit) return false;
+    // The Larder may have been finished at the hall since the last morning.
+    this.refreshHolds();
     if (exitOpen(exit, this.holds)) this.leave(exit);
     else {
-      this.message = "It is shut.";
+      this.message =
+        exit.id === "greenhouse"
+          ? "The greenhouse is a ruin. Finish the Larder bundles at the village hall to repair it."
+          : "It is shut.";
       this.render();
     }
     return true;
@@ -1708,6 +1723,7 @@ export class FarmScene extends Phaser.Scene {
     if (this.state.animals.coopBuilt) this.holds.add(COOP_BUILT);
     if (this.state.animals.barnBuilt) this.holds.add(BARN_BUILT);
     for (const h of houseHolds(this.state.houseTier)) this.holds.add(h);
+    for (const h of greenhouseHolds(this.state)) this.holds.add(h);
   }
 
   private endDay(): void {
@@ -1821,19 +1837,18 @@ export class FarmScene extends Phaser.Scene {
     if (this.mapId === CAVE_MAP) this.drawCave(put);
     if (isFestivalMap(this.mapId)) this.drawFestivalProps();
     if (!this.map.hasSoil) return;
-    for (const { x, y, plot } of this.state.farm.each()) {
+    const soil = this.map.indoors ? this.state.greenhouse : this.state.farm;
+    for (const { x, y, plot } of soil.each()) {
       put(x, y, soilKey(plot.wateredToday));
       const fert = fertilizerById(plot.fertilizer);
       if (fert) put(x, y, fertKey(fert.line));
       const crop = plot.crop;
       const def = crop && cropById(crop.id);
       if (!crop || !def) continue;
-      const stage = stageOf(
-        crop.daysGrown / def.growDays,
-        this.state.farm.isRipe(x, y),
-      );
+      const stage = stageOf(crop.daysGrown / def.growDays, soil.isRipe(x, y));
       put(x, y, cropKey(crop.id, stage));
     }
+    if (this.map.indoors) return;
     for (const { x, y, id } of this.state.forage.each())
       put(x, y, forageKey(id));
     for (const w of this.state.weeds.each()) put(w.x, w.y, WEED_KEY);
@@ -2064,6 +2079,18 @@ export class FarmScene extends Phaser.Scene {
       );
   }
 
+  /** The greenhouse on the farm: a vine-grown ruin with scaffold poles until the Larder is done. Placeholder. */
+  private drawGreenhouseRuin(): void {
+    if (!isFarmMap(this.mapId) || greenhouseRepaired(this.state)) return;
+    const ts = this.map.tileSize;
+    const { x, y, w, h } = GREENHOUSE_SITE;
+    const g = this.wash;
+    g.fillStyle(0x3a5a3a, 0.55).fillRect(x * ts, y * ts, w * ts, h * ts);
+    g.lineStyle(3, 0x8a6a45, 1);
+    for (let dx = 0; dx <= w; dx += 2)
+      g.lineBetween((x + dx) * ts, y * ts, (x + dx) * ts, (y + h) * ts);
+  }
+
   private drawCoop(): void {
     const a = this.state.animals;
     this.drawFarmBuilding(
@@ -2238,6 +2265,7 @@ export class FarmScene extends Phaser.Scene {
     // drawRooms clears the wash layer, so everything else draws after it.
     this.drawRooms();
     this.drawCoop();
+    this.drawGreenhouseRuin();
     this.drawCoopInside();
     this.drawFurnace();
     this.drawMailbox();

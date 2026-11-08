@@ -19,6 +19,13 @@ const EPSILON = 1e-9;
 export class Farm {
   private plots = new Map<string, Plot>();
 
+  /**
+   * An indoor plot (the greenhouse, `docs/design/31_farm_growth.md`): crops
+   * grow in any season, never wither when it changes, and fertilizer stays.
+   * Watering is still the player's (or a sprinkler's) job, and rain does not reach it.
+   */
+  constructor(readonly indoors = false) {}
+
   /** Plots keyed by "x,y", as plain data. */
   save(): Record<string, Plot> {
     return structuredClone(Object.fromEntries(this.plots));
@@ -47,12 +54,12 @@ export class Farm {
     return true;
   }
 
-  /** Plant a seed in tilled, empty soil. Fails out of season. */
+  /** Plant a seed in tilled, empty soil. Fails out of season, except indoors. */
   plant(x: number, y: number, cropId: string, season: Season): boolean {
     const plot = this.plotAt(x, y);
     const def = cropById(cropId);
-    if (!plot || plot.crop || !def || !def.seasons.includes(season))
-      return false;
+    if (!plot || plot.crop || !def) return false;
+    if (!this.indoors && !def.seasons.includes(season)) return false;
     plot.crop = { id: cropId, daysGrown: 0, harvests: 0 };
     return true;
   }
@@ -133,14 +140,15 @@ export class Farm {
       const crop = plot.crop;
       if (crop) {
         const def = cropById(crop.id);
-        if (!def || !def.seasons.includes(newSeason)) delete plot.crop;
+        if (!def || (!this.indoors && !def.seasons.includes(newSeason)))
+          delete plot.crop;
         else if (plot.wateredToday)
           crop.daysGrown +=
             growth + (fertilizerById(plot.fertilizer)?.growthBonus ?? 0);
       }
       const keep = fertilizerById(plot.fertilizer)?.keepWet;
       plot.wateredToday = keep !== undefined && random() < keep;
-      if (seasonChanged && !plot.crop) delete plot.fertilizer;
+      if (seasonChanged && !plot.crop && !this.indoors) delete plot.fertilizer;
     }
   }
 }

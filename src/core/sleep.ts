@@ -152,6 +152,8 @@ export function sleep(
 
   const { season } = dateOf(g.day.clock.day);
   g.farm.endDay(season, growthRate(g.skills), random, season !== before);
+  // The greenhouse grows in every season and rain does not reach it.
+  g.greenhouse.endDay(season, growthRate(g.skills), random, season !== before);
   g.weather = g.tomorrow;
   const next = dateOf(g.day.clock.day + 1);
   g.tomorrow = rollWeather(next.season, next.dayOfSeason, random);

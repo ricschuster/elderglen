@@ -56,6 +56,7 @@ export function useHeld(
   if (held.kind === "empty") return fail("nothing held");
   if (held.kind === "tool" && toolAway(g, held.tool))
     return fail("at the smith");
+  if (map.indoors) return useInGreenhouse(g, map, held, x, y);
   // Any tool, or the empty hand, lifts a placed sprinkler (SC-48).
   if (held.kind === "tool" && g.sprinklers.at(x, y))
     return pickUpSprinkler(g, x, y);
@@ -110,6 +111,31 @@ export function useHeld(
   return fail("nothing to do here");
 }
 
+/**
+ * The greenhouse: the hoe, can, seeds and fertilizer work its own soil, and
+ * nothing else does. The farm's trees, weeds, machines and sprinklers are
+ * stored by tile and belong to the farm map, so they are never touched here.
+ */
+function useInGreenhouse(
+  g: GameState,
+  map: FarmMap,
+  held: Held,
+  x: number,
+  y: number,
+): Outcome {
+  const soil = g.greenhouse;
+  if (held.kind === "tool" && held.tool === "hoe")
+    return map.isTillable(x, y)
+      ? till(g, x, y, Math.random, soil)
+      : fail("cannot dig here");
+  if (held.kind === "tool" && held.tool === "can") return water(g, x, y, soil);
+  if (held.kind === "item" && (cropOfSeed(held.id) || held.id === MIXED_SEED))
+    return plant(g, x, y, held.id, Math.random, soil);
+  if (held.kind === "item" && fertilizerById(held.id))
+    return fertilize(g, x, y, held.id, soil);
+  return fail("nothing to do here");
+}
+
 /** The reason `act` gives when the tile holds nothing to act on. It shows no message. */
 export const NOTHING_TO_ACT_ON = "nothing to act on";
 
@@ -132,7 +158,9 @@ function pick(g: GameState, x: number, y: number): Outcome {
  */
 export function act(g: GameState, map: FarmMap, x: number, y: number): Outcome {
   if (!map.hasSoil) return fail(NOTHING_TO_ACT_ON);
-  const result = pick(g, x, y);
+  const result = map.indoors
+    ? harvest(g, x, y, Math.random, g.greenhouse)
+    : pick(g, x, y);
   if (result.ok) return result;
   return QUIET.has(result.reason) ? fail(NOTHING_TO_ACT_ON) : result;
 }

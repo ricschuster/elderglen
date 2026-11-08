@@ -1,3 +1,4 @@
+import { cropById } from "./crops";
 import {
   loadAnimals,
   newAnimals,
@@ -88,6 +89,8 @@ export interface GameState {
   fruitTrees: FruitTrees;
   /** Machines standing on the farm. */
   machines: Machines;
+  /** The greenhouse's soil: grows in any season (note 31). */
+  greenhouse: Farm;
   /** The casks in the cellar (note 24). */
   casks: Casks;
   /** The furnace the smith gives. */
@@ -157,6 +160,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     money: START_MONEY,
     inventory: new Inventory(),
     farm: new Farm(),
+    greenhouse: new Farm(true),
     trees: new Trees(farmMap.trees),
     ground: new GroundItems(),
     weeds: new Weeds(),
@@ -231,6 +235,8 @@ interface SaveData {
   fruitTrees?: PlacedFruitTree[];
   /** Absent in saves made before machines. */
   machines?: PlacedMachine[];
+  /** Absent in saves made before the greenhouse. */
+  greenhouse?: ReturnType<Farm["save"]>;
   /** Absent in saves made before casks. */
   casks?: PlacedCask[];
   /** Absent in saves made before the mines. */
@@ -307,6 +313,7 @@ export function serialize(g: GameState): string {
     money: g.money,
     inventory: g.inventory.save(),
     farm: g.farm.save(),
+    greenhouse: g.greenhouse.save(),
     trees: g.trees.save(),
     ground: g.ground.save(),
     weeds: g.weeds.save(),
@@ -473,6 +480,22 @@ export function deserialize(text: string): GameState | undefined {
   g.weather = weather as Weather;
   g.inventory.load(inventory as ReturnType<Inventory["save"]>);
   g.farm.load(farm as ReturnType<Farm["save"]>);
+  if (isObject(raw.greenhouse)) {
+    const plots = Object.entries(raw.greenhouse).filter(
+      ([k, p]) =>
+        /^\d+,\d+$/.test(k) &&
+        isObject(p) &&
+        p.tilled === true &&
+        typeof p.wateredToday === "boolean" &&
+        (p.crop === undefined ||
+          (isObject(p.crop) &&
+            typeof p.crop.id === "string" &&
+            cropById(p.crop.id) !== undefined &&
+            isCount(p.crop.daysGrown) &&
+            isCount(p.crop.harvests))),
+    );
+    g.greenhouse.load(Object.fromEntries(plots) as ReturnType<Farm["save"]>);
+  }
   g.skills.load(skills as ReturnType<Skills["save"]>);
   if (Array.isArray(raw.trees)) {
     const valid = raw.trees.filter(

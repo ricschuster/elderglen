@@ -221,6 +221,8 @@ export class FarmMap {
     readonly bounds: TileRect = { x: 0, y: 0, w: width, h: height },
     /** Water tiles, by cell index: the ground layer's water tile (`WATER_TILE`). */
     private readonly water: boolean[] = [],
+    /** An indoor growing room (the map property `indoors`): its soil is not the farm's. */
+    readonly indoors = false,
   ) {}
 
   /** True for a water tile: fishable, and never walkable. */
@@ -379,6 +381,7 @@ export class FarmMap {
       at,
       bounds,
       water,
+      json.properties?.find((p) => p.name === "indoors")?.value === true,
     );
   }
 
@@ -410,6 +413,7 @@ export class FarmMap {
       this.tier,
       this.bounds,
       this.water,
+      this.indoors,
     );
   }
 
