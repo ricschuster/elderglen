@@ -476,6 +476,11 @@
       "t": "WP: Hearthwell part 2, the interiors",
       "state": "open",
       "labels": ["work-package"]
+    },
+    "649": {
+      "t": "WP: Quarry map, mended bridge, regrowing stone and ore, the stonekeeper",
+      "state": "open",
+      "labels": ["work-package"]
     }
   }
 }

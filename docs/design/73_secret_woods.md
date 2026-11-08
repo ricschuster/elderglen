@@ -1,7 +1,7 @@
 # 73 Secret Woods (draft)
 
-Status: draft, written 2026-11-08 for the owner to review. Nothing here is
-built. It designs the Secret Woods map and settles the hardwood supply that note
+Status: draft, written 2026-11-08, owner answers recorded the same day (note 71). Nothing here is
+built. M3b. It designs the Secret Woods map and settles the hardwood supply that note
 59 decided. Overview and owner questions: `71_map_areas_overview.md`. Stardew
 facts are from the saved Secret Woods, Hardwood and Large Log pages (read
 2026-11-08), as ideas only (ADR 0002).
@@ -28,8 +28,11 @@ come out.
 5. **The spirit's statue stands here** (note 39, elderfruit source 5): an old
    mossy stone the player gives a rare fruit to, once.
 6. **Rare forage, with a high rare share,** as note 19 says.
-7. **A small pond,** fishable (open question 3 in note 71).
-8. **No creatures in the first build** (open question 2 in note 71).
+7. **A small pond,** fishable (owner, 2026-11-08, as Stardew): one unique fish and
+   two common ones.
+8. **No creatures in the first build** (owner, 2026-11-08: they come later, as
+   Stardew has slimes, with the combat notes). **Mahogany stays off the map for
+   now.** The hardwood supply is the stumps, kept as designed.
 9. **The carpenter's stand-in is removed in this slice.**
 
 ## Shape and layout
@@ -103,12 +106,14 @@ exists for it (note 19).
 
 ## Fishing
 
-A pond water kind, `woods-pond` (contract need 1). If the owner agrees to open
-question 3: fishable all year, no seasons, with two common fish already in the
-roster and one unique fish of our own. A unique fish adds a 47th fish, so the
-Whole Roster achievement (`38_achievements.md`) and the completion count move
-(`39_completion_total.md`). If the owner prefers scenery only, the pond is just a
-decor water tile.
+A pond water kind, `woods-pond` (contract need 1). Fishable all year, no seasons
+(owner, 2026-11-08, as Stardew): two common fish already in the roster and one
+unique fish of our own, name and bar motion still to be designed with the fish
+roster (`21_fishing.md`). The unique fish is the 47th, so Whole Roster
+(`38_achievements.md`) and the completion fish count (`39_completion_total.md`)
+count 47. The Secret Woods fish is never needed by a bundle (note 71, rule 6
+applies to it as it does to the cove). Casting spots: the pond's shore, with the
+covered passage kept clear.
 
 ## The spirit's statue
 
@@ -140,7 +145,7 @@ regrow (5), `rideable` (7). The map has no tree objects, and the choppable
 3. The log in the Forest, its chop rule (steel axe), the gate flag, the 8
    Hardwood and the exit. Tests that an unchopped log leaves the exit gated.
 4. Forage table.
-5. Pond and its fish, if approved.
+5. Pond and its fish (approved).
 6. The statue, with the elderfruit slice.
 
 Work package: "Secret Woods map, hardwood stumps and the massive log" (steps 1 to
@@ -148,7 +153,9 @@ Work package: "Secret Woods map, hardwood stumps and the massive log" (steps 1 t
 
 ## Open
 
-- Question 2 (creatures and Mahogany) and question 3 (pond) in note 71.
+- The unique pond fish: its name, price and bar motion (design with note 21's
+  roster, which says 46 and needs a 47th row).
+- Creatures and Mahogany come later, with the combat notes (owner, 2026-11-08).
 - The stump swing count and the yield of a stump at tier 2 and above are tuning.
 - Whether the saved page's "lost items shop" idea has a use: our tools return
   (SC-79) and there are no unique unrecoverable items, so it is not in scope.

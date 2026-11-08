@@ -58,7 +58,7 @@ Anecdotal, from forums and press, not a survey.
    leaves the zone) lifts silver or gold by one grade. There is no iridium
    tier. This is an extension of the crop and forage roll in
    `src/core/quality.ts`.
-8. **Roster: 46 fish** in ring 1, sketched below. Each needs an icon and
+8. **Roster: 47 fish** in ring 1 (the 46 sketched below plus the Secret Woods pond's unique fish, owner 2026-11-08, note 73). Each needs an icon and
    a bar motion. The motion and difficulty are in the roster tables.
 9. **Traps (bundle 18): a way to fish without the bar, for shellfish only, and
    optional.** A baited pot at the water gives crabs and the like the next day,
@@ -112,7 +112,7 @@ Anecdotal, from forums and press, not a survey.
 | Sea (Beach) | From the start | Sea fish, bundle 15; night fish | 10 |
 | Lake cove | Water room reward | The rarest ordinary fish and the legend | 8 |
 
-Total 46 fish plus the legend. Night fish for bundle 16 are drawn from the sea
+Total 46 fish plus the legend in these tables, and a 47th: the Secret Woods pond's unique fish (owner, 2026-11-08, note 73), not yet named or given a row. The pond also holds two common fish already in the roster. Night fish for bundle 16 are drawn from the sea
 and the lakes. Crab pot catches are separate and are not counted.
 
 ## Draft roster (2026-10-29, edited with the owner)
@@ -517,7 +517,7 @@ and are in `07_tuning_numbers.md`.
 - **The completion tracker's Fish row is live** and counts the fish in the data.
 - **Not built:** the catch screen's "New record" and "First Catch" show in the
   fishing message only, not in a collection page; the fishing achievements of
-  note 38 (they count 10, 24 and all 46 fish, so they wait for the roster);
+  note 38 (they count 10, 24 and all 47 fish, so they wait for the roster);
   water plants, jellies, trash and the recycler; the crown on a legend.
 
 ## Built in slice 3, part one: bait and lures (2026-11-08, issue #596)
@@ -552,7 +552,7 @@ Bait, lures and the fishing achievements. Numbers are placeholders and are in
   sold back.
 - **Fishing achievements** of note 38 are in data: First Ten (10 kinds), Harbour
   Hand (24 kinds), Whole Roster (every fish, held back until the roster has all
-  46 so a part roster cannot earn it) and A Hundred Lines (100 fish). First Ten
+  47 so a part roster cannot earn it) and A Hundred Lines (100 fish). First Ten
   needs the second water, since the farm pond has nine fish. Whole Roster's mail
   gift is not built.
 - **Not built (the rest of slice 3 and slice 4):** the other waters and the maps

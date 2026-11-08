@@ -358,13 +358,13 @@
         },
         {
           "s": "open",
-          "t": "Map areas design pass (draft, 2026-11-08): one note per unbuilt area, Forest 120 by 120, Secret Woods 48 by 40, Mountain 80 by 70, River delta with the Beach 100 by 70, Lake cove 50 by 40 and Hearthwell 120 by 110, each with a tile sketch, exits and entries, resources, forage, fishing, people, contract needs and slices; build order Forest, Secret Woods, delta, Mountain, Forest part 2, cove, Hearthwell shell, Hearthwell interiors, Beach elf; eleven owner questions wait for review",
+          "t": "Map areas design pass (draft, 2026-11-08): one note per unbuilt area, Forest 120 by 120, Secret Woods 48 by 40, Mountain 80 by 70, River delta with the Beach 100 by 70, Lake cove 50 by 40 and Hearthwell 120 by 110, each with a tile sketch, exits and entries, resources, forage, fishing, people, contract needs and slices; build order Forest, Secret Woods, delta, Mountain, Quarry, Forest part 2, cove, Hearthwell shell, Hearthwell interiors, Beach elf. The owner answered all eleven questions on 2026-11-08: the maps are in M3b; no Secret Woods creatures yet and no Mahogany; fishable woods pond (47 fish); Beach footbridge broken until 300 wood; nobody keeps the ferry; cove gets a hidden treasure spot (drafter pick, owner may veto); Hearthwell blacksmith does upgrades and geodes, the Mountain dwarf is a Mines-side trader; Hearthwell river in two arms with the layout still to design; festivals use a decorated Hearthwell variant; the horse rides every outdoor valley map; the stonekeeper gets a Quarry",
           "ref": "71_map_areas_overview.md#Build order, with reasons",
           "issue": 636
         },
         {
           "s": "open",
-          "t": "Nine map contract additions for the areas: water kinds, the massive log, per-map forage tables, tree kind, per-map stump regrow, conditional layers, rideable flag, cart and board service kinds",
+          "t": "Ten map contract additions for the areas: water kinds, the massive log, per-map forage tables, tree kind, per-map stump regrow, conditional layers, rideable flag, cart and board service kinds, nightly spawns",
           "ref": "71_map_areas_overview.md#Map contract additions",
           "issue": 636
         },
@@ -385,10 +385,30 @@
           "t": "Hearthwell (draft): river in two arms with the sawmill on the main one, the hall on the island and the broken bridge on the east arm; trees cosmetic; interiors by template; people with #599",
           "ref": "77_hearthwell.md#Decisions (draft)",
           "issue": 645
+        },
+        {
+          "s": "open",
+          "t": "Hearthwell river layout: owner chose two arms (a wide east arm with the broken bridge, the hall on the island) on 2026-11-08 and left the detailed layout of arms, banks, bridges and streets to a later design pass",
+          "ref": "77_hearthwell.md#Decisions (draft)",
+          "issue": 645
+        },
+        {
+          "s": "open",
+          "t": "Quarry (draft): a 60 by 44 map past a ravine bridge that a bundle room mends, with rocks and ore that regrow every night and the stonekeeper dwarf at the bridge; four owner questions (which room, the dwarf's trade, regrow numbers, trees)",
+          "ref": "78_quarry.md#Decisions (draft)",
+          "issue": 649
+        },
+        {
+          "s": "open",
+          "t": "Smith split (owner, 2026-11-08): the Hearthwell blacksmith does tool upgrades, geode cracking and ore and does not buy geodes; the Mountain smith dwarf is a Mines-side trader (lamps, rest-camp supplies, buys ore, no upgrades)",
+          "ref": "74_mountain.md#What lives there",
+          "issue": 643
         }
       ],
       "deps": [],
-      "issues": [67, 69, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646]
+      "issues": [
+        67, 69, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 649
+      ]
     },
     {
       "id": "story",

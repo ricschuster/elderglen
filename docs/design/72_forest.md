@@ -1,7 +1,7 @@
 # 72 Forest (draft)
 
-Status: draft, written 2026-11-08 for the owner to review. Nothing here is
-built. It designs the Forest map to the pattern of `55_farm_layout.md`, from the
+Status: draft, written 2026-11-08, owner answers recorded the same day (note 71). Nothing here is
+built. M3b (ring 1 systems), not M3c. It designs the Forest map to the pattern of `55_farm_layout.md`, from the
 areas in `19_valley_layout.md`. The overview and the owner questions are in
 `71_map_areas_overview.md`. Stardew facts are from the owner's saved pages
 (Cindersap Forest, Large Log, Trees, read 2026-11-08), as ideas only, never
@@ -122,7 +122,7 @@ frames the map edges and the cliff (as the farm border, note 43).
   energy can chop. Placeholder, tune in note 07.
 - **Types.** Oak and maple only here. Their tap products are note 36's and are
   not changed. Pine is the Mountain's type. Mahogany has no standing tree on the
-  map (open question 2 in note 71).
+  map (owner, 2026-11-08: Mahogany stays off the map for now).
 - **Clutter at the start.** Rocks 40, twigs 50, weeds 60, hand placed, placeholder
   counts. They come back by the rules of `65_special_orders_and_debris.md` (a small
   capped share each spring, summer and fall; none in winter). Stardew's saved page
@@ -199,8 +199,8 @@ Work packages: "Forest map part 1" (steps 2 to 4) and "Forest part 2" (steps 5 a
 
 ## Open
 
-- Owner questions that touch this map are in note 71: question 1 (milestone),
-  question 10 (riding).
+- Owner answers that touch this map are in note 71: milestone M3b (answer 1) and
+  the horse rides here (answer 10, `rideable` true).
 - Tuning of tree counts, regrowth and the forage cap (note 07).
 - The size 120 by 120 must be confirmed by loading a placeholder map on the
   SM-T500 first (note 19).

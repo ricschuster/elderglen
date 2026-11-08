@@ -94,3 +94,16 @@ a placeholder item.
 1. Floors 11 to 40 and a plain geode that cracks per this note.
 2. Frozen with floors 41 to 80, Magma with floors 81 to 120.
 3. Omni once the first three are in.
+
+## Who cracks and who buys, once the maps exist (owner, 2026-11-08)
+
+The Hearthwell blacksmith cracks geodes (25g) and handles ore, and does not buy
+geodes, as Stardew's blacksmith does (saved Blacksmith page, SC-58 and SC-60;
+`71_map_areas_overview.md` answer 7). The Mountain smith dwarf is a Mines-side
+trader who sells lamps and rest-camp supplies and buys ore for coin, with no tool
+upgrades (`74_mountain.md`). This replaces the earlier line "the smith cracks, the
+dwarf buys": nobody buys geodes uncracked. The built stand-in (the dwarf buying each
+kind at its sell price) stays until Hearthwell's smithy exists, and then the
+purchase is removed in the same slice. Open: whether a geode can be sold at a
+general counter at all (Stardew's blacksmith does not buy them, and whether the
+shipping bin takes them is unchecked).

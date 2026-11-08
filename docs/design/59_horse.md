@@ -19,8 +19,14 @@ Numbers are placeholders for note 07.
 - **Riding.** Action facing the horse gets on, Action again gets off, anywhere.
   Tools and fishing are refused while mounted. Speed is 6.6 over our run speed
   of 5, a factor of 1.32 (the saved Speed page). Terrain costs do not exist yet.
-- **Outdoors only.** Rideable maps are the farms and the village green. A door
-  or the Mines dismounts the rider and parks the horse near where they stood.
+- **Outdoors only.** Built today: the farms and the village green. **Decided
+  (owner, 2026-11-08): the horse rides on every outdoor valley map** (the farms,
+  Forest, Secret Woods, Mountain, Quarry, River delta and Beach, Hearthwell and its
+  festival variant), and not in interiors, the Mines or the Lake cove (the ferry
+  dismounts the rider and parks the horse at the dock). As each map lands it
+  sets the map property `rideable` (`71_map_areas_overview.md`, contract need
+  7), which then replaces the horse's list of map names. A door or the Mines
+  dismounts the rider and parks the horse near where they stood.
 - **Blocking (owner, 2026-11-07, as Stardew).** A parked horse blocks the tile
   it stands on. The rule that keeps it from ever trapping the player:
   - It is not solid while ridden, and not while it waits at the stable.
@@ -46,7 +52,8 @@ Numbers are placeholders for note 07.
   is not saved: a loaded game starts on foot.
 - **Not built:** the extras (carrot, horse book, flute, hats), the walk and run
   split, the horse and rider sprites (placeholder blocks), the Mines being
-  unrideable only by map name (no Mines ride exists), and the gate rule for gaps
+  unrideable only by map name (no Mines ride exists, and `rideable` replaces the
+  list when the maps land), and the gate rule for gaps
   under two tiles.
 
 ## Why

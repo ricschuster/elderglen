@@ -83,6 +83,14 @@
           "tone": "marsh",
           "rect": [640, 1100, 280, 110],
           "seed": 21
+        },
+        {
+          "id": "quarry",
+          "name": "Quarry",
+          "tone": "stone",
+          "rect": [1320, 345, 240, 105],
+          "seed": 23,
+          "sub": "past the mended bridge"
         }
       ],
       "roads": [
@@ -92,6 +100,7 @@
         ["forest", "secret-woods", "road"],
         ["forest", "mountain", "road"],
         ["mountain", "mines", "road"],
+        ["mountain", "quarry", "road"],
         ["mountain", "hearthwell", "road"],
         ["hearthwell", "delta", "road"],
         ["hearthwell", "ring2", "road"],
@@ -171,12 +180,12 @@
           "ref": "19_valley_layout.md"
         },
         {
-          "name": "Smith dwarf's forge",
+          "name": "Smith dwarf's trading hut",
           "kind": "building",
           "x": 970,
           "y": 290,
           "people": [{ "n": "Smith dwarf", "r": "dwarf", "c": true }],
-          "note": "Tool upgrades and lamps.",
+          "note": "A Mines-side trader: lamps and rest-camp supplies, buys ore. No tool upgrades (the Hearthwell smith does those).",
           "ref": "44_tool_upgrades.md"
         },
         {
@@ -185,8 +194,16 @@
           "x": 1210,
           "y": 290,
           "people": [{ "n": "Stonekeeper dwarf", "r": "dwarf", "c": true }],
-          "note": "Bridges and stonework.",
+          "note": "Keeps the Quarry bridge and works the Quarry (note 78).",
           "ref": "20_ring1_cast.md"
+        },
+        {
+          "name": "Quarry bridge",
+          "kind": "gate",
+          "x": 1290,
+          "y": 360,
+          "note": "Ruined until a bundle room mends it. Opens the Quarry, where stone and ore regrow daily.",
+          "ref": "78_quarry.md"
         },
         {
           "name": "Mine entrance",
@@ -294,7 +311,7 @@
           "x": 880,
           "y": 940,
           "people": [{ "n": "Fisher", "r": "halfling", "c": true }],
-          "note": "Sells fishing gear. May also keep the ferry.",
+          "note": "Sells fishing gear. Nobody keeps the ferry: you step on the boat.",
           "ref": "21_fishing.md"
         },
         {
@@ -366,7 +383,7 @@
         ],
         [
           [640, 500],
-          [1330, 500]
+          [1240, 500]
         ],
         [
           [900, 300],
@@ -380,11 +397,20 @@
         [690, 650],
         [735, 850]
       ],
+      "rivers": [
+        [
+          [1260, 60],
+          [1275, 300],
+          [1260, 500],
+          [1275, 700],
+          [1260, 850]
+        ]
+      ],
       "exits": [
         { "t": "To the Mountain (river road)", "x": 700, "y": 40 },
         { "t": "To the Farm", "x": 76, "y": 478, "anchor": "start" },
         { "t": "To the River delta", "x": 735, "y": 878 },
-        { "t": "To ring 2 (broken bridge)", "x": 1260, "y": 560 }
+        { "t": "To ring 2 (broken bridge)", "x": 1330, "y": 560 }
       ],
       "features": [
         {
@@ -448,6 +474,7 @@
           "x": 300,
           "y": 600,
           "people": [{ "n": "Smith", "r": "halfling", "c": true }],
+          "note": "Tool upgrades, geode cracking and ore (the blacksmith, as Stardew). Does not buy geodes.",
           "ref": "20_ring1_cast.md"
         },
         {
@@ -514,7 +541,7 @@
           "kind": "landmark",
           "x": 1000,
           "y": 770,
-          "note": "Where festivals are held.",
+          "note": "Where festivals are held, as a decorated variant of the town map (the separate green map is folded in later).",
           "ref": "14_festival_calendar.md"
         },
         {
@@ -522,15 +549,15 @@
           "kind": "building",
           "x": 1180,
           "y": 400,
-          "note": "The village hall. Nobody lives here. The steward from the Outpost opens it.",
+          "note": "The village hall, on the island between the river arms. Nobody lives here. The steward from the Outpost opens it. The arms' detailed layout is an open design item.",
           "ref": "40_hall_layout.md"
         },
         {
           "name": "Broken bridge",
           "kind": "gate",
-          "x": 1300,
+          "x": 1260,
           "y": 500,
-          "note": "Mended by the Last Seat. Leads to ring 2.",
+          "note": "Crosses the wide east arm of the river. Mended by the Last Seat. Leads to ring 2.",
           "ref": "19_valley_layout.md"
         }
       ]

@@ -38,6 +38,15 @@ looked at together like a map.
 - Farm positions follow note 55. The two ponds are the big south pond and the
   small east pond.
 
+## Update after the map area answers (2026-11-08)
+
+The owner chose two river arms in Hearthwell, a wide eastern arm crossed by the
+broken bridge with the hall on the island between, and left the detailed layout
+open (`71_map_areas_overview.md` answer 8, `77_hearthwell.md`). The zoomed view is
+redrawn only that far: the east arm and the bridge are marked, the hall sits on
+the island, and the rest of the arrangement is not claimed. The Quarry (note 78)
+is added to the whole valley view off the Mountain.
+
 ## Keeping it honest
 
 `npm run valley-map:check` is part of `npm run check`. It fails when the page is

@@ -213,6 +213,15 @@ screens stay until the maps exist.
 5. **Villagers stand inside the maze, one line each (Stardew).** A few at the
    scares, as note 66 already says. The Showing's villagers stand on the green.
 
+6. **Festivals load a decorated Hearthwell variant (owner, 2026-11-08,
+   Stardew).** The green of the festival map is the south of the Hearthwell
+   map, and a festival loads a decorated variant of that map (props, shop doors
+   locked, villagers at festival spots), not a separate map. The separate
+   `green` map is built as a placeholder and is folded into the Hearthwell
+   variant when Hearthwell is built (`77_hearthwell.md`, slice 5). The hedge map
+   keeps its own place. This settles note 71's question 9, and SC-90 (that
+   Stardew does this for the town) stays an unchecked memory claim.
+
 Open: the even-year maze layout and reward, the hidden gap's tell (a lantern
 out of line is the proposal), festival spots for villagers on the green, and
 the green map's festival props. These need the village map from note 56.

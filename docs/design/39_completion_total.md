@@ -56,11 +56,11 @@ Each had a Stardew option.
 | Gallery donations | 5 | Finds donated, of the gallery's list (`38_achievements.md`) | Later |
 | Slayer goals | 10 | Every goal on the mines' slayer list (`22_mines.md`) | 3 |
 | Friends | 12 | Every person at maximum hearts, children excluded | 4 |
-| Skills | 5 | Every skill at level 10 | 1 to 3 |
+| Skills | 5 | Every skill at level 10. Owner, 2026-11-08: the category counts 5 skills of 10 levels, and the percentage drop this causes is accepted | 1 to 3 |
 | Rare boost items | 10 | Every one of the seven elderfruit (see "Settled with the owner") | 1 to 4 |
 | Cooking | 10 | Every recipe cooked | 4 |
 | Crafting | 10 | Every item crafted | 1 |
-| Fish | 10 | Every fish caught, the five legends included (`21_fishing.md`) | 2 |
+| Fish | 10 | Every fish caught, the five legends included (`21_fishing.md`), 47 ordinary fish since the Secret Woods pond's unique fish (owner, 2026-11-08) | 2 |
 
 Total 100. The 5 percent Stardew gives its late region's collectible was given
 back to ring 1's own categories, since ring 1 must be completable alone (shipped

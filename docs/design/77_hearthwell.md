@@ -1,11 +1,11 @@
 # 77 Hearthwell (draft)
 
-Status: draft, written 2026-11-08 for the owner to review. Nothing here is
-built. It designs the Hearthwell town map, the largest social place in the
+Status: draft, written 2026-11-08, owner answers recorded the same day (note 71). Nothing here is
+built. Shell and interiors stay with #599 in M3b. It designs the Hearthwell town map, the largest social place in the
 game. Overview and owner questions: `71_map_areas_overview.md`. Stardew facts are
 from the saved Pelican Town page (read 2026-11-08), as ideas only (ADR 0002).
 Positions follow the zoomed Hearthwell view of `56_valley_map.md` where the
-river allows (see open question 8).
+river allows. The river layout is an open design item (see decision 3).
 
 ## Why
 
@@ -23,11 +23,14 @@ earlier (note 71, build order).
 2. **Four exits:** west to the Farm, north to the Mountain along the river road,
    south to the River delta, and east to ring 2 across the broken bridge
    (gated, parked, #20).
-3. **The river has two arms** (working draft, question 8): the main arm
-   through the middle with the sawmill on it, and a wide eastern arm that the
-   broken bridge crosses. They rejoin south of the town and run on to the delta.
-   The town stands on three pieces of land: the west bank, the island between the
-   arms, and a thin far bank that only ring 2 uses.
+3. **The river has two arms** (owner, 2026-11-08): a wide eastern arm crossed by
+   the broken bridge, and the hall on the island between the arms. **The detailed
+   layout is an open design item, designed later** (where the main arm runs, how
+   banks, bridges and streets sit, where the sawmill's wheel is, whether the arms
+   rejoin south of the town). The sketch and the coordinates below are the
+   earlier working draft and are placeholders until that design is done. The
+   town stands on three pieces of land in the draft: the west bank, the island
+   between the arms, and a thin far bank that only ring 2 uses.
 4. **The Long Table (the hall) stands at the east end of the island,** on the road
    toward the bridge (note 19, decision 5), as an old inn on the road.
 5. **All 11 households' homes can be entered** (note 19, decision 14): eight are
@@ -39,8 +42,11 @@ earlier (note 71, build order).
 7. **A town square at the main bridge,** with the Hearth room cart stop beside it
    (note 16, reserved, note 71 contract need 8).
 8. **The festival green is the south of the island** at the existing placeholder's
-   size, 36 by 22 (`green.json`). Whether festivals use a variant of this map is
-   question 9.
+   size, 36 by 22 (`green.json`). **Festivals load a decorated variant of the
+   Hearthwell map** (owner, 2026-11-08, as Stardew): the same map with festival
+   props, closed shop doors and festival spots for villagers. The separate
+   `green` map is folded into that variant later (see slice 5). The hedge map
+   stays on its own, entered from the green as note 66 says.
 9. **Names and looks are open.** Role labels only (#136).
 
 ## Shape and layout
@@ -94,7 +100,7 @@ says more. The `sawmill` and `hall` maps already exist.
 | Healer | (41, 24) | `healer` | The healer |
 | Inn and kitchen | (22, 53) | `inn` | Inn keeper's family. The two young adults work here. The courier lodges here |
 | Library | (41, 53) | `library` | The librarian |
-| Smithy and mender | (22, 82) | `smithy` | The smith. What it does is question 7 |
+| Smithy and mender | (22, 82) | `smithy` | The smith. **Tool upgrades, geode cracking and ore** (owner, 2026-11-08, as Stardew). Does not buy geodes |
 | Hatter's shop | (41, 82) | `hatter` | The hat-maker and sibling |
 | Sawmill and carpenter | (48, 66) | `sawmill` (exists) | The carpenter's household. Building, moving and removing farm buildings (note 60) |
 | The Outpost | (88, 12) | `outpost` and `outpost-rooms` | The hall steward (lives here), the courier hangs out. Boards and the trader's stalls (note 57) |
@@ -156,6 +162,13 @@ The farm maps lose their `hall` and `sawmill` doors when this lands, and the
   legend in its river.
 - **Pots** on both arms. The sawmill's wheel and the bridges are land.
 
+## The smithy (owner, 2026-11-08, as Stardew)
+
+The Hearthwell blacksmith does tool upgrades, geode cracking (25g, note 69) and
+buys and sells ore, and does not buy geodes (saved Blacksmith page, SC-58 and
+SC-60). The Mountain smith dwarf is a Mines-side trader (note 74) with no tool
+upgrades. The smith menu stand-in moves to this counter when the smithy exists.
+
 ## Interiors and the template
 
 Interior shells follow note 58: a shop-and-home shell (about eight maps counting the
@@ -179,7 +192,9 @@ and Outpost boards (9). Everything else exists.
 3. **Interiors:** store, healer, inn, library, smithy, hatter and the three burrows
    as shells with a counter and furniture, no people.
 4. **People:** placement, schedules, gifts, with #599 and the cast (#136).
-5. **Festival variant** (question 9).
+5. **Festival variant** (owner, 2026-11-08): a decorated Hearthwell map per
+   festival, with props and villagers' festival spots, replacing the `green` map
+   (the green's festival code in `festivals.json` then names the variant).
 6. **East arm, broken bridge and ring 2 gate,** with the Last Seat (#603).
 
 Work packages: "Hearthwell part 1, the shell and moving the farm's doors" (step 1 and
@@ -187,8 +202,12 @@ Work packages: "Hearthwell part 1, the shell and moving the farm's doors" (step 
 
 ## Open
 
-- Questions 7 (smithy), 8 (river arms), 9 (festival green) and 10 (riding) in
-  note 71.
+- **The river layout (open design item).** Owner answer 8 fixes only two arms,
+  the broken bridge across the wide east arm and the hall on the island. A
+  design pass is needed for the main arm, bridges, banks and streets. The
+  valley map zoom shows only what the answer supports (see `56_valley_map.md`).
+- Riding is allowed here (note 71, answer 10), including the festival variant,
+  unless a festival says otherwise.
 - Cart stops: a stop at the town square, one at the hall, one at the farm and one at
   the Mountain's mine mouth are reserved. The cart screen and its fare are not
   designed. They need a note when the Hearth room is built.

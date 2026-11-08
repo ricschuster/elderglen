@@ -233,6 +233,10 @@ function viewSvg(v) {
     out += `<path d="${openSmooth(v.river)}" class="river"/>`;
     out += `<path d="${openSmooth(v.river)}" class="riverline"/>`;
   }
+  for (const r of v.rivers ?? []) {
+    out += `<path d="${openSmooth(r)}" class="river"/>`;
+    out += `<path d="${openSmooth(r)}" class="riverline"/>`;
+  }
   for (const e of v.exits ?? []) {
     out += `<text x="${e.x}" y="${e.y}" class="exit" text-anchor="${e.anchor ?? "middle"}">${esc(e.t)}</text>`;
   }

@@ -12,7 +12,8 @@ Start each session by asking which item to take.
 M3 (close out: the owner's play), M3b ring 1 systems (fishing, combat, villagers,
 horse, building placement #611, cask, dye vat and greenhouse built), M4 multiplayer, M3c story
 and ending, M3d polish, then M5 and M6. The list below is the design order within
-that. Filed work packages: #595 to #604, #611 and #636 to #646 (map areas).
+that. The map areas (notes 71 to 78) are M3b too since 2026-11-08 (owner). Filed
+work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
 
 ## Open, in order
 
@@ -26,21 +27,31 @@ that. Filed work packages: #595 to #604, #611 and #636 to #646 (map areas).
    project (#5). Together they decide what the ending and the Last Seat mean. Below Special Orders
    (2026-11-06): nothing in slices 1 to 3 needs it, and it is only needed
    before slice 5 (note 33), alongside the heart events. Owner put it before art.
-3. **Map areas** (notes 71 to 77, drafted 2026-11-08, owner review pending). One
-   note per unbuilt area. Recommended build order: contract additions (#636),
-   Forest part 1 (#637), Secret Woods (#639, ends the carpenter's Hardwood sale),
-   River delta with the Beach (#640, unblocks #596), Mountain (#642, #643), Forest
-   part 2 (#638), Lake cove (#644), Hearthwell shell (#645) and interiors (#646),
-   Beach elf (#641). The owner questions (eleven, in note 71) come first:
-   milestone placement, the river in Hearthwell, the smithy split and the rest.
+3. **Map areas** (notes 71 to 78, M3b, owner answers recorded 2026-11-08). One
+   note per unbuilt area. Recommended build order, from note 71: contract
+   additions (#636, ten of them) first, then Forest part 1 (#637), Secret Woods
+   (#639, ends the carpenter's Hardwood sale), River delta with the Beach (#640,
+   unblocks #596), Mountain (#642, #643), the Quarry (#649), Forest part 2
+   (#638), Lake cove (#644), Hearthwell shell (#645) and interiors (#646), Beach
+   elf (#641, waits on the story spine). Changed order since the draft: the Quarry
+   is new at step 4b and the maps moved up from M3c. Open design items left:
+   Hearthwell's river layout (two arms chosen, detail not designed), the Quarry's
+   four questions (note 78), and the cove treasure spot, which is a drafter's pick
+   and waits on the owner's veto.
 4. **Art direction and audio plan.** Character art (note 15), ruined and
    restored hall rooms (#335), and the placeholder swap. No audio note exists
    (audio plan: #527).
 5. **Ring 2 shape and travel** (#20, M5). Parked until slice 3 is played.
 
-**Remove when real hardwood supply exists:** the carpenter's temporary Hardwood
-sale (200g, `src/content/carpenter-standin.json`, note 43). Take it out once logs,
-the Secret Woods, Mahogany or Mines hardwood give a real supply.
+**Remove when real hardwood supply exists (#639):** the carpenter's temporary
+Hardwood sale (200g, `src/content/carpenter-standin.json`, note 43). It comes out
+in the Secret Woods work package, #639, when the six daily stumps exist (owner,
+2026-11-08). Mahogany stays off the map for now.
+
+Session 2026-11-08l (handoff 2026-11-08l): a large building session (placement,
+fishing, horse, mines, greenhouse, moss) and then the map area answers. Next
+session starts by asking which item to take; recommended is #636, the map
+contract additions.
 
 Session 2026-11-08k (handoff 2026-11-08k): housekeeping, no design or build.
 Note 70 stays unbuilt until the owner says go. A crop wish list is not designed.

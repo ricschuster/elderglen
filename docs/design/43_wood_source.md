@@ -124,7 +124,9 @@ Settled briefly where the notes left gaps. Numbers are placeholders (note 07).
   lists none) so the stable and house tier 2 are reachable on the Standard farm.
   REMOVE it when a real supply exists (logs, Secret Woods, Mahogany, Mines
   hardwood): set `enabled` false in `src/content/carpenter-standin.json`, or
-  delete that file, `src/core/carpenter.ts` and the scene row.
+  delete that file, `src/core/carpenter.ts` and the scene row. The removal is
+  part of the Secret Woods work package (#639, note 73), when the six stumps
+  regrow daily.
 - **Saves.** Nothing new is saved. Large stumps and their regrow timers load as
   before, and a stable or house order already paid in wood stays paid.
 

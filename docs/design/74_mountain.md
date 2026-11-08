@@ -1,7 +1,7 @@
 # 74 Mountain (draft)
 
-Status: draft, written 2026-11-08 for the owner to review. Nothing here is
-built. It designs the Mountain map and moves the Mines entrance onto it.
+Status: draft, written 2026-11-08, owner answers recorded the same day (note 71). Nothing here is
+built. M3b. It designs the Mountain map and moves the Mines entrance onto it.
 Overview and owner questions: `71_map_areas_overview.md`. Stardew facts are from
 the saved Mountain page (read 2026-11-08), as ideas only (ADR 0002).
 
@@ -36,9 +36,10 @@ Forest to Hearthwell on the second loop (decision 2).
 7. **More stone than the Forest.** Rocks are the early stone supply (note 22).
 8. **The trainer and the dummy are in the Mines entrance hall,** not here (note
    22), so the Mountain has no Adventurers' Guild-like building (not in scope).
-9. **No quarry in this design.** Stardew has a separate Quarry past a mended bridge
-   (saved page). Ours has no such area (note 19), and the stonekeeper's job is
-   open question 11 in note 71.
+9. **A Quarry lies past the east road** (owner, 2026-11-08, as Stardew's Quarry
+   past a mended bridge). It is its own map, `quarry` (note 78). The Mountain
+   gets one more exit, `to_quarry`, east of the stonekeeper's yard, behind a
+   ravine bridge that is ruined until a bundle room mends it.
 
 ## Shape and layout
 
@@ -64,8 +65,10 @@ Forest to Hearthwell on the second loop (decision 2).
 | Lake | x 18 to 46, y 8 to 26 | about 28 by 18 | Fishing, shore path on the south and east |
 | River | From (47, 18) south, x 47 to 53 | 4 to 6 wide | Joins the south exit road |
 | Stone footbridge | (50, 37), east to west | 6 by 3 | Always open. Placed as a ground tile run |
-| Forge | Door at (18, 46) | Exterior 10 by 7 | Smith dwarf's forge, an interior (note 58) |
-| Stonekeeper's yard | x 60 to 72, y 42 to 52 | 13 by 11 | Open air yard, a work bench and a stack of stone. No interior |
+| Forge | Door at (18, 46) | Exterior 10 by 7 | Smith dwarf's trading hut, an interior (note 58). A Mines-side shop, not a forge for tools (see "What lives there") |
+| Stonekeeper's yard | x 60 to 72, y 42 to 52 | 13 by 11 | Open air yard, a work bench and a stack of stone. No interior. The Quarry bridge starts at its east side |
+| Quarry bridge | x 73 to 78, y 45 to 49 | 6 by 5 | A plank bridge over a ravine. Ruined art until the bundle room that mends it (note 78) |
+| Quarry exit | East edge, x 79, y 45 to 49 | 5 tall | `to_quarry`, requires `quarry-open`. Staged until the Quarry exists |
 | Rockfall | x 60 to 66, y 14 to 18 | 7 by 5 | Cleared on Spring 5 by the Wanderer's announcement |
 | Mine mouth | Door at (68, 10) | 5 by 4 | Door to `mine`, `requires: mines-open` |
 | Cart stop | (64, 12) | 1 | Reserved for the Hearth room carts (`16_bundles.md`). Not built until then |
@@ -81,11 +84,13 @@ forge, and goes on south to the river road.
 | exit | `to_forest` | `forest` entry `from_mountain` | West edge |
 | exit | `to_hearthwell` | `hearthwell` entry `from_mountain` | South edge. Omitted until Hearthwell exists (staged) |
 | exit | `mine` | `mine` entry `door` | `requires: mines-open`. Replaces the farm's `mine` door |
-| exit | `forge` | `forge` entry `door` | Smith dwarf's forge |
+| exit | `forge` | `forge` entry `door` | Smith dwarf's trading hut |
+| exit | `to_quarry` | `quarry` entry `from_mountain` | East edge, `requires: quarry-open`. Staged |
 | entry | `from_forest` | (3, 37) | |
 | entry | `from_hearthwell` | (47, 66) | |
 | entry | `from_mine` | (68, 13) | The mine hall's exit returns here |
 | entry | `from_forge` | (18, 49) | |
+| entry | `from_quarry` | (76, 47) | Beside the Quarry exit, on the near side of the bridge |
 
 When this slice lands, `mine.json`'s exit target changes from `farm` entry
 `from_mine` to `mountain` entry `from_mine`, and the farm maps lose their `mine`
@@ -95,12 +100,16 @@ door. The hand-in and the mines-open flag are unchanged.
 
 | Place | Who | Interior |
 | --- | --- | --- |
-| Forge | The smith dwarf (F, dwarf, candidate) | `forge`, one-room hut template (note 58). Ore shop, furnace gift, tool upgrades, lamps (notes 22 and 44). Today a menu stand-in |
-| Stonekeeper's yard | The stonekeeper dwarf (M, dwarf, candidate) | None (note 58). He works outdoors |
+| Forge (the hut) | The smith dwarf (F, dwarf, candidate) | `forge`, one-room hut template (note 58). **A Mines-side trader** (owner, 2026-11-08): sells lamps and rest-camp supplies, buys ore for coin. **No tool upgrades and no geode cracking** (the Hearthwell blacksmith does those, note 77). Where the furnace gift sits is open (see Open). Today a menu stand-in |
+| Stonekeeper's yard | The stonekeeper dwarf (M, dwarf, candidate) | None (note 58). He works outdoors. His job is the Quarry (note 78) |
 | Mine mouth | none | The mine entrance hall `mine`, trainer and dummy inside |
 
-Who does geode cracking and what the Hearthwell smithy does is open question 7 in
-note 71.
+Owner answer 7 (2026-11-08, as Stardew): the Hearthwell blacksmith does tool
+upgrades, geode cracking and ore, and does not buy geodes (note 77). The dwarf
+here is a trader for people going down the Mines. Note 69's "the smith cracks,
+the dwarf buys geodes" is changed: nobody buys geodes uncracked, and the dwarf buys ore
+only. The `forge` interior keeps its name (the hut is still at a forge by the
+mountain), and its id does not change.
 
 ## Trees, stone and clutter
 
@@ -146,8 +155,11 @@ uses the existing gated exit.
 2. Pines, rocks, forage, fishing tables for the lake and the upper river.
 3. The mine mouth: move the farm's `mine` door here, retarget `mine.json`, the
    rockfall art and its Spring 5 clearing. Remove the farm door.
-4. The forge: interior, the dwarf's counter replacing the smith menu stand-in.
+4. The trading hut: interior, the dwarf's counter (lamps, rest-camp supplies, ore
+   buying). The smith menu's upgrades and cracking move to the Hearthwell
+   blacksmith (note 77) when that exists, and stay in the menu until then.
 5. The stonekeeper's yard and footbridge as scenery, and the dwarf placeholder.
+   The Quarry bridge and exit ride with note 78 (#649).
 6. The Hearthwell exit when that map exists.
 
 Work package: "Mountain map and the Mines entrance" (steps 1 to 3, 6) and the forge
@@ -155,7 +167,10 @@ with the dwarves' counters (steps 4 and 5).
 
 ## Open
 
-- Question 7 (smith split), question 10 (riding) and question 11 (the stonekeeper)
-  in note 71.
+- Where the furnace gift (note 44) is handed over, now the dwarf has no upgrades:
+  the Hearthwell blacksmith is the proposal. The furnace itself is placed on the
+  farm as today.
+- The `forge` interior's name (the Mines-side hut), and the hut's lamp and
+  rest-camp stock, which wait on the Mines notes (`22_mines.md`, #598).
 - Whether the lake and river sizes give the 15 river and lake casting spots needed
   for a comfortable cast; check on the first Tiled draft.

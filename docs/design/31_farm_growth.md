@@ -196,5 +196,5 @@ part that is pure loss. Everything else is a reward the player chooses.
   ruin site). The scene draws the ruin and the glass house itself. The old site is
   ordinary open ground again, and tillable: `mapWithDoors` marks the old site's
   open tiles as soil once the greenhouse stands elsewhere, then walls the new
-  footprint (owner decision). The greenhouse is never removed or refunded. What is inside never moves: it is stored by the greenhouse's own
+  footprint (owner decision). The greenhouse is never removed or refunded (owner, 2026-11-08: the ruin site is as built, the old site is tillable after a move, and it is never removed or refunded). What is inside never moves: it is stored by the greenhouse's own
   map.
