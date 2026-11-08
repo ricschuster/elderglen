@@ -7,6 +7,7 @@ import {
   BUILT_FLOORS,
   LADDER_CAP,
   bandOf,
+  rockKindAt,
   hearthsilverNodes,
   floorLayout,
   floorMapJson,
@@ -648,6 +649,15 @@ describe("the deeper mine (floors 11 to 120)", () => {
     expect(bandOf(40).name).toBe("The Upper Galleries");
     expect(bandOf(41).name).toBe("The Cold Deeps");
     expect(bandOf(120).name).toBe("The Ember Deeps");
+  });
+
+  it("opens iron nodes from floor 26, rarer than copper until floor 41", () => {
+    expect(kinds(25).has("iron")).toBe(false);
+    expect(kinds(26).has("iron")).toBe(true);
+    expect(kinds(40).get("iron")!).toBeLessThan(kinds(40).get("copper")!);
+    expect(rockKindAt(25, 0.23)).toBe("coal");
+    expect(rockKindAt(26, 0.23)).toBe("iron");
+    expect(rockKindAt(26, 0.21)).toBe("copper");
   });
 
   it("shows copper above floor 40, iron in the Cold Deeps and gold below", () => {

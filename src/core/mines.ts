@@ -41,7 +41,7 @@ export const QUARTZ_SHARE = 0.06;
 export const BANDS = bandData.bands as {
   name: string;
   floors: [number, number];
-  ores: { kind: RockKind; share: number }[];
+  ores: { kind: RockKind; share: number; fromFloor?: number }[];
 }[];
 
 /** The band a floor is in. Floors past the last band stay in it. */
@@ -59,7 +59,9 @@ export function hearthsilverNodes(floor: number): number {
 /** The kind a plain roll in 0..1 gives on a floor: its band's ores, coal, quartz, a geode, else stone. */
 export function rockKindAt(floor: number, r: number): RockKind {
   const table: [RockKind, number][] = [
-    ...bandOf(floor).ores.map((o): [RockKind, number] => [o.kind, o.share]),
+    ...bandOf(floor)
+      .ores.filter((o) => floor >= (o.fromFloor ?? 0))
+      .map((o): [RockKind, number] => [o.kind, o.share]),
     ["coal", COAL_SHARE],
     ["quartz", QUARTZ_SHARE],
     ["geode", GEODE_SHARE],

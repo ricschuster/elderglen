@@ -337,7 +337,7 @@ Source: `16_bundles.md`. All placeholders, ours unless marked.
 Source: `22_mines.md`. All of these are ours and are placeholders. Stardew facts
 are from memory and unchecked.
 
-- 120 floors in three bands of 40 (copper, iron, gold). Hearthsilver on floors 100
+- 120 floors in three bands of 40 (copper, iron, gold). Iron nodes from floor 26 (owner, 2026-11-08): 6 percent of rocks on floors 26 to 40, 22 percent on 41 to 80, 6 percent from 81 (`mine-bands.json`, `fromFloor`). Hearthsilver on floors 100
   to 120. The lift stops at every floor once reached. A rest camp with a loot chest
   every 10 floors, no healing.
 - Opening day: Spring day 5. Dry-streak ladder odds: 1 percent plus 0.5 percent per

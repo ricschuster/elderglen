@@ -14,7 +14,7 @@ bars. The charcoal kiln is built as a machine (2026-11-07, note 24). The Smith's
 (2026-11-07, session e): a placeable machine, mining level 4, 20 copper ore and 25
 stone, 5 ore and 1 coal a bar. Old Greencoat's door scene (placeholder words, no
 portrait) and the camp chest on floor 10 (a daily gift, take only, no bench) are built
-(session e). Geodes are built (session e): a node that takes 3 swings, 5 percent of rocks on floors 1 to 10, cracked by the smith for 25g into a stone, ore, quartz, a placeholder gem or a found thing (`src/content/geodes.json`); Rockhound adds an extra geode from plain rock. The gem list, found things, clay and the Glimmerstone are not written. The mine hall's ore-only bin is built (#522): a service tile in `mine.json` that opens the shipping bin screen with raw ore only (copper, iron and gold ore; bars, stone and coal are refused, placeholder), into the same bin and nightly payment. **Built (2026-11-08): the deeper mine as digging only, floors 11 to 120** (`mine-bands.json`, `src/core/mines.ts`): the three bands of 40, iron nodes from floor 41, gold from 81 with iron and copper rarer, Hearthsilver (6 nodes a floor, 1 to 2 ore) from floor 100, geodes in each band's kind, a camp chest on every 10th floor (emptied per camp, gift ore by band), the lift to every floor reached, no ladder on floor 120. **Built (2026-11-08): the Hearthsilver bar** (furnace, 5 ore and 2 coal, 8 hours placeholder) **and the fifth tool tier** at the smith (note 44). Not built: creatures, special floors, dangerous mode. Not built:
+(session e). Geodes are built (session e): a node that takes 3 swings, 5 percent of rocks on floors 1 to 10, cracked by the smith for 25g into a stone, ore, quartz, a placeholder gem or a found thing (`src/content/geodes.json`); Rockhound adds an extra geode from plain rock. The gem list, found things, clay and the Glimmerstone are not written. The mine hall's ore-only bin is built (#522): a service tile in `mine.json` that opens the shipping bin screen with raw ore only (copper, iron and gold ore; bars, stone and coal are refused, placeholder), into the same bin and nightly payment. **Built (2026-11-08): the deeper mine as digging only, floors 11 to 120** (`mine-bands.json`, `src/core/mines.ts`): the three bands of 40, iron nodes from floor 26 (owner decision 2026-11-08; a rare 6 percent share before floor 41, 22 percent from 41), gold from 81 with iron and copper rarer, Hearthsilver (6 nodes a floor, 1 to 2 ore) from floor 100, geodes in each band's kind, a camp chest on every 10th floor (emptied per camp, gift ore by band), the lift to every floor reached, no ladder on floor 120. **Built (2026-11-08): the Hearthsilver bar** (furnace, 5 ore and 2 coal, 8 hours placeholder) **and the fifth tool tier** at the smith (note 44). Not built: creatures, special floors, dangerous mode. Not built:
 everything else from slice 3 on. The mine hall and the mine door are placeholders
 on the farm until the Mountain exists (note 19). Everything else is unbuilt. It answers the design half of the mines item in
 `16_bundles.md` and feeds the fifth tool tier (#194).
@@ -116,7 +116,7 @@ Mountain (`19_valley_layout.md`).
 
 | Band | Floors | Look | Ore | Creatures |
 | --- | --- | --- | --- | --- |
-| The Upper Galleries | 1 to 40 | Brown stone, old dwarf lamps | Copper | Pebblebacks, Dustmoths, Rock Crabs, Mossbeetles, Gloop (green) |
+| The Upper Galleries | 1 to 40 | Brown stone, old dwarf lamps | Copper, and a little iron from floor 26 | Pebblebacks, Dustmoths, Rock Crabs, Mossbeetles, Gloop (green) |
 | The Cold Deeps | 41 to 80 | Blue rock and frost, breath clouds | Iron | Frostnibblers, Icicle Hoppers, Cave Bats, Nabblers, Gloop (blue) |
 | The Ember Deeps | 81 to 120 | Red rock, warm glow, old forge halls | Gold, and Hearthsilver from floor 100 | Cinder Pups, Lanternmoths, Old Diggers, Gloop (red) |
 
@@ -201,7 +201,7 @@ time, and the lift can bring them up afterwards.
 | Ore | Band | Bar | Smelt |
 | --- | --- | --- | --- |
 | Copper | 1 to 40 (and later bands, rarer) | Copper bar | 5 ore, 1 coal |
-| Iron | 41 to 80 | Iron bar | 5 ore, 1 coal |
+| Iron | 26 to 80 (rare before 41) | Iron bar | 5 ore, 1 coal |
 | Gold | 81 to 120 | Gold bar | 5 ore, 1 coal |
 | Hearthsilver | 100 to 120 | Hearthsilver bar | 5 ore, 2 coal |
 
