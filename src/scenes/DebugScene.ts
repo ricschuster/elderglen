@@ -125,6 +125,8 @@ export class DebugScene extends Phaser.Scene {
           },
         ],
       },
+      this.stackRow("Wood", "wood"),
+      this.stackRow("Stone", "stone"),
       {
         label: "Items",
         detail: "wood, seeds, crops, forage",
@@ -228,6 +230,23 @@ export class DebugScene extends Phaser.Scene {
         ],
       },
     ];
+  }
+
+  /** A top level row that hands out one plain item in big steps (wood and stone build most things). */
+  private stackRow(label: string, id: string): Row {
+    const g = this.state;
+    const give = (n: number) => ({
+      text: `+${n}`,
+      run: () => {
+        const result = giveItem(g, id, n);
+        this.say(result === "ok" ? "" : "No room in the backpack.");
+      },
+    });
+    return {
+      label,
+      detail: `held ${g.inventory.count(id)}`,
+      buttons: [give(10), give(100), give(500)],
+    };
   }
 
   private pickerRows(): Row[] {
