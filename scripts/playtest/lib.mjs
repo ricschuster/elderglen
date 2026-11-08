@@ -108,6 +108,7 @@ export async function launch({
   context,
   profile = "desktop",
   bindings,
+  scheme = "stick",
 }) {
   // DEVICE_CDP: drive Chrome on a real device (adb forward tcp:9222
   // localabstract:chrome_devtools_remote) instead of a headless browser.
@@ -127,13 +128,13 @@ export async function launch({
   // Set the profile explicitly, so a run never depends on the machine's
   // pointer type (note 45). The bindings stay at their defaults unless given.
   await p.addInitScript(
-    ({ profile, bindings }) => {
+    ({ profile, bindings, scheme }) => {
       localStorage.setItem(
         "elderglen-settings",
-        JSON.stringify({ version: 1, profile, touchScheme: "stick", bindings }),
+        JSON.stringify({ version: 1, profile, touchScheme: scheme, bindings }),
       );
     },
-    { profile, bindings },
+    { profile, bindings, scheme },
   );
   // SEED makes Math.random repeatable, so two builds can be compared on the
   // same weather, forage and trees.

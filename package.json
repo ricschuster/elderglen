@@ -22,6 +22,7 @@
     "playtest": "node scripts/playtest/play.mjs",
     "playtest:late": "node scripts/playtest/late.mjs",
     "playtest:touch": "node scripts/playtest/touch.mjs",
+    "playtest:tap": "node scripts/playtest/tap.mjs",
     "playtest:controls": "node scripts/playtest/controls.mjs",
     "playtest:mouse": "node scripts/playtest/mouse.mjs",
     "sim": "node scripts/sim/run.mjs scripts/sim/main.ts",

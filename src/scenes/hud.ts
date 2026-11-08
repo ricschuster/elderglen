@@ -227,6 +227,12 @@ export class Hud {
     ]);
     this.pin("r", "b", [use, useText, eat, eatText]);
     this.pin("r", "t", [skills, skillsText, craft, craftText, hats, hatsText]);
+    // Tap-to-move has no Use button: a tap on the tile beside the farmer uses
+    // the held tool (note 27).
+    if (this.touch && settings.touchScheme === "tap") {
+      use.setVisible(false).disableInteractive();
+      useText.setVisible(false);
+    }
     if (!this.touch)
       for (const o of [
         use,

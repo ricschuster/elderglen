@@ -1,7 +1,11 @@
 # 27 Touch controls (draft)
 
-Status: draft, open questions settled. Decided with the owner on 2026-10-31. Nothing here is built
-except the floating stick (`src/scenes/controls.ts`). Reference: the Stardew
+Status: tap-to-move built 2026-11-08 (`src/core/pathing.ts`, `src/scenes/FarmScene.ts`);
+the floating stick is the second scheme (`src/scenes/controls.ts`). Decided with
+the owner on 2026-10-31. Tablet players asked for Stardew's default controls on
+2026-11-08, so tap-to-move is the default. A tap on the tile beside the farmer
+faces it and uses the held tool (our rule, for careful tilling and placing).
+The tap scheme has no Use button, only Action. Reference: the Stardew
 Valley Wiki Mobile Controls and Controls pages, read only (ADR 0002).
 
 ## Decisions

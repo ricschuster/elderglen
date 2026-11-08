@@ -19,6 +19,8 @@ errors. The game's weather and forage are random, so reruns differ.
 4. `npm run playtest:late` leaves a new game standing until 2 am and checks the
    pass-out. It takes about 14 minutes.
 
+5. `npm run playtest:tap` taps a tile, a tree and an unreachable spot in the
+   tap-to-move scheme (about 15 seconds).
 5. `npm run playtest:touch` plays one short loop with touch events only, in a
    tablet-sized touch browser (1200x700 CSS pixels, like the SM-T500): the
    stick, the toolbar, till, plant, water and harvest (with Action), a second finger on Use
