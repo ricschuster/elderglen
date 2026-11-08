@@ -26,6 +26,7 @@ const ground = () =>
   );
 
 async function chop(t) {
+  await bot.refreshMap();
   const here = (await bot.dbg()).tile;
   const cands = [
     { x: t.x, y: t.y + 1, dir: "up" },

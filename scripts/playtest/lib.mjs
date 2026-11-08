@@ -10,7 +10,17 @@ fs.mkdirSync(`${OUT}/shots`, { recursive: true });
 export const GAME_URL = process.env.BASE_URL ?? "http://localhost:5173/";
 /** Every map by id, so the bot can path on whichever map it is standing in. */
 const MAPS = Object.fromEntries(
-  ["farm", "house", "sawmill", "hall", "cellar"].map((id) => {
+  [
+    "farm",
+    "house",
+    "sawmill",
+    "hall",
+    "cellar",
+    "green",
+    "hedge",
+    "mine",
+    "farm-cave",
+  ].map((id) => {
     const map = JSON.parse(
       fs.readFileSync(`${ROOT}src/content/maps/${id}.json`, "utf8"),
     );
@@ -58,15 +68,19 @@ let here = "farm";
 export const setMap = (id) => {
   here = id;
 };
+/** Tiles the game says are blocked now (rocks, machines, felled trees...). */
+let live = new Set();
+let liveRead = false;
 const blockedT = (x, y) => {
   const { W, H, col, trees } = MAPS[here];
   return (
+    live.has(`${x},${y}`) ||
     x < 0 ||
     y < 0 ||
     x >= W ||
     y >= H ||
     col[y * W + x] !== 0 ||
-    trees.has(`${x},${y}`)
+    (!liveRead && trees.has(`${x},${y}`))
   );
 };
 export const isWalk = (x, y) =>
@@ -186,6 +200,17 @@ export class Bot {
   }
   dbg() {
     return this.p.evaluate(() => window.farmDebug());
+  }
+  /** Read the map and the game's own blocked tiles, so planning matches the game. */
+  async refreshMap() {
+    const r = await this.p.evaluate(() => ({
+      map: window.farmDebug().map,
+      blocked: window.farmBlocked ? window.farmBlocked() : [],
+    }));
+    here = r.map;
+    live = new Set(r.blocked);
+    liveRead = r.blocked.length > 0;
+    return r.map;
   }
   /** Live read of the game state. Used only to observe and verify. */
   snap() {
@@ -320,10 +345,64 @@ export class Bot {
     return p ? p.length : Infinity;
   }
 
+  /**
+   * Walk by the game's own tap route (the dev hook `farmWalk`), so no key hold
+   * is timed from outside. True on arrival. False when the hook is missing or
+   * there is no route, and the caller falls back to key holds.
+   */
+  async hookWalk(tx, ty) {
+    const ok = await this.p.evaluate(
+      ([x, y]) => (window.farmWalk ? window.farmWalk(x, y) : false),
+      [tx, ty],
+    );
+    if (!ok) {
+      log(`hookWalk: no route to ${tx},${ty}`);
+      return false;
+    }
+    const limit = Date.now() + 20000;
+    for (;;) {
+      await sleepMs(25);
+      const d = await this.dbg();
+      if (!d.walking) return d.tile.x === tx && d.tile.y === ty;
+      if (Date.now() > limit) {
+        const sn = await this.snap();
+        log(
+          `hookWalk timed out: tile ${JSON.stringify(d.tile)} map ${d.map} scenes ${sn.scenes} target ${tx},${ty}`,
+        );
+        return false;
+      }
+    }
+  }
+
+  /**
+   * Close a story screen the game opens by itself in the morning (the Greencoat
+   * when the mines open, the cave choice, the orders board intro). It pauses the
+   * farm, so no walk or key press reaches the player until it is closed. Without
+   * this a persona run stalled for minutes at the first of them (day 5).
+   */
+  async dismissModals() {
+    for (let i = 0; i < 3; i++) {
+      const open = await this.p.evaluate(() =>
+        ["greencoat", "cave-choice", "orders"].filter((k) =>
+          window.__game.scene.isActive(k),
+        ),
+      );
+      if (open.length === 0) return;
+      log(`closing ${open} (opened by the game)`);
+      await this.p.keyboard.press("Escape");
+      await sleepMs(500);
+    }
+  }
+
   async walkTo(tx, ty) {
     for (let attempt = 0; attempt < 4; attempt++) {
+      await this.dismissModals();
+      await this.refreshMap();
       const d = await this.dbg();
-      here = d.map;
+      if (await this.hookWalk(tx, ty)) {
+        await sleepMs(20);
+        return;
+      }
       const path = this.bfs(d.tile, { x: tx, y: ty });
       if (!path)
         throw new Error(`no path ${JSON.stringify(d.tile)} -> ${tx},${ty}`);
@@ -388,7 +467,7 @@ export class Bot {
   /** Walk next to a target tile and press `key` on it (Use by default). */
   async useAt(tx, ty, prefer, key = "KeyC") {
     // The bot may have left a door since the last walk, so read the map first.
-    here = (await this.dbg()).map;
+    await this.refreshMap();
     const cands = [
       { x: tx, y: ty + 1, dir: "up" },
       { x: tx, y: ty - 1, dir: "down" },

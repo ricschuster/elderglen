@@ -205,6 +205,23 @@ async function menuCursor(scene, field) {
     [scene, field],
   );
 }
+/** The labels of a menu's rows, in the order the game shows them. */
+const menuLabels = (scene, field) =>
+  page.evaluate(
+    ([sc, f]) => window.__game.scene.getScene(sc)[f].rows.map((r) => r.label),
+    [scene, field],
+  );
+/** The row index whose label starts with the item's display name. */
+async function rowOf(scene, field, name, suffix = "") {
+  const labels = await menuLabels(scene, field);
+  const i = labels.findIndex((l) => l === name + suffix);
+  if (i < 0)
+    throw new Error(
+      `no row "${name}${suffix}" in ${scene}.${field}: ${labels}`,
+    );
+  return i;
+}
+const itemName = (id) => page.evaluate((i) => window.farmItemName(i), id);
 async function menuTo(scene, field, idx) {
   for (let i = 0; i < 40; i++) {
     const c = await menuCursor(scene, field);
@@ -348,11 +365,12 @@ async function visitShop(day) {
     await bot.key("ArrowRight", 40);
     for (const [id, n] of sells) {
       const cur = await bot.snap();
-      const rows = [];
-      for (const sl of cur.inv)
-        if (sl && !rows.includes(sl.id)) rows.push(sl.id);
-      await menuTo("shop", "sellMenu", rows.indexOf(id));
       const have = bot.count(cur, id);
+      await menuTo(
+        "shop",
+        "sellMenu",
+        await rowOf("shop", "sellMenu", await itemName(id), `  x${have}`),
+      );
       if (n === have) await bot.key("Space", 120);
       else for (let i = 0; i < n; i++) await bot.key("Enter", 80);
       const after = await bot.snap();
@@ -379,7 +397,11 @@ async function visitShop(day) {
     const cur = await bot.snap();
     n = Math.min(n, Math.floor(cur.money / cropDef[crop].seedPrice));
     if (n <= 0) continue;
-    await menuTo("shop", "buyMenu", stock.indexOf(crop));
+    await menuTo(
+      "shop",
+      "buyMenu",
+      await rowOf("shop", "buyMenu", `${cropDef[crop].name} seeds`),
+    );
     let left = n;
     while (left >= 5) {
       await bot.key("Space", 100);
