@@ -2,11 +2,25 @@ import { animalReportLines } from "./animals";
 import { WAITING_ROOMS_LINE } from "./house";
 import { ordersReportLines } from "./orders";
 import type { SleepReport } from "./sleep";
+import { itemById } from "./items";
 
 /** The words for the morning after: what happened overnight, one per line. */
 export function reportLines(r: SleepReport): string[] {
   const lines: string[] = [];
-  if (r.passedOut) {
+  if (r.defeat) {
+    lines.push("You were knocked out and carried out of the mine.");
+    lines.push(
+      r.moneyLost > 0
+        ? `The bearers kept ${r.moneyLost}g for the trouble.`
+        : "The bearers asked for nothing.",
+    );
+    for (const l of r.defeat.lost)
+      lines.push(
+        `Lost for good: ${l.count} ${itemById(l.id)?.name.toLowerCase() ?? l.id}.`,
+      );
+    if (r.defeat.posted)
+      lines.push("The trainer is posting one of them back to you.");
+  } else if (r.passedOut) {
     const why =
       r.reason === "energy"
         ? "You ran out of energy and passed out."

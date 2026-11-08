@@ -178,6 +178,10 @@ export interface Settings {
   showHints: boolean;
   /** Fishing assist: 0 off, 1 bigger bar and calmer fish, 2 skip the fight (note 21). */
   fishingAssist: 0 | 1 | 2;
+  /** Combat assist: half damage, wider telegraphs, no items lost on defeat (note 22). */
+  combatAssist: boolean;
+  /** Mine floors with no creatures at all, for a player who only wants to dig (note 22). */
+  noCreatures: boolean;
 }
 
 export const SETTINGS_VERSION = 1;
@@ -196,6 +200,8 @@ export function defaultSettings(coarsePointer = false): Settings {
     uiSize: DEFAULT_PERCENT,
     showHints: true,
     fishingAssist: 0,
+    combatAssist: false,
+    noCreatures: false,
   };
 }
 
@@ -255,6 +261,12 @@ export function deserializeSettings(
       raw.fishingAssist === 1 || raw.fishingAssist === 2
         ? raw.fishingAssist
         : base.fishingAssist,
+    combatAssist:
+      typeof raw.combatAssist === "boolean"
+        ? raw.combatAssist
+        : base.combatAssist,
+    noCreatures:
+      typeof raw.noCreatures === "boolean" ? raw.noCreatures : base.noCreatures,
   };
 }
 

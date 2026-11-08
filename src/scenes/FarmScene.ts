@@ -92,6 +92,22 @@ import {
   loadDeviceSettings,
 } from "./storage";
 import { saveGame } from "../core/save";
+import {
+  healthShown,
+  isWeapon,
+  swingTargets,
+  weaponById,
+  type WeaponDef,
+} from "../core/combat";
+import {
+  creatureById,
+  creatureTile,
+  floorHasCreatures,
+  hurtCreature,
+  rollDrops,
+  stepCreature,
+  type Creature,
+} from "../core/creatures";
 import { absoluteMinutes } from "../core/furnace";
 import { jobDone, statusText } from "../core/machines";
 import {
@@ -209,6 +225,13 @@ const SPEED = 80;
 const RIDER_LIFT = 6;
 /** The map of every farm type: where the horse can be ridden, with the village green. */
 const FARM_MAP_IDS = FARM_TYPES.map((t) => t.map);
+/** A creature's feet box, in world pixels. */
+const CREATURE_BODY: Body = { hw: 5, h: 5 };
+/** Placeholder colours for the first creatures, until the art pass. */
+const CREATURE_COLOURS: Record<string, number> = {
+  pebbleback: 0x8c8c94,
+  dustmoth: 0xd9c08a,
+};
 /** The player's feet box, in world pixels. */
 const PLAYER: Body = { hw: 5, h: 6 };
 
@@ -271,6 +294,12 @@ export class FarmScene extends Phaser.Scene {
   private target!: Phaser.GameObjects.Rectangle;
   /** Placeholder hat drawn on the player. */
   private hat!: Phaser.GameObjects.Rectangle;
+  /** One placeholder block per creature on this floor, by creature id. */
+  private creatureSprites = new Map<number, Phaser.GameObjects.Rectangle>();
+  /** The swing flash, drawn in the world. */
+  private swingFx!: Phaser.GameObjects.Graphics;
+  /** The scene time before which the next weapon swing is refused. */
+  private swingReady = 0;
   /** True while the naming dialog is open for the first ride. */
   private namingHorse = false;
   /** The horse under the rider while mounted (a placeholder block). */
@@ -389,6 +418,19 @@ export class FarmScene extends Phaser.Scene {
       .setOrigin(0)
       .setStrokeStyle(1, 0xffffff, 0.6);
     world.push(this.player, this.hat, this.target);
+    this.swingFx = this.add.graphics().setDepth(900);
+    world.push(this.swingFx);
+    this.creatureSprites = new Map();
+    this.syncCombatSettings();
+    for (const c of this.floorState?.creatures ?? []) {
+      const block = this.add
+        .rectangle(c.x, c.y, 12, 10, CREATURE_COLOURS[c.kind] ?? 0xffffff)
+        .setOrigin(0.5, 1)
+        .setStrokeStyle(1, 0x000000, 0.6)
+        .setVisible(!this.state.combat.noCreatures);
+      this.creatureSprites.set(c.uid, block);
+      world.push(block);
+    }
     const built = this.map.bounds;
     this.night = this.add
       .rectangle(
@@ -550,6 +592,7 @@ export class FarmScene extends Phaser.Scene {
       _sys: unknown,
       data?: { sleep?: boolean; goto?: { map: string; entry: string } },
     ) => {
+      this.syncCombatSettings();
       if (data?.sleep) return this.endDay();
       if (data?.goto) return this.travel(data.goto.map, data.goto.entry);
       if (this.namingHorse) {
@@ -661,6 +704,15 @@ export class FarmScene extends Phaser.Scene {
         houseBuild: this.state.houseBuild ?? null,
         mounted: this.state.animals.mounted,
         horse: this.state.animals.horse,
+        health: this.state.combat.health.current,
+        creatures: (this.floorState?.creatures ?? []).map((c) => ({
+          uid: c.uid,
+          kind: c.kind,
+          x: c.x,
+          y: c.y,
+          hp: c.hp,
+          state: c.state,
+        })),
       });
   }
 
@@ -710,6 +762,7 @@ export class FarmScene extends Phaser.Scene {
     this.drawHat();
     this.repeatUse(delta * DEV_SPEED);
     this.pickUp();
+    this.updateCombat(dt);
 
     const mark = this.tapMark;
     if (mark && this.time.now > mark.until) this.tapMark = undefined;
@@ -1302,6 +1355,12 @@ export class FarmScene extends Phaser.Scene {
       return this.render();
     }
     const front = this.aimTile();
+    const carried = heldAt(this.state, this.selected);
+    const weapon =
+      carried.kind === "item" && isWeapon(carried.id)
+        ? weaponById(carried.id)
+        : undefined;
+    if (weapon) return this.swing(weapon);
     if (this.map.serviceAt(front.x, front.y)) return;
     if (this.useSilo(front.x, front.y)) return;
     const held = heldAt(this.state, this.selected);
@@ -1412,6 +1471,11 @@ export class FarmScene extends Phaser.Scene {
     if (service?.kind === "camp-chest")
       return this.report(takeCampGift(this.state, this.floor));
     if (service?.kind === "ore-bin") return this.open("bin", { oreOnly: true });
+    if (service?.kind === "trainer") return this.open("trainer");
+    if (service?.kind === "dummy") {
+      this.message = "The training dummy. Hold a weapon and swing at it.";
+      return this.render();
+    }
     if (service?.kind === "stairs")
       return this.travel(mineMapId(1), "from_above");
     if (service && isFestivalMap(this.mapId))
@@ -2171,6 +2235,183 @@ export class FarmScene extends Phaser.Scene {
     this.drawMailbox();
     this.drawRequestMark();
     this.drawBuild();
-    this.hud.update(this.state, this.selected, this.message);
+    this.hud.update(this.state, this.selected, this.message, this.showHealth());
+  }
+
+  /** True where health can be lost, so the bar shows (note 22, decision 17). */
+  private showHealth(): boolean {
+    return healthShown(
+      this.floor !== undefined && floorHasCreatures(this.floor),
+      this.state.combat.noCreatures,
+    );
+  }
+
+  /** Read the combat settings from the device: assist and "no creatures". */
+  private syncCombatSettings(): void {
+    const s = loadDeviceSettings();
+    this.state.combat.assist = s.combatAssist;
+    this.state.combat.noCreatures = s.noCreatures;
+    for (const block of this.creatureSprites.values())
+      block.setVisible(!s.noCreatures);
+  }
+
+  /** Step every creature on the floor, take hits and handle a knock out. */
+  private updateCombat(dt: number): void {
+    const combat = this.state.combat;
+    const floor = this.floorState;
+    this.player.setAlpha(
+      combat.health.grace > 0 && Math.floor(this.time.now / 90) % 2 ? 0.4 : 1,
+    );
+    if (!floor || combat.noCreatures) return;
+    combat.health.tick(dt);
+    const ts = this.map.tileSize;
+    for (const c of floor.creatures) {
+      const result = stepCreature(c, dt, {
+        player: this.pos,
+        walk: (cr, dx, dy) =>
+          move(
+            { x: cr.x, y: cr.y },
+            { x: dx, y: dy },
+            CREATURE_BODY,
+            ts,
+            (x, y) => this.tileBlockedNoHorse(x, y),
+          ),
+        random: Math.random,
+        assist: combat.assist,
+        tileSize: ts,
+      });
+      if (result.hit) {
+        const lost = combat.health.hurt(result.hit, combat.assist);
+        if (lost > 0) {
+          this.message = `${creatureById(c.kind)?.name ?? "It"} hits you for ${lost}.`;
+          this.floatText(this.pos.x, this.pos.y - 14, `-${lost}`, "#ff8080");
+          this.render();
+        }
+      }
+      this.drawCreature(c);
+    }
+    if (combat.health.down && !combat.defeatPending) this.knockedOut();
+  }
+
+  private drawCreature(c: Creature): void {
+    const block = this.creatureSprites.get(c.uid);
+    if (!block) return;
+    block.setPosition(c.x, c.y);
+    // The wind up is the warning: a swelling, blinking block (note 22).
+    const winding = c.state === "windup";
+    block.setScale(winding ? 1.35 : 1);
+    block.setFillStyle(
+      winding && Math.floor(this.time.now / 100) % 2
+        ? 0xff9a40
+        : c.state === "stagger"
+          ? 0xffffff
+          : (CREATURE_COLOURS[c.kind] ?? 0xffffff),
+    );
+    block.setAlpha(c.state === "recover" ? 0.6 : 1);
+  }
+
+  /** Health ran out: the day ends and the defeat rule runs overnight (note 22). */
+  private knockedOut(): void {
+    this.state.combat.defeatPending = true;
+    this.message = "";
+    this.endDay();
+  }
+
+  /** A short number that rises and fades in the world. */
+  private floatText(x: number, y: number, text: string, color: string): void {
+    const t = this.add
+      .text(x, y, text, { fontSize: "10px", color })
+      .setOrigin(0.5)
+      .setDepth(950);
+    this.uiCamera.ignore(t);
+    this.tweens.add({
+      targets: t,
+      y: y - 14,
+      alpha: 0,
+      duration: 700,
+      onComplete: () => t.destroy(),
+    });
+  }
+
+  /**
+   * Swing the held weapon (note 22). The training dummy takes the hit and shows
+   * the number. Otherwise every creature in reach is hit, and a beaten one drops
+   * its goods and may reveal a ladder.
+   */
+  private swing(weapon: WeaponDef): void {
+    if (this.time.now < this.swingReady) return;
+    this.swingReady = this.time.now + weapon.cooldown * 1000;
+    const ts = this.map.tileSize;
+    const f = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] }[
+      this.facing
+    ];
+    // A flash of the swing: a short line for a shot, a block for a swing.
+    this.swingFx.clear().fillStyle(0xffffff, 0.35);
+    const mid = { x: this.pos.x, y: this.pos.y - 6 };
+    const len =
+      weapon.family === "sling" ? weapon.reach * ts : weapon.reach * ts * 0.8;
+    this.swingFx.fillRect(
+      mid.x + (f[0]! > 0 ? 0 : f[0]! < 0 ? -len : -len / 2),
+      mid.y + (f[1]! > 0 ? 0 : f[1]! < 0 ? -len : -len / 2),
+      f[0] !== 0 ? len : weapon.family === "sling" ? 3 : len,
+      f[1] !== 0 ? len : weapon.family === "sling" ? 3 : len,
+    );
+    this.time.delayedCall(90, () => this.swingFx.clear());
+
+    // The dummy: in front, as far as the weapon reaches.
+    const here = tileOf(this.pos, PLAYER, ts);
+    for (let i = 1; i <= Math.max(1, Math.floor(weapon.reach)); i++) {
+      const tx = here.x + f[0]! * i;
+      const ty = here.y + f[1]! * i;
+      const kind = this.map.serviceAt(tx, ty)?.kind;
+      if (kind === "dummy") {
+        this.floatText((tx + 0.5) * ts, ty * ts, `${weapon.damage}`, "#ffffff");
+        this.message = `The dummy takes ${weapon.damage}. Swing again in ${weapon.cooldown} seconds.`;
+        return this.render();
+      }
+      if (this.tileBlocked(tx, ty)) break;
+    }
+
+    const floor = this.floorState;
+    if (!floor || this.state.combat.noCreatures) return;
+    const hits = swingTargets(
+      weapon,
+      this.facing,
+      this.pos,
+      floor.creatures,
+      ts,
+    );
+    for (const c of hits) {
+      this.floatText(c.x, c.y - 12, `${weapon.damage}`, "#ffffff");
+      if (hurtCreature(c, weapon.damage)) this.beaten(c);
+    }
+  }
+
+  /** A creature is beaten: its goods, the kill tally and a ladder roll. */
+  private beaten(c: Creature): void {
+    const floor = this.floorState!;
+    const def = creatureById(c.kind);
+    floor.creatures = floor.creatures.filter((o) => o.uid !== c.uid);
+    this.creatureSprites.get(c.uid)?.destroy();
+    this.creatureSprites.delete(c.uid);
+    if (!def) return;
+    this.state.combat.noteKill(c.kind);
+    const got: string[] = [];
+    let left = false;
+    for (const d of rollDrops(def, Math.random)) {
+      if (this.state.inventory.add(d.id, d.count))
+        got.push(`${d.count} ${itemById(d.id)?.name.toLowerCase() ?? d.id}`);
+      else left = true;
+    }
+    const tile = creatureTile(c, this.map.tileSize);
+    const ladder = this.state.mines.creatureBeaten(
+      this.floor!,
+      this.state.day.clock.day,
+      tile.x,
+      tile.y,
+      Math.random,
+    );
+    this.message = `${def.name} beaten.${got.length ? ` Got ${got.join(", ")}.` : ""}${left ? " Your pack is full, so something was left behind." : ""}${ladder ? " A ladder is revealed!" : ""}`;
+    this.render();
   }
 }

@@ -203,6 +203,28 @@ export class OptionsScene extends Phaser.Scene {
         })),
       },
       {
+        label: "Combat assist",
+        detail: "half damage, wider warnings, no items lost when knocked out",
+        buttons: [false, true].map((on) => ({
+          text: this.mark(s.combatAssist === on, on ? "On" : "Off"),
+          run: () => {
+            s.combatAssist = on;
+            this.refresh();
+          },
+        })),
+      },
+      {
+        label: "Creatures in the mine",
+        detail: "turn them off to dig in peace",
+        buttons: [false, true].map((off) => ({
+          text: this.mark(s.noCreatures === off, off ? "None" : "Some"),
+          run: () => {
+            s.noCreatures = off;
+            this.refresh();
+          },
+        })),
+      },
+      {
         label: "Controls for this device",
         buttons: (Object.keys(PROFILE_NAMES) as Profile[]).map((p) => ({
           text: this.mark(s.profile === p, PROFILE_NAMES[p]),

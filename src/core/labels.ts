@@ -28,6 +28,8 @@ const SERVICES: Record<string, string> = {
   "coop-bench": "Feeding Bench",
   "barn-bench": "Feeding Bench",
   smith: "Smith",
+  trainer: "Trainer",
+  dummy: "Dummy",
   lift: "Lift",
   stairs: "Stairs",
   "cave-dehydrator": "Dehydrator",

@@ -10,8 +10,14 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 8,
-  "nextobjectid": 100,
-  "properties": [{ "name": "placeholder", "type": "bool", "value": true }],
+  "nextobjectid": 102,
+  "properties": [
+    {
+      "name": "placeholder",
+      "type": "bool",
+      "value": true
+    }
+  ],
   "layers": [
     {
       "id": 1,
@@ -24,10 +30,10 @@
       "opacity": 1,
       "visible": true,
       "data": [
-        7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 3, 11, 3, 3, 11, 3, 12, 3, 11, 3,
-        7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-        7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-        7, 7, 7, 7, 7, 7, 7, 9, 7, 7, 7, 7, 7
+        7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 3, 11, 3, 11, 11, 3, 12, 3, 11,
+        12, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+        3, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+        3, 7, 7, 7, 7, 7, 7, 7, 9, 7, 7, 7, 7, 7
       ]
     },
     {
@@ -41,7 +47,7 @@
       "opacity": 1,
       "visible": false,
       "data": [
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1,
         1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
         1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
         1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1
@@ -95,8 +101,16 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            { "name": "map", "type": "string", "value": "farm" },
-            { "name": "entry", "type": "string", "value": "from_mine" }
+            {
+              "name": "map",
+              "type": "string",
+              "value": "farm"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "from_mine"
+            }
           ]
         },
         {
@@ -111,7 +125,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "kind", "type": "string", "value": "lift" }]
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "lift"
+            }
+          ]
         },
         {
           "id": 99,
@@ -126,7 +146,11 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            { "name": "kind", "type": "string", "value": "ore-bin" }
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "ore-bin"
+            }
           ]
         },
         {
@@ -141,7 +165,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "kind", "type": "string", "value": "smith" }]
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "smith"
+            }
+          ]
         },
         {
           "id": 87,
@@ -156,7 +186,51 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            { "name": "kind", "type": "string", "value": "stairs" }
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "stairs"
+            }
+          ]
+        },
+        {
+          "id": 100,
+          "name": "trainer",
+          "class": "service",
+          "type": "service",
+          "x": 72,
+          "y": 24,
+          "width": 0,
+          "height": 0,
+          "point": true,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "trainer"
+            }
+          ]
+        },
+        {
+          "id": 101,
+          "name": "dummy",
+          "class": "service",
+          "type": "service",
+          "x": 168,
+          "y": 24,
+          "width": 0,
+          "height": 0,
+          "point": true,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "dummy"
+            }
           ]
         }
       ]

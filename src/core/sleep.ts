@@ -23,6 +23,7 @@ import { fruitTreeById } from "./fruittrees";
 import { CAVE_MAP } from "./cave";
 import { returnDebris } from "./debris";
 import { endDayOrders, type OrdersNews } from "./orders";
+import { maxHealth, loseItems, type Lost } from "./combat";
 import { maps } from "../content/maps";
 
 /**
@@ -86,6 +87,8 @@ export interface SleepReport {
   horseWasOut: boolean;
   /** True when the carpenter finished the silo this morning. */
   siloFinished: boolean;
+  /** Set when the player was knocked out in a fight: what the defeat took (note 22). */
+  defeat?: { lost: Lost[]; posted: boolean };
   /** What the night did to the animals. */
   animals: AnimalNews;
   /** True when the smith left the furnace this morning. */
@@ -127,9 +130,20 @@ export function sleep(
   const before = dateOf(g.day.clock.day).season;
   const cropsBefore = g.farm.cropCount;
   const completionBefore = valleyPercent(ringProgress(g));
+  // A defeat is the pass-out rule with the item loss on top (note 22): money
+  // goes by the same code, and the player wakes with the pass-out energy.
+  const defeated = g.combat.defeatPending;
+  if (defeated) g.day.energy.current = 0;
   const end = g.day.end(g.money);
   const moneyLost = end.passedOut ? end.moneyLost : 0;
   g.money -= moneyLost;
+  const lost = defeated
+    ? loseItems(g, random, g.combat.assist, g.day.clock.day)
+    : [];
+  g.combat.defeatPending = false;
+  // Any night's sleep restores health.
+  g.combat.health.max = maxHealth();
+  g.combat.health.fill();
   // The bin pays after the pass-out cost, which takes cash carried only.
   const shipped = g.bin.settle(g);
   const orders = endDayOrders(g, shipped.lines, g.day.clock.day);
@@ -239,6 +253,7 @@ export function sleep(
     passedOut: end.passedOut,
     reason: end.passedOut ? end.reason : undefined,
     moneyLost,
+    ...(defeated ? { defeat: { lost, posted: lost.length > 0 } } : {}),
     weather: g.weather,
     newSeason: season !== before ? season : undefined,
     withered: cropsBefore - g.farm.cropCount,

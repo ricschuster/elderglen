@@ -4,6 +4,7 @@ import { farmTypeById } from "./farmtypes";
 import { HARDWOOD, cropOfSeed, itemById } from "./items";
 import { fertilizerById, qualityLevelOf } from "./fertilizer";
 import { MAX_ENERGY } from "./energy";
+import { HEALTH_PER_ENERGY } from "./combat";
 import { doubleForageChance, forageFloor } from "./professions";
 import { cropQuality, forageQuality, withQuality } from "./quality";
 import { FORAGE_XP, harvestXp, type Skill } from "./skills";
@@ -200,9 +201,12 @@ export function eat(g: GameState, itemId: string): Outcome {
   const gain = itemById(itemId)?.energy;
   if (gain === undefined) return fail("not food");
   if (g.inventory.count(itemId) < 1) return fail("nothing to eat");
-  if (g.day.energy.current >= MAX_ENERGY) return fail("not hungry");
+  if (g.day.energy.current >= MAX_ENERGY && g.combat.health.full)
+    return fail("not hungry");
   g.inventory.remove(itemId);
   g.day.energy.restore(gain);
+  // Food heals too, a share of its energy value (note 22).
+  g.combat.health.heal(Math.round(gain * HEALTH_PER_ENERGY));
   return { ok: true, item: itemId };
 }
 

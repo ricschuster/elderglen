@@ -15,6 +15,7 @@ import {
 import { SPRINKLERS } from "./sprinklers";
 import { FRUIT_TREES, saplingId } from "./fruittrees";
 import decorData from "../content/decor.json";
+import weaponData from "../content/weapons.json";
 import furnitureData from "../content/furniture.json";
 import { ARTISAN_GOODS } from "./artisan";
 import { MACHINES } from "./processing";
@@ -179,6 +180,13 @@ for (const o of ORES) items.set(o.id, { ...o });
 for (const b of BARS)
   items.set(b.id, { id: b.id, name: b.name, sellPrice: b.sellPrice });
 
+/** Weapons are carried and kept: the smith forges them, the trainer gives the starters, nothing buys or sells them (note 22). */
+for (const w of weaponData)
+  items.set(w.id, { id: w.id, name: w.name, sellPrice: 0, keep: true });
+/** Moth dust, a Dustmoth drop and a crafting good (note 22). Sell price is a placeholder, ours. */
+export const MOTH_DUST = "moth-dust";
+items.set(MOTH_DUST, { id: MOTH_DUST, name: "Moth dust", sellPrice: 30 });
+
 /** Fish (note 21). Prices are placeholders in the bands of note 07. */
 for (const f of FISH)
   items.set(f.id, { id: f.id, name: f.name, sellPrice: f.sellPrice });
@@ -260,6 +268,7 @@ const GROUPS: [string, string[]][] = [
       ...BARS.map((b) => b.id),
     ],
   ],
+  ["Weapons and creature drops", [...weaponData.map((w) => w.id), MOTH_DUST]],
   [
     "Fish and rods",
     [...FISH, ...RODS, ...BAITS, ...LURES, ...TRINKETS].map((f) => f.id),
