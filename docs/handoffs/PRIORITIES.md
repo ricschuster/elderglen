@@ -11,9 +11,8 @@ Start each session by asking which item to take.
 
 1. **Completion tracker (#196). Built 2026-11-08 (PR #573).** Counters for
    friends, fish, slayer, gallery and elderfruit are locked at 0 until their
-   systems exist, and nothing calls `noteCooked` yet. Left: a top-level menu
-   entry (it is reached through the achievements page), the day-end recheck,
-   the summit achievement, the hall scene and rewards, and a look at the layout
+   systems exist. The top-level menu entry and the day-end recheck are done
+   (#586), and `noteCooked` is called now (#593). Left: the summit achievement, the hall scene and rewards, and a look at the layout
    in a browser. "Items crafted" counts only buildable recipes (owner, 2026-11-08).
 2. **Story spine.** The warden head and her staged reveal (#177), the sea elf
    and Homeward pin (#176), the hermit witch (#178) and the third community
@@ -24,6 +23,16 @@ Start each session by asking which item to take.
    restored hall rooms (#335), and the placeholder swap. No audio note exists
    (audio plan: #527).
 4. **Ring 2 shape and travel** (#20, M5). Parked until slice 3 is played.
+
+Built on 2026-11-08 (handoff 2026-11-08g, build session, nothing designed): the
+collections menu row and day-end recheck (#586), the placeable furniture
+catalogue (#587), a longer smoke script (#588), animals in three slices (note
+23, #589 to #591: coop and barn tiers, chickens, ducks, rabbits, cow, goat,
+sheep, pig, incubator, hay silo), the cheese press, mayonnaise machine, loom and
+oil maker (#592) and cooking with a stove and eight dishes (note 24, #593).
+None of it was played by hand. Not built: heater, animal professions, the
+keeper, animal art, most recipes, cooking achievements. Next: a hands-on play of
+coop, barn and cooking, then the Forest keeper design and animal art.
 
 Built on 2026-11-08 (handoff 2026-11-08f, build session, nothing designed):
 the completion tracker and collections page (#196, #573), geodes by band with
