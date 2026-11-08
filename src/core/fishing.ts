@@ -254,7 +254,21 @@ export interface FightSetup {
   assist: Assist;
   /** The first catch: the meter does not drain, so the fish cannot get away. */
   tutorial?: boolean;
+  /** A Magpie Hook chest appears in the bar during this fight. */
+  chest?: boolean;
 }
+
+/** The Magpie Hook chest in the bar (note 21). Placeholders (note 07). */
+export const CHEST = {
+  /** It appears this many seconds into the fight, at random between the two. */
+  appearMin: 1,
+  appearMax: 3,
+  /** Its height as a share of the track. */
+  size: 0.1,
+  /** Fetch progress gained per second with the bar over it, and lost otherwise. */
+  gain: 0.7,
+  loss: 0.2,
+} as const;
 
 /**
  * The bar's height for a rod, widened by assist (note 07) and by a lure's
@@ -282,6 +296,12 @@ export class Fight {
   state: FightState = "playing";
   private target: number;
   private retarget = 0;
+  /** The chest's centre on the track, or undefined when this fight has none. */
+  chestAt: number | undefined;
+  private chestIn = 0;
+  chestProgress = 0;
+  /** The chest has been fetched. It pays only if the fish is landed too. */
+  chestGot = false;
 
   constructor(
     readonly setup: FightSetup,
@@ -290,6 +310,25 @@ export class Fight {
     this.fishPos = setup.width / 2;
     this.target = this.fishPos;
     this.pickTarget(random);
+    if (setup.chest) {
+      this.chestIn =
+        CHEST.appearMin + random() * (CHEST.appearMax - CHEST.appearMin);
+      this.chestAt = CHEST.size / 2 + random() * (1 - CHEST.size);
+    }
+  }
+
+  /** True while the chest is showing in the bar and not yet fetched. */
+  get chestShown(): boolean {
+    return this.chestAt !== undefined && this.chestIn <= 0 && !this.chestGot;
+  }
+
+  /** True when the chest is inside the bar. */
+  private get chestInZone(): boolean {
+    const at = this.chestAt ?? 0;
+    const half = CHEST.size / 2;
+    return (
+      at + half >= this.barPos && at - half <= this.barPos + this.setup.width
+    );
   }
 
   /** True when the fish is inside the bar. */
@@ -364,6 +403,20 @@ export class Fight {
     const move = this.pace() * dt;
     const gap = this.target - this.fishPos;
     this.fishPos += Math.abs(gap) <= move ? gap : Math.sign(gap) * move;
+
+    // The chest is fetched with the bar and never touches a perfect catch.
+    if (this.chestAt !== undefined && !this.chestGot) {
+      if (this.chestIn > 0) this.chestIn -= dt;
+      else {
+        this.chestProgress +=
+          (this.chestInZone ? CHEST.gain : -CHEST.loss) * dt;
+        this.chestProgress = Math.max(this.chestProgress, 0);
+        if (this.chestProgress >= 1) {
+          this.chestProgress = 1;
+          this.chestGot = true;
+        }
+      }
+    }
 
     if (this.inZone) this.progress += BAR.gain * dt;
     else {

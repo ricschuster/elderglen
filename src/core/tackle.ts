@@ -53,7 +53,7 @@ export const lureById = (id: string | undefined) =>
 
 /** Casts a lure lasts. */
 export const LURE_CASTS = 20;
-/** Chance a Magpie Hook cast brings up a treasure, and the share of treasures that are purses. */
+/** Chance a Magpie Hook fight shows a treasure chest in the bar, and the share of treasures that are purses. */
 export const TREASURE_CHANCE = 0.2;
 export const PURSE_SHARE = 0.6;
 
@@ -267,12 +267,14 @@ export type Treasure =
 /** The gold in a coin purse: `40 + 15 * fishingLevel`. */
 export const purseGold = (level: number) => 40 + 15 * level;
 
-/** Roll the Magpie Hook's treasure for a catch, or none. Call only when the rig has the hook. */
-export function rollTreasure(
+/**
+ * Pick what a Magpie Hook chest holds. Whether a chest appears in the bar is a
+ * separate one in five (`TREASURE_CHANCE`, rolled by the scene per fight).
+ */
+export function pickTreasure(
   level: number,
   random: () => number,
 ): Treasure | undefined {
-  if (random() >= TREASURE_CHANCE) return undefined;
   if (random() < PURSE_SHARE) return { kind: "purse", gold: purseGold(level) };
   const item = TRINKETS[Math.floor(random() * TRINKETS.length)];
   return item ? { kind: "trinket", item } : undefined;

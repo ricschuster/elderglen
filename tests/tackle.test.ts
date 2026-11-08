@@ -24,7 +24,7 @@ import {
   purseGold,
   removeBait,
   removeLure,
-  rollTreasure,
+  pickTreasure,
 } from "../src/core/tackle";
 import { startGame } from "../src/core/toolbar";
 
@@ -243,16 +243,15 @@ describe("odds and the bar", () => {
 });
 
 describe("the Magpie Hook treasure", () => {
-  it("is one in five, six purses in ten, else a trinket", () => {
-    expect(rollTreasure(3, seq(0.5))).toBeUndefined();
-    expect(rollTreasure(3, seq(0.1, 0.3))).toEqual({
+  it("is six purses in ten, else a trinket", () => {
+    expect(pickTreasure(3, seq(0.3))).toEqual({
       kind: "purse",
       gold: purseGold(3),
     });
     expect(purseGold(4)).toBe(100);
-    const t = rollTreasure(3, seq(0.1, 0.9, 0.99));
+    const t = pickTreasure(3, seq(0.9, 0.99));
     expect(t?.kind === "trinket" && t.item.id).toBe("ring-box");
-    const first = rollTreasure(3, seq(0.1, 0.9, 0));
+    const first = pickTreasure(3, seq(0.9, 0));
     expect(first?.kind === "trinket" && first.item.id).toBe("tin-spoon");
   });
 

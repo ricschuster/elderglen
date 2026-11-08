@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { dateOf } from "../core/calendar";
 import {
   CAST_MINUTES,
+  CHEST,
   TOO_TIRED_TO_CAST,
   castEnergy,
   Fight,
@@ -26,9 +27,11 @@ import {
   lureById,
   removeBait,
   removeLure,
-  rollTreasure,
+  pickTreasure,
+  TREASURE_CHANCE,
   treasureText,
   type Effects,
+  type Treasure,
 } from "../core/tackle";
 import { isRaining } from "../core/weather";
 import type { Quality } from "../core/quality";
@@ -83,6 +86,8 @@ export class FishingScene extends Phaser.Scene {
   private distance = 0;
   private fight: Fight | undefined;
   private tutorial = false;
+  /** What the chest in this fight holds, when one appears. */
+  private chestPrize: Treasure | undefined;
   /** What the rig did to the cast in flight. */
   private effects!: Effects;
   private rigText!: Phaser.GameObjects.Text;
@@ -373,6 +378,11 @@ export class FishingScene extends Phaser.Scene {
       return this.land(b.fish.id, false);
     }
     this.phase = "fight";
+    // One fight in five with the Magpie Hook shows a chest in the bar.
+    this.chestPrize =
+      this.effects.treasure && Math.random() < TREASURE_CHANCE
+        ? pickTreasure(this.state.skills.level("fishing"), Math.random)
+        : undefined;
     this.fight = new Fight(
       {
         behaviour: b.fish.behaviour,
@@ -380,13 +390,18 @@ export class FishingScene extends Phaser.Scene {
         width: barWidth(this.rod, this.assist, this.effects.bar),
         assist: this.assist,
         tutorial: this.tutorial,
+        chest: this.chestPrize !== undefined,
       },
       Math.random,
     );
-    this.text.setText("Keep the bar on the fish!");
+    this.text.setText(
+      this.chestPrize
+        ? "Keep the bar on the fish! A chest may show in the bar: fetch it too."
+        : "Keep the bar on the fish!",
+    );
   }
 
-  private land(id: string, perfect: boolean): void {
+  private land(id: string, perfect: boolean, chest = false): void {
     const b = this.pending;
     if (b.kind !== "fish" || b.fish.id !== id) return;
     const g = this.state;
@@ -396,9 +411,8 @@ export class FishingScene extends Phaser.Scene {
       random: Math.random,
       at: this.cfg.at,
     });
-    const prize = this.effects.treasure
-      ? rollTreasure(g.skills.level("fishing"), Math.random)
-      : undefined;
+    // The chest pays only when it was fetched as well as the fish.
+    const prize = chest ? this.chestPrize : undefined;
     if (prize) giveTreasure(g, prize, this.cfg.at);
     this.text.setText(
       [this.describe(r), prize ? treasureText(prize) : ""]
@@ -443,7 +457,11 @@ export class FishingScene extends Phaser.Scene {
     } else if (this.phase === "fight" && this.fight) {
       this.fight.step(dt, this.held, Math.random);
       if (this.fight.state === "caught" && this.pending.kind === "fish")
-        this.land(this.pending.fish.id, this.fight.perfect);
+        this.land(
+          this.pending.fish.id,
+          this.fight.perfect,
+          this.fight.chestGot,
+        );
       else if (this.fight.state === "lost") {
         this.text.setText("It got away. Cast again.");
         this.rest();
@@ -465,6 +483,21 @@ export class FishingScene extends Phaser.Scene {
     m.fillStyle(0x1b4f7a, 1).fillRect(x, y, w, h);
     const bar = f.setup.width * h;
     m.fillStyle(0x6fcf6a, 0.8).fillRect(x, y + h - f.barPos * h - bar, w, bar);
+    if (f.chestShown && f.chestAt !== undefined) {
+      const ch = CHEST.size * h;
+      m.fillStyle(0xb5651d, 1).fillRect(
+        x + 4,
+        y + h - f.chestAt * h - ch / 2,
+        w - 8,
+        ch,
+      );
+      m.fillStyle(0xffe9a0, 1).fillRect(
+        x - 12,
+        y + h * (1 - f.chestProgress),
+        6,
+        h * f.chestProgress,
+      );
+    }
     m.fillStyle(0xffd34a, 1).fillCircle(x + w / 2, y + h - f.fishPos * h, 9);
     m.fillStyle(0x000000, 0.5).fillRect(x + w + 16, y, 14, h);
     m.fillStyle(0xffe9a0, 1).fillRect(

@@ -292,7 +292,8 @@ Built numbers (`src/core/fishing.ts`, `src/content/fish.json`, `rods.json`):
   trinket worth 30 to 120g). The Heron Rod has one lure slot, the Hearthwell Rod two.
 - Built with bait and lures: a bite wait of 1.5 to 4.5 s is multiplied by bait and
   the Whirligig, rare, night and rain weights multiply the draw, a Magpie Hook
-  treasure rolls 1 in 5 per landed fish (purse share 0.6), trinkets Tin Spoon 30g,
+  chest appears in the bar 1 in 5 fights, 1 to 3 s in, height 0.1 of the track, fetch
+  fill 0.7 per s and drain 0.2 per s (purse share 0.6), trinkets Tin Spoon 30g,
   Glass Bead 45g, Brass Button 60g, Cracked Locket 90g, Ring Box 120g. Plain Bait,
   Fine Bait and the seven lures are sold at the general store for now.
 - Fish sell prices by rarity: common 40 to 90g, uncommon 100 to 200g, rare 250
