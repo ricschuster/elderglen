@@ -1,6 +1,6 @@
 import type { Outcome } from "./actions";
 import { isFarmMap } from "./farmtypes";
-import { isHouseMap, legacyHouseTile } from "./house";
+import { HOUSE_LAYOUT, isHouseMap, legacyHouseTile } from "./house";
 import { Inventory } from "./inventory";
 import type { FarmMap } from "./map";
 import type { GameState } from "./save";
@@ -51,8 +51,8 @@ export class Chests {
     }));
   }
 
-  /** `legacy` is true for a save from before the merged house map (`legacyHouseTile`). */
-  load(raw: unknown, legacy = false): void {
+  /** `layout` is the save's `houseLayout`; an older frame is moved (`legacyHouseTile`). */
+  load(raw: unknown, layout = HOUSE_LAYOUT): void {
     this.placed.clear();
     if (!Array.isArray(raw)) return;
     for (const c of raw as Partial<ChestSave>[]) {
@@ -67,7 +67,7 @@ export class Chests {
         continue;
       const x = c.x as number;
       const y = c.y as number;
-      const to = legacy && isHouseMap(c.map) ? legacyHouseTile(c.map, x, y) : c;
+      const to = isHouseMap(c.map) ? legacyHouseTile(c.map, x, y, layout) : c;
       // If the new tile is taken, keep the chest where it was rather than lose its stacks.
       const added =
         this.add(to.map as string, to.x as number, to.y as number, def.id) ??

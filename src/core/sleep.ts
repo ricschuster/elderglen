@@ -53,6 +53,8 @@ export interface SleepReport {
   withered: number;
   /** True when the carpenter finished the house upgrade this morning. */
   houseFinished: boolean;
+  /** The tier that opened, when `houseFinished` is true. */
+  houseTier?: number;
   /** True when the smith left the furnace this morning. */
   furnaceGifted: boolean;
   /** Achievements earned by tonight's check, whose hats are now on sale. */
@@ -158,6 +160,7 @@ export function sleep(
     newSeason: season !== before ? season : undefined,
     withered: cropsBefore - g.farm.cropCount,
     houseFinished,
+    houseTier: houseFinished ? g.houseTier : undefined,
     furnaceGifted,
     achievements: checkAchievements(g).map((a) => a.name),
     toolReady: g.toolOrder && orderReady(g) ? g.toolOrder.tool : undefined,

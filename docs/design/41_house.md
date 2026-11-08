@@ -144,6 +144,20 @@ tier 1 until their layers exist, and a tier change while the player is inside
 the double bed in the bedroom is the bed that saves the day, and the start
 room's bed tile becomes plain floor. The sizes may still move by a tile or two.
 
+Built in #286: the map is now 31 by 22. The tier 2 band sits above (rows 0 to
+10, row 10 is the shared wall), so the start room's corner moved to (9, 12) and
+the tier 1 rooms to rows 10 to 21. The save frame is `houseLayout: 3` (note 68
+lists the migration). The band is `ground-t2` and `collision-t2`: a spare room
+(x 1 to 13) and a nursery (x 15 to 29) joined by a doorway at (14, 5), and
+stairs at (4, 10) that open the kitchen's top wall. Both rooms are bare and
+tidy. Tier 3 has no layers, it shows tier 2 and `houseHasCellar(tier)` is
+true for the cellar (#282). The carpenter lists "Upper floor" (65,000g, 100
+wood standing in for hardwood) and "Cellar stairs" (100,000g), and says the
+rooms are for later when tier 2 is ordered and when it lands. Not built: the
+larger kitchen and bedroom at tier 2 (the issue asked for them; the band is the
+part that is visible, and growing the rooms needs a wider map, so it waits for
+the owner's call).
+
 Shapes, from the images:
 
 - **Start:** one room. Bed lower right, hearth and TV on the back wall, door

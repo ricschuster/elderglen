@@ -6,7 +6,14 @@ import {
   furnitureProblem,
   stationStock,
 } from "../core/furniture";
-import { nextUpgrade, orderProblem, orderUpgrade, WOOD } from "../core/house";
+import {
+  HOUSE_UPGRADE_NAMES,
+  WAITING_ROOMS_LINE,
+  nextUpgrade,
+  orderProblem,
+  orderUpgrade,
+  WOOD,
+} from "../core/house";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
@@ -74,8 +81,11 @@ export class CarpenterScene extends Phaser.Scene {
       });
     } else {
       rows.push({
-        label: "Kitchen and bedroom",
-        detail: `${cost.coin}g and ${cost.wood} wood (have ${g.inventory.count(WOOD)})`,
+        label: HOUSE_UPGRADE_NAMES[g.houseTier] ?? "House upgrade",
+        detail:
+          cost.wood > 0
+            ? `${cost.coin}g and ${cost.wood} wood (have ${g.inventory.count(WOOD)})`
+            : `${cost.coin}g`,
         buttons: [{ text: "Order", run: () => this.order() }],
       });
     }
@@ -109,8 +119,9 @@ export class CarpenterScene extends Phaser.Scene {
       this.message.setText(problem);
     } else {
       orderUpgrade(this.state);
+      const tier2 = this.state.houseBuild?.tier === 2;
       this.message.setText(
-        "Ordered. The carpenter starts tomorrow and takes three days.",
+        `Ordered. The carpenter starts tomorrow and takes three days.${tier2 ? ` ${WAITING_ROOMS_LINE}` : ""}`,
       );
     }
     this.refresh();

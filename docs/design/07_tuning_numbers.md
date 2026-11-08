@@ -704,3 +704,17 @@ Source: `src/content/furniture.json`, `src/core/furniture.ts`.
   garnet 10 (90g), frost opal 5 (120g), old dwarf cup 10 (40g). The gem and found
   thing names and prices are placeholders. A Rockhound gets an extra geode from
   5 percent of plain rocks.
+
+## House upgrades (build 2026-11-07, note 41 and 68, placeholders)
+
+Source: `src/core/house.ts`. All three are Stardew's prices, untuned.
+
+- Tier 1: 10,000g and 450 wood.
+- Tier 2: 65,000g and 100 wood. Stardew asks for 100 hardwood. Hardwood is not
+  an item yet, so wood stands in for it (as for the large stump). Change the
+  item when hardwood exists.
+- Tier 3: 100,000g, no wood. Adds the cellar stairs flag only (`houseHasCellar`,
+  the cellar is #282).
+- Each tier needs the one before it, one order at a time, three working days
+  (a festival morning does not count).
+- Tiers 2 and 3 are probably out of reach in two seasons. Tune after a playtest.

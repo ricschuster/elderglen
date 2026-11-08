@@ -571,10 +571,10 @@ export function deserialize(text: string): GameState | undefined {
     g.showTokens = { year: tokens.year, count: tokens.count };
   g.cave.load(raw.cave as Partial<CaveSave> | undefined);
   g.wardrobe.load(raw.wardrobe);
-  // Saves from before the merged house map keep furniture and chests by the old frame.
-  const legacyHouse = raw.houseLayout !== HOUSE_LAYOUT;
-  g.furniture.load(raw.furniture, legacyHouse);
-  g.chests.load(raw.chests, legacyHouse);
+  // Saves from an older house frame keep furniture and chests by that frame.
+  const layout = isCount(raw.houseLayout) ? raw.houseLayout : 1;
+  g.furniture.load(raw.furniture, layout);
+  g.chests.load(raw.chests, layout);
   g.achievements.load(raw.achievements);
   // Loading rechecks, so a goal met under an older save is granted (note 38).
   checkAchievements(g);

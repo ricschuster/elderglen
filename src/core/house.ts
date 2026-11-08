@@ -3,7 +3,10 @@ import { festivalToday } from "./festivals";
 import { visibleTier } from "./map";
 import type { GameState } from "./save";
 
-/** The house grows in tiers: 0 is the start room, 1 adds a kitchen and a bedroom. */
+/**
+ * The house grows in tiers: 0 is the start room, 1 adds a kitchen and a
+ * bedroom, 2 the upper band (spare room and nursery), 3 the cellar stairs.
+ */
 export const MAX_HOUSE_TIER = 3;
 
 /** The id of the start map, and the target of the farm's house door. */
@@ -13,36 +16,51 @@ export const HOUSE_MAP = "house";
  * The tier of the house the player sees: the rooms built so far, kept to the
  * tiers the house map has. The house is one map that grows
  * (`docs/design/68_growing_interiors.md`), so this picks layers, not a map.
- * Tiers 2 and 3 get their layers in M3, so until then they show tier 1.
+ * Tier 2 adds the upper band. Tier 3 has no layers of its own yet: it shows
+ * tier 2 and only flags the cellar stairs (`houseHasCellar`, #282).
  */
 export function houseVisibleTier(tier: number): number {
   return visibleTier(tier, maps.maxTier(HOUSE_MAP));
 }
 
 /**
- * The version of the house map's tile frame. Saves from before the house grew
- * in one map (no `houseLayout`) hold furniture and chests by the old start room
- * frame, which sat at the corner. See `legacyHouseTile`.
+ * The version of the house map's tile frame, written to every save as
+ * `houseLayout`. 1 (no field) is the old frame, where the start room sat at the
+ * corner of its own map. 2 is the merged map of 12 rows (tier 1, #421). 3 is
+ * the map with the tier 2 band above, 22 rows, so everything moved down by
+ * `TIER_2_BAND` (#286). See `legacyHouseTile`.
  */
-export const HOUSE_LAYOUT = 2;
+export const HOUSE_LAYOUT = 3;
+
+/** Rows the tier 2 band added above the tier 1 rooms in layout 3. */
+export const TIER_2_BAND = 10;
 
 /** Where the start room's corner sits in the merged house map, in tiles. */
-export const START_ROOM_AT = { x: 9, y: 2 } as const;
+export const START_ROOM_AT = { x: 9, y: 2 + TIER_2_BAND } as const;
 
 /**
- * Bring a tile saved before the merged house map into its frame. A piece on
- * the old start map moves by the start room's offset. A piece on the old tier 1
- * map (`house-1`) keeps its tile, since the new map reuses that frame, and goes
- * to the one house map.
+ * Bring a tile saved under an older frame into the current one. `layout` is the
+ * save's `houseLayout` (1 when absent). From layout 1, a piece on the old start
+ * map moves by the start room's offset, and a piece on the old tier 1 map
+ * (`house-1`) moves down by the band and goes to the one house map. From
+ * layout 2 the house pieces move down by the band. Layout 3 is current.
  */
 export function legacyHouseTile(
   map: string,
   x: number,
   y: number,
+  layout = 1,
 ): { map: string; x: number; y: number } {
+  if (layout >= HOUSE_LAYOUT) return { map, x, y };
+  if (layout === 2) return { map: HOUSE_MAP, x, y: y + TIER_2_BAND };
   if (map === HOUSE_MAP)
     return { map, x: x + START_ROOM_AT.x, y: y + START_ROOM_AT.y };
-  return { map: HOUSE_MAP, x, y };
+  return { map: HOUSE_MAP, x, y: y + TIER_2_BAND };
+}
+
+/** True once the house has its cellar stairs: tier 3 (#282 builds the cellar). */
+export function houseHasCellar(tier: number): boolean {
+  return tier >= 3;
 }
 
 /** True for any of the house interior maps. */
@@ -57,10 +75,29 @@ export interface HouseUpgrade {
 }
 
 /**
- * Tier 1 only for now; tiers 2 and 3 are M3. Stardew's price, a placeholder
- * for `07_tuning_numbers.md`.
+ * Tiers 1, 2 and 3 in order. Stardew's prices, placeholders for
+ * `07_tuning_numbers.md`. Tier 2 asks for 100 hardwood in Stardew; hardwood is
+ * not an item yet (see `actions.ts`), so wood stands in for it.
  */
-export const HOUSE_UPGRADES: HouseUpgrade[] = [{ coin: 10000, wood: 450 }];
+export const HOUSE_UPGRADES: HouseUpgrade[] = [
+  { coin: 10000, wood: 450 },
+  { coin: 65000, wood: 100 },
+  { coin: 100000, wood: 0 },
+];
+
+/** What each upgrade adds, for the carpenter's list. Index is the tier reached minus one. */
+export const HOUSE_UPGRADE_NAMES = [
+  "Kitchen and bedroom",
+  "Upper floor",
+  "Cellar stairs",
+] as const;
+
+/**
+ * The line that says the empty rooms are for later (note 41), shown when tier 2
+ * is ordered and again when it lands.
+ */
+export const WAITING_ROOMS_LINE =
+  "The carpenter says the spare room and the nursery will be bare and tidy, for later.";
 
 /** The item id of wood. Chopping trees and stumps gives it (`docs/design/43_wood_source.md`). */
 export const WOOD = "wood";
@@ -87,7 +124,8 @@ export function orderProblem(g: GameState): string | undefined {
   const missing: string[] = [];
   if (g.money < cost.coin) missing.push(`${cost.coin - g.money}g more`);
   const have = g.inventory.count(WOOD);
-  if (have < cost.wood) missing.push(`${cost.wood - have} more wood`);
+  if (cost.wood > 0 && have < cost.wood)
+    missing.push(`${cost.wood - have} more wood`);
   return missing.length > 0 ? `You need ${missing.join(" and ")}.` : undefined;
 }
 
@@ -96,7 +134,7 @@ export function orderUpgrade(g: GameState): boolean {
   if (orderProblem(g) !== undefined) return false;
   const cost = nextUpgrade(g.houseTier)!;
   g.money -= cost.coin;
-  g.inventory.remove(WOOD, cost.wood);
+  if (cost.wood > 0) g.inventory.remove(WOOD, cost.wood);
   g.houseBuild = { tier: g.houseTier + 1, daysLeft: BUILD_DAYS };
   return true;
 }
