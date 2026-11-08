@@ -80,6 +80,9 @@ cozy hobbit home. This note settles both.
   hardwood, 100,000g, three days each. They are placeholders for
   `07_tuning_numbers.md`, and 65,000g and 100,000g may be too steep for two
   seasons. Check against the playtest income.
+- **Superseded 2026-11-07 by `68_growing_interiors.md`:** one growing map holding
+  every tier, not a map per tier. The paragraph below and the floor plans keep
+  the room shapes and sizes, which still hold.
 - **One interior map per tier, no sealed earth (owner, 2026-11-06).** This
   replaces the sealed earth plan. The start, tier 1 and tier 2 each have their
   own Tiled map. Tier 3 only adds the cellar stairs, so it reuses the tier 2

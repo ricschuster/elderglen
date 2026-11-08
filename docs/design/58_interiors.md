@@ -13,18 +13,13 @@ map work is planned.
 
 ## Decisions (owner, 2026-11-06)
 
-1. **Coop and barn are walked into, one map per tier (owner, 2026-11-06,
-   revised).** The first draft said the big and deluxe tiers add parts to one
-   base layout. The owner did not like that and chose a full map per tier, with
-   no sealed earth, for the coop, the barn and the farmhouse (`41_house.md`).
-   So the coop has three maps and the barn three, sized by the table below. They
-   share a template and furniture so the authoring stays light. Whether Stardew
-   stores them this way is not checked (SC-36).
-   **Update 2026-11-07, not yet settled:** the owner now says to do it as
-   Stardew does (one room that grows with each tier, SC-36), and asked how to
-   draw it, since a tier that is not built must not show early. This reopens
-   the one map per tier choice above. Design this before building the barn,
-   coop or farmhouse tiers.
+1. **Coop and barn are walked into, and each grows as one place (owner,
+   2026-11-07).** Settled in `68_growing_interiors.md`: one map per building
+   holding every tier, unbuilt space black void, camera clamped to the built
+   rooms. This replaces the 2026-11-06 choice of a full map per tier. Storage in
+   Stardew is not checked (SC-36), so the note states the rules as what the
+   player sees. The coop and barn sizes below still hold, and the farmhouse
+   follows the same rules.
 2. **The greenhouse is walked into.** Note 31 already says "as in Stardew". It
    is one map, locked as a ruin until the Larder room reward.
 3. **Everyone outside Hearthwell with a shop or home gets an interior, and
@@ -93,8 +88,7 @@ screenshots. The owner can still confirm in game.
 | The Outpost | 2 | Post room, and the steward's rooms |
 | Hearthwell burrows | 3 | Gardener, retired couple with grandchild, two young adults (`19_valley_layout.md`, decision 14) |
 | The Long Table (hall) | 1 | Main room and six rooms (`40_hall_layout.md`) |
-| Farm buildings | 5 | Farmhouse start, tier 1 and tier 2 (tier 3 reuses the tier 2 map and adds the cellar stairs, `41_house.md`), farm cave (`55_farm_layout.md`), greenhouse |
-| Coop and barn | 6 | One map per tier, three each |
+| Farm buildings | 5 | Farmhouse (one growing map, all tiers, `68_growing_interiors.md`), farm cave (`55_farm_layout.md`), greenhouse, coop and barn (one growing map each) |
 | Outside Hearthwell | 5 | Hermit's tower (Forest), farmstead keeper's house with the animal shop (Forest), smith dwarf's forge (Mountain), fisher's shop and home (River delta), the Beach elf's house and Homeward pin stall (Beach) |
 
 By place:
@@ -103,11 +97,11 @@ By place:
 | --- | --- |
 | Hearthwell | 12 |
 | The Long Table | 1 |
-| Farm (house 3, cave, greenhouse, coop 3, barn 3) | 11 |
+| Farm (house, cave, greenhouse, coop, barn) | 5 |
 | Forest | 2 |
 | Mountain | 1 |
 | River delta (with the Beach) | 2 |
-| **Total** | **29** |
+| **Total** | **23** |
 
 The Mines, the Secret Woods and the Lake cove are areas, not interiors.
 
