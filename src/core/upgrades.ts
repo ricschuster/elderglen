@@ -6,13 +6,24 @@ import type { Wallet } from "./shop";
 /** The tools that can be upgraded, and what each tier is called. */
 export const UPGRADABLE = ["hoe", "can", "pickaxe", "axe"] as const;
 export type Upgradable = (typeof UPGRADABLE)[number];
-export const TIER_NAMES = ["Basic", "Copper", "Steel", "Gold"] as const;
+export const TIER_NAMES = [
+  "Basic",
+  "Copper",
+  "Steel",
+  "Gold",
+  "Hearthsilver",
+] as const;
 export const MAX_TIER = TIER_NAMES.length - 1;
 
-/** Gold to upgrade a tool to tier 1, 2 and 3. From memory (note 44). */
-export const UPGRADE_COST = [2000, 5000, 10000];
-/** The bars a step needs, five of the metal for that grade (note 44). Hearthsilver, the fifth grade, waits for the deep mine. */
-export const UPGRADE_BAR = ["copper-bar", "iron-bar", "gold-bar"];
+/** Gold to upgrade a tool to tier 1 to 4. From memory (note 44). The Hearthsilver step is bars only (note 22). */
+export const UPGRADE_COST = [2000, 5000, 10000, 0];
+/** The bars a step needs, five of the metal for that grade (note 44). */
+export const UPGRADE_BAR = [
+  "copper-bar",
+  "iron-bar",
+  "gold-bar",
+  "hearthsilver-bar",
+];
 export const UPGRADE_BARS = 5;
 /** Days the smith keeps the tool, as Stardew's blacksmith does (note 44). */
 export const UPGRADE_DAYS = 2;

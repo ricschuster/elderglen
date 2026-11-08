@@ -1,4 +1,4 @@
-import { barById, COAL, COAL_PER_BAR, ORE_PER_BAR } from "./ore";
+import { barById, COAL, coalFor, ORE_PER_BAR } from "./ore";
 import type { GameState } from "./save";
 
 /** A batch in the furnace: the bar it makes and when it is done, in minutes since day 1 at midnight. */
@@ -43,9 +43,9 @@ export function smelt(g: GameState, barId: string): string | undefined {
   if (!g.furnace.gifted) return "no furnace";
   if (g.furnace.job) return "furnace busy";
   if (g.inventory.count(bar.ore) < ORE_PER_BAR) return "not enough ore";
-  if (g.inventory.count(COAL) < COAL_PER_BAR) return "not enough coal";
+  if (g.inventory.count(COAL) < coalFor(bar)) return "not enough coal";
   g.inventory.remove(bar.ore, ORE_PER_BAR);
-  g.inventory.remove(COAL, COAL_PER_BAR);
+  g.inventory.remove(COAL, coalFor(bar));
   g.furnace.job = { bar: bar.id, doneAt: absoluteMinutes(g) + bar.minutes };
   return undefined;
 }

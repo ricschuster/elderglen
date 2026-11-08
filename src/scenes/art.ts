@@ -712,11 +712,13 @@ const MINE_ICON_IDS = [
   "copper-bar",
   "iron-bar",
   "gold-bar",
+  "hearthsilver-bar",
 ];
 const METAL: Record<string, string> = {
   "copper-ore": "#c8743c",
   "iron-ore": "#9aa4b4",
   "gold-ore": "#e8c040",
+  "hearthsilver-ore": "#d8d0c8",
 };
 
 function paintFruitTrees(scene: Phaser.Scene): void {
