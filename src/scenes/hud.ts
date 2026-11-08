@@ -58,6 +58,7 @@ export class Hud {
   private readonly status: Phaser.GameObjects.Text;
   private readonly message: Phaser.GameObjects.Text;
   private readonly hint: Phaser.GameObjects.Text;
+  private readonly hintBox: Phaser.GameObjects.Rectangle;
   private readonly slots: Phaser.GameObjects.Rectangle[] = [];
   private readonly captions: Phaser.GameObjects.Text[] = [];
   private readonly icons: Phaser.GameObjects.Image[] = [];
@@ -81,6 +82,7 @@ export class Hud {
   private readonly touch: boolean;
   /** Which row of backpack slots the bar is showing. */
   private row = 0;
+  private hintsOn = true;
 
   constructor(
     scene: Phaser.Scene,
@@ -99,18 +101,28 @@ export class Hud {
       fontSize: "24px",
       color: "#ffffff",
     });
-    this.hint = scene.add.text(16, 84, "", {
+    // The hint sits in a dark box so it reads over any ground.
+    this.hint = scene.add.text(24, 122, "", {
       fontSize: "14px",
-      color: "#ffffffcc",
+      color: "#ffffff",
+      wordWrap: { width: 640 },
     });
+    this.hintBox = scene.add
+      .rectangle(16, 116, 0, 0, 0x000000, 0.65)
+      .setOrigin(0)
+      .setStrokeStyle(1, 0xffffff, 0.3);
+    this.hintBox.setDepth(0);
+    this.hint.setDepth(1);
     // The hint is for a keyboard; touch has the stick and the buttons, and
     // desktop has no on-screen buttons (note 45).
     this.hint.setText(this.touch ? "" : desktopHint(settings.bindings));
-    this.message = scene.add.text(16, 106, "", {
+    this.hintsOn = settings.showHints && !this.touch;
+    this.showHint();
+    this.message = scene.add.text(16, 84, "", {
       fontSize: "18px",
       color: "#ffe9a0",
     });
-    this.objects.push(this.status, this.hint, this.message);
+    this.objects.push(this.status, this.hintBox, this.hint, this.message);
 
     const left = (BASE_W - BAR_W) / 2;
     this.heldName = scene.add
@@ -287,6 +299,19 @@ export class Hud {
       p.o.x = p.x + (p.h === "c" ? dx / 2 : dx);
       p.o.y = p.y + (p.v === "b" ? dy : 0);
     }
+  }
+
+  /** Show or hide the control hint box. Touch has no keyboard hint. */
+  setHintsShown(on: boolean): void {
+    this.hintsOn = on && !this.touch;
+    this.showHint();
+  }
+
+  private showHint(): void {
+    const on = this.hintsOn;
+    this.hint.setVisible(on);
+    this.hintBox.setVisible(on);
+    this.hintBox.setSize(this.hint.width + 16, this.hint.height + 12);
   }
 
   /** True while a finger or the mouse holds the Use button. */

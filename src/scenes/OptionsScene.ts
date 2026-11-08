@@ -180,6 +180,17 @@ export class OptionsScene extends Phaser.Scene {
       this.percentRow("UI size", "uiSize", UI_MIN, UI_MAX),
       ...this.windowRows(),
       {
+        label: "Control hints box",
+        detail: "keyboard hints at the top left of the farm",
+        buttons: [true, false].map((on) => ({
+          text: this.mark(s.showHints === on, on ? "On" : "Off"),
+          run: () => {
+            s.showHints = on;
+            this.refresh();
+          },
+        })),
+      },
+      {
         label: "Controls for this device",
         buttons: (Object.keys(PROFILE_NAMES) as Profile[]).map((p) => ({
           text: this.mark(s.profile === p, PROFILE_NAMES[p]),

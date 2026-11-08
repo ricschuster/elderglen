@@ -17,6 +17,7 @@ export interface Intents {
   openCraft?: () => void;
   openHats?: () => void;
   endDay?: () => void;
+  toggleHints?: () => void;
   openDebug?: () => void;
   nextSlot?: () => void;
   nextRow?: () => void;
@@ -73,6 +74,7 @@ class DesktopControls implements Controls {
         craft: intents.openCraft,
         hats: intents.openHats,
         endDay: intents.endDay,
+        hints: intents.toggleHints,
         nextSlot: intents.nextSlot,
         nextRow: intents.nextRow,
       };
@@ -237,6 +239,6 @@ export function desktopHint(b: Bindings): string {
   return (
     `Move: ${k("moveUp")}${k("moveLeft")}${k("moveDown")}${k("moveRight")} or arrows   ` +
     `Use: ${k("use")}   Action: ${k("action")}   Eat: ${k("eat")}   Skills: ${k("skills")}   Craft: ${k("craft")}   ` +
-    `Sleep: bed or ${k("endDay")}   Tools: 1-9, ${k("nextSlot")}: next, ${k("nextRow")}: row`
+    `Sleep: bed or ${k("endDay")}   Tools: 1-9, ${k("nextSlot")}: next, ${k("nextRow")}: row   Hide hints: ${k("hints")}`
   );
 }

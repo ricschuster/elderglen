@@ -182,3 +182,16 @@ describe("view settings", () => {
     expect(old.uiSize).toBe(100);
   });
 });
+
+describe("control hints setting", () => {
+  it("is on by default, round trips off, and ignores bad values", () => {
+    const s = defaultSettings();
+    expect(s.showHints).toBe(true);
+    s.showHints = false;
+    expect(deserializeSettings(serializeSettings(s)).showHints).toBe(false);
+    const bad = deserializeSettings(
+      JSON.stringify({ version: 1, showHints: "no" }),
+    );
+    expect(bad.showHints).toBe(true);
+  });
+});

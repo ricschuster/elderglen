@@ -62,6 +62,7 @@ export const ACTIONS: readonly ActionInfo[] = [
   { id: "craft", label: "Crafting", key: "KeyR" },
   { id: "hats", label: "Hats", key: "KeyH" },
   { id: "endDay", label: "End the day", key: "KeyZ" },
+  { id: "hints", label: "Show or hide the control hints", key: "KeyG" },
 ];
 
 export type ActionId = string;
@@ -173,6 +174,8 @@ export interface Settings {
   worldZoom: number;
   /** UI size in percent, 75 to 150 (note 64). */
   uiSize: number;
+  /** Whether the control hint box shows on the farm. */
+  showHints: boolean;
 }
 
 export const SETTINGS_VERSION = 1;
@@ -189,6 +192,7 @@ export function defaultSettings(coarsePointer = false): Settings {
     bindings: defaultBindings(),
     worldZoom: DEFAULT_PERCENT,
     uiSize: DEFAULT_PERCENT,
+    showHints: true,
   };
 }
 
@@ -242,6 +246,8 @@ export function deserializeSettings(
       ZOOM_MAX,
     ),
     uiSize: clampPercent(raw.uiSize ?? base.uiSize, UI_MIN, UI_MAX),
+    showHints:
+      typeof raw.showHints === "boolean" ? raw.showHints : base.showHints,
   };
 }
 
