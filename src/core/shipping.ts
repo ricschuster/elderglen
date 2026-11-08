@@ -1,5 +1,6 @@
 import { itemById } from "./items";
 import type { Inventory } from "./inventory";
+import { isOre } from "./ore";
 
 /** Goods of one kind shipped at one locked unit price. */
 export interface BinLine {
@@ -61,6 +62,14 @@ export class ShippingBin {
     if (line) line.count += count;
     else this.lines.push({ id, count, unit });
     return count;
+  }
+
+  /**
+   * Ship into the mine hall's bin: the same bin and the same nightly payment,
+   * but it takes raw ore only (note 22). Returns how many went in.
+   */
+  shipOre(inv: Inventory, id: string, n: number, multiplier = 1): number {
+    return isOre(id) ? this.ship(inv, id, n, multiplier) : 0;
   }
 
   /**

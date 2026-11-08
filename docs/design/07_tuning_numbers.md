@@ -114,6 +114,11 @@ Lightning Rod pages where marked, otherwise ours and unchecked):
   if lamp-posts, the crystalarium and more are each wanted.
   Raise the storm share or the strike chance if play finds packs scarce.
 
+  Built (#522, weather only): `stormy` is a weather, 25 percent of rain days outside
+  winter (`STORM_SHARE`), summer days 13 and 26 always (`FIXED_STORM_DAYS`),
+  festival days and day 1 still sunny. It waters like rain, the bed forecast and
+  morning report name it. No strikes, rods or packs yet.
+
 ## Foraging
 
 Source: `src/core/forage.ts`, `src/content/forage.json`.

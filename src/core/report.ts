@@ -43,11 +43,13 @@ export function reportLines(r: SleepReport): string[] {
       `Your ${r.toolReady === "can" ? "watering can" : r.toolReady} is ready at the smith.`,
     );
   lines.push(
-    r.weather === "rainy"
-      ? "It is raining. The rain watered your crops."
-      : r.weather === "snowy"
-        ? "Snow is falling."
-        : "The sun is out.",
+    r.weather === "stormy"
+      ? "A thunderstorm rolls over the valley. The rain watered your crops."
+      : r.weather === "rainy"
+        ? "It is raining. The rain watered your crops."
+        : r.weather === "snowy"
+          ? "Snow is falling."
+          : "The sun is out.",
   );
   return lines;
 }

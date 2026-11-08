@@ -45,7 +45,7 @@ export class BedScene extends Phaser.Scene {
     const g = this.registry.get(STATE_KEY) as GameState;
     const f = festivalToday(g.day.clock.day + 1);
     const festival = f ? `\nTomorrow is the ${f.name}.` : "";
-    return `The day ends and the night passes.\nForecast for tomorrow: ${g.tomorrow === "rainy" ? "rain" : g.tomorrow === "snowy" ? "snow" : "clear skies"}.${festival}`;
+    return `The day ends and the night passes.\nForecast for tomorrow: ${g.tomorrow === "stormy" ? "a thunderstorm" : g.tomorrow === "rainy" ? "rain" : g.tomorrow === "snowy" ? "snow" : "clear skies"}.${festival}`;
   }
 
   private button(

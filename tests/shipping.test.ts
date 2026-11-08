@@ -133,4 +133,19 @@ describe("the bin and the night", () => {
     const back = deserialize(serialize(g))!;
     expect(back.bin.save()).toEqual(g.bin.save());
   });
+
+  it("the mine hall's bin takes raw ore only, into the same bin", () => {
+    const inv = new Inventory();
+    inv.add("copper-ore", 4);
+    inv.add("copper-bar", 2);
+    inv.add("stone", 3);
+    inv.add("coal", 1);
+    const bin = new ShippingBin();
+    expect(bin.shipOre(inv, "copper-ore", 4)).toBe(4);
+    expect(bin.shipOre(inv, "copper-bar", 2)).toBe(0);
+    expect(bin.shipOre(inv, "stone", 3)).toBe(0);
+    expect(bin.shipOre(inv, "coal", 1)).toBe(0);
+    expect(inv.count("copper-bar")).toBe(2);
+    expect(bin.total()).toBe(4 * 5);
+  });
 });

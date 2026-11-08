@@ -40,6 +40,7 @@ import { sleep } from "../../src/core/sleep";
 import { startGame } from "../../src/core/toolbar";
 import type { GameState } from "../../src/core/save";
 import { START } from "../../src/core/maps";
+import { isRaining } from "../../src/core/weather";
 import { TIME, Walker, type Spot } from "./world";
 import type { Persona } from "./personas";
 
@@ -182,7 +183,7 @@ class Bot {
     // Order follows what a player does: crops first, then the walk for goods.
     this.harvestRipe();
     this.plantWanted();
-    if (g.weather !== "rainy" && !this.lateNight) this.waterAll();
+    if (!isRaining(g.weather) && !this.lateNight) this.waterAll();
     if (this.random() < this.p.forageChance) this.sweepForage();
     this.eatIfLow();
     if (this.p.keepsForHall) {

@@ -22,6 +22,7 @@ import { sprinklerById } from "./sprinklers";
 import { isMature, saplingId, treeOfSapling } from "./fruittrees";
 import { FIBER, FIBER_CHANCE, MIXED_SEED } from "./weeds";
 import { TWIG_WOOD } from "./debris";
+import { isRaining } from "./weather";
 
 /** Energy per tool swing (hoe, watering can), as in Stardew. Seeds, picking and harvesting are free. */
 export const TOOL_ENERGY = 2;
@@ -75,7 +76,7 @@ export function till(
   if (g.machines.at(x, y)) return fail("a machine is in the way");
   if (g.chests.onFarm(x, y)) return fail("a chest is in the way");
   if (!g.farm.till(x, y)) return fail("already tilled");
-  if (g.weather === "rainy") g.farm.water(x, y);
+  if (isRaining(g.weather)) g.farm.water(x, y);
   swing(g, "hoe");
   if (
     dateOf(g.day.clock.day).season === "winter" &&
@@ -195,9 +196,6 @@ export function eat(g: GameState, itemId: string): Outcome {
   return { ok: true, item: itemId };
 }
 
-/** The axe has no tiers yet (#194), so it is always tier 0. */
-export const AXE_TIER = 0;
-
 /** Wood from a young tree, as Stardew. */
 const YOUNG_WOOD = 4;
 /** Chance per foraging level that a seedling drops 1 wood. As Stardew. */
@@ -240,7 +238,7 @@ function planChop(
   if (t.large) {
     if (t.regrow !== undefined) return undefined;
     return {
-      swings: swingsToUproot(AXE_TIER) + LARGE_STUMP_EXTRA_SWINGS,
+      swings: swingsToUproot(g.toolTiers.axe) + LARGE_STUMP_EXTRA_SWINGS,
       goods: goods(
         ["wood", LARGE_STUMP_WOOD + Math.floor(random() * 6)],
         ["sap", STUMP_SAP],
@@ -250,7 +248,7 @@ function planChop(
   }
   if (t.stump)
     return {
-      swings: swingsToUproot(AXE_TIER),
+      swings: swingsToUproot(g.toolTiers.axe),
       goods: goods(["wood", 4 + Math.floor(random() * 6)], ["sap", STUMP_SAP]),
       xp: STUMP_XP,
     };
@@ -265,7 +263,7 @@ function planChop(
   if (t.stage === YOUNG_STAGE)
     return { swings: 1, goods: goods(["wood", YOUNG_WOOD]), xp: 0 };
   return {
-    swings: swingsToFell(AXE_TIER),
+    swings: swingsToFell(g.toolTiers.axe),
     goods: goods(
       ["wood", TREE_WOOD + Math.min(level, TREE_WOOD_BONUS_MAX)],
       ["sap", TREE_SAP],
@@ -315,7 +313,10 @@ export function chop(
   const plan = planChop(g, x, y, random);
   const t = g.trees.at(x, y);
   if (!plan || !t) return fail("nothing to chop");
-  g.day.act(swingCost(TOOL_ENERGY, AXE_TIER, g.skills.level("foraging")), 0);
+  g.day.act(
+    swingCost(TOOL_ENERGY, g.toolTiers.axe, g.skills.level("foraging")),
+    0,
+  );
   if (t.hits + 1 < plan.swings) {
     t.hits += 1;
     return { ok: true };
@@ -354,9 +355,12 @@ function chopFruitTree(
 ): Outcome {
   const t = g.fruitTrees.at(x, y);
   if (!t) return fail("nothing to chop");
-  g.day.act(swingCost(TOOL_ENERGY, AXE_TIER, g.skills.level("foraging")), 0);
+  g.day.act(
+    swingCost(TOOL_ENERGY, g.toolTiers.axe, g.skills.level("foraging")),
+    0,
+  );
   const mature = isMature(t);
-  if (mature && t.hits + 1 < swingsToFell(AXE_TIER)) {
+  if (mature && t.hits + 1 < swingsToFell(g.toolTiers.axe)) {
     t.hits += 1;
     return { ok: true };
   }
@@ -503,7 +507,10 @@ export function clearWeed(
   if (g.day.over) return fail("exhausted");
   if (!g.weeds.at(x, y)) return fail("no weed");
   if (tool === "axe")
-    g.day.act(swingCost(TOOL_ENERGY, AXE_TIER, g.skills.level("foraging")), 0);
+    g.day.act(
+      swingCost(TOOL_ENERGY, g.toolTiers.axe, g.skills.level("foraging")),
+      0,
+    );
   else swing(g, tool);
   g.weeds.remove(x, y);
   // Fiber at 50 percent. A weed that drops none may drop a mixed seed, at the
@@ -535,7 +542,10 @@ export function clearTwig(
   if (g.day.over) return fail("exhausted");
   if (!g.twigs.at(x, y)) return fail("no twig");
   if (tool === "axe")
-    g.day.act(swingCost(TOOL_ENERGY, AXE_TIER, g.skills.level("foraging")), 0);
+    g.day.act(
+      swingCost(TOOL_ENERGY, g.toolTiers.axe, g.skills.level("foraging")),
+      0,
+    );
   else swing(g, tool);
   g.twigs.remove(x, y);
   if (g.inventory.add("wood", TWIG_WOOD)) return { ok: true, item: "wood" };

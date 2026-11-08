@@ -39,9 +39,7 @@ function caption(held: Held, g: GameState): string {
   if (held.kind === "tool") {
     if (toolAway(g, held.tool)) return `${TOOL_LABEL[held.tool]} (smith)`;
     const tier =
-      held.tool === "hand" || held.tool === "axe"
-        ? 0
-        : g.toolTiers[held.tool as Upgradable];
+      held.tool === "hand" ? 0 : g.toolTiers[held.tool as Upgradable];
     return tier > 0
       ? `${TIER_NAMES[tier]} ${TOOL_LABEL[held.tool].toLowerCase()}`
       : TOOL_LABEL[held.tool];
