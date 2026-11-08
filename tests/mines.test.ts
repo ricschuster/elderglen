@@ -3,8 +3,11 @@ import { maps } from "../src/content/maps";
 import { START } from "../src/core/maps";
 import { FarmMap } from "../src/core/map";
 import {
+  BANDS,
   BUILT_FLOORS,
   LADDER_CAP,
+  bandOf,
+  hearthsilverNodes,
   floorLayout,
   floorMapJson,
   ladderChance,
@@ -341,7 +344,7 @@ describe("quartz and the quality sprinkler", () => {
     let quartz = 0;
     let total = 0;
     for (let day = 5; day < 45; day++)
-      for (let floor = 1; floor <= BUILT_FLOORS; floor++)
+      for (let floor = 1; floor <= 10; floor++)
         for (const r of floorLayout(floor, day).rocks) {
           total++;
           if (r.kind === "quartz") quartz++;
@@ -411,7 +414,7 @@ describe("Old Greencoat and the rest camp", () => {
     g.day.clock.day = 6;
     expect(takeCampGift(g).ok).toBe(true);
     expect(g.inventory.count("coal")).toBe(4);
-    expect(deserialize(serialize(g))!.mines.campTaken).toBe(6);
+    expect(deserialize(serialize(g))!.mines.campTakenOn(10)).toBe(6);
   });
 
   it("leaves the gift when the backpack is full, taking nothing", () => {
@@ -419,7 +422,7 @@ describe("Old Greencoat and the rest camp", () => {
     g.day.clock.day = 5;
     for (let i = 0; i < g.inventory.size; i++) g.inventory.add(`junk-${i}`);
     expect(takeCampGift(g)).toEqual({ ok: false, reason: "backpack full" });
-    expect(g.mines.campTaken).toBe(0);
+    expect(g.mines.campTakenOn(10)).toBe(0);
     expect(g.inventory.count("coal")).toBe(0);
     expect(campGift(5).every((s) => itemById(s.id))).toBe(true);
   });
@@ -450,7 +453,7 @@ describe("geodes", () => {
     let geodes = 0;
     let total = 0;
     for (let day = 5; day < 45; day++)
-      for (let floor = 1; floor <= BUILT_FLOORS; floor++)
+      for (let floor = 1; floor <= 10; floor++)
         for (const r of floorLayout(floor, day).rocks) {
           total++;
           if (r.kind === "geode") geodes++;
@@ -623,5 +626,119 @@ describe("geodes", () => {
     mine(g, 2, 2, 1, () => 0);
     mine(g, 2, 2, 1, () => 0);
     expect(g.inventory.count("geode")).toBe(1);
+  });
+});
+
+describe("the deeper mine (floors 11 to 120)", () => {
+  const kinds = (floor: number) => {
+    const seen = new Map<string, number>();
+    for (let day = 5; day < 45; day++)
+      for (const r of floorLayout(floor, day).rocks)
+        seen.set(r.kind, (seen.get(r.kind) ?? 0) + 1);
+    return seen;
+  };
+
+  it("runs 120 floors in three bands of 40", () => {
+    expect(BUILT_FLOORS).toBe(120);
+    expect(BANDS.map((b) => b.floors)).toEqual([
+      [1, 40],
+      [41, 80],
+      [81, 120],
+    ]);
+    expect(bandOf(40).name).toBe("The Upper Galleries");
+    expect(bandOf(41).name).toBe("The Cold Deeps");
+    expect(bandOf(120).name).toBe("The Ember Deeps");
+  });
+
+  it("shows copper above floor 40, iron in the Cold Deeps and gold below", () => {
+    expect(kinds(20).has("iron")).toBe(false);
+    expect(kinds(20).has("gold")).toBe(false);
+    expect(kinds(60).get("iron")!).toBeGreaterThan(kinds(60).get("copper")!);
+    expect(kinds(60).has("gold")).toBe(false);
+    expect(kinds(90).get("gold")!).toBeGreaterThan(kinds(90).get("iron")!);
+    expect(kinds(90).has("hearthsilver")).toBe(false);
+  });
+
+  it("puts Hearthsilver on floors 100 to 120 only", () => {
+    expect(hearthsilverNodes(99)).toBe(0);
+    expect(hearthsilverNodes(100)).toBe(6);
+    for (let day = 5; day < 15; day++) {
+      const n = floorLayout(110, day).rocks.filter(
+        (r) => r.kind === "hearthsilver",
+      ).length;
+      expect(n).toBe(6);
+    }
+    expect(kinds(60).has("hearthsilver")).toBe(false);
+  });
+
+  it("makes every deep floor a valid map and the same all day", () => {
+    for (const floor of [11, 40, 41, 80, 81, 100, 120]) {
+      const a = floorLayout(floor, 9);
+      expect(floorLayout(floor, 9).rocks).toEqual(a.rocks);
+      const map = FarmMap.fromTiled(floorMapJson(a));
+      expect(map.problems()).toEqual([]);
+      expect(map.reachable(a.arrive).size).toBe(
+        a.walls.filter((w) => !w).length,
+      );
+    }
+  });
+
+  it("keeps geodes dropping in each band's kind", () => {
+    expect(kinds(60).get("geode")!).toBeGreaterThan(0);
+    expect(geodeKindForFloor(60)).toBe("frozen-geode");
+    expect(geodeKindForFloor(90)).toBe("magma-geode");
+  });
+
+  it("gives iron, gold and Hearthsilver ore from their nodes", () => {
+    expect(drops("iron", 0, false, () => 0.99).id).toBe("iron-ore");
+    expect(drops("gold", 0, false, () => 0.99).id).toBe("gold-ore");
+    const h = drops("hearthsilver", 0, false, () => 0.1);
+    expect(h).toEqual({ id: "hearthsilver-ore", count: 1 });
+    expect(itemById(h.id)).toBeDefined();
+  });
+
+  it("has a camp every 10th floor, each emptied on its own", () => {
+    for (const floor of [10, 20, 50, 120])
+      expect(floorLayout(floor, 6).camp).toBeDefined();
+    expect(floorLayout(25, 6).camp).toBeUndefined();
+    expect(campGift(5, 50).some((s) => s.id === "iron-ore")).toBe(true);
+    expect(campGift(5, 100).some((s) => s.id === "gold-ore")).toBe(true);
+    const g = startGame();
+    g.day.clock.day = 6;
+    expect(takeCampGift(g, 10).ok).toBe(true);
+    expect(takeCampGift(g, 10).ok).toBe(false);
+    expect(takeCampGift(g, 20).ok).toBe(true);
+    const back = deserialize(serialize(g))!;
+    expect(back.mines.campTakenOn(20)).toBe(6);
+    expect(back.mines.campTakenOn(30)).toBe(0);
+  });
+
+  it("finds a ladder on floors 11 to 119 and none on floor 120", () => {
+    const g = startGame();
+    g.day.clock.day = 6;
+    for (const floor of [30, 119]) {
+      const f = g.mines.visit(floor, 6);
+      f.ladder = undefined;
+      const rock = [...f.rocks.each()][0]!;
+      rock.hits = 5;
+      expect(mine(g, rock.x, rock.y, floor, () => 0)).toMatchObject({
+        ladder: true,
+      });
+    }
+    expect(g.mines.deepest).toBe(119);
+    g.mines.visit(120, 6);
+    expect(g.mines.deepest).toBe(120);
+  });
+
+  it("saves and loads a deep dig with its Hearthsilver nodes", () => {
+    const g = startGame();
+    g.mines.visit(105, 7);
+    const back = deserialize(serialize(g))!;
+    expect(back.mines.deepest).toBe(105);
+    expect(
+      [...back.mines.today(105, 7)!.rocks.each()].some(
+        (r) => r.kind === "hearthsilver",
+      ),
+    ).toBe(true);
   });
 });

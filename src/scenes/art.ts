@@ -695,6 +695,9 @@ export const ROCK_KEYS = {
   coal: "rock-coal",
   quartz: "rock-quartz",
   geode: "rock-geode",
+  iron: "rock-iron",
+  gold: "rock-gold",
+  hearthsilver: "rock-hearthsilver",
 } as const;
 export const LADDER_KEY = "mine-ladder";
 
@@ -832,6 +835,18 @@ function paintMineArt(scene: Phaser.Scene): void {
   draw(ROCK_KEYS.copper, (c) => {
     lump(c, "#8a8a90", "#5a5a62", "#b4b4ba");
     specks(c, "#d8803c");
+  });
+  draw(ROCK_KEYS.iron, (c) => {
+    lump(c, "#7a8494", "#4a5262", "#a8b4c4");
+    specks(c, "#c8d0dc");
+  });
+  draw(ROCK_KEYS.gold, (c) => {
+    lump(c, "#8a7a5a", "#5a4a30", "#b4a07a");
+    specks(c, "#f0c838");
+  });
+  draw(ROCK_KEYS.hearthsilver, (c) => {
+    lump(c, "#6a5a58", "#3a2e2e", "#9a8a88");
+    specks(c, "#f4efe8");
   });
   draw(ROCK_KEYS.coal, (c) => {
     lump(c, "#4a4a52", "#2a2a30", "#6a6a74");

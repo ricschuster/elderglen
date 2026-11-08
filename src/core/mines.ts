@@ -1,4 +1,5 @@
 import type { Spot } from "./forage";
+import bandData from "../content/mine-bands.json";
 import { GEODE_SHARE } from "./geodes";
 import type { TiledMapJson } from "./map";
 import { Rocks, type Rock, type RockKind } from "./rocks";
@@ -12,8 +13,11 @@ import { Rocks, type Rock, type RockKind } from "./rocks";
 
 /** Spring day 5, as in Stardew (decided). Day numbers start at 1 on spring 1. */
 export const MINES_OPEN_DAY = 5;
-/** Floors built so far. The rest of the 120 come with later slices. */
-export const BUILT_FLOORS = 10;
+/**
+ * The bottom floor, 120 (note 22). Floors 11 to 120 are built as digging only:
+ * creatures, special floors and dangerous mode wait for later slices.
+ */
+export const BUILT_FLOORS = bandData.topFloor;
 
 export const FLOOR_WIDTH = 20;
 export const FLOOR_HEIGHT = 14;
@@ -28,30 +32,74 @@ export const LADDER_CAP = 0.25;
 /** Rocks on a floor, 12 to 16 (placeholder). */
 export const MIN_ROCKS = 12;
 export const MAX_ROCKS = 16;
-/** Share of rocks that are copper nodes and coal rocks on floors 1 to 10 (placeholders). */
-export const COPPER_SHARE = 0.22;
-export const COAL_SHARE = 0.08;
-/** Share of rocks that are quartz clusters on floors 1 to 10 (placeholder, note 07). */
+/** Share of rocks that are coal rocks on every floor (placeholder). */
+export const COAL_SHARE = bandData.coalShare;
+/** Share of rocks that are quartz clusters (placeholder, note 07). */
 export const QUARTZ_SHARE = 0.06;
+
+/** The three bands of 40 floors and the ore nodes each one shows (placeholders, `mine-bands.json`). */
+export const BANDS = bandData.bands as {
+  name: string;
+  floors: [number, number];
+  ores: { kind: RockKind; share: number }[];
+}[];
+
+/** The band a floor is in. Floors past the last band stay in it. */
+export function bandOf(floor: number): (typeof BANDS)[number] {
+  return BANDS.find((b) => floor <= b.floors[1]) ?? BANDS[BANDS.length - 1]!;
+}
+
+/** Hearthsilver nodes on a floor: a fixed handful from floor 100 on, none above (note 22, placeholder). */
+export function hearthsilverNodes(floor: number): number {
+  return floor >= bandData.hearthsilver.fromFloor
+    ? bandData.hearthsilver.nodes
+    : 0;
+}
+
+/** The kind a plain roll in 0..1 gives on a floor: its band's ores, coal, quartz, a geode, else stone. */
+export function rockKindAt(floor: number, r: number): RockKind {
+  const table: [RockKind, number][] = [
+    ...bandOf(floor).ores.map((o): [RockKind, number] => [o.kind, o.share]),
+    ["coal", COAL_SHARE],
+    ["quartz", QUARTZ_SHARE],
+    ["geode", GEODE_SHARE],
+  ];
+  let edge = 0;
+  for (const [kind, share] of table) {
+    edge += share;
+    if (r < edge) return kind;
+  }
+  return "stone";
+}
 
 export const minesOpen = (day: number): boolean => day >= MINES_OPEN_DAY;
 
 /** A rest camp every 10th floor (note 22). No healing: a chest and a cozy beat. */
 export const CAMP_EVERY = 10;
 export const isCampFloor = (floor: number): boolean =>
-  floor % CAMP_EVERY === 0 && floor <= BUILT_FLOORS;
+  floor >= CAMP_EVERY && floor % CAMP_EVERY === 0 && floor <= BUILT_FLOORS;
 
 /**
- * What the camp chest holds each day, a gift from the old dwarf lamp-keepers
- * (placeholders, note 07): 2 coal, 3 copper ore and one thing by the day.
+ * What a camp chest holds each day, a gift from the old dwarf lamp-keepers
+ * (placeholders, note 07): 2 coal, a few of the band's ore and one thing by the
+ * day. Copper in the Upper Galleries, iron in the Cold Deeps, gold below.
  */
-export function campGift(day: number): { id: string; count: number }[] {
+export function campGift(
+  day: number,
+  floor = CAMP_EVERY,
+): { id: string; count: number }[] {
+  const band = BANDS.indexOf(bandOf(floor));
+  const ore = (["copper", "iron", "gold"] as const)[band] ?? "copper";
   const extra = [
     { id: "quartz-crystal", count: 1 },
     { id: "stone", count: 5 },
     { id: "cave-mushroom", count: 1 },
   ][day % 3] as { id: string; count: number };
-  return [{ id: "coal", count: 2 }, { id: "copper-ore", count: 3 }, extra];
+  return [
+    { id: "coal", count: 2 },
+    { id: `${ore}-ore`, count: bandData.campGiftOre[ore] },
+    extra,
+  ];
 }
 
 export const mineMapId = (floor: number): string => `mine-${floor}`;
@@ -142,23 +190,15 @@ export function floorLayout(floor: number, day: number): FloorLayout {
   const camp = isCampFloor(floor) ? pick((s) => !near(s, UP, 4)) : undefined;
   const rocks: Rock[] = [];
   const count = MIN_ROCKS + Math.floor(random() * (MAX_ROCKS - MIN_ROCKS + 1));
+  const hearth = hearthsilverNodes(floor);
   for (let i = 0; i < count; i++) {
     const s = pick(() => true);
     if (!s) break;
-    const r = random();
     const kind: RockKind =
-      r < COPPER_SHARE
-        ? "copper"
-        : r < COPPER_SHARE + COAL_SHARE
-          ? "coal"
-          : r < COPPER_SHARE + COAL_SHARE + QUARTZ_SHARE
-            ? "quartz"
-            : r < COPPER_SHARE + COAL_SHARE + QUARTZ_SHARE + GEODE_SHARE
-              ? "geode"
-              : "stone";
+      i < hearth ? "hearthsilver" : rockKindAt(floor, random());
     rocks.push({ ...s, kind, hits: 0 });
   }
-  // The floor's last floor has no way down yet.
+  // The bottom floor has no way down.
   const ladder =
     floor < BUILT_FLOORS && random() < FREE_LADDER_CHANCE
       ? pick((s) => !near(s, UP, 5))
@@ -284,8 +324,10 @@ export interface FloorSave {
 export interface MinesSave {
   /** True once Old Greencoat has come to the door (note 22). */
   greeted?: boolean;
-  /** The day the camp chest was last emptied. */
+  /** The day the camp chest was last emptied, kept for saves from before the deeper camps (floor 10). */
   campTaken?: number;
+  /** The day each camp chest was last emptied, by floor. */
+  campDays?: Record<number, number>;
   deepest: number;
   misses: number;
   copperHandedIn: boolean;
@@ -302,9 +344,18 @@ export class Mines {
   copperHandedIn = false;
   /** True once Old Greencoat has brought the news at the farm door. */
   greeted = false;
-  /** The day the camp chest was last emptied, 0 if never. */
-  campTaken = 0;
+  /** The day each camp chest was last emptied, by floor. */
+  private campDays = new Map<number, number>();
   private floors = new Map<number, Floor>();
+
+  /** The day a camp's chest was last emptied, 0 if never. */
+  campTakenOn(floor: number): number {
+    return this.campDays.get(floor) ?? 0;
+  }
+
+  takeCamp(floor: number, day: number): void {
+    this.campDays.set(floor, day);
+  }
 
   /**
    * The floor as dug today, made fresh if it is a new day. Visiting it counts
@@ -361,7 +412,7 @@ export class Mines {
       };
     return {
       greeted: this.greeted,
-      campTaken: this.campTaken,
+      campDays: Object.fromEntries(this.campDays),
       deepest: this.deepest,
       misses: this.misses,
       copperHandedIn: this.copperHandedIn,
@@ -375,7 +426,11 @@ export class Mines {
     this.copperHandedIn = saved.copperHandedIn;
     // A save from before the door scene that already dug has no need of the news.
     this.greeted = saved.greeted ?? this.deepest > 0;
-    this.campTaken = saved.campTaken ?? 0;
+    this.campDays = new Map(
+      Object.entries(saved.campDays ?? {}).map(([n, d]) => [Number(n), d]),
+    );
+    if (saved.campTaken && !this.campDays.has(CAMP_EVERY))
+      this.campDays.set(CAMP_EVERY, saved.campTaken);
     this.floors = new Map();
     for (const [n, f] of Object.entries(saved.floors)) {
       const rocks = new Rocks();

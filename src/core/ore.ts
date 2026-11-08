@@ -31,6 +31,10 @@ export const COAL_PER_BAR = 1;
 export const STONE = "stone";
 export const COAL = "coal";
 export const COPPER_ORE = "copper-ore";
+export const IRON_ORE = "iron-ore";
+export const GOLD_ORE = "gold-ore";
+/** Dug from floor 100 down; its item is defined with the geode goods (`geodes.json`). */
+export const HEARTHSILVER_ORE = "hearthsilver-ore";
 /** The quartz crystal stands in for refined quartz and earth crystals in recipes (note 34). */
 export const QUARTZ = "quartz-crystal";
 /** Stardew's quartz sells for 25g (from memory). */
