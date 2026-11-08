@@ -57,6 +57,11 @@ export async function main(args: string[]): Promise<void> {
   for (let seed = 1; seed <= runs; seed++)
     results.push(playGame(persona, mulberry32(seed), maxDay));
 
+  // SIM_VERBOSE=1 prints each seed's bundle days, to chase one odd run.
+  if (env_.SIM_VERBOSE)
+    results.forEach((r, i) =>
+      console.log(`  seed ${i + 1}: ${JSON.stringify(r.bundleDays)}`),
+    );
   console.log(`${name}: ${runs} runs to day ${maxDay}`);
   for (const b of BUNDLES)
     console.log(

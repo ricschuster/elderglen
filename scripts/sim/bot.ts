@@ -6,12 +6,29 @@ import { dateOf, DAYS_PER_SEASON } from "../../src/core/calendar";
 import {
   clearWeed,
   harvest,
+  isClear,
+  pickFruit,
   plant,
+  plantFruitTree,
   till,
   water,
   forage,
 } from "../../src/core/actions";
+import { categoryOf, produceOf } from "../../src/core/artisan";
+import { canCraft, craft, known, recipeById } from "../../src/core/crafting";
 import { cropById, CROPS } from "../../src/core/crops";
+import {
+  FRUIT_TREES,
+  MATURE_DAYS,
+  fruitTreeById,
+  saplingId,
+} from "../../src/core/fruittrees";
+import {
+  collectMachine,
+  jobDone,
+  loadMachine,
+  placeMachine,
+} from "../../src/core/machines";
 import { chop, eat } from "../../src/core/actions";
 import { smelt, collect, ready as furnaceReady } from "../../src/core/furnace";
 import { mine } from "../../src/core/mining";
@@ -44,19 +61,33 @@ import { isRaining } from "../../src/core/weather";
 import { TIME, Walker, type Spot } from "./world";
 import type { Persona } from "./personas";
 
+/** `SIM_ARTISAN`: "off" (default) leaves the bundle out, "parallel" crafts as soon as a recipe is known, "after" waits for Woodland and the Smith's. */
+const ARTISAN_MODE =
+  (
+    globalThis as unknown as {
+      process: { env: Record<string, string | undefined> };
+    }
+  ).process.env.SIM_ARTISAN ?? "off";
+
 /** Gold the bot keeps back for seeds before it buys ore. */
 const SEED_RESERVE = 1500;
 
 /** Young trees a day the bot cuts back. */
 const TIDY_TREES = 8;
 
+/** Gold kept back after buying an orchard tree. */
+const ORCHARD_RESERVE = 300;
+
+/** Machines the bot sets down on the farm as soon as it has crafted them. */
+const MACHINES_TO_RUN = ["preserves-jar", "bee-house"];
+
 /** Past this time of night a careful player heads for bed (midnight). */
 const BED_TIME = 24 * 60;
 
 /**
- * Bundles the bot does not play for. Only Artisan Goods is left out: it needs
- * a preserves jar and a bee house run for jam, pickles and honey, and a fruit
- * tree planted a month ahead. Winter Foraging, Autumn Crops and Quality Crops
+ * Bundles the bot does not play for: none now. Artisan Goods is played by
+ * crafting a preserves jar and a bee house, running them for jam, pickles and
+ * honey, and planting a fruit tree a month ahead (`tendArtisan`). Winter Foraging, Autumn Crops and Quality Crops
  * are played now that the bot farms through fall and winter (it clears weeds
  * to find soil). Woodland is played by chopping trees, cutting weeds and
  * breaking rocks on the farm and on mine floor 1. The Smith's is played by
@@ -65,7 +96,8 @@ const BED_TIME = 24 * 60;
  * not the whole hall. Real play of the whole hall is covered by
  * `tests/bundles.test.ts`.
  */
-export const UNPLAYED_BUNDLES: readonly string[] = ["artisan-goods"];
+export const UNPLAYED_BUNDLES: readonly string[] =
+  ARTISAN_MODE === "off" ? ["artisan-goods"] : [];
 
 /** Share of a harvest that is silver or better at a farming level, with plain soil (`cropQuality`). Floored so early planning stays sane. */
 const silverShare = (level: number) =>
@@ -89,6 +121,8 @@ export function playGame(
   persona: Persona,
   random: () => number,
   maxDay: number,
+  /** Called after each day's play, to watch a run. */
+  onDay?: (g: GameState) => void,
 ): RunResult {
   const g = startGame();
   g.forage.respawn(dateOf(1).season, maps.get(START.map).forageSpots, random);
@@ -104,6 +138,7 @@ export function playGame(
   while (g.day.clock.day <= maxDay && !playedDone(g)) {
     const day = g.day.clock.day;
     bot.playDay();
+    onDay?.(g);
     for (const b of g.hall.bundles)
       if (g.hall.complete(b.id) && !(b.id in result.bundleDays))
         result.bundleDays[b.id] = day;
@@ -190,6 +225,7 @@ class Bot {
       this.tendFurnace();
       this.gatherWoodland();
     }
+    if (this.p.keepsForHall) this.tendArtisan();
     if (this.dueFor(this.p.hallEvery)) this.visitHall();
     if (this.p.keepsForHall) this.tendFurnace();
     this.tidyTrees();
@@ -273,18 +309,25 @@ class Bot {
 
   /** Units of an item the hall still wants and the pack does not yet hold. */
   private shortOf(item: string): number {
-    const owed = this.wanted().filter((w) => w.item === item).length;
+    const owed = [...this.wanted(), ...this.craftWants()].filter(
+      (w) => w.item === item,
+    ).length;
     return Math.max(owed - this.g.inventory.count(item), 0);
   }
 
   /** Chop trees, cut weeds and break rocks for the Woodland bundle. */
   private gatherWoodland(): void {
     const g = this.g;
-    if (this.lateNight || g.hall.complete("woodland")) return;
+    if (
+      this.lateNight ||
+      (g.hall.complete("woodland") && this.craftWants().length === 0)
+    )
+      return;
     const spare = () => g.day.energy.current > 30 && !this.lateNight;
-    if (this.shortOf("wood") > 0) {
+    const logging = () => this.shortOf("wood") > 0 || this.shortOf("sap") > 0;
+    if (logging()) {
       this.walker.enter("farm");
-      while (this.shortOf("wood") > 0 && spare()) {
+      while (logging() && spare()) {
         const trees = [...g.trees.each()].filter(
           (t) => t.stump || t.stage >= MATURE_STAGE,
         );
@@ -368,7 +411,11 @@ class Bot {
   /** Collect a done bar, shop for ore and coal, and start the next bar. */
   private tendFurnace(): void {
     const g = this.g;
-    if (g.hall.complete("smiths") || !minesOpen(this.day) || this.lateNight)
+    if (
+      (g.hall.complete("smiths") && this.barsOwed().length === 0) ||
+      !minesOpen(this.day) ||
+      this.lateNight
+    )
       return;
     // Hand over the first copper ore, so the smith brings the furnace.
     if (!g.mines.copperHandedIn && g.money > 200) {
@@ -465,7 +512,8 @@ class Bot {
     const taken = new Map<string, number>();
     for (const w of this.wanted()) {
       for (const s of this.stacks()) {
-        if (splitQuality(s.id).base !== w.item) continue;
+        const base = splitQuality(s.id).base;
+        if (base !== w.item && categoryOf(base) !== w.item) continue;
         const used = taken.get(s.id) ?? 0;
         if (used >= s.count) continue;
         if (this.g.hall.problem(this.g.inventory, w.bundle, s.id)) continue;
@@ -491,6 +539,189 @@ class Bot {
       }
     }
     this.walker.enter("farm");
+  }
+
+  // ---- artisan goods ----
+
+  /** True while the Artisan Goods bundle still wants this slot (jam, pickles, honey, apple, cherry). */
+  private owes(slot: string): boolean {
+    const g = this.g;
+    return (
+      ARTISAN_MODE !== "off" &&
+      !g.hall.complete("artisan-goods") &&
+      g.hall.have("artisan-goods", slot) < 1 &&
+      !this.stacks().some((s) => categoryOf(splitQuality(s.id).base) === slot)
+    );
+  }
+
+  private placedOf(id: string) {
+    return [...this.g.machines.each()].filter((m) => m.id === id);
+  }
+
+  /** Machines the bot wants and does not have: the jar for jam or pickles, the bee house for honey. */
+  private machineGaps(): string[] {
+    const g = this.g;
+    if (
+      !this.p.keepsForHall ||
+      ARTISAN_MODE === "off" ||
+      g.hall.complete("artisan-goods")
+    )
+      return [];
+    // SIM_ARTISAN=after waits for Woodland and the Smith's, as a player who finishes one room first.
+    if (
+      ARTISAN_MODE === "after" &&
+      !(g.hall.complete("woodland") && g.hall.complete("smiths"))
+    )
+      return [];
+    const gaps: string[] = [];
+    const missing = (id: string) =>
+      this.placedOf(id).length === 0 && g.inventory.count(id) === 0;
+    const open = (id: string) => {
+      const r = recipeById(id);
+      return !!r && known(g, r);
+    };
+    if (
+      (this.owes("jam") || this.owes("pickles")) &&
+      missing("preserves-jar") &&
+      open("preserves-jar")
+    )
+      gaps.push("preserves-jar");
+    if (this.owes("honey") && missing("bee-house") && open("bee-house"))
+      gaps.push("bee-house");
+    return gaps;
+  }
+
+  /** What the bot must gather to craft the machines it lacks, one entry a unit. */
+  private craftWants(): Want[] {
+    const out: Want[] = [];
+    for (const id of this.machineGaps())
+      for (const i of recipeById(id)?.ingredients ?? [])
+        for (let n = 0; n < i.count; n++)
+          out.push({ bundle: "craft", item: i.item, room: "", min: "normal" });
+    return out;
+  }
+
+  /** Fruit and vegetables to hold back from the bin for the jar's next two batches. */
+  private produceReserve(): Record<"fruit" | "vegetable", number> {
+    return {
+      fruit: this.owes("jam") ? 1 : 0,
+      vegetable: this.owes("pickles") ? 1 : 0,
+    };
+  }
+
+  /** A clear tile near the house door for a machine. */
+  private machineSpot(): Spot | undefined {
+    const g = this.g;
+    const map = maps.get(START.map);
+    return this.freeSoil(map, 60).find(
+      (s) =>
+        isClear(g, map, s.x, s.y) &&
+        !g.weeds.at(s.x, s.y) &&
+        !g.farm.plotAt(s.x, s.y),
+    );
+  }
+
+  /**
+   * The Artisan Goods bundle: plant a fruit tree early, craft and set down a
+   * preserves jar and a bee house, keep them loaded, and pick the fruit.
+   */
+  private tendArtisan(): void {
+    const g = this.g;
+    if (
+      ARTISAN_MODE === "off" ||
+      this.lateNight ||
+      g.hall.complete("artisan-goods")
+    )
+      return;
+    this.walker.enter("farm");
+    this.plantOrchard();
+    // Craft what is in reach (at a workbench in the house, whose walk is ignored).
+    for (const id of this.machineGaps()) {
+      const r = recipeById(id);
+      if (r && canCraft(g, r)) craft(g, id);
+    }
+    for (const id of MACHINES_TO_RUN)
+      while (g.inventory.count(id) > 0) {
+        const spot = this.machineSpot();
+        if (
+          !spot ||
+          !this.act(spot, () =>
+            placeMachine(g, maps.get(START.map), spot.x, spot.y, id),
+          )
+        )
+          break;
+      }
+    for (const m of this.placedOf("preserves-jar")) {
+      if (jobDone(g, m)) this.act(m, () => collectMachine(g, m.x, m.y));
+      if (m.job) continue;
+      const want = this.owes("jam")
+        ? "fruit"
+        : this.owes("pickles")
+          ? "vegetable"
+          : undefined;
+      const stack =
+        want &&
+        this.stacks().find((s) => produceOf(splitQuality(s.id).base) === want);
+      if (stack)
+        this.act(m, () => loadMachine(g, m.x, m.y, stack.id, this.random));
+    }
+    for (const m of this.placedOf("bee-house"))
+      if (jobDone(g, m)) this.act(m, () => collectMachine(g, m.x, m.y));
+    for (const t of [...g.fruitTrees.each()])
+      if (g.fruitTrees.ripe(t.x, t.y))
+        this.act(t, () => pickFruit(g, t.x, t.y));
+  }
+
+  /** Buy and plant the fruit tree that will bear soonest, for the apple and cherry slots. */
+  private plantOrchard(): void {
+    const g = this.g;
+    if (!this.owes("apple") || !this.owes("cherry")) return;
+    const slots = ["apple", "cherry"];
+    if ([...g.fruitTrees.each()].some((t) => slots.includes(t.id))) return;
+    // The tree that will give fruit first, counted from the day it would mature.
+    const ripeDay = (id: string): number => {
+      const def = fruitTreeById(id);
+      if (!def) return Infinity;
+      for (
+        let d = this.day + MATURE_DAYS;
+        d < this.day + MATURE_DAYS + 112;
+        d++
+      )
+        if (dateOf(d).season === def.season) return d;
+      return Infinity;
+    };
+    const pick = FRUIT_TREES.filter((t) => slots.includes(t.id)).sort(
+      (a, b) => ripeDay(a.id) - ripeDay(b.id),
+    )[0];
+    if (!pick) return;
+    const sapling = saplingId(pick.id);
+    if (g.inventory.count(sapling) < 1) {
+      // A player saves for the tree: seed money is spent only on top of its price.
+      if (g.money < pick.saplingPrice + ORCHARD_RESERVE) return;
+      if (!this.walker.goToService("farm", "shop")) return;
+      if (!buy(g.inventory, g, sapling)) return;
+    }
+    const map = maps.get(START.map);
+    this.walker.enter("farm");
+    const door = map.entry("from_house") ?? { x: 0, y: 0 };
+    const spots: Spot[] = [];
+    for (let y = 0; y < map.height; y++)
+      for (let x = 0; x < map.width; x++)
+        if (
+          map.canPlantTree(x, y) &&
+          isClear(g, map, x, y) &&
+          !g.farm.plotAt(x, y)
+        )
+          spots.push({ x, y });
+    spots.sort(
+      (a, b) =>
+        Math.abs(b.x - door.x) +
+        Math.abs(b.y - door.y) -
+        (Math.abs(a.x - door.x) + Math.abs(a.y - door.y)),
+    );
+    // The far corner of the yard keeps the orchard clear of the fields.
+    for (const s of spots.slice(0, 12))
+      if (this.act(s, () => plantFruitTree(g, map, s.x, s.y, sapling))) return;
   }
 
   // ---- planting and the shop ----
@@ -540,6 +771,16 @@ class Bot {
           ? Math.max(this.p.cropsPerBundleCrop, Math.ceil(owed))
           : 0;
       for (let i = have; i < want; i++) plan.push(def.id);
+    }
+    // Jam needs a fruit. Forage may give one, but plant a fruit crop if none is in hand or growing.
+    if (this.owes("jam") && this.p.keepsForHall) {
+      const hasFruit =
+        this.stacks().some(
+          (s) => produceOf(splitQuality(s.id).base) === "fruit",
+        ) ||
+        [...inGround.keys()].some((id) => cropById(id)?.produce === "fruit");
+      const fruitCrop = CROPS.find((c) => c.produce === "fruit" && fits(c.id));
+      if (!hasFruit && fruitCrop) plan.push(fruitCrop.id);
     }
     // Spare plots go to the persona's cash crop.
     const cash = this.p.cashCrop;
@@ -618,7 +859,10 @@ class Bot {
   /** Ship everything the hall does not still want, at the bin by the house. */
   private shipSurplus(): void {
     if (this.lateNight) return;
-    const keep: Want[] = this.p.keepsForHall ? this.wanted() : [];
+    const keep: Want[] = this.p.keepsForHall
+      ? [...this.wanted(), ...this.craftWants()]
+      : [];
+    const reserve = this.produceReserve();
     const lines: { id: string; n: number }[] = [];
     for (const s of this.stacks()) {
       const { base, quality } = splitQuality(s.id);
@@ -631,6 +875,8 @@ class Bot {
         (base === COAL || ORES.some((o) => o.id === base))
       )
         continue;
+      // A machine in the pack waits to be put down.
+      if (MACHINES_TO_RUN.includes(base)) continue;
       // Hold one unit for each open slot this stack could fill.
       let held = 0;
       for (let u = 0; u < s.count; u++) {
@@ -641,6 +887,13 @@ class Bot {
         );
         if (at < 0) break;
         keep.splice(at, 1);
+        held++;
+      }
+      // One fruit and one vegetable wait for the preserves jar.
+      const kind = produceOf(base);
+      const keepBack = kind && this.p.keepsForHall ? reserve[kind] : 0;
+      if (kind && keepBack > 0 && s.count - held > 0) {
+        reserve[kind] = keepBack - 1;
         held++;
       }
       const n = s.count - held;
