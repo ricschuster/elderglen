@@ -316,7 +316,7 @@ two gates of our own.
   time, weather and the bar are the only limits). This replaces the earlier two
   rules: the Reed Pole lands common fish only, and rare fish need fishing level 5.
   Every rod can hook any fish the conditions allow. Skill still helps through the
-  bar. Not yet built: the code still has both rules (issue filed with this note).
+  bar. Built (issue 653).
 - **Legends need the Hearthwell Rod** (decision 13), and the cove is open only
   after the Water room. There is no extra level gate.
 
@@ -350,7 +350,7 @@ Bundle 13 gives 30 Plain Bait. Pots take bait, one a day.
 in a lure slot and lasts 20 casts. Different lures stack on the Hearthwell Rod,
 which has two slots. Odds lures change the mix among fish the water, season,
 time and weather already allow. They never add an out-of-condition fish and
-never lift the starter rod's limit or the level 5 gate for rare fish.
+never add a fish the conditions do not allow.
 
 | Lure | Price | Effect |
 | --- | --- | --- |
@@ -496,8 +496,7 @@ and are in `07_tuning_numbers.md`.
   bites, plus an energy cost that falls with fishing level (see "Decisions 2026-11-08m"; the build has no energy cost yet). The clock stands still on the fishing screen, so this is the only cost.
 - **Which fish.** Season, time slot (dawn before 8 am, dusk the two hours before
   nightfall, night after, day between) and weather (a rain fish bites only in
-  rain). Weights by rarity are 6, 3 and 1. **Superseded 2026-11-08: no rod or level limit** (see "Decisions 2026-11-08m"). Built so far: the Reed Pole only draws common fish, and any other rod loses a rare bite below fishing level
-  5 ("Something heavy took the line"). If nothing is in season the bite is
+  rain). Weights by rarity are 6, 3 and 1. **Superseded 2026-11-08: no rod or level limit** (see "Decisions 2026-11-08m"). Built (issue 653): no rod or level limit, and no lost bite. If nothing is in season the bite is
   "nothing is biting". Winter has only the Reedling by day.
 - **The bite and the bar.** A wait of 1.5 to 4.5 s, then a window of 1.4 s (3 s
   with assist) to press. The bar is the five motions of "Catch details" on a
@@ -541,8 +540,7 @@ Bait, lures and the fishing achievements. Numbers are placeholders and are in
   multiply), Glint, Moth and Storm weight the draw among fish the conditions
   already allow, the Wide Float adds 15 percent to the bar and adds to the assist
   bar (rod bar times `1 + 0.3 + 0.15` with both), the Sounding Float names the
-  hooked fish at the bite. No lure adds a fish, lifts the Reed Pole limit or
-  skips the level 5 gate for rare fish.
+  hooked fish at the bite. No lure adds a fish, is needed to hook rare fish.
 - **The Magpie Hook rolls on a landed fish**, one in five, so a lost or missed
   bite gives no treasure. A purse is 6 times in 10, else a trinket. It does not
   break a perfect catch. The five trinkets are plain sellable items.

@@ -47,7 +47,7 @@ export class SkillsScene extends Phaser.Scene {
     this.add.text(
       24,
       486,
-      "Better farming means better crop quality and cheaper tool swings. Better foraging means better forage quality. Better mining means cheaper pickaxe swings and more ore. Better fishing means bigger, better fish, and rare fish from level 5. Better combat means more health.   Esc: close",
+      "Better farming means better crop quality and cheaper tool swings. Better foraging means better forage quality. Better mining means cheaper pickaxe swings and more ore. Better fishing means bigger, better fish. Better combat means more health.   Esc: close",
       { fontSize: "13px", color: "#ffffffaa", wordWrap: { width: 780 } },
     );
   }

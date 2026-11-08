@@ -315,8 +315,6 @@ export class FishingScene extends Phaser.Scene {
     this.pending = bite(
       "river",
       { season, minutes: g.day.clock.minutes, raining: isRaining(g.weather) },
-      this.rod,
-      g.skills.level("fishing"),
       Math.random,
       this.tutorial,
       fx,
@@ -361,12 +359,6 @@ export class FishingScene extends Phaser.Scene {
   private hooked(): void {
     this.bang.setVisible(false);
     const b = this.pending;
-    if (b.kind === "lost") {
-      this.text.setText(
-        "Something heavy took the line and was gone. It needs more skill than you have yet.",
-      );
-      return this.rest();
-    }
     if (b.kind !== "fish") return;
     if (this.assist === 2) {
       // The fight is skipped: no bar, and never a perfect catch.

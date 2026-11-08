@@ -4,6 +4,7 @@ import {
   FISH,
   barWidth,
   bite,
+  fishAvailable,
   fishWeight,
   rodById,
   type Conditions,
@@ -214,15 +215,7 @@ describe("odds and the bar", () => {
     const count = (odds: { rain?: number }) => {
       let n = 0;
       for (let i = 0; i < 400; i++) {
-        const r = bite(
-          "river",
-          rain,
-          hearth,
-          10,
-          () => Math.random(),
-          false,
-          odds,
-        );
+        const r = bite("river", rain, () => Math.random(), false, odds);
         if (r.kind === "fish" && r.fish.time === "rain") n++;
       }
       return n;
@@ -230,28 +223,16 @@ describe("odds and the bar", () => {
     expect(count({ rain: 6 })).toBeGreaterThan(count({}));
   });
 
-  it("does not lift the Reed Pole limit or the level gate", () => {
+  it("never adds an out-of-condition fish", () => {
     const night: Conditions = {
       season: "winter",
       minutes: 23 * 60,
       raining: false,
     };
-    const r = bite("river", night, reed, 10, seq(0), false, {
-      rare: 99,
-      night: 99,
-    });
-    expect(r.kind === "fish" && r.fish.rarity).not.toBe("rare");
-    const low = bite(
-      "river",
-      { season: "spring", minutes: 6 * 60, raining: false },
-      hazel,
-      1,
-      seq(0.99),
-      false,
-      { rare: 99 },
-    );
-    expect(["lost", "fish"]).toContain(low.kind);
-    if (low.kind === "lost") expect(low.fish.rarity).toBe("rare");
+    const r = bite("river", night, seq(0), false, { rare: 99, night: 99 });
+    if (r.kind === "fish") {
+      expect(fishAvailable("river", night)).toContain(r.fish);
+    }
   });
 
   it("adds a lure's bar to the assist bar", () => {
