@@ -9,7 +9,12 @@ const farm = (fn, arg) =>
     ([src, arg]) => {
       const g = window.__game;
       const f = g.scene.getScene("farm");
-      return new Function("g", "f", "s", "arg", src)(g, f, g.registry.get("state"), arg);
+      return new Function("g", "f", "s", "arg", src)(
+        g,
+        f,
+        g.registry.get("state"),
+        arg,
+      );
     },
     [`return (${fn.toString()})(g, f, s, arg)`, arg],
   );
@@ -31,13 +36,17 @@ if (!/ruin/.test(shut)) finding(`ruin message missing: ${shut}`);
 
 // Repair it as the Larder would, make it winter, and go in.
 await farm((g, f, s) => {
-  s.hall.roomComplete = (id) => id === "larder" || s.hall.rooms.some((r) => r.id === id) && false;
+  s.hall.roomComplete = (id) =>
+    id === "larder" || (s.hall.rooms.some((r) => r.id === id) && false);
   s.day.clock.day = 3 * 28 + 5;
   s.inventory.add("parsnip-seed", 3);
   f.action();
 });
 await sleepMs(1500);
-let st = await farm((g, f) => ({ map: f.mapId, scenes: g.scene.getScenes(true).map((x) => x.scene.key) }));
+let st = await farm((g, f) => ({
+  map: f.mapId,
+  scenes: g.scene.getScenes(true).map((x) => x.scene.key),
+}));
 log("after door:", JSON.stringify(st));
 if (st.map !== "greenhouse") finding(`did not enter the greenhouse: ${st.map}`);
 log("errs:", JSON.stringify(errs));
@@ -49,7 +58,12 @@ await bot.refreshMap();
 await bot.walkTo(9, 14);
 await bot.face("up");
 const plots = () => farm((g, f, s) => [...s.greenhouse.each()]);
-const toolbar = await farm((g, f, s) => s.inventory.save().slice(0, 6).map((x) => x && x.id));
+const toolbar = await farm((g, f, s) =>
+  s.inventory
+    .save()
+    .slice(0, 6)
+    .map((x) => x && x.id),
+);
 log("backpack:", JSON.stringify(toolbar));
 await bot.select(0);
 await bot.key("KeyC", 300);
@@ -69,7 +83,9 @@ await shot("planted");
 // Sleep overnight in the scene's own end of day.
 await farm((g, f, s) => f.endDay());
 await sleepMs(800);
-const grown = await farm((g, f, s) => [...s.greenhouse.each()][0]?.plot.crop?.daysGrown);
+const grown = await farm(
+  (g, f, s) => [...s.greenhouse.each()][0]?.plot.crop?.daysGrown,
+);
 log("daysGrown after a night:", grown);
 if (grown !== 1) finding(`crop did not grow overnight in winter: ${grown}`);
 for (const e of errs) finding(`console: ${e}`);
