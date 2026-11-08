@@ -30,10 +30,14 @@ const rect = () =>
     const r = document.querySelector("canvas").getBoundingClientRect();
     return { left: r.left, top: r.top, width: r.width, height: r.height };
   });
-/** Game coordinates (960x540) to page coordinates. */
-async function toPage(gx, gy) {
+/**
+ * Canvas coordinates (CSS pixels from the canvas corner, as `targets` gives
+ * them) to page coordinates. The canvas is the window (note 64), so there is
+ * no fixed game size to scale by.
+ */
+async function toPage(cx, cy) {
   const r = await rect();
-  return { x: r.left + (gx * r.width) / 960, y: r.top + (gy * r.height) / 540 };
+  return { x: r.left + cx, y: r.top + cy };
 }
 const point = (id, x, y) => ({ id, x, y, radiusX: 8, radiusY: 8, force: 1 });
 const touch = (type, pts) =>
@@ -48,20 +52,19 @@ async function tap(gx, gy, wait = 120) {
 }
 
 /** The floating stick starts here: the left half, clear of the toolbar. */
-const STICK = { gx: 150, gy: 250 };
+const STICK = { fx: 0.15, fy: 0.45 };
 const dirs = { left: [-1, 0], right: [1, 0], up: [0, -1], down: [0, 1] };
 let stick = null;
 async function stickDown() {
-  const a = await toPage(STICK.gx, STICK.gy);
+  const r = await rect();
+  const a = await toPage(STICK.fx * r.width, STICK.fy * r.height);
   stick = a;
   await touch("touchStart", [point(0, a.x, a.y)]);
 }
 async function stickPush(dir, reach = 45) {
-  const r = await rect();
-  const k = r.width / 960;
   const [dx, dy] = dirs[dir];
   await touch("touchMove", [
-    point(0, stick.x + dx * reach * k, stick.y + dy * reach * k),
+    point(0, stick.x + dx * reach, stick.y + dy * reach),
   ]);
 }
 async function stickUp() {
@@ -69,10 +72,26 @@ async function stickUp() {
   stick = null;
 }
 
-/** All interactive objects of a scene, as game-space boxes with any label near them. */
+/**
+ * All interactive objects of a scene, as boxes in canvas CSS pixels (through
+ * the scene's camera, which the menus and the farm HUD use to centre and scale)
+ * with any label near them.
+ */
 function targets(key) {
   return p.evaluate((key) => {
     const sc = window.__game.scene.getScene(key);
+    // The farm draws its HUD with a second, unzoomed camera.
+    const cam = sc.cameras.cameras[sc.cameras.cameras.length - 1];
+    const gs = window.__game.scale;
+    const css =
+      document.querySelector("canvas").getBoundingClientRect().width / gs.width;
+    const sx = (x) =>
+      (cam.x + cam.width / 2 + (x - cam.scrollX - cam.width / 2) * cam.zoom) *
+      css;
+    const sy = (y) =>
+      (cam.y + cam.height / 2 + (y - cam.scrollY - cam.height / 2) * cam.zoom) *
+      css;
+    const sz = cam.zoom * css;
     const objs = sc.children.list;
     const texts = objs.filter((o) => o.type === "Text" && o.text);
     return objs
@@ -88,10 +107,10 @@ function targets(key) {
             t.y <= y0 + o.displayHeight + 2,
         );
         return {
-          cx: x0 + o.displayWidth / 2,
-          cy: y0 + o.displayHeight / 2,
-          w: o.displayWidth,
-          h: o.displayHeight,
+          cx: sx(x0 + o.displayWidth / 2),
+          cy: sy(y0 + o.displayHeight / 2),
+          w: o.displayWidth * sz,
+          h: o.displayHeight * sz,
           label: t ? t.text.replace(/\n/g, " ") : "",
         };
       });
@@ -106,13 +125,9 @@ async function tapLabel(scene, label, nth = 0) {
 
 /** Check target sizes of a screen against the comfortable minimum. */
 async function checkSizes(scene) {
-  const k = (await rect()).width / 960;
   const small = (await targets(scene))
-    .filter((t) => Math.min(t.w, t.h) * k < MIN_TARGET)
-    .map(
-      (t) =>
-        `${t.label || "?"} ${(t.w * k).toFixed(0)}x${(t.h * k).toFixed(0)}`,
-    );
+    .filter((t) => Math.min(t.w, t.h) < MIN_TARGET)
+    .map((t) => `${t.label || "?"} ${t.w.toFixed(0)}x${t.h.toFixed(0)}`);
   if (small.length)
     finding(
       `${scene}: touch targets under ${MIN_TARGET} CSS px: ${[...new Set(small)].slice(0, 6).join(", ")}${small.length > 6 ? ` (+${small.length - 6} more)` : ""}`,
@@ -202,8 +217,9 @@ async function actTool() {
 }
 
 async function selectSlot(i) {
+  const H = (await rect()).height;
   const slots = (await targets("farm"))
-    .filter((t) => t.cy > 480 && t.w < 60)
+    .filter((t) => t.cy > H * 0.85 && t.w < 90)
     .sort((a, c) => a.cx - c.cx);
   await tap(slots[i].cx, slots[i].cy, 100);
   const s = await bot.snap();
@@ -246,7 +262,7 @@ if (Math.abs(t3.pos.x - t2.pos.x) > 0.01)
   finding("the player kept moving after the finger lifted");
 log(`stick: moved ${(t1.pos.x - t0.pos.x).toFixed(0)}px in 0.5s`);
 
-// 2. Farming loop by touch.
+// 2. Farming loop by touch. The toolbar is hoe, can, axe, pickaxe, hand, then the bag.
 const PX = 16;
 await walkTo(PX, 12);
 await faceTo("up");
@@ -257,7 +273,7 @@ await useTool();
 let s = await bot.snap();
 if (!s.plots.some((q) => q.x === front.x && q.y === front.y && q.tilled))
   finding("Use with the hoe did not till the tile in front");
-const seedSlot = s.inv.findIndex((x) => x && x.id === "parsnip-seed") + 4;
+const seedSlot = s.inv.findIndex((x) => x && x.id === "parsnip-seed") + 5;
 await selectSlot(seedSlot);
 await useTool();
 s = await bot.snap();
@@ -277,7 +293,7 @@ await p.evaluate(
   },
   [front.x, front.y],
 );
-await selectSlot(3); // hand
+await selectSlot(4); // hand
 const before = (await bot.snap()).inv;
 await actTool();
 s = await bot.snap();
@@ -363,19 +379,17 @@ await selectSlot(0);
 
 // 3. Two fingers: keep the stick down and tap Use with the other.
 await selectSlot(0);
-const ud = await toPage(0, 0);
-void ud;
 await stickDown();
 await stickPush("down");
 const use = (await targets("farm")).find((t) => t.label === "Use");
 const up = await toPage(use.cx, use.cy);
 const m0 = (await bot.dbg()).pos.y;
 await touch("touchStart", [
-  point(0, stick.x, stick.y + 45 * (vp.width / 960)),
+  point(0, stick.x, stick.y + 45),
   point(1, up.x, up.y),
 ]);
 await sleepMs(60);
-await touch("touchEnd", [point(0, stick.x, stick.y + 45 * (vp.width / 960))]);
+await touch("touchEnd", [point(0, stick.x, stick.y + 45)]);
 await sleepMs(300);
 const m1 = (await bot.dbg()).pos.y;
 await stickUp();
@@ -423,15 +437,14 @@ else {
 }
 
 // 5. Hall by touch: in by the door, to a scroll, and back out.
+// Doors open on Action, not on a walk through.
 await walkTo(6, 21);
-await holdAxis("x", cx(6));
-await holdAxis("y", cy(22));
+await faceTo("down");
+await actTool();
 await sleepMs(900);
 const inHall = await bot.dbg();
 if (inHall.map !== "hall")
-  finding(
-    `walking into the hall door did not enter the hall (map ${inHall.map})`,
-  );
+  finding(`Action on the hall door did not enter the hall (map ${inHall.map})`);
 await walkTo(4, 2);
 await faceTo("up");
 const bundle = await p.evaluate(() => {
@@ -459,10 +472,11 @@ else {
   await sleepMs(300);
 }
 await walkTo(23, 18);
-await holdAxis("y", cy(19));
+await faceTo("down");
+await actTool();
 await sleepMs(900);
 if ((await bot.dbg()).map !== "farm")
-  finding("walking out of the hall door did not return to the farm");
+  finding("Action on the hall door did not return to the farm");
 
 // 5b. Shipping bin by touch: tap a row to ship the stack, the prompt for part.
 await walkTo(8, 7);
@@ -508,19 +522,17 @@ else {
 
 // 6. Sleep by touch: walk into the house, use the bed, answer Yes.
 await walkTo(6, 6);
-// Square up on the door first: the doorway is one tile wide, so a few pixels
-// of sideways drift from the walk puts the player against the wall.
-await holdAxis("x", cx(6));
-await holdAxis("y", cy(5));
+await faceTo("up");
+await actTool();
 await sleepMs(900);
 const atDoor = await bot.dbg();
 if (atDoor.map !== "house")
   finding(
-    `walking into the house door did not enter the house (map ${atDoor.map}, tile ${atDoor.tile.x},${atDoor.tile.y}, pos ${atDoor.pos.x.toFixed(1)},${atDoor.pos.y.toFixed(1)}, exit ${atDoor.exit})`,
+    `Action on the house door did not enter the house (map ${atDoor.map}, tile ${atDoor.tile.x},${atDoor.tile.y}, pos ${atDoor.pos.x.toFixed(1)},${atDoor.pos.y.toFixed(1)}, exit ${atDoor.exit})`,
   );
 else {
-  await holdAxis("y", cy(2));
-  await holdAxis("x", cx(6));
+  // The bed is at 18,19 on the house map; stand below it.
+  await walkTo(18, 20);
   await faceTo("up");
   const day = (await bot.snap()).day;
   await actTool();

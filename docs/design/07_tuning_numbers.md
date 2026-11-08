@@ -626,7 +626,7 @@ bundles on day 41 of 56.
 
 ## Farm types (build 9, placeholders, ours)
 
-Source: `src/content/farm-types.json`, `scripts/gen-farm-map.mjs`.
+Source: `src/content/farm-types.json` and the farm map JSON.
 
 - Woodland farmland: 40 soil tiles (8 by 5) against Standard's 96, about 42
   percent. Trees: 52 hand-free points on grass, none on the soil, none in the

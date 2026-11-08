@@ -244,13 +244,15 @@ async function closeScreen(kind) {
   return s;
 }
 
-/** Walk through a door by holding a direction, then wait for the next map. */
-async function walkThrough(dir, ms, want) {
-  const key = { up: "ArrowUp", down: "ArrowDown" }[dir];
-  await page.keyboard.down(key);
-  await sleepMs(ms);
-  await page.keyboard.up(key);
-  await sleepMs(900);
+/**
+ * Open the door in front of the bot (it stands on the tile before the door).
+ * Doors open on a click or Action, not on a walk through, so face the door
+ * and press Action, then wait for the next map.
+ */
+async function walkThrough(dir, _ms, want) {
+  await bot.face(dir);
+  await bot.key("KeyX", 90);
+  await sleepMs(1200);
   const d = await bot.dbg();
   if (d.map !== want)
     finding(`expected map ${want} after the door, on ${d.map}`);
@@ -762,23 +764,13 @@ async function main() {
 async function visitHouse() {
   log("visiting the house");
   await bot.walkTo(6, 6);
-  await bot.face("up");
-  await page.keyboard.down("ArrowUp");
-  await sleepMs(1200);
-  await page.keyboard.up("ArrowUp");
-  await sleepMs(900);
-  let d = await bot.dbg();
-  log("after walking up through the door: map", d.map, JSON.stringify(d.tile));
+  await walkThrough("up", 0, "house");
   await bot.shot("house-inside");
-  if (d.map !== "house")
-    finding("walking into the house door did not enter the house");
-  await page.keyboard.down("ArrowDown");
-  await sleepMs(1800);
-  await page.keyboard.up("ArrowDown");
-  await sleepMs(900);
-  d = await bot.dbg();
-  log("after walking down: map", d.map, JSON.stringify(d.tile));
-  if (d.map !== "farm") finding("could not leave the house by walking down");
+  // Out again by the door at the bottom of the house map (entry tile 11,20).
+  await bot.walkTo(11, 20);
+  await walkThrough("down", 0, "farm");
+  const d = await bot.dbg();
+  log("after leaving the house: map", d.map, JSON.stringify(d.tile));
 }
 
 main().catch(async (e) => {

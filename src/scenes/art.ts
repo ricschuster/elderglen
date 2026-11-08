@@ -41,7 +41,7 @@ function disc(c: Ctx, colour: string, cx: number, cy: number, r: number) {
       if (x * x + y * y <= r * r + r * 0.6) c.fillRect(cx + x, cy + y, 1, 1);
 }
 
-// ---- tiles, in the order of the tileset in scripts/gen-farm-map.mjs
+// ---- tiles, in the order of the tileset in the map JSON (`src/content/maps/`)
 
 function speckle(
   c: Ctx,

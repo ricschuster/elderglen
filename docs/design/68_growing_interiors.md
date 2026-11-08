@@ -90,8 +90,8 @@ whole barn shifting.
   goes from 29 to 23. The cellar was not in that count and still is not.
 - **Built work.** `house.json` and `house-1.json` (#422) become one map. Tier 2
   and the cellar arrive as layers in M3. #421, #282 and #286 are rewritten.
-- **Tiled authoring.** The generator `scripts/gen-farm-map.mjs` is already
-  stale (see #524), so the new maps are authored by hand.
+- **Tiled authoring.** The generator `scripts/gen-farm-map.mjs` was
+  stale and was retired in #524, so the maps are authored by hand.
 
 ## Settled 2026-11-07 (the open items)
 

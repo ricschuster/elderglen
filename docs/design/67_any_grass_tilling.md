@@ -79,7 +79,7 @@ No rule code changes. `isTillable` stays. The changes are data and art.
    furrows. The existing dark brown tile, the dry and wet soil textures and the
    tilled look stay as they are. The pale tile must differ from the dry tilled
    soil (`paintSoil` in `src/scenes/art.ts`) at a glance on a tablet.
-2. `scripts/gen-farm-map.mjs`: paint the field with the new tile. Size per
+2. The farm map JSON: paint the field with the new tile. Size per
    "Size".
 3. The farm choice preview colours tiles by `isTillable`. It keeps working, and
    should use the same pale colour.

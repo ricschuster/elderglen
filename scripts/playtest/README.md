@@ -133,6 +133,16 @@ all three after a change to prices, bundles, growth or energy.
   real multi-touch events. It is an emulator: it cannot judge how the targets
   feel under a finger, the frame rate, or Android Chrome's own behaviour.
 
-The farm layout in `play.mjs` (soil rows at y 11 and 13, aisle at y 12) and the
-door tile in `lib.mjs` match `src/content/maps/farm.json`. Update them if the
-map changes.
+The farm layout in `play.mjs` (soil rows at y 11 and 13, aisle at y 12) matches
+`src/content/maps/farm.json`. Update it if the map changes. The scripts read
+every map's walls, doors and trees from the JSON, so only fixed tiles need a
+check: the door stand tiles (farm house door 6,6, hall door 6,21, house exit
+11,20, hall exit 23,18) and the bed (18,19 in the house).
+
+Doors open on a click or Action, not on a walk through: the scripts stand on the
+tile before a door, face it and press Action (`walkThrough` in `play.mjs`,
+`actTool` in `touch.mjs`).
+
+The game canvas is the window (note 64), not a fixed 960 by 540. `touch.mjs`
+reads each target through its scene camera (`targets`), so it works at any
+window size. `mouse.mjs` converts tiles through the farm camera.
