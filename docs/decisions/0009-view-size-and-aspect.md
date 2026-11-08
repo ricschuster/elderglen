@@ -37,7 +37,7 @@ expect to zoom in and out, on a tablet by pinching.
 - Note 19 counts screens as 510 tiles. Area sizes in tiles and crossing times
   do not change.
 - The scene camera and HUD need work before this is built: the canvas sizes to
-  the window, with a cap, and the camera zoom follows the setting. Not built yet.
+  the window, and the camera zoom follows the setting. Built in #520 (note 64).
 - Maps need about 8 tiles of border margin on each side, to be checked at the
   widest view.
 - Tests and playtests should run at the default size, one wide and one square

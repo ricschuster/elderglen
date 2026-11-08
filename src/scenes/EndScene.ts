@@ -4,6 +4,7 @@ import { dateOf } from "../core/calendar";
 import { newGame, saveGame, type GameState } from "../core/save";
 import { browserStore } from "./storage";
 import { STATE_KEY } from "./state";
+import { WINDOW_FILL } from "./panel";
 
 /**
  * Shown once, when the last bundle is handed in. Placeholder text: the feast
@@ -24,8 +25,7 @@ export class EndScene extends Phaser.Scene {
   create(): void {
     const g = this.state;
     this.add
-      .rectangle(0, 0, 960, 540, 0x10201a, 1)
-      .setOrigin(0)
+      .rectangle(480, 270, WINDOW_FILL, WINDOW_FILL, 0x10201a, 1)
       .setInteractive();
     this.add
       .text(480, 90, "The valley is restored", {

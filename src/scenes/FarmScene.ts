@@ -83,7 +83,9 @@ import {
 } from "./art";
 import { giveItem, giveMoney } from "../core/debug";
 import { pickupRadius } from "../core/ground";
-import { Hud } from "./hud";
+import { Hud, HUD_FIT_W } from "./hud";
+import { UI_SIZE_KEY, WORLD_ZOOM_KEY } from "./panel";
+import { cameraBounds, cornerScroll, hudScale, worldZoom } from "../core/view";
 import {
   makePlaceholderTextures,
   PLAYER_KEY,
@@ -116,8 +118,6 @@ const DEV_SPEED = import.meta.env.DEV
 const SPEED = 80;
 /** The player's feet box, in world pixels. */
 const PLAYER: Body = { hw: 5, h: 6 };
-/** The world is drawn at this zoom; the HUD is not. */
-const WORLD_ZOOM = 2;
 
 /** While Use is held with the axe or pickaxe, swing again this often, in milliseconds. */
 const REPEAT_MS = 400;
@@ -307,22 +307,17 @@ export class FarmScene extends Phaser.Scene {
     const uiCamera = this.cameras.add(0, 0, width, height);
     this.uiCamera = uiCamera;
     uiCamera.ignore(world);
-    // A map smaller than the view is centred rather than pinned to a corner.
-    const view = { x: 0, y: 0, w: this.map.width, h: this.map.height };
-    const mapW = view.w * ts;
-    const mapH = view.h * ts;
-    const viewW = width / WORLD_ZOOM;
-    const viewH = height / WORLD_ZOOM;
-    this.cameras.main
-      .setBounds(
-        view.x * ts + Math.min(0, (mapW - viewW) / 2),
-        view.y * ts + Math.min(0, (mapH - viewH) / 2),
-        Math.max(mapW, viewW),
-        Math.max(mapH, viewH),
-      )
-      .setZoom(WORLD_ZOOM)
-      .startFollow(this.player, true)
-      .ignore(ui);
+    this.cameras.main.startFollow(this.player, true).ignore(ui);
+    // The canvas is the window: zoom, bounds and the HUD follow its size and
+    // the zoom and UI size settings (note 64).
+    this.layoutView();
+    const relayout = (): void => this.layoutView();
+    this.scale.on(Phaser.Scale.Events.RESIZE, relayout);
+    this.events.on(Phaser.Scenes.Events.RESUME, relayout);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.scale.off(Phaser.Scale.Events.RESIZE, relayout);
+      this.events.off(Phaser.Scenes.Events.RESUME, relayout);
+    });
 
     // The mouse (note 46): moving the cursor hands it the aim, left-click uses
     // the held tool, right-click is Action. Touch pointers never count, and
@@ -637,6 +632,44 @@ export class FarmScene extends Phaser.Scene {
       exit.map === HOUSE_MAP ? houseMapId(this.state.houseTier) : exit.map,
       exit.entry,
     );
+  }
+
+  /**
+   * Set the cameras and the HUD for the window size and the zoom and UI size
+   * settings. A map smaller than the view is centred, and the rest is black.
+   */
+  private layoutView(): void {
+    const { width, height } = this.scale.gameSize;
+    const zoomPercent =
+      (this.registry.get(WORLD_ZOOM_KEY) as number | undefined) ?? 100;
+    const uiPercent =
+      (this.registry.get(UI_SIZE_KEY) as number | undefined) ?? 100;
+    const ts = this.map.tileSize;
+    const zoom = worldZoom(zoomPercent, width, height);
+    const b = cameraBounds(
+      this.map.width * ts,
+      this.map.height * ts,
+      width / zoom,
+      height / zoom,
+    );
+    this.cameras.main
+      .setSize(width, height)
+      .setBackgroundColor(0x000000)
+      .setZoom(zoom)
+      .setBounds(b.x, b.y, b.w, b.h);
+    const scale = hudScale(
+      uiPercent,
+      this.controls.profile === "touch",
+      width,
+      HUD_FIT_W,
+    );
+    const corner = cornerScroll(width, height, scale);
+    this.uiCamera
+      .setSize(width, height)
+      .setZoom(scale)
+      .setScroll(corner.x, corner.y);
+    this.hud.layout(width / scale, height / scale, scale);
+    this.controls.setUiScale(scale);
   }
 
   /** Fade out and restart the scene on another map. */

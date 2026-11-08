@@ -4,6 +4,7 @@ import type { SleepReport } from "../core/sleep";
 import { dateOf } from "../core/calendar";
 import type { GameState } from "../core/save";
 import { STATE_KEY } from "./state";
+import { WINDOW_FILL } from "./panel";
 
 /** The morning report, drawn over the paused farm after every night. */
 export class ReportScene extends Phaser.Scene {
@@ -21,8 +22,7 @@ export class ReportScene extends Phaser.Scene {
 
   create(): void {
     this.add
-      .rectangle(0, 0, 960, 540, 0x10201a, 0.94)
-      .setOrigin(0)
+      .rectangle(480, 270, WINDOW_FILL, WINDOW_FILL, 0x10201a, 0.94)
       .setInteractive();
     const { season, dayOfSeason, year } = dateOf(this.state.day.clock.day);
     this.add

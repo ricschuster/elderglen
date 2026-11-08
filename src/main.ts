@@ -26,6 +26,8 @@ import { FurnaceScene } from "./scenes/FurnaceScene";
 import { ChestScene } from "./scenes/ChestScene";
 import { GreencoatScene } from "./scenes/GreencoatScene";
 import { AchievementsScene } from "./scenes/AchievementsScene";
+import { centreMenus, UI_SIZE_KEY, WORLD_ZOOM_KEY } from "./scenes/panel";
+import { loadDeviceSettings } from "./scenes/storage";
 
 // Throwaway test scenes, opened first with ?scene=witch or ?scene=witchwalk.
 const tests = { witch: WitchTestScene, witchwalk: WitchWalkScene };
@@ -33,14 +35,17 @@ const wanted = new URLSearchParams(location.search).get("scene");
 const first =
   wanted && wanted in tests ? [tests[wanted as keyof typeof tests]] : [];
 
-new Phaser.Game({
+const game = new Phaser.Game({
   type: Phaser.AUTO,
   parent: "game",
-  width: 960,
-  height: 540,
   backgroundColor: "#2f4a35",
   pixelArt: true,
-  scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+  // The canvas is the window (note 64). Menus draw in a centred 960 by 540 box.
+  scale: {
+    mode: Phaser.Scale.RESIZE,
+    width: "100%",
+    height: "100%",
+  },
   scene: [
     ...first,
     TitleScene,
@@ -72,3 +77,10 @@ new Phaser.Game({
     ...Object.values(tests).filter((t) => !first.includes(t)),
   ],
 });
+
+// The zoom and UI size settings are kept live in the registry, so a change in
+// Options shows at once and the farm reads them when it lays out.
+const settings = loadDeviceSettings();
+game.registry.set(WORLD_ZOOM_KEY, settings.worldZoom);
+game.registry.set(UI_SIZE_KEY, settings.uiSize);
+centreMenus(game, ["farm"]);

@@ -14,7 +14,13 @@ import { TIER_NAMES, toolAway, type Upgradable } from "../core/upgrades";
 const SLOT = 44;
 const GAP = 4;
 const BAR_W = TOOLBAR_SIZE * (SLOT + GAP) - GAP;
-const BAR_Y = 540 - SLOT - 8;
+// Layout is drawn for a 960 by 540 window, then each object is shifted by its
+// anchor when the real window size is known (`layout`).
+const BASE_W = 960;
+const BASE_H = 540;
+const BAR_Y = BASE_H - SLOT - 8;
+/** The widest HUD row, toolbar and a margin, in HUD units: it must fit the window. */
+export const HUD_FIT_W = BAR_W + 16;
 const USE_R = 52;
 const EAT_R = 36;
 
@@ -61,6 +67,18 @@ export class Hud {
   private readonly rowButton: Phaser.GameObjects.Rectangle;
   private readonly rowText: Phaser.GameObjects.Text;
   private usePressed = false;
+  /** Objects shifted with a window edge, and where they sit in the base layout. */
+  private readonly pinned: {
+    o: Phaser.GameObjects.Components.Transform;
+    x: number;
+    y: number;
+    h: "c" | "r";
+    v: "t" | "b";
+  }[] = [];
+  /** The HUD's size in its own units, and its scale on screen. */
+  private uw = BASE_W;
+  private uh = BASE_H;
+  private scale = 1;
   /** The touch profile shows the on-screen buttons; desktop does not. */
   private readonly touch: boolean;
   /** Which row of backpack slots the bar is showing. */
@@ -96,9 +114,9 @@ export class Hud {
     });
     this.objects.push(this.status, this.hint, this.message);
 
-    const left = (960 - BAR_W) / 2;
+    const left = (BASE_W - BAR_W) / 2;
     this.heldName = scene.add
-      .text(480, BAR_Y - 14, "", { fontSize: "16px", color: "#ffffff" })
+      .text(BASE_W / 2, BAR_Y - 14, "", { fontSize: "16px", color: "#ffffff" })
       .setOrigin(0.5, 1);
     this.objects.push(this.heldName);
     for (let i = 0; i < TOOLBAR_SIZE; i++) {
@@ -141,7 +159,7 @@ export class Hud {
     this.objects.push(this.rowButton, this.rowText);
 
     const use = scene.add
-      .circle(960 - USE_R - 24, BAR_Y - USE_R - 16, USE_R, 0xf2d16b, 0.45)
+      .circle(BASE_W - USE_R - 24, BAR_Y - USE_R - 16, USE_R, 0xf2d16b, 0.45)
       .setStrokeStyle(3, 0xffffff, 0.7)
       .setInteractive({ useHandCursor: true });
     use.on("pointerdown", () => {
@@ -163,7 +181,7 @@ export class Hud {
       .text(eat.x, eat.y, "Action", { fontSize: "16px", color: "#ffffff" })
       .setOrigin(0.5);
     const skills = scene.add
-      .rectangle(960 - 16 - 90, 16, 90, 40, 0x000000, 0.5)
+      .rectangle(BASE_W - 16 - 90, 16, 90, 40, 0x000000, 0.5)
       .setOrigin(0)
       .setStrokeStyle(2, 0xffffff, 0.5)
       .setInteractive({ useHandCursor: true });
@@ -201,6 +219,16 @@ export class Hud {
       hats,
       hatsText,
     );
+    this.pin("c", "b", [
+      this.heldName,
+      ...this.slots,
+      ...this.captions,
+      ...this.icons,
+      this.rowButton,
+      this.rowText,
+    ]);
+    this.pin("r", "b", [use, useText, eat, eatText]);
+    this.pin("r", "t", [skills, skillsText, craft, craftText, hats, hatsText]);
     if (!this.touch)
       for (const o of [
         use,
@@ -227,6 +255,33 @@ export class Hud {
         .text(dbg.x + 45, 84, "DBG", { fontSize: "18px", color: "#ffffff" })
         .setOrigin(0.5);
       this.objects.push(dbg, dbgText);
+      this.pin("r", "t", [dbg, dbgText]);
+    }
+  }
+
+  /** Anchor objects to the horizontal centre or right, and top or bottom. */
+  private pin(
+    h: "c" | "r",
+    v: "t" | "b",
+    list: Phaser.GameObjects.Components.Transform[],
+  ): void {
+    for (const o of list) this.pinned.push({ o, x: o.x, y: o.y, h, v });
+  }
+
+  /**
+   * Lay the HUD out in a window of `uw` by `uh` HUD units, shown at `scale`.
+   * The status readout stays top left; the toolbar sits bottom centre, the
+   * buttons bottom right and top right.
+   */
+  layout(uw: number, uh: number, scale: number): void {
+    this.uw = uw;
+    this.uh = uh;
+    this.scale = scale;
+    const dx = uw - BASE_W;
+    const dy = uh - BASE_H;
+    for (const p of this.pinned) {
+      p.o.x = p.x + (p.h === "c" ? dx / 2 : dx);
+      p.o.y = p.y + (p.v === "b" ? dy : 0);
     }
   }
 
@@ -242,8 +297,10 @@ export class Hud {
 
   /** True if a screen point falls on the toolbar, which owns its touches. */
   covers(x: number, y: number): boolean {
-    const left = (960 - BAR_W) / 2;
-    return y >= BAR_Y && x >= left && x <= left + BAR_W;
+    const ux = x / this.scale;
+    const uy = y / this.scale;
+    const left = (this.uw - BAR_W) / 2;
+    return uy >= BAR_Y + (this.uh - BASE_H) && ux >= left && ux <= left + BAR_W;
   }
 
   update(g: GameState, selected: number, message: string): void {

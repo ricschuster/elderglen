@@ -1,5 +1,56 @@
 import Phaser from "phaser";
 import { paintUiFrame, UI_FRAME_EDGE, UI_FRAME_KEY } from "./art";
+import { MENU_H, MENU_W, menuZoom } from "../core/view";
+
+/**
+ * A backdrop rectangle centred on the menu box and bigger than any window, so
+ * a dim or a block of taps covers the whole window and not only the box.
+ */
+export const WINDOW_FILL = 20000;
+
+/** Registry key for the UI size percent (live copy of the setting). */
+export const UI_SIZE_KEY = "uiSize";
+/** Registry key for the world zoom percent (live copy of the setting). */
+export const WORLD_ZOOM_KEY = "worldZoom";
+
+/**
+ * Put the 960 by 540 menu box in the middle of the window, scaled by the UI
+ * size and shrunk if the window is smaller than the box.
+ */
+export function centreView(scene: Phaser.Scene): void {
+  const { width, height } = scene.scale.gameSize;
+  const ui = (scene.registry.get(UI_SIZE_KEY) as number | undefined) ?? 100;
+  scene.cameras.main
+    .setSize(width, height)
+    .setZoom(menuZoom(ui, width, height))
+    .centerOn(MENU_W / 2, MENU_H / 2);
+}
+
+/**
+ * Every scene except the farm draws in a centred menu box. Hooked once at
+ * start: it centres each scene after its `create` and again on a resize or a
+ * wake. The farm lays out its own cameras.
+ */
+export function centreMenus(game: Phaser.Game, skip: string[]): void {
+  game.events.once(Phaser.Core.Events.READY, () => {
+    for (const scene of game.scene.getScenes(false)) {
+      if (skip.includes(scene.scene.key)) continue;
+      const apply = () => centreView(scene);
+      const attach = () => {
+        apply();
+        scene.scale.off(Phaser.Scale.Events.RESIZE, apply);
+        scene.scale.on(Phaser.Scale.Events.RESIZE, apply);
+      };
+      scene.events.on(Phaser.Scenes.Events.CREATE, attach);
+      scene.events.on(Phaser.Scenes.Events.WAKE, apply);
+      scene.events.on(Phaser.Scenes.Events.SHUTDOWN, () =>
+        scene.scale.off(Phaser.Scale.Events.RESIZE, apply),
+      );
+      // The first scene can already be running when this hook is set.
+      if (scene.sys.isActive()) attach();
+    }
+  });
+}
 
 export interface RowButton {
   text: string;
@@ -200,8 +251,7 @@ export function frame(
   // The interactive backdrop blocks clicks to the scene behind. The frame
   // image only draws the border over it.
   scene.add
-    .rectangle(0, 0, 960, 540, 0x10201a, 1)
-    .setOrigin(0)
+    .rectangle(480, 270, WINDOW_FILL, WINDOW_FILL, 0x10201a, 1)
     .setInteractive();
   scene.add
     .nineslice(

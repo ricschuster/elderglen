@@ -4,6 +4,7 @@ import { sellMultiplier } from "../core/professions";
 import type { GameState } from "../core/save";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
+import { WINDOW_FILL } from "./panel";
 
 /** The quantity prompt: which item, how many, and the most the backpack holds. */
 interface Prompt {
@@ -238,8 +239,7 @@ export class BinScene extends Phaser.Scene {
     // The backdrop blocks taps on the menus behind the prompt.
     add(
       this.add
-        .rectangle(0, 0, 960, 540, 0x000000, 0.6)
-        .setOrigin(0)
+        .rectangle(480, 270, WINDOW_FILL, WINDOW_FILL, 0x000000, 0.6)
         .setInteractive(),
     );
     add(

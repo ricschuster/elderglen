@@ -34,6 +34,7 @@ import {
 } from "../core/showing";
 import { frame, Menu } from "./panel";
 import { STATE_KEY } from "./state";
+import { WINDOW_FILL } from "./panel";
 
 /**
  * Today's festival, drawn over the farm. As in Stardew, time stands still
@@ -92,8 +93,7 @@ export class FestivalScene extends Phaser.Scene {
     this.inside = true;
     this.asking.forEach((o) => o.destroy());
     this.add
-      .rectangle(0, 0, 960, 540, 0x10201a, 1)
-      .setOrigin(0)
+      .rectangle(480, 270, WINDOW_FILL, WINDOW_FILL, 0x10201a, 1)
       .setInteractive();
     this.add.text(24, 16, f.name, { fontSize: "30px", color: "#ffffff" });
     this.add.text(24, 64, f.blurb, {

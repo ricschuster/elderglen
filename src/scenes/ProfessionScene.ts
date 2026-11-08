@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { choose, optionsFor, pendingChoice } from "../core/professions";
 import type { GameState } from "../core/save";
 import { STATE_KEY } from "./state";
+import { WINDOW_FILL } from "./panel";
 
 const SKILL_NAMES = {
   farming: "Farming",
@@ -23,8 +24,7 @@ export class ProfessionScene extends Phaser.Scene {
     const skill = pendingChoice(g.skills);
     if (!skill) return this.done();
     this.add
-      .rectangle(0, 0, 960, 540, 0x10201a, 0.92)
-      .setOrigin(0)
+      .rectangle(480, 270, WINDOW_FILL, WINDOW_FILL, 0x10201a, 0.92)
       .setInteractive();
     this.add
       .text(480, 90, `${SKILL_NAMES[skill]} level 5`, {

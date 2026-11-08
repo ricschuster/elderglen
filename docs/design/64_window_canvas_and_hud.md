@@ -1,8 +1,8 @@
 # 64 Window sized canvas, HUD anchoring and UI size (draft)
 
-Status: draft, updated 2026-11-07. The forks below were decided with the owner.
-Everything else is the assistant's proposal, and the numbers are placeholders.
-Nothing here is built. This turns ADR 0009 (view size and zoom) into a build
+Status: built in #520 (2026-11-07), except the items under "Still open". The
+forks below were decided with the owner. Everything else is the assistant's
+proposal, and the numbers are placeholders. This turns ADR 0009 (view size and zoom) into a build
 plan. Stardew's behaviour is from the owner's memory only (SC-42, SC-46).
 
 ## Decided with the owner (2026-11-06)
@@ -73,7 +73,31 @@ ultrawide window can be wider than a whole interior or small area.
 4. Zoom and UI size in Options, plus pinch, saved per device.
 5. Tests: default size, one wide window, one square window, both zoom caps.
 
+## Built (#520)
+
+- `src/core/view.ts` holds the maths (ranges, steps, base zoom, HUD and menu
+  scale, camera bounds), unit tested in `tests/view.test.ts`. The settings
+  record gained `worldZoom` and `uiSize` (percent, default 100, clamped).
+- The canvas is the window (RESIZE). The farm lays out its cameras on every
+  resize; a map smaller than the view is centred with black round it.
+- The HUD anchors to the window edges and scales by UI size. It shrinks if its
+  toolbar would not fit a narrow window, which wins over the touch floor.
+- Every other scene is centred in a 960 by 540 box by a hook in
+  `panel.ts` (`centreMenus`). The box scales by UI size and shrinks to fit a
+  small window. Dim and blocking backdrops use `WINDOW_FILL`.
+- Options has World zoom, UI size and Window mode rows. Zoom and UI size apply
+  at once (live copy in the game registry) and save when Options closes.
+- Window mode: Windowed and Fullscreen through the browser Fullscreen API,
+  not saved (browsers want a gesture each time).
+
 ## Still open
+
+- Borderless Windowed needs the desktop wrapper.
+- In game zoom control (pinch, a key) is not built; zoom changes only in
+  Options, which opens from the title.
+- Device pixel ratio is not used yet, so text is not crisper on dense screens.
+- The scripted touch playtest maps clicks onto a fixed 960 by 540 canvas and
+  needs updating (#524).
 
 - Whether fractional zoom shimmers on the tablet (fall back to whole steps).
 - The desktop wrapper ADR, which must cover window mode (SC-64).
