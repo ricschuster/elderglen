@@ -28,6 +28,18 @@ const SERVICES: Record<string, string> = {
   "mushroom-box": "Mushroom Box",
   "camp-chest": "Camp Chest",
   orders: "Orders Board",
+  festival: "Village Green",
+  "festival-leave": "Way Home",
+  "hedge-chest": "Chest",
+  "hedge-cart": "Cart Home",
+};
+
+/** Festival map counters and villagers share kinds, so they are named by id. */
+const FESTIVAL_BY_ID: Record<string, string> = {
+  table: "Display Table",
+  judge: "Judge",
+  prizes: "Prize Counter",
+  booth: "Booth",
 };
 
 /** Hall counters share the kind "hall", so they are named by id. */
@@ -45,5 +57,10 @@ export function exitLabel(id: string): string | undefined {
 }
 
 export function serviceLabel(kind: string, id: string): string | undefined {
-  return kind === "hall" ? HALL[id] : SERVICES[kind];
+  if (kind === "hall") return HALL[id];
+  if (kind === "showing" || kind === "festival-counter")
+    return FESTIVAL_BY_ID[id];
+  if (kind === "sight")
+    return id.startsWith("scare") ? "Decoration" : "Villager";
+  return SERVICES[kind];
 }

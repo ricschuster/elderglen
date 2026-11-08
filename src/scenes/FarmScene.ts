@@ -9,7 +9,14 @@ import { pendingChoice } from "../core/professions";
 import { eat, type Outcome } from "../core/actions";
 import { dateOf } from "../core/calendar";
 import { clockText, darkness } from "../core/clock";
-import { festivalOpen, festivalToday } from "../core/festivals";
+import {
+  festivalOfMap,
+  festivalOpen,
+  festivalToday,
+  isFestivalMap,
+  sightLine,
+} from "../core/festivals";
+import { openChest } from "../core/maze";
 import { itemById } from "../core/items";
 import { NOTHING_TO_ACT_ON, act, reasonText, useHeld } from "../core/tools";
 import { cropById } from "../core/crops";
@@ -455,6 +462,8 @@ export class FarmScene extends Phaser.Scene {
       delay: TICK_MS / DEV_SPEED,
       loop: true,
       callback: () => {
+        // Time stands still on a festival map, as in Stardew.
+        if (isFestivalMap(this.mapId)) return;
         this.state.day.act(0, TICK_MINUTES);
         this.afterAction();
       },
@@ -543,7 +552,7 @@ export class FarmScene extends Phaser.Scene {
     // Cap the step so a stalled frame cannot throw the player across the map.
     const dt = Math.min(delta, 50) / 1000;
     this.night.setAlpha(
-      this.map.hasSoil
+      this.map.hasSoil || festivalOfMap(this.mapId)?.activity === "maze"
         ? NIGHT_ALPHA *
             darkness(
               dateOf(this.state.day.clock.day).season,
@@ -1132,6 +1141,8 @@ export class FarmScene extends Phaser.Scene {
     if (service?.kind === "ore-bin") return this.open("bin", { oreOnly: true });
     if (service?.kind === "stairs")
       return this.travel(mineMapId(1), "from_above");
+    if (service && isFestivalMap(this.mapId))
+      return this.festivalAction(service);
     if (this.mapId === CAVE_MAP) return this.caveAction(front, service?.kind);
     if (service?.kind === "furnace") {
       if (!this.state.furnace.gifted) {
@@ -1229,6 +1240,60 @@ export class FarmScene extends Phaser.Scene {
       this.message = "";
     }
     this.afterAction();
+  }
+
+  /**
+   * A service on a festival map: the display table and counters open their
+   * panel, the way home asks first, villagers and decorations speak, and the
+   * hedge chest and cart finish the maze.
+   */
+  private festivalAction(service: { id: string; kind: string }): void {
+    const f = festivalOfMap(this.mapId);
+    if (!f) return;
+    switch (service.kind) {
+      case "showing":
+        return this.open("festival", { mode: "panel", panel: "showing" });
+      case "festival-counter":
+        return this.open("festival", { mode: "panel", panel: "counter" });
+      case "festival-leave":
+        return this.open("festival", { mode: "leave" });
+      case "hedge-chest":
+        this.message = openChest(this.state);
+        return this.render();
+      case "hedge-cart":
+        return this.travel(this.mapId, "door");
+      case "sight":
+        this.message = sightLine(f, service.id) ?? "";
+        return this.render();
+    }
+  }
+
+  /** Placeholder props on a festival map: tables, booths, villagers and the chest. */
+  private drawFestivalProps(): void {
+    const ts = this.map.tileSize;
+    const colour: Record<string, number> = {
+      showing: 0x8b5a2b,
+      "festival-counter": 0xc0463a,
+      "festival-leave": 0xf0e8d0,
+      "hedge-chest": 0xe8c050,
+      "hedge-cart": 0x7a5230,
+    };
+    for (const s of this.map.services) {
+      const c =
+        s.kind === "sight"
+          ? s.id.startsWith("scare")
+            ? 0xe8802a
+            : 0x4a9fd8
+          : colour[s.kind];
+      if (c === undefined) continue;
+      this.ground
+        .fillStyle(c, 1)
+        .fillRect(s.x * ts + 1, s.y * ts + 2, ts - 2, ts - 4);
+      if (s.kind === "showing" && s.id === "judge")
+        this.ground
+          .fillStyle(0x203a8a, 1)
+          .fillRect(s.x * ts + 4, s.y * ts + 4, ts - 8, ts - 8);
+    }
   }
 
   /** The festival green: open only while today's festival is on. */
@@ -1341,6 +1406,7 @@ export class FarmScene extends Phaser.Scene {
     for (const c of this.state.chests.each(this.mapId))
       put(c.x, c.y, chestKey(c.id));
     if (this.mapId === CAVE_MAP) this.drawCave(put);
+    if (isFestivalMap(this.mapId)) this.drawFestivalProps();
     if (!this.map.hasSoil) return;
     for (const { x, y, plot } of this.state.farm.each()) {
       put(x, y, soilKey(plot.wateredToday));

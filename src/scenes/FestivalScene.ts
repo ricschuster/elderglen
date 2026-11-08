@@ -7,21 +7,11 @@ import {
   enterFestival,
   type Festival,
   enterProblem,
+  FESTIVAL_RETURN,
   festivalToday,
   leaveFestival,
 } from "../core/festivals";
 import { itemById } from "../core/items";
-import {
-  MAZE,
-  atChest,
-  cellAt,
-  lineAt,
-  mazeHeight,
-  mazeStart,
-  mazeWidth,
-  openChest,
-  step,
-} from "../core/maze";
 import type { GameState } from "../core/save";
 import {
   TABLE_SIZE,
@@ -32,6 +22,7 @@ import {
   scoreTable,
   showTokens,
 } from "../core/showing";
+import { clockText } from "../core/clock";
 import { frame, Menu } from "./panel";
 import { STATE_KEY } from "./state";
 import { WINDOW_FILL } from "./panel";
@@ -42,38 +33,63 @@ import { WINDOW_FILL } from "./panel";
  * leaving cannot be undone. The prize counter and the festival game are hooks:
  * a festival lists them in its data and they show here once it has any.
  */
+/**
+ * How the scene is used. "ask" is the invitation on the farm (a festival with a
+ * map sends the player there, one without shows its screen). "leave" asks
+ * before going home from a festival map. "panel" is one counter or the display
+ * table, opened from a service on the festival map, and closing it stays there.
+ */
+export interface FestivalData {
+  mode?: "ask" | "leave" | "panel";
+  panel?: "showing" | "counter";
+}
+
 export class FestivalScene extends Phaser.Scene {
   private state!: GameState;
   private inside = false;
+  private mode: NonNullable<FestivalData["mode"]> = "ask";
+  private only: FestivalData["panel"];
   private message!: Phaser.GameObjects.Text;
 
   constructor() {
     super("festival");
   }
 
-  init(): void {
+  init(data?: FestivalData): void {
     this.state = this.registry.get(STATE_KEY) as GameState;
     this.inside = false;
+    this.mode = data?.mode ?? "ask";
+    this.only = data?.panel;
   }
 
   create(): void {
     const f = festivalToday(this.state.day.clock.day);
-    if (!f || enterProblem(this.state)) return this.close(false);
-    frame(this, f.name, () => this.close(this.inside));
+    if (!f || (this.mode === "ask" && enterProblem(this.state)))
+      return this.close(false);
+    frame(this, f.name, () => this.close(this.inside && this.mode === "ask"));
+    if (this.mode === "panel") return this.enter();
+    const leaving = this.mode === "leave";
     this.add
       .text(
         480,
         200,
-        `Go to the ${f.name}?\nTime stops while you are there, and it is 10 pm when you leave.`,
+        leaving
+          ? `Leave the ${f.name}?\nIt will be ${clockText(f.ends)} when you are home, and you cannot come back.`
+          : `Go to the ${f.name}?\nTime stops while you are there, and it is ${clockText(f.ends)} when you leave.`,
         { fontSize: "22px", color: "#ffffff", align: "center" },
       )
       .setOrigin(0.5);
-    const yes = this.button(340, 330, "Go", 0x3f7d3a, () => this.enter());
-    const no = this.button(620, 330, "Not now", 0xa0482e, () =>
-      this.close(false),
+    const go = () => (leaving ? this.goHome() : this.enter());
+    const yes = this.button(340, 330, leaving ? "Leave" : "Go", 0x3f7d3a, go);
+    const no = this.button(
+      620,
+      330,
+      leaving ? "Stay" : "Not now",
+      0xa0482e,
+      () => this.close(false),
     );
     this.input.keyboard?.on("keydown-ENTER", () => {
-      if (!this.inside) this.enter();
+      if (!this.inside) go();
     });
     this.add
       .text(480, 500, "Enter: yes   Esc: no", {
@@ -86,10 +102,21 @@ export class FestivalScene extends Phaser.Scene {
 
   private asking: Phaser.GameObjects.GameObject[] = [];
 
+  /** Leave a festival map: the clock moves on and the player is back at the farm. */
+  private goHome(): void {
+    this.close(true, { map: "farm", entry: FESTIVAL_RETURN });
+  }
+
   private enter(): void {
     if (this.inside) return;
-    const f = enterFestival(this.state);
+    const f =
+      this.mode === "panel"
+        ? festivalToday(this.state.day.clock.day)
+        : enterFestival(this.state);
     if (!f) return this.close(false);
+    // A festival with a map is played there, not on this screen.
+    if (f.map && this.mode === "ask")
+      return this.close(false, { map: f.map, entry: "door" });
     this.inside = true;
     this.asking.forEach((o) => o.destroy());
     this.add
@@ -114,13 +141,13 @@ export class FestivalScene extends Phaser.Scene {
     kb?.on("keydown-SPACE", () => this.menu?.press(0));
 
     const tabs: { text: string; show: () => void }[] = [];
-    if (f.activity === "showing")
+    const want = (p: FestivalData["panel"]) =>
+      this.mode !== "panel" || this.only === p;
+    if (f.activity === "showing" && want("showing"))
       tabs.push({ text: "The table", show: () => this.showingPanel() });
-    if (f.activity === "maze")
-      tabs.push({ text: "The maze", show: () => this.mazePanel() });
     if (f.activity === "sights")
       tabs.push({ text: "Look around", show: () => this.sightsPanel(f) });
-    if (f.counter.length > 0)
+    if (f.counter.length > 0 && want("counter"))
       tabs.push({ text: "Counter", show: () => this.counterPanel(f) });
     tabs.forEach((t, i) =>
       this.button(
@@ -133,7 +160,16 @@ export class FestivalScene extends Phaser.Scene {
         36,
       ),
     );
-    this.button(840, 490, "Leave", 0xa0482e, () => this.close(true), 200, 50);
+    const panel = this.mode === "panel";
+    this.button(
+      840,
+      490,
+      panel ? "Done" : "Leave",
+      0xa0482e,
+      () => this.close(!panel),
+      200,
+      50,
+    );
     const first = tabs[0];
     if (first) this.switchTo(first.show);
   }
@@ -276,62 +312,6 @@ export class FestivalScene extends Phaser.Scene {
     );
   }
 
-  private mazePanel(): void {
-    const cell = 22;
-    const ox = 24;
-    const oy = 196;
-    const g = this.add.graphics();
-    this.panel.push(g);
-    const pos = { ...mazeStart() };
-    const line = this.add.text(ox + mazeWidth() * cell + 16, oy, "", {
-      fontSize: "16px",
-      color: "#ffe9a0",
-      wordWrap: { width: 960 - (ox + mazeWidth() * cell + 16) - 24 },
-    });
-    this.panel.push(line);
-    const draw = () => {
-      g.clear();
-      for (let y = 0; y < mazeHeight(); y++)
-        for (let x = 0; x < mazeWidth(); x++) {
-          const c = cellAt(x, y);
-          const colour =
-            c === "#"
-              ? 0x2f5a2f
-              : c === "E"
-                ? 0xe8c050
-                : c in MAZE.scares || c in MAZE.talkers
-                  ? 0xe8802a
-                  : 0x1a2a20;
-          g.fillStyle(colour, 1);
-          g.fillRect(ox + x * cell, oy + y * cell, cell - 1, cell - 1);
-        }
-      g.fillStyle(0xffffff, 1);
-      g.fillCircle(ox + (pos.x + 0.5) * cell, oy + (pos.y + 0.5) * cell, 7);
-    };
-    const move = (dx: number, dy: number) => {
-      const to = step(pos, dx, dy);
-      if (to === pos) return;
-      pos.x = to.x;
-      pos.y = to.y;
-      draw();
-      if (atChest(pos)) return line.setText(openChest(this.state));
-      line.setText(lineAt(pos.x, pos.y) ?? "");
-    };
-    this.onArrow = move;
-    draw();
-    line.setText(
-      "Walk with the arrow keys or the pad. The glowing squares are only decorations. Find the chest at the far end.",
-    );
-    const pad = (x: number, y: number, t: string, dx: number, dy: number) =>
-      this.panel.push(
-        ...this.button(x, y, t, 0x3f7d3a, () => move(dx, dy), 56, 46),
-      );
-    pad(760, 330, "Up", 0, -1);
-    pad(700, 380, "Left", -1, 0);
-    pad(760, 430, "Down", 0, 1);
-    pad(820, 380, "Right", 1, 0);
-  }
-
   private sightsPanel(f: Festival): void {
     const menu = new Menu(this, {
       x: 24,
@@ -373,9 +353,9 @@ export class FestivalScene extends Phaser.Scene {
   }
 
   /** Close the screen. Leaving a festival you went to moves the clock on. */
-  private close(left: boolean): void {
+  private close(left: boolean, goto?: { map: string; entry: string }): void {
     if (left) leaveFestival(this.state);
     this.scene.stop();
-    this.scene.resume("farm");
+    this.scene.resume("farm", goto ? { goto } : undefined);
   }
 }

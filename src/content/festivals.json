@@ -101,7 +101,22 @@
         "count": 15
       }
     ],
-    "minigame": null
+    "minigame": null,
+    "map": "green",
+    "sights": [
+      {
+        "name": "A neighbour",
+        "line": "My marrow did not place last year. This year I brought two, to be safe."
+      },
+      {
+        "name": "A child",
+        "line": "I am not allowed to touch the table. I am allowed to look at it very closely."
+      },
+      {
+        "name": "The baker",
+        "line": "Everything on that table is better than my loaf. I will not be saying so to the judge."
+      }
+    ]
   },
   {
     "id": "hollow-eve",
@@ -127,7 +142,8 @@
         "price": 260
       }
     ],
-    "minigame": null
+    "minigame": null,
+    "map": "hedge"
   },
   {
     "id": "frostday",

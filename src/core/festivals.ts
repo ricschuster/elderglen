@@ -2,6 +2,7 @@ import festivalData from "../content/festivals.json";
 import { DAYS_PER_SEASON, SEASONS, dateOf, type Season } from "./calendar";
 import { hatById } from "./hats";
 import { itemById } from "./items";
+import { MAZE } from "./maze";
 import type { GameState } from "./save";
 import { showTokens, spendTokens } from "./showing";
 
@@ -42,8 +43,13 @@ export interface Festival {
   gift?: { hat: string };
   /** A festival activity: the Harvest Showing table, the Hollow Eve maze, or things to look at. */
   activity?: FestivalActivity;
-  /** Things to look at, for the `sights` activity. */
+  /** Things to look at, for the `sights` activity, or the villagers on the festival's map. */
   sights?: Sight[];
+  /**
+   * A map the festival is played on, in place of the screen (note 66). Its
+   * door leads there, every other door on it is shut, and time stands still.
+   */
+  map?: string;
   /** What the festival's counter sells. Hats sell once, items without limit. */
   counter: CounterEntry[];
   /** Id of the festival game, or null for none (see `11_minigames.md`). */
@@ -159,4 +165,30 @@ export function buyAtCounter(
   if (e.tokens) spendTokens(g, e.price);
   else g.money -= e.price;
   return true;
+}
+
+/** The entry on every farm map where the player stands again after a festival map. */
+export const FESTIVAL_RETURN = "from_festival";
+
+/** The festival whose map this is, if it is a festival map. */
+export function festivalOfMap(mapId: string): Festival | undefined {
+  return FESTIVALS.find((f) => f.map === mapId);
+}
+
+/** True for a map that only exists for a festival: the green and the hedge maze. */
+export const isFestivalMap = (mapId: string): boolean =>
+  festivalOfMap(mapId) !== undefined;
+
+/**
+ * The line for a villager or decoration on a festival map, by service id. The
+ * green's villagers are `sight-N` (the festival's `sights`), and the hedge's
+ * are `scare-x` and `talk-x` (the maze file). Undefined for any other id.
+ */
+export function sightLine(f: Festival, id: string): string | undefined {
+  const n = /^sight-(\d+)$/.exec(id);
+  if (n) return f.sights?.[Number(n[1])]?.line;
+  const m = /^(scare|talk)-(.)$/.exec(id);
+  if (m && f.activity === "maze")
+    return (m[1] === "scare" ? MAZE.scares : MAZE.talkers)[m[2]!];
+  return undefined;
 }

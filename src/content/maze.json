@@ -16,6 +16,7 @@
     "#.......#.....#..E#",
     "###################"
   ],
+  "gap": { "x": 6, "y": 5 },
   "scares": {
     "a": "A scarecrow turns its head to watch you. It is only straw.",
     "b": "A pumpkin grins up from the hedge. Its candle gutters, friendly enough.",

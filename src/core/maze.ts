@@ -12,6 +12,8 @@ import type { GameState } from "./save";
  */
 export interface MazeData {
   rows: string[];
+  /** A hedge tile left open: the shorter way to the chest, never the only one. */
+  gap: Cell;
   scares: Record<string, string>;
   talkers: Record<string, string>;
   chestHat: string;
@@ -25,9 +27,9 @@ export interface Cell {
   y: number;
 }
 
-const find = (ch: string, rows = MAZE.rows): Cell => {
-  for (let y = 0; y < rows.length; y++) {
-    const x = rows[y]!.indexOf(ch);
+const find = (ch: string): Cell => {
+  for (let y = 0; y < MAZE.rows.length; y++) {
+    const x = MAZE.rows[y]!.indexOf(ch);
     if (x >= 0) return { x, y };
   }
   throw new Error(`maze has no ${ch}`);
@@ -39,7 +41,7 @@ export const mazeWidth = () => MAZE.rows[0]!.length;
 export const mazeHeight = () => MAZE.rows.length;
 
 export const cellAt = (x: number, y: number): string =>
-  MAZE.rows[y]?.[x] ?? "#";
+  x === MAZE.gap.x && y === MAZE.gap.y ? "." : (MAZE.rows[y]?.[x] ?? "#");
 
 /** True when the player can stand on a tile: anything but a wall or a scare. */
 export const walkable = (x: number, y: number): boolean => {
