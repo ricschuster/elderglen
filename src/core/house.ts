@@ -1,4 +1,6 @@
+import { maps } from "../content/maps";
 import { festivalToday } from "./festivals";
+import { visibleTier } from "./map";
 import type { GameState } from "./save";
 
 /** The house grows in tiers: 0 is the start room, 1 adds a kitchen and a bedroom. */
@@ -8,12 +10,39 @@ export const MAX_HOUSE_TIER = 3;
 export const HOUSE_MAP = "house";
 
 /**
- * The interior map for a house tier: one map per tier, no sealed earth
- * (`docs/design/41_house.md`). Tiers 2 and 3 get their own maps in M3, so until
- * then they use the tier 1 map. Tiers out of range are clamped.
+ * The tier of the house the player sees: the rooms built so far, kept to the
+ * tiers the house map has. The house is one map that grows
+ * (`docs/design/68_growing_interiors.md`), so this picks layers, not a map.
+ * Tiers 2 and 3 get their layers in M3, so until then they show tier 1.
  */
-export function houseMapId(tier: number): string {
-  return Math.floor(tier) >= 1 ? "house-1" : HOUSE_MAP;
+export function houseVisibleTier(tier: number): number {
+  return visibleTier(tier, maps.maxTier(HOUSE_MAP));
+}
+
+/**
+ * The version of the house map's tile frame. Saves from before the house grew
+ * in one map (no `houseLayout`) hold furniture and chests by the old start room
+ * frame, which sat at the corner. See `legacyHouseTile`.
+ */
+export const HOUSE_LAYOUT = 2;
+
+/** Where the start room's corner sits in the merged house map, in tiles. */
+export const START_ROOM_AT = { x: 9, y: 2 } as const;
+
+/**
+ * Bring a tile saved before the merged house map into its frame. A piece on
+ * the old start map moves by the start room's offset. A piece on the old tier 1
+ * map (`house-1`) keeps its tile, since the new map reuses that frame, and goes
+ * to the one house map.
+ */
+export function legacyHouseTile(
+  map: string,
+  x: number,
+  y: number,
+): { map: string; x: number; y: number } {
+  if (map === HOUSE_MAP)
+    return { map, x: x + START_ROOM_AT.x, y: y + START_ROOM_AT.y };
+  return { map: HOUSE_MAP, x, y };
 }
 
 /** True for any of the house interior maps. */

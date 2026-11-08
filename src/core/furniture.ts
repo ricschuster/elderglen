@@ -1,6 +1,6 @@
 import furnitureData from "../content/furniture.json";
 import type { Outcome } from "./actions";
-import { isHouseMap } from "./house";
+import { isHouseMap, legacyHouseTile } from "./house";
 import type { FarmMap } from "./map";
 import type { GameState } from "./save";
 
@@ -60,7 +60,8 @@ export class Furniture {
     };
   }
 
-  load(raw: unknown): void {
+  /** `legacy` is true for a save from before the merged house map (`legacyHouseTile`). */
+  load(raw: unknown, legacy = false): void {
     this.placed.clear();
     this.stash = [];
     if (typeof raw !== "object" || raw === null) return;
@@ -75,7 +76,9 @@ export class Furniture {
           Number.isInteger(p.x) &&
           Number.isInteger(p.y) &&
           furnitureById(p.id);
-        if (ok) this.add(p.map, p.x, p.y, p.id);
+        if (!ok) continue;
+        const at = legacy ? legacyHouseTile(p.map, p.x, p.y) : p;
+        this.add(at.map, at.x, at.y, p.id);
       }
     if (Array.isArray(data.stash))
       this.stash = data.stash.filter((id) => furnitureById(id));

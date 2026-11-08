@@ -15,7 +15,7 @@ import { cropById } from "../core/crops";
 import { mapFiles, maps } from "../content/maps";
 import { START } from "../core/maps";
 import { farmMapOf, isFarmMap, resolveMapId } from "../core/farmtypes";
-import { exitOpen, FarmMap, type Exit } from "../core/map";
+import { exitOpen, FarmMap, layersAtTier, type Exit } from "../core/map";
 import { exitLabel, serviceLabel } from "../core/labels";
 import {
   facingFrom,
@@ -60,7 +60,7 @@ import {
   placeFurniture,
 } from "../core/furniture";
 import { hatById } from "../core/hats";
-import { HOUSE_MAP, houseMapId, isHouseMap } from "../core/house";
+import { HOUSE_MAP, houseVisibleTier, isHouseMap } from "../core/house";
 import { SELECTED_KEY, STATE_KEY } from "./state";
 import {
   cropKey,
@@ -163,6 +163,8 @@ export class FarmScene extends Phaser.Scene {
   /** Dusk over the farm: fades in toward nightfall, which moves by season. */
   private night!: Phaser.GameObjects.Rectangle;
   private map!: FarmMap;
+  /** The building tier the map was loaded at: the house rooms built so far. */
+  private tier = 0;
   private controls!: Controls;
   private player!: Phaser.GameObjects.Image;
   private target!: Phaser.GameObjects.Rectangle;
@@ -216,7 +218,10 @@ export class FarmScene extends Phaser.Scene {
     const mineLayout =
       this.floor === undefined ? undefined : floorLayout(this.floor, day);
     const json = mineLayout ? floorMapJson(mineLayout) : mapFiles[id]!;
-    this.map = mineLayout ? FarmMap.fromTiled(json) : maps.get(id);
+    // The house is one map that grows: only the layers at or below the house
+    // tier are read and drawn, and the rest is black void.
+    this.tier = isHouseMap(id) ? houseVisibleTier(this.state.houseTier) : 0;
+    this.map = mineLayout ? FarmMap.fromTiled(json) : maps.get(id, this.tier);
     if (isHouseMap(id)) carryFurniture(this.state, this.map, id);
     if (this.floor !== undefined)
       this.floorState = this.state.mines.visit(this.floor, day);
@@ -231,7 +236,7 @@ export class FarmScene extends Phaser.Scene {
     const tilemap = this.make.tilemap({ key: cacheKey });
     const tileset = tilemap.addTilesetImage(TILESET_NAME, TILES_KEY)!;
     const world: Phaser.GameObjects.GameObject[] = [];
-    for (const layer of json.layers) {
+    for (const layer of layersAtTier(json, this.tier)) {
       if (layer.type !== "tilelayer" || layer.visible === false) continue;
       const drawn = tilemap.createLayer(layer.name, tileset);
       if (drawn) world.push(drawn);
@@ -261,8 +266,15 @@ export class FarmScene extends Phaser.Scene {
       .setOrigin(0)
       .setStrokeStyle(1, 0xffffff, 0.6);
     world.push(this.player, this.hat, this.target);
+    const built = this.map.bounds;
     this.night = this.add
-      .rectangle(0, 0, this.map.width * ts, this.map.height * ts, 0x0a1030)
+      .rectangle(
+        built.x * ts,
+        built.y * ts,
+        built.w * ts,
+        built.h * ts,
+        0x0a1030,
+      )
       .setOrigin(0)
       .setAlpha(0)
       .setDepth(1000);
@@ -410,16 +422,13 @@ export class FarmScene extends Phaser.Scene {
         !this.state.mines.today(this.floor, this.state.day.clock.day)
       )
         return this.travel("farm", "from_house");
-      // A new house tier (the carpenter finished, or the debug menu) means a
-      // new map: reload it at its door.
+      // A new house tier (the carpenter finished, or the debug menu) means
+      // more rooms to draw: reload the house at its door.
       if (
         isHouseMap(this.mapId) &&
-        this.mapId !== houseMapId(this.state.houseTier)
+        this.tier !== houseVisibleTier(this.state.houseTier)
       ) {
-        const data: SceneData = {
-          map: houseMapId(this.state.houseTier),
-          entry: "door",
-        };
+        const data: SceneData = { map: this.mapId, entry: "door" };
         this.scene.restart(data);
         return;
       }
@@ -627,11 +636,7 @@ export class FarmScene extends Phaser.Scene {
   }
 
   private leave(exit: Exit): void {
-    // The farm's house door leads to the map for the current house tier.
-    this.travel(
-      exit.map === HOUSE_MAP ? houseMapId(this.state.houseTier) : exit.map,
-      exit.entry,
-    );
+    this.travel(exit.map, exit.entry);
   }
 
   /**
@@ -646,11 +651,15 @@ export class FarmScene extends Phaser.Scene {
       (this.registry.get(UI_SIZE_KEY) as number | undefined) ?? 100;
     const ts = this.map.tileSize;
     const zoom = worldZoom(zoomPercent, width, height);
+    // The camera stops at the built rooms; unbuilt space stays black.
+    const built = this.map.bounds;
     const b = cameraBounds(
-      this.map.width * ts,
-      this.map.height * ts,
+      built.w * ts,
+      built.h * ts,
       width / zoom,
       height / zoom,
+      built.x * ts,
+      built.y * ts,
     );
     this.cameras.main
       .setSize(width, height)

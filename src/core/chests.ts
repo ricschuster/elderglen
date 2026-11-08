@@ -1,6 +1,6 @@
 import type { Outcome } from "./actions";
 import { isFarmMap } from "./farmtypes";
-import { isHouseMap } from "./house";
+import { isHouseMap, legacyHouseTile } from "./house";
 import { Inventory } from "./inventory";
 import type { FarmMap } from "./map";
 import type { GameState } from "./save";
@@ -51,7 +51,8 @@ export class Chests {
     }));
   }
 
-  load(raw: unknown): void {
+  /** `legacy` is true for a save from before the merged house map (`legacyHouseTile`). */
+  load(raw: unknown, legacy = false): void {
     this.placed.clear();
     if (!Array.isArray(raw)) return;
     for (const c of raw as Partial<ChestSave>[]) {
@@ -64,7 +65,13 @@ export class Chests {
         !Array.isArray(c.slots)
       )
         continue;
-      const added = this.add(c.map, c.x as number, c.y as number, def.id);
+      const x = c.x as number;
+      const y = c.y as number;
+      const to = legacy && isHouseMap(c.map) ? legacyHouseTile(c.map, x, y) : c;
+      // If the new tile is taken, keep the chest where it was rather than lose its stacks.
+      const added =
+        this.add(to.map as string, to.x as number, to.y as number, def.id) ??
+        this.add(c.map, x, y, def.id);
       if (added) added.items.load(c.slots);
     }
   }

@@ -99,6 +99,22 @@ describe("camera bounds", () => {
     expect(b.x).toBe(0);
     expect(b.y).toBe(-100);
   });
+  it("stops at a built part that sits away from the map corner", () => {
+    // A 176 by 160 start room at (144, 32) in a bigger map, in a small view.
+    expect(cameraBounds(176, 160, 100, 100, 144, 32)).toEqual({
+      x: 144,
+      y: 32,
+      w: 176,
+      h: 160,
+    });
+  });
+  it("centres a built part on the room, so a big window shows black bars", () => {
+    const b = cameraBounds(176, 160, 480, 270, 144, 32);
+    // The view is centred on the room: its middle is the room's middle.
+    expect(b.x + b.w / 2).toBe(144 + 88);
+    expect(b.y + b.h / 2).toBe(32 + 80);
+    expect(b.w).toBe(480);
+  });
 });
 
 describe("corner scroll", () => {
