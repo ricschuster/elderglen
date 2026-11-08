@@ -8,6 +8,8 @@ const base: SleepReport = {
   weather: "sunny",
   withered: 0,
   houseFinished: false,
+  coopFinished: false,
+  animals: { eggs: 0, unfed: 0, outside: 0, grown: [] },
   furnaceGifted: false,
   toolReady: undefined,
   achievements: [],

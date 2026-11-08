@@ -18,6 +18,17 @@ import {
   orderUpgrade,
   WOOD,
 } from "../core/house";
+import {
+  CHICKEN_PRICE,
+  COOP_COST,
+  HAY_PRICE,
+  buyChick,
+  buyHay,
+  chickProblem,
+  coopProblem,
+  defaultName,
+  orderCoop,
+} from "../core/animals";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
@@ -93,6 +104,35 @@ export class CarpenterScene extends Phaser.Scene {
         buttons: [{ text: "Order", run: () => this.order() }],
       });
     }
+    // The coop, its chicks and hay stand at the carpenter's until the Forest
+    // farmstead keeper exists (note 23, slice 1 placeholder).
+    if (g.animals.build) {
+      rows.push({
+        label: "Chicken coop under way",
+        detail: `${g.animals.build.daysLeft} days left`,
+        dim: true,
+        buttons: [],
+      });
+    } else if (!g.animals.coopBuilt) {
+      rows.push({
+        label: "Chicken coop",
+        detail: `${COOP_COST.coin}g, ${COOP_COST.wood} wood and ${COOP_COST.stone} stone (have ${g.inventory.count("wood")} and ${g.inventory.count("stone")})`,
+        dim: coopProblem(g) !== undefined,
+        buttons: [{ text: "Order", run: () => this.orderCoop() }],
+      });
+    } else {
+      rows.push({
+        label: "Young chicken",
+        detail: `${CHICKEN_PRICE}g, grows up in a few days (${g.animals.animals.length} in the coop)`,
+        dim: chickProblem(g) !== undefined,
+        buttons: [{ text: "Buy", run: () => this.buyChicken() }],
+      });
+      rows.push({
+        label: "Hay, 10 bales",
+        detail: `${HAY_PRICE * 10}g, into the silo (${g.animals.hay} in it)`,
+        buttons: [{ text: "Buy", run: () => this.buyHay() }],
+      });
+    }
     if (!g.houseBuild && !g.catalogue && g.houseTier >= 1) {
       rows.push({
         label: "Furniture Catalogue",
@@ -122,6 +162,41 @@ export class CarpenterScene extends Phaser.Scene {
           buttons: [{ text: "Buy", run: () => this.buyCovering(d.id) }],
         });
     this.menu.setRows(rows);
+  }
+
+  private orderCoop(): void {
+    const problem = coopProblem(this.state);
+    if (problem !== undefined) this.message.setText(problem);
+    else if (orderCoop(this.state))
+      this.message.setText(
+        "Ordered. The carpenter starts tomorrow and takes three days.",
+      );
+    this.refresh();
+  }
+
+  private buyChicken(): void {
+    const problem = chickProblem(this.state);
+    if (problem !== undefined) this.message.setText(problem);
+    else {
+      const asked = window.prompt?.(
+        "Name your new chicken",
+        defaultName(this.state),
+      );
+      const a = buyChick(this.state, asked ?? "");
+      if (a)
+        this.message.setText(
+          `${a.name} is in the coop. No hay needed on the first day.`,
+        );
+    }
+    this.refresh();
+  }
+
+  private buyHay(): void {
+    const n = buyHay(this.state, 10);
+    this.message.setText(
+      n > 0 ? `Bought ${n} hay.` : "No room in the silo, or not enough money.",
+    );
+    this.refresh();
   }
 
   private buyCovering(id: string): void {

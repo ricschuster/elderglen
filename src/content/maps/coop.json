@@ -1,0 +1,199 @@
+{
+  "type": "map",
+  "version": "1.10",
+  "tiledversion": "1.10.2",
+  "orientation": "orthogonal",
+  "renderorder": "right-down",
+  "infinite": false,
+  "width": 11,
+  "height": 8,
+  "tilewidth": 16,
+  "tileheight": 16,
+  "nextlayerid": 8,
+  "nextobjectid": 100,
+  "properties": [
+    {
+      "name": "placeholder",
+      "type": "bool",
+      "value": true
+    }
+  ],
+  "layers": [
+    {
+      "id": 1,
+      "name": "ground",
+      "type": "tilelayer",
+      "width": 11,
+      "height": 8,
+      "x": 0,
+      "y": 0,
+      "opacity": 1,
+      "visible": true,
+      "data": [
+        7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
+        7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 7, 7, 3, 3, 3,
+        3, 3, 3, 3, 3, 3, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 7, 7, 3, 3, 3, 3, 3,
+        3, 3, 3, 3, 7, 7, 9, 7, 7, 7, 7, 7, 7, 7, 7, 7
+      ]
+    },
+    {
+      "id": 2,
+      "name": "collision",
+      "type": "tilelayer",
+      "width": 11,
+      "height": 8,
+      "x": 0,
+      "y": 0,
+      "opacity": 1,
+      "visible": false,
+      "data": [
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1
+      ]
+    },
+    {
+      "id": 5,
+      "name": "markers",
+      "type": "objectgroup",
+      "draworder": "topdown",
+      "opacity": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "objects": [
+        {
+          "id": 1,
+          "name": "door",
+          "class": "entry",
+          "type": "entry",
+          "x": 16,
+          "y": 96,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 2,
+          "name": "door",
+          "class": "exit",
+          "type": "exit",
+          "x": 16,
+          "y": 112,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "map",
+              "type": "string",
+              "value": "farm"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "from_coop"
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "name": "bench-0",
+          "class": "service",
+          "type": "service",
+          "x": 48,
+          "y": 32,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "coop-bench"
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "name": "bench-1",
+          "class": "service",
+          "type": "service",
+          "x": 64,
+          "y": 32,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "coop-bench"
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "name": "bench-2",
+          "class": "service",
+          "type": "service",
+          "x": 80,
+          "y": 32,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "coop-bench"
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "name": "bench-3",
+          "class": "service",
+          "type": "service",
+          "x": 96,
+          "y": 32,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "coop-bench"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "tilesets": [
+    {
+      "firstgid": 1,
+      "name": "placeholder",
+      "tilewidth": 16,
+      "tileheight": 16,
+      "tilecount": 12,
+      "columns": 10,
+      "image": "placeholder-tiles.png",
+      "imagewidth": 192,
+      "imageheight": 16
+    }
+  ]
+}

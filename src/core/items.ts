@@ -115,6 +115,8 @@ items.set("wood", { id: "wood", name: "Wood", sellPrice: 2 });
 items.set("sap", { id: "sap", name: "Sap", sellPrice: 2 });
 /** Fiber comes from weeds and sells for 1g, as Stardew's (`29_weeds.md`). It is always normal quality. */
 items.set("fiber", { id: "fiber", name: "Fiber", sellPrice: 1 });
+/** Eggs from the coop (note 23). Sell price and energy are from memory, placeholders. */
+items.set("egg", { id: "egg", name: "Egg", sellPrice: 50, energy: 50 });
 /** Mixed seeds plant a random crop that suits the season. Sell price is ours. */
 items.set("mixed-seed", {
   id: "mixed-seed",

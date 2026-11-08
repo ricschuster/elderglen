@@ -264,6 +264,38 @@ for (const floor of [11, 26, 45, 85, 100, 120])
     log(`mine floor ${floor} at`, JSON.stringify(d.tile));
   });
 
+await step("coop", async () => {
+  await farm((g, f, s) => {
+    s.inventory.add("wood", 300);
+    s.inventory.add("stone", 100);
+    // Under the house upgrade price, so only the coop row can be ordered.
+    s.money = 20000;
+    s.houseBuild = undefined;
+  });
+  await overlay("carpenter");
+  await pickRow("carpenter", /Ordered\./);
+  await close();
+  // Three sleeps stand in for the three build days.
+  await farm((g, f, s) => {
+    s.animals.build = undefined;
+    s.animals.coopBuilt = true;
+  });
+  await overlay("carpenter");
+  await pickRow("carpenter", /is in the coop/);
+  await pickRow("carpenter", /Bought \d+ hay/);
+  await close();
+  await goMap("coop", "door");
+  await overlay("coop-bench");
+  await pickRow("coop-bench", /Fed \d/);
+  await p.keyboard.press("ArrowDown");
+  await p.keyboard.press("Enter");
+  await sleepMs(100);
+  await p.keyboard.press("Digit3");
+  await sleepMs(100);
+  await close();
+  await goMap("farm", "from_coop");
+});
+
 await step("back-to-farm", async () => {
   await goMap("farm", "start");
 });

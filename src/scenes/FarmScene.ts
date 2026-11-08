@@ -1,3 +1,12 @@
+import {
+  COOP_BUILT,
+  COOP_FOOTPRINT,
+  COOP_MAP,
+  COOP_SLOTS,
+  GROW_DAYS,
+  coopBlocks,
+  coopSite,
+} from "../core/animals";
 import { fertilizerById } from "../core/fertilizer";
 import Phaser from "phaser";
 import { saveSettings } from "../core/bindings";
@@ -246,6 +255,7 @@ export class FarmScene extends Phaser.Scene {
       minesOpen(this.state.day.clock.day) ? ["mines-open"] : [],
     );
     if (this.state.cave.open) this.holds.add("cave-open");
+    if (this.state.animals.coopBuilt) this.holds.add(COOP_BUILT);
     for (const h of houseHolds(this.state.houseTier)) this.holds.add(h);
     this.heldMs = 0;
     this.mouseAim = false;
@@ -653,6 +663,12 @@ export class FarmScene extends Phaser.Scene {
         (this.state.trees.blocks(x, y) || !!this.state.fruitTrees.at(x, y))) ||
       !!this.rocks()?.at(x, y) ||
       this.furnaceAt(x, y) ||
+      coopBlocks(this.state, this.mapId, x, y) ||
+      (this.mapId === COOP_MAP &&
+        this.state.animals.animals.some((_, i) => {
+          const s = COOP_SLOTS[i];
+          return !!s && s.x === x && s.y === y;
+        })) ||
       this.state.furniture.blocks(this.mapId, x, y) ||
       !!this.state.chests.at(this.mapId, x, y) ||
       this.map.serviceAt(x, y)?.kind === "camp-chest" ||
@@ -1683,8 +1699,65 @@ export class FarmScene extends Phaser.Scene {
       .fillRect(x + 7, y + 9, 3, 3);
   }
 
+  /** The coop on the farm: a plain barn block, scaffolding while it is built (note 23). */
+  private drawCoop(): void {
+    const site = coopSite(this.mapId);
+    if (!site) return;
+    const a = this.state.animals;
+    if (!a.coopBuilt && !a.build) return;
+    const ts = this.map.tileSize;
+    const x = site.x * ts;
+    const y = site.y * ts;
+    const g = this.wash;
+    if (!a.coopBuilt) {
+      g.lineStyle(3, 0x8a6a45, 1);
+      for (let dx = 0; dx <= COOP_FOOTPRINT.w; dx += 2)
+        g.lineBetween(x + dx * ts, y, x + dx * ts, y + COOP_FOOTPRINT.h * ts);
+      return;
+    }
+    g.fillStyle(0xb5563c, 1).fillRect(x, y, COOP_FOOTPRINT.w * ts, ts);
+    g.fillStyle(0xc9a26b, 1).fillRect(
+      x,
+      y + ts,
+      COOP_FOOTPRINT.w * ts,
+      (COOP_FOOTPRINT.h - 1) * ts,
+    );
+    g.fillStyle(0x4a3220, 1).fillRect(
+      x + ts + 3,
+      y + (COOP_FOOTPRINT.h - 1) * ts + 2,
+      ts - 6,
+      ts - 2,
+    );
+  }
+
+  /** Inside the coop: the feeding bench along the back wall and the animals as blocks. */
+  private drawCoopInside(): void {
+    if (this.mapId !== COOP_MAP) return;
+    const ts = this.map.tileSize;
+    const g = this.wash;
+    g.fillStyle(0x8a6a45, 1).fillRect(3 * ts, 2 * ts + 4, 4 * ts, ts - 4);
+    g.fillStyle(0xe0c068, 1).fillRect(2 * ts + 2, 2 * ts + 3, ts - 4, ts - 3);
+    g.fillStyle(0x6fa8d0, 1).fillRect(7 * ts + 2, 2 * ts + 5, ts - 4, ts - 5);
+    this.state.animals.animals.forEach((an, i) => {
+      const s = COOP_SLOTS[i];
+      if (!s) return;
+      const grown = an.age >= GROW_DAYS;
+      const size = grown ? ts - 4 : ts - 8;
+      g.fillStyle(grown ? 0xf4efe0 : 0xf2d95c, 1).fillRect(
+        s.x * ts + (ts - size) / 2,
+        s.y * ts + ts - size - 1,
+        size,
+        size,
+      );
+      if (an.product)
+        g.fillStyle(0xffffff, 1).fillRect(s.x * ts + 6, s.y * ts + ts, 4, 3);
+    });
+  }
+
   private render(): void {
     this.drawGround();
+    this.drawCoop();
+    this.drawCoopInside();
     this.drawRooms();
     this.drawFurnace();
     this.drawMailbox();
