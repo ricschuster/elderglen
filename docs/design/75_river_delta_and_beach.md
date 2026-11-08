@@ -1,7 +1,7 @@
 # 75 River delta and Beach (draft)
 
-Status: draft, written 2026-11-08 for the owner to review. Nothing here is
-built. It designs the River delta map with the Beach at its east end (note 19,
+Status: draft, written 2026-11-08, owner answers recorded the same day (note 71). Nothing here is
+built. M3b, except the Beach elf's house, which waits for the story spine (#176). It designs the River delta map with the Beach at its east end (note 19,
 decision 13). Overview and owner questions: `71_map_areas_overview.md`. Stardew
 facts are from the saved Beach page (read 2026-11-08), as ideas only (ADR 0002).
 
@@ -61,10 +61,11 @@ issue 176).
 | Side channel | x 50 to 53, y 18 to 30 | 3 wide | Feeds the marsh lake |
 | Fisher's hut | Door at (38, 28) | Exterior 10 by 7 | East shore of the marsh lake. Rods, bait, lures |
 | Dock and ferry landing | x 24 to 28, y 54 to 58 | 5 by 5 | South shore of the marsh lake. Exit `ferry` |
-| Footbridge | (64, 36), east to west | 6 by 3 | To the Beach. See open question 4 |
+| Footbridge | (64, 36), east to west | 6 by 3 | To the Beach. Always open, a ground run, no new object |
+| Tide pool footbridge | x 86 to 89, y 44 to 47 | 4 by 4 | Between the sand and the tide pools. **Broken until repaired** with 300 wood (owner, 2026-11-08). Conditional layer `tide-bridge-mended` |
 | Beach sand | x 60 to 99, y 20 to 52 | about 40 by 32 | The east end of the map |
 | Elf's house | Door at (78, 30) | Exterior 9 by 7 | Beach elf's house, a dune above the sand |
-| Tide pools | x 90 to 99, y 40 to 48 | 10 by 9 | Far east end. Forage zone |
+| Tide pools | x 90 to 99, y 40 to 48 | 10 by 9 | Far east end, behind the broken footbridge. Forage zone |
 | Sea | x 56 to 99, y 52 to 69 | about 44 by 18 | Casting spots on the shore and the pier |
 | Pier | x 88, y 48 to 58 | 3 by 11 | Land for casting, as in the saved page (piers are land) |
 
@@ -90,9 +91,9 @@ yet.
 
 | Place | Who | Interior |
 | --- | --- | --- |
-| Fisher's hut | The fisher (F, halfling, candidate). May keep the ferry (open question 5) | `fisher-hut`, shop and home. Sells the four rods, bait and the seven lures (note 21) |
+| Fisher's hut | The fisher (F, halfling, candidate). She does not keep the ferry (owner, 2026-11-08) | `fisher-hut`, shop and home. Sells the four rods, bait and the seven lures (note 21) |
 | Elf's house | The odd elf (F, elf, candidate) | `beach-elf-house`, shop and home. The Homeward pin at 3 hearts (note 09, #176, #181) |
-| Dock | Maybe the fisher | The ferry to the cove |
+| Dock | Nobody | The ferry to the cove. You step on the boat, like a door (owner, 2026-11-08) |
 
 A ship or a quay on the sand is scenery only and left undecided on purpose (#176).
 
@@ -121,7 +122,8 @@ shells are new goods, names plain English, prices placeholders for note 07.
 | Summer | periwinkle 40, razor clam 20, whelk 10, cockleshell 6, pearly shell 24 (rare) |
 | Winter | periwinkle 25, razor clam 15, whelk 12, spiral shell 48 (rare) |
 
-**Tide pools:** 20 candidate spots at the east end, outside the caps. About 1.2 goods
+**Tide pools** (behind the broken footbridge, so the player cannot reach them
+until it is mended): 20 candidate spots at the east end, outside the caps. About 1.2 goods
 a night, 80 percent sea fan and 20 percent pin urchin (saved page: Coral and Sea
 Urchin at those rates; ours are renamed). No limit on a morning, and a small chance
 of seaweed on the water's edge, 3 percent a night.
@@ -139,6 +141,20 @@ All shore goods give 7 Foraging XP, as the saved page does for the Beach.
 - **Casting spots:** the pier counts as land. Beach shore and the marsh boardwalk
   are open; reed edges are not.
 
+## The tide pool footbridge (owner, 2026-11-08, as Stardew)
+
+The footbridge to the tide pools is broken at the start, as the saved Beach page
+describes (SC-86). The player repairs it by handing in **300 wood** at the bridge
+(the Action button on the ruined tiles asks first, as a purchase does), once, for
+good. Wood only: Stardew also allows the second community upgrade (a hall reward
+that Elderglen has no matching version of), so ours has one way, the wood. The
+repaired flag is saved as `tide-bridge-mended` and the conditional layer swaps the
+ruined art for the mended art (contract need 6). While it is broken the exit
+tiles past the bridge are solid, not an exit object, so the check treats the pools
+as reachable with the condition true and unreachable with it false, and both runs
+must still pass. The 300 wood is a placeholder for note 07 (it comes from the
+Forest and Mountain, note 43).
+
 ## Debris and trees
 
 No choppable trees: willows and reeds are cosmetic. Driftwood twigs, 20, and a few
@@ -147,7 +163,8 @@ rocks, 12, hand placed. No weeds beyond a handful in the marsh meadow.
 ## Map contract needs
 
 Water kinds (1), forage tables and regions (3, 3a), conditional layers for the
-ferry (6), `rideable` (7). The footbridge is a ground run, no new object.
+ferry and the tide pool footbridge (6), `rideable` (7). The Beach footbridge at
+(64, 36) is a ground run, no new object.
 
 ## Build order and slices
 
@@ -156,7 +173,8 @@ ferry (6), `rideable` (7). The footbridge is a ground run, no new object.
    channels with their tables (this unblocks #596 slices 3 and 4 partly).
 2. The sea and the pier, the sea fish and salt water pots.
 3. The fisher's hut: interior, counter, gear moves out of the general store.
-4. Forage: marsh and beach tables, tide pools, the new shell goods in data.
+4. Forage: marsh and beach tables, tide pools, the new shell goods in data. The
+   tide pool footbridge with its 300 wood repair and the `tide-bridge-mended` flag.
 5. The ferry dock as scenery, ruined, then live with the cove (`76_lake_cove.md`).
 6. The elf's house, with #176.
 
@@ -165,8 +183,8 @@ Work packages: "River delta and Beach map, waters and the fisher" (steps 1 to 4)
 
 ## Open
 
-- Question 4 (the footbridge), question 5 (the ferry's keeper) and question 10
-  (riding) in note 71.
+- Riding is allowed here (note 71, answer 10). The ferry works like a door and
+  dismounts the rider (note 76).
 - Festivals on the Beach (Stardew has several, saved Beach page): ours do not use
   the Beach in note 14, so no variant map is planned.
 - Prices and names of the new shore goods, in note 07.

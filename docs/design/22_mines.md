@@ -506,6 +506,7 @@ Gaps settled with our own placeholders (numbers in `07_tuning_numbers.md`):
   the crab halves blade and sling hits that land on its front, and the Mossbeetle
   does so while curled (winding up or dashing). Halved is rounded up, never to
   nothing. A club ignores armour, and so does a hit from behind a crab.
+  Owner, 2026-11-08: armour halves blade and sling damage, never a club.
 - **Gloop splits once** on its first hit if it survives: a small one with 1
   health appears beside it. The small one touches for half and gives half the XP,
   and does not split. Every Gloop kill counts toward the 1,000 goal.

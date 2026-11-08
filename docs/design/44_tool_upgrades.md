@@ -141,3 +141,10 @@ a placeholder by floor band.
 - The 25,000g price on the top grade (ours is bars only).
 - The trash can ladder. A trash can upgrade is not designed.
 - Item names, art and text.
+
+## Who upgrades tools once the maps exist (owner, 2026-11-08)
+
+Tool upgrades are done by the Hearthwell blacksmith, as Stardew's blacksmith does
+(`77_hearthwell.md`, `71_map_areas_overview.md` answer 7). The Mountain smith dwarf
+no longer upgrades tools: his hut is a Mines-side trader (`74_mountain.md`). Until
+Hearthwell's smithy exists the smith menu stand-in keeps working unchanged.

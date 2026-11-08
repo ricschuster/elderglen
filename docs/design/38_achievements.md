@@ -132,10 +132,10 @@ goal. Ours does.
 | --- | --- | --- | --- |
 | Catch 10 different fish | First Ten | Oilskin Hat, 1,000g | Built, needs 10 fish |
 | Catch 24 different fish | Harbour Hand | Harbour Cap, 2,000g | Built, needs 24 fish |
-| Catch every fish | Whole Roster | Spyglass Band, 5,000g, and a mail gift | Built (hat only), needs all 46 fish |
+| Catch every fish | Whole Roster | Spyglass Band, 5,000g, and a mail gift | Built (hat only), needs all 47 fish |
 | Catch 100 fish | A Hundred Lines | Dockside Band, 1,000g | Built |
 
-We have 46 fish (`21_fishing.md`), so "24 different" is a little over half and
+We have 47 fish (`21_fishing.md`, with the Secret Woods pond's unique fish), so "24 different" is a little over half and
 stands unless play says otherwise. Algae, weeds and jellies count toward these
 in Stardew and trash does not, so water plants count and trash does not here.
 The mail gift for the full roster is a rare seed or fruit, as Stardew's is

@@ -27,8 +27,7 @@ M3 splits into four GitHub milestones. M4, M5 and M6 keep their names.
   every system exists and bundles 1 to 26 can be filled.
 - **M4, multiplayer.** Moves to follow M3b.
 - **M3c, ring 1 story and ending.** The story spine, the Last Seat (slice 5) and
-  its numbers, the Forest and Mountain maps with tree types, the valley layout,
-  and the year two rules. Done when ring 1 plays from start to ending.
+  its numbers, the valley layout, and the year two rules. Done when ring 1 plays from start to ending.
 - **M3d, ring 1 polish.** Art, audio, onboarding, balance, minigames, packaging
   and the name register check. Done when ring 1 is releasable as a full game.
 
@@ -44,3 +43,11 @@ multiplayer base.
   systems keep world and player state separable.
 - `docs/design/03_milestones.md` holds the table. The GitHub milestones are
   created to match and the open issues moved.
+
+## Amendment (2026-11-08)
+
+The owner moved the map areas into M3b: the Forest (with tree types), Secret
+Woods, River delta with the Beach, Mountain, Quarry and Lake cove maps, because
+fishing, hardwood, the Mines entrance and the Water room need them. Hearthwell's
+shell and interiors are filed in M3b too and ride with #599. The Beach elf's
+house waits for the story spine. See `docs/design/71_map_areas_overview.md`.

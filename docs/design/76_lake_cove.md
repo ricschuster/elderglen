@@ -1,7 +1,7 @@
 # 76 Lake cove (draft)
 
-Status: draft, written 2026-11-08 for the owner to review. Nothing here is
-built. It designs the Lake cove map and the ferry. Overview and owner questions:
+Status: draft, written 2026-11-08, owner answers recorded the same day (note 71). Nothing here is
+built. M3b. It designs the Lake cove map and the ferry. Overview and owner questions:
 `71_map_areas_overview.md`. Stardew has no area that matches the cove (the saved
 Secret Woods and Beach pages are the nearest fishing places, SC-89), so this is
 our own design.
@@ -20,17 +20,33 @@ and not a step in it. That makes it small, quiet and late.
    crossing 10 seconds. A reward fishing spot, not a trip.
 2. **Reached only by the ferry** from the River delta dock. It opens when the Water
    room is complete (condition `cove-open`, contract need 6).
-3. **One exit, back to the delta,** the same dock. No other way in or out. The ferry
-   back is always free and always running (no schedule), so a player at the cove at
-   night is never stranded.
-4. **A lake, a shore walk and nothing else.** No shop, no resident, no building, no
-   choppable trees. The rarest fish and the legend are the content.
+3. **One exit, back to the delta,** the same dock. No other way in or out. Nobody
+   keeps the ferry (owner, 2026-11-08): you step on the boat, like a door, so it
+   is always free and always running, with no schedule, and a player at the cove
+   at night is never stranded.
+4. **A lake, a shore walk and one small extra.** No shop, no resident, no building,
+   no choppable trees. The rarest fish and the legend are the content, plus a
+   **hidden treasure spot** (decision 8).
 5. **Fresh water.** The cove is a lake, not the sea (note 19, decision 11, and note 21:
    fresh water pots go on it).
 6. **Weather and time matter,** because the legend needs rain at dusk in autumn
    (note 21). The cove shows weather and night like any outdoor map.
 7. **The horse stays behind.** The ferry works like a door: it dismounts the rider
    and parks the horse beside the dock (`59_horse.md`).
+8. **The extra: a hidden treasure spot (drafter's pick, FLAGGED FOR OWNER VETO).**
+   The owner asked for a small extra beyond fishing and left the choice to the
+   drafter between a hidden treasure spot and a mist-only dawn event (the two
+   options of the earlier draft). The treasure spot is picked: one spot on the
+   shore, found by looking (a faint glint on a ledge, and a small stone pile),
+   that gives one chest per season, never random, opened with the Action button.
+   Why it wins: it needs no new event system or clock rule, it is a plain
+   `service`-style tile with a save flag, it works on touch, it is easy to test,
+   and it rewards a walk round the shore on a trip that is otherwise only
+   fishing. The mist-only dawn event (a mist on the water at dawn that raises the
+   rare bite rate for that morning) stays the alternative if the owner prefers it.
+   Contents are placeholders for note 07: a seasonal pick from the pools of an
+   existing note (geodes, a lure, bait, a cooking ingredient), no unique item that
+   a bundle or the completion tracker could need.
 
 ## Shape and layout
 
@@ -53,6 +69,7 @@ y39  +------------------------------------+
 | Shore path | A ring 3 tiles wide round the water | | Casting spots all round |
 | Lantern posts | 6, spaced round the shore | | Scenery that glows at night. The Cove Lantern fish is a night fish (note 21) |
 | Bench | (24, 36) | 3 by 1 | A place to sit, scenery now |
+| Treasure spot | (41, 36) | 1 | South-east ledge, off the shore path. One chest a season (decision 8) |
 | Cliffs and trees | The border | | Cosmetic only |
 
 ## Exits, entries and gates
@@ -97,13 +114,14 @@ delta and an ordinary exit here.
 2. The ferry on the delta side: ruined art, the `cove-open` gate, the Water room
    reward flag, the repaired art.
 3. The cove's fish table and the legend (fishing slice 4, #596). Forage table.
-4. Lanterns, bench and the night look.
+4. Lanterns, bench, the night look and the treasure spot (decision 8).
 
 Work package: "Lake cove and the ferry".
 
 ## Open
 
-- Question 5 (who keeps the ferry) and question 6 (what the cove is for beyond
-  fishing) in note 71.
+- The treasure spot is a drafter's pick (note 71, answer 6) and waits on the
+  owner's veto. The treasure contents are placeholders. A save flag per season
+  records the chest taken.
 - Nothing about a ferry animation is designed: today an exit fades like a door.
 - The Water room reward flag and the hall art are the hall's (`40_hall_layout.md`).

@@ -169,6 +169,7 @@ These must exist before the recipes above can be built.
   the smith dwarf's geodes (settled 2026-10-31, below).
 - **Moss**, from mature trees with any tool, 1 to 2 a tree, not in winter, as
   in Stardew's Trees page (saved). Mossbeetles also drop it from slice 3.
+  Owner, 2026-11-08: moss from mature trees is accepted as built.
   Built 2026-11-08. Gaps settled (ours): one tree kind, so moss is on any
   mature tree. A mature tree with no moss has 7 percent a night to grow it, not
   in winter, and moss is gone from every tree when winter comes. One use of any

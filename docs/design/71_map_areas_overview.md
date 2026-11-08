@@ -1,6 +1,7 @@
 # 71 Map areas overview and build order (draft)
 
-Status: draft, written 2026-11-08 for the owner to review. Nothing here is
+Status: draft, written 2026-11-08. The owner answered the eleven questions the
+same day (see "Owner answers"), and the Quarry was added as note 78. Nothing here is
 built. It is the cover note for the design pass on every unbuilt map area of the
 home valley, and answers the layout half of issue #67 that note 19 left as sizes
 only. Ring 2 stays parked (#20). One note per area:
@@ -13,6 +14,7 @@ only. Ring 2 stays parked (#20). One note per area:
 | `75_river_delta_and_beach.md` | River delta with the Beach | `delta` | 100 by 70 |
 | `76_lake_cove.md` | Lake cove | `cove` | 50 by 40 |
 | `77_hearthwell.md` | Hearthwell | `hearthwell` | 120 by 110 |
+| `78_quarry.md` | Quarry | `quarry` | 60 by 44 |
 
 Built today: `farm` and `farm-woodland` (placeholder), `hall`, `mine`, `green`,
 `hedge`, `sawmill`, and the interiors (`house`, `cellar`, `coop`, `barn`,
@@ -54,11 +56,12 @@ so a map can be authored later from the note alone.
 
 | Order | Work | Why here | Issue |
 | --- | --- | --- | --- |
-| 0 | Map contract additions and the tablet load test | Every map below needs one of the nine additions, so build them once | #636 |
+| 0 | Map contract additions and the tablet load test | Every map below needs one of the ten additions, so build them once | #636 |
 | 1 | Forest part 1 | The main wood supply once the farm runs dry (note 43), the first extra lake, the farm's north exit, and the log the next step needs | #637 |
 | 2 | Secret Woods | Small, and it ends the carpenter's temporary Hardwood sale with a real supply (note 59). Needs the log from step 1 | #639 |
 | 3 | River delta with the Beach | Three fishing waters and the fisher unblock #596 slices 3 and 4. Open from the start, and needs only the farm's south exit | #640 |
 | 4 | Mountain | The Mines entrance leaves the farm, the forge replaces a menu, and the third lake and the river source complete the lake set the Water room needs | #642, #643 |
+| 4b | Quarry | Off the Mountain's east road. Regrowing stone and ore, the stonekeeper's job. Waits on the bridge's bundle room (note 78, question 1) | #649 |
 | 5 | Forest part 2 | Farmstead, hermit and Wanderer. Waits on names (#136, #178) so it follows the fish and mines work | #638 |
 | 6 | Lake cove | The Water room reward. Needs the delta and the full roster, and is small and late by design | #644 |
 | 7 | Hearthwell part 1 | The shell moves the hall and sawmill off the farm, joins Mountain and delta, and closes both loops of note 19. Interiors can be empty shells | #645 |
@@ -70,16 +73,17 @@ so a map can be authored later from the note alone.
 shell comes earlier, at step 7, because it unlocks the second loop and removes
 placeholder doors.
 
-**Milestones.** Note 03 puts the Forest and Mountain maps in M3c, after
-multiplayer. These maps unblock M3b systems, so question 1 asks the owner whether
-to move them. The work packages are filed in M3b as the task asked, and move if the
-owner chooses otherwise.
+**Milestones (owner, 2026-11-08).** The Forest, Secret Woods, River delta with
+the Beach, Mountain, Quarry and Lake cove maps are in M3b, since fishing, hardwood,
+the Mines entrance and the Water room need them. Hearthwell's shell and interiors
+stay with #599 (also M3b, as filed), and the Beach elf waits for the story spine.
+Note 03 and ADR 0012 are updated to match, and #396 (tree types) moves to M3b.
 
 ## Map contract additions
 
 The contract of note 05 and note 06 already has `entry`, `exit` (with `requires`),
 `forage`, `tree`, `stump`, `rock`, `service`, `region`, bounds and tier layers. The
-areas need these additions, all data, with rules in `src/core/`:
+areas need these additions (ten, with the Quarry), all data, with rules in `src/core/`:
 
 1. **Water kinds.** One water tile exists today (`WATER_TILE`), and fishing has one
    `Water` type, the river (`fishing.ts`). Add an object class `water` (a
@@ -105,14 +109,21 @@ areas need these additions, all data, with rules in `src/core/`:
    condition, so ruined and repaired art swap: the ferry (`cove-open`), the
    rockfall (`mines-open`), the broken bridge (`bridge-mended`). The map check runs
    with every condition true and with every condition false. New named conditions:
-   `secret-log-cleared`, `cove-open`, `bridge-mended`.
-7. **Rideable.** A map property `rideable` (default false, true for the outdoor
-   valley maps if question 10 agrees), replacing the horse's list of map names
+   `secret-log-cleared`, `cove-open`, `bridge-mended`, `quarry-open` (note 78)
+   and `tide-bridge-mended` (note 75).
+7. **Rideable.** A map property `rideable` (default false, true for every
+   outdoor valley map (owner, 2026-11-08): the farms, Forest, Secret Woods,
+   Mountain, Quarry, delta and Beach, Hearthwell and the green; false for
+   interiors, the Mines and the cove), replacing the horse's list of map names
    (note 59).
 8. **Cart stop.** A `service` kind `cart`, reserved for the Hearth room carts
    (note 16). Placed, drawn, not used until that reward is built.
 9. **Board.** `service` kinds `board-help` (note 50) and `board-news` and
    `board-orders` (notes 57 and 65), so the boards are placed by the map.
+
+10. **Nightly spawns.** A per-map data table of weighted kinds (rock, hard rock,
+    ore nodes) and a count of attempts a night, rising by year, used by the
+    Quarry (note 78). Existing objects block a spawn.
 
 No change to `collision`, `soil`, `paths`, `entry`, `exit` or the bounds
 properties. The first Tiled draft may find more, and this list is updated then.
@@ -124,10 +135,10 @@ From note 58, for the work packages. Existing interior maps are marked.
 | Area | Interior maps |
 | --- | --- |
 | Forest | `forest-farmstead`, `hermit-tower` |
-| Mountain | `forge`, plus the `mine` entrance hall (exists) |
+| Mountain | `forge` (the Mines-side trader's hut, question 7), plus the `mine` entrance hall (exists) |
 | River delta and Beach | `fisher-hut`, `beach-elf-house` |
 | Hearthwell | `general-store`, `healer`, `inn`, `library`, `smithy`, `hatter`, `outpost`, `outpost-rooms`, `burrow-gardener`, `burrow-retired`, `burrow-young`, `sawmill` (exists), `hall` (exists) |
-| Secret Woods, Lake cove | none |
+| Secret Woods, Lake cove, Quarry | none |
 
 ## Fishing waters
 
@@ -142,7 +153,7 @@ already, so no fish are designed here):
 | River, both arms | `hearthwell` | From the start |
 | Marsh lake, river channels, sea | `delta` | From the start |
 | Cove | `cove` | Water room reward |
-| Woods pond | `secret-woods` | Only if question 3 agrees |
+| Woods pond | `secret-woods` | From the start (owner, 2026-11-08) |
 
 ## Changes to earlier notes
 
@@ -153,108 +164,64 @@ already, so no fish are designed here):
   now tied to the Secret Woods slice (#639).
 - Note 59's "notes 19 and 43 still need the stump count and respawn rule" is
   answered by note 73: six stumps, regrow every morning.
-- Note 03's M3c list names the Forest and Mountain maps. That row is for question 1.
+- Note 03's M3c list named the Forest and Mountain maps. They moved to M3b
+  (answer 1), and ADR 0012 has an amendment line.
+- Notes 21, 38 and 39 count 47 fish now (answer 3).
+- Notes 59, 66 and 69 carry answers 10, 9 and 7.
 
 ## Stardew checks added
 
 Rows SC-83 to SC-90 in `54_stardew_checks.md`: five answered from the saved
 Secret Woods, Cindersap Forest, Mountain, Beach and Pelican Town pages (read
 2026-11-08), and three claims from memory (horse maps, the boat, festival maps).
+SC-91 (the Quarry) is answered from the saved Quarry page. The owner's answers
+followed the Stardew options on questions 2, 3, 4, 7, 9 and 11, and SC-88 to
+SC-90 stay open as claims from memory.
 
-## Owner questions
+## Owner answers (2026-11-08)
 
-The one list to relay. Each has a recommendation first. Where a question has no
-Stardew counterpart it says so. Questions are about decisions that belong to the
-owner. Everything else in the notes is a draft the owner may edit.
+All eleven questions are answered. Each line says what was chosen, and which notes
+changed. Anything the owner did not settle is marked as open, and the one decision
+made by the drafter is flagged for owner veto.
 
-1. **Which milestone owns the map areas?** Note 03 puts the Forest and Mountain maps in
-   M3c, after multiplayer.
-   - A (Recommended): move the Forest, Secret Woods, River delta with the Beach,
-     Mountain and Lake cove maps into M3b, since fishing, hardwood, the Mines
-     entrance and the Water room need them. Hearthwell's shell and interiors stay
-     with #599, and the Beach elf waits for the story spine.
-   - B: keep note 03: all area maps in M3c.
-   - C (Stardew): Stardew's areas all exist from the start of its game, so this
-     question has no Stardew answer. It would mean building every map before the
-     systems, the opposite of the recommendation.
-2. **Do the Secret Woods have creatures, and where does Mahogany come from?**
-   - A (Recommended): no creatures in the first build. Mahogany trees are not on
-     the map yet. Add a gentle creature later with the combat notes, if the owner
-     wants one, with a rare Mahogany seed drop.
-   - B (Stardew): slimes attack the player there and drop Mahogany seeds when
-     slain (saved Secret Woods page).
-   - C: no creatures ever, and Mahogany comes only from a shop or the Mines.
-3. **Is the Secret Woods pond fishable?**
-   - A (Stardew, Recommended): fishable all year with a unique fish plus two
-     common fish already in the roster, as the saved page says of its pond. The
-     fish name is ours. It makes 47 fish, so Whole Roster and the completion count
-     move by one.
-   - B: scenery only, no fish.
-4. **Is the Beach's footbridge to the tide pools broken at the start?**
-   - A (Recommended): open from the start. The Beach has one resident and a dead end,
-     and gating it hides the elf (#176) for no gain.
-   - B (Stardew): broken until repaired for 300 wood or a later community
-     upgrade (saved Beach page). Ours would use wood only, as the community upgrade
-     does not exist.
-5. **Who keeps the ferry to the cove?**
-   - A (Recommended): the fisher, who stands at the dock during the day. The ferry
-     itself always runs, with or without her, so nobody is stranded.
-   - B: nobody. The ferry is a boat you step on, like a door.
-   - C (Stardew): Stardew's boat is piloted by the fish shop owner, from memory,
-     and its fare and rules are not checked (SC-89).
-6. **What is the cove for beyond fishing?**
-   - A (Recommended): fishing only, plus lanterns and a bench. No shop, no resident.
-   - B: add a small extra: a hidden treasure spot or a mist-only dawn event.
-   - C (Stardew): Stardew has no area like it, so there is no Stardew option. The
-     closest is its fishing-only Secret Woods pond (SC-89).
-7. **What does the Hearthwell smithy do, and who cracks geodes?** Notes 20 and 58
-   give a smithy and mender in town and a smith dwarf on the Mountain, and today one
-   menu does ore, upgrades and geode cracking.
-   - A (Recommended): the Mountain dwarf keeps the ore shop, the furnace gift, tool
-     upgrades and lamps. The Hearthwell smith cracks geodes for 25g and mends and
-     sells small iron goods. This follows note 69's "the smith cracks, the dwarf
-     buys".
-   - B (Stardew): one blacksmith does tool upgrades, geode cracking and ore, and
-     does not buy geodes (saved Blacksmith page, SC-58 and SC-60). The Hearthwell
-     smith would take all of it and the dwarf only sells lamps.
-8. **How does the river sit in Hearthwell, and where is the broken bridge?** Note 19
-   has one river line, the sawmill on it, the hall on the road to the bridge and
-   ring 2 across the river, and the zoomed valley map draws one arm through the
-   middle.
-   - A (Recommended): the river splits into two arms through town. The main arm
-     runs through the middle with the sawmill on it. A wide eastern arm is crossed by
-     the broken bridge. The hall stands on the island between. The valley map's
-     zoomed view then needs its river and bridge redrawn after the owner agrees.
-   - B: one river on the east edge. The town and sawmill sit on its west bank, and
-     the broken bridge crosses it just past the hall. The zoomed view moves the
-     sawmill to the east side.
-   - C (Stardew): the river runs through the middle of town with houses on both
-     banks (the saved Pelican Town page names "east of the river" and "west of the
-     river"). Ring 2 would be reached by an ordinary east exit, not a bridge, which
-     departs from note 19, decision 6.
-9. **Does a festival use the town map or its own map?** Today the green is a
-   separate placeholder map.
-   - A (Stardew, Recommended): the green is the south of the Hearthwell map and a
-     festival loads a decorated variant of that map. The saved Beach page says
-     Stardew's festivals use custom versions of the Beach map, and the owner's
-     memory is the same for the town (SC-90).
-   - B: keep the separate `green` map as the festival place, entered by a door or
-     exit from the town.
-10. **Which maps can the horse ride on?** Note 59 lists only the farms and the green.
-    - A (Recommended): every outdoor valley map (Forest, Mountain, delta and Beach,
-      Hearthwell), and not interiors, the Mines or the cove (the ferry dismounts). It
-      is why the horse exists on the long maps (note 19).
-    - B: keep the farms and the green only.
-    - C (Stardew): the horse can be ridden in outdoor areas. That is from memory and
-      unchecked (SC-88).
-11. **What does the stonekeeper dwarf do in play?** Note 20 says bridges and
-    stonework.
-    - A (Recommended): a person with a yard and a footbridge for now, no shop. His
-      job (stone for the Last Seat bridge) waits for the Last Seat design (#603, #181).
-    - B: a stone shop selling stone in bulk, from the start.
-    - C (Stardew): Stardew has a Quarry past a bridge, mended by finishing the Crafts
-      Room, where stone and ore regrow daily (saved Mountain page). We have no
-      quarry area, so this would be a new area, which needs its own note.
+1. **Milestone: M3b.** The Forest, Secret Woods, River delta with the Beach,
+   Mountain and Lake cove maps (and the Quarry, note 78) move into M3b. Hearthwell
+   stays with #599, and the Beach elf waits for the story spine (#176). Note 03
+   and ADR 0012 updated.
+2. **Secret Woods creatures: later (Stardew has slimes).** None in the first build,
+   and they come with the combat notes. Hardwood comes from a number of large
+   stumps that respawn every night (note 73, kept). Mahogany stays off the map for
+   now.
+3. **The pond is fishable (Stardew).** One unique fish plus two common fish. That is
+   47 fish, so Whole Roster and the completion fish count move by one (notes 21,
+   38, 39 and 73).
+4. **The Beach footbridge is broken until repaired (Stardew).** Ours is repaired
+   with 300 wood only, since the community upgrade does not exist (note 75, #640).
+5. **The ferry has no keeper.** You step on the boat, like a door (notes 75 and 76,
+   #644). The fisher stays at her hut.
+6. **The cove gets one extra beyond fishing: a hidden treasure spot (drafter's
+   pick, flagged for owner veto).** Of the two options in note 76 (a hidden treasure
+   spot or a mist-only dawn event), the treasure spot needs no new event system,
+   fits a quiet reward place and is easy to test. Written into note 76 as the
+   decision. The dawn event stays as the alternative if the owner prefers it.
+7. **Smithy split (Stardew).** The Hearthwell blacksmith does tool upgrades, geode
+   cracking and ore, and does not buy geodes. The Mountain smith dwarf becomes a
+   Mines-side trader: he sells lamps and rest-camp supplies and buys ore for coin,
+   with no tool upgrades. Notes 74, 77, 69 and 44's pointer updated, #643 and #646.
+8. **Hearthwell river: two arms, the detail is open.** One wide eastern arm with a
+   broken bridge across it, and the hall on the island between. The layout of the
+   arms, banks and streets is an open design item and is designed later. The valley
+   map's zoom is redrawn only as far as this answer supports (the east arm, the
+   broken bridge and the hall island). Note 77 marks it open.
+9. **Festivals use a decorated Hearthwell variant (Stardew).** The separate `green`
+   map is folded into it later. Notes 66 and 77.
+10. **The horse rides on every outdoor valley map,** not interiors, the Mines or
+    the cove. Note 59 and contract need 7 above.
+11. **The stonekeeper dwarf gets a Quarry area (Stardew).** Past a bridge mended by
+    a bundle room, with stone and ore that regrow daily. New note 78, #649.
+
+Open questions from the answers: note 78 has its own list (which bundle room mends
+the bridge, the dwarf's trade, how fast the Quarry regrows).
 
 ## Open
 
