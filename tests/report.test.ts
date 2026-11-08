@@ -11,6 +11,8 @@ const base: SleepReport = {
   furnaceGifted: false,
   toolReady: undefined,
   achievements: [],
+  completion: 0,
+  completionGain: 0,
   newMail: 0,
   caveOffer: false,
   shipped: { lines: [], total: 0 },

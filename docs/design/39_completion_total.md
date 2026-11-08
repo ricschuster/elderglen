@@ -247,7 +247,10 @@ Each had a Stardew option, and the owner took the recommended one.
   and fish have no counter yet and show as locked at zero. Cooking has its save
   counter (`cooked`) but no recipes, so it is locked too. Items crafted reuses
   the existing crafted set. The summit reward and the valley summit are not
-  built.
+  built. Also built: a Collections row in the hat box menu, and a day-end
+  recheck (the total is recomputed with the achievement check, and the morning
+  report says "Collections: N percent complete." on a night it rose). Nothing
+  calls `noteCooked` yet because no cooking action exists (note 24 is unbuilt).
 
 ## Open
 

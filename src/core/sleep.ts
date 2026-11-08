@@ -6,6 +6,7 @@ import type { GameState } from "./save";
 import type { FarmMap } from "./map";
 import { advanceBuild } from "./house";
 import { checkAchievements } from "./achievements";
+import { ringProgress, valleyPercent } from "./completion";
 import { deliverAll } from "./mail";
 import { endDayQuests } from "./quests";
 import { deliverFurnace } from "./smith";
@@ -72,6 +73,10 @@ export interface SleepReport {
   furnaceGifted: boolean;
   /** Achievements earned by tonight's check, whose hats are now on sale. */
   achievements: string[];
+  /** The valley completion total after tonight's recheck, in whole percent (note 39). */
+  completion: number;
+  /** Whole percent the total rose by tonight, zero when it did not. */
+  completionGain: number;
   /** Letters that arrived this morning. */
   newMail: number;
   /** The tool the smith has finished, if it is ready to collect this morning. */
@@ -102,6 +107,7 @@ export function sleep(
 ): SleepReport {
   const before = dateOf(g.day.clock.day).season;
   const cropsBefore = g.farm.cropCount;
+  const completionBefore = valleyPercent(ringProgress(g));
   const end = g.day.end(g.money);
   const moneyLost = end.passedOut ? end.moneyLost : 0;
   g.money -= moneyLost;
@@ -201,6 +207,8 @@ export function sleep(
   const furnaceGifted = deliverFurnace(g);
 
   const achievements = checkAchievements(g).map((a) => a.name);
+  // The completion total is rechecked with the achievements (note 39).
+  const completion = valleyPercent(ringProgress(g));
   // Tonight's triggers arrive on the morning of the next day, which has begun.
   const newMail = deliverAll(g, g.day.clock.day);
 
@@ -215,6 +223,8 @@ export function sleep(
     houseTier: houseFinished ? g.houseTier : undefined,
     furnaceGifted,
     achievements,
+    completion,
+    completionGain: Math.max(0, completion - completionBefore),
     newMail,
     toolReady: g.toolOrder && orderReady(g) ? g.toolOrder.tool : undefined,
     shipped,

@@ -97,3 +97,25 @@ describe("completion total", () => {
     expect(loaded.achievements.cookedCount).toBe(0);
   });
 });
+
+describe("day-end recheck", () => {
+  it("reports the new total and its gain after a night that ships", async () => {
+    const { sleep } = await import("../src/core/sleep");
+    const { reportLines } = await import("../src/core/report");
+    const { SHIPPABLE } = await import("../src/core/completion");
+    const g = newGame();
+    const quiet = sleep(g, [], () => 0);
+    expect(quiet.completionGain).toBe(0);
+    expect(reportLines(quiet).join(" ")).not.toMatch(/Collections/);
+    for (const id of SHIPPABLE) {
+      g.inventory.add(id, 1);
+      g.bin.ship(g.inventory, id, 1);
+    }
+    const r = sleep(g, [], () => 0);
+    expect(r.completion).toBeGreaterThan(0);
+    expect(r.completionGain).toBe(r.completion);
+    expect(reportLines(r)).toContain(
+      `Collections: ${r.completion} percent complete.`,
+    );
+  });
+});
