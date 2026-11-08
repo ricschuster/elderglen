@@ -6,7 +6,7 @@ handoff). Machine numbers, dish lists and prices are our draft and are
 placeholders. Built 2026-11-07 (slice 1 build 7): the machine framework and five machines, the
 charcoal kiln, preserves jar, bee house, keg and seed maker, with jam, pickles,
 wine, juice, honey and mead (`src/core/machines.ts`, `processing.ts`,
-`artisan.ts`). The machine bundles (4, 5, 9, 10, 12) are in the hall data and give their machine and recipe (2026-11-07, note 35). Built 2026-11-08 (animal goods): the cheese press, mayonnaise machine, loom and oil maker, with cheese, goat cheese, mayonnaise, duck mayonnaise, cloth, truffle oil and oil. The cheese press and loom come from bundles 11 and 21 or farming 6 and 7, the mayonnaise machine from farming 2 and the oil maker from farming 8 (sunflower oil waits for the crop). Cloth keeps wool quality (silver 25 percent, gold 50 percent for 2 cloth); moonwool has no machine yet. Numbers are in note 07. Built 2026-11-08 (cooking, first slice): a stove in the tier 1 house kitchen opens the cooking screen (`CookingScene`, `src/core/cooking.ts`, `dishes.ts`, `src/content/dishes.json`). Eight placeholder dishes from the pack, a locked recipe shows as ???, and recipes are learned at the start or a skill level. A dish is an item with energy and a sell price, eaten from the pack, and cooking calls `noteCooked`. Not built: the fridge, the cookout kit, buffs, friendship, mail, inn and cookbook recipe sources, fish dishes (no fish yet), the other 73 recipes and the ring 2 and 3 dishes. Not built: dye vat, fish smoker, crystalarium, flower honey, beer (no grain) and
+`artisan.ts`). The machine bundles (4, 5, 9, 10, 12) are in the hall data and give their machine and recipe (2026-11-07, note 35). Built 2026-11-08 (animal goods): the cheese press, mayonnaise machine, loom and oil maker, with cheese, goat cheese, mayonnaise, duck mayonnaise, cloth, truffle oil and oil. The cheese press and loom come from bundles 11 and 21 or farming 6 and 7, the mayonnaise machine from farming 2 and the oil maker from farming 8 (sunflower oil waits for the crop). Cloth keeps wool quality (silver 25 percent, gold 50 percent for 2 cloth); moonwool has no machine yet. Numbers are in note 07. Built 2026-11-08 (cooking, first slice): a stove in the tier 1 house kitchen opens the cooking screen (`CookingScene`, `src/core/cooking.ts`, `dishes.ts`, `src/content/dishes.json`). Eight placeholder dishes from the pack, a locked recipe shows as ???, and recipes are learned at the start or a skill level. A dish is an item with energy and a sell price, eaten from the pack, and cooking calls `noteCooked`. Not built: the fridge, the cookout kit, buffs, friendship, mail, inn and cookbook recipe sources, fish dishes (no fish yet), the other 73 recipes and the ring 2 and 3 dishes. Built 2026-11-09 (#602): the cask and the dye vat (see "The cask and the dye vat, built" below). Not built: fish smoker, crystalarium, flower honey, beer (no grain) and
 the cask. Unchecked claims are SC-50 and SC-51. Stardew facts were checked against the
 saved wiki pages Artisan Goods and Cooking, read only (ADR 0002). No text or
 tables are copied, and the dish names below are ours.
@@ -201,10 +201,41 @@ the same goods into a buff with a reason to plan the day. Tying the kitchen to
 the house upgrade gives the upgrade a payoff, and tying recipes to friendship,
 skills and rings gives each of them a second use.
 
+## The cask and the dye vat, built (2026-11-09, #602)
+
+Settled where the notes left gaps. All numbers are placeholders (note 07).
+
+- **The cask stands only in the cellar.** It is a backpack item
+  (`cask`, crafted from 40 wood, wood standing in for Stardew's hardwood as in
+  the house upgrade). The recipe is known once the cellar stairs are built
+  (tier 3). A held cask is stood on a clear floor tile of the cellar, up to 33
+  (Stardew's cellar, SC-39). The farm refuses it. Casks are not in the machine
+  save list: the save holds `casks` (tile, and the good with its starting
+  quality and the day it went in). An older save has none.
+- **Aging.** One good per cask, no queue. It takes wine, mead and cheese
+  (goat cheese too). The good keeps its starting quality as a floor and gains
+  silver and gold by days in the cask: wine and mead 14 and 28 days, cheese 6
+  and 10 (Stardew's figures from memory, SC-82). We have no iridium grade.
+  Taking it out early is allowed and gives the grade reached. Time is counted
+  in whole game days, so a cask works while the player is away.
+- **Use.** Hold a good and face the cask to load it. Action reads the cask
+  and takes a gold good out. The axe or pickaxe takes the good out at any time,
+  or an empty cask up, so a stray press never resets the ageing. A gold good
+  shows the ready mark. Not built: ale and pale ale (no grain), cask count
+  upgrades, a cask in the farm cave.
+- **The dye vat** is the Dyer's bundle (23) reward, a machine on the farm like
+  the keg, and its recipe comes with the bundle only (40 wood, 10 stone, 10
+  fiber). One flower, berry or crop in, one dye out after 1 day:
+  daffodil to yellow, sweet pea to pink, red cabbage to purple, cranberry to
+  red, bramble berry to indigo, crocus to violet. Each dye sells for 120g. Dyes
+  have no other use yet: tailoring (note 10) and bundle 29 will ask for them.
+  The Dyer's bundle is built in the Hearth room (4 of 6, any quality).
+- **The greenhouse is not built.** It needs its own interior map, a walled
+  plot and year round growing rules (note 68), which is a PR of its own.
+
 ## Left for later
 
-- **The cask,** first to return. It needs the cellar from a house upgrade and
-  long timers. Aged wine, cheese, ale and mead come with it.
+- **Ale and pale ale** for the cask, once grain exists (the cask is built, see above).
 - **A dehydrator,** which Stardew sells for a high price.
 - **Recycling and a worm bin,** deep Stardew machines. Recycling for trash is in `21_fishing.md`.
 - **Artisan goods from trees and tapping** (maple syrup and similar). They need

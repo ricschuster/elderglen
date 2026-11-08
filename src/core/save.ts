@@ -15,6 +15,8 @@ import { Rocks, type Rock, ROCK_KINDS } from "./rocks";
 import { Mines, type MinesSave } from "./mines";
 import { FruitTrees, fruitTreeById, type PlacedFruitTree } from "./fruittrees";
 import { Sprinklers, sprinklerById, type PlacedSprinkler } from "./sprinklers";
+import { QUALITIES, type Quality } from "./quality";
+import { Casks, CASK_LIMIT, caskTakes, type PlacedCask } from "./cask";
 import { Machines, type MachineJob, type PlacedMachine } from "./machines";
 import { FarmCave, type CaveSave } from "./cave";
 import { machineById } from "./processing";
@@ -84,6 +86,8 @@ export interface GameState {
   fruitTrees: FruitTrees;
   /** Machines standing on the farm. */
   machines: Machines;
+  /** The casks in the cellar (note 24). */
+  casks: Casks;
   /** The furnace the smith gives. */
   furnace: Furnace;
   /** Goods shipped today, paid when the day ends. */
@@ -159,6 +163,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     sprinklers: new Sprinklers(),
     fruitTrees: new FruitTrees(),
     machines: new Machines(),
+    casks: new Casks(),
     furnace: new Furnace(),
     bin: new ShippingBin(),
     skills: new Skills(),
@@ -221,6 +226,8 @@ interface SaveData {
   fruitTrees?: PlacedFruitTree[];
   /** Absent in saves made before machines. */
   machines?: PlacedMachine[];
+  /** Absent in saves made before casks. */
+  casks?: PlacedCask[];
   /** Absent in saves made before the mines. */
   furnace?: FurnaceSave;
   /** Absent in saves made before the shipping bin. */
@@ -303,6 +310,7 @@ export function serialize(g: GameState): string {
     sprinklers: g.sprinklers.save(),
     fruitTrees: g.fruitTrees.save(),
     machines: g.machines.save(),
+    casks: g.casks.save(),
     furnace: g.furnace.save(),
     bin: g.bin.save(),
     skills: g.skills.save(),
@@ -548,6 +556,31 @@ export function deserialize(text: string): GameState | undefined {
       });
     }
     g.machines.load(valid);
+  }
+  if (Array.isArray(raw.casks)) {
+    const valid: PlacedCask[] = [];
+    for (const c of raw.casks) {
+      if (!isObject(c) || !Number.isInteger(c.x) || !Number.isInteger(c.y))
+        continue;
+      const job = c.job;
+      valid.push({
+        x: c.x as number,
+        y: c.y as number,
+        job:
+          isObject(job) &&
+          typeof job.item === "string" &&
+          caskTakes(job.item) &&
+          QUALITIES.includes(job.quality as Quality) &&
+          isCount(job.since)
+            ? {
+                item: job.item,
+                quality: job.quality as Quality,
+                since: job.since,
+              }
+            : undefined,
+      });
+    }
+    g.casks.load(valid.slice(0, CASK_LIMIT));
   }
   if (Array.isArray(raw.fruitTrees)) {
     g.fruitTrees.load(

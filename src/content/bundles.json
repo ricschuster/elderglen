@@ -227,5 +227,26 @@
       }
     },
     "hint": "Wool from the sheep or rabbit, and plant fibre from the weeds."
+  },
+  {
+    "id": "dyers",
+    "name": "Dyer's",
+    "room": "hearth",
+    "items": [
+      "daffodil",
+      "sweet-pea",
+      "red-cabbage",
+      "cranberry",
+      "bramble-berry",
+      "crocus"
+    ],
+    "required": 4,
+    "reward": {
+      "item": {
+        "id": "dye-vat",
+        "count": 1
+      }
+    },
+    "hint": "Flowers and berries that colour cloth: spring daffodils, summer sweet peas, autumn cranberries and winter crocuses."
   }
 ]

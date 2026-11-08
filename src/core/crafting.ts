@@ -1,5 +1,6 @@
 import recipeData from "../content/recipes.json";
 import { BUNDLES } from "./bundles";
+import { houseHasCellar } from "./house";
 import { itemById } from "./items";
 import { orderById } from "./orders";
 import type { Skill } from "./skills";
@@ -24,7 +25,9 @@ export type RecipeSource =
   /** Known once the hall bundle is finished (note 34: a bundle gives its machine and recipe together). */
   | { kind: "bundle"; bundle: string }
   /** Known once a Special Order has been filled at least once (note 65). */
-  | { kind: "order"; order: string };
+  | { kind: "order"; order: string }
+  /** Known once the cellar stairs are built (the cask, note 24). */
+  | { kind: "cellar" };
 
 export interface Recipe {
   id: string;
@@ -54,7 +57,9 @@ export function known(g: GameState, r: { sources: RecipeSource[] }): boolean {
         ? g.skills.level(s.skill) >= s.level
         : s.kind === "order"
           ? g.orders.timesDone(s.order) > 0
-          : g.hall.complete(s.bundle),
+          : s.kind === "cellar"
+            ? houseHasCellar(g.houseTier)
+            : g.hall.complete(s.bundle),
   );
 }
 
@@ -70,6 +75,7 @@ export function sourceText(r: { sources: RecipeSource[] }): string {
       const title = orderById(s.order)?.title;
       return title ? [`the ${title} order`] : [];
     }
+    if (s.kind === "cellar") return ["the cellar stairs"];
     return [];
   });
   return parts.length === 0

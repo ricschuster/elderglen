@@ -20,7 +20,7 @@ import { CATEGORY_NAMES, type ArtisanCategory } from "../src/core/artisan";
 import { fillHall } from "./hall-helpers";
 
 describe("bundle data", () => {
-  it("has the twelve built bundles with known items and sane requirements", () => {
+  it("has the thirteen built bundles with known items and sane requirements", () => {
     expect(BUNDLES.map((b) => b.id)).toEqual([
       "spring-foraging",
       "summer-foraging",
@@ -34,6 +34,7 @@ describe("bundle data", () => {
       "artisan-goods",
       "smiths",
       "weavers",
+      "dyers",
     ]);
     for (const b of BUNDLES) {
       expect(b.required).toBeGreaterThanOrEqual(1);

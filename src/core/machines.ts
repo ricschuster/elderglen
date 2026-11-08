@@ -155,6 +155,7 @@ export function placeMachine(
   if (g.day.over) return fail("exhausted");
   const def = machineById(id);
   if (!def) return fail("not a machine");
+  if (def.cellar) return fail("cellar only");
   if (g.inventory.count(id) < 1) return fail("no machine");
   if (!isClear(g, map, x, y)) return fail("cannot place here");
   g.inventory.remove(id);

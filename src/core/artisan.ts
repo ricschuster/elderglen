@@ -12,7 +12,14 @@ import { splitQuality } from "./quality";
  */
 export type ArtisanKind = "jam" | "pickles" | "wine" | "juice" | "dried";
 export type ArtisanCategory =
-  ArtisanKind | "honey" | "mead" | "cheese" | "mayonnaise" | "cloth" | "oil";
+  | ArtisanKind
+  | "honey"
+  | "mead"
+  | "cheese"
+  | "mayonnaise"
+  | "cloth"
+  | "oil"
+  | "dye";
 
 export interface ArtisanDef {
   id: string;
@@ -39,6 +46,7 @@ export const CATEGORY_NAMES: Record<ArtisanCategory, string> = {
   mayonnaise: "Any mayonnaise",
   cloth: "Cloth",
   oil: "Any oil",
+  dye: "Any dye",
 };
 
 /** Price rule per kind, from the base price of the input. */
@@ -167,6 +175,33 @@ for (const d of [
   { id: OIL, name: "Oil", category: "oil", sellPrice: 100 },
 ] satisfies ArtisanDef[])
   defs.set(d.id, d);
+
+/**
+ * Dyes (note 24, dye vat; note 63, bundle 23): one dye from each of the six
+ * colour goods the Dyer's bundle asks for. Names, colours and the 120g price
+ * are ours, placeholders (note 07). Tailoring and the Hearth Fire bundle will
+ * use them later.
+ */
+const DYES: { input: string; id: string; name: string }[] = [
+  { input: "daffodil", id: "yellow-dye", name: "Yellow dye" },
+  { input: "sweet-pea", id: "pink-dye", name: "Pink dye" },
+  { input: "red-cabbage", id: "purple-dye", name: "Purple dye" },
+  { input: "cranberry", id: "red-dye", name: "Red dye" },
+  { input: "bramble-berry", id: "indigo-dye", name: "Indigo dye" },
+  { input: "crocus", id: "violet-dye", name: "Violet dye" },
+];
+export const DYE_PRICE = 120;
+for (const d of DYES)
+  defs.set(d.id, {
+    id: d.id,
+    name: d.name,
+    category: "dye",
+    sellPrice: DYE_PRICE,
+  });
+
+/** The dye a flower, berry or crop makes in the dye vat, if any. */
+export const dyeOf = (input: string): string | undefined =>
+  DYES.find((d) => d.input === splitQuality(input).base)?.id;
 
 /** Every artisan good the game can make. */
 export const ARTISAN_GOODS: readonly ArtisanDef[] = [...defs.values()];

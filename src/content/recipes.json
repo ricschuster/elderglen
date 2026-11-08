@@ -514,5 +514,50 @@
         "level": 8
       }
     ]
+  },
+  {
+    "id": "dye-vat",
+    "ingredients": [
+      {
+        "item": "wood",
+        "count": 40
+      },
+      {
+        "item": "stone",
+        "count": 10
+      },
+      {
+        "item": "fiber",
+        "count": 10
+      }
+    ],
+    "result": {
+      "item": "dye-vat",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "bundle",
+        "bundle": "dyers"
+      }
+    ]
+  },
+  {
+    "id": "cask",
+    "ingredients": [
+      {
+        "item": "wood",
+        "count": 40
+      }
+    ],
+    "result": {
+      "item": "cask",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "cellar"
+      }
+    ]
   }
 ]
