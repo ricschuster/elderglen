@@ -91,9 +91,23 @@ whole barn shifting.
 - **Tiled authoring.** The generator `scripts/gen-farm-map.mjs` is already
   stale (see #524), so the new maps are authored by hand.
 
+## Settled 2026-11-07 (the open items)
+
+- **The barn stall wing is built (owner).** The cut-out in the bottom left of
+  the base barn, about 5 wide by 4 deep, as measured from the screenshots. What
+  Stardew uses it for is not checked (SC-69), so ours gets its own purpose in
+  note 23, such as a feed store or a healer's corner. Like every part of a
+  growing barn it stays in place at the bigger tiers.
+- **Barn door tiles are a placeholder (owner).** The middle tile of the bottom
+  wall at each tier, x 8, 10 and 12 on the 17, 21 and 24 wide barns. The owner
+  reads the real tiles in the desktop game (SC-68). The coop door stays bottom
+  left. A change of tile touches only the door object's position.
+- **One line on waking (owner).** When an upgrade lands, the player gets a
+  single dismissable line from the carpenter, such as "The new rooms are
+  ready", so the change is not missed. Whether Stardew shows anything is not
+  checked (SC-70).
+
 ## Still open
 
-- Whether the barn stall wing is built (note 58).
-- Door tile positions for the barn at each tier (owner can measure in game).
-- Whether the upgrade shows a short "new rooms are ready" line on waking.
 - The cellar stairs: a stairs object in the tier 2 layers, enabled at tier 3.
+  Nothing blocks this until M3.
