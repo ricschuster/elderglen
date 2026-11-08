@@ -112,6 +112,17 @@ export class Chests {
     return c;
   }
 
+  /** Shift a chest, stacks and all, to another tile of the same place. False if it is not there or the tile is taken. */
+  move(map: string, x: number, y: number, nx: number, ny: number): boolean {
+    const c = this.get(map, x, y);
+    if (!c || this.placed.has(key(map, nx, ny))) return false;
+    this.placed.delete(key(map, x, y));
+    c.x = nx;
+    c.y = ny;
+    this.placed.set(key(map, nx, ny), c);
+    return true;
+  }
+
   /** The chests on the tiles touching a spot, as a workbench draws on them. */
   near(map: string, x: number, y: number): PlacedChest[] {
     const out: PlacedChest[] = [];
@@ -179,6 +190,35 @@ export function pickUpChest(
   g.chests.remove(mapId, x, y);
   g.inventory.add(c.id);
   return { ok: true, item: c.id };
+}
+
+/**
+ * Push a chest one tile with the axe or pickaxe (SC-56), on the farm or in the
+ * house. The tile ahead must be open, as for placing. Taking it up needs it
+ * empty, so a chest with items in it is moved this way. Free of energy.
+ */
+export function pushChest(
+  g: GameState,
+  map: FarmMap,
+  mapId: string,
+  x: number,
+  y: number,
+  dx: number,
+  dy: number,
+): Outcome {
+  const c = g.chests.get(mapId, x, y);
+  if (!c) return fail("nothing to act on");
+  if (g.day.over) return fail("exhausted");
+  const nx = x + dx;
+  const ny = y + dy;
+  const ok = isHouseMap(mapId)
+    ? canStand(g, map, mapId, nx, ny) && !g.chests.get(mapId, nx, ny)
+    : isFarmMap(mapId) &&
+      isClear(g, map, nx, ny) &&
+      !g.chests.get(mapId, nx, ny);
+  if (!ok) return fail("chest will not move");
+  g.chests.move(mapId, x, y, nx, ny);
+  return { ok: true };
 }
 
 /** Move up to `n` of a stack from the backpack into a chest. Returns how many moved. */

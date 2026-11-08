@@ -103,10 +103,13 @@ The four added machines:
   lists do. Bars mean a copper or iron trip,
   so machine crafting follows the mines. The exact lists go in
   `07_tuning_numbers.md`.
-- **Bee houses** do not run in winter, and flowers in range change the honey,
+- **Bee houses** keep their timer in winter but make no honey until spring (SC-50), and flowers in range change the honey,
   with the reach set at about five tiles. A flower pot also counts.
 - **A machine sits where the player puts it,** on the farm, as with any placed
-  object. A cask later goes in the cellar (see "Left for later").
+  object. A cask later goes in the cellar (see "Left for later"). A machine can
+  be picked up at any time, working or not: a working batch is cancelled and
+  the input comes back (SC-50, owner 2026-11-07, built in parity pass 521). A
+  bee house loses its batch.
 - **Selling.** Machine goods sell through the shipping bin and the shop at the
   same price (`28_shipping_bin.md`). The Artisan profession adds its 40 percent
   when the good is made, so the price is fixed then.

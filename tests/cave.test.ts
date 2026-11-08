@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  BAT_FRUIT,
   BAT_ODDS,
   CAVE_MAP,
   CAVE_MARK,
@@ -137,20 +138,30 @@ describe("fruit bats", () => {
       { x: 1, y: 1 },
       { x: 2, y: 1 },
     ];
-    for (let i = 0; i < 6; i++) c.endDay("summer", spots, () => 0.999);
+    for (let i = 0; i < 6; i++) c.endDay(spots, () => 0.999);
     expect(c.fruitCount).toBe(2);
-    for (const f of c.eachFruit())
-      expect(["grape", "spice-berry"]).toContain(f.id);
+    for (const f of c.eachFruit()) expect(BAT_FRUIT).toContain(f.id);
   });
 
-  it("uses any wild fruit in a season with none, and does nothing without bats", () => {
+  it("leaves any fruit in any season, wild or orchard, and does nothing without bats", () => {
     const c = new FarmCave();
     c.addEarnings(CAVE_MARK, 1);
     c.choose("bats");
-    c.endDay("winter", [{ x: 1, y: 1 }], () => 0.999);
+    c.endDay([{ x: 1, y: 1 }], () => 0.999);
     expect(c.fruitCount).toBe(1);
+    expect(BAT_FRUIT).toContain("grape");
+    expect(BAT_FRUIT).toContain("apricot");
+    const seen = new Set<string>();
+    for (let i = 0; i < BAT_FRUIT.length; i++) {
+      const d = new FarmCave();
+      d.addEarnings(CAVE_MARK, 1);
+      d.choose("bats");
+      d.endDay([{ x: 1, y: 1 }], () => (i + 0.5) / BAT_FRUIT.length || 0.999);
+      for (const f of d.eachFruit()) seen.add(f.id);
+    }
+    expect(seen.size).toBeGreaterThan(5);
     const none = new FarmCave();
-    none.endDay("fall", [{ x: 1, y: 1 }], () => 0.999);
+    none.endDay([{ x: 1, y: 1 }], () => 0.999);
     expect(none.fruitCount).toBe(0);
   });
 
@@ -158,7 +169,7 @@ describe("fruit bats", () => {
     const g = newGame();
     g.cave.addEarnings(CAVE_MARK, 1);
     g.cave.choose("bats");
-    g.cave.endDay("summer", [{ x: 3, y: 3 }], () => 0.999);
+    g.cave.endDay([{ x: 3, y: 3 }], () => 0.999);
     const at = [...g.cave.eachFruit()][0]!;
     g.skills.gain("foraging", 0);
     const r = pickBatFruit(g, at.x, at.y, () => 0.99);
@@ -184,11 +195,11 @@ describe("mushrooms", () => {
     const c = new FarmCave();
     c.addEarnings(CAVE_MARK, 1);
     c.choose("mushrooms");
-    c.endDay("winter", [], () => 0);
+    c.endDay([], () => 0);
     expect(c.boxes.every((b) => b.ready === undefined)).toBe(true);
-    for (let d = 1; d < MUSHROOM_DAYS; d++) c.endDay("winter", [], () => 0);
+    for (let d = 1; d < MUSHROOM_DAYS; d++) c.endDay([], () => 0);
     expect(c.boxes.every((b) => b.ready === "field-mushroom")).toBe(true);
-    c.endDay("winter", [], () => 0.99);
+    c.endDay([], () => 0.99);
     expect(c.boxes.every((b) => b.ready === "field-mushroom")).toBe(true);
   });
 

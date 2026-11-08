@@ -165,7 +165,9 @@ export class HallScene extends Phaser.Scene {
     const g = this.state;
     const why = g.hall.problem(g.inventory, bundleId, itemId);
     if (why) return this.say(why);
-    const result = g.hall.handIn(g.inventory, g, bundleId, itemId);
+    const result = g.hall.handIn(g.inventory, g, bundleId, itemId, (gold) =>
+      g.cave.addEarnings(gold, g.day.clock.day + 1),
+    );
     const bundle = g.hall.bundles.find((b) => b.id === bundleId)!;
     this.say(
       result === "completed"

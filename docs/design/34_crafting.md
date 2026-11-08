@@ -41,7 +41,9 @@ It is slice 1 work (`33_build_order.md`).
   Lightning never harms the farm. With no rod in range the strike only
   flashes. This reverses the line in `31_farm_growth.md` that lightning does not
   exist for us.
-- **Chests as in Stardew:** wood, stone, and big versions of each.
+- **Chests as in Stardew:** wood, stone, and big versions of each. A chest with
+  items in it cannot be picked up, but the axe or pickaxe pushes it one tile
+  forward (SC-56, built in parity pass 521).
 - **Every craftable is data**, in `src/content/`, with its ingredients, its
   source and its slice. New recipes are data files, not code.
 

@@ -55,6 +55,9 @@ export function useHeld(
   if (held.kind === "empty") return fail("nothing held");
   if (held.kind === "tool" && toolAway(g, held.tool))
     return fail("at the smith");
+  // Any tool, or the empty hand, lifts a placed sprinkler (SC-48).
+  if (held.kind === "tool" && g.sprinklers.at(x, y))
+    return pickUpSprinkler(g, x, y);
   if (held.kind === "tool" && held.tool === "pickaxe")
     return mine(g, x, y, floor);
   if (!map.hasSoil) return fail("nothing to do here");
@@ -166,6 +169,7 @@ const REASONS: Record<string, string> = {
   "not a chest": "That is not a chest.",
   "no chest": "Out of chests.",
   "chest not empty": "Empty the chest before picking it up.",
+  "chest will not move": "The chest will not budge that way.",
   "camp chest empty": "The lamp-keepers have left nothing more today.",
   "not a machine": "That is not a machine.",
   "no machine": "Out of machines.",

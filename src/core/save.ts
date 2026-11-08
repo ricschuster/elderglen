@@ -7,7 +7,7 @@ import { Rocks, type Rock, ROCK_KINDS } from "./rocks";
 import { Mines, type MinesSave } from "./mines";
 import { FruitTrees, fruitTreeById, type PlacedFruitTree } from "./fruittrees";
 import { Sprinklers, sprinklerById, type PlacedSprinkler } from "./sprinklers";
-import { Machines, type PlacedMachine } from "./machines";
+import { Machines, type MachineJob, type PlacedMachine } from "./machines";
 import { FarmCave, type CaveSave } from "./cave";
 import { machineById } from "./processing";
 import { Furnace, type FurnaceSave } from "./furnace";
@@ -284,6 +284,21 @@ function rocksFrom(list: unknown[]): Rock[] {
  * Load a save. Returns undefined for anything that is not a valid save of
  * this version, so a corrupt or old file never crashes the game.
  */
+/** The input a machine job remembers, if it is well formed. */
+function savedInput(raw: unknown): MachineJob["input"] {
+  if (!isObject(raw) || typeof raw.item !== "string" || !isCount(raw.use))
+    return undefined;
+  const also = raw.also;
+  return {
+    item: raw.item,
+    use: raw.use,
+    also:
+      isObject(also) && typeof also.item === "string" && isCount(also.use)
+        ? { item: also.item, use: also.use }
+        : undefined,
+  };
+}
+
 export function deserialize(text: string): GameState | undefined {
   let raw: unknown;
   try {
@@ -407,7 +422,12 @@ export function deserialize(text: string): GameState | undefined {
           typeof job.output === "string" &&
           isCount(job.count) &&
           isCount(job.doneAt)
-            ? { output: job.output, count: job.count, doneAt: job.doneAt }
+            ? {
+                output: job.output,
+                count: job.count,
+                doneAt: job.doneAt,
+                input: savedInput(job.input),
+              }
             : undefined,
       });
     }

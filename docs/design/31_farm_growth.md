@@ -35,6 +35,8 @@ read only (ADR 0002). Costs and recipes are placeholders until the tuning note.
   decided 2026-10-31). They are not in slice 1.
 - A sprinkler waters tilled tiles only, every morning. It does not work on
   sand, which only matters if a sandy farm is ever added (`30_farm_types.md`).
+- A placed sprinkler blocks walking and is lifted by clicking it with any tool
+  or the empty hand (SC-48, built in parity pass 521).
 - Rain waters everything already, as now. Sprinklers matter on dry days.
 
 ### Scarecrows

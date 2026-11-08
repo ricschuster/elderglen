@@ -206,6 +206,8 @@ export class Hall {
     wallet: Wallet,
     bundleId: string,
     stackId: string,
+    /** Told the gold a finished bundle pays, so the caller can count it as earnings (SC-54). */
+    onGold?: (gold: number) => void,
   ): HandIn {
     if (this.problem(inv, bundleId, stackId)) return "rejected";
     const def = this.bundles.find((b) => b.id === bundleId)!;
@@ -215,7 +217,9 @@ export class Hall {
     counts.set(itemId, (counts.get(itemId) ?? 0) + 1);
     this.given.set(bundleId, counts);
     if (!this.complete(bundleId)) return "accepted";
-    wallet.money += def.reward.money ?? 0;
+    const gold = def.reward.money ?? 0;
+    wallet.money += gold;
+    if (gold > 0) onGold?.(gold);
     const prize = def.reward.item;
     if (prize) inv.add(prize.id, prize.count);
     return "completed";

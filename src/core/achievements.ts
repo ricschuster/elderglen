@@ -97,7 +97,7 @@ function shippedOf(g: GameState, base: string): number {
 export function met(g: GameState, a: AchievementDef): boolean {
   switch (a.kind) {
     case "money":
-      // Sales only, as the cave mark counts (SC-54 is the open question).
+      // All gold received, as the cave mark counts (SC-54, SC-61).
       return g.cave.earnings >= a.threshold;
     case "craft":
       return g.achievements.craftedCount >= a.threshold;

@@ -9,7 +9,7 @@ has a shop for her. Hat prices marked "set later" are a 3,000g placeholder. Not
 built: the hatter's letter (mail is unbuilt, so the morning report names the
 achievement instead), mail gifts, First Rosette (the Rosette Hat also has a token
 counter), Nothing Left (no shipped item collection), All Trades and every goal
-that waits for a later slice. The money goals will count all gold received, as Stardew (owner, 2026-11-07, SC-61). The build still counts sales only, a leftover. A wider
+that waits for a later slice. The money goals count all gold received, as Stardew (owner, 2026-11-07, SC-61): sales and bundle rewards, built in parity pass 521. A wider
 collections page is still to build.
 
 Status: decided 2026-10-31 for the list and the hat rewards. The open items
