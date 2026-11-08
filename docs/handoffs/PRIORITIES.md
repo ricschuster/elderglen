@@ -14,7 +14,7 @@ Start each session by asking which item to take.
    systems exist, and nothing calls `noteCooked` yet. Left: a top-level menu
    entry (it is reached through the achievements page), the day-end recheck,
    the summit achievement, the hall scene and rewards, and a look at the layout
-   in a browser. Open: should "items crafted" count only buildable recipes.
+   in a browser. "Items crafted" counts only buildable recipes (owner, 2026-11-08).
 2. **Story spine.** The warden head and her staged reveal (#177), the sea elf
    and Homeward pin (#176), the hermit witch (#178) and the third community
    project (#5). Together they decide what the ending and the Last Seat mean. Below Special Orders
@@ -31,8 +31,11 @@ per-kind pools and dwarf sales (note 69, #574), the furniture catalogue at the
 carpenter (200,000g after house tier 1, #575), festival maps for the Harvest
 Showing and Hollow Eve (#576), the mail system with the hatter's letter (note
 51, #577), mines floors 11 to 120 as digging only (#578), the Hearthsilver bar
-and fifth tool tier (#579), and flooring and wallpaper (#580). Many numbers are
-placeholders. Open questions are in the handoff.
+and fifth tool tier (#579), flooring and wallpaper at the carpenter's (#580, owner: stays there), iron from
+floor 26 (#582), the request board with delivery and gathering requests and the
+errand achievements (note 50, #583), and the playtest bot fixes with a smoke
+script (#333 done, #584). Many numbers are placeholders. Open questions are in
+the handoff.
 
 Designed on 2026-11-08 (handoff 2026-11-08e): geodes (note 69), festival maps
 (note 66 addendum), fruit energy (SC-66 closed) and the completion tracker's open
@@ -80,9 +83,9 @@ quartz and the quality sprinkler, pickaxe tiers and the smith's upgrades, crafte
 furnaces, chests and the workbench, Old Greencoat's door scene, the camp chest,
 geodes, and slice 1's achievements with the hatter.
 
-Smaller leftovers still open (tracked in #522): mail gifts for requests and
-the 10 and 40 requests achievements (request board, note 50, unbuilt),
-friendship mail, the Long Road and fish seed letters and the journal Mail
+Smaller leftovers still open (tracked in #522): request board extras (star
+counter and prize tickets, story quests, friendship pay, hand-in to the poster,
+fishing, slaying and hello types, the journal Quests section), friendship mail, the Long Road and fish seed letters and the journal Mail
 section, the placeable 0g furniture catalogue (note 10; the shop version is
 built), festival maps beyond the first two (even-year maze and reward, the
 gap's tell, other festivals, villagers' spots; need the village map, note 56),
