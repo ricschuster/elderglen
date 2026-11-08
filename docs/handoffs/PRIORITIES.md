@@ -31,6 +31,15 @@ that. Filed work packages: #595 to #604 and #611.
    (audio plan: #527).
 4. **Ring 2 shape and travel** (#20, M5). Parked until slice 3 is played.
 
+Owner playtest, 2026-11-08 (after handoff 2026-11-08j): coop, barn, silo and
+cooking were played by hand and work as far as the owner can tell. The silo
+order that failed earlier now orders fine, so that report is closed. Not yet
+played: the new axe pick-ups. The playtest scripts edited for four tool slots
+are still unrun.
+Closed after it: #531 and #521, and the M3-vertical-slice milestone. The coop
+and barn leftovers (door tiles, art, heater, professions, incubator tile) are
+#618.
+
 Session 2026-11-08h (handoff 2026-11-08h): the M3 split, hint box, debug menu
 groups and the coop and barn drawing fix. No design work.
 
