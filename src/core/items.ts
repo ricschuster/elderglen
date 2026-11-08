@@ -35,6 +35,8 @@ export interface ItemDef {
   keep?: boolean;
   /** Energy restored when eaten, at normal quality. Absent if not food. */
   energy?: number;
+  /** The dev menu's picker heading. Not used by the game rules. */
+  group?: string;
 }
 
 const items = new Map<string, ItemDef>();
@@ -167,6 +169,67 @@ items.set(QUARTZ, {
 for (const o of ORES) items.set(o.id, { ...o });
 for (const b of BARS)
   items.set(b.id, { id: b.id, name: b.name, sellPrice: b.sellPrice });
+
+/** Heading each item for the dev menu's picker, in the order the groups list. */
+const GROUPS: [string, string[]][] = [
+  ["Crops", CROPS.map((c) => c.id)],
+  [
+    "Seeds and saplings",
+    [
+      ...CROPS.map((c) => seedId(c.id)),
+      ...FRUIT_TREES.map((t) => saplingId(t.id)),
+      "mixed-seed",
+      "tree-seed",
+    ],
+  ],
+  ["Fruit", FRUIT_TREES.map((t) => t.id)],
+  ["Forage", FORAGE.map((f) => f.id)],
+  ["Fertilizer", FERTILIZERS.map((f) => f.id)],
+  [
+    "Machines, sprinklers and chests",
+    [...SPRINKLERS, ...MACHINES, ...CHESTS].map((m) => m.id),
+  ],
+  ["Artisan goods", ARTISAN_GOODS.map((a) => a.id)],
+  ["Dishes", DISHES.map((d) => d.id)],
+  [
+    "Animal goods",
+    [
+      "egg",
+      "duck-egg",
+      "feather",
+      "wool",
+      "milk",
+      "goat-milk",
+      "truffle",
+      "moonwool",
+    ],
+  ],
+  ["Furniture", furnitureData.map((f) => f.id)],
+  ["Wallpaper and flooring", decorData.map((d) => d.id)],
+  [
+    "Mining",
+    [
+      STONE,
+      COAL,
+      QUARTZ,
+      ...GEODE_ITEMS.map((i) => i.id),
+      ...ORES.map((o) => o.id),
+      ...BARS.map((b) => b.id),
+    ],
+  ],
+  ["Wood and fibre", ["wood", "sap", "fiber"]],
+];
+for (const [group, ids] of GROUPS)
+  for (const id of ids) {
+    const def = items.get(id);
+    if (def) def.group = group;
+  }
+
+/** The picker headings, in order, with "Other" for anything not listed. */
+export const ITEM_GROUPS: readonly string[] = [
+  ...GROUPS.map(([g]) => g),
+  "Other",
+];
 
 /** Every base item (normal quality), for the dev menu's picker. */
 export function allItems(): ItemDef[] {

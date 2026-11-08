@@ -10,7 +10,7 @@ import {
   setWeather,
   stepHouseTier,
 } from "../core/debug";
-import { allItems } from "../core/items";
+import { allItems, ITEM_GROUPS } from "../core/items";
 import { QUALITIES, withQuality, type Quality } from "../core/quality";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
@@ -26,6 +26,8 @@ export class DebugScene extends Phaser.Scene {
   private money!: Phaser.GameObjects.Text;
   private message!: Phaser.GameObjects.Text;
   private picker = false;
+  /** The item group open in the picker, or undefined on the group list. */
+  private group: string | undefined;
   private quality: Quality = "normal";
 
   constructor() {
@@ -35,6 +37,7 @@ export class DebugScene extends Phaser.Scene {
   init(): void {
     this.state = this.registry.get(STATE_KEY) as GameState;
     this.picker = false;
+    this.group = undefined;
     this.quality = "normal";
   }
 
@@ -61,6 +64,13 @@ export class DebugScene extends Phaser.Scene {
 
   /** Esc: leave the item picker, or close the menu from the top list. */
   private back(): void {
+    if (this.picker && this.group !== undefined) {
+      this.group = undefined;
+      this.menu.cursor = 0;
+      this.message.setText("");
+      this.refresh();
+      return;
+    }
     if (this.picker) {
       this.picker = false;
       this.message.setText("");
@@ -223,10 +233,35 @@ export class DebugScene extends Phaser.Scene {
   private pickerRows(): Row[] {
     const g = this.state;
     const next = QUALITIES[(QUALITIES.indexOf(this.quality) + 1) % 3]!;
+    const all = allItems();
+    const inGroup = (i: { group?: string }) =>
+      (i.group ?? "Other") === this.group;
+    if (this.group === undefined) {
+      return ITEM_GROUPS.flatMap((name): Row[] => {
+        const n = all.filter((i) => (i.group ?? "Other") === name).length;
+        if (n === 0) return [];
+        return [
+          {
+            label: name,
+            detail: `${n} items`,
+            buttons: [
+              {
+                text: "Open",
+                run: () => {
+                  this.group = name;
+                  this.menu.cursor = 0;
+                  this.say("");
+                },
+              },
+            ],
+          },
+        ];
+      });
+    }
     const rows: Row[] = [
       {
-        label: `Quality: ${this.quality}`,
-        detail: "applies to the rows below",
+        label: `${this.group} (Esc: back to groups)`,
+        detail: `quality: ${this.quality}`,
         buttons: [
           {
             text: `Switch to ${next}`,
@@ -251,7 +286,7 @@ export class DebugScene extends Phaser.Scene {
         );
       },
     });
-    for (const item of allItems()) {
+    for (const item of all.filter(inGroup)) {
       // Only goods have a quality; seeds, wood and sap do not.
       const id = this.hasQuality(item.id)
         ? withQuality(item.id, this.quality)

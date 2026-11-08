@@ -82,3 +82,10 @@ describe("debug edits", () => {
     expect(g.day.energy.current).toBe(270);
   });
 });
+
+describe("item groups for the picker", () => {
+  it("every item has a group, so none falls into Other", () => {
+    const loose = allItems().filter((i) => i.group === undefined);
+    expect(loose.map((i) => i.id)).toEqual([]);
+  });
+});

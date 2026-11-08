@@ -1435,6 +1435,12 @@ export class FarmScene extends Phaser.Scene {
     const ts = this.map.tileSize;
     const tags: { x: number; y: number; text: string }[] = [];
     for (const e of this.map.exits) {
+      // The coop and barn doors have nothing behind them until built.
+      if (
+        (e.requires === COOP_BUILT || e.requires === BARN_BUILT) &&
+        !exitOpen(e, this.holds)
+      )
+        continue;
       const text = exitLabel(e.id);
       if (text) tags.push({ x: e.x + e.w / 2, y: e.y, text });
     }
