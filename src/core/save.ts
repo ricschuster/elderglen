@@ -28,6 +28,7 @@ import { Hall, type HallProgress } from "./bundles";
 import { Inventory } from "./inventory";
 import { Skills, SKILLS, type Skill } from "./skills";
 import { professionById } from "./professions";
+import { Decor, type DecorSave } from "./decor";
 import { Furniture, type FurnitureSave } from "./furniture";
 import { Mailbox, type MailEntry } from "./mail";
 import { Wardrobe, type WardrobeSave } from "./hats";
@@ -108,6 +109,8 @@ export interface GameState {
   wardrobe: Wardrobe;
   /** Furniture placed in the house. */
   furniture: Furniture;
+  /** Wallpaper and flooring per house room (note 10). */
+  decor: Decor;
   /** Chests standing on the farm and in the house. */
   chests: Chests;
   /** Achievements earned and the different recipes crafted. */
@@ -156,6 +159,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     cave: new FarmCave(),
     wardrobe: new Wardrobe(),
     furniture: new Furniture(),
+    decor: new Decor(),
     chests: new Chests(),
     achievements: new Achievements(),
     mail: new Mailbox(),
@@ -233,6 +237,8 @@ interface SaveData {
   houseLayout?: number;
   /** Absent in saves made before furniture. */
   furniture?: FurnitureSave;
+  /** Absent in saves made before wallpaper and flooring. */
+  decor?: DecorSave;
   /** Absent in saves made before chests. */
   chests?: ChestSave[];
   /** Absent in saves made before achievements. */
@@ -288,6 +294,7 @@ export function serialize(g: GameState): string {
     wardrobe: g.wardrobe.save(),
     houseLayout: HOUSE_LAYOUT,
     furniture: g.furniture.save(),
+    decor: g.decor.save(),
     chests: g.chests.save(),
     achievements: g.achievements.save(),
     mail: g.mail.save(),
@@ -658,6 +665,7 @@ export function deserialize(text: string): GameState | undefined {
   const layout = isCount(raw.houseLayout) ? raw.houseLayout : 1;
   g.furniture.load(raw.furniture, layout);
   g.chests.load(raw.chests, layout);
+  g.decor.load(raw.decor);
   g.achievements.load(raw.achievements);
   g.mail.load(raw.mail);
   // Loading rechecks, so a goal met under an older save is granted (note 38).

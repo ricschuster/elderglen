@@ -1,0 +1,47 @@
+[
+  {
+    "id": "start",
+    "name": "Main room",
+    "tier": 0,
+    "x": 11,
+    "y": 12,
+    "w": 11,
+    "h": 10
+  },
+  {
+    "id": "kitchen",
+    "name": "Kitchen",
+    "tier": 1,
+    "x": 0,
+    "y": 10,
+    "w": 11,
+    "h": 12
+  },
+  {
+    "id": "bedroom",
+    "name": "Bedroom",
+    "tier": 1,
+    "x": 22,
+    "y": 10,
+    "w": 13,
+    "h": 12
+  },
+  {
+    "id": "spare",
+    "name": "Spare room",
+    "tier": 2,
+    "x": 0,
+    "y": 0,
+    "w": 16,
+    "h": 10
+  },
+  {
+    "id": "nursery",
+    "name": "Nursery",
+    "tier": 2,
+    "x": 16,
+    "y": 0,
+    "w": 19,
+    "h": 10
+  }
+]

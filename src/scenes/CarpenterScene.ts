@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import type { GameState } from "../core/save";
+import { DECOR, buyDecor, decorProblem } from "../core/decor";
 import {
   CATALOGUE_PRICE,
   buyCatalogue,
@@ -115,7 +116,25 @@ export class CarpenterScene extends Phaser.Scene {
         });
       }
     }
+    if (!g.houseBuild)
+      for (const d of DECOR)
+        rows.push({
+          label: d.name,
+          detail: `${d.price}g  (${d.kind === "floor" ? "covers a room's floor" : "covers a room's walls"})`,
+          dim: decorProblem(g, d.id) !== undefined,
+          buttons: [{ text: "Buy", run: () => this.buyCovering(d.id) }],
+        });
     this.menu.setRows(rows);
+  }
+
+  private buyCovering(id: string): void {
+    const problem = decorProblem(this.state, id);
+    if (problem !== undefined) this.message.setText(problem);
+    else if (buyDecor(this.state, id))
+      this.message.setText(
+        "Bought. Hold it in the house and press Use facing a room.",
+      );
+    this.refresh();
   }
 
   private buyCat(): void {

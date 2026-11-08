@@ -14,6 +14,7 @@ import {
 } from "./ore";
 import { SPRINKLERS } from "./sprinklers";
 import { FRUIT_TREES, saplingId } from "./fruittrees";
+import decorData from "../content/decor.json";
 import furnitureData from "../content/furniture.json";
 import { ARTISAN_GOODS } from "./artisan";
 import { MACHINES } from "./processing";
@@ -104,6 +105,10 @@ for (const c of CHESTS)
 /** Furniture pieces are items, so they ride in the backpack. They cannot be sold (`10_customisation.md`). */
 for (const f of furnitureData)
   items.set(f.id, { id: f.id, name: f.name, sellPrice: 0, keep: true });
+
+/** Wallpaper and flooring ride in the backpack and cannot be sold (note 10). */
+for (const d of decorData)
+  items.set(d.id, { id: d.id, name: d.name, sellPrice: 0, keep: true });
 
 /** Tree goods (`docs/design/36_gathering_trees_sap_fiber.md`). Wood and sap sell as Stardew's do. */
 items.set("wood", { id: "wood", name: "Wood", sellPrice: 2 });

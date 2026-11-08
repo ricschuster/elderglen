@@ -1,0 +1,30 @@
+[
+  {
+    "id": "wallpaper-linen",
+    "name": "Linen wallpaper",
+    "kind": "wallpaper",
+    "price": 200,
+    "color": "#d8c9a3"
+  },
+  {
+    "id": "wallpaper-moss",
+    "name": "Mossy wallpaper",
+    "kind": "wallpaper",
+    "price": 200,
+    "color": "#6f8f5a"
+  },
+  {
+    "id": "floor-planks",
+    "name": "Plank flooring",
+    "kind": "floor",
+    "price": 200,
+    "color": "#a67c52"
+  },
+  {
+    "id": "floor-slate",
+    "name": "Slate flooring",
+    "kind": "floor",
+    "price": 200,
+    "color": "#6d7480"
+  }
+]

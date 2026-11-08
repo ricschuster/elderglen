@@ -1,4 +1,5 @@
 import { CHESTS, chestById } from "../core/chestdefs";
+import { DECOR, decorById } from "../core/decor";
 import { FURNITURE, furnitureById } from "../core/furniture";
 import { fertilizerById } from "../core/fertilizer";
 import { SPRINKLERS, sprinklerById } from "../core/sprinklers";
@@ -797,6 +798,18 @@ function paintFurniture(scene: Phaser.Scene): void {
   }
 }
 
+/** Wallpaper and flooring icons: a swatch in the covering's colour. Placeholders. */
+function paintDecor(scene: Phaser.Scene): void {
+  for (const d of DECOR) {
+    const t = scene.textures.createCanvas(`decor-${d.id}`, SIZE, SIZE)!;
+    const c = t.getContext();
+    px(c, d.color, 2, 2, 12, 12);
+    px(c, d.kind === "floor" ? "#00000033" : "#ffffff44", 2, 8, 12, 1);
+    px(c, d.kind === "floor" ? "#00000033" : "#ffffff44", 8, 2, 1, 12);
+    t.refresh();
+  }
+}
+
 /** Chests: a lidded box, wood or stone, a little wider when big. Placeholders. */
 function paintChests(scene: Phaser.Scene): void {
   for (const ch of CHESTS) {
@@ -916,6 +929,7 @@ export function iconKey(itemId: string): string | undefined {
   if (sprinklerById(base)) return sprinklerKey(base);
   if (machineById(base)) return machineKey(base);
   if (furnitureById(base)) return furnitureKey(base);
+  if (decorById(base)) return `decor-${base}`;
   if (chestById(base)) return chestKey(base);
   const sapling = treeOfSapling(base);
   if (sapling) return saplingIconKey(sapling.id);
@@ -952,5 +966,6 @@ export function makeArt(
   paintFruitTrees(scene);
   paintMineArt(scene);
   paintFurniture(scene);
+  paintDecor(scene);
   paintChests(scene);
 }
