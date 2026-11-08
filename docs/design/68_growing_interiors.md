@@ -147,3 +147,25 @@ whole barn shifting.
   Your new rooms are ready." (`core/report.ts`), which covers SC-70.
 - **If the layers prove awkward in Tiled.** The fallback is still a map per tier
   with only the loader changed. Nothing so far needs it.
+
+## Built (#286, 2026-11-07)
+
+- **Tier 2 layers.** `ground-t2` and `collision-t2` add the upper band (a spare
+  room and a nursery, 10 rows with the shared wall) above the tier 1 rooms.
+  Stairs at (4, 10) open the kitchen's top wall with the open tile. No objects
+  layer was needed, and no furniture is placed, so the rooms read as waiting.
+- **Bounds.** `bounds-t2` is the whole 31 by 22 map. Tier 3 has no property, so
+  the nearest lower one is used. `houseVisibleTier(3)` is 2 and
+  `houseHasCellar(tier)` flags the cellar stairs for #282.
+- **The frame moved.** Tier 2 needed 10 more rows above, so the map is 22 rows
+  and the start room's corner is (9, 12). `HOUSE_LAYOUT` is 3. A save with no
+  `houseLayout` (layout 1) moves pieces on `house` by (9, 12) and pieces on
+  `house-1` down 10. A save at layout 2 moves its house pieces down 10.
+  `legacyHouseTile(map, x, y, layout)` does all three.
+- **Carpenter.** `HOUSE_UPGRADES` has tiers 1 to 3. Tier 2 wood stands in for
+  hardwood. Order checks and the three day build are the existing ones. The
+  waiting line ("The carpenter says the spare room and the nursery will be bare
+  and tidy, for later.") shows when tier 2 is ordered and in the morning report
+  when it lands.
+- **Not built.** The larger kitchen and bedroom at tier 2: the map stays 31
+  wide, and widening it would move the tier 1 tiles again.
