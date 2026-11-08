@@ -9,7 +9,8 @@ import { STATE_KEY } from "./state";
 const FAMILY_TALK = {
   blade: "A quick short arc. Good for everything.",
   club: "Slow and wide. It hits several at once.",
-  sling: "A soft shot with pebbles. Face them and let fly.",
+  sling:
+    "A soft shot with pebbles. Face them and let fly, or aim with the pointer.",
 } as const;
 
 /**

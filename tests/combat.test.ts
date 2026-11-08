@@ -169,6 +169,17 @@ describe("weapons", () => {
     expect(hits.map((c) => c.uid)).toEqual([1]);
   });
 
+  it("a sling shot flies along the aim when one is given", () => {
+    const sling = weaponById("pocket-sling")!;
+    const below = { ...at2(2, 30), uid: 5 };
+    const ahead = at2(30, 0);
+    const hits = swingTargets(sling, "right", at, [ahead, below], 16, {
+      x: 0,
+      y: 40,
+    });
+    expect(hits.map((c) => c.uid)).toEqual([5]);
+  });
+
   it("the trainer gives each starter free, once at a time", () => {
     const g = newGame();
     expect(g.combat.trainerMet).toBe(false);

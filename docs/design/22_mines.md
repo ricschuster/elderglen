@@ -456,8 +456,9 @@ Gaps the notes left open, settled with our own placeholders (every number is in
   (never sold or shipped). Swings cost no energy and no game time. Stats are
   damage, cooldown, reach, arc and most targets. The blade is a 120 degree arc
   that hits one creature, the club a 220 degree arc that hits up to four, the
-  sling a straight shot that hits the first creature on its line (it flies in the
-  faced direction, free aim by pointer is a later tablet check).
+  sling a straight shot that hits the first creature on its line (it flies toward
+  the mouse pointer, or on touch toward the tapped spot, and the faced way when
+  the keys have the aim).
 - **Where weapons come from:** the trainer hands each starter free, on asking, any
   time the player carries none of it (the Hazel Switch needs no first visit
   ritual). The smith dwarf forges the copper tier of each family for 4 copper bars
@@ -671,6 +672,8 @@ settled 2026-10-31). Slices 3 onward wait for build slice 3.
   be bought back for its sell value (see the defeat rule above).
 - **Weapons are tools in the toolbar,** swung with Use, as built.
 - **The sling aims toward the pointer**, and on touch toward the tapped spot, from
-  memory (SC-94). Built: it fires the faced way. A tablet check is needed.
+  memory (SC-94). Built: the mouse pointer aims it on desktop, and on touch (tap
+  scheme) a tap on the floor shoots at the tapped spot instead of walking. Keys
+  and the stick still fire the faced way. A tablet check is needed.
 - **Creature names and the trainer's words stay placeholders** until art exists.
 - **The stonekeeper dwarf is a villager** with loves for stone, ore and forage (owner, 2026-11-08, round two; see note 78). No heart events yet.
