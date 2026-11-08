@@ -217,6 +217,22 @@ Open: the even-year maze layout and reward, the hidden gap's tell (a lantern
 out of line is the proposal), festival spots for villagers on the green, and
 the green map's festival props. These need the village map from note 56.
 
+**Built (2026-11-08, #522):** the Harvest Showing is played on a new green map
+(`green.json`) with no doors out, and Hollow Eve on its own hedge map
+(`hedge.json`, the odd-year maze tile for tile, plus a plaza with the booth).
+A festival names its map in `festivals.json`; the invitation on the farm sends
+the player there, time stands still, and the way home asks first, then moves the
+clock to the festival's end. The table, judge, prize counter and booth open the
+old panels from the map. Villagers and scares are services that speak when
+used. The hidden gap is built as an open hedge tile (`gap` in `maze.json`),
+shorter and never the only way, with a cart beside the chest back to the
+entrance. Choices made: the green is entered from a sign on each farm map (no
+village map yet), the hedge map is entered directly from the farm instead of
+through the green, and every year uses the odd-year maze for now. Not built:
+the even-year maze and its reward, the gap's tell, lanterns, festival spots and
+props on the green beyond placeholders, and maps for the other festivals (they
+stay screens).
+
 ## Still open
 
 - The villager who asks to use the cave, and the Hollow Eve first-time hat.
