@@ -241,6 +241,13 @@ Each had a Stardew option, and the owner took the recommended one.
 - Reuses the counters the achievements already keep (`38_achievements.md`).
   New counters (recipes cooked, items crafted) need save fields.
 - Rounding down is a test: a total of 99.9 shows 99.
+- Built (#196): `src/content/completion.json`, `src/core/completion.ts`, and
+  the collections page (`CollectionsScene`, opened from the achievements page).
+  Shipped items count crops and forage. Gallery, slayer, friends, elderfruit
+  and fish have no counter yet and show as locked at zero. Cooking has its save
+  counter (`cooked`) but no recipes, so it is locked too. Items crafted reuses
+  the existing crafted set. The summit reward and the valley summit are not
+  built.
 
 ## Open
 

@@ -1,0 +1,55 @@
+{
+  "rings": [
+    {
+      "id": "ring1",
+      "name": "Home valley",
+      "categories": [
+        {
+          "id": "shipped",
+          "name": "Shipped items",
+          "weight": 16,
+          "counter": "shipped"
+        },
+        {
+          "id": "bundles",
+          "name": "Hall bundles",
+          "weight": 12,
+          "counter": "bundles"
+        },
+        {
+          "id": "gallery",
+          "name": "Gallery donations",
+          "weight": 5,
+          "counter": null
+        },
+        {
+          "id": "slayer",
+          "name": "Slayer goals",
+          "weight": 10,
+          "counter": null
+        },
+        { "id": "friends", "name": "Friends", "weight": 12, "counter": null },
+        { "id": "skills", "name": "Skills", "weight": 5, "counter": "skills" },
+        {
+          "id": "elderfruit",
+          "name": "Rare boost items",
+          "weight": 10,
+          "counter": null
+        },
+        {
+          "id": "cooking",
+          "name": "Cooking",
+          "weight": 10,
+          "counter": "cooking"
+        },
+        {
+          "id": "crafting",
+          "name": "Crafting",
+          "weight": 10,
+          "counter": "crafting"
+        },
+        { "id": "fish", "name": "Fish", "weight": 10, "counter": null }
+      ]
+    }
+  ]
+}
