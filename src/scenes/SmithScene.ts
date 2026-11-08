@@ -17,6 +17,7 @@ import {
   upgradeBar,
   upgradeCost,
 } from "../core/upgrades";
+import { FORGED, forgeWeapon } from "../core/combat";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
@@ -158,8 +159,32 @@ export class SmithScene extends Phaser.Scene {
         dim: true,
         buttons: [],
       });
-    rows.push(...this.toolRows());
+    rows.push(...this.toolRows(), ...this.forgeRows());
     this.menu.setRows(rows);
+  }
+
+  /** Weapons the smith forges from bars and gold, with no wait (note 22). */
+  private forgeRows(): Row[] {
+    const g = this.state;
+    return FORGED.map((w) => {
+      const { bar, bars, gold } = w.forge!;
+      const barName = itemById(bar)?.name.toLowerCase() ?? bar;
+      return {
+        label: `Forge: ${w.name}`,
+        detail: `${bars} ${barName}s and ${gold}g, damage ${w.damage}`,
+        dim: g.inventory.count(bar) < bars || g.money < gold,
+        buttons: [
+          {
+            text: "Forge",
+            run: () =>
+              this.say(
+                forgeWeapon(g, w.id) ??
+                  `She hands you a ${w.name.toLowerCase()}.`,
+              ),
+          },
+        ],
+      };
+    });
   }
 
   /** The tool upgrade rows: hand a tool over, or collect it (note 44). */

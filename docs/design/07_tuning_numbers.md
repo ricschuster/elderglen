@@ -384,6 +384,15 @@ are from memory and unchecked.
   Built 2026-11-08 with placeholders: smelt time 8 hours (480 minutes, unsettled in note 22), bar sells 1000g, top pickaxe swings 1 (stone to iron), 1 (gold), 2 (Hearthsilver rock), top axe 2 per tree and 1 per stump (note 44).
 - Weapons: three families, four tiers each. The first build has the starter and
   copper tier of each.
+- Built 2026-11-08 (part one of combat, note 22, all placeholders): food heals half
+  its energy value. Pebbleback 3 health, touch 4, 24 px/s, sight 5 tiles, wind up
+  0.6 s, pause 1 s; Dustmoth 2 health, touch 4, 20 px/s, sight 4, wind up 0.6 s,
+  pause 1.2 s. A weapon hit dazes a creature 0.4 s. Assist: damage times 0.5 (up),
+  wind up times 1.5. Weapons: Hazel Switch 2 damage, 0.35 s, 120 degrees; Rolling
+  Pin 3, 0.8 s, 220 degrees, 4 targets; Pocket Sling 1, 0.7 s, 4.5 tiles; copper
+  tier 3, 5 and 2 damage, forged for 4 copper bars and 200g. Creatures per floor
+  2 to 5 (band 1). Drops: Pebbleback stone (always, 1 to 2) and copper ore (30
+  percent); Dustmoth moth dust (60 percent, sells 30g) and fibre (50 percent).
 
 ## Animals (draft; slice 1 built 2026-11-08)
 

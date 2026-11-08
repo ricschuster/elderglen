@@ -3,6 +3,13 @@ import bandData from "../content/mine-bands.json";
 import { GEODE_SHARE } from "./geodes";
 import type { TiledMapJson } from "./map";
 import { Rocks, type Rock, type RockKind } from "./rocks";
+import {
+  loadCreature,
+  saveCreature,
+  spawnCreatures,
+  type Creature,
+  type CreatureSave,
+} from "./creatures";
 
 /**
  * The mine (`docs/design/22_mines.md`, build slice 1). Pure rules: a floor is
@@ -308,12 +315,38 @@ export function floorMapJson(layout: FloorLayout): TiledMapJson & {
   return json as unknown as TiledMapJson & { tilesets: unknown[] };
 }
 
+/**
+ * The creatures a floor starts the day with (note 22): on open tiles, never on
+ * a rock, the way up or a ladder, and well away from where the player arrives.
+ * Seeded by the day and the floor, so a reload does not change them.
+ */
+export function floorCreatures(floor: number, day: number): Creature[] {
+  const layout = floorLayout(floor, day);
+  const random = seeded(day * 2003 + floor * 6173 + 29);
+  const taken = new Set(layout.rocks.map((r) => `${r.x},${r.y}`));
+  if (layout.ladder) taken.add(`${layout.ladder.x},${layout.ladder.y}`);
+  if (layout.camp) taken.add(`${layout.camp.x},${layout.camp.y}`);
+  return spawnCreatures(
+    floor,
+    random,
+    (x, y) =>
+      !layout.walls[y * FLOOR_WIDTH + x] &&
+      !taken.has(`${x},${y}`) &&
+      !near({ x, y }, UP, 1),
+    FLOOR_WIDTH,
+    FLOOR_HEIGHT,
+    ARRIVE,
+  );
+}
+
 /** One floor as the player has dug it today. */
 export class Floor {
   constructor(
     readonly day: number,
     readonly rocks: Rocks,
     public ladder: Spot | undefined,
+    /** The creatures still on the floor today. A beaten one is gone until tomorrow. */
+    public creatures: Creature[] = [],
   ) {}
 }
 
@@ -321,6 +354,8 @@ export interface FloorSave {
   day: number;
   rocks: Rock[];
   ladder?: Spot;
+  /** Absent in saves from before creatures: the floor is given its day's creatures on load. */
+  creatures?: CreatureSave[];
 }
 
 export interface MinesSave {
@@ -370,7 +405,12 @@ export class Mines {
     const layout = floorLayout(floor, day);
     const rocks = new Rocks();
     for (const r of layout.rocks) rocks.add(r.x, r.y, r.kind);
-    const made = new Floor(day, rocks, layout.ladder);
+    const made = new Floor(
+      day,
+      rocks,
+      layout.ladder,
+      floorCreatures(floor, day),
+    );
     this.floors.set(floor, made);
     return made;
   }
@@ -404,12 +444,36 @@ export class Mines {
     return false;
   }
 
+  /**
+   * A creature was beaten at a tile. It rolls the same dry streak chance as a
+   * rock for a ladder, from the same counter (note 22, decision 18). Returns
+   * true if a ladder now shows. The bottom floor has no way down.
+   */
+  creatureBeaten(
+    floor: number,
+    day: number,
+    x: number,
+    y: number,
+    random: () => number,
+  ): boolean {
+    const f = this.visit(floor, day);
+    if (f.ladder || floor >= BUILT_FLOORS) return false;
+    if (random() < ladderChance(this.misses)) {
+      f.ladder = { x, y };
+      this.misses = 0;
+      return true;
+    }
+    this.misses += 1;
+    return false;
+  }
+
   save(): MinesSave {
     const floors: Record<number, FloorSave> = {};
     for (const [n, f] of this.floors)
       floors[n] = {
         day: f.day,
         rocks: f.rocks.save(),
+        creatures: f.creatures.map(saveCreature),
         ...(f.ladder ? { ladder: { ...f.ladder } } : {}),
       };
     return {
@@ -437,7 +501,10 @@ export class Mines {
     for (const [n, f] of Object.entries(saved.floors)) {
       const rocks = new Rocks();
       rocks.load(f.rocks);
-      this.floors.set(Number(n), new Floor(f.day, rocks, f.ladder));
+      const creatures = f.creatures
+        ? f.creatures.flatMap((c) => loadCreature(c) ?? [])
+        : floorCreatures(Number(n), f.day);
+      this.floors.set(Number(n), new Floor(f.day, rocks, f.ladder, creatures));
     }
   }
 }

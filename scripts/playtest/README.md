@@ -202,3 +202,6 @@ tile before a door, face it and press Action (`walkThrough` in `play.mjs`,
 The game canvas is the window (note 64), not a fixed 960 by 540. `touch.mjs`
 reads each target through its scene camera (`targets`), so it works at any
 window size. `mouse.mjs` converts tiles through the farm camera.
+
+`node scripts/playtest/combat.mjs` (about 30 seconds) takes the trainer's starter, swings at the
+dummy, fights a creature on mine floor 1 and is knocked out, checking health, the report and waking at home.

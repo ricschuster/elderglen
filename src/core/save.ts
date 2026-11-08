@@ -13,6 +13,8 @@ import { Twigs, type Twig } from "./debris";
 import { Orders, orderById, type OrdersSave } from "./orders";
 import { Rocks, type Rock, ROCK_KINDS } from "./rocks";
 import { Mines, type MinesSave } from "./mines";
+import { Combat, type CombatSave } from "./combat";
+import type { CreatureSave } from "./creatures";
 import { FruitTrees, fruitTreeById, type PlacedFruitTree } from "./fruittrees";
 import { Sprinklers, sprinklerById, type PlacedSprinkler } from "./sprinklers";
 import { QUALITIES, type Quality } from "./quality";
@@ -138,6 +140,8 @@ export interface GameState {
   fishing: FishLog;
   /** Bait and lures on each rod (note 21). */
   tackle: Tackle;
+  /** Health, the trainer and the kill tally (note 22). */
+  combat: Combat;
   /** Wild goods on the ground today. Not saved: it respawns each morning. */
   forage: ForageField;
 }
@@ -189,6 +193,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     quests: new Quests(),
     fishing: new FishLog(),
     tackle: new Tackle(),
+    combat: new Combat(),
     forage: new ForageField(),
   };
 }
@@ -281,6 +286,8 @@ interface SaveData {
   fishing?: FishingSave;
   /** Absent in saves made before bait and lures. */
   tackle?: TackleSave;
+  /** Absent in saves made before combat: full health, no trainer yet. */
+  combat?: CombatSave;
 }
 
 /** Where saves live. The scene supplies one backed by the browser. */
@@ -339,6 +346,7 @@ export function serialize(g: GameState): string {
     quests: g.quests.save(),
     fishing: g.fishing.save(),
     tackle: g.tackle.save(),
+    combat: g.combat.save(),
   };
   return JSON.stringify(data);
 }
@@ -619,6 +627,20 @@ export function deserialize(text: string): GameState | undefined {
           ...(isSpot(f.ladder)
             ? { ladder: { x: f.ladder.x, y: f.ladder.y } }
             : {}),
+          // A save from before creatures has none, and the floor is given its own on load.
+          ...(Array.isArray(f.creatures)
+            ? {
+                creatures: f.creatures.filter(
+                  (c): c is CreatureSave =>
+                    isObject(c) &&
+                    typeof c.uid === "number" &&
+                    typeof c.kind === "string" &&
+                    typeof c.x === "number" &&
+                    typeof c.y === "number" &&
+                    typeof c.hp === "number",
+                ),
+              }
+            : {}),
         };
     }
     g.mines.load({
@@ -741,6 +763,7 @@ export function deserialize(text: string): GameState | undefined {
   g.quests.load(raw.quests);
   g.fishing.load(raw.fishing);
   g.tackle.load(raw.tackle);
+  g.combat.load(raw.combat);
   // Loading rechecks, so a goal met under an older save is granted (note 38).
   checkAchievements(g);
   return g;

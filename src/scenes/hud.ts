@@ -7,6 +7,7 @@ import { festivalToday } from "../core/festivals";
 import { splitQuality } from "../core/quality";
 import { itemById } from "../core/items";
 import type { GameState } from "../core/save";
+import { weaponById } from "../core/combat";
 import type { Settings } from "../core/bindings";
 import { desktopHint } from "./controls";
 import { TIER_NAMES, toolAway, type Upgradable } from "../core/upgrades";
@@ -23,6 +24,7 @@ const BAR_Y = BASE_H - SLOT - 8;
 export const HUD_FIT_W = BAR_W + 16;
 const USE_R = 52;
 const EAT_R = 36;
+const HEALTH_W = 160;
 
 const QUALITY_TINT = { normal: 0xffffff, silver: 0xc8d8ff, gold: 0xffd860 };
 
@@ -43,6 +45,8 @@ function caption(held: Held, g: GameState): string {
       : TOOL_LABEL[held.tool];
   }
   if (held.kind === "empty") return "";
+  const weapon = weaponById(held.id);
+  if (weapon) return weapon.short;
   return String(held.count);
 }
 
@@ -55,6 +59,9 @@ export class Hud {
   readonly objects: Phaser.GameObjects.GameObject[] = [];
   private readonly status: Phaser.GameObjects.Text;
   private readonly message: Phaser.GameObjects.Text;
+  private readonly healthBack: Phaser.GameObjects.Rectangle;
+  private readonly healthFill: Phaser.GameObjects.Rectangle;
+  private readonly healthText: Phaser.GameObjects.Text;
   private readonly hint: Phaser.GameObjects.Text;
   private readonly hintBox: Phaser.GameObjects.Rectangle;
   private readonly slots: Phaser.GameObjects.Rectangle[] = [];
@@ -119,7 +126,28 @@ export class Hud {
       fontSize: "18px",
       color: "#ffe9a0",
     });
-    this.objects.push(this.status, this.hintBox, this.hint, this.message);
+    // One health bar, drawn only where health can be lost (note 22, decision 17).
+    this.healthBack = scene.add
+      .rectangle(16, 74, HEALTH_W, 8, 0x000000, 0.6)
+      .setOrigin(0)
+      .setStrokeStyle(1, 0xffffff, 0.5)
+      .setVisible(false);
+    this.healthFill = scene.add
+      .rectangle(16, 74, HEALTH_W, 8, 0xd04a4a, 1)
+      .setOrigin(0)
+      .setVisible(false);
+    this.healthText = scene.add
+      .text(16 + HEALTH_W + 8, 69, "", { fontSize: "13px", color: "#ffffff" })
+      .setVisible(false);
+    this.objects.push(
+      this.status,
+      this.healthBack,
+      this.healthFill,
+      this.healthText,
+      this.hintBox,
+      this.hint,
+      this.message,
+    );
 
     const left = (BASE_W - BAR_W) / 2;
     this.heldName = scene.add
@@ -329,7 +357,23 @@ export class Hud {
     return uy >= BAR_Y + (this.uh - BASE_H) && ux >= left && ux <= left + BAR_W;
   }
 
-  update(g: GameState, selected: number, message: string): void {
+  update(
+    g: GameState,
+    selected: number,
+    message: string,
+    showHealth = false,
+  ): void {
+    const { health } = g.combat;
+    this.healthBack.setVisible(showHealth);
+    this.healthFill.setVisible(showHealth);
+    this.healthText.setVisible(showHealth);
+    if (showHealth) {
+      this.healthFill.width = Math.max(
+        0,
+        (HEALTH_W * health.current) / health.max,
+      );
+      this.healthText.setText(`${Math.ceil(health.current)}/${health.max}`);
+    }
     const { clock, energy } = g.day;
     this.status.setText(
       `${dateText(clock.day)}  ${clock.format()}${festivalToday(clock.day) ? "  Festival" : ""}\nEnergy ${Math.ceil(energy.current)}  ${g.money}g`,

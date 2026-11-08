@@ -1,0 +1,36 @@
+[
+  {
+    "id": "pebbleback",
+    "name": "Pebbleback",
+    "behaviour": "shuffler",
+    "bands": [1],
+    "hp": 3,
+    "touch": 4,
+    "speed": 24,
+    "sight": 5,
+    "reach": 1.1,
+    "windup": 0.6,
+    "recover": 1,
+    "drops": [
+      { "id": "stone", "chance": 1, "min": 1, "max": 2 },
+      { "id": "copper-ore", "chance": 0.3, "min": 1, "max": 1 }
+    ]
+  },
+  {
+    "id": "dustmoth",
+    "name": "Dustmoth",
+    "behaviour": "drifter",
+    "bands": [1],
+    "hp": 2,
+    "touch": 4,
+    "speed": 20,
+    "sight": 4,
+    "reach": 0.9,
+    "windup": 0.6,
+    "recover": 1.2,
+    "drops": [
+      { "id": "moth-dust", "chance": 0.6, "min": 1, "max": 1 },
+      { "id": "fiber", "chance": 0.5, "min": 1, "max": 2 }
+    ]
+  }
+]

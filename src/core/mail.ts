@@ -32,11 +32,33 @@ export interface LetterDef {
 
 export const LETTERS = letterData as LetterDef[];
 
+/** A letter kept in a save, if it is shaped right. */
+function validLetter(raw: unknown): LetterDef | undefined {
+  if (typeof raw !== "object" || raw === null) return undefined;
+  const l = raw as Partial<LetterDef>;
+  if (
+    typeof l.id !== "string" ||
+    typeof l.sender !== "string" ||
+    typeof l.title !== "string" ||
+    typeof l.body !== "string"
+  )
+    return undefined;
+  return l as LetterDef;
+}
+
 export function letterById(
   id: string,
   defs: LetterDef[] = LETTERS,
 ): LetterDef | undefined {
   return defs.find((l) => l.id === id);
+}
+
+/** The letter an entry stands for: one written at the time, or one from the data. */
+export function letterOf(
+  e: MailEntry,
+  defs: LetterDef[] = LETTERS,
+): LetterDef | undefined {
+  return e.letter ?? letterById(e.id, defs);
 }
 
 /** queued: not due yet. waiting: delivered, unread. opened: read, gift still to take. taken: done. */
@@ -46,6 +68,8 @@ export interface MailEntry {
   id: string;
   /** The morning it arrives. */
   due: number;
+  /** A letter written at the time, such as the trainer's post of a lost stack. Absent for letters from `letters.json`. */
+  letter?: LetterDef;
   /** The day it arrived, once delivered. */
   received?: number;
   state: LetterState;
@@ -66,9 +90,14 @@ export class Mailbox {
   }
 
   /** Queue a letter for a morning. False if it was ever queued before. */
-  queue(id: string, due: number): boolean {
+  queue(id: string, due: number, letter?: LetterDef): boolean {
     if (this.has(id)) return false;
-    this.entries.push({ id, due, state: "queued" });
+    this.entries.push({
+      id,
+      due,
+      state: "queued",
+      ...(letter ? { letter } : {}),
+    });
     return true;
   }
 
@@ -119,7 +148,14 @@ export class Mailbox {
         continue;
       const received = Number.isInteger(e.received) ? e.received : undefined;
       if (e.state !== "queued" && received === undefined) continue;
-      this.entries.push({ id: e.id, due: e.due, received, state: e.state });
+      const letter = validLetter(e.letter);
+      this.entries.push({
+        id: e.id,
+        due: e.due,
+        received,
+        state: e.state,
+        ...(letter ? { letter } : {}),
+      });
     }
   }
 }
@@ -190,7 +226,7 @@ export function openLetter(
   defs: LetterDef[] = LETTERS,
 ): OpenResult {
   const e = g.mail.entry(id);
-  const letter = letterById(id, defs);
+  const letter = e ? letterOf(e, defs) : undefined;
   if (!e || !letter || e.state === "queued")
     return { ok: false, reason: "There is no such letter." };
   const a = letter.attachment;

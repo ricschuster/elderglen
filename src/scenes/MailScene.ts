@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import { dateOf } from "../core/calendar";
-import { letterById, nextLetter, openLetter } from "../core/mail";
+import { letterOf, nextLetter, openLetter } from "../core/mail";
 import type { GameState } from "../core/save";
 import { frame, Menu, TOUCH_ROW_H, type Row } from "./panel";
 import { STATE_KEY } from "./state";
@@ -61,7 +61,7 @@ export class MailScene extends Phaser.Scene {
     this.clearCard();
     const g = this.state;
     const rows: Row[] = g.mail.kept().map((e) => {
-      const l = letterById(e.id);
+      const l = letterOf(e);
       const pending = e.state === "waiting" || e.state === "opened";
       const day = e.received ?? e.due;
       const { season, dayOfSeason } = dateOf(day);

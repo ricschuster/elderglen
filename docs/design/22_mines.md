@@ -14,7 +14,7 @@ bars. The charcoal kiln is built as a machine (2026-11-07, note 24). The Smith's
 (2026-11-07, session e): a placeable machine, mining level 4, 20 copper ore and 25
 stone, 5 ore and 1 coal a bar. Old Greencoat's door scene (placeholder words, no
 portrait) and the camp chest on floor 10 (a daily gift, take only, no bench) are built
-(session e). Geodes are built (session e): a node that takes 3 swings, 5 percent of rocks on floors 1 to 10, cracked by the smith for 25g into a stone, ore, quartz, a placeholder gem or a found thing (`src/content/geodes.json`); Rockhound adds an extra geode from plain rock. The gem list, found things, clay and the Glimmerstone are not written. The mine hall's ore-only bin is built (#522): a service tile in `mine.json` that opens the shipping bin screen with raw ore only (copper, iron and gold ore; bars, stone and coal are refused, placeholder), into the same bin and nightly payment. **Built (2026-11-08): the deeper mine as digging only, floors 11 to 120** (`mine-bands.json`, `src/core/mines.ts`): the three bands of 40, iron nodes from floor 26 (owner decision 2026-11-08; a rare 6 percent share before floor 41, 22 percent from 41), gold from 81 with iron and copper rarer, Hearthsilver (6 nodes a floor, 1 to 2 ore) from floor 100, geodes in each band's kind, a camp chest on every 10th floor (emptied per camp, gift ore by band), the lift to every floor reached, no ladder on floor 120. **Built (2026-11-08): the Hearthsilver bar** (furnace, 5 ore and 2 coal, 8 hours placeholder) **and the fifth tool tier** at the smith (note 44). Not built: creatures, special floors, dangerous mode. Not built:
+(session e). Geodes are built (session e): a node that takes 3 swings, 5 percent of rocks on floors 1 to 10, cracked by the smith for 25g into a stone, ore, quartz, a placeholder gem or a found thing (`src/content/geodes.json`); Rockhound adds an extra geode from plain rock. The gem list, found things, clay and the Glimmerstone are not written. The mine hall's ore-only bin is built (#522): a service tile in `mine.json` that opens the shipping bin screen with raw ore only (copper, iron and gold ore; bars, stone and coal are refused, placeholder), into the same bin and nightly payment. **Built (2026-11-08): the deeper mine as digging only, floors 11 to 120** (`mine-bands.json`, `src/core/mines.ts`): the three bands of 40, iron nodes from floor 26 (owner decision 2026-11-08; a rare 6 percent share before floor 41, 22 percent from 41), gold from 81 with iron and copper rarer, Hearthsilver (6 nodes a floor, 1 to 2 ore) from floor 100, geodes in each band's kind, a camp chest on every 10th floor (emptied per camp, gift ore by band), the lift to every floor reached, no ladder on floor 120. **Built (2026-11-08): the Hearthsilver bar** (furnace, 5 ore and 2 coal, 8 hours placeholder) **and the fifth tool tier** at the smith (note 44). **Built (2026-11-08, build slice 3 part one, #597): gentle combat, first cut** (`src/core/combat.ts`, `creatures.ts`, `creatures.json`, `weapons.json`): the health bar, the six first weapons, the trainer and the dummy, the first two creatures on floors 1 to 40, defeat and the lost item by post, Assist and "no creatures" in the options. See "Settled in the part one build" below. Not built: the other ten creatures and bands 2 and 3 creatures, the combat skill and professions, rest camp changes, the slayer list, special floors, dangerous mode. Not built:
 everything else from slice 3 on. The mine hall and the mine door are placeholders
 on the farm until the Mountain exists (note 19). Everything else is unbuilt. It answers the design half of the mines item in
 `16_bundles.md` and feeds the fifth tool tier (#194).
@@ -428,6 +428,58 @@ mines.
   for the cast and dialogue notes (`18_dialogue.md`).
 - **A first fight is optional.** The player is never forced to fight. The
   trainer offers once and then waits to be asked.
+
+## Settled in the part one build (2026-11-08)
+
+Gaps the notes left open, settled with our own placeholders (every number is in
+`07_tuning_numbers.md`):
+
+- **Creatures built first: the Pebbleback and the Dustmoth**, both band 1, from
+  floor 1. The first band's other creatures (Rock Crab, Mossbeetle, Gloop) wait for
+  part two (#598). Floors 41 to 120 have no creatures yet, so the health bar does
+  not show there. The Pebbleback has 3 health and a touch of 4. It shuffles at 24
+  pixels a second (walking is 80), sees 5 tiles, winds up for 0.6 seconds
+  (blinking and swelling) and hits only if the player is still within reach. The
+  Dustmoth has 2 health, drifts in loops, leans toward the player inside 4 tiles
+  and puffs after the same wind up. After a hit a creature steps back and pauses.
+  Creatures lose interest after 3 seconds beyond 6 tiles.
+- **Count and place:** 2 to 5 a floor in the first band, on open tiles, never on a
+  rock, a ladder or the camp chest, and at least 6 tiles from where the player
+  arrives. Seeded by day and floor, saved with the floor, and a beaten one stays
+  gone until tomorrow. A saved floor from before creatures gets its day's set.
+- **Weapons live in the pack and are swung from the toolbar,** so "one slot, with
+  a swap" is the toolbar slot: hold a weapon and press Use. They are kept goods
+  (never sold or shipped). Swings cost no energy and no game time. Stats are
+  damage, cooldown, reach, arc and most targets. The blade is a 120 degree arc
+  that hits one creature, the club a 220 degree arc that hits up to four, the
+  sling a straight shot that hits the first creature on its line (it flies in the
+  faced direction, free aim by pointer is a later tablet check).
+- **Where weapons come from:** the trainer hands each starter free, on asking, any
+  time the player carries none of it (the Hazel Switch needs no first visit
+  ritual). The smith dwarf forges the copper tier of each family for 4 copper bars
+  and 200g, with no wait. Iron, gold and Hearthsilver tiers are part two.
+- **Health from food** is half the food's energy value, rounded. A hurt player may
+  eat at full energy. Any night's sleep, and a defeat, restores health.
+- **Defeat runs the pass-out code** (10 percent of money, capped at 1000g, wake
+  with the pass-out energy), then takes up to 3 stacks. The safe types are weapons,
+  seeds and saplings, bundle goods of any quality, and every kept item (rods, bait,
+  furniture, chests, wallpaper). Tools are not in the pack. A taken stack is lost
+  whole or half by a coin flip, and the first lost stack comes back in the
+  morning mail from the trainer (a letter written at the time, saved in the
+  mailbox). The mail is the lost and found, so there is no counter in the hall.
+- **The dummy** is a counter tile in the entrance hall that shows the damage
+  number and the swing timer, and never hurts. Only the "stand still" setting is
+  built, the slow walking setting waits.
+- **The trainer's tile** is in the entrance hall, a menu of the three starters
+  with a line on each family. Her words are placeholders.
+- **A beaten creature rolls the ladder chance** from the same dry streak counter
+  as rocks, and the ladder shows where it fell.
+- **Drops** are added to the pack, and left behind if it is full. Moth dust is a
+  new crafting good with no recipe yet.
+- **Assist and "no creatures"** are device settings (as the fishing assist is),
+  not saved with the game. Assist halves damage (rounded up, never to nothing),
+  lengthens wind ups by half and loses no items on defeat. "No creatures" spawns
+  and shows none, and hides the health bar.
 
 ## Opening the mines
 
