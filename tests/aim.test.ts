@@ -5,21 +5,24 @@ const here = { x: 10, y: 10 };
 
 describe("aimAt", () => {
   it("aims at the cursor tile within reach", () => {
-    expect(aimAt(here, { x: 12, y: 10 }, "down")).toEqual({
-      tile: { x: 12, y: 10 },
+    expect(aimAt(here, { x: 11, y: 10 }, "down")).toEqual({
+      tile: { x: 11, y: 10 },
       facing: "right",
     });
-    expect(aimAt(here, { x: 9, y: 8 }, "down")).toEqual({
-      tile: { x: 9, y: 8 },
+    expect(aimAt(here, { x: 9, y: 9 }, "down")).toEqual({
+      tile: { x: 9, y: 9 },
       facing: "up",
     });
   });
 
-  it("counts the diagonals as within reach", () => {
-    expect(aimAt(here, { x: 12, y: 12 }, "left").tile).toEqual({
-      x: 12,
-      y: 12,
+  it("turns toward a cursor two tiles off instead of reaching it", () => {
+    expect(aimAt(here, { x: 12, y: 10 }, "down")).toEqual({
+      tile: { x: 11, y: 10 },
+      facing: "right",
     });
+  });
+
+  it("counts the diagonals as within reach", () => {
     expect(aimAt(here, { x: 11, y: 11 }, "left").tile).toEqual({
       x: 11,
       y: 11,
