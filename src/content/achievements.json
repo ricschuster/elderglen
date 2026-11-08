@@ -180,5 +180,33 @@
       "color": "#8a7a6a",
       "price": 5000
     }
+  },
+  {
+    "id": "errand-runner",
+    "name": "Errand Runner",
+    "goal": "Complete 10 requests from the board",
+    "kind": "requests",
+    "threshold": 10,
+    "secret": false,
+    "hat": {
+      "id": "spotted-bow",
+      "name": "Spotted Bow",
+      "color": "#c8587a",
+      "price": 1000
+    }
+  },
+  {
+    "id": "valley-helper",
+    "name": "Valley Helper",
+    "goal": "Complete 40 requests from the board",
+    "kind": "requests",
+    "threshold": 40,
+    "secret": false,
+    "hat": {
+      "id": "hen-mask",
+      "name": "Hen Mask",
+      "color": "#c8883a",
+      "price": 2000
+    }
   }
 ]

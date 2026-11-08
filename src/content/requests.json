@@ -1,0 +1,11 @@
+{
+  "delivery": [
+    { "from": "crop", "min": 2, "max": 6 },
+    { "from": "forage", "min": 2, "max": 5 },
+    { "from": "items", "ids": ["wood", "stone"], "min": 10, "max": 30 }
+  ],
+  "gathering": [
+    { "from": "forage", "min": 3, "max": 8 },
+    { "from": "items", "ids": ["wood", "stone", "fiber"], "min": 10, "max": 40 }
+  ]
+}

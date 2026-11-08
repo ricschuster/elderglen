@@ -1,4 +1,5 @@
 import type { Outcome } from "./actions";
+import { noteGathered } from "./quests";
 import { GEODE_SHARE, geodeDrop, geodeKindForFloor } from "./geodes";
 import {
   COAL,
@@ -111,6 +112,7 @@ export function mine(
   }
   rocks.remove(x, y);
   g.inventory.add(drop.id, drop.count);
+  noteGathered(g, drop.id, drop.count);
   // Rockhounds also turn up a geode in plain rock, as often as the nodes do (note 22).
   if (
     floor !== undefined &&

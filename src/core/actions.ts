@@ -23,6 +23,7 @@ import { isMature, saplingId, treeOfSapling } from "./fruittrees";
 import { FIBER, FIBER_CHANCE, MIXED_SEED } from "./weeds";
 import { TWIG_WOOD } from "./debris";
 import { isRaining } from "./weather";
+import { noteGathered } from "./quests";
 
 /** Energy per tool swing (hoe, watering can), as in Stardew. Seeds, picking and harvesting are free. */
 export const TOOL_ENERGY = 2;
@@ -160,6 +161,7 @@ export function harvest(
   if (g.inventory.room(item) < count) return fail("backpack full");
   g.farm.harvest(x, y);
   g.inventory.add(item, count);
+  noteGathered(g, item, count);
   const price = cropById(cropId)?.sellPrice ?? 0;
   return award(g, "farming", harvestXp(price), item);
 }
@@ -180,8 +182,10 @@ export function forage(
   if (g.inventory.room(item) < 1) return fail("backpack full");
   g.forage.collect(x, y);
   g.inventory.add(item);
+  noteGathered(g, item);
   // Gatherers sometimes find a second one, if it fits.
-  if (random() < doubleForageChance(g.skills)) g.inventory.add(item);
+  if (random() < doubleForageChance(g.skills) && g.inventory.add(item))
+    noteGathered(g, item);
   return award(g, "foraging", FORAGE_XP, item);
 }
 
@@ -323,7 +327,7 @@ export function chop(
   }
   for (const [id, n] of plan.goods) {
     const fits = Math.min(n, g.inventory.room(id));
-    if (fits > 0) g.inventory.add(id, fits);
+    if (fits > 0 && g.inventory.add(id, fits)) noteGathered(g, id, fits);
     if (fits < n) {
       const spot = dropSpot(g, map, x, y);
       g.ground.drop(spot.x, spot.y, id, n - fits);
@@ -373,7 +377,7 @@ function chopFruitTree(
     [sapling, 1],
   ] as const) {
     const fits = Math.min(n, g.inventory.room(id));
-    if (fits > 0) g.inventory.add(id, fits);
+    if (fits > 0 && g.inventory.add(id, fits)) noteGathered(g, id, fits);
     if (fits < n) {
       const spot = dropSpot(g, map, x, y);
       g.ground.drop(spot.x, spot.y, id, n - fits);
@@ -420,6 +424,7 @@ export function pickFruit(g: GameState, x: number, y: number): Outcome {
   const take = Math.min(ripe.count, g.inventory.room(ripe.item));
   if (take < 1) return fail("backpack full");
   g.inventory.add(ripe.item, take);
+  noteGathered(g, ripe.item, take);
   const t = g.fruitTrees.at(x, y);
   if (t) t.fruit -= take;
   return { ok: true, item: ripe.item };
@@ -522,7 +527,10 @@ export function clearWeed(
         ? MIXED_SEED
         : undefined;
   if (!drop) return { ok: true };
-  if (g.inventory.add(drop)) return { ok: true, item: drop };
+  if (g.inventory.add(drop)) {
+    noteGathered(g, drop);
+    return { ok: true, item: drop };
+  }
   const spot = dropSpot(g, map, x, y);
   g.ground.drop(spot.x, spot.y, drop, 1);
   return { ok: true };
@@ -548,7 +556,10 @@ export function clearTwig(
     );
   else swing(g, tool);
   g.twigs.remove(x, y);
-  if (g.inventory.add("wood", TWIG_WOOD)) return { ok: true, item: "wood" };
+  if (g.inventory.add("wood", TWIG_WOOD)) {
+    noteGathered(g, "wood", TWIG_WOOD);
+    return { ok: true, item: "wood" };
+  }
   const spot = dropSpot(g, map, x, y);
   g.ground.drop(spot.x, spot.y, "wood", TWIG_WOOD);
   return { ok: true };

@@ -4,6 +4,34 @@
     "sender": "The hat-makers",
     "title": "Hats for the valley",
     "body": "Word has reached us that you have done something worth a hat. We make them for folk who do. Ask at the hatter's counter on your achievements page, and you will find the first one waiting. Wear it well.",
-    "trigger": { "kind": "first-achievement" }
+    "trigger": {
+      "kind": "first-achievement"
+    }
+  },
+  {
+    "id": "errand-letter-10",
+    "sender": "The neighbours",
+    "title": "Thank you for the errands",
+    "body": "Ten jobs off the board, and not one left to rot. The valley notices a helping hand. Here is a little something for your trouble.",
+    "trigger": {
+      "kind": "achievement",
+      "id": "errand-runner"
+    },
+    "attachment": {
+      "gold": 500
+    }
+  },
+  {
+    "id": "errand-letter-40",
+    "sender": "The neighbours",
+    "title": "Forty errands and counting",
+    "body": "Forty requests filled. We hardly know how the valley managed before you. Please take this, and know that it is meant kindly.",
+    "trigger": {
+      "kind": "achievement",
+      "id": "valley-helper"
+    },
+    "attachment": {
+      "gold": 2500
+    }
   }
 ]

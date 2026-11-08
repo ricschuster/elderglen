@@ -64,6 +64,18 @@ export class HatsScene extends Phaser.Scene {
         },
       ],
     });
+    rows.push({
+      label: "Open requests",
+      buttons: [
+        {
+          text: "Open",
+          run: () => {
+            this.scene.stop();
+            this.scene.launch("requests", { list: true });
+          },
+        },
+      ],
+    });
     this.menu.setRows(rows);
   }
 

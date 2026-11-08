@@ -780,3 +780,16 @@ Source: `src/core/orders.ts`, `src/core/debris.ts`, `src/content/orders.json`.
   10 percent chance of one stump, standing cap 25 rocks and 25 twigs, none in
   winter. A twig gives 1 wood. The grass spread rate is not set (no grass).
 - Check in play: the steady wood and stone supply against note 43's wood economy.
+
+## Request board (built 2026-11-08, note 50, placeholders)
+
+Source: `src/core/quests.ts`, `src/content/requests.json`.
+
+- A day posts a request with an 80 percent chance (SC-27, unchecked). None on
+  day 1. Half of them are deliveries. 2 days to finish: the day posted and the next.
+- Delivery pays 3 times the normal quality sell price times the count (Stardew).
+- Gathering pays 2 times the normal sell value of the count (ours, untuned).
+- Counts: delivery crops 2 to 6, forage 2 to 5, wood or stone 10 to 30. Gathering
+  forage 3 to 8, wood, stone or fiber 10 to 40.
+- Errand achievements: 10 requests (Spotted Bow hat 1,000g, 500g letter) and 40
+  (Hen Mask 2,000g, 2,500g letter), as note 38.

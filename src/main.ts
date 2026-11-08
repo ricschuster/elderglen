@@ -26,6 +26,7 @@ import { FurnaceScene } from "./scenes/FurnaceScene";
 import { ChestScene } from "./scenes/ChestScene";
 import { GreencoatScene } from "./scenes/GreencoatScene";
 import { OrdersScene } from "./scenes/OrdersScene";
+import { RequestsScene } from "./scenes/RequestsScene";
 import { AchievementsScene } from "./scenes/AchievementsScene";
 import { CollectionsScene } from "./scenes/CollectionsScene";
 import { MailScene } from "./scenes/MailScene";
@@ -66,6 +67,7 @@ const game = new Phaser.Game({
     CollectionsScene,
     MailScene,
     OrdersScene,
+    RequestsScene,
     CraftingScene,
     HatsScene,
     CaveChoiceScene,

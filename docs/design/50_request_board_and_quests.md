@@ -1,6 +1,6 @@
 # 50 The request board and quests (draft)
 
-Status: draft. Decided with the owner on 2026-11-02. Nothing here is built. Note
+Status: draft. Decided with the owner on 2026-11-02. First slice built 2026-11-08 (see "Built"). Note
 38 settled that a daily request board stands at the general store and counts
 toward two errand achievements. This note gives it types, pay, rules and a
 quest record. The quest log in the journal (`49_menu_and_journal.md`) shows what
@@ -85,6 +85,19 @@ One data record covers every quest, whatever its source.
   one shows its text, what it wants, the gathering counter and the days left.
   Cancel is under it.
 - Touch needs no drag, and every action is a tap on a button.
+
+## Built
+
+Built 2026-11-08: delivery and gathering requests (steps 1 to 3 and 5 of the
+build order). `src/core/quests.ts`, `src/content/requests.json`, a Request Board
+at the general store (`RequestsScene`), the open list under the hat box's "Open
+requests" row (no journal shell yet), gathering credit from forage, harvest,
+wood, fiber and mining drops, the Errand Runner and Valley Helper achievements
+and their letters, and an optional `quests` save field (no version bump, as
+mail). Placeholders are in `07_tuning_numbers.md`. Left out: the star counter
+and prize tickets, story quests, friendship pay, hand-in to the poster (the
+board takes it), fishing, slaying and hello types, and the journal section.
+Items picked up off the ground after a full pack do not count toward gathering.
 
 ## Build order
 

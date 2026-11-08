@@ -108,5 +108,15 @@
     "id": "fur-lined-hood",
     "name": "Fur-lined Hood",
     "color": "#8a7a6a"
+  },
+  {
+    "id": "spotted-bow",
+    "name": "Spotted Bow",
+    "color": "#c8587a"
+  },
+  {
+    "id": "hen-mask",
+    "name": "Hen Mask",
+    "color": "#c8883a"
   }
 ]

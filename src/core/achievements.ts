@@ -15,7 +15,14 @@ import { SKILLS } from "./skills";
  * its systems. Content is `src/content/achievements.json`. Pure rules.
  */
 export type AchievementKind =
-  "money" | "craft" | "craftAll" | "shipEach" | "shipOne" | "skill" | "house";
+  | "money"
+  | "craft"
+  | "craftAll"
+  | "shipEach"
+  | "shipOne"
+  | "skill"
+  | "house"
+  | "requests";
 
 export interface AchievementDef {
   id: string;
@@ -137,6 +144,8 @@ export function met(g: GameState, a: AchievementDef): boolean {
       return SKILLS.some((s) => g.skills.level(s) >= a.threshold);
     case "house":
       return g.houseTier >= a.threshold;
+    case "requests":
+      return g.quests.completed >= a.threshold;
   }
 }
 
