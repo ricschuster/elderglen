@@ -21,6 +21,12 @@ Start each session by asking which item to take.
    (audio plan: #527).
 4. **Ring 2 shape and travel** (#20, M5). Parked until slice 3 is played.
 
+Built on 2026-11-08 (handoff 2026-11-08d): menu rows at touch size (#542), zoom
+keys and pinch zoom (#543), playtest script fixes (#524), geode kinds as items
+(#521), and the device pixel ratio settled as not needed (SC-72). Design item
+added: a layout addendum to note 66 for the festival maps (Harvest Showing and
+Hollow Eve maze) before they are built.
+
 Built on 2026-11-08 (handoff 2026-11-08c): Artisan Goods calibration in the sim
 bot (owner: accept year two, keep the 4000g sapling) and the tier 2 widening
 (#550). Next: pick from the list above, the completion tracker (#196) design
@@ -58,9 +64,11 @@ geodes, and slice 1's achievements with the hatter.
 
 Smaller leftovers still open (tracked in #522): the furniture catalogue (needs a design answer:
 where it is sold and its price, note 41), the hatter's letter, mail gifts and the
-achievements that wait for later systems, the axe ladder and the Hearthsilver
-grade, the mine hall's ore-only bin, Artisan Goods in the sim bot, festival maps
-in place of the festival screens, storms, and the fruit bat and mushroom art.
+achievements that wait for later systems (mail system, note 51, unbuilt), the
+Hearthsilver grade (no design), festival maps in place of the festival screens
+(layout addendum to note 66 first), storm strikes (slice 3), and the fruit bat
+and mushroom art. The axe ladder, the mine hall's ore-only bin, Artisan Goods in
+the sim bot and weather-only storms are built.
 
 Session f (2026-11-07, handoff 2026-11-07f) fixed the first browser playtest
 feedback: pickaxe repeat, click to open doors, name tags, the carpenter's Buy
