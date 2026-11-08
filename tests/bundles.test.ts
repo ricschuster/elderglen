@@ -488,3 +488,28 @@ describe("the slice 1 hall", () => {
     expect(inv.count("coal")).toBe(20);
   });
 });
+
+describe("bundle gold counts as earnings (SC-54)", () => {
+  it("tells the caller the gold a finished bundle pays, once", () => {
+    const hall = openHall();
+    const bundle = hall.bundles.find((b) => b.reward.money)!;
+    const wallet = { money: 0 };
+    const inv = new Inventory();
+    const told: number[] = [];
+    let last: string | undefined;
+    for (const item of bundle.items) {
+      if (hall.complete(bundle.id)) break;
+      const stack =
+        item.minQuality === "normal"
+          ? item.id
+          : `${item.id}@${item.minQuality}`;
+      for (let n = 0; n < item.count; n++) {
+        inv.add(stack);
+        last = hall.handIn(inv, wallet, bundle.id, stack, (g) => told.push(g));
+      }
+    }
+    expect(last).toBe("completed");
+    expect(told).toEqual([bundle.reward.money]);
+    expect(wallet.money).toBe(bundle.reward.money);
+  });
+});

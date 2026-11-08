@@ -116,7 +116,9 @@ The booth sells winter furniture from the build 8 list.
 - **Fruit bats.** Each night an empty cave gets no fruit 48 percent, 1 fruit 25
   percent, 2 fruit 13 percent, 3 fruit 7 percent and 4 or more 7 percent
   (`07_tuning_numbers.md`, line 525). Fruit stays until picked up, and more
-  fruit in the cave leaves less room. Includes foraged fruit out of season.
+  fruit in the cave leaves less room. Bats leave any fruit in any season (SC-55,
+  owner 2026-11-07): every wild fruit and every orchard fruit, with no season
+  pool.
   Picking gives 7 foraging experience, Botanist makes the fruit top grade and
   Gatherer can double it.
 - **Mushrooms.** Six growing boxes. Each box makes one mushroom every second
@@ -173,7 +175,7 @@ festival furniture and hats. Without a dish group the table tops out at 93
 points, so first place (85) needs five groups of top goods.
 
 The farm cave is built too (2026-11-07). Earnings from the bin and the shop
-count toward 25,000g. Decided later (SC-54, 2026-11-07): all gold received counts, so bundle rewards will too. The build still counts sales only, a leftover. The villager
+count toward 25,000g. All gold received counts (SC-54, 2026-11-07), so bundle rewards count too (built in parity pass 521). The villager
 comes the next morning as a choice screen, once a morning until answered. The
 door sits at the north edge of every farm map (column 36), shut until the
 choice. Fruit bats and mushroom boxes follow the numbers above, picked with

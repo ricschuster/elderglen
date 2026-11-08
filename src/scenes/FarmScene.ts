@@ -32,7 +32,7 @@ import { browserStore, loadDeviceSettings } from "./storage";
 import { saveGame } from "../core/save";
 import { absoluteMinutes } from "../core/furnace";
 import { jobDone, statusText } from "../core/machines";
-import { chestById, pickUpChest, placeChest } from "../core/chests";
+import { chestById, pickUpChest, placeChest, pushChest } from "../core/chests";
 import { greencoatDue, takeCampGift } from "../core/camp";
 import {
   CAVE_MAP,
@@ -141,6 +141,14 @@ interface SceneData {
  * tool, the end-day key sleeps (both rebindable, see `core/bindings.ts`). Walking through an exit restarts the scene on the next map; the
  * state and the selected toolbar slot survive in the game registry.
  */
+/** The tile step a push takes for each way the farmer faces. */
+const PUSH: Record<Facing, { x: number; y: number }> = {
+  up: { x: 0, y: -1 },
+  down: { x: 0, y: 1 },
+  left: { x: -1, y: 0 },
+  right: { x: 1, y: 0 },
+};
+
 export class FarmScene extends Phaser.Scene {
   private state!: GameState;
   private selected = 0;
@@ -755,6 +763,25 @@ export class FarmScene extends Phaser.Scene {
       this.state.chests.at(this.mapId, front.x, front.y)
     )
       return this.report(pickUpChest(this.state, this.mapId, front.x, front.y));
+    // The axe or pickaxe pushes a chest with items in it one tile along (SC-56).
+    if (
+      held.kind === "tool" &&
+      (held.tool === "axe" || held.tool === "pickaxe") &&
+      this.state.chests.at(this.mapId, front.x, front.y)
+    ) {
+      const step = PUSH[this.facing];
+      return this.report(
+        pushChest(
+          this.state,
+          this.map,
+          this.mapId,
+          front.x,
+          front.y,
+          step.x,
+          step.y,
+        ),
+      );
+    }
     if (isHouseMap(this.mapId)) {
       // In the house the held piece is stood down, and the hand takes one up.
       if (held.kind === "item" && furnitureById(held.id))

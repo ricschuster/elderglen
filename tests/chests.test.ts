@@ -4,6 +4,7 @@ import {
   contents,
   pickUpChest,
   placeChest,
+  pushChest,
   putIn,
   takeOut,
 } from "../src/core/chests";
@@ -162,3 +163,51 @@ describe("the workbench", () => {
 
 import { RECIPES } from "../src/core/crafting";
 const recipe = () => RECIPES.find((r) => r.id === "chest")!;
+
+describe("pushing a chest (SC-56)", () => {
+  const next = farm
+    .tillableTiles()
+    .find((t) =>
+      farm.tillableTiles().some((u) => u.x === t.x + 1 && u.y === t.y),
+    )!;
+
+  it("moves a full chest one tile, stacks and all", () => {
+    const g = newGame();
+    g.inventory.add("chest");
+    placeChest(g, farm, "farm", next.x, next.y, "chest");
+    g.chests.get("farm", next.x, next.y)!.items.add("wood", 5);
+    expect(pickUpChest(g, "farm", next.x, next.y).ok).toBe(false);
+    expect(pushChest(g, farm, "farm", next.x, next.y, 1, 0).ok).toBe(true);
+    expect(g.chests.at("farm", next.x, next.y)).toBeUndefined();
+    expect(g.chests.get("farm", next.x + 1, next.y)?.items.count("wood")).toBe(
+      5,
+    );
+  });
+
+  it("will not push onto a blocked tile", () => {
+    const g = newGame();
+    g.inventory.add("chest", 2);
+    placeChest(g, farm, "farm", next.x, next.y, "chest");
+    placeChest(g, farm, "farm", next.x + 1, next.y, "chest");
+    expect(pushChest(g, farm, "farm", next.x, next.y, 1, 0)).toEqual({
+      ok: false,
+      reason: "chest will not move",
+    });
+    expect(g.chests.count).toBe(2);
+  });
+
+  it("pushes in the house too", () => {
+    const g = newGame();
+    g.inventory.add("chest");
+    placeChest(g, house, "house", floor.x, floor.y, "chest");
+    const r = [
+      [1, 0],
+      [-1, 0],
+      [0, 1],
+      [0, -1],
+    ].some(
+      ([dx, dy]) => pushChest(g, house, "house", floor.x, floor.y, dx!, dy!).ok,
+    );
+    expect(r).toBe(true);
+  });
+});

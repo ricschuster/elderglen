@@ -175,3 +175,26 @@ describe("crafting", () => {
     expect(craft(g, "nope")).toBe("no such recipe");
   });
 });
+
+describe("lifting a sprinkler", () => {
+  it("works with any tool or the hand, and blocks the tool's usual job", () => {
+    const map = soilMap();
+    for (const tool of ["hand", "axe", "pickaxe", "hoe", "can"] as const) {
+      const g = newGame();
+      g.sprinklers.add(2, 2, "sprinkler");
+      const r = useHeld(g, map, { kind: "tool", tool }, 2, 2);
+      expect(r.ok).toBe(true);
+      expect(g.sprinklers.at(2, 2)).toBeUndefined();
+      expect(g.inventory.count("sprinkler")).toBe(1);
+    }
+  });
+
+  it("stays put when the backpack is full or a seed is held", () => {
+    const map = soilMap();
+    const g = newGame();
+    g.sprinklers.add(2, 2, "sprinkler");
+    for (let i = 0; i < g.inventory.size; i++) g.inventory.add(`filler${i}`);
+    expect(useHeld(g, map, { kind: "tool", tool: "axe" }, 2, 2).ok).toBe(false);
+    expect(g.sprinklers.at(2, 2)).toBe("sprinkler");
+  });
+});

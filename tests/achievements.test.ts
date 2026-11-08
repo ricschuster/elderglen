@@ -26,7 +26,7 @@ describe("achievements", () => {
     }
   });
 
-  it("earns the money goals from sales, and hides the top one until earned", () => {
+  it("earns the money goals from gold received, and hides the top one until earned", () => {
     const g = newGame();
     expect(checkAchievements(g)).toEqual([]);
     g.cave.addEarnings(60000, 99);

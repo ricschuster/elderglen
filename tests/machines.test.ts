@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { ARTISAN_GOODS, categoryOf } from "../src/core/artisan";
 import { Hall, normalizeBundle, ROOMS } from "../src/core/bundles";
 import { craft, knownRecipes } from "../src/core/crafting";
+import { COAL, COAL_PER_BAR, ORE_PER_BAR, ORES } from "../src/core/ore";
 import { itemById } from "../src/core/items";
 import { FarmMap, type TiledMapJson } from "../src/core/map";
 import {
@@ -10,6 +11,7 @@ import {
   jobDone,
   loadMachine,
   placeMachine,
+  statusText,
   waitText,
 } from "../src/core/machines";
 import { MINUTES_PER_DAY, processFor } from "../src/core/processing";
@@ -109,10 +111,6 @@ describe("machines on the farm", () => {
     expect(r.ok).toBe(true);
     expect(g.inventory.count("melon@silver")).toBe(0);
     const hand = { kind: "tool", tool: "hand" } as const;
-    expect(useHeld(g, map, hand, 3, 3)).toEqual({
-      ok: false,
-      reason: "machine busy",
-    });
     pass(g, map, 2);
     expect(jobDone(g, g.machines.get(3, 3)!)).toBe(false);
     pass(g, map, 1);
@@ -157,11 +155,48 @@ describe("machines on the farm", () => {
     expect(g.inventory.count("wood")).toBe(0);
   });
 
-  it("an idle machine is picked up by hand, a busy one is not", () => {
+  it("a working machine is picked up and gives its input back", () => {
+    const { g } = withMachine("keg");
+    g.inventory.add("tomato");
+    loadMachine(g, 3, 3, "tomato");
+    expect(g.inventory.count("tomato")).toBe(0);
+    expect(handOnMachine(g, 3, 3).ok).toBe(true);
+    expect(g.machines.count).toBe(0);
+    expect(g.inventory.count("keg")).toBe(1);
+    expect(g.inventory.count("tomato")).toBe(1);
+  });
+
+  it("gives back both inputs of a two input machine", () => {
+    const { g } = withMachine("furnace");
+    const ore = ORES[0]!.id;
+    g.inventory.add(ore, ORE_PER_BAR);
+    g.inventory.add(COAL, COAL_PER_BAR);
+    expect(loadMachine(g, 3, 3, ore).ok).toBe(true);
+    expect(g.inventory.count(ore)).toBe(0);
+    expect(g.inventory.count(COAL)).toBe(0);
+    expect(handOnMachine(g, 3, 3).ok).toBe(true);
+    expect(g.inventory.count(ore)).toBe(ORE_PER_BAR);
+    expect(g.inventory.count(COAL)).toBe(COAL_PER_BAR);
+  });
+
+  it("keeps the batch and the machine when the backpack cannot hold them", () => {
+    const { g } = withMachine("charcoal-kiln");
+    g.inventory.add("wood", 10);
+    loadMachine(g, 3, 3, "wood");
+    for (let i = 0; i < g.inventory.size; i++) g.inventory.add(`filler${i}`);
+    expect(handOnMachine(g, 3, 3)).toEqual({
+      ok: false,
+      reason: "backpack full",
+    });
+    expect(g.machines.count).toBe(1);
+    expect(g.machines.get(3, 3)?.job).toBeDefined();
+    expect(g.inventory.count("wood")).toBe(0);
+  });
+
+  it("an idle machine is picked up by hand", () => {
     const { g, map } = withMachine("keg");
     g.inventory.add("tomato");
     loadMachine(g, 3, 3, "tomato");
-    expect(handOnMachine(g, 3, 3).ok).toBe(false);
     pass(g, map, 7);
     expect(handOnMachine(g, 3, 3).ok).toBe(true);
     expect(handOnMachine(g, 3, 3).ok).toBe(true);
@@ -178,9 +213,21 @@ describe("machines on the farm", () => {
     expect(handOnMachine(g, 3, 3).ok).toBe(true);
     expect(g.inventory.count("honey")).toBe(1);
     expect(g.machines.get(3, 3)?.job).toBeDefined();
-    const before = g.machines.get(3, 3)!.job!.doneAt;
-    g.machines.endDay("winter");
-    expect(g.machines.get(3, 3)!.job!.doneAt).toBe(before + MINUTES_PER_DAY);
+  });
+
+  it("a bee house keeps its timer in winter but makes no honey", () => {
+    const { g, map } = withMachine("bee-house");
+    const m = g.machines.get(3, 3)!;
+    const before = m.job!.doneAt;
+    // Spring is 28 days, so day 29 starts summer; use the winter dates directly.
+    g.day.clock.day = 28 * 3 + 1;
+    expect(machineMinutes(g)).toBeGreaterThan(before);
+    expect(jobDone(g, m)).toBe(false);
+    expect(statusText(g, 3, 3)).toBe("The bees rest until spring.");
+    expect(m.job!.doneAt).toBe(before);
+    g.day.clock.day = 28 * 4 + 1;
+    expect(jobDone(g, m)).toBe(true);
+    expect(map).toBeDefined();
   });
 
   it("block digging and sprinklers on their tile", () => {

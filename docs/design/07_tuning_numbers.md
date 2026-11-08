@@ -536,7 +536,7 @@ marked ours. Recipes are in `34_crafting.md`.
   - Preserves jar: jelly and pickles 4,000 min (2.5 days).
   - Keg: wine 10,000 min (6.25 days), juice 6,000 min (3.75 days), beer 1,750
     min (about 1.1 days), mead 600 min.
-  - Bee house: honey every 4 nights, none in winter, flowers within 5 tiles
+  - Bee house: honey every 4 nights, none in winter (the timer runs, the honey waits for spring), flowers within 5 tiles
     change it.
 - Artisan sell prices: jelly and pickles 2 x base price + 50, wine 3 x base,
   juice 2.25 x base, beer 200g, mead 300g. Wild honey 100g. Flower honey by
@@ -558,7 +558,7 @@ the farm growth section above; these are the rest.
 
 - Machine time is 1,600 minutes a day (the clock's 1,200 awake plus 400
   overnight), so a batch finishes overnight. Bee house: honey every 4 days
-  (6,400 machine minutes), 100g, none in winter (a winter night does not count).
+  (6,400 machine minutes), 100g, none in winter (the timer keeps running; a batch done in winter is ready on the first day of spring).
   Flower honey waits for a flower set.
 - Kiln: 10 wood for 1 coal, 30 minutes. Seed maker: crops only for now (no wild
   seeds item yet), 1 to 3 seeds rolled when the batch starts, 20 minutes.

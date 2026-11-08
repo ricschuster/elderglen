@@ -1,5 +1,6 @@
 import type { Outcome } from "./actions";
 import { DAY_START } from "./clock";
+import { dateOf } from "./calendar";
 import { HONEY } from "./artisan";
 import { itemById } from "./items";
 import type { FarmMap } from "./map";
@@ -17,6 +18,8 @@ export interface MachineJob {
   output: string;
   count: number;
   doneAt: number;
+  /** What was put in, given back if the machine is picked up while working. */
+  input?: { item: string; use: number; also?: { item: string; use: number } };
 }
 
 export interface PlacedMachine {
@@ -88,22 +91,24 @@ export class Machines {
     this.placed.delete(key(x, y));
     return m;
   }
-
-  /** Bee houses make nothing in winter, so a winter night does not count on their timer. */
-  endDay(season: string): void {
-    if (season !== "winter") return;
-    for (const m of this.placed.values())
-      if (m.id === "bee-house" && m.job) m.job.doneAt += MINUTES_PER_DAY;
-  }
 }
 
 const fail = (reason: string): Outcome => ({ ok: false, reason });
 
 const nameOf = (id: string) => itemById(id)?.name ?? id;
 
-/** True when a job is in and finished. */
+/** True in winter, when a bee house keeps its timer but makes no honey (SC-50). */
+export function restingBees(g: GameState, m: PlacedMachine): boolean {
+  return m.id === "bee-house" && dateOf(g.day.clock.day).season === "winter";
+}
+
+/** True when a job is in and finished. A bee house is not ready in winter. */
 export function jobDone(g: GameState, m: PlacedMachine): boolean {
-  return m.job !== undefined && machineMinutes(g) >= m.job.doneAt;
+  return (
+    m.job !== undefined &&
+    machineMinutes(g) >= m.job.doneAt &&
+    !restingBees(g, m)
+  );
 }
 
 /** Machine minutes left, or undefined with no job. 0 when done. */
@@ -129,6 +134,7 @@ export function statusText(g: GameState, x: number, y: number): string {
   if (!m) return "";
   const name = nameOf(m.id);
   if (!m.job) return `The ${name.toLowerCase()} is empty.`;
+  if (restingBees(g, m)) return "The bees rest until spring.";
   const left = minutesLeft(g, m) ?? 0;
   return left <= 0
     ? `The ${nameOf(m.job.output).toLowerCase()} is ready.`
@@ -191,6 +197,7 @@ export function loadMachine(
     output: p.output,
     count: p.count,
     doneAt: machineMinutes(g) + p.minutes,
+    input: { item, use: p.use, also: p.also && { ...p.also } },
   };
   return {
     ok: true,
@@ -216,17 +223,32 @@ export function collectMachine(g: GameState, x: number, y: number): Outcome {
 }
 
 /**
- * The hand on a machine: collect a done batch, else take up an idle machine.
- * A bee house can be taken up any time, and loses its batch.
+ * The hand on a machine: collect a done batch, else take the machine up. A
+ * working machine can be picked up too: the batch is cancelled and the input
+ * comes back (SC-50, SC-66). A bee house loses its batch. If the backpack
+ * cannot hold the machine and its input, nothing changes.
  */
 export function handOnMachine(g: GameState, x: number, y: number): Outcome {
   const m = g.machines.get(x, y);
   if (!m) return fail("no machine here");
   if (jobDone(g, m)) return collectMachine(g, x, y);
-  if (m.job && !machineById(m.id)?.auto) return fail("machine busy");
   if (g.day.over) return fail("exhausted");
-  if (g.inventory.room(m.id) < 1) return fail("backpack full");
+  const counts: Record<string, number> = { [m.id]: 1 };
+  const input = m.job?.input;
+  if (input) {
+    counts[input.item] = (counts[input.item] ?? 0) + input.use;
+    if (input.also)
+      counts[input.also.item] = (counts[input.also.item] ?? 0) + input.also.use;
+  }
+  // Try the lot, and undo if any of it does not fit.
+  const added: [string, number][] = [];
+  for (const [id, n] of Object.entries(counts)) {
+    if (g.inventory.room(id) < n || !g.inventory.add(id, n)) {
+      for (const [a, k] of added) g.inventory.remove(a, k);
+      return fail("backpack full");
+    }
+    added.push([id, n]);
+  }
   g.machines.remove(x, y);
-  g.inventory.add(m.id);
   return { ok: true, item: m.id };
 }

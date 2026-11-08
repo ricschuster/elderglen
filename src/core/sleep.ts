@@ -95,7 +95,6 @@ export function sleep(
   g.tomorrow = rollWeather(next.season, next.dayOfSeason, random);
   if (g.weather === "rainy") g.farm.waterAll();
   g.sprinklers.water(g.farm);
-  g.machines.endDay(season);
   g.trees.endDay(
     season,
     random,
@@ -147,7 +146,7 @@ export function sleep(
     ),
     random,
   );
-  g.cave.endDay(season, maps.get(CAVE_MAP).forageSpots, random);
+  g.cave.endDay(maps.get(CAVE_MAP).forageSpots, random);
   const houseFinished = advanceBuild(g);
   const furnaceGifted = deliverFurnace(g);
 

@@ -1,5 +1,6 @@
 import type { Outcome } from "./actions";
 import { FORAGE, type Spot } from "./forage";
+import { FRUIT_TREES } from "./fruittrees";
 import { machineMinutes } from "./machines";
 import { processFor } from "./processing";
 import { doubleForageChance } from "./professions";
@@ -72,6 +73,12 @@ export function batFruitCount(roll: number): number {
   return BAT_ODDS.length - 1;
 }
 
+/** Every fruit a bat may leave, in any season: wild fruit and orchard fruit. */
+export const BAT_FRUIT: readonly string[] = [
+  ...FORAGE.filter((f) => f.produce === "fruit").map((f) => f.id),
+  ...FRUIT_TREES.map((t) => t.id),
+];
+
 /** A mushroom for a box, by weight, from one roll in 0 to 1. */
 export function pickMushroom(roll: number): string {
   const total = MUSHROOM_WEIGHTS.reduce((n, m) => n + m.weight, 0);
@@ -85,7 +92,7 @@ export function pickMushroom(roll: number): string {
 
 /** The farm cave's state: the offer, the choice and what is growing. */
 export class FarmCave {
-  /** Gold earned from selling over the whole game. Bundle rewards do not count (SC-54 open). */
+  /** All gold received over the whole game: sales and bundle rewards (SC-54). */
   earnings = 0;
   /** True once the villager has asked. */
   asked = false;
@@ -159,20 +166,17 @@ export class FarmCave {
 
   /**
    * Overnight. Bats leave 0 to 4 fruit on free spots, and mushroom boxes grow.
-   * Fruit is any wild fruit in season, or any wild fruit at all in a season
-   * with none, such as winter.
+   * Fruit is any fruit in any season (SC-55): wild or orchard.
    */
-  endDay(season: string, spots: Spot[], random: () => number): void {
+  endDay(spots: Spot[], random: () => number): void {
     if (this.choice === "bats") {
-      const wild = FORAGE.filter((f) => f.produce === "fruit");
-      const inSeason = wild.filter((f) => f.seasons.includes(season as never));
-      const options = inSeason.length > 0 ? inSeason : wild;
+      const options = BAT_FRUIT;
       const free = spots.filter((s) => !this.fruit.has(key(s.x, s.y)));
       let n = batFruitCount(random());
       while (n-- > 0 && free.length > 0 && options.length > 0) {
         const spot = free.splice(Math.floor(random() * free.length), 1)[0]!;
-        const def = options[Math.floor(random() * options.length)]!;
-        this.fruit.set(key(spot.x, spot.y), def.id);
+        const id = options[Math.floor(random() * options.length)]!;
+        this.fruit.set(key(spot.x, spot.y), id);
       }
     }
     if (this.choice === "mushrooms") {
