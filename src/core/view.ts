@@ -41,6 +41,22 @@ export function stepPercent(
 }
 
 /**
+ * The zoom percent for a pinch: the percent when the fingers went down, scaled
+ * by how far they have moved apart, rounded to a step and kept in range. A zero
+ * start distance changes nothing.
+ */
+export function pinchPercent(
+  startPercent: number,
+  startDist: number,
+  dist: number,
+): number {
+  if (!(startDist > 0) || !Number.isFinite(dist)) {
+    return clampPercent(startPercent, ZOOM_MIN, ZOOM_MAX);
+  }
+  return clampPercent((startPercent * dist) / startDist, ZOOM_MIN, ZOOM_MAX);
+}
+
+/**
  * The zoom at 100 percent for a window of this size in CSS pixels: the default
  * zoom, or less on a window too small to show 30 by 17 tiles. A bigger window
  * keeps the same zoom and so shows more world.

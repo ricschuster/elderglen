@@ -90,12 +90,20 @@ ultrawide window can be wider than a whole interior or small area.
 - Window mode: Windowed and Fullscreen through the browser Fullscreen API,
   not saved (browsers want a gesture each time).
 
+## In game zoom (#543)
+
+The Minus and Plus keys (also the numpad) step world zoom by 5 percent, and a
+two finger pinch scales it from where the fingers went down. Both clamp to 75 to
+200 percent, apply at once and save for this device (a pinch saves when a finger
+lifts). The keys are fixed, not rebindable. `pinchPercent` in `core/view.ts`.
+
 ## Still open
 
 - Borderless Windowed needs the desktop wrapper.
-- In game zoom control (pinch, a key) is not built; zoom changes only in
-  Options, which opens from the title.
 - Device pixel ratio is not used yet, so text is not crisper on dense screens.
+  Phaser 4 has no game level resolution, so the canvas backing store is the CSS
+  size. Crisper text means a denser canvas with every camera and the menu box
+  scaled to match, which is a design call before it is built (#543).
 - The scripted touch playtest maps clicks onto a fixed 960 by 540 canvas and
   needs updating (#524).
 

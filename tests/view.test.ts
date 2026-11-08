@@ -6,6 +6,7 @@ import {
   cornerScroll,
   hudScale,
   menuZoom,
+  pinchPercent,
   stepPercent,
   worldZoom,
   UI_MAX,
@@ -124,5 +125,20 @@ describe("corner scroll", () => {
     // Visible left = scroll + w/2 - w/(2 zoom).
     expect(s.x + 480 - 960 / 4).toBeCloseTo(0);
     expect(s.y + 270 - 540 / 4).toBeCloseTo(0);
+  });
+});
+
+describe("pinch zoom", () => {
+  it("scales with the finger distance, in steps", () => {
+    expect(pinchPercent(100, 100, 150)).toBe(150);
+    expect(pinchPercent(100, 100, 103)).toBe(105);
+    expect(pinchPercent(100, 100, 50)).toBe(75);
+  });
+  it("stops at the caps", () => {
+    expect(pinchPercent(150, 100, 900)).toBe(200);
+    expect(pinchPercent(80, 100, 1)).toBe(75);
+  });
+  it("ignores a zero start distance", () => {
+    expect(pinchPercent(120, 0, 80)).toBe(120);
   });
 });
