@@ -1,7 +1,7 @@
 # 53 Multiplayer (draft)
 
 Status: draft. Decided with the owner on 2026-11-02, as the first design for
-milestone M4 (`docs/decisions/0007-multiplayer-milestone.md`). Nothing here is
+milestone M4 (`docs/decisions/0007-multiplayer-milestone.md`, moved to follow M3b by ADR 0012). Nothing here is
 built. Stardew's behaviour was checked against the saved Multiplayer wiki page on 2026-11-02 (see "Checked against Stardew"). Claims not in that page are still from memory.
 The model is the owner's own game beaver_cycle, whose same-network multiplayer is
 built and measured (its ADR 0014 and note 42). Only ideas are taken from it, no

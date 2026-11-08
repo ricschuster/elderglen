@@ -25,7 +25,7 @@ issues labelled `next-payoff`.
 
 The first playable is one farm, two seasons, selling, farming and foraging
 skills, and five village hall bundles. It is deliberately NOT: regions beyond
-the home valley, combat, multiplayer (milestone M4, after the vertical slice, ADR 0007), deep relationships, generated content,
+the home valley, combat, multiplayer (milestone M4, after M3b the ring 1 systems, ADRs 0007 and 0012), deep relationships, generated content,
 or final art and name. Do not expand scope without a design note in
 `docs/design/` or an ADR in `docs/decisions/`.
 

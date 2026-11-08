@@ -226,6 +226,18 @@ describe("the night", () => {
     expect(a.friendship).toBe(100 + 15 - 20);
   });
 
+  it("neglect costs only potential: no animal dies, leaves or costs gold (tone rules, #135)", () => {
+    const { g } = withChick();
+    grow(g);
+    const gold = g.money;
+    for (let i = 0; i < 60; i++) endDay(g, () => 0.5);
+    expect(g.animals.animals).toHaveLength(1);
+    expect(g.money).toBe(gold);
+    const a = g.animals.animals[0]!;
+    expect(a.mood).toBeGreaterThanOrEqual(0);
+    expect(a.friendship).toBeGreaterThanOrEqual(0);
+  });
+
   it("a grown, fed, petted hen lays an egg a day, which waits until collected", () => {
     const { g, a } = withChick();
     grow(g);

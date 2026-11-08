@@ -107,7 +107,7 @@ these is ruled out forever.
 - **Real-time combat.** The largest scope item. The first playable has none.
 - **A real-time threat clock.** The threat is ambient. No timers or game overs.
 - **Multiplayer.** Not in the first playable or M3. Planned as milestone M4,
-  between the vertical slice and ring 2 (decided 2026-11-02, ADR 0007, which
+  between the ring 1 systems (M3b) and the rest of ring 1 (decided 2026-11-02, ADR 0007, moved by ADR 0012, which
   reverses the 2026-10-15 decision in issue #18). A design note settles its
   form first. Until then, single player is the build.
 - **Generated content.** Regions are hand-built first.
