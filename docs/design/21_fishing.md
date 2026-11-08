@@ -613,7 +613,11 @@ Each followed Stardew, checked on the saved Fishing and Bait pages unless said.
 - **The Magpie Hook treasure appears as a chest in the bar** during the minigame
   and must be caught as well as the fish (Stardew's treasure chest, saved page: it
   shows 1 to 3 seconds in). This replaces "rolls on a landed fish". The one in five
-  is the chance a chest appears. Not built.
+  is the chance a chest appears. Built (issue 655): the chance is rolled when the
+  fight starts, the chest shows 1 to 3 seconds in at a random height, and the
+  bar fetches it by covering it (fill 0.7 per second, drain 0.2 per second
+  away). It pays only if the fish is landed too, and never breaks a perfect
+  catch. Assist level two skips the bar, so it has no chest.
 - **The Wide Float adds to the bar with skill and the assist bar**, with a cap at
   half the track (Stardew's bar bonuses add, saved page). Built.
 - **No rod or level limit on the draw** (above). The Reed Pole is a plain starter

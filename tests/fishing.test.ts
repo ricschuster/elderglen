@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   FISH,
+  CHEST,
   Fight,
   FishLog,
   RODS,
@@ -249,6 +250,35 @@ describe("the bar", () => {
       f.step(0.02, i % 2 === 0, fixed(0.5));
     expect(f.state).toBe("caught");
     expect(f.perfect).toBe(true);
+  });
+
+  it("shows a chest 1 to 3 seconds in and fetches it with the bar, keeping a perfect catch", () => {
+    // random 0 puts the chest at the bottom, appearing after 1 second. A wide bar covers it and the still fish.
+    const f = new Fight(
+      setup({ behaviour: "smooth", difficulty: 0, width: 0.9, chest: true }),
+      fixed(0),
+    );
+    expect(f.chestShown).toBe(false);
+    for (let i = 0; i < 40; i++) f.step(0.02, false, fixed(0));
+    expect(f.chestShown).toBe(false);
+    f.step(0.3, false, fixed(0));
+    expect(f.chestShown).toBe(true);
+    for (let i = 0; i < 400 && !f.chestGot; i++) f.step(0.02, false, fixed(0));
+    expect(f.chestGot).toBe(true);
+    expect(f.chestShown).toBe(false);
+    expect(f.perfect).toBe(true);
+  });
+
+  it("loses fetch progress when the bar leaves the chest, and has no chest unless asked", () => {
+    const f = new Fight(
+      setup({ behaviour: "smooth", difficulty: 0, width: 0.3, chest: true }),
+      fixed(1),
+    );
+    expect(f.chestAt).toBeCloseTo(1 - CHEST.size / 2);
+    for (let i = 0; i < 400; i++) f.step(0.02, false, fixed(1));
+    expect(f.chestGot).toBe(false);
+    expect(f.chestProgress).toBe(0);
+    expect(new Fight(setup(), fixed(0)).chestAt).toBeUndefined();
   });
 
   it("lets the fish get away when the bar never follows it", () => {
