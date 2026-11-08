@@ -169,6 +169,14 @@ These must exist before the recipes above can be built.
   the smith dwarf's geodes (settled 2026-10-31, below).
 - **Moss**, from mature trees with any tool, 1 to 2 a tree, not in winter, as
   in Stardew's Trees page (saved). Mossbeetles also drop it from slice 3.
+  Built 2026-11-08. Gaps settled (ours): one tree kind, so moss is on any
+  mature tree. A mature tree with no moss has 7 percent a night to grow it, not
+  in winter, and moss is gone from every tree when winter comes. One use of any
+  tool (axe, hoe, can, pickaxe) or the Action hand gathers it, with no chop,
+  no energy cost and no XP; the tree stays and can grow moss again. Stardew
+  grows moss over stages 5 to 12 and drops back a stage on harvest; ours is a
+  plain nightly chance. Stardew's Green Rain boost and Mossy Seed trees wait
+  for that weather. Moss recipes (speed fertilizer) wait for that recipe.
 - **Gold bars**, from the smith dwarf's ore shop in slice 1.
 - **Quartz crystals**, found on the floor of mine floors 1 to 10, and rarely in
   the smith dwarf's geodes (settled 2026-10-31, below). They stand in for

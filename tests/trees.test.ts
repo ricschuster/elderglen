@@ -357,3 +357,30 @@ describe("the map", () => {
     expect(mapWithTrees([{ x: 2, stage: 6 }]).problems()).toHaveLength(1);
   });
 });
+
+describe("moss on a tree", () => {
+  it("any tool or the hand gathers it instead of chopping", () => {
+    for (const tool of ["axe", "hoe", "can", "pickaxe"] as const) {
+      const map = mapWithTrees([{ x: 1 }]);
+      const g = game([{ x: 1, y: 0, stage: 5 }]);
+      g.trees.at(1, 0)!.moss = true;
+      expect(useHeld(g, map, { kind: "tool", tool }, 1, 0).ok).toBe(true);
+      expect(g.inventory.count("moss")).toBeGreaterThan(0);
+      expect(g.trees.at(1, 0)?.stump).toBe(false);
+      expect(g.trees.at(1, 0)?.hits).toBe(0);
+    }
+    const map = mapWithTrees([{ x: 1 }]);
+    const g = game([{ x: 1, y: 0, stage: 5 }]);
+    g.trees.at(1, 0)!.moss = true;
+    expect(act(g, map, 1, 0).ok).toBe(true);
+    expect(g.inventory.count("moss")).toBeGreaterThan(0);
+  });
+
+  it("the axe chops a bare tree as before", () => {
+    const map = mapWithTrees([{ x: 1 }]);
+    const g = game([{ x: 1, y: 0, stage: 5 }]);
+    useHeld(g, map, { kind: "tool", tool: "axe" }, 1, 0);
+    expect(g.trees.at(1, 0)?.hits).toBe(1);
+    expect(g.inventory.count("moss")).toBe(0);
+  });
+});

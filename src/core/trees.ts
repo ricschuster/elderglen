@@ -19,6 +19,11 @@ export const STAGE_CHANCE = 0.2;
 export const YOUNG_CHANCE = 0.1;
 /** Chance a night that a mature tree holds a loose seed to shake down. */
 export const LOOSE_SEED_CHANCE = 0.05;
+/** Chance a night that a mature tree grows moss, outside winter. Ours (note 34). */
+export const MOSS_CHANCE = 0.07;
+/** Moss from one tree: 1 to 2. As Stardew's Trees page. */
+export const MOSS_MIN = 1;
+export const MOSS_MAX = 2;
 /** Chance a night that a mature tree plants a seed nearby. */
 export const SPREAD_CHANCE = 0.15;
 /** How far a spread seed can land, in tiles on each axis. */
@@ -41,6 +46,8 @@ export interface Tree {
   hits: number;
   /** A mature tree holding a loose seed that shaking drops. */
   seed: boolean;
+  /** A mature tree with moss on it. Any tool or the hand gathers it. Absent in old saves. */
+  moss?: boolean;
   /**
    * A large stump from the map. It is a stump from the start, and once chopped
    * it regrows (`docs/design/32_farm_types.md`, Woodland).
@@ -156,8 +163,11 @@ export class Trees {
         if (grows && random() < chance) {
           if (t.stage < YOUNG_STAGE || !this.matureNeighbour(t)) t.stage += 1;
         }
-      } else if (!t.seed && random() < LOOSE_SEED_CHANCE) {
-        t.seed = true;
+      } else {
+        if (!t.seed && random() < LOOSE_SEED_CHANCE) t.seed = true;
+        // Moss grows in the warm seasons and is gone by winter.
+        if (!grows) delete t.moss;
+        else if (!t.moss && random() < MOSS_CHANCE) t.moss = true;
       }
     }
     for (const t of spreaders) {

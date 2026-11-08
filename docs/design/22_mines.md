@@ -518,8 +518,7 @@ Gaps settled with our own placeholders (numbers in `07_tuning_numbers.md`):
   (gold), 5 bars and 1500g (Hearthsilver). Every weapon is a kept good.
 - **New goods:** shell, moss, gloop jelly, frost berry (food, 30 energy), ice
   shard, bat wing, pocket coin, warm ember and old tools (`creature-goods.json`).
-  Oil and the ores are the existing goods. Moss does not yet come from trees (note
-  34 says it should).
+  Oil and the ores are the existing goods. Moss also comes from mature trees (note 34).
 - **Slayer counter:** the completion total's slayer category reads the kill tally
   (`combat.kills`) against the goal counts of the slayer list. A goal is met at
   its count. The wall list and the rewards need the warden head and the
