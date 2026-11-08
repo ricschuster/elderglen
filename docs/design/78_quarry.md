@@ -35,8 +35,12 @@ stonekeeper dwarf, whose job note 20 only called "bridges and stonework".
    the Mountain (decision 7).
 6. **No creatures, no mine mouth, no water, no forage.** It is a work place. A
    Quarry mineshaft (Stardew 1.4) is not planned.
-7. **The stonekeeper dwarf keeps the bridge and the yard,** and his job is open
-   question 2. He is not in the Quarry.
+7. **The stonekeeper dwarf lives in the Quarry** (owner, 2026-11-08: the dwarf
+   equivalent of Stardew's Linus, a hermit who just lives there, no trade). This
+   replaces the earlier draft, where he stayed at his yard on the Mountain. He is
+   a villager with a home spot, lines and gifts, and the Quarry needs a small
+   camp or hut for him. His likes, his lines and how a villager sits in a map
+   with no villager walks are open.
 8. **The horse rides here** (note 71, answer 10), with `rideable` true.
 
 ## Shape and layout
@@ -148,9 +152,23 @@ Each has a recommendation first.
    - B (Stardew): oak and maple seeds spawn at about 6 percent of attempts, and the
      Quarry's tillable tiles take common trees (saved page).
 
+## Owner answers 2026-11-08m
+
+1. **The Foragers' Shelf mends the bridge** (Stardew's Crafts Room). Its herb stall
+   reward gains the bridge. The Quarry opens early.
+2. **The stonekeeper dwarf just lives there,** like Linus. No shop, no stone buying.
+   He moves from his yard to a Quarry camp (decision 7). His Last Seat job waits
+   for #603 and #181.
+3. **Regrow follows Stardew:** 7 attempts a night in year 1, plus 2 a year, at most
+   16 (saved Quarry page). The map is smaller than Stardew's, so the tuning pass
+   may scale it; the numbers are placeholders for note 07.
+4. **Trees spawn:** oak and maple seeds at about 6 percent of attempts, and
+   tillable Quarry tiles take common trees (Stardew). This replaces "no trees" in
+   the draft and the line "Wood stays the Forest's job".
+
 ## Open
 
-- Question 1 to 4 above.
+- Questions 1 to 4 are answered (above). Left: the dwarf's camp and the villager details, and the tree rules on a map with no forest.
 - Whether gem nodes and artifact spots join the table, with notes 69 and the
   artifact design.
 - The Mining level gates for iron and gold nodes (note 07).

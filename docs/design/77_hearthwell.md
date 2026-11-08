@@ -213,3 +213,7 @@ Work packages: "Hearthwell part 1, the shell and moving the farm's doors" (step 
   designed. They need a note when the Hearth room is built.
 - The exact interior sizes, once area sizes are set (note 58).
 - Names, ages and schedules (#136, #599).
+
+## Owner answer 2026-11-08m: the river layout
+
+The two arms **rejoin south of the town**, with the hall on the island between them. The layout, bridges, streets and the sawmill's wheel need their own design pass before the shell (#645) is built. Not designed yet.

@@ -101,7 +101,7 @@ door. The hand-in and the mines-open flag are unchanged.
 | Place | Who | Interior |
 | --- | --- | --- |
 | Forge (the hut) | The smith dwarf (F, dwarf, candidate) | `forge`, one-room hut template (note 58). **A Mines-side trader** (owner, 2026-11-08): sells lamps and rest-camp supplies, buys ore for coin. **No tool upgrades and no geode cracking** (the Hearthwell blacksmith does those, note 77). Where the furnace gift sits is open (see Open). Today a menu stand-in |
-| Stonekeeper's yard | The stonekeeper dwarf (M, dwarf, candidate) | None (note 58). He works outdoors. His job is the Quarry (note 78) |
+| Stonekeeper's yard | The stonekeeper dwarf (M, dwarf, candidate) | None (note 58). He works outdoors. **Moves to a camp in the Quarry (owner, 2026-11-08, note 78)**, so the yard keeps the bridge only |
 | Mine mouth | none | The mine entrance hall `mine`, trainer and dummy inside |
 
 Owner answer 7 (2026-11-08, as Stardew): the Hearthwell blacksmith does tool

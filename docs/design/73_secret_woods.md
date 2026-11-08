@@ -159,3 +159,7 @@ Work package: "Secret Woods map, hardwood stumps and the massive log" (steps 1 t
 - The stump swing count and the yield of a stump at tier 2 and above are tuning.
 - Whether the saved page's "lost items shop" idea has a use: our tools return
   (SC-79) and there are no unique unrecoverable items, so it is not in scope.
+
+## Owner answer 2026-11-08m
+
+The pond's unique fish is the **Mossback**, a working name, a shy mossy fish. Its bar motion, price and conditions are designed with the roster (`21_fishing.md`).
