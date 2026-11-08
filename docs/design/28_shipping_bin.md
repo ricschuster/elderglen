@@ -64,7 +64,7 @@ for the player who needs money now to buy seeds before planting.
   the house on the farm map, close to the door and the bed, so shipping is the
   last chore of the day. Stardew's exact spot is from memory, not checked on a
   saved page. The `bin` object class and its tile go in the map contract
-  (`05_farm_map_placeholder.md`) and `scripts/gen-farm-map.mjs`.
+  (`05_farm_map_placeholder.md`) and the committed map JSON.
 - **Touch: tap ships a stack, with a quantity prompt for singles (Stardew).**
   Tapping a stack moves all of it. The prompt (a small number picker with
   plus, minus, All and Ship) opens for a single or a part. This replaces the

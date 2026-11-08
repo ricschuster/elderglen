@@ -50,7 +50,22 @@ else log("far click: turned right and tilled the adjacent tile");
 
 // ---- the toolbar and the context menu -------------------------------------
 const before = await bot.snap();
-await p.mouse.click(190, 510); // the second toolbar slot
+const slot2 = await p.evaluate(() => {
+  // The HUD is anchored to the window edges, so find the slot on screen.
+  const sc = window.__game.scene.getScene("farm");
+  const cam = sc.cameras.cameras[sc.cameras.cameras.length - 1];
+  const H = window.innerHeight;
+  const hits = sc.children.list
+    .filter((o) => o.input && o.input.enabled && o.displayWidth < 90)
+    .map((o) => ({
+      x: cam.x + o.x + o.displayWidth * (0.5 - o.originX),
+      y: cam.y + o.y + o.displayHeight * (0.5 - o.originY),
+    }))
+    .filter((q) => q.y > H * 0.85)
+    .sort((a, c) => a.x - c.x);
+  return hits[1];
+});
+await p.mouse.click(slot2.x, slot2.y); // the second toolbar slot
 await sleepMs(150);
 const after = await bot.snap();
 if (after.selected !== 1) finding(`toolbar click: slot ${after.selected}`);

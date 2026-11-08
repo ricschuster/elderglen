@@ -145,7 +145,7 @@ tillable share per farm type follows `32_farm_types.md`.
 
 1. Settle the open items with the owner and update this note.
 2. Author `farm.json` in Tiled to the contract in note 05, replacing the
-   placeholder (`gen-farm-map.mjs` is deleted then).
+   placeholder (the generator `gen-farm-map.mjs` was retired in #524).
 3. Hand-place clutter and trees from a data list, not code.
 4. Add the greenhouse ruin and cave as placed, locked objects once their
    systems exist.

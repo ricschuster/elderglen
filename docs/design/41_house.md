@@ -145,7 +145,8 @@ the double bed in the bedroom is the bed that saves the day, and the start
 room's bed tile becomes plain floor. The sizes may still move by a tile or two.
 
 Built in #282: the cellar is its own map, `cellar.json`, 19 by 16 (placeholder
-art, written by `scripts/gen-farm-map.mjs`). Stone floor, stairs up in the top
+art, first written by a generator that was retired in #524, so the JSON is
+the source). Stone floor, stairs up in the top
 left corner as a 3 by 3 block (48 px, over the 40 px touch minimum), entry
 `from_above`, and nothing else: casks wait on note 24, so it reads as empty and
 waiting. The way down is the kitchen's stairs in the tier 2 layers of the house
