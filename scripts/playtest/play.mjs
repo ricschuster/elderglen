@@ -766,8 +766,8 @@ async function visitHouse() {
   await bot.walkTo(6, 6);
   await walkThrough("up", 0, "house");
   await bot.shot("house-inside");
-  // Out again by the door at the bottom of the house map (entry tile 11,20).
-  await bot.walkTo(11, 20);
+  // Out again by the door at the bottom of the house map (entry tile 13,20).
+  await bot.walkTo(13, 20);
   await walkThrough("down", 0, "farm");
   const d = await bot.dbg();
   log("after leaving the house: map", d.map, JSON.stringify(d.tile));

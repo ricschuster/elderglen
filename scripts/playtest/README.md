@@ -139,7 +139,7 @@ The farm layout in `play.mjs` (soil rows at y 11 and 13, aisle at y 12) matches
 `src/content/maps/farm.json`. Update it if the map changes. The scripts read
 every map's walls, doors and trees from the JSON, so only fixed tiles need a
 check: the door stand tiles (farm house door 6,6, hall door 6,21, house exit
-11,20, hall exit 23,18) and the bed (18,19 in the house).
+13,20, hall exit 23,18) and the bed (20,19 in the house).
 
 Doors open on a click or Action, not on a walk through: the scripts stand on the
 tile before a door, face it and press Action (`walkThrough` in `play.mjs`,

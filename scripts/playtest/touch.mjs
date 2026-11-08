@@ -531,8 +531,8 @@ if (atDoor.map !== "house")
     `Action on the house door did not enter the house (map ${atDoor.map}, tile ${atDoor.tile.x},${atDoor.tile.y}, pos ${atDoor.pos.x.toFixed(1)},${atDoor.pos.y.toFixed(1)}, exit ${atDoor.exit})`,
   );
 else {
-  // The bed is at 18,19 on the house map; stand below it.
-  await walkTo(18, 20);
+  // The bed is at 20,19 on the house map; stand below it.
+  await walkTo(20, 20);
   await faceTo("up");
   const day = (await bot.snap()).day;
   await actTool();
