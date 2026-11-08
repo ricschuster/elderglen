@@ -7,6 +7,7 @@ import {
   barWidth,
   bite,
   castDistance,
+  castEnergy,
   catchQuality,
   catchXp,
   distanceShare,
@@ -483,5 +484,22 @@ describe("saving, skills and the rest of the game", () => {
     expect(itemById("salmon@gold")?.sellPrice).toBeGreaterThan(
       itemById("salmon")!.sellPrice,
     );
+  });
+});
+
+describe("cast energy", () => {
+  it("falls 0.1 per level from 8 to 7", () => {
+    expect(castEnergy(0)).toBe(8);
+    expect(castEnergy(5)).toBe(7.5);
+    expect(castEnergy(10)).toBe(7);
+    expect(castEnergy(15)).toBe(7);
+    expect(castEnergy(-1)).toBe(8);
+  });
+
+  it("is spent with the 20 minute cast", () => {
+    const g = startGame();
+    const before = g.day.energy.current;
+    g.day.act(castEnergy(0), 20);
+    expect(g.day.energy.current).toBe(before - 8);
   });
 });

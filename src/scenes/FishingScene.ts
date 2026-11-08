@@ -2,6 +2,8 @@ import Phaser from "phaser";
 import { dateOf } from "../core/calendar";
 import {
   CAST_MINUTES,
+  TOO_TIRED_TO_CAST,
+  castEnergy,
   Fight,
   barWidth,
   bite,
@@ -295,6 +297,12 @@ export class FishingScene extends Phaser.Scene {
   }
 
   private cast(): void {
+    const cost = castEnergy(this.state.skills.level("fishing"));
+    if (this.state.day.energy.current < cost) {
+      this.text.setText(TOO_TIRED_TO_CAST);
+      this.charge = 0;
+      return;
+    }
     const spot = landing(
       this.cfg.water,
       this.rod.range,
@@ -320,7 +328,7 @@ export class FishingScene extends Phaser.Scene {
       fx,
     );
     // A cast takes game time, win or lose, and spends the bait and a lure cast.
-    g.day.act(0, CAST_MINUTES);
+    g.day.act(cost, CAST_MINUTES);
     const gone = g.tackle.spend(this.rod.id);
     this.phase = "wait";
     const [lo, hi] = WAIT;
