@@ -176,8 +176,9 @@ farms through fall and winter (clearing weeds to find soil), so Winter Foraging,
 Autumn Crops and Quality Crops are played. It chops trees, cuts weeds and breaks
 rocks on the farm and mine floor 1 for Woodland, and buys ore and coal from the
 smith and runs the furnace for the Smith's (it keeps 1,500g back for seeds, and
-cuts a few young trees a day so the doors stay open). Only Artisan Goods is
-skipped (it needs jar and bee house runs and an orchard). Expert medians over 10
+cuts a few young trees a day so the doors stay open). Artisan Goods was
+skipped at first (it needs jar and bee house runs and an orchard); see the
+Artisan Goods calibration update below. Expert medians over 10
 runs: Woodland day 73, Smith's day 57, Autumn Crops day 65, Winter Foraging day
 87, all played bundles day 88, with 9 of 10 runs finishing (one misses the fifth
 silver melon). Woodland is gated by fiber: 30 fiber is about 60 weeds, and only
@@ -185,3 +186,28 @@ silver melon). Woodland is gated by fiber: 30 fiber is about 60 weeds, and only
 and cut them in bulk. That is a tuning flag for note 63. The casual does not play
 Woodland or the Smith's (it sells what it finds). The report now prints four
 seasons of money.
+
+Update 2026-11-08 (Artisan Goods calibration): the bot plays Artisan Goods
+opt-in with `SIM_ARTISAN=parallel|after` (default off, the baseline is
+unchanged). `SIM_ORCHARD_RESERVE` sets the gold kept back after the tree
+(default 300; high means buy the tree only when flush). Two findings.
+
+- A bot bug is fixed: coal was bought only inside the furnace trip, which stops
+  once the Smith's is done, so the second machine (8 coal each) was never
+  crafted. With the bot buying coal for machines, jam, pickles and honey all
+  finish in every run that reaches them. Expert finishes went from 24 of 40 to
+  32 of 40 (reserve 300).
+- The remaining gate is the fruit slot. The bundle takes 4 of 5, and jam,
+  pickles and honey are only three, so a fruit is always needed. A sapling costs 4000g
+  (apple) and a tree bears 28 days after planting, in its season. Expert, 40
+  runs to day 140, "after" mode: buying the tree early (reserve 300) finishes
+  Artisan Goods at median day 77 (37 of 40), all bundles at day 88 (32 of 40),
+  with season 2 money 5003. Buying only when flush (reserve 6000) pushes
+  Artisan Goods to median day 113 (33 of 40), but keeps season 2 money at 8904.
+  Intermediate: reserve 300 gives Artisan median day 123 (18 of 40), reserve
+  6000 gives day 120 (31 of 40). So for the expert Artisan Goods fits year one
+  only by spending 4000g on a tree at the end of spring, and for the
+  intermediate it is a year two bundle either way.
+- Not resolved: a few seeds finish Woodland late (day 120 or later) when the
+  bot runs Artisan Goods, which looks like the fiber timing (weeds stop in
+  winter) and not the tree.
