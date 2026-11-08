@@ -224,6 +224,32 @@ Neglect follows the written rule:
 
 ## Feed and the silo
 
+**Decided with the owner on 2026-11-08 (supersedes the lines below where they
+differ; built the same day).** Slices 1 to 3 gave a free silo of 240 and a hay count.
+That was wrong. The design is Stardew's, checked against the saved Silo page:
+
+- **Hay is a pack item.** The carpenter sells it (10 bales for 500g, placeholder).
+  It takes pack slots and stacks like any good. There is no hay count outside the
+  pack until a silo stands.
+- **No silo at the start.** Feeding without one: stand at the feeding bench and
+  drop hay from the pack, one bale per animal (our choice, Stardew's no-silo
+  feeding was not checked).
+- **The silo is a farm building** the carpenter sells and builds. Stardew: 100g,
+  100 stone, 10 clay, 5 copper bars, 3 by 3, 2 days, holds 240, several allowed
+  and their capacity adds up. Our materials follow Stardew. Clay turns up when tilling
+  soil (Stardew's Hoe page: tilling may yield it; 3 percent a tile, placeholder).
+  The silo stands at a fixed site on the farm until note 60 (#611) lands, one
+  silo for now.
+- **A silo adds a hay hopper** inside each coop and barn. The hopper feeds the
+  bench from the silo, wherever it stands. The deluxe auto-feeder keeps feeding
+  from the silo as built.
+- **Filling a silo:** click it while holding hay, or click a hopper while
+  holding hay. Cutting grass with the scythe adds hay to the silo, 50 percent of
+  the time with the basic scythe (Stardew).
+- **No free hay before the scythe.** Remove the weed-cutting hay (2 per weed).
+  Until grass and the scythe exist, hay is bought only (owner, Stardew).
+- **Building placement** (note 60, #611) covers where the silo stands.
+
 - Cutting grass with the scythe fills the silo with hay. The keeper sells hay as a
   backstop.
 - The silo holds hay for winter and rain, when there is little grass.
@@ -301,6 +327,8 @@ Our draft, to be tuned in playtests and copied into `07_tuning_numbers.md`.
 - The level 10 tier of professions: the choice screen, the file change, and how
   it ties to the processing note for Artisan.
 - Whether pigs also need rain and winter rules beyond "let out" in the code.
-- Whether the keeper or the carpenter sells the silo.
+- Whether the keeper or the carpenter sells the silo. The carpenter does until the keeper exists (2026-11-08).
+- Clay's chance and sell price (20g, Stardew's, unchecked). Several silos wait for #611.
+- The scythe and grass tiles (a prerequisite for grass hay).
 - A valley animal of our own, with the art pass (#58).
 - Whether hall gating belongs on the deluxe tiers.

@@ -149,7 +149,8 @@ describe("winter soil digging", () => {
     );
     expect(tuber).toMatchObject({ item: "snow-tuber" });
     g.day.clock.day = dayOf("fall", 3);
-    expect(till(g, 4, 1, () => 0)).toEqual({ ok: true });
+    // Fall has no frost root, only the clay roll.
+    expect(till(g, 4, 1, () => 0.99)).toEqual({ ok: true });
   });
 });
 

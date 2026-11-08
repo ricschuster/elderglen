@@ -1,4 +1,3 @@
-import { addHay, HAY_PER_WEED } from "./animals";
 import { dateOf } from "./calendar";
 import { CROPS, cropById } from "./crops";
 import { farmTypeById } from "./farmtypes";
@@ -62,6 +61,8 @@ function award(g: GameState, skill: Skill, xp: number, item?: string): Outcome {
 /** Chance that tilling winter soil turns something up, and the share of finds that are frost root. Placeholders (note 07). */
 export const WINTER_DIG_CHANCE = 0.03;
 export const FROST_ROOT_SHARE = 2 / 3;
+/** Chance that tilling soil in any season turns up clay. Stardew's chance is not in the saved page: placeholder (note 23). */
+export const CLAY_CHANCE = 0.03;
 
 export function till(
   g: GameState,
@@ -87,6 +88,10 @@ export function till(
     const found = random() < FROST_ROOT_SHARE ? "frost-root" : "snow-tuber";
     if (!g.inventory.add(found)) g.ground.drop(x, y, found, 1);
     return { ok: true, item: found };
+  }
+  if (random() < CLAY_CHANCE) {
+    if (!g.inventory.add("clay")) g.ground.drop(x, y, "clay", 1);
+    return { ok: true, item: "clay" };
   }
   return { ok: true };
 }
@@ -519,9 +524,7 @@ export function clearWeed(
     );
   else swing(g, tool);
   g.weeds.remove(x, y);
-  // Cut grass fills the silo with hay once there is a coop. There is no scythe
-  // or grass tile yet, so a cut weed stands in (note 23).
-  addHay(g, HAY_PER_WEED);
+  // Hay waits for the scythe and grass tiles: it is bought until then (note 23).
   // Fiber at 50 percent. A weed that drops none may drop a mixed seed, at the
   // farm type's chance (notes 29 and 32).
   const drop =

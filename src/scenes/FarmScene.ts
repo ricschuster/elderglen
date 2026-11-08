@@ -4,6 +4,12 @@ import {
   BARN_MAP,
   BARN_MAX_TIER,
   barnBlocks,
+  siloBlocks,
+  siloSite,
+  SILO_FOOTPRINT,
+  depositHay,
+  siloCapacity,
+  HAY,
   barnSite,
   barnVisibleTier,
   animalSlots,
@@ -261,13 +267,7 @@ export class FarmScene extends Phaser.Scene {
     this.ladderArmed = true;
     this.floor = mineFloorOf(this.mapId);
     this.floorState = undefined;
-    this.holds = new Set(
-      minesOpen(this.state.day.clock.day) ? ["mines-open"] : [],
-    );
-    if (this.state.cave.open) this.holds.add("cave-open");
-    if (this.state.animals.coopBuilt) this.holds.add(COOP_BUILT);
-    if (this.state.animals.barnBuilt) this.holds.add(BARN_BUILT);
-    for (const h of houseHolds(this.state.houseTier)) this.holds.add(h);
+    this.refreshHolds();
     this.heldMs = 0;
     this.mouseAim = false;
     this.mouseHeld = false;
@@ -686,6 +686,7 @@ export class FarmScene extends Phaser.Scene {
       this.furnaceAt(x, y) ||
       coopBlocks(this.state, this.mapId, x, y) ||
       barnBlocks(this.state, this.mapId, x, y) ||
+      siloBlocks(this.state, this.mapId, x, y) ||
       ((this.mapId === COOP_MAP || this.mapId === BARN_MAP) &&
         animalSlots(this.state, this.mapId === COOP_MAP ? "coop" : "barn").some(
           (s) => s.x === x && s.y === y,
@@ -1136,6 +1137,7 @@ export class FarmScene extends Phaser.Scene {
     if (this.useDoor()) return;
     const front = this.aimTile();
     if (this.map.serviceAt(front.x, front.y)) return;
+    if (this.useSilo(front.x, front.y)) return;
     const held = heldAt(this.state, this.selected);
     // A chest is stood down from the backpack, and the hand takes an empty one up.
     if (held.kind === "item" && chestById(held.id))
@@ -1414,10 +1416,22 @@ export class FarmScene extends Phaser.Scene {
     saveGame(browserStore, this.state);
   }
 
+  /** The conditions that open doors. Rebuilt after sleeping, when a building may have landed overnight. */
+  private refreshHolds(): void {
+    this.holds = new Set(
+      minesOpen(this.state.day.clock.day) ? ["mines-open"] : [],
+    );
+    if (this.state.cave.open) this.holds.add("cave-open");
+    if (this.state.animals.coopBuilt) this.holds.add(COOP_BUILT);
+    if (this.state.animals.barnBuilt) this.holds.add(BARN_BUILT);
+    for (const h of houseHolds(this.state.houseTier)) this.holds.add(h);
+  }
+
   private endDay(): void {
     const g = this.state;
     const farmMap = farmMapOf(g);
     const report = sleep(g, farmMap.forageSpots, Math.random, farmMap);
+    this.refreshHolds();
     this.message = "";
     this.save();
     this.render();
@@ -1779,6 +1793,53 @@ export class FarmScene extends Phaser.Scene {
       a.build?.building === "barn" && !a.barnBuilt,
       0x8f3b2e,
     );
+    this.drawSilo();
+  }
+
+  /** The silo: a round grey tower, scaffolding while it is built. */
+  private drawSilo(): void {
+    const site = siloSite(this.mapId);
+    const a = this.state.animals;
+    if (!site || (!a.silo && a.siloDays <= 0)) return;
+    const ts = this.map.tileSize;
+    const x = site.x * ts;
+    const y = site.y * ts;
+    const g = this.wash;
+    if (!a.silo) {
+      g.lineStyle(3, 0x8a6a45, 1);
+      for (let dx = 0; dx <= SILO_FOOTPRINT.w; dx += 1)
+        g.lineBetween(x + dx * ts, y, x + dx * ts, y + SILO_FOOTPRINT.h * ts);
+      return;
+    }
+    g.fillStyle(0x9aa0a6, 1).fillRect(
+      x + 4,
+      y + ts,
+      SILO_FOOTPRINT.w * ts - 8,
+      (SILO_FOOTPRINT.h - 1) * ts,
+    );
+    g.fillStyle(0x6e747a, 1).fillRect(
+      x + 2,
+      y + 4,
+      SILO_FOOTPRINT.w * ts - 4,
+      ts,
+    );
+  }
+
+  /** Facing the silo: tip the held hay in, or read how full it is. True if the tile is the silo. */
+  private useSilo(tx: number, ty: number): boolean {
+    if (!siloBlocks(this.state, this.mapId, tx, ty)) return false;
+    const held = heldAt(this.state, this.selected);
+    const cap = siloCapacity(this.state);
+    if (held.kind === "item" && held.id === HAY) {
+      const n = depositHay(this.state);
+      this.message =
+        n > 0
+          ? `${n} hay into the silo (${this.state.animals.hay}/${cap}).`
+          : "The silo is full.";
+    } else
+      this.message = `The silo holds ${this.state.animals.hay} of ${cap} hay. Hold hay to fill it.`;
+    this.render();
+    return true;
   }
 
   /** Inside the coop or barn: the feeding bench along the back wall and the animals as blocks. */

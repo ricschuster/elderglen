@@ -30,6 +30,10 @@ import {
   buildingProblem,
   buyAnimal,
   buyHay,
+  orderSilo,
+  siloProblem,
+  SILO_BUILD_DAYS,
+  SILO_COST,
   capacityOf,
   defaultName,
   isBuilt,
@@ -155,10 +159,24 @@ export class CarpenterScene extends Phaser.Scene {
           buttons: [{ text: "Buy", run: () => this.buyAnimal(sp) }],
         });
     }
+    if (g.animals.siloDays > 0)
+      rows.push({
+        label: "Silo work under way",
+        detail: `${g.animals.siloDays} days left`,
+        dim: true,
+        buttons: [],
+      });
+    else if (!g.animals.silo)
+      rows.push({
+        label: "Silo",
+        detail: `${SILO_COST.coin}g, ${SILO_COST.stone} stone, ${SILO_COST.clay} clay and ${SILO_COST["copper-bar"]} copper bars (have ${g.inventory.count("clay")} clay and ${g.inventory.count("copper-bar")} bars), holds hay for the hoppers`,
+        dim: siloProblem(g) !== undefined,
+        buttons: [{ text: "Order", run: () => this.orderSilo() }],
+      });
     if (g.animals.coopBuilt || g.animals.barnBuilt)
       rows.push({
         label: "Hay, 10 bales",
-        detail: `${HAY_PRICE * 10}g, into the silo (${g.animals.hay} in it)`,
+        detail: `${HAY_PRICE * 10}g, into your pack (${g.inventory.count("hay")} carried)`,
         buttons: [{ text: "Buy", run: () => this.buyHay() }],
       });
     if (!g.houseBuild && !g.catalogue && g.houseTier >= 1) {
@@ -223,16 +241,28 @@ export class CarpenterScene extends Phaser.Scene {
       const a = buyAnimal(this.state, species, asked ?? "");
       if (a)
         this.message.setText(
-          `${a.name} is in the ${BUILDINGS[SPECIES[species].building].noun}. No hay needed on the first day.`,
+          `${a.name} is in the ${BUILDINGS[SPECIES[species].building].noun}. It needs no hay on the first day.`,
         );
     }
+    this.refresh();
+  }
+
+  private orderSilo(): void {
+    const problem = siloProblem(this.state);
+    if (problem !== undefined) this.message.setText(problem);
+    else if (orderSilo(this.state))
+      this.message.setText(
+        `Ordered. The carpenter starts tomorrow and takes ${SILO_BUILD_DAYS} days.`,
+      );
     this.refresh();
   }
 
   private buyHay(): void {
     const n = buyHay(this.state, 10);
     this.message.setText(
-      n > 0 ? `Bought ${n} hay.` : "No room in the silo, or not enough money.",
+      n > 0
+        ? `Bought ${n} hay. It is in your pack.`
+        : "Your pack is full, or you do not have the money.",
     );
     this.refresh();
   }

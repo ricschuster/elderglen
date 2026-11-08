@@ -841,7 +841,7 @@ class Bot {
           clearWeed(this.g, spot.x, spot.y, "hoe", this.random),
         );
       if (!this.g.farm.plotAt(spot.x, spot.y)?.tilled)
-        this.act(spot, () => till(this.g, spot.x, spot.y));
+        this.act(spot, () => till(this.g, spot.x, spot.y, this.random));
       this.act(spot, () => plant(this.g, spot.x, spot.y, seedId(crop)));
     }
   }
