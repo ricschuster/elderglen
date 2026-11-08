@@ -12,7 +12,7 @@ Start each session by asking which item to take.
 M3 (close out: the owner's play), M3b ring 1 systems (fishing, combat, villagers,
 horse, building placement #611, cask, dye vat and greenhouse built), M4 multiplayer, M3c story
 and ending, M3d polish, then M5 and M6. The list below is the design order within
-that. Filed work packages: #595 to #604 and #611.
+that. Filed work packages: #595 to #604, #611 and #636 to #646 (map areas).
 
 ## Open, in order
 
@@ -26,10 +26,17 @@ that. Filed work packages: #595 to #604 and #611.
    project (#5). Together they decide what the ending and the Last Seat mean. Below Special Orders
    (2026-11-06): nothing in slices 1 to 3 needs it, and it is only needed
    before slice 5 (note 33), alongside the heart events. Owner put it before art.
-3. **Art direction and audio plan.** Character art (note 15), ruined and
+3. **Map areas** (notes 71 to 77, drafted 2026-11-08, owner review pending). One
+   note per unbuilt area. Recommended build order: contract additions (#636),
+   Forest part 1 (#637), Secret Woods (#639, ends the carpenter's Hardwood sale),
+   River delta with the Beach (#640, unblocks #596), Mountain (#642, #643), Forest
+   part 2 (#638), Lake cove (#644), Hearthwell shell (#645) and interiors (#646),
+   Beach elf (#641). The owner questions (eleven, in note 71) come first:
+   milestone placement, the river in Hearthwell, the smithy split and the rest.
+4. **Art direction and audio plan.** Character art (note 15), ruined and
    restored hall rooms (#335), and the placeholder swap. No audio note exists
    (audio plan: #527).
-4. **Ring 2 shape and travel** (#20, M5). Parked until slice 3 is played.
+5. **Ring 2 shape and travel** (#20, M5). Parked until slice 3 is played.
 
 **Remove when real hardwood supply exists:** the carpenter's temporary Hardwood
 sale (200g, `src/content/carpenter-standin.json`, note 43). Take it out once logs,

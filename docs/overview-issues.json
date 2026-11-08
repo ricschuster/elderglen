@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-11-06",
+  "fetched": "2026-11-08",
   "issues": {
     "5": {
       "t": "Design: what is the third community project?",
@@ -103,12 +103,12 @@
     },
     "60": {
       "t": "WP9: Quality tiers, skill perks and tool upgrades",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "61": {
       "t": "WP10: Seasonal forage and crop expansion",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "62": {
@@ -148,7 +148,7 @@
     },
     "133": {
       "t": "WP14: Customisation first slice (furniture and hats)",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "134": {
@@ -158,7 +158,7 @@
     },
     "135": {
       "t": "WP16: Neglect and tone rules (villagers and tone only; animals later)",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "136": {
@@ -173,7 +173,7 @@
     },
     "138": {
       "t": "Design: final game name",
-      "state": "open",
+      "state": "closed",
       "labels": ["design-question"]
     },
     "155": {
@@ -243,10 +243,14 @@
     },
     "282": {
       "t": "WP21: House cellar map",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
-    "286": { "t": "WP22: House tiers 2 and 3", "state": "open", "labels": [] },
+    "286": {
+      "t": "WP22: House tiers 2 and 3 as layers in the house map",
+      "state": "closed",
+      "labels": []
+    },
     "317": {
       "t": "Playtest: expert bot gets stuck one tile short of targets",
       "state": "closed",
@@ -269,7 +273,7 @@
     },
     "333": {
       "t": "Make the browser playtest bot walk reliably at speed",
-      "state": "open",
+      "state": "closed",
       "labels": ["enhancement"]
     },
     "335": {
@@ -279,13 +283,199 @@
     },
     "336": {
       "t": "Check the first playable on a real tablet",
-      "state": "open",
+      "state": "closed",
       "labels": ["enhancement"]
     },
     "396": {
       "t": "Tree types by region (M3)",
       "state": "open",
       "labels": ["enhancement"]
+    },
+    "421": {
+      "t": "WP: Make the farmhouse one growing map with tier layers",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "422": {
+      "t": "WP19b: House maps per tier (start 11 by 10, tier 1 about 31 by 12), no sealed earth",
+      "state": "closed",
+      "labels": ["next-payoff"]
+    },
+    "520": {
+      "t": "Build the window sized canvas, HUD anchoring and zoom",
+      "state": "closed",
+      "labels": ["enhancement", "next-payoff"]
+    },
+    "521": {
+      "t": "Stardew-parity fixes from the register (session h)",
+      "state": "closed",
+      "labels": ["enhancement"]
+    },
+    "522": {
+      "t": "Slice 1 leftovers",
+      "state": "open",
+      "labels": ["enhancement"]
+    },
+    "523": {
+      "t": "Tablet follow-ups: play, WebView performance, icon, hosting plugin",
+      "state": "open",
+      "labels": ["enhancement"]
+    },
+    "524": {
+      "t": "Playtest tooling: click doors and the stale map generator",
+      "state": "closed",
+      "labels": ["enhancement"]
+    },
+    "525": {
+      "t": "Design: growing interiors for the barn, coop and farmhouse",
+      "state": "closed",
+      "labels": ["design-question"]
+    },
+    "526": {
+      "t": "Design: answer the open Stardew checks (SC-28, 53, 66, 67)",
+      "state": "open",
+      "labels": ["design-question"]
+    },
+    "527": {
+      "t": "Design: audio plan",
+      "state": "open",
+      "labels": ["design-question"]
+    },
+    "531": {
+      "t": "WP: Coop and barn growing interiors",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "542": {
+      "t": "Menu rows under the 40 px touch floor in shop, hall and bin",
+      "state": "closed",
+      "labels": []
+    },
+    "543": {
+      "t": "Window canvas leftovers: in-game zoom control, device pixel ratio, Borderless Windowed",
+      "state": "closed",
+      "labels": []
+    },
+    "550": {
+      "t": "feat: tier 2 widens the kitchen and bedroom (note 68)",
+      "state": "closed",
+      "labels": ["next-payoff"]
+    },
+    "595": {
+      "t": "WP: Fishing slices 1 and 2, the bar, one water and the roster",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "596": {
+      "t": "WP: Fishing slices 3 and 4, bait, lures, conditions, pots, the cove and the legend",
+      "state": "open",
+      "labels": ["work-package"]
+    },
+    "597": {
+      "t": "WP: Mines proper part 1, health, weapons, trainer and first creatures",
+      "state": "open",
+      "labels": ["work-package"]
+    },
+    "598": {
+      "t": "WP: Mines proper part 2, deeper bands, creatures, combat skill, rest camps, lightning rod",
+      "state": "open",
+      "labels": ["work-package"]
+    },
+    "599": {
+      "t": "WP: Villagers, schedules and friendship with gifts",
+      "state": "open",
+      "labels": ["work-package"]
+    },
+    "600": {
+      "t": "WP: Heart events and recipe mail",
+      "state": "open",
+      "labels": ["work-package"]
+    },
+    "601": { "t": "WP: Horse", "state": "closed", "labels": ["work-package"] },
+    "602": {
+      "t": "WP: Cask, cellar, dye vat and greenhouse",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "603": {
+      "t": "WP: The Last Seat, bundles 27 to 30, the bridge and the letter",
+      "state": "open",
+      "labels": ["work-package"]
+    },
+    "604": {
+      "t": "WP: Year two rules and the ring 1 ending",
+      "state": "open",
+      "labels": ["work-package"]
+    },
+    "611": {
+      "t": "WP: Building placement (carpenter placement screen, move and remove)",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "618": {
+      "t": "Coop and barn leftovers (door tiles, art, heater, professions, incubator tile)",
+      "state": "open",
+      "labels": ["enhancement"]
+    },
+    "634": {
+      "t": "Greenhouse follow-up: per-map store, sprinklers, fruit trees indoors, move at carpenter",
+      "state": "closed",
+      "labels": ["enhancement"]
+    },
+    "636": {
+      "t": "WP: Map contract additions for the valley areas",
+      "state": "open",
+      "labels": ["work-package"]
+    },
+    "637": {
+      "t": "WP: Forest map part 1, shell, lake, trees and forage",
+      "state": "open",
+      "labels": ["work-package"]
+    },
+    "638": {
+      "t": "WP: Forest part 2, farmstead, hermit's tower and the Wanderer's camp",
+      "state": "open",
+      "labels": ["work-package"]
+    },
+    "639": {
+      "t": "WP: Secret Woods map, daily hardwood stumps and the massive log",
+      "state": "open",
+      "labels": ["work-package"]
+    },
+    "640": {
+      "t": "WP: River delta and Beach map, waters and the fisher's hut",
+      "state": "open",
+      "labels": ["work-package"]
+    },
+    "641": {
+      "t": "WP: Beach elf's house and the Homeward pin stall",
+      "state": "open",
+      "labels": ["work-package"]
+    },
+    "642": {
+      "t": "WP: Mountain map and the Mines entrance",
+      "state": "open",
+      "labels": ["work-package"]
+    },
+    "643": {
+      "t": "WP: Mountain forge and the stonekeeper's yard",
+      "state": "open",
+      "labels": ["work-package"]
+    },
+    "644": {
+      "t": "WP: Lake cove and the ferry",
+      "state": "open",
+      "labels": ["work-package"]
+    },
+    "645": {
+      "t": "WP: Hearthwell part 1, the shell and moving the farm's doors",
+      "state": "open",
+      "labels": ["work-package"]
+    },
+    "646": {
+      "t": "WP: Hearthwell part 2, the interiors",
+      "state": "open",
+      "labels": ["work-package"]
     }
   }
 }

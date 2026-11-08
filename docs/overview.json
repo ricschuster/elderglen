@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-06",
+  "updated": "2026-11-08",
   "about": "Hand-kept map of the design. Edit this file, then run npm run overview. Issue titles and states come from docs/overview-issues.json, refreshed with npm run overview:refresh (needs gh). npm run overview:check fails if a note, heading, area or issue reference is wrong, or if overview.html is stale.",
   "groups": {
     "core": "Core loop",
@@ -355,10 +355,40 @@
           "s": "decided",
           "t": "A stable and a horse as in Stardew: one per player, 10,000g plus Hardwood and iron, speed 6.6 against running at 5, outdoors only, no feeding; extras carrot, book, flute, hats. Walk speed stays at 5 tiles a second as an assumption (SC-41)",
           "ref": "59_horse.md#Answers (owner, 2026-11-06)"
+        },
+        {
+          "s": "open",
+          "t": "Map areas design pass (draft, 2026-11-08): one note per unbuilt area, Forest 120 by 120, Secret Woods 48 by 40, Mountain 80 by 70, River delta with the Beach 100 by 70, Lake cove 50 by 40 and Hearthwell 120 by 110, each with a tile sketch, exits and entries, resources, forage, fishing, people, contract needs and slices; build order Forest, Secret Woods, delta, Mountain, Forest part 2, cove, Hearthwell shell, Hearthwell interiors, Beach elf; eleven owner questions wait for review",
+          "ref": "71_map_areas_overview.md#Build order, with reasons",
+          "issue": 636
+        },
+        {
+          "s": "open",
+          "t": "Nine map contract additions for the areas: water kinds, the massive log, per-map forage tables, tree kind, per-map stump regrow, conditional layers, rideable flag, cart and board service kinds",
+          "ref": "71_map_areas_overview.md#Map contract additions",
+          "issue": 636
+        },
+        {
+          "s": "open",
+          "t": "Secret Woods (draft): six large stumps regrow every morning for 2 Hardwood each, a steel axe clears the massive log once, and the carpenter's temporary Hardwood sale is removed in the same slice",
+          "ref": "73_secret_woods.md#Decisions (draft)",
+          "issue": 639
+        },
+        {
+          "s": "open",
+          "t": "Forest (draft): six groves of about 150 choppable oak and maple regrowing at 20 percent a night give the steady wood supply; farmstead north-east, hermit south-west, Wanderer's camp by the farm road",
+          "ref": "72_forest.md#Trees and the steady wood supply",
+          "issue": 637
+        },
+        {
+          "s": "open",
+          "t": "Hearthwell (draft): river in two arms with the sawmill on the main one, the hall on the island and the broken bridge on the east arm; trees cosmetic; interiors by template; people with #599",
+          "ref": "77_hearthwell.md#Decisions (draft)",
+          "issue": 645
         }
       ],
       "deps": [],
-      "issues": [67, 69]
+      "issues": [67, 69, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646]
     },
     {
       "id": "story",
