@@ -622,6 +622,13 @@ Source: `24_processing_and_cooking.md`. Code: `processing.ts`, `artisan.ts`.
 - Bundle 11 (Animal Goods, larder): 4 of egg, duck egg, milk, goat milk, wool.
   Bundle 21 (Weaver's, hearth): 8 wool and 20 fiber.
 
+## Cooking (2026-11-08, ours, placeholders)
+
+Source: `24_processing_and_cooking.md`. Code: `cooking.ts`, `src/content/dishes.json`.
+
+- One cook turns the ingredients in the pack into one dish, with no time. Quality is ignored. Energy only, no health.
+- Fried egg (egg) 75 energy, 35g, known at the start. Baked potato 90, 70g, farming 1. Garden salad (leek, dandelion) 110, 110g, foraging 1. Hearty omelette (2 egg, milk) 125, 100g, farming 2. Mushroom stew (2 field mushroom, potato) 150, 190g, foraging 2. Cheese melt (cheese, potato) 160, 240g, farming 3. Mayonnaise slaw (mayonnaise, kale) 140, 260g, farming 4. Pumpkin soup (pumpkin, milk) 200, 400g, farming 5.
+
 ## Desktop mouse (2026-11-02)
 
 Placeholders, not checked against Stardew (`46_desktop_mouse.md`).

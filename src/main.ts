@@ -23,6 +23,7 @@ import { SkillsScene } from "./scenes/SkillsScene";
 import { LiftScene } from "./scenes/LiftScene";
 import { SmithScene } from "./scenes/SmithScene";
 import { CraftingScene } from "./scenes/CraftingScene";
+import { CookingScene } from "./scenes/CookingScene";
 import { HatsScene } from "./scenes/HatsScene";
 import { CaveChoiceScene } from "./scenes/CaveChoiceScene";
 import { FurnaceScene } from "./scenes/FurnaceScene";
@@ -75,6 +76,7 @@ const game = new Phaser.Game({
     OrdersScene,
     RequestsScene,
     CraftingScene,
+    CookingScene,
     HatsScene,
     CaveChoiceScene,
     HallScene,

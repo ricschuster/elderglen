@@ -46,7 +46,7 @@ export function buildable(r: Recipe): boolean {
 }
 
 /** True when the player has met the recipe's source. */
-export function known(g: GameState, r: Recipe): boolean {
+export function known(g: GameState, r: { sources: RecipeSource[] }): boolean {
   return r.sources.some((s) =>
     s.kind === "start"
       ? true
@@ -59,7 +59,7 @@ export function known(g: GameState, r: Recipe): boolean {
 }
 
 /** Words for how a locked recipe is learned, such as "Farming level 4 or the Woodland bundle". */
-export function sourceText(r: Recipe): string {
+export function sourceText(r: { sources: RecipeSource[] }): string {
   const parts = r.sources.flatMap((s) => {
     if (s.kind === "level") return [`${s.skill} level ${s.level}`];
     if (s.kind === "bundle") {

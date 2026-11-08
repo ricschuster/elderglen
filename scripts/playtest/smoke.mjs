@@ -113,6 +113,29 @@ await step("carpenter", async () => {
   await close();
 });
 
+await step("cooking", async () => {
+  const tier = await farm((g, f, s) => {
+    const was = s.houseTier;
+    s.houseTier = Math.max(was, 1);
+    s.inventory.add("egg", 2);
+    return was;
+  });
+  await overlay("cooking");
+  await sleepMs(200);
+  const m = await pickRow("cooking", /You cook|missing|full/);
+  log("cook:", m);
+  const n = await farm((g, f, s) => s.achievements.cookedCount);
+  if (!/You cook/.test(m) || n !== 1)
+    finding(`cooking: message "${m}", cooked count ${n}`);
+  await close();
+  await farm((g, f, s, tier) => {
+    s.houseTier = tier;
+    // Leave the pack as it was, so later steps still have room.
+    s.inventory.remove("egg", s.inventory.count("egg"));
+    s.inventory.remove("fried-egg", s.inventory.count("fried-egg"));
+  }, tier);
+});
+
 await step("mailbox", async () => {
   const n = await farm((g, f, s) => {
     s.mail.queue("hatters-letter", s.day.clock.day);

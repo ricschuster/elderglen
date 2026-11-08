@@ -23,6 +23,7 @@ const SERVICES: Record<string, string> = {
   furnace: "Furnace",
   mailbox: "Mailbox",
   bed: "Bed",
+  cooking: "Stove",
   carpenter: "Carpenter",
   "coop-bench": "Feeding Bench",
   "barn-bench": "Feeding Bench",
