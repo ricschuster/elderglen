@@ -158,7 +158,8 @@ function clutterAt(g: GameState, x: number, y: number): string | undefined {
   if (g.fruitTrees.at(x, y)) return "a fruit tree";
   if (g.weeds.at(x, y)) return "weeds";
   if (g.twigs.at(x, y)) return "a twig";
-  if (g.farm.plotAt(x, y)) return "tilled soil";
+  // Empty tilled soil does not block: it is cleared under the building.
+  if (g.farm.plotAt(x, y)?.crop) return "a growing crop";
   if (g.sprinklers.at(x, y)) return "a sprinkler";
   if (g.machines.at(x, y)) return "a machine";
   if (g.ground.at(x, y).length > 0) return "something on the ground";
@@ -337,6 +338,12 @@ export function placementProblem(
     : `Something is in the way: ${first.why}.`;
 }
 
+/** Clear the empty tilled soil under a footprint. Only called once the spot is free, so no crop is there. */
+function clearSoilUnder(g: GameState, r: Rect): void {
+  for (let y = r.y; y < r.y + r.h; y++)
+    for (let x = r.x; x < r.x + r.w; x++) g.farm.clearEmpty(x, y);
+}
+
 /** Order a base building, standing on a chosen spot. False, with nothing paid, if it cannot be done. */
 export function orderBuildingAt(
   g: GameState,
@@ -350,6 +357,7 @@ export function orderBuildingAt(
   if (placementProblem(g, map, mapId, b, x, y) !== undefined) return false;
   if (!orderBuilding(g, b)) return false;
   g.animals.sites[b] = { x, y };
+  clearSoilUnder(g, footprintAt(b, x, y));
   return true;
 }
 
@@ -383,6 +391,7 @@ export function moveBuilding(
   if (placementProblem(g, map, mapId, b, x, y) !== undefined) return false;
   if (b === "greenhouse") g.greenhouseSite = { x, y };
   else g.animals.sites[b] = { x, y };
+  clearSoilUnder(g, footprintAt(b, x, y));
   return true;
 }
 

@@ -84,8 +84,8 @@ placeholders for note 07.
 - **Stable (issue #601):** placeable with the same screen, 4 by 2, no door, and the tile in front stays free for the horse. Two days to build; removing pays half of the gold, wood and iron bars and takes the horse away (`59_horse.md`).
 - **Not built:** the silo, well and bin as placeable buildings, painting,
   and the real barn door tiles of #618. **Decided 2026-11-08 (owner): empty tilled soil
-  does not block a spot** and is cleared under the building; soil with a crop
-  still blocks. Not built: the build still blocks all tilled soil.
+  does not block a spot** and is cleared under the building (fertilizer in it is
+  lost); soil with a crop still blocks. Built in issue #657. The tile in front of the door is not covered, so its soil stays.
 
 ## Built: the greenhouse (issue #634)
 
