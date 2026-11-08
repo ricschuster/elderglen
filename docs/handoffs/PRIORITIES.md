@@ -10,8 +10,10 @@ Start each session by asking which item to take.
 ## Open, in order
 
 1. **Window sized canvas, HUD anchoring and zoom** (ADR 0009). Designed in
-   note 64 (2026-11-06), not built. The game still draws a fixed 960 by 540
-   canvas, and the build touches every screen.
+   note 64 and settled on 2026-11-07 (world zoom 75 to 200 percent, UI size 75
+   to 150, black bars around small maps, three window modes in the desktop ADR).
+   Ready to build, not built. The game still draws a fixed 960 by 540 canvas,
+   and the build touches every screen.
 2. **Completion tracker (#196).** Special Orders and seasonal debris were
    designed in note 65 (2026-11-06), not built. The tracker is next.
 3. **Story spine.** The warden head and her staged reveal (#177), the sea elf
@@ -59,6 +61,17 @@ Session g (2026-11-07, handoff 2026-11-07g) built the Android app (Capacitor,
 ADR 0008) and installed it on three tablets. New leftovers: play it on the
 tablets, repeat the performance spike in the WebView, replace the placeholder
 icon, and the tablet hosting plugin for M4.
+
+Session h (2026-11-07, handoff 2026-11-07h) settled note 64 and answered most
+of the Stardew checks register. New leftovers, each from a register row: lift a
+sprinkler with any tool (SC-48), picking up a working machine returns the input
+(SC-50, SC-66), the bee house keeps its timer in winter (SC-50), fruit energy
+per fruit (SC-52, SC-66), fruit bats leave any fruit in any season with the
+nightly counts on the Cave page (SC-55), push a full chest with the axe or
+pickaxe (SC-56), geode price per kind sold at the dwarf (SC-58, SC-67), and
+count all gold received for the cave mark and money achievements (SC-54,
+SC-61). Design open: how a growing barn, coop or farmhouse draws without showing
+unbuilt tiers (note 58, SC-36).
 
 ## Remaining bundle work
 
