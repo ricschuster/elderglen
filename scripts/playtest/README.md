@@ -54,6 +54,10 @@ errors. The game's weather and forage are random, so reruns differ.
    about 1 s a run. The time model is in `scripts/sim/world.ts` (`TIME`). Compare
    two builds by running the same personas on both.
 
+`node scripts/playtest/smoke.mjs` (about 75 seconds) opens the newer scenes once each, including the
+hat box Collections row, buying and placing the Furniture Catalogue, taking a copy, and the
+morning report, and fails on any console error.
+
 Dev hooks the scripts can call: `window.farmGive(id, n)` adds items (returns
 `"ok"`, `"unknown"` or `"full"`), `window.farmMoney(n)` adds money,
 `window.farmWalk(x, y)` starts the tap route to a tile (false when there is no
