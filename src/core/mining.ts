@@ -1,5 +1,5 @@
 import type { Outcome } from "./actions";
-import { GEODE, GEODE_SHARE } from "./geodes";
+import { GEODE_SHARE, geodeDrop, geodeKindForFloor } from "./geodes";
 import { COAL, COPPER_ORE, QUARTZ, STONE } from "./ore";
 import { swingCost } from "./upgrades";
 import type { GameState } from "./save";
@@ -34,9 +34,10 @@ export function drops(
   miningLevel: number,
   prospector: boolean,
   random: () => number,
+  floor?: number,
 ): Drop {
   if (kind === "stone") return { id: STONE, count: random() < 0.5 ? 1 : 2 };
-  if (kind === "geode") return { id: GEODE, count: 1 };
+  if (kind === "geode") return { id: geodeDrop(floor, random), count: 1 };
   if (kind === "quartz") return { id: QUARTZ, count: 1 };
   if (kind === "coal") return { id: COAL, count: 1 + (random() < 0.3 ? 1 : 0) };
   let count = 1;
@@ -75,6 +76,7 @@ export function mine(
         g.skills.level("mining"),
         g.skills.has("prospector"),
         random,
+        floor,
       )
     : undefined;
   if (drop && g.inventory.room(drop.id) < drop.count)
@@ -96,7 +98,7 @@ export function mine(
     g.skills.has("rockhound") &&
     random() < GEODE_SHARE
   )
-    g.inventory.add(GEODE);
+    g.inventory.add(geodeKindForFloor(floor));
   const ladder =
     floor !== undefined && g.mines.rockBroken(floor, day, x, y, random);
   const level = g.skills.gain("mining", ROCK_XP[rock.kind]);

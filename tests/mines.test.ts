@@ -14,7 +14,15 @@ import {
   mineMapId,
   minesOpen,
 } from "../src/core/mines";
-import { crackGeode, crackResult, CRACK_FEE } from "../src/core/geodes";
+import {
+  crackGeode,
+  crackResult,
+  CRACK_FEE,
+  geodeDrop,
+  geodeKindForFloor,
+  GEODE_ITEMS,
+} from "../src/core/geodes";
+import geodeData from "../src/content/geodes.json";
 import { greencoatDue, hearGreencoat, takeCampGift } from "../src/core/camp";
 import { drops, mine } from "../src/core/mining";
 import { collect, minutesLeft, ready, smelt } from "../src/core/furnace";
@@ -451,7 +459,7 @@ describe("geodes", () => {
     expect(geodes / total).toBeLessThan(0.08);
   });
 
-  it("are cracked by the smith for 25g into a stone, ore, gem or found thing", () => {
+  it("are cracked by the smith for 25g into an artifact, mineral, stone, clay or ore", () => {
     const g = newGame();
     expect(crackGeode(g)).toEqual({ ok: false, reason: "no geode" });
     g.inventory.add("geode", 2);
@@ -459,9 +467,9 @@ describe("geodes", () => {
     expect(crackGeode(g)).toEqual({ ok: false, reason: "not enough money" });
     g.money = 100;
     const r = crackGeode(g, () => 0);
-    expect(r).toEqual({ ok: true, item: "stone", count: 3 });
+    expect(r).toEqual({ ok: true, item: "dwarf-cup", count: 1 });
     expect(g.money).toBe(100 - CRACK_FEE);
-    expect(g.inventory.count("stone")).toBe(3);
+    expect(g.inventory.count("dwarf-cup")).toBe(1);
     expect(g.inventory.count("geode")).toBe(1);
   });
 
@@ -471,6 +479,125 @@ describe("geodes", () => {
       seen.add(crackResult(() => (i * 0.6180339) % 1).item);
     expect(seen.size).toBeGreaterThanOrEqual(6);
     for (const id of seen) expect(itemById(id), id).toBeDefined();
+  });
+
+  it("drop by depth band, with Omni rare from floor 21 on", () => {
+    expect(geodeKindForFloor(1)).toBe("geode");
+    expect(geodeKindForFloor(40)).toBe("geode");
+    expect(geodeKindForFloor(41)).toBe("frozen-geode");
+    expect(geodeKindForFloor(80)).toBe("frozen-geode");
+    expect(geodeKindForFloor(81)).toBe("magma-geode");
+    expect(geodeKindForFloor(120)).toBe("magma-geode");
+    expect(geodeDrop(undefined, () => 0)).toBe("geode");
+    expect(geodeDrop(20, () => 0)).toBe("geode");
+    expect(geodeDrop(21, () => 0)).toBe("omni-geode");
+    expect(geodeDrop(60, () => 0.99)).toBe("frozen-geode");
+    expect(drops("geode", 0, false, () => 0.99, 90).id).toBe("magma-geode");
+    let omni = 0;
+    for (let i = 0; i < 1000; i++)
+      if (geodeDrop(50, () => ((i * 0.6180339) % 1) as number) === "omni-geode")
+        omni++;
+    expect(omni).toBeGreaterThan(30);
+    expect(omni).toBeLessThan(150);
+  });
+
+  it("give a rockhound an extra geode of the band's kind", () => {
+    const g = newGame();
+    g.day.clock.day = 5;
+    g.skills.gain("mining", 100000);
+    g.skills.setProfession("mining", "rockhound");
+    g.mines.visit(50, 5).rocks.add(2, 2, "stone");
+    mine(g, 2, 2, 50, () => 0);
+    mine(g, 2, 2, 50, () => 0);
+    expect(g.inventory.count("frozen-geode")).toBe(1);
+  });
+
+  it("have a real item for every pool entry, six minerals a pool", () => {
+    for (const p of geodeData.pools) {
+      expect(p.minerals).toHaveLength(6);
+      const ids = [
+        p.artifact.item,
+        p.foraged.item,
+        ...p.minerals,
+        ...p.ores.map((o) => o.item),
+      ];
+      for (const id of ids) expect(itemById(id), id).toBeDefined();
+    }
+    for (const i of GEODE_ITEMS)
+      expect(itemById(i.id)?.sellPrice).toBe(i.sellPrice);
+  });
+
+  it("crack each kind into its own pool", () => {
+    const seq = (v: number[]) => {
+      let i = 0;
+      return () => v[i++] ?? 0.99;
+    };
+    // Artifact, foraged mineral, first mineral of each pool.
+    expect(crackResult(() => 0, "frozen-geode").item).toBe("ice-bell");
+    expect(crackResult(() => 0, "magma-geode").item).toBe("ember-lantern");
+    expect(crackResult(seq([0.5, 0.01]), "geode").item).toBe("loam-crystal");
+    expect(crackResult(seq([0.5, 0.5, 0.01]), "frozen-geode").item).toBe(
+      "frost-opal",
+    );
+    expect(
+      crackResult(
+        seq([0.5, 0.5, 0.99, 0.99, 0.99, 0.99, 0.99, 0.01]),
+        "magma-geode",
+      ).item,
+    ).toBe("heartfire-diamond");
+    // Omni picks a pool by its first roll.
+    expect(crackResult(() => 0, "omni-geode").item).toBe("dwarf-cup");
+    expect(crackResult(seq([0.99, 0]), "omni-geode").item).toBe(
+      "ember-lantern",
+    );
+  });
+
+  it("crack to stone, clay or ore after the minerals, gated by depth", () => {
+    // Skip artifact, foraged and the six minerals, then the resource roll.
+    const after = (res: number, ...rest: number[]) => {
+      const v = [0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, res, ...rest];
+      let i = 0;
+      return () => v[i++] ?? 0;
+    };
+    expect(crackResult(after(0.05, 0.9), "geode")).toEqual({
+      item: "stone",
+      count: 2,
+    });
+    expect(crackResult(after(0.15), "geode")).toEqual({
+      item: "clay",
+      count: 1,
+    });
+    // Ore: roll 0 picks the first ore (coal), then amount 1.
+    expect(crackResult(after(0.5, 0, 0), "geode", 1)).toEqual({
+      item: "coal",
+      count: 1,
+    });
+    // Iron only from floor 26 on: the last roll of 0.99 picks it then, copper before.
+    expect(crackResult(after(0.5, 0.99, 0), "geode", 10).item).toBe(
+      "copper-ore",
+    );
+    expect(crackResult(after(0.5, 0.99, 0), "geode", 30).item).toBe("iron-ore");
+    // Gold in the Frozen pool only from floor 76 on.
+    expect(crackResult(after(0.5, 0.99, 0), "frozen-geode", 50).item).toBe(
+      "iron-ore",
+    );
+    expect(crackResult(after(0.5, 0.99, 0), "frozen-geode", 76).item).toBe(
+      "gold-ore",
+    );
+    // Hearthsilver is the rare Magma ore, in its own amounts.
+    expect(crackResult(after(0.5, 0.99, 0.99), "magma-geode", 90)).toEqual({
+      item: "hearthsilver-ore",
+      count: 11,
+    });
+  });
+
+  it("cracks a Frozen geode at the smith using the deepest floor reached", () => {
+    const g = newGame();
+    g.money = 100;
+    g.inventory.add("frozen-geode", 1);
+    const r = crackGeode(g, () => 0, "frozen-geode");
+    expect(r).toEqual({ ok: true, item: "ice-bell", count: 1 });
+    expect(g.inventory.count("frozen-geode")).toBe(0);
   });
 
   it("leaves the geode and the gold when the backpack is full", () => {

@@ -2,6 +2,7 @@ import { CHESTS, chestById } from "../core/chestdefs";
 import { FURNITURE, furnitureById } from "../core/furniture";
 import { fertilizerById } from "../core/fertilizer";
 import { SPRINKLERS, sprinklerById } from "../core/sprinklers";
+import { GEODE_ITEMS, GEODE_KINDS } from "../core/geodes";
 import { categoryOf } from "../core/artisan";
 import { MACHINES, machineById } from "../core/processing";
 import Phaser from "phaser";
@@ -701,10 +702,7 @@ const MINE_ICON_IDS = [
   "stone",
   "coal",
   "quartz-crystal",
-  "geode",
-  "river-garnet",
-  "frost-opal",
-  "dwarf-cup",
+  ...GEODE_ITEMS.map((i) => i.id),
   "copper-ore",
   "iron-ore",
   "gold-ore",
@@ -868,15 +866,16 @@ function paintMineArt(scene: Phaser.Scene): void {
     draw(`icon-${id}`, (c) => {
       if (id === "stone") lump(c, "#8a8a90", "#5a5a62", "#b4b4ba");
       else if (id === "quartz-crystal") crystal(c);
-      else if (id === "geode") geode(c);
-      else if (id === "river-garnet") gem(c, "#a02a3a", "#e07080");
-      else if (id === "frost-opal") gem(c, "#8ad0e8", "#e8f8ff");
+      else if (GEODE_KINDS.includes(id)) geode(c);
       else if (id === "dwarf-cup") {
         px(c, "#00000044", 4, 13, 8, 1);
         px(c, "#a88a4a", 4, 5, 8, 3);
         px(c, "#a88a4a", 6, 8, 4, 4);
         px(c, "#7a5e2a", 5, 12, 6, 1);
         px(c, "#d8be7a", 5, 6, 2, 1);
+      } else if (GEODE_ITEMS.some((i) => i.id === id)) {
+        const i = GEODE_ITEMS.find((i) => i.id === id)!;
+        gem(c, i.color ?? "#ffffff", i.light ?? "#ffffff");
       } else if (id === "coal") {
         lump(c, "#4a4a52", "#2a2a30", "#6a6a74");
         specks(c, "#16161a");

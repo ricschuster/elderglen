@@ -1,38 +1,357 @@
 {
   "fee": 25,
-  "geode": { "id": "geode", "name": "Geode", "sellPrice": 50 },
+  "geode": {
+    "id": "geode",
+    "name": "Geode",
+    "sellPrice": 50
+  },
   "kinds": [
-    { "id": "frozen-geode", "name": "Frozen Geode", "sellPrice": 100 },
-    { "id": "magma-geode", "name": "Magma Geode", "sellPrice": 150 },
-    { "id": "omni-geode", "name": "Omni Geode", "sellPrice": 300 }
+    {
+      "id": "frozen-geode",
+      "name": "Frozen Geode",
+      "sellPrice": 100
+    },
+    {
+      "id": "magma-geode",
+      "name": "Magma Geode",
+      "sellPrice": 150
+    },
+    {
+      "id": "omni-geode",
+      "name": "Omni Geode",
+      "sellPrice": 300
+    }
+  ],
+  "omni": {
+    "fromFloor": 21,
+    "chance": 0.08
+  },
+  "resources": {
+    "stoneChance": 0.125,
+    "clayChance": 0.0625,
+    "clay": "clay"
+  },
+  "oreAmounts": {
+    "counts": [1, 3, 5, 10, 20],
+    "weights": [30, 30, 30, 9, 1]
+  },
+  "hearthsilverAmounts": {
+    "counts": [1, 2, 3, 6, 11],
+    "weights": [30, 30, 30, 9, 1]
+  },
+  "pools": [
+    {
+      "kind": "geode",
+      "floors": [1, 40],
+      "artifact": {
+        "item": "dwarf-cup",
+        "chance": 0.03125
+      },
+      "foraged": {
+        "item": "loam-crystal",
+        "chance": 0.0625
+      },
+      "minerals": [
+        "river-garnet",
+        "moss-agate",
+        "amber-drop",
+        "rust-jasper",
+        "dune-jade",
+        "hazel-stone"
+      ],
+      "mineralChance": 0.03333,
+      "ores": [
+        {
+          "item": "coal",
+          "minFloor": 1,
+          "weight": 3
+        },
+        {
+          "item": "copper-ore",
+          "minFloor": 1,
+          "weight": 3
+        },
+        {
+          "item": "iron-ore",
+          "minFloor": 26,
+          "weight": 3
+        }
+      ]
+    },
+    {
+      "kind": "frozen-geode",
+      "floors": [41, 80],
+      "artifact": {
+        "item": "ice-bell",
+        "chance": 0.03333
+      },
+      "foraged": {
+        "item": "rime-crystal",
+        "chance": 0.0625
+      },
+      "minerals": [
+        "frost-opal",
+        "glacier-topaz",
+        "snow-beryl",
+        "pale-moonstone",
+        "winter-pearl",
+        "deepwater-aquamarine"
+      ],
+      "mineralChance": 0.03333,
+      "ores": [
+        {
+          "item": "coal",
+          "minFloor": 1,
+          "weight": 3
+        },
+        {
+          "item": "copper-ore",
+          "minFloor": 1,
+          "weight": 3
+        },
+        {
+          "item": "iron-ore",
+          "minFloor": 1,
+          "weight": 3
+        },
+        {
+          "item": "gold-ore",
+          "minFloor": 76,
+          "weight": 3
+        }
+      ]
+    },
+    {
+      "kind": "magma-geode",
+      "floors": [81, 120],
+      "artifact": {
+        "item": "ember-lantern",
+        "chance": 0.03846
+      },
+      "foraged": {
+        "item": "cinder-crystal",
+        "chance": 0.0625
+      },
+      "minerals": [
+        "forge-jasper",
+        "basalt-onyx",
+        "lava-glass",
+        "ember-topaz",
+        "cinder-ruby",
+        "heartfire-diamond"
+      ],
+      "mineralChance": 0.03333,
+      "ores": [
+        {
+          "item": "coal",
+          "minFloor": 1,
+          "weight": 3
+        },
+        {
+          "item": "copper-ore",
+          "minFloor": 1,
+          "weight": 3
+        },
+        {
+          "item": "iron-ore",
+          "minFloor": 1,
+          "weight": 3
+        },
+        {
+          "item": "gold-ore",
+          "minFloor": 1,
+          "weight": 3
+        },
+        {
+          "item": "hearthsilver-ore",
+          "minFloor": 1,
+          "weight": 1
+        }
+      ]
+    }
   ],
   "items": [
     {
-      "id": "river-garnet",
-      "name": "River garnet",
-      "sellPrice": 90,
-      "note": "Placeholder gem, the gem list is unwritten (note 22)"
+      "id": "clay",
+      "name": "Clay",
+      "sellPrice": 20,
+      "color": "#b0704a",
+      "light": "#d89a74"
     },
     {
-      "id": "frost-opal",
-      "name": "Frost opal",
-      "sellPrice": 120,
-      "note": "Placeholder gem"
+      "id": "hearthsilver-ore",
+      "name": "Hearthsilver ore",
+      "sellPrice": 100,
+      "color": "#d8d0c8",
+      "light": "#ffffff"
     },
     {
       "id": "dwarf-cup",
       "name": "Old dwarf cup",
       "sellPrice": 40,
-      "note": "Placeholder found thing from note 22's list"
+      "color": "#a88a4a",
+      "light": "#d8be7a"
+    },
+    {
+      "id": "ice-bell",
+      "name": "Ice bell",
+      "sellPrice": 120,
+      "color": "#8ab0c8",
+      "light": "#e0f0f8"
+    },
+    {
+      "id": "ember-lantern",
+      "name": "Ember lantern",
+      "sellPrice": 200,
+      "color": "#c85a2a",
+      "light": "#f8b070"
+    },
+    {
+      "id": "loam-crystal",
+      "name": "Loam crystal",
+      "sellPrice": 50,
+      "color": "#9a7a4a",
+      "light": "#d8c090"
+    },
+    {
+      "id": "rime-crystal",
+      "name": "Rime crystal",
+      "sellPrice": 75,
+      "color": "#a8d8e8",
+      "light": "#f0fcff"
+    },
+    {
+      "id": "cinder-crystal",
+      "name": "Cinder crystal",
+      "sellPrice": 100,
+      "color": "#e0602a",
+      "light": "#ffc080"
+    },
+    {
+      "id": "river-garnet",
+      "name": "River garnet",
+      "sellPrice": 90,
+      "color": "#a02a3a",
+      "light": "#e07080"
+    },
+    {
+      "id": "moss-agate",
+      "name": "Moss agate",
+      "sellPrice": 50,
+      "color": "#5a8a5a",
+      "light": "#a8d0a0"
+    },
+    {
+      "id": "amber-drop",
+      "name": "Amber drop",
+      "sellPrice": 80,
+      "color": "#d89a2a",
+      "light": "#f8d880"
+    },
+    {
+      "id": "rust-jasper",
+      "name": "Rust jasper",
+      "sellPrice": 40,
+      "color": "#a05a3a",
+      "light": "#d89070"
+    },
+    {
+      "id": "dune-jade",
+      "name": "Dune jade",
+      "sellPrice": 100,
+      "color": "#6ab08a",
+      "light": "#b8f0d0"
+    },
+    {
+      "id": "hazel-stone",
+      "name": "Hazel stone",
+      "sellPrice": 60,
+      "color": "#8a6a3a",
+      "light": "#c8a870"
+    },
+    {
+      "id": "frost-opal",
+      "name": "Frost opal",
+      "sellPrice": 120,
+      "color": "#8ad0e8",
+      "light": "#e8f8ff"
+    },
+    {
+      "id": "glacier-topaz",
+      "name": "Glacier topaz",
+      "sellPrice": 130,
+      "color": "#6a9ad8",
+      "light": "#b8d8f8"
+    },
+    {
+      "id": "snow-beryl",
+      "name": "Snow beryl",
+      "sellPrice": 110,
+      "color": "#a8c8d0",
+      "light": "#e8f4f8"
+    },
+    {
+      "id": "pale-moonstone",
+      "name": "Pale moonstone",
+      "sellPrice": 100,
+      "color": "#c0c8e0",
+      "light": "#f4f6ff"
+    },
+    {
+      "id": "winter-pearl",
+      "name": "Winter pearl",
+      "sellPrice": 140,
+      "color": "#e0e0f0",
+      "light": "#ffffff"
+    },
+    {
+      "id": "deepwater-aquamarine",
+      "name": "Deepwater aquamarine",
+      "sellPrice": 150,
+      "color": "#4a8ac0",
+      "light": "#98d0f0"
+    },
+    {
+      "id": "forge-jasper",
+      "name": "Forge jasper",
+      "sellPrice": 180,
+      "color": "#a03a1a",
+      "light": "#e07a4a"
+    },
+    {
+      "id": "basalt-onyx",
+      "name": "Basalt onyx",
+      "sellPrice": 150,
+      "color": "#2a2a34",
+      "light": "#6a6a7a"
+    },
+    {
+      "id": "lava-glass",
+      "name": "Lava glass",
+      "sellPrice": 160,
+      "color": "#c04a1a",
+      "light": "#f09060"
+    },
+    {
+      "id": "ember-topaz",
+      "name": "Ember topaz",
+      "sellPrice": 220,
+      "color": "#e08a1a",
+      "light": "#ffd080"
+    },
+    {
+      "id": "cinder-ruby",
+      "name": "Cinder ruby",
+      "sellPrice": 200,
+      "color": "#c0182a",
+      "light": "#f06a7a"
+    },
+    {
+      "id": "heartfire-diamond",
+      "name": "Heartfire diamond",
+      "sellPrice": 250,
+      "color": "#f0e0d8",
+      "light": "#ffffff"
     }
-  ],
-  "outcomes": [
-    { "item": "stone", "min": 3, "max": 6, "weight": 30 },
-    { "item": "coal", "min": 1, "max": 3, "weight": 15 },
-    { "item": "copper-ore", "min": 2, "max": 5, "weight": 15 },
-    { "item": "quartz-crystal", "min": 1, "max": 2, "weight": 15 },
-    { "item": "river-garnet", "min": 1, "max": 1, "weight": 10 },
-    { "item": "frost-opal", "min": 1, "max": 1, "weight": 5 },
-    { "item": "dwarf-cup", "min": 1, "max": 1, "weight": 10 }
   ]
 }

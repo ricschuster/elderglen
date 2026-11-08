@@ -14,53 +14,137 @@ export const GEODE = geodeData.geode.id;
 export const CRACK_FEE = geodeData.fee;
 /** Share of rocks that are geode nodes on floors 1 to 10 (placeholder). */
 export const GEODE_SHARE = 0.05;
-/**
- * The other geode kinds are items with sell prices only (SC-67). Where each
- * drops and what it cracks into is unsettled, so they do not drop yet and the
- * smith cracks only the plain geode.
- */
+/** The other geode kinds are items with a drop band and a contents pool each (note 69). */
+export const FROZEN_GEODE = "frozen-geode";
+export const MAGMA_GEODE = "magma-geode";
+export const OMNI_GEODE = "omni-geode";
+export const GEODE_KINDS = [GEODE, FROZEN_GEODE, MAGMA_GEODE, OMNI_GEODE];
+
+export interface GeodeItem {
+  id: string;
+  name: string;
+  sellPrice: number;
+  /** Icon colours for the placeholder art. */
+  color?: string;
+  light?: string;
+}
+
 /** Items only geodes give, so `items.ts` can list them. */
-export const GEODE_ITEMS: { id: string; name: string; sellPrice: number }[] = [
+export const GEODE_ITEMS: GeodeItem[] = [
   geodeData.geode,
   ...geodeData.kinds,
   ...geodeData.items,
 ];
 
-interface Outcome_ {
-  item: string;
-  min: number;
-  max: number;
-  weight: number;
+interface Pool {
+  kind: string;
+  floors: [number, number];
+  artifact: { item: string; chance: number };
+  foraged: { item: string; chance: number };
+  minerals: string[];
+  mineralChance: number;
+  ores: { item: string; minFloor: number; weight: number }[];
 }
 
-const OUTCOMES = geodeData.outcomes as Outcome_[];
+const POOLS = geodeData.pools as Pool[];
+const HEARTHSILVER = "hearthsilver-ore";
 
-/** What a geode gives, given the roll. Pure. */
-export function crackResult(random: () => number): {
-  item: string;
-  count: number;
-} {
-  const total = OUTCOMES.reduce((n, o) => n + o.weight, 0);
+/** The geode kind that drops on a mine floor: plain to 40, Frozen to 80, Magma beyond (note 69). */
+export function geodeKindForFloor(floor: number): string {
+  return (
+    POOLS.find((p) => floor <= p.floors[1])?.kind ??
+    POOLS[POOLS.length - 1]!.kind
+  );
+}
+
+/** The geode a broken node gives on a mine floor: the band's kind, or rarely an Omni from floor 21 on. Pure. */
+export function geodeDrop(
+  floor: number | undefined,
+  random: () => number,
+): string {
+  if (floor === undefined) return GEODE;
+  if (floor >= geodeData.omni.fromFloor && random() < geodeData.omni.chance)
+    return OMNI_GEODE;
+  return geodeKindForFloor(floor);
+}
+
+const pickWeighted = <T>(
+  list: T[],
+  weight: (t: T) => number,
+  random: () => number,
+): T => {
+  const total = list.reduce((n, t) => n + weight(t), 0);
   let roll = random() * total;
-  const hit = OUTCOMES.find((o) => (roll -= o.weight) < 0) ?? OUTCOMES[0]!;
-  return {
-    item: hit.item,
-    count: hit.min + Math.floor(random() * (hit.max - hit.min + 1)),
-  };
+  return list.find((t) => (roll -= weight(t)) < 0) ?? list[0]!;
+};
+
+const amount = (
+  a: { counts: number[]; weights: number[] },
+  random: () => number,
+): number => {
+  const i = pickWeighted(
+    a.counts.map((_, i) => i),
+    (i) => a.weights[i]!,
+    random,
+  );
+  return a.counts[i]!;
+};
+
+function crackPool(
+  pool: Pool,
+  deepest: number,
+  random: () => number,
+): { item: string; count: number } {
+  if (random() < pool.artifact.chance)
+    return { item: pool.artifact.item, count: 1 };
+  if (random() < pool.foraged.chance)
+    return { item: pool.foraged.item, count: 1 };
+  for (const m of pool.minerals)
+    if (random() < pool.mineralChance) return { item: m, count: 1 };
+  const res = geodeData.resources;
+  const r = random();
+  if (r < res.stoneChance)
+    return { item: "stone", count: random() < 0.5 ? 1 : 2 };
+  if (r < res.stoneChance + res.clayChance) return { item: res.clay, count: 1 };
+  const ores = pool.ores.filter((o) => Math.max(deepest, 1) >= o.minFloor);
+  const ore = pickWeighted(ores, (o) => o.weight, random);
+  const counts =
+    ore.item === HEARTHSILVER
+      ? geodeData.hearthsilverAmounts
+      : geodeData.oreAmounts;
+  return { item: ore.item, count: amount(counts, random) };
+}
+
+/**
+ * What cracking a geode gives. `deepest` is the deepest mine floor reached: it
+ * gates iron after floor 26 and gold after floor 76 as Stardew gates by level.
+ * An Omni geode draws from every pool. Pure, given the rolls.
+ */
+export function crackResult(
+  random: () => number,
+  kind: string = GEODE,
+  deepest = 0,
+): { item: string; count: number } {
+  const pool =
+    kind === OMNI_GEODE
+      ? POOLS[Math.min(POOLS.length - 1, Math.floor(random() * POOLS.length))]!
+      : (POOLS.find((p) => p.kind === kind) ?? POOLS[0]!);
+  return crackPool(pool, deepest, random);
 }
 
 const fail = (reason: string): Outcome => ({ ok: false, reason });
 
-/** The smith cracks one geode from the backpack for the fee. */
+/** The smith cracks one geode of a kind from the backpack for the fee. */
 export function crackGeode(
   g: GameState,
   random: () => number = Math.random,
+  kind: string = GEODE,
 ): Outcome & { count?: number } {
-  if (g.inventory.count(GEODE) < 1) return fail("no geode");
+  if (g.inventory.count(kind) < 1) return fail("no geode");
   if (g.money < CRACK_FEE) return fail("not enough money");
   const before = g.inventory.save();
-  g.inventory.remove(GEODE, 1);
-  const r = crackResult(random);
+  g.inventory.remove(kind, 1);
+  const r = crackResult(random, kind, g.mines.deepest);
   if (!g.inventory.add(r.item, r.count)) {
     g.inventory.load(before);
     return fail("backpack full");
