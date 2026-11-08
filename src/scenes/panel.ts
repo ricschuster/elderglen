@@ -204,8 +204,13 @@ export class Menu {
         this.objects.push(
           this.scene.add
             .text(detailX, ry + this.rowH / 2 - 2, row.detail, {
-              fontSize: "15px",
+              fontSize: "14px",
               color: "#d8e8c8",
+              align: "right",
+              // Wrap into the room between the label and the buttons, not over the label.
+              wordWrap: {
+                width: Math.max(120, detailX - (x + 8 + label.width) - 24),
+              },
             })
             .setOrigin(1, 0.5)
             .setAlpha(alpha),
