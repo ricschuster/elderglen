@@ -604,9 +604,9 @@ Each followed Stardew, checked on the saved Fishing and Bait pages unless said.
 
 - **Bait is spent on every cast that lands in water**, even with no bite. Already
   built, and now confirmed (saved Bait page: always single use).
-- **A cast costs energy**, falling with the fishing level. Stardew: 8 at level 0,
-  0.1 less per level, 7 from level 10 (saved Fishing page). Ours scales that to our
-  energy pool, a placeholder in note 07. Not built.
+- **A cast costs energy**, falling with the fishing level: 8 at level 0, 0.1 less
+  per level, 7 from level 10 (saved Fishing page). Our pool is 270 like Stardew's,
+  so the numbers are used as they are (owner, 2026-11-08, round two). Not built.
 - **A perfect catch lifts quality one grade only if the fish was already silver or
   better**, so silver to gold for us (no iridium grade). Built as drafted.
 - **Winter keeps a thinned roster** (Stardew has fewer winter fish). The count in
