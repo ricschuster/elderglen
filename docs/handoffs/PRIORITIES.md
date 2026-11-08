@@ -71,9 +71,11 @@ per fruit (SC-52, SC-66), fruit bats leave any fruit in any season with the
 nightly counts on the Cave page (SC-55), push a full chest with the axe or
 pickaxe (SC-56), geode price per kind sold at the dwarf (SC-58, SC-67), and
 count all gold received for the cave mark and money achievements (SC-54,
-SC-61). Design open: how a growing barn, coop or farmhouse draws without showing
-unbuilt tiers (note 58, SC-36, #525). The house issues #421, #282 and #286 are
-on hold until it is settled. Open register rows: #526.
+SC-61). The growing barn, coop and farmhouse interiors were settled later the
+same day in note 68 (one map per building, unbuilt space black void, #525). Build
+issues: #421 first (the tier layer loader and the merged house map), then #286
+(tiers 2 and 3), #282 (cellar) and #531 (coop and barn). New register rows
+SC-68 to SC-70 wait for the owner. Open register rows: #526.
 
 ## Remaining bundle work
 
