@@ -244,6 +244,34 @@ describe("where a building may stand", () => {
 });
 
 describe("ordering, moving and removing", () => {
+  it("empty tilled soil does not block and is cleared; a crop still blocks", () => {
+    const g = built();
+    const m = map();
+    const spot = freeSpot(g, "coop");
+    g.farm.till(spot.x, spot.y);
+    g.farm.till(spot.x + 1, spot.y);
+    g.farm.plant(spot.x + 1, spot.y, "parsnip", "spring");
+    const blockers = placementBlockers(g, m, MAP_ID, "coop", spot.x, spot.y);
+    expect(blockers.map((b) => b.why)).toEqual(["a growing crop"]);
+    delete g.farm.plotAt(spot.x + 1, spot.y)?.crop;
+    expect(placementBlockers(g, m, MAP_ID, "coop", spot.x, spot.y)).toEqual([]);
+  });
+
+  it("clears the empty soil under a placed building", () => {
+    const g = newGame();
+    g.money = COOP_COST.coin;
+    g.inventory.add("wood", COOP_COST.wood);
+    g.inventory.add("stone", COOP_COST.stone);
+    const spot = freeSpot(g, "coop", 40);
+    g.farm.till(spot.x, spot.y);
+    g.farm.till(spot.x + 40, spot.y + 40);
+    expect(orderBuildingAt(g, map(), MAP_ID, "coop", spot.x, spot.y)).toBe(
+      true,
+    );
+    expect(g.farm.plotAt(spot.x, spot.y)).toBeUndefined();
+    expect(g.farm.plotAt(spot.x + 40, spot.y + 40)).toBeDefined();
+  });
+
   it("orders on a chosen spot and remembers it", () => {
     const g = newGame();
     g.money = COOP_COST.coin;

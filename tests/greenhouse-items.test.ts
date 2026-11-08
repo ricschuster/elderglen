@@ -247,11 +247,12 @@ describe("moving the greenhouse at the carpenter", () => {
   it("is refused on rocks, soil and the other buildings, and accepted on bare ground", () => {
     const g = repaired();
     g.farm.till(20, 12);
+    g.farm.plant(20, 12, "parsnip", "spring");
     expect(
       placementBlockers(g, raw(), "farm", "greenhouse", 20, 12).map(
         (b) => b.why,
       ),
-    ).toContain("tilled soil");
+    ).toContain("a growing crop");
     expect(moveBuilding(g, raw(), "farm", "greenhouse", 20, 12)).toBe(false);
     g.animals.coopBuilt = true;
     const c = COOP_SITES.farm!;

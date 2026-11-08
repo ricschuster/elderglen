@@ -54,6 +54,13 @@ export class Farm {
     return true;
   }
 
+  /** Remove empty tilled soil (and any fertilizer in it). False, and nothing changed, if there is none or a crop grows there. */
+  clearEmpty(x: number, y: number): boolean {
+    const plot = this.plotAt(x, y);
+    if (!plot || plot.crop) return false;
+    return this.plots.delete(key(x, y));
+  }
+
   /** Plant a seed in tilled, empty soil. Fails out of season, except indoors. */
   plant(x: number, y: number, cropId: string, season: Season): boolean {
     const plot = this.plotAt(x, y);
