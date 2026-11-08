@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { itemById } from "../core/items";
 import type { SleepReport } from "../core/sleep";
+import { WINDOW_FILL } from "./panel";
 
 /** Item lines shown before "and N more". */
 const SHOWN = 9;
@@ -24,8 +25,7 @@ export class ShippingScene extends Phaser.Scene {
   create(): void {
     const { lines, total } = this.report.shipped;
     this.add
-      .rectangle(0, 0, 960, 540, 0x10201a, 0.96)
-      .setOrigin(0)
+      .rectangle(480, 270, WINDOW_FILL, WINDOW_FILL, 0x10201a, 0.96)
       .setInteractive();
     this.add
       .text(480, 50, "Shipped", { fontSize: "34px", color: "#ffffff" })

@@ -32,6 +32,8 @@ export interface Controls {
   vector(): Vec;
   /** True while the use control is held. */
   useHeld(): boolean;
+  /** The UI camera's zoom, so touch drawing keeps its screen size. */
+  setUiScale(scale: number): void;
 }
 
 const ARROWS = {
@@ -123,6 +125,8 @@ class DesktopControls implements Controls {
   useHeld(): boolean {
     return this.held("use");
   }
+
+  setUiScale(): void {}
 }
 
 /**
@@ -177,6 +181,11 @@ class TouchControls implements Controls {
 
   useHeld(): boolean {
     return false;
+  }
+
+  setUiScale(scale: number): void {
+    // The stick is drawn in screen pixels on a zoomed UI camera.
+    this.stick.setScale(1 / scale);
   }
 
   private drawStick(): void {

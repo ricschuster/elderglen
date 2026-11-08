@@ -161,3 +161,24 @@ describe("keyLabel", () => {
     expect(keyLabel("Tab")).toBe("Tab");
   });
 });
+
+describe("view settings", () => {
+  it("defaults to 100 percent and round trips", () => {
+    const s = defaultSettings();
+    expect(s.worldZoom).toBe(100);
+    expect(s.uiSize).toBe(100);
+    s.worldZoom = 175;
+    s.uiSize = 80;
+    expect(deserializeSettings(serializeSettings(s))).toEqual(s);
+  });
+
+  it("clamps out of range values and keeps older records working", () => {
+    const text = JSON.stringify({ version: 1, worldZoom: 900, uiSize: 1 });
+    const s = deserializeSettings(text);
+    expect(s.worldZoom).toBe(200);
+    expect(s.uiSize).toBe(75);
+    const old = deserializeSettings(JSON.stringify({ version: 1 }));
+    expect(old.worldZoom).toBe(100);
+    expect(old.uiSize).toBe(100);
+  });
+});

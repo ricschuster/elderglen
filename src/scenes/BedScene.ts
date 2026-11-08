@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { festivalToday } from "../core/festivals";
 import type { GameState } from "../core/save";
 import { STATE_KEY } from "./state";
+import { WINDOW_FILL } from "./panel";
 
 /**
  * Asked when the player uses the bed: go to sleep now, or not. The farm is
@@ -14,8 +15,7 @@ export class BedScene extends Phaser.Scene {
 
   create(): void {
     this.add
-      .rectangle(0, 0, 960, 540, 0x10201a, 0.8)
-      .setOrigin(0)
+      .rectangle(480, 270, WINDOW_FILL, WINDOW_FILL, 0x10201a, 0.8)
       .setInteractive();
     this.add
       .text(480, 200, "Go to sleep?", { fontSize: "36px", color: "#ffe9a0" })

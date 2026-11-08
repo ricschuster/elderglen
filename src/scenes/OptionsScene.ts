@@ -11,7 +11,15 @@ import {
   type Settings,
   type TouchScheme,
 } from "../core/bindings";
-import { frame, Menu, type Row } from "./panel";
+import {
+  centreView,
+  frame,
+  Menu,
+  type Row,
+  UI_SIZE_KEY,
+  WORLD_ZOOM_KEY,
+} from "./panel";
+import { stepPercent, UI_MAX, UI_MIN, ZOOM_MAX, ZOOM_MIN } from "../core/view";
 import { browserSettingsStore, loadDeviceSettings } from "./storage";
 
 export const PROFILE_NAMES: Record<Profile, string> = {
@@ -26,7 +34,9 @@ const SCHEME_NAMES: Record<TouchScheme, string> = {
 
 /**
  * The options screen, opened from the title (note 45 step 3). It holds the
- * controls only: the profile, the touch scheme, and the desktop key list.
+ * view (world zoom, UI size and window mode, note 64) and the controls: the
+ * profile, the touch scheme, and the desktop key list. Zoom and UI size apply
+ * at once, here and in the farm.
  * Choosing a key row waits for the next key press; a key already in use asks
  * before it swaps. Changes apply at once and are saved when the screen closes.
  */
@@ -56,7 +66,7 @@ export class OptionsScene extends Phaser.Scene {
     this.add.text(
       24,
       516,
-      "Up and Down: move   Enter: change a key   Right: default key   Esc: close",
+      "Up and Down: move   Left and Right: smaller, larger or default   Enter: change a key   Esc: close",
       { fontSize: "13px", color: "#ffffffaa" },
     );
     this.menu = new Menu(this, {
@@ -166,6 +176,9 @@ export class OptionsScene extends Phaser.Scene {
   private refresh(): void {
     const s = this.settings;
     const rows: Row[] = [
+      this.percentRow("World zoom", "worldZoom", ZOOM_MIN, ZOOM_MAX),
+      this.percentRow("UI size", "uiSize", UI_MIN, UI_MAX),
+      ...this.windowRows(),
       {
         label: "Controls for this device",
         buttons: (Object.keys(PROFILE_NAMES) as Profile[]).map((p) => ({
@@ -223,6 +236,65 @@ export class OptionsScene extends Phaser.Scene {
       });
     }
     this.menu.setRows(rows);
+  }
+
+  /** A setting in 5 percent steps: Left and Right press the two buttons. */
+  private percentRow(
+    label: string,
+    key: "worldZoom" | "uiSize",
+    min: number,
+    max: number,
+  ): Row {
+    const change = (dir: 1 | -1) => () => {
+      const next = stepPercent(this.settings[key], dir, min, max);
+      this.settings[key] = next;
+      this.registry.set(
+        key === "worldZoom" ? WORLD_ZOOM_KEY : UI_SIZE_KEY,
+        next,
+      );
+      // The UI size also scales this screen's box, so redraw it now.
+      centreView(this);
+      this.refresh();
+    };
+    return {
+      label,
+      detail: `${this.settings[key]}%`,
+      buttons: [
+        { text: "Smaller", run: change(-1), enabled: this.settings[key] > min },
+        { text: "Larger", run: change(1), enabled: this.settings[key] < max },
+      ],
+    };
+  }
+
+  /**
+   * Window mode as far as a browser can express it: Windowed and Fullscreen.
+   * Borderless Windowed needs the desktop wrapper (note 64). The browser asks
+   * for a tap or key press each time, so the mode is not saved.
+   */
+  private windowRows(): Row[] {
+    if (!this.scale.fullscreen.available) return [];
+    const full = this.scale.isFullscreen;
+    return [
+      {
+        label: "Window mode",
+        buttons: [
+          {
+            text: this.mark(!full, "Windowed"),
+            run: () => {
+              this.scale.stopFullscreen();
+              this.time.delayedCall(250, () => this.refresh());
+            },
+          },
+          {
+            text: this.mark(full, "Fullscreen"),
+            run: () => {
+              this.scale.startFullscreen();
+              this.time.delayedCall(250, () => this.refresh());
+            },
+          },
+        ],
+      },
+    ];
   }
 
   private close(): void {

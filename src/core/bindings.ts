@@ -4,6 +4,15 @@
  * they hold across keyboard layouts.
  */
 
+import {
+  clampPercent,
+  DEFAULT_PERCENT,
+  UI_MAX,
+  UI_MIN,
+  ZOOM_MAX,
+  ZOOM_MIN,
+} from "./view";
+
 export type Profile = "desktop" | "touch";
 export type TouchScheme = "tap" | "stick";
 
@@ -160,6 +169,10 @@ export interface Settings {
   profile: Profile;
   touchScheme: TouchScheme;
   bindings: Bindings;
+  /** World zoom in percent, 75 to 200 (note 64). */
+  worldZoom: number;
+  /** UI size in percent, 75 to 150 (note 64). */
+  uiSize: number;
 }
 
 export const SETTINGS_VERSION = 1;
@@ -174,6 +187,8 @@ export function defaultSettings(coarsePointer = false): Settings {
     profile: chooseProfile(coarsePointer),
     touchScheme: "tap",
     bindings: defaultBindings(),
+    worldZoom: DEFAULT_PERCENT,
+    uiSize: DEFAULT_PERCENT,
   };
 }
 
@@ -221,6 +236,12 @@ export function deserializeSettings(
     touchScheme:
       TOUCH_SCHEMES.find((t) => t === raw.touchScheme) ?? base.touchScheme,
     bindings: cleanBindings(raw.bindings),
+    worldZoom: clampPercent(
+      raw.worldZoom ?? base.worldZoom,
+      ZOOM_MIN,
+      ZOOM_MAX,
+    ),
+    uiSize: clampPercent(raw.uiSize ?? base.uiSize, UI_MIN, UI_MAX),
   };
 }
 
