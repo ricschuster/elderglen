@@ -60,7 +60,13 @@ import {
   placeFurniture,
 } from "../core/furniture";
 import { hatById } from "../core/hats";
-import { HOUSE_MAP, houseVisibleTier, isHouseMap } from "../core/house";
+import {
+  CELLAR_MAP,
+  HOUSE_MAP,
+  houseHolds,
+  houseVisibleTier,
+  isHouseMap,
+} from "../core/house";
 import { SELECTED_KEY, STATE_KEY } from "./state";
 import {
   cropKey,
@@ -207,6 +213,7 @@ export class FarmScene extends Phaser.Scene {
       minesOpen(this.state.day.clock.day) ? ["mines-open"] : [],
     );
     if (this.state.cave.open) this.holds.add("cave-open");
+    for (const h of houseHolds(this.state.houseTier)) this.holds.add(h);
     this.heldMs = 0;
     this.mouseAim = false;
     this.mouseHeld = false;
@@ -958,6 +965,8 @@ export class FarmScene extends Phaser.Scene {
 
   /** Save to the browser. The clock is not saved, so a reload is a new morning. */
   private save(): void {
+    // A save made in the cellar loads there (`resumeAt`); anywhere else clears it.
+    this.state.resumeMap = this.mapId === CELLAR_MAP ? CELLAR_MAP : undefined;
     saveGame(browserStore, this.state);
   }
 

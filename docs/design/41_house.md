@@ -144,6 +144,18 @@ tier 1 until their layers exist, and a tier change while the player is inside
 the double bed in the bedroom is the bed that saves the day, and the start
 room's bed tile becomes plain floor. The sizes may still move by a tile or two.
 
+Built in #282: the cellar is its own map, `cellar.json`, 19 by 16 (placeholder
+art, written by `scripts/gen-farm-map.mjs`). Stone floor, stairs up in the top
+left corner as a 3 by 3 block (48 px, over the 40 px touch minimum), entry
+`from_above`, and nothing else: casks wait on note 24, so it reads as empty and
+waiting. The way down is the kitchen's stairs in the tier 2 layers of the house
+map (note 68), shut until tier 3. A save made in the cellar loads there
+(`resumeMap` in the save, only ever `cellar`; everywhere else a load starts at
+the farm as before, and a cellar save with the stairs not open falls back to
+the farm). The cellar has no soil, so the night wash does not draw there.
+The stairs sit in the kitchen's corner, not in a notch of the bottom wall as in
+the image, because the map has no row below the kitchen.
+
 Built in #286: the map is now 31 by 22. The tier 2 band sits above (rows 0 to
 10, row 10 is the shared wall), so the start room's corner moved to (9, 12) and
 the tier 1 rooms to rows 10 to 21. The save frame is `houseLayout: 3` (note 68

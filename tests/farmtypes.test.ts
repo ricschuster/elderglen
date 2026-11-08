@@ -46,7 +46,7 @@ describe("farm type data", () => {
     expect(resolveMapId("farm", "woodland")).toBe("farm-woodland");
     expect(resolveMapId("farm", "standard")).toBe("farm");
     expect(resolveMapId("hall", "woodland")).toBe("hall");
-    for (const id of ["house", "sawmill", "hall", "mine"])
+    for (const id of ["house", "sawmill", "hall", "mine", "cellar"])
       for (const exit of maps.get(id).exits)
         if (exit.map === "farm")
           for (const t of FARM_TYPES)

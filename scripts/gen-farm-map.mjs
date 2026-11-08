@@ -611,14 +611,55 @@ const hall = {
   ],
 };
 
+// Built last, so adding it does not renumber the other maps' object ids.
+// The house cellar (docs/design/41_house.md, #282): its own small map, 19 by
+// 16, reached by stairs from the kitchen once the house is at tier 3. Stone
+// floor (the path tile for now), the stairs up in the top left corner as a 3 by
+// 3 block so the tap target is 48 px or more. It is empty on purpose: casks
+// wait on note 24, so it reads as waiting.
+const CW = 19;
+const CH = 16;
+const cground = new Array(CW * CH).fill(PATH);
+const ccollision = new Array(CW * CH).fill(0);
+for (let y = 0; y < CH; y++)
+  for (let x = 0; x < CW; x++)
+    if (x === 0 || y === 0 || x === CW - 1 || y === CH - 1) {
+      cground[y * CW + x] = WALL;
+      ccollision[y * CW + x] = 1;
+    }
+for (let y = 1; y <= 3; y++)
+  for (let x = 1; x <= 3; x++) cground[y * CW + x] = DOOR;
+
+const cellar = {
+  ...farm,
+  width: CW,
+  height: CH,
+  layers: [
+    { ...tileLayer(1, "ground", cground), width: CW, height: CH },
+    { ...tileLayer(2, "collision", ccollision, false), width: CW, height: CH },
+    {
+      ...farm.layers[4],
+      objects: [
+        point("entry", "from_above", 4, 2),
+        {
+          ...exit("stairs", 1, 1, "house", "from_cellar"),
+          width: 3 * T,
+          height: 3 * T,
+        },
+      ],
+    },
+  ],
+};
+
 const dir = "src/content/maps";
 mkdirSync(dir, { recursive: true });
 writeFileSync(`${dir}/farm.json`, JSON.stringify(farm));
 writeFileSync(`${dir}/farm-woodland.json`, JSON.stringify(buildFarm(true)));
 // house.json is hand-authored now: one map with tier layers (note 68, #421).
 writeFileSync(`${dir}/sawmill.json`, JSON.stringify(sawmill));
+writeFileSync(`${dir}/cellar.json`, JSON.stringify(cellar));
 writeFileSync(`${dir}/hall.json`, JSON.stringify(hall));
 writeFileSync(`${dir}/mine.json`, JSON.stringify(mine));
 console.log(
-  `wrote the farm and the Woodland farm, sawmill, mine hall and hall maps in ${dir} (placeholders)`,
+  `wrote the farm and the Woodland farm, sawmill, cellar, mine hall and hall maps in ${dir} (placeholders)`,
 );

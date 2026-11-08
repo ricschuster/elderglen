@@ -58,9 +58,34 @@ export function legacyHouseTile(
   return { map: HOUSE_MAP, x, y: y + TIER_2_BAND };
 }
 
-/** True once the house has its cellar stairs: tier 3 (#282 builds the cellar). */
+/** True once the house has its cellar stairs: tier 3. */
 export function houseHasCellar(tier: number): boolean {
   return tier >= 3;
+}
+
+/** The id of the cellar map, its own small map and not a tier of the house. */
+export const CELLAR_MAP = "cellar";
+
+/** The gate on the house's stairs exit: it opens when the house reaches tier 3. */
+export const CELLAR_OPEN = "cellar-open";
+
+/** The conditions the house gives for gated exits at a house tier. */
+export function houseHolds(tier: number): string[] {
+  return houseHasCellar(tier) ? [CELLAR_OPEN] : [];
+}
+
+/**
+ * Where a loaded game puts the player: the cellar if the save was made down
+ * there and the stairs are still open, else the farm's start (saves keep the
+ * map only for the cellar, since everywhere else a new morning starts at home).
+ */
+export function resumeAt(g: {
+  resumeMap?: string;
+  houseTier: number;
+}): { map: string; entry: string } | undefined {
+  return g.resumeMap === CELLAR_MAP && houseHasCellar(g.houseTier)
+    ? { map: CELLAR_MAP, entry: "from_above" }
+    : undefined;
 }
 
 /** True for any of the house interior maps. */

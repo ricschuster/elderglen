@@ -32,6 +32,7 @@ import {
   BUILD_DAYS,
   HOUSE_LAYOUT,
   MAX_HOUSE_TIER,
+  CELLAR_MAP,
   type HouseBuild,
 } from "./house";
 import {
@@ -78,6 +79,8 @@ export interface GameState {
   hall: Hall;
   /** House tier, 0 for the start room only. */
   houseTier: number;
+  /** The map the last save was made on, kept only for the cellar (`resumeAt`). */
+  resumeMap?: string;
   /** The upgrade the carpenter is building, if any. */
   houseBuild: HouseBuild | undefined;
   /** Today's weather. */
@@ -188,6 +191,8 @@ interface SaveData {
   toolOrder?: ToolOrder;
   /** Absent in saves made before the house had tiers. */
   houseTier?: number;
+  /** Absent unless the save was made in the cellar. */
+  resumeMap?: string;
   /** Absent when no upgrade is being built, and in older saves. */
   houseBuild?: HouseBuild;
   weather: Weather;
@@ -246,6 +251,7 @@ export function serialize(g: GameState): string {
     toolTiers: { ...g.toolTiers },
     toolOrder: g.toolOrder ? { ...g.toolOrder } : undefined,
     houseTier: g.houseTier,
+    resumeMap: g.resumeMap,
     houseBuild: g.houseBuild ? { ...g.houseBuild } : undefined,
     weather: g.weather,
     tomorrow: g.tomorrow,
@@ -543,6 +549,7 @@ export function deserialize(text: string): GameState | undefined {
     };
   if (isCount(raw.houseTier))
     g.houseTier = Math.min(Math.floor(raw.houseTier), MAX_HOUSE_TIER);
+  if (raw.resumeMap === CELLAR_MAP) g.resumeMap = CELLAR_MAP;
   const build = raw.houseBuild;
   if (
     isObject(build) &&

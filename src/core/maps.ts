@@ -62,12 +62,14 @@ export class MapRegistry {
         for (const p of map.problems()) out.push(`${label}: ${p}`);
         for (const exit of map.exits) {
           if (exit.map === "" || exit.entry === "") continue;
-          const target = this.maps.get(exit.map)?.[0];
+          // An entry may sit on a higher tier of a growing map (the house's
+          // cellar stairs), so the target counts if any tier has it.
+          const target = this.maps.get(exit.map);
           if (!target)
             out.push(
               `${label}: exit "${exit.id}" leads to missing map "${exit.map}"`,
             );
-          else if (!target.entry(exit.entry))
+          else if (!target.some((t) => t.entry(exit.entry)))
             out.push(
               `${label}: exit "${exit.id}" leads to missing entry "${exit.entry}" on "${exit.map}"`,
             );

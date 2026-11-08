@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   BUILD_DAYS,
+  CELLAR_MAP,
+  houseHolds,
+  resumeAt,
   houseHasCellar,
   houseVisibleTier,
   nextUpgrade,
@@ -12,6 +15,7 @@ import {
   WOOD,
 } from "../src/core/house";
 import { maps } from "../src/content/maps";
+import { exitOpen } from "../src/core/map";
 import { festivalToday } from "../src/core/festivals";
 import { deserialize, newGame, serialize } from "../src/core/save";
 import { reportLines } from "../src/core/report";
@@ -370,5 +374,84 @@ describe("sawmill map", () => {
     const counter = sawmill.services.find((s) => s.kind === "carpenter")!;
     const walkable = sawmill.reachable(sawmill.entry("door")!);
     expect(walkable.has(`${counter.x},${counter.y + 1}`)).toBe(true);
+  });
+});
+
+describe("cellar map", () => {
+  const tier2 = () => maps.get("house", houseVisibleTier(3));
+  const stairsDown = () => tier2().exits.find((e) => e.id === "cellar")!;
+
+  it("is its own small map, not a house map", () => {
+    const cellar = maps.get(CELLAR_MAP);
+    expect(isHouseMap(CELLAR_MAP)).toBe(false);
+    expect(maps.maxTier(CELLAR_MAP)).toBe(0);
+    expect([cellar.width, cellar.height]).toEqual([19, 16]);
+    expect(maps.problems()).toEqual([]);
+  });
+
+  it("joins the house stairs and the cellar stairs both ways", () => {
+    expect(stairsDown()).toMatchObject({
+      map: CELLAR_MAP,
+      entry: "from_above",
+    });
+    expect(maps.get(CELLAR_MAP).exits[0]).toMatchObject({
+      map: "house",
+      entry: "from_cellar",
+    });
+    expect(tier2().entry("from_cellar")).toBeDefined();
+  });
+
+  it("has no stairs before tier 2 and keeps them shut until tier 3", () => {
+    expect(maps.get("house", 1).exits.some((e) => e.id === "cellar")).toBe(
+      false,
+    );
+    const stairs = stairsDown();
+    expect(exitOpen(stairs, new Set(houseHolds(2)))).toBe(false);
+    expect(exitOpen(stairs, new Set(houseHolds(3)))).toBe(true);
+  });
+
+  it("makes the stairs tap targets of 40 px or more", () => {
+    for (const [map, exit] of [
+      [tier2(), stairsDown()],
+      [maps.get(CELLAR_MAP), maps.get(CELLAR_MAP).exits[0]!],
+    ] as const) {
+      expect(exit.w * map.tileSize).toBeGreaterThanOrEqual(40);
+      expect(exit.h * map.tileSize).toBeGreaterThanOrEqual(40);
+    }
+  });
+
+  it("is empty and waiting: open floor, no services", () => {
+    const cellar = maps.get(CELLAR_MAP);
+    expect(cellar.services).toEqual([]);
+    expect(cellar.reachable(cellar.entry("from_above")!).size).toBeGreaterThan(
+      100,
+    );
+  });
+
+  it("is reachable from the kitchen", () => {
+    const map = tier2();
+    const walkable = map.reachable(map.entry("door")!);
+    const s = stairsDown();
+    expect(walkable.has(`${s.x + 1},${s.y + 1}`)).toBe(true);
+  });
+
+  it("loads a save made in the cellar back into the cellar", () => {
+    const g = newGame();
+    g.houseTier = 3;
+    g.resumeMap = CELLAR_MAP;
+    const back = deserialize(serialize(g))!;
+    expect(resumeAt(back)).toEqual({ map: CELLAR_MAP, entry: "from_above" });
+    const home = deserialize(serialize({ ...g, resumeMap: undefined }))!;
+    expect(resumeAt(home)).toBeUndefined();
+  });
+
+  it("starts at the farm if the stairs are not open", () => {
+    expect(resumeAt({ resumeMap: CELLAR_MAP, houseTier: 2 })).toBeUndefined();
+  });
+
+  it("ignores an unknown saved map", () => {
+    const raw = JSON.parse(serialize(newGame()));
+    raw.resumeMap = "mine-3";
+    expect(deserialize(JSON.stringify(raw))!.resumeMap).toBeUndefined();
   });
 });
