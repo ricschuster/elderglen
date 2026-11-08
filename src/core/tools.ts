@@ -1,6 +1,7 @@
 import {
   chop,
   clearSeedling,
+  clearTwig,
   clearWeed,
   fertilize,
   forage,
@@ -68,6 +69,7 @@ export function useHeld(
       : undefined;
   if (weedTool && g.weeds.at(x, y))
     return clearWeed(g, x, y, weedTool, Math.random, map);
+  if (weedTool && g.twigs.at(x, y)) return clearTwig(g, x, y, weedTool, map);
   if (held.kind === "tool" && held.tool === "axe")
     return chop(g, x, y, Math.random, map);
   if (held.kind === "tool" && held.tool === "hoe") {

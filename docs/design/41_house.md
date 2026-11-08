@@ -135,8 +135,8 @@ tiles. Width by depth, outer size including walls.
 | Tier 3 | same as tier 2, plus cellar stairs |
 | Cellar | about 19 by 16 |
 
-Built in #421 (replacing the map per tier of #422): `house.json` is one 31 by
-12 map holding the start room (11 by 10, at tile 9, 2) and the tier 1 rooms in
+Built in #421 (replacing the map per tier of #422): `house.json` was one 31 by
+12 map (now 31 by 22, see #286 below) holding the start room (11 by 10, at tile 9, 2; now 9, 12) and the tier 1 rooms in
 `-t1` layers (note 68). It is a hand-authored placeholder; the generator no
 longer writes it. `houseVisibleTier(tier)` picks the layers, tiers 2 and 3 show
 tier 1 until their layers exist, and a tier change while the player is inside

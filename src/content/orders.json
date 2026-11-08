@@ -1,0 +1,35 @@
+[
+  {
+    "id": "bumper-harvest",
+    "title": "Bumper Harvest",
+    "poster": "A carrier from the east road",
+    "text": "A road crew is passing through and wants a great deal of one crop.",
+    "ask": { "kind": "ship-one-crop", "count": 100 },
+    "windowDays": 28,
+    "repeat": true,
+    "notSeasons": ["winter"],
+    "gold": 1500,
+    "firstReward": {
+      "item": { "id": "big-chest", "count": 1 },
+      "text": "a big chest"
+    }
+  },
+  {
+    "id": "fine-vegetables",
+    "title": "Fine Vegetables",
+    "poster": "A buyer from the far market",
+    "text": "A buyer wants vegetables of gold quality, sent through the shipping bin.",
+    "ask": {
+      "kind": "ship-quality-vegetables",
+      "count": 25,
+      "quality": "gold"
+    },
+    "windowDays": 28,
+    "repeat": true,
+    "notSeasons": [],
+    "gold": 1000,
+    "firstReward": {
+      "text": "the dehydrator recipe"
+    }
+  }
+]

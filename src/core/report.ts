@@ -1,4 +1,5 @@
 import { WAITING_ROOMS_LINE } from "./house";
+import { ordersReportLines } from "./orders";
 import type { SleepReport } from "./sleep";
 
 /** The words for the morning after: what happened overnight, one per line. */
@@ -25,6 +26,7 @@ export function reportLines(r: SleepReport): string[] {
         : `${r.withered} crops withered when the season ended.`,
     );
   }
+  lines.push(...ordersReportLines(r.orders));
   for (const name of r.stuckTrees)
     lines.push(
       `Your ${name.toLowerCase()} tree cannot grow. Clear the ground around it.`,

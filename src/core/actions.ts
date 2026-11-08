@@ -21,6 +21,7 @@ import { swingCost, type Upgradable } from "./upgrades";
 import { sprinklerById } from "./sprinklers";
 import { isMature, saplingId, treeOfSapling } from "./fruittrees";
 import { FIBER, FIBER_CHANCE, MIXED_SEED } from "./weeds";
+import { TWIG_WOOD } from "./debris";
 
 /** Energy per tool swing (hoe, watering can), as in Stardew. Seeds, picking and harvesting are free. */
 export const TOOL_ENERGY = 2;
@@ -69,6 +70,7 @@ export function till(
   if (g.trees.at(x, y) || g.fruitTrees.at(x, y))
     return fail("a tree is in the way");
   if (g.weeds.at(x, y)) return fail("a weed is in the way");
+  if (g.twigs.at(x, y)) return fail("a twig is in the way");
   if (g.sprinklers.at(x, y)) return fail("a sprinkler is in the way");
   if (g.machines.at(x, y)) return fail("a machine is in the way");
   if (g.chests.onFarm(x, y)) return fail("a chest is in the way");
@@ -472,6 +474,7 @@ export function plantTree(
     g.fruitTrees.at(x, y) ||
     g.ground.at(x, y).length > 0 ||
     g.weeds.at(x, y) ||
+    g.twigs.at(x, y) ||
     g.sprinklers.at(x, y) ||
     g.machines.at(x, y) ||
     g.farm.plotAt(x, y) ||
@@ -519,6 +522,29 @@ export function clearWeed(
 }
 
 /**
+ * Clear a twig with any tool, in one swing at that tool's energy cost, like a
+ * weed. It gives 1 wood, to the backpack or onto the ground nearby.
+ */
+export function clearTwig(
+  g: GameState,
+  x: number,
+  y: number,
+  tool: "hoe" | "can" | "axe",
+  map?: FarmMap,
+): Outcome {
+  if (g.day.over) return fail("exhausted");
+  if (!g.twigs.at(x, y)) return fail("no twig");
+  if (tool === "axe")
+    g.day.act(swingCost(TOOL_ENERGY, AXE_TIER, g.skills.level("foraging")), 0);
+  else swing(g, tool);
+  g.twigs.remove(x, y);
+  if (g.inventory.add("wood", TWIG_WOOD)) return { ok: true, item: "wood" };
+  const spot = dropSpot(g, map, x, y);
+  g.ground.drop(spot.x, spot.y, "wood", TWIG_WOOD);
+  return { ok: true };
+}
+
+/**
  * True when a tile is open, diggable ground with nothing on it: no soil already
  * dug, crop, tree, weed, rock, forage, sprinkler, machine or goods on the ground.
  */
@@ -539,6 +565,7 @@ export function isClear(
     g.trees.at(x, y) ||
     g.fruitTrees.at(x, y) ||
     g.weeds.at(x, y) ||
+    g.twigs.at(x, y) ||
     g.rocks.at(x, y) ||
     g.forage.itemAt(x, y) ||
     g.ground.at(x, y).length > 0

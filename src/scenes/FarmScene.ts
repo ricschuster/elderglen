@@ -85,6 +85,7 @@ import {
   soilKey,
   stageOf,
   treeKey,
+  TWIG_KEY,
   WEED_KEY,
 } from "./art";
 import { giveItem, giveMoney } from "../core/debug";
@@ -413,6 +414,8 @@ export class FarmScene extends Phaser.Scene {
     } else if (isFarmMap(this.mapId) && this.state.cave.due(today)) {
       this.state.cave.shownDay = today;
       this.time.delayedCall(400, () => this.open("cave-choice"));
+    } else if (isFarmMap(this.mapId) && this.state.orders.introDue(today)) {
+      this.time.delayedCall(400, () => this.showOrdersIntro());
     }
     this.time.addEvent({
       delay: TICK_MS / DEV_SPEED,
@@ -449,6 +452,14 @@ export class FarmScene extends Phaser.Scene {
       }
       this.message = "";
       this.render();
+      // Fall 2 of year one: the orders board goes up, in any weather.
+      if (
+        isFarmMap(this.mapId) &&
+        this.state.orders.introDue(this.state.day.clock.day)
+      ) {
+        this.showOrdersIntro();
+        return;
+      }
       // The debug menu can hand out XP that earns a profession choice.
       if (pendingChoice(this.state.skills)) this.open("profession");
     };
@@ -744,6 +755,13 @@ export class FarmScene extends Phaser.Scene {
     this.hat
       .setFillStyle(Phaser.Display.Color.HexStringToColor(def.color).color)
       .setPosition(this.pos.x, head + 1);
+  }
+
+  /** The short scene that opens the Special Orders board (note 65). Shown once. */
+  private showOrdersIntro(): void {
+    this.state.orders.opened = true;
+    this.save();
+    this.open("orders", { intro: true });
   }
 
   /** Open a screen over the farm. The farm is paused until it closes. */
@@ -1057,6 +1075,7 @@ export class FarmScene extends Phaser.Scene {
     for (const { x, y, id } of this.state.forage.each())
       put(x, y, forageKey(id));
     for (const w of this.state.weeds.each()) put(w.x, w.y, WEED_KEY);
+    for (const t of this.state.twigs.each()) put(t.x, t.y, TWIG_KEY);
     for (const s of this.state.sprinklers.each())
       put(s.x, s.y, sprinklerKey(s.id));
     for (const m of this.state.machines.each()) {

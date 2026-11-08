@@ -718,3 +718,18 @@ Source: `src/core/house.ts`. All three are Stardew's prices, untuned.
 - Each tier needs the one before it, one order at a time, three working days
   (a festival morning does not count).
 - Tiers 2 and 3 are probably out of reach in two seasons. Tune after a playtest.
+
+## Special Orders and seasonal debris (built 2026-11-07, note 65, placeholders)
+
+Source: `src/core/orders.ts`, `src/core/debris.ts`, `src/content/orders.json`.
+
+- Board opens Fall 2, year one (day 58). Two orders on the board, one new pick a
+  week, one new order accepted a week.
+- Bumper Harvest: ship 100 of one crop in its season, 28 days, 1,500g, repeats.
+  First reward a big chest (stands in for a second shipping bin).
+- Fine Vegetables: ship 25 gold quality vegetables, 28 days, 1,000g, repeats.
+  First reward the dehydrator recipe.
+- Debris on day 1 of spring, summer and fall: up to 8 rocks, up to 8 twigs, a
+  10 percent chance of one stump, standing cap 25 rocks and 25 twigs, none in
+  winter. A twig gives 1 wood. The grass spread rate is not set (no grass).
+- Check in play: the steady wood and stone supply against note 43's wood economy.
