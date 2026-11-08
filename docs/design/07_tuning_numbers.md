@@ -375,7 +375,14 @@ deluxe 20000g, 500 wood, 200 stone, 3 days each, holds 8 and 12. Duck 1200g,
 egg (95g) every 2 fed nights, feather (250g) in place of the egg 25 percent of
 the time at friendship 800 or more. Rabbit 8000g, wool (340g) every 4 fed
 nights. Duck egg energy 75. Auto-feeder at the deluxe tier. Sell prices are
-ours. The barn and the rest below are not built.
+ours. Slice 3 (barn) built, placeholders: barn 4000g, 300 wood, 100 stone, big
+10000g, 400 wood, 150 stone, deluxe 20000g, 500 wood, 200 stone, 3 days each,
+holds 4, 8 and 12. Cow 1500g (base barn), milk 125g daily. Goat 4000g (big
+barn), goat milk 225g every 2 fed nights. Sheep 8000g (deluxe barn), wool
+(340g) every 3 fed nights, Moonwool 1200g with a 5 percent chance at friendship
+800 or more, mood 70 or more. Pig 16000g (deluxe barn), truffle 625g on a fed
+night it was let out. Incubator: big coop, one egg, hatches in 6 nights.
+Auto-feeder at the deluxe barn. Sell prices are ours.
 
 Source: `23_animals.md`. All of these are placeholders. Stardew facts were
 checked against the Stardew Valley Wiki on 2026-10-30.

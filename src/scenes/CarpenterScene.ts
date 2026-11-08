@@ -19,21 +19,26 @@ import {
   WOOD,
 } from "../core/house";
 import {
-  COOP_COST,
+  BUILDINGS,
+  BUILDING_ORDER,
   HAY_PRICE,
   SPECIES,
-  SPECIES_ORDER,
+  type Building,
   type Species,
   animalProblem,
+  animalsIn,
+  buildingProblem,
   buyAnimal,
   buyHay,
-  coopCapacity,
-  coopProblem,
-  coopUpgradeProblem,
+  capacityOf,
   defaultName,
-  nextCoopUpgrade,
-  orderCoop,
-  orderCoopUpgrade,
+  isBuilt,
+  nextBuildingUpgrade,
+  orderBuilding,
+  orderBuildingUpgrade,
+  speciesOf,
+  tierOf,
+  upgradeProblem,
 } from "../core/animals";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
@@ -110,44 +115,52 @@ export class CarpenterScene extends Phaser.Scene {
         buttons: [{ text: "Order", run: () => this.order() }],
       });
     }
-    // The coop, its chicks and hay stand at the carpenter's until the Forest
-    // farmstead keeper exists (note 23, slice 1 placeholder).
+    // The coop and barn, their animals and hay stand at the carpenter's until
+    // the Forest farmstead keeper exists (note 23, slice 1 placeholder).
+    const have = `have ${g.inventory.count("wood")} wood and ${g.inventory.count("stone")} stone`;
     if (g.animals.build) {
+      const b = g.animals.build;
       rows.push({
-        label: "Chicken coop under way",
-        detail: `${g.animals.build.daysLeft} days left`,
+        label: `${BUILDINGS[b.building].name} work under way`,
+        detail: `${b.daysLeft} days left`,
         dim: true,
         buttons: [],
       });
-    } else if (!g.animals.coopBuilt) {
-      rows.push({
-        label: "Chicken coop",
-        detail: `${COOP_COST.coin}g, ${COOP_COST.wood} wood and ${COOP_COST.stone} stone (have ${g.inventory.count("wood")} and ${g.inventory.count("stone")})`,
-        dim: coopProblem(g) !== undefined,
-        buttons: [{ text: "Order", run: () => this.orderCoop() }],
-      });
-    } else {
-      const up = nextCoopUpgrade(g);
-      if (up)
+    }
+    for (const id of BUILDING_ORDER) {
+      const info = BUILDINGS[id];
+      if (!isBuilt(g.animals, id)) {
+        if (g.animals.build?.building === id) continue;
+        rows.push({
+          label: info.name,
+          detail: `${info.cost.coin}g, ${info.cost.wood} wood and ${info.cost.stone} stone (${have})`,
+          dim: buildingProblem(g, id) !== undefined,
+          buttons: [{ text: "Order", run: () => this.orderBuilding(id) }],
+        });
+        continue;
+      }
+      const up = nextBuildingUpgrade(g, id);
+      if (up && g.animals.build?.building !== id)
         rows.push({
           label: up.name,
-          detail: `${up.coin}g, ${up.wood} wood and ${up.stone} stone (have ${g.inventory.count("wood")} and ${g.inventory.count("stone")}), more room and more animals`,
-          dim: coopUpgradeProblem(g) !== undefined,
-          buttons: [{ text: "Order", run: () => this.orderUpgrade() }],
+          detail: `${up.coin}g, ${up.wood} wood and ${up.stone} stone (${have}), more room and more animals`,
+          dim: upgradeProblem(g, id) !== undefined,
+          buttons: [{ text: "Order", run: () => this.orderUpgrade(id) }],
         });
-      for (const sp of SPECIES_ORDER)
+      for (const sp of speciesOf(id))
         rows.push({
           label: `Young ${SPECIES[sp].name.toLowerCase()}`,
-          detail: `${SPECIES[sp].price}g, grows up in a few days (${g.animals.animals.length}/${coopCapacity(g.animals.tier)} in the coop)`,
+          detail: `${SPECIES[sp].price}g, grows up in a few days (${animalsIn(g, id).length}/${capacityOf(id, tierOf(g.animals, id))} in the ${info.noun})`,
           dim: animalProblem(g, sp) !== undefined,
           buttons: [{ text: "Buy", run: () => this.buyAnimal(sp) }],
         });
+    }
+    if (g.animals.coopBuilt || g.animals.barnBuilt)
       rows.push({
         label: "Hay, 10 bales",
         detail: `${HAY_PRICE * 10}g, into the silo (${g.animals.hay} in it)`,
         buttons: [{ text: "Buy", run: () => this.buyHay() }],
       });
-    }
     if (!g.houseBuild && !g.catalogue && g.houseTier >= 1) {
       rows.push({
         label: "Furniture Catalogue",
@@ -179,22 +192,22 @@ export class CarpenterScene extends Phaser.Scene {
     this.menu.setRows(rows);
   }
 
-  private orderCoop(): void {
-    const problem = coopProblem(this.state);
+  private orderBuilding(id: Building): void {
+    const problem = buildingProblem(this.state, id);
     if (problem !== undefined) this.message.setText(problem);
-    else if (orderCoop(this.state))
+    else if (orderBuilding(this.state, id))
       this.message.setText(
         "Ordered. The carpenter starts tomorrow and takes three days.",
       );
     this.refresh();
   }
 
-  private orderUpgrade(): void {
-    const problem = coopUpgradeProblem(this.state);
+  private orderUpgrade(id: Building): void {
+    const problem = upgradeProblem(this.state, id);
     if (problem !== undefined) this.message.setText(problem);
-    else if (orderCoopUpgrade(this.state))
+    else if (orderBuildingUpgrade(this.state, id))
       this.message.setText(
-        "Ordered. The carpenter starts tomorrow and takes three days. The coop stays as it is until then.",
+        `Ordered. The carpenter starts tomorrow and takes three days. The ${BUILDINGS[id].noun} stays as it is until then.`,
       );
     this.refresh();
   }
@@ -210,7 +223,7 @@ export class CarpenterScene extends Phaser.Scene {
       const a = buyAnimal(this.state, species, asked ?? "");
       if (a)
         this.message.setText(
-          `${a.name} is in the coop. No hay needed on the first day.`,
+          `${a.name} is in the ${BUILDINGS[SPECIES[species].building].noun}. No hay needed on the first day.`,
         );
     }
     this.refresh();

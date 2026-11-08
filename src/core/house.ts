@@ -157,7 +157,8 @@ export function nextUpgrade(tier: number): HouseUpgrade | undefined {
 /** Why the upgrade cannot be ordered now, in words, or undefined if it can. */
 export function orderProblem(g: GameState): string | undefined {
   if (g.houseBuild) return "The carpenter is already at work on the house.";
-  if (g.animals.build) return "The carpenter is busy building your coop.";
+  if (g.animals.build)
+    return `The carpenter is busy building your ${g.animals.build.building}.`;
   const cost = nextUpgrade(g.houseTier);
   if (!cost) return "There is no further upgrade yet.";
   const missing: string[] = [];

@@ -286,9 +286,15 @@ await step("coop", async () => {
   await pickRow("carpenter", /is in the coop/);
   await pickRow("carpenter", /Bought \d+ hay/);
   await close();
+  await farm((g, f, s) => {
+    s.inventory.add("egg", 1);
+  });
   await goMap("coop", "door");
   await overlay("coop-bench");
   await pickRow("coop-bench", /Fed \d/);
+  // The incubator row comes next: put the egg in.
+  await p.keyboard.press("ArrowDown");
+  await pickRow("coop-bench", /in the incubator/, 1);
   await p.keyboard.press("ArrowDown");
   await p.keyboard.press("Enter");
   await sleepMs(100);
@@ -296,6 +302,43 @@ await step("coop", async () => {
   await sleepMs(100);
   await close();
   await goMap("farm", "from_coop");
+});
+
+await step("barn", async () => {
+  await farm((g, f, s) => {
+    s.inventory.add("wood", 300);
+    s.inventory.add("stone", 100);
+    // Under the house upgrade price, so only the barn row can be ordered.
+    s.money = 20000;
+    s.houseBuild = undefined;
+    s.animals.build = undefined;
+  });
+  await overlay("carpenter");
+  await pickRow("carpenter", /Ordered\./);
+  await close();
+  await farm((g, f, s) => {
+    s.animals.build = undefined;
+    s.animals.barnBuilt = true;
+    // The deluxe interior (24 wide, 13 deep) loads and can be walked in.
+    s.animals.barnTier = 3;
+    s.money = 30000;
+    s.animals.hay = 60;
+  });
+  await overlay("carpenter");
+  await pickRow("carpenter", /is in the barn/);
+  await close();
+  await goMap("barn", "door");
+  await overlay("barn-bench");
+  await pickRow("barn-bench", /Fed \d/);
+  await p.keyboard.press("ArrowDown");
+  await p.keyboard.press("Enter");
+  await sleepMs(100);
+  await p.keyboard.press("Digit3");
+  await sleepMs(100);
+  await close();
+  await shot("barn-inside");
+  await goMap("farm", "from_barn");
+  await shot("barn-outside");
 });
 
 await step("back-to-farm", async () => {

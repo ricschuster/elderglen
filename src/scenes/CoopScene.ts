@@ -1,14 +1,21 @@
 import Phaser from "phaser";
 import {
+  type Building,
+  HATCHES,
+  INCUBATE_DAYS,
+  INCUBATOR_TIER,
+  animalsIn,
   bringIn,
   collect,
   feedAll,
   hearts,
+  incubatorProblem,
   isAdult,
   letOut,
   letOutProblem,
   moodWord,
   pet,
+  putEgg,
   rename,
   SILO_CAPACITY,
   SPECIES,
@@ -19,9 +26,11 @@ import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
 /**
- * The feeding bench in the coop: feed everyone from the silo, and one row per
- * animal to pet, collect its egg, let it out or bring it in, and rename it.
- * Placeholder interface until the art pass (note 23).
+ * The feeding bench in the coop, or the barn (`BarnScene` is the same screen
+ * for the other building): feed everyone from the silo, and one row per animal
+ * to pet, collect what it made, let it out or bring it in, and rename it. The
+ * big coop's bench also holds the incubator. Placeholder interface until the
+ * art pass (note 23).
  */
 export class CoopScene extends Phaser.Scene {
   private state!: GameState;
@@ -29,8 +38,11 @@ export class CoopScene extends Phaser.Scene {
   private money!: Phaser.GameObjects.Text;
   private message!: Phaser.GameObjects.Text;
 
-  constructor() {
-    super("coop-bench");
+  constructor(
+    key = "coop-bench",
+    protected readonly building: Building = "coop",
+  ) {
+    super(key);
   }
 
   init(): void {
@@ -38,7 +50,11 @@ export class CoopScene extends Phaser.Scene {
   }
 
   create(): void {
-    const { money, message } = frame(this, "Coop", () => this.close());
+    const { money, message } = frame(
+      this,
+      this.building === "coop" ? "Coop" : "Barn",
+      () => this.close(),
+    );
     this.money = money;
     this.message = message;
     this.add.text(
@@ -76,7 +92,17 @@ export class CoopScene extends Phaser.Scene {
         buttons: [{ text: "Feed", run: () => this.feed() }],
       },
     ];
-    for (const an of a.animals) {
+    if (this.building === "coop" && a.tier >= INCUBATOR_TIER)
+      rows.push({
+        label: "Incubator",
+        detail: a.incubator
+          ? a.incubator.daysLeft > 0
+            ? `${itemById(a.incubator.egg)?.name ?? "Egg"} hatching, ${a.incubator.daysLeft} of ${INCUBATE_DAYS} nights left`
+            : "Ready, but the coop is full"
+          : "Empty. Put an egg in and it hatches in a few nights",
+        buttons: [{ text: "Put egg", run: () => this.putEgg() }],
+      });
+    for (const an of animalsIn(this.state, this.building)) {
       const what = itemById(an.item ?? SPECIES[an.species].item)?.name;
       const egg = an.product
         ? `, ${an.product === "normal" ? "" : `${an.product} `}${what?.toLowerCase() ?? "product"} waiting`
@@ -97,7 +123,7 @@ export class CoopScene extends Phaser.Scene {
         ],
       });
     }
-    if (a.animals.length === 0)
+    if (animalsIn(this.state, this.building).length === 0)
       rows.push({
         label: "No animals yet",
         detail: "The carpenter sells young animals",
@@ -108,7 +134,7 @@ export class CoopScene extends Phaser.Scene {
   }
 
   private feed(): void {
-    const { fed, short } = feedAll(this.state);
+    const { fed, short } = feedAll(this.state, this.building);
     this.message.setText(
       fed === 0 && short === 0
         ? "Everyone has eaten."
@@ -132,9 +158,24 @@ export class CoopScene extends Phaser.Scene {
     const r = collect(this.state, id);
     this.message.setText(
       "item" in r
-        ? `Took ${itemById(r.item)?.name.toLowerCase() ?? "it"}.`
+        ? `Took ${itemById(r.item)?.name.toLowerCase() ?? "it"}${r.also ? ` and ${itemById(r.also)?.name.toLowerCase() ?? "more"}` : ""}.`
         : r.problem,
     );
+    this.refresh();
+  }
+
+  private putEgg(): void {
+    const egg = Object.keys(HATCHES).find(
+      (e) => incubatorProblem(this.state, e) === undefined,
+    );
+    if (egg && putEgg(this.state, egg))
+      this.message.setText(
+        `The ${itemById(egg)?.name.toLowerCase() ?? "egg"} is in the incubator.`,
+      );
+    else
+      this.message.setText(
+        incubatorProblem(this.state, "egg") ?? "You have no egg to put in.",
+      );
     this.refresh();
   }
 

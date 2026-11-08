@@ -320,7 +320,7 @@ describe("the night", () => {
 
   it("the coop lands on the sleep that ends its last day", () => {
     const g = newGame();
-    g.animals.build = { daysLeft: 1, tier: 1 };
+    g.animals.build = { daysLeft: 1, tier: 1, building: "coop" };
     const r = sleep(g, [], () => 0.5);
     expect(r.coopFinished).toBe(true);
     expect(g.animals.coopBuilt).toBe(true);
@@ -345,7 +345,10 @@ describe("saves", () => {
     expect(g.animals).toEqual({
       coopBuilt: false,
       tier: 1,
+      barnBuilt: false,
+      barnTier: 1,
       build: undefined,
+      incubator: undefined,
       animals: [],
       hay: 0,
       nextId: 1,
@@ -393,7 +396,11 @@ describe("coop tiers", () => {
     expect(orderCoopUpgrade(g)).toBe(true);
     expect(g.money).toBe(100000 - COOP_UPGRADES[2]!.coin);
     expect(g.animals.tier).toBe(1);
-    expect(g.animals.build).toEqual({ daysLeft: COOP_BUILD_DAYS, tier: 2 });
+    expect(g.animals.build).toEqual({
+      daysLeft: COOP_BUILD_DAYS,
+      tier: 2,
+      building: "coop",
+    });
     for (let i = 0; i < COOP_BUILD_DAYS - 1; i++) {
       expect(advanceCoop(g)).toBe(false);
       expect(g.animals.tier).toBe(1);
@@ -534,6 +541,7 @@ describe("coop tiers", () => {
     expect(deserialize(serialize(up))!.animals.build).toEqual({
       daysLeft: 3,
       tier: 2,
+      building: "coop",
     });
     const raw = JSON.parse(serialize(tierGame(1)));
     raw.animals.animals = [
@@ -553,7 +561,11 @@ describe("coop tiers", () => {
     const raw = JSON.parse(serialize(newGame()));
     raw.animals = { coopBuilt: false, build: { daysLeft: 2 }, animals: [] };
     const g = deserialize(JSON.stringify(raw))!;
-    expect(g.animals.build).toEqual({ daysLeft: 2, tier: 1 });
+    expect(g.animals.build).toEqual({
+      daysLeft: 2,
+      tier: 1,
+      building: "coop",
+    });
     expect(g.animals.tier).toBe(1);
   });
 });

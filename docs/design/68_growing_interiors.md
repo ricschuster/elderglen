@@ -237,7 +237,7 @@ the tile rule above. This is the one allowed break, and the last one.
   the layout 3 frame as before, then adds 2 to x for any layout under 4.
 - **Tests.** Tier 1 still shows no widened tile, and every tile walkable at tier 1
   is walkable at tier 2. A layout 3 save moves right by 2.
-- **Not done.** The barn is unchanged. The coop is built (#531, below).
+- **Not done.** The coop and barn are built (#531, below).
 
 ## Built (coop, #531, 2026-11-08)
 
@@ -255,3 +255,32 @@ the tile rule above. This is the one allowed break, and the last one.
 - **Animals.** `COOP_SLOTS` holds twelve tiles; the first four are the base room
   and each new tier adds four on its own new tiles, so nobody moves on upgrade.
 - **Saves.** `animals.tier` and `build.tier`. Old saves load at tier 1.
+
+## Built (barn, #531, 2026-11-08)
+
+- **One map, three tiers.** `barn.json` is 24 by 13. The base layers are tier 1
+  (17 wide, depth 13). `ground-t1` and `collision-t1` add the big barn (to 21
+  wide) and `ground-t2` and `collision-t2` the deluxe one (to 24). `bounds`,
+  `bounds-t1` and `bounds-t2` clamp the camera to 17, 21 and 24 by 13. Unbuilt
+  space is black void.
+- **The one wall that opens.** As for the coop, each tier turns the old east wall
+  of the floor rows into floor with an open tile and puts the new wall at the
+  new east edge.
+- **Door per tier.** Entry and exit objects named `door` carry a `tier`
+  property, at x 8, 10 and 12 of the bottom wall (the SC-68 placeholder). The
+  loader keeps the highest one at or below the tier. A new tier turns the old
+  door tile back into wall (a wall tile in the tier layer), so only one door
+  shows. Entries stand one tile above (y 11).
+- **Stall wing.** Bottom left, x 0 to 4 and y 9 to 12: walls on its top and
+  right with a doorway at (4, 10), a straw floor inside. Cosmetic only (SC-69).
+  It is part of the base layers, so it stays at every tier.
+- **Tier mapping.** `barnVisibleTier` maps barn tier 1 to 3 to layer tier 0 to
+  2, like the coop. `FarmScene.buildingTier` reloads the map when it changes.
+- **Animals.** `BARN_SLOTS` holds twelve tiles; four per tier on the tiles that
+  tier added, off the three door lanes. Barn and coop slots are counted per
+  building (`animalSlots`).
+- **Farm sites.** Footprint 7 by 4 at (18, 9) on the farm and (21, 9) on the
+  woodland farm, door at the bottom row's fourth tile, entry `from_barn` below.
+  Gated by the `barn-built` condition.
+- **Saves.** `animals.barnBuilt`, `animals.barnTier` and `build.building`. Old
+  saves load with no barn, and a build with no building is the coop's.

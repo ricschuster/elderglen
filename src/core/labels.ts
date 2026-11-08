@@ -13,6 +13,7 @@ const EXITS: Record<string, string> = {
   cellar: "Cellar stairs",
   stairs: "Stairs up",
   coop: "Coop",
+  barn: "Barn",
 };
 
 const SERVICES: Record<string, string> = {
@@ -24,6 +25,7 @@ const SERVICES: Record<string, string> = {
   bed: "Bed",
   carpenter: "Carpenter",
   "coop-bench": "Feeding Bench",
+  "barn-bench": "Feeding Bench",
   smith: "Smith",
   lift: "Lift",
   stairs: "Stairs",
