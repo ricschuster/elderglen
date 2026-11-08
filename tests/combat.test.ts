@@ -8,11 +8,13 @@ import {
   Health,
   STARTERS,
   WEAPONS,
+  buyBack,
   forgeWeapon,
   healthShown,
   isSafeFromDefeat,
   loseItems,
   maxHealth,
+  recoveryFee,
   swingTargets,
   takeStarter,
   weaponById,
@@ -39,7 +41,6 @@ import { Mines, floorCreatures, floorLayout } from "../src/core/mines";
 import { deserialize, newGame, serialize } from "../src/core/save";
 import { eat } from "../src/core/actions";
 import { itemById } from "../src/core/items";
-import { openLetter } from "../src/core/mail";
 import { reportLines } from "../src/core/report";
 import { sleep } from "../src/core/sleep";
 import { MAX_ENERGY } from "../src/core/energy";
@@ -423,7 +424,7 @@ describe("defeat", () => {
 
   it("takes at most three stacks, and the rest are kept", () => {
     const g = stocked();
-    const lost = loseItems(g, () => 0, false, 9);
+    const lost = loseItems(g, () => 0, false);
     expect(lost.length).toBeLessThanOrEqual(3);
     expect(lost.length).toBeGreaterThan(0);
     expect(g.inventory.count("hazel-switch")).toBe(1);
@@ -435,38 +436,68 @@ describe("defeat", () => {
     const whole = stocked();
     // First roll takes the stack, the coin (0.9) says whole.
     const rolls = [0, 0.9, 0.99, 0.99, 0.99, 0.99, 0.99];
-    const lostWhole = loseItems(whole, () => rolls.shift() ?? 0.99, false, 9);
+    const lostWhole = loseItems(whole, () => rolls.shift() ?? 0.99, false);
     expect(lostWhole[0]!.count).toBeGreaterThan(0);
     const half = stocked();
     const halfRolls = [0, 0.1, 0.99, 0.99, 0.99, 0.99, 0.99];
-    const lostHalf = loseItems(half, () => halfRolls.shift() ?? 0.99, false, 9);
+    const lostHalf = loseItems(half, () => halfRolls.shift() ?? 0.99, false);
     const id = lostHalf[0]!.id;
     expect(half.inventory.count(id)).toBeGreaterThan(0);
   });
 
   it("assist loses no items", () => {
     const g = stocked();
-    expect(loseItems(g, () => 0, true, 9)).toEqual([]);
+    expect(loseItems(g, () => 0, true)).toEqual([]);
     expect(g.inventory.count("stone")).toBe(20);
-    expect(g.mail.has("lost-9")).toBe(false);
+    expect(g.combat.counter).toEqual([]);
   });
 
-  it("posts one lost stack back in the trainer's mail", () => {
+  it("leaves the lost stacks at the counter, priced at their sell value", () => {
     const g = stocked();
-    const lost = loseItems(g, () => 0, false, 9);
-    expect(g.mail.has("lost-9")).toBe(true);
-    g.mail.deliver(9);
-    const before = g.inventory.count(lost[0]!.id);
-    const opened = openLetter(g, "lost-9");
-    expect(opened.ok).toBe(true);
-    expect(g.inventory.count(lost[0]!.id)).toBe(before + lost[0]!.count);
+    const lost = loseItems(g, () => 0, false);
+    expect(g.combat.counter).toEqual(lost);
+    const l = lost[0]!;
+    expect(recoveryFee(l)).toBe((itemById(l.id)?.sellPrice ?? 0) * l.count);
   });
 
-  it("the post survives a save", () => {
+  it("buying one back charges the fee and the rest stay lost", () => {
     const g = stocked();
-    loseItems(g, () => 0, false, 9);
+    g.combat.counter = [
+      { id: "clay", count: 2 },
+      { id: "stone", count: 5 },
+    ];
+    const l = g.combat.counter[0]!;
+    const fee = recoveryFee(l);
+    g.money = fee + 5;
+    const before = g.inventory.count(l.id);
+    expect(buyBack(g, 0)).toBeUndefined();
+    expect(g.money).toBe(5);
+    expect(g.inventory.count(l.id)).toBe(before + l.count);
+    expect(g.combat.counter).toEqual([]);
+    expect(buyBack(g, 1)).toBeDefined();
+  });
+
+  it("refuses a buy back when money is short", () => {
+    const g = stocked();
+    loseItems(g, () => 0, false);
+    g.money = 0;
+    expect(buyBack(g, 0)).toBe("Not enough money.");
+    expect(g.combat.counter.length).toBeGreaterThan(0);
+  });
+
+  it("a new defeat replaces the counter", () => {
+    const g = stocked();
+    loseItems(g, () => 0, false);
+    g.combat.counter = [{ id: "clay", count: 1 }];
+    loseItems(g, () => 0.99, false);
+    expect(g.combat.counter).toEqual([]);
+  });
+
+  it("the counter survives a save", () => {
+    const g = stocked();
+    const lost = loseItems(g, () => 0, false);
     const back = deserialize(serialize(g))!;
-    expect(back.mail.entry("lost-9")?.letter?.sender).toBe("The trainer");
+    expect(back.combat.counter).toEqual(lost);
   });
 
   it("sleeping after a knock out runs the pass-out rule and the item loss", () => {
@@ -485,8 +516,8 @@ describe("defeat", () => {
     );
     const lines = reportLines(report).join(" ");
     expect(lines).toMatch(/knocked out/);
-    expect(lines).toMatch(/posting one of them back/);
-    expect(g.mail.pending().length).toBeGreaterThan(0);
+    expect(lines).toMatch(/buy one back/);
+    expect(g.combat.counter.length).toBeGreaterThan(0);
   });
 
   it("assist still costs money but loses no items", () => {

@@ -6,7 +6,6 @@ import type { Creature } from "./creatures";
 import type { Skills } from "./skills";
 import type { Facing, Vec } from "./movement";
 import type { GameState } from "./save";
-import type { LetterDef } from "./mail";
 
 /**
  * Gentle combat (`docs/design/22_mines.md`, build slice 3, part one): one health
@@ -220,15 +219,14 @@ export interface Lost {
 
 /**
  * Defeat takes up to three stacks from the pack, whole or halved by a coin
- * flip, and posts one of them back in the morning mail from the trainer
- * (note 22). Assist loses no items. Money is the day rule's job. Returns what
- * was lost. `due` is the morning the post arrives.
+ * flip, and leaves them at the trainer's counter to buy back (note 22). Only
+ * the latest defeat is kept there. Assist loses no items. Money is the day
+ * rule's job. Returns what was lost.
  */
 export function loseItems(
   g: GameState,
   random: () => number,
   assist: boolean,
-  due: number,
 ): Lost[] {
   if (assist) return [];
   const stacks: Lost[] = [];
@@ -244,27 +242,36 @@ export function loseItems(
     const count = half ? Math.floor(s.count / 2) : s.count;
     if (g.inventory.remove(s.id, count)) lost.push({ id: s.id, count });
   }
-  const back = lost[0];
-  if (back) g.mail.queue(`lost-${due}`, due, postedBack(due, back));
+  g.combat.counter = lost.map((l) => ({ ...l }));
   return lost;
 }
 
-/** The trainer's note with the one stack she found. Placeholder words. */
-function postedBack(due: number, back: Lost): LetterDef {
-  return {
-    id: `lost-${due}`,
-    sender: "The trainer",
-    title: "Something of yours",
-    body: "I found this at the foot of the lift. Rest up, and go gently next time.",
-    trigger: { kind: "first-achievement" },
-    attachment: { items: [{ id: back.id, count: back.count }] },
-  };
+/** The fee to buy a lost stack back: its sell value, no profession bonus (note 22). */
+export function recoveryFee(l: Lost): number {
+  return (itemById(l.id)?.sellPrice ?? 0) * l.count;
+}
+
+/**
+ * Buy one stack back from the trainer's counter. The other stacks from that
+ * defeat are then gone for good (Stardew's guild sells back one). Returns an
+ * error line, or undefined when it worked.
+ */
+export function buyBack(g: GameState, index: number): string | undefined {
+  const l = g.combat.counter[index];
+  if (!l) return "She has nothing like that.";
+  const fee = recoveryFee(l);
+  if (g.money < fee) return "Not enough money.";
+  if (!g.inventory.add(l.id, l.count)) return "Your backpack is full.";
+  g.money -= fee;
+  g.combat.counter = [];
+  return undefined;
 }
 
 export interface CombatSave {
   health: number;
   trainerMet: boolean;
   kills: Record<string, number>;
+  counter: Lost[];
 }
 
 /** What the player carries into a fight: health, the trainer's progress and the kill tally. */
@@ -274,6 +281,8 @@ export class Combat {
   trainerMet = false;
   /** Set when health ran out: the day ends and the defeat rule runs (see `sleep`). */
   defeatPending = false;
+  /** The stacks the latest defeat took, for sale back at the trainer's counter (note 22). */
+  counter: Lost[] = [];
   /** Beaten creatures by kind, for the slayer list later (note 22). */
   kills: Record<string, number> = {};
   /** The Assist toggle, synced from the device settings by the scene. Never saved here. */
@@ -297,6 +306,7 @@ export class Combat {
       health: this.health.current,
       trainerMet: this.trainerMet,
       kills: { ...this.kills },
+      counter: this.counter.map((l) => ({ ...l })),
     };
   }
 
@@ -316,6 +326,16 @@ export class Combat {
     this.kills = {};
     for (const [k, v] of Object.entries(raw?.kills ?? {}))
       if (Number.isInteger(v) && v > 0) this.kills[k] = v;
+    this.counter = [];
+    for (const l of Array.isArray(raw?.counter) ? raw.counter : [])
+      if (
+        l &&
+        typeof l.id === "string" &&
+        itemById(l.id) &&
+        Number.isInteger(l.count) &&
+        l.count > 0
+      )
+        this.counter.push({ id: l.id, count: l.count });
   }
 }
 

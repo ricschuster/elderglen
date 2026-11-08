@@ -19,7 +19,9 @@ export function reportLines(r: SleepReport): string[] {
         `Lost for good: ${l.count} ${itemById(l.id)?.name.toLowerCase() ?? l.id}.`,
       );
     if (r.defeat.posted)
-      lines.push("The trainer is posting one of them back to you.");
+      lines.push(
+        "The trainer keeps them at her counter. You can buy one back.",
+      );
   } else if (r.passedOut) {
     const why =
       r.reason === "energy"

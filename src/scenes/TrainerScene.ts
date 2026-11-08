@@ -1,5 +1,6 @@
 import Phaser from "phaser";
-import { STARTERS, takeStarter } from "../core/combat";
+import { STARTERS, buyBack, recoveryFee, takeStarter } from "../core/combat";
+import { itemById } from "../core/items";
 import type { GameState } from "../core/save";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
@@ -44,7 +45,7 @@ export class TrainerScene extends Phaser.Scene {
       x: 24,
       y: 130,
       w: 600,
-      title: "A weapon to start with, free",
+      title: "A weapon to start with, free, and lost things",
       buttonsOnly: true,
     });
     const kb = this.input.keyboard;
@@ -74,7 +75,27 @@ export class TrainerScene extends Phaser.Scene {
         },
       ],
     }));
-    this.menu.setRows(rows);
+    const found: Row[] = g.combat.counter.map((l, i) => {
+      const fee = recoveryFee(l);
+      return {
+        label: `${l.count} ${itemById(l.id)?.name ?? l.id}`,
+        detail: `${fee}g. Buy one back and the rest stay lost.`,
+        dim: g.money < fee,
+        buttons: [
+          {
+            text: "Buy back",
+            run: () => {
+              const problem = buyBack(g, i);
+              this.message.setText(
+                problem ?? "She slides it across the counter.",
+              );
+              this.refresh();
+            },
+          },
+        ],
+      };
+    });
+    this.menu.setRows([...rows, ...found]);
   }
 
   private close(): void {
