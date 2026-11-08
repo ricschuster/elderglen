@@ -29,6 +29,7 @@ import { Inventory } from "./inventory";
 import { Skills, SKILLS, type Skill } from "./skills";
 import { professionById } from "./professions";
 import { Furniture, type FurnitureSave } from "./furniture";
+import { Mailbox, type MailEntry } from "./mail";
 import { Wardrobe, type WardrobeSave } from "./hats";
 import {
   BUILD_DAYS,
@@ -111,6 +112,8 @@ export interface GameState {
   chests: Chests;
   /** Achievements earned and the different recipes crafted. */
   achievements: Achievements;
+  /** Letters sent, delivered and taken (note 51). */
+  mail: Mailbox;
   /** Wild goods on the ground today. Not saved: it respawns each morning. */
   forage: ForageField;
 }
@@ -155,6 +158,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     furniture: new Furniture(),
     chests: new Chests(),
     achievements: new Achievements(),
+    mail: new Mailbox(),
     forage: new ForageField(),
   };
 }
@@ -233,6 +237,8 @@ interface SaveData {
   chests?: ChestSave[];
   /** Absent in saves made before achievements. */
   achievements?: AchievementsSave;
+  /** Absent in saves made before mail. */
+  mail?: MailEntry[];
 }
 
 /** Where saves live. The scene supplies one backed by the browser. */
@@ -284,6 +290,7 @@ export function serialize(g: GameState): string {
     furniture: g.furniture.save(),
     chests: g.chests.save(),
     achievements: g.achievements.save(),
+    mail: g.mail.save(),
   };
   return JSON.stringify(data);
 }
@@ -645,6 +652,7 @@ export function deserialize(text: string): GameState | undefined {
   g.furniture.load(raw.furniture, layout);
   g.chests.load(raw.chests, layout);
   g.achievements.load(raw.achievements);
+  g.mail.load(raw.mail);
   // Loading rechecks, so a goal met under an older save is granted (note 38).
   checkAchievements(g);
   return g;
