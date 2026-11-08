@@ -111,9 +111,6 @@ whole barn shifting.
 
 ## Still open
 
-- The cellar stairs: a stairs object in the tier 2 layers, enabled at tier 3.
-  Nothing blocks this until M3.
-
 ## Built (#421, 2026-11-07)
 
 - **Layers.** `core/map.ts` reads a layer name's `-tN` suffix as its tier
@@ -169,3 +166,16 @@ whole barn shifting.
   when it lands.
 - **Not built.** The larger kitchen and bedroom at tier 2: the map stays 31
   wide, and widening it would move the tier 1 tiles again.
+
+## Built (#282, 2026-11-07)
+
+- **Cellar stairs.** `markers-t2` in `house.json` holds the stairs: an exit
+  `cellar` (3 by 3 tiles in the kitchen's lower left corner, drawn with the door
+  tile in `ground-t2`) and the entry `from_cellar`. The exit has
+  `requires: cellar-open`, so it is a tier 3 flag and not a new layer set:
+  `houseHolds(tier)` gives `cellar-open` from tier 3, and before that the stairs
+  say "It is shut."
+- **Registry check.** `MapRegistry.problems()` now accepts an exit target entry
+  that sits on any tier of the target map, since `from_cellar` lives on tier 2.
+- **Not a house map.** The cellar id is `cellar`, so `isHouseMap` is false: no
+  furniture or chests there, and a house tier change does not reload it.

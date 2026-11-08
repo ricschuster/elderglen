@@ -9,8 +9,8 @@
   "height": 22,
   "tilewidth": 16,
   "tileheight": 16,
-  "nextlayerid": 15,
-  "nextobjectid": 120,
+  "nextlayerid": 16,
+  "nextobjectid": 122,
   "properties": [
     {
       "name": "placeholder",
@@ -249,9 +249,9 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 9, 9, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 9, 9, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 9, 9,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -395,6 +395,60 @@
               "name": "kind",
               "type": "string",
               "value": "bed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "name": "markers-t2",
+      "type": "objectgroup",
+      "draworder": "topdown",
+      "opacity": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "objects": [
+        {
+          "id": 120,
+          "name": "from_cellar",
+          "class": "entry",
+          "type": "entry",
+          "x": 72,
+          "y": 312,
+          "rotation": 0,
+          "visible": true,
+          "width": 0,
+          "height": 0,
+          "point": true
+        },
+        {
+          "id": 121,
+          "name": "cellar",
+          "class": "exit",
+          "type": "exit",
+          "x": 16,
+          "y": 288,
+          "rotation": 0,
+          "visible": true,
+          "width": 48,
+          "height": 48,
+          "properties": [
+            {
+              "name": "map",
+              "type": "string",
+              "value": "cellar"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "from_above"
+            },
+            {
+              "name": "requires",
+              "type": "string",
+              "value": "cellar-open"
             }
           ]
         }

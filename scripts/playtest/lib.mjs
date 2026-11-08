@@ -10,7 +10,7 @@ fs.mkdirSync(`${OUT}/shots`, { recursive: true });
 export const GAME_URL = process.env.BASE_URL ?? "http://localhost:5173/";
 /** Every map by id, so the bot can path on whichever map it is standing in. */
 const MAPS = Object.fromEntries(
-  ["farm", "house", "sawmill", "hall"].map((id) => {
+  ["farm", "house", "sawmill", "hall", "cellar"].map((id) => {
     const map = JSON.parse(
       fs.readFileSync(`${ROOT}src/content/maps/${id}.json`, "utf8"),
     );

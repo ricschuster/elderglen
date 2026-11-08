@@ -10,6 +10,8 @@ const EXITS: Record<string, string> = {
   mine: "Mine",
   cave: "Farm Cave",
   door: "Door",
+  cellar: "Cellar stairs",
+  stairs: "Stairs up",
 };
 
 const SERVICES: Record<string, string> = {

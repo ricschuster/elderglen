@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { dateOf } from "../core/calendar";
 import { farmMapOf, farmTypeById } from "../core/farmtypes";
+import { resumeAt } from "../core/house";
 import { loadGame, type GameState } from "../core/save";
 import { startGame } from "../core/toolbar";
 import { PROFILE_NAMES } from "./OptionsScene";
@@ -108,7 +109,7 @@ export class TitleScene extends Phaser.Scene {
       Math.random,
     );
     this.registry.set(STATE_KEY, state);
-    this.scene.start("farm");
+    this.scene.start("farm", resumeAt(state));
   }
 
   private button(
