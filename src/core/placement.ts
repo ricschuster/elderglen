@@ -3,6 +3,7 @@ import {
   BUILDINGS,
   COOP_SITES,
   FOOTPRINTS,
+  IRON_BAR,
   SILO_FOOTPRINT,
   SILO_SITES,
   isBuilt,
@@ -13,6 +14,7 @@ import {
   buildingProblem,
   type Building,
 } from "./animals";
+import { newHorse } from "./horse";
 import type { FarmMap } from "./map";
 import type { GameState } from "./save";
 
@@ -44,7 +46,11 @@ const inRect = (r: Rect, x: number, y: number) =>
 export const REFUND_SHARE = 0.5;
 
 /** The names of the two buildings, for the words on the screen. */
-const NAME: Record<Building, string> = { coop: "coop", barn: "barn" };
+const NAME: Record<Building, string> = {
+  coop: "coop",
+  barn: "barn",
+  stable: "stable",
+};
 
 /** The footprint a building covers with its top left on a tile. */
 export function footprintAt(b: Building, x: number, y: number): Rect {
@@ -181,7 +187,9 @@ function walkable(
     .filter((o) => o !== except)
     .flatMap((o) => {
       const r = placedFootprint(g, o, mapId);
-      return r ? [{ r, d: doorAt(o, r.x, r.y) }] : [];
+      return r
+        ? [{ r, d: FOOTPRINTS[o].door ? doorAt(o, r.x, r.y) : undefined }]
+        : [];
     });
   const silo = SILO_SITES[mapId];
   const siloRect =
@@ -192,7 +200,7 @@ function walkable(
     if (map.isBlocked(x, y)) return false;
     if (siloRect && inRect(siloRect, x, y)) return false;
     for (const { r, d } of placed)
-      if (inRect(r, x, y) && !(x === d.x && y === d.y)) return false;
+      if (inRect(r, x, y) && !(d && x === d.x && y === d.y)) return false;
     return !(extra && inRect(extra, x, y));
   };
 }
@@ -243,7 +251,9 @@ function wallsOffAnExit(
   const before = reach(map, walkable(g, map, mapId, b, undefined));
   const solid = walkable(g, map, mapId, b, foot);
   const after = reach(map, (x, y) =>
-    x === door.x && y === door.y ? !map.isBlocked(x, y) : solid(x, y),
+    FOOTPRINTS[b].door && x === door.x && y === door.y
+      ? !map.isBlocked(x, y)
+      : solid(x, y),
   );
   const near = (set: Set<string>, x: number, y: number) =>
     [
@@ -327,9 +337,9 @@ export function moveBuilding(
 export function refundOf(
   g: GameState,
   b: Building,
-): { coin: number; wood: number; stone: number } {
+): { coin: number; wood: number; stone: number; iron: number } {
   const info = BUILDINGS[b];
-  const total = { ...info.cost };
+  const total = { iron: 0, ...info.cost };
   for (let t = 2; t <= tierOf(g.animals, b); t++) {
     const up = info.upgrades[t];
     if (!up) continue;
@@ -341,6 +351,7 @@ export function refundOf(
     coin: Math.floor(total.coin * REFUND_SHARE),
     wood: Math.floor(total.wood * REFUND_SHARE),
     stone: Math.floor(total.stone * REFUND_SHARE),
+    iron: Math.floor(total.iron * REFUND_SHARE),
   };
 }
 
@@ -356,8 +367,14 @@ export function removeProblem(g: GameState, b: Building): string | undefined {
   if (b === "coop" && g.animals.incubator)
     return "There is an egg in the incubator. Wait for it to hatch.";
   const r = refundOf(g, b);
-  if (g.inventory.room("wood") < r.wood || g.inventory.room("stone") < r.stone)
-    return "Make room in your pack for the wood and stone.";
+  if (
+    g.inventory.room("wood") < r.wood ||
+    g.inventory.room("stone") < r.stone ||
+    g.inventory.room(IRON_BAR) < r.iron
+  )
+    return b === "stable"
+      ? "Make room in your pack for the wood and iron bars."
+      : "Make room in your pack for the wood and stone.";
   return undefined;
 }
 
@@ -368,9 +385,15 @@ export function removeBuilding(g: GameState, b: Building): boolean {
   g.money += r.coin;
   g.inventory.add("wood", r.wood);
   g.inventory.add("stone", r.stone);
+  g.inventory.add(IRON_BAR, r.iron);
   if (b === "coop") {
     g.animals.coopBuilt = false;
     g.animals.tier = 1;
+  } else if (b === "stable") {
+    // The horse goes with the stable (note 59).
+    g.animals.stableBuilt = false;
+    g.animals.horse = newHorse();
+    g.animals.mounted = false;
   } else {
     g.animals.barnBuilt = false;
     g.animals.barnTier = 1;

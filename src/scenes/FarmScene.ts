@@ -4,9 +4,13 @@ import {
   BARN_MAP,
   BARN_MAX_TIER,
   barnBlocks,
+  stableBlocks,
+  stableHome,
   siloBlocks,
   siloSite,
   SILO_FOOTPRINT,
+  STABLE_FOOTPRINT,
+  siteOf,
   depositHay,
   siloCapacity,
   HAY,
@@ -49,7 +53,23 @@ import { cropById } from "../core/crops";
 import { mapFiles, maps } from "../content/maps";
 import { START } from "../core/maps";
 import { mapWithDoors } from "../core/placement";
-import { farmMapOf, isFarmMap, resolveMapId } from "../core/farmtypes";
+import {
+  FARM_TYPES,
+  farmMapOf,
+  isFarmMap,
+  resolveMapId,
+} from "../core/farmtypes";
+import {
+  dismount,
+  horseName,
+  horseTile,
+  mount,
+  mountProblem,
+  needsName,
+  nameHorse,
+  rideable,
+  speedFactor,
+} from "../core/horse";
 import { exitOpen, FarmMap, layersAtTier, type Exit } from "../core/map";
 import { exitLabel, serviceLabel } from "../core/labels";
 import {
@@ -174,6 +194,10 @@ const DEV_SPEED = import.meta.env.DEV
 
 /** World pixels per second. */
 const SPEED = 80;
+/** How far the rider is drawn above the ground, so the horse shows under them. */
+const RIDER_LIFT = 6;
+/** The map of every farm type: where the horse can be ridden, with the village green. */
+const FARM_MAP_IDS = FARM_TYPES.map((t) => t.map);
 /** The player's feet box, in world pixels. */
 const PLAYER: Body = { hw: 5, h: 6 };
 
@@ -236,6 +260,8 @@ export class FarmScene extends Phaser.Scene {
   private target!: Phaser.GameObjects.Rectangle;
   /** Placeholder hat drawn on the player. */
   private hat!: Phaser.GameObjects.Rectangle;
+  /** The horse under the rider while mounted (a placeholder block). */
+  private steed!: Phaser.GameObjects.Rectangle;
   private pos: Vec = { x: 0, y: 0 };
   private facing: Facing = "down";
   private heldMs = 0;
@@ -336,6 +362,11 @@ export class FarmScene extends Phaser.Scene {
       this.ladderArmed = false;
     }
     this.pos = { x: (spawn.x + 0.5) * ts, y: (spawn.y + 1) * ts - 2 };
+    this.steed = this.add
+      .rectangle(this.pos.x, this.pos.y, 26, 14, 0x8a5a33)
+      .setOrigin(0.5, 1)
+      .setVisible(false);
+    world.push(this.steed);
     this.player = this.add
       .image(this.pos.x, this.pos.y, PLAYER_KEY)
       .setOrigin(0.5, 0.875);
@@ -604,6 +635,8 @@ export class FarmScene extends Phaser.Scene {
         money: this.state.money,
         houseTier: this.state.houseTier,
         houseBuild: this.state.houseBuild ?? null,
+        mounted: this.state.animals.mounted,
+        horse: this.state.animals.horse,
       });
   }
 
@@ -629,7 +662,10 @@ export class FarmScene extends Phaser.Scene {
     for (let i = 0; i < DEV_SPEED; i++)
       this.pos = move(
         this.pos,
-        { x: v.x * SPEED * dt, y: v.y * SPEED * dt },
+        {
+          x: v.x * SPEED * speedFactor(this.state) * dt,
+          y: v.y * SPEED * speedFactor(this.state) * dt,
+        },
         PLAYER,
         ts,
         (x, y) => this.tileBlocked(x, y),
@@ -644,7 +680,9 @@ export class FarmScene extends Phaser.Scene {
         this.tapMark = undefined;
       }
     }
-    this.player.setPosition(this.pos.x, this.pos.y);
+    const riding = this.state.animals.mounted;
+    this.steed.setVisible(riding).setPosition(this.pos.x, this.pos.y);
+    this.player.setPosition(this.pos.x, this.pos.y - (riding ? RIDER_LIFT : 0));
     this.drawHat();
     this.repeatUse(delta * DEV_SPEED);
     this.pickUp();
@@ -691,6 +729,7 @@ export class FarmScene extends Phaser.Scene {
       coopBlocks(this.state, this.mapId, x, y) ||
       barnBlocks(this.state, this.mapId, x, y) ||
       siloBlocks(this.state, this.mapId, x, y) ||
+      stableBlocks(this.state, this.mapId, x, y) ||
       ((this.mapId === COOP_MAP || this.mapId === BARN_MAP) &&
         animalSlots(this.state, this.mapId === COOP_MAP ? "coop" : "barn").some(
           (s) => s.x === x && s.y === y,
@@ -1076,11 +1115,55 @@ export class FarmScene extends Phaser.Scene {
   private travel(map: string, entry: string): void {
     if (this.leaving) return;
     this.leaving = true;
+    // Doors and the Mines dismount: the horse waits outside (note 59).
+    if (
+      this.state.animals.mounted &&
+      !rideable(resolveMapId(map, this.state.farmType), FARM_MAP_IDS)
+    ) {
+      const here = tileOf(this.pos, PLAYER, this.map.tileSize);
+      dismount(this.state, this.mapId, here.x, here.y);
+      this.save();
+    }
     const data: SceneData = { map, entry };
     this.cameras.main.fadeOut(FADE_MS);
     this.cameras.main.once("camerafadeoutcomplete", () =>
       this.scene.restart(data),
     );
+  }
+
+  /** The tile the horse stands on here, when it is not being ridden. */
+  private horseSpot(): { x: number; y: number } | undefined {
+    return horseTile(
+      this.state,
+      this.mapId,
+      stableHome(this.state, this.mapId),
+    );
+  }
+
+  /** Get on the horse. The first ride asks for a name (note 59). */
+  private getOn(): void {
+    const problem = mountProblem(this.state, this.mapId, FARM_MAP_IDS);
+    if (problem !== undefined) {
+      this.message = problem;
+      return this.render();
+    }
+    if (needsName(this.state)) {
+      const asked = window.prompt?.("Name your horse", "Clover");
+      nameHorse(this.state, asked ?? "");
+    }
+    mount(this.state, this.mapId, FARM_MAP_IDS);
+    this.message = `You are riding ${horseName(this.state)}. Press Action to get off.`;
+    this.save();
+    this.render();
+  }
+
+  /** Get off where the rider stands. The horse waits there until morning. */
+  private getOff(): void {
+    const here = tileOf(this.pos, PLAYER, this.map.tileSize);
+    dismount(this.state, this.mapId, here.x, here.y);
+    this.message = `${horseName(this.state)} waits here.`;
+    this.save();
+    this.render();
   }
 
   /** Take the ladder down. The last built floor has none. */
@@ -1116,7 +1199,8 @@ export class FarmScene extends Phaser.Scene {
     const def = worn ? hatById(worn) : undefined;
     this.hat.setVisible(def !== undefined);
     if (!def) return;
-    const head = this.pos.y - this.player.displayHeight * 0.875;
+    const lift = this.state.animals.mounted ? RIDER_LIFT : 0;
+    const head = this.pos.y - lift - this.player.displayHeight * 0.875;
     this.hat
       .setFillStyle(Phaser.Display.Color.HexStringToColor(def.color).color)
       .setPosition(this.pos.x, head + 1);
@@ -1139,6 +1223,10 @@ export class FarmScene extends Phaser.Scene {
   private use(): void {
     if (this.leaving) return;
     if (this.useDoor()) return;
+    if (this.state.animals.mounted) {
+      this.message = `Press Action to get off ${horseName(this.state)} first.`;
+      return this.render();
+    }
     const front = this.aimTile();
     if (this.map.serviceAt(front.x, front.y)) return;
     if (this.useSilo(front.x, front.y)) return;
@@ -1226,7 +1314,10 @@ export class FarmScene extends Phaser.Scene {
   private action(): void {
     if (this.leaving) return;
     if (this.useDoor()) return;
+    if (this.state.animals.mounted) return this.getOff();
     const front = this.aimTile();
+    const spot = this.horseSpot();
+    if (spot && spot.x === front.x && spot.y === front.y) return this.getOn();
     const service = this.map.serviceAt(front.x, front.y);
     if (service?.kind === "festival") return this.openFestival();
     if (service?.kind === "camp-chest")
@@ -1785,12 +1876,13 @@ export class FarmScene extends Phaser.Scene {
       size.w * ts,
       (size.h - 1) * ts,
     );
-    g.fillStyle(0x4a3220, 1).fillRect(
-      x + doorX * ts + 3,
-      y + (size.h - 1) * ts + 2,
-      ts - 6,
-      ts - 2,
-    );
+    if (doorX >= 0)
+      g.fillStyle(0x4a3220, 1).fillRect(
+        x + doorX * ts + 3,
+        y + (size.h - 1) * ts + 2,
+        ts - 6,
+        ts - 2,
+      );
   }
 
   private drawCoop(): void {
@@ -1812,6 +1904,29 @@ export class FarmScene extends Phaser.Scene {
       0x8f3b2e,
     );
     this.drawSilo();
+    this.drawStable();
+  }
+
+  /** The stable and the horse beside it, or where it was left. Placeholder blocks. */
+  private drawStable(): void {
+    const a = this.state.animals;
+    this.drawFarmBuilding(
+      siteOf(this.state, "stable", this.mapId),
+      STABLE_FOOTPRINT,
+      -1,
+      a.stableBuilt,
+      a.build?.building === "stable" && !a.stableBuilt,
+      0x7a5a3a,
+    );
+    const spot = this.horseSpot();
+    if (!spot) return;
+    const ts = this.map.tileSize;
+    this.wash
+      .fillStyle(0x8a5a33, 1)
+      .fillRect(spot.x * ts + 3, spot.y * ts + ts - 14, ts - 6, 14);
+    this.wash
+      .fillStyle(0x5b3a1e, 1)
+      .fillRect(spot.x * ts + ts - 8, spot.y * ts + ts - 18, 5, 6);
   }
 
   /** The silo: a round grey tower, scaffolding while it is built. */

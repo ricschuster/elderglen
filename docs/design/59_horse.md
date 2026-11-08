@@ -1,8 +1,40 @@
 # 59 The horse (draft)
 
-Status: draft. Decided with the owner on 2026-11-06. Nothing here is built. It
+Status: draft. Decided with the owner on 2026-11-06. The stable, the horse, riding and naming are built (issue #601, see Built below); the extras are not. It
 settles whether the valley has a mount, so long maps do not mean long walks all
 game (`19_valley_layout.md`, area sizes).
+
+## Built (issue #601)
+
+Numbers are placeholders for note 07.
+
+- **Stable.** A fifth carpenter row, placed with the placement screen of note 60
+  (Place, Move, Take down). 4 by 2 tiles, all solid, no interior. 10,000g, 100
+  wood standing in for Hardwood (as the house tiers do) and 5 iron bars, two
+  days, horse included. One carpenter job at a time, like the coop and barn.
+  Taking it down returns half (5,000g, 50 wood, 2 iron bars) and the horse
+  leaves with it, name and all.
+- **The horse** waits on the tile in front of the stable (the tile placement
+  keeps free). The morning report says when the stable is finished.
+- **Riding.** Action facing the horse gets on, Action again gets off, anywhere.
+  Tools and fishing are refused while mounted. Speed is 6.6 over our run speed
+  of 5, a factor of 1.32 (the saved Speed page). Terrain costs do not exist yet.
+- **Outdoors only.** Rideable maps are the farms and the village green. A door
+  or the Mines dismounts the rider and parks the horse where they stood. The
+  horse does not block movement (so it can never trap the player); it is only
+  something to face.
+- **Parking.** A horse left outside stays there for the day and is back at the
+  stable each morning (the morning report says so). A mounted player who sleeps
+  wakes on foot.
+- **Naming.** The first ride asks for a name (a browser prompt, like animals);
+  an empty answer takes "Clover". Names are trimmed and cut to 16 letters.
+- **Saves.** `animals.stableBuilt`, `animals.horse` (name and parked spot) and
+  `animals.sites.stable`. Old saves have none and load unchanged. Riding itself
+  is not saved: a loaded game starts on foot.
+- **Not built:** the extras (carrot, horse book, flute, hats), the walk and run
+  split, the horse and rider sprites (placeholder blocks), the Mines being
+  unrideable only by map name (no Mines ride exists), the gate rule for gaps
+  under two tiles, and the stump source of real Hardwood.
 
 ## Why
 
