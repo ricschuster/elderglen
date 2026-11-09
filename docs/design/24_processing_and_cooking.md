@@ -233,7 +233,19 @@ Settled where the notes left gaps. All numbers are placeholders (note 07).
   **Changed 2026-11-08 (owner, Stardew dyes many items):** the vat takes any plant
   or flower, each with a colour. The six goods above are only the first rows.
   The full list of inputs and colours, and what the Dyer's bundle asks for, are
-  open design items, waiting on the saved Dye Pot page (Stardew takes certain flowers, forage and gems, one colour each; unchecked, owner 2026-11-08 round two). Cask days follow Stardew's, to be checked (SC-82).
+  open design items, waiting on the saved Dye Pot page (Stardew takes certain flowers, forage and gems, one colour each; unchecked, owner 2026-11-08 round two).
+  **Decided 2026-11-08 (owner, after the saved Dyeing page, SC-95): both
+  follow Stardew.** The dye station is six pots (red, orange, yellow, green,
+  blue, purple), one item in each, all six used up, then hue, saturation and
+  value sliders pick any colour for the clothes being worn. Stardew's pots stand
+  at the tailor's house beside the sewing machine, need the player to wear the
+  piece, and ignore item quality. The accepted items are a broad list by pot
+  colour: flowers, forage, gems, fish, dishes and tools, with jelly, juice,
+  pickles, wine, dried goods, smoked fish and roe taking the colour of their
+  ingredient. This replaces the single-input vat and its fixed dyes. Open
+  design first: the clothing and look system (note 10) it needs, whether the
+  built vat and the Dyer's bundle (23) stay, and where our pots stand. #660
+  waits on that design. Cask days follow Stardew's, to be checked (SC-82).
 - **The greenhouse is built** (`31_farm_growth.md`, "Built (#602)").
 
 ## Left for later
