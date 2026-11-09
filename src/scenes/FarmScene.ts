@@ -52,6 +52,7 @@ import { rodById, waterAhead } from "../core/fishing";
 import { holdsOf } from "../core/worldflags";
 import { mendTideBridge, TIDE_BRIDGE_WOOD } from "../core/tidebridge";
 import { logCleared } from "../core/logs";
+import { STONEKEEPER_LINE } from "../core/smith";
 import { NOTHING_TO_ACT_ON, act, reasonText, useHeld } from "../core/tools";
 import { cropById } from "../core/crops";
 import { mapFiles, maps } from "../content/maps";
@@ -1567,6 +1568,10 @@ export class FarmScene extends Phaser.Scene {
     if (service?.kind === "fisher-shop")
       return this.open("shop", { stock: "fisher" });
     if (service?.kind === "tide-bridge") return this.mendBridge();
+    if (service?.kind === "stonekeeper") {
+      this.message = STONEKEEPER_LINE;
+      return this.render();
+    }
     if (service?.kind === "festival") return this.openFestival();
     if (service?.kind === "camp-chest")
       return this.report(takeCampGift(this.state, this.floor));

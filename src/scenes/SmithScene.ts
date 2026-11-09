@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import { itemById } from "../core/items";
 import type { GameState } from "../core/save";
 import { buy } from "../core/shop";
-import { COPPER_ORE } from "../core/ore";
+import { COPPER_ORE, ORES } from "../core/ore";
 import { crackGeode, CRACK_FEE, GEODE_KINDS } from "../core/geodes";
 import { sell, sellAll } from "../core/shop";
 import { handOverCopper, SMITH_STOCK } from "../core/smith";
@@ -97,6 +97,25 @@ export class SmithScene extends Phaser.Scene {
         ],
       };
     });
+    // The dwarf also buys raw ore for coin (note 74).
+    for (const o of ORES) {
+      const have = g.inventory.count(o.id);
+      if (have < 1) continue;
+      rows.push({
+        label: `Sell ${o.name.toLowerCase()}`,
+        detail: `${o.sellPrice}g  have ${have}`,
+        buttons: [
+          {
+            text: "Sell 1",
+            run: () => this.say(`Sold for ${sell(g.inventory, g, o.id, 1)}g.`),
+          },
+          {
+            text: "Sell all",
+            run: () => this.say(`Sold for ${sellAll(g.inventory, g, o.id)}g.`),
+          },
+        ],
+      });
+    }
     if (!g.mines.copperHandedIn)
       rows.push({
         label: "Show her a copper ore",

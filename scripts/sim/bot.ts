@@ -429,7 +429,7 @@ class Bot {
       return;
     // Hand over the first copper ore, so the smith brings the furnace.
     if (!g.mines.copperHandedIn && g.money > 200) {
-      if (!this.walker.goToService("mine", "smith")) return;
+      if (!this.walker.goToService("forge", "smith")) return;
       buy(g.inventory, g, COPPER_ORE, 1);
       handOverCopper(g);
       this.walker.enter("farm");
@@ -463,7 +463,7 @@ class Bot {
     if (
       needsTrip &&
       g.money >= bill + SEED_RESERVE &&
-      this.walker.goToService("mine", "smith")
+      this.walker.goToService("forge", "smith")
     ) {
       for (const { bar, n } of owed) {
         const def = ORES.find((o) => o.id === bar.ore);
@@ -657,7 +657,7 @@ class Bot {
       coalShort > 0 &&
       minesOpen(this.day) &&
       g.money >= COAL_BUY_PRICE * coalShort + SEED_RESERVE &&
-      this.walker.goToService("mine", "smith")
+      this.walker.goToService("forge", "smith")
     ) {
       buy(g.inventory, g, COAL, coalShort);
       this.walker.enter("farm");

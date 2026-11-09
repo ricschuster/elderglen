@@ -1,8 +1,8 @@
 # 74 Mountain (draft)
 
 Status: draft, written 2026-11-08, owner answers recorded the same day (note 71).
-Build order steps 1 to 3 and 6 are built (2026-11-09, #642, see "Built status" at the
-end); the trading hut, the stonekeeper's yard and the Quarry exit are not (#643, #649).
+Build order steps 1 to 6 are built (2026-11-09, #642 and #643, see "Built status" at
+the end); the Quarry bridge and exit are not (#649).
 M3b. It designs the Mountain map and moves the Mines entrance onto it.
 Overview and owner questions: `71_map_areas_overview.md`. Stardew facts are from
 the saved Mountain page (read 2026-11-08), as ideas only (ADR 0002).
@@ -227,3 +227,38 @@ map allows.
   cart stop, the Moonlit Mother legend, pots, ruined and cleared art (placeholder tiles
   stand in), and the smith menu is still the stand-in at the mine hall.
 - **Playtest:** `npm run playtest:mountain`.
+
+## Built status (2026-11-09, #643)
+
+Build order steps 4 and 5: the forge and the stonekeeper's yard. Hand edits to
+`mountain.json`, no generator.
+
+- **Forge hut:** exterior x 15 to 24, y 40 to 46 (10 by 7, roof then wall tiles), door
+  at (18, 46), entry `from_forge` at (18, 47) on the road past the forge. The note's
+  entry (18, 49) and a hut from x 14 would sit on the forge spur road, so the hut is
+  shifted one tile east and the entry moved up onto the road. Exit `forge` (map `forge`,
+  entry `door`).
+- **Interior:** `src/content/maps/forge.json`, 10 by 7, the fisher's hut template: one
+  `smith` service at (5, 1), two crate tiles as stock, the door at (5, 6) back to
+  `from_forge`.
+- **The smith's counter moves here.** The `smith` service is removed from the mine hall
+  (`mine.json`) and is the forge's counter, so ore, coal, the furnace gift (first copper
+  ore shown), geode cracking, weapon forging and the tool upgrades all sit at the forge.
+  The note says upgrades and cracking go to the Hearthwell blacksmith when that exists
+  (note 77), so they stay in this one menu until then. The sim bot walks to the forge.
+- **The dwarf buys ore:** the counter gains "Sell copper / iron / gold ore" rows
+  (Stardew sell prices already in `ore.ts`), shown when ore is held. Bars, stone and
+  coal are still not bought.
+- **Open from day 1.** The forge door has no `requires`, so the furnace gift and ore are
+  reachable before Spring 5 (the mine hall's old counter opened with the mines). The
+  furnace still needs a copper ore, coal and gold.
+- **Stonekeeper's yard:** a paved yard x 60 to 72, y 44 to 51 joined to the south spur,
+  a stone stack (x 68 to 71, y 44 to 45, solid), a two-crate work bench (65 to 66, 45) and
+  the stonekeeper's post at (66, 46), a sign tile standing in for the dwarf (no sprite).
+  Facing it says the bridge east is out (`STONEKEEPER_LINE`, `src/core/smith.ts`). No
+  interior. The east side (x 73 to 79) is left clear.
+- **Not built:** lamps and rest-camp supplies at the counter (no lamp item or camp
+  supply design exists; they wait on the Mines notes, #598), the Quarry bridge, exit
+  and `to_quarry` (#649), a dwarf sprite for either dwarf, and the furnace gift moving to
+  the Hearthwell blacksmith (open, above).
+- **Playtest:** `npm run playtest:forge`. Tests: `tests/mountain.test.ts`.

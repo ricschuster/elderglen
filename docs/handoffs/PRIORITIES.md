@@ -44,8 +44,9 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
    the ferry, the Hearthwell exit, pots and the legend wait, note 75 "Built status";
    it unblocks #596), Mountain (#642 built 2026-11-09: the map, the lake and
    river, pines, rocks and forage, the Forest exit, and the rockfall and mine mouth
-   that moved the Mines door off the farm, note 74 "Built status"; the forge and the
-   stonekeeper's yard are #643), the Quarry (#649), Forest part 2
+   that moved the Mines door off the farm; #643 built 2026-11-09: the forge hut with
+   the smith's counter moved from the mine hall, and the stonekeeper's yard, note 74
+   "Built status"; lamps and the Quarry bridge wait), the Quarry (#649), Forest part 2
    (#638), Lake cove (#644), Hearthwell shell (#645) and interiors (#646), Beach
    elf (#641, waits on the story spine). Changed order since the draft: the Quarry
    is new at step 4b and the maps moved up from M3c. Open design items left:
@@ -59,7 +60,7 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
 with the Secret Woods (six daily stumps and the log). Mahogany stays off the map
 for now.
 
-Session 2026-11-09 part three (handoff 2026-11-09c): orchestrated build of map areas, one sub-agent and one PR at a time: #636, #637, #639, #640 and #642 (first part) merged. Next: #643, Mountain forge and the stonekeeper's yard.
+Session 2026-11-09 part three (handoff 2026-11-09c): orchestrated build of map areas, one sub-agent and one PR at a time: #636, #637, #639, #640 and #642 (first part) merged. Next: #649 (Quarry). (#643, the Mountain forge and yard, built after.)
 
 Session 2026-11-09 part two (handoff 2026-11-09b): hermit witch Rosmarin and her fairy rings settled, #5 and the warden head's line parked for ring 3 after ring 2. Next: note 54 question batch, then ring 2 (#20) if the owner agrees.
 
