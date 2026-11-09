@@ -504,7 +504,7 @@ nothing and she never mentions it (see Neglect).
   finds it, in a small act the player may notice, in the end of ring 1 or in
   ring 2. She may sail or stay by her own choice. Not needed for slices 1 to 3.
   Stardew's Krobus story is never resolved (from memory, unchecked).
-- **Name (decided).** Ondrel. Invented, with a water sound.
+- **Name (decided, changed 2026-11-09).** Thalwen. Invented, old and a little formal, with "thal" from the Greek for sea. It replaces Ondrel, which read too close to Oriel.
 - **Oddness and look (decided).** A travelling coat she never takes off, and a
   half-packed trunk by her door that she packs and unpacks in small ways each
   season. It shows the unfinished business without a word.
