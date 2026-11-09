@@ -1,1 +1,98 @@
-{}
+{
+  "forest": {
+    "cap": 6,
+    "tables": {
+      "default": {
+        "spring": [
+          {
+            "id": "horseradish",
+            "weight": 30
+          },
+          {
+            "id": "dandelion",
+            "weight": 30
+          },
+          {
+            "id": "leek",
+            "weight": 20
+          },
+          {
+            "id": "daffodil",
+            "weight": 15
+          },
+          {
+            "id": "morel",
+            "weight": 5
+          }
+        ],
+        "summer": [
+          {
+            "id": "sweet-pea",
+            "weight": 40
+          },
+          {
+            "id": "spice-berry",
+            "weight": 35
+          },
+          {
+            "id": "grape",
+            "weight": 20
+          },
+          {
+            "id": "wild-ginger",
+            "weight": 5
+          }
+        ],
+        "fall": [
+          {
+            "id": "field-mushroom",
+            "weight": 35
+          },
+          {
+            "id": "bramble-berry",
+            "weight": 35
+          },
+          {
+            "id": "crab-apple",
+            "weight": 15
+          },
+          {
+            "id": "wild-garlic",
+            "weight": 10
+          },
+          {
+            "id": "chanterelle",
+            "weight": 5
+          }
+        ],
+        "winter": [
+          {
+            "id": "crocus",
+            "weight": 35
+          },
+          {
+            "id": "winter-cress",
+            "weight": 25
+          },
+          {
+            "id": "snowdrop",
+            "weight": 20
+          },
+          {
+            "id": "holly-sprig",
+            "weight": 15
+          },
+          {
+            "id": "snowcap",
+            "weight": 5
+          }
+        ]
+      }
+    },
+    "patches": {
+      "onion-bank": {
+        "spring": "spring-onion"
+      }
+    }
+  }
+}

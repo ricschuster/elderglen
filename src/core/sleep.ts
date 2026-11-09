@@ -26,6 +26,7 @@ import { endDayOrders, type OrdersNews } from "./orders";
 import { loseItems, type Lost } from "./combat";
 import { maps } from "../content/maps";
 import { storeOf } from "./mapstore";
+import { areasEndDay, leaveArea } from "./areas";
 
 /**
  * True when something stands in the 3x3 around a tile that stops a young fruit
@@ -150,6 +151,8 @@ export function sleep(
   random: () => number,
   map?: FarmMap,
 ): SleepReport {
+  // Passing out away from the farm: the night works on the farm's world first.
+  leaveArea(g);
   const before = dateOf(g.day.clock.day).season;
   const cropsBefore = g.farm.cropCount;
   const completionBefore = valleyPercent(ringProgress(g));
@@ -267,6 +270,8 @@ export function sleep(
     ),
     random,
   );
+  // The Forest and the other area maps have their own night.
+  areasEndDay(g, random);
   g.cave.endDay(maps.get(CAVE_MAP).forageSpots, random);
   const houseFinished = advanceBuild(g);
   const animalJob = advanceBuilding(g);

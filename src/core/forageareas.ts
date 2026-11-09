@@ -22,6 +22,12 @@ export interface ForageArea {
   cap: number | Partial<Record<Season, number>>;
   /** Tables by name. `default` serves every point outside a region that names one. */
   tables: Record<string, ForageTable>;
+  /**
+   * Daily patches by region table name: in a listed season every point of a
+   * region with that `forage` name holds the named good each morning, outside
+   * the cap (the Forest's spring onion bank). In other seasons it holds nothing.
+   */
+  patches?: Record<string, Partial<Record<Season, string>>>;
 }
 
 export type ForageAreas = Record<string, ForageArea>;
@@ -78,6 +84,10 @@ export function forageAreaProblems(
       typeof area.cap === "number" ? [area.cap] : Object.values(area.cap);
     if (caps.some((c) => !Number.isInteger(c) || c < 0))
       out.push(`${mapId}: the cap must be a whole number, zero or more`);
+    for (const [name, patch] of Object.entries(area.patches ?? {}))
+      for (const [season, id] of Object.entries(patch))
+        if (id !== undefined && !known(id))
+          out.push(`${mapId}/${name}/${season}: unknown forage "${id}"`);
     for (const [name, table] of Object.entries(area.tables))
       for (const [season, list] of Object.entries(table))
         for (const w of list ?? []) {

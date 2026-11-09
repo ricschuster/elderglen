@@ -205,3 +205,9 @@ window size. `mouse.mjs` converts tiles through the farm camera.
 
 `node scripts/playtest/combat.mjs` (about 30 seconds) takes the trainer's starter, swings at the
 dummy, fights a creature on mine floor 1 and is knocked out, checking health, the report and waking at home.
+
+`node scripts/playtest/forest.mjs` (about 50 seconds, `npm run dev` running; set
+`BASE_URL` if the dev server took another port) walks from the farm's north exit
+into the Forest, checks its own trees, rocks and forage are swapped in, fells a
+grove tree, picks forage, passes the night away from the farm and leaves by the
+south road.

@@ -106,5 +106,77 @@
     "difficulty": 60,
     "sellPrice": 280,
     "length": [45, 120]
+  },
+  {
+    "id": "carp",
+    "name": "Carp",
+    "water": "forest-lake",
+    "seasons": ["spring", "summer", "fall", "winter"],
+    "time": "day",
+    "rarity": "common",
+    "behaviour": "smooth",
+    "difficulty": 15,
+    "sellPrice": 50,
+    "length": [30, 80]
+  },
+  {
+    "id": "perch",
+    "name": "Perch",
+    "water": "forest-lake",
+    "seasons": ["spring"],
+    "time": "day",
+    "rarity": "common",
+    "behaviour": "mixed",
+    "difficulty": 25,
+    "sellPrice": 45,
+    "length": [15, 40]
+  },
+  {
+    "id": "fernfin",
+    "name": "Fernfin",
+    "water": "forest-lake",
+    "seasons": ["summer"],
+    "time": "day",
+    "rarity": "uncommon",
+    "behaviour": "mixed",
+    "difficulty": 40,
+    "sellPrice": 130,
+    "length": [25, 55]
+  },
+  {
+    "id": "mushroom-loach",
+    "name": "Mushroom Loach",
+    "water": "forest-lake",
+    "seasons": ["fall"],
+    "time": "dusk",
+    "rarity": "uncommon",
+    "behaviour": "sinker",
+    "difficulty": 40,
+    "sellPrice": 140,
+    "length": [20, 45]
+  },
+  {
+    "id": "moonmirror",
+    "name": "Moonmirror",
+    "water": "forest-lake",
+    "seasons": ["spring", "summer", "fall", "winter"],
+    "time": "night",
+    "rarity": "uncommon",
+    "behaviour": "smooth",
+    "difficulty": 45,
+    "sellPrice": 160,
+    "length": [30, 70]
+  },
+  {
+    "id": "hermit-trout",
+    "name": "Hermit Trout",
+    "water": "forest-lake",
+    "seasons": ["spring", "summer", "fall", "winter"],
+    "time": "rain",
+    "rarity": "rare",
+    "behaviour": "mixed",
+    "difficulty": 65,
+    "sellPrice": 300,
+    "length": [40, 90]
   }
 ]
