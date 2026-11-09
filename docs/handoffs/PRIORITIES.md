@@ -46,6 +46,8 @@ Hardwood sale (200g, `src/content/carpenter-standin.json`, note 43). It comes ou
 in the Secret Woods work package, #639, when the six daily stumps exist (owner,
 2026-11-08). Mahogany stays off the map for now.
 
+Session 2026-11-08o (handoff 2026-11-08o): built #653 to #658 (PRs #662 to #667), all closed. Unplayed. Left from the 2026-11-08n batch: #659, #660 (waits on the Dye Pot page) and #661.
+
 Session 2026-11-08n (handoff 2026-11-08n): second question round. Hearthwell's river layout is decided (note 77), the cast energy and the Quarry dwarf are settled, the dye list waits on a saved page. Build issues #653 to #661 are filed.
 
 Session 2026-11-08m (handoff 2026-11-08m): owner answers to the open fishing, mines and Quarry questions, recorded in notes 21, 22, 24, 60, 73, 74, 77 and 78. They create build work (see the handoff). The Quarry's four questions are closed.
