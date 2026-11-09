@@ -370,7 +370,9 @@ export function chop(
   }
   if (t.large) {
     // A farm with no regrow days (Standard) loses the stump for good.
-    const days = farmTypeById(g.farmType).stumpRegrowDays;
+    // A map may set its own days (the Secret Woods); else the farm type decides.
+    const days =
+      map?.stumpRegrowDays ?? farmTypeById(g.farmType).stumpRegrowDays;
     if (days > 0) {
       t.regrow = days;
       t.hits = 0;

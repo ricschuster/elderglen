@@ -1,4 +1,5 @@
 import type { Season } from "./calendar";
+import type { TreeKind } from "./map";
 
 /**
  * Common trees on the farm (`docs/design/36_gathering_trees_sap_fiber.md` and
@@ -53,6 +54,8 @@ export interface Tree {
    * it regrows (`docs/design/32_farm_types.md`, Woodland).
    */
   large?: boolean;
+  /** The kind of tree, from the map (note 71). Absent means oak. */
+  kind?: TreeKind;
   /** Days until a chopped large stump is whole again. Absent while it stands. */
   regrow?: number;
 }
@@ -64,10 +67,20 @@ export class Trees {
   private trees = new Map<string, Tree>();
 
   constructor(
-    initial: { x: number; y: number; stage: number; large?: boolean }[] = [],
+    initial: {
+      x: number;
+      y: number;
+      stage: number;
+      large?: boolean;
+      kind?: TreeKind;
+    }[] = [],
   ) {
     for (const t of initial) {
       this.add(t.x, t.y, t.stage);
+      if (t.kind) {
+        const added = this.at(t.x, t.y);
+        if (added) added.kind = t.kind;
+      }
       if (t.large) {
         const added = this.at(t.x, t.y);
         if (added) {

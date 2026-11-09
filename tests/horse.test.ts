@@ -53,7 +53,8 @@ import { Weeds } from "../src/core/weeds";
 import { Twigs } from "../src/core/debris";
 import { ForageField } from "../src/core/forage";
 
-const FARMS = ["farm", "farm-woodland"];
+const OUTSIDE = { rideable: true };
+const INSIDE = { rideable: false };
 
 function rich(): GameState {
   const g = newGame();
@@ -220,19 +221,19 @@ describe("the stable", () => {
 describe("riding", () => {
   it("needs a stable, and only works outdoors", () => {
     const g = rich();
-    expect(mountProblem(g, "farm", FARMS)).toBe("You have no horse.");
+    expect(mountProblem(g, OUTSIDE)).toBe("You have no horse.");
     const s = stabled();
-    expect(mountProblem(s, "farm", FARMS)).toBeUndefined();
-    expect(mountProblem(s, "house", FARMS)).toBe("You can only ride outdoors.");
-    expect(rideable("green", FARMS)).toBe(true);
-    expect(rideable("mine-1", FARMS)).toBe(false);
-    expect(rideable("hall", FARMS)).toBe(false);
+    expect(mountProblem(s, OUTSIDE)).toBeUndefined();
+    expect(mountProblem(s, INSIDE)).toBe("You can only ride outdoors.");
+    expect(rideable(maps.get("green"))).toBe(true);
+    expect(rideable(maps.get("mine"))).toBe(false);
+    expect(rideable(maps.get("hall"))).toBe(false);
   });
 
   it("rides faster than running: 6.6 over 5", () => {
     const g = stabled();
     expect(speedFactor(g)).toBe(1);
-    mount(g, "farm", FARMS);
+    mount(g, OUTSIDE);
     expect(speedFactor(g)).toBeCloseTo(1.32);
     expect(HORSE_SPEED_FACTOR).toBeCloseTo(1.32);
   });
@@ -253,7 +254,7 @@ describe("riding", () => {
     const g = stabled();
     const home = stableHome(g, "farm")!;
     expect(horseTile(g, "farm", home)).toEqual(home);
-    mount(g, "farm", FARMS);
+    mount(g, OUTSIDE);
     expect(horseTile(g, "farm", home)).toBeUndefined();
     dismount(g, "green", 3, 4);
     expect(g.animals.mounted).toBe(false);
@@ -266,7 +267,7 @@ describe("riding", () => {
 
   it("lines in the morning report when it spent the night out", () => {
     const g = stabled();
-    mount(g, "farm", FARMS);
+    mount(g, OUTSIDE);
     dismount(g, "farm", 5, 5);
     const r = sleepReport(g);
     expect(r).toContain(
@@ -276,7 +277,7 @@ describe("riding", () => {
 
   it("is on foot after a load", () => {
     const g = stabled();
-    mount(g, "farm", FARMS);
+    mount(g, OUTSIDE);
     const back = deserialize(serialize(g))!;
     expect(back.animals.mounted).toBe(false);
   });
@@ -301,7 +302,7 @@ describe("saves", () => {
   it("the stable, site, name and parked spot survive a save", () => {
     const g = stabled();
     nameHorse(g, "Dobbin");
-    mount(g, "farm", FARMS);
+    mount(g, OUTSIDE);
     dismount(g, "green", 7, 8);
     const back = deserialize(serialize(g))!;
     expect(back.animals.stableBuilt).toBe(true);
@@ -358,13 +359,13 @@ describe("a parked horse blocks, and never traps the player", () => {
     const g = stabled();
     const home = stableHome(g, "farm")!;
     expect(horseBlocks(g, "farm", home.x, home.y)).toBe(false);
-    mount(g, "farm", FARMS);
+    mount(g, OUTSIDE);
     expect(horseBlocks(g, "farm", 5, 5)).toBe(false);
     dismount(g, "farm", 5, 5);
     expect(horseBlocks(g, "farm", 5, 5)).toBe(true);
     expect(horseBlocks(g, "farm", 6, 5)).toBe(false);
     expect(horseBlocks(g, "green", 5, 5)).toBe(false);
-    mount(g, "farm", FARMS);
+    mount(g, OUTSIDE);
     expect(horseBlocks(g, "farm", 5, 5)).toBe(false);
     dismount(g, "farm", 5, 5);
     horseEndDay(g);
@@ -409,7 +410,7 @@ describe("a parked horse blocks, and never traps the player", () => {
     expect(parkSpot(w, from, { x: 2, y: 1 })).toEqual({ x: 3, y: 1 });
     expect(PARK_RANGE).toBeGreaterThan(2);
     const g = stabled();
-    mount(g, "farm", FARMS);
+    mount(g, OUTSIDE);
     const none = world(["###", "#.#", "###"]);
     expect(
       dismountSafely(g, "farm", none, { x: 1, y: 1 }, { x: 1, y: 1 }),
@@ -420,7 +421,7 @@ describe("a parked horse blocks, and never traps the player", () => {
 
   it("dismounts onto a safe tile and the player can still walk everywhere", () => {
     const g = stabled();
-    mount(g, "farm", FARMS);
+    mount(g, OUTSIDE);
     const w = world(["#####", "#...#", "#...#", "#####"]);
     const spot = dismountSafely(g, "farm", w, { x: 1, y: 1 }, { x: 2, y: 1 })!;
     expect(spot).toEqual({ x: 2, y: 1 });
@@ -432,7 +433,7 @@ describe("a parked horse blocks, and never traps the player", () => {
     const g = stabled();
     const w = world(["#####", "#...#", "#...#", "#####"]);
     // On the rider's own tile.
-    mount(g, "farm", FARMS);
+    mount(g, OUTSIDE);
     dismount(g, "farm", 1, 1);
     settleHorse(g, "farm", w, { x: 1, y: 1 });
     expect(g.animals.horse.parked).not.toEqual({ map: "farm", x: 1, y: 1 });

@@ -95,30 +95,31 @@ export function hasHorse(g: GameState): boolean {
   return g.animals.stableBuilt;
 }
 
-/** True for a map the horse can be ridden on: the farms and the village green. Doors dismount. */
-export function rideable(mapId: string, farmMaps: readonly string[]): boolean {
-  return mapId === "green" || farmMaps.includes(mapId);
+/**
+ * True for a map the horse can be ridden on: the map property `rideable`, set
+ * on every outdoor valley map (note 71). Doors dismount.
+ */
+export function rideable(map: { readonly rideable: boolean }): boolean {
+  return map.rideable;
 }
 
 /** Why the player cannot get on, or undefined if they can. */
 export function mountProblem(
   g: GameState,
-  mapId: string,
-  farmMaps: readonly string[],
+  map: { readonly rideable: boolean },
 ): string | undefined {
   if (!hasHorse(g)) return "You have no horse.";
   if (g.animals.mounted) return "You are already riding.";
-  if (!rideable(mapId, farmMaps)) return "You can only ride outdoors.";
+  if (!rideable(map)) return "You can only ride outdoors.";
   return undefined;
 }
 
 /** Get on. Returns false, and changes nothing, if it cannot be done. */
 export function mount(
   g: GameState,
-  mapId: string,
-  farmMaps: readonly string[],
+  map: { readonly rideable: boolean },
 ): boolean {
-  if (mountProblem(g, mapId, farmMaps) !== undefined) return false;
+  if (mountProblem(g, map) !== undefined) return false;
   g.animals.mounted = true;
   g.animals.horse.parked = undefined;
   return true;

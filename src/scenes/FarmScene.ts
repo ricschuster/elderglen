@@ -48,18 +48,15 @@ import {
 import { openChest } from "../core/maze";
 import { itemById } from "../core/items";
 import { rodById, waterAhead } from "../core/fishing";
+import { holdsOf } from "../core/worldflags";
+import { logCleared } from "../core/logs";
 import { NOTHING_TO_ACT_ON, act, reasonText, useHeld } from "../core/tools";
 import { cropById } from "../core/crops";
 import { mapFiles, maps } from "../content/maps";
 import { START } from "../core/maps";
 import { storeOf } from "../core/mapstore";
 import { mapWithDoors } from "../core/placement";
-import {
-  FARM_TYPES,
-  farmMapOf,
-  isFarmMap,
-  resolveMapId,
-} from "../core/farmtypes";
+import { farmMapOf, isFarmMap, resolveMapId } from "../core/farmtypes";
 import {
   dismountSafely,
   horseBlocks,
@@ -234,7 +231,6 @@ const SPEED = 80;
 /** How far the rider is drawn above the ground, so the horse shows under them. */
 const RIDER_LIFT = 6;
 /** The map of every farm type: where the horse can be ridden, with the village green. */
-const FARM_MAP_IDS = FARM_TYPES.map((t) => t.map);
 /** A creature's feet box, in world pixels. */
 const CREATURE_BODY: Body = { hw: 5, h: 5 };
 /** Placeholder colours for the first creatures, until the art pass. */
@@ -390,7 +386,10 @@ export class FarmScene extends Phaser.Scene {
     // The house is one map that grows: only the layers at or below the house
     // tier are read and drawn, and the rest is black void.
     this.tier = this.buildingTier(id);
-    this.map = mineLayout ? FarmMap.fromTiled(json) : maps.get(id, this.tier);
+    const holds = holdsOf(this.state);
+    this.map = mineLayout
+      ? FarmMap.fromTiled(json)
+      : maps.getWith(id, holds, this.tier);
     // The coop and barn doors stand where the buildings were placed.
     if (isFarmMap(id)) this.map = mapWithDoors(this.state, this.map, id);
     if (isHouseMap(id)) carryFurniture(this.state, this.map, id);
@@ -407,7 +406,7 @@ export class FarmScene extends Phaser.Scene {
     const tilemap = this.make.tilemap({ key: cacheKey });
     const tileset = tilemap.addTilesetImage(TILESET_NAME, TILES_KEY)!;
     const world: Phaser.GameObjects.GameObject[] = [];
-    for (const layer of layersAtTier(json, this.tier)) {
+    for (const layer of layersAtTier(json, this.tier, holds)) {
       if (layer.type !== "tilelayer" || layer.visible === false) continue;
       const drawn = tilemap.createLayer(layer.name, tileset);
       if (drawn) world.push(drawn);
@@ -848,8 +847,10 @@ export class FarmScene extends Phaser.Scene {
   }
 
   private tileBlockedNoHorse(x: number, y: number): boolean {
+    const log = this.map.logAt(x, y);
     return (
       this.map.isBlocked(x, y) ||
+      (log !== undefined && !logCleared(this.state, log)) ||
       (this.outdoorSoil && this.state.trees.blocks(x, y)) ||
       !!this.store.fruitTrees.at(x, y) ||
       !!this.rocks()?.at(x, y) ||
@@ -1280,7 +1281,7 @@ export class FarmScene extends Phaser.Scene {
     // Doors and the Mines dismount: the horse waits outside (note 59).
     if (
       this.state.animals.mounted &&
-      !rideable(resolveMapId(map, this.state.farmType), FARM_MAP_IDS)
+      !rideable(maps.get(resolveMapId(map, this.state.farmType)))
     ) {
       const here = tileOf(this.pos, PLAYER, this.map.tileSize);
       dismountSafely(
@@ -1310,7 +1311,7 @@ export class FarmScene extends Phaser.Scene {
 
   /** Get on the horse. The first ride asks for a name (note 59). */
   private getOn(): void {
-    const problem = mountProblem(this.state, this.mapId, FARM_MAP_IDS);
+    const problem = mountProblem(this.state, this.map);
     if (problem !== undefined) {
       this.message = problem;
       return this.render();
@@ -1320,7 +1321,7 @@ export class FarmScene extends Phaser.Scene {
       this.namingHorse = true;
       return this.open("name-horse");
     }
-    mount(this.state, this.mapId, FARM_MAP_IDS);
+    mount(this.state, this.map);
     this.message = `You are riding ${horseName(this.state)}. Press Action to get off.`;
     this.save();
     this.render();
@@ -1501,7 +1502,12 @@ export class FarmScene extends Phaser.Scene {
       this.message = "Face the water to fish.";
       return this.render();
     }
-    this.open("fishing", { rod: rodId, water, at: here });
+    const first = water[0]!;
+    const kind = this.map.waterKindAt(
+      here.x + step.x * first,
+      here.y + step.y * first,
+    );
+    this.open("fishing", { rod: rodId, water, at: here, kind });
   }
 
   /**

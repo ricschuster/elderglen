@@ -37,6 +37,7 @@ import { isRaining } from "../core/weather";
 import type { Quality } from "../core/quality";
 import type { GameState } from "../core/save";
 import { frame } from "./panel";
+import type { WaterKind } from "../core/map";
 import { STATE_KEY } from "./state";
 import { loadDeviceSettings } from "./storage";
 
@@ -47,6 +48,8 @@ export interface FishingData {
   water: number[];
   /** The tile at the player's feet, where a fish lies if the backpack is full. */
   at: { x: number; y: number };
+  /** The kind of water fished (note 71). Absent means the river. */
+  kind?: WaterKind;
 }
 
 type Phase = "aim" | "wait" | "hook" | "fight" | "result";
@@ -326,7 +329,7 @@ export class FishingScene extends Phaser.Scene {
     const fx = g.tackle.effects(this.rod.id);
     this.effects = fx;
     this.pending = bite(
-      "river",
+      this.cfg.kind ?? "river",
       { season, minutes: g.day.clock.minutes, raining: isRaining(g.weather) },
       Math.random,
       this.tutorial,

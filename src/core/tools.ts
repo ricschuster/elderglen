@@ -20,9 +20,10 @@ import {
 } from "./actions";
 import { TREE_SEED } from "./trees";
 import { mine } from "./mining";
+import { chopLog, logCleared } from "./logs";
 import type { FarmMap } from "./map";
 import type { GameState } from "./save";
-import { cropOfSeed } from "./items";
+import { HARDWOOD, cropOfSeed } from "./items";
 import { MIXED_SEED } from "./weeds";
 import { fertilizerById } from "./fertilizer";
 import { treeOfSapling } from "./fruittrees";
@@ -73,6 +74,25 @@ export function useHeld(
   if (held.kind === "tool" && g.trees.at(x, y)?.moss) {
     const moss = gatherMoss(g, x, y);
     if (moss.ok || moss.reason !== "nothing to shake") return moss;
+  }
+  // The massive log: one chop with a steel axe, then it is gone (note 71).
+  const log = map.logAt(x, y);
+  if (
+    log &&
+    !logCleared(g, log) &&
+    held.kind === "tool" &&
+    held.tool === "axe"
+  ) {
+    const r = chopLog(g, log);
+    if (!r.ok)
+      return fail(r.reason === "cleared" ? "nothing to chop" : r.reason);
+    return {
+      ok: true,
+      item: HARDWOOD,
+      ...(r.levelUp
+        ? { levelUp: { skill: "foraging", level: r.levelUp.level } }
+        : {}),
+    };
   }
   if (held.kind === "tool" && held.tool === "pickaxe")
     return mine(g, x, y, floor);
@@ -208,7 +228,7 @@ const REASONS: Record<string, string> = {
   "nothing to do here": "Nothing to do here.",
   "nothing held": "Select a tool or item.",
   "nothing to chop": "Nothing to chop here.",
-  "needs a better axe": "A large stump needs a copper axe or better.",
+  "needs a better axe": "That needs a better axe.",
   "a weed is in the way": "Clear the weed first.",
   "no weed": "No weed here.",
   "not a fertilizer": "That cannot be mixed into soil.",
