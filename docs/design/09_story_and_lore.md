@@ -431,6 +431,25 @@ nothing and she never mentions it (see Neglect).
   also gives two orders each Monday paid in Qi gems (the pay is from memory;
   the saved page confirms only the two weekly orders). Token prices, the shop
   stock and the order list are open.
+- **The note trail's shape (decided, 2026-11-09).** Four notes. The first is
+  found in the valley, in the Secret Woods, and is written to Oriel, not to the
+  player, so the trail starts as something left unfinished. Each of the first
+  three notes sends the player to leave an ordinary item (farm or forage goods)
+  in an odd place, as Stardew's trail does with a battery pack, ten beets and a
+  solar essence (checked on the saved Special Orders page). The next note is
+  found where the item is left. The fourth note ends the trail at the stage 2
+  mark on the Outpost board. Each task returns a small, odd gift, and the carrier's
+  mark stays the stage 3 gift (the trail does not give it). Stardew's saved page
+  shows only the final reward, iridium snake milk; whether early tasks pay is
+  not on the page.
+- **The three drops and gifts (decided, 2026-11-09, items are placeholders).**
+  All three are near the village, as Stardew's include the mayor's fridge. In
+  order: a fish in the inn kitchen, a jar of preserves in the library, and a
+  crop on the Outpost step. The last note is found on the step, and the trail
+  ends at the stage 2 mark on the Outpost board beside it. The gifts, in order,
+  are a cooked dish, a rare seed and a rare ore. The drops need the Hearthwell
+  interiors (#645, #646), so the trail cannot be built before them.
+  Open: the exact items, counts and gift values (tuning note 07).
 
 ## Cast balance
 
@@ -555,8 +574,8 @@ Rule for this game, in the same spirit:
   from Tolkien's Gandalf.
 - The hermit witch's name, look and tower, what the fairy rings cost and what makes them look different from each other, and
   how she differs from Radagast.
-- The warden head: her real name and alias (deferred to its own talk), the exact
-  notes and places of the stage 1 trail, token prices, shop stock and the order
+- The warden head: her real name and alias (deferred to its own talk), exact
+  items, counts and gift values of the stage 1 trail, token prices, shop stock and the order
   list for her board, and whether she should be a woman (stays a woman for now).
   Her tie to Oriel, the note trail, the mark, her voice, look, ring 1 look change
   and board place are decided above.
