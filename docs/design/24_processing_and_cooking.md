@@ -214,8 +214,8 @@ Settled where the notes left gaps. All numbers are placeholders (note 07).
   quality and the day it went in). An older save has none.
 - **Aging.** One good per cask, no queue. It takes wine, mead and cheese
   (goat cheese too). The good keeps its starting quality as a floor and gains
-  silver and gold by days in the cask: wine and mead 14 and 28 days, cheese 6
-  and 10 (Stardew's figures from memory, SC-82). We have no iridium grade.
+  silver and gold by days in the cask: wine 14 and 28 days, mead 7 and 14,
+  cheese 3 and 7 (Stardew's figures, checked on the saved Cask page, SC-82). We have no iridium grade.
   Taking it out early is allowed and gives the grade reached. Time is counted
   in whole game days, so a cask works while the player is away.
 - **Use.** Hold a good and face the cask to load it. Action reads the cask

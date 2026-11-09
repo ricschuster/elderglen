@@ -102,7 +102,7 @@ describe("the cask", () => {
     loadCask(g, 8, 8, "cheese@silver");
     const job = g.casks.get(8, 8)!.job!;
     expect(caskQuality(g, job)).toBe("silver");
-    g.day.clock.day = 2 + 10;
+    g.day.clock.day = 2 + 7;
     expect(caskQuality(g, job)).toBe("gold");
   });
 
@@ -113,7 +113,7 @@ describe("the cask", () => {
     g.day.clock.day = 1;
     loadCask(g, 8, 8, "cheese");
     g.day.clock.day = 3;
-    expect(caskStatus(g, 8, 8)).toBe("Cheese: normal, silver in 4 days.");
+    expect(caskStatus(g, 8, 8)).toBe("Cheese: normal, silver in 1 day.");
     expect(loadCask(g, 8, 8, "cheese")).toMatchObject({ reason: "cask busy" });
     expect(pickUpCask(g, 8, 8)).toMatchObject({ reason: "cask not empty" });
     expect(handOnCask(g, 8, 8)).toMatchObject({ ok: true, item: "cheese" });

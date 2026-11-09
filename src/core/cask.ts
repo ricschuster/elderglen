@@ -17,16 +17,16 @@ export const CASK = "cask";
 export const CASK_LIMIT = 33;
 
 /**
- * Days in the cask before a good reaches silver and gold. Ours, placeholders
- * (note 07): Stardew ages wine to silver in 14 days and gold in 28, and cheese
- * in 6 and 10, from memory (SC-82). Mead follows wine.
+ * Days in the cask before a good reaches silver and gold, counted from the day
+ * it went in. Stardew's figures from the saved Cask page, read 2026-11-08
+ * (SC-82): wine 14 and 28, mead 7 and 14, cheese and goat cheese 3 and 7.
  */
 export const CASK_DAYS: Partial<
   Record<ArtisanCategory, { silver: number; gold: number }>
 > = {
   wine: { silver: 14, gold: 28 },
-  mead: { silver: 14, gold: 28 },
-  cheese: { silver: 6, gold: 10 },
+  mead: { silver: 7, gold: 14 },
+  cheese: { silver: 3, gold: 7 },
 };
 
 /** What a cask holds: the good, the quality it went in at and the day it went in. */
