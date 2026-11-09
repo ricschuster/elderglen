@@ -383,6 +383,41 @@ mailbox note thread was dropped on 2026-10-29, so the reveal needs no mailbox. O
 Tone: no scares and no pressure. A visit declined, a glimpse missed or an errand skipped costs
 nothing and she never mentions it (see Neglect).
 
+### The warden head, owner answers (2026-11-08)
+
+- **Her tie to the player (decided).** She knew Oriel. Oriel was once a Dawn
+  Carrier, or worked with them, and left the road to garden. She watches the
+  farm because of that. Stage 3 (the morning after the bridge is mended) is her
+  coming to see who inherited it. This ties the relative, the wardens and the
+  Last Seat letter into one thread. It does not change the hermit, who still
+  does not know Oriel, or the Wanderer, who still knows where Oriel went.
+- **Stage 1 errands are a note trail (decided, Stardew).** Checked on the saved
+  Special Orders page: Stardew's Mr. Qi starts with notes hidden in odd places
+  (a lock-box, the mayor's fridge, the sand dragon), each pointing to a small
+  odd task and the next note, and only later has a board of his own in his room.
+  Ours: a short trail of three or four notes found in odd spots around the
+  valley, each with a small odd task, ending at the stage 2 mark. The courier at
+  the Outpost is not seen leaving them. The notes are placed in the world and
+  are not mail, so the dropped mailbox thread stays dropped. The trail is not
+  on the town request board.
+- **Her own board later (decided, Stardew).** Her ring 2 challenges sit on a
+  board of her own, separate from the town request board and from Special Orders
+  (note 65). Where it stands and what it pays are open.
+- **Stage 3 gift (decided).** A carrier's mark, a small token with her alias on
+  one side. In ring 2 it opens her board. It is a keepsake with a purpose.
+- **Look (decided).** A dusty carrier's coat, mended many times, to start with.
+  Her look changes over time: definitely in rings 2 and 3, and whether it
+  starts in ring 1 (for example at stage 3) is open. No hood, cloak or weapon
+  (ADR 0003).
+- **Voice (decided).** Dry and brief, kind underneath. Short sentences,
+  understatement, a dry joke now and then. She never explains herself. Her
+  warmth shows in what she notices about the player.
+- **Names (decided style).** The alias is a plain, courteous, blank word, such as
+  Mrs. Post or Miss Verge, so the player later sees it as a joke on her trade.
+  The real name is an old road name, heard at stage 4. Candidates from the
+  design talk, not yet chosen: Hesper Calloway, Marrow Vane, Tamsin Wick. The
+  owner may name her.
+
 ## Cast balance
 
 The current state of the ring 1 cast, with races, genders and households, is in
@@ -506,8 +541,10 @@ Rule for this game, in the same spirit:
   from Tolkien's Gandalf.
 - The hermit witch's name, look and tower, what the fairy rings cost and what makes them look different from each other, and
   how she differs from Radagast.
-- The warden head: her name and look, what she asks of the player, how late
-  she appears, and whether she should be a woman.
+- The warden head: her real name and alias, the exact notes and places of the
+  stage 1 trail, whether her look starts changing in ring 1, where her own
+  board stands and what it pays, and whether she should be a woman. Her tie to
+  Oriel, the note trail, the mark, her voice and look are decided above.
 - Who fills the open named slots in the cast balance table.
 - The crossroads town's full building list.
 - The shadow in ring 3 (issue #5, what centre 3 is).
