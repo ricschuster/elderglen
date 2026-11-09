@@ -63,6 +63,8 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
 with the Secret Woods (six daily stumps and the log). Mahogany stays off the map
 for now.
 
+Session 2026-11-09 part four (handoff 2026-11-09d): orchestrated build of the rest of the map areas, one sub-agent and one PR at a time: #643, #649, #638, #644, #661, #645, #646 and #641 merged. Every map package on the list is now built to shell level. Next: the owner plays the new areas, then the note 54 question batch.
+
 Session 2026-11-09 part three (handoff 2026-11-09c): orchestrated build of map areas, one sub-agent and one PR at a time: #636, #637, #639, #640 and #642 (first part) merged. Next: #649 (Quarry). (#643, the Mountain forge and yard, built after.)
 
 Session 2026-11-09 part two (handoff 2026-11-09b): hermit witch Rosmarin and her fairy rings settled, #5 and the warden head's line parked for ring 3 after ring 2. Next: note 54 question batch, then ring 2 (#20) if the owner agrees.
