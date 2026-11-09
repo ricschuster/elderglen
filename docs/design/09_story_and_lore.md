@@ -537,12 +537,31 @@ nothing and she never mentions it (see Neglect).
   the one who remembers why hats and ledgers matter, but she tells it in a
   scatty, sideways way, through recipes and old sayings. This sets her apart
   from Radagast beyond the animal quirk.
-- **Name (open).** The owner likes Tansy but wants names that tie to the lore.
-  Candidates raised: Rosmarin (rosemary, the herb of remembrance), Minna (an
-  old root for remembrance), Hesta (from Hestia, the hearth), and Tansy. Norse
-  wizard names such as Mimir or Hugin are avoided (see the dark lord's name
-  note).
-  Open: the name, the look of each fairy ring and what each costs.
+- **Name (decided 2026-11-09).** Rosmarin (rosemary, the herb of remembrance),
+  chosen from Tansy, Minna, Hesta and a title only (Stardew: the Wizard has a
+  personal name too, recalled as Rasmodius and unchecked). It carries her
+  ledger hook, and herb names suit her recipes and old sayings. Villagers may
+  shorten it. Norse wizard names such as Mimir or Hugin stay avoided (see the
+  dark lord's name note).
+- **Ring cost (decided 2026-11-09).** Gold plus rare items, as Stardew's
+  obelisks do (saved Wizard's Tower page: gold plus items such as Iridium Bar,
+  Clam and Coral). Each ring takes gold, a few rare goods local to its
+  destination, and one item from Rosmarin's odd requests. Exact gold and counts
+  come at tuning (note 07); the gold should sit below Stardew's, as the pin's
+  price does.
+- **Ring look (decided 2026-11-09).** All four are the same toadstool ring on
+  the farm, each edged with its own local material: mountain stone, beach
+  shells, elf-garden moss, and a plain edge for the ring 3 one until ring 3 is
+  designed. Not a colour per ring, and not Stardew's standing stone obelisks.
+- **Ring unlock (decided 2026-11-09).** A custom-themed quest, then the shop:
+  she sets one request tied to her ledger hook (bring back a lost custom, such
+  as a recipe or saying) and then teaches the rings. Stardew's shop opens after
+  the Magic Ink quest (saved Wizard's Tower page). The exact request is open.
+- **Tower look (decided 2026-11-09).** Overgrown and lived in: moss and ivy on
+  the stone, drying herbs and jars at the door, a toadstool ring at the foot.
+  No animal nests, to stay clear of Radagast.
+  Open: the exact unlock request, the exact gold and item counts (note 07), and
+  how she differs from Radagast beyond the hook.
 
 ## Cast balance
 
@@ -665,8 +684,7 @@ Rule for this game, in the same spirit:
   3). The dwarf groups are decided above.
 - The Wanderer's true name, what he gives at each road, and how he differs
   from Tolkien's Gandalf.
-- The hermit witch's name, look and tower, what the fairy rings cost and what makes them look different from each other, and
-  how she differs from Radagast.
+- The hermit witch's ring unlock request and exact ring prices (note 07).
 - The warden head: how her old line matters to the ending (#5), exact
   items, counts and gift values of the stage 1 trail, the shop list and token
   prices, the board's order list, the exact stops and milestones for the stage 5 errands, and whether she should be
