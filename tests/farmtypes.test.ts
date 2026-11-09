@@ -18,7 +18,7 @@ import { sleep } from "../src/core/sleep";
 
 const dropOf = (o: Outcome) => (o.ok ? o.item : undefined);
 
-const ENTRIES = ["start", "from_house", "from_hall", "from_sawmill"];
+const ENTRIES = ["start", "from_house", "from_hearthwell"];
 
 describe("farm type data", () => {
   it("lists Standard and Woodland, each with a real map", () => {

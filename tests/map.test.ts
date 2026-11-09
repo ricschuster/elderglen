@@ -297,11 +297,12 @@ describe("the hall map", () => {
     expect(regions.find((r) => r.id === "plaque")?.w).toBe(rooms.length);
   });
 
-  it("joins the farm's hall door", () => {
-    const door = maps.get("farm").exits.find((e) => e.id === "hall");
+  it("joins Hearthwell's hall door", () => {
+    const door = maps.get("hearthwell").exits.find((e) => e.id === "hall");
     expect(door).toMatchObject({ map: "hall", entry: "door" });
+    expect(maps.get("farm").exits.find((e) => e.id === "hall")).toBeUndefined();
     expect(maps.get("hall").exits[0]).toMatchObject({
-      map: "farm",
+      map: "hearthwell",
       entry: "from_hall",
     });
   });

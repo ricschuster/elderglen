@@ -29,7 +29,7 @@ describe("the Mountain map (note 74, steps 1 to 3)", () => {
     expect(Object.keys(newAreas())).toContain("mountain");
   });
 
-  it("joins the Forest both ways and leaves the Hearthwell exit unauthored", () => {
+  it("joins the Forest both ways and leads on to Hearthwell", () => {
     expect(mountain.exits.find((e) => e.id === "to_forest")).toMatchObject({
       map: "forest",
       entry: "from_mountain",
@@ -55,6 +55,7 @@ describe("the Mountain map (note 74, steps 1 to 3)", () => {
       "forge",
       "mine",
       "to_forest",
+      "to_hearthwell",
       "to_quarry",
     ]);
     expect(exitLabel("to_mountain")).toBe("Mountain");

@@ -90,7 +90,7 @@ import {
   type Exit,
   type TiledLayer,
 } from "../core/map";
-import { exitLabel, serviceLabel } from "../core/labels";
+import { BOARD_LINES, exitLabel, serviceLabel } from "../core/labels";
 import {
   facingFrom,
   facingTile,
@@ -1592,6 +1592,10 @@ export class FarmScene extends Phaser.Scene {
     if (service?.kind === "tide-bridge") return this.mendBridge();
     if (service?.kind === "quarry-bridge") {
       this.message = QUARRY_BRIDGE_LINE;
+      return this.render();
+    }
+    if (service && BOARD_LINES[service.kind]) {
+      this.message = BOARD_LINES[service.kind] as string;
       return this.render();
     }
     if (service?.kind === COVE_TREASURE) return this.openTreasure();

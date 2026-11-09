@@ -394,13 +394,13 @@
         },
         {
           "s": "open",
-          "t": "Hearthwell (draft): river in two arms with the sawmill on the main one, the hall on the island and the broken bridge on the east arm; trees cosmetic; interiors by template; people with #599",
+          "t": "Hearthwell (shell built 2026-11-09, #645; interiors #646): river in two arms with the sawmill on the main one, the hall on the island and the broken bridge on the east arm; trees cosmetic; interiors by template; people with #599",
           "ref": "77_hearthwell.md#Decisions (draft)",
           "issue": 645
         },
         {
           "s": "decided",
-          "t": "Hearthwell river layout (built 2026-11-09, #661): the terrain map with the 7 wide main arm bending once east under the festival green, the 5 wide east arm, three bridges, streets and avenues, 12 reserved lots and the arms rejoining as one river out of the south edge; no buildings, doors or exits yet (#645)",
+          "t": "Hearthwell river layout (built 2026-11-09, #661): the terrain map with the 7 wide main arm bending once east under the festival green, the 5 wide east arm, three bridges, streets and avenues, 12 reserved lots and the arms rejoining as one river out of the south edge; the shell (#645) then added the exits to the farm, Mountain and delta, the building exteriors and the hall and sawmill doors",
           "ref": "77_hearthwell.md#Built status (2026-11-09, #661)",
           "issue": 661
         },

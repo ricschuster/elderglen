@@ -72,11 +72,12 @@ describe("the River delta map (note 75, steps 1 to 4)", () => {
     expect(hut.services.find((s) => s.kind === "fisher-shop")).toBeDefined();
   });
 
-  it("keeps the Hearthwell exit unbuilt and has the ferry (note 76)", () => {
+  it("has the Hearthwell exit and the ferry (notes 76 and 77)", () => {
     expect(delta.exits.map((e) => e.id).sort()).toEqual([
       "ferry",
       "fisher",
       "to_farm",
+      "to_hearthwell",
     ]);
   });
 

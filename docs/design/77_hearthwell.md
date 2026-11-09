@@ -1,7 +1,8 @@
 # 77 Hearthwell (draft)
 
-Status: draft, written 2026-11-08, owner answers recorded the same day (note 71). Only the
-river layout terrain is built (#661, see "Built status" at the end), as a map file with no buildings. Shell and interiors stay with #599 in M3b. It designs the Hearthwell town map, the largest social place in the
+Status: draft, written 2026-11-08, owner answers recorded the same day (note 71). The river
+layout terrain (#661) and the shell (#645: exits, building exteriors, the hall and sawmill doors, see
+"Built status" and "Shell built" at the end) are built. Interiors (#646) and people (#599) are not. It designs the Hearthwell town map, the largest social place in the
 game. Overview and owner questions: `71_map_areas_overview.md`. Stardew facts are
 from the saved Pelican Town page (read 2026-11-08), as ideas only (ADR 0002).
 Positions follow the zoomed Hearthwell view of `56_valley_map.md` where the
@@ -296,3 +297,57 @@ not reachable in play yet (no exit leads to it). Tests: `tests/hearthwell.test.t
 - The far bank (x 114 to 119) is unreachable land with only the reserved ring 2 gate.
 - Lots are open grass for now; #645 adds the buildings, doors and exits (and the farm's
   matching entries).
+
+## Shell built (2026-11-09, #645)
+
+The shell is `hearthwell.json` plus edits to the farm maps, the Mountain, the delta and the
+two interiors. The town is reachable in play: farm east exit, Mountain south exit, delta
+north exit. Tests: `tests/hearthwell.test.ts` ("the Hearthwell shell"). Playtest:
+`npm run playtest:hearthwell`.
+
+- **Exits (Hearthwell side):** `to_farm` (x 0, y 58 to 64, to `farm` entry `from_hearthwell`),
+  `to_mountain` (x 48 to 54, y 0, to `mountain`), `to_delta` (x 70 to 76, y 109, to `delta`).
+  The `exit-*` regions from #661 stay as the reserved record. `exit-ring2` has no exit object.
+- **Farm maps** (`farm`, `farm-woodland`): the hall and sawmill exits, their entries and their
+  building tiles are gone (open grass now). New exit `hearthwell` on the east edge (x 39,
+  y 16 to 18, three tall) with entry `from_hearthwell` (38, 17).
+- **Mountain:** exit `to_hearthwell` (x 44 to 50, y 69) to `hearthwell` entry `from_mountain`.
+  **Delta:** exit `to_hearthwell` (x 66 to 72, y 0, walls opened at y 0 to 1) to `hearthwell`
+  entry `from_delta`, and entry `from_hearthwell` (69, 3) on the east bank, which the
+  footbridge at y 35 to 37 joins to the farm side.
+- **Interiors:** `hall.json` and `sawmill.json` exit to `hearthwell` entries `from_hall` (99, 60)
+  and `from_sawmill` (48, 76). Hall door (99, 59) and sawmill door (48, 75) are exits on the
+  doors of their lots.
+- **Exteriors:** all 12 lots are drawn as solid buildings (roof row, wall rows, a door tile on
+  the bottom row, placeholder tiles). Only the hall and sawmill doors open. The ten other doors
+  are shut tiles until #646 gives them interiors, except the counters below.
+
+**Choices made where the notes left gaps (for the owner):**
+
+- **The farm keeps its shop, Orders and Request counters.** Only the hall and sawmill doors move,
+  as the issue says. Hearthwell adds a second set as stand-ins: the store counter (`shop`
+  service) and the Help Wanted board (`requests`, two tiles left of the door) on the general
+  store's bottom row, and the smithy counter (`smith`) on its door tile. Both sets use the
+  same game state, so they are the same shop and board. The farm's counters leave when the
+  interiors (#646) land. The bot and the playtests keep shopping at the farm (a Hearthwell
+  trip is a long walk).
+- **The smith menu stays whole.** The Hearthwell smithy counter opens the existing smith screen
+  (ore, coal, tools), as the Mountain forge does. Splitting upgrades and geode cracking to town
+  and leaving ore at the forge waits for #646.
+- **Outpost boards are stand-ins.** `board-news` and `board-orders` services stand on the
+  Outpost's bottom row (x 86 and x 90) and show one line each ("Nothing is posted yet", "empty
+  for now"). Road news and Special Orders are not built (note 57 steps 1 and 5). The Outpost's
+  door is a shut tile and the stall yard is only a region. The trader (note 57 step 3) is not built.
+- **The cart stop** (66, 58) stays a region. No `cart` service, since the cart screen is undesigned.
+- **Door tiles for counters are blocked.** A counter on a door tile is used from the street
+  below, facing up, like a farm counter. Real doors (hall, sawmill) are walkable exits that open
+  on Action like every other door.
+- **Farm east exit position** (y 16 to 18) is mine: the east edge between the festival counter
+  (36, 14) and the shop building (y 20) had no other gap. Note 55 gave none.
+- **Unreachable far bank and ring 2:** no exit, as #661 left it.
+- **Sim and playtests walk through town.** The sim's `Walker` finds the hall and the carpenter by
+  the fewest doors (farm, Hearthwell, door), so each hall visit now costs the bot the walk
+  across town. `play.mjs` and `touch.mjs` walk out of the farm's east exit, along the middle
+  street, in by the hall door, and back the same way.
+- **Not built:** the other ten interiors, people, forage, weeds, cosmetic trees, pots and
+  fishing zones on the river, the Outpost's stalls and trader, the cart, and the festival variant.
