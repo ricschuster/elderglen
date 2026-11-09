@@ -111,7 +111,7 @@ animals before any code, so they do not feel bolted on.
 - **Buildings stand on the home farm.** A coop and a barn, each upgradable, and
   an upgrade never changes the building's footprint (`41_house.md`). A
   carpenter in Hearthwell builds and upgrades them (an existing cast member,
-  see "Cast"). The Forest farmstead keeper sells animals and gives advice.
+  see "Cast"). The Forest farmstead keeper sells animals and gives advice (built 2026-11-09, note 72: young animals, hay and a line of advice; the carpenter no longer sells them).
 - **Care is Stardew-like:** feed, pet, let out.
 - **Products come on a timer per species.** Auto-collect can come later, not in
   the first build.

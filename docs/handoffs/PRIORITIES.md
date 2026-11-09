@@ -48,7 +48,9 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
    the smith's counter moved from the mine hall, and the stonekeeper's yard, note 74
    "Built status"; lamps wait; #649 built 2026-11-09: the Quarry map, the mended bridge,
    regrowing stone and ore and the dwarf's camp, note 78 "Built status"), Forest part 2
-   (#638), Lake cove (#644), Hearthwell shell (#645) and interiors (#646), Beach
+   (#638 built 2026-11-09: the farmstead and keeper's counter that now sells young animals
+   and hay, the hermit's tower and the Wanderer's camp; names, the hermit's stock and
+   the paddock animals wait, note 72 "Built status"), Lake cove (#644), Hearthwell shell (#645) and interiors (#646), Beach
    elf (#641, waits on the story spine). Changed order since the draft: the Quarry
    is new at step 4b and the maps moved up from M3c. Open design items left:
    Hearthwell's river layout (two arms chosen, detail not designed). The cove treasure spot is settled.

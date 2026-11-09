@@ -24,6 +24,8 @@ const EXITS: Record<string, string> = {
   delta: "River delta",
   fisher: "Fisher's hut",
   forge: "Forge",
+  farmstead: "Farmstead",
+  hermit: "Hermit's tower",
 };
 
 const SERVICES: Record<string, string> = {
@@ -53,6 +55,9 @@ const SERVICES: Record<string, string> = {
   "hedge-cart": "Cart Home",
   "fisher-shop": "Fisher's Counter",
   stonekeeper: "Stonekeeper",
+  keeper: "Keeper's Counter",
+  hermit: "Hermit",
+  camp: "Camp Fire",
   "tide-bridge": "Broken Footbridge",
   "quarry-bridge": "Broken Bridge",
 };

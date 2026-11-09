@@ -22,27 +22,16 @@ import {
 import {
   BUILDINGS,
   BUILDING_ORDER,
-  HAY_PRICE,
   IRON_BAR,
-  SPECIES,
   type Building,
-  type Species,
-  animalProblem,
-  animalsIn,
   buildingProblem,
-  buyAnimal,
-  buyHay,
   orderSilo,
   siloProblem,
   SILO_BUILD_DAYS,
   SILO_COST,
-  capacityOf,
-  defaultName,
   isBuilt,
   nextBuildingUpgrade,
   orderBuildingUpgrade,
-  speciesOf,
-  tierOf,
   upgradeProblem,
 } from "../core/animals";
 import {
@@ -136,8 +125,8 @@ export class CarpenterScene extends Phaser.Scene {
         buttons: [{ text: "Order", run: () => this.order() }],
       });
     }
-    // The coop and barn, their animals and hay stand at the carpenter's until
-    // the Forest farmstead keeper exists (note 23, slice 1 placeholder).
+    // The coop and barn stand at the carpenter's. Young animals and hay are
+    // the Forest farmstead keeper's (note 72).
     const have = `have ${g.inventory.count("wood")} wood and ${g.inventory.count("stone")} stone`;
     if (g.animals.build) {
       const b = g.animals.build;
@@ -193,13 +182,6 @@ export class CarpenterScene extends Phaser.Scene {
           dim: upgradeProblem(g, id) !== undefined,
           buttons: [{ text: "Order", run: () => this.orderUpgrade(id) }],
         });
-      for (const sp of speciesOf(id))
-        rows.push({
-          label: `Young ${SPECIES[sp].name.toLowerCase()}`,
-          detail: `${SPECIES[sp].price}g, grows up in a few days (${animalsIn(g, id).length}/${capacityOf(id, tierOf(g.animals, id))} in the ${info.noun})`,
-          dim: animalProblem(g, sp) !== undefined,
-          buttons: [{ text: "Buy", run: () => this.buyAnimal(sp) }],
-        });
     }
     // The repaired greenhouse can be moved too, never removed (note 31).
     if (moveProblem(g, "greenhouse") === undefined)
@@ -226,12 +208,6 @@ export class CarpenterScene extends Phaser.Scene {
           `${SILO_COST.coin}g, ${SILO_COST.stone} stone, ${SILO_COST.clay} clay, ${SILO_COST["copper-bar"]} copper bars`,
         dim: siloProblem(g) !== undefined,
         buttons: [{ text: "Order", run: () => this.orderSilo() }],
-      });
-    if (g.animals.coopBuilt || g.animals.barnBuilt)
-      rows.push({
-        label: "Hay, 10 bales",
-        detail: `${HAY_PRICE * 10}g, into your pack (${g.inventory.count("hay")} carried)`,
-        buttons: [{ text: "Buy", run: () => this.buyHay() }],
       });
     if (!g.houseBuild && !g.catalogue && g.houseTier >= 1) {
       rows.push({
@@ -315,23 +291,6 @@ export class CarpenterScene extends Phaser.Scene {
     this.refresh();
   }
 
-  private buyAnimal(species: Species): void {
-    const problem = animalProblem(this.state, species);
-    if (problem !== undefined) this.message.setText(problem);
-    else {
-      const asked = window.prompt?.(
-        `Name your new ${SPECIES[species].name.toLowerCase()}`,
-        defaultName(this.state),
-      );
-      const a = buyAnimal(this.state, species, asked ?? "");
-      if (a)
-        this.message.setText(
-          `${a.name} is in the ${BUILDINGS[SPECIES[species].building].noun}. It needs no hay on the first day.`,
-        );
-    }
-    this.refresh();
-  }
-
   private orderSilo(): void {
     const problem = siloProblem(this.state);
     if (problem !== undefined) this.message.setText(problem);
@@ -339,16 +298,6 @@ export class CarpenterScene extends Phaser.Scene {
       this.message.setText(
         `Ordered. The carpenter starts tomorrow and takes ${SILO_BUILD_DAYS} days.`,
       );
-    this.refresh();
-  }
-
-  private buyHay(): void {
-    const n = buyHay(this.state, 10);
-    this.message.setText(
-      n > 0
-        ? `Bought ${n} hay. It is in your pack.`
-        : "Your pack is full, or you do not have the money.",
-    );
     this.refresh();
   }
 

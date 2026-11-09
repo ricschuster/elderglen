@@ -25,6 +25,8 @@ const MAPS = Object.fromEntries(
     "mountain",
     "fisher-hut",
     "forge",
+    "forest-farmstead",
+    "hermit-tower",
     "quarry",
   ].map((id) => {
     const map = JSON.parse(

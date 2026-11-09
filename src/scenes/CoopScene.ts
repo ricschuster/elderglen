@@ -140,7 +140,7 @@ export class CoopScene extends Phaser.Scene {
     if (animalsIn(this.state, this.building).length === 0)
       rows.push({
         label: "No animals yet",
-        detail: "The carpenter sells young animals",
+        detail: "The keeper in the Forest sells young animals",
         dim: true,
         buttons: [],
       });

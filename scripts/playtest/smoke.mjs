@@ -305,9 +305,9 @@ await step("coop", async () => {
     // The deluxe interior (22 wide) loads and can be walked in.
     s.animals.tier = 3;
   });
-  await overlay("carpenter");
-  await pickRow("carpenter", /is in the coop/);
-  await pickRow("carpenter", /Bought \d+ hay/);
+  await overlay("keeper");
+  await pickRow("keeper", /is in the coop/);
+  await pickRow("keeper", /Bought \d+ hay/);
   await close();
   await farm((g, f, s) => {
     s.inventory.add("egg", 1);
@@ -347,8 +347,8 @@ await step("barn", async () => {
     s.money = 30000;
     s.animals.hay = 60;
   });
-  await overlay("carpenter");
-  await pickRow("carpenter", /is in the barn/);
+  await overlay("keeper");
+  await pickRow("keeper", /is in the barn/);
   await close();
   await goMap("barn", "door");
   await overlay("barn-bench");
