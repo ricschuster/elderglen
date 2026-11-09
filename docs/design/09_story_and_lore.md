@@ -560,8 +560,14 @@ nothing and she never mentions it (see Neglect).
   the player talk to people), then cooks the dish and brings it to her. She
   then teaches the rings. It uses the cooking system (note 34) and the dish
   is a ring 1 recipe the player keeps. Stardew's shop opens after the Magic Ink
-  quest (saved Wizard's Tower page). Open: which villagers hold which piece, and
-  the dish.
+  quest (saved Wizard's Tower page, which does not say how that quest works).
+- **Dish pieces (decided 2026-11-09, owner).** Each villager tells one piece of
+  the dish as an old memory, about four pieces. The dish is not tied to any
+  festival or season, so the quest can start at any time. The holders are the
+  four ring 1 people the owner liked from the Cake Day proposal: the inn
+  keeper (the base), the store keeper (the sweetener), the retired couple (the
+  old spice) and the hat-maker (the decoration). Open: the dish's name and the
+  exact ingredients (note 34 and note 24).
 - **Tower look (decided 2026-11-09).** Overgrown and lived in: moss and ivy on
   the stone, drying herbs and jars at the door, a toadstool ring at the foot.
   No animal nests, to stay clear of Radagast.
@@ -689,7 +695,7 @@ Rule for this game, in the same spirit:
   3). The dwarf groups are decided above.
 - The Wanderer's true name, what he gives at each road, and how he differs
   from Tolkien's Gandalf.
-- The hermit witch's unlock dish and which villagers hold its pieces, and exact ring prices (note 07).
+- The hermit witch's unlock dish name and exact ingredients, and exact ring prices (note 07). Its four holders are decided.
 - The warden head: how her old line matters to the ending (parked for ring 3, #5, M6, after ring 2), exact
   items, counts and gift values of the stage 1 trail, the shop list and token
   prices, the board's order list, the exact stops and milestones for the stage 5 errands, and whether she should be
