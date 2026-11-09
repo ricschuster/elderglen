@@ -46,6 +46,8 @@ Hardwood sale (200g, `src/content/carpenter-standin.json`, note 43). It comes ou
 in the Secret Woods work package, #639, when the six daily stumps exist (owner,
 2026-11-08). Mahogany stays off the map for now.
 
+Session 2026-11-08p (handoff 2026-11-08p): Stardew checks, no build. Cask days match Stardew (#669), winter fish to match Stardew (note 21, fish not chosen), dye pots to follow Stardew and need the clothing and look design first (#660 waits). Owner chose #636 next.
+
 Session 2026-11-08o (handoff 2026-11-08o): built #653 to #658 (PRs #662 to #667), all closed. Unplayed. Left from the 2026-11-08n batch: #659, #660 (waits on the Dye Pot page) and #661.
 
 Session 2026-11-08n (handoff 2026-11-08n): second question round. Hearthwell's river layout is decided (note 77), the cast energy and the Quarry dwarf are settled, the dye list waits on a saved page. Build issues #653 to #661 are filed.
