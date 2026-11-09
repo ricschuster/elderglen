@@ -19,6 +19,7 @@ const EXITS: Record<string, string> = {
   to_farm: "Farm",
   to_secret_woods: "Secret Woods",
   to_forest: "Forest",
+  to_mountain: "Mountain",
   delta: "River delta",
   fisher: "Fisher's hut",
 };

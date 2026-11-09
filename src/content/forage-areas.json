@@ -349,5 +349,60 @@
         ]
       }
     }
+  },
+  "mountain": {
+    "cap": 4,
+    "tables": {
+      "default": {
+        "spring": [
+          {
+            "id": "leek",
+            "weight": 55
+          },
+          {
+            "id": "horseradish",
+            "weight": 45
+          }
+        ],
+        "summer": [
+          {
+            "id": "grape",
+            "weight": 60
+          },
+          {
+            "id": "spice-berry",
+            "weight": 40
+          }
+        ],
+        "fall": [
+          {
+            "id": "hazelnut",
+            "weight": 50
+          },
+          {
+            "id": "field-mushroom",
+            "weight": 25
+          },
+          {
+            "id": "wild-plum",
+            "weight": 25
+          }
+        ],
+        "winter": [
+          {
+            "id": "crocus",
+            "weight": 40
+          },
+          {
+            "id": "pine-nut",
+            "weight": 35
+          },
+          {
+            "id": "holly-sprig",
+            "weight": 25
+          }
+        ]
+      }
+    }
   }
 }

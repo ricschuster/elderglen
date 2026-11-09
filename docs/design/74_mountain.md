@@ -1,7 +1,9 @@
 # 74 Mountain (draft)
 
-Status: draft, written 2026-11-08, owner answers recorded the same day (note 71). Nothing here is
-built. M3b. It designs the Mountain map and moves the Mines entrance onto it.
+Status: draft, written 2026-11-08, owner answers recorded the same day (note 71).
+Build order steps 1 to 3 and 6 are built (2026-11-09, #642, see "Built status" at the
+end); the trading hut, the stonekeeper's yard and the Quarry exit are not (#643, #649).
+M3b. It designs the Mountain map and moves the Mines entrance onto it.
 Overview and owner questions: `71_map_areas_overview.md`. Stardew facts are from
 the saved Mountain page (read 2026-11-08), as ideas only (ADR 0002).
 
@@ -174,3 +176,54 @@ with the dwarves' counters (steps 4 and 5).
   rest-camp stock, which wait on the Mines notes (`22_mines.md`, #598).
 - Whether the lake and river sizes give the 15 river and lake casting spots needed
   for a comfortable cast; check on the first Tiled draft.
+
+## Built status (2026-11-09, #642)
+
+Build order steps 1 to 3 are built, with step 2's lake fish, and step 6 as far as the
+map allows.
+
+- **Map:** `src/content/maps/mountain.json`, 80 by 70, drafted by
+  `scripts/gen-mountain-map.mjs` (the JSON is the source from then on). Properties
+  `wild`, `rideable` and `waterKind` mountain-lake. Water zones: the lake
+  (x 18 to 45, y 8 to 25) as the default kind, and three `river` rects that step east
+  (x 46 to 52 from the stream mouth at (46, 18) to y 37, x 50 to 55 to y 45, x 53 to
+  58 to the south edge) so the Hearthwell road keeps the west bank to the south edge.
+- **Roads:** west road (y 35 to 37) from the Forest exit, the stone footbridge at
+  x 47 to 52 (path tiles over the water), the east road, a spur north to the rockfall
+  and the mine mouth, a spur south to where the stonekeeper's yard goes, the river road
+  and a lake shore path. The forge spur and the road past it (y 47 to 48) are laid and
+  the forge footprint (x 10 to 24, y 38 to 50) is kept clear of trees and clutter.
+- **Exits and entries:** `to_forest` (west, x 0, y 34 to 40) with entry `from_forest`
+  (3, 37); the Forest gains `to_mountain` (east edge, x 119, y 60 to 66) and entry
+  `from_mountain` (116, 63), and its road now runs to the edge; `mine` at (68, 10)
+  with `requires: mines-open`, entry `from_mine` (68, 13); entry `from_hearthwell`
+  (47, 66) with **no exit yet** (Hearthwell does not exist). `mine.json`'s door now
+  returns to `mountain` entry `from_mine`. The farm and the Woodland farm lose their
+  `mine` exit and `from_mine` entry (the door tile at (20, 0) is a tree again). Not
+  cut: `forge`, `to_quarry`, and their entries.
+- **The rockfall:** x 60 to 66, y 14 to 18, in a permanent cliff band across the pass
+  (x 54 to 77) and a ridge east of the lake, so the mine mouth is reached only through
+  it. A conditional `collision` layer and a `rockfall` art layer are shown `unless`
+  `mines-open`; `holdsOf` now adds `mines-open` from day 5, so the gap is open on any
+  load after Spring 5 begins (collision is read at load, so a map already open when the
+  day turns would show it on the next entry; the player wakes at home, so this does not
+  come up). The mine mouth is a 5 by 4 block with its door at (68, 10).
+- **Contract change:** an entry may carry `requires`. `from_mine` does, because with the
+  rockfall shut nothing reaches it, so the "all conditions false" reading skips an
+  unreachable entry that needs a condition, and skips an unreachable exit that needs one.
+- **Pines, clutter, forage:** 80 choppable pines (56 mature, 17 young, 7 seedlings), at
+  least a tile apart and all reachable; 60 rocks (36 weighted to the forge side and the
+  east road), 30 twigs, 30 weeds; 24 forage spots; ten cosmetic cliff outcrops.
+  `forage-areas.json` gains `mountain` (cap 4, the four seasonal tables of this note).
+- **Fish:** the six lake fish of note 21 in `fish.json` (Cold Quill, Arctic Char,
+  Granite Gudgeon, Echo Pike, Ember Trout, Glacier Ghost; prices and lengths are
+  placeholders). The river is the shared river table. Not built: Moonlit Mother and
+  pots.
+- **Sim:** the headless bot's `enter` now finds a route over the map graph (farm,
+  Forest, Mountain, mine hall), reads maps with their conditions, and keeps flood
+  distances for maps with no soil. Expert seed 1 still plays every bundle it plays.
+- **Not built:** the forge hut and its counter (#643), the stonekeeper's yard and the
+  dwarf placeholders (#643), the Quarry bridge and exit (#649), the Hearthwell exit, the
+  cart stop, the Moonlit Mother legend, pots, ruined and cleared art (placeholder tiles
+  stand in), and the smith menu is still the stand-in at the mine hall.
+- **Playtest:** `npm run playtest:mountain`.

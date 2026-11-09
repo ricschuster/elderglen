@@ -382,5 +382,77 @@
     "difficulty": 70,
     "sellPrice": 350,
     "length": [60, 150]
+  },
+  {
+    "id": "cold-quill",
+    "name": "Cold Quill",
+    "water": "mountain-lake",
+    "seasons": ["spring", "summer", "fall", "winter"],
+    "time": "day",
+    "rarity": "common",
+    "behaviour": "dart",
+    "difficulty": 25,
+    "sellPrice": 50,
+    "length": [15, 40]
+  },
+  {
+    "id": "arctic-char",
+    "name": "Arctic Char",
+    "water": "mountain-lake",
+    "seasons": ["winter", "spring"],
+    "time": "day",
+    "rarity": "common",
+    "behaviour": "mixed",
+    "difficulty": 30,
+    "sellPrice": 60,
+    "length": [25, 60]
+  },
+  {
+    "id": "granite-gudgeon",
+    "name": "Granite Gudgeon",
+    "water": "mountain-lake",
+    "seasons": ["spring", "summer", "fall", "winter"],
+    "time": "any",
+    "rarity": "uncommon",
+    "behaviour": "sinker",
+    "difficulty": 40,
+    "sellPrice": 120,
+    "length": [15, 35]
+  },
+  {
+    "id": "echo-pike",
+    "name": "Echo Pike",
+    "water": "mountain-lake",
+    "seasons": ["spring", "summer", "fall", "winter"],
+    "time": "rain",
+    "rarity": "uncommon",
+    "behaviour": "dart",
+    "difficulty": 50,
+    "sellPrice": 150,
+    "length": [40, 90]
+  },
+  {
+    "id": "ember-trout",
+    "name": "Ember Trout",
+    "water": "mountain-lake",
+    "seasons": ["summer"],
+    "time": "dusk",
+    "rarity": "uncommon",
+    "behaviour": "mixed",
+    "difficulty": 45,
+    "sellPrice": 140,
+    "length": [25, 55]
+  },
+  {
+    "id": "glacier-ghost",
+    "name": "Glacier Ghost",
+    "water": "mountain-lake",
+    "seasons": ["winter"],
+    "time": "night",
+    "rarity": "rare",
+    "behaviour": "floater",
+    "difficulty": 75,
+    "sellPrice": 320,
+    "length": [40, 100]
   }
 ]

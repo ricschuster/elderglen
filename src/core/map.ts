@@ -136,6 +136,12 @@ export const GROUND_LAYER = "ground";
 /** A named place where the player can arrive, in tiles. */
 export interface Entry extends Spot {
   name: string;
+  /**
+   * A condition the entry exists under: the Mountain's `from_mine` lies behind
+   * the rockfall, so it cannot reach the rest of the map until `mines-open`.
+   * The contract check skips such an entry in a reading where it does not hold.
+   */
+  requires?: string;
 }
 
 /**
@@ -525,7 +531,11 @@ export class FarmMap {
         const cls = objectClass(o);
         const spot = { x: tile(o.x), y: tile(o.y) };
         if (cls === "entry")
-          put(entries, "entry", o.name, objTier, { name: o.name, ...spot });
+          put(entries, "entry", o.name, objTier, {
+            name: o.name,
+            ...spot,
+            ...(text(o, "requires") ? { requires: text(o, "requires") } : {}),
+          });
         else if (cls === "forage") forageSpots.push(spot);
         else if (cls === "rock") rocks.push(spot);
         else if (cls === "weed") litter.weeds.push(spot);

@@ -1,5 +1,6 @@
 // The headless player: the real core rules, plus the two things the scene
 // supplies, a position on a map and the passing of game time (note 46).
+import { holdsOf } from "../../src/core/worldflags";
 import { maps } from "../../src/content/maps";
 import { HOUSE_MAP, houseVisibleTier, isHouseMap } from "../../src/core/house";
 import { FarmMap } from "../../src/core/map";
@@ -71,8 +72,9 @@ export class Walker {
   get map(): FarmMap {
     const floor = mineFloorOf(this.mapId);
     if (floor === undefined)
-      return maps.get(
+      return maps.getWith(
         this.mapId,
+        holdsOf(this.g),
         isHouseMap(this.mapId) ? houseVisibleTier(this.g.houseTier) : 0,
       );
     // A mine floor is made from the day and the floor, as the scene does.
@@ -114,6 +116,24 @@ export class Walker {
 
   /** Four-way walking distances from `from`, -1 where it cannot be reached. */
   private distances(map: FarmMap, from: Spot): Dist {
+    // A map with no soil has no trees of ours to walk round, so its distances
+    // from a tile never change: keep them (the Forest is 14,400 tiles).
+    const memo = map.hasSoil ? undefined : this.dists.get(map);
+    const key = from.y * map.width + from.x;
+    const hit = memo?.get(key);
+    if (hit) return hit;
+    const d = this.floodFrom(map, from);
+    if (!map.hasSoil) {
+      const into = memo ?? new Map<number, Dist>();
+      into.set(key, d);
+      this.dists.set(map, into);
+    }
+    return d;
+  }
+
+  private readonly dists = new WeakMap<FarmMap, Map<number, Dist>>();
+
+  private floodFrom(map: FarmMap, from: Spot): Dist {
     const { width, height } = map;
     const d = new Int32Array(width * height).fill(-1);
     const solid = (x: number, y: number) =>
@@ -221,20 +241,36 @@ export class Walker {
     this.pos = { x: entry.x, y: entry.y };
   }
 
-  /** Change to another map, through the farm, which joins them all. */
+  /**
+   * Change to another map by the fewest doors, over the map graph: the farm
+   * joins the house and the rest, and the Mines now lie farm, Forest, Mountain,
+   * mine hall (note 74).
+   */
   enter(dest: string): void {
     if (this.mapId === dest) return;
     // Climb out of the mine one floor at a time, by the ladder up.
     while (this.floor !== undefined) this.through("up");
-    if (this.mapId !== "farm") {
-      const back = this.map.exits.find((e) => e.map === "farm");
-      if (!back) throw new Error(`${this.mapId} has no way to the farm`);
-      this.through(back.id);
+    if (this.mapId === dest) return;
+    const from = new Map<string, { prev: string; exit: string }>();
+    const queue = [this.mapId];
+    for (let i = 0; i < queue.length && !from.has(dest); i++) {
+      const at = queue[i] as string;
+      for (const e of maps.get(at).exits) {
+        if (e.map === "" || !maps.ids.includes(e.map)) continue;
+        if (e.map === this.mapId || from.has(e.map)) continue;
+        from.set(e.map, { prev: at, exit: e.id });
+        queue.push(e.map);
+      }
     }
-    if (dest === "farm") return;
-    const door = maps.get("farm").exits.find((e) => e.map === dest);
-    if (!door) throw new Error(`the farm has no way to ${dest}`);
-    this.through(door.id);
+    if (!from.has(dest))
+      throw new Error(`no way from ${this.mapId} to ${dest}`);
+    const route: string[] = [];
+    for (let at = dest; at !== this.mapId;) {
+      const step = from.get(at) as { prev: string; exit: string };
+      route.unshift(step.exit);
+      at = step.prev;
+    }
+    for (const exit of route) this.through(exit);
   }
 
   /** Walk to a service tile (the shop counter, the bin, a bed) and face it. */

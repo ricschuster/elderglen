@@ -61,10 +61,11 @@ describe("the Forest map (note 72, part 1)", () => {
     }
   });
 
-  it("leaves the Mountain exit unauthored, and gates the Secret Woods behind the log", () => {
+  it("has the Mountain exit on the east edge, and gates the Secret Woods behind the log", () => {
     expect(forest.exits.map((e) => e.id)).toEqual([
       "to_farm",
       "to_secret_woods",
+      "to_mountain",
     ]);
     expect(forest.logs.length).toBe(2);
   });
@@ -219,7 +220,7 @@ describe("the Forest forage table", () => {
 
 describe("area worlds", () => {
   it("finds the Forest by its wild property", () => {
-    expect(areaMaps()).toEqual(["delta", "forest", "secret-woods"]);
+    expect(areaMaps()).toEqual(["delta", "forest", "mountain", "secret-woods"]);
     expect(isAreaMap("forest")).toBe(true);
     expect(isAreaMap("farm")).toBe(false);
     expect(isAreaMap("nowhere")).toBe(false);

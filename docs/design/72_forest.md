@@ -257,6 +257,10 @@ Where it differs from the note, or was decided in the build:
 
 Not built (later slices): farmstead, keeper's house and animal shop (part 2, #638),
 hermit's tower and the Wanderer's camp (part 2), the massive log and the Secret
-Woods exit (#639), the Mountain exit (#642), the Grandmother Hush legend and pots on
+Woods exit (#639), the Grandmother Hush legend and pots on
 the lake (pots are not built for any water yet). The first run of the map on the
 SM-T500 is still open. Names and looks stay placeholders.
+
+**Update (2026-11-09, #642):** the Mountain exit is built. The east gap is cut at
+x 118 to 119, y 60 to 66, the road runs to the edge, and exit `to_mountain` (x 119,
+y 60 to 66) leads to the Mountain's `from_forest`, with entry `from_mountain` (116, 63).
