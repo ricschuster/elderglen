@@ -463,7 +463,21 @@ nothing and she never mentions it (see Neglect).
   errands in ring 2, off the board, each followed by a short talk that tells a
   bit of her road. Stardew's Qi story is told through notes and quests (from
   memory, unchecked).
-  Open: the errands themselves and the shop list and prices (tuning note 07).
+- **The stage 5 errands (decided, 2026-11-09).** Three errands, not four. Each is
+  Retrace Oriel's road: the player finds something Oriel left at an old Carrier
+  stop in ring 2 (a seed tin, a pressed flower, a worn map) and brings it to her,
+  then she tells one piece of her past. The order, which is a proposal the owner
+  can change: (1) how she and Oriel worked together, (2) what the Smoulderer was
+  and what the Carriers remember, the first real mention of him after ring 1's
+  silence, and (3) why Oriel left the road to garden, which fits last because it
+  leans on the other two. Each opens at a ring 2 milestone (for example reaching
+  the haven, meeting the elves, the first creature at a region's edge), not at
+  friendship hearts. The last find is Oriel's own old carrier's mark, which she
+  gives the player to keep beside their own. It is a keepsake with no mechanical
+  use and leads into ring 3's arc (stage 6). Stardew's Qi story is item drops and
+  quests (from memory, unchecked).
+  Open: the exact stops, finds and milestones, and the shop list and prices
+  (tuning note 07).
 
 ## Cast balance
 
@@ -590,7 +604,7 @@ Rule for this game, in the same spirit:
   how she differs from Radagast.
 - The warden head: her real name and alias (deferred to its own talk), exact
   items, counts and gift values of the stage 1 trail, the shop list and token
-  prices, the board's order list, the stage 5 errands, and whether she should be
+  prices, the board's order list, the exact stops and milestones for the stage 5 errands, and whether she should be
   a woman (stays a woman for now). Her tie to Oriel, the note trail, the mark,
   her voice, look, ring 1 look change, board place, order kind, shop kind and
   the stage 5 errand plan are decided above.
