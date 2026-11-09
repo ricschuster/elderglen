@@ -157,3 +157,9 @@ note 49 that are marked "ours".
 | SC-93 | 22 | What share of a food's energy does Stardew's food restore as health? | no | open | Added 2026-11-08. The saved Health page says food heals but gives no ratio. Ours is half the energy value. |
 | SC-94 | 22 | Does Stardew's slingshot aim toward the pointer, and on touch? | no | open | Added 2026-11-08. Owner chose pointer aim from memory. Not on the saved Combat or Weapons pages. Check by play. |
 | SC-95 | 24 | How do Stardew's dye pots work, and what do they accept? | no | done | Saved Dyeing page, read 2026-11-08: Emily's house, beside the sewing machine, unlocked by a cutscene after the first Cloth. Six pots, one item each, all consumed, quality ignored; then HSV sliders colour the worn clothes. Many items per pot colour, and processed goods take their ingredient's colour. Owner, 2026-11-08: match Stardew (note 24). |
+| SC-96 | 09 | Is Stardew's Qi look the same in every appearance? | no | open | Added 2026-11-09. From memory it never changes. Check by play or the saved Qi page. |
+| SC-97 | 09 | What does Stardew's Qi board pay, and how many orders? | no | open | Added 2026-11-09. The saved page confirms two weekly orders. From memory they pay Qi gems. Not checked. |
+| SC-98 | 09 | Is Stardew's Qi shop priced in gems only? | no | open | Added 2026-11-09. From memory yes. Not checked. |
+| SC-99 | 09 | How is Stardew's Qi story told (notes, quests, item drops)? | no | open | Added 2026-11-09. From memory through notes and quests. Not checked. |
+| SC-100 | 09 | Does Stardew's Krobus story ever resolve? | no | open | Added 2026-11-09. From memory it never does. Not checked. |
+| SC-101 | 09 | Does Stardew's Wizard have a personal name, and what is it? | no | open | Added 2026-11-09. Recalled as Rasmodius. The saved Wizard's Tower page says only the Wizard. Check by play. |

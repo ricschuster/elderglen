@@ -432,13 +432,13 @@ nothing and she never mentions it (see Neglect).
 - **Look in ring 1 (decided, 2026-11-09).** One small visible change at stage 3,
   when she gives the carrier's mark (for example a new mend on the coat). The
   rest of the coat's change begins at stage 4. Stardew's Qi look is unchanged
-  (from memory, unchecked).
+  (from memory, unchecked, SC-96).
 - **Her board (decided, 2026-11-09).** It stands in a room of her base in the
   ring 2 haven, opened by the carrier's mark, as Stardew's board is in Qi's room
   behind the walnut gate (checked on the saved Special Orders page). Two odd
   orders to pick from, refreshed weekly. They pay in carrier tokens, her own
   currency spent at her shop for rare things, plus some goods. Stardew's board
-  also gives two orders each Monday paid in Qi gems (the pay is from memory;
+  also gives two orders each Monday paid in Qi gems (the pay is from memory, SC-97;
   the saved page confirms only the two weekly orders). Token prices, the shop
   stock and the order list are open.
 - **The note trail's shape (decided, 2026-11-09).** Four notes. The first is
@@ -468,11 +468,11 @@ nothing and she never mentions it (see Neglect).
 - **Token shop (decided, 2026-11-09).** Rare, one-off goods only that cannot be
   bought elsewhere (rare seeds, a carrier's coat or lantern, keepsakes). Tokens
   never buy common goods, so the main economy is untouched. Stardew's Qi shop is
-  gem-priced (from memory, unchecked).
+  gem-priced (from memory, unchecked, SC-98).
 - **Stage 5 story errands (decided, 2026-11-09).** Three or four one-off
   errands in ring 2, off the board, each followed by a short talk that tells a
   bit of her road. Stardew's Qi story is told through notes and quests (from
-  memory, unchecked).
+  memory, unchecked, SC-99).
 - **The stage 5 errands (decided, 2026-11-09).** Three errands, not four. Each is
   Retrace Oriel's road: the player finds something Oriel left at an old Carrier
   stop in ring 2 (a seed tin, a pressed flower, a worn map) and brings it to her,
@@ -485,7 +485,7 @@ nothing and she never mentions it (see Neglect).
   friendship hearts. The last find is Oriel's own old carrier's mark, which she
   gives the player to keep beside their own. It is a keepsake with no mechanical
   use and leads into ring 3's arc (stage 6). Stardew's Qi story is item drops and
-  quests (from memory, unchecked).
+  quests (from memory, unchecked, SC-99).
   Open: the exact stops, finds and milestones, and the shop list and prices
   (tuning note 07).
 
@@ -504,7 +504,7 @@ nothing and she never mentions it (see Neglect).
 - **Her unfinished business (decided).** It stays unnamed until late, then she
   finds it, in a small act the player may notice, in the end of ring 1 or in
   ring 2. She may sail or stay by her own choice. Not needed for slices 1 to 3.
-  Stardew's Krobus story is never resolved (from memory, unchecked).
+  Stardew's Krobus story is never resolved (from memory, unchecked, SC-100).
 - **Name (decided, changed 2026-11-09).** Thalwen. Invented, old and a little formal, with "thal" from the Greek for sea. It replaces Ondrel, which read too close to Oriel.
 - **Oddness and look (decided).** A travelling coat she never takes off, and a
   half-packed trunk by her door that she packs and unpacks in small ways each
@@ -533,14 +533,14 @@ nothing and she never mentions it (see Neglect).
 
 - **Home (decided).** A crooked tower of mossy stone in the Forest. This keeps
   note 58's tower and replaces the valley map's hut. Stardew's Wizard lives in a
-  tower (from memory, unchecked).
+  tower (checked on the saved Wizard's Tower page).
 - **Hook (decided).** She keeps the valley's old customs like a living ledger,
   the one who remembers why hats and ledgers matter, but she tells it in a
   scatty, sideways way, through recipes and old sayings. This sets her apart
   from Radagast beyond the animal quirk.
 - **Name (decided 2026-11-09).** Rosmarin (rosemary, the herb of remembrance),
   chosen from Tansy, Minna, Hesta and a title only (Stardew: the Wizard has a
-  personal name too, recalled as Rasmodius and unchecked). It carries her
+  personal name too, recalled as Rasmodius, unchecked, SC-101). It carries her
   ledger hook, and herb names suit her recipes and old sayings. Villagers may
   shorten it. Norse wizard names such as Mimir or Hugin stay avoided (see the
   dark lord's name note).
@@ -554,15 +554,19 @@ nothing and she never mentions it (see Neglect).
   the farm, each edged with its own local material: mountain stone, beach
   shells, elf-garden moss, and a plain edge for the ring 3 one until ring 3 is
   designed. Not a colour per ring, and not Stardew's standing stone obelisks.
-- **Ring unlock (decided 2026-11-09).** A custom-themed quest, then the shop:
-  she sets one request tied to her ledger hook (bring back a lost custom, such
-  as a recipe or saying) and then teaches the rings. Stardew's shop opens after
-  the Magic Ink quest (saved Wizard's Tower page). The exact request is open.
+- **Ring unlock (decided 2026-11-09).** A custom-themed quest, then the shop.
+  Rosmarin half remembers an old festival dish and asks for the missing parts.
+  The player gathers them by asking villagers (each knows a piece, so it makes
+  the player talk to people), then cooks the dish and brings it to her. She
+  then teaches the rings. It uses the cooking system (note 34) and the dish
+  is a ring 1 recipe the player keeps. Stardew's shop opens after the Magic Ink
+  quest (saved Wizard's Tower page). Open: which villagers hold which piece, and
+  the dish.
 - **Tower look (decided 2026-11-09).** Overgrown and lived in: moss and ivy on
   the stone, drying herbs and jars at the door, a toadstool ring at the foot.
   No animal nests, to stay clear of Radagast.
-  Open: the exact unlock request, the exact gold and item counts (note 07), and
-  how she differs from Radagast beyond the hook.
+  Open: the exact gold and item counts (note 07), and how she differs from
+  Radagast beyond the hook.
 
 ## Cast balance
 
@@ -685,7 +689,7 @@ Rule for this game, in the same spirit:
   3). The dwarf groups are decided above.
 - The Wanderer's true name, what he gives at each road, and how he differs
   from Tolkien's Gandalf.
-- The hermit witch's ring unlock request and exact ring prices (note 07).
+- The hermit witch's unlock dish and which villagers hold its pieces, and exact ring prices (note 07).
 - The warden head: how her old line matters to the ending (parked for ring 3, #5, M6, after ring 2), exact
   items, counts and gift values of the stage 1 trail, the shop list and token
   prices, the board's order list, the exact stops and milestones for the stage 5 errands, and whether she should be
