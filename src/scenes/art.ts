@@ -335,7 +335,28 @@ const FORAGE_COLOURS: Record<string, string> = {
   "spring-onion": "#a8d878",
   salmonberry: "#f08a3a",
   "fiddlehead-fern": "#3a9a4a",
+  periwinkle: "#8a6a9a",
+  "razor-clam": "#d8c8a0",
+  whelk: "#c8a878",
+  cockleshell: "#e8d8c0",
+  "pearly-shell": "#f4e8f0",
+  "spiral-shell": "#e0b8a0",
+  "sea-fan": "#e86a8a",
+  "pin-urchin": "#5a3a7a",
+  seaweed: "#2a7a5a",
 };
+/** Goods of the shore, drawn as a small shell or tuft rather than a flower. */
+const SHORE_FORAGE = new Set([
+  "periwinkle",
+  "razor-clam",
+  "whelk",
+  "cockleshell",
+  "pearly-shell",
+  "spiral-shell",
+  "sea-fan",
+  "pin-urchin",
+  "seaweed",
+]);
 
 export const forageKey = (id: string) => `forage-${id}`;
 
@@ -353,6 +374,10 @@ function paintForage(scene: Phaser.Scene, id: string): void {
     px(c, "#3a8a30", 9, 4, 1, 7);
     px(c, colour, 6, 11, 4, 3);
     px(c, "#ffffff", 7, 13, 2, 1);
+  } else if (SHORE_FORAGE.has(id)) {
+    disc(c, colour, 8, 10, 3);
+    px(c, "#ffffff88", 7, 8, 2, 1);
+    px(c, "#00000033", 6, 12, 5, 1);
   } else if (id === "horseradish") {
     px(c, "#4a9a3a", 5, 4, 3, 5);
     px(c, "#4a9a3a", 9, 5, 3, 4);

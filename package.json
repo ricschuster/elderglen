@@ -27,6 +27,7 @@
     "playtest:mouse": "node scripts/playtest/mouse.mjs",
     "playtest:forest": "node scripts/playtest/forest.mjs",
     "playtest:secret-woods": "node scripts/playtest/secret-woods.mjs",
+    "playtest:delta": "node scripts/playtest/delta.mjs",
     "sim": "node scripts/sim/run.mjs scripts/sim/main.ts",
     "android:sync": "npm run build && cap sync android",
     "android:apk": "node scripts/android/build-apk.mjs",

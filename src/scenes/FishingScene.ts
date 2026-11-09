@@ -257,7 +257,9 @@ export class FishingScene extends Phaser.Scene {
     const g = this.state;
     const rig = g.tackle.rig(this.rod.id);
     const owned = BAITS.filter(
-      (b) => !b.sea && (g.inventory.count(b.id) > 0 || rig.bait?.id === b.id),
+      (b) =>
+        (!b.sea || this.cfg.kind === "sea") &&
+        (g.inventory.count(b.id) > 0 || rig.bait?.id === b.id),
     );
     const at = owned.findIndex((b) => b.id === rig.bait?.id);
     const next = owned[at + 1];
@@ -326,7 +328,7 @@ export class FishingScene extends Phaser.Scene {
     const g = this.state;
     const { season } = dateOf(g.day.clock.day);
     this.tutorial = g.fishing.total === 0;
-    const fx = g.tackle.effects(this.rod.id);
+    const fx = g.tackle.effects(this.rod.id, this.cfg.kind === "sea");
     this.effects = fx;
     this.pending = bite(
       this.cfg.kind ?? "river",

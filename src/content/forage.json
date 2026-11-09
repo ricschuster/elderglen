@@ -221,5 +221,59 @@
     "sellPrice": 200,
     "energy": 25,
     "mushroom": true
+  },
+  {
+    "id": "periwinkle",
+    "name": "Periwinkle",
+    "seasons": [],
+    "sellPrice": 20
+  },
+  {
+    "id": "razor-clam",
+    "name": "Razor clam",
+    "seasons": [],
+    "sellPrice": 40
+  },
+  {
+    "id": "whelk",
+    "name": "Whelk",
+    "seasons": [],
+    "sellPrice": 55
+  },
+  {
+    "id": "cockleshell",
+    "name": "Cockleshell",
+    "seasons": [],
+    "sellPrice": 60
+  },
+  {
+    "id": "pearly-shell",
+    "name": "Pearly shell",
+    "seasons": [],
+    "sellPrice": 180
+  },
+  {
+    "id": "spiral-shell",
+    "name": "Spiral shell",
+    "seasons": [],
+    "sellPrice": 200
+  },
+  {
+    "id": "sea-fan",
+    "name": "Sea fan",
+    "seasons": [],
+    "sellPrice": 90
+  },
+  {
+    "id": "pin-urchin",
+    "name": "Pin urchin",
+    "seasons": [],
+    "sellPrice": 160
+  },
+  {
+    "id": "seaweed",
+    "name": "Seaweed",
+    "seasons": [],
+    "sellPrice": 20
   }
 ]

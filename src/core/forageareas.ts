@@ -20,6 +20,13 @@ export type ForageTable = Partial<Record<Season, WeightedForage[]>>;
 export interface ForageArea {
   /** Most points holding a good on one day: one number, or one per season. */
   cap: number | Partial<Record<Season, number>>;
+  /**
+   * Own daily caps for named tables, one number (fractions allowed: 1.2 means one
+   * point a day and a 1 in 5 chance of a second) or one per season. A table with
+   * an entry here is filled to its own cap and stays out of `cap`, so the marsh
+   * and the beach of one map are capped apart (the River delta).
+   */
+  tableCaps?: Record<string, number | Partial<Record<Season, number>>>;
   /** Tables by name. `default` serves every point outside a region that names one. */
   tables: Record<string, ForageTable>;
   /**
@@ -45,6 +52,17 @@ export function forageAreaOf(
 /** The daily cap of an area in a season. A season the cap omits gives zero. */
 export function forageCap(area: ForageArea, season: Season): number {
   return typeof area.cap === "number" ? area.cap : (area.cap[season] ?? 0);
+}
+
+/** The cap of one table with its own entry in a season, or undefined when it has none. */
+export function tableCapOf(
+  area: ForageArea,
+  table: string,
+  season: Season,
+): number | undefined {
+  const c = area.tableCaps?.[table];
+  if (c === undefined) return undefined;
+  return typeof c === "number" ? c : (c[season] ?? 0);
 }
 
 /** The weighted goods of a table in a season. Empty for an unknown table. */
@@ -84,6 +102,10 @@ export function forageAreaProblems(
       typeof area.cap === "number" ? [area.cap] : Object.values(area.cap);
     if (caps.some((c) => !Number.isInteger(c) || c < 0))
       out.push(`${mapId}: the cap must be a whole number, zero or more`);
+    for (const [name, c] of Object.entries(area.tableCaps ?? {}))
+      for (const n of typeof c === "number" ? [c] : Object.values(c))
+        if (!(n >= 0))
+          out.push(`${mapId}/${name}: a table cap must be zero or more`);
     for (const [name, patch] of Object.entries(area.patches ?? {}))
       for (const [season, id] of Object.entries(patch))
         if (id !== undefined && !known(id))

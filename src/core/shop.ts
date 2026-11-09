@@ -84,20 +84,17 @@ export function saplingStock(): string[] {
 }
 
 /**
- * Rods on sale, cheapest first. A stand in for the fisher at the River delta
- * (note 21), who does not exist yet: the general store sells them until she does.
+ * Rods on sale, cheapest first. The fisher at the River delta sells them, with
+ * the bait and lures (note 75), and the general store does not.
  */
 export const rodStock = (): string[] => byPrice(RODS.map((r) => r.id));
 
-/**
- * Bait and lures on sale, cheapest first, from the same stand in. Salted Bait
- * waits for the sea, where it works.
- */
+/** Bait and lures on sale at the fisher, cheapest first. Salted Bait works at the sea, where she keeps her hut. */
 export const tackleStock = (): string[] =>
-  byPrice([
-    ...BAITS.filter((b) => !b.sea).map((b) => b.id),
-    ...LURES.map((l) => l.id),
-  ]);
+  byPrice([...BAITS.map((b) => b.id), ...LURES.map((l) => l.id)]);
+
+/** Everything the fisher's counter sells. */
+export const fisherStock = (): string[] => [...rodStock(), ...tackleStock()];
 
 import { fertilizerStock as allFertilizer } from "./fertilizer";
 

@@ -295,7 +295,14 @@ Built numbers (`src/core/fishing.ts`, `src/content/fish.json`, `rods.json`):
   chest appears in the bar 1 in 5 fights, 1 to 3 s in, height 0.1 of the track, fetch
   fill 0.7 per s and drain 0.2 per s (purse share 0.6), trinkets Tin Spoon 30g,
   Glass Bead 45g, Brass Button 60g, Cracked Locket 90g, Ring Box 120g. Plain Bait,
-  Fine Bait and the seven lures are sold at the general store for now.
+  Fine Bait, Salted Bait and the seven lures are sold at the fisher's counter on the delta (2026-11-09, #640).
+- Delta fish prices (2026-11-09): marsh lake Marshlight 45, Bogwhisker 50, Sunk Boot
+  Loach 40, Reed Cat 150, Catfish 130, Bullhead 120, Glassy Elver 300. Sea: Sardine 40,
+  Skiff Sprat 40, Mackerel 60, Mullet 55, Cod 70, Kelp Ribbon 110, Harbour Ray 160,
+  Herring 100, Lantern Squid 170, Crowned Tunny 350. Shore goods: Periwinkle 20, Razor
+  clam 40, Whelk 55, Cockleshell 60, Pearly shell 180, Spiral shell 200, Sea fan 90,
+  Pin urchin 160, Seaweed 20. Tide pool footbridge: 300 wood. Forage caps: marsh 3,
+  Beach 5, tide pools 1.2 a night.
 - Fish sell prices by rarity: common 40 to 90g, uncommon 100 to 200g, rare 250
   to 500g, cove fish 400 to 700g. Legends: Hearthwell Carp 4000g, Valley King
   3500g, Moonlit Mother 3500g, Grandmother Hush 3000g, Great Hearthfin 3000g.

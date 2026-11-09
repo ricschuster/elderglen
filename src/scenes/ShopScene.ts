@@ -11,8 +11,7 @@ import {
   seedStock,
   fertilizerStock,
   saplingStock,
-  rodStock,
-  tackleStock,
+  fisherStock,
 } from "../core/shop";
 import { nextBackpack, upgradeBackpack } from "../core/upgrades";
 import { frame, Menu, TOUCH_ROW_H, type Row } from "./panel";
@@ -37,18 +36,25 @@ export class ShopScene extends Phaser.Scene {
   private money!: Phaser.GameObjects.Text;
   private message!: Phaser.GameObjects.Text;
   private column: 0 | 1 = 0;
+  /** The fisher's counter sells rods, bait and lures; the general store the rest (note 75). */
+  private fisher = false;
 
   constructor() {
     super("shop");
   }
 
-  init(): void {
+  init(data?: { stock?: "fisher" }): void {
+    this.fisher = data?.stock === "fisher";
     this.state = this.registry.get(STATE_KEY) as GameState;
     this.column = 0;
   }
 
   create(): void {
-    const { money, message } = frame(this, "Shop", () => this.close());
+    const { money, message } = frame(
+      this,
+      this.fisher ? "Fisher" : "Shop",
+      () => this.close(),
+    );
     this.money = money;
     this.message = message;
     this.add.text(
@@ -105,13 +111,13 @@ export class ShopScene extends Phaser.Scene {
     const g = this.state;
     this.money.setText(`Money ${g.money}g`);
     const season = dateOf(g.day.clock.day).season;
-    const stock = [
-      ...seedStock(season),
-      ...saplingStock(),
-      ...fertilizerStock(g.day.clock.day),
-      ...rodStock(),
-      ...tackleStock(),
-    ];
+    const stock = this.fisher
+      ? fisherStock()
+      : [
+          ...seedStock(season),
+          ...saplingStock(),
+          ...fertilizerStock(g.day.clock.day),
+        ];
     const buyRows: Row[] = stock.map((id) => {
       const def = itemById(id)!;
       const price = def.buyPrice ?? 0;
@@ -152,7 +158,7 @@ export class ShopScene extends Phaser.Scene {
           dim: true,
           buttons: [],
         };
-    this.buyMenu.setRows([...buyRows, packRow]);
+    this.buyMenu.setRows(this.fisher ? buyRows : [...buyRows, packRow]);
 
     const ids: string[] = [];
     for (let i = 0; i < g.inventory.size; i++) {

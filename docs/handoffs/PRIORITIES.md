@@ -38,8 +38,11 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
    72 "Built status"), Secret Woods (#639, built 2026-11-09 with the massive log,
    six daily stumps and forage; the carpenter's Hardwood sale is gone; the pond's
    fish and the statue wait for the fish and elderfruit slices, note 73 "Built
-   status"), River delta with the Beach (#640,
-   unblocks #596), Mountain (#642, #643), the Quarry (#649), Forest part 2
+   status"), River delta with the Beach (#640, built
+   2026-11-09: map with marsh lake, channels and sea, the farm's south exit, the
+   fisher's hut and counter, delta forage and tide pools, the 300 wood footbridge;
+   the ferry, the Hearthwell exit, pots and the legend wait, note 75 "Built status";
+   it unblocks #596), Mountain (#642, #643), the Quarry (#649), Forest part 2
    (#638), Lake cove (#644), Hearthwell shell (#645) and interiors (#646), Beach
    elf (#641, waits on the story spine). Changed order since the draft: the Quarry
    is new at step 4b and the maps moved up from M3c. Open design items left:

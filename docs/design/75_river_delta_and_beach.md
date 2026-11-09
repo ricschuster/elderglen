@@ -1,7 +1,8 @@
-# 75 River delta and Beach (draft)
+# 75 River delta and Beach (steps 1 to 4 built)
 
-Status: draft, written 2026-11-08, owner answers recorded the same day (note 71). Nothing here is
-built. M3b, except the Beach elf's house, which waits for the story spine (#176). It designs the River delta map with the Beach at its east end (note 19,
+Status: draft, written 2026-11-08, owner answers recorded the same day (note 71).
+Steps 1 to 4 are built (2026-11-09, #640, see "Built status" at the end); the ferry,
+the Hearthwell exit, the elf's house, pots and the legend are not. M3b, except the Beach elf's house, which waits for the story spine (#176). It designs the River delta map with the Beach at its east end (note 19,
 decision 13). Overview and owner questions: `71_map_areas_overview.md`. Stardew
 facts are from the saved Beach page (read 2026-11-08), as ideas only (ADR 0002).
 
@@ -188,3 +189,64 @@ Work packages: "River delta and Beach map, waters and the fisher" (steps 1 to 4)
 - Festivals on the Beach (Stardew has several, saved Beach page): ours do not use
   the Beach in note 14, so no variant map is planned.
 - Prices and names of the new shore goods, in note 07.
+
+## Built status (2026-11-09, #640)
+
+Build order steps 1 to 4 are built, except the pots and the Great Hearthfin legend
+(see "Not built").
+
+- **Map:** `src/content/maps/delta.json`, 100 by 70, drafted by
+  `scripts/gen-delta-map.mjs` (the JSON is the source from then on). Properties
+  `wild`, `rideable` and `waterKind` marsh-lake. Water kinds are zones: the marsh lake
+  (default), `river` (the main channel and the three side channel rects, an L that
+  runs from the channel to the lake) and `sea` (the sea and the lagoon by the
+  tide pool bridge). Willows are cosmetic tile art (no choppable trees); 20 twigs,
+  12 rocks and 8 weeds are hand placed.
+- **Exits:** `to_farm` (north edge, x 10 to 16) with entry `from_farm` (13, 3), and
+  `fisher` to the hut. The farm and the Woodland farm gain exit `delta` (bottom
+  row, x 21 to 23) and entry `from_delta` (22, 28). **Not cut:** the Hearthwell exit,
+  the ferry and the elf's exit, so no entries for them either (the targets do not
+  exist yet).
+- **Where it differs from the sketch:** the hut is 9 by 7 at x 40 to 48, y 34 to 40,
+  with its door on the south wall at (44, 40) and entry (44, 41), because the note's
+  door (38, 28) sits at the lake's north-east corner and not on the east shore.
+  The pier is at x 80 to 82, y 48 to 58 (the note's x 88 collides with the tide
+  pool footbridge). The marsh lake is split from the east bank by the main channel
+  (x 62 to 65, to y 51); the Beach footbridge is at x 61 to 66, y 35 to 37. A reed
+  footbridge crosses the side channel at y 23 to 24, so the hut is a short walk from
+  the farm road and not around the lake. The Beach sand is x 66 to 85 and not 60 to
+  99, since a cliff wall shuts the east end (the pocket and the lagoon).
+- **Fisher's hut:** `fisher-hut.json`, a 10 by 7 interior with one counter
+  (service `fisher-shop`). It sells the four rods, Plain, Fine and Salted Bait and
+  the lures. The general store stopped selling them (the stand-in is removed).
+  The fisher herself is not drawn or named (no villager sprites yet); the counter
+  buys back goods as the general store does.
+- **Fish:** the 7 marsh lake fish and the 10 sea fish of note 21 are in
+  `fish.json`, prices placeholders. A cast reads the water kind of the first water
+  tile ahead. Salted Bait now works and can be fitted at the sea (and only there).
+- **Forage:** `forage-areas.json` entry `delta`. The marsh region (x 0 to 55) is
+  capped at 3 and the Beach (the default table) at 5, apart, through a new optional
+  `tableCaps` map (a table with an entry fills to its own cap; a fractional cap such
+  as 1.2 is a whole part and a chance of one more). The tide pools (region
+  `tide-pools`, 20 spots) give about 1.2 a night, 78 percent sea fan, 19 percent pin
+  urchin and 3 percent seaweed, so the note's 80 and 20 are approximated and the
+  seaweed chance is part of the table and not a separate roll. Nine new shore goods
+  are in `forage.json` with no seasons, so the farm's shared pool never holds them.
+  Foraging XP is the usual 7. Spots: 24 marsh, 40 beach, 20 pools.
+- **Tide pool footbridge:** `core/tidebridge.ts`. Broken at the start: the four
+  bridge tiles are shut by a conditional `collision` layer (unless the flag) and
+  covered by a conditional art layer, and four `tide-bridge` services on a
+  conditional object layer stand on them. Action on one asks ("Press Action again
+  to mend it for 300 wood"), the second press takes 300 wood, sets
+  `tide-bridge-mended` and reloads the map at entry `at_bridge` (85, 45), since the
+  way through is read when the map loads. The map check reads both ways: it does
+  not flag forage spots behind a shut gate in the "all conditions false" reading,
+  and still requires them reachable with all conditions true.
+- **Also fixed:** a map `region` that names a forage table was drawn as a grey hall
+  room wash (it hit the Forest's onion bank); the wash is now for hall rooms only.
+- **Not built:** the ferry exit and dock art, the Hearthwell exit, the elf's house
+  (#641), shellfish and crab pots (nothing in the game makes a pot yet), the Pearl
+  Lobster, the legend Great Hearthfin, and the fisher as a named person.
+- **Playtest:** `npm run playtest:delta` (leaves by the farm's south exit, casts a
+  rod on the marsh lake, the river and the sea, buys a rod, mends the footbridge
+  and crosses it, sleeps).

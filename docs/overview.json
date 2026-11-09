@@ -363,6 +363,12 @@
           "issue": 636
         },
         {
+          "s": "decided",
+          "t": "River delta with the Beach (steps 1 to 4 built 2026-11-09): the 100 by 70 map with marsh lake, river channels and sea, the farm's south exit, the fisher's hut with the rods, bait and lures moved out of the general store, the marsh and Beach forage tables and tide pools, and the tide pool footbridge mended with 300 wood; the ferry, the Hearthwell exit, pots and the legend are not built",
+          "ref": "75_river_delta_and_beach.md#Built status (2026-11-09, #640)",
+          "issue": 640
+        },
+        {
           "s": "open",
           "t": "Ten map contract additions for the areas: water kinds, the massive log, per-map forage tables, tree kind, per-map stump regrow, conditional layers, rideable flag, cart and board service kinds, nightly spawns",
           "ref": "71_map_areas_overview.md#Map contract additions",

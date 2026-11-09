@@ -110,7 +110,17 @@ export class MapRegistry {
                 ],
               ];
         for (const [name, map] of readings)
-          for (const p of map.problems()) out.push(`${name}: ${p}`);
+          for (const p of map.problems()) {
+            // A forage spot may lie behind a gate that is shut in the false
+            // reading (the delta's tide pools, behind the broken footbridge).
+            // It must still be reachable with every condition true.
+            if (
+              name.endsWith("(all conditions false)") &&
+              /^forage spot \d+,\d+ cannot be reached/.test(p)
+            )
+              continue;
+            out.push(`${name}: ${p}`);
+          }
         for (const exit of plain.exits) {
           if (exit.map === "" || exit.entry === "") continue;
           // An entry may sit on a higher tier of a growing map (the house's
