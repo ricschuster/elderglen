@@ -59,6 +59,8 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
 with the Secret Woods (six daily stumps and the log). Mahogany stays off the map
 for now.
 
+Session 2026-11-09 part three (handoff 2026-11-09c): orchestrated build of map areas, one sub-agent and one PR at a time: #636, #637, #639, #640 and #642 (first part) merged. Next: #643, Mountain forge and the stonekeeper's yard.
+
 Session 2026-11-09 part two (handoff 2026-11-09b): hermit witch Rosmarin and her fairy rings settled, #5 and the warden head's line parked for ring 3 after ring 2. Next: note 54 question batch, then ring 2 (#20) if the owner agrees.
 
 Session 2026-11-09 (handoff 2026-11-09): warden head settled bar two items, sea elf Thalwen settled for ring 1, ADR 0013. Next: the hermit witch (#178), then #5.
