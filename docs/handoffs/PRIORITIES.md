@@ -22,7 +22,7 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
    systems exist (fish went live with fishing slices 1 and 2, #595). The top-level menu entry and the day-end recheck are done
    (#586), and `noteCooked` is called now (#593). Left: the summit achievement, the hall scene and rewards, and a look at the layout
    in a browser. "Items crafted" counts only buildable recipes (owner, 2026-11-08).
-2. **Story spine (started 2026-11-08q, the warden head is settled bar two items).** The warden head and her staged reveal (#177), the sea elf
+2. **Story spine (started 2026-11-08q, the warden head and the sea elf are settled bar a few items; next the hermit witch, #178).** The warden head and her staged reveal (#177), the sea elf
    and Homeward pin (#176), the hermit witch (#178) and the third community
    project (#5). Together they decide what the ending and the Last Seat mean. Below Special Orders
    (2026-11-06): nothing in slices 1 to 3 needs it, and it is only needed
@@ -45,6 +45,8 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
 Hardwood sale (200g, `src/content/carpenter-standin.json`, note 43). It comes out
 in the Secret Woods work package, #639, when the six daily stumps exist (owner,
 2026-11-08). Mahogany stays off the map for now.
+
+Session 2026-11-09 (handoff 2026-11-09): warden head settled bar two items, sea elf Thalwen settled for ring 1, ADR 0013. Next: the hermit witch (#178), then #5.
 
 Sea elf (2026-11-09, note 09, #176): Thalwen (was Ondrel, too close to Oriel), knew Oriel slightly, cannot say why she has not sailed home across the sea, travelling coat and half-packed trunk, cottage on the Beach dunes. Her unfinished business ties to a haven elf in ring 2 (a keepsake quest like Birdie's), voice dreamy and courteous, the pin comes from her trunk. Open: the haven elf's slot, the keepsake, whether she leaves or stays, the pin's price.
 
