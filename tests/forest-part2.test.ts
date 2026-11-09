@@ -134,6 +134,6 @@ describe("the keeper's stock and the lines (note 23, note 72)", () => {
 
   it("uses no em dashes in its lines", () => {
     for (const line of [...KEEPER_ADVICE, HERMIT_LINE, CAMP_LINE])
-      expect(line).not.toContain("—");
+      expect(line).not.toContain(String.fromCharCode(0x2014));
   });
 });
