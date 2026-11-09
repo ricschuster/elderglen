@@ -16,6 +16,11 @@
       "name": "placeholder",
       "type": "bool",
       "value": true
+    },
+    {
+      "name": "rideable",
+      "type": "bool",
+      "value": true
     }
   ],
   "layers": [

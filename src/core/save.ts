@@ -95,6 +95,8 @@ export interface GameState {
   greenhouseFruitTrees: FruitTrees;
   /** Where the repaired greenhouse stands, once moved at the carpenter. Unset: its ruin site. */
   greenhouseSite?: { x: number; y: number };
+  /** World flags that are up, such as `secret-log-cleared` (`core/worldflags.ts`). Absent until one is. */
+  flags?: string[];
   /** Machines standing on the farm. */
   machines: Machines;
   /** The greenhouse's soil: grows in any season (note 31). */
@@ -254,6 +256,8 @@ interface SaveData {
   fruitTrees?: PlacedFruitTree[];
   /** Absent until the greenhouse is moved. */
   greenhouseSite?: { x: number; y: number };
+  /** Absent until a world flag is raised. */
+  flags?: string[];
   /** Absent in saves made before machines. */
   machines?: PlacedMachine[];
   /** Absent in saves made before the greenhouse. */
@@ -389,6 +393,7 @@ export function serialize(g: GameState): string {
       },
     },
     ...(g.greenhouseSite ? { greenhouseSite: { ...g.greenhouseSite } } : {}),
+    ...(g.flags?.length ? { flags: [...g.flags] } : {}),
     machines: g.machines.save(),
     casks: g.casks.save(),
     furnace: g.furnace.save(),
@@ -632,6 +637,12 @@ export function deserialize(text: string): GameState | undefined {
       x: Math.min(Math.max(raw.greenhouseSite.x as number, 0), MAX_SITE),
       y: Math.min(Math.max(raw.greenhouseSite.y as number, 0), MAX_SITE),
     };
+  if (Array.isArray(raw.flags)) {
+    const flags = raw.flags.filter(
+      (f): f is string => typeof f === "string" && f !== "",
+    );
+    if (flags.length > 0) g.flags = [...new Set(flags)];
+  }
   if (Array.isArray(raw.machines)) {
     const valid: PlacedMachine[] = [];
     for (const m of raw.machines) {

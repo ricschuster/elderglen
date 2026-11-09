@@ -1,5 +1,12 @@
 import type { Season } from "./calendar";
 import forageData from "../content/forage.json";
+import {
+  forageAreaOf,
+  forageCap,
+  forageWeights,
+  pickForage,
+  type ForageArea,
+} from "./forageareas";
 
 export interface ForageDef {
   id: string;
@@ -73,6 +80,34 @@ export class ForageField {
         rares.length > 0 && random() < RARE_CHANCE ? rares : options;
       const def = pickFrom[Math.floor(random() * pickFrom.length)] as ForageDef;
       this.found.set(`${spot.x},${spot.y}`, def.id);
+    }
+  }
+
+  /**
+   * Scatter the day's goods on a map with its own forage area: up to the area's
+   * cap of points, each given a good from the weight table of its region
+   * (`tableOf`), with no rare chance on top. Without an area for the map this
+   * is the shared pool (`respawn`).
+   */
+  respawnArea(
+    mapId: string,
+    season: Season,
+    spots: Spot[],
+    tableOf: (spot: Spot) => string,
+    random: () => number,
+    area: ForageArea | undefined = forageAreaOf(mapId),
+  ): void {
+    if (area === undefined) return this.respawn(season, spots, random);
+    this.found.clear();
+    const pool = [...spots];
+    const target = Math.min(forageCap(area, season), pool.length);
+    for (let i = 0; i < target; i++) {
+      const spot = pool.splice(
+        Math.floor(random() * pool.length),
+        1,
+      )[0] as Spot;
+      const id = pickForage(forageWeights(area, tableOf(spot), season), random);
+      if (id !== undefined) this.found.set(`${spot.x},${spot.y}`, id);
     }
   }
 

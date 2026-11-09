@@ -1,4 +1,10 @@
-import { FarmMap, maxTierOf, visibleTier, type TiledMapJson } from "./map";
+import {
+  FarmMap,
+  conditionsOf,
+  maxTierOf,
+  visibleTier,
+  type TiledMapJson,
+} from "./map";
 
 /** Where a new game starts: a map id and the name of an entry on it. */
 export const START = { map: "farm", entry: "start" } as const;
@@ -9,12 +15,20 @@ export const START = { map: "farm", entry: "start" } as const;
  */
 export class MapRegistry {
   /** Every tier of every map, read once: `maps[id][tier]`. */
-  private constructor(private readonly maps: Map<string, FarmMap[]>) {}
+  private constructor(
+    private readonly maps: Map<string, FarmMap[]>,
+    private readonly files: Map<string, TiledMapJson> = new Map(),
+  ) {}
+
+  /** Maps read with some conditions held, by id, tier and the conditions the map uses. */
+  private readonly variants = new Map<string, FarmMap>();
 
   /** Read each map at each of its tiers. Throws, naming the map, if one breaks the file format. */
   static fromTiled(files: Record<string, TiledMapJson>): MapRegistry {
     const maps = new Map<string, FarmMap[]>();
+    const kept = new Map<string, TiledMapJson>();
     for (const [id, json] of Object.entries(files)) {
+      kept.set(id, json);
       try {
         const tiers: FarmMap[] = [];
         for (let t = 0; t <= maxTierOf(json); t++)
@@ -24,7 +38,7 @@ export class MapRegistry {
         throw new Error(`map "${id}": ${(e as Error).message}`, { cause: e });
       }
     }
-    return new MapRegistry(maps);
+    return new MapRegistry(maps, kept);
   }
 
   get ids(): string[] {
@@ -42,6 +56,26 @@ export class MapRegistry {
     return tiers[visibleTier(tier, tiers.length - 1)]!;
   }
 
+  /**
+   * The map as it stands when the named conditions hold: layers with `when` or
+   * `unless` swap (`cove-open`, `bridge-mended`). Only the conditions the map
+   * uses count, so a map with no conditional layers is the plain map.
+   */
+  getWith(id: string, holds: ReadonlySet<string>, tier = 0): FarmMap {
+    const json = this.files.get(id);
+    if (!json) throw new Error(`no map "${id}"`);
+    const used = conditionsOf(json).filter((c) => holds.has(c));
+    if (conditionsOf(json).length === 0) return this.get(id, tier);
+    const t = visibleTier(tier, this.maxTier(id));
+    const key = `${id}|${t}|${used.sort().join(",")}`;
+    let map = this.variants.get(key);
+    if (!map) {
+      map = FarmMap.fromTiled(json, t, new Set(used));
+      this.variants.set(key, map);
+    }
+    return map;
+  }
+
   /** The highest tier a map has. Zero for a map that does not grow. */
   maxTier(id: string): number {
     const tiers = this.maps.get(id);
@@ -57,10 +91,27 @@ export class MapRegistry {
     else if (!start.entry(START.entry))
       out.push(`the start map has no entry "${START.entry}"`);
     for (const [id, tiers] of this.maps)
-      tiers.forEach((map, tier) => {
+      tiers.forEach((plain, tier) => {
         const label = tiers.length > 1 ? `${id} tier ${tier}` : id;
-        for (const p of map.problems()) out.push(`${label}: ${p}`);
-        for (const exit of map.exits) {
+        // A map with conditional layers is checked with every condition true
+        // and with every condition false (note 71).
+        const names = conditionsOf(this.files.get(id)!);
+        const readings: [string, FarmMap][] =
+          names.length === 0
+            ? [[label, plain]]
+            : [
+                [
+                  `${label} (all conditions true)`,
+                  this.getWith(id, new Set(names), tier),
+                ],
+                [
+                  `${label} (all conditions false)`,
+                  this.getWith(id, new Set(), tier),
+                ],
+              ];
+        for (const [name, map] of readings)
+          for (const p of map.problems()) out.push(`${name}: ${p}`);
+        for (const exit of plain.exits) {
           if (exit.map === "" || exit.entry === "") continue;
           // An entry may sit on a higher tier of a growing map (the house's
           // cellar stairs), so the target counts if any tier has it.

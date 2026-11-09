@@ -4,6 +4,7 @@ import type { Season } from "./calendar";
 import { NIGHTFALL } from "./clock";
 import { withQuality, type Quality } from "./quality";
 import { harvestXp } from "./skills";
+import type { WaterKind } from "./map";
 import type { GameState } from "./save";
 
 /**
@@ -16,7 +17,16 @@ export type Rarity = "common" | "uncommon" | "rare";
 export type Behaviour = "mixed" | "smooth" | "sinker" | "floater" | "dart";
 export type Time = "any" | "dawn" | "day" | "dusk" | "night" | "rain";
 /** A table of fish. The farm pond uses the river table (notes 32 and 55). */
-export type Water = "river";
+/** A body of water: each kind has its own fish table (note 71). */
+export type Water = WaterKind;
+
+/** The pot that fishes a water: fresh water pots and salt water pots (note 21). */
+export type PotKind = "fresh" | "salt";
+
+/** Sea and the cove are salt water, every other kind is fresh. */
+export function potKindOf(kind: WaterKind): PotKind {
+  return kind === "sea" || kind === "cove" ? "salt" : "fresh";
+}
 
 export interface FishDef {
   id: string;

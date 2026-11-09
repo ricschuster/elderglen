@@ -128,6 +128,34 @@ areas need these additions (ten, with the Quarry), all data, with rules in `src/
 No change to `collision`, `soil`, `paths`, `entry`, `exit` or the bounds
 properties. The first Tiled draft may find more, and this list is updated then.
 
+**Built status (2026-11-09, #636).** All ten are built as rules, data and map
+checks, with tests in `tests/mapcontract.test.ts`. Where they live:
+
+- Map parsing and checks: `src/core/map.ts` (`water`, `log`, tree and stump
+  `kind`, `region` `forage`, map properties `waterKind`, `stumpRegrowDays` and
+  `rideable`, layer properties `when` and `unless`) and `src/core/maps.ts`
+  (`getWith`, and the check with every condition true and false).
+- Water kinds: `FarmMap.waterKindAt`, `Water` and `potKindOf` in `fishing.ts`.
+  The farm passes the kind of the tile fished to the bite. The fish table still
+  holds river fish only; each area adds its own.
+- Log: `src/core/logs.ts` (one chop with a steel axe, 8 Hardwood, 25 XP, sets the
+  flag), reached through `useHeld`, solid in the farm scene until its flag is up.
+  World flags are new: `src/core/worldflags.ts`, saved as `flags` (`holdsOf` gives
+  the conditions that hold, and the farm scene reads layers with it).
+- Forage areas: `src/core/forageareas.ts`, `src/content/forage-areas.json` (empty
+  until a map needs one) and `ForageField.respawnArea`. The sleep step still
+  scatters the farm's shared pool only; the first area map wires its own field.
+- Stump regrow: `chop` reads the map's `stumpRegrowDays` before the farm type.
+- Rideable: the horse reads the map property (`rideable` in `horse.ts`), set on
+  `farm`, `farm-woodland` and `green`; the list of map names is gone.
+- Cart and boards: the service kinds `cart`, `board-help`, `board-news` and
+  `board-orders` are named in `map.ts` and place like any service. Nothing opens
+  them yet.
+- Nightly spawns: `src/core/spawns.ts` and `src/content/spawns.json` (empty until
+  the Quarry). The map's scene places what `nightlySpawns` returns.
+- Load test: the test builds a 120 by 120 placeholder map and bounds its read and
+  check time. The run on the SM-T500 itself is by hand and not done yet (open).
+
 ## Interiors by area
 
 From note 58, for the work packages. Existing interior maps are marked.

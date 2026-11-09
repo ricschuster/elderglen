@@ -23,6 +23,8 @@ export interface TiledLayer {
   visible?: boolean;
   data?: number[];
   objects?: TiledObject[];
+  /** Tiled custom properties. `when` and `unless` make the layer conditional. */
+  properties?: { name: string; value: unknown }[];
 }
 
 export interface TiledMapJson {
@@ -70,14 +72,54 @@ export function visibleTier(tier: number, maxTier: number): number {
   return Math.min(Math.max(0, Math.floor(tier)), Math.max(0, maxTier));
 }
 
+/** No named condition holds. The default for a map read without a game state. */
+export const NO_CONDITIONS: ReadonlySet<string> = new Set();
+
+const layerText = (l: TiledLayer, key: string): string | undefined => {
+  const value = l.properties?.find((p) => p.name === key)?.value;
+  return typeof value === "string" && value !== "" ? value : undefined;
+};
+
+/**
+ * Whether a layer is read and drawn, given the conditions that hold. A layer
+ * property `when` names a condition that must hold, `unless` one that must not,
+ * so ruined and repaired art swap (`docs/design/71_map_areas_overview.md`).
+ */
+export function layerShows(
+  layer: TiledLayer,
+  holds: ReadonlySet<string>,
+): boolean {
+  const when = layerText(layer, "when");
+  const unless = layerText(layer, "unless");
+  return (
+    (when === undefined || holds.has(when)) &&
+    (unless === undefined || !holds.has(unless))
+  );
+}
+
+/** Every condition name any layer of the map uses in `when` or `unless`. */
+export function conditionsOf(json: TiledMapJson): string[] {
+  const out = new Set<string>();
+  for (const l of json.layers)
+    for (const key of ["when", "unless"]) {
+      const c = layerText(l, key);
+      if (c !== undefined) out.add(c);
+    }
+  return [...out];
+}
+
 /**
  * The layers at or below a tier, lowest tier first and in file order within a
  * tier, so a higher tier lands on top.
  */
-export function layersAtTier(json: TiledMapJson, tier: number): TiledLayer[] {
+export function layersAtTier(
+  json: TiledMapJson,
+  tier: number,
+  holds: ReadonlySet<string> = NO_CONDITIONS,
+): TiledLayer[] {
   return json.layers
     .map((layer, i) => ({ layer, i, t: layerTier(layer.name) }))
-    .filter((e) => e.t <= tier)
+    .filter((e) => e.t <= tier && layerShows(e.layer, holds))
     .sort((a, b) => a.t - b.t || a.i - b.i)
     .map((e) => e.layer);
 }
@@ -120,9 +162,15 @@ export interface Service extends Spot {
   kind: string;
 }
 
+/** The kinds of tree, by region (SC-30). Tap products stay as note 36. */
+export type TreeKind = "oak" | "maple" | "pine";
+export const TREE_KINDS: readonly TreeKind[] = ["oak", "maple", "pine"];
+
 /** A tree placed on the map at the start of a new game. `stage` is 1 to 5 (`core/trees.ts`). */
 export interface TreeSpot extends Spot {
   stage: number;
+  /** Absent means oak, the farm's tree. */
+  kind?: TreeKind;
   /** A large stump that regrows after it is chopped (`core/trees.ts`). Stage is 5. */
   large?: boolean;
 }
@@ -134,7 +182,62 @@ export interface Region {
   y: number;
   w: number;
   h: number;
+  /** The forage table that forage points inside this region use (`forage-areas.json`). */
+  forage?: string;
 }
+
+/** The bodies of water, each with its own fish table and pot kind (note 71). */
+export type WaterKind =
+  | "river"
+  | "forest-lake"
+  | "mountain-lake"
+  | "marsh-lake"
+  | "sea"
+  | "cove"
+  | "woods-pond";
+export const WATER_KINDS: readonly WaterKind[] = [
+  "river",
+  "forest-lake",
+  "mountain-lake",
+  "marsh-lake",
+  "sea",
+  "cove",
+  "woods-pond",
+];
+
+/** A rectangle of water of one kind (the object class `water`). */
+export interface WaterZone extends TileRect {
+  kind: WaterKind;
+}
+
+/**
+ * The massive log (the object class `log`): solid until chopped with a steel
+ * axe or better. `flag` is the world flag chopping it sets, named by the
+ * object's `flag` property.
+ */
+export interface LogSpot extends Spot {
+  flag: string;
+}
+
+/** Service kinds the map places for later rewards and boards (notes 16, 50, 57, 65). */
+export const CART_KIND = "cart";
+export const BOARD_KINDS = [
+  "board-help",
+  "board-news",
+  "board-orders",
+] as const;
+
+/** Map-wide properties beyond the tile layers (note 71, Map contract additions). */
+export interface MapTraits {
+  /** The water kind of a water tile outside every `water` zone. The farm pond is the river. */
+  waterKind: WaterKind;
+  /** Days a chopped large stump takes to regrow here. Absent: the farm type decides. */
+  stumpRegrowDays?: number;
+  /** Whether the horse can be ridden here. Default false. */
+  rideable: boolean;
+}
+
+const DEFAULT_TRAITS: MapTraits = { waterKind: "river", rideable: false };
 
 /** Whether the player may use an exit, given the conditions that hold. */
 export function exitOpen(exit: Exit, holds: ReadonlySet<string>): boolean {
@@ -152,6 +255,24 @@ export const SOIL_LAYER = "soil";
 export const PATHS_LAYER = "paths";
 
 const objectClass = (o: TiledObject) => o.class ?? o.type ?? "";
+
+const treeKindOf = (o: TiledObject): { kind?: TreeKind } => {
+  const kind = text(o, "kind");
+  return kind === undefined ? {} : { kind: kind as TreeKind };
+};
+
+/** The map properties `waterKind`, `stumpRegrowDays` and `rideable`. */
+function traitsOf(json: TiledMapJson): MapTraits {
+  const prop = (name: string) =>
+    json.properties?.find((p) => p.name === name)?.value;
+  const days = prop("stumpRegrowDays");
+  const kind = prop("waterKind");
+  return {
+    waterKind: typeof kind === "string" ? (kind as WaterKind) : "river",
+    rideable: prop("rideable") === true,
+    ...(typeof days === "number" ? { stumpRegrowDays: days } : {}),
+  };
+}
 
 const num = (o: TiledObject, key: string): number | undefined => {
   const value = o.properties?.find((p) => p.name === key)?.value;
@@ -223,7 +344,52 @@ export class FarmMap {
     private readonly water: boolean[] = [],
     /** An indoor growing room (the map property `indoors`): its soil is not the farm's. */
     readonly indoors = false,
+    /** Rectangles of water with their own kind (the object class `water`). */
+    readonly waterZones: WaterZone[] = [],
+    /** Massive logs, solid until chopped (the object class `log`). */
+    readonly logs: LogSpot[] = [],
+    readonly traits: MapTraits = DEFAULT_TRAITS,
   ) {}
+
+  /** Whether the horse can be ridden on this map (the map property `rideable`). */
+  get rideable(): boolean {
+    return this.traits.rideable;
+  }
+
+  /** The map's own stump regrow days, if it sets them (`stumpRegrowDays`). */
+  get stumpRegrowDays(): number | undefined {
+    return this.traits.stumpRegrowDays;
+  }
+
+  /**
+   * The kind of water on a tile: the first `water` zone that holds it, else the
+   * map's default `waterKind`. Undefined when the tile is not water.
+   */
+  waterKindAt(x: number, y: number): WaterKind | undefined {
+    if (!this.isWater(x, y)) return undefined;
+    const zone = this.waterZones.find(
+      (z) => x >= z.x && x < z.x + z.w && y >= z.y && y < z.y + z.h,
+    );
+    return zone?.kind ?? this.traits.waterKind;
+  }
+
+  /** The log standing on this tile, if any. */
+  logAt(x: number, y: number): LogSpot | undefined {
+    return this.logs.find((l) => l.x === x && l.y === y);
+  }
+
+  /** The forage table name for a point: that of the region holding it, else "default". */
+  forageTableAt(x: number, y: number): string {
+    const region = this.regions.find(
+      (r) =>
+        r.forage !== undefined &&
+        x >= r.x &&
+        x < r.x + r.w &&
+        y >= r.y &&
+        y < r.y + r.h,
+    );
+    return region?.forage ?? "default";
+  }
 
   /** True for a water tile: fishable, and never walkable. */
   isWater(x: number, y: number): boolean {
@@ -235,16 +401,21 @@ export class FarmMap {
    * Read a Tiled map as it stands at a building tier. Layers of a higher tier
    * are ignored, and on a map that grows, cells with no ground are void:
    * blocked, and outside the camera bounds. Throws with a clear message if the
-   * map breaks the contract.
+   * map breaks the contract. A layer with `when` or `unless` is read only if
+   * the condition holds (or does not), given `holds`.
    */
-  static fromTiled(json: TiledMapJson, tier = 0): FarmMap {
+  static fromTiled(
+    json: TiledMapJson,
+    tier = 0,
+    holds: ReadonlySet<string> = NO_CONDITIONS,
+  ): FarmMap {
     const { width, height } = json;
     if (json.tilewidth !== json.tileheight)
       throw new Error("map tiles must be square");
     const size = json.tilewidth;
     const maxTier = maxTierOf(json);
     const at = visibleTier(tier, maxTier);
-    const layers = layersAtTier(json, at);
+    const layers = layersAtTier(json, at, holds);
     const cells = width * height;
     /** The base layer must exist; a tier layer of the same name paints over it. */
     const grid = (name: string, optional = false): boolean[] => {
@@ -300,6 +471,8 @@ export class FarmMap {
     const regions: Region[] = [];
     const trees: TreeSpot[] = [];
     const rocks: Spot[] = [];
+    const waterZones: WaterZone[] = [];
+    const logs: LogSpot[] = [];
     // A named entry, exit or service on a higher tier replaces the one of the
     // same name on a lower tier (the barn door moves as the barn grows).
     const kept = new Map<string, { tier: number; at: number }>();
@@ -332,9 +505,22 @@ export class FarmMap {
         else if (cls === "forage") forageSpots.push(spot);
         else if (cls === "rock") rocks.push(spot);
         else if (cls === "tree")
-          trees.push({ ...spot, stage: num(o, "stage") ?? 5 });
+          trees.push({
+            ...spot,
+            stage: num(o, "stage") ?? 5,
+            ...treeKindOf(o),
+          });
         else if (cls === "stump")
-          trees.push({ ...spot, stage: 5, large: true });
+          trees.push({ ...spot, stage: 5, large: true, ...treeKindOf(o) });
+        else if (cls === "log")
+          logs.push({ ...spot, flag: text(o, "flag") ?? "" });
+        else if (cls === "water")
+          waterZones.push({
+            ...spot,
+            w: Math.max(1, Math.round((o.width ?? size) / size)),
+            h: Math.max(1, Math.round((o.height ?? size) / size)),
+            kind: (text(o, "kind") ?? "") as WaterKind,
+          });
         else if (cls === "service")
           put(services, "service", o.name, objTier, {
             id: o.name,
@@ -345,6 +531,9 @@ export class FarmMap {
           regions.push({
             id: o.name,
             ...spot,
+            ...(text(o, "forage") === undefined
+              ? {}
+              : { forage: text(o, "forage") }),
             w: Math.max(1, Math.round((o.width ?? size) / size)),
             h: Math.max(1, Math.round((o.height ?? size) / size)),
           });
@@ -382,6 +571,9 @@ export class FarmMap {
       bounds,
       water,
       json.properties?.find((p) => p.name === "indoors")?.value === true,
+      waterZones,
+      logs,
+      traitsOf(json),
     );
   }
 
@@ -414,6 +606,9 @@ export class FarmMap {
       this.bounds,
       this.water,
       this.indoors,
+      this.waterZones,
+      this.logs,
+      this.traits,
     );
   }
 
@@ -448,6 +643,9 @@ export class FarmMap {
       this.bounds,
       this.water,
       this.indoors,
+      this.waterZones,
+      this.logs,
+      this.traits,
     );
   }
 
@@ -488,6 +686,9 @@ export class FarmMap {
       this.bounds,
       this.water,
       this.indoors,
+      this.waterZones,
+      this.logs,
+      this.traits,
     );
   }
 
@@ -571,7 +772,12 @@ export class FarmMap {
       ] as const) {
         const next = { x: x + dx, y: y + dy };
         const k = `${next.x},${next.y}`;
-        if (seen.has(k) || solid.has(k) || this.isBlocked(next.x, next.y))
+        // A log is solid only until it is chopped, so it counts as open here.
+        if (
+          seen.has(k) ||
+          solid.has(k) ||
+          (this.isBlocked(next.x, next.y) && !this.logAt(next.x, next.y))
+        )
           continue;
         seen.add(k);
         queue.push(next);
@@ -612,6 +818,27 @@ export class FarmMap {
         out.push(`${at} has a stage outside 1 to 5`);
       if (!this.canPlantTree(t.x, t.y))
         out.push(`${at} is on a blocked, path, exit, entry or service tile`);
+    }
+    if (!WATER_KINDS.includes(this.traits.waterKind))
+      out.push(`waterKind "${this.traits.waterKind}" is not a water kind`);
+    const days = this.traits.stumpRegrowDays;
+    if (days !== undefined && (!Number.isInteger(days) || days < 0))
+      out.push("stumpRegrowDays must be a whole number, zero or more");
+    for (const z of this.waterZones)
+      if (!WATER_KINDS.includes(z.kind))
+        out.push(
+          `water zone at ${z.x},${z.y} has the kind "${z.kind}", which is not a water kind`,
+        );
+    for (const t of this.trees)
+      if (t.kind !== undefined && !TREE_KINDS.includes(t.kind))
+        out.push(`tree at ${t.x},${t.y} has the kind "${t.kind}"`);
+    for (const l of this.logs) {
+      if (l.flag === "") out.push(`log at ${l.x},${l.y} needs a flag`);
+      if (
+        this.exitAt(l.x, l.y) ||
+        this.entries.some((e) => e.x === l.x && e.y === l.y)
+      )
+        out.push(`log at ${l.x},${l.y} is on an exit or entry tile`);
     }
     for (const r of this.rocks)
       if (
@@ -656,6 +883,12 @@ export class FarmMap {
             `service "${service.id}" cannot be reached from entry "${entry.name}"`,
           );
       }
+      for (const z of this.waterZones) {
+        if (!this.hasCastingSpot(z, walkable))
+          out.push(
+            `water zone at ${z.x},${z.y} has no walkable casting spot from entry "${entry.name}"`,
+          );
+      }
       for (const s of this.forageSpots)
         if (this.treeTiles().has(`${s.x},${s.y}`))
           out.push(`forage spot ${s.x},${s.y} is under a tree`);
@@ -665,6 +898,29 @@ export class FarmMap {
           );
     }
     return out;
+  }
+
+  /**
+   * Whether the player can stand beside some water tile of the zone: a walkable
+   * tile next to it, four ways, that is not itself water.
+   */
+  private hasCastingSpot(zone: WaterZone, walkable: Set<string>): boolean {
+    for (let y = zone.y; y < zone.y + zone.h; y++)
+      for (let x = zone.x; x < zone.x + zone.w; x++) {
+        if (!this.isWater(x, y)) continue;
+        for (const [dx, dy] of [
+          [1, 0],
+          [-1, 0],
+          [0, 1],
+          [0, -1],
+        ] as const)
+          if (
+            !this.isWater(x + dx, y + dy) &&
+            walkable.has(`${x + dx},${y + dy}`)
+          )
+            return true;
+      }
+    return false;
   }
 
   /** Whether any tile can be tilled. */

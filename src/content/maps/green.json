@@ -11,7 +11,10 @@
   "tileheight": 16,
   "nextlayerid": 6,
   "nextobjectid": 9,
-  "properties": [{ "name": "placeholder", "type": "bool", "value": true }],
+  "properties": [
+    { "name": "placeholder", "type": "bool", "value": true },
+    { "name": "rideable", "type": "bool", "value": true }
+  ],
   "layers": [
     {
       "id": 1,
