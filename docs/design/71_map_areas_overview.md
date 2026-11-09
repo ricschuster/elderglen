@@ -64,7 +64,7 @@ so a map can be authored later from the note alone.
 | 4b | Quarry (built 2026-11-09, note 78) | Off the Mountain's east road. Regrowing stone and ore, the stonekeeper's camp. The Foragers' Shelf mends the bridge | #649 |
 | 5 | Forest part 2 (built 2026-11-09, note 72) | Farmstead and keeper's counter, hermit's tower and the Wanderer's camp. Names, stock and the hermit's teaching wait for #136 and #178 | #638 |
 | 6 | Lake cove | The Water room reward. Needs the delta and the full roster, and is small and late by design | #644 |
-| 7 | Hearthwell part 1 | The shell moves the hall and sawmill off the farm, joins Mountain and delta, and closes both loops of note 19. Interiors can be empty shells | #645 |
+| 7 | Hearthwell part 1 | The shell moves the hall and sawmill off the farm, joins Mountain and delta, and closes both loops of note 19. Interiors can be empty shells. Built 2026-11-09 (note 77 "Shell built") | #645 |
 | 8 | Hearthwell part 2 | Interiors by template. People, schedules and gifts ride with #599 | #646, #599 |
 | 9 | Beach elf's house | Waits on the story spine (#176) | #641 |
 

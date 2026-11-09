@@ -247,6 +247,12 @@ are not written yet), steps on the boat to the Lake cove, casts a rod on its wat
 opens the hidden treasure chest on the ledge (and finds it bare the second time), sleeps,
 then steps back on the boat. A scene restart stands in for the walk to the dock.
 
+`node scripts/playtest/hearthwell.mjs` (`npm run playtest:hearthwell`, about 2 minutes,
+`npm run dev` running) leaves the farm by its east exit, walks to the hall and sawmill doors
+and back, uses the carpenter, the store, the Help Wanted board and the smithy counter, reads
+the two Outpost boards, then goes out by the Mountain and delta exits and back, and home.
+A scene restart stands in for the first step onto the farm only.
+
 `node scripts/playtest/farmstead.mjs` (about 60 seconds, `npm run dev` running) walks
 the Forest's roads to the keeper's door, goes in, buys a young chicken at the counter
 (a coop is set by state), comes out, goes into the hermit's tower and speaks to her,

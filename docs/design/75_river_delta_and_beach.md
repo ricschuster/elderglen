@@ -55,7 +55,7 @@ issue 176).
 | Feature | Place (tiles) | Size | Notes |
 | --- | --- | --- | --- |
 | Farm exit | North edge, x 10 to 16, y 0 | 7 wide | Entry `from_farm` at (13, 3) |
-| Hearthwell exit | North edge, x 66 to 72, y 0 | 7 wide | Entry `from_hearthwell` at (69, 3). Staged until Hearthwell exists |
+| Hearthwell exit | North edge, x 66 to 72, y 0 | 7 wide | Entry `from_hearthwell` at (69, 3). Built with Hearthwell part 1 (#645, note 77 "Shell built") |
 | Marsh lake | x 8 to 38, y 28 to 52 | about 30 by 24 | Reeds, boardwalk on the north shore |
 | Main channel | x 62 to 66, y 0 to 50 | 4 to 5 wide | Runs into the sea at y 50 |
 | Side channel | x 50 to 53, y 18 to 30 | 3 wide | Feeds the marsh lake |
@@ -244,7 +244,7 @@ Build order steps 1 to 4 are built, except the pots and the Great Hearthfin lege
 - **Also fixed:** a map `region` that names a forage table was drawn as a grey hall
   room wash (it hit the Forest's onion bank); the wash is now for hall rooms only.
 - **Ferry:** built later (#644, 2026-11-09): the dock, the gated exit and the ruined and repaired art, see note 76 "Built status".
-- **Not built:** the Hearthwell exit, the elf's house
+- **Not built:** the elf's house (the Hearthwell exit was built by #645)
   (#641), shellfish and crab pots (nothing in the game makes a pot yet), the Pearl
   Lobster, the legend Great Hearthfin, and the fisher as a named person.
 - **Playtest:** `npm run playtest:delta` (leaves by the farm's south exit, casts a

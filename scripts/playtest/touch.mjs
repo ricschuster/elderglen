@@ -444,8 +444,14 @@ else {
 
 // 5. Hall by touch: in by the door, to a scroll, and back out.
 // Doors open on Action, not on a walk through.
-await walkTo(6, 21);
-await faceTo("down");
+await walkTo(38, 17);
+await faceTo("right");
+await actTool();
+await sleepMs(900);
+if ((await bot.dbg()).map !== "hearthwell")
+  finding("Action on the farm's east exit did not reach Hearthwell");
+await walkTo(99, 60);
+await faceTo("up");
 await actTool();
 await sleepMs(900);
 const inHall = await bot.dbg();
@@ -481,8 +487,14 @@ await walkTo(23, 18);
 await faceTo("down");
 await actTool();
 await sleepMs(900);
+if ((await bot.dbg()).map !== "hearthwell")
+  finding("Action on the hall door did not return to Hearthwell");
+await walkTo(1, 61);
+await faceTo("left");
+await actTool();
+await sleepMs(900);
 if ((await bot.dbg()).map !== "farm")
-  finding("Action on the hall door did not return to the farm");
+  finding("Action on the Hearthwell farm exit did not return to the farm");
 
 // 5b. Shipping bin by touch: tap a row to ship the stack, the prompt for part.
 await walkTo(8, 7);

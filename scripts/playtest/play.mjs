@@ -279,9 +279,12 @@ async function visitHall() {
   const list0 = await giveList();
   if (list0.length === 0) return;
   log("hall: can hand in", list0.map((g) => g[2]).join(","));
-  // The hall is a walkable interior: in by the door, to a scroll, and back.
-  await bot.walkTo(6, 21);
-  await walkThrough("down", 1200, "hall");
+  // The hall is in Hearthwell: out of the farm's east exit, along the middle
+  // street to the hall's door, then in to a scroll and back.
+  await bot.walkTo(38, 17);
+  await walkThrough("right", 1200, "hearthwell");
+  await bot.walkTo(99, 60);
+  await walkThrough("up", 1200, "hall");
   let first = true;
   const rooms = [...new Set(list0.map((g) => g[3]))];
   for (const room of rooms) {
@@ -319,7 +322,9 @@ async function visitHall() {
     if (closed.scenes.includes("end")) await endScreen();
   }
   await bot.walkTo(23, 18);
-  await walkThrough("down", 1200, "farm");
+  await walkThrough("down", 1200, "hearthwell");
+  await bot.walkTo(1, 61);
+  await walkThrough("left", 1200, "farm");
 }
 
 async function endScreen() {

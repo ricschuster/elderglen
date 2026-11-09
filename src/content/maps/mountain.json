@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 11,
-  "nextobjectid": 244,
+  "nextobjectid": 245,
   "properties": [
     { "name": "placeholder", "type": "bool", "value": true },
     { "name": "rideable", "type": "bool", "value": true },
@@ -5468,6 +5468,22 @@
             { "name": "entry", "type": "string", "value": "from_mountain" },
             { "name": "requires", "type": "string", "value": "quarry-open" }
           ]
+        },
+        {
+          "id": 244,
+          "name": "to_hearthwell",
+          "class": "exit",
+          "type": "exit",
+          "x": 704,
+          "y": 1104,
+          "width": 112,
+          "height": 16,
+          "properties": [
+            { "name": "map", "type": "string", "value": "hearthwell" },
+            { "name": "entry", "type": "string", "value": "from_mountain" }
+          ],
+          "rotation": 0,
+          "visible": true
         }
       ]
     },

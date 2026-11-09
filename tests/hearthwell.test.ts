@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { mapFiles, maps } from "../src/content/maps";
+import { BOARD_LINES, serviceLabel } from "../src/core/labels";
+import { newGame } from "../src/core/save";
+import { Walker } from "../scripts/sim/world";
 
 // The river layout pass of note 77 (#661): terrain, streets, bridges and lots.
 const town = maps.get("hearthwell");
@@ -194,5 +197,187 @@ describe("the Hearthwell river layout (note 77, #661)", () => {
     expect(d.x).toBe(70);
     expect(town.isWater(d.x, d.y - 1)).toBe(false);
     expect(town.isWater(d.x, 106)).toBe(true);
+  });
+});
+
+describe("the Hearthwell shell (note 77, #645)", () => {
+  const farmIds = ["farm", "farm-woodland"];
+
+  it("joins the farm, the Mountain and the delta both ways", () => {
+    const to = (id: string) => town.exits.find((e) => e.id === id);
+    expect(to("to_farm")).toMatchObject({
+      map: "farm",
+      entry: "from_hearthwell",
+    });
+    expect(to("to_mountain")).toMatchObject({
+      map: "mountain",
+      entry: "from_hearthwell",
+    });
+    expect(to("to_delta")).toMatchObject({
+      map: "delta",
+      entry: "from_hearthwell",
+    });
+    // Each exit stands on its reserved edge region.
+    for (const [exit, reserved] of [
+      ["to_farm", "exit-farm"],
+      ["to_mountain", "exit-mountain"],
+      ["to_delta", "exit-delta"],
+    ] as const) {
+      const e = to(exit)!;
+      const r = region(reserved);
+      expect([e.x, e.y, e.w, e.h]).toEqual([r.x, r.y, r.w, r.h]);
+    }
+    // No ring 2 exit until ring 2 has a map.
+    expect(town.exits.find((e) => e.map === "")).toBeUndefined();
+    expect(town.exits.map((e) => e.id).sort()).toEqual([
+      "hall",
+      "sawmill",
+      "to_delta",
+      "to_farm",
+      "to_mountain",
+    ]);
+    for (const id of farmIds)
+      expect(
+        maps.get(id).exits.find((e) => e.id === "hearthwell"),
+      ).toMatchObject({
+        map: "hearthwell",
+        entry: "from_farm",
+      });
+    expect(
+      maps.get("mountain").exits.find((e) => e.id === "to_hearthwell"),
+    ).toMatchObject({ map: "hearthwell", entry: "from_mountain" });
+    expect(
+      maps.get("delta").exits.find((e) => e.id === "to_hearthwell"),
+    ).toMatchObject({ map: "hearthwell", entry: "from_delta" });
+    expect(maps.get("delta").entry("from_hearthwell")).toMatchObject({
+      x: 69,
+      y: 3,
+    });
+    expect(maps.get("farm").entry("from_hearthwell")).toBeDefined();
+  });
+
+  it("takes the hall and sawmill doors off both farms and points the interiors here", () => {
+    for (const id of farmIds) {
+      const farm = maps.get(id);
+      for (const gone of ["hall", "sawmill"])
+        expect(farm.exits.find((e) => e.id === gone)).toBeUndefined();
+      for (const gone of ["from_hall", "from_sawmill"])
+        expect(farm.entry(gone)).toBeUndefined();
+      // The two building sites are open ground again.
+      expect(farm.isBlocked(6, 23)).toBe(false);
+      expect(farm.isBlocked(33, 9)).toBe(false);
+      // The shop, board and request counters stay on the farm.
+      for (const kind of ["shop", "orders", "requests"])
+        expect(farm.services.some((s) => s.kind === kind)).toBe(true);
+    }
+    expect(town.exits.find((e) => e.id === "hall")).toMatchObject({
+      map: "hall",
+    });
+    expect(maps.get("hall").exits[0]).toMatchObject({
+      map: "hearthwell",
+      entry: "from_hall",
+    });
+    expect(maps.get("sawmill").exits[0]).toMatchObject({
+      map: "hearthwell",
+      entry: "from_sawmill",
+    });
+  });
+
+  it("stands the hall and sawmill doors on their lots, above the entries", () => {
+    for (const id of ["hall", "sawmill"]) {
+      const door = town.exits.find((e) => e.id === id)!;
+      const lot = region(`lot-${id}`);
+      const entry = town.entry(`from_${id}`)!;
+      expect(door.y).toBe(lot.y + lot.h - 1);
+      expect(door.x).toBeGreaterThanOrEqual(lot.x);
+      expect(door.x).toBeLessThan(lot.x + lot.w);
+      expect([entry.x, entry.y]).toEqual([door.x, door.y + 1]);
+      expect(town.isBlocked(door.x, door.y)).toBe(false);
+    }
+  });
+
+  it("builds every lot as a solid building with one door tile on the bottom row", () => {
+    for (const lot of lots) {
+      let solid = 0;
+      let open = 0;
+      for (const [x, y] of inside(lot)) {
+        if (town.isBlocked(x, y)) solid++;
+        else open++;
+      }
+      const id = lot.id.slice(4);
+      const opens = ["hall", "sawmill"].includes(id);
+      expect(open, id).toBe(opens ? 1 : 0);
+      expect(solid + open, id).toBe(lot.w * lot.h);
+    }
+  });
+
+  it("puts the store and smithy counters on their door tiles, reached from the street", () => {
+    const store = town.services.find((s) => s.id === "shop")!;
+    const smithy = town.services.find((s) => s.id === "smithy")!;
+    expect(store).toMatchObject({ kind: "shop", x: 22, y: 28 });
+    expect(smithy).toMatchObject({ kind: "smith", x: 22, y: 89 });
+    const help = town.services.find((s) => s.kind === "requests")!;
+    expect(help.y).toBe(28);
+    expect(help.x).toBeGreaterThanOrEqual(region("lot-general-store").x);
+    expect(help.x).toBeLessThan(region("lot-general-store").x + 10);
+    const walkable = town.reachable(town.entry("from_farm")!);
+    for (const s of [store, smithy, help])
+      expect(walkable.has(`${s.x},${s.y + 1}`)).toBe(true);
+  });
+
+  it("hangs the road news and Special Orders boards on the Outpost wall", () => {
+    const outpost = region("lot-outpost");
+    for (const [id, kind] of [
+      ["road-news", "board-news"],
+      ["special-orders", "board-orders"],
+    ] as const) {
+      const s = town.services.find((x) => x.id === id)!;
+      expect(s.kind).toBe(kind);
+      expect(s.y).toBe(outpost.y + outpost.h - 1);
+      expect(BOARD_LINES[kind]).toBeDefined();
+      expect(serviceLabel(kind, id)).toBeDefined();
+    }
+  });
+
+  it("reaches the hall, sawmill and shop from the house through Hearthwell", () => {
+    const seen = new Map<string, string[]>([["house", ["house"]]]);
+    const queue = ["house"];
+    for (let i = 0; i < queue.length; i++) {
+      const at = queue[i]!;
+      for (const e of maps.get(at).exits) {
+        const to = e.map === "farm" ? "farm" : e.map;
+        if (!to || seen.has(to) || !mapFiles[to]) continue;
+        seen.set(to, [...seen.get(at)!, to]);
+        queue.push(to);
+      }
+    }
+    expect(seen.get("hall")).toEqual(["house", "farm", "hearthwell", "hall"]);
+    expect(seen.get("sawmill")).toEqual([
+      "house",
+      "farm",
+      "hearthwell",
+      "sawmill",
+    ]);
+    expect(seen.get("hearthwell")).toBeDefined();
+    // The sim's walker finds them the same way and the carpenter is reachable.
+    const g = newGame();
+    const walker = new Walker(g);
+    expect(walker.goToService("hall", "larder")).toBe(true);
+    expect(walker.mapId).toBe("hall");
+    expect(walker.goToService("sawmill", "carpenter")).toBe(true);
+    expect(walker.goToService("hearthwell", "shop")).toBe(true);
+    expect(walker.goToService("farm", "shop")).toBe(true);
+    expect(walker.mapId).toBe("farm");
+  });
+
+  it("passes the map check with every edge exit reachable", () => {
+    expect(maps.problems()).toEqual([]);
+    for (const e of ["from_farm", "from_mountain", "from_delta", "from_hall"]) {
+      const walkable = town.reachable(town.entry(e)!);
+      for (const x of town.exits) {
+        const any = inside(x).some(([tx, ty]) => walkable.has(`${tx},${ty}`));
+        expect(any, `${x.id} from ${e}`).toBe(true);
+      }
+    }
   });
 });

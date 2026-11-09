@@ -16,6 +16,8 @@ const EXITS: Record<string, string> = {
   greenhouse: "Greenhouse",
   barn: "Barn",
   forest: "Forest",
+  hearthwell: "Hearthwell",
+  to_hearthwell: "Hearthwell",
   to_farm: "Farm",
   to_secret_woods: "Secret Woods",
   to_forest: "Forest",
@@ -51,6 +53,8 @@ const SERVICES: Record<string, string> = {
   "camp-chest": "Camp Chest",
   orders: "Orders Board",
   requests: "Request Board",
+  "board-news": "Road News Board",
+  "board-orders": "Special Orders Board",
   festival: "Village Green",
   "festival-leave": "Way Home",
   "hedge-chest": "Chest",
@@ -95,3 +99,12 @@ export function serviceLabel(kind: string, id: string): string | undefined {
     return id.startsWith("scare") ? "Decoration" : "Villager";
   return SERVICES[kind];
 }
+
+/**
+ * What the Outpost's two boards say until their systems exist (note 57, built
+ * as stand-ins by Hearthwell part 1). Keyed by service kind.
+ */
+export const BOARD_LINES: Record<string, string> = {
+  "board-news": "The road news board. Nothing is posted yet.",
+  "board-orders": "The Special Orders board. It is empty for now.",
+};

@@ -80,7 +80,7 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            { "name": "map", "type": "string", "value": "farm" },
+            { "name": "map", "type": "string", "value": "hearthwell" },
             { "name": "entry", "type": "string", "value": "from_sawmill" }
           ]
         },

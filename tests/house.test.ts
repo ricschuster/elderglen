@@ -389,12 +389,15 @@ describe("house upgrade order", () => {
 });
 
 describe("sawmill map", () => {
-  it("joins the farm's sawmill door both ways", () => {
+  it("joins Hearthwell's sawmill door both ways", () => {
+    expect(
+      maps.get("hearthwell").exits.find((e) => e.id === "sawmill"),
+    ).toMatchObject({ map: "sawmill", entry: "door" });
     expect(
       maps.get("farm").exits.find((e) => e.id === "sawmill"),
-    ).toMatchObject({ map: "sawmill", entry: "door" });
+    ).toBeUndefined();
     expect(maps.get("sawmill").exits[0]).toMatchObject({
-      map: "farm",
+      map: "hearthwell",
       entry: "from_sawmill",
     });
   });

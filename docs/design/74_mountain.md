@@ -84,7 +84,7 @@ forge, and goes on south to the river road.
 | Object | Name | Target | Notes |
 | --- | --- | --- | --- |
 | exit | `to_forest` | `forest` entry `from_mountain` | West edge |
-| exit | `to_hearthwell` | `hearthwell` entry `from_mountain` | South edge. Omitted until Hearthwell exists (staged) |
+| exit | `to_hearthwell` | `hearthwell` entry `from_mountain` | South edge. Built with Hearthwell part 1 (#645, note 77 "Shell built") |
 | exit | `mine` | `mine` entry `door` | `requires: mines-open`. Replaces the farm's `mine` door |
 | exit | `forge` | `forge` entry `door` | Smith dwarf's trading hut |
 | exit | `to_quarry` | `quarry` entry `from_mountain` | East edge, `requires: quarry-open`. Staged |
