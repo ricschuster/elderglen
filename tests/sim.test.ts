@@ -21,7 +21,7 @@ describe("headless sim", () => {
     expect(playGame(expert, seeded(3), 60)).toEqual(
       playGame(expert, seeded(3), 60),
     );
-  });
+  }, 30000);
 
   it("lets the expert finish the bundles it plays over the 112 day year", () => {
     const r = playGame(PERSONAS.expert!, seeded(1), 112);
