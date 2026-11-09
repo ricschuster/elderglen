@@ -94,5 +94,69 @@
         "spring": "spring-onion"
       }
     }
+  },
+  "secret-woods": {
+    "cap": {
+      "spring": 4,
+      "summer": 4,
+      "fall": 4,
+      "winter": 6
+    },
+    "tables": {
+      "default": {
+        "spring": [
+          {
+            "id": "horseradish",
+            "weight": 40
+          },
+          {
+            "id": "morel",
+            "weight": 35
+          },
+          {
+            "id": "leek",
+            "weight": 25
+          }
+        ],
+        "summer": [
+          {
+            "id": "fiddlehead-fern",
+            "weight": 75
+          },
+          {
+            "id": "wild-ginger",
+            "weight": 25
+          }
+        ],
+        "fall": [
+          {
+            "id": "field-mushroom",
+            "weight": 40
+          },
+          {
+            "id": "chanterelle",
+            "weight": 35
+          },
+          {
+            "id": "wild-garlic",
+            "weight": 25
+          }
+        ],
+        "winter": [
+          {
+            "id": "snowcap",
+            "weight": 35
+          },
+          {
+            "id": "holly-sprig",
+            "weight": 40
+          },
+          {
+            "id": "winter-cress",
+            "weight": 25
+          }
+        ]
+      }
+    }
   }
 }

@@ -211,3 +211,9 @@ dummy, fights a creature on mine floor 1 and is knocked out, checking health, th
 into the Forest, checks its own trees, rocks and forage are swapped in, fells a
 grove tree, picks forage, passes the night away from the farm and leaves by the
 south road.
+
+`node scripts/playtest/secret-woods.mjs` (about 25 seconds, `npm run dev` running)
+grants a steel axe, starts at the Forest's `from_secret_woods` entry (a scene
+restart, not a walk), checks the log is solid, chops it for 8 Hardwood, leaves by
+the west exit into the Secret Woods, chops a large stump for 2 Hardwood, sleeps
+and checks the stump and forage are back.

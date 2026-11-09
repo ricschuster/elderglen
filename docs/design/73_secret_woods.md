@@ -1,7 +1,8 @@
-# 73 Secret Woods (draft)
+# 73 Secret Woods (steps 1 to 4 built)
 
-Status: draft, written 2026-11-08, owner answers recorded the same day (note 71). Nothing here is
-built. M3b. It designs the Secret Woods map and settles the hardwood supply that note
+Status: draft, written 2026-11-08, owner answers recorded the same day (note 71).
+Steps 1 to 4 are built (2026-11-09, #639, see "Built status" at the end); the pond's fish and
+the statue are not. M3b. It designs the Secret Woods map and settles the hardwood supply that note
 59 decided. Overview and owner questions: `71_map_areas_overview.md`. Stardew
 facts are from the saved Secret Woods, Hardwood and Large Log pages (read
 2026-11-08), as ideas only (ADR 0002).
@@ -163,3 +164,36 @@ Work package: "Secret Woods map, hardwood stumps and the massive log" (steps 1 t
 ## Owner answer 2026-11-08m
 
 The pond's unique fish is the **Mossback**, a working name, a shy mossy fish. Its bar motion, price and conditions are designed with the roster (`21_fishing.md`).
+
+## Built status (2026-11-09, #639)
+
+Build order steps 1 to 4 and the stand-in removal are built.
+
+- **Map:** `src/content/maps/secret-woods.json`, 48 by 40, drafted by
+  `scripts/gen-secret-woods-map.mjs` (the JSON is the source from then on).
+  Properties `wild`, `rideable`, `waterKind` woods-pond and `stumpRegrowDays` 1.
+  Glade, covered passage (x 38 to 39, y 22 to 26) and hollow as in the sketch,
+  six `stump` objects (kind oak) at the note's tiles, 22 cosmetic trees in each
+  of glade and hollow, 6 rocks, 8 twigs and 14 weeds at the start, 30 forage
+  spots. Entry `from_forest` (45, 11), exit `to_forest` (x 47, y 10 to 13).
+- **Pond:** the water tiles are placed and typed `woods-pond`, so the map is
+  walkable and the pond is blocked. It has no fish table yet: fishing waits for
+  the fish slice (step 5).
+- **Stumps:** `stumpRegrowDays` 1 gives a chopped stump a one day timer, and
+  `sleep()` ticks it through `areasEndDay`. Copper axe or better, 2 Hardwood,
+  3 Foraging XP, a basic axe is refused (the existing large stump rules).
+- **Forage:** `forage-areas.json` entry `secret-woods`, the table above, cap 4 a
+  morning and 6 in winter.
+- **The log:** two `log` objects on the Forest at (7, 15) and (7, 16) share the
+  flag `secret-log-cleared`, so the two wide corridor is sealed by either. A
+  conditional layer `log` (`unless` the flag) draws it. The scene now builds its
+  door conditions from the saved flags (they were left out before) and refreshes
+  them, and the log art, after every tool use, so the exit opens as soon as the
+  log is chopped.
+- **Stand-in removed:** `carpenter-standin.json`, `core/carpenter.ts`, the
+  carpenter's Hardwood row and its test are deleted.
+- **Not built:** the pond's fish (the Mossback and the two common ones), the
+  spirit's statue, digging spots, creatures and Mahogany.
+- **Playtest:** `npm run playtest:secret-woods` (steel axe, log, woods, stump,
+  night). It starts by a scene restart at the Forest entry, not a walk from the
+  farm.

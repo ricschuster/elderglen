@@ -71,7 +71,14 @@ import {
   rideable,
   speedFactor,
 } from "../core/horse";
-import { exitOpen, FarmMap, layersAtTier, type Exit } from "../core/map";
+import {
+  exitOpen,
+  FarmMap,
+  layersAtTier,
+  layerShows,
+  type Exit,
+  type TiledLayer,
+} from "../core/map";
 import { exitLabel, serviceLabel } from "../core/labels";
 import {
   facingFrom,
@@ -308,6 +315,11 @@ export class FarmScene extends Phaser.Scene {
   private map!: FarmMap;
   /** The building tier the map was loaded at: the house rooms built so far. */
   private tier = 0;
+  /** Drawn layers that show only while a condition holds (`when` or `unless`), such as the log. */
+  private conditional: {
+    drawn: Phaser.GameObjects.GameObject & { setVisible(v: boolean): unknown };
+    layer: TiledLayer;
+  }[] = [];
   private controls!: Controls;
   private player!: Phaser.GameObjects.Image;
   private target!: Phaser.GameObjects.Rectangle;
@@ -362,6 +374,7 @@ export class FarmScene extends Phaser.Scene {
     this.ladderArmed = true;
     this.floor = mineFloorOf(this.mapId);
     this.floorState = undefined;
+    this.conditional = [];
     this.refreshHolds();
     this.heldMs = 0;
     this.mouseAim = false;
@@ -415,6 +428,11 @@ export class FarmScene extends Phaser.Scene {
       if (layer.type !== "tilelayer" || layer.visible === false) continue;
       const drawn = tilemap.createLayer(layer.name, tileset);
       if (drawn) world.push(drawn);
+      if (
+        drawn &&
+        layer.properties?.some((q) => q.name === "when" || q.name === "unless")
+      )
+        this.conditional.push({ drawn, layer });
     }
 
     const ts = this.map.tileSize;
@@ -1504,6 +1522,8 @@ export class FarmScene extends Phaser.Scene {
     this.report(
       useHeld(this.state, this.map, held, front.x, front.y, this.floor),
     );
+    // Chopping the massive log raises a world flag: open its exit, drop its art.
+    this.refreshHolds();
   }
 
   /** Use a rod: it needs water in front of the player within the rod's range (note 21). */
@@ -1766,14 +1786,15 @@ export class FarmScene extends Phaser.Scene {
 
   /** The conditions that open doors. Rebuilt after sleeping, when a building may have landed overnight. */
   private refreshHolds(): void {
-    this.holds = new Set(
-      minesOpen(this.state.day.clock.day) ? ["mines-open"] : [],
-    );
+    this.holds = new Set(holdsOf(this.state));
+    if (minesOpen(this.state.day.clock.day)) this.holds.add("mines-open");
     if (this.state.cave.open) this.holds.add("cave-open");
     if (this.state.animals.coopBuilt) this.holds.add(COOP_BUILT);
     if (this.state.animals.barnBuilt) this.holds.add(BARN_BUILT);
     for (const h of houseHolds(this.state.houseTier)) this.holds.add(h);
     for (const h of greenhouseHolds(this.state)) this.holds.add(h);
+    for (const c of this.conditional)
+      c.drawn.setVisible(layerShows(c.layer, this.holds));
   }
 
   private endDay(): void {

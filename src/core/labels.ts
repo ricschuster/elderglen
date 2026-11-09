@@ -17,6 +17,8 @@ const EXITS: Record<string, string> = {
   barn: "Barn",
   forest: "Forest",
   to_farm: "Farm",
+  to_secret_woods: "Secret Woods",
+  to_forest: "Forest",
 };
 
 const SERVICES: Record<string, string> = {
