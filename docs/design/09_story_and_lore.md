@@ -510,8 +510,23 @@ nothing and she never mentions it (see Neglect).
   season. It shows the unfinished business without a word.
 - **Home (decided).** A small cottage on the dunes of the Beach, with her ship
   seen moored below. This fits the shop and home plan in note 75.
-  Open: what the unfinished business is, her voice and manner, and the pin's
-  exact price.
+- **Her unfinished business (decided, 2026-11-09, replaces the late-reveal line
+  above).** It ties to a ring 2 character: an elf of the ring 2 haven who knew
+  her long ago, a slot and not yet a person. Nothing in ring 1 can resolve it.
+  It follows Birdie's quest on Ginger Island, The Pirate's Wife, where an old
+  woman on the beach asks the player to find a keepsake of her husband's (checked
+  on the saved Special Orders page). Ours: she gives the player a small token from
+  her old home to take to the haven elf, and the player brings back a keepsake
+  that answers it, ending in a quiet scene. Whether she then sails, stays, or has
+  a part in ring 2 or ring 3 is open.
+- **Voice (decided).** Dreamy and courteous, with plans that slip: soft,
+  old-fashioned politeness, a little drifting, and "before I go" or "tomorrow,
+  perhaps" that never lands. Distinct from the warden head (dry, brief) and the
+  hermit (scatty).
+- **The pin (decided).** At 3 hearts she opens the half-packed trunk and sells
+  the pin she had packed for the voyage, since she is not using it yet.
+  Open: the haven elf's slot in ring 2, the keepsake and token, whether she
+  leaves or stays, and the pin's exact price (tuning note 07).
 
 ## Cast balance
 

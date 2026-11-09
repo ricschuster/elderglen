@@ -46,7 +46,7 @@ Hardwood sale (200g, `src/content/carpenter-standin.json`, note 43). It comes ou
 in the Secret Woods work package, #639, when the six daily stumps exist (owner,
 2026-11-08). Mahogany stays off the map for now.
 
-Sea elf (2026-11-09, note 09, #176): Ondrel, knew Oriel slightly, cannot say why she has not sailed home across the sea, travelling coat and half-packed trunk, cottage on the Beach dunes. Open: what her unfinished business is, her voice, the pin's price.
+Sea elf (2026-11-09, note 09, #176): Ondrel, knew Oriel slightly, cannot say why she has not sailed home across the sea, travelling coat and half-packed trunk, cottage on the Beach dunes. Her unfinished business ties to a haven elf in ring 2 (a keepsake quest like Birdie's), voice dreamy and courteous, the pin comes from her trunk. Open: the haven elf's slot, the keepsake, whether she leaves or stays, the pin's price.
 
 Warden head, two items left open (2026-11-09, note 09 open list, #177): (1) how her old line matters to the ending, to settle with the third community project (#5) and ADR 0013; (2) the exact stops, finds and ring 2 milestones for her three stage 5 errands. Tuning items (trail and gift values, shop list, token prices, board order list) wait for note 07.
 
