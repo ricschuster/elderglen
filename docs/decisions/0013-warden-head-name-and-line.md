@@ -35,4 +35,5 @@ ADR 0003 still holds: nothing may come from Tolkien's content.
 - Her look, voice and stage 5 errands keep to the decided shape. The old line
   can inform stage 4 and stage 5 talk, not new errands.
 - The warden head is no longer a pure Qi-type figure. She has a part in the
-  ending. This should be set against issue #5 and the Last Seat in note 09.
+  ending. This is set against issue #5 and the Last Seat in note 09 when ring 3 is
+  designed (M6, after ring 2), not during ring 1 (owner, 2026-11-09).
