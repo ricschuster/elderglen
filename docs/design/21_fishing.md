@@ -608,8 +608,10 @@ Each followed Stardew, checked on the saved Fishing and Bait pages unless said.
   is refused with a low-energy message when energy is below the cost.
 - **A perfect catch lifts quality one grade only if the fish was already silver or
   better**, so silver to gold for us (no iridium grade). Built as drafted.
-- **Winter keeps a thinned roster** (Stardew has fewer winter fish). The count in
-  Stardew is unchecked (SC-92).
+- **Winter keeps a thinned roster** (owner choice). Checked on the saved Fish page
+  (SC-92): Stardew's winter is not thin, with about 31 fish against 28 in
+  spring, 34 in summer and 33 in fall. Our thin winter is therefore our own
+  choice, not Stardew's. Open for the owner: keep it thin or match Stardew.
 - **The Magpie Hook treasure appears as a chest in the bar** during the minigame
   and must be caught as well as the fish (Stardew's treasure chest, saved page: it
   shows 1 to 3 seconds in). This replaces "rolls on a landed fish". The one in five
