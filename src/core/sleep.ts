@@ -28,6 +28,7 @@ import { maps } from "../content/maps";
 import { storeOf } from "./mapstore";
 import { areasEndDay, leaveArea } from "./areas";
 import { quarryBridgeNews } from "./quarry";
+import { ferryNews } from "./cove";
 
 /**
  * True when something stands in the 3x3 around a tile that stops a young fruit
@@ -138,6 +139,8 @@ export interface SleepReport {
   requestsLapsed: string[];
   /** True on the first morning after the Foragers' Shelf is done: the Quarry bridge is mended (note 78). */
   quarryBridge: boolean;
+  /** True on the first morning after the Water room is done: the ferry is repaired (note 76). */
+  ferryMended: boolean;
   /** Names of young fruit trees that could not grow, since something stood in their 3x3. */
   stuckTrees: string[];
 }
@@ -317,6 +320,7 @@ export function sleep(
     requestsLapsed,
     stuckTrees: stuck.map((t) => fruitTreeById(t.id)?.name ?? t.id),
     quarryBridge: quarryBridgeNews(g),
+    ferryMended: ferryNews(g),
   };
 }
 

@@ -32,6 +32,7 @@
     "playtest:forge": "node scripts/playtest/forge.mjs",
     "playtest:farmstead": "node scripts/playtest/farmstead.mjs",
     "playtest:quarry": "node scripts/playtest/quarry.mjs",
+    "playtest:cove": "node scripts/playtest/cove.mjs",
     "sim": "node scripts/sim/run.mjs scripts/sim/main.ts",
     "android:sync": "npm run build && cap sync android",
     "android:apk": "node scripts/android/build-apk.mjs",

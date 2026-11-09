@@ -53,6 +53,8 @@ export function reportLines(r: SleepReport): string[] {
     lines.push(
       "The bridge east of the stonekeeper's yard is mended. The Quarry is open.",
     );
+  if (r.ferryMended)
+    lines.push("The ferry on the delta is repaired. The Lake cove is open.");
   if (r.houseFinished) {
     lines.push("The carpenter has finished. Your new rooms are ready.");
     if (r.houseTier === 2) lines.push(WAITING_ROOMS_LINE);

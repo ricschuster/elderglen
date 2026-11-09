@@ -41,7 +41,11 @@ describe("fish data", () => {
     expect(new Set(FISH.map((f) => f.id)).size).toBe(FISH.length);
     const band = { common: [40, 90], uncommon: [100, 200], rare: [250, 500] };
     for (const f of FISH) {
-      const [lo, hi] = band[f.rarity] as [number, number];
+      // Cove fish are the rarest ordinary fish, 400 to 700g (note 21).
+      const [lo, hi] = (f.water === "cove" ? [400, 700] : band[f.rarity]) as [
+        number,
+        number,
+      ];
       expect(f.sellPrice, f.id).toBeGreaterThanOrEqual(lo);
       expect(f.sellPrice, f.id).toBeLessThanOrEqual(hi);
       expect(f.length[0], f.id).toBeLessThan(f.length[1]);

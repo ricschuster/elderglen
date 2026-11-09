@@ -1,3 +1,4 @@
+import { coveHolds } from "./cove";
 import { greenhouseHolds } from "./greenhouse";
 import { minesOpen } from "./mines";
 import { quarryHolds } from "./quarry";
@@ -25,6 +26,7 @@ export function holdsOf(g: GameState): Set<string> {
   const holds = new Set([
     ...greenhouseHolds(g),
     ...quarryHolds(g),
+    ...coveHolds(g),
     ...(g.flags ?? []),
   ]);
   // The rockfall below the mine mouth is cleared on the day the mines open.

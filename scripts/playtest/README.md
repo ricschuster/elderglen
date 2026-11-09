@@ -241,6 +241,12 @@ Quarry, speaks to the stonekeeper at his camp, breaks a rock with the pickaxe, t
 sleeps and checks that nodes came back and the morning report told of the bridge. A
 scene restart stands in for the walk from the Forest.
 
+`node scripts/playtest/cove.mjs` (about 60 seconds, `npm run dev` running) finds the
+delta's ferry a wreck, repairs it by the `cove-open` world flag (the Water room bundles
+are not written yet), steps on the boat to the Lake cove, casts a rod on its water,
+opens the hidden treasure chest on the ledge (and finds it bare the second time), sleeps,
+then steps back on the boat. A scene restart stands in for the walk to the dock.
+
 `node scripts/playtest/farmstead.mjs` (about 60 seconds, `npm run dev` running) walks
 the Forest's roads to the keeper's door, goes in, buys a young chicken at the counter
 (a coop is set by state), comes out, goes into the hermit's tower and speaks to her,

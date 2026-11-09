@@ -454,5 +454,101 @@
     "difficulty": 75,
     "sellPrice": 320,
     "length": [40, 100]
+  },
+  {
+    "id": "pearlback",
+    "name": "Pearlback",
+    "water": "cove",
+    "seasons": ["spring", "summer", "fall", "winter"],
+    "time": "day",
+    "rarity": "uncommon",
+    "behaviour": "smooth",
+    "difficulty": 40,
+    "sellPrice": 400,
+    "length": [25, 60]
+  },
+  {
+    "id": "cove-lantern",
+    "name": "Cove Lantern",
+    "water": "cove",
+    "seasons": ["spring", "summer", "fall", "winter"],
+    "time": "night",
+    "rarity": "uncommon",
+    "behaviour": "floater",
+    "difficulty": 50,
+    "sellPrice": 450,
+    "length": [20, 45]
+  },
+  {
+    "id": "still-water-gar",
+    "name": "Still-water Gar",
+    "water": "cove",
+    "seasons": ["spring", "summer"],
+    "time": "day",
+    "rarity": "uncommon",
+    "behaviour": "sinker",
+    "difficulty": 45,
+    "sellPrice": 420,
+    "length": [50, 110]
+  },
+  {
+    "id": "velvet-koi",
+    "name": "Velvet Koi",
+    "water": "cove",
+    "seasons": ["fall"],
+    "time": "dusk",
+    "rarity": "rare",
+    "behaviour": "smooth",
+    "difficulty": 65,
+    "sellPrice": 600,
+    "length": [40, 90]
+  },
+  {
+    "id": "hush",
+    "name": "Hush",
+    "water": "cove",
+    "seasons": ["spring", "summer", "fall", "winter"],
+    "time": "dawn",
+    "rarity": "rare",
+    "behaviour": "dart",
+    "difficulty": 70,
+    "sellPrice": 650,
+    "length": [30, 70]
+  },
+  {
+    "id": "dusk-opal",
+    "name": "Dusk Opal",
+    "water": "cove",
+    "seasons": ["spring", "summer", "fall", "winter"],
+    "time": "dusk",
+    "rarity": "rare",
+    "behaviour": "mixed",
+    "difficulty": 65,
+    "sellPrice": 620,
+    "length": [25, 55]
+  },
+  {
+    "id": "deepglow",
+    "name": "Deepglow",
+    "water": "cove",
+    "seasons": ["winter"],
+    "time": "night",
+    "rarity": "rare",
+    "behaviour": "floater",
+    "difficulty": 75,
+    "sellPrice": 700,
+    "length": [45, 100]
+  },
+  {
+    "id": "shell-ghost",
+    "name": "Shell Ghost",
+    "water": "cove",
+    "seasons": ["spring", "summer", "fall", "winter"],
+    "time": "rain",
+    "rarity": "rare",
+    "behaviour": "sinker",
+    "difficulty": 70,
+    "sellPrice": 680,
+    "length": [30, 65]
   }
 ]

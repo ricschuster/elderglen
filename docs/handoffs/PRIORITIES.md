@@ -50,7 +50,7 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
    regrowing stone and ore and the dwarf's camp, note 78 "Built status"), Forest part 2
    (#638 built 2026-11-09: the farmstead and keeper's counter that now sells young animals
    and hay, the hermit's tower and the Wanderer's camp; names, the hermit's stock and
-   the paddock animals wait, note 72 "Built status"), Lake cove (#644), Hearthwell shell (#645) and interiors (#646), Beach
+   the paddock animals wait, note 72 "Built status"), Lake cove (#644 built 2026-11-09: the cove map, the ferry on the delta, the Water room gate, 8 cove fish, forage and the treasure chest; the Hearthwell Carp legend and pots wait, and the gate cannot open until bundles 13 to 18 exist, note 76 "Built status"), Hearthwell shell (#645) and interiors (#646), Beach
    elf (#641, waits on the story spine). Changed order since the draft: the Quarry
    is new at step 4b and the maps moved up from M3c. Open design items left:
    Hearthwell's river layout (two arms chosen, detail not designed). The cove treasure spot is settled.
