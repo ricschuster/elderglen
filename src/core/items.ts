@@ -220,6 +220,21 @@ for (const l of LURES)
     buyPrice: l.price,
     keep: true,
   });
+/**
+ * The Homeward pin (note 09, #641): Thalwen sells it from her trunk, one only.
+ * It is kept and cannot be sold. The price is a placeholder (note 07), a little
+ * under the 2,000,000g the saved Krobus page gives for Stardew's Return Scepter.
+ * It does nothing yet: the warp rings it would return from are not built.
+ */
+export const HOMEWARD_PIN = "homeward-pin";
+export const HOMEWARD_PIN_PRICE = 1_500_000;
+items.set(HOMEWARD_PIN, {
+  id: HOMEWARD_PIN,
+  name: "Homeward pin",
+  sellPrice: 0,
+  buyPrice: HOMEWARD_PIN_PRICE,
+  keep: true,
+});
 /** Trinkets from the Magpie Hook: sellable, giftable curios (note 21). */
 for (const t of TRINKETS)
   items.set(t.id, { id: t.id, name: t.name, sellPrice: t.sellPrice });
@@ -283,6 +298,7 @@ const GROUPS: [string, string[]][] = [
     "Fish and rods",
     [...FISH, ...RODS, ...BAITS, ...LURES, ...TRINKETS].map((f) => f.id),
   ],
+  ["Keepsakes", [HOMEWARD_PIN]],
   ["Wood and fibre", ["wood", "hardwood", "sap", "fiber", "clay", "hay"]],
 ];
 for (const [group, ids] of GROUPS)

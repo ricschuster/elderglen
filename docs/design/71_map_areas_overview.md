@@ -66,7 +66,7 @@ so a map can be authored later from the note alone.
 | 6 | Lake cove | The Water room reward. Needs the delta and the full roster, and is small and late by design | #644 |
 | 7 | Hearthwell part 1 | The shell moves the hall and sawmill off the farm, joins Mountain and delta, and closes both loops of note 19. Interiors can be empty shells. Built 2026-11-09 (note 77 "Shell built") | #645 |
 | 8 | Hearthwell part 2 | Interiors by template (built 2026-11-09, #646, note 77 "Interiors built"). People, schedules and gifts ride with #599 | #646, #599 |
-| 9 | Beach elf's house | Waits on the story spine (#176) | #641 |
+| 9 | Beach elf's house (built 2026-11-09, note 75 "Elf's house built") | Cottage on the dunes, one room, the Homeward pin stall as a stand-in counter | #641 |
 
 **Hearthwell is last in full.** The town needs the cast list (#136) and schedules
 (#599) before it has anyone in it, and it is the largest area. Only its empty

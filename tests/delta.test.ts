@@ -74,6 +74,7 @@ describe("the River delta map (note 75, steps 1 to 4)", () => {
 
   it("has the Hearthwell exit and the ferry (notes 76 and 77)", () => {
     expect(delta.exits.map((e) => e.id).sort()).toEqual([
+      "elf",
       "ferry",
       "fisher",
       "to_farm",

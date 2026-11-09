@@ -908,3 +908,6 @@ Source: `src/core/quests.ts`, `src/content/requests.json`.
   250g. One input, one dye, 1 day (1,600 machine minutes). Every dye sells for
   120g. Dyer's bundle: 4 of daffodil, sweet pea, red cabbage, cranberry, bramble
   berry, crocus, in the Hearth room.
+- Homeward pin (2026-11-09, #641, placeholder): 1,500,000g at Thalwen's stall, one only,
+  cannot be sold back. A little under Stardew's Return Scepter at 2,000,000g (saved Krobus
+  page), so year 1 is unlikely (note 09). Not gated at 3 hearts until friendship exists.

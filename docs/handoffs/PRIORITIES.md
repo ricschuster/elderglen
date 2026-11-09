@@ -51,7 +51,7 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
    (#638 built 2026-11-09: the farmstead and keeper's counter that now sells young animals
    and hay, the hermit's tower and the Wanderer's camp; names, the hermit's stock and
    the paddock animals wait, note 72 "Built status"), Lake cove (#644 built 2026-11-09: the cove map, the ferry on the delta, the Water room gate, 8 cove fish, forage and the treasure chest; the Hearthwell Carp legend and pots wait, and the gate cannot open until bundles 13 to 18 exist, note 76 "Built status"), Hearthwell shell (#645 built 2026-11-09: farm, Mountain and delta exits, the 12 buildings as solid exteriors, the hall and sawmill doors moved off the farm, store, smithy and Outpost board stand-ins; note 77 "Shell built") and interiors (#646 built 2026-11-09: eleven interior shells, the ten shut doors open, store and smith counters moved inside, no people; the farm keeps its own counters pending an owner decision, note 77 "Interiors built"), Beach
-   elf (#641, waits on the story spine). Changed order since the draft: the Quarry
+   elf (#641 built 2026-11-09: the cottage, its room and the Homeward pin stall as a stand-in counter at a placeholder 1,500,000g, not gated by hearts; note 75 "Elf's house built"). Changed order since the draft: the Quarry
    is new at step 4b and the maps moved up from M3c. Open design items left:
    none on Hearthwell's river layout (built as terrain in #661, 2026-11-09: the map file with arms, bridges, streets and 12 reserved lots, no buildings, note 77 "Built status"). The cove treasure spot is settled.
 4. **Art direction and audio plan.** Character art (note 15), ruined and

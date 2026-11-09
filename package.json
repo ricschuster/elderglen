@@ -32,6 +32,7 @@
     "playtest:forge": "node scripts/playtest/forge.mjs",
     "playtest:farmstead": "node scripts/playtest/farmstead.mjs",
     "playtest:quarry": "node scripts/playtest/quarry.mjs",
+    "playtest:beach-elf": "node scripts/playtest/beach-elf.mjs",
     "playtest:cove": "node scripts/playtest/cove.mjs",
     "playtest:hearthwell": "node scripts/playtest/hearthwell.mjs",
     "sim": "node scripts/sim/run.mjs scripts/sim/main.ts",

@@ -255,6 +255,11 @@ three burrows, reads the two Outpost boards, then goes out by the Mountain and d
 and back, and home.
 A scene restart stands in for the first step onto the farm only.
 
+`node scripts/playtest/beach-elf.mjs` (`npm run playtest:beach-elf`, about 2 minutes,
+`npm run dev` running) walks the Beach dunes to Thalwen's cottage door, goes in, opens the
+pin stall, is refused the Homeward pin with 100g, buys it with a full purse, is refused a
+second, and walks out. A scene restart stands in for the walk from the farm.
+
 `node scripts/playtest/farmstead.mjs` (about 60 seconds, `npm run dev` running) walks
 the Forest's roads to the keeper's door, goes in, buys a young chicken at the counter
 (a coop is set by state), comes out, goes into the hermit's tower and speaks to her,
