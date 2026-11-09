@@ -229,3 +229,8 @@ leaves the Forest by its east exit onto the Mountain, finds the rockfall shut be
 Spring 5, casts a rod on the lake and the river, sets day 5, walks through the cleared
 rockfall to the mine mouth, goes into the mine hall and back out, then sleeps. It
 does not play the farm's walk to the Mountain (a scene restart stands in for it).
+
+`node scripts/playtest/forge.mjs` (about 40 seconds, `npm run dev` running) walks to the
+Mountain's forge door, goes in, uses the smith's counter (the dwarf sells and buys ore),
+comes out, then speaks to the stonekeeper in his yard over the footbridge. A scene
+restart stands in for the walk from the Forest.

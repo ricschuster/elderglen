@@ -27,3 +27,7 @@ export function deliverFurnace(g: GameState): boolean {
   g.furnace.gifted = true;
   return true;
 }
+
+/** What the stonekeeper dwarf says at his bench in the yard (note 74). */
+export const STONEKEEPER_LINE =
+  "The stonekeeper taps a block. 'The bridge east is out. Come back when the hall has mended it.'";

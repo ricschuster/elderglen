@@ -130,20 +130,6 @@
           ]
         },
         {
-          "id": 86,
-          "name": "smith",
-          "class": "service",
-          "type": "service",
-          "x": 88,
-          "y": 24,
-          "width": 0,
-          "height": 0,
-          "point": true,
-          "rotation": 0,
-          "visible": true,
-          "properties": [{ "name": "kind", "type": "string", "value": "smith" }]
-        },
-        {
           "id": 87,
           "name": "stairs",
           "class": "service",

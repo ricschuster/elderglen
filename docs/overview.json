@@ -412,7 +412,7 @@
         },
         {
           "s": "open",
-          "t": "Smith split (owner, 2026-11-08): the Hearthwell blacksmith does tool upgrades, geode cracking and ore and does not buy geodes; the Mountain smith dwarf is a Mines-side trader (lamps, rest-camp supplies, buys ore, no upgrades)",
+          "t": "Smith split (owner, 2026-11-08): the Hearthwell blacksmith does tool upgrades, geode cracking and ore and does not buy geodes; the Mountain smith dwarf is a Mines-side trader (lamps, rest-camp supplies, buys ore, no upgrades). Built #643: the forge hut holds the old smith menu until Hearthwell exists; lamps not built",
           "ref": "74_mountain.md#What lives there",
           "issue": 643
         }

@@ -22,6 +22,7 @@ const EXITS: Record<string, string> = {
   to_mountain: "Mountain",
   delta: "River delta",
   fisher: "Fisher's hut",
+  forge: "Forge",
 };
 
 const SERVICES: Record<string, string> = {
@@ -50,6 +51,7 @@ const SERVICES: Record<string, string> = {
   "hedge-chest": "Chest",
   "hedge-cart": "Cart Home",
   "fisher-shop": "Fisher's Counter",
+  stonekeeper: "Stonekeeper",
   "tide-bridge": "Broken Footbridge",
 };
 

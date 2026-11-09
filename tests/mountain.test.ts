@@ -8,7 +8,7 @@ import {
   forageWeights,
 } from "../src/core/forageareas";
 import { exitOpen, layersAtTier } from "../src/core/map";
-import { exitLabel } from "../src/core/labels";
+import { exitLabel, serviceLabel } from "../src/core/labels";
 import { MINES_OPEN_DAY } from "../src/core/mines";
 import { newGame } from "../src/core/save";
 import { holdsOf } from "../src/core/worldflags";
@@ -52,6 +52,7 @@ describe("the Mountain map (note 74, steps 1 to 3)", () => {
     expect(mountain.entry("from_forest")).toMatchObject({ x: 3, y: 37 });
     expect(mountain.entry("from_hearthwell")).toMatchObject({ x: 47, y: 66 });
     expect(mountain.exits.map((e) => e.id).sort()).toEqual([
+      "forge",
       "mine",
       "to_forest",
     ]);
@@ -207,5 +208,56 @@ describe("the Mountain map (note 74, steps 1 to 3)", () => {
     );
     expect(ids).not.toContain("ember-trout");
     expect(fishAvailable("river", winter).length).toBeGreaterThan(0);
+  });
+});
+
+describe("the forge and the stonekeeper's yard (note 74, steps 4 and 5)", () => {
+  const forge = maps.get("forge");
+
+  it("has a forge hut door on the Mountain and a smith counter inside", () => {
+    expect(mountain.exits.find((e) => e.id === "forge")).toMatchObject({
+      map: "forge",
+      entry: "door",
+      x: 18,
+      y: 46,
+    });
+    expect(mountain.entry("from_forge")).toMatchObject({ x: 18, y: 47 });
+    expect(forge.exits.find((e) => e.id === "door")).toMatchObject({
+      map: "mountain",
+      entry: "from_forge",
+    });
+    expect(forge.services.map((s) => s.kind)).toEqual(["smith"]);
+    expect(serviceLabel("stonekeeper", "stonekeeper")).toBe("Stonekeeper");
+    expect(maps.problems()).toEqual([]);
+  });
+
+  it("moves the smith counter off the mine hall", () => {
+    expect(
+      maps.get("mine").services.find((s) => s.kind === "smith"),
+    ).toBeUndefined();
+  });
+
+  it("walks from the road to the forge door and back", () => {
+    const from = mountain.entry("from_forge")!;
+    const walkable = mountain.reachable(from);
+    expect(walkable.has("18,47")).toBe(true);
+    expect(walkable.has("3,37")).toBe(true);
+    expect(mountain.isBlocked(17, 46)).toBe(true);
+    expect(mountain.isBlocked(18, 46)).toBe(false);
+  });
+
+  it("keeps the yard reachable over the footbridge, with its bench and stone stack", () => {
+    const walkable = mountain.reachable(mountain.entry("from_forest")!);
+    expect(walkable.has("66,47")).toBe(true);
+    expect(walkable.has("62,44")).toBe(true);
+    expect(mountain.isBlocked(70, 44)).toBe(true);
+    expect(mountain.isBlocked(65, 45)).toBe(true);
+    expect(mountain.serviceAt(66, 46)?.kind).toBe("stonekeeper");
+    expect(walkable.has("66,47")).toBe(true);
+  });
+
+  it("leaves the Quarry bridge and exit unbuilt", () => {
+    expect(mountain.exits.find((e) => e.id === "to_quarry")).toBeUndefined();
+    expect(mountain.entry("from_quarry")).toBeUndefined();
   });
 });

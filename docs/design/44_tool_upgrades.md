@@ -148,3 +148,7 @@ Tool upgrades are done by the Hearthwell blacksmith, as Stardew's blacksmith doe
 (`77_hearthwell.md`, `71_map_areas_overview.md` answer 7). The Mountain smith dwarf
 no longer upgrades tools: his hut is a Mines-side trader (`74_mountain.md`). Until
 Hearthwell's smithy exists the smith menu stand-in keeps working unchanged.
+
+Built 2026-11-09 (#643): the smith stand-in menu now sits at the Mountain forge hut
+(`forge` map), not in the mine hall. It still upgrades tools until the Hearthwell
+blacksmith exists.
