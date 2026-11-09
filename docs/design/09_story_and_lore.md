@@ -528,6 +528,22 @@ nothing and she never mentions it (see Neglect).
   Open: the haven elf's slot in ring 2, the keepsake and token, whether she
   leaves or stays, and the pin's exact price (tuning note 07).
 
+### The hermit witch, owner answers (2026-11-09, partial, #178)
+
+- **Home (decided).** A crooked tower of mossy stone in the Forest. This keeps
+  note 58's tower and replaces the valley map's hut. Stardew's Wizard lives in a
+  tower (from memory, unchecked).
+- **Hook (decided).** She keeps the valley's old customs like a living ledger,
+  the one who remembers why hats and ledgers matter, but she tells it in a
+  scatty, sideways way, through recipes and old sayings. This sets her apart
+  from Radagast beyond the animal quirk.
+- **Name (open).** The owner likes Tansy but wants names that tie to the lore.
+  Candidates raised: Rosmarin (rosemary, the herb of remembrance), Minna (an
+  old root for remembrance), Hesta (from Hestia, the hearth), and Tansy. Norse
+  wizard names such as Mimir or Hugin are avoided (see the dark lord's name
+  note).
+  Open: the name, the look of each fairy ring and what each costs.
+
 ## Cast balance
 
 The current state of the ring 1 cast, with races, genders and households, is in
