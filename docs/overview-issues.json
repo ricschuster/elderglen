@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-11-08",
+  "fetched": "2026-11-09",
   "issues": {
     "5": {
       "t": "Design: what is the third community project?",
@@ -163,7 +163,7 @@
     },
     "136": {
       "t": "Design: ring 1 cast list",
-      "state": "open",
+      "state": "closed",
       "labels": ["design-question"]
     },
     "137": {
@@ -223,7 +223,7 @@
     },
     "201": {
       "t": "Design: revisit and rebalance all bundle rewards",
-      "state": "open",
+      "state": "closed",
       "labels": ["design-question"]
     },
     "261": {
@@ -429,12 +429,12 @@
     },
     "637": {
       "t": "WP: Forest map part 1, shell, lake, trees and forage",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "638": {
       "t": "WP: Forest part 2, farmstead, hermit's tower and the Wanderer's camp",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "639": {
@@ -459,12 +459,12 @@
     },
     "643": {
       "t": "WP: Mountain forge and the stonekeeper's yard",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "644": {
       "t": "WP: Lake cove and the ferry",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "645": {
@@ -479,6 +479,51 @@
     },
     "649": {
       "t": "WP: Quarry map, mended bridge, regrowing stone and ore, the stonekeeper",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "653": {
+      "t": "Fishing: remove the Reed Pole and level 5 rare limits",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "654": {
+      "t": "Fishing: energy per cast",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "655": {
+      "t": "Fishing: Magpie Hook chest appears in the bar",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "656": {
+      "t": "Mines: paid recovery of a lost stack at the trainer",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "657": {
+      "t": "Placement: empty tilled soil no longer blocks",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "658": {
+      "t": "Mines: sling aims toward the pointer",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "659": {
+      "t": "Quarry: the stonekeeper's camp, regrow numbers and trees (follow-up to #649)",
+      "state": "open",
+      "labels": ["work-package"]
+    },
+    "660": {
+      "t": "Dye vat: any plant or flower as input",
+      "state": "open",
+      "labels": ["work-package"]
+    },
+    "661": {
+      "t": "Hearthwell: river layout Tiled pass (before the shell, #645)",
       "state": "open",
       "labels": ["work-package"]
     }

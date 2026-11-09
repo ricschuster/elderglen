@@ -399,10 +399,10 @@
           "issue": 645
         },
         {
-          "s": "open",
-          "t": "Hearthwell river layout: owner chose two arms (a wide east arm with the broken bridge, the hall on the island) on 2026-11-08 and left the detailed layout of arms, banks, bridges and streets to a later design pass",
-          "ref": "77_hearthwell.md#Decisions (draft)",
-          "issue": 645
+          "s": "decided",
+          "t": "Hearthwell river layout (built 2026-11-09, #661): the terrain map with the 7 wide main arm bending once east under the festival green, the 5 wide east arm, three bridges, streets and avenues, 12 reserved lots and the arms rejoining as one river out of the south edge; no buildings, doors or exits yet (#645)",
+          "ref": "77_hearthwell.md#Built status (2026-11-09, #661)",
+          "issue": 661
         },
         {
           "s": "decided",
