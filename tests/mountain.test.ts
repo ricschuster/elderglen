@@ -55,6 +55,7 @@ describe("the Mountain map (note 74, steps 1 to 3)", () => {
       "forge",
       "mine",
       "to_forest",
+      "to_quarry",
     ]);
     expect(exitLabel("to_mountain")).toBe("Mountain");
     const forest = maps.get("forest");
@@ -254,10 +255,5 @@ describe("the forge and the stonekeeper's yard (note 74, steps 4 and 5)", () => 
     expect(mountain.isBlocked(65, 45)).toBe(true);
     expect(mountain.serviceAt(66, 46)?.kind).toBe("stonekeeper");
     expect(walkable.has("66,47")).toBe(true);
-  });
-
-  it("leaves the Quarry bridge and exit unbuilt", () => {
-    expect(mountain.exits.find((e) => e.id === "to_quarry")).toBeUndefined();
-    expect(mountain.entry("from_quarry")).toBeUndefined();
   });
 });

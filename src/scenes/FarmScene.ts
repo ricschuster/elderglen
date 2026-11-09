@@ -53,6 +53,13 @@ import { holdsOf } from "../core/worldflags";
 import { mendTideBridge, TIDE_BRIDGE_WOOD } from "../core/tidebridge";
 import { logCleared } from "../core/logs";
 import { STONEKEEPER_LINE } from "../core/smith";
+import {
+  campLine,
+  QUARRY_BRIDGE_LINE,
+  QUARRY_MAP,
+  QUARRY_OPEN,
+  YARD_EMPTY_LINE,
+} from "../core/quarry";
 import { NOTHING_TO_ACT_ON, act, reasonText, useHeld } from "../core/tools";
 import { cropById } from "../core/crops";
 import { mapFiles, maps } from "../content/maps";
@@ -1198,7 +1205,9 @@ export class FarmScene extends Phaser.Scene {
       this.message =
         exit.id === "greenhouse"
           ? "The greenhouse is a ruin. Finish the Larder bundles at the village hall to repair it."
-          : "It is shut.";
+          : exit.id === "to_quarry"
+            ? QUARRY_BRIDGE_LINE
+            : "It is shut.";
       this.render();
     }
     return true;
@@ -1568,8 +1577,18 @@ export class FarmScene extends Phaser.Scene {
     if (service?.kind === "fisher-shop")
       return this.open("shop", { stock: "fisher" });
     if (service?.kind === "tide-bridge") return this.mendBridge();
+    if (service?.kind === "quarry-bridge") {
+      this.message = QUARRY_BRIDGE_LINE;
+      return this.render();
+    }
     if (service?.kind === "stonekeeper") {
-      this.message = STONEKEEPER_LINE;
+      this.refreshHolds();
+      this.message =
+        this.mapId === QUARRY_MAP
+          ? campLine(this.state.day.clock.day)
+          : this.holds.has(QUARRY_OPEN)
+            ? YARD_EMPTY_LINE
+            : STONEKEEPER_LINE;
       return this.render();
     }
     if (service?.kind === "festival") return this.openFestival();

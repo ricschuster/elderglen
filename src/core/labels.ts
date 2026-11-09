@@ -20,6 +20,7 @@ const EXITS: Record<string, string> = {
   to_secret_woods: "Secret Woods",
   to_forest: "Forest",
   to_mountain: "Mountain",
+  to_quarry: "Quarry",
   delta: "River delta",
   fisher: "Fisher's hut",
   forge: "Forge",
@@ -53,6 +54,7 @@ const SERVICES: Record<string, string> = {
   "fisher-shop": "Fisher's Counter",
   stonekeeper: "Stonekeeper",
   "tide-bridge": "Broken Footbridge",
+  "quarry-bridge": "Broken Bridge",
 };
 
 /** Festival map counters and villagers share kinds, so they are named by id. */

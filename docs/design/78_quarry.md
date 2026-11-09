@@ -1,7 +1,7 @@
 # 78 Quarry (draft)
 
 Status: draft, written 2026-11-08 after the owner chose it (note 71, answer 11).
-Nothing here is built. It designs the Quarry map off the Mountain, the repaired
+Built 2026-11-09 (#649), see "Built status" at the end. It designs the Quarry map off the Mountain, the repaired
 bridge, the regrowing stone and ore, and the stonekeeper dwarf's job. Overview:
 `71_map_areas_overview.md`. Stardew facts are from the saved Quarry page (read
 2026-11-08, SC-91) and Mountain page (SC-85), as ideas only (ADR 0002).
@@ -174,3 +174,44 @@ Each has a recommendation first.
   artifact design.
 - The Mining level gates for iron and gold nodes (note 07).
 - Size 60 by 44 is a guess, confirmed on the first Tiled draft (note 19).
+
+## Built status (2026-11-09, #649)
+
+All four build slices are built: the map, the nightly spawns, the bridge on the
+Mountain (note 74 "Built status (2026-11-09, #649)") and the dwarf's camp.
+
+- **Map** `src/content/maps/quarry.json`, 60 by 44, `wild`, rideable, written by
+  `scripts/gen-quarry-map.mjs` once and hand edited from then on. A two tile cliff border,
+  exit `to_mountain` at x 0, y 20 to 24 and entry `from_mountain` at (3, 22), a short
+  path to the camp, three clear pads (regions `pad-a` (6, 5), `pad-b` (28, 12), `pad-c`
+  (46, 26), 8 by 6, region property `pad`), and 60 stone rocks, 8 copper, 4 coal and 2 iron
+  placed by the generator with a fixed seed (map `rock` objects gained an optional `kind`).
+  Pads never take a spawn, a weed or returning debris (`FarmMap.isPad`, `areas.ts`).
+- **Nightly spawns:** `src/content/spawns.json` has `quarry` with owner answer 3
+  (7 attempts in year 1, 2 more a year, at most 16) and weights plain rock 45, hard rock 23,
+  copper 8, coal 8, iron 4, gold 1.3, Hearthsilver 0.02, oak seed 3, maple seed 3 (the two
+  seeds are about 6 percent, answer 4). `areasEndDay` runs it after the other area rules
+  on every map with a table (`placeSpawn` in `src/core/areas.ts`). Free tiles are the
+  planting rules' open tiles with nothing on them, off the pads and paths.
+- **Gate:** `quarry-open` is read from the hall (`src/core/quarry.ts`, `holdsOf`): the
+  Foragers' Shelf complete (owner answer 1). No saved flag for the gate. The morning
+  report says once that the bridge is mended (`SleepReport.quarryBridge`, remembered by
+  the world flag `quarry-told`).
+- **Camp:** a hut (solid, no interior) at x 8 to 12, y 30 to 33, a fire at (14, 35)
+  and the dwarf's post at (11, 35), a `stonekeeper` service. One line a day from
+  `CAMP_LINES`. Placeholder tiles stand in for the dwarf and the fire.
+- **Choices where the notes were silent:**
+  - Hard rock has no kind of its own yet, so it spawns as plain stone. A nightly attempt
+    on it is a stone rock.
+  - Ore tiers do not follow the Mining level yet (note 07 has no levels), so all ores can
+    spawn in year 1.
+  - Spawn tile candidates are the planting rules' open tiles (`canPlantTree`), not tillable
+    tiles, since the Quarry has no soil. "Tillable tiles take common trees" is therefore
+    only the seeds in the table; no other tree rule was added.
+  - The dwarf has no gifts, likes or heart events and no schedule: he stands at his post.
+    His loves (stone, ore, forage) wait on the gift system (#599).
+  - Weeds and the seasonal debris also return here by the shared area rules.
+  - The yard post's line changes once the bridge is mended (note 74).
+- **Not built:** gem nodes and artifact spots, Mining level gates on ore, a hard rock
+  kind that can drop coal, the dwarf's sprite and gifts, the Last Seat bridge job (#603).
+- **Playtest:** `npm run playtest:quarry`. Tests: `tests/quarry.test.ts`.

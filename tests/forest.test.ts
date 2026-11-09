@@ -220,7 +220,13 @@ describe("the Forest forage table", () => {
 
 describe("area worlds", () => {
   it("finds the Forest by its wild property", () => {
-    expect(areaMaps()).toEqual(["delta", "forest", "mountain", "secret-woods"]);
+    expect(areaMaps()).toEqual([
+      "delta",
+      "forest",
+      "mountain",
+      "quarry",
+      "secret-woods",
+    ]);
     expect(isAreaMap("forest")).toBe(true);
     expect(isAreaMap("farm")).toBe(false);
     expect(isAreaMap("nowhere")).toBe(false);

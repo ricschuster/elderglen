@@ -1,5 +1,6 @@
 import { greenhouseHolds } from "./greenhouse";
 import { minesOpen } from "./mines";
+import { quarryHolds } from "./quarry";
 import type { GameState } from "./save";
 
 /**
@@ -21,7 +22,11 @@ export function setFlag(g: Pick<GameState, "flags">, flag: string): void {
  * greenhouse gate and each world flag.
  */
 export function holdsOf(g: GameState): Set<string> {
-  const holds = new Set([...greenhouseHolds(g), ...(g.flags ?? [])]);
+  const holds = new Set([
+    ...greenhouseHolds(g),
+    ...quarryHolds(g),
+    ...(g.flags ?? []),
+  ]);
   // The rockfall below the mine mouth is cleared on the day the mines open.
   if (minesOpen(g.day.clock.day)) holds.add("mines-open");
   return holds;

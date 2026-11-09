@@ -6,7 +6,8 @@ import { FruitTrees } from "./fruittrees";
 import { GroundItems } from "./ground";
 import { Machines } from "./machines";
 import type { FarmMap, TreeSpot } from "./map";
-import { Rocks } from "./rocks";
+import { Rocks, ROCK_KINDS, type RockKind } from "./rocks";
+import { nightlySpawns, spawnTableOf, type Spawn } from "./spawns";
 import { Sprinklers } from "./sprinklers";
 import type { GameState } from "./save";
 import { SEED_STAGE, Trees } from "./trees";
@@ -187,6 +188,27 @@ function emptyAt(w: World, x: number, y: number): boolean {
   );
 }
 
+/**
+ * Put one night's spawn on a world (note 78). `rock` and `hard-rock` are plain
+ * stone (hard rock is not its own kind yet), an ore id is that node, and
+ * `oak-seed` and `maple-seed` are a seed in the ground of that tree kind.
+ */
+export function placeSpawn(w: World, s: Spawn): boolean {
+  if (s.kind === "oak-seed" || s.kind === "maple-seed") {
+    if (!w.trees.add(s.x, s.y, SEED_STAGE)) return false;
+    const t = w.trees.at(s.x, s.y);
+    if (t) t.kind = s.kind === "oak-seed" ? "oak" : "maple";
+    return true;
+  }
+  const kind: RockKind =
+    s.kind === "rock" || s.kind === "hard-rock"
+      ? "stone"
+      : (ROCK_KINDS as string[]).includes(s.kind)
+        ? (s.kind as RockKind)
+        : "stone";
+  return w.rocks.add(s.x, s.y, kind);
+}
+
 /** Scatter the day's forage on every area (the morning, and a new or loaded game). */
 export function respawnAreaForage(g: GameState, random: () => number): void {
   const { season } = dateOf(g.day.clock.day);
@@ -218,7 +240,7 @@ export function areasEndDay(g: GameState, random: () => number): void {
   for (const [id, w] of Object.entries(g.areas)) {
     const map = maps.get(id);
     const free = (x: number, y: number) =>
-      map.canPlantTree(x, y) && emptyAt(w, x, y);
+      map.canPlantTree(x, y) && !map.isPad(x, y) && emptyAt(w, x, y);
     // Seeds do not spread on their own here: the groves renew by `regrowGroves`.
     w.trees.endDay(season, random, () => false);
     regrowGroves(w.trees, map.trees, random, free);
@@ -235,6 +257,17 @@ export function areasEndDay(g: GameState, random: () => number): void {
       free,
       () => openTiles(map),
     );
+    // A map with a nightly spawn table (the Quarry) fills its free tiles.
+    const table = spawnTableOf(id);
+    if (table)
+      for (const spawn of nightlySpawns(
+        table,
+        dateOf(g.day.clock.day).year,
+        openTiles(map),
+        free,
+        random,
+      ))
+        placeSpawn(w, spawn);
   }
   respawnAreaForage(g, random);
 }

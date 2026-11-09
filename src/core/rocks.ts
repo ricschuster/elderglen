@@ -61,9 +61,9 @@ const key = (x: number, y: number) => `${x},${y}`;
 export class Rocks {
   private rocks = new Map<string, Rock>();
 
-  /** Plain stone on each given tile, for a map's starting rocks. */
-  constructor(spots: Spot[] = []) {
-    for (const s of spots) this.add(s.x, s.y, "stone");
+  /** A rock on each given tile, plain stone unless the spot names a kind, for a map's starting rocks. */
+  constructor(spots: (Spot & { kind?: RockKind })[] = []) {
+    for (const s of spots) this.add(s.x, s.y, s.kind ?? "stone");
   }
 
   save(): Rock[] {
