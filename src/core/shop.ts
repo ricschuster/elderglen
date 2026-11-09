@@ -1,7 +1,7 @@
 import { SEASONS, type Season } from "./calendar";
 import { CROPS } from "./crops";
 import { FRUIT_TREES, saplingId } from "./fruittrees";
-import { itemById, seedId } from "./items";
+import { HOMEWARD_PIN, itemById, seedId } from "./items";
 import { RODS } from "./fishing";
 import { BAITS, LURES } from "./tackle";
 import type { Inventory } from "./inventory";
@@ -25,6 +25,9 @@ export function sell(
   return earned;
 }
 
+/** Goods the shop sells once only, "available until purchased" (the Homeward pin). */
+export const isOneOnly = (id: string): boolean => id === HOMEWARD_PIN;
+
 /** Buy n of an item. Returns false if unbuyable, too dear, or no room. */
 export function buy(
   inv: Inventory,
@@ -34,6 +37,7 @@ export function buy(
 ): boolean {
   const def = itemById(id);
   if (!def || def.buyPrice === undefined || n <= 0) return false;
+  if (isOneOnly(id) && (n > 1 || inv.count(id) > 0)) return false;
   const cost = def.buyPrice * n;
   if (wallet.money < cost || !inv.add(id, n)) return false;
   wallet.money -= cost;
@@ -95,6 +99,9 @@ export const tackleStock = (): string[] =>
 
 /** Everything the fisher's counter sells. */
 export const fisherStock = (): string[] => [...rodStock(), ...tackleStock()];
+
+/** Thalwen's pin stall sells the Homeward pin only (note 09, #641). */
+export const pinStock = (): string[] => [HOMEWARD_PIN];
 
 import { fertilizerStock as allFertilizer } from "./fertilizer";
 

@@ -1580,6 +1580,8 @@ export class FarmScene extends Phaser.Scene {
     if (service?.kind !== "tide-bridge") this.mendAsked = false;
     if (service?.kind === "fisher-shop")
       return this.open("shop", { stock: "fisher" });
+    if (service?.kind === "pin-stall")
+      return this.open("shop", { stock: "pin" });
     if (service?.kind === "keeper") return this.open("keeper");
     if (service?.kind === "hermit") {
       this.message = HERMIT_LINE;

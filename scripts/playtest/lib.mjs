@@ -24,6 +24,7 @@ const MAPS = Object.fromEntries(
     "delta",
     "mountain",
     "fisher-hut",
+    "beach-elf-house",
     "forge",
     "forest-farmstead",
     "hermit-tower",

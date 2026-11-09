@@ -1,7 +1,7 @@
 # 75 River delta and Beach (steps 1 to 4 built)
 
 Status: draft, written 2026-11-08, owner answers recorded the same day (note 71).
-Steps 1 to 4 are built (2026-11-09, #640, see "Built status" at the end); the Hearthwell exit, the elf's house, pots and the legend are not. M3b, except the Beach elf's house, which waits for the story spine (#176). It designs the River delta map with the Beach at its east end (note 19,
+Steps 1 to 4 are built (2026-11-09, #640, see "Built status" at the end); the elf's house was built later (#641, "Built status"); pots and the legend are not. M3b. It designs the River delta map with the Beach at its east end (note 19,
 decision 13). Overview and owner questions: `71_map_areas_overview.md`. Stardew
 facts are from the saved Beach page (read 2026-11-08), as ideas only (ADR 0002).
 
@@ -244,9 +244,34 @@ Build order steps 1 to 4 are built, except the pots and the Great Hearthfin lege
 - **Also fixed:** a map `region` that names a forage table was drawn as a grey hall
   room wash (it hit the Forest's onion bank); the wash is now for hall rooms only.
 - **Ferry:** built later (#644, 2026-11-09): the dock, the gated exit and the ruined and repaired art, see note 76 "Built status".
-- **Not built:** the elf's house (the Hearthwell exit was built by #645)
-  (#641), shellfish and crab pots (nothing in the game makes a pot yet), the Pearl
+- **Elf's house:** built later (#641, 2026-11-09), see "Elf's house built" below.
+- **Not built:** shellfish and crab pots (nothing in the game makes a pot yet), the Pearl
   Lobster, the legend Great Hearthfin, and the fisher as a named person.
 - **Playtest:** `npm run playtest:delta` (leaves by the farm's south exit, casts a
   rod on the marsh lake, the river and the sea, buys a rod, mends the footbridge
   and crosses it, sleeps).
+
+## Elf's house built (2026-11-09, #641)
+
+Drafted by `scripts/gen-beach-elf-house.mjs`; the JSON is the source from then on.
+
+- **Cottage:** on the Beach dunes in `delta.json`, a 7 by 5 solid building at x 77 to 83,
+  y 23 to 27 (the sand's north-east, under the cliff wall), door on the south wall at
+  (80, 27), exit `elf`, entry `from_elf` (80, 28). Placeholder art as the fisher's hut.
+- **Interior:** `beach-elf-house.json`, 12 by 9. Her counter, service `pin-stall`
+  ("Thalwen's Pin Stall"), stands on the north wall. A crate beside the door is the
+  half-packed trunk (note 09), a bed, a shelf and a table are solid furniture.
+- **The stall:** a stand-in counter that opens the shop screen titled "Thalwen" with one
+  row, the Homeward pin, and buys back goods as the other counters do. She is not drawn
+  or named in speech (no villager sprites yet).
+- **The pin:** item `homeward-pin`, kept (cannot be sold), sold once only ("available
+  until purchased", as the saved Krobus page gives for Stardew's Return Scepter).
+  Placeholder price 1,500,000g (note 07), a little under Stardew's 2,000,000g.
+- **Gaps closed by the smallest choice:** hearts and villagers do not exist (#599), so
+  the stall is not gated at 3 hearts yet; the gate is added with friendship. The pin does
+  nothing when held, since the warp rings it returns from are not built. Her ship is not
+  drawn (the pier at x 80 to 82 is where it would be moored). Still open as in note 09:
+  the haven elf's slot, the keepsake and token, whether she leaves, the pin's final price.
+- **Playtest:** `npm run playtest:beach-elf` (walks to the cottage, enters, opens the stall,
+  is refused with 100g, buys the pin with a full purse, is refused a second).
+
