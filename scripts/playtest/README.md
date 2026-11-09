@@ -240,3 +240,8 @@ Mountain's east bridge out, finishes the Foragers' Shelf by state, crosses into 
 Quarry, speaks to the stonekeeper at his camp, breaks a rock with the pickaxe, then
 sleeps and checks that nodes came back and the morning report told of the bridge. A
 scene restart stands in for the walk from the Forest.
+
+`node scripts/playtest/farmstead.mjs` (about 60 seconds, `npm run dev` running) walks
+the Forest's roads to the keeper's door, goes in, buys a young chicken at the counter
+(a coop is set by state), comes out, goes into the hermit's tower and speaks to her,
+then reads the Wanderer's camp fire. A scene restart stands in for the walk from the farm.

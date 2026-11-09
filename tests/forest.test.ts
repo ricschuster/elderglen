@@ -66,6 +66,8 @@ describe("the Forest map (note 72, part 1)", () => {
       "to_farm",
       "to_secret_woods",
       "to_mountain",
+      "farmstead",
+      "hermit",
     ]);
     expect(forest.logs.length).toBe(2);
   });

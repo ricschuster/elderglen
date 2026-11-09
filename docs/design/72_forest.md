@@ -1,7 +1,7 @@
 # 72 Forest (draft)
 
 Status: draft, written 2026-11-08, owner answers recorded the same day (note 71). Part 1
-(slices 2 to 4) is built, see "Built status" at the end; the rest is not. M3b (ring 1 systems), not M3c. It designs the Forest map to the pattern of `55_farm_layout.md`, from the
+(slices 2 to 4) and part 2 (slices 5 and 6) are built, see "Built status" at the end; the rest is not. M3b (ring 1 systems), not M3c. It designs the Forest map to the pattern of `55_farm_layout.md`, from the
 areas in `19_valley_layout.md`. The overview and the owner questions are in
 `71_map_areas_overview.md`. Stardew facts are from the owner's saved pages
 (Cindersap Forest, Large Log, Trees, read 2026-11-08), as ideas only, never
@@ -264,3 +264,47 @@ SM-T500 is still open. Names and looks stay placeholders.
 **Update (2026-11-09, #642):** the Mountain exit is built. The east gap is cut at
 x 118 to 119, y 60 to 66, the road runs to the edge, and exit `to_mountain` (x 119,
 y 60 to 66) leads to the Mountain's `from_forest`, with entry `from_mountain` (116, 63).
+
+**Part 2, #638 (2026-11-09): slices 5 and 6 are built.** The farmstead, the hermit's
+tower and the Wanderer's camp are cut into `forest.json` by the one-off
+`scripts/gen-forest-part2.mjs`, which also wrote the two interiors. Placeholder art, role
+labels, no names.
+
+Built:
+
+- Roads: a farmstead road runs east from the lake's south shore path (y 35 to 37, x 68 to
+  97) and north up x 95 to 97 to the keeper's door; the west leg (x 31 to 33) runs on
+  south to y 95, with a spur (x 23 to 30, y 93 to 95) to the tower door; a spur (x 75 to
+  89, y 84 to 86) runs from the farm road into the camp. All on the `paths` layer.
+- Farmstead: the keeper's house (x 92 to 100, y 18 to 22), door exit `farmstead` at
+  (96, 22), entry `from_farmstead` (96, 23). Three fenced paddocks (x 85 to 90, y 26 to
+  32; x 101 to 106, y 26 to 32; x 102 to 107, y 16 to 22), scenery only, no animals drawn
+  (no art yet), closed rings that cannot be entered. Interior `forest-farmstead` (12 by 8)
+  with the keeper's counter, service kind `keeper`.
+- Keeper's counter (`KeeperScene`): sells young animals for each coop and barn the player
+  has built, and hay by 10 bales, and shows one piece of advice a day. This replaces the
+  carpenter's stand-in: the carpenter's counter no longer sells animals or hay, and keeps
+  building, upgrades, silo and furniture. The `smoke` playtest buys at the keeper.
+- Hermit's tower: x 19 to 25, y 86 to 92, door exit `hermit` at (22, 92), entry
+  `from_hermit` (22, 93). Interior `hermit-tower` (9 by 9, one room) with the hermit,
+  service kind `hermit`, who only mutters a line.
+- Wanderer's camp: a tent, a bench and a fire on solid tiles at x 82 to 89, y 80 to 83;
+  the fire (85, 83) is service kind `camp` and gives a line that he is on the road. No
+  interior.
+
+Where it differs from the note, or was decided in the build:
+
+- The hermit sells nothing and gives no seed yet. Elderfruit, the emberseed, her
+  teaching and the fairy rings wait for #178 and the friendship system (no hearts exist).
+- The Wanderer does not wander, and has no sprite: the camp is empty. He still comes to
+  the farm door on Spring 5 by `GreencoatScene`.
+- The garden and the ring of toadstools at the tower are not drawn (no art).
+- Hand placed clutter that stood on the new buildings and roads (2 rocks, 2 twigs, 7
+  weeds) was moved to open ground near (40 to 60, 46 to 60), so the counts of 40 rocks,
+  50 twigs and 60 weeds hold.
+- The note's farmstead box (25 by 25) and tower box (25 by 21) are the cleared zones; the
+  buildings sit inside them and the rest is open grass.
+- The advice is five placeholder lines, chosen by the day.
+
+Not built: names and looks (#136, #178), the keeper and hermit as characters with
+schedules and hearts, the animals in the paddocks, the Wanderer on the roads.
