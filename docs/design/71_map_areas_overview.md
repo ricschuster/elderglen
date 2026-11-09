@@ -61,7 +61,7 @@ so a map can be authored later from the note alone.
 | 2 | Secret Woods (built 2026-11-09, steps 1 to 4, note 73) | Small, and it ends the carpenter's temporary Hardwood sale with a real supply (note 59). Needs the log from step 1 | #639 |
 | 3 | River delta with the Beach (built 2026-11-09, steps 1 to 4, note 75) | Three fishing waters and the fisher unblock #596 slices 3 and 4. Open from the start, and needs only the farm's south exit | #640 |
 | 4 | Mountain (map, rockfall and Mines entrance #642, forge and yard #643, built 2026-11-09, note 74) | The Mines entrance leaves the farm, the forge replaces a menu, and the third lake and the river source complete the lake set the Water room needs | #642, #643 |
-| 4b | Quarry | Off the Mountain's east road. Regrowing stone and ore, the stonekeeper's job. Waits on the bridge's bundle room (note 78, question 1) | #649 |
+| 4b | Quarry (built 2026-11-09, note 78) | Off the Mountain's east road. Regrowing stone and ore, the stonekeeper's camp. The Foragers' Shelf mends the bridge | #649 |
 | 5 | Forest part 2 | Farmstead, hermit and Wanderer. Waits on names (#136, #178) so it follows the fish and mines work | #638 |
 | 6 | Lake cove | The Water room reward. Needs the delta and the full roster, and is small and late by design | #644 |
 | 7 | Hearthwell part 1 | The shell moves the hall and sawmill off the farm, joins Mountain and delta, and closes both loops of note 19. Interiors can be empty shells | #645 |

@@ -2,7 +2,7 @@
 
 Status: draft, written 2026-11-08, owner answers recorded the same day (note 71).
 Build order steps 1 to 6 are built (2026-11-09, #642 and #643, see "Built status" at
-the end); the Quarry bridge and exit are not (#649).
+the end); the Quarry bridge and exit were built later (#649, see "Built status (2026-11-09, #649)").
 M3b. It designs the Mountain map and moves the Mines entrance onto it.
 Overview and owner questions: `71_map_areas_overview.md`. Stardew facts are from
 the saved Mountain page (read 2026-11-08), as ideas only (ADR 0002).
@@ -262,3 +262,24 @@ Build order steps 4 and 5: the forge and the stonekeeper's yard. Hand edits to
   and `to_quarry` (#649), a dwarf sprite for either dwarf, and the furnace gift moving to
   the Hearthwell blacksmith (open, above).
 - **Playtest:** `npm run playtest:forge`. Tests: `tests/mountain.test.ts`.
+
+## Built status (2026-11-09, #649)
+
+The Quarry bridge and exit, hand edits to `mountain.json` (the Quarry itself is note 78).
+
+- **Bridge:** ground run x 73 to 79, y 45 to 49 is path (the plank bridge and the way
+  to the exit). A ravine of cliff tiles (solid) fills x 73 to 78 above (y 40 to 44) and
+  below (y 50 to 54) it, so nothing walks round. The east trees at x 78 and 79 on those
+  rows are cleared.
+- **Ruined and mended art:** a collision layer and a `bridge-ruined` art layer
+  (checkered cliff tiles) with `unless: quarry-open` cover x 73 to 78, y 45 to 49. When
+  the condition holds both go and the plain path shows. An object group
+  `bridge-markers` (`unless: quarry-open`) puts five `quarry-bridge` services on x 73,
+  y 45 to 49, so facing the ruin from the yard says "The bridge is out" and names the
+  Foragers' Shelf (`QUARRY_BRIDGE_LINE`, `src/core/quarry.ts`).
+- **Exit and entry:** `to_quarry` (x 79, y 45 to 49, `requires: quarry-open`) leads to
+  `quarry` entry `from_mountain`. Entry `from_quarry` at (76, 47), on the bridge, also
+  `requires: quarry-open`. The map check passes with the condition true and false.
+- **The yard post** now says the stonekeeper has taken his camp across the Quarry bridge
+  once `quarry-open` holds (`YARD_EMPTY_LINE`); before it, the old bridge line.
+- **Tests:** `tests/quarry.test.ts`. Playtest: `npm run playtest:quarry`.

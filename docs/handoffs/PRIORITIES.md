@@ -46,11 +46,12 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
    river, pines, rocks and forage, the Forest exit, and the rockfall and mine mouth
    that moved the Mines door off the farm; #643 built 2026-11-09: the forge hut with
    the smith's counter moved from the mine hall, and the stonekeeper's yard, note 74
-   "Built status"; lamps and the Quarry bridge wait), the Quarry (#649), Forest part 2
+   "Built status"; lamps wait; #649 built 2026-11-09: the Quarry map, the mended bridge,
+   regrowing stone and ore and the dwarf's camp, note 78 "Built status"), Forest part 2
    (#638), Lake cove (#644), Hearthwell shell (#645) and interiors (#646), Beach
    elf (#641, waits on the story spine). Changed order since the draft: the Quarry
    is new at step 4b and the maps moved up from M3c. Open design items left:
-   Hearthwell's river layout (two arms chosen, detail not designed), the dwarf's camp in the Quarry (note 78). The cove treasure spot is settled.
+   Hearthwell's river layout (two arms chosen, detail not designed). The cove treasure spot is settled.
 4. **Art direction and audio plan.** Character art (note 15), ruined and
    restored hall rooms (#335), and the placeholder swap. No audio note exists
    (audio plan: #527).

@@ -1,4 +1,5 @@
 import type { Spot } from "./forage";
+import { ROCK_KINDS, type RockKind } from "./rocks";
 
 /**
  * The part of a Tiled JSON map the game reads. The contract is documented in
@@ -187,6 +188,11 @@ export interface Litter {
   twigs: Spot[];
 }
 
+/** A rock the map places: plain stone unless it names another kind (the Quarry's ore nodes). */
+export interface RockSpot extends Spot {
+  kind?: RockKind;
+}
+
 /** A named rectangle of tiles, such as one room of the hall. */
 export interface Region {
   id: string;
@@ -196,6 +202,8 @@ export interface Region {
   h: number;
   /** The forage table that forage points inside this region use (`forage-areas.json`). */
   forage?: string;
+  /** A clear pad (note 78): nothing spawns, spreads or returns here overnight. Machines and chests go here. */
+  pad?: boolean;
 }
 
 /** The bodies of water, each with its own fish table and pot kind (note 71). */
@@ -357,7 +365,7 @@ export class FarmMap {
     readonly regions: Region[] = [],
     readonly trees: TreeSpot[] = [],
     private readonly paths: boolean[] = [],
-    readonly rocks: Spot[] = [],
+    readonly rocks: RockSpot[] = [],
     /** The building tier this map shows. Zero for a map that does not grow. */
     readonly tier = 0,
     /** The built part of the map, in tiles: what the camera may show. */
@@ -418,6 +426,18 @@ export class FarmMap {
         y < r.y + r.h,
     );
     return region?.forage ?? "default";
+  }
+
+  /** True on a clear pad (a region with `pad`): nothing is placed there overnight. */
+  isPad(x: number, y: number): boolean {
+    return this.regions.some(
+      (r) =>
+        r.pad === true &&
+        x >= r.x &&
+        x < r.x + r.w &&
+        y >= r.y &&
+        y < r.y + r.h,
+    );
   }
 
   /** True for a water tile: fishable, and never walkable. */
@@ -499,7 +519,7 @@ export class FarmMap {
     const services: Service[] = [];
     const regions: Region[] = [];
     const trees: TreeSpot[] = [];
-    const rocks: Spot[] = [];
+    const rocks: RockSpot[] = [];
     const litter: Litter = { weeds: [], twigs: [] };
     const waterZones: WaterZone[] = [];
     const logs: LogSpot[] = [];
@@ -537,8 +557,10 @@ export class FarmMap {
             ...(text(o, "requires") ? { requires: text(o, "requires") } : {}),
           });
         else if (cls === "forage") forageSpots.push(spot);
-        else if (cls === "rock") rocks.push(spot);
-        else if (cls === "weed") litter.weeds.push(spot);
+        else if (cls === "rock") {
+          const kind = text(o, "kind") as RockKind | undefined;
+          rocks.push(kind ? { ...spot, kind } : spot);
+        } else if (cls === "weed") litter.weeds.push(spot);
         else if (cls === "twig") litter.twigs.push(spot);
         else if (cls === "tree")
           trees.push({
@@ -570,6 +592,7 @@ export class FarmMap {
             ...(text(o, "forage") === undefined
               ? {}
               : { forage: text(o, "forage") }),
+            ...(text(o, "pad") === "true" ? { pad: true } : {}),
             w: Math.max(1, Math.round((o.width ?? size) / size)),
             h: Math.max(1, Math.round((o.height ?? size) / size)),
           });
@@ -889,6 +912,11 @@ export class FarmMap {
       )
         out.push(
           `rock at ${r.x},${r.y} is on a blocked, exit, entry or service tile`,
+        );
+    for (const r of this.rocks)
+      if (r.kind !== undefined && !ROCK_KINDS.includes(r.kind))
+        out.push(
+          `rock at ${r.x},${r.y} has the kind "${r.kind}", which is not a rock kind`,
         );
     for (const [what, spots] of [
       ["weed", this.litter.weeds],

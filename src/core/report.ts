@@ -49,6 +49,10 @@ export function reportLines(r: SleepReport): string[] {
     lines.push(
       `Your ${name.toLowerCase()} tree cannot grow. Clear the ground around it.`,
     );
+  if (r.quarryBridge)
+    lines.push(
+      "The bridge east of the stonekeeper's yard is mended. The Quarry is open.",
+    );
   if (r.houseFinished) {
     lines.push("The carpenter has finished. Your new rooms are ready.");
     if (r.houseTier === 2) lines.push(WAITING_ROOMS_LINE);

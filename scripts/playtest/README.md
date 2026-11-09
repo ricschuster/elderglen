@@ -234,3 +234,9 @@ does not play the farm's walk to the Mountain (a scene restart stands in for it)
 Mountain's forge door, goes in, uses the smith's counter (the dwarf sells and buys ore),
 comes out, then speaks to the stonekeeper in his yard over the footbridge. A scene
 restart stands in for the walk from the Forest.
+
+`node scripts/playtest/quarry.mjs` (about 60 seconds, `npm run dev` running) finds the
+Mountain's east bridge out, finishes the Foragers' Shelf by state, crosses into the
+Quarry, speaks to the stonekeeper at his camp, breaks a rock with the pickaxe, then
+sleeps and checks that nodes came back and the morning report told of the bridge. A
+scene restart stands in for the walk from the Forest.

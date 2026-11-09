@@ -27,6 +27,7 @@ import { loseItems, type Lost } from "./combat";
 import { maps } from "../content/maps";
 import { storeOf } from "./mapstore";
 import { areasEndDay, leaveArea } from "./areas";
+import { quarryBridgeNews } from "./quarry";
 
 /**
  * True when something stands in the 3x3 around a tile that stops a young fruit
@@ -135,6 +136,8 @@ export interface SleepReport {
   orders: OrdersNews;
   /** Board requests that ran out overnight, as report lines. */
   requestsLapsed: string[];
+  /** True on the first morning after the Foragers' Shelf is done: the Quarry bridge is mended (note 78). */
+  quarryBridge: boolean;
   /** Names of young fruit trees that could not grow, since something stood in their 3x3. */
   stuckTrees: string[];
 }
@@ -313,6 +316,7 @@ export function sleep(
     orders,
     requestsLapsed,
     stuckTrees: stuck.map((t) => fruitTreeById(t.id)?.name ?? t.id),
+    quarryBridge: quarryBridgeNews(g),
   };
 }
 

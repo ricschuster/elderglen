@@ -33,6 +33,7 @@ const base: SleepReport = {
   orders: { done: [], lapsed: [] },
   requestsLapsed: [],
   stuckTrees: [],
+  quarryBridge: false,
 };
 
 describe("overnight report", () => {
