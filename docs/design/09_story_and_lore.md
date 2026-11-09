@@ -566,7 +566,7 @@ nothing and she never mentions it (see Neglect).
   festival or season, so the quest can start at any time. The holders are the
   four ring 1 people the owner liked from the Cake Day proposal: the inn
   keeper (the base), the store keeper (the sweetener), the retired couple (the
-  old spice) and the hat-maker (the decoration). 
+  old spice) and the hat-maker (the decoration).
 - **The dish (decided 2026-11-09, owner).** Remembrance stew, named for
   rosemary and remembering. Four parts, one per holder: cheese and potato
   (inn keeper, the base), honey (store keeper, the sweetener), a spice such as
