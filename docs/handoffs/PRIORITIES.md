@@ -46,6 +46,8 @@ Hardwood sale (200g, `src/content/carpenter-standin.json`, note 43). It comes ou
 in the Secret Woods work package, #639, when the six daily stumps exist (owner,
 2026-11-08). Mahogany stays off the map for now.
 
+Sea elf (2026-11-09, note 09, #176): Ondrel, knew Oriel slightly, cannot say why she has not sailed home across the sea, travelling coat and half-packed trunk, cottage on the Beach dunes. Open: what her unfinished business is, her voice, the pin's price.
+
 Warden head, two items left open (2026-11-09, note 09 open list, #177): (1) how her old line matters to the ending, to settle with the third community project (#5) and ADR 0013; (2) the exact stops, finds and ring 2 milestones for her three stage 5 errands. Tuning items (trail and gift values, shop list, token prices, board order list) wait for note 07.
 
 Session 2026-11-08q (handoff 2026-11-08q): story spine started. The warden head's role is settled (knew Oriel, note trail, own board, carrier's mark, #177). Next: her open items (name, trail, look, board), then #176, #178, #5. #201 and #136 closed.
