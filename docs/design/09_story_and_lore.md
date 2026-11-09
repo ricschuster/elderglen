@@ -417,6 +417,20 @@ nothing and she never mentions it (see Neglect).
   The real name is an old road name, heard at stage 4. Candidates from the
   design talk, not yet chosen: Hesper Calloway, Marrow Vane, Tamsin Wick. The
   owner may name her.
+- **Name (deferred, 2026-11-09).** The owner will settle her real name and alias
+  in a separate discussion, as it needs time. The candidates stand.
+- **Look in ring 1 (decided, 2026-11-09).** One small visible change at stage 3,
+  when she gives the carrier's mark (for example a new mend on the coat). The
+  rest of the coat's change begins at stage 4. Stardew's Qi look is unchanged
+  (from memory, unchecked).
+- **Her board (decided, 2026-11-09).** It stands in a room of her base in the
+  ring 2 haven, opened by the carrier's mark, as Stardew's board is in Qi's room
+  behind the walnut gate (checked on the saved Special Orders page). Two odd
+  orders to pick from, refreshed weekly. They pay in carrier tokens, her own
+  currency spent at her shop for rare things, plus some goods. Stardew's board
+  also gives two orders each Monday paid in Qi gems (the pay is from memory;
+  the saved page confirms only the two weekly orders). Token prices, the shop
+  stock and the order list are open.
 
 ## Cast balance
 
@@ -541,10 +555,11 @@ Rule for this game, in the same spirit:
   from Tolkien's Gandalf.
 - The hermit witch's name, look and tower, what the fairy rings cost and what makes them look different from each other, and
   how she differs from Radagast.
-- The warden head: her real name and alias, the exact notes and places of the
-  stage 1 trail, whether her look starts changing in ring 1, where her own
-  board stands and what it pays, and whether she should be a woman. Her tie to
-  Oriel, the note trail, the mark, her voice and look are decided above.
+- The warden head: her real name and alias (deferred to its own talk), the exact
+  notes and places of the stage 1 trail, token prices, shop stock and the order
+  list for her board, and whether she should be a woman (stays a woman for now).
+  Her tie to Oriel, the note trail, the mark, her voice, look, ring 1 look change
+  and board place are decided above.
 - Who fills the open named slots in the cast balance table.
 - The crossroads town's full building list.
 - The shadow in ring 3 (issue #5, what centre 3 is).
