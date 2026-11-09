@@ -409,7 +409,9 @@ When health reaches zero:
    defeat stay lost. Only the latest defeat is kept: a new defeat replaces the
    counter. There is no time limit and no free letter. In Stardew, lost tools are
    mailed back the next day (not fishing poles or weapons), and the guild owner
-   sells back one lost item or stack for its sell price. Stardew's gold loss is 5
+   sells back one lost item or stack for its sell price. Checked on the saved
+   Adventurer's Guild page, 2026-11-08: one item or stack, the rest lost for
+   good, the choice open until the next defeat, so ours matches. Stardew's gold loss is 5
    to 25 percent up to 15,000g (checked, SC-23j). Our version has the trainer be
    the helper. This is the soft part.
 5. **Energy** on waking is the pass-out value (`PASS_OUT_WAKE_ENERGY`).

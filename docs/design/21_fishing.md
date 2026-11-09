@@ -610,8 +610,12 @@ Each followed Stardew, checked on the saved Fishing and Bait pages unless said.
   better**, so silver to gold for us (no iridium grade). Built as drafted.
 - **Winter keeps a thinned roster** (owner choice). Checked on the saved Fish page
   (SC-92): Stardew's winter is not thin, with about 31 fish against 28 in
-  spring, 34 in summer and 33 in fall. Our thin winter is therefore our own
-  choice, not Stardew's. Open for the owner: keep it thin or match Stardew.
+  spring, 34 in summer and 33 in fall. **Decided 2026-11-08 (owner): match Stardew.** Winter becomes level
+  with the other seasons. Our counts today (all-season fish included) are about
+  30 in spring, 31 in summer, 32 in autumn and 29 in winter, so winter needs a
+  few more fish, new or stretched from other seasons, to reach about 31 or 32.
+  The fish are not chosen yet, and the bundle checks in "What the roster
+  covers" must be redone after.
 - **The Magpie Hook treasure appears as a chest in the bar** during the minigame
   and must be caught as well as the fish (Stardew's treasure chest, saved page: it
   shows 1 to 3 seconds in). This replaces "rolls on a landed fish". The one in five
