@@ -424,7 +424,8 @@ nothing and she never mentions it (see Neglect).
   Wick) are dropped.
 - **Her old line (decided, 2026-11-09, ADR 0013).** She descends from the old
   ruling line of the kingdom the dark lord broke, and it matters to the ending
-  (ring 3, #5). How is not designed. The limits stay: no hidden crown, no
+  (ring 3, centre 3 #5, M6). How is not designed, and it waits for ring 2 (#20)
+  and then ring 3, not for ring 1. The limits stay: no hidden crown, no
   reforged sword, no claim to a throne, no heir who must take a seat. The empty
   crown is the dark lord's emblem and does not become hers. This amends the
   2026-10-28 no hidden crown line above, which now reads as no crown she uses.
@@ -685,7 +686,7 @@ Rule for this game, in the same spirit:
 - The Wanderer's true name, what he gives at each road, and how he differs
   from Tolkien's Gandalf.
 - The hermit witch's ring unlock request and exact ring prices (note 07).
-- The warden head: how her old line matters to the ending (#5), exact
+- The warden head: how her old line matters to the ending (parked for ring 3, #5, M6, after ring 2), exact
   items, counts and gift values of the stage 1 trail, the shop list and token
   prices, the board's order list, the exact stops and milestones for the stage 5 errands, and whether she should be
   a woman (stays a woman for now). Her tie to Oriel, the note trail, the mark,

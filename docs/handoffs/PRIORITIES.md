@@ -22,9 +22,12 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
    systems exist (fish went live with fishing slices 1 and 2, #595). The top-level menu entry and the day-end recheck are done
    (#586), and `noteCooked` is called now (#593). Left: the summit achievement, the hall scene and rewards, and a look at the layout
    in a browser. "Items crafted" counts only buildable recipes (owner, 2026-11-08).
-2. **Story spine (started 2026-11-08q, the warden head and the sea elf are settled bar a few items; next the hermit witch, #178).** The warden head and her staged reveal (#177), the sea elf
-   and Homeward pin (#176), the hermit witch (#178) and the third community
-   project (#5). Together they decide what the ending and the Last Seat mean. Below Special Orders
+2. **Story spine (started 2026-11-08q; ring 1 part nearly done).** The warden head
+   and her staged reveal (#177), the sea elf and Homeward pin (#176) and the
+   hermit witch Rosmarin (#178) are settled bar small items. The third
+   community project (#5) is NOT part of this: it is centre 3 in ring 3 (M6) and
+   waits for ring 2 (#20, M5), so how the warden head's old line matters to the
+   ending is parked there (owner, 2026-11-09). Below Special Orders
    (2026-11-06): nothing in slices 1 to 3 needs it, and it is only needed
    before slice 5 (note 33), alongside the heart events. Owner put it before art.
 3. **Map areas** (notes 71 to 78, M3b, owner answers recorded 2026-11-08). One
