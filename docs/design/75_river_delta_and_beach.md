@@ -274,4 +274,3 @@ Drafted by `scripts/gen-beach-elf-house.mjs`; the JSON is the source from then o
   the haven elf's slot, the keepsake and token, whether she leaves, the pin's final price.
 - **Playtest:** `npm run playtest:beach-elf` (walks to the cottage, enters, opens the stall,
   is refused with 100g, buys the pin with a full purse, is refused a second).
-
