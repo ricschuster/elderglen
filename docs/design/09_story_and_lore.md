@@ -417,8 +417,17 @@ nothing and she never mentions it (see Neglect).
   The real name is an old road name, heard at stage 4. Candidates from the
   design talk, not yet chosen: Hesper Calloway, Marrow Vane, Tamsin Wick. The
   owner may name her.
-- **Name (deferred, 2026-11-09).** The owner will settle her real name and alias
-  in a separate discussion, as it needs time. The candidates stand.
+- **Name and alias (decided, 2026-11-09, ADR 0013).** Her real name is Aldreth,
+  one name and no surname, heard at stage 4. Her ring 1 alias is Lane, one word
+  and no title (this replaces the Mrs. Post style above). Strider is Tolkien's
+  and is not used. The old candidates (Hesper Calloway, Marrow Vane, Tamsin
+  Wick) are dropped.
+- **Her old line (decided, 2026-11-09, ADR 0013).** She descends from the old
+  ruling line of the kingdom the dark lord broke, and it matters to the ending
+  (ring 3, #5). How is not designed. The limits stay: no hidden crown, no
+  reforged sword, no claim to a throne, no heir who must take a seat. The empty
+  crown is the dark lord's emblem and does not become hers. This amends the
+  2026-10-28 no hidden crown line above, which now reads as no crown she uses.
 - **Look in ring 1 (decided, 2026-11-09).** One small visible change at stage 3,
   when she gives the carrier's mark (for example a new mend on the coat). The
   rest of the coat's change begins at stage 4. Stardew's Qi look is unchanged
@@ -602,7 +611,7 @@ Rule for this game, in the same spirit:
   from Tolkien's Gandalf.
 - The hermit witch's name, look and tower, what the fairy rings cost and what makes them look different from each other, and
   how she differs from Radagast.
-- The warden head: her real name and alias (deferred to its own talk), exact
+- The warden head: how her old line matters to the ending (#5), exact
   items, counts and gift values of the stage 1 trail, the shop list and token
   prices, the board's order list, the exact stops and milestones for the stage 5 errands, and whether she should be
   a woman (stays a woman for now). Her tie to Oriel, the note trail, the mark,
