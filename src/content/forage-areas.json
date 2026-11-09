@@ -158,5 +158,196 @@
         ]
       }
     }
+  },
+  "delta": {
+    "cap": 5,
+    "tableCaps": {
+      "marsh": 3,
+      "tide-pools": 1.2
+    },
+    "tables": {
+      "default": {
+        "spring": [
+          {
+            "id": "periwinkle",
+            "weight": 55
+          },
+          {
+            "id": "razor-clam",
+            "weight": 25
+          },
+          {
+            "id": "whelk",
+            "weight": 15
+          },
+          {
+            "id": "cockleshell",
+            "weight": 5
+          }
+        ],
+        "fall": [
+          {
+            "id": "periwinkle",
+            "weight": 55
+          },
+          {
+            "id": "razor-clam",
+            "weight": 25
+          },
+          {
+            "id": "whelk",
+            "weight": 15
+          },
+          {
+            "id": "cockleshell",
+            "weight": 5
+          }
+        ],
+        "summer": [
+          {
+            "id": "periwinkle",
+            "weight": 40
+          },
+          {
+            "id": "razor-clam",
+            "weight": 20
+          },
+          {
+            "id": "whelk",
+            "weight": 10
+          },
+          {
+            "id": "cockleshell",
+            "weight": 6
+          },
+          {
+            "id": "pearly-shell",
+            "weight": 24
+          }
+        ],
+        "winter": [
+          {
+            "id": "periwinkle",
+            "weight": 25
+          },
+          {
+            "id": "razor-clam",
+            "weight": 15
+          },
+          {
+            "id": "whelk",
+            "weight": 12
+          },
+          {
+            "id": "spiral-shell",
+            "weight": 48
+          }
+        ]
+      },
+      "marsh": {
+        "spring": [
+          {
+            "id": "dandelion",
+            "weight": 40
+          },
+          {
+            "id": "daffodil",
+            "weight": 30
+          },
+          {
+            "id": "salmonberry",
+            "weight": 30
+          }
+        ],
+        "summer": [
+          {
+            "id": "sweet-pea",
+            "weight": 60
+          },
+          {
+            "id": "spice-berry",
+            "weight": 40
+          }
+        ],
+        "fall": [
+          {
+            "id": "bramble-berry",
+            "weight": 60
+          },
+          {
+            "id": "crab-apple",
+            "weight": 40
+          }
+        ],
+        "winter": [
+          {
+            "id": "winter-cress",
+            "weight": 60
+          },
+          {
+            "id": "snowdrop",
+            "weight": 40
+          }
+        ]
+      },
+      "tide-pools": {
+        "spring": [
+          {
+            "id": "sea-fan",
+            "weight": 78
+          },
+          {
+            "id": "pin-urchin",
+            "weight": 19
+          },
+          {
+            "id": "seaweed",
+            "weight": 3
+          }
+        ],
+        "summer": [
+          {
+            "id": "sea-fan",
+            "weight": 78
+          },
+          {
+            "id": "pin-urchin",
+            "weight": 19
+          },
+          {
+            "id": "seaweed",
+            "weight": 3
+          }
+        ],
+        "fall": [
+          {
+            "id": "sea-fan",
+            "weight": 78
+          },
+          {
+            "id": "pin-urchin",
+            "weight": 19
+          },
+          {
+            "id": "seaweed",
+            "weight": 3
+          }
+        ],
+        "winter": [
+          {
+            "id": "sea-fan",
+            "weight": 78
+          },
+          {
+            "id": "pin-urchin",
+            "weight": 19
+          },
+          {
+            "id": "seaweed",
+            "weight": 3
+          }
+        ]
+      }
+    }
   }
 }

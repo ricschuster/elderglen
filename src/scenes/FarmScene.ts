@@ -50,6 +50,7 @@ import { openChest } from "../core/maze";
 import { itemById } from "../core/items";
 import { rodById, waterAhead } from "../core/fishing";
 import { holdsOf } from "../core/worldflags";
+import { mendTideBridge, TIDE_BRIDGE_WOOD } from "../core/tidebridge";
 import { logCleared } from "../core/logs";
 import { NOTHING_TO_ACT_ON, act, reasonText, useHeld } from "../core/tools";
 import { cropById } from "../core/crops";
@@ -305,6 +306,8 @@ export class FarmScene extends Phaser.Scene {
   /** Conditions that currently hold, for gated exits: "mines-open" from spring 5. */
   private holds = new Set<string>();
   private message = "";
+  /** True after the first Action press on the ruined footbridge, which asks first. */
+  private mendAsked = false;
   private hud!: Hud;
   private uiCamera!: Phaser.Cameras.Scene2D.Camera;
   private sprites!: Phaser.GameObjects.Container;
@@ -1560,6 +1563,10 @@ export class FarmScene extends Phaser.Scene {
     const spot = this.horseSpot();
     if (spot && spot.x === front.x && spot.y === front.y) return this.getOn();
     const service = this.map.serviceAt(front.x, front.y);
+    if (service?.kind !== "tide-bridge") this.mendAsked = false;
+    if (service?.kind === "fisher-shop")
+      return this.open("shop", { stock: "fisher" });
+    if (service?.kind === "tide-bridge") return this.mendBridge();
     if (service?.kind === "festival") return this.openFestival();
     if (service?.kind === "camp-chest")
       return this.report(takeCampGift(this.state, this.floor));
@@ -1635,6 +1642,30 @@ export class FarmScene extends Phaser.Scene {
       return;
     }
     this.report(result);
+  }
+
+  /**
+   * The ruined tide pool footbridge asks first, as a purchase does: the first
+   * press says what it costs, the second hands in the wood. Mending reloads the
+   * map, since the way through is a collision layer read at load (note 75).
+   */
+  private mendBridge(): void {
+    if (!this.mendAsked) {
+      this.mendAsked = true;
+      this.message = `The footbridge is broken. Press Action again to mend it for ${TIDE_BRIDGE_WOOD} wood.`;
+      return this.render();
+    }
+    this.mendAsked = false;
+    const result = mendTideBridge(this.state);
+    if (!result.ok) {
+      this.message =
+        result.reason === "not enough wood"
+          ? `Mending the footbridge takes ${TIDE_BRIDGE_WOOD} wood.`
+          : "The footbridge is already mended.";
+      return this.render();
+    }
+    this.save();
+    this.travel(this.mapId, "at_bridge");
   }
 
   /** Action in the farm cave: pick bat fruit, pick a mushroom box, or use the free dehydrator. */
@@ -2018,6 +2049,8 @@ export class FarmScene extends Phaser.Scene {
     this.wash.clear();
     const hall = this.state.hall;
     for (const r of regions) {
+      // A region that names a forage table is a patch of ground, not a hall room.
+      if (r.forage !== undefined) continue;
       if (r.id === "plaque") {
         hall.rooms.forEach((room, i) => {
           const lit = hall.roomComplete(room.id);

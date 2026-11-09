@@ -8,7 +8,7 @@ only, ADR 0002) and the differences were settled with the owner; see "Catch
 details and Stardew differences". Numbers are placeholders.
 The open items at the end are not decided. It answers the design half of
 issue #181. Slices 1 and 2 are built (see "Built in slices 1 and 2"), and the
-bait and lure half of slice 3 (see "Built in slice 3, part one"); the rest is not.
+bait and lure half of slice 3 (see "Built in slice 3, part one"), and the delta's marsh lake and sea with the fisher's counter (see "Built in slice 3, part two"); the rest is not.
 
 ## Why
 
@@ -561,6 +561,18 @@ Bait, lures and the fishing achievements. Numbers are placeholders and are in
   the Water room reward, the five legends and the crown, water plants, trash and
   the recycler, the Pearl Lobster, and bundles 13 to 18 and their rewards.
   Issue #596 stays open for these.
+
+## Built in slice 3, part two: the delta waters and the fisher (2026-11-09, issue #640)
+
+The River delta map (`75_river_delta_and_beach.md`, "Built status") gives three
+fishable waters. The 7 marsh lake fish and the 10 sea fish of the roster are in
+`fish.json` (placeholder prices; Sunk Boot Loach and Skiff Sprat are 40g, the floor
+of the common band). The river channels use the River table, as the farm pond does.
+The roster now holds 32 fish, so Whole Roster stays held back. The rods, Plain, Fine
+and Salted Bait and the lures are sold at the fisher's counter in her hut, and
+the general store no longer sells them. Salted Bait can be fitted and works at the
+sea only. Not built: shellfish pots, the Pearl Lobster, the Great Hearthfin legend,
+the other lakes (the Mountain lake) and the cove. Issue #596 stays open for these.
 
 ## Touch and accessibility
 

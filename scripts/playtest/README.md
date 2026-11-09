@@ -217,3 +217,9 @@ grants a steel axe, starts at the Forest's `from_secret_woods` entry (a scene
 restart, not a walk), checks the log is solid, chops it for 8 Hardwood, leaves by
 the west exit into the Secret Woods, chops a large stump for 2 Hardwood, sleeps
 and checks the stump and forage are back.
+
+`node scripts/playtest/delta.mjs` (about 80 seconds, `npm run dev` running) leaves the
+farm by its south exit into the River delta, casts a rod on the marsh lake, the river
+channel and the sea (checking the fishing screen opens on that water kind and a bite
+from that table is rolled), buys a rod at the fisher's counter, finds the tide pool
+footbridge shut, mends it with 300 wood and crosses, then sleeps.

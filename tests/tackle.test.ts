@@ -64,11 +64,11 @@ describe("tackle data", () => {
     ]);
   });
 
-  it("sells bait and lures in the shop, but not Salted Bait before the sea", () => {
+  it("sells bait, lures and Salted Bait at the fisher", () => {
     const stock = tackleStock();
     expect(stock).toContain("plain-bait");
     expect(stock).toContain("glint-lure");
-    expect(stock).not.toContain("salted-bait");
+    expect(stock).toContain("salted-bait");
     const g = startGame();
     expect(buy(g.inventory, g, "plain-bait", 10)).toBe(true);
     expect(g.inventory.count("plain-bait")).toBe(10);

@@ -5,6 +5,7 @@ import {
   forageCap,
   forageWeights,
   pickForage,
+  tableCapOf,
   type ForageArea,
 } from "./forageareas";
 
@@ -109,15 +110,35 @@ export class ForageField {
         if (id !== undefined) this.found.set(`${spot.x},${spot.y}`, id);
       }
     }
-    const target = Math.min(forageCap(area, season), pool.length);
-    for (let i = 0; i < target; i++) {
-      const spot = pool.splice(
-        Math.floor(random() * pool.length),
-        1,
-      )[0] as Spot;
-      const id = pickForage(forageWeights(area, tableOf(spot), season), random);
-      if (id !== undefined) this.found.set(`${spot.x},${spot.y}`, id);
+    // A table with its own cap is filled to it, apart from the rest (the delta's
+    // marsh, beach and tide pools). A fractional cap adds a point on that chance.
+    const own = new Map<string, Spot[]>();
+    const shared: Spot[] = [];
+    for (const spot of pool) {
+      const table = tableOf(spot);
+      if (tableCapOf(area, table, season) === undefined) shared.push(spot);
+      else own.set(table, [...(own.get(table) ?? []), spot]);
     }
+    const fill = (spots: Spot[], target: number) => {
+      const n = Math.min(target, spots.length);
+      for (let i = 0; i < n; i++) {
+        const spot = spots.splice(
+          Math.floor(random() * spots.length),
+          1,
+        )[0] as Spot;
+        const id = pickForage(
+          forageWeights(area, tableOf(spot), season),
+          random,
+        );
+        if (id !== undefined) this.found.set(`${spot.x},${spot.y}`, id);
+      }
+    };
+    for (const [table, spots] of own) {
+      const cap = tableCapOf(area, table, season) ?? 0;
+      const whole = Math.floor(cap);
+      fill(spots, whole + (random() < cap - whole ? 1 : 0));
+    }
+    fill(shared, forageCap(area, season));
   }
 
   /** Pick up whatever lies at a spot. Returns the item id, if any. */
