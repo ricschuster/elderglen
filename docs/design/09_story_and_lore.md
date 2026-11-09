@@ -450,6 +450,20 @@ nothing and she never mentions it (see Neglect).
   are a cooked dish, a rare seed and a rare ore. The drops need the Hearthwell
   interiors (#645, #646), so the trail cannot be built before them.
   Open: the exact items, counts and gift values (tuning note 07).
+- **Board orders (decided, 2026-11-09, Stardew).** Odd and big, tied to existing
+  systems: bring a long run of one thing, cook a set of dishes, give to the
+  villagers, all against a time limit. Stardew's Qi orders are of this kind
+  (crop shipping, colour collection, dishes, kindness; checked on the saved
+  Special Orders page). No courier-job orders for now.
+- **Token shop (decided, 2026-11-09).** Rare, one-off goods only that cannot be
+  bought elsewhere (rare seeds, a carrier's coat or lantern, keepsakes). Tokens
+  never buy common goods, so the main economy is untouched. Stardew's Qi shop is
+  gem-priced (from memory, unchecked).
+- **Stage 5 story errands (decided, 2026-11-09).** Three or four one-off
+  errands in ring 2, off the board, each followed by a short talk that tells a
+  bit of her road. Stardew's Qi story is told through notes and quests (from
+  memory, unchecked).
+  Open: the errands themselves and the shop list and prices (tuning note 07).
 
 ## Cast balance
 
@@ -575,10 +589,11 @@ Rule for this game, in the same spirit:
 - The hermit witch's name, look and tower, what the fairy rings cost and what makes them look different from each other, and
   how she differs from Radagast.
 - The warden head: her real name and alias (deferred to its own talk), exact
-  items, counts and gift values of the stage 1 trail, token prices, shop stock and the order
-  list for her board, and whether she should be a woman (stays a woman for now).
-  Her tie to Oriel, the note trail, the mark, her voice, look, ring 1 look change
-  and board place are decided above.
+  items, counts and gift values of the stage 1 trail, the shop list and token
+  prices, the board's order list, the stage 5 errands, and whether she should be
+  a woman (stays a woman for now). Her tie to Oriel, the note trail, the mark,
+  her voice, look, ring 1 look change, board place, order kind, shop kind and
+  the stage 5 errand plan are decided above.
 - Who fills the open named slots in the cast balance table.
 - The crossroads town's full building list.
 - The shadow in ring 3 (issue #5, what centre 3 is).
