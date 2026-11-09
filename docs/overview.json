@@ -369,6 +369,12 @@
           "issue": 640
         },
         {
+          "s": "decided",
+          "t": "Mountain (steps 1 to 3 built 2026-11-09): the 80 by 70 map with the lake and river source, pines, rocks and forage, the stone footbridge, the six lake fish, the Forest exit, and the rockfall and mine mouth that move the Mines door off the farm (open from Spring 5); the forge, the stonekeeper's yard, the Quarry exit, the Hearthwell exit and pots are not built",
+          "ref": "74_mountain.md#Built status (2026-11-09, #642)",
+          "issue": 642
+        },
+        {
           "s": "open",
           "t": "Ten map contract additions for the areas: water kinds, the massive log, per-map forage tables, tree kind, per-map stump regrow, conditional layers, rideable flag, cart and board service kinds, nightly spawns",
           "ref": "71_map_areas_overview.md#Map contract additions",

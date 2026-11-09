@@ -80,12 +80,13 @@ describe("the mine floors", () => {
       expect(floorLayout(BUILT_FLOORS, d).ladder).toBeUndefined();
   });
 
-  it("has a farm map with rocks and a gated mine door", () => {
+  it("has a farm map with rocks, and a gated mine door on the Mountain", () => {
     const farm = maps.get(START.map);
     expect(farm.rocks.length).toBeGreaterThan(5);
-    expect(farm.exits.find((e) => e.id === "mine")?.requires).toBe(
-      "mines-open",
-    );
+    expect(farm.exits.find((e) => e.id === "mine")).toBeUndefined();
+    expect(
+      maps.get("mountain").exits.find((e) => e.id === "mine")?.requires,
+    ).toBe("mines-open");
     expect(maps.problems()).toEqual([]);
   });
 });

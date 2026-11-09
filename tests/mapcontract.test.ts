@@ -116,10 +116,12 @@ describe("1 water kinds", () => {
     const c = { season: "spring", minutes: 12 * 60, raining: false } as const;
     expect(fishAvailable("river", c).length).toBeGreaterThan(0);
     expect(fishAvailable("sea", c).every((f) => f.water === "sea")).toBe(true);
-    // The river, the Forest lake, the delta's marsh lake and the sea have fish so far; each area adds its own.
+    // The river, the Forest lake, the Mountain lake, the delta's marsh lake and the sea have fish so far; each area adds its own.
     expect(
       FISH.every((f) =>
-        ["river", "forest-lake", "marsh-lake", "sea"].includes(f.water),
+        ["river", "forest-lake", "mountain-lake", "marsh-lake", "sea"].includes(
+          f.water,
+        ),
       ),
     ).toBe(true);
     expect(

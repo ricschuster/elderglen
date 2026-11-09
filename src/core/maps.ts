@@ -119,6 +119,25 @@ export class MapRegistry {
               /^forage spot \d+,\d+ cannot be reached/.test(p)
             )
               continue;
+            // An entry that needs a condition (behind the Mountain's
+            // rockfall) is not walked from while the condition is false.
+            if (
+              name.endsWith("(all conditions false)") &&
+              plain.exits.some(
+                (x) =>
+                  x.requires !== undefined &&
+                  p.startsWith(`exit "${x.id}" cannot be reached`),
+              )
+            )
+              continue;
+            if (
+              name.endsWith("(all conditions false)") &&
+              plain.entries.some(
+                (e) =>
+                  e.requires !== undefined && p.includes(`entry "${e.name}"`),
+              )
+            )
+              continue;
             out.push(`${name}: ${p}`);
           }
         for (const exit of plain.exits) {

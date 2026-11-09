@@ -11,13 +11,7 @@
   "tileheight": 16,
   "nextlayerid": 8,
   "nextobjectid": 102,
-  "properties": [
-    {
-      "name": "placeholder",
-      "type": "bool",
-      "value": true
-    }
-  ],
+  "properties": [{ "name": "placeholder", "type": "bool", "value": true }],
   "layers": [
     {
       "id": 1,
@@ -101,16 +95,8 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            {
-              "name": "map",
-              "type": "string",
-              "value": "farm"
-            },
-            {
-              "name": "entry",
-              "type": "string",
-              "value": "from_mine"
-            }
+            { "name": "map", "type": "string", "value": "mountain" },
+            { "name": "entry", "type": "string", "value": "from_mine" }
           ]
         },
         {
@@ -125,13 +111,7 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "lift"
-            }
-          ]
+          "properties": [{ "name": "kind", "type": "string", "value": "lift" }]
         },
         {
           "id": 99,
@@ -146,11 +126,7 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "ore-bin"
-            }
+            { "name": "kind", "type": "string", "value": "ore-bin" }
           ]
         },
         {
@@ -165,13 +141,7 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "smith"
-            }
-          ]
+          "properties": [{ "name": "kind", "type": "string", "value": "smith" }]
         },
         {
           "id": 87,
@@ -186,11 +156,7 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "stairs"
-            }
+            { "name": "kind", "type": "string", "value": "stairs" }
           ]
         },
         {
@@ -206,11 +172,7 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "trainer"
-            }
+            { "name": "kind", "type": "string", "value": "trainer" }
           ]
         },
         {
@@ -225,13 +187,7 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "dummy"
-            }
-          ]
+          "properties": [{ "name": "kind", "type": "string", "value": "dummy" }]
         }
       ]
     }

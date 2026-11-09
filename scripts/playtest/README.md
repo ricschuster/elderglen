@@ -223,3 +223,9 @@ farm by its south exit into the River delta, casts a rod on the marsh lake, the 
 channel and the sea (checking the fishing screen opens on that water kind and a bite
 from that table is rolled), buys a rod at the fisher's counter, finds the tide pool
 footbridge shut, mends it with 300 wood and crosses, then sleeps.
+
+`node scripts/playtest/mountain.mjs` (about 80 seconds, `npm run dev` running)
+leaves the Forest by its east exit onto the Mountain, finds the rockfall shut before
+Spring 5, casts a rod on the lake and the river, sets day 5, walks through the cleared
+rockfall to the mine mouth, goes into the mine hall and back out, then sleeps. It
+does not play the farm's walk to the Mountain (a scene restart stands in for it).
