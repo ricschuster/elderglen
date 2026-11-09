@@ -488,6 +488,31 @@ nothing and she never mentions it (see Neglect).
   Open: the exact stops, finds and milestones, and the shop list and prices
   (tuning note 07).
 
+### The sea elf, owner answers (2026-11-09)
+
+- **Why she stays (decided).** She does not know. She feels there is something
+  left for her to do before she can leave, and cannot say what. No dark lord and
+  no promise, so it fits ring 1's silence.
+- **Oriel (decided).** She knew Oriel, but only slightly. A small tie and a warm
+  detail, not a plot. The hermit still does not know Oriel.
+- **Where the ship goes (decided).** Her old home across the sea, which is not
+  the ring 2 haven. The haven is on this continent; her home is far more
+  different. The sea voyage stays offscreen unless a later design opens it.
+  Not Tolkien's western harbour (ADR 0003): the harbour, ship and home are our
+  own.
+- **Her unfinished business (decided).** It stays unnamed until late, then she
+  finds it, in a small act the player may notice, in the end of ring 1 or in
+  ring 2. She may sail or stay by her own choice. Not needed for slices 1 to 3.
+  Stardew's Krobus story is never resolved (from memory, unchecked).
+- **Name (decided).** Ondrel. Invented, with a water sound.
+- **Oddness and look (decided).** A travelling coat she never takes off, and a
+  half-packed trunk by her door that she packs and unpacks in small ways each
+  season. It shows the unfinished business without a word.
+- **Home (decided).** A small cottage on the dunes of the Beach, with her ship
+  seen moored below. This fits the shop and home plan in note 75.
+  Open: what the unfinished business is, her voice and manner, and the pin's
+  exact price.
+
 ## Cast balance
 
 The current state of the ring 1 cast, with races, genders and households, is in

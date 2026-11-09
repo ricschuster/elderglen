@@ -22,7 +22,7 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
    systems exist (fish went live with fishing slices 1 and 2, #595). The top-level menu entry and the day-end recheck are done
    (#586), and `noteCooked` is called now (#593). Left: the summit achievement, the hall scene and rewards, and a look at the layout
    in a browser. "Items crafted" counts only buildable recipes (owner, 2026-11-08).
-2. **Story spine (started 2026-11-08q, warden head's role settled, her name and trail open).** The warden head and her staged reveal (#177), the sea elf
+2. **Story spine (started 2026-11-08q, the warden head is settled bar two items).** The warden head and her staged reveal (#177), the sea elf
    and Homeward pin (#176), the hermit witch (#178) and the third community
    project (#5). Together they decide what the ending and the Last Seat mean. Below Special Orders
    (2026-11-06): nothing in slices 1 to 3 needs it, and it is only needed
@@ -45,6 +45,10 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
 Hardwood sale (200g, `src/content/carpenter-standin.json`, note 43). It comes out
 in the Secret Woods work package, #639, when the six daily stumps exist (owner,
 2026-11-08). Mahogany stays off the map for now.
+
+Sea elf (2026-11-09, note 09, #176): Ondrel, knew Oriel slightly, cannot say why she has not sailed home across the sea, travelling coat and half-packed trunk, cottage on the Beach dunes. Open: what her unfinished business is, her voice, the pin's price.
+
+Warden head, two items left open (2026-11-09, note 09 open list, #177): (1) how her old line matters to the ending, to settle with the third community project (#5) and ADR 0013; (2) the exact stops, finds and ring 2 milestones for her three stage 5 errands. Tuning items (trail and gift values, shop list, token prices, board order list) wait for note 07.
 
 Session 2026-11-08q (handoff 2026-11-08q): story spine started. The warden head's role is settled (knew Oriel, note trail, own board, carrier's mark, #177). Next: her open items (name, trail, look, board), then #176, #178, #5. #201 and #136 closed.
 

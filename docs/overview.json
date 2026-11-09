@@ -534,8 +534,14 @@
           "issue": 177
         },
         {
+          "s": "decided",
+          "t": "The sea elf is Ondrel: she knew Oriel only slightly, cannot say why she has not sailed home across the sea (not the ring 2 haven), wears a travelling coat and keeps a half-packed trunk, lives in a cottage on the Beach dunes; her unfinished business stays unnamed until late",
+          "ref": "09_story_and_lore.md#The sea elf, owner answers (2026-11-09)",
+          "issue": 176
+        },
+        {
           "s": "open",
-          "t": "The Homeward pin opens at 3 hearts; exact price still open",
+          "t": "The sea elf: what her unfinished business is, her voice and manner; the Homeward pin opens at 3 hearts, exact price still open",
           "issue": 176
         }
       ],
