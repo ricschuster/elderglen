@@ -223,6 +223,7 @@ describe("the Forest forage table", () => {
 describe("area worlds", () => {
   it("finds the Forest by its wild property", () => {
     expect(areaMaps()).toEqual([
+      "cove",
       "delta",
       "forest",
       "mountain",

@@ -1,7 +1,8 @@
-# 76 Lake cove (draft)
+# 76 Lake cove (built, legend and pots waiting)
 
-Status: draft, written 2026-11-08, owner answers recorded the same day (note 71). Nothing here is
-built. M3b. It designs the Lake cove map and the ferry. Overview and owner questions:
+Status: draft, written 2026-11-08, owner answers recorded the same day (note 71). Built
+2026-11-09 (#644, see "Built status" at the end) except the legend, the pots and
+the ferry animation. M3b. It designs the Lake cove map and the ferry. Overview and owner questions:
 `71_map_areas_overview.md`. Stardew has no area that matches the cove (the saved
 Secret Woods and Beach pages are the nearest fishing places, SC-89), so this is
 our own design.
@@ -125,3 +126,59 @@ Work package: "Lake cove and the ferry".
   records the chest taken.
 - Nothing about a ferry animation is designed: today an exit fades like a door.
 - The Water room reward flag and the hall art are the hall's (`40_hall_layout.md`).
+
+## Built status (2026-11-09, #644)
+
+Slices 1, 2 and 4 and the cove's fish table and forage of slice 3 are built. The
+legend waits (below).
+
+- **Map:** `src/content/maps/cove.json`, 50 by 40, drafted by `scripts/gen-cove-map.mjs`
+  (the JSON is the source from then on). Properties `wild`, `rideable: false` and
+  `waterKind: cove`. Water x 14 to 44, y 10 to 34 with the four corners cut round;
+  a path ring 3 tiles wide round it; a 5 by 5 dock at x 4 to 8, y 6 to 10; six
+  lantern posts (tile art, solid, they do not glow yet), the bench at (24..26, 36),
+  45 cosmetic trees (tile art, not choppable) and a cliff border. No building, no
+  resident, no shop.
+- **Exit and entry:** `to_delta` is a 1 by 3 exit on the dock's east edge (x 8, y 7
+  to 9) with the boat art on it, and `from_ferry` is (9, 8), the tile beside it.
+  Exits open with Action, as every door does, so the ferry is the same door. It is
+  always open and always free. The horse is dismounted by the existing door rule
+  (the map is not rideable).
+- **Delta side:** a path dock at x 24 to 28, y 54 to 58, the entry `from_ferry` at
+  (26, 57) and the gated exit `ferry` (x 25 to 27, y 58, `requires: cove-open`) to
+  `cove`. Two conditional art layers: `ferry-ruined` (`unless cove-open`, cliff
+  tiles) and `ferry-repaired` (`when cove-open`, roof tiles). The map check reads
+  both ways. A shut ferry says "The ferry is a wreck. Finish the Water room bundles
+  at the village hall to repair it."
+- **Gate:** `core/cove.ts`. `cove-open` is read from the hall (`roomComplete` of
+  `water-room`), as the Quarry bridge reads the Foragers' Shelf, with no saved flag.
+  The first night after the room is done the morning report says "The ferry on the
+  delta is repaired. The Lake cove is open." once (world flag `cove-told`).
+  **Bundles 13 to 18 are not written yet, so the Water room is empty and the gate
+  cannot open in a real game until they are.** Tests and the playtest open it with a
+  one-bundle test room and the `cove-open` flag respectively.
+- **Fish:** the 8 ordinary cove fish of note 21 are in `fish.json` (water `cove`),
+  with the note's seasons, times and bars. Prices are 400 to 700 (Pearlback 400,
+  Cove Lantern 450, Still-water Gar 420, Velvet Koi 600, Hush 650, Dusk Opal 620,
+  Deepglow 700, Shell Ghost 680), placeholders for note 07. A test checks no
+  bundle uses a cove fish.
+- **Forage:** `forage-areas.json` entry `cove`, the note's table, cap 2, 12 spots.
+- **Treasure:** service `cove-treasure` at (41, 36), a solid stone pile on the
+  south-east ledge, opened with Action from the shore. One chest per season, never
+  random. Contents, placeholders: spring 3 geodes, summer 10 Fine Bait, fall 1 Moth
+  Lure, winter 2 Frozen Geodes. The world flag `cove-chest-<year>-<season>` records
+  it taken, and goes up only when the goods fit in the backpack.
+- **Pots:** `potKindOf("cove")` is now fresh, as decision 5 says (it was salt, an
+  early stand-in). Nothing makes a pot yet.
+- **Choices where the notes left gaps:** the exit is 3 tiles tall and the boat is
+  drawn on it; the ferry exit on the delta is 3 wide at the dock's south edge; the
+  six lanterns and the bench are plain solid tiles with no label; the chest
+  contents above; a full backpack leaves the chest for later.
+- **Not built:** the legend, the Hearthwell Carp (it needs a legend rarity, the top
+  rod gate, a dusk and rain condition together and the crown, which the legends
+  slice builds); lantern glow and the night look; any ferry animation (it fades
+  like a door); pots; the mist-only dawn alternative (not needed, the treasure spot
+  stands).
+- **Playtest:** `npm run playtest:cove` (finds the ferry a wreck, repairs it by
+  flag, crosses, casts on the cove, opens the chest and finds it bare the second
+  time, sleeps, and steps back on the boat).

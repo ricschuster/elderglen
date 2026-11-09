@@ -404,5 +404,52 @@
         ]
       }
     }
+  },
+  "cove": {
+    "cap": 2,
+    "tables": {
+      "default": {
+        "spring": [
+          {
+            "id": "dandelion",
+            "weight": 50
+          },
+          {
+            "id": "daffodil",
+            "weight": 50
+          }
+        ],
+        "summer": [
+          {
+            "id": "sweet-pea",
+            "weight": 60
+          },
+          {
+            "id": "spice-berry",
+            "weight": 40
+          }
+        ],
+        "fall": [
+          {
+            "id": "bramble-berry",
+            "weight": 50
+          },
+          {
+            "id": "crab-apple",
+            "weight": 50
+          }
+        ],
+        "winter": [
+          {
+            "id": "crocus",
+            "weight": 50
+          },
+          {
+            "id": "snowdrop",
+            "weight": 50
+          }
+        ]
+      }
+    }
   }
 }

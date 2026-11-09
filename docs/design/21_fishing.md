@@ -572,7 +572,7 @@ The roster now holds 32 fish, so Whole Roster stays held back. The rods, Plain, 
 and Salted Bait and the lures are sold at the fisher's counter in her hut, and
 the general store no longer sells them. Salted Bait can be fitted and works at the
 sea only. Not built: shellfish pots, the Pearl Lobster, the Great Hearthfin legend,
-the other lakes (the Mountain lake) and the cove. Issue #596 stays open for these.
+and the legends. The cove's 8 ordinary fish are built (#644, note 76), and so are the other lakes. Issue #596 stays open for these.
 
 ## Touch and accessibility
 

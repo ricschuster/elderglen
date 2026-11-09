@@ -47,7 +47,6 @@ import {
   sightLine,
 } from "../core/festivals";
 import { openChest } from "../core/maze";
-import { itemById } from "../core/items";
 import { rodById, waterAhead } from "../core/fishing";
 import { holdsOf } from "../core/worldflags";
 import { mendTideBridge, TIDE_BRIDGE_WOOD } from "../core/tidebridge";
@@ -61,6 +60,8 @@ import {
   QUARRY_OPEN,
   YARD_EMPTY_LINE,
 } from "../core/quarry";
+import { COVE_TREASURE, FERRY_LINE, takeTreasure } from "../core/cove";
+import { itemById } from "../core/items";
 import { NOTHING_TO_ACT_ON, act, reasonText, useHeld } from "../core/tools";
 import { cropById } from "../core/crops";
 import { mapFiles, maps } from "../content/maps";
@@ -1208,7 +1209,9 @@ export class FarmScene extends Phaser.Scene {
           ? "The greenhouse is a ruin. Finish the Larder bundles at the village hall to repair it."
           : exit.id === "to_quarry"
             ? QUARRY_BRIDGE_LINE
-            : "It is shut.";
+            : exit.id === "ferry"
+              ? FERRY_LINE
+              : "It is shut.";
       this.render();
     }
     return true;
@@ -1591,6 +1594,7 @@ export class FarmScene extends Phaser.Scene {
       this.message = QUARRY_BRIDGE_LINE;
       return this.render();
     }
+    if (service?.kind === COVE_TREASURE) return this.openTreasure();
     if (service?.kind === "stonekeeper") {
       this.refreshHolds();
       this.message =
@@ -1700,6 +1704,21 @@ export class FarmScene extends Phaser.Scene {
     }
     this.save();
     this.travel(this.mapId, "at_bridge");
+  }
+
+  /** The cove's hidden chest: one a season, opened with Action (note 76, decision 8). */
+  private openTreasure(): void {
+    const r = takeTreasure(this.state);
+    if (r.ok) {
+      const name = itemById(r.id)?.name ?? r.id;
+      this.message = `A chest under the ledge. Inside: ${r.count} ${name}.`;
+      this.save();
+    } else
+      this.message =
+        r.reason === "taken"
+          ? "The ledge is bare. Something may turn up next season."
+          : "Your backpack is full.";
+    this.render();
   }
 
   /** Action in the farm cave: pick bat fruit, pick a mushroom box, or use the free dehydrator. */

@@ -10,7 +10,7 @@ import type { GameState } from "./save";
 /**
  * Fishing, slices 1 to 3 of note 21: a cast, a bite, the bar, the size roll,
  * the fishing skill, and bait and lures (`tackle.ts`). Pots, the other waters,
- * the cove and the legends are later slices. Content is `src/content/fish.json` and `rods.json`. Numbers are
+ * the legends are a later slice. Content is `src/content/fish.json` and `rods.json`. Numbers are
  * placeholders (`docs/design/07_tuning_numbers.md`). Pure rules, no Phaser.
  */
 export type Rarity = "common" | "uncommon" | "rare";
@@ -23,9 +23,9 @@ export type Water = WaterKind;
 /** The pot that fishes a water: fresh water pots and salt water pots (note 21). */
 export type PotKind = "fresh" | "salt";
 
-/** Sea and the cove are salt water, every other kind is fresh. */
+/** Only the sea is salt water. The cove is a fresh lake (note 76, decision 5). */
 export function potKindOf(kind: WaterKind): PotKind {
-  return kind === "sea" || kind === "cove" ? "salt" : "fresh";
+  return kind === "sea" ? "salt" : "fresh";
 }
 
 export interface FishDef {
