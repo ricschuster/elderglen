@@ -2,7 +2,7 @@
 
 Status: draft, written 2026-11-08, owner answers recorded the same day (note 71). The river
 layout terrain (#661) and the shell (#645: exits, building exteriors, the hall and sawmill doors, see
-"Built status" and "Shell built" at the end) are built. Interiors (#646) and people (#599) are not. It designs the Hearthwell town map, the largest social place in the
+"Built status" and "Shell built" at the end) are built. The interiors (#646, see "Interiors built") are built. People (#599) are not. It designs the Hearthwell town map, the largest social place in the
 game. Overview and owner questions: `71_map_areas_overview.md`. Stardew facts are
 from the saved Pelican Town page (read 2026-11-08), as ideas only (ADR 0002).
 Positions follow the zoomed Hearthwell view of `56_valley_map.md` where the
@@ -351,3 +351,54 @@ north exit. Tests: `tests/hearthwell.test.ts` ("the Hearthwell shell"). Playtest
   street, in by the hall door, and back the same way.
 - **Not built:** the other ten interiors, people, forage, weeds, cosmetic trees, pots and
   fishing zones on the river, the Outpost's stalls and trader, the cart, and the festival variant.
+
+## Interiors built (2026-11-09, #646)
+
+Eleven interior maps are built as shells with a counter and furniture, no people, and the ten shut
+lot doors in `hearthwell.json` are now walkable exits (the door tile is open, the exit id is the lot
+id, entry `door` on the interior, return entry `from_<id>`). Generated once by
+`scripts/gen-hearthwell-interiors.mjs`; the JSON is the source from then on. Tests:
+`tests/hearthwell-interiors.test.ts`. Playtest: `npm run playtest:hearthwell` now goes in and out of
+every interior.
+
+| Map | Size | Counter or station (service kind) | Notes |
+| --- | --- | --- | --- |
+| `general-store` | 14 by 10 | `shop` | Shelves, a bed corner for the household |
+| `healer` | 14 by 10 | `counter-healer` | Four patient beds |
+| `inn` | 14 by 10 | `counter-inn` | Tables, four pairs of guest beds |
+| `library` | 14 by 10 | `counter-library` | Shelves and a reading table |
+| `smithy` | 14 by 10 | `smith` | The whole smith screen, as the Mountain forge |
+| `hatter` | 14 by 10 | `counter-hatter` | Shelves |
+| `outpost` | 14 by 10 | `counter-outpost` | Post counter, notice wall, bench, door to the rooms in the top wall |
+| `outpost-rooms` | 10 by 8 | none | Two beds, a table, a stove |
+| `burrow-gardener` | 8 by 7 | none | One bed |
+| `burrow-retired` | 8 by 7 | none | Three beds (two retirees and the grandchild) |
+| `burrow-young` | 8 by 7 | none | Two beds |
+
+**Choices made where the notes left gaps (for the owner):**
+
+- **The farm keeps its shop, Orders and Request counters.** Note 77 says only the hall and sawmill
+  doors move off the farm, and the shell's choice ("The farm's counters leave when the interiors land")
+  would send every early shop trip across town, which the sim bot and playtests do not do. Hearthwell
+  now has the real store counter inside the general store. Both use the same game state. **Owner
+  decision wanted:** remove the farm's counters (the shop building then becomes scenery) or keep them.
+- **Counter moves.** The store's stand-in `shop` counter and the smithy's `smith` counter left the
+  streets and stand inside their interiors. The Help Wanted board stays outside the store, left of the
+  door (note 50: "outside the store"). The Outpost's two boards stay outside on its wall, with the
+  trader's stalls (note 57: "boards are outside by the door").
+- **The smith screen stays whole** (ore, coal, tools, as the forge). Splitting tool upgrades and
+  geode cracking to town waits for the geode and upgrade work.
+- **Healer, inn, library, hatter and post counters have no system.** They are solid counter tiles of
+  new kinds (`counter-healer`, `counter-inn`, `counter-library`, `counter-hatter`, `counter-outpost`)
+  that say "Nobody is here yet." (`COUNTER_LINES` in `core/labels.ts`), as the Outpost boards do. No
+  cooking, resting or hat-buying is wired to them. The hatter does not open the hats screen, which is
+  the player's own wardrobe.
+- **Sizes.** Shops and the Outpost post room are the 14 by 10 placeholder of note 58. The burrows are
+  8 by 7 (note 58 sets no size, "small burrow shell"). The steward's rooms are 10 by 8. The shop
+  interiors are the shop's 14 wide, wider than the 10 by 8 exterior footprint, which is placeholder.
+- **Outpost layout.** The steward's rooms are reached by a door in the post room's top wall (note 57
+  says "a stair or door"), return entry `from_rooms`.
+- **Furniture is placeholder tiles** from the existing tileset (crate, bed, scroll), all solid, no
+  furniture objects or art. Interiors carry no day state (open in note 58, and #599).
+- **Not built:** people and schedules (#599), shop hours and festival closures, any system behind the
+  four stand-in counters, the trader and stalls, the festival variant, and interior lighting.
