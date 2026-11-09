@@ -1,7 +1,7 @@
 # 77 Hearthwell (draft)
 
-Status: draft, written 2026-11-08, owner answers recorded the same day (note 71). Nothing here is
-built. Shell and interiors stay with #599 in M3b. It designs the Hearthwell town map, the largest social place in the
+Status: draft, written 2026-11-08, owner answers recorded the same day (note 71). Only the
+river layout terrain is built (#661, see "Built status" at the end), as a map file with no buildings. Shell and interiors stay with #599 in M3b. It designs the Hearthwell town map, the largest social place in the
 game. Overview and owner questions: `71_map_areas_overview.md`. Stardew facts are
 from the saved Pelican Town page (read 2026-11-08), as ideas only (ADR 0002).
 Positions follow the zoomed Hearthwell view of `56_valley_map.md` where the
@@ -25,7 +25,7 @@ earlier (note 71, build order).
    (gated, parked, #20).
 3. **The river has two arms** (owner, 2026-11-08): a wide eastern arm crossed by
    the broken bridge, and the hall on the island between the arms. **The detailed
-   layout is an open design item, designed later** (where the main arm runs, how
+   layout was designed later ("River layout decided" and "Built status" at the end)** (where the main arm runs, how
    banks, bridges and streets sit, where the sawmill's wheel is, whether the arms
    rejoin south of the town). The sketch and the coordinates below are the
    earlier working draft and are placeholders until that design is done. The
@@ -202,7 +202,7 @@ Work packages: "Hearthwell part 1, the shell and moving the farm's doors" (step 
 
 ## Open
 
-- **The river layout (open design item).** Owner answer 8 fixes only two arms,
+- **The river layout (settled, built as terrain in #661, see "Built status").** Owner answer 8 fixed only two arms,
   the broken bridge across the wide east arm and the hall on the island. A
   design pass is needed for the main arm, bridges, banks and streets. The
   valley map zoom shows only what the answer supports (see `56_valley_map.md`).
@@ -232,3 +232,67 @@ The two arms **rejoin south of the town**, with the hall on the island between t
 - The draft coordinates above stay placeholders. The curve moves the main arm off
   x 56 to 62 in its bend, so the Tiled draft sets the final tiles. Streets, house
   spots and landmarks still need the Tiled pass.
+
+## Built status (2026-11-09, #661)
+
+The river layout Tiled pass is built: `src/content/maps/hearthwell.json`, 120 by 110,
+drafted by `scripts/gen-hearthwell-map.mjs` (the JSON is the source from then on).
+Properties `rideable: true` and `waterKind: river`. Terrain only. **No building, door,
+exit, farm map change, trees, forage or weeds**: those are #645 and later. The map is
+not reachable in play yet (no exit leads to it). Tests: `tests/hearthwell.test.ts`.
+
+**Final tiles (these replace the draft coordinates above where they differ):**
+
+| Feature | Tiles |
+| --- | --- |
+| Main arm | x 56 to 62 (7 wide), straight from y 0 to 94, one bend east (quarter circle, centre (68.5, 94.5), radius 9), then a reach at y 100 to 106 |
+| East arm | x 109 to 113, y 0 to 99. Joins the reach at y 100 to 106 |
+| Outflow | One river leaves by the south edge at x 104 to 113 |
+| Bridges | North x 56 to 62, y 29 to 31 (7 by 3). Middle y 60 to 64 (7 by 5, the cart road). South y 90 to 92 (7 by 3). Paths over the water |
+| Streets (3 wide) | North y 29 to 31, x 0 to 89 (over the bridge to the island road). Middle y 60 to 64, x 0 to 108 (to the broken bridge). South y 90 to 92, x 0 to 70 |
+| Avenues (3 wide) | West bank x 30 to 32, y 29 to 108. Mountain road x 50 to 52, y 0 to 28. Island avenue x 87 to 89, y 13 to 76 |
+| Lanes | Sawmill lane y 76 to 77, x 31 to 55. South road y 107 to 108, x 30 to 76. Farm road y 58 to 59, x 0 to 4. Retired footpath y 85, x 64 to 70 |
+| Exits (reserved, regions) | Farm x 0, y 58 to 64. Mountain x 48 to 54, y 0. Delta x 70 to 76, y 109. Ring 2 x 119, y 58 to 65 |
+| Entries | `from_farm` (3, 61), `from_mountain` (51, 3), `from_delta` (73, 108), and `from_<building>` one tile below each door |
+| Broken bridge | x 109 to 113, y 60 to 64, still water (ruined art waits for #603) |
+| Town square | x 64 to 80, y 54 to 70, cart stop (66, 58) |
+| Festival green | x 70 to 105, y 77 to 98 (36 by 22), bandstand x 86 to 90, y 81 to 83 |
+| Mill wheel | x 56 to 58, y 67 to 69, in the main arm. Sawmill yard x 51 to 55, y 66 to 75 beside it |
+
+**Lots** (`region` rectangles named `lot-<id>`; the door is the bottom row, the entry
+`from_<id>` is the tile below it on a street; all face south). Footprint x, y, w, h and door:
+
+| Lot | Footprint | Door |
+| --- | --- | --- |
+| general-store | 17, 21, 10 by 8 | (22, 28) |
+| healer | 36, 21, 10 by 8 | (41, 28) |
+| inn | 15, 50, 14 by 10 | (22, 59) |
+| library | 36, 52, 10 by 8 | (41, 59) |
+| burrow-young | 5, 55, 6 by 5 | (8, 59) |
+| sawmill | 37, 66, 14 by 10 | (48, 75), entry on the lane |
+| smithy | 17, 82, 10 by 8 | (22, 89) |
+| hatter | 36, 82, 10 by 8 | (41, 89) |
+| burrow-gardener | 66, 24, 6 by 5 | (68, 28) |
+| outpost | 82, 5, 12 by 8 | (88, 12), stall yard x 80 to 96, y 14 to 19 |
+| hall | 92, 50, 14 by 10 | (99, 59) |
+| burrow-retired | 64, 80, 6 by 5 | (66, 84) |
+
+**Choices made where the notes left gaps (recorded for the owner):**
+
+- The delta exit stays at x 70 to 76 but is on the **south bank**, a strip y 107 to 109
+  under the river reach, reached from the west bank by the south road. It is no longer on
+  the island, because the arms rejoin south of the green and the island ends at y 99.
+- The draft's door rows (y 24, 53, 82, doors one tile off the streets) were inconsistent
+  with the streets, so every lot now has its door on its bottom row and its entry on the
+  street below. Street rows and bridge rows now agree (29 to 31, 60 to 64, 90 to 92).
+- The Farm exit moved from y 56 to 62 to **y 58 to 64**, to meet the middle street.
+- The festival green is y 77 to 98, not 80 to 101, so the river reach fits below it.
+- The sawmill lot is x 37 to 50 with its door at x 48 and a lane entry, since a
+  south-facing door on the middle street's south side had no street to open onto.
+- The main arm has a single bend (the south one, east). It stays x 56 to 62 above it,
+  so the draft's "moves off 56 to 62" shows only in the bend.
+- The middle bridge is 5 rows tall and spans the whole 7 wide arm (the draft's 6 by 3
+  and 4 by 3 did not match the arm width).
+- The far bank (x 114 to 119) is unreachable land with only the reserved ring 2 gate.
+- Lots are open grass for now; #645 adds the buildings, doors and exits (and the farm's
+  matching entries).
