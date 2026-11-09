@@ -1,7 +1,8 @@
-// Hearthwell part 1 (note 77): the shell and the farm's moved doors. Leave the
-// farm by its east exit, walk to the Village Hall door and the sawmill door and
-// back, use the store and smithy counters, read the Outpost boards, then out by
-// the Mountain exit and back, and by the delta exit and back, and home to the farm.
+// Hearthwell parts 1 and 2 (note 77): the shell, the farm's moved doors and the
+// interiors. Leave the farm by its east exit, walk to the hall and sawmill doors
+// and back, go into the store, smithy, healer, inn, library, hatter, the Outpost
+// and its rooms and the three burrows and out again, then out by the Mountain
+// exit and back, and by the delta exit and back, and home to the farm.
 // Run with `npm run dev` going: node scripts/playtest/hearthwell.mjs
 // (BASE_URL=http://localhost:5174/ if the dev server picked another port.)
 import { launch, Bot, log, sleepMs, finding, findings } from "./lib.mjs";
@@ -67,10 +68,52 @@ await door(48, 76, "up", "sawmill", "the sawmill door");
 await counter(5, 2, "carpenter", "the carpenter");
 await door(5, 5, "down", "hearthwell", "the sawmill's own door");
 
-// The store and smithy counters, outside their doors.
-await counter(22, 29, "shop", "the store counter");
+// The Help Wanted board stays outside the general store, by its door.
 await counter(20, 29, "requests", "the Help Wanted board");
-await counter(22, 90, "smith", "the smithy counter");
+
+// The store: in by its door, the counter inside, out again.
+await door(22, 29, "up", "general-store", "the general store door");
+await counter(5, 2, "shop", "the store counter");
+await door(7, 8, "down", "hearthwell", "the store's own door");
+
+// The smithy: in by its door, the smith counter inside, out again.
+await door(22, 90, "up", "smithy", "the smithy door");
+await counter(6, 2, "smith", "the smithy counter");
+await door(7, 8, "down", "hearthwell", "the smithy's own door");
+
+// The healer, inn, library and hatter: in, a counter that talks, out.
+for (const [id, x, doorX, doorY, cx] of [
+  ["healer", 41, 41, 29, 6],
+  ["inn", 22, 22, 60, 6],
+  ["library", 41, 41, 60, 6],
+  ["hatter", 41, 41, 90, 6],
+]) {
+  await door(doorX, doorY, "up", id, `the ${id} door`);
+  await bot.walkTo(cx, 2);
+  await bot.face("up");
+  await bot.key("KeyX", 300);
+  const said = (await bot.dbg()).message;
+  if (!said.includes("Nobody is here yet"))
+    finding(`the ${id} counter said "${said}"`);
+  else log(`the ${id} counter: "${said}"`);
+  await door(7, 8, "down", "hearthwell", `the ${id}'s own door`);
+}
+
+// The Outpost: the post room, the steward's rooms behind it, and back.
+await door(88, 13, "up", "outpost", "the Outpost door");
+await door(12, 1, "up", "outpost-rooms", "the steward's rooms door");
+await door(4, 6, "down", "outpost", "the steward's rooms' own door");
+await door(7, 8, "down", "hearthwell", "the Outpost's own door");
+
+// The three burrows.
+for (const [id, x, y] of [
+  ["burrow-young", 8, 60],
+  ["burrow-gardener", 68, 29],
+  ["burrow-retired", 66, 85],
+]) {
+  await door(x, y, "up", id, `the ${id} door`);
+  await door(3, 5, "down", "hearthwell", `the ${id}'s own door`);
+}
 
 // The Outpost boards say something and open nothing.
 for (const [x, what, line] of [

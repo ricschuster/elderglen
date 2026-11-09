@@ -65,7 +65,7 @@ so a map can be authored later from the note alone.
 | 5 | Forest part 2 (built 2026-11-09, note 72) | Farmstead and keeper's counter, hermit's tower and the Wanderer's camp. Names, stock and the hermit's teaching wait for #136 and #178 | #638 |
 | 6 | Lake cove | The Water room reward. Needs the delta and the full roster, and is small and late by design | #644 |
 | 7 | Hearthwell part 1 | The shell moves the hall and sawmill off the farm, joins Mountain and delta, and closes both loops of note 19. Interiors can be empty shells. Built 2026-11-09 (note 77 "Shell built") | #645 |
-| 8 | Hearthwell part 2 | Interiors by template. People, schedules and gifts ride with #599 | #646, #599 |
+| 8 | Hearthwell part 2 | Interiors by template (built 2026-11-09, #646, note 77 "Interiors built"). People, schedules and gifts ride with #599 | #646, #599 |
 | 9 | Beach elf's house | Waits on the story spine (#176) | #641 |
 
 **Hearthwell is last in full.** The town needs the cast list (#136) and schedules

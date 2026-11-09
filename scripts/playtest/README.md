@@ -249,8 +249,10 @@ then steps back on the boat. A scene restart stands in for the walk to the dock.
 
 `node scripts/playtest/hearthwell.mjs` (`npm run playtest:hearthwell`, about 2 minutes,
 `npm run dev` running) leaves the farm by its east exit, walks to the hall and sawmill doors
-and back, uses the carpenter, the store, the Help Wanted board and the smithy counter, reads
-the two Outpost boards, then goes out by the Mountain and delta exits and back, and home.
+and back, uses the carpenter, the Help Wanted board, goes into the store and smithy and uses
+their counters, visits the healer, inn, library, hatter, the Outpost and its rooms and the
+three burrows, reads the two Outpost boards, then goes out by the Mountain and delta exits
+and back, and home.
 A scene restart stands in for the first step onto the farm only.
 
 `node scripts/playtest/farmstead.mjs` (about 60 seconds, `npm run dev` running) walks

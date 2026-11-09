@@ -1,0 +1,107 @@
+{
+  "type": "map",
+  "version": "1.10",
+  "tiledversion": "1.10.2",
+  "orientation": "orthogonal",
+  "renderorder": "right-down",
+  "infinite": false,
+  "width": 8,
+  "height": 7,
+  "tilewidth": 16,
+  "tileheight": 16,
+  "nextlayerid": 4,
+  "nextobjectid": 28,
+  "properties": [{ "name": "placeholder", "type": "bool", "value": true }],
+  "tilesets": [
+    {
+      "firstgid": 1,
+      "name": "placeholder",
+      "tilewidth": 16,
+      "tileheight": 16,
+      "tilecount": 12,
+      "columns": 10,
+      "image": "placeholder-tiles.png",
+      "imagewidth": 192,
+      "imageheight": 16
+    }
+  ],
+  "layers": [
+    {
+      "id": 1,
+      "name": "ground",
+      "type": "tilelayer",
+      "width": 8,
+      "height": 7,
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "visible": true,
+      "data": [
+        7, 7, 7, 7, 7, 7, 7, 7, 7, 10, 3, 12, 12, 3, 12, 7, 7, 3, 3, 3, 3, 3, 3,
+        7, 7, 3, 12, 3, 3, 3, 3, 7, 7, 3, 3, 3, 12, 12, 3, 7, 7, 3, 3, 3, 3, 3,
+        3, 7, 7, 7, 7, 9, 7, 7, 7, 7
+      ]
+    },
+    {
+      "id": 2,
+      "name": "collision",
+      "type": "tilelayer",
+      "width": 8,
+      "height": 7,
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "visible": false,
+      "data": [
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1,
+        1, 1, 1, 0, 1, 1, 1, 1
+      ]
+    },
+    {
+      "id": 3,
+      "name": "markers",
+      "type": "objectgroup",
+      "draworder": "topdown",
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "visible": true,
+      "objects": [
+        {
+          "id": 26,
+          "name": "door",
+          "class": "entry",
+          "type": "entry",
+          "x": 56,
+          "y": 88,
+          "width": 0,
+          "height": 0,
+          "point": true,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 27,
+          "name": "door",
+          "class": "exit",
+          "type": "exit",
+          "x": 48,
+          "y": 96,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            { "name": "map", "type": "string", "value": "hearthwell" },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "from_burrow-gardener"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

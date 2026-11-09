@@ -30,6 +30,17 @@ const EXITS: Record<string, string> = {
   forge: "Forge",
   farmstead: "Farmstead",
   hermit: "Hermit's tower",
+  "general-store": "General Store",
+  healer: "Healer",
+  inn: "Inn",
+  library: "Library",
+  smithy: "Smithy",
+  hatter: "Hatter",
+  outpost: "Outpost",
+  rooms: "Steward's rooms",
+  "burrow-gardener": "Gardener's burrow",
+  "burrow-retired": "Retired couple's burrow",
+  "burrow-young": "Young adults' burrow",
 };
 
 const SERVICES: Record<string, string> = {
@@ -67,6 +78,11 @@ const SERVICES: Record<string, string> = {
   "tide-bridge": "Broken Footbridge",
   "quarry-bridge": "Broken Bridge",
   "cove-treasure": "Glint on the Ledge",
+  "counter-healer": "Healer's Counter",
+  "counter-inn": "Inn Counter",
+  "counter-library": "Library Desk",
+  "counter-hatter": "Hatter's Counter",
+  "counter-outpost": "Post Counter",
 };
 
 /** Festival map counters and villagers share kinds, so they are named by id. */
@@ -108,3 +124,19 @@ export const BOARD_LINES: Record<string, string> = {
   "board-news": "The road news board. Nothing is posted yet.",
   "board-orders": "The Special Orders board. It is empty for now.",
 };
+
+/**
+ * What the Hearthwell counters without a system yet say (note 77, interiors
+ * built as shells by #646). Nobody stands behind them until villagers (#599).
+ */
+export const COUNTER_LINES: Record<string, string> = {
+  "counter-healer": "The healer's counter. Nobody is here yet.",
+  "counter-inn": "The inn's counter. Nobody is here yet.",
+  "counter-library": "The library desk. Nobody is here yet.",
+  "counter-hatter": "The hatter's counter. Nobody is here yet.",
+  "counter-outpost": "The post counter. Nobody is here yet.",
+};
+
+/** The line a stand-in counter or board says, if the kind has one. */
+export const standInLine = (kind: string): string | undefined =>
+  BOARD_LINES[kind] ?? COUNTER_LINES[kind];

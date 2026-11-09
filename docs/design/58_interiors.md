@@ -1,6 +1,6 @@
 # 58 Interiors (draft)
 
-Status: draft. Decided with the owner on 2026-11-06. Nothing here is built. It
+Status: draft. Decided with the owner on 2026-11-06. The Hearthwell interiors, the Outpost's two maps and the three burrows are built as shells (#646, note 77 "Interiors built"); the rest is not. It
 settles which buildings the player can walk into, and so how many interior maps
 the game needs. ADR 0005 says buildings are interior maps, not menus.
 

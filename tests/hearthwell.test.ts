@@ -18,6 +18,19 @@ const inside = (r: { x: number; y: number; w: number; h: number }) => {
   return out;
 };
 const lots = town.regions.filter((r) => r.id.startsWith("lot-"));
+/** The ten lot doors that #646 opened onto interiors. */
+const DOORS = [
+  "general-store",
+  "healer",
+  "inn",
+  "library",
+  "smithy",
+  "hatter",
+  "outpost",
+  "burrow-gardener",
+  "burrow-retired",
+  "burrow-young",
+];
 
 describe("the Hearthwell river layout (note 77, #661)", () => {
   it("is 120 by 110, rideable, river water, and meets the contract", () => {
@@ -229,13 +242,16 @@ describe("the Hearthwell shell (note 77, #645)", () => {
     }
     // No ring 2 exit until ring 2 has a map.
     expect(town.exits.find((e) => e.map === "")).toBeUndefined();
-    expect(town.exits.map((e) => e.id).sort()).toEqual([
-      "hall",
-      "sawmill",
-      "to_delta",
-      "to_farm",
-      "to_mountain",
-    ]);
+    expect(town.exits.map((e) => e.id).sort()).toEqual(
+      [
+        ...DOORS,
+        "hall",
+        "sawmill",
+        "to_delta",
+        "to_farm",
+        "to_mountain",
+      ].sort(),
+    );
     for (const id of farmIds)
       expect(
         maps.get(id).exits.find((e) => e.id === "hearthwell"),
@@ -296,7 +312,7 @@ describe("the Hearthwell shell (note 77, #645)", () => {
     }
   });
 
-  it("builds every lot as a solid building with one door tile on the bottom row", () => {
+  it("builds every lot as a solid building with one open door tile on the bottom row", () => {
     for (const lot of lots) {
       let solid = 0;
       let open = 0;
@@ -305,24 +321,25 @@ describe("the Hearthwell shell (note 77, #645)", () => {
         else open++;
       }
       const id = lot.id.slice(4);
-      const opens = ["hall", "sawmill"].includes(id);
-      expect(open, id).toBe(opens ? 1 : 0);
+      // Every lot has one walkable door now (#646 opened the other ten).
+      expect(open, id).toBe(1);
       expect(solid + open, id).toBe(lot.w * lot.h);
     }
   });
 
-  it("puts the store and smithy counters on their door tiles, reached from the street", () => {
-    const store = town.services.find((s) => s.id === "shop")!;
-    const smithy = town.services.find((s) => s.id === "smithy")!;
-    expect(store).toMatchObject({ kind: "shop", x: 22, y: 28 });
-    expect(smithy).toMatchObject({ kind: "smith", x: 22, y: 89 });
+  it("keeps the Help Wanted board on the store's wall and moves the shop and smith counters inside", () => {
+    expect(town.services.find((s) => s.kind === "shop")).toBeUndefined();
+    expect(town.services.find((s) => s.kind === "smith")).toBeUndefined();
     const help = town.services.find((s) => s.kind === "requests")!;
     expect(help.y).toBe(28);
     expect(help.x).toBeGreaterThanOrEqual(region("lot-general-store").x);
     expect(help.x).toBeLessThan(region("lot-general-store").x + 10);
     const walkable = town.reachable(town.entry("from_farm")!);
-    for (const s of [store, smithy, help])
-      expect(walkable.has(`${s.x},${s.y + 1}`)).toBe(true);
+    expect(walkable.has(`${help.x},${help.y + 1}`)).toBe(true);
+    expect(maps.get("general-store").services[0]).toMatchObject({
+      kind: "shop",
+    });
+    expect(maps.get("smithy").services[0]).toMatchObject({ kind: "smith" });
   });
 
   it("hangs the road news and Special Orders boards on the Outpost wall", () => {
@@ -365,7 +382,8 @@ describe("the Hearthwell shell (note 77, #645)", () => {
     expect(walker.goToService("hall", "larder")).toBe(true);
     expect(walker.mapId).toBe("hall");
     expect(walker.goToService("sawmill", "carpenter")).toBe(true);
-    expect(walker.goToService("hearthwell", "shop")).toBe(true);
+    expect(walker.goToService("general-store", "shop")).toBe(true);
+    expect(walker.mapId).toBe("general-store");
     expect(walker.goToService("farm", "shop")).toBe(true);
     expect(walker.mapId).toBe("farm");
   });
