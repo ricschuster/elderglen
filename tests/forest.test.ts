@@ -61,9 +61,12 @@ describe("the Forest map (note 72, part 1)", () => {
     }
   });
 
-  it("leaves the Mountain and Secret Woods exits unauthored", () => {
-    expect(forest.exits.map((e) => e.id)).toEqual(["to_farm"]);
-    expect(forest.logs).toEqual([]);
+  it("leaves the Mountain exit unauthored, and gates the Secret Woods behind the log", () => {
+    expect(forest.exits.map((e) => e.id)).toEqual([
+      "to_farm",
+      "to_secret_woods",
+    ]);
+    expect(forest.logs.length).toBe(2);
   });
 
   it("has the Forest lake, fished as forest-lake water", () => {
@@ -216,7 +219,7 @@ describe("the Forest forage table", () => {
 
 describe("area worlds", () => {
   it("finds the Forest by its wild property", () => {
-    expect(areaMaps()).toEqual(["forest"]);
+    expect(areaMaps()).toEqual(["forest", "secret-woods"]);
     expect(isAreaMap("forest")).toBe(true);
     expect(isAreaMap("farm")).toBe(false);
     expect(isAreaMap("nowhere")).toBe(false);

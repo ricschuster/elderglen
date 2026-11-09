@@ -184,8 +184,9 @@ stump already exist.
 1. **Contract additions** (shared work package, note 71).
 2. **Shell:** `forest.json` with terrain, collision, roads, the lake with its
    water kind, entries, the farm exit and the matching farm exit. Rocks, twigs,
-   weeds. The Mountain and Secret Woods exits stay unauthored, ending in
-   scenery. `placeholder: true`.
+   weeds. The Mountain exit stays unauthored, ending in
+   scenery. The Secret Woods exit, entry and log were added by #639 (note 73:
+   the log is two objects at (7, 15) and (7, 16), a two wide corridor). `placeholder: true`.
 3. **Trees:** the six groves, the cosmetic border, regrowth outside the farm.
 4. **Forage:** the table and cap, the onion bank.
 5. **Farmstead:** exterior, paddocks, the keeper's house interior and the animal

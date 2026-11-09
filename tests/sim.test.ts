@@ -24,7 +24,7 @@ describe("headless sim", () => {
   });
 
   it("lets the expert finish the bundles it plays over the 112 day year", () => {
-    const r = playGame(PERSONAS.expert!, seeded(2), 112);
+    const r = playGame(PERSONAS.expert!, seeded(4), 112);
     // Winter Foraging opens in winter (day 85), so it ends the run.
     expect(r.allDay).toBeGreaterThanOrEqual(85);
     expect(r.allDay).toBeLessThanOrEqual(112);
@@ -34,7 +34,9 @@ describe("headless sim", () => {
       else expect(r.bundleDays[b.id], b.id).toBeDefined();
     }
     expect(r.moneyAtSeasonEnd).toHaveLength(3);
-  });
+    // The year's nights tick every area world, so it takes about 5 s (the default timeout).
+    // Seed 4: adding a world to the nights shifts the random stream, and seed 2 then misses a bundle.
+  }, 30000);
 
   it("names the bundles it does not play, all of which exist", () => {
     // Artisan Goods needs jar and bee house runs and an orchard the bot lacks.

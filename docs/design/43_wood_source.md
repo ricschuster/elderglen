@@ -115,11 +115,14 @@ Settled briefly where the notes left gaps. Numbers are placeholders (note 07).
   4 days (about 3 a day). The Standard farm has 3, hand placed on the soil, that
   do not come back (`stumpRegrowDays` 0 now means the stump is removed, as note
   44 says of the Standard farm). No sap from a large stump.
-- **Not built.** Large logs (steel axe), the Secret Woods with its six daily
-  stumps, Mahogany trees, the Mines floors 41 to 69 and the other Stardew
+- **Built since (2026-11-09, #639).** The massive log (steel axe) and the Secret
+  Woods with its six daily stumps (note 73), about 12 Hardwood a day.
+- **Not built.** Mahogany trees, the Mines floors 41 to 69 and the other Stardew
   sources. Until the Secret Woods exists, 100 hardwood is out of reach on the
   Standard farm (3 stumps give 6) and takes about 33 days of Woodland stumps.
-- **Temporary carpenter sale (owner, 2026-11-08).** The carpenter sells Hardwood
+- **Temporary carpenter sale (owner, 2026-11-08), REMOVED 2026-11-09 (#639).** The
+  Secret Woods now has six large stumps that regrow daily (note 73), so the
+  stand-in file, `core/carpenter.ts` and the scene row are deleted. It said: the carpenter sold Hardwood
   at 200g each (Stardew's price from memory, unchecked: the saved Carpenter page
   lists none) so the stable and house tier 2 are reachable on the Standard farm.
   REMOVE it when a real supply exists (logs, Secret Woods, Mahogany, Mines

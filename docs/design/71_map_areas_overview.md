@@ -58,7 +58,7 @@ so a map can be authored later from the note alone.
 | --- | --- | --- | --- |
 | 0 | Map contract additions and the tablet load test | Every map below needs one of the ten additions, so build them once | #636 |
 | 1 | Forest part 1 | The main wood supply once the farm runs dry (note 43), the first extra lake, the farm's north exit, and the log the next step needs | #637 |
-| 2 | Secret Woods | Small, and it ends the carpenter's temporary Hardwood sale with a real supply (note 59). Needs the log from step 1 | #639 |
+| 2 | Secret Woods (built 2026-11-09, steps 1 to 4, note 73) | Small, and it ends the carpenter's temporary Hardwood sale with a real supply (note 59). Needs the log from step 1 | #639 |
 | 3 | River delta with the Beach | Three fishing waters and the fisher unblock #596 slices 3 and 4. Open from the start, and needs only the farm's south exit | #640 |
 | 4 | Mountain | The Mines entrance leaves the farm, the forge replaces a menu, and the third lake and the river source complete the lake set the Water room needs | #642, #643 |
 | 4b | Quarry | Off the Mountain's east road. Regrowing stone and ore, the stonekeeper's job. Waits on the bridge's bundle room (note 78, question 1) | #649 |

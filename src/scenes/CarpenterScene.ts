@@ -1,12 +1,6 @@
 import Phaser from "phaser";
 import type { GameState } from "../core/save";
 import { HARDWOOD } from "../core/items";
-import {
-  HARDWOOD_STANDIN_ENABLED,
-  HARDWOOD_STANDIN_PRICE,
-  buyHardwood,
-  hardwoodProblem,
-} from "../core/carpenter";
 import { DECOR, buyDecor, decorProblem } from "../core/decor";
 import {
   CATALOGUE_PRICE,
@@ -239,14 +233,6 @@ export class CarpenterScene extends Phaser.Scene {
         detail: `${HAY_PRICE * 10}g, into your pack (${g.inventory.count("hay")} carried)`,
         buttons: [{ text: "Buy", run: () => this.buyHay() }],
       });
-    // TEMPORARY stand-in, remove with src/core/carpenter.ts (note 43).
-    if (HARDWOOD_STANDIN_ENABLED)
-      rows.push({
-        label: "Hardwood",
-        detail: `${HARDWOOD_STANDIN_PRICE}g each, a stand in until real supply (have ${g.inventory.count(HARDWOOD)})`,
-        dim: hardwoodProblem(g) !== undefined,
-        buttons: [{ text: "Buy", run: () => this.buyHardwood() }],
-      });
     if (!g.houseBuild && !g.catalogue && g.houseTier >= 1) {
       rows.push({
         label: "Furniture Catalogue",
@@ -353,15 +339,6 @@ export class CarpenterScene extends Phaser.Scene {
       this.message.setText(
         `Ordered. The carpenter starts tomorrow and takes ${SILO_BUILD_DAYS} days.`,
       );
-    this.refresh();
-  }
-
-  private buyHardwood(): void {
-    const problem = hardwoodProblem(this.state);
-    if (problem !== undefined) this.message.setText(problem);
-    else if (buyHardwood(this.state) > 0)
-      this.message.setText(`Bought 1 hardwood for ${HARDWOOD_STANDIN_PRICE}g.`);
-    else this.message.setText("Your pack is full.");
     this.refresh();
   }
 

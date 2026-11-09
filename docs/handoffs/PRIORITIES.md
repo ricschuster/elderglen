@@ -35,8 +35,10 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
    additions (#636, ten of them, built) first, then Forest part 1 (#637, built
    2026-11-09: map, lake and its six fish, six groves with regrowth, forage and the
    onion bank, and the farm's north exit; area worlds in `core/areas.ts`, see note
-   72 "Built status"), Secret Woods
-   (#639, ends the carpenter's Hardwood sale), River delta with the Beach (#640,
+   72 "Built status"), Secret Woods (#639, built 2026-11-09 with the massive log,
+   six daily stumps and forage; the carpenter's Hardwood sale is gone; the pond's
+   fish and the statue wait for the fish and elderfruit slices, note 73 "Built
+   status"), River delta with the Beach (#640,
    unblocks #596), Mountain (#642, #643), the Quarry (#649), Forest part 2
    (#638), Lake cove (#644), Hearthwell shell (#645) and interiors (#646), Beach
    elf (#641, waits on the story spine). Changed order since the draft: the Quarry
@@ -47,10 +49,9 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
    (audio plan: #527).
 5. **Ring 2 shape and travel** (#20, M5). Parked until slice 3 is played.
 
-**Remove when real hardwood supply exists (#639):** the carpenter's temporary
-Hardwood sale (200g, `src/content/carpenter-standin.json`, note 43). It comes out
-in the Secret Woods work package, #639, when the six daily stumps exist (owner,
-2026-11-08). Mahogany stays off the map for now.
+**Done (#639, 2026-11-09):** the carpenter's temporary Hardwood sale was removed
+with the Secret Woods (six daily stumps and the log). Mahogany stays off the map
+for now.
 
 Session 2026-11-09 part two (handoff 2026-11-09b): hermit witch Rosmarin and her fairy rings settled, #5 and the warden head's line parked for ring 3 after ring 2. Next: note 54 question batch, then ring 2 (#20) if the owner agrees.
 
