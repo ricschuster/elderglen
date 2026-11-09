@@ -1,7 +1,7 @@
 # 72 Forest (draft)
 
-Status: draft, written 2026-11-08, owner answers recorded the same day (note 71). Nothing here is
-built. M3b (ring 1 systems), not M3c. It designs the Forest map to the pattern of `55_farm_layout.md`, from the
+Status: draft, written 2026-11-08, owner answers recorded the same day (note 71). Part 1
+(slices 2 to 4) is built, see "Built status" at the end; the rest is not. M3b (ring 1 systems), not M3c. It designs the Forest map to the pattern of `55_farm_layout.md`, from the
 areas in `19_valley_layout.md`. The overview and the owner questions are in
 `71_map_areas_overview.md`. Stardew facts are from the owner's saved pages
 (Cindersap Forest, Large Log, Trees, read 2026-11-08), as ideas only, never
@@ -205,3 +205,57 @@ Work packages: "Forest map part 1" (steps 2 to 4) and "Forest part 2" (steps 5 a
 - The size 120 by 120 must be confirmed by loading a placeholder map on the
   SM-T500 first (note 19).
 - Names and looks for the keeper, hermit and Wanderer (#136, #178).
+
+## Built status
+
+**Part 1, #637 (2026-11-09): slices 2 to 4 are built.** Map `forest.json` (120 by
+120, `placeholder`, `rideable`, `wild`, `waterKind` forest-lake), authored once by
+`scripts/gen-forest-map.mjs` and now edited by hand or in Tiled.
+
+Built:
+
+- Shell, roads and loop as designed, with the junction at (73, 70). The trunk road
+  runs west to east at y 69 to 71, the lake loop is the west leg (x 31 to 33), the
+  south shore path (y 35 to 37) and the east leg (x 65 to 67). The Mountain road
+  climbs to (116, 63) and ends in the border trees: the east gap is not cut.
+- Exit `to_farm` (south edge, x 70 to 76, 7 wide) and entry `from_farm` (73, 116).
+  The farm and the Woodland farm gain exit `forest` at (28, 0), entry
+  `from_forest`, in the north border trees between the mine and the cave doors.
+- The lake (x 34 to 64, y 12 to 34, 31 by 23) as `forest-lake` water with a
+  `water` zone. North and west shore tiles are cliff, the south and east shores
+  are open and have the path. The six lake fish are in `fish.json` (carp, perch,
+  fernfin, mushroom loach, moonmirror, hermit trout, prices are placeholders).
+  Grandmother Hush is not built (no legends exist yet, note 21).
+- Six groves (152 choppable trees: 110 mature, 25 young, 17 seedlings; oak in G1
+  to G3, maple in G4 to G6) on a lattice with one tile lanes, so every tree can be
+  reached. The cosmetic border is tile art (a 2 tile ring, a cliff wall on the north
+  edge, and 60 loose trees in the edge bands), not choppable.
+- Regrowth: `regrowGroves` in `src/core/areas.ts`. An emptied grove spot sprouts a
+  seed of its own kind 20 percent of nights, then grows by the normal stages. Seeds
+  do not spread on their own in the Forest.
+- Clutter: 40 rocks, 50 twigs and 60 weeds hand placed (object classes `rock`, and
+  `twig` and `weed`, which are new in this slice). Weeds, rocks and twigs return
+  by notes 29 and 65, with the Forest's own empty tiles.
+- Forage: 56 candidate spots plus the 48 point onion bank. `forage-areas.json`
+  holds the Forest's weights per season, a cap of 6 and a `patches` entry: every
+  point of the region `onion-bank` holds a spring onion each spring morning, outside
+  the cap, and nothing in other seasons.
+
+Where it differs from the note, or was decided in the build:
+
+- The Forest keeps its own world, `src/core/areas.ts` (new, note 71 had named only
+  forage): trees, rocks, weeds, twigs, goods on the ground and forage are held per
+  area map and swapped into the game state while the player is there, so the rules
+  that work on `g.trees` work on the Forest unchanged. The farm's soil, sprinklers,
+  fruit trees and machines are swapped for empty ones there. A map opts in with the
+  map property `wild`. Saves keep the farm's world as before and add `areas`.
+- Sleeping, or passing out, in the Forest puts the farm's world back first; the night
+  then runs on the farm and on every area (`areasEndDay`), and the player wakes at home.
+- The onion bank is pale earth you can walk on, not yet a tillable patch.
+- Hand placed rocks stay out of the groves, so lanes cannot be closed.
+
+Not built (later slices): farmstead, keeper's house and animal shop (part 2, #638),
+hermit's tower and the Wanderer's camp (part 2), the massive log and the Secret
+Woods exit (#639), the Mountain exit (#642), the Grandmother Hush legend and pots on
+the lake (pots are not built for any water yet). The first run of the map on the
+SM-T500 is still open. Names and looks stay placeholders.

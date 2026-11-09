@@ -25,6 +25,7 @@
     "playtest:tap": "node scripts/playtest/tap.mjs",
     "playtest:controls": "node scripts/playtest/controls.mjs",
     "playtest:mouse": "node scripts/playtest/mouse.mjs",
+    "playtest:forest": "node scripts/playtest/forest.mjs",
     "sim": "node scripts/sim/run.mjs scripts/sim/main.ts",
     "android:sync": "npm run build && cap sync android",
     "android:apk": "node scripts/android/build-apk.mjs",

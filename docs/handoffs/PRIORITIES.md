@@ -32,7 +32,10 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
    before slice 5 (note 33), alongside the heart events. Owner put it before art.
 3. **Map areas** (notes 71 to 78, M3b, owner answers recorded 2026-11-08). One
    note per unbuilt area. Recommended build order, from note 71: contract
-   additions (#636, ten of them) first, then Forest part 1 (#637), Secret Woods
+   additions (#636, ten of them, built) first, then Forest part 1 (#637, built
+   2026-11-09: map, lake and its six fish, six groves with regrowth, forage and the
+   onion bank, and the farm's north exit; area worlds in `core/areas.ts`, see note
+   72 "Built status"), Secret Woods
    (#639, ends the carpenter's Hardwood sale), River delta with the Beach (#640,
    unblocks #596), Mountain (#642, #643), the Quarry (#649), Forest part 2
    (#638), Lake cove (#644), Hearthwell shell (#645) and interiors (#646), Beach

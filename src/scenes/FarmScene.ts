@@ -31,6 +31,7 @@ import { fertilizerById } from "../core/fertilizer";
 import Phaser from "phaser";
 import { saveSettings } from "../core/bindings";
 import { sleep } from "../core/sleep";
+import { areaOf, enterArea, isAreaMap, leaveArea } from "../core/areas";
 import { stageOf as fruitStageOf } from "../core/fruittrees";
 import type { GameState } from "../core/save";
 import { TOOLS, cycle, heldAt, nextRow, toolbarSize } from "../core/toolbar";
@@ -351,6 +352,10 @@ export class FarmScene extends Phaser.Scene {
     this.mapId = resolveMapId(data.map ?? START.map, this.state.farmType);
     this.entryName = data.entry ?? START.entry;
     this.state = this.registry.get(STATE_KEY) as GameState;
+    // An area map (the Forest) has its own trees, rocks and forage: set them in
+    // the state while the player is here, and put the farm's back anywhere else.
+    leaveArea(this.state);
+    enterArea(this.state, this.mapId);
     this.selected =
       (this.registry.get(SELECTED_KEY) as number | undefined) ?? 0;
     this.leaving = false;
@@ -611,6 +616,10 @@ export class FarmScene extends Phaser.Scene {
       this.syncCombatSettings();
       if (data?.sleep) return this.endDay();
       if (data?.goto) return this.travel(data.goto.map, data.goto.entry);
+      // Slept or passed out away from the farm: the night put the farm's world
+      // back, so wake at home.
+      if (isAreaMap(this.mapId) && areaOf(this.state) === undefined)
+        return this.travel("farm", "from_house");
       if (this.namingHorse) {
         this.namingHorse = false;
         return this.getOn();
@@ -851,7 +860,7 @@ export class FarmScene extends Phaser.Scene {
     return (
       this.map.isBlocked(x, y) ||
       (log !== undefined && !logCleared(this.state, log)) ||
-      (this.outdoorSoil && this.state.trees.blocks(x, y)) ||
+      (this.outdoorWorld && this.state.trees.blocks(x, y)) ||
       !!this.store.fruitTrees.at(x, y) ||
       !!this.rocks()?.at(x, y) ||
       this.furnaceAt(x, y) ||
@@ -880,6 +889,11 @@ export class FarmScene extends Phaser.Scene {
   /** True on a map with the farm's soil: its trees, weeds, forage and machines live here. The greenhouse has its own soil. */
   private get outdoorSoil(): boolean {
     return this.map.hasSoil && !this.map.indoors;
+  }
+
+  /** True outdoors on the farm or an area map: the map whose trees, rocks and forage are the state's. */
+  private get outdoorWorld(): boolean {
+    return !this.map.indoors && (this.map.hasSoil || isAreaMap(this.mapId));
   }
 
   /** The tile under a screen point, in the world. */
@@ -1353,7 +1367,9 @@ export class FarmScene extends Phaser.Scene {
   /** The rocks on this map: the farm's, or this mine floor's. */
   private rocks(): Rocks | undefined {
     if (this.floorState) return this.floorState.rocks;
-    return isFarmMap(this.mapId) ? this.state.rocks : undefined;
+    return isFarmMap(this.mapId) || isAreaMap(this.mapId)
+      ? this.state.rocks
+      : undefined;
   }
 
   /** True on the furnace tile once the smith has given it. */
@@ -1495,9 +1511,10 @@ export class FarmScene extends Phaser.Scene {
     const rod = rodById(rodId)!;
     const here = tileOf(this.pos, PLAYER, this.map.tileSize);
     const step = PUSH[this.facing];
-    const water = isFarmMap(this.mapId)
-      ? waterAhead(this.map, here.x, here.y, step.x, step.y, rod.range)
-      : [];
+    const water =
+      isFarmMap(this.mapId) || isAreaMap(this.mapId)
+        ? waterAhead(this.map, here.x, here.y, step.x, step.y, rod.range)
+        : [];
     if (water.length === 0) {
       this.message = "Face the water to fish.";
       return this.render();
@@ -1869,7 +1886,14 @@ export class FarmScene extends Phaser.Scene {
       }
     if (this.mapId === CAVE_MAP) this.drawCave(put);
     if (isFestivalMap(this.mapId)) this.drawFestivalProps();
-    if (!this.map.hasSoil) return;
+    if (this.map.hasSoil) this.drawSoil(put);
+    this.drawWorld(put);
+  }
+
+  /** The dug soil, crops, fertilizer, sprinklers and fruit trees of the map. */
+  private drawSoil(
+    put: (x: number, y: number, key: string) => Phaser.GameObjects.Image,
+  ): void {
     const soil = this.map.indoors ? this.state.greenhouse : this.state.farm;
     for (const { x, y, plot } of soil.each()) {
       put(x, y, soilKey(plot.wateredToday));
@@ -1888,7 +1912,13 @@ export class FarmScene extends Phaser.Scene {
       put(t.x, t.y, fruitTreeKey(fruitStageOf(t.age)));
       if (t.fruit > 0) put(t.x, t.y, fruitOnTreeKey(t.id));
     }
-    if (this.map.indoors) return;
+  }
+
+  /** What stands and lies outdoors: forage, weeds, twigs, machines, trees and goods on the ground. */
+  private drawWorld(
+    put: (x: number, y: number, key: string) => Phaser.GameObjects.Image,
+  ): void {
+    if (!this.outdoorWorld) return;
     for (const { x, y, id } of this.state.forage.each())
       put(x, y, forageKey(id));
     for (const w of this.state.weeds.each()) put(w.x, w.y, WEED_KEY);

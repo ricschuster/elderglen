@@ -175,6 +175,12 @@ export interface TreeSpot extends Spot {
   large?: boolean;
 }
 
+/** Weeds and twigs placed on a map by hand (the object classes `weed` and `twig`). */
+export interface Litter {
+  weeds: Spot[];
+  twigs: Spot[];
+}
+
 /** A named rectangle of tiles, such as one room of the hall. */
 export interface Region {
   id: string;
@@ -235,9 +241,18 @@ export interface MapTraits {
   stumpRegrowDays?: number;
   /** Whether the horse can be ridden here. Default false. */
   rideable: boolean;
+  /**
+   * The map property `wild`: an outdoor map with no soil that still has its own
+   * trees, rocks, weeds, twigs and forage (the Forest). See `core/areas.ts`.
+   */
+  wild: boolean;
 }
 
-const DEFAULT_TRAITS: MapTraits = { waterKind: "river", rideable: false };
+const DEFAULT_TRAITS: MapTraits = {
+  waterKind: "river",
+  rideable: false,
+  wild: false,
+};
 
 /** Whether the player may use an exit, given the conditions that hold. */
 export function exitOpen(exit: Exit, holds: ReadonlySet<string>): boolean {
@@ -270,6 +285,7 @@ function traitsOf(json: TiledMapJson): MapTraits {
   return {
     waterKind: typeof kind === "string" ? (kind as WaterKind) : "river",
     rideable: prop("rideable") === true,
+    wild: prop("wild") === true,
     ...(typeof days === "number" ? { stumpRegrowDays: days } : {}),
   };
 }
@@ -349,11 +365,18 @@ export class FarmMap {
     /** Massive logs, solid until chopped (the object class `log`). */
     readonly logs: LogSpot[] = [],
     readonly traits: MapTraits = DEFAULT_TRAITS,
+    /** Weeds and twigs lying on the map at the start of a new game (`weed` and `twig` objects). */
+    readonly litter: Litter = { weeds: [], twigs: [] },
   ) {}
 
   /** Whether the horse can be ridden on this map (the map property `rideable`). */
   get rideable(): boolean {
     return this.traits.rideable;
+  }
+
+  /** Whether this map keeps its own trees, rocks, weeds, twigs and forage (the map property `wild`). */
+  get wild(): boolean {
+    return this.traits.wild;
   }
 
   /** The map's own stump regrow days, if it sets them (`stumpRegrowDays`). */
@@ -471,6 +494,7 @@ export class FarmMap {
     const regions: Region[] = [];
     const trees: TreeSpot[] = [];
     const rocks: Spot[] = [];
+    const litter: Litter = { weeds: [], twigs: [] };
     const waterZones: WaterZone[] = [];
     const logs: LogSpot[] = [];
     // A named entry, exit or service on a higher tier replaces the one of the
@@ -504,6 +528,8 @@ export class FarmMap {
           put(entries, "entry", o.name, objTier, { name: o.name, ...spot });
         else if (cls === "forage") forageSpots.push(spot);
         else if (cls === "rock") rocks.push(spot);
+        else if (cls === "weed") litter.weeds.push(spot);
+        else if (cls === "twig") litter.twigs.push(spot);
         else if (cls === "tree")
           trees.push({
             ...spot,
@@ -574,6 +600,7 @@ export class FarmMap {
       waterZones,
       logs,
       traitsOf(json),
+      litter,
     );
   }
 
@@ -609,6 +636,7 @@ export class FarmMap {
       this.waterZones,
       this.logs,
       this.traits,
+      this.litter,
     );
   }
 
@@ -646,6 +674,7 @@ export class FarmMap {
       this.waterZones,
       this.logs,
       this.traits,
+      this.litter,
     );
   }
 
@@ -689,6 +718,7 @@ export class FarmMap {
       this.waterZones,
       this.logs,
       this.traits,
+      this.litter,
     );
   }
 
@@ -850,6 +880,20 @@ export class FarmMap {
         out.push(
           `rock at ${r.x},${r.y} is on a blocked, exit, entry or service tile`,
         );
+    for (const [what, spots] of [
+      ["weed", this.litter.weeds],
+      ["twig", this.litter.twigs],
+    ] as const)
+      for (const r of spots)
+        if (
+          this.isBlocked(r.x, r.y) ||
+          this.exitAt(r.x, r.y) ||
+          this.entries.some((e) => e.x === r.x && e.y === r.y) ||
+          this.serviceAt(r.x, r.y)
+        )
+          out.push(
+            `${what} at ${r.x},${r.y} is on a blocked, exit, entry or service tile`,
+          );
     for (const entry of this.entries) {
       if (this.exitAt(entry.x, entry.y))
         out.push(`entry "${entry.name}" is inside an exit`);

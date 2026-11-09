@@ -99,7 +99,16 @@ export class ForageField {
   ): void {
     if (area === undefined) return this.respawn(season, spots, random);
     this.found.clear();
-    const pool = [...spots];
+    // A patch fills every point of its region and stays out of the cap.
+    const pool: Spot[] = [];
+    for (const spot of spots) {
+      const patch = area.patches?.[tableOf(spot)];
+      if (patch === undefined) pool.push(spot);
+      else {
+        const id = patch[season];
+        if (id !== undefined) this.found.set(`${spot.x},${spot.y}`, id);
+      }
+    }
     const target = Math.min(forageCap(area, season), pool.length);
     for (let i = 0; i < target; i++) {
       const spot = pool.splice(

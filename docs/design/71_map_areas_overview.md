@@ -153,6 +153,13 @@ checks, with tests in `tests/mapcontract.test.ts`. Where they live:
   them yet.
 - Nightly spawns: `src/core/spawns.ts` and `src/content/spawns.json` (empty until
   the Quarry). The map's scene places what `nightlySpawns` returns.
+- Area worlds (added by #637): `src/core/areas.ts`. A map with the property `wild`
+  has its own trees, rocks, weeds, twigs, goods on the ground and forage, kept in
+  `GameState.areas` and swapped into the state while the player is there. Maps
+  without soil that are `wild` also take the axe, pickaxe and Action. Forage areas
+  gained `patches` (daily patches outside the cap). Map objects `weed` and `twig`
+  place litter at the start. A later area map (Secret Woods, Mountain, delta, Beach,
+  Quarry, cove) needs only `wild`, an entry in `forage-areas.json` and its objects.
 - Load test: the test builds a 120 by 120 placeholder map and bounds its read and
   check time. The run on the SM-T500 itself is by hand and not done yet (open).
 

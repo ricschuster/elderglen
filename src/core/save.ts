@@ -36,6 +36,7 @@ import { ShippingBin, type BinLine, type BinSave } from "./shipping";
 import { maps } from "../content/maps";
 import { DEFAULT_FARM_TYPE, farmTypeById } from "./farmtypes";
 import { ForageField } from "./forage";
+import { homeWorld, newAreas, type World } from "./areas";
 import { type Weather, WEATHERS } from "./weather";
 import { Hall, type HallProgress } from "./bundles";
 import { Inventory } from "./inventory";
@@ -97,6 +98,14 @@ export interface GameState {
   greenhouseSite?: { x: number; y: number };
   /** World flags that are up, such as `secret-log-cleared` (`core/worldflags.ts`). Absent until one is. */
   flags?: string[];
+  /**
+   * The worlds of the area maps by map id (`areas.ts`): their trees, rocks,
+   * weeds, twigs and goods on the ground. The fields above are the farm's, or
+   * the area's while `away` is set.
+   */
+  areas: Record<string, World>;
+  /** Set while the player is in an area: which one, and the farm's world set aside. */
+  away?: { mapId: string; home: World };
   /** Machines standing on the farm. */
   machines: Machines;
   /** The greenhouse's soil: grows in any season (note 31). */
@@ -211,6 +220,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     tackle: new Tackle(),
     combat: new Combat(),
     forage: new ForageField(),
+    areas: newAreas(),
   };
 }
 
@@ -258,6 +268,8 @@ interface SaveData {
   greenhouseSite?: { x: number; y: number };
   /** Absent until a world flag is raised. */
   flags?: string[];
+  /** Absent in saves made before the Forest: each area's starting world. */
+  areas?: Record<string, AreaSave>;
   /** Absent in saves made before machines. */
   machines?: PlacedMachine[];
   /** Absent in saves made before the greenhouse. */
@@ -321,6 +333,15 @@ interface SaveData {
   combat?: CombatSave;
 }
 
+/** One area's saved world. Forage is not saved: it respawns each morning. */
+interface AreaSave {
+  trees?: Tree[];
+  ground?: Pile[];
+  weeds?: Weed[];
+  twigs?: Twig[];
+  rocks?: Rock[];
+}
+
 /** Where saves live. The scene supplies one backed by the browser. */
 export interface SaveStore {
   read(): string | null;
@@ -363,8 +384,55 @@ function validFruitTrees(raw: unknown): PlacedFruitTree[] {
     : [];
 }
 
+/** The trees of a saved list that are well formed. */
+function validTrees(raw: unknown[]): Tree[] {
+  return raw.filter(
+    (t): t is Tree =>
+      isObject(t) &&
+      Number.isInteger(t.x) &&
+      Number.isInteger(t.y) &&
+      Number.isInteger(t.stage) &&
+      (t.stage as number) >= 1 &&
+      (t.stage as number) <= 5 &&
+      typeof t.stump === "boolean" &&
+      typeof t.seed === "boolean" &&
+      isCount(t.hits) &&
+      (t.large === undefined || typeof t.large === "boolean") &&
+      (t.regrow === undefined || isCount(t.regrow)),
+  );
+}
+
+/** The piles of goods of a saved list that are well formed. */
+function validPiles(raw: unknown[]): Pile[] {
+  return raw.filter(
+    (p): p is Pile =>
+      isObject(p) &&
+      Number.isInteger(p.x) &&
+      Number.isInteger(p.y) &&
+      typeof p.id === "string" &&
+      isCount(p.count) &&
+      (p.count as number) > 0,
+  );
+}
+
+function validWeeds(raw: unknown[]): Weed[] {
+  return raw.filter(
+    (w): w is Weed =>
+      isObject(w) && Number.isInteger(w.x) && Number.isInteger(w.y),
+  );
+}
+
+function validTwigs(raw: unknown[]): Twig[] {
+  return raw.filter(
+    (t): t is Twig =>
+      isObject(t) && Number.isInteger(t.x) && Number.isInteger(t.y),
+  );
+}
+
 /** Save as text, including the time of day, so a reload mid day resumes it. */
 export function serialize(g: GameState): string {
+  // The farm's world is saved as the top-level fields, even from inside an area.
+  const home = homeWorld(g);
   const data: SaveData = {
     version: SAVE_VERSION,
     farmType: g.farmType,
@@ -373,19 +441,19 @@ export function serialize(g: GameState): string {
     minutes: g.day.clock.minutes,
     money: g.money,
     inventory: g.inventory.save(),
-    farm: g.farm.save(),
+    farm: home.farm.save(),
     greenhouse: g.greenhouse.save(),
-    trees: g.trees.save(),
-    ground: g.ground.save(),
-    weeds: g.weeds.save(),
-    twigs: g.twigs.save(),
+    trees: home.trees.save(),
+    ground: home.ground.save(),
+    weeds: home.weeds.save(),
+    twigs: home.twigs.save(),
     orders: g.orders.save(),
-    rocks: g.rocks.save(),
+    rocks: home.rocks.save(),
     mines: g.mines.save(),
     mapItems: {
       [FARM_STORE]: {
-        sprinklers: g.sprinklers.save(),
-        fruitTrees: g.fruitTrees.save(),
+        sprinklers: home.sprinklers.save(),
+        fruitTrees: home.fruitTrees.save(),
       },
       [GREENHOUSE_STORE]: {
         sprinklers: g.greenhouseSprinklers.save(),
@@ -394,7 +462,19 @@ export function serialize(g: GameState): string {
     },
     ...(g.greenhouseSite ? { greenhouseSite: { ...g.greenhouseSite } } : {}),
     ...(g.flags?.length ? { flags: [...g.flags] } : {}),
-    machines: g.machines.save(),
+    areas: Object.fromEntries(
+      Object.entries(g.areas).map(([id, w]) => [
+        id,
+        {
+          trees: w.trees.save(),
+          ground: w.ground.save(),
+          weeds: w.weeds.save(),
+          twigs: w.twigs.save(),
+          rocks: w.rocks.save(),
+        },
+      ]),
+    ),
+    machines: home.machines.save(),
     casks: g.casks.save(),
     furnace: g.furnace.save(),
     bin: g.bin.save(),
@@ -568,52 +648,21 @@ export function deserialize(text: string): GameState | undefined {
     g.greenhouse.load(Object.fromEntries(plots) as ReturnType<Farm["save"]>);
   }
   g.skills.load(skills as ReturnType<Skills["save"]>);
-  if (Array.isArray(raw.trees)) {
-    const valid = raw.trees.filter(
-      (t): t is Tree =>
-        isObject(t) &&
-        Number.isInteger(t.x) &&
-        Number.isInteger(t.y) &&
-        Number.isInteger(t.stage) &&
-        (t.stage as number) >= 1 &&
-        (t.stage as number) <= 5 &&
-        typeof t.stump === "boolean" &&
-        typeof t.seed === "boolean" &&
-        isCount(t.hits) &&
-        (t.large === undefined || typeof t.large === "boolean") &&
-        (t.regrow === undefined || isCount(t.regrow)),
-    );
-    g.trees.load(valid);
-  }
-  if (Array.isArray(raw.ground)) {
-    g.ground.load(
-      raw.ground.filter(
-        (p): p is Pile =>
-          isObject(p) &&
-          Number.isInteger(p.x) &&
-          Number.isInteger(p.y) &&
-          typeof p.id === "string" &&
-          isCount(p.count) &&
-          (p.count as number) > 0,
-      ),
-    );
-  }
-  if (Array.isArray(raw.weeds)) {
-    g.weeds.load(
-      raw.weeds.filter(
-        (w): w is Weed =>
-          isObject(w) && Number.isInteger(w.x) && Number.isInteger(w.y),
-      ),
-    );
-  }
-  if (Array.isArray(raw.twigs)) {
-    g.twigs.load(
-      raw.twigs.filter(
-        (t): t is Twig =>
-          isObject(t) && Number.isInteger(t.x) && Number.isInteger(t.y),
-      ),
-    );
-  }
+  if (Array.isArray(raw.trees)) g.trees.load(validTrees(raw.trees));
+  if (Array.isArray(raw.ground)) g.ground.load(validPiles(raw.ground));
+  if (Array.isArray(raw.weeds)) g.weeds.load(validWeeds(raw.weeds));
+  if (Array.isArray(raw.twigs)) g.twigs.load(validTwigs(raw.twigs));
+  // An area missing from the save keeps its starting world.
+  if (isObject(raw.areas))
+    for (const [id, a] of Object.entries(raw.areas)) {
+      const w = g.areas[id];
+      if (!w || !isObject(a)) continue;
+      if (Array.isArray(a.trees)) w.trees.load(validTrees(a.trees));
+      if (Array.isArray(a.ground)) w.ground.load(validPiles(a.ground));
+      if (Array.isArray(a.weeds)) w.weeds.load(validWeeds(a.weeds));
+      if (Array.isArray(a.twigs)) w.twigs.load(validTwigs(a.twigs));
+      if (Array.isArray(a.rocks)) w.rocks.load(rocksFrom(a.rocks));
+    }
   const saved = savedOrders(raw.orders);
   if (saved) g.orders.load(saved);
   // Per-map items. An old save has the farm's two lists at the top level.

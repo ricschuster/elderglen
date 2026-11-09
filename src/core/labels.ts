@@ -15,6 +15,8 @@ const EXITS: Record<string, string> = {
   coop: "Coop",
   greenhouse: "Greenhouse",
   barn: "Barn",
+  forest: "Forest",
+  to_farm: "Farm",
 };
 
 const SERVICES: Record<string, string> = {

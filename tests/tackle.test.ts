@@ -312,9 +312,9 @@ describe("saving tackle", () => {
 describe("fishing achievements", () => {
   it("counts kinds and total catches, and holds the full roster back until it exists", () => {
     const g = startGame();
-    for (const f of FISH) g.fishing.note(f.id, 10);
+    for (const f of FISH.slice(0, 9)) g.fishing.note(f.id, 10);
     const won = checkAchievements(g).map((a) => a.id);
-    // Nine fish so far: no kinds goal yet, and the roster goal waits for 46.
+    // Nine fish: no kinds goal yet, and the roster goal waits for 46.
     expect(won).not.toContain("first-ten");
     expect(won).not.toContain("whole-roster");
     for (let i = 0; i < 100; i++) g.fishing.note(FISH[0]!.id, 10);

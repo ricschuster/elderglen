@@ -1,3 +1,4 @@
+import { respawnAreaForage } from "../core/areas";
 import Phaser from "phaser";
 import { dateOf } from "../core/calendar";
 import { farmMapOf, farmTypeById } from "../core/farmtypes";
@@ -108,6 +109,7 @@ export class TitleScene extends Phaser.Scene {
       farmMapOf(state).forageSpots,
       Math.random,
     );
+    respawnAreaForage(state, Math.random);
     this.registry.set(STATE_KEY, state);
     this.scene.start("farm", resumeAt(state));
   }

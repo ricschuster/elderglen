@@ -96,7 +96,7 @@ export function useHeld(
   }
   if (held.kind === "tool" && held.tool === "pickaxe")
     return mine(g, x, y, floor);
-  if (!map.hasSoil) return fail("nothing to do here");
+  if (!map.hasSoil && !map.wild) return fail("nothing to do here");
   const weedTool =
     held.kind === "tool" &&
     (held.tool === "axe" || held.tool === "hoe" || held.tool === "can")
@@ -205,7 +205,7 @@ function pickIndoors(g: GameState, x: number, y: number): Outcome {
  * Services and eating are the scene's to do; this covers the farm tiles only.
  */
 export function act(g: GameState, map: FarmMap, x: number, y: number): Outcome {
-  if (!map.hasSoil) return fail(NOTHING_TO_ACT_ON);
+  if (!map.hasSoil && !map.wild) return fail(NOTHING_TO_ACT_ON);
   const result = map.indoors ? pickIndoors(g, x, y) : pick(g, x, y);
   if (result.ok) return result;
   return QUIET.has(result.reason) ? fail(NOTHING_TO_ACT_ON) : result;

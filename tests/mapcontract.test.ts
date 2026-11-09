@@ -116,7 +116,13 @@ describe("1 water kinds", () => {
     const c = { season: "spring", minutes: 12 * 60, raining: false } as const;
     expect(fishAvailable("river", c).length).toBeGreaterThan(0);
     expect(fishAvailable("sea", c).every((f) => f.water === "sea")).toBe(true);
-    expect(FISH.every((f) => f.water === "river")).toBe(true);
+    // The river and the Forest lake have fish so far; each area adds its own.
+    expect(
+      FISH.every((f) => f.water === "river" || f.water === "forest-lake"),
+    ).toBe(true);
+    expect(
+      fishAvailable("forest-lake", c).every((f) => f.water === "forest-lake"),
+    ).toBe(true);
   });
 
   it("flags a bad kind and a zone with no casting spot", () => {
