@@ -402,3 +402,14 @@ every interior.
   furniture objects or art. Interiors carry no day state (open in note 58, and #599).
 - **Not built:** people and schedules (#599), shop hours and festival closures, any system behind the
   four stand-in counters, the trader and stalls, the festival variant, and interior lighting.
+
+## Owner decisions 2026-11-09 (after the map builds)
+
+- **Remove the farm's shop, Orders and Request counters (as Stardew).** All shopping,
+  Help Wanted and Orders moves to Hearthwell. The farm's shop building becomes scenery.
+  The sim bot and the playtests shop in town. This replaces the "farm keeps its counters"
+  choice in the shell and interiors notes above.
+- **Tool upgrades and geode cracking move to the Hearthwell blacksmith (as Stardew).** The
+  smith screen is split: see note 74 "Owner decisions 2026-11-09".
+- **Sim pacing is measured, then retuned** only if bundle completion moved a lot against
+  the pre-map baseline (our own balance check, no Stardew equivalent).
