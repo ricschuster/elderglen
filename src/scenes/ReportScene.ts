@@ -71,6 +71,8 @@ export class ReportScene extends Phaser.Scene {
 
   private close(): void {
     this.scene.stop();
-    this.scene.resume("farm");
+    // The steward's call is owed a scene (note 39, step 4): the stub takes it.
+    if (this.state.summit.scenePending) this.scene.launch("summit");
+    else this.scene.resume("farm");
   }
 }

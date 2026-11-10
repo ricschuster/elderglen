@@ -3,6 +3,7 @@ import { WAITING_ROOMS_LINE } from "./house";
 import { ordersReportLines } from "./orders";
 import type { SleepReport } from "./sleep";
 import { itemById } from "./items";
+import { SUMMIT_TEXT } from "./summit";
 
 /** The words for the morning after: what happened overnight, one per line. */
 export function reportLines(r: SleepReport): string[] {
@@ -75,6 +76,7 @@ export function reportLines(r: SleepReport): string[] {
     lines.push(`Achievement: ${name}. The hatter has a new hat on sale.`);
   if (r.completionGain > 0)
     lines.push(`Collections: ${r.completion} percent complete.`);
+  if (r.summitCall) lines.push(SUMMIT_TEXT.callLine);
   if (r.newMail > 0) lines.push("There is mail.");
   if (r.toolReady)
     lines.push(

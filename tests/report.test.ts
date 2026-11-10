@@ -25,6 +25,7 @@ const base: SleepReport = {
   furnaceGifted: false,
   toolReady: undefined,
   achievements: [],
+  summitCall: false,
   completion: 0,
   completionGain: 0,
   newMail: 0,
