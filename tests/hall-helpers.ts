@@ -20,6 +20,8 @@ export function fillBundle(
     for (let n = 0; n < item.count; n++) {
       if (hall.complete(bundle.id)) return;
       const stack = slotStack(item);
+      // The rewards pile up in the pack, so the helper grows it as a player would.
+      inv.grow(inv.size + 1);
       inv.add(stack);
       hall.handIn(inv, wallet, bundle.id, stack);
     }

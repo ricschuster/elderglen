@@ -130,7 +130,7 @@
       "group": "core",
       "pos": [260, 330],
       "built": "partial",
-      "builtNote": "Thirteen of the 30 bundles work (note 07, \"Village hall\"): the Foragers' Shelf has four, the Larder six, the Hearth two and the Guests' Board one (the Dyer's). The Water room and the Last Seat have none yet, so the Lake cove ferry cannot open.",
+      "builtNote": "Nineteen of the 30 bundles work (note 07, \"Village hall\"): the Foragers' Shelf has four, the Larder six, the Water room six (13 to 18, 2026-11-10), the Hearth two and the Guests' Board one (the Dyer's). The Last Seat has none yet. Finishing the Water room opens the Lake cove ferry.",
       "summary": "Six rooms, 30 bundles, ending at The Last Seat, the one gate to ring 2.",
       "items": [
         {
@@ -746,7 +746,7 @@
       "group": "systems",
       "pos": [20, 580],
       "built": "partial",
-      "builtNote": "Fishing slices 1 and 2 are built: 46 fish in six waters, four rods, bait, lures and the fisher's hut on the delta. Shellfish pots are built (2026-11-10). Not built: the five legends and the Water room bundles (#596).",
+      "builtNote": "Fishing slices 1 and 2 are built: 46 fish in six waters, four rods, bait, lures and the fisher's hut on the delta. Shellfish pots are built (2026-11-10). The Water room bundles 13 to 18 are built (2026-11-10). Not built: the five legends, trash and the recycler (#596).",
       "summary": "Six Water room bundles and one Last Seat bundle depend on it.",
       "items": [
         {

@@ -107,6 +107,13 @@ export const UNPLAYED_BUNDLES: readonly string[] = [
   // The bot keeps no animals, so it cannot fill the animal-goods bundles.
   "animal-goods",
   "weavers",
+  // The bot does not fish or set pots, so the six Water room bundles are unplayed (note 21).
+  "stream-fish",
+  "lake-fish",
+  "sea-fish",
+  "night-fishing",
+  "specialty-fish",
+  "trap-catch",
 ];
 
 /** Share of a harvest that is silver or better at a farming level, with plain soil (`cropQuality`). Floored so early planning stays sane. */

@@ -154,9 +154,9 @@ legend waits (below).
   `water-room`), as the Quarry bridge reads the Foragers' Shelf, with no saved flag.
   The first night after the room is done the morning report says "The ferry on the
   delta is repaired. The Lake cove is open." once (world flag `cove-told`).
-  **Bundles 13 to 18 are not written yet, so the Water room is empty and the gate
-  cannot open in a real game until they are.** Tests and the playtest open it with a
-  one-bundle test room and the `cove-open` flag respectively.
+  Bundles 13 to 18 are written since (2026-11-10, see note 21), so the gate opens in
+  a real game when all six are handed in. The cove tests finish the real room; the
+  playtest still opens it with the `cove-open` flag.
 - **Fish:** the 8 ordinary cove fish of note 21 are in `fish.json` (water `cove`),
   with the note's seasons, times and bars. Prices are 400 to 700 (Pearlback 400,
   Cove Lantern 450, Still-water Gar 420, Velvet Koi 600, Hush 650, Dusk Opal 620,

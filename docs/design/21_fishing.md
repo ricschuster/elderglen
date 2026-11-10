@@ -701,3 +701,32 @@ Each followed Stardew, checked on the saved Fishing and Bait pages unless said.
 - **Secret Woods pond:** the unique fish is the **Mossback**, a shy mossy fish, a
   working name. Its bar motion and price come with the roster (note 73).
 - **Cove treasure spot kept** (note 76).
+
+## Built in slice 4, part two: the Water room bundles (2026-11-10, issue #596)
+
+Bundles 13 to 18 are in `src/content/bundles.json`, room `water-room`, and finishing all six opens the cove ferry (note 76). Tests: `tests/waterroom.test.ts`.
+
+| # | Bundle | Rule | Pool | Reward |
+| --- | --- | --- | --- | --- |
+| 13 | Stream Fish | 3 of 5 | Reedling, Brookslip, Millrun, Salmon, Hearthside Dace | 30 Plain Bait |
+| 14 | Lake Fish | 3 of 4 | Carp, Fernfin, Cold Quill, Marshlight | 1 Glint Lure |
+| 15 | Sea Fish | 4 of 6 | Sardine, Skiff Sprat, Mullet, Cod, Kelp Ribbon, Mackerel | 5 Beach warp totems |
+| 16 | Night Fishing | 3 of 4 | Moonmirror, Reed Cat, Herring, Lantern Squid | A glow ring |
+| 17 | Specialty Fish | All 4 | Silverthread, Hermit Trout, Crowned Tunny, Pearl Lobster | 5 Fisher's stews |
+| 18 | Trap Catch | 5 of 8 | The eight pot shellfish, fresh and salt | 3 Shellfish pots |
+
+- **Pools were the builder's picks** where the note left a gap: the roster lists 7
+  eligible fish for 13 and 15, 6 for 14 and 16, but the rules say 5, 4, 6 and 4
+  slots, so each pool is a chosen subset. Hand-ins are kept across seasons, so no
+  season blocks a bundle. Every pool keeps the waters the note names (stream, the
+  three lakes, sea, night fish). No cove fish is used (a test checks it).
+- **Placeholders:** the Beach warp totem and the glow ring are kept items that do
+  nothing yet (the totem has no use, the equipment slot of note 37 is not built),
+  like the Homeward pin. Fisher's stew is a new dish (1 Carp, 1 Potato, 150
+  energy, 220g, learned when bundle 17 is finished), since cooking exists but had
+  no fish dish. All numbers are placeholders for note 07.
+- **The Pearl Lobster** is in both 17 and 18, so a player who wants both needs two.
+  Bundle 18 has seven other choices, so it is never required.
+- The sim bot does not fish, so the six are in `UNPLAYED_BUNDLES`.
+- **Not built (issue #596 stays open):** the five legends and the crown, water
+  plants, trash and the recycler, the warp totem's use, the glow ring's slot.

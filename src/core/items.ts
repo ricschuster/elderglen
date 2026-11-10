@@ -246,6 +246,26 @@ items.set(HOMEWARD_PIN, {
   buyPrice: HOMEWARD_PIN_PRICE,
   keep: true,
 });
+/**
+ * Water room rewards whose systems are not built yet (note 16, note 37): the
+ * glow ring waits for the equipment slot, the Beach warp totem for a use that
+ * returns the player to the Beach. Both are kept and do nothing yet, like the
+ * Homeward pin. Prices are placeholders (note 07).
+ */
+export const GLOW_RING = "glow-ring";
+export const WARP_TOTEM_BEACH = "warp-totem-beach";
+items.set(GLOW_RING, {
+  id: GLOW_RING,
+  name: "Glow ring",
+  sellPrice: 0,
+  keep: true,
+});
+items.set(WARP_TOTEM_BEACH, {
+  id: WARP_TOTEM_BEACH,
+  name: "Beach warp totem",
+  sellPrice: 0,
+  keep: true,
+});
 /** The shellfish pot is bought and kept (note 21). Its catches and junk sell as set in `pots.json`. */
 items.set(POT_ITEM, {
   id: POT_ITEM,
@@ -331,7 +351,7 @@ const GROUPS: [string, string[]][] = [
       { id: POT_ITEM },
     ].map((f) => f.id),
   ],
-  ["Keepsakes", [HOMEWARD_PIN]],
+  ["Keepsakes", [HOMEWARD_PIN, GLOW_RING, WARP_TOTEM_BEACH]],
   ["Wood and fibre", ["wood", "hardwood", "sap", "fiber", "clay", "hay"]],
 ];
 for (const [group, ids] of GROUPS)

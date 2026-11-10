@@ -248,5 +248,105 @@
       }
     },
     "hint": "Flowers and berries that colour cloth: spring daffodils, summer sweet peas, autumn cranberries and winter crocuses."
+  },
+  {
+    "id": "stream-fish",
+    "name": "Stream Fish",
+    "room": "water-room",
+    "items": ["reedling", "brookslip", "millrun", "salmon", "hearthside-dace"],
+    "required": 3,
+    "reward": {
+      "item": {
+        "id": "plain-bait",
+        "count": 30
+      }
+    },
+    "hint": "Fish the river from the farm to the delta. Some run only in one season, so keep a line in all year."
+  },
+  {
+    "id": "lake-fish",
+    "name": "Lake Fish",
+    "room": "water-room",
+    "items": ["carp", "fernfin", "cold-quill", "marshlight"],
+    "required": 3,
+    "reward": {
+      "item": {
+        "id": "glint-lure",
+        "count": 1
+      }
+    },
+    "hint": "Still water: the forest lake, the mountain lake and the delta marsh."
+  },
+  {
+    "id": "sea-fish",
+    "name": "Sea Fish",
+    "room": "water-room",
+    "items": [
+      "sardine",
+      "skiff-sprat",
+      "mullet",
+      "cod",
+      "kelp-ribbon",
+      "mackerel"
+    ],
+    "required": 4,
+    "reward": {
+      "item": {
+        "id": "warp-totem-beach",
+        "count": 5
+      }
+    },
+    "hint": "Cast from the Beach. The sea gives different fish by the season."
+  },
+  {
+    "id": "night-fishing",
+    "name": "Night Fishing",
+    "room": "water-room",
+    "items": ["moonmirror", "reed-cat", "herring", "lantern-squid"],
+    "required": 3,
+    "reward": {
+      "item": {
+        "id": "glow-ring",
+        "count": 1
+      }
+    },
+    "hint": "Fish after dark, on lake, marsh and sea. A moth lure helps."
+  },
+  {
+    "id": "specialty-fish",
+    "name": "Specialty Fish",
+    "room": "water-room",
+    "items": ["silverthread", "hermit-trout", "crowned-tunny", "pearl-lobster"],
+    "required": 4,
+    "reward": {
+      "item": {
+        "id": "fisher-stew",
+        "count": 5
+      }
+    },
+    "hint": "One rare fish each from the river, a lake and the sea, and the Pearl Lobster. Rain, dawn and a good rod help."
+  },
+  {
+    "id": "trap-catch",
+    "name": "Trap Catch",
+    "room": "water-room",
+    "items": [
+      "crayfish",
+      "river-mussel",
+      "ladle-snail",
+      "marsh-clam",
+      "crab",
+      "reef-periwinkle",
+      "spiny-shrimp",
+      "pearl-lobster"
+    ],
+    "required": 5,
+    "reward": {
+      "item": {
+        "id": "shellfish-pot",
+        "count": 3
+      }
+    },
+    "hint": "Shellfish from pots set in fresh and salt water. Bait the pot each day."
   }
 ]

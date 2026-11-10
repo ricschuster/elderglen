@@ -323,7 +323,7 @@ Built numbers (`src/core/fishing.ts`, `src/content/fish.json`, `rods.json`):
 
 Source: `src/content/bundles.json`.
 
-- Thirteen bundles are built (the Pantry was dropped 2026-10-31, see
+- Nineteen bundles are built (thirteen at first, then the Water room's six; the Pantry was dropped 2026-10-31, see
   `16_bundles.md`): the ten below, plus Animal Goods and the Weaver's
   ("Animal-goods machines" section) and the Dyer's ("Cask and dye vat" section). First
   slice: Spring Foraging (any 4 of 6, 15 parsnip seeds), Summer Foraging (any 3
@@ -333,6 +333,7 @@ Source: `src/content/bundles.json`.
   Crops (4 of 6, bee house), Quality Crops (3 of 4, 5 each silver or better,
   preserves jar), Artisan Goods (4 of 5, keg) and the Smith's (5 copper, 5 iron
   and 3 gold bars, 20 coal). Contents and rewards are ours.
+- **Water room (2026-11-10).** Bundles 13 to 18 are built, nineteen in all (pools and rewards in note 21, "Built in slice 4, part two"). Placeholders: Fisher's stew (1 carp, 1 potato, 150 energy, 220g), the Beach warp totem and the glow ring (kept, no use yet).
 - **Pools after build 4 (2026-11-07).** The stand-in pools are gone. Winter
   Foraging takes crocus, snowdrop, winter cress, pine nut and frost root; Autumn
   Crops the six fall crops; Quality Crops has pumpkin back; Artisan Goods takes
