@@ -25,10 +25,11 @@ export class SkillsScene extends Phaser.Scene {
     skillRows(g.skills).forEach((row, i) => {
       const y = 84 + i * 76;
       const pro = professionById(g.skills.professionOf(row.skill) ?? "");
+      const top = professionById(g.skills.topProfessionOf(row.skill) ?? "");
       this.add.text(
         48,
         y,
-        `${NAMES[row.skill]}  level ${row.level}${pro ? `  ${pro.name}` : ""}`,
+        `${NAMES[row.skill]}  level ${row.level}${pro ? `  ${pro.name}` : ""}${top ? `, ${top.name}` : ""}`,
         { fontSize: "28px", color: "#ffffff" },
       );
       const bar = 600;

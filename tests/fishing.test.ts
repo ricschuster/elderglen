@@ -493,11 +493,11 @@ describe("saving, skills and the rest of the game", () => {
     expect(s.level("fishing")).toBe(0);
   });
 
-  it("asks for no profession at fishing level 5 until some exist", () => {
+  it("asks for a profession at fishing level 5", () => {
     const s = new Skills();
     s.gain("fishing", 2150);
     expect(s.level("fishing")).toBe(5);
-    expect(pendingChoice(s)).toBeUndefined();
+    expect(pendingChoice(s)).toBe("fishing");
   });
 
   it("counts fish in the completion tracker", () => {

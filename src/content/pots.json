@@ -3,6 +3,7 @@
   "junkChance": 0.38,
   "fineBaitJunkChance": 0.3,
   "junkXp": 1,
+  "rodLobsterChance": 0.03,
   "catches": [
     {
       "id": "crayfish",

@@ -284,7 +284,10 @@ export function sleep(
   areasEndDay(g, random);
   g.cave.endDay(maps.get(CAVE_MAP).forageSpots, random);
   // Baited pots hold a catch by morning.
-  g.pots.endDay(random);
+  g.pots.endDay(random, {
+    noBait: g.skills.has("luremaster"),
+    noJunk: g.skills.has("mariner"),
+  });
   const houseFinished = advanceBuild(g);
   const animalJob = advanceBuilding(g);
   const siloFinished = advanceSilo(g);

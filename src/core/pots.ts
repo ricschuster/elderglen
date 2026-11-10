@@ -4,7 +4,7 @@ import { isAreaMap } from "./areas";
 import { isFarmMap } from "./farmtypes";
 import { catchQuality, potKindOf, sizeRoll, type PotKind } from "./fishing";
 import type { FarmMap } from "./map";
-import { withQuality } from "./quality";
+import { withQuality, type Quality } from "./quality";
 import type { GameState } from "./save";
 import { harvestXp } from "./skills";
 import { baitById } from "./tackle";
@@ -42,6 +42,9 @@ export const FINE_BAIT_JUNK_CHANCE = potData.fineBaitJunkChance;
 /** Fishing XP for a pot harvest of junk: junk sells for almost nothing, but still counts (note 21). */
 export const JUNK_XP = potData.junkXp;
 export const FINE_BAIT = "fine-bait";
+/** The Pearl Lobster's share of sea bites on the rod (note 21, placeholder). */
+export const ROD_LOBSTER_CHANCE = potData.rodLobsterChance;
+export const PEARL_LOBSTER = "pearl-lobster";
 
 export const shellfishById = (id: string | undefined) =>
   SHELLFISH.find((s) => s.id === id);
@@ -110,10 +113,13 @@ export class Pots {
   }
 
   /** The morning: every baited pot with room gives one catch and spends its bait. */
-  endDay(random: () => number): void {
+  endDay(
+    random: () => number,
+    perks: { noBait?: boolean; noJunk?: boolean } = {},
+  ): void {
     for (const p of this.placed.values()) {
-      if (!p.bait || p.catch) continue;
-      p.catch = rollCatch(p.kind, p.bait, random);
+      if ((!p.bait && !perks.noBait) || p.catch) continue;
+      p.catch = rollCatch(p.kind, p.bait ?? "", random, perks.noJunk);
       p.bait = undefined;
     }
   }
@@ -167,8 +173,9 @@ export function rollCatch(
   kind: PotKind,
   bait: string,
   random: () => number,
+  noJunk = false,
 ): string {
-  if (random() < junkChance(bait))
+  if (!noJunk && random() < junkChance(bait))
     return JUNK[Math.min(Math.floor(random() * JUNK.length), JUNK.length - 1)]!
       .id;
   const pool = SHELLFISH.filter((s) => s.water === kind);
@@ -274,4 +281,34 @@ export function pickUpPot(
   g.inventory.add(POT_ITEM);
   if (pot.bait) g.inventory.add(pot.bait);
   return { ok: true, item: POT_ITEM };
+}
+
+/**
+ * Land a Pearl Lobster hooked on the rod. There is no bar fight (the note sets
+ * none): it takes the same quality roll as a pot shellfish, never perfect. A
+ * full backpack drops it at the player's feet. Counts as a shellfish catch.
+ */
+export function landLobster(
+  g: GameState,
+  at: { x: number; y: number },
+  distance: number,
+  random: () => number,
+): { quality: Quality; dropped: boolean; levelUp?: number } {
+  const def = shellfishById(PEARL_LOBSTER)!;
+  const quality = catchQuality(
+    sizeRoll(g.skills.level("fishing"), distance, random),
+    false,
+  );
+  const item = withQuality(def.id, quality);
+  let dropped = false;
+  if (!g.inventory.add(item)) {
+    g.ground.drop(at.x, at.y, item, 1);
+    dropped = true;
+  }
+  g.pots.note(def.id);
+  return {
+    quality,
+    dropped,
+    levelUp: g.skills.gain("fishing", harvestXp(def.sellPrice)),
+  };
 }

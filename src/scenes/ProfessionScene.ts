@@ -1,5 +1,10 @@
 import Phaser from "phaser";
-import { choose, optionsFor, pendingChoice } from "../core/professions";
+import {
+  choose,
+  optionsFor,
+  pendingChoice,
+  pendingLevel,
+} from "../core/professions";
 import type { GameState } from "../core/save";
 import { STATE_KEY } from "./state";
 import { WINDOW_FILL } from "./panel";
@@ -13,7 +18,7 @@ const SKILL_NAMES = {
 } as const;
 
 /**
- * Asked when a skill reaches level 5: pick one of two professions. There is no
+ * Asked when a skill reaches level 5 (or 10, under the first pick): pick one of two professions. There is no
  * way to skip it. The farm is paused behind it and resumes once one is chosen.
  */
 export class ProfessionScene extends Phaser.Scene {
@@ -29,10 +34,15 @@ export class ProfessionScene extends Phaser.Scene {
       .rectangle(480, 270, WINDOW_FILL, WINDOW_FILL, 0x10201a, 0.92)
       .setInteractive();
     this.add
-      .text(480, 90, `${SKILL_NAMES[skill]} level 5`, {
-        fontSize: "34px",
-        color: "#ffe9a0",
-      })
+      .text(
+        480,
+        90,
+        `${SKILL_NAMES[skill]} level ${pendingLevel(g.skills, skill)}`,
+        {
+          fontSize: "34px",
+          color: "#ffe9a0",
+        },
+      )
       .setOrigin(0.5);
     this.add
       .text(480, 140, "Choose a profession. It cannot be changed.", {
@@ -40,7 +50,7 @@ export class ProfessionScene extends Phaser.Scene {
         color: "#ffffff",
       })
       .setOrigin(0.5);
-    optionsFor(skill).forEach((p, i) => {
+    optionsFor(skill, g.skills).forEach((p, i) => {
       const x = 280 + i * 400;
       this.add
         .rectangle(x, 300, 340, 220, 0x3f7d3a, 1)

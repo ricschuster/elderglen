@@ -35,11 +35,13 @@ export function buy(
   wallet: Wallet,
   id: string,
   n = 1,
+  /** A price that stands in for the listed one (a profession discount). */
+  price?: number,
 ): boolean {
   const def = itemById(id);
   if (!def || def.buyPrice === undefined || n <= 0) return false;
   if (isOneOnly(id) && (n > 1 || inv.count(id) > 0)) return false;
-  const cost = def.buyPrice * n;
+  const cost = (price ?? def.buyPrice) * n;
   if (wallet.money < cost || !inv.add(id, n)) return false;
   wallet.money -= cost;
   return true;
