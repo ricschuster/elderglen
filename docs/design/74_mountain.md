@@ -283,3 +283,13 @@ The Quarry bridge and exit, hand edits to `mountain.json` (the Quarry itself is 
 - **The yard post** now says the stonekeeper has taken his camp across the Quarry bridge
   once `quarry-open` holds (`YARD_EMPTY_LINE`); before it, the old bridge line.
 - **Tests:** `tests/quarry.test.ts`. Playtest: `npm run playtest:quarry`.
+
+## Owner decisions 2026-11-09 (after the map builds)
+
+- **The forge hut stays open from day 1, no gate (as Stardew's Mines).** Ore and the
+  furnace gift are reachable before Spring 5. Stamina and the furnace cost (copper ore,
+  coal, gold) are the pacing, not a door. Furnace recipe timing in Stardew is unchecked
+  (SC-102).
+- **The smith screen is split.** The forge hut keeps ore buying, lamps and rest-camp
+  supplies. Tool upgrades, geode cracking and weapon forging go to the Hearthwell
+  blacksmith counter (note 77), as the owner decided in answer 7.

@@ -163,3 +163,4 @@ note 49 that are marked "ours".
 | SC-99 | 09 | How is Stardew's Qi story told (notes, quests, item drops)? | no | open | Added 2026-11-09. From memory through notes and quests. Not checked. |
 | SC-100 | 09 | Does Stardew's Krobus story ever resolve? | no | open | Added 2026-11-09. From memory it never does. Not checked. |
 | SC-101 | 09 | Does Stardew's Wizard have a personal name, and what is it? | no | open | Added 2026-11-09. Recalled as Rasmodius. The saved Wizard's Tower page says only the Wizard. Check by play. Saved Krobus page, read 2026-11-09, names the Wizard's catalogue as "M. Rasmodius' private furniture collection", so the recalled name is confirmed. |
+| SC-102 | 74 | When does Stardew give the furnace recipe, and can you mine copper on day 1? | no | open | Added 2026-11-09. From memory the Mines are open from day 1 and the furnace recipe comes after the first copper ore. Not checked. |
