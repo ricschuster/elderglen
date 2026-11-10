@@ -143,7 +143,7 @@ describe("the smith's tool upgrades", () => {
     expect(collectUpgrade(g)).toBeUndefined();
     const map = maps.get(START.map);
     const r = useHeld(g, map, { kind: "tool", tool: "pickaxe" }, 1, 1);
-    expect(r).toEqual({ ok: false, reason: "at the smith" });
+    expect(r).toEqual({ ok: false, reason: "at the smithy" });
     expect(useHeld(g, map, { kind: "tool", tool: "hoe" }, 1, 1)).not.toEqual(r);
   });
 
@@ -157,7 +157,7 @@ describe("the smith's tool upgrades", () => {
     const r = sleep(back, none, () => 0.5);
     expect(r.toolReady).toBe("can");
     expect(reportLines(r)).toContain(
-      "Your watering can is ready at the smith.",
+      "Your watering can is ready at the smithy in Hearthwell.",
     );
   });
 

@@ -1,4 +1,5 @@
-// Smoke test of the newer scenes: the collections page, the smith (geodes),
+// Smoke test of the newer scenes: the collections page, the smithy (geodes, a
+// tool upgrade), the smith dwarf (a weapon),
 // the carpenter (furniture, flooring, wallpaper), the village green and hedge
 // festival maps, the mailbox, mine floors beyond 10 and the request board. It
 // opens each, does one small thing, takes a screenshot and fails on any console
@@ -63,6 +64,7 @@ async function goMap(map, entry) {
 }
 /** Press Down and Enter until the scene's message contains `text`. */
 async function pickRow(scene, text, tries = 25) {
+  const seen = new Set();
   for (let i = 0; i < tries; i++) {
     await p.keyboard.press("Enter");
     await sleepMs(60);
@@ -71,10 +73,40 @@ async function pickRow(scene, text, tries = 25) {
       scene,
     );
     if (text.test(m)) return m;
+    seen.add(m);
     await p.keyboard.press("ArrowDown");
     await sleepMs(40);
   }
-  throw new Error(`no row gave ${text} in ${scene}`);
+  throw new Error(
+    `no row gave ${text} in ${scene}; rows said: ${[...seen].join(" / ")}`,
+  );
+}
+
+/**
+ * Order a building: the carpenter's row opens the placement screen (note 60),
+ * so put the ghost on the first free spot and confirm, as the player would.
+ */
+async function orderBuilding(id) {
+  await farm(
+    (g, f, s, a) => g.scene.getScene("carpenter").place(a, "order"),
+    id,
+  );
+  await sleepMs(500);
+  if (!(await active()).includes("placement"))
+    throw new Error(`placement did not open for the ${id}`);
+  await farm((g) => {
+    const pl = g.scene.getScene("placement");
+    pl.free = false;
+    for (let y = 8; y < 24 && !pl.free; y++)
+      for (let x = 18; x < 34 && !pl.free; x++) pl.moveTo(x, y);
+    pl.confirm();
+  });
+  await sleepMs(500);
+  const m = await farm(
+    (g) => g.scene.getScene("carpenter").message?.text ?? "",
+  );
+  if (!/Ordered\./.test(m))
+    throw new Error(`the ${id} was not ordered: "${m}"`);
 }
 
 await bot.dbg();
@@ -99,6 +131,38 @@ await step("smithy-geodes", async () => {
   const after = await farm((g, f, s) => s.inventory.count("geode"));
   if (/splits open/.test(m) && after !== before - 1)
     finding(`smithy: geode count ${before} -> ${after} after a crack`);
+  await close();
+});
+
+await step("smithy-upgrade", async () => {
+  await farm((g, f, s) => {
+    s.inventory.add("copper-bar", 5);
+  });
+  await overlay("smithy");
+  const m = await pickRow("smithy", /in two days/);
+  log("smithy upgrade:", m);
+  const order = await farm((g, f, s) => s.toolOrder ?? null);
+  if (!order) finding("smithy: no tool order after handing a tool over");
+  await close();
+  // Give the tool back, so the later steps have it.
+  await farm((g, f, s) => {
+    s.toolOrder = undefined;
+  });
+});
+
+await step("smith-weapons", async () => {
+  await overlay("smith");
+  const before = await farm((g, f, s) => s.money);
+  const m = await pickRow("smith", /hands you a/);
+  log("smith weapon:", m);
+  const got = await farm((g, f, s) => ({
+    money: s.money,
+    swords: ["copper-switch", "copper-rolling-pin", "copper-sling"].filter(
+      (id) => s.inventory.count(id) > 0,
+    ).length,
+  }));
+  if (got.swords < 1) finding("smith: no weapon in the backpack after Buy");
+  if (got.money >= before) finding("smith: the weapon cost nothing");
   await close();
 });
 
@@ -296,7 +360,7 @@ await step("coop", async () => {
     s.houseBuild = undefined;
   });
   await overlay("carpenter");
-  await pickRow("carpenter", /Ordered\./);
+  await orderBuilding("coop");
   await close();
   // Three sleeps stand in for the three build days.
   await farm((g, f, s) => {
@@ -337,7 +401,7 @@ await step("barn", async () => {
     s.animals.build = undefined;
   });
   await overlay("carpenter");
-  await pickRow("carpenter", /Ordered\./);
+  await orderBuilding("barn");
   await close();
   await farm((g, f, s) => {
     s.animals.build = undefined;

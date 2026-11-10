@@ -38,7 +38,7 @@ const TOOL_LABEL = {
 /** Short text for a slot, until the art pass gives items icons. */
 function caption(held: Held, g: GameState): string {
   if (held.kind === "tool") {
-    if (toolAway(g, held.tool)) return `${TOOL_LABEL[held.tool]} (smith)`;
+    if (toolAway(g, held.tool)) return `${TOOL_LABEL[held.tool]} (smithy)`;
     const tier = g.toolTiers[held.tool as Upgradable];
     return tier > 0
       ? `${TIER_NAMES[tier]} ${TOOL_LABEL[held.tool].toLowerCase()}`

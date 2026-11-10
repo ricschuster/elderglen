@@ -58,7 +58,7 @@ export function useHeld(
 ): Outcome {
   if (held.kind === "empty") return fail("nothing held");
   if (held.kind === "tool" && toolAway(g, held.tool))
-    return fail("at the smith");
+    return fail("at the smithy");
   if (map.indoors) return useInGreenhouse(g, map, held, x, y);
   // Any tool, or the empty hand, lifts a placed sprinkler (SC-48).
   if (held.kind === "tool" && g.sprinklers.at(x, y))

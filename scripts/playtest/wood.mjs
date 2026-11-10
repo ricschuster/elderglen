@@ -76,7 +76,10 @@ for (let guard = 0; guard < 400; guard++) {
     await bot.select(2);
     continue;
   }
-  const all = (await treeList()).filter((t) => t.stage >= 4 || t.stump);
+  // A large stump needs a copper axe (note 44), so the basic axe leaves it.
+  const all = (await treeList()).filter(
+    (t) => !t.large && (t.stage >= 4 || t.stump),
+  );
   const here = d.tile;
   const ranked = all
     .map((t) => ({ t, d: Math.abs(t.x - here.x) + Math.abs(t.y - here.y) }))
