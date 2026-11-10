@@ -35,7 +35,7 @@ Our mine is 120 floors, so Stardew's bands map one to one.
 
 | Kind | Where | Notes |
 | --- | --- | --- |
-| Geode | Floors 1 to 40 | The only kind built so far (floors 1 to 10). |
+| Geode | Floors 1 to 40 | Built (all four kinds are items, the node kind follows the floor band). |
 | Frozen Geode | Floors 41 to 80 | Iron band. |
 | Magma Geode | Floors 81 to 120 | Gold band. |
 | Omni Geode | Rocks from floor 21 on, rare in every band | Never the common find. |

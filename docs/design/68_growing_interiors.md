@@ -199,8 +199,8 @@ the tile rule above. This is the one allowed break, and the last one.
   `houseLayout` (layout 1) moves pieces on `house` by (9, 12) and pieces on
   `house-1` down 10. A save at layout 2 moves its house pieces down 10.
   `legacyHouseTile(map, x, y, layout)` does all three.
-- **Carpenter.** `HOUSE_UPGRADES` has tiers 1 to 3. Tier 2 wood stands in for
-  hardwood. Order checks and the three day build are the existing ones. The
+- **Carpenter.** `HOUSE_UPGRADES` has tiers 1 to 3. Tier 2 costs 100 hardwood (the stand-in
+  wood is gone since the Secret Woods, #639). Order checks and the three day build are the existing ones. The
   waiting line ("The carpenter says the spare room and the nursery will be bare
   and tidy, for later.") shows when tier 2 is ordered and in the morning report
   when it lands.

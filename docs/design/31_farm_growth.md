@@ -1,22 +1,16 @@
 # 31 Farm growth tools (draft)
 
-Status: draft. Decided with the owner on 2026-10-31. Fruit trees built 2026-11-07
-(slice 1 build 5, `src/core/fruittrees.ts`, data in
-`src/content/fruit-trees.json`): saplings from the shop, 28 days to mature, the
-clear 3x3 rule, fruit in season held up to 3, grade by age, chopping returns the
-sapling, fruit feeds the jar and keg. The six trees are data; the three fall
-trees wait for fall in the calendar and are not sold yet. The farm cave is not
-built (needs a map, an earnings counter and the choice screen). Fertilizer is built
-(2026-11-07, slice 1 build 3, `src/core/fertilizer.ts`): five items from the
-shop only, no crafting yet, applied from the toolbar, one per tile, gone at the
-season change. Sprinklers, the greenhouse, fruit trees and the cave are not
-built; the game has hand watering for the rest. Sprinklers built 2026-11-07 (slice 1 build 3, `src/core/sprinklers.ts`): the
-basic and quality tiers, placed from the toolbar on clear undug ground, picked
-up with the hand or Action, watering their tiles each morning. The 24 tile tier
-needs iridium and waits. Sprinklers built 2026-11-07 (slice 1 build 3, `src/core/sprinklers.ts`): the
-basic and quality tiers, placed from the toolbar on clear undug ground, picked
-up with the hand or Action, watering their tiles each morning. The 24 tile tier
-needs iridium and waits. Reference: the Stardew Valley Wiki
+Status: draft. Decided with the owner on 2026-10-31. Built since: fruit trees
+(2026-11-07, `src/core/fruittrees.ts`, data in `src/content/fruit-trees.json`:
+saplings from the shop all year, 28 days to mature, the clear 3x3 rule, fruit in
+season held up to 3, grade by age, chopping returns the sapling, fruit feeds the
+jar and keg; six trees, two a season), fertilizer (2026-11-07,
+`src/core/fertilizer.ts`: five items from the shop, applied from the toolbar, one
+per tile, gone at the season change), sprinklers (2026-11-07,
+`src/core/sprinklers.ts`: the basic and quality tiers, placed on clear undug
+ground, picked up with the hand or Action, watering their tiles each morning; the
+24 tile tier needs iridium and waits), the farm cave (#498, 2026-11-07) and the
+greenhouse (#602 and #634, below). Not built: decorative scarecrows. Reference: the Stardew Valley Wiki
 Sprinkler, Scarecrow, Fruit Trees, Greenhouse, The Cave and Fertilizer pages,
 read only (ADR 0002). Costs and recipes are placeholders until the tuning note.
 
