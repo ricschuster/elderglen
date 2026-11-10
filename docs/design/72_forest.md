@@ -122,7 +122,7 @@ frames the map edges and the cliff (as the farm border, note 43).
   energy can chop. Placeholder, tune in note 07.
 - **Types.** Oak and maple only here. Their tap products are note 36's and are
   not changed. Pine is the Mountain's type. Mahogany has no standing tree on the
-  map (owner, 2026-11-08: Mahogany stays off the map for now).
+  map (owner, 2026-11-10: it is player-planted only, note 36 "Mahogany").
 - **Clutter at the start.** Rocks 40, twigs 50, weeds 60, hand placed, placeholder
   counts. They come back by the rules of `65_special_orders_and_debris.md` (a small
   capped share each spring, summer and fall; none in winter). Stardew's saved page

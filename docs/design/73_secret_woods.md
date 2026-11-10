@@ -32,8 +32,10 @@ come out.
 7. **A small pond,** fishable (owner, 2026-11-08, as Stardew): one unique fish and
    two common ones.
 8. **No creatures in the first build** (owner, 2026-11-08: they come later, as
-   Stardew has slimes, with the combat notes). **Mahogany stays off the map for
-   now.** The hardwood supply is the stumps, kept as designed.
+   Stardew has slimes, with the combat notes). **Mahogany seeds come from here
+   (owner, 2026-11-10, note 36 "Mahogany"):** a chance from a daily stump now and
+   from creatures when they exist. No wild Mahogany tree stands in the woods. The
+   hardwood supply is the stumps, kept as designed.
 9. **The carpenter's stand-in is removed in this slice.**
 
 ## Shape and layout
@@ -156,7 +158,7 @@ Work package: "Secret Woods map, hardwood stumps and the massive log" (steps 1 t
 
 - The unique pond fish: its name, price and bar motion (design with note 21's
   roster, which says 46 and needs a 47th row).
-- Creatures and Mahogany come later, with the combat notes (owner, 2026-11-08).
+- Creatures come later, with the combat notes (owner, 2026-11-08). Mahogany seeds from stumps are designed (note 36, 2026-11-10) and not built; the creature drop waits for the creatures.
 - The stump swing count and the yield of a stump at tier 2 and above are tuning.
 - Whether the saved page's "lost items shop" idea has a use: our tools return
   (SC-79) and there are no unique unrecoverable items, so it is not in scope.

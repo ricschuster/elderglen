@@ -98,6 +98,34 @@ Slice 1 asks for these amounts.
   Fiber is always normal quality. Sap is not food: the player cannot eat it
   (ours, 2026-10-31).
 
+## Mahogany (decided 2026-11-10, reopened by the owner)
+
+The earlier "Mahogany stays off the map for now" (2026-11-08) is replaced. Facts
+are from the saved Trees, Hardwood and Secret Woods pages. Numbers marked
+placeholder are ours to tune (note 07).
+
+- **A fourth common tree, player-planted only.** No wild Mahogany stands in the
+  valley (owner, 2026-11-10). Stardew's main map has none either; wild ones are
+  on Ginger Island, which is ring 2 or later.
+- **Yield (Stardew).** A mature tree gives 10 Hardwood and no wood (12 or 13 with
+  the Forester profession), and 0 to 1 Mahogany Seed.
+  Tapped, it gives sap every day, with a tapper of either kind. Any axe fells it.
+  Its stump gives wood by the common rule in this note.
+- **Growth (Stardew).** 15 percent a night per stage (20 for other trees), stage 4
+  takes twice as long, tree fertilizer works as for other trees. Median time is
+  longer than 24 days. Not placed on a fruit tree's 3x3.
+- **Seed sources (owner, 2026-11-10).** Monsters in the Secret Woods drop a seed,
+  10 percent each (Stardew, Secret Woods page; placeholder for ours), plus a
+  placeholder 10 percent chance that a Secret Woods daily stump gives one too
+  (ours, not Stardew). A mature Mahogany tree gives a seed back, so a grove is
+  self-seeding.
+- **Build order.** The stump chance and the planting rules can be built now. The
+  monster drop waits for Secret Woods creatures, which note 73 left for the
+  combat notes. Until then the stump chance is the only seed source.
+- **Effect on Hardwood.** The six daily stumps stay the early supply. A planted
+  grove is the later one: ten trees give 100 Hardwood, about one stable or house
+  tier, once grown.
+
 ## Open
 
 - Weed day 1 count and spread chance, from a playtest or a saved source page.

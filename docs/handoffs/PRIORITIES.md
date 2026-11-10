@@ -60,8 +60,10 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
 5. **Ring 2 shape and travel** (#20, M5). Parked until slice 3 is played.
 
 **Done (#639, 2026-11-09):** the carpenter's temporary Hardwood sale was removed
-with the Secret Woods (six daily stumps and the log). Mahogany stays off the map
-for now.
+with the Secret Woods (six daily stumps and the log). Mahogany was reopened 2026-11-10: player-planted,
+seed from the Secret Woods (note 36 "Mahogany"), designed, not built.
+
+Session 2026-11-10 part eight (handoff 2026-11-10i): note 54 question batch answered, Mahogany reopened and designed (#724). Build order unchanged.
 
 Session 2026-11-10 part seven (handoff 2026-11-10h): the notes 09 to 62 audit is finished; stale status lines fixed, note 55 differs from the farm map and needs an owner decision. Build order unchanged.
 
