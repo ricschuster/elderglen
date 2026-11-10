@@ -23,7 +23,7 @@
   "width": 120,
   "height": 110,
   "nextlayerid": 6,
-  "nextobjectid": 63,
+  "nextobjectid": 64,
   "properties": [
     { "name": "placeholder", "type": "bool", "value": true },
     { "name": "rideable", "type": "bool", "value": true },
@@ -2340,6 +2340,22 @@
           "point": true,
           "properties": [
             { "name": "kind", "type": "string", "value": "requests" }
+          ],
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 63,
+          "name": "orders",
+          "class": "service",
+          "type": "service",
+          "x": 392,
+          "y": 456,
+          "width": 0,
+          "height": 0,
+          "point": true,
+          "properties": [
+            { "name": "kind", "type": "string", "value": "orders" }
           ],
           "rotation": 0,
           "visible": true

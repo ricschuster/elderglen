@@ -94,9 +94,9 @@ describe("the Hearthwell interiors", () => {
     expect(maps.get("smithy").services[0]!.kind).toBe("smith");
     for (const k of ["shop", "smith"])
       expect(town.services.some((s) => s.kind === k)).toBe(false);
-    // The farm keeps its own shop, Orders and Request counters (note 77, Interiors built).
+    // The farm has no shop, Orders or Request counters (note 77, owner decisions 2026-11-09).
     for (const k of ["shop", "orders", "requests"])
-      expect(maps.get("farm").services.some((s) => s.kind === k)).toBe(true);
+      expect(maps.get("farm").services.some((s) => s.kind === k)).toBe(false);
   });
 
   it("joins the Outpost's post room and the steward's rooms both ways", () => {

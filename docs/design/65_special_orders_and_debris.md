@@ -106,10 +106,9 @@ Code: `src/core/orders.ts`, `src/core/debris.ts`, data in
 `src/content/orders.json`, scene `src/scenes/OrdersScene.ts`. Tests:
 `tests/orders.test.ts`, `tests/debris.test.ts`.
 
-- **The board stands by the shop on the farm map, not at the Outpost.** The
-  Outpost is not built (note 57), so a service tile `board` (kind `orders`)
-  sits in the shop building at tile (35, 20) on both farm maps. It moves when
-  the Outpost exists.
+- **The board stands on the general store's wall in Hearthwell.** A service tile `orders`
+  sits on the store's bottom row, two tiles right of the door, beside the Help Wanted board
+  (it stood on the farm until 2026-11-09, note 77). The Outpost's own board stays a stand-in.
 - **The Fall 2 scene.** The first time the player is on the farm map on or
   after day 58 (Fall 2, year one), in any weather, a short scene opens the
   board (after waking, or on loading an old save past that day). It shows once.

@@ -300,6 +300,6 @@ export function collectOwed(g: GameState): { id: string; count: number }[] {
 
 /** The words the board shows when the intro scene opens it. */
 export const ORDERS_INTRO = [
-  "A new board has gone up beside the shop. Carriers and buyers passing through pin their bigger jobs to it.",
+  "A new board has gone up in Hearthwell, beside the general store. Carriers and buyers passing through pin their bigger jobs to it.",
   "Take one, and its days start counting from the day you take it. Fill it by shipping, and it pays by itself. Let one run out and nothing is lost.",
 ];

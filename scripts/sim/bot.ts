@@ -725,7 +725,7 @@ class Bot {
     if (g.inventory.count(sapling) < 1) {
       // A player saves for the tree: seed money is spent only on top of its price.
       if (g.money < pick.saplingPrice + ORCHARD_RESERVE) return;
-      if (!this.walker.goToService("farm", "shop")) return;
+      if (!this.walker.goToService("general-store", "shop")) return;
       if (!buy(g.inventory, g, sapling)) return;
     }
     const map = maps.get(START.map);
@@ -828,7 +828,7 @@ class Bot {
         this.g.inventory.count(seedId(id)) <
         plan.slice(0, i + 1).filter((x) => x === id).length,
     );
-    if (short) this.visitShop(plan);
+    if (short && this.canAffordSeed(plan)) this.visitShop(plan);
     const map = maps.get(START.map);
     const free = this.freeSoil(map, plan.length);
     for (const [i, crop] of plan.entries()) {
@@ -866,11 +866,25 @@ class Bot {
     return out.slice(0, n);
   }
 
+  /**
+   * A player does not walk to Hearthwell with empty pockets (note 77): skip the
+   * trip when no seed the plan is short of can be paid for.
+   */
+  private canAffordSeed(plan: string[]): boolean {
+    const price = (id: string) => itemById(seedId(id))?.buyPrice ?? Infinity;
+    const shortOf = plan.filter(
+      (id, i) =>
+        this.g.inventory.count(seedId(id)) <
+        plan.slice(0, i + 1).filter((x) => x === id).length,
+    );
+    return shortOf.some((id) => this.g.money >= price(id));
+  }
+
   /** Walk to the shop and buy seeds for the plan; keep a cash reserve. */
   private visitShop(plan: string[] = this.cropPlan()): void {
     if (this.lateNight) return;
     if (plan.length === 0 && this.g.bin.isEmpty) return;
-    if (!this.walker.goToService("farm", "shop")) return;
+    if (!this.walker.goToService("general-store", "shop")) return;
     const stock = new Set(seedStock(dateOf(this.day).season));
     for (const crop of plan) {
       const seed = seedId(crop);

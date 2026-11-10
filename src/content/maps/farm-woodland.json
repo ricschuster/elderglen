@@ -321,52 +321,6 @@
           ]
         },
         {
-          "id": 112,
-          "name": "shop",
-          "class": "service",
-          "type": "service",
-          "x": 536,
-          "y": 328,
-          "width": 0,
-          "height": 0,
-          "point": true,
-          "rotation": 0,
-          "visible": true,
-          "properties": [{ "name": "kind", "type": "string", "value": "shop" }]
-        },
-        {
-          "id": 209,
-          "name": "board",
-          "class": "service",
-          "type": "service",
-          "x": 568,
-          "y": 328,
-          "width": 0,
-          "height": 0,
-          "point": true,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            { "name": "kind", "type": "string", "value": "orders" }
-          ]
-        },
-        {
-          "id": 213,
-          "name": "requests",
-          "class": "service",
-          "type": "service",
-          "x": 584,
-          "y": 328,
-          "width": 0,
-          "height": 0,
-          "point": true,
-          "rotation": 0,
-          "visible": true,
-          "properties": [
-            { "name": "kind", "type": "string", "value": "requests" }
-          ]
-        },
-        {
           "id": 113,
           "name": "bin",
           "class": "service",

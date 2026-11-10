@@ -282,9 +282,9 @@ describe("the Hearthwell shell (note 77, #645)", () => {
       // The two building sites are open ground again.
       expect(farm.isBlocked(6, 23)).toBe(false);
       expect(farm.isBlocked(33, 9)).toBe(false);
-      // The shop, board and request counters stay on the farm.
+      // The shop, Orders and Request counters are gone: all of it is in town.
       for (const kind of ["shop", "orders", "requests"])
-        expect(farm.services.some((s) => s.kind === kind)).toBe(true);
+        expect(farm.services.some((s) => s.kind === kind)).toBe(false);
     }
     expect(town.exits.find((e) => e.id === "hall")).toMatchObject({
       map: "hall",
@@ -342,6 +342,19 @@ describe("the Hearthwell shell (note 77, #645)", () => {
     expect(maps.get("smithy").services[0]).toMatchObject({ kind: "smith" });
   });
 
+  it("hangs the Special Orders board on the store's wall beside Help Wanted", () => {
+    const orders = town.services.find((s) => s.kind === "orders")!;
+    const lot = region("lot-general-store");
+    expect(orders.y).toBe(28);
+    expect(orders.x).toBeGreaterThanOrEqual(lot.x);
+    expect(orders.x).toBeLessThan(lot.x + lot.w);
+    expect(
+      town
+        .reachable(town.entry("from_farm")!)
+        .has(`${orders.x},${orders.y + 1}`),
+    ).toBe(true);
+  });
+
   it("hangs the road news and Special Orders boards on the Outpost wall", () => {
     const outpost = region("lot-outpost");
     for (const [id, kind] of [
@@ -384,7 +397,7 @@ describe("the Hearthwell shell (note 77, #645)", () => {
     expect(walker.goToService("sawmill", "carpenter")).toBe(true);
     expect(walker.goToService("general-store", "shop")).toBe(true);
     expect(walker.mapId).toBe("general-store");
-    expect(walker.goToService("farm", "shop")).toBe(true);
+    expect(walker.goToService("farm", "bin")).toBe(true);
     expect(walker.mapId).toBe("farm");
   });
 
