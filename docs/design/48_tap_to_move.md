@@ -74,7 +74,7 @@ an NPC or animal to walk next to them and interact.
 
 ## Pathing
 
-- **A pure function in `src/core/path.ts`,** free of Phaser: `findPath(from, to,
+- **A pure function in `src/core/pathing.ts`,** (planned as `path.ts`) free of Phaser: `findPath(from, to,
   blocked)` over tiles, four-way A*, returning the tile list or nothing. It is unit
   tested.
 - **What blocks:** `map.isBlocked` and, on the farm, `state.trees.blocks`, the
@@ -117,7 +117,7 @@ scene. The pending action never fires after an interrupt.
   whether it is a hold) instead of a vector. The scene owns the path and the
   pending action, since it knows the map and the state.
 - The scene's `aimTile()` has a third source: the active tap target.
-- A new `src/core/tap.ts` classifies a tile as walk, tool or action from the table
+- `planTap` in `src/core/pathing.ts` (planned as a new `tap.ts`) classifies a tile as walk, tool or action from the table
   above (pure, tested). The scene calls it, then `findPath`.
 
 ## Testing

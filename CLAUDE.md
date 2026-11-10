@@ -12,9 +12,11 @@ solo developer. Brief: `docs/design/00_project_brief.md`.
 
 ## Project status
 
-Engine chosen (ADR 0004). Milestone M2, the first playable, works in the
-browser with placeholder art, plus some M3 items built early. Design is ahead of
-the build: settled notes in `docs/design/` are not yet built. Roadmap:
+Engine chosen (ADR 0004). M2, the first playable, is closed (2026-11-07). M3
+waits on the owner's hands-on play, and much of M3b (ring 1 systems and the map
+areas, ADR 0012) is built to shell level with placeholder art. Design is still
+ahead of the build in places: some settled notes in `docs/design/` are not yet
+built. Roadmap:
 `docs/design/03_milestones.md`; placeholder numbers:
 `docs/design/07_tuning_numbers.md`. GitHub issues are the live tracker. Start
 each session by reading the latest handoff in `docs/handoffs/`, the design
@@ -23,10 +25,12 @@ issues labelled `next-payoff`.
 
 ## Scope
 
-The first playable is one farm, two seasons, selling, farming and foraging
-skills, and five village hall bundles. It is deliberately NOT: regions beyond
-the home valley, combat, multiplayer (milestone M4, after M3b the ring 1 systems, ADRs 0007 and 0012), deep relationships, generated content,
-or final art and name. Do not expand scope without a design note in
+The first playable (M2) was one farm, two seasons, selling, farming and foraging
+skills, and a few village hall bundles. The work now is ring 1, the home valley
+(M3 and M3b, `docs/design/03_milestones.md`): four seasons, fishing, the mines
+with combat, animals, the map areas and Hearthwell. It is deliberately NOT yet:
+regions beyond the home valley (M5), multiplayer (milestone M4, after M3b,
+ADRs 0007 and 0012), marriage, generated content, or final art. Do not expand scope without a design note in
 `docs/design/` or an ADR in `docs/decisions/`.
 
 This project is Stardew Valley inspired. Do not copy its name, art, audio,
@@ -35,7 +39,7 @@ characters, text or code. See
 
 ## Stack
 
-TypeScript, Phaser 3, Vite, and Tiled maps (JSON). Installed apps wrap the web
+TypeScript, Phaser 4, Vite, and Tiled maps (JSON). Installed apps wrap the web
 build; the wrapper is a later ADR. Game rules stay free of Phaser and the DOM
 under `src/core/` so they are unit-testable. Content (items, crops, bundles)
 is data files, not code. See `docs/decisions/0004-engine-and-language.md`.

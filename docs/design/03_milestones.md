@@ -21,7 +21,7 @@ the dark edge is Could.
 | M1 | Define the first playable | The first playable's scope and done list are written below, and the audience, identity, core loop of a day and multiplayer questions are answered. | Done | None |
 | M2 | First playable | Day and energy cycle, farming, selling and a small centre 1 run in the home valley, with rough art. Engine chosen in an ADR. | Done (2026-11-07) | None |
 | M3 | Vertical slice | Slice 1 and the work pulled forward from later slices (`33_build_order.md`). Done when the owner has played the coop, barn, machines and cooking by hand and the open issues are closed or moved. | In progress | The owner's hands-on play |
-| M3b | Ring 1 systems | Fishing and the Water room (slice 2), combat and the deeper mines (slice 3), friendship, the cast, gifts and heart events (slice 4), the horse, the cask and cellar, the dye vat and the greenhouse, and the map areas of the home valley (Forest, Secret Woods, River delta with the Beach, Mountain, Quarry, Lake cove, then Hearthwell with #599; notes 71 to 78). Bundles 1 to 26 can be filled. | Not started | M3, the cast list (#136) |
+| M3b | Ring 1 systems | Fishing and the Water room (slice 2), combat and the deeper mines (slice 3), friendship, the cast, gifts and heart events (slice 4), the horse, the cask and cellar, the dye vat and the greenhouse, and the map areas of the home valley (Forest, Secret Woods, River delta with the Beach, Mountain, Quarry, Lake cove, then Hearthwell with #599; notes 71 to 78). Bundles 1 to 26 can be filled. | In progress (fishing slices 1 and 2, combat, the horse, the cask, the dye vat, the greenhouse and every map area are built to shell level; villagers, pots, legends and bundles 13 to 26 are not) | The owner's play, villagers (#599) |
 | M4 | Multiplayer | Up to 8 players share one valley on one network, designed in `53_multiplayer.md` (ADR 0007, `docs/decisions/0007-multiplayer-milestone.md`). Moved to follow M3b (ADR 0012). | Not started | M3b, the wrapper ADR (done, ADR 0008), a hosting spike |
 | M3c | Ring 1 story and ending | The story spine, the Last Seat (slice 5) and its numbers, the year two rules. The Forest and Mountain maps moved to M3b on 2026-11-08 (owner, note 71) and take tree types with them. Ring 1 plays from start to ending. | Not started | M4, the story spine design (#176 to #178) |
 | M3d | Ring 1 polish | Art, audio, onboarding, balance, minigames, packaging and the name register check. Ring 1 is releasable as a full game. | Not started | M3c |
@@ -114,7 +114,8 @@ scope is in `13_m3_scope.md` (accepted, #130).
   three types in fixed places outside the farm, regrowing when chopped, and some
   cosmetic ones that cannot be chopped. Decided 2026-11-06 for M3, not M2: #396.
 - Later, not M3: marriage, which needs its own design note (#137, parked).
-  Also unscheduled: the ring 1 cast list (#136) and the final name (#138).
+  The ring 1 cast list (#136, note 20) and the final name (#138, Elderglen,
+  ADR 0011) are settled and closed.
 
 ### CI and the build check
 

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-08",
+  "updated": "2026-11-10",
   "about": "Hand-kept map of the design. Edit this file, then run npm run overview. Issue titles and states come from docs/overview-issues.json, refreshed with npm run overview:refresh (needs gh). npm run overview:check fails if a note, heading, area or issue reference is wrong, or if overview.html is stale.",
   "groups": {
     "core": "Core loop",
@@ -73,7 +73,7 @@
       "group": "core",
       "pos": [20, 320],
       "built": "partial",
-      "builtNote": "Two seasons, forecast, spring and summer forage and crops. Autumn and winter not built (#61).",
+      "builtNote": "Four seasons, weather and the forecast, forage and crops for every season, and the area forage tables are built. Storm strikes are not (slice 3).",
       "summary": "What grows and what can be found changes with the season.",
       "items": [
         {
@@ -130,7 +130,7 @@
       "group": "core",
       "pos": [260, 330],
       "built": "partial",
-      "builtNote": "Ten bundles work (four first-slice, six from note 35, some with stand-in pools). The 30-bundle design is not built (#179, #180).",
+      "builtNote": "Thirteen of the 30 bundles work (note 07, \"Village hall\"): the Foragers' Shelf has four, the Larder six and the Hearth three. The Water room, the Guests' Board and the Last Seat have none yet, so the Lake cove ferry cannot open.",
       "summary": "Six rooms, 30 bundles, ending at The Last Seat, the one gate to ring 2.",
       "items": [
         {
@@ -272,7 +272,7 @@
       "group": "world",
       "pos": [260, 60],
       "built": "partial",
-      "builtNote": "A placeholder farm map and map loader exist. The layout is designed but no real map is authored.",
+      "builtNote": "Every home valley map is built to shell level (2026-11-09): Forest, Secret Woods, River delta and Beach, Mountain, Quarry, Lake cove and Hearthwell with eleven interiors. No villagers stand in them yet (#599), and the owner has not played them.",
       "summary": "Separate areas joined by exits, buildings as interiors. Nine valley areas on eight maps (the Beach shares the River delta map), one river line, ring 2 across the bridge.",
       "items": [
         {
@@ -661,8 +661,8 @@
       "name": "Mines and gentle combat",
       "group": "systems",
       "pos": [260, 520],
-      "built": "none",
-      "builtNote": "",
+      "built": "partial",
+      "builtNote": "Built 2026-11-08: 120 floors in bands, health, three weapon families in five tiers, the trainer, twelve creatures, the Combat skill and defeat. The smith dwarf sells weapons for coin (2026-11-09). Not built: lamps, rest-camp supplies and the lightning rod (#598).",
       "summary": "Opens Spring day 5, 120 floors in three bands. Combat is real-time, gentle and optional, and mining works without it.",
       "items": [
         {
@@ -745,8 +745,8 @@
       "name": "Fishing and the water",
       "group": "systems",
       "pos": [20, 580],
-      "built": "none",
-      "builtNote": "",
+      "built": "partial",
+      "builtNote": "Fishing slices 1 and 2 are built: 46 fish in six waters, four rods, bait, lures and the fisher's hut on the delta. Not built: shellfish pots, the five legends and the Water room bundles (#596).",
       "summary": "Six Water room bundles and one Last Seat bundle depend on it.",
       "items": [
         {
@@ -889,7 +889,7 @@
       "group": "systems",
       "pos": [500, 520],
       "built": "partial",
-      "builtNote": "Built 2026-11-08: coop and barn with tiers, chickens, ducks, rabbits, cow, goat, sheep, pig, incubator, hay silo, animal-goods machines and a first cooking pass (stove, eight placeholder dishes). Not built: heater, animal professions, keeper, animal art, most recipes.",
+      "builtNote": "Built 2026-11-08: coop and barn with tiers, chickens, ducks, rabbits, cow, goat, sheep, pig, incubator, hay silo, animal-goods machines and a first cooking pass (stove, eight placeholder dishes). The Forest keeper sells young animals and hay (2026-11-09). Not built: heater, animal professions, animal art, most recipes.",
       "summary": "Machines, cooking, coops and bees. Needed by many bundles. Animals are designed in 23_animals.md; processing and cooking are not.",
       "items": [
         {
@@ -964,8 +964,8 @@
       "name": "Customisation and hats",
       "group": "systems",
       "pos": [20, 440],
-      "built": "none",
-      "builtNote": "",
+      "built": "partial",
+      "builtNote": "Hats (festival and achievement), furniture, wallpaper and flooring, and the furniture catalogue are built. Clothing, tailoring and farm decoration are not.",
       "summary": "Furniture, clothing, dyes and hats.",
       "items": [
         {
@@ -1109,7 +1109,7 @@
       "group": "craft",
       "pos": [20, 740],
       "built": "partial",
-      "builtNote": "Runs in the browser. The real-tablet check is not done.",
+      "builtNote": "Runs in the browser and as an Android app (Capacitor, ADR 0008), installed on three tablets. The real-tablet play check is not done (#523).",
       "summary": "Browser and tablet; installed wrapper later.",
       "items": [
         {

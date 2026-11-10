@@ -11,8 +11,8 @@ developer, inspired by Stardew Valley but not copied from it (see
 
 ## Status
 
-The first playable (milestone M2) works in the browser with placeholder art.
-The roadmap is `docs/design/03_milestones.md`, and GitHub issues are the live
+The first playable (milestone M2) is done, and most of the home valley's
+systems and map areas (M3 and M3b) are built with placeholder art. The roadmap is `docs/design/03_milestones.md`, and GitHub issues are the live
 tracker.
 
 ## Running it

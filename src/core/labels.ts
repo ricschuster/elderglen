@@ -98,11 +98,11 @@ const FESTIVAL_BY_ID: Record<string, string> = {
 
 /** Hall counters share the kind "hall", so they are named by id. */
 const HALL: Record<string, string> = {
-  "foragers-shelf": "Forager's Shelf",
+  "foragers-shelf": "Foragers' Shelf",
   larder: "Larder",
   hearth: "Hearth",
   "last-seat": "Last Seat",
-  "water-room": "Water Room",
+  "water-room": "Water room",
   "guests-board": "Guests' Board",
 };
 

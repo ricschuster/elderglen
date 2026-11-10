@@ -185,7 +185,7 @@
           "x": 970,
           "y": 290,
           "people": [{ "n": "Smith dwarf", "r": "dwarf", "c": true }],
-          "note": "A Mines-side trader: lamps and rest-camp supplies, buys ore. No tool upgrades (the Hearthwell smith does those).",
+          "note": "A Mines-side trader: sells ore, coal and weapons for coin, buys ore, and gives the furnace; lamps and rest-camp supplies come later. No tool upgrades (the Hearthwell smith does those).",
           "ref": "44_tool_upgrades.md"
         },
         {

@@ -181,7 +181,7 @@ for (const o of ORES) items.set(o.id, { ...o });
 for (const b of BARS)
   items.set(b.id, { id: b.id, name: b.name, sellPrice: b.sellPrice });
 
-/** Weapons are carried and kept: the smith forges them, the trainer gives the starters, nothing buys or sells them (note 22). */
+/** Weapons are carried and kept: the trainer gives the starters, the smith dwarf sells the other tiers for coin (`weaponPrice`, note 74), and nothing buys them back. */
 for (const w of weaponData)
   items.set(w.id, { id: w.id, name: w.name, sellPrice: 0, keep: true });
 /** Moth dust, a Dustmoth drop and a crafting good (note 22). Sell price is a placeholder, ours. */
