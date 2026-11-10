@@ -150,6 +150,36 @@ await step("smithy-upgrade", async () => {
   });
 });
 
+// The smithy sells ore and coal too, at the dwarf's prices (note 77, 2026-11-10).
+await step("smithy-ore", async () => {
+  // Geode cracks give ore too, so take the geodes away for an exact count.
+  await farm((g, f, s) => {
+    for (const id of ["geode", "frozen-geode", "magma-geode", "omni-geode"])
+      s.inventory.remove(id, s.inventory.count(id));
+  });
+  await overlay("smithy");
+  const before = await farm((g, f, s) => ({
+    money: s.money,
+    ore: ["copper-ore", "iron-ore", "gold-ore", "coal"].reduce(
+      (n, id) => n + s.inventory.count(id),
+      0,
+    ),
+  }));
+  const m = await pickRow("smithy", /^Bought 1 /);
+  log("smithy ore:", m);
+  const after = await farm((g, f, s) => ({
+    money: s.money,
+    ore: ["copper-ore", "iron-ore", "gold-ore", "coal"].reduce(
+      (n, id) => n + s.inventory.count(id),
+      0,
+    ),
+  }));
+  if (after.ore !== before.ore + 1)
+    finding(`smithy: ore and coal ${before.ore} -> ${after.ore} after Buy 1`);
+  if (after.money >= before.money) finding("smithy: the ore cost nothing");
+  await close();
+});
+
 await step("smith-weapons", async () => {
   await overlay("smith");
   const before = await farm((g, f, s) => s.money);

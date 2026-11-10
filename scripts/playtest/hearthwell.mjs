@@ -68,10 +68,8 @@ await door(48, 76, "up", "sawmill", "the sawmill door");
 await counter(5, 2, "carpenter", "the carpenter");
 await door(5, 5, "down", "hearthwell", "the sawmill's own door");
 
-// The Help Wanted and Orders boards stay outside the general store, by its door.
+// The Help Wanted board stays outside the general store, by its door.
 await counter(20, 29, "requests", "the Help Wanted board");
-// The Special Orders board is on the same wall, right of the door.
-await counter(24, 29, "orders", "the Orders board");
 
 // The store: in by its door, the counter inside, out again.
 await door(22, 29, "up", "general-store", "the general store door");
@@ -117,11 +115,11 @@ for (const [id, x, y] of [
   await door(3, 5, "down", "hearthwell", `the ${id}'s own door`);
 }
 
-// The Outpost boards say something and open nothing.
-for (const [x, what, line] of [
-  [86, "road news board", "road news board"],
-  [90, "Special Orders board", "Special Orders board"],
-]) {
+// The Special Orders board is on the Outpost wall, right of the door (notes 57 and 65).
+await counter(90, 13, "orders", "the Orders board");
+
+// The road news board says something and opens nothing.
+for (const [x, what, line] of [[86, "road news board", "road news board"]]) {
   for (let tries = 0; tries < 3; tries++) {
     await bot.walkTo(x, 13);
     const at = (await bot.dbg()).tile;

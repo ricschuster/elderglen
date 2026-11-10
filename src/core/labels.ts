@@ -67,7 +67,6 @@ const SERVICES: Record<string, string> = {
   orders: "Orders Board",
   requests: "Request Board",
   "board-news": "Road News Board",
-  "board-orders": "Special Orders Board",
   festival: "Village Green",
   "festival-leave": "Way Home",
   "hedge-chest": "Chest",
@@ -120,12 +119,12 @@ export function serviceLabel(kind: string, id: string): string | undefined {
 }
 
 /**
- * What the Outpost's two boards say until their systems exist (note 57, built
- * as stand-ins by Hearthwell part 1). Keyed by service kind.
+ * What the Outpost's road news board says until its system exists (note 57,
+ * built as a stand-in by Hearthwell part 1). Keyed by service kind. The
+ * Special Orders board beside it is the working `orders` service.
  */
 export const BOARD_LINES: Record<string, string> = {
   "board-news": "The road news board. Nothing is posted yet.",
-  "board-orders": "The Special Orders board. It is empty for now.",
 };
 
 /**

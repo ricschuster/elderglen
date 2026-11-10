@@ -492,7 +492,10 @@ describe("the slice 1 hall", () => {
       "foragers-shelf",
       "larder",
       "hearth",
+      "guests-board",
     ]);
+    // The Dyer's is the Guests' Board's bundle 23 (notes 16 and 63).
+    expect(BUNDLES.find((b) => b.id === "dyers")!.room).toBe("guests-board");
     expect(inv.count("keg")).toBe(1);
     expect(inv.count("coal")).toBe(20);
   });

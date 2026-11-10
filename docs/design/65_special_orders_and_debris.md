@@ -102,6 +102,10 @@ are (note 29). All numbers are placeholders.
 
 ## Built (2026-11-07)
 
+The board has stood on the Outpost wall in Hearthwell since 2026-11-10 (note 77,
+"Owner decisions 2026-11-10"), as "Where" above says. Before that it was a farm
+counter, then a board on the general store's wall.
+
 Code: `src/core/orders.ts`, `src/core/debris.ts`, data in
 `src/content/orders.json`, scene `src/scenes/OrdersScene.ts`. Tests:
 `tests/orders.test.ts`, `tests/debris.test.ts`.

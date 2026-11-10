@@ -342,12 +342,16 @@ describe("the Hearthwell shell (note 77, #645)", () => {
     expect(maps.get("smithy").services[0]).toMatchObject({ kind: "smithy" });
   });
 
-  it("hangs the Special Orders board on the store's wall beside Help Wanted", () => {
-    const orders = town.services.find((s) => s.kind === "orders")!;
-    const lot = region("lot-general-store");
-    expect(orders.y).toBe(28);
-    expect(orders.x).toBeGreaterThanOrEqual(lot.x);
-    expect(orders.x).toBeLessThan(lot.x + lot.w);
+  it("hangs the one working Special Orders board on the Outpost wall", () => {
+    // Notes 57 and 65 (owner, 2026-11-10): one board, at the Outpost, not at the store.
+    const boards = town.services.filter((s) => s.kind === "orders");
+    expect(boards.map((s) => s.id)).toEqual(["special-orders"]);
+    const orders = boards[0]!;
+    const outpost = region("lot-outpost");
+    expect(orders.y).toBe(outpost.y + outpost.h - 1);
+    expect(orders.x).toBeGreaterThanOrEqual(outpost.x);
+    expect(orders.x).toBeLessThan(outpost.x + outpost.w);
+    expect(serviceLabel("orders", orders.id)).toBeDefined();
     expect(
       town
         .reachable(town.entry("from_farm")!)
@@ -355,18 +359,13 @@ describe("the Hearthwell shell (note 77, #645)", () => {
     ).toBe(true);
   });
 
-  it("hangs the road news and Special Orders boards on the Outpost wall", () => {
+  it("hangs the road news board on the Outpost wall as a stand-in", () => {
     const outpost = region("lot-outpost");
-    for (const [id, kind] of [
-      ["road-news", "board-news"],
-      ["special-orders", "board-orders"],
-    ] as const) {
-      const s = town.services.find((x) => x.id === id)!;
-      expect(s.kind).toBe(kind);
-      expect(s.y).toBe(outpost.y + outpost.h - 1);
-      expect(BOARD_LINES[kind]).toBeDefined();
-      expect(serviceLabel(kind, id)).toBeDefined();
-    }
+    const s = town.services.find((x) => x.id === "road-news")!;
+    expect(s.kind).toBe("board-news");
+    expect(s.y).toBe(outpost.y + outpost.h - 1);
+    expect(BOARD_LINES[s.kind]).toBeDefined();
+    expect(serviceLabel(s.kind, s.id)).toBeDefined();
   });
 
   it("reaches the hall, sawmill and shop from the house through Hearthwell", () => {

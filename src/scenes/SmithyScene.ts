@@ -13,13 +13,16 @@ import {
   upgradeBar,
   upgradeCost,
 } from "../core/upgrades";
+import { oreRows } from "./ore-rows";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
 /**
- * The Hearthwell smithy counter (notes 44, 69 and 77): tool upgrades and
- * geode cracking. Nobody here buys a geode uncracked (owner answer 7). Ore, coal and weapons are the dwarf's (`SmithScene`). The
- * farm is paused behind this screen.
+ * The Hearthwell smithy counter (notes 44, 69 and 77): tool upgrades, geode
+ * cracking, and ore and coal at the dwarf's prices (owner, 2026-11-10, as
+ * Stardew's blacksmith). Nobody here buys a geode uncracked (owner answer 7).
+ * Weapons and the furnace gift are the dwarf's (`SmithScene`). The farm is
+ * paused behind this screen.
  */
 export class SmithyScene extends Phaser.Scene {
   private state!: GameState;
@@ -39,15 +42,20 @@ export class SmithyScene extends Phaser.Scene {
     const { money, message } = frame(this, "The smithy", () => this.close());
     this.money = money;
     this.message = message;
-    this.add.text(24, 500, "Arrows: move   Enter: choose   Esc: close", {
-      fontSize: "13px",
-      color: "#ffffffaa",
-    });
+    this.add.text(
+      24,
+      500,
+      "Arrows: move   Enter: first button   Space: second   Esc: close",
+      {
+        fontSize: "13px",
+        color: "#ffffffaa",
+      },
+    );
     this.menu = new Menu(this, {
       x: 24,
       y: 64,
       w: 600,
-      title: "Tools and geodes",
+      title: "Tools, geodes and ore",
       buttonsOnly: true,
     });
     const kb = this.input.keyboard;
@@ -100,6 +108,7 @@ export class SmithyScene extends Phaser.Scene {
         buttons: [],
       });
     rows.push(...this.toolRows());
+    rows.push(...oreRows(g, (text) => this.say(text)));
     this.menu.setRows(rows);
   }
 

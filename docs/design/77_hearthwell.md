@@ -326,16 +326,16 @@ north exit. Tests: `tests/hearthwell.test.ts` ("the Hearthwell shell"). Playtest
 
 - **The farm's shop, Orders and Request counters are gone** (owner decision 2026-11-09, see the
   last section). Hearthwell holds the store counter (`shop` service, now inside the general
-  store), the Help Wanted board (`requests`, two tiles left of the door) and the Special
-  Orders board (`orders`, two tiles right of the door) on the store's bottom row, and the
-  smithy counter (`smith`). The farm's shop building is scenery. The bot and the playtests
+  store), the Help Wanted board (`requests`, two tiles left of the door) on the store's bottom
+  row, the Special Orders board (`orders`, on the Outpost wall since 2026-11-10, see the last
+  section), and the smithy counter (`smithy`). The farm's shop building is scenery. The bot and the playtests
   shop in town (a Hearthwell trip is a long walk, so the sim pacing was measured: see below).
 - **The smith menu is split (#708).** The Hearthwell smithy counter (kind `smithy`) does tool
   upgrades and geode cracking (it still lists geodes for sale, as before). Ore, coal and weapons
   stay at the Mountain forge dwarf (kind `smith`). Weapons are bought there, not forged.
-- **Outpost boards are stand-ins.** `board-news` and `board-orders` services stand on the
-  Outpost's bottom row (x 86 and x 90) and show one line each ("Nothing is posted yet", "empty
-  for now"). Road news and Special Orders are not built (note 57 steps 1 and 5). The Outpost's
+- **Outpost boards.** The road news board (`board-news`, x 86) is a stand-in that shows one
+  line ("Nothing is posted yet"); road news is not built (note 57 step 1). The board beside it
+  (x 90) is the working Special Orders board since 2026-11-10 (see the last section). The Outpost's
   door is a shut tile and the stall yard is only a region. The trader (note 57 step 3) is not built.
 - **The cart stop** (66, 58) stays a region. No `cart` service, since the cart screen is undesigned.
 - **Door tiles for counters are blocked.** A counter on a door tile is used from the street
@@ -414,8 +414,9 @@ every interior.
 ## Built 2026-11-09: farm counters removed, sim pacing measured
 
 The farm's shop, Orders and Request counters are gone from both farm maps, and the shop
-building is scenery. The Special Orders board (`orders`) now stands on the general store's
-bottom row, right of the door (x 24, y 28, as Help Wanted is at x 20). The Fall 2 Orders
+building is scenery. The Special Orders board (`orders`) stood on the general store's
+bottom row, right of the door (x 24, y 28), until it moved to the Outpost wall on 2026-11-10
+(see the last section). The Fall 2 Orders
 intro still opens on the farm on waking, and its text now says the board is in Hearthwell.
 The sim bot shops at the general store (`goToService("general-store", "shop")`) and the
 browser playtests (`play`, `touch`, `hearthwell`) shop in town.
@@ -442,3 +443,21 @@ past bedtime. The bot now skips the trip when it cannot afford any seed it is sh
 and made it worse (spare seeds tied up the gold), so it was dropped.
 
 Unverified: the three browser playtests were edited but not rerun in this change.
+
+## Owner decisions 2026-11-10 (consistency audit)
+
+A consistency pass found three places where the build and the notes disagreed. The owner
+chose the notes' side each time, and all three are built.
+
+- **One Special Orders board, on the Outpost wall** (notes 57 and 65). The working `orders`
+  service is the Outpost's `special-orders` board (x 90, y 12, used from the street below), and
+  the copy on the general store's wall and the "empty for now" stand-in are gone. Stardew keeps
+  Special Orders on its own board in front of the Mayor's Manor, apart from the Help Wanted
+  board at the store (saved Quests page, SC-32). The Fall 2 intro text names the Outpost wall.
+- **The smithy trades ore.** The Hearthwell smithy sells the three ores and coal and buys raw
+  ore, at the smith dwarf's prices, as "The smithy" section above says (Stardew's blacksmith,
+  saved Blacksmith page). The dwarf keeps the same stock, the furnace gift and the weapons.
+  Both screens share `src/scenes/ore-rows.ts`.
+- **The Dyer's bundle is in the Guests' Board** (bundle 23, notes 16 and 63), not the Hearth.
+  Stardew's Dye Bundle is in its Bulletin Board (saved Bundles page). The Hearth holds the
+  Smith's and the Weaver's until the Lamplighter's is built.

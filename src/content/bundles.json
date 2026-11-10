@@ -231,7 +231,7 @@
   {
     "id": "dyers",
     "name": "Dyer's",
-    "room": "hearth",
+    "room": "guests-board",
     "items": [
       "daffodil",
       "sweet-pea",
