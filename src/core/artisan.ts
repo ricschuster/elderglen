@@ -1,6 +1,7 @@
 import { CROPS, cropById } from "./crops";
 import { FORAGE, forageById } from "./forage";
 import { FRUIT_TREES, fruitTreeById } from "./fruittrees";
+import dyeData from "../content/dyes.json";
 import { splitQuality } from "./quality";
 
 /**
@@ -177,21 +178,15 @@ for (const d of [
   defs.set(d.id, d);
 
 /**
- * Dyes (note 24, dye vat; note 63, bundle 23): one dye from each of the six
- * colour goods the Dyer's bundle asks for. Names, colours and the 120g price
- * are ours, placeholders (note 07). Tailoring and the Hearth Fire bundle will
- * use them later.
+ * Dyes (note 24, dye vat): the vat takes any plant, flower or berry in the
+ * table `content/dyes.json`, one colour each, and makes that colour's dye.
+ * Names, colours and the 120g price are ours, placeholders (note 07).
  */
-const DYES: { input: string; id: string; name: string }[] = [
-  { input: "daffodil", id: "yellow-dye", name: "Yellow dye" },
-  { input: "sweet-pea", id: "pink-dye", name: "Pink dye" },
-  { input: "red-cabbage", id: "purple-dye", name: "Purple dye" },
-  { input: "cranberry", id: "red-dye", name: "Red dye" },
-  { input: "bramble-berry", id: "indigo-dye", name: "Indigo dye" },
-  { input: "crocus", id: "violet-dye", name: "Violet dye" },
-];
-export const DYE_PRICE = 120;
-for (const d of DYES)
+const DYE_COLOURS = new Map<string, { id: string; name: string }>(
+  dyeData.colours.map((c) => [c.id, { id: `${c.id}-dye`, name: c.name }]),
+);
+export const DYE_PRICE = dyeData.price;
+for (const d of DYE_COLOURS.values())
   defs.set(d.id, {
     id: d.id,
     name: d.name,
@@ -199,9 +194,14 @@ for (const d of DYES)
     sellPrice: DYE_PRICE,
   });
 
-/** The dye a flower, berry or crop makes in the dye vat, if any. */
-export const dyeOf = (input: string): string | undefined =>
-  DYES.find((d) => d.input === splitQuality(input).base)?.id;
+/** Every plant the dye vat takes, with the colour it gives. */
+export const DYE_INPUTS: Readonly<Record<string, string>> = dyeData.inputs;
+
+/** The dye a plant, flower or berry makes in the dye vat, if any. */
+export const dyeOf = (input: string): string | undefined => {
+  const colour = DYE_INPUTS[splitQuality(input).base];
+  return colour ? DYE_COLOURS.get(colour)?.id : undefined;
+};
 
 /** Every artisan good the game can make. */
 export const ARTISAN_GOODS: readonly ArtisanDef[] = [...defs.values()];

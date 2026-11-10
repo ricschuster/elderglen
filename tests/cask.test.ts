@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { maps } from "../src/content/maps";
-import { categoryOf } from "../src/core/artisan";
+import { categoryOf, DYE_INPUTS, dyeOf } from "../src/core/artisan";
 import {
   CASK,
   CASK_LIMIT,
@@ -171,7 +171,7 @@ describe("the cask", () => {
 });
 
 describe("the dye vat", () => {
-  it("turns each of the six colour goods into a dye in a day", () => {
+  it("turns any plant in the table into its colour's dye in a day", () => {
     const expected: Record<string, string> = {
       daffodil: "yellow-dye",
       "sweet-pea": "pink-dye",
@@ -179,6 +179,9 @@ describe("the dye vat", () => {
       cranberry: "red-dye",
       "bramble-berry": "indigo-dye",
       crocus: "violet-dye",
+      pumpkin: "orange-dye",
+      kale: "green-dye",
+      snowdrop: "blue-dye",
     };
     for (const [input, dye] of Object.entries(expected)) {
       expect(processFor("dye-vat", `${input}@silver`)).toMatchObject({
@@ -192,7 +195,18 @@ describe("the dye vat", () => {
       expect(itemById(dye)?.sellPrice).toBe(120);
     }
     expect(processFor("dye-vat", "parsnip")).toBeUndefined();
+    expect(processFor("dye-vat", "wool")).toBeUndefined();
     expect(splitQuality("yellow-dye").base).toBe("yellow-dye");
+  });
+
+  it("has a real item and a known dye for every table row", () => {
+    expect(Object.keys(DYE_INPUTS).length).toBeGreaterThan(6);
+    for (const input of Object.keys(DYE_INPUTS)) {
+      expect(itemById(input), input).toBeDefined();
+      const dye = dyeOf(input);
+      expect(dye, input).toBeDefined();
+      expect(categoryOf(dye!)).toBe("dye");
+    }
   });
 
   it("runs a batch in the machine", () => {
