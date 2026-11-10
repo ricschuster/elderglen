@@ -63,6 +63,8 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
 with the Secret Woods (six daily stumps and the log). Mahogany stays off the map
 for now.
 
+Session 2026-11-10 part four (handoff 2026-11-10d): second audit pass, note 07's numbers against the code, about half done and nothing fixed. Nine stale places in note 07 are listed in the handoff (aim reach, cast energy, rod gates, wheat, the Hardwood stand-in, the fertiliser term, tool upgrades, mines, geodes). Next: fix them in note 07 and finish the pass. Owner decision: wheat, build it or mark it not built. Build order unchanged.
+
 Session 2026-11-10 part three (handoff 2026-11-10c): consistency audit (#716, #717). Stale docs and labels fixed; owner decisions: one Special Orders board on the Outpost wall, ore at the Hearthwell smithy, the Dyer's bundle in the Guests' Board. Build order unchanged: pots (#596), Water room bundles, legends.
 
 Session 2026-11-10 part two (handoff 2026-11-10b): verification and housekeeping only (PR #714). Every playtest script was run; four stale scripts fixed, no game fault found. Build order chosen by the owner: shellfish pots (#596), then the Water room bundles 13 to 18, then the five legends. None started.
