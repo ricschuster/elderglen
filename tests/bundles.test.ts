@@ -17,10 +17,12 @@ import { SEASONS } from "../src/core/calendar";
 import { machineById } from "../src/core/processing";
 import { RECIPES } from "../src/core/crafting";
 import { CATEGORY_NAMES, type ArtisanCategory } from "../src/core/artisan";
+import { FISH } from "../src/core/fishing";
+import { SHELLFISH } from "../src/core/pots";
 import { fillHall } from "./hall-helpers";
 
 describe("bundle data", () => {
-  it("has the thirteen built bundles with known items and sane requirements", () => {
+  it("has the nineteen built bundles with known items and sane requirements", () => {
     expect(BUNDLES.map((b) => b.id)).toEqual([
       "spring-foraging",
       "summer-foraging",
@@ -35,6 +37,12 @@ describe("bundle data", () => {
       "smiths",
       "weavers",
       "dyers",
+      "stream-fish",
+      "lake-fish",
+      "sea-fish",
+      "night-fishing",
+      "specialty-fish",
+      "trap-catch",
     ]);
     for (const b of BUNDLES) {
       expect(b.required).toBeGreaterThanOrEqual(1);
@@ -237,8 +245,9 @@ describe("the soft gate", () => {
     expect(hall.gateRemaining("larder")).toBe(1);
     // The Hearth has the Smith's, and opens after two bundles elsewhere.
     expect(hall.roomStatus("hearth")).toBe("locked");
-    // No bundles are written for the Water room yet, so it is never ready.
-    expect(hall.roomStatus("water-room")).toBe("empty");
+    // The Water room has its six bundles and opens after one bundle elsewhere.
+    expect(hall.roomStatus("water-room")).toBe("locked");
+    expect(hall.bundlesIn("water-room")).toHaveLength(6);
     const inv = new Inventory();
     openLarder(hall, inv, { money: 0 });
     expect(hall.roomStatus("larder")).toBe("ready");
@@ -473,6 +482,9 @@ describe("the slice 1 hall", () => {
       "milk",
       "goat-milk",
       "wool",
+      // Fish and shellfish: fishing has no season gate here (note 21), and the Water room is checked in waterroom.test.ts.
+      ...FISH.map((f) => f.id),
+      ...SHELLFISH.map((s) => s.id),
     ]);
     for (const b of BUNDLES) {
       const fillable = b.items.filter((i) => supplied.has(i.id)).length;
@@ -491,6 +503,7 @@ describe("the slice 1 hall", () => {
     expect(hall.completedRooms.map((r) => r.id)).toEqual([
       "foragers-shelf",
       "larder",
+      "water-room",
       "hearth",
       "guests-board",
     ]);

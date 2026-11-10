@@ -42,7 +42,7 @@ here are our own.
 | --- | --- | --- |
 | Foragers' Shelf | 6 | Open at the start |
 | Larder | 6 | 1 bundle done |
-| Water room | 6 | 1 bundle done |
+| Water room | 6 (built 2026-11-10, pools in note 21) | 1 bundle done |
 | Hearth | 3 | 2 bundles done |
 | Guests' Board | 5 | 3 bundles done |
 | The Last Seat | 4 | 20 of the other 26 bundles done |
@@ -94,6 +94,8 @@ Spring pool: parsnip, potato, cauliflower, green bean, kale, garlic. Summer
 pool: melon, tomato, radish, hot pepper, corn, red cabbage.
 
 ### 3. Water room
+
+Built 2026-11-10 (issue #596): bundles 13 to 18 are in the hall data, with pools in `21_fishing.md` ("Built in slice 4, part two"). The glow ring and the Beach warp totem are kept placeholders until the equipment slot and the totem's use exist.
 
 Room reward: the ferry is repaired and a lake cove opens inside ring 1. No
 bundle in this room may need cove fish, since the cove opens only when the

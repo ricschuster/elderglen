@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { fillBundle } from "./hall-helpers";
 import { mapFiles, maps } from "../src/content/maps";
 import { areasEndDay, isAreaMap, respawnAreaForage } from "../src/core/areas";
 import { BUNDLES, Hall, ROOMS } from "../src/core/bundles";
@@ -32,31 +33,21 @@ const delta = maps.get("delta");
 const open = maps.getWith("delta", new Set([COVE_OPEN]));
 const ruined = maps.getWith("delta", new Set());
 
-/** A game whose hall has one small Water room bundle, since bundles 13 to 18 are not written yet. */
+/** A game whose Water room opens at once, so the tests need not finish other rooms first. */
 function gameWithWaterRoom() {
   const g = newGame();
   g.hall = new Hall(
-    [
-      ...BUNDLES,
-      {
-        id: "test-water",
-        name: "Test water",
-        room: COVE_ROOM,
-        hint: "",
-        items: [{ id: "carp", count: 1, minQuality: "normal" }],
-        required: 1,
-        reward: {},
-      },
-    ],
+    BUNDLES,
     {},
     ROOMS.map((r) => (r.id === COVE_ROOM ? { ...r, opensAfter: 0 } : r)),
   );
   return g;
 }
 
+/** Hand in every Water room bundle in full, as bundles 13 to 18 are now written. */
 function finishWaterRoom(g: ReturnType<typeof newGame>) {
-  g.inventory.add("carp");
-  g.hall.handIn(g.inventory, g, "test-water", "carp");
+  for (const b of g.hall.bundlesIn(COVE_ROOM))
+    fillBundle(g.hall, g.inventory, g, b);
 }
 
 describe("the Lake cove map (note 76)", () => {
