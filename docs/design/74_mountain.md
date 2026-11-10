@@ -293,7 +293,8 @@ The Quarry bridge and exit, hand edits to `mountain.json` (the Quarry itself is 
 - **The smith screen is split (built, #708).** The forge hut keeps ore buying, lamps and
   rest-camp supplies (lamps and camp supplies are not on the screen yet). Tool upgrades and
   geode cracking go to the Hearthwell smithy counter (note 77, kind `smithy`), as the owner
-  decided in answer 7. **Weapons are bought at the dwarf, not forged** (owner, 2026-11-09):
+  decided in answer 7. Since 2026-11-10 the smithy sells and buys ore and sells coal too, at
+  the dwarf's prices (note 77, "Owner decisions 2026-11-10"). **Weapons are bought at the dwarf, not forged** (owner, 2026-11-09):
   there is no weapon forging until a later forge (Stardew has no forge until Ginger Island).
   The dwarf sells the copper, iron, gold and Hearthsilver tiers for coin, with no gate. In
   Stardew, Mines weapons are sold at the Adventurer's Guild (owner, 2026-11-09, SC-103), and

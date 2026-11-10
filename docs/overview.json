@@ -130,7 +130,7 @@
       "group": "core",
       "pos": [260, 330],
       "built": "partial",
-      "builtNote": "Thirteen of the 30 bundles work (note 07, \"Village hall\"): the Foragers' Shelf has four, the Larder six and the Hearth three. The Water room, the Guests' Board and the Last Seat have none yet, so the Lake cove ferry cannot open.",
+      "builtNote": "Thirteen of the 30 bundles work (note 07, \"Village hall\"): the Foragers' Shelf has four, the Larder six, the Hearth two and the Guests' Board one (the Dyer's). The Water room and the Last Seat have none yet, so the Lake cove ferry cannot open.",
       "summary": "Six rooms, 30 bundles, ending at The Last Seat, the one gate to ring 2.",
       "items": [
         {
@@ -318,7 +318,7 @@
         },
         {
           "s": "decided",
-          "t": "The Outpost (draft): two boards (Help Wanted stays at the store, road news at the Outpost from day 1, Special Orders appear later as in Stardew, SC-32), one road trader on Wednesday and Saturday with seeded stock at 1.5 times sell value, the farmhouse TV gives the same forecast (SC-33), road news is gossip plus trader notice plus tomorrow's weather, and a channel table that gives each way of talking to the player one job",
+          "t": "The Outpost (draft): two boards (Help Wanted stays at the store, road news at the Outpost from day 1, Special Orders appear later as in Stardew, SC-32; the working Orders board is on the Outpost wall since 2026-11-10), one road trader on Wednesday and Saturday with seeded stock at 1.5 times sell value, the farmhouse TV gives the same forecast (SC-33), road news is gossip plus trader notice plus tomorrow's weather, and a channel table that gives each way of talking to the player one job",
           "ref": "57_the_outpost.md#Decisions (owner, 2026-11-06)"
         },
         {
@@ -412,7 +412,7 @@
         },
         {
           "s": "open",
-          "t": "Smith split (owner, 2026-11-08): the Hearthwell blacksmith does tool upgrades, geode cracking and ore and does not buy geodes; the Mountain smith dwarf is a Mines-side trader (lamps, rest-camp supplies, buys ore, no upgrades). Built 2026-11-10 (#708): upgrades and geode cracking at the Hearthwell smithy, which buys no geodes; the dwarf buys ore and sells coal and weapons for coin (no weapon forging until a later forge, as Stardew's Ginger Island); the forge hut has no gate; lamps not built",
+          "t": "Smith split (owner, 2026-11-08): the Hearthwell blacksmith does tool upgrades, geode cracking and ore and does not buy geodes; the Mountain smith dwarf is a Mines-side trader (lamps, rest-camp supplies, buys ore, no upgrades). Built 2026-11-10 (#708): upgrades and geode cracking at the Hearthwell smithy, which buys no geodes; the dwarf buys ore and sells coal and weapons for coin (no weapon forging until a later forge, as Stardew's Ginger Island); the forge hut has no gate; lamps not built. Since 2026-11-10 the smithy also sells and buys ore and sells coal, at the dwarf's prices",
           "ref": "74_mountain.md#What lives there",
           "issue": 643
         }

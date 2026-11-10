@@ -2345,22 +2345,6 @@
           "visible": true
         },
         {
-          "id": 63,
-          "name": "orders",
-          "class": "service",
-          "type": "service",
-          "x": 392,
-          "y": 456,
-          "width": 0,
-          "height": 0,
-          "point": true,
-          "properties": [
-            { "name": "kind", "type": "string", "value": "orders" }
-          ],
-          "rotation": 0,
-          "visible": true
-        },
-        {
           "id": 51,
           "name": "road-news",
           "class": "service",
@@ -2387,7 +2371,7 @@
           "height": 0,
           "point": true,
           "properties": [
-            { "name": "kind", "type": "string", "value": "board-orders" }
+            { "name": "kind", "type": "string", "value": "orders" }
           ],
           "rotation": 0,
           "visible": true

@@ -1,11 +1,9 @@
 import Phaser from "phaser";
-import { itemById } from "../core/items";
 import type { GameState } from "../core/save";
-import { buy } from "../core/shop";
-import { COPPER_ORE, ORES } from "../core/ore";
-import { sell, sellAll } from "../core/shop";
-import { handOverCopper, SMITH_STOCK } from "../core/smith";
+import { COPPER_ORE } from "../core/ore";
+import { handOverCopper } from "../core/smith";
 import { buyWeapon, FORGED, weaponPrice } from "../core/combat";
+import { oreRows } from "./ore-rows";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
@@ -67,45 +65,8 @@ export class SmithScene extends Phaser.Scene {
   private refresh(): void {
     const g = this.state;
     this.money.setText(`Money ${g.money}g`);
-    const rows: Row[] = SMITH_STOCK.map((id) => {
-      const def = itemById(id)!;
-      const price = def.buyPrice ?? 0;
-      const tryBuy = (n: number) => () =>
-        this.say(
-          buy(g.inventory, g, id, n)
-            ? `Bought ${n} ${def.name.toLowerCase()} for ${price * n}g.`
-            : g.money < price * n
-              ? "Not enough money."
-              : "Your backpack is full.",
-        );
-      return {
-        label: def.name,
-        detail: `${price}g  have ${g.inventory.count(id)}`,
-        buttons: [
-          { text: "Buy 1", run: tryBuy(1) },
-          { text: "Buy 5", run: tryBuy(5) },
-        ],
-      };
-    });
-    // The dwarf also buys raw ore for coin (note 74).
-    for (const o of ORES) {
-      const have = g.inventory.count(o.id);
-      if (have < 1) continue;
-      rows.push({
-        label: `Sell ${o.name.toLowerCase()}`,
-        detail: `${o.sellPrice}g  have ${have}`,
-        buttons: [
-          {
-            text: "Sell 1",
-            run: () => this.say(`Sold for ${sell(g.inventory, g, o.id, 1)}g.`),
-          },
-          {
-            text: "Sell all",
-            run: () => this.say(`Sold for ${sellAll(g.inventory, g, o.id)}g.`),
-          },
-        ],
-      });
-    }
+    // She sells ore and coal and buys raw ore for coin (note 74).
+    const rows: Row[] = oreRows(g, (text) => this.say(text));
     if (!g.mines.copperHandedIn)
       rows.push({
         label: "Show her a copper ore",

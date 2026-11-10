@@ -229,7 +229,8 @@ Settled where the notes left gaps. All numbers are placeholders (note 07).
   daffodil to yellow, sweet pea to pink, red cabbage to purple, cranberry to
   red, bramble berry to indigo, crocus to violet. Each dye sells for 120g. Dyes
   have no other use yet: tailoring (note 10) and bundle 29 will ask for them.
-  The Dyer's bundle is built in the Hearth room (4 of 6, any quality).
+  The Dyer's bundle is built in the Guests' Board room (4 of 6, any quality; it stood in
+  the Hearth until 2026-11-10, note 77 "Owner decisions 2026-11-10").
   **Changed 2026-11-08 (owner, Stardew dyes many items):** the vat takes any plant
   or flower, each with a colour. The six goods above are only the first rows.
   The full list of inputs and colours, and what the Dyer's bundle asks for, are

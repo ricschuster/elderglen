@@ -114,8 +114,10 @@ describe("the Hearthwell interiors", () => {
     expect(rooms.services).toHaveLength(0);
     // Boards and the trader's stalls stay outside by the door (note 57).
     expect(
-      town.services.filter((s) => s.kind.startsWith("board-")),
-    ).toHaveLength(2);
+      town.services
+        .filter((s) => s.kind.startsWith("board-") || s.kind === "orders")
+        .map((s) => s.id),
+    ).toEqual(["road-news", "special-orders"]);
   });
 
   it("makes the burrows small, each with a bed per sleeper", () => {
