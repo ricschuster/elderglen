@@ -225,8 +225,8 @@ made by the drafter is flagged for owner veto.
    and ADR 0012 updated.
 2. **Secret Woods creatures: later (Stardew has slimes).** None in the first build,
    and they come with the combat notes. Hardwood comes from a number of large
-   stumps that respawn every night (note 73, kept). Mahogany stays off the map for
-   now.
+   stumps that respawn every night (note 73, kept). Mahogany is player-planted with its
+   seed from the woods (reopened 2026-11-10, note 36).
 3. **The pond is fishable (Stardew).** One unique fish plus two common fish. That is
    47 fish, so Whole Roster and the completion fish count move by one (notes 21,
    38, 39 and 73).

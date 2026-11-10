@@ -117,7 +117,7 @@ Settled briefly where the notes left gaps. Numbers are placeholders (note 07).
   44 says of the Standard farm). No sap from a large stump.
 - **Built since (2026-11-09, #639).** The massive log (steel axe) and the Secret
   Woods with its six daily stumps (note 73), about 12 Hardwood a day.
-- **Not built.** Mahogany trees, the Mines floors 41 to 69 and the other Stardew
+- **Not built.** Mahogany trees (designed 2026-11-10, note 36), the Mines floors 41 to 69 and the other Stardew
   sources. Until the Secret Woods exists, 100 hardwood is out of reach on the
   Standard farm (3 stumps give 6) and takes about 33 days of Woodland stumps.
 - **Temporary carpenter sale (owner, 2026-11-08), REMOVED 2026-11-09 (#639).** The
