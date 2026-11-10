@@ -8,7 +8,7 @@ only, ADR 0002) and the differences were settled with the owner; see "Catch
 details and Stardew differences". Numbers are placeholders.
 The open items at the end are not decided. It answers the design half of
 issue #181. Slices 1 and 2 are built (see "Built in slices 1 and 2"), and the
-bait and lure half of slice 3 (see "Built in slice 3, part one"), and the delta's marsh lake and sea with the fisher's counter (see "Built in slice 3, part two"), and shellfish pots (see "Built in slice 4, part one"); the rest is not.
+bait and lure half of slice 3 (see "Built in slice 3, part one"), and the delta's marsh lake and sea with the fisher's counter (see "Built in slice 3, part two"), and shellfish pots (see "Built in slice 4, part one"), and the fishing professions with the Pearl Lobster on the rod (see "Built in slice 4, part two"); the rest is not.
 
 ## Why
 
@@ -511,8 +511,8 @@ and are in `07_tuning_numbers.md`.
   lifts silver to gold only (normal stays normal, gold stays gold). Length is the
   fish's range scaled by the size roll. A full backpack drops the fish at the
   player's feet. The fish log keeps a count and the longest of each kind.
-- **Professions at level 5 are not offered yet** (Fisher and Trapper wait for
-  pots), so a fishing level 5 asks for no choice.
+- **Professions at level 5** were not offered in these slices. They are built
+  since (see "Built in slice 4, part two").
 - **The completion tracker's Fish row is live** and counts the fish in the data.
 - **Not built:** the catch screen's "New record" and "First Catch" show in the
   fishing message only, not in a collection page; the fishing achievements of
@@ -571,7 +571,7 @@ of the common band). The river channels use the River table, as the farm pond do
 The roster now holds 32 fish, so Whole Roster stays held back. The rods, Plain, Fine
 and Salted Bait and the lures are sold at the fisher's counter in her hut, and
 the general store no longer sells them. Salted Bait can be fitted and works at the
-sea only. Shellfish pots are built since (see "Built in slice 4, part one"). Not built: the Pearl Lobster on the rod, the Great Hearthfin legend,
+sea only. Shellfish pots are built since (see "Built in slice 4, part one"). The Pearl Lobster on the rod is built since. Not built: the Great Hearthfin legend,
 and the legends. The cove's 8 ordinary fish are built (#644, note 76), and so are the other lakes. Issue #596 stays open for these.
 
 ## Built in slice 4, part one: shellfish pots (2026-11-10, issue #596)
@@ -601,9 +601,36 @@ placeholders and match the table above and note 07.
 - **Junk is five placeholder items** (Tangled line, Cracked jar, Sodden rope, Bent
   spoon, Old boot), 1g each. Trash and the recycler are not built; the rod's trash
   should draw on the same list when it is.
-- **Not built:** the Trapper and Fisher professions and the level 5 choice, the
-  Water room bundles 17 and 18 and their three pots reward, the Pearl Lobster on the
-  rod, and a pot-side screen (a pot shows a marker when it holds a catch).
+- **Not built:** the Water room bundles 17 and 18 and their three pots reward,
+  and a pot-side screen (a pot shows a marker when it holds a catch).
+
+## Built in slice 4, part two: fishing professions and the rod's Pearl Lobster (2026-11-10, issue #596)
+
+Placeholder numbers where marked.
+
+- **Level 5 and level 10 choices.** The choice screen now serves both levels: at
+  level 5 Fisher or Trapper, at level 10 the pair under the first pick (Angler
+  or Pirate under Fisher, Mariner or Luremaster under Trapper). Other skills
+  have no level 10 options yet, so they ask nothing at 10 (the generic hook is
+  `optionsFor(skill, skills)` in `professions.ts`; the level 10 pick is saved as
+  `topProfessions`, and a pick that does not grow from the saved level 5 pick is
+  dropped on load).
+- **Fisher** sells fish for 25 percent more, **Angler** for 50 percent more
+  (replaces Fisher's bonus, does not stack). Fish only: shellfish and junk are
+  not fish.
+- **Trapper:** the pot costs half at the fisher's counter (75g). The note says
+  only "cheaper to make" and pots are bought, not crafted, so the discount is a
+  placeholder.
+- **Pirate** doubles the Magpie Hook's chest chance (one in five to two in five).
+- **Mariner:** pots never roll junk. **Luremaster:** a pot rolls each morning
+  with no bait (a baited pot still spends its bait, and Fine Bait still cuts
+  junk).
+- **The Pearl Lobster on the rod:** 3 in 100 sea bites (`rodLobsterChance` in
+  `pots.json`), never on the first tutorial cast. There is no bar fight (the
+  note sets none). It takes the pot's quality roll (never perfect), gives harvest
+  XP on its price and counts as a shellfish catch for the tracker.
+- **Not built:** the Great Hearthfin and the other legends, trash and the
+  recycler, bundles 13 to 18, the lobster's own bar fight if one is wanted.
 
 ## Touch and accessibility
 

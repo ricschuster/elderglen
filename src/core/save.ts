@@ -292,6 +292,8 @@ interface SaveData {
   hall: HallProgress;
   /** Absent in saves made before professions existed. */
   professions?: ReturnType<Skills["saveProfessions"]>;
+  /** The level 10 professions. Absent in older saves. */
+  topProfessions?: ReturnType<Skills["saveTopProfessions"]>;
   /** Absent in saves made before tool upgrades existed. */
   toolTiers?: ToolTiers;
   /** Absent when no tool is at the smith, and in older saves. */
@@ -492,6 +494,7 @@ export function serialize(g: GameState): string {
     bin: g.bin.save(),
     skills: g.skills.save(),
     professions: g.skills.saveProfessions(),
+    topProfessions: g.skills.saveTopProfessions(),
     hall: g.hall.save(),
     toolTiers: { ...g.toolTiers },
     toolOrder: g.toolOrder ? { ...g.toolOrder } : undefined,
@@ -850,6 +853,16 @@ export function deserialize(text: string): GameState | undefined {
         picked[k] = id;
     }
     g.skills.loadProfessions(picked);
+    // A level 10 pick only stands under the level 5 pick it grows from.
+    const top: Partial<Record<Skill, string>> = {};
+    if (isObject(raw.topProfessions))
+      for (const k of SKILLS) {
+        const id = raw.topProfessions[k];
+        const def = typeof id === "string" ? professionById(id) : undefined;
+        if (def?.skill === k && def.under && def.under === picked[k])
+          top[k] = id as string;
+      }
+    g.skills.loadTopProfessions(top);
   }
   const tiers = raw.toolTiers;
   if (isObject(tiers)) {

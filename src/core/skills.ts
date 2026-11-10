@@ -31,6 +31,8 @@ export class Skills {
     combat: 0,
   };
   private chosen: Partial<Record<Skill, string>> = {};
+  /** The level 10 choice, under the level 5 one. */
+  private chosenTop: Partial<Record<Skill, string>> = {};
 
   /** Every skill, for code that loops over them. */
   readonly skills = SKILLS;
@@ -39,9 +41,29 @@ export class Skills {
     return this.chosen[skill];
   }
 
-  /** True if the player picked this profession. */
+  /** The level 10 profession of a skill, if picked. */
+  topProfessionOf(skill: Skill): string | undefined {
+    return this.chosenTop[skill];
+  }
+
+  /** True if the player picked this profession, at level 5 or level 10. */
   has(professionId: string): boolean {
-    return Object.values(this.chosen).includes(professionId);
+    return (
+      Object.values(this.chosen).includes(professionId) ||
+      Object.values(this.chosenTop).includes(professionId)
+    );
+  }
+
+  setTopProfession(skill: Skill, id: string): void {
+    this.chosenTop[skill] = id;
+  }
+
+  saveTopProfessions(): Partial<Record<Skill, string>> {
+    return { ...this.chosenTop };
+  }
+
+  loadTopProfessions(saved: Partial<Record<Skill, string>>): void {
+    this.chosenTop = { ...saved };
   }
 
   setProfession(skill: Skill, id: string): void {

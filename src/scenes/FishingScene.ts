@@ -33,6 +33,8 @@ import {
   type Effects,
   type Treasure,
 } from "../core/tackle";
+import { treasureChance } from "../core/professions";
+import { landLobster } from "../core/pots";
 import { isRaining } from "../core/weather";
 import type { Quality } from "../core/quality";
 import type { GameState } from "../core/save";
@@ -361,7 +363,7 @@ export class FishingScene extends Phaser.Scene {
     // The Sounding Float names what is on the line.
     this.text.setText(
       this.effects.sounding
-        ? `A bite! It feels like a ${b.fish.name}. Press now.`
+        ? `A bite! It feels like a ${b.kind === "fish" ? b.fish.name : "Pearl Lobster"}. Press now.`
         : "A bite! Press now.",
     );
   }
@@ -377,6 +379,7 @@ export class FishingScene extends Phaser.Scene {
   private hooked(): void {
     this.bang.setVisible(false);
     const b = this.pending;
+    if (b.kind === "lobster") return this.landPearlLobster();
     if (b.kind !== "fish") return;
     if (this.assist === 2) {
       // The fight is skipped: no bar, and never a perfect catch.
@@ -385,7 +388,8 @@ export class FishingScene extends Phaser.Scene {
     this.phase = "fight";
     // One fight in five with the Magpie Hook shows a chest in the bar.
     this.chestPrize =
-      this.effects.treasure && Math.random() < TREASURE_CHANCE
+      this.effects.treasure &&
+      Math.random() < treasureChance(this.state.skills, TREASURE_CHANCE)
         ? pickTreasure(this.state.skills.level("fishing"), Math.random)
         : undefined;
     this.fight = new Fight(
@@ -404,6 +408,16 @@ export class FishingScene extends Phaser.Scene {
         ? "Keep the bar on the fish! A chest may show in the bar: fetch it too."
         : "Keep the bar on the fish!",
     );
+  }
+
+  /** The Pearl Lobster takes the line without a fight (note 21). */
+  private landPearlLobster(): void {
+    const r = landLobster(this.state, this.cfg.at, this.distance, Math.random);
+    this.text.setText(
+      `A Pearl Lobster! A rare catch.${r.quality === "normal" ? "" : ` ${QUALITY_LABEL[r.quality]} quality.`}${r.dropped ? " Your pack is full, so it lies at your feet." : ""}${r.levelUp ? ` Fishing is now level ${r.levelUp}.` : ""}`,
+    );
+    this.info.setText("Cast again with Space.");
+    this.rest();
   }
 
   private land(id: string, perfect: boolean, chest = false): void {

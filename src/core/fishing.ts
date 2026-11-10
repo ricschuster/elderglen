@@ -1,4 +1,5 @@
 import fishData from "../content/fish.json";
+import potData from "../content/pots.json";
 import rodData from "../content/rods.json";
 import type { Season } from "./calendar";
 import { NIGHTFALL } from "./clock";
@@ -150,7 +151,11 @@ export function fishWeight(f: FishDef, odds: Odds): number {
   return w;
 }
 
-export type Bite = { kind: "none" } | { kind: "fish"; fish: FishDef };
+export type Bite =
+  | { kind: "none" }
+  | { kind: "fish"; fish: FishDef }
+  /** The Pearl Lobster, on the sea only (`pots.ts`). */
+  | { kind: "lobster" };
 
 /**
  * What bites. Every rod can hook any fish the conditions allow, and no level
@@ -164,6 +169,9 @@ export function bite(
   tutorial = false,
   odds: Odds = {},
 ): Bite {
+  // The sea sometimes gives the rare Pearl Lobster instead of a fish.
+  if (water === "sea" && !tutorial && random() < potData.rodLobsterChance)
+    return { kind: "lobster" };
   let pool = fishAvailable(water, c);
   if (tutorial) pool = pool.filter((f) => f.rarity === "common");
   if (pool.length === 0) {

@@ -2,7 +2,8 @@ import Phaser from "phaser";
 import { dateOf } from "../core/calendar";
 import { itemById } from "../core/items";
 import type { GameState } from "../core/save";
-import { sellMultiplier } from "../core/professions";
+import { potPrice, sellMultiplier } from "../core/professions";
+import { POT_ITEM } from "../core/pots";
 import {
   buy,
   byName,
@@ -19,9 +20,15 @@ import { nextBackpack, upgradeBackpack } from "../core/upgrades";
 import { frame, Menu, TOUCH_ROW_H, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
+/** The price of one: the listed price, less the Trapper's pot discount. */
+function unitPrice(g: GameState, id: string): number {
+  const base = itemById(id)?.buyPrice ?? 0;
+  return id === POT_ITEM ? potPrice(g.skills, base) : base;
+}
+
 /** Why a purchase was refused, in words for the player. */
 function buyRefusal(g: GameState, id: string, n: number): string {
-  const price = itemById(id)?.buyPrice ?? 0;
+  const price = unitPrice(g, id);
   if (isOneOnly(id) && (n > 1 || g.inventory.count(id) > 0))
     return "She only has the one, and you carry it already.";
   if (g.money < price * n) return "Not enough money.";
@@ -129,9 +136,9 @@ export class ShopScene extends Phaser.Scene {
           ];
     const buyRows: Row[] = stock.map((id) => {
       const def = itemById(id)!;
-      const price = def.buyPrice ?? 0;
+      const price = unitPrice(g, id);
       const tryBuy = (n: number) => () => {
-        if (buy(g.inventory, g, id, n))
+        if (buy(g.inventory, g, id, n, price))
           this.say(`Bought ${n} ${def.name} for ${price * n}g.`);
         else this.say(buyRefusal(g, id, n));
       };
