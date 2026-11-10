@@ -63,6 +63,8 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
 with the Secret Woods (six daily stumps and the log). Mahogany stays off the map
 for now.
 
+Session 2026-11-10 part seven (handoff 2026-11-10h): the notes 09 to 62 audit is finished; stale status lines fixed, note 55 differs from the farm map and needs an owner decision. Build order unchanged.
+
 Session 2026-11-10 part six (handoff 2026-11-10g): first pass of the notes 09 to 62 audit, stale built and unbuilt claims fixed in notes 22, 25, 31, 33, 34, 68 and 69; the rest of the audit is listed in the handoff. Build order unchanged.
 
 Session 2026-11-10 part five (handoff 2026-11-10e): note 07 fixed against the code (PR #720) and about two thirds of the audit done; the rest is listed in the handoff. Owner decision still open: wheat, build it or leave it not built. Build order unchanged.

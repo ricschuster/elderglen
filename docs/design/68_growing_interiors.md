@@ -96,9 +96,9 @@ whole barn shifting.
 ## Settled 2026-11-07 (the open items)
 
 - **The barn stall wing is built (owner).** The cut-out in the bottom left of
-  the base barn, about 5 wide by 4 deep, as measured from the screenshots. What
-  Stardew uses it for is not checked (SC-69), so ours gets its own purpose in
-  note 23, such as a feed store or a healer's corner. Like every part of a
+  the base barn, about 5 wide by 4 deep, as measured from the screenshots. Stardew's
+  saved page does not say what it is for (SC-69); the owner settled on
+  2026-11-08 that ours is cosmetic only, with no function. Like every part of a
   growing barn it stays in place at the bigger tiers.
 - **Barn door tiles are a placeholder (owner).** The middle tile of the bottom
   wall at each tier, x 8, 10 and 12 on the 17, 21 and 24 wide barns. The owner

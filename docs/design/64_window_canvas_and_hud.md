@@ -14,8 +14,9 @@ plan. Stardew's behaviour is from the owner's memory only (SC-42, SC-46).
 2. **Full-screen menus keep their layout.** The dim backdrop fills the whole
    window and the panel content stays a fixed 960 by 540 box in the centre.
    Every existing layout stays as drawn.
-3. **A separate UI size setting, as in Stardew** (from memory, SC-46). World
-   zoom and UI size are two settings, each saved per device.
+3. **A separate UI size setting, as in Stardew** (checked by the owner in the
+   desktop game, SC-46). World zoom and UI size are two settings, each saved per
+   device.
 
 ## Decided with the owner (2026-11-07)
 

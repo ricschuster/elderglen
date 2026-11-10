@@ -1,6 +1,6 @@
 # 46 Desktop mouse: aiming, clicking and the wheel (draft)
 
-Status: draft. Decided with the owner on 2026-11-02. Nothing here is built. It is
+Status: draft. Decided with the owner on 2026-11-02. Built: aimed click, right-click as Action and the wheel (`FarmScene`). It is
 step 5 (desktop half) of `45_controls_profiles.md`; tap-to-move is the other half
 and gets its own note after this one. The Stardew rules below are from memory.
 The saved Controls page lists keys only, so none of them is checked.

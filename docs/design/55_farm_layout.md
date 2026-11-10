@@ -1,6 +1,8 @@
 # 55 Farm layout (draft)
 
-Status: draft, started 2026-11-03. Nothing here is built. The placeholder farm
+Status: draft, started 2026-11-03. The placeholder farm map (`farm.json`) is built and does not follow this note:
+the house is north-west, the cave and festival ground east, the greenhouse north
+of centre. Settle which moves before real art. The placeholder farm
 (`05_farm_map_placeholder.md`) stays until a real map is authored in Tiled. This
 note decides where things stand on the home farm, so the farm map, the house
 (`41_house.md`), the bin (`28_shipping_bin.md`), the greenhouse and cave
