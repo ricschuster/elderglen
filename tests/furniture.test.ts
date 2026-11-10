@@ -39,7 +39,7 @@ describe("furniture data", () => {
     expect(new Set(FURNITURE.map((f) => f.id)).size).toBe(FURNITURE.length);
     for (const f of FURNITURE) {
       expect(itemById(f.id)?.keep, f.id).toBe(true);
-      expect(f.price, f.id).toBeGreaterThan(0);
+      if (!f.keepsake) expect(f.price, f.id).toBeGreaterThan(0);
     }
   });
 
@@ -117,7 +117,12 @@ describe("the carpenter", () => {
     for (let d = 1; d <= 30; d++) for (const f of dailyStock(d)) seen.add(f.id);
     expect(seen.size).toBe(
       FURNITURE.filter(
-        (f) => !f.festival && !f.station && !f.catalogue && !f.catalogueBook,
+        (f) =>
+          !f.festival &&
+          !f.station &&
+          !f.catalogue &&
+          !f.catalogueBook &&
+          !f.keepsake,
       ).length,
     );
     const differs = [2, 3, 4, 5].some(

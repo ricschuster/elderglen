@@ -1,4 +1,5 @@
 import letterData from "../content/letters.json";
+import { furnitureById } from "./furniture";
 import { hatById } from "./hats";
 import { itemById } from "./items";
 import type { GameState } from "./save";
@@ -16,6 +17,8 @@ export interface Attachment {
   items?: { id: string; count: number }[];
   /** A hat id to add to the wardrobe. */
   hat?: string;
+  /** A furniture id; the piece goes to the pack with the items. */
+  furniture?: string;
 }
 
 export type LetterTrigger =
@@ -216,7 +219,7 @@ function itemsFit(
 }
 
 /**
- * Open a delivered letter. Gold and a hat apply at once; items go to the pack
+ * Open a delivered letter. Gold and a hat apply at once; items and furniture go to the pack
  * all together, or not at all and the letter stays `opened`. A taken letter
  * never gives its gift again. Reading a kept letter is allowed any time.
  */
@@ -234,7 +237,11 @@ export function openLetter(
     e.state = "taken";
     return { ok: true, letter, gift: [], pending: false };
   }
-  if (a.items && !itemsFit(g, a.items)) {
+  const packed = [
+    ...(a.items ?? []),
+    ...(a.furniture ? [{ id: a.furniture, count: 1 }] : []),
+  ];
+  if (packed.length > 0 && !itemsFit(g, packed)) {
     e.state = "opened";
     return {
       ok: true,
@@ -251,6 +258,10 @@ export function openLetter(
   for (const i of a.items ?? []) {
     g.inventory.add(i.id, i.count);
     gift.push(`${i.count} x ${itemById(i.id)?.name ?? i.id}`);
+  }
+  if (a.furniture) {
+    g.inventory.add(a.furniture, 1);
+    gift.push(furnitureById(a.furniture)?.name ?? a.furniture);
   }
   if (a.hat && g.wardrobe.add(a.hat))
     gift.push(`A hat: ${hatById(a.hat)?.name ?? a.hat}`);

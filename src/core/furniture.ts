@@ -29,6 +29,8 @@ export interface FurnitureDef {
   station?: "workbench";
   /** The Furniture Catalogue itself: placed in the house, Action on it gives copies at 0g. Bought once, never listed. */
   catalogueBook?: boolean;
+  /** A keepsake that only mail brings (note 39): never sold, never in the catalogue. */
+  keepsake?: boolean;
 }
 
 export const FURNITURE = furnitureData as FurnitureDef[];
@@ -219,7 +221,12 @@ export function carryFurniture(
  */
 export function dailyStock(day: number): FurnitureDef[] {
   const scored = FURNITURE.filter(
-    (f) => !f.festival && !f.station && !f.catalogue && !f.catalogueBook,
+    (f) =>
+      !f.festival &&
+      !f.station &&
+      !f.catalogue &&
+      !f.catalogueBook &&
+      !f.keepsake,
   ).map((f, i) => ({
     f,
     score: Math.imul(day * 7919 + i * 104729 + 13, 2654435761) >>> 0,
@@ -234,7 +241,9 @@ export const stationStock = (): FurnitureDef[] =>
 
 /** Every piece the catalogue sells: the daily pool and the catalogue-only pieces. */
 export const catalogueStock = (): FurnitureDef[] =>
-  FURNITURE.filter((f) => !f.festival && !f.station && !f.catalogueBook);
+  FURNITURE.filter(
+    (f) => !f.festival && !f.station && !f.catalogueBook && !f.keepsake,
+  );
 
 /** True when the player's catalogue item is somewhere we can find it. */
 export function hasCatalogueItem(g: GameState): boolean {

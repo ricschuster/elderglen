@@ -281,7 +281,12 @@ Each had a Stardew option, and the owner took the recommended one.
   (3) The morning-after trigger: the steward walks from the Outpost and calls
   the player to the hall. (4) The scene with placeholder lines and the player's
   one choice of how to take the toast. (5) Play resumes. Slices 1 and 2 are
-  testable without art or the scene.
+  testable without art or the scene. **Slices 1 and 2 are built (2026-11-10):**
+  the `summit` achievement (kind `summit`, fires when ring 1 shows 100) with
+  the Summit Crown hat at the hatter, the mail `furniture` attachment, the
+  `steadfast-lamp` keepsake (flagged `keepsake`, so never sold) and
+  `summit-letter`. The achievement cannot fire until the locked counters
+  (gallery, friends, elderfruit) are built. Slices 3 to 5 are not built.
 
 ## Open
 
