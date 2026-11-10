@@ -1,5 +1,10 @@
 import type { Season } from "./calendar";
 import type { TreeKind } from "./map";
+import {
+  MAHOGANY_KIND,
+  MAHOGANY_STAGE_CHANCE,
+  MAHOGANY_YOUNG_CHANCE,
+} from "./mahogany";
 
 /**
  * Common trees on the farm (`docs/design/36_gathering_trees_sap_fiber.md` and
@@ -58,6 +63,14 @@ export interface Tree {
   kind?: TreeKind;
   /** Days until a chopped large stump is whole again. Absent while it stands. */
   regrow?: number;
+}
+
+/** The nightly chance a seed or seedling of this kind grows from its stage. */
+function growChance(t: Tree): number {
+  const young = t.stage === YOUNG_STAGE;
+  if (t.kind === MAHOGANY_KIND)
+    return young ? MAHOGANY_YOUNG_CHANCE : MAHOGANY_STAGE_CHANCE;
+  return young ? YOUNG_CHANCE : STAGE_CHANCE;
 }
 
 const key = (x: number, y: number) => `${x},${y}`;
@@ -161,7 +174,11 @@ export class Trees {
     const grows = !NO_GROWTH.includes(season);
     const list = [...this.trees.values()];
     const spreaders = list.filter(
-      (t) => !t.stump && !t.large && t.stage === MATURE_STAGE,
+      (t) =>
+        !t.stump &&
+        !t.large &&
+        t.stage === MATURE_STAGE &&
+        t.kind !== MAHOGANY_KIND,
     );
     for (const t of list) {
       t.hits = 0;
@@ -172,7 +189,7 @@ export class Trees {
       }
       if (t.stump) continue;
       if (t.stage < MATURE_STAGE) {
-        const chance = t.stage === YOUNG_STAGE ? YOUNG_CHANCE : STAGE_CHANCE;
+        const chance = growChance(t);
         if (grows && random() < chance) {
           if (t.stage < YOUNG_STAGE || !this.matureNeighbour(t)) t.stage += 1;
         }

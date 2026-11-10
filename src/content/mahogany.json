@@ -1,0 +1,9 @@
+{
+  "seedName": "Mahogany Seed",
+  "seedSellPrice": 20,
+  "hardwood": 10,
+  "stageChance": 0.15,
+  "youngChance": 0.075,
+  "seedChance": 0.5,
+  "stumpSeedChance": 0.1
+}

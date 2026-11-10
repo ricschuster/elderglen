@@ -170,7 +170,8 @@ export interface Service extends Spot {
 }
 
 /** The kinds of tree, by region (SC-30). Tap products stay as note 36. */
-export type TreeKind = "oak" | "maple" | "pine";
+export type TreeKind = "oak" | "maple" | "pine" | "mahogany";
+/** Kinds a map may place. Mahogany is player-planted only (note 36), so it is not one. */
 export const TREE_KINDS: readonly TreeKind[] = ["oak", "maple", "pine"];
 
 /** A tree placed on the map at the start of a new game. `stage` is 1 to 5 (`core/trees.ts`). */

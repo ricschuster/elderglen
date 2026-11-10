@@ -61,7 +61,7 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
 
 **Done (#639, 2026-11-09):** the carpenter's temporary Hardwood sale was removed
 with the Secret Woods (six daily stumps and the log). Mahogany was reopened 2026-11-10: player-planted,
-seed from the Secret Woods (note 36 "Mahogany"), designed, not built.
+seed from the Secret Woods (note 36 "Mahogany"), built 2026-11-10 (#724) except tapping and the monster drop.
 
 Session 2026-11-10 part eight (handoff 2026-11-10i): note 54 question batch answered, Mahogany reopened and designed (#724). Build order unchanged.
 
