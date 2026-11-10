@@ -64,7 +64,7 @@ Our names and items. Unchecked in play:
 - Corn already grows in summer and fall (14 days then every 4, 150g, 50g). Its
   season list in `crops.json` adds fall.
 - Crops that are alive when fall ends die, as spring and summer crops do. There
-  are no winter crops outdoors, and no greenhouse until slice 4.
+  are no winter crops outdoors, and the greenhouse is built (`greenhouse.ts`).
 
 A crop grows one day for each day it was watered. It does not regrow after
 harvest, and it withers when its season ends. Rain waters every plot overnight.
@@ -352,11 +352,15 @@ Source: `src/content/bundles.json`.
   percentile 9) and Summer Foraging in 3 (90th percentile 6), with no failures
   in 2000 runs. A real player walks and spends time, so expect longer.
 
-## Full hall (proposed, not built)
+## Full hall (proposed, 13 of 30 built)
 
 Source: `16_bundles.md`. All placeholders, ours unless marked.
 
 - 30 bundles in six rooms (6, 6, 6, 3, 5, 4). The counts follow Stardew.
+  Built so far (audit, 2026-11-10): 13 bundles across Foragers' Shelf (4),
+  Larder (6), Hearth (2) and Guests' Board (1), and all six rooms in
+  `rooms.json` with the thresholds below. The Water room and The Last Seat have
+  no bundles yet (the Water room waits on bundles 13 to 18).
 - Rooms appear by bundles finished: Foragers' Shelf at the start, Larder and
   Water room after 1, Hearth after 2, Guests' Board after 3, The Last Seat after
   20 of the other 26. Stardew's pattern comes from a forum reply and is
@@ -485,12 +489,13 @@ Decided with the owner on 2026-10-31 (not built yet):
 - The morning after a skill level gives full energy, whatever the night was.
 
 - Nightfall moves by season, as in Stardew: 8 pm in spring and summer, 7 pm in
-  fall, 6 pm in winter, with a gradual darkening outdoors. Only the two earlier
-  hours are used until fall exists.
+  fall, 6 pm in winter, with a gradual darkening outdoors. Built (`NIGHTFALL`
+  and `darkness` in `clock.ts`): the light fades from an hour before nightfall
+  over 90 minutes.
 - The clock stops while any menu or dialog is open (shop, hall, inventory,
-  prompts), so slow touch menus never cost game time.
-- Seasons three and four get their own design note (fall and winter), written
-  before M3 so the calendar, crops and bundles are planned together.
+  prompts), so slow touch menus never cost game time. Built: a screen pauses the
+  farm scene (`FarmScene.ts`).
+- Seasons three and four have their own design note and are built.
 
 Differences found (the four above are now decided):
 
@@ -506,12 +511,14 @@ Differences found (the four above are now decided):
 - Level-up morning: Stardew gives full energy the morning after a skill level,
   whatever the night was. We do not.
 - Nightfall: 8 pm in spring and summer, 7 pm in fall, 6 pm in winter, with a
-  gradual darkening. We have no darkness yet.
-- Pauses: the clock stops in menus and dialogs there. Ours should too on a
-  tablet (check).
+  gradual darkening. Built since this was written (audit, 2026-11-10).
+- Pauses: the clock stops in menus and dialogs there. Ours does too (built).
 - Seasons: new forage, logs, rocks and grass appear on the farm at the start of
-  each spring. Winter clears crops and weeds and stops outdoor growth. Both
-  matter for the third and fourth season, which are out of scope for now.
+  each spring. Winter clears crops and weeds and stops outdoor growth. Fall and
+  winter are built, see their notes.
+- The late sleep, exhaustion, pass-out location and level-up morning rows are
+  still not built (audit, 2026-11-10): `day.ts` keeps the flat 50 and 75
+  percent wake energy and ends the day at 0 energy.
 - Not on these pages: the rain chance per season. Our 20 and 15 percent stay
   ours, and fall and snow chances are ours too (above).
 
@@ -533,6 +540,9 @@ Full rules in `36_gathering_trees_sap_fiber.md`.
   is ours: Stardew lets it be eaten for -5 energy.
 
 ## Start options (decided 2026-10-31, not built)
+
+Audited 2026-11-10: no margin setting exists in `src/` (profit margin is not
+built). Farm types are built (build 9, below).
 
 - Profit margin: one setting for single player and multiplayer, chosen when
   starting a game. See "Profit margin" below. Bundle remix and a year-one
@@ -863,7 +873,7 @@ Source: `src/content/furniture.json`, `src/core/furniture.ts`.
   mushroom (`mushroom` flag in `forage.json`).
 
 - Quartz (built 2026-11-07, placeholders): a crystal node is 6 percent of rocks
-  on mine floors 1 to 10, breaks in 1 swing, drops 1 quartz crystal, gives 3
+  on every mine floor (`QUARTZ_SHARE`; it was floors 1 to 10 in the first build), breaks in 1 swing, drops 1 quartz crystal, gives 3
   mining XP and sells for 25g (Stardew's quartz price, from memory).
 
 - Mine camp chest (built 2026-11-07, placeholders): on every 10th floor, it gives 2 coal, a band ore (copper 3, iron 3, gold 2,
@@ -871,7 +881,7 @@ Source: `src/content/furniture.json`, `src/core/furniture.ts`.
   5 stone or a cave mushroom (by the day) once a day, and nothing can be put in.
 
 - Geodes (built 2026-11-07, placeholders): a geode node is 5 percent of rocks on
-  floors 1 to 10, takes 3 swings at the basic pickaxe, gives 4 mining XP and sells
+  every floor (`GEODE_SHARE`; floors 1 to 10 in the first build), takes 3 swings at the basic pickaxe, gives 4 mining XP and sells
   for 50g. The smith cracks one for 25g. This is the first-build table and is superseded: `src/content/geodes.json` now
   has four geode kinds (geode 50g, frozen 100g, magma 150g, omni 300g from floor
   21) with a pool per floor band of ores, minerals, artifacts and foraged
