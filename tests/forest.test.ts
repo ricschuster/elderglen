@@ -89,7 +89,9 @@ describe("the Forest map (note 72, part 1)", () => {
   });
 
   it("holds the six lake fish of note 21", () => {
-    const lake = FISH.filter((f) => f.water === "forest-lake");
+    const lake = FISH.filter(
+      (f) => f.water === "forest-lake" && f.rarity !== "legend",
+    );
     expect(lake.map((f) => f.id).sort()).toEqual(
       [
         "carp",

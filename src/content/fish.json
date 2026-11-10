@@ -550,5 +550,69 @@
     "difficulty": 70,
     "sellPrice": 680,
     "length": [30, 65]
+  },
+  {
+    "id": "hearthwell-carp",
+    "name": "The Hearthwell Carp",
+    "water": "cove",
+    "seasons": ["fall"],
+    "time": "dusk",
+    "weather": "rain",
+    "rarity": "legend",
+    "behaviour": "smooth",
+    "difficulty": 95,
+    "sellPrice": 4000,
+    "length": [110, 160]
+  },
+  {
+    "id": "grandmother-hush",
+    "name": "Grandmother Hush",
+    "water": "forest-lake",
+    "seasons": ["spring"],
+    "time": "dusk",
+    "weather": "rain",
+    "rarity": "legend",
+    "behaviour": "dart",
+    "difficulty": 100,
+    "sellPrice": 3000,
+    "length": [90, 140]
+  },
+  {
+    "id": "valley-king",
+    "name": "The Valley King",
+    "water": "river",
+    "seasons": ["fall"],
+    "time": "dawn",
+    "weather": "rain",
+    "rarity": "legend",
+    "behaviour": "mixed",
+    "difficulty": 100,
+    "sellPrice": 3500,
+    "length": [120, 180]
+  },
+  {
+    "id": "moonlit-mother",
+    "name": "Moonlit Mother",
+    "water": "mountain-lake",
+    "seasons": ["winter"],
+    "time": "night",
+    "weather": "clear",
+    "rarity": "legend",
+    "behaviour": "sinker",
+    "difficulty": 100,
+    "sellPrice": 3500,
+    "length": [100, 150]
+  },
+  {
+    "id": "great-hearthfin",
+    "name": "Great Hearthfin",
+    "water": "sea",
+    "seasons": ["summer"],
+    "time": "day",
+    "rarity": "legend",
+    "behaviour": "floater",
+    "difficulty": 85,
+    "sellPrice": 3000,
+    "length": [150, 220]
   }
 ]

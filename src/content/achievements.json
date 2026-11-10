@@ -242,7 +242,7 @@
     "name": "Whole Roster",
     "goal": "Catch every fish",
     "kind": "fishAll",
-    "threshold": 46,
+    "threshold": 52,
     "secret": false,
     "hat": {
       "id": "spyglass-band",
