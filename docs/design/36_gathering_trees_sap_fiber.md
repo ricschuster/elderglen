@@ -140,9 +140,9 @@ placeholder are ours to tune (note 07).
 
 - Species by region (maple, oak, pine, mahogany) and the mushroom, mystic and
   green rain trees. Slice 1 has one common kind. Decided 2026-11-06 for M3,
-  not M2: three tree types by region as Stardew (owner, SC-30), with fixed places
+  not M2: tree types by region as Stardew (owner, SC-30), with fixed places
   outside the farm, regrowth after chopping, and some cosmetic trees that
-  cannot be chopped. The saved Trees page names Maple, Oak and Pine (seeds: Maple Seed, Acorn, Pine
-  Cone) with yields and regrow rules (SC-30, SC-09); which three we use and where
-  they stand are open.
+  cannot be chopped. Settled 2026-11-10: four types (maple, oak, pine and
+  mahogany, the last player-planted and Secret Woods only, see "Mahogany").
+  Seeds are Maple Seed, Acorn, Pine Cone and Mahogany Seed.
 - Palm trees, fiddlehead ferns and Qi's Walnut Room seeds.
