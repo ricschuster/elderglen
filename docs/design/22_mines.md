@@ -288,12 +288,18 @@ Names are placeholders, in the cozy register, and none is from Stardew.
 | Sling | Soft ranged shot with pebbles, short reach | Pocket Sling |
 
 - **Four tiers per family,** by band: the starter, then a copper, iron and gold
-  weapon forged by the smith dwarf from bars, and a Hearthsilver weapon at the
-  end. Fifteen weapons in all.
+  weapon bought from the smith dwarf for coin (owner, 2026-11-09: no forging for now,
+  prices in note 07), and a Hearthsilver weapon at the end. Fifteen weapons in all.
 - **The first build has a few from each family,** not only the blade (decided):
   the starter and the copper tier of each, six in all. This means the sling needs
   aiming on touch from the start, so it gets an early tablet check.
-- **Forging costs bars plus gold,** with no wait. Weapons are never rolled
+- **Weapons are bought, not forged, for now** (owner, 2026-11-09, #708). Stardew has no
+  forge until Ginger Island, and its Mines weapons are sold at the Adventurer's Guild
+  (answered by the owner, SC-103). The smith dwarf is the Mines-side trader and sells the
+  copper, iron, gold and Hearthsilver tiers for coin, from the old bar costs (note 07), with
+  no gate. The `forge` data and `forgeWeapon` code stay so forging can return with a later
+  forge. The rule below is the old forging design.
+- **Forging cost bars plus gold,** with no wait. Weapons are never rolled
   at random, so there is no weapon grind. A floor chest gives a weapon from the
   band, as a choice of fixed ones.
 - **Stats are simple:** damage, speed and reach. No crit, no enchant at first.
@@ -463,8 +469,8 @@ Gaps the notes left open, settled with our own placeholders (every number is in
   the keys have the aim).
 - **Where weapons come from:** the trainer hands each starter free, on asking, any
   time the player carries none of it (the Hazel Switch needs no first visit
-  ritual). The smith dwarf forges the copper tier of each family for 4 copper bars
-  and 200g, with no wait. Iron, gold and Hearthsilver tiers are part two.
+  ritual). The smith dwarf now sells the copper tier of each family for 440g
+  (it was forged for 4 copper bars and 200g, with no wait). Iron, gold and Hearthsilver tiers are part two.
 - **Health from food** is half the food's energy value, rounded. A hurt player may
   eat at full energy. Any night's sleep, and a defeat, restores health.
 - **Defeat runs the pass-out code** (10 percent of money, capped at 1000g, wake
@@ -523,8 +529,8 @@ Gaps settled with our own placeholders (numbers in `07_tuning_numbers.md`):
   **Steady** adds 25. **Nimble** makes the grace after a hit 2.5 seconds. A
   profession choice opens when the level 5 kill lands.
 - **Weapons:** iron, gold and Hearthsilver tiers of all three families (15
-  weapons), forged at the smith for 4 bars and 400g (iron), 4 bars and 800g
-  (gold), 5 bars and 1500g (Hearthsilver). Every weapon is a kept good.
+  weapons), sold by the smith dwarf for coin since 2026-11-09 (iron 880g, gold 1,800g,
+  Hearthsilver 6,500g; they were forged for 4 bars and 400g, 4 bars and 800g, 5 bars and 1500g). Every weapon is a kept good.
 - **New goods:** shell, moss, gloop jelly, frost berry (food, 30 energy), ice
   shard, bat wing, pocket coin, warm ember and old tools (`creature-goods.json`).
   Oil and the ores are the existing goods. Moss also comes from mature trees (note 34).

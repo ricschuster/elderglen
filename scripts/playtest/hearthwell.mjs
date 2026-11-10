@@ -80,7 +80,7 @@ await door(7, 8, "down", "hearthwell", "the store's own door");
 
 // The smithy: in by its door, the smith counter inside, out again.
 await door(22, 90, "up", "smithy", "the smithy door");
-await counter(6, 2, "smith", "the smithy counter");
+await counter(6, 2, "smithy", "the smithy counter");
 await door(7, 8, "down", "hearthwell", "the smithy's own door");
 
 // The healer, inn, library and hatter: in, a counter that talks, out.

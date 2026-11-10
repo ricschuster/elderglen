@@ -116,7 +116,9 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "kind", "type": "string", "value": "smith" }]
+          "properties": [
+            { "name": "kind", "type": "string", "value": "smithy" }
+          ]
         }
       ]
     }

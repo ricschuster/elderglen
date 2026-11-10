@@ -330,9 +330,9 @@ north exit. Tests: `tests/hearthwell.test.ts` ("the Hearthwell shell"). Playtest
   Orders board (`orders`, two tiles right of the door) on the store's bottom row, and the
   smithy counter (`smith`). The farm's shop building is scenery. The bot and the playtests
   shop in town (a Hearthwell trip is a long walk, so the sim pacing was measured: see below).
-- **The smith menu stays whole.** The Hearthwell smithy counter opens the existing smith screen
-  (ore, coal, tools), as the Mountain forge does. Splitting upgrades and geode cracking to town
-  and leaving ore at the forge waits for #646.
+- **The smith menu is split (#708).** The Hearthwell smithy counter (kind `smithy`) does tool
+  upgrades and geode cracking (it still lists geodes for sale, as before). Ore, coal and weapons
+  stay at the Mountain forge dwarf (kind `smith`). Weapons are bought there, not forged.
 - **Outpost boards are stand-ins.** `board-news` and `board-orders` services stand on the
   Outpost's bottom row (x 86 and x 90) and show one line each ("Nothing is posted yet", "empty
   for now"). Road news and Special Orders are not built (note 57 steps 1 and 5). The Outpost's

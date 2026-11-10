@@ -106,6 +106,8 @@ export interface WeaponDef {
   targets: number;
   /** What the smith dwarf asks to forge it. Starters are not forged. */
   forge?: { bar: string; bars: number; gold: number };
+  /** What the smith dwarf sells it for in coin (placeholder, note 07). Forged tiers only. */
+  price?: number;
 }
 
 export const WEAPONS = weaponData as WeaponDef[];
@@ -189,6 +191,23 @@ export function forgeWeapon(g: GameState, id: string): string | undefined {
     return "Your backpack is full.";
   }
   g.money -= gold;
+  return undefined;
+}
+
+/** The coin price of a forged weapon at the dwarf's shop, 0 when she does not sell it. */
+export const weaponPrice = (w: WeaponDef): number => w.price ?? 0;
+
+/**
+ * The dwarf sells a forged tier for coin (owner, 2026-11-09). Returns an error
+ * line, or undefined when it was bought.
+ */
+export function buyWeapon(g: GameState, id: string): string | undefined {
+  const w = weaponById(id);
+  if (!w?.price) return "She does not sell that.";
+  if (g.inventory.count(id) > 0) return "You already carry one.";
+  if (g.money < w.price) return "Not enough money.";
+  if (!g.inventory.add(id)) return "Your backpack is full.";
+  g.money -= w.price;
   return undefined;
 }
 

@@ -3,28 +3,18 @@ import { itemById } from "../core/items";
 import type { GameState } from "../core/save";
 import { buy } from "../core/shop";
 import { COPPER_ORE, ORES } from "../core/ore";
-import { crackGeode, CRACK_FEE, GEODE_KINDS } from "../core/geodes";
 import { sell, sellAll } from "../core/shop";
 import { handOverCopper, SMITH_STOCK } from "../core/smith";
-import {
-  collectUpgrade,
-  orderProblem,
-  orderReady,
-  orderUpgrade,
-  TIER_NAMES,
-  UPGRADABLE,
-  UPGRADE_BARS,
-  upgradeBar,
-  upgradeCost,
-} from "../core/upgrades";
-import { FORGED, forgeWeapon } from "../core/combat";
+import { buyWeapon, FORGED, weaponPrice } from "../core/combat";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
 /**
- * The smith dwarf's counter (note 22): she sells ore and coal, never bars.
+ * The smith dwarf's counter in the forge hut (notes 22 and 74): she sells and
+ * buys ore, sells coal (never bars) and sells the forged weapon tiers for coin.
  * The first copper ore handed to her makes her bring a furnace the next
- * morning. The farm is paused behind this screen.
+ * morning. Tool upgrades and geodes are the Hearthwell smithy's. The farm is
+ * paused behind this screen.
  */
 export class SmithScene extends Phaser.Scene {
   private state!: GameState;
@@ -57,7 +47,7 @@ export class SmithScene extends Phaser.Scene {
       x: 24,
       y: 64,
       w: 600,
-      title: "Ore, coal and tools",
+      title: "Ore, coal and weapons",
       buttonsOnly: true,
     });
     const kb = this.input.keyboard;
@@ -133,141 +123,31 @@ export class SmithScene extends Phaser.Scene {
           },
         ],
       });
-    for (const kind of GEODE_KINDS) {
-      const have = g.inventory.count(kind);
-      if (have < 1) continue;
-      const def = itemById(kind)!;
-      rows.push({
-        label: `Crack a ${def.name.toLowerCase()}`,
-        detail: `${CRACK_FEE}g  have ${have}`,
-        buttons: [
-          {
-            text: "Crack",
-            run: () => {
-              const r = crackGeode(g, Math.random, kind);
-              this.say(
-                r.ok
-                  ? `It splits open: ${r.count} ${itemById(r.item ?? "")?.name.toLowerCase()}.`
-                  : r.reason === "backpack full"
-                    ? "Your backpack is full."
-                    : "Not enough money.",
-              );
-            },
-          },
-        ],
-      });
-      rows.push({
-        label: `Sell a ${def.name.toLowerCase()}`,
-        detail: `${def.sellPrice}g  have ${have}`,
-        buttons: [
-          {
-            text: "Sell 1",
-            run: () => this.say(`Sold for ${sell(g.inventory, g, kind, 1)}g.`),
-          },
-          {
-            text: "Sell all",
-            run: () => this.say(`Sold for ${sellAll(g.inventory, g, kind)}g.`),
-          },
-        ],
-      });
-    }
-    if (GEODE_KINDS.every((k) => g.inventory.count(k) < 1))
-      rows.push({
-        label: "Crack or sell a geode",
-        detail: "You have none",
-        dim: true,
-        buttons: [],
-      });
-    rows.push(...this.toolRows(), ...this.forgeRows());
+    rows.push(...this.weaponRows());
     this.menu.setRows(rows);
   }
 
-  /** Weapons the smith forges from bars and gold, with no wait (note 22). */
-  private forgeRows(): Row[] {
+  /** The forged tiers, sold for coin (owner, 2026-11-09). Forging is off for now. */
+  private weaponRows(): Row[] {
     const g = this.state;
     return FORGED.map((w) => {
-      const { bar, bars, gold } = w.forge!;
-      const barName = itemById(bar)?.name.toLowerCase() ?? bar;
+      const price = weaponPrice(w);
       return {
-        label: `Forge: ${w.name}`,
-        detail: `${bars} ${barName}s and ${gold}g, damage ${w.damage}`,
-        dim: g.inventory.count(bar) < bars || g.money < gold,
+        label: w.name,
+        detail: `${price}g, damage ${w.damage}`,
+        dim: g.money < price || g.inventory.count(w.id) > 0,
         buttons: [
           {
-            text: "Forge",
+            text: "Buy",
             run: () =>
               this.say(
-                forgeWeapon(g, w.id) ??
+                buyWeapon(g, w.id) ??
                   `She hands you a ${w.name.toLowerCase()}.`,
               ),
           },
         ],
       };
     });
-  }
-
-  /** The tool upgrade rows: hand a tool over, or collect it (note 44). */
-  private toolRows(): Row[] {
-    const g = this.state;
-    const names = {
-      hoe: "Hoe",
-      can: "Watering can",
-      pickaxe: "Pickaxe",
-      axe: "Axe",
-    };
-    const order = g.toolOrder;
-    const rows: Row[] = [];
-    if (order && orderReady(g))
-      rows.push({
-        label: `Your ${names[order.tool].toLowerCase()} is ready`,
-        detail: TIER_NAMES[order.tier] ?? "",
-        buttons: [
-          {
-            text: "Collect",
-            run: () => {
-              const tool = collectUpgrade(g);
-              this.say(
-                tool
-                  ? `Your ${names[tool].toLowerCase()} is now ${TIER_NAMES[g.toolTiers[tool]]?.toLowerCase()}.`
-                  : "Nothing to collect.",
-              );
-            },
-          },
-        ],
-      });
-    else if (order)
-      rows.push({
-        label: `${names[order.tool]} at the forge`,
-        detail: `Ready on day ${order.readyDay}`,
-        dim: true,
-        buttons: [],
-      });
-    for (const tool of UPGRADABLE) {
-      const tier = g.toolTiers[tool];
-      const cost = upgradeCost(tier);
-      const bar = upgradeBar(tier);
-      const label = `${names[tool]} (${TIER_NAMES[tier]})`;
-      if (cost === undefined || bar === undefined) {
-        rows.push({ label, detail: "Best", dim: true, buttons: [] });
-        continue;
-      }
-      rows.push({
-        label,
-        detail: `${TIER_NAMES[tier + 1]}: ${cost > 0 ? `${cost}g and ` : ""}${UPGRADE_BARS} ${itemById(bar)?.name.toLowerCase()}s`,
-        dim: orderProblem(g, tool) !== undefined,
-        buttons: [
-          {
-            text: "Hand over",
-            run: () =>
-              this.say(
-                orderUpgrade(g, tool) ??
-                  `She will have it back in two days (day ${g.toolOrder?.readyDay}).`,
-              ),
-          },
-        ],
-      });
-    }
-    return rows;
   }
 
   private close(): void {

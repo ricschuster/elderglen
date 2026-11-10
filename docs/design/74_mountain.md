@@ -290,6 +290,12 @@ The Quarry bridge and exit, hand edits to `mountain.json` (the Quarry itself is 
   furnace gift are reachable before Spring 5. Stamina and the furnace cost (copper ore,
   coal, gold) are the pacing, not a door. Furnace recipe timing in Stardew is unchecked
   (SC-102).
-- **The smith screen is split.** The forge hut keeps ore buying, lamps and rest-camp
-  supplies. Tool upgrades, geode cracking and weapon forging go to the Hearthwell
-  blacksmith counter (note 77), as the owner decided in answer 7.
+- **The smith screen is split (built, #708).** The forge hut keeps ore buying, lamps and
+  rest-camp supplies (lamps and camp supplies are not on the screen yet). Tool upgrades and
+  geode cracking go to the Hearthwell smithy counter (note 77, kind `smithy`), as the owner
+  decided in answer 7. **Weapons are bought at the dwarf, not forged** (owner, 2026-11-09):
+  there is no weapon forging until a later forge (Stardew has no forge until Ginger Island).
+  The dwarf sells the copper, iron, gold and Hearthsilver tiers for coin, with no gate. In
+  Stardew, Mines weapons are sold at the Adventurer's Guild (owner, 2026-11-09, SC-103), and
+  the dwarf, the Mines-side trader, is the Elderglen equivalent. Prices are placeholders
+  (note 07). `forgeWeapon` and its tests stay in `src/core/combat.ts`.

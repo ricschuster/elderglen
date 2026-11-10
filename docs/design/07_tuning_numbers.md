@@ -396,6 +396,11 @@ are from memory and unchecked.
   Built 2026-11-08 with placeholders: smelt time 8 hours (480 minutes, unsettled in note 22), bar sells 1000g, top pickaxe swings 1 (stone to iron), 1 (gold), 2 (Hearthsilver rock), top axe 2 per tree and 1 per stump (note 44).
 - Weapons: three families, four tiers each. The first build has the starter and
   copper tier of each.
+- Weapon shop at the smith dwarf (#708, 2026-11-09, placeholders, no gate): the forged tiers
+  are sold for coin, each priced as the old gold fee plus the bars at their sell value
+  (copper 60, iron 120, gold 250, Hearthsilver 1,000). Copper tier 440g (was 4 bars and 200g),
+  iron 880g (4 bars and 400g), gold 1,800g (4 bars and 800g), Hearthsilver 6,500g (5 bars and
+  1,500g). All three families of a tier cost the same. Forging is off the screen, code kept.
 - Built 2026-11-08 (part one of combat, note 22, all placeholders): food heals half
   its energy value. Pebbleback 3 health, touch 4, 24 px/s, sight 5 tiles, wind up
   0.6 s, pause 1 s; Dustmoth 2 health, touch 4, 20 px/s, sight 4, wind up 0.6 s,
