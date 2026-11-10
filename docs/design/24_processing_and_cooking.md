@@ -247,6 +247,15 @@ Settled where the notes left gaps. All numbers are placeholders (note 07).
   design first: the clothing and look system (note 10) it needs, whether the
   built vat and the Dyer's bundle (23) stay, and where our pots stand. #660
   waits on that design. Cask days follow Stardew's, to be checked (SC-82).
+- **Dye vat, any plant (built 2026-11-10, #660).** The vat takes any plant,
+  flower or berry in `src/content/dyes.json`, one colour each (31 rows over
+  crops and forage; our own table, colours chosen by look, not copied from
+  Stardew). Nine colours: red, orange, yellow, green, blue, indigo, violet,
+  purple and pink, each a 120g dye. Quality is ignored. The six pot station and
+  sliders above stay for the clothing and look design (note 10); this vat is the
+  simple machine until then. Not in the table: fruit tree fruit, shells, nuts,
+  mushrooms. **The Dyer's bundle (23) is unchanged:** 4 of the six raw colour
+  goods, because its reward is the vat itself, so the ask cannot be dyes.
 - **The greenhouse is built** (`31_farm_growth.md`, "Built (#602)").
 
 ## Left for later
