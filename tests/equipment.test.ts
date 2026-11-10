@@ -1,0 +1,91 @@
+import { describe, expect, it } from "vitest";
+import { Equipment, RINGS, ringById } from "../src/core/equipment";
+import { pickupRadius } from "../src/core/ground";
+import { Inventory } from "../src/core/inventory";
+import { itemById } from "../src/core/items";
+import { newGame, serialize, deserialize } from "../src/core/save";
+
+describe("rings", () => {
+  it("every ring is a kept item", () => {
+    for (const r of RINGS) expect(itemById(r.id)?.keep).toBe(true);
+  });
+
+  it("wears from the pack and takes off back into it", () => {
+    const inv = new Inventory();
+    const eq = new Equipment();
+    inv.add("magnet-ring");
+    expect(eq.wear(inv, 0, "magnet-ring")).toBe(true);
+    expect(inv.count("magnet-ring")).toBe(0);
+    expect(eq.magnetBonus()).toBe(2);
+    expect(eq.remove(inv, 0)).toBe(true);
+    expect(inv.count("magnet-ring")).toBe(1);
+    expect(eq.magnetBonus()).toBe(0);
+  });
+
+  it("refuses a ring not in the pack, an unknown ring and a bad slot", () => {
+    const inv = new Inventory();
+    const eq = new Equipment();
+    expect(eq.wear(inv, 0, "glow-ring")).toBe(false);
+    inv.add("glow-ring");
+    expect(eq.wear(inv, 2, "glow-ring")).toBe(false);
+    expect(eq.wear(inv, 0, "stone")).toBe(false);
+    expect(eq.remove(inv, 1)).toBe(false);
+  });
+
+  it("stacks light and magnet across both slots", () => {
+    const inv = new Inventory();
+    const eq = new Equipment();
+    inv.add("small-glow-ring");
+    inv.add("glow-ring");
+    eq.wear(inv, 0, "small-glow-ring");
+    eq.wear(inv, 1, "glow-ring");
+    expect(eq.lightRadius()).toBe(15);
+    expect(ringById("small-magnet-ring")?.magnet).toBe(1);
+  });
+
+  it("swapping a slot hands the old ring back", () => {
+    const inv = new Inventory();
+    const eq = new Equipment();
+    inv.add("small-magnet-ring");
+    inv.add("magnet-ring");
+    eq.wear(inv, 0, "small-magnet-ring");
+    expect(eq.wear(inv, 0, "magnet-ring")).toBe(true);
+    expect(inv.count("small-magnet-ring")).toBe(1);
+    expect(eq.worn()[0]).toBe("magnet-ring");
+  });
+
+  it("takes off nothing when the pack is full", () => {
+    const inv = new Inventory();
+    const eq = new Equipment();
+    inv.add("glow-ring");
+    eq.wear(inv, 0, "glow-ring");
+    for (let i = 0; i < inv.size; i++) inv.add("wood", 999);
+    expect(inv.room("glow-ring")).toBe(0);
+    expect(eq.remove(inv, 0)).toBe(false);
+    expect(eq.worn()[0]).toBe("glow-ring");
+  });
+
+  it("magnet rings widen the pickup radius", () => {
+    expect(pickupRadius()).toBe(1);
+    expect(pickupRadius(2)).toBe(3);
+  });
+
+  it("saves and loads, dropping unknown rings", () => {
+    const eq = new Equipment();
+    eq.load({ rings: ["glow-ring", "nonsense"] });
+    expect(eq.worn()).toEqual(["glow-ring", undefined]);
+    const copy = new Equipment();
+    copy.load(eq.save());
+    expect(copy.worn()).toEqual(eq.worn());
+    copy.load(undefined);
+    expect(copy.worn()).toEqual([undefined, undefined]);
+  });
+
+  it("is part of the game save", () => {
+    const g = newGame();
+    g.inventory.add("magnet-ring");
+    g.equipment.wear(g.inventory, 1, "magnet-ring");
+    const back = deserialize(serialize(g));
+    expect(back!.equipment.worn()[1]).toBe("magnet-ring");
+  });
+});

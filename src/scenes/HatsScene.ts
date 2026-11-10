@@ -53,6 +53,19 @@ export class HatsScene extends Phaser.Scene {
     const rows = [row(undefined, "No hat")];
     for (const id of w.list()) rows.push(row(id, hatById(id)?.name ?? id));
     rows.push({
+      label: "Rings you wear",
+      detail: "two slots",
+      buttons: [
+        {
+          text: "Open",
+          run: () => {
+            this.scene.stop();
+            this.scene.launch("equipment");
+          },
+        },
+      ],
+    });
+    rows.push({
       label: "Achievements and the hatter",
       buttons: [
         {

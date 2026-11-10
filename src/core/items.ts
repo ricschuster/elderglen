@@ -4,6 +4,7 @@ import {
   MAHOGANY_SEED_NAME,
   MAHOGANY_SEED_PRICE,
 } from "./mahogany";
+import { RINGS } from "./equipment";
 import { FERTILIZERS } from "./fertilizer";
 import { FORAGE } from "./forage";
 import {
@@ -247,19 +248,15 @@ items.set(HOMEWARD_PIN, {
   keep: true,
 });
 /**
- * Water room rewards whose systems are not built yet (note 16, note 37): the
- * glow ring waits for the equipment slot, the Beach warp totem for a use that
- * returns the player to the Beach. Both are kept and do nothing yet, like the
- * Homeward pin. Prices are placeholders (note 07).
+ * The glow ring is the Night Fishing reward and is worn since the ring slots
+ * (note 37). The Beach warp totem waits for a use that returns the player to
+ * the Beach. It is kept and does nothing yet, like the Homeward pin. Prices are placeholders (note 07).
  */
 export const GLOW_RING = "glow-ring";
 export const WARP_TOTEM_BEACH = "warp-totem-beach";
-items.set(GLOW_RING, {
-  id: GLOW_RING,
-  name: "Glow ring",
-  sellPrice: 0,
-  keep: true,
-});
+/** Rings are worn in the two ring slots (`equipment.ts`, note 37). */
+for (const r of RINGS)
+  items.set(r.id, { id: r.id, name: r.name, sellPrice: 0, keep: true });
 items.set(WARP_TOTEM_BEACH, {
   id: WARP_TOTEM_BEACH,
   name: "Beach warp totem",
@@ -351,7 +348,8 @@ const GROUPS: [string, string[]][] = [
       { id: POT_ITEM },
     ].map((f) => f.id),
   ],
-  ["Keepsakes", [HOMEWARD_PIN, GLOW_RING, WARP_TOTEM_BEACH]],
+  ["Keepsakes", [HOMEWARD_PIN, WARP_TOTEM_BEACH]],
+  ["Rings", RINGS.map((r) => r.id)],
   ["Wood and fibre", ["wood", "hardwood", "sap", "fiber", "clay", "hay"]],
 ];
 for (const [group, ids] of GROUPS)

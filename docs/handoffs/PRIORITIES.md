@@ -76,6 +76,8 @@ Session 2026-11-10 part four (handoff 2026-11-10d): second audit pass, note 07's
 Built shellfish pots (#596, 2026-11-10: place, bait, daily catch with junk, quality, XP, tracker, shop at the fisher; bundles 17 and 18 and the legends wait, note 21 "Built in slice 4, part one").
 Built the fishing professions (Fisher, Trapper and the level 10 Angler, Pirate, Mariner, Luremaster, with the level 10 choice screen) and the Pearl Lobster on the rod (#596, note 21 "Built in slice 4, part two"). Left of #596: bundles 13 to 18, the legends, trash and the recycler.
 
+Built the ring slots (#597, 2026-11-10: `core/equipment.ts`, glow and magnet rings, wearing screen from the hat box, magnet wired into pickup; boots, Defense and combat rings wait, note 37 "Built").
+
 Built #660 (dye vat takes any plant from `src/content/dyes.json`, one colour each; Dyer's bundle ask unchanged; the six pot station waits on the clothing design, note 10).
 
 Water room bundles 13 to 18 built 2026-11-10 (#596, note 21): the cove ferry can now open. Next in the owner's order: the five legends, then trash and the recycler.

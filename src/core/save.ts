@@ -50,6 +50,7 @@ import { Quests, type QuestsSave } from "./quests";
 import { FishLog, type FishingSave } from "./fishing";
 import { Tackle, type TackleSave } from "./tackle";
 import { Pots, type PotsSave } from "./pots";
+import { Equipment } from "./equipment";
 import { Wardrobe, type WardrobeSave } from "./hats";
 import {
   BUILD_DAYS,
@@ -148,6 +149,8 @@ export interface GameState {
   cave: FarmCave;
   /** Hats owned and worn. */
   wardrobe: Wardrobe;
+  /** Rings worn (note 37). */
+  equipment: Equipment;
   /** Furniture placed in the house. */
   furniture: Furniture;
   /** Wallpaper and flooring per house room (note 10). */
@@ -216,6 +219,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     showTokens: { year: 0, count: 0 },
     cave: new FarmCave(),
     wardrobe: new Wardrobe(),
+    equipment: new Equipment(),
     furniture: new Furniture(),
     decor: new Decor(),
     chests: new Chests(),
@@ -321,6 +325,8 @@ interface SaveData {
   cave?: CaveSave;
   /** Absent in saves made before hats. */
   wardrobe?: WardrobeSave;
+  /** Absent in saves made before the ring slots. */
+  equipment?: unknown;
   /** The house map frame (`HOUSE_LAYOUT`). Absent in saves made before the house grew in one map. */
   houseLayout?: number;
   /** Absent in saves made before furniture. */
@@ -510,6 +516,7 @@ export function serialize(g: GameState): string {
     showTokens: { ...g.showTokens },
     cave: g.cave.save(),
     wardrobe: g.wardrobe.save(),
+    equipment: g.equipment.save(),
     houseLayout: HOUSE_LAYOUT,
     furniture: g.furniture.save(),
     decor: g.decor.save(),
@@ -918,6 +925,7 @@ export function deserialize(text: string): GameState | undefined {
     g.showTokens = { year: tokens.year, count: tokens.count };
   g.cave.load(raw.cave as Partial<CaveSave> | undefined);
   g.wardrobe.load(raw.wardrobe);
+  g.equipment.load(raw.equipment);
   // Saves from an older house frame keep furniture and chests by that frame.
   const layout = isCount(raw.houseLayout) ? raw.houseLayout : 1;
   g.furniture.load(raw.furniture, layout);

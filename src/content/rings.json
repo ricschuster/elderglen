@@ -1,0 +1,16 @@
+[
+  {
+    "id": "small-glow-ring",
+    "name": "Small glow ring",
+    "light": 5,
+    "magnet": 0
+  },
+  { "id": "glow-ring", "name": "Glow ring", "light": 10, "magnet": 0 },
+  {
+    "id": "small-magnet-ring",
+    "name": "Small magnet ring",
+    "light": 0,
+    "magnet": 1
+  },
+  { "id": "magnet-ring", "name": "Magnet ring", "light": 0, "magnet": 2 }
+]

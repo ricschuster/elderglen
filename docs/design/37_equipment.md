@@ -1,6 +1,6 @@
 # 37 Equipment: rings, boots and clothing slots (draft)
 
-Status: draft. Decided with the owner on 2026-10-31. Nothing here is built.
+Status: draft. Decided with the owner on 2026-10-31. Built 2026-11-10 (#597): the two ring slots, the four light and magnet rings, the wearing screen (see "Built"). Boots, Defense, Immunity and the combat rings are not built.
 Reference: the saved Stardew Valley Wiki pages Rings, Boots, Footwear, Hats,
 Inventory and Forge, read only (ADR 0002). The owner chose Stardew's behaviour
 on every question, so this note follows the saved pages. Item names are ours
@@ -115,6 +115,18 @@ The slot and the first rings do not need all of this. See the order below.
 Bundle 16's glow ring has a placeholder reward until the slot exists
 (`33_build_order.md`). Built 2026-11-10: `glow-ring` is a kept item that does
 nothing yet. The slot itself is not built.
+
+## Built (2026-11-10, #597)
+
+`src/core/equipment.ts` and `src/content/rings.json`: two ring slots, worn from
+the pack (a worn ring leaves the pack, so the bin cannot take it), saved with
+the game. Four rings, light and magnet only, which stack: small glow (light 5),
+glow (10), small magnet (+1 tile) and magnet (+2). The magnet bonus is wired
+into the ground pickup radius. Light is computed (`lightRadius()`) but nothing
+reads it yet, since the mines have no dark floors. Screen: `EquipmentScene`,
+opened from the hat box, not yet the Pack tab (no Pack tab exists). The magnet
+ring has no source until bundle 28 (The Catch) is built. Placeholder: which of
+the glow rings the Night Fishing bundle gives is the 10 radius one.
 
 ## Open
 
