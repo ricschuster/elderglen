@@ -20,7 +20,7 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
 1. **Completion tracker (#196). Built 2026-11-08 (PR #573).** Counters for
    friends, slayer, gallery and elderfruit are locked at 0 until their
    systems exist (fish went live with fishing slices 1 and 2, #595). The top-level menu entry and the day-end recheck are done
-   (#586), and `noteCooked` is called now (#593). Summit slices 1 and 2 are built (achievement, hat, mail furniture, lamp, letter). Left: the steward's call and the hall scene with placeholder lines (note 39 "Summit build decisions"; the valley summit waits for ring 2), and a look at the layout
+   (#586), and `noteCooked` is called now (#593). Summit slices 1 to 3 are built (achievement, hat, mail furniture, lamp, letter, the steward's morning call with a stub `SummitScene` as the hook). Left: the hall scene itself (step 4, replace `src/scenes/SummitScene.ts`) with placeholder lines (note 39 "Summit build decisions"; the valley summit waits for ring 2), and a look at the layout
    in a browser. "Items crafted" counts only buildable recipes (owner, 2026-11-08).
 2. **Story spine (started 2026-11-08q; ring 1 part nearly done).** The warden head
    and her staged reveal (#177), the sea elf and Homeward pin (#176) and the

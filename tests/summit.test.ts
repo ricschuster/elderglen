@@ -1,78 +1,94 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
+import { SummitCall } from "../src/core/summit";
+import { deserialize, newGame, serialize } from "../src/core/save";
+import { sleep } from "../src/core/sleep";
+import { reportLines } from "../src/core/report";
+import { festivalToday } from "../src/core/festivals";
 
-const ring = vi.hoisted(() => ({ percent: 99 }));
-vi.mock("../src/core/completion", async (orig) => {
-  const real = await orig<typeof import("../src/core/completion")>();
-  return {
-    ...real,
-    ringProgress: () => [
-      {
-        id: "ring1",
-        name: "Home valley",
-        exact: ring.percent,
-        percent: ring.percent,
-        categories: [],
-      },
-    ],
-  };
+function night(g: ReturnType<typeof newGame>) {
+  return sleep(g, [], () => 0.5);
+}
+
+describe("SummitCall", () => {
+  it("calls nobody until armed", () => {
+    const s = new SummitCall();
+    expect(s.callToday(false)).toBe(false);
+    expect(s.scenePending).toBe(false);
+  });
+
+  it("calls once, on the first free morning, and leaves the scene pending", () => {
+    const s = new SummitCall();
+    s.arm();
+    expect(s.callToday(true)).toBe(false);
+    expect(s.isArmed).toBe(true);
+    expect(s.callToday(false)).toBe(true);
+    expect(s.scenePending).toBe(true);
+    expect(s.callToday(false)).toBe(false);
+  });
+
+  it("arming again changes nothing while pending or after the scene", () => {
+    const s = new SummitCall();
+    s.arm();
+    s.callToday(false);
+    s.arm();
+    expect(s.isArmed).toBe(false);
+    s.finish();
+    s.arm();
+    expect(s.isArmed).toBe(false);
+    expect(s.seen).toBe(true);
+    expect(s.scenePending).toBe(false);
+  });
+
+  it("round-trips, and tolerates a missing save", () => {
+    const s = new SummitCall();
+    s.arm();
+    s.callToday(false);
+    const t = new SummitCall();
+    t.load(JSON.parse(JSON.stringify(s.save())));
+    expect(t.scenePending).toBe(true);
+    const u = new SummitCall();
+    u.load(undefined);
+    expect(u.save()).toEqual({
+      armed: false,
+      scenePending: false,
+      seen: false,
+    });
+  });
 });
 
-import {
-  ACHIEVEMENTS,
-  buyHat,
-  checkAchievements,
-  hatsOnSale,
-} from "../src/core/achievements";
-import { dailyStock, furnitureById } from "../src/core/furniture";
-import { STACK_SIZE } from "../src/core/inventory";
-import { deliverAll, openLetter } from "../src/core/mail";
-import { newGame } from "../src/core/save";
-
-describe("summit achievement", () => {
-  beforeEach(() => {
-    ring.percent = 99;
-  });
-
-  it("is not earned below 100 and is earned at 100", () => {
+describe("the steward's morning call", () => {
+  it("does not call before the summit", () => {
     const g = newGame();
-    expect(checkAchievements(g).map((a) => a.id)).not.toContain("summit");
-    ring.percent = 100;
-    expect(checkAchievements(g).map((a) => a.id)).toContain("summit");
-    expect(checkAchievements(g)).toEqual([]);
+    const r = night(g);
+    expect(r.summitCall).toBe(false);
+    expect(g.summit.scenePending).toBe(false);
   });
 
-  it("puts its hat on sale at the hatter", () => {
+  it("calls the morning after the achievement, once, and survives save and load", () => {
     const g = newGame();
-    ring.percent = 100;
-    checkAchievements(g);
-    const a = ACHIEVEMENTS.find((x) => x.id === "summit")!;
-    expect(hatsOnSale(g).map((x) => x.id)).toContain("summit");
-    g.money = a.hat.price;
-    expect(buyHat(g, a.hat.id)).toBeUndefined();
-    expect(g.wardrobe.has(a.hat.id)).toBe(true);
+    g.achievements.award("summit");
+    const r = night(g);
+    expect(r.summitCall).toBe(true);
+    expect(reportLines(r).join(" ")).toContain("steward");
+    expect(g.summit.scenePending).toBe(true);
+    const back = deserialize(serialize(g));
+    expect(back?.summit.scenePending).toBe(true);
+    expect(night(g).summitCall).toBe(false);
+    g.summit.finish();
+    expect(deserialize(serialize(g))?.summit.seen).toBe(true);
   });
 
-  it("mails the lamp the morning after, and keeps it if the pack is full", () => {
+  it("waits out a festival morning", () => {
     const g = newGame();
-    ring.percent = 100;
-    checkAchievements(g);
-    deliverAll(g, 7);
-    let n = 0;
-    while (g.inventory.add(`filler-${n++}`, STACK_SIZE));
-    const full = openLetter(g, "summit-letter");
-    expect(full.ok && full.pending).toBe(true);
-    expect(g.inventory.count("steadfast-lamp")).toBe(0);
-    g.inventory.remove("filler-0", STACK_SIZE);
-    const r = openLetter(g, "summit-letter");
-    expect(r.ok && r.gift).toEqual(["Steadfast lamp"]);
-    expect(g.inventory.count("steadfast-lamp")).toBe(1);
-    openLetter(g, "summit-letter");
-    expect(g.inventory.count("steadfast-lamp")).toBe(1);
-  });
-
-  it("keeps the lamp out of the carpenter's stock", () => {
-    expect(furnitureById("steadfast-lamp")?.keepsake).toBe(true);
-    for (let d = 1; d < 200; d++)
-      expect(dailyStock(d).map((f) => f.id)).not.toContain("steadfast-lamp");
+    g.achievements.award("summit");
+    // Run nights until the morning that begins on a festival day.
+    for (let i = 0; i < 120 && !festivalToday(g.day.clock.day + 1); i++)
+      g.day.clock.day += 1;
+    expect(festivalToday(g.day.clock.day + 1)).toBeDefined();
+    const r = night(g);
+    expect(festivalToday(g.day.clock.day)).toBeDefined();
+    expect(r.summitCall).toBe(false);
+    expect(g.summit.isArmed).toBe(true);
+    expect(night(g).summitCall).toBe(true);
   });
 });

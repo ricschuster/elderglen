@@ -286,7 +286,16 @@ Each had a Stardew option, and the owner took the recommended one.
   the Summit Crown hat at the hatter, the mail `furniture` attachment, the
   `steadfast-lamp` keepsake (flagged `keepsake`, so never sold) and
   `summit-letter`. The achievement cannot fire until the locked counters
-  (gallery, friends, elderfruit) are built. Slices 3 to 5 are not built.
+  (gallery, friends, elderfruit) are built. **Slice 3 is built (2026-11-10):** `src/core/summit.ts`
+  (`SummitCall`, saved with the game) is armed by the night's check when the
+  achievement is earned. The next morning the steward calls: the morning report
+  shows a placeholder call line (`src/content/summit.json`) and the scene is
+  owed. A festival morning is never interrupted: the call waits for the first
+  free morning. The walk is told in the report line, not drawn, until art
+  exists. The hook for step 4 is `state.summit.scenePending`, read by
+  `ReportScene`, which launches the stub `src/scenes/SummitScene.ts`; the real
+  scene replaces its body and ends with `summit.finish()`. Slices 4 and 5 are
+  not built.
 
 ## Open
 

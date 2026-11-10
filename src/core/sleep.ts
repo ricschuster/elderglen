@@ -1,4 +1,5 @@
 import { dateOf, type Season } from "./calendar";
+import { festivalToday } from "./festivals";
 import { growthRate } from "./professions";
 import { isRaining, rollWeather, type Weather } from "./weather";
 import type { Spot } from "./forage";
@@ -13,6 +14,7 @@ import {
   type AnimalNews,
 } from "./animals";
 import { checkAchievements } from "./achievements";
+import { SUMMIT_ACHIEVEMENT } from "./summit";
 import { ringProgress, valleyPercent } from "./completion";
 import { deliverAll } from "./mail";
 import { endDayQuests } from "./quests";
@@ -121,6 +123,8 @@ export interface SleepReport {
   furnaceGifted: boolean;
   /** Achievements earned by tonight's check, whose hats are now on sale. */
   achievements: string[];
+  /** True when the hall steward has walked over this morning to call the player in (note 39). */
+  summitCall: boolean;
   /** The valley completion total after tonight's recheck, in whole percent (note 39). */
   completion: number;
   /** Whole percent the total rose by tonight, zero when it did not. */
@@ -287,6 +291,12 @@ export function sleep(
   const furnaceGifted = deliverFurnace(g);
 
   const achievements = checkAchievements(g).map((a) => a.name);
+  // The summit: tonight's check arms the call; the steward comes this morning
+  // unless it is a festival day (note 39, "Summit build decisions").
+  if (g.achievements.has(SUMMIT_ACHIEVEMENT)) g.summit.arm();
+  const summitCall = g.summit.callToday(
+    festivalToday(g.day.clock.day) !== undefined,
+  );
   // The completion total is rechecked with the achievements (note 39).
   const completion = valleyPercent(ringProgress(g));
   // Tonight's triggers arrive on the morning of the next day, which has begun.
@@ -310,6 +320,7 @@ export function sleep(
     animals,
     furnaceGifted,
     achievements,
+    summitCall,
     completion,
     completionGain: Math.max(0, completion - completionBefore),
     newMail,

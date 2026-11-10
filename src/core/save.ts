@@ -32,6 +32,7 @@ import {
   checkAchievements,
   type AchievementsSave,
 } from "./achievements";
+import { SummitCall, type SummitSave } from "./summit";
 import { ShippingBin, type BinLine, type BinSave } from "./shipping";
 import { maps } from "../content/maps";
 import { DEFAULT_FARM_TYPE, farmTypeById } from "./farmtypes";
@@ -154,6 +155,8 @@ export interface GameState {
   chests: Chests;
   /** Achievements earned and the different recipes crafted. */
   achievements: Achievements;
+  /** The steward's call to the hall after the summit, and the scene owed (note 39). */
+  summit: SummitCall;
   /** Letters sent, delivered and taken (note 51). */
   mail: Mailbox;
   /** Board requests taken and finished (note 50). */
@@ -214,6 +217,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     decor: new Decor(),
     chests: new Chests(),
     achievements: new Achievements(),
+    summit: new SummitCall(),
     mail: new Mailbox(),
     quests: new Quests(),
     fishing: new FishLog(),
@@ -321,6 +325,8 @@ interface SaveData {
   chests?: ChestSave[];
   /** Absent in saves made before achievements. */
   achievements?: AchievementsSave;
+  /** Absent in saves made before the summit call. */
+  summit?: SummitSave;
   /** Absent in saves made before mail. */
   mail?: MailEntry[];
   /** Absent in saves made before the request board. */
@@ -500,6 +506,7 @@ export function serialize(g: GameState): string {
     decor: g.decor.save(),
     chests: g.chests.save(),
     achievements: g.achievements.save(),
+    summit: g.summit.save(),
     mail: g.mail.save(),
     quests: g.quests.save(),
     fishing: g.fishing.save(),
@@ -898,6 +905,7 @@ export function deserialize(text: string): GameState | undefined {
   g.chests.load(raw.chests, layout);
   g.decor.load(raw.decor);
   g.achievements.load(raw.achievements);
+  g.summit.load(raw.summit);
   g.mail.load(raw.mail);
   g.quests.load(raw.quests);
   g.fishing.load(raw.fishing);
