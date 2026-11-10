@@ -8,7 +8,7 @@ only, ADR 0002) and the differences were settled with the owner; see "Catch
 details and Stardew differences". Numbers are placeholders.
 The open items at the end are not decided. It answers the design half of
 issue #181. Slices 1 and 2 are built (see "Built in slices 1 and 2"), and the
-bait and lure half of slice 3 (see "Built in slice 3, part one"), and the delta's marsh lake and sea with the fisher's counter (see "Built in slice 3, part two"); the rest is not.
+bait and lure half of slice 3 (see "Built in slice 3, part one"), and the delta's marsh lake and sea with the fisher's counter (see "Built in slice 3, part two"), and shellfish pots (see "Built in slice 4, part one"); the rest is not.
 
 ## Why
 
@@ -571,8 +571,39 @@ of the common band). The river channels use the River table, as the farm pond do
 The roster now holds 32 fish, so Whole Roster stays held back. The rods, Plain, Fine
 and Salted Bait and the lures are sold at the fisher's counter in her hut, and
 the general store no longer sells them. Salted Bait can be fitted and works at the
-sea only. Not built: shellfish pots, the Pearl Lobster, the Great Hearthfin legend,
+sea only. Shellfish pots are built since (see "Built in slice 4, part one"). Not built: the Pearl Lobster on the rod, the Great Hearthfin legend,
 and the legends. The cove's 8 ordinary fish are built (#644, note 76), and so are the other lakes. Issue #596 stays open for these.
+
+## Built in slice 4, part one: shellfish pots (2026-11-10, issue #596)
+
+Rules are `src/core/pots.ts`, content is `src/content/pots.json`. Numbers are
+placeholders and match the table above and note 07.
+
+- **Placing.** Hold the Shellfish pot and use it facing a water tile on the farm
+  or an area map. The tile's water kind sets the pot: only the sea is salt, so the
+  cove, rivers, lakes and the marsh take fresh water pots. No pot on land, and one
+  pot a tile. Axe or pickaxe takes a pot up when it holds no catch (its bait comes
+  back).
+- **Bait.** Hold any of the three baits and use it facing a pot: one bait goes in.
+  A pot with a catch in it takes no bait. Overnight, a baited pot spends the bait
+  and rolls: junk 38 in 100 (30 with Fine Bait), else a shellfish by the odds. An
+  unbaited pot catches nothing.
+- **Collecting.** Action on the pot takes the catch. A shellfish takes the fishing
+  quality roll (no distance, never perfect, so gold needs fishing level 4 or more)
+  and gives harvest XP on its price. Junk gives 1 XP (placeholder) and
+  is never silver or gold. A full backpack leaves the catch in the pot.
+- **Shop.** The pot is sold at the fisher's counter for 150g with the tackle.
+- **Tracker.** The completion tracker's Fish row counts the eight shellfish with the
+  fish (54 in all). Pot catches are kept in `g.pots`, not in the fish log, so the
+  fish achievements (10, 24, 100 and the whole roster) still count fish only.
+- **The salt water Periwinkle is "Reef Periwinkle"** (`reef-periwinkle`, 50g). The
+  beach already has a Periwinkle forage good at 20g, so the pot's would have clashed.
+- **Junk is five placeholder items** (Tangled line, Cracked jar, Sodden rope, Bent
+  spoon, Old boot), 1g each. Trash and the recycler are not built; the rod's trash
+  should draw on the same list when it is.
+- **Not built:** the Trapper and Fisher professions and the level 5 choice, the
+  Water room bundles 17 and 18 and their three pots reward, the Pearl Lobster on the
+  rod, and a pot-side screen (a pot shows a marker when it holds a catch).
 
 ## Touch and accessibility
 

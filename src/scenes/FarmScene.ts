@@ -140,6 +140,14 @@ import {
   placeCask,
 } from "../core/cask";
 import { chestById, pickUpChest, placeChest, pushChest } from "../core/chests";
+import {
+  POT_ITEM,
+  baitPot,
+  collectPot,
+  pickUpPot,
+  placePot,
+} from "../core/pots";
+import { baitById } from "../core/tackle";
 import { greencoatDue, takeCampGift } from "../core/camp";
 import {
   CAVE_MAP,
@@ -191,6 +199,8 @@ import {
   sprinklerKey,
   furnitureKey,
   chestKey,
+  POT_KEY,
+  POT_READY_KEY,
   machineKey,
   MACHINE_READY_KEY,
   forageKey,
@@ -1467,6 +1477,25 @@ export class FarmScene extends Phaser.Scene {
     if (this.useSilo(front.x, front.y)) return;
     const held = heldAt(this.state, this.selected);
     if (held.kind === "item" && rodById(held.id)) return this.cast(held.id);
+    // A pot goes on the water, bait goes in a pot, and the axe or pickaxe takes an empty one up.
+    if (held.kind === "item" && held.id === POT_ITEM)
+      return this.report(
+        placePot(this.state, this.map, this.mapId, front.x, front.y),
+      );
+    if (
+      held.kind === "item" &&
+      baitById(held.id) &&
+      this.state.pots.get(this.mapId, front.x, front.y)
+    )
+      return this.report(
+        baitPot(this.state, this.mapId, front.x, front.y, held.id),
+      );
+    if (
+      held.kind === "tool" &&
+      (held.tool === "axe" || held.tool === "pickaxe") &&
+      this.state.pots.get(this.mapId, front.x, front.y)
+    )
+      return this.report(pickUpPot(this.state, this.mapId, front.x, front.y));
     // A chest is stood down from the backpack, and the axe or pickaxe takes an empty one up.
     if (held.kind === "item" && chestById(held.id))
       return this.report(
@@ -1652,6 +1681,10 @@ export class FarmScene extends Phaser.Scene {
       }
       return this.report(collectCask(this.state, front.x, front.y));
     }
+    if (this.state.pots.get(this.mapId, front.x, front.y))
+      return this.report(
+        collectPot(this.state, this.mapId, front.x, front.y, Math.random),
+      );
     if (this.state.chests.at(this.mapId, front.x, front.y))
       return this.open("chest", {
         mapId: this.mapId,
@@ -1990,6 +2023,10 @@ export class FarmScene extends Phaser.Scene {
       if (s.kind === "camp-chest") put(s.x, s.y, chestKey("big-chest"));
     for (const c of this.state.chests.each(this.mapId))
       put(c.x, c.y, chestKey(c.id));
+    for (const p of this.state.pots.each(this.mapId)) {
+      put(p.x, p.y, POT_KEY);
+      if (p.catch) put(p.x, p.y, POT_READY_KEY);
+    }
     if (this.mapId === CELLAR_MAP)
       for (const c of this.state.casks.each()) {
         put(c.x, c.y, machineKey(CASK));

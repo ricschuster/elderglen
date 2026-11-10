@@ -30,6 +30,7 @@ import { CHESTS } from "./chestdefs";
 import { GEODE_ITEMS } from "./geodes";
 import { FISH, RODS } from "./fishing";
 import { BAITS, LURES, TRINKETS } from "./tackle";
+import { JUNK, POT_ITEM, POT_NAME, POT_PRICE, SHELLFISH } from "./pots";
 import { ENERGY_MULTIPLIER, QUALITY_MULTIPLIER, splitQuality } from "./quality";
 
 /** Item ids: a crop's produce uses the crop id, its seed uses `<id>-seed`. */
@@ -245,6 +246,18 @@ items.set(HOMEWARD_PIN, {
   buyPrice: HOMEWARD_PIN_PRICE,
   keep: true,
 });
+/** The shellfish pot is bought and kept (note 21). Its catches and junk sell as set in `pots.json`. */
+items.set(POT_ITEM, {
+  id: POT_ITEM,
+  name: POT_NAME,
+  sellPrice: 0,
+  buyPrice: POT_PRICE,
+  keep: true,
+});
+for (const s of SHELLFISH)
+  items.set(s.id, { id: s.id, name: s.name, sellPrice: s.sellPrice });
+for (const j of JUNK)
+  items.set(j.id, { id: j.id, name: j.name, sellPrice: j.sellPrice });
 /** Trinkets from the Magpie Hook: sellable, giftable curios (note 21). */
 for (const t of TRINKETS)
   items.set(t.id, { id: t.id, name: t.name, sellPrice: t.sellPrice });
@@ -307,7 +320,16 @@ const GROUPS: [string, string[]][] = [
   ],
   [
     "Fish and rods",
-    [...FISH, ...RODS, ...BAITS, ...LURES, ...TRINKETS].map((f) => f.id),
+    [
+      ...FISH,
+      ...RODS,
+      ...BAITS,
+      ...LURES,
+      ...TRINKETS,
+      ...SHELLFISH,
+      ...JUNK,
+      { id: POT_ITEM },
+    ].map((f) => f.id),
   ],
   ["Keepsakes", [HOMEWARD_PIN]],
   ["Wood and fibre", ["wood", "hardwood", "sap", "fiber", "clay", "hay"]],

@@ -1,3 +1,4 @@
+import { POT_ITEM } from "../core/pots";
 import { CHESTS, chestById } from "../core/chestdefs";
 import { MAHOGANY_SEED } from "../core/mahogany";
 import { DECOR, decorById } from "../core/decor";
@@ -849,6 +850,25 @@ function paintFruitTrees(scene: Phaser.Scene): void {
 
 export const furnitureKey = (id: string) => `furniture-${id}`;
 export const chestKey = (id: string) => `chest-${id}`;
+/** The shellfish pot standing in the water, and the mark on one that holds a catch. */
+export const POT_KEY = "shellfish-pot";
+export const POT_READY_KEY = "shellfish-pot-ready";
+
+/** A wicker pot with a float. Placeholder art. */
+function paintPot(scene: Phaser.Scene): void {
+  const t = scene.textures.createCanvas(POT_KEY, SIZE, SIZE)!;
+  const c = t.getContext();
+  px(c, "#00000033", 3, 13, 10, 1);
+  px(c, "#9a7a3c", 4, 6, 8, 7);
+  px(c, "#6a4e22", 4, 8, 8, 1);
+  px(c, "#6a4e22", 4, 11, 8, 1);
+  px(c, "#6a4e22", 7, 6, 1, 7);
+  px(c, "#d8503c", 7, 3, 2, 3);
+  t.refresh();
+  const r = scene.textures.createCanvas(POT_READY_KEY, SIZE, SIZE)!;
+  px(r.getContext(), "#ffe070", 11, 1, 4, 4);
+  r.refresh();
+}
 
 /** Furniture: a plain shape per piece, in the piece's colour. Placeholders. */
 function paintFurniture(scene: Phaser.Scene): void {
@@ -1002,6 +1022,7 @@ export function iconKey(itemId: string): string | undefined {
   if (furnitureById(base)) return furnitureKey(base);
   if (decorById(base)) return `decor-${base}`;
   if (chestById(base)) return chestKey(base);
+  if (base === POT_ITEM) return POT_KEY;
   const sapling = treeOfSapling(base);
   if (sapling) return saplingIconKey(sapling.id);
   if (fruitTreeById(base)) return `icon-${base}`;
@@ -1044,4 +1065,5 @@ export function makeArt(
   paintFurniture(scene);
   paintDecor(scene);
   paintChests(scene);
+  paintPot(scene);
 }
