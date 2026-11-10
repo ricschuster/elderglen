@@ -8,7 +8,7 @@ basic sprinkler, and the quality sprinkler hidden until quartz crystals exist).
 Build 7 (2026-11-07) added the bundle source (a finished bundle teaches its
 machine recipe), several sources per recipe, and recipes for basic fertilizer,
 basic retaining soil and the five farm machines (kiln, jar, bee house, keg, seed
-maker). The five machine bundles are in `bundles.json` now (note 35). Quartz crystals and the quality sprinkler were built 2026-11-07 (session e): quartz is a one swing crystal node on mine floors 1 to 10 (6 percent of rocks, a placeholder for "lying on the floor"), selling for 25g. Crafted furnaces were built the same day (a placeable machine, recipe at mining level 4). Chests and the workbench were built the same day (session e): four chests (36 and 70 slots) stood on clear farm ground or open house floor and taken up only when empty; the workbench is furniture bought at the carpenter for 2,000g, and crafting at it draws on the chests on the 8 tiles beside it, pack first. The stone chest recipe is known from the start as a placeholder (the carpenter's recipe shop source is unbuilt). Not built: the shop and gift sources, fences,
+maker). The five machine bundles are in `bundles.json` now (note 35). Quartz crystals and the quality sprinkler were built 2026-11-07 (session e): quartz is a one swing crystal node on every mine floor (6 percent of rocks, a placeholder for "lying on the floor"), selling for 25g. Crafted furnaces were built the same day (a placeable machine, recipe at mining level 4). Chests and the workbench were built the same day (session e): four chests (36 and 70 slots) stood on clear farm ground or open house floor and taken up only when empty; the workbench is furniture bought at the carpenter for 2,000g, and crafting at it draws on the chests on the 8 tiles beside it, pack first. The stone chest recipe is known from the start as a placeholder (the carpenter's recipe shop source is unbuilt). Not built: the shop and gift sources, fences,
 paths, floors, signs, torches and campfires (no placeable objects yet), tree
 fertilizer, wild seeds, speed fertilizer (needs moss), quality retaining soil
 (needs clay) and quality fertilizer (needs fish). The rest of this note is not built.
@@ -179,7 +179,7 @@ These must exist before the recipes above can be built.
   plain nightly chance. Stardew's Green Rain boost and Mossy Seed trees wait
   for that weather. Moss recipes (speed fertilizer) wait for that recipe.
 - **Gold bars**, from the smith dwarf's ore shop in slice 1.
-- **Quartz crystals**, found on the floor of mine floors 1 to 10, and rarely in
+- **Quartz crystals**, found as crystal nodes on every mine floor, and rarely in
   the smith dwarf's geodes (settled 2026-10-31, below). They stand in for
   refined quartz and earth crystals in the recipes above.
 - **A battery pack**, from a lightning rod in a storm. Storms are a new weather

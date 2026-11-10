@@ -51,7 +51,7 @@ random carpenter stock and add the catalogue once tier 1 exists.
 ### Slice 1: year one on the farm
 
 Rooms finished: the Foragers' Shelf. The Larder's bundles 7 to 10 and 12 can be
-filled, but its room reward, the greenhouse, waits for bundle 11 in slice 4.
+filled. Its room reward, the greenhouse, is built (#602, 2026-11-08) and opens when the Larder room is complete.
 Bundle 19 of the Hearth can also be filled, but the room's reward waits for
 slice 4.
 
@@ -65,9 +65,8 @@ Builds:
    (`29_weeds.md`, `31_farm_growth.md`).
 4. Fall and winter: crops, forage, nightfall, weather, snow and thunderstorms
    (`26_seasons.md`, #61).
-5. Fruit trees and the farm cave (`31_farm_growth.md`). Fruit trees built 2026-11-07; the cave is not built. The greenhouse is not
-   here: it is the Larder reward, which needs the animal bundle, so it
-   arrives in slice 4 (`35_bundle_pools.md`).
+5. Fruit trees and the farm cave (`31_farm_growth.md`). Fruit trees built 2026-11-07; the cave was built 2026-11-07 (#498). The greenhouse
+   is the Larder reward and was built 2026-11-08 (#602).
 6. The mines, first part (built 2026-11-07, with the Smith's bundle added the same day, except crafted furnaces, see `22_mines.md`; decided 2026-10-31, as in Stardew): floors 1 to 10 with
    no creatures, the lift, copper, the opening day on spring day 5, the smith
    dwarf's ore shop and the furnace gift (mines build slices 1 and 2 in
