@@ -280,10 +280,13 @@ describe("fish of the delta waters (note 21)", () => {
   const day = { season: "summer", minutes: 12 * 60, raining: false } as const;
   const count = (w: string) => FISH.filter((f) => f.water === w).length;
 
-  it("has 7 marsh lake fish and 10 sea fish, and no legend", () => {
+  it("has 7 marsh lake fish (no legend) and 10 sea fish and the Great Hearthfin", () => {
     expect(count("marsh-lake")).toBe(7);
-    expect(count("sea")).toBe(10);
-    expect(FISH.some((f) => f.id === "great-hearthfin")).toBe(false);
+    expect(count("sea")).toBe(11);
+    // The Great Hearthfin is the sea's legend, among the 11.
+    expect(
+      FISH.filter((f) => f.water === "sea" && f.rarity !== "legend"),
+    ).toHaveLength(10);
   });
 
   it("bites by water kind, season, time and weather", () => {

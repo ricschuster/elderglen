@@ -1,20 +1,21 @@
 import fishData from "../content/fish.json";
 import potData from "../content/pots.json";
 import rodData from "../content/rods.json";
-import type { Season } from "./calendar";
+import { dateOf, type Season } from "./calendar";
 import { NIGHTFALL } from "./clock";
 import { withQuality, type Quality } from "./quality";
 import { harvestXp } from "./skills";
 import type { WaterKind } from "./map";
 import type { GameState } from "./save";
+import { hasFlag, setFlag } from "./worldflags";
 
 /**
  * Fishing, slices 1 to 3 of note 21: a cast, a bite, the bar, the size roll,
  * the fishing skill, and bait and lures (`tackle.ts`). Pots, the other waters,
- * the legends are a later slice. Content is `src/content/fish.json` and `rods.json`. Numbers are
+ * the legends are built (slice 4, note 21). Content is `src/content/fish.json` and `rods.json`. Numbers are
  * placeholders (`docs/design/07_tuning_numbers.md`). Pure rules, no Phaser.
  */
-export type Rarity = "common" | "uncommon" | "rare";
+export type Rarity = "common" | "uncommon" | "rare" | "legend";
 export type Behaviour = "mixed" | "smooth" | "sinker" | "floater" | "dart";
 export type Time = "any" | "dawn" | "day" | "dusk" | "night" | "rain";
 /** A table of fish. The farm pond uses the river table (notes 32 and 55). */
@@ -35,6 +36,8 @@ export interface FishDef {
   water: Water;
   seasons: Season[];
   time: Time;
+  /** A weather the fish needs on top of its time: rain, or a dry sky (the legends, note 21). */
+  weather?: "rain" | "clear";
   rarity: Rarity;
   behaviour: Behaviour;
   /** 0 to 100: how hard the fish is on the bar. */
@@ -90,7 +93,20 @@ export const RARITY_WEIGHT: Record<Rarity, number> = {
   common: 6,
   uncommon: 3,
   rare: 1,
+  /** A legend is a lucky bite: a third of a common fish's weight (placeholder). */
+  legend: 2,
 };
+
+/** The rod a legend needs (note 21, decision 13). */
+export const LEGEND_ROD = "hearthwell-rod";
+
+/**
+ * The world flag that records a legend as caught in a year. Legends can be
+ * caught again each year (note 21, decision 13a), so the flag names the year.
+ */
+export function legendFlag(id: string, day: number): string {
+  return `legend-${id}-${dateOf(day).year}`;
+}
 
 /** The assist levels in the options: off, a bigger bar and calmer fish, and skip the fight. */
 export type Assist = 0 | 1 | 2;
@@ -121,6 +137,24 @@ export interface Conditions {
   minutes: number;
   /** Rain or a storm. */
   raining: boolean;
+  /** The rod in hand. Legends need the Hearthwell Rod. */
+  rod?: string;
+  /** The Water room is done at the hall: the four legends of other waters open. */
+  waterRoomDone?: boolean;
+  /** Legends already caught this year, which cannot bite again until next year. */
+  legendsTaken?: readonly string[];
+}
+
+/**
+ * A legend bites only on the Hearthwell Rod, once the Water room is done
+ * (which also opens the cove), and not twice in one year (note 21).
+ */
+export function legendOpen(f: FishDef, c: Conditions): boolean {
+  return (
+    c.rod === LEGEND_ROD &&
+    c.waterRoomDone === true &&
+    !(c.legendsTaken ?? []).includes(f.id)
+  );
 }
 
 /** Fish of a water that the season, time and weather allow, whatever the rod. */
@@ -131,7 +165,9 @@ export function fishAvailable(water: Water, c: Conditions): FishDef[] {
     (f) =>
       f.water === water &&
       f.seasons.includes(c.season) &&
-      (f.time === "any" || (f.time === "rain" ? rain : f.time === slot)),
+      (f.time === "any" || (f.time === "rain" ? rain : f.time === slot)) &&
+      (f.weather === undefined || (f.weather === "rain") === rain) &&
+      (f.rarity !== "legend" || legendOpen(f, c)),
   );
 }
 
@@ -190,6 +226,24 @@ export function bite(
     }
   }
   return { kind: "fish", fish };
+}
+
+/**
+ * The legend gates read from a game: the rod, the Water room and the legends
+ * caught this year. The caller adds season, time and weather.
+ */
+export function legendGates(
+  g: Pick<GameState, "hall" | "flags" | "day">,
+  rod: string,
+): Pick<Conditions, "rod" | "waterRoomDone" | "legendsTaken"> {
+  const day = g.day.clock.day;
+  return {
+    rod,
+    waterRoomDone: g.hall.roomComplete("water-room"),
+    legendsTaken: FISH.filter(
+      (f) => f.rarity === "legend" && hasFlag(g, legendFlag(f.id, day)),
+    ).map((f) => f.id),
+  };
 }
 
 // ---- the cast
@@ -272,6 +326,8 @@ export interface FightSetup {
   assist: Assist;
   /** The first catch: the meter does not drain, so the fish cannot get away. */
   tutorial?: boolean;
+  /** A legend: the bar shows its crown. */
+  legend?: boolean;
   /** A Magpie Hook chest appears in the bar during this fight. */
   chest?: boolean;
 }
@@ -609,6 +665,8 @@ export function landFish(
     dropped = true;
   }
   const { first, record } = g.fishing.note(fish.id, length);
+  if (fish.rarity === "legend")
+    setFlag(g, legendFlag(fish.id, g.day.clock.day));
   const xp = catchXp(fish, opts.perfect);
   return {
     fish,

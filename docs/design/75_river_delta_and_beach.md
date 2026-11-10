@@ -1,7 +1,7 @@
 # 75 River delta and Beach (steps 1 to 4 built)
 
 Status: draft, written 2026-11-08, owner answers recorded the same day (note 71).
-Steps 1 to 4 are built (2026-11-09, #640, see "Built status" at the end); the elf's house was built later (#641, "Built status"); pots and the legend are not. M3b. It designs the River delta map with the Beach at its east end (note 19,
+Steps 1 to 4 are built (2026-11-09, #640, see "Built status" at the end); the elf's house was built later (#641, "Built status"); pots and the Great Hearthfin legend are built since (note 21). M3b. It designs the River delta map with the Beach at its east end (note 19,
 decision 13). Overview and owner questions: `71_map_areas_overview.md`. Stardew
 facts are from the saved Beach page (read 2026-11-08), as ideas only (ADR 0002).
 

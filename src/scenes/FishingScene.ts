@@ -16,6 +16,7 @@ import {
   type Bite,
   type CatchResult,
   type RodDef,
+  legendGates,
 } from "../core/fishing";
 import {
   BAITS,
@@ -334,7 +335,12 @@ export class FishingScene extends Phaser.Scene {
     this.effects = fx;
     this.pending = bite(
       this.cfg.kind ?? "river",
-      { season, minutes: g.day.clock.minutes, raining: isRaining(g.weather) },
+      {
+        season,
+        minutes: g.day.clock.minutes,
+        raining: isRaining(g.weather),
+        ...legendGates(g, this.rod.id),
+      },
       Math.random,
       this.tutorial,
       fx,
@@ -399,6 +405,7 @@ export class FishingScene extends Phaser.Scene {
         width: barWidth(this.rod, this.assist, this.effects.bar),
         assist: this.assist,
         tutorial: this.tutorial,
+        legend: b.fish.rarity === "legend",
         chest: this.chestPrize !== undefined,
       },
       Math.random,
@@ -448,7 +455,9 @@ export class FishingScene extends Phaser.Scene {
 
   private describe(r: CatchResult): string {
     const lines = [
-      `You caught a ${r.fish.name}! ${r.length} cm.`,
+      r.fish.rarity === "legend"
+        ? `A legend! You caught ${r.fish.name}! ${r.length} cm.`
+        : `You caught a ${r.fish.name}! ${r.length} cm.`,
       r.quality === "normal" ? "" : `${QUALITY_LABEL[r.quality]} quality.`,
       r.perfect ? "A perfect catch!" : "",
       r.first ? "First catch!" : r.record ? "New record!" : "",
@@ -517,7 +526,23 @@ export class FishingScene extends Phaser.Scene {
         h * f.chestProgress,
       );
     }
-    m.fillStyle(0xffd34a, 1).fillCircle(x + w / 2, y + h - f.fishPos * h, 9);
+    const fy = y + h - f.fishPos * h;
+    m.fillStyle(0xffd34a, 1).fillCircle(x + w / 2, fy, 9);
+    if (f.setup.legend) {
+      // The crown of a legend: three points over the fish.
+      const cx = x + w / 2;
+      m.fillStyle(0xfff3b0, 1).fillTriangle(
+        cx - 9,
+        fy - 10,
+        cx - 9,
+        fy - 20,
+        cx - 3,
+        fy - 13,
+      );
+      m.fillTriangle(cx - 5, fy - 13, cx, fy - 24, cx + 5, fy - 13);
+      m.fillTriangle(cx + 3, fy - 13, cx + 9, fy - 20, cx + 9, fy - 10);
+      m.fillRect(cx - 9, fy - 12, 18, 4);
+    }
     m.fillStyle(0x000000, 0.5).fillRect(x + w + 16, y, 14, h);
     m.fillStyle(0xffe9a0, 1).fillRect(
       x + w + 16,

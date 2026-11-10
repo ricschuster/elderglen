@@ -174,9 +174,9 @@ legend waits (below).
   drawn on it; the ferry exit on the delta is 3 wide at the dock's south edge; the
   six lanterns and the bench are plain solid tiles with no label; the chest
   contents above; a full backpack leaves the chest for later.
-- **Not built:** the legend, the Hearthwell Carp (it needs a legend rarity, the top
-  rod gate, a dusk and rain condition together and the crown, which the legends
-  slice builds); lantern glow and the night look; any ferry animation (it fades
+- **Legend built since (2026-11-10, #596):** the Hearthwell Carp is in the cove
+  table (autumn, dusk, rain, Hearthwell Rod, once a year), see note 21 "Built in slice 4, part three".
+- **Not built:** lantern glow and the night look; any ferry animation (it fades
   like a door); pots; the mist-only dawn alternative (not needed, the treasure spot
   stands).
 - **Playtest:** `npm run playtest:cove` (finds the ferry a wreck, repairs it by

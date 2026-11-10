@@ -571,8 +571,7 @@ of the common band). The river channels use the River table, as the farm pond do
 The roster now holds 32 fish, so Whole Roster stays held back. The rods, Plain, Fine
 and Salted Bait and the lures are sold at the fisher's counter in her hut, and
 the general store no longer sells them. Salted Bait can be fitted and works at the
-sea only. Shellfish pots are built since (see "Built in slice 4, part one"). The Pearl Lobster on the rod is built since. Not built: the Great Hearthfin legend,
-and the legends. The cove's 8 ordinary fish are built (#644, note 76), and so are the other lakes. Issue #596 stays open for these.
+sea only. Shellfish pots are built since (see "Built in slice 4, part one"). The Pearl Lobster on the rod is built since. The five legends are built since (slice 4, part three). The cove's 8 ordinary fish are built (#644, note 76), and so are the other lakes. Issue #596 stays open for these.
 
 ## Built in slice 4, part one: shellfish pots (2026-11-10, issue #596)
 
@@ -632,6 +631,38 @@ Placeholder numbers where marked.
 - **Not built:** the Great Hearthfin and the other legends, trash and the
   recycler, bundles 13 to 18, the lobster's own bar fight if one is wanted.
 
+## Built in slice 4, part three: the five legends and the crown (2026-11-10, issue #596)
+
+Data is the five `legend` rows of `src/content/fish.json`; rules are in
+`src/core/fishing.ts` (`legendOpen`, `legendGates`, `legendFlag`). Numbers are
+placeholders and follow the table above and note 07.
+
+- **Where:** The Hearthwell Carp in the cove, Grandmother Hush in the forest lake,
+  the Valley King in the river table, Moonlit Mother in the mountain lake, Great
+  Hearthfin in the sea. Prices are note 07's (4000, 3000, 3500, 3500, 3000).
+  Conditions are the table: a new optional `weather` field (`rain` or `clear`)
+  sits beside `time`, so "dusk, rain" and "night, clear" are one row each.
+- **Gates:** only the Hearthwell Rod (decision 13), and only once the Water room
+  is done at the hall (this also opens the cove, so one gate serves all five; the
+  note says the four others open after bundles 13 to 18, which are the Water room's
+  six). Never on the tutorial cast.
+- **Once a year (decision 13a, "can be caught again each year"):** landing a
+  legend raises the world flag `legend-<id>-<year>`, and that legend cannot bite
+  again until the next year. A lost fight does not use it up. This reads the note as
+  once per year, not as free repeat catches; the owner may prefer otherwise.
+- **The draw:** a legend has weight 2 against a common fish's 6, a placeholder.
+- **Bar:** the fish's own behaviour and difficulty (85 to 100). A legend wears a
+  crown in the bar (`FightSetup.legend`, drawn over the fish). Assist level 2 skips
+  the fight as for any fish.
+- **Catch screen:** "A legend!" and the usual length, record and first catch lines.
+- **Tracker:** legends are in the roster, so the completion tracker's fish counter
+  counts them, and Whole Roster now needs 52 (47 plus the five legends).
+- **Not built, and why:** the Valley King also bites in the farm pond, because the
+  pond uses the river table and the maps carry no kind to tell them apart; a map
+  kind for the pond would fix it. The Hearthwell river is terrain only (#661), so
+  nothing there is fished yet. The 47th fish (the pond's unique fish) is still not
+  in the data, so Whole Roster is out of reach until it is.
+
 ## Touch and accessibility
 
 - Tap anywhere to lift the marker, as the bar is one input. Check on a real
@@ -656,7 +687,7 @@ Placeholder numbers where marked.
   output odds.
 - The lengths per fish, and the units.
 - The exact price of each fish within its band, in `07_tuning_numbers.md`.
-- The four new legends: final times, weather and sell prices.
+- The legends: final times, weather and sell prices (the first build used note 07's prices); whether a legend is once a year or free to repeat; the farm pond holding the Valley King.
 - The completion tracker: what counts, the weights and the reward (a note of its
   own).
 - The Pearl Lobster's final rod and pot odds (tuning). With junk, a pot gives

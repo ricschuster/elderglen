@@ -303,7 +303,7 @@ Built numbers (`src/core/fishing.ts`, `src/content/fish.json`, `rods.json`):
   Pin urchin 160, Seaweed 20. Tide pool footbridge: 300 wood. Forage caps: marsh 3,
   Beach 5, tide pools 1.2 a night.
 - Fish sell prices by rarity: common 40 to 90g, uncommon 100 to 200g, rare 250
-  to 500g, cove fish 400 to 700g. Legends: Hearthwell Carp 4000g, Valley King
+  to 500g, cove fish 400 to 700g. Legends (built, `fish.json`): Hearthwell Carp 4000g, Valley King
   3500g, Moonlit Mother 3500g, Grandmother Hush 3000g, Great Hearthfin 3000g.
   Pearl Lobster 800g.
 - Pots: 150g in the shop, one bait a day (any bait), junk 38 in 100 or 30 with

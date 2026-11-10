@@ -200,7 +200,7 @@ describe("the Water room reward gate", () => {
 });
 
 describe("cove fishing (note 21)", () => {
-  const cf = FISH.filter((f) => f.water === "cove");
+  const cf = FISH.filter((f) => f.water === "cove" && f.rarity !== "legend");
   const at = (
     season: "spring" | "summer" | "fall" | "winter",
     h: number,

@@ -188,7 +188,9 @@ describe("the Mountain map (note 74, steps 1 to 3)", () => {
   });
 
   it("has the six lake fish and no river fish of its own", () => {
-    const lake = FISH.filter((f) => f.water === "mountain-lake");
+    const lake = FISH.filter(
+      (f) => f.water === "mountain-lake" && f.rarity !== "legend",
+    );
     expect(lake.map((f) => f.id).sort()).toEqual(
       [
         "arctic-char",
