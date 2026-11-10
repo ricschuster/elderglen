@@ -431,7 +431,7 @@ are from memory and unchecked.
 
 Slice 1 built (`animals.ts`), all placeholders: base coop 4000g, 300 wood, 100
 stone, 3 days, holds 4. Chicken 800g, grows in 4 fed days, one egg a night (50g,
-energy 50, from memory). Silo 240 hay, hay 50g each at the carpenter, a cut weed
+energy 50, from memory). Silo 240 hay (100g, 100 stone, 10 clay, 5 copper bars, 2 days), hay 50g each at the carpenter, a cut weed
 gives 2. Pet +15 friendship and +32 mood, grass +8 and 255 mood, unfed -20 and
 -100, unpetted -10 and -30, slept outside halves mood. Start friendship 0, mood
 128. Slice 2 (coop tiers) built, placeholders: big coop 10000g, 400 wood, 150 stone,
@@ -571,8 +571,8 @@ Decided with the owner. Prices and formulas are Stardew's, from the saved
 Sprinkler, Fertilizer, Fruit Trees, The Cave and Artisan Goods pages, unless
 marked ours. Recipes are in `34_crafting.md`.
 
-- Sprinkler sell prices (built 2026-11-07, as items): sprinkler 100g, quality sprinkler 450g, iridium
-  sprinkler 1,000g. Sprinklers are crafted and never sold in the shop.
+- Sprinkler sell prices (built 2026-11-07, as items): sprinkler 100g, quality sprinkler 450g (the
+  iridium sprinkler, 1,000g, is not built: it needs iridium). Sprinklers are crafted and never sold in the shop.
 - Fertilizer shop: basic fertilizer, basic retaining soil and speed-gro cost
   100g from Spring 15 of year 1. Quality fertilizer, quality retaining soil and
   deluxe speed-gro cost 150g from year 2. Sell prices: basic fertilizer 2g,
@@ -580,7 +580,11 @@ marked ours. Recipes are in `34_crafting.md`.
   speed-gro 20g, deluxe speed-gro 40g.
 - Fertilizer yield per craft: basic fertilizer 1, quality fertilizer 2, basic
   retaining soil 1, quality retaining soil 2, speed-gro 5, deluxe speed-gro 5.
-  Our speed fertilizer takes the speed-gro slot (`34_crafting.md`).
+  Our speed fertilizer takes the speed-gro slot (`34_crafting.md`). Built
+  (`fertilizer.ts`, audit 2026-11-10): five items only, with one speed fertilizer
+  (+10 percent growth, 20g sell, 100g buy) and no deluxe speed-gro. Shop prices
+  are 100g and 150g from year 2 as above, and the sell prices match. Craft
+  recipes exist for basic fertilizer and basic retaining soil only.
 - Sprinkler add-ons are a Ring 2 item (owner, 2026-10-31), not in slice 1.
   Stardew sells 4 for 20 Qi Gems in the Walnut Room and rarely drops them from
   monsters in special quests (saved Pressure Nozzle and Enricher pages). Ours
@@ -602,8 +606,8 @@ marked ours. Recipes are in `34_crafting.md`.
 - Fruit trees built 2026-11-07 (placeholders, ours unless the line above says
   otherwise): fruit eats for 38 energy at normal quality (Stardew's figure from
   memory, SC-52); a tree holds up to 3 fruit; a year for grading is the calendar
-  year (56 days now, so one grade per 56 days after maturity, and it grows as
-  seasons are added); a mature tree falls in as many axe swings as a common tree,
+  year (`DAYS_PER_YEAR` is 112 now that there are four seasons, so one grade per 112
+  days after maturity); a mature tree falls in as many axe swings as a common tree,
   gives 12 wood plus foraging level up to 4, 12 foraging experience, and its
   sapling back; a young tree falls in one swing for 4 wood; a sapling sells for
   half its price. What blocks a young tree's growth: a weed, rock, tree, another
@@ -808,23 +812,30 @@ Source: `src/content/farm-types.json` and the farm map JSON.
 
 Source: `src/content/hats.json`, `src/content/festivals.json`.
 
-- Hats: four placeholders, drawn as a coloured block on the player. The Parade
+- Hats: 28 now in `hats.json` (this paragraph describes the first four), drawn as
+  a coloured block on the player. The Parade
   Ribbon is free, given the first time the player goes to the Hat Parade. The
   Straw Boater (300g), Feathered Cap (500g) and Wool Beret (400g) sell at the
   parade's counter, once each. The counter only opens after the player has gone
   in. Stardew's hat prices run from 1,000g up (note 10), so these are low on
   purpose, since the hatter's shop and achievement hats are not built.
+- Built since (audit 2026-11-10): Harvest Showing (fall 9, showing and token
+  counter), Hollow Eve (fall 21, maze), Frostday (winter 8) and Midwinter Feast
+  (winter 20), each with a counter of hats and furniture. Only Cake Day and
+  Lamplight Evening still have an empty counter.
 - Seedswap Fair (spring 21): the counter sells mixed seeds at 20g each, no
   limit. Mixed seeds sell for 5g, so this is a cheap way to try a random crop.
 - Cake Day (summer 8) and Lamplight Evening (summer 20): in the calendar with
   a blurb and an empty counter. Their content waits for a note.
-- Fall and winter festivals wait for the seasons (build 4).
 
 ## Furniture (build 8, placeholders, ours)
 
 Source: `src/content/furniture.json`, `src/core/furniture.ts`.
 
-- Ten one tile pieces (stool 60g, chair 90g, mat 80g up to armchair 400g).
+- 26 entries now in `furniture.json` (the first ten are described here; the
+  rest are festival pieces, winter pieces up to the 520g pine wardrobe, the
+  2,000g workbench and the 200,000g Furniture Catalogue).
+- The first ten were one tile pieces (stool 60g, chair 90g, mat 80g up to armchair 400g).
   Prices are placeholders, well under Stardew's. Two are rugs, which can be
   walked on. No stacking, no multi tile pieces.
 - The carpenter shows 4 of the 10 each day, a hash of the day number, the same
@@ -833,7 +844,10 @@ Source: `src/content/furniture.json`, `src/core/furniture.ts`.
   It is placed with Use in the house and taken up with Action or the hand.
 - A house upgrade moves pieces to the new map at the same tile if it is open,
   else into the pack, else a stash that empties into the pack when room opens.
-- Not built: the catalogue (copies at 0g), wallpaper and floors, bundle furniture
+- The Furniture Catalogue is built: 200,000g at the carpenter once the house is
+  tier 1, placed in the house, and Action on it gives copies of catalogue pieces
+  at 0g (`furniture.ts`).
+- Not built: wallpaper and floors, bundle furniture
   rewards (no bundle names one yet), the per-people catalogues.
 
 ## Dehydrator (build 5, 2026-11-07, note 66, placeholders)
