@@ -77,6 +77,6 @@ describe("summit scene script", () => {
     ]
       .map((b) => JSON.stringify(b))
       .join("");
-    expect(all.includes("—")).toBe(false);
+    expect(all.includes("\u2014")).toBe(false);
   });
 });
