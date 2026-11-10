@@ -1152,7 +1152,13 @@ export class FarmScene extends Phaser.Scene {
   private pickUp(): void {
     if (!this.outdoorSoil || this.state.ground.count === 0) return;
     const here = tileOf(this.pos, PLAYER, this.map.tileSize);
-    if (this.state.ground.collect(this.state.inventory, here, pickupRadius()))
+    if (
+      this.state.ground.collect(
+        this.state.inventory,
+        here,
+        pickupRadius(this.state.equipment.magnetBonus()),
+      )
+    )
       this.render();
   }
 

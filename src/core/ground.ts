@@ -11,12 +11,12 @@ export interface Pile {
 /**
  * How near the player must be to pull goods in, in tiles (Chebyshev). The base
  * is ours, a placeholder: the saved Stardew pages give only that rings add 1 or
- * 2 tiles of magnetism. Later buffs and rings add to it here.
+ * 2 tiles of magnetism. Magnet rings add to it through `bonus` (`equipment.ts`).
  */
 export const BASE_PICKUP_RADIUS = 1;
 
-export function pickupRadius(): number {
-  return BASE_PICKUP_RADIUS;
+export function pickupRadius(bonus = 0): number {
+  return BASE_PICKUP_RADIUS + bonus;
 }
 
 /**
