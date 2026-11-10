@@ -140,9 +140,10 @@ scene is not checked.
   through a choice of how to take the toast. The scene closes on the steward's
   last line. The line count follows the cast's household count
   (`20_ring1_cast.md`) and is checked against it at writing.
-- **Hats.** A villager's hat in the scene is the one the player gave them, or
-  their usual hat if none. This asks the hat system for a per-villager gift
-  record, which the friendship design must keep.
+- **Hats.** Every villager wears their own usual hat. No hat is given to
+  villagers, so no per-villager gift record exists (owner, 2026-11-10; see
+  "Summit build decisions"). Hats are bought and cannot be gifted
+  (`38_achievements.md`).
 - **The keepsake is a lamp that never gutters,** a plain brass lamp in the
   lamp-makers' style with a small flame that holds steady through ash and wind.
   It is furniture, delivered by mail with the hatter's hat, and works in the
@@ -252,6 +253,36 @@ Each had a Stardew option, and the owner took the recommended one.
   is built (2026-11-08, note 24): the stove calls `noteCooked`, and the cooking
   counter now counts dishes cooked of the dish list, so it is no longer locked.
 
+## Summit build decisions (owner, 2026-11-10)
+
+Each had a Stardew option, and the owner took the recommended one.
+
+- **No hat gift record.** The scene shows each villager in their usual hat.
+  Note 61 item 11 (a per-villager gift record) is removed. Giving hats to
+  villagers would be its own system, and one two-minute scene does not justify
+  it. Stardew has no such record to my knowledge (SC-104, unchecked).
+- **Valley summit: designed now, built with ring 2.** The rule above stands
+  (mean of the rings that exist, fires when every ring is at 100). Only ring 1's
+  summit is built now. With one ring the valley figure would equal ring 1's, so
+  the page hides it until ring 2 exists. Stardew has one total only, so it has
+  no such figure (checked on the saved Perfection Tracker page).
+- **The scene is built with placeholder lines.** The steward's toast, Old
+  Greencoat's line and the household lines sit in a data file under
+  `src/content/`, like `EndScene`'s placeholder text. Timing is tuned now and
+  the real text swaps in with the cast voice sheets. Stardew's 100 percent
+  scene is unchecked (SC-104).
+- **The lamp arrives by mail.** A mail attachment gains an optional `furniture`
+  id (`src/core/mail.ts`), and the lamp is added to the house stock. One core
+  change with a test. Stardew mailing furniture and keepsakes is from memory
+  (SC-105).
+- **Build order for the summit slice.** (1) A `summit` achievement and its hat
+  at the hatter, fired by ring 1 reaching 100 (rounded down). (2) The mail
+  `furniture` attachment, the lamp furniture entry and the hatter's letter.
+  (3) The morning-after trigger: the steward walks from the Outpost and calls
+  the player to the hall. (4) The scene with placeholder lines and the player's
+  one choice of how to take the toast. (5) Play resumes. Slices 1 and 2 are
+  testable without art or the scene.
+
 ## Open
 
 - The emberseed's days to grow.
@@ -259,6 +290,8 @@ Each had a Stardew option, and the owner took the recommended one.
 - Ring 2's weights and the collectible's name and look, in the ring 2 design
   (#20). Ring 3's total only if it is built.
 - The scene's actual lines and the lamp's art, with the voice sheets.
+- The steward's walk and the hall scene's staging need the Outpost and the
+  hall interior to exist as places (notes 77 and 16). Both are built as shells.
 
 Stardew details above come from the saved Perfection Tracker, Stardrop and
 Movie Theater pages, read on 2026-10-31.
