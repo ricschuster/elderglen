@@ -324,13 +324,12 @@ north exit. Tests: `tests/hearthwell.test.ts` ("the Hearthwell shell"). Playtest
 
 **Choices made where the notes left gaps (for the owner):**
 
-- **The farm keeps its shop, Orders and Request counters.** Only the hall and sawmill doors move,
-  as the issue says. Hearthwell adds a second set as stand-ins: the store counter (`shop`
-  service) and the Help Wanted board (`requests`, two tiles left of the door) on the general
-  store's bottom row, and the smithy counter (`smith`) on its door tile. Both sets use the
-  same game state, so they are the same shop and board. The farm's counters leave when the
-  interiors (#646) land. The bot and the playtests keep shopping at the farm (a Hearthwell
-  trip is a long walk).
+- **The farm's shop, Orders and Request counters are gone** (owner decision 2026-11-09, see the
+  last section). Hearthwell holds the store counter (`shop` service, now inside the general
+  store), the Help Wanted board (`requests`, two tiles left of the door) and the Special
+  Orders board (`orders`, two tiles right of the door) on the store's bottom row, and the
+  smithy counter (`smith`). The farm's shop building is scenery. The bot and the playtests
+  shop in town (a Hearthwell trip is a long walk, so the sim pacing was measured: see below).
 - **The smith menu stays whole.** The Hearthwell smithy counter opens the existing smith screen
   (ore, coal, tools), as the Mountain forge does. Splitting upgrades and geode cracking to town
   and leaving ore at the forge waits for #646.
@@ -377,11 +376,9 @@ every interior.
 
 **Choices made where the notes left gaps (for the owner):**
 
-- **The farm keeps its shop, Orders and Request counters.** Note 77 says only the hall and sawmill
-  doors move off the farm, and the shell's choice ("The farm's counters leave when the interiors land")
-  would send every early shop trip across town, which the sim bot and playtests do not do. Hearthwell
-  now has the real store counter inside the general store. Both use the same game state. **Owner
-  decision wanted:** remove the farm's counters (the shop building then becomes scenery) or keep them.
+- **The farm's counters were kept at first, then removed.** The first build kept them so the sim
+  bot and playtests did not walk across town. The owner decided on 2026-11-09 to remove them
+  (see the last section); the shop building is now scenery.
 - **Counter moves.** The store's stand-in `shop` counter and the smithy's `smith` counter left the
   streets and stand inside their interiors. The Help Wanted board stays outside the store, left of the
   door (note 50: "outside the store"). The Outpost's two boards stay outside on its wall, with the
@@ -413,3 +410,35 @@ every interior.
   smith screen is split: see note 74 "Owner decisions 2026-11-09".
 - **Sim pacing is measured, then retuned** only if bundle completion moved a lot against
   the pre-map baseline (our own balance check, no Stardew equivalent).
+
+## Built 2026-11-09: farm counters removed, sim pacing measured
+
+The farm's shop, Orders and Request counters are gone from both farm maps, and the shop
+building is scenery. The Special Orders board (`orders`) now stands on the general store's
+bottom row, right of the door (x 24, y 28, as Help Wanted is at x 20). The Fall 2 Orders
+intro still opens on the farm on waking, and its text now says the board is in Hearthwell.
+The sim bot shops at the general store (`goToService("general-store", "shop")`) and the
+browser playtests (`play`, `touch`, `hearthwell`) shop in town.
+
+**Sim pacing** (`npm run sim`, 30 seeds each, days to finish; the farm start to the store
+is about 27 game minutes each way):
+
+| Persona | Measure | Before (origin/main) | After |
+| --- | --- | --- | --- |
+| Expert | all played bundles, median (finished) | 88 (28 of 30) | 88 (28 of 30) |
+| Expert | spring crops / smiths / dyers, median | 18 / 54 / 60 | 18 / 54 / 60 |
+| Intermediate | all played bundles, median (finished) | 90 (25 of 30) | 90 (22 of 30) |
+| Intermediate | spring crops, finished | 30 of 30 | 27 of 30 |
+| Casual | all played bundles | 0 of 30 | 0 of 30 |
+
+Season 1 money is unchanged (expert 4110 to 4110, intermediate 4189 to 4234). A change this
+small does not call for a retune, so no tuning number in note 07 moved.
+
+A first run with the bot only repointed at the store looked bad (expert all bundles 28 to 10
+of 30, season 1 money 4110 to 1949). The cause was the bot, not the game: with no gold left
+it walked to the store every day and bought nothing, and the long days then pushed shipping
+past bedtime. The bot now skips the trip when it cannot afford any seed it is short of
+(`canAffordSeed` in `scripts/sim/bot.ts`). Buying seeds for several days at once was tried
+and made it worse (spare seeds tied up the gold), so it was dropped.
+
+Unverified: the three browser playtests were edited but not rerun in this change.

@@ -346,6 +346,20 @@ async function endScreen() {
   return true;
 }
 
+/** The store is in Hearthwell: out of the farm's east exit, along to the store door, in. */
+async function enterStore() {
+  await bot.walkTo(38, 17);
+  await walkThrough("right", 1200, "hearthwell");
+  await bot.walkTo(22, 29);
+  await walkThrough("up", 1200, "general-store");
+}
+async function leaveStore() {
+  await bot.walkTo(7, 8);
+  await walkThrough("down", 1200, "hearthwell");
+  await bot.walkTo(1, 61);
+  await walkThrough("left", 1200, "farm");
+}
+
 async function visitShop(day) {
   const s0 = await bot.snap();
   const keep = await reserve();
@@ -363,7 +377,8 @@ async function visitShop(day) {
   const def = seedDeficit(s0);
   if (sells.length === 0 && Object.keys(def).length === 0) return;
   log("shop: sell", JSON.stringify(sells), "deficit", JSON.stringify(def));
-  await openService(33, 19, "shop");
+  await enterStore();
+  await openService(5, 2, "shop", "up");
   await bot.shot(`shop-d${day}`);
   // Sell first so the money funds the seeds.
   if (sells.length > 0) {
@@ -427,6 +442,7 @@ async function visitShop(day) {
       );
   }
   await closeScreen("shop");
+  await leaveStore();
 }
 
 // ---------- farm work

@@ -31,6 +31,7 @@ const MAPS = Object.fromEntries(
     "quarry",
     "cove",
     "hearthwell",
+    "general-store",
   ].map((id) => {
     const map = JSON.parse(
       fs.readFileSync(`${ROOT}src/content/maps/${id}.json`, "utf8"),

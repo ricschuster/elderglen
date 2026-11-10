@@ -409,40 +409,57 @@ if (m1 <= m0)
   finding("the stick stopped working while a second finger tapped Use");
 else log("stick plus Use at once: the stick kept moving");
 
-// 4. Shop by touch.
-await walkTo(33, 19);
-await faceTo("down");
-await actTool();
-await sleepMs(300);
-if (!(await sceneNow()).includes("shop"))
-  finding("Action facing the shop door did not open the shop");
-else {
-  await checkSizes("shop");
-  const m = (await bot.snap()).money;
-  // Shop rows are buttons only (#545): a row tap selects, the buttons act.
-  await tapRowButton("shop", "Parsnip seeds", "Buy 1");
-  const m2 = (await bot.snap()).money;
-  if (m2 >= m) finding("tapping Buy 1 did not buy one");
-  await tapLabel("shop", "Buy 5");
-  const m3 = (await bot.snap()).money;
-  if (m3 >= m2) finding("tapping Buy 5 did not spend money");
-  const have = bot.countBase(await bot.snap(), "parsnip");
-  if (have > 0) {
-    await tapRowButton("shop", "Parsnip  x", "Sell 1");
-    const m4 = (await bot.snap()).money;
-    if (m4 <= m3) finding("tapping Sell 1 did not sell one");
-    const rows = (await targets("shop")).filter((t) => t.label === "Sell all");
-    if (rows.length) await tap(rows[0].cx, rows[0].cy, 200);
-  }
-  await tapLabel("shop", "Close");
+// 4. Shop by touch, in Hearthwell's general store (the farm has no counters).
+async function shopByTouch() {
+  await walkTo(22, 29);
+  await faceTo("up");
+  await actTool();
+  await sleepMs(900);
+  if ((await bot.dbg()).map !== "general-store")
+    finding("Action on the general store door did not enter the store");
+  await walkTo(5, 2);
+  await faceTo("up");
+  await actTool();
   await sleepMs(300);
-  const sc = await sceneNow();
-  if (sc.includes("shop") || !sc.includes("farm"))
-    finding("tapping Close did not return to the farm");
-  else log("shop by touch: buy, sell, close done");
+  if (!(await sceneNow()).includes("shop"))
+    finding("Action facing the store counter did not open the shop");
+  else {
+    await checkSizes("shop");
+    const m = (await bot.snap()).money;
+    // Shop rows are buttons only (#545): a row tap selects, the buttons act.
+    await tapRowButton("shop", "Parsnip seeds", "Buy 1");
+    const m2 = (await bot.snap()).money;
+    if (m2 >= m) finding("tapping Buy 1 did not buy one");
+    await tapLabel("shop", "Buy 5");
+    const m3 = (await bot.snap()).money;
+    if (m3 >= m2) finding("tapping Buy 5 did not spend money");
+    const have = bot.countBase(await bot.snap(), "parsnip");
+    if (have > 0) {
+      await tapRowButton("shop", "Parsnip  x", "Sell 1");
+      const m4 = (await bot.snap()).money;
+      if (m4 <= m3) finding("tapping Sell 1 did not sell one");
+      const rows = (await targets("shop")).filter(
+        (t) => t.label === "Sell all",
+      );
+      if (rows.length) await tap(rows[0].cx, rows[0].cy, 200);
+    }
+    await tapLabel("shop", "Close");
+    await sleepMs(300);
+    const sc = await sceneNow();
+    if (sc.includes("shop") || !sc.includes("farm"))
+      finding("tapping Close did not return to the farm");
+    else log("shop by touch: buy, sell, close done");
+  }
+  await walkTo(7, 8);
+  await faceTo("down");
+  await actTool();
+  await sleepMs(900);
+  if ((await bot.dbg()).map !== "hearthwell")
+    finding("Action on the store door did not return to Hearthwell");
 }
 
-// 5. Hall by touch: in by the door, to a scroll, and back out.
+// 5. Hall by touch: in by the door, to a scroll, and back out. The shop test
+// above runs on the way, since the store is in Hearthwell too.
 // Doors open on Action, not on a walk through.
 await walkTo(38, 17);
 await faceTo("right");
@@ -450,6 +467,7 @@ await actTool();
 await sleepMs(900);
 if ((await bot.dbg()).map !== "hearthwell")
   finding("Action on the farm's east exit did not reach Hearthwell");
+await shopByTouch();
 await walkTo(99, 60);
 await faceTo("up");
 await actTool();

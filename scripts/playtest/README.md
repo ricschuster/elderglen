@@ -25,7 +25,7 @@ errors. The game's weather and forage are random, so reruns differ.
    tablet-sized touch browser (1200x700 CSS pixels, like the SM-T500): the
    stick, the toolbar, till, plant, water and harvest (with Action), a second finger on Use
    while the stick is held, hold Use to chop a tree and its stump, ground goods picked up by walking, the
-   shop, the hall, the bed in the house, the report and Continue on the title
+   shop (in Hearthwell's general store), the hall, the bed in the house, the report and Continue on the title
    screen. It also checks touch target sizes. About 85 seconds.
 
 7. `npm run playtest:controls` checks the input profiles (note 45): a mouse drag
@@ -249,7 +249,7 @@ then steps back on the boat. A scene restart stands in for the walk to the dock.
 
 `node scripts/playtest/hearthwell.mjs` (`npm run playtest:hearthwell`, about 2 minutes,
 `npm run dev` running) leaves the farm by its east exit, walks to the hall and sawmill doors
-and back, uses the carpenter, the Help Wanted board, goes into the store and smithy and uses
+and back, uses the carpenter, the Help Wanted and Orders boards, goes into the store and smithy and uses
 their counters, visits the healer, inn, library, hatter, the Outpost and its rooms and the
 three burrows, reads the two Outpost boards, then goes out by the Mountain and delta exits
 and back, and home.
