@@ -157,7 +157,7 @@ If a walk fails now, look at `farmBlocked()` and the plan first.
 
 `node scripts/playtest/smoke.mjs` (about 60 seconds) opens the newer scenes in a
 fresh game and fails on any console or page error: collections and achievements,
-the smith (cracks a geode), the carpenter list, the mailbox (one letter), the
+the smithy (cracks a geode), the carpenter list, the mailbox (one letter), the
 request board and the open requests list, the village green and hedge maps
 (walks a few tiles), and mine floors 11, 26, 45, 85, 100 and 120. Screenshots go
 to `playtest-out/shots/smoke-*.png`. It does not test festival play (the
@@ -231,7 +231,7 @@ rockfall to the mine mouth, goes into the mine hall and back out, then sleeps. I
 does not play the farm's walk to the Mountain (a scene restart stands in for it).
 
 `node scripts/playtest/forge.mjs` (about 40 seconds, `npm run dev` running) walks to the
-Mountain's forge door, goes in, uses the smith's counter (the dwarf sells and buys ore),
+Mountain's forge door, goes in, uses the smith's counter (the dwarf sells and buys ore and sells weapons),
 comes out, then speaks to the stonekeeper in his yard over the footbridge. A scene
 restart stands in for the walk from the Forest.
 

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { BARS } from "../src/core/ore";
 import {
   ASSIST_DAMAGE,
   BASE_HEALTH,
@@ -9,6 +10,7 @@ import {
   STARTERS,
   WEAPONS,
   buyBack,
+  buyWeapon,
   forgeWeapon,
   healthShown,
   isSafeFromDefeat,
@@ -188,6 +190,23 @@ describe("weapons", () => {
     expect(takeStarter(g, "hazel-switch")).toBe("You already carry one.");
     expect(takeStarter(g, "copper-switch")).toBe("She has no such thing.");
     expect(g.money).toBe(500);
+  });
+
+  it("the dwarf sells each forged tier for coin, from the old bar costs", () => {
+    const g = newGame();
+    g.money = 100;
+    expect(buyWeapon(g, "copper-switch")).toBe("Not enough money.");
+    g.money = 440;
+    expect(buyWeapon(g, "copper-switch")).toBeUndefined();
+    expect(g.money).toBe(0);
+    expect(g.inventory.count("copper-switch")).toBe(1);
+    expect(buyWeapon(g, "copper-switch")).toBe("You already carry one.");
+    expect(buyWeapon(g, "hazel-switch")).toBe("She does not sell that.");
+    for (const w of FORGED) {
+      const { bar, bars, gold } = w.forge!;
+      const barValue = BARS.find((b) => b.id === bar)!.sellPrice;
+      expect(w.price).toBe(gold + bars * barValue);
+    }
   });
 
   it("the smith forges a copper weapon from bars and gold", () => {

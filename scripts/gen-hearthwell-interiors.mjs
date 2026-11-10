@@ -98,7 +98,7 @@ const maps = {
       SHOP_DOOR,
     ],
     out: ["hearthwell", "from_smithy"],
-    services: { 1: ["smithy", "smith"] },
+    services: { 1: ["smithy", "smithy"] },
   },
   hatter: {
     grid: [

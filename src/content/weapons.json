@@ -50,7 +50,8 @@
       "bar": "copper-bar",
       "bars": 4,
       "gold": 200
-    }
+    },
+    "price": 440
   },
   {
     "id": "copper-rolling-pin",
@@ -67,7 +68,8 @@
       "bar": "copper-bar",
       "bars": 4,
       "gold": 200
-    }
+    },
+    "price": 440
   },
   {
     "id": "copper-sling",
@@ -84,7 +86,8 @@
       "bar": "copper-bar",
       "bars": 4,
       "gold": 200
-    }
+    },
+    "price": 440
   },
   {
     "id": "iron-switch",
@@ -101,7 +104,8 @@
       "bar": "iron-bar",
       "bars": 4,
       "gold": 400
-    }
+    },
+    "price": 880
   },
   {
     "id": "iron-rolling-pin",
@@ -118,7 +122,8 @@
       "bar": "iron-bar",
       "bars": 4,
       "gold": 400
-    }
+    },
+    "price": 880
   },
   {
     "id": "iron-sling",
@@ -135,7 +140,8 @@
       "bar": "iron-bar",
       "bars": 4,
       "gold": 400
-    }
+    },
+    "price": 880
   },
   {
     "id": "gold-switch",
@@ -152,7 +158,8 @@
       "bar": "gold-bar",
       "bars": 4,
       "gold": 800
-    }
+    },
+    "price": 1800
   },
   {
     "id": "gold-rolling-pin",
@@ -169,7 +176,8 @@
       "bar": "gold-bar",
       "bars": 4,
       "gold": 800
-    }
+    },
+    "price": 1800
   },
   {
     "id": "gold-sling",
@@ -186,7 +194,8 @@
       "bar": "gold-bar",
       "bars": 4,
       "gold": 800
-    }
+    },
+    "price": 1800
   },
   {
     "id": "hearthsilver-switch",
@@ -203,7 +212,8 @@
       "bar": "hearthsilver-bar",
       "bars": 5,
       "gold": 1500
-    }
+    },
+    "price": 6500
   },
   {
     "id": "hearthsilver-rolling-pin",
@@ -220,7 +230,8 @@
       "bar": "hearthsilver-bar",
       "bars": 5,
       "gold": 1500
-    }
+    },
+    "price": 6500
   },
   {
     "id": "hearthsilver-sling",
@@ -237,6 +248,7 @@
       "bar": "hearthsilver-bar",
       "bars": 5,
       "gold": 1500
-    }
+    },
+    "price": 6500
   }
 ]

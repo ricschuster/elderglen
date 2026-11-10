@@ -64,6 +64,10 @@ else {
     log(`counter rows: ${JSON.stringify(rows)}`);
     if (rows && !rows.some((r) => /copper ore/i.test(r) && /Sell/.test(r)))
       finding("the dwarf does not buy ore");
+    if (rows && !rows.some((r) => /Copper Switch/.test(r)))
+      finding("the dwarf does not sell weapons");
+    if (rows && rows.some((r) => /Forge:|Crack|\(Basic\)/.test(r)))
+      finding("the dwarf still forges, cracks or upgrades");
     await p.keyboard.press("Enter"); // buy 1 of the first row, copper ore
     await sleepMs(400);
     const money1 = await state((s) => s.money);

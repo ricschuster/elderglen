@@ -91,14 +91,14 @@ await step("collections", async () => {
   await close();
 });
 
-await step("smith-geodes", async () => {
-  await overlay("smith");
+await step("smithy-geodes", async () => {
+  await overlay("smithy");
   const before = await farm((g, f, s) => s.inventory.count("geode"));
-  const m = await pickRow("smith", /splits open|Not enough|full/);
-  log("smith crack:", m);
+  const m = await pickRow("smithy", /splits open|Not enough|full/);
+  log("smithy crack:", m);
   const after = await farm((g, f, s) => s.inventory.count("geode"));
   if (/splits open/.test(m) && after !== before - 1)
-    finding(`smith: geode count ${before} -> ${after} after a crack`);
+    finding(`smithy: geode count ${before} -> ${after} after a crack`);
   await close();
 });
 

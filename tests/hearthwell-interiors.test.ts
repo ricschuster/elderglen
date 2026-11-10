@@ -15,7 +15,7 @@ const SHOPS = {
   healer: "counter-healer",
   inn: "counter-inn",
   library: "counter-library",
-  smithy: "smith",
+  smithy: "smithy",
   hatter: "counter-hatter",
 } as const;
 const BURROWS = ["burrow-gardener", "burrow-retired", "burrow-young"];
@@ -91,8 +91,8 @@ describe("the Hearthwell interiors", () => {
 
   it("moves the store and smith counters off the town's streets, as the same kinds", () => {
     expect(maps.get("general-store").services[0]!.kind).toBe("shop");
-    expect(maps.get("smithy").services[0]!.kind).toBe("smith");
-    for (const k of ["shop", "smith"])
+    expect(maps.get("smithy").services[0]!.kind).toBe("smithy");
+    for (const k of ["shop", "smith", "smithy"])
       expect(town.services.some((s) => s.kind === k)).toBe(false);
     // The farm has no shop, Orders or Request counters (note 77, owner decisions 2026-11-09).
     for (const k of ["shop", "orders", "requests"])

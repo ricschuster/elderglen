@@ -25,6 +25,7 @@ import { DebugScene } from "./scenes/DebugScene";
 import { SkillsScene } from "./scenes/SkillsScene";
 import { LiftScene } from "./scenes/LiftScene";
 import { SmithScene } from "./scenes/SmithScene";
+import { SmithyScene } from "./scenes/SmithyScene";
 import { TrainerScene } from "./scenes/TrainerScene";
 import { CraftingScene } from "./scenes/CraftingScene";
 import { CookingScene } from "./scenes/CookingScene";
@@ -74,6 +75,7 @@ const game = new Phaser.Game({
     CatalogueScene,
     LiftScene,
     SmithScene,
+    SmithyScene,
     TrainerScene,
     FurnaceScene,
     ChestScene,

@@ -339,7 +339,7 @@ describe("the Hearthwell shell (note 77, #645)", () => {
     expect(maps.get("general-store").services[0]).toMatchObject({
       kind: "shop",
     });
-    expect(maps.get("smithy").services[0]).toMatchObject({ kind: "smith" });
+    expect(maps.get("smithy").services[0]).toMatchObject({ kind: "smithy" });
   });
 
   it("hangs the Special Orders board on the store's wall beside Help Wanted", () => {
