@@ -6,6 +6,7 @@ import { RECIPES, buildable } from "./crafting";
 import { splitQuality } from "./quality";
 import type { GameState } from "./save";
 import { SKILLS } from "./skills";
+import { ringProgress } from "./completion";
 
 /**
  * Achievements and the hatter (`docs/design/38_achievements.md`). The slice 1
@@ -26,7 +27,9 @@ export type AchievementKind =
   | "requests"
   | "fishKinds"
   | "fishTotal"
-  | "fishAll";
+  | "fishAll"
+  /** A ring's shown percent (rounded down) reaches the threshold (note 39). */
+  | "summit";
 
 export interface AchievementDef {
   id: string;
@@ -154,6 +157,11 @@ export function met(g: GameState, a: AchievementDef): boolean {
       return g.fishing.kinds >= a.threshold;
     case "fishTotal":
       return g.fishing.total >= a.threshold;
+    case "summit":
+      return (
+        (ringProgress(g).find((r) => r.id === "ring1")?.percent ?? 0) >=
+        a.threshold
+      );
     case "fishAll":
       // Waits for the whole roster of note 21: a part roster never counts.
       return (

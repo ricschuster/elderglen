@@ -174,5 +174,12 @@
     "price": 200000,
     "color": "#c8a24a",
     "catalogueBook": true
+  },
+  {
+    "id": "steadfast-lamp",
+    "name": "Steadfast lamp",
+    "price": 0,
+    "color": "#e0a830",
+    "keepsake": true
   }
 ]

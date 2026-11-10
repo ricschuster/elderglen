@@ -264,5 +264,19 @@
       "color": "#4a7a8a",
       "price": 1000
     }
+  },
+  {
+    "id": "summit",
+    "name": "Summit",
+    "goal": "Complete the home valley to 100 percent",
+    "kind": "summit",
+    "threshold": 100,
+    "secret": false,
+    "hat": {
+      "id": "summit-crown",
+      "name": "Summit Crown",
+      "color": "#d8c070",
+      "price": 5000
+    }
   }
 ]

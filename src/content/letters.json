@@ -33,5 +33,18 @@
     "attachment": {
       "gold": 2500
     }
+  },
+  {
+    "id": "summit-letter",
+    "sender": "The hat-makers",
+    "title": "A crown, and a lamp",
+    "body": "The whole valley is tended, and word of it has reached our workshop. There is a hat waiting at the hatter's counter. With this letter comes a brass lamp from the lamp-makers, with a flame that holds steady through ash and wind. Hang it somewhere you will see it.",
+    "trigger": {
+      "kind": "achievement",
+      "id": "summit"
+    },
+    "attachment": {
+      "furniture": "steadfast-lamp"
+    }
   }
 ]

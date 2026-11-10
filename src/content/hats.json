@@ -138,5 +138,10 @@
     "id": "dockside-band",
     "name": "Dockside Band",
     "color": "#4a7a8a"
+  },
+  {
+    "id": "summit-crown",
+    "name": "Summit Crown",
+    "color": "#d8c070"
   }
 ]
