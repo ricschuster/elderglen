@@ -46,7 +46,7 @@ Crops (season, days to grow, seed price, sell price):
 - Hot pepper: summer, 5 days then regrows every 3, 40g, 40g. From memory.
 - Corn: summer, 14 days then regrows every 4, 150g, 50g. From memory.
 - Red cabbage: summer, 9 days, 100g, 260g. Checked against the saved Crops page (2026-11-06). Stardew sells its seed from year two only. We do not.
-- Wheat: summer and fall, 4 days, seeds 10g, sells 25g, inedible, grain for the Fodder bundle (`63_bundle_pools_part_two.md`). Checked against the saved Crops page (2026-11-06).
+- Wheat: summer and fall, 4 days, seeds 10g, sells 25g, inedible, grain for the Fodder bundle (`63_bundle_pools_part_two.md`). Checked against the saved Crops page (2026-11-06). **Not built:** it is not in `crops.json` or `src/`, so the Fodder bundle and beer have no grain yet. Whether to add it is the owner's call (audit, 2026-11-10).
 
 Fall crops (decided 2026-10-31, `35_bundle_pools.md`). The owner chose to match
 the saved Stardew Fall Crops page for our equivalents, as spring and summer do.
@@ -190,13 +190,12 @@ Lumberjack and Tapper wait until trees and wood are a real system.
 
 ## Tool upgrades and energy
 
-Source: `src/core/upgrades.ts`. The hoe and watering can have four tiers (basic,
-copper, steel, gold) bought in the shop for 2000g, 5000g and 10000g. From
-memory for prices. Decided 2026-11-01: all four tools move to Stardew's rule of
-gold plus 5 bars and a 2 day wait, with a fifth grade, when bars exist
-(`44_tool_upgrades.md`). The live shop stays gold only until then.
-A fifth tier above gold is planned (decided 2026-10-29, `21_fishing.md`): a rare
-metal from the deepest mine levels. Not built, and its price is open (#194).
+Source: `src/core/upgrades.ts`. Four tools (hoe, can, pickaxe, axe) have five tiers
+(basic, copper, steel, gold, Hearthsilver). The smith takes 2000g, 5000g and
+10000g for tiers 1 to 3 and nothing in gold for the Hearthsilver step, plus 5
+bars of that grade (copper, iron, gold, Hearthsilver) each step, and keeps the
+tool 2 days (`UPGRADE_COST`, `UPGRADE_BARS`, `UPGRADE_DAYS`; `44_tool_upgrades.md`).
+From memory for prices.
 
 - A swing costs `2 - 0.25 * tier - 0.1 * farmingLevel`, never under 0.5. The
   level term is from memory, the tier term is ours. Energy can now be
@@ -230,10 +229,8 @@ it is a late goal, like the 10,000g tool tier. Hardwood supply is the open part
 (built 2026-11-07: 2 per large stump, note 43; the Woodland farm has 6 that regrow
 every 4 days, the Standard farm 3 that do not, so 100 is out of reach on Standard
 until the Secret Woods exists).
-Temporary stand-in (owner, 2026-11-08, note 43): the carpenter sells Hardwood at
-200g (Stardew's price from memory, unchecked). 100 hardwood is then 20,000g, so
-the stable's materials cost twice its coin price: costly but reachable. Remove it
-when a real supply exists.
+The carpenter's temporary Hardwood sale (200g, owner 2026-11-08) is gone: the
+Secret Woods supply replaced it (#639) and no shop code sells Hardwood now.
 
 ## Backpack
 
@@ -251,7 +248,7 @@ so each tier stacks and sells separately. Bundles take any tier.
   until there is a source for it. From memory.
 - Crops: gold chance is `0.2 * farmingLevel / 10 + 0.01`; silver chance is twice
   that, so a level 10 farmer gets about 21 percent gold and 21 percent silver.
-  Stardew's fertiliser term is left out. From memory.
+  The soil term is in: `0.2 * soil * (level + 2) / 12` is added to the gold chance (`src/core/quality.ts`). From memory.
 - Forage: gold chance is `foragingLevel / 30`, silver up to `foragingLevel / 15`.
   From memory.
   Checked against the wiki on 2026-10-31: both formulas match.
@@ -269,7 +266,7 @@ Source: `21_fishing.md`. All of these are ours and are placeholders.
 
 Built numbers (`src/core/fishing.ts`, `src/content/fish.json`, `rods.json`):
 
-- Cast: 1.2 s to full charge, 20 game minutes per cast, no energy. Bite wait 1.5
+- Cast: 1.2 s to full charge, 20 game minutes per cast, 8 energy at level 0 and 0.1 less per fishing level (`CAST_ENERGY`, `CAST_ENERGY_PER_LEVEL`). Bite wait 1.5
   to 4.5 s, hook window 1.4 s (3 s with assist).
 - Odds weights by rarity: common 6, uncommon 3, rare 1. Dawn ends at 8 am, dusk
   is the 2 hours before nightfall.
@@ -282,7 +279,9 @@ Built numbers (`src/core/fishing.ts`, `src/content/fish.json`, `rods.json`):
   280.
 
 - Rods: Reed Pole 50g, Hazel Rod 400g, Heron Rod 1500g, Hearthwell Rod 4000g.
-  Only the Reed Pole limits fish (common only). Rare fish need fishing level 5.
+  Every rod can hook any fish the season, time and weather allow, and no level
+  gates rare fish (`bite` in `fishing.ts`, note 21). Rods differ in bar width
+  and cast range.
 - Bar width as a share of the track: 0.30, 0.36, 0.42, 0.50 by rod. Assist adds
   30 percent. Cast range in tiles: 4, 6, 8, 10.
 - Bait: Plain 3g (wait x0.7), Fine 12g (x0.5), Salted 8g (sea only, x0.5).
@@ -368,7 +367,7 @@ Source: `16_bundles.md`. All placeholders, ours unless marked.
 - The mines open on a fixed day announced by Old Greencoat. The day is not
   chosen.
 
-## Mines and combat (draft, not built)
+## Mines and combat (floors and combat built in part, see `22_mines.md`)
 
 Source: `22_mines.md`. All of these are ours and are placeholders. Stardew facts
 are from memory and unchecked.
@@ -698,7 +697,7 @@ Source: `24_processing_and_cooking.md`. Code: `cooking.ts`, `src/content/dishes.
 
 Placeholders, not checked against Stardew (`46_desktop_mouse.md`).
 
-- Aim reach: 2 tiles, Chebyshev (`AIM_REACH` in `src/core/aim.ts`). A cursor
+- Aim reach: 1 tile, Chebyshev (`AIM_REACH` in `src/core/aim.ts`, tool reach 1, #547). A cursor
   within it aims at the cursor tile, else at the neighbour toward it.
 - Wheel step: 100 wheel units make one slot step (`WHEEL_STEP` in
   `FarmScene.ts`), one notch of a mouse wheel.
@@ -716,12 +715,13 @@ Source: `22_mines.md`. Code: `mines.ts`, `mining.ts`, `rocks.ts`, `ore.ts`.
 
 - Floor: 20 by 14 tiles, 6 to 9 single pillars, 12 to 16 rocks, made fresh each
   day from a seed of the day and the floor. 1 floor in 4 shows its ladder.
-- Rock mix on floors 1 to 10: 22 percent copper nodes, 8 percent coal, the rest
-  stone. Swings to break at the basic pickaxe: stone 2, copper 3, coal 3.
+- Rock mix on floors 1 to 40 (band 1): 22 percent copper nodes, 6 percent iron
+  from floor 26, 8 percent coal, the rest stone. Bands 2 and 3 are in
+  `mine-bands.json` (floors 41 to 80 and 81 to 120, 120 floors in all). Swings to break at the basic pickaxe: stone 2, copper 3, coal 3.
 - Drops: stone 1 or 2; copper 1, with a 25 percent (+3 per mining level) chance
   of 2 or 3; coal 1, 30 percent chance of 2. Prospector adds 1 at 25 percent.
 - Ladder odds: 1 percent, +0.5 percent per miss, cap 25 percent. The last rock
-  on a floor always hides it. Floor 10 has none (nothing below is built).
+  on a floor always hides it. Floor 120 has none.
 - Pickaxe swing: 2 energy, less 0.1 per mining level, never under 0.5. XP per
   rock: stone 2, copper 5, coal 4.
 - The farm has 16 stone rocks and none respawn yet.
@@ -852,16 +852,16 @@ Source: `src/content/furniture.json`, `src/core/furniture.ts`.
   on mine floors 1 to 10, breaks in 1 swing, drops 1 quartz crystal, gives 3
   mining XP and sells for 25g (Stardew's quartz price, from memory).
 
-- Mine camp chest (built 2026-11-07, placeholders): on every 10th floor (only
-  floor 10 is built), it gives 2 coal, 3 copper ore and one of a quartz crystal,
+- Mine camp chest (built 2026-11-07, placeholders): on every 10th floor, it gives 2 coal, a band ore (copper 3, iron 3, gold 2,
+  `campGiftOre` in `mine-bands.json`) and one of a quartz crystal,
   5 stone or a cave mushroom (by the day) once a day, and nothing can be put in.
 
 - Geodes (built 2026-11-07, placeholders): a geode node is 5 percent of rocks on
   floors 1 to 10, takes 3 swings at the basic pickaxe, gives 4 mining XP and sells
-  for 50g. The smith cracks one for 25g. Outcome weights are in
-  `src/content/geodes.json`: stone 30, coal 15, copper ore 15, quartz 15, river
-  garnet 10 (90g), frost opal 5 (120g), old dwarf cup 10 (40g). The gem and found
-  thing names and prices are placeholders. A Rockhound gets an extra geode from
+  for 50g. The smith cracks one for 25g. This is the first-build table and is superseded: `src/content/geodes.json` now
+  has four geode kinds (geode 50g, frozen 100g, magma 150g, omni 300g from floor
+  21) with a pool per floor band of ores, minerals, artifacts and foraged
+  finds (note 69). The gem and found thing names and prices are placeholders. A Rockhound gets an extra geode from
   5 percent of plain rocks.
 
 ## House upgrades (build 2026-11-07, note 41 and 68, placeholders)
