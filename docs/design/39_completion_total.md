@@ -294,8 +294,14 @@ Each had a Stardew option, and the owner took the recommended one.
   free morning. The walk is told in the report line, not drawn, until art
   exists. The hook for step 4 is `state.summit.scenePending`, read by
   `ReportScene`, which launches the stub `src/scenes/SummitScene.ts`; the real
-  scene replaces its body and ends with `summit.finish()`. Slices 4 and 5 are
-  not built.
+  scene replaces its body and ends with `summit.finish()`. **Slices 4 and 5 are built (2026-11-10):** `SummitScene`
+  plays the Long Table scene from placeholder lines in `src/content/summit.json`
+  (17 household lines, the cast's heads bar the steward and Old Greencoat),
+  with every person in a usual hat drawn as a placeholder figure. The player's
+  one choice (three options) gets a steward reply, the scene closes on the
+  steward's line, then `summit.finish()`, a save and play resumes. Script rules
+  are in `src/core/summitscene.ts`. The real lines and art wait for the voice
+  sheets; the browser look is unchecked.
 
 ## Open
 

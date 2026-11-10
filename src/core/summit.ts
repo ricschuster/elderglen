@@ -16,6 +16,22 @@ export const SUMMIT_TEXT = summitData as {
   callTitle: string;
 };
 
+export interface SummitPerson {
+  name: string;
+  hat: string;
+}
+
+/** The scene's placeholder script (`src/content/summit.json`). */
+export const SUMMIT_SCENE = summitData as unknown as {
+  sceneTitle: string;
+  steward: SummitPerson;
+  toast: string[];
+  greencoat: SummitPerson & { line: string };
+  guests: (SummitPerson & { line: string })[];
+  choices: { id: string; label: string; reply: string }[];
+  closing: string;
+};
+
 export interface SummitSave {
   armed: boolean;
   scenePending: boolean;

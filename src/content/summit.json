@@ -1,5 +1,121 @@
 {
-  "_note": "Placeholder lines (note 39, summit build decisions). Real text comes with the cast voice sheets.",
+  "_note": "Placeholder lines (note 39, summit build decisions). Real text comes with the cast voice sheets. Hats are ids from hats.json: each person's usual hat, never a gift.",
   "callLine": "The steward has walked over from the Outpost and is waiting at your gate. The hall is open, and everyone is there.",
-  "callTitle": "The steward is calling"
+  "callTitle": "The steward is calling",
+  "sceneTitle": "The Long Table",
+  "steward": { "name": "Hall steward", "hat": "peaked-cap" },
+  "toast": [
+    "Friends, neighbours, hold your cups. The hall is mended, and the valley is tended from the hills to the shore.",
+    "Not one corner of it is wanting. We drink to the one who did it."
+  ],
+  "greencoat": {
+    "name": "Old Greencoat",
+    "hat": "tall-brim",
+    "line": "A fine valley. There is more country over the ridge, mind, when you are ready for it."
+  },
+  "guests": [
+    {
+      "name": "The smith",
+      "hat": "slate-cap",
+      "line": "Every tool I sold you came home hard used. Good."
+    },
+    {
+      "name": "The inn keeper",
+      "hat": "rosette-hat",
+      "line": "The kitchen is yours, any evening."
+    },
+    {
+      "name": "The store keeper",
+      "hat": "plaid-brim",
+      "line": "You paid in full and in good seed. I will miss the haggling."
+    },
+    {
+      "name": "The healer",
+      "hat": "buttercup-wreath",
+      "line": "May you need me less than I hope you do."
+    },
+    {
+      "name": "The librarian",
+      "hat": "wool-beret",
+      "line": "I shall write this down. Quietly, so as not to spoil it."
+    },
+    {
+      "name": "The carpenter",
+      "hat": "craftsmans-cap",
+      "line": "Sound beams, sound hall, sound neighbour."
+    },
+    {
+      "name": "The hat-maker",
+      "hat": "gilded-derby",
+      "line": "I made your crown. You made it mean something."
+    },
+    {
+      "name": "The young adults",
+      "hat": "spotted-bow",
+      "line": "We carried the cups ourselves. Do not tell the inn keeper."
+    },
+    {
+      "name": "The retired couple",
+      "hat": "thatch-pin",
+      "line": "We watched the hall go up the first time. This is better."
+    },
+    {
+      "name": "The gardener",
+      "hat": "straw-boater",
+      "line": "Your rows were straight. I checked."
+    },
+    {
+      "name": "The keeper of the farmstead",
+      "hat": "hen-mask",
+      "line": "The hens send their regards, loudly."
+    },
+    {
+      "name": "The smith dwarf",
+      "hat": "clay-cap",
+      "line": "The mountain ran quiet today. It approves."
+    },
+    {
+      "name": "The stonekeeper",
+      "hat": "fur-lined-hood",
+      "line": "Bridges hold. So do people, with care."
+    },
+    {
+      "name": "The trainer",
+      "hat": "peaked-cap",
+      "line": "You hit harder than you did in spring. Sit down, eat."
+    },
+    {
+      "name": "The fisher",
+      "hat": "oilskin-hat",
+      "line": "The river says well done, and wants its bait back."
+    },
+    {
+      "name": "The odd elf",
+      "hat": "spyglass-band",
+      "line": "I saw this coming on the tide. Naturally."
+    },
+    {
+      "name": "The hermit",
+      "hat": "lantern-hood",
+      "line": "I came down for this. Do not make it a habit of mine."
+    }
+  ],
+  "choices": [
+    {
+      "id": "humble",
+      "label": "Wave it off: everyone helped.",
+      "reply": "Hush now. Take the praise and pass the bread."
+    },
+    {
+      "id": "glad",
+      "label": "Raise a cup and thank them all.",
+      "reply": "There. A proper answer. Cups up, everyone."
+    },
+    {
+      "id": "quiet",
+      "label": "Say nothing, and smile.",
+      "reply": "Ha. The quiet ones have always run this valley."
+    }
+  ],
+  "closing": "Eat, rest, and tend your farm. The valley will keep."
 }
