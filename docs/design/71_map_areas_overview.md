@@ -88,8 +88,8 @@ areas need these additions (ten, with the Quarry), all data, with rules in `src/
 1. **Water kinds.** One water tile exists today (`WATER_TILE`), and fishing has one
    `Water` type, the river (`fishing.ts`). Add an object class `water` (a
    rectangle) with a `kind` property: `river`, `forest-lake`, `mountain-lake`,
-   `marsh-lake`, `sea`, `cove`, `woods-pond`. A map `waterKind` property gives the
-   default (the farm pond is `river`). The fish table and the pot kind (fresh or
+   `marsh-lake`, `sea`, `cove`, `woods-pond`, `farm-pond`. A map `waterKind` property gives the
+   default (river when absent; the farm maps set `farm-pond`, a lake, owner 2026-11-10). The fish table and the pot kind (fresh or
    salt) read the kind of the tile fished. The map check proves every water zone
    has a walkable casting spot.
 2. **The massive log.** An object class `log`, solid until chopped with a steel axe
@@ -182,7 +182,7 @@ already, so no fish are designed here):
 
 | Water | Map | Open |
 | --- | --- | --- |
-| Farm pond (river table) | `farm` | Built |
+| Farm pond (lake table) | `farm` | Built |
 | Forest lake | `forest` | From the start |
 | Mountain lake, upper river | `mountain` | From the start |
 | River, both arms | `hearthwell` | From the start |

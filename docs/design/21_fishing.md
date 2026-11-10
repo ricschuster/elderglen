@@ -481,8 +481,8 @@ What the build settled where the note was silent. All numbers are placeholders
 and are in `07_tuning_numbers.md`.
 
 - **One table, the farm pond.** Both farm maps have one pond (the ground
-  layer's water tile), so that pond is the fishable water, on the river table
-  (the nine River fish, `src/content/fish.json`). The other waters, the delta
+  layer's water tile), so that pond is the fishable water, on the lake table
+  (since 2026-11-10; the first build used the River fish, `src/content/fish.json`). The other waters, the delta
   fisher and the Water room bundles are slice 3 and later. The small east pond
   of note 55 is not drawn yet, so the one pond is fishable.
 - **The rod is a backpack item**, not a fifth tool (the toolbar has four tool
@@ -567,7 +567,7 @@ Bait, lures and the fishing achievements. Numbers are placeholders and are in
 The River delta map (`75_river_delta_and_beach.md`, "Built status") gives three
 fishable waters. The 7 marsh lake fish and the 10 sea fish of the roster are in
 `fish.json` (placeholder prices; Sunk Boot Loach and Skiff Sprat are 40g, the floor
-of the common band). The river channels use the River table, as the farm pond does.
+of the common band). The river channels use the River table. The farm pond does not: it is a lake (see "Owner decision, 2026-11-10").
 The roster now holds 32 fish, so Whole Roster stays held back. The rods, Plain, Fine
 and Salted Bait and the lures are sold at the fisher's counter in her hut, and
 the general store no longer sells them. Salted Bait can be fitted and works at the
@@ -657,11 +657,26 @@ placeholders and follow the table above and note 07.
 - **Catch screen:** "A legend!" and the usual length, record and first catch lines.
 - **Tracker:** legends are in the roster, so the completion tracker's fish counter
   counts them, and Whole Roster now needs 52 (47 plus the five legends).
-- **Not built, and why:** the Valley King also bites in the farm pond, because the
-  pond uses the river table and the maps carry no kind to tell them apart; a map
-  kind for the pond would fix it. The Hearthwell river is terrain only (#661), so
+- **The farm pond is a lake** (fixed 2026-11-10, see "Owner decision, 2026-11-10"), so
+  the Valley King no longer bites there. **Not built, and why:** the Hearthwell river is terrain only (#661), so
   nothing there is fished yet. The 47th fish (the pond's unique fish) is still not
   in the data, so Whole Roster is out of reach until it is.
+
+## Owner decision, 2026-11-10: the farm pond is a lake
+
+The farm pond is a lake, not a river, for fishing. The maps carry a `farm-pond`
+water kind (the `waterKind` map property on both farm maps). It draws on the
+forest lake's table (`tableOf` in `src/core/fishing.ts`): Carp, Perch, Fernfin,
+Mushroom Loach, Moonmirror and Hermit Trout. No river fish bites there, so the
+Valley King cannot, and a legend bites only in its own water, so Grandmother
+Hush stays in the forest lake. Pots on the pond are fresh water pots, as on
+every lake (`potKindOf`). Tests: `tests/farmpond.test.ts`.
+
+There is no single "lake table" in the data (the forest, mountain and marsh
+lakes each have one). The forest lake was picked as the gentlest, all common to
+rare fish that suit a small pond. Fish that may want to differ: Hermit Trout (rare,
+rain) and Moonmirror (night) are strong for a farm pond, and Mushroom Loach
+leans on the forest. Placeholder, for the owner to confirm.
 
 ## Touch and accessibility
 
@@ -687,7 +702,7 @@ placeholders and follow the table above and note 07.
   output odds.
 - The lengths per fish, and the units.
 - The exact price of each fish within its band, in `07_tuning_numbers.md`.
-- The legends: final times, weather and sell prices (the first build used note 07's prices); whether a legend is once a year or free to repeat; the farm pond holding the Valley King.
+- The legends: final times, weather and sell prices (the first build used note 07's prices); whether a legend is once a year or free to repeat. (The farm pond holding the Valley King is settled: it does not, owner 2026-11-10.)
 - The completion tracker: what counts, the weights and the reward (a note of its
   own).
 - The Pearl Lobster's final rod and pot odds (tuning). With junk, a pot gives

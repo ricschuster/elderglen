@@ -18,7 +18,6 @@ import { hasFlag, setFlag } from "./worldflags";
 export type Rarity = "common" | "uncommon" | "rare" | "legend";
 export type Behaviour = "mixed" | "smooth" | "sinker" | "floater" | "dart";
 export type Time = "any" | "dawn" | "day" | "dusk" | "night" | "rain";
-/** A table of fish. The farm pond uses the river table (notes 32 and 55). */
 /** A body of water: each kind has its own fish table (note 71). */
 export type Water = WaterKind;
 
@@ -157,13 +156,23 @@ export function legendOpen(f: FishDef, c: Conditions): boolean {
   );
 }
 
+/**
+ * The water whose fish table a water draws on. The farm pond is a lake (owner,
+ * 2026-11-10, note 21): it fishes the forest lake's table, without its legend.
+ */
+export function tableOf(water: Water): Water {
+  return water === "farm-pond" ? "forest-lake" : water;
+}
+
 /** Fish of a water that the season, time and weather allow, whatever the rod. */
 export function fishAvailable(water: Water, c: Conditions): FishDef[] {
   const slot = timeSlot(c.season, c.minutes);
   const rain = c.raining;
   return FISH.filter(
     (f) =>
-      f.water === water &&
+      f.water === tableOf(water) &&
+      // A legend keeps to its own water: the pond only borrows the ordinary table.
+      (f.rarity !== "legend" || f.water === water) &&
       f.seasons.includes(c.season) &&
       (f.time === "any" || (f.time === "rain" ? rain : f.time === slot)) &&
       (f.weather === undefined || (f.weather === "rain") === rain) &&
@@ -212,7 +221,9 @@ export function bite(
   if (tutorial) pool = pool.filter((f) => f.rarity === "common");
   if (pool.length === 0) {
     if (!tutorial) return { kind: "none" };
-    const stand = FISH.find((f) => f.water === water && f.rarity === "common");
+    const stand = FISH.find(
+      (f) => f.water === tableOf(water) && f.rarity === "common",
+    );
     return stand ? { kind: "fish", fish: stand } : { kind: "none" };
   }
   const total = pool.reduce((n, f) => n + fishWeight(f, odds), 0);

@@ -61,7 +61,7 @@ Read from the image, not from memory. Positions are as seen on screen.
 | Mailbox | Beside the house, on the road path east of the door (decided 2026-11-03) | `51_mail_and_letters.md` |
 | Greenhouse ruin | North, left of centre, on a grass patch | `31_farm_growth.md`. Repaired in place by the Larder reward |
 | Farm cave | North cliff, west of the greenhouse | `31_farm_growth.md`. A small interior map you walk into (decided 2026-11-03), empty until the earnings mark |
-| Big pond | South centre | Watering can. River fish table (`32_farm_types.md`) |
+| Big pond | South centre | Watering can. Lake fish table (`farm-pond`, owner 2026-11-10; `32_farm_types.md`) |
 | Small pond | East side | Decided 2026-11-03: two ponds. A second refill point, no fish |
 | Exits | See below | `19_valley_layout.md` |
 | Stable | Player placed on any free 4 by 2 spot (decided 2026-11-06, as Stardew) | `59_horse.md`. No fixed site on the map. Placement is designed in `60_building_placement.md`: drag a footprint and confirm on touch, plus move and remove with some resources back (owner, 2026-11-06) |
@@ -76,7 +76,7 @@ sits just outside the door for the very first scene, after any intro.
 ## Ponds and fish
 
 Two ponds (decided 2026-11-03). Both refill the watering can. Only the big
-south pond holds fish, on the river table (`32_farm_types.md`). The small east
+south pond holds fish, on the lake table (`32_farm_types.md`, owner 2026-11-10). The small east
 pond is for water and looks. Note 19 says the farm has one pond; this adds a
 second, and fishing stays as that note and #181 settle it.
 
