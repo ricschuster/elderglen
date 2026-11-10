@@ -34,6 +34,16 @@ import { FIBER, FIBER_CHANCE, MIXED_SEED } from "./weeds";
 import { TWIG_WOOD } from "./debris";
 import { isRaining } from "./weather";
 import { noteGathered } from "./quests";
+import {
+  MAHOGANY_HARDWOOD,
+  MAHOGANY_SEED,
+  MAHOGANY_SEED_CHANCE,
+  STUMP_SEED_AREA,
+  STUMP_SEED_CHANCE,
+  fruitTreeNear,
+  isMahogany,
+  seedOfKind,
+} from "./mahogany";
 
 /** Energy per tool swing (hoe, watering can), as in Stardew. Seeds, picking and harvesting are free. */
 export const TOOL_ENERGY = 2;
@@ -276,9 +286,12 @@ function planChop(
   const goods = (...list: [string, number][]) => list.filter(([, n]) => n > 0);
   if (t.large) {
     if (t.regrow !== undefined) return undefined;
+    // The Secret Woods daily stumps may give a Mahogany Seed (note 36).
+    const seed =
+      g.away?.mapId === STUMP_SEED_AREA && random() < STUMP_SEED_CHANCE ? 1 : 0;
     return {
       swings: swingsToUproot(g.toolTiers.axe) + LARGE_STUMP_EXTRA_SWINGS,
-      goods: goods([HARDWOOD, LARGE_STUMP_HARDWOOD]),
+      goods: goods([HARDWOOD, LARGE_STUMP_HARDWOOD], [MAHOGANY_SEED, seed]),
       xp: LARGE_STUMP_XP,
     };
   }
@@ -289,7 +302,11 @@ function planChop(
       xp: STUMP_XP,
     };
   if (t.stage === SEED_STAGE)
-    return { swings: 1, goods: goods([TREE_SEED, level >= 1 ? 1 : 0]), xp: 0 };
+    return {
+      swings: 1,
+      goods: goods([seedOfKind(t.kind) ?? TREE_SEED, level >= 1 ? 1 : 0]),
+      xp: 0,
+    };
   if (t.stage < YOUNG_STAGE)
     return {
       swings: 1,
@@ -298,6 +315,17 @@ function planChop(
     };
   if (t.stage === YOUNG_STAGE)
     return { swings: 1, goods: goods(["wood", YOUNG_WOOD]), xp: 0 };
+  if (isMahogany(t))
+    // Hardwood and no wood; 0 to 1 seed back, so a grove is self-seeding.
+    return {
+      swings: swingsToFell(g.toolTiers.axe),
+      goods: goods(
+        [HARDWOOD, MAHOGANY_HARDWOOD],
+        ["sap", TREE_SAP],
+        [MAHOGANY_SEED, random() < MAHOGANY_SEED_CHANCE ? 1 : 0],
+      ),
+      xp: TREE_XP,
+    };
   return {
     swings: swingsToFell(g.toolTiers.axe),
     goods: goods(
@@ -512,9 +540,10 @@ export function clearSeedling(
   swing(g, tool);
   g.trees.remove(x, y);
   if (t.stage === SEED_STAGE && g.skills.level("foraging") >= 1) {
-    if (g.inventory.add(TREE_SEED)) return { ok: true, item: TREE_SEED };
+    const seed = seedOfKind(t.kind) ?? TREE_SEED;
+    if (g.inventory.add(seed)) return { ok: true, item: seed };
     const spot = dropSpot(g, map, x, y);
-    g.ground.drop(spot.x, spot.y, TREE_SEED, 1);
+    g.ground.drop(spot.x, spot.y, seed, 1);
   }
   return { ok: true };
 }
@@ -549,10 +578,11 @@ export function shake(g: GameState, x: number, y: number): Outcome {
     return gatherMoss(g, x, y);
   if (!t || t.stump || t.stage !== MATURE_STAGE || !t.seed)
     return fail("nothing to shake");
-  if (g.inventory.room(TREE_SEED) < 1) return fail("backpack full");
+  const seed = seedOfKind(t.kind) ?? TREE_SEED;
+  if (g.inventory.room(seed) < 1) return fail("backpack full");
   t.seed = false;
-  g.inventory.add(TREE_SEED);
-  return { ok: true, item: TREE_SEED };
+  g.inventory.add(seed);
+  return { ok: true, item: seed };
 }
 
 /** Plant a tree seed on open ground the player faces. */
@@ -561,8 +591,9 @@ export function plantTree(
   map: FarmMap,
   x: number,
   y: number,
+  seedId: string = TREE_SEED,
 ): Outcome {
-  if (g.inventory.count(TREE_SEED) < 1) return fail("no seeds");
+  if (g.inventory.count(seedId) < 1) return fail("no seeds");
   if (
     !map.canPlantTree(x, y) ||
     g.trees.at(x, y) ||
@@ -576,8 +607,16 @@ export function plantTree(
     g.forage.itemAt(x, y)
   )
     return fail("cannot plant tree here");
-  g.inventory.remove(TREE_SEED);
+  const mahogany = seedId === MAHOGANY_SEED;
+  // A Mahogany tree is not planted on a fruit tree's 3x3 (note 36).
+  if (mahogany && fruitTreeNear(g.fruitTrees, x, y))
+    return fail("cannot plant tree here");
+  g.inventory.remove(seedId);
   g.trees.add(x, y, SEED_STAGE);
+  if (mahogany) {
+    const t = g.trees.at(x, y);
+    if (t) t.kind = "mahogany";
+  }
   return { ok: true };
 }
 

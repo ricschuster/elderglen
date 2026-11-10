@@ -1,4 +1,9 @@
 import { CROPS, cropById } from "./crops";
+import {
+  MAHOGANY_SEED,
+  MAHOGANY_SEED_NAME,
+  MAHOGANY_SEED_PRICE,
+} from "./mahogany";
 import { FERTILIZERS } from "./fertilizer";
 import { FORAGE } from "./forage";
 import {
@@ -161,6 +166,11 @@ items.set("mixed-seed", {
 });
 /** Sell price is ours, a placeholder. */
 items.set("tree-seed", { id: "tree-seed", name: "Tree seed", sellPrice: 5 });
+items.set(MAHOGANY_SEED, {
+  id: MAHOGANY_SEED,
+  name: MAHOGANY_SEED_NAME,
+  sellPrice: MAHOGANY_SEED_PRICE,
+});
 
 /** Mining goods (`docs/design/22_mines.md`). Prices are placeholders, see `ore.ts`. */
 items.set(STONE, { id: STONE, name: "Stone", sellPrice: STONE_SELL_PRICE });
@@ -249,6 +259,7 @@ const GROUPS: [string, string[]][] = [
       ...FRUIT_TREES.map((t) => saplingId(t.id)),
       "mixed-seed",
       "tree-seed",
+      MAHOGANY_SEED,
     ],
   ],
   ["Fruit", FRUIT_TREES.map((t) => t.id)],

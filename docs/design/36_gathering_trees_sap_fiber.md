@@ -126,6 +126,18 @@ placeholder are ours to tune (note 07).
   grove is the later one: ten trees give 100 Hardwood, about one stable or house
   tier, once grown.
 
+**Built (2026-11-10, #724).** The `mahogany-seed` item, Mahogany as a tree kind
+(player-planted only: maps cannot place it), planting by the held seed (refused
+on a fruit tree's 3x3), 15 percent a night per stage with stage 4 at half that
+(no growth in winter), 10 Hardwood and 5 sap and 0 to 1 seed on felling, no
+spreading, a stump by the common rule, and a 10 percent seed chance per chop of
+a Secret Woods daily stump. Numbers are data in `src/content/mahogany.json`,
+rules in `src/core/mahogany.ts`. **Not built:** tapping for daily sap (no tapper
+exists yet, so it waits for the tapper), tree fertilizer on common trees (none
+exists yet), the Forester bonus (12 or 13 Hardwood, no profession yet), the
+monster seed drop (waits for Secret Woods creatures), and Mahogany art (it
+borrows the oak sprites).
+
 ## Open
 
 - Weed day 1 count and spread chance, from a playtest or a saved source page.

@@ -1,4 +1,5 @@
 import { CHESTS, chestById } from "../core/chestdefs";
+import { MAHOGANY_SEED } from "../core/mahogany";
 import { DECOR, decorById } from "../core/decor";
 import { FURNITURE, furnitureById } from "../core/furniture";
 import { fertilizerById } from "../core/fertilizer";
@@ -743,6 +744,12 @@ function paintTrees(scene: Phaser.Scene): void {
     px(c, "#5a9a3a", 9, 5, 2, 3);
     px(c, "#7a5ac0", 6, 9, 3, 2);
   });
+  draw("icon-mahogany-seed", (c) => {
+    px(c, "#7a2e22", 5, 4, 6, 8);
+    px(c, "#9a4a32", 6, 3, 4, 2);
+    px(c, "#4a1a14", 5, 10, 6, 2);
+    px(c, "#d08a5a", 7, 6, 1, 3);
+  });
   draw("icon-tree-seed", (c) => {
     px(c, "#7a5a2a", 5, 4, 6, 8);
     px(c, "#9a7a3a", 6, 3, 4, 2);
@@ -989,6 +996,7 @@ function paintMineArt(scene: Phaser.Scene): void {
 export function iconKey(itemId: string): string | undefined {
   const { base } = splitQuality(itemId);
   if (fertilizerById(base)) return `icon-${base}`;
+  if (base === MAHOGANY_SEED) return "icon-mahogany-seed";
   if (sprinklerById(base)) return sprinklerKey(base);
   if (machineById(base)) return machineKey(base);
   if (furnitureById(base)) return furnitureKey(base);

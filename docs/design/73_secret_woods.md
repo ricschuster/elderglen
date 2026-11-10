@@ -158,7 +158,7 @@ Work package: "Secret Woods map, hardwood stumps and the massive log" (steps 1 t
 
 - The unique pond fish: its name, price and bar motion (design with note 21's
   roster, which says 46 and needs a 47th row).
-- Creatures come later, with the combat notes (owner, 2026-11-08). Mahogany seeds from stumps are designed (note 36, 2026-11-10) and not built; the creature drop waits for the creatures.
+- Creatures come later, with the combat notes (owner, 2026-11-08). The 10 percent Mahogany seed chance on a daily stump is built (note 36, #724); the creature drop waits for the creatures.
 - The stump swing count and the yield of a stump at tier 2 and above are tuning.
 - Whether the saved page's "lost items shop" idea has a use: our tools return
   (SC-79) and there are no unique unrecoverable items, so it is not in scope.

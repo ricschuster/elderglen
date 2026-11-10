@@ -19,6 +19,7 @@ import {
   type Outcome,
 } from "./actions";
 import { TREE_SEED } from "./trees";
+import { MAHOGANY_SEED } from "./mahogany";
 import { mine } from "./mining";
 import { chopLog, logCleared } from "./logs";
 import type { FarmMap } from "./map";
@@ -132,6 +133,8 @@ export function useHeld(
     return placeSprinkler(g, map, x, y, held.id);
   if (held.kind === "item" && held.id === TREE_SEED)
     return plantTree(g, map, x, y);
+  if (held.kind === "item" && held.id === MAHOGANY_SEED)
+    return plantTree(g, map, x, y, MAHOGANY_SEED);
   if (held.kind === "item" && treeOfSapling(held.id))
     return plantFruitTree(g, map, x, y, held.id);
   // Picking, shaking and harvesting are the Action button's job (note 47).
