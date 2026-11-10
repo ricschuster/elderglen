@@ -2,7 +2,6 @@ import Phaser from "phaser";
 import { itemById } from "../core/items";
 import type { GameState } from "../core/save";
 import { crackGeode, CRACK_FEE, GEODE_KINDS } from "../core/geodes";
-import { sell, sellAll } from "../core/shop";
 import {
   collectUpgrade,
   orderProblem,
@@ -19,7 +18,7 @@ import { STATE_KEY } from "./state";
 
 /**
  * The Hearthwell smithy counter (notes 44, 69 and 77): tool upgrades and
- * geode cracking. Ore, coal and weapons are the dwarf's (`SmithScene`). The
+ * geode cracking. Nobody here buys a geode uncracked (owner answer 7). Ore, coal and weapons are the dwarf's (`SmithScene`). The
  * farm is paused behind this screen.
  */
 export class SmithyScene extends Phaser.Scene {
@@ -92,24 +91,10 @@ export class SmithyScene extends Phaser.Scene {
           },
         ],
       });
-      rows.push({
-        label: `Sell a ${def.name.toLowerCase()}`,
-        detail: `${def.sellPrice}g  have ${have}`,
-        buttons: [
-          {
-            text: "Sell 1",
-            run: () => this.say(`Sold for ${sell(g.inventory, g, kind, 1)}g.`),
-          },
-          {
-            text: "Sell all",
-            run: () => this.say(`Sold for ${sellAll(g.inventory, g, kind)}g.`),
-          },
-        ],
-      });
     }
     if (GEODE_KINDS.every((k) => g.inventory.count(k) < 1))
       rows.push({
-        label: "Crack or sell a geode",
+        label: "Crack a geode",
         detail: "You have none",
         dim: true,
         buttons: [],
