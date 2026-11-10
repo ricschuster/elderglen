@@ -73,6 +73,8 @@ Session 2026-11-10 part five (handoff 2026-11-10e): note 07 fixed against the co
 
 Session 2026-11-10 part four (handoff 2026-11-10d): second audit pass, note 07's numbers against the code, about half done and nothing fixed. Nine stale places in note 07 are listed in the handoff (aim reach, cast energy, rod gates, wheat, the Hardwood stand-in, the fertiliser term, tool upgrades, mines, geodes). Next: fix them in note 07 and finish the pass. Owner decision: wheat, build it or mark it not built. Build order unchanged.
 
+Built shellfish pots (#596, 2026-11-10: place, bait, daily catch with junk, quality, XP, tracker, shop at the fisher; Trapper professions, bundles 17 and 18 and the legends wait, note 21 "Built in slice 4, part one").
+
 Built #660 (dye vat takes any plant from `src/content/dyes.json`, one colour each; Dyer's bundle ask unchanged; the six pot station waits on the clothing design, note 10).
 
 Session 2026-11-10 part three (handoff 2026-11-10c): consistency audit (#716, #717). Stale docs and labels fixed; owner decisions: one Special Orders board on the Outpost wall, ore at the Hearthwell smithy, the Dyer's bundle in the Guests' Board. Build order unchanged: pots (#596), Water room bundles, legends.

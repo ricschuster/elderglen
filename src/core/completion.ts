@@ -6,6 +6,7 @@ import { RECIPES, buildable } from "./crafting";
 import { cookable } from "./cooking";
 import { DISHES } from "./dishes";
 import { FISH } from "./fishing";
+import { SHELLFISH } from "./pots";
 import { itemById } from "./items";
 import { shippedOf } from "./achievements";
 import { MAX_LEVEL, SKILLS } from "./skills";
@@ -105,10 +106,15 @@ export const COUNTERS: Record<string, Counter> = {
     };
   },
   fish: (g) => {
-    const missing = FISH.filter((f) => !g.fishing.has(f.id));
+    // Pot catches count as fish do (note 21, shellfish pots).
+    const missing = [
+      ...FISH.filter((f) => !g.fishing.has(f.id)),
+      ...SHELLFISH.filter((s) => !g.pots.has(s.id)),
+    ];
+    const total = FISH.length + SHELLFISH.length;
     return {
-      done: FISH.length - missing.length,
-      total: FISH.length,
+      done: total - missing.length,
+      total,
       missing: missing.map((f) => f.name),
     };
   },

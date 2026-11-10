@@ -49,6 +49,7 @@ import { Mailbox, type MailEntry } from "./mail";
 import { Quests, type QuestsSave } from "./quests";
 import { FishLog, type FishingSave } from "./fishing";
 import { Tackle, type TackleSave } from "./tackle";
+import { Pots, type PotsSave } from "./pots";
 import { Wardrobe, type WardrobeSave } from "./hats";
 import {
   BUILD_DAYS,
@@ -165,6 +166,8 @@ export interface GameState {
   fishing: FishLog;
   /** Bait and lures on each rod (note 21). */
   tackle: Tackle;
+  /** Shellfish pots on the water, and the shellfish landed. */
+  pots: Pots;
   /** Health, the trainer and the kill tally (note 22). */
   combat: Combat;
   /** Wild goods on the ground today. Not saved: it respawns each morning. */
@@ -222,6 +225,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     quests: new Quests(),
     fishing: new FishLog(),
     tackle: new Tackle(),
+    pots: new Pots(),
     combat: new Combat(),
     forage: new ForageField(),
     areas: newAreas(),
@@ -335,6 +339,8 @@ interface SaveData {
   fishing?: FishingSave;
   /** Absent in saves made before bait and lures. */
   tackle?: TackleSave;
+  /** Absent in saves made before shellfish pots. */
+  pots?: PotsSave;
   /** Absent in saves made before combat: full health, no trainer yet. */
   combat?: CombatSave;
 }
@@ -511,6 +517,7 @@ export function serialize(g: GameState): string {
     quests: g.quests.save(),
     fishing: g.fishing.save(),
     tackle: g.tackle.save(),
+    pots: g.pots.save(),
     combat: g.combat.save(),
   };
   return JSON.stringify(data);
@@ -910,6 +917,7 @@ export function deserialize(text: string): GameState | undefined {
   g.quests.load(raw.quests);
   g.fishing.load(raw.fishing);
   g.tackle.load(raw.tackle);
+  g.pots.load(raw.pots);
   g.combat.load(raw.combat, g.skills);
   // Loading rechecks, so a goal met under an older save is granted (note 38).
   checkAchievements(g);

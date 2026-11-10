@@ -3,6 +3,7 @@ import { CROPS } from "./crops";
 import { FRUIT_TREES, saplingId } from "./fruittrees";
 import { HOMEWARD_PIN, itemById, seedId } from "./items";
 import { RODS } from "./fishing";
+import { POT_ITEM } from "./pots";
 import { BAITS, LURES } from "./tackle";
 import type { Inventory } from "./inventory";
 
@@ -95,7 +96,7 @@ export const rodStock = (): string[] => byPrice(RODS.map((r) => r.id));
 
 /** Bait and lures on sale at the fisher, cheapest first. Salted Bait works at the sea, where she keeps her hut. */
 export const tackleStock = (): string[] =>
-  byPrice([...BAITS.map((b) => b.id), ...LURES.map((l) => l.id)]);
+  byPrice([...BAITS.map((b) => b.id), ...LURES.map((l) => l.id), POT_ITEM]);
 
 /** Everything the fisher's counter sells. */
 export const fisherStock = (): string[] => [...rodStock(), ...tackleStock()];

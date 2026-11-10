@@ -283,6 +283,8 @@ export function sleep(
   // The Forest and the other area maps have their own night.
   areasEndDay(g, random);
   g.cave.endDay(maps.get(CAVE_MAP).forageSpots, random);
+  // Baited pots hold a catch by morning.
+  g.pots.endDay(random);
   const houseFinished = advanceBuild(g);
   const animalJob = advanceBuilding(g);
   const siloFinished = advanceSilo(g);

@@ -23,6 +23,7 @@ import {
   waterAhead,
 } from "../src/core/fishing";
 import { deserialize, serialize } from "../src/core/save";
+import { SHELLFISH } from "../src/core/pots";
 import { startGame } from "../src/core/toolbar";
 import { itemById } from "../src/core/items";
 import { FarmMap } from "../src/core/map";
@@ -501,7 +502,10 @@ describe("saving, skills and the rest of the game", () => {
 
   it("counts fish in the completion tracker", () => {
     const g = startGame();
-    expect(COUNTERS.fish!(g)).toMatchObject({ done: 0, total: FISH.length });
+    expect(COUNTERS.fish!(g)).toMatchObject({
+      done: 0,
+      total: FISH.length + SHELLFISH.length,
+    });
     g.fishing.note("reedling", 20);
     const c = COUNTERS.fish!(g);
     expect(c.done).toBe(1);

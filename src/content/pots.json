@@ -1,0 +1,71 @@
+{
+  "pot": { "id": "shellfish-pot", "name": "Shellfish pot", "price": 150 },
+  "junkChance": 0.38,
+  "fineBaitJunkChance": 0.3,
+  "junkXp": 1,
+  "catches": [
+    {
+      "id": "crayfish",
+      "name": "Crayfish",
+      "water": "fresh",
+      "odds": 35,
+      "sellPrice": 40
+    },
+    {
+      "id": "river-mussel",
+      "name": "River Mussel",
+      "water": "fresh",
+      "odds": 35,
+      "sellPrice": 45
+    },
+    {
+      "id": "ladle-snail",
+      "name": "Ladle Snail",
+      "water": "fresh",
+      "odds": 20,
+      "sellPrice": 70
+    },
+    {
+      "id": "marsh-clam",
+      "name": "Marsh Clam",
+      "water": "fresh",
+      "odds": 10,
+      "sellPrice": 90
+    },
+    {
+      "id": "crab",
+      "name": "Crab",
+      "water": "salt",
+      "odds": 30,
+      "sellPrice": 60
+    },
+    {
+      "id": "reef-periwinkle",
+      "name": "Reef Periwinkle",
+      "water": "salt",
+      "odds": 30,
+      "sellPrice": 50
+    },
+    {
+      "id": "spiny-shrimp",
+      "name": "Spiny Shrimp",
+      "water": "salt",
+      "odds": 20,
+      "sellPrice": 100
+    },
+    {
+      "id": "pearl-lobster",
+      "name": "Pearl Lobster",
+      "water": "salt",
+      "odds": 20,
+      "sellPrice": 800
+    }
+  ],
+  "junk": [
+    { "id": "tangled-line", "name": "Tangled line", "sellPrice": 1 },
+    { "id": "cracked-jar", "name": "Cracked jar", "sellPrice": 1 },
+    { "id": "sodden-rope", "name": "Sodden rope", "sellPrice": 1 },
+    { "id": "bent-spoon", "name": "Bent spoon", "sellPrice": 1 },
+    { "id": "old-boot", "name": "Old boot", "sellPrice": 1 }
+  ]
+}
