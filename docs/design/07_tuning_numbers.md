@@ -324,7 +324,9 @@ Built numbers (`src/core/fishing.ts`, `src/content/fish.json`, `rods.json`):
 
 Source: `src/content/bundles.json`.
 
-- Ten bundles (the Pantry was dropped 2026-10-31, see `16_bundles.md`). First
+- Thirteen bundles are built (the Pantry was dropped 2026-10-31, see
+  `16_bundles.md`): the ten below, plus Animal Goods and the Weaver's
+  ("Animal-goods machines" section) and the Dyer's ("Cask and dye vat" section). First
   slice: Spring Foraging (any 4 of 6, 15 parsnip seeds), Summer Foraging (any 3
   of 4, 15 radish seeds), Spring Crops (3 of 3, 300g) and Summer Crops (3 of 3,
   400g). Added 2026-11-07 (`35_bundle_pools.md`): Winter Foraging (3 of 5,
