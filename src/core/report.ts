@@ -78,7 +78,7 @@ export function reportLines(r: SleepReport): string[] {
   if (r.newMail > 0) lines.push("There is mail.");
   if (r.toolReady)
     lines.push(
-      `Your ${r.toolReady === "can" ? "watering can" : r.toolReady} is ready at the smith.`,
+      `Your ${r.toolReady === "can" ? "watering can" : r.toolReady} is ready at the smithy in Hearthwell.`,
     );
   lines.push(
     r.weather === "stormy"

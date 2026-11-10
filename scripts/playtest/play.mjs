@@ -19,7 +19,8 @@ const seasonOf = (d) =>
 const dos = (d) => ((d - 1) % 28) + 1;
 
 // ---- farm layout: two rows of 11 plots either side of an aisle at y=12.
-const A = Array.from({ length: 11 }, (_, i) => ({ x: 14 + i, y: 11 }));
+// Row A starts at x 16: the soil layer has no soil at x 10 to 15, y 9 to 11.
+const A = Array.from({ length: 11 }, (_, i) => ({ x: 16 + i, y: 11 }));
 const B = Array.from({ length: 11 }, (_, i) => ({ x: 14 + i, y: 13 }));
 const PERSONA = process.argv[2] ?? process.env.PERSONA ?? "expert";
 process.env.PERSONA = PERSONA;
@@ -649,8 +650,16 @@ async function overdo() {
     finding("energy never ran out during overdo");
     return;
   }
-  log("pass-out report:", await uiText("report"));
+  const reportText = await uiText("report");
+  log("pass-out report:", reportText);
   await bot.shot("passout-energy");
+  // The clock can beat the energy bar: a 2 am pass-out wakes at 75 percent
+  // (`late.mjs` checks that one), so the energy checks below do not apply.
+  if (/stayed up too late/.test(reportText)) {
+    finding("overdo ended at 2 am, not by running out of energy");
+    await bot.key("Enter", 500);
+    return;
+  }
   const lost = before.money - s.money;
   const expect = Math.min(1000, Math.floor(before.money * 0.1));
   log(

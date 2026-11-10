@@ -134,7 +134,7 @@ export class SmithyScene extends Phaser.Scene {
       });
     else if (order)
       rows.push({
-        label: `${names[order.tool]} at the forge`,
+        label: `${names[order.tool]} at the smithy`,
         detail: `Ready on day ${order.readyDay}`,
         dim: true,
         buttons: [],
@@ -158,7 +158,7 @@ export class SmithyScene extends Phaser.Scene {
             run: () =>
               this.say(
                 orderUpgrade(g, tool) ??
-                  `She will have it back in two days (day ${g.toolOrder?.readyDay}).`,
+                  `It will be ready in two days (day ${g.toolOrder?.readyDay}).`,
               ),
           },
         ],

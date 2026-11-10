@@ -274,7 +274,7 @@ export class FishingScene extends Phaser.Scene {
       this.fit(
         removeBait(g.tackle, g.inventory, this.rod),
         owned.length === 0
-          ? "You have no bait. The shop sells it."
+          ? "You have no bait. The fisher sells it."
           : "Bait taken off.",
       );
   }
@@ -288,7 +288,7 @@ export class FishingScene extends Phaser.Scene {
         g.inventory.count(l.id) > 0 && !rig.lures.some((x) => x.id === l.id),
     );
     if (!next)
-      return this.fit("You have no other lure. The shop sells them.", "");
+      return this.fit("You have no other lure. The fisher sells them.", "");
     this.fit(
       equipLure(g.tackle, g.inventory, this.rod, next.id),
       `${next.name} fitted: ${next.text}`,

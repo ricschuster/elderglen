@@ -2,7 +2,16 @@ import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", "android", "node_modules", "scripts", "docs/reference"] },
+  {
+    ignores: [
+      "dist",
+      "android",
+      "node_modules",
+      "scripts",
+      "docs/reference",
+      ".claude",
+    ],
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
