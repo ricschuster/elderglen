@@ -67,7 +67,7 @@ The first non-Standard farm, because foraging is already built.
   same tables as the valley (`forage.json`).
 - Special weeds always drop a mixed seed, in place of the 5 percent chance on
   other farms (`29_weeds.md`). They can still be cut by any tool.
-- A pond, small, with the river table (see "Fish").
+- A pond, small, with the lake table (see "Fish"; owner, 2026-11-10).
 
 ### Riverside
 
@@ -88,7 +88,7 @@ The first non-Standard farm, because foraging is already built.
   quarry is cleared.
 - No monsters on any farm. The quarry is rock only, so the no-creatures setting
   in `22_mines.md` needs no special case.
-- A pond with the river table.
+- A pond with the lake table.
 
 ### Meadow
 
@@ -98,7 +98,7 @@ The first non-Standard farm, because foraging is already built.
   animals let out on Meadow grass gain a little extra mood, scaled in
   `07_tuning_numbers.md`. This tunes into `23_animals.md`'s mood rules and needs
   no new system.
-- A pond with the river table, so no farm lacks a fishable pond.
+- A pond with the lake table, so no farm lacks a fishable pond.
 
 ## Rule changes as data
 
@@ -126,13 +126,13 @@ get tables of its own.
 
 | Type | Water | Tables |
 | --- | --- | --- |
-| Standard | Small pond | River |
-| Woodland | Small pond | River |
+| Standard | Small pond | Lake |
+| Woodland | Small pond | Lake |
 | Riverside | Wide water | River and woods, mixed |
-| Hilltop | Small pond | River |
-| Meadow | Small pond | River |
+| Hilltop | Small pond | Lake |
+| Meadow | Small pond | Lake |
 
-The split ratios and the pond size are placeholders. The valley fishing spots
+Owner decision, 2026-11-10: a farm pond is a lake, not a river, so it uses the lake table (the `farm-pond` water kind, see note 21), never the river table. The split ratios and the pond size are placeholders. The valley fishing spots
 are unchanged, so a farm's pond is a bonus and never the only source. Bundles
 that need fish stay completable on every type.
 

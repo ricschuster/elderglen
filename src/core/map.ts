@@ -215,7 +215,8 @@ export type WaterKind =
   | "marsh-lake"
   | "sea"
   | "cove"
-  | "woods-pond";
+  | "woods-pond"
+  | "farm-pond";
 export const WATER_KINDS: readonly WaterKind[] = [
   "river",
   "forest-lake",
@@ -224,6 +225,7 @@ export const WATER_KINDS: readonly WaterKind[] = [
   "sea",
   "cove",
   "woods-pond",
+  "farm-pond",
 ];
 
 /** A rectangle of water of one kind (the object class `water`). */
@@ -250,7 +252,7 @@ export const BOARD_KINDS = [
 
 /** Map-wide properties beyond the tile layers (note 71, Map contract additions). */
 export interface MapTraits {
-  /** The water kind of a water tile outside every `water` zone. The farm pond is the river. */
+  /** The water kind of a water tile outside every `water` zone. The default is the river; the farm maps set `farm-pond`. */
   waterKind: WaterKind;
   /** Days a chopped large stump takes to regrow here. Absent: the farm type decides. */
   stumpRegrowDays?: number;

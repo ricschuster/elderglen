@@ -12,6 +12,7 @@
   "nextlayerid": 8,
   "nextobjectid": 912,
   "properties": [
+    { "name": "waterKind", "type": "string", "value": "farm-pond" },
     { "name": "placeholder", "type": "bool", "value": true },
     { "name": "rideable", "type": "bool", "value": true }
   ],
