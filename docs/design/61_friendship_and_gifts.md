@@ -121,8 +121,9 @@ objects.
 10. **Hat standing stays cosmetic.** The player's hat is only a look. Brimmers'
     dialogue and the Hat Parade react to hearts, not to which hat is worn.
     This settles the open question in `10_customisation.md`.
-11. **Per-villager gift record.** The save keeps the last hat given to each
-    villager, so the Valley Day scene can show it (`39_completion_total.md`).
+11. **No per-villager hat record (removed 2026-11-10).** Hats are not given to
+    villagers, and the summit scene shows each villager's usual hat
+    (`39_completion_total.md`, "Summit build decisions").
 12. **Courtship and proposal items** are the bouquet and the unworn token from
     `12_marriage.md`. Flower types and the token's name stay open.
 13. **Children have a lower weight.** They use the 10 heart cap and the standard
