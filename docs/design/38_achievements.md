@@ -1,13 +1,14 @@
 # 38 Achievements and hats
 
-Built in part 2026-11-07 (session e): the 13 goals the game can already measure
+Built in part 2026-11-07 (session e): the first 13 goals the game could measure (19 are in
+`achievements.json` now)
 (money from sales, different recipes crafted, shipping, a skill at level 10, house
 tiers), checked at day end and on load, each putting one hat on sale at the hatter
 (`src/core/achievements.ts`, `src/content/achievements.json`). The hatter is a
 counter on the achievements screen, reached from the Hats screen, until the valley
 has a shop for her. Hat prices marked "set later" are a 3,000g placeholder. Not
-built: the hatter's letter (mail is unbuilt, so the morning report names the
-achievement instead), mail gifts, First Rosette (the Rosette Hat also has a token
+built: the hatter's letter (the mail core exists and `letters.json` has an
+achievement trigger; check the letter is wired before relying on this line), mail gifts, First Rosette (the Rosette Hat also has a token
 counter), Nothing Left (no shipped item collection), All Trades and every goal
 that waits for a later slice. The money goals count all gold received, as Stardew (owner, 2026-11-07, SC-61): sales and bundle rewards, built in parity pass 521. A wider
 collections page is still to build.

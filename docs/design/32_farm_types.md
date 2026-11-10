@@ -6,7 +6,7 @@ choice screen, the saved type and the data fields `map`, `startSeeds`,
 water tile check in `problems`, per-farm fish tables, `startBuildings`,
 `startAnimals`, `grassBonus` and `quarry`. The Meadow start, fish tables and choice screen were decided
 with the owner on 2026-10-31. The layouts, perks and numbers are our draft and
-are placeholders. Nothing here is built. The earlier decisions are in
+are placeholders. Only Standard and Woodland are built. The earlier decisions are in
 `25_stardew_system_review.md` ("Owner decisions, 2026-10-30"), and the check
 against the Farm Maps page and Guidebook is in `30_farm_types.md`. Both sources
 are reference only (ADR 0002); nothing is copied.

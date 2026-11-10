@@ -3,8 +3,10 @@
 Status: **decided with the owner on 2026-10-28** (areas, links, river, what
 lives where). The open items at the end are not decided. It answers the layout
 half of issue #67. The map style is already settled in `06_map_style.md` and
-ADR 0005. Nothing here is built, and the placeholder maps stay until real maps
-are authored in Tiled.
+ADR 0005. The farm, Forest, Secret Woods, delta, Mountain, Quarry, cove and
+Hearthwell maps are built as placeholder shells (notes 71 to 78 "Built
+status"); the rest is not, and the placeholder maps stay until real maps are
+authored in Tiled.
 
 ## Why
 
@@ -135,7 +137,8 @@ From `09_story_and_lore.md`, with the sawmill added:
 
 ## Area sizes (draft, revised 2026-11-06)
 
-First sizes, corrected by the owner the same day. Nothing is built. Stardew
+First sizes, corrected by the owner the same day. The built maps follow notes
+71 to 78, not these first sizes. Stardew
 totals are the saved forage footnotes (SC-40): whole map rectangles, so they
 include water and unwalkable tiles, and no widths or heights are given.
 

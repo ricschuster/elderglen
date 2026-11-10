@@ -1,6 +1,6 @@
 # 47 The Action intent: what Use does and what Action does (draft)
 
-Status: draft. Decided with the owner on 2026-11-02. Nothing here is built. It
+Status: draft. Decided with the owner on 2026-11-02. Built: the `use` and `action` intents (`src/scenes/controls.ts`) and right-click as Action. It
 finishes the intent seam of `45_controls_profiles.md` and unblocks right-click in
 `46_desktop_mouse.md`. The Stardew split is from memory. The saved Controls page
 says only "Use tool or place item" for C and left-click and "Check/Do Action" for

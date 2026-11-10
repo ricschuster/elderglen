@@ -1,6 +1,6 @@
 # 42 The debug menu (dev builds only)
 
-Status: decided with the owner on 2026-11-01. Nothing here is built.
+Status: decided with the owner on 2026-11-01. Built: `src/core/debug.ts`, `DebugScene` (dev builds only, backtick key and the DBG button).
 Requested in the 2026-10-31q handoff.
 
 ## Why

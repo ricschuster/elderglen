@@ -1,8 +1,8 @@
 # 14 Festival calendar
 
-Built 2026-11-07: the four spring and summer festivals are in
-`src/content/festivals.json`, each with an optional free hat and a counter.
-Fall and winter wait for those seasons.
+Built: all eight festivals are in `src/content/festivals.json` (spring and
+summer 2026-11-07, fall and winter since), each with an optional free hat and a
+counter.
 
 Status: accepted 2026-10-27 (issue #131), extended 2026-10-31 to four seasons
 and eight festivals. Design only. The festival system (#132) builds from this.
@@ -12,8 +12,8 @@ here.
 ## Rules
 
 - Two festivals per season (`09_story_and_lore.md`). The year has four seasons
-  (`26_seasons.md`), so the calendar has eight festivals. The code has two
-  seasons today (`src/core/calendar.ts`) and gains fall and winter in slice 1.
+  (`26_seasons.md`), so the calendar has eight festivals. The code has all four
+  seasons (`src/core/calendar.ts`).
 - A festival falls on a fixed day of the season, every year.
 - Not on day 1 (the always sunny start of a season) and not in the last week
   (days 22 to 28),
@@ -100,8 +100,8 @@ it.
 
 ## M3 cut
 
-Only the Hat Parade is built in M3 (`13_m3_scope.md`). The other three rows are
-the plan, not a promise. The Seedswap Fair is the cheapest second festival,
+This was the M3 cut (`13_m3_scope.md`); all eight are built since. The Seedswap
+Fair note below is history. The Seedswap Fair is the cheapest second festival,
 because it is mostly a prize counter.
 
 ## Shop hours (decided 2026-10-31)

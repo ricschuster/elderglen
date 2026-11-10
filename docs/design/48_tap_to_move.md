@@ -1,6 +1,6 @@
 # 48 Tap-to-move on touch (draft)
 
-Status: draft. Decided with the owner on 2026-11-02. Nothing here is built. It is
+Status: draft. Decided with the owner on 2026-11-02. Built 2026-11-08 (`src/core/pathing.ts`, `planTap` in `FarmScene`, see note 27). It is
 the touch half of step 5 of `45_controls_profiles.md` and turns the settled rules
 of `27_touch_controls.md` into a build plan. It uses the aim seam of
 `46_desktop_mouse.md` and the Action intent of `47_action_intent.md`. The saved

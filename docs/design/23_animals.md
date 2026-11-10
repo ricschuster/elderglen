@@ -3,7 +3,7 @@
 Status: **decided with the owner on 2026-10-30**, in two rounds of questions.
 The species, buildings and professions are settled. The numbers under "Placeholder
 numbers" are our draft and are listed under "Open". Every number is a
-placeholder. Nothing here is built. Stardew facts
+placeholder. Only the slices under "Built" below are built. Stardew facts
 were checked against the Stardew Valley Wiki "Animals" page on 2026-10-30.
 
 ## Built, slice 1 (2026-11-08, #531)

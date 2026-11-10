@@ -78,9 +78,10 @@ would affect every player. No multiplayer work is added here.
 
 ## Versions
 
-A record from another `SAVE_VERSION` is refused, as `deserialize` does. Each
-change to the fields bumps the version with the slice that adds them, and a
-migration is written then if players exist who need one. The two records are
+A record from another `SAVE_VERSION` is refused, as `deserialize` does. In practice
+(`SAVE_VERSION` is 2) a new slice adds an optional field that old saves lack and
+the loader defaults, so the version bumps only when a field changes meaning or
+becomes required. A migration is written then if players exist who need one. The two records are
 written together, so they share a version.
 
 ## Build order
