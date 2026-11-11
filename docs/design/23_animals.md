@@ -283,10 +283,12 @@ Decided with the owner: Stardew's tree. Checked against the Stardew Valley Wiki
   wool a day sooner).
 - **Level 10, under Tiller:** Artisan (artisan goods sell for 40 percent more) or
   Agriculturist (crops grow 10 percent faster).
-- This needs a level 10 choice, which `professions.ts` does not have yet. Today
-  the farming choice is Tiller or Agriculturist at level 5, so building this
-  changes that file, its tests and the skills screen. Artisan needs the
-  processing note.
+- **Built (2026-11-11, #618):** the whole farming tree in `professions.ts`.
+  Rancher +20 percent on animal goods, Artisan +40 percent on artisan goods.
+  Coopmaster and Shepherd (placeholders, ours): petting and grazing friendship
+  x1.5 for that building's animals, quality rolled as if friendship were 150
+  higher, Coopmaster incubator 3 nights, Shepherd sheep wool after 2 fed nights.
+  An old save with Agriculturist at level 5 loads as Tiller then Agriculturist.
 
 ## Cast
 
@@ -324,8 +326,8 @@ Our draft, to be tuned in playtests and copied into `07_tuning_numbers.md`.
   (`16_bundles.md`, "Open questions", issue #201).
 - Whether the carpenter also builds other things (the silo, the stable, a fish
   pond).
-- The level 10 tier of professions: the choice screen, the file change, and how
-  it ties to the processing note for Artisan.
+- Coopmaster and Shepherd numbers (friendship x1.5, quality +150) are placeholders.
+- The coop and barn heater: no rule is designed yet (what winter does to mood indoors, whether the barn has one). Bundle 25 is not in `bundles.json`, so the reward cannot be wired.
 - Whether pigs also need rain and winter rules beyond "let out" in the code.
 - Whether the keeper or the carpenter sells the silo. The carpenter does until the keeper exists (2026-11-08).
 - Clay's chance and sell price (20g, Stardew's, unchecked). Several silos wait for #611.

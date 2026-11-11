@@ -1,4 +1,6 @@
 import type { Skill, Skills } from "./skills";
+import { artisanById } from "./artisan";
+import { FEATHER, MOONWOOL, SPECIES } from "./animals";
 import { cropById } from "./crops";
 import { fishById } from "./fishing";
 import { fruitTreeById } from "./fruittrees";
@@ -31,10 +33,38 @@ export const PROFESSIONS: ProfessionDef[] = [
     text: "Crops sell for 10% more.",
   },
   {
+    id: "rancher",
+    skill: "farming",
+    name: "Rancher",
+    text: "Animal goods sell for 20% more.",
+  },
+  {
     id: "agriculturist",
     skill: "farming",
     name: "Agriculturist",
     text: "Crops grow 10% faster.",
+    under: "tiller",
+  },
+  {
+    id: "artisan",
+    skill: "farming",
+    name: "Artisan",
+    text: "Artisan goods sell for 40% more.",
+    under: "tiller",
+  },
+  {
+    id: "coopmaster",
+    skill: "farming",
+    name: "Coopmaster",
+    text: "Coop animals befriend faster and give better goods. The incubator takes half the time.",
+    under: "rancher",
+  },
+  {
+    id: "shepherd",
+    skill: "farming",
+    name: "Shepherd",
+    text: "Barn animals befriend faster and give better goods. Sheep give wool a day sooner.",
+    under: "rancher",
   },
   {
     id: "gatherer",
@@ -120,8 +150,21 @@ export const ANGLER_BONUS = 0.5;
 export const TRAPPER_PRICE = 0.5;
 export const PIRATE_TREASURE = 2;
 export const TILLER_BONUS = 0.1;
+/** Rancher: animal goods sell for this much more (note 23). */
+export const RANCHER_BONUS = 0.2;
+/** Artisan: artisan goods sell for this much more (note 23). */
+export const ARTISAN_BONUS = 0.4;
 export const AGRICULTURIST_SPEED = 1 / 0.9;
 export const GATHERER_CHANCE = 0.2;
+
+/** True for anything an animal makes: Rancher raises what these sell for. */
+function isAnimalGood(base: string): boolean {
+  return (
+    base === FEATHER ||
+    base === MOONWOOL ||
+    Object.values(SPECIES).some((s) => s.item === base)
+  );
+}
 
 export function professionById(id: string): ProfessionDef | undefined {
   return PROFESSIONS.find((p) => p.id === id);
@@ -173,6 +216,8 @@ export function sellMultiplier(skills: Skills, itemId: string): number {
   const { base } = splitQuality(itemId);
   if (skills.has("tiller") && (cropById(base) || fruitTreeById(base)))
     return 1 + TILLER_BONUS;
+  if (skills.has("rancher") && isAnimalGood(base)) return 1 + RANCHER_BONUS;
+  if (skills.has("artisan") && artisanById(base)) return 1 + ARTISAN_BONUS;
   // Fish only: shellfish and junk from a pot are not fish. Angler replaces Fisher.
   if (fishById(base)) {
     if (skills.has("angler")) return 1 + ANGLER_BONUS;

@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import {
   type Building,
   HATCHES,
-  INCUBATE_DAYS,
+  incubateDays,
   INCUBATOR_TIER,
   animalsIn,
   bringIn,
@@ -111,7 +111,7 @@ export class CoopScene extends Phaser.Scene {
         label: "Incubator",
         detail: a.incubator
           ? a.incubator.daysLeft > 0
-            ? `${itemById(a.incubator.egg)?.name ?? "Egg"} hatching, ${a.incubator.daysLeft} of ${INCUBATE_DAYS} nights left`
+            ? `${itemById(a.incubator.egg)?.name ?? "Egg"} hatching, ${a.incubator.daysLeft} of ${incubateDays(this.state)} nights left`
             : "Ready, but the coop is full"
           : "Empty. Put an egg in and it hatches in a few nights",
         buttons: [{ text: "Put egg", run: () => this.putEgg() }],
