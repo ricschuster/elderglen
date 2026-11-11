@@ -180,14 +180,19 @@ stock and price below is a placeholder for tuning.
 2. **The lantern stall (decor).** A stall under strung lanterns by the river
    bank sells decor without limit per item: seasonal candles, plants and lamps,
    some only here.
-3. **The travelling artist.** One painting a night, 1,200g placeholder, **nine
-   paintings on a three-year cycle** (Stardew's shape): each evening of each
-   year sells a different one, so a player sees every painting only by coming
-   to all three evenings over three years. Nine pieces of art are needed, one
-   a year per evening.
+3. **The travelling hat-maker.** Not a painter: a visiting hat-maker, to fit
+   the folk's hat culture (owner, 2026-11-11; Stardew's is a painter, saved
+   Night Market page). One hat a night, 1,200g placeholder, **nine hats on a
+   three-year cycle** (Stardew's shape): each evening of each year sells a
+   different one, so a player sees all nine only by coming to all three
+   evenings for three years. Each hat stands for a place in or beyond the
+   valley, as the visitor's road, and is worn, not hung (owner: "Hats").
+   Nine hats need nine pieces of art and `hats.json` entries. A hat-maker in
+   the valley already exists (Cordelia, note 80), so the visitor is a separate
+   person and the two may talk about each other (a line, not a feature).
+
 4. **The curio stall.** Different stock each evening: decor, seeds at shop
-   price, one hat and one fireplace, unlimited per item. Prices may move over
-   the three days for the hat.
+   price and one fireplace, unlimited per item.
 5. **Night fishing from the lit pier.** A paid permit (1,000g placeholder,
    closes at 23:00) lets the player fish off a lantern-lit pier on the river
    arm at the square, with fish found only here, plus a small chance of a
@@ -207,14 +212,14 @@ the fishing happens from the bank. SC-113 (the Mermaid Boat) is now only
 background for what we chose not to do.
 
 - **Build order.** Stalls 1 to 4 and 6 first (one stall panel each, over the
-  existing shop panel), then 5 with fishing. The nine paintings need art; a
-  placeholder frame stands in until then.
+  existing shop panel), then 5 with fishing. The nine hats need art; a
+  placeholder hat sprite stands in until then.
 - **Animals.** The clock runs, so animals still need feeding on the three
   days, as on any other day. Stardew does the same (saved page).
 - **Stock source (owner, 2026-11-11): mixed.** The lantern stall and curio stall
-  sell the existing winter decor and hats without limit per item, plus a short
-  market-only list that is never sold elsewhere: **4 new decor pieces, 3 new
-  hats (one per evening) and 1 fireplace.** The market-only items are the
+  sell the existing winter decor without limit per item, plus a short
+  market-only list that is never sold elsewhere: **4 new decor pieces and 1 fireplace**, plus the
+  hat-maker's nine hats (above). The market-only items are the
   reason to come each year. They need art and data entries (`furniture.json`,
   `hats.json`), not built yet.
 - **Placeholder stock (my proposal, 2026-11-11, not yet owner-checked).** Prices
@@ -222,13 +227,18 @@ background for what we chose not to do.
   - Lantern stall, always: snow lamp 220, winter wreath 120, warm rug 180, hanging
     planter 210, plus the 4 market-only decor pieces at 300 each (a lantern
     string, a frost-glass candle, a pine garland, a sleigh bench).
-  - Curio stall, by evening: day 1 a market-only hat 900 and a market-only
-    fireplace 1,500; day 2 the same hat at 600 (the price dips on the middle
-    night, as Stardew's hat does) and seeds at shop price; day 3 the same hat
-    at 900 and the third hat. Each evening also sells one existing winter hat.
+  - Curio stall, by evening: day 1 a market-only fireplace 1,500; day 2 seeds
+    at shop price and the fireplace; day 3 the fireplace and a pair of decor
+    pieces. (A first sketch: the real split comes with the item list.)
   - Road trader: 4 to 6 rare winter goods at 1.5 times sell value (note 57's
     rule), chosen from winter forage and the cooked winter dishes.
-  - Artist: one painting, 1,200g.
+  - Hat-maker: one hat, 1,200g. Nine hats over three years, placeholder
+    names and places: Cove Dusk Cap (the cove), Summit Lamp Hat (the summit),
+    Mine Mouth Hood (the mine mouth), Snowbound Hall Cap (the hall), Lakeside
+    Reed Hat (the forest lake), Marsh Heron Hat (the delta), Bridgewright Cap
+    (the quarry), Square Festival Hat (Hearthwell square) and one hat from a
+    far place we never visit, a hint of ring 2. Year 1 evening 1 to 3 are the
+    first three, year 2 the next three, year 3 the last three.
   - Pier permit and lantern float: 1,000g and 50g.
   Two caps for later: the market-only items should not undercut the hall's
   rewards, and gold sunk here should be a sink, not a route to anything the
@@ -243,10 +253,10 @@ background for what we chose not to do.
   meanwhile; the real ones come with the voice sheets. Above Stardew, which
   has one line per festival as I recall (unchecked, SC-114).
 - **Seller names (owner, 2026-11-11).** Placeholder role names in the data
-  ("the artist", "the pier keeper"); real names come with the voice sheets and
+  ("the hat-maker", "the pier keeper"); real names come with the voice sheets and
   art, as for the road trader.
 - **Still open:** the owner's check of the placeholder stock, the nine
-  paintings' subjects, the market-only fish list, and each person's festival
+  hats' art and names, the market-only fish list, and each person's festival
   spot (note 80 open item 3).
 
 ## Open
