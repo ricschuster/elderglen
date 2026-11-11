@@ -183,7 +183,7 @@ Also off limits: Tolkien's dwarf and elf names and the Norse dwarf-name list
    (child, young adult, adult, elder), and no ageing over the years.
 2. **Birthdays**: done, see note 61 "Birthdays" (decided 2026-11-10).
 3. Shop hours and closed days: done, see "Shop hours". The first routes
-   (default and rain for each of the 30) are next.
+   (default and rain for each of the 30) are drafted in note 80.
 
 ## Stardew checks
 
