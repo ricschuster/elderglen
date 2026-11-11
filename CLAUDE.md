@@ -21,7 +21,8 @@ built. Roadmap:
 `docs/design/07_tuning_numbers.md`. GitHub issues are the live tracker. Start
 each session by reading the latest handoff in `docs/handoffs/`, the design
 priority list `docs/handoffs/PRIORITIES.md` (update it in each handoff), and the
-issues labelled `next-payoff`.
+issues labelled `next-payoff`. Show the owner the
+priority list at the start of each session, then ask what to design.
 
 ## Scope
 
