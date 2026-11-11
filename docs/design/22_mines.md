@@ -660,8 +660,8 @@ settled 2026-10-31). Slices 3 onward wait for build slice 3.
   (processing, not yet written).
 - **The warden head's errand** that gates the dangerous mode lever (#177), and
   the exact dangerous mode numbers.
-- **The Skull Key analogue:** in Stardew, floor 120 also yields the key to the
-  Skull Cavern. Ours may use the same beat to open the ring 2 deep dig.
+- **The Skull Key analogue:** settled 2026-11-11, the floor 120 camp chest gives the
+  Deepmark key for the ring 2 deep dig (see the rest camp chest answers above).
 - **The lift at every floor** and its effect on pacing, to test.
 - **Names:** the creatures, the weapons and the bands. All placeholders.
 - **Stardew facts used from memory or from unverified search results** (the
