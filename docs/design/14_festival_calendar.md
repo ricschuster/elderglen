@@ -151,8 +151,8 @@ Midwinter Feast (25).
   17:00 to 24:00 each evening, after counters close, so it never costs the player
   a working day. The "time stands still, noon to 6 pm" rule does not apply.
 - **Where:** the Hearthwell square, decorated each evening (a festival map
-  variant, note 66). Stalls from area residents who bring goods to town, and a
-  counter of rare winter goods. The stock and prices are not designed yet.
+  variant, note 66). The six attractions are designed below (2026-11-11). Stock and
+  prices are still placeholders.
 - **Villagers:** the evening inn crowd (note 80) moves to the square from 18:00
   to 22:00 on the three days. Everyone else keeps their route. A festival spot
   per person is written with the festival maps.
@@ -161,6 +161,47 @@ Midwinter Feast (25).
   It is mail, not a festival event, so nothing conflicts.
 - **To build:** an entry in `festivals.json` with a three-day span (the lookup
   returns one day today), the square variant and the counter. Not started.
+
+### Night Market attractions (decided 2026-11-11, owner)
+
+Owner answers, each as Stardew does (saved Night Market page, read 2026-11-11)
+except the closing time. The market has **six attractions**, one per Stardew
+role, all ours in content and art. All open 17:00 to 24:00 (owner: keep our
+close, not Stardew's 02:00, so staying late never costs the next day). Every
+stock and price below is a placeholder for tuning.
+
+1. **The desert-road trader.** A travelling trader (a Wanderer's cousin, name
+   with the voice sheets) gives one free hot drink each evening, a small energy
+   buff, and sells a few rare winter goods. This is the "rare winter goods
+   counter" this note already promised.
+2. **The lantern boat (decor).** A moored boat on the river arm sells decor
+   without limit per item: seasonal candles, plants and lamps, some only here.
+3. **The travelling artist.** One painting a night, 1,200g placeholder, **nine
+   paintings on a three-year cycle** (Stardew's shape): each evening of each
+   year sells a different one, so a player sees every painting only by coming
+   to all three evenings over three years. Nine pieces of art are needed, one
+   a year per evening.
+4. **The curio boat.** Different stock each evening: decor, seeds at shop
+   price, one hat and one fireplace, unlimited per item. Prices may move over
+   the three days for the hat.
+5. **The night-fishing outing.** A paid boat trip (1,000g placeholder, closes
+   at 23:00) that takes the player onto dark water for a fishing stretch with
+   fish found only here, plus a small chance of a pearl. Needs fishing (note 21)
+   and a handful of new market-only fish, so it builds after the fishing slices
+   and is not part of the first Night Market build.
+6. **The lantern-boat ride.** A short ride along Hearthwell's river arm for a
+   small fee: a cosmetic scene and a single line from the boat keeper. The
+   cheapest of the six. Stardew's matching boat was not read, so this ride is
+   our own and the exact Stardew behaviour is a register row (SC-113).
+
+- **Build order.** Stalls 1 to 4 and 6 first (one stall panel each, over the
+  existing shop panel), then 5 with fishing. The nine paintings need art; a
+  placeholder frame stands in until then.
+- **Animals.** The clock runs, so animals still need feeding on the three
+  days, as on any other day. Stardew does the same (saved page).
+- **Still open:** names of the six sellers, real stock and prices, the nine
+  paintings' subjects, the market-only fish list, and each person's festival
+  spot (note 80 open item 3).
 
 ## Open
 

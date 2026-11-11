@@ -1054,6 +1054,11 @@
         },
         {
           "s": "decided",
+          "t": "Night Market has six attractions (trader with a free drink, decor boat, artist with 9 paintings over 3 years, curio boat, night-fishing outing, lantern-boat ride), open 17:00 to 24:00",
+          "ref": "14_festival_calendar.md#Night Market attractions (decided 2026-11-11, owner)"
+        },
+        {
+          "s": "decided",
           "t": "Fall and winter festivals and the farm cave (draft): Harvest Showing is a 9 good display scored for points, Hollow Eve a lantern maze with a prize chest, Frostday an ice sculpture day until fishing, the mushroom cave comes with a free dehydrator (a new machine)",
           "ref": "66_fall_winter_festivals_and_farm_cave.md"
         },
