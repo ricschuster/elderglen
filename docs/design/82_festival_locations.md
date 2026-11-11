@@ -86,6 +86,42 @@ spots already designed.
 Register: SC-127 added to note 54 (which place Stardew uses for each festival,
 and who skips). Check by the saved Calendar page.
 
+## Harvest Showing spots (drafted 2026-11-11, owner answered the setup)
+
+Place: the built `green` map (36 by 22 tiles, `green.json`). Owner answers: zones
+around the table row; Cuthbert hosts and the judge stays a separate unnamed figure;
+the 8 player starts are a row inside the entrance; keep the three sights and add
+props plus a second attraction, a cider and pie stall run by the inn family; each
+area resident stands in a zone matching their trade (Stardew, from memory,
+unchecked, SC-127). Everyone stands from 12:00 to the end at 22:00, except Hester
+(home 20:30).
+
+**Built (kept):** display table (16,8), judge (19,8), prize counter (23,8), sights
+(9,9), (26,10), (12,16), entry (17,19), leave (17,20).
+
+**New props:** bandstand x 16 to 20, y 4 to 6 (blocks); cider and pie stall at
+(10,12) (blocks); two benches at (6,14) and (7,14); bunting is decoration only
+and does not block.
+
+**Player starts:** (13,18) to (20,18), eight tiles in a row above the entrance.
+
+**Villager tiles (a draft for the owner to check; every tile is free ground):**
+
+| Zone | Person | Tile |
+| --- | --- | --- |
+| Host | Cuthbert | (21,9) |
+| Table | Odette, Dorrie, Alder, Tilda, Rufus, Cordelia | (14,10), (15,10), (16,10), (17,10), (18,10), (13,10) |
+| Prize counter | Barnaby, Aldreth | (22,9), (24,9) |
+| Cider stall | Hattie, Podge, Linnet, Pim | (10,11), (11,11), (9,11), (10,13) |
+| Bandstand | Dunmar, Aurelle, Bramwell, Thistle | (15,7), (17,7), (19,7), (21,7) |
+| Benches | Hester, Walter | (6,13), (7,13) |
+| Children | Fitch, Wren, Toby | (20,15), (22,15), (21,17) |
+| Visitors, by trade | Korvi, Marl, Maren, Dilly, Rushie, Thalwen | (26,7), (27,7), (30,12), (4,11), (4,17), (31,5) |
+
+That is 28 people: the 22 town residents (with Aldreth) and the six area
+residents who attend (decision 5). Open: the stall's stock and prices, the
+unnamed judge's tile (the built one stays), and whether the owner wants any
+person moved.
 ## Midwinter Feast in the hall (drafted 2026-11-11, owner answered the setup)
 
 Owner answers: the feast is held in the hall only when **all six rooms are
