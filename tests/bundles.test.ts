@@ -19,15 +19,18 @@ import { RECIPES } from "../src/core/crafting";
 import { CATEGORY_NAMES, type ArtisanCategory } from "../src/core/artisan";
 import { FISH } from "../src/core/fishing";
 import { SHELLFISH } from "../src/core/pots";
+import { DISHES } from "../src/core/dishes";
 import { fillHall } from "./hall-helpers";
 
 describe("bundle data", () => {
-  it("has the twenty-four built bundles with known items and sane requirements", () => {
+  it("has the twenty-seven built bundles with known items and sane requirements", () => {
     expect(BUNDLES.map((b) => b.id)).toEqual([
       "spring-foraging",
       "summer-foraging",
+      "autumn-foraging",
       "winter-foraging",
       "woodland",
+      "rare-finds",
       "spring-crops",
       "summer-crops",
       "autumn-crops",
@@ -37,6 +40,7 @@ describe("bundle data", () => {
       "smiths",
       "weavers",
       "dyers",
+      "cooks",
       "stream-fish",
       "lake-fish",
       "sea-fish",
@@ -497,6 +501,8 @@ describe("the slice 1 hall", () => {
       // Fish and shellfish: fishing has no season gate here (note 21), and the Water room is checked in waterroom.test.ts.
       ...FISH.map((f) => f.id),
       ...SHELLFISH.map((s) => s.id),
+      // Dishes are cooked on the stove (note 24).
+      ...DISHES.map((d) => d.id),
     ]);
     for (const b of BUNDLES) {
       // The Last Seat asks for goods from every room, so it is checked in lastseat.test.ts.
