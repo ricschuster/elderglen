@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { FarmMap, type TiledMapJson } from "../src/core/map";
 import { heldAt, startGame, TOOLS, type Held } from "../src/core/toolbar";
-import { tapUse } from "../src/core/tapuse";
+import { tapPick, tapUse } from "../src/core/tapuse";
 import { useHeld } from "../src/core/tools";
 
 const layer = (name: string, data: number[]) => ({
@@ -75,5 +75,28 @@ describe("tapUse", () => {
 
   it("the axe is not judged: the scene keeps its rule", () => {
     expect(tapUse(startGame(), map(), axe, 0, 0)).toBe("other");
+  });
+});
+
+describe("tapPick", () => {
+  it("a ripe crop is picked by hand, a growing one or bare soil is not", () => {
+    const g = startGame();
+    const m = map();
+    useHeld(g, m, hoe, 0, 0);
+    expect(tapPick(g, m, 0, 0)).toBe(false);
+    g.farm.plant(0, 0, "parsnip", "spring");
+    expect(tapPick(g, m, 0, 0)).toBe(false);
+    g.farm.plotAt(0, 0)!.crop!.daysGrown = 99;
+    expect(tapPick(g, m, 0, 0)).toBe(true);
+    // A ripe crop is a harvest first: the can would not water it by tap.
+    expect(tapPick(g, m, 1, 0)).toBe(false);
+  });
+
+  it("a forage item is picked by hand", () => {
+    const g = startGame();
+    const m = map();
+    expect(tapPick(g, m, 2, 0)).toBe(false);
+    g.forage.respawn("spring", [{ x: 2, y: 0 }], () => 0);
+    expect(tapPick(g, m, 2, 0)).toBe(!!g.forage.itemAt(2, 0));
   });
 });
