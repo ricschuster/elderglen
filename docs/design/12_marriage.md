@@ -129,7 +129,8 @@ Settled with the owner, closing issue #137.
 - **Children: in, by player choice.** Offered only once a house upgrade adds a
   spare room (`10_customisation.md`). Never automatic and never pressed. Costs
   a crib, child sprites and writing, which go in the art and writing plans.
-- **The spouse stays on the farm.** The spouse never travels to other rings and
+- **The spouse lives on the farm and keeps their village job** (changed
+  2026-11-11, note 84). The spouse never travels to other rings and
   there is no second home. Candidates in rings 2 and 3 can still exist; their
   counts are set in those ring notes.
 - **Wedding look: left to the art pass** (#58). It is a ledger-joining scene

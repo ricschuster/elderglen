@@ -42,6 +42,9 @@ rest is Stardew's shape from the owner's play and memory, unchecked
   and the deep tier. The standard tier gets fewer, set at writing. Courtship
   events unlock after the bouquet (`12_marriage.md`) at the heart steps above 8.
   A spouse's events use the extra hearts.
+- **Presence (2026-11-11, note 84).** An event starts only if the person's route
+  has them on the event's map, and the scene places them. No event days. The event
+  record has a time window that must overlap the route.
 - **Order.** Events run in any order within a person, except where a story needs
   one first. No event needs a person to be reached by a date.
 - **Not on the first-playable path.** No event gates the hall, the bundles or the
