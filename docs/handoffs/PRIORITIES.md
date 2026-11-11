@@ -93,9 +93,10 @@ Design, can start now:
 - Step 4: Interior layout notes, a Tiled draft of one pilot interior first. **Drafted
    2026-11-11** (note 86, drafts in `docs/design/drafts/interiors-draft/`): the general
    store pilot, the one-room hut and the inn, from 13 saved Stardew interior images.
-   Owner round 1 done: 2 wide entry for every interior, home behind the shop, bedrooms
-   gated at 2 hearts; the pilot is redrawn and waits for a look. The other interiors
-   have sizes only.
+   Owner checked 2026-11-11: 2 wide entry for every interior, home behind the shop, two
+   gated bedrooms, and the general store pilot as an irregular 31 by 31 plan (not a
+   square). The hut and inn drafts are not yet checked. The other interiors have sizes
+   only: next session draws them, each with its own layout.
 - Step 5: The layout page design note (dev server, objects and block-out regions, saves
    to the map JSON after the contract checks; note 81 decision 11).
 
@@ -134,6 +135,8 @@ Art, in M3d:
 **Done (#639, 2026-11-09):** the carpenter's temporary Hardwood sale was removed
 with the Secret Woods (six daily stumps and the log). Mahogany was reopened 2026-11-10: player-planted,
 seed from the Secret Woods (note 36 "Mahogany"), built 2026-11-10 (#724) except tapping and the monster drop.
+
+Session 2026-11-11 part twenty (handoff 2026-11-11u): design only. The general store pilot is owner checked as an irregular 31 by 31 plan (note 86). Next: draw the other interiors (smithy, sawmill, hatter, library, healer, farmstead, burrows, huts), each with its own layout, then step 5.
 
 Session 2026-11-11 part nineteen (handoff 2026-11-11t): design only. Step 4 is drafted in note 86 from 13 saved Stardew interior images: the general store pilot, the one-room hut and the inn. Owner round 1 (same day): 2 wide entry for every interior, the home behind the shop (Stardew), two gated bedrooms, so the pilot is redrawn as an irregular 31 by 31 plan (owner: not a square). Next: the owner looks at the redrawn drafts, then the other interiors' plans (each building its own layout), or step 5.
 
