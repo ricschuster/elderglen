@@ -232,7 +232,8 @@ background for what we chose not to do.
   - Curio stall, by evening: day 1 a market-only fireplace 15,000 (owner); day 2 seeds
     at shop price and the fireplace; day 3 the fireplace and a pair of decor
     pieces. (A first sketch: the real split comes with the item list.)
-  - Road trader: 4 to 6 rare winter goods at 1.5 times sell value (note 57's
+  - Road trader (owner, 2026-11-11: rotating, a different set each evening, not
+    a fixed list as Stardew's Desert Trader from memory): 4 to 6 rare winter goods at 1.5 times sell value (note 57's
     rule), chosen from winter forage and the cooked winter dishes.
   - Hat-maker: one hat, 1,200g. Nine hats over three years, placeholder
     names and places: Cove Dusk Cap (the cove), Summit Lamp Hat (the summit),

@@ -28,7 +28,8 @@ Times and spots are placeholders, tuned in data, not code.
   `hw:green` (festival green), `hw:river-path`, `hw:outpost-yard`. A test checks
   that every id exists in the map files (note 79 "Data shape").
 - **A route lists stops** as `time place (idle key)`. The person walks between stops.
-  Idle keys are strings that do nothing until art exists.
+  Idle keys do nothing until art exists. They come from a frozen list, the tags
+  in use here, checked by a test (see open item 2).
 - **Closed day:** on a shop's closed weekday the keeper uses the household's
   `home` stops from 9:00 to closing and may be on the square. That is a weekday
   override, written in the next layer. The default route is for an open day.
@@ -232,10 +233,15 @@ returns an hour earlier. A snow day does not stop the trip (snow is not rain, ow
 
 ## Open items
 
-1. **Weekday overrides**: done above. Left: a count of closed counters per weekday
-   (the owner can check the load), and heart-event days.
+1. **Weekday overrides**: done above. Closed counters per weekday (owner checked
+   2026-11-11, kept as drafted): Monday 2, Tuesday 1, Wednesday 1, Thursday 1,
+   Friday 1, Saturday 2, Sunday 2, and the forge, elf and dwarf never closed. Left:
+   heart-event days.
 2. **Season overrides**: done above (all 30, per season). Snow does not count as
-   rain (settled 2026-11-11). Left: the art-free idle keys.
+   rain (settled 2026-11-11). Idle keys (owner,
+   2026-11-11): freeze the tags in use as the allowed list, normalise odd ones
+   (for example `walk, short` to `walk`, `the trader` to `stall`) and add a test
+   that rejects any other key. Not built.
 3. **Festival spots**: each person's spot on the green per festival, written with
    the festival maps (note 66).
 4. **Heart event and spouse routes** (note 79 rule 7) wait for #600 and note 12.
