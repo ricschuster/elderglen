@@ -23,7 +23,7 @@ describe("professions", () => {
     expect(choose(g.skills, "farming", "gatherer")).toBe(false);
     expect(choose(g.skills, "farming", "tiller")).toBe(true);
     expect(pendingChoice(g.skills)).toBeUndefined();
-    expect(choose(g.skills, "farming", "agriculturist")).toBe(false);
+    expect(choose(g.skills, "farming", "rancher")).toBe(false);
   });
 
   it("tillers sell crops, but not forage, for 10% more", () => {
@@ -38,7 +38,8 @@ describe("professions", () => {
 
   it("agriculturists ripen a 12 day crop a day sooner", () => {
     const g = newGame();
-    g.skills.gain("farming", level5);
+    g.skills.gain("farming", LEVEL_XP[9]!);
+    choose(g.skills, "farming", "tiller");
     choose(g.skills, "farming", "agriculturist");
     expect(growthRate(g.skills)).toBeGreaterThan(1);
     g.inventory.add(seedId("cauliflower"));

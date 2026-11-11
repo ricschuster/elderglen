@@ -161,7 +161,7 @@ Source: `src/core/skills.ts`.
   From memory.
 - Levels raise the chance of better quality goods, and farming levels trim
   swing energy (see below). At level 5 each skill asks for a profession (see
-  Professions). Stardew's level 10 choices are not built.
+  Professions). The farming and fishing level 10 choices are built.
 
 ## Professions
 
@@ -175,7 +175,7 @@ by ones that fit our game. Ours, unchecked.
 - Foraging: Gatherer (20 percent chance of a second good) or Botanist (forage is
   never plain, at least silver).
 
-Planned, not built (`23_animals.md`, decided 2026-10-30): Stardew's tree for
+Built 2026-11-11 (`23_animals.md`, decided 2026-10-30): Stardew's tree for
 farming. Level 5 is Rancher (animal goods sell for 20 percent more) or Tiller.
 Level 10 is Coopmaster or Shepherd under Rancher, Artisan (artisan goods 40
 percent more) or Agriculturist under Tiller. Agriculturist moves to level 10.

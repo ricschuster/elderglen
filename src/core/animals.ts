@@ -258,6 +258,38 @@ export const BUILDING_ORDER: readonly Building[] = ["coop", "barn"];
 /** The incubator at the big coop: one egg at a time, hatching after these nights (note 23, placeholder). */
 export const INCUBATE_DAYS = 6;
 export const INCUBATOR_TIER = 2;
+
+/** Coopmaster and Shepherd: friendship from petting and grazing is this many times larger (placeholder). */
+export const MASTER_FRIENDSHIP = 1.5;
+/** Coopmaster and Shepherd: friendship counted extra when a good's quality is rolled (placeholder). */
+export const MASTER_QUALITY_FRIENDSHIP = 150;
+
+/** The level 10 profession that serves a building's animals, if the player has it. */
+function masterOf(g: GameState, b: Building): boolean {
+  return g.skills.has(b === "coop" ? "coopmaster" : "shepherd");
+}
+
+/** Friendship from petting and grazing: a master of the building earns half as much again (placeholder). */
+function friendshipGain(g: GameState, a: Animal, n: number): number {
+  return masterOf(g, SPECIES[a.species].building)
+    ? Math.round(n * MASTER_FRIENDSHIP)
+    : n;
+}
+
+/** Nights an egg takes to hatch: the Coopmaster halves it. */
+export function incubateDays(g: GameState): number {
+  return g.skills.has("coopmaster")
+    ? Math.ceil(INCUBATE_DAYS / 2)
+    : INCUBATE_DAYS;
+}
+
+/** Fed nights between products: the Shepherd's sheep give wool a day sooner. */
+function productDays(g: GameState, a: Animal): number {
+  const base = SPECIES[a.species].days;
+  return a.species === "sheep" && g.skills.has("shepherd")
+    ? Math.max(1, base - 1)
+    : base;
+}
 /** The eggs it takes, and the young animal each hatches. */
 export const HATCHES: Record<string, Species> = {
   egg: "chicken",
@@ -1105,7 +1137,11 @@ export function pet(g: GameState, id: number): boolean {
   const a = g.animals.animals.find((x) => x.id === id);
   if (!a || a.petted) return false;
   a.petted = true;
-  a.friendship = clamp(a.friendship + PET_FRIENDSHIP, 0, MAX_FRIENDSHIP);
+  a.friendship = clamp(
+    a.friendship + friendshipGain(g, a, PET_FRIENDSHIP),
+    0,
+    MAX_FRIENDSHIP,
+  );
   a.mood = clamp(a.mood + PET_MOOD, 0, MAX_MOOD);
   return true;
 }
@@ -1133,7 +1169,11 @@ export function letOut(g: GameState, id: number): boolean {
   a.grazed = true;
   if (!a.fed) {
     a.fed = true;
-    a.friendship = clamp(a.friendship + GRASS_FRIENDSHIP, 0, MAX_FRIENDSHIP);
+    a.friendship = clamp(
+      a.friendship + friendshipGain(g, a, GRASS_FRIENDSHIP),
+      0,
+      MAX_FRIENDSHIP,
+    );
   }
   a.mood = MAX_MOOD;
   return true;
@@ -1210,7 +1250,7 @@ export function putEgg(g: GameState, egg: string): boolean {
   if (incubatorProblem(g, egg) !== undefined) return false;
   const id = packEgg(g, egg)!;
   g.inventory.remove(id, 1);
-  g.animals.incubator = { egg, daysLeft: INCUBATE_DAYS };
+  g.animals.incubator = { egg, daysLeft: incubateDays(g) };
   return true;
 }
 
@@ -1282,10 +1322,14 @@ export function endDay(g: GameState, random: () => number): AnimalNews {
       const info = SPECIES[a.species];
       // A pig digs a truffle only on a day it was let out.
       const ready = !info.outdoors || (a.grazed && !sleptOut);
-      if (a.lay >= info.days && a.product === undefined && ready) {
+      if (a.lay >= productDays(g, a) && a.product === undefined && ready) {
         const chance = a.mood >= PRODUCT_MOOD ? 1 : a.mood / PRODUCT_MOOD;
         if (random() < chance) {
-          a.product = animalQuality(a.friendship, a.mood);
+          a.product = animalQuality(
+            a.friendship +
+              (masterOf(g, info.building) ? MASTER_QUALITY_FRIENDSHIP : 0),
+            a.mood,
+          );
           a.item =
             a.species === "duck" &&
             a.friendship >= FEATHER_FRIENDSHIP &&
