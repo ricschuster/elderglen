@@ -58,7 +58,16 @@ whole day to that would be worse than any undo it prevents. So we depart.
 - **A failed write is shown once (decided 2026-11-02).** Today a refused write
   is silent. The game shows a small notice, "Could not save. Export from Options
   to keep your game.", the first time it fails in a session and then stays quiet.
-- **One slot.** No named saves or slots in the first playable.
+- **Five slots (decided 2026-11-11, not built).** Replaces the one slot.
+  The title screen shows five slot cards. A used card reads farm name, season
+  and day, year and gold, with Continue and Delete; an empty card has New game.
+  Slots are fixed at five, as the owner chose (Stardew lists every saved farm
+  with no fixed cap, from memory, SC-124). Delete asks to confirm. Each slot
+  keeps its own two records (the day-end save and the resume record), so
+  rolling back one never touches another. Export and import work on the chosen
+  slot, and import asks which slot to fill. The existing single save moves into
+  slot 1 the first time the new build loads, nothing lost. Settings stay apart.
+  Storage keys carry the slot number; a save version bump covers the move.
 - **Settings stay apart** (`45_controls_profiles.md`): per device, never in
   either record, never exported with a save.
 
