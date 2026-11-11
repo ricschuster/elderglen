@@ -119,6 +119,8 @@ Art, in M3d:
 with the Secret Woods (six daily stumps and the log). Mahogany was reopened 2026-11-10: player-planted,
 seed from the Secret Woods (note 36 "Mahogany"), built 2026-11-10 (#724) except tapping and the monster drop.
 
+Session 2026-11-11 part twelve (handoff 2026-11-11l): a build session, eleven PRs (#801 to #811): villagers with schedules, friendship and gifts, festival data and the shut rule, heart events and their runner, boots, rod trash and the recycler, animal professions, the Last Seat bundles, villagers drawn in the scenes. On the tablet, unplayed. Design is now the blocker for: year two rules, the ring 1 ending, the heater, rest camps, special floors, lamps, rare creatures. Next: play it, then Hollow Eve and the Hat Parade spots.
+
 Session 2026-11-11 part eleven (handoff 2026-11-11k): festival spots drafted in note 82 for Seedswap (seed hunt), Lamplight (lantern floating) and Frostday (ice fishing contest); festival areas shut before opening (decision 12). Left: Hollow Eve and the Hat Parade. Design only.
 
 Session 2026-11-11 part ten (handoff 2026-11-11j): the screen stays on and undimmed on the tablet (#791), and festival locations, attendance and spots are designed in note 82 (#792 to #796) for the Showing, Midwinter Feast and Cake Day. Next: spots for the other five festivals, or the farmhouse and cabin interior (step 11).
