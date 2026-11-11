@@ -172,6 +172,6 @@ Owner answers, 2026-11-11, are marked. The rest are proposals to check.
 - The style sheet itself: reference images, draft swatches and the rounds of
   changes (note 15, art direction in `docs/handoffs/PRIORITIES.md` item 4). Comes
   after the layouts.
-- The layout page is decided in decision 11. Its own design note comes before any build.
+- The layout page is decided in decision 11 and designed in note 87 (drafted 2026-11-11, awaiting the owner's check).
 - The metrics in decision 5 are a first guess and need a hands-on walk of the
   built areas.
