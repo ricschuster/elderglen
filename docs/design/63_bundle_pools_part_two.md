@@ -178,6 +178,6 @@ so no bundle needs it.
 Built 2026-11-11 (owner chose the rewards): bundle 3 Autumn Foraging (4 of 6, 15
 beet seeds), bundle 6 Rare Finds (3 of 5, 5 mushroom stews) and bundle 22 Cook's
 (3 of 5 dishes, 3 Innkeeper's roasts, a placeholder feast dish) are in
-`bundles.json`. The Last Seat still opens after 20 other bundles, now of 23 built.
+`bundles.json`. The Last Seat now needs all 23 other bundles (owner, 2026-11-11; the built gate still says 20 and needs changing).
 Still absent: 20, 24 and 26 (they need lamps and oil, festival dishes and the
 Storyteller's items, none built). The sim bot leaves 6 and 22 unplayed.

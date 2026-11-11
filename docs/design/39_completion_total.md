@@ -179,7 +179,7 @@ scene is not checked.
 | # | Our source | Stardew's source |
 | --- | --- | --- |
 | 1 | The Harvest Showing's prize counter, fall 9, sells one at a fixed price (placeholder 2,000g) | The Fair, 2,000g |
-| 2 | A chest in the last hall of floor 120 | Floor 100 chest in the mines |
+| 2 | The camp chest on mine floor 100, once (owner, 2026-11-11, note 22) | Floor 100 chest in the mines |
 | 3 | A spouse at 12.5 hearts (`12_marriage.md`) | Spouse or roommate at 12.5 hearts |
 | 4 | The hermit sells one at a very high price (placeholder 20,000g) | Krobus, 20,000g |
 | 5 | A spirit in the Secret Woods, for the fruit of a rare seed the hermit gives (see below) | Old Master Cannoli and a Sweet Gem Berry |

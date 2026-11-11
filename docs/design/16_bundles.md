@@ -45,7 +45,7 @@ here are our own.
 | Water room | 6 (built 2026-11-10, pools in note 21) | 1 bundle done |
 | Hearth | 3 | 2 bundles done |
 | Guests' Board | 5 | 3 bundles done |
-| The Last Seat | 4 | 20 of the other 26 bundles done |
+| The Last Seat | 4 | All the other bundles done (owner, 2026-11-11; was 20 of 26) |
 
 - Stardew's own thresholds (1, 2, 3 and 4 for its later rooms) come from one
   forum reply and were not checked against the wiki or the game data. Ours
