@@ -50,7 +50,7 @@ Hearthwell south green: only the Harvest Showing is on the green now.
 | Hat Parade | Spring 10 | Hearthwell town square and middle street | A parade route along the street through the square |
 | Seedswap Fair | Spring 21 | Forest clearing by the farmstead | Stardew's Flower Dance is in its forest (memory, unchecked). Spots drafted below |
 | Cake Day | Summer 8 | The inn and its lane | Hosted by the inn keeper's family |
-| Lamplight Evening | Summer 24 | The Beach at dusk | Lanterns along the shore. The elf's cottage is there |
+| Lamplight Evening | Summer 24 | The Beach at dusk | Lanterns along the shore. The elf's cottage is there. Spots drafted below |
 | Harvest Showing | Fall 9 | The festival green | The only festival on the green. Judge's table and prize counter are built |
 | Hollow Eve | Fall 21 | The hedge map and its entrance plaza | Villagers at the plaza booth and at the scares |
 | Frostday | Winter 8 | The Forest lake, frozen | Ice fishing. Stardew's ice festival is at a forest lake (memory, unchecked) |
@@ -312,3 +312,53 @@ hunt as Stardew's does (it ends the day at once) or the stall stays open, how
 many packets multiplayer needs (Stardew's counts are above), the stall's stock
 beyond mixed seeds, and the forest trees around the clearing. Not built:
 `festivals.json` still says the fair is on the green, with the day hours.
+
+## Lamplight Evening on the Beach (drafted 2026-11-11, owner answered the setup)
+
+Date: Summer 24. Opens 17:00, closes 22:00, ends 23:00 (decision 9). Owner
+answers: the activity is **lantern floating**, and the 8 player starts are at the
+footbridge side with the crowd along the south shore. Stardew's Moonlight Jellies
+is watch-only (from memory, unchecked, SC-127), so ours adds the player's own
+lantern.
+
+Place: the `delta` map's Beach (sand x 66 to 85, y 20 to 52, the sea from y 52).
+Players arrive by the footbridge (x 61 to 66, y 35 to 37) from the farm side, which
+is also the walk from the farm (decision 11). The elf's house (x 78 to 84, y 23 to
+27) and the tide pool footbridge (x 86 to 89, y 44 to 47) are untouched.
+
+**Props (new):** a lantern stall x 72 to 74, y 44 (3 tiles, blocks); two driftwood
+benches at (76,46) and (77,46) (block); a bonfire at (67,46) (blocks). String
+lanterns on the pier (x 80 to 82, y 48 to 58) and lamp posts along the shore are
+decoration only.
+
+**Player starts (8):** (68,38) to (75,38), a row below the footbridge landing, which
+stays clear.
+
+**Lantern floating:** buy a paper lantern at the stall, then stand on the launch
+line (the shore row y 51, x 68 to 79, 12 tiles, kept clear) and set it afloat. All
+lanterns drift out together as the festival closes at 22:00. Once a year the
+launch gives a small friendship gain with every attendee and a keepsake lantern for
+the farm the first time. The price, the gain and the keepsake are open. Row y 50
+stays open for walking along the shore.
+
+**Villager tiles (draft for the owner to check; every tile is free ground):** 24
+people, the 22 town residents with Aldreth plus Thalwen and Rushie (decision 5).
+Dilly, Korvi, Marl, Maren, Rosmarin and Rundahl do not come.
+
+| Zone | Person | Tile |
+| --- | --- | --- |
+| Lantern stall, behind it | Cordelia, Barnaby | (72,43), (73,43) |
+| Host | Cuthbert | (74,47) |
+| Shore row, inn family | Hattie, Podge, Linnet, Thistle | (68,49) to (71,49) |
+| Shore row, store | Odette, Dorrie, Alder | (72,49), (73,49), (74,49) |
+| Shore row, trades | Tilda, Rufus, Bramwell, Aurelle, Dunmar | (75,49) to (79,49) |
+| Benches | Hester, Walter | (76,45), (77,45) |
+| By the bonfire | Aldreth | (69,45) |
+| Children | Fitch, Wren, Pim, Toby | (70,47), (72,47), (78,47), (79,46) |
+| Beach residents | Thalwen, Rushie | (80,47), (81,50) |
+
+Hester leaves at 20:30 (decision 6). Open: the lantern's price, art and keepsake,
+the friendship numbers, the drifting animation, how the lanterns look at dusk on
+the dark Beach (the dusk tint is the festival's, not built), and whether the
+lantern stall keepers should be the hat-makers (they are the Cake Day costume
+stall's too). Not built: `festivals.json` still has the day hours.
