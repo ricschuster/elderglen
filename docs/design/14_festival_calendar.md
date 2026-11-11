@@ -37,11 +37,11 @@ here.
 | Spring | 10 | Hat Parade | The M3 festival. Everyone shows off their best hat. |
 | Spring | 21 | Seedswap Fair | Neighbours trade seeds. Mostly a prize counter. |
 | Summer | 8 | Cake Day | Brimmers dress in food-looking clothes. |
-| Summer | 20 | Lamplight Evening | A quiet lantern gathering at dusk. |
+| Summer | 24 | Lamplight Evening | The summer solstice: a quiet lantern gathering at dusk on the longest day. Moved from day 20 (2026-11-10). |
 | Fall | 9 | Harvest Showing | Crops judged on the green, with a prize counter. The counter sells one elderfruit (`39_completion_total.md`). |
 | Fall | 21 | Hollow Eve | A spooky evening walk. Quiet scares only, no threat. |
 | Winter | 8 | Frostday | Ice fishing on the river. |
-| Winter | 20 | Midwinter Feast | A gift exchange with one villager. The hall steward's (Cuthbert, the reeve, note 20) letter names the recipient on Winter 13, random among people met (`61_friendship_and_gifts.md`). |
+| Winter | 25 | Midwinter Feast | The winter solstice: a gift exchange with one villager. The hall steward's (Cuthbert, the reeve, note 20) letter names the recipient on Winter 18, random among people met (`61_friendship_and_gifts.md`). |
 
 Names are final for now (2026-10-31). The fall and winter pair follow Stardew's
 shape (a harvest fair and a spooky night, then an ice day and a gift feast),
@@ -65,8 +65,9 @@ fall 16 and 27 and winter 8 and 25, from the saved Festivals page.
 - **Lamplight Evening, summer day 20.** A calm counterpoint late in the run.
   It is also a natural place for the first light touch of the ember and ash
   theme later (a few lamps gutter), without any threat.
-- **Fall, days 9 and 21, and winter, days 8 and 20.** The same spacing as spring
-  and summer, and clear of the last week. Hollow Eve is an evening festival
+- **Fall, days 9 and 21, and winter, day 8.** The same spacing as spring
+  and summer, and clear of the last week. The two solstice festivals moved
+  late (see "Solstice festivals"). Hollow Eve is an evening festival
   like Lamplight Evening, so the two quiet ones are in different seasons.
 
 Each season has its two festivals twelve days apart, so a player always has a
@@ -111,6 +112,29 @@ afternoon, since the shopkeeper goes to the green. The morning is free for
 buying seeds and selling, and the shipping bin still pays at sleep. Stardew
 locks every shop and home all day on festival days, except four festivals where
 time keeps passing (saved Festivals page). Ours is looser on purpose.
+
+## Solstice festivals (decided 2026-11-10, owner)
+
+The year has two solstice festivals, the summer and winter ones, and they are
+the existing Lamplight Evening and Midwinter Feast moved late in their seasons,
+as Stardew puts its winter feast on winter 25 (saved Calendar page). No festival
+is added by this. The count stays 8, two a season.
+
+- **Lamplight Evening, Summer 24 (was 20).** The summer solstice. Day 24 keeps
+  clear of the store keeper's birthday (Summer 25) and Hester's (Summer 22).
+- **Midwinter Feast, Winter 25 (was 20).** The winter solstice, on Stardew's own
+  day. The steward's letter moves to Winter 18, a week before, as Stardew does.
+  Winter 25 is clear of Walter's (24) and the hall steward's (26) birthdays.
+- **The last-week rule is relaxed for these two.** The rule (no festival on days
+  22 to 28) stays for the other six. A solstice festival may fall late because
+  neither is on a crop-rush day that matters: Midwinter has no crops in
+  winter, and Lamplight Evening opens at dusk, after the day's chores.
+- **Still to build:** `festivals.json`, `tests/festivals.test.ts` and
+  `tests/showing.test.ts` hold the old days (summer 20, winter 20) and the
+  letter day. A build task, not done here.
+- **Open (owner):** the extra festival. The owner liked adding one but is unsure
+  it belongs in winter. Winter has two already, with Stardew's three in winter.
+  Which season, if any, is not settled.
 
 ## Open
 
