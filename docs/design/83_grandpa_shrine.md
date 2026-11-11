@@ -115,6 +115,8 @@ ground."
 
 ## Oriel's letter (draft, arrives by post the morning after the first scene)
 
+Owner, 2026-11-11: likes the lines and the letter; keep it short, no extra paragraph.
+
 > Dear {name},
 >
 > The valley tells me you have been busy, which is the polite way of saying it
@@ -158,7 +160,7 @@ cannot be reached yet.
 
 1. Whether these lines read right: the voices, the "if fewer than four" line, and
    the redo lines. The owner reshapes them.
-2. Whether Oriel's letter says too much about Evenglade, and the sign-off.
+2. Whether the "live forever" line in Oriel's letter says too much about Evenglade.
 3. The Diamond item itself (name, art, exact sell price) and its node share in
    `mine-bands.json`, with the Quarry and deep dig shares. Needs a gem entry.
 4. The shrine's exact tiles, in the farm layout (note 55, #776).
