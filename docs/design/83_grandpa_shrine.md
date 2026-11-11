@@ -6,6 +6,11 @@ number is a placeholder. Nothing here is built. Stardew's Grandpa page was read
 as reference only (ADR 0002, saved page, checked in note 54 as SC-132). No text
 is copied.
 
+## Stardew, for comparison
+
+21 points; candles at 0 to 3, 4 to 7, 8 to 11 and 12 or more. The statue needs
+all four. Nothing else changes in the game.
+
 ## Decided with the owner (2026-11-11)
 
 1. **There is a shrine with candles (Stardew), and it is an ancestors' shrine
@@ -22,11 +27,6 @@ is copied.
 4. **The top candle gives a statue (Stardew), paying Hearthsilver ore.** Stardew's
    Statue of Perfection pays 2 to 8 iridium ore a day when you interact with it.
    Ours pays the metal above gold, Hearthsilver ore (note 22, note 44).
-
-## Stardew, for comparison
-
-21 points; candles at 0 to 3, 4 to 7, 8 to 11 and 12 or more. The statue needs
-all four. Nothing else changes in the game.
 
 5. **Points and cuts follow Stardew's (owner, 2026-11-11).** 20 points, candles at
    1 to 3, 4 to 7, 8 to 11 and 12 or more.
