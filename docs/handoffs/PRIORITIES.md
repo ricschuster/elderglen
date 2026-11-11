@@ -63,6 +63,8 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
 with the Secret Woods (six daily stumps and the log). Mahogany was reopened 2026-11-10: player-planted,
 seed from the Secret Woods (note 36 "Mahogany"), built 2026-11-10 (#724) except tapping and the monster drop.
 
+Session 2026-11-11 (handoff 2026-11-11): design only. The Winter Night Market is designed in note 14 (six attractions, no boats, nine place hats over three years, spots for 18 villagers, a lit pier, four market-only fish). Owner-check of the proposals is open. Next: the festival date and three-day span build task, then festival spots for the other festivals, then #599. Build order unchanged.
+
 Session 2026-11-10 part eleven (handoff 2026-11-10o): design only. Reeve edits done, per-season routes for all 30 (note 80), solstice festivals (Lamplight Evening Summer 24, Midwinter Feast Winter 25) and a ninth festival, the three-evening Winter Night Market (Winter 16 to 18, note 14). Next: Night Market stalls and stock, festival spots with the festival maps (note 66), then #599. Build order unchanged. Festival data and tests need the new dates.
 
 Session 2026-11-10 part ten (handoff 2026-11-10n): design only. Shop hours (note 79), default and rain routes for all 30 and weekday overrides (note 80) are settled. Next: season overrides and festival spots, then the reeve edits in notes 14, 50, 57 and 65, then #599. Build order unchanged.
