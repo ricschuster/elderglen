@@ -119,7 +119,7 @@ Room reward: carts between the farm, the hall, the town and the mines.
 | # | Bundle | Rule | Reward | Needs |
 | --- | --- | --- | --- | --- |
 | 19 | Smith's | All: 5 copper bars, 5 iron bars, 3 gold bars | 20 coal | Smelting, ore from the mines or the smith |
-| 20 | Lamplighter's | 2 of 3: 3 lamps, 10 oil, 20 torches | A small glow ring | Light, equipment slot, oil maker (slice 4, see `35_bundle_pools.md`) |
+| 20 | Lamplighter's | 2 of 3: 3 lamps, 10 oil, 20 candles (owner, 2026-11-11, was torches) | A small glow ring | Light, equipment slot, oil maker (slice 4, see `35_bundle_pools.md`) |
 | 21 | Weaver's | All: 8 wool, 20 fiber (raw goods, since the reward is the loom, see `63_bundle_pools_part_two.md`) | Loom | Wool, animals |
 
 The mines are not unlocked by the Hearth (see "The mines" below).
@@ -132,9 +132,9 @@ Room reward: two hearts with every villager who is not a candidate and whom the 
 | --- | --- | --- | --- | --- |
 | 22 | Cook's | 3 of 5 dishes | 3 feast dishes | Cooking |
 | 23 | Dyer's | 4 of 6 raw colour goods (flowers, berries, cabbage), not dyes | Dye vat | Dyes, tailoring |
-| 24 | Host's | 3 of 4: bread, cake, tea, a festival treat | Set of festival hats | Cooking, hats, festivals |
+| 24 | Host's | 3 of 4: bread, cake, tea, a festival treat (any festival stall) | Set of 3 festival hats | Cooking, hats, festivals |
 | 25 | Fodder | All: 20 hay, 10 wheat, 10 root crops | Coop heater | Animals, coop |
-| 26 | Storyteller's | 3 of 5 herbs and old things found in the valley | A keepsake from Old Greencoat | Found items, a lore item |
+| 26 | Storyteller's | 3 of 5 herbs and old things found in the valley | A green-glass lantern, Old Greencoat's keepsake (placeable) | Found items, a lore item |
 
 Storyteller's pool: rare herbs, an old seed packet, a carved bead, a faded
 ribbon, a pressed flower.

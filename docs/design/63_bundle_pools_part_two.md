@@ -232,3 +232,30 @@ No em dashes. `{name}` is the player. The scene is short.
 
 Left open: the exact camera shots, which villagers stand where (spots with the
 Hearthwell layout, note 77), and the hat each villager wears.
+
+## Bundles 20, 24 and 26 (owner answers 2026-11-11)
+
+Not built. These are the three bundles still absent from `bundles.json`. The asks
+and rewards below are placeholders for tuning, except where marked as the owner's.
+
+- **Bundle 20 Lamplighter's: 2 of 3 of 3 lamps, 10 oil and 20 candles.** Candles
+  replace torches (owner), because torches have no design or item. The reward is
+  the small glow ring (decision 5 above). A candle is a cheap craft, made from
+  wax, with the recipe in the crafting note. Wax comes from the bee house
+  (placeholder, to confirm) and is not yet designed as an item.
+- **Bundle 24 Host's: 3 of 4 of bread, honey cake, herb tea and a festival treat.**
+  The treat is whatever treat a festival stall sells, and each festival sells a
+  different one (owner), so no one festival blocks it. The reward is a set of
+  **3** festival hats (owner). Which three hats is open (note 10 and note 14).
+  Bread, honey cake and herb tea are not in `dishes.json` yet.
+- **Bundle 26 Storyteller's: 3 of 5 of a rare herb, an old seed packet, a carved
+  bead, a faded ribbon and a pressed flower.** The four old things are dug up by
+  the hoe on **artifact spots** in the valley (owner, Stardew's pattern, saved
+  Artifacts page), commoner in winter, plus the mine quiet floors and Old Diggers
+  (decision 7). The reward is **a small green-glass lantern**, Old Greencoat's
+  keepsake (owner): a placeable furniture item that lights a house tile. It is
+  the same kind of item as the `steadfast-lamp` keepsake in `furniture.json`,
+  which is another keepsake, so a second one is added.
+
+Left open: wax, candle and artifact spot designs, the three hats, the treat list
+per festival, the old things' names and sell prices, and the lantern's art.
