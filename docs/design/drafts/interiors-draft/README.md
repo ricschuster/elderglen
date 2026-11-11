@@ -7,7 +7,7 @@ note 86 lists). Each map has `ground` (walls, floor, rug, door), `fixtures`
 routes' spots). Each `.txt` is the plan, one character per tile, and each
 `-preview.png` is the same plan with a 5 tile grid and the marks in yellow.
 
-- `general-store`: the pilot, home behind the shop, 25 by 26.
+- `general-store`: the pilot, irregular, home behind the shop, 31 by 31.
 - `hut-fisher`: the one-room hut template, 12 by 12.
 - `inn`: the inn and kitchen, 30 by 16.
 

@@ -75,21 +75,25 @@ The patterns, found in at least three images each:
 8. **Crowd rooms are open floor with furniture on the edges.** The Saloon tap room has
    the bar on the back wall, a hearth, and tables with seats spread on open floor.
    JojaMart is the extreme: 2 wide aisles between shelf blocks, nothing narrower.
-9. **Shapes are irregular.** Corners are cut, rooms are different widths, and the
-   building outline is not a rectangle. That is Stardew's look and not our rule.
+9. **Shapes are irregular.** Rooms are different widths and heights, they sit at
+   different offsets, and the building outline is stepped, not a rectangle.
 
 ## What we change
 
 1. **The home sits behind the shop, as in Stardew (owner, 2026-11-11).** The shop is
    at the front with the door; the household's rooms are behind it, off a living
    area. I first drew shop and home side by side to fit one 30 by 17 screen, and the
-   owner chose Stardew's layout instead. The general store is 25 by 26 and scrolls
-   vertically. Other buildings have their own layouts (owner), so each building keeps
+   owner chose Stardew's layout instead. The general store is 31 by 31 and scrolls
+   both ways. Other buildings have their own layouts (owner), so each building keeps
    its own plan and this is not a rule for all of them. Only the hall and the
    buildings taller than 17 scroll.
-2. **Rectangles.** Every room is a rectangle and every building is one rectangle plus
-   the door notch. The look of cut corners is an art question (note 15), not a layout
-   one. This keeps the contract checks simple and the tile counts readable.
+2. **Irregular footprints (owner, 2026-11-11: "don't make it a square").** A building
+   is a set of rooms of different sizes at different offsets, joined by passages 2
+   wide, with a stepped outline and void between the wings. The drafts are made from
+   the floor shape: every void tile next to a floor tile becomes wall, with 2 rows
+   along a top edge. The contract still holds (every floor tile reachable, doors and
+   marks on floor). Rooms may share no wall at all, so a corner of the building can
+   be a courtyard or empty void; the art pass decides what fills it.
 3. **2 wide entry notch everywhere (owner accepted, 2026-11-11, SC-145).** Note 81 decision 5 says a
    door is 1 tile wide and 2 for barns and the hall. Stardew's notch is 2 in every
    interior I measured, and decision 12 asks for crowd doors 2 wide. This note uses
@@ -109,78 +113,97 @@ The patterns, found in at least three images each:
 ## The pilot: the general store
 
 Draft: `docs/design/drafts/interiors-draft/general-store.tmj`, with the picture
-`general-store-preview.png` and the plan `general-store.txt`. The plan is 25 wide by
-26 tall, including the walls and the door notch. The owner asked for a store area, a
-living area, a kitchen and two bedrooms (2026-11-11).
+`general-store-preview.png` and the plan `general-store.txt`. The plan is 31 wide by
+31 tall, including the walls and the door notch, with an irregular outline. The owner
+asked for a store area, a living area, a kitchen and two bedrooms, and for a layout
+that is not a square (2026-11-11). Coordinates below are the plan's tile columns and
+rows, counted from 0 at the top left. Round 1 drew it as one rectangle in three bands,
+and the owner asked for something more creative.
 
 ```text
-#########################
-#########################
-#SS..BB.#B.....#.KKKKKK.#
-#....BB.#B.....#........#
-#.......#......#..TTT...#
-#.......#......#..TTT...#
-#..rrr..#....XX#........#
-#.......#....XX#........#
-####GG#####GG######..####
-#..............HHH......#
-#..QQQQ.................#
-#........rrrrrrr.TTT....#
-#................TTT....#
-###########..############
-#.............SSSSSSSS..#
-#.......................#
-#..CCCCCC...............#
-#X......................#
-#X......................#
-#X......SSSSSS..........#
-#X......SSSSSS..........#
-#X....................XX#
-#.........rrrrrr........#
-###########..############
-          #..#           
-          #DD#           
+             #######           
+            #########          
+            #B..TT..#          
+            #B......#          
+   ######   #.......#          
+  ########  #.....XX#   ###### 
+  #SS.BB.####.....XX###########
+  #...BB.######GG#######.KKKKK#
+  #......#........HHH..#......#
+  #......G.............#......#
+  #.rrr..G..QQQQ..........TTT.#
+  #.rrr..#.rrrrrr..TTT....TTT.#
+  #......#.........TTT.#......#
+  #############..##############
+   ############..##            
+  #############..###           
+  #.SSSSSS.SSS.....#           
+  #................#           
+  #.CCCCCC.........#           
+  #................####        
+  #X...............#####       
+  #X................LL.#       
+  #X...SSSSSS..........#       
+  #X...SSSSSS..........#       
+  #X.................TT#       
+  #......rrrr....XX....#       
+  #......rrrr....XX....#       
+  #######..#############       
+        #..#                   
+        #DD#                   
+        ####                   
 ```
 
 Key: `#` wall, `.` floor, `r` rug (walkable), `D` door, `G` gated door (a bedroom
 door, open from 2 hearts), `C` counter, `S` shelf, `B` bed, `T` table, `K` kitchen,
-`X` crate or bin, `W` workstation, `H` hearth, `Q` seat, `L` display or tank. Fixtures
-block movement. Marks are points on `markers`.
+`X` crate or bin, `W` workstation, `H` hearth, `Q` seat, `L` display or tank. A blank
+is void. Fixtures block movement. Marks are points on `markers`.
 
-- **Three bands, top to bottom.** The bedrooms and kitchen (y 2 to 7), the living area
-  (y 9 to 12), and the shop (y 14 to 22). Each band is joined to the next by a gap
-  2 wide, so the building reads shop, then living, then the rooms behind.
-- **Shop (y 14 to 22, x 1 to 23).** Counter 6 wide at x 3 to 8, y 16, one row off the
-  keeper's aisle (y 15). The player serves from (5, 17) and (6, 17), with four more
-  floor tiles along the front, so the counter has six player tiles and the keeper
-  tile (5, 15) is open from both sides. A stock shelf on the back wall (x 14 to 21),
-  one shelf island 6 wide (x 8 to 13, y 19 to 20) and a produce wall (x 1, y 17 to 21)
-  put the goods between the door and the counter. Crates (x 22 to 23, y 21). The aisles
-  round the island are 2 wide.
-- **The opening to the living area.** A gap 2 wide at x 11 to 12, y 13 (owner:
-  a 2 row opening is fine for the general store).
-- **Living area (y 9 to 12).** A hearth on the back wall (x 15 to 17), a sofa (x 3 to 6,
-  y 10), a rug and a dining table (x 17 to 19, y 11 to 12). It is the hub of the home.
-- **Rooms behind (y 2 to 7).** The parents' bedroom (x 1 to 7, a double bed and a
-  dresser), the child's bedroom (x 9 to 14, a bed and a toy crate) and the kitchen
-  (x 16 to 23, a strip of kitchen along the back wall and a table). Each opens to the
-  living area through a gap 2 wide at y 8.
+- **The shape.** A big shop in the south-west with a display bay stepping out of its
+  east side, a narrow passage going north from the shop's top edge, and the home
+  spread above it: the living area at the middle, the parents' bedroom stepping out to
+  the west, the child's room standing up to the north, and the kitchen as a wing to the
+  east. No two rooms have the same width or the same top edge.
+- **Shop (x 3 to 18, y 16 to 26) and its bay (x 19 to 22, y 21 to 26).** The counter is
+  6 wide at x 4 to 9, y 18, one row off the keeper's aisle (y 17). The player serves
+  from (6, 19) and (7, 19), with four more floor tiles along the front, so the counter
+  has six player tiles and the keeper tile (6, 17) is open from both sides. Stock
+  shelves on the back wall (x 4 to 9 and x 11 to 13, y 16), a shelf island 6 wide
+  (x 7 to 12, y 22 to 23) and a produce wall (x 3, y 20 to 24) put the goods between
+  the door and the counter. The bay holds a display (x 20 to 21, y 21) and a table
+  (x 21 to 22, y 24) for the season's goods, and crates (x 17 to 18, y 25 to 26). Every
+  aisle is 2 wide.
+- **The passage to the home** (x 15 to 16, y 13 to 15) is 2 wide and 3 deep, from the
+  shop's top edge to the living area (owner: a 2 wide opening is fine for the general
+  store).
+- **Living area (x 10 to 22, y 8 to 12).** A hearth on the back wall (x 18 to 20), a sofa
+  (x 12 to 15, y 10), a rug and a dining table (x 19 to 21, y 11 to 12). It is the hub:
+  the passage comes in at its bottom, the parents' bedroom on its west side, the
+  child's room on its north side and the kitchen on its east side.
+- **Parents' bedroom (x 3 to 8, y 6 to 12).** A double bed (x 6 to 7, y 6 to 7), a
+  dresser and a rug. It sticks out west of the living area, with a gated door at
+  x 9, y 9 to 10.
+- **Child's bedroom (x 13 to 19, y 2 to 6).** A bed (x 13, y 2 to 3), a desk and a toy
+  crate. It stands north of the living area with a gated door at x 15 to 16, y 7.
+- **Kitchen (x 24 to 29, y 7 to 12).** A kitchen strip along the back wall (x 25 to 29)
+  and a table (x 26 to 28, y 10 to 11), open from the living area through a gap at
+  x 23, y 10 to 11.
 - **What the player may enter.** The shop, the living area and the kitchen are open
   while the door is open (to 21:00, note 79). The two bedrooms have gated doors (`G`),
   shut until 2 hearts with that person (owner, 2026-11-11, and note 61 decision 6:
   "a person's door", as in Stardew). A check on the draft with the gates shut leaves
   only the two bedrooms unreachable.
-- **The door notch.** Floor at x 11 to 12 through the bottom wall and one row below,
-  doors at y 25, entry marks at y 24, so the entry is 2 wide.
+- **The door notch.** Floor at x 9 to 10 through the bottom wall and one row below,
+  doors at y 29, entry marks at y 28, so the entry is 2 wide.
 - **Marks.** `entry` and `door` (2 each), `service-shop` (2), `spot-counter-serve`,
   `spot-counter-stock`, `spot-home-cook`, `spot-home-sit`, `bed-parents`, `bed-child`,
   `door-gated-parents`, `door-gated-child` and `door-kitchen`. A check on the draft
   confirms every floor tile and every mark is reachable from the entry. The test that
   does this is a build task (below).
-- **What differs from Stardew's Pierre's:** one rectangle; the counter 6 wide with no
-  cash-register nook; three bands, not an irregular spread; the home has two
-  bedrooms, a living area and a kitchen, with no exercise hall, sun room or shrine;
-  the bedroom gate is our hearts rule.
+- **What differs from Stardew's Pierre's:** the counter 6 wide with no cash-register
+  nook; the home has two bedrooms, a living area and a kitchen, with no exercise hall,
+  sun room or shrine; the shop sits at the south-west with a bay, not in a plain
+  rectangle; the bedroom gate is our hearts rule.
 
 ## Template 2: the one-room hut
 
@@ -248,7 +271,7 @@ door notch, and a proposal.
 
 | Interior | Shape | Size | Counter or station | What is different |
 | --- | --- | --- | --- | --- |
-| `general-store` | shop at the front, living area, then the rooms behind | 25 by 26 | `shop` | The pilot. |
+| `general-store` | stepped: shop and bay in the south-west, living area, two bedrooms and kitchen above | 31 by 31 | `shop` | The pilot. |
 | `smithy` | shop west, workshop and home east | about 28 by 14 | `counter-smithy` | A forge and anvil in the east room, fixtures `W` and `H`. Blacksmith in Stardew is a 15 by 20 room with a small home above. |
 | `sawmill` | shop and home | about 26 by 12 | `counter-sawmill` | A saw bench (`W`) and a timber rack in the shop. |
 | `hatter` | shop and home | about 24 by 12 | `counter-hatter` | Hat stands (display `L`), a sewing table, the sibling's bed. |
@@ -282,7 +305,7 @@ Final art waits for M3d (ADR 0012).
 
 ## Build work (no issues filed yet)
 
-1. **The pilot map.** Rebuild `general-store.json` from the draft: 25 by 26, the
+1. **The pilot map.** Rebuild `general-store.json` from the draft: 31 by 31, the
    `ground`, `collision` and `markers` layers, the 2 wide entry, the marks above, and
    the two gated bedroom doors (a `gate` property read from friendship, note 61).
    Change the Hearthwell lot's `from_general-store` entry name only if the notch
