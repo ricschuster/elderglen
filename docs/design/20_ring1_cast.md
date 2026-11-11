@@ -42,6 +42,13 @@ copy out. Reset it to its defaults to see this note's cast.
    conversations are released in layers (`18_dialogue.md`), so the load can be
    spread.
 
+8. **Hearthwell's leader is Cuthbert, the hall steward, with the title of
+   Reeve (decided 2026-11-10, owner).** There is no separate mayor and no 31st
+   person. As reeve he opens the festivals, gives the hall hint, sends the
+   Midwinter letter, and stands behind the Special Orders board and the prize
+   machine at the Long Table (notes 14, 50, 57 and 65 keep their text and take
+   this as the host). Stardew has a separate mayor in a manor.
+
 ## Outside Hearthwell
 
 | Area | Person | Gender | Race | Tier | Candidate |

@@ -269,7 +269,9 @@ likes lean on cooked and made goods. Wheat joins the lists when it exists
 - **The other 22 (decided 2026-11-10, owner),** by the same rules. Spring 8,
   summer 8, fall 7, winter 7. The late-reveal people show their birthday once
   met, like everyone, under the name the player knows (Old Greencoat for
-  Rundahl, Lane for Aldreth).
+  Rundahl, Lane for Aldreth). Rundahl (winter), Aldreth (spring) and
+  Rosmarin (fall) are kept in different seasons because they drive the story
+  (owner, 2026-11-10).
 
   | Season | Day | Person |
   | --- | --- | --- |
@@ -278,7 +280,7 @@ likes lean on cooked and made goods. Wheat joins the lists when it exists
   | Spring | 12 | Bramwell |
   | Spring | 18 | Marl |
   | Spring | 23 | Rushie |
-  | Spring | 28 | Walter |
+  | Spring | 28 | Aldreth |
   | Summer | 2 | Fitch |
   | Summer | 5 | Maren |
   | Summer | 11 | Barnaby |
@@ -294,7 +296,7 @@ likes lean on cooked and made goods. Wheat joins the lists when it exists
   | Winter | 6 | Dorrie |
   | Winter | 15 | Thalwen |
   | Winter | 22 | Rundahl |
-  | Winter | 24 | Aldreth |
+  | Winter | 24 | Walter |
 
 ## Midwinter pairing (decided 2026-11-06)
 
