@@ -96,9 +96,9 @@ Design, can start now:
    Owner checked 2026-11-11: 2 wide entry for every interior, home behind the shop, two
    gated bedrooms, and the general store pilot as an irregular 31 by 31 plan (not a
    square). The hut and inn drafts are not yet checked. Owner answers 2026-11-11: all six
-   shops get a full home, Stardew sized, burrows with several rooms. **Batch 1 drafted
-   2026-11-11**: sawmill, healer, smithy (waiting for the owner). Next batches: library,
-   hatter and farmstead keeper; the three burrows; the huts (tower and Outpost their own) and the inn redrawn.
+   shops get a full home, Stardew sized, burrows with several rooms. **Batch 1 done, owner checked
+   2026-11-11** (sawmill, healer, smithy). **Batch 2 drafted 2026-11-11** (library, hatter,
+   farmstead keeper), waiting for the owner. Next batches: the three burrows; the huts (tower and Outpost their own) and the inn redrawn.
 - Step 5: The layout page design note (dev server, objects and block-out regions, saves
    to the map JSON after the contract checks; note 81 decision 11).
 
@@ -137,6 +137,8 @@ Art, in M3d:
 **Done (#639, 2026-11-09):** the carpenter's temporary Hardwood sale was removed
 with the Secret Woods (six daily stumps and the log). Mahogany was reopened 2026-11-10: player-planted,
 seed from the Secret Woods (note 36 "Mahogany"), built 2026-11-10 (#724) except tapping and the monster drop.
+
+Session 2026-11-11 part twenty-two (handoff 2026-11-11w): design only. Batch 1 interiors owner checked; batch 2 drafted (library, hatter, farmstead keeper, note 86). Next: the owner checks batch 2, then batch 3 (the three burrows).
 
 Session 2026-11-11 part twenty-one (handoff 2026-11-11v): design only. Owner answers on homes, sizes, rooms and bedrooms for the other interiors (note 86); batch 1 drafted (sawmill, healer, smithy) with a kept generator (`gen.py`). Next: the owner checks batch 1, then batch 2 (library, hatter, farmstead).
 
