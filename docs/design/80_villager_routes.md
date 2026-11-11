@@ -189,8 +189,9 @@ placeholders.
 short and cold. Children stay at `home` or at the inn, and play on `hw:green`
 only on a snow day from 13:00 to 15:00. Retirees stay indoors until 12:00. No
 one is at `hw:burrow-garden`. Area residents with outdoor stops shorten them to
-two hours around noon. Snow does not count as rain (open: whether it should,
-for the Forest keeper's rain-open rule).
+two hours around noon. Snow does not count as rain for routes or for the Forest
+keeper's rain-open rule (owner, 2026-11-11; Stardew has no snow schedule on the
+saved Abigail page, SC-112). The snow-day lines below stay as written.
 
 | Person | Summer | Fall | Winter |
 | --- | --- | --- | --- |
@@ -232,10 +233,11 @@ returns an hour earlier, and on a snow day the person does not travel (as in rai
 
 1. **Weekday overrides**: done above. Left: a count of closed counters per weekday
    (the owner can check the load), and heart-event days.
-2. **Season overrides**: done above (all 30, per season). Left: whether snow
-   counts as rain, and the art-free idle keys.
+2. **Season overrides**: done above (all 30, per season). Snow does not count as
+   rain (settled 2026-11-11). Left: the art-free idle keys.
 3. **Festival spots**: each person's spot on the green per festival, written with
    the festival maps (note 66).
 4. **Heart event and spouse routes** (note 79 rule 7) wait for #600 and note 12.
-5. **Register**: SC-106, SC-109 and SC-112 (per-season schedules) are still open. Everything here is from memory
-   (Stardew's schedules are per person), not checked.
+5. **Register**: SC-106, SC-109 and SC-112 are answered (2026-11-11), the
+   per-person details from the saved Abigail page only. Other villagers are not
+   checked.
