@@ -328,8 +328,8 @@ describe("moving the greenhouse at the carpenter", () => {
       true,
     );
     expect(d.exits.find((e) => e.id === "greenhouse")).toMatchObject({
-      x: 15,
-      y: 5,
+      x: GREENHOUSE_SITE.x + 2,
+      y: GREENHOUSE_SITE.y + 3,
     });
   });
 

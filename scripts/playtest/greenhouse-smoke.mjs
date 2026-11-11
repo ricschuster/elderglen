@@ -25,7 +25,7 @@ const shot = (n) => p.screenshot({ path: `${OUT}/shots/greenhouse-${n}.png` });
 
 // The ruin on the farm, door shut.
 await farm((g, f, s) => {
-  f.pos = { x: 15 * 16 + 8, y: 6 * 16 + 8 };
+  f.pos = { x: 26 * 16 + 8, y: 14 * 16 + 8 };
 });
 await sleepMs(300);
 await shot("ruin");

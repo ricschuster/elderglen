@@ -24,8 +24,22 @@ export function greenhouseHolds(g: { hall: Hall }): string[] {
   return greenhouseRepaired(g) ? [GREENHOUSE_OPEN] : [];
 }
 
-/** Footprint of the greenhouse on the farm, in tiles, with the door on the bottom row. Same on every farm type. */
-export const GREENHOUSE_SITE = { x: 13, y: 2, w: 6, h: 4 } as const;
+/** Footprint of the greenhouse on the Standard farm, in tiles, with the door on the bottom row. The size is the same on every farm type. */
+export const GREENHOUSE_SITE = { x: 24, y: 10, w: 6, h: 4 } as const;
+
+/** The ruin site of a farm type with its own map layout; every other type uses `GREENHOUSE_SITE`. */
+const RUIN_SITES: Record<string, { x: number; y: number }> = {
+  woodland: { x: 13, y: 2 },
+};
+
+/** The spot the greenhouse ruin stands on at the start of a farm of this type. */
+export function greenhouseRuinSite(farmType?: string): {
+  x: number;
+  y: number;
+} {
+  const s = (farmType && RUIN_SITES[farmType]) || GREENHOUSE_SITE;
+  return { x: s.x, y: s.y };
+}
 
 /** The footprint of the greenhouse, and the door tile's offset from its top left on the bottom row. */
 export const GREENHOUSE_FOOTPRINT = {
@@ -41,13 +55,14 @@ export const GREENHOUSE_FOOTPRINT = {
  */
 export function greenhouseSite(g: {
   greenhouseSite?: { x: number; y: number };
+  farmType?: string;
 }): { x: number; y: number } {
-  return g.greenhouseSite ?? { x: GREENHOUSE_SITE.x, y: GREENHOUSE_SITE.y };
+  return g.greenhouseSite ?? greenhouseRuinSite(g.farmType);
 }
 
 /** True if a tile is under the greenhouse's walls, other than its door tile. */
 export function greenhouseBlocks(
-  g: { greenhouseSite?: { x: number; y: number } },
+  g: { greenhouseSite?: { x: number; y: number }; farmType?: string },
   x: number,
   y: number,
 ): boolean {

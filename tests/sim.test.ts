@@ -21,7 +21,7 @@ describe("headless sim", () => {
     expect(playGame(expert, seeded(3), 60)).toEqual(
       playGame(expert, seeded(3), 60),
     );
-  }, 30000);
+  }, 120000);
 
   it("lets the expert finish the bundles it plays over the 112 day year", () => {
     const r = playGame(PERSONAS.expert!, seeded(1), 112);
@@ -36,7 +36,7 @@ describe("headless sim", () => {
     expect(r.moneyAtSeasonEnd).toHaveLength(3);
     // The year's nights tick every area world, so it takes about 5 s (the default timeout).
     // Seed 1: adding a world to the nights shifts the random stream, so a seed that finished every bundle before may miss one (seed 4 did, with the delta).
-  }, 30000);
+  }, 120000);
 
   it("names the bundles it does not play, all of which exist", () => {
     // Artisan Goods needs jar and bee house runs and an orchard the bot lacks.

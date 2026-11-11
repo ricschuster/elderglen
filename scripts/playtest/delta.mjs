@@ -57,7 +57,7 @@ await travel("farm", "from_delta");
 await sleepMs(1200);
 let d = await bot.dbg();
 if (d.map !== "farm") finding(`expected the farm, on ${d.map}`);
-await bot.walkTo(22, 28);
+await bot.walkTo(46, 63);
 await bot.face("down");
 await bot.key("KeyX", 200);
 await sleepMs(900);

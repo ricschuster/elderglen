@@ -214,7 +214,15 @@ describe("the cast", () => {
     const map = maps.get("farm");
     const exit = map.exits[0]!;
     const moved = map.withDoor(exit.id, map.entries[0]!.name, { x: 5, y: 5 });
-    expect(moved.isWater(30, 5)).toBe(true);
+    let n = 0;
+    for (let y = 0; y < map.height; y++)
+      for (let x = 0; x < map.width; x++) {
+        if (map.isWater(x, y)) {
+          expect(moved.isWater(x, y)).toBe(true);
+          n++;
+        }
+      }
+    expect(n).toBeGreaterThan(8);
   });
 
   it("finds water on both farm maps", () => {

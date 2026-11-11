@@ -213,9 +213,12 @@ describe("the dye vat", () => {
     const g = newGame();
     g.inventory.add("dye-vat");
     g.inventory.add("daffodil");
-    expect(placeMachine(g, maps.get("farm"), 20, 20, "dye-vat").ok).toBe(true);
-    expect(loadMachine(g, 20, 20, "daffodil").ok).toBe(true);
-    const m = g.machines.get(20, 20)!;
+    const at = { x: 61, y: 20 }; // bare field south of the house (gen-farm-map.mjs)
+    expect(placeMachine(g, maps.get("farm"), at.x, at.y, "dye-vat").ok).toBe(
+      true,
+    );
+    expect(loadMachine(g, at.x, at.y, "daffodil").ok).toBe(true);
+    const m = g.machines.get(at.x, at.y)!;
     expect(jobDone(g, m)).toBe(false);
     g.day.clock.day += 1;
     expect(jobDone(g, m)).toBe(true);

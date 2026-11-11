@@ -193,7 +193,7 @@ export const STABLE_FOOTPRINT = { w: 4, h: 2 } as const;
 export const IRON_BAR = "iron-bar";
 /** Only used when a stable has no chosen site, which a placed stable always has. */
 export const STABLE_SITES: Record<string, { x: number; y: number }> = {
-  farm: { x: 31, y: 9 },
+  farm: { x: 60, y: 27 },
   "farm-woodland": { x: 32, y: 9 },
 };
 /** What a base building costs. Only the stable asks for hardwood and iron. */
@@ -282,7 +282,7 @@ export const SILO_COST = {
 export const SILO_BUILD_DAYS = 2;
 export const SILO_FOOTPRINT = { w: 3, h: 3 } as const;
 export const SILO_SITES: Record<string, { x: number; y: number }> = {
-  farm: { x: 27, y: 9 },
+  farm: { x: 52, y: 27 },
   "farm-woodland": { x: 28, y: 9 },
 };
 /** What a new animal's mood and friendship start at. */
@@ -315,13 +315,13 @@ export const DEFAULT_NAMES = [
 
 /** Where the coop stands on each farm map: the top left of its 6 by 3 footprint. The door is the bottom row, second tile. */
 export const COOP_SITES: Record<string, { x: number; y: number }> = {
-  farm: { x: 10, y: 9 },
+  farm: { x: 52, y: 20 },
   "farm-woodland": { x: 14, y: 11 },
 };
 export const COOP_FOOTPRINT = { w: 6, h: 3 } as const;
 /** Where the barn stands: the top left of its 7 by 4 footprint. The door is the bottom row, fourth tile. */
 export const BARN_SITES: Record<string, { x: number; y: number }> = {
-  farm: { x: 18, y: 9 },
+  farm: { x: 60, y: 20 },
   "farm-woodland": { x: 21, y: 9 },
 };
 export const BARN_FOOTPRINT = { w: 7, h: 4 } as const;

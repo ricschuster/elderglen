@@ -22,7 +22,7 @@ const farmTrees = await state((s) => s.trees.count);
 log(`farm trees at the start: ${farmTrees}`);
 
 // ---- farm to Forest by the north exit.
-await bot.walkTo(28, 1);
+await bot.walkTo(46, 1);
 await bot.face("up");
 await bot.key("KeyX", 200);
 await sleepMs(800);
@@ -142,7 +142,7 @@ if (after.forageOut === 0)
 await bot.shot("farm-morning");
 
 // ---- back into the Forest by the north exit, and out by the south road.
-await bot.walkTo(28, 1);
+await bot.walkTo(46, 1);
 await bot.face("up");
 await bot.key("KeyX", 200);
 await sleepMs(800);
