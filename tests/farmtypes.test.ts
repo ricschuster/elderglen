@@ -60,7 +60,7 @@ describe("farm type data", () => {
     expect(maps.get("farm-woodland").forageSpots.length).toBeGreaterThan(
       maps.get("farm").forageSpots.length,
     );
-    expect(maps.get("farm").trees.filter((t) => t.large)).toHaveLength(20);
+    expect(maps.get("farm").trees.filter((t) => t.large)).toHaveLength(45);
     expect(maps.get("farm-woodland").trees.filter((t) => t.large)).toHaveLength(
       6,
     );

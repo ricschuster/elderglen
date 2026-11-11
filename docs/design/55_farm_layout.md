@@ -296,8 +296,8 @@ change. Differences from the table above:
 - The festival service stays on the farm at 74,16 as a stand-in (a blocked gate
   tile), because Hearthwell has no festival entrance yet. It leaves with the
   festival layouts (track step 2).
-- Starting clutter: 100 trees (80, 12, 8), 20 stumps, 92 rocks (stones and
-  boulders together, there is no boulder kind), 60 twigs, 150 weeds, 16 forage
+- Starting clutter (raised 2026-11-11 after the owner looked, it was sparse): 250 trees (200, 30, 20), 45 stumps, 200 rocks (stones and
+  boulders together, there is no boulder kind), 150 twigs, 400 weeds, 20 forage
   spots. Bushes (15) are not placed: no bush system exists.
 - Woodland is still 40 by 30, so its farmland is now about 11 percent of
   Standard's, not 40 percent. Its relayout is a later task.
