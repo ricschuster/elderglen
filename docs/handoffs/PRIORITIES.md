@@ -75,8 +75,9 @@ Design, can start now:
    player start spots as well as the villager spots. **Locations settled 2026-11-11**
    (note 82: only the Showing on the green). Attendance, hours and getting there are
    settled. Spots drafted for the Harvest Showing (green), Midwinter Feast (hall and
-   square) and Cake Day (inn lane). Left: Seedswap (Forest clearing), Lamplight (Beach),
-   Frostday (Forest lake), Hollow Eve (hedge) and the Hat Parade (square).
+   square), Cake Day (inn lane) and Seedswap (Forest clearing, with a seed hunt).
+   Left: Lamplight (Beach), Frostday (Forest lake), Hollow Eve (hedge) and the Hat
+   Parade (square).
 - Step 3: Heart events and spouse routes (note 80 item 4, #600, note 12), which may add
    interior spaces and spots.
 - Step 4: Interior layout notes, a Tiled draft of one pilot interior first. Not the

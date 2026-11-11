@@ -48,7 +48,7 @@ Hearthwell south green: only the Harvest Showing is on the green now.
 | Festival | Date | Place | Notes |
 | --- | --- | --- | --- |
 | Hat Parade | Spring 10 | Hearthwell town square and middle street | A parade route along the street through the square |
-| Seedswap Fair | Spring 21 | Forest clearing by the farmstead | Stardew's Flower Dance is in its forest (memory, unchecked) |
+| Seedswap Fair | Spring 21 | Forest clearing by the farmstead | Stardew's Flower Dance is in its forest (memory, unchecked). Spots drafted below |
 | Cake Day | Summer 8 | The inn and its lane | Hosted by the inn keeper's family |
 | Lamplight Evening | Summer 24 | The Beach at dusk | Lanterns along the shore. The elf's cottage is there |
 | Harvest Showing | Fall 9 | The festival green | The only festival on the green. Judge's table and prize counter are built |
@@ -251,3 +251,64 @@ costume, the elf Aurelle, the dwarf Dunmar and the courier Aldreth do not.
 Hester leaves at 20:30 (decision 6). Open: the friendship numbers for the cake
 table, the costume items (names, prices, art, slot), whether Pim stands behind
 the table with her parents (she is in the children's zone here), and the lines.
+
+## Seedswap Fair in the Forest clearing (drafted 2026-11-11, owner answered the setup)
+
+Date: Spring 21. Opens 12:00, closes 18:00, ends 22:00 (`festivals.json`). Stardew's
+egg festival is Spring 13 (saved Egg Festival page), so ours is later on purpose,
+after the first bundles (note 14).
+
+Owner answers: the fair uses the **whole of grove G4's ground** on the Forest map
+(trees around it are designed later); the mixed-seed counter stays; and there is
+a **seed hunt** like Stardew's egg hunt: **50 seconds, find 9 hidden seed packets
+to win** (Stardew, saved Egg Festival page: 50 seconds, 9 eggs for one player, 6
+for two, 5 for three, 4 for four or more, else a villager rival wins). The prize is
+**a rare seed packet each year, plus a hat the first time** (the crop and the hat
+are open).
+
+Place: `forest.json`, the clearing x 68 to 83, y 12 to 34 (16 by 23), east of the
+lake path (x 65 to 67) and west of the farmstead (x 84 and up). The farmstead road
+(y 35 to 37) runs along its south edge, so players arrive from the south. G4's
+maples are not shown on the festival map and come back the next day.
+
+**Props:** the seed stall x 74 to 77, y 16 (4 tiles, blocks, the built mixed-seed
+counter); two benches at (70,18) and (71,18) (block). Bunting and a banner over the
+entry at (75,34) are decoration only.
+
+**Player starts (8):** (72,33) to (79,33), a row inside the south edge.
+
+**The hunt:** talk to Cuthbert at (75,31) to start. Packets lie on free ground in
+the clearing and are picked up by walking over them (tap-to-move: tap a packet).
+There are 18 packet tiles in odd years and a different 18 in even years (Stardew
+changes its egg spots by year parity). Year 1 is odd. Players may start at any
+time up to 17:30 so the hunt always ends before the 18:00 closing.
+
+| Year | Packet tiles |
+| --- | --- |
+| Odd | (71,14), (74,12), (78,13), (83,16), (69,16), (73,18), (78,18), (81,17), (75,21), (71,21), (80,21), (77,24), (74,26), (80,25), (70,29), (76,29), (81,31), (73,32) |
+| Even | (70,13), (76,12), (82,14), (72,16), (79,16), (69,19), (75,19), (81,19), (73,22), (79,22), (71,25), (76,25), (81,27), (74,28), (79,29), (69,31), (72,30), (77,32) |
+
+**Villager tiles (draft for the owner to check; every tile is free ground):** 23
+people, the 22 town residents with Aldreth and Dilly (decision 5). The rest of the
+area residents do not come (Korvi, Marl, Maren: Showing and Midwinter; Thalwen and
+Rushie: Lamplight; Rosmarin and Rundahl never).
+
+| Zone | Person | Tile |
+| --- | --- | --- |
+| Seed stall, behind it | Odette, Dorrie, Alder | (74,15), (75,15), (76,15) |
+| Host | Cuthbert | (75,31) |
+| West edge, inn family | Hattie, Podge, Linnet, Thistle | (69,20), (69,22), (69,24), (69,26) |
+| East edge, trades | Tilda, Rufus, Cordelia, Barnaby, Bramwell | (82,20), (82,22), (82,24), (82,26), (82,28) |
+| North edge | Aurelle, Dunmar | (80,13), (81,13) |
+| Benches | Hester, Walter | (70,17), (71,17) |
+| Visitors | Aldreth, Dilly | (79,32), (83,30) |
+| Children | Toby, Fitch, Wren, Pim | (72,23), (72,27), (78,27), (78,23) |
+
+Hester leaves at 20:30 (decision 6).
+
+Open: the rival who wins if the player fails (proposed: Linnet, who runs; Stardew
+uses Abigail), the rare packet and the hat, whether the festival ends after the
+hunt as Stardew's does (it ends the day at once) or the stall stays open, how
+many packets multiplayer needs (Stardew's counts are above), the stall's stock
+beyond mixed seeds, and the forest trees around the clearing. Not built:
+`festivals.json` still says the fair is on the green, with the day hours.
