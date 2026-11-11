@@ -8,11 +8,11 @@ routes' spots). Each `.txt` is the plan, one character per tile, and each
 `-preview.png` is the same plan with a 5 tile grid and the marks in yellow.
 
 - `general-store`: the pilot, irregular, home behind the shop, 31 by 31.
-- `hut-fisher`: the one-room hut template, 12 by 12.
+- `hut-fisher`: the delta fisher's one-room hut, 15 by 13 (redrawn with the generator).
 - `sawmill` (31 by 27), `healer` (22 by 23), `smithy` (21 by 26): batch 1 plans (owner checked).
 - `library` (35 by 30), `hatter` (27 by 27), `forest-farmstead` (32 by 22): batch 2 plans.
 - `burrow-gardener` (30 by 20), `burrow-retired` (32 by 21), `burrow-young` (28 by 20): batch 3 plans.
-- `hermit-tower` (19 by 28), `outpost` (18 by 23), `outpost-rooms` (19 by 19), `forge` (20 by 16), `beach-elf-house` (14 by 15), `inn` (44 by 32, redrawn with its home): batch 4 plans. `hut-fisher` stays the hut template.
+- `hermit-tower` (19 by 28), `outpost` (18 by 23), `outpost-rooms` (19 by 19), `forge` (20 by 16), `beach-elf-house` (14 by 15), `inn` (44 by 32, redrawn with its home): batch 4 plans.
 
 `gen.py` builds the walls, the `.tmj`, the `.txt` and the preview from the room
 rectangles in `plans.py`, and checks reachability (`python3 gen.py`, needs Pillow).

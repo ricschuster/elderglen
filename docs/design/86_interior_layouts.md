@@ -205,32 +205,34 @@ is void. Fixtures block movement. Marks are points on `markers`.
   sun room or shrine; the shop sits at the south-west with a bay, not in a plain
   rectangle; the bedroom gate is our hearts rule.
 
-## Template 2: the one-room hut
+## Template 2: the one-room hut (the delta fisher's hut, redrawn)
 
-Draft: `hut-fisher.tmj`, `hut-fisher-preview.png`, `hut-fisher.txt`. Plan, 12 by 12:
+Draft: `hut-fisher.tmj`, `hut-fisher-preview.png`, `hut-fisher.txt`. Redrawn 2026-11-11
+with the generator (`plans.py`) from the first 12 by 12 rectangle: 15 by 13 with the 2
+wide entry, a bunk alcove east that steps out of the room, and a counter 4 wide. Plan:
 
 ```text
+ ##########
 ############
-############
-#.SSS..KK.B#
-#.........B#
-#.CCCC..LL.#
-#..........#
-#X......TT.#
-#X......TT.#
-#....rrr...#
-#####..#####
+#SSS..LLKK.###
+#..........####
+#.CCCC......BB#
+#...........BB#
+#..rrrr.TT....#
+#X.rrrr.TT...X#
+#X...........X#
+#####..########
     #..#
     #DD#
+    ####
 ```
 
-This is the template for the delta fisher, the Mountain forge hut, the hermit's
-tower base, the Beach elf and the Outpost steward's rooms. One counter 4 wide, a
-bed, a stove, a table, and one theme piece (here a fish tank, `L`; for the forge a
-workstation `W`; for the elf's stall a display). The counter is reachable from four
-tiles and the keeper's tile from both sides. It is bigger than Stardew's Fish Shop
-(11 by 10, a counter and a home in one room) by one row so the counter and the
-table have clear aisles.
+One room for a shop and a home: tool shelves, a fish tank and a stove on the back wall,
+the counter with 4 player tiles in front and keeper tiles on both sides, a rug, a table,
+nets and crates, and the bed in the alcove. It is bigger than Stardew's Fish Shop (11 by
+10, a counter and a home in one room) so the counter and the table have clear aisles. It
+has no gated bedroom: it is one room. The forge, the elf's house, the tower and the
+Outpost have their own plans (batches 4 and above), so this plan is the fisher's only.
 
 ## Template 3: the inn and kitchen
 
@@ -866,7 +868,7 @@ Final art waits for M3d (ADR 0012).
 | Map | Layout done | Art done | Notes |
 | --- | --- | --- | --- |
 | `general-store` | Drafted, waits for the owner | No | The pilot |
-| `fisher-hut` | Template drafted, waits for the owner | No | The hut template; the other huts have their own plans |
+| `fisher-hut` | Redrawn 2026-11-11, waits for the owner | No | The other huts have their own plans |
 | `hermit-tower`, `outpost`, `outpost-rooms`, `forge`, `beach-elf-house`, `inn` (redrawn) | Drafted 2026-11-11 (batch 4), waits for the owner | No | |
 | `sawmill`, `healer`, `smithy` | Done, owner checked 2026-11-11 (batch 1) | No | |
 | `library`, `hatter`, `forest-farmstead` | Done, owner checked 2026-11-11 (batch 2) | No | |

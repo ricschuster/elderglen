@@ -98,7 +98,7 @@ Design, can start now:
    square). The hut and inn drafts are not yet checked. Owner answers 2026-11-11: all six
    shops get a full home, Stardew sized, burrows with several rooms. **Batch 1 done, owner checked
    2026-11-11** (sawmill, healer, smithy). **Batches 2 and 3 done, owner checked 2026-11-11** (library, hatter,
-   farmstead keeper; the three burrows). **Batch 4 drafted 2026-11-11** (tower, Outpost and its rooms, forge, elf's house, inn redrawn), waiting for the owner. Left after that: the fisher hut template check, then step 5.
+   farmstead keeper; the three burrows). **Batch 4 drafted 2026-11-11** (tower, Outpost and its rooms, forge, elf's house, inn redrawn), waiting for the owner. The fisher hut is redrawn (15 by 13), waiting too. Left after that: step 5.
 - Step 5: The layout page design note (dev server, objects and block-out regions, saves
    to the map JSON after the contract checks; note 81 decision 11).
 

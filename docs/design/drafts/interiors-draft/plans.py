@@ -1,5 +1,5 @@
 """Interior plans (note 86). Batch 1: sawmill, healer, smithy. Batch 2: library, hatter,
-farmstead keeper. Batch 3: the three burrows. Batch 4: tower, Outpost, forge, elf's house, inn.
+farmstead keeper. Batch 3: the three burrows. Batch 4: tower, Outpost, forge, elf's house, inn. Then the fisher hut.
 
 Coordinates are plan tiles with no walls (gen.py adds them). Each building has its
 own shape: a public room at the front with the 2 wide door notch, the household
@@ -734,6 +734,32 @@ def inn_home():
     return p
 
 
+def hut_fisher():
+    p = Plan("hut-fisher", "delta fisher's hut, counter, tank and a bunk alcove")
+    p.floor(0, 2, 9, 8)               # shop and living room
+    p.floor(10, 4, 12, 8)             # bunk alcove, open to the room
+    p.floor(4, 9, 5, 10)              # door notch
+    p.door(4, 11, 10)
+    p.put("S", 0, 2, 2, 2)            # rods and bait
+    p.put("L", 5, 2, 6, 2)            # fish tank
+    p.put("K", 7, 2, 8, 2)            # stove
+    p.put("C", 1, 4, 4, 4)            # counter, 4 wide
+    p.put("X", 0, 7, 0, 8)            # nets and crates
+    p.put("r", 2, 6, 5, 7)
+    p.put("T", 7, 6, 8, 7)
+    p.put("B", 11, 4, 12, 5)
+    p.put("X", 12, 7, 12, 8)
+    p.mark("service-shop-1", 2, 5)
+    p.mark("service-shop-2", 3, 5)
+    p.mark("spot-counter-serve", 2, 3)
+    p.mark("spot-counter-stock", 4, 3)
+    p.mark("spot-home-cook", 7, 3)
+    p.mark("spot-home-sit", 9, 6)
+    p.mark("bed-fisher", 11, 6)
+    return p
+
+
 ALL = [sawmill(), healer(), smithy(), library(), hatter(), farmstead(),
        burrow_gardener(), burrow_retired(), burrow_young(),
-       hermit_tower(), outpost(), outpost_rooms(), forge(), elf_house(), inn_home()]
+       hermit_tower(), outpost(), outpost_rooms(), forge(), elf_house(), inn_home(),
+       hut_fisher()]
