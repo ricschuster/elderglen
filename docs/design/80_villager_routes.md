@@ -103,11 +103,82 @@ takes about an hour each way at the base speed, so a trip leaves home first
 (about 9:00 for Dilly and Korvi). The stops above are arrival times in town.
 On a rainy trip day the person does not travel and uses the rain route at home.
 
+## Weekday overrides (decided 2026-11-10)
+
+Owner answers, each the Stardew way: a keeper goes out on a short outing on their
+shop's closed day, one weekly town gathering (a Wednesday market on the square),
+and a few people change on Saturday and Sunday. Selection order stays as note 79
+(festival, rain, weekday, season, default), so **rain wins over a weekday
+override**, and a weekday override only replaces the stops it lists. All later
+stops fall through to the default.
+
+**Closed-day rule.** On a keeper's closed weekday their counter stops are
+replaced by the outing below. In rain, the rain route applies, and the counter
+stops become `room` (the shop stays shut), except the rain-open shops (carpenter,
+fisher, Forest keeper) whose rain route stands as written. A keeper away on a
+trip day (below) closes their counter for the hours they are away. "Open daily"
+(note 79) means no weekly closed day, not that the keeper never leaves.
+
+| Person | Closed day | Outing (replaces counter hours) | Then |
+| --- | --- | --- | --- |
+| Odette | Wednesday | 9:30 hw:square (market), 11:30 hw:river-path (walk), 13:00 store/home | default from 17:00 |
+| Bramwell | Friday | 9:00 hw:river-path (fish), 13:00 inn (eat), 15:00 smithy/room (forge) | default from 19:00 |
+| Tilda | Tuesday | Rain-open: the default route stands in rain. Dry: 9:00 hw:square (errands), 11:00 sawmill/yard (repair), 14:00 hw:green (sit) | default from 17:00 |
+| Cordelia | Sunday | 10:00 hw:green (sketch), 12:30 inn (lunch), 15:00 hatter/room (sew) | default from 19:00 |
+| Dunmar | Monday | 10:00 hw:river-path (walk), 12:30 inn (lunch), 14:30 library/room (read) | default from 19:30 |
+| Aurelle | Saturday | 10:00 hw:burrow-garden (herbs, with Alder), 12:30 hw:square, 15:00 healer/room (study) | default from 19:00 |
+| Hattie | Thursday | Kitchen counter shut, common room stays open for the evening. 8:00 inn/room, 11:00 hw:square (errands), 13:00 inn/home (rest), 18:00 inn (sit, not serving). Podge and the young adults serve | home 24:00 |
+| Cuthbert | Sunday | 10:00 hw:green (stroll), 12:00 inn (lunch), 14:00 outpost/room (sort mail) | default from 18:00 |
+| Dilly | Monday | Rain-open. Dry: 7:30 forest:paddock (feed), 10:00 forest:lake (rest), 13:00 farmstead/room | default from 16:00 |
+| Rushie | Saturday | Rain-open. Dry: her Saturday is also her town trip day (see below) | default from 20:00 |
+
+Rushie closes on a trip day for the hours she is away; she has no extra outing.
+The farmstead is thus closed on Monday and on Tuesday (Dilly's trip), the same as
+Stardew's Marnie, who is closed two days.
+
+**Wednesday market.** Wednesday is the trader's day (note 57) and the store is
+shut, so the square is full: 9:30 to 11:30 at hw:square (market) are Odette,
+Dorrie, Podge, Barnaby, Hester and Walter. They drop their own Wednesday stops
+for that window only. Cuthbert stands at hw:outpost-yard (stalls) from 9:00 to
+12:00 on Wednesday and Saturday, then returns to the counter. Aldreth is at
+hw:outpost-yard (browse) 10:00 to 12:00 on both days.
+
+**Weekend changes (a few people).**
+
+| Person | Days | Change |
+| --- | --- | --- |
+| Fitch, Pim, Wren, Toby | Saturday, Sunday | 9:00 hw:green (play) all morning, home 12:30 to 13:30 for lunch, 13:30 hw:green (play) until 17:30. Bed 20:00 as default |
+| Linnet | Saturday, Sunday | Day off until 17:30: 9:00 hw:river-path (run), 12:00 hw:square, 14:00 hw:green (rest). Serves from 18:00 as default |
+| Thistle | Saturday, Sunday | Day off until 17:30: 10:00 library (read), 13:00 hw:green, 16:00 hw:river-path. Serves from 18:00 as default |
+| Alder | Sunday | 14:00 retired burrow/home (visit Hester and Walter), 16:30 default |
+| Rufus | Saturday | 12:00 hw:river-path (fish) until 17:00, then default |
+| Walter | Saturday | 9:30 hw:river-path (fish) with Rufus until 12:30, then default |
+
+Shop hours do not change at the weekend (note 79 "Shop hours").
+
+## Town trips from the area side
+
+A trip day replaces the person's stops from the leaving time to their return.
+The area is empty and the counter is closed during that time. Times are
+placeholders for the walk (about one hour each way, same as the base speed).
+
+| Person | Leaves | Arrives in town | Leaves town | Home by |
+| --- | --- | --- | --- | --- |
+| Dilly (Tuesday) | 9:30 | 10:30 | 15:30 | 16:30 |
+| Rushie (Saturday) | 9:30 | 10:30 | 15:00 | 16:00 |
+| Maren (Friday) | 8:30 | 10:00 | 17:00 | 18:30 |
+| Thalwen (Sunday) | 10:00 | 11:00 | 16:30 | 17:30 |
+| Korvi (Saturday) | 10:00 | 11:00 | 17:00 | 18:00 |
+| Marl (Sunday) | 9:30 | 10:30 | 16:30 | 17:30 |
+
+Maren's trip is longer: the mines are the farthest. The mines hall counter is
+Maren's dummy only, so no shop closes. On a trip day the person's area stops
+after the return are the default's.
+
 ## Open items
 
-1. **Weekday overrides**: closed-day routes per keeper, the trip arrivals from the
-   area side (the walk), and any person who needs a special weekday (the reeve on
-   Wednesday and Saturday for the trader, note 57).
+1. **Weekday overrides**: done above. Left: a count of closed counters per weekday
+   (the owner can check the load), and heart-event days.
 2. **Season overrides**: the fisher in winter (note 79), Rundahl's camp in the
    snow, the retirees and children indoors in winter.
 3. **Festival spots**: each person's spot on the green per festival, written with
