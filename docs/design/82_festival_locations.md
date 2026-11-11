@@ -122,6 +122,7 @@ That is 28 people: the 22 town residents (with Aldreth) and the six area
 residents who attend (decision 5). Open: the stall's stock and prices, the
 unnamed judge's tile (the built one stays), and whether the owner wants any
 person moved.
+
 ## Midwinter Feast in the hall (drafted 2026-11-11, owner answered the setup)
 
 Owner answers: the feast is held in the hall only when **all six rooms are
