@@ -5,7 +5,8 @@ the handoff pull request (tick off what is done, reorder, add). Do not copy the
 list into handoffs; link here instead. Set by the owner on 2026-11-06 (handoff
 2026-11-06p) and updated since.
 
-Start each session by asking which item to take.
+Start each session by showing the owner this list (the open items in order, and the
+layout and tiles track) and asking which item to take (owner, 2026-11-11).
 
 ## Milestone order (ADR 0012, 2026-11-08)
 
@@ -111,6 +112,8 @@ Art, in M3d:
 **Done (#639, 2026-11-09):** the carpenter's temporary Hardwood sale was removed
 with the Secret Woods (six daily stumps and the log). Mahogany was reopened 2026-11-10: player-planted,
 seed from the Secret Woods (note 36 "Mahogany"), built 2026-11-10 (#724) except tapping and the monster drop.
+
+Session 2026-11-11 part four (handoff 2026-11-11d): design only. The farm layout is settled and owner checked (note 55, Tiled draft in `docs/design/drafts/farm-draft/`, build issue #776). Step 1 of the layout track is done. Next: festival spots (step 2), or the farmhouse and cabin interior (step 11, now unblocked). Build order unchanged.
 
 Session 2026-11-11 part three (handoff 2026-11-11c): design only. Issues #636, #640, #642, #659 and #526 closed and the overview refreshed. The layout and tiles shared rules are settled in note 81, and the layout track order is recorded above. Cabins are placed freely and players block each other (notes 53, 55). Next: the farm layout (note 55), then festival spots. Build order unchanged.
 
