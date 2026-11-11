@@ -11,9 +11,8 @@ is copied.
 1. **There is a shrine with candles (Stardew).** It stands on the farm, in a
    corner chosen with the farm layout (note 55). It lights up to four candles.
 2. **The evaluation runs at the start of year 3, and can be redone any time
-   (Stardew).** A note at the shrine says so. Redo is by interacting with the
-   shrine; Stardew asks for a Diamond, ours needs a token item (open, below).
-   It only rewards. Year two loses nothing (note 63).
+   (Stardew).** A note at the shrine says so. Redo is by placing a Diamond in the
+   shrine, as Stardew does. It only rewards. Year two loses nothing (note 63).
 3. **The score counts our own milestones, about 20 points.** Not the museum,
    marriage, pet or keys, which we lack.
 4. **The top candle gives a statue (Stardew), paying Hearthsilver ore.** Stardew's
@@ -36,10 +35,11 @@ all four. Nothing else changes in the game.
 | Cooking | 1 | Every dish cooked (cooking counter) |
 | Friends | 2 | Eight hearts with five villagers, then ten |
 | Hall | 3 | Every bundle done (1), the ending scene played (2) |
+| Deepmark key | 1 | The floor 120 chest opened (note 22) |
 | Slayer | 1 | The slayer goals done |
 | Summit | 1 | The summit reached |
 | Rare boost items | 1 | All found |
-| **Total** | **19** | |
+| **Total** | **20** | |
 
 Candles at the same cut points scaled to the total: about 1 at 0 to 3, 2 at 4 to 7,
 3 at 8 to 11 and 4 at 12 or more (placeholders; check against a normal save).
@@ -48,7 +48,11 @@ Candles at the same cut points scaled to the total: about 1 at 0 to 3, 2 at 4 to
 
 1. The point list and the candle cuts. Many counters are still locked at 0 (friends,
    slayer, elderfruit), so the top score is not reachable until those exist.
-2. The redo token item (Stardew uses a Diamond; we have no diamond item).
+2. The Diamond item. We have none yet. Source (owner, 2026-11-11, as Stardew's
+   Diamond page): gem nodes in the mine from floor 50, in the Quarry, and in the
+   ring 2 deep dig. Stardew has more sources (monster drops, panning, treasure
+   chests, fish ponds); which of those ours takes is open. It needs a gem
+   entry and a node share in `mine-bands.json`.
 3. How many ore a day, and which days. The statue is a daily interaction, not
    a machine.
 4. Where the shrine stands, and the grandfather figure's name and the letter

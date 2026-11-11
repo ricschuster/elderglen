@@ -695,8 +695,22 @@ settled 2026-10-31). Slices 3 onward wait for build slice 3.
   these floors. A geode floor is full of geode nodes with no monsters. The peaceful
   Gloop floor and the puzzle ruin are not chosen. Not built.
 - **Rest camp chest: the first open gives one special item, after that it is
-  empty.** This replaces "refilled each day". The special item is not chosen yet
-  (open). The built camp chest gives gift ore by band and empties per camp.
+  empty.** This replaces "refilled each day". The built camp chest gives gift ore
+  by band and empties per camp; this replaces it (not built).
+- **The camp chest item is fixed per floor, in Stardew's pattern (owner,
+  2026-11-11; Stardew checked on the saved Mines page, SC-133).** Stardew gives
+  one item once per player, never reset, on every 10th floor: boots at 10, 50, 80
+  and 110, a sword or dagger at 20, 60 and 90, a slingshot at 40 and 70, nothing
+  at 30, a Stardrop at 100 and the Skull Key at 120. Ours uses our own tier of the
+  same kind by band: boots from `boots.json` (worn up to ember), blades or clubs
+  from `weapons.json` by tier, a better sling at 40 and 70, nothing at 30. Floor
+  100 gives one rare boost item (note 39). Which exact item on each floor is a
+  placeholder list for the owner to shape.
+- **Floor 120 gives the Deepmark key (owner, 2026-11-11).** It is our Skull Key
+  equivalent: it opens the ring 2 deep dig, our Skull Cavern counterpart (the
+  beat noted under Stardew's Skull Key above). Stardew's Skull Key opens the Skull
+  Cavern in the desert. The key is held until ring 2 exists, and counts a point at
+  the farm shrine (note 83). Name and art are placeholders.
 - **Lamps are placeable, plus the glow ring** (Stardew, from memory, unchecked). No
   carried lamp slot. A lamp is a craftable placeable item, which gives bundle 29 its
   real item. Not built.
