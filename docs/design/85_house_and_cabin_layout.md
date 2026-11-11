@@ -39,7 +39,9 @@ room is 64 px a tile, the tier 1 and tier 2 images about 39 and 35 px a tile).
 - **The cellar stairs** are a notch in the bottom wall under the kitchen, about
   2 wide.
 - **The cellar** is a stone room with 33 casks in 3 rows of 11, three pillars and
-  a stairs notch in the top left corner. The saved page says it can hold up to 189.
+  a stairs notch in the top left corner. The saved Farmhouse page says it can hold up to
+  189 casks; the saved Cask page (2026-11-11) says 125 fit with paths left to every one,
+  and a full cellar is possible (SC-144). There is no count cap in Stardew, only space.
 - **Renovations (saved Farmhouse page):** all unlock after the second upgrade, are
   completed instantly, and can be refunded in full at any time if the added area is
   not occupied. Prices: remove crib free, open bedroom 10,000g, southern room
@@ -358,9 +360,9 @@ off in Tiled.
 
 No change. `cellar.json` is 19 by 16: a stone room, interior 17 by 14, the stairs
 up 3 by 3 in the top left corner (1 to 3, 1 to 3) and the entry at (4, 2). The player
-stands up to 33 casks on any free floor tile (#602, SC-39), so the room has no cask
-slots to draw. Stardew's page says its cellar can hold as many as 189, ours stays at
-33. The cellar has no soil, no furniture and no chests.
+stands casks on any free floor tile (#602, SC-39), so the room has no cask slots to
+draw. The count has no cap, only space, as in Stardew (SC-144): ours has 229 free
+tiles against Stardew's 125 with paths, so the room is big enough as it is. The cellar has no soil, no furniture and no chests.
 
 ## Marks for the routes
 

@@ -3,7 +3,6 @@ import { maps } from "../src/content/maps";
 import { categoryOf, DYE_INPUTS, dyeOf } from "../src/core/artisan";
 import {
   CASK,
-  CASK_LIMIT,
   caskQuality,
   caskStatus,
   caskTakes,
@@ -54,14 +53,16 @@ describe("the cask", () => {
     expect(g.casks.count).toBe(1);
   });
 
-  it("holds at most 33 casks", () => {
+  it("has no cap on the count, only floor space", () => {
     const g = newGame();
-    g.inventory.add(CASK, 1);
-    for (let i = 0; i < CASK_LIMIT; i++) g.casks.add({ x: i, y: 0 });
-    expect(placeCask(g, cellar(), FREE.x, FREE.y)).toEqual({
-      ok: false,
-      reason: "cellar full",
-    });
+    const m = cellar();
+    g.inventory.add(CASK, 60);
+    let placed = 0;
+    for (let y = 0; y < m.height && placed < 60; y++)
+      for (let x = 0; x < m.width && placed < 60; x++)
+        if (placeCask(g, m, x, y).ok) placed++;
+    expect(placed).toBe(60);
+    expect(g.casks.count).toBe(60);
   });
 
   it("takes wine, mead and cheese only", () => {

@@ -208,8 +208,9 @@ Settled where the notes left gaps. All numbers are placeholders (note 07).
 - **The cask stands only in the cellar.** It is a backpack item
   (`cask`, crafted from 40 wood, wood standing in for Stardew's hardwood as in
   the house upgrade). The recipe is known once the cellar stairs are built
-  (tier 3). A held cask is stood on a clear floor tile of the cellar, up to 33
-  (Stardew's cellar, SC-39). The farm refuses it. Casks are not in the machine
+  (tier 3). A held cask is stood on a clear floor tile of the cellar, with no
+  count cap, only floor space (Stardew, SC-144: its cellar comes with 33 but takes 125
+  with paths). The farm refuses it. Casks are not in the machine
   save list: the save holds `casks` (tile, and the good with its starting
   quality and the day it went in). An older save has none.
 - **Aging.** One good per cask, no queue. It takes wine, mead and cheese

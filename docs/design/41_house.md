@@ -198,7 +198,7 @@ Shapes, from the images:
   the cellar. The upstairs and the rest do not change. This matches the images:
   the cellar stairs appear only after tier 2.
 - **Cellar:** its own map, stone floor, stairs up in a corner, rows of cask
-  spaces (Stardew has 33, in 3 rows of 11). Our cask count waits on note 24, since the cask is not in
+  spaces (Stardew comes with 33, in 3 rows of 11, and has no cap; ours has none either, note 24). The cask is not in
   the first version.
 
 The first playable keeps only the start map and tier 1 (decision 7). The old
