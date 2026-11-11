@@ -44,6 +44,8 @@ import {
   festivalOfMap,
   festivalOpen,
   festivalDayToday,
+  festivalShutLine,
+  festivalStepShut,
   isFestivalMap,
   sightLine,
 } from "../core/festivals";
@@ -842,6 +844,17 @@ export class FarmScene extends Phaser.Scene {
         ts,
         (x, y) => this.tileBlocked(x, y),
       );
+    const ahead = facingTile(this.pos, PLAYER, this.facing, ts);
+    if (
+      (v.x !== 0 || v.y !== 0) &&
+      this.tileShutForFestival(ahead.x, ahead.y)
+    ) {
+      const line = festivalShutLine(this.state.day.clock.day);
+      if (this.message !== line) {
+        this.message = line;
+        this.render();
+      }
+    }
     if (walking && this.tapPath.length > 0) {
       const moved = Math.hypot(this.pos.x - before.x, this.pos.y - before.y);
       this.tapStuckMs =
@@ -953,6 +966,7 @@ export class FarmScene extends Phaser.Scene {
     const log = this.map.logAt(x, y);
     return (
       this.map.isBlocked(x, y) ||
+      this.tileShutForFestival(x, y) ||
       (log !== undefined && !logCleared(this.state, log)) ||
       (this.outdoorWorld && this.state.trees.blocks(x, y)) ||
       !!this.store.fruitTrees.at(x, y) ||
@@ -1465,7 +1479,10 @@ export class FarmScene extends Phaser.Scene {
     if (!exit) return false;
     // The Larder may have been finished at the hall since the last morning.
     this.refreshHolds();
-    if (exitOpen(exit, this.holds)) this.leave(exit);
+    if (this.exitShutForFestival(exit)) {
+      this.message = festivalShutLine(this.state.day.clock.day);
+      this.render();
+    } else if (exitOpen(exit, this.holds)) this.leave(exit);
     else {
       this.message =
         exit.id === "greenhouse"
@@ -1478,6 +1495,39 @@ export class FarmScene extends Phaser.Scene {
       this.render();
     }
     return true;
+  }
+
+  /** Where the player stands now, as a map and a tile. */
+  private hereTile(): { map: string; x: number; y: number } {
+    const t = tileOf(this.pos, PLAYER, this.map.tileSize);
+    return { map: this.mapId, x: t.x, y: t.y };
+  }
+
+  /**
+   * True when the exit lands in a festival place that is not open yet
+   * (note 82 decision 12). Only exits whose target map is built are checked.
+   * Placeholder: the hall counts as not restored until that is tracked.
+   */
+  private exitShutForFestival(exit: Exit): boolean {
+    const target = maps.get(resolveMapId(exit.map, this.state.farmType));
+    const at = target?.entry(exit.entry);
+    if (!at) return false;
+    const clock = this.state.day.clock;
+    return festivalStepShut(clock.day, clock.minutes, this.hereTile(), {
+      map: resolveMapId(exit.map, this.state.farmType),
+      x: at.x,
+      y: at.y,
+    });
+  }
+
+  /** True when walking onto this tile of the current map is shut by a festival setting up. */
+  private tileShutForFestival(x: number, y: number): boolean {
+    const clock = this.state.day.clock;
+    return festivalStepShut(clock.day, clock.minutes, this.hereTile(), {
+      map: this.mapId,
+      x,
+      y,
+    });
   }
 
   private leave(exit: Exit): void {
