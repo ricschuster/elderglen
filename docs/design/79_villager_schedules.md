@@ -99,6 +99,9 @@ draft must keep these, and must not reuse them or sit close to them:
 | Korvi | The Mountain smith dwarf (F, candidate) | owner, 2026-11-10 |
 | Marl | The Mountain stonekeeper dwarf (M, candidate) | owner, 2026-11-10 |
 | Rundahl | The Wanderer's personal name (M, wizard), heard late. Valley folk still say Old Greencoat. Mimir and its variants are ruled out (owner) | owner, 2026-11-10 |
+| Thalwen | The Beach sea elf (F, candidate), replaced Ondrel (too close to Oriel, so Ondrel is out) | note 09, 2026-11-09 |
+| Maren | The Mines trainer (F, human, candidate) | owner, 2026-11-10 |
+| Rushie | The delta fisher (F, halfling, candidate) | owner, 2026-11-10 |
 | Brimmers | The halfling hat folk, family name for Hearthwell households | note 09 |
 
 Also off limits: Tolkien's dwarf and elf names and the Norse dwarf-name list
@@ -106,7 +109,7 @@ Also off limits: Tolkien's dwarf and elf names and the Norse dwarf-name list
 
 ## Next
 
-1. **Names, in batches by place** (owner). Batch 1 (the Forest and the Mountain) is done, see "Settled names". Still to name: the Mines trainer, the delta fisher, the Beach elf, then Hearthwell by household. The plan was: the Forest and the Mountain first,
+1. **Names, in batches by place** (owner). Batch 1 (the Forest and the Mountain) is done, see "Settled names". Batch 2 (the Mines, delta and Beach) is done too. Still to name: Hearthwell by household. The plan was: the Forest and the Mountain first,
    then the Mines, delta and Beach, then Hearthwell by household. Plain given
    names, distinct by race, with a shared family name for each Hearthwell
    household (Brimmer is already in the lore). No ages shown, only age bands
