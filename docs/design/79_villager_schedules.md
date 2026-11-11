@@ -99,17 +99,42 @@ draft must keep these, and must not reuse them or sit close to them:
 | Korvi | The Mountain smith dwarf (F, candidate) | owner, 2026-11-10 |
 | Marl | The Mountain stonekeeper dwarf (M, candidate) | owner, 2026-11-10 |
 | Rundahl | The Wanderer's personal name (M, wizard), heard late. Valley folk still say Old Greencoat. Mimir and its variants are ruled out (owner) | owner, 2026-11-10 |
-| Brimmers | The halfling hat folk, family name for Hearthwell households | note 09 |
+| Thalwen | The Beach sea elf (F, candidate), replaced Ondrel (too close to Oriel, so Ondrel is out) | note 09, 2026-11-09 |
+| Maren | The Mines trainer (F, human, candidate) | owner, 2026-11-10 |
+| Rushie | The delta fisher (F, halfling, candidate) | owner, 2026-11-10 |
+| Bramwell | Hearthwell smith (M, halfling, candidate) | owner, 2026-11-10 |
+| Hattie | Inn keeper (F, halfling) | owner, 2026-11-10 |
+| Podge | Inn keeper's partner (M, halfling) | owner, 2026-11-10 |
+| Pim | Inn keeper's child (F, halfling) | owner, 2026-11-10 |
+| Odette | Store keeper (F, halfling) | owner, 2026-11-10 |
+| Dorrie | Store keeper's partner (F, halfling) | owner, 2026-11-10 |
+| Fitch | Store keeper's child (M, halfling) | owner, 2026-11-10 |
+| Alder | Gardener (M, halfling, candidate) | owner, 2026-11-10 |
+| Aurelle | Healer (F, elf, candidate) | owner, 2026-11-10 |
+| Dunmar | Librarian (M, dwarf, candidate) | owner, 2026-11-10 |
+| Tilda | Carpenter (F, halfling) | owner, 2026-11-10 |
+| Rufus | Carpenter's partner (M, halfling) | owner, 2026-11-10 |
+| Wren | Carpenter's child (F, halfling) | owner, 2026-11-10 |
+| Cuthbert | Hall steward and postmaster (M, halfling) | owner, 2026-11-10 |
+| Cordelia | Hat-maker (F, halfling, candidate) | owner, 2026-11-10 |
+| Barnaby | Hat-maker's sibling (M, halfling, candidate) | owner, 2026-11-10 |
+| Linnet | Young adult A (F, halfling, candidate) | owner, 2026-11-10 |
+| Thistle | Young adult B (F, halfling, candidate) | owner, 2026-11-10 |
+| Hester | Retiree A (F, halfling) | owner, 2026-11-10 |
+| Walter | Retiree B (M, halfling) | owner, 2026-11-10 |
+| Toby | Grandchild of the retirees (M, halfling) | owner, 2026-11-10 |
+| Brimmers | The halfling hat folk (a people's name, not a surname) | note 09 |
 
 Also off limits: Tolkien's dwarf and elf names and the Norse dwarf-name list
 (note 09), and Stardew's villager names (ADR 0002).
 
 ## Next
 
-1. **Names, in batches by place** (owner). Batch 1 (the Forest and the Mountain) is done, see "Settled names". Still to name: the Mines trainer, the delta fisher, the Beach elf, then Hearthwell by household. The plan was: the Forest and the Mountain first,
+1. **Names, in batches by place** (owner). Batch 1 (the Forest and the Mountain) is done, see "Settled names". Batch 2 (the Mines, delta and Beach) is done too. Batch 3 (all 21 Hearthwell people) is done too, so all 30 are named. The plan was: the Forest and the Mountain first,
    then the Mines, delta and Beach, then Hearthwell by household. Plain given
-   names, distinct by race, with a shared family name for each Hearthwell
-   household (Brimmer is already in the lore). No ages shown, only age bands
+   given names only, distinct by race (owner, 2026-11-10: plain given names, no
+   family names, so households are told apart by role and home, and "Brimmers"
+   stays the people's name, not a surname). No ages shown, only age bands
    (child, young adult, adult, elder), and no ageing over the years.
 2. **Birthdays**: one per person, spread so each season has seven or eight,
    avoiding festival days (Stardew's spread, unchecked). Waits for the names.
