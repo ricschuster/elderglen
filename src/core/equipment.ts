@@ -1,3 +1,4 @@
+import bootData from "../content/boots.json";
 import ringData from "../content/rings.json";
 import type { Inventory } from "./inventory";
 
@@ -18,6 +19,27 @@ export interface RingDef {
 
 export const RINGS = ringData as RingDef[];
 
+/**
+ * Boots give Defense and Immunity (note 37). Stat pairs are Stardew's, names and
+ * prices are ours and placeholders. The smith sells them (`buyBoots`).
+ */
+export interface BootsDef {
+  id: string;
+  name: string;
+  /** Health taken off every hit, to a floor of 1 (placeholder rule, note 37 leaves it open). */
+  defense: number;
+  /** Shortens bad effects. Stored and shown only: no bad effect exists yet. */
+  immunity: number;
+  /** Smith price in coin (placeholder). */
+  price: number;
+}
+
+export const BOOTS = bootData as BootsDef[];
+
+export function bootsById(id: string): BootsDef | undefined {
+  return BOOTS.find((b) => b.id === id);
+}
+
 export const RING_SLOTS = 2;
 
 export function ringById(id: string): RingDef | undefined {
@@ -26,11 +48,14 @@ export function ringById(id: string): RingDef | undefined {
 
 export interface EquipmentSave {
   rings: (string | null)[];
+  boots?: string | null;
 }
 
 /** What the player wears. A worn ring leaves the pack, so the bin cannot take it. */
 export class Equipment {
   private rings: (string | undefined)[] = [undefined, undefined];
+
+  private boots: string | undefined;
 
   /** The ring in each slot, undefined when empty. */
   worn(): (string | undefined)[] {
@@ -67,6 +92,41 @@ export class Equipment {
     return true;
   }
 
+  /** The boots worn, undefined when none. */
+  wornBoots(): string | undefined {
+    return this.boots;
+  }
+
+  /** Put boots from the pack on. Boots already worn go back to the pack. */
+  wearBoots(inv: Inventory, id: string): boolean {
+    if (!bootsById(id) || inv.count(id) < 1) return false;
+    const old = this.boots;
+    inv.remove(id, 1);
+    if (old !== undefined && !inv.add(old, 1)) {
+      inv.add(id, 1);
+      return false;
+    }
+    this.boots = id;
+    return true;
+  }
+
+  /** Take the boots off into the pack. False if none or the pack is full. */
+  removeBoots(inv: Inventory): boolean {
+    if (this.boots === undefined || !inv.add(this.boots, 1)) return false;
+    this.boots = undefined;
+    return true;
+  }
+
+  /** Health taken off each hit by the boots. */
+  defense(): number {
+    return (this.boots && bootsById(this.boots)?.defense) || 0;
+  }
+
+  /** Immunity from the boots. */
+  immunity(): number {
+    return (this.boots && bootsById(this.boots)?.immunity) || 0;
+  }
+
   /** Light radius from rings, in tiles. Zero with none worn. */
   lightRadius(): number {
     return this.sum((r) => r.light);
@@ -87,13 +147,19 @@ export class Equipment {
   }
 
   save(): EquipmentSave {
-    return { rings: this.rings.map((r) => r ?? null) };
+    return {
+      rings: this.rings.map((r) => r ?? null),
+      boots: this.boots ?? null,
+    };
   }
 
   /** Restore from a save, dropping unknown rings. A ring is never duplicated. */
   load(raw: unknown): void {
     this.rings = [undefined, undefined];
+    this.boots = undefined;
     if (typeof raw !== "object" || raw === null) return;
+    const boots = (raw as Partial<EquipmentSave>).boots;
+    if (typeof boots === "string" && bootsById(boots)) this.boots = boots;
     const list = (raw as Partial<EquipmentSave>).rings;
     if (!Array.isArray(list)) return;
     for (let i = 0; i < RING_SLOTS; i++) {

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { Equipment, RINGS, ringById } from "../src/core/equipment";
+import { BOOTS, Equipment, RINGS, ringById } from "../src/core/equipment";
+import { buyBoots, Health } from "../src/core/combat";
 import { pickupRadius } from "../src/core/ground";
 import { Inventory } from "../src/core/inventory";
 import { itemById } from "../src/core/items";
@@ -87,5 +88,60 @@ describe("rings", () => {
     g.equipment.wear(g.inventory, 1, "magnet-ring");
     const back = deserialize(serialize(g));
     expect(back!.equipment.worn()[1]).toBe("magnet-ring");
+  });
+});
+
+describe("boots", () => {
+  it("every pair is a kept item with a price", () => {
+    for (const b of BOOTS) {
+      expect(itemById(b.id)?.keep).toBe(true);
+      expect(b.price).toBeGreaterThan(0);
+    }
+  });
+
+  it("wears, swaps and takes off, giving defense and immunity", () => {
+    const inv = new Inventory();
+    const eq = new Equipment();
+    inv.add("sturdy-boots");
+    inv.add("warded-boots");
+    expect(eq.wearBoots(inv, "sturdy-boots")).toBe(true);
+    expect(eq.defense()).toBe(2);
+    expect(eq.wearBoots(inv, "warded-boots")).toBe(true);
+    expect(inv.count("sturdy-boots")).toBe(1);
+    expect(eq.defense()).toBe(2);
+    expect(eq.immunity()).toBe(1);
+    expect(eq.removeBoots(inv)).toBe(true);
+    expect(eq.defense()).toBe(0);
+    expect(eq.wearBoots(inv, "glow-ring")).toBe(false);
+  });
+
+  it("defense cuts a hit to a floor of 1, before assist", () => {
+    const h = new Health();
+    expect(h.hurt(6, false, 2)).toBe(4);
+    h.grace = 0;
+    expect(h.hurt(2, false, 4)).toBe(1);
+    h.grace = 0;
+    expect(h.hurt(10, true, 2)).toBe(4);
+  });
+
+  it("the smith sells boots for coin, once", () => {
+    const g = newGame();
+    g.money = 10;
+    expect(buyBoots(g, "worn-boots")).toBe("Not enough money.");
+    g.money = 200;
+    expect(buyBoots(g, "worn-boots")).toBeUndefined();
+    expect(g.money).toBe(50);
+    expect(buyBoots(g, "worn-boots")).toBe("You already have a pair.");
+  });
+
+  it("saves boots, and an old save without them loads", () => {
+    const g = newGame();
+    g.inventory.add("ember-boots");
+    g.equipment.wearBoots(g.inventory, "ember-boots");
+    const back = deserialize(serialize(g));
+    expect(back?.equipment.wornBoots()).toBe("ember-boots");
+    const e = new Equipment();
+    e.load({ rings: [null, null] });
+    expect(e.wornBoots()).toBeUndefined();
   });
 });

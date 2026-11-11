@@ -2727,7 +2727,11 @@ export class FarmScene extends Phaser.Scene {
         tileSize: ts,
       });
       if (result.hit) {
-        const lost = combat.health.hurt(result.hit, combat.assist);
+        const lost = combat.health.hurt(
+          result.hit,
+          combat.assist,
+          this.state.equipment.defense(),
+        );
         if (lost > 0) {
           this.message = `${creatureById(c.kind)?.name ?? "It"} hits you for ${lost}.`;
           this.floatText(this.pos.x, this.pos.y - 14, `-${lost}`, "#ff8080");

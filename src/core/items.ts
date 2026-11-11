@@ -4,7 +4,7 @@ import {
   MAHOGANY_SEED_NAME,
   MAHOGANY_SEED_PRICE,
 } from "./mahogany";
-import { RINGS } from "./equipment";
+import { BOOTS, RINGS } from "./equipment";
 import { FERTILIZERS } from "./fertilizer";
 import { FORAGE } from "./forage";
 import {
@@ -257,6 +257,8 @@ export const WARP_TOTEM_BEACH = "warp-totem-beach";
 /** Rings are worn in the two ring slots (`equipment.ts`, note 37). */
 for (const r of RINGS)
   items.set(r.id, { id: r.id, name: r.name, sellPrice: 0, keep: true });
+for (const b of BOOTS)
+  items.set(b.id, { id: b.id, name: b.name, sellPrice: 0, keep: true });
 items.set(WARP_TOTEM_BEACH, {
   id: WARP_TOTEM_BEACH,
   name: "Beach warp totem",
@@ -350,6 +352,7 @@ const GROUPS: [string, string[]][] = [
   ],
   ["Keepsakes", [HOMEWARD_PIN, WARP_TOTEM_BEACH]],
   ["Rings", RINGS.map((r) => r.id)],
+  ["Boots", BOOTS.map((b) => b.id)],
   ["Wood and fibre", ["wood", "hardwood", "sap", "fiber", "clay", "hay"]],
 ];
 for (const [group, ids] of GROUPS)

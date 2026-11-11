@@ -1,5 +1,11 @@
 import Phaser from "phaser";
-import { RING_SLOTS, RINGS, ringById } from "../core/equipment";
+import {
+  BOOTS,
+  bootsById,
+  RING_SLOTS,
+  RINGS,
+  ringById,
+} from "../core/equipment";
 import type { GameState } from "../core/save";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
@@ -22,7 +28,7 @@ export class EquipmentScene extends Phaser.Scene {
   }
 
   create(): void {
-    frame(this, "Rings", () => this.close());
+    frame(this, "Rings and boots", () => this.close());
     this.add.text(
       24,
       500,
@@ -65,6 +71,39 @@ export class EquipmentScene extends Phaser.Scene {
           : [],
       });
     });
+    const boots = bootsById(eq.wornBoots() ?? "");
+    rows.push({
+      label: `Boots: ${boots?.name ?? "none"}`,
+      detail: `Defense ${eq.defense()}, immunity ${eq.immunity()}`,
+      buttons: boots
+        ? [
+            {
+              text: "Take off",
+              run: () => {
+                if (!eq.removeBoots(inv)) this.say("The pack is full.");
+                this.refresh();
+              },
+            },
+          ]
+        : [],
+    });
+    for (const b of BOOTS) {
+      const n = inv.count(b.id);
+      if (n < 1) continue;
+      rows.push({
+        label: b.name,
+        detail: `Defense ${b.defense}, immunity ${b.immunity}`,
+        buttons: [
+          {
+            text: "Wear",
+            run: () => {
+              if (!eq.wearBoots(inv, b.id)) this.say("The pack is full.");
+              this.refresh();
+            },
+          },
+        ],
+      });
+    }
     for (const ring of RINGS) {
       const n = inv.count(ring.id);
       if (n < 1) continue;
