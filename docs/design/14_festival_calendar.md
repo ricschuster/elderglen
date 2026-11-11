@@ -252,12 +252,43 @@ background for what we chose not to do.
   lines each, about 54 plus the six keepers' own lines. Placeholder lines
   meanwhile; the real ones come with the voice sheets. Above Stardew, which
   has one line per festival as I recall (unchecked, SC-114).
+- **Festival spots on the square (my proposal, 2026-11-11, placeholders).** The
+  18 who attend (the rule above, applied to note 80's routes) each get a spot
+  zone. Tile positions come with the festival map. Zones: **stalls** (browsing
+  one stall), **well** (chat by the well), **bench**, **pier** (watching the
+  fishing), **lanterns** (by the strung lights). The market runs 17:00 to 24:00,
+  but villagers stand there 18:00 to 22:00 (children 18:00 to 20:00), as note 14
+  already says; the rest of the time they follow their ordinary route.
+
+  | Person | Spot | Stays | Note |
+  | --- | --- | --- | --- |
+  | Cuthbert | well | 18:00 to 22:00 | The host. Welcomes the player, says what each stall is |
+  | Odette | stalls (curio) | 18:00 to 22:00 | Store keeper, buys seeds at the curio stall |
+  | Dorrie | stalls (lantern) | 18:00 to 22:00 | With Odette's lines |
+  | Bramwell | stalls (trader) | 19:00 to 22:00 | Comes from the inn |
+  | Hattie | inn door | 18:00 to 24:00 | Keeps the inn open; stands at its door, not a stall |
+  | Podge | stalls (hat-maker) | 18:00 to 22:00 | |
+  | Aurelle | pier | 19:00 to 21:00 | Her river walk joins the market |
+  | Dunmar | bench | 19:30 to 22:00 | Reads by the lanterns |
+  | Cordelia | stalls (hat-maker) | 19:00 to 21:00 | Talks about the visitor's hats, the cross-line from the hat-maker note |
+  | Barnaby | stalls (hat-maker) | 19:00 to 22:00 | |
+  | Linnet | stalls (trader) | 18:00 to 22:00 | Serves at the inn, comes out between orders |
+  | Thistle | stalls (lantern) | 18:00 to 22:00 | |
+  | Walter | pier | 19:30 to 21:00 | Fishing talk |
+  | Aldreth | well | 18:00 to 22:00 | The courier, a visitor too |
+  | Fitch, Pim, Wren, Toby | lanterns | 18:00 to 20:00 | Children play under the lights, then go home |
+
+  Not at the market: Hester (asleep by 21:00, keeps her early route), Alder,
+  Tilda, Rufus and the area residents (Wanderer, hermit, dwarf, plus Dilly,
+  Marl, Maren, Rushie and Thalwen, who stay in their areas). Each attendee has
+  three lines, one per evening, per the lines rule above.
 - **Seller names (owner, 2026-11-11).** Placeholder role names in the data
   ("the hat-maker", "the pier keeper"); real names come with the voice sheets and
   art, as for the road trader.
 - **Still open:** the owner's check of the placeholder stock, the nine
-  hats' art and names, the market-only fish list, and each person's festival
-  spot (note 80 open item 3).
+  hats' art and names, the market-only fish list, the owner's check of the
+  spot table above, and the festival spots for the other festivals (note 80
+  open item 3).
 
 ## Open
 
