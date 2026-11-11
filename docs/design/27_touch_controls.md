@@ -47,6 +47,32 @@ away in options.
   beside the toolbar (tap-to-move scheme) or takes the action button's place
   (stick scheme).
 
+## Tap uses the held tool when it fits (decided 2026-11-11, not built)
+
+Found on the first tablet play (2026-11-11): a tap one tile away tilled, a tap
+two tiles away only walked, so a plot could not be worked by tapping. Stardew's
+saved Mobile Controls page says a tap on bare ground only walks, objects
+auto-pick the tool, and careful placement is for the stick scheme (SC-123).
+Owner chose option A:
+
+- **One rule for every tap.** Tap a tile. If the held item has a use on that
+  tile, the farmer walks beside it and uses the item once. If not, the farmer
+  only walks there. The tile beside the farmer is the same rule with no walk.
+- **What fits:** the hoe on a diggable tile, the can on tilled soil or a crop,
+  seeds on tilled soil, fertilizer on a crop or soil, a sprinkler or machine on
+  an open tile. Trees and rocks keep the auto-picked axe or pickaxe.
+  The scythe stays a manual pick. Anything else only walks.
+- **Drag works the tiles.** With the hoe, can or seeds held, a finger dragged
+  over tiles works each new reachable tile, as the mouse drag does on desktop
+  (note 55 "Built status", #780, #783). A drag with any other item only follows
+  the finger.
+- **Energy and seeds.** A tap that only walks never costs energy or a seed.
+- **The mark.** The target outline is white when the tap will use the item,
+  grey when it will only walk, red when there is no route.
+- **Test.** Unit tests for the "does the held item fit this tile" decision in
+  `src/core/` (free of Phaser); a tablet check of a 4 by 4 plot, tilled, planted
+  and watered by taps and drags.
+
 ## Open questions
 
 - Checked on a real tablet (#59, #63) before either scheme is called done. The

@@ -113,6 +113,8 @@ Art, in M3d:
 with the Secret Woods (six daily stumps and the log). Mahogany was reopened 2026-11-10: player-planted,
 seed from the Secret Woods (note 36 "Mahogany"), built 2026-11-10 (#724) except tapping and the monster drop.
 
+Session 2026-11-11 part seven (handoff 2026-11-11g): first tablet play. Doors, bin, seed drag and the farm-choice preview are fixed and merged (#782 to #784). Designed, not built: tap uses the held tool when it fits (note 27) and five save slots (note 52). Next session builds both, then looks at the tablet frame rate and replays a full game.
+
 Session 2026-11-11 part six (handoff 2026-11-11f): the farm map is merged (#779) and the owner's first look is built (#780): walk-through exits, hoe and can on the own tile and by mouse drag, 250 trees and denser clutter. Next: rerun playtests on the denser farm, then festival spots (step 2) or the farmhouse and cabin interior (step 11).
 
 Session 2026-11-11 part five (handoff 2026-11-11e): the real farm map is built (#776, merged as #779; note 55 "Built status").
