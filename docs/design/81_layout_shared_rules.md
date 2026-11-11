@@ -1,6 +1,6 @@
 # 81 Layout and tiles: the shared rules (draft)
 
-Status: owner answers recorded 2026-11-11, the metrics and note format still to check. Settles the rules that four coming tracks
+Status: owner answers recorded 2026-11-11, the metrics still to check in play. Settles the rules that four coming tracks
 share, so they do not each invent their own: map layout, festival layout, mine
 layout and interior layout. Nothing here is built. Each track still needs its own
 layout note with sketches (design before build). Format and contract stay in
@@ -45,8 +45,16 @@ Owner answers, 2026-11-11, are marked. The rest are proposals to check.
    it: a short style sheet (palette, outline weight, light direction, tile
    detail level) is written before any final tile is drawn, so generated and
    hand-drawn pieces match, and an ADR checks the licence of any non-code
-   generated source before its output ships. Note 15 keeps the open question of
-   who draws what.
+   generated source before its output ships.
+
+   The split (owner, 2026-11-11): the owner draws characters and portraits, and
+   may draw some special items. Claude generates terrain, props and buildings
+   with the owner's guidance. The look starts from a mix of two routes: the owner
+   collects 5 to 10 reference images (ideas only, ADR 0002) and Claude also
+   builds on what exists (the pencil witch and the code-drawn tiles). It will
+   take several rounds: Claude writes a draft style sheet with swatches drawn
+   in code, the owner marks what to change, and the sheet is fixed before any
+   final tile.
 3. **Tilesets are one image per theme, with a stable tile order, and the
    outdoor theme has one image per season (owner, 2026-11-11, Stardew from
    memory, SC-116).** Themes: outdoor (four seasonal images, same tile order),
@@ -116,6 +124,17 @@ Owner answers, 2026-11-11, are marked. The rest are proposals to check.
     Entry names say where the player came from (`from_farm`). Exits say where
     they lead (`to_forest`). Festival variants are not new map ids.
 
+11. **The layout page (owner, 2026-11-11).** A page in the dev server
+    (`npm run dev`), to review proposed layouts, adjust them and place things.
+    It loads a map JSON and shows the layers, the 30 by 17 view box, and the
+    entries, exits, services, forage spots and trees. It moves or adds those
+    objects and paints coarse block-out regions (water, path, building
+    footprint, clear pad). Tile detail stays in Tiled. Save writes
+    `src/content/maps/<id>.json` after running the contract and reachability
+    checks, and refuses a map that fails them. It is a dev tool, never in the
+    shipped game. The first layout notes use Tiled screenshots, so the page is
+    not on their path.
+
 ## Order of the four tracks
 
 1. Interiors: small, shells exist (#646), and they prove the tileset pipeline.
@@ -126,16 +145,9 @@ Owner answers, 2026-11-11, are marked. The rest are proposals to check.
 
 ## Open
 
-- The style sheet and the split of what is generated and what is hand drawn
-  (note 15, art direction in `docs/handoffs/PRIORITIES.md` item 4). Comes after
-  the layouts.
-- The owner's layout page (owner, 2026-11-11: not sure of the full scope; the
-  aims are to review proposed layouts, adjust how things are laid out and place
-  things). Proposed scope, to confirm: a local web page that loads a map JSON,
-  shows the layers, the 30 by 17 view box, and the entries, exits, services and
-  forage spots, lets the owner move or add those objects and block out areas,
-  runs the contract and reachability checks live, and saves the JSON. Painting
-  tiles stays in Tiled. Needs its own design note before any build. Not part of
-  the first layout notes, which use Tiled screenshots.
+- The style sheet itself: reference images, draft swatches and the rounds of
+  changes (note 15, art direction in `docs/handoffs/PRIORITIES.md` item 4). Comes
+  after the layouts.
+- The layout page is decided in decision 11. Its own design note comes before any build.
 - The metrics in decision 5 are a first guess and need a hands-on walk of the
   built areas.
