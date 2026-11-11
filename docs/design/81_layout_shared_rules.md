@@ -90,7 +90,7 @@ Owner answers, 2026-11-11, are marked. The rest are proposals to check.
    | --- | --- |
    | Main path | 2 tiles wide, 3 where two groups may meet (the green, the Hearthwell streets) |
    | Branch or trail | 1 tile wide, never a dead end without a forage spot, prop or view |
-   | Door | 1 tile wide, 2 for barns and the hall, entry tile directly below |
+   | Door | 1 tile wide, 2 for barns and the hall, entry tile directly below; note 86 proposes the interior entry notch 2 wide for every interior (SC-145) |
    | Exit | 3 to 7 tiles wide, as in notes 72 to 78 |
    | Crossing a settled area | no more than about 60 s on foot, 30 s on the horse; checked by walk time, not tiles |
    | One screen | any landmark worth finding is visible from 30 by 17 tiles, or hinted at the screen edge |
@@ -160,6 +160,8 @@ Owner answers, 2026-11-11, are marked. The rest are proposals to check.
 
 1. Interiors: small, shells exist (#646), and they prove the tileset pipeline.
    The farmhouse and the cabin wait for the farm layout (note 55).
+   The farmhouse and cabin are laid out in note 85, the other interiors in note 86
+   (a pilot, a hut and an inn so far).
 2. Valley maps, area by area in the order of note 71, after an art direction
    decision.
 3. Festival layouts: need the festival spots design (note 66, note 80 item 3).
