@@ -31,6 +31,12 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
    ending is parked there (owner, 2026-11-09). Below Special Orders
    (2026-11-06): nothing in slices 1 to 3 needs it, and it is only needed
    before slice 5 (note 33), alongside the heart events. Owner put it before art.
+2b. **Ancestors' shrine and evaluation (note 83, drafted 2026-11-11).** Settled: the
+   shrine, 20 points, Stardew's candle cuts, the statue, the three ancestors, the
+   scene lines and Oriel's letter, the Diamond as a gem below the Glimmerstone. Left: the
+   Diamond's name, art and drop rates (SC-135), the shrine's tiles under the old tree
+   (farm layout, #776), the scene's shots, and the camp chest's exact items by floor
+   (note 22). Nothing built.
 3. **Map areas** (notes 71 to 78, M3b, owner answers recorded 2026-11-08). One
    note per unbuilt area. Recommended build order, from note 71: contract
    additions (#636, ten of them, built) first, then Forest part 1 (#637, built
