@@ -598,7 +598,7 @@ placeholders and match the table above and note 07.
 - **The salt water Periwinkle is "Reef Periwinkle"** (`reef-periwinkle`, 50g). The
   beach already has a Periwinkle forage good at 20g, so the pot's would have clashed.
 - **Junk is five placeholder items** (Tangled line, Cracked jar, Sodden rope, Bent
-  spoon, Old boot), 1g each. Trash and the recycler are not built; the rod's trash
+  spoon, Old boot), 1g each. Trash and the recycler came later (see slice 4 part four); the rod's trash
   should draw on the same list when it is.
 - **Not built:** the Water room bundles 17 and 18 and their three pots reward,
   and a pot-side screen (a pot shows a marker when it holds a catch).
@@ -628,8 +628,26 @@ Placeholder numbers where marked.
   `pots.json`), never on the first tutorial cast. There is no bar fight (the
   note sets none). It takes the pot's quality roll (never perfect), gives harvest
   XP on its price and counts as a shellfish catch for the tracker.
-- **Not built:** the Great Hearthfin and the other legends, trash and the
-  recycler, bundles 13 to 18, the lobster's own bar fight if one is wanted.
+- **Not built:** the Great Hearthfin and the other legends, bundles 13 to 18, the lobster's own bar fight if one is wanted.
+
+## Built in slice 4, part four: rod trash and the recycler (2026-11-11, issue #596)
+
+Placeholder numbers where marked. Tests: `tests/recycler.test.ts`.
+
+- **Trash on the rod:** a bite is trash at 15 in 100 on the farm pond and the
+  delta marsh lake, 2 in 100 elsewhere (`rodTrashChance` in `fishing.ts`, data in
+  `pots.json`). It draws from the pot's five junk items, has no bar, is never on
+  the tutorial cast, gives the junk XP (1) and drops at the feet if the pack is
+  full. Bait, lures and the Trapper do not change it (the note sets none; Mariner
+  stays pots only).
+- **The recycler** (`recycler`, `processing.ts`): takes one piece of trash, runs an
+  hour, and makes stone (3), wood (3), coal, iron ore or cloth by weight 30, 25,
+  20, 15, 10 (placeholders). Torches are left out, there is no torch item yet. It
+  is crafted from 25 wood, 25 stone and an iron bar at fishing level 4, and
+  places and saves like any machine. Art is a plain stand-in.
+- **Not built:** water plants and jellies (the set is still open in "Open", and
+  the note gives no list), so no fish smoker input either; trash is not in the
+  collection or tracker.
 
 ## Built in slice 4, part three: the five legends and the crown (2026-11-10, issue #596)
 

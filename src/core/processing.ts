@@ -14,6 +14,7 @@ import {
   produceOf,
   type ArtisanKind,
 } from "./artisan";
+import { JUNK } from "./pots";
 import { cropById } from "./crops";
 import { BARS, COAL, coalFor, ORE_PER_BAR } from "./ore";
 import { splitQuality, type Quality } from "./quality";
@@ -52,6 +53,8 @@ export const MACHINES: readonly MachineDef[] = [
   { id: "cask", name: "Cask", sellPrice: 200, cellar: true },
   /** A crafted furnace, for more batches at once. The first is the smith's gift (`furnace.ts`). */
   { id: "furnace", name: "Furnace", sellPrice: 150 },
+  /** Turns the rod's and the pots' trash into useful goods (note 21). Sell price is ours, a placeholder. */
+  { id: "recycler", name: "Recycler", sellPrice: 200 },
 ];
 
 export const machineById = (id: string | undefined): MachineDef | undefined =>
@@ -116,6 +119,39 @@ const MAYO_OF: Record<string, string> = {
   "duck-egg": DUCK_MAYONNAISE,
 };
 
+/** The recycler takes an hour per item (note 21). */
+export const RECYCLER_MINUTES = 60;
+/**
+ * What a piece of trash becomes: stone, coal, iron ore, wood or cloth, by weight
+ * (placeholders, note 21). The note also lists torches, but there is no torch
+ * item yet, so it is left out.
+ */
+export const RECYCLER_OUTPUTS: readonly {
+  item: string;
+  count: number;
+  weight: number;
+}[] = [
+  { item: "stone", count: 3, weight: 30 },
+  { item: "wood", count: 3, weight: 25 },
+  { item: COAL, count: 1, weight: 20 },
+  { item: "iron-ore", count: 1, weight: 15 },
+  { item: CLOTH, count: 1, weight: 10 },
+];
+
+/** The output of one recycled item, drawn by weight. */
+export function recyclerRoll(random: () => number): {
+  item: string;
+  count: number;
+} {
+  const total = RECYCLER_OUTPUTS.reduce((n, o) => n + o.weight, 0);
+  let pick = random() * total;
+  for (const o of RECYCLER_OUTPUTS) {
+    pick -= o.weight;
+    if (pick < 0) return o;
+  }
+  return RECYCLER_OUTPUTS[RECYCLER_OUTPUTS.length - 1]!;
+}
+
 /** The dye vat makes one dye from one flower, berry or crop in a day (ours, placeholder, note 07). */
 export const DYE_MINUTES = MINUTES_PER_DAY;
 
@@ -175,6 +211,16 @@ export function processFor(
       count: 1,
       output: artisanId(input, "dried"),
       minutes: DEHYDRATOR_MINUTES,
+    };
+  }
+  if (machine === "recycler") {
+    if (!JUNK.some((j) => j.id === input)) return undefined;
+    const out = recyclerRoll(random);
+    return {
+      ...one,
+      output: out.item,
+      count: out.count,
+      minutes: RECYCLER_MINUTES,
     };
   }
   if (machine === "dye-vat") {

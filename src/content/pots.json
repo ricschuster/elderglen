@@ -4,6 +4,7 @@
   "fineBaitJunkChance": 0.3,
   "junkXp": 1,
   "rodLobsterChance": 0.03,
+  "rodTrashChance": { "default": 0.02, "farm-pond": 0.15, "marsh-lake": 0.15 },
   "catches": [
     {
       "id": "crayfish",

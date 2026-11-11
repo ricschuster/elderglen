@@ -196,11 +196,21 @@ export function fishWeight(f: FishDef, odds: Odds): number {
   return w;
 }
 
+/**
+ * The share of rod bites that are trash in a water (note 21, placeholders): weak
+ * waters 15 in 100, the better waters almost none (2 in 100).
+ */
+export function rodTrashChance(water: string): number {
+  const t = potData.rodTrashChance as Record<string, number>;
+  return t[water] ?? t.default!;
+}
 export type Bite =
   | { kind: "none" }
   | { kind: "fish"; fish: FishDef }
   /** The Pearl Lobster, on the sea only (`pots.ts`). */
-  | { kind: "lobster" };
+  | { kind: "lobster" }
+  /** A piece of trash, hauled in with no bar (`pots.ts`, `rodTrashChance`). */
+  | { kind: "trash"; item: string };
 
 /**
  * What bites. Every rod can hook any fish the conditions allow, and no level
@@ -217,6 +227,17 @@ export function bite(
   // The sea sometimes gives the rare Pearl Lobster instead of a fish.
   if (water === "sea" && !tutorial && random() < potData.rodLobsterChance)
     return { kind: "lobster" };
+  // Weak waters sometimes give trash: no bar, never on the tutorial cast.
+  if (!tutorial && random() < rodTrashChance(water))
+    return {
+      kind: "trash",
+      item: potData.junk[
+        Math.min(
+          Math.floor(random() * potData.junk.length),
+          potData.junk.length - 1,
+        )
+      ]!.id,
+    };
   let pool = fishAvailable(water, c);
   if (tutorial) pool = pool.filter((f) => f.rarity === "common");
   if (pool.length === 0) {
