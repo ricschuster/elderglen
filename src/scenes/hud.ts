@@ -20,6 +20,13 @@ const BAR_W = TOOLBAR_SIZE * (SLOT + GAP) - GAP;
 const BASE_W = 960;
 const BASE_H = 540;
 const BAR_Y = BASE_H - SLOT - 8;
+/** Touch: the toolbar is a column down the left edge, with the map drawn beside it. */
+const STEP = SLOT + GAP;
+const COL_X = 8;
+const COL_TOP = 8;
+const COL_W = SLOT + 2 * COL_X;
+/** A drag moves the column when the finger travels this far, in HUD units. */
+const DRAG_MIN = 6;
 /** The widest HUD row, toolbar and a margin, in HUD units: it must fit the window. */
 export const HUD_FIT_W = BAR_W + 16;
 const USE_R = 52;
@@ -76,7 +83,7 @@ export class Hud {
     o: Phaser.GameObjects.Components.Transform;
     x: number;
     y: number;
-    h: "c" | "r";
+    h: "l" | "c" | "r";
     v: "t" | "b";
   }[] = [];
   /** The HUD's size in its own units, and its scale on screen. */
@@ -88,6 +95,11 @@ export class Hud {
   /** Which row of backpack slots the bar is showing. */
   private row = 0;
   private hintsOn = true;
+  /** Touch column: the first slot position shown, and how many fit. */
+  private scrollTop = 0;
+  private visibleCount = 1;
+  private lastAt = -1;
+  private drag: { y: number; top: number; moved: boolean } | undefined;
 
   constructor(
     scene: Phaser.Scene,
@@ -102,17 +114,18 @@ export class Hud {
     settings: Settings,
   ) {
     this.touch = settings.profile === "touch";
-    this.status = scene.add.text(16, 16, "", {
+    const ox = this.touch ? COL_W : 0;
+    this.status = scene.add.text(16 + ox, 16, "", {
       fontSize: "24px",
       color: "#ffffff",
     });
     // The hint sits in a dark box so it reads over any ground.
-    this.hint = scene.add.text(24, 122, "", {
+    this.hint = scene.add.text(24 + ox, 122, "", {
       fontSize: "14px",
       color: "#ffffff",
     });
     this.hintBox = scene.add
-      .rectangle(16, 116, 0, 0, 0x000000, 0.65)
+      .rectangle(16 + ox, 116, 0, 0, 0x000000, 0.65)
       .setOrigin(0)
       .setStrokeStyle(1, 0xffffff, 0.3);
     this.hintBox.setDepth(0);
@@ -122,22 +135,25 @@ export class Hud {
     this.hint.setText(this.touch ? "" : desktopHint(settings.bindings));
     this.hintsOn = settings.showHints && !this.touch;
     this.showHint();
-    this.message = scene.add.text(16, 84, "", {
+    this.message = scene.add.text(16 + ox, 84, "", {
       fontSize: "18px",
       color: "#ffe9a0",
     });
     // One health bar, drawn only where health can be lost (note 22, decision 17).
     this.healthBack = scene.add
-      .rectangle(16, 74, HEALTH_W, 8, 0x000000, 0.6)
+      .rectangle(16 + ox, 74, HEALTH_W, 8, 0x000000, 0.6)
       .setOrigin(0)
       .setStrokeStyle(1, 0xffffff, 0.5)
       .setVisible(false);
     this.healthFill = scene.add
-      .rectangle(16, 74, HEALTH_W, 8, 0xd04a4a, 1)
+      .rectangle(16 + ox, 74, HEALTH_W, 8, 0xd04a4a, 1)
       .setOrigin(0)
       .setVisible(false);
     this.healthText = scene.add
-      .text(16 + HEALTH_W + 8, 69, "", { fontSize: "13px", color: "#ffffff" })
+      .text(16 + ox + HEALTH_W + 8, 69, "", {
+        fontSize: "13px",
+        color: "#ffffff",
+      })
       .setVisible(false);
     this.objects.push(
       this.status,
@@ -161,7 +177,18 @@ export class Hud {
         .setOrigin(0)
         .setStrokeStyle(2, 0xffffff, 0.3)
         .setInteractive({ useHandCursor: true });
-      box.on("pointerdown", () => onSelect(this.indexOf(i)));
+      if (this.touch) {
+        // A tap selects; a drag along the column scrolls it.
+        box.on("pointerdown", (p: Phaser.Input.Pointer) => {
+          this.drag = { y: p.y, top: this.scrollTop, moved: false };
+        });
+        box.on("pointerup", () => {
+          const d = this.drag;
+          this.drag = undefined;
+          if (d && !d.moved) onSelect(this.indexOf(i));
+        });
+        box.on("pointerupoutside", () => (this.drag = undefined));
+      } else box.on("pointerdown", () => onSelect(this.indexOf(i)));
       const text = scene.add
         .text(x + SLOT / 2, BAR_Y + SLOT - 2, "", {
           fontSize: "10px",
@@ -179,14 +206,26 @@ export class Hud {
       this.objects.push(box, icon, text);
     }
 
+    if (this.touch)
+      scene.input.on("pointermove", (p: Phaser.Input.Pointer) => {
+        const d = this.drag;
+        if (!d || !p.isDown) return;
+        const dy = (p.y - d.y) / this.scale;
+        if (Math.abs(dy) < DRAG_MIN && !d.moved) return;
+        d.moved = true;
+        this.scrollTop = d.top - Math.round(dy / STEP);
+      });
+    // On touch the Row button sits at the foot of the column, beside it.
+    const rowX = this.touch ? COL_W + 8 : left;
+    const rowY = this.touch ? BASE_H - 48 : BAR_Y - 46;
     this.rowButton = scene.add
-      .rectangle(left, BAR_Y - 46, 90, 40, 0x000000, 0.5)
+      .rectangle(rowX, rowY, 90, 40, 0x000000, 0.5)
       .setOrigin(0)
       .setStrokeStyle(2, 0xffffff, 0.5)
       .setInteractive({ useHandCursor: true })
       .on("pointerdown", onRow);
     this.rowText = scene.add
-      .text(left + 45, BAR_Y - 26, "Row", {
+      .text(rowX + 45, rowY + 20, "Row", {
         fontSize: "16px",
         color: "#ffffff",
       })
@@ -254,14 +293,19 @@ export class Hud {
       hats,
       hatsText,
     );
-    this.pin("c", "b", [
-      this.heldName,
-      ...this.slots,
-      ...this.captions,
-      ...this.icons,
-      this.rowButton,
-      this.rowText,
-    ]);
+    if (this.touch) {
+      // The column is placed from the top in `update`; only these ride the foot.
+      this.heldName.setOrigin(0, 1).setPosition(COL_W + 8, BASE_H - 56);
+      this.pin("l", "b", [this.heldName, this.rowButton, this.rowText]);
+    } else
+      this.pin("c", "b", [
+        this.heldName,
+        ...this.slots,
+        ...this.captions,
+        ...this.icons,
+        this.rowButton,
+        this.rowText,
+      ]);
     this.pin("r", "b", [use, useText, eat, eatText]);
     this.pin("r", "t", [skills, skillsText, craft, craftText, hats, hatsText]);
     // Tap-to-move has no Use button: a tap on the tile beside the farmer uses
@@ -305,7 +349,7 @@ export class Hud {
 
   /** Anchor objects to the horizontal centre or right, and top or bottom. */
   private pin(
-    h: "c" | "r",
+    h: "l" | "c" | "r",
     v: "t" | "b",
     list: Phaser.GameObjects.Components.Transform[],
   ): void {
@@ -323,8 +367,12 @@ export class Hud {
     this.scale = scale;
     const dx = uw - BASE_W;
     const dy = uh - BASE_H;
+    this.visibleCount = Math.max(
+      1,
+      Math.floor((uh - 2 * COL_TOP + GAP) / STEP),
+    );
     for (const p of this.pinned) {
-      p.o.x = p.x + (p.h === "c" ? dx / 2 : dx);
+      p.o.x = p.x + (p.h === "l" ? 0 : p.h === "c" ? dx / 2 : dx);
       p.o.y = p.y + (p.v === "b" ? dy : 0);
     }
   }
@@ -342,6 +390,11 @@ export class Hud {
     this.hintBox.setSize(this.hint.width + 16, this.hint.height + 12);
   }
 
+  /** Screen pixels the toolbar column takes from the left edge: touch only. */
+  insetLeft(scale: number): number {
+    return this.touch ? COL_W * scale : 0;
+  }
+
   /** True while a finger or the mouse holds the Use button. */
   get useHeld(): boolean {
     return this.usePressed;
@@ -356,6 +409,8 @@ export class Hud {
   covers(x: number, y: number): boolean {
     const ux = x / this.scale;
     const uy = y / this.scale;
+    // On touch the whole left strip is the toolbar's; the map starts beside it.
+    if (this.touch) return ux <= COL_W;
     const left = (this.uw - BAR_W) / 2;
     return uy >= BAR_Y + (this.uh - BASE_H) && ux >= left && ux <= left + BAR_W;
   }
@@ -390,10 +445,35 @@ export class Hud {
     const multiRow = g.inventory.size > SLOT_COUNT;
     this.rowButton.setVisible(multiRow && this.touch);
     this.rowText.setVisible(multiRow && this.touch);
+    // The tools sit on the first row only; later rows show backpack slots.
+    const order: number[] = [];
+    for (let i = 0; i < this.slots.length; i++)
+      if (this.row === 0 || i >= TOOLS.length) order.push(i);
+    if (this.touch) {
+      // Keep the held slot in view, then clamp the scroll to the column.
+      const at = order.indexOf(
+        this.slots.findIndex((_, i) => this.indexOf(i) === selected),
+      );
+      if (at >= 0 && at !== this.lastAt) {
+        if (at < this.scrollTop) this.scrollTop = at;
+        if (at >= this.scrollTop + this.visibleCount)
+          this.scrollTop = at - this.visibleCount + 1;
+      }
+      this.lastAt = at;
+      const most = Math.max(0, order.length - this.visibleCount);
+      this.scrollTop = Math.min(most, Math.max(0, this.scrollTop));
+    }
     this.slots.forEach((box, i) => {
       const index = this.indexOf(i);
-      // The tools sit on the first row only; later rows show backpack slots.
-      const shown = this.row === 0 || i >= TOOLS.length;
+      let shown = this.row === 0 || i >= TOOLS.length;
+      if (this.touch) {
+        const k = order.indexOf(i) - this.scrollTop;
+        shown = shown && k >= 0 && k < this.visibleCount;
+        const y = COL_TOP + k * STEP;
+        box.setPosition(COL_X, y);
+        this.icons[i]!.setPosition(COL_X + SLOT / 2, y + 15);
+        this.captions[i]!.setPosition(COL_X + SLOT / 2, y + SLOT - 2);
+      }
       box.setVisible(shown);
       this.icons[i]!.setVisible(shown);
       this.captions[i]!.setVisible(shown);

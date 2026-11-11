@@ -1610,28 +1610,33 @@ export class FarmScene extends Phaser.Scene {
     const uiPercent =
       (this.registry.get(UI_SIZE_KEY) as number | undefined) ?? 100;
     const ts = this.map.tileSize;
-    const zoom = worldZoom(zoomPercent, width, height);
-    // The camera stops at the built rooms; unbuilt space stays black.
-    const built = this.map.bounds;
-    const b = cameraBounds(
-      built.w * ts,
-      built.h * ts,
-      width / zoom,
-      height / zoom,
-      built.x * ts,
-      built.y * ts,
-    );
-    this.cameras.main
-      .setSize(width, height)
-      .setBackgroundColor(0x000000)
-      .setZoom(zoom)
-      .setBounds(b.x, b.y, b.w, b.h);
     const scale = hudScale(
       uiPercent,
       this.controls.profile === "touch",
       width,
       HUD_FIT_W,
     );
+    // On touch the toolbar is a column down the left, and the map is drawn
+    // beside it, so no tile is ever under a button.
+    const inset = Math.round(this.hud.insetLeft(scale));
+    const viewW = width - inset;
+    const zoom = worldZoom(zoomPercent, viewW, height);
+    // The camera stops at the built rooms; unbuilt space stays black.
+    const built = this.map.bounds;
+    const b = cameraBounds(
+      built.w * ts,
+      built.h * ts,
+      viewW / zoom,
+      height / zoom,
+      built.x * ts,
+      built.y * ts,
+    );
+    this.cameras.main
+      .setPosition(inset, 0)
+      .setSize(viewW, height)
+      .setBackgroundColor(0x000000)
+      .setZoom(zoom)
+      .setBounds(b.x, b.y, b.w, b.h);
     const corner = cornerScroll(width, height, scale);
     this.uiCamera
       .setSize(width, height)

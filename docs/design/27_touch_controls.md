@@ -41,9 +41,13 @@ away in options.
   the bar. A world tap in the margin along the screen edge walks the farmer and
   never touches the toolbar. Stardew only warns players to take care near the
   edges, so this is a fix where it has none.
-- **Layout:** the toolbar sits along the bottom in both schemes, so there is one
-  position to learn. In the stick scheme the use-tool and action buttons sit
-  above the right end of the bar. When food is selected an Eat button appears
+- **Layout (changed 2026-11-11, owner):** on touch the toolbar is one fixed column
+  down the left edge in its own strip, and the map is drawn to its right, so a
+  bar never covers a tile or an exit (the bottom bar hid south exits on the
+  tablet). When the window is too short for all slots, the column scrolls by drag
+  and keeps the held slot in view; a tap selects. The Row button sits at the
+  foot, beside the column. Desktop keeps the bottom bar. In the stick scheme the
+  use-tool and action buttons sit above the right end of the screen. When food is selected an Eat button appears
   beside the toolbar (tap-to-move scheme) or takes the action button's place
   (stick scheme).
 
