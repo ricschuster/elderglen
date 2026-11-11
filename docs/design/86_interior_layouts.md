@@ -205,34 +205,53 @@ is void. Fixtures block movement. Marks are points on `markers`.
   sun room or shrine; the shop sits at the south-west with a bay, not in a plain
   rectangle; the bedroom gate is our hearts rule.
 
-## Template 2: the one-room hut (the delta fisher's hut, redrawn)
+## Template 2: the fisher's hut and loft
 
-Draft: `hut-fisher.tmj`, `hut-fisher-preview.png`, `hut-fisher.txt`. Redrawn 2026-11-11
-with the generator (`plans.py`) from the first 12 by 12 rectangle: 15 by 13 with the 2
-wide entry, a bunk alcove east that steps out of the room, and a counter 4 wide. Plan:
+Drafts: `hut-fisher` and `hut-fisher-loft` (`.tmj`, `-preview.png`, `.txt`). Redrawn
+2026-11-11 with the generator (`plans.py`). Owner: put a ladder in, as Stardew's Fish
+Shop does, going up to the bedroom. The saved Fish Shop image shows the ladder on the
+back wall at the left (the bedroom is the owner's word, from memory, not checked). So the
+hut is the shop and living room (12 by 13), and the bedroom is a second small map, the
+loft (11 by 11), reached by the ladder.
 
 ```text
  ##########
 ############
-#SSS..LLKK.###
-#..........####
-#.CCCC......BB#
-#...........BB#
-#..rrrr.TT....#
-#X.rrrr.TT...X#
-#X...........X#
-#####..########
+#GGSS.LLKK.#
+#..........#
+#.CCCC.....#
+#..........#
+#..rrrr.TT.#
+#X.rrrr.TTX#
+#X........X#
+#####..#####
     #..#
     #DD#
     ####
 ```
 
-One room for a shop and a home: tool shelves, a fish tank and a stove on the back wall,
-the counter with 4 player tiles in front and keeper tiles on both sides, a rug, a table,
-nets and crates, and the bed in the alcove. It is bigger than Stardew's Fish Shop (11 by
-10, a counter and a home in one room) so the counter and the table have clear aisles. It
-has no gated bedroom: it is one room. The forge, the elf's house, the tower and the
-Outpost have their own plans (batches 4 and above), so this plan is the fisher's only.
+```text
+ #########
+###########
+#BB.SS..TT#
+#BB.....TT#
+#..rrrr...#
+#..rrrr.XX#
+#.........#
+####..#####
+   #..#
+   #DD#
+   ####
+```
+
+The ladder is 2 tiles wide (the 2 wide rule, note 81 decision 5) and is a gated door
+like every bedroom door (2 hearts, note 61 decision 6): the `G` tiles on the back wall. The
+loft's own entry is the ladder foot (2 wide, marks `entry-1` and `entry-2`). The shop has
+tool shelves, a fish tank and a stove on the back wall, a 4 wide counter with 4 player
+tiles in front and keeper tiles on both sides, a rug, a table and nets and crates. The loft
+has the bed, a shelf, a table at the round window and a sea chest. The hut is bigger than
+Stardew's Fish Shop (11 by 10) so the counter and the table have clear aisles. The forge, the elf's
+house, the tower and the Outpost have their own plans (batch 4).
 
 ## Template 3: the inn and kitchen
 
@@ -868,7 +887,7 @@ Final art waits for M3d (ADR 0012).
 | Map | Layout done | Art done | Notes |
 | --- | --- | --- | --- |
 | `general-store` | Drafted, waits for the owner | No | The pilot |
-| `fisher-hut` | Redrawn 2026-11-11, waits for the owner | No | The other huts have their own plans |
+| `fisher-hut`, `fisher-loft` | Redrawn 2026-11-11 with a ladder to a loft bedroom, waits for the owner | No | The other huts have their own plans |
 | `hermit-tower`, `outpost`, `outpost-rooms`, `forge`, `beach-elf-house`, `inn` (redrawn) | Drafted 2026-11-11 (batch 4), waits for the owner | No | |
 | `sawmill`, `healer`, `smithy` | Done, owner checked 2026-11-11 (batch 1) | No | |
 | `library`, `hatter`, `forest-farmstead` | Done, owner checked 2026-11-11 (batch 2) | No | |

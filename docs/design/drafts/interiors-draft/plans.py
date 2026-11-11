@@ -735,31 +735,44 @@ def inn_home():
 
 
 def hut_fisher():
-    p = Plan("hut-fisher", "delta fisher's hut, counter, tank and a bunk alcove")
+    p = Plan("hut-fisher", "delta fisher's hut, counter, tank and a ladder to the loft")
     p.floor(0, 2, 9, 8)               # shop and living room
-    p.floor(10, 4, 12, 8)             # bunk alcove, open to the room
     p.floor(4, 9, 5, 10)              # door notch
     p.door(4, 11, 10)
-    p.put("S", 0, 2, 2, 2)            # rods and bait
+    p.put("S", 2, 2, 3, 2)            # rods and bait
     p.put("L", 5, 2, 6, 2)            # fish tank
     p.put("K", 7, 2, 8, 2)            # stove
+    p.gate("fisher-loft", 0, 2, 1, 2)  # the ladder up, gated like a bedroom door
     p.put("C", 1, 4, 4, 4)            # counter, 4 wide
     p.put("X", 0, 7, 0, 8)            # nets and crates
+    p.put("X", 9, 7, 9, 8)
     p.put("r", 2, 6, 5, 7)
     p.put("T", 7, 6, 8, 7)
-    p.put("B", 11, 4, 12, 5)
-    p.put("X", 12, 7, 12, 8)
     p.mark("service-shop-1", 2, 5)
     p.mark("service-shop-2", 3, 5)
     p.mark("spot-counter-serve", 2, 3)
     p.mark("spot-counter-stock", 4, 3)
     p.mark("spot-home-cook", 7, 3)
-    p.mark("spot-home-sit", 9, 6)
-    p.mark("bed-fisher", 11, 6)
+    p.mark("spot-home-sit", 6, 5)
+    return p
+
+
+def hut_fisher_loft():
+    p = Plan("hut-fisher-loft", "the fisher's loft bedroom, up the ladder")
+    p.floor(0, 2, 8, 6)               # loft
+    p.floor(3, 7, 4, 8)               # the ladder foot, 2 wide
+    p.door(3, 9, 8)
+    p.put("B", 0, 2, 1, 3)
+    p.put("S", 3, 2, 4, 2)
+    p.put("T", 7, 2, 8, 3)            # table at the round window
+    p.put("X", 7, 5, 8, 5)            # sea chest
+    p.put("r", 2, 4, 5, 5)
+    p.mark("bed-fisher", 2, 3)
+    p.mark("spot-loft", 5, 4)
     return p
 
 
 ALL = [sawmill(), healer(), smithy(), library(), hatter(), farmstead(),
        burrow_gardener(), burrow_retired(), burrow_young(),
        hermit_tower(), outpost(), outpost_rooms(), forge(), elf_house(), inn_home(),
-       hut_fisher()]
+       hut_fisher(), hut_fisher_loft()]

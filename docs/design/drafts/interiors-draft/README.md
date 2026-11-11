@@ -8,7 +8,7 @@ routes' spots). Each `.txt` is the plan, one character per tile, and each
 `-preview.png` is the same plan with a 5 tile grid and the marks in yellow.
 
 - `general-store`: the pilot, irregular, home behind the shop, 31 by 31.
-- `hut-fisher`: the delta fisher's one-room hut, 15 by 13 (redrawn with the generator).
+- `hut-fisher` (12 by 13) and `hut-fisher-loft` (11 by 11): the delta fisher's hut and the bedroom up its ladder.
 - `sawmill` (31 by 27), `healer` (22 by 23), `smithy` (21 by 26): batch 1 plans (owner checked).
 - `library` (35 by 30), `hatter` (27 by 27), `forest-farmstead` (32 by 22): batch 2 plans.
 - `burrow-gardener` (30 by 20), `burrow-retired` (32 by 21), `burrow-young` (28 by 20): batch 3 plans.
