@@ -1,6 +1,6 @@
 # 87 The layout page (draft)
 
-Status: drafted 2026-11-11 for the owner to check. Design only, nothing built. This is step 5 of
+Status: drafted 2026-11-11, small points decided by the owner the same day, ready for slice 1. Design only, nothing built. This is step 5 of
 the layout and tiles track (`docs/handoffs/PRIORITIES.md`) and the design note that note 81
 decision 11 asked for before any build. It settles what the page is, what it edits, what it
 refuses, and the order of the build. The map format and contract stay in note 05, note 71 and
@@ -191,13 +191,18 @@ The valley and festival layouts (steps 9 and 10) start after slice 2 at the earl
 at the best. Slices 1 and 2 are the minimum worth building, since the first layout notes can
 still use Tiled screenshots (note 81 decision 11).
 
+## Decided (owner, 2026-11-11)
+
+The owner took the recommendations on the three small points:
+
+- Brush writes touch `collision` directly, with the same tile index Tiled would write.
+- The page does not set the layout-done flag. The owner or the handoff sets it in the status
+  table, and the page only shows it.
+- The entry and exit pair limit is 4 tiles, to tune when the pair view is first used.
+
 ## Open
 
-- Whether brush writes may touch `collision` directly or only through the object rules
-  (recommended: directly, with the same tile index Tiled would write, so Tiled never sees a
-  surprise).
-- Whether the page sets the layout-done flag of note 81 decision 7 (recommended: no; the owner
-  or the handoff sets it in the status table, the page only shows it).
-- The 4 tile limit for entry and exit pairs is my guess.
+- Nothing blocks the build. The 4 tile limit and the brush tile indices are placeholders to
+  check in use.
 - Stardew has no equivalent to check against; its own tooling is not public and this is a
   developer tool, so no Stardew checks row is added.
