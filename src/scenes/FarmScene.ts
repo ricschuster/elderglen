@@ -32,6 +32,8 @@ import Phaser from "phaser";
 import { saveSettings } from "../core/bindings";
 import { sleep } from "../core/sleep";
 import { areaOf, enterArea, isAreaMap, leaveArea } from "../core/areas";
+import { eventAtTile } from "../core/eventrun";
+import { declinedToday } from "./HeartEventScene";
 import { meet, presentAt, villagersOn, type Present } from "../core/townfolk";
 import { stageOf as fruitStageOf } from "../core/fruittrees";
 import type { GameState } from "../core/save";
@@ -386,6 +388,8 @@ export class FarmScene extends Phaser.Scene {
     string,
     { box: Phaser.GameObjects.Rectangle; tag: Phaser.GameObjects.Text }
   >();
+  /** The tile last checked for a heart event. */
+  private eventTile = "";
   private villagerStamp = -1;
   private tapAct?: Vec;
   /** True when the route ends in using the held item on `tapAct` (note 27). */
@@ -826,6 +830,7 @@ export class FarmScene extends Phaser.Scene {
         : 0,
     );
     this.syncVillagers();
+    this.checkHeartEvent();
     const walking = this.tapPath.length > 0;
     const v = walking ? this.tapVector(dt) : this.controls.vector();
     if (!walking && (v.x !== 0 || v.y !== 0)) this.cancelTap();
@@ -1761,6 +1766,28 @@ export class FarmScene extends Phaser.Scene {
     this.state.orders.opened = true;
     this.save();
     this.open("orders", { intro: true });
+  }
+
+  /**
+   * Stepping near an event's place starts its scene (note 62). The scene asks
+   * first, and "not now" lets it wait. Checked when the tile changes.
+   */
+  private checkHeartEvent(): void {
+    if (isFestivalMap(this.mapId) || this.state.animals.mounted) return;
+    const t = tileOf(this.pos, PLAYER, this.map.tileSize);
+    const key = `${t.x},${t.y}`;
+    if (key === this.eventTile) return;
+    this.eventTile = key;
+    const day = this.state.day.clock.day;
+    const event = eventAtTile(
+      this.state,
+      this.mapId,
+      t.x,
+      t.y,
+      { day, weather: this.state.weather },
+      declinedToday(day),
+    );
+    if (event) this.open("heart-event", { id: event.id, warn: true });
   }
 
   /** Open a screen over the farm. The farm is paused until it closes. */

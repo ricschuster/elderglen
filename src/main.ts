@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { BedScene } from "./scenes/BedScene";
 import { BinScene } from "./scenes/BinScene";
 import { EndScene } from "./scenes/EndScene";
+import { HeartEventScene } from "./scenes/HeartEventScene";
 import { SummitScene } from "./scenes/SummitScene";
 import { FarmScene } from "./scenes/FarmScene";
 import { FestivalScene } from "./scenes/FestivalScene";
@@ -97,6 +98,7 @@ const game = new Phaser.Game({
     FestivalScene,
     EndScene,
     SummitScene,
+    HeartEventScene,
     ShippingScene,
     ReportScene,
     BinScene,
