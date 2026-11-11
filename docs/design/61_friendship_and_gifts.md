@@ -300,8 +300,9 @@ likes lean on cooked and made goods. Wheat joins the lists when it exists
 
 ## Midwinter pairing (decided 2026-11-06)
 
-- **A letter a week before.** On Winter 13 the hall steward's letter names the
-  villager the player gives a gift to at the feast on Winter 20. Stardew sends
+- **A letter a week before.** On Winter 18 the hall steward's letter names the
+  villager the player gives a gift to at the feast on Winter 25 (moved from
+  13 and 20 on 2026-11-10, note 14 "Solstice festivals"). Stardew sends
   its letter a week before its feast, on the 18th for the 25th, and names the
   recipient the same way, from the saved Feast of the Winter Star page.
 - **Random among people the player has met.** Stardew picks any villager at

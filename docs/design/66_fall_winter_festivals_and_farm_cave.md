@@ -96,10 +96,10 @@ and one line each) and the mushroom cave. Both are below. The farm cave mark
   `21_fishing.md`, and Stardew's contest shape is checked (needs five fish,
   first win unique).
 
-## Midwinter Feast (Winter 20)
+## Midwinter Feast (Winter 25, moved from 20 on 2026-11-10)
 
 Already designed in note 61 (secret gift pairing, the steward's letter on
-Winter 13, a gift counts x5). Its map and shop only need the festival counter.
+Winter 18, a gift counts x5). Its map and shop only need the festival counter.
 The booth sells winter furniture from the build 8 list.
 
 ## The farm cave
