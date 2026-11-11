@@ -1,6 +1,6 @@
 # 86 Interior layouts: templates from Stardew's rooms (draft)
 
-Status: **drafted 2026-11-11, owner answers recorded (round 1), the redrawn pilot waits for the owner's check** (note 81 decision 6).
+Status: **the general store pilot is owner checked (2026-11-11, round 2: irregular footprint); the hut and the inn drafts and the other interiors wait** (note 81 decision 6).
 Nothing here is built. This is step 4 of the layout track
 (`docs/handoffs/PRIORITIES.md`, note 81): interior layouts, with a Tiled draft of a
 pilot first. The pilot is the general store, plus two more templates (the one-room
