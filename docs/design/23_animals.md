@@ -334,3 +334,10 @@ Our draft, to be tuned in playtests and copied into `07_tuning_numbers.md`.
 - The scythe and grass tiles (a prerequisite for grass hay).
 - A valley animal of our own, with the art pass (#58).
 - Whether hall gating belongs on the deluxe tiers.
+
+## Decisions 2026-11-11m (owner answers)
+
+- **The heater is optional comfort.** Winter without a heater lowers animal mood a
+  little each day, a placed heater removes it, and it never harms or sickens an
+  animal. This softens the earlier "winter needs the coop heater to keep mood up".
+  The exact mood amount and whether the barn has one are still open. Not built.
