@@ -192,6 +192,8 @@ export function sleep(
   const next = dateOf(g.day.clock.day + 1);
   g.tomorrow = rollWeather(next.season, next.dayOfSeason, random);
   if (isRaining(g.weather)) g.farm.waterAll();
+  // The new day: last week's gifts pay the weekly friendship bonus (note 61).
+  g.friendship.startDay(g.day.clock.day);
   g.sprinklers.water(g.farm);
   g.greenhouseSprinklers.water(g.greenhouse);
   g.trees.endDay(

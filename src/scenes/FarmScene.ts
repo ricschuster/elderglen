@@ -32,6 +32,7 @@ import Phaser from "phaser";
 import { saveSettings } from "../core/bindings";
 import { sleep } from "../core/sleep";
 import { areaOf, enterArea, isAreaMap, leaveArea } from "../core/areas";
+import { meet, presentAt, villagersOn, type Present } from "../core/townfolk";
 import { stageOf as fruitStageOf } from "../core/fruittrees";
 import type { GameState } from "../core/save";
 import { TOOLS, cycle, heldAt, nextRow, toolbarSize } from "../core/toolbar";
@@ -377,6 +378,13 @@ export class FarmScene extends Phaser.Scene {
   private tapPath: Vec[] = [];
   /** A tapped spot in the world the sling shoots at, for a moment. */
   private tapShot?: { x: number; y: number; until: number };
+  /** Villagers on this map right now and the placeholder blocks that show them (#599). */
+  private villagers: Present[] = [];
+  private villagerSprites = new Map<
+    string,
+    { box: Phaser.GameObjects.Rectangle; tag: Phaser.GameObjects.Text }
+  >();
+  private villagerStamp = -1;
   private tapAct?: Vec;
   /** True when the route ends in using the held item on `tapAct` (note 27). */
   private tapActUses = false;
@@ -509,6 +517,10 @@ export class FarmScene extends Phaser.Scene {
     this.syncCombatSettings();
     for (const c of this.floorState?.creatures ?? [])
       world.push(this.addCreatureSprite(c));
+    this.villagers = [];
+    this.villagerSprites = new Map();
+    this.villagerStamp = -1;
+    this.syncVillagers(world);
     const built = this.map.bounds;
     this.night = this.add
       .rectangle(
@@ -811,6 +823,7 @@ export class FarmScene extends Phaser.Scene {
             )
         : 0,
     );
+    this.syncVillagers();
     const walking = this.tapPath.length > 0;
     const v = walking ? this.tapVector(dt) : this.controls.vector();
     if (!walking && (v.x !== 0 || v.y !== 0)) this.cancelTap();
@@ -1166,8 +1179,82 @@ export class FarmScene extends Phaser.Scene {
     );
   }
 
+  /**
+   * Show the villagers the schedule puts on this map (#599). Runs each frame
+   * but only does work when the game minute or day changes. Placeholder blocks
+   * with a name tag; people jump between schedule stops (no walking yet).
+   */
+  private syncVillagers(world?: Phaser.GameObjects.GameObject[]): void {
+    const clock = this.state.day.clock;
+    const stamp = clock.day * 2000 + clock.minutes;
+    if (stamp === this.villagerStamp) return;
+    this.villagerStamp = stamp;
+    // Time stands still on a festival map, and the festival routes are not built.
+    this.villagers = isFestivalMap(this.mapId)
+      ? []
+      : villagersOn(this.state, this.mapId, clock.day, clock.minutes);
+    const ts = this.map.tileSize;
+    const here = new Set(this.villagers.map((v) => v.id));
+    for (const [id, s] of this.villagerSprites)
+      if (!here.has(id)) {
+        s.box.destroy();
+        s.tag.destroy();
+        this.villagerSprites.delete(id);
+      }
+    for (const v of this.villagers) {
+      let s = this.villagerSprites.get(v.id);
+      if (!s) {
+        let hash = 0;
+        for (const ch of v.id) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
+        const colour = Phaser.Display.Color.HSLToColor(
+          (hash % 360) / 360,
+          0.5,
+          0.55,
+        ).color;
+        const box = this.add
+          .rectangle(0, 0, 10, 12, colour)
+          .setOrigin(0.5, 1)
+          .setStrokeStyle(1, 0x000000, 0.6)
+          .setDepth(5);
+        const tag = this.add
+          .text(0, 0, v.name, {
+            fontSize: "8px",
+            color: "#ffffff",
+            backgroundColor: "#000000aa",
+            padding: { x: 2, y: 1 },
+          })
+          .setOrigin(0.5, 1)
+          .setDepth(900);
+        if (world) world.push(box, tag);
+        else this.uiCamera.ignore([box, tag]);
+        s = { box, tag };
+        this.villagerSprites.set(v.id, s);
+      }
+      const px = (v.x + 0.5) * ts;
+      const py = (v.y + 1) * ts - 1;
+      s.box.setPosition(px, py);
+      s.tag.setPosition(px, py - 13);
+    }
+  }
+
+  /** Talk to a villager, or give them the held item (#599, note 61). Returns false if nobody is on the tile. */
+  private meetVillager(tile: Vec): boolean {
+    const who = presentAt(this.villagers, tile.x, tile.y);
+    if (!who) return false;
+    const held = heldAt(this.state, this.selected);
+    const r = meet(
+      this.state,
+      who.id,
+      held.kind === "item" ? held.id : undefined,
+    );
+    this.message = r.message;
+    this.render();
+    return true;
+  }
+
   /** True when a tap on the tile picks by hand: ripe crop, forage, fruit, or the horse. */
   private tapHand(tile: Vec): boolean {
+    if (presentAt(this.villagers, tile.x, tile.y)) return true;
     if (tapPick(this.state, this.map, tile.x, tile.y)) return true;
     const spot = this.horseSpot();
     return (
@@ -1648,6 +1735,8 @@ export class FarmScene extends Phaser.Scene {
         : undefined;
     if (weapon) return this.swing(weapon);
     if (this.map.serviceAt(front.x, front.y)) return;
+    // A person is talked to, never worked on (the Action button or a tap does that).
+    if (presentAt(this.villagers, front.x, front.y)) return;
     if (this.useSilo(front.x, front.y)) return;
     const held = heldAt(this.state, this.selected);
     if (held.kind === "item" && rodById(held.id)) return this.cast(held.id);
@@ -1779,6 +1868,7 @@ export class FarmScene extends Phaser.Scene {
     const front = this.aimTile();
     const spot = this.horseSpot();
     if (spot && spot.x === front.x && spot.y === front.y) return this.getOn();
+    if (this.meetVillager(front)) return;
     const service = this.map.serviceAt(front.x, front.y);
     if (service?.kind !== "tide-bridge") this.mendAsked = false;
     if (service?.kind === "fisher-shop")
