@@ -129,3 +129,40 @@ west end next to their own side. Hester leaves at 20:30 (decision 6).
 
 Open: the long table's art, the candle and lantern props, the return gifts
 (a short list per year, note 61), and the square version.
+
+## Midwinter Feast on the square (drafted 2026-11-11, owner answered the setup)
+
+The version most players see, until all six hall rooms are restored. Owner
+answers: a long table across the middle with lanterns, the well and benches kept
+as they are, the same shape and exchange as the hall version; hours stay the day
+hours (open 12:00, close 18:00, end 22:00, shops shut); no food, the gift
+exchange only.
+
+Place: the Hearthwell map's festival variant, the square x 64 to 80, y 54 to 70,
+north of the middle street (y 60 to 64, kept clear). Door and shop locking as the
+other day festivals.
+
+**Props:** a long table at x 66 to 77, y 56 (12 tiles, blocks); lantern posts
+at both ends; a bonfire at (72,53) on the north edge; the cart stop (66,58), the
+well and benches stay. Bunting and lanterns do not block.
+
+**Player starts (8):** (68,59) to (75,59), in a row south of the table, clear of
+the road.
+
+**The exchange:** as the hall version: a lit lantern over the recipient's seat,
+give a gift there, Cuthbert at the head hands over the return gift.
+
+**Villager tiles (draft for the owner to check):** the same 25 people as the hall
+version, 24 seats, each person seated, so Aldreth sits too.
+
+| Zone | Person | Tile |
+| --- | --- | --- |
+| Head | Cuthbert | (78,56) |
+| West end, children | Fitch, Wren, Pim, Toby | (66,55), (67,55), (66,57), (67,57) |
+| North side | Odette, Dorrie, Tilda, Rufus, Cordelia, Barnaby, Linnet, Thistle, Dunmar, Aurelle | (68,55) to (77,55), in that order |
+| South side | Hattie, Podge, Hester, Walter, Alder, Bramwell, Aldreth, Korvi, Marl, Maren | (68,57) to (77,57), in that order |
+
+Hester leaves at 20:30 (decision 6). Open: the well and bench tiles (the square
+has none placed yet, the shell has only the town-square region and the cart stop),
+and whether Cuthbert's head seat on the east edge crowds the square's east wall
+(x 80) when the map is drawn.
