@@ -562,9 +562,14 @@
           "ref": "80_villager_routes.md#Weekday overrides (decided 2026-11-10)"
         },
         {
+          "s": "decided",
+          "t": "Heart event and spouse routes (note 84, 2026-11-11): an event starts only if the person's route has them on the map and the scene places them (no event days, no route switches); the spouse keeps their village job, does small chores, walks home by 18:00 to a shared room and outside corner (14 prop sets), and stays home on rain, closed days and festivals; the wedding is on the festival green, three days after the token (this replaces note 12's spouse-stays-on-the-farm line)",
+          "ref": "84_heart_event_and_spouse_routes.md#Decided (owner, 2026-11-11)"
+        },
+        {
           "s": "open",
-          "t": "Villager routes: season overrides, festival spots, heart-event and spouse routes, and the closed-counters-per-weekday count; the Stardew rows SC-106, SC-108, SC-109 and SC-110 are unchecked",
-          "ref": "80_villager_routes.md#Open items"
+          "t": "Villager routes: the idle-key freeze is not built, and the Stardew rows SC-106, SC-108, SC-109, SC-110, SC-138 (absent person at an event) and SC-139 (wedding venue) are unchecked; the spouse corner's tiles on the farm, the 14 spouse prop sets and the far-area walk length are open (note 84)",
+          "ref": "84_heart_event_and_spouse_routes.md#Open"
         }
       ],
       "deps": ["valley-map", "dialogue"],
@@ -659,7 +664,7 @@
         },
         {
           "s": "open",
-          "t": "Item forms, divorce fee, child room upgrade, ring 2 and 3 counts",
+          "t": "Item forms, divorce fee, child room upgrade, ring 2 and 3 counts (the spouse now keeps their village job, note 84)",
           "ref": "12_marriage.md#Open"
         }
       ],
@@ -1066,6 +1071,11 @@
           "s": "decided",
           "t": "Festival maps: the Harvest Showing uses the village green with shops locked; Hollow Eve has its own hedge map with two mazes by year, a hidden gap and a shortcut back, and villagers inside (all Stardew)",
           "ref": "66_fall_winter_festivals_and_farm_cave.md#Layout addendum: festival maps (2026-11-08)"
+        },
+        {
+          "s": "decided",
+          "t": "Festival spots drafted for all eight festivals (owner checked 2026-11-11): Hollow Eve villagers stand in one-tile hedge niches so none block the maze; the Hat Parade march is auto-play like the Flower Dance, on fixed waypoints with no jams, and gives a flat +20 friendship to each marcher once a year",
+          "ref": "82_festival_locations.md#Hollow Eve in the hedge maze (drafted 2026-11-11, owner answered the setup)"
         },
         {
           "s": "decided",

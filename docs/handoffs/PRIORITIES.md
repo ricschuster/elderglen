@@ -84,10 +84,12 @@ Design, can start now:
    square), Cake Day (inn lane) and Seedswap (Forest clearing, with a seed hunt) and
    Lamplight (Beach, lantern floating) and Frostday (Forest lake, ice fishing contest).
    Hollow Eve (hedge, villagers in wall niches) and the Hat Parade (out-and-back march on the
-   street) drafted 2026-11-11, so **step 2 is done bar the owner's check of the tiles**. Festival areas are shut
+   street) drafted 2026-11-11, so **step 2 is done, owner checked 2026-11-11** (Hollow Eve niches accepted; the Hat Parade march is auto-play, +20 friendship). Festival areas are shut
    until opening (note 82 decision 12).
-- Step 3: Heart events and spouse routes (note 80 item 4, #600, note 12), which may add
-   interior spaces and spots.
+- Step 3: Heart events and spouse routes. **Done 2026-11-11** (note 84, build issue #600): events need the
+   person on the map by route, the spouse keeps their village job, one shared room and
+   outside corner, the wedding on the festival green. It adds no interiors. Left for the farm: the corner's
+   tiles (note 55).
 - Step 4: Interior layout notes, a Tiled draft of one pilot interior first. Not the
    farmhouse or cabin until step 1.
 - Step 5: The layout page design note (dev server, objects and block-out regions, saves
@@ -125,6 +127,8 @@ Art, in M3d:
 **Done (#639, 2026-11-09):** the carpenter's temporary Hardwood sale was removed
 with the Secret Woods (six daily stumps and the log). Mahogany was reopened 2026-11-10: player-planted,
 seed from the Secret Woods (note 36 "Mahogany"), built 2026-11-10 (#724) except tapping and the monster drop.
+
+Session 2026-11-11 part sixteen (handoff 2026-11-11q): design only. Owner checked the festival tiles, then step 3 is settled in note 84 (heart event presence rule, spouse routes, wedding on the green). Next: step 11 (farmhouse and cabin interiors, with the spouse corner and bed route) or step 4 (a pilot interior).
 
 Session 2026-11-11 part fifteen (handoff 2026-11-11p): design only. Festival spots for Hollow Eve (everyone in the maze, in hedge niches so no one blocks) and the Hat Parade (walk the route in the line) are drafted in note 82, which finishes step 2. Next: the owner checks the tiles, then step 3 (heart events) or step 11 (farmhouse and cabin interiors).
 
