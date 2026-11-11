@@ -457,8 +457,8 @@ is already on the outer ring. A niche is a dead end of length one, so it never
 blocks and never joins two corridors. The long way round to the chest (45 tiles)
 runs along the top row and the right column, so most niches are met in order on the
 way. No two niches touch. The map grows by one hedge column on the east (23 to 24
-tiles wide) so the east niches have a back wall. Open for the owner: whether
-niches read well, or the maze should be widened instead.
+tiles wide) so the east niches have a back wall. Owner accepted the niches on
+2026-11-11.
 
 **Props:** the plaza bonfire at (2,8) (blocks); a bench at (1,7) (blocks); the booth
 and the lanterns as built. Hedge niches are cut at the 15 tiles below.
@@ -502,11 +502,12 @@ the gate needs Cuthbert (he only greets).
 ## Hat Parade on the Hearthwell street (drafted 2026-11-11, owner answered the setup)
 
 Date: Spring 10. Opens 12:00, closes 18:00, ends 22:00 (`festivals.json`, the day
-hours). Owner answers: the player **walks the route in the line** (a slow march, a
-hat worn, nothing to win or fail); **all the villagers march from 14:00 to 15:00
-and stand by the square otherwise**. Stardew has no walking festival; its Flower
-Dance is a fixed dance and the festival ends after it (saved Flower Dance page),
-which our parade does not copy (SC-127).
+hours). Owner answers: the player **marches in the line** (a slow march, a hat worn,
+nothing to win or fail); **all the villagers march from 14:00 to 15:00 and stand by
+the square otherwise**. **The march is auto-play, like Stardew's Flower Dance
+(owner, 2026-11-11):** a scripted scene that moves every marcher and the player along
+fixed waypoints, so nothing can block or jam. Unlike the dance, the festival does
+not end after it (saved Flower Dance page, SC-127).
 
 Place: the Hearthwell map's festival variant. The square x 64 to 80, y 54 to 70
 holds the crowd, and the middle street y 60 to 64 carries the march west to the
@@ -518,16 +519,19 @@ crowd at the square before and after. At 14:00 the line forms at the square's we
 mouth (64,61) and walks west along the **out lane y 61** to the turn at (48,61),
 just west of the main bridge, crosses to the **back lane y 63** and walks east to
 the square mouth (64,63) by 15:00. Rows y 60, 62 and 64 stay free for onlookers and
-players, so a player is never on a lane. The marchers do not stop for a player
-(they pass through the player's tile). The line, from the head: Cuthbert, the four
+players, so a player is never on a lane. At 14:00 a player at the square joins the line
+and the script walks them with the rest, with input off, so there is no pass-through
+or wait rule and no jam on a tablet or between players. A player elsewhere when it
+starts just sees the march go by. The line, from the head: Cuthbert, the four
 children, then the other 17 in the same order as the table below. Placeholder
 numbers: 48 tiles of walking in 60 game minutes is a slow march, to tune in play.
 
 **The player's part.** Wear any hat (the Parade Ribbon is free the first time,
-built). Step onto the line's start, walk the street to the turn marker (48,62) and
-back to the square before 15:30, and talk to Cuthbert at (66,65). Once a year this
-gives a small friendship gain with everyone who marched, bigger the more hats the
-player owns (the numbers are open). A player who skips it loses nothing, and the
+built). Be at the square's west mouth at 14:00; the script walks the player out to
+the turn marker (48,62) and back, then returns control at the square, and Cuthbert at
+(66,65) says his closing line. Once a year this gives **+20 friendship with each
+villager who marched** (owner, 2026-11-11, a placeholder to tune in play; no hat-count
+scaling). A player who skips it loses nothing, and the
 counter works either way (the three hats at 300, 500 and 400g, as built).
 
 **Props (new):** the hat counter at x 74 to 75, y 56 (2 tiles, blocks, the built
@@ -561,8 +565,7 @@ Walter, Aldreth, Hester. Hester goes home at 20:30 (decision 6), long after the
 march. The route data is a waypoint list per person (the note 79 data shape): stand
 tile, then the out lane tiles, the turn, the back lane tiles, the stand tile.
 
-Open: the friendship numbers and the hat-count scaling, the exact march speed,
-whether marchers may pass through a player or wait (a jam is possible on a tablet),
+Open: the exact march speed, whether a late player joins at the head or misses it,
 the unnamed hats the villagers wear (the 28 in `hats.json` are the player's), the
 lines, and whether the turn marker needs a sign. The well and bench tiles (72,57),
 (77,58) and (78,58) need checking against the Hearthwell square when it is drawn.
