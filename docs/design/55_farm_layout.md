@@ -134,12 +134,36 @@ about 100 trees (note 43) with room to farm. The camera scrolls, and whole
 number zoom shows only part of the farm on a tablet (`06_map_style.md`). The
 tillable share per farm type follows `32_farm_types.md`.
 
+## Settled 2026-11-11 (owner)
+
+- **Tillable count and field shape (Stardew from the saved Farm Maps page,
+  SC-25).** About 3,400 tillable tiles of the 80 by 65 farm (Stardew's Standard
+  farm has 3,427), with one big open block as the main field, up to about 63 by
+  31 tiles (Stardew's biggest block). The block fills the middle and the west.
+  The house strip is north-east, the greenhouse patch sits inside the north
+  edge, and the ponds cut into the south and east edges. Grass border, cliffs
+  and ponds hold the rest.
+- **Starting clutter counts (ours, Stardew's counts unchecked, SC-122).** Trees
+  100 (80 mature, 12 young, 8 seedlings, note 43), stumps 20, boulders 12,
+  stones 80, branches 60, bushes 15, weeds 150. All hand-placed from a data
+  list, thinner near the house. Set when the first Tiled draft exists and tuned
+  in `07_tuning_numbers.md`. Note 43's wood economy already counts about 100
+  trees, so it needs no change.
+- **Cabin area: no reserved pad (Stardew from memory, SC-120).** Clutter is
+  thin near the house, as the principles say. The host clears room for cabins
+  as for any building. Seven cabins are placed freely through the carpenter, so
+  the map needs no cabin lots and no pad object.
+
 ## Open
 
-- **The exact tillable count and the field shape.**
-- **Starting clutter counts** and the knock-on to note 43's wood economy.
-- **Stardew unchecked:** how large the Standard field is (SC-25). The house,
-  bin, greenhouse and cave are fixed there (SC-24, owner).
+- **Stardew unchecked:** the Standard farm's overall size (SC-25, owner keeps
+  80 by 65 as our target). The house, bin, greenhouse and cave are fixed there
+  (SC-24, owner).
+- **The first Tiled draft:** a rough sketch (note 81 decision 6) with tile
+  positions for the house, bin, mailbox, greenhouse patch, cave, ponds and the
+  three exits, checked by the owner before a build issue is filed.
+- **The placeholder farm still differs** (house north-west, cave and festival
+  ground east). The authored map replaces it, with no interim move.
 - **Other farm types** (Woodland, Riverside, Hilltop, Meadow) each need their
   own layout note later. This one covers Standard only.
 
@@ -151,9 +175,9 @@ placed freely through the carpenter like any other building, with the building
 placement system (#611), and not on reserved lots. So the farm layout needs
 one open area, not a plot row. Consequences for this note:
 
-- Keep a generous clear area near the house, so seven cabins fit as well as the
-  coop, barn, silo and greenhouse without crowding the field. Check the size
-  when the farm is authored.
+- Keep clutter thin near the house, so seven cabins fit as well as the coop,
+  barn, silo and greenhouse without crowding the field. Check the room when the
+  farm is authored. No reserved pad (owner, 2026-11-11).
 - A game started as multiplayer places each free cabin in a default spot for
   each joiner. The default spot is a rule in the M4 build, not a map object.
 - The cabin interior is one template with per-player state (note 68, growing
