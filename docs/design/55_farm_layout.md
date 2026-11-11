@@ -1,6 +1,6 @@
 # 55 Farm layout (draft)
 
-Status: draft, started 2026-11-03. The placeholder farm map (`farm.json`) is built and does not follow this note:
+Status: layout done and owner checked 2026-11-11 (the first draft below, build issue #776). Draft otherwise, started 2026-11-03. The placeholder farm map (`farm.json`) is built and does not follow this note:
 the house is north-west, the cave and festival ground east, the greenhouse north
 of centre. Settle which moves before real art. The placeholder farm
 (`05_farm_map_placeholder.md`) stays until a real map is authored in Tiled. This
@@ -248,18 +248,15 @@ How the sketch handles the rules:
   The greenhouse ruin changes to the repaired greenhouse by tier. The festival
   ground is no longer a farm object (festival layouts are another track).
 
-Still open for the owner to check in the picture:
-
-1. **The border is thin** (2 tiles on most edges). Stardew shows a wider grass and
-   flowering tree border. Wider costs tillable tiles.
+The owner accepted the layout as drawn on 2026-11-11, including the thin 2 tile
+border. Build issue: #776.
 
 ## Open
 
 - **Stardew unchecked:** the Standard farm's overall size (SC-25, owner keeps
   80 by 65 as our target). The house, bin, greenhouse and cave are fixed there
   (SC-24, owner).
-- **The draft's last item** (border width), then the owner's go before a build
-  issue is filed.
+- **Border width:** left as drawn, 2 tiles (owner, 2026-11-11: layout good as is).
 - **The placeholder farm still differs** (house north-west, cave and festival
   ground east). The authored map replaces it, with no interim move.
 - **Other farm types** (Woodland, Riverside, Hilltop, Meadow) each need their
