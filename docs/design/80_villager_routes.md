@@ -175,14 +175,67 @@ Maren's trip is longer: the mines are the farthest. The mines hall counter is
 Maren's dummy only, so no shop closes. On a trip day the person's area stops
 after the return are the default's.
 
+## Season overrides (decided 2026-11-10, owner: per-season routes for everyone)
+
+Owner answer, the Stardew way (from memory, not checked, SC-112): every person
+has a route per season. **The default route above is the spring route.** Each
+person below has a summer, fall and winter entry. "=" means the spring route
+stands. An entry replaces only the stops it lists, as with weekday overrides.
+Selection order stays as note 79: festival, rain, weekday, season, default, so
+rain and weekday overrides still win over a season entry. Times and spots are
+placeholders.
+
+**Winter rules (apply to everyone unless the row says otherwise).** The day is
+short and cold. Children stay at `home` or at the inn, and play on `hw:green`
+only on a snow day from 13:00 to 15:00. Retirees stay indoors until 12:00. No
+one is at `hw:burrow-garden`. Area residents with outdoor stops shorten them to
+two hours around noon. Snow does not count as rain (open: whether it should,
+for the Forest keeper's rain-open rule).
+
+| Person | Summer | Fall | Winter |
+| --- | --- | --- | --- |
+| Odette | = | = | 18:00 stays at store/home |
+| Dorrie | 9:00 hw:green (walk) until 12:00 | 9:00 hw:river-path (walk, leaves) | 9:00 store/counter (stock) until 17:00 |
+| Fitch | bed 20:30, play until 18:00 | = | 9:30 store/home (play), snow day 13:00 hw:green |
+| Alder | 8:00 hw:burrow-garden (water) until 10:00 | 8:00 hw:burrow-garden (harvest) until 10:00 | 8:30 store/counter until 17:00 |
+| Bramwell | = | = | 9:00 to 11:00 smithy/room (forge), counter hours as written |
+| Hattie | = | = | 18:00 inn stays, fire lit (hw:inn idle `fire`) |
+| Podge | 11:00 hw:square (market) until 13:00 | 11:00 hw:square (market) until 13:30 | 8:00 inn/room all day |
+| Pim | bed 20:30, play until 18:00 | = | 9:30 inn/room (play), snow day 13:00 hw:green |
+| Aurelle | 19:00 hw:river-path (walk) until 21:30 | = | 19:00 stays in healer/room |
+| Dunmar | 18:00 hw:river-path (read) until 19:30 | = | = |
+| Tilda | 7:30 sawmill/yard until 9:00 as written | 6:30 start, 17:30 home (busy) | 7:30 sawmill/room (work) instead of the yard |
+| Rufus | = | = | 8:00 sawmill/room (work) all day |
+| Wren | bed 20:30, play until 18:00 | = | 9:30 sawmill/home (play), snow day 13:00 hw:green |
+| Cuthbert | 18:00 hw:square (walk) until 20:00 | = | 18:00 stays at outpost/home |
+| Cordelia | = | = | 19:00 stays in hatter/room |
+| Barnaby | 17:00 hw:green (sketch) until 19:00 | 17:00 hw:river-path (sketch, leaves) | 12:00 stays in hatter/room (no market) |
+| Linnet | 17:00 hw:green (rest) until 18:00, 9:00 hw:river-path (swim, summer only) | = | 9:00 inn/room (help) instead of the run |
+| Thistle | 16:00 hw:river-path until 18:00 | = | 14:00 library (read) instead of errands |
+| Hester | 9:00 hw:square (bench) until 12:00, 14:00 hw:river-path | = | stays at retired burrow/home until 12:00, then 12:30 hw:square (bench) if dry |
+| Walter | 9:30 hw:river-path (fish) until 13:00 | = | 9:30 retired burrow/home all day (ice), 19:30 inn |
+| Toby | bed 20:30, play until 18:00 | = | 9:30 retired burrow/home (play), snow day 13:00 hw:green |
+| Dilly | 7:30 forest:paddock (feed) until 10:00, 12:00 forest:lake (rest) | = | 7:30 forest:farmstead/room (tend) all day, as the rain route |
+| Rosmarin | 9:00 forest:hermit-garden until 12:00 | 9:00 forest:hermit-garden (gather) until 13:00 | 9:00 hermit-tower/room all day |
+| Rundahl | 8:00 forest:camp, 13:00 forest:lake (sit) | 10:00 forest:wood-path (walk) until 15:00 | 8:00 camp (under the tent) all day on a snow day, else 11:00 to 13:00 forest:farm-road (walk) |
+| Korvi | = | = | 17:00 mtn:forge/room (hammer) from 15:00 |
+| Marl | 12:00 quarry:camp (eat) until 13:30 | = | 8:00 quarry:camp (mend) until 17:00, as the rain route |
+| Maren | = (underground) | = | = |
+| Rushie | 5:30 delta:hut/home, 6:00 delta:dock (fish) | = | 9:00 delta:hut/counter all day, 11:00 delta:dock (fish) until 14:00 |
+| Thalwen | 9:00 beach:dunes (gaze) until 12:00, 14:00 beach:shore (walk) until 17:00 | = | 9:00 beach:cottage/room all day, 14:00 beach:shore (walk, short) |
+| Aldreth | 8:30 hw:outpost-yard until 12:00 | = | 8:30 outpost/room (sort) until 12:00, then inn |
+
+Town trip weekdays stay as written. In winter a trip leaves an hour earlier and
+returns an hour earlier, and on a snow day the person does not travel (as in rain).
+
 ## Open items
 
 1. **Weekday overrides**: done above. Left: a count of closed counters per weekday
    (the owner can check the load), and heart-event days.
-2. **Season overrides**: the fisher in winter (note 79), Rundahl's camp in the
-   snow, the retirees and children indoors in winter.
+2. **Season overrides**: done above (all 30, per season). Left: whether snow
+   counts as rain, and the art-free idle keys.
 3. **Festival spots**: each person's spot on the green per festival, written with
    the festival maps (note 66).
 4. **Heart event and spouse routes** (note 79 rule 7) wait for #600 and note 12.
-5. **Register**: SC-106 and SC-109 are still open. Everything here is from memory
+5. **Register**: SC-106, SC-109 and SC-112 (per-season schedules) are still open. Everything here is from memory
    (Stardew's schedules are per person), not checked.
