@@ -53,16 +53,16 @@ describe("the cask", () => {
     expect(g.casks.count).toBe(1);
   });
 
-  it("has no cap on the count, only floor space", () => {
+  it("holds Stardew's most, 189 casks, with no cap on the count", () => {
     const g = newGame();
     const m = cellar();
-    g.inventory.add(CASK, 60);
+    g.inventory.add(CASK, 189);
     let placed = 0;
-    for (let y = 0; y < m.height && placed < 60; y++)
-      for (let x = 0; x < m.width && placed < 60; x++)
+    for (let y = 0; y < m.height && placed < 189; y++)
+      for (let x = 0; x < m.width && placed < 189; x++)
         if (placeCask(g, m, x, y).ok) placed++;
-    expect(placed).toBe(60);
-    expect(g.casks.count).toBe(60);
+    expect(placed).toBe(189);
+    expect(g.casks.count).toBe(189);
   });
 
   it("takes wine, mead and cheese only", () => {

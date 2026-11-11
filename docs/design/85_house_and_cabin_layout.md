@@ -491,7 +491,6 @@ Settled above (decision 2). In detail:
 Decided 2026-11-11 (round 3): the one more frame shift to 74 by 44 is accepted, and
 the renovations come in M3b with the house.
 
-
 - SC-143: what an expansion or the open rooms need first in Stardew, and whether a
   cabin can be renovated. Ours is a proposal.
 - The looks of the added rooms, the fixtures, the nursery and the 14 prop sets
