@@ -42,6 +42,16 @@ Hearthwell south green: only the Harvest Showing is on the green now.
     way home still asks first. The note 66 built behaviour (the farm sign sends
     the player to the green or hedge) changes to a plain exit walk when the
     Hearthwell variants are built.
+12. **Festival areas are shut before the festival opens (owner, 2026-11-11, a
+    side point).** On a festival day the festival's place cannot be entered
+    before its opening time, as in Stardew (saved Egg Festival page: entering
+    the town before 9am says the event is still being set up). The exit shows
+    that message and the player stays where they were. Opening times are the
+    festival's own (12:00 for the day festivals, 17:00 for Lamplight). Applies to
+    the Forest clearing, the Beach, the lake, the hedge and the Hearthwell
+    festival areas. Open: whether a whole map is shut (the Forest, the delta) or
+    only the festival zone, since the Forest and the delta are also roads to other
+    places; the owner said "most" areas, so some stay open.
 
 ## Locations
 
@@ -53,7 +63,7 @@ Hearthwell south green: only the Harvest Showing is on the green now.
 | Lamplight Evening | Summer 24 | The Beach at dusk | Lanterns along the shore. The elf's cottage is there. Spots drafted below |
 | Harvest Showing | Fall 9 | The festival green | The only festival on the green. Judge's table and prize counter are built |
 | Hollow Eve | Fall 21 | The hedge map and its entrance plaza | Villagers at the plaza booth and at the scares |
-| Frostday | Winter 8 | The Forest lake, frozen | Ice fishing. Stardew's ice festival is at a forest lake (memory, unchecked) |
+| Frostday | Winter 8 | The Forest lake, frozen | Ice fishing. Stardew's ice festival is at a forest lake (memory, unchecked). Spots drafted below |
 | Midwinter Feast | Winter 25 | Inside the hall, at the Long Table once all six rooms are restored; the Hearthwell square before that | Owner, 2026-11-11. The hall fits all players with room to pass (note 81 decision 12). Stardew holds it in the town square (memory, unchecked) |
 
 Midwinter Feast therefore needs two layouts (square and hall main room). Which
@@ -362,3 +372,50 @@ the friendship numbers, the drifting animation, how the lanterns look at dusk on
 the dark Beach (the dusk tint is the festival's, not built), and whether the
 lantern stall keepers should be the hat-makers (they are the Cake Day costume
 stall's too). Not built: `festivals.json` still has the day hours.
+
+## Frostday on the frozen Forest lake (drafted 2026-11-11, owner answered the setup)
+
+Date: Winter 8. Opens 12:00, closes 18:00, ends 22:00. Owner answers: the contest
+is **Stardew's: catch 5 fish at the ice holes, else a villager wins** (saved Festival
+of Ice page: 5 fish to win, Willy wins otherwise, judged by the mayor), and the
+prize is **the Frostfin and a hat the first time**. The Frostfin is a festival fish
+that bites only at the holes and counts towards the 5. Per decision 12 the lake is
+shut before 12:00.
+
+Place: `forest.json`, the lake x 34 to 64, y 12 to 34, frozen: the ice is
+walkable. The farmstead road (y 35 to 37) is the south shore and the east shore
+path is x 65 to 67. Players arrive from the south.
+
+**Props (new):** twelve ice holes on the ice at x 42, 46, 50, 54 by y 22, 26, 30
+(one tile each, cast into from an adjacent ice tile, no stand-on); a festival
+counter at (58,36) and (59,36) (blocks, the built hat and furniture counter);
+two benches at (40,37) and (41,37) (block); four snowmen on the east shore at
+(66,18), (66,22), (66,26), (66,30) (block). Ice sculptures and bunting are
+decoration only.
+
+**Player starts (8):** (46,36) to (53,36), a row on the south shore.
+
+**The contest:** the player fishes at any hole with the usual rod rules and the
+Forest lake's fish plus the Frostfin. Talk to Cuthbert at (55,36) to be judged;
+5 fish wins. Winning gives one Frostfin each year and a hat the first time. The
+rival is Rushie, who stands at a hole and wins if the player has fewer than 5.
+How many fish multiplayer needs, the Frostfin's price and bundle use, and the hat
+are open.
+
+**Villager tiles (draft for the owner to check; every tile is free ground):** 24
+people, the 22 town residents with Aldreth, Rushie and Dilly (decision 5).
+
+| Zone | Person | Tile |
+| --- | --- | --- |
+| Host | Cuthbert | (55,36) |
+| Festival counter | Cordelia, Barnaby | (58,35), (59,35) |
+| South shore, inn family | Hattie, Podge, Linnet, Thistle | (36,37) to (39,37) |
+| Benches | Hester, Aldreth | (40,36), (41,36) |
+| South shore, store and trades | Odette, Dorrie, Alder, Tilda, Rufus, Bramwell, Aurelle, Dunmar | (42,37) to (49,37), in that order |
+| Children, on the ice | Fitch, Wren, Pim, Toby | (44,32), (47,32), (50,32), (53,32) |
+| At the holes | Dilly, Walter, Rushie | (42,23), (54,23), (54,27) |
+
+Hester leaves at 20:30 (decision 6). Open: the Frostfin (price, art, bundle use),
+the hat, whether the festival ends after judging as Stardew's does, and whether
+holes need a cast distance rule on a tablet (Stardew's holes are small and hard
+to cast into). Not built: `festivals.json` says the river, not the lake.
