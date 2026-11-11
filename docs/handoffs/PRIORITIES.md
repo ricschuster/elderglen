@@ -113,6 +113,8 @@ Art, in M3d:
 with the Secret Woods (six daily stumps and the log). Mahogany was reopened 2026-11-10: player-planted,
 seed from the Secret Woods (note 36 "Mahogany"), built 2026-11-10 (#724) except tapping and the monster drop.
 
+Session 2026-11-11 part nine (handoff 2026-11-11i): the Action button is obsolete in tap-to-move (#789, note 27): tap a ripe crop, forage or fruit to pick, tap the farmer to eat or get off the horse, tap the horse to mount. Built and on the tablet; harvest, eating and the horse by tap not yet played. Next: play them, then the tablet frame rate, rerun the playtests, replay a full game.
+
 Session 2026-11-11 part eight (handoff 2026-11-11h): tap uses the held tool (#786) and five save slots (#787) are built, merged and on the tablet. Not built: export and import per slot (Options has none). Next: tablet frame rate on the dense farm, rerun the playtests, replay a full game.
 
 Session 2026-11-11 part seven (handoff 2026-11-11g): first tablet play. Doors, bin, seed drag and the farm-choice preview are fixed and merged (#782 to #784). Designed, not built: tap uses the held tool when it fits (note 27) and five save slots (note 52). Next session builds both, then looks at the tablet frame rate and replays a full game.
