@@ -46,5 +46,61 @@
     "attachment": {
       "furniture": "steadfast-lamp"
     }
+  },
+  {
+    "id": "odette-recipe-5",
+    "sender": "Odette",
+    "title": "A pie for market day",
+    "body": "PLACEHOLDER TEXT. Here is the pie I make when the shelves are full. Do not let the leeks go soft.",
+    "trigger": {
+      "kind": "hearts",
+      "villager": "odette",
+      "hearts": 5
+    },
+    "attachment": {
+      "recipe": "market-pie"
+    }
+  },
+  {
+    "id": "odette-recipe-10",
+    "sender": "Odette",
+    "title": "The hotpot",
+    "body": "PLACEHOLDER TEXT. This one I keep for the cold evenings. I do not write it down for just anyone.",
+    "trigger": {
+      "kind": "hearts",
+      "villager": "odette",
+      "hearts": 10
+    },
+    "attachment": {
+      "recipe": "harvest-hotpot"
+    }
+  },
+  {
+    "id": "hattie-recipe-5",
+    "sender": "Hattie",
+    "title": "Custard from the inn",
+    "body": "PLACEHOLDER TEXT. The inn's custard, as promised. Two eggs, and patience.",
+    "trigger": {
+      "kind": "hearts",
+      "villager": "hattie",
+      "hearts": 5
+    },
+    "attachment": {
+      "recipe": "inn-custard"
+    }
+  },
+  {
+    "id": "hattie-recipe-10",
+    "sender": "Hattie",
+    "title": "My roast",
+    "body": "PLACEHOLDER TEXT. The roast the inn is known for. Keep it in the family of friends.",
+    "trigger": {
+      "kind": "hearts",
+      "villager": "hattie",
+      "hearts": 10
+    },
+    "attachment": {
+      "recipe": "innkeepers-roast"
+    }
   }
 ]

@@ -47,6 +47,7 @@ import { Decor, type DecorSave } from "./decor";
 import { Furniture, migrateCatalogue, type FurnitureSave } from "./furniture";
 import { Mailbox, type MailEntry } from "./mail";
 import { Friendship } from "./friendship";
+import { HeartEvents, type HeartEventsSave } from "./heartevents";
 import { Quests, type QuestsSave } from "./quests";
 import { FishLog, type FishingSave } from "./fishing";
 import { Tackle, type TackleSave } from "./tackle";
@@ -168,6 +169,8 @@ export interface GameState {
   quests: Quests;
   /** Friendship points, talks and gifts per villager (note 61). */
   friendship: Friendship;
+  /** Heart events seen, story flags and the day of the last event (note 62). */
+  heartEvents: HeartEvents;
   /** Fish caught, with the longest of each (note 21). */
   fishing: FishLog;
   /** Bait and lures on each rod (note 21). */
@@ -230,6 +233,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     summit: new SummitCall(),
     mail: new Mailbox(),
     friendship: new Friendship(),
+    heartEvents: new HeartEvents(),
     quests: new Quests(),
     fishing: new FishLog(),
     tackle: new Tackle(),
@@ -347,6 +351,8 @@ interface SaveData {
   mail?: MailEntry[];
   /** Absent in saves made before friendship: nobody met, no points. */
   friendship?: ReturnType<Friendship["save"]>;
+  /** Absent in saves made before heart events: none seen. */
+  heartEvents?: HeartEventsSave;
   /** Absent in saves made before the request board. */
   quests?: QuestsSave;
   /** Absent in saves made before fishing. */
@@ -531,6 +537,7 @@ export function serialize(g: GameState): string {
     summit: g.summit.save(),
     mail: g.mail.save(),
     friendship: g.friendship.save(),
+    heartEvents: g.heartEvents.save(),
     quests: g.quests.save(),
     fishing: g.fishing.save(),
     tackle: g.tackle.save(),
@@ -943,6 +950,7 @@ export function deserialize(text: string): GameState | undefined {
   g.summit.load(raw.summit);
   g.mail.load(raw.mail);
   g.friendship.load(raw.friendship);
+  g.heartEvents.load(raw.heartEvents);
   g.quests.load(raw.quests);
   g.fishing.load(raw.fishing);
   g.tackle.load(raw.tackle);
