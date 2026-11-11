@@ -122,3 +122,51 @@ That is 28 people: the 22 town residents (with Aldreth) and the six area
 residents who attend (decision 5). Open: the stall's stock and prices, the
 unnamed judge's tile (the built one stays), and whether the owner wants any
 person moved.
+
+## Cake Day on the inn lane (drafted 2026-11-11, owner answered the setup)
+
+Owner answers: the activity is a **cake table**. The player hands in one cooked
+dish, everyone tastes it, and the dish's quality sets a small friendship gain
+with all attendees, once a year (Stardew's Luau is the closest, from memory,
+unchecked, SC-127; the numbers are open). Set up on the Hearthwell middle street
+in front of the inn. Every halfling attendee wears a food costume, and the player
+can wear one too, brought from home or bought at the festival. The inn is shut,
+like every shop on festival days (note 79), with its family at the table. Day
+hours (12:00 to 22:00).
+
+Place: the Hearthwell map's festival variant, the middle street x 14 to 34,
+y 60 to 64 (5 tall), the inn above at x 15 to 28, y 50 to 59 with its door at
+(22,59) and the entry tile (22,60) kept clear.
+
+**Props (new):** a cake table at x 16 to 29, y 62 (14 tiles, blocks); a costume
+stall at (33,61) (blocks); two benches at (31,61) and (32,61). Bunting along
+the inn's front and lantern strings, decoration only. Row y 64 stays open for
+walking through.
+
+**Player starts (8):** (20,64) to (27,64), in a row south of the table. The
+hand-in spot is the south side of the table at (21,63) to (24,63), kept free.
+
+**Costume stall:** sells one or two food costumes (name, price and art are open,
+and the costume is a hat or outfit slot, note 10). Keeper Cordelia (hat-maker).
+A costume brought from home is one the player already owns; the rule that a
+costume must be worn at Cake Day to count for anything is not needed, it is
+only for show and for the villagers' lines.
+
+**Villager tiles (draft for the owner to check):** the 22 town residents with
+Aldreth. No area resident attends (decision 5). Every halfling wears a food
+costume, the elf Aurelle, the dwarf Dunmar and the courier Aldreth do not.
+
+| Zone | Person | Tile |
+| --- | --- | --- |
+| Hosts behind the table | Hattie, Podge, Linnet, Thistle | (19,61), (21,61), (23,61), (25,61) |
+| Head of the table | Cuthbert | (30,62) |
+| Tasters at the table | Bramwell, Odette, Dorrie, Alder, Tilda, Rufus, Barnaby | (16,63), (17,63), (18,63), (19,63), (26,63), (27,63), (28,63) |
+| Benches | Hester, Walter | (31,60), (32,60) |
+| Costume stall | Cordelia | (33,60) |
+| By the east end | Dunmar, Aurelle | (33,63), (34,63) |
+| Visitor | Aldreth | (14,63) |
+| Children, running | Fitch, Wren, Pim, Toby | (16,64), (18,64), (30,64), (32,64) |
+
+Hester leaves at 20:30 (decision 6). Open: the friendship numbers for the cake
+table, the costume items (names, prices, art, slot), whether Pim stands behind
+the table with her parents (she is in the children's zone here), and the lines.
