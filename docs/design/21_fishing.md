@@ -702,7 +702,7 @@ leans on the forest. Placeholder, for the owner to confirm.
   output odds.
 - The lengths per fish, and the units.
 - The exact price of each fish within its band, in `07_tuning_numbers.md`.
-- The legends: final times, weather and sell prices (the first build used note 07's prices); whether a legend is once a year or free to repeat. (The farm pond holding the Valley King is settled: it does not, owner 2026-11-10.)
+- The legends: final times, weather and sell prices (the first build used note 07's prices); once a year is settled (owner, 2026-11-11; Stardew is once per save, saved Legendary Fish page). (The farm pond holding the Valley King is settled: it does not, owner 2026-11-10.)
 - The completion tracker: what counts, the weights and the reward (a note of its
   own).
 - The Pearl Lobster's final rod and pot odds (tuning). With junk, a pot gives
