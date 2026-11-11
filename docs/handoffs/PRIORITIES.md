@@ -73,8 +73,10 @@ Design, can start now:
    farmhouse and the cabin interiors.
 - Step 2: Festival spots for the other eight festivals (note 80 item 3, note 82), with 8
    player start spots as well as the villager spots. **Locations settled 2026-11-11**
-   (note 82: only the Showing on the green). Left: who skips each, then the layouts with
-   exact tiles.
+   (note 82: only the Showing on the green). Attendance, hours and getting there are
+   settled. Spots drafted for the Harvest Showing (green), Midwinter Feast (hall and
+   square) and Cake Day (inn lane). Left: Seedswap (Forest clearing), Lamplight (Beach),
+   Frostday (Forest lake), Hollow Eve (hedge) and the Hat Parade (square).
 - Step 3: Heart events and spouse routes (note 80 item 4, #600, note 12), which may add
    interior spaces and spots.
 - Step 4: Interior layout notes, a Tiled draft of one pilot interior first. Not the
@@ -114,6 +116,8 @@ Art, in M3d:
 **Done (#639, 2026-11-09):** the carpenter's temporary Hardwood sale was removed
 with the Secret Woods (six daily stumps and the log). Mahogany was reopened 2026-11-10: player-planted,
 seed from the Secret Woods (note 36 "Mahogany"), built 2026-11-10 (#724) except tapping and the monster drop.
+
+Session 2026-11-11 part ten (handoff 2026-11-11j): the screen stays on and undimmed on the tablet (#791), and festival locations, attendance and spots are designed in note 82 (#792 to #796) for the Showing, Midwinter Feast and Cake Day. Next: spots for the other five festivals, or the farmhouse and cabin interior (step 11).
 
 Session 2026-11-11 part nine (handoff 2026-11-11i): the Action button is obsolete in tap-to-move (#789, note 27): tap a ripe crop, forage or fruit to pick, tap the farmer to eat or get off the horse, tap the horse to mount. Built and on the tablet; harvest, eating and the horse by tap not yet played. Next: play them, then the tablet frame rate, rerun the playtests, replay a full game.
 
