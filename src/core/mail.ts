@@ -1,4 +1,5 @@
 import letterData from "../content/letters.json";
+import { dishById } from "./dishes";
 import { furnitureById } from "./furniture";
 import { hatById } from "./hats";
 import { itemById } from "./items";
@@ -19,10 +20,18 @@ export interface Attachment {
   hat?: string;
   /** A furniture id; the piece goes to the pack with the items. */
   furniture?: string;
+  /**
+   * A dish id whose recipe the letter teaches. Nothing is stored: a recipe with a
+   * `letter` source is known once the letter is taken (see `known` in crafting).
+   */
+  recipe?: string;
 }
 
 export type LetterTrigger =
-  { kind: "first-achievement" } | { kind: "achievement"; id: string };
+  | { kind: "first-achievement" }
+  | { kind: "achievement"; id: string }
+  /** Friendship mail (note 61 rule 8): a villager reaches this many hearts. */
+  | { kind: "hearts"; villager: string; hearts: number };
 
 export interface LetterDef {
   id: string;
@@ -164,6 +173,7 @@ export class Mailbox {
 }
 
 function triggered(g: GameState, t: LetterTrigger): boolean {
+  if (t.kind === "hearts") return g.friendship.hearts(t.villager) >= t.hearts;
   return t.kind === "first-achievement"
     ? g.achievements.list().length > 0
     : g.achievements.has(t.id);
@@ -263,6 +273,7 @@ export function openLetter(
     g.inventory.add(a.furniture, 1);
     gift.push(furnitureById(a.furniture)?.name ?? a.furniture);
   }
+  if (a.recipe) gift.push(`A recipe: ${dishById(a.recipe)?.name ?? a.recipe}`);
   if (a.hat && g.wardrobe.add(a.hat))
     gift.push(`A hat: ${hatById(a.hat)?.name ?? a.hat}`);
   e.state = "taken";

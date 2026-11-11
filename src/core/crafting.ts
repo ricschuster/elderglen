@@ -27,7 +27,11 @@ export type RecipeSource =
   /** Known once a Special Order has been filled at least once (note 65). */
   | { kind: "order"; order: string }
   /** Known once the cellar stairs are built (the cask, note 24). */
-  | { kind: "cellar" };
+  | { kind: "cellar" }
+  /** Taught by a letter (friendship mail, note 24): known once that letter is taken. */
+  | { kind: "letter"; letter: string }
+  /** Taught by a heart event: known once that event has been seen (note 62). */
+  | { kind: "event"; event: string };
 
 export interface Recipe {
   id: string;
@@ -59,7 +63,11 @@ export function known(g: GameState, r: { sources: RecipeSource[] }): boolean {
           ? g.orders.timesDone(s.order) > 0
           : s.kind === "cellar"
             ? houseHasCellar(g.houseTier)
-            : g.hall.complete(s.bundle),
+            : s.kind === "letter"
+              ? g.mail.entry(s.letter)?.state === "taken"
+              : s.kind === "event"
+                ? g.heartEvents.seen(s.event)
+                : g.hall.complete(s.bundle),
   );
 }
 
@@ -76,6 +84,8 @@ export function sourceText(r: { sources: RecipeSource[] }): string {
       return title ? [`the ${title} order`] : [];
     }
     if (s.kind === "cellar") return ["the cellar stairs"];
+    if (s.kind === "letter") return ["a letter from a friend"];
+    if (s.kind === "event") return ["a friend's story"];
     return [];
   });
   return parts.length === 0

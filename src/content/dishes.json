@@ -194,5 +194,105 @@
         "bundle": "specialty-fish"
       }
     ]
+  },
+  {
+    "id": "market-pie",
+    "name": "Market pie",
+    "ingredients": [
+      {
+        "item": "potato",
+        "count": 1
+      },
+      {
+        "item": "leek",
+        "count": 1
+      },
+      {
+        "item": "cheese",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 160,
+    "sources": [
+      {
+        "kind": "letter",
+        "letter": "odette-recipe-5"
+      }
+    ]
+  },
+  {
+    "id": "harvest-hotpot",
+    "name": "Harvest hotpot",
+    "ingredients": [
+      {
+        "item": "pumpkin",
+        "count": 1
+      },
+      {
+        "item": "field-mushroom",
+        "count": 1
+      },
+      {
+        "item": "potato",
+        "count": 1
+      }
+    ],
+    "energy": 170,
+    "sellPrice": 240,
+    "sources": [
+      {
+        "kind": "letter",
+        "letter": "odette-recipe-10"
+      }
+    ]
+  },
+  {
+    "id": "inn-custard",
+    "name": "Inn custard",
+    "ingredients": [
+      {
+        "item": "egg",
+        "count": 2
+      },
+      {
+        "item": "milk",
+        "count": 1
+      }
+    ],
+    "energy": 120,
+    "sellPrice": 130,
+    "sources": [
+      {
+        "kind": "letter",
+        "letter": "hattie-recipe-5"
+      }
+    ]
+  },
+  {
+    "id": "innkeepers-roast",
+    "name": "Innkeeper's roast",
+    "ingredients": [
+      {
+        "item": "potato",
+        "count": 2
+      },
+      {
+        "item": "leek",
+        "count": 1
+      },
+      {
+        "item": "field-mushroom",
+        "count": 1
+      }
+    ],
+    "energy": 180,
+    "sellPrice": 260,
+    "sources": [
+      {
+        "kind": "letter",
+        "letter": "hattie-recipe-10"
+      }
+    ]
   }
 ]
