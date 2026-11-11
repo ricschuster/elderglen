@@ -17,6 +17,32 @@ Hearthwell south green: only the Harvest Showing is on the green now.
 4. **Off-green positions for Frostday and Hollow Eve** are fixed positions,
    to be designed with their layouts.
 
+5. **Residents (owner, 2026-11-11).** Each area resident attends the festival in
+   or nearest their own area, plus the Harvest Showing: Dilly at the Seedswap
+   Fair and Frostday (Forest), Thalwen and Rushie at Lamplight Evening (Beach),
+   Rushie at Frostday too, and Korvi, Marl and Maren at the Showing and the
+   Midwinter Feast. Rosmarin and Rundahl never come. Which exact festivals each
+   resident gets is proposed here and still to be checked per festival.
+6. **Nobody skips on purpose (Stardew, from memory, unchecked).** All town
+   residents attend every festival. One exception: Hester goes home at 20:30 on
+   every festival (bedtime, note 80).
+7. **Spots run from opening to the end (Stardew, from memory).** A person
+   stands at their spot for the festival's whole window, not a shorter one. The
+   children leave early only at the Night Market (note 14).
+8. **Fixed tiles, except the Hat Parade (owner).** Villagers stand on one tile
+   per festival. At the Hat Parade they walk the parade route.
+9. **Lamplight Evening is a dusk festival (owner).** Opens 17:00, closes 22:00,
+   ends 23:00 (`festivals.json` still has the day hours: a build task).
+10. **Frostday freezes the Forest lake (owner).** A frozen variant of the lake
+    with marked ice holes; the player fishes only at the holes, from the existing
+    fish list plus a festival catch. Villagers stand on the shore, a few at holes.
+11. **The player walks there (owner).** No teleport from the farm. The invitation
+    on the farm still says where and when, and the clock stands still on the
+    festival map as built (note 66); the walk before it costs normal time. The
+    way home still asks first. The note 66 built behaviour (the farm sign sends
+    the player to the green or hedge) changes to a plain exit walk when the
+    Hearthwell variants are built.
+
 ## Locations
 
 | Festival | Date | Place | Notes |
@@ -50,8 +76,7 @@ spots already designed.
 
 ## To design next (in this order)
 
-1. Who skips each festival (a short list per festival; area residents may attend
-   the one nearest them).
+1. Exact tiles: who stands where at each festival, once its layout is drawn.
 2. The festival layout for each place, with a Tiled draft: props, the 8 player
    start spots, the prize counter or stalls, and the exact villager tiles.
 3. The Frostday ice holes and the Hollow Eve positions.
