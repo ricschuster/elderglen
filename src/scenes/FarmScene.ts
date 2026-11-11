@@ -61,7 +61,8 @@ import {
   YARD_EMPTY_LINE,
 } from "../core/quarry";
 import { COVE_TREASURE, FERRY_LINE, takeTreasure } from "../core/cove";
-import { itemById } from "../core/items";
+import { cropOfSeed, itemById } from "../core/items";
+import { MIXED_SEED } from "../core/weeds";
 import { NOTHING_TO_ACT_ON, act, reasonText, useHeld } from "../core/tools";
 import { cropById } from "../core/crops";
 import { mapFiles, maps } from "../content/maps";
@@ -1159,21 +1160,23 @@ export class FarmScene extends Phaser.Scene {
     const w = this.cameras.main.getWorldPoint(p.x, p.y);
     const cursor = { x: Math.floor(w.x / ts), y: Math.floor(w.y / ts) };
     const here = tileOf(this.pos, PLAYER, ts);
-    // The hoe and the can work the tile the farmer stands on when the cursor is on it.
+    // The hoe, can and seeds work the tile the farmer stands on when the cursor is on it.
     if (cursor.x === here.x && cursor.y === here.y && this.heldSoilTool())
       return here;
     return aimAt(here, cursor, this.facing).tile;
   }
 
-  /** True when the held tool is the hoe or the watering can. */
+  /** True when the held thing is the hoe, the watering can or a seed packet. */
   private heldSoilTool(): boolean {
     const held = heldAt(this.state, this.selected);
+    if (held.kind === "item")
+      return !!cropOfSeed(held.id) || held.id === MIXED_SEED;
     return held.kind === "tool" && (held.tool === "hoe" || held.tool === "can");
   }
 
   /**
-   * Holding the mouse with the hoe or can drags the work along: each new tile
-   * the cursor reaches is dug or watered at once.
+   * Holding the mouse with the hoe, can or seeds drags the work along: each new tile
+   * the cursor reaches is dug, watered or planted at once.
    */
   private dragSoilWork(): void {
     if (!this.mouseHeld || !this.mouseAim || !this.heldSoilTool()) {
