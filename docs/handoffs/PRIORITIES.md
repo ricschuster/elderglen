@@ -83,7 +83,8 @@ Design, can start now:
    settled. Spots drafted for the Harvest Showing (green), Midwinter Feast (hall and
    square), Cake Day (inn lane) and Seedswap (Forest clearing, with a seed hunt) and
    Lamplight (Beach, lantern floating) and Frostday (Forest lake, ice fishing contest).
-   Left: Hollow Eve (hedge) and the Hat Parade (square). Festival areas are shut
+   Hollow Eve (hedge, villagers in wall niches) and the Hat Parade (out-and-back march on the
+   street) drafted 2026-11-11, so **step 2 is done bar the owner's check of the tiles**. Festival areas are shut
    until opening (note 82 decision 12).
 - Step 3: Heart events and spouse routes (note 80 item 4, #600, note 12), which may add
    interior spaces and spots.
@@ -124,6 +125,8 @@ Art, in M3d:
 **Done (#639, 2026-11-09):** the carpenter's temporary Hardwood sale was removed
 with the Secret Woods (six daily stumps and the log). Mahogany was reopened 2026-11-10: player-planted,
 seed from the Secret Woods (note 36 "Mahogany"), built 2026-11-10 (#724) except tapping and the monster drop.
+
+Session 2026-11-11 part fifteen (handoff 2026-11-11p): design only. Festival spots for Hollow Eve (everyone in the maze, in hedge niches so no one blocks) and the Hat Parade (walk the route in the line) are drafted in note 82, which finishes step 2. Next: the owner checks the tiles, then step 3 (heart events) or step 11 (farmhouse and cabin interiors).
 
 Session 2026-11-11 part fourteen (handoff 2026-11-11o): design only. Camp chest items by floor, the Last Seat needs all 23 others, coop and barn heaters, infested floors, the ring 1 ending scene and bundles 20, 24 and 26 are settled (#819 to #821). Next session: festival spots for Hollow Eve and the Hat Parade (step 2).
 
