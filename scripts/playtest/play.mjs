@@ -282,7 +282,7 @@ async function visitHall() {
   log("hall: can hand in", list0.map((g) => g[2]).join(","));
   // The hall is in Hearthwell: out of the farm's east exit, along the middle
   // street to the hall's door, then in to a scroll and back.
-  await bot.walkTo(38, 17);
+  await bot.walkTo(78, 14);
   await walkThrough("right", 1200, "hearthwell");
   await bot.walkTo(99, 60);
   await walkThrough("up", 1200, "hall");
@@ -349,7 +349,7 @@ async function endScreen() {
 
 /** The store is in Hearthwell: out of the farm's east exit, along to the store door, in. */
 async function enterStore() {
-  await bot.walkTo(38, 17);
+  await bot.walkTo(78, 14);
   await walkThrough("right", 1200, "hearthwell");
   await bot.walkTo(22, 29);
   await walkThrough("up", 1200, "general-store");
@@ -815,7 +815,7 @@ async function main() {
 
 async function visitHouse() {
   log("visiting the house");
-  await bot.walkTo(6, 6);
+  await bot.walkTo(62, 12);
   await walkThrough("up", 0, "house");
   await bot.shot("house-inside");
   // Out again by the door at the bottom of the house map (entry tile 13,20).

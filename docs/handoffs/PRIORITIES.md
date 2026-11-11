@@ -113,6 +113,8 @@ Art, in M3d:
 with the Secret Woods (six daily stumps and the log). Mahogany was reopened 2026-11-10: player-planted,
 seed from the Secret Woods (note 36 "Mahogany"), built 2026-11-10 (#724) except tapping and the monster drop.
 
+Session 2026-11-11 part five (handoff 2026-11-11e): the real farm map is built (#776, branch `feat/farm-layout-map`, not yet pushed or merged; note 55 "Built status"). Owner has not yet looked at it in a browser. Next: push, PR, then festival spots (step 2) or the farmhouse and cabin interior (step 11).
+
 Session 2026-11-11 part four (handoff 2026-11-11d): design only. The farm layout is settled and owner checked (note 55, Tiled draft in `docs/design/drafts/farm-draft/`, build issue #776). Step 1 of the layout track is done. Next: festival spots (step 2), or the farmhouse and cabin interior (step 11, now unblocked). Build order unchanged.
 
 Session 2026-11-11 part three (handoff 2026-11-11c): design only. Issues #636, #640, #642, #659 and #526 closed and the overview refreshed. The layout and tiles shared rules are settled in note 81, and the layout track order is recorded above. Cabins are placed freely and players block each other (notes 53, 55). Next: the farm layout (note 55), then festival spots. Build order unchanged.

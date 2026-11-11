@@ -25,7 +25,7 @@ const shot = (n) => p.screenshot({ path: `${OUT}/shots/greenhouse-${n}.png` });
 
 // The ruin on the farm, door shut.
 await farm((g, f, s) => {
-  f.pos = { x: 15 * 16 + 8, y: 6 * 16 + 8 };
+  f.pos = { x: 26 * 16 + 8, y: 14 * 16 + 8 };
 });
 await sleepMs(300);
 await shot("ruin");
@@ -212,7 +212,7 @@ await sleepMs(1200);
 const out = await farm((g, f, s) => ({
   map: f.mapId,
   tile: { x: Math.floor(f.pos.x / 16), y: Math.floor(f.pos.y / 16) },
-  oldSiteBlocked: f.map.isBlocked(14, 3),
+  oldSiteBlocked: f.map.isBlocked(25, 11),
   newSiteBlocked: f.map.isBlocked(
     s.greenhouseSite.x + 1,
     s.greenhouseSite.y + 1,

@@ -48,10 +48,11 @@ describe("farm type data", () => {
             expect(maps.get(t.map).entry(exit.entry)).toBeDefined();
   });
 
-  it("gives Woodland about 40 percent of Standard's farmland", () => {
+  // Standard is the 80 by 65 layout (note 55); Woodland is still the 40 by 30
+  // map, so it has much less farmland. Its relayout is a later task.
+  it("gives Woodland much less farmland than Standard", () => {
     const std = maps.get("farm").tillableTiles().length;
     const wood = maps.get("farm-woodland").tillableTiles().length;
-    expect(wood / std).toBeGreaterThan(0.35);
     expect(wood / std).toBeLessThan(0.5);
   });
 
@@ -59,7 +60,7 @@ describe("farm type data", () => {
     expect(maps.get("farm-woodland").forageSpots.length).toBeGreaterThan(
       maps.get("farm").forageSpots.length,
     );
-    expect(maps.get("farm").trees.filter((t) => t.large)).toHaveLength(3);
+    expect(maps.get("farm").trees.filter((t) => t.large)).toHaveLength(20);
     expect(maps.get("farm-woodland").trees.filter((t) => t.large)).toHaveLength(
       6,
     );

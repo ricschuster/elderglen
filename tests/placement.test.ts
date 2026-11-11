@@ -33,7 +33,7 @@ import { ForageField } from "../src/core/forage";
 import { deserialize, newGame, serialize } from "../src/core/save";
 import type { GameState } from "../src/core/save";
 import { FarmMap } from "../src/core/map";
-import { GREENHOUSE_SITE } from "../src/core/greenhouse";
+import { GREENHOUSE_SITE, greenhouseRuinSite } from "../src/core/greenhouse";
 
 const MAP_ID = "farm";
 const map = (): FarmMap => maps.get(MAP_ID);
@@ -77,6 +77,7 @@ describe("where a building may stand", () => {
   it("accepts the fixed sites of both farms, so old saves stay valid", () => {
     for (const id of Object.keys(COOP_SITES)) {
       const g = built();
+      g.farmType = id === "farm" ? "standard" : "woodland";
       const m = maps.get(id);
       const c = COOP_SITES[id]!;
       const b = BARN_SITES[id]!;
@@ -436,11 +437,17 @@ describe("the greenhouse's old site", () => {
   for (const id of ["farm", "farm-woodland"]) {
     it(`is tillable only after a move, on ${id}`, () => {
       const base = maps.get(id);
-      const s = GREENHOUSE_SITE;
+      const type = id === "farm" ? "standard" : "woodland";
+      const s = {
+        ...greenhouseRuinSite(type),
+        w: GREENHOUSE_SITE.w,
+        h: GREENHOUSE_SITE.h,
+      };
       const tiles: { x: number; y: number }[] = [];
       for (let y = s.y; y < s.y + s.h; y++)
         for (let x = s.x; x < s.x + s.w; x++) tiles.push({ x, y });
       const g = newGame();
+      g.farmType = type;
       const before = mapWithDoors(g, base, id);
       for (const t of tiles) expect(before.isTillable(t.x, t.y)).toBe(false);
       g.greenhouseSite = { x: s.x + 8, y: s.y + 6 };

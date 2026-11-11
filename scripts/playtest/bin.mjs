@@ -16,10 +16,10 @@ await p.evaluate(() => {
 const money0 = (await bot.snap()).money;
 
 // Stand below the bin and use it.
-await bot.walkTo(8, 7);
+await bot.walkTo(66, 14);
 await bot.face("up");
 const target = (await bot.dbg()).target;
-if (target.x !== 8 || target.y !== 6)
+if (target.x !== 66 || target.y !== 13)
   finding(`facing ${JSON.stringify(target)}, expected the bin at 8,6`);
 await bot.shot("bin-world");
 await bot.key("KeyX", 400);

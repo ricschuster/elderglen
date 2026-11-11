@@ -56,7 +56,7 @@ const farmExits = await p.evaluate(
 );
 if (farmExits !== "farm") finding("not on the farm");
 
-await door(38, 17, "right", "hearthwell", "the farm's east exit");
+await door(78, 14, "right", "hearthwell", "the farm's east exit");
 await bot.shot("hearthwell-arrive");
 
 // The hall and back.
