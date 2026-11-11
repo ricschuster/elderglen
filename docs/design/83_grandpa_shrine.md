@@ -56,6 +56,19 @@ all four. Nothing else changes in the game.
     we lack (panning, Trout Derby, fish pond products) are added when built. Stardew's
     sources are in SC-134.
 
+13. **Fish, shipped and cooking need every item on the list, one point each
+    (Stardew, owner 2026-11-11).** The lists are the counters' own (note 39).
+14. **Friends: 8 hearts with 5 villagers, then with 10 (Stardew, owner
+    2026-11-11).** Our hearts are 250 points each (`friendship.json`), so 8
+    hearts is 2000 points. Stardew tests for 1975, slightly under 8 hearts (saved
+    page); ours tests for the full 2000. Children are excluded, as in note 39.
+15. **The first evaluation is the long scene, a redo is short (owner,
+    2026-11-11).** A redo only lights the candles and gives one line.
+16. **The Diamond sells high and is liked by every villager as a gift (Stardew,
+    owner 2026-11-11).** Stardew sells it for 750g and every giftable villager
+    likes or loves it (saved Diamond page). The price is a placeholder for
+    `07_tuning_numbers.md`.
+
 ## Proposed points (about 20, placeholders)
 
 | Area | Points | Source |
@@ -79,15 +92,15 @@ cannot be reached yet.
 
 ## Open
 
-1. The exact per-category thresholds. Earnings and skills follow Stardew, the others
-   are placeholders. Several counters are locked at 0, so four candles cannot be
-   reached yet.
-2. The Diamond item itself (name, art, sell price) and its node share in
+1. The earnings and skill thresholds still follow Stardew's numbers in the table
+   below and may need tuning to our economy. Several counters are locked at 0, so
+   four candles cannot be reached yet.
+2. The Diamond item itself (name, art, exact sell price) and its node share in
    `mine-bands.json`, with the Quarry and deep dig shares. Needs a gem entry.
 3. Where the shrine stands: a special place on the farm, chosen with the farm layout
    (note 55, build issue #776). Not beside the path.
 4. The three ancestors' names and one line about each (note 09, "The relative"
    neighbours), the ancestors' short lines at the scene, and the text of Oriel's
    letter.
-5. The scene's length and how it plays (a short scene runner like the heart events,
-   #600), and the redo scene when a Diamond is placed.
+5. The long first scene's exact length and shots (a scene runner like the heart
+   events, #600), and the one-line redo.
