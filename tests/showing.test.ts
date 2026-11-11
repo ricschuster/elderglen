@@ -46,7 +46,7 @@ describe("fall and winter festival data", () => {
     expect(festivalOn("fall", 9)?.id).toBe("harvest-showing");
     expect(festivalOn("fall", 21)?.id).toBe("hollow-eve");
     expect(festivalOn("winter", 8)?.id).toBe("frostday");
-    expect(festivalOn("winter", 20)?.id).toBe("midwinter-feast");
+    expect(festivalOn("winter", 25)?.id).toBe("midwinter-feast");
   });
 
   it("opens Hollow Eve at 8 pm and sends the player home at midnight", () => {

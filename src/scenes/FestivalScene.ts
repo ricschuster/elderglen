@@ -8,7 +8,7 @@ import {
   type Festival,
   enterProblem,
   FESTIVAL_RETURN,
-  festivalToday,
+  festivalDayToday,
   leaveFestival,
 } from "../core/festivals";
 import { itemById } from "../core/items";
@@ -63,7 +63,7 @@ export class FestivalScene extends Phaser.Scene {
   }
 
   create(): void {
-    const f = festivalToday(this.state.day.clock.day);
+    const f = festivalDayToday(this.state.day.clock.day);
     if (!f || (this.mode === "ask" && enterProblem(this.state)))
       return this.close(false);
     frame(this, f.name, () => this.close(this.inside && this.mode === "ask"));
@@ -111,7 +111,7 @@ export class FestivalScene extends Phaser.Scene {
     if (this.inside) return;
     const f =
       this.mode === "panel"
-        ? festivalToday(this.state.day.clock.day)
+        ? festivalDayToday(this.state.day.clock.day)
         : enterFestival(this.state);
     if (!f) return this.close(false);
     // A festival with a map is played there, not on this screen.

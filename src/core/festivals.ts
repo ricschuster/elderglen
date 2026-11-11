@@ -26,13 +26,38 @@ export interface Sight {
   line: string;
 }
 
+/** A rectangle of map tiles. */
+export interface Zone {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+/** A map id and the zone of it the festival uses. */
+export interface FestivalPlace {
+  map: string;
+  zone: Zone;
+}
+
 /** A dated village event. Content lives in `src/content/festivals.json`. */
 export interface Festival {
   id: string;
   name: string;
   season: Season;
-  /** Day of the season, 1 to DAYS_PER_SEASON. */
+  /** Day of the season, 1 to DAYS_PER_SEASON (the first day, for a span). */
   day: number;
+  /** The last day of a multi-day festival (the Night Market). Defaults to `day`. */
+  lastDay?: number;
+  /**
+   * An evening festival that does not take over the day (the Night Market):
+   * shops and homes keep their hours, the clock runs and the green stays quiet.
+   */
+  evening?: boolean;
+  /** Where the festival is held (note 82). Not the same as `map`, the built screen. */
+  place: FestivalPlace;
+  /** A better place used once its requirement is met (Midwinter Feast in the hall). */
+  placeUpgrade?: FestivalPlace & { requires: "hall-restored" };
   /** Minutes since midnight when the festival opens and closes. */
   opens: number;
   closes: number;
@@ -63,13 +88,59 @@ export function festivalOn(
   season: Season,
   dayOfSeason: number,
 ): Festival | undefined {
-  return FESTIVALS.find((f) => f.season === season && f.day === dayOfSeason);
+  return FESTIVALS.find(
+    (f) =>
+      f.season === season &&
+      dayOfSeason >= f.day &&
+      dayOfSeason <= (f.lastDay ?? f.day),
+  );
 }
 
 /** The festival on a game day (1 based, as in `Clock.day`), if any. */
 export function festivalToday(day: number): Festival | undefined {
   const { season, dayOfSeason } = dateOf(day);
   return festivalOn(season, dayOfSeason);
+}
+
+/**
+ * The festival that takes over today (shops shut, clock stands still), if any.
+ * The Night Market is an evening festival and does not.
+ */
+export function festivalDayToday(day: number): Festival | undefined {
+  const f = festivalToday(day);
+  return f && !f.evening ? f : undefined;
+}
+
+/** Where the festival is held, given whether the hall is fully restored. */
+export function festivalPlace(
+  f: Festival,
+  hallRestored: boolean,
+): FestivalPlace {
+  return f.placeUpgrade && hallRestored ? f.placeUpgrade : f.place;
+}
+
+export const inZone = (z: Zone, x: number, y: number): boolean =>
+  x >= z.x && x < z.x + z.w && y >= z.y && y < z.y + z.h;
+
+/**
+ * Note 82 decision 12: a festival's place cannot be entered before it opens.
+ * True when `tile` on `mapId` is in today's festival place and it is earlier
+ * than the opening time. Only the festival zone is shut, not the whole map,
+ * because the Forest and the delta are also roads (the note leaves this open;
+ * this is the placeholder choice). Evening festivals never shut.
+ */
+export function festivalAreaShut(
+  day: number,
+  minutes: number,
+  mapId: string,
+  x: number,
+  y: number,
+  hallRestored = false,
+): boolean {
+  const f = festivalDayToday(day);
+  if (!f || minutes >= f.opens) return false;
+  const p = festivalPlace(f, hallRestored);
+  return p.map === mapId && inZone(p.zone, x, y);
 }
 
 /** True while the festival is open at this time on its day. */
@@ -105,7 +176,7 @@ export function joinKey(f: Festival, day: number): string {
 
 /** Why the player cannot go to a festival now, or undefined if they can. */
 export function enterProblem(g: GameState): string | undefined {
-  const f = festivalToday(g.day.clock.day);
+  const f = festivalDayToday(g.day.clock.day);
   if (!f) return "There is no festival today.";
   if (g.day.clock.minutes < f.opens) return `${f.name} has not started yet.`;
   if (g.day.clock.minutes >= f.closes) return `${f.name} is over for today.`;

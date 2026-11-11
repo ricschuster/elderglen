@@ -42,7 +42,7 @@ import { clockText, darkness } from "../core/clock";
 import {
   festivalOfMap,
   festivalOpen,
-  festivalToday,
+  festivalDayToday,
   isFestivalMap,
   sightLine,
 } from "../core/festivals";
@@ -2043,7 +2043,7 @@ export class FarmScene extends Phaser.Scene {
 
   /** The festival green: open only while today's festival is on. */
   private openFestival(): void {
-    const f = festivalToday(this.state.day.clock.day);
+    const f = festivalDayToday(this.state.day.clock.day);
     if (f && festivalOpen(f, this.state.day.clock.minutes))
       return this.open("festival");
     if (!f) this.message = "The green is quiet today.";
@@ -2287,7 +2287,7 @@ export class FarmScene extends Phaser.Scene {
 
   /** On a festival day, hang flags over the green so the village looks changed. */
   private drawBunting(): void {
-    if (!festivalToday(this.state.day.clock.day)) return;
+    if (!festivalDayToday(this.state.day.clock.day)) return;
     const green = this.map.services.find((s) => s.kind === "festival");
     if (!green) return;
     const ts = this.map.tileSize;

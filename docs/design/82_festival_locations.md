@@ -93,6 +93,13 @@ spots already designed.
 4. Route data: a `festival` spot per person per festival (note 79 data shape),
    and `festivals.json` naming each festival's map.
 
+Built status (2026-11-11): `festivals.json` has the new dates, the dusk hours for
+Lamplight, the Night Market as a span (Winter 16 to 18, `lastDay`, `evening`), and a
+`place` (map and tile zone) per festival, with the hall as a `placeUpgrade` for the
+feast. `festivalAreaShut` (decision 12) is a pure helper, not yet wired to the exits;
+it shuts only the festival zone (a placeholder for the open point). No maps,
+activities or routes yet.
+
 Register: SC-127 added to note 54 (which place Stardew uses for each festival,
 and who skips). Check by the saved Calendar page.
 
@@ -371,7 +378,7 @@ Hester leaves at 20:30 (decision 6). Open: the lantern's price, art and keepsake
 the friendship numbers, the drifting animation, how the lanterns look at dusk on
 the dark Beach (the dusk tint is the festival's, not built), and whether the
 lantern stall keepers should be the hat-makers (they are the Cake Day costume
-stall's too). Not built: `festivals.json` still has the day hours.
+stall's too).
 
 ## Frostday on the frozen Forest lake (drafted 2026-11-11, owner answered the setup)
 
@@ -418,4 +425,4 @@ people, the 22 town residents with Aldreth, Rushie and Dilly (decision 5).
 Hester leaves at 20:30 (decision 6). Open: the Frostfin (price, art, bundle use),
 the hat, whether the festival ends after judging as Stardew's does, and whether
 holes need a cast distance rule on a tablet (Stardew's holes are small and hard
-to cast into). Not built: `festivals.json` says the river, not the lake.
+to cast into).

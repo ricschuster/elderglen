@@ -1,5 +1,5 @@
 import { dateOf } from "./calendar";
-import { festivalToday } from "./festivals";
+import { festivalDayToday } from "./festivals";
 import { loadHorse, newHorse, saveHorse, type Horse } from "./horse";
 import { HARDWOOD, itemById } from "./items";
 import {
@@ -859,7 +859,7 @@ export function orderBuilding(g: GameState, b: Building): boolean {
  */
 export function advanceBuilding(g: GameState): Building | undefined {
   const b = g.animals.build;
-  if (!b || festivalToday(g.day.clock.day)) return undefined;
+  if (!b || festivalDayToday(g.day.clock.day)) return undefined;
   b.daysLeft -= 1;
   if (b.daysLeft > 0) return undefined;
   g.animals.build = undefined;
@@ -1065,7 +1065,8 @@ export function orderSilo(g: GameState): boolean {
 
 /** One morning of the silo job. A festival day does not count. True on the morning it opens. */
 export function advanceSilo(g: GameState): boolean {
-  if (g.animals.siloDays <= 0 || festivalToday(g.day.clock.day)) return false;
+  if (g.animals.siloDays <= 0 || festivalDayToday(g.day.clock.day))
+    return false;
   g.animals.siloDays -= 1;
   if (g.animals.siloDays > 0) return false;
   g.animals.silo = true;

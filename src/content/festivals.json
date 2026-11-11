@@ -25,7 +25,16 @@
         "price": 400
       }
     ],
-    "minigame": null
+    "minigame": null,
+    "place": {
+      "map": "hearthwell",
+      "zone": {
+        "x": 14,
+        "y": 54,
+        "w": 67,
+        "h": 17
+      }
+    }
   },
   {
     "id": "seedswap-fair",
@@ -42,7 +51,16 @@
         "price": 20
       }
     ],
-    "minigame": null
+    "minigame": null,
+    "place": {
+      "map": "forest",
+      "zone": {
+        "x": 68,
+        "y": 12,
+        "w": 16,
+        "h": 23
+      }
+    }
   },
   {
     "id": "cake-day",
@@ -54,19 +72,37 @@
     "ends": 1320,
     "blurb": "The Brimmers dress as food and the green smells of baking.",
     "counter": [],
-    "minigame": null
+    "minigame": null,
+    "place": {
+      "map": "hearthwell",
+      "zone": {
+        "x": 14,
+        "y": 60,
+        "w": 21,
+        "h": 5
+      }
+    }
   },
   {
     "id": "lamplight-evening",
     "name": "Lamplight Evening",
     "season": "summer",
-    "day": 20,
-    "opens": 720,
-    "closes": 1080,
-    "ends": 1320,
-    "blurb": "A quiet lantern gathering on the green as the light goes.",
+    "day": 24,
+    "opens": 1020,
+    "closes": 1320,
+    "ends": 1380,
+    "blurb": "A quiet lantern gathering on the Beach as the light goes.",
     "counter": [],
-    "minigame": null
+    "minigame": null,
+    "place": {
+      "map": "delta",
+      "zone": {
+        "x": 66,
+        "y": 20,
+        "w": 20,
+        "h": 33
+      }
+    }
   },
   {
     "id": "harvest-showing",
@@ -116,7 +152,16 @@
         "name": "The baker",
         "line": "Everything on that table is better than my loaf. I will not be saying so to the judge."
       }
-    ]
+    ],
+    "place": {
+      "map": "green",
+      "zone": {
+        "x": 0,
+        "y": 0,
+        "w": 36,
+        "h": 22
+      }
+    }
   },
   {
     "id": "hollow-eve",
@@ -143,7 +188,16 @@
       }
     ],
     "minigame": null,
-    "map": "hedge"
+    "map": "hedge",
+    "place": {
+      "map": "hedge",
+      "zone": {
+        "x": 0,
+        "y": 0,
+        "w": 23,
+        "h": 17
+      }
+    }
   },
   {
     "id": "frostday",
@@ -153,7 +207,7 @@
     "opens": 720,
     "closes": 1080,
     "ends": 1320,
-    "blurb": "The river is frozen and the green is full of snowmen and ice sculptures. Fishing through the ice joins in a later season.",
+    "blurb": "The Forest lake is frozen and the shore is full of snowmen and ice sculptures. Fishing through the ice joins in a later build.",
     "activity": "sights",
     "sights": [
       {
@@ -191,13 +245,45 @@
         "price": 350
       }
     ],
+    "minigame": null,
+    "place": {
+      "map": "forest",
+      "zone": {
+        "x": 34,
+        "y": 12,
+        "w": 31,
+        "h": 23
+      }
+    }
+  },
+  {
+    "id": "night-market",
+    "name": "Winter Night Market",
+    "season": "winter",
+    "day": 16,
+    "lastDay": 18,
+    "evening": true,
+    "opens": 1020,
+    "closes": 1440,
+    "ends": 1440,
+    "blurb": "Three evenings of lantern-lit stalls on the Hearthwell square. The shops keep their hours.",
+    "place": {
+      "map": "hearthwell",
+      "zone": {
+        "x": 64,
+        "y": 54,
+        "w": 17,
+        "h": 17
+      }
+    },
+    "counter": [],
     "minigame": null
   },
   {
     "id": "midwinter-feast",
     "name": "Midwinter Feast",
     "season": "winter",
-    "day": 20,
+    "day": 25,
     "opens": 720,
     "closes": 1080,
     "ends": 1320,
@@ -220,6 +306,25 @@
         "price": 350
       }
     ],
-    "minigame": null
+    "minigame": null,
+    "place": {
+      "map": "hearthwell",
+      "zone": {
+        "x": 64,
+        "y": 54,
+        "w": 17,
+        "h": 17
+      }
+    },
+    "placeUpgrade": {
+      "map": "hall",
+      "zone": {
+        "x": 16,
+        "y": 6,
+        "w": 16,
+        "h": 11
+      },
+      "requires": "hall-restored"
+    }
   }
 ]

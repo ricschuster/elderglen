@@ -5,7 +5,10 @@ import {
   buyAtCounter,
   counterProblem,
   festivalOn,
+  festivalAreaShut,
+  festivalDayToday,
   festivalOpen,
+  festivalPlace,
   festivalToday,
   enterFestival,
   enterProblem,
@@ -25,13 +28,24 @@ const dayOf = (season: (typeof SEASONS)[number], d: number) =>
 
 describe("festival data", () => {
   it("follows the calendar rules in 14_festival_calendar.md", () => {
-    const keys = FESTIVALS.map((f) => `${f.season}${f.day}`);
+    const keys = FESTIVALS.flatMap((f) =>
+      Array.from(
+        { length: (f.lastDay ?? f.day) - f.day + 1 },
+        (_, i) => `${f.season}${f.day + i}`,
+      ),
+    );
     expect(new Set(keys).size).toBe(keys.length);
     expect(new Set(FESTIVALS.map((f) => f.id)).size).toBe(FESTIVALS.length);
     for (const f of FESTIVALS) {
       expect(SEASONS, f.id).toContain(f.season);
       expect(f.day, f.id).toBeGreaterThan(1);
-      expect(f.day, f.id).toBeLessThanOrEqual(DAYS_PER_SEASON - 7);
+      // The last-week rule is relaxed for the two solstice festivals (note 14).
+      if (!["lamplight-evening", "midwinter-feast"].includes(f.id))
+        expect(f.lastDay ?? f.day, f.id).toBeLessThanOrEqual(
+          DAYS_PER_SEASON - 7,
+        );
+      expect(f.lastDay ?? f.day, f.id).toBeLessThanOrEqual(DAYS_PER_SEASON);
+      expect(f.place.zone.w, f.id).toBeGreaterThan(0);
       expect(f.opens, f.id).toBeLessThan(f.closes);
       expect(f.ends, f.id).toBeGreaterThanOrEqual(f.closes);
       for (const e of f.counter) {
@@ -59,16 +73,17 @@ describe("lookup", () => {
     expect(festivalOn("summer", 10)).toBeUndefined();
     expect(festivalOn("spring", 21)?.id).toBe("seedswap-fair");
     expect(festivalOn("summer", 8)?.id).toBe("cake-day");
-    expect(festivalOn("summer", 20)?.id).toBe("lamplight-evening");
+    expect(festivalOn("summer", 24)?.id).toBe("lamplight-evening");
+    expect(festivalOn("summer", 20)).toBeUndefined();
   });
 
   it("finds the next festival, wrapping into the next year", () => {
     expect(nextFestival(1)?.day).toBe(10);
     expect(nextFestival(10)?.festival.id).toBe("seedswap-fair");
-    const next = nextFestival(dayOf("winter", 20))!;
+    const next = nextFestival(dayOf("winter", 25))!;
     expect(next.festival.id).toBe("hat-parade");
     expect(dateOf(next.day).year).toBe(2);
-    expect(nextFestival(dayOf("summer", 20))?.festival.id).toBe(
+    expect(nextFestival(dayOf("summer", 24))?.festival.id).toBe(
       "harvest-showing",
     );
   });
@@ -218,5 +233,95 @@ describe("hats and the counter", () => {
     const odd = deserialize(JSON.stringify(raw))!;
     expect(odd.wardrobe.list()).toEqual(["wool-beret"]);
     expect(odd.wardrobe.worn).toBeUndefined();
+  });
+});
+
+describe("2026-11-11 festival data (notes 14, 80 and 82)", () => {
+  const byId = (id: string) => FESTIVALS.find((f) => f.id === id)!;
+
+  it("has the solstice dates and the dusk hours", () => {
+    expect(byId("lamplight-evening")).toMatchObject({
+      season: "summer",
+      day: 24,
+      opens: 17 * 60,
+      closes: 22 * 60,
+      ends: 23 * 60,
+    });
+    expect(byId("midwinter-feast")).toMatchObject({
+      season: "winter",
+      day: 25,
+    });
+    expect(festivalOn("winter", 20)).toBeUndefined();
+  });
+
+  it("runs the Winter Night Market on three evenings, 16 to 18", () => {
+    const m = byId("night-market");
+    expect([m.day, m.lastDay]).toEqual([16, 18]);
+    expect([m.opens, m.closes]).toEqual([17 * 60, 24 * 60]);
+    for (const d of [16, 17, 18])
+      expect(festivalOn("winter", d)?.id).toBe("night-market");
+    expect(festivalOn("winter", 15)).toBeUndefined();
+    expect(festivalOn("winter", 19)).toBeUndefined();
+    expect(festivalToday(dayOf("winter", 17))?.id).toBe("night-market");
+    expect(nextFestival(dayOf("winter", 8))?.festival.id).toBe("night-market");
+    expect(nextFestival(dayOf("winter", 18))?.festival.id).toBe(
+      "midwinter-feast",
+    );
+    expect(rollWeather("winter", 17, () => 0)).toBe("sunny");
+  });
+
+  it("does not take over the day on a Night Market evening", () => {
+    expect(festivalDayToday(dayOf("winter", 17))).toBeUndefined();
+    expect(festivalDayToday(dayOf("winter", 25))?.id).toBe("midwinter-feast");
+    const g = newGame();
+    g.day.clock.day = dayOf("winter", 17);
+    g.day.clock.minutes = 18 * 60;
+    expect(enterProblem(g)).toMatch(/no festival/);
+  });
+
+  it("places each festival in an area, not the old green or river", () => {
+    const maps = Object.fromEntries(FESTIVALS.map((f) => [f.id, f.place.map]));
+    expect(maps).toMatchObject({
+      "seedswap-fair": "forest",
+      "lamplight-evening": "delta",
+      frostday: "forest",
+      "harvest-showing": "green",
+      "hollow-eve": "hedge",
+      "cake-day": "hearthwell",
+      "night-market": "hearthwell",
+    });
+    const feast = byId("midwinter-feast");
+    expect(festivalPlace(feast, false).map).toBe("hearthwell");
+    expect(festivalPlace(feast, true).map).toBe("hall");
+    expect(festivalPlace(byId("frostday"), true).map).toBe("forest");
+  });
+});
+
+describe("festival areas are shut before opening (note 82, decision 12)", () => {
+  const frost = dayOf("winter", 8);
+  it("shuts the festival zone, not the rest of the map, until it opens", () => {
+    expect(festivalAreaShut(frost, 11 * 60, "forest", 46, 22)).toBe(true);
+    expect(festivalAreaShut(frost, 12 * 60, "forest", 46, 22)).toBe(false);
+    expect(festivalAreaShut(frost, 11 * 60, "forest", 90, 50)).toBe(false);
+    expect(festivalAreaShut(frost, 11 * 60, "delta", 46, 22)).toBe(false);
+  });
+
+  it("is open on other days, and uses the festival's own opening time", () => {
+    expect(festivalAreaShut(frost + 1, 8 * 60, "forest", 46, 22)).toBe(false);
+    const lamp = dayOf("summer", 24);
+    expect(festivalAreaShut(lamp, 16 * 60, "delta", 70, 40)).toBe(true);
+    expect(festivalAreaShut(lamp, 17 * 60, "delta", 70, 40)).toBe(false);
+  });
+
+  it("follows the hall when the feast moves there, and skips the Night Market", () => {
+    const feast = dayOf("winter", 25);
+    expect(festivalAreaShut(feast, 600, "hall", 20, 10, true)).toBe(true);
+    expect(festivalAreaShut(feast, 600, "hall", 20, 10, false)).toBe(false);
+    expect(festivalAreaShut(feast, 600, "hearthwell", 70, 58, false)).toBe(
+      true,
+    );
+    expect(
+      festivalAreaShut(dayOf("winter", 16), 600, "hearthwell", 70, 58),
+    ).toBe(false);
   });
 });
