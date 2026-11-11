@@ -227,7 +227,8 @@ saved Abigail page, SC-112). The snow-day lines below stay as written.
 | Aldreth | 8:30 hw:outpost-yard until 12:00 | = | 8:30 outpost/room (sort) until 12:00, then inn |
 
 Town trip weekdays stay as written. In winter a trip leaves an hour earlier and
-returns an hour earlier, and on a snow day the person does not travel (as in rain).
+returns an hour earlier. A snow day does not stop the trip (snow is not rain, owner
+2026-11-11); only rain does.
 
 ## Open items
 
