@@ -1,6 +1,6 @@
 # 86 Interior layouts: templates from Stardew's rooms (draft)
 
-Status: **the general store pilot is owner checked (2026-11-11, round 2: irregular footprint); the sawmill, healer and smithy are drafted (batch 1 section), waiting for the owner; the hut and the inn drafts and the other interiors wait** (note 81 decision 6).
+Status: **the general store pilot is owner checked (2026-11-11, round 2: irregular footprint); the sawmill, healer and smithy are owner checked (batch 1); the library, hatter and farmstead are drafted (batch 2), waiting for the owner; the hut and the inn drafts and the other interiors wait** (note 81 decision 6).
 Nothing here is built. This is step 4 of the layout track
 (`docs/handoffs/PRIORITIES.md`, note 81): interior layouts, with a Tiled draft of a
 pilot first. The pilot is the general store, plus two more templates (the one-room
@@ -405,6 +405,126 @@ player tiles and the same number of keeper tiles. The 1 wide spots (for example 
 shop's back strip, the pantry's corner) are dead ends beside fixtures, never the only
 way through.
 
+## Plan batch 2: library, hatter, farmstead keeper (2026-11-11)
+
+Drawn from the same answers as batch 1. Each has its own shape.
+
+### Library and librarian's flat (35 by 30)
+
+Dunmar lives here alone. The reading hall (4 to 23, 10 to 21) has shelf blocks with 2
+wide aisles, a 5 wide counter near the door, a reading table with seats and a display
+case. A reading nook with armchairs steps out to the west. A passage north from the
+hall's top edge leads to the flat: living area, a kitchen to its west with a pantry
+above it, and the gated bedroom to the east.
+
+```text
+       #####
+      #######
+      #SSSSS#
+      #.....#
+      #XX...##              ######
+      ###..#### ###################
+      #KK..KKK##############.BB.SS#
+      #.......##....HHH....#.BB...#
+      #..TTT...............G......#
+      #..TTT.....QQQQ......G..rrr.#
+      #.......##..rrrrr....#..rrr.#
+      ##########..rrrrr....#......#
+      #############..##############
+     ##############..######
+ #####SSSSSSSSSSSSS..SSSSS#
+######....................#
+#QQ..#....................#
+#....#..SSSSSS....SSSSSS..#
+#S......SSSSSS....SSSSSS..#
+#Srrr.....................#
+#Srrr#........rrrr......LL#
+#S...#..SSSS..rrrr......LL#
+######..SSSS..rrrrCCCCC...#
+     #........rrrr........#
+     #.QTTTTQ.............#
+     #.QTTTTQ.............#
+     #########..###########
+             #..#
+             #DD#
+             ####
+```
+
+### Hatter's shop and home (27 by 27)
+
+Cordelia and her sibling Barnaby live here. The shop room has a 4 wide counter, hat
+stands and a table, and a bay on its west side holds the sewing table. The home runs
+north: a living area with a gated bedroom on each side (Cordelia west, Barnaby east),
+and a kitchen above with a pantry.
+
+```text
+          ######## #####
+         ################
+         #KKKKKKKK#SSSSS#
+         #..............#
+         #....TTT.....XX#
+ ######  #....TTT.#...XX##
+############..#############
+#.BB.SS#####..######TT..BB#
+#.BB...#.....HHH...#....BB#
+#......G...........G......#
+#..rrr.G.QQQQ.rrrr.G.rrr..#
+#..rrr.#......rrrr.#.rrr..#
+########...........########
+       #####..######
+      ######..######
+  #####SSSSS..SSSSS#
+ ######............#
+ #.......CCCC......#
+ #WW.LL............#
+ #WW.......rrr.LL..#
+ #......LL.rrr.LL..#
+ #XX...............#
+ ######.........TTT#
+      ######..######
+           #..#
+           #DD#
+           ####
+```
+
+### Farmstead keeper's house (32 by 22)
+
+Dilly lives here alone. A wide, low plan: the shop room with a 5 wide counter, hay and
+feed, opens east into the young animal pen (hay bales on the back wall, a water trough,
+a straw rug). The house sits above the shop: living area, a kitchen with a pantry, and
+the gated bedroom to the west.
+
+```text
+ #####            ####### ####
+###############################
+#BB.SS############KKKKKKK#SSSS#
+#BB...#...HHH....#............#
+#.....#.............TTT......X#
+#.rrr.G..QQQQ.......TTT..#...X#
+#.rrr.G.rrrr.....#.......######
+#.....#.rrrr.....##############
+###########..###################
+      #####..#######.XXXXXXXXXX#
+      #SSSS...SSSSS#...........#
+      #............#...........#
+      #........................#
+      #.CCCCC..............LLL.#
+      #............#...rrrrLLL.#
+      #XXrrrrrLLXXX#...rrrr....#
+      #XXrrrrr..XXX#.XXrrrr....#
+      #XX.......XXX#.XXrrrr....#
+      ######..##################
+           #..#
+           #DD#
+           ####
+```
+
+Checks (all pass): every floor tile and mark is reachable with the gates open; with the
+gates shut only the bedrooms are cut off (32 tiles at the library, 52 at the hatter's,
+26 at the farmstead); each counter has 4 or 5 player tiles. The farmstead is not a
+Hearthwell shop, but it gets a home like the others (the table below said "shop and
+keeper's home").
+
 ## The other interiors
 
 Each uses one of the three shapes, with its own furniture. Sizes are outer, with the
@@ -440,8 +560,8 @@ Final art waits for M3d (ADR 0012).
 | `general-store` | Drafted, waits for the owner | No | The pilot |
 | `fisher-hut` and the other huts | Template drafted, waits for the owner | No | One draft stands for five |
 | `inn` | Drafted, waits for the owner | No | |
-| `sawmill`, `healer`, `smithy` | Drafted 2026-11-11 (batch 1), waits for the owner | No | |
-| `hatter`, `library`, `forest-farmstead` | Sizes and fixtures only; batch 2 of the plans | No | |
+| `sawmill`, `healer`, `smithy` | Done, owner checked 2026-11-11 (batch 1) | No | |
+| `library`, `hatter`, `forest-farmstead` | Drafted 2026-11-11 (batch 2), waits for the owner | No | |
 | `burrow-*` | Sizes and fixtures only; several rooms each (owner, 2026-11-11 answers) | No | |
 | `hall` | Done, note 40 | No | Crowd rules only |
 
