@@ -153,8 +153,8 @@ Owner answers, 2026-11-11, are marked. The rest are proposals to check.
 
 13. **Cabins are placed freely (owner, 2026-11-11, Stardew from memory, SC-120).**
     The farm keeps one open area for them, see note 55 "Cabins for multiplayer".
-    The cabin interior is one template with per-player state, built after the
-    farmhouse interior.
+    The cabin interior is the farmhouse map with per-player state (Stardew,
+    checked: identical to the farmhouse), laid out in note 85.
 
 ## Order of the four tracks
 

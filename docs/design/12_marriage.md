@@ -143,5 +143,7 @@ Settled with the owner, closing issue #137.
   notes.
 - The fee amount for divorce, and the size of the spouse's helps (placeholder
   numbers in `07_tuning_numbers.md` when built).
-- What the child does day to day. The nursery is house tier 2 (`41_house.md`).
+- What the child does day to day. The nursery is house tier 2 (`41_house.md`) and comes
+  furnished with a crib and two child beds (note 85, Stardew checked). Ours has no
+  "remove crib" choice, since the offer is never pressed.
 - The look of the wedding scene and festival (art pass, #58).
