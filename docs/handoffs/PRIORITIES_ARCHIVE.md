@@ -6,7 +6,7 @@ The live list is `PRIORITIES.md`.
 
 ---
 
-# Design priority list
+## Design priority list
 
 The single live copy. Read it at the start of each session, and update it in
 the handoff pull request (tick off what is done, reorder, add). Do not copy the
