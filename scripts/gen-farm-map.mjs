@@ -29,6 +29,7 @@ const R = {
   WALL: 7,
   ROOF: 8,
   DOOR: 9,
+  BIN: 12,
 };
 
 const draft = JSON.parse(readFileSync(SRC, "utf8"));
@@ -152,6 +153,8 @@ entry("start", 62, 13);
 entry("from_house", 62, 12);
 exit("house", DOOR.x, DOOR.y, 1, 1, "house", "door");
 service("bin", "bin", 66, 13);
+objects[idx(66, 13)] = R.BIN;
+collision[idx(66, 13)] = 1;
 service("mailbox", "mailbox", 68, 13);
 service("furnace", "furnace", 60, 13);
 // Stand-in: the festival green stays on the farm until the festival layouts

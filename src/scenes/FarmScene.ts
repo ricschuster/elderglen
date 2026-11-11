@@ -857,13 +857,28 @@ export class FarmScene extends Phaser.Scene {
     if (down && here.x === down.x && here.y === down.y) {
       if (this.ladderArmed) return this.descend();
     } else this.ladderArmed = true;
-    // Walking onto an exit tile takes it. A shut exit says so once per step on.
-    const onExit = this.map.exitAt(here.x, here.y);
+    // Walking onto an open-land exit, or out of a building, takes it. Doors into buildings need opening (click or Action).
+    const found = this.map.exitAt(here.x, here.y);
+    const onExit = found && this.isWalkThrough(found) ? found : undefined;
     if (!onExit) this.exitArmed = true;
     else if (this.exitArmed && !this.leaving) {
       this.exitArmed = false;
       this.useDoor(onExit);
     }
+  }
+
+  /**
+   * True for an exit you walk onto: one on the map edge that is three or more
+   * tiles wide (open land), or any edge exit inside a building (leaving).
+   * Going into a building still needs the door opened (click or Action).
+   */
+  private isWalkThrough(e: Exit): boolean {
+    const edge =
+      e.x === 0 ||
+      e.y === 0 ||
+      e.x + e.w >= this.map.width ||
+      e.y + e.h >= this.map.height;
+    return edge && (!this.outdoorWorld || Math.max(e.w, e.h) >= 3);
   }
 
   /** The tier layers a growing building map shows: the house rooms or the coop size built so far. */
