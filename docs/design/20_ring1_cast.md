@@ -139,7 +139,7 @@ steward, the carpenter, partners and retirees are not candidates.
 
 ## Still open
 
-- Names, ages and looks for everyone. The voice sheet template comes with the
+- Looks for everyone. Names are set (note 79, "Settled names"); ages are age bands only, with no ageing. The voice sheet template comes with the
   first names (`18_dialogue.md`).
 - Humans stay visitors (decided 2026-10-29): travellers and festival guests,
   not residents. The two human residents stay as they are, and no halfling
