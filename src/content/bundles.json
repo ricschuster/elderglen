@@ -35,6 +35,27 @@
     "hint": "Warm days bring berries and vines to the forage spots."
   },
   {
+    "id": "autumn-foraging",
+    "name": "Autumn Foraging",
+    "room": "foragers-shelf",
+    "items": [
+      "bramble-berry",
+      "hazelnut",
+      "wild-plum",
+      "field-mushroom",
+      "crab-apple",
+      "rose-hip"
+    ],
+    "required": 4,
+    "reward": {
+      "item": {
+        "id": "beet-seed",
+        "count": 15
+      }
+    },
+    "hint": "Autumn hedges are heavy with fruit and nuts. Fill a basket before the frost."
+  },
+  {
     "id": "winter-foraging",
     "name": "Winter Foraging",
     "room": "foragers-shelf",
@@ -73,6 +94,26 @@
       }
     },
     "hint": "Fell trees, break rocks and clear the weeds. The hall needs a great deal of each."
+  },
+  {
+    "id": "rare-finds",
+    "name": "Rare Finds",
+    "room": "foragers-shelf",
+    "items": [
+      "morel",
+      "chanterelle",
+      "snowcap",
+      "wild-ginger",
+      "cave-mushroom"
+    ],
+    "required": 3,
+    "reward": {
+      "item": {
+        "id": "mushroom-stew",
+        "count": 5
+      }
+    },
+    "hint": "Rare things turn up now and then on a forage spot or deep in the mine. Keep an eye out across the year."
   },
   {
     "id": "spring-crops",
@@ -248,6 +289,26 @@
       }
     },
     "hint": "Flowers and berries that colour cloth: spring daffodils, summer sweet peas, autumn cranberries and winter crocuses."
+  },
+  {
+    "id": "cooks",
+    "name": "Cook's",
+    "room": "guests-board",
+    "items": [
+      "pumpkin-soup",
+      "mushroom-stew",
+      "market-pie",
+      "harvest-hotpot",
+      "inn-custard"
+    ],
+    "required": 3,
+    "reward": {
+      "item": {
+        "id": "innkeepers-roast",
+        "count": 3
+      }
+    },
+    "hint": "Three of the dishes the valley's kitchens are known for, hot from your own stove."
   },
   {
     "id": "stream-fish",

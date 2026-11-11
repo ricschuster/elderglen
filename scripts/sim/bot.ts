@@ -107,6 +107,9 @@ export const UNPLAYED_BUNDLES: readonly string[] = [
   // The bot keeps no animals, so it cannot fill the animal-goods bundles.
   "animal-goods",
   "weavers",
+  // Rare finds are a low chance on a forage spot, and the bot does not cook.
+  "rare-finds",
+  "cooks",
   // The bot does not fish or set pots, so the six Water room bundles are unplayed (note 21).
   "stream-fish",
   "lake-fish",

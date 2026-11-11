@@ -82,7 +82,8 @@ describe("the Last Seat, bundles 27 to 30", () => {
 
   it("opens after 20 other bundles, and finishing it mends the bridge", () => {
     const others = BUNDLES.filter((b) => b.room !== LAST_ROOM);
-    expect(others).toHaveLength(20);
+    // 23 others are built; the room opens after 20 of them (a soft gate, rooms.json).
+    expect(others).toHaveLength(23);
     const hall = new Hall();
     expect(hall.roomOpen(LAST_ROOM)).toBe(false);
     const inv = new Inventory(40);
