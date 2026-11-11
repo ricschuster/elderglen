@@ -164,3 +164,13 @@ summer and fall, seeds 10g, sells for 25g. Red cabbage is 9 days, seed 100g, sel
 260g. Both are in `07_tuning_numbers.md`. Stardew sells red cabbage seed only
 from year two, a gate we do not copy. It is only one of Dyer's six dye goods,
 so no bundle needs it.
+
+## Decisions 2026-11-11m (owner answers)
+
+- **Year two loses nothing.** Bundles stay open with no deadline, and year two only
+  changes the festival cycle and shop stock.
+- **Ring 1 ending: a scene on the bridge and a letter, then play continues.** No
+  credits. The letter points to ring 2, and the completion tracker shows a marker.
+  Not built.
+- **Bundles 3, 6, 20, 22, 24 and 26** (absent from `bundles.json`): Claude drafts
+  each ask and reward from notes 16 and 63 for the owner to check, before any build.

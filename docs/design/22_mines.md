@@ -685,3 +685,18 @@ settled 2026-10-31). Slices 3 onward wait for build slice 3.
   and the stick still fire the faced way. A tablet check is needed.
 - **Creature names and the trainer's words stay placeholders** until art exists.
 - **The stonekeeper dwarf is a villager** with loves for stone, ore and forage (owner, 2026-11-08, round two; see note 78). No heart events yet.
+
+## Decisions 2026-11-11m (owner answers)
+
+- **Special floors: infested and geode floors.** About 1 floor in 15 (kept). On an
+  infested floor every monster must die before a ladder appears (Stardew, saved
+  Mines page). This is an exception to "mining works with no fighting": the lift
+  and the stairs already in sight are the way out, and the exception is only for
+  these floors. A geode floor is full of geode nodes with no monsters. The peaceful
+  Gloop floor and the puzzle ruin are not chosen. Not built.
+- **Rest camp chest: the first open gives one special item, after that it is
+  empty.** This replaces "refilled each day". The special item is not chosen yet
+  (open). The built camp chest gives gift ore by band and empties per camp.
+- **Lamps are placeable, plus the glow ring** (Stardew, from memory, unchecked). No
+  carried lamp slot. A lamp is a craftable placeable item, which gives bundle 29 its
+  real item. Not built.
