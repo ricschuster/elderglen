@@ -181,3 +181,54 @@ beet seeds), bundle 6 Rare Finds (3 of 5, 5 mushroom stews) and bundle 22 Cook's
 `bundles.json`. The Last Seat now needs all 23 other bundles (owner, 2026-11-11; the built gate still says 20 and needs changing).
 Still absent: 20, 24 and 26 (they need lamps and oil, festival dishes and the
 Storyteller's items, none built). The sim bot leaves 6 and 22 unplayed.
+
+## The ring 1 ending scene and letter (owner answers 2026-11-11)
+
+Not built. The earlier decision stands: a scene on the bridge and a letter, then
+play continues, with no credits (see "Decisions 2026-11-11m").
+
+- **Trigger (Stardew, saved Community Center page).** The next sunny day after the
+  last Last Seat bundle is handed in, the scene plays when the player enters
+  Hearthwell, at any hour. Stardew's ceremony does the same on entering town. A
+  rainy or snowy day waits. In a co-op game the scene plays for every player in
+  the valley and the host's day counts.
+- **Cast.** The whole valley gathers on the mended bridge with the hats on (note 09,
+  "The ending"). Cuthbert the reeve opens it. Old Greencoat gives the speech and
+  hands over the letter to the elves. The warden head stands at the edge and says
+  nothing; she visits the farm the morning after the scene (note 09, stage 3).
+- **Letter.** Old Greencoat's letter to the elves, bundle 30's reward item
+  (note 16). It is read out in the scene and kept in the bag as a story item. It is
+  a short introduction to the elves of Evenglade and says only that the road is
+  open. It does not name Oriel (her own letter comes at the shrine, note 83).
+- **Tracker marker.** One line in the completion tracker menu, "The road to
+  Evenglade is open", shown once the scene has played. It is not counted in the
+  percent.
+- **After the scene.** The farm and the hall go on as before. The tracker line is
+  the only new record. Ring 2 travel is the ring 2 design (#20), parked.
+
+### Draft lines (assistant's, placeholders for the owner to reshape)
+
+No em dashes. `{name}` is the player. The scene is short.
+
+- Cuthbert: "Friends, neighbours, hat wearers. The Long Table is whole, and so is
+  the bridge. I am told by several people that I should say something clever.
+  I will let Old Greencoat do it."
+- Old Greencoat: "I have crossed a good many bridges, and mended very few. {name}
+  mended this one, with a good deal of help and a great deal of wood."
+- Old Greencoat: "The road goes on, as roads do. Across it there are people who
+  have waited a long time for a visitor. I have written them a letter. It says you
+  are to be trusted, which saves you the trouble of saying so."
+- Old Greencoat (handing it over): "No hurry. The river will be here tomorrow, and
+  so will the bridge."
+
+**The letter to the elves** (short, kept as an item):
+
+> To the keepers of Evenglade,
+>
+> The bearer is the one who mended the bridge. Be kind to them, and feed them,
+> and do not make them answer riddles before supper.
+>
+> Old Greencoat
+
+Left open: the exact camera shots, which villagers stand where (spots with the
+Hearthwell layout, note 77), and the hat each villager wears.
