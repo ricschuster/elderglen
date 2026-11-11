@@ -1,6 +1,6 @@
 # 86 Interior layouts: templates from Stardew's rooms (draft)
 
-Status: **the general store pilot is owner checked (2026-11-11, round 2: irregular footprint); the sawmill, healer and smithy are owner checked (batch 1); the library, hatter and farmstead are drafted (batch 2), and the three burrows (batch 3, 2026-11-11), both waiting for the owner; the hut and the inn drafts and the huts' own layouts wait** (note 81 decision 6).
+Status: **the general store pilot is owner checked (2026-11-11, round 2: irregular footprint); the sawmill, healer and smithy are owner checked (batch 1); the library, hatter and farmstead are drafted (batch 2), the three burrows (batch 3) both owner checked 2026-11-11; batch 4 (tower, Outpost, forge, elf's house, the inn redrawn) is drafted, waiting for the owner** (note 81 decision 6).
 Nothing here is built. This is step 4 of the layout track
 (`docs/handoffs/PRIORITIES.md`, note 81): interior layouts, with a Tiled draft of a
 pilot first. The pilot is the general store, plus two more templates (the one-room
@@ -284,7 +284,7 @@ Owner answers before drawing:
    as Stardew's tower and guild); the forge hut and the elf's house stay huts, each a
    different shape.
 7. **Order:** rounds of three, checked each time. Batch 1 below. Batch 2 is the library,
-   the hatter and the farmstead keeper, batch 3 (drawn) the three burrows, batch 4 the huts and
+   the hatter and the farmstead keeper, batch 3 the three burrows, batch 4 (drawn) the tower, Outpost, forge, elf's house and
    the inn redrawn.
 
 The drafts come from `docs/design/drafts/interiors-draft/gen.py` (plans in `plans.py`):
@@ -629,6 +629,210 @@ gates shut only the bedrooms are cut off (32 tiles at the gardener's, 68 at the 
 couple's, 70 at the young adults'); every public aisle is 2 wide. Each has the 2 wide
 door notch to the south.
 
+## Plan batch 4: tower, Outpost, forge, elf's house, inn (2026-11-11)
+
+Owner checked batches 2 and 3 ("look great"). Batch 4 follows owner answer 6: the
+hermit's tower and the Outpost get their own tall layouts, and the forge hut and the
+elf's house are huts of different shapes, so the one-room hut template (above) now stands
+only for the delta fisher (`hut-fisher`, unchanged, still to be checked). The inn is
+redrawn with a full home (owner answer 1). Drafts in `docs/design/drafts/interiors-draft/`.
+
+### Hermit's tower (19 by 28)
+
+Tall, as Stardew's Wizard's Tower (13 by 25, about 2x taller than wide), widened so every
+aisle is 2 wide. Four rooms up a 2 wide stair of passages: the entrance hall with the
+counter (the hermit sells her elderfruit here, note 39) and a perch, the study with the
+cauldron, a book table and a stove, a conservatory west of the study for the animals and
+plants she lives with, and her bedroom at the top, gated at 2 hearts.
+
+```text
+         #########
+        ###########
+        #BB....SSS#
+        #BB.......#
+        #.......TT#
+        #...rrrr..#
+        #...rrrr..#
+        #.........#
+ ###########GG#####
+############..#####
+#XXXXXX.#SSS..SSSS#
+#.......#.........#
+#..LLL....TT..WW..#
+#..LLL....TT..WW..#
+#XX.....#.......KK#
+#XX.rrr.#.........#
+############..#####
+        ####..#####
+        #SSS..SSSS#
+        #.........#
+        #.CCCC..LL#
+        #.......LL#
+        #X..rrrr..#
+        #X..rrrr..#
+        #####..####
+            #..#
+            #DD#
+            ####
+```
+
+### Outpost post room (18 by 23) and the steward's rooms (19 by 19)
+
+The post room is a tall hall, narrower at the north (Stardew's Adventurer's Guild is
+13 by 20): a lobby with notice walls, two benches and a display for the trader's days,
+then a counter room with a 6 wide counter, parcel crates and pigeonholes. The door to the
+steward's rooms is in the top wall (note 57). Nothing here is gated. The steward's rooms
+are his whole home: a sitting room with a ledger desk, a kitchen, a pantry and one
+bedroom, gated. The courier lodges at the inn, so there is one bed.
+
+```text
+        ##
+    ##########
+   #####DD#####
+   #SSSS..SSSS#
+   #..........#
+   #XX......XX#
+   #XX......XX#
+   #.CCCCCC...#
+   #..........#
+   #..rrrrrr..#
+ ###..rrrrrr..###
+####..........####
+#SSS..........SSS#
+#................#
+#S..QQQQ..QQQQ.XX#
+#S...............#
+#S.............LL#
+#..............LL#
+#................#
+########..########
+       #..#
+       #DD#
+       ####
+```
+
+```text
+ ########## #####
+##################
+#KKKKKKKKKK#SSSSS#
+#................#
+#.TTT..........XX#
+#.TTT......#...XX#
+#..........#.....#
+#####..###########
+#####..############
+#SSS...HHH.#.SS.BB#
+#..........#....BB#
+#.TT.......G......#
+#.TT...QQQ.G.rrr..#
+#...rrrr...#.rrr..#
+#...rrrr...#......#
+#####..############
+    #..#
+    #DD#
+    ####
+```
+
+### Forge hut (20 by 16)
+
+An L: a counter room with a 4 wide counter, tool shelves and ore bins, and a forge wing
+stepping north-east through a 2 row opening, with the furnace, anvil, grindstone and coal.
+No home (the forge is a workshop, not a household).
+
+```text
+            #######
+           #########
+           #.HHH..X#
+ ###########......X#
+############......X#
+#SSSS..XXXX#......X#
+#..........#...WW..#
+#..CCCC............#
+#..............rrr.#
+#...rrrr.LL#...rrr.#
+#...rrrr.LL#.WW..XX#
+#..........#.....XX#
+#####..#############
+    #..#
+    #DD#
+    ####
+```
+
+### Elf's house (14 by 15)
+
+A rounded room, so it reads as the one house on the Beach: a 4 wide pin stall with the
+Homeward pin on show behind it, a bed, a shelf, the half-packed trunk (note 09) and a table
+at the sea window. She has no gated bedroom: it is one room.
+
+```text
+    ######
+  ##########
+ ###......###
+##....LL....##
+#S.........TT#
+#S...CCCC..TT#
+#............#
+#BB..rrrr..XX#
+#BB..rrrr..XX#
+##..........##
+ ###......###
+   ###..###
+     #..#
+     #DD#
+     ####
+```
+
+### The inn, redrawn (44 by 32)
+
+The 30 by 16 draft above is replaced. The tap room (22 by 15, a 9 wide bar, 7 stools, a
+hearth, six tables with seats) opens east to the kitchen and north to the guest wing (four
+pairs of guest beds, note 77) through 2 wide passages. East of the kitchen is the keeper's
+family home: a living room, the parents' room (one double bed) and the child's room, both
+gated, and a pantry north of the kitchen. The courier's room is off the guest wing, gated.
+It is bigger than the Saloon (45 by 25) in height because it carries a full home and a
+guest wing. It scrolls.
+
+```text
+    ###################
+   ###########################
+   #.BBBBXXBBBBXXBBBB..########
+   #.BBBBXXBBBBXXBBBB..#.BB.SS#
+   #...................#.BB...#
+   #...................G......########
+   #.......rrrrrr......G..rrr.#########
+   #.......rrrrrr......#..rrr.#SSSSSSS#
+   #...................#......#.......#
+   #.BBBB..............#......#.....XX#
+   #.BBBB..............########.....XX#
+ #############..########      #.......#
+##############..######## ######..#######
+#..SSSSSSSSS......HHH..########..########
+#......................##KKKKKK..#.BB.TT#
+#......................##........#.BB...#
+#..CCCCCCCCC...............TTTT..G......#
+#..QQQQQQQ.................TTTT..G..rrr.#
+#......................##........#..rrr.#
+#......................##........#......#
+#..QTTQ..QTTQ..QTTQ....#####..#############
+#..QTTQ..QTTQ..QTTQ....#####..##############
+#..................rrrr##......HHH.#.BBB.SS#
+#..................rrrr##..........#.BBB...#
+#..QTTQ..QTTQ..QTTQ....##.QQQQ.....G.......#
+#..QTTQ..QTTQ..QTTQ....##..........G.......#
+#......................##..rrrrrr..#.rrrr..#
+#......................##..rrrrrr..#.rrrr..#
+##########..#############..........#.......#
+         #..#           ####################
+         #DD#
+         ####
+```
+
+Checks (all pass): every floor tile and mark is reachable with the gates open; with the
+gates shut only the bedrooms are cut off (47 tiles at the tower, 32 at the steward's, 113
+at the inn); each counter has 2 or more player tiles and keeper tiles from both sides.
+The bar's player tiles are the 2 service tiles at its right end, as before, since the
+stools fill the rest of the front.
+
 ## The other interiors
 
 Each uses one of the three shapes, with its own furniture. Sizes are outer, with the
@@ -662,11 +866,11 @@ Final art waits for M3d (ADR 0012).
 | Map | Layout done | Art done | Notes |
 | --- | --- | --- | --- |
 | `general-store` | Drafted, waits for the owner | No | The pilot |
-| `fisher-hut` and the other huts | Template drafted, waits for the owner | No | One draft stands for five |
-| `inn` | Drafted, waits for the owner | No | |
+| `fisher-hut` | Template drafted, waits for the owner | No | The hut template; the other huts have their own plans |
+| `hermit-tower`, `outpost`, `outpost-rooms`, `forge`, `beach-elf-house`, `inn` (redrawn) | Drafted 2026-11-11 (batch 4), waits for the owner | No | |
 | `sawmill`, `healer`, `smithy` | Done, owner checked 2026-11-11 (batch 1) | No | |
-| `library`, `hatter`, `forest-farmstead` | Drafted 2026-11-11 (batch 2), waits for the owner | No | |
-| `burrow-*` | Drafted 2026-11-11 (batch 3), waits for the owner | No | |
+| `library`, `hatter`, `forest-farmstead` | Done, owner checked 2026-11-11 (batch 2) | No | |
+| `burrow-*` | Done, owner checked 2026-11-11 (batch 3) | No | |
 | `hall` | Done, note 40 | No | Crowd rules only |
 
 ## Build work (no issues filed yet)
