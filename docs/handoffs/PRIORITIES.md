@@ -90,8 +90,11 @@ Design, can start now:
    person on the map by route, the spouse keeps their village job, one shared room and
    outside corner, the wedding on the festival green. It adds no interiors. Left for the farm: the corner's
    tiles (note 55).
-- Step 4: Interior layout notes, a Tiled draft of one pilot interior first. Not the
-   farmhouse or cabin until step 1.
+- Step 4: Interior layout notes, a Tiled draft of one pilot interior first. **Drafted
+   2026-11-11** (note 86, drafts in `docs/design/drafts/interiors-draft/`): the general
+   store pilot, the one-room hut and the inn, from 13 saved Stardew interior images.
+   Waits for the owner's check, including the 2 wide entry for every interior (SC-145,
+   changes note 81 decision 5). The other interiors have sizes only.
 - Step 5: The layout page design note (dev server, objects and block-out regions, saves
    to the map JSON after the contract checks; note 81 decision 11).
 
@@ -130,6 +133,8 @@ Art, in M3d:
 **Done (#639, 2026-11-09):** the carpenter's temporary Hardwood sale was removed
 with the Secret Woods (six daily stumps and the log). Mahogany was reopened 2026-11-10: player-planted,
 seed from the Secret Woods (note 36 "Mahogany"), built 2026-11-10 (#724) except tapping and the monster drop.
+
+Session 2026-11-11 part nineteen (handoff 2026-11-11t): design only. Step 4 is drafted in note 86 from 13 saved Stardew interior images: the general store pilot (shop west, home east, one screen), the one-room hut and the inn, with the 2 wide entry proposed for every interior. Next: the owner checks the three drafts, then the other interiors' plans, or step 5.
 
 Session 2026-11-11 part eighteen (handoff 2026-11-11s): note 85 owner checked (door 2 wide, frame shift accepted, renovations in M3b, three openings widened to 5 rows), build issues #832 to #838 filed, the 33 cask cap removed (SC-144). Next: step 4 or 5, or the house build.
 
