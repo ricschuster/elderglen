@@ -91,8 +91,9 @@ Rules that keep them apart:
 
 ## The steward and the building
 
-- **Steward's day (placeholder):** at the counter from about 9:00 to 17:00,
-  then in their rooms. Mail and parcels are lore only: the player gets mail at
+- **Steward's day:** the steward is Cuthbert, the reeve (note 20). His hours
+  are in note 80 (at the counter from 7:50, in his rooms in the evening); the
+  old placeholder of 9:00 to 17:00 is replaced. Mail and parcels are lore only: the player gets mail at
   the farm mailbox (note 51). The steward is not a second mail point.
 - **The hall hint and toast** stay with the steward (`39_completion_total.md`).
   They walk over from the Outpost to open the hall for hall business.

@@ -10,7 +10,7 @@ our own names, posters and items.
 
 ## Decided with the owner (2026-11-06)
 
-1. **The board opens on a fixed day, as Stardew.** A short scene on Fall 2 of
+1. **The board opens on a fixed day, as Stardew.** Cuthbert, the reeve (note 20), stands behind it. A short scene on Fall 2 of
    year one, in any weather, opens it (checked, SC-32). Each order has its own
    prerequisite (a system built, a season), so a player only sees orders they
    can fill. No order needs the hall.

@@ -41,7 +41,7 @@ here.
 | Fall | 9 | Harvest Showing | Crops judged on the green, with a prize counter. The counter sells one elderfruit (`39_completion_total.md`). |
 | Fall | 21 | Hollow Eve | A spooky evening walk. Quiet scares only, no threat. |
 | Winter | 8 | Frostday | Ice fishing on the river. |
-| Winter | 20 | Midwinter Feast | A gift exchange with one villager. The hall steward's letter names the recipient on Winter 13, random among people met (`61_friendship_and_gifts.md`). |
+| Winter | 20 | Midwinter Feast | A gift exchange with one villager. The hall steward's (Cuthbert, the reeve, note 20) letter names the recipient on Winter 13, random among people met (`61_friendship_and_gifts.md`). |
 
 Names are final for now (2026-10-31). The fall and winter pair follow Stardew's
 shape (a harvest fair and a spooky night, then an ice day and a gift feast),

@@ -113,7 +113,8 @@ Items picked up off the ground after a full pack do not count toward gathering.
 
 - **Prize tickets.** If a prize list is designed, add a star counter to the
   board and a ticket every three finished requests. It needs a prize machine and
-  a place for it. Stardew's machine is in the mayor's house.
+  a place for it. Stardew's machine is in the mayor's house; ours would stand at the Long
+  Table with Cuthbert, the reeve (note 20), as the host.
 - **Fishing, slaying and hello requests** with their systems.
 - **Story quests** with the story, dialogue and mail notes.
 
