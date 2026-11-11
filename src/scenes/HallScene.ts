@@ -127,7 +127,7 @@ export class HallScene extends Phaser.Scene {
       bundle.hint,
       ...bundle.items.map(
         (i) =>
-          `${given.includes(i.id) ? "[x]" : "[ ]"} ${name(i.id)}${i.minQuality === "normal" ? "" : ` (${i.minQuality} or better)`}${i.count > 1 ? ` ${hall.have(bundle.id, i.id)}/${i.count}` : ""}`,
+          `${given.includes(i.id) ? "[x]" : "[ ]"} ${i.name ?? name(i.id)}${i.minQuality === "normal" ? "" : ` (${i.minQuality} or better)`}${i.count > 1 ? ` ${hall.have(bundle.id, i.id)}/${i.count}` : ""}`,
       ),
       `Reward: ${rewardText(bundle)}`,
     ];

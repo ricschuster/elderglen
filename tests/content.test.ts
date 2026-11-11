@@ -42,7 +42,9 @@ describe("content data", () => {
   it("keeps every bundle completable from known goods", () => {
     for (const b of BUNDLES) {
       expect(
-        b.items.filter((i) => itemById(i.id) || i.id in CATEGORY_NAMES).length,
+        b.items.filter(
+          (i) => i.anyOf || itemById(i.id) || i.id in CATEGORY_NAMES,
+        ).length,
         b.id,
       ).toBeGreaterThanOrEqual(b.required);
     }

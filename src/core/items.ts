@@ -265,6 +265,20 @@ items.set(WARP_TOTEM_BEACH, {
   sellPrice: 0,
   keep: true,
 });
+/**
+ * Last Seat and Fodder rewards whose systems are not built (note 63, issue #603): the coop heater
+ * (no winter mood rule yet), the Crystalarium (no gem machine yet) and Old Greencoat's letter to
+ * the elves (a story item). Kept and do nothing yet, like the Beach warp totem.
+ */
+export const COOP_HEATER = "coop-heater";
+export const CRYSTALARIUM = "crystalarium";
+export const ELF_LETTER = "elf-letter";
+for (const [id, name] of [
+  [COOP_HEATER, "Coop heater"],
+  [CRYSTALARIUM, "Crystalarium"],
+  [ELF_LETTER, "Letter to the elves"],
+] as const)
+  items.set(id, { id, name, sellPrice: 0, keep: true });
 /** The shellfish pot is bought and kept (note 21). Its catches and junk sell as set in `pots.json`. */
 items.set(POT_ITEM, {
   id: POT_ITEM,
@@ -350,7 +364,10 @@ const GROUPS: [string, string[]][] = [
       { id: POT_ITEM },
     ].map((f) => f.id),
   ],
-  ["Keepsakes", [HOMEWARD_PIN, WARP_TOTEM_BEACH]],
+  [
+    "Keepsakes",
+    [HOMEWARD_PIN, WARP_TOTEM_BEACH, COOP_HEATER, CRYSTALARIUM, ELF_LETTER],
+  ],
   ["Rings", RINGS.map((r) => r.id)],
   ["Boots", BOOTS.map((b) => b.id)],
   ["Wood and fibre", ["wood", "hardwood", "sap", "fiber", "clay", "hay"]],

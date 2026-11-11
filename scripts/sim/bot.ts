@@ -114,6 +114,12 @@ export const UNPLAYED_BUNDLES: readonly string[] = [
   "night-fishing",
   "specialty-fish",
   "trap-catch",
+  // The bot does not keep hay or wheat stores, and the Last Seat needs goods from every room (note 16).
+  "fodder",
+  "harvest-feast",
+  "the-catch",
+  "hearth-fire",
+  "long-road",
 ];
 
 /** Share of a harvest that is silver or better at a farming level, with plain soil (`cropQuality`). Floored so early planning stays sane. */

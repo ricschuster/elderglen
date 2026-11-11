@@ -170,5 +170,13 @@
     "seedPrice": 30,
     "sellPrice": 160,
     "energy": 30
+  },
+  {
+    "id": "wheat",
+    "name": "Wheat",
+    "seasons": ["summer", "fall"],
+    "growDays": 4,
+    "seedPrice": 10,
+    "sellPrice": 25
   }
 ]
