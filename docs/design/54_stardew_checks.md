@@ -181,3 +181,5 @@ note 49 that are marked "ours".
 | SC-117 | 81 | Does Stardew draw roofs and tree canopies over the player on a separate layer? | no | open | From memory, unchecked. Owner chose it for ours, 2026-11-11. |
 | SC-118 | 81 | How wide are Stardew's main paths and doors (about 2 and 1 tiles)? | no | open | From memory, unchecked. Owner chose our widths, 2026-11-11. Walk time to cross an area is also not known. |
 | SC-119 | 81 | Are most Stardew mine floors generated, with fixed layouts only for some special floors and the bottom? | no | open | From memory, unchecked. Owner chose it for ours, 2026-11-11. |
+| SC-120 | 55 | Does Stardew let the host place cabins freely through the carpenter, with a few already on the farm at a multiplayer start? | no | open | From memory, unchecked (the saved Multiplayer page confirms the carpenter builds cabins for 100g). Owner chose free placement for ours, 2026-11-11. |
+| SC-121 | 81 | Do Stardew players collide with each other when they walk? | no | open | Not checked. Owner chose yes for ours, 2026-11-11, so layouts keep doors and counters reachable from several tiles. Check in a two-player game. |

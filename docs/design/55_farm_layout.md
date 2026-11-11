@@ -143,6 +143,22 @@ tillable share per farm type follows `32_farm_types.md`.
 - **Other farm types** (Woodland, Riverside, Hilltop, Meadow) each need their
   own layout note later. This one covers Standard only.
 
+## Cabins for multiplayer (owner, 2026-11-11)
+
+Note 53 (M4) gives each joining player a cabin on the farm, up to seven beside
+the host's house. Decided 2026-11-11 (Stardew from memory, SC-120): cabins are
+placed freely through the carpenter like any other building, with the building
+placement system (#611), and not on reserved lots. So the farm layout needs
+one open area, not a plot row. Consequences for this note:
+
+- Keep a generous clear area near the house, so seven cabins fit as well as the
+  coop, barn, silo and greenhouse without crowding the field. Check the size
+  when the farm is authored.
+- A game started as multiplayer places each free cabin in a default spot for
+  each joiner. The default spot is a rule in the M4 build, not a map object.
+- The cabin interior is one template with per-player state (note 68, growing
+  interior). Its layout waits for the farmhouse interior, which it follows.
+
 ## Build order
 
 1. Settle the open items with the owner and update this note.
