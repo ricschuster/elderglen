@@ -28,7 +28,11 @@ Hearthwell south green: only the Harvest Showing is on the green now.
 | Harvest Showing | Fall 9 | The festival green | The only festival on the green. Judge's table and prize counter are built |
 | Hollow Eve | Fall 21 | The hedge map and its entrance plaza | Villagers at the plaza booth and at the scares |
 | Frostday | Winter 8 | The Forest lake, frozen | Ice fishing. Stardew's ice festival is at a forest lake (memory, unchecked) |
-| Midwinter Feast | Winter 25 | Inside the hall, at the Long Table | Must fit all players with room to pass (note 81 decision 12) |
+| Midwinter Feast | Winter 25 | Inside the hall, at the Long Table once its main room is restored; the Hearthwell square before that | Owner, 2026-11-11. The hall fits all players with room to pass (note 81 decision 12). Stardew holds it in the town square (memory, unchecked) |
+
+Midwinter Feast therefore needs two layouts (square and hall main room). Which
+hall stage counts as restored is read from `40_hall_layout.md` when the layout
+is drawn.
 
 The Winter Night Market stays on the Hearthwell square (note 14), with its 18
 spots already designed.
