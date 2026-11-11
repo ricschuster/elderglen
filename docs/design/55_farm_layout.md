@@ -56,11 +56,11 @@ Read from the image, not from memory. Positions are as seen on screen.
 
 | Thing | Place | Note |
 | --- | --- | --- |
-| House | North-east corner, door facing south | `41_house.md`. Footprint 9 by 5 and never changes |
+| House | North-east, west of the corner and south of the cliff, door facing south | `41_house.md`. Footprint 9 by 5 and never changes |
 | Bin | Right of the house door, a few tiles from it | `28_shipping_bin.md`, owner SC-03 |
 | Mailbox | Beside the house, on the road path east of the door (decided 2026-11-03) | `51_mail_and_letters.md` |
-| Greenhouse ruin | North, left of centre, on a grass patch | `31_farm_growth.md`. Repaired in place by the Larder reward |
-| Farm cave | North cliff, west of the greenhouse | `31_farm_growth.md`. A small interior map you walk into (decided 2026-11-03), empty until the earnings mark |
+| Greenhouse ruin | Left of centre, near the north edge, on a grass patch | `31_farm_growth.md`. Repaired in place by the Larder reward |
+| Farm cave | North cliff, next to the Forest exit (owner, 2026-11-11) | `31_farm_growth.md`. A small interior map you walk into (decided 2026-11-03), empty until the earnings mark |
 | Big pond | South centre | Watering can. Lake fish table (`farm-pond`, owner 2026-11-10; `32_farm_types.md`) |
 | Small pond | East side | Decided 2026-11-03: two ponds. A second refill point, no fish |
 | Exits | See below | `19_valley_layout.md` |
@@ -154,44 +154,50 @@ tillable share per farm type follows `32_farm_types.md`.
   as for any building. Seven cabins are placed freely through the carpenter, so
   the map needs no cabin lots and no pad object.
 
-## First draft (2026-11-11, for the owner to check)
+## First draft, revised 2026-11-11 (owner checked in the picture)
 
-A rough block-out, not a Tiled file yet (note 81 decision 6). Each character is
-2 by 2 tiles, the map is 80 by 65 tiles (40 by 33 characters). Tile positions
-below are x then y from the top-left, and a size is width by height.
+A rough block-out. The Tiled file is `docs/design/drafts/farm-draft/farm-draft.tmj`
+with a picture beside it (see the README there); it is regenerated from one
+coordinate list, so these numbers match it. Each character below is 2 by 2
+tiles, the map is 80 by 65 tiles (40 by 33 characters). Tile positions are x
+then y from the top-left, and a size is width by height.
 
-```
-##################NNN###################
-######CC##########===##########HHHHH####
-^.................===..........HHHHH...^
-^...........GGG....=...........HHHHH...^
-^,,,,,,,,,,.GGG.,,,=,,,,,,,,.....@=BM==E
-^,,,,,,,,,,.....,,,=,,,,,,,,.....======E
-^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,E
-^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
-^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
-^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
-^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
-^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
-^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
-^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
-^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
-^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+Owner changes, same day: the house and the greenhouse move south, the house
+moves west, the small pond moves close to the house, the Forest exit moves east,
+no exit is gated, and the cave moves next to the Forest exit.
+
+```text
+######################NNN###############
+###################C##===###############
+^.....................===..............^
+^......................=.....HHHHH.....^
+^,,,,,,,,,,,,,,,,,,,,,,=,,,,.HHHHH.....^
+^,,,,,,,,,,.GGG.,,,,,,,=,,,,.HHHHH.....^
+^,,,,,,,,,,.GGG.,,,,,,,,,,,,...@=BM====E
+^,,,,,,,,,,.....,,,,,,,,,,,,...========E
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,...........E
 ^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~,^
 ^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~,^
 ^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~,^
 ^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
 ^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
 ^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
-^.,,,,,,,,,,,,,,,,,,,,==,,,,,,,,,,,,,,,^
-^.,,,,,,,,,,,,,,,,,,,,==,,,,,,,,,,,....^
-^.,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,....^
-^.,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,....^
-^.,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,....^
-^.,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,....^
-^.,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,....^
-^.,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,....^
-^.,,,,,,,,,,,,........==,,,,,,,,,,,....^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,,,,,,,,,==,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,,,,,,,,,==,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,........==,,,,,,,,,,,,,,,^
 ^^^^^^^^^^^^^^^^^^^^^^==^^^^^^^^^^^^^^^^
 ^^^^^^^^^^^^^^^^^^^^^^DDD^^^^^^^^^^^^^^^
 ```
@@ -202,66 +208,60 @@ Legend: `#` cliff, `^` border trees, `.` grass (not tillable), `,` field
 
 | Thing | Tiles | Note |
 | --- | --- | --- |
-| House | x 62 to 70, y 3 to 7 (9 by 5) | Door bottom middle at 66,7. Strip of grass around it, x 56 to 77, y 4 to 11 |
-| Start entry and path | 66,8, steps 66,8 to 66,10 | The first `start` entry just outside the door |
-| Bin | 70,9 | Right of the door, on the road side |
-| Mailbox | 72,9 | On the east road, as decided 2026-11-03 |
-| East road | x 66 to 79, y 9 to 10 (2 wide) | Leads to the Hearthwell exit |
-| Hearthwell exit | x 79, y 8 to 12 (5 tall) | `to_hearthwell`, entry `from_hearthwell` at 78,10 |
-| Farm cave | 13,3 to 14,3 in the north cliff (2 wide) | `to_cave`, entry below it at 13,4. West of the greenhouse |
-| Greenhouse ruin | x 24 to 29, y 6 to 9 (6 by 4) | On a grass patch x 22 to 31, y 6 to 11, inside the north edge of the field. Door third tile of the bottom row, at 26,9 |
-| Forest exit | x 36 to 40, y 0 (5 wide) | `to_forest`, entry `from_forest` at 38,4. A 5 wide path runs from the cliff gap to the field, then 1 wide down to the field at 38,5 to 38,11 |
+| House | x 58 to 66, y 7 to 11 (9 by 5) | Door bottom middle at 62,11. Grass strip around it, x 56 to 77, y 6 to 17 |
+| Start entry and path | 62,12, steps 62,12 to 62,14 | The first `start` entry just outside the door |
+| Bin | 66,13 | Right of the door, on the road side |
+| Mailbox | 68,13 | On the east road, as decided 2026-11-03 |
+| East road | x 62 to 79, y 13 to 14 (2 wide) | Leads to the Hearthwell exit |
+| Hearthwell exit | x 79, y 12 to 16 (5 tall) | `to_hearthwell`, entry `from_hearthwell` at 78,14 |
+| Forest exit | x 44 to 48, y 0 (5 wide) | `to_forest`, entry `from_forest` at 46,4. A 5 wide path runs through the cliff gap, then 1 wide down to the field at 46,5 to 46,11 |
+| Farm cave | 38,3 to 39,3 in the north cliff (2 wide) | `to_cave`, entry below it at 38,4. 8 tiles west of the Forest exit, east of the greenhouse |
+| Greenhouse ruin | x 24 to 29, y 10 to 13 (6 by 4) | On a grass patch x 22 to 31, y 9 to 15, inside the north edge of the field. Door third tile of the bottom row, at 26,13 |
 | Big pond | x 30 to 43, y 49 to 58 (14 by 10) | Lake fish table. South centre |
-| Small pond | x 70 to 75, y 33 to 37 (6 by 5) | Water only, east side |
+| Small pond | x 70 to 75, y 19 to 23 (6 by 5) | Water only, east side, 6 tiles from the road |
 | River delta exit | x 44 to 48, y 64 (5 wide) | `to_delta`, entry `from_delta` at 46,63. A 2 wide path x 45 to 46 runs from the field past the east side of the big pond |
-| Main field | x 6 to 68, y 12 to 42 (63 by 31) | Stardew's biggest block size. North band y 8 to 11, west band x 3 to 5, south band y 43 to 47, south-west lobe x 4 to 27, y 48 to 60, south-east lobe x 46 to 68, y 48 to 60 and east strip x 69 to 76, y 12 to 44 |
+| Main field | x 6 to 68, y 12 to 42 (63 by 31) | Stardew's biggest block size, with the house strip cut out of its north-east corner. Bands and lobes: north y 8 to 11, west x 3 to 5, south y 43 to 47, south-west x 4 to 27, y 48 to 60, south-east x 46 to 76, y 45 to 60, east strip x 69 to 76, y 18 to 44 |
 
-Tillable total in this sketch: 3363 tiles, against the target of about 3,400.
+No exit has a `requires` gate (owner, 2026-11-11). Tillable total in this
+sketch: 3353 tiles, against the target of about 3,400.
 
 How the sketch handles the rules:
 
-- **House anchor.** Bed, bin, mailbox and the Hearthwell road are all within 10
-  tiles of the door. The north and south exits are 40 and 55 tiles away.
-- **Work flows away from the house.** The first fields (south of the house, x 40
-  to 68, y 12 to 30) are nearest the house and the small pond. The big pond and
+- **House anchor.** Bed, bin, mailbox and the Hearthwell road are all within 20
+  tiles of the door.
+- **Work flows away from the house.** The first fields (south and west of the
+  house, with the small pond beside them) are nearest the house. The big pond and
   the far south-west lobe are the farthest, and the hardest ground sits there.
-- **Thin clutter near the house.** The area x 50 to 76, y 12 to 30 starts thin
+- **Thin clutter near the house.** The area x 50 to 76, y 18 to 36 starts thin
   (about a third of the field's density), which is the room for the seven
   cabins, coop, barn, silo and stable. No reserved pad (owner).
-- **Water.** The small pond is near the first fields, the big pond is on the
-  way to the south exit. Neither is on the north road.
-- **Walk times at 5 tiles a second (`SPEED` 80, 16 px tiles).** Door to the
-  Hearthwell exit about 3 s, door to the Forest exit about 10 s, door to the
-  River delta exit about 15 s. Well inside the 60 s of note 81 decision 5.
-- **Exits and entries** sit beside each exit, not inside it (the map contract),
-  and no door or exit can be walled off by a reachable pad (note 81 decision 12
-  asks for more than one approach tile to the bin and the door).
+- **Water.** The small pond is near the house, the big pond is on the way to the
+  south exit.
+- **Walk times at 5 tiles a second (`SPEED` 80, 16 px tiles, not checked as the
+  walking speed).** Door to the Hearthwell exit about 6 s, to the Forest exit
+  about 10 s, to the River delta exit about 17 s. All well inside the 60 s of
+  note 81 decision 5.
+- **Exits and entries** sit beside each exit, not inside it (the map contract).
+  The bin and the door need more than one approach tile (note 81 decision 12).
 - **Seasons, tiers, festivals.** The field and borders swap with the season
   tileset (note 81 decision 3). The farmhouse is one footprint at every tier.
-  The festival ground leaves the farm (it is a Forest or village map, not a farm
-  object). The greenhouse ruin changes to the repaired greenhouse by tier.
+  The greenhouse ruin changes to the repaired greenhouse by tier. The festival
+  ground is no longer a farm object (festival layouts are another track).
 
-What the draft leaves open for the owner to check:
+Still open for the owner to check in the picture:
 
-1. **The field is large.** Grass border is thin (2 tiles on most edges). Stardew
-   shows a wider grass and flowering tree border (the screenshot). Do you want
-   it wider, at the cost of tillable tiles?
-2. **The cave sits at the far west of the north cliff** (13,3), 11 tiles west
-   of the greenhouse patch, as the screenshot suggests.
-3. **The Forest path comes down at x 38,** the middle of the map, so the north
-   half of the field is split by a path. Move it to the east edge of the field
-   if you want the field unbroken.
-4. **The festival ground object** (placeholder at 36,14) is gone from the
-   farm. Festival layouts are the other track (step 2).
+1. **The border is thin** (2 tiles on most edges). Stardew shows a wider grass and
+   flowering tree border. Wider costs tillable tiles.
+2. **The Forest path splits the north half of the field** at x 46. It could run
+   along the field's edge instead.
 
 ## Open
 
 - **Stardew unchecked:** the Standard farm's overall size (SC-25, owner keeps
   80 by 65 as our target). The house, bin, greenhouse and cave are fixed there
   (SC-24, owner).
-- **The first Tiled draft:** a rough sketch (note 81 decision 6) with tile
-  positions for the house, bin, mailbox, greenhouse patch, cave, ponds and the
-  three exits, checked by the owner before a build issue is filed.
+- **The draft's last two items** (border width, Forest path), then the owner's
+  go before a build issue is filed.
 - **The placeholder farm still differs** (house north-west, cave and festival
   ground east). The authored map replaces it, with no interim move.
 - **Other farm types** (Woodland, Riverside, Hilltop, Meadow) each need their
