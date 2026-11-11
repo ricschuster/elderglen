@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { findPath, planTap, type Grid } from "../src/core/pathing";
+import { findPath, planTap, planUse, type Grid } from "../src/core/pathing";
 
 /** A grid from rows: "#" blocks. */
 function grid(rows: string[]): Grid {
@@ -61,5 +61,31 @@ describe("planTap", () => {
     expect(planTap(wall, { x: 0, y: 0 }, { x: 1, y: 0 }, () => false)).toBe(
       undefined,
     );
+  });
+});
+
+describe("planUse", () => {
+  it("walks beside the tile and marks the act as a use", () => {
+    const g = grid(["....", "....", "...."]);
+    const plan = planUse(g, { x: 0, y: 0 }, { x: 3, y: 0 })!;
+    expect(plan.use).toBe(true);
+    expect(plan.act).toEqual({ x: 3, y: 0 });
+    expect(plan.path.at(-1)).toEqual({ x: 2, y: 0 });
+  });
+
+  it("does not walk when already beside the tile", () => {
+    const g = grid(["...."]);
+    expect(planUse(g, { x: 1, y: 0 }, { x: 2, y: 0 })!.path).toEqual([]);
+  });
+
+  it("steps off the tile when the farmer stands on it", () => {
+    const g = grid(["..."]);
+    const plan = planUse(g, { x: 1, y: 0 }, { x: 1, y: 0 })!;
+    expect(plan.path).toHaveLength(1);
+  });
+
+  it("is undefined when no side is reachable", () => {
+    const g = grid([".#.#.", ".#.#."]);
+    expect(planUse(g, { x: 0, y: 0 }, { x: 2, y: 0 })).toBeUndefined();
   });
 });

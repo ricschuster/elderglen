@@ -83,6 +83,8 @@ export interface TapPlan {
   path: Vec[];
   /** The tile to act on once there, if the tap was on an object. */
   act?: Vec;
+  /** True when the farmer uses the held item on `act`, not the auto-picked tool. */
+  use?: boolean;
 }
 
 /**
@@ -110,4 +112,21 @@ export function planTap(
     if (path && (!best || path.length < best.length)) best = path;
   }
   return best && { path: best, act: tap };
+}
+
+/**
+ * Plan a tap that uses the held item on an open tile: walk to the nearest open
+ * tile beside it (no walk if the farmer is already there), then use the item
+ * on it. The tile itself is never the standing place, so the farmer faces it.
+ */
+export function planUse(g: Grid, from: Vec, tap: Vec): TapPlan | undefined {
+  if (!inside(g, tap.x, tap.y)) return undefined;
+  let best: Vec[] | undefined;
+  for (const d of DIRS) {
+    const side = { x: tap.x + d.x, y: tap.y + d.y };
+    if (!inside(g, side.x, side.y) || g.blocked(side.x, side.y)) continue;
+    const path = findPath(g, from, side);
+    if (path && (!best || path.length < best.length)) best = path;
+  }
+  return best && { path: best, act: tap, use: true };
 }
