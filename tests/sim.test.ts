@@ -45,6 +45,8 @@ describe("headless sim", () => {
       "artisan-goods",
       "animal-goods",
       "weavers",
+      "rare-finds",
+      "cooks",
       "stream-fish",
       "lake-fish",
       "sea-fish",
