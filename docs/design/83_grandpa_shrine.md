@@ -81,18 +81,57 @@ all four. Nothing else changes in the game.
     2026-11-11).** Tune in play, after the owner's hands-on M3 play, since note 07's
     income is still placeholder.
 
-## Name candidates (assistant's draft, for the owner to pick, placeholders)
+## The ancestors (owner picked Set A, 2026-11-11)
 
-Plain, a little old, and clear of Stardew and Tolkien names (ADR 0002, 0003).
-All carry the family name Thimblemoss.
+Hester Thimblemoss, the founder, who first cleared the farm. Fenwick
+Thimblemoss, the seedkeeper, who kept the rare seeds. Bram Thimblemoss, Oriel's
+parent. Oriel is on a living marker, not carved (decision 10).
 
-| Role | Set A | Set B | Set C |
-| --- | --- | --- | --- |
-| Founder, first cleared the farm | Hester | Alder | Wynn |
-| Seedkeeper, kept the rare seeds | Fenwick | Marlow | Tansy |
-| Oriel's parent | Bram | Sorrel | Dunstan |
+## Draft lines (assistant's, placeholders for the owner to reshape)
 
-One line each would be drafted once the names are picked.
+No em dashes. `{name}` is the player. The scene is the long first one, then a
+one-line redo. Line counts follow the evaluation, not the lines.
+
+**The first scene (year 3, day 1).** The player is drawn to the old tree. The
+four candle stands are dark. They light one at a time, as many as the score
+earns, and the ancestors speak while they do.
+
+- Hester: "I cleared this ground with a borrowed spade and a stubborn back.
+  You have done more with it, {name}."
+- Fenwick: "Seeds are a promise kept slowly. I see yours growing."
+- Bram: "Oriel always said the farm would find the right hands. Look at them."
+- Hester (after the last candle): "Tend it, and let it tend you."
+
+If fewer than four candles light, a final line from Fenwick replaces Hester's:
+"There is room on the stand yet. No hurry. The ground is patient."
+
+**The redo (a Diamond placed, short).** The candles relight. One line, by the
+count: "The light holds, {name}." with four candles; "There is more light to come."
+with fewer.
+
+**The statue.** At four candles the stone changes and can be used by hand
+(2 to 8 Hearthsilver ore a day, decision 6). Its use line: "A gift, from the old
+ground."
+
+## Oriel's letter (draft, arrives by post the morning after the first scene)
+
+> Dear {name},
+>
+> The valley tells me you have been busy, which is the polite way of saying it
+> talks about you. I hear the candles are lit. Good. Hester would have pretended
+> not to be pleased, and then told everyone.
+>
+> I am well and as comfortable as a person can be among people who live
+> forever and are terribly patient about it. The seeds here keep odd hours and
+> the tea is better than you would believe. You would be welcome at Evenglade,
+> when the road suits you. Not before.
+>
+> With affection, and a little dust,
+> Oriel
+
+Notes: it names Evenglade once and says no more (decision 18). It does not
+depend on the candle count. The wording on the longevity is a hint of the elves
+and ring 2 (note 09) and is easy to cut if it says too much.
 
 ## Proposed points (about 20, placeholders)
 
@@ -117,9 +156,9 @@ cannot be reached yet.
 
 ## Open
 
-1. The three ancestors' names (pick from the table above, or give your own), then
-   one line each and the ancestors' short lines at the scene.
-2. The text of Oriel's letter, drafted after the names.
+1. Whether these lines read right: the voices, the "if fewer than four" line, and
+   the redo lines. The owner reshapes them.
+2. Whether Oriel's letter says too much about Evenglade, and the sign-off.
 3. The Diamond item itself (name, art, exact sell price) and its node share in
    `mine-bands.json`, with the Quarry and deep dig shares. Needs a gem entry.
 4. The shrine's exact tiles, in the farm layout (note 55, #776).
