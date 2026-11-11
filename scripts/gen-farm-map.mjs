@@ -204,8 +204,8 @@ exit(
 );
 entry("from_barn", SITES.barn.x + 3, SITES.barn.y + 4);
 
-// ---- starting clutter (note 55): trees 100 (80 mature, 12 young, 8
-// seedlings), stumps 20, stones and boulders 92, branches 60, weeds 150, all
+// ---- starting clutter (note 55, raised after the owner's look, 2026-11-11): trees 250 (200 mature, 30 young, 20
+// seedlings), stumps 45, stones and boulders 200, branches 150, weeds 400, all
 // thin near the house. Bushes (15) have no system yet and are not placed.
 const taken = new Set();
 const keep = (x0, y0, w, h, m = 0) =>
@@ -254,21 +254,21 @@ const place = (n, add) => {
   if (placed < n) throw new Error("could not place all clutter");
 };
 const trees = [];
-place(80, (x, y) =>
+place(200, (x, y) =>
   trees.push(obj("tree", "tree", x, y, 0, 0, [prop("stage", 5)])),
 );
-place(12, (x, y) =>
+place(30, (x, y) =>
   trees.push(obj("tree", "tree", x, y, 0, 0, [prop("stage", 4)])),
 );
-place(8, (x, y) =>
+place(20, (x, y) =>
   trees.push(obj("tree", "tree", x, y, 0, 0, [prop("stage", 3)])),
 );
-place(20, (x, y) => trees.push(obj("stump", "stump", x, y, 0, 0)));
-place(92, (x, y) => trees.push(obj("rock", "rock", x, y, 0, 0)));
-place(60, (x, y) => trees.push(obj("twig", "twig", x, y, 0, 0)));
+place(45, (x, y) => trees.push(obj("stump", "stump", x, y, 0, 0)));
+place(200, (x, y) => trees.push(obj("rock", "rock", x, y, 0, 0)));
+place(400, (x, y) => trees.push(obj("twig", "twig", x, y, 0, 0)));
 place(150, (x, y) => trees.push(obj("weed", "weed", x, y, 0, 0)));
 // Forage may stand on the field (note 67); a few spots over the whole farm.
-place(16, (x, y) => trees.push(obj("forage", "forage", x, y, 0, 0)));
+place(20, (x, y) => trees.push(obj("forage", "forage", x, y, 0, 0)));
 markers.push(...trees);
 
 const old = JSON.parse(readFileSync(OUT, "utf8"));

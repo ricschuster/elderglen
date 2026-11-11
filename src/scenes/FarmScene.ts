@@ -323,6 +323,10 @@ export class FarmScene extends Phaser.Scene {
   private floorState: Floor | undefined;
   /** False right after arriving on a ladder, until the player steps off it. */
   private ladderArmed = true;
+  /** True once the player has stood off every exit tile, so a walk onto one counts. */
+  private exitArmed = false;
+  /** The last tile a held hoe or can worked by mouse drag. */
+  private dragTile: { x: number; y: number } | undefined;
   /** Conditions that currently hold, for gated exits: "mines-open" from spring 5. */
   private holds = new Set<string>();
   private message = "";
@@ -395,6 +399,7 @@ export class FarmScene extends Phaser.Scene {
       (this.registry.get(SELECTED_KEY) as number | undefined) ?? 0;
     this.leaving = false;
     this.ladderArmed = true;
+    this.exitArmed = false;
     this.floor = mineFloorOf(this.mapId);
     this.floorState = undefined;
     this.conditional = [];
@@ -586,6 +591,7 @@ export class FarmScene extends Phaser.Scene {
         if (p.rightButtonDown()) this.action();
         else if (p.leftButtonDown()) {
           this.mouseHeld = true;
+          this.dragTile = this.aimTile();
           this.use();
         }
       };
@@ -827,6 +833,7 @@ export class FarmScene extends Phaser.Scene {
     this.player.setPosition(this.pos.x, this.pos.y - (riding ? RIDER_LIFT : 0));
     this.drawHat();
     this.repeatUse(delta * DEV_SPEED);
+    this.dragSoilWork();
     this.pickUp();
     this.updateCombat(dt);
 
@@ -850,7 +857,13 @@ export class FarmScene extends Phaser.Scene {
     if (down && here.x === down.x && here.y === down.y) {
       if (this.ladderArmed) return this.descend();
     } else this.ladderArmed = true;
-    // Doors open on a click or Action, not on a walk through (see `useDoor`).
+    // Walking onto an exit tile takes it. A shut exit says so once per step on.
+    const onExit = this.map.exitAt(here.x, here.y);
+    if (!onExit) this.exitArmed = true;
+    else if (this.exitArmed && !this.leaving) {
+      this.exitArmed = false;
+      this.useDoor(onExit);
+    }
   }
 
   /** The tier layers a growing building map shows: the house rooms or the coop size built so far. */
@@ -1145,7 +1158,33 @@ export class FarmScene extends Phaser.Scene {
     const p = this.input.activePointer;
     const w = this.cameras.main.getWorldPoint(p.x, p.y);
     const cursor = { x: Math.floor(w.x / ts), y: Math.floor(w.y / ts) };
-    return aimAt(tileOf(this.pos, PLAYER, ts), cursor, this.facing).tile;
+    const here = tileOf(this.pos, PLAYER, ts);
+    // The hoe and the can work the tile the farmer stands on when the cursor is on it.
+    if (cursor.x === here.x && cursor.y === here.y && this.heldSoilTool())
+      return here;
+    return aimAt(here, cursor, this.facing).tile;
+  }
+
+  /** True when the held tool is the hoe or the watering can. */
+  private heldSoilTool(): boolean {
+    const held = heldAt(this.state, this.selected);
+    return held.kind === "tool" && (held.tool === "hoe" || held.tool === "can");
+  }
+
+  /**
+   * Holding the mouse with the hoe or can drags the work along: each new tile
+   * the cursor reaches is dug or watered at once.
+   */
+  private dragSoilWork(): void {
+    if (!this.mouseHeld || !this.mouseAim || !this.heldSoilTool()) {
+      this.dragTile = undefined;
+      return;
+    }
+    const t = this.aimTile();
+    const last = this.dragTile;
+    if (last && last.x === t.x && last.y === t.y) return;
+    this.dragTile = t;
+    if (last) this.use();
   }
 
   /** Pull in goods lying on the ground near the player, as far as the bag has room. */
@@ -1212,9 +1251,9 @@ export class FarmScene extends Phaser.Scene {
    * Open the door on the faced tile, or the one under the player. Returns
    * false when there is no door there. A door that is not open yet says so.
    */
-  private useDoor(): boolean {
+  private useDoor(at: Exit | undefined = this.exitAtAim()): boolean {
     if (this.leaving) return false;
-    const exit = this.exitAtAim();
+    const exit = at;
     if (!exit) return false;
     // The Larder may have been finished at the hall since the last morning.
     this.refreshHolds();
