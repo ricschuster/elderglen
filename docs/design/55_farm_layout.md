@@ -154,6 +154,106 @@ tillable share per farm type follows `32_farm_types.md`.
   as for any building. Seven cabins are placed freely through the carpenter, so
   the map needs no cabin lots and no pad object.
 
+## First draft (2026-11-11, for the owner to check)
+
+A rough block-out, not a Tiled file yet (note 81 decision 6). Each character is
+2 by 2 tiles, the map is 80 by 65 tiles (40 by 33 characters). Tile positions
+below are x then y from the top-left, and a size is width by height.
+
+```
+##################NNN###################
+######CC##########===##########HHHHH####
+^.................===..........HHHHH...^
+^...........GGG....=...........HHHHH...^
+^,,,,,,,,,,.GGG.,,,=,,,,,,,,.....@=BM==E
+^,,,,,,,,,,.....,,,=,,,,,,,,.....======E
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,E
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~,^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~,^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~,^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+^.,,,,,,,,,,,,,,,,,,,,==,,,,,,,,,,,,,,,^
+^.,,,,,,,,,,,,,,,,,,,,==,,,,,,,,,,,....^
+^.,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,....^
+^.,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,....^
+^.,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,....^
+^.,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,....^
+^.,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,....^
+^.,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,....^
+^.,,,,,,,,,,,,........==,,,,,,,,,,,....^
+^^^^^^^^^^^^^^^^^^^^^^==^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^DDD^^^^^^^^^^^^^^^
+```
+
+Legend: `#` cliff, `^` border trees, `.` grass (not tillable), `,` field
+(tillable), `~` pond, `=` path, `H` house, `G` greenhouse ruin, `C` farm cave,
+`@` start, `B` bin, `M` mailbox, `N` `E` `D` exits north, east and south.
+
+| Thing | Tiles | Note |
+| --- | --- | --- |
+| House | x 62 to 70, y 3 to 7 (9 by 5) | Door bottom middle at 66,7. Strip of grass around it, x 56 to 77, y 4 to 11 |
+| Start entry and path | 66,8, steps 66,8 to 66,10 | The first `start` entry just outside the door |
+| Bin | 70,9 | Right of the door, on the road side |
+| Mailbox | 72,9 | On the east road, as decided 2026-11-03 |
+| East road | x 66 to 79, y 9 to 10 (2 wide) | Leads to the Hearthwell exit |
+| Hearthwell exit | x 79, y 8 to 12 (5 tall) | `to_hearthwell`, entry `from_hearthwell` at 78,10 |
+| Farm cave | 13,3 to 14,3 in the north cliff (2 wide) | `to_cave`, entry below it at 13,4. West of the greenhouse |
+| Greenhouse ruin | x 24 to 29, y 6 to 9 (6 by 4) | On a grass patch x 22 to 31, y 6 to 11, inside the north edge of the field. Door third tile of the bottom row, at 26,9 |
+| Forest exit | x 36 to 40, y 0 (5 wide) | `to_forest`, entry `from_forest` at 38,4. A 5 wide path runs from the cliff gap to the field, then 1 wide down to the field at 38,5 to 38,11 |
+| Big pond | x 30 to 43, y 49 to 58 (14 by 10) | Lake fish table. South centre |
+| Small pond | x 70 to 75, y 33 to 37 (6 by 5) | Water only, east side |
+| River delta exit | x 44 to 48, y 64 (5 wide) | `to_delta`, entry `from_delta` at 46,63. A 2 wide path x 45 to 46 runs from the field past the east side of the big pond |
+| Main field | x 6 to 68, y 12 to 42 (63 by 31) | Stardew's biggest block size. North band y 8 to 11, west band x 3 to 5, south band y 43 to 47, south-west lobe x 4 to 27, y 48 to 60, south-east lobe x 46 to 68, y 48 to 60 and east strip x 69 to 76, y 12 to 44 |
+
+Tillable total in this sketch: 3363 tiles, against the target of about 3,400.
+
+How the sketch handles the rules:
+
+- **House anchor.** Bed, bin, mailbox and the Hearthwell road are all within 10
+  tiles of the door. The north and south exits are 40 and 55 tiles away.
+- **Work flows away from the house.** The first fields (south of the house, x 40
+  to 68, y 12 to 30) are nearest the house and the small pond. The big pond and
+  the far south-west lobe are the farthest, and the hardest ground sits there.
+- **Thin clutter near the house.** The area x 50 to 76, y 12 to 30 starts thin
+  (about a third of the field's density), which is the room for the seven
+  cabins, coop, barn, silo and stable. No reserved pad (owner).
+- **Water.** The small pond is near the first fields, the big pond is on the
+  way to the south exit. Neither is on the north road.
+- **Walk times at 5 tiles a second (`SPEED` 80, 16 px tiles).** Door to the
+  Hearthwell exit about 3 s, door to the Forest exit about 10 s, door to the
+  River delta exit about 15 s. Well inside the 60 s of note 81 decision 5.
+- **Exits and entries** sit beside each exit, not inside it (the map contract),
+  and no door or exit can be walled off by a reachable pad (note 81 decision 12
+  asks for more than one approach tile to the bin and the door).
+- **Seasons, tiers, festivals.** The field and borders swap with the season
+  tileset (note 81 decision 3). The farmhouse is one footprint at every tier.
+  The festival ground leaves the farm (it is a Forest or village map, not a farm
+  object). The greenhouse ruin changes to the repaired greenhouse by tier.
+
+What the draft leaves open for the owner to check:
+
+1. **The field is large.** Grass border is thin (2 tiles on most edges). Stardew
+   shows a wider grass and flowering tree border (the screenshot). Do you want
+   it wider, at the cost of tillable tiles?
+2. **The cave sits at the far west of the north cliff** (13,3), 11 tiles west
+   of the greenhouse patch, as the screenshot suggests.
+3. **The Forest path comes down at x 38,** the middle of the map, so the north
+   half of the field is split by a path. Move it to the east edge of the field
+   if you want the field unbroken.
+4. **The festival ground object** (placeholder at 36,14) is gone from the
+   farm. Festival layouts are the other track (step 2).
+
 ## Open
 
 - **Stardew unchecked:** the Standard farm's overall size (SC-25, owner keeps
