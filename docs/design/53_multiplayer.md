@@ -191,6 +191,11 @@ not built in M4. The pros and cons, so the idea is not lost:
 - Existing notes that change when M4 starts: 49 (menu pause), 52 (save), 28
   (bin), 50, 51, 38, 42 (the debug menu) and `src/core/sleep.ts`.
 
+- **Layout effects (owner, 2026-11-11, note 81).** Cabins are placed freely
+  through the carpenter (SC-120) and players block each other (SC-121, ours).
+  Open for the spike: how a jam is freed, and whether a tablet host needs
+  several maps in memory (note 81 decision 9).
+
 ## Checked against Stardew (2026-11-02)
 
 From the saved Multiplayer page. Not copied, only compared.

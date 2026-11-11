@@ -118,7 +118,10 @@ Owner answers, 2026-11-11, are marked. The rest are proposals to check.
    is mostly the three band tilesets, the camp and special-floor layouts and
    the generator's room shapes.
 9. **Tablet budget (owner, 2026-11-11).** Largest map 120 by 120 tiles (the Forest and
-   Hearthwell). One map in memory at a time (ADR 0005). The SM-T500 load test
+   Hearthwell). One map in memory at a time on a client (ADR 0005). A multiplayer
+   host (M4, note 53) may need several maps at once, because players can be on
+   different maps and the nightly area rules run for every area world. This is not
+   checked in the code and is raised for the M4 spike. It may change the cap. The SM-T500 load test
    is by hand and tracked in #523. Any bigger map needs an ADR.
 10. **Naming (owner, 2026-11-11).** Map ids as now: lower case, hyphens, the area name.
     Entry names say where the player came from (`from_farm`). Exits say where
@@ -135,9 +138,28 @@ Owner answers, 2026-11-11, are marked. The rest are proposals to check.
     shipped game. The first layout notes use Tiled screenshots, so the page is
     not on their path.
 
+12. **Players block each other (owner, 2026-11-11, ours, SC-121).** In
+    multiplayer (note 53) players collide. Stardew's behaviour is not checked.
+    Consequences for layouts, all proposals until play checks them:
+
+    - Doors, counters, the shipping bin and festival spots must be reachable
+      from more than one tile, so one player cannot wall off a use.
+    - Doors used by crowds (the hall, the inn, the Night Market) are 2 wide.
+    - Festival layouts give up to 8 player start spots as well as the villager spots.
+    - Rest camps and the hall interior fit 8 players with room to pass.
+    - The M4 rules need a way to free a jam, such as sliding past or pushing
+      through after a moment. That is a note 53 item, not a layout one.
+    - Single player is unaffected.
+
+13. **Cabins are placed freely (owner, 2026-11-11, Stardew from memory, SC-120).**
+    The farm keeps one open area for them, see note 55 "Cabins for multiplayer".
+    The cabin interior is one template with per-player state, built after the
+    farmhouse interior.
+
 ## Order of the four tracks
 
 1. Interiors: small, shells exist (#646), and they prove the tileset pipeline.
+   The farmhouse and the cabin wait for the farm layout (note 55).
 2. Valley maps, area by area in the order of note 71, after an art direction
    decision.
 3. Festival layouts: need the festival spots design (note 66, note 80 item 3).
