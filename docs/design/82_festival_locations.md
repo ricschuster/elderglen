@@ -54,7 +54,7 @@ Hearthwell south green: only the Harvest Showing is on the green now.
 | Harvest Showing | Fall 9 | The festival green | The only festival on the green. Judge's table and prize counter are built |
 | Hollow Eve | Fall 21 | The hedge map and its entrance plaza | Villagers at the plaza booth and at the scares |
 | Frostday | Winter 8 | The Forest lake, frozen | Ice fishing. Stardew's ice festival is at a forest lake (memory, unchecked) |
-| Midwinter Feast | Winter 25 | Inside the hall, at the Long Table once its main room is restored; the Hearthwell square before that | Owner, 2026-11-11. The hall fits all players with room to pass (note 81 decision 12). Stardew holds it in the town square (memory, unchecked) |
+| Midwinter Feast | Winter 25 | Inside the hall, at the Long Table once all six rooms are restored; the Hearthwell square before that | Owner, 2026-11-11. The hall fits all players with room to pass (note 81 decision 12). Stardew holds it in the town square (memory, unchecked) |
 
 Midwinter Feast therefore needs two layouts (square and hall main room). Which
 hall stage counts as restored is read from `40_hall_layout.md` when the layout
@@ -122,6 +122,87 @@ That is 28 people: the 22 town residents (with Aldreth) and the six area
 residents who attend (decision 5). Open: the stall's stock and prices, the
 unnamed judge's tile (the built one stays), and whether the owner wants any
 person moved.
+
+## Midwinter Feast in the hall (drafted 2026-11-11, owner answered the setup)
+
+Owner answers: the feast is held in the hall only when **all six rooms are
+restored** (Stardew, from memory, unchecked: its festivals stay in town whatever
+the community center state). Until then it is on the Hearthwell square, so for
+most of a first game the square version is the one players see. The square
+layout is still to design. One long table runs east to west down the middle; the
+gift exchange is at the villager's seat; households sit together, children at the
+west end, residents at the east end.
+
+Place: `hall.json`, 48 by 20 tiles, main room x 16 to 31, y 6 to 16, entrance
+(23,18), plaque (20,5), the corridor row y 10 to 11 runs the full width.
+
+**Props:** the long table at x 18 to 29, y 11 (12 tiles, blocks). Bunting and
+candles are decoration. The hall scroll and reward objects stay as built.
+
+**Player starts (8):** (20,15) to (27,15), in a row below the table, in view of
+the entrance. Row y 13 stays open so players can walk round either side.
+
+**The exchange:** the steward's letter on Winter 18 names the recipient (note
+14, note 61). On the day a lit lantern hangs over their seat. Talk to them and
+give a gift with the usual gift rules; the host (Cuthbert, head of the table at
+(30,11)) then hands the player the return gift. Seats are fixed, so the lantern
+is the only hint needed.
+
+**Villager tiles (draft for the owner to check):** 25 people, the 22 town
+residents with Aldreth, plus Korvi, Marl and Maren (decision 5).
+
+| Zone | Person | Tile |
+| --- | --- | --- |
+| Head | Cuthbert | (30,11) |
+| West end, children | Fitch, Wren, Pim, Toby | (18,10), (19,10), (18,12), (19,12) |
+| North side | Odette, Dorrie, Tilda, Rufus, Cordelia, Barnaby, Linnet, Thistle, Dunmar, Aurelle | (20,10) to (29,10), in that order |
+| South side | Hattie, Podge, Hester, Walter, Alder, Bramwell | (20,12) to (25,12), in that order |
+| East end, residents | Korvi, Marl, Maren | (27,12), (28,12), (29,12) |
+| Standing at the hearth | Aldreth | (22,7) |
+
+One south seat (26,12) is left empty. Households sit side by side (the inn,
+store, carpenter and retired couples, the hat-makers) and each child is on the
+west end next to their own side. Hester leaves at 20:30 (decision 6).
+
+Open: the long table's art, the candle and lantern props, the return gifts
+(a short list per year, note 61), and the square version.
+
+## Midwinter Feast on the square (drafted 2026-11-11, owner answered the setup)
+
+The version most players see, until all six hall rooms are restored. Owner
+answers: a long table across the middle with lanterns, the well and benches kept
+as they are, the same shape and exchange as the hall version; hours stay the day
+hours (open 12:00, close 18:00, end 22:00, shops shut); no food, the gift
+exchange only.
+
+Place: the Hearthwell map's festival variant, the square x 64 to 80, y 54 to 70,
+north of the middle street (y 60 to 64, kept clear). Door and shop locking as the
+other day festivals.
+
+**Props:** a long table at x 66 to 77, y 56 (12 tiles, blocks); lantern posts
+at both ends; a bonfire at (72,53) on the north edge; the cart stop (66,58), the
+well and benches stay. Bunting and lanterns do not block.
+
+**Player starts (8):** (68,59) to (75,59), in a row south of the table, clear of
+the road.
+
+**The exchange:** as the hall version: a lit lantern over the recipient's seat,
+give a gift there, Cuthbert at the head hands over the return gift.
+
+**Villager tiles (draft for the owner to check):** the same 25 people as the hall
+version, 24 seats, each person seated, so Aldreth sits too.
+
+| Zone | Person | Tile |
+| --- | --- | --- |
+| Head | Cuthbert | (78,56) |
+| West end, children | Fitch, Wren, Pim, Toby | (66,55), (67,55), (66,57), (67,57) |
+| North side | Odette, Dorrie, Tilda, Rufus, Cordelia, Barnaby, Linnet, Thistle, Dunmar, Aurelle | (68,55) to (77,55), in that order |
+| South side | Hattie, Podge, Hester, Walter, Alder, Bramwell, Aldreth, Korvi, Marl, Maren | (68,57) to (77,57), in that order |
+
+Hester leaves at 20:30 (decision 6). Open: the well and bench tiles (the square
+has none placed yet, the shell has only the town-square region and the cart stop),
+and whether Cuthbert's head seat on the east edge crowds the square's east wall
+(x 80) when the map is drawn.
 
 ## Cake Day on the inn lane (drafted 2026-11-11, owner answered the setup)
 
