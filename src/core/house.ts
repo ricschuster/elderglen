@@ -1,5 +1,5 @@
 import { maps } from "../content/maps";
-import { festivalToday } from "./festivals";
+import { festivalDayToday } from "./festivals";
 import { HARDWOOD } from "./items";
 import { visibleTier } from "./map";
 import type { GameState } from "./save";
@@ -194,7 +194,7 @@ export function orderUpgrade(g: GameState): boolean {
  */
 export function advanceBuild(g: GameState): boolean {
   const build = g.houseBuild;
-  if (!build || festivalToday(g.day.clock.day)) return false;
+  if (!build || festivalDayToday(g.day.clock.day)) return false;
   build.daysLeft -= 1;
   if (build.daysLeft > 0) return false;
   g.houseTier = build.tier;

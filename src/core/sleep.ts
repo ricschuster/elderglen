@@ -1,5 +1,5 @@
 import { dateOf, type Season } from "./calendar";
-import { festivalToday } from "./festivals";
+import { festivalDayToday } from "./festivals";
 import { growthRate } from "./professions";
 import { isRaining, rollWeather, type Weather } from "./weather";
 import type { Spot } from "./forage";
@@ -300,7 +300,7 @@ export function sleep(
   // unless it is a festival day (note 39, "Summit build decisions").
   if (g.achievements.has(SUMMIT_ACHIEVEMENT)) g.summit.arm();
   const summitCall = g.summit.callToday(
-    festivalToday(g.day.clock.day) !== undefined,
+    festivalDayToday(g.day.clock.day) !== undefined,
   );
   // The completion total is rechecked with the achievements (note 39).
   const completion = valleyPercent(ringProgress(g));
