@@ -170,11 +170,11 @@ no exit is gated, and the cave moves next to the Forest exit.
 ######################NNN###############
 ###################C##===###############
 ^.....................===..............^
-^......................=.....HHHHH.....^
-^,,,,,,,,,,,,,,,,,,,,,,=,,,,.HHHHH.....^
-^,,,,,,,,,,.GGG.,,,,,,,=,,,,.HHHHH.....^
-^,,,,,,,,,,.GGG.,,,,,,,,,,,,...@=BM====E
-^,,,,,,,,,,.....,,,,,,,,,,,,...========E
+^............................HHHHH.....^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,.HHHHH.....^
+^,,,,,,,,,,,GGG,,,,,,,,,,,,,.HHHHH.....^
+^,,,,,,,,,,,GGG,,,,,,,,,,,,,...@=BM====E
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,...========E
 ^,,,,,,,,,,,,,,,,,,,,,,,,,,,...........E
 ^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~,^
 ^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~,^
@@ -189,16 +189,16 @@ no exit is gated, and the cave moves next to the Forest exit.
 ^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
 ^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
 ^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
-^,,,,,,,,,,,,,,,,,,,,,==,,,,,,,,,,,,,,,^
-^,,,,,,,,,,,,,,,,,,,,,==,,,,,,,,,,,,,,,^
-^,,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,,,,,^
-^,,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,,,,,^
-^,,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,,,,,^
-^,,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,,,,,^
-^,,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,,,,,^
-^,,,,,,,,,,,,,.~~~~~~~==,,,,,,,,,,,,,,,^
-^,,,,,,,,,,,,,........==,,,,,,,,,,,,,,,^
-^^^^^^^^^^^^^^^^^^^^^^==^^^^^^^^^^^^^^^^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,.~~~~~~~.,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,.~~~~~~~.,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,.~~~~~~~.,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,.~~~~~~~.,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,.~~~~~~~.,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,.~~~~~~~.,,,,,,,,,,,,,,,,^
+^,,,,,,,,,,,,,........===,,,,,,,,,,,,,,^
+^^^^^^^^^^^^^^^^^^^^^^===^^^^^^^^^^^^^^^
 ^^^^^^^^^^^^^^^^^^^^^^DDD^^^^^^^^^^^^^^^
 ```
 
@@ -214,16 +214,16 @@ Legend: `#` cliff, `^` border trees, `.` grass (not tillable), `,` field
 | Mailbox | 68,13 | On the east road, as decided 2026-11-03 |
 | East road | x 62 to 79, y 13 to 14 (2 wide) | Leads to the Hearthwell exit |
 | Hearthwell exit | x 79, y 12 to 16 (5 tall) | `to_hearthwell`, entry `from_hearthwell` at 78,14 |
-| Forest exit | x 44 to 48, y 0 (5 wide) | `to_forest`, entry `from_forest` at 46,4. A 5 wide path runs through the cliff gap, then 1 wide down to the field at 46,5 to 46,11 |
+| Forest exit | x 44 to 48, y 0 (5 wide) | `to_forest`, entry `from_forest` at 46,4. A 5 wide path runs through the cliff gap only. Below it the way is grass, then field: no path across the field (owner, 2026-11-11) |
 | Farm cave | 38,3 to 39,3 in the north cliff (2 wide) | `to_cave`, entry below it at 38,4. 8 tiles west of the Forest exit, east of the greenhouse |
-| Greenhouse ruin | x 24 to 29, y 10 to 13 (6 by 4) | On a grass patch x 22 to 31, y 9 to 15, inside the north edge of the field. Door third tile of the bottom row, at 26,13 |
+| Greenhouse ruin | x 24 to 29, y 10 to 13 (6 by 4) | Stands on tillable field, no grass patch. Its tiles are on the `objects` layer over field ground and the `soil` layer is marked underneath, so it can move (owner, 2026-11-11). Door third tile of the bottom row, at 26,13 |
 | Big pond | x 30 to 43, y 49 to 58 (14 by 10) | Lake fish table. South centre |
 | Small pond | x 70 to 75, y 19 to 23 (6 by 5) | Water only, east side, 6 tiles from the road |
-| River delta exit | x 44 to 48, y 64 (5 wide) | `to_delta`, entry `from_delta` at 46,63. A 2 wide path x 45 to 46 runs from the field past the east side of the big pond |
+| River delta exit | x 44 to 48, y 64 (5 wide) | `to_delta`, entry `from_delta` at 46,63. A 5 wide path runs through the border trees only (x 44 to 48, y 61 to 63). The way up from it is tillable field, no path (owner, 2026-11-11) |
 | Main field | x 6 to 68, y 12 to 42 (63 by 31) | Stardew's biggest block size, with the house strip cut out of its north-east corner. Bands and lobes: north y 8 to 11, west x 3 to 5, south y 43 to 47, south-west x 4 to 27, y 48 to 60, south-east x 46 to 76, y 45 to 60, east strip x 69 to 76, y 18 to 44 |
 
 No exit has a `requires` gate (owner, 2026-11-11). Tillable total in this
-sketch: 3353 tiles, against the target of about 3,400.
+sketch: 3424 tiles, plus the 24 under the greenhouse, against the target of about 3,400.
 
 How the sketch handles the rules:
 
@@ -252,16 +252,14 @@ Still open for the owner to check in the picture:
 
 1. **The border is thin** (2 tiles on most edges). Stardew shows a wider grass and
    flowering tree border. Wider costs tillable tiles.
-2. **The Forest path splits the north half of the field** at x 46. It could run
-   along the field's edge instead.
 
 ## Open
 
 - **Stardew unchecked:** the Standard farm's overall size (SC-25, owner keeps
   80 by 65 as our target). The house, bin, greenhouse and cave are fixed there
   (SC-24, owner).
-- **The draft's last two items** (border width, Forest path), then the owner's
-  go before a build issue is filed.
+- **The draft's last item** (border width), then the owner's go before a build
+  issue is filed.
 - **The placeholder farm still differs** (house north-west, cave and festival
   ground east). The authored map replaces it, with no interim move.
 - **Other farm types** (Woodland, Riverside, Hilltop, Meadow) each need their
