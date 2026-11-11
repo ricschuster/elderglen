@@ -264,9 +264,37 @@ likes lean on cooked and made goods. Wheat joins the lists when it exists
   | Winter | 26 | Hall steward |
 
 - **The calendar shows them.** The farmhouse calendar and the Social tab list a
-  season's birthdays, as Stardew's calendar does. The other 22 dates are set
-  as each person is written, at about 5 or 6 more a season, by the same rules.
-  The hat-maker's sibling stays on a different day from the hat-maker.
+  season's birthdays, as Stardew's calendar does. The hat-maker's sibling stays
+  on a different day from the hat-maker.
+- **The other 22 (decided 2026-11-10, owner),** by the same rules. Spring 8,
+  summer 8, fall 7, winter 7. The late-reveal people show their birthday once
+  met, like everyone, under the name the player knows (Old Greencoat for
+  Rundahl, Lane for Aldreth).
+
+  | Season | Day | Person |
+  | --- | --- | --- |
+  | Spring | 3 | Toby |
+  | Spring | 7 | Linnet |
+  | Spring | 12 | Bramwell |
+  | Spring | 18 | Marl |
+  | Spring | 23 | Rushie |
+  | Spring | 28 | Walter |
+  | Summer | 2 | Fitch |
+  | Summer | 5 | Maren |
+  | Summer | 11 | Barnaby |
+  | Summer | 16 | Dunmar |
+  | Summer | 22 | Hester |
+  | Summer | 28 | Podge |
+  | Fall | 2 | Wren |
+  | Fall | 7 | Korvi |
+  | Fall | 12 | Thistle |
+  | Fall | 24 | Rufus |
+  | Fall | 27 | Rosmarin |
+  | Winter | 3 | Pim |
+  | Winter | 6 | Dorrie |
+  | Winter | 15 | Thalwen |
+  | Winter | 22 | Rundahl |
+  | Winter | 24 | Aldreth |
 
 ## Midwinter pairing (decided 2026-11-06)
 
@@ -313,7 +341,6 @@ likes lean on cooked and made goods. Wheat joins the lists when it exists
 - The other 22 people's lists, written by layer. Names and voices for all.
 - ~~Whether the week has seven named days.~~ Settled 2026-11-10: seven days,
   Monday to Sunday (note 79).
-- Birthday dates for the other 22 people.
 - Heart event content (see `62_heart_events.md`).
 - The courtship bouquet's flowers and the proposal token's name.
 - Whether telephone-like contact exists. It does not now.

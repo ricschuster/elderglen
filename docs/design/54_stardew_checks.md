@@ -172,4 +172,4 @@ note 49 that are marked "ours".
 | SC-108 | 79 | Are Stardew interiors locked at night and on festival days? | no | open | Added 2026-11-10. From memory, yes. Not checked. |
 | SC-109 | 79 | Do Stardew villagers visit town on set days, and do they change routes only after heart events or marriage? | no | open | Added 2026-11-10. From memory. Not checked. |
 | SC-110 | 79 | Does a Stardew villager pause when the player talks to them while walking? | no | open | Added 2026-11-10. From memory, yes. Not checked. |
-| SC-111 | 79 | Does Stardew spread birthdays so each season has seven or eight? | no | open | Added 2026-11-10. From memory, close to even. Not checked. |
+| SC-111 | 79 | Does Stardew spread birthdays so each season has seven or eight? | no | done | Added 2026-11-10. Already answered by SC-44 (saved Calendar page: spring 8, summer 8, fall 8, winter 9). Closed 2026-11-10. |

@@ -1,7 +1,7 @@
 # 79 Villager schedules
 
-Status: **decided with the owner on 2026-11-10.** Names, birthdays and ages
-are still to come (see "Next"). Nothing here is built. It feeds #599 (slice 4
+Status: **decided with the owner on 2026-11-10.** Names, birthdays and age
+bands are set too (see "Next"). Nothing here is built. It feeds #599 (slice 4
 of `33_build_order.md`), alongside `20_ring1_cast.md` (who), `61_friendship_and_gifts.md`
 (talk and gifts) and `77_hearthwell.md` (the places).
 
@@ -136,8 +136,7 @@ Also off limits: Tolkien's dwarf and elf names and the Norse dwarf-name list
    family names, so households are told apart by role and home, and "Brimmers"
    stays the people's name, not a surname). No ages shown, only age bands
    (child, young adult, adult, elder), and no ageing over the years.
-2. **Birthdays**: one per person, spread so each season has seven or eight,
-   avoiding festival days (Stardew's spread, unchecked). Waits for the names.
+2. **Birthdays**: done, see note 61 "Birthdays" (decided 2026-11-10).
 3. Shop hours and closed days per shop, and the first routes, once the names
    exist.
 
