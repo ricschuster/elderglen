@@ -61,6 +61,9 @@ Node 22 and npm. Gates run in CI and a non-zero exit blocks a merge.
   `docs/valley-map.json`. Update the JSON when note 19, 20 or 55 changes. Design
   reference only (`docs/design/56_valley_map.md`). Open the HTML from disk.
 - `npm run check`: all of the gates in order. Run before pushing.
+- `python3 docs/design/drafts/interiors-draft/gen.py [name ...]`: rebuild the interior layout
+  drafts (note 86) from `plans.py`, with reachability checks. Needs Python 3 and Pillow. Design
+  material, not a gate. Run it from that folder.
 - `npm run playtest -- <expert|intermediate|casual>` and the other
   `playtest:*` scripts, plus `node scripts/playtest/wood.mjs`: scripted browser
   playthroughs. Manual only, not a gate. Need `npm run dev` running. See
