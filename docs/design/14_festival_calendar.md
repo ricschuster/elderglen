@@ -166,7 +166,7 @@ Midwinter Feast (25).
 
 Owner answers, each as Stardew does (saved Night Market page, read 2026-11-11)
 except the closing time. The market has **six attractions**, one per Stardew
-role, all ours in content and art. All open 17:00 to 24:00 (owner: keep our
+role except the boats, all ours in content and art. All open 17:00 to 24:00 (owner: keep our
 close, not Stardew's 02:00, so staying late never costs the next day). Every
 stock and price below is a placeholder for tuning.
 
@@ -177,32 +177,41 @@ stock and price below is a placeholder for tuning.
    goods, the "rare winter goods counter" this note already promised. He is
    away from the Outpost only on the three evenings, after its counter hours,
    so no shop day is lost.
-2. **The lantern boat (decor).** A moored boat on the river arm sells decor
-   without limit per item: seasonal candles, plants and lamps, some only here.
+2. **The lantern stall (decor).** A stall under strung lanterns by the river
+   bank sells decor without limit per item: seasonal candles, plants and lamps,
+   some only here.
 3. **The travelling artist.** One painting a night, 1,200g placeholder, **nine
    paintings on a three-year cycle** (Stardew's shape): each evening of each
    year sells a different one, so a player sees every painting only by coming
    to all three evenings over three years. Nine pieces of art are needed, one
    a year per evening.
-4. **The curio boat.** Different stock each evening: decor, seeds at shop
+4. **The curio stall.** Different stock each evening: decor, seeds at shop
    price, one hat and one fireplace, unlimited per item. Prices may move over
    the three days for the hat.
-5. **The night-fishing outing.** A paid boat trip (1,000g placeholder, closes
-   at 23:00) that takes the player onto dark water for a fishing stretch with
-   fish found only here, plus a small chance of a pearl. Needs fishing (note 21)
-   and a handful of new market-only fish, so it builds after the fishing slices
-   and is not part of the first Night Market build.
-6. **The lantern-boat ride.** A short ride along Hearthwell's river arm for a
-   small fee: a cosmetic scene and a single line from the boat keeper. The
-   cheapest of the six. Stardew's matching boat was not read, so this ride is
-   our own and the exact Stardew behaviour is a register row (SC-113).
+5. **Night fishing from the lit pier.** A paid permit (1,000g placeholder,
+   closes at 23:00) lets the player fish off a lantern-lit pier on the river
+   arm at the square, with fish found only here, plus a small chance of a
+   pearl. The pier is a stretch of the real river bank, so it needs no boat.
+   Needs fishing (note 21) and a handful of market-only fish, so it builds
+   after the fishing slices and is not part of the first Night Market build.
+6. **Floating a lantern.** A small fee (50g placeholder) to set a paper lantern
+   on the river arm at the pier: a short cosmetic scene and one line from the
+   keeper, and a small luck buff until morning. The cheapest of the six. Ours,
+   with no Stardew source (see SC-113).
+
+**No boats (owner, 2026-11-11).** The first draft had moored boats and a boat
+ride. The owner dropped them as too close to Stardew's docks. All six
+attractions stand on the square, with the stalls and the pier along the east
+bank of the main river arm (x 62, beside the square at x 64 to 80, note 77), so
+the fishing happens from the bank. SC-113 (the Mermaid Boat) is now only
+background for what we chose not to do.
 
 - **Build order.** Stalls 1 to 4 and 6 first (one stall panel each, over the
   existing shop panel), then 5 with fishing. The nine paintings need art; a
   placeholder frame stands in until then.
 - **Animals.** The clock runs, so animals still need feeding on the three
   days, as on any other day. Stardew does the same (saved page).
-- **Stock source (owner, 2026-11-11): mixed.** The decor boat and curio boat
+- **Stock source (owner, 2026-11-11): mixed.** The lantern stall and curio stall
   sell the existing winter decor and hats without limit per item, plus a short
   market-only list that is never sold elsewhere: **4 new decor pieces, 3 new
   hats (one per evening) and 1 fireplace.** The market-only items are the
@@ -210,22 +219,31 @@ stock and price below is a placeholder for tuning.
   `hats.json`), not built yet.
 - **Placeholder stock (my proposal, 2026-11-11, not yet owner-checked).** Prices
   sit near the existing furniture (60 to 520g). Unlimited per item.
-  - Decor boat, always: snow lamp 220, winter wreath 120, warm rug 180, hanging
+  - Lantern stall, always: snow lamp 220, winter wreath 120, warm rug 180, hanging
     planter 210, plus the 4 market-only decor pieces at 300 each (a lantern
     string, a frost-glass candle, a pine garland, a sleigh bench).
-  - Curio boat, by evening: day 1 a market-only hat 900 and a market-only
+  - Curio stall, by evening: day 1 a market-only hat 900 and a market-only
     fireplace 1,500; day 2 the same hat at 600 (the price dips on the middle
     night, as Stardew's hat does) and seeds at shop price; day 3 the same hat
     at 900 and the third hat. Each evening also sells one existing winter hat.
   - Road trader: 4 to 6 rare winter goods at 1.5 times sell value (note 57's
     rule), chosen from winter forage and the cooked winter dishes.
   - Artist: one painting, 1,200g.
-  - Outing and ride: 1,000g and 50g.
+  - Pier permit and lantern float: 1,000g and 50g.
   Two caps for later: the market-only items should not undercut the hall's
   rewards, and gold sunk here should be a sink, not a route to anything the
   bundles need.
+- **Who attends (owner, 2026-11-11).** The evening inn crowd plus anyone whose
+  route is already in town that evening, 18:00 to 22:00, standing at the stalls.
+  Families with children come 18:00 to 20:00 and go home. Area residents
+  (Wanderer, hermit, dwarf) stay away. About 18 of 30 people. Stardew's
+  attendance was not checked on the saved page (SC-114).
+- **Lines (owner, 2026-11-11).** A different line per person each evening, three
+  lines each, about 54 plus the six keepers' own lines. Placeholder lines
+  meanwhile; the real ones come with the voice sheets. Above Stardew, which
+  has one line per festival as I recall (unchecked, SC-114).
 - **Seller names (owner, 2026-11-11).** Placeholder role names in the data
-  ("the artist", "the boat keeper"); real names come with the voice sheets and
+  ("the artist", "the pier keeper"); real names come with the voice sheets and
   art, as for the road trader.
 - **Still open:** the owner's check of the placeholder stock, the nine
   paintings' subjects, the market-only fish list, and each person's festival
