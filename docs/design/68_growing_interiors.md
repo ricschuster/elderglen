@@ -166,7 +166,7 @@ Note 85 designs every Stardew renovation room as a `when: reno-<id>` layer set. 
 attic and the expanded corner room need rows north of row 0 and the dining room needs
 columns west of column 0, so the frame shifts once more by (20, 11) to 74 by 44, now
 holding every room, and `HOUSE_LAYOUT` becomes 5. This replaces "the last one" of
-#550: that was the last for the rooms known then. Three 3 wide stairs replace the 1
+the #550 shift: that was the last for the rooms known then. Three 3 wide stairs replace the 1
 wide stair at (6, 10), the kitchen opens into the start room, and the connectors are
 at least 3 wide. Camera bounds fall back to the built cells, so the new layers need no
 bounds properties.
