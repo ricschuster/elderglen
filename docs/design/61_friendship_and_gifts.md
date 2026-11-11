@@ -311,8 +311,8 @@ likes lean on cooked and made goods. Wheat joins the lists when it exists
   systems are settled (notes 23, 14 and 22), but the Harvest Showing scoring and
   the gem list are not.
 - The other 22 people's lists, written by layer. Names and voices for all.
-- Whether the week in our calendar has seven named days (the Sunday rule needs
-  one). Check `26_seasons.md` at build.
+- ~~Whether the week has seven named days.~~ Settled 2026-11-10: seven days,
+  Monday to Sunday (note 79).
 - Birthday dates for the other 22 people.
 - Heart event content (see `62_heart_events.md`).
 - The courtship bouquet's flowers and the proposal token's name.
