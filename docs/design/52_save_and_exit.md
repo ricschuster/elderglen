@@ -58,7 +58,7 @@ whole day to that would be worse than any undo it prevents. So we depart.
 - **A failed write is shown once (decided 2026-11-02).** Today a refused write
   is silent. The game shows a small notice, "Could not save. Export from Options
   to keep your game.", the first time it fails in a session and then stays quiet.
-- **Five slots (decided 2026-11-11, not built).** Replaces the one slot.
+- **Five slots (decided 2026-11-11, built 2026-11-11 except export and import, which Options does not have yet).** Replaces the one slot.
   The title screen shows five slot cards. A used card reads farm name, season
   and day, year and gold, with Continue and Delete; an empty card has New game.
   Slots are fixed at five, as the owner chose (Stardew lists every saved farm
@@ -67,7 +67,10 @@ whole day to that would be worse than any undo it prevents. So we depart.
   rolling back one never touches another. Export and import work on the chosen
   slot, and import asks which slot to fill. The existing single save moves into
   slot 1 the first time the new build loads, nothing lost. Settings stay apart.
-  Storage keys carry the slot number; a save version bump covers the move.
+  Storage keys carry the slot number (`elderglen-save-slot-N`, `src/core/slots.ts`).
+  The move needed no save version bump: the record is unchanged, only its key
+  moves, and the old key is dropped after the copy reads back identical. The
+  slot last played is remembered, so `?new` and Start over use it.
 - **Settings stay apart** (`45_controls_profiles.md`): per device, never in
   either record, never exported with a save.
 
