@@ -69,6 +69,31 @@ all four. Nothing else changes in the game.
     likes or loves it (saved Diamond page). The price is a placeholder for
     `07_tuning_numbers.md`.
 
+17. **The shrine stands in the far north-west of the farm, under an old tree
+    (owner, 2026-11-11).** Stardew's is also in the far north-west corner
+    (saved page). The standing stone and four candle stands sit under the tree.
+    The exact tiles are chosen in the farm layout (note 55, #776).
+18. **Oriel's letter is warm and brief, a little dry, with a hint of Evenglade
+    (owner, 2026-11-11).** Two short paragraphs: how Oriel is, a word on the
+    candles, and one line about ring 2 that says no more. One letter, not one
+    per candle count.
+19. **Earnings and skill thresholds keep Stardew's numbers for now (owner,
+    2026-11-11).** Tune in play, after the owner's hands-on M3 play, since note 07's
+    income is still placeholder.
+
+## Name candidates (assistant's draft, for the owner to pick, placeholders)
+
+Plain, a little old, and clear of Stardew and Tolkien names (ADR 0002, 0003).
+All carry the family name Thimblemoss.
+
+| Role | Set A | Set B | Set C |
+| --- | --- | --- | --- |
+| Founder, first cleared the farm | Hester | Alder | Wynn |
+| Seedkeeper, kept the rare seeds | Fenwick | Marlow | Tansy |
+| Oriel's parent | Bram | Sorrel | Dunstan |
+
+One line each would be drafted once the names are picked.
+
 ## Proposed points (about 20, placeholders)
 
 | Area | Points | Source |
@@ -92,15 +117,13 @@ cannot be reached yet.
 
 ## Open
 
-1. The earnings and skill thresholds still follow Stardew's numbers in the table
-   below and may need tuning to our economy. Several counters are locked at 0, so
-   four candles cannot be reached yet.
-2. The Diamond item itself (name, art, exact sell price) and its node share in
+1. The three ancestors' names (pick from the table above, or give your own), then
+   one line each and the ancestors' short lines at the scene.
+2. The text of Oriel's letter, drafted after the names.
+3. The Diamond item itself (name, art, exact sell price) and its node share in
    `mine-bands.json`, with the Quarry and deep dig shares. Needs a gem entry.
-3. Where the shrine stands: a special place on the farm, chosen with the farm layout
-   (note 55, build issue #776). Not beside the path.
-4. The three ancestors' names and one line about each (note 09, "The relative"
-   neighbours), the ancestors' short lines at the scene, and the text of Oriel's
-   letter.
+4. The shrine's exact tiles, in the farm layout (note 55, #776).
 5. The long first scene's exact length and shots (a scene runner like the heart
    events, #600), and the one-line redo.
+6. Several counters are locked at 0 (slayer, elderfruit, friends), so four candles
+   cannot be reached yet.
