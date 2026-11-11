@@ -222,12 +222,14 @@ background for what we chose not to do.
   hat-maker's nine hats (above). The market-only items are the
   reason to come each year. They need art and data entries (`furniture.json`,
   `hats.json`), not built yet.
-- **Placeholder stock (my proposal, 2026-11-11, not yet owner-checked).** Prices
-  sit near the existing furniture (60 to 520g). Unlimited per item.
-  - Lantern stall, always: snow lamp 220, winter wreath 120, warm rug 180, hanging
-    planter 210, plus the 4 market-only decor pieces at 300 each (a lantern
-    string, a frost-glass candle, a pine garland, a sleigh bench).
-  - Curio stall, by evening: day 1 a market-only fireplace 1,500; day 2 seeds
+- **Placeholder stock (owner-checked 2026-11-11 on decor and fireplace prices).**
+  Owner chose Stardew's scale (saved Night Market page: decor 200 to 1,000g, the
+  unique fireplace 15,000g), so the numbers below are raised to match. Check 15,000g against note 7 before
+  building. Unlimited per item.
+  - Lantern stall, always: snow lamp 220, winter wreath 200, warm rug 200, hanging
+    planter 210, plus the 4 market-only decor pieces: a lantern string 500, a
+    frost-glass candle 600, a pine garland 700, a sleigh bench 1,000.
+  - Curio stall, by evening: day 1 a market-only fireplace 15,000 (owner); day 2 seeds
     at shop price and the fireplace; day 3 the fireplace and a pair of decor
     pieces. (A first sketch: the real split comes with the item list.)
   - Road trader: 4 to 6 rare winter goods at 1.5 times sell value (note 57's
@@ -252,7 +254,7 @@ background for what we chose not to do.
   lines each, about 54 plus the six keepers' own lines. Placeholder lines
   meanwhile; the real ones come with the voice sheets. Above Stardew, which
   has one line per festival as I recall (unchecked, SC-114).
-- **Festival spots on the square (my proposal, 2026-11-11, placeholders).** The
+- **Festival spots on the square (owner accepted as drafted, 2026-11-11).** The
   18 who attend (the rule above, applied to note 80's routes) each get a spot
   zone. Tile positions come with the festival map. Zones: **stalls** (browsing
   one stall), **well** (chat by the well), **bench**, **pier** (watching the
@@ -282,7 +284,7 @@ background for what we chose not to do.
   Tilda, Rufus and the area residents (Wanderer, hermit, dwarf, plus Dilly,
   Marl, Maren, Rushie and Thalwen, who stay in their areas). Each attendee has
   three lines, one per evening, per the lines rule above.
-- **Layout on the square (my proposal, 2026-11-11, placeholders).** The festival
+- **Layout on the square (owner accepted as drafted, 2026-11-11).** The festival
   variant of the Hearthwell map (note 66) dresses the square (x 64 to 80, y 54
   to 70, note 77) with lantern strings and no new map. The main river arm runs
   along its west edge (x 56 to 62), so the bank is x 63.
@@ -299,7 +301,7 @@ background for what we chose not to do.
     standing villagers. Benches and the lantern strings are props.
   - **Doors:** none shut. Shops keep normal hours (owner), so the festival
     variant of this map leaves every door open, unlike the other festivals.
-- **Market-only fish (my proposal, placeholders).** Four fish caught only from
+- **Market-only fish (owner accepted four, 2026-11-11; Stardew has three).** Four fish caught only from
   the pier on the three evenings, with the permit, plus the pearl. None counts
   toward bundles or the fish tracker's normal list, but each is a catch that
   counts for the collection. Rarities and bars follow the cove's table in note
