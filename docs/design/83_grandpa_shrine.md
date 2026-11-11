@@ -39,6 +39,23 @@ all four. Nothing else changes in the game.
 8. **A wedding or festival delays the year 3 scene, the candles still light
    (Stardew, checked on the saved page).** Assistant's default, not asked.
 
+9. **The evaluation is a quiet scene at the shrine, then a letter from Oriel
+   (owner, 2026-11-11).** The candles light, a few short lines come from the
+   ancestors, and the next morning a warm, brief letter from Oriel arrives by
+   post. Oriel stays alive and far away. Stardew's Grandpa returns as a ghost
+   (checked on the saved page); ours does not, as Oriel is alive.
+10. **Three ancestors (owner, 2026-11-11):** a founder who first cleared the
+    farm, a seedkeeper, and Oriel's own parent. Oriel is on a living marker, not
+    carved. Names are open.
+11. **The shrine is four candle stands around a standing stone (owner,
+    2026-11-11),** one stand per candle, on a small stone circle, the family
+    stone at the centre.
+12. **Diamonds come from every Stardew source we already have (owner,
+    2026-11-11):** gem nodes (mine from floor 50, Quarry, deep dig), plus rare
+    monster drops and fishing treasure chests where those systems exist. Sources
+    we lack (panning, Trout Derby, fish pond products) are added when built. Stardew's
+    sources are in SC-134.
+
 ## Proposed points (about 20, placeholders)
 
 | Area | Points | Source |
@@ -62,18 +79,15 @@ cannot be reached yet.
 
 ## Open
 
-1. The point list's exact thresholds per category (the earnings and skill rows
-   follow Stardew, the others are placeholders).
-2. The Diamond item. We have none yet. Source (owner, 2026-11-11, as Stardew's
-   Diamond page): gem nodes in the mine from floor 50, in the Quarry, and in the
-   ring 2 deep dig. Stardew has more sources (monster drops, panning, treasure
-   chests, fish ponds); which of those ours takes is open. It needs a gem entry
-   and a node share in `mine-bands.json`.
-3. Where the shrine stands: a special place on the farm, to be chosen with the
-   farm layout (note 55, build issue #776). Not the path.
-4. Who speaks at the year 3 evaluation. Oriel is alive and far away, so it is not
-   a ghost scene. Options for the story note: the ancestors' voices at the shrine,
-   a letter from Oriel arriving by post, or the Wanderer who knows Oriel. The
-   shrine's lines, the family history it shows, and the scene's length.
-5. What the shrine looks like: candle stands, ancestors' names or portraits, and
-   which Thimblemoss ancestors there are (a short family list in note 09).
+1. The exact per-category thresholds. Earnings and skills follow Stardew, the others
+   are placeholders. Several counters are locked at 0, so four candles cannot be
+   reached yet.
+2. The Diamond item itself (name, art, sell price) and its node share in
+   `mine-bands.json`, with the Quarry and deep dig shares. Needs a gem entry.
+3. Where the shrine stands: a special place on the farm, chosen with the farm layout
+   (note 55, build issue #776). Not beside the path.
+4. The three ancestors' names and one line about each (note 09, "The relative"
+   neighbours), the ancestors' short lines at the scene, and the text of Oriel's
+   letter.
+5. The scene's length and how it plays (a short scene runner like the heart events,
+   #600), and the redo scene when a Diamond is placed.
