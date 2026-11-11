@@ -282,13 +282,55 @@ background for what we chose not to do.
   Tilda, Rufus and the area residents (Wanderer, hermit, dwarf, plus Dilly,
   Marl, Maren, Rushie and Thalwen, who stay in their areas). Each attendee has
   three lines, one per evening, per the lines rule above.
+- **Layout on the square (my proposal, 2026-11-11, placeholders).** The festival
+  variant of the Hearthwell map (note 66) dresses the square (x 64 to 80, y 54
+  to 70, note 77) with lantern strings and no new map. The main river arm runs
+  along its west edge (x 56 to 62), so the bank is x 63.
+  - **Pier:** a lantern-lit wooden strip on the bank, x 62 to 63, y 64 to 69,
+    south of the cart road so the bridge approach (y 60 to 64) stays clear. The
+    permit seller (the pier keeper) stands at its landward end, and the lantern
+    floating is done from its tip. It is placed fishing water: the river arm's
+    ordinary river fish also bite here, plus the market-only ones below.
+  - **Stalls:** four along the north and east edges of the square, each a
+    2 by 2 tile counter with a keeper: lantern stall (66, 55), curio stall
+    (70, 55), road trader (74, 55) and hat-maker (78, 58). The pier keeper
+    stands at the pier. The cart stop at (66, 58) and the well stay free.
+  - **Crowd space:** the middle of the square, around the well, stays open for
+    standing villagers. Benches and the lantern strings are props.
+  - **Doors:** none shut. Shops keep normal hours (owner), so the festival
+    variant of this map leaves every door open, unlike the other festivals.
+- **Market-only fish (my proposal, placeholders).** Four fish caught only from
+  the pier on the three evenings, with the permit, plus the pearl. None counts
+  toward bundles or the fish tracker's normal list, but each is a catch that
+  counts for the collection. Rarities and bars follow the cove's table in note
+  21; sell prices sit with the cove's (450 to 700g).
+
+  | Fish | Time | Rarity | Bar | Sell |
+  | --- | --- | --- | --- | --- |
+  | Lamp Minnow | Night | Common | dart 30 | 120 |
+  | Frostveil | Night | Uncommon | floater 55 | 400 |
+  | Midnight Gar | Night | Rare | sinker 70 | 650 |
+  | Hush Lantern | Night | Rare | smooth 75 | 800 |
+
+  The pearl is a small chance, about 1 in 200, as a rare find. Pier catches
+  use the night odds from 17:00 to 23:00. The permit lasts the evening, and
+  the pier closes at 23:00. Stardew's equivalent has three exclusive fish and
+  a pearl (saved Night Market page).
+- **Weather (decided in this pass).** Each evening is fair like other festival
+  days (note 14's earlier rule). Snow still falls only on days that the weather
+  table says; the market's three days are forced clear, so the question of
+  whether snow counts as rain does not arise here. It still stands for ordinary
+  days (note 80).
+- **Build order, summary.** (1) `festivals.json` three-day span and the
+  square variant with its four stalls and no shut doors. (2) The stall
+  panels: trader, lantern, curio, hat-maker, float. (3) The pier and its
+  permit and fish with the fishing slices. The attendance, lines and spots are
+  content for the voice sheets. Nothing here is built.
+
 - **Seller names (owner, 2026-11-11).** Placeholder role names in the data
   ("the hat-maker", "the pier keeper"); real names come with the voice sheets and
   art, as for the road trader.
-- **Still open:** the owner's check of the placeholder stock, the nine
-  hats' art and names, the market-only fish list, the owner's check of the
-  spot table above, and the festival spots for the other festivals (note 80
-  open item 3).
+- **Still open:** the owner's check of the placeholder stock, prices, spots, layout and fish above, the hats' art and names, and the festival spots for the other festivals (note 80 open item 3). The design is otherwise complete for a build.
 
 ## Open
 
