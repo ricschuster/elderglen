@@ -81,6 +81,22 @@ all four. Nothing else changes in the game.
     2026-11-11).** Tune in play, after the owner's hands-on M3 play, since note 07's
     income is still placeholder.
 
+20. **"People who live forever" stays in Oriel's letter (owner, 2026-11-11).**
+21. **The shrine's Diamond is a separate gem just below the Glimmerstone (owner,
+    2026-11-11).** The Glimmerstone stays the top gem (note 22). The Diamond sells
+    high and every villager likes it (decision 16).
+22. **Diamond nodes start at floor 50, rarer above (Stardew, owner 2026-11-11).**
+    A small share in the Cold Deeps (41 to 80, from floor 50) and a larger share in the Ember
+    Deeps. "Rarer above 100" was the owner's wording for Stardew's pattern; the
+    exact reading, and the rates, are open.
+23. **Rates follow Stardew's (owner, 2026-11-11), but they are not on the saved
+    pages.** The saved Mining page lists only experience per gem node, and the
+    saved Diamond page points to a lost book for the floor chances. Until
+    checked (SC-135), the placeholder is note 22's 0.5 percent per gem node and 0.2
+    percent per geode.
+24. **The Quarry gets a small gem node share, the deep dig a larger one (owner,
+    2026-11-11).** Stardew lists both (saved Diamond page).
+
 ## The ancestors (owner picked Set A, 2026-11-11)
 
 Hester Thimblemoss, the founder, who first cleared the farm. Fenwick
@@ -159,11 +175,13 @@ cannot be reached yet.
 ## Open
 
 1. Whether these lines read right: the voices, the "if fewer than four" line, and
-   the redo lines. The owner reshapes them.
-2. Whether the "live forever" line in Oriel's letter says too much about Evenglade.
-3. The Diamond item itself (name, art, exact sell price) and its node share in
-   `mine-bands.json`, with the Quarry and deep dig shares. Needs a gem entry.
-4. The shrine's exact tiles, in the farm layout (note 55, #776).
+   the redo lines. The owner reshapes them (the owner liked them on 2026-11-11).
+2. The Diamond's name (placeholder), art and exact sell price (Stardew 750g), and
+   its node, geode, Quarry and dig shares in `mine-bands.json` and
+   `geodes.json`. Rates need the Stardew check (SC-135) or the placeholder stays.
+3. What "rarer above 100" means in numbers: whether Ember Deeps nodes are more or
+   less likely than the Cold Deeps, given that Hearthsilver digs from floor 100.
+4. The shrine's exact tiles under the old tree, in the farm layout (note 55, #776).
 5. The long first scene's exact length and shots (a scene runner like the heart
    events, #600), and the one-line redo.
 6. Several counters are locked at 0 (slayer, elderfruit, friends), so four candles
