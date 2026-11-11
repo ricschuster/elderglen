@@ -71,8 +71,10 @@ Design, can start now:
 - Step 1: Farm layout. **Done 2026-11-11, owner checked** (note 55, Tiled draft in
    `docs/design/drafts/farm-draft/`, build issue #776). Unblocks the farm map, the
    farmhouse and the cabin interiors.
-- Step 2: Festival spots for the other eight festivals (note 80 item 3, note 66), with 8
-   player start spots as well as the villager spots.
+- Step 2: Festival spots for the other eight festivals (note 80 item 3, note 82), with 8
+   player start spots as well as the villager spots. **Locations settled 2026-11-11**
+   (note 82: only the Showing on the green). Left: who skips each, then the layouts with
+   exact tiles.
 - Step 3: Heart events and spouse routes (note 80 item 4, #600, note 12), which may add
    interior spaces and spots.
 - Step 4: Interior layout notes, a Tiled draft of one pilot interior first. Not the

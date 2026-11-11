@@ -185,6 +185,8 @@ name is still open, so the screen says "a neighbour".
 
 ## Layout addendum: festival maps (2026-11-08)
 
+Note 82 (2026-11-11) supersedes item 6: only the Showing is on the green.
+
 Decided with the owner on 2026-11-08, each as Stardew does (saved Stardew
 Valley Fair and Spirit's Eve pages, read the same day). Not built: the festival
 screens stay until the maps exist.
