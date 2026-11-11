@@ -76,3 +76,22 @@ function fits(
   // A sprinkler or a machine stands on an open tile.
   return isClear(g, map, x, y);
 }
+
+/**
+ * Whether tile (x, y) holds something a tap picks by hand, whatever is held
+ * (note 27, "Tap makes the Action button obsolete"): a ripe crop, a forage
+ * item or a fruit tree with fruit. A ripe crop is a harvest first, so a can or
+ * hoe held over it does not water or dig.
+ */
+export function tapPick(
+  g: GameState,
+  map: FarmMap,
+  x: number,
+  y: number,
+): boolean {
+  if (g.day.over) return false;
+  const here = storeOf(g, map.indoors);
+  if (here.fruitTrees.ripe(x, y)) return true;
+  if (here.soil.plotAt(x, y)?.crop && here.soil.isRipe(x, y)) return true;
+  return !map.indoors && !!g.forage.itemAt(x, y);
+}

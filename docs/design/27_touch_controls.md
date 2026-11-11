@@ -73,7 +73,7 @@ Owner chose option A:
   `src/core/` (free of Phaser); a tablet check of a 4 by 4 plot, tilled, planted
   and watered by taps and drags.
 
-## Tap makes the Action button obsolete (decided 2026-11-11, not built)
+## Tap makes the Action button obsolete (decided 2026-11-11, built 2026-11-11, not yet played on the tablet)
 
 In the tap-to-move scheme the Action button goes, as the Use button did. Every
 job it does gets a tap target. Owner answers, 2026-11-11 (Stardew's saved Mobile

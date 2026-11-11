@@ -104,7 +104,7 @@ import {
 import { aimAt } from "../core/aim";
 import { createControls, type Controls } from "./controls";
 import { planTap, planUse, type TapPlan } from "../core/pathing";
-import { tapUse } from "../core/tapuse";
+import { tapPick, tapUse } from "../core/tapuse";
 import {
   browserSettingsStore,
   browserStore,
@@ -1044,11 +1044,28 @@ export class FarmScene extends Phaser.Scene {
       const dy = tap.y - here.y;
       const beside = Math.abs(dx) + Math.abs(dy) === 1;
       const held = heldAt(this.state, this.selected);
+      // A tap on the farmer's own tile gets off the horse, else eats the held
+      // food (note 27, "Tap makes the Action button obsolete").
+      if (fresh && dx === 0 && dy === 0) {
+        if (this.state.animals.mounted) {
+          this.cancelTap();
+          return this.getOff();
+        }
+        if (held.kind === "item" && itemById(held.id)?.energy !== undefined) {
+          this.cancelTap();
+          return this.eatHeld();
+        }
+      }
+      // A ripe crop, forage or fruit, or the horse, is picked by hand first.
+      const hand = this.tapHand(tap);
       // One rule (note 27): a soil-work item is used where it fits and the tap
       // only walks where it does not. Other items keep the old rule.
-      const fit = tapUse(this.state, this.map, held, tap.x, tap.y);
+      const fit = hand
+        ? "other"
+        : tapUse(this.state, this.map, held, tap.x, tap.y);
       const thing =
-        this.tapObject(tap.x, tap.y) && this.tileBlocked(tap.x, tap.y);
+        hand ||
+        (this.tapObject(tap.x, tap.y) && this.tileBlocked(tap.x, tap.y));
       const exit = !!this.map.exitAt(tap.x, tap.y);
       if (fit === "use" && !this.tileBlocked(tap.x, tap.y)) {
         // A drag uses each new tile beside the farmer at once.
@@ -1088,7 +1105,20 @@ export class FarmScene extends Phaser.Scene {
         else this.use();
         return;
       }
-      const plan = this.planAt(tap);
+      let plan = this.planAt(tap);
+      if (hand && !this.tileBlocked(tap.x, tap.y)) {
+        // Walk beside an open tile, then pick by hand (not use the held item).
+        const beside = planUse(
+          {
+            width: this.map.width,
+            height: this.map.height,
+            blocked: (x, y) => this.tileBlocked(x, y),
+          },
+          here,
+          tap,
+        );
+        plan = beside && { ...beside, use: false };
+      }
       if (!plan) {
         this.cancelTap();
         this.tapMark = { ...tap, bad: true, until: this.time.now + 700 };
@@ -1136,8 +1166,21 @@ export class FarmScene extends Phaser.Scene {
     );
   }
 
+  /** True when a tap on the tile picks by hand: ripe crop, forage, fruit, or the horse. */
+  private tapHand(tile: Vec): boolean {
+    if (tapPick(this.state, this.map, tile.x, tile.y)) return true;
+    const spot = this.horseSpot();
+    return (
+      !this.state.animals.mounted &&
+      !!spot &&
+      spot.x === tile.x &&
+      spot.y === tile.y
+    );
+  }
+
   /** Act on a tile beside the farmer: the axe for a tree, the pickaxe for a rock. */
   private actOn(tile: Vec): void {
+    if (this.tapHand(tile)) return this.action();
     const tree =
       (!this.map.indoors && this.state.trees.at(tile.x, tile.y)) ||
       this.store.fruitTrees.at(tile.x, tile.y);
@@ -1491,6 +1534,14 @@ export class FarmScene extends Phaser.Scene {
     );
   }
 
+  /** How the player gets off the horse: a tap on the farmer, or the Action key. */
+  private getOffHint(): string {
+    return this.controls.profile === "touch" &&
+      loadDeviceSettings().touchScheme === "tap"
+      ? "Tap yourself"
+      : "Press Action";
+  }
+
   /** Get on the horse. The first ride asks for a name (note 59). */
   private getOn(): void {
     const problem = mountProblem(this.state, this.map);
@@ -1504,7 +1555,7 @@ export class FarmScene extends Phaser.Scene {
       return this.open("name-horse");
     }
     mount(this.state, this.map);
-    this.message = `You are riding ${horseName(this.state)}. Press Action to get off.`;
+    this.message = `You are riding ${horseName(this.state)}. ${this.getOffHint()} to get off.`;
     this.save();
     this.render();
   }
@@ -1586,7 +1637,7 @@ export class FarmScene extends Phaser.Scene {
     if (this.leaving) return;
     if (this.useDoor()) return;
     if (this.state.animals.mounted) {
-      this.message = `Press Action to get off ${horseName(this.state)} first.`;
+      this.message = `${this.getOffHint()} to get off ${horseName(this.state)} first.`;
       return this.render();
     }
     const front = this.aimTile();

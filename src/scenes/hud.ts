@@ -269,6 +269,9 @@ export class Hud {
     if (this.touch && settings.touchScheme === "tap") {
       use.setVisible(false).disableInteractive();
       useText.setVisible(false);
+      // Every Action job has a tap target too (note 27).
+      eat.setVisible(false).disableInteractive();
+      eatText.setVisible(false);
     }
     if (!this.touch)
       for (const o of [
