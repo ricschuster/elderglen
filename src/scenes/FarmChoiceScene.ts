@@ -8,7 +8,10 @@ import { STATE_KEY } from "./state";
 
 const CARD_W = 300;
 const CARD_H = 330;
-const PREVIEW_PX = 6;
+/** The preview box inside a card; a map is scaled down to fit it. */
+const PREVIEW_W = CARD_W - 24;
+const PREVIEW_H = 180;
+const PREVIEW_MAX_PX = 6;
 
 /**
  * The farm choice at a new game (`docs/design/32_farm_types.md`). One card per
@@ -83,11 +86,16 @@ export class FarmChoiceScene extends Phaser.Scene {
   private preview(type: FarmTypeDef, cx: number, y: number): void {
     const map = maps.get(type.map);
     const g = this.add.graphics();
-    const w = map.width * PREVIEW_PX;
+    const px = Math.min(
+      PREVIEW_MAX_PX,
+      PREVIEW_W / map.width,
+      PREVIEW_H / map.height,
+    );
+    const w = map.width * px;
     const x0 = cx - w / 2;
     const at = (x: number, yy: number) => ({
-      x: x0 + x * PREVIEW_PX,
-      y: y + yy * PREVIEW_PX,
+      x: x0 + x * px,
+      y: y + yy * px,
     });
     for (let ty = 0; ty < map.height; ty++)
       for (let tx = 0; tx < map.width; tx++) {
@@ -97,20 +105,20 @@ export class FarmChoiceScene extends Phaser.Scene {
             ? 0x555e66
             : 0x4e8f46;
         const p = at(tx, ty);
-        g.fillStyle(color, 1).fillRect(p.x, p.y, PREVIEW_PX, PREVIEW_PX);
+        g.fillStyle(color, 1).fillRect(p.x, p.y, px, px);
       }
     for (const t of map.trees) {
       const p = at(t.x, t.y);
-      g.fillStyle(t.large ? 0x7a4e26 : 0x1f4d25, 1).fillRect(
-        p.x,
-        p.y,
-        PREVIEW_PX,
-        PREVIEW_PX,
-      );
+      g.fillStyle(t.large ? 0x7a4e26 : 0x1f4d25, 1).fillRect(p.x, p.y, px, px);
     }
     for (const f of map.forageSpots) {
       const p = at(f.x, f.y);
-      g.fillStyle(0xf2d84a, 1).fillRect(p.x + 2, p.y + 2, 2, 2);
+      g.fillStyle(0xf2d84a, 1).fillRect(
+        p.x,
+        p.y,
+        Math.max(px, 2),
+        Math.max(px, 2),
+      );
     }
   }
 
