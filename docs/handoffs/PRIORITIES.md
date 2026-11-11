@@ -67,8 +67,9 @@ Art waits for M3d (ADR 0012).
 
 Design, can start now:
 
-- Step 1: Farm layout (note 55 open items, with the free cabin area). Gates the farm
-   map, the farmhouse and the cabin interiors.
+- Step 1: Farm layout. **Done 2026-11-11, owner checked** (note 55, Tiled draft in
+   `docs/design/drafts/farm-draft/`, build issue #776). Unblocks the farm map, the
+   farmhouse and the cabin interiors.
 - Step 2: Festival spots for the other eight festivals (note 80 item 3, note 66), with 8
    player start spots as well as the villager spots.
 - Step 3: Heart events and spouse routes (note 80 item 4, #600, note 12), which may add
