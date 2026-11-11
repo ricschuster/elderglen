@@ -603,7 +603,7 @@ async function sleepNight(prev) {
   if (s.day !== before.day + 1)
     finding(`day after sleep is ${s.day}, expected ${before.day + 1}`);
   const saved = await page.evaluate(() =>
-    localStorage.getItem("elderglen-save"),
+    localStorage.getItem("elderglen-save-slot-1"),
   );
   fs.writeFileSync(`${OUT}/save-${PERSONA}.json`, saved ?? "");
   return s;

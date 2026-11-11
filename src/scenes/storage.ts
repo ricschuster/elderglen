@@ -1,31 +1,55 @@
 import type { SaveStore } from "../core/save";
 import {
+  activeSlot,
+  migrateLegacySave,
+  setActiveSlot,
+  slotStore,
+  type KeyValue,
+} from "../core/slots";
+import {
   loadSettings,
   type Settings,
   type SettingsStore,
 } from "../core/bindings";
 
-const KEY = "elderglen-save";
-// Saves made under the working title "beaver-valley" are still read, and move to
-// the new key on the next write (ADR 0011).
-const LEGACY_KEY = "beaver-valley-save";
-
-/** A save store backed by localStorage. Reads and writes never throw. */
-export const browserStore: SaveStore = {
-  read() {
+/** Browser storage as plain key and value. Reads and writes never throw. */
+export const browserKv: KeyValue = {
+  get(key) {
     try {
-      return localStorage.getItem(KEY) ?? localStorage.getItem(LEGACY_KEY);
+      return localStorage.getItem(key);
     } catch {
       return null;
     }
   },
-  write(text) {
+  set(key, value) {
     try {
-      localStorage.setItem(KEY, text);
+      localStorage.setItem(key, value);
     } catch {
       // Private windows and full storage can refuse a write. Play on unsaved.
     }
   },
+  remove(key) {
+    try {
+      localStorage.removeItem(key);
+    } catch {
+      // Nothing to remove.
+    }
+  },
+};
+
+// The one save from before slots, and the "beaver-valley" one before it, move
+// into slot 1 the first time this loads (note 52, ADR 0011).
+migrateLegacySave(browserKv);
+
+/** Make a slot the one every save and load uses, and remember it. */
+export function useSlot(slot: number): void {
+  setActiveSlot(browserKv, slot);
+}
+
+/** The save store of the slot being played. Reads and writes never throw. */
+export const browserStore: SaveStore = {
+  read: () => slotStore(browserKv, activeSlot(browserKv)).read(),
+  write: (text) => slotStore(browserKv, activeSlot(browserKv)).write(text),
 };
 
 const SETTINGS_KEY = "elderglen-settings";
