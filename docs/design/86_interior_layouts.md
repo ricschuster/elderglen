@@ -1,6 +1,6 @@
 # 86 Interior layouts: templates from Stardew's rooms (draft)
 
-Status: **the general store pilot is owner checked (2026-11-11, round 2: irregular footprint); the sawmill, healer and smithy are owner checked (batch 1); the library, hatter and farmstead are drafted (batch 2), waiting for the owner; the hut and the inn drafts and the other interiors wait** (note 81 decision 6).
+Status: **the general store pilot is owner checked (2026-11-11, round 2: irregular footprint); the sawmill, healer and smithy are owner checked (batch 1); the library, hatter and farmstead are drafted (batch 2), and the three burrows (batch 3, 2026-11-11), both waiting for the owner; the hut and the inn drafts and the huts' own layouts wait** (note 81 decision 6).
 Nothing here is built. This is step 4 of the layout track
 (`docs/handoffs/PRIORITIES.md`, note 81): interior layouts, with a Tiled draft of a
 pilot first. The pilot is the general store, plus two more templates (the one-room
@@ -284,7 +284,7 @@ Owner answers before drawing:
    as Stardew's tower and guild); the forge hut and the elf's house stay huts, each a
    different shape.
 7. **Order:** rounds of three, checked each time. Batch 1 below. Batch 2 is the library,
-   the hatter and the farmstead keeper, batch 3 the three burrows, batch 4 the huts and
+   the hatter and the farmstead keeper, batch 3 (drawn) the three burrows, batch 4 the huts and
    the inn redrawn.
 
 The drafts come from `docs/design/drafts/interiors-draft/gen.py` (plans in `plans.py`):
@@ -525,6 +525,110 @@ gates shut only the bedrooms are cut off (32 tiles at the library, 52 at the hat
 Hearthwell shop, but it gets a home like the others (the table below said "shop and
 keeper's home").
 
+## Plan batch 3: the three burrows (2026-11-11)
+
+Each burrow is a household's whole home, so no counter and no shop. The entry opens on
+the living room (public while the door is open, as SC-146), with the kitchen and pantry
+north through a 2 wide passage and each person's bedroom behind a gate (2 hearts, note
+61 decision 6). Bedrooms are one per person and couples share (owner, 2026-11-11), so
+the sizes follow the household. Burrows are smaller than the shops: Stardew's one-person
+and family homes are not measured here, and a bedroom is about Sebastian's room (6 by 6
+floor, 12 by 12 outer). Drafts: `burrow-gardener`, `burrow-retired`, `burrow-young` in
+`docs/design/drafts/interiors-draft/`.
+
+### Gardener's burrow (30 by 20)
+
+One person, so one bedroom. The theme is a potting room east of the living room, through
+a 2 row opening, with seed shelves, a potting bench, soil bags and seedling trays (the
+gardener gives crop hints, note 20).
+
+```text
+        ######## #####
+       ################
+       #KKKKKKKK#SSSSS#
+       #..............#
+       #.TTT........XX#
+       #.TTT....#...XX#
+       #........#.....#
+ ##########..##########
+###########..################
+#BB.SS.#....HHH.....##########
+#BB....#.........LL.#SSSSSSSS#
+#......G..QQQQ...LL.#........#
+#.rrr..G...............WWWW..#
+#.rrr..#...rrrrr.......WWWW..#
+#......#...rrrrr....#......XX#
+########............#.LL...XX#
+       ######..###############
+            #..#
+            #DD#
+            ####
+```
+
+### Retired couple's burrow (32 by 21)
+
+Two retirees and the grandchild: a double bed in the couple's room (west, gated), the
+grandchild's own room (north-east, gated, reached from the sunroom) and a sunroom east of
+the living room with armchairs and keepsakes. The pantry is west of the kitchen.
+
+```text
+   ###### ##########
+  ###################   #######
+  #SSSSSS#KKKKKKKKKK#  #########
+  #S................#  #BB...TT#
+  #S.........TTTT...#  #BB.....#
+  #S...XX#...TTTT...#  #.......#
+  #S...XX#..........#  #..rrr..#
+ #############..###### #..rrrXX#
+##############..########.....XX#
+#BBB.SS#SSSS.....HHH..####GG####
+#BBB...#..............##SS..SSS#
+#......G..QQQQ........##.......#
+#......G.........TTTQ........LL#
+#..rrr.#...rrrrr.TTTQ.....QQ.LL#
+#..rrr.#...rrrrr......##.rrrr..#
+#....XX#..............##.rrrr..#
+########..............##.....X.#
+       #######..################
+             #..#
+             #DD#
+             ####
+```
+
+### Young adults' burrow (28 by 20)
+
+Two people who each get a bedroom, one west and one east of the living room, both gated
+(owner, 2026-11-11: young adults get one each). The living room is the shared space, with
+shelves, a hearth and a display; the kitchen and pantry are north.
+
+```text
+        ######## #####
+       ################
+       #KKKKKKKK#SSSSS#
+       #..............#
+       #..TTT.......XX#
+       #..TTT...#...XX#
+       #........#.....#
+ ##########..##############
+###########..###############
+#BB..TT#SSS...HHH...#.SS.BB#
+#BB....#............#....BB#
+#......G............G......#
+#......G..QQQQ......G......#
+#..rrr.#..rrrrr...LL#.rrr..#
+#XXrrr.#..rrrrr...LL#.rrrTT#
+#XX....#............#......#
+#############..#############
+            #..#
+            #DD#
+            ####
+```
+
+Checks (all pass): every floor tile and mark is reachable with the gates open; with the
+gates shut only the bedrooms are cut off (32 tiles at the gardener's, 68 at the retired
+couple's, 70 at the young adults'); every public aisle is 2 wide. Each has the 2 wide
+door notch to the south.
+
 ## The other interiors
 
 Each uses one of the three shapes, with its own furniture. Sizes are outer, with the
@@ -562,7 +666,7 @@ Final art waits for M3d (ADR 0012).
 | `inn` | Drafted, waits for the owner | No | |
 | `sawmill`, `healer`, `smithy` | Done, owner checked 2026-11-11 (batch 1) | No | |
 | `library`, `hatter`, `forest-farmstead` | Drafted 2026-11-11 (batch 2), waits for the owner | No | |
-| `burrow-*` | Sizes and fixtures only; several rooms each (owner, 2026-11-11 answers) | No | |
+| `burrow-*` | Drafted 2026-11-11 (batch 3), waits for the owner | No | |
 | `hall` | Done, note 40 | No | Crowd rules only |
 
 ## Build work (no issues filed yet)

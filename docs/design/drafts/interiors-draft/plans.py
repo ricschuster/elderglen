@@ -1,5 +1,5 @@
 """Interior plans (note 86). Batch 1: sawmill, healer, smithy. Batch 2: library, hatter,
-farmstead keeper.
+farmstead keeper. Batch 3: the three burrows.
 
 Coordinates are plan tiles with no walls (gen.py adds them). Each building has its
 own shape: a public room at the front with the 2 wide door notch, the household
@@ -351,4 +351,141 @@ def farmstead():
     return p
 
 
-ALL = [sawmill(), healer(), smithy(), library(), hatter(), farmstead()]
+def burrow_gardener():
+    p = Plan("burrow-gardener", "gardener's burrow, one bedroom and a potting room")
+    p.floor(3, 9, 14, 15)             # living room
+    p.floor(8, 16, 9, 17)             # door notch
+    p.door(8, 18, 17)
+    p.floor(16, 10, 23, 15)           # potting room
+    p.floor(15, 12, 15, 13)           # potting room opening
+    p.floor(6, 7, 7, 8)               # passage north
+    p.floor(3, 2, 10, 6)              # kitchen
+    p.floor(12, 2, 16, 6)             # pantry
+    p.floor(11, 3, 11, 4)             # pantry opening
+    p.floor(-4, 9, 1, 14)             # bedroom
+    # living room
+    p.put("H", 7, 9, 9, 9)
+    p.put("Q", 5, 11, 8, 11)
+    p.put("r", 6, 13, 10, 14)
+    p.put("L", 12, 10, 13, 11)        # window planters
+    # kitchen and pantry
+    p.put("K", 3, 2, 10, 2)
+    p.put("T", 4, 4, 6, 5)
+    p.put("S", 12, 2, 16, 2)
+    p.put("X", 15, 4, 16, 5)
+    # potting room
+    p.put("S", 16, 10, 23, 10)        # seed shelves
+    p.put("W", 18, 12, 21, 13)        # potting bench
+    p.put("X", 22, 14, 23, 15)        # soil bags
+    p.put("L", 17, 15, 18, 15)        # seedling trays
+    # bedroom
+    p.gate("gardener", 2, 11, 2, 12)
+    p.put("B", -4, 9, -3, 10)
+    p.put("S", -1, 9, 0, 9)
+    p.put("r", -3, 12, -1, 13)
+    # marks
+    p.mark("spot-home-sit", 6, 12)
+    p.mark("spot-home-cook", 6, 3)
+    p.mark("spot-potting", 20, 14)
+    p.mark("bed-gardener", -2, 11)
+    return p
+
+
+def burrow_retired():
+    p = Plan("burrow-retired", "retired couple's burrow, two bedrooms and a sunroom")
+    p.floor(6, 12, 19, 19)            # living room
+    p.floor(12, 20, 13, 21)           # door notch
+    p.door(12, 22, 21)
+    p.floor(22, 13, 28, 19)           # sunroom
+    p.floor(20, 15, 21, 16)           # sunroom opening
+    p.floor(12, 10, 13, 11)           # passage north
+    p.floor(8, 5, 17, 9)              # kitchen
+    p.floor(1, 5, 6, 9)               # pantry
+    p.floor(7, 6, 7, 7)               # pantry opening
+    p.floor(-1, 12, 4, 18)            # couple's bedroom
+    p.floor(22, 6, 28, 11)            # grandchild's bedroom
+    # living room
+    p.put("S", 6, 12, 9, 12)          # shelves
+    p.put("H", 15, 12, 17, 12)
+    p.put("Q", 8, 14, 11, 14)
+    p.put("r", 9, 16, 13, 17)
+    p.put("T", 15, 15, 17, 16)        # dining table
+    p.put("Q", 18, 15, 18, 16)
+    # kitchen and pantry
+    p.put("K", 8, 5, 17, 5)
+    p.put("T", 11, 7, 14, 8)
+    p.put("S", 1, 5, 6, 5)
+    p.put("S", 1, 6, 1, 9)
+    p.put("X", 5, 8, 6, 9)
+    # couple's bedroom
+    p.gate("couple", 5, 14, 5, 15)
+    p.put("B", -1, 12, 1, 13)         # one double bed
+    p.put("S", 3, 12, 4, 12)
+    p.put("r", 1, 16, 3, 17)
+    p.put("X", 3, 18, 4, 18)
+    # sunroom
+    p.put("S", 22, 13, 23, 13)
+    p.put("S", 26, 13, 28, 13)
+    p.put("Q", 24, 16, 25, 16)
+    p.put("L", 27, 15, 28, 16)        # keepsakes
+    p.put("r", 23, 17, 26, 18)
+    p.put("X", 27, 19)
+    # grandchild's bedroom
+    p.gate("grandchild", 24, 12, 25, 12)
+    p.put("B", 22, 6, 23, 7)
+    p.put("T", 27, 6, 28, 6)          # desk
+    p.put("X", 27, 10, 28, 11)        # toys
+    p.put("r", 24, 9, 26, 10)
+    # marks
+    p.mark("spot-home-sit", 10, 15)
+    p.mark("spot-home-cook", 12, 6)
+    p.mark("spot-sunroom", 24, 17)
+    p.mark("bed-couple", 0, 15)
+    p.mark("bed-grandchild", 24, 8)
+    return p
+
+
+def burrow_young():
+    p = Plan("burrow-young", "young adults' burrow, a bedroom each")
+    p.floor(5, 9, 16, 15)             # living room
+    p.floor(10, 16, 11, 17)           # door notch
+    p.door(10, 18, 17)
+    p.floor(8, 7, 9, 8)               # passage north
+    p.floor(5, 2, 12, 6)              # kitchen
+    p.floor(14, 2, 18, 6)             # pantry
+    p.floor(13, 3, 13, 4)             # pantry opening
+    p.floor(-2, 9, 3, 15)             # first bedroom
+    p.floor(18, 9, 23, 15)            # second bedroom
+    # living room
+    p.put("S", 5, 9, 7, 9)
+    p.put("H", 11, 9, 13, 9)
+    p.put("Q", 7, 12, 10, 12)
+    p.put("r", 7, 13, 11, 14)
+    p.put("L", 15, 13, 16, 14)
+    # kitchen and pantry
+    p.put("K", 5, 2, 12, 2)
+    p.put("T", 7, 4, 9, 5)
+    p.put("S", 14, 2, 18, 2)
+    p.put("X", 17, 4, 18, 5)
+    # first bedroom
+    p.gate("young-a", 4, 11, 4, 12)
+    p.put("B", -2, 9, -1, 10)
+    p.put("T", 2, 9, 3, 9)            # desk
+    p.put("X", -2, 14, -1, 15)
+    p.put("r", 0, 13, 2, 14)
+    # second bedroom
+    p.gate("young-b", 17, 11, 17, 12)
+    p.put("B", 22, 9, 23, 10)
+    p.put("S", 19, 9, 20, 9)
+    p.put("T", 22, 14, 23, 14)
+    p.put("r", 19, 13, 21, 14)
+    # marks
+    p.mark("spot-home-sit", 8, 13)
+    p.mark("spot-home-cook", 8, 3)
+    p.mark("bed-young-a", 0, 12)
+    p.mark("bed-young-b", 20, 11)
+    return p
+
+
+ALL = [sawmill(), healer(), smithy(), library(), hatter(), farmstead(),
+       burrow_gardener(), burrow_retired(), burrow_young()]
