@@ -312,3 +312,21 @@ export function landLobster(
     levelUp: g.skills.gain("fishing", harvestXp(def.sellPrice)),
   };
 }
+
+/**
+ * Haul in a piece of trash hooked on the rod. There is no bar, no quality and
+ * never silver or gold. It gives the junk fishing XP. A full backpack drops it
+ * at the player's feet.
+ */
+export function landTrash(
+  g: GameState,
+  at: { x: number; y: number },
+  item: string,
+): { dropped: boolean; levelUp?: number } {
+  let dropped = false;
+  if (!g.inventory.add(item)) {
+    g.ground.drop(at.x, at.y, item, 1);
+    dropped = true;
+  }
+  return { dropped, levelUp: g.skills.gain("fishing", JUNK_XP) };
+}

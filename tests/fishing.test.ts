@@ -128,7 +128,7 @@ describe("what bites", () => {
       minutes: 22 * 60,
       raining: false,
     } as const;
-    expect(bite("river", night, fixed(0)).kind).toBe("none");
+    expect(bite("river", night, fixed(0.5)).kind).toBe("none");
   });
 
   it("hooks an uncommon fish", () => {
@@ -146,7 +146,7 @@ describe("what bites", () => {
       minutes: 6.5 * 60,
       raining: false,
     } as const;
-    const b = bite("river", dawn, fixed(0));
+    const b = bite("river", dawn, fixed(0.5));
     expect(b.kind === "fish" && b.fish.id).toBe("silverthread");
   });
 

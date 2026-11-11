@@ -312,6 +312,16 @@
     ]
   },
   {
+    "id": "recycler",
+    "ingredients": [
+      { "item": "wood", "count": 25 },
+      { "item": "stone", "count": 25 },
+      { "item": "iron-bar", "count": 1 }
+    ],
+    "result": { "item": "recycler", "count": 1 },
+    "sources": [{ "kind": "level", "skill": "fishing", "level": 4 }]
+  },
+  {
     "id": "chest",
     "ingredients": [
       {
