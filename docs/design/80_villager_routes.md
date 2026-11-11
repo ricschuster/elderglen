@@ -242,8 +242,9 @@ returns an hour earlier. A snow day does not stop the trip (snow is not rain, ow
    2026-11-11): freeze the tags in use as the allowed list, normalise odd ones
    (for example `walk, short` to `walk`, `the trader` to `stall`) and add a test
    that rejects any other key. Not built.
-3. **Festival spots**: each person's spot on the green per festival, written with
-   the festival maps (note 66).
+3. **Festival spots**: locations settled 2026-11-11 (note 82, only the Showing is on
+   the green). Who skips each festival and the exact tiles are written with the
+   festival layouts.
 4. **Heart event and spouse routes** (note 79 rule 7) wait for #600 and note 12.
 5. **Register**: SC-106, SC-109 and SC-112 are answered (2026-11-11), the
    per-person details from the saved Abigail page only. Other villagers are not
