@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-11-09",
+  "fetched": "2026-11-11",
   "issues": {
     "5": {
       "t": "Design: what is the third community project?",
@@ -333,7 +333,7 @@
     },
     "526": {
       "t": "Design: answer the open Stardew checks (SC-28, 53, 66, 67)",
-      "state": "open",
+      "state": "closed",
       "labels": ["design-question"]
     },
     "527": {
@@ -424,7 +424,7 @@
     },
     "636": {
       "t": "WP: Map contract additions for the valley areas",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "637": {
@@ -444,17 +444,17 @@
     },
     "640": {
       "t": "WP: River delta and Beach map, waters and the fisher's hut",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "641": {
       "t": "WP: Beach elf's house and the Homeward pin stall",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "642": {
       "t": "WP: Mountain map and the Mines entrance",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "643": {
@@ -469,12 +469,12 @@
     },
     "645": {
       "t": "WP: Hearthwell part 1, the shell and moving the farm's doors",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "646": {
       "t": "WP: Hearthwell part 2, the interiors",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "649": {
@@ -514,17 +514,32 @@
     },
     "659": {
       "t": "Quarry: the stonekeeper's camp, regrow numbers and trees (follow-up to #649)",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "660": {
       "t": "Dye vat: any plant or flower as input",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "661": {
       "t": "Hearthwell: river layout Tiled pass (before the shell, #645)",
-      "state": "open",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "707": {
+      "t": "Remove the farm's shop, Orders and Request counters; shop in Hearthwell",
+      "state": "closed",
+      "labels": ["next-payoff"]
+    },
+    "708": {
+      "t": "Split the smith screen: upgrades, geodes, forging to the Hearthwell blacksmith",
+      "state": "closed",
+      "labels": ["next-payoff"]
+    },
+    "724": {
+      "t": "Mahogany trees: planting, growth, Hardwood yield, Secret Woods stump seed",
+      "state": "closed",
       "labels": ["work-package"]
     }
   }
