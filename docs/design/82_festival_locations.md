@@ -432,3 +432,137 @@ Hester leaves at 20:30 (decision 6). Open: the Frostfin (price, art, bundle use)
 the hat, whether the festival ends after judging as Stardew's does, and whether
 holes need a cast distance rule on a tablet (Stardew's holes are small and hard
 to cast into).
+
+## Hollow Eve in the hedge maze (drafted 2026-11-11, owner answered the setup)
+
+Date: Fall 21. Opens 20:00, closes 23:30, ends 24:00 (`festivals.json`). Owner
+answers: **everyone is in the maze, as in Stardew** (saved Spirit's Eve page: most
+townspeople are in the haunted maze, frightened or confused; Pierre's booth stands
+at the entrance; which tile each person stands on is not on the page, SC-137), and
+**the children are kept out in odd years and go in with a talker in even years**
+(saved page: Vincent is kept out in year 1 and goes in with Sam in year 2).
+
+Place: `hedge.json`, 23 by 17 tiles, the odd-year maze at map x 4 to 22, y 1 to 15
+(maze tile (mx,my) is map tile (mx+4,my+1)). The plaza is the strip x 1 to 3, y 1
+to 15, joined to the maze by the opening at (4,2). The booth is at (3,4), the start
+at (5,2), the chest at (21,14), the cart at (20,13) and the leave marker at (2,14),
+all as built. No new areas are needed.
+
+**The blocking problem.** The maze is one tile wide and has only 2 cycles, so a
+villager standing in a corridor can wall off the way on. The tablet rule (no one
+stuck) forbids it. Of its 127 tiles only 61 can be blocked without cutting off the
+rest, and only 5 are dead ends. The owner chose everyone in the maze, so the draft
+cuts **niches** into the outer hedge: one tile, opening onto a corridor tile that
+is already on the outer ring. A niche is a dead end of length one, so it never
+blocks and never joins two corridors. The long way round to the chest (45 tiles)
+runs along the top row and the right column, so most niches are met in order on the
+way. No two niches touch. The map grows by one hedge column on the east (23 to 24
+tiles wide) so the east niches have a back wall. Open for the owner: whether
+niches read well, or the maze should be widened instead.
+
+**Props:** the plaza bonfire at (2,8) (blocks); a bench at (1,7) (blocks); the booth
+and the lanterns as built. Hedge niches are cut at the 15 tiles below.
+
+**Player starts (8):** (1,11), (2,11), (3,11), (1,12), (2,12), (3,12), (1,13), (3,13),
+a block on the plaza below the bonfire. The path to the opening at (4,2) stays
+clear (x 2 and the rows above y 9), and the leave marker (2,14) stays free.
+
+**Villager tiles, odd years (draft for the owner to check):** the 22 town residents
+with Aldreth. No area resident attends (Rosmarin and Rundahl never come, the rest
+are at their own festivals).
+
+| Zone | Person | Tile |
+| --- | --- | --- |
+| Gate, at the maze mouth | Cuthbert | (3,2) |
+| Booth keeper | Odette | (2,4) |
+| Bench by the fire | Hester | (1,7) |
+| Children, round the fire | Fitch, Wren, Toby, Pim | (1,8), (3,8), (2,7), (2,9) |
+| Top niches, inn family first | Hattie, Podge, Linnet, Thistle | (6,1), (10,1), (12,1), (16,1) |
+| Top niches, store | Dorrie, Alder | (18,1), (20,1) |
+| East niches | Tilda, Rufus, Cordelia, Barnaby | (22,3), (22,5), (22,9), (22,11) |
+| Bottom niches | Bramwell, Walter, Aurelle | (20,15), (16,15), (8,15) |
+| Dead ends | Dunmar, Aldreth | (11,14), (15,12) |
+
+That is 7 on the plaza and 15 in the maze. The built sights stay: the three scares
+at (11,4), (13,8) and (15,10), and the talker at (17,12). The villager in a niche
+speaks one line when talked to from the corridor tile it faces. Hester leaves at
+20:30 (decision 6), which is half an hour after opening, so the bench is empty for
+most of the night.
+
+**Even years.** The larger even-year maze is still not designed, so its niches and
+the reward are open. The rule is the same: a niche per villager, never a corridor
+tile. In even years one child goes in with a talker, as Stardew's Vincent with Sam
+(proposal: Toby with Walter); the other three stay at the fire.
+
+Open: the villager lines (one each, a draft per person with the voice sheets), the
+booth's stock beyond the built three items, the even-year maze and its niches, the
+reward chest items, whether Hester should be placed at all after 20:30, and whether
+the gate needs Cuthbert (he only greets).
+
+## Hat Parade on the Hearthwell street (drafted 2026-11-11, owner answered the setup)
+
+Date: Spring 10. Opens 12:00, closes 18:00, ends 22:00 (`festivals.json`, the day
+hours). Owner answers: the player **walks the route in the line** (a slow march, a
+hat worn, nothing to win or fail); **all the villagers march from 14:00 to 15:00
+and stand by the square otherwise**. Stardew has no walking festival; its Flower
+Dance is a fixed dance and the festival ends after it (saved Flower Dance page),
+which our parade does not copy (SC-127).
+
+Place: the Hearthwell map's festival variant. The square x 64 to 80, y 54 to 70
+holds the crowd, and the middle street y 60 to 64 carries the march west to the
+turn and back. The `hat-parade` entry in `festivals.json` already has the zone
+x 14 to 80, y 54 to 70.
+
+**The march.** Out and back, along the same street, because the owner wants the
+crowd at the square before and after. At 14:00 the line forms at the square's west
+mouth (64,61) and walks west along the **out lane y 61** to the turn at (48,61),
+just west of the main bridge, crosses to the **back lane y 63** and walks east to
+the square mouth (64,63) by 15:00. Rows y 60, 62 and 64 stay free for onlookers and
+players, so a player is never on a lane. The marchers do not stop for a player
+(they pass through the player's tile). The line, from the head: Cuthbert, the four
+children, then the other 17 in the same order as the table below. Placeholder
+numbers: 48 tiles of walking in 60 game minutes is a slow march, to tune in play.
+
+**The player's part.** Wear any hat (the Parade Ribbon is free the first time,
+built). Step onto the line's start, walk the street to the turn marker (48,62) and
+back to the square before 15:30, and talk to Cuthbert at (66,65). Once a year this
+gives a small friendship gain with everyone who marched, bigger the more hats the
+player owns (the numbers are open). A player who skips it loses nothing, and the
+counter works either way (the three hats at 300, 500 and 400g, as built).
+
+**Props (new):** the hat counter at x 74 to 75, y 56 (2 tiles, blocks, the built
+parade counter); a well at (72,57) (blocks); two benches at (77,58) and (78,58)
+(block). Bunting along both sides of the street, a banner at the turn and ribbons on
+the lamp posts are decoration only. The cart stop (66,58) stays.
+
+**Player starts (8):** (2,62) to (5,62) and (2,63) to (5,63), a block just inside
+the farm exit. The `from_farm` entry (3,61) stays clear. The player walks the 60
+tiles from here to the square (decision 11), so the farm invitation says to leave
+early.
+
+**Standing tiles, 12:00 to 14:00 and 15:00 to 18:00 (draft for the owner to
+check; every tile is free ground off the street):** the 22 town residents with
+Aldreth. No area resident attends.
+
+| Zone | Person | Tile |
+| --- | --- | --- |
+| Host, leads the march | Cuthbert | (66,65) |
+| Hat counter | Cordelia, Barnaby | (74,55), (75,55) |
+| North row, inn family | Hattie, Podge, Linnet, Thistle | (68,58) to (71,58) |
+| North row, store | Odette, Dorrie, Alder | (73,58), (74,58), (75,58) |
+| North edge, trades | Tilda, Rufus, Bramwell, Aurelle, Dunmar | (66,56) to (70,56) |
+| Benches | Hester, Walter | (77,57), (78,57) |
+| By the north wall | Aldreth | (79,56) |
+| Children, south half | Fitch, Wren, Pim, Toby | (70,66), (72,66), (74,66), (76,66) |
+
+The 17 marchers after the children are, in order: Hattie, Podge, Linnet, Thistle,
+Odette, Dorrie, Alder, Tilda, Rufus, Bramwell, Aurelle, Dunmar, Cordelia, Barnaby,
+Walter, Aldreth, Hester. Hester goes home at 20:30 (decision 6), long after the
+march. The route data is a waypoint list per person (the note 79 data shape): stand
+tile, then the out lane tiles, the turn, the back lane tiles, the stand tile.
+
+Open: the friendship numbers and the hat-count scaling, the exact march speed,
+whether marchers may pass through a player or wait (a jam is possible on a tablet),
+the unnamed hats the villagers wear (the 28 in `hats.json` are the player's), the
+lines, and whether the turn marker needs a sign. The well and bench tiles (72,57),
+(77,58) and (78,58) need checking against the Hearthwell square when it is drawn.
