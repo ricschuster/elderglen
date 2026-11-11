@@ -60,6 +60,51 @@ and unchecked (register rows SC-106 to SC-111 in note 54).
     then resumes. The tap area on a moving person is generous (tablet), but
     this does not change the pause rule.
 
+## Shop hours (decided with the owner on 2026-11-10)
+
+The day runs 6:00 to 26:00 (2 am). Checked against saved Stardew shop pages
+(SC-107): a shop has counter hours and longer building hours, closes on a fixed
+weekday, shuts on festival days, and the closed day of Pierre and Clint ends
+after the Community Center. Rules, each the Stardew way (owner):
+
+1. **Counter hours and door hours differ.** The keeper leaves the counter at
+   closing and goes home. The door stays open until the door time, so the player
+   can walk in and look but not buy. After door time the interior locks (rule 5).
+2. **One closed weekday per shop.** The door and the Social tab entry show it.
+   Festival hours shut every shop (rule 4 of "Decisions").
+3. **Rain opens some shops on their closed day (mixed by shop):** the sawmill
+   and carpenter, the delta fisher and the Forest keeper. Every other shop stays
+   shut on a rainy closed day.
+4. **The general store and the smithy open every day** once the last ring 1 hall
+   project is done (the Stardew "Key to the Town" case). Others keep their day.
+5. **Area counters:** the Forest farmstead and the delta fisher have hours and a
+   closed day. The Mountain forge, the Beach elf's stall and the Quarry dwarf
+   are open daily with long hours, and stand at the counter by their route.
+
+Draft table (numbers are placeholders, changed in data, not code):
+
+| Place | Counter | Door open until | Closed | Opens in rain |
+| --- | --- | --- | --- | --- |
+| General store | 9:00 to 17:00 | 21:00 | Wednesday | no |
+| Smithy | 9:00 to 16:00 | 19:00 | Friday | no |
+| Sawmill and carpenter | 9:00 to 17:00 | 20:00 | Tuesday | yes |
+| Hatter | 10:00 to 17:00 | 19:00 | Sunday | no |
+| Library | 10:00 to 18:00 | 20:00 | Monday | no |
+| Healer | 9:00 to 17:00 | 20:00 | Saturday | no |
+| Inn and kitchen | 12:00 to 24:00 | 24:00 | Thursday | no |
+| Outpost post counter | 8:00 to 18:00 | 20:00 | Sunday | no |
+| Forest farmstead | 9:00 to 16:00 | 18:00 | Monday | yes |
+| Delta fisher | 9:00 to 17:00 | 17:00 | Saturday | yes |
+| Mountain forge | 9:00 to 19:00 | none | daily | n/a |
+| Beach elf's stall | 10:00 to 18:00 | none | daily | n/a |
+| Quarry dwarf | 8:00 to 20:00 | none | daily | n/a |
+
+The Long Table has no fixed hours: the reeve opens it for hall business. Closed
+days are spread so that no weekday has more than two Hearthwell closures.
+Data: a `hours` block per counter (`open`, `close`, `doorClose`, `closedDay`,
+`rainOpen`, `dailyAfterHall`), read by one pure function with the weekday and
+weather, unit tested.
+
 ## Data shape (to build)
 
 - One entry per person: `default` route, `weekday` overrides keyed by weekday,
@@ -137,8 +182,8 @@ Also off limits: Tolkien's dwarf and elf names and the Norse dwarf-name list
    stays the people's name, not a surname). No ages shown, only age bands
    (child, young adult, adult, elder), and no ageing over the years.
 2. **Birthdays**: done, see note 61 "Birthdays" (decided 2026-11-10).
-3. Shop hours and closed days per shop, and the first routes, once the names
-   exist.
+3. Shop hours and closed days: done, see "Shop hours". The first routes
+   (default and rain for each of the 30) are next.
 
 ## Stardew checks
 
