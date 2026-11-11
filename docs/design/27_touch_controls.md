@@ -73,6 +73,28 @@ Owner chose option A:
   `src/core/` (free of Phaser); a tablet check of a 4 by 4 plot, tilled, planted
   and watered by taps and drags.
 
+## Tap makes the Action button obsolete (decided 2026-11-11, not built)
+
+In the tap-to-move scheme the Action button goes, as the Use button did. Every
+job it does gets a tap target. Owner answers, 2026-11-11 (Stardew's saved Mobile
+Controls page says only "Tap on items to action them" and that tapping an NPC,
+animal or pet walks you next to them and interacts; eating and the horse are not
+on it, SC-125 and SC-126):
+
+- **Services, doors, talking, chests.** Already a tap: walk beside it and run
+  Action. Unchanged.
+- **Ripe crop, forage item, fruit on a tree.** A tap walks beside it and runs
+  Action, whatever is held (a hoe or can included). The soil-work rule above
+  still decides tiles with no crop; a ripe crop is a harvest first.
+- **Eating.** Tap your own farmer to eat the held food. With nothing edible held
+  the tap only walks (the farmer is under the finger, so nothing moves).
+- **The horse.** Tap the horse to mount. Tap your own farmer to get off. The
+  "Press Action to get off" message says "Tap yourself to get off" in this
+  scheme.
+- **The stick scheme keeps its Action button.** Nothing else changes there.
+- **Test.** Unit test for what a tap on each of these tiles resolves to (in
+  `src/core/`); a tablet check of harvesting a plot, eating and riding by taps.
+
 ## Open questions
 
 - Checked on a real tablet (#59, #63) before either scheme is called done. The
