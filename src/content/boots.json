@@ -1,0 +1,44 @@
+[
+  {
+    "id": "worn-boots",
+    "name": "Worn boots",
+    "defense": 1,
+    "immunity": 0,
+    "price": 150
+  },
+  {
+    "id": "padded-boots",
+    "name": "Padded boots",
+    "defense": 0,
+    "immunity": 1,
+    "price": 150
+  },
+  {
+    "id": "sturdy-boots",
+    "name": "Sturdy boots",
+    "defense": 2,
+    "immunity": 0,
+    "price": 300
+  },
+  {
+    "id": "delvers-boots",
+    "name": "Delver's boots",
+    "defense": 3,
+    "immunity": 0,
+    "price": 700
+  },
+  {
+    "id": "warded-boots",
+    "name": "Warded boots",
+    "defense": 2,
+    "immunity": 1,
+    "price": 700
+  },
+  {
+    "id": "ember-boots",
+    "name": "Ember boots",
+    "defense": 4,
+    "immunity": 2,
+    "price": 1600
+  }
+]

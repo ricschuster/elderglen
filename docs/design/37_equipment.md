@@ -128,6 +128,10 @@ opened from the hat box, not yet the Pack tab (no Pack tab exists). The magnet
 ring has no source until bundle 28 (The Catch) is built. Placeholder: which of
 the glow rings the Night Fishing bundle gives is the 10 radius one.
 
+## Built (boots, #598 leftovers)
+
+`src/content/boots.json`: six placeholder pairs (stat pairs from the tables above, names and prices ours), one boots slot in `Equipment`, saved as an optional `boots` field. The smith dwarf sells them for coin (150 to 1600g placeholder). Defense takes its number off every hit before Assist halves it, to a floor of 1 (placeholder rule). Immunity is stored and shown only, since no bad effect exists yet. Not built: boots as floor chest finds, tailoring, late pairs.
+
 ## Open
 
 - How Defense changes damage, and how Immunity is read, from a source or a

@@ -2,7 +2,8 @@ import Phaser from "phaser";
 import type { GameState } from "../core/save";
 import { COPPER_ORE } from "../core/ore";
 import { handOverCopper } from "../core/smith";
-import { buyWeapon, FORGED, weaponPrice } from "../core/combat";
+import { buyBoots, buyWeapon, FORGED, weaponPrice } from "../core/combat";
+import { BOOTS } from "../core/equipment";
 import { oreRows } from "./ore-rows";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
@@ -84,7 +85,7 @@ export class SmithScene extends Phaser.Scene {
           },
         ],
       });
-    rows.push(...this.weaponRows());
+    rows.push(...this.weaponRows(), ...this.bootsRows());
     this.menu.setRows(rows);
   }
 
@@ -109,6 +110,28 @@ export class SmithScene extends Phaser.Scene {
         ],
       };
     });
+  }
+
+  /** Boots for coin (placeholder source, note 37). */
+  private bootsRows(): Row[] {
+    const g = this.state;
+    return BOOTS.map((b) => ({
+      label: b.name,
+      detail: `${b.price}g, defense ${b.defense}, immunity ${b.immunity}`,
+      dim:
+        g.money < b.price ||
+        g.inventory.count(b.id) > 0 ||
+        g.equipment.wornBoots() === b.id,
+      buttons: [
+        {
+          text: "Buy",
+          run: () =>
+            this.say(
+              buyBoots(g, b.id) ?? `She hands you ${b.name.toLowerCase()}.`,
+            ),
+        },
+      ],
+    }));
   }
 
   private close(): void {

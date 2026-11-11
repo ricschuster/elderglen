@@ -1,5 +1,6 @@
 import weaponData from "../content/weapons.json";
 import { BUNDLES } from "./bundles";
+import { bootsById } from "./equipment";
 import { itemById } from "./items";
 import { splitQuality } from "./quality";
 import type { Creature } from "./creatures";
@@ -50,9 +51,11 @@ export class Health {
 
   /**
    * Take a hit. Nothing happens during grace. Assist halves the hit (rounded up,
-   * so a hit is never free). Returns the health actually lost.
+   * so a hit is never free). Defense from boots comes off first, to a floor of
+   * 1 (placeholder rule, note 37). Returns the health actually lost.
    */
-  hurt(amount: number, assist = false): number {
+  hurt(amount: number, assist = false, defense = 0): number {
+    amount = Math.max(1, amount - defense);
     if (this.grace > 0 || this.down) return 0;
     const lost = Math.min(
       this.current,
@@ -208,6 +211,18 @@ export function buyWeapon(g: GameState, id: string): string | undefined {
   if (g.money < w.price) return "Not enough money.";
   if (!g.inventory.add(id)) return "Your backpack is full.";
   g.money -= w.price;
+  return undefined;
+}
+
+/** The dwarf sells boots for coin (placeholder source, note 37). Returns an error line, or undefined when bought. */
+export function buyBoots(g: GameState, id: string): string | undefined {
+  const b = bootsById(id);
+  if (!b) return "She does not sell that.";
+  if (g.inventory.count(id) > 0 || g.equipment.wornBoots() === id)
+    return "You already have a pair.";
+  if (g.money < b.price) return "Not enough money.";
+  if (!g.inventory.add(id)) return "Your backpack is full.";
+  g.money -= b.price;
   return undefined;
 }
 
