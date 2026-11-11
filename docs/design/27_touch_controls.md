@@ -47,7 +47,7 @@ away in options.
   beside the toolbar (tap-to-move scheme) or takes the action button's place
   (stick scheme).
 
-## Tap uses the held tool when it fits (decided 2026-11-11, not built)
+## Tap uses the held tool when it fits (decided 2026-11-11, built 2026-11-11)
 
 Found on the first tablet play (2026-11-11): a tap one tile away tilled, a tap
 two tiles away only walked, so a plot could not be worked by tapping. Stardew's
