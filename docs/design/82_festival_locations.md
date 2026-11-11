@@ -100,6 +100,12 @@ feast. `festivalAreaShut` (decision 12) is a pure helper, not yet wired to the e
 it shuts only the festival zone (a placeholder for the open point). No maps,
 activities or routes yet.
 
+Wired (2026-11-11): `festivalStepShut` and `festivalShutLine` in core; `FarmScene`
+blocks area exits whose entry lands in a shut zone and blocks walking onto shut
+zone tiles on the same map (Hearthwell street), with a placeholder message. A
+player already inside is never blocked. The hall is treated as not restored until
+that is tracked. Not wired: the farm sign's direct trip to the green or hedge.
+
 Register: SC-127 added to note 54 (which place Stardew uses for each festival,
 and who skips). Check by the saved Calendar page.
 

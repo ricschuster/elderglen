@@ -143,6 +143,44 @@ export function festivalAreaShut(
   return p.map === mapId && inZone(p.zone, x, y);
 }
 
+/** Where the player stands: a map and a tile. */
+export interface MapTile {
+  map: string;
+  x: number;
+  y: number;
+}
+
+/**
+ * Whether the player may not step from `from` to `to` because `to` is in a
+ * festival place that is not open yet (note 82 decision 12). A player already
+ * inside the shut zone is never blocked, so nobody is stranded, and moving
+ * within the zone stays allowed. A missing `from` counts as outside.
+ */
+export function festivalStepShut(
+  day: number,
+  minutes: number,
+  from: MapTile | undefined,
+  to: MapTile,
+  hallRestored = false,
+): boolean {
+  if (!festivalAreaShut(day, minutes, to.map, to.x, to.y, hallRestored))
+    return false;
+  const inside =
+    from !== undefined &&
+    festivalAreaShut(day, minutes, from.map, from.x, from.y, hallRestored);
+  return !inside;
+}
+
+/** The placeholder line shown at a shut festival place (opening time of the day's festival). */
+export function festivalShutLine(day: number): string {
+  const f = festivalDayToday(day);
+  if (!f) return "";
+  const h = Math.floor(f.opens / 60);
+  const m = f.opens % 60;
+  const when = `${h % 12 === 0 ? 12 : h % 12}${m ? `:${String(m).padStart(2, "0")}` : ""} ${h < 12 ? "am" : "pm"}`;
+  return `Setting up for the ${f.name}. Opens at ${when}.`;
+}
+
 /** True while the festival is open at this time on its day. */
 export function festivalOpen(f: Festival, minutes: number): boolean {
   return minutes >= f.opens && minutes < f.closes;

@@ -6,6 +6,8 @@ import {
   counterProblem,
   festivalOn,
   festivalAreaShut,
+  festivalShutLine,
+  festivalStepShut,
   festivalDayToday,
   festivalOpen,
   festivalPlace,
@@ -323,5 +325,67 @@ describe("festival areas are shut before opening (note 82, decision 12)", () => 
     expect(
       festivalAreaShut(dayOf("winter", 16), 600, "hearthwell", 70, 58),
     ).toBe(false);
+  });
+});
+
+describe("stepping into a shut festival place (note 82 decision 12)", () => {
+  const frost = dayOf("winter", 8);
+  const out = { map: "delta", x: 5, y: 5 };
+  const lake = { map: "forest", x: 46, y: 22 };
+
+  it("blocks entering before opening and allows it at opening", () => {
+    expect(festivalStepShut(frost, 11 * 60, out, lake)).toBe(true);
+    expect(festivalStepShut(frost, 12 * 60, out, lake)).toBe(false);
+    expect(festivalStepShut(frost, 11 * 60, undefined, lake)).toBe(true);
+  });
+
+  it("never blocks a player already inside, or one heading outside", () => {
+    const inside = { map: "forest", x: 47, y: 22 };
+    expect(festivalStepShut(frost, 11 * 60, inside, lake)).toBe(false);
+    expect(festivalStepShut(frost, 11 * 60, inside, out)).toBe(false);
+  });
+
+  it("stays open after closing and on other days", () => {
+    expect(festivalStepShut(frost, 23 * 60, out, lake)).toBe(false);
+    expect(festivalStepShut(frost + 1, 8 * 60, out, lake)).toBe(false);
+  });
+
+  it("never shuts the three-day Night Market", () => {
+    for (const d of [16, 17, 18])
+      expect(
+        festivalStepShut(dayOf("winter", d), 8 * 60, out, {
+          map: "hearthwell",
+          x: 70,
+          y: 58,
+        }),
+      ).toBe(false);
+  });
+
+  it("shuts the place of every day festival and no other tile", () => {
+    for (const f of FESTIVALS.filter((x) => !x.evening)) {
+      const day = dayOf(f.season, f.day);
+      const { map, zone } = f.place;
+      expect(
+        festivalStepShut(day, f.opens - 1, out, { map, x: zone.x, y: zone.y }),
+      ).toBe(true);
+      expect(
+        festivalStepShut(day, f.opens, out, { map, x: zone.x, y: zone.y }),
+      ).toBe(false);
+      expect(
+        festivalStepShut(day, f.opens - 1, out, {
+          map,
+          x: zone.x + zone.w,
+          y: zone.y,
+        }),
+      ).toBe(false);
+    }
+  });
+
+  it("words the line with the festival's name and opening time", () => {
+    expect(festivalShutLine(frost)).toBe(
+      "Setting up for the Frostday. Opens at 12 pm.",
+    );
+    expect(festivalShutLine(dayOf("summer", 24))).toContain("5 pm");
+    expect(festivalShutLine(frost + 1)).toBe("");
   });
 });
