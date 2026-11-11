@@ -131,6 +131,8 @@ Art, in M3d:
 with the Secret Woods (six daily stumps and the log). Mahogany was reopened 2026-11-10: player-planted,
 seed from the Secret Woods (note 36 "Mahogany"), built 2026-11-10 (#724) except tapping and the monster drop.
 
+Session 2026-11-11 part eighteen (handoff 2026-11-11s): note 85 owner checked (door 2 wide, frame shift accepted, renovations in M3b, three openings widened to 5 rows), build issues #832 to #838 filed, the 33 cask cap removed (SC-144). Next: step 4 or 5, or the house build.
+
 Session 2026-11-11 part seventeen (handoff 2026-11-11r): design only. Step 11 is drafted in note 85 with a Tiled draft: the spouse room right of the bedroom from tier 1, the farm corner at x 70 to 71, y 4 to 11, the cabin is the farmhouse map. Next: the owner checks the sketch, then step 4 (a pilot interior) or step 5.
 
 Session 2026-11-11 part sixteen (handoff 2026-11-11q): design only. Owner checked the festival tiles, then step 3 is settled in note 84 (heart event presence rule, spouse routes, wedding on the green). Next: step 11 (farmhouse and cabin interiors, with the spouse corner and bed route) or step 4 (a pilot interior).
