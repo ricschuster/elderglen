@@ -21,7 +21,7 @@ import type { CreatureSave } from "./creatures";
 import { FruitTrees, fruitTreeById, type PlacedFruitTree } from "./fruittrees";
 import { Sprinklers, sprinklerById, type PlacedSprinkler } from "./sprinklers";
 import { QUALITIES, type Quality } from "./quality";
-import { Casks, CASK_LIMIT, caskTakes, type PlacedCask } from "./cask";
+import { Casks, caskTakes, type PlacedCask } from "./cask";
 import { Machines, type MachineJob, type PlacedMachine } from "./machines";
 import { FarmCave, type CaveSave } from "./cave";
 import { machineById } from "./processing";
@@ -785,7 +785,7 @@ export function deserialize(text: string): GameState | undefined {
             : undefined,
       });
     }
-    g.casks.load(valid.slice(0, CASK_LIMIT));
+    g.casks.load(valid);
   }
   if (Array.isArray(raw.rocks)) g.rocks.load(rocksFrom(raw.rocks));
   const mines = raw.mines;

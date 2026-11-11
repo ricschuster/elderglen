@@ -13,8 +13,11 @@ import type { GameState } from "./save";
  */
 export const CASK = "cask";
 
-/** How many casks the cellar holds. Stardew's cellar has 33, in 3 rows of 11 (SC-39). */
-export const CASK_LIMIT = 33;
+/*
+ * There is no cap on the number of casks: floor space is the limit, as in
+ * Stardew (its cellar comes with 33 but takes up to 125 with paths left, saved
+ * Cask page, read 2026-11-11, SC-144). Ours has 229 free tiles.
+ */
 
 /**
  * Days in the cask before a good reaches silver and gold, counted from the day
@@ -82,8 +85,7 @@ export class Casks {
   }
 
   add(c: PlacedCask): boolean {
-    if (this.placed.has(key(c.x, c.y)) || this.placed.size >= CASK_LIMIT)
-      return false;
+    if (this.placed.has(key(c.x, c.y))) return false;
     this.placed.set(key(c.x, c.y), c);
     return true;
   }
@@ -162,7 +164,6 @@ export function placeCask(
 ): Outcome {
   if (g.day.over) return fail("exhausted");
   if (g.inventory.count(CASK) < 1) return fail("no cask");
-  if (g.casks.count >= CASK_LIMIT) return fail("cellar full");
   if (
     map.isBlocked(x, y) ||
     map.exitAt(x, y) ||

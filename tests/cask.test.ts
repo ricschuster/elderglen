@@ -3,7 +3,6 @@ import { maps } from "../src/content/maps";
 import { categoryOf, DYE_INPUTS, dyeOf } from "../src/core/artisan";
 import {
   CASK,
-  CASK_LIMIT,
   caskQuality,
   caskStatus,
   caskTakes,
@@ -54,14 +53,16 @@ describe("the cask", () => {
     expect(g.casks.count).toBe(1);
   });
 
-  it("holds at most 33 casks", () => {
+  it("holds Stardew's most, 189 casks, with no cap on the count", () => {
     const g = newGame();
-    g.inventory.add(CASK, 1);
-    for (let i = 0; i < CASK_LIMIT; i++) g.casks.add({ x: i, y: 0 });
-    expect(placeCask(g, cellar(), FREE.x, FREE.y)).toEqual({
-      ok: false,
-      reason: "cellar full",
-    });
+    const m = cellar();
+    g.inventory.add(CASK, 189);
+    let placed = 0;
+    for (let y = 0; y < m.height && placed < 189; y++)
+      for (let x = 0; x < m.width && placed < 189; x++)
+        if (placeCask(g, m, x, y).ok) placed++;
+    expect(placed).toBe(189);
+    expect(g.casks.count).toBe(189);
   });
 
   it("takes wine, mead and cheese only", () => {

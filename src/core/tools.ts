@@ -276,7 +276,6 @@ const REASONS: Record<string, string> = {
   "cask empty": "The cask is empty.",
   "cask not empty": "Take the good out of the cask first.",
   "cask will not take that": "A cask takes wine, mead and cheese.",
-  "cellar full": "The cellar has no room for another cask.",
   "no cask": "Out of casks.",
   "no cask here": "No cask here.",
   "machine will not take that": "It cannot use that.",

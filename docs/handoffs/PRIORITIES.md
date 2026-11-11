@@ -115,7 +115,7 @@ Layout work, by track:
 - Step 11: Farmhouse and cabin interiors. **Drafted 2026-11-11** (note 85, Tiled draft in
     `docs/design/drafts/house-draft/`): the shared spouse room right of the bedroom from
     tier 1, the hall, fixtures and marks, the furnished nursery, wider connectors and three stairs from the Stardew screenshots, all eight renovations, a picture per tier and per renovation, the farm's spouse corner, the cabin as the
-    farmhouse map. Waits for the owner's check of the sketch, then a build issue.
+    farmhouse map. Owner checked 2026-11-11 (round 3: three openings widened to 5 rows, frame shift accepted, renovations in M3b); build issues next.
 - Step 12: Mines, after combat's leftovers (#598: boots, special floors, lamps, rest-camp
     supplies, rare creatures).
 

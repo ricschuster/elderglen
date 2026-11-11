@@ -39,7 +39,9 @@ room is 64 px a tile, the tier 1 and tier 2 images about 39 and 35 px a tile).
 - **The cellar stairs** are a notch in the bottom wall under the kitchen, about
   2 wide.
 - **The cellar** is a stone room with 33 casks in 3 rows of 11, three pillars and
-  a stairs notch in the top left corner. The saved page says it can hold up to 189.
+  a stairs notch in the top left corner. The saved Farmhouse page says it can hold up to
+  189 casks; the saved Cask page (2026-11-11) says 125 fit with paths left to every one,
+  and a full cellar is possible (SC-144). There is no count cap in Stardew, only space.
 - **Renovations (saved Farmhouse page):** all unlock after the second upgrade, are
   completed instantly, and can be refunded in full at any time if the added area is
   not occupied. Prices: remove crib free, open bedroom 10,000g, southern room
@@ -78,11 +80,14 @@ room is 64 px a tile, the tier 1 and tier 2 images about 39 and 35 px a tile).
 4. **Connectors are bigger, the kitchen is open, there are more ways upstairs, and
    every Stardew renovation room is designed (owner, 2026-11-11, round 2).** The
    connector sizes, the three stairs and the eight renovations below follow.
-5. **Proposal, to confirm: the interior door is 2 wide, the farm door stays 1 wide.**
-   The owner first chose 1 wide as "Stardew, from memory". The screenshot shows the
-   interior notch is about 2 tiles, which also fits "connectors bigger" and the
-   crowd rule of note 81 decision 12. The draft uses 2 wide inside and the 1 tile
-   door at (62, 11) on the farm. SC-140 is answered from the screenshot.
+5. **Door and connector widths (owner, 2026-11-11, round 3).** The interior door is
+   2 wide and the farm door stays 1 wide (Stardew, from the screenshot: the owner's
+   round 1 "1 wide" was from memory). The owner said stairs up and down are 2 wide
+   and openings on one floor can be wider, then circled three openings on the
+   picture to widen: the spare room to the nursery, the nursery to the corner room,
+   and the bedroom to the spouse room. Those three are now 5 rows tall. Every other
+   connector, stair and the door stay as drawn. SC-140 is answered from the
+   screenshot.
 
 ## Checked on the saved Cabin page (2026-11-11)
 
@@ -111,8 +116,8 @@ furniture sits on any of them.
    The exit and entry objects grow with it.
 4. The tier 2 stairs at (6, 10), 1 wide, **close again** (the one change that turns
    a built opening back into wall). Three 3 wide stairs replace it (see "Stairs").
-5. The opening between the spare room and the nursery grows from 1 row to 3
-   (x 16, y 4 to 6).
+5. The opening between the spare room and the nursery grows from 1 row to 5
+   (x 16, y 3 to 7).
 6. The kitchen fixtures, TV and hearth are not built yet and take the places below.
 
 ## The farmhouse plan
@@ -177,15 +182,15 @@ the hill, so the outside footprint does not change (note 41 decision 3, SC-08).
 
 ### Connectors
 
-Every connector is at least 3 wide, as the screenshots and the crowd rule suggest.
+Every connector is at least 3 wide, as the screenshots and the crowd rule suggest. The three circled by the owner (round 3) are 5.
 "Built" is today's map. "Stardew" is read from the screenshots, to within a tile.
 
 | Connector | Tiles | Size | Built | Stardew |
 | --- | --- | --- | --- | --- |
 | Kitchen and start room | x 10 to 11, y 13 to 20 | open, 8 rows | 1 row | no wall |
 | Start room and bedroom | x 21 to 23, y 14 to 17 | 4 rows, 3 thick | 1 row | about 4 rows, 2 thick |
-| Spare room and nursery | x 16, y 4 to 6 | 3 rows | 1 row | about 2 to 3 rows |
-| Bedroom and spouse room (hall) | y 17 to 19 | 3 rows | not built | not read |
+| Spare room and nursery | x 16, y 3 to 7 | 5 rows | 1 row | about 2 to 3 rows |
+| Bedroom and spouse room (hall) | y 16 to 20 | 5 rows | not built | not read |
 | Stairs A, B, C | 3 wide each | 3 wide | one, 1 wide | one, about 2 wide |
 | Interior door | x 13 to 14, y 21 | 2 wide | 1 | about 2 |
 | Cellar stairs | x 3 to 5, y 18 to 20 | 3 wide | 3 | about 2 |
@@ -232,7 +237,7 @@ fixtures are fixed. Their art is placeholder.
 | --- | --- | --- |
 | 0 | The start room, the 2 wide door | `ground`, `collision` |
 | 1 | Kitchen and bedroom, the open kitchen, the 4 row passage, the double bed, the stove, the fridge and sink | `-t1` |
-| 2 | The upper band, three stairs, the 3 row door between the upper rooms, both rooms widened by 2, the nursery fixtures | `-t2` |
+| 2 | The upper band, three stairs, the 5 row door between the upper rooms, both rooms widened by 2, the nursery fixtures | `-t2` |
 | 3 | The cellar stairs and the cellar | `markers-t2` (flag `cellar-open`) |
 | `spouse` (marriage, any tier from 1) | The spouse room and its hall | `when: spouse` |
 | `reno-...` (tier 2 and up) | One renovation each, see below | `when: reno-...` |
@@ -245,7 +250,7 @@ The `spouse` and `reno-...` conditions are names in `houseHolds` beside
 The bedroom's east wall is column 32 at tier 1 and column 34 at tier 2, so the
 spouse room cannot sit on a wall that moves. It stands at a fixed place, interior
 columns 36 to 45, and the hall between them changes. At tier 2 the hall is the
-wall tiles (34 to 35, 17 to 19). At tier 1 it is a corridor (32 to 34, 17 to 19)
+wall tiles (34 to 35, 16 to 20). At tier 1 it is a corridor (32 to 34, 16 to 20)
 with a wall above and below. The tier 2 widening turns the corridor's walls into
 bedroom floor, as it does for the rest of the east wall, so no tile moves and the
 spouse room never shifts.
@@ -272,7 +277,7 @@ Stardew's renovations, designed for ours. Placeholders at Stardew's prices.
 | --- | --- | --- | --- | --- | --- | --- |
 | Open bedroom | 10,000g | tier 2 | x 21 to 23, y 13 to 20 (the wall) | 3 by 8 added | the wall is gone, the bedroom and start room are one room | the same |
 | Southern room | 30,000g | tier 2 | x 24 to 33, y 22 to 31 | 10 by 10 | stair, 3 wide and 2 deep, x 27 to 29, y 21 to 22 | the same |
-| Corner room | 20,000g | tier 2 | x 36 to 46, y 1 to 9 | 11 by 9 | to the nursery, x 34 to 35, y 4 to 6 (3 rows); to the spouse room, stair x 40 to 42, y 10 (only while married) | violet |
+| Corner room | 20,000g | tier 2 | x 36 to 46, y 1 to 9 | 11 by 9 | to the nursery, x 34 to 35, y 3 to 7 (5 rows); to the spouse room, stair x 40 to 42, y 10 (only while married) | violet |
 | Expanded corner room | 100,000g | the corner room | north wing x 36 to 46, y -10 to 0; east wing x 48 to 52, y 2 to 7 | 11 by 11 and 5 by 6 added | the old top wall (row 0) and the east wall (x 47, y 2 to 7) open | violet |
 | Attic | 60,000g | tier 2 | x 2 to 14, y -10 to -2 | 13 by 9 | stair, 3 wide and 2 deep, x 7 to 9, y -1 to 0, up from the spare room | dark brown |
 | Cubby | 10,000g | tier 2 | x 16 to 20, y 22 to 24 | 5 by 3 | the start room's south wall opens, x 16 to 20, y 21 | the same |
@@ -345,7 +350,7 @@ off in Tiled.
 | `house-draft-tier0-preview.png` | The start room alone, 11 by 10, the 2 wide door |
 | `house-draft-tier1-preview.png` | Tier 1: the open kitchen, the start room, the 4 row passage, the bedroom |
 | `house-draft-tier2-preview.png` | Tier 2 (and tier 3, which only adds the cellar stairs): three stairs, the nursery |
-| `house-draft-tier1-spouse-preview.png` | Tier 1 with the spouse room and its 3 row hall |
+| `house-draft-tier1-spouse-preview.png` | Tier 1 with the spouse room and its 5 row hall |
 | `house-draft-tier2-spouse-preview.png` | Tier 2 with the spouse room, 47 by 22 |
 | `house-draft-all-renovations-preview.png` | Everything on: tier 2, the spouse room and all eight renovations, 74 by 44 |
 | `house-draft-reno-<name>-preview.png` | One per renovation (open bedroom, southern room, corner room, corner room expanded, attic, cubby, dining room, open dining room), the added tiles tinted yellow |
@@ -355,9 +360,9 @@ off in Tiled.
 
 No change. `cellar.json` is 19 by 16: a stone room, interior 17 by 14, the stairs
 up 3 by 3 in the top left corner (1 to 3, 1 to 3) and the entry at (4, 2). The player
-stands up to 33 casks on any free floor tile (#602, SC-39), so the room has no cask
-slots to draw. Stardew's page says its cellar can hold as many as 189, ours stays at
-33. The cellar has no soil, no furniture and no chests.
+stands casks on any free floor tile (#602, SC-39), so the room has no cask slots to
+draw. The count has no cap, only space, as in Stardew (SC-144): ours has 229 free
+tiles against Stardew's 125 with paths, so the room is big enough as it is. The cellar has no soil, no furniture and no chests.
 
 ## Marks for the routes
 
@@ -447,16 +452,16 @@ Settled above (decision 2). In detail:
 | Map | Layout done | Art done | Notes |
 | --- | --- | --- | --- |
 | `house` (start, tiers 1 and 2, cellar stairs) | Built, placeholder; the connectors change | No | This note changes six things in it |
-| `house` spouse room and hall | Drafted, owner check pending | No | New |
-| `house` renovations (eight) | Drafted, owner check pending | No | New |
-| `farm` spouse corner | Drafted, owner check pending | No | Farm map from #776 |
+| `house` spouse room and hall | Drafted, owner checked 2026-11-11 | No | New |
+| `house` renovations (eight) | Drafted, owner checked 2026-11-11, build in M3b with the house | No | New |
+| `farm` spouse corner | Drafted, owner checked 2026-11-11 | No | Farm map from #776 |
 | `cellar` | Built, placeholder | No | Not changed here |
 
 ## Build work (no issues filed yet)
 
 1. **The frame shift and the connector changes** in `house.json`: shift every tile
    and object by (20, 11), open the kitchen wall, widen the bedroom passage to 4
-   rows, the spare and nursery door to 3 rows, the door to 2 wide, close the old
+   rows, the spare and nursery door to 5 rows, the door to 2 wide, close the old
    stairs at (6, 10) and cut stairs A, B and C. `HOUSE_LAYOUT` 5 and the migration.
    Tests: nothing walkable at tier 0 or 1 is lost, every tile walkable before is
    still walkable, and a layout 4 save moves by (20, 11).
@@ -483,10 +488,11 @@ Settled above (decision 2). In detail:
 
 ## Open
 
+Decided 2026-11-11 (round 3): the one more frame shift to 74 by 44 is accepted, and
+the renovations come in M3b with the house.
+
 - SC-143: what an expansion or the open rooms need first in Stardew, and whether a
   cabin can be renovated. Ours is a proposal.
-- Whether the renovations come in M3b or later. Their layers are cheap, but the
-  carpenter's tab and the refund rule are build work.
 - The looks of the added rooms, the fixtures, the nursery and the 14 prop sets
   (the art pass, #58, and the voice sheets).
 - The look and the number of children, and what they do day to day (note 12 still
