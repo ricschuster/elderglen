@@ -63,6 +63,8 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
 with the Secret Woods (six daily stumps and the log). Mahogany was reopened 2026-11-10: player-planted,
 seed from the Secret Woods (note 36 "Mahogany"), built 2026-11-10 (#724) except tapping and the monster drop.
 
+Session 2026-11-10 part ten (handoff 2026-11-10n): design only. Shop hours (note 79), default and rain routes for all 30 and weekday overrides (note 80) are settled. Next: season overrides and festival spots, then the reeve edits in notes 14, 50, 57 and 65, then #599. Build order unchanged.
+
 Session 2026-11-10 part nine (handoff 2026-11-10m): design only. Villager schedules (note 79), all 30 names, all 30 birthdays and the reeve are settled. Next: shop hours, first routes, then #599. Build order unchanged.
 
 Session 2026-11-10 part eight (handoff 2026-11-10i): note 54 question batch answered, Mahogany reopened and designed (#724). Build order unchanged.

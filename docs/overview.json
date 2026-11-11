@@ -555,6 +555,16 @@
           "s": "open",
           "t": "The sea elf: the haven elf's slot, the keepsake and token, whether she leaves or stays; the Homeward pin opens at 3 hearts, exact price still open (stall built #641 at a placeholder 1,500,000g, not yet gated by hearts)",
           "issue": 176
+        },
+        {
+          "s": "decided",
+          "t": "Villager schedules (not built, #599): timed routes with weekday, season, rain and festival variants, seven named weekdays, shop hours with one closed day each (store, smithy, sawmill, hatter, library, healer, inn, Outpost and two area counters), the inn as the evening meeting place, short routes for children and elders, one or two weekly town trips for six area residents, a Wednesday market, closed-day outings, all 30 named with birthdays, and the reeve as Hearthwell's leader. Default and rain routes for all 30 are drafted",
+          "ref": "80_villager_routes.md#Weekday overrides (decided 2026-11-10)"
+        },
+        {
+          "s": "open",
+          "t": "Villager routes: season overrides, festival spots, heart-event and spouse routes, and the closed-counters-per-weekday count; the Stardew rows SC-106, SC-108, SC-109 and SC-110 are unchecked",
+          "ref": "80_villager_routes.md#Open items"
         }
       ],
       "deps": ["valley-map", "dialogue"],
