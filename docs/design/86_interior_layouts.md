@@ -1,6 +1,6 @@
 # 86 Interior layouts: templates from Stardew's rooms (draft)
 
-Status: **the general store pilot is owner checked (2026-11-11, round 2: irregular footprint); the hut and the inn drafts and the other interiors wait** (note 81 decision 6).
+Status: **the general store pilot is owner checked (2026-11-11, round 2: irregular footprint); the sawmill, healer and smithy are drafted (batch 1 section), waiting for the owner; the hut and the inn drafts and the other interiors wait** (note 81 decision 6).
 Nothing here is built. This is step 4 of the layout track
 (`docs/handoffs/PRIORITIES.md`, note 81): interior layouts, with a Tiled draft of a
 pilot first. The pilot is the general store, plus two more templates (the one-room
@@ -264,6 +264,147 @@ note 77 asks for, with a 2 wide corridor down its west side, through a 2 row gap
 from the tap room. The inn just fits the 30 by 17 view (30 by 16), so nothing scrolls. Its tap room fits the 8 player rule with every aisle 2 wide, like
 the Saloon's open floor.
 
+## Owner answers and plan batch 1 (2026-11-11)
+
+Owner answers before drawing:
+
+1. **All six Hearthwell shops get a full home** behind the shop (living area, kitchen,
+   bedrooms): sawmill, healer, smithy, hatter, library and the inn. Stardew has no home
+   in the museum (from memory, not checked), so the library's is our own choice.
+2. **Stardew sized, scrolling allowed** (sawmill about 31 by 25, healer about 23 by 20,
+   library about 24 by 19, smithy about 15 by 20). This replaces the small sizes in the
+   table below.
+3. **Public rooms as Stardew:** a sawmill workshop, a clinic ward, one big library hall.
+   The smithy and the hatter are one shop room each, with the forge in the smithy's shop.
+4. **Burrows:** a bedroom for each person who needs one, plus a living room, a kitchen
+   and a pantry, so several rooms each, not one.
+5. **Bedrooms:** one per person, couples share (Stardew). Hatter siblings and the young
+   adults get one each. Every bedroom is gated at 2 hearts.
+6. **Huts:** the hermit's tower and the Outpost post room get their own layouts (tall,
+   as Stardew's tower and guild); the forge hut and the elf's house stay huts, each a
+   different shape.
+7. **Order:** rounds of three, checked each time. Batch 1 below. Batch 2 is the library,
+   the hatter and the farmstead keeper, batch 3 the three burrows, batch 4 the huts and
+   the inn redrawn.
+
+The drafts come from `docs/design/drafts/interiors-draft/gen.py` (plans in `plans.py`):
+rooms and passages as rectangles, walls made from the floor shape, and checks that every
+floor tile and mark is reachable from the entry with the gates shut and then open, and
+that each counter has player tiles in front. Run `python3 gen.py` there (needs Pillow).
+
+### Sawmill and carpenter (31 by 27)
+
+Tilda, Rufus and Wren live here. The shop (3 to 14, 14 to 21) has a 5 wide counter and
+the door notch; a workshop (16 to 28, 13 to 22) steps out to the east, by the mill wheel,
+with the saw bench, a planer and a log stack, through a 2 row opening. A passage north
+leads to the living area, with the parents' bedroom to the west and Wren's room north,
+both gated, and the kitchen to the east with its own pantry.
+
+```text
+          ######
+         ########
+         #BB..TT#
+         #BB....#
+ ######  #......#  #######
+######## #....XX# ############
+#.BB.SS###....XX###KKKKKKK#####
+#.BB...#####GG#####.......#SSS#
+#......#.......HHH#.......#..S#
+#......G..........#..TTT.....S#
+#..rrr.G.QQQQ........TTT.....S#
+#..rrr.#...rrrr...........#X..#
+#......#...rrrr...#.......#####
+##########..###################
+   #######..#####SSSSSSSSSSSS.#
+   #SSSSSS......#.............#
+   #............#...WWWW....XX#
+   #..CCCCC.....#...WWWW....XX#
+   #.........LL.............XX#
+   #Xrrrrr............rrr...XX#
+   #XrrrrrSSSS..#.....rrr.WW..#
+   #X.....SSSSXX#..TTT....WW..#
+   #..........XX#..TTT........#
+   ####..########.............#
+      #..#      ###############
+      #DD#
+      ####
+```
+
+### Healer's clinic and flat (22 by 23)
+
+Aurelle lives here alone. The waiting room has a 4 wide counter. A ward with four beds in
+pairs, with a screen between each pair, opens to its east. A short passage goes north to
+the flat: living area, kitchen with a herb pantry, and the gated bedroom to the north-east.
+
+```text
+ ####### ###
+#############
+#KKKKKKK#SSS#######
+#..........S########
+#TT........S.BB..SS#
+#TT.....#..S.BB....#
+####..######...rrr.#
+ #...HHH...G...rrr.#
+ #.........G.......#
+ #.QQQQ....##########
+ #..rrrr...###########
+ #..rrrr...#SSSSSSSSS#
+########..##.BB.S.BB.#
+#.SSSSSS...#.BB.S.BB.#
+#..........#.........#
+#..CCCC..L.....rrr...#
+#........L.....rrr...#
+#...rrrr...#.BB.S.BB.#
+#.QQ....QQ.#.BB.S.BB.#
+#####..###############
+    #..#
+    #DD#
+    ####
+```
+
+### Smithy and mender (21 by 26)
+
+Bramwell lives here alone. A tall plan: the shop room at the front with a 5 wide counter
+and ore bins, and the forge wing stepping east (furnace on the back wall, anvil,
+grindstone, coal). The home runs north through a passage: living area, a kitchen with a
+pantry to its west, and the gated bedroom to the east.
+
+```text
+ ### ######
+############ #######
+#SSS#KKKKKK##########
+#..........##.BB..SS#
+#.....TTT..##.BB....#
+#XX.#......##.......#
+#######..####.......#
+   #.....HHH#..rrrr.#
+   #........G..rrrr.#
+   #.QQQ....G..rrrr.#
+   #..rrrr..#.......#
+   #..rrrr..#########
+   #........#########
+   ####..#####..HHH.#
+   ####..#####......#
+   #SSS..SS........X#
+   #.......XXX..WW.X#
+   #.CCCCC.........X#
+   #...........WWrrX#
+   #Xrrrrr..LL...rr.#
+   #Xrrrrr..LL#######
+   #X.........#
+   ####..######
+      #..#
+      #DD#
+      ####
+```
+
+Checks (all pass): every floor tile and mark reachable with the gates open; with the
+gates shut only the bedrooms are unreachable (60 tiles at the sawmill, 31 at the
+healer's, 52 at the smithy); each counter has 4 or 5
+player tiles and the same number of keeper tiles. The 1 wide spots (for example the
+shop's back strip, the pantry's corner) are dead ends beside fixtures, never the only
+way through.
+
 ## The other interiors
 
 Each uses one of the three shapes, with its own furniture. Sizes are outer, with the
@@ -299,8 +440,9 @@ Final art waits for M3d (ADR 0012).
 | `general-store` | Drafted, waits for the owner | No | The pilot |
 | `fisher-hut` and the other huts | Template drafted, waits for the owner | No | One draft stands for five |
 | `inn` | Drafted, waits for the owner | No | |
-| `smithy`, `sawmill`, `hatter`, `library`, `healer`, `forest-farmstead` | Sizes and fixtures only; plans after the pilot is checked | No | |
-| `burrow-*` | Sizes and fixtures only | No | |
+| `sawmill`, `healer`, `smithy` | Drafted 2026-11-11 (batch 1), waits for the owner | No | |
+| `hatter`, `library`, `forest-farmstead` | Sizes and fixtures only; batch 2 of the plans | No | |
+| `burrow-*` | Sizes and fixtures only; several rooms each (owner, 2026-11-11 answers) | No | |
 | `hall` | Done, note 40 | No | Crowd rules only |
 
 ## Build work (no issues filed yet)
@@ -324,7 +466,7 @@ Final art waits for M3d (ADR 0012).
 - Whether the gated bedroom needs a heart level other than 2 per person, and how a
   closed bedroom door looks (note 61 decision 6 says 2, as in Stardew).
 - Other buildings' homes: the owner expects each to have its own layout, so the
-  smithy, sawmill, hatter, healer and the rest need their own rooms (round 2).
+  smithy, sawmill, hatter, healer and the rest need their own rooms (batches 1 to 4).
 - The widths and sizes are my sums from images at different scales, so the shop
   room's size is "about"; the owner can confirm in play.
 - The looks (cut corners, walls, windows) wait for the art pass (note 15).
