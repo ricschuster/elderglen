@@ -3,6 +3,7 @@ import {
   BUILD_DAYS,
   CELLAR_MAP,
   houseHolds,
+  HOUSE_SHIFT,
   resumeAt,
   houseHasCellar,
   houseVisibleTier,
@@ -15,6 +16,7 @@ import {
   WOOD,
 } from "../src/core/house";
 import { maps } from "../src/content/maps";
+import oldWalkable from "./fixtures/house-layout4-walkable.json";
 import { exitOpen } from "../src/core/map";
 import { festivalToday } from "../src/core/festivals";
 import { deserialize, newGame, serialize } from "../src/core/save";
@@ -55,6 +57,105 @@ describe("house tier shown", () => {
   });
 });
 
+/** The cells reachable from the door in the layout 4 map, in its own frame (before the shift). */
+const OLD_WALKABLE = oldWalkable as Record<string, string[]>;
+const oldCells = (tier: number) => {
+  const out: [number, number][] = [];
+  OLD_WALKABLE[`tier${tier}`]!.forEach((row, y) =>
+    [...row].forEach((c, x) => {
+      if (c === "#") out.push([x, y]);
+    }),
+  );
+  return out;
+};
+
+describe("house frame shift (layout 5, note 85)", () => {
+  const walk = (tier: number) => {
+    const m = maps.get("house", tier);
+    return m.reachable(m.entry("door")!);
+  };
+  const at = (x: number, y: number) =>
+    `${x + HOUSE_SHIFT.x},${y + HOUSE_SHIFT.y}`;
+
+  it("loses nothing walkable at tiers 0 and 1, shifted by (20, 11)", () => {
+    for (const tier of [0, 1]) {
+      const now = walk(tier);
+      for (const [x, y] of oldCells(tier)) expect(now.has(at(x, y))).toBe(true);
+    }
+  });
+
+  it("loses nothing walkable at tier 2 but the old stairs at (6, 10)", () => {
+    const now = walk(2);
+    for (const [x, y] of oldCells(2))
+      if (!(x === 6 && y === 10)) expect(now.has(at(x, y))).toBe(true);
+    expect(now.has(at(6, 10))).toBe(false);
+    expect(maps.get("house", 2).isBlocked(6 + 20, 10 + 11)).toBe(true);
+  });
+
+  it("opens the kitchen wall from tier 1, x 10 to 11 and y 13 to 20", () => {
+    const t1 = walk(1);
+    for (let y = 13; y <= 20; y++)
+      for (const x of [10, 11]) expect(t1.has(at(x, y))).toBe(true);
+    expect(walk(0).has(at(10, 13))).toBe(false);
+    expect(maps.get("house", 0).isBlocked(11 + 20, 13 + 11)).toBe(true);
+  });
+
+  it("widens the bedroom passage to 4 rows, x 21 to 23 and y 14 to 17", () => {
+    const t1 = walk(1);
+    for (let y = 14; y <= 17; y++)
+      for (const x of [21, 22, 23]) expect(t1.has(at(x, y))).toBe(true);
+    for (const y of [13, 18])
+      for (const x of [22, 23]) expect(t1.has(at(x, y))).toBe(false);
+  });
+
+  it("opens the spare room to the nursery over 5 rows at tier 2", () => {
+    const t2 = walk(2);
+    for (let y = 3; y <= 7; y++) expect(t2.has(at(16, y))).toBe(true);
+    for (const y of [2, 8]) expect(t2.has(at(16, y))).toBe(false);
+  });
+
+  it("makes the front door notch 2 wide at every tier", () => {
+    for (const tier of [0, 1, 2]) {
+      const m = maps.get("house", tier);
+      expect(m.isBlocked(13 + 20, 21 + 11)).toBe(false);
+      expect(m.isBlocked(14 + 20, 21 + 11)).toBe(false);
+      expect(m.isBlocked(12 + 20, 21 + 11)).toBe(true);
+      expect(m.isBlocked(15 + 20, 21 + 11)).toBe(true);
+      const door = m.exits.find((e) => e.map === "farm")!;
+      expect([door.x, door.y, door.w, door.h]).toEqual([33, 32, 2, 1]);
+    }
+  });
+
+  it("cuts stairs A, B and C, each 3 wide, at tier 2 only", () => {
+    const t2 = walk(2);
+    const t1 = walk(1);
+    for (const [x0, y1] of [
+      [12, 12],
+      [18, 12],
+      [30, 10],
+    ] as const)
+      for (let x = x0; x < x0 + 3; x++)
+        for (let y = 10; y <= y1; y++) {
+          expect(t2.has(at(x, y))).toBe(true);
+          expect(t1.has(at(x, y))).toBe(false);
+        }
+    // Each stair joins a floor above to a floor below.
+    expect(t2.has(at(13, 9))).toBe(true);
+    expect(t2.has(at(13, 13))).toBe(true);
+    expect(t2.has(at(31, 9))).toBe(true);
+    expect(t2.has(at(31, 11))).toBe(true);
+  });
+
+  it("shifts the markers by (20, 11)", () => {
+    const m = maps.get("house", 1);
+    expect(m.entry("door")).toMatchObject({ x: 33, y: 31 });
+    expect(m.services.find((s) => s.kind === "cooking")).toMatchObject({
+      x: 25,
+      y: 22,
+    });
+  });
+});
+
 describe("house tier in the save", () => {
   it("starts at tier 0", () => {
     expect(newGame().houseTier).toBe(0);
@@ -86,15 +187,15 @@ describe("house maps", () => {
   const bed = (m: ReturnType<typeof start>) =>
     m.services.find((s) => s.kind === "bed")!;
 
-  it("is one 35 by 22 map at every tier, with the start room 11 by 10 in it", () => {
+  it("is one 74 by 44 map at every tier, with the start room 11 by 10 in it", () => {
     for (const m of [start(), tier1(), tier2(), maps.get("house", 3)])
-      expect([m.width, m.height]).toEqual([35, 22]);
-    expect(start().bounds).toEqual({ x: 11, y: 12, w: 11, h: 10 });
-    expect(tier1().bounds).toEqual({ x: 2, y: 10, w: 31, h: 12 });
+      expect([m.width, m.height]).toEqual([74, 44]);
+    expect(start().bounds).toEqual({ x: 31, y: 23, w: 11, h: 10 });
+    expect(tier1().bounds).toEqual({ x: 22, y: 21, w: 31, h: 12 });
   });
 
   it("clamps the camera to the whole house at tiers 2 and 3", () => {
-    const whole = { x: 0, y: 0, w: 35, h: 22 };
+    const whole = { x: 20, y: 11, w: 35, h: 22 };
     expect(tier2().bounds).toEqual(whole);
     expect(maps.get("house", 3).bounds).toEqual(whole);
   });
@@ -104,9 +205,9 @@ describe("house maps", () => {
     const b = tier1().reachable(tier1().entry("door")!);
     expect(start().entry("door")).toEqual(tier1().entry("door"));
     // Everything the start room offers is still there at tier 1.
-    for (let y = 13; y <= 20; y++)
-      for (let x = 12; x <= 20; x++)
-        if (a.has(`${x},${y}`) && !(x === 20 && y === 19))
+    for (let y = 24; y <= 31; y++)
+      for (let x = 32; x <= 40; x++)
+        if (a.has(`${x},${y}`) && !(x === 40 && y === 30))
           expect(b.has(`${x},${y}`)).toBe(true);
   });
 
@@ -115,25 +216,25 @@ describe("house maps", () => {
     const walkable = m.reachable(m.entry("door")!);
     for (const t of walkable) {
       const [x, y] = t.split(",").map(Number) as [number, number];
-      expect(x >= 11 && x < 22 && y >= 12 && y < 22).toBe(true);
+      expect(x >= 31 && x < 42 && y >= 23 && y < 33).toBe(true);
     }
-    expect(m.isBlocked(6, 15)).toBe(true); // where the kitchen will be
-    expect(m.isBlocked(27, 15)).toBe(true); // where the bedroom will be
-    expect(m.isBlocked(6, 5)).toBe(true); // where the upper band will be
-    expect(walkable.has("6,15")).toBe(false);
+    expect(m.isBlocked(26, 26)).toBe(true); // where the kitchen will be
+    expect(m.isBlocked(47, 26)).toBe(true); // where the bedroom will be
+    expect(m.isBlocked(26, 16)).toBe(true); // where the upper band will be
+    expect(walkable.has("26,26")).toBe(false);
   });
 
   it("moves the bed to the bedroom at tier 1", () => {
-    expect(bed(start())).toMatchObject({ x: 20, y: 19 });
-    expect(bed(tier1())).toMatchObject({ x: 27, y: 12 });
+    expect(bed(start())).toMatchObject({ x: 40, y: 30 });
+    expect(bed(tier1())).toMatchObject({ x: 47, y: 23 });
     expect(tier1().services.filter((s) => s.kind === "bed")).toHaveLength(1);
   });
 
   it("cuts doorways through the start room's walls at tier 1 only", () => {
-    expect(start().isBlocked(11, 15)).toBe(true);
-    expect(start().isBlocked(21, 15)).toBe(true);
-    expect(tier1().isBlocked(11, 15)).toBe(false);
-    expect(tier1().isBlocked(19, 15)).toBe(false);
+    expect(start().isBlocked(31, 26)).toBe(true);
+    expect(start().isBlocked(41, 26)).toBe(true);
+    expect(tier1().isBlocked(31, 26)).toBe(false);
+    expect(tier1().isBlocked(39, 26)).toBe(false);
   });
 
   it("has no problems on either map", () => {
@@ -166,8 +267,8 @@ describe("house maps", () => {
 
   it("lets the player walk from the door into the kitchen and bedroom at tier 1", () => {
     const walkable = tier1().reachable(tier1().entry("door")!);
-    expect(walkable.has("6,15")).toBe(true); // kitchen
-    expect(walkable.has("27,15")).toBe(true); // bedroom
+    expect(walkable.has("26,26")).toBe(true); // kitchen
+    expect(walkable.has("47,26")).toBe(true); // bedroom
   });
 });
 
@@ -186,16 +287,18 @@ describe("house tiers 2 and 3", () => {
 
   it("is still black void above at tier 1", () => {
     const t1 = maps.get("house", 1);
-    expect(t1.isBlocked(6, 5)).toBe(true);
-    expect(walk(t1).has("6,5")).toBe(false);
+    expect(t1.isBlocked(26, 16)).toBe(true);
+    expect(walk(t1).has("26,16")).toBe(false);
   });
 
   it("lets the player climb the stairs into the spare room and on to the nursery", () => {
     const w = walk();
-    expect(w.has("6,10")).toBe(true); // the stairs over the kitchen end
-    expect(w.has("6,5")).toBe(true); // spare room
-    expect(w.has("16,5")).toBe(true); // doorway between the rooms
-    expect(w.has("24,5")).toBe(true); // nursery
+    expect(w.has("32,21")).toBe(true); // stairs A
+    expect(w.has("38,21")).toBe(true); // stairs B
+    expect(w.has("50,21")).toBe(true); // stairs C
+    expect(w.has("26,16")).toBe(true); // spare room
+    expect(w.has("36,16")).toBe(true); // doorway between the rooms
+    expect(w.has("44,16")).toBe(true); // nursery
   });
 
   it("widens the kitchen to 9 and the bedroom to 10 at tier 2, and the band to match", () => {
@@ -205,24 +308,24 @@ describe("house tiers 2 and 3", () => {
         (x) => !t2.isBlocked(x, y),
       );
     // Kitchen interior x 1 to 9 at tier 2 (was 3 to 9), bedroom 24 to 33 (was 24 to 31).
-    expect(row(13, 0, 10)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    expect(row(13, 24, 34)).toEqual([24, 25, 26, 27, 28, 29, 30, 31, 32, 33]);
+    expect(row(24, 20, 29)).toEqual([21, 22, 23, 24, 25, 26, 27, 28, 29]);
+    expect(row(24, 44, 54)).toEqual([44, 45, 46, 47, 48, 49, 50, 51, 52, 53]);
     // Spare room and nursery gain 2 columns each, the divider stays at 16.
-    expect(t2.isBlocked(1, 3)).toBe(false);
-    expect(t2.isBlocked(16, 3)).toBe(true);
-    expect(t2.isBlocked(33, 3)).toBe(false);
-    expect(t2.isBlocked(34, 3)).toBe(true);
+    expect(t2.isBlocked(21, 14)).toBe(false);
+    expect(t2.isBlocked(36, 12)).toBe(true);
+    expect(t2.isBlocked(53, 14)).toBe(false);
+    expect(t2.isBlocked(54, 14)).toBe(true);
   });
 
   it("keeps the tier 1 view the same at tier 2 apart from the wider rooms", () => {
     const t1 = maps.get("house", 1);
     const t2 = tier2();
-    for (let y = 0; y < 22; y++)
-      for (let x = 0; x < 35; x++)
+    for (let y = 0; y < 44; y++)
+      for (let x = 0; x < 74; x++)
         if (!t1.isBlocked(x, y)) expect(t2.isBlocked(x, y)).toBe(false);
     // Tier 1 itself does not show the widened columns.
-    expect(t1.isBlocked(1, 13)).toBe(true);
-    expect(t1.isBlocked(33, 13)).toBe(true);
+    expect(t1.isBlocked(21, 24)).toBe(true);
+    expect(t1.isBlocked(53, 24)).toBe(true);
   });
 
   it("has no problems at any tier", () => {

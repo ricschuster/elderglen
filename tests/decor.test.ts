@@ -56,8 +56,8 @@ describe("buying and applying", () => {
   it("covers the room under the faced tile and uses the item up", () => {
     const g = newGame();
     g.inventory.add("wallpaper-moss");
-    expect(roomAt(0, 15, 15)?.id).toBe("start");
-    expect(applyDecor(g, "house", 15, 15, "wallpaper-moss").ok).toBe(true);
+    expect(roomAt(0, 35, 26)?.id).toBe("start");
+    expect(applyDecor(g, "house", 35, 26, "wallpaper-moss").ok).toBe(true);
     expect(g.decor.get("start").wallpaper).toBe("wallpaper-moss");
     expect(g.inventory.count("wallpaper-moss")).toBe(0);
   });
@@ -68,7 +68,7 @@ describe("buying and applying", () => {
     g.inventory.add("floor-planks");
     g.inventory.add("floor-slate");
     for (const id of ["wallpaper-moss", "floor-planks", "floor-slate"])
-      applyDecor(g, "house", 15, 15, id);
+      applyDecor(g, "house", 35, 26, id);
     expect(g.decor.get("start")).toEqual({
       wallpaper: "wallpaper-moss",
       floor: "floor-slate",
@@ -78,11 +78,11 @@ describe("buying and applying", () => {
   it("refuses outside a built room, outside the house and without the item", () => {
     const g = newGame();
     g.inventory.add("floor-slate");
-    expect(applyDecor(g, "house", 3, 15, "floor-slate").ok).toBe(false);
-    expect(applyDecor(g, "farm", 15, 15, "floor-slate").ok).toBe(false);
-    expect(applyDecor(g, "house", 15, 15, "floor-planks").ok).toBe(false);
+    expect(applyDecor(g, "house", 23, 26, "floor-slate").ok).toBe(false);
+    expect(applyDecor(g, "farm", 35, 26, "floor-slate").ok).toBe(false);
+    expect(applyDecor(g, "house", 35, 26, "floor-planks").ok).toBe(false);
     g.houseTier = 1;
-    expect(applyDecor(g, "house", 3, 15, "floor-slate").ok).toBe(true);
+    expect(applyDecor(g, "house", 23, 26, "floor-slate").ok).toBe(true);
     expect(g.decor.get("kitchen").floor).toBe("floor-slate");
   });
 });
@@ -91,7 +91,7 @@ describe("saving", () => {
   it("round trips and loads old saves without the field", () => {
     const g = newGame();
     g.inventory.add("floor-slate");
-    applyDecor(g, "house", 15, 15, "floor-slate");
+    applyDecor(g, "house", 35, 26, "floor-slate");
     const back = deserialize(serialize(g));
     expect(back?.decor.get("start").floor).toBe("floor-slate");
     const raw = JSON.parse(serialize(g));

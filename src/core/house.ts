@@ -31,9 +31,13 @@ export function houseVisibleTier(tier: number): number {
  * the map with the tier 2 band above, 22 rows, so everything moved down by
  * `TIER_2_BAND` (#286). 4 widens the map from 31 to 35 columns, so everything
  * moved right by `TIER_2_WIDEN` (the larger tier 2 kitchen and bedroom, note 68).
+ * 5 is the final frame, 74 by 44, so everything moved by `HOUSE_SHIFT` (note 85).
  * See `legacyHouseTile`.
  */
-export const HOUSE_LAYOUT = 4;
+export const HOUSE_LAYOUT = 5;
+
+/** Tiles every house piece moved by in layout 5: right by x and down by y (note 85, "Frame and saves"). */
+export const HOUSE_SHIFT = { x: 20, y: 11 } as const;
 
 /** Columns every house tile moved right by in layout 4, to make room for the wider kitchen. */
 export const TIER_2_WIDEN = 2;
@@ -43,8 +47,8 @@ export const TIER_2_BAND = 10;
 
 /** Where the start room's corner sits in the merged house map, in tiles. */
 export const START_ROOM_AT = {
-  x: 9 + TIER_2_WIDEN,
-  y: 2 + TIER_2_BAND,
+  x: 9 + TIER_2_WIDEN + HOUSE_SHIFT.x,
+  y: 2 + TIER_2_BAND + HOUSE_SHIFT.y,
 } as const;
 
 /**
@@ -53,7 +57,7 @@ export const START_ROOM_AT = {
  * map moves by the start room's offset, and a piece on the old tier 1 map
  * (`house-1`) moves down by the band and goes to the one house map. From
  * layout 2 the house pieces move down by the band. Every older layout then
- * moves right by the widening (layout 4, current).
+ * moves right by the widening (layout 4), and every layout below 5 then moves by `HOUSE_SHIFT` (layout 5, current).
  */
 export function legacyHouseTile(
   map: string,
@@ -69,7 +73,8 @@ export function legacyHouseTile(
         ? { map, x: x + 9, y: y + 2 + TIER_2_BAND }
         : { map: HOUSE_MAP, x, y: y + TIER_2_BAND };
   } else if (layout === 2) at = { map: HOUSE_MAP, x, y: y + TIER_2_BAND };
-  return { ...at, x: at.x + TIER_2_WIDEN };
+  if (layout < 4) at = { ...at, x: at.x + TIER_2_WIDEN };
+  return { ...at, x: at.x + HOUSE_SHIFT.x, y: at.y + HOUSE_SHIFT.y };
 }
 
 /** True once the house has its cellar stairs: tier 3. */

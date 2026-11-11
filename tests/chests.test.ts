@@ -24,8 +24,8 @@ const farm = maps.get(START.map);
 const house = maps.get("house");
 const tile = farm.tillableTiles()[0]!;
 const floor = (() => {
-  for (let y = 0; y < 20; y++)
-    for (let x = 0; x < 20; x++) {
+  for (let y = 0; y < 44; y++)
+    for (let x = 0; x < 74; x++) {
       const g = newGame();
       g.inventory.add("oak-chair");
       if (placeFurniture(g, house, "house", x, y, "oak-chair").ok)
