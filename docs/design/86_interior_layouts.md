@@ -1,6 +1,6 @@
 # 86 Interior layouts: templates from Stardew's rooms (draft)
 
-Status: **the general store pilot is owner checked (2026-11-11, round 2: irregular footprint); the sawmill, healer and smithy are owner checked (batch 1); the library, hatter and farmstead are drafted (batch 2), the three burrows (batch 3) both owner checked 2026-11-11; batch 4 (tower, Outpost, forge, elf's house, the inn redrawn) is drafted, waiting for the owner** (note 81 decision 6).
+Status: **done, every plan owner checked 2026-11-11: the general store pilot (round 2, irregular footprint), batches 1 to 3, and batch 4 (tower, Outpost and its rooms, forge, elf's house, the inn redrawn, the fisher's hut and loft)** (note 81 decision 6).
 Nothing here is built. This is step 4 of the layout track
 (`docs/handoffs/PRIORITIES.md`, note 81): interior layouts, with a Tiled draft of a
 pilot first. The pilot is the general store, plus two more templates (the one-room
@@ -887,8 +887,8 @@ Final art waits for M3d (ADR 0012).
 | Map | Layout done | Art done | Notes |
 | --- | --- | --- | --- |
 | `general-store` | Drafted, waits for the owner | No | The pilot |
-| `fisher-hut`, `fisher-loft` | Redrawn 2026-11-11 with a ladder to a loft bedroom, waits for the owner | No | The other huts have their own plans |
-| `hermit-tower`, `outpost`, `outpost-rooms`, `forge`, `beach-elf-house`, `inn` (redrawn) | Drafted 2026-11-11 (batch 4), waits for the owner | No | |
+| `fisher-hut`, `fisher-loft` | Done, owner checked 2026-11-11 (redrawn with a ladder to a loft bedroom) | No | The other huts have their own plans |
+| `hermit-tower`, `outpost`, `outpost-rooms`, `forge`, `beach-elf-house`, `inn` (redrawn) | Done, owner checked 2026-11-11 (batch 4) | No | |
 | `sawmill`, `healer`, `smithy` | Done, owner checked 2026-11-11 (batch 1) | No | |
 | `library`, `hatter`, `forest-farmstead` | Done, owner checked 2026-11-11 (batch 2) | No | |
 | `burrow-*` | Done, owner checked 2026-11-11 (batch 3) | No | |
