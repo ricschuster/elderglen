@@ -100,7 +100,9 @@ Design, can start now:
    2026-11-11** (sawmill, healer, smithy). **Batches 2 and 3 done, owner checked 2026-11-11** (library, hatter,
    farmstead keeper; the three burrows). **Batch 4 done, owner checked 2026-11-11** (tower, Outpost and its rooms, forge, elf's house, inn redrawn, fisher hut with a ladder to a loft bedroom). **Step 4 is done**: every interior in note 86 has a checked plan.
 - Step 5: The layout page design note (dev server, objects and block-out regions, saves
-   to the map JSON after the contract checks; note 81 decision 11).
+   to the map JSON after the contract checks; note 81 decision 11). **Drafted 2026-11-11**
+   (note 87): viewer, object edit and save, block-out brushes, warnings, pair view, built in
+   five slices. Waits for the owner's check.
 
 In parallel, the owner:
 
@@ -137,6 +139,8 @@ Art, in M3d:
 **Done (#639, 2026-11-09):** the carpenter's temporary Hardwood sale was removed
 with the Secret Woods (six daily stumps and the log). Mahogany was reopened 2026-11-10: player-planted,
 seed from the Secret Woods (note 36 "Mahogany"), built 2026-11-10 (#724) except tapping and the monster drop.
+
+Session 2026-11-11 part twenty-five (handoff 2026-11-11z): design only. Step 5, the layout page, is drafted in note 87 (five build slices). Next: the owner checks it, then slices 1 and 2.
 
 Session 2026-11-11 part twenty-four (handoff 2026-11-11y): design only. Owner checked batches 2 and 3; batch 4 drafted (note 86). Step 4 done, owner checked. Next: step 5, or build the interiors.
 
