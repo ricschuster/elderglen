@@ -102,7 +102,7 @@ draft must keep these, and must not reuse them or sit close to them:
 | Thalwen | The Beach sea elf (F, candidate), replaced Ondrel (too close to Oriel, so Ondrel is out) | note 09, 2026-11-09 |
 | Maren | The Mines trainer (F, human, candidate) | owner, 2026-11-10 |
 | Rushie | The delta fisher (F, halfling, candidate) | owner, 2026-11-10 |
-| Brimmers | The halfling hat folk, family name for Hearthwell households | note 09 |
+| Brimmers | The halfling hat folk (a people's name, not a surname) | note 09 |
 
 Also off limits: Tolkien's dwarf and elf names and the Norse dwarf-name list
 (note 09), and Stardew's villager names (ADR 0002).
@@ -111,8 +111,9 @@ Also off limits: Tolkien's dwarf and elf names and the Norse dwarf-name list
 
 1. **Names, in batches by place** (owner). Batch 1 (the Forest and the Mountain) is done, see "Settled names". Batch 2 (the Mines, delta and Beach) is done too. Still to name: Hearthwell by household. The plan was: the Forest and the Mountain first,
    then the Mines, delta and Beach, then Hearthwell by household. Plain given
-   names, distinct by race, with a shared family name for each Hearthwell
-   household (Brimmer is already in the lore). No ages shown, only age bands
+   given names only, distinct by race (owner, 2026-11-10: plain given names, no
+   family names, so households are told apart by role and home, and "Brimmers"
+   stays the people's name, not a surname). No ages shown, only age bands
    (child, young adult, adult, elder), and no ageing over the years.
 2. **Birthdays**: one per person, spread so each season has seven or eight,
    avoiding festival days (Stardew's spread, unchecked). Waits for the names.
