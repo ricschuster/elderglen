@@ -5,14 +5,16 @@ summer 2026-11-07, fall and winter since), each with an optional free hat and a
 counter.
 
 Status: accepted 2026-10-27 (issue #131), extended 2026-10-31 to four seasons
-and eight festivals. Design only. The festival system (#132) builds from this.
+and eight festivals, and to nine on 2026-11-10 (Winter Night Market).
+Design only. The festival system (#132) builds from this.
 Dates are ours and cheap to change; change them with a new dated decision
 here.
 
 ## Rules
 
 - Two festivals per season (`09_story_and_lore.md`). The year has four seasons
-  (`26_seasons.md`), so the calendar has eight festivals. The code has all four
+  (`26_seasons.md`), so the calendar had eight festivals. Winter has a third, the Night Market, so
+  nine. The code has all four
   seasons (`src/core/calendar.ts`).
 - A festival falls on a fixed day of the season, every year.
 - Not on day 1 (the always sunny start of a season) and not in the last week
@@ -41,6 +43,7 @@ here.
 | Fall | 9 | Harvest Showing | Crops judged on the green, with a prize counter. The counter sells one elderfruit (`39_completion_total.md`). |
 | Fall | 21 | Hollow Eve | A spooky evening walk. Quiet scares only, no threat. |
 | Winter | 8 | Frostday | Ice fishing on the river. |
+| Winter | 16 to 18 | Winter Night Market | A three-evening market on the square. Shops keep their normal hours. Added 2026-11-10 (see "Winter Night Market"). |
 | Winter | 25 | Midwinter Feast | The winter solstice: a gift exchange with one villager. The hall steward's (Cuthbert, the reeve, note 20) letter names the recipient on Winter 18, random among people met (`61_friendship_and_gifts.md`). |
 
 Names are final for now (2026-10-31). The fall and winter pair follow Stardew's
@@ -117,8 +120,8 @@ time keeps passing (saved Festivals page). Ours is looser on purpose.
 
 The year has two solstice festivals, the summer and winter ones, and they are
 the existing Lamplight Evening and Midwinter Feast moved late in their seasons,
-as Stardew puts its winter feast on winter 25 (saved Calendar page). No festival
-is added by this. The count stays 8, two a season.
+as Stardew puts its winter feast on winter 25 (saved Calendar page). The solstice
+change adds none. The year has 9 festivals with the Winter Night Market.
 
 - **Lamplight Evening, Summer 24 (was 20).** The summer solstice. Day 24 keeps
   clear of the store keeper's birthday (Summer 25) and Hester's (Summer 22).
@@ -132,9 +135,32 @@ is added by this. The count stays 8, two a season.
 - **Still to build:** `festivals.json`, `tests/festivals.test.ts` and
   `tests/showing.test.ts` hold the old days (summer 20, winter 20) and the
   letter day. A build task, not done here.
-- **Open (owner):** the extra festival. The owner liked adding one but is unsure
-  it belongs in winter. Winter has two already, with Stardew's three in winter.
-  Which season, if any, is not settled.
+- The count is 9 once the Winter Night Market is added (below).
+
+## Winter Night Market (decided 2026-11-10, owner)
+
+The ninth festival. The owner wanted one more and chose winter, because the
+player has less farming to do. It follows Stardew's Night Market, which runs
+winter 15 to 17 (saved Calendar page); ours runs **Winter 16 to 18**, since
+Winter 15 is Thalwen's birthday and a birthday never falls on a festival day.
+Winter then has three festivals: Frostday (8), the Night Market (16 to 18) and
+Midwinter Feast (25).
+
+- **Three evenings, shops keep normal hours (owner).** Unlike the other eight, no
+  shop or home closes and the clock keeps running: the market is open from
+  17:00 to 24:00 each evening, after counters close, so it never costs the player
+  a working day. The "time stands still, noon to 6 pm" rule does not apply.
+- **Where:** the Hearthwell square, decorated each evening (a festival map
+  variant, note 66). Stalls from area residents who bring goods to town, and a
+  counter of rare winter goods. The stock and prices are not designed yet.
+- **Villagers:** the evening inn crowd (note 80) moves to the square from 18:00
+  to 22:00 on the three days. Everyone else keeps their route. A festival spot
+  per person is written with the festival maps.
+- **Weather:** the three evenings are fair like other festival days.
+- **The steward's letter** (Winter 18, note 61) lands on the third market day.
+  It is mail, not a festival event, so nothing conflicts.
+- **To build:** an entry in `festivals.json` with a three-day span (the lookup
+  returns one day today), the square variant and the counter. Not started.
 
 ## Open
 
