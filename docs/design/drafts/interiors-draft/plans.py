@@ -1,5 +1,5 @@
 """Interior plans (note 86). Batch 1: sawmill, healer, smithy. Batch 2: library, hatter,
-farmstead keeper.
+farmstead keeper. Batch 3: the three burrows. Batch 4: tower, Outpost, forge, elf's house, inn. Then the fisher hut.
 
 Coordinates are plan tiles with no walls (gen.py adds them). Each building has its
 own shape: a public room at the front with the 2 wide door notch, the household
@@ -351,4 +351,428 @@ def farmstead():
     return p
 
 
-ALL = [sawmill(), healer(), smithy(), library(), hatter(), farmstead()]
+def burrow_gardener():
+    p = Plan("burrow-gardener", "gardener's burrow, one bedroom and a potting room")
+    p.floor(3, 9, 14, 15)             # living room
+    p.floor(8, 16, 9, 17)             # door notch
+    p.door(8, 18, 17)
+    p.floor(16, 10, 23, 15)           # potting room
+    p.floor(15, 12, 15, 13)           # potting room opening
+    p.floor(6, 7, 7, 8)               # passage north
+    p.floor(3, 2, 10, 6)              # kitchen
+    p.floor(12, 2, 16, 6)             # pantry
+    p.floor(11, 3, 11, 4)             # pantry opening
+    p.floor(-4, 9, 1, 14)             # bedroom
+    # living room
+    p.put("H", 7, 9, 9, 9)
+    p.put("Q", 5, 11, 8, 11)
+    p.put("r", 6, 13, 10, 14)
+    p.put("L", 12, 10, 13, 11)        # window planters
+    # kitchen and pantry
+    p.put("K", 3, 2, 10, 2)
+    p.put("T", 4, 4, 6, 5)
+    p.put("S", 12, 2, 16, 2)
+    p.put("X", 15, 4, 16, 5)
+    # potting room
+    p.put("S", 16, 10, 23, 10)        # seed shelves
+    p.put("W", 18, 12, 21, 13)        # potting bench
+    p.put("X", 22, 14, 23, 15)        # soil bags
+    p.put("L", 17, 15, 18, 15)        # seedling trays
+    # bedroom
+    p.gate("gardener", 2, 11, 2, 12)
+    p.put("B", -4, 9, -3, 10)
+    p.put("S", -1, 9, 0, 9)
+    p.put("r", -3, 12, -1, 13)
+    # marks
+    p.mark("spot-home-sit", 6, 12)
+    p.mark("spot-home-cook", 6, 3)
+    p.mark("spot-potting", 20, 14)
+    p.mark("bed-gardener", -2, 11)
+    return p
+
+
+def burrow_retired():
+    p = Plan("burrow-retired", "retired couple's burrow, two bedrooms and a sunroom")
+    p.floor(6, 12, 19, 19)            # living room
+    p.floor(12, 20, 13, 21)           # door notch
+    p.door(12, 22, 21)
+    p.floor(22, 13, 28, 19)           # sunroom
+    p.floor(20, 15, 21, 16)           # sunroom opening
+    p.floor(12, 10, 13, 11)           # passage north
+    p.floor(8, 5, 17, 9)              # kitchen
+    p.floor(1, 5, 6, 9)               # pantry
+    p.floor(7, 6, 7, 7)               # pantry opening
+    p.floor(-1, 12, 4, 18)            # couple's bedroom
+    p.floor(22, 6, 28, 11)            # grandchild's bedroom
+    # living room
+    p.put("S", 6, 12, 9, 12)          # shelves
+    p.put("H", 15, 12, 17, 12)
+    p.put("Q", 8, 14, 11, 14)
+    p.put("r", 9, 16, 13, 17)
+    p.put("T", 15, 15, 17, 16)        # dining table
+    p.put("Q", 18, 15, 18, 16)
+    # kitchen and pantry
+    p.put("K", 8, 5, 17, 5)
+    p.put("T", 11, 7, 14, 8)
+    p.put("S", 1, 5, 6, 5)
+    p.put("S", 1, 6, 1, 9)
+    p.put("X", 5, 8, 6, 9)
+    # couple's bedroom
+    p.gate("couple", 5, 14, 5, 15)
+    p.put("B", -1, 12, 1, 13)         # one double bed
+    p.put("S", 3, 12, 4, 12)
+    p.put("r", 1, 16, 3, 17)
+    p.put("X", 3, 18, 4, 18)
+    # sunroom
+    p.put("S", 22, 13, 23, 13)
+    p.put("S", 26, 13, 28, 13)
+    p.put("Q", 24, 16, 25, 16)
+    p.put("L", 27, 15, 28, 16)        # keepsakes
+    p.put("r", 23, 17, 26, 18)
+    p.put("X", 27, 19)
+    # grandchild's bedroom
+    p.gate("grandchild", 24, 12, 25, 12)
+    p.put("B", 22, 6, 23, 7)
+    p.put("T", 27, 6, 28, 6)          # desk
+    p.put("X", 27, 10, 28, 11)        # toys
+    p.put("r", 24, 9, 26, 10)
+    # marks
+    p.mark("spot-home-sit", 10, 15)
+    p.mark("spot-home-cook", 12, 6)
+    p.mark("spot-sunroom", 24, 17)
+    p.mark("bed-couple", 0, 15)
+    p.mark("bed-grandchild", 24, 8)
+    return p
+
+
+def burrow_young():
+    p = Plan("burrow-young", "young adults' burrow, a bedroom each")
+    p.floor(5, 9, 16, 15)             # living room
+    p.floor(10, 16, 11, 17)           # door notch
+    p.door(10, 18, 17)
+    p.floor(8, 7, 9, 8)               # passage north
+    p.floor(5, 2, 12, 6)              # kitchen
+    p.floor(14, 2, 18, 6)             # pantry
+    p.floor(13, 3, 13, 4)             # pantry opening
+    p.floor(-2, 9, 3, 15)             # first bedroom
+    p.floor(18, 9, 23, 15)            # second bedroom
+    # living room
+    p.put("S", 5, 9, 7, 9)
+    p.put("H", 11, 9, 13, 9)
+    p.put("Q", 7, 12, 10, 12)
+    p.put("r", 7, 13, 11, 14)
+    p.put("L", 15, 13, 16, 14)
+    # kitchen and pantry
+    p.put("K", 5, 2, 12, 2)
+    p.put("T", 7, 4, 9, 5)
+    p.put("S", 14, 2, 18, 2)
+    p.put("X", 17, 4, 18, 5)
+    # first bedroom
+    p.gate("young-a", 4, 11, 4, 12)
+    p.put("B", -2, 9, -1, 10)
+    p.put("T", 2, 9, 3, 9)            # desk
+    p.put("X", -2, 14, -1, 15)
+    p.put("r", 0, 13, 2, 14)
+    # second bedroom
+    p.gate("young-b", 17, 11, 17, 12)
+    p.put("B", 22, 9, 23, 10)
+    p.put("S", 19, 9, 20, 9)
+    p.put("T", 22, 14, 23, 14)
+    p.put("r", 19, 13, 21, 14)
+    # marks
+    p.mark("spot-home-sit", 8, 13)
+    p.mark("spot-home-cook", 8, 3)
+    p.mark("bed-young-a", 0, 12)
+    p.mark("bed-young-b", 20, 11)
+    return p
+
+
+def hermit_tower():
+    p = Plan("hermit-tower", "hermit's tower, tall, four rooms")
+    p.floor(0, 17, 8, 22)             # entrance hall with the counter
+    p.floor(4, 23, 5, 24)             # door notch
+    p.door(4, 25, 24)
+    p.floor(3, 15, 4, 16)             # passage north
+    p.floor(0, 9, 8, 14)              # study
+    p.floor(-1, 11, -1, 12)           # conservatory opening
+    p.floor(-8, 9, -2, 14)            # conservatory
+    p.floor(3, 7, 4, 8)               # passage to the bedroom
+    p.floor(0, 1, 8, 6)               # bedroom
+    # entrance hall
+    p.put("S", 0, 17, 2, 17)
+    p.put("S", 5, 17, 8, 17)
+    p.put("C", 1, 19, 4, 19)          # counter, 4 wide
+    p.put("L", 7, 19, 8, 20)          # perch
+    p.put("X", 0, 21, 0, 22)
+    p.put("r", 3, 21, 6, 22)
+    # study
+    p.put("S", 0, 9, 2, 9)
+    p.put("S", 5, 9, 8, 9)
+    p.put("W", 5, 11, 6, 12)          # cauldron
+    p.put("T", 1, 11, 2, 12)          # book table
+    p.put("K", 7, 13, 8, 13)          # stove
+    # conservatory
+    p.put("X", -8, 9, -3, 9)          # planters
+    p.put("L", -6, 11, -4, 12)        # basin
+    p.put("X", -8, 13, -7, 14)        # hay for the animals
+    p.put("r", -5, 14, -3, 14)
+    # bedroom
+    p.gate("hermit", 3, 7, 4, 7)
+    p.put("B", 0, 1, 1, 2)
+    p.put("S", 6, 1, 8, 1)
+    p.put("T", 7, 3, 8, 3)
+    p.put("r", 3, 4, 6, 5)
+    # marks
+    p.mark("service-hermit-1", 2, 20)
+    p.mark("service-hermit-2", 3, 20)
+    p.mark("spot-counter-serve", 2, 18)
+    p.mark("spot-counter-stock", 5, 18)
+    p.mark("spot-study", 4, 12)
+    p.mark("spot-conservatory", -5, 13)
+    p.mark("bed-hermit", 3, 3)
+    return p
+
+
+def outpost():
+    p = Plan("outpost", "Outpost post room, tall hall")
+    p.floor(0, 15, 15, 21)            # lobby
+    p.floor(3, 6, 12, 14)             # counter room, narrower, stepping north
+    p.floor(7, 22, 8, 23)             # door notch
+    p.door(7, 24, 23)
+    for x in (7, 8):                  # door to the steward's rooms in the top wall
+        p.cells[(x, 5)] = "D"
+        p.mark(f"door-rooms-{x - 6}", x, 5)
+    # counter room
+    p.put("S", 3, 6, 6, 6)
+    p.put("S", 9, 6, 12, 6)
+    p.put("C", 4, 10, 9, 10)          # counter, 6 wide
+    p.put("X", 3, 8, 4, 9)            # parcels
+    p.put("X", 11, 8, 12, 9)
+    p.put("r", 5, 12, 10, 13)
+    # lobby: notice walls, benches, a display for the trader's days
+    p.put("S", 0, 15, 2, 15)
+    p.put("S", 13, 15, 15, 15)
+    p.put("S", 0, 17, 0, 19)
+    p.put("Q", 3, 17, 6, 17)
+    p.put("Q", 9, 17, 12, 17)
+    p.put("L", 14, 19, 15, 20)
+    p.put("X", 14, 17, 15, 17)
+    # marks
+    p.mark("service-outpost-1", 6, 11)
+    p.mark("service-outpost-2", 7, 11)
+    p.mark("spot-counter-serve", 6, 9)
+    p.mark("spot-counter-stock", 5, 8)
+    p.mark("spot-lobby-sit", 4, 18)
+    p.mark("spot-courier", 12, 19)
+    return p
+
+
+def outpost_rooms():
+    p = Plan("outpost-rooms", "the steward's rooms, one bedroom")
+    p.floor(0, 9, 9, 14)              # sitting room
+    p.floor(4, 15, 5, 16)             # door notch
+    p.door(4, 17, 16)
+    p.floor(4, 7, 5, 8)               # passage north
+    p.floor(0, 2, 9, 6)               # kitchen
+    p.floor(11, 2, 15, 6)             # pantry
+    p.floor(10, 3, 10, 4)             # pantry opening
+    p.floor(11, 9, 16, 14)            # bedroom
+    # sitting room
+    p.put("S", 0, 9, 2, 9)
+    p.put("H", 6, 9, 8, 9)
+    p.put("T", 1, 11, 2, 12)          # ledger desk
+    p.put("Q", 6, 12, 8, 12)
+    p.put("r", 3, 13, 6, 14)
+    # kitchen and pantry
+    p.put("K", 0, 2, 9, 2)
+    p.put("T", 1, 4, 3, 5)
+    p.put("S", 11, 2, 15, 2)
+    p.put("X", 14, 4, 15, 5)
+    # bedroom
+    p.gate("steward", 10, 11, 10, 12)
+    p.put("B", 15, 9, 16, 10)
+    p.put("S", 12, 9, 13, 9)
+    p.put("r", 12, 12, 14, 13)
+    # marks
+    p.mark("spot-home-sit", 4, 12)
+    p.mark("spot-home-cook", 5, 3)
+    p.mark("bed-steward", 14, 11)
+    return p
+
+
+def forge():
+    p = Plan("forge", "forge hut, L shape, workshop and counter")
+    p.floor(0, 5, 9, 11)              # counter room
+    p.floor(4, 12, 5, 13)             # door notch
+    p.door(4, 14, 13)
+    p.floor(10, 7, 10, 8)             # opening east
+    p.floor(11, 2, 17, 11)            # forge wing
+    # counter room
+    p.put("S", 0, 5, 3, 5)            # tools
+    p.put("X", 6, 5, 9, 5)            # ore bins
+    p.put("C", 2, 7, 5, 7)            # counter, 4 wide
+    p.put("L", 8, 9, 9, 10)           # display of tools
+    p.put("r", 3, 9, 6, 10)
+    # forge wing
+    p.put("H", 12, 2, 14, 2)          # furnace
+    p.put("X", 17, 2, 17, 5)          # coal
+    p.put("W", 14, 6, 15, 6)          # anvil
+    p.put("W", 12, 10, 13, 10)        # grindstone
+    p.put("X", 16, 10, 17, 11)
+    p.put("r", 14, 8, 16, 9)
+    # marks
+    p.mark("service-smith-1", 3, 8)
+    p.mark("service-smith-2", 4, 8)
+    p.mark("spot-counter-serve", 3, 6)
+    p.mark("spot-counter-stock", 6, 6)
+    p.mark("spot-forge", 14, 7)
+    return p
+
+
+def elf_house():
+    p = Plan("beach-elf-house", "the elf's house, a round room with a sea window")
+    rows = {0: (3, 8), 1: (1, 10), 2: (0, 11), 3: (0, 11), 4: (0, 11), 5: (0, 11),
+            6: (0, 11), 7: (1, 10), 8: (3, 8)}
+    for y, (a, b) in rows.items():
+        p.floor(a, y, b, y)
+    p.floor(5, 9, 6, 10)              # door notch
+    p.door(5, 11, 10)
+    p.put("L", 5, 1, 6, 1)            # the Homeward pin on show
+    p.put("C", 4, 3, 7, 3)            # pin stall, 4 wide
+    p.put("S", 0, 2, 0, 3)
+    p.put("B", 0, 5, 1, 6)
+    p.put("X", 10, 5, 11, 6)          # the half packed trunk
+    p.put("T", 10, 2, 11, 3)          # table at the sea window
+    p.put("r", 4, 5, 7, 6)
+    p.mark("service-pin-1", 5, 4)
+    p.mark("service-pin-2", 6, 4)
+    p.mark("spot-counter-serve", 5, 2)
+    p.mark("spot-counter-stock", 8, 2)
+    p.mark("spot-window", 9, 4)
+    p.mark("bed-elf", 2, 5)
+    return p
+
+
+def inn_home():
+    p = Plan("inn", "inn and kitchen with the innkeeper's home, the guest wing and the courier's room")
+    p.floor(0, 12, 21, 26)            # tap room
+    p.floor(9, 27, 10, 28)            # door notch
+    p.door(9, 29, 28)
+    p.floor(13, 10, 14, 11)           # passage north to the guest wing
+    p.floor(3, 1, 21, 9)              # guest wing
+    p.floor(23, 2, 28, 8)             # courier's room
+    p.floor(22, 4, 22, 5)             # (gate cells below)
+    p.floor(22, 15, 23, 16)           # opening to the kitchen
+    p.floor(24, 13, 31, 18)           # kitchen
+    p.floor(30, 11, 31, 12)           # passage to the pantry
+    p.floor(30, 6, 36, 10)            # pantry
+    p.floor(27, 19, 28, 20)           # passage south to the family's living room
+    p.floor(24, 21, 33, 27)           # living room
+    p.floor(35, 21, 41, 27)           # parents' bedroom
+    p.floor(33, 13, 38, 18)           # child's bedroom
+    # tap room
+    p.put("S", 2, 12, 10, 12)         # bottles
+    p.put("H", 17, 12, 19, 12)
+    p.put("C", 2, 15, 10, 15)         # bar, 9 wide
+    p.put("Q", 2, 16, 8, 16)          # stools, service at the right end
+    for x0 in (2, 8, 14):
+        p.put("Q", x0, 19, x0, 20)
+        p.put("T", x0 + 1, 19, x0 + 2, 20)
+        p.put("Q", x0 + 3, 19, x0 + 3, 20)
+        p.put("Q", x0, 23, x0, 24)
+        p.put("T", x0 + 1, 23, x0 + 2, 24)
+        p.put("Q", x0 + 3, 23, x0 + 3, 24)
+    p.put("r", 18, 21, 21, 22)
+    # guest wing: four pairs of beds
+    for x0, y0 in ((4, 1), (10, 1), (16, 1), (4, 8)):
+        p.put("B", x0, y0, x0 + 1, y0 + 1)
+        p.put("B", x0 + 2, y0, x0 + 3, y0 + 1)
+    p.put("X", 8, 1, 9, 2)
+    p.put("X", 14, 1, 15, 2)
+    p.put("r", 10, 5, 15, 6)
+    # courier's room
+    p.gate("courier", 22, 4, 22, 5)
+    p.put("B", 24, 2, 25, 3)
+    p.put("S", 27, 2, 28, 2)
+    p.put("r", 25, 5, 27, 6)
+    # kitchen, pantry
+    p.put("K", 24, 13, 29, 13)
+    p.put("T", 26, 15, 29, 16)
+    p.put("S", 30, 6, 36, 6)
+    p.put("X", 35, 8, 36, 9)
+    # family living room
+    p.put("H", 30, 21, 32, 21)
+    p.put("Q", 25, 23, 28, 23)
+    p.put("r", 26, 25, 31, 26)
+    # bedrooms
+    p.gate("parents", 34, 23, 34, 24)
+    p.put("B", 36, 21, 38, 22)        # one double bed
+    p.put("S", 40, 21, 41, 21)
+    p.put("r", 36, 25, 39, 26)
+    p.gate("child", 32, 15, 32, 16)
+    p.put("B", 34, 13, 35, 14)
+    p.put("T", 37, 13, 38, 13)
+    p.put("r", 35, 16, 37, 17)
+    # marks
+    p.mark("service-inn-1", 9, 16)
+    p.mark("service-inn-2", 10, 16)
+    p.mark("spot-counter-serve", 9, 14)
+    p.mark("spot-counter-stock", 4, 14)
+    p.mark("spot-hearth", 18, 14)
+    p.mark("spot-table-1", 5, 21)
+    p.mark("spot-table-2", 11, 21)
+    p.mark("spot-table-3", 17, 21)
+    p.mark("spot-home-cook", 27, 14)
+    p.mark("spot-home-sit", 26, 24)
+    p.mark("bed-parents", 37, 24)
+    p.mark("bed-child", 36, 15)
+    p.mark("bed-courier", 25, 6)
+    p.mark("bed-guest-1", 5, 4)
+    p.mark("bed-guest-2", 11, 4)
+    p.mark("bed-guest-3", 17, 4)
+    p.mark("bed-guest-4", 5, 6)
+    return p
+
+
+def hut_fisher():
+    p = Plan("hut-fisher", "delta fisher's hut, counter, tank and a ladder to the loft")
+    p.floor(0, 2, 9, 8)               # shop and living room
+    p.floor(4, 9, 5, 10)              # door notch
+    p.door(4, 11, 10)
+    p.put("S", 2, 2, 3, 2)            # rods and bait
+    p.put("L", 5, 2, 6, 2)            # fish tank
+    p.put("K", 7, 2, 8, 2)            # stove
+    p.gate("fisher-loft", 0, 2, 1, 2)  # the ladder up, gated like a bedroom door
+    p.put("C", 1, 4, 4, 4)            # counter, 4 wide
+    p.put("X", 0, 7, 0, 8)            # nets and crates
+    p.put("X", 9, 7, 9, 8)
+    p.put("r", 2, 6, 5, 7)
+    p.put("T", 7, 6, 8, 7)
+    p.mark("service-shop-1", 2, 5)
+    p.mark("service-shop-2", 3, 5)
+    p.mark("spot-counter-serve", 2, 3)
+    p.mark("spot-counter-stock", 4, 3)
+    p.mark("spot-home-cook", 7, 3)
+    p.mark("spot-home-sit", 6, 5)
+    return p
+
+
+def hut_fisher_loft():
+    p = Plan("hut-fisher-loft", "the fisher's loft bedroom, up the ladder")
+    p.floor(0, 2, 8, 6)               # loft
+    p.floor(3, 7, 4, 8)               # the ladder foot, 2 wide
+    p.door(3, 9, 8)
+    p.put("B", 0, 2, 1, 3)
+    p.put("S", 3, 2, 4, 2)
+    p.put("T", 7, 2, 8, 3)            # table at the round window
+    p.put("X", 7, 5, 8, 5)            # sea chest
+    p.put("r", 2, 4, 5, 5)
+    p.mark("bed-fisher", 2, 3)
+    p.mark("spot-loft", 5, 4)
+    return p
+
+
+ALL = [sawmill(), healer(), smithy(), library(), hatter(), farmstead(),
+       burrow_gardener(), burrow_retired(), burrow_young(),
+       hermit_tower(), outpost(), outpost_rooms(), forge(), elf_house(), inn_home(),
+       hut_fisher(), hut_fisher_loft()]

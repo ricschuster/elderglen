@@ -95,10 +95,10 @@ Design, can start now:
    store pilot, the one-room hut and the inn, from 13 saved Stardew interior images.
    Owner checked 2026-11-11: 2 wide entry for every interior, home behind the shop, two
    gated bedrooms, and the general store pilot as an irregular 31 by 31 plan (not a
-   square). The hut and inn drafts are not yet checked. Owner answers 2026-11-11: all six
+   square). Owner answers 2026-11-11: all six
    shops get a full home, Stardew sized, burrows with several rooms. **Batch 1 done, owner checked
-   2026-11-11** (sawmill, healer, smithy). **Batch 2 drafted 2026-11-11** (library, hatter,
-   farmstead keeper), waiting for the owner. Next batches: the three burrows; the huts (tower and Outpost their own) and the inn redrawn.
+   2026-11-11** (sawmill, healer, smithy). **Batches 2 and 3 done, owner checked 2026-11-11** (library, hatter,
+   farmstead keeper; the three burrows). **Batch 4 done, owner checked 2026-11-11** (tower, Outpost and its rooms, forge, elf's house, inn redrawn, fisher hut with a ladder to a loft bedroom). **Step 4 is done**: every interior in note 86 has a checked plan.
 - Step 5: The layout page design note (dev server, objects and block-out regions, saves
    to the map JSON after the contract checks; note 81 decision 11).
 
@@ -137,6 +137,10 @@ Art, in M3d:
 **Done (#639, 2026-11-09):** the carpenter's temporary Hardwood sale was removed
 with the Secret Woods (six daily stumps and the log). Mahogany was reopened 2026-11-10: player-planted,
 seed from the Secret Woods (note 36 "Mahogany"), built 2026-11-10 (#724) except tapping and the monster drop.
+
+Session 2026-11-11 part twenty-four (handoff 2026-11-11y): design only. Owner checked batches 2 and 3; batch 4 drafted (note 86). Step 4 done, owner checked. Next: step 5, or build the interiors.
+
+Session 2026-11-11 part twenty-three (handoff 2026-11-11x): design only. Batch 3 drafted (the three burrows, note 86). Next: the owner checks batches 2 and 3, then batch 4 (huts, tower, Outpost rooms, inn redrawn).
 
 Session 2026-11-11 part twenty-two (handoff 2026-11-11w): design only. Batch 1 interiors owner checked; batch 2 drafted (library, hatter, farmstead keeper, note 86). Next: the owner checks batch 2, then batch 3 (the three burrows).
 
