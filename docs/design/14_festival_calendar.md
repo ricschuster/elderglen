@@ -170,10 +170,13 @@ role, all ours in content and art. All open 17:00 to 24:00 (owner: keep our
 close, not Stardew's 02:00, so staying late never costs the next day). Every
 stock and price below is a placeholder for tuning.
 
-1. **The desert-road trader.** A travelling trader (a Wanderer's cousin, name
-   with the voice sheets) gives one free hot drink each evening, a small energy
-   buff, and sells a few rare winter goods. This is the "rare winter goods
-   counter" this note already promised.
+1. **The road trader.** The Outpost's road trader himself (note 57), moved to
+   the square for the three evenings (owner, 2026-11-11; Stardew's Desert
+   Trader is a separate character, from memory, unchecked). He gives one free
+   hot drink each evening, a small energy buff, and sells a few rare winter
+   goods, the "rare winter goods counter" this note already promised. He is
+   away from the Outpost only on the three evenings, after its counter hours,
+   so no shop day is lost.
 2. **The lantern boat (decor).** A moored boat on the river arm sells decor
    without limit per item: seasonal candles, plants and lamps, some only here.
 3. **The travelling artist.** One painting a night, 1,200g placeholder, **nine
@@ -199,7 +202,32 @@ stock and price below is a placeholder for tuning.
   placeholder frame stands in until then.
 - **Animals.** The clock runs, so animals still need feeding on the three
   days, as on any other day. Stardew does the same (saved page).
-- **Still open:** names of the six sellers, real stock and prices, the nine
+- **Stock source (owner, 2026-11-11): mixed.** The decor boat and curio boat
+  sell the existing winter decor and hats without limit per item, plus a short
+  market-only list that is never sold elsewhere: **4 new decor pieces, 3 new
+  hats (one per evening) and 1 fireplace.** The market-only items are the
+  reason to come each year. They need art and data entries (`furniture.json`,
+  `hats.json`), not built yet.
+- **Placeholder stock (my proposal, 2026-11-11, not yet owner-checked).** Prices
+  sit near the existing furniture (60 to 520g). Unlimited per item.
+  - Decor boat, always: snow lamp 220, winter wreath 120, warm rug 180, hanging
+    planter 210, plus the 4 market-only decor pieces at 300 each (a lantern
+    string, a frost-glass candle, a pine garland, a sleigh bench).
+  - Curio boat, by evening: day 1 a market-only hat 900 and a market-only
+    fireplace 1,500; day 2 the same hat at 600 (the price dips on the middle
+    night, as Stardew's hat does) and seeds at shop price; day 3 the same hat
+    at 900 and the third hat. Each evening also sells one existing winter hat.
+  - Road trader: 4 to 6 rare winter goods at 1.5 times sell value (note 57's
+    rule), chosen from winter forage and the cooked winter dishes.
+  - Artist: one painting, 1,200g.
+  - Outing and ride: 1,000g and 50g.
+  Two caps for later: the market-only items should not undercut the hall's
+  rewards, and gold sunk here should be a sink, not a route to anything the
+  bundles need.
+- **Seller names (owner, 2026-11-11).** Placeholder role names in the data
+  ("the artist", "the boat keeper"); real names come with the voice sheets and
+  art, as for the road trader.
+- **Still open:** the owner's check of the placeholder stock, the nine
   paintings' subjects, the market-only fish list, and each person's festival
   spot (note 80 open item 3).
 
