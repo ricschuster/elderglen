@@ -693,7 +693,11 @@ settled 2026-10-31). Slices 3 onward wait for build slice 3.
   Mines page). This is an exception to "mining works with no fighting": the lift
   and the stairs already in sight are the way out, and the exception is only for
   these floors. A geode floor is full of geode nodes with no monsters. The peaceful
-  Gloop floor and the puzzle ruin are not chosen. Not built.
+  Gloop floor and the puzzle ruin are not chosen. **Which floors (owner,
+  2026-11-11):** any floor from 10 up except the camp floors (every 10th). **The
+  bonus for clearing one:** a second drop roll on every kill and 25 percent more
+  slayer count for the floor (placeholders; the bonus itself is from memory,
+  SC-136). Not built.
 - **Rest camp chest: the first open gives one special item, after that it is
   empty.** This replaces "refilled each day". The built camp chest gives gift ore
   by band and empties per camp; this replaces it (not built).
@@ -702,10 +706,29 @@ settled 2026-10-31). Slices 3 onward wait for build slice 3.
   one item once per player, never reset, on every 10th floor: boots at 10, 50, 80
   and 110, a sword or dagger at 20, 60 and 90, a slingshot at 40 and 70, nothing
   at 30, a Stardrop at 100 and the Skull Key at 120. Ours uses our own tier of the
-  same kind by band: boots from `boots.json` (worn up to ember), blades or clubs
-  from `weapons.json` by tier, a better sling at 40 and 70, nothing at 30. Floor
-  100 gives one rare boost item (note 39). Which exact item on each floor is a
-  placeholder list for the owner to shape.
+  same kind by band. **The exact list (owner, 2026-11-11; weapon numbers are
+  placeholders):**
+
+  | Floor | Item (id in `boots.json` or `weapons.json`) |
+  | --- | --- |
+  | 10 | Sturdy boots |
+  | 20 | Iron Switch (blade) |
+  | 30 | Nothing (Stardew) |
+  | 40 | Iron Sling |
+  | 50 | Warded boots |
+  | 60 | Gold Switch |
+  | 70 | Gold Sling |
+  | 80 | Delver's boots |
+  | 90 | Hearthsilver Switch |
+  | 100 | One elderfruit (note 39, source 2) |
+  | 110 | Ember boots |
+  | 120 | The Deepmark key |
+
+  Blades only, as Stardew gives a sword or dagger and never a club (owner). Clubs
+  stay with the forge and the dwarf's counter. A player who already owns the item
+  or a better one still gets it (it can be sold). The floor 100 elderfruit moves
+  note 39's source 2 here from "a chest in the last hall of floor 120" (owner,
+  2026-11-11, to match Stardew's floor 100 chest).
 - **Floor 120 gives the Deepmark key (owner, 2026-11-11).** It is our Skull Key
   equivalent: it opens the ring 2 deep dig, our Skull Cavern counterpart (the
   beat noted under Stardew's Skull Key above). Stardew's Skull Key opens the Skull
