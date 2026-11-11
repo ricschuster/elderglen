@@ -43,9 +43,9 @@ and unchecked (register rows SC-106 to SC-111 in note 54).
    resident has one or two weekly Hearthwell trips written into the weekday
    overrides. On those days their home area has no one in it. The Social tab
    entry shows the weekday of the trip once the person has been met.
-7. **Heart level does not change the route, except by a heart event or by
-   marriage (Stardew).** A heart event may switch a person to a new route, as
-   data. A spouse moves to the farm with a spouse route (`12_marriage.md`).
+7. **Heart level does not change the route, except by marriage (Stardew).** A
+   heart event never switches a route (note 84). A spouse moves to the farm with a
+   spouse route built from their old one (`12_marriage.md`, note 84).
 8. **Where someone is, in the Social tab: a rough "last seen" area.** For each
    person met, the tab shows the area where they were this morning, never the
    exact spot. (Not Stardew, which has no help.)

@@ -245,7 +245,9 @@ returns an hour earlier. A snow day does not stop the trip (snow is not rain, ow
 3. **Festival spots**: locations settled 2026-11-11 (note 82, only the Showing is on
    the green). Who skips each festival and the exact tiles are written with the
    festival layouts.
-4. **Heart event and spouse routes** (note 79 rule 7) wait for #600 and note 12.
+4. **Heart event and spouse routes**: done 2026-11-11 in note 84 (events need the
+   person on the map and the scene places them, no event days; the spouse keeps
+   their old route from the farm).
 5. **Register**: SC-106, SC-109 and SC-112 are answered (2026-11-11), the
    per-person details from the saved Abigail page only. Other villagers are not
    checked.
