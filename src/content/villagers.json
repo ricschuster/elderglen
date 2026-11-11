@@ -1,0 +1,1580 @@
+{
+  "_note": "Villagers slice 1 (#599). Source: notes 79 and 80, birthdays in note 61. Times are game clock H:MM on the 6:00 to 26:00 day. A stop is 'H:MM place (idle)'. Every time, spot and tile is a placeholder tuned here, not in code.",
+  "areas": {
+    "hw": { "map": "hearthwell" },
+    "forest": { "map": "forest" },
+    "mtn": { "map": "mountain" },
+    "quarry": { "map": "quarry" },
+    "mines": { "map": "mine" },
+    "delta": { "map": "delta" },
+    "beach": { "map": null }
+  },
+  "places": {
+    "hw:store": { "interior": "general-store", "x": 22, "y": 24 },
+    "hw:healer": { "interior": "healer", "x": 41, "y": 24 },
+    "hw:inn": { "interior": "inn", "x": 22, "y": 53 },
+    "hw:library": { "interior": "library", "x": 41, "y": 53 },
+    "hw:smithy": { "interior": "smithy", "x": 22, "y": 82 },
+    "hw:hatter": { "interior": "hatter", "x": 41, "y": 82 },
+    "hw:sawmill": { "interior": "sawmill", "x": 48, "y": 66 },
+    "hw:outpost": { "interior": "outpost", "x": 88, "y": 12 },
+    "hw:burrow-gardener": { "interior": "burrow-gardener", "x": 68, "y": 32 },
+    "hw:burrow-retired": { "interior": "burrow-retired", "x": 67, "y": 86 },
+    "hw:burrow-young": { "interior": "burrow-young", "x": 8, "y": 51 },
+    "hw:square": { "x": 59, "y": 62, "placeholder": true },
+    "hw:green": { "x": 88, "y": 90, "placeholder": true },
+    "hw:river-path": { "x": 56, "y": 45, "placeholder": true },
+    "hw:outpost-yard": { "x": 88, "y": 16, "placeholder": true },
+    "hw:burrow-garden": { "x": 70, "y": 30, "placeholder": true },
+    "forest:farmstead": {
+      "interior": "forest-farmstead",
+      "x": 60,
+      "y": 60,
+      "placeholder": true
+    },
+    "forest:hermit-tower": {
+      "interior": "hermit-tower",
+      "x": 20,
+      "y": 20,
+      "placeholder": true
+    },
+    "forest:paddock": { "x": 55, "y": 65, "placeholder": true },
+    "forest:hermit-garden": { "x": 22, "y": 24, "placeholder": true },
+    "forest:fairy-ring": { "x": 30, "y": 30, "placeholder": true },
+    "forest:camp": { "x": 80, "y": 40, "placeholder": true },
+    "forest:farm-road": { "x": 60, "y": 90, "placeholder": true },
+    "forest:wood-path": { "x": 40, "y": 70, "placeholder": true },
+    "forest:lake": { "x": 90, "y": 80, "placeholder": true },
+    "mtn:forge": { "interior": "forge", "x": 30, "y": 30, "placeholder": true },
+    "quarry:camp": { "x": 10, "y": 10, "placeholder": true },
+    "quarry:yard": { "x": 30, "y": 20, "placeholder": true },
+    "quarry:bridge": { "x": 45, "y": 25, "placeholder": true },
+    "mines:hall": { "x": 10, "y": 10, "placeholder": true },
+    "delta:hut": {
+      "interior": "fisher-hut",
+      "x": 30,
+      "y": 30,
+      "placeholder": true
+    },
+    "delta:dock": { "x": 40, "y": 40, "placeholder": true },
+    "beach:cottage": {
+      "interior": "beach-elf-house",
+      "x": 20,
+      "y": 20,
+      "placeholder": true
+    },
+    "beach:dunes": { "x": 10, "y": 15, "placeholder": true },
+    "beach:shore": { "x": 25, "y": 30, "placeholder": true },
+    "road:forest": { "transit": true },
+    "road:mtn": { "transit": true },
+    "road:quarry": { "transit": true },
+    "road:mines": { "transit": true },
+    "road:delta": { "transit": true },
+    "road:beach": { "transit": true }
+  },
+  "interiorSpots": {
+    "counter": { "x": 5, "y": 4 },
+    "home": { "x": 3, "y": 7 },
+    "room": { "x": 9, "y": 6 },
+    "common": { "x": 7, "y": 6 },
+    "yard": { "x": 7, "y": 2 },
+    "dummy": { "x": 6, "y": 5 }
+  },
+  "idleKeys": [
+    "work",
+    "serve",
+    "stock",
+    "cook",
+    "chat",
+    "walk",
+    "play",
+    "eat",
+    "weed",
+    "water",
+    "harvest",
+    "drink",
+    "sit",
+    "quiet",
+    "tea",
+    "sew",
+    "sketch",
+    "market",
+    "errands",
+    "run",
+    "swim",
+    "rest",
+    "bench",
+    "fish",
+    "forge",
+    "hammer",
+    "saw",
+    "study",
+    "read",
+    "herbs",
+    "stroll",
+    "stalls",
+    "browse",
+    "visit",
+    "talk",
+    "fire",
+    "tend",
+    "feed",
+    "brew",
+    "gaze",
+    "stand",
+    "mend",
+    "check",
+    "spar",
+    "carriers",
+    "sort",
+    "gather",
+    "kitchen",
+    "open",
+    "repair",
+    "ice",
+    "tent"
+  ],
+  "villagers": [
+    {
+      "id": "odette",
+      "name": "Odette",
+      "role": "Store keeper",
+      "ageBand": "adult",
+      "birthday": { "season": "summer", "day": 25 },
+      "home": "hw:store/home",
+      "shop": "store",
+      "bed": "22:30",
+      "route": [
+        "7:00 hw:store/home",
+        "8:50 hw:store/counter (serve)",
+        "17:00 hw:store/home (cook)",
+        "18:00 hw:inn (sit)",
+        "22:00 hw:store/home"
+      ],
+      "rain": [
+        "7:00 hw:store/home",
+        "8:50 hw:store/counter (serve)",
+        "17:00 hw:store/home (cook)",
+        "22:00 hw:store/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Wed"],
+          "from": "9:30",
+          "until": "17:00",
+          "stops": [
+            "9:30 hw:square (market)",
+            "11:30 hw:river-path (walk)",
+            "13:00 hw:store/home"
+          ]
+        }
+      ],
+      "season": [
+        {
+          "season": "winter",
+          "from": "18:00",
+          "until": "22:00",
+          "stops": ["18:00 hw:store/home"]
+        }
+      ]
+    },
+    {
+      "id": "dorrie",
+      "name": "Dorrie",
+      "role": "Store keeper's partner",
+      "ageBand": "adult",
+      "birthday": { "season": "winter", "day": 6 },
+      "home": "hw:store/home",
+      "bed": "22:00",
+      "route": [
+        "7:30 hw:store/home",
+        "9:00 hw:green (walk)",
+        "11:00 hw:store/counter (stock)",
+        "14:00 hw:square (chat)",
+        "17:00 hw:store/home"
+      ],
+      "rain": [
+        "7:30 hw:store/home",
+        "9:00 hw:store/counter (stock)",
+        "17:00 hw:store/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Wed"],
+          "from": "9:30",
+          "until": "11:30",
+          "stops": ["9:30 hw:square (market)"]
+        }
+      ],
+      "season": [
+        {
+          "season": "summer",
+          "from": "9:00",
+          "until": "12:00",
+          "stops": ["9:00 hw:green (walk)"]
+        },
+        {
+          "season": "fall",
+          "from": "9:00",
+          "until": "11:00",
+          "stops": ["9:00 hw:river-path (walk)"]
+        },
+        {
+          "season": "winter",
+          "from": "9:00",
+          "until": "17:00",
+          "stops": ["9:00 hw:store/counter (stock)"]
+        }
+      ]
+    },
+    {
+      "id": "fitch",
+      "name": "Fitch",
+      "role": "Store keeper's child",
+      "ageBand": "child",
+      "birthday": { "season": "summer", "day": 2 },
+      "home": "hw:store/home",
+      "bed": "20:00",
+      "route": [
+        "8:00 hw:store/home",
+        "9:30 hw:green (play)",
+        "12:00 hw:store/home (eat)",
+        "13:30 hw:green (play)",
+        "17:00 hw:store/home"
+      ],
+      "rain": ["8:00 hw:store/home", "9:30 hw:store/home (play)"],
+      "weekday": [
+        {
+          "days": ["Sat", "Sun"],
+          "from": "9:00",
+          "until": "17:30",
+          "stops": [
+            "9:00 hw:green (play)",
+            "12:30 hw:store/home (eat)",
+            "13:30 hw:green (play)"
+          ]
+        }
+      ],
+      "season": [
+        {
+          "season": "summer",
+          "from": "17:00",
+          "until": "18:00",
+          "bed": "20:30",
+          "stops": ["17:00 hw:green (play)"]
+        },
+        {
+          "season": "winter",
+          "from": "9:30",
+          "until": "17:00",
+          "stops": ["9:30 hw:store/home (play)"]
+        },
+        {
+          "season": "winter",
+          "weather": "snowy",
+          "from": "13:00",
+          "until": "15:00",
+          "stops": ["13:00 hw:green (play)"]
+        }
+      ]
+    },
+    {
+      "id": "alder",
+      "name": "Alder",
+      "role": "Gardener",
+      "ageBand": "adult",
+      "birthday": { "season": "summer", "day": 13 },
+      "home": "hw:burrow-gardener/home",
+      "bed": "22:30",
+      "route": [
+        "7:00 hw:burrow-gardener/home",
+        "8:00 hw:burrow-garden (weed)",
+        "9:00 hw:store/counter (stock)",
+        "13:00 hw:river-path (eat)",
+        "14:00 hw:store/counter (stock)",
+        "17:00 hw:burrow-gardener/home"
+      ],
+      "rain": [
+        "7:00 hw:burrow-gardener/home",
+        "8:30 hw:store/counter (stock)",
+        "17:00 hw:burrow-gardener/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Sun"],
+          "from": "14:00",
+          "until": "16:30",
+          "stops": ["14:00 hw:burrow-retired/home (visit)"]
+        }
+      ],
+      "season": [
+        {
+          "season": "summer",
+          "from": "8:00",
+          "until": "10:00",
+          "stops": ["8:00 hw:burrow-garden (water)"]
+        },
+        {
+          "season": "fall",
+          "from": "8:00",
+          "until": "10:00",
+          "stops": ["8:00 hw:burrow-garden (harvest)"]
+        },
+        {
+          "season": "winter",
+          "from": "8:00",
+          "until": "17:00",
+          "stops": ["8:30 hw:store/counter (stock)"]
+        }
+      ]
+    },
+    {
+      "id": "bramwell",
+      "name": "Bramwell",
+      "role": "Smith",
+      "ageBand": "adult",
+      "birthday": { "season": "spring", "day": 12 },
+      "home": "hw:smithy/home",
+      "shop": "smithy",
+      "bed": "23:00",
+      "route": [
+        "7:00 hw:smithy/home",
+        "8:50 hw:smithy/counter (serve)",
+        "16:00 hw:smithy/room (forge)",
+        "19:00 hw:inn (drink)",
+        "22:00 hw:smithy/home"
+      ],
+      "rain": [
+        "7:00 hw:smithy/home",
+        "8:50 hw:smithy/counter (serve)",
+        "16:00 hw:smithy/room (forge)",
+        "19:00 hw:inn (drink)",
+        "22:00 hw:smithy/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Fri"],
+          "from": "9:00",
+          "until": "19:00",
+          "stops": [
+            "9:00 hw:river-path (fish)",
+            "13:00 hw:inn (eat)",
+            "15:00 hw:smithy/room (forge)"
+          ]
+        }
+      ],
+      "season": [
+        {
+          "season": "winter",
+          "from": "9:00",
+          "until": "11:00",
+          "stops": ["9:00 hw:smithy/room (forge)"]
+        }
+      ]
+    },
+    {
+      "id": "hattie",
+      "name": "Hattie",
+      "role": "Inn keeper",
+      "ageBand": "adult",
+      "birthday": { "season": "winter", "day": 12 },
+      "home": "hw:inn/home",
+      "shop": "inn",
+      "bed": "24:30",
+      "route": [
+        "7:00 hw:inn/home",
+        "8:00 hw:inn/room (kitchen)",
+        "12:00 hw:inn/counter (open)",
+        "24:00 hw:inn/home"
+      ],
+      "rain": [
+        "7:00 hw:inn/home",
+        "8:00 hw:inn/room (kitchen)",
+        "12:00 hw:inn/counter (open)",
+        "24:00 hw:inn/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Thu"],
+          "from": "8:00",
+          "until": "24:00",
+          "stops": [
+            "8:00 hw:inn/room (kitchen)",
+            "11:00 hw:square (errands)",
+            "13:00 hw:inn/home (rest)",
+            "18:00 hw:inn (sit)"
+          ]
+        }
+      ],
+      "season": [
+        {
+          "season": "winter",
+          "from": "18:00",
+          "until": "24:00",
+          "stops": ["18:00 hw:inn (fire)"]
+        }
+      ]
+    },
+    {
+      "id": "podge",
+      "name": "Podge",
+      "role": "Inn keeper's partner",
+      "ageBand": "adult",
+      "birthday": { "season": "summer", "day": 28 },
+      "home": "hw:inn/home",
+      "bed": "23:00",
+      "route": [
+        "8:00 hw:inn/room (kitchen)",
+        "11:00 hw:square (market)",
+        "12:30 hw:inn/room (kitchen)",
+        "22:00 hw:inn/home"
+      ],
+      "rain": ["8:00 hw:inn/room (kitchen)", "22:00 hw:inn/home"],
+      "weekday": [
+        {
+          "days": ["Wed"],
+          "from": "9:30",
+          "until": "11:30",
+          "stops": ["9:30 hw:square (market)"]
+        }
+      ],
+      "season": [
+        {
+          "season": "summer",
+          "from": "11:00",
+          "until": "13:00",
+          "stops": ["11:00 hw:square (market)"]
+        },
+        {
+          "season": "fall",
+          "from": "11:00",
+          "until": "13:30",
+          "stops": ["11:00 hw:square (market)"]
+        },
+        {
+          "season": "winter",
+          "from": "8:00",
+          "until": "22:00",
+          "stops": ["8:00 hw:inn/room (kitchen)"]
+        }
+      ]
+    },
+    {
+      "id": "pim",
+      "name": "Pim",
+      "role": "Inn keeper's child",
+      "ageBand": "child",
+      "birthday": { "season": "winter", "day": 3 },
+      "home": "hw:inn/home",
+      "bed": "20:00",
+      "route": [
+        "8:00 hw:inn/home",
+        "9:30 hw:green (play)",
+        "12:30 hw:inn/room (eat)",
+        "14:00 hw:river-path (play)",
+        "17:30 hw:inn/home"
+      ],
+      "rain": ["8:00 hw:inn/home", "9:30 hw:inn/room (play)"],
+      "weekday": [
+        {
+          "days": ["Sat", "Sun"],
+          "from": "9:00",
+          "until": "17:30",
+          "stops": [
+            "9:00 hw:green (play)",
+            "12:30 hw:inn/home (eat)",
+            "13:30 hw:green (play)"
+          ]
+        }
+      ],
+      "season": [
+        {
+          "season": "summer",
+          "from": "17:30",
+          "until": "18:00",
+          "bed": "20:30",
+          "stops": ["17:30 hw:green (play)"]
+        },
+        {
+          "season": "winter",
+          "from": "9:30",
+          "until": "17:30",
+          "stops": ["9:30 hw:inn/room (play)"]
+        },
+        {
+          "season": "winter",
+          "weather": "snowy",
+          "from": "13:00",
+          "until": "15:00",
+          "stops": ["13:00 hw:green (play)"]
+        }
+      ]
+    },
+    {
+      "id": "aurelle",
+      "name": "Aurelle",
+      "role": "Healer",
+      "ageBand": "adult",
+      "birthday": { "season": "spring", "day": 26 },
+      "home": "hw:healer/home",
+      "shop": "healer",
+      "bed": "22:30",
+      "route": [
+        "7:30 hw:healer/home",
+        "8:50 hw:healer/counter (serve)",
+        "17:00 hw:healer/room (study)",
+        "19:00 hw:river-path (walk)",
+        "21:00 hw:healer/home"
+      ],
+      "rain": [
+        "7:30 hw:healer/home",
+        "8:50 hw:healer/counter (serve)",
+        "17:00 hw:healer/room (study)",
+        "21:00 hw:healer/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Sat"],
+          "from": "10:00",
+          "until": "19:00",
+          "stops": [
+            "10:00 hw:burrow-garden (herbs)",
+            "12:30 hw:square (chat)",
+            "15:00 hw:healer/room (study)"
+          ]
+        }
+      ],
+      "season": [
+        {
+          "season": "summer",
+          "from": "19:00",
+          "until": "21:30",
+          "stops": ["19:00 hw:river-path (walk)"]
+        },
+        {
+          "season": "winter",
+          "from": "19:00",
+          "until": "21:00",
+          "stops": ["19:00 hw:healer/room (study)"]
+        }
+      ]
+    },
+    {
+      "id": "dunmar",
+      "name": "Dunmar",
+      "role": "Librarian",
+      "ageBand": "adult",
+      "birthday": { "season": "summer", "day": 16 },
+      "home": "hw:library/home",
+      "shop": "library",
+      "bed": "23:00",
+      "route": [
+        "8:00 hw:library/home",
+        "9:50 hw:library/counter (serve)",
+        "18:00 hw:library/room (read)",
+        "19:30 hw:inn (quiet)",
+        "22:00 hw:library/home"
+      ],
+      "rain": [
+        "8:00 hw:library/home",
+        "9:50 hw:library/counter (serve)",
+        "18:00 hw:library/room (read)",
+        "19:30 hw:inn (quiet)",
+        "22:00 hw:library/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Mon"],
+          "from": "10:00",
+          "until": "19:30",
+          "stops": [
+            "10:00 hw:river-path (walk)",
+            "12:30 hw:inn (eat)",
+            "14:30 hw:library/room (read)"
+          ]
+        }
+      ],
+      "season": [
+        {
+          "season": "summer",
+          "from": "18:00",
+          "until": "19:30",
+          "stops": ["18:00 hw:river-path (read)"]
+        }
+      ]
+    },
+    {
+      "id": "tilda",
+      "name": "Tilda",
+      "role": "Carpenter",
+      "ageBand": "adult",
+      "birthday": { "season": "fall", "day": 4 },
+      "home": "hw:sawmill/home",
+      "shop": "sawmill",
+      "bed": "22:00",
+      "route": [
+        "6:30 hw:sawmill/home",
+        "7:30 hw:sawmill/yard (saw)",
+        "9:00 hw:sawmill/counter (serve)",
+        "17:00 hw:sawmill/home"
+      ],
+      "rain": [
+        "6:30 hw:sawmill/home",
+        "9:00 hw:sawmill/counter (serve)",
+        "11:00 hw:sawmill/room (saw)",
+        "17:00 hw:sawmill/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Tue"],
+          "from": "9:00",
+          "until": "17:00",
+          "stops": [
+            "9:00 hw:square (errands)",
+            "11:00 hw:sawmill/yard (repair)",
+            "14:00 hw:green (sit)"
+          ]
+        }
+      ],
+      "season": [
+        {
+          "season": "fall",
+          "from": "6:30",
+          "until": "17:30",
+          "stops": [
+            "6:30 hw:sawmill/yard (saw)",
+            "9:00 hw:sawmill/counter (serve)"
+          ]
+        },
+        {
+          "season": "winter",
+          "from": "7:30",
+          "until": "9:00",
+          "stops": ["7:30 hw:sawmill/room (saw)"]
+        }
+      ]
+    },
+    {
+      "id": "rufus",
+      "name": "Rufus",
+      "role": "Carpenter's partner",
+      "ageBand": "adult",
+      "birthday": { "season": "fall", "day": 24 },
+      "home": "hw:sawmill/home",
+      "bed": "22:00",
+      "route": [
+        "7:00 hw:sawmill/home",
+        "8:00 hw:sawmill/yard (saw)",
+        "12:00 hw:river-path (eat)",
+        "13:00 hw:sawmill/yard (saw)",
+        "17:30 hw:sawmill/home"
+      ],
+      "rain": [
+        "7:00 hw:sawmill/home",
+        "8:00 hw:sawmill/room (saw)",
+        "17:30 hw:sawmill/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Sat"],
+          "from": "12:00",
+          "until": "17:00",
+          "stops": ["12:00 hw:river-path (fish)"]
+        }
+      ],
+      "season": [
+        {
+          "season": "winter",
+          "from": "8:00",
+          "until": "17:30",
+          "stops": ["8:00 hw:sawmill/room (saw)"]
+        }
+      ]
+    },
+    {
+      "id": "wren",
+      "name": "Wren",
+      "role": "Carpenter's child",
+      "ageBand": "child",
+      "birthday": { "season": "fall", "day": 2 },
+      "home": "hw:sawmill/home",
+      "bed": "20:00",
+      "route": [
+        "8:00 hw:sawmill/home",
+        "9:30 hw:green (play)",
+        "12:00 hw:sawmill/home (eat)",
+        "13:30 hw:river-path (play)",
+        "17:00 hw:sawmill/home"
+      ],
+      "rain": ["8:00 hw:sawmill/home", "9:30 hw:sawmill/home (play)"],
+      "weekday": [
+        {
+          "days": ["Sat", "Sun"],
+          "from": "9:00",
+          "until": "17:30",
+          "stops": [
+            "9:00 hw:green (play)",
+            "12:30 hw:sawmill/home (eat)",
+            "13:30 hw:green (play)"
+          ]
+        }
+      ],
+      "season": [
+        {
+          "season": "summer",
+          "from": "17:00",
+          "until": "18:00",
+          "bed": "20:30",
+          "stops": ["17:00 hw:green (play)"]
+        },
+        {
+          "season": "winter",
+          "from": "9:30",
+          "until": "17:00",
+          "stops": ["9:30 hw:sawmill/home (play)"]
+        },
+        {
+          "season": "winter",
+          "weather": "snowy",
+          "from": "13:00",
+          "until": "15:00",
+          "stops": ["13:00 hw:green (play)"]
+        }
+      ]
+    },
+    {
+      "id": "cuthbert",
+      "name": "Cuthbert",
+      "role": "Reeve, hall steward and postmaster",
+      "ageBand": "adult",
+      "birthday": { "season": "winter", "day": 26 },
+      "home": "hw:outpost/home",
+      "shop": "outpost",
+      "bed": "22:00",
+      "route": [
+        "6:30 hw:outpost/home",
+        "7:50 hw:outpost/counter (serve)",
+        "12:00 hw:outpost-yard (eat)",
+        "13:00 hw:outpost/counter (serve)",
+        "18:00 hw:square (walk)",
+        "19:30 hw:outpost/home"
+      ],
+      "rain": [
+        "6:30 hw:outpost/home",
+        "7:50 hw:outpost/counter (serve)",
+        "18:00 hw:outpost/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Wed", "Sat"],
+          "from": "9:00",
+          "until": "12:00",
+          "stops": ["9:00 hw:outpost-yard (stalls)"]
+        },
+        {
+          "days": ["Sun"],
+          "from": "10:00",
+          "until": "18:00",
+          "stops": [
+            "10:00 hw:green (stroll)",
+            "12:00 hw:inn (eat)",
+            "14:00 hw:outpost/room (sort)"
+          ]
+        }
+      ],
+      "season": [
+        {
+          "season": "summer",
+          "from": "18:00",
+          "until": "20:00",
+          "stops": ["18:00 hw:square (walk)"]
+        },
+        {
+          "season": "winter",
+          "from": "18:00",
+          "until": "19:30",
+          "stops": ["18:00 hw:outpost/home"]
+        }
+      ]
+    },
+    {
+      "id": "cordelia",
+      "name": "Cordelia",
+      "role": "Hat-maker",
+      "ageBand": "adult",
+      "birthday": { "season": "spring", "day": 14 },
+      "home": "hw:hatter/home",
+      "shop": "hatter",
+      "bed": "22:30",
+      "route": [
+        "8:30 hw:hatter/home",
+        "9:50 hw:hatter/counter (serve)",
+        "17:00 hw:hatter/room (sew)",
+        "19:00 hw:inn (tea)",
+        "21:00 hw:hatter/home"
+      ],
+      "rain": [
+        "8:30 hw:hatter/home",
+        "9:50 hw:hatter/counter (serve)",
+        "17:00 hw:hatter/room (sew)",
+        "19:00 hw:inn (tea)",
+        "21:00 hw:hatter/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Sun"],
+          "from": "10:00",
+          "until": "19:00",
+          "stops": [
+            "10:00 hw:green (sketch)",
+            "12:30 hw:inn (eat)",
+            "15:00 hw:hatter/room (sew)"
+          ]
+        }
+      ],
+      "season": [
+        {
+          "season": "winter",
+          "from": "19:00",
+          "until": "21:00",
+          "stops": ["19:00 hw:hatter/room (sew)"]
+        }
+      ]
+    },
+    {
+      "id": "barnaby",
+      "name": "Barnaby",
+      "role": "Hat-maker's sibling",
+      "ageBand": "adult",
+      "birthday": { "season": "summer", "day": 11 },
+      "home": "hw:hatter/home",
+      "bed": "23:00",
+      "route": [
+        "9:00 hw:hatter/home",
+        "10:00 hw:hatter/room (sew)",
+        "12:00 hw:square (market)",
+        "13:30 hw:hatter/counter (serve)",
+        "17:00 hw:green (sketch)",
+        "19:00 hw:inn (drink)",
+        "22:00 hw:hatter/home"
+      ],
+      "rain": [
+        "9:00 hw:hatter/home",
+        "10:00 hw:hatter/room (sew)",
+        "19:00 hw:inn (drink)",
+        "22:00 hw:hatter/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Wed"],
+          "from": "9:30",
+          "until": "11:30",
+          "stops": ["9:30 hw:square (market)"]
+        }
+      ],
+      "season": [
+        {
+          "season": "summer",
+          "from": "17:00",
+          "until": "19:00",
+          "stops": ["17:00 hw:green (sketch)"]
+        },
+        {
+          "season": "fall",
+          "from": "17:00",
+          "until": "19:00",
+          "stops": ["17:00 hw:river-path (sketch)"]
+        },
+        {
+          "season": "winter",
+          "from": "12:00",
+          "until": "17:00",
+          "stops": ["12:00 hw:hatter/room (sew)"]
+        }
+      ]
+    },
+    {
+      "id": "linnet",
+      "name": "Linnet",
+      "role": "Young adult, works at the inn",
+      "ageBand": "young-adult",
+      "birthday": { "season": "spring", "day": 7 },
+      "home": "hw:burrow-young/home",
+      "bed": "23:00",
+      "route": [
+        "7:30 hw:burrow-young/home",
+        "9:00 hw:river-path (run)",
+        "10:30 hw:inn/counter (serve)",
+        "17:00 hw:green (rest)",
+        "18:00 hw:inn (serve)",
+        "22:00 hw:burrow-young/home"
+      ],
+      "rain": [
+        "7:30 hw:burrow-young/home",
+        "10:30 hw:inn/counter (serve)",
+        "18:00 hw:inn (serve)",
+        "22:00 hw:burrow-young/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Sat", "Sun"],
+          "from": "9:00",
+          "until": "18:00",
+          "stops": [
+            "9:00 hw:river-path (run)",
+            "12:00 hw:square (chat)",
+            "14:00 hw:green (rest)"
+          ]
+        }
+      ],
+      "season": [
+        {
+          "season": "summer",
+          "from": "9:00",
+          "until": "10:30",
+          "stops": ["9:00 hw:river-path (swim)"]
+        },
+        {
+          "season": "winter",
+          "from": "9:00",
+          "until": "10:30",
+          "stops": ["9:00 hw:inn/room (kitchen)"]
+        }
+      ]
+    },
+    {
+      "id": "thistle",
+      "name": "Thistle",
+      "role": "Young adult, works at the inn",
+      "ageBand": "young-adult",
+      "birthday": { "season": "fall", "day": 12 },
+      "home": "hw:burrow-young/home",
+      "bed": "23:30",
+      "route": [
+        "8:00 hw:burrow-young/home",
+        "10:00 hw:inn/room (kitchen)",
+        "14:00 hw:square (errands)",
+        "16:00 hw:river-path (walk)",
+        "18:00 hw:inn/counter (serve)",
+        "22:00 hw:burrow-young/home"
+      ],
+      "rain": [
+        "8:00 hw:burrow-young/home",
+        "10:00 hw:inn/room (kitchen)",
+        "18:00 hw:inn/counter (serve)",
+        "22:00 hw:burrow-young/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Sat", "Sun"],
+          "from": "10:00",
+          "until": "18:00",
+          "stops": [
+            "10:00 hw:library/room (read)",
+            "13:00 hw:green (rest)",
+            "16:00 hw:river-path (walk)"
+          ]
+        }
+      ],
+      "season": [
+        {
+          "season": "winter",
+          "from": "14:00",
+          "until": "16:00",
+          "stops": ["14:00 hw:library/room (read)"]
+        }
+      ]
+    },
+    {
+      "id": "hester",
+      "name": "Hester",
+      "role": "Retiree",
+      "ageBand": "elder",
+      "birthday": { "season": "summer", "day": 22 },
+      "home": "hw:burrow-retired/home",
+      "bed": "21:00",
+      "route": [
+        "7:00 hw:burrow-retired/home",
+        "9:00 hw:square (bench)",
+        "11:30 hw:burrow-retired/home (eat)",
+        "14:00 hw:river-path (walk)",
+        "16:30 hw:burrow-retired/home"
+      ],
+      "rain": ["7:00 hw:burrow-retired/home"],
+      "weekday": [
+        {
+          "days": ["Wed"],
+          "from": "9:30",
+          "until": "11:30",
+          "stops": ["9:30 hw:square (market)"]
+        }
+      ],
+      "season": [
+        {
+          "season": "summer",
+          "from": "9:00",
+          "until": "12:00",
+          "stops": ["9:00 hw:square (bench)"]
+        },
+        {
+          "season": "winter",
+          "from": "9:00",
+          "until": "12:30",
+          "stops": ["9:00 hw:burrow-retired/home"]
+        },
+        {
+          "season": "winter",
+          "weather": "sunny",
+          "from": "12:30",
+          "until": "14:00",
+          "stops": ["12:30 hw:square (bench)"]
+        }
+      ]
+    },
+    {
+      "id": "walter",
+      "name": "Walter",
+      "role": "Retiree",
+      "ageBand": "elder",
+      "birthday": { "season": "winter", "day": 24 },
+      "home": "hw:burrow-retired/home",
+      "bed": "21:30",
+      "route": [
+        "8:00 hw:burrow-retired/home",
+        "9:30 hw:river-path (fish)",
+        "12:30 hw:square (bench)",
+        "15:00 hw:burrow-retired/home",
+        "19:30 hw:inn (drink)",
+        "21:00 hw:burrow-retired/home"
+      ],
+      "rain": [
+        "8:00 hw:burrow-retired/home",
+        "19:30 hw:inn (drink)",
+        "21:00 hw:burrow-retired/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Wed"],
+          "from": "9:30",
+          "until": "11:30",
+          "stops": ["9:30 hw:square (market)"]
+        }
+      ],
+      "season": [
+        {
+          "season": "summer",
+          "from": "9:30",
+          "until": "13:00",
+          "stops": ["9:30 hw:river-path (fish)"]
+        },
+        {
+          "season": "winter",
+          "from": "9:30",
+          "until": "19:30",
+          "stops": ["9:30 hw:burrow-retired/home (ice)"]
+        }
+      ]
+    },
+    {
+      "id": "toby",
+      "name": "Toby",
+      "role": "Retirees' grandchild",
+      "ageBand": "child",
+      "birthday": { "season": "spring", "day": 3 },
+      "home": "hw:burrow-retired/home",
+      "bed": "20:00",
+      "route": [
+        "8:00 hw:burrow-retired/home",
+        "9:30 hw:green (play)",
+        "12:00 hw:burrow-retired/home (eat)",
+        "14:00 hw:river-path (play)",
+        "17:30 hw:burrow-retired/home"
+      ],
+      "rain": [
+        "8:00 hw:burrow-retired/home",
+        "9:30 hw:burrow-retired/home (play)"
+      ],
+      "weekday": [
+        {
+          "days": ["Sat", "Sun"],
+          "from": "9:00",
+          "until": "17:30",
+          "stops": [
+            "9:00 hw:green (play)",
+            "12:30 hw:burrow-retired/home (eat)",
+            "13:30 hw:green (play)"
+          ]
+        }
+      ],
+      "season": [
+        {
+          "season": "summer",
+          "from": "17:30",
+          "until": "18:00",
+          "bed": "20:30",
+          "stops": ["17:30 hw:green (play)"]
+        },
+        {
+          "season": "winter",
+          "from": "9:30",
+          "until": "17:30",
+          "stops": ["9:30 hw:burrow-retired/home (play)"]
+        },
+        {
+          "season": "winter",
+          "weather": "snowy",
+          "from": "13:00",
+          "until": "15:00",
+          "stops": ["13:00 hw:green (play)"]
+        }
+      ]
+    },
+    {
+      "id": "dilly",
+      "name": "Dilly",
+      "role": "Forest animal keeper",
+      "ageBand": "adult",
+      "birthday": { "season": "fall", "day": 17 },
+      "home": "forest:farmstead/home",
+      "shop": "farmstead",
+      "bed": "22:00",
+      "area": "forest",
+      "route": [
+        "6:30 forest:farmstead/home",
+        "7:30 forest:paddock (feed)",
+        "9:00 forest:farmstead/counter (serve)",
+        "16:00 forest:paddock (tend)",
+        "18:00 forest:farmstead/home"
+      ],
+      "rain": [
+        "6:30 forest:farmstead/home",
+        "7:30 forest:farmstead/room (tend)",
+        "9:00 forest:farmstead/counter (serve)",
+        "16:00 forest:farmstead/room (tend)",
+        "18:00 forest:farmstead/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Mon"],
+          "from": "7:30",
+          "until": "16:00",
+          "stops": [
+            "7:30 forest:paddock (feed)",
+            "10:00 forest:lake (rest)",
+            "13:00 forest:farmstead/room (rest)"
+          ]
+        },
+        {
+          "days": ["Tue"],
+          "from": "9:30",
+          "until": "16:30",
+          "stops": [
+            "9:30 road:forest",
+            "10:30 hw:square (chat)",
+            "11:00 hw:store/counter (chat)",
+            "12:30 hw:inn (eat)",
+            "14:00 hw:green (sit)",
+            "15:30 road:forest"
+          ]
+        }
+      ],
+      "season": [
+        {
+          "season": "summer",
+          "from": "7:30",
+          "until": "10:00",
+          "stops": ["7:30 forest:paddock (feed)"]
+        },
+        {
+          "season": "summer",
+          "from": "12:00",
+          "until": "13:00",
+          "stops": ["12:00 forest:lake (rest)"]
+        },
+        {
+          "season": "winter",
+          "from": "7:30",
+          "until": "18:00",
+          "stops": [
+            "7:30 forest:farmstead/room (tend)",
+            "9:00 forest:farmstead/counter (serve)",
+            "16:00 forest:farmstead/room (tend)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rosmarin",
+      "name": "Rosmarin",
+      "role": "Forest hermit witch",
+      "ageBand": "adult",
+      "birthday": { "season": "fall", "day": 27 },
+      "home": "forest:hermit-tower/home",
+      "bed": "23:30",
+      "area": "forest",
+      "neverTownTrip": true,
+      "route": [
+        "8:00 forest:hermit-tower/home",
+        "9:00 forest:hermit-garden (tend)",
+        "12:00 forest:hermit-tower/room (brew)",
+        "15:00 forest:fairy-ring (stand)",
+        "18:00 forest:hermit-tower/home"
+      ],
+      "rain": [
+        "8:00 forest:hermit-tower/home",
+        "9:00 forest:hermit-tower/room (brew)",
+        "18:00 forest:hermit-tower/home"
+      ],
+      "weekday": [],
+      "season": [
+        {
+          "season": "fall",
+          "from": "9:00",
+          "until": "13:00",
+          "stops": ["9:00 forest:hermit-garden (gather)"]
+        },
+        {
+          "season": "winter",
+          "from": "9:00",
+          "until": "18:00",
+          "stops": ["9:00 forest:hermit-tower/room (brew)"]
+        }
+      ]
+    },
+    {
+      "id": "rundahl",
+      "name": "Rundahl",
+      "knownAs": "Old Greencoat",
+      "role": "Forest wanderer",
+      "ageBand": "elder",
+      "birthday": { "season": "winter", "day": 22 },
+      "home": "forest:camp",
+      "bed": "22:00",
+      "bedPlaceholder": true,
+      "area": "forest",
+      "neverTownTrip": true,
+      "route": [
+        "8:00 forest:camp (fire)",
+        "10:00 forest:farm-road (walk)",
+        "13:00 forest:camp (sit)",
+        "16:00 forest:wood-path (walk)",
+        "19:00 forest:camp (fire)"
+      ],
+      "rain": ["8:00 forest:camp (tent)"],
+      "weekday": [],
+      "season": [
+        {
+          "season": "summer",
+          "from": "13:00",
+          "until": "16:00",
+          "stops": ["13:00 forest:lake (sit)"]
+        },
+        {
+          "season": "fall",
+          "from": "10:00",
+          "until": "15:00",
+          "stops": ["10:00 forest:wood-path (walk)"]
+        },
+        {
+          "season": "winter",
+          "from": "8:00",
+          "until": "19:00",
+          "stops": [
+            "8:00 forest:camp (fire)",
+            "11:00 forest:farm-road (walk)",
+            "13:00 forest:camp (sit)"
+          ]
+        },
+        {
+          "season": "winter",
+          "weather": "snowy",
+          "from": "8:00",
+          "until": "19:00",
+          "stops": ["8:00 forest:camp (tent)"]
+        }
+      ]
+    },
+    {
+      "id": "korvi",
+      "name": "Korvi",
+      "role": "Mountain smith dwarf",
+      "ageBand": "adult",
+      "birthday": { "season": "fall", "day": 7 },
+      "home": "mtn:forge/home",
+      "shop": "forge",
+      "bed": "23:00",
+      "area": "mtn",
+      "route": [
+        "6:30 mtn:forge/home",
+        "8:00 mtn:forge/counter (serve)",
+        "17:00 mtn:forge/room (hammer)",
+        "20:00 mtn:forge/home"
+      ],
+      "rain": [
+        "6:30 mtn:forge/home",
+        "8:00 mtn:forge/counter (serve)",
+        "17:00 mtn:forge/room (hammer)",
+        "20:00 mtn:forge/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Sat"],
+          "from": "10:00",
+          "until": "18:00",
+          "stops": [
+            "10:00 road:mtn",
+            "11:00 hw:square (chat)",
+            "12:30 hw:smithy/counter (talk)",
+            "14:00 hw:inn (drink)",
+            "17:00 road:mtn"
+          ]
+        }
+      ],
+      "season": [
+        {
+          "season": "winter",
+          "from": "15:00",
+          "until": "20:00",
+          "stops": ["15:00 mtn:forge/room (hammer)"]
+        }
+      ]
+    },
+    {
+      "id": "marl",
+      "name": "Marl",
+      "role": "Quarry stonekeeper dwarf",
+      "ageBand": "adult",
+      "birthday": { "season": "spring", "day": 18 },
+      "home": "quarry:camp/home",
+      "shop": "quarry-dwarf",
+      "bed": "22:00",
+      "area": "quarry",
+      "route": [
+        "7:00 quarry:camp/home",
+        "8:00 quarry:yard (work)",
+        "12:00 quarry:camp (eat)",
+        "13:00 quarry:bridge (check)",
+        "17:00 quarry:yard (work)",
+        "19:00 quarry:camp/home"
+      ],
+      "rain": [
+        "7:00 quarry:camp/home",
+        "8:00 quarry:camp (mend)",
+        "17:00 quarry:camp/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Sun"],
+          "from": "9:30",
+          "until": "17:30",
+          "stops": [
+            "9:30 road:quarry",
+            "10:30 hw:square (chat)",
+            "12:00 hw:inn (eat)",
+            "14:00 hw:green (sit)",
+            "16:30 road:quarry"
+          ]
+        }
+      ],
+      "season": [
+        {
+          "season": "summer",
+          "from": "12:00",
+          "until": "13:30",
+          "stops": ["12:00 quarry:camp (eat)"]
+        },
+        {
+          "season": "winter",
+          "from": "8:00",
+          "until": "17:00",
+          "stops": ["8:00 quarry:camp (mend)"]
+        }
+      ]
+    },
+    {
+      "id": "maren",
+      "name": "Maren",
+      "role": "Mines trainer",
+      "ageBand": "adult",
+      "birthday": { "season": "summer", "day": 5 },
+      "home": "mines:hall/home",
+      "bed": "22:00",
+      "area": "mines",
+      "route": [
+        "7:00 mines:hall/home",
+        "8:00 mines:hall/dummy (spar)",
+        "12:00 mines:hall/home (eat)",
+        "13:00 mines:hall/dummy (spar)",
+        "19:00 mines:hall/home"
+      ],
+      "rain": [
+        "7:00 mines:hall/home",
+        "8:00 mines:hall/dummy (spar)",
+        "12:00 mines:hall/home (eat)",
+        "13:00 mines:hall/dummy (spar)",
+        "19:00 mines:hall/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Fri"],
+          "from": "8:30",
+          "until": "18:30",
+          "stops": [
+            "8:30 road:mines",
+            "10:00 hw:smithy/counter (talk)",
+            "12:00 hw:inn (eat)",
+            "15:00 hw:river-path (walk)",
+            "17:00 road:mines"
+          ]
+        }
+      ],
+      "season": []
+    },
+    {
+      "id": "rushie",
+      "name": "Rushie",
+      "role": "Delta fisher",
+      "ageBand": "adult",
+      "birthday": { "season": "spring", "day": 23 },
+      "home": "delta:hut/home",
+      "shop": "delta-fisher",
+      "bed": "21:30",
+      "area": "delta",
+      "route": [
+        "5:30 delta:hut/home",
+        "6:30 delta:dock (fish)",
+        "9:00 delta:hut/counter (serve)",
+        "17:00 delta:dock (fish)",
+        "20:00 delta:hut/home"
+      ],
+      "rain": [
+        "5:30 delta:hut/home",
+        "9:00 delta:hut/counter (serve)",
+        "17:00 delta:hut/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Sat"],
+          "from": "9:30",
+          "until": "16:00",
+          "stops": [
+            "9:30 road:delta",
+            "10:30 hw:square (chat)",
+            "11:30 hw:outpost-yard (browse)",
+            "13:00 hw:inn (eat)",
+            "15:00 road:delta"
+          ]
+        }
+      ],
+      "season": [
+        {
+          "season": "summer",
+          "from": "5:30",
+          "until": "9:00",
+          "stops": ["5:30 delta:hut/home", "6:00 delta:dock (fish)"]
+        },
+        {
+          "season": "winter",
+          "from": "9:00",
+          "until": "17:00",
+          "stops": [
+            "9:00 delta:hut/counter (serve)",
+            "11:00 delta:dock (fish)",
+            "14:00 delta:hut/counter (serve)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "thalwen",
+      "name": "Thalwen",
+      "role": "Beach sea elf",
+      "ageBand": "adult",
+      "birthday": { "season": "winter", "day": 15 },
+      "home": "beach:cottage/home",
+      "shop": "beach-stall",
+      "bed": "23:00",
+      "area": "beach",
+      "route": [
+        "7:00 beach:cottage/home",
+        "9:00 beach:dunes (gaze)",
+        "12:00 beach:cottage/room (rest)",
+        "14:00 beach:shore (walk)",
+        "18:00 beach:cottage/counter (serve)",
+        "20:00 beach:cottage/home"
+      ],
+      "rain": [
+        "7:00 beach:cottage/home",
+        "9:00 beach:cottage/room (rest)",
+        "18:00 beach:cottage/counter (serve)",
+        "20:00 beach:cottage/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Sun"],
+          "from": "10:00",
+          "until": "17:30",
+          "stops": [
+            "10:00 road:beach",
+            "11:00 hw:square (chat)",
+            "12:30 hw:library/room (visit)",
+            "14:30 hw:river-path (gaze)",
+            "16:30 road:beach"
+          ]
+        }
+      ],
+      "season": [
+        {
+          "season": "winter",
+          "from": "9:00",
+          "until": "18:00",
+          "stops": [
+            "9:00 beach:cottage/room (rest)",
+            "14:00 beach:shore (walk)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "aldreth",
+      "name": "Aldreth",
+      "knownAs": "Lane",
+      "role": "Courier, lodges at the inn",
+      "ageBand": "adult",
+      "birthday": { "season": "spring", "day": 28 },
+      "home": "hw:inn/home",
+      "bed": "23:30",
+      "route": [
+        "7:00 hw:inn/home",
+        "8:30 hw:outpost-yard (carriers)",
+        "12:00 hw:inn/counter (eat)",
+        "13:00 hw:outpost-yard (carriers)",
+        "18:00 hw:inn (sit)",
+        "22:30 hw:inn/home"
+      ],
+      "rain": [
+        "7:00 hw:inn/home",
+        "8:30 hw:outpost/room (sort)",
+        "12:00 hw:inn/counter (eat)",
+        "18:00 hw:inn (sit)",
+        "22:30 hw:inn/home"
+      ],
+      "weekday": [
+        {
+          "days": ["Wed", "Sat"],
+          "from": "10:00",
+          "until": "12:00",
+          "stops": ["10:00 hw:outpost-yard (browse)"]
+        }
+      ],
+      "season": [
+        {
+          "season": "winter",
+          "from": "8:30",
+          "until": "12:00",
+          "stops": ["8:30 hw:outpost/room (sort)"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,148 @@
+{
+  "_note": "Shop hours, note 79 'Shop hours' (placeholders). Times are H:MM on the 6:00 to 26:00 day. closedDay null means open daily. doorClose null means no building door.",
+  "shops": [
+    {
+      "id": "store",
+      "name": "General store",
+      "keeper": "odette",
+      "open": "9:00",
+      "close": "17:00",
+      "doorClose": "21:00",
+      "closedDay": "Wed",
+      "rainOpen": false,
+      "dailyAfterHall": true
+    },
+    {
+      "id": "smithy",
+      "name": "Smithy",
+      "keeper": "bramwell",
+      "open": "9:00",
+      "close": "16:00",
+      "doorClose": "19:00",
+      "closedDay": "Fri",
+      "rainOpen": false,
+      "dailyAfterHall": true
+    },
+    {
+      "id": "sawmill",
+      "name": "Sawmill and carpenter",
+      "keeper": "tilda",
+      "open": "9:00",
+      "close": "17:00",
+      "doorClose": "20:00",
+      "closedDay": "Tue",
+      "rainOpen": true,
+      "dailyAfterHall": false
+    },
+    {
+      "id": "hatter",
+      "name": "Hatter",
+      "keeper": "cordelia",
+      "open": "10:00",
+      "close": "17:00",
+      "doorClose": "19:00",
+      "closedDay": "Sun",
+      "rainOpen": false,
+      "dailyAfterHall": false
+    },
+    {
+      "id": "library",
+      "name": "Library",
+      "keeper": "dunmar",
+      "open": "10:00",
+      "close": "18:00",
+      "doorClose": "20:00",
+      "closedDay": "Mon",
+      "rainOpen": false,
+      "dailyAfterHall": false
+    },
+    {
+      "id": "healer",
+      "name": "Healer",
+      "keeper": "aurelle",
+      "open": "9:00",
+      "close": "17:00",
+      "doorClose": "20:00",
+      "closedDay": "Sat",
+      "rainOpen": false,
+      "dailyAfterHall": false
+    },
+    {
+      "id": "inn",
+      "name": "Inn and kitchen",
+      "keeper": "hattie",
+      "open": "12:00",
+      "close": "24:00",
+      "doorClose": "24:00",
+      "closedDay": "Thu",
+      "rainOpen": false,
+      "dailyAfterHall": false
+    },
+    {
+      "id": "outpost",
+      "name": "Outpost post counter",
+      "keeper": "cuthbert",
+      "open": "8:00",
+      "close": "18:00",
+      "doorClose": "20:00",
+      "closedDay": "Sun",
+      "rainOpen": false,
+      "dailyAfterHall": false
+    },
+    {
+      "id": "farmstead",
+      "name": "Forest farmstead",
+      "keeper": "dilly",
+      "open": "9:00",
+      "close": "16:00",
+      "doorClose": "18:00",
+      "closedDay": "Mon",
+      "rainOpen": true,
+      "dailyAfterHall": false
+    },
+    {
+      "id": "delta-fisher",
+      "name": "Delta fisher",
+      "keeper": "rushie",
+      "open": "9:00",
+      "close": "17:00",
+      "doorClose": "17:00",
+      "closedDay": "Sat",
+      "rainOpen": true,
+      "dailyAfterHall": false
+    },
+    {
+      "id": "forge",
+      "name": "Mountain forge",
+      "keeper": "korvi",
+      "open": "9:00",
+      "close": "19:00",
+      "doorClose": null,
+      "closedDay": null,
+      "rainOpen": false,
+      "dailyAfterHall": false
+    },
+    {
+      "id": "beach-stall",
+      "name": "Beach elf's stall",
+      "keeper": "thalwen",
+      "open": "10:00",
+      "close": "18:00",
+      "doorClose": null,
+      "closedDay": null,
+      "rainOpen": false,
+      "dailyAfterHall": false
+    },
+    {
+      "id": "quarry-dwarf",
+      "name": "Quarry dwarf",
+      "keeper": "marl",
+      "open": "8:00",
+      "close": "20:00",
+      "doorClose": null,
+      "closedDay": null,
+      "rainOpen": false,
+      "dailyAfterHall": false
+    }
+  ]
+}
