@@ -11,6 +11,10 @@ export interface BundleItem {
   id: string;
   count: number;
   minQuality: Quality;
+  /** For a slot that takes any one of several goods: the words shown for it. */
+  name?: string;
+  /** Goods (or artisan categories) that fill this slot. The slot's own `id` is then only its key. */
+  anyOf?: string[];
 }
 
 export interface BundleReward {
@@ -47,7 +51,16 @@ export interface RawBundle {
   name: string;
   room: string;
   hint: string;
-  items: (string | { id: string; count?: number; minQuality?: Quality })[];
+  items: (
+    | string
+    | {
+        id: string;
+        count?: number;
+        minQuality?: Quality;
+        name?: string;
+        anyOf?: string[];
+      }
+  )[];
   required?: number;
   reward: BundleReward;
 }
@@ -61,6 +74,8 @@ export function normalizeBundle(raw: RawBundle): BundleDef {
           id: i.id,
           count: i.count ?? 1,
           minQuality: i.minQuality ?? ("normal" as Quality),
+          ...(i.name ? { name: i.name } : {}),
+          ...(i.anyOf ? { anyOf: i.anyOf } : {}),
         },
   );
   return { ...raw, items, required: raw.required ?? items.length };
@@ -90,7 +105,13 @@ function slotFor(def: BundleDef, base: string): BundleItem | undefined {
   const own = def.items.find((i) => i.id === base);
   if (own) return own;
   const category = categoryOf(base);
-  return category ? def.items.find((i) => i.id === category) : undefined;
+  if (category) {
+    const byCategory = def.items.find((i) => i.id === category);
+    if (byCategory) return byCategory;
+  }
+  return def.items.find(
+    (i) => i.anyOf?.includes(base) || (category && i.anyOf?.includes(category)),
+  );
 }
 
 const qualityRank = (q: Quality) => QUALITIES.indexOf(q);

@@ -348,5 +348,196 @@
       }
     },
     "hint": "Shellfish from pots set in fresh and salt water. Bait the pot each day."
+  },
+  {
+    "id": "fodder",
+    "name": "Fodder",
+    "room": "guests-board",
+    "items": [
+      {
+        "id": "hay",
+        "count": 20
+      },
+      {
+        "id": "wheat",
+        "count": 10
+      },
+      {
+        "id": "any-root-crop",
+        "name": "Root crops (any mix)",
+        "count": 10,
+        "anyOf": ["parsnip", "potato", "radish", "beet", "sweet-potato"]
+      }
+    ],
+    "reward": {
+      "item": {
+        "id": "coop-heater",
+        "count": 1
+      }
+    },
+    "hint": "Hay from the silo or the carpenter, grain from the fields, and roots from the cellar. The coop will want a heater come winter."
+  },
+  {
+    "id": "harvest-feast",
+    "name": "Harvest Feast",
+    "room": "last-seat",
+    "items": [
+      {
+        "id": "any-meal",
+        "name": "A cooked meal",
+        "count": 3,
+        "anyOf": [
+          "fried-egg",
+          "baked-potato",
+          "garden-salad",
+          "hearty-omelette",
+          "mushroom-stew",
+          "cheese-melt",
+          "mayo-slaw",
+          "pumpkin-soup",
+          "fisher-stew",
+          "market-pie",
+          "harvest-hotpot",
+          "inn-custard",
+          "innkeepers-roast"
+        ]
+      },
+      {
+        "id": "any-preserve",
+        "name": "A preserve (jam or pickles)",
+        "count": 3,
+        "anyOf": ["jam", "pickles"]
+      },
+      {
+        "id": "cheese",
+        "count": 3
+      },
+      {
+        "id": "honey",
+        "count": 3
+      }
+    ],
+    "reward": {
+      "item": {
+        "id": "crystalarium",
+        "count": 1
+      }
+    },
+    "hint": "One of everything the valley's kitchens and cellars make: a meal, a preserve, a cheese and honey, three of each."
+  },
+  {
+    "id": "the-catch",
+    "name": "The Catch",
+    "room": "last-seat",
+    "items": [
+      {
+        "id": "any-stream-fish",
+        "name": "A stream fish",
+        "minQuality": "gold",
+        "anyOf": [
+          "reedling",
+          "brookslip",
+          "millrun",
+          "salmon",
+          "hearthside-dace"
+        ]
+      },
+      {
+        "id": "any-lake-fish",
+        "name": "A lake fish",
+        "minQuality": "gold",
+        "anyOf": ["carp", "fernfin", "cold-quill", "marshlight"]
+      },
+      {
+        "id": "any-sea-fish",
+        "name": "A sea fish",
+        "minQuality": "gold",
+        "anyOf": [
+          "sardine",
+          "skiff-sprat",
+          "mullet",
+          "cod",
+          "kelp-ribbon",
+          "mackerel"
+        ]
+      },
+      {
+        "id": "any-night-fish",
+        "name": "A night fish",
+        "minQuality": "gold",
+        "anyOf": ["moonmirror", "reed-cat", "herring", "lantern-squid"]
+      }
+    ],
+    "reward": {
+      "item": {
+        "id": "magnet-ring",
+        "count": 1
+      }
+    },
+    "hint": "The finest of each water: a stream, a lake, a sea and a night fish, all gold quality."
+  },
+  {
+    "id": "hearth-fire",
+    "name": "The Hearth Fire",
+    "room": "last-seat",
+    "items": [
+      {
+        "id": "any-bar",
+        "name": "Bars (any metal)",
+        "count": 10,
+        "anyOf": ["copper-bar", "iron-bar", "gold-bar"]
+      },
+      {
+        "id": "oil",
+        "count": 5
+      },
+      {
+        "id": "cloth",
+        "count": 5
+      },
+      {
+        "id": "dye",
+        "count": 3
+      }
+    ],
+    "reward": {
+      "item": {
+        "id": "big-chest",
+        "count": 1
+      }
+    },
+    "hint": "Metal, light, cloth and colour to warm a hall for the long road. Oil stands in for lamps for now."
+  },
+  {
+    "id": "long-road",
+    "name": "The Long Road",
+    "room": "last-seat",
+    "items": [
+      {
+        "id": "wood",
+        "count": 100
+      },
+      {
+        "id": "stone",
+        "count": 100
+      },
+      {
+        "id": "any-bar",
+        "name": "Bars (any metal)",
+        "count": 20,
+        "anyOf": ["copper-bar", "iron-bar", "gold-bar"]
+      },
+      {
+        "id": "cloth",
+        "count": 10
+      }
+    ],
+    "reward": {
+      "item": {
+        "id": "elf-letter",
+        "count": 1
+      }
+    },
+    "hint": "Supplies for the road past the bridge. Old Greencoat will write you a letter of introduction."
   }
 ]

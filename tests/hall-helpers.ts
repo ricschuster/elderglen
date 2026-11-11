@@ -3,8 +3,10 @@ import type { Inventory } from "../src/core/inventory";
 import type { Wallet } from "../src/core/shop";
 
 /** The stack id that fills a bundle slot: the good, at its minimum quality. */
-export const slotStack = (item: BundleDef["items"][number]) =>
-  item.minQuality === "normal" ? item.id : `${item.id}@${item.minQuality}`;
+export const slotStack = (item: BundleDef["items"][number]) => {
+  const id = item.anyOf?.[0] ?? item.id;
+  return item.minQuality === "normal" ? id : `${id}@${item.minQuality}`;
+};
 
 /**
  * Hand a bundle in full, one good at a time, conjuring each good first. Fills

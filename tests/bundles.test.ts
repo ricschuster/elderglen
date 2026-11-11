@@ -22,7 +22,7 @@ import { SHELLFISH } from "../src/core/pots";
 import { fillHall } from "./hall-helpers";
 
 describe("bundle data", () => {
-  it("has the nineteen built bundles with known items and sane requirements", () => {
+  it("has the twenty-four built bundles with known items and sane requirements", () => {
     expect(BUNDLES.map((b) => b.id)).toEqual([
       "spring-foraging",
       "summer-foraging",
@@ -43,6 +43,11 @@ describe("bundle data", () => {
       "night-fishing",
       "specialty-fish",
       "trap-catch",
+      "fodder",
+      "harvest-feast",
+      "the-catch",
+      "hearth-fire",
+      "long-road",
     ]);
     for (const b of BUNDLES) {
       expect(b.required).toBeGreaterThanOrEqual(1);
@@ -52,11 +57,17 @@ describe("bundle data", () => {
         ROOMS.some((r) => r.id === b.room),
         b.id,
       ).toBe(true);
-      for (const { id, count } of b.items) {
+      for (const slot of b.items) {
+        const { id, count } = slot;
         expect(
-          itemById(id) ?? CATEGORY_NAMES[id as ArtisanCategory],
+          itemById(id) ?? CATEGORY_NAMES[id as ArtisanCategory] ?? slot?.name,
           `${b.id}: ${id}`,
         ).toBeDefined();
+        for (const any of slot?.anyOf ?? [])
+          expect(
+            itemById(any) ?? CATEGORY_NAMES[any as ArtisanCategory],
+            `${b.id}: ${id} takes ${any}`,
+          ).toBeDefined();
         expect(count).toBeGreaterThanOrEqual(1);
       }
       if (b.reward.item) expect(itemById(b.reward.item.id)).toBeDefined();
@@ -464,6 +475,7 @@ describe("the slice 1 hall", () => {
       "copper-bar",
       "iron-bar",
       "gold-bar",
+      "hay",
       ...CROPS.filter((c) => c.seasons.some((s) => SEASONS.includes(s))).map(
         (c) => c.id,
       ),
@@ -487,7 +499,11 @@ describe("the slice 1 hall", () => {
       ...SHELLFISH.map((s) => s.id),
     ]);
     for (const b of BUNDLES) {
-      const fillable = b.items.filter((i) => supplied.has(i.id)).length;
+      // The Last Seat asks for goods from every room, so it is checked in lastseat.test.ts.
+      if (b.room === LAST_ROOM) continue;
+      const fillable = b.items.filter(
+        (i) => supplied.has(i.id) || i.anyOf?.some((a) => supplied.has(a)),
+      ).length;
       expect(fillable, `${b.id} needs ${b.required}`).toBeGreaterThanOrEqual(
         b.required,
       );
@@ -506,6 +522,7 @@ describe("the slice 1 hall", () => {
       "water-room",
       "hearth",
       "guests-board",
+      "last-seat",
     ]);
     // The Dyer's is the Guests' Board's bundle 23 (notes 16 and 63).
     expect(BUNDLES.find((b) => b.id === "dyers")!.room).toBe("guests-board");

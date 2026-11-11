@@ -245,7 +245,9 @@ export function isSafeFromDefeat(id: string): boolean {
   if (isWeapon(base)) return true;
   if (itemById(id)?.keep) return true;
   if (/(^|-)(seed|sapling)$/.test(base)) return true;
-  return BUNDLES.some((b) => b.items.some((i) => i.id === base));
+  return BUNDLES.some((b) =>
+    b.items.some((i) => i.id === base || i.anyOf?.includes(base)),
+  );
 }
 
 /** Chance each eligible stack is taken, and the most stacks taken (placeholders, note 22). */

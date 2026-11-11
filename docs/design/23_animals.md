@@ -327,7 +327,7 @@ Our draft, to be tuned in playtests and copied into `07_tuning_numbers.md`.
 - Whether the carpenter also builds other things (the silo, the stable, a fish
   pond).
 - Coopmaster and Shepherd numbers (friendship x1.5, quality +150) are placeholders.
-- The coop and barn heater: no rule is designed yet (what winter does to mood indoors, whether the barn has one). Bundle 25 is not in `bundles.json`, so the reward cannot be wired.
+- The coop and barn heater: no rule is designed yet (what winter does to mood indoors, whether the barn has one). Bundle 25 is now in `bundles.json` (2026-11-11) and hands out a kept `coop-heater` item that does nothing yet.
 - Whether pigs also need rain and winter rules beyond "let out" in the code.
 - Whether the keeper or the carpenter sells the silo. The carpenter does until the keeper exists (2026-11-08).
 - Clay's chance and sell price (20g, Stardew's, unchecked). Several silos wait for #611.

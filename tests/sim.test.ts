@@ -51,6 +51,11 @@ describe("headless sim", () => {
       "night-fishing",
       "specialty-fish",
       "trap-catch",
+      "fodder",
+      "harvest-feast",
+      "the-catch",
+      "hearth-fire",
+      "long-road",
     ]);
     for (const id of UNPLAYED_BUNDLES)
       expect(
