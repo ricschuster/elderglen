@@ -59,9 +59,59 @@ work packages: #595 to #604, #611, #636 to #646 and #649 (map areas).
    (audio plan: #527).
 5. **Ring 2 shape and travel** (#20, M5). Parked until slice 3 is played.
 
+## Layout and tiles track (note 81, set 2026-11-11)
+
+The shared rules for the map, festival, mine and interior layouts are in
+`docs/design/81_layout_shared_rules.md`. Task order, with what gates each step.
+Art waits for M3d (ADR 0012).
+
+Design, can start now:
+
+- Step 1: Farm layout (note 55 open items, with the free cabin area). Gates the farm
+   map, the farmhouse and the cabin interiors.
+- Step 2: Festival spots for the other eight festivals (note 80 item 3, note 66), with 8
+   player start spots as well as the villager spots.
+- Step 3: Heart events and spouse routes (note 80 item 4, #600, note 12), which may add
+   interior spaces and spots.
+- Step 4: Interior layout notes, a Tiled draft of one pilot interior first. Not the
+   farmhouse or cabin until step 1.
+- Step 5: The layout page design note (dev server, objects and block-out regions, saves
+   to the map JSON after the contract checks; note 81 decision 11).
+
+In parallel, the owner:
+
+- Step 6: Hands-on play of the built areas, to check the placeholder metrics (paths 2
+   wide, doors 1, 60 s on foot and 30 s on the horse to cross) and feed the
+   valley layouts.
+
+Build, small:
+
+- Step 7: The layout page, before the valley and festival layouts.
+- Step 8: Wait for the M4 spike: how a jam between blocking players is freed, and
+   whether a tablet host needs several maps in memory (could change the
+   120 by 120 cap).
+
+Layout work, by track:
+
+- Step 9: Valley maps, area by area in the order of note 71, after step 6.
+- Step 10: Festival layouts, from step 2.
+- Step 11: Farmhouse and cabin interiors, after step 1.
+- Step 12: Mines, after combat's leftovers (#598: boots, special floors, lamps, rest-camp
+    supplies, rare creatures).
+
+Art, in M3d:
+
+- Step 13: The `above` layer and seasonal tilesets in the scene, just before the swap.
+- Step 14: The owner's 5 to 10 reference images, then a style sheet in rounds.
+- Step 15: The licence ADR for any non-code generated art.
+- Step 16: The art swap: the owner draws characters, portraits and some special items;
+    Claude generates terrain, props and buildings.
+
 **Done (#639, 2026-11-09):** the carpenter's temporary Hardwood sale was removed
 with the Secret Woods (six daily stumps and the log). Mahogany was reopened 2026-11-10: player-planted,
 seed from the Secret Woods (note 36 "Mahogany"), built 2026-11-10 (#724) except tapping and the monster drop.
+
+Session 2026-11-11 part three (handoff 2026-11-11c): design only. Issues #636, #640, #642, #659 and #526 closed and the overview refreshed. The layout and tiles shared rules are settled in note 81, and the layout track order is recorded above. Cabins are placed freely and players block each other (notes 53, 55). Next: the farm layout (note 55), then festival spots. Build order unchanged.
 
 Session 2026-11-11 part two (handoff 2026-11-11b): design only. Night Market owner check done (Stardew-scale decor 200 to 1,000g, fireplace 15,000g, four fish, spots and layout accepted), note 54 is fully answered, snow is not rain, small leftovers settled (legends once a year, idle keys frozen to the tags in use, trader stock rotates). Next: the Night Market build (three-day span, solstice dates in data and tests), then festival spots for the other festivals, then #599. Build order unchanged.
 
