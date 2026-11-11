@@ -53,7 +53,10 @@ cozy hobbit home. This note settles both.
    rooms grow into the hill, not outward.
 4. **Every Brimmer home is a burrow**, not only the player's. The lore note
    says so.
-5. **The spouse gets a room of their own**, as in Stardew, from tier 2.
+5. **The spouse gets a room of their own**, as in Stardew: one shared room to the
+   right of the bedroom, set up on marriage, so from tier 1 (corrected 2026-11-11,
+   note 85: the first draft said tier 2, but marriage needs tier 1 and Stardew
+   adds the room when you marry). The layout is in `85_house_and_cabin_layout.md`.
 6. **The cellar is in, on a separate level** reached by stairs down from the
    kitchen, as in Stardew. It is its own small map.
 7. **Tier 1 is in the first playable** (`03_milestones.md`). Tiers 2 and 3 and
@@ -115,7 +118,9 @@ cozy hobbit home. This note settles both.
   Built: the catalogue is a one-time 200,000g row at the carpenter's after
   tier 1 (`catalogue` save field). Owning it lists every carpenter piece plus six
   catalogue-only pieces at their listed prices, in place of the daily pick.
-- **Empty rooms read as waiting.** The spouse room and the nursery are open,
+- **Empty rooms read as waiting.** (Changed 2026-11-11, note 85: the nursery now has a
+  crib and two child beds from tier 2, as Stardew's has, so only the spare room stays
+  bare. The first draft said both.) The spouse room and the nursery are open,
   bare and tidy, with a short line from Old Greencoat or the carpenter that
   they are for later. They are not shown as broken or blocked, which matches
   the hall's greyed rooms.
@@ -200,6 +205,8 @@ The first playable keeps only the start map and tier 1 (decision 7). The old
 sealed earth plan, 18 by 8 with a kitchen 4 wide, is dropped.
 
 ## Renovations (reference)
+
+Designed 2026-11-11 in `85_house_and_cabin_layout.md` (all eight rooms, where they sit, their connectors, prices and rules, one `when: reno-...` layer each). The text below is the original reference.
 
 Stardew's renovations unlock after upgrade 2 and the saved Farmhouse page lists
 10,000g to 150,000g. The owner saved images of eight, all taken on a tier 3

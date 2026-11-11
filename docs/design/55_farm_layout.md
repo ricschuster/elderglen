@@ -275,8 +275,19 @@ one open area, not a plot row. Consequences for this note:
   farm is authored. No reserved pad (owner, 2026-11-11).
 - A game started as multiplayer places each free cabin in a default spot for
   each joiner. The default spot is a rule in the M4 build, not a map object.
-- The cabin interior is one template with per-player state (note 68, growing
-  interior). Its layout waits for the farmhouse interior, which it follows.
+- The cabin interior is the farmhouse map with per-player state (note 68, growing
+  interior; Stardew checked: identical to the farmhouse). Its layout is the
+  farmhouse's, in `85_house_and_cabin_layout.md`.
+
+## The spouse corner (note 85, 2026-11-11)
+
+Note 84 reserved an outside corner for the spouse, a 2 by 8 tile area north-east
+of the house (Stardew, checked, host's spouse only). Tiles: **x 70 to 71, y 4 to
+11.** The cliff fills rows 0 to 3, the Hearthwell road runs on rows 13 and 14, so the
+corner sits north of the road with row 12 free. Props in rows 4 to 8, the way in
+is rows 10 and 11, the idle mark is (70, 9), and there is no fence. It starts as
+clear grass. The farm map gets a `spouse-corner` zone and a `when: spouse` props
+layer, built with the house work (note 85). The house door stays 1 wide at (62, 11).
 
 ## Built status (2026-11-11, #776)
 

@@ -78,9 +78,10 @@ Rules:
 4. **Old home and old job.** The person's old house stays on the map with their
    family. Their old bed is empty. The family still visit the festivals.
 5. **Divorce** (note 12): the spouse route ends the next morning and the person
-   goes back to their own routes. The farmhouse room and the corner props go to a
-   chest in the room, as in Stardew (checked: items left in the ex's room are put
-   in a chest). The ex-spouse stays friendly at the old heart level (note 12, not
+   goes back to their own routes. The spouse room and the corner vanish and the items
+   left in the room go to one chest in the bedroom (note 85, owner 2026-11-11, as
+   Stardew, checked: the room and the outside area are gone the next morning and
+   items left in the room are put in a chest). The ex-spouse stays friendly at the old heart level (note 12, not
    Stardew, which resets hearts and turns hostile).
 6. **No clash with the route rules.** Blocked paths use note 79 rule 10 (wait
    then step around). The farmhouse door is never locked to the spouse.
@@ -133,7 +134,8 @@ needed.** The list of events is written with the heart events per person.
   decision 3 here. Spouse chores stay as written (small helps).
 - Note 62: add decision 1 to "Shape" (presence rule and the time window field).
 - Note 79 rule 7 and note 80 open item 4: closed by this note.
-- Note 41: the spouse room (tier 2) is the one shared room of decision 4.
+- Note 41: the spouse room is the one shared room of decision 4, set up on marriage
+  from tier 1, to the right of the bedroom (note 85).
 - Note 55 (farm layout): reserve the outside corner, a 2 by 8 tile area north-east
   of the farmhouse, and a bed, kitchen and door route for the spouse.
 - Data: a `spouseWindow` field on an event, a `spouse` field on the save, and a
@@ -141,8 +143,8 @@ needed.** The list of events is written with the heart events per person.
 
 ## Open
 
-- The outside corner's exact tiles on the farm (note 55) and whether it needs
-  fences.
+- The outside corner is settled in note 85: x 70 to 71, y 4 to 11 on the farm, no
+  fence.
 - The 14 prop sets and idle keys (art, with the voice sheets).
 - Whether a spouse's old job keeps going if they run a shop: the shop stays staffed
   by the same person with the shop's own hours (draft: yes), so the family run it

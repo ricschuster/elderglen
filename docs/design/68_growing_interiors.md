@@ -149,6 +149,28 @@ the tile rule above. This is the one allowed break, and the last one.
   The waiting line about the spare room and nursery stays.
 - **Build issue:** #550, built (see "Built (#550)" below).
 
+## A condition layer for the spouse room (note 85, 2026-11-11)
+
+The spouse room is the first part of the house that depends on the save and not on the
+tier. It is drawn by layers with `when: spouse` (the loader already supports `when`),
+and `houseHolds` gains `spouse` beside `cellar-open`. Nothing old moves, so
+`HOUSE_LAYOUT` stays 4. The camera bounds add `bounds-t1-spouse` and
+`bounds-t2-spouse`, and the loader takes the bounds property of the highest tier
+whose conditions hold. The room stands at fixed columns 36 to 45 and only its hall
+changes between tier 1 and tier 2 (the bedroom's east wall moves from column 32
+to 34). A cabin uses this same map for its owner.
+
+## Renovations and the last frame shift (note 85, 2026-11-11)
+
+Note 85 designs every Stardew renovation room as a `when: reno-<id>` layer set. The
+attic and the expanded corner room need rows north of row 0 and the dining room needs
+columns west of column 0, so the frame shifts once more by (20, 11) to 74 by 44, now
+holding every room, and `HOUSE_LAYOUT` becomes 5. This replaces "the last one" of
+#550: that was the last for the rooms known then. Three 3 wide stairs replace the 1
+wide stair at (6, 10), the kitchen opens into the start room, and the connectors are
+at least 3 wide. Camera bounds fall back to the built cells, so the new layers need no
+bounds properties.
+
 ## Still open
 
 ## Built (#421, 2026-11-07)
