@@ -568,8 +568,13 @@
         },
         {
           "s": "open",
-          "t": "Villager routes: the idle-key freeze is not built, and the Stardew rows SC-106, SC-108, SC-109, SC-110, SC-138 (absent person at an event) and SC-139 (wedding venue) are unchecked; the spouse corner's tiles on the farm, the 14 spouse prop sets and the far-area walk length are open (note 84)",
+          "t": "Villager routes: the idle-key freeze is not built, and the Stardew rows SC-106, SC-108, SC-109, SC-110, SC-138 (absent person at an event) and SC-139 (wedding venue) are unchecked; the 14 spouse prop sets and the far-area walk length are open (note 84)",
           "ref": "84_heart_event_and_spouse_routes.md#Open"
+        },
+        {
+          "s": "decided",
+          "t": "Farmhouse and cabin layout (note 85, 2026-11-11, Tiled draft in docs/design/drafts/house-draft): one shared spouse room right of the bedroom, set up on marriage from tier 1 (corrects note 41), reached by a hall that changes between tiers so no tile moves; the door stays 1 wide; on divorce the room and corner vanish and items go to a chest; the spouse corner is x 70 to 71, y 4 to 11 on the farm; a cabin is the farmhouse map with per-player state; the nursery has a crib and two child beds from tier 2 (Stardew); round 2 redrew the connectors from the screenshots (open kitchen, 4 row bedroom passage, 3 wide stairs, 2 wide door, three ways upstairs) and designed all eight Stardew renovations (open bedroom, southern room, corner room, expanded corner room, attic, cubby, dining room, open dining room) in one last 74 by 44 frame; drafts for every tier, every renovation and the cellar. The sketch waits for the owner check, SC-140 (door width) is unchecked",
+          "ref": "85_house_and_cabin_layout.md#Decided (owner, 2026-11-11)"
         }
       ],
       "deps": ["valley-map", "dialogue"],

@@ -112,7 +112,10 @@ Layout work, by track:
 
 - Step 9: Valley maps, area by area in the order of note 71, after step 6.
 - Step 10: Festival layouts, from step 2.
-- Step 11: Farmhouse and cabin interiors, after step 1.
+- Step 11: Farmhouse and cabin interiors. **Drafted 2026-11-11** (note 85, Tiled draft in
+    `docs/design/drafts/house-draft/`): the shared spouse room right of the bedroom from
+    tier 1, the hall, fixtures and marks, the furnished nursery, wider connectors and three stairs from the Stardew screenshots, all eight renovations, a picture per tier and per renovation, the farm's spouse corner, the cabin as the
+    farmhouse map. Waits for the owner's check of the sketch, then a build issue.
 - Step 12: Mines, after combat's leftovers (#598: boots, special floors, lamps, rest-camp
     supplies, rare creatures).
 
@@ -127,6 +130,8 @@ Art, in M3d:
 **Done (#639, 2026-11-09):** the carpenter's temporary Hardwood sale was removed
 with the Secret Woods (six daily stumps and the log). Mahogany was reopened 2026-11-10: player-planted,
 seed from the Secret Woods (note 36 "Mahogany"), built 2026-11-10 (#724) except tapping and the monster drop.
+
+Session 2026-11-11 part seventeen (handoff 2026-11-11r): design only. Step 11 is drafted in note 85 with a Tiled draft: the spouse room right of the bedroom from tier 1, the farm corner at x 70 to 71, y 4 to 11, the cabin is the farmhouse map. Next: the owner checks the sketch, then step 4 (a pilot interior) or step 5.
 
 Session 2026-11-11 part sixteen (handoff 2026-11-11q): design only. Owner checked the festival tiles, then step 3 is settled in note 84 (heart event presence rule, spouse routes, wedding on the green). Next: step 11 (farmhouse and cabin interiors, with the spouse corner and bed route) or step 4 (a pilot interior).
 
