@@ -1,0 +1,151 @@
+{
+  "_note": "Villagers slice 2 (#599): friendship numbers and gift tastes. Source: notes 61 and 62. Numbers are note 61's decided values. Every personal list is the owner's DRAFT from note 61 ('for the owner to reshape'). An entry is an item id, or '#tag' for a whole category or kind (see tagsOf in friendship.ts). Items not built yet (beer, flower-honey, smoked-fish, pearlback...) are kept by id so the list is ready when they exist.",
+  "points": {
+    "heart": 250,
+    "talk": 20,
+    "taste": {
+      "love": 80,
+      "like": 45,
+      "neutral": 20,
+      "dislike": -20,
+      "hate": -40
+    },
+    "birthdayMultiplier": 8,
+    "weeklyGifts": 2,
+    "weeklyBonus": 10,
+    "quality": { "silver": 1.1, "gold": 1.25 },
+    "request": 150,
+    "bundleBonus": 500
+  },
+  "caps": {
+    "_note": "Hearts. A candidate stops at 8 until given the bouquet (note 61).",
+    "friend": 10,
+    "candidateBeforeBouquet": 8,
+    "candidateAfterBouquet": 10
+  },
+  "candidates": [
+    "bramwell",
+    "aurelle",
+    "dunmar",
+    "cordelia",
+    "barnaby",
+    "linnet",
+    "thistle",
+    "alder",
+    "dilly",
+    "korvi",
+    "marl",
+    "maren",
+    "rushie",
+    "thalwen"
+  ],
+  "tags": {
+    "_note": "Hand-kept tag lists. Other tags come from the item data (artisan kind, dishes, crops, forage, bait, drops, junk, geodes).",
+    "flower": ["daffodil", "sweet-pea", "crocus", "snowdrop"],
+    "found": [],
+    "egg": ["egg", "duck-egg"],
+    "milk": ["milk", "goat-milk"],
+    "mineralExtra": ["quartz-crystal"]
+  },
+  "universal": {
+    "loves": [
+      "pearl-lobster",
+      "hearthwell-carp",
+      "truffle-oil",
+      "moonwool",
+      "blue-ribbon-melon",
+      "glimmerstone"
+    ],
+    "dislikes": ["oil", "stone", "driftwood"],
+    "hates": [
+      "copper-ore",
+      "iron-ore",
+      "coal",
+      "warp-totem-beach",
+      "shellfish-pot",
+      "hay",
+      "sap",
+      "seaweed",
+      "pin-urchin",
+      "carp"
+    ],
+    "tagTaste": {
+      "artisan": "like",
+      "dish": "like",
+      "flower": "like",
+      "mineral": "like",
+      "fruit": "like",
+      "gem": "like",
+      "vegetable": "like",
+      "bait": "hate",
+      "monster-drop": "hate",
+      "trash": "hate",
+      "found": "hate"
+    }
+  },
+  "defaultList": {
+    "_note": "PLACEHOLDER. The other 22 people have no list yet (note 61, by layer). They take the universal tastes only.",
+    "loves": [],
+    "likes": [],
+    "neutral": [],
+    "dislikes": [],
+    "hates": []
+  },
+  "people": {
+    "hattie": {
+      "loves": ["#cheese", "beer", "#pickles"],
+      "likes": ["honey", "goat-cheese", "#egg", "leek", "potato", "corn"],
+      "dislikes": ["oil", "fiber"],
+      "hates": ["coal", "clay"]
+    },
+    "tilda": {
+      "loves": ["copper-bar", "iron-bar", "hot-pepper", "wood"],
+      "likes": ["tomato", "cauliflower", "beer"],
+      "dislikes": ["#jam", "#wine"],
+      "hates": ["sweet-pea", "dandelion"]
+    },
+    "dilly": {
+      "loves": ["goat-milk", "cloth", "egg", "flower-honey", "sweet-pea"],
+      "likes": ["wool", "milk", "#dish"],
+      "dislikes": ["#wine", "beer"],
+      "hates": ["smoked-fish", "#mayonnaise"]
+    },
+    "cordelia": {
+      "loves": ["cloth", "#dye", "#wine", "grape", "daffodil"],
+      "likes": ["wool", "sweet-pea", "#jam"],
+      "dislikes": ["coal", "clay", "hay"],
+      "hates": ["sap", "stone"]
+    },
+    "odette": {
+      "loves": ["#jam", "melon", "cauliflower"],
+      "likes": ["#vegetable", "#wine"],
+      "neutral": ["grape", "spice-berry"],
+      "dislikes": ["#forage"],
+      "hates": ["pearlback", "dandelion"]
+    },
+    "aurelle": {
+      "loves": [
+        "flower-honey",
+        "daffodil",
+        "fiddlehead-fern",
+        "#juice",
+        "quartz-crystal"
+      ],
+      "likes": ["garlic", "spice-berry", "dandelion"],
+      "dislikes": ["#alcohol"],
+      "hates": ["coal", "smoked-fish"]
+    },
+    "cuthbert": {
+      "loves": ["mead", "goat-cheese", "honey", "radish"],
+      "likes": ["corn", "cauliflower", "cloth"],
+      "dislikes": ["hot-pepper", "garlic"],
+      "hates": ["dandelion", "salmonberry"]
+    },
+    "alder": {
+      "loves": ["red-cabbage", "kale", "spice-berry", "salmonberry", "garlic"],
+      "likes": ["tomato", "green-bean", "fiddlehead-fern", "radish"],
+      "dislikes": ["#cheese", "#mayonnaise"],
+      "hates": ["hot-pepper", "gloop-jelly"]
+    }
+  }
+}
