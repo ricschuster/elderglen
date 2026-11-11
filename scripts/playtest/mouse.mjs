@@ -36,7 +36,7 @@ const start = await bot.dbg();
 await clickTile(62, 21); // one step diagonally: within reach
 let d = await bot.dbg();
 if (!(await plotAt(62, 21)))
-  finding(`near click: the cursor tile (25,16) was not tilled (${d.message})`);
+  finding(`near click: the cursor tile (62,21) was not tilled (${d.message})`);
 else if (await plotAt(start.target.x, start.target.y))
   finding("near click: it tilled the faced tile as well");
 else log("near click: tilled the cursor tile, not the faced one");
@@ -45,7 +45,7 @@ await clickTile(67, 20); // six tiles right: out of reach
 d = await bot.dbg();
 if (d.facing !== "right") finding(`far click: facing ${d.facing}, not right`);
 else if (!(await plotAt(62, 20)))
-  finding(`far click: the adjacent tile (25,15) was not tilled (${d.message})`);
+  finding(`far click: the adjacent tile (62,20) was not tilled (${d.message})`);
 else log("far click: turned right and tilled the adjacent tile");
 
 // ---- the toolbar and the context menu -------------------------------------
@@ -82,7 +82,7 @@ await p.evaluate(() => {
     window.__menu = e.defaultPrevented;
   });
 });
-await clickTile(25, 15, { button: "right" });
+await clickTile(62, 20, { button: "right" });
 if ((await p.evaluate(() => window.__menu)) !== true)
   finding("right-click: the browser menu was not prevented");
 else log("right-click: the browser menu is prevented");

@@ -278,6 +278,32 @@ one open area, not a plot row. Consequences for this note:
 - The cabin interior is one template with per-player state (note 68, growing
   interior). Its layout waits for the farmhouse interior, which it follows.
 
+## Built status (2026-11-11, #776)
+
+`src/content/maps/farm.json` is now the 80 by 65 map, written by
+`scripts/gen-farm-map.mjs` from the Tiled draft (a one-shot; the JSON is the
+source from then on). Tiles keep the placeholder indices, so there is no art
+change. Differences from the table above:
+
+- The greenhouse is not drawn on the map: code stands and walls it at
+  `GREENHOUSE_SITE` (now 24,10; Woodland keeps 13,2 through `greenhouseRuinSite`).
+  The 24 tiles under it are marked soil.
+- The cave, greenhouse, coop and barn exits keep their `requires` gates
+  (`cave-open`, `greenhouse-open`, `coop-built`, `barn-built`); the Forest,
+  Hearthwell and delta exits have none.
+- Default sites in `core/animals.ts`: coop 52,20, barn 60,20, silo 52,27, stable
+  60,27 (all in the thin clutter area).
+- The festival service stays on the farm at 74,16 as a stand-in (a blocked gate
+  tile), because Hearthwell has no festival entrance yet. It leaves with the
+  festival layouts (track step 2).
+- Starting clutter: 100 trees (80, 12, 8), 20 stumps, 92 rocks (stones and
+  boulders together, there is no boulder kind), 60 twigs, 150 weeds, 16 forage
+  spots. Bushes (15) are not placed: no bush system exists.
+- Woodland is still 40 by 30, so its farmland is now about 11 percent of
+  Standard's, not 40 percent. Its relayout is a later task.
+- The bot sim is about 6 times slower on the bigger farm (its flood fill runs
+  per action); `tests/sim.test.ts` timeouts went to 120 s.
+
 ## Build order
 
 1. Settle the open items with the owner and update this note.
