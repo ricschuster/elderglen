@@ -212,7 +212,7 @@ class Plan:
                 layer["objects"] = objs
                 tmpl["nextobjectid"] = len(objs) + 1
         (HERE / f"{self.name}.tmj").write_text(json.dumps(tmpl, indent=1) + "\n")
-        s = 12
+        s = 20
         im = Image.new("RGB", (W * s, H * s), (245, 245, 245))
         d = ImageDraw.Draw(im)
         for y in range(H):
@@ -229,7 +229,7 @@ class Plan:
             d.line([(k * s, 0), (k * s, H * s)], fill=(190, 190, 230))
             d.line([(0, k * s), (W * s, k * s)], fill=(190, 190, 230))
         for n, x, y in self.tile_marks():
-            d.ellipse([x * s + 3, y * s + 3, x * s + s - 4, y * s + s - 4], fill=(255, 230, 0))
+            d.ellipse([x * s + 5, y * s + 5, x * s + s - 6, y * s + s - 6], fill=(255, 230, 0))
         im.save(HERE / f"{self.name}-preview.png")
 
 
