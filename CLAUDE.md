@@ -18,11 +18,10 @@ areas, ADR 0012) is built to shell level with placeholder art. Design is still
 ahead of the build in places: some settled notes in `docs/design/` are not yet
 built. Roadmap:
 `docs/design/03_milestones.md`; placeholder numbers:
-`docs/design/07_tuning_numbers.md`. GitHub issues are the live tracker. Start
-each session by reading the latest handoff in `docs/handoffs/`, the design
-priority list `docs/handoffs/PRIORITIES.md` (update it in each handoff), and the
-issues labelled `next-payoff`. Show the owner the
-priority list at the start of each session, then ask what to design.
+`docs/design/07_tuning_numbers.md`. GitHub issues are the live tracker. Start each session by reading only the latest handoff in `docs/handoffs/`, the short priority
+list `docs/handoffs/PRIORITIES.md` (keep it under about 8 KB; finished items go to
+`PRIORITIES_ARCHIVE.md`, which is not read at start) and the issues labelled
+`next-payoff`. Show the owner the priority list, then ask what to design.
 
 ## Scope
 
@@ -52,22 +51,15 @@ Node 22 and npm. Gates run in CI and a non-zero exit blocks a merge.
 - `npm run dev`: run locally with hot reload.
 - Gates: `format:check`, `lint`, `typecheck`, `test` (Vitest, `tests/`), `build`
   (typecheck and production build to `dist/`). `npm run format` fixes Prettier.
-- `npm run overview` (gate: `overview:check`): rebuild `docs/overview.html`, the
-  clickable design map, from the hand-kept `docs/overview.json`. Update the JSON
-  when a design decision or open question changes. `npm run overview:refresh`
-  re-fetches issue titles and states with `gh`. Open the HTML from disk.
-- `npm run valley-map` (gate: `valley-map:check`): rebuild `docs/valley-map.html`,
-  the overview map of areas, buildings and people, from the hand-kept
-  `docs/valley-map.json`. Update the JSON when note 19, 20 or 55 changes. Design
-  reference only (`docs/design/56_valley_map.md`). Open the HTML from disk.
+- `npm run overview` / `valley-map` (gates `overview:check`, `valley-map:check`): rebuild
+  `docs/overview.html` and `docs/valley-map.html` from the hand-kept `docs/overview.json`
+  and `docs/valley-map.json`. Update the JSON when the design changes; open the HTML from
+  disk. `npm run overview:refresh` re-fetches issue states with `gh`.
 - `npm run check`: all of the gates in order. Run before pushing.
-- `python3 docs/design/drafts/interiors-draft/gen.py [name ...]`: rebuild the interior layout
-  drafts (note 86) from `plans.py`, with reachability checks. Needs Python 3 and Pillow. Design
-  material, not a gate. Run it from that folder.
-- `npm run playtest -- <expert|intermediate|casual>` and the other
-  `playtest:*` scripts, plus `node scripts/playtest/wood.mjs`: scripted browser
-  playthroughs. Manual only, not a gate. Need `npm run dev` running. See
-  `scripts/playtest/README.md`.
+- Interior drafts: `python3 docs/design/drafts/interiors-draft/gen.py` (from that folder;
+  Python 3 and Pillow). Design material, not a gate.
+- `npm run playtest -- <expert|intermediate|casual>`, other `playtest:*` scripts: manual
+  browser playthroughs, need `npm run dev`. See `scripts/playtest/README.md`.
 
 ## Repo structure
 
@@ -110,15 +102,13 @@ Node 22 and npm. Gates run in CI and a non-zero exit blocks a merge.
   plays, saved wiki page, Guidebook). Add a row when a note makes such a claim,
   and offer the owner a question batch at session start when five or more are
   open. Black box only: never reverse engineer Stardew (ADR 0002).
-- Stardew wiki pages: the wiki blocks Claude's crawler, so never fetch it (no
-  WebFetch, curl, Playwright), and the owner's `wget` is blocked too. Write page
-  URLs, one per line, to `docs/reference/stardew/urls_<topic>.txt`; the owner
-  saves each page there by hand. Read the saved files, then delete the list. The
-  folder is gitignored; the text is reference only, never copied into the repo
-  (`docs/decisions/0002-stardew-valley-inspired.md`).
-- Stardew Valley Guidebook: the owner's PDF in `docs/reference/stardew/` is only
-  the free 5th edition 1.6 supplement (119 PDF pages), not the full book. The
-  wiki stays the main source. Do not build an extraction pipeline. Read on
-  demand with `pdftotext -layout -f <page> -l <page>`; its tables are
-  unreliable, so check numbers against the page image. Flag any conflict with
-  the wiki. Cite by printed page, never by quote. Same gitignore and copy rules.
+- Stardew wiki pages: the wiki blocks Claude's crawler, so never fetch it (no WebFetch,
+  curl, Playwright). Write page URLs, one per line, to
+  `docs/reference/stardew/urls_<topic>.txt`; the owner saves each page there by hand.
+  Read the saved files, then delete the list. Reference only, never copied into the repo
+  (ADR 0002).
+- Stardew Valley Guidebook: the owner's PDF in `docs/reference/stardew/` is the free
+  supplement only; the wiki stays the main source. Read on demand with
+  `pdftotext -layout -f <page> -l <page>`, check table numbers against the page image,
+  flag conflicts with the wiki, cite by printed page, never quote. Do not build an
+  extraction pipeline.
