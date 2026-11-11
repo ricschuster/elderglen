@@ -1,0 +1,131 @@
+# 81 Layout and tiles: the shared rules (draft)
+
+Status: owner answers recorded 2026-11-11, rest still proposals. Settles the rules that four coming tracks
+share, so they do not each invent their own: map layout, festival layout, mine
+layout and interior layout. Nothing here is built. Each track still needs its own
+layout note with sketches (design before build). Format and contract stay in
+`05_farm_map_placeholder.md`, `06_map_style.md` and ADRs 0005 and 0009.
+
+## Why
+
+Thirty-six maps exist as shells with placeholder art. The valley, festival, mine
+and interior layouts all turn a settled design note into walkable tiles, and
+they will be done at different times. Without shared rules the result looks
+like four games. The format and the checks are settled. What is missing is the
+layer between them and real art.
+
+## Already settled (not reopened here)
+
+- Tiled JSON, orthogonal, one map per area, loaded by id (ADR 0005).
+- 16 px tiles, whole-number zoom, at least 30 by 17 tiles visible (ADR 0009).
+- The contract and its checks (note 05, note 71 "Map contract additions").
+- The committed JSON is the source. The `scripts/gen-*-map.mjs` files are
+  one-time drafts and are not run again once a map has been hand-edited.
+- Growing interiors: one map holds every tier, unbuilt space is black void
+  (note 68).
+- A festival is a decorated variant of the same map through conditional layers
+  (note 66 addendum).
+- The mine floors are generated each day from a seed (note 22).
+- Final pixel art is image files in `public/art/`, sources in `art-source/`.
+  Placeholder art stays drawn in code, `src/scenes/art.ts` (note 15).
+
+## Decisions
+
+Owner answers, 2026-11-11, are marked. The rest are proposals to check.
+
+1. **Transitions: a short fade to black (owner, 2026-11-11, Stardew from memory,
+   SC-115).** Every exit fades out and in, with no peek at the next area. The
+   code already does this (`FADE_MS` 200 in `FarmScene.ts`). The fade stays one
+   value for every exit, not a per-map setting. It hides map loading on the
+   tablet.
+2. **The art source is not decided (owner, 2026-11-11).** Layout notes and maps
+   stay art-agnostic. The tileset rules below fix tile order, size and file
+   layout only, so any source can fill them in later (note 15 keeps the open
+   question of who draws).
+3. **Tilesets are one image per theme, with a stable tile order, and the
+   outdoor theme has one image per season (owner, 2026-11-11, Stardew from
+   memory, SC-116).** Themes: outdoor (four seasonal images, same tile order),
+   interior (one, no seasons) and one per mine band (three). A real tileset
+   replaces the code-drawn tiles by keeping the tile index of each kind, so no
+   map is re-authored. New tile kinds are appended, never inserted. A tile
+   list per theme lives beside the layout notes (or next to the tileset
+   file) so an artist or generator has a checklist.
+4. **The layer stack, with an optional `above` layer (owner, 2026-11-11, Stardew
+   from memory, SC-117).** Maps today draw `ground` and `objects`
+   under the player and nothing above them. Real art needs one more rule:
+
+   | Layer | Drawn | Use |
+   | --- | --- | --- |
+   | `ground` | under the player | terrain, floors, water |
+   | `objects` | under the player | things the player walks on or beside (paths, fences, rugs) |
+   | `above` | over the player | roofs, tree tops, arches, anything the player walks behind |
+   | `collision`, `soil`, `paths` | not drawn | as in note 05 |
+
+   `above` is optional, like `soil`. A tall object is split: the foot tiles go
+   on `objects` and `collision`, the top tiles on `above`. Tier layers
+   (`-tN`) and conditional layers (`when`, `unless`) apply to `above` as to the
+   others. The scene draws `above` at a fixed depth over the player and
+   animals, and under the weather and the interface. Characters sort by their
+   feet among themselves, as now.
+5. **Layout metrics (owner, 2026-11-11: widths as Stardew from memory, SC-118;
+   walk times accepted; all placeholders to tune in play).**
+
+   | Thing | Rule |
+   | --- | --- |
+   | Main path | 2 tiles wide, 3 where two groups may meet (the green, the Hearthwell streets) |
+   | Branch or trail | 1 tile wide, never a dead end without a forage spot, prop or view |
+   | Door | 1 tile wide, 2 for barns and the hall, entry tile directly below |
+   | Exit | 3 to 7 tiles wide, as in notes 72 to 78 |
+   | Crossing a settled area | no more than about 60 s on foot, 30 s on the horse; checked by walk time, not tiles |
+   | One screen | any landmark worth finding is visible from 30 by 17 tiles, or hinted at the screen edge |
+
+   The tuning numbers belong to `07_tuning_numbers.md` once they settle.
+6. **The layout note format (owner, 2026-11-11).** The owner reviews a layout
+   mostly as a Tiled screenshot, and may want an interactive HTML page to edit
+   the layout directly (not decided, see Open). Each track writes one note (or
+   extends the area note) with: why, the list of places, a rough draft
+   screenshot from Tiled (an ASCII sketch of one character per tile, or per four
+   for the big maps, where a draft is not yet worth making), the exits and
+   entries by name, what changes by season, tier or festival, the walk times,
+   and the build order. The owner checks the layout before a build issue is
+   filed. The JSON stays the source.
+7. **Status per map (owner, 2026-11-11).** Two separate flags in one table in the layout
+   notes: layout done (shell, laid out, owner checked) and art done
+   (placeholder, tileset swapped). The map JSON property `placeholder: true`
+   means art is still placeholder and is cleared in the art swap, not when the
+   layout is done. A map is not "done" until both hold.
+8. **Procedural versus authored mines (owner, 2026-11-11, Stardew from memory,
+   SC-119).** Hand-authored: the mine
+   mouth and hall, the rest camps (every 10th floor), special floors, and
+   the floor 120 lever room. Generated: ordinary floors, by band, from the
+   seed. The generator takes its look from the band tileset, so the mine track
+   is mostly the three band tilesets, the camp and special-floor layouts and
+   the generator's room shapes.
+9. **Tablet budget (owner, 2026-11-11).** Largest map 120 by 120 tiles (the Forest and
+   Hearthwell). One map in memory at a time (ADR 0005). The SM-T500 load test
+   is by hand and tracked in #523. Any bigger map needs an ADR.
+10. **Naming (proposal).** Map ids as now: lower case, hyphens, the area name.
+    Entry names say where the player came from (`from_farm`). Exits say where
+    they lead (`to_forest`). Festival variants are not new map ids.
+
+## Order of the four tracks
+
+1. Interiors: small, shells exist (#646), and they prove the tileset pipeline.
+2. Valley maps, area by area in the order of note 71, after an art direction
+   decision.
+3. Festival layouts: need the festival spots design (note 66, note 80 item 3).
+4. Mines: need the band tilesets and the combat notes (#597, #598).
+
+## Open
+
+- The look of the art itself, and who draws it (note 15, art direction in
+  `docs/handoffs/PRIORITIES.md` item 4).
+- The owner's own editor: an interactive HTML page where the owner moves things and
+  edits a layout. Not designed. It would need a decision on what it edits (the
+  Tiled JSON or a sketch format), whether it runs the contract checks, and
+  whether it is worth building against Tiled itself. Raise it before the first
+  layout note.
+- Whether the `above` layer needs tier or festival variants beyond the general
+  rule. It follows the existing tier and condition rules until a case breaks it.
+- The metrics in decision 5 are a first guess and need a hands-on walk of the
+  built areas.
