@@ -19,9 +19,8 @@ Decided 2026-11-12: the Last Seat opens after ALL other bundles (built). #876 an
 stay in M3b. Guests' Board +500 friendship (built), up to five heart events a person.
 
 Built 2026-11-12 (session 7d), all awaiting the owner's play: #869 bundles 20, 24, 26 and
-the gate, #872 gift tastes, #874 elderfruit (five of seven sources), #875 goods hand-in,
-#870 Crystalarium, #871 room rewards, notes 91 flowers, 92 (tapper, crusher, worm bin,
-hops, pale ale), 93 (fish pond core, water finds) and 94 (Defense, Immunity, effects).
+the gate, #872 gift tastes, #874 elderfruit (five of seven sources), #875 goods hand-in, #870 Crystalarium, #871
+room rewards, notes 91 flowers, 92 (tapper, crusher, worm bin, hops, pale ale), 93 (fish pond core, water finds) and 94 (Defense, Immunity, effects).
 Details are in the notes' "Built status" and the 2026-11-12l handoff. Bundles 1 to 26 can
 now be filled; the exit test needs the owner's play.
 
