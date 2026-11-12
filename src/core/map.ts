@@ -57,9 +57,15 @@ export function layerTier(name: string): number {
   return m ? Number(m[1]) : 0;
 }
 
-/** A layer name without its tier suffix: `ground-t1` is `ground`. */
+/**
+ * A layer name without its tier suffix: `ground-t1` is `ground`. A feature
+ * layer of the ground or collision grid, such as `ground-spouse-t1` or
+ * `collision-spouse-t1`, has the base of its grid, so one map can hold many
+ * conditional layers of the same grid under unique names.
+ */
 export function layerBase(name: string): string {
-  return name.replace(/-t\d+$/, "");
+  const base = name.replace(/-t\d+$/, "");
+  return /^(ground|collision)-./.exec(base)?.[1] ?? base;
 }
 
 /** The highest tier any layer of the map belongs to. Zero for a map that does not grow. */
@@ -285,6 +291,21 @@ export const COLLISION_LAYER = "collision";
 export const SOIL_LAYER = "soil";
 /** Optional: path tiles, where a tree seed cannot be planted or spread. Never drawn. */
 export const PATHS_LAYER = "paths";
+
+/** A named point the route code reads (note 85, "Marks for the routes"), in tiles. */
+export interface Mark extends Spot {
+  name: string;
+}
+
+/** A fixed piece of the room, such as a sink or a crib: a rectangle of tiles and a kind. */
+export interface Fixture {
+  id: string;
+  kind: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
 
 const objectClass = (o: TiledObject) => o.class ?? o.type ?? "";
 
@@ -1016,4 +1037,40 @@ export class FarmMap {
   private inside(x: number, y: number): boolean {
     return x >= 0 && y >= 0 && x < this.width && y < this.height;
   }
+}
+
+/**
+ * The marks and fixtures a map has at a tier, given the conditions that hold.
+ * Both are marker objects (class `mark` and `fixture`); their tiles block in
+ * the collision layers. A mark or fixture on a layer with `when` shows only
+ * while the condition holds.
+ */
+export function marksAndFixtures(
+  json: TiledMapJson,
+  tier = 0,
+  holds: ReadonlySet<string> = NO_CONDITIONS,
+): { marks: Mark[]; fixtures: Fixture[] } {
+  const size = json.tilewidth;
+  const at = visibleTier(tier, maxTierOf(json));
+  const marks: Mark[] = [];
+  const fixtures: Fixture[] = [];
+  for (const layer of layersAtTier(json, at, holds)) {
+    if (layer.type !== "objectgroup") continue;
+    for (const o of layer.objects ?? []) {
+      const cls = objectClass(o);
+      const x = Math.floor(o.x / size);
+      const y = Math.floor(o.y / size);
+      if (cls === "mark") marks.push({ name: o.name, x, y });
+      else if (cls === "fixture")
+        fixtures.push({
+          id: o.name,
+          kind: text(o, "kind") ?? "",
+          x,
+          y,
+          w: Math.max(1, Math.round((o.width ?? size) / size)),
+          h: Math.max(1, Math.round((o.height ?? size) / size)),
+        });
+    }
+  }
+  return { marks, fixtures };
 }

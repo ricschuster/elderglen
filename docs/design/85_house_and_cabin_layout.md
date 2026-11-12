@@ -466,12 +466,12 @@ Settled above (decision 2). In detail:
    Tests: nothing walkable at tier 0 or 1 is lost, every tile walkable before is
    still walkable, and a layout 4 save moves by (20, 11).
 2. **Spouse layers** with `when: spouse`: the room, the hall and the wall
-   openings. `houseHolds(tier, spouse)` adds `spouse`.
+   openings. `houseHolds(tier, spouse)` adds `spouse`. **Built (#833).**
 3. **Renovation layers** with `when: reno-<id>`, one per renovation, plus
    `corner-stairs`. `houseHolds` adds the ids from `houseRenos`. The carpenter's
    Renovations tab, pricing, the empty-area refund rule, and the needs
    (expansion needs its room).
-4. **Fixtures.** The sink, fridge, counters, TV and hearth, and the nursery's crib
+4. **Fixtures (built, #835).** The sink, fridge, counters, TV and hearth, and the nursery's crib
    and two child beds (tier 2), as `markers` objects and blocking tiles, the double
    bed's two sleep marks, the divorce chest and the named marks.
 5. **The farm corner.** The `spouse-corner` zone and `spouse-corner-idle` mark on
