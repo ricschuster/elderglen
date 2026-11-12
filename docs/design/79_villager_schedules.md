@@ -1,7 +1,7 @@
 # 79 Villager schedules
 
 Status: **decided with the owner on 2026-11-10.** Names, birthdays and age
-bands are set too (see "Next"). Nothing here is built. It feeds #599 (slice 4
+bands are set too (see "Next"). **Built (#599, `src/core/villagers.ts`, `src/content/villagers.json`, `tests/villagers.test.ts`):** the routes, rain and weekday and season layers, shop hours and where-at. Not built: festival and spouse route layers. It feeds #599 (slice 4
 of `33_build_order.md`), alongside `20_ring1_cast.md` (who), `61_friendship_and_gifts.md`
 (talk and gifts) and `77_hearthwell.md` (the places).
 

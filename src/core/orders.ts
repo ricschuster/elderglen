@@ -1,6 +1,7 @@
 import orderData from "../content/orders.json";
 import { dateOf, type Season } from "./calendar";
 import { cropById } from "./crops";
+import { fishById } from "./fishing";
 import type { BinLine } from "./shipping";
 import { splitQuality, type Quality } from "./quality";
 import type { GameState } from "./save";
@@ -23,7 +24,13 @@ export type OrderAsk =
   /** Ship `count` of any one crop, in its season. */
   | { kind: "ship-one-crop"; count: number }
   /** Ship `count` vegetables of at least this quality. */
-  | { kind: "ship-quality-vegetables"; count: number; quality: Quality };
+  | { kind: "ship-quality-vegetables"; count: number; quality: Quality }
+  /** Land `count` of any one fish that is in season. Counted from the fish log since acceptance. */
+  | { kind: "catch-one-fish"; count: number }
+  /** Land `count` fish from one kind of water. */
+  | { kind: "catch-water"; count: number }
+  /** Beat `count` of any one creature kind. Counted from the kill tally since acceptance. */
+  | { kind: "slay-one"; count: number };
 
 export interface OrderDef {
   id: string;
@@ -57,6 +64,22 @@ export interface ActiveOrder {
   due: number;
   /** Count so far, by crop id or `all`. */
   progress: Record<string, number>;
+  /** Tallies when the order was taken, for the orders counted from a log (fish and kills). */
+  base?: OrderBase;
+}
+
+/** Fish landed and creatures beaten by id, so an order counts only what comes after it was taken. */
+export interface OrderBase {
+  fish: Record<string, number>;
+  kills: Record<string, number>;
+}
+
+/** The tallies to keep when an order is taken. */
+export function orderBase(g: GameState): OrderBase {
+  const fish: Record<string, number> = {};
+  for (const [id, r] of Object.entries(g.fishing.save().caught))
+    fish[id] = r.count;
+  return { fish, kills: { ...g.combat.kills } };
 }
 
 export interface OrdersSave {
@@ -139,7 +162,11 @@ export class Orders {
   }
 
   /** Take an order (one new order a week, as Stardew). Refused when it is not posted, or one was already taken this week. */
-  accept(id: string, day: number): "ok" | "not posted" | "one a week" {
+  accept(
+    id: string,
+    day: number,
+    base?: OrderBase,
+  ): "ok" | "not posted" | "one a week" {
     if (!this.board(day).some((o) => o.id === id)) return "not posted";
     if (this.lastAcceptedWeek === weekOf(day)) return "one a week";
     const def = orderById(id) as OrderDef;
@@ -148,6 +175,7 @@ export class Orders {
       accepted: day,
       due: day + def.windowDays,
       progress: {},
+      ...(base ? { base: copyBase(base) } : {}),
     });
     this.lastAcceptedWeek = weekOf(day);
     return "ok";
@@ -168,19 +196,62 @@ export class Orders {
     for (const a of this.active) {
       const def = orderById(a.id);
       if (!def || shipDay < a.accepted) continue;
-      for (const l of lines) {
-        const { base, quality } = splitQuality(l.id);
-        const crop = cropById(base);
-        if (!crop) continue;
-        if (def.ask.kind === "ship-one-crop") {
-          if (crop.seasons.includes(season))
-            a.progress[base] = (a.progress[base] ?? 0) + l.count;
-        } else if (
-          crop.produce !== "fruit" &&
-          qualityRank(quality) >= qualityRank(def.ask.quality)
-        )
-          a.progress.all = (a.progress.all ?? 0) + l.count;
-      }
+      const ask = def.ask;
+      if (
+        ask.kind === "ship-one-crop" ||
+        ask.kind === "ship-quality-vegetables"
+      )
+        for (const l of lines) {
+          const { base, quality } = splitQuality(l.id);
+          const crop = cropById(base);
+          if (!crop) continue;
+          if (ask.kind === "ship-one-crop") {
+            if (crop.seasons.includes(season))
+              a.progress[base] = (a.progress[base] ?? 0) + l.count;
+          } else if (
+            crop.produce !== "fruit" &&
+            qualityRank(quality) >= qualityRank(ask.quality)
+          )
+            a.progress.all = (a.progress.all ?? 0) + l.count;
+        }
+      if (filled(def, a)) finished.push(a);
+    }
+    return finished;
+  }
+
+  /**
+   * Count the fish landed and creatures beaten since each order was taken
+   * (fishing and slaying orders). Run each night; the totals are read from the
+   * logs, so nothing in the scenes has to report a catch. Returns the finished ones.
+   */
+  creditLogs(g: GameState, day: number): ActiveOrder[] {
+    const season = dateOf(day).season;
+    const caught = g.fishing.save().caught;
+    const finished: ActiveOrder[] = [];
+    for (const a of this.active) {
+      const def = orderById(a.id);
+      if (!def || day < a.accepted) continue;
+      const ask = def.ask;
+      if (ask.kind === "catch-one-fish" || ask.kind === "catch-water") {
+        const by: Record<string, number> = {};
+        for (const [id, r] of Object.entries(caught)) {
+          const f = fishById(id);
+          if (!f) continue;
+          if (ask.kind === "catch-one-fish" && !f.seasons.includes(season))
+            continue;
+          const n = r.count - (a.base?.fish[id] ?? 0);
+          const key = ask.kind === "catch-one-fish" ? id : f.water;
+          if (n > 0) by[key] = (by[key] ?? 0) + n;
+        }
+        a.progress.all = Math.max(0, ...Object.values(by));
+      } else if (ask.kind === "slay-one") {
+        a.progress.all = Math.max(
+          0,
+          ...Object.entries(g.combat.kills).map(
+            ([id, n]) => n - (a.base?.kills[id] ?? 0),
+          ),
+        );
+      } else continue;
       if (filled(def, a)) finished.push(a);
     }
     return finished;
@@ -189,7 +260,11 @@ export class Orders {
   save(): OrdersSave {
     return {
       opened: this.opened,
-      active: this.active.map((a) => ({ ...a, progress: { ...a.progress } })),
+      active: this.active.map((a) => ({
+        ...a,
+        progress: { ...a.progress },
+        ...(a.base ? { base: copyBase(a.base) } : {}),
+      })),
       done: { ...this.done },
       lastAcceptedWeek: this.lastAcceptedWeek,
       owed: this.owed.map((o) => ({ ...o })),
@@ -198,10 +273,18 @@ export class Orders {
 
   load(s: OrdersSave): void {
     this.opened = s.opened;
-    this.active = s.active.map((a) => ({
-      ...a,
-      progress: { ...a.progress },
-    }));
+    this.active = s.active.map((a) => {
+      const { base, ...rest } = a;
+      const ok =
+        base !== undefined &&
+        typeof base.fish === "object" &&
+        typeof base.kills === "object";
+      return {
+        ...rest,
+        progress: { ...a.progress },
+        ...(ok ? { base: copyBase(base) } : {}),
+      };
+    });
     this.done = { ...s.done };
     this.lastAcceptedWeek = s.lastAcceptedWeek;
     this.owed = s.owed.map((o) => ({ ...o }));
@@ -214,6 +297,11 @@ export class Orders {
     return first;
   }
 }
+
+const copyBase = (b: OrderBase): OrderBase => ({
+  fish: { ...b.fish },
+  kills: { ...b.kills },
+});
 
 const RANK: Record<Quality, number> = { normal: 0, silver: 1, gold: 2 };
 const qualityRank = (q: Quality): number => RANK[q];
@@ -232,9 +320,18 @@ function filled(def: OrderDef, a: ActiveOrder): boolean {
 /** Words for what an order asks. */
 export function askText(def: OrderDef): string {
   const a = def.ask;
-  return a.kind === "ship-one-crop"
-    ? `Ship ${a.count} of one crop`
-    : `Ship ${a.count} ${a.quality} vegetables`;
+  switch (a.kind) {
+    case "ship-one-crop":
+      return `Ship ${a.count} of one crop`;
+    case "ship-quality-vegetables":
+      return `Ship ${a.count} ${a.quality} vegetables`;
+    case "catch-one-fish":
+      return `Catch ${a.count} of one fish that is in season`;
+    case "catch-water":
+      return `Catch ${a.count} fish from one kind of water`;
+    case "slay-one":
+      return `Beat ${a.count} of one cave creature`;
+  }
 }
 
 /**
@@ -250,7 +347,8 @@ export function endDayOrders(
   const news: OrdersNews = { done: [], lapsed: [] };
   const o = g.orders;
   if (!o.opened) return news;
-  for (const a of o.credit(lines, day - 1)) {
+  const finished = [...o.credit(lines, day - 1), ...o.creditLogs(g, day - 1)];
+  for (const a of finished) {
     const def = orderById(a.id) as OrderDef;
     o.cancel(a.id);
     const first = o.markDone(a.id);

@@ -1,6 +1,6 @@
 # 80 Villager routes (default and rain)
 
-Status: **drafted 2026-11-10, owner answers recorded.** Nothing here is built. The
+Status: **drafted 2026-11-10, owner answers recorded.** **Built (data in `src/content/villagers.json`, loaded by `src/core/villagers.ts`; the idle key allowed list is tested):** default, rain, weekday and season routes for the 30. Festival spots and spouse routes are not built. The
 rules are in `79_villager_schedules.md`, the people in `20_ring1_cast.md`, the
 names in note 79 "Settled names", the shop hours in note 79 "Shop hours". This
 note is the first layer: a **default route and a rain route for each of the 30**.

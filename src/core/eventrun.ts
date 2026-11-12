@@ -42,7 +42,7 @@ export function eventAtTile(
   mapId: string,
   x: number,
   y: number,
-  ctx: { day: number; weather: Weather },
+  ctx: { day: number; weather: Weather; minute?: number },
   declined: readonly string[] = [],
 ): HeartEvent | undefined {
   for (const place of placesAt(mapId, x, y)) {

@@ -5,7 +5,7 @@ later the same day.** The points, caps, gift limits, decay, bad gifts, taste
 tiers, how tastes are learned, birthdays, the quality bonus, the six universal
 loves, the universal hates, the Midwinter pairing and the first eight people's
 lists are set (lists are drafts for the owner to reshape). Rows marked "proposed" were not asked and stand
-unless the owner objects. Nothing here is built. It feeds slice 4
+unless the owner objects. Built in slice 2 (#599; `src/core/friendship.ts`, `src/content/friendship.json`, `tests/friendship.test.ts`): points, caps, talks, gifts and tastes, birthdays. Not built: spouse halving and the marriage steps. It fed slice 4
 (`33_build_order.md`), house tiers 2 and 3 (#286) and the recipe mail
 (`24_processing_and_cooking.md`).
 

@@ -5,7 +5,9 @@ import {
   completeEvent,
   dueEvents,
   eventById,
+  inWindow,
   nextEvent,
+  presenceOverlaps,
   playable,
   validateEvents,
   validateScene,
@@ -53,6 +55,45 @@ describe("heart event data", () => {
       expect(t.startsWith("PLACEHOLDER TEXT.")).toBe(true);
       expect(t).not.toContain(String.fromCharCode(0x2014));
     }
+  });
+});
+
+describe("presence window (note 84)", () => {
+  it("every event has a window where its person stands at the place", () => {
+    for (const e of HEART_EVENTS) {
+      expect(e.window, e.id).toBeDefined();
+      expect(presenceOverlaps(e), e.id).toBe(true);
+    }
+  });
+
+  it("rejects a window the person never keeps, or none at all", () => {
+    const base = eventById("odette-store-2")!;
+    expect(
+      validateEvents([
+        { ...base, window: { from: "3:00", until: "5:00" } },
+      ]).join(),
+    ).toContain("never at the place");
+    const bare: Partial<HeartEvent> = { ...base };
+    delete bare.window;
+    expect(validateEvents([bare as HeartEvent]).join()).toContain(
+      "presence window",
+    );
+  });
+
+  it("starts an event only inside its window", () => {
+    const g = newGame();
+    setHearts(g, "odette", 2);
+    const e = eventById("odette-store-2")!;
+    expect(inWindow(e, undefined)).toBe(true);
+    expect(
+      nextEvent(g, { ...ctx("hw:store"), minute: 8 * 60 }),
+    ).toBeUndefined();
+    expect(nextEvent(g, { ...ctx("hw:store"), minute: 10 * 60 })?.id).toBe(
+      e.id,
+    );
+    expect(
+      nextEvent(g, { ...ctx("hw:store"), minute: 20 * 60 }),
+    ).toBeUndefined();
   });
 });
 
