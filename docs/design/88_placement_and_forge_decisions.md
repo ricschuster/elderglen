@@ -29,7 +29,7 @@ write. Nothing here is built.
   placeholder). Rules are in `src/core/lightning.ts`.
 - **Lamps.** A fixed glow ring at night, no fuel (Stardew, SC-128).
 
-## Still to design
+## Still to design (the full rules are now in note 89)
 
 Bomb blast shape, damage to the player and monsters, and which rock a bomb breaks (the
 hard rock gate). The per item place table. The heater's effect size. The Life Elixir,
