@@ -1,6 +1,6 @@
 # 37 Equipment: rings, boots and clothing slots (draft)
 
-Status: draft. Decided with the owner on 2026-10-31. Built 2026-11-10 (#597): the two ring slots, the four light and magnet rings, the wearing screen (see "Built"). Boots, Defense, Immunity and the combat rings are not built.
+Status: draft. Decided with the owner on 2026-10-31. Built 2026-11-10 (#597): the two ring slots, the four light and magnet rings, the wearing screen (see "Built"). Boots, Defense and Immunity are built (note 94); the other combat rings are not.
 Reference: the saved Stardew Valley Wiki pages Rings, Boots, Footwear, Hats,
 Inventory and Forge, read only (ADR 0002). The owner chose Stardew's behaviour
 on every question, so this note follows the saved pages. Item names are ours

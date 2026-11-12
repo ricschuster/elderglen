@@ -168,6 +168,7 @@ import {
   placeLight,
 } from "../core/lights";
 import { drink, isDrink, oilCalms } from "../core/elixirs";
+import { effectById } from "../core/effects";
 import {
   type LitBomb,
   blastCreatures,
@@ -413,6 +414,8 @@ export class FarmScene extends Phaser.Scene {
   private swingFx!: Phaser.GameObjects.Graphics;
   /** The scene time before which the next weapon swing is refused. */
   private swingReady = 0;
+  /** Burn damage not yet a whole point of health. */
+  private burnDebt = 0;
   /** True while the naming dialog is open for the first ride. */
   private namingHorse = false;
   /** The horse under the rider while mounted (a placeholder block). */
@@ -475,6 +478,8 @@ export class FarmScene extends Phaser.Scene {
     this.exitArmed = false;
     this.floor = mineFloorOf(this.mapId);
     this.floorState = undefined;
+    // A bad effect never leaves the floor it was caught on (note 94).
+    this.state.combat.effects.clear();
     this.conditional = [];
     this.refreshHolds();
     this.heldMs = 0;
@@ -904,12 +909,13 @@ export class FarmScene extends Phaser.Scene {
     if (v.x !== 0 || v.y !== 0) this.keyAim();
     const ts = this.map.tileSize;
     const before = { ...this.pos };
+    const slowed = this.state.combat.effects.speedFactor();
     for (let i = 0; i < DEV_SPEED; i++)
       this.pos = move(
         this.pos,
         {
-          x: v.x * SPEED * speedFactor(this.state) * dt,
-          y: v.y * SPEED * speedFactor(this.state) * dt,
+          x: v.x * SPEED * speedFactor(this.state) * slowed * dt,
+          y: v.y * SPEED * speedFactor(this.state) * slowed * dt,
         },
         PLAYER,
         ts,
@@ -3193,6 +3199,17 @@ export class FarmScene extends Phaser.Scene {
     if (!floor || combat.noCreatures) return;
     combat.sync(this.state.skills);
     combat.health.tick(dt);
+    const burn = combat.effects.tick(dt);
+    if (burn > 0) {
+      this.burnDebt += burn;
+      if (this.burnDebt >= 1) {
+        const whole = Math.floor(this.burnDebt);
+        this.burnDebt -= whole;
+        const lost = combat.health.drain(whole);
+        if (lost > 0)
+          this.floatText(this.pos.x, this.pos.y - 14, `-${lost}`, "#ff9a40");
+      }
+    } else this.burnDebt = 0;
     const ts = this.map.tileSize;
     for (const c of floor.creatures) {
       const result = stepCreature(c, dt, {
@@ -3218,6 +3235,19 @@ export class FarmScene extends Phaser.Scene {
         );
         if (lost > 0) {
           this.message = `${creatureById(c.kind)?.name ?? "It"} hits you for ${lost}.`;
+          const inflicts = creatureById(c.kind)?.inflicts;
+          if (inflicts && Math.random() < inflicts.chance) {
+            const eq = this.state.equipment;
+            const r = combat.effects.inflict(inflicts.effect, Math.random, {
+              immunity: eq.immunity(),
+              slimeProof: eq.slimeProof(),
+              halfLength: eq.halvesEffects(),
+            });
+            const name = effectById(inflicts.effect)?.name.toLowerCase();
+            if (r === "afflicted") this.message += ` You are ${name}.`;
+            else if (r === "resisted")
+              this.message += ` You shrug off ${name}.`;
+          }
           this.floatText(this.pos.x, this.pos.y - 14, `-${lost}`, "#ff8080");
           this.render();
         }
@@ -3293,7 +3323,9 @@ export class FarmScene extends Phaser.Scene {
    */
   private swing(weapon: WeaponDef): void {
     if (this.time.now < this.swingReady) return;
-    this.swingReady = this.time.now + weapon.cooldown * 1000;
+    this.swingReady =
+      this.time.now +
+      weapon.cooldown * this.state.combat.effects.swingFactor() * 1000;
     const ts = this.map.tileSize;
     // The sling shoots toward the mouse pointer, or the tapped spot on touch
     // (note 22, SC-94). Everything else, and a sling with no aim, goes the faced way.

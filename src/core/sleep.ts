@@ -188,6 +188,7 @@ export function sleep(
   // Any night's sleep restores health.
   g.combat.sync(g.skills);
   g.combat.health.fill();
+  g.combat.effects.clear();
   // The bin pays after the pass-out cost, which takes cash carried only.
   const shipped = g.bin.settle(g);
   const orders = endDayOrders(g, shipped.lines, g.day.clock.day);
