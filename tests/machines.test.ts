@@ -255,6 +255,7 @@ describe("machines on the farm", () => {
     expect(back.machines.at(3, 3)).toBe("keg");
     expect(back.machines.get(3, 3)?.job).toEqual(g.machines.get(3, 3)?.job);
     const raw = JSON.parse(serialize(newGame()));
+    delete raw.placed;
     delete raw.machines;
     expect(deserialize(JSON.stringify(raw))!.machines.count).toBe(0);
     raw.machines = [{ x: 1, y: 1, id: "nope" }, { x: "a" }];

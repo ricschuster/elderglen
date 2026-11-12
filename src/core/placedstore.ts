@@ -1,7 +1,6 @@
 import { homeWorld } from "./areas";
 import { FARM_STORE, GREENHOUSE_STORE } from "./mapstore";
 import type { GameState } from "./save";
-import type { MachineJob } from "./machines";
 import { isFarmMap } from "./farmtypes";
 import { placeableById } from "./placeables";
 
@@ -150,33 +149,43 @@ export function collectPlaced(g: GameState): PlacedStore {
   return out;
 }
 
-/** The reverse bridge: set the three older lists from a store. Used until the last kind has moved. */
-export function applyPlaced(g: GameState, store: PlacedStore): void {
-  const home = homeWorld(g);
-  const jobOf = (p: PlacedItem) => p.state?.job as MachineJob | undefined;
-  home.sprinklers.load([]);
-  g.greenhouseSprinklers.load([]);
-  home.machines.load([]);
-  g.chests.load([]);
-  for (const p of store.each(FARM_STORE)) {
-    const kind = placeableById(p.id)?.kind;
-    if (kind === "chest")
-      g.chests.add("farm", p.x, p.y, p.id)?.items.load(slotsOf(p));
-    else if (kind === "sprinkler") home.sprinklers.add(p.x, p.y, p.id);
-    else if (kind === "machine")
-      home.machines.add({ x: p.x, y: p.y, id: p.id, job: jobOf(p) });
-  }
-  for (const p of store.each(GREENHOUSE_STORE))
-    g.greenhouseSprinklers.add(p.x, p.y, p.id);
-  for (const map of store.mapIds()) {
-    if (map === FARM_STORE || map === GREENHOUSE_STORE) continue;
-    for (const p of store.each(map))
-      g.chests.add(map, p.x, p.y, p.id)?.items.load(slotsOf(p));
-  }
+/** The older lists, in the raw shapes their own loaders check, read out of a saved `placed`. */
+export interface LegacyLists {
+  farmSprinklers: unknown[];
+  greenhouseSprinklers: unknown[];
+  machines: unknown[];
+  chests: unknown[];
 }
 
-function slotsOf(p: PlacedItem): ({ id: string; count: number } | null)[] {
-  return Array.isArray(p.state?.slots)
-    ? (p.state.slots as ({ id: string; count: number } | null)[])
-    : [];
+/**
+ * The load read: split a saved `placed` into the raw rows each typed list
+ * loads and validates for itself (a machine's job, a chest's slots), so the
+ * checks live in one place. Rows whose id is not that kind of placeable are
+ * left out.
+ */
+export function splitPlaced(raw: unknown): LegacyLists {
+  const store = new PlacedStore();
+  store.load(raw);
+  const out: LegacyLists = {
+    farmSprinklers: [],
+    greenhouseSprinklers: [],
+    machines: [],
+    chests: [],
+  };
+  for (const map of store.mapIds())
+    for (const p of store.each(map)) {
+      const kind = placeableById(p.id)?.kind;
+      if (kind === "sprinkler") {
+        if (map === FARM_STORE) out.farmSprinklers.push(rowOf(p));
+        else if (map === GREENHOUSE_STORE)
+          out.greenhouseSprinklers.push(rowOf(p));
+      } else if (kind === "machine" && map === FARM_STORE) {
+        out.machines.push({ ...rowOf(p), job: p.state?.job });
+      } else if (kind === "chest") {
+        out.chests.push({ ...rowOf(p), map, slots: p.state?.slots });
+      }
+    }
+  return out;
 }
+
+const rowOf = (p: PlacedItem) => ({ x: p.x, y: p.y, id: p.id });

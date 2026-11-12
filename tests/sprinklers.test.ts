@@ -125,6 +125,7 @@ describe("sprinklers", () => {
     const back = deserialize(serialize(g))!;
     expect(back.sprinklers.at(4, 5)).toBe("quality-sprinkler");
     const raw = JSON.parse(serialize(newGame()));
+    delete raw.placed;
     delete raw.sprinklers;
     expect(deserialize(JSON.stringify(raw))!.sprinklers.count).toBe(0);
   });

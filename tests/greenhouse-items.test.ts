@@ -196,9 +196,10 @@ describe("the per-map store in saves", () => {
     g.fruitTrees.add(10, 10, "apricot", 12);
     const raw = JSON.parse(serialize(g));
     // The shape before the per-map store: two top level lists.
-    raw.sprinklers = raw.mapItems.farm.sprinklers;
+    raw.sprinklers = [{ x: 3, y: 3, id: "sprinkler" }];
     raw.fruitTrees = raw.mapItems.farm.fruitTrees;
     delete raw.mapItems;
+    delete raw.placed;
     delete raw.greenhouseSite;
     const back = deserialize(JSON.stringify(raw))!;
     expect(back.sprinklers.at(3, 3)).toBe("sprinkler");
@@ -213,6 +214,7 @@ describe("the per-map store in saves", () => {
 
   it("drops damaged entries instead of failing", () => {
     const raw = JSON.parse(serialize(newGame()));
+    delete raw.placed;
     raw.mapItems = {
       farm: { sprinklers: "nope", fruitTrees: [{ x: 1 }] },
       greenhouse: {
