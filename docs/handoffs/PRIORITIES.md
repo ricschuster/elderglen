@@ -53,7 +53,7 @@ Tier 3, design first, one issue per system when taken:
 - **12. #396 tree types by region.**
 
 Alongside: #880 stale status lines, `docs/overview.json` (behind since 2026-11-11), a
-Stardew checks question batch (about 12 open rows), and file the M4 hosting spike before M4.
+last three Stardew checks rows (SC-122, 135, 160), and file the M4 hosting spike before M4.
 
 ## Milestone order (ADR 0012)
 

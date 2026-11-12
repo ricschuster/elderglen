@@ -46,9 +46,12 @@ count. They cannot be put in a pond.
   resets it (the capacity from quests too).
 - **Products.** Each fish may give an item at night. Roe is the main one: Stardew rolls
   an extra roe 20 percent of the time again and again (about 0.25 extra on average). The
-  chances and which fish make what are not on the saved page, so ours are placeholders
-  (SC-158): a fish gives roe 5 percent a night, scaled by the pond's size over 10, and a
-  few fish give a species item (Fernscale: a pond pearl, others later). The roe goes to
+  chance is Stardew's (saved page, SC-158; owner chose it 2026-11-12): each night an item
+  is possible with chance population x 0.08 + 0.15 (23 to 95 percent, an empty pond
+  never), then the item is picked by species and population, roe mostly. Species goods
+  need a minimum population, as the page's table lists (for example Sunfish gives Solar
+  Essence at 10, Woodskip hardwood at 6, Blobfish a pearl at 9). Fish the page does not
+  list keep our own goods (Fernscale: a pond pearl, others later). The roe goes to
   the preserves jar for aged roe (note 24).
 - **Quests (Stardew).** When the pond hits its cap, an exclamation mark appears over it
   1 to 5 days later. The quest asks for items thrown in one at a time, any quality. Done,
@@ -81,6 +84,6 @@ count. They cannot be put in a pond.
 
 ## Open
 
-- SC-158: the pond's product table and chances (not on the saved page).
+- SC-158: done for the chance formula and the listed fish. Our own fish still need their goods and population gates.
 - The legend rule and whether the Fernscale needs a pond of its own (note 21).
 - Names, prices, art.

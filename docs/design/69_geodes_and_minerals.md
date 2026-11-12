@@ -105,8 +105,9 @@ unless it says Stardew's.
 
 1. **Artifact spots follow Stardew.** A marked spot on the ground, dug with the hoe in the
    valley areas, each area giving its own finds, **much more common in winter**. The hoe
-   on dirt in the mines can also give an artifact. Stardew's daily spot count is not on the
-   saved page: placeholder 2 to 4 a day in an area, 6 to 10 in winter, logged as SC-154.
+   on dirt in the mines can also give an artifact. Stardew's averages (search snippet of the wiki,
+   SC-154) run 0.1 to 1 a day by area and 0.4 to 1.4 in winter, so ours is 0 to 2 a day in
+   an area and 1 to 3 in winter (owner chose it, 2026-11-12).
 2. **42 artifacts to match Stardew's list.** One of each is donated to the library gallery
    (note 39), with rewards at donation milestones. Names, art and prices are ours (ADR
    0002). Bundle 26's four old things (old seed packet, carved bead, faded ribbon, pressed

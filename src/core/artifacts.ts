@@ -40,9 +40,9 @@ export const ARTIFACT_AREAS = [
 export const artifactById = (id: string): ArtifactDef | undefined =>
   ARTIFACTS.find((a) => a.id === id);
 
-/** Spots rolled a day in an area: 2 to 4, and 6 to 10 in winter (placeholder, SC-154). */
-export const SPOTS_NORMAL: [number, number] = [2, 4];
-export const SPOTS_WINTER: [number, number] = [6, 10];
+/** Spots rolled a day in an area: 0 to 2, and 1 to 3 in winter (near Stardew's averages, SC-154; owner chose it 2026-11-12). */
+export const SPOTS_NORMAL: [number, number] = [0, 2];
+export const SPOTS_WINTER: [number, number] = [1, 3];
 /** Mine dirt gives an artifact this often per hoe use, by band (placeholder; Stardew's lowest is 0.1 percent). */
 export const MINE_DIRT_CHANCE = [0.0015, 0.002, 0.0025];
 /** Mine floors per band, matching `mine-bands.json`. */

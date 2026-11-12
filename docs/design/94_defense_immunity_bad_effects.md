@@ -9,8 +9,8 @@ into damage, what Immunity does, and which bad effects exist.
 
 - **Immunity is a chance to resist a bad effect (Stardew).** Not a shorter duration.
   This replaces note 37's "Immunity shortens bad effects". The saved Combat page says
-  Immunity "affects the chance to be afflicted with certain debuffs" and gives no numbers
-  (SC-159).
+  Immunity "affects the chance to be afflicted with certain debuffs". The saved Immunity
+  page gives the numbers (SC-159): see Immunity below.
 - **Three bad effects, one per mine band:** slimed, chilled and burned.
 
 ## Defense (already built)
@@ -18,16 +18,16 @@ into damage, what Immunity does, and which bad effects exist.
 Defense is a flat cut from each hit, to a floor of 1 damage, and Assist halves what is
 left (rounded up). It is built in `Health.hurt` (`src/core/combat.ts`) and fed by the
 boots and the Defense ring (+1 and +5). Stardew says only that Defense "affects how much
-damage the player takes" (saved page), so the flat rule is ours (SC-159). Boots today run
+damage the player takes" (saved page), and the saved Defense page confirms the flat rule (1 off per point, floor of 1, SC-159). Boots today run
 from 0 to 4 Defense against hits of 4 to 12, so a full set trims about a third at the
 top and never makes a hit free.
 
 ## Immunity
 
 - **A resist roll.** When a creature's hit would inflict a bad effect, roll once. Each
-  point of Immunity resists 10 percent, capped at 75 percent, so an effect always has a
-  chance to land. Boots give 0 to 2 points (`boots.json`) and the Sturdy and Immunity
-  band adds 4 (note 37), so up to 6 points, 60 percent, in play.
+  point of Immunity resists 9.1 percent, added up, with no cap (Stardew, saved Immunity
+  page, SC-159; owner chose it 2026-11-12). Eleven points make a player immune. Boots give 0 to 2 points (`boots.json`) and the Sturdy and Immunity
+  band adds 4 (note 37), so up to 6 points, about 55 percent, in play.
 - **The roll is per hit.** A hit that lands still hurts. Immunity only stops the effect.
 - **Slime proof ring** blocks slimed outright and takes no slime damage (note 37).
 - **The Sturdy ring's half-duration** stays as written in note 37: a separate cut on the
@@ -67,5 +67,5 @@ top and never makes a hit free.
 
 ## Open
 
-- SC-159: Stardew's Defense formula, the Immunity numbers and the debuff list.
+- SC-159: formula and numbers done. The full debuff list is not on the saved pages.
 - Names, icons and the exact effect numbers.
