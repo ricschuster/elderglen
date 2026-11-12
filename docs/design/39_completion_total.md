@@ -57,7 +57,7 @@ Each had a Stardew option.
 | Slayer goals | 10 | Every goal on the mines' slayer list (`22_mines.md`) | 3 |
 | Friends | 12 | Every person at maximum hearts, children excluded | 4 |
 | Skills | 5 | Every skill at level 10. Owner, 2026-11-08: the category counts 5 skills of 10 levels, and the percentage drop this causes is accepted | 1 to 3 |
-| Rare boost items | 10 | Every one of the eight elderfruit (see "Settled with the owner" and "Eighth elderfruit") | 1 to 4 |
+| Rare boost items | 10 | Every one of the seven elderfruit (see "Settled with the owner" and "Seven elderfruit") | 1 to 4 |
 | Cooking | 10 | Every recipe cooked | 4 |
 | Crafting | 10 | Every item crafted | 1 |
 | Fish | 10 | Every fish caught, the five legends included (`21_fishing.md`), 47 ordinary fish since the Secret Woods pond's unique fish (owner, 2026-11-08) | 2 |
@@ -316,22 +316,22 @@ Each had a Stardew option, and the owner took the recommended one.
 Stardew details above come from the saved Perfection Tracker, Stardrop and
 Movie Theater pages, read on 2026-10-31.
 
-## Eighth elderfruit (owner, 2026-11-12)
+## Seven elderfruit, eaten on receipt (owner, 2026-11-12)
 
-Stardew has seven stardrops; ours has eight. The eighth is the mailed gift of the fish
-seed letter (every ordinary fish landed, the legends and the pond fish not needed, trigger `fish-roster`, `src/content/letters.json`; split from the Whole Roster achievement 2026-11-12). It
-is the same item as the other seven: +34 maximum energy, eaten at once, 270 up to 542 in
-all. The points for the rare boost line are split in eighths, and the "Find every
-stardrop" counter reads eight. Update the counter, the achievement and the completion
-data when this is built.
+The "eighth source" is dropped: there are seven sources, as Stardew's seven stardrops
+(270 up to 508). The fish seed letter is source 6 and was never an extra. Every source eats the
+fruit the moment it is received (`absorbElderfruit` in `src/core/elderfruit.ts`, called by the
+counter, camp chest, mail, hermit and spirit), as Stardew eats a stardrop on pickup. The rare boost
+points are split in sevenths and the "Find every stardrop" counter and the "Every Elderfruit"
+achievement read seven. Built 2026-11-12.
 
 ## Elderfruit build status (2026-11-12)
 
 Built (#874): `src/core/elderfruit.ts`, the `elderfruit` count on the game state (saved), and
 `Energy.max` (270 plus 34 for each one eaten; days, faints and `refillEnergy` use it). Eating the
 item from the pack (`eat`) raises the maximum by 34, fills the new space, and heals nothing. The
-rare boost line of the completion total reads fruit eaten of eight, and the "Every Elderfruit"
-achievement (hat: Elderfruit Circlet, 3,000g placeholder) fires at eight.
+rare boost line of the completion total reads fruit eaten of seven, and the "Every Elderfruit"
+achievement (hat: Elderfruit Circlet, 3,000g placeholder) fires at seven.
 
 | # | Source | State |
 | --- | --- | --- |
@@ -342,17 +342,9 @@ achievement (hat: Elderfruit Circlet, 3,000g placeholder) fires at eight.
 | 5 | Emberseed from the hermit's 4 heart event, ember berry (a `rare` crop: not on sale, not in the mixed seed, not in the shipped count), handed to the spirit's stone in the Secret Woods (service `spirit-statue`) | Built, placeholder art and text |
 | 6 | The fish seed letter (`fish-roster`) | Built earlier |
 | 7 | The full gallery set | Not built (no gallery) |
-| 8 | See "Open" below | Unclear |
 
 Open after the build:
 
-- **The eighth source is not named.** The table has seven rows, and the fish seed letter is both
-  its row 6 and the "eighth" above. Every counter and the achievement use eight (as this note
-  says), so 100 percent in this category cannot be reached until an eighth source exists or the
-  count is set to seven. Needs an owner decision.
-- **Eaten at once.** Stardew eats a stardrop on pickup. Ours is an item that the player eats from
-  the pack (and the mail, camp chest, counter and spirit all drop it there), so it can sit
-  uneaten. The completion line counts fruit eaten. Whether to eat on receipt is not decided.
 - **Energy on eating.** Raising the maximum also adds 34 to current energy. Stardew's refill is
   unchecked (add to the checks register if the owner wants it settled).
 - **Emberseed days to grow** are a 14 day placeholder. Planting in winter is simply refused, as

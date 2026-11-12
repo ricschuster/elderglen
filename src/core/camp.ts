@@ -1,5 +1,7 @@
 import type { Outcome } from "./actions";
 import { campItem, MINES_OPEN_DAY } from "./mines";
+import { absorbElderfruit } from "./elderfruit";
+import { ELDERFRUIT } from "./items";
 import type { GameState } from "./save";
 
 /**
@@ -36,5 +38,6 @@ export function takeCampGift(g: GameState, floor = 10): Outcome {
   if (!item || g.mines.campOpenedOn(floor)) return fail("camp chest empty");
   if (!g.inventory.add(item, 1)) return fail("backpack full");
   g.mines.openCamp(floor);
+  if (item === ELDERFRUIT) absorbElderfruit(g);
   return { ok: true, item };
 }

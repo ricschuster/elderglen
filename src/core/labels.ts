@@ -71,6 +71,7 @@ const SERVICES: Record<string, string> = {
   trader: "Road Trader",
   festival: "Village Green",
   "festival-leave": "Way Home",
+  "cake-table": "Cake Table",
   "hedge-chest": "Chest",
   "hedge-cart": "Cart Home",
   cart: "Cart",
@@ -89,6 +90,8 @@ const SERVICES: Record<string, string> = {
   "counter-inn": "Inn Counter",
   "counter-library": "Library Desk",
   "counter-hatter": "Hatter's Counter",
+  "sewing-machine": "Sewing Machine",
+  "dye-pots": "Dye Pots",
   "counter-outpost": "Post Counter",
 };
 
@@ -98,6 +101,11 @@ const FESTIVAL_BY_ID: Record<string, string> = {
   judge: "Judge",
   prizes: "Prize Counter",
   booth: "Booth",
+  "hat-counter": "Hat Counter",
+  "seed-stall": "Seed Stall",
+  "costume-stall": "Costume Stall",
+  "lantern-stall": "Lantern Stall",
+  "festival-counter": "Festival Counter",
 };
 
 /** Hall counters share the kind "hall", so they are named by id. */

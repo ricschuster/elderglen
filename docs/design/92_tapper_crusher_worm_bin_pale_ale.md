@@ -82,8 +82,9 @@ machines in `processing.ts` and `machines.ts`, three recipes, three placeables r
 Details: the tapper state is `tap` on the tree (saves with the trees); Action takes a ready
 good, the pickaxe lifts the tapper (a ready good comes too), felling the tree returns it.
 The worm bin keeps a job with a count, fills 4 to 5 each morning from sleep, cap 50. The
-crusher uses `crackResult` with the deepest floor reached. The crusher recipe's "diamond"
-is the Heartfire diamond (note 69), the only diamond item.
+crusher uses `crackResult` with the deepest floor reached. Corrected 2026-11-12: the crusher
+recipe's diamond is the Diamond of note 83 decision 21 (a 750g gem, id `gem-high-b` as the
+placeholder, named Diamond in `gems.json`), not the Heartfire diamond.
 
 Built (2026-11-12, second pass): item 4. `hops` is in `crops.json` (summer, 11 days, regrow
 1, seed 60g, sells 25g); crops now take `produce: "none"` (wheat and hops), so neither makes
@@ -109,3 +110,15 @@ Heavy Tapper, and seeds for hops in the shop lists.
 
 - Prices (SC-156) and the crusher recipe (SC-157) are now Stardew's. Remaining placeholders: the worm bin and pale ale.
 - Art and names.
+
+Built (2026-11-12, follow-ups): the cart stop at the mine mouth sits beside the mine door on the
+Mountain and is listed only once the mines open (`requires: "mines-open"` in `carts.json`, the
+`from_cart-mine` entry carries the same condition; see note 16).
+
+Built (2026-11-12, art pass): placeholder tapper art. Item icons `icon-tapper` and
+`icon-heavy-tapper`, and a spout and bucket drawn on a tapped tree (`tapper-on-tree`, a gold
+band for the heavy one), under the green ready mark. The Heavy Tapper is built: item, placeable,
+recipe (placeholder: 30 hardwood and 1 gold bar, Foraging level 8), a `heavy` flag on the tree's
+`tap`, cycles 3, 4, 2 days and mahogany daily from `tapper.json`. Tests in `tests/tapper.test.ts`.
+Still not built: tool shop rows. Where a tapper is sold (and at what price) is not settled in
+this note, and Stardew sells none (SC-156 unchecked), so no shop carries one yet.

@@ -5,7 +5,7 @@ import {
   MAHOGANY_SEED_NAME,
   MAHOGANY_SEED_PRICE,
 } from "./mahogany";
-import { BOOTS, RINGS } from "./equipment";
+import { BOOTS, RINGS, isCombo, ringById } from "./equipment";
 import { FERTILIZERS } from "./fertilizer";
 import { FORAGE } from "./forage";
 import {
@@ -27,7 +27,7 @@ import weaponData from "../content/weapons.json";
 import furnitureData from "../content/furniture.json";
 import { ARTISAN_GOODS } from "./artisan";
 import { MACHINES } from "./processing";
-import { TAP_GOODS, TAPPER, TAPPER_DEF } from "./tapper";
+import { HEAVY_TAPPER_DEF, TAP_GOODS, TAPPER, TAPPER_DEF } from "./tapper";
 import { DISHES } from "./dishes";
 import { CHESTS } from "./chestdefs";
 import { GEODE_ITEMS } from "./geodes";
@@ -148,6 +148,7 @@ items.set("wood", { id: "wood", name: "Wood", sellPrice: 2 });
 items.set("sap", { id: "sap", name: "Sap", sellPrice: 2 });
 /** The tapper and what it gives (note 92). Prices are placeholders, see `tapper.json`. */
 items.set(TAPPER, { ...TAPPER_DEF });
+items.set(HEAVY_TAPPER_DEF.id, { ...HEAVY_TAPPER_DEF });
 for (const g of TAP_GOODS)
   if (g.item !== "sap")
     items.set(g.item, { id: g.item, name: g.name, sellPrice: g.sellPrice });
@@ -199,7 +200,10 @@ items.set("mixed-seed", {
   sellPrice: 5,
 });
 /** Sell price is ours, a placeholder. */
-items.set("tree-seed", { id: "tree-seed", name: "Tree seed", sellPrice: 5 });
+items.set("tree-seed", { id: "tree-seed", name: "Acorn", sellPrice: 5 });
+/** The Maple and Pine seeds (note 36, SC-30). The Acorn keeps the old `tree-seed` id so saves stay valid. */
+items.set("maple-seed", { id: "maple-seed", name: "Maple seed", sellPrice: 5 });
+items.set("pine-cone", { id: "pine-cone", name: "Pine cone", sellPrice: 5 });
 items.set(MAHOGANY_SEED, {
   id: MAHOGANY_SEED,
   name: MAHOGANY_SEED_NAME,
@@ -317,6 +321,16 @@ for (const [id, name] of [
   ["iron-lamp-post", "Iron lamp-post"],
 ] as const)
   items.set(id, { id, name, sellPrice: 0, keep: true });
+/** Farm decoration (note 89, the seventh placeable kind): carried, stood on the farm, kept. Sold by the keeper (`farmdecor.ts`). */
+for (const [id, name] of [
+  ["ornamental-hay-bale", "Ornamental hay bale"],
+  ["doghouse", "Doghouse"],
+  ["dark-doghouse", "Dark doghouse"],
+  ["cat-tree", "Cat tree"],
+  ["dark-cat-tree", "Dark cat tree"],
+  ["bird-house", "Bird house"],
+] as const)
+  items.set(id, { id, name, sellPrice: 0, keep: true });
 /** Bombs (note 89): bought at the Forge, lit on a tile, used up. Prices from `bombs.json`. */
 for (const b of bombData)
   items.set(b.id, {
@@ -421,6 +435,8 @@ const GROUPS: [string, string[]][] = [
       ...FRUIT_TREES.map((t) => saplingId(t.id)),
       "mixed-seed",
       "tree-seed",
+      "maple-seed",
+      "pine-cone",
       MAHOGANY_SEED,
     ],
   ],
@@ -467,6 +483,12 @@ const GROUPS: [string, string[]][] = [
       "campfire",
       "wood-brazier",
       "stone-brazier",
+      "ornamental-hay-bale",
+      "doghouse",
+      "dark-doghouse",
+      "cat-tree",
+      "dark-cat-tree",
+      "bird-house",
       ...bombData.map((b) => b.id),
       LIFE_ELIXIR,
       MINERS_TREAT,
@@ -515,6 +537,7 @@ const GROUPS: [string, string[]][] = [
       WAX,
       CANDLE,
       TAPPER,
+      HEAVY_TAPPER_DEF.id,
       ...TAP_GOODS.map((g) => g.item).filter((i) => i !== "sap"),
     ],
   ],
@@ -541,7 +564,12 @@ const QUALITY_NAME = { silver: "Silver", gold: "Gold" } as const;
 /** An item by id. A good with a quality suffix sells for more, per tier. */
 export function itemById(id: string): ItemDef | undefined {
   const { base, quality } = splitQuality(id);
-  const def = items.get(base);
+  let def = items.get(base);
+  if (!def) {
+    // A combined ring (note 95) is made, not listed.
+    const ring = isCombo(base) ? ringById(base) : undefined;
+    if (ring) def = { id: ring.id, name: ring.name, sellPrice: 0, keep: true };
+  }
   if (!def || quality === "normal") return def;
   return {
     id,

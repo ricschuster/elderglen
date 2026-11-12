@@ -1,5 +1,8 @@
 import { POT_ITEM } from "../core/pots";
 import { isBomb } from "../core/bombs";
+import { BOOTS, RINGS, comboId, comboParts, ringById } from "../core/equipment";
+import { LIFE_ELIXIR, MINERS_TREAT, OIL_OF_GARLIC } from "../core/items";
+import { farmDecorIds, isFarmDecor } from "../core/farmdecor";
 import { isLight } from "../core/lights";
 import { LIGHTNING_ROD } from "../core/lightning";
 import { CHESTS, chestById } from "../core/chestdefs";
@@ -594,6 +597,28 @@ function paintTrees(scene: Phaser.Scene): void {
     px(c, "#d9b27a", 2, 6, 1, 2);
     px(c, "#d9b27a", 2, 10, 1, 2);
   });
+  // The tapper (note 92): a small spout and a bucket. Placeholder art. The icon is the
+  // item; the "on-tree" picture is the overlay drawn over a tapped trunk.
+  const tapperArt = (c: Ctx, heavy: boolean) => {
+    px(c, heavy ? "#6a6a74" : "#8a8a94", 6, 4, 4, 2);
+    px(c, heavy ? "#4a4a54" : "#6a6a72", 7, 6, 2, 3);
+    px(c, "#7a4e26", 5, 9, 6, 5);
+    px(c, "#9a6a3a", 5, 9, 6, 1);
+    if (heavy) px(c, "#c8a838", 5, 11, 6, 1);
+  };
+  draw("icon-tapper", (c) => tapperArt(c, false));
+  draw("icon-heavy-tapper", (c) => tapperArt(c, true));
+  draw("tapper-on-tree", (c) => {
+    px(c, "#8a8a94", 6, 8, 3, 2);
+    px(c, "#7a4e26", 4, 10, 5, 4);
+    px(c, "#9a6a3a", 4, 10, 5, 1);
+  });
+  draw("tapper-on-tree-heavy", (c) => {
+    px(c, "#6a6a74", 6, 8, 3, 2);
+    px(c, "#7a4e26", 4, 10, 5, 4);
+    px(c, "#9a6a3a", 4, 10, 5, 1);
+    px(c, "#c8a838", 4, 12, 5, 1);
+  });
   draw("icon-hardwood", (c) => {
     px(c, "#4a2e18", 2, 5, 12, 3);
     px(c, "#6a4426", 2, 5, 12, 1);
@@ -784,6 +809,17 @@ function paintTrees(scene: Phaser.Scene): void {
     px(c, "#4a1a14", 5, 10, 6, 2);
     px(c, "#d08a5a", 7, 6, 1, 3);
   });
+  draw("icon-maple-seed", (c) => {
+    px(c, "#b8542a", 4, 6, 4, 5);
+    px(c, "#d8744a", 8, 5, 4, 4);
+    px(c, "#7a3418", 7, 10, 2, 2);
+  });
+  draw("icon-pine-cone", (c) => {
+    px(c, "#6a4a22", 5, 3, 6, 10);
+    px(c, "#8a6a34", 6, 4, 4, 2);
+    px(c, "#8a6a34", 6, 8, 4, 2);
+    px(c, "#3a2a10", 7, 12, 2, 1);
+  });
   draw("icon-tree-seed", (c) => {
     px(c, "#7a5a2a", 5, 4, 6, 8);
     px(c, "#9a7a3a", 6, 3, 4, 2);
@@ -888,6 +924,8 @@ function paintFruitTrees(scene: Phaser.Scene): void {
 export const furnitureKey = (id: string) => `furniture-${id}`;
 export const chestKey = (id: string) => `chest-${id}`;
 export const lightKey = (id: string) => `light-${id}`;
+/** A farm decoration, drawn per covered tile (note 89). */
+export const farmDecorKey = (id: string) => `farmdecor-${id}`;
 /** The shellfish pot standing in the water, and the mark on one that holds a catch. */
 export const POT_KEY = "shellfish-pot";
 export const POT_READY_KEY = "shellfish-pot-ready";
@@ -955,6 +993,103 @@ function paintChests(scene: Phaser.Scene): void {
     px(c, "#2a2a30", 7, 7, 2, 3);
     t.refresh();
   }
+}
+
+/** Farm decorations: one plain block per piece, in its colour. Placeholders (art waits for M3d). */
+function paintFarmDecor(scene: Phaser.Scene): void {
+  const colours: Record<string, [string, string]> = {
+    "ornamental-hay-bale": ["#d8b84a", "#b8942e"],
+    doghouse: ["#a8703a", "#6a4220"],
+    "dark-doghouse": ["#5a4a3a", "#2e2418"],
+    "cat-tree": ["#c8a878", "#8a6a44"],
+    "dark-cat-tree": ["#6a5a6a", "#3a2e3a"],
+    "bird-house": ["#9a7a4a", "#c8503c"],
+  };
+  for (const id of farmDecorIds()) {
+    const [body, trim] = colours[id] ?? ["#a08060", "#604830"];
+    const t = scene.textures.createCanvas(farmDecorKey(id), SIZE, SIZE)!;
+    const c = t.getContext();
+    px(c, "#00000033", 1, 14, 14, 1);
+    px(c, body, 1, 3, 14, 11);
+    px(c, trim, 1, 3, 14, 2);
+    px(c, "#ffffff33", 3, 6, 10, 2);
+    t.refresh();
+  }
+}
+
+/** The texture key of a ring, a pair of boots or a Forge good. */
+export const forgeKey = (id: string) => `icon-forge-${id}`;
+const FORGE_GOODS = [LIFE_ELIXIR, MINERS_TREAT, OIL_OF_GARLIC];
+
+/**
+ * Rings, boots and the Forge's small goods (note 89, note 95, #877): flat placeholder
+ * pictures. A ring's stone is coloured by what it does; a combined ring shows both
+ * stones. Art waits for M3d.
+ */
+function paintForgeGoods(scene: Phaser.Scene): void {
+  const draw = (id: string, paint: (c: Ctx) => void) => {
+    const t = scene.textures.createCanvas(forgeKey(id), SIZE, SIZE)!;
+    paint(t.getContext());
+    t.refresh();
+  };
+  const stone = (id: string): string => {
+    const r = ringById(id);
+    if (!r) return "#c8c8d0";
+    if (r.light) return "#ffe14a";
+    if (r.magnet) return "#d8503c";
+    if (r.slimeProof) return "#5ac86a";
+    if (r.immunity) return "#8a6ad8";
+    return "#7ab0e8";
+  };
+  const band = (c: Ctx) => {
+    px(c, "#00000044", 4, 14, 8, 1);
+    px(c, "#d8b84a", 4, 7, 8, 6);
+    px(c, "#00000000", 6, 9, 4, 2);
+    px(c, "#2a2a30", 6, 9, 4, 2);
+  };
+  for (const r of RINGS)
+    draw(r.id, (c) => {
+      band(c);
+      px(c, stone(r.id), 6, 4, 4, 3);
+      px(c, "#ffffff88", 7, 4, 1, 1);
+    });
+  for (const a of RINGS)
+    for (const b of RINGS) {
+      if (a.id >= b.id) continue;
+      draw(comboId(a.id, b.id), (c) => {
+        band(c);
+        px(c, stone(a.id), 4, 4, 4, 3);
+        px(c, stone(b.id), 8, 4, 4, 3);
+      });
+    }
+  for (const b of BOOTS)
+    draw(b.id, (c) => {
+      const tone = b.defense >= 3 ? "#6a6a74" : "#8a5a2a";
+      px(c, "#00000044", 3, 14, 10, 1);
+      px(c, tone, 5, 3, 4, 8);
+      px(c, tone, 5, 9, 8, 4);
+      px(c, "#ffffff44", 5, 3, 1, 8);
+      px(c, "#2a2a30", 5, 13, 8, 1);
+    });
+  draw(LIFE_ELIXIR, (c) => {
+    px(c, "#00000044", 4, 14, 8, 1);
+    px(c, "#c8d8e0", 6, 2, 4, 3);
+    px(c, "#d84a5a", 4, 6, 8, 8);
+    px(c, "#ff9aa4", 5, 7, 2, 4);
+  });
+  draw(MINERS_TREAT, (c) => {
+    px(c, "#00000044", 3, 14, 10, 1);
+    px(c, "#a8743c", 3, 6, 10, 8);
+    px(c, "#d8a860", 3, 6, 10, 2);
+    px(c, "#5a3a1e", 5, 9, 2, 2);
+    px(c, "#5a3a1e", 9, 11, 2, 2);
+  });
+  draw(OIL_OF_GARLIC, (c) => {
+    px(c, "#00000044", 4, 14, 8, 1);
+    px(c, "#7a5a2a", 6, 2, 4, 3);
+    px(c, "#e8d878", 4, 5, 8, 9);
+    px(c, "#f4ecb0", 5, 6, 2, 5);
+  });
 }
 
 /** Torch, campfire and the two braziers. Placeholders: the glow itself is drawn by the scene. */
@@ -1150,8 +1285,17 @@ export function iconKey(itemId: string): string | undefined {
   if (furnitureById(base)) return furnitureKey(base);
   if (decorById(base)) return `decor-${base}`;
   if (chestById(base)) return chestKey(base);
+  if (isFarmDecor(base)) return farmDecorKey(base);
   if (isLight(base) || isBomb(base) || base === LIGHTNING_ROD)
     return lightKey(base);
+  if (base === "tapper" || base === "heavy-tapper") return `icon-${base}`;
+  if (
+    ringById(base) ||
+    comboParts(base) ||
+    BOOTS.some((b) => b.id === base) ||
+    FORGE_GOODS.includes(base)
+  )
+    return forgeKey(base);
   if (base === POT_ITEM) return POT_KEY;
   const sapling = treeOfSapling(base);
   if (sapling) return saplingIconKey(sapling.id);
@@ -1167,7 +1311,7 @@ export function iconKey(itemId: string): string | undefined {
     base === "fiber"
   )
     return `icon-${base}`;
-  if (base.endsWith("-seed")) return `icon-${base}`;
+  if (base.endsWith("-seed") || base === "pine-cone") return `icon-${base}`;
   if (ALL_CROPS.some((c) => c.id === base))
     return cropKey(base, CROP_STAGES - 1);
   if (FORAGE.some((f) => f.id === base)) return forageKey(base);
@@ -1198,5 +1342,7 @@ export function makeArt(
   paintDecor(scene);
   paintChests(scene);
   paintLights(scene);
+  paintForgeGoods(scene);
+  paintFarmDecor(scene);
   paintPot(scene);
 }

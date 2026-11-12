@@ -43,6 +43,22 @@ export class PlacedStore {
     return this.maps.get(map)?.get(key(x, y));
   }
 
+  /**
+   * The placeable that stands on a tile, counting the whole footprint of a larger one
+   * (a 2 by 2 decoration is kept at its top left tile). Use this for "is the tile taken".
+   */
+  covering(map: string, x: number, y: number): PlacedItem | undefined {
+    const m = this.maps.get(map);
+    if (!m) return undefined;
+    const exact = m.get(key(x, y));
+    if (exact) return exact;
+    for (const p of m.values()) {
+      const [w, h] = placeableById(p.id)?.footprint ?? [1, 1];
+      if (x >= p.x && x < p.x + w && y >= p.y && y < p.y + h) return p;
+    }
+    return undefined;
+  }
+
   remove(map: string, x: number, y: number): PlacedItem | undefined {
     const item = this.get(map, x, y);
     this.maps.get(map)?.delete(key(x, y));

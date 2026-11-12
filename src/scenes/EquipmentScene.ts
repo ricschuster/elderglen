@@ -7,6 +7,7 @@ import {
   RINGS,
   ringById,
 } from "../core/equipment";
+import { packRings } from "../core/forge";
 import type { GameState } from "../core/save";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
@@ -105,7 +106,10 @@ export class EquipmentScene extends Phaser.Scene {
         ],
       });
     }
-    for (const ring of RINGS) {
+    for (const ring of [
+      ...RINGS,
+      ...packRings(inv).combos.map((c) => ringById(c)!),
+    ]) {
       const n = inv.count(ring.id);
       if (n < 1) continue;
       const free = eq.worn().findIndex((r) => r === undefined);

@@ -580,3 +580,54 @@ Open: the exact march speed, whether a late player joins at the head or misses i
 the unnamed hats the villagers wear (the 28 in `hats.json` are the player's), the
 lines, and whether the turn marker needs a sign. The well and bench tiles (72,57),
 (77,58) and (78,58) need checking against the Hearthwell square when it is drawn.
+
+## Built status (2026-11-12, #876)
+
+Built, with tests (`tests/festivalroutes.test.ts`): the route layer and the layouts for
+all festivals but the Night Market. All tiles, numbers and the layout tiles below are
+placeholders to check in play.
+
+- **Data:** `src/content/festival-spots.json` has, per festival (and `midwinter-feast@hall`),
+  the 8 start tiles, one standing tile per person, `keepClear` tiles, and the extras: the
+  Seedswap hunt (50 s, 9 to win, `lastStart` 17:30, the odd and even packet tiles), the 12
+  Frostday holes, the Hollow Eve niches.
+- **Core:** `src/core/festivalroutes.ts`: `festivalWhere` is the festival layer of the note 79
+  route (nothing before opening or after the end, standing from opening to the end, Hester
+  `home` at 20:30), `villagerNow` picks it before the normal route, `festivalHolds` names
+  the map condition of today's layout. `RIVALS` (Seedswap: Linnet; Frostday: Rushie) and
+  `ENDS_AFTER_MAIN_EVENT` (Seedswap, Frostday) hold the 2026-11-12 decisions as data and
+  helpers. The activities themselves (hunt, judging, ice fishing, lantern floating, cake
+  table) are not built, so nothing yet ends the festival after its event.
+- **Hat Parade march:** a timed waypoint path per marcher (stand tile, mouth (64,61), out
+  lane y 61, turn (48,61), back lane y 63, mouth (64,63), stand tile). Placeholder pace:
+  1 game minute per tile while marching, 0.5 while walking to and from the line, 1 minute
+  between marchers; the whole march runs from 14:00 to about 14:55. `paradeLaps(joinedAt)`:
+  one lap, or a second lap when the player joins after 14:00, starting at the join minute
+  or when the first lap ends, whichever is later. The player is slot 22, the tail. The
+  scene does not walk the line yet.
+- **Maps:** a festival layout is a set of conditional layers (`when` the hold, note 81 and 71)
+  on the existing map, not a new map id: `festival-hat-parade`, `festival-cake-day` and
+  `festival-midwinter-feast` on Hearthwell, `festival-seedswap-fair` and `festival-frostday`
+  on the Forest, `festival-lamplight-evening` on the Beach (delta), and
+  `festival-midwinter-feast-hall` on the hall. Each adds blocking props, services (hat
+  counter, seed stall, costume stall, lantern stall, cake table, festival counter), the
+  8 `<id>_start_N` entries, and moves any tree, forage, rock or weed on a festival tile
+  into a `quiet-` layer shown `unless` the hold (the whole clearing for the Seedswap). The
+  Frostday ice is a `ground-` layer that makes the lake walkable, the lake's block moving
+  to a `collision-lake-` layer shown `unless` the hold; the holes stay water and blocked,
+  and are `ice-hole-N` regions. The green gets the Showing props and starts directly, and
+  the hedge map grows to 24 wide, with 13 niches cut and the starts added
+  (`festivals.json` zone width 24). `FarmScene` adds today's hold to the map holds.
+  `FarmScene` still sends the player by the farm sign for the green and hedge; the plain
+  walk (decision 11) is not wired.
+- **Changes to the drafts above:** the Hollow Eve note names 15 niche tiles but lists 13
+  (6 top, 4 east, 3 bottom), so 13 are cut, the other two people stand at dead ends.
+  Aldreth moved from (15,12), a pocket cut off behind the scare at (15,10), to the dead
+  end (17,13). Hester sits on the bench tile (1,7) (a `seated` entry in the data). The
+  Beach and Forest festival maps hide decorations only on the tiles they use; the sim
+  test seed moved from 2 to 3 because moving objects reorders forage spots.
+- **Not built (open or blocked):** the even-year maze and its niches; Hollow Eve niche
+  lines; who walks the villagers between standing tiles (scene); the hall-restored state
+  (the feast always uses the square until it is tracked); the Seedswap and Frostday
+  activities; the cake table, lantern floating and costume stall behaviour; the shut zone
+  for the Frostday south shore (the zone stays the lake, since the shore is the Forest road).

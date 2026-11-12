@@ -3,7 +3,8 @@ import { dishById } from "./dishes";
 import { furnitureById } from "./furniture";
 import { ORDINARY_FISH } from "./fishing";
 import { hatById } from "./hats";
-import { itemById } from "./items";
+import { absorbElderfruit } from "./elderfruit";
+import { ELDERFRUIT, itemById } from "./items";
 import type { GameState } from "./save";
 
 /**
@@ -272,6 +273,7 @@ export function openLetter(
   }
   for (const i of a.items ?? []) {
     g.inventory.add(i.id, i.count);
+    if (i.id === ELDERFRUIT) absorbElderfruit(g);
     gift.push(`${i.count} x ${itemById(i.id)?.name ?? i.id}`);
   }
   if (a.furniture) {

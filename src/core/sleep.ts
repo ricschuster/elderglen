@@ -16,7 +16,7 @@ import {
   endDay as animalsEndDay,
   type AnimalNews,
 } from "./animals";
-import { advancePonds, pondNight } from "./pond";
+import { advancePonds, pondNews, pondNight } from "./pond";
 import { checkAchievements } from "./achievements";
 import { SUMMIT_ACHIEVEMENT } from "./summit";
 import { ringProgress, valleyPercent } from "./completion";
@@ -64,7 +64,7 @@ export function blocksGrowth(
         (!self && g.fruitTrees.at(tx, ty)) ||
         g.sprinklers.at(tx, ty) ||
         g.machines.at(tx, ty) ||
-        g.placed.get(FARM_STORE, tx, ty) ||
+        g.placed.covering(FARM_STORE, tx, ty) ||
         g.chests.onFarm(tx, ty) ||
         g.farm.plotAt(tx, ty)?.crop ||
         g.forage.itemAt(tx, ty)
@@ -124,6 +124,8 @@ export interface SleepReport {
   siloFinished: boolean;
   /** Fish ponds the carpenter opened this morning (note 93). */
   pondsFinished?: number;
+  /** Ponds with something to take, and ponds with a fish asking for an item (note 93). */
+  pondNews?: { ready: number; quests: number };
   /** Set when the player was knocked out in a fight: what the defeat took (note 22). */
   defeat?: { lost: Lost[]; posted: boolean };
   /** What the night did to the animals. */
@@ -226,7 +228,7 @@ export function sleep(
       !g.rocks.at(x, y) &&
       !g.sprinklers.at(x, y) &&
       !g.machines.at(x, y) &&
-      !g.placed.get(FARM_STORE, x, y) &&
+      !g.placed.covering(FARM_STORE, x, y) &&
       !g.chests.onFarm(x, y) &&
       !g.fruitTrees.at(x, y) &&
       g.ground.at(x, y).length === 0,
@@ -247,7 +249,7 @@ export function sleep(
         !g.twigs.at(x, y) &&
         !g.sprinklers.at(x, y) &&
         !g.machines.at(x, y) &&
-        !g.placed.get(FARM_STORE, x, y) &&
+        !g.placed.covering(FARM_STORE, x, y) &&
         !g.farm.plotAt(x, y)?.crop &&
         !g.forage.itemAt(x, y) &&
         g.ground.at(x, y).length === 0,
@@ -271,7 +273,7 @@ export function sleep(
         !g.trees.at(x, y) &&
         !g.sprinklers.at(x, y) &&
         !g.machines.at(x, y) &&
-        !g.placed.get(FARM_STORE, x, y) &&
+        !g.placed.covering(FARM_STORE, x, y) &&
         !g.chests.onFarm(x, y) &&
         !g.farm.plotAt(x, y) &&
         !g.forage.itemAt(x, y) &&
@@ -298,7 +300,7 @@ export function sleep(
         !g.weeds.at(s.x, s.y) &&
         !g.sprinklers.at(s.x, s.y) &&
         !g.machines.at(s.x, s.y) &&
-        !g.placed.get(FARM_STORE, s.x, s.y) &&
+        !g.placed.covering(FARM_STORE, s.x, s.y) &&
         !g.chests.onFarm(s.x, s.y),
     ),
     random,
@@ -317,6 +319,7 @@ export function sleep(
   const pondsFinished = advancePonds(g);
   // Built ponds breed, make roe and tick their quests (note 93).
   pondNight(g, random);
+  const pondReport = pondNews(g);
   const animals = animalsEndDay(g, random);
   const horseWasOut = horseEndDay(g);
   const furnaceGifted = deliverFurnace(g);
@@ -349,6 +352,9 @@ export function sleep(
     horseWasOut,
     siloFinished,
     pondsFinished,
+    ...(pondReport.ready + pondReport.quests > 0
+      ? { pondNews: pondReport }
+      : {}),
     animals,
     furnaceGifted,
     achievements,

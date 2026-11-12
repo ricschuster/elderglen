@@ -1,7 +1,8 @@
 import festivalData from "../content/festivals.json";
 import { DAYS_PER_SEASON, SEASONS, dateOf, type Season } from "./calendar";
 import { hatById } from "./hats";
-import { itemById } from "./items";
+import { absorbElderfruit } from "./elderfruit";
+import { ELDERFRUIT, itemById } from "./items";
 import { MAZE } from "./maze";
 import type { GameState } from "./save";
 import { showTokens, spendTokens } from "./showing";
@@ -279,6 +280,7 @@ export function buyAtCounter(
   if (e.tokens) spendTokens(g, e.price);
   else g.money -= e.price;
   if (e.once) setFlag(g, e.once);
+  if (e.item === ELDERFRUIT) absorbElderfruit(g);
   return true;
 }
 

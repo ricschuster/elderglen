@@ -4,6 +4,7 @@ import { maps } from "../src/content/maps";
 import { BUNDLES, Hall, ROOMS } from "../src/core/bundles";
 import { farmMapOf } from "../src/core/farmtypes";
 import { CART_KIND } from "../src/core/map";
+import { MINES_OPEN_DAY } from "../src/core/mines";
 import { reportLines } from "../src/core/report";
 import {
   CART_IDLE_LINE,
@@ -111,6 +112,24 @@ describe("the Hearth room carts", () => {
     expect(stopOfService("cart-mine")?.name).toBe("Mine mouth");
     expect(stopOfService("bin")).toBeUndefined();
     expect(maps.problems()).toEqual([]);
+  });
+
+  it("list the mine mouth only once the mines open", () => {
+    expect(
+      cartDestinations("farm", MINES_OPEN_DAY - 1).map((s) => s.id),
+    ).toEqual(["square", "hall"]);
+    expect(cartDestinations("farm", MINES_OPEN_DAY).map((s) => s.id)).toContain(
+      "mine",
+    );
+  });
+
+  it("put the mine stop beside the mine door", () => {
+    const m = maps.get("mountain");
+    const door = m.exits.find((e) => e.map === "mine")!;
+    const svc = m.services.find((v) => v.id === "cart-mine")!;
+    expect(Math.abs(svc.x - door.x) + Math.abs(svc.y - door.y)).toBeLessThan(
+      6 * 16,
+    );
   });
 
   it("offer every other stop, free", () => {

@@ -27,7 +27,7 @@ import {
   coopSite,
   coopVisibleTier,
 } from "../core/animals";
-import { pondBlocks } from "../core/pond";
+import { pondBlocks, pondCovering, pondUse, takeFish } from "../core/pond";
 import { fertilizerById } from "../core/fertilizer";
 import Phaser from "phaser";
 import { saveSettings } from "../core/bindings";
@@ -54,6 +54,7 @@ import {
 } from "../core/festivals";
 import { openChest } from "../core/maze";
 import { rodById, waterAhead } from "../core/fishing";
+import { festivalHolds } from "../core/festivalroutes";
 import { holdsOf } from "../core/worldflags";
 import { gateOpen, gateShutLine, parseGate } from "../core/gates";
 import { mendTideBridge, TIDE_BRIDGE_WOOD } from "../core/tidebridge";
@@ -123,7 +124,7 @@ import { aimAt } from "../core/aim";
 import { createControls, type Controls } from "./controls";
 import { planTap, planUse, type TapPlan } from "../core/pathing";
 import { tapPick, tapUse } from "../core/tapuse";
-import { tapReady, tapStatus, TAPPER } from "../core/tapper";
+import { isTapperItem, tapReady, tapStatus } from "../core/tapper";
 import {
   browserSettingsStore,
   browserStore,
@@ -200,6 +201,18 @@ import {
 import { baitById } from "../core/tackle";
 import { greencoatDue, takeCampGift } from "../core/camp";
 import {
+  decorTiles,
+  farmDecorAt,
+  isFarmDecor,
+  pickUpFarmDecor,
+  placeFarmDecor,
+} from "../core/farmdecor";
+import {
+  DYE_POTS_SERVICE,
+  SEWING_SERVICE,
+  tailoringLine,
+} from "../core/tailoring";
+import {
   CAVE_MAP,
   caveDehydratorDone,
   collectCaveDehydrator,
@@ -250,6 +263,7 @@ import {
   sprinklerKey,
   furnitureKey,
   chestKey,
+  farmDecorKey,
   lightKey,
   POT_KEY,
   POT_READY_KEY,
@@ -522,6 +536,8 @@ export class FarmScene extends Phaser.Scene {
       this.state.houseRenos,
     ))
       holds.add(h);
+    // A festival day shows its layout on the map (note 82).
+    for (const h of festivalHolds(day)) holds.add(h);
     this.map = mineLayout
       ? FarmMap.fromTiled(json)
       : maps.getWith(id, holds, this.tier);
@@ -1075,7 +1091,7 @@ export class FarmScene extends Phaser.Scene {
       this.state.furniture.blocks(this.mapId, x, y) ||
       (this.mapId === CELLAR_MAP && this.state.casks.at(x, y)) ||
       !!this.state.chests.at(this.mapId, x, y) ||
-      !!lightAt(this.state, this.mapId, x, y) ||
+      !!this.state.placed.covering(lightMapKey(this.mapId), x, y) ||
       (isFarmMap(this.mapId) && !!rodAt(this.state, x, y)) ||
       this.map.serviceAt(x, y)?.kind === "camp-chest" ||
       !!this.store.sprinklers.at(x, y) ||
@@ -1189,7 +1205,7 @@ export class FarmScene extends Phaser.Scene {
         (this.tapObject(tap.x, tap.y) && this.tileBlocked(tap.x, tap.y));
       const exit = !!this.map.exitAt(tap.x, tap.y);
       // A tapper goes on a tree, whose tile is blocked (note 92).
-      const tapper = held.kind === "item" && held.id === TAPPER;
+      const tapper = held.kind === "item" && isTapperItem(held.id);
       if (fit === "use" && (tapper || !this.tileBlocked(tap.x, tap.y))) {
         // A drag uses each new tile beside the farmer at once.
         if (beside) {
@@ -1932,6 +1948,12 @@ export class FarmScene extends Phaser.Scene {
     if (presentAt(this.villagers, front.x, front.y)) return;
     if (this.useSilo(front.x, front.y)) return;
     const held = heldAt(this.state, this.selected);
+    // The rod lifts a fish out of a pond: no bar, no bait (note 93).
+    const pond = isFarmMap(this.mapId)
+      ? pondCovering(this.state, front.x, front.y)
+      : undefined;
+    if (pond && held.kind === "item" && rodById(held.id))
+      return this.report(takeFish(this.state, pond.x, pond.y));
     if (held.kind === "item" && rodById(held.id)) return this.cast(held.id);
     // A pot goes on the water, bait goes in a pot, and the axe or pickaxe takes an empty one up.
     if (held.kind === "item" && held.id === POT_ITEM)
@@ -1968,6 +1990,21 @@ export class FarmScene extends Phaser.Scene {
       if (lit.ok) this.litBombs.push(lit.bomb);
       return this.report(lit.ok ? { ok: true } : lit);
     }
+    // A farm decoration is stood down from the pack and lifted by hand, like a light (note 89).
+    if (held.kind === "item" && isFarmDecor(held.id))
+      return this.report(
+        placeFarmDecor(
+          this.state,
+          this.map,
+          this.mapId,
+          front.x,
+          front.y,
+          held.id,
+          (x, y) => !!this.rocks()?.at(x, y),
+        ),
+      );
+    if (isFarmMap(this.mapId) && farmDecorAt(this.state, front.x, front.y))
+      return this.report(pickUpFarmDecor(this.state, front.x, front.y));
     // A light is stood down from the backpack, and any tool or the empty hand lifts one.
     if (held.kind === "item" && isLight(held.id))
       return this.report(
@@ -2110,6 +2147,19 @@ export class FarmScene extends Phaser.Scene {
       return this.render();
     }
     if (service?.kind === CART_KIND) return this.rideCart(service.id);
+    if (
+      service?.kind === SEWING_SERVICE ||
+      service?.kind === DYE_POTS_SERVICE
+    ) {
+      const line = tailoringLine(this.state);
+      if (line) {
+        this.message = line;
+        return this.render();
+      }
+      return this.open("tailor", {
+        mode: service.kind === SEWING_SERVICE ? "sew" : "dye",
+      });
+    }
     if (service?.kind === "herb-stall") {
       const closed = herbStallProblem(this.state);
       if (closed) {
@@ -2244,6 +2294,15 @@ export class FarmScene extends Phaser.Scene {
       return this.report(
         pickUpFurniture(this.state, this.mapId, front.x, front.y),
       );
+    const pondHere = isFarmMap(this.mapId)
+      ? pondCovering(this.state, front.x, front.y)
+      : undefined;
+    if (pondHere) {
+      const h = heldAt(this.state, this.selected);
+      return this.report(
+        pondUse(this.state, pondHere, h.kind === "item" ? h.id : undefined),
+      );
+    }
     const result = act(this.state, this.map, front.x, front.y);
     if (!result.ok && result.reason === NOTHING_TO_ACT_ON) {
       const held = heldAt(this.state, this.selected);
@@ -2469,6 +2528,7 @@ export class FarmScene extends Phaser.Scene {
     ))
       this.holds.add(h);
     for (const h of greenhouseHolds(this.state)) this.holds.add(h);
+    for (const h of festivalHolds(this.state.day.clock.day)) this.holds.add(h);
     for (const c of this.conditional)
       c.drawn.setVisible(layerShows(c.layer, this.holds));
   }
@@ -2686,8 +2746,12 @@ export class FarmScene extends Phaser.Scene {
       if (s.kind === "camp-chest") put(s.x, s.y, chestKey("big-chest"));
     for (const c of this.state.chests.each(this.mapId))
       put(c.x, c.y, chestKey(c.id));
-    for (const l of this.state.placed.each(lightMapKey(this.mapId)))
-      put(l.x, l.y, lightKey(l.id));
+    for (const l of this.state.placed.each(lightMapKey(this.mapId))) {
+      if (isFarmDecor(l.id))
+        for (const t of decorTiles(l.id, l.x, l.y))
+          put(t.x, t.y, farmDecorKey(l.id));
+      else put(l.x, l.y, lightKey(l.id));
+    }
     if (isFarmMap(this.mapId))
       for (const p of this.state.placed.each(lightMapKey(this.mapId)))
         if (p.id === LIGHTNING_ROD && p.state?.pack === true)
@@ -2747,6 +2811,8 @@ export class FarmScene extends Phaser.Scene {
     }
     for (const t of this.state.trees.each()) {
       put(t.x, t.y, treeKey(t.stage, t.stump, t.large, t.regrow !== undefined));
+      if (t.tap)
+        put(t.x, t.y, t.tap.heavy ? "tapper-on-tree-heavy" : "tapper-on-tree");
       if (tapReady(this.state, t)) put(t.x, t.y, MACHINE_READY_KEY);
     }
     for (const p of this.state.ground.each()) {

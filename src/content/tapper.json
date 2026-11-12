@@ -1,5 +1,9 @@
 {
-  "tapper": { "id": "tapper", "name": "Tapper", "sellPrice": 50 },
+  "tapper": {
+    "id": "tapper",
+    "name": "Tapper",
+    "sellPrice": 50
+  },
   "goods": [
     {
       "kind": "oak",
@@ -29,5 +33,16 @@
       "sellPrice": 2,
       "days": 1
     }
-  ]
+  ],
+  "heavy": {
+    "id": "heavy-tapper",
+    "name": "Heavy tapper",
+    "sellPrice": 100,
+    "days": {
+      "oak": 3,
+      "maple": 4,
+      "pine": 2,
+      "mahogany": 1
+    }
+  }
 }

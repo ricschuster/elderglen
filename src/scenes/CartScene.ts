@@ -41,7 +41,10 @@ export class CartScene extends Phaser.Scene {
       buttonsOnly: true,
     });
     this.menu.setFocus(true);
-    const rows: Row[] = cartDestinations(this.from).map((stop) => ({
+    const rows: Row[] = cartDestinations(
+      this.from,
+      this.state.day.clock.day,
+    ).map((stop) => ({
       label: stop.name,
       buttons: [{ text: "Ride", run: () => this.ride(stop) }],
     }));

@@ -20,7 +20,8 @@ export type PlaceableKind =
   | "rod"
   | "heater"
   | "bomb"
-  | "pond";
+  | "pond"
+  | "decor";
 
 /** The kinds of place the table reads. A map says which it is (`placeTag`). */
 export type PlaceTag =
@@ -38,6 +39,8 @@ export interface PlaceableDef {
   pickUp: "hand" | "none";
   /** Lights only: the glow radius in tiles, and whether it shows only after dusk. */
   light?: { radius: number; onlyAtNight: boolean };
+  /** Decor only: the keeper's price in gold (note 23, placeholder where Stardew is unchecked, SC-164). */
+  price?: number;
 }
 
 export const PLACEABLES = placeableData as unknown as readonly PlaceableDef[];

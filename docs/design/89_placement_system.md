@@ -242,3 +242,21 @@ Settled 2026-11-12: heater from the ranch shop, no torches indoors, no bomb expe
   `placed`. An older save's `rods` list is read into the store on load (a struck rod keeps
   its strike). `placeRod`, `pickUpRod`, `takePack`, `chargeRods`; recipe from note 34 (iron
   bar, quartz crystal, 5 bat wing, Foraging 6); placeholder art beside the lights.
+
+- Decor kind (2026-11-12): `src/core/farmdecor.ts` (`placeFarmDecor`, `pickUpFarmDecor`,
+  `farmDecorAt`, `buyFarmDecor`), six `decor` rows in `placeables.json` (ornamental hay bale
+  250g and bird house 5,000g at 1 by 1, doghouse, dark doghouse, cat tree and dark cat tree
+  10,000g at 2 by 2; the `price` field is new), items, the keeper's counter rows, placeholder
+  block art, and `PlacedStore.covering` so a 2 by 2 piece (kept at its top left tile) blocks
+  digging, planting, spawns, lights and walking on all four tiles. Tests:
+  `tests/farmdecor.test.ts`. Left: real art, the cosmetic pet system the doghouses and cat
+  trees wait for, a browser look at placing.
+
+## Built status
+
+The decor kind is built (the last item above); see "Built today" for the other steps.
+
+Built (2026-11-12, #877 icons): the bombs already had pictures. Added placeholder icons for the
+Forge goods (Life Elixir, Miner's Treat, Oil of Garlic), every boots row, every ring and every
+pair of rings (a combined ring shows both stones), key `icon-forge-<id>` (`forgeKey` in
+`src/scenes/art.ts`). Test: `tests/forgeicons.test.ts`.

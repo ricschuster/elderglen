@@ -4,6 +4,7 @@ import type { Hall } from "./bundles";
 import { WEEKDAYS } from "./calendar";
 import { resolveMapId } from "./farmtypes";
 import { itemById } from "./items";
+import { minesOpen } from "./mines";
 import type { GameState } from "./save";
 import { seeded } from "./trader";
 import { hasFlag, setFlag } from "./worldflags";
@@ -29,6 +30,8 @@ export interface CartStop {
   map: string;
   /** The entry a rider steps off at. */
   entry: string;
+  /** The stop is listed only once this holds. Only `mines-open` is known (the mine mouth). */
+  requires?: "mines-open";
 }
 
 export const CART_STOPS = cartData.stops as CartStop[];
@@ -57,9 +60,18 @@ export function stopOfService(serviceId: string): CartStop | undefined {
   return CART_STOPS.find((s) => cartServiceId(s.id) === serviceId);
 }
 
-/** The stops a rider can go to from a stop: every other one. */
-export function cartDestinations(fromStopId: string): CartStop[] {
-  return CART_STOPS.filter((s) => s.id !== fromStopId);
+/**
+ * The stops a rider can go to from a stop: every other one, except the mine mouth until the
+ * mines open (owner, 2026-11-12). `day` is the game day; left out, every stop is listed.
+ */
+export function cartDestinations(
+  fromStopId: string,
+  day: number = Number.POSITIVE_INFINITY,
+): CartStop[] {
+  return CART_STOPS.filter(
+    (s) =>
+      s.id !== fromStopId && (s.requires !== "mines-open" || minesOpen(day)),
+  );
 }
 
 /** The map and entry a rider arrives at, the farm resolved to this game's farm map. */

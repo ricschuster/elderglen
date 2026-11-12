@@ -232,7 +232,9 @@ export type WaterKind =
   | "sea"
   | "cove"
   | "woods-pond"
-  | "farm-pond";
+  | "farm-pond"
+  /** Water in a cave or mine (note 93): the home of Pale lichen and Glow jelly. */
+  | "cave-pool";
 export const WATER_KINDS: readonly WaterKind[] = [
   "river",
   "forest-lake",
@@ -242,6 +244,7 @@ export const WATER_KINDS: readonly WaterKind[] = [
   "cove",
   "woods-pond",
   "farm-pond",
+  "cave-pool",
 ];
 
 /** A rectangle of water of one kind (the object class `water`). */

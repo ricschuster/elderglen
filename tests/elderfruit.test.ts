@@ -6,6 +6,7 @@ import { ringProgress } from "../src/core/completion";
 import { PASS_OUT_WAKE_ENERGY } from "../src/core/day";
 import {
   ELDERFRUIT_ENERGY,
+  absorbElderfruit,
   ELDERFRUIT_TOTAL,
   EMBERSEED,
   EMBER_BERRY,
@@ -25,6 +26,7 @@ import {
   counterProblem,
   enterFestival,
 } from "../src/core/festivals";
+import { takeCampGift } from "../src/core/camp";
 import { itemById } from "../src/core/items";
 import { deserialize, newGame, serialize } from "../src/core/save";
 import { seedStock } from "../src/core/shop";
@@ -52,7 +54,7 @@ describe("elderfruit", () => {
     expect(g.day.energy.current).toBe(304);
   });
 
-  it("refuses when there is none, and stops at eight (270 up to 542)", () => {
+  it("refuses when there is none, and stops at seven (270 up to 508)", () => {
     const g = newGame();
     expect(eat(g, "elderfruit")).toEqual({
       ok: false,
@@ -62,10 +64,22 @@ describe("elderfruit", () => {
       g.inventory.add("elderfruit");
       expect(eat(g, "elderfruit").ok).toBe(true);
     }
-    expect(g.day.energy.max).toBe(542);
-    expect(maxEnergyFor(ELDERFRUIT_TOTAL)).toBe(542);
+    expect(g.day.energy.max).toBe(508);
+    expect(maxEnergyFor(ELDERFRUIT_TOTAL)).toBe(508);
     g.inventory.add("elderfruit");
     expect(eat(g, "elderfruit")).toEqual({ ok: false, reason: "all eaten" });
+  });
+
+  it("is eaten on receipt from every source, so none sits in the pack", () => {
+    const g = newGame();
+    g.inventory.add("elderfruit", 2);
+    expect(absorbElderfruit(g)).toBe(2);
+    expect(g.elderfruit).toBe(2);
+    expect(g.inventory.count("elderfruit")).toBe(0);
+    const c = newGame();
+    expect(takeCampGift(c, 100).ok).toBe(true);
+    expect(c.elderfruit).toBe(1);
+    expect(c.inventory.count("elderfruit")).toBe(0);
   });
 
   it("a new day and a faint use the raised maximum", () => {
@@ -111,13 +125,13 @@ describe("elderfruit", () => {
     expect(line().points).toBeCloseTo((10 * 2) / ELDERFRUIT_TOTAL, 5);
   });
 
-  it("earns Every Elderfruit and its circlet at eight", () => {
+  it("earns Every Elderfruit and its circlet at seven", () => {
     const a = ACHIEVEMENTS.find((x) => x.id === "every-elderfruit")!;
     expect(a.threshold).toBe(ELDERFRUIT_TOTAL);
     const g = newGame();
-    g.elderfruit = 7;
+    g.elderfruit = 6;
     expect(checkAchievements(g).map((x) => x.id)).not.toContain(a.id);
-    g.elderfruit = 8;
+    g.elderfruit = 7;
     expect(checkAchievements(g).map((x) => x.id)).toContain(a.id);
   });
 });
@@ -137,11 +151,13 @@ describe("elderfruit sources", () => {
     g.money = e.price + 7;
     expect(buyAtCounter(g, f, e)).toBe(true);
     expect(g.money).toBe(7);
-    expect(g.inventory.count("elderfruit")).toBe(1);
+    expect(g.elderfruit).toBe(1);
+    expect(g.inventory.count("elderfruit")).toBe(0);
     g.money = 10000;
     expect(counterProblem(g, f, e)).toMatch(/already/);
     expect(buyAtCounter(g, f, e)).toBe(false);
-    expect(g.inventory.count("elderfruit")).toBe(1);
+    expect(g.elderfruit).toBe(1);
+    expect(g.inventory.count("elderfruit")).toBe(0);
   });
 
   it("source 2: the floor 100 camp chest holds one", async () => {
@@ -161,7 +177,8 @@ describe("elderfruit sources", () => {
       buyElderfruit(g, SOURCE_FLAGS.hermit, HERMIT_ELDERFRUIT_PRICE),
     ).toBeUndefined();
     expect(g.money).toBe(1);
-    expect(g.inventory.count("elderfruit")).toBe(1);
+    expect(g.elderfruit).toBe(1);
+    expect(g.inventory.count("elderfruit")).toBe(0);
     expect(hermitStock(g)).toEqual([]);
     g.money = 99999;
     expect(
@@ -221,14 +238,16 @@ describe("elderfruit sources", () => {
   it("source 5: the spirit takes one ember berry, once, for an elderfruit", () => {
     const g = newGame();
     expect(giveToSpirit(g)).toMatch(/rare seed/);
-    expect(g.inventory.count("elderfruit")).toBe(0);
+    expect(g.elderfruit).toBe(0);
     g.inventory.add(EMBER_BERRY, 2);
     expect(giveToSpirit(g)).toMatch(/takes/);
-    expect(g.inventory.count("elderfruit")).toBe(1);
+    expect(g.elderfruit).toBe(1);
+    expect(g.inventory.count("elderfruit")).toBe(0);
     expect(g.inventory.count(EMBER_BERRY)).toBe(1);
     expect(hasFlag(g, SOURCE_FLAGS.spirit)).toBe(true);
     expect(giveToSpirit(g)).toMatch(/quiet/);
-    expect(g.inventory.count("elderfruit")).toBe(1);
+    expect(g.elderfruit).toBe(1);
+    expect(g.inventory.count("elderfruit")).toBe(0);
     expect(g.inventory.count(EMBER_BERRY)).toBe(1);
   });
 

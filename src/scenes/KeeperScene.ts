@@ -17,7 +17,13 @@ import {
   speciesOf,
   tierOf,
 } from "../core/animals";
-import { COOP_HEATER, HEATER_PRICE } from "../core/items";
+import {
+  buyFarmDecor,
+  farmDecorIds,
+  farmDecorProblem,
+} from "../core/farmdecor";
+import { COOP_HEATER, HEATER_PRICE, itemById } from "../core/items";
+import { placeableById } from "../core/placeables";
 import { keeperAdvice } from "../core/forestfolk";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
@@ -101,7 +107,23 @@ export class KeeperScene extends Phaser.Scene {
         dim: g.money < HEATER_PRICE,
         buttons: [{ text: "Buy", run: () => this.buyHeater() }],
       });
+    for (const id of farmDecorIds()) {
+      const def = placeableById(id)!;
+      rows.push({
+        label: itemById(id)?.name ?? id,
+        detail: `${def.price}g, a farm decoration (${g.inventory.count(id)} carried)`,
+        dim: farmDecorProblem(g, id) !== undefined,
+        buttons: [{ text: "Buy", run: () => this.buyDecor(id) }],
+      });
+    }
     this.menu.setRows(rows);
+  }
+
+  private buyDecor(id: string): void {
+    this.message.setText(
+      buyFarmDecor(this.state, id) ?? "He wraps it up. It is in your pack.",
+    );
+    this.refresh();
   }
 
   private buyHeater(): void {

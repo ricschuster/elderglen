@@ -73,10 +73,11 @@ export class Health {
 
   /**
    * Health a bad effect takes, ignoring grace, Defense and Assist. Never knocks
-   * the player out (placeholder, note 94 leaves it open). Returns what was lost.
+   * the player out when the health runs out (owner, 2026-11-12: a burn can defeat).
+   * Returns what was lost.
    */
   drain(amount: number): number {
-    const lost = Math.max(0, Math.min(amount, this.current - 1));
+    const lost = Math.max(0, Math.min(amount, this.current));
     this.current -= lost;
     return lost;
   }

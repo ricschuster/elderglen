@@ -62,3 +62,25 @@ Gift tastes: cloth stays shared by the animal keeper and hat-maker (note 61).
 - The exact set of dye-pot items and colours (extend `dyes.json`).
 - Whether the unlock scene is a heart event or a plain first-cloth line.
 - Cloth prices at the Hat-maker's board.
+
+## Built status (2026-11-12)
+
+Built, with `tests/tailoring.test.ts`: `src/core/clothes.ts` (shirt and pants defs, tints),
+the wardrobe now holds shirts, pants, the worn one of each and dye tints (all optional in the
+save), `src/core/tailoring.ts` (sew, refusal lines, the spool table, dye pots, undye, the
+first-cloth unlock), `src/content/tailoring.json` (13 shirts with the Plain Shirt, 8 pants, 29
+spool rows over 8 new tailorable hats, shirts and pants, cloth cost 1), the pot items in
+`dyes.json` (`potInputs`, `potColours`, `potAlias`: pink, indigo and violet fold into red,
+blue and purple), the `sewing-machine` and `dye-pots` services in the Hatter's house, and a
+placeholder `TailorScene` (spool list, hue, saturation and value rows) plus shirt and pants
+rows in the hat box.
+
+Taken as: the unlock is a plain first-cloth line from Cordelia (not a heart event); a redo
+costs the six pot items again (only the gold is free); the second spool copy is refused.
+
+Not built: boots tailoring (needs a look and stats split on boots in note 37 and the
+equipment, not designed), processed goods taking their ingredient's colour in the pots, the
+player sprite wearing shirts and pants (art, M3d), the Hat-maker's order board cloth, the
+cloth prices, the hatter map generator (it does not know the two new services, so
+regenerating the map drops them). Placeholders: all piece names and colours, the 29 spool
+rows, cloth cost 1, the pot item list.

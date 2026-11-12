@@ -9,7 +9,7 @@ import { doubleForageChance, forageFloor } from "./professions";
 import { cropQuality, forageQuality, withQuality } from "./quality";
 import { FORAGE_XP, harvestXp, type Skill } from "./skills";
 import type { GameState } from "./save";
-import type { FarmMap } from "./map";
+import type { FarmMap, TreeKind } from "./map";
 import type { Farm } from "./farm";
 import {
   MATURE_STAGE,
@@ -34,7 +34,7 @@ import { FIBER, FIBER_CHANCE, MIXED_SEED } from "./weeds";
 import { TWIG_WOOD } from "./debris";
 import { isRaining } from "./weather";
 import { noteGathered } from "./quests";
-import { goodOfTree, tapReady, TAPPER } from "./tapper";
+import { goodOfTree, HEAVY_TAPPER, tapReady, TAPPER } from "./tapper";
 import { mayPlaceOn, placeTag } from "./placeables";
 import {
   MAHOGANY_HARDWOOD,
@@ -43,6 +43,7 @@ import {
   STUMP_SEED_AREA,
   STUMP_SEED_CHANCE,
   fruitTreeNear,
+  kindOfSeed,
   isMahogany,
   seedOfKind,
 } from "./mahogany";
@@ -106,7 +107,8 @@ export function till(
     if (g.twigs.at(x, y)) return fail("a twig is in the way");
     if (g.machines.at(x, y)) return fail("a machine is in the way");
     if (g.chests.onFarm(x, y)) return fail("a chest is in the way");
-    if (g.placed.get(FARM_STORE, x, y)) return fail("a light is in the way");
+    if (g.placed.covering(FARM_STORE, x, y))
+      return fail("a light is in the way");
   }
   if (!soil.till(x, y)) return fail("already tilled");
   if (!soil.indoors && isRaining(g.weather)) soil.water(x, y);
@@ -353,7 +355,10 @@ function planChop(
     goods: goods(
       ["wood", TREE_WOOD + Math.min(level, TREE_WOOD_BONUS_MAX)],
       ["sap", TREE_SAP],
-      [TREE_SEED, level >= 1 ? Math.floor(random() * 3) : 0],
+      [
+        seedOfKind(t.kind) ?? TREE_SEED,
+        level >= 1 ? Math.floor(random() * 3) : 0,
+      ],
     ),
     xp: TREE_XP,
   };
@@ -430,7 +435,10 @@ export function chop(
   } else if (!t.stump && t.stage === MATURE_STAGE) {
     // A tapper on a felled tree comes back to the player, with any good ready.
     if (t.tap) {
-      const back = [TAPPER, ...(tapReady(g, t) ? [goodOfTree(t).item] : [])];
+      const back = [
+        t.tap.heavy ? HEAVY_TAPPER : TAPPER,
+        ...(tapReady(g, t) ? [goodOfTree(t).item] : []),
+      ];
       for (const id of back)
         if (!g.inventory.add(id, 1)) {
           const spot = dropSpot(g, map, x, y);
@@ -635,20 +643,21 @@ export function plantTree(
     g.twigs.at(x, y) ||
     g.sprinklers.at(x, y) ||
     g.machines.at(x, y) ||
-    g.placed.get(FARM_STORE, x, y) ||
+    g.placed.covering(FARM_STORE, x, y) ||
     g.farm.plotAt(x, y) ||
     g.forage.itemAt(x, y)
   )
     return fail("cannot plant tree here");
   const mahogany = seedId === MAHOGANY_SEED;
+  const kind = kindOfSeed(seedId);
   // A Mahogany tree is not planted on a fruit tree's 3x3 (note 36).
   if (mahogany && fruitTreeNear(g.fruitTrees, x, y))
     return fail("cannot plant tree here");
   g.inventory.remove(seedId);
   g.trees.add(x, y, SEED_STAGE);
-  if (mahogany) {
+  if (kind) {
     const t = g.trees.at(x, y);
-    if (t) t.kind = "mahogany";
+    if (t) t.kind = kind as TreeKind;
   }
   return { ok: true };
 }
@@ -752,7 +761,7 @@ export function isClear(
     g.sprinklers.at(x, y) ||
     g.machines.at(x, y) ||
     g.chests.onFarm(x, y) ||
-    g.placed.get(FARM_STORE, x, y) ||
+    g.placed.covering(FARM_STORE, x, y) ||
     g.farm.plotAt(x, y) ||
     g.trees.at(x, y) ||
     g.fruitTrees.at(x, y) ||

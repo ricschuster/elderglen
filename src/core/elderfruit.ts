@@ -6,13 +6,14 @@ import type { GameState } from "./save";
 /**
  * The elderfruit (`docs/design/39_completion_total.md`), our counterpart of
  * Stardew's stardrop: each one eaten adds 34 to the maximum energy, with no
- * health restored. There are eight sources and eight to find, 270 up to 542.
+ * health restored. There are seven sources and seven to find, 270 up to 508 (as Stardew's stardrops).
+ * Each is eaten the moment it is received (`absorbElderfruit`).
  * The fruit is an item in the pack until it is eaten; the count eaten is the
  * saved state (`GameState.elderfruit`). Pure rules.
  */
 export const ELDERFRUIT_ENERGY = 34;
-/** Eight sources, one fruit each (note 39, "Eighth elderfruit"). */
-export const ELDERFRUIT_TOTAL = 8;
+/** Seven sources, one fruit each (note 39, owner 2026-11-12). */
+export const ELDERFRUIT_TOTAL = 7;
 
 /** Maximum energy after `eaten` elderfruit. */
 export const maxEnergyFor = (eaten: number): number =>
@@ -32,6 +33,16 @@ export function eatElderfruit(
   g.day.energy.max = maxEnergyFor(g.elderfruit);
   g.day.energy.restore(ELDERFRUIT_ENERGY);
   return { ok: true };
+}
+
+/**
+ * Eat every elderfruit the pack holds, as Stardew eats a stardrop on pickup. Called by each
+ * source right after it adds the item. Returns how many were eaten.
+ */
+export function absorbElderfruit(g: GameState): number {
+  let n = 0;
+  while (g.inventory.count(ELDERFRUIT) > 0 && eatElderfruit(g).ok) n += 1;
+  return n;
 }
 
 /** The flags that mark a one-off elderfruit source as taken. */
@@ -58,6 +69,7 @@ export function buyElderfruit(
   g.inventory.add(ELDERFRUIT);
   g.money -= price;
   setFlag(g, flag);
+  absorbElderfruit(g);
   return undefined;
 }
 
@@ -84,5 +96,6 @@ export function giveToSpirit(g: GameState): string {
     return "Your pack is full.";
   }
   setFlag(g, SOURCE_FLAGS.spirit);
+  absorbElderfruit(g);
   return "The stone takes the ember berry. Something small and bright rolls out of the moss.";
 }

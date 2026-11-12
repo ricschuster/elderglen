@@ -31,10 +31,13 @@ describe("placeables table", () => {
         MACHINES.length +
         CHESTS.length +
         lights.length +
-        3 +
+        // The rod, the heater, the tapper and the Heavy Tapper.
+        4 +
         BOMBS.length +
         // The fish pond: a building, not an item (note 93).
-        1,
+        1 +
+        // The six farm decorations (note 89).
+        PLACEABLES.filter((p) => p.kind === "decor").length,
     );
   });
 
