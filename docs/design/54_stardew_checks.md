@@ -221,4 +221,5 @@ note 49 that are marked "ours".
 | SC-156 | 92 | What are Stardew's tapper recipe and its tap goods' sell prices (oak resin, maple syrup, pine tar, sap)? | no | open | Added 2026-11-12, from memory. The tap cycles are checked on the saved Trees page (oak 7 days, maple 9, pine 5, mahogany daily). Prices and the recipe are placeholders in note 92. |
 | SC-157 | 92 | What does Stardew's Geode Crusher cost, when is it learned, and how long does it take to crack a geode? | no | open | Added 2026-11-12, from memory. Not on any saved page. Ours is a placeholder in note 92. |
 | SC-158 | 93 | What does each fish in a Stardew fish pond produce, and with what chance? | no | open | Added 2026-11-12. The saved Fish Pond page gives roe rules and quests but not the product table. Ours is a placeholder in note 93. |
+| SC-159 | 94 | How does Stardew turn Defense into damage, what are Immunity's numbers, and which debuffs does it list? | no | open | Added 2026-11-12. The saved Combat page says only that Defense affects damage taken and Immunity affects the chance to be afflicted with certain debuffs. Ours is a placeholder in note 94. |
 
