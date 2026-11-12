@@ -194,6 +194,10 @@ const add = (...a) => markers.push(mk(...a));
 add("from_forest", "entry", 3, 37);
 add("from_hearthwell", "entry", 47, 66);
 add("from_mine", "entry", 68, 13, { requires: "mines-open" });
+// The cart stop beside the mine door (note 16), open once the mines are.
+add("cart-mine", "service", 66, 12, { kind: "cart" });
+add("from_cart-mine", "entry", 66, 13, { requires: "mines-open" });
+
 add(
   "to_forest",
   "exit",

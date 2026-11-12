@@ -157,6 +157,9 @@ objects[idx(66, 13)] = R.BIN;
 collision[idx(66, 13)] = 1;
 service("mailbox", "mailbox", 68, 13);
 service("furnace", "furnace", 60, 13);
+// The Hearth room's cart stop (note 16): the service tile and where a rider steps off.
+service("cart-farm", "cart", 76, 12);
+entry("from_cart-farm", 76, 13);
 // Stand-in: the festival green stays on the farm until the festival layouts
 // (layout track step 2) give it a home in the village.
 service("festival", "festival", 74, 16);
