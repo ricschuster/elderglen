@@ -18,6 +18,8 @@ import {
   placeTapper,
   tapReady,
   TAPPER,
+  HEAVY_TAPPER,
+  cycleDays,
 } from "../src/core/tapper";
 import { MATURE_STAGE } from "../src/core/trees";
 import { useHeld } from "../src/core/tools";
@@ -189,5 +191,36 @@ describe("worm bin", () => {
     const r = recipeById("worm-bin")!;
     expect(r.sources).toEqual([{ kind: "level", skill: "fishing", level: 4 }]);
     expect(itemById("plain-bait")?.sellPrice).toBe(0);
+  });
+
+  it("a Heavy Tapper runs the short cycles and comes back as itself", () => {
+    const days = { oak: 3, maple: 4, pine: 2, mahogany: 1 } as const;
+    for (const kind of ["oak", "maple", "pine", "mahogany"] as const) {
+      const { g, t } = treeGame(kind);
+      g.inventory.add(HEAVY_TAPPER);
+      expect(placeTapper(g, 2, 2, HEAVY_TAPPER).ok).toBe(true);
+      expect(t.tap?.heavy).toBe(true);
+      expect(g.inventory.count(HEAVY_TAPPER)).toBe(0);
+      expect(cycleDays(t)).toBe(days[kind]);
+      g.day.clock.day += days[kind] - 1;
+      expect(tapReady(g, t)).toBe(false);
+      g.day.clock.day += 1;
+      expect(tapReady(g, t)).toBe(true);
+    }
+    const { g } = treeGame("oak");
+    g.inventory.add(HEAVY_TAPPER);
+    placeTapper(g, 2, 2, HEAVY_TAPPER);
+    const back = deserialize(serialize(g));
+    expect(back?.trees.at(2, 2)?.tap?.heavy).toBe(true);
+    expect(liftTapper(g, 2, 2).ok).toBe(true);
+    expect(g.inventory.count(HEAVY_TAPPER)).toBe(1);
+    expect(g.inventory.count(TAPPER)).toBe(1);
+  });
+
+  it("has a Heavy Tapper recipe at Foraging level 8", () => {
+    expect(itemById(HEAVY_TAPPER)?.name).toBe("Heavy tapper");
+    expect(recipeById("heavy-tapper")?.sources).toEqual([
+      { kind: "level", skill: "foraging", level: 8 },
+    ]);
   });
 });

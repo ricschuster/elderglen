@@ -14,6 +14,26 @@ import { MATURE_STAGE, type Tree } from "./trees";
  */
 export const TAPPER = tapperData.tapper.id;
 export const TAPPER_DEF = tapperData.tapper;
+/** The Heavy Tapper (note 92, Stardew's cycles: 3, 4 and 2 days, mahogany daily). Recipe and price are placeholders. */
+export const HEAVY_TAPPER = tapperData.heavy.id;
+export const HEAVY_TAPPER_DEF = {
+  id: tapperData.heavy.id,
+  name: tapperData.heavy.name,
+  sellPrice: tapperData.heavy.sellPrice,
+};
+
+/** True for either tapper item. */
+export const isTapperItem = (id: string): boolean =>
+  id === TAPPER || id === HEAVY_TAPPER;
+
+/** Days one cycle takes on this tree, shorter with a Heavy Tapper. */
+export function cycleDays(t: Pick<Tree, "kind" | "tap">): number {
+  const good = goodOfTree(t);
+  const heavy = t.tap?.heavy
+    ? (tapperData.heavy.days as Record<string, number>)[good.kind]
+    : undefined;
+  return heavy ?? good.days;
+}
 
 export interface TapGood {
   kind: string;
@@ -45,7 +65,7 @@ export function mayTap(t: Tree | undefined): boolean {
 /** Days until the tapped tree's good is ready, or undefined if it holds no tapper. 0 when ready. */
 export function tapDaysLeft(g: GameState, t: Tree): number | undefined {
   if (!t.tap) return undefined;
-  return Math.max(goodOfTree(t).days - (g.day.clock.day - t.tap.since), 0);
+  return Math.max(cycleDays(t) - (g.day.clock.day - t.tap.since), 0);
 }
 
 /** True when the tree holds a tapper whose cycle is full. */
@@ -63,15 +83,21 @@ export function tapStatus(g: GameState, x: number, y: number): string {
 }
 
 /** Put a tapper from the backpack on the mature tree at a tile. */
-export function placeTapper(g: GameState, x: number, y: number): Outcome {
+export function placeTapper(
+  g: GameState,
+  x: number,
+  y: number,
+  id: string = TAPPER,
+): Outcome {
   if (g.day.over) return fail("exhausted");
   const t = g.trees.at(x, y);
   if (!t) return fail("no tree here");
   if (t.tap) return fail("already tapped");
   if (!mayTap(t)) return fail("cannot tap this");
-  if (g.inventory.count(TAPPER) < 1) return fail("no tapper");
-  g.inventory.remove(TAPPER, 1);
+  if (g.inventory.count(id) < 1) return fail("no tapper");
+  g.inventory.remove(id, 1);
   t.tap = { since: g.day.clock.day };
+  if (id === HEAVY_TAPPER) t.tap.heavy = true;
   return { ok: true };
 }
 
@@ -96,14 +122,15 @@ export function liftTapper(g: GameState, x: number, y: number): Outcome {
   const t = g.trees.at(x, y);
   if (!t?.tap) return fail("not tapped");
   const good = tapReady(g, t) ? goodOfTree(t).item : undefined;
+  const heavy = t.tap.heavy;
   const before = g.inventory.save();
   if (
-    !g.inventory.add(TAPPER, 1) ||
+    !g.inventory.add(t.tap.heavy ? HEAVY_TAPPER : TAPPER, 1) ||
     (good !== undefined && !g.inventory.add(good, 1))
   ) {
     g.inventory.load(before);
     return fail("backpack full");
   }
   delete t.tap;
-  return { ok: true, item: TAPPER };
+  return { ok: true, item: heavy ? HEAVY_TAPPER : TAPPER };
 }

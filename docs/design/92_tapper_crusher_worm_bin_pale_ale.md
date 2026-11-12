@@ -114,3 +114,11 @@ Heavy Tapper, and seeds for hops in the shop lists.
 Built (2026-11-12, follow-ups): the cart stop at the mine mouth sits beside the mine door on the
 Mountain and is listed only once the mines open (`requires: "mines-open"` in `carts.json`, the
 `from_cart-mine` entry carries the same condition; see note 16).
+
+Built (2026-11-12, art pass): placeholder tapper art. Item icons `icon-tapper` and
+`icon-heavy-tapper`, and a spout and bucket drawn on a tapped tree (`tapper-on-tree`, a gold
+band for the heavy one), under the green ready mark. The Heavy Tapper is built: item, placeable,
+recipe (placeholder: 30 hardwood and 1 gold bar, Foraging level 8), a `heavy` flag on the tree's
+`tap`, cycles 3, 4, 2 days and mahogany daily from `tapper.json`. Tests in `tests/tapper.test.ts`.
+Still not built: tool shop rows. Where a tapper is sold (and at what price) is not settled in
+this note, and Stardew sells none (SC-156 unchecked), so no shop carries one yet.

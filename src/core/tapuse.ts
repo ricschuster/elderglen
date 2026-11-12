@@ -8,7 +8,7 @@ import { storeOf } from "./mapstore";
 import { machineById } from "./processing";
 import type { GameState } from "./save";
 import { sprinklerById } from "./sprinklers";
-import { mayTap, TAPPER } from "./tapper";
+import { isTapperItem, mayTap } from "./tapper";
 import type { Held } from "./toolbar";
 import { MIXED_SEED } from "./weeds";
 
@@ -35,7 +35,7 @@ export function isSoilWork(held: Held): boolean {
     !!fertilizerById(held.id) ||
     !!sprinklerById(held.id) ||
     !!machineById(held.id) ||
-    held.id === TAPPER
+    isTapperItem(held.id)
   );
 }
 
@@ -75,7 +75,7 @@ function fits(
     return !!def && def.seasons.includes(dateOf(g.day.clock.day).season);
   }
   // A tapper goes on a mature tree with none on it (note 92); the tree tile is blocked.
-  if (held.id === TAPPER) return mayTap(g.trees.at(x, y));
+  if (isTapperItem(held.id)) return mayTap(g.trees.at(x, y));
   if (fertilizerById(held.id)) return !!plot && g.inventory.count(held.id) > 0;
   // A sprinkler or a machine stands on an open tile.
   return isClear(g, map, x, y);

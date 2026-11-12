@@ -36,7 +36,7 @@ import {
   liftTapper,
   placeTapper,
   tapReady,
-  TAPPER,
+  isTapperItem,
 } from "./tapper";
 import { handOnMachine, loadMachine, placeMachine } from "./machines";
 import { machineById } from "./processing";
@@ -139,7 +139,8 @@ export function useHeld(
     return g.trees.at(x, y)
       ? clearSeedling(g, x, y, "can", map)
       : water(g, x, y);
-  if (held.kind === "item" && held.id === TAPPER) return placeTapper(g, x, y);
+  if (held.kind === "item" && isTapperItem(held.id))
+    return placeTapper(g, x, y, held.id);
   if (g.machines.at(x, y)) {
     // A machine takes the held item; Action collects from it.
     if (held.kind === "item") return loadMachine(g, x, y, held.id);

@@ -27,7 +27,7 @@ import weaponData from "../content/weapons.json";
 import furnitureData from "../content/furniture.json";
 import { ARTISAN_GOODS } from "./artisan";
 import { MACHINES } from "./processing";
-import { TAP_GOODS, TAPPER, TAPPER_DEF } from "./tapper";
+import { HEAVY_TAPPER_DEF, TAP_GOODS, TAPPER, TAPPER_DEF } from "./tapper";
 import { DISHES } from "./dishes";
 import { CHESTS } from "./chestdefs";
 import { GEODE_ITEMS } from "./geodes";
@@ -148,6 +148,7 @@ items.set("wood", { id: "wood", name: "Wood", sellPrice: 2 });
 items.set("sap", { id: "sap", name: "Sap", sellPrice: 2 });
 /** The tapper and what it gives (note 92). Prices are placeholders, see `tapper.json`. */
 items.set(TAPPER, { ...TAPPER_DEF });
+items.set(HEAVY_TAPPER_DEF.id, { ...HEAVY_TAPPER_DEF });
 for (const g of TAP_GOODS)
   if (g.item !== "sap")
     items.set(g.item, { id: g.item, name: g.name, sellPrice: g.sellPrice });
@@ -536,6 +537,7 @@ const GROUPS: [string, string[]][] = [
       WAX,
       CANDLE,
       TAPPER,
+      HEAVY_TAPPER_DEF.id,
       ...TAP_GOODS.map((g) => g.item).filter((i) => i !== "sap"),
     ],
   ],

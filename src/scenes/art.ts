@@ -595,6 +595,28 @@ function paintTrees(scene: Phaser.Scene): void {
     px(c, "#d9b27a", 2, 6, 1, 2);
     px(c, "#d9b27a", 2, 10, 1, 2);
   });
+  // The tapper (note 92): a small spout and a bucket. Placeholder art. The icon is the
+  // item; the "on-tree" picture is the overlay drawn over a tapped trunk.
+  const tapperArt = (c: Ctx, heavy: boolean) => {
+    px(c, heavy ? "#6a6a74" : "#8a8a94", 6, 4, 4, 2);
+    px(c, heavy ? "#4a4a54" : "#6a6a72", 7, 6, 2, 3);
+    px(c, "#7a4e26", 5, 9, 6, 5);
+    px(c, "#9a6a3a", 5, 9, 6, 1);
+    if (heavy) px(c, "#c8a838", 5, 11, 6, 1);
+  };
+  draw("icon-tapper", (c) => tapperArt(c, false));
+  draw("icon-heavy-tapper", (c) => tapperArt(c, true));
+  draw("tapper-on-tree", (c) => {
+    px(c, "#8a8a94", 6, 8, 3, 2);
+    px(c, "#7a4e26", 4, 10, 5, 4);
+    px(c, "#9a6a3a", 4, 10, 5, 1);
+  });
+  draw("tapper-on-tree-heavy", (c) => {
+    px(c, "#6a6a74", 6, 8, 3, 2);
+    px(c, "#7a4e26", 4, 10, 5, 4);
+    px(c, "#9a6a3a", 4, 10, 5, 1);
+    px(c, "#c8a838", 4, 12, 5, 1);
+  });
   draw("icon-hardwood", (c) => {
     px(c, "#4a2e18", 2, 5, 12, 3);
     px(c, "#6a4426", 2, 5, 12, 1);
@@ -1189,6 +1211,7 @@ export function iconKey(itemId: string): string | undefined {
   if (isFarmDecor(base)) return farmDecorKey(base);
   if (isLight(base) || isBomb(base) || base === LIGHTNING_ROD)
     return lightKey(base);
+  if (base === "tapper" || base === "heavy-tapper") return `icon-${base}`;
   if (base === POT_ITEM) return POT_KEY;
   const sapling = treeOfSapling(base);
   if (sapling) return saplingIconKey(sapling.id);

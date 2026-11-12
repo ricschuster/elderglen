@@ -304,6 +304,14 @@
     "pickUp": "hand"
   },
   {
+    "id": "heavy-tapper",
+    "kind": "tapper",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": false,
+    "pickUp": "hand"
+  },
+  {
     "id": "fish-pond",
     "kind": "pond",
     "places": ["farm"],
