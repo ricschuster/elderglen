@@ -12,6 +12,7 @@ import { deserialize, newGame, serialize } from "../src/core/save";
 import { sleep } from "../src/core/sleep";
 import { STACK_SIZE } from "../src/core/inventory";
 import { ACHIEVEMENTS } from "../src/core/achievements";
+import { FISH } from "../src/core/fishing";
 
 const gift: LetterDef = {
   id: "test-gift",
@@ -125,10 +126,11 @@ describe("mail", () => {
     expect(quiet.newMail).toBe(0);
   });
 
-  it("sends the fish seed letter once, the morning after Whole Roster", () => {
+  it("sends the fish seed letter once, the morning after every ordinary fish", () => {
     const g = newGame();
     expect(queueMail(g, 2)).not.toContain("fish-seed-letter");
-    g.achievements.award("whole-roster");
+    for (const f of FISH) if (f.rarity !== "legend") g.fishing.note(f.id, 10);
+    expect(g.achievements.has("whole-roster")).toBe(false);
     expect(queueMail(g, 5)).toContain("fish-seed-letter");
     expect(queueMail(g, 6)).toEqual([]);
     g.mail.deliver(5);

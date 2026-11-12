@@ -218,6 +218,23 @@ bundle a fish can fill (`16_bundles.md`).
 
 ## The legends (decided 2026-10-29, conditions are placeholders)
 
+**Which fish are legends (named 2026-11-12).** The five in the table below, and only
+those: the Hearthwell Carp, Grandmother Hush, the Valley King, Moonlit Mother and the Great
+Hearthfin. In data they are the rows with `rarity: "legend"`. The Secret Woods pond's
+unique fish (the Mossback) is not a legend and has its own place, so it is outside the
+ordinary roster too (note 88, sixth round). Two goals follow:
+
+- **Ordinary roster:** the 46 fish that are neither legends nor the pond fish. Landing all
+  of them sends the fish seed letter (trigger `fish-roster`, `ORDINARY_FISH` in
+  `src/core/fishing.ts`). Built 2026-11-12.
+- **Whole Roster achievement:** every fish, the five legends and the pond fish included
+  (52 now, 53 when the pond fish is built). Unchanged in code except that its threshold
+  must rise to 53 with that row.
+- **Name clash to settle:** the river already has an **Old Mossback** (rare, autumn rain).
+  The pond fish's working name "Mossback" is too close. Rename one before the pond row is
+  built. The pond fish needs a rarity value that is neither `legend` nor in the ordinary
+  roster (for example `unique`) so `ORDINARY_FISH` leaves it out.
+
 Five in all. The first is open once the Water room is done (it needs the cove).
 The other four open after the fishing bundles (13 to 18) are done. Each is worth
 a lot as the fish itself, and can be caught again each year.

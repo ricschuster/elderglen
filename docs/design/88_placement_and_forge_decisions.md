@@ -106,7 +106,9 @@ named place and Mossback and the pond fish are not yet taken.
 - **Legends.** Once per save, each farm slot starts fresh (saved Legendary Fish page). No
   second copy by catch or by purchase, and the one catch counts for everything.
 - **Build.** The letter trigger and the achievement need separate counters in
-  `src/content/letters.json` and the achievements data.
+  `src/content/letters.json` and the achievements data. Done 2026-11-12: the letter uses the
+  new `fish-roster` trigger (every non-legend fish), Whole Roster is unchanged (every fish).
+  The `Old Mossback` river fish clashes with the pond fish's working name (note 21).
 
 ## Seventh round: hall and aisles (owner, 2026-11-12)
 

@@ -1,6 +1,7 @@
 import letterData from "../content/letters.json";
 import { dishById } from "./dishes";
 import { furnitureById } from "./furniture";
+import { ORDINARY_FISH } from "./fishing";
 import { hatById } from "./hats";
 import { itemById } from "./items";
 import type { GameState } from "./save";
@@ -30,6 +31,8 @@ export interface Attachment {
 export type LetterTrigger =
   | { kind: "first-achievement" }
   | { kind: "achievement"; id: string }
+  /** Every ordinary fish landed. The legends and the pond fish are outside it (note 88). */
+  | { kind: "fish-roster" }
   /** Friendship mail (note 61 rule 8): a villager reaches this many hearts. */
   | { kind: "hearts"; villager: string; hearts: number };
 
@@ -174,6 +177,8 @@ export class Mailbox {
 
 function triggered(g: GameState, t: LetterTrigger): boolean {
   if (t.kind === "hearts") return g.friendship.hearts(t.villager) >= t.hearts;
+  if (t.kind === "fish-roster")
+    return ORDINARY_FISH.every((f) => g.fishing.has(f.id));
   return t.kind === "first-achievement"
     ? g.achievements.list().length > 0
     : g.achievements.has(t.id);

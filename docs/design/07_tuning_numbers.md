@@ -945,3 +945,17 @@ Source: `src/core/quests.ts`, `src/content/requests.json`.
 - Homeward pin (2026-11-09, #641, placeholder): 1,500,000g at Thalwen's stall, one only,
   cannot be sold back. A little under Stardew's Return Scepter at 2,000,000g (saved Krobus
   page), so year 1 is unlikely (note 09). Not gated at 3 hearts until friendship exists.
+
+## Placement, bombs and Forge stock (decided 2026-11-12, notes 88 and 89, placeholders, not built)
+
+- Bombs (Stardew, from memory, SC-149): cherry bomb radius 1, bomb 2, mega bomb 3. Fuse 1.5
+  seconds. Damage to monsters 15, 30, 50; to the player 10, 20, 30 percent of maximum health,
+  never lethal. No mining experience. Forge prices 450g, 1,000g, 1,600g (saved Dwarf page).
+- Light radii in tiles: torch 3, campfire 4, brazier 4, lamp-post 6, worn light ring (bundle
+  20) 5. Fixed glow, no fuel (SC-128).
+- Heater: 1,000g at the ranch shop, covers the whole building on winter nights (SC-131 open).
+- Forge: Life Elixir 2,000g (health to full), Miner's Treat 1,000g (100 energy), Oil of
+  Garlic 3,000g (monsters below a tier ignore you for the day).
+- Lightning rod: a strike yields a battery pack, 500g.
+- Old pond fish, the Mossback: base price 750g, a hard bar (note 21).
+- Elderfruit: +34 maximum energy, eight sources (note 39).
