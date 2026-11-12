@@ -54,6 +54,7 @@ import {
 } from "../core/festivals";
 import { openChest } from "../core/maze";
 import { rodById, waterAhead } from "../core/fishing";
+import { festivalHolds } from "../core/festivalroutes";
 import { holdsOf } from "../core/worldflags";
 import { gateOpen, gateShutLine, parseGate } from "../core/gates";
 import { mendTideBridge, TIDE_BRIDGE_WOOD } from "../core/tidebridge";
@@ -535,6 +536,8 @@ export class FarmScene extends Phaser.Scene {
       this.state.houseRenos,
     ))
       holds.add(h);
+    // A festival day shows its layout on the map (note 82).
+    for (const h of festivalHolds(day)) holds.add(h);
     this.map = mineLayout
       ? FarmMap.fromTiled(json)
       : maps.getWith(id, holds, this.tier);
@@ -2525,6 +2528,7 @@ export class FarmScene extends Phaser.Scene {
     ))
       this.holds.add(h);
     for (const h of greenhouseHolds(this.state)) this.holds.add(h);
+    for (const h of festivalHolds(this.state.day.clock.day)) this.holds.add(h);
     for (const c of this.conditional)
       c.drawn.setVisible(layerShows(c.layer, this.holds));
   }

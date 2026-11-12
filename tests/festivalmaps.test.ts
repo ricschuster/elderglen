@@ -7,6 +7,7 @@ import {
   isFestivalMap,
   sightLine,
 } from "../src/core/festivals";
+import { festivalLayout } from "../src/core/festivalroutes";
 import { serviceLabel } from "../src/core/labels";
 import { MAZE, cellAt, mazeChest, mazeStart } from "../src/core/maze";
 import { isFarmMap, FARM_TYPES } from "../src/core/farmtypes";
@@ -100,9 +101,16 @@ describe("festival maps (note 66 layout addendum)", () => {
 describe("the hedge map", () => {
   const map = maps.get("hedge");
 
-  it("is the odd-year maze, tile for tile, beside a plaza with a booth", () => {
+  it("is the odd-year maze, tile for tile except the villagers' niches, beside a plaza with a booth", () => {
+    // Note 82: a niche is cut into the outer hedge for each villager (the map is one column wider).
+    const niches = new Set(
+      festivalLayout(FESTIVALS.find((f) => f.id === "hollow-eve")!)!.niches.map(
+        String,
+      ),
+    );
     for (let y = 0; y < MAZE.rows.length; y++)
       for (let x = 1; x < MAZE.rows[0]!.length; x++) {
+        if (niches.has(String([x + OX, y + OY]))) continue;
         const c = cellAt(x, y);
         const solid =
           c === "#" || c in MAZE.scares || c in MAZE.talkers || c === "E";
