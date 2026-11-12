@@ -83,19 +83,34 @@ describe("taste", () => {
 });
 
 describe("data", () => {
-  it("has a list for the first eight and a marked placeholder for the rest", () => {
-    const own = VILLAGERS.filter((v) => hasOwnList(v.id));
-    expect(own.map((v) => v.id).sort()).toEqual([
-      "alder",
-      "aurelle",
-      "cordelia",
-      "cuthbert",
-      "dilly",
-      "hattie",
-      "odette",
-      "tilda",
-    ]);
-    expect(data.defaultList._note).toMatch(/PLACEHOLDER/);
+  it("has a list for all 30 people and a neutral safety-net default", () => {
+    expect(VILLAGERS.length).toBe(30);
+    for (const v of VILLAGERS) expect(hasOwnList(v.id), v.id).toBe(true);
+    expect(data.defaultList.loves).toEqual([]);
+    expect(data.defaultList.hates).toEqual([]);
+  });
+  it("keeps note 90 list sizes", () => {
+    for (const [id, l] of Object.entries(data.people)) {
+      expect(l.loves.length, id).toBeGreaterThanOrEqual(3);
+      expect(l.loves.length, id).toBeLessThanOrEqual(8);
+      expect(l.hates.length, id).toBeGreaterThanOrEqual(1);
+      expect(l.hates.length, id).toBeLessThanOrEqual(3);
+    }
+  });
+  it("reads the note 90 tag entries", () => {
+    expect(tagsOf("cockleshell")).toContain("shell");
+    expect(tagsOf("spiral-shell")).toContain("shell");
+    expect(tagsOf("perch")).toContain("fish");
+    expect(tagsOf("bat-wing")).toContain("monster-drop");
+    expect(tasteOf("thalwen", "pearly-shell")).toBe("like");
+    expect(tasteOf("toby", "cockleshell")).toBe("love");
+    expect(tasteOf("dunmar", "bat-wing")).toBe("dislike");
+    expect(tasteOf("rundahl", "gloop-jelly")).toBe("dislike");
+    expect(tasteOf("rushie", "reedling")).toBe("like");
+    expect(tasteOf("rushie", "valley-king")).toBe("neutral");
+    expect(tasteOf("rushie", "hearthwell-carp")).toBe("love");
+    expect(tasteOf("thalwen", "melon-jam")).toBe("dislike");
+    expect(tasteOf("bramwell", "iron-bar")).toBe("love");
   });
   it("names only known tags, and unbuilt items from an allow list", () => {
     const tags = new Set([
@@ -126,6 +141,8 @@ describe("data", () => {
       "monster-drop",
       "trash",
       "found",
+      "shell",
+      "fish",
     ]);
     const unbuilt = new Set<string>();
     for (const e of listedEntries()) {
