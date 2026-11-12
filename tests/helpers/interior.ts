@@ -370,4 +370,46 @@ export const AISLE_EXCEPTIONS: Record<
     reason:
       "Checked draft (note 86, 2026-11-11): 1 wide spots by design, the kitchen strip between counters and the table (rows 3 and 6, x 10 to 21), the hearth edge and the display and bedroom edges (18 to 19,15 and 25 to 26,15), and the east bedroom's gate nook (21,9 and 24,9). None is the only way through a room.",
   },
+  "hermit-tower": {
+    tiles:
+      "9,21 16,19 9,20 17,19 11,19 9,19 10,19 16,15 17,15 14,11 11,11 15,11 10,11 9,11 7,10 5,11 4,11 3,11 16,3 17,3".split(
+        " ",
+      ),
+    reason:
+      "owner-checked draft (note 86, 2026-11-11): the strips beside the stairs and shelves, the bedroom wing and its gated door, and the hermit's counter ends are one tile wide",
+  },
+  outpost: {
+    tiles:
+      "15,18 16,18 15,15 14,14 16,15 14,13 15,13 1,13 16,13 4,7 12,4 13,4 5,4 4,4".split(
+        " ",
+      ),
+    reason:
+      "owner-checked draft (note 86, 2026-11-11): the post hall's side stalls and bunks, the gap round the notice table and the strips at the top wall near the steward's door are one tile wide",
+  },
+  "outpost-rooms": {
+    tiles:
+      "1,12 3,10 1,11 2,10 1,10 4,6 10,9 3,6 2,6 12,9 1,6 4,3 1,5 3,3 1,4 2,3 15,9 1,3 15,3 15,6 16,3 16,6".split(
+        " ",
+      ),
+    reason:
+      "owner-checked draft (note 86, 2026-11-11): the steward's rooms: bed and shelf nooks, the gap between the rooms and the gated bedroom door are one tile wide",
+  },
+  forge: {
+    tiles: "9,11 10,11 3,6 4,6 12,10 12,11 13,11 14,11 12,2".split(" "),
+    reason:
+      "owner-checked draft (note 86, 2026-11-11): the ore bins and anvil edges and the wing strip beside the forge are one tile wide",
+  },
+  "beach-elf-house": {
+    tiles: "2,9 11,9 11,6 1,6 12,6 6,4 7,4 11,3 6,2 7,2".split(" "),
+    reason:
+      "owner-checked draft (note 86, 2026-11-11): the bed, trunks and stall counter edges in the small cottage are one tile wide",
+  },
+  inn: {
+    tiles:
+      "27,15 28,15 29,15 30,15 4,9 4,10 24,4 34,15 25,24 24,3 4,3 34,14 4,2 34,22 27,3 37,14 36,11 37,11 36,23 36,22 36,8 37,8 40,22".split(
+        " ",
+      ),
+    reason:
+      "owner-checked draft (note 86, 2026-11-11): the bar and stool strips, the bedroom and kitchen doorways of the inn's home wing and the corner nooks are one tile wide",
+  },
 };

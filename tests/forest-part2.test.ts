@@ -73,7 +73,7 @@ describe("the Forest's farmstead, tower and camp (note 72, part 2)", () => {
     expect([...new Set(farmstead.services.map((s) => s.kind))]).toEqual([
       "keeper",
     ]);
-    expect(tower.services.map((s) => s.kind)).toEqual(["hermit"]);
+    expect([...new Set(tower.services.map((s) => s.kind))]).toEqual(["hermit"]);
     const fire = forest.services.find((s) => s.kind === "camp")!;
     expect(fire).toMatchObject({ x: 85, y: 83 });
     expect(forest.isBlocked(fire.x, fire.y)).toBe(true);

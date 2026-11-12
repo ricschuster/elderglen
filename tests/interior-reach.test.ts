@@ -17,16 +17,7 @@ import {
  * so the gate stays green. Each later batch (#853, #855 to #860) removes its
  * maps from this set as it rebuilds them; the test then runs on them.
  */
-export const PENDING = new Set<string>([
-  "fisher-hut",
-  "hermit-tower",
-  "outpost",
-  "outpost-rooms",
-  "forge",
-  "beach-elf-house",
-  "inn",
-  "hall",
-]);
+export const PENDING = new Set<string>(["fisher-hut", "hall"]);
 
 const all = interiorIds();
 
