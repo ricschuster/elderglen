@@ -153,6 +153,23 @@ Code: `src/core/orders.ts`, `src/core/debris.ts`, data in
   taken orders (no journal yet, the board lists them), and the mail return (no order holds goods yet).
   Placeholder numbers are in `07_tuning_numbers.md`.
 
+## Goods hand-in to a named place (owner answer 2026-11-12, #875)
+
+Settled in the M3b finish list. The orders that wait on it are Spring Leeks, Barrel
+Batch, Pantry Stock and Crystal Gift (the three fish and cave orders are built from the
+logs, so #875's first wording was out of date).
+
+- **A drop chest at each named place.** Taking such an order puts a marked chest in the
+  named place (the inn pantry, a named kitchen or house). The player fills it over the
+  days the order runs, from the pack. The nightly check counts the matching goods in
+  the chest and, when the count is met, removes them and pays out. It reuses the chest
+  store and the one saved `placed` list (note 89), with a `bound to order` state.
+- Goods stay in the chest until the order ends. If the window lapses, the player can
+  take them back (this answers the last open line below for these orders).
+- Stardew's way of taking order goods is not checked (register row to add).
+- Open: the places (the inn pantry exists in note 24; which kitchen for Barrel Batch),
+  the chest's look, and Crystal Gift's five gems, which are placeholders.
+
 ## Still open
 
 - The real list: more orders, final gold, the first rewards and their scenes.
