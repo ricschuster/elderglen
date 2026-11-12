@@ -105,7 +105,7 @@ describe("heater as a placeable", () => {
     expect(pickUpHeater(g, "stable")).toBe(false);
   });
 
-  it("is sold for 1,000g at the farmstead, to someone with a coop or barn", () => {
+  it("is sold for 2,000g at the farmstead, to someone with a coop or barn", () => {
     const g = newGame();
     g.money = 5000;
     expect(buyHeater(g)).toMatch(/coop or barn/);

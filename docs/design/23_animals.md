@@ -343,3 +343,27 @@ Our draft, to be tuned in playtests and copied into `07_tuning_numbers.md`.
   **Both the coop and the barn have a heater (owner, 2026-11-11, Stardew's
   pattern, SC-131 unchecked).** The mood loss without one is a placeholder of 10
   points a winter day on the 0 to 255 mood scale, to tune. Not built.
+
+## The keeper's shop list (owner, 2026-11-12)
+
+The owner asked for the Forest farmstead keeper to sell what Marnie sells in Stardew,
+with the prices on the saved Marnie's Ranch page (read 2026-11-12). Prices below are
+Stardew's; ours match them. Only the first rows exist now.
+
+| Item | Price | State |
+| --- | --- | --- |
+| Hay | 50g | Built (the shop row sells 10 bales). |
+| Heater | 2,000g | Built (note 89). |
+| Milk Pail, Shears | 1,000g each | No tool exists; animals give milk and wool by hand. Decide whether to add them as tools or leave them out. |
+| Auto-Grabber | 25,000g, Farming 10 | No system. Collects from a building each morning. |
+| Animal Catalogue | 5,000g, year 2 | No system. Opens the shop when the keeper is away. |
+| Ornamental Hay Bale | 250g | A farm decoration. Needs the decoration kind below. |
+| Doghouse, Dark Doghouse, Cat Tree, Dark Cat Tree | 10,000g each | Farm decorations. No pets exist, so they are decor only until a pet system. |
+| Bird House | 5,000g | Farm decoration. |
+| Golden Egg | 100,000g, after the completion tracker (#196) | No system. |
+| Cow Decal | 10,000g, a prize machine reward in Stardew | No prize machine. |
+
+**Not built: the decoration kind.** A farm decoration is a placeable with no behaviour: it
+stands on the farm, blocks walking and lifts by hand (note 89). It needs a seventh
+`PlaceableKind` and the same save list, render and lift code as a light. Design it in
+note 89 before building; until then the keeper sells none of these.

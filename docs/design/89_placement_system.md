@@ -116,7 +116,7 @@ collection.
 - With a heater placed, the building takes no mood loss on winter nights (the built rule,
   note 23: placeholder 10 points). It never harms an animal.
 - **Where the item comes from (owner, 2026-11-12):** sold at the ranch shop for gold, as
-  Stardew does from memory (unchecked, SC-149). Placeholder price 1,000g. Bundle 25
+  Stardew does from memory (unchecked, SC-149). Price 2,000g, as the saved Marnie page lists it (owner, 2026-11-12, SC-149). Bundle 25
   still gives the first one.
 - Bundle 25 already hands out a kept `coop-heater` item. That item becomes the placeable.
 
