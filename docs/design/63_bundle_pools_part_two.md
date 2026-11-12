@@ -257,5 +257,23 @@ and rewards below are placeholders for tuning, except where marked as the owner'
   the same kind of item as the `steadfast-lamp` keepsake in `furniture.json`,
   which is another keepsake, so a second one is added.
 
-Left open: wax, candle and artifact spot designs, the three hats, the treat list
-per festival, the old things' names and sell prices, and the lantern's art.
+### Decisions 2026-11-12 (owner, M3b finish list)
+
+- **Wax** comes from the bee house alongside honey (owner, recommended option).
+  Stardew has no candle bundle, so there is nothing to check. Wax is a new item.
+- **Old things** come from artifact spots dug with the hoe (Stardew's pattern),
+  with the mine quiet floors and Old Diggers as a second route. This needs the
+  artifact spot system of note 69, so it is built with it (#879).
+- **Bundle 24 hats.** The owner chose Harvest Crown, Snow Cap and Holly Hat and
+  left two more to us, reading the reward as "3 of 5 hats". Taken as: the reward
+  is a choice of 3 from a set of 5. The two added are new hats, one per season the
+  three leave bare: a spring and a summer hat (placeholders `seed-wreath` for the
+  Seedswap Fair and `sun-bonnet` for Cake Day, names open). Both need a
+  `hats.json` entry and placeholder art. Existing `rosette-hat` and `lantern-hood`
+  are already maze and summit rewards, so they are not used. The owner can
+  correct this reading.
+- **Bundle 24 dishes.** Bread, honey cake and herb tea are added now as three
+  placeholder starter recipes, learned at a skill level, like the first eight.
+
+Left open: the candle recipe numbers, artifact spot numbers, the treat list per
+festival, the old things' names and sell prices, and the lantern's art.
