@@ -117,7 +117,10 @@
         "kind": "bundle",
         "bundle": "woodland"
       },
-      { "kind": "order", "order": "too-many-fish" }
+      {
+        "kind": "order",
+        "order": "too-many-fish"
+      }
     ]
   },
   {
@@ -254,7 +257,10 @@
         "skill": "farming",
         "level": 9
       },
-      { "kind": "order", "order": "cave-patrol" }
+      {
+        "kind": "order",
+        "order": "cave-patrol"
+      }
     ]
   },
   {
@@ -316,14 +322,33 @@
   {
     "id": "recycler",
     "ingredients": [
-      { "item": "wood", "count": 25 },
-      { "item": "stone", "count": 25 },
-      { "item": "iron-bar", "count": 1 }
+      {
+        "item": "wood",
+        "count": 25
+      },
+      {
+        "item": "stone",
+        "count": 25
+      },
+      {
+        "item": "iron-bar",
+        "count": 1
+      }
     ],
-    "result": { "item": "recycler", "count": 1 },
+    "result": {
+      "item": "recycler",
+      "count": 1
+    },
     "sources": [
-      { "kind": "level", "skill": "fishing", "level": 4 },
-      { "kind": "order", "order": "still-waters" }
+      {
+        "kind": "level",
+        "skill": "fishing",
+        "level": 4
+      },
+      {
+        "kind": "order",
+        "order": "still-waters"
+      }
     ]
   },
   {
@@ -572,6 +597,98 @@
     "sources": [
       {
         "kind": "cellar"
+      }
+    ]
+  },
+  {
+    "id": "torch",
+    "ingredients": [
+      {
+        "item": "wood",
+        "count": 1
+      },
+      {
+        "item": "sap",
+        "count": 2
+      }
+    ],
+    "result": {
+      "item": "torch",
+      "count": 3
+    },
+    "sources": [
+      {
+        "kind": "start"
+      }
+    ]
+  },
+  {
+    "id": "campfire",
+    "ingredients": [
+      {
+        "item": "wood",
+        "count": 10
+      },
+      {
+        "item": "stone",
+        "count": 5
+      }
+    ],
+    "result": {
+      "item": "campfire",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "start"
+      }
+    ]
+  },
+  {
+    "id": "wood-brazier",
+    "ingredients": [
+      {
+        "item": "wood",
+        "count": 20
+      },
+      {
+        "item": "sap",
+        "count": 5
+      }
+    ],
+    "result": {
+      "item": "wood-brazier",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "level",
+        "skill": "foraging",
+        "level": 2
+      }
+    ]
+  },
+  {
+    "id": "stone-brazier",
+    "ingredients": [
+      {
+        "item": "stone",
+        "count": 20
+      },
+      {
+        "item": "coal",
+        "count": 3
+      }
+    ],
+    "result": {
+      "item": "stone-brazier",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "level",
+        "skill": "mining",
+        "level": 2
       }
     ]
   }

@@ -1,4 +1,6 @@
 import { dateOf, type Season } from "./calendar";
+import { FARM_STORE } from "./mapstore";
+import { clearMineLights } from "./lights";
 import { festivalDayToday } from "./festivals";
 import { growthRate } from "./professions";
 import { collectPacks } from "./lightning";
@@ -59,6 +61,7 @@ export function blocksGrowth(
         (!self && g.fruitTrees.at(tx, ty)) ||
         g.sprinklers.at(tx, ty) ||
         g.machines.at(tx, ty) ||
+        g.placed.get(FARM_STORE, tx, ty) ||
         g.chests.onFarm(tx, ty) ||
         g.farm.plotAt(tx, ty)?.crop ||
         g.forage.itemAt(tx, ty)
@@ -195,6 +198,7 @@ export function sleep(
   if (isRaining(g.weather)) g.farm.waterAll();
   // The new day: last week's gifts pay the weekly friendship bonus (note 61).
   g.friendship.startDay(g.day.clock.day);
+  clearMineLights(g);
   g.sprinklers.water(g.farm);
   collectPacks(g);
   g.greenhouseSprinklers.water(g.greenhouse);
@@ -211,6 +215,7 @@ export function sleep(
       !g.rocks.at(x, y) &&
       !g.sprinklers.at(x, y) &&
       !g.machines.at(x, y) &&
+      !g.placed.get(FARM_STORE, x, y) &&
       !g.chests.onFarm(x, y) &&
       !g.fruitTrees.at(x, y) &&
       g.ground.at(x, y).length === 0,
@@ -231,6 +236,7 @@ export function sleep(
         !g.twigs.at(x, y) &&
         !g.sprinklers.at(x, y) &&
         !g.machines.at(x, y) &&
+        !g.placed.get(FARM_STORE, x, y) &&
         !g.farm.plotAt(x, y)?.crop &&
         !g.forage.itemAt(x, y) &&
         g.ground.at(x, y).length === 0,
@@ -254,6 +260,7 @@ export function sleep(
         !g.trees.at(x, y) &&
         !g.sprinklers.at(x, y) &&
         !g.machines.at(x, y) &&
+        !g.placed.get(FARM_STORE, x, y) &&
         !g.chests.onFarm(x, y) &&
         !g.farm.plotAt(x, y) &&
         !g.forage.itemAt(x, y) &&
@@ -280,6 +287,7 @@ export function sleep(
         !g.weeds.at(s.x, s.y) &&
         !g.sprinklers.at(s.x, s.y) &&
         !g.machines.at(s.x, s.y) &&
+        !g.placed.get(FARM_STORE, s.x, s.y) &&
         !g.chests.onFarm(s.x, s.y),
     ),
     random,

@@ -1,6 +1,12 @@
 import { cropById } from "./crops";
 import { FARM_STORE, GREENHOUSE_STORE } from "./mapstore";
-import { collectPlaced, splitPlaced, type PlacedSave } from "./placedstore";
+import {
+  PlacedStore,
+  collectPlaced,
+  nativePlaced,
+  splitPlaced,
+  type PlacedSave,
+} from "./placedstore";
 import {
   MAX_SITE,
   loadAnimals,
@@ -116,6 +122,11 @@ export interface GameState {
   areas: Record<string, World>;
   /** Set while the player is in an area: which one, and the farm's world set aside. */
   away?: { mapId: string; home: World };
+  /**
+   * Placeables that have no typed list of their own (lights so far), by map
+   * (`placedstore.ts`). Sprinklers, machines and chests are saved with these.
+   */
+  placed: PlacedStore;
   /** Machines standing on the farm. */
   machines: Machines;
   /** The greenhouse's soil: grows in any season (note 31). */
@@ -214,6 +225,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     fruitTrees: new FruitTrees(),
     greenhouseSprinklers: new Sprinklers(),
     greenhouseFruitTrees: new FruitTrees(),
+    placed: new PlacedStore(),
     machines: new Machines(),
     casks: new Casks(),
     furnace: new Furnace(),
@@ -738,6 +750,7 @@ export function deserialize(text: string): GameState | undefined {
   );
   // A save with `placed` holds sprinklers, machines and chests there; an older one in three lists.
   const placed = isObject(raw.placed) ? splitPlaced(raw.placed) : undefined;
+  if (isObject(raw.placed)) g.placed = nativePlaced(raw.placed);
   g.sprinklers.load(
     validSprinklers(placed ? placed.farmSprinklers : farmItems.sprinklers),
   );

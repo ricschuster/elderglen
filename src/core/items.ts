@@ -269,6 +269,14 @@ items.set("lightning-rod", {
   sellPrice: 0,
   keep: true,
 });
+/** Placeable lights (note 89): stood on a tile, they glow. Not sold, so a placed set is never a shop run. */
+for (const [id, name] of [
+  ["torch", "Torch"],
+  ["campfire", "Campfire"],
+  ["wood-brazier", "Wood brazier"],
+  ["stone-brazier", "Stone brazier"],
+] as const)
+  items.set(id, { id, name, sellPrice: 0, keep: true });
 items.set(ELDERFRUIT, {
   id: ELDERFRUIT,
   name: "Elderfruit",
@@ -370,6 +378,10 @@ const GROUPS: [string, string[]][] = [
       ...BARS.map((b) => b.id),
       "battery-pack",
       "lightning-rod",
+      "torch",
+      "campfire",
+      "wood-brazier",
+      "stone-brazier",
       ELDERFRUIT,
       DEEPMARK_KEY,
     ],

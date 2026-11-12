@@ -158,5 +158,53 @@
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"
+  },
+  {
+    "id": "torch",
+    "kind": "light",
+    "places": ["farm", "mine", "camp", "wild"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand",
+    "light": {
+      "radius": 3,
+      "onlyAtNight": false
+    }
+  },
+  {
+    "id": "campfire",
+    "kind": "light",
+    "places": ["farm", "mine", "camp", "wild"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand",
+    "light": {
+      "radius": 4,
+      "onlyAtNight": false
+    }
+  },
+  {
+    "id": "wood-brazier",
+    "kind": "light",
+    "places": ["farm", "camp"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand",
+    "light": {
+      "radius": 4,
+      "onlyAtNight": false
+    }
+  },
+  {
+    "id": "stone-brazier",
+    "kind": "light",
+    "places": ["farm", "camp"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand",
+    "light": {
+      "radius": 4,
+      "onlyAtNight": false
+    }
   }
 ]

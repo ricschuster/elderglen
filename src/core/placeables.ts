@@ -1,6 +1,7 @@
 import placeableData from "../content/placeables.json";
 import { isFarmMap } from "./farmtypes";
 import { isHouseMap } from "./house";
+import { isCampFloor, mineFloorOf } from "./mines";
 import type { FarmMap } from "./map";
 
 /**
@@ -14,7 +15,8 @@ export type PlaceableKind =
   "sprinkler" | "machine" | "chest" | "light" | "rod" | "heater" | "bomb";
 
 /** The kinds of place the table reads. A map says which it is (`placeTag`). */
-export type PlaceTag = "farm" | "greenhouse" | "house" | "cellar";
+export type PlaceTag =
+  "farm" | "greenhouse" | "house" | "cellar" | "mine" | "camp" | "wild";
 
 export interface PlaceableDef {
   id: string;
@@ -26,6 +28,8 @@ export interface PlaceableDef {
   blocksWalking: boolean;
   /** `hand`: any tool or the empty hand lifts it. `none`: it cannot be lifted (a bomb). */
   pickUp: "hand" | "none";
+  /** Lights only: the glow radius in tiles, and whether it shows only after dusk. */
+  light?: { radius: number; onlyAtNight: boolean };
 }
 
 export const PLACEABLES = placeableData as unknown as readonly PlaceableDef[];
@@ -39,13 +43,16 @@ export function placeableById(
 /**
  * Which kind of place a map is. The greenhouse is the indoor growing room, a
  * house map is a home interior, and any other farm map is the farm. A map
- * outside these has no tag, so nothing may be placed there yet.
+ * outside these has no tag, so nothing may be placed there yet. A mine floor is
+ * `mine`, or `camp` on the rest floors, and an outdoor map with no soil is `wild`.
  */
 export function placeTag(map: FarmMap, mapId?: string): PlaceTag | undefined {
   if (mapId !== undefined && isHouseMap(mapId)) return "house";
   if (map.indoors) return "greenhouse";
   if (mapId === undefined || isFarmMap(mapId)) return "farm";
-  return undefined;
+  const floor = mineFloorOf(mapId);
+  if (floor !== undefined) return isCampFloor(floor) ? "camp" : "mine";
+  return map.wild ? "wild" : undefined;
 }
 
 /** May this placeable stand on this kind of place? Says nothing of the tile. */

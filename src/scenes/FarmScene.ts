@@ -152,6 +152,14 @@ import {
 } from "../core/cask";
 import { chestById, pickUpChest, placeChest, pushChest } from "../core/chests";
 import {
+  isLight,
+  lightAt,
+  lightLayer,
+  lightMapKey,
+  pickUpLight,
+  placeLight,
+} from "../core/lights";
+import {
   POT_ITEM,
   baitPot,
   collectPot,
@@ -211,6 +219,7 @@ import {
   sprinklerKey,
   furnitureKey,
   chestKey,
+  lightKey,
   POT_KEY,
   POT_READY_KEY,
   machineKey,
@@ -348,6 +357,8 @@ export class FarmScene extends Phaser.Scene {
   private uiCamera!: Phaser.Cameras.Scene2D.Camera;
   private sprites!: Phaser.GameObjects.Container;
   private ground!: Phaser.GameObjects.Graphics;
+  /** The light layer: glow rings of placed lights and the worn ring (note 89). */
+  private glow!: Phaser.GameObjects.Graphics;
   private wash!: Phaser.GameObjects.Graphics;
   /** Dusk over the farm: fades in toward nightfall, which moves by season. */
   private night!: Phaser.GameObjects.Rectangle;
@@ -554,6 +565,8 @@ export class FarmScene extends Phaser.Scene {
       .setAlpha(0)
       .setDepth(1000);
     world.push(this.night);
+    this.glow = this.add.graphics().setDepth(1001);
+    world.push(this.glow);
 
     // UI objects, drawn by a second camera that does not zoom.
     const settings = loadDeviceSettings();
@@ -843,6 +856,7 @@ export class FarmScene extends Phaser.Scene {
             )
         : 0,
     );
+    this.drawGlow();
     this.syncVillagers();
     this.checkHeartEvent();
     const walking = this.tapPath.length > 0;
@@ -1014,6 +1028,7 @@ export class FarmScene extends Phaser.Scene {
       this.state.furniture.blocks(this.mapId, x, y) ||
       (this.mapId === CELLAR_MAP && this.state.casks.at(x, y)) ||
       !!this.state.chests.at(this.mapId, x, y) ||
+      !!lightAt(this.state, this.mapId, x, y) ||
       this.map.serviceAt(x, y)?.kind === "camp-chest" ||
       !!this.store.sprinklers.at(x, y) ||
       (this.outdoorSoil && !!this.state.machines.at(x, y))
@@ -1887,6 +1902,21 @@ export class FarmScene extends Phaser.Scene {
       this.state.pots.get(this.mapId, front.x, front.y)
     )
       return this.report(pickUpPot(this.state, this.mapId, front.x, front.y));
+    // A light is stood down from the backpack, and any tool or the empty hand lifts one.
+    if (held.kind === "item" && isLight(held.id))
+      return this.report(
+        placeLight(
+          this.state,
+          this.map,
+          this.mapId,
+          front.x,
+          front.y,
+          held.id,
+          (x, y) => !!this.rocks()?.at(x, y),
+        ),
+      );
+    if (lightAt(this.state, this.mapId, front.x, front.y))
+      return this.report(pickUpLight(this.state, this.mapId, front.x, front.y));
     // A chest is stood down from the backpack, and the axe or pickaxe takes an empty one up.
     if (held.kind === "item" && chestById(held.id))
       return this.report(
@@ -2415,6 +2445,33 @@ export class FarmScene extends Phaser.Scene {
     }
   }
 
+  /**
+   * The light layer (note 89): a soft warm ring for each placed light and the
+   * worn ring. Placed lights show once it is dusk outdoors, and always in the
+   * mines, where it is dark all day.
+   */
+  private drawGlow(): void {
+    this.glow.clear();
+    const dusk = this.outdoorSoil
+      ? darkness(
+          dateOf(this.state.day.clock.day).season,
+          this.state.day.clock.minutes,
+        )
+      : 0;
+    const dark = this.floor !== undefined ? 1 : dusk;
+    if (dark <= 0) return;
+    const ts = this.map.tileSize;
+    const at = { x: this.pos.x / ts, y: (this.pos.y - ts / 2) / ts };
+    for (const l of lightLayer(this.state, this.mapId, at)) {
+      const cx = (l.worn ? l.x : l.x + 0.5) * ts;
+      const cy = (l.worn ? l.y : l.y + 0.5) * ts;
+      for (let i = 4; i >= 1; i--) {
+        this.glow.fillStyle(0xffd27a, 0.06 * dark);
+        this.glow.fillCircle(cx, cy, (l.radius * ts * i) / 4);
+      }
+    }
+  }
+
   /** Draw plots, crops and forage on the tiles. */
   private drawGround(): void {
     this.ground.clear();
@@ -2441,6 +2498,8 @@ export class FarmScene extends Phaser.Scene {
       if (s.kind === "camp-chest") put(s.x, s.y, chestKey("big-chest"));
     for (const c of this.state.chests.each(this.mapId))
       put(c.x, c.y, chestKey(c.id));
+    for (const l of this.state.placed.each(lightMapKey(this.mapId)))
+      put(l.x, l.y, lightKey(l.id));
     for (const p of this.state.pots.each(this.mapId)) {
       put(p.x, p.y, POT_KEY);
       if (p.catch) put(p.x, p.y, POT_READY_KEY);
