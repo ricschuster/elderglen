@@ -33,8 +33,7 @@ Tier 1, needed to fill the bundles:
    Spring Leeks, Barrel Batch, Pantry Stock, Crystal Gift. Build.
 5. **#870 Crystalarium** (BUILT 2026-11-12, awaiting owner play): designed (note 24), Stardew's times by gem value, craftable with
    Hearthsilver. Build.
-6. **#871 room rewards**: designed (note 16), free four-stop carts and a weekly herb
-   stall. Build with the Guests' Board data fix and `bundleBonus()` wiring.
+6. **#871 room rewards**: BUILT (note 16, "Built status"): carts with the cart screen, the weekly herb stall, the Guests' Board +500 payout. Left: art, stock and price numbers, later stops. Close the issue after the owner's play.
 
 Tier 2, thin or placeholder content:
 

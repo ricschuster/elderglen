@@ -10,12 +10,28 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 11,
-  "nextobjectid": 245,
+  "nextobjectid": 247,
   "properties": [
-    { "name": "placeholder", "type": "bool", "value": true },
-    { "name": "rideable", "type": "bool", "value": true },
-    { "name": "wild", "type": "bool", "value": true },
-    { "name": "waterKind", "type": "string", "value": "mountain-lake" }
+    {
+      "name": "placeholder",
+      "type": "bool",
+      "value": true
+    },
+    {
+      "name": "rideable",
+      "type": "bool",
+      "value": true
+    },
+    {
+      "name": "wild",
+      "type": "bool",
+      "value": true
+    },
+    {
+      "name": "waterKind",
+      "type": "string",
+      "value": "mountain-lake"
+    }
   ],
   "tilesets": [
     {
@@ -605,7 +621,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
         1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1,
         1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1019,7 +1035,11 @@
         0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        { "name": "unless", "type": "string", "value": "mines-open" }
+        {
+          "name": "unless",
+          "type": "string",
+          "value": "mines-open"
+        }
       ]
     },
     {
@@ -1269,7 +1289,11 @@
         0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        { "name": "unless", "type": "string", "value": "mines-open" }
+        {
+          "name": "unless",
+          "type": "string",
+          "value": "mines-open"
+        }
       ]
     },
     {
@@ -1519,7 +1543,11 @@
         0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        { "name": "unless", "type": "string", "value": "quarry-open" }
+        {
+          "name": "unless",
+          "type": "string",
+          "value": "quarry-open"
+        }
       ]
     },
     {
@@ -1769,7 +1797,11 @@
         0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        { "name": "unless", "type": "string", "value": "quarry-open" }
+        {
+          "name": "unless",
+          "type": "string",
+          "value": "quarry-open"
+        }
       ]
     },
     {
@@ -2068,7 +2100,11 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "requires", "type": "string", "value": "mines-open" }
+            {
+              "name": "requires",
+              "type": "string",
+              "value": "mines-open"
+            }
           ]
         },
         {
@@ -2083,8 +2119,16 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            { "name": "map", "type": "string", "value": "forest" },
-            { "name": "entry", "type": "string", "value": "from_mountain" }
+            {
+              "name": "map",
+              "type": "string",
+              "value": "forest"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "from_mountain"
+            }
           ]
         },
         {
@@ -2100,9 +2144,21 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "map", "type": "string", "value": "mine" },
-            { "name": "entry", "type": "string", "value": "door" },
-            { "name": "requires", "type": "string", "value": "mines-open" }
+            {
+              "name": "map",
+              "type": "string",
+              "value": "mine"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "door"
+            },
+            {
+              "name": "requires",
+              "type": "string",
+              "value": "mines-open"
+            }
           ]
         },
         {
@@ -2117,7 +2173,11 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            { "name": "kind", "type": "string", "value": "mountain-lake" }
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "mountain-lake"
+            }
           ]
         },
         {
@@ -2131,7 +2191,13 @@
           "height": 336,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "kind", "type": "string", "value": "river" }]
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "river"
+            }
+          ]
         },
         {
           "id": 8,
@@ -2144,7 +2210,13 @@
           "height": 128,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "kind", "type": "string", "value": "river" }]
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "river"
+            }
+          ]
         },
         {
           "id": 9,
@@ -2157,7 +2229,13 @@
           "height": 384,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "kind", "type": "string", "value": "river" }]
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "river"
+            }
+          ]
         },
         {
           "id": 10,
@@ -2172,8 +2250,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2189,8 +2275,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2206,8 +2300,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2223,8 +2325,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2240,8 +2350,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2257,8 +2375,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2274,8 +2400,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2291,8 +2425,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2308,8 +2450,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2325,8 +2475,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2342,8 +2500,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2359,8 +2525,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2376,8 +2550,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2393,8 +2575,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2410,8 +2600,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2427,8 +2625,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2444,8 +2650,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2461,8 +2675,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2478,8 +2700,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2495,8 +2725,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2512,8 +2750,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2529,8 +2775,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2546,8 +2800,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2563,8 +2825,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2580,8 +2850,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2597,8 +2875,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2614,8 +2900,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2631,8 +2925,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2648,8 +2950,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2665,8 +2975,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2682,8 +3000,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2699,8 +3025,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2716,8 +3050,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2733,8 +3075,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2750,8 +3100,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2767,8 +3125,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2784,8 +3150,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2801,8 +3175,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2818,8 +3200,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2835,8 +3225,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2852,8 +3250,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2869,8 +3275,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2886,8 +3300,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2903,8 +3325,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2920,8 +3350,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2937,8 +3375,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2954,8 +3400,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2971,8 +3425,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -2988,8 +3450,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3005,8 +3475,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3022,8 +3500,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3039,8 +3525,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3056,8 +3550,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3073,8 +3575,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3090,8 +3600,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3107,8 +3625,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 5 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3124,8 +3650,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 4 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3141,8 +3675,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 4 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3158,8 +3700,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 4 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3175,8 +3725,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 4 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3192,8 +3750,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 4 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3209,8 +3775,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 4 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3226,8 +3800,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 4 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3243,8 +3825,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 4 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3260,8 +3850,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 4 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3277,8 +3875,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 4 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3294,8 +3900,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 4 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3311,8 +3925,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 4 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3328,8 +3950,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 4 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3345,8 +3975,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 4 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3362,8 +4000,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 4 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3379,8 +4025,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 4 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3396,8 +4050,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 4 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3413,8 +4075,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 3 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3430,8 +4100,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 2 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3447,8 +4125,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 3 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3464,8 +4150,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 3 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3481,8 +4175,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 2 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3498,8 +4200,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 3 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 3
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -3515,8 +4225,16 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "stage", "type": "int", "value": 2 },
-            { "name": "kind", "type": "string", "value": "pine" }
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 2
+            },
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "pine"
+            }
           ]
         },
         {
@@ -5416,8 +6134,16 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            { "name": "map", "type": "string", "value": "forge" },
-            { "name": "entry", "type": "string", "value": "door" }
+            {
+              "name": "map",
+              "type": "string",
+              "value": "forge"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "door"
+            }
           ]
         },
         {
@@ -5433,7 +6159,11 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "kind", "type": "string", "value": "stonekeeper" }
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "stonekeeper"
+            }
           ]
         },
         {
@@ -5449,7 +6179,11 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "requires", "type": "string", "value": "quarry-open" }
+            {
+              "name": "requires",
+              "type": "string",
+              "value": "quarry-open"
+            }
           ]
         },
         {
@@ -5464,9 +6198,21 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            { "name": "map", "type": "string", "value": "quarry" },
-            { "name": "entry", "type": "string", "value": "from_mountain" },
-            { "name": "requires", "type": "string", "value": "quarry-open" }
+            {
+              "name": "map",
+              "type": "string",
+              "value": "quarry"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "from_mountain"
+            },
+            {
+              "name": "requires",
+              "type": "string",
+              "value": "quarry-open"
+            }
           ]
         },
         {
@@ -5479,11 +6225,52 @@
           "width": 112,
           "height": 16,
           "properties": [
-            { "name": "map", "type": "string", "value": "hearthwell" },
-            { "name": "entry", "type": "string", "value": "from_mountain" }
+            {
+              "name": "map",
+              "type": "string",
+              "value": "hearthwell"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "from_mountain"
+            }
           ],
           "rotation": 0,
           "visible": true
+        },
+        {
+          "id": 245,
+          "name": "cart-mine",
+          "class": "service",
+          "type": "service",
+          "x": 1056,
+          "y": 320,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "cart"
+            }
+          ]
+        },
+        {
+          "id": 246,
+          "name": "from_cart-mine",
+          "class": "entry",
+          "type": "entry",
+          "x": 1056,
+          "y": 336,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
         }
       ]
     },
@@ -5497,7 +6284,11 @@
       "x": 0,
       "y": 0,
       "properties": [
-        { "name": "unless", "type": "string", "value": "quarry-open" }
+        {
+          "name": "unless",
+          "type": "string",
+          "value": "quarry-open"
+        }
       ],
       "objects": [
         {
@@ -5513,7 +6304,11 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "kind", "type": "string", "value": "quarry-bridge" }
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "quarry-bridge"
+            }
           ]
         },
         {
@@ -5529,7 +6324,11 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "kind", "type": "string", "value": "quarry-bridge" }
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "quarry-bridge"
+            }
           ]
         },
         {
@@ -5545,7 +6344,11 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "kind", "type": "string", "value": "quarry-bridge" }
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "quarry-bridge"
+            }
           ]
         },
         {
@@ -5561,7 +6364,11 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "kind", "type": "string", "value": "quarry-bridge" }
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "quarry-bridge"
+            }
           ]
         },
         {
@@ -5577,7 +6384,11 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "kind", "type": "string", "value": "quarry-bridge" }
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "quarry-bridge"
+            }
           ]
         }
       ]

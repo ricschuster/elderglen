@@ -91,6 +91,7 @@ import {
   speedFactor,
 } from "../core/horse";
 import {
+  CART_KIND,
   exitOpen,
   FarmMap,
   layersAtTier,
@@ -101,6 +102,12 @@ import {
 import { counterShutLine, doorShutLine } from "../core/shophours";
 import { roadNews } from "../core/roadnews";
 import { traderProblem } from "../core/trader";
+import {
+  CART_IDLE_LINE,
+  cartsRunning,
+  herbStallProblem,
+  stopOfService,
+} from "../core/roomrewards";
 import { exitLabel, serviceLabel, standInLine } from "../core/labels";
 import {
   facingFrom,
@@ -2091,6 +2098,15 @@ export class FarmScene extends Phaser.Scene {
       this.message = shut;
       return this.render();
     }
+    if (service?.kind === CART_KIND) return this.rideCart(service.id);
+    if (service?.kind === "herb-stall") {
+      const closed = herbStallProblem(this.state);
+      if (closed) {
+        this.message = closed;
+        return this.render();
+      }
+      return this.open("shop", { stock: "herb" });
+    }
     if (service?.kind === "fisher-shop")
       return this.open("shop", { stock: "fisher" });
     if (service?.kind === "pin-stall")
@@ -2252,6 +2268,16 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** The cove's hidden chest: one a season, opened with Action (note 76, decision 8). */
+  /** The Hearth room's cart: free once it runs (note 16), an empty cart before. */
+  private rideCart(serviceId: string): void {
+    const stop = stopOfService(serviceId);
+    if (!stop || !cartsRunning(this.state)) {
+      this.message = CART_IDLE_LINE;
+      return this.render();
+    }
+    this.open("cart", { from: stop.id });
+  }
+
   private openTreasure(): void {
     const r = takeTreasure(this.state);
     if (r.ok) {

@@ -282,7 +282,8 @@ describe("the hall map", () => {
   it("has one scroll for each room", () => {
     const names = maps
       .get("hall")
-      .services.map((s) => s.id)
+      .services.filter((s) => s.kind === "hall")
+      .map((s) => s.id)
       .sort();
     expect(names).toEqual(rooms.map((r) => r.id).sort());
   });
