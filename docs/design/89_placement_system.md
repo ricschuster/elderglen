@@ -62,7 +62,7 @@ full it stays. Exceptions:
 | Sprinkler | The farm and the greenhouse | As built. Not on sand. Only tilled tiles are watered |
 | Machine | The farm, plus the processing rooms the note 24 lists | As built, per machine. Not in the mines |
 | Chest | The farm, houses, camps | As built. Not in a shop or on a festival spot |
-| Torch | The farm, the mines floors, camps, the wilds | Not in Hearthwell, not indoors except the farmhouse |
+| Torch | The farm, the mines floors, camps, the wilds | Not in Hearthwell, not indoors (owner, 2026-11-12) |
 | Campfire | The farm, the mines floors, camps, the wilds | Carries a small cook or warm rule later, not in this note |
 | Brazier (wood, stone) | The farm and camps | Decoration with light |
 | Wood and iron lamp-post | The farm, outdoors | Cost includes a battery pack (note 34) |
@@ -113,8 +113,9 @@ collection.
   It does not block walking.
 - With a heater placed, the building takes no mood loss on winter nights (the built rule,
   note 23: placeholder 10 points). It never harms an animal.
-- **Where the item comes from** is open, see "Open questions". The Stardew source is
-  unchecked (SC-149).
+- **Where the item comes from (owner, 2026-11-12):** sold at the ranch shop for gold, as
+  Stardew does from memory (unchecked, SC-149). Placeholder price 1,000g. Bundle 25
+  still gives the first one.
 - Bundle 25 already hands out a kept `coop-heater` item. That item becomes the placeable.
 
 ## Bombs
@@ -185,17 +186,13 @@ Each step is a small pull request and the first one is the base for the rest.
 
 ## Open questions
 
-1. **Heater source.** Marnie's shop (a gold price), a recipe, or only the bundle gift.
-   Stardew's source is not checked (SC-149).
-2. **Torch in the farmhouse.** Allowed (a cosy light) or not. Lean yes.
-3. **Bomb experience and drops.** Does a bomb give Mining experience, and do its drops
-   match a swing? The note says no experience, same drops.
-4. **Lit bombs and leaving a map.** The note makes them go off at once. A player could
-   also keep them safe by leaving. Acceptable.
-5. **Rod count limit.** No limit as built. Many rods make nearly every strike land, which
-   is what the formula wants. Worth a check in play.
-6. **Placeable tags per map.** The layout page (note 87) must give each map the tags
-   this table reads.
+Settled 2026-11-12: heater from the ranch shop, no torches indoors, no bomb experience
+(same drops as a swing), no cap on rods.
+
+1. **Lit bombs and leaving a map.** They go off at once. A player could keep safe by
+   leaving. Acceptable.
+2. **Placeable tags per map.** The layout page (note 87) must give each map the tags this
+   table reads.
 
 ## Built today
 
