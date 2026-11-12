@@ -294,5 +294,70 @@
         "letter": "hattie-recipe-10"
       }
     ]
+  },
+  {
+    "id": "bread",
+    "name": "Bread",
+    "ingredients": [
+      {
+        "item": "wheat",
+        "count": 2
+      }
+    ],
+    "energy": 60,
+    "sellPrice": 60,
+    "sources": [
+      {
+        "kind": "level",
+        "skill": "farming",
+        "level": 2
+      }
+    ]
+  },
+  {
+    "id": "herb-tea",
+    "name": "Herb tea",
+    "ingredients": [
+      {
+        "item": "dandelion",
+        "count": 2
+      }
+    ],
+    "energy": 50,
+    "sellPrice": 80,
+    "sources": [
+      {
+        "kind": "level",
+        "skill": "foraging",
+        "level": 2
+      }
+    ]
+  },
+  {
+    "id": "honey-cake",
+    "name": "Honey cake",
+    "ingredients": [
+      {
+        "item": "honey",
+        "count": 1
+      },
+      {
+        "item": "wheat",
+        "count": 1
+      },
+      {
+        "item": "egg",
+        "count": 1
+      }
+    ],
+    "energy": 120,
+    "sellPrice": 160,
+    "sources": [
+      {
+        "kind": "level",
+        "skill": "farming",
+        "level": 4
+      }
+    ]
   }
 ]

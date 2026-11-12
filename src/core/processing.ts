@@ -69,6 +69,9 @@ export const WOOD_PER_COAL = 10;
 export const BEE_DAYS = 4;
 export const BEE_MINUTES = BEE_DAYS * MINUTES_PER_DAY;
 
+/** Chance a bee house batch also gives one beeswax (note 63, a placeholder, ours). */
+export const WAX_CHANCE = 0.5;
+
 /** One batch: what goes in, what comes out and how long it takes. */
 export interface Process {
   /** The input item, quality removed. */
