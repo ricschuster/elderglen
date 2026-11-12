@@ -5,7 +5,7 @@ import {
   MAHOGANY_SEED_NAME,
   MAHOGANY_SEED_PRICE,
 } from "./mahogany";
-import { BOOTS, RINGS } from "./equipment";
+import { BOOTS, RINGS, isCombo, ringById } from "./equipment";
 import { FERTILIZERS } from "./fertilizer";
 import { FORAGE } from "./forage";
 import {
@@ -562,7 +562,12 @@ const QUALITY_NAME = { silver: "Silver", gold: "Gold" } as const;
 /** An item by id. A good with a quality suffix sells for more, per tier. */
 export function itemById(id: string): ItemDef | undefined {
   const { base, quality } = splitQuality(id);
-  const def = items.get(base);
+  let def = items.get(base);
+  if (!def) {
+    // A combined ring (note 95) is made, not listed.
+    const ring = isCombo(base) ? ringById(base) : undefined;
+    if (ring) def = { id: ring.id, name: ring.name, sellPrice: 0, keep: true };
+  }
   if (!def || quality === "normal") return def;
   return {
     id,

@@ -121,3 +121,16 @@ Cinder Shard equivalent.
   100 to 120, six nodes a floor).
 - Which of each gem pair gives which stat.
 - The switch to a Cinder Shard equivalent at M5 (ring 2 or 3).
+
+## Built status
+
+Built (2026-11-12): ring combining and unforge only (ring 1). `src/content/forge.json`
+(`forgeCurrency`, `combineCost` 40, `unforgeReturnShare` 0.5), `src/core/forge.ts`
+(`combineRings`, `unforgeRing`, `packRings`), and a combined ring is an id of its two base ids
+joined by `+` (`comboId`, `ringById` in `equipment.ts`), so it saves as a plain item and the
+effects stack. The menu is extra rows on the smith counter at the Mountain forge hut
+(`SmithScene`), one Combine row per pair of rings in the pack and one Unforge row per combined
+ring. The equipment screen lists combined rings. Tests: `tests/forge.test.ts`.
+
+Not built: the four new rings of note 94 have no source (owner to choose where they come
+from), a dedicated forge scene with three tabs, gem forging and enchanting (ring 2 or 3).

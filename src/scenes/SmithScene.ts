@@ -13,6 +13,14 @@ import {
 import { BOMBS } from "../core/bombs";
 import { buy } from "../core/shop";
 import { BOOTS } from "../core/equipment";
+import {
+  COMBINE_COST,
+  combineRings,
+  packRings,
+  unforgeRing,
+  UNFORGE_RETURN,
+} from "../core/forge";
+import { ringById } from "../core/equipment";
 import { oreRows } from "./ore-rows";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
@@ -94,7 +102,12 @@ export class SmithScene extends Phaser.Scene {
           },
         ],
       });
-    rows.push(...this.weaponRows(), ...this.bootsRows(), ...this.bombRows());
+    rows.push(
+      ...this.weaponRows(),
+      ...this.bootsRows(),
+      ...this.bombRows(),
+      ...this.ringRows(),
+    );
     this.menu.setRows(rows);
   }
 
@@ -119,6 +132,51 @@ export class SmithScene extends Phaser.Scene {
         ],
       };
     });
+  }
+
+  /** Ring combining and unforging (note 95): two different rings for ore, or split one free. */
+  private ringRows(): Row[] {
+    const g = this.state;
+    const { base, combos } = packRings(g.inventory);
+    const rows: Row[] = [];
+    for (let i = 0; i < base.length; i++)
+      for (let j = i + 1; j < base.length; j++) {
+        const a = base[i]!;
+        const b = base[j]!;
+        rows.push({
+          label: `Combine ${ringById(a)!.name.toLowerCase()} and ${ringById(b)!.name.toLowerCase()}`,
+          detail: `${COMBINE_COST} hearthsilver ore, both effects in one ring`,
+          dim: g.inventory.count("hearthsilver-ore") < COMBINE_COST,
+          buttons: [
+            {
+              text: "Forge",
+              run: () => {
+                const r = combineRings(g.inventory, a, b);
+                this.say(
+                  r.ok
+                    ? `She hammers them into ${ringById(r.id)!.name.toLowerCase()}.`
+                    : r.reason,
+                );
+              },
+            },
+          ],
+        });
+      }
+    for (const id of combos)
+      rows.push({
+        label: `Unforge ${ringById(id)!.name.toLowerCase()}`,
+        detail: `Free, you get ${UNFORGE_RETURN} ore back`,
+        buttons: [
+          {
+            text: "Split",
+            run: () => {
+              const r = unforgeRing(g.inventory, id);
+              this.say(r.ok ? "She splits it in two." : r.reason);
+            },
+          },
+        ],
+      });
+    return rows;
   }
 
   /** Boots for coin (placeholder source, note 37). */

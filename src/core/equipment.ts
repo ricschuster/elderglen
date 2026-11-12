@@ -51,8 +51,54 @@ export function bootsById(id: string): BootsDef | undefined {
 
 export const RING_SLOTS = 2;
 
+/** A combined ring's id joins its two base ring ids with this (note 95). */
+export const COMBO_SEP = "+";
+
+/** The id of the ring made from two different base rings, order-free. */
+export function comboId(a: string, b: string): string {
+  return [a, b].sort().join(COMBO_SEP);
+}
+
+/** The two base ring ids of a combined ring, undefined for any other id. */
+export function comboParts(id: string): [string, string] | undefined {
+  const parts = id.split(COMBO_SEP);
+  if (parts.length !== 2) return undefined;
+  const [a, b] = parts as [string, string];
+  if (a === b || a > b) return undefined;
+  if (!RINGS.some((r) => r.id === a) || !RINGS.some((r) => r.id === b))
+    return undefined;
+  return [a, b];
+}
+
+/**
+ * A ring by id. A combined ring (note 95) is built from its two parts and
+ * stacks both effects as if worn together.
+ */
 export function ringById(id: string): RingDef | undefined {
-  return RINGS.find((r) => r.id === id);
+  const base = RINGS.find((r) => r.id === id);
+  if (base) return base;
+  const parts = comboParts(id);
+  if (!parts) return undefined;
+  const a = RINGS.find((r) => r.id === parts[0])!;
+  const b = RINGS.find((r) => r.id === parts[1])!;
+  const def: RingDef = {
+    id,
+    name: `${a.name} and ${b.name.toLowerCase()}`,
+    light: a.light + b.light,
+    magnet: a.magnet + b.magnet,
+  };
+  const defense = (a.defense ?? 0) + (b.defense ?? 0);
+  const immunity = (a.immunity ?? 0) + (b.immunity ?? 0);
+  if (defense) def.defense = defense;
+  if (immunity) def.immunity = immunity;
+  if (a.slimeProof || b.slimeProof) def.slimeProof = true;
+  if (a.halfEffects || b.halfEffects) def.halfEffects = true;
+  return def;
+}
+
+/** A ring that is itself a combination (it cannot be combined again). */
+export function isCombo(id: string): boolean {
+  return comboParts(id) !== undefined;
 }
 
 export interface EquipmentSave {
