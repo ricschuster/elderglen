@@ -351,7 +351,7 @@ with the prices on the saved Marnie's Ranch page (read 2026-11-12). Prices below
 Stardew's; ours match them. Only the first rows exist now.
 
 | Item | Price | State |
-|---|---|---|
+| --- | --- | --- |
 | Hay | 50g | Built (the shop row sells 10 bales). |
 | Heater | 2,000g | Built (note 89). |
 | Milk Pail, Shears | 1,000g each | No tool exists; animals give milk and wool by hand. Decide whether to add them as tools or leave them out. |
