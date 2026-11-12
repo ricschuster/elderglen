@@ -354,8 +354,8 @@ items.set(WARP_TOTEM_BEACH, {
 export const COOP_HEATER = "coop-heater";
 export const CRYSTALARIUM = "crystalarium";
 export const ELF_LETTER = "elf-letter";
-/** The heater is sold at the Forest farmstead (note 89, placeholder, SC-149). Bundle 25 still gives the first. */
-export const HEATER_PRICE = 1000;
+/** The heater is sold at the Forest farmstead for Stardew's 2,000g (note 89, SC-149). Bundle 25 still gives the first. */
+export const HEATER_PRICE = 2000;
 items.set(COOP_HEATER, {
   id: COOP_HEATER,
   name: "Coop heater",
