@@ -1,5 +1,7 @@
 import {
   artisanId,
+  BEER,
+  PALE_ALE,
   CHEESE,
   CLOTH,
   dyeOf,
@@ -117,6 +119,9 @@ const KEG: Record<"fruit" | "vegetable", ArtisanKind> = {
 const JAR_MINUTES = 4000;
 const KEG_MINUTES = { wine: 10000, juice: 6000 } as const;
 const MEAD_MINUTES = 600;
+/** Pale ale 2,250 minutes (saved Artisan Goods page). Beer 1,750 is from memory, unchecked. */
+const PALE_ALE_MINUTES = 2250;
+const BEER_MINUTES = 1750;
 const KILN_MINUTES = 30;
 /** The geode crusher takes 1 game hour a geode and burns no fuel (Stardew, SC-157). */
 const CRUSHER_MINUTES = 60;
@@ -342,6 +347,10 @@ export function processFor(
   }
   if (machine === "keg") {
     if (input === HONEY) return { ...one, output: MEAD, minutes: MEAD_MINUTES };
+    if (input === "hops")
+      return { ...one, output: PALE_ALE, minutes: PALE_ALE_MINUTES };
+    if (input === "wheat")
+      return { ...one, output: BEER, minutes: BEER_MINUTES };
     const produce = produceOf(input);
     if (!produce) return undefined;
     const kind = KEG[produce];

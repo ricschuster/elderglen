@@ -15,8 +15,12 @@ export interface CropDef {
   yield?: number;
   /** Energy restored when eaten. */
   energy?: number;
-  /** Fruit goes to jam and wine, a vegetable to pickles and juice. Crops default to vegetable. */
-  produce?: "fruit" | "vegetable";
+  /**
+   * Fruit goes to jam and wine, a vegetable to pickles and juice. Crops default
+   * to vegetable. `none` is neither (wheat and hops: the keg makes beer and pale
+   * ale from them, note 92).
+   */
+  produce?: "fruit" | "vegetable" | "none";
   /** A rare crop is not on sale, not in a mixed seed, not shipped for the total and not asked for (the ember berry, note 39). */
   rare?: boolean;
   /** The seed's own name, when it is not "<name> seeds" (the Emberseed). */

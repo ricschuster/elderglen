@@ -177,7 +177,8 @@
     "seasons": ["summer", "fall"],
     "growDays": 4,
     "seedPrice": 10,
-    "sellPrice": 25
+    "sellPrice": 25,
+    "produce": "none"
   },
   {
     "id": "ember-berry",
@@ -189,5 +190,15 @@
     "rare": true,
     "seedName": "Emberseed",
     "produce": "fruit"
+  },
+  {
+    "id": "hops",
+    "name": "Hops",
+    "seasons": ["summer"],
+    "growDays": 11,
+    "regrowDays": 1,
+    "seedPrice": 60,
+    "sellPrice": 25,
+    "produce": "none"
   }
 ]

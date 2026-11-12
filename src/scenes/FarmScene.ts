@@ -122,6 +122,7 @@ import { aimAt } from "../core/aim";
 import { createControls, type Controls } from "./controls";
 import { planTap, planUse, type TapPlan } from "../core/pathing";
 import { tapPick, tapUse } from "../core/tapuse";
+import { tapReady, tapStatus, TAPPER } from "../core/tapper";
 import {
   browserSettingsStore,
   browserStore,
@@ -1185,7 +1186,9 @@ export class FarmScene extends Phaser.Scene {
         hand ||
         (this.tapObject(tap.x, tap.y) && this.tileBlocked(tap.x, tap.y));
       const exit = !!this.map.exitAt(tap.x, tap.y);
-      if (fit === "use" && !this.tileBlocked(tap.x, tap.y)) {
+      // A tapper goes on a tree, whose tile is blocked (note 92).
+      const tapper = held.kind === "item" && held.id === TAPPER;
+      if (fit === "use" && (tapper || !this.tileBlocked(tap.x, tap.y))) {
         // A drag uses each new tile beside the farmer at once.
         if (beside) {
           this.cancelTap();
@@ -2337,7 +2340,9 @@ export class FarmScene extends Phaser.Scene {
           ? statusText(this.state, front.x, front.y)
           : result.reason === "cask busy"
             ? caskStatus(this.state, front.x, front.y)
-            : reasonText(result.reason);
+            : result.reason === "tap busy"
+              ? tapStatus(this.state, front.x, front.y)
+              : reasonText(result.reason);
     } else if (result.note) {
       this.message = result.note;
     } else if (result.ladder) {
@@ -2738,8 +2743,10 @@ export class FarmScene extends Phaser.Scene {
       put(m.x, m.y, machineKey(m.id));
       if (jobDone(this.state, m)) put(m.x, m.y, MACHINE_READY_KEY);
     }
-    for (const t of this.state.trees.each())
+    for (const t of this.state.trees.each()) {
       put(t.x, t.y, treeKey(t.stage, t.stump, t.large, t.regrow !== undefined));
+      if (tapReady(this.state, t)) put(t.x, t.y, MACHINE_READY_KEY);
+    }
     for (const p of this.state.ground.each()) {
       const key = iconKey(p.id);
       if (key) put(p.x, p.y, key);
