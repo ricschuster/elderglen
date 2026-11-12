@@ -1,4 +1,5 @@
 import creatureData from "../content/creatures.json";
+import type { Inflicts } from "./effects";
 import type { Vec } from "./movement";
 
 /**
@@ -59,6 +60,8 @@ export interface CreatureDef {
    * A club ignores it (note 22).
    */
   armour?: "front" | "rolled";
+  /** The bad effect a landed hit may carry, and the chance (note 94). */
+  inflicts?: Inflicts;
 }
 
 export const CREATURES = creatureData as CreatureDef[];
