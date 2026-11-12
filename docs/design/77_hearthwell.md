@@ -461,3 +461,22 @@ chose the notes' side each time, and all three are built.
 - **The Dyer's bundle is in the Guests' Board** (bundle 23, notes 16 and 63), not the Hearth.
   Stardew's Dye Bundle is in its Bulletin Board (saved Bundles page). The Hearth holds the
   Smith's and the Weaver's until the Lamplighter's is built.
+
+## Built status (2026-11-12, shop hours, road news and the trader)
+
+- **Shop hours and festival closures:** `src/core/shophours.ts` ties note 79's `shops.json` hours to the
+  counters (`counterShutLine`, checked in `FarmScene.action` before a counter opens) and to the eight
+  Hearthwell shop doors (`doorShutLine`, checked in `useDoor`: locked before opening and after door
+  time, open between). Festival hours (opens to closes of a day festival) shut every shop; the Night
+  Market does not. Rain and the hall (Last Seat) open the days note 79 says. Tests:
+  `tests/shophours.test.ts`. Not done: the keeper walking home at closing is already the schedule's job;
+  locking the player out of homes after bedtime (#599).
+- **Road news (note 57 step 1, 2):** the road news board now speaks `roadNews` (`src/core/roadnews.ts`,
+  lines in `src/content/road-news.json`): one or two seeded flavour lines, the trader notice and the
+  forecast read from the stored `g.tomorrow`, with a festival heads-up. The steward and the farmhouse TV
+  do not read it yet.
+- **The trader (note 57 step 3):** `src/core/trader.ts`, goods in `src/content/trader.json`. Wednesday and
+  Saturday, 9:00 to 20:00, 4 to 6 goods seeded by the day, 1.5 times sell value. A `trader-stall` service
+  in the Outpost yard (tile 92, 16) opens `ShopScene` with `stock: "trader"`. Tests: `tests/trader.test.ts`.
+  The goods are a placeholder mix of rare forage, bars, geodes and dishes (no rare seed, recipe or decor
+  yet; decor has no shop item).

@@ -768,6 +768,7 @@ function paintTrees(scene: Phaser.Scene): void {
 
 export const ROCK_KEYS = {
   stone: "rock-stone",
+  hard: "rock-hard",
   copper: "rock-copper",
   coal: "rock-coal",
   quartz: "rock-quartz",
@@ -942,6 +943,10 @@ function paintMineArt(scene: Phaser.Scene): void {
     px(c, colour, 8, 10, 2, 1);
   };
   draw(ROCK_KEYS.stone, (c) => lump(c, "#8a8a90", "#5a5a62", "#b4b4ba"));
+  draw(ROCK_KEYS.hard, (c) => {
+    lump(c, "#6e6e76", "#3e3e46", "#9a9aa2");
+    specks(c, "#2e2e36");
+  });
   draw(ROCK_KEYS.copper, (c) => {
     lump(c, "#8a8a90", "#5a5a62", "#b4b4ba");
     specks(c, "#d8803c");

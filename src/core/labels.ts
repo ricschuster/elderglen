@@ -68,6 +68,7 @@ const SERVICES: Record<string, string> = {
   orders: "Orders Board",
   requests: "Request Board",
   "board-news": "Road News Board",
+  trader: "Road Trader",
   festival: "Village Green",
   "festival-leave": "Way Home",
   "hedge-chest": "Chest",

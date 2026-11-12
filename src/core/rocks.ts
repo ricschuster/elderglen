@@ -10,6 +10,7 @@ import type { Spot } from "./forage";
 
 export type RockKind =
   | "stone"
+  | "hard"
   | "copper"
   | "coal"
   | "quartz"
@@ -29,6 +30,7 @@ export interface Rock {
 /** Swings to break each kind at each pickaxe grade, Basic to Hearthsilver. Ours, placeholders (note 44): a better pickaxe needs fewer swings. */
 const SWINGS_BY_TIER: Record<RockKind, readonly number[]> = {
   stone: [2, 2, 1, 1, 1],
+  hard: [3, 3, 2, 2, 1],
   copper: [3, 2, 2, 1, 1],
   coal: [3, 2, 2, 1, 1],
   quartz: [1, 1, 1, 1, 1],
@@ -46,6 +48,7 @@ export function swingsToBreak(kind: RockKind, tier: number): number {
 
 export const ROCK_KINDS: RockKind[] = [
   "stone",
+  "hard",
   "copper",
   "coal",
   "quartz",

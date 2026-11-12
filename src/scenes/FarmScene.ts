@@ -97,6 +97,9 @@ import {
   type Exit,
   type TiledLayer,
 } from "../core/map";
+import { counterShutLine, doorShutLine } from "../core/shophours";
+import { roadNews } from "../core/roadnews";
+import { traderProblem } from "../core/trader";
 import { exitLabel, serviceLabel, standInLine } from "../core/labels";
 import {
   facingFrom,
@@ -1507,7 +1510,12 @@ export class FarmScene extends Phaser.Scene {
     if (!exit) return false;
     // The Larder may have been finished at the hall since the last morning.
     this.refreshHolds();
-    if (this.exitShutForFestival(exit)) {
+    const doorShut =
+      this.mapId === "hearthwell" ? doorShutLine(this.state, exit.id) : "";
+    if (doorShut) {
+      this.message = doorShut;
+      this.render();
+    } else if (this.exitShutForFestival(exit)) {
       this.message = festivalShutLine(this.state.day.clock.day);
       this.render();
     } else if (exitOpen(exit, this.holds)) this.leave(exit);
@@ -1991,6 +1999,13 @@ export class FarmScene extends Phaser.Scene {
     if (this.meetVillager(front)) return;
     const service = this.map.serviceAt(front.x, front.y);
     if (service?.kind !== "tide-bridge") this.mendAsked = false;
+    const shut = service
+      ? counterShutLine(this.state, this.mapId, service.kind)
+      : "";
+    if (shut) {
+      this.message = shut;
+      return this.render();
+    }
     if (service?.kind === "fisher-shop")
       return this.open("shop", { stock: "fisher" });
     if (service?.kind === "pin-stall")
@@ -2008,6 +2023,20 @@ export class FarmScene extends Phaser.Scene {
     if (service?.kind === "quarry-bridge") {
       this.message = QUARRY_BRIDGE_LINE;
       return this.render();
+    }
+    if (service?.kind === "board-news") {
+      const g = this.state;
+      this.message = roadNews(g.day.clock.day, g.tomorrow);
+      return this.render();
+    }
+    if (service?.kind === "trader") {
+      const g = this.state;
+      const closed = traderProblem(g.day.clock.day, g.day.clock.minutes);
+      if (closed) {
+        this.message = closed;
+        return this.render();
+      }
+      return this.open("shop", { stock: "trader" });
     }
     if (service && standInLine(service.kind)) {
       this.message = standInLine(service.kind) as string;

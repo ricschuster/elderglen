@@ -189,8 +189,8 @@ function emptyAt(w: World, x: number, y: number): boolean {
 }
 
 /**
- * Put one night's spawn on a world (note 78). `rock` and `hard-rock` are plain
- * stone (hard rock is not its own kind yet), an ore id is that node, and
+ * Put one night's spawn on a world (note 78). `rock` is plain stone, `hard-rock`
+ * is the hard kind that can drop coal, an ore id is that node, and
  * `oak-seed` and `maple-seed` are a seed in the ground of that tree kind.
  */
 export function placeSpawn(w: World, s: Spawn): boolean {
@@ -201,11 +201,13 @@ export function placeSpawn(w: World, s: Spawn): boolean {
     return true;
   }
   const kind: RockKind =
-    s.kind === "rock" || s.kind === "hard-rock"
+    s.kind === "rock"
       ? "stone"
-      : (ROCK_KINDS as string[]).includes(s.kind)
-        ? (s.kind as RockKind)
-        : "stone";
+      : s.kind === "hard-rock"
+        ? "hard"
+        : (ROCK_KINDS as string[]).includes(s.kind)
+          ? (s.kind as RockKind)
+          : "stone";
   return w.rocks.add(s.x, s.y, kind);
 }
 
@@ -266,6 +268,7 @@ export function areasEndDay(g: GameState, random: () => number): void {
         openTiles(map),
         free,
         random,
+        g.skills.level("mining"),
       ))
         placeSpawn(w, spawn);
   }

@@ -10,6 +10,8 @@ export interface SpawnKind {
   /** What spawns: `rock`, `hard-rock` or an ore node id. The map's scene knows how to place it. */
   kind: string;
   weight: number;
+  /** Mining level needed before this kind spawns (note 78 "Ore gates"). Default none. */
+  minLevel?: number;
 }
 
 export interface SpawnTable {
@@ -57,8 +59,10 @@ export function nightlySpawns(
   tiles: readonly { x: number; y: number }[],
   free: (x: number, y: number) => boolean,
   random: () => number,
+  miningLevel = Infinity,
 ): Spawn[] {
-  const total = table.kinds.reduce((n, k) => n + k.weight, 0);
+  const kinds = table.kinds.filter((k) => (k.minLevel ?? 0) <= miningLevel);
+  const total = kinds.reduce((n, k) => n + k.weight, 0);
   if (tiles.length === 0 || total <= 0) return [];
   const out: Spawn[] = [];
   const used = new Set<string>();
@@ -67,8 +71,8 @@ export function nightlySpawns(
     const key = `${tile.x},${tile.y}`;
     if (used.has(key) || !free(tile.x, tile.y)) continue;
     let pick = random() * total;
-    let kind = table.kinds[table.kinds.length - 1]!.kind;
-    for (const k of table.kinds) {
+    let kind = kinds[kinds.length - 1]!.kind;
+    for (const k of kinds) {
       pick -= k.weight;
       if (pick < 0) {
         kind = k.kind;

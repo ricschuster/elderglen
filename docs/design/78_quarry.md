@@ -215,3 +215,14 @@ Mountain (note 74 "Built status (2026-11-09, #649)") and the dwarf's camp.
 - **Not built:** gem nodes and artifact spots, Mining level gates on ore, a hard rock
   kind that can drop coal, the dwarf's sprite and gifts, the Last Seat bridge job (#603).
 - **Playtest:** `npm run playtest:quarry`. Tests: `tests/quarry.test.ts`.
+
+## Built status (2026-11-12, hard rock and ore gates)
+
+- **Hard rock** is its own rock kind (`hard`): 3 swings at the basic pickaxe (stone 2), 3 mining XP,
+  gives stone, or coal 30 percent of the time (`HARD_COAL_CHANCE`, placeholder, note 07). The
+  nightly `hard-rock` spawn places it (it used to place plain stone).
+- **Ore gates:** each spawn kind may carry `minLevel` in `spawns.json`. Placeholders: iron 2, gold 5,
+  Hearthsilver 8; copper and coal from the start. A kind above the player's Mining level is left out
+  of that night's draw. Numbers need the owner's say (note 07).
+- **Still not built:** gem nodes (wait for the final mineral list, note 69) and artifact spots (no
+  artifact design), the dwarf's sprite and gifts, the Last Seat bridge job (#603).

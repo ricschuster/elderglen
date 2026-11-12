@@ -20,6 +20,7 @@ export const PICKAXE_ENERGY = 2;
 /** Mining XP for breaking a rock of each kind. Ours, placeholders ("a few XP, ore gives more"). */
 export const ROCK_XP: Record<RockKind, number> = {
   stone: 2,
+  hard: 3,
   copper: 5,
   coal: 4,
   quartz: 3,
@@ -35,6 +36,9 @@ export const EXTRA_ORE_PER_LEVEL = 0.03;
 /** Prospectors get one more ore from a node this often. */
 export const PROSPECTOR_CHANCE = 0.25;
 
+/** Chance a broken hard rock gives coal instead of stone. Ours, a placeholder (note 07). */
+export const HARD_COAL_CHANCE = 0.3;
+
 export interface Drop {
   id: string;
   count: number;
@@ -49,6 +53,12 @@ export function drops(
   floor?: number,
 ): Drop {
   if (kind === "stone") return { id: STONE, count: random() < 0.5 ? 1 : 2 };
+  if (kind === "hard") {
+    // Hard rock (note 78): stone, and now and then coal.
+    if (random() < HARD_COAL_CHANCE)
+      return { id: COAL, count: 1 + (random() < 0.3 ? 1 : 0) };
+    return { id: STONE, count: random() < 0.5 ? 1 : 2 };
+  }
   if (kind === "geode") return { id: geodeDrop(floor, random), count: 1 };
   if (kind === "quartz") return { id: QUARTZ, count: 1 };
   if (kind === "coal") return { id: COAL, count: 1 + (random() < 0.3 ? 1 : 0) };
