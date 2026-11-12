@@ -82,3 +82,17 @@ named place and Mossback and the pond fish are not yet taken.
 - **Mossback price.** 750g base (placeholder).
 - **Gem nodes.** A fixed chance by floor band. Mining level gates the ore tier, not the
   gem odds.
+
+## Fifth round: flowers and dyes (owner, 2026-11-12)
+
+- **Flowers.** Six: two each in spring, summer and fall, none in winter. Seeds at the
+  general store, plus wild finds in the forage areas (Stardew-like).
+- **Honey.** A hive near a flower makes a flower honey, otherwise plain (Stardew, recalled,
+  unchecked). Needs a SC row when the note is written.
+- **Dyes (Stardew, saved Dyeing page).** Dyes change clothing, shirt and trousers layers,
+  not hats. A fixed dye station in a villager's house, colour from items you put in,
+  free colour with hue, saturation and value sliders. The slider screen must work on a
+  tablet. The pots are not placeables, so note 89 does not cover them. Our character needs
+  recolourable clothing layers (note 15), which waits for the art step.
+- **Bouquet.** Deferred to the marriage design (note 12).
+- **Flower dance.** No link to flowers, the festival stays as note 82.
