@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { rewardText, ROOMS, type BundleDef } from "../core/bundles";
+import { hatById } from "../core/hats";
 import { itemById } from "../core/items";
 import { CATEGORY_NAMES, type ArtisanCategory } from "../core/artisan";
 import type { GameState } from "../core/save";
@@ -133,6 +134,23 @@ export class HallScene extends Phaser.Scene {
     ];
     this.detail.setText(lines.join("\n"));
 
+    const hats = bundle.reward.hats;
+    if (hats && hall.complete(bundle.id)) {
+      const left = hall.hatPicksLeft(bundle.id, g.wardrobe);
+      this.packMenu.setRows(
+        hats.from.map((id) => ({
+          label: hatById(id)?.name ?? id,
+          detail: g.wardrobe.has(id) ? "Yours" : `${left} to take`,
+          dim: g.wardrobe.has(id) || left === 0,
+          buttons:
+            g.wardrobe.has(id) || left === 0
+              ? []
+              : [{ text: "Take", run: () => this.takeHat(bundle.id, id) }],
+        })),
+      );
+      return;
+    }
+
     const ids: string[] = [];
     for (let i = 0; i < g.inventory.size; i++) {
       const slot = g.inventory.slot(i);
@@ -174,6 +192,12 @@ export class HallScene extends Phaser.Scene {
         ? `${bundle.name} is complete! You receive ${rewardText(bundle)}.`
         : `Handed in ${name(itemId)}.`,
     );
+  }
+
+  private takeHat(bundleId: string, hatId: string): void {
+    const g = this.state;
+    if (g.hall.claimHat(bundleId, hatId, g.wardrobe))
+      this.say(`You take the ${hatById(hatId)?.name ?? hatId}.`);
   }
 
   private close(): void {

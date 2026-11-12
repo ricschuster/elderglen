@@ -277,3 +277,17 @@ and rewards below are placeholders for tuning, except where marked as the owner'
 
 Left open: the candle recipe numbers, artifact spot numbers, the treat list per
 festival, the old things' names and sell prices, and the lantern's art.
+
+Built 2026-11-12 (#869): bundles 20 Lamplighter's (Hearth, 2 of 3: 3 standing lamps, 10 oil, 20
+candles, reward the small glow ring), 24 Host's (Guests' Board, bread, honey cake, herb tea,
+reward a choice of 3 of 5 hats) and 26 Storyteller's (Guests' Board, 3 of a rare herb, old seed
+packet, carved bead, faded ribbon, pressed flower; reward the green-glass lantern, a keepsake
+furniture item) are in `bundles.json`. A bee house batch gives one beeswax on a 50 percent roll
+(`WAX_CHANCE`, placeholder). The candle is a farming level 3 recipe, 1 wax and 1 fiber. Bread (2
+wheat, farming 2), herb tea (2 dandelions, foraging 2) and honey cake (honey, wheat, egg, farming
+4) are in `dishes.json`. The new hats are `seed-wreath` and `sun-bonnet`. The hats are taken in
+the hall from the finished bundle, one at a time (`Hall.claimHat`); nothing extra is saved, the
+hats owned from the set count as the picks used. The Last Seat's `opensAfter` is now `"all"`: it
+opens after every bundle in the other rooms (26). Gaps: the festival treat slot of bundle 24 is
+left out (no festival treat items exist, so the bundle is 3 of 3 dishes for now), the lantern does
+not yet light a tile, and the hat set has no placeholder art beyond a colour.

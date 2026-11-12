@@ -143,5 +143,15 @@
     "id": "summit-crown",
     "name": "Summit Crown",
     "color": "#d8c070"
+  },
+  {
+    "id": "seed-wreath",
+    "name": "Seed Wreath",
+    "color": "#8fbf5a"
+  },
+  {
+    "id": "sun-bonnet",
+    "name": "Sun Bonnet",
+    "color": "#f0c860"
   }
 ]

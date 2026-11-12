@@ -166,6 +166,11 @@ items.set("milk", { id: "milk", name: "Milk", sellPrice: 125 });
 items.set("goat-milk", { id: "goat-milk", name: "Goat milk", sellPrice: 225 });
 items.set("truffle", { id: "truffle", name: "Truffle", sellPrice: 625 });
 items.set("moonwool", { id: "moonwool", name: "Moonwool", sellPrice: 1200 });
+/** Beeswax from the bee house and the candle made from it (note 63, bundle 20). Prices are placeholders, ours. */
+export const WAX = "wax";
+export const CANDLE = "candle";
+items.set(WAX, { id: WAX, name: "Beeswax", sellPrice: 40 });
+items.set(CANDLE, { id: CANDLE, name: "Candle", sellPrice: 60 });
 /** Mixed seeds plant a random crop that suits the season. Sell price is ours. */
 items.set("mixed-seed", {
   id: "mixed-seed",
@@ -477,7 +482,10 @@ const GROUPS: [string, string[]][] = [
   ],
   ["Rings", RINGS.map((r) => r.id)],
   ["Boots", BOOTS.map((b) => b.id)],
-  ["Wood and fibre", ["wood", "hardwood", "sap", "fiber", "clay", "hay"]],
+  [
+    "Wood and fibre",
+    ["wood", "hardwood", "sap", "fiber", "clay", "hay", WAX, CANDLE],
+  ],
 ];
 for (const [group, ids] of GROUPS)
   for (const id of ids) {

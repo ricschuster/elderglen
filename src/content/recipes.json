@@ -767,5 +767,29 @@
         "level": 9
       }
     ]
+  },
+  {
+    "id": "candle",
+    "ingredients": [
+      {
+        "item": "wax",
+        "count": 1
+      },
+      {
+        "item": "fiber",
+        "count": 1
+      }
+    ],
+    "result": {
+      "item": "candle",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "level",
+        "skill": "farming",
+        "level": 3
+      }
+    ]
   }
 ]
