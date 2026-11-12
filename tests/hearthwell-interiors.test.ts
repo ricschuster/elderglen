@@ -19,7 +19,12 @@ const SHOPS = {
   hatter: "counter-hatter",
 } as const;
 // Interiors rebuilt to their note 86 layouts keep their size here (#853, #855 to #860).
-const REBUILT: Record<string, [number, number]> = { "general-store": [31, 31] };
+const REBUILT: Record<string, [number, number]> = {
+  "general-store": [31, 31],
+  sawmill: [31, 27],
+  healer: [22, 23],
+  smithy: [21, 26],
+};
 const BURROWS = ["burrow-gardener", "burrow-retired", "burrow-young"];
 const ALL = [...Object.keys(SHOPS), "outpost", "outpost-rooms", ...BURROWS];
 
