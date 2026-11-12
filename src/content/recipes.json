@@ -460,6 +460,10 @@
       {
         "kind": "bundle",
         "bundle": "animal-goods"
+      },
+      {
+        "kind": "order",
+        "order": "spring-leeks"
       }
     ]
   },
