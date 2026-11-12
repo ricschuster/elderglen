@@ -96,3 +96,14 @@ named place and Mossback and the pond fish are not yet taken.
   recolourable clothing layers (note 15), which waits for the art step.
 - **Bouquet.** Deferred to the marriage design (note 12).
 - **Flower dance.** No link to flowers, the festival stays as note 82.
+
+## Sixth round: fish goals (owner, 2026-11-12)
+
+- **Letter roster.** The fish seed letter counts the 46 ordinary fish. The Mossback and the
+  five legends are outside it.
+- **Two goals (Stardew-like, recalled, unchecked).** The letter is the ordinary fish. A
+  separate fish achievement counts every fish, the legends and the Mossback included.
+- **Legends.** Once per save, each farm slot starts fresh (saved Legendary Fish page). No
+  second copy by catch or by purchase, and the one catch counts for everything.
+- **Build.** The letter trigger and the achievement need separate counters in
+  `src/content/letters.json` and the achievements data.
