@@ -459,6 +459,15 @@ export class FarmScene extends Phaser.Scene {
     // tier are read and drawn, and the rest is black void.
     this.tier = this.buildingTier(id);
     const holds = holdsOf(this.state);
+    // The house's spouse, renovation and corner stair layers bake into the map
+    // (collision too), so its holds must be here and not only in `refreshHolds`.
+    // A renovation is ordered at the carpenter's, so the house is rebuilt on entry.
+    for (const h of houseHolds(
+      this.state.houseTier,
+      houseSpouse(this.state),
+      this.state.houseRenos,
+    ))
+      holds.add(h);
     this.map = mineLayout
       ? FarmMap.fromTiled(json)
       : maps.getWith(id, holds, this.tier);
@@ -2261,7 +2270,11 @@ export class FarmScene extends Phaser.Scene {
     if (this.state.cave.open) this.holds.add("cave-open");
     if (this.state.animals.coopBuilt) this.holds.add(COOP_BUILT);
     if (this.state.animals.barnBuilt) this.holds.add(BARN_BUILT);
-    for (const h of houseHolds(this.state.houseTier, houseSpouse(this.state)))
+    for (const h of houseHolds(
+      this.state.houseTier,
+      houseSpouse(this.state),
+      this.state.houseRenos,
+    ))
       this.holds.add(h);
     for (const h of greenhouseHolds(this.state)) this.holds.add(h);
     for (const c of this.conditional)

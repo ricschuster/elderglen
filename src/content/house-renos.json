@@ -1,0 +1,20 @@
+[
+  { "id": "open-bedroom", "name": "Open bedroom", "price": 10000 },
+  { "id": "south", "name": "Southern room", "price": 30000 },
+  { "id": "corner", "name": "Corner room", "price": 20000 },
+  {
+    "id": "corner-big",
+    "name": "Expanded corner room",
+    "price": 100000,
+    "needs": "corner"
+  },
+  { "id": "attic", "name": "Attic", "price": 60000 },
+  { "id": "cubby", "name": "Cubby", "price": 10000 },
+  { "id": "dining", "name": "Dining room", "price": 150000 },
+  {
+    "id": "dining-open",
+    "name": "Open dining room",
+    "price": 10000,
+    "needs": "dining"
+  }
+]
