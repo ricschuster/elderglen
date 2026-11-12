@@ -105,7 +105,7 @@ a placeholder by floor band.
   slice in `33_build_order.md`). Until then the live shop keeps its gold only
   rule, and the axe and pickaxe are not upgradable.
 
-## Build notes (not built)
+## Build notes (built)
 
 - `src/core/upgrades.ts`: `UPGRADABLE` gains `axe` and `pickaxe`. `TIER_NAMES`
   gains Hearthsilver, so `MAX_TIER` becomes 4. `UPGRADE_COST` becomes gold and

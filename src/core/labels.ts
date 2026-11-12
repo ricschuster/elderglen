@@ -132,15 +132,6 @@ export function serviceLabel(kind: string, id: string): string | undefined {
 }
 
 /**
- * What the Outpost's road news board says until its system exists (note 57,
- * built as a stand-in by Hearthwell part 1). Keyed by service kind. The
- * Special Orders board beside it is the working `orders` service.
- */
-export const BOARD_LINES: Record<string, string> = {
-  "board-news": "The road news board. Nothing is posted yet.",
-};
-
-/**
  * What the Hearthwell counters without a system yet say (note 77, interiors
  * built as shells by #646). Nobody stands behind them until villagers (#599).
  */
@@ -154,4 +145,4 @@ export const COUNTER_LINES: Record<string, string> = {
 
 /** The line a stand-in counter or board says, if the kind has one. */
 export const standInLine = (kind: string): string | undefined =>
-  BOARD_LINES[kind] ?? COUNTER_LINES[kind];
+  COUNTER_LINES[kind];

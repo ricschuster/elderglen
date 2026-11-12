@@ -262,8 +262,8 @@ Settled where the notes left gaps. All numbers are placeholders (note 07).
 ## Left for later
 
 - **Ale and pale ale** for the cask, once grain exists (the cask is built, see above).
-- **A dehydrator,** which Stardew sells for a high price.
-- **Recycling and a worm bin,** deep Stardew machines. Recycling for trash is in `21_fishing.md`.
+- **A dehydrator** is built (placeable and recipe, farm cave).
+- **Recycling and a worm bin:** the recycler and worm bin are built placeables. Recycling for trash is in `21_fishing.md`.
 - **Artisan goods from trees and tapping** (maple syrup and similar). They need
   trees and the Tapper profession (`26_seasons.md` and the foraging
   professions).
