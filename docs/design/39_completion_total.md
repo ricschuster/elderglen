@@ -319,7 +319,7 @@ Movie Theater pages, read on 2026-10-31.
 ## Eighth elderfruit (owner, 2026-11-12)
 
 Stardew has seven stardrops; ours has eight. The eighth is the mailed gift of the fish
-seed letter (every fish landed, trigger `whole-roster`, `src/content/letters.json`). It
+seed letter (every ordinary fish landed, the legends and the pond fish not needed, trigger `fish-roster`, `src/content/letters.json`; split from the Whole Roster achievement 2026-11-12). It
 is the same item as the other seven: +34 maximum energy, eaten at once, 270 up to 542 in
 all. The points for the rare boost line are split in eighths, and the "Find every
 stardrop" counter reads eight. Update the counter, the achievement and the completion

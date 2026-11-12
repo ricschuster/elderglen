@@ -47,6 +47,8 @@ export interface FishDef {
 }
 
 export const FISH = fishData as FishDef[];
+/** The ordinary roster: every fish that is not a legend (the fish seed letter counts these). */
+export const ORDINARY_FISH = FISH.filter((f) => f.rarity !== "legend");
 
 export function fishById(id: string): FishDef | undefined {
   return FISH.find((f) => f.id === id);
