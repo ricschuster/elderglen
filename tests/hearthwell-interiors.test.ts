@@ -160,7 +160,7 @@ describe("the Hearthwell interiors", () => {
       expect(COUNTER_LINES[kind]).not.toContain(String.fromCharCode(0x2014));
     }
     expect(standInLine("shop")).toBeUndefined();
-    expect(standInLine("board-news")).toBeDefined();
+    expect(standInLine("board-news")).toBeUndefined();
   });
 
   it("can be reached from the Farm by walking, shop and smithy included", () => {

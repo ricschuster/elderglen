@@ -43,7 +43,7 @@ Open, top to bottom:
 8. A browser look at hat picker, cart screen, herb stall, tapper, lights, rod, bombs, festival
    maps, tailoring and decor.
 
-Alongside: #880 stale status lines, `docs/overview.json` (behind since 2026-11-11), Stardew
+Alongside: `docs/overview.json` (behind since 2026-11-11), Stardew
 checks rows (SC-122, 135, 160 to 167, SC-156), and file the M4 hosting spike before M4.
 
 ## Milestone order (ADR 0012)

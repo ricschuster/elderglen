@@ -245,8 +245,9 @@ Build order steps 1 to 4 are built, except the pots and the Great Hearthfin lege
   room wash (it hit the Forest's onion bank); the wash is now for hall rooms only.
 - **Ferry:** built later (#644, 2026-11-09): the dock, the gated exit and the ruined and repaired art, see note 76 "Built status".
 - **Elf's house:** built later (#641, 2026-11-09), see "Elf's house built" below.
-- **Not built:** shellfish and crab pots (nothing in the game makes a pot yet), the Pearl
-  Lobster, the legend Great Hearthfin, and the fisher as a named person.
+- **Not built at the time (pots and legends came later, `src/core/pots.ts`, `fish.json`):**
+  shellfish and crab pots, the Pearl Lobster, the legend Great Hearthfin, and the fisher as
+  a named person.
 - **Playtest:** `npm run playtest:delta` (leaves by the farm's south exit, casts a
   rod on the marsh lake, the river and the sea, buys a rod, mends the footbridge
   and crosses it, sleeps).
@@ -267,8 +268,8 @@ Drafted by `scripts/gen-beach-elf-house.mjs`; the JSON is the source from then o
 - **The pin:** item `homeward-pin`, kept (cannot be sold), sold once only ("available
   until purchased", as the saved Krobus page gives for Stardew's Return Scepter).
   Placeholder price 1,500,000g (note 07), a little under Stardew's 2,000,000g.
-- **Gaps closed by the smallest choice:** hearts and villagers do not exist (#599), so
-  the stall is not gated at 3 hearts yet; the gate is added with friendship. The pin does
+- **Gaps closed by the smallest choice:** hearts and villagers did not exist then (#599); friendship is built now, so check the
+  stall's 3 heart gate. The pin does
   nothing when held, since the warp rings it returns from are not built. Her ship is not
   drawn (the pier at x 80 to 82 is where it would be moored). Still open as in note 09:
   the haven elf's slot, the keepsake and token, whether she leaves, the pin's final price.
