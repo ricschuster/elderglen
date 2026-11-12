@@ -1,3 +1,9 @@
+import { isClear } from "./actions";
+import type { Outcome } from "./actions";
+import type { FarmMap } from "./map";
+import { FARM_STORE } from "./mapstore";
+import { mayPlaceOn, placeTag } from "./placeables";
+import type { PlacedItem } from "./placedstore";
 import type { GameState } from "./save";
 
 /**
@@ -7,106 +13,163 @@ import type { GameState } from "./save";
  * minutes. A strike lands on a rod with chance `1 - (charged / all)^2`. A hit rod
  * makes one battery pack the next morning and ignores more strikes that day.
  * With no rod, or on a miss, a strike only flashes: the farm is never harmed.
- * Pure rules. Placing a rod on the map is not wired yet.
+ * A rod is a placeable (`docs/design/89_placement_system.md`) kept in the generic
+ * placed store under the farm, with `state { hit, pack }`: `hit` once struck
+ * today, `pack` when a battery pack waits on it. The morning turns a hit into a
+ * waiting pack, and the player takes it with Action. Pure rules.
  */
 export const STRIKE_CHANCE = 0.03;
 export const STRIKE_MINUTES = 10;
 export const LIGHTNING_ROD = "lightning-rod";
 export const BATTERY_PACK = "battery-pack";
 
-export interface Rod {
-  x: number;
-  y: number;
-  /** True once struck today: it makes a pack in the morning. */
+const fail = (reason: string): Outcome => ({ ok: false, reason });
+
+/** The state a rod keeps in the placed store. */
+export interface RodState {
   hit: boolean;
+  pack: boolean;
 }
 
-export class Rods {
-  private rods: Rod[] = [];
+const stateOf = (p: PlacedItem): RodState => ({
+  hit: p.state?.hit === true,
+  pack: p.state?.pack === true,
+});
 
-  get count(): number {
-    return this.rods.length;
-  }
+const setState = (p: PlacedItem, s: RodState): void => {
+  p.state = { hit: s.hit, pack: s.pack };
+};
 
-  /** The number struck and waiting for the morning. */
-  get charged(): number {
-    return this.rods.filter((r) => r.hit).length;
-  }
+/** Every rod on the farm. */
+export function rodsOf(g: GameState): PlacedItem[] {
+  return [...g.placed.each(FARM_STORE)].filter((p) => p.id === LIGHTNING_ROD);
+}
 
-  at(x: number, y: number): Rod | undefined {
-    return this.rods.find((r) => r.x === x && r.y === y);
-  }
+export function rodAt(
+  g: GameState,
+  x: number,
+  y: number,
+): PlacedItem | undefined {
+  const p = g.placed.get(FARM_STORE, x, y);
+  return p?.id === LIGHTNING_ROD ? p : undefined;
+}
 
-  place(x: number, y: number): boolean {
-    if (this.at(x, y)) return false;
-    this.rods.push({ x, y, hit: false });
-    return true;
-  }
+/** True when a battery pack waits on the rod at this tile. */
+export function packWaiting(g: GameState, x: number, y: number): boolean {
+  const rod = rodAt(g, x, y);
+  return !!rod && stateOf(rod).pack;
+}
 
-  remove(x: number, y: number): boolean {
-    const n = this.rods.length;
-    this.rods = this.rods.filter((r) => r.x !== x || r.y !== y);
-    return this.rods.length < n;
-  }
+/**
+ * Stand a rod from the backpack on the faced tile. Only the farm, outdoors in
+ * the open (the place table), on clear ground. Free, and any number may stand.
+ */
+export function placeRod(
+  g: GameState,
+  map: FarmMap,
+  mapId: string,
+  x: number,
+  y: number,
+): Outcome {
+  if (g.inventory.count(LIGHTNING_ROD) < 1) return fail("no rod");
+  if (
+    !mayPlaceOn(LIGHTNING_ROD, placeTag(map, mapId)) ||
+    !isClear(g, map, x, y)
+  )
+    return fail("cannot place here");
+  if (!g.placed.add(FARM_STORE, { x, y, id: LIGHTNING_ROD }))
+    return fail("cannot place here");
+  g.inventory.remove(LIGHTNING_ROD);
+  return { ok: true };
+}
 
-  /**
-   * One strike falls. Returns true if a rod caught it. The chance of a catch is
-   * `1 - (charged / all)^2`, so a spent rod does not take a second strike.
-   */
-  strike(random: () => number): boolean {
-    const free = this.rods.filter((r) => !r.hit);
-    if (free.length === 0) return false;
-    const spent = this.rods.length - free.length;
-    const chance = 1 - (spent / this.rods.length) ** 2;
-    if (random() >= chance) return false;
-    free[Math.floor(random() * free.length)]!.hit = true;
-    return true;
-  }
+/**
+ * Take a rod up into the backpack, with the pack waiting on it if there is
+ * one. Both must fit, or the rod stays.
+ */
+export function pickUpRod(g: GameState, x: number, y: number): Outcome {
+  const rod = rodAt(g, x, y);
+  if (!rod) return fail("nothing to act on");
+  const pack = stateOf(rod).pack;
+  if (
+    g.inventory.room(LIGHTNING_ROD) < 1 ||
+    (pack && g.inventory.room(BATTERY_PACK) < 1)
+  )
+    return fail("backpack full");
+  g.placed.remove(FARM_STORE, x, y);
+  g.inventory.add(LIGHTNING_ROD);
+  if (pack) g.inventory.add(BATTERY_PACK);
+  return { ok: true, item: LIGHTNING_ROD };
+}
 
-  /** A new day: every struck rod hands over one pack and resets. Returns the packs. */
-  endDay(): number {
-    const packs = this.charged;
-    for (const r of this.rods) r.hit = false;
-    return packs;
-  }
+/** Action on a rod: take the battery pack it made in the night. */
+export function takePack(g: GameState, x: number, y: number): Outcome {
+  const rod = rodAt(g, x, y);
+  if (!rod || !stateOf(rod).pack) return fail("nothing to act on");
+  if (g.inventory.room(BATTERY_PACK) < 1) return fail("backpack full");
+  g.inventory.add(BATTERY_PACK);
+  setState(rod, { ...stateOf(rod), pack: false });
+  return {
+    ok: true,
+    item: BATTERY_PACK,
+    note: "You take the battery pack the rod made in the storm.",
+  };
+}
 
-  save(): Rod[] {
-    return this.rods.map((r) => ({ ...r }));
-  }
-
-  load(rods: Rod[] | undefined): void {
-    this.rods = (rods ?? []).map((r) => ({
-      x: Math.floor(r.x),
-      y: Math.floor(r.y),
-      hit: r.hit === true,
-    }));
-  }
+/**
+ * One strike falls. Returns the rod that caught it, if any. The chance of a
+ * catch is `1 - (charged / all)^2`, so a spent rod does not take a second strike.
+ */
+export function strikeRods(
+  g: GameState,
+  random: () => number,
+): PlacedItem | undefined {
+  const rods = rodsOf(g);
+  const free = rods.filter((r) => !stateOf(r).hit);
+  if (free.length === 0) return undefined;
+  const spent = rods.length - free.length;
+  const chance = 1 - (spent / rods.length) ** 2;
+  if (random() >= chance) return undefined;
+  const rod = free[Math.floor(random() * free.length)]!;
+  setState(rod, { ...stateOf(rod), hit: true });
+  return rod;
 }
 
 /**
  * Roll the strikes for a stretch of game minutes on the farm. Only a storm
- * strikes. Returns how many strikes fell and how many a rod caught.
+ * strikes. Returns how many strikes fell, how many a rod caught and which
+ * rods, so the scene can flash them.
  */
 export function rollStrikes(
   g: GameState,
   minutes: number,
   random: () => number,
-): { strikes: number; caught: number } {
-  let strikes = 0;
-  let caught = 0;
-  if (g.weather !== "stormy") return { strikes, caught };
+): { strikes: number; caught: number; hits: { x: number; y: number }[] } {
+  const out = { strikes: 0, caught: 0, hits: [] as { x: number; y: number }[] };
+  if (g.weather !== "stormy") return out;
   for (let m = STRIKE_MINUTES; m <= minutes; m += STRIKE_MINUTES) {
     if (random() >= STRIKE_CHANCE) continue;
-    strikes += 1;
-    if (g.rods.strike(random)) caught += 1;
+    out.strikes += 1;
+    const rod = strikeRods(g, random);
+    if (rod) {
+      out.caught += 1;
+      out.hits.push({ x: rod.x, y: rod.y });
+    }
   }
-  return { strikes, caught };
+  return out;
 }
 
-/** The morning: leave a battery pack in the pack for each struck rod, at most as many as fit. Returns packs given. */
-export function collectPacks(g: GameState): number {
-  const packs = g.rods.endDay();
-  let given = 0;
-  for (let i = 0; i < packs; i++) if (g.inventory.add(BATTERY_PACK)) given++;
-  return given;
+/**
+ * The morning: every struck rod now holds one battery pack and resets. A pack
+ * already waiting stays the one pack. Returns the rods that gained a pack.
+ */
+export function chargeRods(g: GameState): number {
+  let made = 0;
+  for (const rod of rodsOf(g)) {
+    const s = stateOf(rod);
+    if (!s.hit) continue;
+    if (!s.pack) made += 1;
+    setState(rod, { hit: false, pack: true });
+  }
+  return made;
 }

@@ -3,7 +3,7 @@ import { FARM_STORE } from "./mapstore";
 import { clearMineLights } from "./lights";
 import { festivalDayToday } from "./festivals";
 import { growthRate } from "./professions";
-import { collectPacks } from "./lightning";
+import { chargeRods } from "./lightning";
 import { isRaining, rollWeather, type Weather } from "./weather";
 import type { Spot } from "./forage";
 import type { GameState } from "./save";
@@ -200,7 +200,7 @@ export function sleep(
   g.friendship.startDay(g.day.clock.day);
   clearMineLights(g);
   g.sprinklers.water(g.farm);
-  collectPacks(g);
+  chargeRods(g);
   g.greenhouseSprinklers.water(g.greenhouse);
   g.trees.endDay(
     season,

@@ -1,5 +1,6 @@
 import { POT_ITEM } from "../core/pots";
 import { isLight } from "../core/lights";
+import { LIGHTNING_ROD } from "../core/lightning";
 import { CHESTS, chestById } from "../core/chestdefs";
 import { MAHOGANY_SEED } from "../core/mahogany";
 import { DECOR, decorById } from "../core/decor";
@@ -950,6 +951,12 @@ function paintLights(scene: Phaser.Scene): void {
     flame(c, 7, 5);
     flame(c, 5, 7);
   });
+  draw("lightning-rod", (c) => {
+    px(c, "#00000033", 5, 14, 6, 1);
+    px(c, "#7a7a84", 7, 4, 2, 10);
+    px(c, "#b4b4ba", 6, 12, 4, 2);
+    px(c, "#ffe14a", 7, 1, 2, 3);
+  });
   for (const stone of [false, true])
     draw(stone ? "stone-brazier" : "wood-brazier", (c) => {
       px(c, "#00000033", 3, 14, 10, 1);
@@ -1066,7 +1073,7 @@ export function iconKey(itemId: string): string | undefined {
   if (furnitureById(base)) return furnitureKey(base);
   if (decorById(base)) return `decor-${base}`;
   if (chestById(base)) return chestKey(base);
-  if (isLight(base)) return lightKey(base);
+  if (isLight(base) || base === LIGHTNING_ROD) return lightKey(base);
   if (base === POT_ITEM) return POT_KEY;
   const sapling = treeOfSapling(base);
   if (sapling) return saplingIconKey(sapling.id);

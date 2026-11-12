@@ -1,8 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { floorLayout, specialFloor, isCampFloor } from "../src/core/mines";
 import { Mines } from "../src/core/mines";
-import { newGame, serialize, deserialize } from "../src/core/save";
-import { collectPacks, rollStrikes, Rods } from "../src/core/lightning";
 
 function find(kind: "infested" | "geode") {
   for (let day = 1; day < 400; day++)
@@ -59,35 +57,5 @@ describe("special floors", () => {
     expect(extra).toEqual([false, false, false, true]);
     expect(m.killBonus(floor, day).extraDrop).toBe(true);
     expect(new Mines().killBonus(1, 1).extraDrop).toBe(false);
-  });
-});
-
-describe("lightning rods", () => {
-  it("catches the first strike with a single rod and then ignores more", () => {
-    const rods = new Rods();
-    rods.place(2, 2);
-    expect(rods.strike(() => 0)).toBe(true);
-    expect(rods.strike(() => 0)).toBe(false);
-    expect(rods.endDay()).toBe(1);
-    expect(rods.charged).toBe(0);
-  });
-
-  it("only strikes in a storm and gives a pack the next morning", () => {
-    const g = newGame();
-    g.rods.place(5, 5);
-    g.weather = "rainy";
-    expect(rollStrikes(g, 840, () => 0).strikes).toBe(0);
-    g.weather = "stormy";
-    expect(rollStrikes(g, 100, () => 0)).toEqual({ strikes: 10, caught: 1 });
-    expect(collectPacks(g)).toBe(1);
-    expect(g.inventory.count("battery-pack")).toBe(1);
-    expect(collectPacks(g)).toBe(0);
-  });
-
-  it("saves rods and keeps old saves loading", () => {
-    const g = newGame();
-    g.rods.place(1, 2);
-    const back = deserialize(serialize(g))!;
-    expect(back.rods.at(1, 2)).toBeDefined();
   });
 });

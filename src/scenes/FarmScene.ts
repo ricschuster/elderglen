@@ -160,6 +160,15 @@ import {
   placeLight,
 } from "../core/lights";
 import {
+  LIGHTNING_ROD,
+  packWaiting,
+  pickUpRod,
+  placeRod,
+  rodAt,
+  rollStrikes,
+  takePack,
+} from "../core/lightning";
+import {
   POT_ITEM,
   baitPot,
   collectPot,
@@ -707,6 +716,7 @@ export class FarmScene extends Phaser.Scene {
         // Time stands still on a festival map, as in Stardew.
         if (isFestivalMap(this.mapId)) return;
         this.state.day.act(0, TICK_MINUTES);
+        this.strikeFlash(rollStrikes(this.state, TICK_MINUTES, Math.random));
         this.afterAction();
       },
     });
@@ -1029,6 +1039,7 @@ export class FarmScene extends Phaser.Scene {
       (this.mapId === CELLAR_MAP && this.state.casks.at(x, y)) ||
       !!this.state.chests.at(this.mapId, x, y) ||
       !!lightAt(this.state, this.mapId, x, y) ||
+      (isFarmMap(this.mapId) && !!rodAt(this.state, x, y)) ||
       this.map.serviceAt(x, y)?.kind === "camp-chest" ||
       !!this.store.sprinklers.at(x, y) ||
       (this.outdoorSoil && !!this.state.machines.at(x, y))
@@ -1917,6 +1928,13 @@ export class FarmScene extends Phaser.Scene {
       );
     if (lightAt(this.state, this.mapId, front.x, front.y))
       return this.report(pickUpLight(this.state, this.mapId, front.x, front.y));
+    // A lightning rod is stood down from the backpack, and any tool or the empty hand lifts one.
+    if (held.kind === "item" && held.id === LIGHTNING_ROD)
+      return this.report(
+        placeRod(this.state, this.map, this.mapId, front.x, front.y),
+      );
+    if (isFarmMap(this.mapId) && rodAt(this.state, front.x, front.y))
+      return this.report(pickUpRod(this.state, front.x, front.y));
     // A chest is stood down from the backpack, and the axe or pickaxe takes an empty one up.
     if (held.kind === "item" && chestById(held.id))
       return this.report(
@@ -2124,6 +2142,8 @@ export class FarmScene extends Phaser.Scene {
       }
       return this.report(collectCask(this.state, front.x, front.y));
     }
+    if (isFarmMap(this.mapId) && packWaiting(this.state, front.x, front.y))
+      return this.report(takePack(this.state, front.x, front.y));
     if (this.state.pots.get(this.mapId, front.x, front.y))
       return this.report(
         collectPot(this.state, this.mapId, front.x, front.y, Math.random),
@@ -2472,6 +2492,20 @@ export class FarmScene extends Phaser.Scene {
     }
   }
 
+  /** A strike falls: a white flash of the screen, and a bright block on each rod it hit (note 89). */
+  private strikeFlash(r: {
+    strikes: number;
+    hits: { x: number; y: number }[];
+  }) {
+    if (r.strikes === 0 || this.floor !== undefined) return;
+    this.cameras.main.flash(180, 255, 255, 255);
+    if (!isFarmMap(this.mapId)) return;
+    const ts = this.map.tileSize;
+    this.swingFx.clear().fillStyle(0xffffaa, 0.8);
+    for (const h of r.hits) this.swingFx.fillRect(h.x * ts, h.y * ts, ts, ts);
+    this.time.delayedCall(220, () => this.swingFx.clear());
+  }
+
   /** Draw plots, crops and forage on the tiles. */
   private drawGround(): void {
     this.ground.clear();
@@ -2500,6 +2534,10 @@ export class FarmScene extends Phaser.Scene {
       put(c.x, c.y, chestKey(c.id));
     for (const l of this.state.placed.each(lightMapKey(this.mapId)))
       put(l.x, l.y, lightKey(l.id));
+    if (isFarmMap(this.mapId))
+      for (const p of this.state.placed.each(lightMapKey(this.mapId)))
+        if (p.id === LIGHTNING_ROD && p.state?.pack === true)
+          put(p.x, p.y, MACHINE_READY_KEY);
     for (const p of this.state.pots.each(this.mapId)) {
       put(p.x, p.y, POT_KEY);
       if (p.catch) put(p.x, p.y, POT_READY_KEY);
