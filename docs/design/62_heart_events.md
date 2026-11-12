@@ -129,8 +129,16 @@ Checked at build time and in a unit test, as for conversations
 - Whether the command set above is enough once the first scene is written. The
   proof scene may add or drop commands.
 - Which events give which rewards, and the heart event list per person.
-- How many events a standard tier person gets.
-- Whether the warning is a text line or a short sound and mark on the person.
 - Music for events, left to the audio plan.
 - The group event for dating several people (Stardew has one that blocks gifts
   for a week). Ours has none: no pairing limits means no jealousy event.
+
+## Owner decisions (2026-11-12)
+
+- **Count.** A standard tier person gets up to five events, at 2, 4, 6, 8 and 10 hearts.
+  The 10 heart event is kept because friends run to 10 hearts (note 61, rule 1). Stardew's
+  own count is from memory and unchecked (SC-45).
+- **Warning.** A visible mark over the person plus a short soft chime, with a text line the
+  first time only. Walking away is "not now" and the event waits. It works on a tablet with
+  no text to read.
+- Still open: the event list per person, which events give which rewards (#873).

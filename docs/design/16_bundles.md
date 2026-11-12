@@ -246,3 +246,14 @@ its room is finished, but the Stardew wiki was not checked for this note.
   once enough of them exist.
 - Stardew's room thresholds and reward lists come from guide sites and a forum
   reply, not the wiki, which blocked fetches.
+
+## Room rewards that did nothing (owner, 2026-11-12, #871)
+
+- **Guests' Board:** +500 friendship with everyone met (Stardew, recalled, the saved
+  Bulletin Board page does not confirm it). `rooms.json` must change from
+  `hat-standing-boost` to it, and `Friendship.bundleBonus()` (built, never called) must be
+  wired.
+- **Hearth `carts`:** a faster travel route. Needs its own design note first (note 71).
+- **Foragers' Shelf `herb-stall`:** a weekly forage stand. Needs its own design note first.
+- Both of the last two are ours, with no Stardew equivalent. The glow ring (bundle 16) and
+  Beach warp totem (bundle 15) placeholders are still to check.
