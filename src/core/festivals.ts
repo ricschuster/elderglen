@@ -5,6 +5,7 @@ import { itemById } from "./items";
 import { MAZE } from "./maze";
 import type { GameState } from "./save";
 import { showTokens, spendTokens } from "./showing";
+import { hasFlag, setFlag } from "./worldflags";
 
 /** One line of a festival's counter: an item or a hat, at a price. */
 export interface CounterEntry {
@@ -14,6 +15,8 @@ export interface CounterEntry {
   count?: number;
   /** Paid in show tokens (Harvest Showing) instead of gold. */
   tokens?: boolean;
+  /** A world flag that is raised on purchase, after which the line is sold out (the elderfruit, note 39). */
+  once?: string;
   price: number;
 }
 
@@ -253,6 +256,8 @@ export function counterProblem(
   if (!g.festivalsJoined.includes(joinKey(f, g.day.clock.day)))
     return "Go to the festival first.";
   if (e.hat && g.wardrobe.has(e.hat)) return "You already have that hat.";
+  if (e.once && hasFlag(g, e.once))
+    return "Sold out. You have bought one already.";
   if (e.tokens) {
     if (showTokens(g) < e.price)
       return `You need ${e.price - showTokens(g)} more show tokens.`;
@@ -273,6 +278,7 @@ export function buyAtCounter(
   else if (e.item && !g.inventory.add(e.item, e.count ?? 1)) return false;
   if (e.tokens) spendTokens(g, e.price);
   else g.money -= e.price;
+  if (e.once) setFlag(g, e.once);
   return true;
 }
 

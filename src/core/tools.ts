@@ -32,6 +32,13 @@ import { fertilizerById } from "./fertilizer";
 import { treeOfSapling } from "./fruittrees";
 import { sprinklerById } from "./sprinklers";
 import { storeOf } from "./mapstore";
+import {
+  collectTap,
+  liftTapper,
+  placeTapper,
+  tapReady,
+  TAPPER,
+} from "./tapper";
 import { handOnMachine, loadMachine, placeMachine } from "./machines";
 import { machineById } from "./processing";
 import type { Held } from "./toolbar";
@@ -73,6 +80,9 @@ export function useHeld(
     g.machines.at(x, y)
   )
     return handOnMachine(g, x, y);
+  // The pickaxe lifts a tapper off its tree (note 92).
+  if (held.kind === "tool" && held.tool === "pickaxe" && g.trees.at(x, y)?.tap)
+    return liftTapper(g, x, y);
   // Any tool gathers moss from a mossy mature tree in one use, no chop.
   if (held.kind === "tool" && g.trees.at(x, y)?.moss) {
     const moss = gatherMoss(g, x, y);
@@ -130,6 +140,7 @@ export function useHeld(
     return g.trees.at(x, y)
       ? clearSeedling(g, x, y, "can", map)
       : water(g, x, y);
+  if (held.kind === "item" && held.id === TAPPER) return placeTapper(g, x, y);
   if (g.machines.at(x, y)) {
     // A machine takes the held item; Action collects from it.
     if (held.kind === "item") return loadMachine(g, x, y, held.id);
@@ -196,7 +207,16 @@ export const NOTHING_TO_ACT_ON = "nothing to act on";
 
 /** Shake a tree, pick forage or harvest a crop: what the hand does on one tile. */
 function pick(g: GameState, x: number, y: number): Outcome {
-  if (g.trees.at(x, y)) return shake(g, x, y);
+  if (tapReady(g, g.trees.at(x, y))) return collectTap(g, x, y);
+  if (g.trees.at(x, y)) {
+    const shaken = shake(g, x, y);
+    // A tapped tree with nothing to shake says how long the tap has left.
+    return !shaken.ok &&
+      shaken.reason === "nothing to shake" &&
+      g.trees.at(x, y)?.tap
+      ? { ok: false, reason: "tap busy" }
+      : shaken;
+  }
   if (g.fruitTrees.at(x, y)) return pickFruit(g, x, y);
   if (g.sprinklers.at(x, y)) return pickUpSprinkler(g, x, y);
   if (g.machines.at(x, y)) return handOnMachine(g, x, y);
@@ -232,6 +252,7 @@ const QUIET = new Set(["nothing ripe", "nothing to shake", "nothing here"]);
 
 const REASONS: Record<string, string> = {
   exhausted: "You are too tired.",
+  "all eaten": "You have eaten every elderfruit there is.",
   "already tilled": "Already dug.",
   "nothing to water": "Dig the soil first.",
   "already watered": "Already watered.",
@@ -288,7 +309,12 @@ const REASONS: Record<string, string> = {
   "cask busy": "The cask is already ageing something.",
   "cask empty": "The cask is empty.",
   "cask not empty": "Take the good out of the cask first.",
-  "cask will not take that": "A cask takes wine, mead and cheese.",
+  "cask will not take that": "A cask takes wine, mead, beer and cheese.",
+  "no tapper": "Out of tappers.",
+  "already tapped": "This tree already has a tapper.",
+  "cannot tap this": "A tapper goes on a full-grown tree.",
+  "no tree here": "There is no tree there.",
+  "not tapped": "There is no tapper on that tree.",
   "no cask": "Out of casks.",
   "no cask here": "No cask here.",
   "machine will not take that": "It cannot use that.",

@@ -5,7 +5,9 @@ and the first eight lists are in `61_friendship_and_gifts.md` (sizes: 3 to 6 lov
 to 8 for the deep tier, 2 to 5 likes, 1 to 3 dislikes, 1 to 3 hates, up to three category
 overrides). The six universal loves and the universal hates apply unless a row says
 otherwise. Temperaments are one line, drafts that the voice sheets (`18_dialogue.md`) may
-change. Item ids are the built ones. A name in `#` is a category. Nothing here is built.
+change. Item ids are the built ones. A name in `#` is a category.
+
+**Built (2026-11-12, #872):** all 22 lists are in `friendship.json`; new tags `#shell` (cockleshell, pearly-shell, spiral-shell) and `#fish`; `#monster-drop` already existed. Bare `jam`, `juice`, `wine` were built as `#jam`, `#juice`, `#wine` (no such items). "#fish except the legendary" is `#fish` plus the four legends as neutral (hearthwell-carp stays the universal love). "#artisan except juice" is `#artisan` as a dislike plus `#juice` as a like.
 
 Overlap rule kept from note 61: a named item has at most two lovers. Where an item is
 already loved by the first eight, it is not a love here unless marked.

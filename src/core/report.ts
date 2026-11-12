@@ -56,6 +56,14 @@ export function reportLines(r: SleepReport): string[] {
     );
   if (r.ferryMended)
     lines.push("The ferry on the delta is repaired. The Lake cove is open.");
+  if (r.cartsRunning)
+    lines.push(
+      "The carts are running. Find one at the town square, the hall, your farm or the mine mouth.",
+    );
+  if (r.guestsBonus.length > 0)
+    lines.push(
+      "The Guests' Board is done. The people you have met think the better of you.",
+    );
   if (r.houseFinished) {
     lines.push("The carpenter has finished. Your new rooms are ready.");
     if (r.houseTier === 2) lines.push(WAITING_ROOMS_LINE);

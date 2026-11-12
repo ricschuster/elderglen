@@ -177,7 +177,29 @@
     "seasons": ["summer", "fall"],
     "growDays": 4,
     "seedPrice": 10,
-    "sellPrice": 25
+    "sellPrice": 25,
+    "produce": "none"
+  },
+  {
+    "id": "ember-berry",
+    "name": "Ember berry",
+    "seasons": ["spring", "summer", "fall"],
+    "growDays": 14,
+    "seedPrice": 0,
+    "sellPrice": 0,
+    "rare": true,
+    "seedName": "Emberseed",
+    "produce": "fruit"
+  },
+  {
+    "id": "hops",
+    "name": "Hops",
+    "seasons": ["summer"],
+    "growDays": 11,
+    "regrowDays": 1,
+    "seedPrice": 60,
+    "sellPrice": 25,
+    "produce": "none"
   },
   {
     "id": "tulip",

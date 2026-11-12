@@ -119,6 +119,10 @@ export const UNPLAYED_BUNDLES: readonly string[] = [
   "trap-catch",
   // The bot does not keep hay or wheat stores, and the Last Seat needs goods from every room (note 16).
   "fodder",
+  // Candles, the festival-free dishes and the old things need beekeeping, cooking and digging the bot lacks.
+  "lamplighters",
+  "hosts",
+  "storytellers",
   "harvest-feast",
   "the-catch",
   "hearth-fire",

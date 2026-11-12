@@ -16,6 +16,7 @@ export type ArtisanCategory =
   | ArtisanKind
   | "honey"
   | "mead"
+  | "beer"
   | "cheese"
   | "mayonnaise"
   | "cloth"
@@ -33,6 +34,8 @@ export interface ArtisanDef {
 
 export const HONEY = "honey";
 export const MEAD = "mead";
+export const BEER = "beer";
+export const PALE_ALE = "pale-ale";
 
 /** Words for each category, for bundle lists. */
 export const CATEGORY_NAMES: Record<ArtisanCategory, string> = {
@@ -42,6 +45,7 @@ export const CATEGORY_NAMES: Record<ArtisanCategory, string> = {
   juice: "Any juice",
   honey: "Honey",
   mead: "Mead",
+  beer: "Any beer",
   dried: "Any dried goods",
   cheese: "Any cheese",
   mayonnaise: "Any mayonnaise",
@@ -75,7 +79,7 @@ export function produceOf(id: string): "fruit" | "vegetable" | undefined {
   const base = splitQuality(id).base;
   const crop = cropById(base);
   if (crop)
-    return crop.produce === "flower"
+    return crop.produce === "none" || crop.produce === "flower"
       ? undefined
       : (crop.produce ?? "vegetable");
   if (fruitTreeById(base)) return "fruit";
@@ -111,7 +115,9 @@ export const isMushroom = (id: string): boolean =>
 
 const defs = new Map<string, ArtisanDef>();
 const inputs = [
-  ...CROPS.filter((c) => c.produce !== "flower").map((c) => c.id),
+  ...CROPS.filter((c) => c.produce !== "none" && c.produce !== "flower").map(
+    (c) => c.id,
+  ),
   ...FRUIT_TREES.map((t) => t.id),
   ...FORAGE.filter((f) => f.produce).map((f) => f.id),
 ];
@@ -168,6 +174,14 @@ defs.set(HONEY, {
   sellPrice: 100,
 });
 defs.set(MEAD, { id: MEAD, name: "Mead", category: "mead", sellPrice: 300 });
+/** Beer from wheat and pale ale from hops (note 92, prices from the saved Artisan Goods page). */
+defs.set(BEER, { id: BEER, name: "Beer", category: "beer", sellPrice: 200 });
+defs.set(PALE_ALE, {
+  id: PALE_ALE,
+  name: "Pale ale",
+  category: "beer",
+  sellPrice: 300,
+});
 
 /**
  * Animal goods and oil (note 24, slice 4): cheese, mayonnaise, cloth and oil.

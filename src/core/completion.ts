@@ -8,6 +8,7 @@ import { DISHES } from "./dishes";
 import { FISH } from "./fishing";
 import { SHELLFISH } from "./pots";
 import { itemById } from "./items";
+import { ELDERFRUIT_TOTAL } from "./elderfruit";
 import { shippedOf } from "./achievements";
 import { MAX_LEVEL, SKILLS } from "./skills";
 import { SLAYER_GOALS, slayerKills } from "./creatures";
@@ -118,6 +119,14 @@ export const COUNTERS: Record<string, Counter> = {
       missing: missing.map((f) => f.name),
     };
   },
+  elderfruit: (g) => ({
+    done: Math.min(g.elderfruit, ELDERFRUIT_TOTAL),
+    total: ELDERFRUIT_TOTAL,
+    missing:
+      g.elderfruit >= ELDERFRUIT_TOTAL
+        ? []
+        : [`${ELDERFRUIT_TOTAL - g.elderfruit} elderfruit left to eat`],
+  }),
   cooking: (g) => {
     const all = DISHES.filter(cookable);
     const missing = all.filter((d) => !g.achievements.hasCooked(d.id));

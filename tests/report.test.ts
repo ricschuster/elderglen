@@ -36,6 +36,8 @@ const base: SleepReport = {
   stuckTrees: [],
   quarryBridge: false,
   ferryMended: false,
+  cartsRunning: false,
+  guestsBonus: [],
 };
 
 describe("overnight report", () => {

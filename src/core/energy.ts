@@ -3,6 +3,8 @@ export const MAX_ENERGY = 270;
 
 export class Energy {
   current = MAX_ENERGY;
+  /** The ceiling: 270 plus the elderfruit eaten (`elderfruit.ts`, note 39). */
+  max = MAX_ENERGY;
 
   /** Spend n points, stopping at zero. Returns true if energy is now empty. */
   spend(n: number): boolean {
@@ -12,7 +14,7 @@ export class Energy {
 
   /** Restore n points, stopping at the maximum. */
   restore(n: number): void {
-    this.current = Math.min(this.current + n, MAX_ENERGY);
+    this.current = Math.min(this.current + n, this.max);
   }
 
   get empty(): boolean {

@@ -256,6 +256,16 @@ describe("flower uses", () => {
     expect(tagsOf("daffodil")).toContain("flower");
   });
 
+  it("flower honey carries the flower-honey tag, plain honey does not", () => {
+    for (const id of Object.keys(SET))
+      expect(tagsOf(flowerHoneyId(id))).toContain("flower-honey");
+    expect(tagsOf(HONEY)).not.toContain("flower-honey");
+    // Tilda loves #flower-honey in her list.
+    expect(tasteOf("tilda", "poppy-honey")).toBe(
+      tasteOf("tilda", "tulip-honey"),
+    );
+  });
+
   it("Dyer's bundle lists all six", () => {
     const dyers = BUNDLES.find((b) => b.id === "dyers")!;
     const ids = dyers.items.map((i) => i.id);

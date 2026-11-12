@@ -34,7 +34,7 @@
           "id": "elderfruit",
           "name": "Rare boost items",
           "weight": 10,
-          "counter": null
+          "counter": "elderfruit"
         },
         {
           "id": "cooking",

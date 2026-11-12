@@ -1,5 +1,6 @@
 import bootData from "../content/boots.json";
 import ringData from "../content/rings.json";
+import { resistChance } from "./effects";
 import type { Inventory } from "./inventory";
 
 /**
@@ -15,6 +16,14 @@ export interface RingDef {
   light: number;
   /** Extra pickup radius in tiles, added across worn rings (stacks). */
   magnet: number;
+  /** Health taken off every hit, added across worn rings and the boots. */
+  defense?: number;
+  /** Immunity points, added across worn rings and the boots (note 94). */
+  immunity?: number;
+  /** Blocks the slimed effect outright (note 37). */
+  slimeProof?: boolean;
+  /** Bad effects that land last half as long (note 37, the Sturdy ring). */
+  halfEffects?: boolean;
 }
 
 export const RINGS = ringData as RingDef[];
@@ -28,7 +37,7 @@ export interface BootsDef {
   name: string;
   /** Health taken off every hit, to a floor of 1 (placeholder rule, note 37 leaves it open). */
   defense: number;
-  /** Shortens bad effects. Stored and shown only: no bad effect exists yet. */
+  /** Immunity points: each resists 9.1 percent of bad effects (note 94). */
   immunity: number;
   /** Smith price in coin (placeholder). */
   price: number;
@@ -117,14 +126,39 @@ export class Equipment {
     return true;
   }
 
-  /** Health taken off each hit by the boots. */
+  /** Health taken off each hit, from the boots and the rings. */
   defense(): number {
-    return (this.boots && bootsById(this.boots)?.defense) || 0;
+    return (
+      ((this.boots && bootsById(this.boots)?.defense) || 0) +
+      this.sum((r) => r.defense ?? 0)
+    );
   }
 
-  /** Immunity from the boots. */
+  /** Immunity points, from the boots and the rings. */
   immunity(): number {
-    return (this.boots && bootsById(this.boots)?.immunity) || 0;
+    return (
+      ((this.boots && bootsById(this.boots)?.immunity) || 0) +
+      this.sum((r) => r.immunity ?? 0)
+    );
+  }
+
+  /** True with a slime proof ring on. */
+  slimeProof(): boolean {
+    return this.rings.some(
+      (id) => id !== undefined && ringById(id)?.slimeProof,
+    );
+  }
+
+  /** True with a ring on that halves bad effects. */
+  halvesEffects(): boolean {
+    return this.rings.some(
+      (id) => id !== undefined && ringById(id)?.halfEffects,
+    );
+  }
+
+  /** Immunity as a percent chance to resist, rounded, for the equipment screen. */
+  resistPercent(): number {
+    return Math.round(resistChance(this.immunity()) * 100);
   }
 
   /** Light radius from rings, in tiles. Zero with none worn. */

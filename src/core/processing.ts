@@ -1,5 +1,7 @@
 import {
   artisanId,
+  BEER,
+  PALE_ALE,
   CHEESE,
   CLOTH,
   dyeOf,
@@ -14,9 +16,12 @@ import {
   produceOf,
   type ArtisanKind,
 } from "./artisan";
+import { crackResult, GEODE_KINDS } from "./geodes";
 import { JUNK } from "./pots";
+import { GEMS, GLIMMERSTONE } from "./gems";
+import geodeData from "../content/geodes.json";
 import { cropById } from "./crops";
-import { BARS, COAL, coalFor, ORE_PER_BAR } from "./ore";
+import { BARS, COAL, coalFor, ORE_PER_BAR, QUARTZ } from "./ore";
 import { splitQuality, type Quality } from "./quality";
 
 /**
@@ -32,8 +37,12 @@ export interface MachineDef {
   sellPrice: number;
   /** True for a machine that makes goods with no input (the bee house). */
   auto?: boolean;
+  /** A bin that fills itself each morning with a good that is taken out by hand (the worm bin). */
+  bin?: { output: string; min: number; max: number; cap: number };
   /** True for a machine that stands only in the cellar (the cask, `cask.ts`). */
   cellar?: boolean;
+  /** True for a machine that starts the same batch again each time it is emptied (the Crystalarium). */
+  repeats?: boolean;
 }
 
 export const MACHINES: readonly MachineDef[] = [
@@ -51,10 +60,21 @@ export const MACHINES: readonly MachineDef[] = [
   /** The dye vat (note 24, bundle 23) and the cask (cellar only). Sell prices are ours, placeholders. */
   { id: "dye-vat", name: "Dye vat", sellPrice: 250 },
   { id: "cask", name: "Cask", sellPrice: 200, cellar: true },
+  /** Crushes geodes for free (note 92). Sell prices are ours, placeholders. */
+  { id: "geode-crusher", name: "Geode crusher", sellPrice: 300 },
+  /** Makes plain bait each morning and cannot be sold (note 92). Sell price is ours, a placeholder. */
+  {
+    id: "worm-bin",
+    name: "Worm bin",
+    sellPrice: 100,
+    bin: { output: "plain-bait", min: 4, max: 5, cap: 50 },
+  },
   /** A crafted furnace, for more batches at once. The first is the smith's gift (`furnace.ts`). */
   { id: "furnace", name: "Furnace", sellPrice: 150 },
   /** Turns the rod's and the pots' trash into useful goods (note 21). Sell price is ours, a placeholder. */
   { id: "recycler", name: "Recycler", sellPrice: 200 },
+  /** Copies a gem or mineral again and again (note 24). Sell price is ours, a placeholder. */
+  { id: "crystalarium", name: "Crystalarium", sellPrice: 500, repeats: true },
 ];
 
 export const machineById = (id: string | undefined): MachineDef | undefined =>
@@ -68,6 +88,9 @@ export const WOOD_PER_COAL = 10;
 /** Days a bee house takes to make one honey. */
 export const BEE_DAYS = 4;
 export const BEE_MINUTES = BEE_DAYS * MINUTES_PER_DAY;
+
+/** Chance a bee house batch also gives one beeswax (note 63, a placeholder, ours). */
+export const WAX_CHANCE = 0.5;
 
 /** One batch: what goes in, what comes out and how long it takes. */
 export interface Process {
@@ -96,7 +119,12 @@ const KEG: Record<"fruit" | "vegetable", ArtisanKind> = {
 const JAR_MINUTES = 4000;
 const KEG_MINUTES = { wine: 10000, juice: 6000 } as const;
 const MEAD_MINUTES = 600;
+/** Pale ale 2,250 minutes (saved Artisan Goods page). Beer 1,750 is from memory, unchecked. */
+const PALE_ALE_MINUTES = 2250;
+const BEER_MINUTES = 1750;
 const KILN_MINUTES = 30;
+/** The geode crusher takes 1 game hour a geode and burns no fuel (Stardew, SC-157). */
+const CRUSHER_MINUTES = 60;
 const SEED_MINUTES = 20;
 /** Stardew's minutes: cheese 200, mayonnaise 180, loom 240 (note 24 says about 3 to 4 hours). */
 const CHEESE_MINUTES = 200;
@@ -160,6 +188,50 @@ export const DEHYDRATOR_USE = 5;
 export const DEHYDRATOR_MINUTES = MINUTES_PER_DAY;
 
 /**
+ * Crystalarium copy times in Stardew's minutes, from the saved Crystalarium page (note 24):
+ * quartz 7 hours, topaz 18 h 40 min, amethyst 22 h 40 min, emerald and ruby 2 d 2 h, jade
+ * 1 d 16 h, diamond 5 days, minerals 3 d 11 h. Stardew's day there is 1,440 minutes and ours
+ * is 1,600, so each is rescaled when built (note 24: "rescaled to our day length").
+ */
+const STARDEW_DAY = 1440;
+const scaled = (stardewMinutes: number) =>
+  Math.round((stardewMinutes * MINUTES_PER_DAY) / STARDEW_DAY);
+export const MINERAL_COPY_MINUTES = scaled(5000);
+/**
+ * Gem copy time by our gem, matched to Stardew's table by sell price (placeholders, since the
+ * six gems have no final names): 50g topaz, 75g amethyst, 150g jade, 250g emerald, 400g ruby,
+ * 750g diamond. The Glimmerstone has no Stardew match and copies as slowly as the diamond.
+ */
+const GEM_STARDEW_MINUTES: Record<string, number> = {
+  "gem-low-a": 1120,
+  "gem-low-b": 1360,
+  "gem-mid-a": 2400,
+  "gem-mid-b": 3000,
+  "gem-high-a": 3000,
+  "gem-high-b": 7200,
+  [GLIMMERSTONE.id]: 7200,
+  [QUARTZ]: 420,
+};
+const MINERAL_IDS: ReadonlySet<string> = new Set(
+  geodeData.pools.flatMap((p) => p.minerals),
+);
+
+/** Minutes the Crystalarium takes to copy this item, or undefined if it is not a gem or mineral. */
+export function copyMinutes(item: string): number | undefined {
+  if (MINERAL_IDS.has(item)) return MINERAL_COPY_MINUTES;
+  const t = GEM_STARDEW_MINUTES[item];
+  return t === undefined ? undefined : scaled(t);
+}
+
+/** Every item the Crystalarium takes. */
+export const COPYABLE: readonly string[] = [
+  ...GEMS.map((g) => g.id),
+  GLIMMERSTONE.id,
+  QUARTZ,
+  ...MINERAL_IDS,
+];
+
+/**
  * The batch a machine would run on an item, or undefined if it takes none.
  * The seed maker's 1 to 3 seeds come from `random`, so the count is fixed
  * when the batch starts.
@@ -168,6 +240,7 @@ export function processFor(
   machine: string,
   item: string,
   random: () => number = Math.random,
+  deepest = 0,
 ): Process | undefined {
   const { base: input, quality } = splitQuality(item);
   const one = { input, use: 1, count: 1 };
@@ -181,6 +254,11 @@ export function processFor(
           minutes: KILN_MINUTES,
         }
       : undefined;
+  if (machine === "geode-crusher") {
+    if (!GEODE_KINDS.includes(input)) return undefined;
+    const r = crackResult(random, input, deepest);
+    return { ...one, output: r.item, count: r.count, minutes: CRUSHER_MINUTES };
+  }
   if (machine === "seed-maker")
     return cropById(input)
       ? {
@@ -212,6 +290,12 @@ export function processFor(
       output: artisanId(input, "dried"),
       minutes: DEHYDRATOR_MINUTES,
     };
+  }
+  if (machine === "crystalarium") {
+    const minutes = copyMinutes(input);
+    return minutes === undefined
+      ? undefined
+      : { ...one, output: input, minutes };
   }
   if (machine === "recycler") {
     if (!JUNK.some((j) => j.id === input)) return undefined;
@@ -263,6 +347,10 @@ export function processFor(
   }
   if (machine === "keg") {
     if (input === HONEY) return { ...one, output: MEAD, minutes: MEAD_MINUTES };
+    if (input === "hops")
+      return { ...one, output: PALE_ALE, minutes: PALE_ALE_MINUTES };
+    if (input === "wheat")
+      return { ...one, output: BEER, minutes: BEER_MINUTES };
     const produce = produceOf(input);
     if (!produce) return undefined;
     const kind = KEG[produce];

@@ -92,8 +92,7 @@ numbers.
 - When the flower is checked (built: when collected, not when the batch starts).
 - Bees on maps other than the open farm (greenhouse, areas): built for the farm only.
 - Whether flower honey makes mead in the keg, and at what price (built: only plain honey).
-- Villager lists name `flower-honey`, but the items are `<flower>-honey`, so those entries
-  match nothing yet. Needs a `flower-honey` tag or per-id entries.
+- Villager lists name `flower-honey`: fixed, they now use the `#flower-honey` tag in `tagsOf`.
 - Bundle 23's cut of "1 per item" is the data's existing count of 1 each, `required` 4.
 - Quests, completion and the ship-every-crop achievements now count flowers as crops.
 

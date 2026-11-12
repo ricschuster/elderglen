@@ -16,7 +16,14 @@ import {
   isOneOnly,
   pinStock,
 } from "../core/shop";
+import { buyFromHerbStall, herbPrice, herbStock } from "../core/roomrewards";
 import { buyFromTrader, traderPrice, traderStock } from "../core/trader";
+import {
+  HERMIT_ELDERFRUIT_PRICE,
+  SOURCE_FLAGS,
+  buyElderfruit,
+  hermitStock,
+} from "../core/elderfruit";
 import { nextBackpack, upgradeBackpack } from "../core/upgrades";
 import { frame, Menu, TOUCH_ROW_H, type Row } from "./panel";
 import { STATE_KEY } from "./state";
@@ -53,13 +60,20 @@ export class ShopScene extends Phaser.Scene {
   /** Thalwen's pin stall sells the Homeward pin only (note 09). */
   private pin = false;
   private trader = false;
+  /** The hermit sells one elderfruit, at a very high price (note 39). */
+  private hermit = false;
+  private herb = false;
 
   constructor() {
     super("shop");
   }
 
-  init(data?: { stock?: "fisher" | "pin" | "trader" }): void {
+  init(data?: {
+    stock?: "fisher" | "pin" | "trader" | "hermit" | "herb";
+  }): void {
+    this.hermit = data?.stock === "hermit";
     this.trader = data?.stock === "trader";
+    this.herb = data?.stock === "herb";
     this.fisher = data?.stock === "fisher";
     this.pin = data?.stock === "pin";
     this.state = this.registry.get(STATE_KEY) as GameState;
@@ -75,7 +89,11 @@ export class ShopScene extends Phaser.Scene {
           ? "Thalwen"
           : this.trader
             ? "Road trader"
-            : "Shop",
+            : this.hermit
+              ? "Hermit"
+              : this.herb
+                ? "Old Greencoat"
+                : "Shop",
       () => this.close(),
     );
     this.money = money;
@@ -134,25 +152,45 @@ export class ShopScene extends Phaser.Scene {
     const g = this.state;
     this.money.setText(`Money ${g.money}g`);
     const season = dateOf(g.day.clock.day).season;
-    const stock = this.trader
-      ? traderStock(g.day.clock.day)
-      : this.pin
-        ? pinStock()
-        : this.fisher
-          ? fisherStock()
-          : [
-              ...seedStock(season),
-              ...saplingStock(),
-              ...fertilizerStock(g.day.clock.day),
-            ];
+    const stock = this.herb
+      ? herbStock(g.day.clock.day)
+      : this.trader
+        ? traderStock(g.day.clock.day)
+        : this.hermit
+          ? hermitStock(g)
+          : this.pin
+            ? pinStock()
+            : this.fisher
+              ? fisherStock()
+              : [
+                  ...seedStock(season),
+                  ...saplingStock(),
+                  ...fertilizerStock(g.day.clock.day),
+                ];
     const buyRows: Row[] = stock.map((id) => {
       const def = itemById(id)!;
-      const price = this.trader ? traderPrice(id) : unitPrice(g, id);
+      const price = this.herb
+        ? herbPrice(id)
+        : this.trader
+          ? traderPrice(id)
+          : this.hermit
+            ? HERMIT_ELDERFRUIT_PRICE
+            : unitPrice(g, id);
       const tryBuy = (n: number) => () => {
+        if (this.hermit) {
+          const refused = buyElderfruit(g, SOURCE_FLAGS.hermit, price);
+          this.say(
+            refused ??
+              `Bought an elderfruit for ${price}g. Eat it from your pack.`,
+          );
+          return;
+        }
         if (
-          this.trader
-            ? buyFromTrader(g, id, n)
-            : buy(g.inventory, g, id, n, price)
+          this.herb
+            ? buyFromHerbStall(g, id, n)
+            : this.trader
+              ? buyFromTrader(g, id, n)
+              : buy(g.inventory, g, id, n, price)
         )
           this.say(`Bought ${n} ${def.name} for ${price * n}g.`);
         else this.say(buyRefusal(g, id, n));
@@ -190,7 +228,9 @@ export class ShopScene extends Phaser.Scene {
           buttons: [],
         };
     this.buyMenu.setRows(
-      this.fisher || this.pin || this.trader ? buyRows : [...buyRows, packRow],
+      this.fisher || this.pin || this.trader || this.hermit || this.herb
+        ? buyRows
+        : [...buyRows, packRow],
     );
 
     const ids: string[] = [];

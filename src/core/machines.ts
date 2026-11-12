@@ -3,13 +3,14 @@ import { DAY_START } from "./clock";
 import { dateOf } from "./calendar";
 import { FLOWER_HONEY_PRICE, flowerHoneyId, HONEY } from "./artisan";
 import { isFlowerCrop } from "./crops";
-import { itemById } from "./items";
+import { itemById, WAX } from "./items";
 import type { FarmMap } from "./map";
 import {
   BEE_MINUTES,
   machineById,
   MINUTES_PER_DAY,
   processFor,
+  WAX_CHANCE,
 } from "./processing";
 import type { GameState } from "./save";
 import { isClear } from "./actions";
@@ -132,6 +133,7 @@ export function restingBees(g: GameState, m: PlacedMachine): boolean {
 
 /** True when a job is in and finished. A bee house is not ready in winter. */
 export function jobDone(g: GameState, m: PlacedMachine): boolean {
+  if (machineById(m.id)?.bin) return (m.job?.count ?? 0) > 0;
   return (
     m.job !== undefined &&
     machineMinutes(g) >= m.job.doneAt &&
@@ -161,7 +163,10 @@ export function statusText(g: GameState, x: number, y: number): string {
   const m = g.machines.get(x, y);
   if (!m) return "";
   const name = nameOf(m.id);
-  if (!m.job) return `The ${name.toLowerCase()} is empty.`;
+  if (!m.job || (machineById(m.id)?.bin && m.job.count === 0))
+    return `The ${name.toLowerCase()} is empty.`;
+  if (machineById(m.id)?.bin)
+    return `${m.job.count} ${nameOf(m.job.output).toLowerCase()} inside.`;
   if (restingBees(g, m)) return "The bees rest until spring.";
   const left = minutesLeft(g, m) ?? 0;
   const output = outputOf(g, m, m.job.output);
@@ -193,13 +198,15 @@ export function placeMachine(
     x,
     y,
     id,
-    job: def.auto
-      ? {
-          output: HONEY,
-          count: 1,
-          doneAt: machineMinutes(g) + BEE_MINUTES,
-        }
-      : undefined,
+    job: def.bin
+      ? { output: def.bin.output, count: 0, doneAt: 0 }
+      : def.auto
+        ? {
+            output: HONEY,
+            count: 1,
+            doneAt: machineMinutes(g) + BEE_MINUTES,
+          }
+        : undefined,
   });
   return { ok: true };
 }
@@ -215,9 +222,10 @@ export function loadMachine(
   if (g.day.over) return fail("exhausted");
   const m = g.machines.get(x, y);
   if (!m) return fail("no machine here");
-  if (machineById(m.id)?.auto) return fail("takes nothing");
+  const def = machineById(m.id);
+  if (def?.auto || def?.bin) return fail("takes nothing");
   if (m.job) return fail("machine busy");
-  const p = processFor(m.id, item, random);
+  const p = processFor(m.id, item, random, g.mines.deepest);
   if (!p) return fail("machine will not take that");
   if (g.inventory.count(item) < p.use) return fail("not enough input");
   if (p.also && g.inventory.count(p.also.item) < p.also.use)
@@ -236,20 +244,68 @@ export function loadMachine(
   };
 }
 
+/** Morning: each worm bin makes its day's goods, up to what it holds. */
+export function fillBins(g: GameState, random: () => number): void {
+  for (const m of g.machines.each()) {
+    const bin = machineById(m.id)?.bin;
+    if (!bin) continue;
+    const made = bin.min + Math.floor(random() * (bin.max - bin.min + 1));
+    const had = m.job?.count ?? 0;
+    m.job = {
+      output: bin.output,
+      count: Math.min(had + made, bin.cap),
+      doneAt: 0,
+    };
+  }
+}
+
 /** Take a finished batch. A bee house starts the next one. */
-export function collectMachine(g: GameState, x: number, y: number): Outcome {
+export function collectMachine(
+  g: GameState,
+  x: number,
+  y: number,
+  random: () => number = Math.random,
+): Outcome {
   if (g.day.over) return fail("exhausted");
   const m = g.machines.get(x, y);
   if (!m) return fail("no machine here");
   if (!m.job) return fail("machine empty");
   if (!jobDone(g, m)) return fail("machine busy");
-  const output = outputOf(g, m, m.job.output);
+  if (machineById(m.id)?.bin) {
+    // A bin gives what the backpack holds and keeps the rest.
+    const take = Math.min(m.job.count, g.inventory.room(m.job.output));
+    if (take < 1 || !g.inventory.add(m.job.output, take))
+      return fail("backpack full");
+    m.job.count -= take;
+    return { ok: true, item: m.job.output };
+  }
+  const made = m.job.output;
+  const output = outputOf(g, m, made);
   const { count } = m.job;
   if (g.inventory.room(output) < count) return fail("backpack full");
   g.inventory.add(output, count);
-  m.job = machineById(m.id)?.auto
-    ? { output: HONEY, count: 1, doneAt: machineMinutes(g) + BEE_MINUTES }
-    : undefined;
+  // A bee house sometimes gives beeswax too, if there is room for it.
+  if (
+    machineById(m.id)?.auto &&
+    random() < WAX_CHANCE &&
+    g.inventory.room(WAX) >= 1
+  )
+    g.inventory.add(WAX, 1);
+  const def = machineById(m.id);
+  const again =
+    def?.repeats && m.job.input
+      ? processFor(m.id, m.job.input.item)
+      : undefined;
+  m.job = def?.auto
+    ? { output: made, count: 1, doneAt: machineMinutes(g) + BEE_MINUTES }
+    : again
+      ? {
+          output: made,
+          count: 1,
+          doneAt: machineMinutes(g) + again.minutes,
+          input: m.job.input,
+        }
+      : undefined;
   return { ok: true, item: output };
 }
 
