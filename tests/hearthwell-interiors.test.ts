@@ -26,6 +26,9 @@ const REBUILT: Record<string, [number, number]> = {
   smithy: [21, 26],
   library: [35, 30],
   hatter: [27, 27],
+  "burrow-gardener": [30, 20],
+  "burrow-retired": [32, 21],
+  "burrow-young": [28, 20],
 };
 const BURROWS = ["burrow-gardener", "burrow-retired", "burrow-young"];
 const ALL = [...Object.keys(SHOPS), "outpost", "outpost-rooms", ...BURROWS];
@@ -129,17 +132,18 @@ describe("the Hearthwell interiors", () => {
 
   it("makes the burrows small, each with a bed per sleeper", () => {
     const beds = (id: string) =>
-      mapFiles[id]!.layers.find((l) => l.name === "ground")!.data!.filter(
+      mapFiles[id]!.layers.find((l) => l.name === "fixtures")!.data!.filter(
         (t: number) => t === 10,
       ).length;
     for (const id of BURROWS) {
       const m = maps.get(id);
-      expect(m.width * m.height).toBeLessThan(14 * 10);
+      expect([m.width, m.height]).toEqual(REBUILT[id]);
       expect(m.services).toHaveLength(0);
     }
-    expect(beds("burrow-gardener")).toBe(1);
-    expect(beds("burrow-retired")).toBe(3);
-    expect(beds("burrow-young")).toBe(2);
+    // bed tiles: a single bed is 2 by 2, the retired couple's double bed is 3 by 2
+    expect(beds("burrow-gardener")).toBe(4);
+    expect(beds("burrow-retired")).toBe(10);
+    expect(beds("burrow-young")).toBe(8);
   });
 
   it("says something at the counters that have no system yet, and uses no em dash", () => {

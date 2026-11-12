@@ -25,9 +25,6 @@ export const PENDING = new Set<string>([
   "forge",
   "beach-elf-house",
   "inn",
-  "burrow-gardener",
-  "burrow-retired",
-  "burrow-young",
   "hall",
 ]);
 
