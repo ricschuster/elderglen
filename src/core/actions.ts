@@ -34,6 +34,7 @@ import { FIBER, FIBER_CHANCE, MIXED_SEED } from "./weeds";
 import { TWIG_WOOD } from "./debris";
 import { isRaining } from "./weather";
 import { noteGathered } from "./quests";
+import { mayPlaceOn, placeTag } from "./placeables";
 import {
   MAHOGANY_HARDWOOD,
   MAHOGANY_SEED,
@@ -746,7 +747,8 @@ export function placeSprinkler(
   if (g.day.over) return fail("exhausted");
   if (!sprinklerById(id)) return fail("not a sprinkler");
   if (g.inventory.count(id) < 1) return fail("no sprinkler");
-  if (!isClear(g, map, x, y)) return fail("cannot place here");
+  if (!mayPlaceOn(id, placeTag(map)) || !isClear(g, map, x, y))
+    return fail("cannot place here");
   g.inventory.remove(id);
   storeOf(g, map.indoors).sprinklers.add(x, y, id);
   return { ok: true };

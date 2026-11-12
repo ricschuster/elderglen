@@ -7,6 +7,7 @@ import type { GameState } from "./save";
 import { canStand } from "./furniture";
 import { chestById } from "./chestdefs";
 import { isClear } from "./actions";
+import { mayPlaceOn, placeTag } from "./placeables";
 
 /**
  * Chests (`docs/design/34_crafting.md`, "Storage and signs"): wood and stone,
@@ -167,9 +168,11 @@ export function placeChest(
 ): Outcome {
   if (!chestById(id)) return fail("not a chest");
   if (g.inventory.count(id) < 1) return fail("no chest");
-  const ok = isHouseMap(mapId)
-    ? canStand(g, map, mapId, x, y) && !g.chests.get(mapId, x, y)
-    : isFarmMap(mapId) && isClear(g, map, x, y) && !g.chests.get(mapId, x, y);
+  const tag = placeTag(map, mapId);
+  const ok =
+    mayPlaceOn(id, tag) &&
+    !g.chests.get(mapId, x, y) &&
+    (tag === "house" ? canStand(g, map, mapId, x, y) : isClear(g, map, x, y));
   if (!ok) return fail("cannot place here");
   g.inventory.remove(id);
   g.chests.add(mapId, x, y, id);
