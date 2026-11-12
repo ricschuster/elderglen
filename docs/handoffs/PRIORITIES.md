@@ -48,7 +48,11 @@ Done, owner checked (2026-11-11): step 1 farm (note 55, #776), step 2 festival s
 - Step 12: Mines, after combat leftovers (#598).
 - Steps 13 to 16 (M3d): `above` layer and seasonal tilesets, reference images and
   style sheet, licence ADR for generated art, the art swap.
-- Build the interiors: #832 to #838.
+- Build the interiors, in this order: the house #832 to #838 (batches 1 to 4, in progress,
+  #832 merged), then the other buildings (note 86): shared reachability test #854, general
+  store pilot #853, doors 2 wide #855, then maps #856 (sawmill, healer, smithy), #857
+  (library, hatter, farmstead), #858 (burrows), #859 (tower, outpost, forge, elf, inn),
+  #860 (fisher hut and loft).
 
 ## Leftovers and housekeeping
 
