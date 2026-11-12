@@ -107,3 +107,12 @@ named place and Mossback and the pond fish are not yet taken.
   second copy by catch or by purchase, and the one catch counts for everything.
 - **Build.** The letter trigger and the achievement need separate counters in
   `src/content/letters.json` and the achievements data.
+
+## Seventh round: hall and aisles (owner, 2026-11-12)
+
+- **Hall.** Gets a draft like the other interiors: 2 wide aisles, each counter reachable
+  from several tiles. Today each of its six counters has one player tile.
+- **Aisle rule for future interiors.** Public aisles are 2 wide. Staff aisles, bedside
+  nooks and kitchen rings in homes may be 1, each listed with a reason in
+  `AISLE_EXCEPTIONS` (`tests/helpers/interior.ts`).
+- **Counters.** Two or more tiles reach a counter and each player's shop menu is their own.
