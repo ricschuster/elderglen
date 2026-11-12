@@ -45,6 +45,7 @@ import { ShippingBin, type BinLine, type BinSave } from "./shipping";
 import { maps } from "../content/maps";
 import { DEFAULT_FARM_TYPE, farmTypeById } from "./farmtypes";
 import { ForageField } from "./forage";
+import { ArtifactSpots } from "./artifacts";
 import { homeWorld, newAreas, type World } from "./areas";
 import { type Weather, WEATHERS } from "./weather";
 import { Hall, type HallProgress } from "./bundles";
@@ -197,6 +198,8 @@ export interface GameState {
   combat: Combat;
   /** Wild goods on the ground today. Not saved: it respawns each morning. */
   forage: ForageField;
+  /** Artifact spots lying on the current map today. Not saved: they roll each morning. */
+  spots: ArtifactSpots;
 }
 
 /** Starting cash for a new game. */
@@ -258,6 +261,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     pots: new Pots(),
     combat: new Combat(),
     forage: new ForageField(),
+    spots: new ArtifactSpots(),
     areas: newAreas(),
   };
 }

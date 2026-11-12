@@ -1,0 +1,70 @@
+{
+  "gems": [
+    {
+      "id": "gem-low-a",
+      "name": "Low gem A",
+      "sellPrice": 50,
+      "minFloor": 1,
+      "xp": 8,
+      "color": "#c0485a",
+      "light": "#f0a0a8"
+    },
+    {
+      "id": "gem-low-b",
+      "name": "Low gem B",
+      "sellPrice": 75,
+      "minFloor": 1,
+      "xp": 8,
+      "color": "#4aa070",
+      "light": "#a8e8c0"
+    },
+    {
+      "id": "gem-mid-a",
+      "name": "Mid gem A",
+      "sellPrice": 150,
+      "minFloor": 41,
+      "xp": 12,
+      "color": "#4a7ac8",
+      "light": "#a8c8f8"
+    },
+    {
+      "id": "gem-mid-b",
+      "name": "Mid gem B",
+      "sellPrice": 250,
+      "minFloor": 41,
+      "xp": 12,
+      "color": "#a05ac8",
+      "light": "#e0b0f8"
+    },
+    {
+      "id": "gem-high-a",
+      "name": "High gem A",
+      "sellPrice": 400,
+      "minFloor": 81,
+      "xp": 16,
+      "color": "#e0802a",
+      "light": "#ffd090"
+    },
+    {
+      "id": "gem-high-b",
+      "name": "High gem B",
+      "sellPrice": 750,
+      "minFloor": 81,
+      "xp": 16,
+      "color": "#e8e0f0",
+      "light": "#ffffff"
+    }
+  ],
+  "glimmerstone": {
+    "id": "glimmerstone",
+    "name": "Glimmerstone",
+    "sellPrice": 1000,
+    "fromFloor": 100,
+    "chance": 0.005,
+    "xp": 25,
+    "color": "#7af0e0",
+    "light": "#ffffff"
+  },
+  "shareByBand": [0.015, 0.025, 0.035],
+  "quarryShare": 0.005
+}

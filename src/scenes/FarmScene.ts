@@ -248,6 +248,7 @@ import {
   iconKey,
   LADDER_KEY,
   ROCK_KEYS,
+  SPOT_KEY,
   soilKey,
   stageOf,
   treeKey,
@@ -2691,6 +2692,7 @@ export class FarmScene extends Phaser.Scene {
     if (!this.outdoorWorld) return;
     for (const { x, y, id } of this.state.forage.each())
       put(x, y, forageKey(id));
+    for (const s of this.state.spots.each()) put(s.x, s.y, SPOT_KEY);
     for (const w of this.state.weeds.each()) put(w.x, w.y, WEED_KEY);
     for (const t of this.state.twigs.each()) put(t.x, t.y, TWIG_KEY);
     for (const m of this.state.machines.each()) {

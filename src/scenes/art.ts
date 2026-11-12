@@ -9,6 +9,8 @@ import { FURNITURE, furnitureById } from "../core/furniture";
 import { fertilizerById } from "../core/fertilizer";
 import { SPRINKLERS, sprinklerById } from "../core/sprinklers";
 import { GEODE_ITEMS, GEODE_KINDS } from "../core/geodes";
+import { GEM_ITEMS } from "../core/gems";
+import { ARTIFACTS } from "../core/artifacts";
 import { categoryOf } from "../core/artisan";
 import { MACHINES, machineById } from "../core/processing";
 import Phaser from "phaser";
@@ -776,17 +778,20 @@ export const ROCK_KEYS = {
   coal: "rock-coal",
   quartz: "rock-quartz",
   geode: "rock-geode",
+  gem: "rock-gem",
   iron: "rock-iron",
   gold: "rock-gold",
   hearthsilver: "rock-hearthsilver",
 } as const;
 export const LADDER_KEY = "mine-ladder";
+export const SPOT_KEY = "artifact-spot";
 
 const MINE_ICON_IDS = [
   "stone",
   "coal",
   "quartz-crystal",
   ...GEODE_ITEMS.map((i) => i.id),
+  ...GEM_ITEMS.map((i) => i.id),
   "copper-ore",
   "iron-ore",
   "gold-ore",
@@ -1044,6 +1049,29 @@ function paintMineArt(scene: Phaser.Scene): void {
     px(c, "#e8d0f4", 7, 8, 2, 1);
   };
   draw(ROCK_KEYS.geode, geode);
+  draw(ROCK_KEYS.gem, (c) => {
+    lump(c, "#7a7a86", "#4a4a56", "#a8a8b4");
+    px(c, "#7ad8e8", 6, 7, 4, 3);
+    px(c, "#ffffff", 7, 8, 1, 1);
+  });
+  // A marked artifact spot: a patch of turned earth with a pale cross.
+  draw(SPOT_KEY, (c) => {
+    px(c, "#6a4a2e", 4, 8, 8, 4);
+    px(c, "#8a6a46", 5, 7, 6, 1);
+    px(c, "#e8d8a8", 7, 8, 2, 3);
+    px(c, "#e8d8a8", 6, 9, 4, 1);
+  });
+  for (const a of ARTIFACTS.filter(
+    (a) => !GEODE_ITEMS.some((g) => g.id === a.id),
+  ))
+    draw(`icon-${a.id}`, (c) => {
+      const h = [...a.id].reduce((n, ch) => n + ch.charCodeAt(0), 0);
+      const colour = `hsl(${(h * 37) % 360} 35% 55%)`;
+      px(c, "#00000044", 4, 13, 8, 1);
+      px(c, colour, 4, 6, 8, 6);
+      px(c, colour, 6, 4, 4, 2);
+      px(c, "#ffffff66", 5, 7, 2, 2);
+    });
   const gem = (c: Ctx, colour: string, light: string) => {
     px(c, "#00000044", 4, 13, 8, 1);
     px(c, colour, 4, 6, 8, 6);
@@ -1067,6 +1095,9 @@ function paintMineArt(scene: Phaser.Scene): void {
         px(c, "#a88a4a", 6, 8, 4, 4);
         px(c, "#7a5e2a", 5, 12, 6, 1);
         px(c, "#d8be7a", 5, 6, 2, 1);
+      } else if (GEM_ITEMS.some((i) => i.id === id)) {
+        const i = GEM_ITEMS.find((i) => i.id === id)!;
+        gem(c, i.color, i.light);
       } else if (GEODE_ITEMS.some((i) => i.id === id)) {
         const i = GEODE_ITEMS.find((i) => i.id === id)!;
         gem(c, i.color ?? "#ffffff", i.light ?? "#ffffff");
@@ -1105,6 +1136,7 @@ export function iconKey(itemId: string): string | undefined {
   const category = categoryOf(base);
   if (category) return `icon-artisan-${category}`;
   if (MINE_ICON_IDS.includes(base)) return `icon-${base}`;
+  if (ARTIFACTS.some((a) => a.id === base)) return `icon-${base}`;
   if (
     base === "wood" ||
     base === "hardwood" ||

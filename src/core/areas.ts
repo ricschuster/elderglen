@@ -1,6 +1,7 @@
 import { dateOf } from "./calendar";
 import { returnDebris, Twigs } from "./debris";
 import { ForageField, type Spot } from "./forage";
+import { ArtifactSpots, ARTIFACT_AREAS, rollAreaSpots } from "./artifacts";
 import { Farm } from "./farm";
 import { FruitTrees } from "./fruittrees";
 import { GroundItems } from "./ground";
@@ -43,6 +44,8 @@ export interface World {
   ground: GroundItems;
   /** Wild goods lying out today. Not saved: it respawns each morning. */
   forage: ForageField;
+  /** Artifact spots lying out today. Not saved. */
+  spots: ArtifactSpots;
   /**
    * The farm's own soil, sprinklers, fruit trees and machines are kept by tile
    * with no map id, so an area swaps in empty ones: nothing of the farm can be
@@ -63,6 +66,7 @@ export function newWorld(map: FarmMap): World {
     twigs: new Twigs(),
     ground: new GroundItems(),
     forage: new ForageField(),
+    spots: new ArtifactSpots(),
     farm: new Farm(),
     sprinklers: new Sprinklers(),
     fruitTrees: new FruitTrees(),
@@ -89,6 +93,7 @@ function current(g: GameState): World {
     twigs: g.twigs,
     ground: g.ground,
     forage: g.forage,
+    spots: g.spots,
     farm: g.farm,
     sprinklers: g.sprinklers,
     fruitTrees: g.fruitTrees,
@@ -103,6 +108,7 @@ function apply(g: GameState, w: World): void {
   g.twigs = w.twigs;
   g.ground = w.ground;
   g.forage = w.forage;
+  g.spots = w.spots;
   g.farm = w.farm;
   g.sprinklers = w.sprinklers;
   g.fruitTrees = w.fruitTrees;
@@ -229,6 +235,17 @@ export function respawnAreaForage(g: GameState, random: () => number): void {
       (s) => map.forageTableAt(s.x, s.y),
       random,
     );
+    if (ARTIFACT_AREAS.includes(id)) {
+      const free = (s: Spot) => emptyAt(w, s.x, s.y);
+      const open = map.forageSpots.filter(free);
+      rollAreaSpots(
+        g,
+        w.spots,
+        open.length > 0 ? open : openTiles(map).filter(free),
+        openTiles(map).filter(free),
+        random,
+      );
+    }
   }
 }
 

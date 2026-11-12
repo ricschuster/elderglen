@@ -30,6 +30,11 @@ import { MACHINES } from "./processing";
 import { DISHES } from "./dishes";
 import { CHESTS } from "./chestdefs";
 import { GEODE_ITEMS } from "./geodes";
+import { GEM_ITEMS } from "./gems";
+import artifactData from "../content/artifacts.json";
+
+/** The found old things, read from data here so this list has no cycle with `artifacts.ts`. */
+const ARTIFACTS = artifactData.artifacts;
 import { FISH, RODS } from "./fishing";
 import { BAITS, LURES, TRINKETS } from "./tackle";
 import { JUNK, POT_ITEM, POT_NAME, POT_PRICE, SHELLFISH } from "./pots";
@@ -185,6 +190,12 @@ items.set(COAL, {
 });
 for (const i of GEODE_ITEMS)
   items.set(i.id, { id: i.id, name: i.name, sellPrice: i.sellPrice });
+for (const i of GEM_ITEMS)
+  items.set(i.id, { id: i.id, name: i.name, sellPrice: i.sellPrice });
+/** Found old things (note 69). The geode finds are already listed with the geode goods. */
+for (const a of ARTIFACTS)
+  if (!items.has(a.id))
+    items.set(a.id, { id: a.id, name: a.name, sellPrice: a.sellPrice });
 items.set(QUARTZ, {
   id: QUARTZ,
   name: "Quartz crystal",
@@ -417,6 +428,10 @@ const GROUPS: [string, string[]][] = [
       COAL,
       QUARTZ,
       ...GEODE_ITEMS.map((i) => i.id),
+      ...GEM_ITEMS.map((i) => i.id),
+      ...ARTIFACTS.map((a) => a.id).filter(
+        (id) => !GEODE_ITEMS.some((g) => g.id === id),
+      ),
       ...ORES.map((o) => o.id),
       ...BARS.map((b) => b.id),
       "battery-pack",

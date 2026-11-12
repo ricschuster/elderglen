@@ -95,6 +95,65 @@ a placeholder item.
 2. Frozen with floors 41 to 80, Magma with floors 81 to 120.
 3. Omni once the first three are in.
 
+## Artifact spots and gem nodes (owner, 2026-11-12)
+
+Closes the design part of #879 for these two systems. Stardew claims are from the saved
+Artifacts, Hoe and Mining pages (read 2026-11-12). Every number below is a placeholder
+unless it says Stardew's.
+
+### Decisions
+
+1. **Artifact spots follow Stardew.** A marked spot on the ground, dug with the hoe in the
+   valley areas, each area giving its own finds, **much more common in winter**. The hoe
+   on dirt in the mines can also give an artifact. Stardew's daily spot count is not on the
+   saved page: placeholder 2 to 4 a day in an area, 6 to 10 in winter, logged as SC-154.
+2. **42 artifacts to match Stardew's list.** One of each is donated to the library gallery
+   (note 39), with rewards at donation milestones. Names, art and prices are ours (ADR
+   0002). Bundle 26's four old things (old seed packet, carved bead, faded ribbon, pressed
+   flower) are four of the 42.
+3. **Six gems in three bands (Stardew's shape).** Two gems from any floor, two from the
+   Cold Deeps (floor 41), two from the Ember Deeps (floor 81 or after the bottom is
+   reached). The Glimmerstone stays the rarest, deep only, and also comes from geodes.
+   Diamond-like rare node chance is a fixed chance by band. Mining level gates the ore
+   tier, not the gem odds (decided earlier today).
+
+### Artifact spots (build)
+
+- **Placement.** Each morning the area rolls its spots on bare diggable tiles. Winter
+  rolls more and lets more tiles count as diggable (as Stardew does).
+- **Dig.** The hoe on a spot removes it and rolls the area's table. A spot is never empty:
+  if no artifact rolls it gives a small common find (clay, seed packet, stone, as Stardew
+  gives a seed or resource, unchecked).
+- **Tables.** Per area, 3 to 5 artifacts each, shares from 0.5 to 3 percent (Stardew's
+  page lists per-spot chances in that range). Areas: Forest, Secret Woods, Delta, Mountain,
+  Cove. Mine finds come from the dirt rule below, creatures and geodes.
+- **Mine dirt.** Tilling a diggable mine tile has a small chance of an artifact, by band
+  (placeholder 0.15 percent, Stardew's lowest rate is 0.1 percent). Bundle 26's old things
+  also drop from Old Diggers.
+- **Duplicates.** Donating one keeps the rest as gifts and sellable. A found artifact
+  already donated still works as a find and is not blocked.
+- **Data.** `src/content/artifacts.json`: id, name, sell price, areas with shares, other
+  sources. Core in `src/core/artifacts.ts`, free of Phaser.
+
+### Gem nodes (build)
+
+- **Gems.** Placeholder ids until the mineral names are final: low gems
+  `gem-low-a`, `gem-low-b` from any floor; mid gems `gem-mid-a`, `gem-mid-b` from floor
+  41; high gems `gem-high-a`, `gem-high-b` from floor 81. Sell prices 50 to 750g.
+- **Node.** A rock node that takes the same swings as a geode node and drops its gem.
+  Share of rocks: 1.5 percent in the Upper Galleries, 2.5 in the Cold Deeps, 3.5 in the
+  Ember Deeps (placeholders). One gem a node.
+- **Glimmerstone.** Floors 100 to 120, 0.5 percent a node (note 22 placeholder).
+- **Rockhound** (note 22) applies to gem nodes as it does to geodes.
+- **Quarry.** A small gem share in the Quarry (note 78): 0.5 percent a rock.
+- **Experience.** A gem node gives more Mining experience than a plain rock, rising with
+  the gem tier (Stardew's pattern from the saved Mining page).
+
+### Still open
+
+The 42 names and prices, the six gem names, the gallery donation rewards, the real daily
+spot count (SC-154) and the dirt chance. Build uses placeholders.
+
 ## Who cracks and who buys, once the maps exist (owner, 2026-11-08)
 
 The Hearthwell blacksmith cracks geodes (25g) and handles ore, and does not buy
