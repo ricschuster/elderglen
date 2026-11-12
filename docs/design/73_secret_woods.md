@@ -165,7 +165,7 @@ Work package: "Secret Woods map, hardwood stumps and the massive log" (steps 1 t
 
 ## Owner answer 2026-11-08m
 
-The pond's unique fish is the **Mossback**, a working name, a shy mossy fish. Its bar motion, price and conditions are designed with the roster (`21_fishing.md`).
+The pond's unique fish is the **Fernscale** (renamed from the working name Mossback, owner 2026-11-12, to avoid the river's Old Mossback), a shy mossy fish. Its bar motion, price and conditions are designed with the roster (`21_fishing.md`).
 
 ## Built status (2026-11-09, #639)
 
@@ -194,7 +194,7 @@ Build order steps 1 to 4 and the stand-in removal are built.
   log is chopped.
 - **Stand-in removed:** `carpenter-standin.json`, `core/carpenter.ts`, the
   carpenter's Hardwood row and its test are deleted.
-- **Not built:** the pond's fish (the Mossback and the two common ones), the
+- **Not built:** the pond's fish (the Fernscale and the two common ones), the
   spirit's statue, digging spots, creatures and Mahogany.
 - **Playtest:** `npm run playtest:secret-woods` (steel axe, log, woods, stump,
   night). It starts by a scene restart at the Forest entry, not a walk from the

@@ -34,7 +34,7 @@ write. Nothing here is built.
 Bomb blast shape, damage to the player and monsters, and which rock a bomb breaks (the
 hard rock gate). The per item place table. The heater's effect size. The Life Elixir,
 Miner's Treat and Oil of Garlic effects and the monster avoid buff. Goods hand-in to a
-named place and Mossback and the pond fish are not yet taken.
+named place and the pond fish are not yet taken.
 
 ## Second round (owner, 2026-11-12)
 
@@ -50,7 +50,7 @@ named place and Mossback and the pond fish are not yet taken.
 - **Life Elixir** restores health to full. **Miner's Treat** gives a big energy boost
   (placeholder 100 energy).
 - **Oil of Garlic.** Monsters below a tier ignore the player for the rest of the day.
-- **Mossback.** Pond only, any time, shy, so a hard bar and a high price (note 21).
+- **Fernscale (was Mossback).** Pond only, any time, shy, so a hard bar and a high price (note 21).
 - **Last Seat.** Counts bundles only, no per-room rule (the every-other-bundle gate
   already implies every room).
 - **Bundle 26 keepsake.** A lore item with no effect; it gives a letter and a hall shelf slot.
@@ -77,9 +77,9 @@ named place and Mossback and the pond fish are not yet taken.
   and decoration and dyes. The flower design note covers each.
 - **Fish seed letter trigger.** Every fish except the legendary ones (a change from the
   built `whole-roster`, which counts every fish). Which fish are "legendary" is to be
-  named in note 21 (the Mossback is a candidate). The achievement trigger needs the same
+  named in note 21 (the pond fish is outside it). The achievement trigger needs the same
   split.
-- **Mossback price.** 750g base (placeholder).
+- **Fernscale price.** 750g base (placeholder).
 - **Gem nodes.** A fixed chance by floor band. Mining level gates the ore tier, not the
   gem odds.
 
@@ -99,10 +99,10 @@ named place and Mossback and the pond fish are not yet taken.
 
 ## Sixth round: fish goals (owner, 2026-11-12)
 
-- **Letter roster.** The fish seed letter counts the 46 ordinary fish. The Mossback and the
+- **Letter roster.** The fish seed letter counts the 46 ordinary fish. The Fernscale and the
   five legends are outside it.
 - **Two goals (Stardew-like, recalled, unchecked).** The letter is the ordinary fish. A
-  separate fish achievement counts every fish, the legends and the Mossback included.
+  separate fish achievement counts every fish, the legends and the Fernscale included.
 - **Legends.** Once per save, each farm slot starts fresh (saved Legendary Fish page). No
   second copy by catch or by purchase, and the one catch counts for everything.
 - **Build.** The letter trigger and the achievement need separate counters in
