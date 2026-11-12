@@ -30,6 +30,8 @@ const REBUILT: Record<string, [number, number]> = {
   "burrow-retired": [32, 21],
   "burrow-young": [28, 20],
   inn: [44, 32],
+  "fisher-hut": [12, 13],
+  "fisher-loft": [11, 11],
 };
 const BURROWS = ["burrow-gardener", "burrow-retired", "burrow-young"];
 const ALL = [...Object.keys(SHOPS), "outpost", "outpost-rooms", ...BURROWS];

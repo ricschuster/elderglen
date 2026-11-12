@@ -39,6 +39,7 @@ const EXITS: Record<string, string> = {
   hatter: "Hatter",
   outpost: "Outpost",
   rooms: "Steward's rooms",
+  loft: "Fisher's loft",
   "burrow-gardener": "Gardener's burrow",
   "burrow-retired": "Retired couple's burrow",
   "burrow-young": "Young adults' burrow",

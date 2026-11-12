@@ -169,6 +169,16 @@ export const AISLE_EXCEPTIONS: Record<
     reason:
       "owner-checked draft (note 86, 2026-11-11): staff aisle, bedside nooks and the kitchen table ring are one tile wide; the public aisles are 2 wide",
   },
+  "fisher-hut": {
+    tiles: ["3,3", "4,3", "5,3", "5,2", "1,4", "10,2", "10,6", "8,8", "9,8"],
+    reason:
+      "Checked draft: 1 wide strips between the shop counter and the loft ladder or wall fixtures, and beside the corner crates. None is the only way through the room.",
+  },
+  "fisher-loft": {
+    tiles: ["3,2", "8,4", "9,4", "8,6", "9,6"],
+    reason:
+      "Checked draft: the bedside nook beside the fisher's bed and the 1 wide strips beside the table and crates. None is the only way through the room.",
+  },
   sawmill: {
     tiles: [
       "10,22",

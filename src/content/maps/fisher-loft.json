@@ -1,0 +1,206 @@
+{
+  "type": "map",
+  "version": "1.10",
+  "tiledversion": "1.10.2",
+  "orientation": "orthogonal",
+  "renderorder": "right-down",
+  "infinite": false,
+  "width": 11,
+  "height": 11,
+  "tilewidth": 16,
+  "tileheight": 16,
+  "nextlayerid": 5,
+  "nextobjectid": 9,
+  "properties": [{ "name": "placeholder", "type": "bool", "value": true }],
+  "tilesets": [
+    {
+      "firstgid": 1,
+      "name": "placeholder",
+      "tilewidth": 16,
+      "tileheight": 16,
+      "tilecount": 12,
+      "columns": 10,
+      "image": "placeholder-tiles.png",
+      "imagewidth": 192,
+      "imageheight": 16
+    }
+  ],
+  "layers": [
+    {
+      "id": 1,
+      "name": "ground",
+      "type": "tilelayer",
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "visible": true,
+      "width": 11,
+      "height": 11,
+      "data": [
+        0, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 3,
+        3, 3, 3, 3, 3, 3, 3, 3, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 7, 7, 3, 3, 5,
+        5, 5, 5, 3, 3, 3, 7, 7, 3, 3, 5, 5, 5, 5, 3, 3, 3, 7, 7, 3, 3, 3, 3, 3,
+        3, 3, 3, 3, 7, 7, 7, 7, 7, 3, 3, 7, 7, 7, 7, 7, 0, 0, 0, 7, 3, 3, 7, 0,
+        0, 0, 0, 0, 0, 0, 7, 9, 9, 7, 0, 0, 0, 0, 0, 0, 0, 7, 7, 7, 7, 0, 0, 0,
+        0
+      ]
+    },
+    {
+      "id": 2,
+      "name": "fixtures",
+      "type": "tilelayer",
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "visible": true,
+      "width": 11,
+      "height": 11,
+      "data": [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10,
+        10, 0, 12, 12, 0, 0, 11, 11, 0, 0, 10, 10, 0, 0, 0, 0, 0, 11, 11, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 12, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0
+      ]
+    },
+    {
+      "id": 3,
+      "name": "collision",
+      "type": "tilelayer",
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "visible": false,
+      "width": 11,
+      "height": 11,
+      "data": [
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1
+      ]
+    },
+    {
+      "id": 4,
+      "name": "markers",
+      "type": "objectgroup",
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "visible": true,
+      "draworder": "topdown",
+      "objects": [
+        {
+          "id": 1,
+          "rotation": 0,
+          "visible": true,
+          "name": "door",
+          "class": "entry",
+          "type": "entry",
+          "x": 64,
+          "y": 128,
+          "width": 0,
+          "height": 0,
+          "point": true
+        },
+        {
+          "id": 2,
+          "rotation": 0,
+          "visible": true,
+          "name": "door",
+          "class": "exit",
+          "type": "exit",
+          "x": 64,
+          "y": 144,
+          "width": 32,
+          "height": 16,
+          "properties": [
+            { "name": "map", "type": "string", "value": "fisher-hut" },
+            { "name": "entry", "type": "string", "value": "from_loft" }
+          ]
+        },
+        {
+          "id": 3,
+          "rotation": 0,
+          "visible": true,
+          "name": "entry-1",
+          "class": "mark",
+          "type": "mark",
+          "x": 64,
+          "y": 128,
+          "width": 0,
+          "height": 0,
+          "point": true
+        },
+        {
+          "id": 4,
+          "rotation": 0,
+          "visible": true,
+          "name": "door-1",
+          "class": "mark",
+          "type": "mark",
+          "x": 64,
+          "y": 144,
+          "width": 0,
+          "height": 0,
+          "point": true
+        },
+        {
+          "id": 5,
+          "rotation": 0,
+          "visible": true,
+          "name": "entry-2",
+          "class": "mark",
+          "type": "mark",
+          "x": 80,
+          "y": 128,
+          "width": 0,
+          "height": 0,
+          "point": true
+        },
+        {
+          "id": 6,
+          "rotation": 0,
+          "visible": true,
+          "name": "door-2",
+          "class": "mark",
+          "type": "mark",
+          "x": 80,
+          "y": 144,
+          "width": 0,
+          "height": 0,
+          "point": true
+        },
+        {
+          "id": 7,
+          "rotation": 0,
+          "visible": true,
+          "name": "bed-fisher",
+          "class": "mark",
+          "type": "mark",
+          "x": 48,
+          "y": 48,
+          "width": 0,
+          "height": 0,
+          "point": true
+        },
+        {
+          "id": 8,
+          "rotation": 0,
+          "visible": true,
+          "name": "spot-loft",
+          "class": "mark",
+          "type": "mark",
+          "x": 96,
+          "y": 64,
+          "width": 0,
+          "height": 0,
+          "point": true
+        }
+      ]
+    }
+  ]
+}

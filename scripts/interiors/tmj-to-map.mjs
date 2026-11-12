@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 // Convert a checked interior draft into the game's map file (note 86, build work).
 //
-//   node scripts/interiors/tmj-to-map.mjs <draft-id> [more ids...]
+//   node scripts/interiors/tmj-to-map.mjs <draft-id>[=<map-id>] [more ids...]
 //
 // Reads docs/design/drafts/interiors-draft/<id>.tmj and writes
-// src/content/maps/<id>.json. Not an npm script and not a CI gate; run it, then
+// src/content/maps/<id>.json (or <map-id>.json when the draft name differs, as in
+// `hut-fisher=fisher-hut` and `hut-fisher-loft=fisher-loft`; LINKS below holds the
+// wiring for maps that are not a plain door to the lot). Not an npm script and not a CI gate; run it, then
 // `npm run format`, and review the diff. The draft's ground and fixtures layers become
 // the game's `ground`, `fixtures` (drawn) and `collision` (walls, void and fixtures)
 // layers on the placeholder tileset (see TILE below). The draft's `markers` points
@@ -52,11 +54,32 @@ const FIXTURE = {
 };
 const COUNTER_GID = 6;
 
+// Wiring that the draft points cannot say, by map id. `door` is the default target of
+// the `door` exit when there is no old file to read it from; `ladder` adds an exit
+// named `ladder-name` over the gate tiles named `door-gated-<gate>` (target map and its
+// entry), plus an entry named `from` on the walkable tile south of the gate.
+const LINKS = {
+  "fisher-loft": { door: ["fisher-hut", "from_loft"] },
+  "fisher-hut": {
+    ladder: {
+      gate: "fisher-loft",
+      name: "loft",
+      map: "fisher-loft",
+      entry: "door",
+      from: "from_loft",
+    },
+  },
+};
+
 const str = (name, value) => ({ name, type: "string", value });
 const warn = (id, msg) => console.warn(`warning (${id}): ${msg}`);
 
-function convert(id) {
-  const draft = JSON.parse(readFileSync(join(DRAFTS, `${id}.tmj`), "utf8"));
+function convert(arg) {
+  const [draftId, mapId] = arg.split("=");
+  const id = mapId ?? draftId;
+  const draft = JSON.parse(
+    readFileSync(join(DRAFTS, `${draftId}.tmj`), "utf8"),
+  );
   const { width: W, height: H } = draft;
   const layer = (n) => draft.layers.find((l) => l.name === n);
   const gd = layer("ground").data;
@@ -84,8 +107,8 @@ function convert(id) {
   const oldDoor = oldObjs.find((o) => o.class === "exit" && o.name === "door");
   const prop = (o, n) => o?.properties?.find((p) => p.name === n)?.value;
   const target = [
-    prop(oldDoor, "map") ?? "hearthwell",
-    prop(oldDoor, "entry") ?? `from_${id}`,
+    prop(oldDoor, "map") ?? LINKS[id]?.door?.[0] ?? "hearthwell",
+    prop(oldDoor, "entry") ?? LINKS[id]?.door?.[1] ?? `from_${id}`,
   ];
   const oldServices = oldObjs.filter((o) => o.class === "service");
 
@@ -187,6 +210,17 @@ function convert(id) {
   }
   for (const p of pts)
     if (!/^service-/.test(p.name)) point(p.name, "mark", p.x, p.y);
+  const ladder = LINKS[id]?.ladder;
+  if (ladder) {
+    const list = gated.get(ladder.gate);
+    if (!list) throw new Error(`${id}: no door-gated-${ladder.gate} points`);
+    const s = span(list);
+    rect(ladder.name, "exit", s.x0, s.y0, s.x1, s.y1, [
+      str("map", ladder.map),
+      str("entry", ladder.entry),
+    ]);
+    point(ladder.from, "entry", s.x0, s.y1 + 1);
+  }
 
   // Carry over extra exits and entries from the old map.
   for (const o of oldObjs) {
