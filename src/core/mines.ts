@@ -2,6 +2,7 @@ import campChest from "../content/camp-chest.json";
 import type { Spot } from "./forage";
 import bandData from "../content/mine-bands.json";
 import { GEODE_SHARE } from "./geodes";
+import { gemShare } from "./gems";
 import type { TiledMapJson } from "./map";
 import { Rocks, type Rock, type RockKind } from "./rocks";
 import {
@@ -73,6 +74,7 @@ export function rockKindAt(floor: number, r: number): RockKind {
     ["coal", COAL_SHARE],
     ["quartz", QUARTZ_SHARE],
     ["geode", GEODE_SHARE],
+    ["gem", gemShare(floor)],
   ];
   let edge = 0;
   for (const [kind, share] of table) {

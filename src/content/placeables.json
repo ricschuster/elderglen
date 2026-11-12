@@ -214,5 +214,61 @@
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"
+  },
+  {
+    "id": "wood-lamp-post",
+    "kind": "light",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand",
+    "light": {
+      "radius": 6,
+      "onlyAtNight": false
+    }
+  },
+  {
+    "id": "iron-lamp-post",
+    "kind": "light",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand",
+    "light": {
+      "radius": 6,
+      "onlyAtNight": false
+    }
+  },
+  {
+    "id": "coop-heater",
+    "kind": "heater",
+    "places": [],
+    "footprint": [1, 1],
+    "blocksWalking": false,
+    "pickUp": "hand"
+  },
+  {
+    "id": "cherry-bomb",
+    "kind": "bomb",
+    "places": ["farm", "mine", "wild"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "none"
+  },
+  {
+    "id": "bomb",
+    "kind": "bomb",
+    "places": ["farm", "mine", "wild"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "none"
+  },
+  {
+    "id": "mega-bomb",
+    "kind": "bomb",
+    "places": ["farm", "mine", "wild"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "none"
   }
 ]

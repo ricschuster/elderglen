@@ -16,7 +16,7 @@ and open. Stat numbers are Stardew's unless marked ours.
 - **Trinkets:** the saved pages list a trinket category, but none of them
   describes the trinket slot, so it is not checked and not in this note.
 - **Boots give Defense and Immunity (as Stardew).** Defense cuts damage taken.
-  Immunity shortens bad effects. Boots are found, bought or won, and all can be
+  Immunity is a chance to resist bad effects (changed 2026-11-12, owner, note 94). Boots are found, bought or won, and all can be
   sold.
 - **The ring list is Stardew's** (below), minus the wedding ring (we use a token
   that is not worn, `12_marriage.md`) and the jukebox ring (unobtainable in

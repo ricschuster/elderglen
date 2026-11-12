@@ -10,12 +10,14 @@ import {
   animalsIn,
   buyAnimal,
   buyHay,
+  buyHeater,
   capacityOf,
   defaultName,
   isBuilt,
   speciesOf,
   tierOf,
 } from "../core/animals";
+import { COOP_HEATER, HEATER_PRICE } from "../core/items";
 import { keeperAdvice } from "../core/forestfolk";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
@@ -92,7 +94,21 @@ export class KeeperScene extends Phaser.Scene {
         detail: `${HAY_PRICE * 10}g, into your pack (${g.inventory.count("hay")} carried)`,
         buttons: [{ text: "Buy", run: () => this.buyHay() }],
       });
+    if (g.animals.coopBuilt || g.animals.barnBuilt)
+      rows.push({
+        label: "Heater",
+        detail: `${HEATER_PRICE}g, one for the coop or the barn, placed from the building's menu (${g.inventory.count(COOP_HEATER)} carried)`,
+        dim: g.money < HEATER_PRICE,
+        buttons: [{ text: "Buy", run: () => this.buyHeater() }],
+      });
     this.menu.setRows(rows);
+  }
+
+  private buyHeater(): void {
+    this.message.setText(
+      buyHeater(this.state) ?? "He wraps a heater for you. It is in your pack.",
+    );
+    this.refresh();
   }
 
   private buyAnimal(species: Species): void {

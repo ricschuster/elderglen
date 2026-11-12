@@ -1,0 +1,26 @@
+[
+  {
+    "id": "cherry-bomb",
+    "name": "Cherry bomb",
+    "radius": 1,
+    "monsterDamage": 15,
+    "playerPercent": 10,
+    "price": 450
+  },
+  {
+    "id": "bomb",
+    "name": "Bomb",
+    "radius": 2,
+    "monsterDamage": 30,
+    "playerPercent": 20,
+    "price": 1000
+  },
+  {
+    "id": "mega-bomb",
+    "name": "Mega bomb",
+    "radius": 3,
+    "monsterDamage": 50,
+    "playerPercent": 30,
+    "price": 1600
+  }
+]

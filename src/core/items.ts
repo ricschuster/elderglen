@@ -1,3 +1,4 @@
+import bombData from "../content/bombs.json";
 import { CROPS, cropById } from "./crops";
 import {
   MAHOGANY_SEED,
@@ -29,6 +30,11 @@ import { MACHINES } from "./processing";
 import { DISHES } from "./dishes";
 import { CHESTS } from "./chestdefs";
 import { GEODE_ITEMS } from "./geodes";
+import { GEM_ITEMS } from "./gems";
+import artifactData from "../content/artifacts.json";
+
+/** The found old things, read from data here so this list has no cycle with `artifacts.ts`. */
+const ARTIFACTS = artifactData.artifacts;
 import { FISH, RODS } from "./fishing";
 import { BAITS, LURES, TRINKETS } from "./tackle";
 import { JUNK, POT_ITEM, POT_NAME, POT_PRICE, SHELLFISH } from "./pots";
@@ -184,6 +190,12 @@ items.set(COAL, {
 });
 for (const i of GEODE_ITEMS)
   items.set(i.id, { id: i.id, name: i.name, sellPrice: i.sellPrice });
+for (const i of GEM_ITEMS)
+  items.set(i.id, { id: i.id, name: i.name, sellPrice: i.sellPrice });
+/** Found old things (note 69). The geode finds are already listed with the geode goods. */
+for (const a of ARTIFACTS)
+  if (!items.has(a.id))
+    items.set(a.id, { id: a.id, name: a.name, sellPrice: a.sellPrice });
 items.set(QUARTZ, {
   id: QUARTZ,
   name: "Quartz crystal",
@@ -275,8 +287,42 @@ for (const [id, name] of [
   ["campfire", "Campfire"],
   ["wood-brazier", "Wood brazier"],
   ["stone-brazier", "Stone brazier"],
+  ["wood-lamp-post", "Wood lamp-post"],
+  ["iron-lamp-post", "Iron lamp-post"],
 ] as const)
   items.set(id, { id, name, sellPrice: 0, keep: true });
+/** Bombs (note 89): bought at the Forge, lit on a tile, used up. Prices from `bombs.json`. */
+for (const b of bombData)
+  items.set(b.id, {
+    id: b.id,
+    name: b.name,
+    sellPrice: 0,
+    buyPrice: b.price,
+    keep: true,
+  });
+export const LIFE_ELIXIR = "life-elixir";
+export const MINERS_TREAT = "miners-treat";
+export const OIL_OF_GARLIC = "oil-of-garlic";
+
+export const LIFE_ELIXIR_PRICE = 2000;
+export const MINERS_TREAT_PRICE = 1000;
+export const OIL_OF_GARLIC_PRICE = 3000;
+/** Energy a Miner's Treat gives (placeholder). */
+export const MINERS_TREAT_ENERGY = 100;
+/** The Forge's small goods (note 89): bought, drunk or eaten, used up. Prices are Stardew's, placeholders. */
+for (const [id, name, buyPrice, energy] of [
+  [LIFE_ELIXIR, "Life Elixir", LIFE_ELIXIR_PRICE, undefined],
+  [MINERS_TREAT, "Miner's Treat", MINERS_TREAT_PRICE, MINERS_TREAT_ENERGY],
+  [OIL_OF_GARLIC, "Oil of Garlic", OIL_OF_GARLIC_PRICE, undefined],
+] as const)
+  items.set(id, {
+    id,
+    name,
+    sellPrice: 0,
+    buyPrice,
+    keep: true,
+    ...(energy !== undefined ? { energy } : {}),
+  });
 items.set(ELDERFRUIT, {
   id: ELDERFRUIT,
   name: "Elderfruit",
@@ -308,8 +354,16 @@ items.set(WARP_TOTEM_BEACH, {
 export const COOP_HEATER = "coop-heater";
 export const CRYSTALARIUM = "crystalarium";
 export const ELF_LETTER = "elf-letter";
+/** The heater is sold at the Forest farmstead (note 89, placeholder, SC-149). Bundle 25 still gives the first. */
+export const HEATER_PRICE = 1000;
+items.set(COOP_HEATER, {
+  id: COOP_HEATER,
+  name: "Coop heater",
+  sellPrice: 0,
+  buyPrice: HEATER_PRICE,
+  keep: true,
+});
 for (const [id, name] of [
-  [COOP_HEATER, "Coop heater"],
   [CRYSTALARIUM, "Crystalarium"],
   [ELF_LETTER, "Letter to the elves"],
 ] as const)
@@ -374,6 +428,10 @@ const GROUPS: [string, string[]][] = [
       COAL,
       QUARTZ,
       ...GEODE_ITEMS.map((i) => i.id),
+      ...GEM_ITEMS.map((i) => i.id),
+      ...ARTIFACTS.map((a) => a.id).filter(
+        (id) => !GEODE_ITEMS.some((g) => g.id === id),
+      ),
       ...ORES.map((o) => o.id),
       ...BARS.map((b) => b.id),
       "battery-pack",
@@ -382,6 +440,12 @@ const GROUPS: [string, string[]][] = [
       "campfire",
       "wood-brazier",
       "stone-brazier",
+      ...bombData.map((b) => b.id),
+      LIFE_ELIXIR,
+      MINERS_TREAT,
+      OIL_OF_GARLIC,
+      "wood-lamp-post",
+      "iron-lamp-post",
       ELDERFRUIT,
       DEEPMARK_KEY,
     ],

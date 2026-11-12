@@ -159,6 +159,17 @@ import {
   pickUpLight,
   placeLight,
 } from "../core/lights";
+import { drink, isDrink, oilCalms } from "../core/elixirs";
+import {
+  type LitBomb,
+  blastCreatures,
+  blastPlayer,
+  blastRocks,
+  bombById,
+  isBomb,
+  placeBomb,
+  tickBombs,
+} from "../core/bombs";
 import {
   LIGHTNING_ROD,
   packWaiting,
@@ -237,6 +248,7 @@ import {
   iconKey,
   LADDER_KEY,
   ROCK_KEYS,
+  SPOT_KEY,
   soilKey,
   stageOf,
   treeKey,
@@ -368,6 +380,9 @@ export class FarmScene extends Phaser.Scene {
   private ground!: Phaser.GameObjects.Graphics;
   /** The light layer: glow rings of placed lights and the worn ring (note 89). */
   private glow!: Phaser.GameObjects.Graphics;
+  /** Bombs lit and counting down on this map. Never saved: they go off at once on leaving (note 89). */
+  private litBombs: LitBomb[] = [];
+  private bombFx!: Phaser.GameObjects.Graphics;
   private wash!: Phaser.GameObjects.Graphics;
   /** Dusk over the farm: fades in toward nightfall, which moves by season. */
   private night!: Phaser.GameObjects.Rectangle;
@@ -553,6 +568,10 @@ export class FarmScene extends Phaser.Scene {
     world.push(this.player, this.hat, this.target);
     this.swingFx = this.add.graphics().setDepth(900);
     world.push(this.swingFx);
+    this.litBombs = [];
+    this.bombFx = this.add.graphics().setDepth(901);
+    world.push(this.bombFx);
+    this.events.once("shutdown", () => this.detonateAll(true));
     this.creatureSprites = new Map();
     this.syncCombatSettings();
     for (const c of this.floorState?.creatures ?? [])
@@ -867,6 +886,7 @@ export class FarmScene extends Phaser.Scene {
         : 0,
     );
     this.drawGlow();
+    this.updateBombs(dt);
     this.syncVillagers();
     this.checkHeartEvent();
     const walking = this.tapPath.length > 0;
@@ -1913,6 +1933,22 @@ export class FarmScene extends Phaser.Scene {
       this.state.pots.get(this.mapId, front.x, front.y)
     )
       return this.report(pickUpPot(this.state, this.mapId, front.x, front.y));
+    // A bomb is lit from the backpack and cannot be lifted (note 89).
+    if (held.kind === "item" && isBomb(held.id)) {
+      const lit = placeBomb(
+        this.state,
+        this.map,
+        this.mapId,
+        front.x,
+        front.y,
+        held.id,
+        (x, y) =>
+          !!this.rocks()?.at(x, y) ||
+          this.litBombs.some((b) => b.x === x && b.y === y),
+      );
+      if (lit.ok) this.litBombs.push(lit.bomb);
+      return this.report(lit.ok ? { ok: true } : lit);
+    }
     // A light is stood down from the backpack, and any tool or the empty hand lifts one.
     if (held.kind === "item" && isLight(held.id))
       return this.report(
@@ -2347,12 +2383,15 @@ export class FarmScene extends Phaser.Scene {
   private eatHeld(): void {
     if (this.leaving) return;
     const held = heldAt(this.state, this.selected);
+    const drinking = held.kind === "item" && isDrink(held.id);
     const result =
       held.kind === "item"
-        ? eat(this.state, held.id)
+        ? drinking
+          ? drink(this.state, held.id)
+          : eat(this.state, held.id)
         : { ok: false as const, reason: "not food" };
     this.message = result.ok
-      ? `Ate ${itemById(held.kind === "item" ? held.id : "")?.name.toLowerCase()}.`
+      ? `${drinking ? "Drank" : "Ate"} ${itemById(held.kind === "item" ? held.id : "")?.name.toLowerCase()}.`
       : reasonText(result.reason);
     this.afterAction();
   }
@@ -2389,6 +2428,7 @@ export class FarmScene extends Phaser.Scene {
   }
 
   private endDay(): void {
+    this.detonateAll(true);
     const g = this.state;
     const farmMap = farmMapOf(g);
     const report = sleep(g, farmMap.forageSpots, Math.random, farmMap);
@@ -2492,6 +2532,74 @@ export class FarmScene extends Phaser.Scene {
     }
   }
 
+  /** Tick the fuses, blink the lit bombs and set off the ones that are due. */
+  private updateBombs(dt: number): void {
+    this.bombFx.clear();
+    if (this.litBombs.length === 0) return;
+    const ts = this.map.tileSize;
+    for (const b of this.litBombs) {
+      const on = Math.floor(this.time.now / 120) % 2 === 0;
+      this.bombFx.fillStyle(on ? 0xffffff : 0xff6a3a, on ? 0.7 : 0.45);
+      this.bombFx.fillRect(b.x * ts + 2, b.y * ts + 2, ts - 4, ts - 4);
+    }
+    for (const b of tickBombs(this.litBombs, dt)) this.detonate(b, false);
+  }
+
+  /** Every lit bomb goes off at once (leaving the map or the day ending). */
+  private detonateAll(quiet: boolean): void {
+    const lit = this.litBombs;
+    this.litBombs = [];
+    for (const b of lit) this.detonate(b, quiet);
+  }
+
+  /**
+   * A bomb goes off (note 89): rocks the Mining level allows break with their
+   * usual drops, monsters and the player inside the circle are hurt, and
+   * nothing else is touched. `quiet` skips the screen and the kill rewards,
+   * for a bomb that goes off as the map is left.
+   */
+  private detonate(b: LitBomb, quiet: boolean): void {
+    const def = bombById(b.id);
+    if (!def) return;
+    const g = this.state;
+    const ts = this.map.tileSize;
+    const rocks = this.rocks();
+    const broken = rocks ? blastRocks(g, rocks, this.floor, b) : undefined;
+    const floor = this.floorState;
+    const dead = floor ? blastCreatures(floor.creatures, b, ts) : [];
+    const lost = blastPlayer(g.combat.health, b, {
+      x: Math.floor(this.pos.x / ts),
+      y: Math.floor((this.pos.y - 1) / ts),
+    });
+    if (quiet) {
+      if (floor)
+        floor.creatures = floor.creatures.filter(
+          (c) => !dead.some((d) => d.uid === c.uid),
+        );
+      return;
+    }
+    for (const c of dead) this.beaten(c);
+    this.cameras.main.shake(200, 0.01);
+    this.swingFx.clear().fillStyle(0xffb040, 0.5);
+    this.swingFx.fillCircle(
+      (b.x + 0.5) * ts,
+      (b.y + 0.5) * ts,
+      (def.radius + 0.5) * ts,
+    );
+    this.time.delayedCall(220, () => this.swingFx.clear());
+    const got = Object.entries(broken?.items ?? {})
+      .map(([id, n]) => `${n} ${itemById(id)?.name.toLowerCase() ?? id}`)
+      .join(", ");
+    this.message =
+      `${def.name} goes off.` +
+      (got ? ` Got ${got}.` : "") +
+      (broken?.ladder ? " A ladder is revealed!" : "") +
+      (lost > 0 ? ` It hurts you for ${lost}.` : "");
+    if (lost > 0)
+      this.floatText(this.pos.x, this.pos.y - 14, `-${lost}`, "#ff8080");
+    this.render();
+  }
+
   /** A strike falls: a white flash of the screen, and a bright block on each rod it hit (note 89). */
   private strikeFlash(r: {
     strikes: number;
@@ -2584,6 +2692,7 @@ export class FarmScene extends Phaser.Scene {
     if (!this.outdoorWorld) return;
     for (const { x, y, id } of this.state.forage.each())
       put(x, y, forageKey(id));
+    for (const s of this.state.spots.each()) put(s.x, s.y, SPOT_KEY);
     for (const w of this.state.weeds.each()) put(w.x, w.y, WEED_KEY);
     for (const t of this.state.twigs.each()) put(t.x, t.y, TWIG_KEY);
     for (const m of this.state.machines.each()) {
@@ -3066,6 +3175,7 @@ export class FarmScene extends Phaser.Scene {
         random: Math.random,
         assist: combat.assist,
         tileSize: ts,
+        calm: oilCalms(this.state, c.kind),
       });
       if (result.hit) {
         const lost = combat.health.hurt(

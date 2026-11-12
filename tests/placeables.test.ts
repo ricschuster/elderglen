@@ -1,3 +1,4 @@
+import { BOMBS } from "../src/core/bombs";
 import { describe, expect, it } from "vitest";
 import { CHESTS } from "../src/core/chestdefs";
 import { itemById } from "../src/core/items";
@@ -16,16 +17,22 @@ import { HOUSE_MAP } from "../src/core/house";
 import { newGame } from "../src/core/save";
 
 describe("placeables table", () => {
-  it("has one row for every sprinkler, machine, chest, light and the rod", () => {
+  it("has one row for every sprinkler, machine, chest, light, the rod and the heater", () => {
     for (const s of SPRINKLERS)
       expect(placeableById(s.id)?.kind).toBe("sprinkler");
     for (const m of MACHINES) expect(placeableById(m.id)?.kind).toBe("machine");
     for (const c of CHESTS) expect(placeableById(c.id)?.kind).toBe("chest");
     expect(placeableById("lightning-rod")?.kind).toBe("rod");
+    expect(placeableById("coop-heater")?.kind).toBe("heater");
     const lights = PLACEABLES.filter((p) => p.kind === "light");
     for (const l of lights) expect(l.light?.radius, l.id).toBeGreaterThan(0);
     expect(PLACEABLES).toHaveLength(
-      SPRINKLERS.length + MACHINES.length + CHESTS.length + lights.length + 1,
+      SPRINKLERS.length +
+        MACHINES.length +
+        CHESTS.length +
+        lights.length +
+        2 +
+        BOMBS.length,
     );
   });
 

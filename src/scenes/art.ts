@@ -1,4 +1,5 @@
 import { POT_ITEM } from "../core/pots";
+import { isBomb } from "../core/bombs";
 import { isLight } from "../core/lights";
 import { LIGHTNING_ROD } from "../core/lightning";
 import { CHESTS, chestById } from "../core/chestdefs";
@@ -8,6 +9,8 @@ import { FURNITURE, furnitureById } from "../core/furniture";
 import { fertilizerById } from "../core/fertilizer";
 import { SPRINKLERS, sprinklerById } from "../core/sprinklers";
 import { GEODE_ITEMS, GEODE_KINDS } from "../core/geodes";
+import { GEM_ITEMS } from "../core/gems";
+import { ARTIFACTS } from "../core/artifacts";
 import { categoryOf } from "../core/artisan";
 import { MACHINES, machineById } from "../core/processing";
 import Phaser from "phaser";
@@ -775,17 +778,20 @@ export const ROCK_KEYS = {
   coal: "rock-coal",
   quartz: "rock-quartz",
   geode: "rock-geode",
+  gem: "rock-gem",
   iron: "rock-iron",
   gold: "rock-gold",
   hearthsilver: "rock-hearthsilver",
 } as const;
 export const LADDER_KEY = "mine-ladder";
+export const SPOT_KEY = "artifact-spot";
 
 const MINE_ICON_IDS = [
   "stone",
   "coal",
   "quartz-crystal",
   ...GEODE_ITEMS.map((i) => i.id),
+  ...GEM_ITEMS.map((i) => i.id),
   "copper-ore",
   "iron-ore",
   "gold-ore",
@@ -951,12 +957,34 @@ function paintLights(scene: Phaser.Scene): void {
     flame(c, 7, 5);
     flame(c, 5, 7);
   });
+  // Bombs: a dark ball, bigger with the blast, and a fuse spark (note 89).
+  for (const [id, size] of [
+    ["cherry-bomb", 4],
+    ["bomb", 5],
+    ["mega-bomb", 6],
+  ] as const)
+    draw(id, (c) => {
+      const o = 8 - size;
+      px(c, "#00000033", o, 14, size * 2, 1);
+      px(c, "#2a2a30", o, 14 - size * 2, size * 2, size * 2);
+      px(c, "#4a4a54", o + 1, 14 - size * 2 + 1, 2, 2);
+      px(c, "#c8a060", 8, 14 - size * 2 - 2, 1, 2);
+      px(c, "#ffd24a", 8, 14 - size * 2 - 3, 2, 1);
+    });
   draw("lightning-rod", (c) => {
     px(c, "#00000033", 5, 14, 6, 1);
     px(c, "#7a7a84", 7, 4, 2, 10);
     px(c, "#b4b4ba", 6, 12, 4, 2);
     px(c, "#ffe14a", 7, 1, 2, 3);
   });
+  for (const iron of [false, true])
+    draw(iron ? "iron-lamp-post" : "wood-lamp-post", (c) => {
+      px(c, "#00000033", 5, 14, 6, 1);
+      px(c, iron ? "#5a5a66" : "#6a4a26", 7, 5, 2, 9);
+      px(c, iron ? "#7a7a86" : "#8a5a2a", 5, 12, 6, 2);
+      px(c, iron ? "#7a7a86" : "#8a5a2a", 5, 3, 6, 2);
+      px(c, "#ffe9a0", 6, 0, 4, 3);
+    });
   for (const stone of [false, true])
     draw(stone ? "stone-brazier" : "wood-brazier", (c) => {
       px(c, "#00000033", 3, 14, 10, 1);
@@ -1021,6 +1049,29 @@ function paintMineArt(scene: Phaser.Scene): void {
     px(c, "#e8d0f4", 7, 8, 2, 1);
   };
   draw(ROCK_KEYS.geode, geode);
+  draw(ROCK_KEYS.gem, (c) => {
+    lump(c, "#7a7a86", "#4a4a56", "#a8a8b4");
+    px(c, "#7ad8e8", 6, 7, 4, 3);
+    px(c, "#ffffff", 7, 8, 1, 1);
+  });
+  // A marked artifact spot: a patch of turned earth with a pale cross.
+  draw(SPOT_KEY, (c) => {
+    px(c, "#6a4a2e", 4, 8, 8, 4);
+    px(c, "#8a6a46", 5, 7, 6, 1);
+    px(c, "#e8d8a8", 7, 8, 2, 3);
+    px(c, "#e8d8a8", 6, 9, 4, 1);
+  });
+  for (const a of ARTIFACTS.filter(
+    (a) => !GEODE_ITEMS.some((g) => g.id === a.id),
+  ))
+    draw(`icon-${a.id}`, (c) => {
+      const h = [...a.id].reduce((n, ch) => n + ch.charCodeAt(0), 0);
+      const colour = `hsl(${(h * 37) % 360} 35% 55%)`;
+      px(c, "#00000044", 4, 13, 8, 1);
+      px(c, colour, 4, 6, 8, 6);
+      px(c, colour, 6, 4, 4, 2);
+      px(c, "#ffffff66", 5, 7, 2, 2);
+    });
   const gem = (c: Ctx, colour: string, light: string) => {
     px(c, "#00000044", 4, 13, 8, 1);
     px(c, colour, 4, 6, 8, 6);
@@ -1044,6 +1095,9 @@ function paintMineArt(scene: Phaser.Scene): void {
         px(c, "#a88a4a", 6, 8, 4, 4);
         px(c, "#7a5e2a", 5, 12, 6, 1);
         px(c, "#d8be7a", 5, 6, 2, 1);
+      } else if (GEM_ITEMS.some((i) => i.id === id)) {
+        const i = GEM_ITEMS.find((i) => i.id === id)!;
+        gem(c, i.color, i.light);
       } else if (GEODE_ITEMS.some((i) => i.id === id)) {
         const i = GEODE_ITEMS.find((i) => i.id === id)!;
         gem(c, i.color ?? "#ffffff", i.light ?? "#ffffff");
@@ -1073,7 +1127,8 @@ export function iconKey(itemId: string): string | undefined {
   if (furnitureById(base)) return furnitureKey(base);
   if (decorById(base)) return `decor-${base}`;
   if (chestById(base)) return chestKey(base);
-  if (isLight(base) || base === LIGHTNING_ROD) return lightKey(base);
+  if (isLight(base) || isBomb(base) || base === LIGHTNING_ROD)
+    return lightKey(base);
   if (base === POT_ITEM) return POT_KEY;
   const sapling = treeOfSapling(base);
   if (sapling) return saplingIconKey(sapling.id);
@@ -1081,6 +1136,7 @@ export function iconKey(itemId: string): string | undefined {
   const category = categoryOf(base);
   if (category) return `icon-artisan-${category}`;
   if (MINE_ICON_IDS.includes(base)) return `icon-${base}`;
+  if (ARTIFACTS.some((a) => a.id === base)) return `icon-${base}`;
   if (
     base === "wood" ||
     base === "hardwood" ||

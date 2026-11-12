@@ -8,6 +8,7 @@
       { "kind": "hard-rock", "weight": 23 },
       { "kind": "copper", "weight": 8 },
       { "kind": "coal", "weight": 8 },
+      { "kind": "gem", "weight": 0.5 },
       { "kind": "iron", "weight": 4, "minLevel": 2 },
       { "kind": "gold", "weight": 1.3, "minLevel": 5 },
       { "kind": "hearthsilver", "weight": 0.02, "minLevel": 8 },
