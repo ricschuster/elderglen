@@ -1,4 +1,5 @@
-import { maps } from "../content/maps";
+import renoData from "../content/house-renos.json";
+import { mapFiles, maps } from "../content/maps";
 import { festivalDayToday } from "./festivals";
 import { HARDWOOD } from "./items";
 import { visibleTier } from "./map";
@@ -104,12 +105,141 @@ export function houseSpouse(g: { flags?: string[] }): boolean {
   return g.flags?.includes(SPOUSE_HOLD) === true;
 }
 
-/** The conditions the house gives for gated exits and conditional layers at a house tier. */
-export function houseHolds(tier: number, spouse = false): string[] {
+/** The house tier from which the renovations can be bought and show (note 85, "Renovations"). */
+export const RENO_MIN_TIER = 2;
+
+/**
+ * The condition of the corner room's stair to the spouse room: the corner room
+ * and a spouse together. A layer reads one name, so the combination is its own
+ * hold (note 85, `corner-stairs`).
+ */
+export const CORNER_STAIRS_HOLD = "corner-stairs";
+
+/** One renovation (note 85, "Renovations"). Content is `src/content/house-renos.json`. */
+export interface Renovation {
+  id: string;
+  name: string;
+  /** The carpenter's price in coin, a placeholder at Stardew's prices (`07_tuning_numbers.md`). */
+  price: number;
+  /** Another renovation this one is built on. */
+  needs?: string;
+}
+
+export const RENOVATIONS = renoData as Renovation[];
+
+export const renovationById = (
+  id: string | undefined,
+): Renovation | undefined => RENOVATIONS.find((r) => r.id === id);
+
+/** The condition a renovation's layers are shown under. */
+export const renoHold = (id: string): string => `reno-${id}`;
+
+/**
+ * The renovations a save may keep: known ids once, only from tier 2, and each
+ * only if the one it needs is there. In the order of `RENOVATIONS`.
+ */
+export function validRenos(tier: number, ids: readonly unknown[]): string[] {
+  if (tier < RENO_MIN_TIER) return [];
+  const have = new Set(ids);
+  return RENOVATIONS.filter(
+    (r) => have.has(r.id) && (r.needs === undefined || have.has(r.needs)),
+  ).map((r) => r.id);
+}
+
+/**
+ * The conditions the house gives for gated exits and conditional layers at a
+ * house tier: the cellar, the spouse room and one `reno-<id>` per renovation
+ * built (`houseRenos`, from tier 2).
+ */
+export function houseHolds(
+  tier: number,
+  spouse = false,
+  renos: readonly string[] = [],
+): string[] {
+  const built = validRenos(tier, renos);
   return [
     ...(houseHasCellar(tier) ? [CELLAR_OPEN] : []),
     ...(spouse ? [SPOUSE_HOLD] : []),
+    ...built.map(renoHold),
+    ...(spouse && built.includes("corner") ? [CORNER_STAIRS_HOLD] : []),
   ];
+}
+
+/**
+ * The tiles a renovation adds, read from its layers on the house map (the
+ * ground layer of `reno-<id>`, and for the corner room its stair to the spouse
+ * room): `x,y` keys, so the layers stay the one source.
+ */
+export function renoArea(id: string): Set<string> {
+  const json = mapFiles[HOUSE_MAP]!;
+  const names =
+    id === "corner"
+      ? ["ground-reno-corner-t2", "ground-corner-stairs-t2"]
+      : [`ground-reno-${id}-t2`];
+  const out = new Set<string>();
+  for (const l of json.layers)
+    if (names.includes(l.name) && l.data)
+      l.data.forEach((v, i) => {
+        if (v !== 0) out.add(`${i % json.width},${Math.floor(i / json.width)}`);
+      });
+  return out;
+}
+
+type RenoState = Pick<
+  GameState,
+  "houseTier" | "houseRenos" | "houseBuild" | "money" | "furniture" | "chests"
+>;
+
+/** Why a renovation cannot be ordered now, in words, or undefined if it can. */
+export function renoOrderProblem(g: RenoState, id: string): string | undefined {
+  const r = renovationById(id);
+  if (!r) return "There is no such renovation.";
+  if (g.houseRenos.includes(id))
+    return `The ${r.name.toLowerCase()} is already built.`;
+  if (g.houseTier < RENO_MIN_TIER)
+    return "The carpenter will renovate once the upper floor is built.";
+  if (g.houseBuild) return "The carpenter is already at work on the house.";
+  if (r.needs !== undefined && !g.houseRenos.includes(r.needs))
+    return `It needs the ${renovationById(r.needs)!.name.toLowerCase()} first.`;
+  if (g.money < r.price) return `You need ${r.price - g.money}g more.`;
+  return undefined;
+}
+
+/** Pay for a renovation. It is done at once, with no building days. False if it cannot. */
+export function orderRenovation(g: RenoState, id: string): boolean {
+  if (renoOrderProblem(g, id) !== undefined) return false;
+  g.money -= renovationById(id)!.price;
+  g.houseRenos = [...g.houseRenos, id];
+  return true;
+}
+
+/** Why a renovation cannot be taken back, in words, or undefined if it can. */
+export function renoRefundProblem(
+  g: RenoState,
+  id: string,
+): string | undefined {
+  if (!renovationById(id) || !g.houseRenos.includes(id))
+    return "That is not built.";
+  const on = RENOVATIONS.find(
+    (o) => o.needs === id && g.houseRenos.includes(o.id),
+  );
+  if (on)
+    return `Take back the ${on.name.toLowerCase()} first, it is built on this.`;
+  const area = renoArea(id);
+  const full =
+    [...g.furniture.each(HOUSE_MAP)].some((f) => area.has(`${f.x},${f.y}`)) ||
+    [...g.chests.each(HOUSE_MAP)].some((c) => area.has(`${c.x},${c.y}`));
+  return full
+    ? "Clear your furniture and chests out of the new area first."
+    : undefined;
+}
+
+/** Take a renovation back and pay its price in full. The walls go back up. False if it cannot. */
+export function refundRenovation(g: RenoState, id: string): boolean {
+  if (renoRefundProblem(g, id) !== undefined) return false;
+  g.money += renovationById(id)!.price;
+  g.houseRenos = g.houseRenos.filter((x) => x !== id);
+  return true;
 }
 
 /**
@@ -157,11 +287,12 @@ export const HOUSE_UPGRADE_NAMES = [
 ] as const;
 
 /**
- * The line that says the empty rooms are for later (note 41), shown when tier 2
- * is ordered and again when it lands.
+ * The line that says the empty room is for later (note 41), shown when tier 2
+ * is ordered and again when it lands. The spare room only: the nursery has its
+ * crib and child beds from tier 2 (note 85, #837).
  */
 export const WAITING_ROOMS_LINE =
-  "The carpenter says the spare room and the nursery will be bare and tidy, for later.";
+  "The carpenter says the spare room will be bare and tidy, for later.";
 
 /** The item id of wood. Chopping trees and stumps gives it (`docs/design/43_wood_source.md`). */
 export const WOOD = "wood";

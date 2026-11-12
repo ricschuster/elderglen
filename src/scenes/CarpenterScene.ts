@@ -13,10 +13,15 @@ import {
 } from "../core/furniture";
 import {
   HOUSE_UPGRADE_NAMES,
+  RENOVATIONS,
   WAITING_ROOMS_LINE,
   nextUpgrade,
   orderProblem,
+  orderRenovation,
   orderUpgrade,
+  refundRenovation,
+  renoOrderProblem,
+  renoRefundProblem,
   WOOD,
 } from "../core/house";
 import {
@@ -56,6 +61,8 @@ export class CarpenterScene extends Phaser.Scene {
   private message!: Phaser.GameObjects.Text;
   /** The building the player pressed Remove on once, waiting for the second press. */
   private removing: Building | undefined;
+  /** Which tab shows: the house and furniture, or the renovations (note 85). */
+  private tab: "main" | "renovations" = "main";
 
   constructor() {
     super("carpenter");
@@ -99,6 +106,28 @@ export class CarpenterScene extends Phaser.Scene {
     this.money.setText(`Money ${g.money}g`);
     const cost = nextUpgrade(g.houseTier);
     const rows: Row[] = [];
+    // The tab switch is the first row. Renovations have a tab of their own.
+    rows.push({
+      label: this.tab === "main" ? "Renovations" : "House and furniture",
+      detail:
+        this.tab === "main"
+          ? "new rooms and open floor plans, from the upper floor"
+          : "back to the house, the farm buildings and furniture",
+      buttons: [
+        {
+          text: "Open",
+          run: () => {
+            this.tab = this.tab === "main" ? "renovations" : "main";
+            this.refresh();
+          },
+        },
+      ],
+    });
+    if (this.tab === "renovations") {
+      this.renovationRows(rows);
+      this.menu.setRows(rows);
+      return;
+    }
     if (g.houseBuild) {
       this.message.setText("The carpenter is out at your farm, working.");
       rows.push({
@@ -238,6 +267,44 @@ export class CarpenterScene extends Phaser.Scene {
           buttons: [{ text: "Buy", run: () => this.buyCovering(d.id) }],
         });
     this.menu.setRows(rows);
+  }
+
+  /** The renovations tab: the eight renovations, each ordered or taken back (note 85, "Renovations"). */
+  private renovationRows(rows: Row[]): void {
+    const g = this.state;
+    for (const r of RENOVATIONS) {
+      if (g.houseRenos.includes(r.id)) {
+        rows.push({
+          label: `${r.name}, built`,
+          detail: `take it back for ${r.price}g, the area must be empty`,
+          dim: renoRefundProblem(g, r.id) !== undefined,
+          buttons: [{ text: "Take back", run: () => this.refundReno(r.id) }],
+        });
+        continue;
+      }
+      rows.push({
+        label: r.name,
+        detail: renoOrderProblem(g, r.id) ?? `${r.price}g, done at once`,
+        dim: renoOrderProblem(g, r.id) !== undefined,
+        buttons: [{ text: "Order", run: () => this.orderReno(r.id) }],
+      });
+    }
+  }
+
+  private orderReno(id: string): void {
+    const problem = renoOrderProblem(this.state, id);
+    if (problem !== undefined) this.message.setText(problem);
+    else if (orderRenovation(this.state, id))
+      this.message.setText("Done. The carpenter has finished already.");
+    this.refresh();
+  }
+
+  private refundReno(id: string): void {
+    const problem = renoRefundProblem(this.state, id);
+    if (problem !== undefined) this.message.setText(problem);
+    else if (refundRenovation(this.state, id))
+      this.message.setText("The carpenter took it back and paid you in full.");
+    this.refresh();
   }
 
   /** Open the placement screen to put a new building down, or move the one that stands. */
