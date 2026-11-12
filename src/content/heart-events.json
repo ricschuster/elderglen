@@ -1,5 +1,5 @@
 {
-  "_note": "Heart events slice 1 (#600). Source: note 62. Every line is PLACEHOLDER TEXT (no voice sheets). The three events are proofs of the engine, not settled story: places, hearts and rewards are placeholders. The hermit gift stands in for the emberseed of note 39 (not built). Stage marks, paths, poses and music ids are free strings until per-map stage data exists. Flags are the only story flags; each must be set by some scene.",
+  "_note": "Heart events slice 1 (#600). Source: note 62. Every line is PLACEHOLDER TEXT (no voice sheets). The three events are proofs of the engine, not settled story: places, hearts and rewards are placeholders. The hermit gift is the emberseed of note 39. Stage marks, paths, poses and music ids are free strings until per-map stage data exists. Flags are the only story flags; each must be set by some scene.",
   "flags": ["odette-store-seen", "hattie-rain-seen", "rosmarin-ring-seen"],
   "emotes": ["smile", "content", "surprise", "think", "heart", "sweat"],
   "lines": {
@@ -13,7 +13,7 @@
     "hattie_2_a": "PLACEHOLDER TEXT. Rain on the roof and a kettle on. Sit, if you like.",
     "hattie_2_b": "PLACEHOLDER TEXT. Folk talk more in the rain. I like that.",
     "rosmarin_4_a": "PLACEHOLDER TEXT. You walk quietly. The fairy ring noticed.",
-    "rosmarin_4_b": "PLACEHOLDER TEXT. Take some of the garden. It is not much, yet."
+    "rosmarin_4_b": "PLACEHOLDER TEXT. Take this seed. Plant it where the sun stays long, and bring the fruit to the old stone in the Secret Woods."
   },
   "events": [
     {
@@ -216,8 +216,8 @@
         },
         {
           "cmd": "give",
-          "item": "field-mushroom",
-          "count": 3
+          "item": "ember-berry-seed",
+          "count": 1
         },
         {
           "cmd": "setFlag",

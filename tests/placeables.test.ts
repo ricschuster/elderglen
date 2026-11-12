@@ -17,7 +17,7 @@ import { HOUSE_MAP } from "../src/core/house";
 import { newGame } from "../src/core/save";
 
 describe("placeables table", () => {
-  it("has one row for every sprinkler, machine, chest, light, the rod and the heater", () => {
+  it("has one row for every sprinkler, machine, chest, light, the rod, heater and tapper", () => {
     for (const s of SPRINKLERS)
       expect(placeableById(s.id)?.kind).toBe("sprinkler");
     for (const m of MACHINES) expect(placeableById(m.id)?.kind).toBe("machine");
@@ -31,7 +31,7 @@ describe("placeables table", () => {
         MACHINES.length +
         CHESTS.length +
         lights.length +
-        2 +
+        3 +
         BOMBS.length +
         // The fish pond: a building, not an item (note 93).
         1,

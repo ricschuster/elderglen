@@ -5,12 +5,51 @@
     "light": 5,
     "magnet": 0
   },
-  { "id": "glow-ring", "name": "Glow ring", "light": 10, "magnet": 0 },
+  {
+    "id": "glow-ring",
+    "name": "Glow ring",
+    "light": 10,
+    "magnet": 0
+  },
   {
     "id": "small-magnet-ring",
     "name": "Small magnet ring",
     "light": 0,
     "magnet": 1
   },
-  { "id": "magnet-ring", "name": "Magnet ring", "light": 0, "magnet": 2 }
+  {
+    "id": "magnet-ring",
+    "name": "Magnet ring",
+    "light": 0,
+    "magnet": 2
+  },
+  {
+    "id": "defense-ring",
+    "name": "Defense ring",
+    "light": 0,
+    "magnet": 0,
+    "defense": 1
+  },
+  {
+    "id": "iron-defense-ring",
+    "name": "Iron defense ring",
+    "light": 0,
+    "magnet": 0,
+    "defense": 5
+  },
+  {
+    "id": "slime-proof-ring",
+    "name": "Slime proof ring",
+    "light": 0,
+    "magnet": 0,
+    "slimeProof": true
+  },
+  {
+    "id": "sturdy-band",
+    "name": "Sturdy band",
+    "light": 0,
+    "magnet": 0,
+    "immunity": 4,
+    "halfEffects": true
+  }
 ]

@@ -88,5 +88,122 @@
     "firstReward": {
       "text": "the seed maker recipe"
     }
+  },
+  {
+    "id": "spring-leeks",
+    "title": "Spring Leeks",
+    "poster": "A cook at the fisher hut",
+    "text": "A house wants a basket of leeks while the spring lasts. Leave them in the marked chest.",
+    "ask": {
+      "kind": "hand-in",
+      "count": 12,
+      "goods": {
+        "mode": "total",
+        "items": ["leek"]
+      },
+      "place": {
+        "map": "fisher-hut",
+        "x": 3,
+        "y": 5,
+        "name": "the fisher hut"
+      }
+    },
+    "windowDays": 28,
+    "repeat": false,
+    "notSeasons": ["summer", "fall", "winter"],
+    "gold": 700,
+    "firstReward": {
+      "text": "the cheese press recipe"
+    }
+  },
+  {
+    "id": "barrel-batch",
+    "title": "Barrel Batch",
+    "poster": "A cook at the inn",
+    "text": "The inn kitchen wants a big batch of one drink from the keg. Leave it in the marked chest.",
+    "ask": {
+      "kind": "hand-in",
+      "count": 12,
+      "goods": {
+        "mode": "one-kind",
+        "group": "keg-drinks"
+      },
+      "place": {
+        "map": "inn",
+        "x": 7,
+        "y": 5,
+        "name": "the inn kitchen"
+      }
+    },
+    "windowDays": 14,
+    "repeat": false,
+    "notSeasons": [],
+    "gold": 1500,
+    "firstReward": {
+      "item": { "id": "keg", "count": 1 },
+      "text": "a keg"
+    }
+  },
+  {
+    "id": "pantry-stock",
+    "title": "Pantry Stock",
+    "poster": "The innkeeper",
+    "text": "The inn pantry is bare of eggs. Leave them in the marked chest.",
+    "ask": {
+      "kind": "hand-in",
+      "count": 24,
+      "goods": {
+        "mode": "total",
+        "items": ["egg"]
+      },
+      "place": {
+        "map": "inn",
+        "x": 5,
+        "y": 5,
+        "name": "the inn pantry"
+      }
+    },
+    "windowDays": 14,
+    "repeat": true,
+    "notSeasons": [],
+    "gold": 1000,
+    "firstReward": {
+      "item": {
+        "id": "mayonnaise-machine",
+        "count": 1
+      },
+      "text": "a mayonnaise machine"
+    }
+  },
+  {
+    "id": "crystal-gift",
+    "title": "Crystal Gift",
+    "poster": "A traveller at the smithy",
+    "text": "A traveller wants one each of five kinds of gem, as a gift. Leave them in the marked chest.",
+    "ask": {
+      "kind": "hand-in",
+      "count": 5,
+      "goods": {
+        "mode": "distinct",
+        "group": "gems"
+      },
+      "place": {
+        "map": "smithy",
+        "x": 6,
+        "y": 8,
+        "name": "the smithy"
+      }
+    },
+    "windowDays": 7,
+    "repeat": false,
+    "notSeasons": [],
+    "gold": 1200,
+    "firstReward": {
+      "item": {
+        "id": "loom",
+        "count": 1
+      },
+      "text": "a loom"
+    }
   }
 ]

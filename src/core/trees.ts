@@ -61,6 +61,8 @@ export interface Tree {
   large?: boolean;
   /** The kind of tree, from the map (note 71). Absent means oak. */
   kind?: TreeKind;
+  /** A tapper stands on this tree (note 92). `since` is the game day its cycle began. */
+  tap?: { since: number };
   /** Days until a chopped large stump is whole again. Absent while it stands. */
   regrow?: number;
 }

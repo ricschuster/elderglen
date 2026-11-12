@@ -14,6 +14,7 @@ import type { FarmMap } from "./map";
 export type PlaceableKind =
   | "sprinkler"
   | "machine"
+  | "tapper"
   | "chest"
   | "light"
   | "rod"

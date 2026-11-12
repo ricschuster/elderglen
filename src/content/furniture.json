@@ -181,5 +181,12 @@
     "price": 0,
     "color": "#e0a830",
     "keepsake": true
+  },
+  {
+    "id": "green-glass-lantern",
+    "name": "Green-glass lantern",
+    "price": 0,
+    "color": "#5fa87a",
+    "keepsake": true
   }
 ]

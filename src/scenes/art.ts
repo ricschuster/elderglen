@@ -14,7 +14,7 @@ import { ARTIFACTS } from "../core/artifacts";
 import { categoryOf } from "../core/artisan";
 import { MACHINES, machineById } from "../core/processing";
 import Phaser from "phaser";
-import { CROPS } from "../core/crops";
+import { ALL_CROPS } from "../core/crops";
 import { FORAGE } from "../core/forage";
 import { FRUIT_TREES, fruitTreeById, treeOfSapling } from "../core/fruittrees";
 import { seedId } from "../core/items";
@@ -283,6 +283,13 @@ const CROP_COLOURS: Record<string, Palette> = {
   "hot-pepper": { fruit: "#d92f1f", leaf: "#3f8f35" },
   corn: { fruit: "#f0d040", leaf: "#5aa83a" },
   "red-cabbage": { fruit: "#8a3a8a", leaf: "#4a9a3a" },
+  // Flowers (note 91): placeholder colours, the dye colour of each.
+  tulip: { fruit: "#f08aaa", leaf: "#4a9a3a" },
+  cornflower: { fruit: "#4a78d8", leaf: "#4a9a3a" },
+  poppy: { fruit: "#d9322a", leaf: "#3f8f35" },
+  zinnia: { fruit: "#f08a2a", leaf: "#3f8f35" },
+  sunflower: { fruit: "#f4cf2a", leaf: "#3f8f35" },
+  dahlia: { fruit: "#8a4ac8", leaf: "#3a8a30" },
 };
 const FALLBACK: Palette = { fruit: "#e0c040", leaf: "#5aa83a" };
 
@@ -699,11 +706,26 @@ function paintTrees(scene: Phaser.Scene): void {
         px(c, "#7a7a84", 5, 2, 6, 4);
         px(c, "#c8a838", 6, 9, 4, 4);
         px(c, "#c8a838", 7, 13, 2, 1);
+      } else if (m.id === "geode-crusher") {
+        px(c, "#5a5a62", 3, 8, 10, 6);
+        px(c, "#8a8a94", 4, 3, 3, 6);
+        px(c, "#8a8a94", 9, 3, 3, 6);
+        px(c, "#a8789a", 6, 10, 4, 3);
+      } else if (m.id === "worm-bin") {
+        px(c, "#7a5a3a", 3, 6, 10, 8);
+        px(c, "#4a3222", 4, 7, 8, 3);
+        px(c, "#d8a0a0", 6, 9, 4, 1);
+        px(c, "#8a6a44", 3, 5, 10, 2);
       } else if (m.id === "recycler") {
         px(c, "#4a6a5a", 3, 5, 10, 9);
         px(c, "#6a8a7a", 4, 3, 8, 3);
         px(c, "#2a3a32", 6, 8, 4, 4);
         px(c, "#d8d8c0", 7, 9, 2, 2);
+      } else if (m.id === "crystalarium") {
+        px(c, "#5a5a72", 3, 9, 10, 5);
+        px(c, "#9ac8e8", 4, 2, 8, 8);
+        px(c, "#d8f0ff", 6, 3, 2, 4);
+        px(c, "#3a3a4a", 4, 10, 8, 1);
       } else if (m.id === "furnace") {
         px(c, "#3a3a42", 3, 4, 10, 10);
         px(c, "#5a5a64", 4, 2, 8, 3);
@@ -728,6 +750,7 @@ function paintTrees(scene: Phaser.Scene): void {
     juice: "#e8a030",
     honey: "#f0c030",
     mead: "#d89a2a",
+    beer: "#e0b030",
     cheese: "#f0d060",
     mayonnaise: "#f4ecc8",
     cloth: "#7a8ad0",
@@ -1145,7 +1168,8 @@ export function iconKey(itemId: string): string | undefined {
   )
     return `icon-${base}`;
   if (base.endsWith("-seed")) return `icon-${base}`;
-  if (CROPS.some((c) => c.id === base)) return cropKey(base, CROP_STAGES - 1);
+  if (ALL_CROPS.some((c) => c.id === base))
+    return cropKey(base, CROP_STAGES - 1);
   if (FORAGE.some((f) => f.id === base)) return forageKey(base);
   return undefined;
 }
@@ -1161,7 +1185,7 @@ export function makeArt(
   paintSoil(scene, false);
   paintSoil(scene, true);
   paintUiFrame(scene);
-  for (const c of CROPS) {
+  for (const c of ALL_CROPS) {
     paintCrop(scene, c.id);
     paintSeedIcon(scene, c.id);
   }

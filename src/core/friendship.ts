@@ -1,7 +1,8 @@
 import data from "../content/friendship.json";
 import geodeData from "../content/geodes.json";
 import creatureGoods from "../content/creature-goods.json";
-import { artisanById, produceOf } from "./artisan";
+import fishData from "../content/fish.json";
+import { artisanById, FLOWER_HONEY_PRICE, produceOf } from "./artisan";
 import { dateOf } from "./calendar";
 import { cropById } from "./crops";
 import { dishById } from "./dishes";
@@ -44,6 +45,8 @@ const FLOWERS = new Set<string>(data.tags.flower);
 const FOUND = new Set<string>(data.tags.found);
 const EGGS = new Set<string>(data.tags.egg);
 const MILK = new Set<string>(data.tags.milk);
+const SHELLS = new Set<string>(data.tags.shell);
+const FISH = new Set(fishData.map((f) => f.id));
 const GEMS = new Set(geodeData.pools.flatMap((p) => p.minerals));
 const MINERALS = new Set([
   ...geodeData.pools.map((p) => p.foraged.item),
@@ -57,7 +60,7 @@ const TRASH = new Set(JUNK.map((j) => j.id));
  * The tags an item carries, most specific first: its artisan kind (`jam`), then
  * its category (`artisan`, `dish`, `flower`, `mineral`, `fruit`, `gem`,
  * `vegetable`, `bait`, `monster-drop`, `trash`, `found`), plus `forage`,
- * `alcohol`, `egg` and `milk`. Quality is ignored.
+ * `alcohol`, `egg`, `milk`, `shell` and `fish`. Quality is ignored.
  */
 export function tagsOf(itemId: string): string[] {
   const id = splitQuality(itemId).base;
@@ -74,11 +77,15 @@ export function tagsOf(itemId: string): string[] {
     if (p) tags.push(p);
   }
   if (FLOWERS.has(id)) tags.push("flower");
+  if (id.endsWith("-honey") && id.slice(0, -6) in FLOWER_HONEY_PRICE)
+    tags.push("flower-honey");
   if (GEMS.has(id)) tags.push("gem");
   if (MINERALS.has(id)) tags.push("mineral");
   if (forageById(id)) tags.push("forage");
   if (EGGS.has(id)) tags.push("egg");
   if (MILK.has(id)) tags.push("milk");
+  if (SHELLS.has(id)) tags.push("shell");
+  if (FISH.has(id)) tags.push("fish");
   if (BAIT_IDS.has(id)) tags.push("bait");
   if (DROPS.has(id)) tags.push("monster-drop");
   if (TRASH.has(id)) tags.push("trash");

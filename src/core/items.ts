@@ -1,5 +1,5 @@
 import bombData from "../content/bombs.json";
-import { CROPS, cropById } from "./crops";
+import { ALL_CROPS, cropById } from "./crops";
 import {
   MAHOGANY_SEED,
   MAHOGANY_SEED_NAME,
@@ -27,6 +27,7 @@ import weaponData from "../content/weapons.json";
 import furnitureData from "../content/furniture.json";
 import { ARTISAN_GOODS } from "./artisan";
 import { MACHINES } from "./processing";
+import { TAP_GOODS, TAPPER, TAPPER_DEF } from "./tapper";
 import { DISHES } from "./dishes";
 import { CHESTS } from "./chestdefs";
 import { GEODE_ITEMS } from "./geodes";
@@ -59,18 +60,20 @@ export interface ItemDef {
 }
 
 const items = new Map<string, ItemDef>();
-for (const c of CROPS) {
+for (const c of ALL_CROPS) {
+  // A rare crop is kept for its hand-in and its seed is a gift, never on sale (the ember berry, note 39).
   items.set(c.id, {
     id: c.id,
     name: c.name,
-    sellPrice: c.sellPrice,
+    sellPrice: c.rare ? 0 : c.sellPrice,
     energy: c.energy,
+    ...(c.rare ? { keep: true } : {}),
   });
   items.set(seedId(c.id), {
     id: seedId(c.id),
-    name: `${c.name} seeds`,
-    sellPrice: Math.floor(c.seedPrice / 2),
-    buyPrice: c.seedPrice,
+    name: c.seedName ?? `${c.name} seeds`,
+    sellPrice: c.rare ? 0 : Math.floor(c.seedPrice / 2),
+    ...(c.rare ? { keep: true } : { buyPrice: c.seedPrice }),
   });
 }
 
@@ -143,6 +146,11 @@ for (const d of decorData)
 /** Tree goods (`docs/design/36_gathering_trees_sap_fiber.md`). Wood and sap sell as Stardew's do. */
 items.set("wood", { id: "wood", name: "Wood", sellPrice: 2 });
 items.set("sap", { id: "sap", name: "Sap", sellPrice: 2 });
+/** The tapper and what it gives (note 92). Prices are placeholders, see `tapper.json`. */
+items.set(TAPPER, { ...TAPPER_DEF });
+for (const g of TAP_GOODS)
+  if (g.item !== "sap")
+    items.set(g.item, { id: g.item, name: g.name, sellPrice: g.sellPrice });
 /** Hardwood comes from large stumps (`docs/design/43_wood_source.md`). Sells for 15g, as the saved Hardwood page. */
 export const HARDWOOD = "hardwood";
 items.set(HARDWOOD, { id: HARDWOOD, name: "Hardwood", sellPrice: 15 });
@@ -179,6 +187,11 @@ for (const s of POND_SPECIES)
     name: `${s.name} roe`,
     sellPrice: roePrice(s),
   });
+/** Beeswax from the bee house and the candle made from it (note 63, bundle 20). Prices are placeholders, ours. */
+export const WAX = "wax";
+export const CANDLE = "candle";
+items.set(WAX, { id: WAX, name: "Beeswax", sellPrice: 40 });
+items.set(CANDLE, { id: CANDLE, name: "Candle", sellPrice: 60 });
 /** Mixed seeds plant a random crop that suits the season. Sell price is ours. */
 items.set("mixed-seed", {
   id: "mixed-seed",
@@ -361,7 +374,7 @@ items.set(WARP_TOTEM_BEACH, {
 });
 /**
  * Last Seat and Fodder rewards whose systems are not built (note 63, issue #603): the coop heater
- * (no winter mood rule yet), the Crystalarium (no gem machine yet) and Old Greencoat's letter to
+ * (no winter mood rule yet) and Old Greencoat's letter to
  * the elves (a story item). Kept and do nothing yet, like the Beach warp totem.
  */
 export const COOP_HEATER = "coop-heater";
@@ -376,11 +389,12 @@ items.set(COOP_HEATER, {
   buyPrice: HEATER_PRICE,
   keep: true,
 });
-for (const [id, name] of [
-  [CRYSTALARIUM, "Crystalarium"],
-  [ELF_LETTER, "Letter to the elves"],
-] as const)
-  items.set(id, { id, name, sellPrice: 0, keep: true });
+items.set(ELF_LETTER, {
+  id: ELF_LETTER,
+  name: "Letter to the elves",
+  sellPrice: 0,
+  keep: true,
+});
 /** The shellfish pot is bought and kept (note 21). Its catches and junk sell as set in `pots.json`. */
 items.set(POT_ITEM, {
   id: POT_ITEM,
@@ -399,11 +413,11 @@ for (const t of TRINKETS)
 
 /** Heading each item for the dev menu's picker, in the order the groups list. */
 const GROUPS: [string, string[]][] = [
-  ["Crops", CROPS.map((c) => c.id)],
+  ["Crops", ALL_CROPS.map((c) => c.id)],
   [
     "Seeds and saplings",
     [
-      ...CROPS.map((c) => seedId(c.id)),
+      ...ALL_CROPS.map((c) => seedId(c.id)),
       ...FRUIT_TREES.map((t) => saplingId(t.id)),
       "mixed-seed",
       "tree-seed",
@@ -486,13 +500,24 @@ const GROUPS: [string, string[]][] = [
       { id: POT_ITEM },
     ].map((f) => f.id),
   ],
-  [
-    "Keepsakes",
-    [HOMEWARD_PIN, WARP_TOTEM_BEACH, COOP_HEATER, CRYSTALARIUM, ELF_LETTER],
-  ],
+  ["Keepsakes", [HOMEWARD_PIN, WARP_TOTEM_BEACH, COOP_HEATER, ELF_LETTER]],
   ["Rings", RINGS.map((r) => r.id)],
   ["Boots", BOOTS.map((b) => b.id)],
-  ["Wood and fibre", ["wood", "hardwood", "sap", "fiber", "clay", "hay"]],
+  [
+    "Wood and fibre",
+    [
+      "wood",
+      "hardwood",
+      "sap",
+      "fiber",
+      "clay",
+      "hay",
+      WAX,
+      CANDLE,
+      TAPPER,
+      ...TAP_GOODS.map((g) => g.item).filter((i) => i !== "sap"),
+    ],
+  ],
 ];
 for (const [group, ids] of GROUPS)
   for (const id of ids) {

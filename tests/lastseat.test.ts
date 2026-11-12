@@ -80,10 +80,10 @@ describe("the Last Seat, bundles 27 to 30", () => {
     expect(hall.problem(inv, "the-catch", "carp@gold")).toMatch(/You do not/);
   });
 
-  it("opens after 20 other bundles, and finishing it mends the bridge", () => {
+  it("opens after all 26 other bundles, and finishing it mends the bridge", () => {
     const others = BUNDLES.filter((b) => b.room !== LAST_ROOM);
-    // 23 others are built; the room opens after 20 of them (a soft gate, rooms.json).
-    expect(others).toHaveLength(23);
+    // The gate is "all" (owner, 2026-11-11): every bundle in the other rooms.
+    expect(others).toHaveLength(26);
     const hall = new Hall();
     expect(hall.roomOpen(LAST_ROOM)).toBe(false);
     const inv = new Inventory(40);

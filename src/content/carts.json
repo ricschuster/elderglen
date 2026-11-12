@@ -1,0 +1,29 @@
+{
+  "_note": "The Hearth room's carts (note 16, 'Room rewards that did nothing', and note 77). Four reserved stops, free, running from the morning after the Hearth room is finished. The service tile on each map is named cart-<id>, and `entry` is where a rider steps off. The farm stop's map id resolves to the farm type's own map. Stop places are placeholders (the notes name only the town square's tile). The mine mouth stop is on the Mountain road below the rockfall, so the cart cannot skip the rockfall.",
+  "stops": [
+    {
+      "id": "square",
+      "name": "Town square",
+      "map": "hearthwell",
+      "entry": "from_cart-square"
+    },
+    {
+      "id": "hall",
+      "name": "Village hall",
+      "map": "hearthwell",
+      "entry": "from_cart-hall"
+    },
+    {
+      "id": "farm",
+      "name": "Your farm",
+      "map": "farm",
+      "entry": "from_cart-farm"
+    },
+    {
+      "id": "mine",
+      "name": "Mine mouth",
+      "map": "mountain",
+      "entry": "from_cart-mine"
+    }
+  ]
+}

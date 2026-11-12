@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { resistChance } from "../core/effects";
 import {
   BOOTS,
   bootsById,
@@ -74,7 +75,7 @@ export class EquipmentScene extends Phaser.Scene {
     const boots = bootsById(eq.wornBoots() ?? "");
     rows.push({
       label: `Boots: ${boots?.name ?? "none"}`,
-      detail: `Defense ${eq.defense()}, immunity ${eq.immunity()}`,
+      detail: `Defense ${eq.defense()}, resist ${eq.resistPercent()} percent`,
       buttons: boots
         ? [
             {
@@ -92,7 +93,7 @@ export class EquipmentScene extends Phaser.Scene {
       if (n < 1) continue;
       rows.push({
         label: b.name,
-        detail: `Defense ${b.defense}, immunity ${b.immunity}`,
+        detail: `Defense ${b.defense}, resist ${Math.round(resistChance(b.immunity) * 100)} percent`,
         buttons: [
           {
             text: "Wear",

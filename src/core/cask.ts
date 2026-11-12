@@ -30,7 +30,19 @@ export const CASK_DAYS: Partial<
   wine: { silver: 14, gold: 28 },
   mead: { silver: 7, gold: 14 },
   cheese: { silver: 3, gold: 7 },
+  // Beer (wheat) 7 and 14; pale ale has its own days below (saved Cask page, SC-82).
+  beer: { silver: 7, gold: 14 },
 };
+
+/** Goods whose days differ from their category's: pale ale 9 and 17 (SC-82). */
+const CASK_ITEM_DAYS: Record<string, { silver: number; gold: number }> = {
+  "pale-ale": { silver: 9, gold: 17 },
+};
+
+/** The days a good needs in the cask, by item first, then by category. */
+function caskDays(item: string): { silver: number; gold: number } | undefined {
+  return CASK_ITEM_DAYS[item] ?? CASK_DAYS[categoryOf(item) as ArtisanCategory];
+}
 
 /** What a cask holds: the good, the quality it went in at and the day it went in. */
 export interface CaskJob {
@@ -115,7 +127,7 @@ export function caskAge(g: GameState, job: CaskJob): number {
 
 /** The quality a good has reached: the age's grade, never below the grade it went in at. */
 export function caskQuality(g: GameState, job: CaskJob): Quality {
-  const days = CASK_DAYS[categoryOf(job.item) as ArtisanCategory];
+  const days = caskDays(job.item);
   if (!days) return job.quality;
   const age = caskAge(g, job);
   const earned: Quality =
@@ -128,7 +140,7 @@ export function daysToNextGrade(
   g: GameState,
   job: CaskJob,
 ): number | undefined {
-  const days = CASK_DAYS[categoryOf(job.item) as ArtisanCategory];
+  const days = caskDays(job.item);
   if (!days) return undefined;
   const age = caskAge(g, job);
   const q = caskQuality(g, job);

@@ -74,6 +74,29 @@ Stardew facts are from the saved Trees, Artisan Goods, Crops and Worm Bin pages 
   gold 14 days (300g) on the saved page. Note 24's cask now takes pale ale and beer.
 - **Data.** `hops` in crops, `pale-ale` in the artisan table and the cask table.
 
+## Built status
+
+Built (2026-11-12): items 1 to 3 of the list below, as core rules and data with tests
+(`src/core/tapper.ts`, `src/content/tapper.json`, the `geode-crusher` and `worm-bin`
+machines in `processing.ts` and `machines.ts`, three recipes, three placeables rows).
+Details: the tapper state is `tap` on the tree (saves with the trees); Action takes a ready
+good, the pickaxe lifts the tapper (a ready good comes too), felling the tree returns it.
+The worm bin keeps a job with a count, fills 4 to 5 each morning from sleep, cap 50. The
+crusher uses `crackResult` with the deepest floor reached. The crusher recipe's "diamond"
+is the Heartfire diamond (note 69), the only diamond item.
+
+Built (2026-11-12, second pass): item 4. `hops` is in `crops.json` (summer, 11 days, regrow
+1, seed 60g, sells 25g); crops now take `produce: "none"` (wheat and hops), so neither makes
+jam, pickles, wine or juice. The keg turns hops into pale ale (2,250 minutes, 300g) and
+wheat into beer (200g). The cask takes both, beer at 7 and 14 days and pale ale at 9 and 17.
+The tapper is wired into the scene: the tap-use fit rule (`tapuse.ts`) walks beside a mature
+untapped tree and places the tapper; Action on a tapped tree with nothing ready says the
+days left (`tapStatus`); the failure reasons have words; a tree whose tap is ready shows the
+green ready mark.
+
+Not built: tapper art on the tree (the ready mark is the machine one), the tapper in a shop,
+Heavy Tapper, and seeds for hops in the shop lists.
+
 ## Build list
 
 1. Tapper placeable, recipe, tree tap state, goods per tree type, mahogany sap (note 36).

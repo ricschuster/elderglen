@@ -65,6 +65,25 @@ top and never makes a hit free.
 4. Equipment screen shows Immunity as a percent.
 5. Tests: resist cap, refresh, clearing, Sturdy half-duration, slime proof.
 
+## Built (2026-11-12)
+
+`src/core/effects.ts` (the three effects, `resistChance`, timers, refresh, burn, clearing),
+`Combat.effects`, `Health.drain`, optional `inflicts` on creature rows (gloop slimed 100
+percent, frostnibbler and icicle hopper chilled 100, cinder pup burned 50), Defense and
+Immunity summed over boots and rings, four placeholder rings in `rings.json` (defense +1,
+iron defense +5, slime proof, sturdy band with Immunity +4 and half length). `FarmScene`
+rolls Immunity on a landed hit, slows walking (slimed), slows swings (chilled), burns 1 a
+second, clears on entering a floor, on sleep and on defeat, and a Life Elixir clears all.
+The health bar shows "Slimed 5s". The equipment screen shows resist as a percent. Tests:
+`tests/effects.test.ts`.
+
+Not built: effect icons (text only), tooltip on the percent, any source for the new rings
+(not in a shop, drop or bundle), chilled cleared by a dish, effect sprites or sound.
+
+Choices made without a settled answer (placeholders): burn never takes the last health
+point; the other gloop colours and the lanternmoth and old digger inflict nothing; the
+resist roll is skipped on a hit lost to grace.
+
 ## Open
 
 - SC-159: formula and numbers done. The full debuff list is not on the saved pages.

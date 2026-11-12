@@ -28,6 +28,7 @@ import type { Settlement } from "./shipping";
 import { fruitTreeById } from "./fruittrees";
 import { CAVE_MAP } from "./cave";
 import { returnDebris } from "./debris";
+import { fillBins } from "./machines";
 import { endDayOrders, type OrdersNews } from "./orders";
 import { loseItems, type Lost } from "./combat";
 import { maps } from "../content/maps";
@@ -35,6 +36,7 @@ import { storeOf } from "./mapstore";
 import { areasEndDay, leaveArea } from "./areas";
 import { quarryBridgeNews } from "./quarry";
 import { ferryNews } from "./cove";
+import { cartNews, payGuestsBoard } from "./roomrewards";
 
 /**
  * True when something stands in the 3x3 around a tile that stops a young fruit
@@ -152,6 +154,10 @@ export interface SleepReport {
   quarryBridge: boolean;
   /** True on the first morning after the Water room is done: the ferry is repaired (note 76). */
   ferryMended: boolean;
+  /** True on the first morning after the Hearth room is done: the carts run (note 16). */
+  cartsRunning: boolean;
+  /** Ids paid the Guests' Board bonus tonight (a catch-up: the hall pays it on hand-in). */
+  guestsBonus: string[];
   /** Names of young fruit trees that could not grow, since something stood in their 3x3. */
   stuckTrees: string[];
 }
@@ -185,6 +191,7 @@ export function sleep(
   // Any night's sleep restores health.
   g.combat.sync(g.skills);
   g.combat.health.fill();
+  g.combat.effects.clear();
   // The bin pays after the pass-out cost, which takes cash carried only.
   const shipped = g.bin.settle(g);
   const orders = endDayOrders(g, shipped.lines, g.day.clock.day);
@@ -205,6 +212,7 @@ export function sleep(
   g.sprinklers.water(g.farm);
   chargeRods(g);
   g.greenhouseSprinklers.water(g.greenhouse);
+  fillBins(g, random);
   g.trees.endDay(
     season,
     random,
@@ -356,6 +364,8 @@ export function sleep(
     stuckTrees: stuck.map((t) => fruitTreeById(t.id)?.name ?? t.id),
     quarryBridge: quarryBridgeNews(g),
     ferryMended: ferryNews(g),
+    cartsRunning: cartNews(g),
+    guestsBonus: payGuestsBoard(g),
   };
 }
 

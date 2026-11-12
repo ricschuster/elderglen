@@ -128,6 +128,14 @@
     "pickUp": "hand"
   },
   {
+    "id": "crystalarium",
+    "kind": "machine",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
     "id": "chest",
     "kind": "chest",
     "places": ["farm", "house"],
@@ -270,6 +278,30 @@
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "none"
+  },
+  {
+    "id": "geode-crusher",
+    "kind": "machine",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "worm-bin",
+    "kind": "machine",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "tapper",
+    "kind": "tapper",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": false,
+    "pickUp": "hand"
   },
   {
     "id": "fish-pond",
