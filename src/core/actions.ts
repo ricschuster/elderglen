@@ -1,9 +1,9 @@
 import { dateOf } from "./calendar";
 import { CROPS, cropById } from "./crops";
 import { farmTypeById } from "./farmtypes";
-import { HARDWOOD, cropOfSeed, itemById } from "./items";
+import { ELDERFRUIT, HARDWOOD, cropOfSeed, itemById } from "./items";
+import { eatElderfruit } from "./elderfruit";
 import { fertilizerById, qualityLevelOf } from "./fertilizer";
-import { MAX_ENERGY } from "./energy";
 import { HEALTH_PER_ENERGY } from "./combat";
 import { doubleForageChance, forageFloor } from "./professions";
 import { cropQuality, forageQuality, withQuality } from "./quality";
@@ -234,10 +234,15 @@ export function forage(
 
 /** Eat one of an item from the backpack to restore energy. Takes no game time. */
 export function eat(g: GameState, itemId: string): Outcome {
+  if (itemId === ELDERFRUIT) {
+    // Eaten at once, no health restored (note 39).
+    const r = eatElderfruit(g);
+    return r.ok ? { ok: true, item: itemId } : fail(r.reason);
+  }
   const gain = itemById(itemId)?.energy;
   if (gain === undefined) return fail("not food");
   if (g.inventory.count(itemId) < 1) return fail("nothing to eat");
-  if (g.day.energy.current >= MAX_ENERGY && g.combat.health.full)
+  if (g.day.energy.current >= g.day.energy.max && g.combat.health.full)
     return fail("not hungry");
   g.inventory.remove(itemId);
   g.day.energy.restore(gain);

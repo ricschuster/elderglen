@@ -78,6 +78,7 @@ const SERVICES: Record<string, string> = {
   stonekeeper: "Stonekeeper",
   keeper: "Keeper's Counter",
   hermit: "Hermit",
+  "spirit-statue": "Spirit's Stone",
   camp: "Camp Fire",
   "tide-bridge": "Broken Footbridge",
   "quarry-bridge": "Broken Bridge",

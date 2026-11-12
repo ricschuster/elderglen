@@ -135,6 +135,11 @@
         "price": 150,
         "tokens": true,
         "count": 15
+      },
+      {
+        "item": "elderfruit",
+        "price": 2000,
+        "once": "elderfruit-showing"
       }
     ],
     "minigame": null,

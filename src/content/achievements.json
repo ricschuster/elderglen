@@ -266,6 +266,20 @@
     }
   },
   {
+    "id": "every-elderfruit",
+    "name": "Every Elderfruit",
+    "goal": "Eat every elderfruit",
+    "kind": "elderfruitAll",
+    "threshold": 8,
+    "secret": false,
+    "hat": {
+      "id": "elderfruit-circlet",
+      "name": "Elderfruit Circlet",
+      "color": "#8a4a8a",
+      "price": 3000
+    }
+  },
+  {
     "id": "summit",
     "name": "Summit",
     "goal": "Complete the home valley to 100 percent",

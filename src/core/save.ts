@@ -56,6 +56,7 @@ import { Decor, type DecorSave } from "./decor";
 import { Furniture, migrateCatalogue, type FurnitureSave } from "./furniture";
 import { Mailbox, type MailEntry } from "./mail";
 import { Friendship } from "./friendship";
+import { ELDERFRUIT_TOTAL, maxEnergyFor } from "./elderfruit";
 import { HeartEvents, type HeartEventsSave } from "./heartevents";
 import { Quests, type QuestsSave } from "./quests";
 import { FishLog, type FishingSave } from "./fishing";
@@ -160,6 +161,8 @@ export interface GameState {
   tomorrow: Weather;
   /** True once the end screen has been shown, so it shows only once. */
   endSeen: boolean;
+  /** Elderfruit eaten, each +34 maximum energy (`elderfruit.ts`, note 39). */
+  elderfruit: number;
   /** Festivals joined, as `joinKey` strings. */
   festivalsJoined: string[];
   /** Show tokens from the Harvest Showing, good for the year they were won. */
@@ -242,6 +245,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     weather: "sunny",
     tomorrow: "sunny",
     endSeen: false,
+    elderfruit: 0,
     festivalsJoined: [],
     showTokens: { year: 0, count: 0 },
     cave: new FarmCave(),
@@ -357,6 +361,8 @@ interface SaveData {
   tomorrow?: Weather;
   /** Absent in saves made before the end screen existed. */
   endSeen?: boolean;
+  /** Absent until one is eaten. */
+  elderfruit?: number;
   /** Absent in saves made before festivals existed. */
   festivalsJoined?: string[];
   /** Absent in saves made before the Harvest Showing. */
@@ -551,6 +557,7 @@ export function serialize(g: GameState): string {
     weather: g.weather,
     tomorrow: g.tomorrow,
     endSeen: g.endSeen,
+    ...(g.elderfruit > 0 ? { elderfruit: g.elderfruit } : {}),
     festivalsJoined: [...g.festivalsJoined],
     showTokens: { ...g.showTokens },
     cave: g.cave.save(),
@@ -690,6 +697,10 @@ export function deserialize(text: string): GameState | undefined {
   const g = newGame(
     typeof raw.farmType === "string" ? raw.farmType : DEFAULT_FARM_TYPE,
   );
+  if (isCount(raw.elderfruit)) {
+    g.elderfruit = Math.min(raw.elderfruit, ELDERFRUIT_TOTAL);
+    g.day.energy.max = maxEnergyFor(g.elderfruit);
+  }
   g.day.restore(day, energy, isCount(raw.minutes) ? raw.minutes : undefined);
   g.money = money;
   g.weather = weather as Weather;

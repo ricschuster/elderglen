@@ -324,3 +324,38 @@ is the same item as the other seven: +34 maximum energy, eaten at once, 270 up t
 all. The points for the rare boost line are split in eighths, and the "Find every
 stardrop" counter reads eight. Update the counter, the achievement and the completion
 data when this is built.
+
+## Elderfruit build status (2026-11-12)
+
+Built (#874): `src/core/elderfruit.ts`, the `elderfruit` count on the game state (saved), and
+`Energy.max` (270 plus 34 for each one eaten; days, faints and `refillEnergy` use it). Eating the
+item from the pack (`eat`) raises the maximum by 34, fills the new space, and heals nothing. The
+rare boost line of the completion total reads fruit eaten of eight, and the "Every Elderfruit"
+achievement (hat: Elderfruit Circlet, 3,000g placeholder) fires at eight.
+
+| # | Source | State |
+| --- | --- | --- |
+| 1 | Harvest Showing counter, 2,000g, once (`once` flag on the counter line) | Built |
+| 2 | Camp chest, floor 100 | Built earlier (`camp-chest.json`) |
+| 3 | Spouse at 12.5 hearts | Not built (no marriage system) |
+| 4 | The hermit sells one at 20,000g, once (opens the shop screen from her tile) | Built |
+| 5 | Emberseed from the hermit's 4 heart event, ember berry (a `rare` crop: not on sale, not in the mixed seed, not in the shipped count), handed to the spirit's stone in the Secret Woods (service `spirit-statue`) | Built, placeholder art and text |
+| 6 | The fish seed letter (`fish-roster`) | Built earlier |
+| 7 | The full gallery set | Not built (no gallery) |
+| 8 | See "Open" below | Unclear |
+
+Open after the build:
+
+- **The eighth source is not named.** The table has seven rows, and the fish seed letter is both
+  its row 6 and the "eighth" above. Every counter and the achievement use eight (as this note
+  says), so 100 percent in this category cannot be reached until an eighth source exists or the
+  count is set to seven. Needs an owner decision.
+- **Eaten at once.** Stardew eats a stardrop on pickup. Ours is an item that the player eats from
+  the pack (and the mail, camp chest, counter and spirit all drop it there), so it can sit
+  uneaten. The completion line counts fruit eaten. Whether to eat on receipt is not decided.
+- **Energy on eating.** Raising the maximum also adds 34 to current energy. Stardew's refill is
+  unchecked (add to the checks register if the owner wants it settled).
+- **Emberseed days to grow** are a 14 day placeholder. Planting in winter is simply refused, as
+  for every crop. The "waits for spring" rule needs a farm change that is not built.
+- The spirit's stone has no art and its line is placeholder text. The hermit's 4 heart event
+  text is placeholder, and the old field mushroom stand-in gift is replaced by the emberseed.

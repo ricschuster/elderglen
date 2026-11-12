@@ -1,5 +1,5 @@
 import bombData from "../content/bombs.json";
-import { CROPS, cropById } from "./crops";
+import { ALL_CROPS, cropById } from "./crops";
 import {
   MAHOGANY_SEED,
   MAHOGANY_SEED_NAME,
@@ -57,18 +57,20 @@ export interface ItemDef {
 }
 
 const items = new Map<string, ItemDef>();
-for (const c of CROPS) {
+for (const c of ALL_CROPS) {
+  // A rare crop is kept for its hand-in and its seed is a gift, never on sale (the ember berry, note 39).
   items.set(c.id, {
     id: c.id,
     name: c.name,
-    sellPrice: c.sellPrice,
+    sellPrice: c.rare ? 0 : c.sellPrice,
     energy: c.energy,
+    ...(c.rare ? { keep: true } : {}),
   });
   items.set(seedId(c.id), {
     id: seedId(c.id),
-    name: `${c.name} seeds`,
-    sellPrice: Math.floor(c.seedPrice / 2),
-    buyPrice: c.seedPrice,
+    name: c.seedName ?? `${c.name} seeds`,
+    sellPrice: c.rare ? 0 : Math.floor(c.seedPrice / 2),
+    ...(c.rare ? { keep: true } : { buyPrice: c.seedPrice }),
   });
 }
 
@@ -391,11 +393,11 @@ for (const t of TRINKETS)
 
 /** Heading each item for the dev menu's picker, in the order the groups list. */
 const GROUPS: [string, string[]][] = [
-  ["Crops", CROPS.map((c) => c.id)],
+  ["Crops", ALL_CROPS.map((c) => c.id)],
   [
     "Seeds and saplings",
     [
-      ...CROPS.map((c) => seedId(c.id)),
+      ...ALL_CROPS.map((c) => seedId(c.id)),
       ...FRUIT_TREES.map((t) => saplingId(t.id)),
       "mixed-seed",
       "tree-seed",
