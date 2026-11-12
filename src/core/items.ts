@@ -36,6 +36,7 @@ import artifactData from "../content/artifacts.json";
 /** The found old things, read from data here so this list has no cycle with `artifacts.ts`. */
 const ARTIFACTS = artifactData.artifacts;
 import { FISH, RODS } from "./fishing";
+import { WATER_FINDS } from "./waterfinds";
 import { BAITS, LURES, TRINKETS } from "./tackle";
 import { JUNK, POT_ITEM, POT_NAME, POT_PRICE, SHELLFISH } from "./pots";
 import { ENERGY_MULTIPLIER, QUALITY_MULTIPLIER, splitQuality } from "./quality";
@@ -166,6 +167,10 @@ items.set("milk", { id: "milk", name: "Milk", sellPrice: 125 });
 items.set("goat-milk", { id: "goat-milk", name: "Goat milk", sellPrice: 225 });
 items.set("truffle", { id: "truffle", name: "Truffle", sellPrice: 625 });
 items.set("moonwool", { id: "moonwool", name: "Moonwool", sellPrice: 1200 });
+/** The water finds (note 93). Seaweed is already a forage item. */
+for (const f of WATER_FINDS)
+  if (!items.has(f.id))
+    items.set(f.id, { id: f.id, name: f.name, sellPrice: f.sellPrice });
 /** Mixed seeds plant a random crop that suits the season. Sell price is ours. */
 items.set("mixed-seed", {
   id: "mixed-seed",
@@ -468,6 +473,7 @@ const GROUPS: [string, string[]][] = [
       ...TRINKETS,
       ...SHELLFISH,
       ...JUNK,
+      ...WATER_FINDS,
       { id: POT_ITEM },
     ].map((f) => f.id),
   ],
