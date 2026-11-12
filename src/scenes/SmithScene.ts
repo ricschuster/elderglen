@@ -3,6 +3,8 @@ import type { GameState } from "../core/save";
 import { COPPER_ORE } from "../core/ore";
 import { handOverCopper } from "../core/smith";
 import { buyBoots, buyWeapon, FORGED, weaponPrice } from "../core/combat";
+import { BOMBS } from "../core/bombs";
+import { buy } from "../core/shop";
 import { BOOTS } from "../core/equipment";
 import { oreRows } from "./ore-rows";
 import { frame, Menu, type Row } from "./panel";
@@ -85,7 +87,7 @@ export class SmithScene extends Phaser.Scene {
           },
         ],
       });
-    rows.push(...this.weaponRows(), ...this.bootsRows());
+    rows.push(...this.weaponRows(), ...this.bootsRows(), ...this.bombRows());
     this.menu.setRows(rows);
   }
 
@@ -128,6 +130,27 @@ export class SmithScene extends Phaser.Scene {
           run: () =>
             this.say(
               buyBoots(g, b.id) ?? `She hands you ${b.name.toLowerCase()}.`,
+            ),
+        },
+      ],
+    }));
+  }
+
+  /** The three bombs, for coin (note 89, Stardew's Forge prices as placeholders). */
+  private bombRows(): Row[] {
+    const g = this.state;
+    return BOMBS.map((b) => ({
+      label: b.name,
+      detail: `${b.price}g, blast ${b.radius} tile${b.radius === 1 ? "" : "s"}, you carry ${g.inventory.count(b.id)}`,
+      dim: g.money < b.price,
+      buttons: [
+        {
+          text: "Buy",
+          run: () =>
+            this.say(
+              buy(g.inventory, g, b.id)
+                ? `She hands you a ${b.name.toLowerCase()}.`
+                : "You cannot afford it, or your pack is full.",
             ),
         },
       ],

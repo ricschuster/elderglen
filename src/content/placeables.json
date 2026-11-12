@@ -246,5 +246,29 @@
     "footprint": [1, 1],
     "blocksWalking": false,
     "pickUp": "hand"
+  },
+  {
+    "id": "cherry-bomb",
+    "kind": "bomb",
+    "places": ["farm", "mine", "wild"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "none"
+  },
+  {
+    "id": "bomb",
+    "kind": "bomb",
+    "places": ["farm", "mine", "wild"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "none"
+  },
+  {
+    "id": "mega-bomb",
+    "kind": "bomb",
+    "places": ["farm", "mine", "wild"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "none"
   }
 ]

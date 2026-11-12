@@ -1,3 +1,4 @@
+import bombData from "../content/bombs.json";
 import { CROPS, cropById } from "./crops";
 import {
   MAHOGANY_SEED,
@@ -279,6 +280,15 @@ for (const [id, name] of [
   ["iron-lamp-post", "Iron lamp-post"],
 ] as const)
   items.set(id, { id, name, sellPrice: 0, keep: true });
+/** Bombs (note 89): bought at the Forge, lit on a tile, used up. Prices from `bombs.json`. */
+for (const b of bombData)
+  items.set(b.id, {
+    id: b.id,
+    name: b.name,
+    sellPrice: 0,
+    buyPrice: b.price,
+    keep: true,
+  });
 items.set(ELDERFRUIT, {
   id: ELDERFRUIT,
   name: "Elderfruit",
@@ -392,6 +402,7 @@ const GROUPS: [string, string[]][] = [
       "campfire",
       "wood-brazier",
       "stone-brazier",
+      ...bombData.map((b) => b.id),
       "wood-lamp-post",
       "iron-lamp-post",
       ELDERFRUIT,

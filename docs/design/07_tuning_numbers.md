@@ -958,6 +958,8 @@ Source: `src/core/quests.ts`, `src/content/requests.json`.
   sap 5 at Foraging 2; stone brazier stone 20 and coal 3 at Mining 2. Lights are not sold.
 - Lamp-post recipes (note 34, built 2026-11-12): wood lamp-post 50 wood and 1 battery pack at
   Farming 7; iron lamp-post 1 iron bar and 1 battery pack at Farming 9. Radius 6, farm only.
+- Bombs built 2026-11-12 (`src/content/bombs.json`): fuse 1.5 s, ore gates reuse the spawn
+  `minLevel`s (iron 2, gold 5, Hearthsilver 8), a lit bomb goes off at once on leaving the map.
 - Heater: 1,000g at the ranch shop, covers the whole building on winter nights (SC-131 open).
 - Forge: Life Elixir 2,000g (health to full), Miner's Treat 1,000g (100 energy), Oil of
   Garlic 3,000g (monsters below a tier ignore you for the day).

@@ -1,3 +1,4 @@
+import { BOMBS } from "../src/core/bombs";
 import { describe, expect, it } from "vitest";
 import { CHESTS } from "../src/core/chestdefs";
 import { itemById } from "../src/core/items";
@@ -26,7 +27,12 @@ describe("placeables table", () => {
     const lights = PLACEABLES.filter((p) => p.kind === "light");
     for (const l of lights) expect(l.light?.radius, l.id).toBeGreaterThan(0);
     expect(PLACEABLES).toHaveLength(
-      SPRINKLERS.length + MACHINES.length + CHESTS.length + lights.length + 2,
+      SPRINKLERS.length +
+        MACHINES.length +
+        CHESTS.length +
+        lights.length +
+        2 +
+        BOMBS.length,
     );
   });
 

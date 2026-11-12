@@ -1,4 +1,5 @@
 import { POT_ITEM } from "../core/pots";
+import { isBomb } from "../core/bombs";
 import { isLight } from "../core/lights";
 import { LIGHTNING_ROD } from "../core/lightning";
 import { CHESTS, chestById } from "../core/chestdefs";
@@ -951,6 +952,20 @@ function paintLights(scene: Phaser.Scene): void {
     flame(c, 7, 5);
     flame(c, 5, 7);
   });
+  // Bombs: a dark ball, bigger with the blast, and a fuse spark (note 89).
+  for (const [id, size] of [
+    ["cherry-bomb", 4],
+    ["bomb", 5],
+    ["mega-bomb", 6],
+  ] as const)
+    draw(id, (c) => {
+      const o = 8 - size;
+      px(c, "#00000033", o, 14, size * 2, 1);
+      px(c, "#2a2a30", o, 14 - size * 2, size * 2, size * 2);
+      px(c, "#4a4a54", o + 1, 14 - size * 2 + 1, 2, 2);
+      px(c, "#c8a060", 8, 14 - size * 2 - 2, 1, 2);
+      px(c, "#ffd24a", 8, 14 - size * 2 - 3, 2, 1);
+    });
   draw("lightning-rod", (c) => {
     px(c, "#00000033", 5, 14, 6, 1);
     px(c, "#7a7a84", 7, 4, 2, 10);
@@ -1081,7 +1096,8 @@ export function iconKey(itemId: string): string | undefined {
   if (furnitureById(base)) return furnitureKey(base);
   if (decorById(base)) return `decor-${base}`;
   if (chestById(base)) return chestKey(base);
-  if (isLight(base) || base === LIGHTNING_ROD) return lightKey(base);
+  if (isLight(base) || isBomb(base) || base === LIGHTNING_ROD)
+    return lightKey(base);
   if (base === POT_ITEM) return POT_KEY;
   const sapling = treeOfSapling(base);
   if (sapling) return saplingIconKey(sapling.id);
