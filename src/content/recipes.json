@@ -719,5 +719,53 @@
         "level": 6
       }
     ]
+  },
+  {
+    "id": "wood-lamp-post",
+    "ingredients": [
+      {
+        "item": "wood",
+        "count": 50
+      },
+      {
+        "item": "battery-pack",
+        "count": 1
+      }
+    ],
+    "result": {
+      "item": "wood-lamp-post",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "level",
+        "skill": "farming",
+        "level": 7
+      }
+    ]
+  },
+  {
+    "id": "iron-lamp-post",
+    "ingredients": [
+      {
+        "item": "iron-bar",
+        "count": 1
+      },
+      {
+        "item": "battery-pack",
+        "count": 1
+      }
+    ],
+    "result": {
+      "item": "iron-lamp-post",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "level",
+        "skill": "farming",
+        "level": 9
+      }
+    ]
   }
 ]

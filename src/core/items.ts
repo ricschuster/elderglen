@@ -275,6 +275,8 @@ for (const [id, name] of [
   ["campfire", "Campfire"],
   ["wood-brazier", "Wood brazier"],
   ["stone-brazier", "Stone brazier"],
+  ["wood-lamp-post", "Wood lamp-post"],
+  ["iron-lamp-post", "Iron lamp-post"],
 ] as const)
   items.set(id, { id, name, sellPrice: 0, keep: true });
 items.set(ELDERFRUIT, {
@@ -382,6 +384,8 @@ const GROUPS: [string, string[]][] = [
       "campfire",
       "wood-brazier",
       "stone-brazier",
+      "wood-lamp-post",
+      "iron-lamp-post",
       ELDERFRUIT,
       DEEPMARK_KEY,
     ],

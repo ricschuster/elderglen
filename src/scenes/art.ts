@@ -957,6 +957,14 @@ function paintLights(scene: Phaser.Scene): void {
     px(c, "#b4b4ba", 6, 12, 4, 2);
     px(c, "#ffe14a", 7, 1, 2, 3);
   });
+  for (const iron of [false, true])
+    draw(iron ? "iron-lamp-post" : "wood-lamp-post", (c) => {
+      px(c, "#00000033", 5, 14, 6, 1);
+      px(c, iron ? "#5a5a66" : "#6a4a26", 7, 5, 2, 9);
+      px(c, iron ? "#7a7a86" : "#8a5a2a", 5, 12, 6, 2);
+      px(c, iron ? "#7a7a86" : "#8a5a2a", 5, 3, 6, 2);
+      px(c, "#ffe9a0", 6, 0, 4, 3);
+    });
   for (const stone of [false, true])
     draw(stone ? "stone-brazier" : "wood-brazier", (c) => {
       px(c, "#00000033", 3, 14, 10, 1);

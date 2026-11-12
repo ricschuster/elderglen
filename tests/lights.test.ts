@@ -7,6 +7,7 @@ import {
   pickUpLight,
   placeLight,
 } from "../src/core/lights";
+import { RECIPES } from "../src/core/crafting";
 import { START } from "../src/core/maps";
 import { mineMapId } from "../src/core/mines";
 import { mayPlaceOn, placeTag } from "../src/core/placeables";
@@ -131,5 +132,48 @@ describe("saving lights", () => {
     expect(deserialize(serialize(g))!.placed.count).toBe(1);
     clearMineLights(g);
     expect(g.placed.count).toBe(1);
+  });
+});
+
+describe("lamp-posts", () => {
+  it("are farm-only lights of radius 6 with a recipe that needs a battery pack", () => {
+    for (const id of ["wood-lamp-post", "iron-lamp-post"]) {
+      expect(mayPlaceOn(id, "farm")).toBe(true);
+      for (const tag of [
+        "greenhouse",
+        "house",
+        "mine",
+        "camp",
+        "wild",
+      ] as const)
+        expect(mayPlaceOn(id, tag)).toBe(false);
+      expect(
+        RECIPES.find((r) => r.id === id)?.ingredients.map((i) => i.item),
+      ).toContain("battery-pack");
+    }
+  });
+
+  it("stand on the farm, glow six tiles, and lift back", () => {
+    const g = holding("wood-lamp-post");
+    expect(
+      placeLight(g, farm, "farm", tile.x, tile.y, "wood-lamp-post").ok,
+    ).toBe(true);
+    const glows = lightLayer(g, "farm");
+    expect(glows).toHaveLength(1);
+    expect(glows[0]!.radius).toBe(6);
+    expect(isLit(glows, tile.x + 6, tile.y)).toBe(true);
+    expect(isLit(glows, tile.x + 7, tile.y)).toBe(false);
+    expect(pickUpLight(g, "farm", tile.x, tile.y).ok).toBe(true);
+    expect(g.inventory.count("wood-lamp-post")).toBe(1);
+  });
+
+  it("are refused in a mine, and survive a save", () => {
+    const g = holding("iron-lamp-post", 2);
+    expect(
+      placeLight(g, farm, mineMapId(1), tile.x, tile.y, "iron-lamp-post").ok,
+    ).toBe(false);
+    placeLight(g, farm, "farm", tile.x, tile.y, "iron-lamp-post");
+    const back = deserialize(serialize(g))!;
+    expect(back.placed.get("farm", tile.x, tile.y)?.id).toBe("iron-lamp-post");
   });
 });
