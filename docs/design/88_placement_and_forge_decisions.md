@@ -70,3 +70,15 @@ named place and Mossback and the pond fish are not yet taken.
   spot (note 84, layout note 85).
 - **Placement** (note 89): heater sold at the ranch shop, no torches indoors, bombs give
   the same drops as a swing and no experience, no cap on rods.
+
+## Fourth round (owner, 2026-11-12)
+
+- **Flower uses.** All four: gifts to villagers (Stardew), bundle items, bees and honey,
+  and decoration and dyes. The flower design note covers each.
+- **Fish seed letter trigger.** Every fish except the legendary ones (a change from the
+  built `whole-roster`, which counts every fish). Which fish are "legendary" is to be
+  named in note 21 (the Mossback is a candidate). The achievement trigger needs the same
+  split.
+- **Mossback price.** 750g base (placeholder).
+- **Gem nodes.** A fixed chance by floor band. Mining level gates the ore tier, not the
+  gem odds.
