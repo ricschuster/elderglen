@@ -738,6 +738,7 @@ function paintTrees(scene: Phaser.Scene): void {
     juice: "#e8a030",
     honey: "#f0c030",
     mead: "#d89a2a",
+    beer: "#e0b030",
     cheese: "#f0d060",
     mayonnaise: "#f4ecc8",
     cloth: "#7a8ad0",

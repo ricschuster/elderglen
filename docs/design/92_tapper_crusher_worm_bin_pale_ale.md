@@ -82,10 +82,20 @@ machines in `processing.ts` and `machines.ts`, three recipes, three placeables r
 Details: the tapper state is `tap` on the tree (saves with the trees); Action takes a ready
 good, the pickaxe lifts the tapper (a ready good comes too), felling the tree returns it.
 The worm bin keeps a job with a count, fills 4 to 5 each morning from sleep, cap 50. The
-crusher uses `crackResult` with the deepest floor reached. Not built: hops, pale ale and
-beer in the cask (item 4), tapper art and a ready mark on the tree, the shell and tap-use
-fit rule for the tapper, shop and Heavy Tapper. The crusher recipe's "diamond" is the
-Heartfire diamond (note 69), the only diamond item.
+crusher uses `crackResult` with the deepest floor reached. The crusher recipe's "diamond"
+is the Heartfire diamond (note 69), the only diamond item.
+
+Built (2026-11-12, second pass): item 4. `hops` is in `crops.json` (summer, 11 days, regrow
+1, seed 60g, sells 25g); crops now take `produce: "none"` (wheat and hops), so neither makes
+jam, pickles, wine or juice. The keg turns hops into pale ale (2,250 minutes, 300g) and
+wheat into beer (200g). The cask takes both, beer at 7 and 14 days and pale ale at 9 and 17.
+The tapper is wired into the scene: the tap-use fit rule (`tapuse.ts`) walks beside a mature
+untapped tree and places the tapper; Action on a tapped tree with nothing ready says the
+days left (`tapStatus`); the failure reasons have words; a tree whose tap is ready shows the
+green ready mark.
+
+Not built: tapper art on the tree (the ready mark is the machine one), the tapper in a shop,
+Heavy Tapper, and seeds for hops in the shop lists.
 
 ## Build list
 

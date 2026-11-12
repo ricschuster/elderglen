@@ -208,7 +208,15 @@ export const NOTHING_TO_ACT_ON = "nothing to act on";
 /** Shake a tree, pick forage or harvest a crop: what the hand does on one tile. */
 function pick(g: GameState, x: number, y: number): Outcome {
   if (tapReady(g, g.trees.at(x, y))) return collectTap(g, x, y);
-  if (g.trees.at(x, y)) return shake(g, x, y);
+  if (g.trees.at(x, y)) {
+    const shaken = shake(g, x, y);
+    // A tapped tree with nothing to shake says how long the tap has left.
+    return !shaken.ok &&
+      shaken.reason === "nothing to shake" &&
+      g.trees.at(x, y)?.tap
+      ? { ok: false, reason: "tap busy" }
+      : shaken;
+  }
   if (g.fruitTrees.at(x, y)) return pickFruit(g, x, y);
   if (g.sprinklers.at(x, y)) return pickUpSprinkler(g, x, y);
   if (g.machines.at(x, y)) return handOnMachine(g, x, y);
@@ -300,7 +308,12 @@ const REASONS: Record<string, string> = {
   "cask busy": "The cask is already ageing something.",
   "cask empty": "The cask is empty.",
   "cask not empty": "Take the good out of the cask first.",
-  "cask will not take that": "A cask takes wine, mead and cheese.",
+  "cask will not take that": "A cask takes wine, mead, beer and cheese.",
+  "no tapper": "Out of tappers.",
+  "already tapped": "This tree already has a tapper.",
+  "cannot tap this": "A tapper goes on a full-grown tree.",
+  "no tree here": "There is no tree there.",
+  "not tapped": "There is no tapper on that tree.",
   "no cask": "Out of casks.",
   "no cask here": "No cask here.",
   "machine will not take that": "It cannot use that.",
