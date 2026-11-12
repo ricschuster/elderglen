@@ -230,7 +230,7 @@ describe("the forge and the stonekeeper's yard (note 74, steps 4 and 5)", () => 
       map: "mountain",
       entry: "from_forge",
     });
-    expect(forge.services.map((s) => s.kind)).toEqual(["smith"]);
+    expect([...new Set(forge.services.map((s) => s.kind))]).toEqual(["smith"]);
     expect(serviceLabel("stonekeeper", "stonekeeper")).toBe("Stonekeeper");
     expect(maps.problems()).toEqual([]);
   });

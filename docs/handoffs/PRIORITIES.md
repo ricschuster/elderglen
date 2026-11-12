@@ -48,12 +48,12 @@ Done, owner checked (2026-11-11): step 1 farm (note 55, #776), step 2 festival s
 - Step 12: Mines, after combat leftovers (#598).
 - Steps 13 to 16 (M3d): `above` layer and seasonal tilesets, reference images and
   style sheet, licence ADR for generated art, the art swap.
-- Build the other interiors (note 86), one branch and one PR per run, a commit per batch:
-  shared reachability test #854, general store pilot #853, doors 2 wide #855, then maps
-  #856 (sawmill, healer, smithy), #857 (library, hatter, farmstead), #858 (burrows), #859
-  (tower, outpost, forge, elf, inn), #860 (fisher hut and loft). The house is built
-  (note 85 items 1 to 7, #832 to #838). Left: spouse route code (note 84), decor zones for
-  renovation rooms, the cabin (M4).
+- The other interiors are built (note 86, #853 to #860) from the checked drafts, with the
+  shared test `tests/interior-reach.test.ts` and the converter
+  `scripts/interiors/tmj-to-map.mjs`. Left: the hall layout (no draft, one player tile at
+  each counter), the owner's call on the `AISLE_EXCEPTIONS` lists, game code that reads
+  `gate` (friendship doors), spouse route code (note 84), decor zones for renovation
+  rooms, the cabin (M4).
 
 ## Leftovers and housekeeping
 

@@ -34,3 +34,9 @@ python3 gen.py inn forge    # only these
 Keep `general-store.tmj`: `gen.py` uses it as the Tiled template, and `python3 gen.py` does
 not rebuild `general-store`. Full notes, the plan calls and the character key are in note 86,
 section "Tooling: the draft generator". Not an npm script and not a CI gate.
+
+## From a draft to a game map
+
+`node scripts/interiors/tmj-to-map.mjs <id>` writes `src/content/maps/<id>.json` from `<id>.tmj`
+(layers, door exit and entry, services, gates and marks; see the header of the script for the
+name rules and limits). Not an npm script and not a CI gate. `general-store` was built this way (#853).

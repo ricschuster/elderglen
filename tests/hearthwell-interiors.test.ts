@@ -18,6 +18,21 @@ const SHOPS = {
   smithy: "smithy",
   hatter: "counter-hatter",
 } as const;
+// Interiors rebuilt to their note 86 layouts keep their size here (#853, #855 to #860).
+const REBUILT: Record<string, [number, number]> = {
+  "general-store": [31, 31],
+  sawmill: [31, 27],
+  healer: [22, 23],
+  smithy: [21, 26],
+  library: [35, 30],
+  hatter: [27, 27],
+  "burrow-gardener": [30, 20],
+  "burrow-retired": [32, 21],
+  "burrow-young": [28, 20],
+  inn: [44, 32],
+  "fisher-hut": [12, 13],
+  "fisher-loft": [11, 11],
+};
 const BURROWS = ["burrow-gardener", "burrow-retired", "burrow-young"];
 const ALL = [...Object.keys(SHOPS), "outpost", "outpost-rooms", ...BURROWS];
 
@@ -81,11 +96,9 @@ describe("the Hearthwell interiors", () => {
   it("gives each shop its counter, with the right kind", () => {
     for (const [id, kind] of Object.entries(SHOPS)) {
       const m = maps.get(id);
-      expect(
-        m.services.map((s) => s.kind),
-        id,
-      ).toEqual([kind]);
-      expect([m.width, m.height]).toEqual([14, 10]);
+      // A wide counter has one service per tile it is served from (all the same kind).
+      expect([...new Set(m.services.map((s) => s.kind))], id).toEqual([kind]);
+      expect([m.width, m.height]).toEqual(REBUILT[id] ?? [14, 10]);
     }
   });
 
@@ -122,17 +135,18 @@ describe("the Hearthwell interiors", () => {
 
   it("makes the burrows small, each with a bed per sleeper", () => {
     const beds = (id: string) =>
-      mapFiles[id]!.layers.find((l) => l.name === "ground")!.data!.filter(
+      mapFiles[id]!.layers.find((l) => l.name === "fixtures")!.data!.filter(
         (t: number) => t === 10,
       ).length;
     for (const id of BURROWS) {
       const m = maps.get(id);
-      expect(m.width * m.height).toBeLessThan(14 * 10);
+      expect([m.width, m.height]).toEqual(REBUILT[id]);
       expect(m.services).toHaveLength(0);
     }
-    expect(beds("burrow-gardener")).toBe(1);
-    expect(beds("burrow-retired")).toBe(3);
-    expect(beds("burrow-young")).toBe(2);
+    // bed tiles: a single bed is 2 by 2, the retired couple's double bed is 3 by 2
+    expect(beds("burrow-gardener")).toBe(4);
+    expect(beds("burrow-retired")).toBe(10);
+    expect(beds("burrow-young")).toBe(8);
   });
 
   it("says something at the counters that have no system yet, and uses no em dash", () => {

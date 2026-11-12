@@ -47,20 +47,25 @@ describe("Thalwen's cottage on the Beach", () => {
   it("has one walkable room with the pin stall counter reachable and solid", () => {
     const walkable = house.reachable(house.entry("door")!);
     const stall = house.services.find((s) => s.kind === "pin-stall")!;
-    expect(house.services).toHaveLength(1);
+    expect(new Set(house.services.map((s) => s.kind))).toEqual(
+      new Set(["pin-stall"]),
+    );
     expect(house.isBlocked(stall.x, stall.y)).toBe(true);
     expect(walkable.has(`${stall.x},${stall.y + 1}`)).toBe(true);
     expect(serviceLabel("pin-stall", stall.id)).toBe("Thalwen's Pin Stall");
   });
 
   it("keeps the half-packed trunk by the door and never blocks the way in", () => {
-    const ground = mapFiles["beach-elf-house"]!.layers.find(
-      (l) => l.name === "ground",
+    // The rebuilt room (note 86, #859) packs the trunks (crate tiles) in its east corner.
+    const fixtures = mapFiles["beach-elf-house"]!.layers.find(
+      (l) => l.name === "fixtures",
     )!.data!;
     const door = house.entry("door")!;
-    const trunk = ground[door.y * house.width + door.x - 1];
-    expect(trunk).toBe(12);
-    expect(house.isBlocked(door.x - 1, door.y)).toBe(true);
+    const trunk = fixtures.indexOf(12);
+    expect(trunk).toBeGreaterThan(-1);
+    expect(
+      house.isBlocked(trunk % house.width, Math.floor(trunk / house.width)),
+    ).toBe(true);
     expect(house.isBlocked(door.x, door.y)).toBe(false);
   });
 });
