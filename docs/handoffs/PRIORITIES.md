@@ -18,9 +18,9 @@ unless the owner says so.
 Decided 2026-11-12: the Last Seat opens after ALL other bundles (built). #876 and #879
 stay in M3b. Guests' Board +500 friendship (built), up to five heart events a person.
 
-Built 2026-11-12 (sessions 7d and 8), all awaiting the owner's play. Bundles 1 to 26 can be
+Built 2026-11-12 (sessions 7d, 8 and 8b), all awaiting the owner's play. Bundles 1 to 26 can be
 filled in code; the exit test needs the owner's play. Detail is in the notes' "Built status",
-the 2026-11-12l and 2026-11-12m handoffs and `PRIORITIES_ARCHIVE.md`.
+the 2026-11-12l, 2026-11-12m and 2026-11-12n handoffs and `PRIORITIES_ARCHIVE.md`.
 
 Open, top to bottom:
 
