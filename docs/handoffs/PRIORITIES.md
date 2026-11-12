@@ -15,45 +15,35 @@ open item is the next task. Issues are in the M3b GitHub milestone. Update this 
 every handoff pull request. Do not start items from the sections below until it is done,
 unless the owner says so.
 
-Decided 2026-11-12: the Last Seat opens after ALL other bundles (not 23; fix
-`rooms.json` `opensAfter`). #876 and #879 stay in M3b. Guests' Board +500 friendship, up
-to five heart events a person.
+Decided 2026-11-12: the Last Seat opens after ALL other bundles (built). #876 and #879
+stay in M3b. Guests' Board +500 friendship (built), up to five heart events a person.
 
-Tier 1, needed to fill the bundles:
+Built 2026-11-12 (session 7d), all awaiting the owner's play: #869 bundles 20, 24, 26 and
+the gate, #872 gift tastes, #874 elderfruit (five of seven sources), #875 goods hand-in, #870 Crystalarium, #871
+room rewards, notes 91 flowers, 92 (tapper, crusher, worm bin, hops, pale ale), 93 (fish pond core, water finds) and 94 (Defense, Immunity, effects).
+Details are in the notes' "Built status" and the 2026-11-12l handoff. Bundles 1 to 26 can
+now be filled; the exit test needs the owner's play.
 
-1. **#877 placement** is built (steps 1 to 7). Left: icons for bombs and Forge goods, a
-   browser look at the lights, rod and bombs. Close the issue after the owner's play.
-2. **#869 bundles 20, 24, 26** and the gate rule. Designed (note 63): wax from the bee
-   house, candle recipe and artifact spots to number, hats choose 3 of 5 (Harvest Crown,
-   Snow Cap, Holly Hat, new spring and summer hats), bread, honey cake, herb tea as
-   starter recipes. Artifact spots are built (note 69), the four old things exist as items but
-   bundle 26 is not in `bundles.json`. Build the rest: wax, candle, hats, dishes, the gate.
-3. **#874 elderfruit**: eight sources and the eat effect (note 39). Build.
-4. **#875 goods hand-in**: designed (note 65), a drop chest bound to the order. Scope is
-   Spring Leeks, Barrel Batch, Pantry Stock, Crystal Gift. Build.
-5. **#870 Crystalarium**: designed (note 24), Stardew's times by gem value, craftable with
-   Hearthsilver. Build.
-6. **#871 room rewards**: designed (note 16), free four-stop carts and a weekly herb
-   stall. Build with the Guests' Board data fix and `bundleBonus()` wiring.
+Open, top to bottom:
 
-Tier 2, thin or placeholder content:
-
-- **7. #872 gift tastes**: designed, approved (note 90). Build the 22 entries into `friendship.json`; confirm the `#shell` and `#monster-drop` tags exist.
-- **8. #873 heart events**: scale and rewards designed (note 62: 2 and 6 hearts for all 30, fixed reward pattern). Needs #872, then the list per person, then scenes as data.
-- **9. #878 Secret Woods statue and pond fish** (check the fish table first).
-
-Tier 3, design first, one issue per system when taken:
-
-- **10. #879 systems.** Built: artifact spots and gem nodes (note 69). Designed, not
-  built: tapper, crusher, worm bin, hops and pale ale (note 92); fish pond and six water
-  finds (note 93); Defense, Immunity and three bad effects (note 94); flowers (note 91);
-  forge ring combining in ring 1 (note 95, gem forging and enchanting deferred to ring 2
-  or 3). Still to design: tailoring.
-- **11. #876 festival route layer** and seven festival maps (overlaps layout step 10).
-- **12. #396 tree types by region.**
+1. **Follow-ups from the owner's 2026-11-12 answers.** Elderfruit: count seven sources,
+   eaten on receipt (Stardew). Burn can defeat the player. Crusher recipe uses the Diamond
+   (note 83 decision 21: `gem-high-b` renamed Diamond; note 92 is stale on this). Cart mine
+   stop at the mine mouth, opens with the mines. Bundle 24 stays 3 of 3 dishes. Wheat makes
+   beer only (as built).
+2. **Tea bush design** (new note, Stardew-shaped: crafted sapling, leaves spring to fall),
+   then herb tea uses tea leaves (bundle 24).
+3. **#873 heart events** (note 62), needs the list per person, then scenes as data.
+4. **#878 Secret Woods statue and pond fish**, after note 93 (the species table is empty).
+5. **Note 93 left:** pond placing screen, menu, FarmScene hooks, report line, cave water kind.
+   **Note 95** forge rings. **Note 96** tailoring and **note 89** decor kind: both designed,
+   not built. Tapper art, Heavy Tapper, tool shop rows.
+6. **#876 festival route layer** and seven festival maps (note 82, decisions 2026-11-12).
+7. **#396 tree types by region.**
+8. **#877** icons for bombs and Forge goods, a browser look at lights, rod, bombs.
 
 Alongside: #880 stale status lines, `docs/overview.json` (behind since 2026-11-11), a
-last three Stardew checks rows (SC-122, 135, 160), and file the M4 hosting spike before M4.
+Stardew checks rows (SC-122, 135, 160 to 167), and file the M4 hosting spike before M4.
 
 ## Milestone order (ADR 0012)
 

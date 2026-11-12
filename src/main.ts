@@ -34,6 +34,7 @@ import { CookingScene } from "./scenes/CookingScene";
 import { EquipmentScene } from "./scenes/EquipmentScene";
 import { HatsScene } from "./scenes/HatsScene";
 import { CaveChoiceScene } from "./scenes/CaveChoiceScene";
+import { CartScene } from "./scenes/CartScene";
 import { FishingScene } from "./scenes/FishingScene";
 import { FurnaceScene } from "./scenes/FurnaceScene";
 import { ChestScene } from "./scenes/ChestScene";
@@ -93,6 +94,7 @@ const game = new Phaser.Game({
     HatsScene,
     EquipmentScene,
     CaveChoiceScene,
+    CartScene,
     FishingScene,
     HallScene,
     FestivalScene,

@@ -1,0 +1,20 @@
+{
+  "_note": "Old Greencoat's herb stall at the hall (note 16, 'Room rewards that did nothing'). Stock list and prices are OPEN in the note, so every number here is a PLACEHOLDER: the stall sells 3 to 5 goods a week from this list, at 1.5 times sell value (the road trader's markup), the same all week. Forage plant seeds are not built, so only herbs and forage are listed.",
+  "markup": 1.5,
+  "minItems": 3,
+  "maxItems": 5,
+  "goods": [
+    "wild-ginger",
+    "snowcap",
+    "morel",
+    "chanterelle",
+    "wild-garlic",
+    "fiddlehead-fern",
+    "periwinkle",
+    "winter-cress",
+    "rose-hip",
+    "sweet-pea",
+    "crocus",
+    "dandelion"
+  ]
+}

@@ -27,12 +27,12 @@
     "id": "guests-board",
     "name": "Guests' Board",
     "opensAfter": 3,
-    "unlock": "hat-standing-boost"
+    "unlock": "friendship-boost"
   },
   {
     "id": "last-seat",
     "name": "The Last Seat",
-    "opensAfter": 23,
+    "opensAfter": "all",
     "unlock": "bridge"
   }
 ]

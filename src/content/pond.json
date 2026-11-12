@@ -1,0 +1,40 @@
+{
+  "build": {
+    "coin": 5000,
+    "stone": 200,
+    "seaweed": 5,
+    "pondweed": 5,
+    "days": 2,
+    "footprint": [5, 5]
+  },
+  "caps": [3, 5, 7, 10],
+  "legendCap": 1,
+  "questDelay": [1, 5],
+  "questCounts": [3, 5, 8],
+  "questXp": { "base": 20, "perDay": 5 },
+  "spawnDays": [
+    { "maxPrice": 60, "days": 1 },
+    { "maxPrice": 120, "days": 2 },
+    { "maxPrice": 250, "days": 3 },
+    { "maxPrice": 500, "days": 4 },
+    { "maxPrice": 1000000, "days": 5 }
+  ],
+  "productChance": { "base": 0.15, "perFish": 0.08, "legend": 0.5 },
+  "extraRoe": 0.2,
+  "roeWeight": 3,
+  "questItems": {
+    "fresh": [
+      "leek",
+      "dandelion",
+      "wild-garlic",
+      "field-mushroom",
+      "copper-ore",
+      "iron-ore"
+    ],
+    "sea": ["seaweed", "cockleshell", "whelk", "periwinkle", "tide-jelly"],
+    "top": ["honey", "cheese", "mayonnaise", "gem-mid-a", "gem-mid-b"],
+    "fallback": "stone"
+  },
+  "extraSpecies": ["pin-urchin", "sea-fan"],
+  "species": {}
+}

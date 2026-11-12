@@ -16,6 +16,7 @@ export type ArtisanCategory =
   | ArtisanKind
   | "honey"
   | "mead"
+  | "beer"
   | "cheese"
   | "mayonnaise"
   | "cloth"
@@ -33,6 +34,8 @@ export interface ArtisanDef {
 
 export const HONEY = "honey";
 export const MEAD = "mead";
+export const BEER = "beer";
+export const PALE_ALE = "pale-ale";
 
 /** Words for each category, for bundle lists. */
 export const CATEGORY_NAMES: Record<ArtisanCategory, string> = {
@@ -42,6 +45,7 @@ export const CATEGORY_NAMES: Record<ArtisanCategory, string> = {
   juice: "Any juice",
   honey: "Honey",
   mead: "Mead",
+  beer: "Any beer",
   dried: "Any dried goods",
   cheese: "Any cheese",
   mayonnaise: "Any mayonnaise",
@@ -74,7 +78,10 @@ export const artisanId = (input: string, kind: ArtisanKind) =>
 export function produceOf(id: string): "fruit" | "vegetable" | undefined {
   const base = splitQuality(id).base;
   const crop = cropById(base);
-  if (crop) return crop.produce ?? "vegetable";
+  if (crop)
+    return crop.produce === "none" || crop.produce === "flower"
+      ? undefined
+      : (crop.produce ?? "vegetable");
   if (fruitTreeById(base)) return "fruit";
   return forageById(base)?.produce;
 }
@@ -108,7 +115,9 @@ export const isMushroom = (id: string): boolean =>
 
 const defs = new Map<string, ArtisanDef>();
 const inputs = [
-  ...CROPS.map((c) => c.id),
+  ...CROPS.filter((c) => c.produce !== "none" && c.produce !== "flower").map(
+    (c) => c.id,
+  ),
   ...FRUIT_TREES.map((t) => t.id),
   ...FORAGE.filter((f) => f.produce).map((f) => f.id),
 ];
@@ -137,6 +146,27 @@ for (const input of [
     });
   }
 }
+/**
+ * Flower honey (note 91): a bee house with a flower crop in reach makes that
+ * flower's honey, `<flower>-honey`. Prices are the nearest Stardew values in
+ * note 07, placeholders. Plain honey stays 100g.
+ */
+export const FLOWER_HONEY_PRICE: Readonly<Record<string, number>> = {
+  tulip: 160,
+  cornflower: 200,
+  poppy: 380,
+  zinnia: 280,
+  sunflower: 260,
+  dahlia: 680,
+};
+export const flowerHoneyId = (flower: string) => `${flower}-honey`;
+for (const [flower, price] of Object.entries(FLOWER_HONEY_PRICE))
+  defs.set(flowerHoneyId(flower), {
+    id: flowerHoneyId(flower),
+    name: `${nameOf(flower)} honey`,
+    category: "honey",
+    sellPrice: price,
+  });
 defs.set(HONEY, {
   id: HONEY,
   name: "Honey",
@@ -144,6 +174,14 @@ defs.set(HONEY, {
   sellPrice: 100,
 });
 defs.set(MEAD, { id: MEAD, name: "Mead", category: "mead", sellPrice: 300 });
+/** Beer from wheat and pale ale from hops (note 92, prices from the saved Artisan Goods page). */
+defs.set(BEER, { id: BEER, name: "Beer", category: "beer", sellPrice: 200 });
+defs.set(PALE_ALE, {
+  id: PALE_ALE,
+  name: "Pale ale",
+  category: "beer",
+  sellPrice: 300,
+});
 
 /**
  * Animal goods and oil (note 24, slice 4): cheese, mayonnaise, cloth and oil.

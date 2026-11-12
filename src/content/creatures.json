@@ -151,7 +151,11 @@
         "min": 1,
         "max": 1
       }
-    ]
+    ],
+    "inflicts": {
+      "effect": "slimed",
+      "chance": 1
+    }
   },
   {
     "id": "frostnibbler",
@@ -184,7 +188,11 @@
         "min": 1,
         "max": 1
       }
-    ]
+    ],
+    "inflicts": {
+      "effect": "chilled",
+      "chance": 1
+    }
   },
   {
     "id": "icicle-hopper",
@@ -207,7 +215,11 @@
         "min": 1,
         "max": 1
       }
-    ]
+    ],
+    "inflicts": {
+      "effect": "chilled",
+      "chance": 1
+    }
   },
   {
     "id": "cave-bat",
@@ -331,7 +343,11 @@
         "min": 1,
         "max": 1
       }
-    ]
+    ],
+    "inflicts": {
+      "effect": "burned",
+      "chance": 0.5
+    }
   },
   {
     "id": "lanternmoth",

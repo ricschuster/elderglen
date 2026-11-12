@@ -1,15 +1,42 @@
 {
   "price": 120,
   "colours": [
-    { "id": "red", "name": "Red dye" },
-    { "id": "orange", "name": "Orange dye" },
-    { "id": "yellow", "name": "Yellow dye" },
-    { "id": "green", "name": "Green dye" },
-    { "id": "blue", "name": "Blue dye" },
-    { "id": "indigo", "name": "Indigo dye" },
-    { "id": "violet", "name": "Violet dye" },
-    { "id": "purple", "name": "Purple dye" },
-    { "id": "pink", "name": "Pink dye" }
+    {
+      "id": "red",
+      "name": "Red dye"
+    },
+    {
+      "id": "orange",
+      "name": "Orange dye"
+    },
+    {
+      "id": "yellow",
+      "name": "Yellow dye"
+    },
+    {
+      "id": "green",
+      "name": "Green dye"
+    },
+    {
+      "id": "blue",
+      "name": "Blue dye"
+    },
+    {
+      "id": "indigo",
+      "name": "Indigo dye"
+    },
+    {
+      "id": "violet",
+      "name": "Violet dye"
+    },
+    {
+      "id": "purple",
+      "name": "Purple dye"
+    },
+    {
+      "id": "pink",
+      "name": "Pink dye"
+    }
   ],
   "inputs": {
     "daffodil": "yellow",
@@ -42,6 +69,12 @@
     "spring-onion": "green",
     "fiddlehead-fern": "green",
     "winter-cress": "green",
-    "holly-sprig": "green"
+    "holly-sprig": "green",
+    "tulip": "pink",
+    "cornflower": "blue",
+    "poppy": "red",
+    "zinnia": "orange",
+    "sunflower": "yellow",
+    "dahlia": "violet"
   }
 }

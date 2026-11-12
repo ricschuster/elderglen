@@ -82,8 +82,64 @@ count. They cannot be put in a pond.
 4. Products and roe, the pond quest items table.
 5. Save in the placed store. Tests for each.
 
+## Built status (2026-11-12)
+
+Core rules, content and tests are built. The scenes are not.
+
+- **Water finds (build step 1): built.** `src/core/waterfinds.ts` and
+  `src/content/waterfinds.json`. `bite()` can return `{ kind: "find" }` after the trash
+  roll, never on the tutorial cast. The `FishingScene` lifts a find with no bar, gives 3
+  fishing XP and does not touch the fish log. Plants bite 12 in 100 and jellies 8 in 100 in
+  the right water, one season each (placeholders): Brook jelly in spring on the river and
+  the delta lake, Tide jelly in summer on the sea. All six are items. Pale lichen and Glow
+  jelly have no water to bite in yet (see gaps).
+- **Pond building (step 2): core built.** `src/core/pond.ts`: the placeable `fish-pond` (kind
+  `pond`, farm only, 5 by 5), `pondProblem` and `orderPond` (5,000g, 200 stone, 5 seaweed, 5
+  pondweed, 2 days, clear ground, no overlap with a building or another pond),
+  `advancePonds` in the morning, `pondBlocks` (the whole footprint stops walking; wired in
+  `FarmScene`). Held in the placed store under the farm, so it saves with no new field.
+- **Population, breeding, harvest (step 3): built.** `putFish` (any quality, one species,
+  the cap), `takeFish` (normal quality, no XP, no log entry, emptying resets it). Cap steps
+  3, 5, 7, 10 (1 for a legend). Breeding one fish every 1 to 5 days by price
+  (`spawnDaysOf`), no clock reset on adding fish.
+- **Products, roe and quests (step 4): built.** `pondNight` (called from `sleep.ts`): chance
+  population x 0.08 + 0.15 (0.5 for a legend), roe mostly with extra roe 20 percent again
+  and again, a species goods table in `pond.json` read at its minimum population. One roe
+  item per species (`<id>-roe`, half the fish price, ours). Quests: the wait is 1 to 5 days
+  after the pond fills and ticks only while it is full, items by water group
+  (`questItems` in `pond.json`) and the top quest a made good or gem, XP 20 plus 5 per
+  spawn day, the spawn clock resets. Removing fish pauses it, the same item comes back.
+- **Not built:** the carpenter menu line and the placing screen for the pond, the pond
+  menu, drawing the pond (art), the interact hooks in `FarmScene` (put in, take out with the
+  rod, take the roe, give the quest item), the morning report line for a finished pond, aged
+  roe in the preserves jar (note 24), the water finds in the fishing completion count and
+  cooking (algae soup), and the dev menu picks.
+
+### Gaps found while building (design to settle, not invented)
+
+- **No Stardew fish table for our fish.** The saved page lists Stardew's species only, and
+  none of ours match, so `pond.json` has an empty `species` table: every fish makes roe
+  only. The goods machinery (a `goods` list of item and minimum population per species) is
+  built and tested, but no species has a row. The Fernscale's pond pearl is not set because
+  the Fernscale is not in the fish roster yet.
+- **Which of our fish hold 1 at the start** (the page's "some rare fish"). Not set: every
+  non-legend pond has the cap of 3.
+- **How the page picks among several goods.** The page gives a chance and a population
+  gate, not the draw. Placeholder: roe has weight 3 and each good with its population
+  met has weight 1.
+- **Quest item counts.** Stardew asks several of an item; ours are 3, 5, 8 by step
+  (placeholder). The quest item lists in `pond.json` are our first guess at the
+  note's groups, and there is no cave group because there is no cave fish.
+- **Cave water.** Pale lichen and Glow jelly are meant for cave water and the mine pools,
+  but the map has no cave or mine water kind (`WaterKind`). They exist as items and bite
+  nowhere. Needs a decision: add a `cave-pool` water kind, or give them another source.
+- **Roe price.** Half the fish price is ours, not Stardew's.
+- **The carpenter is one job at a time.** The pond refuses an order while the coop, barn,
+  silo or house job runs, but the older jobs do not yet check for a pond under way.
+- **Sea urchin and coral.** Read as our Pin urchin and Sea fan (note 72). Confirm.
+
 ## Open
 
-- SC-158: done for the chance formula and the listed fish. Our own fish still need their goods and population gates.
+- SC-158: done for the chance formula and the listed fish. Our own fish still need their goods and population gates (see the gaps above).
 - The legend rule and whether the Fernscale needs a pond of its own (note 21).
 - Names, prices, art.

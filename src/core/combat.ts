@@ -1,5 +1,6 @@
 import weaponData from "../content/weapons.json";
 import { BUNDLES } from "./bundles";
+import { Effects } from "./effects";
 import { bootsById } from "./equipment";
 import { itemById } from "./items";
 import { splitQuality } from "./quality";
@@ -68,6 +69,16 @@ export class Health {
 
   tick(dt: number): void {
     this.grace = Math.max(0, this.grace - dt);
+  }
+
+  /**
+   * Health a bad effect takes, ignoring grace, Defense and Assist. Never knocks
+   * the player out (placeholder, note 94 leaves it open). Returns what was lost.
+   */
+  drain(amount: number): number {
+    const lost = Math.max(0, Math.min(amount, this.current - 1));
+    this.current -= lost;
+    return lost;
   }
 
   heal(n: number): void {
@@ -321,6 +332,8 @@ export interface CombatSave {
 /** What the player carries into a fight: health, the trainer's progress and the kill tally. */
 export class Combat {
   readonly health = new Health();
+  /** The bad effects on the player: in memory only, cleared by sleep, defeat and leaving a floor (note 94). */
+  readonly effects = new Effects();
   /** True once the trainer has handed a first weapon over. */
   trainerMet = false;
   /** Set when health ran out: the day ends and the defeat rule runs (see `sleep`). */

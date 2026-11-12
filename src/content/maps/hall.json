@@ -10,8 +10,14 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 8,
-  "nextobjectid": 100,
-  "properties": [{ "name": "placeholder", "type": "bool", "value": true }],
+  "nextobjectid": 101,
+  "properties": [
+    {
+      "name": "placeholder",
+      "type": "bool",
+      "value": true
+    }
+  ],
   "layers": [
     {
       "id": 1,
@@ -95,7 +101,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+        1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
@@ -154,8 +160,16 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            { "name": "map", "type": "string", "value": "hearthwell" },
-            { "name": "entry", "type": "string", "value": "from_hall" }
+            {
+              "name": "map",
+              "type": "string",
+              "value": "hearthwell"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "from_hall"
+            }
           ]
         },
         {
@@ -170,7 +184,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "kind", "type": "string", "value": "hall" }]
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "hall"
+            }
+          ]
         },
         {
           "id": 98,
@@ -184,7 +204,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "kind", "type": "string", "value": "hall" }]
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "hall"
+            }
+          ]
         },
         {
           "id": 99,
@@ -198,7 +224,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "kind", "type": "string", "value": "hall" }]
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "hall"
+            }
+          ]
         },
         {
           "id": 100,
@@ -212,7 +244,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "kind", "type": "string", "value": "hall" }]
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "hall"
+            }
+          ]
         },
         {
           "id": 101,
@@ -226,7 +264,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "kind", "type": "string", "value": "hall" }]
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "hall"
+            }
+          ]
         },
         {
           "id": 102,
@@ -240,7 +284,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "kind", "type": "string", "value": "hall" }]
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "hall"
+            }
+          ]
         },
         {
           "id": 88,
@@ -332,6 +382,26 @@
           "point": true,
           "rotation": 0,
           "visible": true
+        },
+        {
+          "id": 100,
+          "name": "herb-stall",
+          "class": "service",
+          "type": "service",
+          "x": 320,
+          "y": 144,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "herb-stall"
+            }
+          ]
         }
       ]
     }

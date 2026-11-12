@@ -1,0 +1,59 @@
+{
+  "plantChance": 0.12,
+  "jellyChance": 0.08,
+  "xp": 3,
+  "finds": [
+    {
+      "id": "pondweed",
+      "name": "Pondweed",
+      "kind": "plant",
+      "sellPrice": 15,
+      "waters": [
+        "farm-pond",
+        "river",
+        "forest-lake",
+        "mountain-lake",
+        "marsh-lake",
+        "woods-pond"
+      ]
+    },
+    {
+      "id": "pale-lichen",
+      "name": "Pale lichen",
+      "kind": "plant",
+      "sellPrice": 25,
+      "waters": []
+    },
+    {
+      "id": "seaweed",
+      "name": "Seaweed",
+      "kind": "plant",
+      "sellPrice": 20,
+      "waters": ["sea", "cove"]
+    },
+    {
+      "id": "brook-jelly",
+      "name": "Brook jelly",
+      "kind": "jelly",
+      "sellPrice": 120,
+      "waters": ["river", "marsh-lake"],
+      "seasons": ["spring"]
+    },
+    {
+      "id": "tide-jelly",
+      "name": "Tide jelly",
+      "kind": "jelly",
+      "sellPrice": 150,
+      "waters": ["sea"],
+      "seasons": ["summer"]
+    },
+    {
+      "id": "glow-jelly",
+      "name": "Glow jelly",
+      "kind": "jelly",
+      "sellPrice": 180,
+      "waters": [],
+      "seasons": ["winter"]
+    }
+  ]
+}

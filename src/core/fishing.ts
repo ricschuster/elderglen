@@ -8,6 +8,7 @@ import { harvestXp } from "./skills";
 import type { WaterKind } from "./map";
 import type { GameState } from "./save";
 import { hasFlag, setFlag } from "./worldflags";
+import { rollFind } from "./waterfinds";
 
 /**
  * Fishing, slices 1 to 3 of note 21: a cast, a bite, the bar, the size roll,
@@ -212,7 +213,9 @@ export type Bite =
   /** The Pearl Lobster, on the sea only (`pots.ts`). */
   | { kind: "lobster" }
   /** A piece of trash, hauled in with no bar (`pots.ts`, `rodTrashChance`). */
-  | { kind: "trash"; item: string };
+  | { kind: "trash"; item: string }
+  /** A water plant or jelly lifted with the rod, no bar (`waterfinds.ts`, note 93). */
+  | { kind: "find"; item: string };
 
 /**
  * What bites. Every rod can hook any fish the conditions allow, and no level
@@ -240,6 +243,11 @@ export function bite(
         )
       ]!.id,
     };
+  // A water plant or a jelly, no bar. Never on the tutorial cast.
+  if (!tutorial) {
+    const found = rollFind(water, c.season, random);
+    if (found) return { kind: "find", item: found.id };
+  }
   let pool = fishAvailable(water, c);
   if (tutorial) pool = pool.filter((f) => f.rarity === "common");
   if (pool.length === 0) {

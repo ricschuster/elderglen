@@ -149,7 +149,7 @@ Code: `src/core/orders.ts`, `src/core/debris.ts`, data in
 - **Built 2026-11-12: three more orders** that count from logs, so no scene hooks them: Too Many Fish (10 of one in-season fish, 7 days), Still Waters (20 fish from one water, 7 days) and Cave Patrol (50 of one creature kind, 7 days). A taken order keeps the fish and kill tallies from the day it was taken (`base`), and a nightly check reads the logs. Their first rewards are recipes through the `order` source (charcoal kiln, recycler, seed maker, all placeholders).
 - **Not built.** Grass spreading (no grass system), the completion tracker
   (#196), the Help Wanted achievement count (no quests exist yet, only
-  `Orders.totalDone` is kept for it), five orders (Spring Leeks, Barrel Batch and Pantry Stock need a hand-in to a named house, kitchen or pantry; Clean Waters needs a trash count; Crystal Gift needs a gem hand-in and the gems are placeholders), a journal row for
+  `Orders.totalDone` is kept for it), one order (Clean Waters needs a trash count; the four hand-in orders are built, see "Goods hand-in"), a journal row for
   taken orders (no journal yet, the board lists them), and the mail return (no order holds goods yet).
   Placeholder numbers are in `07_tuning_numbers.md`.
 
@@ -169,6 +169,31 @@ logs, so #875's first wording was out of date).
 - Stardew's way of taking order goods is not checked (register row to add).
 - Open: the places (the inn pantry exists in note 24; which kitchen for Barrel Batch),
   the chest's look, and Crystal Gift's five gems, which are placeholders.
+
+### Built (2026-11-12)
+
+Spring Leeks, Barrel Batch, Pantry Stock and Crystal Gift are built, in `orders.json` as
+`hand-in` asks. Code: `acceptOrder`, `dropOrder`, `handInTally` and the nightly chest
+check in `src/core/orders.ts`; the binding is `order` and `closed` on a placed chest
+(`chests.ts`, saved in the chest's `placed` state). Tests: `tests/handin.test.ts`.
+
+- **Taking** the order stands a plain chest at the named tile with the order bound to it. It
+  is refused if the tile already holds a chest. A bound chest cannot be lifted or pushed.
+  Dropping the order from the board works as before.
+- **Counting** runs each night with the other orders. Quality is ignored. Spring Leeks
+  counts 12 leeks in all; Barrel Batch 12 of one wine, juice or mead (not a mix); Pantry
+  Stock 24 eggs; Crystal Gift one each of five different gems. When met, only the asked
+  goods are taken out and gold is paid, the first reward is owed at the board.
+- **Ending** (done, lapsed or dropped) closes the chest. Goods left in it can be taken back
+  through the chest screen, and it is removed on the first night after it is empty. A
+  closed chest still holds its tile, so the order cannot be retaken there until it is empty.
+- **Placeholders.** The places are a guess, one tile each: the fisher hut (3,5) for leeks,
+  the inn (7,5) as the kitchen and (5,5) as the pantry, the smithy (6,8) for gems. The first
+  rewards are stand-ins: cheese press recipe, a keg, a mayonnaise machine, a loom. The
+  scenes that note 65 names for Spring Leeks, Barrel Batch and Crystal Gift are not built.
+  Pantry Stock counts "egg" only (not duck eggs). Gold is a placeholder.
+- **Not built:** the chest's own look (it is a plain chest), the mail return (goods are
+  taken back by hand instead), a Stardew check row for how Stardew takes order goods.
 
 ## Still open
 

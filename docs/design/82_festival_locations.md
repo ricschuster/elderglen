@@ -53,6 +53,17 @@ Hearthwell south green: only the Harvest Showing is on the green now.
     only the festival zone, since the Forest and the delta are also roads to other
     places; the owner said "most" areas, so some stay open.
 
+## Decided 2026-11-12 (owner)
+
+- **A festival ends after its main event (Stardew, checked on the saved Festivals page).**
+  The Seedswap hunt, the Frostday judging and the other main events end the festival, and
+  the player goes back to the farm. This closes the "ends after the hunt or judging" open
+  points for the Seedswap Fair and Frostday. The stalls do not stay open after the result.
+- **Seedswap rival:** if the player fails the hunt, Linnet wins (Stardew uses Abigail,
+  from memory, unchecked).
+- **Hat Parade late join:** a player who arrives after the march has started joins at the
+  tail. The villagers do one extra lap so nobody misses it.
+
 ## Locations
 
 | Festival | Date | Place | Notes |
