@@ -31,7 +31,7 @@ Tier 1, needed to fill the bundles:
 3. **#874 elderfruit**: eight sources and the eat effect (note 39). Build.
 4. **#875 goods hand-in**: designed (note 65), a drop chest bound to the order. Scope is
    Spring Leeks, Barrel Batch, Pantry Stock, Crystal Gift. Build.
-5. **#870 Crystalarium**: designed (note 24), Stardew's times by gem value, craftable with
+5. **#870 Crystalarium** (BUILT 2026-11-12, awaiting owner play): designed (note 24), Stardew's times by gem value, craftable with
    Hearthsilver. Build.
 6. **#871 room rewards**: designed (note 16), free four-stop carts and a weekly herb
    stall. Build with the Guests' Board data fix and `bundleBonus()` wiring.

@@ -15,8 +15,10 @@ import {
   type ArtisanKind,
 } from "./artisan";
 import { JUNK } from "./pots";
+import { GEMS, GLIMMERSTONE } from "./gems";
+import geodeData from "../content/geodes.json";
 import { cropById } from "./crops";
-import { BARS, COAL, coalFor, ORE_PER_BAR } from "./ore";
+import { BARS, COAL, coalFor, ORE_PER_BAR, QUARTZ } from "./ore";
 import { splitQuality, type Quality } from "./quality";
 
 /**
@@ -34,6 +36,8 @@ export interface MachineDef {
   auto?: boolean;
   /** True for a machine that stands only in the cellar (the cask, `cask.ts`). */
   cellar?: boolean;
+  /** True for a machine that starts the same batch again each time it is emptied (the Crystalarium). */
+  repeats?: boolean;
 }
 
 export const MACHINES: readonly MachineDef[] = [
@@ -55,6 +59,8 @@ export const MACHINES: readonly MachineDef[] = [
   { id: "furnace", name: "Furnace", sellPrice: 150 },
   /** Turns the rod's and the pots' trash into useful goods (note 21). Sell price is ours, a placeholder. */
   { id: "recycler", name: "Recycler", sellPrice: 200 },
+  /** Copies a gem or mineral again and again (note 24). Sell price is ours, a placeholder. */
+  { id: "crystalarium", name: "Crystalarium", sellPrice: 500, repeats: true },
 ];
 
 export const machineById = (id: string | undefined): MachineDef | undefined =>
@@ -163,6 +169,50 @@ export const DEHYDRATOR_USE = 5;
 export const DEHYDRATOR_MINUTES = MINUTES_PER_DAY;
 
 /**
+ * Crystalarium copy times in Stardew's minutes, from the saved Crystalarium page (note 24):
+ * quartz 7 hours, topaz 18 h 40 min, amethyst 22 h 40 min, emerald and ruby 2 d 2 h, jade
+ * 1 d 16 h, diamond 5 days, minerals 3 d 11 h. Stardew's day there is 1,440 minutes and ours
+ * is 1,600, so each is rescaled when built (note 24: "rescaled to our day length").
+ */
+const STARDEW_DAY = 1440;
+const scaled = (stardewMinutes: number) =>
+  Math.round((stardewMinutes * MINUTES_PER_DAY) / STARDEW_DAY);
+export const MINERAL_COPY_MINUTES = scaled(5000);
+/**
+ * Gem copy time by our gem, matched to Stardew's table by sell price (placeholders, since the
+ * six gems have no final names): 50g topaz, 75g amethyst, 150g jade, 250g emerald, 400g ruby,
+ * 750g diamond. The Glimmerstone has no Stardew match and copies as slowly as the diamond.
+ */
+const GEM_STARDEW_MINUTES: Record<string, number> = {
+  "gem-low-a": 1120,
+  "gem-low-b": 1360,
+  "gem-mid-a": 2400,
+  "gem-mid-b": 3000,
+  "gem-high-a": 3000,
+  "gem-high-b": 7200,
+  [GLIMMERSTONE.id]: 7200,
+  [QUARTZ]: 420,
+};
+const MINERAL_IDS: ReadonlySet<string> = new Set(
+  geodeData.pools.flatMap((p) => p.minerals),
+);
+
+/** Minutes the Crystalarium takes to copy this item, or undefined if it is not a gem or mineral. */
+export function copyMinutes(item: string): number | undefined {
+  if (MINERAL_IDS.has(item)) return MINERAL_COPY_MINUTES;
+  const t = GEM_STARDEW_MINUTES[item];
+  return t === undefined ? undefined : scaled(t);
+}
+
+/** Every item the Crystalarium takes. */
+export const COPYABLE: readonly string[] = [
+  ...GEMS.map((g) => g.id),
+  GLIMMERSTONE.id,
+  QUARTZ,
+  ...MINERAL_IDS,
+];
+
+/**
  * The batch a machine would run on an item, or undefined if it takes none.
  * The seed maker's 1 to 3 seeds come from `random`, so the count is fixed
  * when the batch starts.
@@ -215,6 +265,12 @@ export function processFor(
       output: artisanId(input, "dried"),
       minutes: DEHYDRATOR_MINUTES,
     };
+  }
+  if (machine === "crystalarium") {
+    const minutes = copyMinutes(input);
+    return minutes === undefined
+      ? undefined
+      : { ...one, output: input, minutes };
   }
   if (machine === "recycler") {
     if (!JUNK.some((j) => j.id === input)) return undefined;

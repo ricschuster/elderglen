@@ -232,9 +232,21 @@ export function collectMachine(
     g.inventory.room(WAX) >= 1
   )
     g.inventory.add(WAX, 1);
-  m.job = machineById(m.id)?.auto
+  const def = machineById(m.id);
+  const again =
+    def?.repeats && m.job.input
+      ? processFor(m.id, m.job.input.item)
+      : undefined;
+  m.job = def?.auto
     ? { output, count: 1, doneAt: machineMinutes(g) + BEE_MINUTES }
-    : undefined;
+    : again
+      ? {
+          output,
+          count: 1,
+          doneAt: machineMinutes(g) + again.minutes,
+          input: m.job.input,
+        }
+      : undefined;
   return { ok: true, item: output };
 }
 
