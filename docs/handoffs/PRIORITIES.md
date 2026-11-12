@@ -48,7 +48,7 @@ Tier 3, design first, one issue per system when taken:
   built: tapper, crusher, worm bin, hops and pale ale (note 92); fish pond and six water
   finds (note 93); Defense, Immunity and three bad effects (note 94); flowers (note 91);
   forge ring combining in ring 1 (note 95, gem forging and enchanting deferred to ring 2
-  or 3). Tailoring is designed (note 96): sewing machine and dye pots in the Hat-maker's house.
+  or 3). Farm decoration kind is designed (note 89). Tailoring is designed (note 96): sewing machine and dye pots in the Hat-maker's house.
 - **11. #876 festival route layer** and seven festival maps (overlaps layout step 10).
 - **12. #396 tree types by region.**
 

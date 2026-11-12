@@ -23,7 +23,7 @@ decoration and furniture inside the farmhouse (note 85), and fences (note 34).
 A placeable is an item with a row in `src/content/placeables.json`. The row says:
 
 - `id`: the item id.
-- `kind`: `sprinkler`, `machine`, `chest`, `light`, `rod`, `heater` or `bomb`.
+- `kind`: `sprinkler`, `machine`, `chest`, `light`, `rod`, `heater`, `bomb` or `decor`.
 - `places`: where it may go (see "Place table").
 - `footprint`: tiles, 1 by 1 for everything in ring 1.
 - `blocksWalking`: true or false.
@@ -68,6 +68,7 @@ full it stays. Exceptions:
 | Wood and iron lamp-post | The farm, outdoors | Cost includes a battery pack (note 34) |
 | Lightning rod | The farm, outdoors, open sky | Not in the greenhouse, not indoors |
 | Heater | The coop and the barn, inside | One per building. Floor tile, not blocking |
+| Decor | The farm, outdoors | Footprint up to 2 by 2, blocks walking. See "Farm decoration" |
 | Bomb | The mines floors, the Quarry, the farm, the wilds | Not in Hearthwell, not indoors, not in camps |
 
 A map says what it is through its tags (`indoors`, `wild`, the area id). The table is
@@ -156,6 +157,22 @@ Treat (1,000g, a big energy boost, placeholder 100), Oil of Garlic (3,000g) and 
 owner's torches, camp supplies and a campfire kit. Oil of Garlic: monsters below a
 tier ignore the player for the rest of the day. Lamp-posts are not sold: they need a
 battery pack. Prices are Stardew's as placeholders.
+
+## Farm decoration (decided 2026-11-12)
+
+The seventh kind, `decor`, for the animal keeper's decoration list (note 23): ornamental
+hay bale, doghouse, dark doghouse, cat tree, dark cat tree and bird house.
+
+- A `placeables.json` row like any other. Footprint up to 2 by 2 (the hay bale 1 by 1, the
+  doghouses and cat trees 2 by 2 placeholder, the bird house 1 by 1). They block walking.
+- Farm outdoors only, not on tilled soil or a path tile. Placed and lifted by hand, free of
+  energy, same rules as a chest, and always empty so lifting is never refused.
+- Cosmetic, no effect, no upkeep, no decay. No pets exist, so the doghouses and cat trees
+  stay decor until a pet system is designed.
+- Sold by the animal keeper at note 23's prices (hay bale 250g, bird house 5,000g,
+  doghouses and cat trees 10,000g). Stardew sells them as buildings (from memory, SC-164);
+  ours are carried, so they can be moved, which is our choice.
+- Saved with the other placeables on the map, no new save field.
 
 ## Saving
 
