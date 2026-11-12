@@ -27,8 +27,8 @@ Stardew facts are from the saved Trees, Artisan Goods, Crops and Worm Bin pages 
   shows when it is ready, and the timer restarts at once. Goods wait in the tapper (no
   loss). Time is counted in whole game days, so it runs while the player is away, and it
   keeps running in winter (as Stardew, from the page, which lists no winter pause).
-- **Recipe.** Wood and copper bars (placeholder 40 wood, 2 copper bars), learned at
-  Foraging level 3 (placeholder). The Lumberjack and Tapper professions (note 07) stay
+- **Recipe.** 40 wood and 2 copper bars, learned at Foraging level 4 (Stardew, saved
+  Tapper page, SC-156; owner chose it 2026-11-12). The Lumberjack and Tapper professions (note 07) stay
   later, the **Heavy Tapper** (cycles 3, 4, 2 days, mahogany daily, saved page) is a later
   upgrade and not built here.
 - **Mahogany** was waiting on the tapper (note 36): daily sap, the tapped tree is still
@@ -41,8 +41,10 @@ Stardew facts are from the saved Trees, Artisan Goods, Crops and Worm Bin pages 
 - **A craftable machine, free to run (note 69).** Put a geode in and a result comes out
   after a short time, the same pools as the smith (note 69), so it takes the 25g trip out
   of the loop later. The smith still cracks for 25g.
-- **Time.** Placeholder 1 game hour per geode (Stardew's is from memory, SC-157).
-- **Recipe.** Placeholder: 20 stone, 3 iron bars and 2 gold bars, learned at Mining level 3. The smith keeps working for those
+- **Time.** 1 game hour per geode, no fuel (Stardew, saved Geode Crusher page, SC-157).
+- **Recipe.** 2 gold bars, 50 stone and 1 diamond (Stardew, SC-157; owner chose it
+  2026-11-12). The recipe comes from the Cave Patrol special order (note 65, built), as in
+  Stardew. It cannot open troves or mystery boxes. The smith keeps working for those
   without it.
 - **Placing.** A placeable (note 89 table), with the job saved like a
   machine (placed store).
@@ -82,5 +84,5 @@ Stardew facts are from the saved Trees, Artisan Goods, Crops and Worm Bin pages 
 
 ## Open
 
-- Prices and recipes marked placeholder, SC-156 and SC-157.
+- Prices (SC-156) and the crusher recipe (SC-157) are now Stardew's. Remaining placeholders: the worm bin and pale ale.
 - Art and names.

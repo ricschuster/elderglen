@@ -50,7 +50,7 @@ describe("artifact data (note 69)", () => {
 });
 
 describe("spot rolls", () => {
-  it("rolls 2 to 4 spots, and 6 to 10 in winter", () => {
+  it("rolls 0 to 2 spots, and 1 to 3 in winter", () => {
     const s = new ArtifactSpots();
     for (const r of [0, 0.5, 0.999]) {
       s.roll("spring", tiles, () => r);
@@ -64,7 +64,7 @@ describe("spot rolls", () => {
   it("never rolls more spots than tiles and clears yesterday's", () => {
     const s = new ArtifactSpots();
     s.add(99, 99);
-    s.roll("winter", tiles.slice(0, 3), Math.random);
+    s.roll("winter", tiles.slice(0, 3), () => 0.999);
     expect(s.count).toBe(3);
     expect(s.at(99, 99)).toBe(false);
   });
