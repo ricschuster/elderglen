@@ -1,5 +1,6 @@
 import { homeWorld } from "./areas";
 import { FARM_STORE, GREENHOUSE_STORE } from "./mapstore";
+import type { PlacedChest } from "./chests";
 import type { GameState } from "./save";
 import { isFarmMap } from "./farmtypes";
 import { placeableById } from "./placeables";
@@ -139,7 +140,7 @@ export function collectPlaced(g: GameState): PlacedStore {
       x: c.x,
       y: c.y,
       id: c.id,
-      state: { slots: c.items.save() },
+      state: chestState(c),
     });
   const others = new Set<string>();
   for (const c of g.chests.all()) if (!isFarmMap(c.map)) others.add(c.map);
@@ -149,10 +150,16 @@ export function collectPlaced(g: GameState): PlacedStore {
         x: c.x,
         y: c.y,
         id: c.id,
-        state: { slots: c.items.save() },
+        state: chestState(c),
       });
   return out;
 }
+
+/** A chest's saved state: its stacks, and the order it is bound to if any. */
+const chestState = (c: PlacedChest): Record<string, unknown> => ({
+  slots: c.items.save(),
+  ...(c.order ? { order: c.order, ...(c.closed ? { closed: true } : {}) } : {}),
+});
 
 /** The older lists, in the raw shapes their own loaders check, read out of a saved `placed`. */
 export interface LegacyLists {
@@ -187,7 +194,13 @@ export function splitPlaced(raw: unknown): LegacyLists {
       } else if (kind === "machine" && map === FARM_STORE) {
         out.machines.push({ ...rowOf(p), job: p.state?.job });
       } else if (kind === "chest") {
-        out.chests.push({ ...rowOf(p), map, slots: p.state?.slots });
+        out.chests.push({
+          ...rowOf(p),
+          map,
+          slots: p.state?.slots,
+          order: p.state?.order,
+          closed: p.state?.closed,
+        });
       }
     }
   return out;
