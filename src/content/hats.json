@@ -158,5 +158,45 @@
     "id": "sun-bonnet",
     "name": "Sun Bonnet",
     "color": "#f0c860"
+  },
+  {
+    "id": "tailored-sunhat",
+    "name": "Tailored Sunhat",
+    "color": "#e0c070"
+  },
+  {
+    "id": "tailored-pillbox",
+    "name": "Pillbox Cap",
+    "color": "#b04a5a"
+  },
+  {
+    "id": "tailored-bucket",
+    "name": "Bucket Hat",
+    "color": "#6a8a68"
+  },
+  {
+    "id": "tailored-cloche",
+    "name": "Cloche",
+    "color": "#8a7aa8"
+  },
+  {
+    "id": "tailored-flatcap",
+    "name": "Flat Cap",
+    "color": "#6a5a48"
+  },
+  {
+    "id": "tailored-hood",
+    "name": "Quilted Hood",
+    "color": "#4a6890"
+  },
+  {
+    "id": "tailored-tricorn",
+    "name": "Tricorn",
+    "color": "#3a3a48"
+  },
+  {
+    "id": "tailored-turban",
+    "name": "Silk Wrap",
+    "color": "#d8803a"
   }
 ]

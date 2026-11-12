@@ -89,6 +89,8 @@ const SERVICES: Record<string, string> = {
   "counter-inn": "Inn Counter",
   "counter-library": "Library Desk",
   "counter-hatter": "Hatter's Counter",
+  "sewing-machine": "Sewing Machine",
+  "dye-pots": "Dye Pots",
   "counter-outpost": "Post Counter",
 };
 

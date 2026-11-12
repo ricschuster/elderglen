@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { pieceById } from "../core/clothes";
 import { hatById } from "../core/hats";
 import type { GameState } from "../core/save";
 import { frame, Menu, type Row } from "./panel";
@@ -52,6 +53,23 @@ export class HatsScene extends Phaser.Scene {
     });
     const rows = [row(undefined, "No hat")];
     for (const id of w.list()) rows.push(row(id, hatById(id)?.name ?? id));
+    for (const kind of ["shirt", "pants"] as const) {
+      for (const id of w.listPieces(kind)) {
+        rows.push({
+          label: pieceById(kind, id)?.name ?? id,
+          detail: w.wornOf(kind) === id ? "worn" : kind,
+          buttons: [
+            {
+              text: w.wornOf(kind) === id ? "Take off" : "Wear",
+              run: () => {
+                w.wearPiece(kind, w.wornOf(kind) === id ? undefined : id);
+                this.refresh();
+              },
+            },
+          ],
+        });
+      }
+    }
     rows.push({
       label: "Rings you wear",
       detail: "two slots",

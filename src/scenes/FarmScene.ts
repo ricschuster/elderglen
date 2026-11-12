@@ -200,6 +200,11 @@ import {
 import { baitById } from "../core/tackle";
 import { greencoatDue, takeCampGift } from "../core/camp";
 import {
+  DYE_POTS_SERVICE,
+  SEWING_SERVICE,
+  tailoringLine,
+} from "../core/tailoring";
+import {
   CAVE_MAP,
   caveDehydratorDone,
   collectCaveDehydrator,
@@ -2110,6 +2115,19 @@ export class FarmScene extends Phaser.Scene {
       return this.render();
     }
     if (service?.kind === CART_KIND) return this.rideCart(service.id);
+    if (
+      service?.kind === SEWING_SERVICE ||
+      service?.kind === DYE_POTS_SERVICE
+    ) {
+      const line = tailoringLine(this.state);
+      if (line) {
+        this.message = line;
+        return this.render();
+      }
+      return this.open("tailor", {
+        mode: service.kind === SEWING_SERVICE ? "sew" : "dye",
+      });
+    }
     if (service?.kind === "herb-stall") {
       const closed = herbStallProblem(this.state);
       if (closed) {

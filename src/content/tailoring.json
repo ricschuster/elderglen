@@ -1,0 +1,260 @@
+{
+  "_note": "Tailoring (note 96). The sewing machine takes 1 cloth in the feed and 1 item in the spool; the spool item picks the piece. Pieces are ours, chosen by look. Placeholder colours.",
+  "clothCost": 1,
+  "shirts": [
+    {
+      "id": "plain-shirt",
+      "name": "Plain Shirt",
+      "color": "#d8d0c0"
+    },
+    {
+      "id": "field-smock",
+      "name": "Field Smock",
+      "color": "#8aa860"
+    },
+    {
+      "id": "river-tunic",
+      "name": "River Tunic",
+      "color": "#4a7fa8"
+    },
+    {
+      "id": "barley-shirt",
+      "name": "Barley Shirt",
+      "color": "#d8b860"
+    },
+    {
+      "id": "embergrain-shirt",
+      "name": "Embergrain Shirt",
+      "color": "#c8602a"
+    },
+    {
+      "id": "plum-blouse",
+      "name": "Plum Blouse",
+      "color": "#7a4a88"
+    },
+    {
+      "id": "moss-jerkin",
+      "name": "Moss Jerkin",
+      "color": "#5a7840"
+    },
+    {
+      "id": "snowdrift-shirt",
+      "name": "Snowdrift Shirt",
+      "color": "#e8eef4"
+    },
+    {
+      "id": "rose-vest",
+      "name": "Rose Vest",
+      "color": "#c85a6a"
+    },
+    {
+      "id": "lantern-shirt",
+      "name": "Lantern Shirt",
+      "color": "#e8a040"
+    },
+    {
+      "id": "stripe-shirt",
+      "name": "Stripe Shirt",
+      "color": "#5a6a98"
+    },
+    {
+      "id": "night-tunic",
+      "name": "Night Tunic",
+      "color": "#2a3050"
+    },
+    {
+      "id": "honey-shirt",
+      "name": "Honey Shirt",
+      "color": "#e0b040"
+    }
+  ],
+  "pants": [
+    {
+      "id": "work-trousers",
+      "name": "Work Trousers",
+      "color": "#7a6040"
+    },
+    {
+      "id": "river-breeches",
+      "name": "River Breeches",
+      "color": "#486890"
+    },
+    {
+      "id": "meadow-trousers",
+      "name": "Meadow Trousers",
+      "color": "#7a9050"
+    },
+    {
+      "id": "rust-trousers",
+      "name": "Rust Trousers",
+      "color": "#a05a30"
+    },
+    {
+      "id": "slate-trousers",
+      "name": "Slate Trousers",
+      "color": "#58606a"
+    },
+    {
+      "id": "plum-trousers",
+      "name": "Plum Trousers",
+      "color": "#684070"
+    },
+    {
+      "id": "cream-breeches",
+      "name": "Cream Breeches",
+      "color": "#d8d0b0"
+    },
+    {
+      "id": "night-trousers",
+      "name": "Night Trousers",
+      "color": "#282c40"
+    }
+  ],
+  "spool": [
+    {
+      "item": "wool",
+      "kind": "shirt",
+      "id": "plain-shirt"
+    },
+    {
+      "item": "daffodil",
+      "kind": "shirt",
+      "id": "field-smock"
+    },
+    {
+      "item": "sweet-pea",
+      "kind": "shirt",
+      "id": "rose-vest"
+    },
+    {
+      "item": "grape",
+      "kind": "shirt",
+      "id": "plum-blouse"
+    },
+    {
+      "item": "fiddlehead-fern",
+      "kind": "shirt",
+      "id": "moss-jerkin"
+    },
+    {
+      "item": "snowdrop",
+      "kind": "shirt",
+      "id": "snowdrift-shirt"
+    },
+    {
+      "item": "salmonberry",
+      "kind": "shirt",
+      "id": "embergrain-shirt"
+    },
+    {
+      "item": "hazelnut",
+      "kind": "shirt",
+      "id": "barley-shirt"
+    },
+    {
+      "item": "seaweed",
+      "kind": "shirt",
+      "id": "river-tunic"
+    },
+    {
+      "item": "dandelion",
+      "kind": "shirt",
+      "id": "honey-shirt"
+    },
+    {
+      "item": "holly-sprig",
+      "kind": "shirt",
+      "id": "stripe-shirt"
+    },
+    {
+      "item": "dusk-opal",
+      "kind": "shirt",
+      "id": "night-tunic"
+    },
+    {
+      "item": "wild-ginger",
+      "kind": "shirt",
+      "id": "lantern-shirt"
+    },
+    {
+      "item": "fiber",
+      "kind": "pants",
+      "id": "work-trousers"
+    },
+    {
+      "item": "sardine",
+      "kind": "pants",
+      "id": "river-breeches"
+    },
+    {
+      "item": "leek",
+      "kind": "pants",
+      "id": "meadow-trousers"
+    },
+    {
+      "item": "clay",
+      "kind": "pants",
+      "id": "rust-trousers"
+    },
+    {
+      "item": "gem-low-a",
+      "kind": "pants",
+      "id": "slate-trousers"
+    },
+    {
+      "item": "wild-plum",
+      "kind": "pants",
+      "id": "plum-trousers"
+    },
+    {
+      "item": "feather",
+      "kind": "pants",
+      "id": "cream-breeches"
+    },
+    {
+      "item": "moonwool",
+      "kind": "pants",
+      "id": "night-trousers"
+    },
+    {
+      "item": "hay",
+      "kind": "hat",
+      "id": "tailored-sunhat"
+    },
+    {
+      "item": "rose-hip",
+      "kind": "hat",
+      "id": "tailored-pillbox"
+    },
+    {
+      "item": "kelp-ribbon",
+      "kind": "hat",
+      "id": "tailored-bucket"
+    },
+    {
+      "item": "periwinkle",
+      "kind": "hat",
+      "id": "tailored-cloche"
+    },
+    {
+      "item": "chestnut",
+      "kind": "hat",
+      "id": "tailored-flatcap"
+    },
+    {
+      "item": "egg",
+      "kind": "hat",
+      "id": "tailored-hood"
+    },
+    {
+      "item": "gem-mid-a",
+      "kind": "hat",
+      "id": "tailored-tricorn"
+    },
+    {
+      "item": "pine-nut",
+      "kind": "hat",
+      "id": "tailored-turban"
+    }
+  ]
+}
