@@ -57,7 +57,7 @@ Each had a Stardew option.
 | Slayer goals | 10 | Every goal on the mines' slayer list (`22_mines.md`) | 3 |
 | Friends | 12 | Every person at maximum hearts, children excluded | 4 |
 | Skills | 5 | Every skill at level 10. Owner, 2026-11-08: the category counts 5 skills of 10 levels, and the percentage drop this causes is accepted | 1 to 3 |
-| Rare boost items | 10 | Every one of the seven elderfruit (see "Settled with the owner") | 1 to 4 |
+| Rare boost items | 10 | Every one of the eight elderfruit (see "Settled with the owner" and "Eighth elderfruit") | 1 to 4 |
 | Cooking | 10 | Every recipe cooked | 4 |
 | Crafting | 10 | Every item crafted | 1 |
 | Fish | 10 | Every fish caught, the five legends included (`21_fishing.md`), 47 ordinary fish since the Secret Woods pond's unique fish (owner, 2026-11-08) | 2 |
@@ -315,3 +315,12 @@ Each had a Stardew option, and the owner took the recommended one.
 
 Stardew details above come from the saved Perfection Tracker, Stardrop and
 Movie Theater pages, read on 2026-10-31.
+
+## Eighth elderfruit (owner, 2026-11-12)
+
+Stardew has seven stardrops; ours has eight. The eighth is the mailed gift of the fish
+seed letter (every fish landed, trigger `whole-roster`, `src/content/letters.json`). It
+is the same item as the other seven: +34 maximum energy, eaten at once, 270 up to 542 in
+all. The points for the rare boost line are split in eighths, and the "Find every
+stardrop" counter reads eight. Update the counter, the achievement and the completion
+data when this is built.
