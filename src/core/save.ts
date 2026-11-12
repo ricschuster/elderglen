@@ -60,6 +60,7 @@ import {
   MAX_HOUSE_TIER,
   CELLAR_MAP,
   type HouseBuild,
+  validRenos,
 } from "./house";
 import {
   UPGRADABLE,
@@ -135,6 +136,8 @@ export interface GameState {
   resumeMap?: string;
   /** The upgrade the carpenter is building, if any. */
   houseBuild: HouseBuild | undefined;
+  /** The renovations built, by id (`core/house.ts`, note 85). Each is the condition `reno-<id>`. */
+  houseRenos: string[];
   /** The coop, its animals and the hay silo (note 23). */
   animals: AnimalsState;
   /** Today's weather. */
@@ -217,6 +220,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     houseTier: 0,
     catalogue: false,
     houseBuild: undefined,
+    houseRenos: [],
     animals: newAnimals(),
     weather: "sunny",
     tomorrow: "sunny",
@@ -318,6 +322,8 @@ interface SaveData {
   resumeMap?: string;
   /** Absent when no upgrade is being built, and in older saves. */
   houseBuild?: HouseBuild;
+  /** Absent when no renovation is built, and in older saves. */
+  houseRenos?: string[];
   /** Absent in saves made before animals. */
   animals?: AnimalsState;
   weather: Weather;
@@ -520,6 +526,7 @@ export function serialize(g: GameState): string {
     catalogue: g.catalogue,
     resumeMap: g.resumeMap,
     houseBuild: g.houseBuild ? { ...g.houseBuild } : undefined,
+    houseRenos: [...g.houseRenos],
     animals: saveAnimals(g.animals),
     weather: g.weather,
     tomorrow: g.tomorrow,
@@ -915,6 +922,10 @@ export function deserialize(text: string): GameState | undefined {
     };
   if (isCount(raw.houseTier))
     g.houseTier = Math.min(Math.floor(raw.houseTier), MAX_HOUSE_TIER);
+  g.houseRenos = validRenos(
+    g.houseTier,
+    Array.isArray(raw.houseRenos) ? raw.houseRenos : [],
+  );
   g.catalogue = raw.catalogue === true;
   if (raw.resumeMap === CELLAR_MAP) g.resumeMap = CELLAR_MAP;
   const build = raw.houseBuild;

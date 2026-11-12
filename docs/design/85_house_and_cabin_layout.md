@@ -470,19 +470,30 @@ Settled above (decision 2). In detail:
 3. **Renovation layers** with `when: reno-<id>`, one per renovation, plus
    `corner-stairs`. `houseHolds` adds the ids from `houseRenos`. The carpenter's
    Renovations tab, pricing, the empty-area refund rule, and the needs
-   (expansion needs its room).
+   (expansion needs its room). **Built (#834).** Layers are `ground-reno-<id>-t2` and
+   `collision-reno-<id>-t2` with `when: reno-<id>` (ids `open-bedroom`, `south`,
+   `corner`, `corner-big`, `attic`, `cubby`, `dining`, `dining-open`), and
+   `ground-corner-stairs-t2` with the hold `corner-stairs`, which `houseHolds` gives
+   for the corner room with a spouse. A renovation's area for the refund rule is its
+   ground layer. Prices are in `src/content/house-renos.json`.
 4. **Fixtures (built, #835).** The sink, fridge, counters, TV and hearth, and the nursery's crib
    and two child beds (tier 2), as `markers` objects and blocking tiles, the double
    bed's two sleep marks, the divorce chest and the named marks.
 5. **The farm corner.** The `spouse-corner` zone and `spouse-corner-idle` mark on
-   `farm.json`, a `when: spouse` props layer and a clutter check.
+   `farm.json`, a `when: spouse` props layer and a clutter check. **Built (#836).**
+   The zone is a `zone` object on `markers`, the mark is on `marks-spouse`, and the
+   props are three placeholder tiles at x 71, rows 4, 6 and 8 on `objects-spouse` and
+   `collision-spouse` (`when: spouse`). Test: `tests/farm-spouse-corner.test.ts`.
 6. **Text.** The carpenter's waiting line and the morning report say the spare room
    and the nursery will be "bare and tidy, for later" (note 68, #286). Change them to
    the spare room only.
+   **Built (#837).**
 7. **Tests.** For every combination of tier, spouse and the eight renovations: every
    mark and every stair is reachable from the door entry, each stair joins two
    floors, a renovation adds no tile outside its own rectangle and openings, and
-   removing one restores the tiles.
+   removing one restores the tiles. **Built (#838).** `tests/house-reach.test.ts` reads every
+   valid renovation set (an expansion only with its room, 144 sets) at tiers 0 to 3,
+   with and without a spouse.
 8. **Cabin** (M4, with note 53): the owner's instance of `house`, per-owner tier,
    renovations and spouse.
 
