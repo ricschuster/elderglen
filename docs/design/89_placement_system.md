@@ -255,3 +255,8 @@ Settled 2026-11-12: heater from the ranch shop, no torches indoors, no bomb expe
 ## Built status
 
 The decor kind is built (the last item above); see "Built today" for the other steps.
+
+Built (2026-11-12, #877 icons): the bombs already had pictures. Added placeholder icons for the
+Forge goods (Life Elixir, Miner's Treat, Oil of Garlic), every boots row, every ring and every
+pair of rings (a combined ring shows both stones), key `icon-forge-<id>` (`forgeKey` in
+`src/scenes/art.ts`). Test: `tests/forgeicons.test.ts`.

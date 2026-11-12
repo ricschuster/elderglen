@@ -1,5 +1,7 @@
 import { POT_ITEM } from "../core/pots";
 import { isBomb } from "../core/bombs";
+import { BOOTS, RINGS, comboId, comboParts, ringById } from "../core/equipment";
+import { LIFE_ELIXIR, MINERS_TREAT, OIL_OF_GARLIC } from "../core/items";
 import { farmDecorIds, isFarmDecor } from "../core/farmdecor";
 import { isLight } from "../core/lights";
 import { LIGHTNING_ROD } from "../core/lightning";
@@ -1015,6 +1017,81 @@ function paintFarmDecor(scene: Phaser.Scene): void {
   }
 }
 
+/** The texture key of a ring, a pair of boots or a Forge good. */
+export const forgeKey = (id: string) => `icon-forge-${id}`;
+const FORGE_GOODS = [LIFE_ELIXIR, MINERS_TREAT, OIL_OF_GARLIC];
+
+/**
+ * Rings, boots and the Forge's small goods (note 89, note 95, #877): flat placeholder
+ * pictures. A ring's stone is coloured by what it does; a combined ring shows both
+ * stones. Art waits for M3d.
+ */
+function paintForgeGoods(scene: Phaser.Scene): void {
+  const draw = (id: string, paint: (c: Ctx) => void) => {
+    const t = scene.textures.createCanvas(forgeKey(id), SIZE, SIZE)!;
+    paint(t.getContext());
+    t.refresh();
+  };
+  const stone = (id: string): string => {
+    const r = ringById(id);
+    if (!r) return "#c8c8d0";
+    if (r.light) return "#ffe14a";
+    if (r.magnet) return "#d8503c";
+    if (r.slimeProof) return "#5ac86a";
+    if (r.immunity) return "#8a6ad8";
+    return "#7ab0e8";
+  };
+  const band = (c: Ctx) => {
+    px(c, "#00000044", 4, 14, 8, 1);
+    px(c, "#d8b84a", 4, 7, 8, 6);
+    px(c, "#00000000", 6, 9, 4, 2);
+    px(c, "#2a2a30", 6, 9, 4, 2);
+  };
+  for (const r of RINGS)
+    draw(r.id, (c) => {
+      band(c);
+      px(c, stone(r.id), 6, 4, 4, 3);
+      px(c, "#ffffff88", 7, 4, 1, 1);
+    });
+  for (const a of RINGS)
+    for (const b of RINGS) {
+      if (a.id >= b.id) continue;
+      draw(comboId(a.id, b.id), (c) => {
+        band(c);
+        px(c, stone(a.id), 4, 4, 4, 3);
+        px(c, stone(b.id), 8, 4, 4, 3);
+      });
+    }
+  for (const b of BOOTS)
+    draw(b.id, (c) => {
+      const tone = b.defense >= 3 ? "#6a6a74" : "#8a5a2a";
+      px(c, "#00000044", 3, 14, 10, 1);
+      px(c, tone, 5, 3, 4, 8);
+      px(c, tone, 5, 9, 8, 4);
+      px(c, "#ffffff44", 5, 3, 1, 8);
+      px(c, "#2a2a30", 5, 13, 8, 1);
+    });
+  draw(LIFE_ELIXIR, (c) => {
+    px(c, "#00000044", 4, 14, 8, 1);
+    px(c, "#c8d8e0", 6, 2, 4, 3);
+    px(c, "#d84a5a", 4, 6, 8, 8);
+    px(c, "#ff9aa4", 5, 7, 2, 4);
+  });
+  draw(MINERS_TREAT, (c) => {
+    px(c, "#00000044", 3, 14, 10, 1);
+    px(c, "#a8743c", 3, 6, 10, 8);
+    px(c, "#d8a860", 3, 6, 10, 2);
+    px(c, "#5a3a1e", 5, 9, 2, 2);
+    px(c, "#5a3a1e", 9, 11, 2, 2);
+  });
+  draw(OIL_OF_GARLIC, (c) => {
+    px(c, "#00000044", 4, 14, 8, 1);
+    px(c, "#7a5a2a", 6, 2, 4, 3);
+    px(c, "#e8d878", 4, 5, 8, 9);
+    px(c, "#f4ecb0", 5, 6, 2, 5);
+  });
+}
+
 /** Torch, campfire and the two braziers. Placeholders: the glow itself is drawn by the scene. */
 function paintLights(scene: Phaser.Scene): void {
   const draw = (id: string, paint: (c: Ctx) => void) => {
@@ -1212,6 +1289,13 @@ export function iconKey(itemId: string): string | undefined {
   if (isLight(base) || isBomb(base) || base === LIGHTNING_ROD)
     return lightKey(base);
   if (base === "tapper" || base === "heavy-tapper") return `icon-${base}`;
+  if (
+    ringById(base) ||
+    comboParts(base) ||
+    BOOTS.some((b) => b.id === base) ||
+    FORGE_GOODS.includes(base)
+  )
+    return forgeKey(base);
   if (base === POT_ITEM) return POT_KEY;
   const sapling = treeOfSapling(base);
   if (sapling) return saplingIconKey(sapling.id);
@@ -1258,6 +1342,7 @@ export function makeArt(
   paintDecor(scene);
   paintChests(scene);
   paintLights(scene);
+  paintForgeGoods(scene);
   paintFarmDecor(scene);
   paintPot(scene);
 }
