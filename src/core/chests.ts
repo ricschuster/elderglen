@@ -77,6 +77,11 @@ export class Chests {
     }
   }
 
+  /** Every chest in the world, whatever its map. */
+  all(): IterableIterator<PlacedChest> {
+    return this.placed.values();
+  }
+
   *each(map: string): Generator<PlacedChest> {
     for (const c of this.placed.values())
       if (place(c.map) === place(map)) yield c;
