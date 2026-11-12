@@ -18,32 +18,33 @@ unless the owner says so.
 Decided 2026-11-12: the Last Seat opens after ALL other bundles (built). #876 and #879
 stay in M3b. Guests' Board +500 friendship (built), up to five heart events a person.
 
-Built 2026-11-12 (session 7d), all awaiting the owner's play: #869 bundles 20, 24, 26 and
-the gate, #872 gift tastes, #874 elderfruit (five of seven sources), #875 goods hand-in, #870 Crystalarium, #871
-room rewards, notes 91 flowers, 92 (tapper, crusher, worm bin, hops, pale ale), 93 (fish pond core, water finds) and 94 (Defense, Immunity, effects).
-Details are in the notes' "Built status" and the 2026-11-12l handoff. Bundles 1 to 26 can
-now be filled; the exit test needs the owner's play.
+Built 2026-11-12 (sessions 7d and 8), all awaiting the owner's play. Bundles 1 to 26 can be
+filled in code; the exit test needs the owner's play. Detail is in the notes' "Built status",
+the 2026-11-12l and 2026-11-12m handoffs and `PRIORITIES_ARCHIVE.md`.
 
 Open, top to bottom:
 
-1. **Follow-ups from the owner's 2026-11-12 answers.** Elderfruit: count seven sources,
-   eaten on receipt (Stardew). Burn can defeat the player. Crusher recipe uses the Diamond
-   (note 83 decision 21: `gem-high-b` renamed Diamond; note 92 is stale on this). Cart mine
-   stop at the mine mouth, opens with the mines. Bundle 24 stays 3 of 3 dishes. Wheat makes
-   beer only (as built).
+1. **Owner answers needed** (small builds wait on them): seven elderfruit sources confirmed;
+   cave-pool placement (farm cave or mine floors); tailoring unlock (first-cloth line or heart
+   event) and dye redo cost; boots tailoring design; #396 cosmetic trees and regrow rule; where
+   the four new rings (note 94) come from; whether a tapper is sold, where, price, and the real
+   Heavy Tapper recipe; sync map generators with committed maps; how hall-restored is tracked;
+   Hat Parade latest join time.
 2. **Tea bush design** (new note, Stardew-shaped: crafted sapling, leaves spring to fall),
    then herb tea uses tea leaves (bundle 24).
 3. **#873 heart events** (note 62), needs the list per person, then scenes as data.
 4. **#878 Secret Woods statue and pond fish**, after note 93 (the species table is empty).
-5. **Note 93 left:** pond placing screen, menu, FarmScene hooks, report line, cave water kind.
-   **Note 95** forge rings. **Note 96** tailoring and **note 89** decor kind: both designed,
-   not built. Tapper art, Heavy Tapper, tool shop rows.
-6. **#876 festival route layer** and seven festival maps (note 82, decisions 2026-11-12).
-7. **#396 tree types by region.**
-8. **#877** icons for bombs and Forge goods, a browser look at lights, rod, bombs.
+5. **Note 93 left:** pond placing screen and menu. Species table.
+6. **#876 left:** festival activities (hunt, judging, ice fishing, lantern floating, cake
+   table), the festival-ends-after-event rule, scene walking villagers and marchers, even-year
+   hedge maze and niche lines (note 82 "Built status").
+7. **Note 96 left:** boots tailoring, pot colour for processed goods. **#396 left:** cosmetic
+   trees, regrow outside the farm.
+8. A browser look at hat picker, cart screen, herb stall, tapper, lights, rod, bombs, festival
+   maps, tailoring and decor.
 
-Alongside: #880 stale status lines, `docs/overview.json` (behind since 2026-11-11), a
-Stardew checks rows (SC-122, 135, 160 to 167), and file the M4 hosting spike before M4.
+Alongside: #880 stale status lines, `docs/overview.json` (behind since 2026-11-11), Stardew
+checks rows (SC-122, 135, 160 to 167, SC-156), and file the M4 hosting spike before M4.
 
 ## Milestone order (ADR 0012)
 
