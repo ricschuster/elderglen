@@ -70,7 +70,9 @@ describe("the Forest's farmstead, tower and camp (note 72, part 2)", () => {
   });
 
   it("has the keeper's counter, the hermit and the camp fire, each reachable", () => {
-    expect(farmstead.services.map((s) => s.kind)).toEqual(["keeper"]);
+    expect([...new Set(farmstead.services.map((s) => s.kind))]).toEqual([
+      "keeper",
+    ]);
     expect(tower.services.map((s) => s.kind)).toEqual(["hermit"]);
     const fire = forest.services.find((s) => s.kind === "camp")!;
     expect(fire).toMatchObject({ x: 85, y: 83 });

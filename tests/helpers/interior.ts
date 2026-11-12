@@ -273,4 +273,28 @@ export const AISLE_EXCEPTIONS: Record<
     reason:
       "Checked draft: 1 wide strips between fixtures and walls (ore bins, forge wing, pantry and bed edges) and the gated bedroom door. None is the only way through a room.",
   },
+  library: {
+    tiles: [
+      "11,23 10,23 9,23 8,23 6,24 6,25 1,17 20,8 11,10 10,10 11,7 28,7",
+      "9,10 28,6 31,6 8,3 7,3",
+    ].flatMap((l) => l.split(" ")),
+    reason:
+      "owner-checked draft (note 86, 2026-11-11): the strip between the north stack and the reading tables, the gaps round the reading tables, nooks beside the bed and the archive, and the keeper's counter ends are one tile wide",
+  },
+  hatter: {
+    tiles: [
+      "16,21 11,16 10,16 9,16 3,20 6,17 2,20 4,18 5,17 4,17 3,17 2,17 14,3",
+      "15,3 4,7 16,3 1,8 1,7 17,5 22,3 23,3",
+    ].flatMap((l) => l.split(" ")),
+    reason:
+      "owner-checked draft (note 86, 2026-11-11): the fitting strip beside the stand and mirrors, the gaps behind the counter and the bedroom nooks are one tile wide",
+  },
+  "forest-farmstead": {
+    tiles: [
+      "8,14 7,14 7,13 20,16 20,17 20,9 12,4 11,4 10,4 20,6 30,13 21,6 20,3",
+      "30,14 22,6 21,3 3,2 22,3 29,3",
+    ].flatMap((l) => l.split(" ")),
+    reason:
+      "owner-checked draft (note 86, 2026-11-11): the keeper's strip behind the counter, the ring round the dining table, the barn and bedroom nooks and the store room edge are one tile wide",
+  },
 };
