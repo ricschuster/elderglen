@@ -17,10 +17,16 @@ export interface CropDef {
   energy?: number;
   /** Fruit goes to jam and wine, a vegetable to pickles and juice. Crops default to vegetable. */
   produce?: "fruit" | "vegetable";
+  /** A rare crop is not on sale, not in a mixed seed, not shipped for the total and not asked for (the ember berry, note 39). */
+  rare?: boolean;
+  /** The seed's own name, when it is not "<name> seeds" (the Emberseed). */
+  seedName?: string;
 }
 
-export const CROPS = cropData as CropDef[];
+/** Every crop, rare ones included. Use `CROPS` for the ordinary ones. */
+export const ALL_CROPS = cropData as CropDef[];
+export const CROPS = ALL_CROPS.filter((c) => !c.rare);
 
 export function cropById(id: string): CropDef | undefined {
-  return CROPS.find((c) => c.id === id);
+  return ALL_CROPS.find((c) => c.id === id);
 }

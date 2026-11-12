@@ -2,13 +2,14 @@ import type { Outcome } from "./actions";
 import { DAY_START } from "./clock";
 import { dateOf } from "./calendar";
 import { HONEY } from "./artisan";
-import { itemById } from "./items";
+import { itemById, WAX } from "./items";
 import type { FarmMap } from "./map";
 import {
   BEE_MINUTES,
   machineById,
   MINUTES_PER_DAY,
   processFor,
+  WAX_CHANCE,
 } from "./processing";
 import type { GameState } from "./save";
 import { isClear } from "./actions";
@@ -231,7 +232,12 @@ export function fillBins(g: GameState, random: () => number): void {
 }
 
 /** Take a finished batch. A bee house starts the next one. */
-export function collectMachine(g: GameState, x: number, y: number): Outcome {
+export function collectMachine(
+  g: GameState,
+  x: number,
+  y: number,
+  random: () => number = Math.random,
+): Outcome {
   if (g.day.over) return fail("exhausted");
   const m = g.machines.get(x, y);
   if (!m) return fail("no machine here");
@@ -249,9 +255,28 @@ export function collectMachine(g: GameState, x: number, y: number): Outcome {
     return fail("backpack full");
   const { output, count } = m.job;
   g.inventory.add(output, count);
-  m.job = machineById(m.id)?.auto
+  // A bee house sometimes gives beeswax too, if there is room for it.
+  if (
+    machineById(m.id)?.auto &&
+    random() < WAX_CHANCE &&
+    g.inventory.room(WAX) >= 1
+  )
+    g.inventory.add(WAX, 1);
+  const def = machineById(m.id);
+  const again =
+    def?.repeats && m.job.input
+      ? processFor(m.id, m.job.input.item)
+      : undefined;
+  m.job = def?.auto
     ? { output, count: 1, doneAt: machineMinutes(g) + BEE_MINUTES }
-    : undefined;
+    : again
+      ? {
+          output,
+          count: 1,
+          doneAt: machineMinutes(g) + again.minutes,
+          input: m.job.input,
+        }
+      : undefined;
   return { ok: true, item: output };
 }
 

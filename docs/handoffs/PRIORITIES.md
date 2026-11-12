@@ -31,7 +31,7 @@ Tier 1, needed to fill the bundles:
 3. **#874 elderfruit**: eight sources and the eat effect (note 39). Build.
 4. **#875 goods hand-in**: designed (note 65), a drop chest bound to the order. Scope is
    Spring Leeks, Barrel Batch, Pantry Stock, Crystal Gift. Build.
-5. **#870 Crystalarium**: designed (note 24), Stardew's times by gem value, craftable with
+5. **#870 Crystalarium** (BUILT 2026-11-12, awaiting owner play): designed (note 24), Stardew's times by gem value, craftable with
    Hearthsilver. Build.
 6. **#871 room rewards**: designed (note 16), free four-stop carts and a weekly herb
    stall. Build with the Guests' Board data fix and `bundleBonus()` wiring.
@@ -48,12 +48,12 @@ Tier 3, design first, one issue per system when taken:
   built: tapper, crusher, worm bin, hops and pale ale (note 92); fish pond and six water
   finds (note 93); Defense, Immunity and three bad effects (note 94); flowers (note 91);
   forge ring combining in ring 1 (note 95, gem forging and enchanting deferred to ring 2
-  or 3). Still to design: tailoring.
+  or 3). Farm decoration kind is designed (note 89). Tailoring is designed (note 96): sewing machine and dye pots in the Hat-maker's house.
 - **11. #876 festival route layer** and seven festival maps (overlaps layout step 10).
 - **12. #396 tree types by region.**
 
 Alongside: #880 stale status lines, `docs/overview.json` (behind since 2026-11-11), a
-last three Stardew checks rows (SC-122, 135, 160), and file the M4 hosting spike before M4.
+A few Stardew checks rows (SC-122, 135, 160 to 163), and file the M4 hosting spike before M4.
 
 ## Milestone order (ADR 0012)
 

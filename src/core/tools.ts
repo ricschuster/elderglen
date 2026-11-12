@@ -244,6 +244,7 @@ const QUIET = new Set(["nothing ripe", "nothing to shake", "nothing here"]);
 
 const REASONS: Record<string, string> = {
   exhausted: "You are too tired.",
+  "all eaten": "You have eaten every elderfruit there is.",
   "already tilled": "Already dug.",
   "nothing to water": "Dig the soil first.",
   "already watered": "Already watered.",

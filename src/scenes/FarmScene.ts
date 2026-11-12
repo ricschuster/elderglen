@@ -58,6 +58,7 @@ import { gateOpen, gateShutLine, parseGate } from "../core/gates";
 import { mendTideBridge, TIDE_BRIDGE_WOOD } from "../core/tidebridge";
 import { logCleared } from "../core/logs";
 import { CAMP_LINE, HERMIT_LINE } from "../core/forestfolk";
+import { SPIRIT_STATUE, giveToSpirit, hermitStock } from "../core/elderfruit";
 import { STONEKEEPER_LINE } from "../core/smith";
 import {
   campLine,
@@ -2096,7 +2097,13 @@ export class FarmScene extends Phaser.Scene {
       return this.open("shop", { stock: "pin" });
     if (service?.kind === "keeper") return this.open("keeper");
     if (service?.kind === "hermit") {
+      if (hermitStock(this.state).length > 0)
+        return this.open("shop", { stock: "hermit" });
       this.message = HERMIT_LINE;
+      return this.render();
+    }
+    if (service?.kind === SPIRIT_STATUE) {
+      this.message = giveToSpirit(this.state);
       return this.render();
     }
     if (service?.kind === "camp") {

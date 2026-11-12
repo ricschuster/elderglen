@@ -28,6 +28,10 @@ export interface PlacedChest {
   y: number;
   id: string;
   items: Inventory;
+  /** The special order this chest is bound to (note 65, "Goods hand-in"). */
+  order?: string;
+  /** The order has ended; goods left inside can be taken back, and the chest goes when empty. */
+  closed?: boolean;
 }
 
 export interface ChestSave {
@@ -36,6 +40,8 @@ export interface ChestSave {
   y: number;
   id: string;
   slots: ({ id: string; count: number } | null)[];
+  order?: string;
+  closed?: boolean;
 }
 
 /** The chests standing in the world. */
@@ -49,6 +55,9 @@ export class Chests {
       y: c.y,
       id: c.id,
       slots: c.items.save(),
+      ...(c.order
+        ? { order: c.order, ...(c.closed ? { closed: true } : {}) }
+        : {}),
     }));
   }
 
@@ -73,7 +82,13 @@ export class Chests {
       const added =
         this.add(to.map as string, to.x as number, to.y as number, def.id) ??
         this.add(c.map, x, y, def.id);
-      if (added) added.items.load(c.slots);
+      if (added) {
+        added.items.load(c.slots);
+        if (typeof c.order === "string") {
+          added.order = c.order;
+          if (c.closed === true) added.closed = true;
+        }
+      }
     }
   }
 
@@ -193,6 +208,7 @@ export function pickUpChest(
 ): Outcome {
   const c = g.chests.get(mapId, x, y);
   if (!c) return fail("nothing to act on");
+  if (c.order && !c.closed) return fail("chest bound to an order");
   if (!isEmpty(c)) return fail("chest not empty");
   if (g.inventory.room(c.id) < 1) return fail("backpack full");
   g.chests.remove(mapId, x, y);
@@ -217,6 +233,7 @@ export function pushChest(
   const c = g.chests.get(mapId, x, y);
   if (!c) return fail("nothing to act on");
   if (g.day.over) return fail("exhausted");
+  if (c.order) return fail("chest bound to an order");
   const nx = x + dx;
   const ny = y + dy;
   const ok = isHouseMap(mapId)
