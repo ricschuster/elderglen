@@ -1,11 +1,17 @@
 # 95 The forge: weapon forging, enchanting and ring combining (draft)
 
-Status: **settled with the owner on 2026-11-12 (all three Stardew parts, paid in Hearthsilver
-ore with a high cost); lists and numbers are placeholders.** Design part of #879
-(enchanting). Stardew rules are from the saved Forge page (read 2026-11-12). Names, prices
-and art are ours (ADR 0002).
+Status: **split by the owner on 2026-11-12. Ring combining is ring 1 (M3b). Gem forging and
+enchanting are deferred to ring 2 or 3 (M5 and later), paid in a Cinder Shard equivalent.**
+Lists and numbers are placeholders. Design part of #879 (enchanting). Stardew rules are from
+the saved Forge page (read 2026-11-12). Names, prices and art are ours (ADR 0002).
 
 ## What the owner decided
+
+- **The split (2026-11-12).** Ring 1 builds only ring combining. Gem forging, enchanting,
+  and the forge menu's other tabs wait for ring 2 or 3, where Stardew's own forge sits in
+  its volcano and a Cinder Shard equivalent has a home. Only the ring combining
+  section below is built in M3b. The Hearthsilver costs there are the stand-in if the owner
+  later pulls them forward. The six gems keep their other uses (sale, gifts, bundles).
 
 - **All three parts of Stardew's Forge:** gem forging of weapons, random enchantments, and
   ring combining.
@@ -100,10 +106,12 @@ and art are ours (ADR 0002).
 
 ## Build order
 
-1. The forge menu shell, costs from `forge.json`, the currency field.
-2. Gem forging and unforge.
-3. Ring combining and unforge.
-4. Enchanting with the combat list and the tool list. The tool effects land one at a time.
+**Ring 1 (M3b):** ring combining and unforge only, in a small forge menu at the Mountain
+forge hut, with the cost and currency read from `forge.json`.
+
+**Deferred to ring 2 or 3:** gem forging and unforge, then enchanting with the combat
+list and the tool list (the tool effects one at a time), the currency switched to the
+Cinder Shard equivalent.
 
 ## Open
 
