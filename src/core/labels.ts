@@ -73,6 +73,8 @@ const SERVICES: Record<string, string> = {
   "festival-leave": "Way Home",
   "hedge-chest": "Chest",
   "hedge-cart": "Cart Home",
+  cart: "Cart",
+  "herb-stall": "Herb Stall",
   "fisher-shop": "Fisher's Counter",
   "pin-stall": "Thalwen's Pin Stall",
   stonekeeper: "Stonekeeper",

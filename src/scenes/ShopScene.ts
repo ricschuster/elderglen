@@ -16,6 +16,7 @@ import {
   isOneOnly,
   pinStock,
 } from "../core/shop";
+import { buyFromHerbStall, herbPrice, herbStock } from "../core/roomrewards";
 import { buyFromTrader, traderPrice, traderStock } from "../core/trader";
 import { nextBackpack, upgradeBackpack } from "../core/upgrades";
 import { frame, Menu, TOUCH_ROW_H, type Row } from "./panel";
@@ -53,13 +54,15 @@ export class ShopScene extends Phaser.Scene {
   /** Thalwen's pin stall sells the Homeward pin only (note 09). */
   private pin = false;
   private trader = false;
+  private herb = false;
 
   constructor() {
     super("shop");
   }
 
-  init(data?: { stock?: "fisher" | "pin" | "trader" }): void {
+  init(data?: { stock?: "fisher" | "pin" | "trader" | "herb" }): void {
     this.trader = data?.stock === "trader";
+    this.herb = data?.stock === "herb";
     this.fisher = data?.stock === "fisher";
     this.pin = data?.stock === "pin";
     this.state = this.registry.get(STATE_KEY) as GameState;
@@ -75,7 +78,9 @@ export class ShopScene extends Phaser.Scene {
           ? "Thalwen"
           : this.trader
             ? "Road trader"
-            : "Shop",
+            : this.herb
+              ? "Old Greencoat"
+              : "Shop",
       () => this.close(),
     );
     this.money = money;
@@ -134,25 +139,33 @@ export class ShopScene extends Phaser.Scene {
     const g = this.state;
     this.money.setText(`Money ${g.money}g`);
     const season = dateOf(g.day.clock.day).season;
-    const stock = this.trader
-      ? traderStock(g.day.clock.day)
-      : this.pin
-        ? pinStock()
-        : this.fisher
-          ? fisherStock()
-          : [
-              ...seedStock(season),
-              ...saplingStock(),
-              ...fertilizerStock(g.day.clock.day),
-            ];
+    const stock = this.herb
+      ? herbStock(g.day.clock.day)
+      : this.trader
+        ? traderStock(g.day.clock.day)
+        : this.pin
+          ? pinStock()
+          : this.fisher
+            ? fisherStock()
+            : [
+                ...seedStock(season),
+                ...saplingStock(),
+                ...fertilizerStock(g.day.clock.day),
+              ];
     const buyRows: Row[] = stock.map((id) => {
       const def = itemById(id)!;
-      const price = this.trader ? traderPrice(id) : unitPrice(g, id);
+      const price = this.herb
+        ? herbPrice(id)
+        : this.trader
+          ? traderPrice(id)
+          : unitPrice(g, id);
       const tryBuy = (n: number) => () => {
         if (
-          this.trader
-            ? buyFromTrader(g, id, n)
-            : buy(g.inventory, g, id, n, price)
+          this.herb
+            ? buyFromHerbStall(g, id, n)
+            : this.trader
+              ? buyFromTrader(g, id, n)
+              : buy(g.inventory, g, id, n, price)
         )
           this.say(`Bought ${n} ${def.name} for ${price * n}g.`);
         else this.say(buyRefusal(g, id, n));
@@ -190,7 +203,9 @@ export class ShopScene extends Phaser.Scene {
           buttons: [],
         };
     this.buyMenu.setRows(
-      this.fisher || this.pin || this.trader ? buyRows : [...buyRows, packRow],
+      this.fisher || this.pin || this.trader || this.herb
+        ? buyRows
+        : [...buyRows, packRow],
     );
 
     const ids: string[] = [];

@@ -34,6 +34,7 @@ import { storeOf } from "./mapstore";
 import { areasEndDay, leaveArea } from "./areas";
 import { quarryBridgeNews } from "./quarry";
 import { ferryNews } from "./cove";
+import { cartNews, payGuestsBoard } from "./roomrewards";
 
 /**
  * True when something stands in the 3x3 around a tile that stops a young fruit
@@ -149,6 +150,10 @@ export interface SleepReport {
   quarryBridge: boolean;
   /** True on the first morning after the Water room is done: the ferry is repaired (note 76). */
   ferryMended: boolean;
+  /** True on the first morning after the Hearth room is done: the carts run (note 16). */
+  cartsRunning: boolean;
+  /** Ids paid the Guests' Board bonus tonight (a catch-up: the hall pays it on hand-in). */
+  guestsBonus: string[];
   /** Names of young fruit trees that could not grow, since something stood in their 3x3. */
   stuckTrees: string[];
 }
@@ -349,6 +354,8 @@ export function sleep(
     stuckTrees: stuck.map((t) => fruitTreeById(t.id)?.name ?? t.id),
     quarryBridge: quarryBridgeNews(g),
     ferryMended: ferryNews(g),
+    cartsRunning: cartNews(g),
+    guestsBonus: payGuestsBoard(g),
   };
 }
 

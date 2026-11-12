@@ -10,11 +10,23 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 8,
-  "nextobjectid": 912,
+  "nextobjectid": 914,
   "properties": [
-    { "name": "waterKind", "type": "string", "value": "farm-pond" },
-    { "name": "placeholder", "type": "bool", "value": true },
-    { "name": "rideable", "type": "bool", "value": true }
+    {
+      "name": "waterKind",
+      "type": "string",
+      "value": "farm-pond"
+    },
+    {
+      "name": "placeholder",
+      "type": "bool",
+      "value": true
+    },
+    {
+      "name": "rideable",
+      "type": "bool",
+      "value": true
+    }
   ],
   "layers": [
     {
@@ -183,7 +195,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
         1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -317,8 +329,16 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            { "name": "map", "type": "string", "value": "house" },
-            { "name": "entry", "type": "string", "value": "door" }
+            {
+              "name": "map",
+              "type": "string",
+              "value": "house"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "door"
+            }
           ]
         },
         {
@@ -333,7 +353,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "kind", "type": "string", "value": "bin" }]
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "bin"
+            }
+          ]
         },
         {
           "id": 212,
@@ -348,7 +374,11 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            { "name": "kind", "type": "string", "value": "mailbox" }
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "mailbox"
+            }
           ]
         },
         {
@@ -364,7 +394,11 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            { "name": "kind", "type": "string", "value": "furnace" }
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "furnace"
+            }
           ]
         },
         {
@@ -821,7 +855,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 150,
@@ -835,7 +875,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 151,
@@ -849,7 +895,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 152,
@@ -863,7 +915,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 153,
@@ -877,7 +935,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 154,
@@ -891,7 +955,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 156,
@@ -905,7 +975,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 158,
@@ -919,7 +995,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 159,
@@ -933,7 +1015,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 160,
@@ -947,7 +1035,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 161,
@@ -961,7 +1055,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 162,
@@ -975,7 +1075,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 163,
@@ -989,7 +1095,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 164,
@@ -1003,7 +1115,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 165,
@@ -1017,7 +1135,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 166,
@@ -1031,7 +1155,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 167,
@@ -1045,7 +1175,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 168,
@@ -1059,7 +1195,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 169,
@@ -1073,7 +1215,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 170,
@@ -1087,7 +1235,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 171,
@@ -1101,7 +1255,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 173,
@@ -1115,7 +1275,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 174,
@@ -1129,7 +1295,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 175,
@@ -1143,7 +1315,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 176,
@@ -1157,7 +1335,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 177,
@@ -1171,7 +1355,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 178,
@@ -1185,7 +1375,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 180,
@@ -1199,7 +1395,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 181,
@@ -1213,7 +1415,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 182,
@@ -1227,7 +1435,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 183,
@@ -1241,7 +1455,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 184,
@@ -1255,7 +1475,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 186,
@@ -1269,7 +1495,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 187,
@@ -1283,7 +1515,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 188,
@@ -1297,7 +1535,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 189,
@@ -1311,7 +1555,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 190,
@@ -1325,7 +1575,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 191,
@@ -1339,7 +1595,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 192,
@@ -1353,7 +1615,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 193,
@@ -1367,7 +1635,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 194,
@@ -1381,7 +1655,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 195,
@@ -1395,7 +1675,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 196,
@@ -1409,7 +1695,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 198,
@@ -1423,7 +1715,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 199,
@@ -1437,7 +1735,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 200,
@@ -1451,7 +1755,13 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [{ "name": "stage", "type": "int", "value": 5 }]
+          "properties": [
+            {
+              "name": "stage",
+              "type": "int",
+              "value": 5
+            }
+          ]
         },
         {
           "id": 201,
@@ -1556,9 +1866,21 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            { "name": "map", "type": "string", "value": "farm-cave" },
-            { "name": "entry", "type": "string", "value": "door" },
-            { "name": "requires", "type": "string", "value": "cave-open" }
+            {
+              "name": "map",
+              "type": "string",
+              "value": "farm-cave"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "door"
+            },
+            {
+              "name": "requires",
+              "type": "string",
+              "value": "cave-open"
+            }
           ]
         },
         {
@@ -1574,7 +1896,11 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            { "name": "kind", "type": "string", "value": "festival" }
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "festival"
+            }
           ]
         },
         {
@@ -1615,9 +1941,21 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            { "name": "map", "type": "string", "value": "coop" },
-            { "name": "entry", "type": "string", "value": "door" },
-            { "name": "requires", "type": "string", "value": "coop-built" }
+            {
+              "name": "map",
+              "type": "string",
+              "value": "coop"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "door"
+            },
+            {
+              "name": "requires",
+              "type": "string",
+              "value": "coop-built"
+            }
           ]
         },
         {
@@ -1645,9 +1983,21 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            { "name": "map", "type": "string", "value": "barn" },
-            { "name": "entry", "type": "string", "value": "door" },
-            { "name": "requires", "type": "string", "value": "barn-built" }
+            {
+              "name": "map",
+              "type": "string",
+              "value": "barn"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "door"
+            },
+            {
+              "name": "requires",
+              "type": "string",
+              "value": "barn-built"
+            }
           ]
         },
         {
@@ -1675,9 +2025,21 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            { "name": "map", "type": "string", "value": "greenhouse" },
-            { "name": "entry", "type": "string", "value": "door" },
-            { "name": "requires", "type": "string", "value": "greenhouse-open" }
+            {
+              "name": "map",
+              "type": "string",
+              "value": "greenhouse"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "door"
+            },
+            {
+              "name": "requires",
+              "type": "string",
+              "value": "greenhouse-open"
+            }
           ]
         },
         {
@@ -1692,8 +2054,16 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            { "name": "map", "type": "string", "value": "forest" },
-            { "name": "entry", "type": "string", "value": "from_farm" }
+            {
+              "name": "map",
+              "type": "string",
+              "value": "forest"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "from_farm"
+            }
           ]
         },
         {
@@ -1721,8 +2091,16 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            { "name": "map", "type": "string", "value": "delta" },
-            { "name": "entry", "type": "string", "value": "from_farm" }
+            {
+              "name": "map",
+              "type": "string",
+              "value": "delta"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "from_farm"
+            }
           ]
         },
         {
@@ -1748,8 +2126,16 @@
           "width": 16,
           "height": 48,
           "properties": [
-            { "name": "map", "type": "string", "value": "hearthwell" },
-            { "name": "entry", "type": "string", "value": "from_farm" }
+            {
+              "name": "map",
+              "type": "string",
+              "value": "hearthwell"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "from_farm"
+            }
           ],
           "rotation": 0,
           "visible": true
@@ -1766,6 +2152,39 @@
           "point": true,
           "rotation": 0,
           "visible": true
+        },
+        {
+          "id": 912,
+          "name": "cart-farm",
+          "class": "service",
+          "type": "service",
+          "x": 576,
+          "y": 272,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "cart"
+            }
+          ]
+        },
+        {
+          "id": 913,
+          "name": "from_cart-farm",
+          "class": "entry",
+          "type": "entry",
+          "x": 576,
+          "y": 288,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
         }
       ]
     },
