@@ -132,11 +132,7 @@ describe("data", () => {
       if (e.startsWith("#")) expect(tags.has(e.slice(1)), e).toBe(true);
       else if (!itemById(e)) unbuilt.add(e);
     }
-    expect([...unbuilt].sort()).toEqual([
-      "beer",
-      "flower-honey",
-      "smoked-fish",
-    ]);
+    expect([...unbuilt].sort()).toEqual(["flower-honey", "smoked-fish"]);
   });
   it("gives every villager a birthday that isBirthday finds once a year", () => {
     for (const v of VILLAGERS) {
