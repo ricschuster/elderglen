@@ -28,6 +28,13 @@ ending, M3d polish, then M5 and M6. Map areas (notes 71 to 78) are M3b.
    placeholder swap, audio (#527).
 5. **Ring 2 shape and travel (#20, M5).** Parked until slice 3 is played.
 
+## M3b completeness (audit 2026-11-12)
+
+M3b is not done: bundles 1 to 26 cannot all be filled. Open issues are in the M3b
+milestone (#869 to #880, #396). Design first: goods hand-in (#875), placement for rod and
+lamps (#877), elderfruit (#874), heart event list (#873). Owner calls: Last Seat gate
+(#869), Guests' Board reward (#871). File the M4 hosting spike before M4.
+
 ## Layout and tiles track (note 81)
 
 Rules: `docs/design/81_layout_shared_rules.md`. Art waits for M3d.
