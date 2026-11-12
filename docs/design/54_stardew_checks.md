@@ -223,4 +223,3 @@ note 49 that are marked "ours".
 | SC-158 | 93 | What does each fish in a Stardew fish pond produce, and with what chance? | no | open | Added 2026-11-12. The saved Fish Pond page gives roe rules and quests but not the product table. Ours is a placeholder in note 93. |
 | SC-159 | 94 | How does Stardew turn Defense into damage, what are Immunity's numbers, and which debuffs does it list? | no | open | Added 2026-11-12. The saved Combat page says only that Defense affects damage taken and Immunity affects the chance to be afflicted with certain debuffs. Ours is a placeholder in note 94. |
 | SC-160 | 95 | What are the odds of each Stardew enchantment, and which tools can take which? | no | open | Added 2026-11-12. The saved Forge page lists the enchantments and a tool grid but no odds. Ours picks evenly from the allowed list (note 95). |
-

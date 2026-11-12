@@ -2,7 +2,7 @@
 
 Status: **settled with the owner on 2026-11-12 (the full Stardew pond with capacity
 quests, and six water finds); the numbers and lists are placeholders.** Design part of
-#879. Stardew rules are from the saved Fish Pond page (read 2026-11-12). Names, prices and
+Issue #879. Stardew rules are from the saved Fish Pond page (read 2026-11-12). Names, prices and
 art are ours (ADR 0002). Extends the "Fish ponds later" paragraph of `21_fishing.md`.
 
 ## What the owner decided

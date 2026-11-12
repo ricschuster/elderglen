@@ -1,7 +1,7 @@
 # 94 Defense, Immunity and bad effects (draft)
 
 Status: **settled with the owner on 2026-11-12; numbers are placeholders.** Design part of
-#879. Builds on `37_equipment.md` and `22_mines.md`. Stardew facts are from the saved
+Issue #879. Builds on `37_equipment.md` and `22_mines.md`. Stardew facts are from the saved
 Combat page (read 2026-11-12). It settles the open points of note 37: how Defense turns
 into damage, what Immunity does, and which bad effects exist.
 
