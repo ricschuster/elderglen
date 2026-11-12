@@ -227,3 +227,6 @@ note 49 that are marked "ours".
 | SC-162 | 96 | How does Stardew unlock the sewing machine and tailor's house? | no | open | Added 2026-11-12. The saved Dyeing page says a cutscene after the first Cloth. Ours: a short scene at the Hat-maker's house (note 96). |
 | SC-163 | 96 | Does Stardew tailoring need a skill level, and can a second boot pair move stats? | no | open | Added 2026-11-12. From memory: no skill gate. Note 37 cites boots tailoring from the Boots page. |
 | SC-164 | 89 | Are Stardew's doghouses, cat trees and bird house built from a shop menu and fixed in place, or carried? | no | open | Added 2026-11-12. From memory: bought at the ranch and placed as buildings. Ours are carried placeables (note 89). |
+| SC-165 | 92 | How long does Stardew's keg take to make beer from wheat? | no | open | Added 2026-11-12. Built at 1,750 minutes from memory, owner kept it (note 92). |
+| SC-166 | 65 | How does Stardew take the goods for a special order, and can they be taken back? | no | open | Added 2026-11-12. Ours is a chest bound to the order, goods taken back by hand (note 65). |
+| SC-167 | 94 | Can Stardew's burn defeat the player, and what are its numbers? | no | open | Added 2026-11-12. Owner chose that burn can defeat (note 94), from memory. |
