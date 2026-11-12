@@ -289,6 +289,29 @@ for (const b of bombData)
     buyPrice: b.price,
     keep: true,
   });
+export const LIFE_ELIXIR = "life-elixir";
+export const MINERS_TREAT = "miners-treat";
+export const OIL_OF_GARLIC = "oil-of-garlic";
+
+export const LIFE_ELIXIR_PRICE = 2000;
+export const MINERS_TREAT_PRICE = 1000;
+export const OIL_OF_GARLIC_PRICE = 3000;
+/** Energy a Miner's Treat gives (placeholder). */
+export const MINERS_TREAT_ENERGY = 100;
+/** The Forge's small goods (note 89): bought, drunk or eaten, used up. Prices are Stardew's, placeholders. */
+for (const [id, name, buyPrice, energy] of [
+  [LIFE_ELIXIR, "Life Elixir", LIFE_ELIXIR_PRICE, undefined],
+  [MINERS_TREAT, "Miner's Treat", MINERS_TREAT_PRICE, MINERS_TREAT_ENERGY],
+  [OIL_OF_GARLIC, "Oil of Garlic", OIL_OF_GARLIC_PRICE, undefined],
+] as const)
+  items.set(id, {
+    id,
+    name,
+    sellPrice: 0,
+    buyPrice,
+    keep: true,
+    ...(energy !== undefined ? { energy } : {}),
+  });
 items.set(ELDERFRUIT, {
   id: ELDERFRUIT,
   name: "Elderfruit",
@@ -403,6 +426,9 @@ const GROUPS: [string, string[]][] = [
       "wood-brazier",
       "stone-brazier",
       ...bombData.map((b) => b.id),
+      LIFE_ELIXIR,
+      MINERS_TREAT,
+      OIL_OF_GARLIC,
       "wood-lamp-post",
       "iron-lamp-post",
       ELDERFRUIT,

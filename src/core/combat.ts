@@ -314,6 +314,8 @@ export interface CombatSave {
   trainerMet: boolean;
   kills: Record<string, number>;
   counter: Lost[];
+  /** The day Oil of Garlic was taken, so it lasts until the next morning (note 89). */
+  oilDay?: number;
 }
 
 /** What the player carries into a fight: health, the trainer's progress and the kill tally. */
@@ -325,6 +327,8 @@ export class Combat {
   defeatPending = false;
   /** The stacks the latest defeat took, for sale back at the trainer's counter (note 22). */
   counter: Lost[] = [];
+  /** The day Oil of Garlic was taken, or 0 when none is working (note 89). */
+  oilDay = 0;
   /** Beaten creatures by kind, for the slayer list later (note 22). */
   kills: Record<string, number> = {};
   /** The Assist toggle, synced from the device settings by the scene. Never saved here. */
@@ -349,6 +353,7 @@ export class Combat {
       trainerMet: this.trainerMet,
       kills: { ...this.kills },
       counter: this.counter.map((l) => ({ ...l })),
+      ...(this.oilDay > 0 ? { oilDay: this.oilDay } : {}),
     };
   }
 
@@ -365,6 +370,10 @@ export class Combat {
         ? Math.min(Math.max(Math.round(raw.health), 1), this.health.max)
         : this.health.max;
     this.trainerMet = raw?.trainerMet === true;
+    this.oilDay =
+      Number.isInteger(raw?.oilDay) && (raw?.oilDay ?? 0) > 0
+        ? (raw!.oilDay as number)
+        : 0;
     this.kills = {};
     for (const [k, v] of Object.entries(raw?.kills ?? {}))
       if (Number.isInteger(v) && v > 0) this.kills[k] = v;

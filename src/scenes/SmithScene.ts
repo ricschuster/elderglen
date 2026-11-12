@@ -3,6 +3,13 @@ import type { GameState } from "../core/save";
 import { COPPER_ORE } from "../core/ore";
 import { handOverCopper } from "../core/smith";
 import { buyBoots, buyWeapon, FORGED, weaponPrice } from "../core/combat";
+import {
+  LIFE_ELIXIR,
+  MINERS_TREAT,
+  MINERS_TREAT_ENERGY,
+  OIL_OF_GARLIC,
+  itemById,
+} from "../core/items";
 import { BOMBS } from "../core/bombs";
 import { buy } from "../core/shop";
 import { BOOTS } from "../core/equipment";
@@ -155,6 +162,35 @@ export class SmithScene extends Phaser.Scene {
         },
       ],
     }));
+  }
+
+  /** Life Elixir, Miner's Treat and Oil of Garlic (note 89), for coin. */
+  private goodsRows(): Row[] {
+    const g = this.state;
+    const what: Record<string, string> = {
+      [LIFE_ELIXIR]: "health to full",
+      [MINERS_TREAT]: `${MINERS_TREAT_ENERGY} energy`,
+      [OIL_OF_GARLIC]: "weaker monsters ignore you for the day",
+    };
+    return [LIFE_ELIXIR, MINERS_TREAT, OIL_OF_GARLIC].map((id) => {
+      const def = itemById(id)!;
+      return {
+        label: def.name,
+        detail: `${def.buyPrice}g, ${what[id]}, you carry ${g.inventory.count(id)}`,
+        dim: g.money < (def.buyPrice ?? 0),
+        buttons: [
+          {
+            text: "Buy",
+            run: () =>
+              this.say(
+                buy(g.inventory, g, id)
+                  ? `She hands you ${def.name.toLowerCase()}.`
+                  : "You cannot afford it, or your pack is full.",
+              ),
+          },
+        ],
+      };
+    });
   }
 
   private close(): void {

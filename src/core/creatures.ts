@@ -226,6 +226,8 @@ export interface StepWorld {
   random: () => number;
   assist: boolean;
   tileSize: number;
+  /** Oil of Garlic: this creature ignores the player (note 89). */
+  calm?: boolean;
 }
 
 export interface StepResult {
@@ -256,6 +258,12 @@ export function stepCreature(
     c.state !== "dash"
   )
     c.face = Math.atan2(dir.y, dir.x);
+  // Calmed by oil: it drops any chase or attack and only wanders.
+  if (
+    w.calm &&
+    (c.state === "chase" || c.state === "windup" || c.state === "dash")
+  )
+    c.state = "wander";
   const go = (vx: number, vy: number) => {
     const next = w.walk(c, vx * dt, vy * dt);
     c.x = next.x;
@@ -304,7 +312,7 @@ export function stepCreature(
   }
 
   // Wander or chase.
-  const sees = d <= def.sight * w.tileSize;
+  const sees = !w.calm && d <= def.sight * w.tileSize;
   if (c.state === "wander" && sees) c.state = "chase";
   if (c.state === "chase") {
     if (d > LOSE_TILES * w.tileSize) {

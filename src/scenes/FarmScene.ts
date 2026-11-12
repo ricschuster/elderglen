@@ -159,6 +159,7 @@ import {
   pickUpLight,
   placeLight,
 } from "../core/lights";
+import { drink, isDrink, oilCalms } from "../core/elixirs";
 import {
   type LitBomb,
   blastCreatures,
@@ -2381,12 +2382,15 @@ export class FarmScene extends Phaser.Scene {
   private eatHeld(): void {
     if (this.leaving) return;
     const held = heldAt(this.state, this.selected);
+    const drinking = held.kind === "item" && isDrink(held.id);
     const result =
       held.kind === "item"
-        ? eat(this.state, held.id)
+        ? drinking
+          ? drink(this.state, held.id)
+          : eat(this.state, held.id)
         : { ok: false as const, reason: "not food" };
     this.message = result.ok
-      ? `Ate ${itemById(held.kind === "item" ? held.id : "")?.name.toLowerCase()}.`
+      ? `${drinking ? "Drank" : "Ate"} ${itemById(held.kind === "item" ? held.id : "")?.name.toLowerCase()}.`
       : reasonText(result.reason);
     this.afterAction();
   }
@@ -3169,6 +3173,7 @@ export class FarmScene extends Phaser.Scene {
         random: Math.random,
         assist: combat.assist,
         tileSize: ts,
+        calm: oilCalms(this.state, c.kind),
       });
       if (result.hit) {
         const lost = combat.health.hurt(
