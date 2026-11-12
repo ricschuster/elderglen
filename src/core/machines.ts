@@ -12,6 +12,7 @@ import {
 } from "./processing";
 import type { GameState } from "./save";
 import { isClear } from "./actions";
+import { mayPlaceOn, placeTag } from "./placeables";
 
 /** A batch in a machine: what it makes and when it is done, in machine minutes. */
 export interface MachineJob {
@@ -157,7 +158,8 @@ export function placeMachine(
   if (!def) return fail("not a machine");
   if (def.cellar) return fail("cellar only");
   if (g.inventory.count(id) < 1) return fail("no machine");
-  if (!isClear(g, map, x, y)) return fail("cannot place here");
+  if (!mayPlaceOn(id, placeTag(map)) || !isClear(g, map, x, y))
+    return fail("cannot place here");
   g.inventory.remove(id);
   g.machines.add({
     x,

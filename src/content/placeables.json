@@ -1,0 +1,162 @@
+[
+  {
+    "id": "sprinkler",
+    "kind": "sprinkler",
+    "places": ["farm", "greenhouse"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "quality-sprinkler",
+    "kind": "sprinkler",
+    "places": ["farm", "greenhouse"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "charcoal-kiln",
+    "kind": "machine",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "preserves-jar",
+    "kind": "machine",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "bee-house",
+    "kind": "machine",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "keg",
+    "kind": "machine",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "seed-maker",
+    "kind": "machine",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "dehydrator",
+    "kind": "machine",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "cheese-press",
+    "kind": "machine",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "mayonnaise-machine",
+    "kind": "machine",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "loom",
+    "kind": "machine",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "oil-maker",
+    "kind": "machine",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "dye-vat",
+    "kind": "machine",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "cask",
+    "kind": "machine",
+    "places": ["cellar"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "furnace",
+    "kind": "machine",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "recycler",
+    "kind": "machine",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "chest",
+    "kind": "chest",
+    "places": ["farm", "house"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "stone-chest",
+    "kind": "chest",
+    "places": ["farm", "house"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "big-chest",
+    "kind": "chest",
+    "places": ["farm", "house"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "big-stone-chest",
+    "kind": "chest",
+    "places": ["farm", "house"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  }
+]

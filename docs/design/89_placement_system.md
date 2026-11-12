@@ -202,3 +202,8 @@ Settled 2026-11-12: heater from the ranch shop, no torches indoors, no bomb expe
   and no clock wiring.
 - The `coop-heater` item, kept and doing nothing, and the winter mood rule.
 - Not built: lights as placeables, lamp-posts, bombs, the generic store.
+- Step 1A (2026-11-12): `src/content/placeables.json` has a row for every sprinkler,
+  machine and chest, and `src/core/placeables.ts` answers "may this id stand on this kind
+  of place?" (`placeTag`, `mayPlaceOn`). `placeSprinkler`, `placeMachine` and `placeChest`
+  call it, with no behaviour change. Their storage is still separate; step 1B (one stored
+  list per map and the save migration) is next.
