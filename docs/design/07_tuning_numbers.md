@@ -953,6 +953,9 @@ Source: `src/core/quests.ts`, `src/content/requests.json`.
   never lethal. No mining experience. Forge prices 450g, 1,000g, 1,600g (saved Dwarf page).
 - Light radii in tiles: torch 3, campfire 4, brazier 4, lamp-post 6, worn light ring (bundle
   20) 5. Fixed glow, no fuel (SC-128).
+- Light recipes (placeholders, built 2026-11-12): torch (makes 3) wood 1 and sap 2, known
+  from the start; campfire wood 10 and stone 5, from the start; wood brazier wood 20 and
+  sap 5 at Foraging 2; stone brazier stone 20 and coal 3 at Mining 2. Lights are not sold.
 - Heater: 1,000g at the ranch shop, covers the whole building on winter nights (SC-131 open).
 - Forge: Life Elixir 2,000g (health to full), Miner's Treat 1,000g (100 energy), Oil of
   Garlic 3,000g (monsters below a tier ignore you for the day).

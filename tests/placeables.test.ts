@@ -16,13 +16,15 @@ import { HOUSE_MAP } from "../src/core/house";
 import { newGame } from "../src/core/save";
 
 describe("placeables table", () => {
-  it("has one row for every sprinkler, machine and chest", () => {
+  it("has one row for every sprinkler, machine, chest and light", () => {
     for (const s of SPRINKLERS)
       expect(placeableById(s.id)?.kind).toBe("sprinkler");
     for (const m of MACHINES) expect(placeableById(m.id)?.kind).toBe("machine");
     for (const c of CHESTS) expect(placeableById(c.id)?.kind).toBe("chest");
+    const lights = PLACEABLES.filter((p) => p.kind === "light");
+    for (const l of lights) expect(l.light?.radius, l.id).toBeGreaterThan(0);
     expect(PLACEABLES).toHaveLength(
-      SPRINKLERS.length + MACHINES.length + CHESTS.length,
+      SPRINKLERS.length + MACHINES.length + CHESTS.length + lights.length,
     );
   });
 
