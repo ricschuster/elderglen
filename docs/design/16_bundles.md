@@ -253,7 +253,13 @@ its room is finished, but the Stardew wiki was not checked for this note.
   Bulletin Board page does not confirm it). `rooms.json` must change from
   `hat-standing-boost` to it, and `Friendship.bundleBonus()` (built, never called) must be
   wired.
-- **Hearth `carts`:** a faster travel route. Needs its own design note first (note 71).
-- **Foragers' Shelf `herb-stall`:** a weekly forage stand. Needs its own design note first.
+- **Hearth `carts` (decided 2026-11-12):** four reserved stops (town square, hall,
+  farm, the Mountain's mine mouth, note 77), free, running from the morning after the
+  room opens (Stardew's minecart opens the next day; its fare is not on the saved page).
+  More stops join as the Quarry and Lake cove open. Needs the cart screen and a `cart`
+  service kind on the maps.
+- **Foragers' Shelf `herb-stall` (decided 2026-11-12):** Old Greencoat's stall at the hall
+  sells a weekly rotating stock of herbs and forage plant seeds. Stock list and prices
+  are open.
 - Both of the last two are ours, with no Stardew equivalent. The glow ring (bundle 16) and
   Beach warp totem (bundle 15) placeholders are still to check.
