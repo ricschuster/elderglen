@@ -77,6 +77,24 @@ export function reportLines(r: SleepReport): string[] {
       r.stableFinished,
     ),
   );
+  if (r.pondsFinished)
+    lines.push(
+      r.pondsFinished === 1
+        ? "The carpenter has finished your fish pond. It is ready for fish."
+        : "The carpenter has finished your fish ponds. They are ready for fish.",
+    );
+  if (r.pondNews?.ready)
+    lines.push(
+      r.pondNews.ready === 1
+        ? "Your fish pond has something to take."
+        : "Your fish ponds have something to take.",
+    );
+  if (r.pondNews?.quests)
+    lines.push(
+      r.pondNews.quests === 1
+        ? "A fish in your pond is asking for something."
+        : "Fish in your ponds are asking for something.",
+    );
   if (r.horseWasOut)
     lines.push("Your horse spent the night outside and is back in the stable.");
   if (r.furnaceGifted) lines.push("The smith left a furnace by your house.");

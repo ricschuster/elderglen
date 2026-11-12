@@ -41,9 +41,11 @@ describe("water finds (note 93)", () => {
     expect(has("sea", "spring", "tide-jelly")).toBe(false);
   });
 
-  it("does not bite cave finds yet (no cave water kind)", () => {
+  it("bites cave finds only in cave water", () => {
     for (const id of ["pale-lichen", "glow-jelly"])
-      expect(WATER_FINDS.find((f) => f.id === id)!.waters).toEqual([]);
+      expect(WATER_FINDS.find((f) => f.id === id)!.waters).toEqual([
+        "cave-pool",
+      ]);
   });
 
   it("rolls a find from a low roll and nothing from a high one", () => {

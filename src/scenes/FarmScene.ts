@@ -27,7 +27,7 @@ import {
   coopSite,
   coopVisibleTier,
 } from "../core/animals";
-import { pondBlocks } from "../core/pond";
+import { pondBlocks, pondCovering, pondUse, takeFish } from "../core/pond";
 import { fertilizerById } from "../core/fertilizer";
 import Phaser from "phaser";
 import { saveSettings } from "../core/bindings";
@@ -1945,6 +1945,12 @@ export class FarmScene extends Phaser.Scene {
     if (presentAt(this.villagers, front.x, front.y)) return;
     if (this.useSilo(front.x, front.y)) return;
     const held = heldAt(this.state, this.selected);
+    // The rod lifts a fish out of a pond: no bar, no bait (note 93).
+    const pond = isFarmMap(this.mapId)
+      ? pondCovering(this.state, front.x, front.y)
+      : undefined;
+    if (pond && held.kind === "item" && rodById(held.id))
+      return this.report(takeFish(this.state, pond.x, pond.y));
     if (held.kind === "item" && rodById(held.id)) return this.cast(held.id);
     // A pot goes on the water, bait goes in a pot, and the axe or pickaxe takes an empty one up.
     if (held.kind === "item" && held.id === POT_ITEM)
@@ -2285,6 +2291,15 @@ export class FarmScene extends Phaser.Scene {
       return this.report(
         pickUpFurniture(this.state, this.mapId, front.x, front.y),
       );
+    const pondHere = isFarmMap(this.mapId)
+      ? pondCovering(this.state, front.x, front.y)
+      : undefined;
+    if (pondHere) {
+      const h = heldAt(this.state, this.selected);
+      return this.report(
+        pondUse(this.state, pondHere, h.kind === "item" ? h.id : undefined),
+      );
+    }
     const result = act(this.state, this.map, front.x, front.y);
     if (!result.ok && result.reason === NOTHING_TO_ACT_ON) {
       const held = heldAt(this.state, this.selected);

@@ -92,7 +92,7 @@ Core rules, content and tests are built. The scenes are not.
   fishing XP and does not touch the fish log. Plants bite 12 in 100 and jellies 8 in 100 in
   the right water, one season each (placeholders): Brook jelly in spring on the river and
   the delta lake, Tide jelly in summer on the sea. All six are items. Pale lichen and Glow
-  jelly have no water to bite in yet (see gaps).
+  jelly bite in the `cave-pool` water kind, which no map places yet.
 - **Pond building (step 2): core built.** `src/core/pond.ts`: the placeable `fish-pond` (kind
   `pond`, farm only, 5 by 5), `pondProblem` and `orderPond` (5,000g, 200 stone, 5 seaweed, 5
   pondweed, 2 days, clear ground, no overlap with a building or another pond),
@@ -130,9 +130,10 @@ Core rules, content and tests are built. The scenes are not.
 - **Quest item counts.** Stardew asks several of an item; ours are 3, 5, 8 by step
   (placeholder). The quest item lists in `pond.json` are our first guess at the
   note's groups, and there is no cave group because there is no cave fish.
-- **Cave water.** Pale lichen and Glow jelly are meant for cave water and the mine pools,
-  but the map has no cave or mine water kind (`WaterKind`). They exist as items and bite
-  nowhere. Needs a decision: add a `cave-pool` water kind, or give them another source.
+- **Cave water.** Settled 2026-11-12 (taken, owner can correct): a `cave-pool` water kind
+  (`WaterKind`, a map trait or a `water` zone names it). Pale lichen and Glow jelly bite in it.
+  No map places such water yet (the farm cave and the mine floors have no pool), so they still
+  bite nowhere in play until a map or floor carries a pool.
 - **Roe price.** Half the fish price is ours, not Stardew's.
 - **The carpenter is one job at a time.** The pond refuses an order while the coop, barn,
   silo or house job runs, but the older jobs do not yet check for a pond under way.
@@ -143,3 +144,16 @@ Core rules, content and tests are built. The scenes are not.
 - SC-158: done for the chance formula and the listed fish. Our own fish still need their goods and population gates (see the gaps above).
 - The legend rule and whether the Fernscale needs a pond of its own (note 21).
 - Names, prices, art.
+
+## Built status, second pass (2026-11-12)
+
+Built, with `tests/pondleftovers.test.ts`: the `cave-pool` water kind and the two finds' water
+lists; `pondStatus` and `pondUse` (one Action rule: the quest item first, then the waiting
+product, then a held fish, else the pond's status line); `pondNews` and three morning report
+lines (pond finished, something to take, a fish asking); `FarmScene` hooks: Action on any
+pond tile runs `pondUse`, the rod on a pond tile lifts a fish (`takeFish`) instead of casting.
+
+Still not built: the carpenter menu line and placing screen for the pond, the pond menu
+(counts, the empty button), drawing the pond (art), aged roe in the preserves jar, water
+finds in the fishing completion count and cooking, dev menu picks, a pool on any map, and the
+species table (still empty, see the gaps).

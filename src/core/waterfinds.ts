@@ -9,8 +9,8 @@ import type { GameState } from "./save";
  * quality, fishing XP, and never a fish for the fish bundles or the fish log.
  * Plants are common and jellies rare, one season each (placeholders). A find
  * cannot be put in a pond. Pale lichen and Glow jelly belong to cave water,
- * which is not a water kind yet, so their `waters` list is empty and they do not
- * bite anywhere (a gap in note 93). Content is `src/content/waterfinds.json`.
+ * the `cave-pool` water kind (a map or a `water` zone names it). No map has such water
+ * yet, so for now they bite only where a map says so. Content is `src/content/waterfinds.json`.
  * Pure rules, no Phaser.
  */
 export interface WaterFindDef {

@@ -445,6 +445,19 @@ export function pondNight(g: GameState, random: () => number): void {
   }
 }
 
+/** What the ponds hold this morning, for the report (note 93): products waiting and quests asking. */
+export function pondNews(g: GameState): { ready: number; quests: number } {
+  let ready = 0;
+  let quests = 0;
+  for (const p of pondsOf(g)) {
+    const s = stateOf(p);
+    if (s.building > 0) continue;
+    if (s.out) ready += 1;
+    if (s.quest) quests += 1;
+  }
+  return { ready, quests };
+}
+
 /** True when a pond has a quest waiting. */
 export function questWaiting(p: PlacedItem): boolean {
   return stateOf(p).quest !== undefined;
@@ -502,4 +515,49 @@ export function collectProduct(g: GameState, x: number, y: number): Outcome {
   delete s.out;
   setState(p, s);
   return { ok: true, item };
+}
+
+/** What a pond shows when the player faces it with nothing to use: its fish, cap and any ask. */
+export function pondStatus(p: PlacedItem): string {
+  const s = stateOf(p);
+  if (s.building > 0)
+    return `The carpenter is still digging the pond (${s.building} ${s.building === 1 ? "day" : "days"} left).`;
+  const sp = speciesById(s.species);
+  if (!sp || s.count === 0)
+    return "An empty pond. Hold a fish and press Action to put it in.";
+  const name = itemById(sp.id)?.name ?? sp.id;
+  const ask = s.quest
+    ? ` They want ${s.quest.need - s.quest.given} ${itemById(s.quest.item)?.name ?? s.quest.item}.`
+    : "";
+  return `${s.count} of ${capOf(s)} ${name}.${ask}`;
+}
+
+/**
+ * The Action press on a pond, one rule for the scene: the quest item the fish ask for
+ * goes in first, then a waiting product is taken, then a held fish is put in, else the
+ * pond says how it stands. `held` is the item id in the player's hand, if any. Taking
+ * fish out is the rod's job (`takeFish`).
+ */
+export function pondUse(
+  g: GameState,
+  p: PlacedItem,
+  held: string | undefined,
+): Outcome {
+  const s = stateOf(p);
+  const base = held ? splitQuality(held).base : undefined;
+  if (s.building === 0 && s.quest && base === s.quest.item)
+    return giveQuestItem(g, p.x, p.y);
+  if (s.building === 0 && s.out) {
+    const item = s.out.item;
+    const r = collectProduct(g, p.x, p.y);
+    return r.ok
+      ? { ok: true, item, note: `You take ${itemById(item)?.name ?? item}.` }
+      : r;
+  }
+  if (base && s.building === 0 && pondable(base)) {
+    const r = putFish(g, p.x, p.y, held!);
+    if (r.ok) return { ...r, note: "The fish slips into the pond." };
+    return r;
+  }
+  return { ok: true, note: pondStatus(p) };
 }

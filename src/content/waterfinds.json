@@ -22,7 +22,7 @@
       "name": "Pale lichen",
       "kind": "plant",
       "sellPrice": 25,
-      "waters": []
+      "waters": ["cave-pool"]
     },
     {
       "id": "seaweed",
@@ -52,7 +52,7 @@
       "name": "Glow jelly",
       "kind": "jelly",
       "sellPrice": 180,
-      "waters": [],
+      "waters": ["cave-pool"],
       "seasons": ["winter"]
     }
   ]
