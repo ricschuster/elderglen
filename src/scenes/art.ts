@@ -699,6 +699,16 @@ function paintTrees(scene: Phaser.Scene): void {
         px(c, "#7a7a84", 5, 2, 6, 4);
         px(c, "#c8a838", 6, 9, 4, 4);
         px(c, "#c8a838", 7, 13, 2, 1);
+      } else if (m.id === "geode-crusher") {
+        px(c, "#5a5a62", 3, 8, 10, 6);
+        px(c, "#8a8a94", 4, 3, 3, 6);
+        px(c, "#8a8a94", 9, 3, 3, 6);
+        px(c, "#a8789a", 6, 10, 4, 3);
+      } else if (m.id === "worm-bin") {
+        px(c, "#7a5a3a", 3, 6, 10, 8);
+        px(c, "#4a3222", 4, 7, 8, 3);
+        px(c, "#d8a0a0", 6, 9, 4, 1);
+        px(c, "#8a6a44", 3, 5, 10, 2);
       } else if (m.id === "recycler") {
         px(c, "#4a6a5a", 3, 5, 10, 9);
         px(c, "#6a8a7a", 4, 3, 8, 3);

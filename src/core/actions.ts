@@ -34,6 +34,7 @@ import { FIBER, FIBER_CHANCE, MIXED_SEED } from "./weeds";
 import { TWIG_WOOD } from "./debris";
 import { isRaining } from "./weather";
 import { noteGathered } from "./quests";
+import { goodOfTree, tapReady, TAPPER } from "./tapper";
 import { mayPlaceOn, placeTag } from "./placeables";
 import {
   MAHOGANY_HARDWOOD,
@@ -408,6 +409,16 @@ export function chop(
       t.hits = 0;
     } else g.trees.remove(x, y);
   } else if (!t.stump && t.stage === MATURE_STAGE) {
+    // A tapper on a felled tree comes back to the player, with any good ready.
+    if (t.tap) {
+      const back = [TAPPER, ...(tapReady(g, t) ? [goodOfTree(t).item] : [])];
+      for (const id of back)
+        if (!g.inventory.add(id, 1)) {
+          const spot = dropSpot(g, map, x, y);
+          g.ground.drop(spot.x, spot.y, id, 1);
+        }
+      delete t.tap;
+    }
     t.stump = true;
     t.hits = 0;
   } else g.trees.remove(x, y);

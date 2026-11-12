@@ -767,5 +767,88 @@
         "level": 9
       }
     ]
+  },
+  {
+    "id": "tapper",
+    "ingredients": [
+      {
+        "item": "wood",
+        "count": 40
+      },
+      {
+        "item": "copper-bar",
+        "count": 2
+      }
+    ],
+    "result": {
+      "item": "tapper",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "level",
+        "skill": "foraging",
+        "level": 4
+      }
+    ]
+  },
+  {
+    "id": "geode-crusher",
+    "ingredients": [
+      {
+        "item": "gold-bar",
+        "count": 2
+      },
+      {
+        "item": "stone",
+        "count": 50
+      },
+      {
+        "item": "heartfire-diamond",
+        "count": 1
+      }
+    ],
+    "result": {
+      "item": "geode-crusher",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "order",
+        "order": "cave-patrol"
+      }
+    ]
+  },
+  {
+    "id": "worm-bin",
+    "ingredients": [
+      {
+        "item": "hardwood",
+        "count": 15
+      },
+      {
+        "item": "gold-bar",
+        "count": 1
+      },
+      {
+        "item": "iron-bar",
+        "count": 1
+      },
+      {
+        "item": "fiber",
+        "count": 50
+      }
+    ],
+    "result": {
+      "item": "worm-bin",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "level",
+        "skill": "fishing",
+        "level": 4
+      }
+    ]
   }
 ]

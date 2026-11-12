@@ -12,7 +12,14 @@ import type { FarmMap } from "./map";
  * rules.
  */
 export type PlaceableKind =
-  "sprinkler" | "machine" | "chest" | "light" | "rod" | "heater" | "bomb";
+  | "sprinkler"
+  | "machine"
+  | "tapper"
+  | "chest"
+  | "light"
+  | "rod"
+  | "heater"
+  | "bomb";
 
 /** The kinds of place the table reads. A map says which it is (`placeTag`). */
 export type PlaceTag =
