@@ -1,5 +1,6 @@
 import { cropById } from "./crops";
 import { FARM_STORE, GREENHOUSE_STORE } from "./mapstore";
+import { collectPlaced, splitPlaced, type PlacedSave } from "./placedstore";
 import {
   MAX_SITE,
   loadAnimals,
@@ -290,6 +291,12 @@ interface SaveData {
     string,
     { sprinklers?: PlacedSprinkler[]; fruitTrees?: PlacedFruitTree[] }
   >;
+  /**
+   * Sprinklers, machines and chests by map id (`placedstore.ts`). Absent in
+   * saves made before the placed store: those hold the three lists below,
+   * which load the same way.
+   */
+  placed?: PlacedSave;
   /** Old saves only: the farm's sprinklers, before `mapItems`. */
   sprinklers?: PlacedSprinkler[];
   /** Old saves only: the farm's fruit trees, before `mapItems`. */
@@ -496,15 +503,10 @@ export function serialize(g: GameState): string {
     mines: g.mines.save(),
     rods: g.rods.save(),
     mapItems: {
-      [FARM_STORE]: {
-        sprinklers: home.sprinklers.save(),
-        fruitTrees: home.fruitTrees.save(),
-      },
-      [GREENHOUSE_STORE]: {
-        sprinklers: g.greenhouseSprinklers.save(),
-        fruitTrees: g.greenhouseFruitTrees.save(),
-      },
+      [FARM_STORE]: { fruitTrees: home.fruitTrees.save() },
+      [GREENHOUSE_STORE]: { fruitTrees: g.greenhouseFruitTrees.save() },
     },
+    placed: collectPlaced(g).save(),
     ...(g.greenhouseSite ? { greenhouseSite: { ...g.greenhouseSite } } : {}),
     ...(g.flags?.length ? { flags: [...g.flags] } : {}),
     areas: Object.fromEntries(
@@ -519,7 +521,6 @@ export function serialize(g: GameState): string {
         },
       ]),
     ),
-    machines: home.machines.save(),
     casks: g.casks.save(),
     furnace: g.furnace.save(),
     bin: g.bin.save(),
@@ -546,7 +547,6 @@ export function serialize(g: GameState): string {
     houseLayout: HOUSE_LAYOUT,
     furniture: g.furniture.save(),
     decor: g.decor.save(),
-    chests: g.chests.save(),
     achievements: g.achievements.save(),
     summit: g.summit.save(),
     mail: g.mail.save(),
@@ -736,8 +736,16 @@ export function deserialize(text: string): GameState | undefined {
         )
       : undefined,
   );
-  g.sprinklers.load(validSprinklers(farmItems.sprinklers));
-  g.greenhouseSprinklers.load(validSprinklers(houseItems.sprinklers));
+  // A save with `placed` holds sprinklers, machines and chests there; an older one in three lists.
+  const placed = isObject(raw.placed) ? splitPlaced(raw.placed) : undefined;
+  g.sprinklers.load(
+    validSprinklers(placed ? placed.farmSprinklers : farmItems.sprinklers),
+  );
+  g.greenhouseSprinklers.load(
+    validSprinklers(
+      placed ? placed.greenhouseSprinklers : houseItems.sprinklers,
+    ),
+  );
   g.fruitTrees.load(validFruitTrees(farmItems.fruitTrees));
   g.greenhouseFruitTrees.load(validFruitTrees(houseItems.fruitTrees));
   if (
@@ -755,9 +763,10 @@ export function deserialize(text: string): GameState | undefined {
     );
     if (flags.length > 0) g.flags = [...new Set(flags)];
   }
-  if (Array.isArray(raw.machines)) {
+  const machineRows = placed ? placed.machines : raw.machines;
+  if (Array.isArray(machineRows)) {
     const valid: PlacedMachine[] = [];
-    for (const m of raw.machines) {
+    for (const m of machineRows) {
       if (
         !isObject(m) ||
         !Number.isInteger(m.x) ||
@@ -983,7 +992,7 @@ export function deserialize(text: string): GameState | undefined {
   const layout = isCount(raw.houseLayout) ? raw.houseLayout : 1;
   g.furniture.load(raw.furniture, layout);
   migrateCatalogue(g);
-  g.chests.load(raw.chests, layout);
+  g.chests.load(placed ? placed.chests : raw.chests, layout);
   g.decor.load(raw.decor);
   g.achievements.load(raw.achievements);
   g.summit.load(raw.summit);

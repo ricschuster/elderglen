@@ -3,12 +3,8 @@ import { maps } from "../src/content/maps";
 import { START } from "../src/core/maps";
 import { placeChest } from "../src/core/chests";
 import { placeMachine } from "../src/core/machines";
-import {
-  PlacedStore,
-  applyPlaced,
-  collectPlaced,
-} from "../src/core/placedstore";
-import { newGame } from "../src/core/save";
+import { PlacedStore, collectPlaced } from "../src/core/placedstore";
+import { deserialize, newGame, serialize } from "../src/core/save";
 
 const farm = maps.get(START.map);
 
@@ -75,17 +71,38 @@ describe("the bridge to the older lists", () => {
     expect(store.get("greenhouse", 1, 1)?.id).toBe("quality-sprinkler");
   });
 
-  it("applies back to the same lists, so nothing is lost", () => {
+  it("survives a save and load, and an old save with the three lists still loads", () => {
     const g = stocked();
-    const before = collectPlaced(g).save();
-    const store = new PlacedStore();
-    store.load(JSON.parse(JSON.stringify(before)));
-    const fresh = newGame();
-    applyPlaced(fresh, store);
-    expect(collectPlaced(fresh).save()).toEqual(before);
+    const text = serialize(g);
+    const saved = JSON.parse(text);
+    expect(saved.machines).toBeUndefined();
+    expect(saved.chests).toBeUndefined();
+    expect(saved.mapItems.farm.sprinklers).toBeUndefined();
+    const back = deserialize(text)!;
+    expect(collectPlaced(back).save()).toEqual(collectPlaced(g).save());
     expect(
-      fresh.chests.get("farm", spots[0]!.x, spots[0]!.y)?.items.count("wood"),
+      back.chests.get("farm", spots[0]!.x, spots[0]!.y)?.items.count("wood"),
     ).toBe(5);
-    expect(fresh.machines.at(spots[1]!.x, spots[1]!.y)).toBe("keg");
+    expect(back.machines.at(spots[1]!.x, spots[1]!.y)).toBe("keg");
+
+    // The same game, saved the way builds before the store wrote it.
+    const old = { ...saved };
+    old.machines = g.machines.save();
+    old.chests = g.chests.save();
+    old.mapItems = {
+      farm: { sprinklers: g.sprinklers.save() },
+      greenhouse: { sprinklers: g.greenhouseSprinklers.save() },
+    };
+    delete old.placed;
+    const fromOld = deserialize(JSON.stringify(old))!;
+    expect(collectPlaced(fromOld).save()).toEqual(collectPlaced(g).save());
+  });
+
+  it("keeps a machine's running job through a save", () => {
+    const g = stocked();
+    const job = { output: "wine", count: 1, doneAt: 900 };
+    g.machines.get(spots[1]!.x, spots[1]!.y)!.job = job;
+    const back = deserialize(serialize(g))!;
+    expect(back.machines.get(spots[1]!.x, spots[1]!.y)?.job).toMatchObject(job);
   });
 });

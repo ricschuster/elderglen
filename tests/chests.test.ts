@@ -111,7 +111,7 @@ describe("chests", () => {
     expect(b.items.size).toBe(70);
     expect(b.items.count("coal")).toBe(40);
     const raw = JSON.parse(serialize(g));
-    delete raw.chests;
+    delete raw.placed;
     expect(deserialize(JSON.stringify(raw))!.chests.count).toBe(0);
   });
 });
