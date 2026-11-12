@@ -1,4 +1,3 @@
-import { MAX_ENERGY } from "./energy";
 import { MAX_HOUSE_TIER } from "./house";
 import { itemById } from "./items";
 import type { GameState } from "./save";
@@ -55,5 +54,5 @@ export function finishBuild(g: GameState): boolean {
 
 /** Fill energy to the maximum. */
 export function refillEnergy(g: GameState): void {
-  g.day.energy.restore(MAX_ENERGY);
+  g.day.energy.restore(g.day.energy.max);
 }

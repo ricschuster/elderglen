@@ -28,6 +28,8 @@ export type AchievementKind =
   | "fishKinds"
   | "fishTotal"
   | "fishAll"
+  /** Elderfruit eaten reaches the threshold (note 39). */
+  | "elderfruitAll"
   /** A ring's shown percent (rounded down) reaches the threshold (note 39). */
   | "summit";
 
@@ -157,6 +159,8 @@ export function met(g: GameState, a: AchievementDef): boolean {
       return g.fishing.kinds >= a.threshold;
     case "fishTotal":
       return g.fishing.total >= a.threshold;
+    case "elderfruitAll":
+      return g.elderfruit >= a.threshold;
     case "summit":
       return (
         (ringProgress(g).find((r) => r.id === "ring1")?.percent ?? 0) >=

@@ -14,7 +14,7 @@ import { ARTIFACTS } from "../core/artifacts";
 import { categoryOf } from "../core/artisan";
 import { MACHINES, machineById } from "../core/processing";
 import Phaser from "phaser";
-import { CROPS } from "../core/crops";
+import { ALL_CROPS } from "../core/crops";
 import { FORAGE } from "../core/forage";
 import { FRUIT_TREES, fruitTreeById, treeOfSapling } from "../core/fruittrees";
 import { seedId } from "../core/items";
@@ -1145,7 +1145,8 @@ export function iconKey(itemId: string): string | undefined {
   )
     return `icon-${base}`;
   if (base.endsWith("-seed")) return `icon-${base}`;
-  if (CROPS.some((c) => c.id === base)) return cropKey(base, CROP_STAGES - 1);
+  if (ALL_CROPS.some((c) => c.id === base))
+    return cropKey(base, CROP_STAGES - 1);
   if (FORAGE.some((f) => f.id === base)) return forageKey(base);
   return undefined;
 }
@@ -1161,7 +1162,7 @@ export function makeArt(
   paintSoil(scene, false);
   paintSoil(scene, true);
   paintUiFrame(scene);
-  for (const c of CROPS) {
+  for (const c of ALL_CROPS) {
     paintCrop(scene, c.id);
     paintSeedIcon(scene, c.id);
   }
