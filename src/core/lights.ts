@@ -62,7 +62,7 @@ export function placeLight(
     !mayPlaceOn(id, tag) ||
     !free ||
     occupied(x, y) ||
-    g.placed.get(lightMapKey(mapId), x, y)
+    g.placed.covering(lightMapKey(mapId), x, y)
   )
     return fail("cannot place here");
   g.inventory.remove(id);

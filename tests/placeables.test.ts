@@ -34,7 +34,9 @@ describe("placeables table", () => {
         3 +
         BOMBS.length +
         // The fish pond: a building, not an item (note 93).
-        1,
+        1 +
+        // The six farm decorations (note 89).
+        PLACEABLES.filter((p) => p.kind === "decor").length,
     );
   });
 

@@ -106,7 +106,8 @@ export function till(
     if (g.twigs.at(x, y)) return fail("a twig is in the way");
     if (g.machines.at(x, y)) return fail("a machine is in the way");
     if (g.chests.onFarm(x, y)) return fail("a chest is in the way");
-    if (g.placed.get(FARM_STORE, x, y)) return fail("a light is in the way");
+    if (g.placed.covering(FARM_STORE, x, y))
+      return fail("a light is in the way");
   }
   if (!soil.till(x, y)) return fail("already tilled");
   if (!soil.indoors && isRaining(g.weather)) soil.water(x, y);
@@ -635,7 +636,7 @@ export function plantTree(
     g.twigs.at(x, y) ||
     g.sprinklers.at(x, y) ||
     g.machines.at(x, y) ||
-    g.placed.get(FARM_STORE, x, y) ||
+    g.placed.covering(FARM_STORE, x, y) ||
     g.farm.plotAt(x, y) ||
     g.forage.itemAt(x, y)
   )
@@ -752,7 +753,7 @@ export function isClear(
     g.sprinklers.at(x, y) ||
     g.machines.at(x, y) ||
     g.chests.onFarm(x, y) ||
-    g.placed.get(FARM_STORE, x, y) ||
+    g.placed.covering(FARM_STORE, x, y) ||
     g.farm.plotAt(x, y) ||
     g.trees.at(x, y) ||
     g.fruitTrees.at(x, y) ||

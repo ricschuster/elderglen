@@ -1,5 +1,6 @@
 import { POT_ITEM } from "../core/pots";
 import { isBomb } from "../core/bombs";
+import { farmDecorIds, isFarmDecor } from "../core/farmdecor";
 import { isLight } from "../core/lights";
 import { LIGHTNING_ROD } from "../core/lightning";
 import { CHESTS, chestById } from "../core/chestdefs";
@@ -888,6 +889,8 @@ function paintFruitTrees(scene: Phaser.Scene): void {
 export const furnitureKey = (id: string) => `furniture-${id}`;
 export const chestKey = (id: string) => `chest-${id}`;
 export const lightKey = (id: string) => `light-${id}`;
+/** A farm decoration, drawn per covered tile (note 89). */
+export const farmDecorKey = (id: string) => `farmdecor-${id}`;
 /** The shellfish pot standing in the water, and the mark on one that holds a catch. */
 export const POT_KEY = "shellfish-pot";
 export const POT_READY_KEY = "shellfish-pot-ready";
@@ -953,6 +956,28 @@ function paintChests(scene: Phaser.Scene): void {
     px(c, body, x, 7, w, 7);
     px(c, lid, x, 4, w, 4);
     px(c, "#2a2a30", 7, 7, 2, 3);
+    t.refresh();
+  }
+}
+
+/** Farm decorations: one plain block per piece, in its colour. Placeholders (art waits for M3d). */
+function paintFarmDecor(scene: Phaser.Scene): void {
+  const colours: Record<string, [string, string]> = {
+    "ornamental-hay-bale": ["#d8b84a", "#b8942e"],
+    doghouse: ["#a8703a", "#6a4220"],
+    "dark-doghouse": ["#5a4a3a", "#2e2418"],
+    "cat-tree": ["#c8a878", "#8a6a44"],
+    "dark-cat-tree": ["#6a5a6a", "#3a2e3a"],
+    "bird-house": ["#9a7a4a", "#c8503c"],
+  };
+  for (const id of farmDecorIds()) {
+    const [body, trim] = colours[id] ?? ["#a08060", "#604830"];
+    const t = scene.textures.createCanvas(farmDecorKey(id), SIZE, SIZE)!;
+    const c = t.getContext();
+    px(c, "#00000033", 1, 14, 14, 1);
+    px(c, body, 1, 3, 14, 11);
+    px(c, trim, 1, 3, 14, 2);
+    px(c, "#ffffff33", 3, 6, 10, 2);
     t.refresh();
   }
 }
@@ -1150,6 +1175,7 @@ export function iconKey(itemId: string): string | undefined {
   if (furnitureById(base)) return furnitureKey(base);
   if (decorById(base)) return `decor-${base}`;
   if (chestById(base)) return chestKey(base);
+  if (isFarmDecor(base)) return farmDecorKey(base);
   if (isLight(base) || isBomb(base) || base === LIGHTNING_ROD)
     return lightKey(base);
   if (base === POT_ITEM) return POT_KEY;
@@ -1198,5 +1224,6 @@ export function makeArt(
   paintDecor(scene);
   paintChests(scene);
   paintLights(scene);
+  paintFarmDecor(scene);
   paintPot(scene);
 }

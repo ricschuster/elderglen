@@ -310,5 +310,59 @@
     "footprint": [5, 5],
     "blocksWalking": true,
     "pickUp": "none"
+  },
+  {
+    "id": "ornamental-hay-bale",
+    "kind": "decor",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand",
+    "price": 250
+  },
+  {
+    "id": "doghouse",
+    "kind": "decor",
+    "places": ["farm"],
+    "footprint": [2, 2],
+    "blocksWalking": true,
+    "pickUp": "hand",
+    "price": 10000
+  },
+  {
+    "id": "dark-doghouse",
+    "kind": "decor",
+    "places": ["farm"],
+    "footprint": [2, 2],
+    "blocksWalking": true,
+    "pickUp": "hand",
+    "price": 10000
+  },
+  {
+    "id": "cat-tree",
+    "kind": "decor",
+    "places": ["farm"],
+    "footprint": [2, 2],
+    "blocksWalking": true,
+    "pickUp": "hand",
+    "price": 10000
+  },
+  {
+    "id": "dark-cat-tree",
+    "kind": "decor",
+    "places": ["farm"],
+    "footprint": [2, 2],
+    "blocksWalking": true,
+    "pickUp": "hand",
+    "price": 10000
+  },
+  {
+    "id": "bird-house",
+    "kind": "decor",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand",
+    "price": 5000
   }
 ]

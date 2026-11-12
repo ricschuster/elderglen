@@ -200,6 +200,13 @@ import {
 import { baitById } from "../core/tackle";
 import { greencoatDue, takeCampGift } from "../core/camp";
 import {
+  decorTiles,
+  farmDecorAt,
+  isFarmDecor,
+  pickUpFarmDecor,
+  placeFarmDecor,
+} from "../core/farmdecor";
+import {
   DYE_POTS_SERVICE,
   SEWING_SERVICE,
   tailoringLine,
@@ -255,6 +262,7 @@ import {
   sprinklerKey,
   furnitureKey,
   chestKey,
+  farmDecorKey,
   lightKey,
   POT_KEY,
   POT_READY_KEY,
@@ -1080,7 +1088,7 @@ export class FarmScene extends Phaser.Scene {
       this.state.furniture.blocks(this.mapId, x, y) ||
       (this.mapId === CELLAR_MAP && this.state.casks.at(x, y)) ||
       !!this.state.chests.at(this.mapId, x, y) ||
-      !!lightAt(this.state, this.mapId, x, y) ||
+      !!this.state.placed.covering(lightMapKey(this.mapId), x, y) ||
       (isFarmMap(this.mapId) && !!rodAt(this.state, x, y)) ||
       this.map.serviceAt(x, y)?.kind === "camp-chest" ||
       !!this.store.sprinklers.at(x, y) ||
@@ -1973,6 +1981,21 @@ export class FarmScene extends Phaser.Scene {
       if (lit.ok) this.litBombs.push(lit.bomb);
       return this.report(lit.ok ? { ok: true } : lit);
     }
+    // A farm decoration is stood down from the pack and lifted by hand, like a light (note 89).
+    if (held.kind === "item" && isFarmDecor(held.id))
+      return this.report(
+        placeFarmDecor(
+          this.state,
+          this.map,
+          this.mapId,
+          front.x,
+          front.y,
+          held.id,
+          (x, y) => !!this.rocks()?.at(x, y),
+        ),
+      );
+    if (isFarmMap(this.mapId) && farmDecorAt(this.state, front.x, front.y))
+      return this.report(pickUpFarmDecor(this.state, front.x, front.y));
     // A light is stood down from the backpack, and any tool or the empty hand lifts one.
     if (held.kind === "item" && isLight(held.id))
       return this.report(
@@ -2704,8 +2727,12 @@ export class FarmScene extends Phaser.Scene {
       if (s.kind === "camp-chest") put(s.x, s.y, chestKey("big-chest"));
     for (const c of this.state.chests.each(this.mapId))
       put(c.x, c.y, chestKey(c.id));
-    for (const l of this.state.placed.each(lightMapKey(this.mapId)))
-      put(l.x, l.y, lightKey(l.id));
+    for (const l of this.state.placed.each(lightMapKey(this.mapId))) {
+      if (isFarmDecor(l.id))
+        for (const t of decorTiles(l.id, l.x, l.y))
+          put(t.x, t.y, farmDecorKey(l.id));
+      else put(l.x, l.y, lightKey(l.id));
+    }
     if (isFarmMap(this.mapId))
       for (const p of this.state.placed.each(lightMapKey(this.mapId)))
         if (p.id === LIGHTNING_ROD && p.state?.pack === true)

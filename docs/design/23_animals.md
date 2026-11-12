@@ -363,7 +363,7 @@ Stardew's; ours match them. Only the first rows exist now.
 | Golden Egg | 100,000g, after the completion tracker (#196) | No system. |
 | Cow Decal | 10,000g, a prize machine reward in Stardew | No prize machine. |
 
-**Not built: the decoration kind.** A farm decoration is a placeable with no behaviour: it
+**Built 2026-11-12 (note 89, `src/core/farmdecor.ts`): the decoration kind and the keeper rows. Earlier text: not built.** A farm decoration is a placeable with no behaviour: it
 stands on the farm, blocks walking and lifts by hand (note 89). It needs a seventh
 `PlaceableKind` and the same save list, render and lift code as a light. Design it in
 note 89 before building; until then the keeper sells none of these.

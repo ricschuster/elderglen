@@ -64,7 +64,7 @@ export function blocksGrowth(
         (!self && g.fruitTrees.at(tx, ty)) ||
         g.sprinklers.at(tx, ty) ||
         g.machines.at(tx, ty) ||
-        g.placed.get(FARM_STORE, tx, ty) ||
+        g.placed.covering(FARM_STORE, tx, ty) ||
         g.chests.onFarm(tx, ty) ||
         g.farm.plotAt(tx, ty)?.crop ||
         g.forage.itemAt(tx, ty)
@@ -226,7 +226,7 @@ export function sleep(
       !g.rocks.at(x, y) &&
       !g.sprinklers.at(x, y) &&
       !g.machines.at(x, y) &&
-      !g.placed.get(FARM_STORE, x, y) &&
+      !g.placed.covering(FARM_STORE, x, y) &&
       !g.chests.onFarm(x, y) &&
       !g.fruitTrees.at(x, y) &&
       g.ground.at(x, y).length === 0,
@@ -247,7 +247,7 @@ export function sleep(
         !g.twigs.at(x, y) &&
         !g.sprinklers.at(x, y) &&
         !g.machines.at(x, y) &&
-        !g.placed.get(FARM_STORE, x, y) &&
+        !g.placed.covering(FARM_STORE, x, y) &&
         !g.farm.plotAt(x, y)?.crop &&
         !g.forage.itemAt(x, y) &&
         g.ground.at(x, y).length === 0,
@@ -271,7 +271,7 @@ export function sleep(
         !g.trees.at(x, y) &&
         !g.sprinklers.at(x, y) &&
         !g.machines.at(x, y) &&
-        !g.placed.get(FARM_STORE, x, y) &&
+        !g.placed.covering(FARM_STORE, x, y) &&
         !g.chests.onFarm(x, y) &&
         !g.farm.plotAt(x, y) &&
         !g.forage.itemAt(x, y) &&
@@ -298,7 +298,7 @@ export function sleep(
         !g.weeds.at(s.x, s.y) &&
         !g.sprinklers.at(s.x, s.y) &&
         !g.machines.at(s.x, s.y) &&
-        !g.placed.get(FARM_STORE, s.x, s.y) &&
+        !g.placed.covering(FARM_STORE, s.x, s.y) &&
         !g.chests.onFarm(s.x, s.y),
     ),
     random,

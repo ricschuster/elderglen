@@ -317,6 +317,16 @@ for (const [id, name] of [
   ["iron-lamp-post", "Iron lamp-post"],
 ] as const)
   items.set(id, { id, name, sellPrice: 0, keep: true });
+/** Farm decoration (note 89, the seventh placeable kind): carried, stood on the farm, kept. Sold by the keeper (`farmdecor.ts`). */
+for (const [id, name] of [
+  ["ornamental-hay-bale", "Ornamental hay bale"],
+  ["doghouse", "Doghouse"],
+  ["dark-doghouse", "Dark doghouse"],
+  ["cat-tree", "Cat tree"],
+  ["dark-cat-tree", "Dark cat tree"],
+  ["bird-house", "Bird house"],
+] as const)
+  items.set(id, { id, name, sellPrice: 0, keep: true });
 /** Bombs (note 89): bought at the Forge, lit on a tile, used up. Prices from `bombs.json`. */
 for (const b of bombData)
   items.set(b.id, {
@@ -467,6 +477,12 @@ const GROUPS: [string, string[]][] = [
       "campfire",
       "wood-brazier",
       "stone-brazier",
+      "ornamental-hay-bale",
+      "doghouse",
+      "dark-doghouse",
+      "cat-tree",
+      "dark-cat-tree",
+      "bird-house",
       ...bombData.map((b) => b.id),
       LIFE_ELIXIR,
       MINERS_TREAT,
