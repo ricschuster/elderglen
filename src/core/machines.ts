@@ -219,9 +219,21 @@ export function collectMachine(g: GameState, x: number, y: number): Outcome {
     return fail("backpack full");
   const { output, count } = m.job;
   g.inventory.add(output, count);
-  m.job = machineById(m.id)?.auto
+  const def = machineById(m.id);
+  const again =
+    def?.repeats && m.job.input
+      ? processFor(m.id, m.job.input.item)
+      : undefined;
+  m.job = def?.auto
     ? { output, count: 1, doneAt: machineMinutes(g) + BEE_MINUTES }
-    : undefined;
+    : again
+      ? {
+          output,
+          count: 1,
+          doneAt: machineMinutes(g) + again.minutes,
+          input: m.job.input,
+        }
+      : undefined;
   return { ok: true, item: output };
 }
 

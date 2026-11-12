@@ -767,5 +767,36 @@
         "level": 9
       }
     ]
+  },
+  {
+    "id": "crystalarium",
+    "ingredients": [
+      {
+        "item": "stone",
+        "count": 99
+      },
+      {
+        "item": "gold-bar",
+        "count": 5
+      },
+      {
+        "item": "hearthsilver-bar",
+        "count": 2
+      },
+      {
+        "item": "battery-pack",
+        "count": 1
+      }
+    ],
+    "result": {
+      "item": "crystalarium",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "bundle",
+        "bundle": "harvest-feast"
+      }
+    ]
   }
 ]

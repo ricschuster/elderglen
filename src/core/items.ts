@@ -348,7 +348,7 @@ items.set(WARP_TOTEM_BEACH, {
 });
 /**
  * Last Seat and Fodder rewards whose systems are not built (note 63, issue #603): the coop heater
- * (no winter mood rule yet), the Crystalarium (no gem machine yet) and Old Greencoat's letter to
+ * (no winter mood rule yet) and Old Greencoat's letter to
  * the elves (a story item). Kept and do nothing yet, like the Beach warp totem.
  */
 export const COOP_HEATER = "coop-heater";
@@ -363,11 +363,12 @@ items.set(COOP_HEATER, {
   buyPrice: HEATER_PRICE,
   keep: true,
 });
-for (const [id, name] of [
-  [CRYSTALARIUM, "Crystalarium"],
-  [ELF_LETTER, "Letter to the elves"],
-] as const)
-  items.set(id, { id, name, sellPrice: 0, keep: true });
+items.set(ELF_LETTER, {
+  id: ELF_LETTER,
+  name: "Letter to the elves",
+  sellPrice: 0,
+  keep: true,
+});
 /** The shellfish pot is bought and kept (note 21). Its catches and junk sell as set in `pots.json`. */
 items.set(POT_ITEM, {
   id: POT_ITEM,
@@ -471,10 +472,7 @@ const GROUPS: [string, string[]][] = [
       { id: POT_ITEM },
     ].map((f) => f.id),
   ],
-  [
-    "Keepsakes",
-    [HOMEWARD_PIN, WARP_TOTEM_BEACH, COOP_HEATER, CRYSTALARIUM, ELF_LETTER],
-  ],
+  ["Keepsakes", [HOMEWARD_PIN, WARP_TOTEM_BEACH, COOP_HEATER, ELF_LETTER]],
   ["Rings", RINGS.map((r) => r.id)],
   ["Boots", BOOTS.map((b) => b.id)],
   ["Wood and fibre", ["wood", "hardwood", "sap", "fiber", "clay", "hay"]],

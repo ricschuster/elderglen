@@ -704,6 +704,11 @@ function paintTrees(scene: Phaser.Scene): void {
         px(c, "#6a8a7a", 4, 3, 8, 3);
         px(c, "#2a3a32", 6, 8, 4, 4);
         px(c, "#d8d8c0", 7, 9, 2, 2);
+      } else if (m.id === "crystalarium") {
+        px(c, "#5a5a72", 3, 9, 10, 5);
+        px(c, "#9ac8e8", 4, 2, 8, 8);
+        px(c, "#d8f0ff", 6, 3, 2, 4);
+        px(c, "#3a3a4a", 4, 10, 8, 1);
       } else if (m.id === "furnace") {
         px(c, "#3a3a42", 3, 4, 10, 10);
         px(c, "#5a5a64", 4, 2, 8, 3);
