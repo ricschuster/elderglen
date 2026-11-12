@@ -122,7 +122,8 @@ export function mine(
   )
     g.inventory.add(geodeKindForFloor(floor));
   const ladder =
-    floor !== undefined && g.mines.rockBroken(floor, day, x, y, random);
+    floor !== undefined &&
+    g.mines.rockBroken(floor, day, x, y, random, g.combat.noCreatures);
   const level = g.skills.gain("mining", ROCK_XP[rock.kind]);
   return {
     ok: true,

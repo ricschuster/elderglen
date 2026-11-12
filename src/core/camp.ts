@@ -1,5 +1,5 @@
 import type { Outcome } from "./actions";
-import { campGift, MINES_OPEN_DAY } from "./mines";
+import { campItem, MINES_OPEN_DAY } from "./mines";
 import type { GameState } from "./save";
 
 /**
@@ -27,20 +27,14 @@ export function hearGreencoat(g: GameState): void {
 const fail = (reason: string): Outcome => ({ ok: false, reason });
 
 /**
- * Take the day's gift from a camp chest. It refills each morning and holds a
- * few things to take, nothing can be put in (note 22). All or nothing, so a
- * full backpack leaves it for later.
+ * Open a camp chest. The first open gives its one fixed item (`campItem`), after
+ * that it is empty (owner, 2026-11-11, note 22). Floor 30 holds nothing. A full
+ * backpack leaves the item for later.
  */
 export function takeCampGift(g: GameState, floor = 10): Outcome {
-  const day = g.day.clock.day;
-  if (g.mines.campTakenOn(floor) === day) return fail("camp chest empty");
-  const before = g.inventory.save();
-  const gift = campGift(day, floor);
-  for (const s of gift)
-    if (!g.inventory.add(s.id, s.count)) {
-      g.inventory.load(before);
-      return fail("backpack full");
-    }
-  g.mines.takeCamp(floor, day);
-  return { ok: true, item: gift[0]?.id };
+  const item = campItem(floor);
+  if (!item || g.mines.campOpenedOn(floor)) return fail("camp chest empty");
+  if (!g.inventory.add(item, 1)) return fail("backpack full");
+  g.mines.openCamp(floor);
+  return { ok: true, item };
 }

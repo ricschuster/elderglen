@@ -1823,7 +1823,11 @@ export class FarmScene extends Phaser.Scene {
       this.mapId,
       t.x,
       t.y,
-      { day, weather: this.state.weather },
+      {
+        day,
+        weather: this.state.weather,
+        minute: this.state.day.clock.minutes,
+      },
       declinedToday(day),
     );
     if (event) this.open("heart-event", { id: event.id, warn: true });
