@@ -1,7 +1,7 @@
 import { dateOf } from "./calendar";
 import { festivalDayToday } from "./festivals";
 import { loadHorse, newHorse, saveHorse, type Horse } from "./horse";
-import { COOP_HEATER, HARDWOOD, itemById } from "./items";
+import { COOP_HEATER, HARDWOOD, HEATER_PRICE, itemById } from "./items";
 import {
   animalQuality,
   splitQuality,
@@ -713,6 +713,30 @@ export function placeHeater(g: GameState, b: Building): boolean {
   if (b === "coop") g.animals.heaters.coop = true;
   else g.animals.heaters.barn = true;
   return true;
+}
+
+/** Take the heater up into the pack, by hand, as a sprinkler is (note 89). It stays if the pack is full. */
+export function pickUpHeater(g: GameState, b: Building): boolean {
+  if (
+    b === "stable" ||
+    !hasHeater(g.animals, b) ||
+    g.inventory.room(COOP_HEATER) < 1
+  )
+    return false;
+  if (b === "coop") g.animals.heaters.coop = false;
+  else g.animals.heaters.barn = false;
+  g.inventory.add(COOP_HEATER, 1);
+  return true;
+}
+
+/** Buy a heater at the farmstead counter, for gold into the pack. Returns an error line, or undefined when bought. */
+export function buyHeater(g: GameState): string | undefined {
+  if (g.money < HEATER_PRICE) return "You cannot afford a heater.";
+  if (!g.animals.coopBuilt && !g.animals.barnBuilt)
+    return "You have no coop or barn to heat.";
+  if (!g.inventory.add(COOP_HEATER, 1)) return "Your pack is full.";
+  g.money -= HEATER_PRICE;
+  return undefined;
 }
 
 /** The animals that live in a building, in the order they were bought. */

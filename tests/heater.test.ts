@@ -5,15 +5,18 @@ import {
   buyChick,
   endDay,
   feedAll,
+  buyHeater,
   hasHeater,
   heaterProblem,
   loadAnimals,
   pet,
+  pickUpHeater,
   placeHeater,
   addHay as putInSilo,
   saveAnimals,
 } from "../src/core/animals";
-import { COOP_HEATER } from "../src/core/items";
+import { COOP_HEATER, HEATER_PRICE } from "../src/core/items";
+import { placeableById } from "../src/core/placeables";
 import { newGame } from "../src/core/save";
 
 function chickGame(day: number) {
@@ -77,5 +80,40 @@ describe("coop and barn heater", () => {
     );
     expect(back.heaters).toEqual({ coop: true, barn: false });
     expect(loadAnimals({}).heaters).toEqual({ coop: false, barn: false });
+  });
+});
+
+describe("heater as a placeable", () => {
+  it("is a hand-lifted floor item with no tile places", () => {
+    const row = placeableById(COOP_HEATER);
+    expect(row).toMatchObject({
+      kind: "heater",
+      blocksWalking: false,
+      pickUp: "hand",
+    });
+    expect(row?.places).toEqual([]);
+  });
+
+  it("lifts back into the pack, and stays if the pack is full", () => {
+    const { g } = chickGame(85);
+    expect(pickUpHeater(g, "coop")).toBe(false);
+    g.inventory.add(COOP_HEATER, 1);
+    placeHeater(g, "coop");
+    expect(pickUpHeater(g, "coop")).toBe(true);
+    expect(hasHeater(g.animals, "coop")).toBe(false);
+    expect(g.inventory.count(COOP_HEATER)).toBe(1);
+    expect(pickUpHeater(g, "stable")).toBe(false);
+  });
+
+  it("is sold for 1,000g at the farmstead, to someone with a coop or barn", () => {
+    const g = newGame();
+    g.money = 5000;
+    expect(buyHeater(g)).toMatch(/coop or barn/);
+    g.animals.barnBuilt = true;
+    expect(buyHeater(g)).toBeUndefined();
+    expect(g.money).toBe(5000 - HEATER_PRICE);
+    expect(g.inventory.count(COOP_HEATER)).toBe(1);
+    g.money = 10;
+    expect(buyHeater(g)).toMatch(/afford/);
   });
 });

@@ -238,5 +238,13 @@
       "radius": 6,
       "onlyAtNight": false
     }
+  },
+  {
+    "id": "coop-heater",
+    "kind": "heater",
+    "places": [],
+    "footprint": [1, 1],
+    "blocksWalking": false,
+    "pickUp": "hand"
   }
 ]

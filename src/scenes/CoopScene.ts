@@ -6,6 +6,7 @@ import {
   INCUBATOR_TIER,
   hasHeater,
   heaterProblem,
+  pickUpHeater,
   placeHeater,
   animalsIn,
   bringIn,
@@ -125,7 +126,12 @@ export class CoopScene extends Phaser.Scene {
         detail: hasHeater(a, this.building)
           ? "Placed. The animals keep warm in winter"
           : `Winter nights wear their mood down without one (you carry ${this.state.inventory.count(COOP_HEATER)})`,
-        buttons: [{ text: "Place", run: () => this.heater() }],
+        buttons: [
+          {
+            text: hasHeater(a, this.building) ? "Take up" : "Place",
+            run: () => this.heater(),
+          },
+        ],
       });
     for (const an of animalsIn(this.state, this.building)) {
       const what = itemById(an.item ?? SPECIES[an.species].item)?.name;
@@ -201,7 +207,13 @@ export class CoopScene extends Phaser.Scene {
 
   private heater(): void {
     const b = this.building;
-    if (placeHeater(this.state, b))
+    if (hasHeater(this.state.animals, b))
+      this.message.setText(
+        pickUpHeater(this.state, b)
+          ? "You take the heater up."
+          : "Your pack is full.",
+      );
+    else if (placeHeater(this.state, b))
       this.message.setText(
         "The heater is in. It will keep them warm in winter.",
       );
