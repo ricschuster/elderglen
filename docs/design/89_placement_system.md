@@ -201,9 +201,21 @@ Settled 2026-11-12: heater from the ranch shop, no torches indoors, no bomb expe
 - Lightning rod rules and battery packs (`src/core/lightning.ts`), with no placing
   and no clock wiring.
 - The `coop-heater` item, kept and doing nothing, and the winter mood rule.
-- Not built: lights as placeables, lamp-posts, bombs, the generic store.
+- Not built: lamp-posts, the rod placing, the heater, bombs.
 - Step 1A (2026-11-12): `src/content/placeables.json` has a row for every sprinkler,
   machine and chest, and `src/core/placeables.ts` answers "may this id stand on this kind
   of place?" (`placeTag`, `mayPlaceOn`). `placeSprinkler`, `placeMachine` and `placeChest`
   call it, with no behaviour change. Their storage is still separate; step 1B (one stored
   list per map and the save migration) is next.
+- Step 1B (2026-11-12, #889 and #890): `src/core/placedstore.ts` keeps one list per map
+  and the save writes a single `placed` list for sprinklers, machines and chests, with the
+  three older lists still read. The typed holders stay in memory; kinds with no holder of
+  their own (lights, and later the rod, heater) live in `g.placed`.
+- Step 2 (2026-11-12): torch, campfire and the two braziers. `src/core/lights.ts`
+  (`placeLight`, `pickUpLight`, `lightLayer`, `isLit`), place tags `mine`, `camp` and `wild`
+  in `placeTag`, items, recipes (note 07), placeholder art, and `FarmScene` places, lifts
+  and draws the glow rings (a warm ring drawn over the night overlay, shown at dusk
+  outdoors and always in the mines). The worn ring joins the same layer. Lights on a mine
+  floor are not saved and the night clears them, since the floor is rebuilt each day.
+  Left: a real light cut-out in the night overlay, camp supplies and the torch as a Forge
+  stock item, and the rest of the build order (steps 3 to 7).

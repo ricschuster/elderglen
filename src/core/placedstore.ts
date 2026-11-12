@@ -3,6 +3,7 @@ import { FARM_STORE, GREENHOUSE_STORE } from "./mapstore";
 import type { GameState } from "./save";
 import { isFarmMap } from "./farmtypes";
 import { placeableById } from "./placeables";
+import { mineFloorOf } from "./mines";
 
 /**
  * The generic placed list (`docs/design/89_placement_system.md`, "Saving"):
@@ -120,6 +121,10 @@ function copy(p: PlacedItem): PlacedItem {
 export function collectPlaced(g: GameState): PlacedStore {
   const home = homeWorld(g);
   const out = new PlacedStore();
+  // Placeables with no typed list live in the store. Mine floors are rebuilt daily, so theirs are not kept.
+  for (const map of g.placed.mapIds())
+    if (mineFloorOf(map) === undefined)
+      for (const p of g.placed.each(map)) out.add(map, p);
   for (const s of home.sprinklers.each()) out.add(FARM_STORE, s);
   for (const s of g.greenhouseSprinklers.each()) out.add(GREENHOUSE_STORE, s);
   for (const m of home.machines.each())
@@ -189,3 +194,19 @@ export function splitPlaced(raw: unknown): LegacyLists {
 }
 
 const rowOf = (p: PlacedItem) => ({ x: p.x, y: p.y, id: p.id });
+
+/** Kinds that have a typed list of their own and so are read by `splitPlaced`. */
+const TYPED = new Set(["sprinkler", "machine", "chest"]);
+
+/** The load read for everything else: the rows of a saved `placed` that the store holds itself. */
+export function nativePlaced(raw: unknown): PlacedStore {
+  const all = new PlacedStore();
+  all.load(raw);
+  const out = new PlacedStore();
+  for (const map of all.mapIds())
+    for (const p of all.each(map)) {
+      const kind = placeableById(p.id)?.kind;
+      if (kind !== undefined && !TYPED.has(kind)) out.add(map, p);
+    }
+  return out;
+}

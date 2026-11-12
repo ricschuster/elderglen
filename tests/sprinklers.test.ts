@@ -138,7 +138,12 @@ describe("crafting", () => {
 
   it("offers the sprinkler at farming level 2 only", () => {
     const g = newGame();
-    expect(knownRecipes(g).map((r) => r.id)).toEqual(["chest", "stone-chest"]);
+    expect(knownRecipes(g).map((r) => r.id)).toEqual([
+      "chest",
+      "stone-chest",
+      "torch",
+      "campfire",
+    ]);
     level(g, 2);
     expect(knownRecipes(g).map((r) => r.id)).toEqual([
       "sprinkler",
@@ -146,6 +151,8 @@ describe("crafting", () => {
       "chest",
       "stone-chest",
       "mayonnaise-machine",
+      "torch",
+      "campfire",
     ]);
   });
 

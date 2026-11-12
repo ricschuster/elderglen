@@ -273,8 +273,8 @@ describe("machine recipes and bundles", () => {
   it("unlock by skill level", () => {
     const g = newGame();
     const names = () => knownRecipes(g).map((r) => r.id);
-    // The two start chests are known from the first day.
-    expect(names()).toEqual(["chest", "stone-chest"]);
+    // The two start chests and the torch and campfire are known from the first day.
+    expect(names()).toEqual(["chest", "stone-chest", "torch", "campfire"]);
     level(g, "farming", 4);
     expect(names()).toContain("preserves-jar");
     expect(names()).toContain("bee-house");

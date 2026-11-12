@@ -77,8 +77,9 @@ Node 22 and npm. Gates run in CI and a non-zero exit blocks a merge.
   to be up to date with `main`, so every merge makes other open pull requests
   stale. Before opening a pull request, run `git fetch` and `gh pr list --state
   open`. If one is still open, wait for it to merge, or tell the owner. Then
-  branch from the fresh `origin/main`. Open the session handoff pull request
-  last. If a branch is already behind, merge `main` into it (no force-push).
+  branch from the fresh `origin/main`. Put the session handoff in the
+  last pull request of the session, not in one of its own. If a branch is already
+  behind, merge `main` into it (no force-push).
 - After opening a pull request, enable auto-merge with squash
   (`gh pr merge --auto --squash <number>`) without being asked.
 - Conventional Commits (for example `feat: ...`, `fix: ...`, `chore: ...`,

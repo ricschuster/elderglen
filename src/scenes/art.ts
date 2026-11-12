@@ -1,4 +1,5 @@
 import { POT_ITEM } from "../core/pots";
+import { isLight } from "../core/lights";
 import { CHESTS, chestById } from "../core/chestdefs";
 import { MAHOGANY_SEED } from "../core/mahogany";
 import { DECOR, decorById } from "../core/decor";
@@ -856,6 +857,7 @@ function paintFruitTrees(scene: Phaser.Scene): void {
 
 export const furnitureKey = (id: string) => `furniture-${id}`;
 export const chestKey = (id: string) => `chest-${id}`;
+export const lightKey = (id: string) => `light-${id}`;
 /** The shellfish pot standing in the water, and the mark on one that holds a catch. */
 export const POT_KEY = "shellfish-pot";
 export const POT_READY_KEY = "shellfish-pot-ready";
@@ -923,6 +925,38 @@ function paintChests(scene: Phaser.Scene): void {
     px(c, "#2a2a30", 7, 7, 2, 3);
     t.refresh();
   }
+}
+
+/** Torch, campfire and the two braziers. Placeholders: the glow itself is drawn by the scene. */
+function paintLights(scene: Phaser.Scene): void {
+  const draw = (id: string, paint: (c: Ctx) => void) => {
+    const t = scene.textures.createCanvas(lightKey(id), SIZE, SIZE)!;
+    paint(t.getContext());
+    t.refresh();
+  };
+  const flame = (c: Ctx, x: number, y: number) => {
+    px(c, "#e8641e", x, y + 1, 3, 3);
+    px(c, "#ffd24a", x + 1, y, 1, 3);
+  };
+  draw("torch", (c) => {
+    px(c, "#00000033", 6, 14, 4, 1);
+    px(c, "#6a4a26", 7, 6, 2, 8);
+    flame(c, 7, 2);
+  });
+  draw("campfire", (c) => {
+    px(c, "#00000033", 2, 14, 12, 1);
+    px(c, "#8a8a90", 2, 11, 12, 3);
+    px(c, "#5a3e22", 3, 10, 10, 2);
+    flame(c, 7, 5);
+    flame(c, 5, 7);
+  });
+  for (const stone of [false, true])
+    draw(stone ? "stone-brazier" : "wood-brazier", (c) => {
+      px(c, "#00000033", 3, 14, 10, 1);
+      px(c, stone ? "#8a8a90" : "#8a5a2a", 4, 9, 8, 5);
+      px(c, stone ? "#b4b4ba" : "#b4803c", 3, 8, 10, 2);
+      flame(c, 7, 4);
+    });
 }
 
 function paintMineArt(scene: Phaser.Scene): void {
@@ -1032,6 +1066,7 @@ export function iconKey(itemId: string): string | undefined {
   if (furnitureById(base)) return furnitureKey(base);
   if (decorById(base)) return `decor-${base}`;
   if (chestById(base)) return chestKey(base);
+  if (isLight(base)) return lightKey(base);
   if (base === POT_ITEM) return POT_KEY;
   const sapling = treeOfSapling(base);
   if (sapling) return saplingIconKey(sapling.id);
@@ -1075,5 +1110,6 @@ export function makeArt(
   paintFurniture(scene);
   paintDecor(scene);
   paintChests(scene);
+  paintLights(scene);
   paintPot(scene);
 }

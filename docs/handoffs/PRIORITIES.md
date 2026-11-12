@@ -32,7 +32,7 @@ ending, M3d polish, then M5 and M6. Map areas (notes 71 to 78) are M3b.
 
 M3b is not done: bundles 1 to 26 cannot all be filled. Open issues are in the M3b
 milestone (#869 to #880, #396). Designed 2026-11-12 (notes 88 and 89), ready to build:
-placement for rod, lamps, heater and bombs (#877, note 89 build order; step 1A built, 1B next), goods hand-in
+placement for rod, lamps, heater and bombs (#877, note 89 build order; steps 1A, 1B and 2 (lights) built, 3 (the rod) next), goods hand-in
 (#875, a container in the named place), elderfruit (#874, eight sources, note 39), Last
 Seat gate (#869, every other bundle). Decided 2026-11-12: Guests' Board +500 friendship, up to five heart events a person. Still design first: heart event list (#873), flowers,
 gem nodes and artifact spots (note 69). Carts and herb stall need notes (#871). File the
