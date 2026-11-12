@@ -48,7 +48,7 @@ describe("gate rules", () => {
     expect(line).toContain("Tilda");
     expect(line).toContain("Rufus");
     expect(line).toContain("2 hearts");
-    expect(line).not.toContain("—");
+    expect(line).not.toContain("\u2014");
   });
 
   it("every gate on every map has a known owner and valid villagers", () => {
