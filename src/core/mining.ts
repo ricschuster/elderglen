@@ -1,5 +1,6 @@
 import type { Outcome } from "./actions";
 import { noteGathered } from "./quests";
+import { gemDrop, gemShare, gemXp } from "./gems";
 import { GEODE_SHARE, geodeDrop, geodeKindForFloor } from "./geodes";
 import {
   COAL,
@@ -25,6 +26,8 @@ export const ROCK_XP: Record<RockKind, number> = {
   coal: 4,
   quartz: 3,
   geode: 4,
+  /** Gem nodes give by the gem dropped (`gemXp`); this is the floor. */
+  gem: 8,
   iron: 7,
   gold: 10,
   hearthsilver: 14,
@@ -60,6 +63,7 @@ export function drops(
     return { id: STONE, count: random() < 0.5 ? 1 : 2 };
   }
   if (kind === "geode") return { id: geodeDrop(floor, random), count: 1 };
+  if (kind === "gem") return { id: gemDrop(floor, random), count: 1 };
   if (kind === "quartz") return { id: QUARTZ, count: 1 };
   if (kind === "coal") return { id: COAL, count: 1 + (random() < 0.3 ? 1 : 0) };
   if (kind === "hearthsilver") {
@@ -131,10 +135,21 @@ export function mine(
     random() < GEODE_SHARE
   )
     g.inventory.add(geodeKindForFloor(floor));
+  // And a gem as often as gem nodes turn up on that floor.
+  if (
+    floor !== undefined &&
+    rock.kind === "stone" &&
+    g.skills.has("rockhound") &&
+    random() < gemShare(floor)
+  )
+    g.inventory.add(gemDrop(floor, random));
   const ladder =
     floor !== undefined &&
     g.mines.rockBroken(floor, day, x, y, random, g.combat.noCreatures);
-  const level = g.skills.gain("mining", ROCK_XP[rock.kind]);
+  const level = g.skills.gain(
+    "mining",
+    rock.kind === "gem" ? gemXp(drop.id) : ROCK_XP[rock.kind],
+  );
   return {
     ok: true,
     item: drop.id,
