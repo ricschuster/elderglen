@@ -21,21 +21,24 @@ to five heart events a person.
 
 Tier 1, needed to fill the bundles:
 
-1. **#877 placement, steps 3 to 7** (note 89). Built: 1A, 1B, 2 (lights). Next: 3 rod
-   (storm clock, flash, pack), 4 lamp-posts, 5 heater, 6 bombs, 7 Forge items. Build.
-2. **#869 bundles 20, 24, 26** and the gate rule. Items: lamp, candle, wax; festival
-   treats and hat set; seed packet, bead, ribbon, pressed flower, green-glass lantern.
-   Notes 16 and 63. Settle the item lists, then build.
+1. **#877 placement, steps 4 to 7** (note 89). Built: 1A, 1B, 2 lights, 3 rod (#893).
+   Next: 4 lamp-posts, 5 heater, 6 bombs, 7 Forge items. Build.
+2. **#869 bundles 20, 24, 26** and the gate rule. Designed (note 63): wax from the bee
+   house, candle recipe and artifact spots to number, hats choose 3 of 5 (Harvest Crown,
+   Snow Cap, Holly Hat, new spring and summer hats), bread, honey cake, herb tea as
+   starter recipes. Needs artifact spots (#879). Build the rest.
 3. **#874 elderfruit**: eight sources and the eat effect (note 39). Build.
-4. **#875 goods hand-in** to a named place (three special orders, note 65). Design, build.
-5. **#870 Crystalarium**: settle the numbers (note 24), build the machine.
-6. **#871 room rewards that do nothing**: Guests' Board data fix, Hearth carts and herb
-   stall (design first).
+4. **#875 goods hand-in**: designed (note 65), a drop chest bound to the order. Scope is
+   Spring Leeks, Barrel Batch, Pantry Stock, Crystal Gift. Build.
+5. **#870 Crystalarium**: designed (note 24), Stardew's times by gem value, craftable with
+   Hearthsilver. Build.
+6. **#871 room rewards**: designed (note 16), free four-stop carts and a weekly herb
+   stall. Build with the Guests' Board data fix and `bundleBonus()` wiring.
 
 Tier 2, thin or placeholder content:
 
 - **7. #872 gift tastes**, 22 of 30 people plus the default list (notes 61, 20).
-- **8. #873 heart event list**: design the list per person and rewards, then build.
+- **8. #873 heart events**: scale and rewards designed (note 62: 2 and 6 hearts for all 30, fixed reward pattern). Needs #872, then the list per person, then scenes as data.
 - **9. #878 Secret Woods statue and pond fish** (check the fish table first).
 
 Tier 3, design first, one issue per system when taken:

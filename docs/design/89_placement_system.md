@@ -104,8 +104,10 @@ collection.
   rod to take it, so the pack is a visible reward and not mail. If the pack waits a
   second storm day the rod still makes only the one.
 - A strike never harms the farm. With no rod it only flashes (note 34).
-- Wiring left: the storm clock calls `rollStrikes` every 10 game minutes, and the scene
-  flashes the rod that was hit.
+- Built (step 3): the storm clock calls `rollStrikes` every 10 game minutes in the
+  scene tick, a strike flashes the screen and a hit rod, and the morning leaves the pack
+  on the rod (`chargeRods`, a mark over the rod) until Action takes it (`takePack`).
+  Lifting a rod with a pack waiting gives both.
 
 ## The heater
 
@@ -198,10 +200,9 @@ Settled 2026-11-12: heater from the ranch shop, no torches indoors, no bomb expe
 
 - Sprinkler placing and lifting, farm and greenhouse (`placeSprinkler`, `pickUpSprinkler`).
 - Machines (`placeMachine`) and chests (`placeChest`, `pickUpChest`).
-- Lightning rod rules and battery packs (`src/core/lightning.ts`), with no placing
-  and no clock wiring.
+- Lightning rod rules, battery packs and placing (`src/core/lightning.ts`).
 - The `coop-heater` item, kept and doing nothing, and the winter mood rule.
-- Not built: lamp-posts, the rod placing, the heater, bombs.
+- Not built: lamp-posts, the heater, bombs.
 - Step 1A (2026-11-12): `src/content/placeables.json` has a row for every sprinkler,
   machine and chest, and `src/core/placeables.ts` answers "may this id stand on this kind
   of place?" (`placeTag`, `mayPlaceOn`). `placeSprinkler`, `placeMachine` and `placeChest`
@@ -219,3 +220,8 @@ Settled 2026-11-12: heater from the ranch shop, no torches indoors, no bomb expe
   floor are not saved and the night clears them, since the floor is rebuilt each day.
   Left: a real light cut-out in the night overlay, camp supplies and the torch as a Forge
   stock item, and the rest of the build order (steps 3 to 7).
+- Step 3 (2026-11-12): the lightning rod. The old `g.rods` list moved into the store: a
+  rod is a `lightning-rod` row under the farm with `state { hit, pack }`, saved in
+  `placed`. An older save's `rods` list is read into the store on load (a struck rod keeps
+  its strike). `placeRod`, `pickUpRod`, `takePack`, `chargeRods`; recipe from note 34 (iron
+  bar, quartz crystal, 5 bat wing, Foraging 6); placeholder art beside the lights.

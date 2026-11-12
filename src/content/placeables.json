@@ -206,5 +206,13 @@
       "radius": 4,
       "onlyAtNight": false
     }
+  },
+  {
+    "id": "lightning-rod",
+    "kind": "rod",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
   }
 ]

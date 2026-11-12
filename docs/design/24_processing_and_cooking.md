@@ -270,11 +270,15 @@ Settled where the notes left gaps. All numbers are placeholders (note 07).
 
 ## Open
 
-- **Crystalarium numbers.** It copies gems and minerals only. Its timer must be
-  long enough that a diamond-style copy loop does not break the economy, since
-  gems sell and feed the lamp trade (`22_mines.md`). Craft cost, and whether
-  more can be crafted, are placeholders. Stardew's crystalarium recipe source
-  is unchecked here. The rest of the reward pass is in `16_bundles.md`.
+- **Crystalarium (owner answers 2026-11-12, #870).** It copies gems and minerals only.
+  The copy time follows Stardew's table by value (saved Crystalarium page: quartz 7
+  hours, topaz 18 h 40 min, amethyst 22 h 40 min, emerald and ruby 2 days 2 h, jade
+  1 day 16 h, diamond 5 days, minerals 3 days 11 hours), about 100 to 150g a day a
+  machine, rescaled to our day length when built. Bundle 27 gives the first machine
+  and its recipe, and more can be crafted: 99 stone, 5 gold bars, 2 Hearthsilver bars
+  (in place of Stardew's iridium) and 1 battery pack (the lightning rod makes them).
+  Costs are placeholders for note 07. Pulling the machine with a tool returns the
+  gem inside (Stardew). The rest of the reward pass is in `16_bundles.md`.
 - Our own items to stand in for Stardew's special craft ingredients.
 - Machine times and sell prices are set for the jar, keg and bee house in
   `07_tuning_numbers.md` (2026-10-31, Stardew's). The charcoal kiln (30 min) and

@@ -117,7 +117,7 @@ Lightning Rod pages where marked, otherwise ours and unchecked):
   Built (#522, weather only): `stormy` is a weather, 25 percent of rain days outside
   winter (`STORM_SHARE`), summer days 13 and 26 always (`FIXED_STORM_DAYS`),
   festival days and day 1 still sunny. It waters like rain, the bed forecast and
-  morning report name it. No strikes, rods or packs yet.
+  morning report name it. Strikes, rods and packs were built in placement step 3 (note 89).
 
 ## Foraging
 
@@ -960,5 +960,7 @@ Source: `src/core/quests.ts`, `src/content/requests.json`.
 - Forge: Life Elixir 2,000g (health to full), Miner's Treat 1,000g (100 energy), Oil of
   Garlic 3,000g (monsters below a tier ignore you for the day).
 - Lightning rod: a strike yields a battery pack, 500g.
+- Lightning rod recipe (note 34, built 2026-11-12): 1 iron bar, 1 quartz crystal, 5 bat wing at
+  Foraging 6. The pack waits on the rod until Action takes it; no new numbers.
 - Pond fish, the Fernscale: base price 750g, a hard bar (note 21).
 - Elderfruit: +34 maximum energy, eight sources (note 39).

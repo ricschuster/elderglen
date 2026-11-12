@@ -257,7 +257,7 @@ export const WARP_TOTEM_BEACH = "warp-totem-beach";
 /** Camp chest items (note 22): the floor 100 elderfruit (note 39) and the floor 120 key to the ring 2 deep dig. Kept, they do nothing yet. */
 export const ELDERFRUIT = "elderfruit";
 export const DEEPMARK_KEY = "deepmark-key";
-/** The battery pack (a struck lightning rod makes one, note 34) and the rod itself. Placing a rod is not wired yet, so both are kept. */
+/** The battery pack (a struck lightning rod makes one, note 34) and the rod itself, which is stood on the farm (note 89) and so is kept. */
 items.set("battery-pack", {
   id: "battery-pack",
   name: "Battery pack",

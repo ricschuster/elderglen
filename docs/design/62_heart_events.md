@@ -141,4 +141,19 @@ Checked at build time and in a unit test, as for conversations
 - **Warning.** A visible mark over the person plus a short soft chime, with a text line the
   first time only. Walking away is "not now" and the event waits. It works on a tablet with
   no text to read.
-- Still open: the event list per person, which events give which rewards (#873).
+- Still open: the event list per person, the story of each scene and the item names.
+
+### Scale and rewards (owner answers 2026-11-12, #873)
+
+- **M3b scale.** Every person gets two events, at 2 and 6 hearts, about 60 scenes with
+  placeholder text. The 4, 8 and 10 heart slots are kept in the data as empty and are
+  written with the voice sheets in M3d. The 14 candidates and deep tier then reach five.
+  Courtship events stay out (CLAUDE.md scope).
+- **Reward pattern, fixed by heart step, with a person-specific item** that follows that
+  person's tastes (note 61, so #872 comes first): 2 hearts a small gift item; 4 a recipe
+  or craft recipe; 6 a useful item or a shop or tool unlock; 8 a keepsake (decor or
+  hat); 10 a unique keepsake. Only 2 and 6 are built in M3b. Stardew's reward pattern
+  is unchecked (add to SC-152).
+- **Build order.** Gift tastes (#872), then the event list per person as a table in this
+  note, then the scenes as data in `heart-events.json`, one person per file as note 62
+  says. Scenes reuse the proof engine, so they are a data job a subagent can do.

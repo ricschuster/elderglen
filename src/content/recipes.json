@@ -691,5 +691,33 @@
         "level": 2
       }
     ]
+  },
+  {
+    "id": "lightning-rod",
+    "ingredients": [
+      {
+        "item": "iron-bar",
+        "count": 1
+      },
+      {
+        "item": "quartz-crystal",
+        "count": 1
+      },
+      {
+        "item": "bat-wing",
+        "count": 5
+      }
+    ],
+    "result": {
+      "item": "lightning-rod",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "level",
+        "skill": "foraging",
+        "level": 6
+      }
+    ]
   }
 ]

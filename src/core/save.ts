@@ -26,7 +26,7 @@ import { Mines, type MinesSave } from "./mines";
 import { Combat, type CombatSave } from "./combat";
 import type { CreatureSave } from "./creatures";
 import { FruitTrees, fruitTreeById, type PlacedFruitTree } from "./fruittrees";
-import { Rods, type Rod } from "./lightning";
+import { LIGHTNING_ROD } from "./lightning";
 import { Sprinklers, sprinklerById, type PlacedSprinkler } from "./sprinklers";
 import { QUALITIES, type Quality } from "./quality";
 import { Casks, caskTakes, type PlacedCask } from "./cask";
@@ -102,8 +102,6 @@ export interface GameState {
   mines: Mines;
   /** Sprinklers standing on the farm (the open farm's store, `mapstore.ts`). */
   sprinklers: Sprinklers;
-  /** Lightning rods on the farm (note 34). */
-  rods: Rods;
   /** Fruit trees planted on the farm. */
   fruitTrees: FruitTrees;
   /** Sprinklers on the greenhouse border and in its plot. */
@@ -221,7 +219,6 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     rocks: new Rocks(farmMap.rocks),
     mines: new Mines(),
     sprinklers: new Sprinklers(),
-    rods: new Rods(),
     fruitTrees: new FruitTrees(),
     greenhouseSprinklers: new Sprinklers(),
     greenhouseFruitTrees: new FruitTrees(),
@@ -292,8 +289,8 @@ interface SaveData {
   rocks?: Rock[];
   /** Absent in saves made before the mines. */
   mines?: MinesSave;
-  /** Absent in saves made before lightning rods. */
-  rods?: Rod[];
+  /** Older saves: the rod list, now kept in `placed` (read once on load). */
+  rods?: { x: number; y: number; hit: boolean }[];
   /**
    * Sprinklers and fruit trees by map id (`mapstore.ts`). Absent in saves made
    * before the greenhouse took them: those hold the farm's in `sprinklers` and
@@ -513,7 +510,6 @@ export function serialize(g: GameState): string {
     orders: g.orders.save(),
     rocks: home.rocks.save(),
     mines: g.mines.save(),
-    rods: g.rods.save(),
     mapItems: {
       [FARM_STORE]: { fruitTrees: home.fruitTrees.save() },
       [GREENHOUSE_STORE]: { fruitTrees: g.greenhouseFruitTrees.save() },
@@ -737,20 +733,19 @@ export function deserialize(text: string): GameState | undefined {
   const houseItems = isObject(items[GREENHOUSE_STORE])
     ? items[GREENHOUSE_STORE]
     : {};
-  g.rods.load(
-    Array.isArray(raw.rods)
-      ? raw.rods.filter(
-          (r): r is Rod =>
-            isObject(r) &&
-            isCount(r.x) &&
-            isCount(r.y) &&
-            typeof r.hit === "boolean",
-        )
-      : undefined,
-  );
   // A save with `placed` holds sprinklers, machines and chests there; an older one in three lists.
   const placed = isObject(raw.placed) ? splitPlaced(raw.placed) : undefined;
   if (isObject(raw.placed)) g.placed = nativePlaced(raw.placed);
+  // The older rod list: rods now live in the placed store. A struck one keeps its strike.
+  else if (Array.isArray(raw.rods))
+    for (const r of raw.rods)
+      if (isObject(r) && isCount(r.x) && isCount(r.y))
+        g.placed.add(FARM_STORE, {
+          x: r.x,
+          y: r.y,
+          id: LIGHTNING_ROD,
+          state: { hit: r.hit === true, pack: false },
+        });
   g.sprinklers.load(
     validSprinklers(placed ? placed.farmSprinklers : farmItems.sprinklers),
   );
