@@ -57,3 +57,16 @@ named place and Mossback and the pond fish are not yet taken.
 - **Bundle 24 treat.** Sold at the stall of any festival with food, so year one cannot miss it.
 - **Bundle 20 glow ring.** A worn light ring of radius 5. Placeable lamps stay a fixed
   glow, with no carried light (SC-128).
+
+## Third round (owner, 2026-11-12)
+
+- **Gem nodes.** A rare rock node on some floors, the gem following the depth band as
+  geodes do (Stardew-like, from memory, SC-135 for the Diamond rate). To design in note 69.
+- **Artifact spots.** A marked spot on the ground, dug with the hoe, outdoors and in the
+  mines (Stardew; confirm on the saved Artifacts page). Gives museum items.
+- **Flowers.** A small flower crop family, a few per season, for gifts, bundles and the
+  dance. Needs its own design note before the summer flower seed is built.
+- **Spouse routes.** Three positions in the farmhouse by time of day: bed, kitchen, a hobby
+  spot (note 84, layout note 85).
+- **Placement** (note 89): heater sold at the ranch shop, no torches indoors, bombs give
+  the same drops as a swing and no experience, no cap on rods.
