@@ -158,3 +158,19 @@ borrows the oak sprites).
   mahogany, the last player-planted and Secret Woods only, see "Mahogany").
   Seeds are Maple Seed, Acorn, Pine Cone and Mahogany Seed.
 - Palm trees, fiddlehead ferns and Qi's Walnut Room seeds.
+
+## Built status: tree kinds and seeds (2026-11-12, #396)
+
+Built, with `tests/treeseeds.test.ts`: each tree kind drops and plants its own seed, as note 36
+and SC-30 settled: Acorn (the oak's, the old `tree-seed` id renamed in the display only, so saves
+stay valid), Maple seed, Pine cone and Mahogany seed. A felled mature maple or pine gives its own
+seed (0 to 2 from Foraging 1), a shaken or cleared one too, a held seed plants as its kind
+(`kindOfSeed`, `TREE_SEED_IDS` in `mahogany.ts`), and a spreading tree's seedling takes its
+parent's kind. The Forest (maple, oak) and Mountain (pine) already placed their kinds (notes 71
+and 74). Placeholder: Maple seed and Pine cone sell for 5g like the Acorn, icons are blocks.
+
+Not built, and left open for the owner: the three cosmetic (unchoppable) tree spots outside the
+farm, and the regrow rule for felled trees outside the farm (SC-30 and SC-09 quote Stardew's 20
+percent a night once the stump is gone, but the owner has not picked it for ours, and which
+trees are cosmetic is a layout call, note 87). Per-type yields are the common tree's (12 wood
+and Foraging bonus, 5 sap).

@@ -199,7 +199,10 @@ items.set("mixed-seed", {
   sellPrice: 5,
 });
 /** Sell price is ours, a placeholder. */
-items.set("tree-seed", { id: "tree-seed", name: "Tree seed", sellPrice: 5 });
+items.set("tree-seed", { id: "tree-seed", name: "Acorn", sellPrice: 5 });
+/** The Maple and Pine seeds (note 36, SC-30). The Acorn keeps the old `tree-seed` id so saves stay valid. */
+items.set("maple-seed", { id: "maple-seed", name: "Maple seed", sellPrice: 5 });
+items.set("pine-cone", { id: "pine-cone", name: "Pine cone", sellPrice: 5 });
 items.set(MAHOGANY_SEED, {
   id: MAHOGANY_SEED,
   name: MAHOGANY_SEED_NAME,
@@ -431,6 +434,8 @@ const GROUPS: [string, string[]][] = [
       ...FRUIT_TREES.map((t) => saplingId(t.id)),
       "mixed-seed",
       "tree-seed",
+      "maple-seed",
+      "pine-cone",
       MAHOGANY_SEED,
     ],
   ],

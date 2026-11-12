@@ -9,7 +9,7 @@ import { doubleForageChance, forageFloor } from "./professions";
 import { cropQuality, forageQuality, withQuality } from "./quality";
 import { FORAGE_XP, harvestXp, type Skill } from "./skills";
 import type { GameState } from "./save";
-import type { FarmMap } from "./map";
+import type { FarmMap, TreeKind } from "./map";
 import type { Farm } from "./farm";
 import {
   MATURE_STAGE,
@@ -43,6 +43,7 @@ import {
   STUMP_SEED_AREA,
   STUMP_SEED_CHANCE,
   fruitTreeNear,
+  kindOfSeed,
   isMahogany,
   seedOfKind,
 } from "./mahogany";
@@ -354,7 +355,10 @@ function planChop(
     goods: goods(
       ["wood", TREE_WOOD + Math.min(level, TREE_WOOD_BONUS_MAX)],
       ["sap", TREE_SAP],
-      [TREE_SEED, level >= 1 ? Math.floor(random() * 3) : 0],
+      [
+        seedOfKind(t.kind) ?? TREE_SEED,
+        level >= 1 ? Math.floor(random() * 3) : 0,
+      ],
     ),
     xp: TREE_XP,
   };
@@ -642,14 +646,15 @@ export function plantTree(
   )
     return fail("cannot plant tree here");
   const mahogany = seedId === MAHOGANY_SEED;
+  const kind = kindOfSeed(seedId);
   // A Mahogany tree is not planted on a fruit tree's 3x3 (note 36).
   if (mahogany && fruitTreeNear(g.fruitTrees, x, y))
     return fail("cannot plant tree here");
   g.inventory.remove(seedId);
   g.trees.add(x, y, SEED_STAGE);
-  if (mahogany) {
+  if (kind) {
     const t = g.trees.at(x, y);
-    if (t) t.kind = "mahogany";
+    if (t) t.kind = kind as TreeKind;
   }
   return { ok: true };
 }

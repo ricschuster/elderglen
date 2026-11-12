@@ -207,7 +207,11 @@ export class Trees {
       const span = 2 * SPREAD_RANGE + 1;
       const x = t.x + Math.floor(random() * span) - SPREAD_RANGE;
       const y = t.y + Math.floor(random() * span) - SPREAD_RANGE;
-      if (!this.at(x, y) && canPlant(x, y)) this.add(x, y, SEED_STAGE);
+      if (!this.at(x, y) && canPlant(x, y) && this.add(x, y, SEED_STAGE)) {
+        // A seedling grows into its parent's kind (a pine spreads pines).
+        const child = this.at(x, y);
+        if (child && t.kind) child.kind = t.kind;
+      }
     }
   }
 }

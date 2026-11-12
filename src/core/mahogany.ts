@@ -32,9 +32,28 @@ export const STUMP_SEED_AREA = "secret-woods";
 export const isMahogany = (t: { kind?: string } | undefined) =>
   t?.kind === MAHOGANY_KIND;
 
-/** The seed a tree of this kind drops and is planted from. */
+/**
+ * The seed each tree kind drops and is planted from (note 36, SC-30): Maple seed, Acorn (the
+ * oak's, kept as the old `tree-seed` id), Pine cone and Mahogany seed. The common oak and a
+ * kind-less tree give `undefined` here, and callers fall back to `tree-seed`.
+ */
+const KIND_SEEDS: Readonly<Record<string, string>> = {
+  maple: "maple-seed",
+  pine: "pine-cone",
+  [MAHOGANY_KIND]: MAHOGANY_SEED,
+};
 export const seedOfKind = (kind: string | undefined) =>
-  kind === MAHOGANY_KIND ? MAHOGANY_SEED : undefined;
+  kind === undefined ? undefined : KIND_SEEDS[kind];
+
+/** The tree kind a seed grows into: undefined for the Acorn (the oak), and for non-seeds. */
+export const kindOfSeed = (seed: string): string | undefined =>
+  Object.entries(KIND_SEEDS).find(([, s]) => s === seed)?.[0];
+
+/** Every seed that can be planted as a tree: the Acorn and the kind seeds. */
+export const TREE_SEED_IDS: readonly string[] = [
+  "tree-seed",
+  ...Object.values(KIND_SEEDS),
+];
 
 /** Whether a fruit tree stands on the tile or any of the eight around it. */
 export function fruitTreeNear(

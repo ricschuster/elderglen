@@ -785,6 +785,17 @@ function paintTrees(scene: Phaser.Scene): void {
     px(c, "#4a1a14", 5, 10, 6, 2);
     px(c, "#d08a5a", 7, 6, 1, 3);
   });
+  draw("icon-maple-seed", (c) => {
+    px(c, "#b8542a", 4, 6, 4, 5);
+    px(c, "#d8744a", 8, 5, 4, 4);
+    px(c, "#7a3418", 7, 10, 2, 2);
+  });
+  draw("icon-pine-cone", (c) => {
+    px(c, "#6a4a22", 5, 3, 6, 10);
+    px(c, "#8a6a34", 6, 4, 4, 2);
+    px(c, "#8a6a34", 6, 8, 4, 2);
+    px(c, "#3a2a10", 7, 12, 2, 1);
+  });
   draw("icon-tree-seed", (c) => {
     px(c, "#7a5a2a", 5, 4, 6, 8);
     px(c, "#9a7a3a", 6, 3, 4, 2);
@@ -1193,7 +1204,7 @@ export function iconKey(itemId: string): string | undefined {
     base === "fiber"
   )
     return `icon-${base}`;
-  if (base.endsWith("-seed")) return `icon-${base}`;
+  if (base.endsWith("-seed") || base === "pine-cone") return `icon-${base}`;
   if (ALL_CROPS.some((c) => c.id === base))
     return cropKey(base, CROP_STAGES - 1);
   if (FORAGE.some((f) => f.id === base)) return forageKey(base);
