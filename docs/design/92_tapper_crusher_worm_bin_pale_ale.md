@@ -74,6 +74,19 @@ Stardew facts are from the saved Trees, Artisan Goods, Crops and Worm Bin pages 
   gold 14 days (300g) on the saved page. Note 24's cask now takes pale ale and beer.
 - **Data.** `hops` in crops, `pale-ale` in the artisan table and the cask table.
 
+## Built status
+
+Built (2026-11-12): items 1 to 3 of the list below, as core rules and data with tests
+(`src/core/tapper.ts`, `src/content/tapper.json`, the `geode-crusher` and `worm-bin`
+machines in `processing.ts` and `machines.ts`, three recipes, three placeables rows).
+Details: the tapper state is `tap` on the tree (saves with the trees); Action takes a ready
+good, the pickaxe lifts the tapper (a ready good comes too), felling the tree returns it.
+The worm bin keeps a job with a count, fills 4 to 5 each morning from sleep, cap 50. The
+crusher uses `crackResult` with the deepest floor reached. Not built: hops, pale ale and
+beer in the cask (item 4), tapper art and a ready mark on the tree, the shell and tap-use
+fit rule for the tapper, shop and Heavy Tapper. The crusher recipe's "diamond" is the
+Heartfire diamond (note 69), the only diamond item.
+
 ## Build list
 
 1. Tapper placeable, recipe, tree tap state, goods per tree type, mahogany sap (note 36).

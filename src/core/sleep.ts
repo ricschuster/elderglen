@@ -27,6 +27,7 @@ import type { Settlement } from "./shipping";
 import { fruitTreeById } from "./fruittrees";
 import { CAVE_MAP } from "./cave";
 import { returnDebris } from "./debris";
+import { fillBins } from "./machines";
 import { endDayOrders, type OrdersNews } from "./orders";
 import { loseItems, type Lost } from "./combat";
 import { maps } from "../content/maps";
@@ -207,6 +208,7 @@ export function sleep(
   g.sprinklers.water(g.farm);
   chargeRods(g);
   g.greenhouseSprinklers.water(g.greenhouse);
+  fillBins(g, random);
   g.trees.endDay(
     season,
     random,

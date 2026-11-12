@@ -14,6 +14,7 @@ import {
   produceOf,
   type ArtisanKind,
 } from "./artisan";
+import { crackResult, GEODE_KINDS } from "./geodes";
 import { JUNK } from "./pots";
 import { GEMS, GLIMMERSTONE } from "./gems";
 import geodeData from "../content/geodes.json";
@@ -34,6 +35,8 @@ export interface MachineDef {
   sellPrice: number;
   /** True for a machine that makes goods with no input (the bee house). */
   auto?: boolean;
+  /** A bin that fills itself each morning with a good that is taken out by hand (the worm bin). */
+  bin?: { output: string; min: number; max: number; cap: number };
   /** True for a machine that stands only in the cellar (the cask, `cask.ts`). */
   cellar?: boolean;
   /** True for a machine that starts the same batch again each time it is emptied (the Crystalarium). */
@@ -55,6 +58,15 @@ export const MACHINES: readonly MachineDef[] = [
   /** The dye vat (note 24, bundle 23) and the cask (cellar only). Sell prices are ours, placeholders. */
   { id: "dye-vat", name: "Dye vat", sellPrice: 250 },
   { id: "cask", name: "Cask", sellPrice: 200, cellar: true },
+  /** Crushes geodes for free (note 92). Sell prices are ours, placeholders. */
+  { id: "geode-crusher", name: "Geode crusher", sellPrice: 300 },
+  /** Makes plain bait each morning and cannot be sold (note 92). Sell price is ours, a placeholder. */
+  {
+    id: "worm-bin",
+    name: "Worm bin",
+    sellPrice: 100,
+    bin: { output: "plain-bait", min: 4, max: 5, cap: 50 },
+  },
   /** A crafted furnace, for more batches at once. The first is the smith's gift (`furnace.ts`). */
   { id: "furnace", name: "Furnace", sellPrice: 150 },
   /** Turns the rod's and the pots' trash into useful goods (note 21). Sell price is ours, a placeholder. */
@@ -106,6 +118,8 @@ const JAR_MINUTES = 4000;
 const KEG_MINUTES = { wine: 10000, juice: 6000 } as const;
 const MEAD_MINUTES = 600;
 const KILN_MINUTES = 30;
+/** The geode crusher takes 1 game hour a geode and burns no fuel (Stardew, SC-157). */
+const CRUSHER_MINUTES = 60;
 const SEED_MINUTES = 20;
 /** Stardew's minutes: cheese 200, mayonnaise 180, loom 240 (note 24 says about 3 to 4 hours). */
 const CHEESE_MINUTES = 200;
@@ -221,6 +235,7 @@ export function processFor(
   machine: string,
   item: string,
   random: () => number = Math.random,
+  deepest = 0,
 ): Process | undefined {
   const { base: input, quality } = splitQuality(item);
   const one = { input, use: 1, count: 1 };
@@ -234,6 +249,11 @@ export function processFor(
           minutes: KILN_MINUTES,
         }
       : undefined;
+  if (machine === "geode-crusher") {
+    if (!GEODE_KINDS.includes(input)) return undefined;
+    const r = crackResult(random, input, deepest);
+    return { ...one, output: r.item, count: r.count, minutes: CRUSHER_MINUTES };
+  }
   if (machine === "seed-maker")
     return cropById(input)
       ? {

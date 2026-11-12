@@ -27,6 +27,7 @@ import weaponData from "../content/weapons.json";
 import furnitureData from "../content/furniture.json";
 import { ARTISAN_GOODS } from "./artisan";
 import { MACHINES } from "./processing";
+import { TAP_GOODS, TAPPER, TAPPER_DEF } from "./tapper";
 import { DISHES } from "./dishes";
 import { CHESTS } from "./chestdefs";
 import { GEODE_ITEMS } from "./geodes";
@@ -143,6 +144,11 @@ for (const d of decorData)
 /** Tree goods (`docs/design/36_gathering_trees_sap_fiber.md`). Wood and sap sell as Stardew's do. */
 items.set("wood", { id: "wood", name: "Wood", sellPrice: 2 });
 items.set("sap", { id: "sap", name: "Sap", sellPrice: 2 });
+/** The tapper and what it gives (note 92). Prices are placeholders, see `tapper.json`. */
+items.set(TAPPER, { ...TAPPER_DEF });
+for (const g of TAP_GOODS)
+  if (g.item !== "sap")
+    items.set(g.item, { id: g.item, name: g.name, sellPrice: g.sellPrice });
 /** Hardwood comes from large stumps (`docs/design/43_wood_source.md`). Sells for 15g, as the saved Hardwood page. */
 export const HARDWOOD = "hardwood";
 items.set(HARDWOOD, { id: HARDWOOD, name: "Hardwood", sellPrice: 15 });
@@ -484,7 +490,18 @@ const GROUPS: [string, string[]][] = [
   ["Boots", BOOTS.map((b) => b.id)],
   [
     "Wood and fibre",
-    ["wood", "hardwood", "sap", "fiber", "clay", "hay", WAX, CANDLE],
+    [
+      "wood",
+      "hardwood",
+      "sap",
+      "fiber",
+      "clay",
+      "hay",
+      WAX,
+      CANDLE,
+      TAPPER,
+      ...TAP_GOODS.map((g) => g.item).filter((i) => i !== "sap"),
+    ],
   ],
 ];
 for (const [group, ids] of GROUPS)
