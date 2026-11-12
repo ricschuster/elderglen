@@ -178,5 +178,59 @@
     "growDays": 4,
     "seedPrice": 10,
     "sellPrice": 25
+  },
+  {
+    "id": "tulip",
+    "name": "Tulip",
+    "seasons": ["spring"],
+    "growDays": 6,
+    "seedPrice": 20,
+    "sellPrice": 30,
+    "produce": "flower"
+  },
+  {
+    "id": "cornflower",
+    "name": "Cornflower",
+    "seasons": ["spring"],
+    "growDays": 7,
+    "seedPrice": 30,
+    "sellPrice": 50,
+    "produce": "flower"
+  },
+  {
+    "id": "poppy",
+    "name": "Poppy",
+    "seasons": ["summer"],
+    "growDays": 7,
+    "seedPrice": 100,
+    "sellPrice": 140,
+    "produce": "flower"
+  },
+  {
+    "id": "zinnia",
+    "name": "Zinnia",
+    "seasons": ["summer"],
+    "growDays": 8,
+    "seedPrice": 50,
+    "sellPrice": 90,
+    "produce": "flower"
+  },
+  {
+    "id": "sunflower",
+    "name": "Sunflower",
+    "seasons": ["summer", "fall"],
+    "growDays": 8,
+    "seedPrice": 200,
+    "sellPrice": 80,
+    "produce": "flower"
+  },
+  {
+    "id": "dahlia",
+    "name": "Dahlia",
+    "seasons": ["fall"],
+    "growDays": 12,
+    "seedPrice": 200,
+    "sellPrice": 290,
+    "produce": "flower"
   }
 ]

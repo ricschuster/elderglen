@@ -1,7 +1,7 @@
 import { dateOf } from "./calendar";
-import { CROPS, cropById } from "./crops";
+import { CROPS, FLOWER_CROPS, cropById } from "./crops";
 import { farmTypeById } from "./farmtypes";
-import { HARDWOOD, cropOfSeed, itemById } from "./items";
+import { HARDWOOD, cropOfSeed, itemById, seedId } from "./items";
 import { fertilizerById, qualityLevelOf } from "./fertilizer";
 import { MAX_ENERGY } from "./energy";
 import { HEALTH_PER_ENERGY } from "./combat";
@@ -229,8 +229,22 @@ export function forage(
   // Gatherers sometimes find a second one, if it fits.
   if (random() < doubleForageChance(g.skills) && g.inventory.add(item))
     noteGathered(g, item);
+  // A wild flower seed packet now and then (note 91), if it fits.
+  const season = dateOf(g.day.clock.day).season;
+  const flowers = FLOWER_CROPS.filter((c) => c.seasons.includes(season));
+  if (
+    flowers.length > 0 &&
+    random() < WILD_FLOWER_SEED_CHANCE &&
+    g.inventory.room(seedId(flowers[0]!.id)) > 0
+  ) {
+    const pick = flowers[Math.floor(random() * flowers.length)] ?? flowers[0]!;
+    g.inventory.add(seedId(pick.id));
+  }
   return award(g, "foraging", FORAGE_XP, item);
 }
+
+/** Chance a forage pickup also turns up a flower seed packet (note 91, placeholder). */
+export const WILD_FLOWER_SEED_CHANCE = 0.02;
 
 /** Eat one of an item from the backpack to restore energy. Takes no game time. */
 export function eat(g: GameState, itemId: string): Outcome {

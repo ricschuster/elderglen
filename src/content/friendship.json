@@ -41,7 +41,18 @@
   ],
   "tags": {
     "_note": "Hand-kept tag lists. Other tags come from the item data (artisan kind, dishes, crops, forage, bait, drops, junk, geodes).",
-    "flower": ["daffodil", "sweet-pea", "crocus", "snowdrop"],
+    "flower": [
+      "daffodil",
+      "sweet-pea",
+      "crocus",
+      "snowdrop",
+      "tulip",
+      "cornflower",
+      "poppy",
+      "zinnia",
+      "sunflower",
+      "dahlia"
+    ],
     "found": [],
     "egg": ["egg", "duck-egg"],
     "milk": ["milk", "goat-milk"],

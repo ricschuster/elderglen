@@ -1,7 +1,8 @@
 import type { Outcome } from "./actions";
 import { DAY_START } from "./clock";
 import { dateOf } from "./calendar";
-import { HONEY } from "./artisan";
+import { FLOWER_HONEY_PRICE, flowerHoneyId, HONEY } from "./artisan";
+import { isFlowerCrop } from "./crops";
 import { itemById } from "./items";
 import type { FarmMap } from "./map";
 import {
@@ -98,6 +99,32 @@ const fail = (reason: string): Outcome => ({ ok: false, reason });
 
 const nameOf = (id: string) => itemById(id)?.name ?? id;
 
+/** How far a bee house reaches for a flower, in tiles (note 91, placeholder). */
+export const BEE_RANGE = 5;
+
+/**
+ * The honey a bee house makes now (note 91): the flower honey of the nearest
+ * flower crop within `BEE_RANGE` tiles, growing or ripe (a flower pot would
+ * count too, but there are none yet), else plain honey. Nearest by tile
+ * distance, ties to the first by id.
+ */
+export function honeyFor(g: GameState, m: PlacedMachine): string {
+  let best: { flower: string; d: number } | undefined;
+  for (const { x, y, plot } of g.farm.each()) {
+    const id = plot.crop?.id;
+    if (!id || !isFlowerCrop(id) || !(id in FLOWER_HONEY_PRICE)) continue;
+    const d = Math.max(Math.abs(x - m.x), Math.abs(y - m.y));
+    if (d > BEE_RANGE) continue;
+    if (!best || d < best.d || (d === best.d && id < best.flower))
+      best = { flower: id, d };
+  }
+  return best ? flowerHoneyId(best.flower) : HONEY;
+}
+
+/** The item a job gives now: a bee house's honey takes the flower in reach at that moment. */
+const outputOf = (g: GameState, m: PlacedMachine, output: string): string =>
+  m.id === "bee-house" && output === HONEY ? honeyFor(g, m) : output;
+
 /** True in winter, when a bee house keeps its timer but makes no honey (SC-50). */
 export function restingBees(g: GameState, m: PlacedMachine): boolean {
   return m.id === "bee-house" && dateOf(g.day.clock.day).season === "winter";
@@ -137,9 +164,10 @@ export function statusText(g: GameState, x: number, y: number): string {
   if (!m.job) return `The ${name.toLowerCase()} is empty.`;
   if (restingBees(g, m)) return "The bees rest until spring.";
   const left = minutesLeft(g, m) ?? 0;
+  const output = outputOf(g, m, m.job.output);
   return left <= 0
-    ? `The ${nameOf(m.job.output).toLowerCase()} is ready.`
-    : `${nameOf(m.job.output)}: ${waitText(left)}.`;
+    ? `The ${nameOf(output).toLowerCase()} is ready.`
+    : `${nameOf(output)}: ${waitText(left)}.`;
 }
 
 /**
@@ -215,12 +243,12 @@ export function collectMachine(g: GameState, x: number, y: number): Outcome {
   if (!m) return fail("no machine here");
   if (!m.job) return fail("machine empty");
   if (!jobDone(g, m)) return fail("machine busy");
-  if (g.inventory.room(m.job.output) < m.job.count)
-    return fail("backpack full");
-  const { output, count } = m.job;
+  const output = outputOf(g, m, m.job.output);
+  const { count } = m.job;
+  if (g.inventory.room(output) < count) return fail("backpack full");
   g.inventory.add(output, count);
   m.job = machineById(m.id)?.auto
-    ? { output, count: 1, doneAt: machineMinutes(g) + BEE_MINUTES }
+    ? { output: HONEY, count: 1, doneAt: machineMinutes(g) + BEE_MINUTES }
     : undefined;
   return { ok: true, item: output };
 }

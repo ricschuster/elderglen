@@ -51,8 +51,10 @@ describe("eating", () => {
   });
 
   it("every crop is food", () => {
-    // The pumpkin and wheat are not food (note 07).
-    for (const c of CROPS.filter((c) => c.id !== "pumpkin" && c.id !== "wheat"))
+    // The pumpkin and wheat are not food (note 07), nor are flowers (note 91).
+    for (const c of CROPS.filter(
+      (c) => c.id !== "pumpkin" && c.id !== "wheat" && c.produce !== "flower",
+    ))
       expect(itemById(c.id)?.energy, c.id).toBeGreaterThan(0);
     expect(FORAGE.some((f) => f.energy)).toBe(true);
   });

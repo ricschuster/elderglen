@@ -283,6 +283,13 @@ const CROP_COLOURS: Record<string, Palette> = {
   "hot-pepper": { fruit: "#d92f1f", leaf: "#3f8f35" },
   corn: { fruit: "#f0d040", leaf: "#5aa83a" },
   "red-cabbage": { fruit: "#8a3a8a", leaf: "#4a9a3a" },
+  // Flowers (note 91): placeholder colours, the dye colour of each.
+  tulip: { fruit: "#f08aaa", leaf: "#4a9a3a" },
+  cornflower: { fruit: "#4a78d8", leaf: "#4a9a3a" },
+  poppy: { fruit: "#d9322a", leaf: "#3f8f35" },
+  zinnia: { fruit: "#f08a2a", leaf: "#3f8f35" },
+  sunflower: { fruit: "#f4cf2a", leaf: "#3f8f35" },
+  dahlia: { fruit: "#8a4ac8", leaf: "#3a8a30" },
 };
 const FALLBACK: Palette = { fruit: "#e0c040", leaf: "#5aa83a" };
 

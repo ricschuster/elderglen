@@ -279,7 +279,13 @@
       "red-cabbage",
       "cranberry",
       "bramble-berry",
-      "crocus"
+      "crocus",
+      "tulip",
+      "cornflower",
+      "poppy",
+      "zinnia",
+      "sunflower",
+      "dahlia"
     ],
     "required": 4,
     "reward": {
