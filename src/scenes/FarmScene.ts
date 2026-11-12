@@ -194,6 +194,7 @@ import {
   CELLAR_MAP,
   HOUSE_MAP,
   houseHolds,
+  houseSpouse,
   houseVisibleTier,
   isHouseMap,
 } from "../core/house";
@@ -2260,7 +2261,8 @@ export class FarmScene extends Phaser.Scene {
     if (this.state.cave.open) this.holds.add("cave-open");
     if (this.state.animals.coopBuilt) this.holds.add(COOP_BUILT);
     if (this.state.animals.barnBuilt) this.holds.add(BARN_BUILT);
-    for (const h of houseHolds(this.state.houseTier)) this.holds.add(h);
+    for (const h of houseHolds(this.state.houseTier, houseSpouse(this.state)))
+      this.holds.add(h);
     for (const h of greenhouseHolds(this.state)) this.holds.add(h);
     for (const c of this.conditional)
       c.drawn.setVisible(layerShows(c.layer, this.holds));

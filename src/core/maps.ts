@@ -1,6 +1,7 @@
 import {
   FarmMap,
   conditionsOf,
+  marksAndFixtures,
   maxTierOf,
   visibleTier,
   type TiledMapJson,
@@ -74,6 +75,17 @@ export class MapRegistry {
       this.variants.set(key, map);
     }
     return map;
+  }
+
+  /** The named marks and fixtures a map has at a tier when the conditions hold (note 85). */
+  marksWith(
+    id: string,
+    holds: ReadonlySet<string>,
+    tier = 0,
+  ): ReturnType<typeof marksAndFixtures> {
+    const json = this.files.get(id);
+    if (!json) throw new Error(`no map "${id}"`);
+    return marksAndFixtures(json, tier, holds);
   }
 
   /** The highest tier a map has. Zero for a map that does not grow. */

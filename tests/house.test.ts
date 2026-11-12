@@ -69,6 +69,18 @@ const oldCells = (tier: number) => {
   return out;
 };
 
+/** Old frame cells that fixtures now stand on (note 85, "Fixtures"): the counters, sink and fridge, the TV and hearth, and the nursery's crib and child beds. */
+const FIXTURE_CELLS = new Set([
+  "3,11",
+  "4,11",
+  "7,11",
+  "8,11",
+  "15,13",
+  "16,13",
+  "17,13",
+  ...[19, 20, 26, 27, 30, 31].flatMap((x) => [`${x},1`, `${x},2`]),
+]);
+
 describe("house frame shift (layout 5, note 85)", () => {
   const walk = (tier: number) => {
     const m = maps.get("house", tier);
@@ -80,14 +92,17 @@ describe("house frame shift (layout 5, note 85)", () => {
   it("loses nothing walkable at tiers 0 and 1, shifted by (20, 11)", () => {
     for (const tier of [0, 1]) {
       const now = walk(tier);
-      for (const [x, y] of oldCells(tier)) expect(now.has(at(x, y))).toBe(true);
+      for (const [x, y] of oldCells(tier))
+        if (!FIXTURE_CELLS.has(`${x},${y}`))
+          expect(now.has(at(x, y))).toBe(true);
     }
   });
 
   it("loses nothing walkable at tier 2 but the old stairs at (6, 10)", () => {
     const now = walk(2);
     for (const [x, y] of oldCells(2))
-      if (!(x === 6 && y === 10)) expect(now.has(at(x, y))).toBe(true);
+      if (!(x === 6 && y === 10) && !FIXTURE_CELLS.has(`${x},${y}`))
+        expect(now.has(at(x, y))).toBe(true);
     expect(now.has(at(6, 10))).toBe(false);
     expect(maps.get("house", 2).isBlocked(6 + 20, 10 + 11)).toBe(true);
   });

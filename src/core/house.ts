@@ -88,9 +88,28 @@ export const CELLAR_MAP = "cellar";
 /** The gate on the house's stairs exit: it opens when the house reaches tier 3. */
 export const CELLAR_OPEN = "cellar-open";
 
-/** The conditions the house gives for gated exits at a house tier. */
-export function houseHolds(tier: number): string[] {
-  return houseHasCellar(tier) ? [CELLAR_OPEN] : [];
+/** The condition under which the spouse room and its hall exist (note 85, from marriage). */
+export const SPOUSE_HOLD = "spouse";
+
+/** The condition under which the divorce chest shows in the bedroom (note 85, "Divorce"). */
+export const DIVORCE_CHEST_HOLD = "divorce-chest";
+
+/**
+ * True while the player is married. Marriage is not built yet (note 84), so
+ * the world flag `spouse` stands in for it; the flag is the only thing to
+ * swap when the marriage state lands. `holdsOf` (`worldflags.ts`) already carries
+ * every flag as a condition, so the map build sees `spouse` through it.
+ */
+export function houseSpouse(g: { flags?: string[] }): boolean {
+  return g.flags?.includes(SPOUSE_HOLD) === true;
+}
+
+/** The conditions the house gives for gated exits and conditional layers at a house tier. */
+export function houseHolds(tier: number, spouse = false): string[] {
+  return [
+    ...(houseHasCellar(tier) ? [CELLAR_OPEN] : []),
+    ...(spouse ? [SPOUSE_HOLD] : []),
+  ];
 }
 
 /**
