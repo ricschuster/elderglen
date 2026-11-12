@@ -130,6 +130,8 @@ export function narrowAisles(id: string): string[] {
   for (const t of reach) {
     if (skip.has(t)) continue;
     const [x, y] = t.split(",").map(Number) as [number, number];
+    // The door itself is one tile, like the door outside (owner, 2026-11-12).
+    if (m.exitAt(x, y)?.id === "door") continue;
     if (!wide(x, y)) out.push(`narrow at ${t}`);
   }
   return out;

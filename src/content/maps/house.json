@@ -11,13 +11,7 @@
   "tileheight": 16,
   "nextlayerid": 45,
   "nextobjectid": 139,
-  "properties": [
-    {
-      "name": "placeholder",
-      "type": "bool",
-      "value": true
-    }
-  ],
+  "properties": [{ "name": "placeholder", "type": "bool", "value": true }],
   "tilesets": [
     {
       "firstgid": 1,
@@ -143,7 +137,7 @@
         3, 3, 3, 3, 3, 3, 3, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-        7, 9, 9, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        7, 9, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -441,7 +435,7 @@
         0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -956,21 +950,13 @@
           "type": "exit",
           "x": 528,
           "y": 512,
-          "width": 32,
+          "width": 16,
           "height": 16,
           "rotation": 0,
           "visible": true,
           "properties": [
-            {
-              "name": "map",
-              "type": "string",
-              "value": "farm"
-            },
-            {
-              "name": "entry",
-              "type": "string",
-              "value": "from_house"
-            }
+            { "name": "map", "type": "string", "value": "farm" },
+            { "name": "entry", "type": "string", "value": "from_house" }
           ]
         },
         {
@@ -985,13 +971,7 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "bed"
-            }
-          ]
+          "properties": [{ "name": "kind", "type": "string", "value": "bed" }]
         }
       ]
     },
@@ -1017,13 +997,7 @@
           "point": true,
           "rotation": 0,
           "visible": true,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "bed"
-            }
-          ]
+          "properties": [{ "name": "kind", "type": "string", "value": "bed" }]
         },
         {
           "id": 90,
@@ -1038,11 +1012,7 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "cooking"
-            }
+            { "name": "kind", "type": "string", "value": "cooking" }
           ]
         }
       ]
@@ -1082,21 +1052,9 @@
           "width": 48,
           "height": 48,
           "properties": [
-            {
-              "name": "map",
-              "type": "string",
-              "value": "cellar"
-            },
-            {
-              "name": "entry",
-              "type": "string",
-              "value": "from_above"
-            },
-            {
-              "name": "requires",
-              "type": "string",
-              "value": "cellar-open"
-            }
+            { "name": "map", "type": "string", "value": "cellar" },
+            { "name": "entry", "type": "string", "value": "from_above" },
+            { "name": "requires", "type": "string", "value": "cellar-open" }
           ]
         }
       ]
@@ -1249,13 +1207,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
-      "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "spouse"
-        }
-      ]
+      "properties": [{ "name": "when", "type": "string", "value": "spouse" }]
     },
     {
       "id": 11,
@@ -1405,13 +1357,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
-      "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "spouse"
-        }
-      ]
+      "properties": [{ "name": "when", "type": "string", "value": "spouse" }]
     },
     {
       "id": 12,
@@ -1561,13 +1507,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
-      "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "spouse"
-        }
-      ]
+      "properties": [{ "name": "when", "type": "string", "value": "spouse" }]
     },
     {
       "id": 13,
@@ -1717,13 +1657,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
-      "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "spouse"
-        }
-      ]
+      "properties": [{ "name": "when", "type": "string", "value": "spouse" }]
     },
     {
       "id": 14,
@@ -1874,11 +1808,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "reno-open-bedroom"
-        }
+        { "name": "when", "type": "string", "value": "reno-open-bedroom" }
       ]
     },
     {
@@ -2030,11 +1960,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "reno-open-bedroom"
-        }
+        { "name": "when", "type": "string", "value": "reno-open-bedroom" }
       ]
     },
     {
@@ -2186,11 +2112,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "reno-south"
-        }
+        { "name": "when", "type": "string", "value": "reno-south" }
       ]
     },
     {
@@ -2342,11 +2264,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "reno-south"
-        }
+        { "name": "when", "type": "string", "value": "reno-south" }
       ]
     },
     {
@@ -2498,11 +2416,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "reno-corner"
-        }
+        { "name": "when", "type": "string", "value": "reno-corner" }
       ]
     },
     {
@@ -2654,11 +2568,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "reno-corner"
-        }
+        { "name": "when", "type": "string", "value": "reno-corner" }
       ]
     },
     {
@@ -2810,11 +2720,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "reno-corner-big"
-        }
+        { "name": "when", "type": "string", "value": "reno-corner-big" }
       ]
     },
     {
@@ -2966,11 +2872,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "reno-corner-big"
-        }
+        { "name": "when", "type": "string", "value": "reno-corner-big" }
       ]
     },
     {
@@ -3122,11 +3024,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "reno-attic"
-        }
+        { "name": "when", "type": "string", "value": "reno-attic" }
       ]
     },
     {
@@ -3278,11 +3176,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "reno-attic"
-        }
+        { "name": "when", "type": "string", "value": "reno-attic" }
       ]
     },
     {
@@ -3434,11 +3328,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "reno-cubby"
-        }
+        { "name": "when", "type": "string", "value": "reno-cubby" }
       ]
     },
     {
@@ -3590,11 +3480,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "reno-cubby"
-        }
+        { "name": "when", "type": "string", "value": "reno-cubby" }
       ]
     },
     {
@@ -3746,11 +3632,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "reno-dining"
-        }
+        { "name": "when", "type": "string", "value": "reno-dining" }
       ]
     },
     {
@@ -3902,11 +3784,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "reno-dining"
-        }
+        { "name": "when", "type": "string", "value": "reno-dining" }
       ]
     },
     {
@@ -4058,11 +3936,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "reno-dining-open"
-        }
+        { "name": "when", "type": "string", "value": "reno-dining-open" }
       ]
     },
     {
@@ -4214,11 +4088,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "reno-dining-open"
-        }
+        { "name": "when", "type": "string", "value": "reno-dining-open" }
       ]
     },
     {
@@ -4370,11 +4240,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "corner-stairs"
-        }
+        { "name": "when", "type": "string", "value": "corner-stairs" }
       ]
     },
     {
@@ -4526,11 +4392,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "corner-stairs"
-        }
+        { "name": "when", "type": "string", "value": "corner-stairs" }
       ]
     },
     {
@@ -5129,11 +4991,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "divorce-chest"
-        }
+        { "name": "when", "type": "string", "value": "divorce-chest" }
       ]
     },
     {
@@ -5285,11 +5143,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "divorce-chest"
-        }
+        { "name": "when", "type": "string", "value": "divorce-chest" }
       ]
     },
     {
@@ -5313,13 +5167,7 @@
           "visible": true,
           "width": 16,
           "height": 16,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "tv"
-            }
-          ]
+          "properties": [{ "name": "kind", "type": "string", "value": "tv" }]
         },
         {
           "id": 123,
@@ -5333,11 +5181,7 @@
           "width": 32,
           "height": 16,
           "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "hearth"
-            }
+            { "name": "kind", "type": "string", "value": "hearth" }
           ]
         }
       ]
@@ -5364,11 +5208,7 @@
           "width": 16,
           "height": 16,
           "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "counter"
-            }
+            { "name": "kind", "type": "string", "value": "counter" }
           ]
         },
         {
@@ -5382,13 +5222,7 @@
           "visible": true,
           "width": 16,
           "height": 16,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "sink"
-            }
-          ]
+          "properties": [{ "name": "kind", "type": "string", "value": "sink" }]
         },
         {
           "id": 126,
@@ -5402,11 +5236,7 @@
           "width": 16,
           "height": 16,
           "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "counter"
-            }
+            { "name": "kind", "type": "string", "value": "counter" }
           ]
         },
         {
@@ -5421,11 +5251,7 @@
           "width": 16,
           "height": 16,
           "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "fridge"
-            }
+            { "name": "kind", "type": "string", "value": "fridge" }
           ]
         }
       ]
@@ -5451,13 +5277,7 @@
           "visible": true,
           "width": 32,
           "height": 32,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "crib"
-            }
-          ]
+          "properties": [{ "name": "kind", "type": "string", "value": "crib" }]
         },
         {
           "id": 129,
@@ -5471,11 +5291,7 @@
           "width": 32,
           "height": 32,
           "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "child-bed"
-            }
+            { "name": "kind", "type": "string", "value": "child-bed" }
           ]
         },
         {
@@ -5490,11 +5306,7 @@
           "width": 32,
           "height": 32,
           "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "child-bed"
-            }
+            { "name": "kind", "type": "string", "value": "child-bed" }
           ]
         }
       ]
@@ -5612,13 +5424,7 @@
           "point": true
         }
       ],
-      "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "spouse"
-        }
-      ]
+      "properties": [{ "name": "when", "type": "string", "value": "spouse" }]
     },
     {
       "id": 43,
@@ -5641,21 +5447,11 @@
           "visible": true,
           "width": 16,
           "height": 16,
-          "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "chest"
-            }
-          ]
+          "properties": [{ "name": "kind", "type": "string", "value": "chest" }]
         }
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "divorce-chest"
-        }
+        { "name": "when", "type": "string", "value": "divorce-chest" }
       ]
     },
     {
@@ -5683,11 +5479,7 @@
         }
       ],
       "properties": [
-        {
-          "name": "when",
-          "type": "string",
-          "value": "divorce-chest"
-        }
+        { "name": "when", "type": "string", "value": "divorce-chest" }
       ]
     }
   ]

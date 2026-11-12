@@ -63,12 +63,12 @@ describe("every rebuilt interior is reachable from its door", () => {
   });
 });
 
-describe("every interior door is 2 wide (#855, SC-145)", () => {
-  it("has a door exit of at least two walkable tiles, in every interior", () => {
+describe("every interior door is one tile, like the door outside", () => {
+  it("has a one tile door exit that is walkable, in every interior", () => {
     for (const id of all) {
       const m = maps.get(id);
       const exit = m.exits.find((e) => e.id === "door")!;
-      expect(exit.w * exit.h, `${id} door size`).toBeGreaterThanOrEqual(2);
+      expect(exit.w * exit.h, `${id} door size`).toBe(1);
       const open = walkable(m);
       for (let dy = 0; dy < exit.h; dy++)
         for (let dx = 0; dx < exit.w; dx++)

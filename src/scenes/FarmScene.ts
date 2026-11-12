@@ -947,7 +947,7 @@ export class FarmScene extends Phaser.Scene {
       e.x + e.w >= this.map.width ||
       e.y + e.h >= this.map.height;
     // Rebuilt interiors keep their door a tile inside the walls, so the way out is the exit named "door".
-    if (this.map.indoors && e.id === "door") return true;
+    if (!this.outdoorWorld && e.id === "door") return true;
     return edge && (!this.outdoorWorld || Math.max(e.w, e.h) >= 3);
   }
 

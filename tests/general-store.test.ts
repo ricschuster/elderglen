@@ -20,9 +20,9 @@ describe("the general store", () => {
       ).toBe(true);
   });
 
-  it("has a 2 wide exit to its Hearthwell lot, entered by the same name", () => {
+  it("has a 1 wide exit to its Hearthwell lot, entered by the same name", () => {
     const door = maps.get("general-store").exits.find((e) => e.id === "door")!;
-    expect([door.w, door.h]).toEqual([2, 1]);
+    expect([door.w, door.h]).toEqual([1, 1]);
     expect([door.map, door.entry]).toEqual([
       "hearthwell",
       "from_general-store",

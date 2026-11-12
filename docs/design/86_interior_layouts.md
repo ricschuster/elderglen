@@ -100,6 +100,9 @@ The patterns, found in at least three images each:
    2 wide for every interior, huts included, so one player in the doorway never shuts
    a hut. The exterior door on the map stays 1 tile. Note 81
    decision 5 now says interior entry 2 wide.
+   **Superseded 2026-11-12 (owner, after play):** the door exit is 1 tile inside and
+   outside, with one arrival tile in front of it; the vestibule before it stays 2 wide.
+   Walking onto the door leaves. Note 81 decision 5 is updated to match.
 4. **Counters reachable from more than one tile** (decision 12): at least two player
    tiles in front of a counter and the keeper's tile reachable from two sides.
 5. **8 players can pass.** Every public aisle is 2 wide, except the produce wall's

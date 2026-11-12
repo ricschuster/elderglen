@@ -11,13 +11,7 @@
   "tileheight": 16,
   "nextlayerid": 5,
   "nextobjectid": 17,
-  "properties": [
-    {
-      "name": "placeholder",
-      "type": "bool",
-      "value": true
-    }
-  ],
+  "properties": [{ "name": "placeholder", "type": "bool", "value": true }],
   "tilesets": [
     {
       "firstgid": 1,
@@ -59,7 +53,7 @@
         3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
         3, 3, 3, 3, 3, 7, 7, 7, 7, 7, 7, 7, 7, 7, 3, 3, 7, 7, 7, 7, 7, 7, 7, 7,
         0, 0, 0, 0, 0, 0, 0, 7, 3, 3, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 7, 9, 9, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 7, 7, 7, 0,
+        0, 7, 9, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 7, 7, 7, 0,
         0, 0, 0, 0, 0, 0
       ]
     },
@@ -121,7 +115,7 @@
         0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1
       ]
     },
@@ -157,19 +151,11 @@
           "type": "exit",
           "x": 128,
           "y": 336,
-          "width": 32,
+          "width": 16,
           "height": 16,
           "properties": [
-            {
-              "name": "map",
-              "type": "string",
-              "value": "hearthwell"
-            },
-            {
-              "name": "entry",
-              "type": "string",
-              "value": "from_outpost"
-            }
+            { "name": "map", "type": "string", "value": "hearthwell" },
+            { "name": "entry", "type": "string", "value": "from_outpost" }
           ]
         },
         {
@@ -185,11 +171,7 @@
           "height": 0,
           "point": true,
           "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "counter-outpost"
-            }
+            { "name": "kind", "type": "string", "value": "counter-outpost" }
           ]
         },
         {
@@ -205,11 +187,7 @@
           "height": 0,
           "point": true,
           "properties": [
-            {
-              "name": "kind",
-              "type": "string",
-              "value": "counter-outpost"
-            }
+            { "name": "kind", "type": "string", "value": "counter-outpost" }
           ]
         },
         {
@@ -348,8 +326,8 @@
           "name": "from_rooms",
           "class": "entry",
           "type": "entry",
-          "x": 136.0,
-          "y": 56.0,
+          "x": 136,
+          "y": 56,
           "width": 0,
           "height": 0,
           "point": true
@@ -365,16 +343,8 @@
           "width": 32,
           "height": 16,
           "properties": [
-            {
-              "name": "map",
-              "type": "string",
-              "value": "outpost-rooms"
-            },
-            {
-              "name": "entry",
-              "type": "string",
-              "value": "door"
-            }
+            { "name": "map", "type": "string", "value": "outpost-rooms" },
+            { "name": "entry", "type": "string", "value": "door" }
           ]
         }
       ]
