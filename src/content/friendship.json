@@ -13,7 +13,10 @@
     "birthdayMultiplier": 8,
     "weeklyGifts": 2,
     "weeklyBonus": 10,
-    "quality": { "silver": 1.1, "gold": 1.25 },
+    "quality": {
+      "silver": 1.1,
+      "gold": 1.25
+    },
     "request": 150,
     "bundleBonus": 500
   },
@@ -45,7 +48,8 @@
     "found": [],
     "egg": ["egg", "duck-egg"],
     "milk": ["milk", "goat-milk"],
-    "mineralExtra": ["quartz-crystal"]
+    "mineralExtra": ["quartz-crystal"],
+    "shell": ["cockleshell", "pearly-shell", "spiral-shell"]
   },
   "universal": {
     "loves": [
@@ -84,7 +88,7 @@
     }
   },
   "defaultList": {
-    "_note": "PLACEHOLDER. The other 22 people have no list yet (note 61, by layer). They take the universal tastes only.",
+    "_note": "Safety net for an item with no personal or category taste. All 30 people have a list (note 90), so this only meets new items. Neutral on everything, so a new item is never a surprise gift. The universal tastes still apply.",
     "loves": [],
     "likes": [],
     "neutral": [],
@@ -146,6 +150,149 @@
       "likes": ["tomato", "green-bean", "fiddlehead-fern", "radish"],
       "dislikes": ["#cheese", "#mayonnaise"],
       "hates": ["hot-pepper", "gloop-jelly"]
+    },
+    "bramwell": {
+      "loves": ["iron-bar", "gold-bar", "hearty-omelette", "baked-potato"],
+      "likes": ["copper-bar", "cheese-melt", "#mineral"],
+      "dislikes": ["#flower", "#jam"],
+      "hates": ["sweet-pea", "#juice"]
+    },
+    "dorrie": {
+      "loves": ["market-pie", "peach", "pomegranate", "inn-custard"],
+      "likes": ["#fruit", "tomato", "garden-salad"],
+      "dislikes": ["field-mushroom", "wild-garlic"],
+      "hates": ["gloop-jelly", "bat-wing"]
+    },
+    "fitch": {
+      "loves": ["apple", "cherry", "bramble-berry", "pocket-coin"],
+      "likes": ["corn", "hazelnut", "fried-egg"],
+      "dislikes": ["kale", "garlic", "radish"],
+      "hates": ["field-mushroom", "hot-pepper"]
+    },
+    "podge": {
+      "loves": [
+        "mushroom-stew",
+        "harvest-hotpot",
+        "red-cabbage",
+        "chanterelle"
+      ],
+      "likes": ["#dish", "potato", "cheese"],
+      "dislikes": ["#gem", "clay"],
+      "hates": ["frost-berry", "ice-shard"]
+    },
+    "pim": {
+      "loves": ["inn-custard", "apple", "honey"],
+      "likes": ["egg", "fried-egg", "corn"],
+      "dislikes": ["leek", "kale"],
+      "hates": ["garlic", "snow-tuber"]
+    },
+    "dunmar": {
+      "loves": ["quartz-crystal", "mushroom-stew", "#juice"],
+      "likes": ["#mineral", "cheese", "red-cabbage"],
+      "dislikes": ["#monster-drop", "beer"],
+      "hates": ["hay", "gloop-jelly"]
+    },
+    "rufus": {
+      "loves": ["wood", "baked-potato", "beer", "corn"],
+      "likes": ["hearty-omelette", "cheese", "goat-milk"],
+      "dislikes": ["fiber", "#jam"],
+      "hates": ["sap", "clay"]
+    },
+    "wren": {
+      "loves": ["chestnut", "pine-nut", "pocket-coin", "fried-egg"],
+      "likes": ["apple", "hazelnut", "honey"],
+      "dislikes": ["eggplant", "beet"],
+      "hates": ["wild-ginger", "#wine"]
+    },
+    "barnaby": {
+      "loves": ["#wine", "pomegranate", "red-cabbage", "hot-pepper"],
+      "likes": ["cheese", "#jam", "#fruit"],
+      "dislikes": ["milk", "oil"],
+      "hates": ["fiddlehead-fern", "seaweed"]
+    },
+    "linnet": {
+      "loves": ["#juice", "peach", "garden-salad", "snowdrop"],
+      "likes": ["#flower", "fried-egg", "cherry"],
+      "dislikes": ["beer", "fisher-stew"],
+      "hates": ["field-mushroom", "snowcap"]
+    },
+    "thistle": {
+      "loves": ["crocus", "cherry", "spice-berry", "moonmirror"],
+      "likes": ["#flower", "mushroom-stew", "honey"],
+      "dislikes": ["#monster-drop", "hot-pepper"],
+      "hates": ["sunk-boot-loach", "hay"]
+    },
+    "hester": {
+      "loves": ["cloth", "wool", "flower-honey", "pumpkin-soup"],
+      "likes": ["tomato", "melon", "inn-custard"],
+      "dislikes": ["hot-pepper", "mayonnaise"],
+      "hates": ["clay", "seaweed"]
+    },
+    "walter": {
+      "loves": ["perch", "catfish", "fisher-stew", "beer"],
+      "likes": ["mackerel", "baked-potato", "wheat"],
+      "dislikes": ["#flower", "#jam"],
+      "hates": ["pin-urchin"]
+    },
+    "toby": {
+      "loves": ["cockleshell", "pearly-shell", "spiral-shell", "apple"],
+      "likes": ["honey", "fried-egg", "corn"],
+      "dislikes": ["cheese", "kale"],
+      "hates": ["wild-garlic", "garlic"]
+    },
+    "rosmarin": {
+      "loves": ["frost-root", "snow-tuber", "wild-ginger", "truffle-oil"],
+      "likes": ["#forage", "mushroom-stew"],
+      "dislikes": ["#dish", "#juice"],
+      "hates": ["cheese", "beer"]
+    },
+    "rundahl": {
+      "loves": ["wild-garlic", "fiddlehead-fern", "holly-sprig", "hazelnut"],
+      "likes": ["#forage", "honey"],
+      "dislikes": ["#monster-drop"],
+      "hates": ["fisher-stew", "coal"]
+    },
+    "korvi": {
+      "loves": ["gold-bar", "iron-bar", "copper-bar", "ember-trout"],
+      "likes": ["hearty-omelette", "hot-pepper", "#gem"],
+      "dislikes": ["#flower", "#juice"],
+      "hates": ["sweet-pea", "snowdrop"]
+    },
+    "marl": {
+      "loves": ["quartz-crystal", "granite-gudgeon", "baked-potato"],
+      "likes": ["#mineral", "wheat", "beer"],
+      "dislikes": ["#flower", "mayonnaise"],
+      "hates": ["frost-berry", "dandelion"]
+    },
+    "maren": {
+      "loves": ["hearty-omelette", "harvest-hotpot", "ember-trout", "melon"],
+      "likes": ["#dish", "egg", "#juice"],
+      "dislikes": ["#wine", "#jam"],
+      "hates": ["gloop-jelly", "bat-wing"]
+    },
+    "rushie": {
+      "loves": ["mackerel", "cod", "harbour-ray", "kelp-ribbon"],
+      "likes": ["#fish", "beer", "fisher-stew"],
+      "dislikes": ["#wine", "cheese"],
+      "hates": ["clay", "hay"],
+      "neutral": [
+        "grandmother-hush",
+        "valley-king",
+        "moonlit-mother",
+        "great-hearthfin"
+      ]
+    },
+    "thalwen": {
+      "loves": ["pearlback", "sea-fan", "lantern-squid", "razor-clam"],
+      "likes": ["#shell", "#juice", "honey"],
+      "dislikes": ["#artisan", "hay"],
+      "hates": ["coal", "carp"]
+    },
+    "aldreth": {
+      "loves": ["fried-egg", "hearty-omelette", "fisher-stew", "#juice"],
+      "likes": ["#dish", "cheese", "honey"],
+      "dislikes": ["#wine", "oil"],
+      "hates": ["gloop-jelly", "hay"]
     }
   }
 }
