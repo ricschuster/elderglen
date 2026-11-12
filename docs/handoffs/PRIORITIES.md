@@ -8,12 +8,52 @@ or issue for detail. Move finished items and built-status detail to
 `PRIORITIES_ARCHIVE.md` in the same pull request. Do not keep a session log here; the
 handoffs hold that. Full history to 2026-11-11 is in the archive.
 
+## NOW: finish M3b (agreed 2026-11-12)
+
+The exit test is "bundles 1 to 26 can be filled". Work this list top to bottom; the first
+open item is the next task. Issues are in the M3b GitHub milestone. Update this list in
+every handoff pull request. Do not start items from the sections below until it is done,
+unless the owner says so.
+
+Decided 2026-11-12: the Last Seat opens after ALL other bundles (not 23; fix
+`rooms.json` `opensAfter`). #876 and #879 stay in M3b. Guests' Board +500 friendship, up
+to five heart events a person.
+
+Tier 1, needed to fill the bundles:
+
+1. **#877 placement, steps 3 to 7** (note 89). Built: 1A, 1B, 2 (lights). Next: 3 rod
+   (storm clock, flash, pack), 4 lamp-posts, 5 heater, 6 bombs, 7 Forge items. Build.
+2. **#869 bundles 20, 24, 26** and the gate rule. Items: lamp, candle, wax; festival
+   treats and hat set; seed packet, bead, ribbon, pressed flower, green-glass lantern.
+   Notes 16 and 63. Settle the item lists, then build.
+3. **#874 elderfruit**: eight sources and the eat effect (note 39). Build.
+4. **#875 goods hand-in** to a named place (three special orders, note 65). Design, build.
+5. **#870 Crystalarium**: settle the numbers (note 24), build the machine.
+6. **#871 room rewards that do nothing**: Guests' Board data fix, Hearth carts and herb
+   stall (design first).
+
+Tier 2, thin or placeholder content:
+
+- **7. #872 gift tastes**, 22 of 30 people plus the default list (notes 61, 20).
+- **8. #873 heart event list**: design the list per person and rewards, then build.
+- **9. #878 Secret Woods statue and pond fish** (check the fish table first).
+
+Tier 3, design first, one issue per system when taken:
+
+- **10. #879 undesigned systems**: tapper, artifact and dig spots, gem nodes, crusher, worm
+  bin, ale, water plants, fish pond, tailoring, enchanting, Defense and Immunity.
+- **11. #876 festival route layer** and seven festival maps (overlaps layout step 10).
+- **12. #396 tree types by region.**
+
+Alongside: #880 stale status lines, `docs/overview.json` (behind since 2026-11-11), a
+Stardew checks question batch (about 12 open rows), and file the M4 hosting spike before M4.
+
 ## Milestone order (ADR 0012)
 
 M3 (close out: the owner's play), M3b ring 1 systems, M4 multiplayer, M3c story and
 ending, M3d polish, then M5 and M6. Map areas (notes 71 to 78) are M3b.
 
-## Open, in order
+## Other open items (after M3b)
 
 1. **Completion tracker (#196).** Built (PR #573). Left: real lines and art with the
    voice sheets, a browser look at the summit scene and layout.
@@ -27,16 +67,6 @@ ending, M3d polish, then M5 and M6. Map areas (notes 71 to 78) are M3b.
 4. **Art direction and audio plan.** Character art (note 15), hall rooms (#335),
    placeholder swap, audio (#527).
 5. **Ring 2 shape and travel (#20, M5).** Parked until slice 3 is played.
-
-## M3b completeness (audit 2026-11-12)
-
-M3b is not done: bundles 1 to 26 cannot all be filled. Open issues are in the M3b
-milestone (#869 to #880, #396). Designed 2026-11-12 (notes 88 and 89), ready to build:
-placement for rod, lamps, heater and bombs (#877, note 89 build order; steps 1A, 1B and 2 (lights) built, 3 (the rod) next), goods hand-in
-(#875, a container in the named place), elderfruit (#874, eight sources, note 39), Last
-Seat gate (#869, every other bundle). Decided 2026-11-12: Guests' Board +500 friendship, up to five heart events a person. Still design first: heart event list (#873), flowers,
-gem nodes and artifact spots (note 69). Carts and herb stall need notes (#871). File the
-M4 hosting spike before M4.
 
 ## Layout and tiles track (note 81)
 
