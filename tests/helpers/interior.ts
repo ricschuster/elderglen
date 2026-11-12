@@ -138,9 +138,35 @@ export function narrowAisles(id: string): string[] {
 /**
  * Narrow tiles allowed by design, by map id. Each entry names the tiles and
  * says why. A gated bedroom door or a ladder is one tile wide on purpose, for
- * example. Empty until a batch has a reason to add one.
+ * example. Add a map's tiles only for spots the owner checked draft draws 1 wide.
  */
 export const AISLE_EXCEPTIONS: Record<
   string,
   { tiles: string[]; reason: string }
-> = {};
+> = {
+  "general-store": {
+    tiles: [
+      // the keeper's aisle behind the counter, its west gap and the stock gap
+      ...[3, 4, 5, 6, 7, 8, 9].map((x) => key(x, 17)),
+      key(3, 16),
+      key(3, 18),
+      key(3, 19),
+      key(10, 16),
+      // the display bay's corner beside the display
+      key(22, 21),
+      // the parents' bedroom, beside the double bed
+      key(5, 6),
+      key(8, 6),
+      key(8, 7),
+      // the living area's corner behind the dining table, and the kitchen: the
+      // row before the strip and the ring round the table
+      key(22, 12),
+      key(24, 7),
+      ...[26, 27, 28, 29].map((x) => key(x, 12)),
+      key(29, 10),
+      key(29, 11),
+    ],
+    reason:
+      "owner-checked draft (note 86, 2026-11-11): staff aisle, bedside nooks and the kitchen table ring are one tile wide; the public aisles are 2 wide",
+  },
+};

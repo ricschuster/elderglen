@@ -18,7 +18,6 @@ import {
  * maps from this set as it rebuilds them; the test then runs on them.
  */
 export const PENDING = new Set<string>([
-  "general-store",
   "fisher-hut",
   "hermit-tower",
   "outpost",

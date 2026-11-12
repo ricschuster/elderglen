@@ -18,6 +18,8 @@ const SHOPS = {
   smithy: "smithy",
   hatter: "counter-hatter",
 } as const;
+// Interiors rebuilt to their note 86 layouts keep their size here (#853, #855 to #860).
+const REBUILT: Record<string, [number, number]> = { "general-store": [31, 31] };
 const BURROWS = ["burrow-gardener", "burrow-retired", "burrow-young"];
 const ALL = [...Object.keys(SHOPS), "outpost", "outpost-rooms", ...BURROWS];
 
@@ -81,11 +83,9 @@ describe("the Hearthwell interiors", () => {
   it("gives each shop its counter, with the right kind", () => {
     for (const [id, kind] of Object.entries(SHOPS)) {
       const m = maps.get(id);
-      expect(
-        m.services.map((s) => s.kind),
-        id,
-      ).toEqual([kind]);
-      expect([m.width, m.height]).toEqual([14, 10]);
+      // A wide counter has one service per tile it is served from (all the same kind).
+      expect([...new Set(m.services.map((s) => s.kind))], id).toEqual([kind]);
+      expect([m.width, m.height]).toEqual(REBUILT[id] ?? [14, 10]);
     }
   });
 

@@ -954,7 +954,7 @@ Final art waits for M3d (ADR 0012).
 
 ## Build work (issues #853 to #860, house is #832 to #838)
 
-1. **The pilot map.** Rebuild `general-store.json` from the draft: 31 by 31, the
+1. **The pilot map (built, #853).** Rebuild `general-store.json` from the draft: 31 by 31, the
    `ground`, `collision` and `markers` layers, the 2 wide entry, the marks above, and
    the two gated bedroom doors (a `gate` property read from friendship, note 61).
    Change the Hearthwell lot's `from_general-store` entry name only if the notch
@@ -968,6 +968,9 @@ Final art waits for M3d (ADR 0012).
    door pair or a ladder to its building's lot; the loft and the steward's rooms are new
    maps (the loft is a map the hut links to, as the Outpost links to its rooms).
 4. **Interior door 2 wide** across the 14 built shells (owner accepted, SC-145).
+   The pilot is built with `scripts/interiors/tmj-to-map.mjs <id>`, which the later maps reuse.
+   Gates are data only for now: a `gate` object (`friendship:<name>:2`) over the door tiles,
+   left walkable, because nothing in `src/` reads a friendship gate yet.
 5. **Fold the generator into the build** if the layout page (step 5) wants to read `plans.py`
    rather than the `.tmj` files. Until then the `.tmj` files are the hand off.
 
