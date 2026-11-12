@@ -21,12 +21,13 @@ to five heart events a person.
 
 Tier 1, needed to fill the bundles:
 
-1. **#877 placement, steps 4 to 7** (note 89). Built: 1A, 1B, 2 lights, 3 rod (#893).
-   Next: 4 lamp-posts, 5 heater, 6 bombs, 7 Forge items. Build.
+1. **#877 placement** is built (steps 1 to 7). Left: icons for bombs and Forge goods, a
+   browser look at the lights, rod and bombs. Close the issue after the owner's play.
 2. **#869 bundles 20, 24, 26** and the gate rule. Designed (note 63): wax from the bee
    house, candle recipe and artifact spots to number, hats choose 3 of 5 (Harvest Crown,
    Snow Cap, Holly Hat, new spring and summer hats), bread, honey cake, herb tea as
-   starter recipes. Needs artifact spots (#879). Build the rest.
+   starter recipes. Artifact spots are built (note 69), the four old things exist as items but
+   bundle 26 is not in `bundles.json`. Build the rest: wax, candle, hats, dishes, the gate.
 3. **#874 elderfruit**: eight sources and the eat effect (note 39). Build.
 4. **#875 goods hand-in**: designed (note 65), a drop chest bound to the order. Scope is
    Spring Leeks, Barrel Batch, Pantry Stock, Crystal Gift. Build.
@@ -37,14 +38,17 @@ Tier 1, needed to fill the bundles:
 
 Tier 2, thin or placeholder content:
 
-- **7. #872 gift tastes**, 22 of 30 people plus the default list (notes 61, 20).
+- **7. #872 gift tastes**: designed, approved (note 90). Build the 22 entries into `friendship.json`; confirm the `#shell` and `#monster-drop` tags exist.
 - **8. #873 heart events**: scale and rewards designed (note 62: 2 and 6 hearts for all 30, fixed reward pattern). Needs #872, then the list per person, then scenes as data.
 - **9. #878 Secret Woods statue and pond fish** (check the fish table first).
 
 Tier 3, design first, one issue per system when taken:
 
-- **10. #879 undesigned systems**: tapper, artifact and dig spots, gem nodes, crusher, worm
-  bin, ale, water plants, fish pond, tailoring, enchanting, Defense and Immunity.
+- **10. #879 systems.** Built: artifact spots and gem nodes (note 69). Designed, not
+  built: tapper, crusher, worm bin, hops and pale ale (note 92); fish pond and six water
+  finds (note 93); Defense, Immunity and three bad effects (note 94); flowers (note 91);
+  forge ring combining in ring 1 (note 95, gem forging and enchanting deferred to ring 2
+  or 3). Still to design: tailoring.
 - **11. #876 festival route layer** and seven festival maps (overlaps layout step 10).
 - **12. #396 tree types by region.**
 

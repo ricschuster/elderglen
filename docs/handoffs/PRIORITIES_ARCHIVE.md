@@ -408,3 +408,5 @@ can close once the owner is happy with note 63.
 
 Tablet check (#336), note 45 and 60 open items, barn stall wing, note 54 answer
 sheet.
+
+- #877 placement steps 1 to 7 built (2026-11-12, #893 and the 2026-11-12i run): placed store, lights, rod, lamp-posts, heater, bombs and Forge goods. Artifact spots and gem nodes (#879) built the same run.
