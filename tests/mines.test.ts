@@ -14,7 +14,7 @@ import {
   ladderChance,
   mineFloorOf,
   MINES_OPEN_DAY,
-  campGift,
+  campItem,
   mineMapId,
   minesOpen,
 } from "../src/core/mines";
@@ -406,27 +406,29 @@ describe("Old Greencoat and the rest camp", () => {
     ).toBe(false);
   });
 
-  it("gives a few things once a day and refills in the morning", () => {
+  it("gives one fixed item the first time and is empty after", () => {
     const g = newGame();
-    g.day.clock.day = 5;
-    expect(takeCampGift(g).ok).toBe(true);
-    expect(g.inventory.count("coal")).toBe(2);
-    expect(g.inventory.count("copper-ore")).toBe(3);
-    expect(takeCampGift(g)).toEqual({ ok: false, reason: "camp chest empty" });
+    expect(takeCampGift(g)).toEqual({ ok: true, item: "sturdy-boots" });
+    expect(g.inventory.count("sturdy-boots")).toBe(1);
     g.day.clock.day = 6;
-    expect(takeCampGift(g).ok).toBe(true);
-    expect(g.inventory.count("coal")).toBe(4);
-    expect(deserialize(serialize(g))!.mines.campTakenOn(10)).toBe(6);
+    expect(takeCampGift(g)).toEqual({ ok: false, reason: "camp chest empty" });
+    expect(deserialize(serialize(g))!.mines.campOpenedOn(10)).toBe(true);
   });
 
-  it("leaves the gift when the backpack is full, taking nothing", () => {
+  it("leaves the item when the backpack is full, taking nothing", () => {
     const g = newGame();
-    g.day.clock.day = 5;
     for (let i = 0; i < g.inventory.size; i++) g.inventory.add(`junk-${i}`);
     expect(takeCampGift(g)).toEqual({ ok: false, reason: "backpack full" });
-    expect(g.mines.campTakenOn(10)).toBe(0);
-    expect(g.inventory.count("coal")).toBe(0);
-    expect(campGift(5).every((s) => itemById(s.id))).toBe(true);
+    expect(g.mines.campOpenedOn(10)).toBe(false);
+  });
+
+  it("has a real item for every camp floor but 30", () => {
+    for (let f = 10; f <= 120; f += 10) {
+      if (f === 30) expect(campItem(f)).toBeUndefined();
+      else expect(itemById(campItem(f)!)).toBeDefined();
+    }
+    expect(campItem(100)).toBe("elderfruit");
+    expect(campItem(120)).toBe("deepmark-key");
   });
 });
 
@@ -712,16 +714,14 @@ describe("the deeper mine (floors 11 to 120)", () => {
     for (const floor of [10, 20, 50, 120])
       expect(floorLayout(floor, 6).camp).toBeDefined();
     expect(floorLayout(25, 6).camp).toBeUndefined();
-    expect(campGift(5, 50).some((s) => s.id === "iron-ore")).toBe(true);
-    expect(campGift(5, 100).some((s) => s.id === "gold-ore")).toBe(true);
     const g = startGame();
     g.day.clock.day = 6;
     expect(takeCampGift(g, 10).ok).toBe(true);
     expect(takeCampGift(g, 10).ok).toBe(false);
     expect(takeCampGift(g, 20).ok).toBe(true);
     const back = deserialize(serialize(g))!;
-    expect(back.mines.campTakenOn(20)).toBe(6);
-    expect(back.mines.campTakenOn(30)).toBe(0);
+    expect(back.mines.campOpenedOn(20)).toBe(true);
+    expect(back.mines.campOpenedOn(30)).toBe(false);
   });
 
   it("finds a ladder on floors 11 to 119 and none on floor 120", () => {

@@ -429,6 +429,7 @@ describe("saves", () => {
       barnTier: 1,
       build: undefined,
       incubator: undefined,
+      heaters: { coop: false, barn: false },
       animals: [],
       hay: 0,
       silo: false,

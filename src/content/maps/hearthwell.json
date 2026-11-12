@@ -23,7 +23,7 @@
   "width": 120,
   "height": 110,
   "nextlayerid": 6,
-  "nextobjectid": 64,
+  "nextobjectid": 65,
   "properties": [
     { "name": "placeholder", "type": "bool", "value": true },
     { "name": "rideable", "type": "bool", "value": true },
@@ -2372,6 +2372,22 @@
           "point": true,
           "properties": [
             { "name": "kind", "type": "string", "value": "orders" }
+          ],
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 64,
+          "name": "trader-stall",
+          "class": "service",
+          "type": "service",
+          "x": 1480,
+          "y": 264,
+          "width": 0,
+          "height": 0,
+          "point": true,
+          "properties": [
+            { "name": "kind", "type": "string", "value": "trader" }
           ],
           "rotation": 0,
           "visible": true

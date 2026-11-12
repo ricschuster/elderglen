@@ -1,3 +1,4 @@
+import campChest from "../content/camp-chest.json";
 import type { Spot } from "./forage";
 import bandData from "../content/mine-bands.json";
 import { GEODE_SHARE } from "./geodes";
@@ -89,26 +90,37 @@ export const isCampFloor = (floor: number): boolean =>
   floor >= CAMP_EVERY && floor % CAMP_EVERY === 0 && floor <= BUILT_FLOORS;
 
 /**
- * What a camp chest holds each day, a gift from the old dwarf lamp-keepers
- * (placeholders, note 07): 2 coal, a few of the band's ore and one thing by the
- * day. Copper in the Upper Galleries, iron in the Cold Deeps, gold below.
+ * The one item a camp chest gives, once, in Stardew's pattern (owner, 2026-11-11,
+ * note 22). `undefined` for floor 30, which holds nothing. Ids are in
+ * `boots.json`, `weapons.json` and the kept items of `items.ts`.
  */
-export function campGift(
+export function campItem(floor: number): string | undefined {
+  return (
+    (campChest as Record<string, string | null>)[String(floor)] ?? undefined
+  );
+}
+
+/**
+ * Special floors (owner, 2026-11-11, note 22): about 1 floor in 15 from floor 10
+ * up, never a camp floor. An infested floor hides its ladder until every creature
+ * is beaten. A geode floor is all geode nodes and has no creatures.
+ */
+export type SpecialFloor = "infested" | "geode";
+export const SPECIAL_CHANCE = 1 / 15;
+export const SPECIAL_FROM = 10;
+/** Extra creatures on an infested floor, and the extra slayer count a clear earns (placeholders, note 07). */
+export const INFESTED_EXTRA_CREATURES = 4;
+export const INFESTED_SLAYER_BONUS = 0.25;
+
+export function specialFloor(
+  floor: number,
   day: number,
-  floor = CAMP_EVERY,
-): { id: string; count: number }[] {
-  const band = BANDS.indexOf(bandOf(floor));
-  const ore = (["copper", "iron", "gold"] as const)[band] ?? "copper";
-  const extra = [
-    { id: "quartz-crystal", count: 1 },
-    { id: "stone", count: 5 },
-    { id: "cave-mushroom", count: 1 },
-  ][day % 3] as { id: string; count: number };
-  return [
-    { id: "coal", count: 2 },
-    { id: `${ore}-ore`, count: bandData.campGiftOre[ore] },
-    extra,
-  ];
+): SpecialFloor | undefined {
+  if (floor < SPECIAL_FROM || isCampFloor(floor) || floor > BUILT_FLOORS)
+    return undefined;
+  const random = seeded(day * 4513 + floor * 3571 + 5);
+  if (random() >= SPECIAL_CHANCE) return undefined;
+  return random() < 0.5 ? "infested" : "geode";
 }
 
 export const mineMapId = (floor: number): string => `mine-${floor}`;
@@ -148,6 +160,8 @@ export interface FloorLayout {
   ladder: Spot | undefined;
   /** The camp chest, on a camp floor. */
   camp: Spot | undefined;
+  /** An infested or geode floor, if it is one today. */
+  special: SpecialFloor | undefined;
 }
 
 const UP: Spot = { x: 1, y: 1 };
@@ -197,6 +211,7 @@ export function floorLayout(floor: number, day: number): FloorLayout {
   };
 
   const camp = isCampFloor(floor) ? pick((s) => !near(s, UP, 4)) : undefined;
+  const special = specialFloor(floor, day);
   const rocks: Rock[] = [];
   const count = MIN_ROCKS + Math.floor(random() * (MAX_ROCKS - MIN_ROCKS + 1));
   const hearth = hearthsilverNodes(floor);
@@ -204,15 +219,30 @@ export function floorLayout(floor: number, day: number): FloorLayout {
     const s = pick(() => true);
     if (!s) break;
     const kind: RockKind =
-      i < hearth ? "hearthsilver" : rockKindAt(floor, random());
+      i < hearth
+        ? "hearthsilver"
+        : special === "geode"
+          ? "geode"
+          : rockKindAt(floor, random());
     rocks.push({ ...s, kind, hits: 0 });
   }
   // The bottom floor has no way down.
   const ladder =
-    floor < BUILT_FLOORS && random() < FREE_LADDER_CHANCE
+    floor < BUILT_FLOORS &&
+    random() < FREE_LADDER_CHANCE &&
+    special !== "infested"
       ? pick((s) => !near(s, UP, 5))
       : undefined;
-  return { floor, walls, up: UP, arrive: ARRIVE, rocks, ladder, camp };
+  return {
+    floor,
+    walls,
+    up: UP,
+    arrive: ARRIVE,
+    rocks,
+    ladder,
+    camp,
+    special,
+  };
 }
 
 /** The same floor as a Tiled map, so the farm scene can walk it. */
@@ -322,6 +352,7 @@ export function floorMapJson(layout: FloorLayout): TiledMapJson & {
  */
 export function floorCreatures(floor: number, day: number): Creature[] {
   const layout = floorLayout(floor, day);
+  if (layout.special === "geode") return [];
   const random = seeded(day * 2003 + floor * 6173 + 29);
   const taken = new Set(layout.rocks.map((r) => `${r.x},${r.y}`));
   if (layout.ladder) taken.add(`${layout.ladder.x},${layout.ladder.y}`);
@@ -336,6 +367,9 @@ export function floorCreatures(floor: number, day: number): Creature[] {
     FLOOR_WIDTH,
     FLOOR_HEIGHT,
     ARRIVE,
+    16,
+    6,
+    layout.special === "infested" ? INFESTED_EXTRA_CREATURES : 0,
   );
 }
 
@@ -348,6 +382,9 @@ export class Floor {
     /** The creatures still on the floor today. A beaten one is gone until tomorrow. */
     public creatures: Creature[] = [],
   ) {}
+
+  /** Kills made on the floor today, for the infested slayer bonus. Not saved. */
+  kills = 0;
 }
 
 export interface FloorSave {
@@ -365,6 +402,8 @@ export interface MinesSave {
   campTaken?: number;
   /** The day each camp chest was last emptied, by floor. */
   campDays?: Record<number, number>;
+  /** Camp floors whose one item has been taken. */
+  campOpened?: number[];
   deepest: number;
   misses: number;
   copperHandedIn: boolean;
@@ -388,6 +427,17 @@ export class Mines {
   /** The day a camp's chest was last emptied, 0 if never. */
   campTakenOn(floor: number): number {
     return this.campDays.get(floor) ?? 0;
+  }
+
+  /** Floors whose camp chest has given its one item (note 22, 2026-11-11). */
+  private campOpened = new Set<number>();
+
+  campOpenedOn(floor: number): boolean {
+    return this.campOpened.has(floor);
+  }
+
+  openCamp(floor: number): void {
+    this.campOpened.add(floor);
   }
 
   takeCamp(floor: number, day: number): void {
@@ -415,6 +465,30 @@ export class Mines {
     return made;
   }
 
+  /**
+   * The bonus for a kill on an infested floor (note 22, placeholders): a second
+   * drop roll, and one extra slayer count in every four kills. Counts kills on
+   * the floor today.
+   */
+  killBonus(
+    floor: number,
+    day: number,
+  ): { extraDrop: boolean; extraKill: boolean } {
+    if (!this.infested(floor, day))
+      return { extraDrop: false, extraKill: false };
+    const f = this.visit(floor, day);
+    f.kills += 1;
+    return {
+      extraDrop: true,
+      extraKill: f.kills % Math.round(1 / INFESTED_SLAYER_BONUS) === 0,
+    };
+  }
+
+  /** True on an infested floor today (note 22, special floors). */
+  infested(floor: number, day: number): boolean {
+    return specialFloor(floor, day) === "infested";
+  }
+
   /** The floor as dug today, if it has been visited today. */
   today(floor: number, day: number): Floor | undefined {
     const have = this.floors.get(floor);
@@ -432,9 +506,13 @@ export class Mines {
     x: number,
     y: number,
     random: () => number,
+    peaceful = false,
   ): boolean {
     const f = this.visit(floor, day);
     if (f.ladder || floor >= BUILT_FLOORS) return false;
+    // An infested floor shows no ladder until every creature is beaten.
+    if (!peaceful && this.infested(floor, day) && f.creatures.length > 0)
+      return false;
     if (random() < ladderChance(this.misses) || f.rocks.count === 0) {
       f.ladder = { x, y };
       this.misses = 0;
@@ -458,6 +536,13 @@ export class Mines {
   ): boolean {
     const f = this.visit(floor, day);
     if (f.ladder || floor >= BUILT_FLOORS) return false;
+    if (this.infested(floor, day)) {
+      // The last creature to fall shows the way down.
+      if (f.creatures.length > 0) return false;
+      f.ladder = { x, y };
+      this.misses = 0;
+      return true;
+    }
     if (random() < ladderChance(this.misses)) {
       f.ladder = { x, y };
       this.misses = 0;
@@ -479,6 +564,7 @@ export class Mines {
     return {
       greeted: this.greeted,
       campDays: Object.fromEntries(this.campDays),
+      campOpened: [...this.campOpened],
       deepest: this.deepest,
       misses: this.misses,
       copperHandedIn: this.copperHandedIn,
@@ -495,6 +581,7 @@ export class Mines {
     this.campDays = new Map(
       Object.entries(saved.campDays ?? {}).map(([n, d]) => [Number(n), d]),
     );
+    this.campOpened = new Set(saved.campOpened ?? []);
     if (saved.campTaken && !this.campDays.has(CAMP_EVERY))
       this.campDays.set(CAMP_EVERY, saved.campTaken);
     this.floors = new Map();

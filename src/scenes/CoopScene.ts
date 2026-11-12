@@ -4,6 +4,9 @@ import {
   HATCHES,
   incubateDays,
   INCUBATOR_TIER,
+  hasHeater,
+  heaterProblem,
+  placeHeater,
   animalsIn,
   bringIn,
   collect,
@@ -21,7 +24,7 @@ import {
   depositHay,
   SPECIES,
 } from "../core/animals";
-import { itemById } from "../core/items";
+import { COOP_HEATER, itemById } from "../core/items";
 import type { GameState } from "../core/save";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
@@ -116,6 +119,14 @@ export class CoopScene extends Phaser.Scene {
           : "Empty. Put an egg in and it hatches in a few nights",
         buttons: [{ text: "Put egg", run: () => this.putEgg() }],
       });
+    if (this.building !== "stable")
+      rows.push({
+        label: "Heater",
+        detail: hasHeater(a, this.building)
+          ? "Placed. The animals keep warm in winter"
+          : `Winter nights wear their mood down without one (you carry ${this.state.inventory.count(COOP_HEATER)})`,
+        buttons: [{ text: "Place", run: () => this.heater() }],
+      });
     for (const an of animalsIn(this.state, this.building)) {
       const what = itemById(an.item ?? SPECIES[an.species].item)?.name;
       const egg = an.product
@@ -185,6 +196,16 @@ export class CoopScene extends Phaser.Scene {
         ? `Took ${itemById(r.item)?.name.toLowerCase() ?? "it"}${r.also ? ` and ${itemById(r.also)?.name.toLowerCase() ?? "more"}` : ""}.`
         : r.problem,
     );
+    this.refresh();
+  }
+
+  private heater(): void {
+    const b = this.building;
+    if (placeHeater(this.state, b))
+      this.message.setText(
+        "The heater is in. It will keep them warm in winter.",
+      );
+    else this.message.setText(heaterProblem(this.state, b) ?? "No heater.");
     this.refresh();
   }
 

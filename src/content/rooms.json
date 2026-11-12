@@ -32,7 +32,7 @@
   {
     "id": "last-seat",
     "name": "The Last Seat",
-    "opensAfter": 20,
+    "opensAfter": 23,
     "unlock": "bridge"
   }
 ]

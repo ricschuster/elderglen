@@ -254,6 +254,33 @@ items.set(HOMEWARD_PIN, {
  */
 export const GLOW_RING = "glow-ring";
 export const WARP_TOTEM_BEACH = "warp-totem-beach";
+/** Camp chest items (note 22): the floor 100 elderfruit (note 39) and the floor 120 key to the ring 2 deep dig. Kept, they do nothing yet. */
+export const ELDERFRUIT = "elderfruit";
+export const DEEPMARK_KEY = "deepmark-key";
+/** The battery pack (a struck lightning rod makes one, note 34) and the rod itself. Placing a rod is not wired yet, so both are kept. */
+items.set("battery-pack", {
+  id: "battery-pack",
+  name: "Battery pack",
+  sellPrice: 500,
+});
+items.set("lightning-rod", {
+  id: "lightning-rod",
+  name: "Lightning rod",
+  sellPrice: 0,
+  keep: true,
+});
+items.set(ELDERFRUIT, {
+  id: ELDERFRUIT,
+  name: "Elderfruit",
+  sellPrice: 0,
+  keep: true,
+});
+items.set(DEEPMARK_KEY, {
+  id: DEEPMARK_KEY,
+  name: "Deepmark key",
+  sellPrice: 0,
+  keep: true,
+});
 /** Rings are worn in the two ring slots (`equipment.ts`, note 37). */
 for (const r of RINGS)
   items.set(r.id, { id: r.id, name: r.name, sellPrice: 0, keep: true });
@@ -341,6 +368,10 @@ const GROUPS: [string, string[]][] = [
       ...GEODE_ITEMS.map((i) => i.id),
       ...ORES.map((o) => o.id),
       ...BARS.map((b) => b.id),
+      "battery-pack",
+      "lightning-rod",
+      ELDERFRUIT,
+      DEEPMARK_KEY,
     ],
   ],
   [

@@ -54,6 +54,7 @@ import {
 import { openChest } from "../core/maze";
 import { rodById, waterAhead } from "../core/fishing";
 import { holdsOf } from "../core/worldflags";
+import { gateOpen, gateShutLine, parseGate } from "../core/gates";
 import { mendTideBridge, TIDE_BRIDGE_WOOD } from "../core/tidebridge";
 import { logCleared } from "../core/logs";
 import { CAMP_LINE, HERMIT_LINE } from "../core/forestfolk";
@@ -96,6 +97,9 @@ import {
   type Exit,
   type TiledLayer,
 } from "../core/map";
+import { counterShutLine, doorShutLine } from "../core/shophours";
+import { roadNews } from "../core/roadnews";
+import { traderProblem } from "../core/trader";
 import { exitLabel, serviceLabel, standInLine } from "../core/labels";
 import {
   facingFrom,
@@ -870,6 +874,17 @@ export class FarmScene extends Phaser.Scene {
         this.render();
       }
     }
+    if (v.x !== 0 || v.y !== 0) {
+      const g = this.map.gateAt(ahead.x, ahead.y);
+      const rule = g && parseGate(g.rule);
+      if (rule && this.gateShut(ahead.x, ahead.y)) {
+        const line = gateShutLine(this.mapId, rule);
+        if (this.message !== line) {
+          this.message = line;
+          this.render();
+        }
+      }
+    }
     if (walking && this.tapPath.length > 0) {
       const moved = Math.hypot(this.pos.x - before.x, this.pos.y - before.y);
       this.tapStuckMs =
@@ -981,6 +996,7 @@ export class FarmScene extends Phaser.Scene {
     const log = this.map.logAt(x, y);
     return (
       this.map.isBlocked(x, y) ||
+      this.gateShut(x, y) ||
       this.tileShutForFestival(x, y) ||
       (log !== undefined && !logCleared(this.state, log)) ||
       (this.outdoorWorld && this.state.trees.blocks(x, y)) ||
@@ -1494,7 +1510,12 @@ export class FarmScene extends Phaser.Scene {
     if (!exit) return false;
     // The Larder may have been finished at the hall since the last morning.
     this.refreshHolds();
-    if (this.exitShutForFestival(exit)) {
+    const doorShut =
+      this.mapId === "hearthwell" ? doorShutLine(this.state, exit.id) : "";
+    if (doorShut) {
+      this.message = doorShut;
+      this.render();
+    } else if (this.exitShutForFestival(exit)) {
       this.message = festivalShutLine(this.state.day.clock.day);
       this.render();
     } else if (exitOpen(exit, this.holds)) this.leave(exit);
@@ -1536,6 +1557,17 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** True when walking onto this tile of the current map is shut by a festival setting up. */
+  /** True on a gated bedroom door the player has not earned the hearts for yet. */
+  private gateShut(x: number, y: number): boolean {
+    const g = this.map.gateAt(x, y);
+    if (!g) return false;
+    const rule = parseGate(g.rule);
+    if (!rule) return false;
+    return !gateOpen(this.mapId, rule, (id) =>
+      this.state.friendship.hearts(id),
+    );
+  }
+
   private tileShutForFestival(x: number, y: number): boolean {
     const clock = this.state.day.clock;
     return festivalStepShut(clock.day, clock.minutes, this.hereTile(), {
@@ -1799,7 +1831,11 @@ export class FarmScene extends Phaser.Scene {
       this.mapId,
       t.x,
       t.y,
-      { day, weather: this.state.weather },
+      {
+        day,
+        weather: this.state.weather,
+        minute: this.state.day.clock.minutes,
+      },
       declinedToday(day),
     );
     if (event) this.open("heart-event", { id: event.id, warn: true });
@@ -1963,6 +1999,13 @@ export class FarmScene extends Phaser.Scene {
     if (this.meetVillager(front)) return;
     const service = this.map.serviceAt(front.x, front.y);
     if (service?.kind !== "tide-bridge") this.mendAsked = false;
+    const shut = service
+      ? counterShutLine(this.state, this.mapId, service.kind)
+      : "";
+    if (shut) {
+      this.message = shut;
+      return this.render();
+    }
     if (service?.kind === "fisher-shop")
       return this.open("shop", { stock: "fisher" });
     if (service?.kind === "pin-stall")
@@ -1980,6 +2023,20 @@ export class FarmScene extends Phaser.Scene {
     if (service?.kind === "quarry-bridge") {
       this.message = QUARRY_BRIDGE_LINE;
       return this.render();
+    }
+    if (service?.kind === "board-news") {
+      const g = this.state;
+      this.message = roadNews(g.day.clock.day, g.tomorrow);
+      return this.render();
+    }
+    if (service?.kind === "trader") {
+      const g = this.state;
+      const closed = traderProblem(g.day.clock.day, g.day.clock.minutes);
+      if (closed) {
+        this.message = closed;
+        return this.render();
+      }
+      return this.open("shop", { stock: "trader" });
     }
     if (service && standInLine(service.kind)) {
       this.message = standInLine(service.kind) as string;
@@ -3104,7 +3161,16 @@ export class FarmScene extends Phaser.Scene {
     const levelUp = this.state.skills.gain("combat", creatureXp(c));
     const got: string[] = [];
     let left = false;
-    for (const d of rollDrops(def, Math.random)) {
+    const bonus = this.state.mines.killBonus(
+      this.floor!,
+      this.state.day.clock.day,
+    );
+    if (bonus.extraKill) this.state.combat.noteKill(c.kind);
+    const rolls = [
+      ...rollDrops(def, Math.random),
+      ...(bonus.extraDrop ? rollDrops(def, Math.random) : []),
+    ];
+    for (const d of rolls) {
       if (this.state.inventory.add(d.id, d.count))
         got.push(`${d.count} ${itemById(d.id)?.name.toLowerCase() ?? d.id}`);
       else left = true;

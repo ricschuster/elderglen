@@ -243,8 +243,13 @@ describe("creatures", () => {
       const day = 5 + floor;
       const layout = floorLayout(floor, day);
       const list = floorCreatures(floor, day);
+      // Special floors differ: none on a geode floor, four more when infested.
+      if (layout.special === "geode") {
+        expect(list).toHaveLength(0);
+        continue;
+      }
       expect(list.length).toBeGreaterThanOrEqual(2);
-      expect(list.length).toBeLessThanOrEqual(5);
+      expect(list.length).toBeLessThanOrEqual(layout.special ? 9 : 5);
       for (const c of list) {
         const tx = Math.floor(c.x / 16);
         const ty = Math.floor((c.y - 1) / 16);

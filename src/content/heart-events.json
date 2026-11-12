@@ -21,6 +21,7 @@
       "villager": "odette",
       "place": "hw:store",
       "hearts": 2,
+      "window": { "from": "9:00", "until": "16:00" },
       "scene": [
         {
           "cmd": "fade",
@@ -130,6 +131,7 @@
       "villager": "hattie",
       "place": "hw:inn",
       "hearts": 2,
+      "window": { "from": "12:00", "until": "20:00" },
       "conditions": {
         "weather": ["rainy", "stormy"]
       },
@@ -185,6 +187,7 @@
       "villager": "rosmarin",
       "place": "forest:fairy-ring",
       "hearts": 4,
+      "window": { "from": "15:00", "until": "18:00" },
       "scene": [
         {
           "cmd": "place",

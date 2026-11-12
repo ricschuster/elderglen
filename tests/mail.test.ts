@@ -124,4 +124,18 @@ describe("mail", () => {
     const quiet = sleep(g, [], () => 0.5);
     expect(quiet.newMail).toBe(0);
   });
+
+  it("sends the fish seed letter once, the morning after Whole Roster", () => {
+    const g = newGame();
+    expect(queueMail(g, 2)).not.toContain("fish-seed-letter");
+    g.achievements.award("whole-roster");
+    expect(queueMail(g, 5)).toContain("fish-seed-letter");
+    expect(queueMail(g, 6)).toEqual([]);
+    g.mail.deliver(5);
+    const r = openLetter(g, "fish-seed-letter");
+    expect(r.ok && r.pending).toBe(false);
+    expect(g.inventory.count("elderfruit")).toBe(1);
+    openLetter(g, "fish-seed-letter");
+    expect(g.inventory.count("elderfruit")).toBe(1);
+  });
 });

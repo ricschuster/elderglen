@@ -6,7 +6,7 @@
 // source from then on: edit them by hand or in Tiled. This script only authored
 // the first draft, with a fixed seed so a re-run gives the same files. (The
 // farm patch is idempotent: it only adds the exit when it is not there.)
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 
 const W = 100;
 const H = 70;
@@ -475,10 +475,13 @@ writeFileSync(
     ],
   };
   hut.nextobjectid = id;
-  writeFileSync(
-    new URL("../src/content/maps/fisher-hut.json", import.meta.url),
-    JSON.stringify(hut) + "\n",
+  // The hut was rebuilt from the checked interior plan (note 86), so this
+  // script no longer overwrites it. Delete the file to regenerate the old one.
+  const hutUrl = new URL(
+    "../src/content/maps/fisher-hut.json",
+    import.meta.url,
   );
+  if (!existsSync(hutUrl)) writeFileSync(hutUrl, JSON.stringify(hut) + "\n");
 }
 
 // ---- the farm's south exit, in both farm maps (note 55): three tiles wide at

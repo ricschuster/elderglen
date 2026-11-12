@@ -384,7 +384,7 @@ describe("saves", () => {
 });
 
 describe("rooms and the bridge", () => {
-  it("lists all six rooms, with the Last Seat last and opening at 20", () => {
+  it("lists all six rooms, with the Last Seat last and opening at 23", () => {
     expect(ROOMS.map((r) => r.id)).toEqual([
       "foragers-shelf",
       "larder",
@@ -393,7 +393,7 @@ describe("rooms and the bridge", () => {
       "guests-board",
       "last-seat",
     ]);
-    expect(ROOMS.map((r) => r.opensAfter)).toEqual([0, 1, 1, 2, 3, 20]);
+    expect(ROOMS.map((r) => r.opensAfter)).toEqual([0, 1, 1, 2, 3, 23]);
     expect(ROOMS.every((r) => r.unlock)).toBe(true);
   });
 

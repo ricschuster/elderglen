@@ -1,0 +1,27 @@
+{
+  "_note": "The road trader's goods (note 57, numbers in note 07 'The road trader'). Placeholders. Each visit draws 4 to 6 from this list, seeded by the day. Price is 1.5 times the item's sell price.",
+  "visitDays": ["Wed", "Sat"],
+  "opens": "9:00",
+  "closes": "20:00",
+  "markup": 1.5,
+  "minItems": 4,
+  "maxItems": 6,
+  "goods": [
+    "morel",
+    "chanterelle",
+    "snowcap",
+    "wild-ginger",
+    "cave-mushroom",
+    "snow-tuber",
+    "pearly-shell",
+    "spiral-shell",
+    "pin-urchin",
+    "iron-bar",
+    "gold-bar",
+    "geode",
+    "honey",
+    "cheese",
+    "pumpkin-soup",
+    "mushroom-stew"
+  ]
+}

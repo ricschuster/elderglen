@@ -237,11 +237,58 @@ describe("the nightly spawn table (note 78, owner answer 3)", () => {
     expect(placeSpawn(w, { x: 22, y: 20, kind: "iron" })).toBe(true);
     expect(w.rocks.at(22, 20)!.kind).toBe("iron");
     expect(placeSpawn(w, { x: 23, y: 20, kind: "hard-rock" })).toBe(true);
-    expect(w.rocks.at(23, 20)!.kind).toBe("stone");
+    expect(w.rocks.at(23, 20)!.kind).toBe("hard");
     expect(placeSpawn(w, { x: 22, y: 20, kind: "rock" })).toBe(false);
   });
 
   it("has the table's kinds in the saved Quarry shape", () => {
     expect(table.kinds.map((k) => k.kind)).toContain("hearthsilver");
+  });
+});
+
+describe("hard rock and Mining level gates (note 78)", () => {
+  it("takes more swings than stone, and can drop coal", async () => {
+    const { swingsToBreak } = await import("../src/core/rocks");
+    const { drops } = await import("../src/core/mining");
+    for (const tier of [0, 1, 2, 3, 4])
+      expect(swingsToBreak("hard", tier)).toBeGreaterThan(
+        swingsToBreak("stone", tier) - 1,
+      );
+    expect(swingsToBreak("hard", 0)).toBe(3);
+    expect(drops("hard", 0, false, () => 0.1)).toMatchObject({ id: "coal" });
+    expect(drops("hard", 0, false, () => 0.9).id).toBe("stone");
+  });
+
+  it("spawns only the ores the Mining level allows", async () => {
+    const { nightlySpawns } = await import("../src/core/spawns");
+    const table = SPAWN_TABLES["quarry"]!;
+    const tiles = Array.from({ length: 400 }, (_, i) => ({
+      x: i % 20,
+      y: Math.floor(i / 20),
+    }));
+    const kindsAt = (level: number) => {
+      let n = 1;
+      const random = () => (n = (n * 16807) % 2147483647) / 2147483647;
+      const found = new Set<string>();
+      for (let d = 0; d < 400; d++)
+        for (const s of nightlySpawns(
+          table,
+          3,
+          tiles,
+          () => true,
+          random,
+          level,
+        ))
+          found.add(s.kind);
+      return found;
+    };
+    expect(kindsAt(0).has("copper")).toBe(true);
+    expect(kindsAt(0).has("iron")).toBe(false);
+    expect(kindsAt(1).has("iron")).toBe(false);
+    expect(kindsAt(2).has("iron")).toBe(true);
+    expect(kindsAt(4).has("gold")).toBe(false);
+    expect(kindsAt(5).has("gold")).toBe(true);
+    expect(kindsAt(7).has("hearthsilver")).toBe(false);
+    expect(kindsAt(10).has("hearthsilver")).toBe(true);
   });
 });

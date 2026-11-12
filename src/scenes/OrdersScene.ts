@@ -3,6 +3,7 @@ import {
   askText,
   collectOwed,
   ORDERS_INTRO,
+  orderBase,
   orderById,
   progressOf,
 } from "../core/orders";
@@ -105,7 +106,7 @@ export class OrdersScene extends Phaser.Scene {
           {
             text: "Take",
             run: () => {
-              const r = o.accept(def.id, day);
+              const r = o.accept(def.id, day, orderBase(g));
               this.say(
                 r === "ok"
                   ? `You took ${def.title}.`

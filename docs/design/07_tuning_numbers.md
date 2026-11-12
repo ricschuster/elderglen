@@ -912,6 +912,7 @@ Source: `src/core/orders.ts`, `src/core/debris.ts`, `src/content/orders.json`.
   First reward a big chest (stands in for a second shipping bin).
 - Fine Vegetables: ship 25 gold quality vegetables, 28 days, 1,000g, repeats.
   First reward the dehydrator recipe.
+- Too Many Fish: 10 of one in-season fish, 7 days, 800g, repeats. Still Waters: 20 fish of one water, 7 days, 1,200g, repeats. Cave Patrol: 50 of one creature kind, 7 days, 1,500g, repeats. Placeholders; first rewards are recipes (charcoal kiln, recycler, seed maker).
 - Debris on day 1 of spring, summer and fall: up to 8 rocks, up to 8 twigs, a
   10 percent chance of one stump, standing cap 25 rocks and 25 twigs, none in
   winter. A twig gives 1 wood. The grass spread rate is not set (no grass).

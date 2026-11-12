@@ -1,14 +1,20 @@
 import data from "../content/heart-events.json";
 import villagerData from "../content/villagers.json";
 import { BUNDLES } from "./bundles";
-import { dateOf, type Season } from "./calendar";
+import { WEEKDAYS, dateOf, type Season } from "./calendar";
 import { dishById } from "./dishes";
 import { festivalDayToday } from "./festivals";
 import { furnitureById } from "./furniture";
 import { itemById } from "./items";
 import { letterById, type LetterDef } from "./mail";
 import type { GameState } from "./save";
-import { villagerById } from "./villagers";
+import {
+  dayContext,
+  parseTime,
+  planDay,
+  splitPlace,
+  villagerById,
+} from "./villagers";
 import type { Weather } from "./weather";
 
 /**
@@ -97,6 +103,11 @@ export interface HeartEvent {
   /** Whole hearts needed. */
   hearts: number;
   conditions?: EventConditions;
+  /**
+   * When the person stands at the place, "H:MM" game clock (note 84, decision 1).
+   * The event starts only inside [from, until). A test checks it overlaps their route.
+   */
+  window?: { from: string; until: string };
   scene: Cmd[];
 }
 
@@ -194,6 +205,16 @@ export interface TriggerContext {
   weather: Weather;
   /** The place id the player has just stepped into, such as `hw:store`. */
   place: string;
+  /** Game clock minutes. When given, an event with a `window` starts only inside it. */
+  minute?: number;
+}
+
+/** Whether a minute of the day is inside an event's window (always true with no window or no minute). */
+export function inWindow(e: HeartEvent, minute: number | undefined): boolean {
+  if (!e.window || minute === undefined) return true;
+  return (
+    minute >= parseTime(e.window.from) && minute < parseTime(e.window.until)
+  );
 }
 
 /** Whether one event's heart level and conditions hold today, ignoring place and the day limits. */
@@ -228,6 +249,7 @@ export function dueEvents(
   return defs.filter(
     (e) =>
       e.place === ctx.place &&
+      inWindow(e, ctx.minute) &&
       !g.heartEvents.seen(e.id) &&
       conditionsMet(g, e, ctx),
   );
@@ -498,6 +520,42 @@ export function validateScene(
   return out;
 }
 
+const SEASONS: Season[] = ["spring", "summer", "fall", "winter"];
+const DRY: Weather[] = ["sunny", "snowy"];
+const WET: Weather[] = ["rainy", "stormy"];
+
+/**
+ * Whether the event's person is at its place during its window on at least one
+ * weekday, in a season and weather the event allows (note 84, decision 1: the
+ * person is never moved, so an absent person just means the event waits).
+ */
+export function presenceOverlaps(e: HeartEvent): boolean {
+  const v = villagerById(e.villager);
+  if (!v || !e.window) return false;
+  const from = parseTime(e.window.from);
+  const until = parseTime(e.window.until);
+  const seasons = e.conditions?.season ? [e.conditions.season] : SEASONS;
+  const allowed = e.conditions?.weather;
+  const weathers: Weather[] = [
+    ...(!allowed || allowed.some((w) => DRY.includes(w)) ? [DRY[0]!] : []),
+    ...(!allowed || allowed.some((w) => WET.includes(w)) ? [WET[0]!] : []),
+  ];
+  const base = splitPlace(e.place).base;
+  for (const season of seasons)
+    for (let wd = 0; wd < WEEKDAYS.length; wd++)
+      for (const weather of weathers) {
+        const day = SEASONS.indexOf(season) * 28 + 1 + wd;
+        const plan = planDay(v, dayContext(day, weather));
+        for (let i = 0; i < plan.stops.length; i++) {
+          const s = plan.stops[i]!;
+          const end = plan.stops[i + 1]?.time ?? plan.bed;
+          if (splitPlace(s.place).base === base && s.time < until && end > from)
+            return true;
+        }
+      }
+  return false;
+}
+
 /** Problems across the whole event list (rules 3, 4, 7 and the record shape). */
 export function validateEvents(defs: HeartEvent[] = HEART_EVENTS): string[] {
   const out: string[] = [];
@@ -525,6 +583,9 @@ export function validateEvents(defs: HeartEvent[] = HEART_EVENTS): string[] {
       if (!defs.some((d) => d.id === a)) at(`unknown "after" event "${a}"`);
     if (c?.bundle && !BUNDLES.some((b) => b.id === c.bundle))
       at(`unknown bundle "${c.bundle}"`);
+    if (!e.window) at("needs a presence window (note 84)");
+    else if (!presenceOverlaps(e))
+      at("the person is never at the place in the window (note 84)");
     for (const m of validateScene(e.scene, e.villager)) at(m);
   }
   return out;

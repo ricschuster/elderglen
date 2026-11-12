@@ -1,6 +1,7 @@
 import { dateOf, type Season } from "./calendar";
 import { festivalDayToday } from "./festivals";
 import { growthRate } from "./professions";
+import { collectPacks } from "./lightning";
 import { isRaining, rollWeather, type Weather } from "./weather";
 import type { Spot } from "./forage";
 import type { GameState } from "./save";
@@ -195,6 +196,7 @@ export function sleep(
   // The new day: last week's gifts pay the weekly friendship bonus (note 61).
   g.friendship.startDay(g.day.clock.day);
   g.sprinklers.water(g.farm);
+  collectPacks(g);
   g.greenhouseSprinklers.water(g.greenhouse);
   g.trees.endDay(
     season,

@@ -191,12 +191,13 @@ export function spawnCreatures(
   arrive: Vec,
   tileSize = 16,
   keepAway = 6,
+  more = 0,
 ): Creature[] {
   const kinds = creaturesOfBand(bandNumber(floor));
   if (kinds.length === 0) return [];
   const out: Creature[] = [];
   const used = new Set<string>();
-  const want = creatureCount(bandNumber(floor), random);
+  const want = creatureCount(bandNumber(floor), random) + more;
   for (let tries = 0; out.length < want && tries < 600; tries++) {
     const x = 1 + Math.floor(random() * (width - 2));
     const y = 1 + Math.floor(random() * (height - 2));

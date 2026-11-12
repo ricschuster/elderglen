@@ -116,7 +116,8 @@
       {
         "kind": "bundle",
         "bundle": "woodland"
-      }
+      },
+      { "kind": "order", "order": "too-many-fish" }
     ]
   },
   {
@@ -252,7 +253,8 @@
         "kind": "level",
         "skill": "farming",
         "level": 9
-      }
+      },
+      { "kind": "order", "order": "cave-patrol" }
     ]
   },
   {
@@ -319,7 +321,10 @@
       { "item": "iron-bar", "count": 1 }
     ],
     "result": { "item": "recycler", "count": 1 },
-    "sources": [{ "kind": "level", "skill": "fishing", "level": 4 }]
+    "sources": [
+      { "kind": "level", "skill": "fishing", "level": 4 },
+      { "kind": "order", "order": "still-waters" }
+    ]
   },
   {
     "id": "chest",

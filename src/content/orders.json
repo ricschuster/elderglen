@@ -4,13 +4,19 @@
     "title": "Bumper Harvest",
     "poster": "A carrier from the east road",
     "text": "A road crew is passing through and wants a great deal of one crop.",
-    "ask": { "kind": "ship-one-crop", "count": 100 },
+    "ask": {
+      "kind": "ship-one-crop",
+      "count": 100
+    },
     "windowDays": 28,
     "repeat": true,
     "notSeasons": ["winter"],
     "gold": 1500,
     "firstReward": {
-      "item": { "id": "big-chest", "count": 1 },
+      "item": {
+        "id": "big-chest",
+        "count": 1
+      },
       "text": "a big chest"
     }
   },
@@ -30,6 +36,57 @@
     "gold": 1000,
     "firstReward": {
       "text": "the dehydrator recipe"
+    }
+  },
+  {
+    "id": "too-many-fish",
+    "title": "Too Many Fish",
+    "poster": "A cook from the coast road",
+    "text": "A kitchen on the coast road has run out of one kind of fish and wants a great many of it.",
+    "ask": {
+      "kind": "catch-one-fish",
+      "count": 10
+    },
+    "windowDays": 7,
+    "repeat": true,
+    "notSeasons": [],
+    "gold": 800,
+    "firstReward": {
+      "text": "the charcoal kiln recipe"
+    }
+  },
+  {
+    "id": "still-waters",
+    "title": "Still Waters",
+    "poster": "A fish buyer from the far market",
+    "text": "A buyer wants a catch from one kind of water, and a good deal of it.",
+    "ask": {
+      "kind": "catch-water",
+      "count": 20
+    },
+    "windowDays": 7,
+    "repeat": true,
+    "notSeasons": [],
+    "gold": 1200,
+    "firstReward": {
+      "text": "the recycler recipe"
+    }
+  },
+  {
+    "id": "cave-patrol",
+    "title": "Cave Patrol",
+    "poster": "A carrier at the mine hall",
+    "text": "The carriers want one kind of cave creature thinned out before the next haul.",
+    "ask": {
+      "kind": "slay-one",
+      "count": 50
+    },
+    "windowDays": 7,
+    "repeat": true,
+    "notSeasons": [],
+    "gold": 1500,
+    "firstReward": {
+      "text": "the seed maker recipe"
     }
   }
 ]

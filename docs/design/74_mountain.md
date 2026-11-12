@@ -300,3 +300,10 @@ The Quarry bridge and exit, hand edits to `mountain.json` (the Quarry itself is 
   Stardew, Mines weapons are sold at the Adventurer's Guild (owner, 2026-11-09, SC-103), and
   the dwarf, the Mines-side trader, is the Elderglen equivalent. Prices are placeholders
   (note 07). `forgeWeapon` and its tests stay in `src/core/combat.ts`.
+
+## Built status (2026-11-12)
+
+The forge hut and its counter (#643) were built on 2026-11-09 (above). The forge counter now keeps its
+shop hours (note 79: 9:00 to 19:00, open daily; see note 77 "Built status (2026-11-12)"). Lamps and
+rest-camp supplies are still not built: no lamp item or camp supply design exists, and placing a lamp
+needs the placement system.
