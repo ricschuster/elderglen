@@ -78,13 +78,15 @@ describe("bad effects", () => {
     expect(e.tick(1)).toBe(0);
   });
 
-  it("burn drain ignores grace and never knocks out", () => {
+  it("burn drain ignores grace and can knock out", () => {
     const h = new Health();
     h.current = 2;
     h.grace = 1;
-    expect(h.drain(5)).toBe(1);
-    expect(h.current).toBe(1);
+    expect(h.drain(1)).toBe(1);
     expect(h.down).toBe(false);
+    expect(h.drain(5)).toBe(1);
+    expect(h.current).toBe(0);
+    expect(h.down).toBe(true);
   });
 
   it("the Sturdy ring halves the length that lands", () => {

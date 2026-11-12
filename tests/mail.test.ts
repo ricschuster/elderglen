@@ -136,8 +136,9 @@ describe("mail", () => {
     g.mail.deliver(5);
     const r = openLetter(g, "fish-seed-letter");
     expect(r.ok && r.pending).toBe(false);
-    expect(g.inventory.count("elderfruit")).toBe(1);
+    expect(g.elderfruit).toBe(1);
+    expect(g.inventory.count("elderfruit")).toBe(0);
     openLetter(g, "fish-seed-letter");
-    expect(g.inventory.count("elderfruit")).toBe(1);
+    expect(g.elderfruit).toBe(1);
   });
 });

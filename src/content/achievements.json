@@ -270,7 +270,7 @@
     "name": "Every Elderfruit",
     "goal": "Eat every elderfruit",
     "kind": "elderfruitAll",
-    "threshold": 8,
+    "threshold": 7,
     "secret": false,
     "hat": {
       "id": "elderfruit-circlet",

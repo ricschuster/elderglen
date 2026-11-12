@@ -153,6 +153,8 @@ describe("geode crusher", () => {
     const r = recipeById("geode-crusher")!;
     expect(r.sources).toEqual([{ kind: "order", order: "cave-patrol" }]);
     expect(r.ingredients.map((i) => i.count)).toEqual([2, 50, 1]);
+    expect(r.ingredients.map((i) => i.item)).toContain("gem-high-b");
+    expect(itemById("gem-high-b")?.name).toBe("Diamond");
   });
 });
 

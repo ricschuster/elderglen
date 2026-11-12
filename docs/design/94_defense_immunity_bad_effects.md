@@ -80,8 +80,8 @@ The health bar shows "Slimed 5s". The equipment screen shows resist as a percent
 Not built: effect icons (text only), tooltip on the percent, any source for the new rings
 (not in a shop, drop or bundle), chilled cleared by a dish, effect sprites or sound.
 
-Choices made without a settled answer (placeholders): burn never takes the last health
-point; the other gloop colours and the lanternmoth and old digger inflict nothing; the
+Choices made without a settled answer (placeholders): burn can defeat the player (owner, 2026-11-12);
+the other gloop colours and the lanternmoth and old digger inflict nothing; the
 resist roll is skipped on a hit lost to grace.
 
 ## Open

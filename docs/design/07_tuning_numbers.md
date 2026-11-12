@@ -969,4 +969,4 @@ Source: `src/core/quests.ts`, `src/content/requests.json`.
 - Lightning rod recipe (note 34, built 2026-11-12): 1 iron bar, 1 quartz crystal, 5 bat wing at
   Foraging 6. The pack waits on the rod until Action takes it; no new numbers.
 - Pond fish, the Fernscale: base price 750g, a hard bar (note 21).
-- Elderfruit: +34 maximum energy, eight sources (note 39).
+- Elderfruit: +34 maximum energy, seven sources, eaten on receipt (note 39).

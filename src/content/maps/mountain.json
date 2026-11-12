@@ -6244,8 +6244,8 @@
           "name": "cart-mine",
           "class": "service",
           "type": "service",
-          "x": 1056,
-          "y": 320,
+          "x": 1064,
+          "y": 200,
           "width": 0,
           "height": 0,
           "rotation": 0,
@@ -6264,13 +6264,20 @@
           "name": "from_cart-mine",
           "class": "entry",
           "type": "entry",
-          "x": 1056,
-          "y": 336,
+          "x": 1064,
+          "y": 216,
           "width": 0,
           "height": 0,
           "rotation": 0,
           "visible": true,
-          "point": true
+          "point": true,
+          "properties": [
+            {
+              "name": "requires",
+              "type": "string",
+              "value": "mines-open"
+            }
+          ]
         }
       ]
     },

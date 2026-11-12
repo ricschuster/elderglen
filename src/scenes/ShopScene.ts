@@ -179,10 +179,7 @@ export class ShopScene extends Phaser.Scene {
       const tryBuy = (n: number) => () => {
         if (this.hermit) {
           const refused = buyElderfruit(g, SOURCE_FLAGS.hermit, price);
-          this.say(
-            refused ??
-              `Bought an elderfruit for ${price}g. Eat it from your pack.`,
-          );
+          this.say(refused ?? `Bought an elderfruit for ${price}g and ate it.`);
           return;
         }
         if (
