@@ -952,7 +952,7 @@ Final art waits for M3d (ADR 0012).
 | `burrow-*` | Done, owner checked 2026-11-11 (batch 3) | No | |
 | `hall` | Done, note 40 | No | Crowd rules only |
 
-## Build work (no issues filed yet)
+## Build work (issues #853 to #860, house is #832 to #838)
 
 1. **The pilot map.** Rebuild `general-store.json` from the draft: 31 by 31, the
    `ground`, `collision` and `markers` layers, the 2 wide entry, the marks above, and
