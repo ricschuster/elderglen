@@ -1,0 +1,30 @@
+{
+  "_note": "Who a gated bedroom door belongs to (notes 61 decision 6 and 86). Keyed by map id, then the slug in the map's gate property (friendship:<slug>:<hearts>). The door opens when any one of the people listed has that many hearts with the player (a couple shares a room, as in Stardew).",
+  "general-store": {
+    "parents": ["odette", "dorrie"],
+    "child": ["fitch"]
+  },
+  "inn": {
+    "parents": ["hattie", "podge"],
+    "child": ["pim"],
+    "courier": ["aldreth"]
+  },
+  "sawmill": {
+    "parents": ["tilda", "rufus"],
+    "child": ["wren"]
+  },
+  "burrow-gardener": { "gardener": ["alder"] },
+  "burrow-retired": {
+    "couple": ["hester", "walter"],
+    "grandchild": ["toby"]
+  },
+  "burrow-young": { "young-a": ["linnet"], "young-b": ["thistle"] },
+  "fisher-hut": { "fisher-loft": ["rushie"] },
+  "forest-farmstead": { "keeper": ["dilly"] },
+  "hatter": { "cordelia": ["cordelia"], "barnaby": ["barnaby"] },
+  "healer": { "healer": ["aurelle"] },
+  "hermit-tower": { "hermit": ["rosmarin"] },
+  "library": { "librarian": ["dunmar"] },
+  "outpost-rooms": { "steward": ["cuthbert"] },
+  "smithy": { "smith": ["bramwell"] }
+}

@@ -54,6 +54,7 @@ import {
 import { openChest } from "../core/maze";
 import { rodById, waterAhead } from "../core/fishing";
 import { holdsOf } from "../core/worldflags";
+import { gateOpen, gateShutLine, parseGate } from "../core/gates";
 import { mendTideBridge, TIDE_BRIDGE_WOOD } from "../core/tidebridge";
 import { logCleared } from "../core/logs";
 import { CAMP_LINE, HERMIT_LINE } from "../core/forestfolk";
@@ -870,6 +871,17 @@ export class FarmScene extends Phaser.Scene {
         this.render();
       }
     }
+    if (v.x !== 0 || v.y !== 0) {
+      const g = this.map.gateAt(ahead.x, ahead.y);
+      const rule = g && parseGate(g.rule);
+      if (rule && this.gateShut(ahead.x, ahead.y)) {
+        const line = gateShutLine(this.mapId, rule);
+        if (this.message !== line) {
+          this.message = line;
+          this.render();
+        }
+      }
+    }
     if (walking && this.tapPath.length > 0) {
       const moved = Math.hypot(this.pos.x - before.x, this.pos.y - before.y);
       this.tapStuckMs =
@@ -981,6 +993,7 @@ export class FarmScene extends Phaser.Scene {
     const log = this.map.logAt(x, y);
     return (
       this.map.isBlocked(x, y) ||
+      this.gateShut(x, y) ||
       this.tileShutForFestival(x, y) ||
       (log !== undefined && !logCleared(this.state, log)) ||
       (this.outdoorWorld && this.state.trees.blocks(x, y)) ||
@@ -1536,6 +1549,17 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** True when walking onto this tile of the current map is shut by a festival setting up. */
+  /** True on a gated bedroom door the player has not earned the hearts for yet. */
+  private gateShut(x: number, y: number): boolean {
+    const g = this.map.gateAt(x, y);
+    if (!g) return false;
+    const rule = parseGate(g.rule);
+    if (!rule) return false;
+    return !gateOpen(this.mapId, rule, (id) =>
+      this.state.friendship.hearts(id),
+    );
+  }
+
   private tileShutForFestival(x: number, y: number): boolean {
     const clock = this.state.day.clock;
     return festivalStepShut(clock.day, clock.minutes, this.hereTile(), {
@@ -3104,7 +3128,16 @@ export class FarmScene extends Phaser.Scene {
     const levelUp = this.state.skills.gain("combat", creatureXp(c));
     const got: string[] = [];
     let left = false;
-    for (const d of rollDrops(def, Math.random)) {
+    const bonus = this.state.mines.killBonus(
+      this.floor!,
+      this.state.day.clock.day,
+    );
+    if (bonus.extraKill) this.state.combat.noteKill(c.kind);
+    const rolls = [
+      ...rollDrops(def, Math.random),
+      ...(bonus.extraDrop ? rollDrops(def, Math.random) : []),
+    ];
+    for (const d of rolls) {
       if (this.state.inventory.add(d.id, d.count))
         got.push(`${d.count} ${itemById(d.id)?.name.toLowerCase() ?? d.id}`);
       else left = true;

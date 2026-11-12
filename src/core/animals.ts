@@ -1,7 +1,7 @@
 import { dateOf } from "./calendar";
 import { festivalDayToday } from "./festivals";
 import { loadHorse, newHorse, saveHorse, type Horse } from "./horse";
-import { HARDWOOD, itemById } from "./items";
+import { COOP_HEATER, HARDWOOD, itemById } from "./items";
 import {
   animalQuality,
   splitQuality,
@@ -328,6 +328,11 @@ export const UNFED_FRIENDSHIP = -20;
 export const UNFED_MOOD = -100;
 export const UNPETTED_FRIENDSHIP = -10;
 export const UNPETTED_MOOD = -30;
+/**
+ * Mood lost on a winter night in a building with no heater (note 23, decisions
+ * 2026-11-11m). A placeholder of 10 on the 0 to 255 scale, to tune.
+ */
+export const WINTER_COLD_MOOD = -10;
 /** Below this mood a fed animal may make nothing: the chance is mood / this. */
 export const PRODUCT_MOOD = 70;
 
@@ -475,6 +480,8 @@ export interface AnimalsState {
   build: CoopBuild | undefined;
   /** The egg being hatched at the big coop. */
   incubator: Incubator | undefined;
+  /** Where a heater is placed. Optional comfort: it only removes the winter mood loss. */
+  heaters: { coop: boolean; barn: boolean };
   animals: Animal[];
   /** Hay in the silo. Always 0 with no silo. */
   hay: number;
@@ -505,6 +512,7 @@ export function newAnimals(): AnimalsState {
     barnTier: 1,
     build: undefined,
     incubator: undefined,
+    heaters: { coop: false, barn: false },
     animals: [],
     hay: 0,
     silo: false,
@@ -528,6 +536,7 @@ export function saveAnimals(a: AnimalsState): AnimalsState {
     barnTier: a.barnTier,
     build: a.build ? { ...a.build } : undefined,
     incubator: a.incubator ? { ...a.incubator } : undefined,
+    heaters: { ...a.heaters },
     animals: a.animals.map((x) => ({ ...x })),
     hay: a.hay,
     silo: a.silo,
@@ -578,6 +587,11 @@ export function loadAnimals(raw: unknown): AnimalsState {
         building,
       };
   }
+  const hs = r.heaters as Record<string, unknown> | undefined;
+  out.heaters = {
+    coop: out.coopBuilt && hs?.coop === true,
+    barn: out.barnBuilt && hs?.barn === true,
+  };
   const inc = r.incubator as Record<string, unknown> | undefined;
   if (
     inc &&
@@ -676,6 +690,29 @@ export function isBuilt(a: AnimalsState, b: Building): boolean {
 /** The tier of a building, 1 to 3 (1 when it is not built). */
 export function tierOf(a: AnimalsState, b: Building): number {
   return b === "coop" ? a.tier : b === "barn" ? a.barnTier : 1;
+}
+
+/** True when the coop or barn has a heater placed. */
+export function hasHeater(a: AnimalsState, b: Building): boolean {
+  return b === "coop" ? a.heaters.coop : b === "barn" ? a.heaters.barn : false;
+}
+
+/** Why a heater cannot be placed in this building now, or undefined if it can. */
+export function heaterProblem(g: GameState, b: Building): string | undefined {
+  if (b === "stable" || !isBuilt(g.animals, b))
+    return "Only a coop or a barn takes a heater.";
+  if (hasHeater(g.animals, b)) return "There is a heater here already.";
+  if (g.inventory.count(COOP_HEATER) < 1) return "You have no heater to place.";
+  return undefined;
+}
+
+/** Place a heater from the pack in the coop or barn. Returns false if it cannot. */
+export function placeHeater(g: GameState, b: Building): boolean {
+  if (heaterProblem(g, b) !== undefined) return false;
+  g.inventory.remove(COOP_HEATER, 1);
+  if (b === "coop") g.animals.heaters.coop = true;
+  else g.animals.heaters.barn = true;
+  return true;
 }
 
 /** The animals that live in a building, in the order they were bought. */
@@ -1293,6 +1330,7 @@ export function endDay(g: GameState, random: () => number): AnimalNews {
   if (g.animals.tier >= COOP_MAX_TIER) feedAll(g, "coop", false);
   if (g.animals.barnBuilt && g.animals.barnTier >= BARN_MAX_TIER)
     feedAll(g, "barn", false);
+  const winterNight = dateOf(g.day.clock.day).season === "winter";
   for (const a of g.animals.animals) {
     const ate = a.fed || a.fresh;
     if (!ate) {
@@ -1304,6 +1342,13 @@ export function endDay(g: GameState, random: () => number): AnimalNews {
       a.friendship += UNPETTED_FRIENDSHIP;
       a.mood += UNPETTED_MOOD;
     }
+    // A cold night without a heater wears the mood down a little. Nothing worse.
+    if (
+      winterNight &&
+      !a.outside &&
+      !hasHeater(g.animals, SPECIES[a.species].building)
+    )
+      a.mood += WINTER_COLD_MOOD;
     const sleptOut = a.outside;
     if (sleptOut) {
       a.mood = Math.floor(a.mood / 2);

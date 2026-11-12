@@ -195,6 +195,16 @@ export interface Litter {
   twigs: Spot[];
 }
 
+/** A gated door's tiles (the object class `gate`, property `gate`: `friendship:<slug>:<hearts>`). */
+export interface GateRect {
+  id: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  rule: string;
+}
+
 /** A rock the map places: plain stone unless it names another kind (the Quarry's ore nodes). */
 export interface RockSpot extends Spot {
   kind?: RockKind;
@@ -405,6 +415,8 @@ export class FarmMap {
     readonly traits: MapTraits = DEFAULT_TRAITS,
     /** Weeds and twigs lying on the map at the start of a new game (`weed` and `twig` objects). */
     readonly litter: Litter = { weeds: [], twigs: [] },
+    /** Gated doors: shut until the player's hearts allow (`core/gates.ts`). */
+    readonly gates: GateRect[] = [],
   ) {}
 
   /** Whether the horse can be ridden on this map (the map property `rideable`). */
@@ -547,6 +559,7 @@ export class FarmMap {
     const litter: Litter = { weeds: [], twigs: [] };
     const waterZones: WaterZone[] = [];
     const logs: LogSpot[] = [];
+    const gates: GateRect[] = [];
     // A named entry, exit or service on a higher tier replaces the one of the
     // same name on a lower tier (the barn door moves as the barn grows).
     const kept = new Map<string, { tier: number; at: number }>();
@@ -620,6 +633,14 @@ export class FarmMap {
             w: Math.max(1, Math.round((o.width ?? size) / size)),
             h: Math.max(1, Math.round((o.height ?? size) / size)),
           });
+        else if (cls === "gate")
+          gates.push({
+            id: o.name,
+            ...spot,
+            w: Math.max(1, Math.round((o.width ?? size) / size)),
+            h: Math.max(1, Math.round((o.height ?? size) / size)),
+            rule: text(o, "gate") ?? "",
+          });
         else if (cls === "exit") {
           const w = Math.max(1, Math.round((o.width ?? size) / size));
           const h = Math.max(1, Math.round((o.height ?? size) / size));
@@ -658,6 +679,14 @@ export class FarmMap {
       logs,
       traitsOf(json),
       litter,
+      gates,
+    );
+  }
+
+  /** The gated door covering this tile, if any. */
+  gateAt(x: number, y: number): GateRect | undefined {
+    return this.gates.find(
+      (g) => x >= g.x && x < g.x + g.w && y >= g.y && y < g.y + g.h,
     );
   }
 
@@ -694,6 +723,7 @@ export class FarmMap {
       this.logs,
       this.traits,
       this.litter,
+      this.gates,
     );
   }
 
@@ -732,6 +762,7 @@ export class FarmMap {
       this.logs,
       this.traits,
       this.litter,
+      this.gates,
     );
   }
 
@@ -776,6 +807,7 @@ export class FarmMap {
       this.logs,
       this.traits,
       this.litter,
+      this.gates,
     );
   }
 
