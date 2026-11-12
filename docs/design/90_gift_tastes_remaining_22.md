@@ -1,6 +1,6 @@
 # 90 Gift tastes for the other 22 people (draft)
 
-Status: **draft for the owner to reshape.** Closes the design part of #872. Rules, sizes
+Status: **decided as drafted (owner, 2026-11-12); single lists may still change later.** Closes the design part of #872. Rules, sizes
 and the first eight lists are in `61_friendship_and_gifts.md` (sizes: 3 to 6 loves, up
 to 8 for the deep tier, 2 to 5 likes, 1 to 3 dislikes, 1 to 3 hates, up to three category
 overrides). The six universal loves and the universal hates apply unless a row says
