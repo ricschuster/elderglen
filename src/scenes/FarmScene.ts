@@ -27,6 +27,7 @@ import {
   coopSite,
   coopVisibleTier,
 } from "../core/animals";
+import { pondBlocks } from "../core/pond";
 import { fertilizerById } from "../core/fertilizer";
 import Phaser from "phaser";
 import { saveSettings } from "../core/bindings";
@@ -1051,6 +1052,7 @@ export class FarmScene extends Phaser.Scene {
       barnBlocks(this.state, this.mapId, x, y) ||
       siloBlocks(this.state, this.mapId, x, y) ||
       stableBlocks(this.state, this.mapId, x, y) ||
+      pondBlocks(this.state, this.mapId, x, y) ||
       ((this.mapId === COOP_MAP || this.mapId === BARN_MAP) &&
         animalSlots(this.state, this.mapId === COOP_MAP ? "coop" : "barn").some(
           (s) => s.x === x && s.y === y,

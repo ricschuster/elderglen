@@ -37,6 +37,7 @@ import artifactData from "../content/artifacts.json";
 const ARTIFACTS = artifactData.artifacts;
 import { FISH, RODS } from "./fishing";
 import { WATER_FINDS } from "./waterfinds";
+import { POND_SPECIES, roeOf, roePrice } from "./pondspecies";
 import { BAITS, LURES, TRINKETS } from "./tackle";
 import { JUNK, POT_ITEM, POT_NAME, POT_PRICE, SHELLFISH } from "./pots";
 import { ENERGY_MULTIPLIER, QUALITY_MULTIPLIER, splitQuality } from "./quality";
@@ -171,6 +172,13 @@ items.set("moonwool", { id: "moonwool", name: "Moonwool", sellPrice: 1200 });
 for (const f of WATER_FINDS)
   if (!items.has(f.id))
     items.set(f.id, { id: f.id, name: f.name, sellPrice: f.sellPrice });
+/** Roe, one item per pond species (note 93). */
+for (const s of POND_SPECIES)
+  items.set(roeOf(s.id), {
+    id: roeOf(s.id),
+    name: `${s.name} roe`,
+    sellPrice: roePrice(s),
+  });
 /** Mixed seeds plant a random crop that suits the season. Sell price is ours. */
 items.set("mixed-seed", {
   id: "mixed-seed",
@@ -474,6 +482,7 @@ const GROUPS: [string, string[]][] = [
       ...SHELLFISH,
       ...JUNK,
       ...WATER_FINDS,
+      ...POND_SPECIES.map((s) => ({ id: roeOf(s.id) })),
       { id: POT_ITEM },
     ].map((f) => f.id),
   ],

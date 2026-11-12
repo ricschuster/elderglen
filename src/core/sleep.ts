@@ -16,6 +16,7 @@ import {
   endDay as animalsEndDay,
   type AnimalNews,
 } from "./animals";
+import { advancePonds, pondNight } from "./pond";
 import { checkAchievements } from "./achievements";
 import { SUMMIT_ACHIEVEMENT } from "./summit";
 import { ringProgress, valleyPercent } from "./completion";
@@ -119,6 +120,8 @@ export interface SleepReport {
   horseWasOut: boolean;
   /** True when the carpenter finished the silo this morning. */
   siloFinished: boolean;
+  /** Fish ponds the carpenter opened this morning (note 93). */
+  pondsFinished?: number;
   /** Set when the player was knocked out in a fight: what the defeat took (note 22). */
   defeat?: { lost: Lost[]; posted: boolean };
   /** What the night did to the animals. */
@@ -303,6 +306,9 @@ export function sleep(
   const houseFinished = advanceBuild(g);
   const animalJob = advanceBuilding(g);
   const siloFinished = advanceSilo(g);
+  const pondsFinished = advancePonds(g);
+  // Built ponds breed, make roe and tick their quests (note 93).
+  pondNight(g, random);
   const animals = animalsEndDay(g, random);
   const horseWasOut = horseEndDay(g);
   const furnaceGifted = deliverFurnace(g);
@@ -334,6 +340,7 @@ export function sleep(
     stableFinished: animalJob === "stable",
     horseWasOut,
     siloFinished,
+    pondsFinished,
     animals,
     furnaceGifted,
     achievements,

@@ -270,5 +270,13 @@
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "none"
+  },
+  {
+    "id": "fish-pond",
+    "kind": "pond",
+    "places": ["farm"],
+    "footprint": [5, 5],
+    "blocksWalking": true,
+    "pickUp": "none"
   }
 ]
