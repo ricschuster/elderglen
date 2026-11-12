@@ -1,0 +1,86 @@
+# 93 Fish pond and water finds (draft)
+
+Status: **settled with the owner on 2026-11-12 (the full Stardew pond with capacity
+quests, and six water finds); the numbers and lists are placeholders.** Design part of
+#879. Stardew rules are from the saved Fish Pond page (read 2026-11-12). Names, prices and
+art are ours (ADR 0002). Extends the "Fish ponds later" paragraph of `21_fishing.md`.
+
+## What the owner decided
+
+- **Full Stardew pond, with capacity quests** (not the quest-free version).
+- **Six water finds like Stardew's set:** three water plants and three jellies, our names.
+
+## Water finds (rod casts, no bar)
+
+Lifted with the rod like trash (note 21): no bar, fishing XP, never fish for the fish
+bundles. Plants are common, jellies rare.
+
+| Find | Where | Kind | Notes |
+| --- | --- | --- | --- |
+| Pondweed | Fresh water (farm pond, river, lake) | plant | Replaces Stardew's green algae |
+| Pale lichen | Cave water and the mine pools | plant | Replaces white algae |
+| Seaweed | The sea and the cove | plant | Already a forage item (note 72); the cast adds it to the rod table |
+| Brook jelly | River and delta | jelly | Rare, any season |
+| Tide jelly | The sea | jelly | Rare, any season |
+| Glow jelly | Cave water | jelly | Rare |
+
+Where each can be cast and in which season is not on the saved page, so it is ours
+(placeholder: jellies in one season each, 8 in 100 bites of the right water). They feed
+cooking (algae soup, later), the fish pond build and quests, and the fishing completion
+count. They cannot be put in a pond.
+
+## The pond
+
+- **A farm building from the carpenter** (note 23, building rules). 5,000g, 200 stone, 5
+  seaweed and 5 pondweed, two days to build, a 5 by 5 footprint (saved page: Robin's build
+  list of stone, seaweed and green algae).
+- **What goes in.** Any fish caught with a rod or a pot, the legends included, and sea
+  urchin and coral (our sea forage items count as fish for the pond). Not the six water
+  finds above. One species per pond: a pond refuses a second species.
+- **Population.** Starts at 3 fish (1 for a legend, and for some rare fish, which hold 1
+  at the start). The cap is 10 (1 for a legend). Fish breed to the cap, one new fish
+  every 1 to 5 days by species, dearer fish slower. Fish breed even if only one is in.
+  Throwing in more fish up to the cap is allowed and does not reset the clock.
+- **Taking fish out.** With the rod, a simplified harvest: no bar, no bait, no tackle
+  wear, always normal quality, not a fish collection entry, no XP. Emptying the pond
+  resets it (the capacity from quests too).
+- **Products.** Each fish may give an item at night. Roe is the main one: Stardew rolls
+  an extra roe 20 percent of the time again and again (about 0.25 extra on average). The
+  chances and which fish make what are not on the saved page, so ours are placeholders
+  (SC-158): a fish gives roe 5 percent a night, scaled by the pond's size over 10, and a
+  few fish give a species item (Fernscale: a pond pearl, others later). The roe goes to
+  the preserves jar for aged roe (note 24).
+- **Quests (Stardew).** When the pond hits its cap, an exclamation mark appears over it
+  1 to 5 days later. The quest asks for items thrown in one at a time, any quality. Done,
+  the fish thanks you and the cap rises by steps of 3, 5, 7, 10: so a quest at 3, at 5,
+  and at 7 fish. A quest also gives fishing XP of 20 plus 5 times the spawn days
+  (25 to 45). A completed quest resets the spawn clock, so a quest slows growth. Removing
+  fish pauses it, and the same item comes back.
+- **The Golden cracker** (doubles output once) is not taken.
+- **Quest items** are ours. Stardew's list is by species, with lots of items from its own
+  world, so we use item groups: a river fish asks for a forage plant or an ore, a sea fish
+  for shells or seaweed or a jelly, a cave fish for a gem, a mineral or a jelly, and the
+  top quest (capacity 7 to 10) asks for a made good (jam, pickles, honey, cheese) or a
+  gem. One table per fish row in `src/content/pond.json`, with a safe fallback item.
+
+## Where it goes
+
+- **Placement.** The farm layout note (55) reserves building plots. The pond takes a
+  5 by 5 plot beside the barn and coop; the placeholder farm gets one. It holds
+  its own water, so it needs no water tile nearby.
+- **Interface.** A small pond menu: the fish, count against the cap, the quest item, the
+  empty button. Tablet friendly, no drag.
+
+## Build list
+
+1. Water finds: six items, the rod table, catch with no bar, fishing XP.
+2. Pond building (carpenter, build time, plot), the pond menu.
+3. Population, breeding, cap steps, harvest with the rod.
+4. Products and roe, the pond quest items table.
+5. Save in the placed store. Tests for each.
+
+## Open
+
+- SC-158: the pond's product table and chances (not on the saved page).
+- The legend rule and whether the Fernscale needs a pond of its own (note 21).
+- Names, prices, art.
