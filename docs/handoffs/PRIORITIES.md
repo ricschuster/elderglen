@@ -34,16 +34,16 @@ Tier 1, needed to fill the bundles:
 
 Tier 2, thin or placeholder content:
 
-7. **#872 gift tastes**, 22 of 30 people plus the default list (notes 61, 20).
-8. **#873 heart event list**: design the list per person and rewards, then build.
-9. **#878 Secret Woods statue and pond fish** (check the fish table first).
+- **7. #872 gift tastes**, 22 of 30 people plus the default list (notes 61, 20).
+- **8. #873 heart event list**: design the list per person and rewards, then build.
+- **9. #878 Secret Woods statue and pond fish** (check the fish table first).
 
 Tier 3, design first, one issue per system when taken:
 
-10. **#879 undesigned systems**: tapper, artifact and dig spots, gem nodes, crusher, worm
-    bin, ale, water plants, fish pond, tailoring, enchanting, Defense and Immunity.
-11. **#876 festival route layer** and seven festival maps (overlaps layout step 10).
-12. **#396 tree types by region.**
+- **10. #879 undesigned systems**: tapper, artifact and dig spots, gem nodes, crusher, worm
+  bin, ale, water plants, fish pond, tailoring, enchanting, Defense and Immunity.
+- **11. #876 festival route layer** and seven festival maps (overlaps layout step 10).
+- **12. #396 tree types by region.**
 
 Alongside: #880 stale status lines, `docs/overview.json` (behind since 2026-11-11), a
 Stardew checks question batch (about 12 open rows), and file the M4 hosting spike before M4.
