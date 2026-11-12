@@ -960,14 +960,15 @@ Final art waits for M3d (ADR 0012).
    Change the Hearthwell lot's `from_general-store` entry name only if the notch
    moves. Tests: every floor tile and mark reachable from the entry; the counter
    has at least two player tiles; the contract checks in note 05 pass.
-2. **A shared interior reachability test.** One test over every interior map:
+2. **A shared interior reachability test (built, #854).** One test over every interior map:
    every mark is reachable from the entry, every counter has two player tiles, every
    public aisle is at least 2 wide.
-3. **The other maps** from the checked drafts (batches 1 to 4 and the fisher's loft). The
+3. **The other maps (built, #856 to #860)** from the checked drafts (batches 1 to 4 and the fisher's loft). The
    fisher's ladder and every bedroom door use the `gate` property. Each new interior adds a
    door pair or a ladder to its building's lot; the loft and the steward's rooms are new
    maps (the loft is a map the hut links to, as the Outpost links to its rooms).
-4. **Interior door 2 wide** across the 14 built shells (owner accepted, SC-145).
+4. **Interior door 2 wide (built, #855)** across the built shells (owner accepted, SC-145). The rebuilds
+   have 2 wide doors from their drafts, and `tests/interior-reach.test.ts` checks every door.
    The pilot is built with `scripts/interiors/tmj-to-map.mjs <id>`, which the later maps reuse.
    Gates are data only for now: a `gate` object (`friendship:<name>:2`) over the door tiles,
    left walkable, because nothing in `src/` reads a friendship gate yet.
@@ -975,6 +976,13 @@ Final art waits for M3d (ADR 0012).
    rather than the `.tmj` files. Until then the `.tmj` files are the hand off.
 
 ## Open
+
+- The hall has no draft and its six counters have one player tile each, so it stays on
+  `PENDING` in `tests/interior-reach.test.ts`. It needs a layout pass.
+- Every rebuilt map lists its one tile wide spots in `AISLE_EXCEPTIONS`
+  (`tests/helpers/interior.ts`). Some are by design (gated doors, bedside nooks); the
+  keeper's aisles and the kitchen table rings are the owner's call.
+- `scripts/gen-delta-map.mjs` still writes the old `fisher-hut.json`; do not rerun it.
 
 - Whether the gated bedroom needs a heart level other than 2 per person, and how a
   closed bedroom door looks (note 61 decision 6 says 2, as in Stardew).
