@@ -21,6 +21,8 @@ import {
 import { TREE_SEED } from "./trees";
 import { MAHOGANY_SEED } from "./mahogany";
 import { mine } from "./mining";
+import { digMineDirt, digSpot } from "./artifacts";
+import { areaOf } from "./areas";
 import { chopLog, logCleared } from "./logs";
 import type { FarmMap } from "./map";
 import type { GameState } from "./save";
@@ -97,6 +99,15 @@ export function useHeld(
   }
   if (held.kind === "tool" && held.tool === "pickaxe")
     return mine(g, x, y, floor);
+  // The hoe on open mine ground can turn up an old thing (note 69).
+  if (
+    held.kind === "tool" &&
+    held.tool === "hoe" &&
+    floor !== undefined &&
+    !map.isBlocked(x, y) &&
+    !g.mines.visit(floor, g.day.clock.day).rocks.at(x, y)
+  )
+    return digMineDirt(g, floor, x, y);
   if (!map.hasSoil && !map.wild) return fail("nothing to do here");
   const weedTool =
     held.kind === "tool" &&
@@ -109,6 +120,8 @@ export function useHeld(
   if (held.kind === "tool" && held.tool === "axe")
     return chop(g, x, y, Math.random, map);
   if (held.kind === "tool" && held.tool === "hoe") {
+    const area = areaOf(g);
+    if (area !== undefined && g.spots.at(x, y)) return digSpot(g, area, x, y);
     if (g.trees.at(x, y)) return clearSeedling(g, x, y, "hoe", map);
     if (g.fruitTrees.at(x, y)) return fail("a tree is in the way");
     return map.isTillable(x, y) ? till(g, x, y) : fail("cannot dig here");

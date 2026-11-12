@@ -8,6 +8,7 @@ import { FURNITURE, furnitureById } from "../core/furniture";
 import { fertilizerById } from "../core/fertilizer";
 import { SPRINKLERS, sprinklerById } from "../core/sprinklers";
 import { GEODE_ITEMS, GEODE_KINDS } from "../core/geodes";
+import { ARTIFACTS } from "../core/artifacts";
 import { categoryOf } from "../core/artisan";
 import { MACHINES, machineById } from "../core/processing";
 import Phaser from "phaser";
@@ -780,6 +781,7 @@ export const ROCK_KEYS = {
   hearthsilver: "rock-hearthsilver",
 } as const;
 export const LADDER_KEY = "mine-ladder";
+export const SPOT_KEY = "artifact-spot";
 
 const MINE_ICON_IDS = [
   "stone",
@@ -1021,6 +1023,24 @@ function paintMineArt(scene: Phaser.Scene): void {
     px(c, "#e8d0f4", 7, 8, 2, 1);
   };
   draw(ROCK_KEYS.geode, geode);
+  // A marked artifact spot: a patch of turned earth with a pale cross.
+  draw(SPOT_KEY, (c) => {
+    px(c, "#6a4a2e", 4, 8, 8, 4);
+    px(c, "#8a6a46", 5, 7, 6, 1);
+    px(c, "#e8d8a8", 7, 8, 2, 3);
+    px(c, "#e8d8a8", 6, 9, 4, 1);
+  });
+  for (const a of ARTIFACTS.filter(
+    (a) => !GEODE_ITEMS.some((g) => g.id === a.id),
+  ))
+    draw(`icon-${a.id}`, (c) => {
+      const h = [...a.id].reduce((n, ch) => n + ch.charCodeAt(0), 0);
+      const colour = `hsl(${(h * 37) % 360} 35% 55%)`;
+      px(c, "#00000044", 4, 13, 8, 1);
+      px(c, colour, 4, 6, 8, 6);
+      px(c, colour, 6, 4, 4, 2);
+      px(c, "#ffffff66", 5, 7, 2, 2);
+    });
   const gem = (c: Ctx, colour: string, light: string) => {
     px(c, "#00000044", 4, 13, 8, 1);
     px(c, colour, 4, 6, 8, 6);
@@ -1081,6 +1101,7 @@ export function iconKey(itemId: string): string | undefined {
   const category = categoryOf(base);
   if (category) return `icon-artisan-${category}`;
   if (MINE_ICON_IDS.includes(base)) return `icon-${base}`;
+  if (ARTIFACTS.some((a) => a.id === base)) return `icon-${base}`;
   if (
     base === "wood" ||
     base === "hardwood" ||

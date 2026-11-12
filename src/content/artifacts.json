@@ -1,0 +1,320 @@
+{
+  "commonFinds": [
+    {
+      "item": "clay",
+      "weight": 4
+    },
+    {
+      "item": "mixed-seed",
+      "weight": 3
+    },
+    {
+      "item": "stone",
+      "weight": 3
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "old-seed-packet",
+      "name": "Old seed packet",
+      "sellPrice": 40,
+      "areas": {
+        "forest": 3
+      },
+      "mineBands": [1],
+      "sources": ["old-digger"]
+    },
+    {
+      "id": "pressed-flower",
+      "name": "Pressed flower",
+      "sellPrice": 50,
+      "areas": {
+        "forest": 2.5
+      },
+      "mineBands": [1],
+      "sources": ["old-digger"]
+    },
+    {
+      "id": "faded-ribbon",
+      "name": "Faded ribbon",
+      "sellPrice": 45,
+      "areas": {
+        "forest": 2
+      },
+      "mineBands": [1],
+      "sources": ["old-digger"]
+    },
+    {
+      "id": "rusted-hoe-head",
+      "name": "Rusted hoe head",
+      "sellPrice": 60,
+      "areas": {
+        "forest": 1.5
+      }
+    },
+    {
+      "id": "wooden-spindle",
+      "name": "Wooden spindle",
+      "sellPrice": 70,
+      "areas": {
+        "forest": 1
+      }
+    },
+    {
+      "id": "carved-bead",
+      "name": "Carved bead",
+      "sellPrice": 55,
+      "areas": {
+        "secret-woods": 2.5
+      },
+      "mineBands": [1],
+      "sources": ["old-digger"]
+    },
+    {
+      "id": "hollow-acorn-charm",
+      "name": "Hollow acorn charm",
+      "sellPrice": 90,
+      "areas": {
+        "secret-woods": 1.5
+      }
+    },
+    {
+      "id": "mossy-compass",
+      "name": "Mossy compass",
+      "sellPrice": 150,
+      "areas": {
+        "secret-woods": 1
+      }
+    },
+    {
+      "id": "fox-tooth-whistle",
+      "name": "Fox tooth whistle",
+      "sellPrice": 200,
+      "areas": {
+        "secret-woods": 0.8
+      }
+    },
+    {
+      "id": "clay-bottle",
+      "name": "Clay bottle",
+      "sellPrice": 65,
+      "areas": {
+        "delta": 3
+      }
+    },
+    {
+      "id": "tide-worn-coin",
+      "name": "Tide-worn coin",
+      "sellPrice": 80,
+      "areas": {
+        "delta": 2
+      }
+    },
+    {
+      "id": "reed-flute",
+      "name": "Reed flute",
+      "sellPrice": 120,
+      "areas": {
+        "delta": 1.2
+      }
+    },
+    {
+      "id": "net-sinker",
+      "name": "Stone net sinker",
+      "sellPrice": 180,
+      "areas": {
+        "delta": 0.8
+      }
+    },
+    {
+      "id": "flint-arrowhead",
+      "name": "Flint arrowhead",
+      "sellPrice": 70,
+      "areas": {
+        "mountain": 3
+      }
+    },
+    {
+      "id": "slate-tablet",
+      "name": "Slate tablet",
+      "sellPrice": 110,
+      "areas": {
+        "mountain": 2
+      }
+    },
+    {
+      "id": "bronze-buckle",
+      "name": "Bronze buckle",
+      "sellPrice": 160,
+      "areas": {
+        "mountain": 1.5
+      }
+    },
+    {
+      "id": "climbers-pick",
+      "name": "Old climber's pick",
+      "sellPrice": 230,
+      "areas": {
+        "mountain": 1
+      }
+    },
+    {
+      "id": "shell-comb",
+      "name": "Shell comb",
+      "sellPrice": 75,
+      "areas": {
+        "cove": 2.5
+      }
+    },
+    {
+      "id": "sea-glass-lantern",
+      "name": "Sea glass lantern",
+      "sellPrice": 130,
+      "areas": {
+        "cove": 2
+      }
+    },
+    {
+      "id": "ship-bell",
+      "name": "Small ship bell",
+      "sellPrice": 260,
+      "areas": {
+        "cove": 1
+      }
+    },
+    {
+      "id": "scrimshaw-tooth",
+      "name": "Scrimshaw tooth",
+      "sellPrice": 300,
+      "areas": {
+        "cove": 0.6
+      }
+    },
+    {
+      "id": "dwarf-cup",
+      "name": "Old dwarf cup",
+      "sellPrice": 40,
+      "sources": ["geode"]
+    },
+    {
+      "id": "ice-bell",
+      "name": "Ice bell",
+      "sellPrice": 120,
+      "sources": ["frozen-geode"]
+    },
+    {
+      "id": "ember-lantern",
+      "name": "Ember lantern",
+      "sellPrice": 200,
+      "sources": ["magma-geode"]
+    },
+    {
+      "id": "bent-key",
+      "name": "Bent key",
+      "sellPrice": 50,
+      "mineBands": [1]
+    },
+    {
+      "id": "tin-spoon",
+      "name": "Tin spoon",
+      "sellPrice": 55,
+      "mineBands": [1]
+    },
+    {
+      "id": "lamp-wick-tin",
+      "name": "Lamp wick tin",
+      "sellPrice": 65,
+      "mineBands": [1]
+    },
+    {
+      "id": "miners-button",
+      "name": "Miner's button",
+      "sellPrice": 75,
+      "mineBands": [1]
+    },
+    {
+      "id": "frozen-thimble",
+      "name": "Frozen thimble",
+      "sellPrice": 100,
+      "mineBands": [2]
+    },
+    {
+      "id": "amber-fly",
+      "name": "Amber-set fly",
+      "sellPrice": 140,
+      "mineBands": [2]
+    },
+    {
+      "id": "rimed-chisel",
+      "name": "Rimed chisel",
+      "sellPrice": 170,
+      "mineBands": [2]
+    },
+    {
+      "id": "cold-iron-ring",
+      "name": "Cold iron ring",
+      "sellPrice": 210,
+      "mineBands": [2]
+    },
+    {
+      "id": "cinder-die",
+      "name": "Cinder die",
+      "sellPrice": 250,
+      "mineBands": [3]
+    },
+    {
+      "id": "slag-figurine",
+      "name": "Slag figurine",
+      "sellPrice": 300,
+      "mineBands": [3]
+    },
+    {
+      "id": "smelters-tongs",
+      "name": "Smelter's tongs",
+      "sellPrice": 360,
+      "mineBands": [3]
+    },
+    {
+      "id": "ember-signet",
+      "name": "Ember signet",
+      "sellPrice": 450,
+      "mineBands": [3]
+    },
+    {
+      "id": "heron-quill-pen",
+      "name": "Heron quill pen",
+      "sellPrice": 85,
+      "sources": ["creature"]
+    },
+    {
+      "id": "mudlark-trinket",
+      "name": "Mudlark trinket",
+      "sellPrice": 95,
+      "sources": ["fishing"]
+    },
+    {
+      "id": "drowned-locket",
+      "name": "Drowned locket",
+      "sellPrice": 190,
+      "sources": ["fishing"]
+    },
+    {
+      "id": "hermits-ledger",
+      "name": "Hermit's ledger",
+      "sellPrice": 240,
+      "sources": ["creature"]
+    },
+    {
+      "id": "old-ward-stone",
+      "name": "Old ward stone",
+      "sellPrice": 330,
+      "sources": ["omni-geode"]
+    },
+    {
+      "id": "first-hall-nail",
+      "name": "First hall nail",
+      "sellPrice": 500,
+      "sources": ["omni-geode"]
+    }
+  ]
+}
