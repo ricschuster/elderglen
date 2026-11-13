@@ -175,7 +175,7 @@ whole-map views of the places, one sprite per person and a four-stage growth str
 on the places index, a portrait on people pages and index, the growth strip on crop pages, the
 result picture on recipe pages, a small icon beside every item link and index row, bundle reward
 icons in the bundle lists, and a map banner and icon tiles on the front page. Still no pictures:
-fish (no art in the game), the 310 items with no icon, and the hall rooms.
+fish (no art in the game), the 310 items with no icon, (the hall rooms now have a hall view and a counter close-up each).
 
 Built: the item table snapshot, `scripts/wiki/build.mjs` (fish, bundles, rooms, items, front page,
 search, sortable fish table, `wiki:check` in `npm run check`, the internal view) and
