@@ -107,7 +107,7 @@ play, not contract:
 
 - Exit width outside 3 to 7 tiles (interior exits and doors excepted).
 - A main path narrower than 2 or a branch that dead-ends without a forage point, prop or view.
-- Door entry tile not directly below the door; interior entry notch not 2 wide.
+- Door entry tile not directly below the door; interior door not 1 tile (owner call 2026-11-12, after play).
 - A service, door or the shipping bin reachable from only one tile (decision 12).
 - A counter with fewer than two player tiles; a crowd door (hall, inn, Night Market) not 2 wide.
 - A named landmark not inside any 30 by 17 box that also holds a path to it.

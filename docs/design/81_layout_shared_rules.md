@@ -90,7 +90,7 @@ Owner answers, 2026-11-11, are marked. The rest are proposals to check.
    | --- | --- |
    | Main path | 2 tiles wide, 3 where two groups may meet (the green, the Hearthwell streets) |
    | Branch or trail | 1 tile wide, never a dead end without a forage spot, prop or view |
-   | Door | 1 tile wide, 2 for barns and the hall, entry tile directly below; the interior entry notch is 2 wide for every interior (owner, 2026-11-11, SC-145, note 86) |
+   | Door | 1 tile wide, 2 for barns and the hall, entry tile directly below; the interior door is also 1 tile, with one arrival tile before it (owner, 2026-11-12, replaces the 2 wide notch of SC-145, note 86) |
    | Exit | 3 to 7 tiles wide, as in notes 72 to 78 |
    | Crossing a settled area | no more than about 60 s on foot, 30 s on the horse; checked by walk time, not tiles |
    | One screen | any landmark worth finding is visible from 30 by 17 tiles, or hinted at the screen edge |

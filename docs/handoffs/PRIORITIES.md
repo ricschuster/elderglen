@@ -96,7 +96,7 @@ Done, owner checked (2026-11-11): step 1 farm (note 55, #776), step 2 festival s
 - Step 12: Mines (the combat leftovers, #598, are closed).
 - Steps 13 to 16 (M3d): `above` layer and seasonal tilesets, reference images and
   style sheet, licence ADR for generated art, the art swap.
-- The other interiors are built (note 86, #853 to #860) from the checked drafts, with the
+- The other interiors are built (note 86, #853 to #860) from the checked drafts (doors 1 tile, 2026-11-12), with the
   shared test `tests/interior-reach.test.ts` and the converter
   `scripts/interiors/tmj-to-map.mjs`. Left: the hall layout (no draft, one player tile at
   each counter), the owner's call on the `AISLE_EXCEPTIONS` lists, game code that reads

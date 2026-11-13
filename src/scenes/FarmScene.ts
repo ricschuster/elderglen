@@ -1036,7 +1036,7 @@ export class FarmScene extends Phaser.Scene {
 
   /**
    * True for an exit you walk onto: one on the map edge that is three or more
-   * tiles wide (open land), or any edge exit inside a building (leaving).
+   * tiles wide (open land), or any edge exit inside a building, or its door (leaving).
    * Going into a building still needs the door opened (click or Action).
    */
   private isWalkThrough(e: Exit): boolean {
@@ -1045,6 +1045,8 @@ export class FarmScene extends Phaser.Scene {
       e.y === 0 ||
       e.x + e.w >= this.map.width ||
       e.y + e.h >= this.map.height;
+    // Rebuilt interiors keep their door a tile inside the walls, so the way out is the exit named "door".
+    if (!this.outdoorWorld && e.id === "door") return true;
     return edge && (!this.outdoorWorld || Math.max(e.w, e.h) >= 3);
   }
 
