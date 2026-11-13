@@ -1,3 +1,4 @@
+import { readdirSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   FarmMap,
@@ -274,6 +275,30 @@ describe("the maps in use", () => {
   it("have one file per map id", () => {
     expect(maps.ids.sort()).toEqual(Object.keys(mapFiles).sort());
   });
+
+  // ADR 0014: the committed JSON is the source, so every file on disk must be
+  // loaded and checked. Reading the folder (not the glob) means a new map
+  // cannot be missed. Add an id here only with a reason.
+  const UNCHECKED: Record<string, string> = {};
+  const onDisk = readdirSync("src/content/maps")
+    .filter((f) => f.endsWith(".json"))
+    .map((f) => f.replace(/\.json$/, ""))
+    .sort();
+
+  it("load every map file on disk", () => {
+    expect(maps.ids.slice().sort()).toEqual(onDisk);
+  });
+
+  for (const id of onDisk)
+    it(`${id} meets the contract on its own`, () => {
+      if (UNCHECKED[id]) return;
+      const own = maps
+        .problems()
+        .filter(
+          (p) => p.startsWith(`${id} `) || p.startsWith(`${id}:`) || p === id,
+        );
+      expect(own).toEqual([]);
+    });
 });
 
 // The hall interior (docs/design/40_hall_layout.md): one scroll per room, each
