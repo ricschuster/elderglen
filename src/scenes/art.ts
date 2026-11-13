@@ -154,8 +154,9 @@ const TILE_PAINTERS: ((c: Ctx, ox: number) => void)[] = [
   },
   // grass with flowers
   (c, ox) => {
-    px(c, "#468a40", ox, 0, SIZE, SIZE);
-    speckle(c, ox, 23, ["#4f9549", "#3d7d38"], 22);
+    // Same base as plain grass, so no seam shows between the two tiles.
+    px(c, "#3f7d3a", ox, 0, SIZE, SIZE);
+    speckle(c, ox, 23, ["#4a8c44", "#356f31", "#52964a"], 26);
     // little blooms with a leaf each
     px(c, "#2f6a2c", ox + 4, 7);
     px(c, "#3d7d38", ox + 3, 7);
@@ -214,8 +215,10 @@ const TILE_PAINTERS: ((c: Ctx, ox: number) => void)[] = [
   },
   // tree (seen from above)
   (c, ox) => {
-    px(c, "#2d6a2e", ox, 0, SIZE, SIZE);
-    px(c, "#1c4a22", ox + 4, 14, 10, 1);
+    // The grass base, so a row of trees stands on the grass, not on a square.
+    px(c, "#3f7d3a", ox, 0, SIZE, SIZE);
+    speckle(c, ox, 11, ["#4a8c44", "#356f31", "#52964a"], 26);
+    px(c, "#2f6a2c", ox + 3, 14, 11, 1);
     canopy(
       c,
       [
@@ -230,22 +233,34 @@ const TILE_PAINTERS: ((c: Ctx, ox: number) => void)[] = [
   },
   // wall
   (c, ox) => {
+    // Stone blocks: a mortar line, a lit top edge and a shaded bottom per block.
     px(c, "#8d7b6a", ox, 0, SIZE, SIZE);
     for (let row = 0; row < 4; row++) {
-      px(c, "#6f5f50", ox, row * 4 + 3, SIZE, 1);
+      const y = row * 4;
+      px(c, "#5f5044", ox, y + 3, SIZE, 1);
+      px(c, "#7c6b5c", ox, y + 2, SIZE, 1);
+      px(c, "#a4927f", ox, y, SIZE, 1);
       const off = row % 2 === 0 ? 4 : 0;
-      px(c, "#6f5f50", ox + off + 4, row * 4, 1, 3);
-      px(c, "#6f5f50", ox + off + 12, row * 4, 1, 3);
-      px(c, "#9d8b7a", ox + 1, row * 4, 3, 1);
+      for (const x of [off, off + 8]) {
+        px(c, "#5f5044", ox + x, y, 1, 3);
+        px(c, "#b3a18d", ox + x + 1, y, 2, 1);
+      }
+      speckle(c, ox, 50 + row, ["#837162", "#978573"], 3);
     }
   },
   // roof
   (c, ox) => {
+    // Overlapping shingles: each row lit on top, shaded at its lower lip.
     px(c, "#a0482e", ox, 0, SIZE, SIZE);
     for (let row = 0; row < 4; row++) {
-      px(c, "#7d3622", ox, row * 4 + 3, SIZE, 1);
-      for (let x = (row % 2) * 4; x < SIZE; x += 8)
-        px(c, "#b85a3e", ox + x, row * 4, 3, 1);
+      const y = row * 4;
+      px(c, "#c06548", ox, y, SIZE, 1);
+      px(c, "#8a3c26", ox, y + 2, SIZE, 1);
+      px(c, "#5e2616", ox, y + 3, SIZE, 1);
+      for (let x = (row % 2) * 4; x < SIZE; x += 8) {
+        px(c, "#5e2616", ox + x, y, 1, 3);
+        px(c, "#d27a5a", ox + x + 1, y, 2, 1);
+      }
     }
   },
   // door

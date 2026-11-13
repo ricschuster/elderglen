@@ -97,8 +97,9 @@ if (process.env.SHEETS_ONLY) {
 }
 
 // 2. Places. Zoom the world camera in so the 16 px sprites can be judged.
-async function place(name, data, setup) {
-  if (setup) await farm(setup);
+async function place(name, data, setup, arg) {
+  if (process.env.ONLY && !process.env.ONLY.split(",").includes(name)) return;
+  if (setup) await farm(setup, arg);
   await farm((g, f, s, a) => f.scene.restart(a), data);
   await sleepMs(1200);
   await farm((g, f) =>
@@ -110,43 +111,50 @@ async function place(name, data, setup) {
 }
 
 await place("farm", { map: "farm" });
-await place("forest", { map: "forest" });
-await place("hearthwell", { map: "hearthwell" }, (g, f, s) => {
-  s.day.clock.minutes = 12 * 60;
-});
-await place("mine-5", { map: "mine-5" });
-await place("mine-45", { map: "mine-45" });
-const animals = (kinds) => (g, f, s) => {
+await place("forest", { map: "forest", entry: "from_farm" });
+await place(
+  "hearthwell",
+  { map: "hearthwell", entry: "from_farm" },
+  (g, f, s) => {
+    s.day.clock.minutes = 12 * 60;
+  },
+);
+await place("mine-5", { map: "mine-5", entry: "from_above" });
+await place("mine-45", { map: "mine-45", entry: "from_above" });
+// Put a set of animals in the coop or barn; the first one is a baby.
+const animals = (g, f, s, kinds) => {
   s.animals.coopBuilt = s.animals.barnBuilt = true;
   s.animals.tier = s.animals.barnTier = 3;
-  s.animals.animals = [];
-  for (const [i, species] of kinds.entries())
-    s.animals.animals.push({
-      id: 100 + i,
-      species,
-      name: species,
-      age: i === 0 ? 0 : 30,
-      friendship: 0,
-      mood: 100,
-      fed: true,
-      petted: true,
-      outside: false,
-      fresh: false,
-      grazed: false,
-      lay: 0,
-      product: i % 2 ? 0 : undefined,
-    });
+  s.animals.animals = kinds.map((species, i) => ({
+    id: 100 + i,
+    species,
+    name: species,
+    age: i === 0 ? 0 : 30,
+    friendship: 0,
+    mood: 100,
+    fed: true,
+    petted: true,
+    outside: false,
+    fresh: false,
+    grazed: false,
+    lay: 0,
+    product: i % 2 ? 0 : undefined,
+  }));
 };
-await place(
-  "coop",
-  { map: "coop" },
-  animals(["chicken", "chicken", "duck", "rabbit", "chicken"]),
-);
-await place(
-  "barn",
-  { map: "barn" },
-  animals(["cow", "cow", "goat", "sheep", "pig"]),
-);
+await place("coop", { map: "coop", entry: "door" }, animals, [
+  "chicken",
+  "chicken",
+  "duck",
+  "rabbit",
+  "chicken",
+]);
+await place("barn", { map: "barn", entry: "door" }, animals, [
+  "cow",
+  "cow",
+  "goat",
+  "sheep",
+  "pig",
+]);
 await place("horse", { map: "farm" }, (g, f, s) => {
   s.animals.mounted = true;
 });
