@@ -8,6 +8,8 @@ import {
 } from "../src/core/machines";
 import { FarmMap, type TiledMapJson } from "../src/core/map";
 import { GEODE, GEODE_KINDS } from "../src/core/geodes";
+import shopData from "../src/content/shops.json";
+import { BUNDLES, rewardText } from "../src/core/bundles";
 import { itemById } from "../src/core/items";
 import { processFor } from "../src/core/processing";
 import { deserialize, newGame, serialize } from "../src/core/save";
@@ -217,10 +219,22 @@ describe("worm bin", () => {
     expect(g.inventory.count(TAPPER)).toBe(1);
   });
 
-  it("has a Heavy Tapper recipe at Foraging level 8", () => {
+  it("teaches the Heavy Tapper recipe only through the Rare Finds bundle", () => {
     expect(itemById(HEAVY_TAPPER)?.name).toBe("Heavy tapper");
-    expect(recipeById("heavy-tapper")?.sources).toEqual([
-      { kind: "level", skill: "foraging", level: 8 },
+    const r = recipeById("heavy-tapper")!;
+    expect(r.sources).toEqual([{ kind: "bundle", bundle: "rare-finds" }]);
+    expect(r.ingredients).toEqual([
+      { item: "hardwood", count: 30 },
+      { item: "hearthsilver-bar", count: 1 },
     ]);
+    const bundle = BUNDLES.find((b) => b.id === "rare-finds")!;
+    expect(bundle.reward.recipe).toBe("heavy-tapper");
+    expect(rewardText(bundle)).toBe("the Heavy tapper recipe");
+    const g = newGame();
+    expect(knownRecipes(g).some((x) => x.id === "heavy-tapper")).toBe(false);
+  });
+
+  it("sells neither tapper in any shop (crafted only)", () => {
+    expect(JSON.stringify(shopData)).not.toContain("tapper");
   });
 });

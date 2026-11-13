@@ -23,6 +23,12 @@ export interface BundleReward {
   item?: { id: string; count: number };
   /** A furniture piece. Named in the reward text, not yet placed (no furniture system). */
   furniture?: string;
+  /**
+   * A recipe the bundle teaches, by recipe id (which is also its result's item id).
+   * It is learned through the recipe's own `bundle` source in `recipes.json`; this
+   * field only names it in the reward text.
+   */
+  recipe?: string;
   /** A choice of hats: the player takes `choose` of `from` (note 63, bundle 24). Taken at the hall with `claimHat`. */
   hats?: { choose: number; from: string[] };
 }
@@ -313,6 +319,10 @@ export function rewardText(def: BundleDef): string {
   if (prize)
     parts.push(`${prize.count} ${itemById(prize.id)?.name ?? prize.id}`);
   if (def.reward.furniture) parts.push(def.reward.furniture);
+  if (def.reward.recipe)
+    parts.push(
+      `the ${itemById(def.reward.recipe)?.name ?? def.reward.recipe} recipe`,
+    );
   if (def.reward.hats)
     parts.push(
       `${def.reward.hats.choose} hats of your choice from ${def.reward.hats.from.length}`,

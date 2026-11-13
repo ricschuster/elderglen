@@ -83,7 +83,7 @@ floors 1 to 10). Moss is not a rare find: it grows on mature trees (see
 | 3 | Autumn Foraging | 4 of 6 | Bramble berry, hazelnut, wild plum, field mushroom, crab apple, rose hip | 15 beet seeds |
 | 4 | Winter Foraging | 3 of 5 | Crocus, snowdrop, winter cress, pine nut, frost root | Seed maker |
 | 5 | Woodland | All | 50 wood, 50 stone, 30 fiber | Charcoal kiln |
-| 6 | Rare Finds | 3 of 5 | Morel, chanterelle, snowcap mushroom, wild ginger, cave mushroom | 5 forage dishes |
+| 6 | Rare Finds | 3 of 5 | Morel, chanterelle, snowcap mushroom, wild ginger, cave mushroom | Heavy Tapper recipe (changed 2026-11-12, was 5 forage dishes; note 92) |
 | 7 | Spring Crops | 4 of 6 | Parsnip, potato, cauliflower, green bean, kale, garlic | 20 fast-grow fertilizer |
 | 8 | Summer Crops | 4 of 6 | Melon, tomato, radish, hot pepper, corn, red cabbage | 20 quality fertilizer |
 | 9 | Autumn Crops | 4 of 6 | Pumpkin, eggplant, sweet potato, beet, cranberry, artichoke | Bee house |
