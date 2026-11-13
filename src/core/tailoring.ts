@@ -8,6 +8,7 @@ import {
   type TailorKind,
   type Tint,
 } from "./clothes";
+import { TAILORED_SEP, bootsById, tailoredParts } from "./equipment";
 import { hatById } from "./hats";
 import { splitQuality } from "./quality";
 import type { GameState } from "./save";
@@ -84,6 +85,70 @@ export function sewableSpool(g: GameState): string[] {
     const slot = g.inventory.slot(i);
     if (slot && spoolRowOf(slot.id) && !out.includes(slot.id))
       out.push(slot.id);
+  }
+  return out;
+}
+
+// ---- boots
+
+/** The base pair that gives a pair its look (a custom pair keeps its look pair). */
+const lookOf = (id: string): string => tailoredParts(id)?.[0] ?? id;
+/** The base pair whose stats a pair carries. */
+const statsOf = (id: string): string => tailoredParts(id)?.[1] ?? id;
+
+const isBoots = (id: string): boolean => bootsById(id) !== undefined;
+
+/**
+ * Why a pair of boots cannot be tailored, or undefined when it can. The feed pair
+ * keeps its look and name; the spool pair gives its stats and is used up. No cloth
+ * (owner, 2026-11-12; which slot is which is unchecked, SC-168). Only pairs in the
+ * pack count, so a worn pair must come off first.
+ */
+export function bootsTailorProblem(
+  g: GameState,
+  feed: string,
+  spool: string,
+): string | undefined {
+  if (!isBoots(feed) || !isBoots(spool))
+    return "Only a pair of boots can go in both.";
+  if (feed === spool && g.inventory.count(feed) < 2)
+    return "You need two different pairs.";
+  if (g.inventory.count(feed) < 1 || g.inventory.count(spool) < 1)
+    return "Both pairs must be in your pack.";
+  if (statsOf(feed) === statsOf(spool))
+    return "Both pairs already have the same stats.";
+  return undefined;
+}
+
+export type TailorBootsResult =
+  { ok: true; id: string; name: string } | { ok: false; reason: string };
+
+/**
+ * Move the stats of the spool pair onto the feed pair. The spool pair is used up and
+ * the feed pair becomes "Custom-tailored [name]". Free of cloth.
+ */
+export function tailorBoots(
+  g: GameState,
+  feed: string,
+  spool: string,
+): TailorBootsResult {
+  const problem = bootsTailorProblem(g, feed, spool);
+  if (problem) return { ok: false, reason: problem };
+  const look = lookOf(feed);
+  const stats = statsOf(spool);
+  const id = look === stats ? look : `${look}${TAILORED_SEP}${stats}`;
+  g.inventory.remove(feed, 1);
+  g.inventory.remove(spool, 1);
+  g.inventory.add(id, 1);
+  return { ok: true, id, name: bootsById(id)!.name };
+}
+
+/** Every pair of boots in the pack, for the screen. */
+export function packBoots(g: GameState): string[] {
+  const out: string[] = [];
+  for (let i = 0; i < g.inventory.size; i++) {
+    const slot = g.inventory.slot(i);
+    if (slot && isBoots(slot.id) && !out.includes(slot.id)) out.push(slot.id);
   }
   return out;
 }
