@@ -126,6 +126,7 @@ describe("1 water kinds", () => {
           "marsh-lake",
           "sea",
           "cove",
+          "woods-pond",
         ].includes(f.water),
       ),
     ).toBe(true);

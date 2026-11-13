@@ -695,8 +695,8 @@ placeholders and follow the table above and note 07.
   counts them, and Whole Roster now needs 52 (47 plus the five legends).
 - **The farm pond is a lake** (fixed 2026-11-10, see "Owner decision, 2026-11-10"), so
   the Valley King no longer bites there. **Not built, and why:** the Hearthwell river is terrain only (#661), so
-  nothing there is fished yet. The 47th fish (the pond's unique fish) is still not
-  in the data, so Whole Roster is out of reach until it is.
+  nothing there is fished yet. The Fernscale (the pond's unique fish) was added
+  2026-11-13 (#878), so Whole Roster is reachable: 52 fish in the data.
 
 ## Owner decision, 2026-11-10: the farm pond is a lake
 

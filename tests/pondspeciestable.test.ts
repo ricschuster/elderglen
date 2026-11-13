@@ -11,9 +11,11 @@ type Row = {
 const rows = pondData.species as Record<string, Row>;
 
 describe("pond species table (note 93)", () => {
-  it("has a row for every fish that is not common", () => {
+  it("has a row for every fish that is not common (the pond's unique fish is roe only, open)", () => {
     for (const f of FISH) {
-      expect(!!rows[f.id], f.id).toBe(f.rarity !== "common");
+      expect(!!rows[f.id], f.id).toBe(
+        f.rarity !== "common" && f.rarity !== "unique",
+      );
     }
   });
 

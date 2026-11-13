@@ -1,8 +1,8 @@
-# 73 Secret Woods (steps 1 to 4 built)
+# 73 Secret Woods (steps 1 to 6 built)
 
 Status: draft, written 2026-11-08, owner answers recorded the same day (note 71).
-Steps 1 to 4 are built (2026-11-09, #639, see "Built status" at the end); the pond's fish and
-the statue are not. M3b. It designs the Secret Woods map and settles the hardwood supply that note
+Steps 1 to 4 are built (2026-11-09, #639, see "Built status" at the end); the pond's fish
+(2026-11-13, #878) and the statue (with the elderfruit slice) are built too. M3b. It designs the Secret Woods map and settles the hardwood supply that note
 59 decided. Overview and owner questions: `71_map_areas_overview.md`. Stardew
 facts are from the saved Secret Woods, Hardwood and Large Log pages (read
 2026-11-08), as ideas only (ADR 0002).
@@ -199,3 +199,19 @@ Build order steps 1 to 4 and the stand-in removal are built.
 - **Playtest:** `npm run playtest:secret-woods` (steel axe, log, woods, stump,
   night). It starts by a scene restart at the Forest entry, not a walk from the
   farm.
+
+## Built status, pond fish and statue (2026-11-13, #878)
+
+- **Statue:** already built with the elderfruit slice (note 39, source 5): the `spirit-statue`
+  service tile at (9, 15) and `giveToSpirit` in `src/core/elderfruit.ts`. Nothing more to build.
+- **Pond fish:** the `woods-pond` water is fishable. The Fernscale is a row in
+  `src/content/fish.json` (rarity `unique`, water `woods-pond`), which `ORDINARY_FISH` leaves
+  out and which only bites in its own pond (`fishAvailable`). Its weight is 3 against a
+  common's 6 (`RARITY_WEIGHT.unique`). The two common fish are borrowed from the forest lake's
+  table through `src/content/fish-tables.json` (`borrow`): Carp and Perch. The fish count is now
+  52, which is the Whole Roster threshold already in the data; the ordinary roster stays 46.
+  Tests: `tests/woodspondfish.test.ts`.
+- **Placeholders, owner to settle:** the Fernscale's price (250g), bar (sinker, difficulty 60),
+  time (dusk, all seasons) and length (25 to 60 cm); which two common fish the pond holds (Carp
+  and Perch are a guess, and both bite by day only); and the Fernscale's pond goods (roe only
+  for now, note 93 says a pond pearl and no such item exists).

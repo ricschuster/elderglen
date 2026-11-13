@@ -109,6 +109,9 @@ Core rules, content and tests are built. The scenes are not.
   after the pond fills and ticks only while it is full, items by water group
   (`questItems` in `pond.json`) and the top quest a made good or gem, XP 20 plus 5 per
   spawn day, the spawn clock resets. Removing fish pauses it, the same item comes back.
+- **The Fernscale (2026-11-13, #878):** now in the fish roster as the `unique` fish of the
+  Secret Woods pond (note 73). Its pond row is not set: it makes roe only, because the note's
+  "pond pearl" has no item. Open for the owner.
 - **Not built:** see the second and third passes below for what is still open.
 
 ### Gaps found while building (design to settle, not invented)

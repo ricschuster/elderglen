@@ -260,6 +260,12 @@ window.WIKI_INDEX = [
     kw: "forest-lake uncommon summer",
   },
   {
+    name: "Fernscale",
+    cat: "Fish",
+    path: "fish/fernscale.html",
+    kw: "woods-pond unique spring summer fall winter",
+  },
+  {
     name: "Ferrywhisker",
     cat: "Fish",
     path: "fish/ferrywhisker.html",
