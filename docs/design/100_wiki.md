@@ -135,7 +135,7 @@ overview, so the diff is readable.
 ## Build order
 
 1. This note, then an ADR only if the tool choice needs one (it does not: no new dependency).
-2. Item table refactor (decision 4), its own PR. Then `scripts/wiki/build.mjs` with the fish category end to end: page template, infobox, table,
+2. Item table snapshot (decision 4), its own PR. Then `scripts/wiki/build.mjs` with the fish category end to end: page template, infobox, table,
    `wiki:check`, the CSS, the search index. Gate added to `npm run check`.
 3. Bundles and rooms on the same template.
 4. Owner looks at fish and bundles and the internal view; fix the template before more
@@ -152,9 +152,11 @@ overview, so the diff is readable.
    would. Revisit only if the owner changes their mind. Stardew's wiki lists them.
 3. **Item pages.** Every item a bundle or recipe names gets a plain page (name, picture, sell
    price, where it comes from, used in). Stardew gives every item a page.
-4. **Data-only item table.** Item names move out of `src/core/items.ts` into a JSON table that
-   the game and the wiki both read. A small refactor in its own PR, before the generator (build
-   order step 2). The generator never parses TypeScript.
+4. **Data-only item table.** The item registry in `src/core/items.ts` is computed from about
+   forty modules, so it stays the source. A committed snapshot, `src/content/item-table.json`
+   (id, name, prices, energy, keep), is written by `npm run items:export` and a test fails when
+   it is stale. The generator reads the snapshot and never parses TypeScript. (Changed from
+   "move the names into JSON the game reads", which would have rewritten the registry.)
 5. **Pictures.** Use the pictures the game has now. The build renders each item's current
    code-drawn art to a PNG in `docs/wiki/img/`; an item with no art gets a plain labelled box.
    Pictures refresh on every build, so the art pass (note 99) flows through without wiki work.
