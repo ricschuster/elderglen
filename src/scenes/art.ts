@@ -27,6 +27,7 @@ import Phaser from "phaser";
 import { paintAnimals } from "./art-animals";
 import { paintCropStage, paintSeedPacket } from "./art-crops";
 import { paintCreatures } from "./art-creatures";
+import { FISH_LOOKS, fishKey, paintFish } from "./art-fish";
 import { PLAYER_LOOK, paintPeople, paintPerson } from "./art-people";
 import { ALL_CROPS } from "../core/crops";
 import { FORAGE } from "../core/forage";
@@ -2323,6 +2324,7 @@ export function iconKey(itemId: string): string | undefined {
   if (ALL_CROPS.some((c) => c.id === base))
     return cropKey(base, CROP_STAGES - 1);
   if (FORAGE.some((f) => f.id === base)) return forageKey(base);
+  if (FISH_LOOKS[base]) return fishKey(base);
   return undefined;
 }
 
@@ -2349,6 +2351,7 @@ export function makeArt(
   paintMineArt(scene);
   paintAnimals(scene);
   paintCreatures(scene);
+  paintFish(scene);
   paintFurniture(scene);
   paintDecor(scene);
   paintChests(scene);
