@@ -97,3 +97,38 @@ export function finishHunt(g: GameState, f: Festival, s: HuntState): boolean {
   leaveFestival(g);
   return true;
 }
+
+/** The villager who starts the hunt. */
+export const HUNT_HOST = "cuthbert";
+
+/** The hunt, or the reason it cannot start, when the player talks to the host. */
+export function huntOffer(
+  f: Festival | undefined,
+  mapId: string,
+  who: string,
+  day: number,
+  minutes: number,
+): { state?: HuntState; message?: string } | undefined {
+  if (!f || who !== HUNT_HOST || f.id !== "seedswap-fair") return undefined;
+  if (festivalLayout(f)?.map !== mapId) return undefined;
+  const state = startHunt(f, day, minutes);
+  if (state)
+    return {
+      state,
+      message: `Find ${state.hunt.win} seed packets in ${state.hunt.seconds} seconds. Go!`,
+    };
+  return { message: huntStartProblem(f, minutes) };
+}
+
+/** The countdown line shown while the hunt runs. */
+export const huntLine = (s: HuntState): string =>
+  `Seed hunt: ${Math.ceil(s.left)}s  ${s.found}/${s.hunt.win}`;
+
+/** The line when the hunt ends, or undefined while it runs. */
+export function huntEndLine(f: Festival, s: HuntState): string | undefined {
+  const winner = huntWinner(f, s);
+  if (!winner) return undefined;
+  return winner === "player"
+    ? `You found ${s.found} packets. You win the hunt!`
+    : `Time is up with ${s.found} found. ${winner[0]!.toUpperCase()}${winner.slice(1)} wins the hunt.`;
+}

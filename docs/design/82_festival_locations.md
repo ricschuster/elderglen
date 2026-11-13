@@ -640,10 +640,13 @@ placeholders to check in play.
   for festivals in `ENDS_AFTER_MAIN_EVENT`). `src/core/cakeday.ts` and
   `src/content/cake-day.json` (hand in one cooked dish, once a year, every attendee gains
   points by the dish quality; the points 20, 30, 40 are placeholders, the numbers are
-  still open). `Friendship.award` is the new way to give points outside gifting. No scene
-  hook yet: the hunt needs a timer and a Cuthbert dialogue, the table needs a dish picker.
-- **Not built (open or blocked):** the scene UI for the hunt and the cake table; the hunt
-  prize (rare packet and hat, both open); multiplayer packet counts; the even-year maze and its niches; Hollow Eve niche
+  still open). `Friendship.award` is the new way to give points outside gifting.
+- **Scene hooks built, unplayed (2026-11-12):** `FarmScene` starts the hunt when the player
+  talks to Cuthbert on the Forest (`huntOffer`), draws the packets as yellow squares, shows
+  a countdown text, picks up by walking onto a tile, then shows the win or lose line and
+  calls `finishHunt`. The `cake-table` service hands in the held cooked dish
+  (`handInCake`); there is no dish picker list yet. No new data was needed.
+- **Not built (open or blocked):** the hunt prize (rare packet and hat, both open); multiplayer packet counts; the even-year maze and its niches; Hollow Eve niche
   lines; who walks the villagers between standing tiles (scene); the hall-restored state
   (the feast always uses the square until it is tracked); Frostday
   activities; the cake table scene, lantern floating and costume stall behaviour; the shut zone

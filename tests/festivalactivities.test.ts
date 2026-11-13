@@ -4,6 +4,9 @@ import { FESTIVALS } from "../src/core/festivals";
 import { newGame } from "../src/core/save";
 import {
   finishHunt,
+  huntEndLine,
+  huntLine,
+  huntOffer,
   huntStartProblem,
   huntWinner,
   packetTiles,
@@ -104,5 +107,35 @@ describe("cake table", () => {
     expect(cakeProblem(g, dish)).toBe("Your dish is already on the table.");
     g.day.clock.day = dayOf("summer", 8, 2);
     expect(cakeProblem(g, dish)).toBeUndefined();
+  });
+});
+
+describe("seed hunt scene offer", () => {
+  const f = fest("seedswap-fair");
+  const day = dayOf("spring", 21);
+
+  it("starts only from Cuthbert, on the forest, in the window", () => {
+    expect(
+      huntOffer(f, "forest", "cuthbert", day, 13 * 60)?.state,
+    ).toBeDefined();
+    expect(huntOffer(f, "forest", "odette", day, 13 * 60)).toBeUndefined();
+    expect(huntOffer(f, "farm", "cuthbert", day, 13 * 60)).toBeUndefined();
+    expect(
+      huntOffer(undefined, "forest", "cuthbert", day, 13 * 60),
+    ).toBeUndefined();
+    const late = huntOffer(f, "forest", "cuthbert", day, 18 * 60);
+    expect(late?.state).toBeUndefined();
+    expect(late?.message).toMatch(/late/);
+  });
+
+  it("words the countdown and the end", () => {
+    const s = startHunt(f, day, 13 * 60)!;
+    expect(huntLine(s)).toBe("Seed hunt: 50s  0/9");
+    expect(huntEndLine(f, s)).toBeUndefined();
+    tickHunt(s, 60);
+    expect(huntEndLine(f, s)).toMatch(/Linnet wins/);
+    const w = startHunt(f, day, 13 * 60)!;
+    for (const t of [...w.packets]) pickUp(w, t[0], t[1]);
+    expect(huntEndLine(f, w)).toMatch(/You win/);
   });
 });
