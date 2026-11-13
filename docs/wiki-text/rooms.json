@@ -1,0 +1,26 @@
+{
+  "foragers-shelf": {
+    "text": "The first room of the village hall, open from the start. Bring in what the woods and hedges give each season.",
+    "draft": true
+  },
+  "larder": {
+    "text": "The hall's pantry. It asks for crops by season, crops of good quality, animal goods and artisan goods.",
+    "draft": true
+  },
+  "water-room": {
+    "text": "For anglers. Fill it and the ferry is mended, and the lake cove opens.",
+    "draft": true
+  },
+  "hearth": {
+    "text": "The workshop room of the hall. Its bundles are the smith's, the weaver's and the lamplighter's.",
+    "draft": true
+  },
+  "guests-board": {
+    "text": "Where the village leaves its requests: the dyer, the cook, fodder for the animals, the host and the storyteller. Finishing it deepens every friendship.",
+    "draft": true
+  },
+  "last-seat": {
+    "text": "The last and hardest room. It opens once every other bundle is done.",
+    "draft": true
+  }
+}
