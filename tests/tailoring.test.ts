@@ -129,7 +129,7 @@ describe("the sewing machine", () => {
           log: {},
         },
       });
-    set(3);
+    set(1);
     expect(nextEvent(g, { ...at, minute: 11 * 60 })).toBeUndefined();
     set(4);
     expect(nextEvent(g, { ...at, minute: 11 * 60 })?.id).toBe(

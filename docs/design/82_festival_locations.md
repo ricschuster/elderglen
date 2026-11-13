@@ -305,7 +305,7 @@ a **seed hunt** like Stardew's egg hunt: **50 seconds, find 9 hidden seed packet
 to win** (Stardew, saved Egg Festival page: 50 seconds, 9 eggs for one player, 6
 for two, 5 for three, 4 for four or more, else a villager rival wins). The prize is
 **a rare seed packet each year, plus a hat the first time** (the crop and the hat
-are open).
+are open; decided 2026-11-13: the packet is a random seed from a short list of uncommon crops, list to be named).
 
 Place: `forest.json`, the clearing x 68 to 83, y 12 to 34 (16 by 23), east of the
 lake path (x 65 to 67) and west of the farmstead (x 84 and up). The farmstead road
@@ -433,7 +433,7 @@ rival is Rushie, who stands at a hole and wins if the player has fewer than 5.
 Only Forest lake fish cast into a hole tile count (not the river). The contest
 ends the festival after the judging, as Stardew's does. Built 2026-11-12 (see Built
 status). How many fish multiplayer needs, the Frostfin's price and bundle use, and
-the hat are open.
+the hat are open. Decided 2026-11-13 (owner): the Frostfin sells for 300g and has no bundle slot; the first-win hat is our own named winter cap (replaces `snow-cap`).
 
 **Villager tiles (draft for the owner to check; every tile is free ground):** 24
 people, the 22 town residents with Aldreth, Rushie and Dilly (decision 5).
