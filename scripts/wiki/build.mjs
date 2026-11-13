@@ -110,7 +110,16 @@ export function load() {
         )
       : [],
   );
+  // Pictures in sub folders (places, people, crops), as "folder/name".
+  const shots = new Set();
+  for (const dir of ["places", "people", "crops"]) {
+    const f = join(root, "docs/wiki/img", dir);
+    if (existsSync(f))
+      for (const n of readdirSync(f))
+        shots.add(`${dir}/${n.replace(/\.png$/, "")}`);
+  }
   return {
+    shots,
     quality,
     items,
     fish,
@@ -163,6 +172,18 @@ export function build(d, { internal }) {
         : forageIds.has(id)
           ? `forage/${id}.html`
           : `items/${id}.html`;
+  /** A small inline picture for an id, or nothing when it has none. */
+  const ico = (id) =>
+    d.images.has(id)
+      ? `<img class="ico" src="@img/${id}.png" alt="" width="32" height="32">`
+      : "";
+  /** Like ico, but keeps the space when there is no picture so a list lines up. */
+  const icoPad = (id) => ico(id) || '<span class="ico gap"></span>';
+  /** A picture from a sub folder (places, people, crops) at a chosen display size. */
+  const shot = (key, alt, cls, w, h) =>
+    d.shots.has(key)
+      ? `<img class="${cls}" src="@img/${key}.png" alt="${esc(alt)}" width="${w}" height="${h}">`
+      : "";
   const link = (from, id, count) => {
     const name = itemName(id);
     if (!name) {
@@ -172,7 +193,7 @@ export function build(d, { internal }) {
     if (KINDS[id] && !d.items.has(id)) return esc(name);
     referenced.add(id);
     const n = count && count > 1 ? ` &times; ${count}` : "";
-    return `<a href="@${pathOf(id)}">${esc(name)}</a>${n}`;
+    return `${ico(id)}<a href="@${pathOf(id)}">${esc(name)}</a>${n}`;
   };
   const pic = (id, name) =>
     d.images.has(id)
@@ -310,7 +331,7 @@ ${prose("fish", f.id)}${sections}`;
     .sort((a, b) => a.name.localeCompare(b.name))
     .map(
       (f) =>
-        `<tr data-water="${esc(f.water)}" data-season="${f.seasons.length === 4 ? "all" : esc(f.seasons.join(" "))}"><td><a href="@fish/${f.id}.html">${esc(f.name)}</a></td><td>${esc(WATERS[f.water])}</td><td>${esc(f.seasons.length === 4 ? "Any" : f.seasons.map(cap).join(", "))}</td><td>${esc(TIMES[f.time])}</td><td>${esc(RARITY[f.rarity])}</td><td class="num">${f.sellPrice}</td></tr>`,
+        `<tr data-water="${esc(f.water)}" data-season="${f.seasons.length === 4 ? "all" : esc(f.seasons.join(" "))}"><td>${ico(f.id)}<a href="@fish/${f.id}.html">${esc(f.name)}</a></td><td>${esc(WATERS[f.water])}</td><td>${esc(f.seasons.length === 4 ? "Any" : f.seasons.map(cap).join(", "))}</td><td>${esc(TIMES[f.time])}</td><td>${esc(RARITY[f.rarity])}</td><td class="num">${f.sellPrice}</td></tr>`,
     )
     .join("");
   add(
@@ -364,7 +385,10 @@ ${prose("bundles", b.id)}<h2>What the hall accepts</h2><ul>${rows}</ul>`;
           : `After ${r.opensAfter} bundle${r.opensAfter > 1 ? "s" : ""} in other rooms ${r.opensAfter > 1 ? "are" : "is"} finished`;
     const list = d.bundles
       .filter((b) => b.room === r.id)
-      .map((b) => `<li><a href="@bundles/${b.id}.html">${esc(b.name)}</a></li>`)
+      .map(
+        (b) =>
+          `<li>${icoPad(b.reward.item?.id)}<a href="@bundles/${b.id}.html">${esc(b.name)}</a></li>`,
+      )
       .join("");
     add(
       `rooms/${r.id}.html`,
@@ -388,7 +412,7 @@ ${prose("rooms", r.id)}<h2>Bundles</h2><ul>${list}</ul>`,
             .filter((b) => b.room === r.id)
             .map(
               (b) =>
-                `<li><a href="@bundles/${b.id}.html">${esc(b.name)}</a></li>`,
+                `<li>${icoPad(b.reward.item?.id)}<a href="@bundles/${b.id}.html">${esc(b.name)}</a></li>`,
             )
             .join("")}</ul>`,
       )
@@ -402,6 +426,8 @@ ${prose("rooms", r.id)}<h2>Bundles</h2><ul>${list}</ul>`,
     cap,
     link,
     pic,
+    ico,
+    shot,
     status,
     prose,
     infobox,
@@ -416,6 +442,8 @@ ${prose("rooms", r.id)}<h2>Bundles</h2><ul>${list}</ul>`,
     esc,
     cap,
     link,
+    ico,
+    shot,
     status,
     prose,
     infobox,
@@ -466,7 +494,8 @@ ${prose("items", id)}${ub || rw ? `<h2>Used in</h2><ul>${ub ? `<li>Hall bundles 
     )
     .sort((a, b) => itemName(a).localeCompare(itemName(b)))
     .map(
-      (id) => `<li><a href="@items/${id}.html">${esc(itemName(id))}</a></li>`,
+      (id) =>
+        `<li>${ico(id)}<a href="@items/${id}.html">${esc(itemName(id))}</a></li>`,
     )
     .join("");
   add(
@@ -562,17 +591,18 @@ ${prose("items", id)}${ub || rw ? `<h2>Used in</h2><ul>${ub ? `<li>Hall bundles 
     "Elderglen wiki",
     `<h1>Elderglen wiki</h1>
 <p>What is in the game, and where to find it. Start with a category or use the search box.</p>
+${shot("places/delta", "The river delta", "hero", 640, 200)}
 <div class="tiles">
 <a class="tile" href="@fish/index.html"><strong>Fish</strong><span>${d.fish.length} fish, by water, season and time</span></a>
 <a class="tile" href="@bundles/index.html"><strong>Bundles</strong><span>${d.bundles.length} hall bundles in ${d.rooms.length} rooms</span></a>
 ${internal ? '<a class="tile" href="@left.html"><strong>What is left</strong><span>The M3b list (internal)</span></a>' : ""}
-<a class="tile" href="@crops/index.html"><strong>Crops</strong><span>${d.crops.length} crops, by season and growing time</span></a>
-<a class="tile" href="@forage/index.html"><strong>Forage</strong><span>${d.forage.length} things to gather</span></a>
+<a class="tile" href="@crops/index.html">${ico("parsnip")}${ico("pumpkin")}${ico("melon")}<strong>Crops</strong><span>${d.crops.length} crops, by season and growing time</span></a>
+<a class="tile" href="@forage/index.html">${ico("bramble-berry")}<strong>Forage</strong><span>${d.forage.length} things to gather</span></a>
 <a class="tile" href="@recipes/index.html"><strong>Recipes</strong><span>${d.recipes.length + d.dishes.length} dishes and craftable things</span></a>
 <a class="tile" href="@places/index.html"><strong>Places</strong><span>The areas of the home valley</span></a>
-<a class="tile" href="@people/index.html"><strong>People</strong><span>The 30 named people, their days and gifts</span></a>
+<a class="tile" href="@people/index.html">${["odette", "dorrie", "fitch", "alder"].map((i) => shot(`people/${i}`, "", "ico", 32, 32)).join("")}<strong>People</strong><span>The 30 named people, their days and gifts</span></a>
 ${internal ? `<a class="tile" href="@planned.html"><strong>Planned</strong><span>${d.planned.length} decided, not built (internal)</span></a>` : ""}
-<a class="tile" href="@items/index.html"><strong>Items</strong><span>Goods the hall and the ponds ask for</span></a>
+<a class="tile" href="@items/index.html">${ico("amber-drop")}<strong>Items</strong><span>Goods the hall and the ponds ask for</span></a>
 </div>`,
     null,
   );
@@ -594,6 +624,12 @@ table.info th{width:6.5rem;color:var(--muted);font-weight:600}
 .pic{width:64px;height:64px;image-rendering:pixelated}.pic.none{display:grid;place-items:center;border:1px dashed var(--line);color:var(--muted);font-size:.65rem;text-align:center;padding:2px;overflow:hidden;line-height:1.1}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:1rem;margin-top:1rem}
 .tile{display:block;padding:1rem;background:var(--card);border:1px solid var(--line);border-radius:8px;text-decoration:none;color:var(--fg)}.tile span{display:block;color:var(--muted)}
+.ico{width:32px;height:32px;image-rendering:pixelated;vertical-align:middle;margin-right:.35rem}
+.hero{display:block;width:100%;height:12rem;object-fit:cover;object-position:center;image-rendering:pixelated;border:1px solid var(--line);border-radius:8px;margin-top:1rem}
+.figure{display:block;max-width:100%;height:auto;image-rendering:pixelated;border:1px solid var(--line);border-radius:8px;margin:1rem 0}
+.strip{height:64px;width:256px;image-rendering:pixelated}.portrait{width:96px;height:96px;image-rendering:pixelated}
+.ico.gap{display:inline-block}.tile .ico{margin-bottom:.4rem}.tile strong{display:block}
+.thumb{width:12rem;height:7rem;object-fit:cover;image-rendering:pixelated;border:1px solid var(--line);border-radius:6px;display:block;margin-bottom:.3rem}
 .num{text-align:right}th[data-sort]{cursor:pointer}ul.cols{columns:14rem}
 .badge{display:inline-block;margin:0;padding:.1rem .6rem;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}.prose{max-width:34rem}
 #results{position:absolute;right:16px;top:3rem;background:var(--card);border:1px solid var(--line);border-radius:6px;list-style:none;margin:0;padding:.3rem;max-width:22rem;z-index:5}

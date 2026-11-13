@@ -24,8 +24,20 @@ const TASTES = [
 ];
 
 export function buildPeople(c) {
-  const { d, esc, cap, link, status, prose, infobox, add, errors, internal } =
-    c;
+  const {
+    d,
+    esc,
+    cap,
+    link,
+    ico,
+    shot,
+    status,
+    prose,
+    infobox,
+    add,
+    errors,
+    internal,
+  } = c;
   const nice = (s) => cap(s.replace(/-/g, " "));
   const people = d.villagers.villagers;
   const tastes = d.friendship.people;
@@ -135,6 +147,9 @@ export function buildPeople(c) {
 
     const body = `<h1>${esc(p.name)}</h1>${status("people", p.id)}
 ${infobox([
+  d.shots.has(`people/${p.id}`)
+    ? ["Picture", shot(`people/${p.id}`, p.name, "portrait", 96, 96)]
+    : null,
   ["Role", esc(p.role)],
   p.knownAs ? ["Also known as", esc(p.knownAs)] : null,
   ["Age", AGE[p.ageBand] ?? esc(p.ageBand)],
@@ -173,7 +188,7 @@ ${prose("people", p.id)}${gifts}${routes}${events}`;
 <table class="sortable"><thead><tr><th>Name</th><th>Role</th><th>Lives in</th><th>Birthday</th><th>Courted</th></tr></thead><tbody>${sorted
       .map(
         (p) =>
-          `<tr><td><a href="@people/${p.id}.html">${esc(p.name)}</a></td><td>${esc(p.role)}</td><td>${areaLink(p.home.split(":")[0])}</td><td>${cap(p.birthday.season)} ${p.birthday.day}</td><td>${candidates.has(p.id) ? "Yes" : "No"}</td></tr>`,
+          `<tr><td>${shot(`people/${p.id}`, "", "ico", 32, 32)}<a href="@people/${p.id}.html">${esc(p.name)}</a></td><td>${esc(p.role)}</td><td>${areaLink(p.home.split(":")[0])}</td><td>${cap(p.birthday.season)} ${p.birthday.day}</td><td>${candidates.has(p.id) ? "Yes" : "No"}</td></tr>`,
       )
       .join("")}</tbody></table>${birthdays}`,
     null,

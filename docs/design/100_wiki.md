@@ -169,6 +169,14 @@ overview, so the diff is readable.
 
 ## Built status (2026-11-13)
 
+Pictures pass (2026-11-13): `npm run wiki:shots` (`scripts/wiki/shots.mjs`, needs `npm run dev`) writes
+whole-map views of the places, one sprite per person and a four-stage growth strip per crop to
+`docs/wiki/img/{places,people,crops}/`. Pages now show: a map on every place page and thumbnails
+on the places index, a portrait on people pages and index, the growth strip on crop pages, the
+result picture on recipe pages, a small icon beside every item link and index row, bundle reward
+icons in the bundle lists, and a map banner and icon tiles on the front page. Still no pictures:
+fish (no art in the game), the 310 items with no icon, and the hall rooms.
+
 Built: the item table snapshot, `scripts/wiki/build.mjs` (fish, bundles, rooms, items, front page,
 search, sortable fish table, `wiki:check` in `npm run check`, the internal view) and
 `scripts/wiki/images.mjs` (376 of 686 items have a picture; fish have none yet, so they show a

@@ -38,7 +38,8 @@ const shots = await p.evaluate(async (ids) => {
   }
   return result;
 }, ids);
-for (const f of fs.readdirSync(out)) fs.rmSync(`${out}/${f}`);
+for (const f of fs.readdirSync(out))
+  if (f.endsWith(".png")) fs.rmSync(`${out}/${f}`);
 for (const [id, url] of Object.entries(shots))
   fs.writeFileSync(
     `${out}/${id}.png`,

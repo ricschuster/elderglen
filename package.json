@@ -12,6 +12,7 @@
     "wiki": "node scripts/wiki/build.mjs",
     "wiki:internal": "node scripts/wiki/build.mjs --internal",
     "wiki:images": "node scripts/wiki/images.mjs",
+    "wiki:shots": "node scripts/wiki/shots.mjs",
     "wiki:check": "node scripts/wiki/build.mjs --check",
     "overview": "node scripts/overview/build.mjs",
     "overview:refresh": "node scripts/overview/build.mjs --refresh",

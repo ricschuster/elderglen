@@ -29,6 +29,8 @@ export function buildMore(c) {
     cap,
     link,
     pic,
+    ico,
+    shot,
     status,
     prose,
     infobox,
@@ -117,6 +119,7 @@ export function buildMore(c) {
     const name = it?.name ?? r.id;
     const body = `<h1>${esc(name)}</h1>${status("recipes", r.id)}
 ${infobox([
+  ["Picture", pic(r.result.item, name)],
   ["Kind", `${r.kind} recipe`],
   ["Makes", link(from, r.result.item, r.result.count)],
   ["Needs", r.ingredients.map((i) => link(from, i.item, i.count)).join(", ")],
@@ -139,7 +142,7 @@ ${prose("recipes", r.id)}`;
       .sort((a, b) => a.name.localeCompare(b.name))
       .map(
         (r) =>
-          `<tr><td><a href="@recipes/${r.id}.html">${esc(r.name)}</a></td><td>${r.ingredients.map((i) => esc((d.items.get(i.item)?.name ?? i.item) + (i.count > 1 ? ` x ${i.count}` : ""))).join(", ")}</td><td>${r.sources.map((s) => sourceText(`recipe ${r.id}`, s).replace(/<[^>]*>/g, "")).join("; ")}</td>${kind === "Cooking" ? `<td class="num">${r.energy}</td><td class="num">${r.sellPrice}</td>` : ""}</tr>`,
+          `<tr><td>${ico(r.result.item)}<a href="@recipes/${r.id}.html">${esc(r.name)}</a></td><td>${r.ingredients.map((i) => esc((d.items.get(i.item)?.name ?? i.item) + (i.count > 1 ? ` x ${i.count}` : ""))).join(", ")}</td><td>${r.sources.map((s) => sourceText(`recipe ${r.id}`, s).replace(/<[^>]*>/g, "")).join("; ")}</td>${kind === "Cooking" ? `<td class="num">${r.energy}</td><td class="num">${r.sellPrice}</td>` : ""}</tr>`,
       )
       .join("");
   add(
@@ -169,6 +172,18 @@ ${prose("recipes", r.id)}`;
     const body = `<h1>${esc(k.name)}</h1>${status("crops", k.id)}
 ${infobox([
   ["Picture", pic(k.id, k.name)],
+  d.shots.has(`crops/${k.id}`)
+    ? [
+        "Growth",
+        shot(
+          `crops/${k.id}`,
+          `${k.name} growing: seedling, sprout, leafy, ripe`,
+          "strip",
+          256,
+          64,
+        ),
+      ]
+    : null,
   ["Grows in", esc(seasonText(k.seasons))],
   ["Time to grow", `${k.growDays} days`],
   k.regrowDays ? ["Regrows every", `${k.regrowDays} days`] : null,
@@ -197,7 +212,7 @@ ${prose("crops", k.id)}${cropUse(k.id)}`;
       .sort((a, b) => a.name.localeCompare(b.name))
       .map(
         (k) =>
-          `<tr><td><a href="@crops/${k.id}.html">${esc(k.name)}</a></td><td>${esc(k.seasons.length === 4 ? "Any" : k.seasons.map(cap).join(", "))}</td><td class="num">${k.growDays}</td><td class="num">${k.regrowDays ?? ""}</td><td class="num">${k.seedPrice || ""}</td><td class="num">${k.sellPrice || ""}</td></tr>`,
+          `<tr><td>${ico(k.id)}<a href="@crops/${k.id}.html">${esc(k.name)}</a></td><td>${esc(k.seasons.length === 4 ? "Any" : k.seasons.map(cap).join(", "))}</td><td class="num">${k.growDays}</td><td class="num">${k.regrowDays ?? ""}</td><td class="num">${k.seedPrice || ""}</td><td class="num">${k.sellPrice || ""}</td></tr>`,
       )
       .join("")}</tbody></table>`,
     null,
@@ -270,7 +285,7 @@ ${prose("forage", f.id)}${where ? `<h2>Found in</h2><ul>${where}</ul>` : ""}${cr
         const w = fi
           ? [...fi.keys()].map((a) => PLACES[a] ?? a).join(", ")
           : "";
-        return `<tr><td><a href="@forage/${f.id}.html">${esc(f.name)}</a></td><td>${esc(f.seasons.length === 0 ? "-" : f.seasons.length === 4 ? "Any" : f.seasons.map(cap).join(", "))}</td><td>${esc(w)}</td><td class="num">${f.sellPrice}</td></tr>`;
+        return `<tr><td>${ico(f.id)}<a href="@forage/${f.id}.html">${esc(f.name)}</a></td><td>${esc(f.seasons.length === 0 ? "-" : f.seasons.length === 4 ? "Any" : f.seasons.map(cap).join(", "))}</td><td>${esc(w)}</td><td class="num">${f.sellPrice}</td></tr>`;
       })
       .join("")}</tbody></table>`,
     null,
@@ -325,17 +340,20 @@ ${infobox([
     ? ["Buildings", inside.map((i) => esc(nice(i))).join(", ")]
     : null,
 ])}
-${prose("places", id)}${forageBlock ? `<h2>Forage</h2><ul>${forageBlock}</ul>` : ""}${rocks ? `<h2>What comes out of the ground</h2><p>${rocks}.</p>` : ""}${fishHere.length ? `<h2>Fish</h2><ul class="cols">${fishHere.map((f) => `<li><a href="@fish/${f.id}.html">${esc(f.name)}</a></li>`).join("")}</ul>` : ""}`;
+${prose("places", id)}${shot(`places/${id}`, `A map of ${name}`, "figure", map.width * 16, map.height * 16)}${forageBlock ? `<h2>Forage</h2><ul>${forageBlock}</ul>` : ""}${rocks ? `<h2>What comes out of the ground</h2><p>${rocks}.</p>` : ""}${fishHere.length ? `<h2>Fish</h2><ul class="cols">${fishHere.map((f) => `<li><a href="@fish/${f.id}.html">${esc(f.name)}</a></li>`).join("")}</ul>` : ""}`;
     add(`places/${id}.html`, name, body, "Place", "");
   }
   add(
     "places/index.html",
     "Places",
-    `<h1>Places</h1><p>${Object.keys(PLACES).length} places in the home valley.</p><ul>${Object.entries(
+    `<h1>Places</h1><p>${Object.keys(PLACES).length} places in the home valley.</p><div class="tiles">${Object.entries(
       PLACES,
     )
-      .map(([id, n]) => `<li><a href="@places/${id}.html">${esc(n)}</a></li>`)
-      .join("")}</ul>`,
+      .map(
+        ([id, n]) =>
+          `<a class="tile" href="@places/${id}.html">${shot(`places/${id}`, "", "thumb", 192, 112)}<strong>${esc(n)}</strong></a>`,
+      )
+      .join("")}</div>`,
     null,
   );
   return { own: [...forageIds] };
