@@ -28,31 +28,32 @@ Built 2026-11-12 (sessions 7d, 8 and 8b), all awaiting the owner's play. Bundles
 filled in code; the exit test needs the owner's play. Detail is in the notes' "Built status",
 the 2026-11-12l, 2026-11-12m and 2026-11-12n handoffs and `PRIORITIES_ARCHIVE.md`.
 
+Decided 2026-11-12 (session 10): Crabshell ring is the Rock Crab 60 reward; Bug Meat added (Sturdy
+band, Icicle Hopper reward); Cordelia's 4 heart event unlocks tailoring; Heavy Tapper twice as fast
+(saved page, SC-168); finds count only toward "catch N fish", algae soup is a pond reward only, aged
+roe in the jar; tea bush crafted (note 97); Cake Day points 60/90/120; hunt prize Straw Boater plus a
+yearly rare seed; keepsake lantern placeable. Built, awaiting play: all of these, plus hunt, cake
+table, lantern floating and ice fishing rules with thin scene hooks, pond menu and placing screen.
+
 Open, top to bottom:
 
-1. **Owner answers left** (small builds wait on them): Defense +5 ring (shop at floor 40 as built,
-   or the Rock Crab 60 reward as the saved page says; note 22's Crabshell ring overlaps); whether
-   "hall restored" needs the Last Seat done (built) or only open; a Bug Meat item (moth dust
-   stands in for the Sturdy band); Heavy Tapper yield (SC-168); Icicle Hopper reward (lost
-   the Sturdy band, note 22); which tailor and which event for the 4 heart tailoring unlock.
-2. **Tea bush design** (new note, Stardew-shaped: crafted sapling, leaves spring to fall),
-   then herb tea uses tea leaves (bundle 24).
-3. **#873 heart events** (note 62), needs the list per person, then scenes as data.
-4. **#878 Secret Woods statue and pond fish**, after note 93 (the species table is empty).
-5. **Note 93 left:** pond placing screen and menu. Species table.
-6. **#876 left:** festival activities (hunt, judging, ice fishing, lantern floating, cake
-   table), the festival-ends-after-event rule, scene walking villagers and marchers, even-year
-   hedge maze and niche lines (note 82 "Built status").
-7. **Decided 2026-11-12, still to build:** the tailoring unlock as a 4 heart
-   event of the tailor (built as a plain first-cloth line), cave-pool water on mine floors
-   (note 93, no map has water yet), village trees marked `cosmetic` (needs tree objects in
-   `hearthwell.json`, layout task, note 87), pot colour for processed goods. #874 left: the
-   spouse source (marriage) and the gallery set (library gallery system).
-8. A browser look at hat picker, cart screen, herb stall, tapper, lights, rod, bombs, festival
-   maps, tailoring and decor.
+1. **Owner answers left:** herb tea with tea leaves (second recipe, or a new dish, or green tea in
+   the keg; bundle 24), garden pot item for tea bushes, Frostfin price and bundle use, hat for
+   Frostday (`snow-cap` placeholder), crop for the rare seed packet, which fish gives algae soup
+   once the species table is filled, aged roe quality rule.
+2. **#873 heart events** (note 62), needs the list per person, then scenes as data.
+3. **#878 Secret Woods statue and pond fish**, after note 93 (the species table is empty).
+4. **Note 93 left:** the species table, pond art, a cave pool on a map.
+5. **#876 left:** judging (Harvest Showing), cake table dish picker (it takes the held item now),
+   scene walking villagers and marchers, even-year hedge maze and niche lines, lantern drift
+   animation, on-screen ice fishing counter, multiplayer counts (M4).
+6. **Decided, still to build:** cave-pool water on mine floors (no map has water), village trees
+   marked `cosmetic` (needs tree objects in `hearthwell.json`, note 87), mahogany monster seed
+   (needs Secret Woods creatures), #874 spouse source and gallery set.
+7. A browser look at everything built since the owner last played: hat picker, cart, herb stall,
+   tapper, lights, rod, bombs, festival maps and activities, tailoring, pond screens, tea bush.
 
-Alongside: `docs/overview.json` (behind since 2026-11-11), check every committed map is in the
-contract tests (ADR 0014), Stardew checks rows (SC-122, 135, 160 to 170), and file the M4
+Alongside: `docs/overview.json` (behind since 2026-11-11), Stardew checks rows (SC-122, 135, 160 to 174), and file the M4
 hosting spike before M4 (also farm player state size in the save, ADR 0014).
 
 ## Milestone order (ADR 0012)
