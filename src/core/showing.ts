@@ -109,6 +109,9 @@ export const placeOf = (points: number): Place =>
 /** The hat for first place. */
 export const ROSETTE_HAT = "rosette-hat";
 
+/** The item for first place, once a year (note 14). A universal gift love. */
+export const PRIZE_MELON = "blue-ribbon-melon";
+
 /** Show tokens held this year. They do not carry between years. */
 export function showTokens(g: GameState): number {
   return g.showTokens.year === dateOf(g.day.clock.day).year
@@ -150,7 +153,7 @@ export interface Judged {
 
 /**
  * Judge the table. Pays show tokens for the place, once a year, and gives the
- * Rosette Hat for first place. Returns undefined (nothing changed) if the
+ * Rosette Hat and a Blue Ribbon Melon for first place. Returns undefined (nothing changed) if the
  * table cannot be judged.
  */
 export function judge(g: GameState, ids: string[]): Judged | undefined {
@@ -160,6 +163,9 @@ export function judge(g: GameState, ids: string[]): Judged | undefined {
   const year = dateOf(g.day.clock.day).year;
   g.festivalsJoined.push(judgedKey(g.day.clock.day));
   g.showTokens = { year, count: showTokens(g) + place.tokens };
-  if (place.place === 1) g.wardrobe.add(ROSETTE_HAT);
+  if (place.place === 1) {
+    g.wardrobe.add(ROSETTE_HAT);
+    g.inventory.add(PRIZE_MELON);
+  }
   return { score, place };
 }

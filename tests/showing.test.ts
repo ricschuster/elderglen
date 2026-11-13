@@ -152,6 +152,7 @@ describe("the Harvest Showing", () => {
     const r = judge(g, goods);
     expect(r?.place.place).toBe(1);
     expect(g.wardrobe.has(ROSETTE_HAT)).toBe(true);
+    expect(g.inventory.count("blue-ribbon-melon")).toBe(1);
     expect(showTokens(g)).toBe(1000);
   });
 
