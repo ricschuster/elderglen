@@ -24,6 +24,10 @@ import { ARTIFACTS } from "../core/artifacts";
 import { categoryOf } from "../core/artisan";
 import { MACHINES, machineById } from "../core/processing";
 import Phaser from "phaser";
+import { paintAnimals } from "./art-animals";
+import { paintCropStage, paintSeedPacket } from "./art-crops";
+import { paintCreatures } from "./art-creatures";
+import { PLAYER_LOOK, paintPeople, paintPerson } from "./art-people";
 import { ALL_CROPS } from "../core/crops";
 import { FORAGE } from "../core/forage";
 import { FRUIT_TREES, fruitTreeById, treeOfSapling } from "../core/fruittrees";
@@ -60,6 +64,53 @@ function disc(c: Ctx, colour: string, cx: number, cy: number, r: number) {
       if (x * x + y * y <= r * r + r * 0.6) c.fillRect(cx + x, cy + y, 1, 1);
 }
 
+type Lobe = readonly [number, number, number];
+/** Outline, shade, body, light, shine: the tones of a leafy crown. */
+type CrownTones = readonly [string, string, string, string, string];
+const TREE_TONES: CrownTones = [
+  "#12341a",
+  "#1f5a28",
+  "#2f7a36",
+  "#4a9a46",
+  "#86c470",
+];
+const FRUIT_TREE_TONES: CrownTones = [
+  "#1a4422",
+  "#2d7036",
+  "#46a04a",
+  "#6cc26c",
+  "#b0e08e",
+];
+
+/**
+ * A leafy crown of overlapping lobes: a dark rim, then shade, body and a lit patch, each
+ * nudged up and left, so the light falls from the top left and the crown keeps a bumpy edge.
+ */
+function canopy(c: Ctx, lobes: readonly Lobe[], tones: CrownTones) {
+  const [outline, shade, body, light, shine] = tones;
+  for (const [x, y, r] of lobes) disc(c, outline, x, y, r);
+  for (const [x, y, r] of lobes) disc(c, shade, x, y, r - 1);
+  for (const [x, y, r] of lobes) if (r > 2) disc(c, body, x - 1, y - 1, r - 2);
+  for (const [x, y, r] of lobes) if (r > 3) disc(c, light, x - 2, y - 2, r - 4);
+  for (const [x, y, r] of lobes) if (r > 2) px(c, shine, x - 2, y - 2);
+}
+
+/** A soft oval shadow on the ground, `w` wide, centred on `cx`. */
+function groundShadow(c: Ctx, cx: number, y: number, w: number) {
+  px(c, "#0000002a", cx - w / 2 + 1, y - 1, w - 2, 1);
+  px(c, "#00000038", cx - w / 2, y, w, 1);
+}
+
+/** A bark trunk: lit on the left, shaded on the right, with a small root flare. */
+function trunk(c: Ctx, x: number, y: number, w: number, h: number) {
+  px(c, "#2e1e0e", x - 1, y, w + 2, h);
+  px(c, "#5a3e22", x, y, w, h);
+  px(c, "#7a5832", x, y, 1, h);
+  px(c, "#3e2a16", x + w - 1, y, 1, h);
+  px(c, "#2e1e0e", x - 2, y + h - 1, w + 4, 1);
+  px(c, "#4a3218", x - 1, y + h - 1, w + 2, 1);
+}
+
 // ---- tiles, in the order of the tileset in the map JSON (`src/content/maps/`)
 
 function speckle(
@@ -81,30 +132,65 @@ const TILE_PAINTERS: ((c: Ctx, ox: number) => void)[] = [
   (c, ox) => {
     px(c, "#3f7d3a", ox, 0, SIZE, SIZE);
     speckle(c, ox, 11, ["#4a8c44", "#356f31", "#52964a"], 26);
+    // soft darker patches break up the flat green
+    for (const [x, y] of [
+      [1, 7],
+      [12, 2],
+      [8, 12],
+    ] as const)
+      px(c, "#37742f", ox + x, y, 3, 1);
+    // blade tufts: a dark base, a bright tip
     for (const [x, y] of [
       [3, 4],
       [10, 9],
       [6, 13],
+      [13, 14],
     ] as const) {
-      px(c, "#5aa152", ox + x, y - 1);
+      px(c, "#2f6a2c", ox + x, y + 1);
       px(c, "#5aa152", ox + x, y);
+      px(c, "#72b866", ox + x, y - 1);
+      px(c, "#5aa152", ox + x + 1, y);
     }
   },
   // grass with flowers
   (c, ox) => {
     px(c, "#468a40", ox, 0, SIZE, SIZE);
     speckle(c, ox, 23, ["#4f9549", "#3d7d38"], 22);
-    px(c, "#f4f0e0", ox + 4, 5);
-    px(c, "#f2d24a", ox + 4, 6);
-    px(c, "#f4f0e0", ox + 11, 11);
+    // little blooms with a leaf each
+    px(c, "#2f6a2c", ox + 4, 7);
+    px(c, "#3d7d38", ox + 3, 7);
+    px(c, "#f4f0e0", ox + 3, 5);
+    px(c, "#f4f0e0", ox + 5, 5);
+    px(c, "#f4f0e0", ox + 4, 4);
+    px(c, "#f2d24a", ox + 4, 5);
+    px(c, "#f4f0e0", ox + 4, 6);
+    px(c, "#2f6a2c", ox + 11, 13);
+    px(c, "#f4f0e0", ox + 10, 11);
+    px(c, "#f4f0e0", ox + 12, 11);
+    px(c, "#f2d24a", ox + 11, 11);
+    px(c, "#f4f0e0", ox + 11, 10);
+    px(c, "#f4f0e0", ox + 11, 12);
+    px(c, "#2f6a2c", ox + 12, 5);
     px(c, "#e98ac0", ox + 12, 3);
+    px(c, "#f7b4d8", ox + 12, 2);
+    px(c, "#e98ac0", ox + 11, 3);
+    px(c, "#e98ac0", ox + 13, 3);
+    px(c, "#c0609a", ox + 12, 4);
   },
   // path
   (c, ox) => {
     px(c, "#b59b6a", ox, 0, SIZE, SIZE);
     speckle(c, ox, 37, ["#a68c5c", "#c4aa78", "#9a8253"], 30);
-    px(c, "#8f7a50", ox + 5, 6, 2, 1);
-    px(c, "#8f7a50", ox + 11, 12, 2, 1);
+    // pebbles: a light top, a dark underside
+    for (const [x, y] of [
+      [5, 6],
+      [11, 12],
+      [2, 13],
+    ] as const) {
+      px(c, "#8f7a50", ox + x, y + 1, 2, 1);
+      px(c, "#d2bb8a", ox + x, y, 2, 1);
+      px(c, "#a68c5c", ox + x + 1, y);
+    }
   },
   // water
   (c, ox) => {
@@ -114,6 +200,10 @@ const TILE_PAINTERS: ((c: Ctx, ox: number) => void)[] = [
     px(c, "#8fc4f0", ox + 2, 3, 3, 1);
     px(c, "#8fc4f0", ox + 9, 10, 4, 1);
     px(c, "#27609c", ox + 6, 7, 3, 1);
+    px(c, "#27609c", ox + 1, 13, 4, 1);
+    px(c, "#27609c", ox + 12, 5, 3, 1);
+    px(c, "#e4f4ff", ox + 3, 3);
+    px(c, "#e4f4ff", ox + 10, 10, 2, 1);
   },
   // pale untilled earth (the diggable field)
   (c, ox) => {
@@ -125,10 +215,18 @@ const TILE_PAINTERS: ((c: Ctx, ox: number) => void)[] = [
   // tree (seen from above)
   (c, ox) => {
     px(c, "#2d6a2e", ox, 0, SIZE, SIZE);
-    disc(c, "#1f4d25", ox + 8, 8, 7);
-    disc(c, "#2a6b31", ox + 6, 6, 4);
-    disc(c, "#3c8a40", ox + 5, 5, 2);
-    px(c, "#14381a", ox + 11, 12, 2, 1);
+    px(c, "#1c4a22", ox + 4, 14, 10, 1);
+    canopy(
+      c,
+      [
+        [ox + 8, 6, 5],
+        [ox + 5, 10, 4],
+        [ox + 11, 10, 4],
+      ],
+      TREE_TONES,
+    );
+    px(c, "#1f5a28", ox + 9, 9, 2, 1);
+    px(c, "#1f5a28", ox + 6, 12, 2, 1);
   },
   // wall
   (c, ox) => {
@@ -212,6 +310,12 @@ function paintSoil(scene: Phaser.Scene, wet: boolean): void {
     px(c, ridge, 1, y - 1, SIZE - 2, 1);
   }
   speckle(c, 0, wet ? 53 : 47, [dot, furrow], 10);
+  // a lit ridge top and a few clods give the bed depth
+  for (const x of [3, 7, 11]) {
+    px(c, dot, x, 2, 2, 1);
+    px(c, dot, x + 2, 7, 2, 1);
+    px(c, dot, x - 1, 12, 2, 1);
+  }
   // a darker edge so neighbouring plots read as separate beds
   px(c, furrow, 0, 0, SIZE, 1);
   px(c, furrow, 0, SIZE - 1, SIZE, 1);
@@ -256,21 +360,7 @@ export function paintUiFrame(scene: Phaser.Scene): void {
 // ---- the player
 
 export function paintPlayer(scene: Phaser.Scene, key: string): void {
-  const t = scene.textures.createCanvas(key, SIZE, SIZE)!;
-  const c = t.getContext();
-  px(c, "#5a3a1e", 4, 1, 8, 3); // hair
-  px(c, "#f0c8a0", 5, 4, 6, 4); // face
-  px(c, "#5a3a1e", 4, 3, 1, 3);
-  px(c, "#5a3a1e", 11, 3, 1, 3);
-  px(c, "#222222", 6, 5);
-  px(c, "#222222", 9, 5);
-  px(c, "#3f6fb8", 4, 8, 8, 5); // shirt
-  px(c, "#2f528c", 4, 12, 8, 1);
-  px(c, "#f0c8a0", 3, 9, 1, 3); // arms
-  px(c, "#f0c8a0", 12, 9, 1, 3);
-  px(c, "#4a3a2a", 5, 13, 3, 2); // boots
-  px(c, "#4a3a2a", 8, 13, 3, 2);
-  t.refresh();
+  paintPerson(scene, key, PLAYER_LOOK);
 }
 
 // ---- crops
@@ -317,107 +407,666 @@ function paintCrop(scene: Phaser.Scene, id: string): void {
   const pal = CROP_COLOURS[id] ?? FALLBACK;
   for (let stage = 0; stage < CROP_STAGES; stage++) {
     const t = scene.textures.createCanvas(cropKey(id, stage), SIZE, SIZE)!;
-    const c = t.getContext();
-    const dark = "#2d6a2e";
-    if (stage === 0) {
-      px(c, pal.leaf, 7, 11, 2, 2);
-      px(c, dark, 7, 13);
-    } else if (stage === 1) {
-      px(c, dark, 8, 8, 1, 6);
-      px(c, pal.leaf, 5, 8, 3, 2);
-      px(c, pal.leaf, 9, 7, 3, 2);
-    } else if (stage === 2) {
-      px(c, dark, 8, 5, 1, 9);
-      px(c, pal.leaf, 4, 5, 4, 2);
-      px(c, pal.leaf, 9, 4, 4, 2);
-      px(c, pal.leaf, 5, 9, 3, 2);
-      px(c, pal.leaf, 9, 9, 3, 2);
-    } else {
-      px(c, dark, 8, 6, 1, 8);
-      px(c, pal.leaf, 4, 5, 4, 2);
-      px(c, pal.leaf, 9, 5, 4, 2);
-      disc(c, pal.fruit, 5, 11, 2);
-      disc(c, pal.fruit, 11, 10, 2);
-      disc(c, pal.fruit, 8, 4, 2);
-      px(c, "#ffffff55", 4, 10);
-      px(c, "#ffffff55", 10, 9);
-    }
+    paintCropStage(t.getContext(), id, stage, pal.fruit);
     t.refresh();
   }
 }
 
 // ---- forage
 
-const FORAGE_COLOURS: Record<string, string> = {
-  daffodil: "#f6d83a",
-  leek: "#c8e0a0",
-  dandelion: "#f4e04a",
-  horseradish: "#d8d0a8",
-  grape: "#7a3a9a",
-  "spice-berry": "#d03a2a",
-  "sweet-pea": "#e98ac0",
-  "spring-onion": "#a8d878",
-  salmonberry: "#f08a3a",
-  "fiddlehead-fern": "#3a9a4a",
-  periwinkle: "#8a6a9a",
-  "razor-clam": "#d8c8a0",
-  whelk: "#c8a878",
-  cockleshell: "#e8d8c0",
-  "pearly-shell": "#f4e8f0",
-  "spiral-shell": "#e0b8a0",
-  "sea-fan": "#e86a8a",
-  "pin-urchin": "#5a3a7a",
-  seaweed: "#2a7a5a",
+const LEAF = "#4a9a3a";
+const LEAF_DARK = "#2a6a24";
+const LEAF_LIGHT = "#7ac05a";
+const STEM = "#3a8a30";
+
+/** A round thing with a shaded lower right and a glint: berries, fruit, nuts. */
+function ball(
+  c: Ctx,
+  x: number,
+  y: number,
+  r: number,
+  colour: string,
+  shade: string,
+) {
+  disc(c, shade, x, y, r);
+  if (r >= 2) disc(c, colour, x - 1, y - 1, r - 1);
+  else {
+    px(c, colour, x - 1, y);
+    px(c, colour, x, y - 1);
+    px(c, colour, x, y);
+  }
+  px(c, "#ffffffaa", x - (r >= 2 ? 1 : 0), y - 1);
+}
+
+/** A small leaf, two pixels long, lit on its upper edge. */
+function leaf(c: Ctx, x: number, y: number, w = 2) {
+  px(c, LEAF_DARK, x, y + 1, w, 1);
+  px(c, LEAF, x, y, w, 1);
+  px(c, LEAF_LIGHT, x, y);
+}
+
+/** A mushroom: a stem, a cap with a dark rim underneath, and a lit top. */
+function mushroom(
+  c: Ctx,
+  cap: string,
+  capDark: string,
+  capLight: string,
+  stem: string,
+) {
+  groundShadow(c, 8, 15, 10);
+  px(c, "#5a4a3a", 6, 9, 4, 6);
+  px(c, stem, 7, 9, 2, 5);
+  px(c, "#ffffff66", 7, 10, 1, 3);
+  px(c, "#00000033", 8, 10, 1, 4);
+  px(c, "#2a1e16", 2, 5, 12, 5);
+  px(c, "#2a1e16", 4, 3, 8, 2);
+  px(c, capDark, 3, 6, 10, 3);
+  px(c, cap, 3, 5, 10, 3);
+  px(c, cap, 5, 4, 6, 1);
+  px(c, capLight, 5, 4, 4, 1);
+  px(c, capLight, 4, 5, 2, 1);
+  px(c, "#00000044", 4, 9, 8, 1);
+}
+
+/** A rooted crop of the soil: tapered root, leaves on top. */
+function root(c: Ctx, body: string, shade: string, light: string) {
+  groundShadow(c, 8, 15, 8);
+  px(c, LEAF_DARK, 5, 2, 6, 4);
+  px(c, LEAF, 6, 2, 1, 4);
+  px(c, LEAF, 9, 1, 1, 4);
+  px(c, LEAF_LIGHT, 6, 2);
+  px(c, LEAF_LIGHT, 9, 1);
+  px(c, "#3a2a1e", 5, 5, 6, 8);
+  px(c, "#3a2a1e", 7, 13, 2, 2);
+  px(c, body, 6, 6, 4, 6);
+  px(c, body, 7, 12, 2, 2);
+  px(c, shade, 9, 6, 1, 6);
+  px(c, light, 6, 6, 1, 4);
+  px(c, shade, 6, 9, 2, 1);
+}
+
+/** A shell or sea good, lying on the sand. */
+const SHORE_PAINTERS: Record<string, (c: Ctx) => void> = {
+  periwinkle: (c) => {
+    groundShadow(c, 8, 14, 8);
+    disc(c, "#2a1e2a", 8, 10, 4);
+    disc(c, "#6a4a7a", 8, 10, 3);
+    disc(c, "#8a6a9a", 7, 9, 2);
+    px(c, "#3a2a44", 8, 10, 2, 1);
+    px(c, "#3a2a44", 9, 9, 1, 1);
+    px(c, "#3a2a44", 7, 11, 2, 1);
+    px(c, "#c8b0d8", 6, 8);
+  },
+  "razor-clam": (c) => {
+    groundShadow(c, 8, 15, 12);
+    for (let i = 0; i < 9; i++) {
+      px(c, "#3a2e1e", 2 + i, 11 - i, 4, 3);
+    }
+    for (let i = 0; i < 9; i++) {
+      px(c, "#d8c8a0", 3 + i, 11 - i, 2, 1);
+      px(c, "#a89068", 3 + i, 12 - i, 2, 1);
+    }
+    px(c, "#f4ecd0", 4, 10);
+    px(c, "#f4ecd0", 7, 7);
+    px(c, "#7a6a4a", 6, 9);
+    px(c, "#7a6a4a", 10, 5);
+  },
+  whelk: (c) => {
+    groundShadow(c, 8, 15, 10);
+    px(c, "#3a2a1a", 4, 7, 9, 7);
+    px(c, "#3a2a1a", 6, 3, 4, 5);
+    px(c, "#3a2a1a", 7, 1, 2, 2);
+    px(c, "#c8a878", 5, 8, 7, 5);
+    px(c, "#c8a878", 7, 4, 2, 4);
+    px(c, "#c8a878", 7, 2, 1, 2);
+    px(c, "#8a6a44", 5, 10, 7, 1);
+    px(c, "#8a6a44", 6, 6, 4, 1);
+    px(c, "#8a6a44", 10, 8, 2, 5);
+    px(c, "#f4e0c0", 6, 8, 2, 1);
+    px(c, "#f4e0c0", 7, 4);
+    px(c, "#f0c8a8", 8, 12, 3, 1);
+  },
+  cockleshell: (c) => {
+    groundShadow(c, 8, 15, 12);
+    disc(c, "#4a3a2a", 8, 9, 5);
+    disc(c, "#e8d8c0", 8, 9, 4);
+    px(c, "#4a3a2a", 6, 13, 5, 2);
+    px(c, "#c8b090", 7, 13, 3, 1);
+    for (const x of [5, 7, 9, 11]) px(c, "#b89c78", x, 6, 1, 7);
+    px(c, "#ffffffaa", 6, 6, 1, 3);
+    px(c, "#f4e8d8", 8, 5, 1, 2);
+  },
+  "pearly-shell": (c) => {
+    groundShadow(c, 8, 15, 12);
+    disc(c, "#5a4a5a", 8, 9, 5);
+    disc(c, "#e8d8e8", 8, 9, 4);
+    disc(c, "#c8b0c8", 9, 10, 3);
+    disc(c, "#f4e8f0", 7, 8, 2);
+    // the pearl in the opened shell
+    disc(c, "#8a7a8a", 9, 10, 1);
+    px(c, "#ffffff", 8, 10);
+    px(c, "#ffffff", 9, 9);
+    px(c, "#ffffff", 5, 7);
+  },
+  "spiral-shell": (c) => {
+    groundShadow(c, 8, 15, 12);
+    disc(c, "#5a3a2a", 8, 9, 5);
+    disc(c, "#e0b8a0", 8, 9, 4);
+    disc(c, "#b88a70", 9, 9, 3);
+    disc(c, "#e0b8a0", 9, 8, 2);
+    disc(c, "#b88a70", 9, 9, 1);
+    px(c, "#f4dcc8", 9, 9);
+    px(c, "#fff0e0", 5, 7, 1, 2);
+  },
+  "sea-fan": (c) => {
+    groundShadow(c, 8, 15, 8);
+    px(c, "#8a2a4a", 7, 10, 2, 5);
+    for (const [x, y, h] of [
+      [3, 4, 6],
+      [5, 2, 8],
+      [8, 1, 9],
+      [10, 3, 7],
+      [12, 5, 5],
+    ] as const) {
+      px(c, "#8a2a4a", x, y, 2, h);
+      px(c, "#e86a8a", x, y, 1, h - 1);
+      px(c, "#ffa8c0", x, y);
+    }
+    px(c, "#e86a8a", 4, 9, 9, 2);
+    px(c, "#8a2a4a", 4, 11, 9, 1);
+  },
+  "pin-urchin": (c) => {
+    groundShadow(c, 8, 15, 12);
+    // spines first, then the body over them
+    for (const [x, y] of [
+      [8, 2],
+      [3, 5],
+      [13, 5],
+      [2, 10],
+      [14, 10],
+      [5, 3],
+      [11, 3],
+      [4, 13],
+      [12, 13],
+    ] as const)
+      px(c, "#3a2a4a", x, y, 1, 2);
+    disc(c, "#2a1a3a", 8, 9, 5);
+    disc(c, "#5a3a7a", 8, 9, 4);
+    disc(c, "#7a5a9a", 7, 8, 2);
+    for (const [x, y] of [
+      [6, 6],
+      [10, 7],
+      [8, 11],
+      [5, 10],
+      [11, 10],
+    ] as const)
+      px(c, "#2a1a3a", x, y);
+    px(c, "#c8b0e0", 6, 7);
+  },
+  seaweed: (c) => {
+    groundShadow(c, 8, 15, 10);
+    for (const [x, sway] of [
+      [5, 1],
+      [8, -1],
+      [11, 1],
+    ] as const)
+      for (let y = 3; y < 15; y++) {
+        const dx = ((y >> 1) % 2) * sway;
+        px(c, "#174a38", x + dx, y, 2, 1);
+        px(c, "#2a7a5a", x + dx, y);
+        if (y % 3 === 0) px(c, "#5ab08a", x + dx, y);
+      }
+  },
 };
-/** Goods of the shore, drawn as a small shell or tuft rather than a flower. */
-const SHORE_FORAGE = new Set([
-  "periwinkle",
-  "razor-clam",
-  "whelk",
-  "cockleshell",
-  "pearly-shell",
-  "spiral-shell",
-  "sea-fan",
-  "pin-urchin",
-  "seaweed",
-]);
+
+/** Each land forage good has its own small picture. */
+const FORAGE_PAINTERS: Record<string, (c: Ctx) => void> = {
+  daffodil: (c) => {
+    groundShadow(c, 8, 15, 8);
+    px(c, LEAF_DARK, 5, 8, 1, 7);
+    px(c, LEAF, 11, 9, 1, 6);
+    px(c, STEM, 8, 8, 1, 7);
+    disc(c, "#a07a10", 8, 6, 3);
+    disc(c, "#f6e47a", 8, 6, 2);
+    px(c, "#d8b02a", 9, 7, 2, 1);
+    px(c, "#d8b02a", 10, 6);
+    px(c, "#fff4b0", 6, 5);
+    // the trumpet
+    px(c, "#f09a2a", 7, 5, 2, 2);
+    px(c, "#c06a1a", 8, 6);
+  },
+  dandelion: (c) => {
+    groundShadow(c, 8, 15, 12);
+    px(c, STEM, 8, 8, 1, 6);
+    // jagged leaves at the foot
+    for (let x = 3; x < 13; x++) {
+      px(c, LEAF_DARK, x, 14);
+      px(c, LEAF, x, 13 - (x % 2));
+    }
+    disc(c, "#a07a10", 8, 5, 3);
+    disc(c, "#e8b820", 8, 5, 2);
+    disc(c, "#f4e04a", 7, 4, 1);
+    px(c, "#fff8b0", 7, 4);
+    px(c, "#c8901a", 9, 6);
+    px(c, "#c8901a", 10, 4);
+  },
+  "sweet-pea": (c) => {
+    groundShadow(c, 8, 15, 8);
+    px(c, STEM, 8, 9, 1, 6);
+    px(c, STEM, 7, 7, 1, 2);
+    px(c, STEM, 9, 8, 2, 1);
+    px(c, LEAF_LIGHT, 11, 7);
+    px(c, LEAF_LIGHT, 12, 6);
+    leaf(c, 5, 11);
+    leaf(c, 9, 12);
+    for (const [x, y] of [
+      [4, 4],
+      [9, 3],
+    ] as const) {
+      px(c, "#8a3a6a", x, y, 4, 4);
+      px(c, "#e98ac0", x, y, 3, 3);
+      px(c, "#f7b4d8", x, y, 2, 1);
+      px(c, "#c0609a", x + 1, y + 2, 2, 1);
+    }
+  },
+  crocus: (c) => {
+    groundShadow(c, 8, 15, 8);
+    px(c, LEAF, 5, 9, 1, 6);
+    px(c, LEAF, 11, 10, 1, 5);
+    px(c, LEAF_DARK, 6, 11, 1, 4);
+    px(c, "#e8e0c8", 8, 10, 1, 5);
+    // a goblet of petals, three tips at the top, narrowing to the stem
+    px(c, "#3a1a5a", 5, 2, 7, 7);
+    px(c, "#3a1a5a", 6, 9, 5, 1);
+    px(c, "#3a1a5a", 7, 10, 3, 1);
+    px(c, "#8a5ac8", 6, 3, 5, 5);
+    px(c, "#8a5ac8", 7, 8, 3, 1);
+    px(c, "#8a5ac8", 6, 2);
+    px(c, "#8a5ac8", 8, 2);
+    px(c, "#8a5ac8", 10, 2);
+    px(c, "#5a5a2a", 7, 2);
+    px(c, "#5a5a2a", 9, 2);
+    px(c, "#b48ae0", 6, 2, 1, 5);
+    px(c, "#6a3aa0", 10, 3, 1, 5);
+    px(c, "#f0a030", 8, 6, 1, 2);
+    px(c, "#ffd870", 8, 6);
+  },
+  snowdrop: (c) => {
+    groundShadow(c, 8, 15, 8);
+    px(c, LEAF, 5, 9, 1, 6);
+    px(c, LEAF_DARK, 6, 11, 1, 4);
+    // an arched stem with the white bell hanging from it
+    px(c, STEM, 8, 6, 1, 9);
+    px(c, STEM, 9, 5, 2, 1);
+    px(c, "#5a5a6a", 9, 6, 4, 5);
+    px(c, "#f4f4f8", 10, 6, 2, 4);
+    px(c, "#ffffff", 10, 6);
+    px(c, "#c8c8d8", 11, 7, 1, 3);
+    px(c, "#6ab84a", 10, 9, 2, 1);
+  },
+  grape: (c) => {
+    groundShadow(c, 8, 15, 10);
+    px(c, "#6a4a26", 8, 1, 1, 3);
+    leaf(c, 9, 2, 3);
+    px(c, LEAF_LIGHT, 13, 1);
+    for (const [x, y] of [
+      [5, 5],
+      [8, 5],
+      [11, 5],
+      [6, 8],
+      [9, 8],
+      [7, 11],
+      [10, 11],
+      [8, 13],
+    ] as const)
+      ball(c, x, y, 1, "#8a4aaa", "#3a1a5a");
+  },
+  "spice-berry": (c) => {
+    groundShadow(c, 8, 15, 10);
+    px(c, "#6a4a26", 3, 3, 1, 1);
+    for (let i = 0; i < 9; i++) px(c, STEM, 3 + i, 3 + i);
+    leaf(c, 6, 3, 3);
+    leaf(c, 10, 7, 3);
+    ball(c, 5, 9, 1, "#e04a3a", "#7a1a14");
+    ball(c, 8, 11, 1, "#e04a3a", "#7a1a14");
+    ball(c, 12, 13, 1, "#e04a3a", "#7a1a14");
+  },
+  salmonberry: (c) => {
+    groundShadow(c, 8, 15, 10);
+    leaf(c, 6, 2, 4);
+    px(c, STEM, 8, 3, 1, 2);
+    disc(c, "#8a3a14", 8, 9, 4);
+    disc(c, "#f08a3a", 8, 9, 3);
+    // drupelets
+    for (const [x, y] of [
+      [6, 7],
+      [9, 7],
+      [7, 9],
+      [10, 10],
+      [6, 11],
+      [9, 12],
+    ] as const) {
+      px(c, "#ffc078", x, y);
+      px(c, "#c05a20", x + 1, y + 1);
+    }
+  },
+  "bramble-berry": (c) => {
+    groundShadow(c, 8, 15, 12);
+    px(c, "#5a3a2a", 2, 4, 12, 1);
+    px(c, "#5a3a2a", 4, 3);
+    px(c, "#5a3a2a", 10, 3);
+    leaf(c, 6, 2, 3);
+    for (const [x, y] of [
+      [5, 8],
+      [11, 9],
+    ] as const) {
+      px(c, STEM, x, 5, 1, y - 6);
+      disc(c, "#14081a", x, y + 1, 2);
+      disc(c, "#3a1a4a", x, y + 1, 1);
+      px(c, "#7a5a9a", x - 1, y + 1);
+      px(c, "#7a5a9a", x, y);
+      px(c, "#7a5a9a", x + 1, y + 2);
+    }
+  },
+  "holly-sprig": (c) => {
+    groundShadow(c, 8, 15, 12);
+    // two spiky leaves
+    for (const [x, y, dx] of [
+      [2, 5, 1],
+      [9, 8, 1],
+    ] as const) {
+      px(c, "#0e3a1a", x, y, 6, 4);
+      px(c, "#1e6a2e", x + 1, y + 1, 4, 2);
+      px(c, "#4a9a4a", x + 1, y + 1, 3, 1);
+      px(c, "#0e3a1a", x + 2 * dx, y - 1);
+      px(c, "#0e3a1a", x + 4 * dx, y + 4);
+    }
+    ball(c, 7, 10, 1, "#e0283a", "#6a0a14");
+    ball(c, 9, 7, 1, "#e0283a", "#6a0a14");
+    ball(c, 6, 13, 1, "#e0283a", "#6a0a14");
+  },
+  "rose-hip": (c) => {
+    groundShadow(c, 8, 15, 10);
+    px(c, "#5a3a2a", 3, 3, 10, 1);
+    leaf(c, 7, 1, 3);
+    for (const x of [5, 10]) {
+      px(c, "#5a3a2a", x, 4, 1, 2);
+      disc(c, "#6a1a10", x, 9, 3);
+      disc(c, "#d8402a", x, 9, 2);
+      px(c, "#a02818", x + 1, 10, 1, 2);
+      px(c, "#a02818", x, 11);
+      px(c, "#f0805a", x - 1, 8, 1, 2);
+      px(c, "#ffffffaa", x - 1, 7);
+      px(c, "#2a1a10", x - 1, 12, 3, 1);
+      px(c, "#2a1a10", x, 13);
+    }
+  },
+  "wild-plum": (c) => {
+    groundShadow(c, 8, 15, 10);
+    px(c, "#5a3a2a", 8, 2, 1, 3);
+    leaf(c, 9, 2, 3);
+    disc(c, "#2a0a2a", 8, 9, 5);
+    disc(c, "#7a3a8a", 8, 9, 4);
+    disc(c, "#9a5aaa", 7, 8, 2);
+    px(c, "#4a1a5a", 8, 6, 1, 7);
+    px(c, "#d8b8e8", 5, 7, 1, 2);
+  },
+  "crab-apple": (c) => {
+    groundShadow(c, 8, 15, 12);
+    px(c, "#5a3a2a", 6, 3, 1, 4);
+    px(c, "#5a3a2a", 10, 4, 1, 4);
+    px(c, "#5a3a2a", 7, 2, 3, 1);
+    leaf(c, 9, 1, 3);
+    ball(c, 5, 10, 2, "#e04030", "#7a1a10");
+    ball(c, 11, 11, 2, "#e8b030", "#9a5a10");
+    px(c, "#e04030", 12, 10);
+  },
+  hazelnut: (c) => {
+    groundShadow(c, 8, 15, 10);
+    disc(c, "#2a1a0a", 8, 9, 4);
+    disc(c, "#a0682a", 8, 9, 3);
+    disc(c, "#c88a44", 7, 8, 1);
+    px(c, "#f0c890", 6, 8);
+    // the frilly husk on top
+    px(c, "#2a5a1a", 4, 4, 8, 3);
+    px(c, "#6aa83a", 5, 4, 6, 2);
+    px(c, "#9ad060", 5, 4, 2, 1);
+    px(c, "#2a5a1a", 4, 3);
+    px(c, "#2a5a1a", 7, 3);
+    px(c, "#2a5a1a", 11, 3);
+  },
+  chestnut: (c) => {
+    groundShadow(c, 8, 15, 12);
+    // a split spiny husk
+    for (const [x, y] of [
+      [2, 6],
+      [3, 3],
+      [6, 2],
+      [10, 2],
+      [13, 3],
+      [14, 7],
+      [2, 11],
+      [14, 11],
+    ] as const)
+      px(c, "#4a7a1a", x, y);
+    disc(c, "#3a5a14", 8, 10, 5);
+    disc(c, "#7aa83a", 8, 10, 4);
+    px(c, "#a8d060", 5, 8, 2, 1);
+    // the glossy nut bursting out of the top of the husk
+    disc(c, "#2a1a0a", 8, 7, 3);
+    disc(c, "#7a3a14", 8, 7, 2);
+    px(c, "#b8683a", 7, 6, 2, 1);
+    px(c, "#f0c0a0", 7, 6);
+    px(c, "#e8d8b0", 7, 9, 3, 1);
+  },
+  "pine-nut": (c) => {
+    groundShadow(c, 8, 15, 10);
+    px(c, "#2a1a0a", 4, 3, 8, 11);
+    px(c, "#2a1a0a", 5, 2, 6, 1);
+    for (let y = 3; y < 13; y += 2)
+      for (let x = 5 + ((y >> 1) % 2); x < 11; x += 2) {
+        px(c, "#8a6a34", x, y, 2, 2);
+        px(c, "#c09a5a", x, y);
+        px(c, "#4a2e14", x + 1, y + 1);
+      }
+    px(c, "#2a1a0a", 7, 13, 2, 2);
+    px(c, "#f0e0c0", 12, 12, 2, 1);
+    px(c, "#f0e0c0", 13, 10, 1, 1);
+  },
+  "field-mushroom": (c) =>
+    mushroom(c, "#f0e8d8", "#c8a888", "#ffffff", "#f4ecdc"),
+  chanterelle: (c) => {
+    groundShadow(c, 8, 15, 10);
+    // a funnel cap with a wavy edge, flaring up from the stem
+    px(c, "#7a3a0a", 3, 3, 10, 4);
+    px(c, "#7a3a0a", 5, 7, 6, 2);
+    px(c, "#7a3a0a", 6, 9, 4, 5);
+    px(c, "#f0a020", 4, 4, 8, 2);
+    px(c, "#d8801a", 5, 6, 6, 2);
+    px(c, "#f0a020", 7, 8, 2, 5);
+    px(c, "#ffd060", 4, 4, 3, 1);
+    px(c, "#ffd060", 7, 8, 1, 4);
+    px(c, "#3a1a04", 4, 3, 1, 1);
+    px(c, "#3a1a04", 8, 3, 1, 1);
+    px(c, "#3a1a04", 11, 3, 1, 1);
+  },
+  morel: (c) => {
+    groundShadow(c, 8, 15, 8);
+    px(c, "#5a4a3a", 6, 11, 4, 4);
+    px(c, "#f0e4c8", 7, 11, 2, 3);
+    px(c, "#2a1e10", 5, 2, 6, 10);
+    px(c, "#2a1e10", 6, 1, 4, 1);
+    px(c, "#a07a44", 6, 2, 4, 9);
+    px(c, "#a07a44", 7, 1, 2, 1);
+    // honeycomb pits
+    for (const [x, y] of [
+      [6, 3],
+      [8, 4],
+      [7, 6],
+      [9, 7],
+      [6, 8],
+      [8, 9],
+    ] as const)
+      px(c, "#4a3218", x, y);
+    px(c, "#d8b878", 7, 2);
+    px(c, "#d8b878", 6, 5);
+  },
+  snowcap: (c) => {
+    mushroom(c, "#d8e4f0", "#8aa0b8", "#ffffff", "#e8eef4");
+    px(c, "#ffffff", 5, 4, 6, 1);
+    px(c, "#ffffff", 4, 5, 3, 1);
+    px(c, "#7a9ac0", 7, 6);
+    px(c, "#7a9ac0", 10, 6);
+    px(c, "#7a9ac0", 5, 7);
+  },
+  "cave-mushroom": (c) => {
+    mushroom(c, "#8a4ab0", "#4a1a6a", "#c08ae0", "#d8c8e0");
+    for (const [x, y] of [
+      [6, 6],
+      [9, 5],
+      [11, 7],
+    ] as const) {
+      px(c, "#b8f0ff", x, y);
+    }
+  },
+  horseradish: (c) => root(c, "#e0d8b0", "#a89870", "#f4ecd0"),
+  "frost-root": (c) => {
+    root(c, "#c8e0f0", "#7a9ab8", "#f0f8ff");
+    px(c, "#ffffff", 11, 7);
+    px(c, "#ffffff", 4, 10);
+    px(c, "#ffffff", 10, 12);
+  },
+  "snow-tuber": (c) => {
+    groundShadow(c, 8, 15, 12);
+    px(c, LEAF_DARK, 7, 2, 2, 3);
+    px(c, LEAF, 7, 2, 1, 2);
+    disc(c, "#4a3a2a", 7, 9, 4);
+    disc(c, "#4a3a2a", 11, 11, 2);
+    disc(c, "#a8987a", 7, 9, 3);
+    disc(c, "#a8987a", 11, 11, 1);
+    disc(c, "#f0e8d0", 6, 8, 2);
+    px(c, "#7a6a4a", 8, 10);
+    px(c, "#7a6a4a", 5, 11);
+    px(c, "#7a6a4a", 10, 7);
+    px(c, "#ffffff", 5, 7);
+  },
+  "wild-ginger": (c) => {
+    groundShadow(c, 8, 15, 12);
+    px(c, LEAF_DARK, 9, 2, 4, 4);
+    px(c, LEAF, 10, 2, 2, 2);
+    px(c, LEAF_LIGHT, 10, 2);
+    px(c, STEM, 10, 5, 1, 3);
+    // a knobbly rhizome
+    px(c, "#4a3218", 2, 8, 12, 5);
+    px(c, "#4a3218", 4, 6, 3, 2);
+    px(c, "#d8b070", 3, 9, 10, 3);
+    px(c, "#d8b070", 5, 7, 1, 2);
+    px(c, "#f0d8a0", 3, 9, 4, 1);
+    px(c, "#a07a44", 3, 11, 10, 1);
+    px(c, "#a07a44", 7, 9, 1, 2);
+    px(c, "#a07a44", 10, 9, 1, 2);
+  },
+  leek: (c) => {
+    groundShadow(c, 8, 15, 8);
+    px(c, "#1e5a1a", 5, 1, 6, 9);
+    px(c, "#3a8a30", 6, 1, 1, 8);
+    px(c, "#3a8a30", 9, 2, 1, 7);
+    px(c, "#5aa84a", 7, 3, 2, 6);
+    px(c, "#7ac05a", 7, 3, 1, 4);
+    px(c, "#7a8a5a", 6, 9, 4, 6);
+    px(c, "#c8e0a0", 7, 9, 2, 5);
+    px(c, "#ffffff", 7, 11, 1, 3);
+    px(c, "#d8d0b0", 7, 14, 2, 1);
+  },
+  "spring-onion": (c) => {
+    groundShadow(c, 8, 15, 8);
+    px(c, "#1e5a1a", 5, 2, 1, 8);
+    px(c, "#1e5a1a", 8, 1, 1, 9);
+    px(c, "#1e5a1a", 10, 3, 1, 7);
+    px(c, "#5aa84a", 6, 2, 1, 8);
+    px(c, "#5aa84a", 9, 1, 1, 9);
+    px(c, "#7ac05a", 9, 1);
+    disc(c, "#7a7a5a", 8, 12, 3);
+    disc(c, "#f4f0e0", 8, 12, 2);
+    px(c, "#ffffff", 7, 11);
+    px(c, "#c8c0a0", 9, 13);
+    px(c, "#a8a080", 7, 15, 3, 1);
+  },
+  "wild-garlic": (c) => {
+    groundShadow(c, 8, 15, 12);
+    // broad leaves with a pale midrib
+    for (const [x, h] of [
+      [3, 8],
+      [10, 9],
+    ] as const) {
+      px(c, LEAF_DARK, x, 13 - h, 3, h);
+      px(c, LEAF, x, 13 - h, 2, h - 1);
+      px(c, LEAF_LIGHT, x + 1, 14 - h, 1, h - 3);
+    }
+    // white star flowers on a stalk
+    px(c, STEM, 8, 4, 1, 10);
+    for (const [x, y] of [
+      [7, 3],
+      [9, 2],
+      [8, 5],
+    ] as const) {
+      px(c, "#ffffff", x, y);
+      px(c, "#e0e0d0", x + 1, y);
+    }
+    px(c, "#f0f0e0", 6, 12, 5, 3);
+    px(c, "#c8c0a8", 9, 13, 2, 2);
+  },
+  "winter-cress": (c) => {
+    groundShadow(c, 8, 15, 12);
+    for (const [x, y] of [
+      [4, 8],
+      [11, 8],
+      [6, 5],
+      [10, 5],
+      [8, 11],
+      [5, 11],
+      [11, 11],
+    ] as const) {
+      disc(c, LEAF_DARK, x, y, 2);
+      disc(c, "#3a8a4a", x, y, 1);
+      px(c, "#8ad08a", x - 1, y);
+    }
+    px(c, "#ffffff", 6, 4);
+    px(c, "#ffffff", 11, 7);
+  },
+  "fiddlehead-fern": (c) => {
+    groundShadow(c, 8, 15, 8);
+    px(c, "#1f5a28", 6, 3, 7, 5);
+    px(c, "#1f5a28", 7, 7, 3, 8);
+    px(c, "#3a9a4a", 8, 7, 1, 7);
+    px(c, "#3a9a4a", 8, 4, 3, 1);
+    px(c, "#3a9a4a", 11, 5, 1, 2);
+    px(c, "#3a9a4a", 9, 6, 2, 1);
+    px(c, "#7ad064", 8, 4, 2, 1);
+    px(c, "#2a7a38", 6, 10, 2, 1);
+    px(c, "#2a7a38", 9, 11, 2, 1);
+  },
+};
 
 export const forageKey = (id: string) => `forage-${id}`;
 
 function paintForage(scene: Phaser.Scene, id: string): void {
-  const colour = FORAGE_COLOURS[id] ?? "#e58fd0";
   const t = scene.textures.createCanvas(forageKey(id), SIZE, SIZE)!;
   const c = t.getContext();
-  if (id === "fiddlehead-fern") {
-    px(c, colour, 8, 7, 1, 7);
-    px(c, colour, 8, 5, 3, 1);
-    px(c, colour, 10, 6, 1, 2);
-    px(c, "#2a7a38", 6, 9, 2, 1);
-  } else if (id === "leek" || id === "spring-onion") {
-    px(c, "#3a8a30", 6, 5, 1, 6);
-    px(c, "#3a8a30", 9, 4, 1, 7);
-    px(c, colour, 6, 11, 4, 3);
-    px(c, "#ffffff", 7, 13, 2, 1);
-  } else if (SHORE_FORAGE.has(id)) {
-    disc(c, colour, 8, 10, 3);
-    px(c, "#ffffff88", 7, 8, 2, 1);
-    px(c, "#00000033", 6, 12, 5, 1);
-  } else if (id === "horseradish") {
-    px(c, "#4a9a3a", 5, 4, 3, 5);
-    px(c, "#4a9a3a", 9, 5, 3, 4);
-    px(c, colour, 7, 10, 2, 4);
-  } else {
-    px(c, "#3a8a30", 8, 8, 1, 6);
-    px(c, "#4a9a3a", 5, 11, 3, 1);
-    px(c, "#4a9a3a", 9, 10, 3, 1);
+  const paint = FORAGE_PAINTERS[id] ?? SHORE_PAINTERS[id];
+  if (paint) paint(c);
+  else {
+    // a fallback flower spray for any good without its own picture
+    groundShadow(c, 8, 15, 8);
+    px(c, STEM, 8, 8, 1, 6);
+    leaf(c, 5, 11, 3);
+    leaf(c, 9, 10, 3);
     for (const [x, y] of [
       [6, 5],
       [10, 6],
       [8, 3],
-      [7, 8],
     ] as const)
-      disc(c, colour, x, y, 1);
-    px(c, "#ffffff66", 6, 4);
+      ball(c, x, y, 1, "#e58fd0", "#8a3a7a");
   }
   t.refresh();
 }
@@ -439,8 +1088,12 @@ function paintToolIcons(scene: Phaser.Scene): void {
   };
   draw(TOOL_ICONS.hoe, (c) => {
     px(c, "#8a5c2a", 7, 2, 2, 12);
+    px(c, "#b07a3c", 7, 4, 1, 10);
+    px(c, "#5c3a18", 8, 4, 1, 10);
     px(c, "#b8bcc4", 4, 2, 8, 2);
+    px(c, "#e4e8ee", 5, 2, 5, 1);
     px(c, "#8a8e96", 4, 4, 2, 1);
+    px(c, "#6a6e76", 4, 3, 1, 2);
   });
   draw(TOOL_ICONS.can, (c) => {
     px(c, "#5a8ec0", 3, 6, 8, 7);
@@ -451,12 +1104,20 @@ function paintToolIcons(scene: Phaser.Scene): void {
     px(c, "#3f6f9c", 4, 4, 5, 1);
     px(c, "#3f6f9c", 4, 5, 1, 1);
     px(c, "#3f6f9c", 8, 5, 1, 1);
+    px(c, "#7fb0dc", 3, 6, 8, 1);
+    px(c, "#2c5478", 3, 13, 8, 1);
+    px(c, "#3f6f9c", 10, 7, 1, 5);
+    px(c, "#2c5478", 14, 3);
   });
   draw(TOOL_ICONS.axe, (c) => {
     px(c, "#8a5c2a", 7, 3, 2, 11);
     px(c, "#b8bcc4", 3, 2, 5, 5);
     px(c, "#8a8e96", 3, 6, 5, 1);
     px(c, "#d8dce4", 4, 3, 2, 1);
+    px(c, "#6a6e76", 3, 7, 5, 1);
+    px(c, "#b07a3c", 7, 4, 1, 10);
+    px(c, "#5c3a18", 8, 4, 1, 10);
+    px(c, "#5c3a18", 7, 14, 2, 1);
   });
   draw(TOOL_ICONS.pickaxe, (c) => {
     px(c, "#8a5c2a", 7, 4, 2, 10);
@@ -464,17 +1125,18 @@ function paintToolIcons(scene: Phaser.Scene): void {
     px(c, "#8a8e96", 2, 5, 2, 2);
     px(c, "#8a8e96", 12, 5, 2, 2);
     px(c, "#d8dce4", 5, 3, 3, 1);
+    px(c, "#6a6e76", 2, 7, 2, 1);
+    px(c, "#6a6e76", 12, 7, 2, 1);
+    px(c, "#b07a3c", 7, 5, 1, 9);
+    px(c, "#5c3a18", 8, 5, 1, 9);
+    px(c, "#5c3a18", 7, 14, 2, 1);
   });
 }
 
 function paintSeedIcon(scene: Phaser.Scene, cropId: string): void {
   const pal = CROP_COLOURS[cropId] ?? FALLBACK;
   const t = scene.textures.createCanvas(`icon-${seedId(cropId)}`, SIZE, SIZE)!;
-  const c = t.getContext();
-  px(c, "#e8dcc0", 3, 2, 10, 12);
-  px(c, "#c8bc9c", 3, 2, 10, 1);
-  px(c, pal.fruit, 5, 5, 6, 4);
-  px(c, pal.leaf, 6, 10, 4, 2);
+  paintSeedPacket(t.getContext(), cropId, pal.fruit);
   t.refresh();
 }
 
@@ -528,13 +1190,21 @@ function paintTrees(scene: Phaser.Scene): void {
   };
   // A weed: a ragged tuft of leaves, flat enough to walk over.
   draw(WEED_KEY, (c) => {
+    groundShadow(c, 8, 14, 10);
+    px(c, "#2a5a20", 3, 7, 4, 4);
+    px(c, "#2a5a20", 6, 5, 5, 4);
+    px(c, "#2a5a20", 9, 7, 4, 4);
     px(c, "#3a7a2a", 5, 9, 1, 5);
     px(c, "#4aa03a", 8, 7, 1, 7);
     px(c, "#3a7a2a", 11, 9, 1, 5);
-    px(c, "#5ab84a", 4, 8, 2, 2);
-    px(c, "#5ab84a", 7, 6, 3, 2);
-    px(c, "#5ab84a", 10, 8, 2, 2);
-    px(c, "#2a5a20", 4, 14, 8, 1);
+    px(c, "#4aa03a", 4, 8, 2, 2);
+    px(c, "#4aa03a", 7, 6, 3, 2);
+    px(c, "#4aa03a", 10, 8, 2, 2);
+    px(c, "#7ad064", 4, 8);
+    px(c, "#7ad064", 7, 6, 2, 1);
+    px(c, "#7ad064", 10, 8);
+    px(c, "#2f6a24", 6, 12, 1, 2);
+    px(c, "#2f6a24", 9, 11, 1, 3);
   });
   // A twig: two crossed bits of branch, flat enough to walk over.
   draw(TWIG_KEY, (c) => {
@@ -543,58 +1213,131 @@ function paintTrees(scene: Phaser.Scene): void {
     px(c, "#6b4e2d", 6, 8, 1, 4);
     px(c, "#8a6a40", 10, 7, 1, 4);
     px(c, "#4a3820", 4, 12, 7, 1);
+    px(c, "#4a3820", 3, 11, 9, 1);
+    px(c, "#4a3820", 7, 9, 1, 3);
+    px(c, "#a88456", 4, 10, 3, 1);
+    px(c, "#a88456", 10, 7);
   });
   // A seed in the ground: a pale mound and a speck.
   draw(treeKey(1, false), (c) => {
+    groundShadow(c, 8, 12, 8);
+    px(c, "#4a3218", 5, 10, 6, 2);
     px(c, "#6b4e2d", 6, 10, 4, 2);
     px(c, "#8a6a40", 7, 9, 2, 1);
+    px(c, "#a88456", 6, 10);
     px(c, "#c9a24a", 7, 10, 2, 1);
+    px(c, "#f0d488", 7, 10);
   });
   // Seedlings: a stem with a few leaves.
   draw(treeKey(2, false), (c) => {
+    groundShadow(c, 8, 14, 6);
     px(c, "#5a3e22", 8, 9, 1, 5);
+    px(c, "#2d6a2e", 5, 8, 3, 3);
+    px(c, "#2d6a2e", 9, 6, 3, 3);
     px(c, "#4aa04a", 6, 8, 2, 2);
     px(c, "#4aa04a", 9, 7, 2, 2);
+    px(c, "#86c470", 6, 8);
+    px(c, "#86c470", 9, 7);
   });
   draw(treeKey(3, false), (c) => {
-    px(c, "#5a3e22", 8, 7, 1, 7);
-    disc(c, "#3c8a40", 8, 6, 3);
-    disc(c, "#4aa04a", 7, 5, 1);
+    groundShadow(c, 8, 14, 8);
+    trunk(c, 8, 8, 1, 6);
+    canopy(
+      c,
+      [
+        [8, 6, 3],
+        [6, 7, 2],
+        [10, 7, 2],
+      ],
+      TREE_TONES,
+    );
   });
   // A young tree: a thin trunk and a small crown.
   draw(treeKey(4, false), (c) => {
-    px(c, "#5a3e22", 7, 9, 2, 6);
-    disc(c, "#1f4d25", 8, 6, 5);
-    disc(c, "#2a6b31", 7, 5, 3);
-    disc(c, "#3c8a40", 6, 4, 1);
+    groundShadow(c, 8, 15, 10);
+    trunk(c, 7, 9, 2, 6);
+    canopy(
+      c,
+      [
+        [8, 5, 4],
+        [5, 8, 3],
+        [11, 8, 3],
+      ],
+      TREE_TONES,
+    );
   });
   // A mature tree: the full crown over a trunk.
   draw(treeKey(5, false), (c) => {
-    px(c, "#5a3e22", 7, 10, 3, 5);
-    px(c, "#3e2a16", 9, 10, 1, 5);
-    disc(c, "#1f4d25", 8, 7, 7);
-    disc(c, "#2a6b31", 6, 5, 4);
-    disc(c, "#3c8a40", 5, 4, 2);
-    px(c, "#14381a", 11, 11, 2, 1);
+    groundShadow(c, 8, 15, 14);
+    trunk(c, 7, 10, 3, 5);
+    canopy(
+      c,
+      [
+        [8, 5, 5],
+        [4, 8, 4],
+        [12, 8, 3],
+        [8, 9, 4],
+      ],
+      TREE_TONES,
+    );
+    // leaf clumps: a few darker notches and lit tips break up the crown
+    px(c, "#1f5a28", 10, 9, 2, 1);
+    px(c, "#1f5a28", 5, 11, 2, 1);
+    px(c, "#1f5a28", 9, 4, 1, 1);
+    px(c, "#4a9a46", 7, 8, 2, 1);
+    px(c, "#86c470", 3, 6);
+    for (const [x, y] of [
+      [5, 3],
+      [10, 3],
+      [2, 8],
+      [7, 7],
+      [11, 7],
+      [5, 10],
+      [9, 11],
+    ] as const) {
+      px(c, "#5aaa52", x, y, 2, 1);
+      px(c, "#1f5a28", x + 1, y + 1, 2, 1);
+    }
   });
   draw(treeKey(5, true), (c) => {
+    groundShadow(c, 8, 15, 12);
+    px(c, "#2e1e0e", 3, 7, 10, 8);
     px(c, "#5a3e22", 4, 8, 8, 6);
-    px(c, "#3e2a16", 4, 13, 8, 1);
-    px(c, "#c9a470", 4, 7, 8, 2);
-    px(c, "#a8844f", 6, 7, 4, 1);
-    px(c, "#a8844f", 7, 8, 2, 1);
+    px(c, "#7a5832", 4, 9, 2, 5);
+    px(c, "#3e2a16", 10, 9, 2, 5);
+    px(c, "#3e2a16", 7, 10, 1, 3);
+    px(c, "#2e1e0e", 2, 13, 12, 1);
+    px(c, "#4a3218", 3, 13, 10, 1);
+    px(c, "#c9a470", 4, 6, 8, 3);
+    px(c, "#2e1e0e", 4, 5, 8, 1);
+    px(c, "#e0c08c", 5, 6, 3, 1);
+    px(c, "#a8844f", 5, 7, 6, 1);
+    px(c, "#c9a470", 7, 7, 2, 1);
+    px(c, "#a8844f", 4, 8, 8, 1);
   });
   // A large stump (Woodland): wide, with rings on top. Cut, it is a low stub.
   draw("stump-large", (c) => {
+    px(c, "#2e1e0e", 0, 4, 16, 12);
     px(c, "#5a3e22", 1, 6, 14, 9);
+    px(c, "#7a5832", 1, 7, 3, 7);
+    px(c, "#3e2a16", 12, 7, 3, 7);
+    px(c, "#3e2a16", 6, 9, 1, 4);
+    px(c, "#3e2a16", 9, 8, 1, 5);
     px(c, "#3e2a16", 1, 14, 14, 1);
     px(c, "#c9a470", 1, 4, 14, 3);
-    px(c, "#a8844f", 4, 5, 8, 1);
-    px(c, "#a8844f", 6, 4, 4, 1);
+    px(c, "#e0c08c", 2, 4, 5, 1);
+    px(c, "#a8844f", 3, 5, 10, 1);
+    px(c, "#c9a470", 5, 5, 6, 1);
+    px(c, "#a8844f", 7, 5, 2, 1);
+    px(c, "#a8844f", 1, 6, 14, 1);
   });
   draw("stump-cut", (c) => {
+    px(c, "#2e1e0e", 2, 9, 12, 7);
     px(c, "#5a3e22", 3, 11, 10, 4);
+    px(c, "#7a5832", 3, 11, 2, 4);
+    px(c, "#3e2a16", 11, 11, 2, 4);
     px(c, "#c9a470", 3, 10, 10, 1);
+    px(c, "#e0c08c", 4, 10, 3, 1);
   });
   draw("icon-wood", (c) => {
     px(c, "#7a4e26", 2, 5, 12, 3);
@@ -881,28 +1624,77 @@ function paintFruitTrees(scene: Phaser.Scene): void {
   };
   // Stages: sapling stick, taller sapling, young tree, then the mature crown.
   draw(fruitTreeKey(0), (c) => {
+    groundShadow(c, 8, 14, 6);
     px(c, "#5a3e22", 8, 10, 1, 4);
-    px(c, "#7ac05a", 7, 9, 3, 2);
+    px(c, "#3a8a3a", 7, 9, 3, 2);
+    px(c, "#7ac05a", 7, 9, 2, 1);
+    px(c, "#b0e08e", 7, 9);
   });
   draw(fruitTreeKey(1), (c) => {
+    groundShadow(c, 8, 14, 6);
     px(c, "#5a3e22", 8, 8, 1, 6);
+    px(c, "#2d7036", 5, 7, 3, 3);
+    px(c, "#2d7036", 9, 5, 3, 3);
     px(c, "#7ac05a", 6, 7, 2, 2);
     px(c, "#7ac05a", 9, 6, 2, 2);
+    px(c, "#b0e08e", 6, 7);
+    px(c, "#b0e08e", 9, 6);
   });
   draw(fruitTreeKey(2), (c) => {
-    px(c, "#5a3e22", 8, 7, 1, 7);
-    disc(c, "#4a9a4a", 8, 6, 3);
+    groundShadow(c, 8, 14, 8);
+    trunk(c, 8, 8, 1, 6);
+    canopy(
+      c,
+      [
+        [8, 6, 3],
+        [6, 7, 2],
+        [10, 7, 2],
+      ],
+      FRUIT_TREE_TONES,
+    );
   });
   draw(fruitTreeKey(3), (c) => {
-    px(c, "#5a3e22", 7, 9, 2, 6);
-    disc(c, "#3c8a40", 8, 6, 4);
-    disc(c, "#5ab05a", 7, 5, 2);
+    groundShadow(c, 8, 15, 10);
+    trunk(c, 7, 9, 2, 6);
+    canopy(
+      c,
+      [
+        [8, 5, 4],
+        [5, 8, 3],
+        [11, 8, 3],
+      ],
+      FRUIT_TREE_TONES,
+    );
   });
   draw(fruitTreeKey(4), (c) => {
-    px(c, "#5a3e22", 7, 10, 3, 5);
-    disc(c, "#2f7a38", 8, 7, 7);
-    disc(c, "#4aa04a", 6, 5, 4);
-    disc(c, "#6ac070", 5, 4, 2);
+    groundShadow(c, 8, 15, 14);
+    trunk(c, 7, 10, 3, 5);
+    canopy(
+      c,
+      [
+        [8, 5, 5],
+        [4, 8, 4],
+        [12, 8, 3],
+        [8, 9, 4],
+      ],
+      FRUIT_TREE_TONES,
+    );
+    px(c, "#2d7036", 10, 9, 2, 1);
+    px(c, "#2d7036", 5, 11, 2, 1);
+    px(c, "#6cc26c", 7, 8, 2, 1);
+    px(c, "#b0e08e", 3, 6);
+    for (const [x, y] of [
+      [5, 3],
+      [10, 3],
+      [2, 8],
+      [7, 7],
+      [11, 7],
+      [5, 10],
+      [9, 11],
+    ] as const) {
+      px(c, "#7ad07a", x, y, 2, 1);
+      px(c, "#2d7036", x + 1, y + 1, 2, 1);
+    }
   });
   for (const t of FRUIT_TREES) {
     draw(fruitOnTreeKey(t.id), (c) => {
@@ -911,19 +1703,36 @@ function paintFruitTrees(scene: Phaser.Scene): void {
         [10, 5],
         [8, 9],
         [11, 9],
-      ] as const)
+      ] as const) {
+        px(c, "#00000055", x, y + 1, 3, 2);
         px(c, fruitColour(t.id), x, y, 2, 2);
+        px(c, "#ffffffaa", x, y);
+        px(c, "#00000040", x + 1, y + 1);
+      }
     });
     draw(`icon-${t.id}`, (c) => {
+      groundShadow(c, 8, 14, 8);
+      disc(c, "#00000066", 8, 9, 5);
       disc(c, fruitColour(t.id), 8, 9, 4);
-      px(c, "#4a8a3a", 8, 3, 3, 2);
-      px(c, "#5a3e22", 8, 4, 1, 2);
+      disc(c, "#00000030", 9, 10, 3);
+      disc(c, fruitColour(t.id), 7, 8, 3);
+      px(c, "#ffffffaa", 6, 7, 2, 1);
+      px(c, "#ffffff66", 6, 8);
+      px(c, "#5a3e22", 8, 3, 1, 3);
+      px(c, "#2d7036", 9, 3, 3, 2);
+      px(c, "#7ac05a", 9, 3, 2, 1);
     });
     draw(saplingIconKey(t.id), (c) => {
+      px(c, "#4a3218", 4, 12, 8, 3);
       px(c, "#6b4e2d", 5, 12, 6, 2);
+      px(c, "#8a6a40", 5, 12, 3, 1);
       px(c, "#5a3e22", 8, 6, 1, 6);
-      px(c, fruitColour(t.id), 6, 4, 2, 2);
+      px(c, "#2d7036", 9, 5, 3, 3);
       px(c, "#7ac05a", 9, 5, 3, 2);
+      px(c, "#b0e08e", 9, 5);
+      px(c, "#00000055", 6, 5, 3, 2);
+      px(c, fruitColour(t.id), 6, 4, 2, 2);
+      px(c, "#ffffffaa", 6, 4);
     });
   }
 }
@@ -941,15 +1750,29 @@ export const POT_READY_KEY = "shellfish-pot-ready";
 function paintPot(scene: Phaser.Scene): void {
   const t = scene.textures.createCanvas(POT_KEY, SIZE, SIZE)!;
   const c = t.getContext();
-  px(c, "#00000033", 3, 13, 10, 1);
+  // ripples where the pot meets the water
+  px(c, "#8fc4f0aa", 2, 13, 12, 1);
+  px(c, "#3b80c4", 3, 14, 10, 1);
+  px(c, "#4a3218", 3, 5, 10, 9);
   px(c, "#9a7a3c", 4, 6, 8, 7);
-  px(c, "#6a4e22", 4, 8, 8, 1);
-  px(c, "#6a4e22", 4, 11, 8, 1);
-  px(c, "#6a4e22", 7, 6, 1, 7);
-  px(c, "#d8503c", 7, 3, 2, 3);
+  px(c, "#c09a52", 4, 6, 8, 1);
+  for (let y = 7; y < 13; y += 2)
+    for (let x = 4 + ((y >> 1) % 2); x < 12; x += 2) px(c, "#7a5c2a", x, y);
+  px(c, "#6a4e22", 4, 9, 8, 1);
+  px(c, "#6a4e22", 10, 6, 2, 7);
+  px(c, "#c09a52", 4, 7, 1, 5);
+  px(c, "#2a1a0a", 5, 6, 6, 1);
+  px(c, "#6a4e22", 8, 3, 1, 3);
+  px(c, "#7a2418", 6, 1, 4, 4);
+  px(c, "#d8503c", 7, 1, 2, 3);
+  px(c, "#f4f0e0", 7, 3, 2, 1);
+  px(c, "#ff9a84", 7, 1);
   t.refresh();
   const r = scene.textures.createCanvas(POT_READY_KEY, SIZE, SIZE)!;
-  px(r.getContext(), "#ffe070", 11, 1, 4, 4);
+  const rc = r.getContext();
+  px(rc, "#8a6a10", 10, 0, 6, 6);
+  px(rc, "#ffe070", 11, 1, 4, 4);
+  px(rc, "#fff6c0", 11, 1, 2, 1);
   r.refresh();
 }
 
@@ -960,12 +1783,29 @@ function paintFurniture(scene: Phaser.Scene): void {
     const c = t.getContext();
     if (f.rug) {
       px(c, f.color, 1, 3, 14, 10);
+      px(c, "#00000033", 1, 3, 14, 10);
+      px(c, f.color, 2, 4, 12, 8);
       px(c, "#ffffff55", 3, 5, 10, 6);
+      px(c, f.color, 4, 6, 8, 4);
+      px(c, "#ffffff33", 6, 7, 4, 2);
+      // a fringe at each end
+      for (let x = 2; x < 14; x += 2) {
+        px(c, "#f4ecd0", x, 2);
+        px(c, "#f4ecd0", x, 13);
+      }
     } else {
-      px(c, "#00000044", 2, 14, 12, 1);
+      groundShadow(c, 8, 15, 12);
+      px(c, "#2a1e16", 2, 4, 12, 11);
       px(c, f.color, 3, 5, 10, 9);
-      px(c, "#ffffff44", 4, 6, 8, 2);
-      px(c, "#00000033", 3, 12, 10, 2);
+      px(c, "#ffffff55", 3, 5, 10, 1);
+      px(c, "#ffffff33", 4, 6, 8, 2);
+      px(c, "#ffffff33", 3, 6, 1, 6);
+      px(c, "#00000033", 12, 6, 1, 6);
+      px(c, "#00000044", 3, 12, 10, 2);
+      px(c, "#00000033", 4, 9, 8, 1);
+      // legs
+      px(c, "#2a1e16", 3, 14, 2, 1);
+      px(c, "#2a1e16", 11, 14, 2, 1);
     }
     t.refresh();
   }
@@ -976,9 +1816,31 @@ function paintDecor(scene: Phaser.Scene): void {
   for (const d of DECOR) {
     const t = scene.textures.createCanvas(`decor-${d.id}`, SIZE, SIZE)!;
     const c = t.getContext();
+    px(c, "#00000055", 1, 1, 14, 14);
     px(c, d.color, 2, 2, 12, 12);
-    px(c, d.kind === "floor" ? "#00000033" : "#ffffff44", 2, 8, 12, 1);
-    px(c, d.kind === "floor" ? "#00000033" : "#ffffff44", 8, 2, 1, 12);
+    if (d.kind === "floor") {
+      // staggered boards, each with a lit top edge
+      for (const y of [2, 6, 10]) {
+        px(c, "#ffffff33", 2, y, 12, 1);
+        px(c, "#00000033", 2, y + 3, 12, 1);
+      }
+      px(c, "#00000033", 7, 2, 1, 4);
+      px(c, "#00000033", 4, 6, 1, 4);
+      px(c, "#00000033", 10, 6, 1, 4);
+      px(c, "#00000033", 8, 10, 1, 4);
+    } else {
+      // stripes and a small motif, lit from the top
+      for (const x of [4, 8, 12]) px(c, "#ffffff33", x, 2, 1, 12);
+      for (const [x, y] of [
+        [6, 5],
+        [10, 9],
+        [6, 12],
+      ] as const) {
+        px(c, "#ffffff55", x, y);
+        px(c, "#00000033", x, y + 1);
+      }
+      px(c, "#00000044", 2, 12, 12, 2);
+    }
     t.refresh();
   }
 }
@@ -994,10 +1856,29 @@ function paintChests(scene: Phaser.Scene): void {
     const lid = stone ? "#b4b4ba" : "#b4803c";
     const x = big ? 1 : 2;
     const w = big ? 14 : 12;
-    px(c, "#00000044", x, 14, w, 1);
+    const rim = stone ? "#3a3a42" : "#3a220e";
+    const band = stone ? "#5a5a62" : "#6a6a72";
+    groundShadow(c, 8, 15, w + 2);
+    px(c, rim, x - 1, 3, w + 2, 12);
     px(c, body, x, 7, w, 7);
     px(c, lid, x, 4, w, 4);
-    px(c, "#2a2a30", 7, 7, 2, 3);
+    // the lid's lit top and shaded seam
+    px(c, "#ffffff55", x, 4, w, 1);
+    px(c, "#00000044", x, 7, w, 1);
+    px(c, "#00000033", x, 12, w, 2);
+    if (stone) {
+      px(c, "#00000033", x + 3, 9, 1, 3);
+      px(c, "#00000033", x + w - 4, 8, 1, 3);
+    } else {
+      px(c, "#00000026", x, 10, w, 1);
+      px(c, "#ffffff22", x, 8, w, 1);
+    }
+    // corner bands and a latch
+    px(c, band, x, 4, 1, 10);
+    px(c, band, x + w - 1, 4, 1, 10);
+    px(c, "#2a2a30", 7, 6, 2, 4);
+    px(c, "#e8c050", 7, 7, 2, 2);
+    px(c, "#fff0a0", 7, 7);
     t.refresh();
   }
 }
@@ -1017,10 +1898,15 @@ function paintFarmDecor(scene: Phaser.Scene): void {
     const [body, trim] = colours[id] ?? ["#a08060", "#604830"];
     const t = scene.textures.createCanvas(farmDecorKey(id), SIZE, SIZE)!;
     const c = t.getContext();
-    px(c, "#00000033", 1, 14, 14, 1);
+    groundShadow(c, 8, 15, 14);
+    px(c, "#2a1e16", 0, 2, 16, 13);
     px(c, body, 1, 3, 14, 11);
     px(c, trim, 1, 3, 14, 2);
+    px(c, "#ffffff44", 1, 3, 14, 1);
     px(c, "#ffffff33", 3, 6, 10, 2);
+    px(c, "#ffffff22", 1, 5, 1, 9);
+    px(c, "#00000033", 14, 5, 1, 9);
+    px(c, "#00000033", 1, 12, 14, 2);
     t.refresh();
   }
 }
@@ -1108,20 +1994,34 @@ function paintLights(scene: Phaser.Scene): void {
     t.refresh();
   };
   const flame = (c: Ctx, x: number, y: number) => {
-    px(c, "#e8641e", x, y + 1, 3, 3);
+    px(c, "#a8301a", x, y + 2, 3, 2);
+    px(c, "#e8641e", x, y + 1, 3, 2);
+    px(c, "#e8641e", x + 1, y - 1, 1, 1);
     px(c, "#ffd24a", x + 1, y, 1, 3);
+    px(c, "#fff6c8", x + 1, y + 2);
   };
   draw("torch", (c) => {
-    px(c, "#00000033", 6, 14, 4, 1);
+    groundShadow(c, 8, 15, 6);
+    px(c, "#3a2412", 6, 6, 4, 9);
     px(c, "#6a4a26", 7, 6, 2, 8);
+    px(c, "#8a6234", 7, 6, 1, 8);
+    px(c, "#5a5a62", 6, 5, 4, 2);
     flame(c, 7, 2);
   });
   draw("campfire", (c) => {
-    px(c, "#00000033", 2, 14, 12, 1);
-    px(c, "#8a8a90", 2, 11, 12, 3);
-    px(c, "#5a3e22", 3, 10, 10, 2);
+    groundShadow(c, 8, 15, 14);
+    // a ring of stones, each lit on top
+    for (const x of [2, 5, 8, 11]) {
+      px(c, "#4a4a52", x, 11, 3, 3);
+      px(c, "#8a8a90", x, 11, 2, 2);
+      px(c, "#b4b4ba", x, 11);
+    }
+    px(c, "#3e2a16", 3, 9, 10, 2);
+    px(c, "#7a5832", 3, 9, 10, 1);
+    px(c, "#3e2a16", 5, 8, 6, 1);
     flame(c, 7, 5);
     flame(c, 5, 7);
+    flame(c, 9, 6);
   });
   // Bombs: a dark ball, bigger with the blast, and a fuse spark (note 89).
   for (const [id, size] of [
@@ -1150,13 +2050,23 @@ function paintLights(scene: Phaser.Scene): void {
       px(c, iron ? "#7a7a86" : "#8a5a2a", 5, 12, 6, 2);
       px(c, iron ? "#7a7a86" : "#8a5a2a", 5, 3, 6, 2);
       px(c, "#ffe9a0", 6, 0, 4, 3);
+      px(c, "#fffbe0", 7, 1, 2, 1);
+      px(c, iron ? "#3a3a44" : "#3e2a16", 8, 5, 1, 9);
+      px(c, "#ffffff33", 5, 12, 6, 1);
     });
   for (const stone of [false, true])
     draw(stone ? "stone-brazier" : "wood-brazier", (c) => {
-      px(c, "#00000033", 3, 14, 10, 1);
+      groundShadow(c, 8, 15, 10);
+      px(c, stone ? "#3a3a42" : "#3a220e", 2, 7, 12, 8);
       px(c, stone ? "#8a8a90" : "#8a5a2a", 4, 9, 8, 5);
+      px(c, "#ffffff33", 4, 10, 1, 4);
+      px(c, "#00000044", 11, 10, 1, 4);
       px(c, stone ? "#b4b4ba" : "#b4803c", 3, 8, 10, 2);
+      px(c, "#ffffff44", 3, 8, 10, 1);
+      px(c, "#1c1c20", 4, 9, 8, 1);
       flame(c, 7, 4);
+      flame(c, 5, 6);
+      flame(c, 9, 6);
     });
 }
 
@@ -1166,16 +2076,43 @@ function paintMineArt(scene: Phaser.Scene): void {
     paint(t.getContext());
     t.refresh();
   };
+  // A rounded boulder: dark rim, shaded underside, lit top-left facets and a crack.
+  const ROCK_ROWS: readonly (readonly [number, number, number])[] = [
+    [4, 5, 10],
+    [5, 4, 11],
+    [6, 3, 12],
+    [7, 2, 13],
+    [8, 2, 13],
+    [9, 2, 13],
+    [10, 2, 13],
+    [11, 2, 13],
+    [12, 3, 12],
+    [13, 4, 11],
+  ];
   const lump = (c: Ctx, base: string, dark: string, light: string) => {
-    px(c, dark, 3, 11, 10, 3);
-    px(c, base, 3, 6, 10, 6);
-    px(c, base, 5, 4, 6, 3);
-    px(c, light, 5, 5, 3, 1);
+    groundShadow(c, 8, 15, 12);
+    for (const [y, a, b] of ROCK_ROWS) px(c, "#1e1c22", a - 1, y, b - a + 3, 1);
+    px(c, "#1e1c22", 5, 3, 6, 1);
+    for (const [y, a, b] of ROCK_ROWS) px(c, dark, a, y, b - a + 1, 1);
+    for (const [y, a, b] of ROCK_ROWS.slice(0, 7)) px(c, base, a, y, b - a, 1);
+    px(c, light, 5, 4, 4, 1);
+    px(c, light, 4, 5, 3, 1);
+    px(c, light, 3, 6, 2, 2);
+    px(c, "#ffffff55", 5, 4, 2, 1);
+    px(c, dark, 9, 5, 1, 2);
+    px(c, dark, 10, 7, 1, 2);
+    px(c, light, 8, 5, 1, 2);
   };
   const specks = (c: Ctx, colour: string) => {
-    px(c, colour, 5, 8, 2, 2);
-    px(c, colour, 9, 7, 2, 2);
-    px(c, colour, 8, 10, 2, 1);
+    for (const [x, y, w, h] of [
+      [5, 8, 2, 2],
+      [9, 7, 2, 2],
+      [8, 10, 2, 1],
+    ] as const) {
+      px(c, "#00000055", x, y + 1, w + 1, h);
+      px(c, colour, x, y, w, h);
+      px(c, "#ffffff77", x, y);
+    }
   };
   draw(ROCK_KEYS.stone, (c) => lump(c, "#8a8a90", "#5a5a62", "#b4b4ba"));
   draw(ROCK_KEYS.hard, (c) => {
@@ -1203,29 +2140,49 @@ function paintMineArt(scene: Phaser.Scene): void {
     specks(c, "#16161a");
   });
   const crystal = (c: Ctx) => {
+    groundShadow(c, 8, 15, 12);
+    px(c, "#2a2a30", 2, 11, 12, 4);
     px(c, "#5a5a62", 3, 12, 10, 2);
-    px(c, "#dff2f4", 5, 4, 3, 8);
+    px(c, "#8a8a90", 3, 12, 4, 1);
+    px(c, "#3a5a62", 4, 2, 5, 11);
+    px(c, "#3a5a62", 5, 1, 3, 1);
+    px(c, "#3a5a62", 7, 5, 5, 8);
+    px(c, "#dff2f4", 5, 3, 3, 9);
+    px(c, "#dff2f4", 6, 2);
     px(c, "#b4dde2", 8, 6, 3, 6);
-    px(c, "#ffffff", 6, 5, 1, 3);
+    px(c, "#8ac0c8", 10, 7, 1, 5);
+    px(c, "#8ac0c8", 7, 4, 1, 8);
+    px(c, "#ffffff", 5, 4, 1, 4);
+    px(c, "#ffffff", 8, 7);
   };
   draw(ROCK_KEYS.quartz, crystal);
   const geode = (c: Ctx) => {
     lump(c, "#7a6a5a", "#4a3e32", "#a8987a");
+    px(c, "#3a2a4a", 5, 7, 6, 4);
     px(c, "#c8a0e0", 6, 7, 4, 3);
-    px(c, "#e8d0f4", 7, 8, 2, 1);
+    px(c, "#8a60b0", 8, 9, 2, 1);
+    px(c, "#e8d0f4", 6, 7, 2, 1);
   };
   draw(ROCK_KEYS.geode, geode);
   draw(ROCK_KEYS.gem, (c) => {
     lump(c, "#7a7a86", "#4a4a56", "#a8a8b4");
+    px(c, "#1e3a44", 5, 7, 6, 4);
     px(c, "#7ad8e8", 6, 7, 4, 3);
-    px(c, "#ffffff", 7, 8, 1, 1);
+    px(c, "#3a98b0", 8, 9, 2, 1);
+    px(c, "#ffffff", 6, 7, 1, 1);
   });
   // A marked artifact spot: a patch of turned earth with a pale cross.
   draw(SPOT_KEY, (c) => {
+    px(c, "#4a3218", 3, 8, 10, 5);
     px(c, "#6a4a2e", 4, 8, 8, 4);
     px(c, "#8a6a46", 5, 7, 6, 1);
+    px(c, "#8a6a46", 4, 8, 2, 1);
     px(c, "#e8d8a8", 7, 8, 2, 3);
     px(c, "#e8d8a8", 6, 9, 4, 1);
+    // little worms of soil wiggling up
+    px(c, "#3a2412", 10, 6, 1, 2);
+    px(c, "#3a2412", 5, 5, 1, 2);
+    px(c, "#3a2412", 4, 7);
   });
   for (const a of ARTIFACTS.filter(
     (a) => !GEODE_ITEMS.some((g) => g.id === a.id),
@@ -1238,17 +2195,38 @@ function paintMineArt(scene: Phaser.Scene): void {
       px(c, colour, 6, 4, 4, 2);
       px(c, "#ffffff66", 5, 7, 2, 2);
     });
+  // A cut gem: a dark rim, a table facet, a shaded lower half and a glint.
   const gem = (c: Ctx, colour: string, light: string) => {
-    px(c, "#00000044", 4, 13, 8, 1);
-    px(c, colour, 4, 6, 8, 6);
+    groundShadow(c, 8, 14, 8);
+    px(c, "#1e1c22", 3, 6, 10, 6);
+    px(c, "#1e1c22", 4, 3, 8, 3);
+    px(c, "#1e1c22", 5, 12, 6, 1);
+    px(c, colour, 4, 6, 8, 5);
     px(c, colour, 5, 4, 6, 3);
+    px(c, colour, 6, 11, 4, 1);
+    px(c, light, 5, 4, 6, 1);
     px(c, light, 6, 5, 2, 2);
+    px(c, "#00000033", 4, 9, 8, 2);
+    px(c, "#00000044", 9, 6, 3, 3);
+    px(c, "#00000033", 6, 11, 4, 1);
+    px(c, "#ffffff", 6, 5);
   };
   draw(LADDER_KEY, (c) => {
+    // a dark shaft, deepest at the bottom, with a lit rim
+    px(c, "#5a4a3a", 1, 1, 14, 14);
     px(c, "#2a1e12", 2, 2, 12, 12);
-    px(c, "#a0743c", 4, 1, 2, 14);
-    px(c, "#a0743c", 10, 1, 2, 14);
-    for (const y of [3, 6, 9, 12]) px(c, "#c8964c", 4, y, 8, 1);
+    px(c, "#140e08", 3, 6, 10, 8);
+    px(c, "#7a6650", 1, 1, 14, 1);
+    px(c, "#3a2e22", 1, 14, 14, 1);
+    px(c, "#3a2418", 4, 1, 2, 14);
+    px(c, "#3a2418", 10, 1, 2, 14);
+    px(c, "#a0743c", 4, 1, 1, 14);
+    px(c, "#a0743c", 10, 1, 1, 14);
+    for (const y of [3, 6, 9, 12]) {
+      px(c, "#5a3e22", 4, y + 1, 8, 1);
+      px(c, "#c8964c", 4, y, 8, 1);
+      px(c, "#e0b070", 5, y, 2, 1);
+    }
   });
   for (const id of MINE_ICON_IDS)
     draw(`icon-${id}`, (c) => {
@@ -1275,10 +2253,15 @@ function paintMineArt(scene: Phaser.Scene): void {
         specks(c, METAL[id] ?? "#ffffff");
       } else {
         const colour = METAL[id.replace("-bar", "-ore")] ?? "#ffffff";
-        px(c, "#00000044", 3, 12, 10, 2);
+        // an ingot: a bevelled top, a shaded front and a dark rim
+        groundShadow(c, 8, 14, 12);
+        px(c, "#1e1c22", 2, 6, 12, 7);
         px(c, colour, 3, 7, 10, 5);
-        px(c, "#ffffff88", 4, 8, 6, 1);
-        px(c, "#00000033", 3, 11, 10, 1);
+        px(c, "#ffffff55", 4, 7, 8, 2);
+        px(c, "#ffffffaa", 4, 7, 5, 1);
+        px(c, "#00000044", 3, 9, 10, 1);
+        px(c, "#00000033", 3, 10, 10, 2);
+        px(c, "#00000033", 12, 7, 1, 5);
       }
     });
 }
@@ -1336,6 +2319,7 @@ export function makeArt(
 ) {
   paintTiles(scene, tilesKey);
   paintPlayer(scene, playerKey);
+  paintPeople(scene);
   paintSoil(scene, false);
   paintSoil(scene, true);
   paintUiFrame(scene);
@@ -1348,6 +2332,8 @@ export function makeArt(
   paintTrees(scene);
   paintFruitTrees(scene);
   paintMineArt(scene);
+  paintAnimals(scene);
+  paintCreatures(scene);
   paintFurniture(scene);
   paintDecor(scene);
   paintChests(scene);

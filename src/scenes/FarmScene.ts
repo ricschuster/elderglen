@@ -30,6 +30,7 @@ import {
 import { pondBlocks, pondCovering, pondUse, takeFish } from "../core/pond";
 import { fertilizerById } from "../core/fertilizer";
 import Phaser from "phaser";
+import { animalKey } from "./art-animals";
 import { saveSettings } from "../core/bindings";
 import { sleep } from "../core/sleep";
 import { areaOf, enterArea, isAreaMap, leaveArea } from "../core/areas";
@@ -103,6 +104,8 @@ import { NOTHING_TO_ACT_ON, act, reasonText, useHeld } from "../core/tools";
 import { cropById } from "../core/crops";
 import { mapFiles, maps } from "../content/maps";
 import { START } from "../core/maps";
+import { HAT_KEY, villagerKey } from "./art-people";
+import { creatureTexture } from "./art-creatures";
 import { storeOf } from "../core/mapstore";
 import { mapWithDoors } from "../core/placement";
 import { farmMapOf, isFarmMap, resolveMapId } from "../core/farmtypes";
@@ -357,23 +360,6 @@ const RIDER_LIFT = 6;
 /** The map of every farm type: where the horse can be ridden, with the village green. */
 /** A creature's feet box, in world pixels. */
 const CREATURE_BODY: Body = { hw: 5, h: 5 };
-/** Placeholder colours for the first creatures, until the art pass. */
-const CREATURE_COLOURS: Record<string, number> = {
-  pebbleback: 0x8c8c94,
-  dustmoth: 0xd9c08a,
-  "rock-crab": 0x7a6a5a,
-  mossbeetle: 0x5f8f4a,
-  gloop: 0x6fd16f,
-  frostnibbler: 0xbfe6f5,
-  "icicle-hopper": 0x8fc8e8,
-  "cave-bat": 0x5a4a78,
-  nabbler: 0xc99a52,
-  "gloop-blue": 0x5f9fe8,
-  "cinder-pup": 0xe8703a,
-  lanternmoth: 0xf5d76e,
-  "old-digger": 0xe8e0cc,
-  "gloop-red": 0xe85a5a,
-};
 /** The player's feet box, in world pixels. */
 const PLAYER: Body = { hw: 5, h: 6 };
 
@@ -451,9 +437,9 @@ export class FarmScene extends Phaser.Scene {
   private player!: Phaser.GameObjects.Image;
   private target!: Phaser.GameObjects.Rectangle;
   /** Placeholder hat drawn on the player. */
-  private hat!: Phaser.GameObjects.Rectangle;
+  private hat!: Phaser.GameObjects.Image;
   /** One placeholder block per creature on this floor, by creature id. */
-  private creatureSprites = new Map<number, Phaser.GameObjects.Rectangle>();
+  private creatureSprites = new Map<number, Phaser.GameObjects.Image>();
   /** The swing flash, drawn in the world. */
   private swingFx!: Phaser.GameObjects.Graphics;
   /** The scene time before which the next weapon swing is refused. */
@@ -463,7 +449,8 @@ export class FarmScene extends Phaser.Scene {
   /** True while the naming dialog is open for the first ride. */
   private namingHorse = false;
   /** The horse under the rider while mounted (a placeholder block). */
-  private steed!: Phaser.GameObjects.Rectangle;
+  private steed!: Phaser.GameObjects.Image;
+  private animalImages: Phaser.GameObjects.Image[] = [];
   private pos: Vec = { x: 0, y: 0 };
   private facing: Facing = "down";
   private heldMs = 0;
@@ -481,7 +468,7 @@ export class FarmScene extends Phaser.Scene {
   private villagers: Present[] = [];
   private villagerSprites = new Map<
     string,
-    { box: Phaser.GameObjects.Rectangle; tag: Phaser.GameObjects.Text }
+    { box: Phaser.GameObjects.Image; tag: Phaser.GameObjects.Text }
   >();
   /** The tile last checked for a heart event. */
   private eventTile = "";
@@ -619,14 +606,14 @@ export class FarmScene extends Phaser.Scene {
     }
     this.pos = { x: (spawn.x + 0.5) * ts, y: (spawn.y + 1) * ts - 2 };
     this.steed = this.add
-      .rectangle(this.pos.x, this.pos.y, 26, 14, 0x8a5a33)
+      .image(this.pos.x, this.pos.y, "steed")
       .setOrigin(0.5, 1)
       .setVisible(false);
     world.push(this.steed);
     this.player = this.add
       .image(this.pos.x, this.pos.y, PLAYER_KEY)
       .setOrigin(0.5, 0.875);
-    this.hat = this.add.rectangle(0, 0, 10, 5, 0xffffff).setVisible(false);
+    this.hat = this.add.image(0, 0, HAT_KEY).setVisible(false);
     this.target = this.add
       .rectangle(0, 0, ts, ts)
       .setOrigin(0)
@@ -1369,17 +1356,9 @@ export class FarmScene extends Phaser.Scene {
     for (const v of this.villagers) {
       let s = this.villagerSprites.get(v.id);
       if (!s) {
-        let hash = 0;
-        for (const ch of v.id) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
-        const colour = Phaser.Display.Color.HSLToColor(
-          (hash % 360) / 360,
-          0.5,
-          0.55,
-        ).color;
         const box = this.add
-          .rectangle(0, 0, 10, 12, colour)
+          .image(0, 0, villagerKey(v.id))
           .setOrigin(0.5, 1)
-          .setStrokeStyle(1, 0x000000, 0.6)
           .setDepth(5);
         const tag = this.add
           .text(0, 0, v.name, {
@@ -1954,7 +1933,7 @@ export class FarmScene extends Phaser.Scene {
     const lift = this.state.animals.mounted ? RIDER_LIFT : 0;
     const head = this.pos.y - lift - this.player.displayHeight * 0.875;
     this.hat
-      .setFillStyle(Phaser.Display.Color.HexStringToColor(def.color).color)
+      .setTint(Phaser.Display.Color.HexStringToColor(def.color).color)
       .setPosition(this.pos.x, head + 1);
   }
 
@@ -3371,6 +3350,8 @@ export class FarmScene extends Phaser.Scene {
 
   /** Inside the coop or barn: the feeding bench along the back wall and the animals as blocks. */
   private drawCoopInside(): void {
+    for (const im of this.animalImages) im.destroy();
+    this.animalImages = [];
     const coop = this.mapId === COOP_MAP;
     if (!coop && this.mapId !== BARN_MAP) return;
     const ts = this.map.tileSize;
@@ -3423,26 +3404,16 @@ export class FarmScene extends Phaser.Scene {
         2 * ts - 8,
       );
     }
-    const colours: Record<string, number> = {
-      chicken: 0xf4efe0,
-      duck: 0xb59a6a,
-      rabbit: 0xcfc6bd,
-      cow: 0xf0f0f0,
-      goat: 0xd8c8a8,
-      sheep: 0xe8e4d8,
-      pig: 0xe8a4a0,
-    };
     for (const { animal: an, x, y } of animalSlots(
       this.state,
       coop ? "coop" : "barn",
     )) {
       const grown = an.age >= GROW_DAYS;
-      const big = an.species === "cow" || an.species === "pig";
-      const size = grown ? ts - (big ? 2 : 4) : ts - 8;
-      g.fillStyle(
-        grown ? (colours[an.species] ?? 0xffffff) : 0xf2d95c,
-        1,
-      ).fillRect(x * ts + (ts - size) / 2, y * ts + ts - size - 1, size, size);
+      const image = this.add
+        .image(x * ts + ts / 2, y * ts + ts - 1, animalKey(an.species, grown))
+        .setOrigin(0.5, 1);
+      this.uiCamera.ignore(image);
+      this.animalImages.push(image);
       if (an.product)
         g.fillStyle(0xffffff, 1).fillRect(x * ts + 6, y * ts + ts, 4, 3);
     }
@@ -3547,18 +3518,12 @@ export class FarmScene extends Phaser.Scene {
     if (combat.health.down && !combat.defeatPending) this.knockedOut();
   }
 
-  /** One placeholder block for a creature, kept in `creatureSprites`. */
-  private addCreatureSprite(c: Creature): Phaser.GameObjects.Rectangle {
+  /** One painted sprite for a creature, kept in `creatureSprites`. */
+  private addCreatureSprite(c: Creature): Phaser.GameObjects.Image {
     const block = this.add
-      .rectangle(
-        c.x,
-        c.y,
-        c.small ? 8 : 12,
-        c.small ? 7 : 10,
-        CREATURE_COLOURS[c.kind] ?? 0xffffff,
-      )
+      .image(c.x, c.y, creatureTexture(this, c.kind))
       .setOrigin(0.5, 1)
-      .setStrokeStyle(1, 0x000000, 0.6)
+      .setScale(c.small ? 0.65 : 1)
       .setVisible(!this.state.combat.noCreatures);
     this.creatureSprites.set(c.uid, block);
     return block;
@@ -3568,16 +3533,15 @@ export class FarmScene extends Phaser.Scene {
     const block = this.creatureSprites.get(c.uid);
     if (!block) return;
     block.setPosition(c.x, c.y);
-    // The wind up is the warning: a swelling, blinking block (note 22).
+    // The wind up is the warning: a swelling, blinking sprite (note 22).
     const winding = c.state === "windup";
-    block.setScale(winding ? 1.35 : 1);
-    block.setFillStyle(
-      winding && Math.floor(this.time.now / 100) % 2
-        ? 0xff9a40
-        : c.state === "stagger"
-          ? 0xffffff
-          : (CREATURE_COLOURS[c.kind] ?? 0xffffff),
-    );
+    const base = c.small ? 0.65 : 1;
+    block.setScale(winding ? base * 1.35 : base);
+    if (winding && Math.floor(this.time.now / 100) % 2) {
+      block.setTint(0xff9a40).setTintMode(Phaser.TintModes.MULTIPLY);
+    } else if (c.state === "stagger") {
+      block.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
+    } else block.clearTint();
     // A sleeping rock crab looks like a dull rock until the player comes near.
     const asleep = creatureById(c.kind)?.sleeper && c.state === "wander";
     block.setAlpha(c.state === "recover" ? 0.6 : asleep ? 0.55 : 1);
