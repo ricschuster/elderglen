@@ -185,9 +185,9 @@ is blind to ponds, and the other carpenter jobs do not wait for a pond under way
   table is empty and we have no slime-like fish, so no species carries it yet.** Name the
   fish (or a legend) that gets it when the table is filled.
 - **Aged roe.** Roe in the preserves jar (`processing.ts`) becomes `<fish>-aged-roe` (name
-  "Aged <fish> roe"), 2 times the roe's price, 4 days (6,400 machine minutes, placeholder).
-  Aged roe goes in no machine. Sea urchin and coral roe count as any species. The Stardew rule is
-  from memory (SC-174, unchecked). Colour: `potColourOf` now strips `-roe` and `-aged-roe` and
+  "Aged <fish> roe"), 2 times the roe's price, 4,000 machine minutes (about 2.5 days), as
+  Stardew (saved Artisan Goods page, SC-174, owner 2026-11-13; it was 4 days).
+  Aged roe goes in no machine. Sea urchin and coral roe count as any species. Colour: `potColourOf` now strips `-roe` and `-aged-roe` and
   uses the fish's pot colour (roe had no colour before this, only note 24 said it should).
   Pot colours exist only for fish listed in `dyes.json` `potInputs`; a fish not listed has no
   colour for its roe either.

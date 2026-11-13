@@ -4,8 +4,6 @@ package-lock.json
 *.md
 .github
 .claude
-public/spike/spike-map.json
-public/maps/farm-placeholder.json
 docs/overview.html
 scripts/overview/template.html
 docs/valley-map.html

@@ -8,7 +8,9 @@ import { Inventory } from "../src/core/inventory";
 import { CANDLE, itemById, WAX } from "../src/core/items";
 import { collectMachine, placeMachine } from "../src/core/machines";
 import { FarmMap, type TiledMapJson } from "../src/core/map";
-import { WAX_CHANCE } from "../src/core/processing";
+import { processFor, WAX_CHANCE } from "../src/core/processing";
+import { GREEN_TEA } from "../src/core/artisan";
+import { TEA_LEAF } from "../src/core/teabush";
 import { newGame } from "../src/core/save";
 import { sleep } from "../src/core/sleep";
 import { fillBundle } from "./hall-helpers";
@@ -89,6 +91,25 @@ describe("bundle 20, Lamplighter's", () => {
     fillBundle(hall, inv, wallet(), b);
     expect(hall.complete("lamplighters")).toBe(true);
     expect(inv.count("small-glow-ring")).toBe(1);
+  });
+});
+
+describe("green tea and the Host's tea slot (note 97, SC-173)", () => {
+  it("brews a tea leaf in the keg for 180 minutes into green tea at 100g", () => {
+    const p = processFor("keg", TEA_LEAF)!;
+    expect(p.output).toBe(GREEN_TEA);
+    expect(p.minutes).toBe(180);
+    expect(itemById(GREEN_TEA)?.sellPrice).toBe(100);
+  });
+
+  it("takes green tea or herb tea in the tea slot", () => {
+    for (const tea of ["green-tea", "herb-tea"]) {
+      const hall = new Hall(BUNDLES, {}, openRooms);
+      const inv = new Inventory(40);
+      inv.add(tea);
+      expect(hall.handIn(inv, wallet(), "hosts", tea)).toBe("accepted");
+      expect(hall.have("hosts", "any-tea")).toBe(1);
+    }
   });
 });
 

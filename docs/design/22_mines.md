@@ -194,7 +194,8 @@ time, and the lift can bring them up afterwards.
   tiring. Placeholder: 2 energy per swing at tier 0.
 - **Mining professions at level 5** (ours): **Prospector** (one extra ore from a
   node, 25 percent of the time) or **Rockhound** (geodes and gems drop
-  twice as often). Level 10 choices are not built, as for the other skills.
+  twice as often). Mining's level 10 choices are not built. Farming and fishing
+  have theirs (`professions.ts`).
 
 ### Ore, coal and bars
 

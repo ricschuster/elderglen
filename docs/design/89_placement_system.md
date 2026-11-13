@@ -218,8 +218,9 @@ Settled 2026-11-12: heater from the ranch shop, no torches indoors, no bomb expe
 - Sprinkler placing and lifting, farm and greenhouse (`placeSprinkler`, `pickUpSprinkler`).
 - Machines (`placeMachine`) and chests (`placeChest`, `pickUpChest`).
 - Lightning rod rules, battery packs and placing (`src/core/lightning.ts`).
-- The `coop-heater` item, kept and doing nothing, and the winter mood rule.
-- Not built: lamp-posts, the heater, bombs.
+- The `coop-heater` item and the winter mood rule.
+- (Lamp-posts, the heater and bombs were not built at the start; the steps below added
+  them.)
 - Step 1A (2026-11-12): `src/content/placeables.json` has a row for every sprinkler,
   machine and chest, and `src/core/placeables.ts` answers "may this id stand on this kind
   of place?" (`placeTag`, `mayPlaceOn`). `placeSprinkler`, `placeMachine` and `placeChest`

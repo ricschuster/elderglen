@@ -76,6 +76,19 @@
     }
   },
   {
+    "id": "odette-tea-sapling",
+    "sender": "Odette",
+    "title": "Tea from the back room",
+    "body": "PLACEHOLDER TEXT. You asked about the tea I keep behind the counter. Here is how to start a bush of your own.",
+    "trigger": {
+      "kind": "event",
+      "event": "odette-store-2"
+    },
+    "attachment": {
+      "recipe": "tea-sapling"
+    }
+  },
+  {
     "id": "hattie-recipe-5",
     "sender": "Hattie",
     "title": "Custard from the inn",

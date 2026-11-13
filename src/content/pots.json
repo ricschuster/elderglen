@@ -68,6 +68,7 @@
     { "id": "cracked-jar", "name": "Cracked jar", "sellPrice": 1 },
     { "id": "sodden-rope", "name": "Sodden rope", "sellPrice": 1 },
     { "id": "bent-spoon", "name": "Bent spoon", "sellPrice": 1 },
-    { "id": "old-boot", "name": "Old boot", "sellPrice": 1 }
+    { "id": "old-boot", "name": "Old boot", "sellPrice": 1 },
+    { "id": "driftwood", "name": "Driftwood", "sellPrice": 1 }
   ]
 }

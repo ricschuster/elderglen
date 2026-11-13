@@ -46,7 +46,7 @@ errors. The game's weather and forage are random, so reruns differ.
    and wood to reach 450 wood (`WOOD_TARGET` changes it). About 3 minutes.
 
 10. `npm run sim -- <expert|intermediate|casual> [runs] [maxDay]` is not a browser
-   run. It plays the rules in `src/core/` headless (`docs/design/46_headless_playtest.md`),
+   run. It plays the rules in `src/core/` headless (`docs/design/98_headless_playtest.md`),
    charges game minutes for walking and key presses, and prints the days to each
    hall bundle over many seeds (the bot does not play Woodland, Artisan Goods or
    the Smith's, and "all played bundles" leaves them out) (default 100 runs to day 84). Runs are exactly
@@ -264,3 +264,14 @@ second, and walks out. A scene restart stands in for the walk from the farm.
 the Forest's roads to the keeper's door, goes in, buys a young chicken at the counter
 (a coop is set by state), comes out, goes into the hermit's tower and speaks to her,
 then reads the Wanderer's camp fire. A scene restart stands in for the walk from the farm.
+
+`node scripts/playtest/greenhouse-smoke.mjs` (`npm run dev` running) checks the greenhouse
+(#602, #634): the ruin door is shut, the Larder repairs it, the player digs, plants and
+waters inside in winter, a sprinkler waters overnight, a fruit tree bears indoors, and the
+greenhouse moves at the carpenter with its contents.
+
+`node scripts/playtest/artsheet.mjs` (`npm run dev` running) is the art sweep, not a test.
+It writes `playtest-out/shots/art-sheet.png`, `art-figures.png`, `art-world.png` and shots
+of the farm, forest, Hearthwell, two mine floors, coop, barn and riding. `SHEETS_ONLY=1`
+writes only the sheets (about 5 seconds); `ONLY=coop,barn` shoots only some places. Outdoor
+shots take about a minute each.

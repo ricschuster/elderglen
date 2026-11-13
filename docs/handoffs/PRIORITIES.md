@@ -16,7 +16,7 @@ every handoff pull request. Do not start items from the sections below until it 
 unless the owner says so.
 
 Decided 2026-11-12: the Last Seat opens after ALL other bundles (built). #876 and #879
-stay in M3b. Guests' Board +500 friendship (built), up to five heart events a person.
+stay in M3b (#879 closed 2026-11-12). Guests' Board +500 friendship (built), up to five heart events a person.
 
 Decided 2026-11-12 (session 9): ADR 0014, committed map JSON is the source, generators moved to
 `scripts/drafts/`. Elderfruit sources confirmed. Tapper crafted at Foraging 4, no shop; Heavy
@@ -37,8 +37,7 @@ table, lantern floating and ice fishing rules with thin scene hooks, pond menu a
 
 Open, top to bottom:
 
-1. **Owner answers left:** herb tea with tea leaves (second recipe, or a new dish, or green tea in
-   the keg; bundle 24), garden pot item for tea bushes, Frostfin price and bundle use, hat for
+1. **Owner answers left:** garden pot item for tea bushes, Frostfin price and bundle use, hat for
    Frostday (`snow-cap` placeholder), crop for the rare seed packet, which fish gives algae soup
    once the species table is filled, aged roe quality rule.
 2. **#873 heart events** (note 62), needs the list per person, then scenes as data.
@@ -49,11 +48,11 @@ Open, top to bottom:
    animation, on-screen ice fishing counter, multiplayer counts (M4).
 6. **Decided, still to build:** cave-pool water on mine floors (no map has water), village trees
    marked `cosmetic` (needs tree objects in `hearthwell.json`, note 87), mahogany monster seed
-   (needs Secret Woods creatures), #874 spouse source and gallery set.
+   (needs Secret Woods creatures), #874 elderfruit sources left: spouse and gallery set.
 7. A browser look at everything built since the owner last played: hat picker, cart, herb stall,
    tapper, lights, rod, bombs, festival maps and activities, tailoring, pond screens, tea bush.
 
-Alongside: `docs/overview.json` (behind since 2026-11-11), Stardew checks rows (SC-122, 135, 160 to 174), and file the M4
+Alongside: `docs/overview.json` (behind since 2026-11-11), Stardew checks rows (SC-122, 135, 160 to 170, 172, 173), and file the M4
 hosting spike before M4 (also farm player state size in the save, ADR 0014).
 
 ## Milestone order (ADR 0012)
@@ -69,7 +68,7 @@ ending, M3d polish, then M5 and M6. Map areas (notes 71 to 78) are M3b.
    small items. The third community project (#5) waits for ring 2 (M5). Needed before
    slice 5 (note 33).
 2b. **Ancestors' shrine (note 83).** Left: the Diamond's name, art and drops (SC-135),
-   the shrine tiles (farm layout, #776), scene shots, camp chest items (note 22).
+   the shrine tiles (farm layout; #776 is closed), scene shots, camp chest items (note 22).
 3. **Map areas (notes 71 to 78).** All built to shell level (#636 to #646, #649, #661).
    Left items are in each note's "Built status". Build detail is in the archive.
 4. **Art direction and audio plan.** Character art (note 15), hall rooms (#335),
@@ -93,10 +92,10 @@ Done, owner checked (2026-11-11): step 1 farm (note 55, #776), step 2 festival s
   120 by 120 cap).
 - Step 9: Valley maps, area by area (note 71 order), after step 6.
 - Step 10: Festival layouts, from step 2.
-- Step 12: Mines, after combat leftovers (#598).
+- Step 12: Mines (the combat leftovers, #598, are closed).
 - Steps 13 to 16 (M3d): `above` layer and seasonal tilesets, reference images and
   style sheet, licence ADR for generated art, the art swap.
-- The other interiors are built (note 86, #853 to #860) from the checked drafts, with the
+- The other interiors are built (note 86, #853 to #860) from the checked drafts (doors 1 tile, 2026-11-12), with the
   shared test `tests/interior-reach.test.ts` and the converter
   `scripts/interiors/tmj-to-map.mjs`. Left: the hall layout (no draft, one player tile at
   each counter), the owner's call on the `AISLE_EXCEPTIONS` lists, game code that reads
@@ -105,8 +104,10 @@ Done, owner checked (2026-11-11): step 1 farm (note 55, #776), step 2 festival s
 
 ## Leftovers and housekeeping
 
-- Slice 1 leftovers: #522 closed 2026-11-12 (art item moved to #335). Bundles: #181, #201 (note 63).
+- Slice 1 leftovers: #522 closed 2026-11-12 (art item moved to #335). Bundles: #181 (note 63; #201 closed).
+- Refactor proposal #904 (FarmScene split, rules into core, shared helpers): settle in a
+  short note before moving code. Repo hygiene pass done 2026-11-13 (handoff 2026-11-13).
 - Art polish pass done 2026-11-12 ahead of M3d (handoff 2026-11-12q); look with
   `node scripts/playtest/artsheet.mjs`.
-- Tablet check (#336), notes 45 and 60 open items, barn stall wing, note 54 answer
+- Tablet follow-ups (#523; #336 closed), notes 45 and 60 open items, barn stall wing, note 54 answer
   sheet.

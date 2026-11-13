@@ -9,11 +9,7 @@ import {
   roeOf,
   roeSpeciesOf,
 } from "../src/core/pondspecies";
-import {
-  AGED_ROE_MINUTES,
-  MINUTES_PER_DAY,
-  processFor,
-} from "../src/core/processing";
+import { AGED_ROE_MINUTES, processFor } from "../src/core/processing";
 import { deserialize, newGame, serialize } from "../src/core/save";
 import { potColourOf } from "../src/core/tailoring";
 import { landFind } from "../src/core/waterfinds";
@@ -49,7 +45,7 @@ describe("aged roe (note 93)", () => {
   it("is made in the preserves jar from roe, in 4 days", () => {
     const p = processFor("preserves-jar", roeOf(fish))!;
     expect(p.output).toBe(agedRoeOf(fish));
-    expect(p.minutes).toBe(4 * MINUTES_PER_DAY);
+    expect(p.minutes).toBe(4000);
     expect(p.minutes).toBe(AGED_ROE_MINUTES);
     expect(p.use).toBe(1);
   });

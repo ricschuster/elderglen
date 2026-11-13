@@ -3,6 +3,11 @@
 Status: passed on desktop, phone, emulator and a 2020 tablet (2026-10-25). To be
 repeated on a real scene once the scene work lands. Required by ADR 0004.
 
+Retired 2026-11-13: the spike page, its code, its map and the map generator were
+removed, since they shipped in every build and the Android app. They are in git
+history (commit a03bae1) if the spike is to be run again; the steps below describe
+the page as it was.
+
 ## What it is
 
 A throwaway test page at `/spike.html` (code in `src/spike/`). It loads a

@@ -1,7 +1,9 @@
 import cartData from "../content/carts.json";
 import herbData from "../content/herb-stall.json";
 import type { Hall } from "./bundles";
-import { WEEKDAYS } from "./calendar";
+import { weekOf } from "./calendar";
+
+export { weekOf };
 import { resolveMapId } from "./farmtypes";
 import { itemById } from "./items";
 import { minesOpen } from "./mines";
@@ -96,10 +98,6 @@ export const HERB_GOODS: readonly string[] = herbData.goods;
 /** True once the Foragers' Shelf is finished. Old Greencoat sets the stall up. */
 export const herbStallOpen = (g: { hall: Hall }): boolean =>
   g.hall.roomComplete(HERB_ROOM);
-
-/** The week of a day, counted from 0. */
-export const weekOf = (day: number): number =>
-  Math.floor((day - 1) / WEEKDAYS.length);
 
 /** What the stall asks for one: 1.5 times sell value, rounded down. */
 export const herbPrice = (id: string): number =>

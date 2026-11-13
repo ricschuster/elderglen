@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { chop, pickTeaLeaves, plantTeaBush } from "../src/core/actions";
 import { recipeById, known } from "../src/core/crafting";
 import { itemById } from "../src/core/items";
+import { openLetter, queueMail } from "../src/core/mail";
 import { FarmMap, type TiledMapJson } from "../src/core/map";
 import { deserialize, newGame, serialize } from "../src/core/save";
 import { sleep } from "../src/core/sleep";
@@ -77,14 +78,25 @@ describe("tea bush rules", () => {
 });
 
 describe("tea bush play", () => {
-  it("is crafted at foraging level 3 from wild seeds and fiber", () => {
+  it("is taught by Odette's letter the morning after her 2 heart event (SC-171)", () => {
     const r = recipeById("tea-sapling")!;
     expect(r.result.item).toBe(TEA_SAPLING);
+    expect(r.ingredients).toEqual([
+      { item: "mixed-seed", count: 2 },
+      { item: "fiber", count: 5 },
+      { item: "wood", count: 5 },
+    ]);
     expect(itemById(TEA_SAPLING)).toBeDefined();
     expect(itemById(TEA_LEAF)).toBeDefined();
     const g = newGame();
-    expect(known(g, r)).toBe(false);
     g.skills.gain("foraging", 100000);
+    expect(known(g, r)).toBe(false);
+    expect(queueMail(g, 2)).not.toContain("odette-tea-sapling");
+    g.heartEvents.mark("odette-store-2", 1);
+    expect(queueMail(g, 2)).toContain("odette-tea-sapling");
+    g.mail.deliver(2);
+    const opened = openLetter(g, "odette-tea-sapling");
+    expect(opened.ok && opened.gift).toContain("A recipe: Tea sapling");
     expect(known(g, r)).toBe(true);
   });
 

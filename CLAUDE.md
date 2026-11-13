@@ -41,7 +41,7 @@ characters, text or code. See
 ## Stack
 
 TypeScript, Phaser 4, Vite, and Tiled maps (JSON). Installed apps wrap the web
-build; the wrapper is a later ADR. Game rules stay free of Phaser and the DOM
+build with Capacitor (ADR 0008, `android/`). Game rules stay free of Phaser and the DOM
 under `src/core/` so they are unit-testable. Content (items, crops, bundles)
 is data files, not code. See `docs/decisions/0004-engine-and-language.md`.
 
@@ -61,6 +61,8 @@ Node 22 and npm. Gates run in CI and a non-zero exit blocks a merge.
   Python 3 and Pillow). Design material, not a gate.
 - `npm run playtest -- <expert|intermediate|casual>`, other `playtest:*` scripts: manual
   browser playthroughs, need `npm run dev`. See `scripts/playtest/README.md`.
+- `npm run sim`: headless sim bot. `android:sync`, `android:apk`, `android:install`: the
+  Capacitor app (ADR 0008).
 
 ## Repo structure
 

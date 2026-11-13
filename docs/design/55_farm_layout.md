@@ -319,7 +319,8 @@ change. Differences from the table above:
 
 1. Settle the open items with the owner and update this note.
 2. Author `farm.json` in Tiled to the contract in note 05, replacing the
-   placeholder (the generator `gen-farm-map.mjs` was retired in #524).
+   placeholder (the generator `gen-farm-map.mjs` was retired in #524 and kept,
+   do-not-run, in `scripts/drafts/`, ADR 0014).
 3. Hand-place clutter and trees from a data list, not code.
 4. Add the greenhouse ruin and cave as placed, locked objects once their
    systems exist.

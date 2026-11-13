@@ -225,7 +225,6 @@ items.set(ALGAE_SOUP, {
   sellPrice: 100,
   energy: 80,
 });
-/** Beeswax from the bee house and the candle made from it (note 63, bundle 20). Prices are placeholders, ours. */
 /** Tea bush goods (note 97). Prices are placeholders, see `tea-bush.json`. */
 items.set(TEA_SAPLING, {
   id: TEA_SAPLING,
@@ -238,6 +237,7 @@ items.set(TEA_LEAF, {
   sellPrice: TEA_LEAF_SELL_PRICE,
   energy: TEA_LEAF_ENERGY,
 });
+/** Beeswax from the bee house and the candle made from it (note 63, bundle 20). Prices are placeholders, ours. */
 export const WAX = "wax";
 export const CANDLE = "candle";
 items.set(WAX, { id: WAX, name: "Beeswax", sellPrice: 40 });
@@ -460,9 +460,9 @@ items.set(WARP_TOTEM_BEACH, {
   keep: true,
 });
 /**
- * Last Seat and Fodder rewards whose systems are not built (note 63, issue #603): the coop heater
- * (no winter mood rule yet) and Old Greencoat's letter to
- * the elves (a story item). Kept and do nothing yet, like the Beach warp totem.
+ * Last Seat and Fodder rewards (note 63, issue #603): the coop heater, placed in a
+ * coop or barn to stop the winter mood loss (`hasHeater` in animals.ts), and Old
+ * Greencoat's letter to the elves, a story item that does nothing yet.
  */
 export const COOP_HEATER = "coop-heater";
 export const CRYSTALARIUM = "crystalarium";

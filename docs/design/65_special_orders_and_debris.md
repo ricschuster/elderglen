@@ -147,10 +147,10 @@ Code: `src/core/orders.ts`, `src/core/debris.ts`, data in
 - **Save.** `orders` and `twigs` are optional keys. An old save loads with a
   closed board; a malformed `orders` record is ignored.
 - **Built 2026-11-12: three more orders** that count from logs, so no scene hooks them: Too Many Fish (10 of one in-season fish, 7 days), Still Waters (20 fish from one water, 7 days) and Cave Patrol (50 of one creature kind, 7 days). A taken order keeps the fish and kill tallies from the day it was taken (`base`), and a nightly check reads the logs. Their first rewards are recipes through the `order` source (charcoal kiln, recycler, seed maker, all placeholders).
-- **Not built.** Grass spreading (no grass system), the completion tracker
-  (#196), the Help Wanted achievement count (no quests exist yet, only
+- **Not built.** Grass spreading (no grass system), the Help Wanted achievement count (no quests exist yet, only
   `Orders.totalDone` is kept for it), one order (Clean Waters needs a trash count; the four hand-in orders are built, see "Goods hand-in"), a journal row for
   taken orders (no journal yet, the board lists them), and the mail return (no order holds goods yet).
+  The completion tracker (#196) is built since (`completion.ts`, PR #573).
   Placeholder numbers are in `07_tuning_numbers.md`.
 
 ## Goods hand-in to a named place (owner answer 2026-11-12, #875)

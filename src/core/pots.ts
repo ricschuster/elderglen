@@ -42,8 +42,6 @@ export const FINE_BAIT_JUNK_CHANCE = potData.fineBaitJunkChance;
 /** Fishing XP for a pot harvest of junk: junk sells for almost nothing, but still counts (note 21). */
 export const JUNK_XP = potData.junkXp;
 export const FINE_BAIT = "fine-bait";
-/** The Pearl Lobster's share of sea bites on the rod (note 21, placeholder). */
-export const ROD_LOBSTER_CHANCE = potData.rodLobsterChance;
 export const PEARL_LOBSTER = "pearl-lobster";
 
 export const shellfishById = (id: string | undefined) =>

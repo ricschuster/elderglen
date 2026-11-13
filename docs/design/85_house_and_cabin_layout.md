@@ -88,6 +88,8 @@ room is 64 px a tile, the tier 1 and tier 2 images about 39 and 35 px a tile).
    and the bedroom to the spouse room. Those three are now 5 rows tall. Every other
    connector, stair and the door stay as drawn. SC-140 is answered from the
    screenshot.
+   **Superseded 2026-11-12 (owner call, after play):** the interior door is 1 tile,
+   like the farm door, and walking onto it leaves (note 86 decision 3).
 
 ## Checked on the saved Cabin page (2026-11-11)
 
@@ -113,7 +115,8 @@ furniture sits on any of them.
 2. The passage from the start room to the bedroom grows from 1 row to 4 (x 21 to 23,
    y 14 to 17), from tier 1.
 3. The door notch grows from 1 tile to 2 at every tier: tiles (13, 21) and (14, 21).
-   The exit and entry objects grow with it.
+   The exit and entry objects grow with it. Undone 2026-11-12 (owner call, after
+   play): the door is 1 tile again at (13, 21) and (14, 21) is wall.
 4. The tier 2 stairs at (6, 10), 1 wide, **close again** (the one change that turns
    a built opening back into wall). Three 3 wide stairs replace it (see "Stairs").
 5. The opening between the spare room and the nursery grows from 1 row to 5
@@ -160,7 +163,7 @@ stairs. The spouse room's floor is a different swatch in the draft.
 | `R` `b` | The nursery's crib and two child beds, 2 by 2 each, on its back wall |
 | `^` | Stairs: A (x 12 to 14), B (x 18 to 20), C (x 30 to 32), each 3 wide |
 | `v` | Cellar stairs, 3 by 3, in the kitchen's lower left corner (tier 3) |
-| `e` | The door entry tile, the door is 2 wide (x 13 to 14, y 21) |
+| `e` | The door entry tile, the door is 1 tile (x 13, y 21; owner call 2026-11-12, after play) |
 | `X` | The chest for divorce items |
 | `P` | The spouse's prop block, 4 by 4, back right corner of the spouse room |
 | `k` `p` `s` `i` | Marks, see "Marks for the routes" |
@@ -192,7 +195,7 @@ Every connector is at least 3 wide, as the screenshots and the crowd rule sugges
 | Spare room and nursery | x 16, y 3 to 7 | 5 rows | 1 row | about 2 to 3 rows |
 | Bedroom and spouse room (hall) | y 16 to 20 | 5 rows | not built | not read |
 | Stairs A, B, C | 3 wide each | 3 wide | one, 1 wide | one, about 2 wide |
-| Interior door | x 13 to 14, y 21 | 2 wide | 1 | about 2 |
+| Interior door | x 13, y 21 | 1 tile (owner call 2026-11-12, after play) | 1 | about 2 |
 | Cellar stairs | x 3 to 5, y 18 to 20 | 3 wide | 3 | about 2 |
 
 ### Stairs
@@ -235,7 +238,7 @@ fixtures are fixed. Their art is placeholder.
 
 | Tier or condition | Adds | Layers (each with its own `-tN` or `when`) |
 | --- | --- | --- |
-| 0 | The start room, the 2 wide door | `ground`, `collision` |
+| 0 | The start room, the 1 tile door | `ground`, `collision` |
 | 1 | Kitchen and bedroom, the open kitchen, the 4 row passage, the double bed, the stove, the fridge and sink | `-t1` |
 | 2 | The upper band, three stairs, the 5 row door between the upper rooms, both rooms widened by 2, the nursery fixtures | `-t2` |
 | 3 | The cellar stairs and the cellar | `markers-t2` (flag `cellar-open`) |
@@ -347,7 +350,7 @@ off in Tiled.
 
 | Picture | Shows |
 | --- | --- |
-| `house-draft-tier0-preview.png` | The start room alone, 11 by 10, the 2 wide door |
+| `house-draft-tier0-preview.png` | The start room alone, 11 by 10, the 2 wide door (the draft; the built door is 1 tile since 2026-11-12) |
 | `house-draft-tier1-preview.png` | Tier 1: the open kitchen, the start room, the 4 row passage, the bedroom |
 | `house-draft-tier2-preview.png` | Tier 2 (and tier 3, which only adds the cellar stairs): three stairs, the nursery |
 | `house-draft-tier1-spouse-preview.png` | Tier 1 with the spouse room and its 5 row hall |
@@ -430,8 +433,8 @@ spouse (checked on the saved Marriage page). Ours:
 - **A visitor** may enter any cabin and sleep there. Only the owner can move
   their bed (Stardew, checked). That is a rule for the M4 build.
 - **The 8 player rule (note 81 decision 12) is met inside a house** by the 3 wide
-  connectors and the 2 wide door. A jam is still possible and the M4 jam rule
-  covers it.
+  connectors. The door is 1 tile (owner call 2026-11-12, after play), so a jam is
+  still possible there and the M4 jam rule covers it.
 
 ## Divorce
 
@@ -461,7 +464,7 @@ Settled above (decision 2). In detail:
 
 1. **The frame shift and the connector changes** in `house.json`: shift every tile
    and object by (20, 11), open the kitchen wall, widen the bedroom passage to 4
-   rows, the spare and nursery door to 5 rows, the door to 2 wide, close the old
+   rows, the spare and nursery door to 5 rows, the door to 2 wide (1 tile again since 2026-11-12), close the old
    stairs at (6, 10) and cut stairs A, B and C. `HOUSE_LAYOUT` 5 and the migration.
    Tests: nothing walkable at tier 0 or 1 is lost, every tile walkable before is
    still walkable, and a layout 4 save moves by (20, 11).

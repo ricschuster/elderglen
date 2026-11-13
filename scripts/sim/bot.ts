@@ -1,4 +1,4 @@
-// A persona playing the core rules for a whole game (note 46). It makes the
+// A persona playing the core rules for a whole game (note 98). It makes the
 // same calls as the scene (actions, shop, hall, bin, sleep), and `Walker`
 // charges the game minutes for walking and key presses.
 import { maps } from "../../src/content/maps";

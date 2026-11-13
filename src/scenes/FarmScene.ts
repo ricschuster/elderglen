@@ -357,7 +357,6 @@ const DEV_SPEED = import.meta.env.DEV
 const SPEED = 80;
 /** How far the rider is drawn above the ground, so the horse shows under them. */
 const RIDER_LIFT = 6;
-/** The map of every farm type: where the horse can be ridden, with the village green. */
 /** A creature's feet box, in world pixels. */
 const CREATURE_BODY: Body = { hw: 5, h: 5 };
 /** The player's feet box, in world pixels. */
@@ -380,11 +379,6 @@ interface SceneData {
   entry: string;
 }
 
-/**
- * A walkable map, a player and one `GameState`. The use key uses the held
- * tool, the end-day key sleeps (both rebindable, see `core/bindings.ts`). Walking through an exit restarts the scene on the next map; the
- * state and the selected toolbar slot survive in the game registry.
- */
 /** The tile step a push takes for each way the farmer faces. */
 const PUSH: Record<Facing, { x: number; y: number }> = {
   up: { x: 0, y: -1 },
@@ -393,6 +387,11 @@ const PUSH: Record<Facing, { x: number; y: number }> = {
   right: { x: 1, y: 0 },
 };
 
+/**
+ * A walkable map, a player and one `GameState`. The use key uses the held
+ * tool, the end-day key sleeps (both rebindable, see `core/bindings.ts`). Walking through an exit restarts the scene on the next map; the
+ * state and the selected toolbar slot survive in the game registry.
+ */
 export class FarmScene extends Phaser.Scene {
   private state!: GameState;
   private selected = 0;
@@ -503,7 +502,6 @@ export class FarmScene extends Phaser.Scene {
     this.state = this.registry.get(STATE_KEY) as GameState;
     this.mapId = resolveMapId(data.map ?? START.map, this.state.farmType);
     this.entryName = data.entry ?? START.entry;
-    this.state = this.registry.get(STATE_KEY) as GameState;
     // An area map (the Forest) has its own trees, rocks and forage: set them in
     // the state while the player is here, and put the farm's back anywhere else.
     leaveArea(this.state);
@@ -1038,7 +1036,7 @@ export class FarmScene extends Phaser.Scene {
 
   /**
    * True for an exit you walk onto: one on the map edge that is three or more
-   * tiles wide (open land), or any edge exit inside a building (leaving).
+   * tiles wide (open land), or any edge exit inside a building, or its door (leaving).
    * Going into a building still needs the door opened (click or Action).
    */
   private isWalkThrough(e: Exit): boolean {
@@ -1047,6 +1045,8 @@ export class FarmScene extends Phaser.Scene {
       e.y === 0 ||
       e.x + e.w >= this.map.width ||
       e.y + e.h >= this.map.height;
+    // Rebuilt interiors keep their door a tile inside the walls, so the way out is the exit named "door".
+    if (!this.outdoorWorld && e.id === "door") return true;
     return edge && (!this.outdoorWorld || Math.max(e.w, e.h) >= 3);
   }
 

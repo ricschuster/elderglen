@@ -172,15 +172,14 @@ so no bundle needs it.
 - **Ring 1 ending: a scene on the bridge and a letter, then play continues.** No
   credits. The letter points to ring 2, and the completion tracker shows a marker.
   Not built.
-- **Bundles 3, 6, 20, 22, 24 and 26** (absent from `bundles.json`): Claude drafts
+- **Bundles 3, 6, 20, 22, 24 and 26** (absent from `bundles.json` then, all built since): Claude drafts
   each ask and reward from notes 16 and 63 for the owner to check, before any build.
 
 Built 2026-11-11 (owner chose the rewards): bundle 3 Autumn Foraging (4 of 6, 15
 beet seeds), bundle 6 Rare Finds (3 of 5, 5 mushroom stews) and bundle 22 Cook's
 (3 of 5 dishes, 3 Innkeeper's roasts, a placeholder feast dish) are in
-`bundles.json`. The Last Seat now needs all 23 other bundles (owner, 2026-11-11; the built gate still says 20 and needs changing).
-Still absent: 20, 24 and 26 (they need lamps and oil, festival dishes and the
-Storyteller's items, none built). The sim bot leaves 6 and 22 unplayed.
+`bundles.json`. The Last Seat now needs all the other bundles (owner, 2026-11-11; 26 now, built as `opensAfter` "all" in `rooms.json`).
+Bundles 20, 24 and 26 are now in `bundles.json` too, so all 30 are built. The sim bot leaves 6 and 22 unplayed.
 
 ## The ring 1 ending scene and letter (owner answers 2026-11-11)
 
@@ -235,7 +234,7 @@ Hearthwell layout, note 77), and the hat each villager wears.
 
 ## Bundles 20, 24 and 26 (owner answers 2026-11-11)
 
-Not built. These are the three bundles still absent from `bundles.json`. The asks
+Built: all three are in `bundles.json` (`lamplighters`, `hosts`, `storytellers`). The asks
 and rewards below are placeholders for tuning, except where marked as the owner's.
 
 - **Bundle 20 Lamplighter's: 2 of 3 of 3 lamps, 10 oil and 20 candles.** Candles
@@ -247,7 +246,8 @@ and rewards below are placeholders for tuning, except where marked as the owner'
   The treat is whatever treat a festival stall sells, and each festival sells a
   different one (owner), so no one festival blocks it. The reward is a set of
   **3** festival hats (owner). Which three hats is open (note 10 and note 14).
-  Bread, honey cake and herb tea are not in `dishes.json` yet.
+  Bread, honey cake and herb tea are not in `dishes.json` yet. (Built since; the tea slot
+  takes herb tea or green tea, owner 2026-11-13, note 97.)
 - **Bundle 26 Storyteller's: 3 of 5 of a rare herb, an old seed packet, a carved
   bead, a faded ribbon and a pressed flower.** The four old things are dug up by
   the hoe on **artifact spots** in the valley (owner, Stardew's pattern, saved

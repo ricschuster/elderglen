@@ -11,10 +11,10 @@ const PLANS = {
 
 describe.each(Object.entries(PLANS))("the rebuilt %s", (id, plan) => {
   const m = maps.get(id);
-  it("has its size and a 2 wide door to its lot", () => {
+  it("has its size and a 1 wide door to its lot", () => {
     expect([m.width, m.height]).toEqual(plan.size);
     const door = m.exits.find((e) => e.id === "door")!;
-    expect([door.w, door.h, door.map]).toEqual([2, 1, plan.lot]);
+    expect([door.w, door.h, door.map]).toEqual([1, 1, plan.lot]);
     expect(door.entry).toBe(`from_${id.replace("forest-", "")}`);
   });
   it("carries a friendship gate on each bedroom door", () => {

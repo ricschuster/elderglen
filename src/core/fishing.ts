@@ -229,7 +229,8 @@ export function bite(
   tutorial = false,
   odds: Odds = {},
 ): Bite {
-  // The sea sometimes gives the rare Pearl Lobster instead of a fish.
+  // The sea sometimes gives the rare Pearl Lobster instead of a fish
+  // (`rodLobsterChance` in pots.json, note 21, placeholder).
   if (water === "sea" && !tutorial && random() < potData.rodLobsterChance)
     return { kind: "lobster" };
   // Weak waters sometimes give trash: no bar, never on the tutorial cast.

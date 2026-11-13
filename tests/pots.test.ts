@@ -34,13 +34,13 @@ function ready() {
 }
 
 describe("pot data", () => {
-  it("has four catches a water, odds of 100, and 5 junk", () => {
+  it("has four catches a water, odds of 100, and 6 junk", () => {
     for (const water of ["fresh", "salt"] as const) {
       const pool = SHELLFISH.filter((s) => s.water === water);
       expect(pool).toHaveLength(4);
       expect(pool.reduce((n, s) => n + s.odds, 0)).toBe(100);
     }
-    expect(JUNK).toHaveLength(5);
+    expect(JUNK).toHaveLength(6);
   });
 
   it("matches the note's prices and sells the pot for 150g at the fisher", () => {
