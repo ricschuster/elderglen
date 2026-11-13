@@ -22,6 +22,7 @@ import { GEMS, GLIMMERSTONE } from "./gems";
 import geodeData from "../content/geodes.json";
 import { cropById } from "./crops";
 import { BARS, COAL, coalFor, ORE_PER_BAR, QUARTZ } from "./ore";
+import { agedRoeOf, roeSpeciesOf } from "./pondspecies";
 import { splitQuality, type Quality } from "./quality";
 
 /**
@@ -122,6 +123,8 @@ const MEAD_MINUTES = 600;
 /** Pale ale 2,250 minutes (saved Artisan Goods page). Beer 1,750 is from memory, unchecked. */
 const PALE_ALE_MINUTES = 2250;
 const BEER_MINUTES = 1750;
+/** Aged roe takes 4 days in the jar (ours, placeholder; Stardew's time is from memory, SC-170). */
+export const AGED_ROE_MINUTES = 4 * MINUTES_PER_DAY;
 const KILN_MINUTES = 30;
 /** The geode crusher takes 1 game hour a geode and burns no fuel (Stardew, SC-157). */
 const CRUSHER_MINUTES = 60;
@@ -336,6 +339,12 @@ export function processFor(
     return undefined;
   }
   if (machine === "preserves-jar") {
+    // Roe becomes aged roe of the same fish (note 93); aged roe goes in no more.
+    const fish = roeSpeciesOf(input);
+    if (fish !== undefined)
+      return input === `${fish}-roe`
+        ? { ...one, output: agedRoeOf(fish), minutes: AGED_ROE_MINUTES }
+        : undefined;
     const produce = produceOf(input);
     return produce
       ? {

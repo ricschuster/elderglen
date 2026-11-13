@@ -49,6 +49,12 @@ interface SpeciesRow {
   goods?: PondGood[];
   /** False for a species that makes no roe. */
   roe?: boolean;
+  /**
+   * A gift for finishing a capacity quest (Stardew's quest rewards). Algae soup is meant
+   * for the slime-like fish (Stardew: Slimejack, 1 Algae Soup or 5 Wild Bait at 5 fish).
+   * Our species table is empty, so no row uses it yet.
+   */
+  reward?: { item: string; count: number };
 }
 
 /** A safety stop on the extra roe repeat (the chance makes more than 6 a rarity). */
@@ -551,6 +557,9 @@ export function giveQuestItem(
   setState(p, s);
   const xp = pondData.questXp.base + pondData.questXp.perDay * spawnDaysOf(sp);
   const levelUp = g.skills.gain("fishing", xp);
+  const gift = SPECIES_ROWS[sp.id]?.reward;
+  if (gift && itemById(gift.item) && !g.inventory.add(gift.item, gift.count))
+    g.ground.drop(x, y, gift.item, gift.count);
   return {
     ok: true,
     done: true,

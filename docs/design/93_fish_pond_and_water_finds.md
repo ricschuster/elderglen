@@ -166,21 +166,37 @@ Empty is taken, owner can correct: every fish goes to the pack (refused unless t
 room for all), which resets the pond, as the rod's `takeFish` does one at a time. The note only
 says "the empty button".
 
-Still not built: drawing the pond (art), aged roe in the preserves jar (see open question
-below), water finds in the fishing completion count and cooking, a pool on any map, and the
+Still not built: drawing the pond (art), a pool on any map, and the
 species table (still empty, see the gaps). The coop, barn, stable, silo and house placing
 rules still do not check for a pond (a building can be put over a pond: `placementBlockers`
 is blind to ponds, and the other carpenter jobs do not wait for a pond under way).
 
-## Open question: aged roe in the preserves jar (not built)
+## Settled by the owner and built (2026-11-12)
 
-Note 24 names roe only as an input that takes its colour in the dye pots. Nothing decides roe
-in the jar: no recipe for "aged roe", no days, no price multiplier, no quality rule, and the
-jar's input list has no roe row. To settle: days in the jar, the price (Stardew's rule is from memory and
-not checked: add a row to `54_stardew_checks.md` when settling), whether sea urchin and coral roe count, and the output item
-name and colour.
+- **Water finds are not Fish entries.** They do not join the Fish completion category (note 39),
+  the fish kinds or the roster. They only count toward the "catch N fish" total, as note 38
+  says plants do in Stardew; trash does not. `FishLog.noteFind` (called by `landFind`) keeps a
+  separate saved `finds` count that `total` includes. Pale lichen and Glow jelly bite on no map
+  yet, which no longer matters for completion. Tests: `tests/roeandfinds.test.ts`.
+- **Algae soup is a pond reward only, with no cooking recipe.** Saved Fish Pond page: Slimejack
+  gives "1 Algae Soup or 5 Wild Bait" at 5 fish. Item `algae-soup` exists (price 100, energy 80,
+  placeholders). The hook is a per-species `reward` row in `pond.json` (`{"item", "count"}`),
+  given when a capacity quest is finished (to the pack, else at the pond). **Open: the species
+  table is empty and we have no slime-like fish, so no species carries it yet.** Name the
+  fish (or a legend) that gets it when the table is filled.
+- **Aged roe.** Roe in the preserves jar (`processing.ts`) becomes `<fish>-aged-roe` (name
+  "Aged <fish> roe"), 2 times the roe's price, 4 days (6,400 machine minutes, placeholder).
+  Aged roe goes in no machine. Sea urchin and coral roe count as any species. The Stardew rule is
+  from memory (SC-170, unchecked). Colour: `potColourOf` now strips `-roe` and `-aged-roe` and
+  uses the fish's pot colour (roe had no colour before this, only note 24 said it should).
+  Pot colours exist only for fish listed in `dyes.json` `potInputs`; a fish not listed has no
+  colour for its roe either.
 
-## Open questions found 2026-11-12 (water finds in completion and cooking, not built)
+## Open question: aged roe quality (new)
+
+Quality of the input is ignored and aged roe is normal quality (as the jar ignores quality).
+
+## Open questions found 2026-11-12 (answered above: completion and soup)
 
 The note says the finds "feed" the fishing completion count and cooking (algae soup), but
 does not decide the rules, so neither is built. To settle:

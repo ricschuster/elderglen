@@ -598,11 +598,26 @@ export interface FishRecord {
 
 export interface FishingSave {
   caught: Record<string, FishRecord>;
+  /** Water finds lifted (note 93). Absent in older saves. */
+  finds?: number;
 }
 
 /** What has been caught: how many of each fish and the longest. Saved with the game. */
 export class FishLog {
   private caught = new Map<string, FishRecord>();
+  private finds = 0;
+
+  /**
+   * Water finds lifted. They count toward the "catch N fish" total only, never the kinds,
+   * the roster or the Fish completion category (note 93, owner 2026-11-12).
+   */
+  get findsLifted(): number {
+    return this.finds;
+  }
+
+  noteFind(): void {
+    this.finds += 1;
+  }
 
   record(id: string): FishRecord | undefined {
     return this.caught.get(id);
@@ -612,7 +627,7 @@ export class FishLog {
   get total(): number {
     let n = 0;
     for (const r of this.caught.values()) n += r.count;
-    return n;
+    return n + this.finds;
   }
 
   /** Different fish landed. */
@@ -640,12 +655,17 @@ export class FishLog {
       caught: Object.fromEntries(
         [...this.caught].map(([id, r]) => [id, { ...r }]),
       ),
+      ...(this.finds > 0 ? { finds: this.finds } : {}),
     };
   }
 
   load(raw: unknown): void {
     this.caught = new Map();
+    this.finds = 0;
     if (typeof raw !== "object" || raw === null) return;
+    const finds = (raw as Partial<FishingSave>).finds;
+    if (typeof finds === "number" && Number.isFinite(finds) && finds > 0)
+      this.finds = Math.floor(finds);
     const caught = (raw as Partial<FishingSave>).caught;
     if (typeof caught !== "object" || caught === null) return;
     for (const [id, r] of Object.entries(caught)) {
