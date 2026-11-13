@@ -11,15 +11,37 @@
   "legendCap": 1,
   "questDelay": [1, 5],
   "questCounts": [3, 5, 8],
-  "questXp": { "base": 20, "perDay": 5 },
+  "questXp": {
+    "base": 20,
+    "perDay": 5
+  },
   "spawnDays": [
-    { "maxPrice": 60, "days": 1 },
-    { "maxPrice": 120, "days": 2 },
-    { "maxPrice": 250, "days": 3 },
-    { "maxPrice": 500, "days": 4 },
-    { "maxPrice": 1000000, "days": 5 }
+    {
+      "maxPrice": 60,
+      "days": 1
+    },
+    {
+      "maxPrice": 120,
+      "days": 2
+    },
+    {
+      "maxPrice": 250,
+      "days": 3
+    },
+    {
+      "maxPrice": 500,
+      "days": 4
+    },
+    {
+      "maxPrice": 1000000,
+      "days": 5
+    }
   ],
-  "productChance": { "base": 0.15, "perFish": 0.08, "legend": 0.5 },
+  "productChance": {
+    "base": 0.15,
+    "perFish": 0.08,
+    "legend": 0.5
+  },
   "extraRoe": 0.2,
   "roeWeight": 3,
   "questItems": {
@@ -36,5 +58,382 @@
     "fallback": "stone"
   },
   "extraSpecies": ["pin-urchin", "sea-fan"],
-  "species": {}
+  "species": {
+    "ferrywhisker": {
+      "goods": [
+        {
+          "item": "pondweed",
+          "minPop": 5
+        }
+      ]
+    },
+    "salmon": {
+      "goods": [
+        {
+          "item": "gem-low-a",
+          "minPop": 5
+        }
+      ]
+    },
+    "hearthside-dace": {
+      "goods": [
+        {
+          "item": "clay",
+          "minPop": 5
+        }
+      ]
+    },
+    "tallow-eel": {
+      "goods": [
+        {
+          "item": "coal",
+          "minPop": 5
+        }
+      ]
+    },
+    "fernfin": {
+      "goods": [
+        {
+          "item": "wild-garlic",
+          "minPop": 5
+        }
+      ]
+    },
+    "mushroom-loach": {
+      "goods": [
+        {
+          "item": "field-mushroom",
+          "minPop": 5
+        }
+      ]
+    },
+    "moonmirror": {
+      "goods": [
+        {
+          "item": "gem-low-b",
+          "minPop": 5
+        }
+      ]
+    },
+    "reed-cat": {
+      "goods": [
+        {
+          "item": "pondweed",
+          "minPop": 5
+        }
+      ]
+    },
+    "catfish": {
+      "goods": [
+        {
+          "item": "clay",
+          "minPop": 5
+        }
+      ]
+    },
+    "bullhead": {
+      "goods": [
+        {
+          "item": "copper-ore",
+          "minPop": 5
+        }
+      ]
+    },
+    "kelp-ribbon": {
+      "goods": [
+        {
+          "item": "seaweed",
+          "minPop": 5
+        }
+      ]
+    },
+    "harbour-ray": {
+      "goods": [
+        {
+          "item": "cockleshell",
+          "minPop": 5
+        }
+      ]
+    },
+    "herring": {
+      "goods": [
+        {
+          "item": "periwinkle",
+          "minPop": 5
+        }
+      ]
+    },
+    "lantern-squid": {
+      "goods": [
+        {
+          "item": "whelk",
+          "minPop": 5
+        }
+      ]
+    },
+    "granite-gudgeon": {
+      "goods": [
+        {
+          "item": "iron-ore",
+          "minPop": 5
+        }
+      ]
+    },
+    "echo-pike": {
+      "goods": [
+        {
+          "item": "copper-ore",
+          "minPop": 5
+        }
+      ]
+    },
+    "ember-trout": {
+      "goods": [
+        {
+          "item": "coal",
+          "minPop": 5
+        }
+      ]
+    },
+    "pearlback": {
+      "goods": [
+        {
+          "item": "pearly-shell",
+          "minPop": 5
+        }
+      ]
+    },
+    "cove-lantern": {
+      "goods": [
+        {
+          "item": "spiral-shell",
+          "minPop": 5
+        }
+      ]
+    },
+    "still-water-gar": {
+      "goods": [
+        {
+          "item": "gem-mid-a",
+          "minPop": 5
+        }
+      ]
+    },
+    "silverthread": {
+      "goods": [
+        {
+          "item": "iron-ore",
+          "minPop": 3
+        },
+        {
+          "item": "gem-mid-a",
+          "minPop": 7
+        }
+      ],
+      "reward": {
+        "item": "plain-bait",
+        "count": 5
+      }
+    },
+    "old-mossback": {
+      "goods": [
+        {
+          "item": "clay",
+          "minPop": 3
+        },
+        {
+          "item": "gem-mid-b",
+          "minPop": 7
+        }
+      ],
+      "reward": {
+        "item": "plain-bait",
+        "count": 5
+      }
+    },
+    "hermit-trout": {
+      "goods": [
+        {
+          "item": "field-mushroom",
+          "minPop": 3
+        },
+        {
+          "item": "gem-mid-a",
+          "minPop": 7
+        }
+      ],
+      "reward": {
+        "item": "plain-bait",
+        "count": 5
+      }
+    },
+    "glassy-elver": {
+      "goods": [
+        {
+          "item": "pondweed",
+          "minPop": 3
+        },
+        {
+          "item": "gem-mid-b",
+          "minPop": 7
+        }
+      ],
+      "reward": {
+        "item": "algae-soup",
+        "count": 1
+      }
+    },
+    "crowned-tunny": {
+      "goods": [
+        {
+          "item": "seaweed",
+          "minPop": 3
+        },
+        {
+          "item": "gem-mid-a",
+          "minPop": 7
+        }
+      ],
+      "reward": {
+        "item": "plain-bait",
+        "count": 5
+      }
+    },
+    "glacier-ghost": {
+      "goods": [
+        {
+          "item": "iron-ore",
+          "minPop": 3
+        },
+        {
+          "item": "gem-high-a",
+          "minPop": 7
+        }
+      ],
+      "reward": {
+        "item": "gem-low-a",
+        "count": 1
+      }
+    },
+    "velvet-koi": {
+      "goods": [
+        {
+          "item": "pearly-shell",
+          "minPop": 3
+        },
+        {
+          "item": "gem-high-a",
+          "minPop": 7
+        }
+      ],
+      "reward": {
+        "item": "gem-low-b",
+        "count": 1
+      }
+    },
+    "hush": {
+      "goods": [
+        {
+          "item": "spiral-shell",
+          "minPop": 3
+        },
+        {
+          "item": "gem-high-b",
+          "minPop": 7
+        }
+      ],
+      "reward": {
+        "item": "gem-low-a",
+        "count": 1
+      }
+    },
+    "dusk-opal": {
+      "goods": [
+        {
+          "item": "pearly-shell",
+          "minPop": 3
+        },
+        {
+          "item": "gem-high-a",
+          "minPop": 7
+        }
+      ],
+      "reward": {
+        "item": "gem-low-b",
+        "count": 1
+      }
+    },
+    "deepglow": {
+      "goods": [
+        {
+          "item": "spiral-shell",
+          "minPop": 3
+        },
+        {
+          "item": "gem-high-b",
+          "minPop": 7
+        }
+      ],
+      "reward": {
+        "item": "gem-low-a",
+        "count": 1
+      }
+    },
+    "shell-ghost": {
+      "goods": [
+        {
+          "item": "whelk",
+          "minPop": 3
+        },
+        {
+          "item": "gem-high-a",
+          "minPop": 7
+        }
+      ],
+      "reward": {
+        "item": "gem-low-b",
+        "count": 1
+      }
+    },
+    "hearthwell-carp": {
+      "goods": [
+        {
+          "item": "gem-high-a",
+          "minPop": 1
+        }
+      ]
+    },
+    "grandmother-hush": {
+      "goods": [
+        {
+          "item": "gem-high-a",
+          "minPop": 1
+        }
+      ]
+    },
+    "valley-king": {
+      "goods": [
+        {
+          "item": "gem-high-a",
+          "minPop": 1
+        }
+      ]
+    },
+    "moonlit-mother": {
+      "goods": [
+        {
+          "item": "gem-high-a",
+          "minPop": 1
+        }
+      ]
+    },
+    "great-hearthfin": {
+      "goods": [
+        {
+          "item": "gem-high-a",
+          "minPop": 1
+        }
+      ]
+    }
+  }
 }

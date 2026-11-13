@@ -97,7 +97,7 @@ describe("seed hunt prize", () => {
     expect(awardHuntPrize(g, s)).toBeUndefined();
     tickHunt(s, 60);
     expect(awardHuntPrize(g, s)).toBeUndefined();
-    expect(g.inventory.count("rare-seed-packet")).toBe(0);
+    expect(g.inventory.count("ember-berry-seed")).toBe(0);
   });
 
   it("first win gives the hat and a packet, a later year only a packet", () => {
@@ -105,11 +105,11 @@ describe("seed hunt prize", () => {
     const a = awardHuntPrize(g, won(g.day.clock.day))!;
     expect(a).toEqual({ hat: "straw-boater", packet: true });
     expect(g.wardrobe.has("straw-boater")).toBe(true);
-    expect(g.inventory.count("rare-seed-packet")).toBe(1);
+    expect(g.inventory.count("ember-berry-seed")).toBe(1);
     expect(awardHuntPrize(g, won(g.day.clock.day))).toBeUndefined();
     g.day.clock.day = dayOf("spring", 14, 2);
     expect(awardHuntPrize(g, won(g.day.clock.day))).toEqual({ packet: true });
-    expect(g.inventory.count("rare-seed-packet")).toBe(2);
+    expect(g.inventory.count("ember-berry-seed")).toBe(2);
   });
 });
 

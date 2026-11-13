@@ -37,7 +37,6 @@ import {
 } from "./teabush";
 import decorData from "../content/decor.json";
 import creatureGoods from "../content/creature-goods.json";
-import huntPrize from "../content/hunt-prize.json";
 import iceFishing from "../content/ice-fishing.json";
 import lanternFloat from "../content/lantern-float.json";
 import weaponData from "../content/weapons.json";
@@ -298,12 +297,6 @@ items.set(lanternFloat.lantern.id, {
   name: lanternFloat.lantern.name,
   sellPrice: 0,
   keep: true,
-});
-/** Seedswap hunt prize packet (note 82, placeholder): a plain item, the crop it grows is open. */
-items.set(huntPrize.packet.id, {
-  id: huntPrize.packet.id,
-  name: huntPrize.packet.name,
-  sellPrice: huntPrize.packet.sellPrice,
 });
 items.set(iceFishing.frostfin.id, {
   id: iceFishing.frostfin.id,
@@ -609,7 +602,6 @@ const GROUPS: [string, string[]][] = [
       ELF_LETTER,
       lanternFloat.lantern.id,
       lanternFloat.keepsake.id,
-      huntPrize.packet.id,
     ],
   ],
   ["Rings", RINGS.map((r) => r.id)],

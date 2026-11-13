@@ -30,7 +30,7 @@ season. Placeholder numbers are marked.
 | Impassable | The scene blocks the tile at every stage. Hoe, building placement and planting treat it as an object. Unlike a fruit tree it needs no clear 3x3, so a row of bushes works as a fence. |
 | Tree Fertilizer no | Nothing applies fertilizer to it. |
 | Tea Leaves | `tea-leaf`, sells for 50, energy 20 (placeholders, SC-173). |
-| Garden pots | Not built. Decided 2026-11-13 (owner, Stardew): craftable from clay 1, stone 10 and one refined input, taught by a story moment after the Larder room (greenhouse) is restored. Stardew (saved Tea Bush and Crafting pages): any season indoors, seasonal crops only outdoors, sprinklers do not water it, a tea bush in a pot grows and bears leaves. Open: our refined input and who teaches it. |
+| Garden pots | Not built. Decided 2026-11-13 (owner, Stardew): craftable from clay 1, stone 10 and one refined input, taught by a story moment after the Larder room (greenhouse) is restored. Stardew (saved Tea Bush and Crafting pages): any season indoors, seasonal crops only outdoors, sprinklers do not water it, a tea bush in a pot grows and bears leaves. Decided 2026-11-13 (owner): the refined input is a refined crystal, a quartz crystal smelted in the furnace (Stardew's refined quartz; needs a smelt recipe), and Alder (the gardener) teaches it in the story moment. Still to build. |
 
 ## Build
 

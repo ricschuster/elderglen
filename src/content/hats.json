@@ -35,6 +35,11 @@
     "color": "#b8782a"
   },
   {
+    "id": "icewarden-cap",
+    "name": "Icewarden's Cap",
+    "color": "#9cc4e0"
+  },
+  {
     "id": "snow-cap",
     "name": "Snow Cap",
     "color": "#e8f0f8"

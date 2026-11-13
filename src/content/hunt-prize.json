@@ -1,9 +1,5 @@
 {
-  "_note": "Seedswap hunt prize (note 82, owner decision 2026-11-12). The first win ever gives the hat, every year's win gives a rare seed packet. The packet's sell price and which crop it grows are open (placeholders).",
+  "_note": "Seedswap hunt prize (note 82, owner decisions 2026-11-12 and 2026-11-13). The first win ever gives the hat, every year's win gives the emberseed, our Rare Seed (note 39). The hat is a placeholder pick.",
   "hat": "straw-boater",
-  "packet": {
-    "id": "rare-seed-packet",
-    "name": "Rare seed packet",
-    "sellPrice": 200
-  }
+  "seed": "ember-berry-seed"
 }

@@ -52,7 +52,7 @@ interface SpeciesRow {
   /**
    * A gift for finishing a capacity quest (Stardew's quest rewards). Algae soup is meant
    * for the slime-like fish (Stardew: Slimejack, 1 Algae Soup or 5 Wild Bait at 5 fish).
-   * Our species table is empty, so no row uses it yet.
+   * Rare fish carry one in the species table (note 93).
    */
   reward?: { item: string; count: number };
 }

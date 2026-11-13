@@ -304,8 +304,8 @@ Owner answers: the fair uses the **whole of grove G4's ground** on the Forest ma
 a **seed hunt** like Stardew's egg hunt: **50 seconds, find 9 hidden seed packets
 to win** (Stardew, saved Egg Festival page: 50 seconds, 9 eggs for one player, 6
 for two, 5 for three, 4 for four or more, else a villager rival wins). The prize is
-**a rare seed packet each year, plus a hat the first time** (the crop and the hat
-are open; decided 2026-11-13: the packet is a random seed from a short list of uncommon crops, list to be named).
+**an emberseed each year (our Rare Seed, note 39), plus a hat the first time** (hat open;
+decided 2026-11-13: the emberseed, Stardew, in place of a random uncommon packet).
 
 Place: `forest.json`, the clearing x 68 to 83, y 12 to 34 (16 by 23), east of the
 lake path (x 65 to 67) and west of the farmstead (x 84 and up). The farmstead road

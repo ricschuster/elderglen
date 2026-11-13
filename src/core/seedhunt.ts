@@ -126,7 +126,7 @@ export function awardHuntPrize(
     if (g.wardrobe.add(prize.hat)) out.hat = prize.hat;
   }
   const key = winKey(g.day.clock.day);
-  if (!g.festivalsJoined.includes(key) && g.inventory.add(prize.packet.id, 1)) {
+  if (!g.festivalsJoined.includes(key) && g.inventory.add(prize.seed, 1)) {
     g.festivalsJoined.push(key);
     out.packet = true;
   }
