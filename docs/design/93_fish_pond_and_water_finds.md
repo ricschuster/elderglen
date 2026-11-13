@@ -210,3 +210,72 @@ does not decide the rules, so neither is built. To settle:
 - **Algae soup.** No recipe is decided: ingredients (which find, how many), energy, sell
   price, and how it is learned (a level, a letter or a shop). No other dish is named for the
   finds. Do the jellies feed a dish at all?
+
+## Species table (2026-11-13, owner: build as drafted)
+
+Owner chose on 2026-11-13: a full table, a row for every fish, like Stardew (saved Fish Pond
+page, where each fish has its own quest items, goods and population gates). Stardew's rows are
+per fish and ours do not match them, so these are our own, by rarity and by what the fish is
+like, and use items that already exist. All numbers are placeholders to edit.
+
+**Rules the rows follow** (change a rule and every row of that tier follows):
+
+- Every species makes roe (weight 3). A good (weight 1 each, once the pond holds its minimum
+  population) is the only extra. Spawn days stay by price (1 to 5).
+- Common fish (15): roe only, no row. Uncommon (20): one good at 5 fish. Rare (11): two
+  goods, at 3 and at 7 fish, and a reward for finishing a capacity quest. Legends (5): one
+  good, a high gem, at 1 fish, and no reward (they never breed and have no quests).
+- Shellfish (8 pot catches), sea urchin and coral: roe only, no row.
+- Goods are chosen to suit the fish: weeds, clay, mushrooms, ore, shells and gems.
+- The algae soup reward goes to the slime-like fish, glassy-elver (Stardew: Slimejack, 1 Algae
+  Soup or 5 Wild Bait at 5 fish). The other rare rewards are plain bait or a gem.
+
+### Uncommon (one good at 5)
+
+| Fish | Water | Good |
+| --- | --- | --- |
+| ferrywhisker | river | pondweed |
+| salmon | river | gem-low-a |
+| hearthside-dace | river | clay |
+| tallow-eel | river | coal |
+| fernfin | forest lake | wild-garlic |
+| mushroom-loach | forest lake | field-mushroom |
+| moonmirror | forest lake | gem-low-b |
+| reed-cat | marsh lake | pondweed |
+| catfish | marsh lake | clay |
+| bullhead | marsh lake | copper-ore |
+| kelp-ribbon | sea | seaweed |
+| harbour-ray | sea | cockleshell |
+| herring | sea | periwinkle |
+| lantern-squid | sea | whelk |
+| granite-gudgeon | mountain lake | iron-ore |
+| echo-pike | mountain lake | copper-ore |
+| ember-trout | mountain lake | coal |
+| pearlback | cove | pearly-shell |
+| cove-lantern | cove | spiral-shell |
+| still-water-gar | cove | gem-mid-a |
+
+### Rare (goods at 3 and 7, reward at each finished capacity quest)
+
+| Fish | Water | Good at 3 | Good at 7 | Reward |
+| --- | --- | --- | --- | --- |
+| silverthread | river | iron-ore | gem-mid-a | 5 plain-bait |
+| old-mossback | river | clay | gem-mid-b | 5 plain-bait |
+| hermit-trout | forest lake | field-mushroom | gem-mid-a | 5 plain-bait |
+| glassy-elver | marsh lake | pondweed | gem-mid-b | 1 algae-soup |
+| crowned-tunny | sea | seaweed | gem-mid-a | 5 plain-bait |
+| glacier-ghost | mountain lake | iron-ore | gem-high-a | 1 gem-low-a |
+| velvet-koi | cove | pearly-shell | gem-high-a | 1 gem-low-b |
+| hush | cove | spiral-shell | gem-high-b | 1 gem-low-a |
+| dusk-opal | cove | pearly-shell | gem-high-a | 1 gem-low-b |
+| deepglow | cove | spiral-shell | gem-high-b | 1 gem-low-a |
+| shell-ghost | cove | whelk | gem-high-a | 1 gem-low-b |
+
+### Legends (one good at 1)
+
+hearthwell-carp, grandmother-hush, valley-king, moonlit-mother and great-hearthfin each give
+gem-high-a (and roe).
+
+Built 2026-11-13: the rows are in `pond.json` (`species`, 36 rows) and
+`tests/pondspeciestable.test.ts` checks the tiers and that each item exists. Left: the numbers
+(what a good is worth against its minimum population), and the pond art.

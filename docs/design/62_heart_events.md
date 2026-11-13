@@ -176,13 +176,13 @@ reward and every story seed is a placeholder to edit. Times are placeholders.
 | Odette | 2 | hw:store | 9:00 to 16:00 | built | Counts coins, asks for help with a late order | Letter later teaches the tea sapling |
 | Odette | 6 | hw:store | 17:00 to 18:00 | none | Shows the shop's old ledger and the first jar she sold | A jam craft recipe |
 | Dorrie | 2 | hw:green | 9:00 to 11:00 | dry | Walks the green, asks what the player is growing | peach |
-| Dorrie | 6 | hw:store | 11:00 to 14:00 | none | Finds a ledger mistake and the player helps find it | Small shop price cut on seeds (placeholder) |
+| Dorrie | 6 | hw:store | 11:00 to 14:00 | none | Finds a ledger mistake and the player helps find it | market-pie (plain item, owner 2026-11-13) |
 | Fitch | 2 | hw:green | 9:30 to 12:00 | dry | Wants to trade a shiny find | apple |
 | Fitch | 6 | hw:green | 13:30 to 17:00 | dry | Proud of a hoard, hides one thing for the player | pocket-coin |
 | Alder | 2 | hw:burrow-garden | 8:00 to 9:00 | none | Weeding, grumbles about slugs | kale |
 | Alder | 6 | hw:store | 9:00 to 13:00 | none | Brings a seedling to the store and asks for a name | A rare seed packet (placeholder) |
 | Bramwell | 2 | hw:smithy | 16:00 to 19:00 | none | Forge cools, asks the player to hold a tong | iron-bar |
-| Bramwell | 6 | hw:smithy | 16:00 to 19:00 | none | Shows the first blade he made, mends a tool | Smithy tool upgrade discount (placeholder) |
+| Bramwell | 6 | hw:smithy | 16:00 to 19:00 | none | Shows the first blade he made, mends a tool | gold-bar (plain item, owner 2026-11-13) |
 | Hattie | 2 | hw:inn | any open | rain | Built | Built |
 | Hattie | 6 | hw:inn | 12:00 to 17:00 | none | The kitchen is short staffed, the player carries trays | A dish recipe |
 | Podge | 2 | hw:square | 11:00 to 12:30 | dry | Tastes the stalls and offers a spoon | chanterelle |
@@ -192,9 +192,9 @@ reward and every story seed is a placeholder to edit. Times are placeholders.
 | Aurelle | 2 | hw:river-path | 19:00 to 21:00 | dry | Evening walk, notices a herb on the bank | fiddlehead-fern |
 | Aurelle | 6 | hw:healer | 8:50 to 17:00 | none | Needs a remedy brewed, the player gathers | A healing tonic recipe |
 | Dunmar | 2 | hw:library | 9:50 to 18:00 | none | A book is missing and he suspects a thief | quartz-crystal |
-| Dunmar | 6 | hw:library | 18:00 to 19:30 | none | Shows his favour ledger and where the player stands | A library card perk (placeholder) |
+| Dunmar | 6 | hw:library | 18:00 to 19:30 | none | Shows his favour ledger and where the player stands | mushroom-stew (plain item, owner 2026-11-13) |
 | Tilda | 2 | hw:sawmill | 7:30 to 9:00 | none | A beam is stuck, asks for a hand | wood |
-| Tilda | 6 | hw:sawmill | 9:00 to 17:00 | none | Shows drafts for the player's farm | Build cost cut on one building (placeholder) |
+| Tilda | 6 | hw:sawmill | 9:00 to 17:00 | none | Shows drafts for the player's farm | copper-bar (plain item, owner 2026-11-13) |
 | Rufus | 2 | hw:sawmill | 8:00 to 12:00 | none | Whittles a bird and asks which it is | corn |
 | Rufus | 6 | hw:river-path | 12:00 to 13:00 | none | Fishing, tells where he caught nothing | beer or a bait recipe (placeholder) |
 | Wren | 2 | hw:river-path | 13:30 to 17:00 | dry | Climbs a tree, cannot get down | pine-nut |
@@ -222,11 +222,11 @@ reward and every story seed is a placeholder to edit. Times are placeholders.
 | Rosmarin | 4 | forest:fairy-ring | built | built | Fairy ring event | Letter flag, tea sapling chain |
 | Rosmarin | 6 | forest:hermit-tower | 12:00 to 15:00 | none | Brews something, shows the tower room | A potion recipe (placeholder) |
 | Rundahl | 2 | forest:camp | 8:00 to 10:00 | none | Offers tea at the fire, asks nothing | wild-garlic |
-| Rundahl | 6 | forest:camp | 13:00 to 16:00 | none | A story of the road, hints at the wardens | Rundahl's trail map (placeholder) |
+| Rundahl | 6 | forest:camp | 13:00 to 16:00 | none | A story of the road, hints at the wardens | fiddlehead-fern (plain item, owner 2026-11-13) |
 | Korvi | 2 | mtn:forge | 8:00 to 17:00 | none | Sparks fly, asks for ore | copper-bar |
 | Korvi | 6 | mtn:forge | 17:00 to 20:00 | none | Shows a dwarven alloy | An alloy recipe (placeholder) |
 | Marl | 2 | quarry:yard | 8:00 to 12:00 | none | Cracks a stone, names the vein | quartz-crystal |
-| Marl | 6 | quarry:bridge | 13:00 to 17:00 | none | Hums while checking the bridge, tells its history | A quarry tool perk (placeholder) |
+| Marl | 6 | quarry:bridge | 13:00 to 17:00 | none | Hums while checking the bridge, tells its history | granite-gudgeon (plain item, owner 2026-11-13) |
 | Maren | 2 | mines:hall | 8:00 to 12:00 | none | Counts reps, asks the player to spot | hearty-omelette |
 | Maren | 6 | mines:hall | 13:00 to 19:00 | none | A bout against the dummy | A combat tip recipe (placeholder) |
 | Rushie | 2 | delta:dock | 6:30 to 9:00 | none | Laughs at a tangled line | mackerel |
@@ -234,7 +234,7 @@ reward and every story seed is a placeholder to edit. Times are placeholders.
 | Thalwen | 2 | beach:dunes | 9:00 to 12:00 | dry | Gazes at the land and asks what a tree is | #shell item, razor-clam |
 | Thalwen | 6 | beach:shore | 14:00 to 18:00 | dry | Shows a sea song, the tide answers | A sea keepsake (placeholder) |
 | Aldreth | 2 | hw:outpost-yard | 8:30 to 12:00 | none | Sorts bags, asks the player to carry one | fried-egg |
-| Aldreth | 6 | hw:inn | 18:00 to 22:30 | none | Tired of roads, says what the warden's work costs | A road pass (placeholder) |
+| Aldreth | 6 | hw:inn | 18:00 to 22:30 | none | Tired of roads, says what the warden's work costs | hearty-omelette (plain item, owner 2026-11-13) |
 
 ### Notes on the draft
 
@@ -244,5 +244,6 @@ reward and every story seed is a placeholder to edit. Times are placeholders.
 - Dry-weather events for the area residents (Rushie, Thalwen, Dilly) rely on their
   town trip days not removing them from the area. The validator test must check that.
 - Thalwen 2 gives a `#shell` item or razor-clam, the person's own loves, not a new item.
+Decided 2026-11-13 (owner, Stardew): no unlock rewards in M3b, those seven are plain items.
 - Rewards that are an unlock (price cut, tool perk, road pass) need a built effect before
   they work. Until then the reward can be a plain item. Decide which unlocks are real.

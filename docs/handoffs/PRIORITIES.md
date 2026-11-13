@@ -37,10 +37,10 @@ table, lantern floating and ice fishing rules with thin scene hooks, pond menu a
 
 Open, top to bottom:
 
-1. **Owner answers left:** the garden pot's refined input and who teaches it (note 97), the Frostday cap name, the uncommon crop list for the hunt's seed packet, which fish gives algae soup once the species table is filled. Decided 2026-11-13: pot is clay, stone and a refined input taught by a story moment (Stardew); Frostfin 300g, no bundle slot; own named winter cap; random uncommon seed; aged roe quality closed.
-2. **#873 heart events** (note 62): the list per person is drafted (58 new events at 2 and 6 hearts, placeholder text, built in `heart-events.json`). Left: owner edits to seeds, windows and rewards, which 6 heart unlock rewards are real, splitting the file per person if wanted, then 4, 8 and 10 with the voice sheets (M3d).
-3. **#878 Secret Woods statue and pond fish**, after note 93 (the species table is empty).
-4. **Note 93 left:** the species table, pond art, a cave pool on a map.
+1. **Owner answers left:** none. Decided 2026-11-13: garden pot is clay 1, stone 10 and a refined crystal (smelted quartz, Stardew), taught by Alder (still to build, with a smelt recipe); Frostfin 300g, no bundle slot; Frostday cap is Icewarden's Cap (built); the hunt prize is the emberseed (built); aged roe quality closed. Algae soup is the glassy-elver's reward (note 93).
+2. **#873 heart events** (note 62): the list per person is drafted (58 new events at 2 and 6 hearts, placeholder text, built in `heart-events.json`). Decided 2026-11-13: no unlock rewards, all 6 heart rewards are plain items (Stardew). Left: owner edits to seeds, windows and rewards, splitting the file per person if wanted, then 4, 8 and 10 with the voice sheets (M3d).
+3. **#878 Secret Woods statue and pond fish**, after note 93 (the species table is built).
+4. **Note 93 left:** the species numbers to tune in play (built as placeholders), pond art, a cave pool on a map.
 5. **#876 left:** judging (Harvest Showing), cake table dish picker (it takes the held item now),
    scene walking villagers and marchers, even-year hedge maze and niche lines, lantern drift
    animation, on-screen ice fishing counter, multiplayer counts (M4).
