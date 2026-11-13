@@ -15,10 +15,8 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
-# Stack-neutral repo hygiene checks only. Add your project's own
-# format/lint/typecheck/test/build job(s) alongside this once the stack is
-# chosen; that is a separate job so this one keeps working with no stack at
-# all.
+# Two jobs: stack-neutral repo hygiene checks, and the project's gates (the
+# same list as `npm run check`).
 jobs:
   repo-hygiene:
     runs-on: ubuntu-latest
@@ -70,3 +68,5 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+      - run: npm run overview:check
+      - run: npm run valley-map:check
