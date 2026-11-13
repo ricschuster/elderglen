@@ -970,3 +970,4 @@ Source: `src/core/quests.ts`, `src/content/requests.json`.
   Foraging 6. The pack waits on the rod until Action takes it; no new numbers.
 - Pond fish, the Fernscale: base price 750g, a hard bar (note 21).
 - Elderfruit: +34 maximum energy, seven sources, eaten on receipt (note 39).
+- Elderfruit placeholder prices: Harvest Showing counter 2,000g (once), hermit 20,000g (once); emberseed 14 days to grow (note 39).
