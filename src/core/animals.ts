@@ -8,6 +8,7 @@ import {
   withQuality,
   type Quality,
 } from "./quality";
+import { pondDigging } from "./pondsite";
 import type { GameState } from "./save";
 import { visibleTier } from "./map";
 import { isRaining } from "./weather";
@@ -934,6 +935,7 @@ export function buildingProblem(g: GameState, b: Building): string | undefined {
       : `The carpenter is busy with your ${g.animals.build.building}.`;
   if (g.houseBuild) return "The carpenter is busy with your house.";
   if (g.animals.siloDays > 0) return "The carpenter is busy with your silo.";
+  if (pondDigging(g)) return "The carpenter is busy digging your pond.";
   return shortOf(g, info.cost);
 }
 
@@ -986,6 +988,7 @@ export function upgradeProblem(g: GameState, b: Building): string | undefined {
       : `The carpenter is busy with your ${g.animals.build.building}.`;
   if (g.houseBuild) return "The carpenter is busy with your house.";
   if (g.animals.siloDays > 0) return "The carpenter is busy with your silo.";
+  if (pondDigging(g)) return "The carpenter is busy digging your pond.";
   return shortOf(g, up);
 }
 
@@ -1132,6 +1135,7 @@ export function siloProblem(g: GameState): string | undefined {
   if (g.animals.build)
     return `The carpenter is busy with your ${g.animals.build.building}.`;
   if (g.houseBuild) return "The carpenter is busy with your house.";
+  if (pondDigging(g)) return "The carpenter is busy digging your pond.";
   const missing: string[] = [];
   if (g.money < SILO_COST.coin)
     missing.push(`${SILO_COST.coin - g.money}g more`);

@@ -244,7 +244,7 @@ Settled where the notes left gaps. All numbers are placeholders (note 07).
   piece, and ignore item quality. The accepted items are a broad list by pot
   colour: flowers, forage, gems, fish, dishes and tools, with jelly, juice,
   pickles, wine, dried goods, smoked fish and roe taking the colour of their
-  ingredient. This replaces the single-input vat and its fixed dyes. Open
+  ingredient (aged roe too, built 2026-11-12, note 93). This replaces the single-input vat and its fixed dyes. Open
   design first: the clothing and look system (note 10) it needs, whether the
   built vat and the Dyer's bundle (23) stay, and where our pots stand. #660
   waits on that design. Cask days follow Stardew's, to be checked (SC-82).

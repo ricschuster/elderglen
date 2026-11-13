@@ -109,11 +109,7 @@ Core rules, content and tests are built. The scenes are not.
   after the pond fills and ticks only while it is full, items by water group
   (`questItems` in `pond.json`) and the top quest a made good or gem, XP 20 plus 5 per
   spawn day, the spawn clock resets. Removing fish pauses it, the same item comes back.
-- **Not built:** the carpenter menu line and the placing screen for the pond, the pond
-  menu, drawing the pond (art), the interact hooks in `FarmScene` (put in, take out with the
-  rod, take the roe, give the quest item), the morning report line for a finished pond, aged
-  roe in the preserves jar (note 24), the water finds in the fishing completion count and
-  cooking (algae soup), and the dev menu picks.
+- **Not built:** see the second and third passes below for what is still open.
 
 ### Gaps found while building (design to settle, not invented)
 
@@ -136,7 +132,9 @@ Core rules, content and tests are built. The scenes are not.
   bite nowhere in play until a map or floor carries a pool.
 - **Roe price.** Half the fish price is ours, not Stardew's.
 - **The carpenter is one job at a time.** The pond refuses an order while the coop, barn,
-  silo or house job runs, but the older jobs do not yet check for a pond under way.
+  silo or house job runs, and those jobs now wait for a pond under way too. Buildings cannot be
+  placed over a pond, and a pond cannot be placed over a building (`pondsite.ts` holds the shared
+  footprint so `placement.ts` need not import `pond.ts`).
 - **Sea urchin and coral.** Read as our Pin urchin and Sea fan (note 72). Confirm.
 
 ## Open
@@ -153,7 +151,62 @@ product, then a held fish, else the pond's status line); `pondNews` and three mo
 lines (pond finished, something to take, a fish asking); `FarmScene` hooks: Action on any
 pond tile runs `pondUse`, the rod on a pond tile lifts a fish (`takeFish`) instead of casting.
 
-Still not built: the carpenter menu line and placing screen for the pond, the pond menu
-(counts, the empty button), drawing the pond (art), aged roe in the preserves jar, water
-finds in the fishing completion count and cooking, dev menu picks, a pool on any map, and the
-species table (still empty, see the gaps).
+## Built status, third pass (2026-11-12)
+
+Built, with `tests/pondmenu.test.ts`: the carpenter menu line "Fish pond" (`pondOrderProblem`,
+`pondCostLine`: price, or what is lacking or the busy job, before a spot is chosen); the
+pond on the placing screen (`PlacementScene` takes `"pond"`; `pondBlockers` gives the red
+tiles, a spot is not free until the price is in hand; the same rules as `pondProblem`); the
+pond menu (`PondScene`, `pondMenu`: fish, count against the cap, the ask, a waiting product)
+with an Empty button (`emptyPond`). Action on a pond with nothing to put in, take or give opens
+the menu. The dev menu already lists the water finds and every roe item (item groups), so no
+dev pick was added; the pond itself is a building, not an item.
+
+Empty is taken, owner can correct: every fish goes to the pack (refused unless the pack has
+room for all), which resets the pond, as the rod's `takeFish` does one at a time. The note only
+says "the empty button".
+
+Still not built: drawing the pond (art), a pool on any map, and the
+species table (still empty, see the gaps). The coop, barn, stable, silo and house placing
+rules still do not check for a pond (a building can be put over a pond: `placementBlockers`
+is blind to ponds, and the other carpenter jobs do not wait for a pond under way).
+
+## Settled by the owner and built (2026-11-12)
+
+- **Water finds are not Fish entries.** They do not join the Fish completion category (note 39),
+  the fish kinds or the roster. They only count toward the "catch N fish" total, as note 38
+  says plants do in Stardew; trash does not. `FishLog.noteFind` (called by `landFind`) keeps a
+  separate saved `finds` count that `total` includes. Pale lichen and Glow jelly bite on no map
+  yet, which no longer matters for completion. Tests: `tests/roeandfinds.test.ts`.
+- **Algae soup is a pond reward only, with no cooking recipe.** Saved Fish Pond page: Slimejack
+  gives "1 Algae Soup or 5 Wild Bait" at 5 fish. Item `algae-soup` exists (price 100, energy 80,
+  placeholders). The hook is a per-species `reward` row in `pond.json` (`{"item", "count"}`),
+  given when a capacity quest is finished (to the pack, else at the pond). **Open: the species
+  table is empty and we have no slime-like fish, so no species carries it yet.** Name the
+  fish (or a legend) that gets it when the table is filled.
+- **Aged roe.** Roe in the preserves jar (`processing.ts`) becomes `<fish>-aged-roe` (name
+  "Aged <fish> roe"), 2 times the roe's price, 4 days (6,400 machine minutes, placeholder).
+  Aged roe goes in no machine. Sea urchin and coral roe count as any species. The Stardew rule is
+  from memory (SC-174, unchecked). Colour: `potColourOf` now strips `-roe` and `-aged-roe` and
+  uses the fish's pot colour (roe had no colour before this, only note 24 said it should).
+  Pot colours exist only for fish listed in `dyes.json` `potInputs`; a fish not listed has no
+  colour for its roe either.
+
+## Open question: aged roe quality (new)
+
+Quality of the input is ignored and aged roe is normal quality (as the jar ignores quality).
+
+## Open questions found 2026-11-12 (answered above: completion and soup)
+
+The note says the finds "feed" the fishing completion count and cooking (algae soup), but
+does not decide the rules, so neither is built. To settle:
+
+- **Completion count.** Do the six finds join the Fish category (note 39) as six more
+  one-time entries (47 fish plus shellfish plus six), or do they only count toward the
+  "catch N fish" achievements (note 38 says plants count there, trash does not)? A new
+  entry needs a saved found-once record (`FishLog.load` drops ids that are not fish).
+  Pale lichen and Glow jelly bite on no map yet (`cave-pool`), so counting them would make
+  the category impossible to finish until a map carries a pool.
+- **Algae soup.** No recipe is decided: ingredients (which find, how many), energy, sell
+  price, and how it is learned (a level, a letter or a shop). No other dish is named for the
+  finds. Do the jellies feed a dish at all?

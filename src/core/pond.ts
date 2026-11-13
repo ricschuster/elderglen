@@ -6,6 +6,9 @@ import type { FarmMap } from "./map";
 import { FARM_STORE } from "./mapstore";
 import { mayPlaceOn, placeTag } from "./placeables";
 import { placedFootprint } from "./placement";
+import { FISH_POND, POND_FOOTPRINT } from "./pondsite";
+
+export { FISH_POND, POND_FOOTPRINT };
 import type { PlacedItem } from "./placedstore";
 import { QUALITIES, splitQuality, withQuality } from "./quality";
 import type { GameState } from "./save";
@@ -24,7 +27,6 @@ import { isWaterFind } from "./waterfinds";
  * Content is `src/content/pond.json`; numbers not from the saved Fish Pond page
  * are placeholders. Pure rules, no Phaser.
  */
-export const FISH_POND = "fish-pond";
 export const POND_COST = {
   coin: pondData.build.coin,
   stone: pondData.build.stone,
@@ -32,10 +34,6 @@ export const POND_COST = {
   pondweed: pondData.build.pondweed,
 } as const;
 export const POND_BUILD_DAYS = pondData.build.days;
-export const POND_FOOTPRINT = {
-  w: pondData.build.footprint[0]!,
-  h: pondData.build.footprint[1]!,
-} as const;
 export const POND_CAPS = pondData.caps;
 export const LEGEND_CAP = pondData.legendCap;
 
@@ -51,6 +49,12 @@ interface SpeciesRow {
   goods?: PondGood[];
   /** False for a species that makes no roe. */
   roe?: boolean;
+  /**
+   * A gift for finishing a capacity quest (Stardew's quest rewards). Algae soup is meant
+   * for the slime-like fish (Stardew: Slimejack, 1 Algae Soup or 5 Wild Bait at 5 fish).
+   * Our species table is empty, so no row uses it yet.
+   */
+  reward?: { item: string; count: number };
 }
 
 /** A safety stop on the extra roe repeat (the chance makes more than 6 a rarity). */
@@ -175,6 +179,78 @@ const rectsOverlap = (
   b: { x: number; y: number; w: number; h: number },
 ) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
 
+/** Why the carpenter cannot start a pond now: another job under way. */
+function pondBusy(g: GameState): string | undefined {
+  if (g.animals.build)
+    return `The carpenter is busy with your ${g.animals.build.building}.`;
+  if (g.animals.siloDays > 0) return "The carpenter is busy with your silo.";
+  if (g.houseBuild) return "The carpenter is busy with your house.";
+  return undefined;
+}
+
+/** What the buyer still lacks of the pond's price, in words, or undefined. */
+function pondCostProblem(g: GameState): string | undefined {
+  const missing: string[] = [];
+  if (g.money < POND_COST.coin)
+    missing.push(`${POND_COST.coin - g.money}g more`);
+  for (const id of ["stone", "seaweed", "pondweed"] as const) {
+    const have = g.inventory.count(id);
+    if (have < POND_COST[id])
+      missing.push(
+        `${POND_COST[id] - have} more ${itemById(id)?.name.toLowerCase() ?? id}`,
+      );
+  }
+  return missing.length > 0 ? `You need ${missing.join(" and ")}.` : undefined;
+}
+
+/** The carpenter's menu line: why a pond cannot be ordered now (no spot yet), or undefined. */
+export function pondOrderProblem(g: GameState): string | undefined {
+  return pondBusy(g) ?? pondCostProblem(g);
+}
+
+/** The price in words, for the carpenter's menu line. */
+export function pondCostLine(): string {
+  const name = (id: string) => itemById(id)?.name.toLowerCase() ?? id;
+  return `${POND_COST.coin}g, ${POND_COST.stone} ${name("stone")}, ${POND_COST.seaweed} ${name("seaweed")} and ${POND_COST.pondweed} ${name("pondweed")}, ${POND_BUILD_DAYS} days`;
+}
+
+/** One tile that stops a pond standing where the player pointed, and why (the placing screen paints these red). */
+export function pondBlockers(
+  g: GameState,
+  map: FarmMap,
+  mapId: string,
+  x: number,
+  y: number,
+): { x: number; y: number; why: string }[] {
+  const out: { x: number; y: number; why: string }[] = [];
+  const fixed = [
+    ...(["coop", "barn", "stable", "greenhouse"] as const).flatMap((b) => {
+      const r = placedFootprint(g, b, mapId);
+      return r ? [r] : [];
+    }),
+    ...(SILO_SITES[mapId]
+      ? [{ ...SILO_SITES[mapId]!, w: SILO_FOOTPRINT.w, h: SILO_FOOTPRINT.h }]
+      : []),
+  ];
+  for (let ty = y; ty < y + POND_FOOTPRINT.h; ty++)
+    for (let tx = x; tx < x + POND_FOOTPRINT.w; tx++) {
+      const cell = { x: tx, y: ty, w: 1, h: 1 };
+      let why: string | undefined;
+      if (tx < 0 || ty < 0 || tx >= map.width || ty >= map.height)
+        why = "that is off the farm";
+      else if (fixed.some((r) => rectsOverlap(r, cell))) why = "a building";
+      else if (
+        pondsOf(g).some((p) =>
+          rectsOverlap({ x: p.x, y: p.y, ...POND_FOOTPRINT }, cell),
+        )
+      )
+        why = "another pond";
+      else if (!isClear(g, map, tx, ty)) why = "the ground is not clear";
+      if (why) out.push({ x: tx, y: ty, why });
+    }
+  return out;
+}
+
 /** Why the carpenter cannot build a pond with its top left here, or undefined. */
 export function pondProblem(
   g: GameState,
@@ -185,10 +261,8 @@ export function pondProblem(
 ): string | undefined {
   if (!mayPlaceOn(FISH_POND, placeTag(map, mapId)))
     return "A pond can only be built on the farm.";
-  if (g.animals.build)
-    return `The carpenter is busy with your ${g.animals.build.building}.`;
-  if (g.animals.siloDays > 0) return "The carpenter is busy with your silo.";
-  if (g.houseBuild) return "The carpenter is busy with your house.";
+  const busy = pondBusy(g);
+  if (busy !== undefined) return busy;
   const here = { x, y, w: POND_FOOTPRINT.w, h: POND_FOOTPRINT.h };
   const fixed = [
     ...(["coop", "barn", "stable", "greenhouse"] as const).flatMap((b) => {
@@ -208,17 +282,7 @@ export function pondProblem(
     for (let tx = x; tx < x + here.w; tx++)
       if (!isClear(g, map, tx, ty) && !pondCovering(g, tx, ty))
         return "The ground there is not clear.";
-  const missing: string[] = [];
-  if (g.money < POND_COST.coin)
-    missing.push(`${POND_COST.coin - g.money}g more`);
-  for (const id of ["stone", "seaweed", "pondweed"] as const) {
-    const have = g.inventory.count(id);
-    if (have < POND_COST[id])
-      missing.push(
-        `${POND_COST[id] - have} more ${itemById(id)?.name.toLowerCase() ?? id}`,
-      );
-  }
-  return missing.length > 0 ? `You need ${missing.join(" and ")}.` : undefined;
+  return pondCostProblem(g);
 }
 
 /** Pay for a pond and start the job. The placed item stands from today, the water waits two days. */
@@ -493,6 +557,9 @@ export function giveQuestItem(
   setState(p, s);
   const xp = pondData.questXp.base + pondData.questXp.perDay * spawnDaysOf(sp);
   const levelUp = g.skills.gain("fishing", xp);
+  const gift = SPECIES_ROWS[sp.id]?.reward;
+  if (gift && itemById(gift.item) && !g.inventory.add(gift.item, gift.count))
+    g.ground.drop(x, y, gift.item, gift.count);
   return {
     ok: true,
     done: true,
@@ -560,4 +627,47 @@ export function pondUse(
     return r;
   }
   return { ok: true, note: pondStatus(p) };
+}
+
+/** What the pond menu shows (note 93, "Interface"): the fish, count against the cap, the ask, and whether Empty works. */
+export interface PondMenu {
+  title: string;
+  lines: string[];
+  canEmpty: boolean;
+}
+
+export function pondMenu(p: PlacedItem): PondMenu {
+  const s = stateOf(p);
+  if (s.building > 0)
+    return { title: "Fish pond", lines: [pondStatus(p)], canEmpty: false };
+  const sp = speciesById(s.species);
+  if (!sp || s.count === 0)
+    return { title: "Fish pond", lines: [pondStatus(p)], canEmpty: false };
+  const name = itemById(sp.id)?.name ?? sp.id;
+  const lines = [`${name}: ${s.count} of ${capOf(s)}`];
+  if (s.quest)
+    lines.push(
+      `They want ${s.quest.need - s.quest.given} ${itemById(s.quest.item)?.name ?? s.quest.item} (${s.quest.given} of ${s.quest.need} given).`,
+    );
+  if (s.out)
+    lines.push(
+      `Waiting: ${s.out.count} ${itemById(s.out.item)?.name ?? s.out.item}.`,
+    );
+  return { title: "Fish pond", lines, canEmpty: true };
+}
+
+/**
+ * The Empty button: every fish goes to the pack (the rod's `takeFish`, repeated), so
+ * the pond resets. Nothing is taken unless the pack has room for all of them.
+ */
+export function emptyPond(g: GameState, x: number, y: number): Outcome {
+  const p = pondAt(g, x, y);
+  if (!p) return fail("There is no pond here.");
+  const s = stateOf(p);
+  if (s.building > 0 || s.count === 0 || s.species === undefined)
+    return fail("There is no fish to take.");
+  if (g.inventory.room(s.species) < s.count) return fail("backpack full");
+  const item = s.species;
+  for (let n = s.count; n > 0; n--) takeFish(g, x, y);
+  return { ok: true, item };
 }

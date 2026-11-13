@@ -1,0 +1,15 @@
+{
+  "_note": "Frostday ice fishing contest (note 82, owner decisions 2026-11-12). 5 fish at the ice holes win, else Rushie does. Cuthbert judges. The prize is one Frostfin each year and a hat the first time. The Frostfin's price, art, bundle use and the hat are open (placeholders). Frostfin chance, difficulty and judging time are placeholders to tune in play.",
+  "win": 5,
+  "judgeAt": "17:00",
+  "frostfinChance": 0.2,
+  "hat": "snow-cap",
+  "frostfin": {
+    "id": "frostfin",
+    "name": "Frostfin",
+    "sellPrice": 300,
+    "difficulty": 45,
+    "behaviour": "dart",
+    "length": [25, 60]
+  }
+}

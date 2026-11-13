@@ -1,6 +1,7 @@
 import type { Farm } from "./farm";
 import type { FruitTrees } from "./fruittrees";
 import type { Sprinklers } from "./sprinklers";
+import type { TeaBushes } from "./teabush";
 import type { GameState } from "./save";
 
 /**
@@ -15,6 +16,7 @@ export interface MapStore {
   soil: Farm;
   sprinklers: Sprinklers;
   fruitTrees: FruitTrees;
+  teaBushes: TeaBushes;
 }
 
 /** The ids a store is saved under. */
@@ -28,6 +30,12 @@ export function storeOf(g: GameState, indoors: boolean): MapStore {
         soil: g.greenhouse,
         sprinklers: g.greenhouseSprinklers,
         fruitTrees: g.greenhouseFruitTrees,
+        teaBushes: g.greenhouseTeaBushes,
       }
-    : { soil: g.farm, sprinklers: g.sprinklers, fruitTrees: g.fruitTrees };
+    : {
+        soil: g.farm,
+        sprinklers: g.sprinklers,
+        fruitTrees: g.fruitTrees,
+        teaBushes: g.teaBushes,
+      };
 }

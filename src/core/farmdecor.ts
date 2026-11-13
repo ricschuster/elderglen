@@ -23,6 +23,12 @@ export const isFarmDecor = (id: string | undefined): boolean =>
 export const farmDecorIds = (): string[] =>
   PLACEABLES.filter((p) => p.kind === "decor").map((p) => p.id);
 
+/** The decorations the keeper sells (those with a price); the keepsake lantern is a festival gift only. */
+export const farmDecorForSale = (): string[] =>
+  PLACEABLES.filter((p) => p.kind === "decor" && p.price !== undefined).map(
+    (p) => p.id,
+  );
+
 /** The tiles a decoration at (x, y) covers. */
 export function decorTiles(
   id: string,

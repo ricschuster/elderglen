@@ -24,6 +24,7 @@ import {
 import { newHorse } from "./horse";
 import { HARDWOOD } from "./items";
 import type { FarmMap } from "./map";
+import { pondRects } from "./pondsite";
 import type { GameState } from "./save";
 
 /**
@@ -157,6 +158,7 @@ function clutterAt(g: GameState, x: number, y: number): string | undefined {
   const t = g.trees.at(x, y);
   if (t) return t.stump ? "a stump" : "a tree";
   if (g.fruitTrees.at(x, y)) return "a fruit tree";
+  if (g.teaBushes.at(x, y)) return "a tea bush";
   if (g.weeds.at(x, y)) return "weeds";
   if (g.twigs.at(x, y)) return "a twig";
   // Empty tilled soil does not block: it is cleared under the building.
@@ -190,6 +192,7 @@ export function placementBlockers(
     o,
     r: placedFootprint(g, o, mapId),
   }));
+  const ponds = pondRects(g, mapId);
   const silo = SILO_SITES[mapId];
   const siloRect = silo
     ? { x: silo.x, y: silo.y, w: SILO_FOOTPRINT.w, h: SILO_FOOTPRINT.h }
@@ -206,6 +209,7 @@ export function placementBlockers(
       if (tx === d.x && ty === d.y + 1) return `the door of your ${NAME[o]}`;
     }
     if (siloRect && inRect(siloRect, tx, ty)) return "the silo's spot";
+    if (ponds.some((r) => inRect(r, tx, ty))) return "a fish pond";
     if (g.chests.at(mapId, tx, ty)) return "a chest";
     return clutterAt(g, tx, ty);
   };
@@ -242,8 +246,10 @@ function walkable(
     silo && g.animals.silo
       ? { x: silo.x, y: silo.y, w: SILO_FOOTPRINT.w, h: SILO_FOOTPRINT.h }
       : undefined;
+  const ponds = pondRects(g, mapId);
   return (x: number, y: number): boolean => {
     if (map.isBlocked(x, y)) return false;
+    if (ponds.some((r) => inRect(r, x, y))) return false;
     if (siloRect && inRect(siloRect, x, y)) return false;
     for (const { r, d } of placed)
       if (inRect(r, x, y) && !(d && x === d.x && y === d.y)) return false;

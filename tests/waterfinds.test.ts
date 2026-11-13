@@ -60,14 +60,16 @@ describe("water finds (note 93)", () => {
     expect(bite("river", day, () => 0.05, true).kind).toBe("fish");
   });
 
-  it("lands in the pack with fishing XP and leaves the fish log alone", () => {
+  it("lands in the pack with fishing XP and makes no fish log entry", () => {
     const g = newGame();
     const before = g.skills.save().fishing;
     const r = landFind(g, { x: 1, y: 1 }, "pondweed");
     expect(r.dropped).toBe(false);
     expect(g.inventory.count("pondweed")).toBe(1);
     expect(g.skills.save().fishing).toBeGreaterThan(before);
-    expect(g.fishing.total).toBe(0);
+    expect(g.fishing.kinds).toBe(0);
+    expect(g.fishing.has("pondweed")).toBe(false);
+    expect(g.fishing.total).toBe(1);
   });
 
   it("drops a find at the feet when the pack is full", () => {

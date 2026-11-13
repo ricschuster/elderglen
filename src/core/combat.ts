@@ -4,7 +4,12 @@ import { Effects } from "./effects";
 import { RINGS, bootsById, type RingDef } from "./equipment";
 import { itemById } from "./items";
 import { splitQuality } from "./quality";
-import { SLAYER_GOALS, slayerKills, type Creature } from "./creatures";
+import {
+  SLAYER_GOALS,
+  slayerKills,
+  type Creature,
+  type SlayerGoal,
+} from "./creatures";
 import type { Skills } from "./skills";
 import type { Facing, Vec } from "./movement";
 import type { GameState } from "./save";
@@ -243,7 +248,7 @@ function hasRing(g: GameState, id: string): boolean {
   return g.inventory.count(id) > 0 || g.equipment.worn().includes(id);
 }
 
-/** Rings the trainer sells for coin: the Defense rings (note 94). The +1 ring waits for the trainer's first meeting, the +5 ring for a mine floor. */
+/** Rings the trainer sells for coin: the Defense +1 ring (note 94), which waits for the trainer's first meeting. */
 export const SHOP_RINGS: RingDef[] = RINGS.filter((r) => r.shop);
 
 /** Why a shop ring is not on offer yet, or undefined when it is. */
@@ -291,6 +296,32 @@ export function claimSlayerRing(g: GameState, id: string): string | undefined {
   if (!g.inventory.add(id)) return "Your backpack is full.";
   g.money -= fee;
   if (!g.combat.slayerClaimed.includes(id)) g.combat.slayerClaimed.push(id);
+  return undefined;
+}
+
+/** Slayer goals whose reward is an item stack rather than a ring. */
+export const SLAYER_ITEM_GOALS = SLAYER_GOALS.filter((s) => s.reward);
+
+/** True once the kill tally meets an item-reward goal and it is not yet claimed. */
+export function slayerItemReady(g: GameState, goal: SlayerGoal): boolean {
+  return (
+    !!goal.reward &&
+    slayerKills(goal, g.combat.kills) >= goal.goal &&
+    !g.combat.slayerClaimed.includes(`goal:${goal.id}`)
+  );
+}
+
+/** Hand over an item-reward slayer goal once (free, not rebought). Returns an error line, or undefined. */
+export function claimSlayerItem(g: GameState, id: string): string | undefined {
+  const goal = SLAYER_ITEM_GOALS.find((s) => s.id === id);
+  if (!goal?.reward) return "She has no such reward.";
+  if (g.combat.slayerClaimed.includes(`goal:${id}`))
+    return "You already took it.";
+  if (slayerKills(goal, g.combat.kills) < goal.goal)
+    return "That goal is not met yet.";
+  if (!g.inventory.add(goal.reward.item, goal.reward.count))
+    return "Your backpack is full.";
+  g.combat.slayerClaimed.push(`goal:${id}`);
   return undefined;
 }
 

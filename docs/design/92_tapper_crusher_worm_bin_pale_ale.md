@@ -125,7 +125,11 @@ Tapper is 40 Wood and 2 Copper Bars at Foraging level 4. The Heavy Tapper is 30 
 Hearthsilver bar (our stand-in for Stardew's Radioactive Bar, the top rare bar we have), and its
 recipe is the reward of the Rare Finds bundle (bundle 6, the rare forage one, whose reward was 5
 mushroom stews; the stew reward is gone). There is no level source for it. Stardew gives the recipe
-from the Forager's Bundle (owner, 2026-11-12), so this is our nearest bundle. Open: the Heavy
-Tapper's cycles (3, 4, 2 days, mahogany daily) are from the saved Trees page, but whether Stardew's
-Heavy Tapper also yields more per cycle is not checked here, so no extra yield is built.
+from the Forager's Bundle (owner statement), but the saved Heavy Tapper page (read 2026-11-12, SC-168)
+says it is bought in Mr. Qi's Secret Walnut Room (Ginger Island) for 20 Qi Gems, so the Rare Finds
+bundle reward is our own mapping, not Stardew. Checked on that page: the Heavy Tapper works twice as
+fast and yields the same goods, it only changes production time (minimum one night, so no gain on
+mahogany), and it does not speed a Mushroom Tree. Our cycles (3, 4, 2 days, mahogany daily) already
+meet that, and no extra yield is built. We have no tappable mushroom trees yet; when we do, the
+Heavy Tapper must keep the plain cycle there.
 Nothing here was verified by play.

@@ -113,10 +113,10 @@ describe("equipment stats", () => {
     const eq = new Equipment();
     inv.add("warded-boots");
     inv.add("sturdy-band");
-    inv.add("iron-defense-ring");
+    inv.add("crabshell-ring");
     eq.wearBoots(inv, "warded-boots");
     eq.wear(inv, 0, "sturdy-band");
-    eq.wear(inv, 1, "iron-defense-ring");
+    eq.wear(inv, 1, "crabshell-ring");
     expect(eq.defense()).toBe(7);
     expect(eq.immunity()).toBe(5);
     expect(eq.halvesEffects()).toBe(true);

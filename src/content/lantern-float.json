@@ -1,0 +1,6 @@
+{
+  "_note": "Lamplight Evening lantern floating (note 82). Every number and name here is a placeholder, open in the note: the lantern's price, the friendship gain and the keepsake. The keepsake is given the first time you launch (once ever), the gain is given once a year.",
+  "lantern": { "id": "paper-lantern", "name": "Paper lantern", "price": 100 },
+  "keepsake": { "id": "keepsake-lantern", "name": "Keepsake lantern" },
+  "points": 20
+}

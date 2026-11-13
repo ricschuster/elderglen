@@ -5,6 +5,7 @@ import { RECIPES } from "../src/core/crafting";
 import { pickupRadius } from "../src/core/ground";
 import { Inventory } from "../src/core/inventory";
 import { itemById } from "../src/core/items";
+import { SLAYER_GOALS } from "../src/core/creatures";
 import { newGame, serialize, deserialize } from "../src/core/save";
 
 describe("rings", () => {
@@ -148,7 +149,7 @@ describe("boots", () => {
 });
 
 describe("ring sources", () => {
-  it("the Defense rings are sold at the trainer, +1 after meeting her, +5 from floor 40", () => {
+  it("the Defense rings are sold at the trainer, +1 after meeting her, and the +5 ring is not sold", () => {
     const g = newGame();
     g.money = 10000;
     expect(buyRing(g, "defense-ring")).toBe("Meet the trainer first.");
@@ -156,10 +157,9 @@ describe("ring sources", () => {
     expect(buyRing(g, "defense-ring")).toBeUndefined();
     expect(g.money).toBe(9000);
     expect(buyRing(g, "defense-ring")).toBe("You already have one.");
-    expect(buyRing(g, "iron-defense-ring")).toBe("Reach floor 40 first.");
-    g.mines.deepest = 40;
-    expect(buyRing(g, "iron-defense-ring")).toBeUndefined();
-    expect(g.money).toBe(4000);
+    g.mines.deepest = 120;
+    expect(buyRing(g, "crabshell-ring")).toBe("She does not sell that.");
+    expect(g.money).toBe(9000);
     expect(buyRing(g, "slime-proof-ring")).toBe("She does not sell that.");
   });
 
@@ -188,6 +188,23 @@ describe("ring sources", () => {
     g.money = 30000;
     expect(claimSlayerRing(g, "slime-proof-ring")).toBeUndefined();
     expect(g.money).toBe(5000);
+  });
+
+  it("the crabshell ring (Defense +5) is the Rock Crab 60 reward, free once", () => {
+    const g = newGame();
+    const r = ringById("crabshell-ring")!;
+    expect(r.defense).toBe(5);
+    expect(r.shop).toBeUndefined();
+    expect(SLAYER_GOALS.find((s) => s.id === "rock-crab")?.goal).toBe(60);
+    g.combat.kills["rock-crab"] = 59;
+    expect(claimSlayerRing(g, "crabshell-ring")).toBe(
+      "That goal is not met yet.",
+    );
+    g.combat.kills["rock-crab"] = 60;
+    expect(claimSlayerRing(g, "crabshell-ring")).toBeUndefined();
+    expect(g.inventory.count("crabshell-ring")).toBe(1);
+    g.equipment.wear(g.inventory, 0, "crabshell-ring");
+    expect(g.equipment.defense()).toBe(5);
   });
 
   it("saves which slayer rings were handed over", () => {

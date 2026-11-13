@@ -64,7 +64,7 @@ export function rollFind(
 
 /**
  * Lift a find: it goes in the pack (or lies at the player's feet when full) and
- * gives a little fishing XP. Not a fish: the fish log is untouched.
+ * gives a little fishing XP. Not a fish: no log entry, only the catch total counts it.
  */
 export function landFind(
   g: GameState,
@@ -76,5 +76,6 @@ export function landFind(
     g.ground.drop(at.x, at.y, item, 1);
     dropped = true;
   }
+  g.fishing.noteFind();
   return { dropped, levelUp: g.skills.gain("fishing", FIND_XP) };
 }

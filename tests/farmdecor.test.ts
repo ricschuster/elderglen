@@ -38,7 +38,7 @@ function holding(id: string, n = 1) {
 }
 
 describe("farm decoration rows", () => {
-  it("are the six pieces, farm only, blocking, lifted by hand, with the keeper's prices", () => {
+  it("are the six pieces and the keepsake lantern, farm only, blocking, lifted by hand, with the keeper's prices", () => {
     expect(farmDecorIds()).toEqual([
       "ornamental-hay-bale",
       "doghouse",
@@ -46,6 +46,7 @@ describe("farm decoration rows", () => {
       "cat-tree",
       "dark-cat-tree",
       "bird-house",
+      "keepsake-lantern",
     ]);
     for (const id of farmDecorIds()) {
       const p = placeableById(id)!;

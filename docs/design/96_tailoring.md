@@ -12,8 +12,8 @@ Part of note 10 ("Tailoring" and "Dyes"). Ring 1 only, art waits for M3d.
   The only part checked is the saved Wool page: cloth in the feed with wool in the spool
   makes a Plain Shirt, and wool in the spool of a dyeable piece is a white dye.
 - **Place (Stardew-shaped):** the Hat-maker household's house in Hearthwell (note 20),
-  with the six dye pots beside the machine (note 24, SC-95). It unlocks by a short scene
-  after the player's first cloth. No skill gate: cloth supply is the pacing.
+  with the six dye pots beside the machine (note 24, SC-95). It unlocks by Cordelia's 4 heart event
+  (owner, 2026-11-12; Stardew's sewing machine comes from Emily's 4 heart event, from memory, SC-162). No skill gate: cloth supply is the pacing.
 - **Scope (Stardew):** hats, shirts, pants and boots, all tailorable, shirts, pants and
   hats dyeable. Boots follow note 37 (move the stats of one pair onto another).
 
@@ -66,7 +66,6 @@ Gift tastes: cloth stays shared by the animal keeper and hat-maker (note 61).
 ## Open
 
 - The exact set of dye-pot items and colours (extend `dyes.json`).
-- Whether the unlock scene is a heart event or a plain first-cloth line.
 - Cloth prices at the Hat-maker's board.
 
 ## Built status (2026-11-12)
@@ -81,14 +80,19 @@ blue and purple), the `sewing-machine` and `dye-pots` services in the Hatter's h
 placeholder `TailorScene` (spool list, hue, saturation and value rows) plus shirt and pants
 rows in the hat box.
 
-Taken as: the unlock is a plain first-cloth line from Cordelia (not a heart event); a redo
+Taken as: the unlock is Cordelia's 4 heart event `cordelia-machine-4` at the Hatter's (window 10:00 to 16:00, placeholder lines), which sets the story flag `tailoring-open`; until then the machine shows a refusal line. The first-cloth line is removed, but an old save's world flag `tailoring-open` still opens the machine; a redo
 costs the six pot items again and no gold (owner, 2026-11-12); the second spool copy is refused.
 
 Boots can be tailored (2026-11-12, `tailorBoots` in `tailoring.ts`, a made `look@stats`
 item in `equipment.ts`, a placeholder boots section on the sewing screen, custom pairs
 wearable and saved). Unverified by play. Boots are not floor chest finds yet.
 
-Not built: processed goods taking their ingredient's colour in the pots, the
+Processed goods take their ingredient's colour in the pots (built 2026-11-12, placeholder
+rule): `potColourOf` strips the kind from a jam, pickles, wine, juice or dried id and looks
+the ingredient up in the pot and dye tables, so tomato jam is red. Other artisan goods
+(mead, cheese, oil, dishes beyond the table) are not pot items unless listed in `dyes.json`.
+
+Not built: the
 player sprite wearing shirts and pants (art, M3d), the Hat-maker's order board cloth, the
 cloth prices, the hatter map generator (it does not know the two new services, so
 regenerating the map drops them). Placeholders: all piece names and colours, the 29 spool

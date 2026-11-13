@@ -2,7 +2,7 @@
 
 Status: **core rules decided with the owner on 2026-11-06.** The form, the
 triggers, the rewards and replay are set. The event list, the scene commands and
-the first scripts are not. **Built (#600, 2026-11):** the core rules (`src/core/heartevents.ts`), the runner (`eventrun.ts`, `HeartEventScene`) and three placeholder proof events (`src/content/heart-events.json`). Built 2026-11-12: the presence window of note 84 (a `window` field, a start-inside-window check and a validator test that the person keeps the place in that window). Not built: the real event list and the spouse events. It builds on
+the first scripts are not. **Built (#600, 2026-11):** the core rules (`src/core/heartevents.ts`), the runner (`eventrun.ts`, `HeartEventScene`) and four placeholder events (`src/content/heart-events.json`): three proofs and Cordelia's 4 heart event, which unlocks tailoring (note 96). Built 2026-11-12: the presence window of note 84 (a `window` field, a start-inside-window check and a validator test that the person keeps the place in that window). Not built: the real event list and the spouse events. It builds on
 `61_friendship_and_gifts.md` and is layer 4 in `18_dialogue.md`.
 
 Source: the saved Stardew Friendship page, read 2026-11-06 (events unlock at

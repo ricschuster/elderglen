@@ -1,13 +1,16 @@
 import Phaser from "phaser";
 import {
   SHOP_RINGS,
+  SLAYER_ITEM_GOALS,
   SLAYER_RINGS,
   STARTERS,
   buyBack,
   buyRing,
+  claimSlayerItem,
   claimSlayerRing,
   recoveryFee,
   ringLocked,
+  slayerItemReady,
   slayerRingEarned,
   takeStarter,
 } from "../core/combat";
@@ -149,7 +152,30 @@ export class TrainerScene extends Phaser.Scene {
         ],
       };
     });
-    this.menu.setRows([...rows, ...rings, ...rewards, ...found]);
+    const itemRewards: Row[] = SLAYER_ITEM_GOALS.filter((s) =>
+      slayerItemReady(g, s),
+    ).map((s) => ({
+      label: `Slayer reward: ${itemById(s.reward?.item ?? "")?.name ?? s.name} x${s.reward?.count}`,
+      detail: "Free",
+      buttons: [
+        {
+          text: "Take",
+          run: () => {
+            this.message.setText(
+              claimSlayerItem(g, s.id) ?? "She hands you the bundle.",
+            );
+            this.refresh();
+          },
+        },
+      ],
+    }));
+    this.menu.setRows([
+      ...rows,
+      ...rings,
+      ...rewards,
+      ...itemRewards,
+      ...found,
+    ]);
   }
 
   private close(): void {

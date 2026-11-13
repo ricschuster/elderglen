@@ -35,8 +35,35 @@ import { sleep } from "../core/sleep";
 import { areaOf, enterArea, isAreaMap, leaveArea } from "../core/areas";
 import { eventAtTile } from "../core/eventrun";
 import { declinedToday } from "./HeartEventScene";
+import {
+  awardHuntPrize,
+  finishHunt,
+  huntEndLine,
+  huntLine,
+  huntOffer,
+  pickUp as pickUpPacket,
+  tickHunt,
+  type HuntState,
+} from "../core/seedhunt";
+import {
+  awardIcePrize,
+  finishIceFishing,
+  iceOffer,
+  isHole,
+  lakeShut,
+  startIceFishing,
+  type IceFishing,
+} from "../core/icefishing";
+import { cakeProblem, handInCake } from "../core/cakeday";
+import {
+  buyLantern,
+  lanternBuyProblem,
+  launchLantern,
+  launchProblem,
+} from "../core/lanterns";
 import { meet, presentAt, villagersOn, type Present } from "../core/townfolk";
 import { stageOf as fruitStageOf } from "../core/fruittrees";
+import { teaStageOf } from "../core/teabush";
 import type { GameState } from "../core/save";
 import { TOOLS, cycle, heldAt, nextRow, toolbarSize } from "../core/toolbar";
 import { pendingChoice } from "../core/professions";
@@ -459,6 +486,12 @@ export class FarmScene extends Phaser.Scene {
   /** The tile last checked for a heart event. */
   private eventTile = "";
   private villagerStamp = -1;
+  /** The running Seedswap hunt (placeholder markers and countdown). */
+  private hunt?: HuntState;
+  private huntGfx?: Phaser.GameObjects.Graphics;
+  private huntText?: Phaser.GameObjects.Text;
+  /** The Frostday ice fishing count (placeholder, note 82). */
+  private ice?: IceFishing;
   private tapAct?: Vec;
   /** True when the route ends in using the held item on `tapAct` (note 27). */
   private tapActUses = false;
@@ -609,6 +642,8 @@ export class FarmScene extends Phaser.Scene {
     this.syncCombatSettings();
     for (const c of this.floorState?.creatures ?? [])
       world.push(this.addCreatureSprite(c));
+    this.hunt = this.huntGfx = this.huntText = undefined;
+    this.ice = undefined;
     this.villagers = [];
     this.villagerSprites = new Map();
     this.villagerStamp = -1;
@@ -921,6 +956,7 @@ export class FarmScene extends Phaser.Scene {
     this.drawGlow();
     this.updateBombs(dt);
     this.syncVillagers();
+    this.updateHunt(dt);
     this.checkHeartEvent();
     const walking = this.tapPath.length > 0;
     const v = walking ? this.tapVector(dt) : this.controls.vector();
@@ -1079,6 +1115,7 @@ export class FarmScene extends Phaser.Scene {
       (log !== undefined && !logCleared(this.state, log)) ||
       (this.outdoorWorld && this.state.trees.blocks(x, y)) ||
       !!this.store.fruitTrees.at(x, y) ||
+      !!this.store.teaBushes.at(x, y) ||
       !!this.rocks()?.at(x, y) ||
       this.furnaceAt(x, y) ||
       coopBlocks(this.state, this.mapId, x, y) ||
@@ -1369,6 +1406,22 @@ export class FarmScene extends Phaser.Scene {
   private meetVillager(tile: Vec): boolean {
     const who = presentAt(this.villagers, tile.x, tile.y);
     if (!who) return false;
+    const offer = this.hunt
+      ? undefined
+      : huntOffer(
+          festivalDayToday(this.state.day.clock.day),
+          this.mapId,
+          who.id,
+          this.state.day.clock.day,
+          this.state.day.clock.minutes,
+        );
+    if (offer) {
+      this.hunt = offer.state;
+      this.message = offer.message ?? "";
+      this.render();
+      return true;
+    }
+    if (this.iceTalk(who.id)) return true;
     const held = heldAt(this.state, this.selected);
     const r = meet(
       this.state,
@@ -1398,7 +1451,8 @@ export class FarmScene extends Phaser.Scene {
     if (this.tapHand(tile)) return this.action();
     const tree =
       (!this.map.indoors && this.state.trees.at(tile.x, tile.y)) ||
-      this.store.fruitTrees.at(tile.x, tile.y);
+      this.store.fruitTrees.at(tile.x, tile.y) ||
+      this.store.teaBushes.at(tile.x, tile.y);
     const rock = this.rocks()?.at(tile.x, tile.y);
     if (tree || rock) {
       this.select(TOOLS.indexOf(tree ? "axe" : "pickaxe"));
@@ -1551,7 +1605,8 @@ export class FarmScene extends Phaser.Scene {
       held.tool === "axe" &&
       !!(
         (!this.map.indoors && this.state.trees.at(front.x, front.y)) ||
-        this.store.fruitTrees.at(front.x, front.y)
+        this.store.fruitTrees.at(front.x, front.y) ||
+        this.store.teaBushes.at(front.x, front.y)
       );
     const pick =
       held.kind === "tool" &&
@@ -2117,6 +2172,37 @@ export class FarmScene extends Phaser.Scene {
     this.refreshHolds();
   }
 
+  /** The Frostday contest for a cast landing on this tile: the state at a hole, "shut" before opening. */
+  private iceFor(x: number, y: number): IceFishing | "shut" | undefined {
+    const f = festivalDayToday(this.state.day.clock.day);
+    if (f?.id !== "frostday" || this.mapId !== "forest") return undefined;
+    if (lakeShut(f, this.state.day.clock.minutes)) return "shut";
+    if (!isHole(f, x, y)) return undefined;
+    this.ice ??= startIceFishing(f);
+    return this.ice;
+  }
+
+  /** Talk to Cuthbert at the contest: the count, or the judging, the prize and the end of the festival. */
+  private iceTalk(who: string): boolean {
+    const f = festivalDayToday(this.state.day.clock.day);
+    if (f?.id !== "frostday" || this.mapId !== "forest") return false;
+    this.ice ??= startIceFishing(f);
+    const line = iceOffer(this.ice, who, this.state.day.clock.minutes);
+    if (!line) return false;
+    this.message = line;
+    const s = this.ice;
+    if (s && s.status !== "fishing") {
+      const won = awardIcePrize(this.state, s);
+      if (won)
+        this.message +=
+          ` ${won.hat ? `You get the ${hatById(won.hat)?.name ?? "hat"}. ` : ""}${won.frostfin ? "You get a Frostfin." : ""}`.trim();
+      finishIceFishing(this.state, s);
+      this.ice = undefined;
+    }
+    this.render();
+    return true;
+  }
+
   /** Use a rod: it needs water in front of the player within the rod's range (note 21). */
   private cast(rodId: string): void {
     const rod = rodById(rodId)!;
@@ -2135,7 +2221,12 @@ export class FarmScene extends Phaser.Scene {
       here.x + step.x * first,
       here.y + step.y * first,
     );
-    this.open("fishing", { rod: rodId, water, at: here, kind });
+    const ice = this.iceFor(here.x + step.x * first, here.y + step.y * first);
+    if (ice === "shut") {
+      this.message = "The lake opens at noon.";
+      return this.render();
+    }
+    this.open("fishing", { rod: rodId, water, at: here, kind, ice });
   }
 
   /**
@@ -2151,6 +2242,7 @@ export class FarmScene extends Phaser.Scene {
     const spot = this.horseSpot();
     if (spot && spot.x === front.x && spot.y === front.y) return this.getOn();
     if (this.meetVillager(front)) return;
+    if (this.onLaunchLine(front)) return this.launchLantern();
     const service = this.map.serviceAt(front.x, front.y);
     if (service?.kind !== "tide-bridge") this.mendAsked = false;
     const shut = service
@@ -2246,7 +2338,7 @@ export class FarmScene extends Phaser.Scene {
     }
     if (service?.kind === "stairs")
       return this.travel(mineMapId(1), "from_above");
-    if (service && isFestivalMap(this.mapId))
+    if (service && (isFestivalMap(this.mapId) || service.kind === "cake-table"))
       return this.festivalAction(service);
     if (this.mapId === CAVE_MAP) return this.caveAction(front, service?.kind);
     if (service?.kind === "furnace") {
@@ -2313,9 +2405,15 @@ export class FarmScene extends Phaser.Scene {
       : undefined;
     if (pondHere) {
       const h = heldAt(this.state, this.selected);
-      return this.report(
-        pondUse(this.state, pondHere, h.kind === "item" ? h.id : undefined),
+      const r = pondUse(
+        this.state,
+        pondHere,
+        h.kind === "item" ? h.id : undefined,
       );
+      // Nothing to put in, take or give: the pond menu shows how it stands.
+      if (r.ok && r.item === undefined)
+        return this.open("pond", { x: pondHere.x, y: pondHere.y });
+      return this.report(r);
     }
     const result = act(this.state, this.map, front.x, front.y);
     if (!result.ok && result.reason === NOTHING_TO_ACT_ON) {
@@ -2437,6 +2535,8 @@ export class FarmScene extends Phaser.Scene {
    * hedge chest and cart finish the maze.
    */
   private festivalAction(service: { id: string; kind: string }): void {
+    if (service.kind === "cake-table") return this.cakeTable();
+    if (service.id === "lantern-stall") return this.lanternStall();
     const f = festivalOfMap(this.mapId);
     if (!f) return;
     switch (service.kind) {
@@ -2455,6 +2555,100 @@ export class FarmScene extends Phaser.Scene {
         this.message = sightLine(f, service.id) ?? "";
         return this.render();
     }
+  }
+
+  /** Lamplight Evening stall: buys a paper lantern (placeholder price). */
+  private lanternStall(): void {
+    const problem = lanternBuyProblem(this.state);
+    this.message =
+      problem ??
+      (buyLantern(this.state)
+        ? "You buy a paper lantern. Set it afloat from the shore."
+        : "");
+    this.render();
+  }
+
+  /** True when the player stands on, or faces, a tile of the launch line (Beach, Lamplight Evening). */
+  private onLaunchLine(front: { x: number; y: number }): boolean {
+    const line = this.map.regions.find((r) => r.id === "launch-line");
+    if (!line) return false;
+    const here = tileOf(this.pos, PLAYER, this.map.tileSize);
+    const inside = (t: { x: number; y: number }) =>
+      t.x >= line.x &&
+      t.x < line.x + line.w &&
+      t.y >= line.y &&
+      t.y < line.y + line.h;
+    return inside(here) || inside(front);
+  }
+
+  /** Sets the held lantern afloat (placeholder: no drifting yet). */
+  private launchLantern(): void {
+    const problem = launchProblem(this.state);
+    if (problem) {
+      this.message = problem;
+      return this.render();
+    }
+    const r = launchLantern(this.state);
+    this.message = r
+      ? `Your lantern drifts out with the rest. They like you a little more.${r.keepsake ? " You keep a small lantern." : ""}`
+      : "";
+    this.render();
+  }
+
+  /** Cake Day table: hands in the held cooked dish (placeholder, no picker yet). */
+  private cakeTable(): void {
+    const held = heldAt(this.state, this.selected);
+    const id = held.kind === "item" ? held.id : "";
+    const problem = cakeProblem(this.state, id);
+    if (problem) {
+      this.message = id ? problem : "Hold a cooked dish to put on the table.";
+      return this.render();
+    }
+    const r = handInCake(this.state, id);
+    this.message = r
+      ? `Everyone tastes your ${itemById(id)?.name.toLowerCase() ?? "dish"} (${r.quality}). They like you a little more.`
+      : "";
+    this.render();
+  }
+
+  /** The Seedswap hunt: clock, pick-up by walking, packet markers and the end (placeholder). */
+  private updateHunt(dt: number): void {
+    const s = this.hunt;
+    if (!s) return;
+    const ts = this.map.tileSize;
+    const f = festivalDayToday(this.state.day.clock.day);
+    if (!this.huntGfx) {
+      this.huntGfx = this.add.graphics().setDepth(850);
+      this.uiCamera.ignore(this.huntGfx);
+      const { width } = this.scale.gameSize;
+      this.huntText = this.add
+        .text(width / 2, 48, "", { fontSize: "18px", color: "#ffffff" })
+        .setOrigin(0.5, 0)
+        .setScrollFactor(0)
+        .setDepth(2000);
+      this.cameras.main.ignore(this.huntText);
+    }
+    const here = tileOf(this.pos, PLAYER, ts);
+    pickUpPacket(s, here.x, here.y);
+    tickHunt(s, dt);
+    this.huntGfx.clear().fillStyle(0xf0d040, 1);
+    for (const t of s.packets)
+      this.huntGfx.fillRect(t[0] * ts + 4, t[1] * ts + 4, ts - 8, ts - 8);
+    this.huntText?.setText(huntLine(s));
+    if (s.status === "running" || !f) return;
+    this.message = huntEndLine(f, s) ?? "";
+    const won = awardHuntPrize(this.state, s);
+    if (won)
+      this.message +=
+        ` ${won.hat ? `You get the ${hatById(won.hat)?.name ?? "hat"}.` : ""}${won.packet ? " You get a rare seed packet." : ""}`.replace(
+          / +/g,
+          " ",
+        );
+    finishHunt(this.state, f, s);
+    this.huntGfx.destroy();
+    this.huntText?.destroy();
+    this.huntGfx = this.huntText = this.hunt = undefined;
+    this.render();
   }
 
   /** Placeholder props on a festival map: tables, booths, villagers and the chest. */
@@ -2811,6 +3005,9 @@ export class FarmScene extends Phaser.Scene {
       put(t.x, t.y, fruitTreeKey(fruitStageOf(t.age)));
       if (t.fruit > 0) put(t.x, t.y, fruitOnTreeKey(t.id));
     }
+    // Placeholder art: the fruit tree sprites, tinted green (note 97).
+    for (const b of here.teaBushes.each())
+      put(b.x, b.y, fruitTreeKey(teaStageOf(b.age) * 2)).setTint(0x7fd66a);
   }
 
   /** What stands and lies outdoors: forage, weeds, twigs, machines, trees and goods on the ground. */

@@ -227,6 +227,16 @@
         },
         {
           "s": "decided",
+          "t": "Ring sources (2026-11-12): Defense +1 from the trainer, the Crabshell ring (Defense +5) as the Rock Crab 60 slayer reward as Stardew, the Sturdy band crafted at Combat 1 from Bug Meat, and the Icicle Hopper goal gives Bug Meat",
+          "ref": "94_defense_immunity_bad_effects.md"
+        },
+        {
+          "s": "decided",
+          "t": "Tailoring unlocks at Cordelia's 4 heart event; processed goods take their ingredient's colour in the dye pots; the Heavy Tapper works twice as fast, same goods (saved page)",
+          "ref": "96_tailoring.md"
+        },
+        {
+          "s": "decided",
           "t": "The first part of the mines (floors 1 to 10, ore shop, furnace, no creatures) is built in slice 1 so bars exist for sprinklers and machines",
           "ref": "33_build_order.md#Slice 1: year one on the farm"
         },

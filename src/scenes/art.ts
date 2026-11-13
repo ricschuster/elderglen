@@ -1011,6 +1011,7 @@ function paintFarmDecor(scene: Phaser.Scene): void {
     "cat-tree": ["#c8a878", "#8a6a44"],
     "dark-cat-tree": ["#6a5a6a", "#3a2e3a"],
     "bird-house": ["#9a7a4a", "#c8503c"],
+    "keepsake-lantern": ["#f0c860", "#8a5a2a"],
   };
   for (const id of farmDecorIds()) {
     const [body, trim] = colours[id] ?? ["#a08060", "#604830"];

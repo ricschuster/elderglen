@@ -19,6 +19,7 @@ import {
   type RodDef,
   legendGates,
 } from "../core/fishing";
+import { iceBite, noteHoleCatch, type IceFishing } from "../core/icefishing";
 import {
   BAITS,
   LURES,
@@ -55,6 +56,8 @@ export interface FishingData {
   at: { x: number; y: number };
   /** The kind of water fished (note 71). Absent means the river. */
   kind?: WaterKind;
+  /** The Frostday contest, when the cast went into an ice hole (note 82). */
+  ice?: IceFishing;
 }
 
 type Phase = "aim" | "wait" | "hook" | "fight" | "result";
@@ -347,6 +350,8 @@ export class FishingScene extends Phaser.Scene {
       this.tutorial,
       fx,
     );
+    if (this.cfg.ice)
+      this.pending = iceBite(this.pending, this.tutorial, Math.random);
     // A cast takes game time, win or lose, and spends the bait and a lure cast.
     g.day.act(cost, CAST_MINUTES);
     const gone = g.tackle.spend(this.rod.id);
@@ -463,6 +468,7 @@ export class FishingScene extends Phaser.Scene {
       random: Math.random,
       at: this.cfg.at,
     });
+    if (this.cfg.ice) noteHoleCatch(this.cfg.ice, this.cfg.kind, true);
     // The chest pays only when it was fetched as well as the fish.
     const prize = chest ? this.chestPrize : undefined;
     if (prize) giveTreasure(g, prize, this.cfg.at);

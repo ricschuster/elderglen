@@ -19,6 +19,10 @@ the item is used up; a new floor or wallpaper replaces the old one. Saved as
 wall tiles. Not built: hall bundle rewards that give wallpaper, other shops, and
 whether Stardew's general store should sell them instead (still not asked).
 
+Built 2026-11-12: the Lamplight Evening keepsake lantern is a farm decoration (`keepsake-lantern`,
+a `decor` placeable, farm only, lifted by hand, not sold by the keeper), given once ever by
+the first lantern launch (note 82). Placeholder art.
+
 ## Why
 
 Reader 1, a long-time Stardew Valley player, named decorating as a genre like,

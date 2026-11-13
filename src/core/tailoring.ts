@@ -1,6 +1,6 @@
 import dyeData from "../content/dyes.json";
 import tailorData from "../content/tailoring.json";
-import { CLOTH, DYE_INPUTS } from "./artisan";
+import { CLOTH, DYE_INPUTS, artisanById } from "./artisan";
 import {
   pieceById,
   clampTint,
@@ -10,9 +10,10 @@ import {
 } from "./clothes";
 import { TAILORED_SEP, bootsById, tailoredParts } from "./equipment";
 import { hatById } from "./hats";
+import { roeSpeciesOf } from "./pondspecies";
 import { splitQuality } from "./quality";
 import type { GameState } from "./save";
-import { hasFlag, setFlag } from "./worldflags";
+import { hasFlag } from "./worldflags";
 
 /**
  * Tailoring (`docs/design/96_tailoring.md`): the sewing machine and the dye pots in the
@@ -160,10 +161,26 @@ export const POT_COLOURS: readonly string[] = dyeData.potColours;
 const POT_ALIAS = dyeData.potAlias as Record<string, string>;
 const POT_INPUTS = dyeData.potInputs as Record<string, string>;
 
+/** Artisan kinds whose id is `<ingredient>-<kind>` (`artisanId`), so they take the ingredient's colour. */
+const PROCESSED_KINDS = ["jam", "pickles", "wine", "juice", "dried"];
+
+/** The raw colour of a processed good's ingredient (note 96): jam, pickles, wine, juice, dried. */
+function processedColour(base: string): string | undefined {
+  const cat = artisanById(base)?.category;
+  if (!cat || !PROCESSED_KINDS.includes(cat)) return undefined;
+  const input = base.slice(0, base.length - cat.length - 1);
+  return POT_INPUTS[input] ?? DYE_INPUTS[input];
+}
+
 /** The pot colour an item stains, if any. Plants follow the dye vat table; quality is ignored. */
 export function potColourOf(item: string): string | undefined {
   const base = splitQuality(item).base;
-  const c = POT_INPUTS[base] ?? DYE_INPUTS[base];
+  // Roe and aged roe take the colour of their fish (notes 24, 93).
+  const fish = roeSpeciesOf(base);
+  const c =
+    POT_INPUTS[fish ?? base] ??
+    DYE_INPUTS[fish ?? base] ??
+    processedColour(base);
   if (!c) return undefined;
   return POT_COLOURS.includes(c) ? c : POT_ALIAS[c];
 }
@@ -209,20 +226,22 @@ export type { PieceKind };
 
 // ---- the Hatter's house
 
-/** The flag raised when Cordelia first shows the machine (the first cloth, note 96). */
+/**
+ * The story flag set by Cordelia's 4 heart event (`cordelia-machine-4`, notes 62 and 96).
+ * Older saves may hold the same name as a world flag from the retired first-cloth line.
+ */
 export const TAILORING_OPEN = "tailoring-open";
 export const SEWING_SERVICE = "sewing-machine";
 export const DYE_POTS_SERVICE = "dye-pots";
 
 /**
- * Facing the machine or the pots. Before the first cloth the machine is Cordelia's; with
- * cloth in the pack she lends it, once, and it is open for good (no skill gate). Returns
- * a line to show, or undefined when the screen opens.
+ * Facing the machine or the pots. Until Cordelia's 4 heart event has set the flag the
+ * machine is hers; after it, it is open for good (no skill gate). A world flag of the same
+ * name, from the retired first-cloth line, still opens it so old saves keep their machine.
+ * Returns a line to show, or undefined when the screen opens.
  */
 export function tailoringLine(g: GameState): string | undefined {
-  if (hasFlag(g, TAILORING_OPEN)) return undefined;
-  if (g.inventory.count(CLOTH) < 1)
-    return "Cordelia's sewing machine, a basket of spools beside it. She says: bring me a bolt of cloth and I will show you.";
-  setFlag(g, TAILORING_OPEN);
-  return 'Cordelia looks at your cloth and smiles. "Feed one in here, put something on the spool, and see what comes out. The machine is yours whenever the shop is open."';
+  if (hasFlag(g, TAILORING_OPEN) || g.heartEvents.hasFlag(TAILORING_OPEN))
+    return undefined;
+  return "Cordelia's sewing machine, a basket of spools beside it. She keeps it to herself for now, and it does not look like it is for sale.";
 }

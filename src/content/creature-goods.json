@@ -7,5 +7,6 @@
   { "id": "bat-wing", "name": "Bat wing", "sellPrice": 40 },
   { "id": "pocket-coin", "name": "Pocket coin", "sellPrice": 15 },
   { "id": "warm-ember", "name": "Warm ember", "sellPrice": 35 },
-  { "id": "old-tools", "name": "Old tools", "sellPrice": 50 }
+  { "id": "old-tools", "name": "Old tools", "sellPrice": 50 },
+  { "id": "bug-meat", "name": "Bug meat", "sellPrice": 8 }
 ]
