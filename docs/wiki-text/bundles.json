@@ -1,0 +1,122 @@
+{
+  "spring-foraging": {
+    "text": "Spring is when the woods wake up. Walk the paths and look down. Give any 4 of the 6 things it asks for to finish it and take 15 parsnip seeds.",
+    "draft": true
+  },
+  "summer-foraging": {
+    "text": "Warm days bring berries and vines to the forage spots. Give any 3 of the 4 things it asks for to finish it and take 15 radish seeds.",
+    "draft": true
+  },
+  "autumn-foraging": {
+    "text": "Autumn hedges are heavy with fruit and nuts. Fill a basket before the frost. Give any 4 of the 6 things it asks for to finish it and take 15 beet seeds.",
+    "draft": true
+  },
+  "winter-foraging": {
+    "text": "Old Greencoat wants what the cold season gives: blooms in the snow, nuts and roots turned up by the hoe. Give any 3 of the 5 things it asks for to finish it and take a seed maker.",
+    "draft": true
+  },
+  "woodland": {
+    "text": "Fell trees, break rocks and clear the weeds. The hall needs a great deal of each. Give all 3 of the things it asks for to finish it and take a charcoal kiln.",
+    "draft": true
+  },
+  "rare-finds": {
+    "text": "Rare things turn up now and then on a forage spot or deep in the mine. Keep an eye out across the year. Give any 3 of the 5 things it asks for to finish it and take the heavy tapper recipe.",
+    "draft": true
+  },
+  "spring-crops": {
+    "text": "Plant these in spring. The shop sells the seeds. Give all 3 of the things it asks for to finish it and take 300 coins.",
+    "draft": true
+  },
+  "summer-crops": {
+    "text": "Summer crops love the heat. Plant them early in the season. Give all 3 of the things it asks for to finish it and take 400 coins.",
+    "draft": true
+  },
+  "autumn-crops": {
+    "text": "The autumn harvest for the larder shelves. The shop sells the seeds in fall. Give any 4 of the 6 things it asks for to finish it and take a bee house.",
+    "draft": true
+  },
+  "quality-crops": {
+    "text": "Five of three kinds, each one at least silver. Tend the soil, and fertilizer helps. Give any 3 of the 4 things it asks for to finish it and take a preserves jar.",
+    "draft": true
+  },
+  "animal-goods": {
+    "text": "Eggs from the coop and milk from the barn. Duck eggs, goat milk and wool come with the bigger buildings. Give any 4 of the 5 things it asks for to finish it and take a cheese press.",
+    "draft": true
+  },
+  "artisan-goods": {
+    "text": "Jars of jam and pickles, a comb of honey, or fruit from your own orchard. Give any 4 of the 5 things it asks for to finish it and take a keg.",
+    "draft": true
+  },
+  "smiths": {
+    "text": "Bars from the furnace: ore from the mine or the smith, and coal to smelt it. Give all 3 of the things it asks for to finish it and take 20 coal.",
+    "draft": true
+  },
+  "weavers": {
+    "text": "Wool from the sheep or rabbit, and plant fibre from the weeds. Give all 2 of the things it asks for to finish it and take a loom.",
+    "draft": true
+  },
+  "lamplighters": {
+    "text": "Light for the long evenings: standing lamps, oil from the press, or candles made from beeswax. Give any 2 of the 3 things it asks for to finish it and take a small glow ring.",
+    "draft": true
+  },
+  "dyers": {
+    "text": "Flowers and berries that colour cloth: spring daffodils, summer sweet peas, autumn cranberries and winter crocuses. Give any 4 of the 12 things it asks for to finish it and take a dye vat.",
+    "draft": true
+  },
+  "cooks": {
+    "text": "Three of the dishes the valley's kitchens are known for, hot from your own stove. Give any 3 of the 5 things it asks for to finish it and take 3 innkeeper's roast.",
+    "draft": true
+  },
+  "stream-fish": {
+    "text": "Fish the river from the farm to the delta. Some run only in one season, so keep a line in all year. Give any 3 of the 5 things it asks for to finish it and take 30 plain bait.",
+    "draft": true
+  },
+  "lake-fish": {
+    "text": "Still water: the forest lake, the mountain lake and the delta marsh. Give any 3 of the 4 things it asks for to finish it and take a glint lure.",
+    "draft": true
+  },
+  "sea-fish": {
+    "text": "Cast from the Beach. The sea gives different fish by the season. Give any 4 of the 6 things it asks for to finish it and take 5 beach warp totem.",
+    "draft": true
+  },
+  "night-fishing": {
+    "text": "Fish after dark, on lake, marsh and sea. A moth lure helps. Give any 3 of the 4 things it asks for to finish it and take a glow ring.",
+    "draft": true
+  },
+  "specialty-fish": {
+    "text": "One rare fish each from the river, a lake and the sea, and the Pearl Lobster. Rain, dawn and a good rod help. Give all 4 of the things it asks for to finish it and take 5 fisher's stew.",
+    "draft": true
+  },
+  "trap-catch": {
+    "text": "Shellfish from pots set in fresh and salt water. Bait the pot each day. Give any 5 of the 8 things it asks for to finish it and take 3 shellfish pot.",
+    "draft": true
+  },
+  "fodder": {
+    "text": "Hay from the silo or the carpenter, grain from the fields, and roots from the cellar. The coop will want a heater come winter. Give all 3 of the things it asks for to finish it and take a coop heater.",
+    "draft": true
+  },
+  "hosts": {
+    "text": "A table worth sitting at: bread, honey cake and a pot of herb tea. Give all 3 of the things it asks for to finish it and take a hat of your choice.",
+    "draft": true
+  },
+  "storytellers": {
+    "text": "Old things turn up under the hoe, and the quiet mine floors keep a few. Old Greencoat collects stories. Give any 3 of the 5 things it asks for to finish it and take a green-glass lantern.",
+    "draft": true
+  },
+  "harvest-feast": {
+    "text": "One of everything the valley's kitchens and cellars make: a meal, a preserve, a cheese and honey, three of each. Give all 4 of the things it asks for to finish it and take a crystalarium.",
+    "draft": true
+  },
+  "the-catch": {
+    "text": "The finest of each water: a stream, a lake, a sea and a night fish, all gold quality. Give all 4 of the things it asks for to finish it and take a magnet ring.",
+    "draft": true
+  },
+  "hearth-fire": {
+    "text": "Metal, light, cloth and colour to warm a hall for the long road. Oil stands in for lamps for now. Give all 4 of the things it asks for to finish it and take a big chest.",
+    "draft": true
+  },
+  "long-road": {
+    "text": "Supplies for the road past the bridge. Old Greencoat will write you a letter of introduction. Give all 4 of the things it asks for to finish it and take a letter to the elves.",
+    "draft": true
+  }
+}

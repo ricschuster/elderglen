@@ -1,34 +1,26 @@
 {
   "farm": {
-    "text": "Your own land. The house, the coop, the barn and the fields are here.",
-    "draft": true
+    "text": "Your own land. The house, the coop, the barn and the fields are here."
   },
   "forest": {
-    "text": "A big wood north of the farm, with its own lake, forage in every season and the old farmstead.",
-    "draft": true
+    "text": "A big wood north of the farm, with its own lake, forage in every season and the old farmstead."
   },
   "secret-woods": {
-    "text": "A small hidden wood with a quiet pond. Few people come here.",
-    "draft": true
+    "text": "A small hidden wood with a quiet pond. Few people come here."
   },
   "mountain": {
-    "text": "The high ground above the valley, with a mountain lake and the way down to the mines.",
-    "draft": true
+    "text": "The high ground above the valley, with a mountain lake and the way down to the mines."
   },
   "delta": {
-    "text": "Where the river reaches the sea. Marsh, tide pools and the Beach all lie here.",
-    "draft": true
+    "text": "Where the river reaches the sea. Marsh, tide pools and the Beach all lie here."
   },
   "cove": {
-    "text": "A sheltered cove on the lake. It opens once the Water room of the hall is finished.",
-    "draft": true
+    "text": "A sheltered cove on the lake. It opens once the Water room of the hall is finished."
   },
   "quarry": {
-    "text": "A rocky pit where ore and stone come out of the ground, and it keeps refilling.",
-    "draft": true
+    "text": "A rocky pit where ore and stone come out of the ground, and it keeps refilling."
   },
   "hearthwell": {
-    "text": "The village at the heart of the valley, with the shops, the inn, the library and the hall.",
-    "draft": true
+    "text": "The village at the heart of the valley, with the shops, the inn, the library and the hall."
   }
 }

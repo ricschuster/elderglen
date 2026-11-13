@@ -1,0 +1,214 @@
+{
+  "sprinkler": {
+    "text": "Something to make: sprinkler. Learned at Farming level 2.",
+    "draft": true
+  },
+  "quality-sprinkler": {
+    "text": "Something to make: quality sprinkler. Learned at Farming level 6.",
+    "draft": true
+  },
+  "basic-fertilizer": {
+    "text": "Something to make: basic fertilizer. Learned at Farming level 1.",
+    "draft": true
+  },
+  "basic-retaining-soil": {
+    "text": "Something to make: basic retaining soil. Learned at Farming level 4.",
+    "draft": true
+  },
+  "charcoal-kiln": {
+    "text": "Something to make: charcoal kiln. Learned at Foraging level 2. A reward from the Woodland bundle in the village hall. A reward for the \"Too many fish\" order on the board.",
+    "draft": true
+  },
+  "bee-house": {
+    "text": "Something to make: bee house. Learned at Farming level 3. A reward from the Autumn Crops bundle in the village hall.",
+    "draft": true
+  },
+  "preserves-jar": {
+    "text": "Something to make: preserves jar. Learned at Farming level 4. A reward from the Quality Crops bundle in the village hall.",
+    "draft": true
+  },
+  "keg": {
+    "text": "Something to make: keg. Learned at Farming level 8. A reward from the Artisan Goods bundle in the village hall.",
+    "draft": true
+  },
+  "seed-maker": {
+    "text": "Something to make: seed maker. A reward from the Winter Foraging bundle in the village hall. Learned at Farming level 9. A reward for the \"Cave patrol\" order on the board.",
+    "draft": true
+  },
+  "dehydrator": {
+    "text": "Something to make: dehydrator. Learned at Farming level 4. A reward for the \"Fine vegetables\" order on the board.",
+    "draft": true
+  },
+  "furnace": {
+    "text": "Something to make: furnace. Learned at Mining level 4.",
+    "draft": true
+  },
+  "recycler": {
+    "text": "Something to make: recycler. Learned at Fishing level 4. A reward for the \"Still waters\" order on the board.",
+    "draft": true
+  },
+  "chest": {
+    "text": "Something to make: chest. You know it from the start.",
+    "draft": true
+  },
+  "stone-chest": {
+    "text": "Something to make: stone chest. You know it from the start.",
+    "draft": true
+  },
+  "big-chest": {
+    "text": "Something to make: big chest. Learned at Farming level 4.",
+    "draft": true
+  },
+  "big-stone-chest": {
+    "text": "Something to make: big stone chest. Learned at Farming level 6.",
+    "draft": true
+  },
+  "cheese-press": {
+    "text": "Something to make: cheese press. Learned at Farming level 6. A reward from the Animal Goods bundle in the village hall. A reward for the \"Spring leeks\" order on the board.",
+    "draft": true
+  },
+  "mayonnaise-machine": {
+    "text": "Something to make: mayonnaise machine. Learned at Farming level 2.",
+    "draft": true
+  },
+  "loom": {
+    "text": "Something to make: loom. Learned at Farming level 7. A reward from the Weaver's bundle in the village hall.",
+    "draft": true
+  },
+  "oil-maker": {
+    "text": "Something to make: oil maker. Learned at Farming level 8.",
+    "draft": true
+  },
+  "dye-vat": {
+    "text": "Something to make: dye vat. A reward from the Dyer's bundle in the village hall.",
+    "draft": true
+  },
+  "cask": {
+    "text": "Something to make: cask. Comes with the cellar.",
+    "draft": true
+  },
+  "torch": {
+    "text": "Something to make: torch. You know it from the start.",
+    "draft": true
+  },
+  "campfire": {
+    "text": "Something to make: campfire. You know it from the start.",
+    "draft": true
+  },
+  "wood-brazier": {
+    "text": "Something to make: wood brazier. Learned at Foraging level 2.",
+    "draft": true
+  },
+  "stone-brazier": {
+    "text": "Something to make: stone brazier. Learned at Mining level 2.",
+    "draft": true
+  },
+  "lightning-rod": {
+    "text": "Something to make: lightning rod. Learned at Foraging level 6.",
+    "draft": true
+  },
+  "wood-lamp-post": {
+    "text": "Something to make: wood lamp-post. Learned at Farming level 7.",
+    "draft": true
+  },
+  "iron-lamp-post": {
+    "text": "Something to make: iron lamp-post. Learned at Farming level 9.",
+    "draft": true
+  },
+  "tapper": {
+    "text": "Something to make: tapper. Learned at Foraging level 4.",
+    "draft": true
+  },
+  "heavy-tapper": {
+    "text": "Something to make: heavy tapper. A reward from the Rare Finds bundle in the village hall.",
+    "draft": true
+  },
+  "geode-crusher": {
+    "text": "Something to make: geode crusher. A reward for the \"Cave patrol\" order on the board.",
+    "draft": true
+  },
+  "worm-bin": {
+    "text": "Something to make: worm bin. Learned at Fishing level 4.",
+    "draft": true
+  },
+  "candle": {
+    "text": "Something to make: candle. Learned at Farming level 3.",
+    "draft": true
+  },
+  "crystalarium": {
+    "text": "Something to make: crystalarium. A reward from the Harvest Feast bundle in the village hall.",
+    "draft": true
+  },
+  "sturdy-band": {
+    "text": "Something to make: sturdy band. Learned at Combat level 1.",
+    "draft": true
+  },
+  "tea-sapling": {
+    "text": "Something to make: tea sapling. Arrives in a letter from Odette.",
+    "draft": true
+  },
+  "fried-egg": {
+    "text": "A dish to cook. You know it from the start.",
+    "draft": true
+  },
+  "baked-potato": {
+    "text": "A dish to cook. Learned at Farming level 1.",
+    "draft": true
+  },
+  "garden-salad": {
+    "text": "A dish to cook. Learned at Foraging level 1.",
+    "draft": true
+  },
+  "hearty-omelette": {
+    "text": "A dish to cook. Learned at Farming level 2.",
+    "draft": true
+  },
+  "mushroom-stew": {
+    "text": "A dish to cook. Learned at Foraging level 2.",
+    "draft": true
+  },
+  "cheese-melt": {
+    "text": "A dish to cook. Learned at Farming level 3.",
+    "draft": true
+  },
+  "mayo-slaw": {
+    "text": "A dish to cook. Learned at Farming level 4.",
+    "draft": true
+  },
+  "pumpkin-soup": {
+    "text": "A dish to cook. Learned at Farming level 5.",
+    "draft": true
+  },
+  "fisher-stew": {
+    "text": "A dish to cook. A reward from the Specialty Fish bundle in the village hall.",
+    "draft": true
+  },
+  "market-pie": {
+    "text": "A dish to cook. Arrives in a letter from Odette.",
+    "draft": true
+  },
+  "harvest-hotpot": {
+    "text": "A dish to cook. Arrives in a letter from Odette.",
+    "draft": true
+  },
+  "inn-custard": {
+    "text": "A dish to cook. Arrives in a letter from Hattie.",
+    "draft": true
+  },
+  "innkeepers-roast": {
+    "text": "A dish to cook. Arrives in a letter from Hattie.",
+    "draft": true
+  },
+  "bread": {
+    "text": "A dish to cook. Learned at Farming level 2.",
+    "draft": true
+  },
+  "herb-tea": {
+    "text": "A dish to cook. Learned at Foraging level 2.",
+    "draft": true
+  },
+  "honey-cake": {
+    "text": "A dish to cook. Learned at Farming level 4.",
+    "draft": true
+  }
+}

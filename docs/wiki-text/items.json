@@ -1,467 +1,352 @@
 {
   "parsnip-seed": {
-    "text": "Plant in spring. Sold in shops for 20 coins.",
-    "draft": true
+    "text": "Plant in spring. Sold in shops for 20 coins."
   },
   "potato-seed": {
-    "text": "Plant in spring. Sold in shops for 50 coins.",
-    "draft": true
+    "text": "Plant in spring. Sold in shops for 50 coins."
   },
   "cauliflower-seed": {
-    "text": "Plant in spring. Sold in shops for 80 coins.",
-    "draft": true
+    "text": "Plant in spring. Sold in shops for 80 coins."
   },
   "melon-seed": {
-    "text": "Plant in summer. Sold in shops for 80 coins.",
-    "draft": true
+    "text": "Plant in summer. Sold in shops for 80 coins."
   },
   "tomato-seed": {
-    "text": "Plant in summer. Sold in shops for 50 coins.",
-    "draft": true
+    "text": "Plant in summer. Sold in shops for 50 coins."
   },
   "radish-seed": {
-    "text": "Plant in summer. Sold in shops for 40 coins.",
-    "draft": true
+    "text": "Plant in summer. Sold in shops for 40 coins."
   },
   "green-bean-seed": {
-    "text": "Plant in spring. Sold in shops for 60 coins.",
-    "draft": true
+    "text": "Plant in spring. Sold in shops for 60 coins."
   },
   "kale-seed": {
-    "text": "Plant in spring. Sold in shops for 70 coins.",
-    "draft": true
+    "text": "Plant in spring. Sold in shops for 70 coins."
   },
   "garlic-seed": {
-    "text": "Plant in spring. Sold in shops for 40 coins.",
-    "draft": true
+    "text": "Plant in spring. Sold in shops for 40 coins."
   },
   "hot-pepper-seed": {
-    "text": "Plant in summer. Sold in shops for 40 coins.",
-    "draft": true
+    "text": "Plant in summer. Sold in shops for 40 coins."
   },
   "corn-seed": {
-    "text": "Plant in summer and fall. Sold in shops for 150 coins.",
-    "draft": true
+    "text": "Plant in summer and fall. Sold in shops for 150 coins."
   },
   "red-cabbage-seed": {
-    "text": "Plant in summer. Sold in shops for 100 coins.",
-    "draft": true
+    "text": "Plant in summer. Sold in shops for 100 coins."
   },
   "pumpkin-seed": {
-    "text": "Plant in fall. Sold in shops for 100 coins.",
-    "draft": true
+    "text": "Plant in fall. Sold in shops for 100 coins."
   },
   "eggplant-seed": {
-    "text": "Plant in fall. Sold in shops for 20 coins.",
-    "draft": true
+    "text": "Plant in fall. Sold in shops for 20 coins."
   },
   "sweet-potato-seed": {
-    "text": "Plant in fall. Sold in shops for 60 coins.",
-    "draft": true
+    "text": "Plant in fall. Sold in shops for 60 coins."
   },
   "beet-seed": {
-    "text": "Plant in fall. Sold in shops for 20 coins.",
-    "draft": true
+    "text": "Plant in fall. Sold in shops for 20 coins."
   },
   "cranberry-seed": {
-    "text": "Plant in fall. Sold in shops for 240 coins.",
-    "draft": true
+    "text": "Plant in fall. Sold in shops for 240 coins."
   },
   "artichoke-seed": {
-    "text": "Plant in fall. Sold in shops for 30 coins.",
-    "draft": true
+    "text": "Plant in fall. Sold in shops for 30 coins."
   },
   "wheat-seed": {
-    "text": "Plant in summer and fall. Sold in shops for 10 coins.",
-    "draft": true
+    "text": "Plant in summer and fall. Sold in shops for 10 coins."
   },
   "ember-berry-seed": {
-    "text": "The seed of a rare crop. It is not sold in shops.",
-    "draft": true
+    "text": "The seed of a rare crop. It is not sold in shops."
   },
   "hops-seed": {
-    "text": "Plant in summer. Sold in shops for 60 coins.",
-    "draft": true
+    "text": "Plant in summer. Sold in shops for 60 coins."
   },
   "tulip-seed": {
-    "text": "Plant in spring. Sold in shops for 20 coins.",
-    "draft": true
+    "text": "Plant in spring. Sold in shops for 20 coins."
   },
   "cornflower-seed": {
-    "text": "Plant in spring. Sold in shops for 30 coins.",
-    "draft": true
+    "text": "Plant in spring. Sold in shops for 30 coins."
   },
   "poppy-seed": {
-    "text": "Plant in summer. Sold in shops for 100 coins.",
-    "draft": true
+    "text": "Plant in summer. Sold in shops for 100 coins."
   },
   "zinnia-seed": {
-    "text": "Plant in summer. Sold in shops for 50 coins.",
-    "draft": true
+    "text": "Plant in summer. Sold in shops for 50 coins."
   },
   "sunflower-seed": {
-    "text": "Plant in summer and fall. Sold in shops for 200 coins.",
-    "draft": true
+    "text": "Plant in summer and fall. Sold in shops for 200 coins."
   },
   "dahlia-seed": {
-    "text": "Plant in fall. Sold in shops for 200 coins.",
-    "draft": true
+    "text": "Plant in fall. Sold in shops for 200 coins."
   },
   "algae-soup": {
-    "text": "A thin green soup made from pond weed.",
-    "draft": true
+    "text": "A thin green soup made from pond weed."
   },
   "apple": {
-    "text": "A sweet orchard fruit.",
-    "draft": true
+    "text": "A sweet orchard fruit."
   },
   "baked-potato": {
-    "text": "A potato baked until soft, a simple meal.",
-    "draft": true
+    "text": "A potato baked until soft, a simple meal."
   },
   "basic-fertilizer": {
-    "text": "Spread on tilled soil before planting.",
-    "draft": true
+    "text": "Spread on tilled soil before planting."
   },
   "basic-retaining-soil": {
-    "text": "Spread on tilled soil before planting.",
-    "draft": true
+    "text": "Spread on tilled soil before planting."
   },
   "bat-wing": {
-    "text": "Dropped by the bats of the mines.",
-    "draft": true
+    "text": "Dropped by the bats of the mines."
   },
   "bee-house": {
-    "text": "A hive that makes honey over time.",
-    "draft": true
+    "text": "A hive that makes honey over time."
   },
   "big-chest": {
-    "text": "A roomy chest for storing goods.",
-    "draft": true
+    "text": "A roomy chest for storing goods."
   },
   "big-stone-chest": {
-    "text": "A larger chest made of stone.",
-    "draft": true
+    "text": "A larger chest made of stone."
   },
   "bread": {
-    "text": "A plain loaf.",
-    "draft": true
+    "text": "A plain loaf."
   },
   "campfire": {
-    "text": "A fire to gather round.",
-    "draft": true
+    "text": "A fire to gather round."
   },
   "candle": {
-    "text": "A small light.",
-    "draft": true
+    "text": "A small light."
   },
   "cask": {
-    "text": "Ages goods in the cellar.",
-    "draft": true
+    "text": "Ages goods in the cellar."
   },
   "charcoal-kiln": {
-    "text": "Burns wood down to charcoal.",
-    "draft": true
+    "text": "Burns wood down to charcoal."
   },
   "cheese-melt": {
-    "text": "Melted cheese, hot from the pan.",
-    "draft": true
+    "text": "Melted cheese, hot from the pan."
   },
   "cheese-press": {
-    "text": "Turns milk into cheese.",
-    "draft": true
+    "text": "Turns milk into cheese."
   },
   "cheese": {
-    "text": "Made from milk in a cheese press.",
-    "draft": true
+    "text": "Made from milk in a cheese press."
   },
   "chest": {
-    "text": "A chest for storing goods.",
-    "draft": true
+    "text": "A chest for storing goods."
   },
   "clay": {
-    "text": "Soft earth for making things.",
-    "draft": true
+    "text": "Soft earth for making things."
   },
   "cloth": {
-    "text": "Woven on a loom.",
-    "draft": true
+    "text": "Woven on a loom."
   },
   "coal": {
-    "text": "Fuel for furnaces and kilns.",
-    "draft": true
+    "text": "Fuel for furnaces and kilns."
   },
   "copper-bar": {
-    "text": "Smelted from copper ore in a furnace.",
-    "draft": true
+    "text": "Smelted from copper ore in a furnace."
   },
   "copper-ore": {
-    "text": "Dug from rock in the mines and quarry.",
-    "draft": true
+    "text": "Dug from rock in the mines and quarry."
   },
   "crab": {
-    "text": "A shellfish from a shellfish pot.",
-    "draft": true
+    "text": "A shellfish from a shellfish pot."
   },
   "crayfish": {
-    "text": "A shellfish from a shellfish pot.",
-    "draft": true
+    "text": "A shellfish from a shellfish pot."
   },
   "crystalarium": {
-    "text": "A machine that copies a crystal again and again.",
-    "draft": true
+    "text": "A machine that copies a crystal again and again."
   },
   "dehydrator": {
-    "text": "Dries fruit and other goods.",
-    "draft": true
+    "text": "Dries fruit and other goods."
   },
   "dye-vat": {
-    "text": "Where cloth and goods are dyed.",
-    "draft": true
+    "text": "Where cloth and goods are dyed."
   },
   "egg": {
-    "text": "Laid by the hens in the coop.",
-    "draft": true
+    "text": "Laid by the hens in the coop."
   },
   "fried-egg": {
-    "text": "An egg fried in the pan, simple and quick.",
-    "draft": true
+    "text": "An egg fried in the pan, simple and quick."
   },
   "fiber": {
-    "text": "Pulled from weeds and long grass.",
-    "draft": true
+    "text": "Pulled from weeds and long grass."
   },
   "furnace": {
-    "text": "Smelts ore into bars.",
-    "draft": true
+    "text": "Smelts ore into bars."
   },
   "geode-crusher": {
-    "text": "Cracks open geodes.",
-    "draft": true
+    "text": "Cracks open geodes."
   },
   "gold-bar": {
-    "text": "Smelted from gold ore in a furnace.",
-    "draft": true
+    "text": "Smelted from gold ore in a furnace."
   },
   "hardwood": {
-    "text": "Dense wood from a tree that needs a good axe.",
-    "draft": true
+    "text": "Dense wood from a tree that needs a good axe."
   },
   "hay": {
-    "text": "Feed for animals.",
-    "draft": true
+    "text": "Feed for animals."
   },
   "honey": {
-    "text": "Made by bees in a bee house.",
-    "draft": true
+    "text": "Made by bees in a bee house."
   },
   "iron-bar": {
-    "text": "Smelted from iron ore in a furnace.",
-    "draft": true
+    "text": "Smelted from iron ore in a furnace."
   },
   "iron-ore": {
-    "text": "Dug from rock in the mines and quarry.",
-    "draft": true
+    "text": "Dug from rock in the mines and quarry."
   },
   "keg": {
-    "text": "Ferments goods into drinks.",
-    "draft": true
+    "text": "Ferments goods into drinks."
   },
   "loom": {
-    "text": "Weaves wool and fiber into cloth.",
-    "draft": true
+    "text": "Weaves wool and fiber into cloth."
   },
   "mayonnaise": {
-    "text": "Made from an egg in a mayonnaise machine.",
-    "draft": true
+    "text": "Made from an egg in a mayonnaise machine."
   },
   "mayonnaise-machine": {
-    "text": "Turns eggs into mayonnaise.",
-    "draft": true
+    "text": "Turns eggs into mayonnaise."
   },
   "milk": {
-    "text": "Milked from the cows.",
-    "draft": true
+    "text": "Milked from the cows."
   },
   "oil-maker": {
-    "text": "Presses oil from crops and seeds.",
-    "draft": true
+    "text": "Presses oil from crops and seeds."
   },
   "oil": {
-    "text": "Pressed in an oil maker.",
-    "draft": true
+    "text": "Pressed in an oil maker."
   },
   "preserves-jar": {
-    "text": "Turns fruit and vegetables into jam and pickles.",
-    "draft": true
+    "text": "Turns fruit and vegetables into jam and pickles."
   },
   "quartz-crystal": {
-    "text": "A clear crystal found underground.",
-    "draft": true
+    "text": "A clear crystal found underground."
   },
   "seed-maker": {
-    "text": "Turns a crop back into seeds.",
-    "draft": true
+    "text": "Turns a crop back into seeds."
   },
   "shellfish-pot": {
-    "text": "Left in the water to catch shellfish.",
-    "draft": true
+    "text": "Left in the water to catch shellfish."
   },
   "sap": {
-    "text": "Gathered from trees.",
-    "draft": true
+    "text": "Gathered from trees."
   },
   "sprinkler": {
-    "text": "Waters the crops next to it each morning.",
-    "draft": true
+    "text": "Waters the crops next to it each morning."
   },
   "quality-sprinkler": {
-    "text": "Waters more of the crops around it each morning.",
-    "draft": true
+    "text": "Waters more of the crops around it each morning."
   },
   "stone": {
-    "text": "Broken from rocks.",
-    "draft": true
+    "text": "Broken from rocks."
   },
   "tapper": {
-    "text": "Set on a tree to gather what it gives.",
-    "draft": true
+    "text": "Set on a tree to gather what it gives."
   },
   "heavy-tapper": {
-    "text": "A tapper that works twice as fast.",
-    "draft": true
+    "text": "A tapper that works twice as fast."
   },
   "torch": {
-    "text": "A handheld light.",
-    "draft": true
+    "text": "A handheld light."
   },
   "wood": {
-    "text": "Chopped from trees.",
-    "draft": true
+    "text": "Chopped from trees."
   },
   "wool": {
-    "text": "Sheared from sheep.",
-    "draft": true
+    "text": "Sheared from sheep."
   },
   "worm-bin": {
-    "text": "Keeps worms for bait.",
-    "draft": true
+    "text": "Keeps worms for bait."
   },
   "tea-sapling": {
-    "text": "Plant it to grow a tea bush.",
-    "draft": true
+    "text": "Plant it to grow a tea bush."
   },
   "green-tea": {
-    "text": "A drink made from tea leaves.",
-    "draft": true
+    "text": "A drink made from tea leaves."
   },
   "herb-tea": {
-    "text": "A warm cup of herbs.",
-    "draft": true
+    "text": "A warm cup of herbs."
   },
   "goat-milk": {
-    "text": "Milked from the goats.",
-    "draft": true
+    "text": "Milked from the goats."
   },
   "duck-egg": {
-    "text": "Laid by the ducks.",
-    "draft": true
+    "text": "Laid by the ducks."
   },
   "iron-lamp-post": {
-    "text": "A lamp post of iron to light the paths.",
-    "draft": true
+    "text": "A lamp post of iron to light the paths."
   },
   "wood-lamp-post": {
-    "text": "A lamp post of wood to light the paths.",
-    "draft": true
+    "text": "A lamp post of wood to light the paths."
   },
   "stone-brazier": {
-    "text": "A brazier of stone that gives light.",
-    "draft": true
+    "text": "A brazier of stone that gives light."
   },
   "wood-brazier": {
-    "text": "A brazier of wood that gives light.",
-    "draft": true
+    "text": "A brazier of wood that gives light."
   },
   "lightning-rod": {
-    "text": "Draws lightning away from the farm in a storm.",
-    "draft": true
+    "text": "Draws lightning away from the farm in a storm."
   },
   "glow-ring": {
-    "text": "A ring that gives off light.",
-    "draft": true
+    "text": "A ring that gives off light."
   },
   "small-glow-ring": {
-    "text": "A ring that gives off a little light.",
-    "draft": true
+    "text": "A ring that gives off a little light."
   },
   "magnet-ring": {
-    "text": "A ring that draws things towards you.",
-    "draft": true
+    "text": "A ring that draws things towards you."
   },
   "sturdy-band": {
-    "text": "A plain ring for fighters.",
-    "draft": true
+    "text": "A plain ring for fighters."
   },
   "pressed-flower": {
-    "text": "A flower dried flat between pages.",
-    "draft": true
+    "text": "A flower dried flat between pages."
   },
   "faded-ribbon": {
-    "text": "A ribbon with its colour worn away.",
-    "draft": true
+    "text": "A ribbon with its colour worn away."
   },
   "plain-bait": {
-    "text": "Bait for the fishing rod.",
-    "draft": true
+    "text": "Bait for the fishing rod."
   },
   "glint-lure": {
-    "text": "A lure that flashes in the water.",
-    "draft": true
+    "text": "A lure that flashes in the water."
   },
   "pondweed": {
-    "text": "Green weed from the pond.",
-    "draft": true
+    "text": "Green weed from the pond."
   },
   "battery-pack": {
-    "text": "Sells for 500 coins.",
-    "draft": true
+    "text": "Sells for 500 coins."
   },
   "bug-meat": {
-    "text": "A cheap drop from the mines. Sells for 8 coins.",
-    "draft": true
+    "text": "A cheap drop from the mines. Sells for 8 coins."
   },
   "carved-bead": {
-    "text": "A small keepsake found while digging. Sells for 55 coins.",
-    "draft": true
+    "text": "A small keepsake found while digging. Sells for 55 coins."
   },
   "cherry": {
-    "text": "A tree fruit that sells for 80 coins and restores 38 energy.",
-    "draft": true
+    "text": "A tree fruit that sells for 80 coins and restores 38 energy."
   },
   "coop-heater": {
-    "text": "Bought for 2000 coins and kept, not sold.",
-    "draft": true
+    "text": "Bought for 2000 coins and kept, not sold."
   },
   "elf-letter": {
-    "text": "A keepsake. It cannot be sold.",
-    "draft": true
+    "text": "A keepsake. It cannot be sold."
   },
   "fisher-stew": {
-    "text": "A cooked dish. Sells for 220 coins and restores 150 energy.",
-    "draft": true
+    "text": "A cooked dish. Sells for 220 coins and restores 150 energy."
   },
   "garden-salad": {
-    "text": "A cooked dish. Sells for 110 coins and restores 110 energy.",
-    "draft": true
+    "text": "A cooked dish. Sells for 110 coins and restores 110 energy."
   },
   "gem-high-a": {
     "text": "A high tier gem that sells for 400 coins. Placeholder name.",
     "draft": true
   },
   "gem-high-b": {
-    "text": "The finest gem. Sells for 750 coins.",
-    "draft": true
+    "text": "The finest gem. Sells for 750 coins."
   },
   "gem-low-a": {
     "text": "A low tier gem that sells for 50 coins. Placeholder name.",
@@ -480,103 +365,78 @@
     "draft": true
   },
   "gloop-jelly": {
-    "text": "A drop from slimes. Sells for 12 coins.",
-    "draft": true
+    "text": "A drop from slimes. Sells for 12 coins."
   },
   "green-glass-lantern": {
-    "text": "A keepsake lantern. It cannot be sold.",
-    "draft": true
+    "text": "A keepsake lantern. It cannot be sold."
   },
   "harvest-hotpot": {
-    "text": "A cooked dish. Sells for 240 coins and restores 170 energy.",
-    "draft": true
+    "text": "A cooked dish. Sells for 240 coins and restores 170 energy."
   },
   "hearthsilver-bar": {
-    "text": "Smelted from hearthsilver ore. Sells for 1000 coins.",
-    "draft": true
+    "text": "Smelted from hearthsilver ore. Sells for 1000 coins."
   },
   "hearty-omelette": {
-    "text": "A cooked dish. Sells for 100 coins and restores 125 energy.",
-    "draft": true
+    "text": "A cooked dish. Sells for 100 coins and restores 125 energy."
   },
   "honey-cake": {
-    "text": "A cooked dish. Sells for 160 coins and restores 120 energy.",
-    "draft": true
+    "text": "A cooked dish. Sells for 160 coins and restores 120 energy."
   },
   "inn-custard": {
-    "text": "A cooked dish. Sells for 130 coins and restores 120 energy.",
-    "draft": true
+    "text": "A cooked dish. Sells for 130 coins and restores 120 energy."
   },
   "innkeepers-roast": {
-    "text": "A cooked dish. Sells for 260 coins and restores 180 energy.",
-    "draft": true
+    "text": "A cooked dish. Sells for 260 coins and restores 180 energy."
   },
   "ladle-snail": {
-    "text": "A shellfish caught in traps. Sells for 70 coins.",
-    "draft": true
+    "text": "A shellfish caught in traps. Sells for 70 coins."
   },
   "market-pie": {
-    "text": "A cooked dish. Sells for 160 coins and restores 140 energy.",
-    "draft": true
+    "text": "A cooked dish. Sells for 160 coins and restores 140 energy."
   },
   "marsh-clam": {
-    "text": "A shellfish caught in traps. Sells for 90 coins.",
-    "draft": true
+    "text": "A shellfish caught in traps. Sells for 90 coins."
   },
   "mayo-slaw": {
-    "text": "A cooked dish. Sells for 260 coins and restores 140 energy.",
-    "draft": true
+    "text": "A cooked dish. Sells for 260 coins and restores 140 energy."
   },
   "mixed-seed": {
-    "text": "Seeds of no certain kind. Sells for 5 coins.",
-    "draft": true
+    "text": "Seeds of no certain kind. Sells for 5 coins."
   },
   "mushroom-stew": {
-    "text": "A cooked dish. Sells for 190 coins and restores 150 energy.",
-    "draft": true
+    "text": "A cooked dish. Sells for 190 coins and restores 150 energy."
   },
   "oil-lamp": {
-    "text": "A standing lamp for the house. It cannot be sold.",
-    "draft": true
+    "text": "A standing lamp for the house. It cannot be sold."
   },
   "old-seed-packet": {
-    "text": "A faded packet found while digging. Sells for 40 coins.",
-    "draft": true
+    "text": "A faded packet found while digging. Sells for 40 coins."
   },
   "pearl-lobster": {
-    "text": "A prized shellfish caught in traps. Sells for 800 coins.",
-    "draft": true
+    "text": "A prized shellfish caught in traps. Sells for 800 coins."
   },
   "pumpkin-soup": {
-    "text": "A cooked dish. Sells for 400 coins and restores 200 energy.",
-    "draft": true
+    "text": "A cooked dish. Sells for 400 coins and restores 200 energy."
   },
   "recycler": {
-    "text": "A machine. Sells for 200 coins.",
-    "draft": true
+    "text": "A machine. Sells for 200 coins."
   },
   "reef-periwinkle": {
-    "text": "A shellfish caught in traps. Sells for 50 coins.",
-    "draft": true
+    "text": "A shellfish caught in traps. Sells for 50 coins."
   },
   "river-mussel": {
-    "text": "A shellfish caught in traps. Sells for 45 coins.",
-    "draft": true
+    "text": "A shellfish caught in traps. Sells for 45 coins."
   },
   "spiny-shrimp": {
-    "text": "A shellfish caught in traps. Sells for 100 coins.",
-    "draft": true
+    "text": "A shellfish caught in traps. Sells for 100 coins."
   },
   "stone-chest": {
-    "text": "A chest for storing things. It cannot be sold.",
-    "draft": true
+    "text": "A chest for storing things. It cannot be sold."
   },
   "warp-totem-beach": {
-    "text": "A totem that carries you to the beach. It cannot be sold.",
-    "draft": true
+    "text": "A totem that carries you to the beach. It cannot be sold."
   },
   "wax": {
-    "text": "Beeswax from the apiary. Sells for 40 coins.",
-    "draft": true
+    "text": "Beeswax from the apiary. Sells for 40 coins."
   }
 }

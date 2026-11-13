@@ -1,158 +1,119 @@
 {
   "daffodil": {
-    "text": "Turns up in spring. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in spring. Gather it from the wild."
   },
   "leek": {
-    "text": "Turns up in spring. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in spring. Gather it from the wild."
   },
   "dandelion": {
-    "text": "Turns up in spring. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in spring. Gather it from the wild."
   },
   "horseradish": {
-    "text": "Turns up in spring. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in spring. Gather it from the wild."
   },
   "grape": {
-    "text": "Turns up in summer. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in summer. Gather it from the wild."
   },
   "spice-berry": {
-    "text": "Turns up in summer. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in summer. Gather it from the wild."
   },
   "sweet-pea": {
-    "text": "Turns up in summer. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in summer. Gather it from the wild."
   },
   "spring-onion": {
-    "text": "Turns up in spring. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in spring. Gather it from the wild."
   },
   "salmonberry": {
-    "text": "Turns up in spring. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in spring. Gather it from the wild."
   },
   "fiddlehead-fern": {
-    "text": "Turns up in summer. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in summer. Gather it from the wild."
   },
   "bramble-berry": {
-    "text": "Turns up in fall. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in fall. Gather it from the wild."
   },
   "hazelnut": {
-    "text": "Turns up in fall. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in fall. Gather it from the wild."
   },
   "wild-plum": {
-    "text": "Turns up in fall. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in fall. Gather it from the wild."
   },
   "field-mushroom": {
-    "text": "Turns up in fall. A mushroom for the basket.",
-    "draft": true
+    "text": "Turns up in fall. A mushroom for the basket."
   },
   "crab-apple": {
-    "text": "Turns up in fall. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in fall. Gather it from the wild."
   },
   "rose-hip": {
-    "text": "Turns up in fall. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in fall. Gather it from the wild."
   },
   "chestnut": {
-    "text": "Turns up in fall. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in fall. Gather it from the wild."
   },
   "wild-garlic": {
-    "text": "Turns up in fall. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in fall. Gather it from the wild."
   },
   "crocus": {
-    "text": "Turns up in winter. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in winter. Gather it from the wild."
   },
   "snowdrop": {
-    "text": "Turns up in winter. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in winter. Gather it from the wild."
   },
   "winter-cress": {
-    "text": "Turns up in winter. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in winter. Gather it from the wild."
   },
   "pine-nut": {
-    "text": "Turns up in winter. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in winter. Gather it from the wild."
   },
   "holly-sprig": {
-    "text": "Turns up in winter. Gather it from the wild.",
-    "draft": true
+    "text": "Turns up in winter. Gather it from the wild."
   },
   "frost-root": {
-    "text": "Found by digging in the ground.",
-    "draft": true
+    "text": "Found by digging in the ground."
   },
   "snow-tuber": {
-    "text": "Found by digging in the ground.",
-    "draft": true
+    "text": "Found by digging in the ground."
   },
   "morel": {
-    "text": "Turns up in spring. A mushroom for the basket.",
-    "draft": true
+    "text": "Turns up in spring. A mushroom for the basket."
   },
   "chanterelle": {
-    "text": "Turns up in fall. A mushroom for the basket.",
-    "draft": true
+    "text": "Turns up in fall. A mushroom for the basket."
   },
   "snowcap": {
-    "text": "Turns up in winter. A mushroom for the basket.",
-    "draft": true
+    "text": "Turns up in winter. A mushroom for the basket."
   },
   "wild-ginger": {
-    "text": "Turns up in every season. A rare find for the keen-eyed.",
-    "draft": true
+    "text": "Turns up in every season. A rare find for the keen-eyed."
   },
   "cave-mushroom": {
-    "text": "A mushroom for the basket.",
-    "draft": true
+    "text": "A mushroom for the basket."
   },
   "periwinkle": {
-    "text": "Gather it from the wild.",
-    "draft": true
+    "text": "Gather it from the wild."
   },
   "razor-clam": {
-    "text": "Gather it from the wild.",
-    "draft": true
+    "text": "Gather it from the wild."
   },
   "whelk": {
-    "text": "Gather it from the wild.",
-    "draft": true
+    "text": "Gather it from the wild."
   },
   "cockleshell": {
-    "text": "Gather it from the wild.",
-    "draft": true
+    "text": "Gather it from the wild."
   },
   "pearly-shell": {
-    "text": "Gather it from the wild.",
-    "draft": true
+    "text": "Gather it from the wild."
   },
   "spiral-shell": {
-    "text": "Gather it from the wild.",
-    "draft": true
+    "text": "Gather it from the wild."
   },
   "sea-fan": {
-    "text": "Gather it from the wild.",
-    "draft": true
+    "text": "Gather it from the wild."
   },
   "pin-urchin": {
-    "text": "Gather it from the wild.",
-    "draft": true
+    "text": "Gather it from the wild."
   },
   "seaweed": {
-    "text": "Gather it from the wild.",
-    "draft": true
+    "text": "Gather it from the wild."
   }
 }
