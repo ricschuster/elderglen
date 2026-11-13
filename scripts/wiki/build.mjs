@@ -70,6 +70,7 @@ const esc = (s) =>
     .replace(/"/g, "&quot;");
 
 export function load() {
+  const quality = content("quality-table");
   const items = new Map(content("item-table").map((i) => [i.id, i]));
   const fish = content("fish");
   const bundles = content("bundles");
@@ -90,7 +91,18 @@ export function load() {
         )
       : [],
   );
-  return { items, fish, bundles, rooms, pond, recipes, dishes, text, images };
+  return {
+    quality,
+    items,
+    fish,
+    bundles,
+    rooms,
+    pond,
+    recipes,
+    dishes,
+    text,
+    images,
+  };
 }
 
 /** The ids a bundle slot accepts. */
@@ -241,6 +253,10 @@ ${infobox([
   ],
   ["Size", `${f.length[0]} to ${f.length[1]} cm`],
   ["Sells for", `${f.sellPrice} coins`],
+  [
+    "By quality",
+    `Silver ${Math.floor(f.sellPrice * d.quality.silver)}, gold ${Math.floor(f.sellPrice * d.quality.gold)} coins`,
+  ],
 ])}
 ${prose("fish", f.id)}${sections}`;
     add(
@@ -388,6 +404,29 @@ ${prose("items", id)}${ub || rw ? `<h2>Used in</h2><ul>${ub ? `<li>Hall bundles 
     null,
   );
 
+  // ---- What is left (internal view only): the NOW section of the priority list.
+  if (internal) {
+    const f = join(root, "docs/handoffs/PRIORITIES.md");
+    const md = existsSync(f) ? readFileSync(f, "utf8") : "";
+    const m = md.match(/## NOW[^\n]*\n([\s\S]*?)\n## /);
+    const inline = (t) =>
+      esc(t)
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/`(.+?)`/g, "<code>$1</code>");
+    const html = (m?.[1] ?? "")
+      .split(/\n\s*\n/)
+      .map((b) => b.trim())
+      .filter(Boolean)
+      .map((b) => `<p>${inline(b.replace(/\n/g, " "))}</p>`)
+      .join("");
+    add(
+      "left.html",
+      "What is left",
+      `<h1>What is left (M3b)</h1><p><em>Internal view. Copied from the priority list when this page was built.</em></p>${html}`,
+      null,
+    );
+  }
+
   // ---- Front page
   add(
     "index.html",
@@ -397,6 +436,7 @@ ${prose("items", id)}${ub || rw ? `<h2>Used in</h2><ul>${ub ? `<li>Hall bundles 
 <div class="tiles">
 <a class="tile" href="@fish/index.html"><strong>Fish</strong><span>${d.fish.length} fish, by water, season and time</span></a>
 <a class="tile" href="@bundles/index.html"><strong>Bundles</strong><span>${d.bundles.length} hall bundles in ${d.rooms.length} rooms</span></a>
+${internal ? '<a class="tile" href="@left.html"><strong>What is left</strong><span>The M3b list (internal)</span></a>' : ""}
 <a class="tile" href="@items/index.html"><strong>Items</strong><span>Goods the hall and the ponds ask for</span></a>
 </div>`,
     null,

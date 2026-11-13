@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { allItems } from "../src/core/items";
+import { QUALITY_MULTIPLIER } from "../src/core/quality";
 
 /**
  * The item table is a committed JSON snapshot of the item registry (`src/core/items.ts`),
@@ -8,6 +9,7 @@ import { allItems } from "../src/core/items";
  * the source. Refresh the file with `npm run items:export` after an item changes.
  */
 const FILE = new URL("../src/content/item-table.json", import.meta.url);
+const QFILE = new URL("../src/content/quality-table.json", import.meta.url);
 
 function table() {
   return allItems()
@@ -24,9 +26,20 @@ function table() {
 
 describe("item table snapshot", () => {
   const fresh = `${JSON.stringify(table(), null, 2)}\n`;
-  if (process.env.UPDATE_ITEM_TABLE === "1") writeFileSync(FILE, fresh);
+  const q = `${JSON.stringify({ silver: QUALITY_MULTIPLIER.silver, gold: QUALITY_MULTIPLIER.gold }, null, 2)}\n`;
+  if (process.env.UPDATE_ITEM_TABLE === "1") {
+    writeFileSync(FILE, fresh);
+    writeFileSync(QFILE, q);
+  }
   it("matches the item registry (run npm run items:export)", () => {
     expect(readFileSync(FILE, "utf8")).toBe(fresh);
+  });
+  it("matches the quality multipliers", () => {
+    const q = JSON.parse(readFileSync(QFILE, "utf8"));
+    expect(q).toEqual({
+      silver: QUALITY_MULTIPLIER.silver,
+      gold: QUALITY_MULTIPLIER.gold,
+    });
   });
   it("has no duplicate ids", () => {
     const ids = table().map((i) => i.id);

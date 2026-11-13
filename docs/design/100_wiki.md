@@ -175,8 +175,9 @@ search, sortable fish table, `wiki:check` in `npm run check`, the internal view)
 labelled box). Draft prose is written for all 51 fish and the 6 rooms (`docs/wiki-text/`, all
 `draft: true`, so only the internal view shows it).
 
-Left: prose for the 30 bundles and the items; the owner clearing `draft` flags; quality prices
-on fish and item pages; recipe, order and request lines under "Used in" beyond what is built;
+Also built: silver and gold prices on fish pages (`src/content/quality-table.json`, snapshot of the
+multipliers) and an internal "What is left" page copied from the priority list. Left: prose for the
+items (bundles already show the hint text); the owner clearing `draft` flags; recipe, order and request lines under "Used in" beyond what is built;
 `status` values other than `built` (stubs for decided, unbuilt fish and bundles); the public
 view for people who have not reached a place; more categories; hosting.
 
