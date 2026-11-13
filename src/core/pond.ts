@@ -6,6 +6,9 @@ import type { FarmMap } from "./map";
 import { FARM_STORE } from "./mapstore";
 import { mayPlaceOn, placeTag } from "./placeables";
 import { placedFootprint } from "./placement";
+import { FISH_POND, POND_FOOTPRINT } from "./pondsite";
+
+export { FISH_POND, POND_FOOTPRINT };
 import type { PlacedItem } from "./placedstore";
 import { QUALITIES, splitQuality, withQuality } from "./quality";
 import type { GameState } from "./save";
@@ -24,7 +27,6 @@ import { isWaterFind } from "./waterfinds";
  * Content is `src/content/pond.json`; numbers not from the saved Fish Pond page
  * are placeholders. Pure rules, no Phaser.
  */
-export const FISH_POND = "fish-pond";
 export const POND_COST = {
   coin: pondData.build.coin,
   stone: pondData.build.stone,
@@ -32,10 +34,6 @@ export const POND_COST = {
   pondweed: pondData.build.pondweed,
 } as const;
 export const POND_BUILD_DAYS = pondData.build.days;
-export const POND_FOOTPRINT = {
-  w: pondData.build.footprint[0]!,
-  h: pondData.build.footprint[1]!,
-} as const;
 export const POND_CAPS = pondData.caps;
 export const LEGEND_CAP = pondData.legendCap;
 

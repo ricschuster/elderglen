@@ -132,7 +132,9 @@ Core rules, content and tests are built. The scenes are not.
   bite nowhere in play until a map or floor carries a pool.
 - **Roe price.** Half the fish price is ours, not Stardew's.
 - **The carpenter is one job at a time.** The pond refuses an order while the coop, barn,
-  silo or house job runs, but the older jobs do not yet check for a pond under way.
+  silo or house job runs, and those jobs now wait for a pond under way too. Buildings cannot be
+  placed over a pond, and a pond cannot be placed over a building (`pondsite.ts` holds the shared
+  footprint so `placement.ts` need not import `pond.ts`).
 - **Sea urchin and coral.** Read as our Pin urchin and Sea fan (note 72). Confirm.
 
 ## Open

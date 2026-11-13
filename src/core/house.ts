@@ -3,6 +3,7 @@ import { mapFiles, maps } from "../content/maps";
 import { festivalDayToday } from "./festivals";
 import { HARDWOOD } from "./items";
 import { visibleTier } from "./map";
+import { pondDigging } from "./pondsite";
 import type { GameState } from "./save";
 
 /**
@@ -318,6 +319,7 @@ export function orderProblem(g: GameState): string | undefined {
     return `The carpenter is busy building your ${g.animals.build.building}.`;
   if (g.animals.siloDays > 0)
     return "The carpenter is busy building your silo.";
+  if (pondDigging(g)) return "The carpenter is busy digging your pond.";
   const cost = nextUpgrade(g.houseTier);
   if (!cost) return "There is no further upgrade yet.";
   const missing: string[] = [];
