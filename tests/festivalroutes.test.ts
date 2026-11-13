@@ -19,6 +19,7 @@ import {
   festivalLayout,
   festivalWhere,
   paradeLaps,
+  PARADE_JOIN_CUTOFF,
   paradeSteps,
   villagerNow,
 } from "../src/core/festivalroutes";
@@ -372,18 +373,23 @@ describe("the Hat Parade march", () => {
   it("does one lap normally and one extra lap for a late joiner, who walks at the tail", () => {
     expect(paradeLaps()).toEqual([PARADE_START]);
     expect(paradeLaps(PARADE_START)).toEqual([PARADE_START]);
-    const late = paradeLaps(t(16));
+    // The march ends near 15:00, so the first lap is over by 14:55; join at the cut-off.
+    const late = paradeLaps(PARADE_JOIN_CUTOFF);
     expect(late).toHaveLength(2);
-    expect(late[1]).toBe(t(16));
+    expect(late[1]).toBeGreaterThanOrEqual(PARADE_JOIN_CUTOFF);
+    // After the 14:30 cut-off nobody joins at the tail: no extra lap (owner, 2026-11-12).
+    expect(paradeLaps(PARADE_JOIN_CUTOFF + 1)).toEqual([PARADE_START]);
+    expect(paradeLaps(t(16))).toEqual([PARADE_START]);
     // Joined mid-march: the extra lap waits for the first to finish.
     const mid = paradeLaps(PARADE_START + 20);
     expect(mid[1]).toBeGreaterThan(PARADE_START + 20);
-    // At 16:20 the head is marching again, because the player joined late.
-    const where = festivalWhere(v("cuthbert"), hat, t(16, 2), {
-      paradeJoinedAt: t(16),
+    // The head marches again on the extra lap, because the player joined late.
+    const lapAt = late[1]! + 5;
+    const where = festivalWhere(v("cuthbert"), hat, lapAt, {
+      paradeJoinedAt: PARADE_JOIN_CUTOFF,
     })!;
     expect(where.state).toBe("marching");
-    const none = festivalWhere(v("cuthbert"), hat, t(16, 2))!;
+    const none = festivalWhere(v("cuthbert"), hat, lapAt)!;
     expect(none.state).toBe("standing");
     expect(PARADE_TAIL).toBe(PARADE_LINE.length);
   });

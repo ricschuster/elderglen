@@ -131,6 +131,7 @@ import {
   loadDeviceSettings,
 } from "./storage";
 import { saveGame } from "../core/save";
+import { hallRestored } from "../core/bundles";
 import {
   healthShown,
   isWeapon,
@@ -537,7 +538,8 @@ export class FarmScene extends Phaser.Scene {
     ))
       holds.add(h);
     // A festival day shows its layout on the map (note 82).
-    for (const h of festivalHolds(day)) holds.add(h);
+    for (const h of festivalHolds(day, hallRestored(this.state.hall)))
+      holds.add(h);
     this.map = mineLayout
       ? FarmMap.fromTiled(json)
       : maps.getWith(id, holds, this.tier);
@@ -1623,18 +1625,24 @@ export class FarmScene extends Phaser.Scene {
   /**
    * True when the exit lands in a festival place that is not open yet
    * (note 82 decision 12). Only exits whose target map is built are checked.
-   * Placeholder: the hall counts as not restored until that is tracked.
+   * The hall's restored state is derived from the bundles (`hallRestored`).
    */
   private exitShutForFestival(exit: Exit): boolean {
     const target = maps.get(resolveMapId(exit.map, this.state.farmType));
     const at = target?.entry(exit.entry);
     if (!at) return false;
     const clock = this.state.day.clock;
-    return festivalStepShut(clock.day, clock.minutes, this.hereTile(), {
-      map: resolveMapId(exit.map, this.state.farmType),
-      x: at.x,
-      y: at.y,
-    });
+    return festivalStepShut(
+      clock.day,
+      clock.minutes,
+      this.hereTile(),
+      {
+        map: resolveMapId(exit.map, this.state.farmType),
+        x: at.x,
+        y: at.y,
+      },
+      hallRestored(this.state.hall),
+    );
   }
 
   /** True when walking onto this tile of the current map is shut by a festival setting up. */
@@ -1651,11 +1659,17 @@ export class FarmScene extends Phaser.Scene {
 
   private tileShutForFestival(x: number, y: number): boolean {
     const clock = this.state.day.clock;
-    return festivalStepShut(clock.day, clock.minutes, this.hereTile(), {
-      map: this.mapId,
-      x,
-      y,
-    });
+    return festivalStepShut(
+      clock.day,
+      clock.minutes,
+      this.hereTile(),
+      {
+        map: this.mapId,
+        x,
+        y,
+      },
+      hallRestored(this.state.hall),
+    );
   }
 
   private leave(exit: Exit): void {
@@ -2528,7 +2542,11 @@ export class FarmScene extends Phaser.Scene {
     ))
       this.holds.add(h);
     for (const h of greenhouseHolds(this.state)) this.holds.add(h);
-    for (const h of festivalHolds(this.state.day.clock.day)) this.holds.add(h);
+    for (const h of festivalHolds(
+      this.state.day.clock.day,
+      hallRestored(this.state.hall),
+    ))
+      this.holds.add(h);
     for (const c of this.conditional)
       c.drawn.setVisible(layerShows(c.layer, this.holds));
   }

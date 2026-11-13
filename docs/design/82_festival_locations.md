@@ -62,7 +62,14 @@ Hearthwell south green: only the Harvest Showing is on the green now.
 - **Seedswap rival:** if the player fails the hunt, Linnet wins (Stardew uses Abigail,
   from memory, unchecked).
 - **Hat Parade late join:** a player who arrives after the march has started joins at the
-  tail. The villagers do one extra lap so nobody misses it.
+  tail. The villagers do one extra lap so nobody misses it. Cut-off 14:30 (owner,
+  2026-11-12): a player arriving later does not join and only sees the march. Built:
+  `PARADE_JOIN_CUTOFF` in `festivalroutes.ts`; `paradeLaps` gives one lap after it.
+- **Hall restored (owner, 2026-11-12, built):** `hallRestored(hall)` in `bundles.ts` is
+  derived, never saved: true when every bundle is done and the Last Seat is open and done.
+  `FarmScene` passes it to `festivalHolds` and `festivalStepShut`, so the Midwinter Feast
+  moves into the hall. `villagerNow` and `festivalWhere` take it as an option, but no
+  scene calls them yet.
 
 ## Locations
 

@@ -28,21 +28,30 @@
     "name": "Defense ring",
     "light": 0,
     "magnet": 0,
-    "defense": 1
+    "defense": 1,
+    "shop": {
+      "price": 1000
+    }
   },
   {
     "id": "iron-defense-ring",
     "name": "Iron defense ring",
     "light": 0,
     "magnet": 0,
-    "defense": 5
+    "defense": 5,
+    "shop": {
+      "price": 5000,
+      "minFloor": 40
+    }
   },
   {
     "id": "slime-proof-ring",
     "name": "Slime proof ring",
     "light": 0,
     "magnet": 0,
-    "slimeProof": true
+    "slimeProof": true,
+    "slayer": "gloop",
+    "rebuy": 25000
   },
   {
     "id": "sturdy-band",

@@ -1,10 +1,10 @@
 import weaponData from "../content/weapons.json";
 import { BUNDLES } from "./bundles";
 import { Effects } from "./effects";
-import { bootsById } from "./equipment";
+import { RINGS, bootsById, type RingDef } from "./equipment";
 import { itemById } from "./items";
 import { splitQuality } from "./quality";
-import type { Creature } from "./creatures";
+import { SLAYER_GOALS, slayerKills, type Creature } from "./creatures";
 import type { Skills } from "./skills";
 import type { Facing, Vec } from "./movement";
 import type { GameState } from "./save";
@@ -238,6 +238,62 @@ export function buyBoots(g: GameState, id: string): string | undefined {
   return undefined;
 }
 
+/** True when the player carries the ring or wears it. */
+function hasRing(g: GameState, id: string): boolean {
+  return g.inventory.count(id) > 0 || g.equipment.worn().includes(id);
+}
+
+/** Rings the trainer sells for coin: the Defense rings (note 94). The +1 ring waits for the trainer's first meeting, the +5 ring for a mine floor. */
+export const SHOP_RINGS: RingDef[] = RINGS.filter((r) => r.shop);
+
+/** Why a shop ring is not on offer yet, or undefined when it is. */
+export function ringLocked(g: GameState, r: RingDef): string | undefined {
+  if (!g.combat.trainerMet) return "Meet the trainer first.";
+  const floor = r.shop?.minFloor ?? 0;
+  if (g.mines.deepest < floor) return `Reach floor ${floor} first.`;
+  return undefined;
+}
+
+/** Buy a Defense ring at the trainer's counter. Returns an error line, or undefined when bought. */
+export function buyRing(g: GameState, id: string): string | undefined {
+  const r = SHOP_RINGS.find((x) => x.id === id);
+  if (!r?.shop) return "She does not sell that.";
+  const locked = ringLocked(g, r);
+  if (locked) return locked;
+  if (hasRing(g, id)) return "You already have one.";
+  if (g.money < r.shop.price) return "Not enough money.";
+  if (!g.inventory.add(id)) return "Your backpack is full.";
+  g.money -= r.shop.price;
+  return undefined;
+}
+
+/** Slayer rewards that are rings, with the goal that earns each (note 22). */
+export const SLAYER_RINGS: RingDef[] = RINGS.filter((r) => r.slayer);
+
+/** True once the kill tally meets the goal of a slayer ring. */
+export function slayerRingEarned(g: GameState, r: RingDef): boolean {
+  const goal = SLAYER_GOALS.find((s) => s.id === r.slayer);
+  return !!goal && slayerKills(goal, g.combat.kills) >= goal.goal;
+}
+
+/**
+ * Hand a slayer ring over: free the first time the goal is met, then for
+ * its `rebuy` price if it is lost (the guild sells lost rewards again, note 22).
+ * Returns an error line, or undefined when handed over.
+ */
+export function claimSlayerRing(g: GameState, id: string): string | undefined {
+  const r = SLAYER_RINGS.find((x) => x.id === id);
+  if (!r) return "She has no such reward.";
+  if (!slayerRingEarned(g, r)) return "That goal is not met yet.";
+  if (hasRing(g, id)) return "You already have it.";
+  const fee = g.combat.slayerClaimed.includes(id) ? (r.rebuy ?? 0) : 0;
+  if (g.money < fee) return "Not enough money.";
+  if (!g.inventory.add(id)) return "Your backpack is full.";
+  g.money -= fee;
+  if (!g.combat.slayerClaimed.includes(id)) g.combat.slayerClaimed.push(id);
+  return undefined;
+}
+
 /**
  * The trainer hands over a starter weapon free, any time the player carries none
  * of it. Returns an error line, or undefined when it was given.
@@ -328,6 +384,8 @@ export interface CombatSave {
   counter: Lost[];
   /** The day Oil of Garlic was taken, so it lasts until the next morning (note 89). */
   oilDay?: number;
+  /** Slayer rings already handed over, so a lost one costs coin to get again. */
+  slayerClaimed?: string[];
 }
 
 /** What the player carries into a fight: health, the trainer's progress and the kill tally. */
@@ -343,6 +401,8 @@ export class Combat {
   counter: Lost[] = [];
   /** The day Oil of Garlic was taken, or 0 when none is working (note 89). */
   oilDay = 0;
+  /** Slayer ring ids handed over once (note 22). */
+  slayerClaimed: string[] = [];
   /** Beaten creatures by kind, for the slayer list later (note 22). */
   kills: Record<string, number> = {};
   /** The Assist toggle, synced from the device settings by the scene. Never saved here. */
@@ -368,6 +428,9 @@ export class Combat {
       kills: { ...this.kills },
       counter: this.counter.map((l) => ({ ...l })),
       ...(this.oilDay > 0 ? { oilDay: this.oilDay } : {}),
+      ...(this.slayerClaimed.length
+        ? { slayerClaimed: [...this.slayerClaimed] }
+        : {}),
     };
   }
 
@@ -388,6 +451,9 @@ export class Combat {
       Number.isInteger(raw?.oilDay) && (raw?.oilDay ?? 0) > 0
         ? (raw!.oilDay as number)
         : 0;
+    this.slayerClaimed = (
+      Array.isArray(raw?.slayerClaimed) ? raw.slayerClaimed : []
+    ).filter((x) => SLAYER_RINGS.some((r) => r.id === x));
     this.kills = {};
     for (const [k, v] of Object.entries(raw?.kills ?? {}))
       if (Number.isInteger(v) && v > 0) this.kills[k] = v;

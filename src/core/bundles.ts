@@ -90,6 +90,21 @@ export const ROOMS = roomData as RoomDef[];
 /** The room whose completion mends the bridge to ring 2. */
 export const LAST_ROOM = "last-seat";
 
+/**
+ * True when the hall counts as restored for festival places (the Midwinter
+ * Feast moves into it, note 82): every bundle is done and the Last Seat is
+ * open. Derived, never saved (owner, 2026-11-12). A hall with no bundles is
+ * never restored.
+ */
+export function hallRestored(hall: Hall): boolean {
+  return (
+    hall.bundles.length > 0 &&
+    hall.allComplete &&
+    hall.roomOpen(LAST_ROOM) &&
+    hall.roomComplete(LAST_ROOM)
+  );
+}
+
 export type RoomStatus = "done" | "ready" | "locked" | "empty";
 
 export type HandIn = "accepted" | "completed" | "rejected";

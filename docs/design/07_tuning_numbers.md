@@ -424,7 +424,7 @@ are from memory and unchecked.
   touch 7; Cave Bat 4, touch 8, dash 0.9 s; Nabbler 5, touch 6; Blue Gloop 5,
   touch 7. Band 3: Cinder Pup 8, touch 10; Lanternmoth 6, touch 9, pulse reach 3.5
   tiles; Old Digger 10, touch 12; Ember Gloop 8, touch 10. Wind ups 0.6 to 0.9 s.
-  XP per kill 2 to 5, 8 to 10, 14 to 18 by band. Slayer goals: Pebbleback 30,
+  XP per kill 2 to 5, 8 to 10, 14 to 18 by band. Ring sources (note 94, placeholders): Defense ring +1 1000g after meeting the trainer, iron defense ring +5 5000g from mine floor 40, slime proof ring rebuy 25000g, Sturdy band craft 2 copper bars, 25 moth dust, 25 gloop jelly at Combat 1. Slayer goals: Pebbleback 30,
   Dustmoth 500, Rock Crab 60, Mossbeetle 80, Gloop 1000 (all colours), Frostnibbler
   100, Icicle Hopper 100, Cave Bat 200, Nabbler 60, Cinder Pup 150, Lanternmoth
   150, Old Digger 50. Steady +25 health, Nimble 2.5 s grace. Weapon damage by
