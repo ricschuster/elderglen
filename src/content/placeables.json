@@ -372,5 +372,13 @@
     "blocksWalking": true,
     "pickUp": "hand",
     "price": 5000
+  },
+  {
+    "id": "keepsake-lantern",
+    "kind": "decor",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
   }
 ]

@@ -9,8 +9,8 @@ import type { GameState } from "./save";
 /**
  * The Cake Day cake table (note 82, owner answers 2026-11-11): the player
  * hands in one cooked dish, everyone tastes it, and the dish's quality sets a
- * small friendship gain with every attendee, once a year. The numbers are
- * placeholders in `src/content/cake-day.json`.
+ * small friendship gain with every attendee, once a year. The points follow the
+ * saved Luau scale (60, 90, 120) in `src/content/cake-day.json`.
  */
 export const CAKE_POINTS = data.points as Record<Quality, number>;
 

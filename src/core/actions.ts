@@ -9,6 +9,14 @@ import { doubleForageChance, forageFloor } from "./professions";
 import { cropQuality, forageQuality, withQuality } from "./quality";
 import { FORAGE_XP, harvestXp, type Skill } from "./skills";
 import type { GameState } from "./save";
+import {
+  TEA_CHOP_AXE_TIER,
+  TEA_CHOP_HITS,
+  TEA_LEAF,
+  TEA_SAPLING,
+  isTeaMature,
+  type TeaBushes,
+} from "./teabush";
 import type { FarmMap, TreeKind } from "./map";
 import type { Farm } from "./farm";
 import {
@@ -99,6 +107,7 @@ export function till(
   // Each map has its own fruit trees and sprinklers (`mapstore.ts`).
   const here = storeOf(g, soil.indoors);
   if (here.fruitTrees.at(x, y)) return fail("a tree is in the way");
+  if (here.teaBushes.at(x, y)) return fail("a tea bush is in the way");
   if (here.sprinklers.at(x, y)) return fail("a sprinkler is in the way");
   // Trees, weeds and the rest stand on the farm's tiles, not the greenhouse's.
   if (!soil.indoors) {
@@ -402,6 +411,8 @@ export function chop(
   if (g.day.over) return fail("exhausted");
   if (storeOf(g, !!map?.indoors).fruitTrees.at(x, y))
     return chopFruitTree(g, x, y, map);
+  if (storeOf(g, !!map?.indoors).teaBushes.at(x, y))
+    return chopTeaBush(g, x, y, map);
   const plan = planChop(g, x, y, random);
   const t = g.trees.at(x, y);
   if (!plan || !t) return fail("nothing to chop");
@@ -539,6 +550,77 @@ export function plantFruitTree(
   g.inventory.remove(id);
   fruitTrees.add(x, y, def.id);
   return { ok: true };
+}
+
+/**
+ * Plant a tea sapling (note 97). It needs open ground like a fruit tree, but no
+ * clear 3x3: bushes may stand side by side, as a fence. Not planted in areas.
+ */
+export function plantTeaBush(
+  g: GameState,
+  map: FarmMap,
+  x: number,
+  y: number,
+): Outcome {
+  if (g.day.over) return fail("exhausted");
+  if (g.inventory.count(TEA_SAPLING) < 1) return fail("no sapling");
+  if (g.away) return fail("cannot plant tree here");
+  if (!map.canPlantTree(x, y) || !isClear(g, map, x, y))
+    return fail("cannot plant tree here");
+  g.inventory.remove(TEA_SAPLING);
+  storeOf(g, map.indoors).teaBushes.add(x, y);
+  return { ok: true };
+}
+
+/**
+ * One swing of the axe at a tea bush. A young bush comes up in one swing; a
+ * mature one takes two swings and a gold or iridium axe. The sapling comes
+ * back (note 97). Refused when the backpack has no room, so it is never lost.
+ */
+function chopTeaBush(
+  g: GameState,
+  x: number,
+  y: number,
+  map?: FarmMap,
+): Outcome {
+  const bushes = storeOf(g, !!map?.indoors).teaBushes;
+  const b = bushes.at(x, y);
+  if (!b) return fail("nothing to chop");
+  const mature = isTeaMature(b);
+  if (mature && g.toolTiers.axe < TEA_CHOP_AXE_TIER)
+    return fail("needs a better axe");
+  const falls = !mature || b.hits + 1 >= TEA_CHOP_HITS;
+  if (falls && g.inventory.room(TEA_SAPLING) < 1) return fail("backpack full");
+  g.day.act(
+    swingCost(TOOL_ENERGY, g.toolTiers.axe, g.skills.level("foraging")),
+    0,
+  );
+  if (!falls) {
+    b.hits += 1;
+    return { ok: true };
+  }
+  g.inventory.add(TEA_SAPLING, 1);
+  noteGathered(g, TEA_SAPLING, 1);
+  bushes.remove(x, y);
+  return { ok: true, item: TEA_SAPLING };
+}
+
+/** Pick the waiting tea leaf by hand. */
+export function pickTeaLeaves(
+  g: GameState,
+  x: number,
+  y: number,
+  bushes: TeaBushes = g.teaBushes,
+): Outcome {
+  if (g.day.over) return fail("exhausted");
+  const b = bushes.at(x, y);
+  if (!b || b.leaves < 1) return fail("nothing ripe");
+  const take = Math.min(b.leaves, g.inventory.room(TEA_LEAF));
+  if (take < 1) return fail("backpack full");
+  g.inventory.add(TEA_LEAF, take);
+  noteGathered(g, TEA_LEAF, take);
+  b.leaves -= take;
+  return { ok: true, item: TEA_LEAF };
 }
 
 /** Shake the fruit off a mature tree by hand, all of it, at the tree's grade. */
@@ -752,6 +834,7 @@ export function isClear(
       !map.canPlantTree(x, y) ||
       here.sprinklers.at(x, y) ||
       here.fruitTrees.at(x, y) ||
+      here.teaBushes.at(x, y) ||
       here.soil.plotAt(x, y)
     );
   }
@@ -766,6 +849,7 @@ export function isClear(
     g.farm.plotAt(x, y) ||
     g.trees.at(x, y) ||
     g.fruitTrees.at(x, y) ||
+    g.teaBushes.at(x, y) ||
     g.weeds.at(x, y) ||
     g.twigs.at(x, y) ||
     g.rocks.at(x, y) ||

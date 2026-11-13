@@ -123,7 +123,7 @@ const MEAD_MINUTES = 600;
 /** Pale ale 2,250 minutes (saved Artisan Goods page). Beer 1,750 is from memory, unchecked. */
 const PALE_ALE_MINUTES = 2250;
 const BEER_MINUTES = 1750;
-/** Aged roe takes 4 days in the jar (ours, placeholder; Stardew's time is from memory, SC-170). */
+/** Aged roe takes 4 days in the jar (ours, placeholder; Stardew's time is from memory, SC-174). */
 export const AGED_ROE_MINUTES = 4 * MINUTES_PER_DAY;
 const KILN_MINUTES = 30;
 /** The geode crusher takes 1 game hour a geode and burns no fuel (Stardew, SC-157). */

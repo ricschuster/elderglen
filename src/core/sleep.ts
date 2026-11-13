@@ -291,6 +291,9 @@ export function sleep(
       true,
     ),
   );
+  const dayOfSeason = dateOf(g.day.clock.day).dayOfSeason;
+  g.teaBushes.endDay(season, dayOfSeason);
+  g.greenhouseTeaBushes.endDay(season, dayOfSeason, true);
   g.forage.respawn(
     season,
     spots.filter(

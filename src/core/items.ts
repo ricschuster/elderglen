@@ -28,8 +28,17 @@ import {
 } from "./ore";
 import { SPRINKLERS } from "./sprinklers";
 import { FRUIT_TREES, saplingId } from "./fruittrees";
+import {
+  TEA_LEAF,
+  TEA_LEAF_ENERGY,
+  TEA_LEAF_SELL_PRICE,
+  TEA_SAPLING,
+  TEA_SAPLING_SELL_PRICE,
+} from "./teabush";
 import decorData from "../content/decor.json";
 import creatureGoods from "../content/creature-goods.json";
+import huntPrize from "../content/hunt-prize.json";
+import iceFishing from "../content/ice-fishing.json";
 import lanternFloat from "../content/lantern-float.json";
 import weaponData from "../content/weapons.json";
 import furnitureData from "../content/furniture.json";
@@ -46,7 +55,13 @@ import artifactData from "../content/artifacts.json";
 const ARTIFACTS = artifactData.artifacts;
 import { FISH, RODS } from "./fishing";
 import { WATER_FINDS } from "./waterfinds";
-import { POND_SPECIES, roeOf, roePrice } from "./pondspecies";
+import {
+  POND_SPECIES,
+  agedRoeOf,
+  agedRoePrice,
+  roeOf,
+  roePrice,
+} from "./pondspecies";
 import { BAITS, LURES, TRINKETS } from "./tackle";
 import { JUNK, POT_ITEM, POT_NAME, POT_PRICE, SHELLFISH } from "./pots";
 import { ENERGY_MULTIPLIER, QUALITY_MULTIPLIER, splitQuality } from "./quality";
@@ -189,14 +204,40 @@ items.set("moonwool", { id: "moonwool", name: "Moonwool", sellPrice: 1200 });
 for (const f of WATER_FINDS)
   if (!items.has(f.id))
     items.set(f.id, { id: f.id, name: f.name, sellPrice: f.sellPrice });
-/** Roe, one item per pond species (note 93). */
-for (const s of POND_SPECIES)
+/** Roe and aged roe, one item each per pond species (note 93). */
+for (const s of POND_SPECIES) {
   items.set(roeOf(s.id), {
     id: roeOf(s.id),
     name: `${s.name} roe`,
     sellPrice: roePrice(s),
   });
+  items.set(agedRoeOf(s.id), {
+    id: agedRoeOf(s.id),
+    name: `Aged ${s.name.toLowerCase()} roe`,
+    sellPrice: agedRoePrice(s),
+  });
+}
+/** Algae soup: a pond reward only, no recipe (note 93). Stats are placeholders. */
+export const ALGAE_SOUP = "algae-soup";
+items.set(ALGAE_SOUP, {
+  id: ALGAE_SOUP,
+  name: "Algae soup",
+  sellPrice: 100,
+  energy: 80,
+});
 /** Beeswax from the bee house and the candle made from it (note 63, bundle 20). Prices are placeholders, ours. */
+/** Tea bush goods (note 97). Prices are placeholders, see `tea-bush.json`. */
+items.set(TEA_SAPLING, {
+  id: TEA_SAPLING,
+  name: "Tea sapling",
+  sellPrice: TEA_SAPLING_SELL_PRICE,
+});
+items.set(TEA_LEAF, {
+  id: TEA_LEAF,
+  name: "Tea leaf",
+  sellPrice: TEA_LEAF_SELL_PRICE,
+  energy: TEA_LEAF_ENERGY,
+});
 export const WAX = "wax";
 export const CANDLE = "candle";
 items.set(WAX, { id: WAX, name: "Beeswax", sellPrice: 40 });
@@ -257,6 +298,17 @@ items.set(lanternFloat.lantern.id, {
   name: lanternFloat.lantern.name,
   sellPrice: 0,
   keep: true,
+});
+/** Seedswap hunt prize packet (note 82, placeholder): a plain item, the crop it grows is open. */
+items.set(huntPrize.packet.id, {
+  id: huntPrize.packet.id,
+  name: huntPrize.packet.name,
+  sellPrice: huntPrize.packet.sellPrice,
+});
+items.set(iceFishing.frostfin.id, {
+  id: iceFishing.frostfin.id,
+  name: iceFishing.frostfin.name,
+  sellPrice: iceFishing.frostfin.sellPrice,
 });
 items.set(lanternFloat.keepsake.id, {
   id: lanternFloat.keepsake.id,
@@ -454,6 +506,7 @@ const GROUPS: [string, string[]][] = [
     [
       ...ALL_CROPS.map((c) => seedId(c.id)),
       ...FRUIT_TREES.map((t) => saplingId(t.id)),
+      TEA_SAPLING,
       "mixed-seed",
       "tree-seed",
       "maple-seed",
@@ -462,14 +515,14 @@ const GROUPS: [string, string[]][] = [
     ],
   ],
   ["Fruit", FRUIT_TREES.map((t) => t.id)],
-  ["Forage", FORAGE.map((f) => f.id)],
+  ["Forage", [...FORAGE.map((f) => f.id), TEA_LEAF]],
   ["Fertilizer", FERTILIZERS.map((f) => f.id)],
   [
     "Machines, sprinklers and chests",
     [...SPRINKLERS, ...MACHINES, ...CHESTS].map((m) => m.id),
   ],
   ["Artisan goods", ARTISAN_GOODS.map((a) => a.id)],
-  ["Dishes", DISHES.map((d) => d.id)],
+  ["Dishes", [...DISHES.map((d) => d.id), ALGAE_SOUP]],
   [
     "Animal goods",
     [
@@ -539,8 +592,12 @@ const GROUPS: [string, string[]][] = [
       ...SHELLFISH,
       ...JUNK,
       ...WATER_FINDS,
-      ...POND_SPECIES.map((s) => ({ id: roeOf(s.id) })),
+      ...POND_SPECIES.flatMap((s) => [
+        { id: roeOf(s.id) },
+        { id: agedRoeOf(s.id) },
+      ]),
       { id: POT_ITEM },
+      { id: iceFishing.frostfin.id },
     ].map((f) => f.id),
   ],
   [
@@ -552,6 +609,7 @@ const GROUPS: [string, string[]][] = [
       ELF_LETTER,
       lanternFloat.lantern.id,
       lanternFloat.keepsake.id,
+      huntPrize.packet.id,
     ],
   ],
   ["Rings", RINGS.map((r) => r.id)],

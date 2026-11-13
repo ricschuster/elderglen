@@ -96,6 +96,7 @@ export function tapPick(
   if (g.day.over) return false;
   const here = storeOf(g, map.indoors);
   if (here.fruitTrees.ripe(x, y)) return true;
+  if ((here.teaBushes.at(x, y)?.leaves ?? 0) > 0) return true;
   if (here.soil.plotAt(x, y)?.crop && here.soil.isRipe(x, y)) return true;
   return !map.indoors && !!g.forage.itemAt(x, y);
 }

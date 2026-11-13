@@ -19,7 +19,7 @@ import {
 } from "../core/animals";
 import {
   buyFarmDecor,
-  farmDecorIds,
+  farmDecorForSale,
   farmDecorProblem,
 } from "../core/farmdecor";
 import { COOP_HEATER, HEATER_PRICE, itemById } from "../core/items";
@@ -107,7 +107,7 @@ export class KeeperScene extends Phaser.Scene {
         dim: g.money < HEATER_PRICE,
         buttons: [{ text: "Buy", run: () => this.buyHeater() }],
       });
-    for (const id of farmDecorIds()) {
+    for (const id of farmDecorForSale()) {
       const def = placeableById(id)!;
       rows.push({
         label: itemById(id)?.name ?? id,

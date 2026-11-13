@@ -51,7 +51,7 @@ export const speciesById = (id: string | undefined) =>
 export const roeOf = (id: string): string => `${id}-roe`;
 export const roePrice = (s: PondSpecies): number => Math.floor(s.sellPrice / 2);
 
-/** Aged roe (preserves jar): `<id>-aged-roe`, twice the roe's price (Stardew, from memory, SC-170). */
+/** Aged roe (preserves jar): `<id>-aged-roe`, twice the roe's price (Stardew, from memory, SC-174). */
 export const agedRoeOf = (id: string): string => `${id}-aged-roe`;
 export const agedRoePrice = (s: PondSpecies): number => 2 * roePrice(s);
 /** The species whose roe or aged roe an item is, if it is one. */

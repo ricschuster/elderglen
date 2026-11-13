@@ -289,8 +289,8 @@ costume, the elf Aurelle, the dwarf Dunmar and the courier Aldreth do not.
 | Visitor | Aldreth | (14,63) |
 | Children, running | Fitch, Wren, Pim, Toby | (16,64), (18,64), (30,64), (32,64) |
 
-Hester leaves at 20:30 (decision 6). Open: the friendship numbers for the cake
-table, the costume items (names, prices, art, slot), whether Pim stands behind
+Hester leaves at 20:30 (decision 6). Settled 2026-11-12: cake points follow the saved Luau
+scale, 60 normal, 90 silver, 120 gold per attendee, and a bad dish is just not accepted. Open: the costume items (names, prices, art, slot), whether Pim stands behind
 the table with her parents (she is in the children's zone here), and the lines.
 
 ## Seedswap Fair in the Forest clearing (drafted 2026-11-11, owner answered the setup)
@@ -430,8 +430,10 @@ decoration only.
 Forest lake's fish plus the Frostfin. Talk to Cuthbert at (55,36) to be judged;
 5 fish wins. Winning gives one Frostfin each year and a hat the first time. The
 rival is Rushie, who stands at a hole and wins if the player has fewer than 5.
-How many fish multiplayer needs, the Frostfin's price and bundle use, and the hat
-are open.
+Only Forest lake fish cast into a hole tile count (not the river). The contest
+ends the festival after the judging, as Stardew's does. Built 2026-11-12 (see Built
+status). How many fish multiplayer needs, the Frostfin's price and bundle use, and
+the hat are open.
 
 **Villager tiles (draft for the owner to check; every tile is free ground):** 24
 people, the 22 town residents with Aldreth, Rushie and Dilly (decision 5).
@@ -447,7 +449,7 @@ people, the 22 town residents with Aldreth, Rushie and Dilly (decision 5).
 | At the holes | Dilly, Walter, Rushie | (42,23), (54,23), (54,27) |
 
 Hester leaves at 20:30 (decision 6). Open: the Frostfin (price, art, bundle use),
-the hat, whether the festival ends after judging as Stardew's does, and whether
+the hat, and whether
 holes need a cast distance rule on a tablet (Stardew's holes are small and hard
 to cast into).
 
@@ -654,10 +656,26 @@ placeholders to check in play.
   `items.ts` from the JSON (`keep`, Keepsakes category). Placeholders, open in the note: price 100,
   gain 20 points, the names and art of the lantern and keepsake. Scene hooks, unplayed: the
   `lantern-stall` counter buys (`FarmScene.lanternStall`), and acting while standing on or facing
-  the `launch-line` region launches (`launchLantern`). No drifting animation, no dusk tint. Open
-  question: "keepsake lantern for the farm" is built as a carried keepsake item, not a placeable.
-- **Not built (open or blocked):** the hunt prize (rare packet and hat, both open); multiplayer packet counts; the even-year maze and its niches; Hollow Eve niche
+  the `launch-line` region launches (`launchLantern`). No drifting animation, no dusk tint. The keepsake
+  is now a placeable farm decoration (see the next entry).
+- **Owner decisions built (2026-11-12):** Cake Day points are 60 / 90 / 120 per attendee (Luau scale, from the saved wiki page). The Seedswap hunt prize: the first win ever gives the Straw Boater (`g.wardrobe.add`, tracked as `seedhunt-hat` in `festivalsJoined`), every year's win gives a `rare-seed-packet` (`seedhunt-win:<year>`, `awardHuntPrize` in `seedhunt.ts`, called from the `FarmScene` hunt end before `finishHunt`; data in `src/content/hunt-prize.json`). The packet is a plain item for now (sell price 200 placeholder, the crop it grows is open). The keepsake lantern is now a `decor` placeable (`placeables.json`, no keeper price, farm only, lifted by hand) instead of a carried keepsake; the keeper's list uses `farmDecorForSale`. Its art is a placeholder block.
+- **Not built (open or blocked):** the rare packet's crop and sell price; multiplayer packet counts; the even-year maze and its niches; Hollow Eve niche
   lines; who walks the villagers between standing tiles (scene); the hall-restored state
   (the feast always uses the square until it is tracked); Frostday
   activities; the cake table scene, the lantern drifting animation and costume stall behaviour; the shut zone
   for the Frostday south shore (the zone stays the lake, since the shore is the Forest road).
+
+- **Frostday ice fishing (2026-11-12, tests `tests/icefishing.test.ts`):** `src/core/icefishing.ts`
+  with data `src/content/ice-fishing.json`: 5 fish win, the twelve holes from the layout,
+  only Forest lake fish cast into a hole count, the lake is shut before 12:00. The Frostfin
+  (`FROSTFIN`, kept out of `fish.json`) replaces a fish bite at a hole with a 20% chance
+  (placeholder), never on the tutorial cast, and counts. Cuthbert judges: 5 wins any time,
+  a short count loses from 17:00 (placeholder) and Rushie wins. A win gives one Frostfin a
+  year and the hat the first time (`awardIcePrize`, same route as the hunt, placeholder hat
+  `snow-cap`); `finishIceFishing` ends the festival through `leaveFestival`. Scene hooks:
+  `FishingData.ice` is the only fishing change (bite swap and count); `FarmScene.iceFor` and
+  `iceTalk`. Open: Frostfin price (300 placeholder), art and bundle use, the hat, the judging
+  time, multiplayer count. Leftovers: no on-screen counter while fishing, the Frostfin is not
+  in the fish log's saved kinds (`FishLog.load` drops unknown ids, so it only counts toward
+  the total until a fish.json entry is chosen), and a hole cast needs the player to face the
+  hole with ice between (the first water tile is the hole), not checked in play.

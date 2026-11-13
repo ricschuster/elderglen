@@ -1,4 +1,4 @@
 {
-  "_note": "Cake Day cake table (note 82). Friendship points per attendee by dish quality: placeholders, the numbers are open (SC-127). One dish, once a year.",
-  "points": { "normal": 20, "silver": 30, "gold": 40 }
+  "_note": "Cake Day cake table (note 82). Friendship points per attendee by dish quality: the saved Luau scale (60, 90, 120, owner decision 2026-11-12). One dish, once a year. A bad dish is not accepted, no penalty.",
+  "points": { "normal": 60, "silver": 90, "gold": 120 }
 }

@@ -1,3 +1,4 @@
+import prize from "../content/hunt-prize.json";
 import { dateOf } from "./calendar";
 import type { Festival } from "./festivals";
 import {
@@ -96,6 +97,40 @@ export function finishHunt(g: GameState, f: Festival, s: HuntState): boolean {
   if (s.status === "running" || !endsAfterMainEvent(f)) return false;
   leaveFestival(g);
   return true;
+}
+
+export const HUNT_PRIZE = prize;
+const winKey = (day: number) => `seedhunt-win:${dateOf(day).year}`;
+const HAT_KEY = "seedhunt-hat";
+
+export interface HuntPrize {
+  /** The hat id, given on the first win ever. */
+  hat?: string;
+  /** True when this year's rare seed packet was given. */
+  packet: boolean;
+}
+
+/**
+ * Pay out a won hunt: the first win ever gives the hat, and each year's first win
+ * gives a rare seed packet (kept for the year if the pack is full, so the hunt can
+ * be won again). Returns undefined when the hunt was not won or nothing is owed.
+ */
+export function awardHuntPrize(
+  g: GameState,
+  s: HuntState,
+): HuntPrize | undefined {
+  if (s.status !== "won") return undefined;
+  const out: HuntPrize = { packet: false };
+  if (!g.festivalsJoined.includes(HAT_KEY)) {
+    g.festivalsJoined.push(HAT_KEY);
+    if (g.wardrobe.add(prize.hat)) out.hat = prize.hat;
+  }
+  const key = winKey(g.day.clock.day);
+  if (!g.festivalsJoined.includes(key) && g.inventory.add(prize.packet.id, 1)) {
+    g.festivalsJoined.push(key);
+    out.packet = true;
+  }
+  return out.hat || out.packet ? out : undefined;
 }
 
 /** The villager who starts the hunt. */

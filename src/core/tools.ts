@@ -10,6 +10,8 @@ import {
   placeSprinkler,
   plant,
   plantFruitTree,
+  plantTeaBush,
+  pickTeaLeaves,
   pickFruit,
   plantTree,
   shake,
@@ -29,6 +31,7 @@ import { HARDWOOD, cropOfSeed } from "./items";
 import { MIXED_SEED } from "./weeds";
 import { fertilizerById } from "./fertilizer";
 import { treeOfSapling } from "./fruittrees";
+import { TEA_SAPLING } from "./teabush";
 import { sprinklerById } from "./sprinklers";
 import { storeOf } from "./mapstore";
 import {
@@ -133,6 +136,7 @@ export function useHeld(
     if (area !== undefined && g.spots.at(x, y)) return digSpot(g, area, x, y);
     if (g.trees.at(x, y)) return clearSeedling(g, x, y, "hoe", map);
     if (g.fruitTrees.at(x, y)) return fail("a tree is in the way");
+    if (g.teaBushes.at(x, y)) return fail("a tea bush is in the way");
     return map.isTillable(x, y) ? till(g, x, y) : fail("cannot dig here");
   }
   if (held.kind === "tool" && held.tool === "can")
@@ -159,6 +163,8 @@ export function useHeld(
     return plantTree(g, map, x, y, held.id);
   if (held.kind === "item" && treeOfSapling(held.id))
     return plantFruitTree(g, map, x, y, held.id);
+  if (held.kind === "item" && held.id === TEA_SAPLING)
+    return plantTeaBush(g, map, x, y);
   // Picking, shaking and harvesting are the Action button's job (note 47).
   return fail("nothing to do here");
 }
@@ -176,14 +182,20 @@ function useInGreenhouse(
   x: number,
   y: number,
 ): Outcome {
-  const { soil, sprinklers, fruitTrees } = storeOf(g, true);
+  const { soil, sprinklers, fruitTrees, teaBushes } = storeOf(g, true);
   // Any tool, or the empty hand, lifts a placed sprinkler (SC-48).
   if (held.kind === "tool" && sprinklers.at(x, y))
     return pickUpSprinkler(g, x, y, sprinklers);
-  if (held.kind === "tool" && held.tool === "axe" && fruitTrees.at(x, y))
+  if (
+    held.kind === "tool" &&
+    held.tool === "axe" &&
+    (fruitTrees.at(x, y) || teaBushes.at(x, y))
+  )
     return chop(g, x, y, Math.random, map);
   if (held.kind === "tool" && held.tool === "hoe" && fruitTrees.at(x, y))
     return fail("a tree is in the way");
+  if (held.kind === "tool" && held.tool === "hoe" && teaBushes.at(x, y))
+    return fail("a tea bush is in the way");
   if (held.kind === "tool" && held.tool === "hoe")
     return map.isTillable(x, y)
       ? till(g, x, y, Math.random, soil)
@@ -197,6 +209,8 @@ function useInGreenhouse(
     return placeSprinkler(g, map, x, y, held.id);
   if (held.kind === "item" && treeOfSapling(held.id))
     return plantFruitTree(g, map, x, y, held.id);
+  if (held.kind === "item" && held.id === TEA_SAPLING)
+    return plantTeaBush(g, map, x, y);
   return fail("nothing to do here");
 }
 
@@ -216,6 +230,7 @@ function pick(g: GameState, x: number, y: number): Outcome {
       : shaken;
   }
   if (g.fruitTrees.at(x, y)) return pickFruit(g, x, y);
+  if (g.teaBushes.at(x, y)) return pickTeaLeaves(g, x, y);
   if (g.sprinklers.at(x, y)) return pickUpSprinkler(g, x, y);
   if (g.machines.at(x, y)) return handOnMachine(g, x, y);
   return g.forage.itemAt(x, y) ? forage(g, x, y) : harvest(g, x, y);
@@ -225,6 +240,7 @@ function pick(g: GameState, x: number, y: number): Outcome {
 function pickIndoors(g: GameState, x: number, y: number): Outcome {
   const here = storeOf(g, true);
   if (here.fruitTrees.at(x, y)) return pickFruit(g, x, y, here.fruitTrees);
+  if (here.teaBushes.at(x, y)) return pickTeaLeaves(g, x, y, here.teaBushes);
   if (here.sprinklers.at(x, y))
     return pickUpSprinkler(g, x, y, here.sprinklers);
   return harvest(g, x, y, Math.random, here.soil);

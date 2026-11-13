@@ -26,6 +26,7 @@ import { Mines, type MinesSave } from "./mines";
 import { Combat, type CombatSave } from "./combat";
 import type { CreatureSave } from "./creatures";
 import { FruitTrees, fruitTreeById, type PlacedFruitTree } from "./fruittrees";
+import { TeaBushes, type PlacedTeaBush } from "./teabush";
 import { LIGHTNING_ROD } from "./lightning";
 import { Sprinklers, sprinklerById, type PlacedSprinkler } from "./sprinklers";
 import { QUALITIES, type Quality } from "./quality";
@@ -110,6 +111,9 @@ export interface GameState {
   greenhouseSprinklers: Sprinklers;
   /** Fruit trees planted in the greenhouse: they bear in any season. */
   greenhouseFruitTrees: FruitTrees;
+  /** Tea bushes of the farm and the greenhouse (note 97). Not kept in areas. */
+  teaBushes: TeaBushes;
+  greenhouseTeaBushes: TeaBushes;
   /** Where the repaired greenhouse stands, once moved at the carpenter. Unset: its ruin site. */
   greenhouseSite?: { x: number; y: number };
   /** World flags that are up, such as `secret-log-cleared` (`core/worldflags.ts`). Absent until one is. */
@@ -228,6 +232,8 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     fruitTrees: new FruitTrees(),
     greenhouseSprinklers: new Sprinklers(),
     greenhouseFruitTrees: new FruitTrees(),
+    teaBushes: new TeaBushes(),
+    greenhouseTeaBushes: new TeaBushes(),
     placed: new PlacedStore(),
     machines: new Machines(),
     casks: new Casks(),
@@ -306,7 +312,11 @@ interface SaveData {
    */
   mapItems?: Record<
     string,
-    { sprinklers?: PlacedSprinkler[]; fruitTrees?: PlacedFruitTree[] }
+    {
+      sprinklers?: PlacedSprinkler[];
+      fruitTrees?: PlacedFruitTree[];
+      teaBushes?: PlacedTeaBush[];
+    }
   >;
   /**
    * Sprinklers, machines and chests by map id (`placedstore.ts`). Absent in
@@ -454,6 +464,26 @@ function validFruitTrees(raw: unknown): PlacedFruitTree[] {
     : [];
 }
 
+/** The tea bushes of a saved list that are well formed. */
+function validTeaBushes(raw: unknown): PlacedTeaBush[] {
+  return Array.isArray(raw)
+    ? raw
+        .filter(
+          (b): b is PlacedTeaBush =>
+            isObject(b) &&
+            Number.isInteger(b.x) &&
+            Number.isInteger(b.y) &&
+            Number.isInteger(b.age),
+        )
+        .map((b) => ({
+          ...b,
+          age: Math.max(b.age, 0),
+          leaves: Number.isInteger(b.leaves) ? Math.max(b.leaves, 0) : 0,
+          hits: 0,
+        }))
+    : [];
+}
+
 /** The trees of a saved list that are well formed. */
 function validTrees(raw: unknown[]): Tree[] {
   return raw.filter(
@@ -521,8 +551,14 @@ export function serialize(g: GameState): string {
     rocks: home.rocks.save(),
     mines: g.mines.save(),
     mapItems: {
-      [FARM_STORE]: { fruitTrees: home.fruitTrees.save() },
-      [GREENHOUSE_STORE]: { fruitTrees: g.greenhouseFruitTrees.save() },
+      [FARM_STORE]: {
+        fruitTrees: home.fruitTrees.save(),
+        teaBushes: g.teaBushes.save(),
+      },
+      [GREENHOUSE_STORE]: {
+        fruitTrees: g.greenhouseFruitTrees.save(),
+        teaBushes: g.greenhouseTeaBushes.save(),
+      },
     },
     placed: collectPlaced(g).save(),
     ...(g.greenhouseSite ? { greenhouseSite: { ...g.greenhouseSite } } : {}),
@@ -771,6 +807,8 @@ export function deserialize(text: string): GameState | undefined {
   );
   g.fruitTrees.load(validFruitTrees(farmItems.fruitTrees));
   g.greenhouseFruitTrees.load(validFruitTrees(houseItems.fruitTrees));
+  g.teaBushes.load(validTeaBushes(farmItems.teaBushes));
+  g.greenhouseTeaBushes.load(validTeaBushes(houseItems.teaBushes));
   if (
     isObject(raw.greenhouseSite) &&
     Number.isInteger(raw.greenhouseSite.x) &&

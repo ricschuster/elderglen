@@ -10,6 +10,7 @@ import {
 } from "./clothes";
 import { TAILORED_SEP, bootsById, tailoredParts } from "./equipment";
 import { hatById } from "./hats";
+import { roeSpeciesOf } from "./pondspecies";
 import { splitQuality } from "./quality";
 import type { GameState } from "./save";
 import { hasFlag } from "./worldflags";
@@ -174,7 +175,12 @@ function processedColour(base: string): string | undefined {
 /** The pot colour an item stains, if any. Plants follow the dye vat table; quality is ignored. */
 export function potColourOf(item: string): string | undefined {
   const base = splitQuality(item).base;
-  const c = POT_INPUTS[base] ?? DYE_INPUTS[base] ?? processedColour(base);
+  // Roe and aged roe take the colour of their fish (notes 24, 93).
+  const fish = roeSpeciesOf(base);
+  const c =
+    POT_INPUTS[fish ?? base] ??
+    DYE_INPUTS[fish ?? base] ??
+    processedColour(base);
   if (!c) return undefined;
   return POT_COLOURS.includes(c) ? c : POT_ALIAS[c];
 }

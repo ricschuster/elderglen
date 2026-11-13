@@ -8,7 +8,7 @@ import type { GameState } from "./save";
  * Lamplight Evening lantern floating (note 82): buy a paper lantern at the
  * stall, stand on the launch line and set it afloat. Once a year the launch
  * gives every attendee a small friendship gain, and the first time ever a
- * keepsake lantern. The drifting is the scene's. Numbers are placeholders in
+ * keepsake lantern (a farm decoration, placed outdoors like the others). The drifting is the scene's. Numbers are placeholders in
  * `src/content/lantern-float.json`.
  */
 export const LANTERN = data.lantern;

@@ -36,6 +36,7 @@ import { areaOf, enterArea, isAreaMap, leaveArea } from "../core/areas";
 import { eventAtTile } from "../core/eventrun";
 import { declinedToday } from "./HeartEventScene";
 import {
+  awardHuntPrize,
   finishHunt,
   huntEndLine,
   huntLine,
@@ -44,6 +45,15 @@ import {
   tickHunt,
   type HuntState,
 } from "../core/seedhunt";
+import {
+  awardIcePrize,
+  finishIceFishing,
+  iceOffer,
+  isHole,
+  lakeShut,
+  startIceFishing,
+  type IceFishing,
+} from "../core/icefishing";
 import { cakeProblem, handInCake } from "../core/cakeday";
 import {
   buyLantern,
@@ -53,6 +63,7 @@ import {
 } from "../core/lanterns";
 import { meet, presentAt, villagersOn, type Present } from "../core/townfolk";
 import { stageOf as fruitStageOf } from "../core/fruittrees";
+import { teaStageOf } from "../core/teabush";
 import type { GameState } from "../core/save";
 import { TOOLS, cycle, heldAt, nextRow, toolbarSize } from "../core/toolbar";
 import { pendingChoice } from "../core/professions";
@@ -479,6 +490,8 @@ export class FarmScene extends Phaser.Scene {
   private hunt?: HuntState;
   private huntGfx?: Phaser.GameObjects.Graphics;
   private huntText?: Phaser.GameObjects.Text;
+  /** The Frostday ice fishing count (placeholder, note 82). */
+  private ice?: IceFishing;
   private tapAct?: Vec;
   /** True when the route ends in using the held item on `tapAct` (note 27). */
   private tapActUses = false;
@@ -630,6 +643,7 @@ export class FarmScene extends Phaser.Scene {
     for (const c of this.floorState?.creatures ?? [])
       world.push(this.addCreatureSprite(c));
     this.hunt = this.huntGfx = this.huntText = undefined;
+    this.ice = undefined;
     this.villagers = [];
     this.villagerSprites = new Map();
     this.villagerStamp = -1;
@@ -1101,6 +1115,7 @@ export class FarmScene extends Phaser.Scene {
       (log !== undefined && !logCleared(this.state, log)) ||
       (this.outdoorWorld && this.state.trees.blocks(x, y)) ||
       !!this.store.fruitTrees.at(x, y) ||
+      !!this.store.teaBushes.at(x, y) ||
       !!this.rocks()?.at(x, y) ||
       this.furnaceAt(x, y) ||
       coopBlocks(this.state, this.mapId, x, y) ||
@@ -1406,6 +1421,7 @@ export class FarmScene extends Phaser.Scene {
       this.render();
       return true;
     }
+    if (this.iceTalk(who.id)) return true;
     const held = heldAt(this.state, this.selected);
     const r = meet(
       this.state,
@@ -1435,7 +1451,8 @@ export class FarmScene extends Phaser.Scene {
     if (this.tapHand(tile)) return this.action();
     const tree =
       (!this.map.indoors && this.state.trees.at(tile.x, tile.y)) ||
-      this.store.fruitTrees.at(tile.x, tile.y);
+      this.store.fruitTrees.at(tile.x, tile.y) ||
+      this.store.teaBushes.at(tile.x, tile.y);
     const rock = this.rocks()?.at(tile.x, tile.y);
     if (tree || rock) {
       this.select(TOOLS.indexOf(tree ? "axe" : "pickaxe"));
@@ -1588,7 +1605,8 @@ export class FarmScene extends Phaser.Scene {
       held.tool === "axe" &&
       !!(
         (!this.map.indoors && this.state.trees.at(front.x, front.y)) ||
-        this.store.fruitTrees.at(front.x, front.y)
+        this.store.fruitTrees.at(front.x, front.y) ||
+        this.store.teaBushes.at(front.x, front.y)
       );
     const pick =
       held.kind === "tool" &&
@@ -2154,6 +2172,37 @@ export class FarmScene extends Phaser.Scene {
     this.refreshHolds();
   }
 
+  /** The Frostday contest for a cast landing on this tile: the state at a hole, "shut" before opening. */
+  private iceFor(x: number, y: number): IceFishing | "shut" | undefined {
+    const f = festivalDayToday(this.state.day.clock.day);
+    if (f?.id !== "frostday" || this.mapId !== "forest") return undefined;
+    if (lakeShut(f, this.state.day.clock.minutes)) return "shut";
+    if (!isHole(f, x, y)) return undefined;
+    this.ice ??= startIceFishing(f);
+    return this.ice;
+  }
+
+  /** Talk to Cuthbert at the contest: the count, or the judging, the prize and the end of the festival. */
+  private iceTalk(who: string): boolean {
+    const f = festivalDayToday(this.state.day.clock.day);
+    if (f?.id !== "frostday" || this.mapId !== "forest") return false;
+    this.ice ??= startIceFishing(f);
+    const line = iceOffer(this.ice, who, this.state.day.clock.minutes);
+    if (!line) return false;
+    this.message = line;
+    const s = this.ice;
+    if (s && s.status !== "fishing") {
+      const won = awardIcePrize(this.state, s);
+      if (won)
+        this.message +=
+          ` ${won.hat ? `You get the ${hatById(won.hat)?.name ?? "hat"}. ` : ""}${won.frostfin ? "You get a Frostfin." : ""}`.trim();
+      finishIceFishing(this.state, s);
+      this.ice = undefined;
+    }
+    this.render();
+    return true;
+  }
+
   /** Use a rod: it needs water in front of the player within the rod's range (note 21). */
   private cast(rodId: string): void {
     const rod = rodById(rodId)!;
@@ -2172,7 +2221,12 @@ export class FarmScene extends Phaser.Scene {
       here.x + step.x * first,
       here.y + step.y * first,
     );
-    this.open("fishing", { rod: rodId, water, at: here, kind });
+    const ice = this.iceFor(here.x + step.x * first, here.y + step.y * first);
+    if (ice === "shut") {
+      this.message = "The lake opens at noon.";
+      return this.render();
+    }
+    this.open("fishing", { rod: rodId, water, at: here, kind, ice });
   }
 
   /**
@@ -2583,6 +2637,13 @@ export class FarmScene extends Phaser.Scene {
     this.huntText?.setText(huntLine(s));
     if (s.status === "running" || !f) return;
     this.message = huntEndLine(f, s) ?? "";
+    const won = awardHuntPrize(this.state, s);
+    if (won)
+      this.message +=
+        ` ${won.hat ? `You get the ${hatById(won.hat)?.name ?? "hat"}.` : ""}${won.packet ? " You get a rare seed packet." : ""}`.replace(
+          / +/g,
+          " ",
+        );
     finishHunt(this.state, f, s);
     this.huntGfx.destroy();
     this.huntText?.destroy();
@@ -2944,6 +3005,9 @@ export class FarmScene extends Phaser.Scene {
       put(t.x, t.y, fruitTreeKey(fruitStageOf(t.age)));
       if (t.fruit > 0) put(t.x, t.y, fruitOnTreeKey(t.id));
     }
+    // Placeholder art: the fruit tree sprites, tinted green (note 97).
+    for (const b of here.teaBushes.each())
+      put(b.x, b.y, fruitTreeKey(teaStageOf(b.age) * 2)).setTint(0x7fd66a);
   }
 
   /** What stands and lies outdoors: forage, weeds, twigs, machines, trees and goods on the ground. */

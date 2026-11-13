@@ -187,7 +187,7 @@ is blind to ponds, and the other carpenter jobs do not wait for a pond under way
 - **Aged roe.** Roe in the preserves jar (`processing.ts`) becomes `<fish>-aged-roe` (name
   "Aged <fish> roe"), 2 times the roe's price, 4 days (6,400 machine minutes, placeholder).
   Aged roe goes in no machine. Sea urchin and coral roe count as any species. The Stardew rule is
-  from memory (SC-170, unchecked). Colour: `potColourOf` now strips `-roe` and `-aged-roe` and
+  from memory (SC-174, unchecked). Colour: `potColourOf` now strips `-roe` and `-aged-roe` and
   uses the fish's pot colour (roe had no colour before this, only note 24 said it should).
   Pot colours exist only for fish listed in `dyes.json` `potInputs`; a fish not listed has no
   colour for its roe either.

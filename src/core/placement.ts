@@ -158,6 +158,7 @@ function clutterAt(g: GameState, x: number, y: number): string | undefined {
   const t = g.trees.at(x, y);
   if (t) return t.stump ? "a stump" : "a tree";
   if (g.fruitTrees.at(x, y)) return "a fruit tree";
+  if (g.teaBushes.at(x, y)) return "a tea bush";
   if (g.weeds.at(x, y)) return "weeds";
   if (g.twigs.at(x, y)) return "a twig";
   // Empty tilled soil does not block: it is cleared under the building.

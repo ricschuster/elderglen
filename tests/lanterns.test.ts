@@ -1,3 +1,5 @@
+import { farmDecorForSale, isFarmDecor } from "../src/core/farmdecor";
+import { placeableById } from "../src/core/placeables";
 import { describe, expect, it } from "vitest";
 import { DAYS_PER_SEASON, SEASONS } from "../src/core/calendar";
 import { FESTIVALS } from "../src/core/festivals";
@@ -31,6 +33,12 @@ describe("lantern floating", () => {
   it("has item defs for the lantern and the keepsake", () => {
     expect(itemById(LANTERN.id)).toBeDefined();
     expect(itemById(KEEPSAKE.id)).toBeDefined();
+  });
+
+  it("the keepsake is a farm decoration with no keeper price", () => {
+    expect(isFarmDecor(KEEPSAKE.id)).toBe(true);
+    expect(placeableById(KEEPSAKE.id)?.price).toBeUndefined();
+    expect(farmDecorForSale()).not.toContain(KEEPSAKE.id);
   });
 
   it("sells a lantern only on the festival, while it is open, for the price", () => {

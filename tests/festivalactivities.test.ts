@@ -3,6 +3,7 @@ import { DAYS_PER_SEASON, SEASONS } from "../src/core/calendar";
 import { FESTIVALS } from "../src/core/festivals";
 import { newGame } from "../src/core/save";
 import {
+  awardHuntPrize,
   finishHunt,
   huntEndLine,
   huntLine,
@@ -77,6 +78,41 @@ describe("seed hunt", () => {
   });
 });
 
+describe("seed hunt prize", () => {
+  const f = fest("seedswap-fair");
+  const won = (day: number) => {
+    const s = startHunt(f, day, 13 * 60)!;
+    s.status = "won";
+    return s;
+  };
+  const setup = (year: number) => {
+    const g = newGame();
+    g.day.clock.day = dayOf("spring", 14, year);
+    return g;
+  };
+
+  it("gives nothing for a lost or running hunt", () => {
+    const g = setup(1);
+    const s = startHunt(f, g.day.clock.day, 13 * 60)!;
+    expect(awardHuntPrize(g, s)).toBeUndefined();
+    tickHunt(s, 60);
+    expect(awardHuntPrize(g, s)).toBeUndefined();
+    expect(g.inventory.count("rare-seed-packet")).toBe(0);
+  });
+
+  it("first win gives the hat and a packet, a later year only a packet", () => {
+    const g = setup(1);
+    const a = awardHuntPrize(g, won(g.day.clock.day))!;
+    expect(a).toEqual({ hat: "straw-boater", packet: true });
+    expect(g.wardrobe.has("straw-boater")).toBe(true);
+    expect(g.inventory.count("rare-seed-packet")).toBe(1);
+    expect(awardHuntPrize(g, won(g.day.clock.day))).toBeUndefined();
+    g.day.clock.day = dayOf("spring", 14, 2);
+    expect(awardHuntPrize(g, won(g.day.clock.day))).toEqual({ packet: true });
+    expect(g.inventory.count("rare-seed-packet")).toBe(2);
+  });
+});
+
 describe("cake table", () => {
   const dish = "fried-egg";
   const setup = () => {
@@ -101,6 +137,7 @@ describe("cake table", () => {
     expect(r.quality).toBe("gold");
     const who = attendees(festivalLayout(fest("cake-day"))!);
     expect(Object.keys(r.gains).sort()).toEqual([...who].sort());
+    expect(CAKE_POINTS).toEqual({ normal: 60, silver: 90, gold: 120 });
     expect(g.friendship.points("hattie")).toBe(CAKE_POINTS.gold);
     expect(g.inventory.count(`${dish}@gold`)).toBe(0);
     expect(handInCake(g, dish)).toBeUndefined();
