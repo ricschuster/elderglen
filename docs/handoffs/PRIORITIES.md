@@ -18,18 +18,23 @@ unless the owner says so.
 Decided 2026-11-12: the Last Seat opens after ALL other bundles (built). #876 and #879
 stay in M3b. Guests' Board +500 friendship (built), up to five heart events a person.
 
+Decided 2026-11-12 (session 9): ADR 0014, committed map JSON is the source, generators moved to
+`scripts/drafts/`. Elderfruit sources confirmed. Tapper crafted at Foraging 4, no shop; Heavy
+Tapper is the Rare Finds bundle reward. Rings from the trainer and slayer goal; Sturdy band
+crafted at Combat 1. Boots tailoring built. Regrow outside the farm 20 percent a night, stage 3.
+Hat Parade join until 14:30. Hall restored is derived. Dye redo costs the six pot items.
+
 Built 2026-11-12 (sessions 7d, 8 and 8b), all awaiting the owner's play. Bundles 1 to 26 can be
 filled in code; the exit test needs the owner's play. Detail is in the notes' "Built status",
 the 2026-11-12l, 2026-11-12m and 2026-11-12n handoffs and `PRIORITIES_ARCHIVE.md`.
 
 Open, top to bottom:
 
-1. **Owner answers needed** (small builds wait on them): seven elderfruit sources confirmed;
-   cave-pool placement (farm cave or mine floors); tailoring unlock (first-cloth line or heart
-   event) and dye redo cost; boots tailoring design; #396 cosmetic trees and regrow rule; where
-   the four new rings (note 94) come from; whether a tapper is sold, where, price, and the real
-   Heavy Tapper recipe; sync map generators with committed maps; how hall-restored is tracked;
-   Hat Parade latest join time.
+1. **Owner answers left** (small builds wait on them): Defense +5 ring (shop at floor 40 as built,
+   or the Rock Crab 60 reward as the saved page says; note 22's Crabshell ring overlaps); whether
+   "hall restored" needs the Last Seat done (built) or only open; a Bug Meat item (moth dust
+   stands in for the Sturdy band); Heavy Tapper yield (SC-168); Icicle Hopper reward (lost
+   the Sturdy band, note 22); which tailor and which event for the 4 heart tailoring unlock.
 2. **Tea bush design** (new note, Stardew-shaped: crafted sapling, leaves spring to fall),
    then herb tea uses tea leaves (bundle 24).
 3. **#873 heart events** (note 62), needs the list per person, then scenes as data.
@@ -38,13 +43,17 @@ Open, top to bottom:
 6. **#876 left:** festival activities (hunt, judging, ice fishing, lantern floating, cake
    table), the festival-ends-after-event rule, scene walking villagers and marchers, even-year
    hedge maze and niche lines (note 82 "Built status").
-7. **Note 96 left:** boots tailoring, pot colour for processed goods. **#396 left:** cosmetic
-   trees, regrow outside the farm.
+7. **Decided 2026-11-12, still to build:** the tailoring unlock as a 4 heart
+   event of the tailor (built as a plain first-cloth line), cave-pool water on mine floors
+   (note 93, no map has water yet), village trees marked `cosmetic` (needs tree objects in
+   `hearthwell.json`, layout task, note 87), pot colour for processed goods. #874 left: the
+   spouse source (marriage) and the gallery set (library gallery system).
 8. A browser look at hat picker, cart screen, herb stall, tapper, lights, rod, bombs, festival
    maps, tailoring and decor.
 
-Alongside: `docs/overview.json` (behind since 2026-11-11), Stardew
-checks rows (SC-122, 135, 160 to 167, SC-156), and file the M4 hosting spike before M4.
+Alongside: `docs/overview.json` (behind since 2026-11-11), check every committed map is in the
+contract tests (ADR 0014), Stardew checks rows (SC-122, 135, 160 to 170), and file the M4
+hosting spike before M4 (also farm player state size in the save, ADR 0014).
 
 ## Milestone order (ADR 0012)
 

@@ -1,9 +1,13 @@
+// DRAFT ONLY, DO NOT RUN (ADR 0014). This script overwrites a committed map that has
+// since been edited by hand, so running it would drop working features. The committed
+// JSON in src/content/maps/ is the source. Kept as a record of the first draft.
+//
 // Writes the Hearthwell river layout (Tiled JSON), build issue #661, the
 // layout pass before the shell (#645) of docs/design/77_hearthwell.md: the 120
 // by 110 terrain with the two river arms, the three bridges, the streets and
 // the reserved lots. No building, door, exit or farm change: the lots are
 // `region` rectangles and the doors are entries, for #645 to fill.
-// Run once: node scripts/gen-hearthwell-map.mjs && npx prettier --write src/content/maps/hearthwell.json
+// Run once: node scripts/drafts/gen-hearthwell-map.mjs && npx prettier --write src/content/maps/hearthwell.json
 // The file it writes is the source from then on: edit it by hand or in Tiled.
 // This script only authored the first draft, with a fixed seed.
 import { writeFileSync } from "node:fs";

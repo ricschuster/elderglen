@@ -804,7 +804,7 @@
         "count": 30
       },
       {
-        "item": "gold-bar",
+        "item": "hearthsilver-bar",
         "count": 1
       }
     ],
@@ -814,9 +814,8 @@
     },
     "sources": [
       {
-        "kind": "level",
-        "skill": "foraging",
-        "level": 8
+        "kind": "bundle",
+        "bundle": "rare-finds"
       }
     ]
   },
@@ -931,6 +930,34 @@
       {
         "kind": "bundle",
         "bundle": "harvest-feast"
+      }
+    ]
+  },
+  {
+    "id": "sturdy-band",
+    "ingredients": [
+      {
+        "item": "copper-bar",
+        "count": 2
+      },
+      {
+        "item": "moth-dust",
+        "count": 25
+      },
+      {
+        "item": "gloop-jelly",
+        "count": 25
+      }
+    ],
+    "result": {
+      "item": "sturdy-band",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "level",
+        "skill": "combat",
+        "level": 1
       }
     ]
   }

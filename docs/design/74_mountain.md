@@ -183,7 +183,7 @@ Build order steps 1 to 3 are built, with step 2's lake fish, and step 6 as far a
 map allows.
 
 - **Map:** `src/content/maps/mountain.json`, 80 by 70, drafted by
-  `scripts/gen-mountain-map.mjs` (the JSON is the source from then on). Properties
+  `scripts/drafts/gen-mountain-map.mjs` (the JSON is the source from then on). Properties
   `wild`, `rideable` and `waterKind` mountain-lake. Water zones: the lake
   (x 18 to 45, y 8 to 25) as the default kind, and three `river` rects that step east
   (x 46 to 52 from the stream mouth at (46, 18) to y 37, x 50 to 55 to y 45, x 53 to

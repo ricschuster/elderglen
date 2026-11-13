@@ -5,7 +5,14 @@ import {
   MAHOGANY_SEED_NAME,
   MAHOGANY_SEED_PRICE,
 } from "./mahogany";
-import { BOOTS, RINGS, isCombo, ringById } from "./equipment";
+import {
+  BOOTS,
+  RINGS,
+  bootsById,
+  isCombo,
+  ringById,
+  tailoredParts,
+} from "./equipment";
 import { FERTILIZERS } from "./fertilizer";
 import { FORAGE } from "./forage";
 import {
@@ -569,6 +576,12 @@ export function itemById(id: string): ItemDef | undefined {
     // A combined ring (note 95) is made, not listed.
     const ring = isCombo(base) ? ringById(base) : undefined;
     if (ring) def = { id: ring.id, name: ring.name, sellPrice: 0, keep: true };
+  }
+  if (!def) {
+    // A custom-tailored pair of boots (note 96) is made, not listed.
+    const boots = tailoredParts(base) ? bootsById(base) : undefined;
+    if (boots)
+      def = { id: boots.id, name: boots.name, sellPrice: 0, keep: true };
   }
   if (!def || quality === "normal") return def;
   return {

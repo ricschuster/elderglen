@@ -1,7 +1,11 @@
+// DRAFT ONLY, DO NOT RUN (ADR 0014). This script overwrites a committed map that has
+// since been edited by hand, so running it would drop working features. The committed
+// JSON in src/content/maps/ is the source. Kept as a record of the first draft.
+//
 // Writes the Mountain map (Tiled JSON), build steps 1 to 3 and 6 of
 // docs/design/74_mountain.md: the shell, the lake and river, the footbridge,
 // the roads, the rockfall and mine mouth, pines, rocks, clutter and forage.
-// Run once: node scripts/gen-mountain-map.mjs
+// Run once: node scripts/drafts/gen-mountain-map.mjs
 // The file it writes, src/content/maps/mountain.json, is the source from then
 // on: edit that by hand or in Tiled. This script only authored the first
 // draft, with a fixed seed so a re-run gives the same file.

@@ -982,7 +982,7 @@ Final art waits for M3d (ADR 0012).
 - Every rebuilt map lists its one tile wide spots in `AISLE_EXCEPTIONS`
   (`tests/helpers/interior.ts`). Some are by design (gated doors, bedside nooks); the
   keeper's aisles and the kitchen table rings are the owner's call.
-- `scripts/gen-delta-map.mjs` still writes the old `fisher-hut.json`; do not rerun it.
+- `scripts/drafts/gen-delta-map.mjs` still writes the old `fisher-hut.json`; do not rerun it.
 
 - Whether the gated bedroom needs a heart level other than 2 per person, and how a
   closed bedroom door looks (note 61 decision 6 says 2, as in Stardew).

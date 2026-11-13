@@ -181,7 +181,7 @@ All four build slices are built: the map, the nightly spawns, the bridge on the
 Mountain (note 74 "Built status (2026-11-09, #649)") and the dwarf's camp.
 
 - **Map** `src/content/maps/quarry.json`, 60 by 44, `wild`, rideable, written by
-  `scripts/gen-quarry-map.mjs` once and hand edited from then on. A two tile cliff border,
+  `scripts/drafts/gen-quarry-map.mjs` once and hand edited from then on. A two tile cliff border,
   exit `to_mountain` at x 0, y 20 to 24 and entry `from_mountain` at (3, 22), a short
   path to the camp, three clear pads (regions `pad-a` (6, 5), `pad-b` (28, 12), `pad-c`
   (46, 26), 8 by 6, region property `pad`), and 60 stone rocks, 8 copper, 4 coal and 2 iron

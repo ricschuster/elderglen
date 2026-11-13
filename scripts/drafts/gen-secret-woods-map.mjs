@@ -1,7 +1,11 @@
+// DRAFT ONLY, DO NOT RUN (ADR 0014). This script overwrites a committed map that has
+// since been edited by hand, so running it would drop working features. The committed
+// JSON in src/content/maps/ is the source. Kept as a record of the first draft.
+//
 // Writes the Secret Woods map (Tiled JSON), steps 1 to 4 of
 // docs/design/73_secret_woods.md: the shell, the upper glade, the covered
 // passage, the lower hollow with its pond, six large stumps and forage spots.
-// Run once: node scripts/gen-secret-woods-map.mjs
+// Run once: node scripts/drafts/gen-secret-woods-map.mjs
 // The file it writes, src/content/maps/secret-woods.json, is the source from
 // then on: edit that by hand or in Tiled. This script only authored the first
 // draft, with a fixed seed so a re-run gives the same file.

@@ -75,7 +75,7 @@ Room reward: Old Greencoat sets up a herb and seed stall at the hall.
 | 3 | Autumn Foraging | 4 of 6 | 15 autumn seeds | Autumn forage and crop |
 | 4 | Winter Foraging | 3 of 5 | Seed maker | Winter forage, seed maker |
 | 5 | Woodland | All: 50 wood, 50 stone, 30 fibre | Charcoal kiln | Gathering, crafting |
-| 6 | Rare Finds | 3 of 5 rare forage | 5 forage dishes | New forage, eating (exists) |
+| 6 | Rare Finds | 3 of 5 rare forage | Heavy Tapper recipe (was 5 forage dishes, note 92) | New forage, eating (exists) |
 
 ### 2. Larder
 

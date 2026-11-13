@@ -422,3 +422,14 @@ Diamond, mine cart stop at the mine mouth; note 96 tailoring; note 89 decor kind
 leftovers (cave-pool kind, pond hooks, report lines); #396 per-kind tree seeds; note 95 ring
 combining and unforge; tapper art and Heavy Tapper; #877 icons; generators emit cart tiles;
 the festival route layer and layouts (#876, note 82).
+
+---
+
+## Built 2026-11-12, session 9 (moved from the live list)
+
+Owner answers taken and built: #874 audit (sources 1, 2, 4, 5, 6 were built; fish letter text
+fixed); tapper crafted at Foraging 4 with the Heavy Tapper as the Rare Finds bundle reward
+(SC-168); trainer rings (Defense +1 and +5, slime proof at 1,000 gloop, Sturdy band crafted at
+Combat 1, SC-169); derived `hallRestored`; Hat Parade join cut-off 14:30; boots tailoring (SC-170);
+regrow outside the farm as stage 3 and the `cosmetic` tree property (#396); ADR 0014 and the
+generators moved to `scripts/drafts/`.

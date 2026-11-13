@@ -132,8 +132,9 @@ on a fruit tree's 3x3), 15 percent a night per stage with stage 4 at half that
 (no growth in winter), 10 Hardwood and 5 sap and 0 to 1 seed on felling, no
 spreading, a stump by the common rule, and a 10 percent seed chance per chop of
 a Secret Woods daily stump. Numbers are data in `src/content/mahogany.json`,
-rules in `src/core/mahogany.ts`. **Not built:** tapping for daily sap (no tapper
-exists yet, so it waits for the tapper), tree fertilizer on common trees (none
+rules in `src/core/mahogany.ts`. **Built later (2026-11-12, note 92):** tapping
+for daily sap with either tapper (Tapper 40 Wood and 2 Copper Bars at Foraging level 4, crafted
+only; Heavy Tapper from the Rare Finds bundle). **Not built:** tree fertilizer on common trees (none
 exists yet), the Forester bonus (12 or 13 Hardwood, no profession yet), the
 monster seed drop (waits for Secret Woods creatures), and Mahogany art (it
 borrows the oak sprites).
@@ -169,8 +170,24 @@ seed (0 to 2 from Foraging 1), a shaken or cleared one too, a held seed plants a
 parent's kind. The Forest (maple, oak) and Mountain (pine) already placed their kinds (notes 71
 and 74). Placeholder: Maple seed and Pine cone sell for 5g like the Acorn, icons are blocks.
 
-Not built, and left open for the owner: the three cosmetic (unchoppable) tree spots outside the
-farm, and the regrow rule for felled trees outside the farm (SC-30 and SC-09 quote Stardew's 20
-percent a night once the stump is gone, but the owner has not picked it for ours, and which
-trees are cosmetic is a layout call, note 87). Per-type yields are the common tree's (12 wood
+## Built status: regrow and cosmetic trees (2026-11-12, #396)
+
+Owner decisions, 2026-11-12. Built, with tests in `tests/forest.test.ts`:
+
+- Regrow outside the farm (SC-09, as Stardew's saved Trees page): a spot where an area map placed a
+  tree, now empty (felled and its stump uprooted), has a 20 percent chance each night of returning
+  as a stage 3 seedling of the same kind, in any season; a stump left in place stops it
+  (`regrowGroves` in `core/areas.ts`, `GROVE_REGROW_STAGE`). The rule already existed but sprouted
+  a stage 1 seed; it now sprouts stage 3. Only original (map-placed) trees regrow, because the
+  rule keys on the map's tree spots, so a tree the player planted outside the farm does not. It
+  never runs on the farm.
+- Cosmetic trees (SC-30, as Stardew's Town trees west of the river): the Tiled `tree` object
+  property `cosmetic` (bool, true) marks one. The axe is refused ("This tree is for show. You can
+  only shake it."), a tapper is refused (`mayTap`), the hand still shakes a seed, and a cosmetic
+  spot never regrows. The tree stays in the map's tree list and blocks like any tree.
+
+Not built: Hearthwell's map (`hearthwell.json`) has no tree objects, so no village tree is marked
+yet. Placing the village trees, with `cosmetic` set, is a layout task (note 87). `farm.json` and
+`mountain.json` were not touched. The Tiled property is not yet read in a map test (only the tree
+rules are), and nothing was verified by play. Per-type yields are the common tree's (12 wood
 and Foraging bonus, 5 sap).

@@ -24,6 +24,12 @@ export interface RingDef {
   slimeProof?: boolean;
   /** Bad effects that land last half as long (note 37, the Sturdy ring). */
   halfEffects?: boolean;
+  /** Sold at the trainer's counter (note 94). `minFloor` is the deepest mine floor reached that unlocks it. */
+  shop?: { price: number; minFloor?: number };
+  /** The slayer goal whose completion hands this ring over (note 22). */
+  slayer?: string;
+  /** What the trainer charges to hand a lost slayer reward over again (placeholder, note 07). */
+  rebuy?: number;
 }
 
 export const RINGS = ringData as RingDef[];
@@ -45,8 +51,39 @@ export interface BootsDef {
 
 export const BOOTS = bootData as BootsDef[];
 
+/** A custom-tailored pair's id joins the look pair and the stats pair with this (note 96). */
+export const TAILORED_SEP = "@";
+
+/** The look pair and stats pair of a custom-tailored pair, undefined for any other id. */
+export function tailoredParts(id: string): [string, string] | undefined {
+  const parts = id.split(TAILORED_SEP);
+  if (parts.length !== 2) return undefined;
+  const [look, stats] = parts as [string, string];
+  if (look === stats) return undefined;
+  if (!BOOTS.some((b) => b.id === look) || !BOOTS.some((b) => b.id === stats))
+    return undefined;
+  return [look, stats];
+}
+
+/**
+ * Boots by id. A custom-tailored pair (note 96) is made, not listed: it keeps the look
+ * and price of its look pair, takes the stats of its stats pair and is named
+ * "Custom-tailored [look name]".
+ */
 export function bootsById(id: string): BootsDef | undefined {
-  return BOOTS.find((b) => b.id === id);
+  const base = BOOTS.find((b) => b.id === id);
+  if (base) return base;
+  const parts = tailoredParts(id);
+  if (!parts) return undefined;
+  const look = BOOTS.find((b) => b.id === parts[0])!;
+  const stats = BOOTS.find((b) => b.id === parts[1])!;
+  return {
+    id,
+    name: `Custom-tailored ${look.name.toLowerCase()}`,
+    defense: stats.defense,
+    immunity: stats.immunity,
+    price: look.price,
+  };
 }
 
 export const RING_SLOTS = 2;

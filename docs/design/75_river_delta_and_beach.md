@@ -195,7 +195,7 @@ Build order steps 1 to 4 are built, except the pots and the Great Hearthfin lege
 (see "Not built").
 
 - **Map:** `src/content/maps/delta.json`, 100 by 70, drafted by
-  `scripts/gen-delta-map.mjs` (the JSON is the source from then on). Properties
+  `scripts/drafts/gen-delta-map.mjs` (the JSON is the source from then on). Properties
   `wild`, `rideable` and `waterKind` marsh-lake. Water kinds are zones: the marsh lake
   (default), `river` (the main channel and the three side channel rects, an L that
   runs from the channel to the lake) and `sea` (the sea and the lagoon by the
@@ -254,7 +254,7 @@ Build order steps 1 to 4 are built, except the pots and the Great Hearthfin lege
 
 ## Elf's house built (2026-11-09, #641)
 
-Drafted by `scripts/gen-beach-elf-house.mjs`; the JSON is the source from then on.
+Drafted by `scripts/drafts/gen-beach-elf-house.mjs`; the JSON is the source from then on.
 
 - **Cottage:** on the Beach dunes in `delta.json`, a 7 by 5 solid building at x 77 to 83,
   y 23 to 27 (the sand's north-east, under the cliff wall), door on the south wall at

@@ -1,9 +1,13 @@
 import Phaser from "phaser";
+import { bootsById } from "../core/equipment";
 import { itemById } from "../core/items";
 import type { GameState } from "../core/save";
 import type { TailorKind } from "../core/clothes";
 import {
   POT_COLOURS,
+  bootsTailorProblem,
+  packBoots,
+  tailorBoots,
   dyePiece,
   pieceName,
   potColourOf,
@@ -26,6 +30,7 @@ export class TailorScene extends Phaser.Scene {
   private mode: "sew" | "dye" = "sew";
   private menu!: Menu;
   private message!: Phaser.GameObjects.Text;
+  private bootsFeed?: string;
   private tint = { h: 200, s: 0.6, v: 0.9 };
 
   constructor() {
@@ -86,8 +91,66 @@ export class TailorScene extends Phaser.Scene {
         ],
       };
     });
+    rows.push(...this.bootsRows());
     if (rows.length === 0)
       rows.push({ label: "Nothing in your pack fits the spool", buttons: [] });
+    return rows;
+  }
+
+  /**
+   * Boots (notes 37 and 96): one pair is the feed, whose look and name stay; each other
+   * pair can go on the spool, giving its stats and used up. Placeholder picker, no cloth.
+   */
+  private bootsRows(): Row[] {
+    const g = this.state;
+    const pairs = packBoots(g);
+    if (pairs.length < 2) return [];
+    const feed =
+      this.bootsFeed && pairs.includes(this.bootsFeed)
+        ? this.bootsFeed
+        : pairs[0]!;
+    const name = (id: string): string => bootsById(id)?.name ?? id;
+    const stats = (id: string): string => {
+      const b = bootsById(id);
+      return b ? `Defense ${b.defense}, immunity ${b.immunity}` : "";
+    };
+    const rows: Row[] = [
+      {
+        label: `Boots in the feed: ${name(feed)}`,
+        detail: stats(feed),
+        buttons: [
+          {
+            text: "Next",
+            run: () => {
+              this.bootsFeed = pairs[(pairs.indexOf(feed) + 1) % pairs.length];
+              this.refresh();
+            },
+          },
+        ],
+      },
+    ];
+    for (const spool of pairs) {
+      if (spool === feed) continue;
+      const problem = bootsTailorProblem(g, feed, spool);
+      rows.push({
+        label: `Spool ${name(spool)}`,
+        detail: `${stats(spool)}${problem ? ` (${problem})` : ""}`,
+        dim: problem !== undefined,
+        buttons: [
+          {
+            text: "Tailor",
+            run: () => {
+              const r = tailorBoots(g, feed, spool);
+              this.message.setText(
+                r.ok ? `You make ${r.name.toLowerCase()}.` : r.reason,
+              );
+              this.bootsFeed = undefined;
+              this.refresh();
+            },
+          },
+        ],
+      });
+    }
     return rows;
   }
 

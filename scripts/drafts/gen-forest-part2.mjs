@@ -1,10 +1,14 @@
+// DRAFT ONLY, DO NOT RUN (ADR 0014). This script overwrites a committed map that has
+// since been edited by hand, so running it would drop working features. The committed
+// JSON in src/content/maps/ is the source. Kept as a record of the first draft.
+//
 // Part 2 of docs/design/72_forest.md: the farmstead, the hermit's tower and the
 // Wanderer's camp, cut into the Forest map, plus the two interiors
 // (forest-farmstead.json, hermit-tower.json).
 // A one-off edit of src/content/maps/forest.json, already applied. Re-running it
 // on the edited file is safe: it clears and re-draws the same tiles, but it adds
 // a second copy of the markers, so do not. After that, edit the files by hand.
-// Run: node scripts/gen-forest-part2.mjs && npx prettier --write src/content/maps
+// Run: node scripts/drafts/gen-forest-part2.mjs && npx prettier --write src/content/maps
 import { readFileSync, writeFileSync } from "node:fs";
 
 const W = 120;

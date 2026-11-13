@@ -1,6 +1,10 @@
+// DRAFT ONLY, DO NOT RUN (ADR 0014). This script overwrites a committed map that has
+// since been edited by hand, so running it would drop working features. The committed
+// JSON in src/content/maps/ is the source. Kept as a record of the first draft.
+//
 // Writes the Forest map (Tiled JSON), part 1 of docs/design/72_forest.md:
 // the shell, the lake, the six groves, the clutter and the forage points.
-// Run once: node scripts/gen-forest-map.mjs
+// Run once: node scripts/drafts/gen-forest-map.mjs
 // The file it writes, src/content/maps/forest.json, is the source from then on:
 // edit that by hand or in Tiled. This script only authored the first draft, with
 // a fixed seed so a re-run gives the same file.

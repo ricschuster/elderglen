@@ -292,7 +292,7 @@ layer, built with the house work (note 85). The house door stays 1 wide at (62, 
 ## Built status (2026-11-11, #776)
 
 `src/content/maps/farm.json` is now the 80 by 65 map, written by
-`scripts/gen-farm-map.mjs` from the Tiled draft (a one-shot; the JSON is the
+`scripts/drafts/gen-farm-map.mjs` from the Tiled draft (a one-shot; the JSON is the
 source from then on). Tiles keep the placeholder indices, so there is no art
 change. Differences from the table above:
 

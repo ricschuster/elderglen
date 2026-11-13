@@ -1,7 +1,7 @@
 # 96 Tailoring
 
 Status: design settled with the owner's answers of 2026-11-12. Numbers are placeholders.
-Nothing here is built. Parts of Stardew's behaviour are from memory (SC-161 to SC-163).
+Built in part (see "Built status"). Parts of Stardew's behaviour are from memory (SC-161 to SC-163, SC-170).
 
 Part of note 10 ("Tailoring" and "Dyes"). Ring 1 only, art waits for M3d.
 
@@ -24,8 +24,13 @@ Part of note 10 ("Tailoring" and "Dyes"). Ring 1 only, art waits for M3d.
   not copied from Stardew. An item with no row is refused with a line saying so. The
   spool item is used up, the cloth too. Output goes to the wardrobe (note 10), not the
   pack, and a second copy is refused.
-- **Boots.** Feed 1 cloth, spool a pair of boots, and a second pair is the feed donor
-  (look from one, stats from the other), per note 37. Placeholder cost 1 cloth.
+- **Boots (owner, 2026-11-12).** The stats of one pair move onto another pair and the
+  donor pair is used up. No cloth. The saved Footwear page confirms only the stat
+  transfer and that the result is named "Custom-tailored [name of shoe/boot]". Which slot
+  is which is not on the page: ours is feed = the pair whose look and name are kept,
+  spool = the pair whose stats are taken and which is used up (SC-170). The same pair, or
+  two pairs with the same stats, are refused. A custom pair keeps its original look and
+  can be tailored again. It is a made item (`look@stats` id), not a listed one.
 - **Dye.** Six pots (red, orange, yellow, green, blue, purple), one item each, all six
   used up, then hue, saturation and value sliders colour the worn piece. Items and their
   pot colour follow `src/content/dyes.json`, which grows from 31 rows to cover flowers,
@@ -35,7 +40,8 @@ Part of note 10 ("Tailoring" and "Dyes"). Ring 1 only, art waits for M3d.
   single-colour machine; the pots are the full tool in town.
 - **Cloth sources.** The loom (built), by wool quality (silver 25, gold 50, per note 24
   tuning). Cloth also comes from the Hat-maker's order board and a few ring 1 chests.
-- **No upkeep, no loss.** A worn-out piece does not exist. Dyeing can be redone free.
+- **No upkeep, no loss.** A worn-out piece does not exist. Dyeing can be redone, and a redo costs the six pot
+  items again, no gold (owner, 2026-11-12: Stardew's pots consume their items).
 
 ## Content (ring 1 starting set)
 
@@ -52,7 +58,7 @@ Part of note 10 ("Tailoring" and "Dyes"). Ring 1 only, art waits for M3d.
 2. `src/core/tailoring.ts`: pure rules for feed, spool, output and refusal, tested.
 3. The sewing machine and pots as interior objects in the Hat-maker house, with the
    unlock scene as data (note 84 events).
-4. Dye pots and sliders screen. Boots tailoring after boots exist as items.
+4. Dye pots and sliders screen. Boots tailoring (built 2026-11-12, boots now exist as items).
 5. Art: placeholder blocks per piece. Real art in M3d.
 
 Gift tastes: cloth stays shared by the animal keeper and hat-maker (note 61).
@@ -76,10 +82,13 @@ placeholder `TailorScene` (spool list, hue, saturation and value rows) plus shir
 rows in the hat box.
 
 Taken as: the unlock is a plain first-cloth line from Cordelia (not a heart event); a redo
-costs the six pot items again (only the gold is free); the second spool copy is refused.
+costs the six pot items again and no gold (owner, 2026-11-12); the second spool copy is refused.
 
-Not built: boots tailoring (needs a look and stats split on boots in note 37 and the
-equipment, not designed), processed goods taking their ingredient's colour in the pots, the
+Boots can be tailored (2026-11-12, `tailorBoots` in `tailoring.ts`, a made `look@stats`
+item in `equipment.ts`, a placeholder boots section on the sewing screen, custom pairs
+wearable and saved). Unverified by play. Boots are not floor chest finds yet.
+
+Not built: processed goods taking their ingredient's colour in the pots, the
 player sprite wearing shirts and pants (art, M3d), the Hat-maker's order board cloth, the
 cloth prices, the hatter map generator (it does not know the two new services, so
 regenerating the map drops them). Placeholders: all piece names and colours, the 29 spool

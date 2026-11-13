@@ -1,7 +1,11 @@
+// DRAFT ONLY, DO NOT RUN (ADR 0014). This script overwrites a committed map that has
+// since been edited by hand, so running it would drop working features. The committed
+// JSON in src/content/maps/ is the source. Kept as a record of the first draft.
+//
 // Writes the Hearthwell interiors (Tiled JSON), build issue #646, step 3 of
 // docs/design/77_hearthwell.md: the six shop-and-home shells, the Outpost's two
 // maps and the three burrows, and opens the ten shut lot doors in hearthwell.json.
-// Run once: node scripts/gen-hearthwell-interiors.mjs && npx prettier --write src/content/maps/*.json
+// Run once: node scripts/drafts/gen-hearthwell-interiors.mjs && npx prettier --write src/content/maps/*.json
 // The files it writes are the source from then on: edit them by hand or in Tiled.
 import { readFileSync, writeFileSync } from "node:fs";
 

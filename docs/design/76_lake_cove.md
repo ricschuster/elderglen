@@ -132,7 +132,7 @@ Work package: "Lake cove and the ferry".
 Slices 1, 2 and 4 and the cove's fish table and forage of slice 3 are built. The
 legend waits (below).
 
-- **Map:** `src/content/maps/cove.json`, 50 by 40, drafted by `scripts/gen-cove-map.mjs`
+- **Map:** `src/content/maps/cove.json`, 50 by 40, drafted by `scripts/drafts/gen-cove-map.mjs`
   (the JSON is the source from then on). Properties `wild`, `rideable: false` and
   `waterKind: cove`. Water x 14 to 44, y 10 to 34 with the four corners cut round;
   a path ring 3 tiles wide round it; a 5 by 5 dock at x 4 to 8, y 6 to 10; six
