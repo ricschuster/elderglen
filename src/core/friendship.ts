@@ -245,6 +245,12 @@ export class Friendship {
     r.weekGifts = 0;
   }
 
+  /** Award points outside gifting (a festival, note 82); capped by the heart limit. Returns the points gained. */
+  award(id: string, n: number): number {
+    const r = this.row(id);
+    return r ? this.add(r, id, n) : 0;
+  }
+
   /** Call each morning: pays the weekly bonus on the first day of a new week. */
   startDay(day: number): void {
     for (const [id, r] of this.rows) this.sync(r, id, day);

@@ -1,0 +1,108 @@
+import { describe, expect, it } from "vitest";
+import { DAYS_PER_SEASON, SEASONS } from "../src/core/calendar";
+import { FESTIVALS } from "../src/core/festivals";
+import { newGame } from "../src/core/save";
+import {
+  finishHunt,
+  huntStartProblem,
+  huntWinner,
+  packetTiles,
+  pickUp,
+  startHunt,
+  tickHunt,
+} from "../src/core/seedhunt";
+import { CAKE_POINTS, cakeProblem, handInCake } from "../src/core/cakeday";
+import { attendees, festivalLayout } from "../src/core/festivalroutes";
+
+const fest = (id: string) => FESTIVALS.find((f) => f.id === id)!;
+const dayOf = (season: string, d: number, year = 1) =>
+  (year - 1) * SEASONS.length * DAYS_PER_SEASON +
+  SEASONS.indexOf(season as never) * DAYS_PER_SEASON +
+  d;
+
+describe("seed hunt", () => {
+  const f = fest("seedswap-fair");
+  const day = dayOf("spring", 21);
+
+  it("uses the odd packet set in year 1 and the even set in year 2", () => {
+    const h = festivalLayout(f)!.hunt!;
+    expect(packetTiles(h, day)).toBe(h.odd);
+    expect(packetTiles(h, dayOf("spring", 21, 2))).toBe(h.even);
+  });
+
+  it("starts from opening to 17:30 only", () => {
+    expect(huntStartProblem(f, 11 * 60)).toBeDefined();
+    expect(huntStartProblem(f, 12 * 60)).toBeUndefined();
+    expect(huntStartProblem(f, 17 * 60 + 30)).toBeUndefined();
+    expect(huntStartProblem(f, 17 * 60 + 31)).toBeDefined();
+    expect(startHunt(f, day, 18 * 60)).toBeUndefined();
+  });
+
+  it("wins at 9 packets, each picked up once", () => {
+    const s = startHunt(f, day, 12 * 60)!;
+    const tiles = packetTiles(s.hunt, day);
+    expect(pickUp(s, 0, 0)).toBe(false);
+    for (let i = 0; i < 8; i++)
+      expect(pickUp(s, tiles[i]![0], tiles[i]![1])).toBe(true);
+    expect(pickUp(s, tiles[0]![0], tiles[0]![1])).toBe(false);
+    expect(s.status).toBe("running");
+    pickUp(s, tiles[8]![0], tiles[8]![1]);
+    expect(s.status).toBe("won");
+    expect(huntWinner(f, s)).toBe("player");
+    expect(pickUp(s, tiles[9]![0], tiles[9]![1])).toBe(false);
+  });
+
+  it("loses on time and Linnet wins", () => {
+    const s = startHunt(f, day, 12 * 60)!;
+    tickHunt(s, 49);
+    expect(s.status).toBe("running");
+    tickHunt(s, 1);
+    expect(s.status).toBe("lost");
+    expect(huntWinner(f, s)).toBe("linnet");
+  });
+
+  it("a finished hunt ends the festival at the end time, a running one does not", () => {
+    const g = newGame();
+    g.day.clock.day = day;
+    g.day.clock.minutes = 13 * 60;
+    const s = startHunt(f, day, 13 * 60)!;
+    expect(finishHunt(g, f, s)).toBe(false);
+    expect(g.day.clock.minutes).toBe(13 * 60);
+    tickHunt(s, 50);
+    expect(finishHunt(g, f, s)).toBe(true);
+    expect(g.day.clock.minutes).toBe(f.ends);
+  });
+});
+
+describe("cake table", () => {
+  const dish = "fried-egg";
+  const setup = () => {
+    const g = newGame();
+    g.day.clock.day = dayOf("summer", 8);
+    return g;
+  };
+
+  it("needs Cake Day and a dish you hold", () => {
+    const g = newGame();
+    expect(cakeProblem(g, "parsnip")).toBeDefined();
+    const c = setup();
+    expect(cakeProblem(c, "parsnip")).toBe("The table is for cooked dishes.");
+    expect(cakeProblem(c, dish)).toBe("You do not have that.");
+  });
+
+  it("gives every attendee points by quality, once a year", () => {
+    const g = setup();
+    g.inventory.add(`${dish}@gold`, 1);
+    g.inventory.add(dish, 1);
+    const r = handInCake(g, `${dish}@gold`)!;
+    expect(r.quality).toBe("gold");
+    const who = attendees(festivalLayout(fest("cake-day"))!);
+    expect(Object.keys(r.gains).sort()).toEqual([...who].sort());
+    expect(g.friendship.points("hattie")).toBe(CAKE_POINTS.gold);
+    expect(g.inventory.count(`${dish}@gold`)).toBe(0);
+    expect(handInCake(g, dish)).toBeUndefined();
+    expect(cakeProblem(g, dish)).toBe("Your dish is already on the table.");
+    g.day.clock.day = dayOf("summer", 8, 2);
+    expect(cakeProblem(g, dish)).toBeUndefined();
+  });
+});

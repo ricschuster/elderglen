@@ -633,8 +633,18 @@ placeholders to check in play.
   end (17,13). Hester sits on the bench tile (1,7) (a `seated` entry in the data). The
   Beach and Forest festival maps hide decorations only on the tiles they use; the sim
   test seed moved from 2 to 3 because moving objects reorders forage spots.
-- **Not built (open or blocked):** the even-year maze and its niches; Hollow Eve niche
+- **Activities built as rules (2026-11-12, tests `tests/festivalactivities.test.ts`):**
+  `src/core/seedhunt.ts` (packet set by year parity, start window from opening to
+  `lastStart` 17:30, 50 s clock, pick up by tile, 9 wins, timeout loses and the rival
+  Linnet wins, `finishHunt` ends the festival at its end time through `leaveFestival`
+  for festivals in `ENDS_AFTER_MAIN_EVENT`). `src/core/cakeday.ts` and
+  `src/content/cake-day.json` (hand in one cooked dish, once a year, every attendee gains
+  points by the dish quality; the points 20, 30, 40 are placeholders, the numbers are
+  still open). `Friendship.award` is the new way to give points outside gifting. No scene
+  hook yet: the hunt needs a timer and a Cuthbert dialogue, the table needs a dish picker.
+- **Not built (open or blocked):** the scene UI for the hunt and the cake table; the hunt
+  prize (rare packet and hat, both open); multiplayer packet counts; the even-year maze and its niches; Hollow Eve niche
   lines; who walks the villagers between standing tiles (scene); the hall-restored state
-  (the feast always uses the square until it is tracked); the Seedswap and Frostday
-  activities; the cake table, lantern floating and costume stall behaviour; the shut zone
+  (the feast always uses the square until it is tracked); Frostday
+  activities; the cake table scene, lantern floating and costume stall behaviour; the shut zone
   for the Frostday south shore (the zone stays the lake, since the shore is the Forest road).
