@@ -1,5 +1,7 @@
 import orderData from "../content/orders.json";
-import { dateOf, type Season } from "./calendar";
+import { dateOf, weekOf, type Season } from "./calendar";
+
+export { weekOf };
 import { categoryOf } from "./artisan";
 import { contents, isEmpty, type PlacedChest } from "./chests";
 import { cropById } from "./crops";
@@ -120,9 +122,6 @@ export interface OrdersNews {
   done: { title: string; gold: number; first: boolean; reward: string }[];
   lapsed: string[];
 }
-
-/** Which week of play a day is in, from 0. Weeks start on a Monday (Spring 1). */
-export const weekOf = (day: number): number => Math.floor((day - 1) / 7);
 
 /** A small stable hash of a week, so a reload draws the same board. */
 function weekRoll(week: number): number {

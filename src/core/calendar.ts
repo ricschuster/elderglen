@@ -32,6 +32,10 @@ export const WEEKDAYS = [
   "Sun",
 ] as const;
 
+/** The week of a day, counted from 0. */
+export const weekOf = (day: number): number =>
+  Math.floor((day - 1) / WEEKDAYS.length);
+
 /** Date in words, such as "Mon. Spring 1", with a seven day week as in Stardew. */
 export function dateText(day: number): string {
   const { season, dayOfSeason } = dateOf(day);

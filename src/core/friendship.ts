@@ -3,7 +3,9 @@ import geodeData from "../content/geodes.json";
 import creatureGoods from "../content/creature-goods.json";
 import fishData from "../content/fish.json";
 import { artisanById, FLOWER_HONEY_PRICE, produceOf } from "./artisan";
-import { dateOf } from "./calendar";
+import { dateOf, weekOf } from "./calendar";
+
+export { weekOf };
 import { cropById } from "./crops";
 import { dishById } from "./dishes";
 import { forageById } from "./forage";
@@ -27,9 +29,6 @@ export const POINTS = data.points;
 export const HEART = POINTS.heart;
 export const TALK_POINTS = POINTS.talk;
 export const TASTE_POINTS: Readonly<Record<Taste, number>> = POINTS.taste;
-
-/** The week index of a game day. Day 1 is a Monday, so a week runs Monday to Sunday. */
-export const weekOf = (day: number): number => Math.floor((day - 1) / 7);
 
 export const isBirthday = (id: string, day: number): boolean => {
   const b = villagerById(id)?.birthday;
@@ -113,15 +112,19 @@ export const tasteListOf = (villagerId: string): TasteList =>
 export const hasOwnList = (villagerId: string): boolean =>
   PEOPLE[villagerId] !== undefined;
 
-/** Every id and tag a personal list names, for validation. */
-export const listedEntries = (): string[] =>
-  Object.values(PEOPLE).flatMap((l) => [
+/** Every id and tag a personal or universal list names, for validation. */
+export const listedEntries = (): string[] => [
+  ...Object.values(PEOPLE).flatMap((l) => [
     ...l.loves,
     ...l.likes,
     ...(l.neutral ?? []),
     ...l.dislikes,
     ...l.hates,
-  ]);
+  ]),
+  ...data.universal.loves,
+  ...data.universal.dislikes,
+  ...data.universal.hates,
+];
 
 const TIERS: [Taste, (l: TasteList) => string[]][] = [
   ["love", (l) => l.loves],

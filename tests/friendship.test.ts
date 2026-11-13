@@ -150,7 +150,13 @@ describe("data", () => {
       if (e.startsWith("#")) expect(tags.has(e.slice(1)), e).toBe(true);
       else if (!itemById(e)) unbuilt.add(e);
     }
-    expect([...unbuilt].sort()).toEqual(["smoked-fish"]);
+    // Named in the design but not built yet: the Harvest Showing prize (note 14),
+    // driftwood among the trash (note 61), smoked fish.
+    expect([...unbuilt].sort()).toEqual([
+      "blue-ribbon-melon",
+      "driftwood",
+      "smoked-fish",
+    ]);
   });
   it("gives every villager a birthday that isBirthday finds once a year", () => {
     for (const v of VILLAGERS) {

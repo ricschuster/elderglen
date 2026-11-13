@@ -225,7 +225,6 @@ items.set(ALGAE_SOUP, {
   sellPrice: 100,
   energy: 80,
 });
-/** Beeswax from the bee house and the candle made from it (note 63, bundle 20). Prices are placeholders, ours. */
 /** Tea bush goods (note 97). Prices are placeholders, see `tea-bush.json`. */
 items.set(TEA_SAPLING, {
   id: TEA_SAPLING,
@@ -238,6 +237,7 @@ items.set(TEA_LEAF, {
   sellPrice: TEA_LEAF_SELL_PRICE,
   energy: TEA_LEAF_ENERGY,
 });
+/** Beeswax from the bee house and the candle made from it (note 63, bundle 20). Prices are placeholders, ours. */
 export const WAX = "wax";
 export const CANDLE = "candle";
 items.set(WAX, { id: WAX, name: "Beeswax", sellPrice: 40 });
