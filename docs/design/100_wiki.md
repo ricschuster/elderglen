@@ -167,6 +167,19 @@ overview, so the diff is readable.
 7. **Licence and credit line** on the public site: settle with the ADR on generated-art licences
    (M3d, steps 13 to 16 of the layout track). Not needed before hosting.
 
+## Built status (2026-11-13)
+
+Built: the item table snapshot, `scripts/wiki/build.mjs` (fish, bundles, rooms, items, front page,
+search, sortable fish table, `wiki:check` in `npm run check`, the internal view) and
+`scripts/wiki/images.mjs` (376 of 686 items have a picture; fish have none yet, so they show a
+labelled box). Draft prose is written for all 51 fish and the 6 rooms (`docs/wiki-text/`, all
+`draft: true`, so only the internal view shows it).
+
+Left: prose for the 30 bundles and the items; the owner clearing `draft` flags; quality prices
+on fish and item pages; recipe, order and request lines under "Used in" beyond what is built;
+`status` values other than `built` (stubs for decided, unbuilt fish and bundles); the public
+view for people who have not reached a place; more categories; hosting.
+
 ## Relation to other notes
 
 - Fish data and roster: note 21. Ponds: note 93. Bundles: notes 16, 35 and 63.

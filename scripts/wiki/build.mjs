@@ -47,6 +47,7 @@ const BEHAVIOUR = {
   dart: "Darting",
   sinker: "Sinking",
   smooth: "Smooth",
+  floater: "Floating",
 };
 /** What a finished hall room opens, in player words. Unknown ids fail the check. */
 const UNLOCKS = {

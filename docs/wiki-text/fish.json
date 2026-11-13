@@ -1,0 +1,206 @@
+{
+  "reedling": {
+    "text": "A quick little river fish that bites all year, and the first catch most new anglers make.",
+    "draft": true
+  },
+  "brookslip": {
+    "text": "A spring fish of the shallows that darts away from the bait the moment it feels a tug.",
+    "draft": true
+  },
+  "millrun": {
+    "text": "Runs up the river in summer and likes the warm shallows near the mill.",
+    "draft": true
+  },
+  "ferrywhisker": {
+    "text": "A whiskered bottom feeder that lurks near the old ferry landing in autumn, day or night.",
+    "draft": true
+  },
+  "salmon": {
+    "text": "The big autumn run. Salmon fight hard and sell well, and the Stream Fish bundle asks for them.",
+    "draft": true
+  },
+  "hearthside-dace": {
+    "text": "Rises at dusk all year, when the lamps in the valley come on.",
+    "draft": true
+  },
+  "tallow-eel": {
+    "text": "A pale, slippery eel that only bites on winter nights, down near the river bed.",
+    "draft": true
+  },
+  "silverthread": {
+    "text": "A flash of silver at first light. Rare, and quick to slip the line.",
+    "draft": true
+  },
+  "old-mossback": {
+    "text": "An old fish with a mossy back that stirs on rainy autumn days. It sinks and then pulls.",
+    "draft": true
+  },
+  "carp": {
+    "text": "The steady fish of the forest lake. It bites in daylight in every season.",
+    "draft": true
+  },
+  "perch": {
+    "text": "A spring perch, easy enough to land with a decent rod.",
+    "draft": true
+  },
+  "fernfin": {
+    "text": "Named for its green, frilled fins. It comes to the forest lake in summer.",
+    "draft": true
+  },
+  "mushroom-loach": {
+    "text": "A dusk-time loach of the forest lake in autumn, found near the damp, mushroomy banks.",
+    "draft": true
+  },
+  "moonmirror": {
+    "text": "Rises on any night, when the forest lake is flat and still.",
+    "draft": true
+  },
+  "hermit-trout": {
+    "text": "A shy trout that only shows itself while it rains.",
+    "draft": true
+  },
+  "marshlight": {
+    "text": "A pale fish of the delta marsh lake that drifts about in the daytime.",
+    "draft": true
+  },
+  "bogwhisker": {
+    "text": "A darting fish of the marsh lake in spring and summer.",
+    "draft": true
+  },
+  "sunk-boot-loach": {
+    "text": "Often hooked when an angler expected something grander. It bites at any hour.",
+    "draft": true
+  },
+  "reed-cat": {
+    "text": "A night-time fish of the reeds that keeps low and moves slowly.",
+    "draft": true
+  },
+  "catfish": {
+    "text": "A dusk fish of the marsh lake. It sinks, and rarely gives up quickly.",
+    "draft": true
+  },
+  "bullhead": {
+    "text": "A grumpy bottom fish that bites in the marsh lake when it rains.",
+    "draft": true
+  },
+  "glassy-elver": {
+    "text": "A see-through young eel of the marsh lake, caught at dawn in spring.",
+    "draft": true
+  },
+  "sardine": {
+    "text": "A small silver fish found along the coast in daylight, all year.",
+    "draft": true
+  },
+  "skiff-sprat": {
+    "text": "A tiny fish that gathers around the boats at the Beach every day of the year.",
+    "draft": true
+  },
+  "mackerel": {
+    "text": "A fast, smooth swimmer of the Beach in summer and autumn.",
+    "draft": true
+  },
+  "mullet": {
+    "text": "Comes to the shallows at dawn in spring.",
+    "draft": true
+  },
+  "cod": {
+    "text": "The winter staple of the coast, caught in daylight.",
+    "draft": true
+  },
+  "kelp-ribbon": {
+    "text": "A long, ribbon-like fish that floats among the kelp at dusk.",
+    "draft": true
+  },
+  "harbour-ray": {
+    "text": "A flat ray that glides into the Beach shallows in summer.",
+    "draft": true
+  },
+  "herring": {
+    "text": "Silver shoals come in at night all year round.",
+    "draft": true
+  },
+  "lantern-squid": {
+    "text": "A glowing squid of autumn and winter nights. It rises, then drifts.",
+    "draft": true
+  },
+  "crowned-tunny": {
+    "text": "A rare, fast-swimming tunny that visits the sea in summer and autumn, by day.",
+    "draft": true
+  },
+  "cold-quill": {
+    "text": "A spiny little fish of the mountain lake, found by day in every season.",
+    "draft": true
+  },
+  "arctic-char": {
+    "text": "Likes the cold: winter and spring in the mountain lake.",
+    "draft": true
+  },
+  "granite-gudgeon": {
+    "text": "A grey fish of the rocky bottom, caught at any hour of the day or night.",
+    "draft": true
+  },
+  "echo-pike": {
+    "text": "A pike that strikes when rain rings across the mountain lake.",
+    "draft": true
+  },
+  "ember-trout": {
+    "text": "A trout with an orange belly, seen at dusk on summer evenings.",
+    "draft": true
+  },
+  "glacier-ghost": {
+    "text": "A pale giant that drifts through the mountain lake on winter nights. Rare.",
+    "draft": true
+  },
+  "pearlback": {
+    "text": "A shimmering fish of the lake cove, found in the daytime.",
+    "draft": true
+  },
+  "cove-lantern": {
+    "text": "A glowing fish of the lake cove after dark.",
+    "draft": true
+  },
+  "still-water-gar": {
+    "text": "A long-snouted gar that waits in the still cove waters in spring and summer.",
+    "draft": true
+  },
+  "velvet-koi": {
+    "text": "A rare, deep-coloured koi that surfaces in the cove at dusk in autumn.",
+    "draft": true
+  },
+  "hush": {
+    "text": "A rare fish of the cove that comes at dawn. It makes no splash at all.",
+    "draft": true
+  },
+  "dusk-opal": {
+    "text": "A rare fish of the cove that gleams at dusk, whatever the season.",
+    "draft": true
+  },
+  "deepglow": {
+    "text": "A rare, softly glowing fish of the cove on winter nights.",
+    "draft": true
+  },
+  "shell-ghost": {
+    "text": "A rare fish of the cove that only appears when it rains.",
+    "draft": true
+  },
+  "hearthwell-carp": {
+    "text": "A legend. An enormous carp, said to live in the lake cove. Catch it at dusk in autumn, in the rain.",
+    "draft": true
+  },
+  "grandmother-hush": {
+    "text": "A legend. A huge old fish of the forest lake, kin to the cove's Hush. Catch it at dusk in spring, in the rain.",
+    "draft": true
+  },
+  "valley-king": {
+    "text": "A legend. The king of the river. Catch it at dawn in autumn, in the rain.",
+    "draft": true
+  },
+  "moonlit-mother": {
+    "text": "A legend. A pale giant char of the mountain lake. Catch it on a clear winter night.",
+    "draft": true
+  },
+  "great-hearthfin": {
+    "text": "A legend. A huge sea fish, and the one legend that bites in any weather. Catch it by day in summer.",
+    "draft": true
+  }
+}

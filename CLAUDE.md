@@ -57,6 +57,11 @@ Node 22 and npm. Gates run in CI and a non-zero exit blocks a merge.
   and `docs/valley-map.json`. Update the JSON when the design changes; open the HTML from
   disk. `npm run overview:refresh` re-fetches issue states with `gh`.
 - `npm run check`: all of the gates in order. Run before pushing.
+- `npm run wiki` / `wiki:check`: rebuild `docs/wiki/` (the public wiki, note 100) from the data in
+  `src/content/` and prose in `docs/wiki-text/`. `npm run wiki:internal` writes `docs/wiki-internal/`
+  (git-ignored, adds build status and draft text; open `index.html` from disk). `npm run items:export`
+  refreshes `src/content/item-table.json` after an item changes. `npm run wiki:images` re-renders item
+  pictures (needs `npm run dev`).
 - Interior drafts: `python3 docs/design/drafts/interiors-draft/gen.py` (from that folder;
   Python 3 and Pillow). Design material, not a gate.
 - `npm run playtest -- <expert|intermediate|casual>`, other `playtest:*` scripts: manual

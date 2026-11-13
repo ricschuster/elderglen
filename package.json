@@ -11,6 +11,7 @@
     "items:export": "UPDATE_ITEM_TABLE=1 vitest run tests/itemtable.test.ts",
     "wiki": "node scripts/wiki/build.mjs",
     "wiki:internal": "node scripts/wiki/build.mjs --internal",
+    "wiki:images": "node scripts/wiki/images.mjs",
     "wiki:check": "node scripts/wiki/build.mjs --check",
     "overview": "node scripts/overview/build.mjs",
     "overview:refresh": "node scripts/overview/build.mjs --refresh",
