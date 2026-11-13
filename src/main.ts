@@ -19,6 +19,7 @@ import { NameScene } from "./scenes/NameScene";
 import { ShopScene } from "./scenes/ShopScene";
 import { CatalogueScene } from "./scenes/CatalogueScene";
 import { CarpenterScene } from "./scenes/CarpenterScene";
+import { PondScene } from "./scenes/PondScene";
 import { KeeperScene } from "./scenes/KeeperScene";
 import { PlacementScene } from "./scenes/PlacementScene";
 import { BarnScene } from "./scenes/BarnScene";
@@ -34,6 +35,8 @@ import { CookingScene } from "./scenes/CookingScene";
 import { EquipmentScene } from "./scenes/EquipmentScene";
 import { HatsScene } from "./scenes/HatsScene";
 import { CaveChoiceScene } from "./scenes/CaveChoiceScene";
+import { CartScene } from "./scenes/CartScene";
+import { TailorScene } from "./scenes/TailorScene";
 import { FishingScene } from "./scenes/FishingScene";
 import { FurnaceScene } from "./scenes/FurnaceScene";
 import { ChestScene } from "./scenes/ChestScene";
@@ -73,6 +76,7 @@ const game = new Phaser.Game({
     CarpenterScene,
     KeeperScene,
     PlacementScene,
+    PondScene,
     CoopScene,
     BarnScene,
     CatalogueScene,
@@ -93,6 +97,8 @@ const game = new Phaser.Game({
     HatsScene,
     EquipmentScene,
     CaveChoiceScene,
+    CartScene,
+    TailorScene,
     FishingScene,
     HallScene,
     FestivalScene,

@@ -292,7 +292,7 @@ layer, built with the house work (note 85). The house door stays 1 wide at (62, 
 ## Built status (2026-11-11, #776)
 
 `src/content/maps/farm.json` is now the 80 by 65 map, written by
-`scripts/gen-farm-map.mjs` from the Tiled draft (a one-shot; the JSON is the
+`scripts/drafts/gen-farm-map.mjs` from the Tiled draft (a one-shot; the JSON is the
 source from then on). Tiles keep the placeholder indices, so there is no art
 change. Differences from the table above:
 
@@ -319,7 +319,8 @@ change. Differences from the table above:
 
 1. Settle the open items with the owner and update this note.
 2. Author `farm.json` in Tiled to the contract in note 05, replacing the
-   placeholder (the generator `gen-farm-map.mjs` was retired in #524).
+   placeholder (the generator `gen-farm-map.mjs` was retired in #524 and kept,
+   do-not-run, in `scripts/drafts/`, ADR 0014).
 3. Hand-place clutter and trees from a data list, not code.
 4. Add the greenhouse ruin and cave as placed, locked objects once their
    systems exist.

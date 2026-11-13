@@ -3,7 +3,8 @@ import { dishById } from "./dishes";
 import { furnitureById } from "./furniture";
 import { ORDINARY_FISH } from "./fishing";
 import { hatById } from "./hats";
-import { itemById } from "./items";
+import { absorbElderfruit } from "./elderfruit";
+import { ELDERFRUIT, itemById } from "./items";
 import type { GameState } from "./save";
 
 /**
@@ -22,7 +23,7 @@ export interface Attachment {
   /** A furniture id; the piece goes to the pack with the items. */
   furniture?: string;
   /**
-   * A dish id whose recipe the letter teaches. Nothing is stored: a recipe with a
+   * A dish or crafting recipe id the letter teaches. Nothing is stored: a recipe with a
    * `letter` source is known once the letter is taken (see `known` in crafting).
    */
   recipe?: string;
@@ -34,7 +35,9 @@ export type LetterTrigger =
   /** Every ordinary fish landed. The legends and the pond fish are outside it (note 88). */
   | { kind: "fish-roster" }
   /** Friendship mail (note 61 rule 8): a villager reaches this many hearts. */
-  | { kind: "hearts"; villager: string; hearts: number };
+  | { kind: "hearts"; villager: string; hearts: number }
+  /** A heart event has been seen; the letter comes the next morning (note 97, SC-171). */
+  | { kind: "event"; event: string };
 
 export interface LetterDef {
   id: string;
@@ -177,6 +180,7 @@ export class Mailbox {
 
 function triggered(g: GameState, t: LetterTrigger): boolean {
   if (t.kind === "hearts") return g.friendship.hearts(t.villager) >= t.hearts;
+  if (t.kind === "event") return g.heartEvents.seen(t.event);
   if (t.kind === "fish-roster")
     return ORDINARY_FISH.every((f) => g.fishing.has(f.id));
   return t.kind === "first-achievement"
@@ -272,13 +276,17 @@ export function openLetter(
   }
   for (const i of a.items ?? []) {
     g.inventory.add(i.id, i.count);
+    if (i.id === ELDERFRUIT) absorbElderfruit(g);
     gift.push(`${i.count} x ${itemById(i.id)?.name ?? i.id}`);
   }
   if (a.furniture) {
     g.inventory.add(a.furniture, 1);
     gift.push(furnitureById(a.furniture)?.name ?? a.furniture);
   }
-  if (a.recipe) gift.push(`A recipe: ${dishById(a.recipe)?.name ?? a.recipe}`);
+  if (a.recipe)
+    gift.push(
+      `A recipe: ${dishById(a.recipe)?.name ?? itemById(a.recipe)?.name ?? a.recipe}`,
+    );
   if (a.hat && g.wardrobe.add(a.hat))
     gift.push(`A hat: ${hatById(a.hat)?.name ?? a.hat}`);
   e.state = "taken";

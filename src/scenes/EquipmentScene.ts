@@ -1,11 +1,8 @@
 import Phaser from "phaser";
-import {
-  BOOTS,
-  bootsById,
-  RING_SLOTS,
-  RINGS,
-  ringById,
-} from "../core/equipment";
+import { resistChance } from "../core/effects";
+import { bootsById, RING_SLOTS, RINGS, ringById } from "../core/equipment";
+import { packRings } from "../core/forge";
+import { packBoots } from "../core/tailoring";
 import type { GameState } from "../core/save";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
@@ -74,7 +71,7 @@ export class EquipmentScene extends Phaser.Scene {
     const boots = bootsById(eq.wornBoots() ?? "");
     rows.push({
       label: `Boots: ${boots?.name ?? "none"}`,
-      detail: `Defense ${eq.defense()}, immunity ${eq.immunity()}`,
+      detail: `Defense ${eq.defense()}, resist ${eq.resistPercent()} percent`,
       buttons: boots
         ? [
             {
@@ -87,12 +84,11 @@ export class EquipmentScene extends Phaser.Scene {
           ]
         : [],
     });
-    for (const b of BOOTS) {
-      const n = inv.count(b.id);
-      if (n < 1) continue;
+    for (const id of packBoots(this.state)) {
+      const b = bootsById(id)!;
       rows.push({
         label: b.name,
-        detail: `Defense ${b.defense}, immunity ${b.immunity}`,
+        detail: `Defense ${b.defense}, resist ${Math.round(resistChance(b.immunity) * 100)} percent`,
         buttons: [
           {
             text: "Wear",
@@ -104,7 +100,10 @@ export class EquipmentScene extends Phaser.Scene {
         ],
       });
     }
-    for (const ring of RINGS) {
+    for (const ring of [
+      ...RINGS,
+      ...packRings(inv).combos.map((c) => ringById(c)!),
+    ]) {
       const n = inv.count(ring.id);
       if (n < 1) continue;
       const free = eq.worn().findIndex((r) => r === undefined);

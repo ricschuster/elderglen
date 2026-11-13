@@ -6,6 +6,11 @@ what we have only half covered and what nobody has discussed. It is step 1 of a
 review plan. Steps 2 to 4 (read the saved wiki pages one at a time, record the
 gaps, choose what to design next) wait for the owner.
 
+The "built" and "not built" words in the table are as of 2026-10-30 and are out of
+date: most systems listed as not built (animals, monsters, boots, rings, fish and
+tackle, four seasons, fruit trees) are built now. `03_milestones.md` holds the
+current status.
+
 The system names come from the wiki's main page index, which groups the game
 into Basics, Farm, Environment, Gameplay, Items, the Valley and Beyond. The
 notes are in our own words. No wiki text is copied here

@@ -1,7 +1,13 @@
 import orderData from "../content/orders.json";
-import { dateOf, type Season } from "./calendar";
+import { dateOf, weekOf, type Season } from "./calendar";
+
+export { weekOf };
+import { categoryOf } from "./artisan";
+import { contents, isEmpty, type PlacedChest } from "./chests";
 import { cropById } from "./crops";
+import { GEM_ITEMS } from "./gems";
 import { fishById } from "./fishing";
+import { itemById } from "./items";
 import type { BinLine } from "./shipping";
 import { splitQuality, type Quality } from "./quality";
 import type { GameState } from "./save";
@@ -30,7 +36,28 @@ export type OrderAsk =
   /** Land `count` fish from one kind of water. */
   | { kind: "catch-water"; count: number }
   /** Beat `count` of any one creature kind. Counted from the kill tally since acceptance. */
-  | { kind: "slay-one"; count: number };
+  | { kind: "slay-one"; count: number }
+  /** Leave goods in a chest bound to the order, at a named place (note 65, "Goods hand-in"). */
+  | { kind: "hand-in"; count: number; goods: HandInGoods; place: HandInPlace };
+
+/**
+ * What a hand-in takes. `total`: `count` goods in all. `one-kind`: `count` of
+ * one kind. `distinct`: one each of `count` kinds. The goods are listed by
+ * `items`, or by a named `group`.
+ */
+export interface HandInGoods {
+  mode: "total" | "one-kind" | "distinct";
+  items?: string[];
+  group?: "keg-drinks" | "gems";
+}
+
+/** The named place whose chest takes the goods. A placeholder tile until the places are designed. */
+export interface HandInPlace {
+  map: string;
+  x: number;
+  y: number;
+  name: string;
+}
 
 export interface OrderDef {
   id: string;
@@ -95,9 +122,6 @@ export interface OrdersNews {
   done: { title: string; gold: number; first: boolean; reward: string }[];
   lapsed: string[];
 }
-
-/** Which week of play a day is in, from 0. Weeks start on a Monday (Spring 1). */
-export const weekOf = (day: number): number => Math.floor((day - 1) / 7);
 
 /** A small stable hash of a week, so a reload draws the same board. */
 function weekRoll(week: number): number {
@@ -331,7 +355,164 @@ export function askText(def: OrderDef): string {
       return `Catch ${a.count} fish from one kind of water`;
     case "slay-one":
       return `Beat ${a.count} of one cave creature`;
+    case "hand-in": {
+      const g = a.goods;
+      const what =
+        g.group === "gems"
+          ? "gems"
+          : g.group === "keg-drinks"
+            ? "keg drinks"
+            : (g.items ?? [])
+                .map((i) => itemById(i)?.name.toLowerCase() ?? i)
+                .join(" or ");
+      return g.mode === "distinct"
+        ? `Leave ${a.count} kinds of ${what}, one of each, in the chest at ${a.place.name}`
+        : g.mode === "one-kind"
+          ? `Leave ${a.count} of one kind of ${what} in the chest at ${a.place.name}`
+          : `Leave ${a.count} ${what} in the chest at ${a.place.name}`;
+    }
   }
+}
+
+/** True for an artisan drink made in the keg: wine, juice or mead. */
+const isKegDrink = (base: string): boolean => {
+  const c = categoryOf(base);
+  return c === "wine" || c === "juice" || c === "mead";
+};
+
+const takesGood = (goods: HandInGoods, base: string): boolean =>
+  (goods.items?.includes(base) ?? false) ||
+  (goods.group === "gems" && GEM_ITEMS.some((g) => g.id === base)) ||
+  (goods.group === "keg-drinks" && isKegDrink(base));
+
+/**
+ * What a bound chest holds toward a hand-in order, and which stacks would be
+ * taken when it is met. Quality does not matter. Pure: it takes nothing.
+ */
+export function handInTally(
+  def: OrderDef,
+  chest: PlacedChest | undefined,
+): { progress: number; take: { id: string; count: number }[] } {
+  const none = { progress: 0, take: [] };
+  if (def.ask.kind !== "hand-in" || !chest) return none;
+  const { goods, count } = def.ask;
+  const byBase = new Map<string, { id: string; count: number }[]>();
+  for (const st of contents(chest)) {
+    const base = splitQuality(st.id).base;
+    if (!takesGood(goods, base)) continue;
+    byBase.set(base, [...(byBase.get(base) ?? []), st]);
+  }
+  const total = (b: string) =>
+    (byBase.get(b) ?? []).reduce((n, st) => n + st.count, 0);
+  const draw = (stacks: { id: string; count: number }[], want: number) => {
+    const take: { id: string; count: number }[] = [];
+    for (const st of stacks) {
+      const n = Math.min(want, st.count);
+      if (n > 0) take.push({ id: st.id, count: n });
+      want -= n;
+    }
+    return take;
+  };
+  if (goods.mode === "distinct") {
+    const bases = [...byBase.keys()];
+    return {
+      progress: bases.length,
+      take: bases.slice(0, count).map((b) => ({
+        id: (byBase.get(b) as { id: string }[])[0]!.id,
+        count: 1,
+      })),
+    };
+  }
+  if (goods.mode === "one-kind") {
+    let best = "";
+    for (const b of byBase.keys()) if (total(b) > total(best)) best = b;
+    return {
+      progress: total(best),
+      take: draw(byBase.get(best) ?? [], count),
+    };
+  }
+  const all = [...byBase.values()].flat();
+  return {
+    progress: all.reduce((n, st) => n + st.count, 0),
+    take: draw(all, count),
+  };
+}
+
+/** The chest bound to an order, if it stands. */
+export function orderChest(
+  g: GameState,
+  def: OrderDef,
+): PlacedChest | undefined {
+  if (def.ask.kind !== "hand-in") return undefined;
+  const { map, x, y } = def.ask.place;
+  const c = g.chests.get(map, x, y);
+  return c?.order === def.id && !c.closed ? c : undefined;
+}
+
+/**
+ * Nightly: count what the bound chests hold. A met order takes its goods out
+ * of the chest, and the order finishes. Returns the finished ones.
+ */
+function creditChests(g: GameState, day: number): ActiveOrder[] {
+  const finished: ActiveOrder[] = [];
+  for (const a of g.orders.active) {
+    const def = orderById(a.id);
+    const chest = def && orderChest(g, def);
+    if (!def || !chest || day < a.accepted) continue;
+    const t = handInTally(def, chest);
+    a.progress.all = t.progress;
+    if (!filled(def, a)) continue;
+    for (const st of t.take) chest.items.remove(st.id, st.count);
+    finished.push(a);
+  }
+  return finished;
+}
+
+/** An order has ended: its chest goes if empty, else it stays closed so the goods can be taken back. */
+function closeOrderChest(g: GameState, id: string): void {
+  for (const c of [...g.chests.all()])
+    if (c.order === id && !c.closed) {
+      if (isEmpty(c)) g.chests.remove(c.map, c.x, c.y);
+      else c.closed = true;
+    }
+}
+
+/** Closed order chests that have been emptied are taken away. */
+function sweepOrderChests(g: GameState): void {
+  for (const c of [...g.chests.all()])
+    if (c.order && c.closed && isEmpty(c)) g.chests.remove(c.map, c.x, c.y);
+}
+
+/**
+ * Take an order. A hand-in order stands its marked chest at the named place;
+ * it is refused if the place is taken (a closed chest there still holds goods).
+ */
+export function acceptOrder(
+  g: GameState,
+  id: string,
+  day: number,
+): ReturnType<Orders["accept"]> | "place taken" {
+  const def = orderById(id);
+  const ask = def?.ask;
+  if (ask?.kind === "hand-in") {
+    const { map, x, y } = ask.place;
+    if (g.chests.get(map, x, y) && g.orders.board(day).some((o) => o.id === id))
+      return "place taken";
+  }
+  const r = g.orders.accept(id, day, orderBase(g));
+  if (r === "ok" && ask?.kind === "hand-in") {
+    const { map, x, y } = ask.place;
+    const c = g.chests.add(map, x, y, "chest");
+    if (c) c.order = id;
+  }
+  return r;
+}
+
+/** Drop an accepted order. A hand-in's chest closes, and the goods can be taken back. */
+export function dropOrder(g: GameState, id: string): boolean {
+  const ok = g.orders.cancel(id);
+  if (ok) closeOrderChest(g, id);
+  return ok;
 }
 
 /**
@@ -346,11 +527,17 @@ export function endDayOrders(
 ): OrdersNews {
   const news: OrdersNews = { done: [], lapsed: [] };
   const o = g.orders;
+  sweepOrderChests(g);
   if (!o.opened) return news;
-  const finished = [...o.credit(lines, day - 1), ...o.creditLogs(g, day - 1)];
+  const finished = [
+    ...o.credit(lines, day - 1),
+    ...o.creditLogs(g, day - 1),
+    ...creditChests(g, day - 1),
+  ];
   for (const a of finished) {
     const def = orderById(a.id) as OrderDef;
     o.cancel(a.id);
+    closeOrderChest(g, a.id);
     const first = o.markDone(a.id);
     g.money += def.gold;
     if (first && def.firstReward.item) o.owed.push({ ...def.firstReward.item });
@@ -364,6 +551,7 @@ export function endDayOrders(
   for (const a of [...o.active])
     if (day > a.due) {
       o.cancel(a.id);
+      closeOrderChest(g, a.id);
       news.lapsed.push(orderById(a.id)?.title ?? a.id);
     }
   return news;
@@ -378,7 +566,11 @@ export function ordersReportLines(news: OrdersNews): string[] {
         (d.first ? ` Your reward: ${d.reward}.` : ""),
     ),
     ...news.lapsed.map(
-      (t) => `The ${t} order ran out of time. It can be offered again.`,
+      (t) =>
+        `The ${t} order ran out of time. It can be offered again.` +
+        (ORDERS.find((d) => d.title === t)?.ask.kind === "hand-in"
+          ? " Goods left in its chest can be taken back."
+          : ""),
     ),
   ];
 }

@@ -211,7 +211,7 @@ Work packages: "Forest map part 1" (steps 2 to 4) and "Forest part 2" (steps 5 a
 
 **Part 1, #637 (2026-11-09): slices 2 to 4 are built.** Map `forest.json` (120 by
 120, `placeholder`, `rideable`, `wild`, `waterKind` forest-lake), authored once by
-`scripts/gen-forest-map.mjs` and now edited by hand or in Tiled.
+`scripts/drafts/gen-forest-map.mjs` and now edited by hand or in Tiled.
 
 Built:
 
@@ -226,7 +226,7 @@ Built:
   `water` zone. North and west shore tiles are cliff, the south and east shores
   are open and have the path. The six lake fish are in `fish.json` (carp, perch,
   fernfin, mushroom loach, moonmirror, hermit trout, prices are placeholders).
-  Grandmother Hush is not built (no legends exist yet, note 21).
+  Grandmother Hush was not built at the time; the legend fish now exist in `fish.json`.
 - Six groves (152 choppable trees: 110 mature, 25 young, 17 seedlings; oak in G1
   to G3, maple in G4 to G6) on a lattice with one tile lanes, so every tree can be
   reached. The cosmetic border is tile art (a 2 tile ring, a cliff wall on the north
@@ -258,7 +258,7 @@ Where it differs from the note, or was decided in the build:
 Not built (later slices): farmstead, keeper's house and animal shop (part 2, #638),
 hermit's tower and the Wanderer's camp (part 2), the massive log and the Secret
 Woods exit (#639), the Grandmother Hush legend and pots on
-the lake (pots are not built for any water yet). The first run of the map on the
+the lake (pots were not built then; they are now, `src/core/pots.ts`). The first run of the map on the
 SM-T500 is still open. Names and looks stay placeholders.
 
 **Update (2026-11-09, #642):** the Mountain exit is built. The east gap is cut at
@@ -267,7 +267,7 @@ y 60 to 66) leads to the Mountain's `from_forest`, with entry `from_mountain` (1
 
 **Part 2, #638 (2026-11-09): slices 5 and 6 are built.** The farmstead, the hermit's
 tower and the Wanderer's camp are cut into `forest.json` by the one-off
-`scripts/gen-forest-part2.mjs`, which also wrote the two interiors. Placeholder art, role
+`scripts/drafts/gen-forest-part2.mjs`, which also wrote the two interiors. Placeholder art, role
 labels, no names.
 
 Built:

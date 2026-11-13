@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { mapFiles, maps } from "../src/content/maps";
 
-// The rebuilt general store (note 86 pilot, #853): 31 by 31, a 2 wide door, and
+// The rebuilt general store (note 86 pilot, #853): 31 by 31, a 1 tile door, and
 // the two gated bedroom doors. Reachability is in interior-reach.test.ts.
 const store = mapFiles["general-store"]!;
 const objects = store.layers.flatMap((l) => l.objects ?? []);
@@ -20,9 +20,9 @@ describe("the general store", () => {
       ).toBe(true);
   });
 
-  it("has a 2 wide exit to its Hearthwell lot, entered by the same name", () => {
+  it("has a 1 wide exit to its Hearthwell lot, entered by the same name", () => {
     const door = maps.get("general-store").exits.find((e) => e.id === "door")!;
-    expect([door.w, door.h]).toEqual([2, 1]);
+    expect([door.w, door.h]).toEqual([1, 1]);
     expect([door.map, door.entry]).toEqual([
       "hearthwell",
       "from_general-store",

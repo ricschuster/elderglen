@@ -9,8 +9,8 @@ into damage, what Immunity does, and which bad effects exist.
 
 - **Immunity is a chance to resist a bad effect (Stardew).** Not a shorter duration.
   This replaces note 37's "Immunity shortens bad effects". The saved Combat page says
-  Immunity "affects the chance to be afflicted with certain debuffs" and gives no numbers
-  (SC-159).
+  Immunity "affects the chance to be afflicted with certain debuffs". The saved Immunity
+  page gives the numbers (SC-159): see Immunity below.
 - **Three bad effects, one per mine band:** slimed, chilled and burned.
 
 ## Defense (already built)
@@ -18,16 +18,16 @@ into damage, what Immunity does, and which bad effects exist.
 Defense is a flat cut from each hit, to a floor of 1 damage, and Assist halves what is
 left (rounded up). It is built in `Health.hurt` (`src/core/combat.ts`) and fed by the
 boots and the Defense ring (+1 and +5). Stardew says only that Defense "affects how much
-damage the player takes" (saved page), so the flat rule is ours (SC-159). Boots today run
+damage the player takes" (saved page), and the saved Defense page confirms the flat rule (1 off per point, floor of 1, SC-159). Boots today run
 from 0 to 4 Defense against hits of 4 to 12, so a full set trims about a third at the
 top and never makes a hit free.
 
 ## Immunity
 
 - **A resist roll.** When a creature's hit would inflict a bad effect, roll once. Each
-  point of Immunity resists 10 percent, capped at 75 percent, so an effect always has a
-  chance to land. Boots give 0 to 2 points (`boots.json`) and the Sturdy and Immunity
-  band adds 4 (note 37), so up to 6 points, 60 percent, in play.
+  point of Immunity resists 9.1 percent, added up, with no cap (Stardew, saved Immunity
+  page, SC-159; owner chose it 2026-11-12). Eleven points make a player immune. Boots give 0 to 2 points (`boots.json`) and the Sturdy and Immunity
+  band adds 4 (note 37), so up to 6 points, about 55 percent, in play.
 - **The roll is per hit.** A hit that lands still hurts. Immunity only stops the effect.
 - **Slime proof ring** blocks slimed outright and takes no slime damage (note 37).
 - **The Sturdy ring's half-duration** stays as written in note 37: a separate cut on the
@@ -65,7 +65,50 @@ top and never makes a hit free.
 4. Equipment screen shows Immunity as a percent.
 5. Tests: resist cap, refresh, clearing, Sturdy half-duration, slime proof.
 
+## Built (2026-11-12)
+
+`src/core/effects.ts` (the three effects, `resistChance`, timers, refresh, burn, clearing),
+`Combat.effects`, `Health.drain`, optional `inflicts` on creature rows (gloop slimed 100
+percent, frostnibbler and icicle hopper chilled 100, cinder pup burned 50), Defense and
+Immunity summed over boots and rings, four placeholder rings in `rings.json` (defense +1,
+crabshell +5, slime proof, sturdy band with Immunity +4 and half length). `FarmScene`
+rolls Immunity on a landed hit, slows walking (slimed), slows swings (chilled), burns 1 a
+second, clears on entering a floor, on sleep and on defeat, and a Life Elixir clears all.
+The health bar shows "Slimed 5s". The equipment screen shows resist as a percent. Tests:
+`tests/effects.test.ts`.
+
+Not built: effect icons (text only), tooltip on the percent, chilled cleared by a dish,
+effect sprites or sound.
+
+### Ring sources (built 2026-11-12, owner chose Stardew's pattern, saved Rings and Adventurer's Guild pages)
+
+The trainer at the mine entrance stands in for the Adventurer's Guild (note 22). Shop and
+slayer data sit on the ring rows in `rings.json`; rules are in `combat.ts`
+(`buyRing`, `ringLocked`, `claimSlayerRing`); the trainer screen lists them.
+
+- **Defense ring (+1):** sold for 1,000g once the player has met the trainer (our stand-in
+  for Stardew's "Initiation" quest, saved Rings page: purchased from the Adventurer's
+  Guild after completing the "Initiation" Quest, Topaz Ring, sells 1,000g on the page).
+- **Crabshell ring (+5):** the Rock Crab slayer reward (60 kills), handed over free the
+  first time, then sold again for 5,000g (placeholder) if lost. Not a shop item (owner
+  decision 2026-11-12, matching the saved Rings page, SC-169). `slayerClaimed` tracks it.
+- **Slime proof ring:** the Gloop slayer goal reward (1,000 kills, all colours), handed
+  over free the first time, then sold again for 25,000g if lost (saved Rings and Guild
+  pages: Slime Charmer Ring, reward for eradicating 1,000 Slimes, and the Guild page shows
+  25,000g for it). `slayerClaimed` is saved on the combat save.
+- **Sturdy band:** crafted at Combat level 1 from 2 copper bars, 25 bug meat and 25
+  gloop jelly (`recipes.json`). Stardew's Sturdy Ring is crafted at Combat level 1 from
+  2 Copper Bars, 25 Bug Meat and 25 Slime (saved Rings page, read 2026-11-12; SC-169).
+  Bug meat is our own item (sell price 8g, a placeholder): the Dustmoth, Mossbeetle and
+  Lanternmoth drop it (25 to 30 percent) and the Icicle Hopper slayer goal (100 kills)
+  hands over a stack of 25 free, once (`reward` on the creature, claimed at the trainer).
+  Gloop jelly stands for Slime.
+
+Choices made without a settled answer (placeholders): burn can defeat the player (owner, 2026-11-12);
+the other gloop colours and the lanternmoth and old digger inflict nothing; the
+resist roll is skipped on a hit lost to grace.
+
 ## Open
 
-- SC-159: Stardew's Defense formula, the Immunity numbers and the debuff list.
+- SC-159: formula and numbers done. The full debuff list is not on the saved pages.
 - Names, icons and the exact effect numbers.

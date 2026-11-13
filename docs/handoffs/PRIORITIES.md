@@ -15,45 +15,43 @@ open item is the next task. Issues are in the M3b GitHub milestone. Update this 
 every handoff pull request. Do not start items from the sections below until it is done,
 unless the owner says so.
 
-Decided 2026-11-12: the Last Seat opens after ALL other bundles (not 23; fix
-`rooms.json` `opensAfter`). #876 and #879 stay in M3b. Guests' Board +500 friendship, up
-to five heart events a person.
+Decided 2026-11-12: the Last Seat opens after ALL other bundles (built). #876 and #879
+stay in M3b (#879 closed 2026-11-12). Guests' Board +500 friendship (built), up to five heart events a person.
 
-Tier 1, needed to fill the bundles:
+Decided 2026-11-12 (session 9): ADR 0014, committed map JSON is the source, generators moved to
+`scripts/drafts/`. Elderfruit sources confirmed. Tapper crafted at Foraging 4, no shop; Heavy
+Tapper is the Rare Finds bundle reward. Rings from the trainer and slayer goal; Sturdy band
+crafted at Combat 1. Boots tailoring built. Regrow outside the farm 20 percent a night, stage 3.
+Hat Parade join until 14:30. Hall restored is derived. Dye redo costs the six pot items.
 
-1. **#877 placement** is built (steps 1 to 7). Left: icons for bombs and Forge goods, a
-   browser look at the lights, rod and bombs. Close the issue after the owner's play.
-2. **#869 bundles 20, 24, 26** and the gate rule. Designed (note 63): wax from the bee
-   house, candle recipe and artifact spots to number, hats choose 3 of 5 (Harvest Crown,
-   Snow Cap, Holly Hat, new spring and summer hats), bread, honey cake, herb tea as
-   starter recipes. Artifact spots are built (note 69), the four old things exist as items but
-   bundle 26 is not in `bundles.json`. Build the rest: wax, candle, hats, dishes, the gate.
-3. **#874 elderfruit**: eight sources and the eat effect (note 39). Build.
-4. **#875 goods hand-in**: designed (note 65), a drop chest bound to the order. Scope is
-   Spring Leeks, Barrel Batch, Pantry Stock, Crystal Gift. Build.
-5. **#870 Crystalarium**: designed (note 24), Stardew's times by gem value, craftable with
-   Hearthsilver. Build.
-6. **#871 room rewards**: designed (note 16), free four-stop carts and a weekly herb
-   stall. Build with the Guests' Board data fix and `bundleBonus()` wiring.
+Built 2026-11-12 (sessions 7d, 8 and 8b), all awaiting the owner's play. Bundles 1 to 26 can be
+filled in code; the exit test needs the owner's play. Detail is in the notes' "Built status",
+the 2026-11-12l, 2026-11-12m and 2026-11-12n handoffs and `PRIORITIES_ARCHIVE.md`.
 
-Tier 2, thin or placeholder content:
+Decided 2026-11-12 (session 10): Crabshell ring is the Rock Crab 60 reward; Bug Meat added (Sturdy
+band, Icicle Hopper reward); Cordelia's 4 heart event unlocks tailoring; Heavy Tapper twice as fast
+(saved page, SC-168); finds count only toward "catch N fish", algae soup is a pond reward only, aged
+roe in the jar; tea bush crafted (note 97); Cake Day points 60/90/120; hunt prize Straw Boater plus a
+yearly rare seed; keepsake lantern placeable. Built, awaiting play: all of these, plus hunt, cake
+table, lantern floating and ice fishing rules with thin scene hooks, pond menu and placing screen.
 
-- **7. #872 gift tastes**: designed, approved (note 90). Build the 22 entries into `friendship.json`; confirm the `#shell` and `#monster-drop` tags exist.
-- **8. #873 heart events**: scale and rewards designed (note 62: 2 and 6 hearts for all 30, fixed reward pattern). Needs #872, then the list per person, then scenes as data.
-- **9. #878 Secret Woods statue and pond fish** (check the fish table first).
+Open, top to bottom:
 
-Tier 3, design first, one issue per system when taken:
+1. **Owner answers left:** none. Decided 2026-11-13: garden pot is clay 1, stone 10 and a refined crystal (smelted quartz, Stardew), taught by Alder (still to build, with a smelt recipe); Frostfin 300g, no bundle slot; Frostday cap is Icewarden's Cap (built); the hunt prize is the emberseed (built); aged roe quality closed. Algae soup is the glassy-elver's reward (note 93).
+2. **#873 heart events** (note 62): the list per person is drafted (58 new events at 2 and 6 hearts, placeholder text, built in `heart-events.json`). Decided 2026-11-13: no unlock rewards, all 6 heart rewards are plain items (Stardew). Left: owner edits to seeds, windows and rewards, splitting the file per person if wanted, then 4, 8 and 10 with the voice sheets (M3d).
+3. **#878 Secret Woods pond fish:** built (Fernscale and two borrowed commons). Left: the statue, if the owner still wants it.
+4. **Note 93 left:** the species numbers to tune in play (built as placeholders), pond art, a cave pool on a map.
+5. **#876 left:** judging (Harvest Showing), cake table dish picker (it takes the held item now),
+   scene walking villagers and marchers, even-year hedge maze and niche lines, lantern drift
+   animation, on-screen ice fishing counter, multiplayer counts (M4).
+6. **Decided, still to build:** cave-pool water on mine floors (no map has water), village trees
+   marked `cosmetic` (needs tree objects in `hearthwell.json`, note 87), mahogany monster seed
+   (needs Secret Woods creatures), #874 elderfruit sources left: spouse and gallery set.
+7. A browser look at everything built since the owner last played: hat picker, cart, herb stall,
+   tapper, lights, rod, bombs, festival maps and activities, tailoring, pond screens, tea bush.
 
-- **10. #879 systems.** Built: artifact spots and gem nodes (note 69). Designed, not
-  built: tapper, crusher, worm bin, hops and pale ale (note 92); fish pond and six water
-  finds (note 93); Defense, Immunity and three bad effects (note 94); flowers (note 91);
-  forge ring combining in ring 1 (note 95, gem forging and enchanting deferred to ring 2
-  or 3). Still to design: tailoring.
-- **11. #876 festival route layer** and seven festival maps (overlaps layout step 10).
-- **12. #396 tree types by region.**
-
-Alongside: #880 stale status lines, `docs/overview.json` (behind since 2026-11-11), a
-Stardew checks question batch (about 12 open rows), and file the M4 hosting spike before M4.
+Alongside: the wiki (#910, note 100; built for fish, bundles, rooms, items, crops, forage, recipes, places, people, with pictures; left: fish and hall room pictures, owner clears `draft` flags, prose for people, bundles and recipes, hosting after M3d), `docs/overview.json` (behind since 2026-11-11), Stardew checks rows (open: SC-122, 135, 160, 161, 170, 172; SC-166 needs the owner's call, note 65), and file the M4
+hosting spike before M4 (also farm player state size in the save, ADR 0014).
 
 ## Milestone order (ADR 0012)
 
@@ -68,7 +66,7 @@ ending, M3d polish, then M5 and M6. Map areas (notes 71 to 78) are M3b.
    small items. The third community project (#5) waits for ring 2 (M5). Needed before
    slice 5 (note 33).
 2b. **Ancestors' shrine (note 83).** Left: the Diamond's name, art and drops (SC-135),
-   the shrine tiles (farm layout, #776), scene shots, camp chest items (note 22).
+   the shrine tiles (farm layout; #776 is closed), scene shots, camp chest items (note 22).
 3. **Map areas (notes 71 to 78).** All built to shell level (#636 to #646, #649, #661).
    Left items are in each note's "Built status". Build detail is in the archive.
 4. **Art direction and audio plan.** Character art (note 15), hall rooms (#335),
@@ -92,10 +90,10 @@ Done, owner checked (2026-11-11): step 1 farm (note 55, #776), step 2 festival s
   120 by 120 cap).
 - Step 9: Valley maps, area by area (note 71 order), after step 6.
 - Step 10: Festival layouts, from step 2.
-- Step 12: Mines, after combat leftovers (#598).
+- Step 12: Mines (the combat leftovers, #598, are closed).
 - Steps 13 to 16 (M3d): `above` layer and seasonal tilesets, reference images and
   style sheet, licence ADR for generated art, the art swap.
-- The other interiors are built (note 86, #853 to #860) from the checked drafts, with the
+- The other interiors are built (note 86, #853 to #860) from the checked drafts (doors 1 tile, 2026-11-12), with the
   shared test `tests/interior-reach.test.ts` and the converter
   `scripts/interiors/tmj-to-map.mjs`. Left: the hall layout (no draft, one player tile at
   each counter), the owner's call on the `AISLE_EXCEPTIONS` lists, game code that reads
@@ -104,6 +102,10 @@ Done, owner checked (2026-11-11): step 1 farm (note 55, #776), step 2 festival s
 
 ## Leftovers and housekeeping
 
-- Slice 1 leftovers are tracked in #522 and #521. Bundles: #181, #201 (note 63).
-- Tablet check (#336), notes 45 and 60 open items, barn stall wing, note 54 answer
+- Slice 1 leftovers: #522 closed 2026-11-12 (art item moved to #335). Bundles: #181 (note 63; #201 closed).
+- Refactor proposal #904 (FarmScene split, rules into core, shared helpers): settle in a
+  short note before moving code. Repo hygiene pass done 2026-11-13 (handoff 2026-11-13).
+- Art polish pass done 2026-11-12 ahead of M3d (handoff 2026-11-12q); look with
+  `node scripts/playtest/artsheet.mjs`.
+- Tablet follow-ups (#523; #336 closed), notes 45 and 60 open items, barn stall wing, note 54 answer
   sheet.

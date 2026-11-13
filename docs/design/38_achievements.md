@@ -138,7 +138,8 @@ goal. Ours does.
 
 We have 47 fish (`21_fishing.md`, with the Secret Woods pond's unique fish), so "24 different" is a little over half and
 stands unless play says otherwise. Algae, weeds and jellies count toward these
-in Stardew and trash does not, so water plants count and trash does not here.
+in Stardew and trash does not, so water plants count and trash does not here. Built 2026-11-12: all six water finds (plants
+and jellies) count toward "Catch 100 fish" only, not the different-fish goals (note 93).
 The mail gift for the full roster is a rare seed or fruit, as Stardew's is
 (decided 2026-11-03). Which item is open, since we have no rare crop yet, and
 what Stardew gives is unchecked (SC-28). It needs a rare crop added to the
@@ -176,7 +177,7 @@ is built. The collection and the request board were settled on 2026-10-31 (see
 | Reach Ginger Island | Reach ring 2. Hat: Folded Paper Cap | Ring 2 (M5) |
 | Delight the Governor | A ring 2 visitor | Ring 2 |
 | Help the forest neighbours grow | A forest family goal | No such family yet |
-| Find every stardrop | Find every rare boost item. Hat: Elderfruit Circlet | Elderfruit, seven sources (`39_completion_total.md`) |
+| Find every stardrop | Find every rare boost item. Hat: Elderfruit Circlet | Elderfruit, seven sources (`39_completion_total.md`). Built 2026-11-12 as Every Elderfruit |
 | Reach the summit | Reach ring 1's 100 percent, and a valley summit when every ring is at 100 | The completion total, `39_completion_total.md` |
 
 Stardew's rival-company achievement has no counterpart and is left out (see

@@ -1,8 +1,11 @@
 import data from "../content/friendship.json";
 import geodeData from "../content/geodes.json";
 import creatureGoods from "../content/creature-goods.json";
-import { artisanById, produceOf } from "./artisan";
-import { dateOf } from "./calendar";
+import fishData from "../content/fish.json";
+import { artisanById, FLOWER_HONEY_PRICE, produceOf } from "./artisan";
+import { dateOf, weekOf } from "./calendar";
+
+export { weekOf };
 import { cropById } from "./crops";
 import { dishById } from "./dishes";
 import { forageById } from "./forage";
@@ -27,9 +30,6 @@ export const HEART = POINTS.heart;
 export const TALK_POINTS = POINTS.talk;
 export const TASTE_POINTS: Readonly<Record<Taste, number>> = POINTS.taste;
 
-/** The week index of a game day. Day 1 is a Monday, so a week runs Monday to Sunday. */
-export const weekOf = (day: number): number => Math.floor((day - 1) / 7);
-
 export const isBirthday = (id: string, day: number): boolean => {
   const b = villagerById(id)?.birthday;
   if (!b) return false;
@@ -44,6 +44,8 @@ const FLOWERS = new Set<string>(data.tags.flower);
 const FOUND = new Set<string>(data.tags.found);
 const EGGS = new Set<string>(data.tags.egg);
 const MILK = new Set<string>(data.tags.milk);
+const SHELLS = new Set<string>(data.tags.shell);
+const FISH = new Set(fishData.map((f) => f.id));
 const GEMS = new Set(geodeData.pools.flatMap((p) => p.minerals));
 const MINERALS = new Set([
   ...geodeData.pools.map((p) => p.foraged.item),
@@ -57,7 +59,7 @@ const TRASH = new Set(JUNK.map((j) => j.id));
  * The tags an item carries, most specific first: its artisan kind (`jam`), then
  * its category (`artisan`, `dish`, `flower`, `mineral`, `fruit`, `gem`,
  * `vegetable`, `bait`, `monster-drop`, `trash`, `found`), plus `forage`,
- * `alcohol`, `egg` and `milk`. Quality is ignored.
+ * `alcohol`, `egg`, `milk`, `shell` and `fish`. Quality is ignored.
  */
 export function tagsOf(itemId: string): string[] {
   const id = splitQuality(itemId).base;
@@ -74,11 +76,15 @@ export function tagsOf(itemId: string): string[] {
     if (p) tags.push(p);
   }
   if (FLOWERS.has(id)) tags.push("flower");
+  if (id.endsWith("-honey") && id.slice(0, -6) in FLOWER_HONEY_PRICE)
+    tags.push("flower-honey");
   if (GEMS.has(id)) tags.push("gem");
   if (MINERALS.has(id)) tags.push("mineral");
   if (forageById(id)) tags.push("forage");
   if (EGGS.has(id)) tags.push("egg");
   if (MILK.has(id)) tags.push("milk");
+  if (SHELLS.has(id)) tags.push("shell");
+  if (FISH.has(id)) tags.push("fish");
   if (BAIT_IDS.has(id)) tags.push("bait");
   if (DROPS.has(id)) tags.push("monster-drop");
   if (TRASH.has(id)) tags.push("trash");
@@ -106,15 +112,19 @@ export const tasteListOf = (villagerId: string): TasteList =>
 export const hasOwnList = (villagerId: string): boolean =>
   PEOPLE[villagerId] !== undefined;
 
-/** Every id and tag a personal list names, for validation. */
-export const listedEntries = (): string[] =>
-  Object.values(PEOPLE).flatMap((l) => [
+/** Every id and tag a personal or universal list names, for validation. */
+export const listedEntries = (): string[] => [
+  ...Object.values(PEOPLE).flatMap((l) => [
     ...l.loves,
     ...l.likes,
     ...(l.neutral ?? []),
     ...l.dislikes,
     ...l.hates,
-  ]);
+  ]),
+  ...data.universal.loves,
+  ...data.universal.dislikes,
+  ...data.universal.hates,
+];
 
 const TIERS: [Taste, (l: TasteList) => string[]][] = [
   ["love", (l) => l.loves],
@@ -236,6 +246,12 @@ export class Friendship {
     if (r.weekGifts >= POINTS.weeklyGifts) this.add(r, id, POINTS.weeklyBonus);
     r.week = w;
     r.weekGifts = 0;
+  }
+
+  /** Award points outside gifting (a festival, note 82); capped by the heart limit. Returns the points gained. */
+  award(id: string, n: number): number {
+    const r = this.row(id);
+    return r ? this.add(r, id, n) : 0;
   }
 
   /** Call each morning: pays the weekly bonus on the first day of a new week. */

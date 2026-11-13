@@ -97,7 +97,12 @@ describe("the Hearthwell interiors", () => {
     for (const [id, kind] of Object.entries(SHOPS)) {
       const m = maps.get(id);
       // A wide counter has one service per tile it is served from (all the same kind).
-      expect([...new Set(m.services.map((s) => s.kind))], id).toEqual([kind]);
+      // The hatter also has the sewing machine and the dye pots (note 96).
+      const extra = id === "hatter" ? ["sewing-machine", "dye-pots"] : [];
+      expect([...new Set(m.services.map((s) => s.kind))], id).toEqual([
+        kind,
+        ...extra,
+      ]);
       expect([m.width, m.height]).toEqual(REBUILT[id] ?? [14, 10]);
     }
   });
@@ -155,7 +160,7 @@ describe("the Hearthwell interiors", () => {
       expect(COUNTER_LINES[kind]).not.toContain(String.fromCharCode(0x2014));
     }
     expect(standInLine("shop")).toBeUndefined();
-    expect(standInLine("board-news")).toBeDefined();
+    expect(standInLine("board-news")).toBeUndefined();
   });
 
   it("can be reached from the Farm by walking, shop and smithy included", () => {

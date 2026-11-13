@@ -61,6 +61,10 @@ export interface Tree {
   large?: boolean;
   /** The kind of tree, from the map (note 71). Absent means oak. */
   kind?: TreeKind;
+  /** A tapper stands on this tree (note 92). `since` is the game day its cycle began. */
+  tap?: { since: number; heavy?: boolean };
+  /** A cosmetic tree from the map: shaken for a seed, never chopped or tapped (SC-30). Absent otherwise. */
+  cosmetic?: boolean;
   /** Days until a chopped large stump is whole again. Absent while it stands. */
   regrow?: number;
 }
@@ -86,6 +90,7 @@ export class Trees {
       stage: number;
       large?: boolean;
       kind?: TreeKind;
+      cosmetic?: boolean;
     }[] = [],
   ) {
     for (const t of initial) {
@@ -93,6 +98,10 @@ export class Trees {
       if (t.kind) {
         const added = this.at(t.x, t.y);
         if (added) added.kind = t.kind;
+      }
+      if (t.cosmetic) {
+        const added = this.at(t.x, t.y);
+        if (added) added.cosmetic = true;
       }
       if (t.large) {
         const added = this.at(t.x, t.y);
@@ -205,7 +214,11 @@ export class Trees {
       const span = 2 * SPREAD_RANGE + 1;
       const x = t.x + Math.floor(random() * span) - SPREAD_RANGE;
       const y = t.y + Math.floor(random() * span) - SPREAD_RANGE;
-      if (!this.at(x, y) && canPlant(x, y)) this.add(x, y, SEED_STAGE);
+      if (!this.at(x, y) && canPlant(x, y) && this.add(x, y, SEED_STAGE)) {
+        // A seedling grows into its parent's kind (a pine spreads pines).
+        const child = this.at(x, y);
+        if (child && t.kind) child.kind = t.kind;
+      }
     }
   }
 }

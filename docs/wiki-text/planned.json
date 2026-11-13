@@ -1,0 +1,122 @@
+[
+  {
+    "name": "Garden pot",
+    "kind": "Item",
+    "note": "97_tea_bush.md",
+    "line": "Craftable from clay 1, stone 10 and a refined crystal. Alder teaches it in a story moment after the Larder room is restored."
+  },
+  {
+    "name": "Refined crystal",
+    "kind": "Item",
+    "note": "97_tea_bush.md",
+    "line": "A quartz crystal smelted in the furnace. Needs a smelt recipe. It is the pot's refined input."
+  },
+  {
+    "name": "Heart events at 4, 8 and 10 hearts",
+    "kind": "People",
+    "note": "62_heart_events.md",
+    "line": "The 2 and 6 heart events are built with draft text. The rest wait for the voice sheets (M3d). All heart rewards are plain items."
+  },
+  {
+    "name": "Secret Woods statue",
+    "kind": "Place",
+    "note": "73_secret_woods.md",
+    "line": "The statue in the Secret Woods, after the pond species table (issue 878). The pond fish are built."
+  },
+  {
+    "name": "Cave pool water on mine floors",
+    "kind": "Place",
+    "note": "93_fish_pond_and_water_finds.md",
+    "line": "A fishable pool in the mines. No mine map has water yet."
+  },
+  {
+    "name": "Cosmetic village trees",
+    "kind": "Place",
+    "note": "77_hearthwell.md",
+    "line": "Most trees in Hearthwell cannot be chopped. Needs tree objects in the Hearthwell map."
+  },
+  {
+    "name": "Mahogany monster seed",
+    "kind": "Item",
+    "note": "36_gathering_trees_sap_fiber.md",
+    "line": "A way to find a mahogany seed from a monster. Needs the Secret Woods creatures."
+  },
+  {
+    "name": "Elderfruit from the spouse and the gallery set",
+    "kind": "Item",
+    "note": "39_completion_total.md",
+    "line": "Two of the seven elderfruit sources are still to build."
+  },
+  {
+    "name": "Harvest Showing judging",
+    "kind": "Festival",
+    "note": "14_festival_calendar.md",
+    "line": "Crops are judged on the green and the prize counter opens. The festival itself is built; the judging is not."
+  },
+  {
+    "name": "Cake table dish picker",
+    "kind": "Festival",
+    "note": "14_festival_calendar.md",
+    "line": "The cake table takes the held item today. A picker to choose a dish is still to build."
+  },
+  {
+    "name": "Lantern drift animation",
+    "kind": "Festival",
+    "note": "14_festival_calendar.md",
+    "line": "The keepsake lantern floats by the rules. The drifting animation is not built."
+  },
+  {
+    "name": "Ice fishing counter on screen",
+    "kind": "Fishing",
+    "note": "21_fishing.md",
+    "line": "The rules for ice fishing are built. The counter shown on screen is not."
+  },
+  {
+    "name": "Fish pond art",
+    "kind": "Fishing",
+    "note": "93_fish_pond_and_water_finds.md",
+    "line": "Pictures for ponds and their fish. Species numbers still need tuning in play."
+  },
+  {
+    "name": "Fish pictures",
+    "kind": "Art",
+    "note": "99_art_polish_and_style.md",
+    "line": "The game has no fish icons yet, so fish pages show a labelled box."
+  },
+  {
+    "name": "The ancestors' shrine",
+    "kind": "Place",
+    "note": "83_grandpa_shrine.md",
+    "line": "The Diamond's name, art and drops, the shrine tiles on the farm and the camp chest items are left."
+  },
+  {
+    "name": "The library gallery",
+    "kind": "Place",
+    "note": "38_achievements.md",
+    "line": "A gallery where finds are donated, with the 40 donation and gallery set achievements."
+  },
+  {
+    "name": "Completion tracker lines and art",
+    "kind": "Art",
+    "note": "39_completion_total.md",
+    "line": "Real lines and art for the completion tracker, with the voice sheets."
+  },
+  {
+    "name": "Valley maps and festival layouts",
+    "kind": "Place",
+    "note": "81_layout_shared_rules.md",
+    "line": "The valley areas are shells today. Hand-authored layouts come after the owner's hands-on play."
+  },
+  {
+    "name": "Multiplayer",
+    "kind": "System",
+    "note": "53_multiplayer.md",
+    "line": "Milestone M4, after M3b."
+  },
+  {
+    "name": "The next region (ring 2)",
+    "kind": "Place",
+    "note": "03_milestones.md",
+    "line": "Regions beyond the home valley, milestone M5."
+  }
+]

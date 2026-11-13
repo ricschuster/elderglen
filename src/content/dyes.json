@@ -1,15 +1,42 @@
 {
   "price": 120,
   "colours": [
-    { "id": "red", "name": "Red dye" },
-    { "id": "orange", "name": "Orange dye" },
-    { "id": "yellow", "name": "Yellow dye" },
-    { "id": "green", "name": "Green dye" },
-    { "id": "blue", "name": "Blue dye" },
-    { "id": "indigo", "name": "Indigo dye" },
-    { "id": "violet", "name": "Violet dye" },
-    { "id": "purple", "name": "Purple dye" },
-    { "id": "pink", "name": "Pink dye" }
+    {
+      "id": "red",
+      "name": "Red dye"
+    },
+    {
+      "id": "orange",
+      "name": "Orange dye"
+    },
+    {
+      "id": "yellow",
+      "name": "Yellow dye"
+    },
+    {
+      "id": "green",
+      "name": "Green dye"
+    },
+    {
+      "id": "blue",
+      "name": "Blue dye"
+    },
+    {
+      "id": "indigo",
+      "name": "Indigo dye"
+    },
+    {
+      "id": "violet",
+      "name": "Violet dye"
+    },
+    {
+      "id": "purple",
+      "name": "Purple dye"
+    },
+    {
+      "id": "pink",
+      "name": "Pink dye"
+    }
   ],
   "inputs": {
     "daffodil": "yellow",
@@ -42,6 +69,54 @@
     "spring-onion": "green",
     "fiddlehead-fern": "green",
     "winter-cress": "green",
-    "holly-sprig": "green"
+    "holly-sprig": "green",
+    "tulip": "pink",
+    "cornflower": "blue",
+    "poppy": "red",
+    "zinnia": "orange",
+    "sunflower": "yellow",
+    "dahlia": "violet"
+  },
+  "potInputs": {
+    "gem-low-a": "red",
+    "gem-low-b": "blue",
+    "gem-mid-a": "green",
+    "gem-mid-b": "purple",
+    "gem-high-a": "orange",
+    "gem-high-b": "blue",
+    "cinder-ruby": "red",
+    "sardine": "blue",
+    "salmon": "orange",
+    "perch": "green",
+    "carp": "orange",
+    "moonmirror": "purple",
+    "pearly-shell": "pink",
+    "seaweed": "green",
+    "chanterelle": "yellow",
+    "morel": "orange",
+    "field-mushroom": "red",
+    "crab-apple": "red",
+    "hazelnut": "orange",
+    "chestnut": "orange",
+    "pine-nut": "yellow",
+    "horseradish": "yellow",
+    "periwinkle": "blue",
+    "wild-garlic": "green",
+    "frost-root": "blue",
+    "honey": "yellow",
+    "sap": "orange",
+    "clay": "orange",
+    "fiber": "green",
+    "egg": "yellow",
+    "duck-egg": "blue",
+    "pumpkin-soup": "orange",
+    "bread": "orange",
+    "honey-cake": "yellow"
+  },
+  "potColours": ["red", "orange", "yellow", "green", "blue", "purple"],
+  "potAlias": {
+    "pink": "red",
+    "indigo": "blue",
+    "violet": "purple"
   }
 }

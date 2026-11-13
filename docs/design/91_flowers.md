@@ -67,7 +67,35 @@ numbers.
 - Bundle 23's pool lists the six where it names flowers.
 - Tests: crop growth, honey flower choice by range, dye rows, seed shop stock by season.
 
+## Built (2026-11-12)
+
+- Six flower crops in `crops.json` (`produce: "flower"`, not food, no jam or pickles), seeds in
+  the general store by season (the store lists every crop by season), placeholder art colours.
+- Wild seed packet: a forage pickup rolls `WILD_FLOWER_SEED_CHANCE` (2 percent) for one seed of
+  an in-season flower (`actions.ts`).
+- Flower honey: `<flower>-honey` items at the table prices. A bee house resolves its honey when
+  collected: the nearest flower crop within `BEE_RANGE` (5 tiles, either axis) on the open
+  farm, else plain honey (`machines.ts`).
+- Dyes, the `flower` tag and Dyer's bundle pool list the six.
+- Tests: `tests/flowers.test.ts`.
+
+## Left to build
+
+- Flower pots (note 24) do not exist, so only growing crops count for bees.
+- Wild flowers (daffodil and the rest) do not attract bees yet (no honey price for them).
+- Not in this note: the bouquet, the dye station, real names and art.
+
+## Design gaps found while building
+
+- Range metric for "within 5 tiles" (built as a square) and which flower wins when several
+  are in reach (built: nearest, then by id).
+- When the flower is checked (built: when collected, not when the batch starts).
+- Bees on maps other than the open farm (greenhouse, areas): built for the farm only.
+- Whether flower honey makes mead in the keg, and at what price (built: only plain honey).
+- Villager lists name `flower-honey`: fixed, they now use the `#flower-honey` tag in `tagsOf`.
+- Bundle 23's cut of "1 per item" is the data's existing count of 1 each, `required` 4.
+- Quests, completion and the ship-every-crop achievements now count flowers as crops.
+
 ## Open
 
 - Real flower names and art (the placeholders are plain real names).
-- Flower art and real names.

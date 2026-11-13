@@ -25,8 +25,8 @@ npm run dev
 ```
 
 Then open the address Vite prints. Move with arrows or WASD, or drag on a touch
-screen. `npm run check` runs every CI gate (format, lint, typecheck, tests and
-build). `CLAUDE.md` lists all the commands.
+screen. `npm run check` runs every CI gate (format, lint, typecheck, tests, build
+and the overview and valley map checks). `CLAUDE.md` lists all the commands.
 
 ## Where things are
 

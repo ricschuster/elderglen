@@ -100,6 +100,9 @@ The patterns, found in at least three images each:
    2 wide for every interior, huts included, so one player in the doorway never shuts
    a hut. The exterior door on the map stays 1 tile. Note 81
    decision 5 now says interior entry 2 wide.
+   **Superseded 2026-11-12 (owner, after play):** the door exit is 1 tile inside and
+   outside, with one arrival tile in front of it; the vestibule before it stays 2 wide.
+   Walking onto the door leaves. Note 81 decision 5 is updated to match.
 4. **Counters reachable from more than one tile** (decision 12): at least two player
    tiles in front of a counter and the keeper's tile reachable from two sides.
 5. **8 players can pass.** Every public aisle is 2 wide, except the produce wall's
@@ -194,7 +197,8 @@ is void. Fixtures block movement. Marks are points on `markers`.
   "a person's door", as in Stardew). A check on the draft with the gates shut leaves
   only the two bedrooms unreachable.
 - **The door notch.** Floor at x 9 to 10 through the bottom wall and one row below,
-  doors at y 29, entry marks at y 28, so the entry is 2 wide.
+  doors at y 29, entry marks at y 28, so the entry is 2 wide. The built door is one
+  tile at x 9 (owner call 2026-11-12, after play); x 10 at y 29 is wall.
 - **Marks.** `entry` and `door` (2 each), `service-shop` (2), `spot-counter-serve`,
   `spot-counter-stock`, `spot-home-cook`, `spot-home-sit`, `bed-parents`, `bed-child`,
   `door-gated-parents`, `door-gated-child` and `door-kitchen`. A check on the draft
@@ -246,7 +250,9 @@ loft (11 by 11), reached by the ladder.
 
 The ladder is 2 tiles wide (the 2 wide rule, note 81 decision 5) and is a gated door
 like every bedroom door (2 hearts, note 61 decision 6): the `G` tiles on the back wall. The
-loft's own entry is the ladder foot (2 wide, marks `entry-1` and `entry-2`). The shop has
+loft's own entry is the ladder foot (2 wide, marks `entry-1` and `entry-2`). The loft's way
+down, its `door` exit, is 1 tile like every interior door (owner call 2026-11-12, after
+play); the hut's ladder up is not a `door` exit and stays 2 wide. The shop has
 tool shelves, a fish tank and a stove on the back wall, a 4 wide counter with 4 player
 tiles in front and keeper tiles on both sides, a rug, a table and nets and crates. The loft
 has the bed, a shelf, a table at the round window and a sea chest. The hut is bigger than
@@ -875,7 +881,7 @@ coordinates (negative numbers are fine, and there are no walls in the plan):
 | --- | --- |
 | `p.floor(x0, y0, x1, y1)` | A room, a passage or an opening. Rooms joined edge to edge are one space. |
 | `p.put(ch, x0, y0, x1, y1)` | A fixture or rug on floor tiles already laid. |
-| `p.door(x, y, entry_y)` | The 2 wide door notch: floor at `entry_y`, door tiles at `y`, and the `entry-1`, `entry-2`, `door-1`, `door-2` marks. Lay the notch floor above it first. |
+| `p.door(x, y, entry_y)` | The 2 wide door notch: floor at `entry_y`, door tiles at `y`, and the `entry-1`, `entry-2`, `door-1`, `door-2` marks. Lay the notch floor above it first. The built maps narrow the door to 1 tile (owner call 2026-11-12). |
 | `p.gate(name, x0, y0, x1, y1)` | A gated door (a bedroom or a ladder): `G` tiles and `door-gated-<name>-n` marks. Walkable only with the gates open. |
 | `p.mark(name, x, y)` | A point for the routes: `service-*`, `spot-*`, `bed-*`. Never on a fixture. |
 
@@ -967,8 +973,11 @@ Final art waits for M3d (ADR 0012).
    fisher's ladder and every bedroom door use the `gate` property. Each new interior adds a
    door pair or a ladder to its building's lot; the loft and the steward's rooms are new
    maps (the loft is a map the hut links to, as the Outpost links to its rooms).
-4. **Interior door 2 wide (built, #855)** across the built shells (owner accepted, SC-145). The rebuilds
-   have 2 wide doors from their drafts, and `tests/interior-reach.test.ts` checks every door.
+4. **Interior door 1 tile (built, #855)** across the built shells. It was 2 wide (owner
+   accepted, SC-145) until the owner call of 2026-11-12, after play: every interior door is 1
+   tile, like the door outside, and walking onto it leaves. The drafts still draw 2 wide doors;
+   the maps are the source (ADR 0014), and `tests/interior-reach.test.ts` checks every door is
+   one walkable tile.
    The pilot is built with `scripts/interiors/tmj-to-map.mjs <id>`, which the later maps reuse.
    Gates are data only for now: a `gate` object (`friendship:<name>:2`) over the door tiles,
    left walkable, because nothing in `src/` reads a friendship gate yet.
@@ -982,7 +991,7 @@ Final art waits for M3d (ADR 0012).
 - Every rebuilt map lists its one tile wide spots in `AISLE_EXCEPTIONS`
   (`tests/helpers/interior.ts`). Some are by design (gated doors, bedside nooks); the
   keeper's aisles and the kitchen table rings are the owner's call.
-- `scripts/gen-delta-map.mjs` still writes the old `fisher-hut.json`; do not rerun it.
+- `scripts/drafts/gen-delta-map.mjs` still writes the old `fisher-hut.json`; do not rerun it.
 
 - Whether the gated bedroom needs a heart level other than 2 per person, and how a
   closed bedroom door looks (note 61 decision 6 says 2, as in Stardew).

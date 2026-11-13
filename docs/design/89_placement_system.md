@@ -23,7 +23,7 @@ decoration and furniture inside the farmhouse (note 85), and fences (note 34).
 A placeable is an item with a row in `src/content/placeables.json`. The row says:
 
 - `id`: the item id.
-- `kind`: `sprinkler`, `machine`, `chest`, `light`, `rod`, `heater` or `bomb`.
+- `kind`: `sprinkler`, `machine`, `chest`, `light`, `rod`, `heater`, `bomb` or `decor`.
 - `places`: where it may go (see "Place table").
 - `footprint`: tiles, 1 by 1 for everything in ring 1.
 - `blocksWalking`: true or false.
@@ -68,6 +68,7 @@ full it stays. Exceptions:
 | Wood and iron lamp-post | The farm, outdoors | Cost includes a battery pack (note 34) |
 | Lightning rod | The farm, outdoors, open sky | Not in the greenhouse, not indoors |
 | Heater | The coop and the barn, inside | One per building. Floor tile, not blocking |
+| Decor | The farm, outdoors | Footprint up to 2 by 2, blocks walking. See "Farm decoration" |
 | Bomb | The mines floors, the Quarry, the farm, the wilds | Not in Hearthwell, not indoors, not in camps |
 
 A map says what it is through its tags (`indoors`, `wild`, the area id). The table is
@@ -157,6 +158,22 @@ owner's torches, camp supplies and a campfire kit. Oil of Garlic: monsters below
 tier ignore the player for the rest of the day. Lamp-posts are not sold: they need a
 battery pack. Prices are Stardew's as placeholders.
 
+## Farm decoration (decided 2026-11-12)
+
+The seventh kind, `decor`, for the animal keeper's decoration list (note 23): ornamental
+hay bale, doghouse, dark doghouse, cat tree, dark cat tree and bird house.
+
+- A `placeables.json` row like any other. Footprint up to 2 by 2 (the hay bale 1 by 1, the
+  doghouses and cat trees 2 by 2 placeholder, the bird house 1 by 1). They block walking.
+- Farm outdoors only, not on tilled soil or a path tile. Placed and lifted by hand, free of
+  energy, same rules as a chest, and always empty so lifting is never refused.
+- Cosmetic, no effect, no upkeep, no decay. No pets exist, so the doghouses and cat trees
+  stay decor until a pet system is designed.
+- Sold by the animal keeper at note 23's prices (hay bale 250g, bird house 5,000g,
+  doghouses and cat trees 10,000g). Stardew sells them as buildings (from memory, SC-164);
+  ours are carried, so they can be moved, which is our choice.
+- Saved with the other placeables on the map, no new save field.
+
 ## Saving
 
 Each map keeps its placeables under its own map id (the `MapStore` of `mapstore.ts`,
@@ -201,8 +218,9 @@ Settled 2026-11-12: heater from the ranch shop, no torches indoors, no bomb expe
 - Sprinkler placing and lifting, farm and greenhouse (`placeSprinkler`, `pickUpSprinkler`).
 - Machines (`placeMachine`) and chests (`placeChest`, `pickUpChest`).
 - Lightning rod rules, battery packs and placing (`src/core/lightning.ts`).
-- The `coop-heater` item, kept and doing nothing, and the winter mood rule.
-- Not built: lamp-posts, the heater, bombs.
+- The `coop-heater` item and the winter mood rule.
+- (Lamp-posts, the heater and bombs were not built at the start; the steps below added
+  them.)
 - Step 1A (2026-11-12): `src/content/placeables.json` has a row for every sprinkler,
   machine and chest, and `src/core/placeables.ts` answers "may this id stand on this kind
   of place?" (`placeTag`, `mayPlaceOn`). `placeSprinkler`, `placeMachine` and `placeChest`
@@ -225,3 +243,21 @@ Settled 2026-11-12: heater from the ranch shop, no torches indoors, no bomb expe
   `placed`. An older save's `rods` list is read into the store on load (a struck rod keeps
   its strike). `placeRod`, `pickUpRod`, `takePack`, `chargeRods`; recipe from note 34 (iron
   bar, quartz crystal, 5 bat wing, Foraging 6); placeholder art beside the lights.
+
+- Decor kind (2026-11-12): `src/core/farmdecor.ts` (`placeFarmDecor`, `pickUpFarmDecor`,
+  `farmDecorAt`, `buyFarmDecor`), six `decor` rows in `placeables.json` (ornamental hay bale
+  250g and bird house 5,000g at 1 by 1, doghouse, dark doghouse, cat tree and dark cat tree
+  10,000g at 2 by 2; the `price` field is new), items, the keeper's counter rows, placeholder
+  block art, and `PlacedStore.covering` so a 2 by 2 piece (kept at its top left tile) blocks
+  digging, planting, spawns, lights and walking on all four tiles. Tests:
+  `tests/farmdecor.test.ts`. Left: real art, the cosmetic pet system the doghouses and cat
+  trees wait for, a browser look at placing.
+
+## Built status
+
+The decor kind is built (the last item above); see "Built today" for the other steps.
+
+Built (2026-11-12, #877 icons): the bombs already had pictures. Added placeholder icons for the
+Forge goods (Life Elixir, Miner's Treat, Oil of Garlic), every boots row, every ring and every
+pair of rings (a combined ring shows both stones), key `icon-forge-<id>` (`forgeKey` in
+`src/scenes/art.ts`). Test: `tests/forgeicons.test.ts`.

@@ -1,6 +1,6 @@
 # 37 Equipment: rings, boots and clothing slots (draft)
 
-Status: draft. Decided with the owner on 2026-10-31. Built 2026-11-10 (#597): the two ring slots, the four light and magnet rings, the wearing screen (see "Built"). Boots, Defense, Immunity and the combat rings are not built.
+Status: draft. Decided with the owner on 2026-10-31. Built 2026-11-10 (#597): the two ring slots, the four light and magnet rings, the wearing screen (see "Built"). Boots, Defense and Immunity are built (note 94); the other combat rings are not.
 Reference: the saved Stardew Valley Wiki pages Rings, Boots, Footwear, Hats,
 Inventory and Forge, read only (ADR 0002). The owner chose Stardew's behaviour
 on every question, so this note follows the saved pages. Item names are ours
@@ -113,8 +113,9 @@ The slot and the first rings do not need all of this. See the order below.
    The weapon stats in `22_mines.md` get crit, attack and knockback then.
 
 Bundle 16's glow ring has a placeholder reward until the slot exists
-(`33_build_order.md`). Built 2026-11-10: `glow-ring` is a kept item that does
-nothing yet. The slot itself is not built.
+(`33_build_order.md`). Built 2026-11-10: `glow-ring` is a kept item. The ring
+slots are built since (`equipment.ts`), and the glow ring gives light 10
+(`rings.json`).
 
 ## Built (2026-11-10, #597)
 
@@ -130,7 +131,7 @@ the glow rings the Night Fishing bundle gives is the 10 radius one.
 
 ## Built (boots, #598 leftovers)
 
-`src/content/boots.json`: six placeholder pairs (stat pairs from the tables above, names and prices ours), one boots slot in `Equipment`, saved as an optional `boots` field. The smith dwarf sells them for coin (150 to 1600g placeholder). Defense takes its number off every hit before Assist halves it, to a floor of 1 (placeholder rule). Immunity is stored and shown only, since no bad effect exists yet. Not built: boots as floor chest finds, tailoring, late pairs.
+`src/content/boots.json`: six placeholder pairs (stat pairs from the tables above, names and prices ours), one boots slot in `Equipment`, saved as an optional `boots` field. The smith dwarf sells them for coin (150 to 1600g placeholder). Defense takes its number off every hit before Assist halves it, to a floor of 1 (placeholder rule). Immunity is stored and shown only, since no bad effect exists yet. Boots tailoring is built (2026-11-12, note 96): the stats of one pair move onto another, the donor is used up, no cloth, the result is "Custom-tailored [name]" (a `look@stats` id, SC-168). Not built: boots as floor chest finds, late pairs.
 
 ## Open
 

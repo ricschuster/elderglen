@@ -129,15 +129,15 @@ describe("house frame shift (layout 5, note 85)", () => {
     for (const y of [2, 8]) expect(t2.has(at(16, y))).toBe(false);
   });
 
-  it("makes the front door notch 2 wide at every tier", () => {
+  it("makes the front door 1 wide at every tier", () => {
     for (const tier of [0, 1, 2]) {
       const m = maps.get("house", tier);
       expect(m.isBlocked(13 + 20, 21 + 11)).toBe(false);
-      expect(m.isBlocked(14 + 20, 21 + 11)).toBe(false);
+      expect(m.isBlocked(14 + 20, 21 + 11)).toBe(true);
       expect(m.isBlocked(12 + 20, 21 + 11)).toBe(true);
       expect(m.isBlocked(15 + 20, 21 + 11)).toBe(true);
       const door = m.exits.find((e) => e.map === "farm")!;
-      expect([door.x, door.y, door.w, door.h]).toEqual([33, 32, 2, 1]);
+      expect([door.x, door.y, door.w, door.h]).toEqual([33, 32, 1, 1]);
     }
   });
 

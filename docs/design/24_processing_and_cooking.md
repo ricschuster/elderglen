@@ -6,7 +6,7 @@ handoff). Machine numbers, dish lists and prices are our draft and are
 placeholders. Built 2026-11-07 (slice 1 build 7): the machine framework and five machines, the
 charcoal kiln, preserves jar, bee house, keg and seed maker, with jam, pickles,
 wine, juice, honey and mead (`src/core/machines.ts`, `processing.ts`,
-`artisan.ts`). The machine bundles (4, 5, 9, 10, 12) are in the hall data and give their machine and recipe (2026-11-07, note 35). Built 2026-11-08 (animal goods): the cheese press, mayonnaise machine, loom and oil maker, with cheese, goat cheese, mayonnaise, duck mayonnaise, cloth, truffle oil and oil. The cheese press and loom come from bundles 11 and 21 or farming 6 and 7, the mayonnaise machine from farming 2 and the oil maker from farming 8 (sunflower oil waits for the crop). Cloth keeps wool quality (silver 25 percent, gold 50 percent for 2 cloth); moonwool has no machine yet. Numbers are in note 07. Built 2026-11-08 (cooking, first slice): a stove in the tier 1 house kitchen opens the cooking screen (`CookingScene`, `src/core/cooking.ts`, `dishes.ts`, `src/content/dishes.json`). Eight placeholder dishes from the pack, a locked recipe shows as ???, and recipes are learned at the start or a skill level. A dish is an item with energy and a sell price, eaten from the pack, and cooking calls `noteCooked`. Not built: the fridge, the cookout kit, buffs, friendship, mail, inn and cookbook recipe sources, fish dishes (no fish yet), the other 73 recipes and the ring 2 and 3 dishes. Built 2026-11-09 (#602): the cask and the dye vat (see "The cask and the dye vat, built" below). Not built: fish smoker, crystalarium, flower honey, beer (no grain) and
+`artisan.ts`). The machine bundles (4, 5, 9, 10, 12) are in the hall data and give their machine and recipe (2026-11-07, note 35). Built 2026-11-08 (animal goods): the cheese press, mayonnaise machine, loom and oil maker, with cheese, goat cheese, mayonnaise, duck mayonnaise, cloth, truffle oil and oil. The cheese press and loom come from bundles 11 and 21 or farming 6 and 7, the mayonnaise machine from farming 2 and the oil maker from farming 8 (sunflower oil waits for the crop). Cloth keeps wool quality (silver 25 percent, gold 50 percent for 2 cloth); moonwool has no machine yet. Numbers are in note 07. Built 2026-11-08 (cooking, first slice): a stove in the tier 1 house kitchen opens the cooking screen (`CookingScene`, `src/core/cooking.ts`, `dishes.ts`, `src/content/dishes.json`). Eight placeholder dishes from the pack, a locked recipe shows as ???, and recipes are learned at the start or a skill level. A dish is an item with energy and a sell price, eaten from the pack, and cooking calls `noteCooked`. Not built: the fridge, the cookout kit, buffs, friendship, mail, inn and cookbook recipe sources, fish dishes (no fish yet), the other 73 recipes and the ring 2 and 3 dishes. Built 2026-11-09 (#602): the cask and the dye vat (see "The cask and the dye vat, built" below). Built 2026-11-12 (#870): the crystalarium (see "Open"). Not built: fish smoker, flower honey, beer (no grain) and
 the cask. Unchecked claims are SC-50 and SC-51. Stardew facts were checked against the
 saved wiki pages Artisan Goods and Cooking, read only (ADR 0002). No text or
 tables are copied, and the dish names below are ours.
@@ -222,8 +222,8 @@ Settled where the notes left gaps. All numbers are placeholders (note 07).
 - **Use.** Hold a good and face the cask to load it. Action reads the cask
   and takes a gold good out. The axe or pickaxe takes the good out at any time,
   or an empty cask up, so a stray press never resets the ageing. A gold good
-  shows the ready mark. Not built: ale and pale ale (no grain), cask count
-  upgrades, a cask in the farm cave.
+  shows the ready mark. Beer and pale ale are built (keg in `processing.ts`,
+  cask days in `cask.ts`). Not built: cask count upgrades, a cask in the farm cave.
 - **The dye vat** is the Dyer's bundle (23) reward, a machine on the farm like
   the keg, and its recipe comes with the bundle only (40 wood, 10 stone, 10
   fiber). One flower, berry or crop in, one dye out after 1 day:
@@ -244,7 +244,7 @@ Settled where the notes left gaps. All numbers are placeholders (note 07).
   piece, and ignore item quality. The accepted items are a broad list by pot
   colour: flowers, forage, gems, fish, dishes and tools, with jelly, juice,
   pickles, wine, dried goods, smoked fish and roe taking the colour of their
-  ingredient. This replaces the single-input vat and its fixed dyes. Open
+  ingredient (aged roe too, built 2026-11-12, note 93). This replaces the single-input vat and its fixed dyes. Open
   design first: the clothing and look system (note 10) it needs, whether the
   built vat and the Dyer's bundle (23) stay, and where our pots stand. #660
   waits on that design. Cask days follow Stardew's, to be checked (SC-82).
@@ -261,9 +261,9 @@ Settled where the notes left gaps. All numbers are placeholders (note 07).
 
 ## Left for later
 
-- **Ale and pale ale** for the cask, once grain exists (the cask is built, see above).
-- **A dehydrator,** which Stardew sells for a high price.
-- **Recycling and a worm bin,** deep Stardew machines. Recycling for trash is in `21_fishing.md`.
+- **Ale and pale ale** for the cask: built (beer from wheat, pale ale from hops, `processing.ts` and `cask.ts`).
+- **A dehydrator** is built (placeable and recipe, farm cave).
+- **Recycling and a worm bin:** the recycler and worm bin are built placeables. Recycling for trash is in `21_fishing.md`.
 - **Artisan goods from trees and tapping** (maple syrup and similar). They need
   trees and the Tapper profession (`26_seasons.md` and the foraging
   professions).
@@ -279,6 +279,11 @@ Settled where the notes left gaps. All numbers are placeholders (note 07).
   (in place of Stardew's iridium) and 1 battery pack (the lightning rod makes them).
   Costs are placeholders for note 07. Pulling the machine with a tool returns the
   gem inside (Stardew). The rest of the reward pass is in `16_bundles.md`.
+  **Built (2026-11-12):** `crystalarium` machine (`processing.ts`, `copyMinutes` by gem, rescaled from
+  Stardew's 1,440-minute day to our 1,600), farm placeable, Harvest Feast recipe, art, tests. It
+  restarts the same copy each time it is emptied; the gem stays inside until the machine is pulled.
+  Placeholders: our six gems are matched to Stardew's tiers by price (400g ruby time, Glimmerstone
+  as diamond), quartz is included, sell price 500g.
 - Our own items to stand in for Stardew's special craft ingredients.
 - Machine times and sell prices are set for the jar, keg and bee house in
   `07_tuning_numbers.md` (2026-10-31, Stardew's). The charcoal kiln (30 min) and

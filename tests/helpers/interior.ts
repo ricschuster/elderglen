@@ -102,9 +102,9 @@ export function thinCounters(id: string): string[] {
 /**
  * Public aisles that are narrower than two tiles. A reachable tile is wide
  * enough when it lies in some 2 by 2 block of tiles that are all reachable, so
- * two people can pass or stand side by side (the doors are 2 wide for the same
- * reason, note 86 decision 12). A one tile corridor, doorway or gap between a
- * counter and a wall fails. By-design exceptions are named in AISLE_EXCEPTIONS
+ * two people can pass or stand side by side (note 86 decision 12). A one tile
+ * corridor, doorway or gap between a counter and a wall fails, except the door
+ * itself, which is one tile (owner, 2026-11-12). By-design exceptions are named in AISLE_EXCEPTIONS
  * and are skipped, tile by tile.
  */
 export function narrowAisles(id: string): string[] {
@@ -130,6 +130,8 @@ export function narrowAisles(id: string): string[] {
   for (const t of reach) {
     if (skip.has(t)) continue;
     const [x, y] = t.split(",").map(Number) as [number, number];
+    // The door itself is one tile, like the door outside (owner, 2026-11-12).
+    if (m.exitAt(x, y)?.id === "door") continue;
     if (!wide(x, y)) out.push(`narrow at ${t}`);
   }
   return out;

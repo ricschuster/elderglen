@@ -46,9 +46,12 @@ count. They cannot be put in a pond.
   resets it (the capacity from quests too).
 - **Products.** Each fish may give an item at night. Roe is the main one: Stardew rolls
   an extra roe 20 percent of the time again and again (about 0.25 extra on average). The
-  chances and which fish make what are not on the saved page, so ours are placeholders
-  (SC-158): a fish gives roe 5 percent a night, scaled by the pond's size over 10, and a
-  few fish give a species item (Fernscale: a pond pearl, others later). The roe goes to
+  chance is Stardew's (saved page, SC-158; owner chose it 2026-11-12): each night an item
+  is possible with chance population x 0.08 + 0.15 (23 to 95 percent, an empty pond
+  never), then the item is picked by species and population, roe mostly. Species goods
+  need a minimum population, as the page's table lists (for example Sunfish gives Solar
+  Essence at 10, Woodskip hardwood at 6, Blobfish a pearl at 9). Fish the page does not
+  list keep our own goods (Fernscale: a pond pearl, others later). The roe goes to
   the preserves jar for aged roe (note 24).
 - **Quests (Stardew).** When the pond hits its cap, an exclamation mark appears over it
   1 to 5 days later. The quest asks for items thrown in one at a time, any quality. Done,
@@ -79,8 +82,203 @@ count. They cannot be put in a pond.
 4. Products and roe, the pond quest items table.
 5. Save in the placed store. Tests for each.
 
+## Built status (2026-11-12)
+
+Core rules, content and tests are built. The scenes are not.
+
+- **Water finds (build step 1): built.** `src/core/waterfinds.ts` and
+  `src/content/waterfinds.json`. `bite()` can return `{ kind: "find" }` after the trash
+  roll, never on the tutorial cast. The `FishingScene` lifts a find with no bar, gives 3
+  fishing XP and does not touch the fish log. Plants bite 12 in 100 and jellies 8 in 100 in
+  the right water, one season each (placeholders): Brook jelly in spring on the river and
+  the delta lake, Tide jelly in summer on the sea. All six are items. Pale lichen and Glow
+  jelly bite in the `cave-pool` water kind, which no map places yet.
+- **Pond building (step 2): core built.** `src/core/pond.ts`: the placeable `fish-pond` (kind
+  `pond`, farm only, 5 by 5), `pondProblem` and `orderPond` (5,000g, 200 stone, 5 seaweed, 5
+  pondweed, 2 days, clear ground, no overlap with a building or another pond),
+  `advancePonds` in the morning, `pondBlocks` (the whole footprint stops walking; wired in
+  `FarmScene`). Held in the placed store under the farm, so it saves with no new field.
+- **Population, breeding, harvest (step 3): built.** `putFish` (any quality, one species,
+  the cap), `takeFish` (normal quality, no XP, no log entry, emptying resets it). Cap steps
+  3, 5, 7, 10 (1 for a legend). Breeding one fish every 1 to 5 days by price
+  (`spawnDaysOf`), no clock reset on adding fish.
+- **Products, roe and quests (step 4): built.** `pondNight` (called from `sleep.ts`): chance
+  population x 0.08 + 0.15 (0.5 for a legend), roe mostly with extra roe 20 percent again
+  and again, a species goods table in `pond.json` read at its minimum population. One roe
+  item per species (`<id>-roe`, half the fish price, ours). Quests: the wait is 1 to 5 days
+  after the pond fills and ticks only while it is full, items by water group
+  (`questItems` in `pond.json`) and the top quest a made good or gem, XP 20 plus 5 per
+  spawn day, the spawn clock resets. Removing fish pauses it, the same item comes back.
+- **The Fernscale (2026-11-13, #878):** now in the fish roster as the `unique` fish of the
+  Secret Woods pond (note 73). Its pond row is not set: it makes roe only, because the note's
+  "pond pearl" has no item. Open for the owner.
+- **Not built:** see the second and third passes below for what is still open.
+
+### Gaps found while building (design to settle, not invented)
+
+- **No Stardew fish table for our fish.** The saved page lists Stardew's species only, and
+  none of ours match, so `pond.json` has an empty `species` table: every fish makes roe
+  only. The goods machinery (a `goods` list of item and minimum population per species) is
+  built and tested, but no species has a row. The Fernscale's pond pearl is not set because
+  the Fernscale is not in the fish roster yet.
+- **Which of our fish hold 1 at the start** (the page's "some rare fish"). Not set: every
+  non-legend pond has the cap of 3.
+- **How the page picks among several goods.** The page gives a chance and a population
+  gate, not the draw. Placeholder: roe has weight 3 and each good with its population
+  met has weight 1.
+- **Quest item counts.** Stardew asks several of an item; ours are 3, 5, 8 by step
+  (placeholder). The quest item lists in `pond.json` are our first guess at the
+  note's groups, and there is no cave group because there is no cave fish.
+- **Cave water.** Settled 2026-11-12 (taken, owner can correct): a `cave-pool` water kind
+  (`WaterKind`, a map trait or a `water` zone names it). Pale lichen and Glow jelly bite in it.
+  No map places such water yet (the farm cave and the mine floors have no pool), so they still
+  bite nowhere in play until a map or floor carries a pool.
+- **Roe price.** Half the fish price is ours, not Stardew's.
+- **The carpenter is one job at a time.** The pond refuses an order while the coop, barn,
+  silo or house job runs, and those jobs now wait for a pond under way too. Buildings cannot be
+  placed over a pond, and a pond cannot be placed over a building (`pondsite.ts` holds the shared
+  footprint so `placement.ts` need not import `pond.ts`).
+- **Sea urchin and coral.** Read as our Pin urchin and Sea fan (note 72). Confirm.
+
 ## Open
 
-- SC-158: the pond's product table and chances (not on the saved page).
+- SC-158: done for the chance formula and the listed fish. Our own fish still need their goods and population gates (see the gaps above).
 - The legend rule and whether the Fernscale needs a pond of its own (note 21).
 - Names, prices, art.
+
+## Built status, second pass (2026-11-12)
+
+Built, with `tests/pondleftovers.test.ts`: the `cave-pool` water kind and the two finds' water
+lists; `pondStatus` and `pondUse` (one Action rule: the quest item first, then the waiting
+product, then a held fish, else the pond's status line); `pondNews` and three morning report
+lines (pond finished, something to take, a fish asking); `FarmScene` hooks: Action on any
+pond tile runs `pondUse`, the rod on a pond tile lifts a fish (`takeFish`) instead of casting.
+
+## Built status, third pass (2026-11-12)
+
+Built, with `tests/pondmenu.test.ts`: the carpenter menu line "Fish pond" (`pondOrderProblem`,
+`pondCostLine`: price, or what is lacking or the busy job, before a spot is chosen); the
+pond on the placing screen (`PlacementScene` takes `"pond"`; `pondBlockers` gives the red
+tiles, a spot is not free until the price is in hand; the same rules as `pondProblem`); the
+pond menu (`PondScene`, `pondMenu`: fish, count against the cap, the ask, a waiting product)
+with an Empty button (`emptyPond`). Action on a pond with nothing to put in, take or give opens
+the menu. The dev menu already lists the water finds and every roe item (item groups), so no
+dev pick was added; the pond itself is a building, not an item.
+
+Empty is taken, owner can correct: every fish goes to the pack (refused unless the pack has
+room for all), which resets the pond, as the rod's `takeFish` does one at a time. The note only
+says "the empty button".
+
+Still not built: drawing the pond (art), a pool on any map, and the
+species table (still empty, see the gaps). The coop, barn, stable, silo and house placing
+rules still do not check for a pond (a building can be put over a pond: `placementBlockers`
+is blind to ponds, and the other carpenter jobs do not wait for a pond under way).
+
+## Settled by the owner and built (2026-11-12)
+
+- **Water finds are not Fish entries.** They do not join the Fish completion category (note 39),
+  the fish kinds or the roster. They only count toward the "catch N fish" total, as note 38
+  says plants do in Stardew; trash does not. `FishLog.noteFind` (called by `landFind`) keeps a
+  separate saved `finds` count that `total` includes. Pale lichen and Glow jelly bite on no map
+  yet, which no longer matters for completion. Tests: `tests/roeandfinds.test.ts`.
+- **Algae soup is a pond reward only, with no cooking recipe.** Saved Fish Pond page: Slimejack
+  gives "1 Algae Soup or 5 Wild Bait" at 5 fish. Item `algae-soup` exists (price 100, energy 80,
+  placeholders). The hook is a per-species `reward` row in `pond.json` (`{"item", "count"}`),
+  given when a capacity quest is finished (to the pack, else at the pond). **Open: the species
+  table is empty and we have no slime-like fish, so no species carries it yet.** Name the
+  fish (or a legend) that gets it when the table is filled.
+- **Aged roe.** Roe in the preserves jar (`processing.ts`) becomes `<fish>-aged-roe` (name
+  "Aged <fish> roe"), 2 times the roe's price, 4,000 machine minutes (about 2.5 days), as
+  Stardew (saved Artisan Goods page, SC-174, owner 2026-11-13; it was 4 days).
+  Aged roe goes in no machine. Sea urchin and coral roe count as any species. Colour: `potColourOf` now strips `-roe` and `-aged-roe` and
+  uses the fish's pot colour (roe had no colour before this, only note 24 said it should).
+  Pot colours exist only for fish listed in `dyes.json` `potInputs`; a fish not listed has no
+  colour for its roe either.
+
+## Open question: aged roe quality (new)
+
+Quality of the input is ignored and aged roe is normal quality (as the jar ignores quality). Closed 2026-11-13: the saved Artisan Goods page gives only "2 x base roe price", no quality rule, so this stands.
+
+## Open questions found 2026-11-12 (answered above: completion and soup)
+
+The note says the finds "feed" the fishing completion count and cooking (algae soup), but
+does not decide the rules, so neither is built. To settle:
+
+- **Completion count.** Do the six finds join the Fish category (note 39) as six more
+  one-time entries (47 fish plus shellfish plus six), or do they only count toward the
+  "catch N fish" achievements (note 38 says plants count there, trash does not)? A new
+  entry needs a saved found-once record (`FishLog.load` drops ids that are not fish).
+  Pale lichen and Glow jelly bite on no map yet (`cave-pool`), so counting them would make
+  the category impossible to finish until a map carries a pool.
+- **Algae soup.** No recipe is decided: ingredients (which find, how many), energy, sell
+  price, and how it is learned (a level, a letter or a shop). No other dish is named for the
+  finds. Do the jellies feed a dish at all?
+
+## Species table (2026-11-13, owner: build as drafted)
+
+Owner chose on 2026-11-13: a full table, a row for every fish, like Stardew (saved Fish Pond
+page, where each fish has its own quest items, goods and population gates). Stardew's rows are
+per fish and ours do not match them, so these are our own, by rarity and by what the fish is
+like, and use items that already exist. All numbers are placeholders to edit.
+
+**Rules the rows follow** (change a rule and every row of that tier follows):
+
+- Every species makes roe (weight 3). A good (weight 1 each, once the pond holds its minimum
+  population) is the only extra. Spawn days stay by price (1 to 5).
+- Common fish (15): roe only, no row. Uncommon (20): one good at 5 fish. Rare (11): two
+  goods, at 3 and at 7 fish, and a reward for finishing a capacity quest. Legends (5): one
+  good, a high gem, at 1 fish, and no reward (they never breed and have no quests).
+- Shellfish (8 pot catches), sea urchin and coral: roe only, no row.
+- Goods are chosen to suit the fish: weeds, clay, mushrooms, ore, shells and gems.
+- The algae soup reward goes to the slime-like fish, glassy-elver (Stardew: Slimejack, 1 Algae
+  Soup or 5 Wild Bait at 5 fish). The other rare rewards are plain bait or a gem.
+
+### Uncommon (one good at 5)
+
+| Fish | Water | Good |
+| --- | --- | --- |
+| ferrywhisker | river | pondweed |
+| salmon | river | gem-low-a |
+| hearthside-dace | river | clay |
+| tallow-eel | river | coal |
+| fernfin | forest lake | wild-garlic |
+| mushroom-loach | forest lake | field-mushroom |
+| moonmirror | forest lake | gem-low-b |
+| reed-cat | marsh lake | pondweed |
+| catfish | marsh lake | clay |
+| bullhead | marsh lake | copper-ore |
+| kelp-ribbon | sea | seaweed |
+| harbour-ray | sea | cockleshell |
+| herring | sea | periwinkle |
+| lantern-squid | sea | whelk |
+| granite-gudgeon | mountain lake | iron-ore |
+| echo-pike | mountain lake | copper-ore |
+| ember-trout | mountain lake | coal |
+| pearlback | cove | pearly-shell |
+| cove-lantern | cove | spiral-shell |
+| still-water-gar | cove | gem-mid-a |
+
+### Rare (goods at 3 and 7, reward at each finished capacity quest)
+
+| Fish | Water | Good at 3 | Good at 7 | Reward |
+| --- | --- | --- | --- | --- |
+| silverthread | river | iron-ore | gem-mid-a | 5 plain-bait |
+| old-mossback | river | clay | gem-mid-b | 5 plain-bait |
+| hermit-trout | forest lake | field-mushroom | gem-mid-a | 5 plain-bait |
+| glassy-elver | marsh lake | pondweed | gem-mid-b | 1 algae-soup |
+| crowned-tunny | sea | seaweed | gem-mid-a | 5 plain-bait |
+| glacier-ghost | mountain lake | iron-ore | gem-high-a | 1 gem-low-a |
+| velvet-koi | cove | pearly-shell | gem-high-a | 1 gem-low-b |
+| hush | cove | spiral-shell | gem-high-b | 1 gem-low-a |
+| dusk-opal | cove | pearly-shell | gem-high-a | 1 gem-low-b |
+| deepglow | cove | spiral-shell | gem-high-b | 1 gem-low-a |
+| shell-ghost | cove | whelk | gem-high-a | 1 gem-low-b |
+
+### Legends (one good at 1)
+
+hearthwell-carp, grandmother-hush, valley-king, moonlit-mother and great-hearthfin each give
+gem-high-a (and roe).
+
+Built 2026-11-13: the rows are in `pond.json` (`species`, 36 rows) and
+`tests/pondspeciestable.test.ts` checks the tiers and that each item exists. Left: the numbers
+(what a good is worth against its minimum population), and the pond art.

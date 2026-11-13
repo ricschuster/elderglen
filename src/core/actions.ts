@@ -1,15 +1,23 @@
 import { dateOf } from "./calendar";
-import { CROPS, cropById } from "./crops";
+import { CROPS, FLOWER_CROPS, cropById } from "./crops";
 import { farmTypeById } from "./farmtypes";
-import { HARDWOOD, cropOfSeed, itemById } from "./items";
+import { ELDERFRUIT, HARDWOOD, cropOfSeed, itemById, seedId } from "./items";
+import { eatElderfruit } from "./elderfruit";
 import { fertilizerById, qualityLevelOf } from "./fertilizer";
-import { MAX_ENERGY } from "./energy";
 import { HEALTH_PER_ENERGY } from "./combat";
 import { doubleForageChance, forageFloor } from "./professions";
 import { cropQuality, forageQuality, withQuality } from "./quality";
 import { FORAGE_XP, harvestXp, type Skill } from "./skills";
 import type { GameState } from "./save";
-import type { FarmMap } from "./map";
+import {
+  TEA_CHOP_AXE_TIER,
+  TEA_CHOP_HITS,
+  TEA_LEAF,
+  TEA_SAPLING,
+  isTeaMature,
+  type TeaBushes,
+} from "./teabush";
+import type { FarmMap, TreeKind } from "./map";
 import type { Farm } from "./farm";
 import {
   MATURE_STAGE,
@@ -34,6 +42,7 @@ import { FIBER, FIBER_CHANCE, MIXED_SEED } from "./weeds";
 import { TWIG_WOOD } from "./debris";
 import { isRaining } from "./weather";
 import { noteGathered } from "./quests";
+import { goodOfTree, HEAVY_TAPPER, tapReady, TAPPER } from "./tapper";
 import { mayPlaceOn, placeTag } from "./placeables";
 import {
   MAHOGANY_HARDWOOD,
@@ -42,6 +51,7 @@ import {
   STUMP_SEED_AREA,
   STUMP_SEED_CHANCE,
   fruitTreeNear,
+  kindOfSeed,
   isMahogany,
   seedOfKind,
 } from "./mahogany";
@@ -97,6 +107,7 @@ export function till(
   // Each map has its own fruit trees and sprinklers (`mapstore.ts`).
   const here = storeOf(g, soil.indoors);
   if (here.fruitTrees.at(x, y)) return fail("a tree is in the way");
+  if (here.teaBushes.at(x, y)) return fail("a tea bush is in the way");
   if (here.sprinklers.at(x, y)) return fail("a sprinkler is in the way");
   // Trees, weeds and the rest stand on the farm's tiles, not the greenhouse's.
   if (!soil.indoors) {
@@ -105,7 +116,8 @@ export function till(
     if (g.twigs.at(x, y)) return fail("a twig is in the way");
     if (g.machines.at(x, y)) return fail("a machine is in the way");
     if (g.chests.onFarm(x, y)) return fail("a chest is in the way");
-    if (g.placed.get(FARM_STORE, x, y)) return fail("a light is in the way");
+    if (g.placed.covering(FARM_STORE, x, y))
+      return fail("a light is in the way");
   }
   if (!soil.till(x, y)) return fail("already tilled");
   if (!soil.indoors && isRaining(g.weather)) soil.water(x, y);
@@ -229,15 +241,34 @@ export function forage(
   // Gatherers sometimes find a second one, if it fits.
   if (random() < doubleForageChance(g.skills) && g.inventory.add(item))
     noteGathered(g, item);
+  // A wild flower seed packet now and then (note 91), if it fits.
+  const season = dateOf(g.day.clock.day).season;
+  const flowers = FLOWER_CROPS.filter((c) => c.seasons.includes(season));
+  if (
+    flowers.length > 0 &&
+    random() < WILD_FLOWER_SEED_CHANCE &&
+    g.inventory.room(seedId(flowers[0]!.id)) > 0
+  ) {
+    const pick = flowers[Math.floor(random() * flowers.length)] ?? flowers[0]!;
+    g.inventory.add(seedId(pick.id));
+  }
   return award(g, "foraging", FORAGE_XP, item);
 }
 
+/** Chance a forage pickup also turns up a flower seed packet (note 91, placeholder). */
+export const WILD_FLOWER_SEED_CHANCE = 0.02;
+
 /** Eat one of an item from the backpack to restore energy. Takes no game time. */
 export function eat(g: GameState, itemId: string): Outcome {
+  if (itemId === ELDERFRUIT) {
+    // Eaten at once, no health restored (note 39).
+    const r = eatElderfruit(g);
+    return r.ok ? { ok: true, item: itemId } : fail(r.reason);
+  }
   const gain = itemById(itemId)?.energy;
   if (gain === undefined) return fail("not food");
   if (g.inventory.count(itemId) < 1) return fail("nothing to eat");
-  if (g.day.energy.current >= MAX_ENERGY && g.combat.health.full)
+  if (g.day.energy.current >= g.day.energy.max && g.combat.health.full)
     return fail("not hungry");
   g.inventory.remove(itemId);
   g.day.energy.restore(gain);
@@ -333,7 +364,10 @@ function planChop(
     goods: goods(
       ["wood", TREE_WOOD + Math.min(level, TREE_WOOD_BONUS_MAX)],
       ["sap", TREE_SAP],
-      [TREE_SEED, level >= 1 ? Math.floor(random() * 3) : 0],
+      [
+        seedOfKind(t.kind) ?? TREE_SEED,
+        level >= 1 ? Math.floor(random() * 3) : 0,
+      ],
     ),
     xp: TREE_XP,
   };
@@ -377,9 +411,12 @@ export function chop(
   if (g.day.over) return fail("exhausted");
   if (storeOf(g, !!map?.indoors).fruitTrees.at(x, y))
     return chopFruitTree(g, x, y, map);
+  if (storeOf(g, !!map?.indoors).teaBushes.at(x, y))
+    return chopTeaBush(g, x, y, map);
   const plan = planChop(g, x, y, random);
   const t = g.trees.at(x, y);
   if (!plan || !t) return fail("nothing to chop");
+  if (t.cosmetic) return fail("cosmetic tree");
   if (t.large && g.toolTiers.axe < LARGE_STUMP_TIER)
     return fail("needs a better axe");
   g.day.act(
@@ -408,6 +445,19 @@ export function chop(
       t.hits = 0;
     } else g.trees.remove(x, y);
   } else if (!t.stump && t.stage === MATURE_STAGE) {
+    // A tapper on a felled tree comes back to the player, with any good ready.
+    if (t.tap) {
+      const back = [
+        t.tap.heavy ? HEAVY_TAPPER : TAPPER,
+        ...(tapReady(g, t) ? [goodOfTree(t).item] : []),
+      ];
+      for (const id of back)
+        if (!g.inventory.add(id, 1)) {
+          const spot = dropSpot(g, map, x, y);
+          g.ground.drop(spot.x, spot.y, id, 1);
+        }
+      delete t.tap;
+    }
     t.stump = true;
     t.hits = 0;
   } else g.trees.remove(x, y);
@@ -500,6 +550,77 @@ export function plantFruitTree(
   g.inventory.remove(id);
   fruitTrees.add(x, y, def.id);
   return { ok: true };
+}
+
+/**
+ * Plant a tea sapling (note 97). It needs open ground like a fruit tree, but no
+ * clear 3x3: bushes may stand side by side, as a fence. Not planted in areas.
+ */
+export function plantTeaBush(
+  g: GameState,
+  map: FarmMap,
+  x: number,
+  y: number,
+): Outcome {
+  if (g.day.over) return fail("exhausted");
+  if (g.inventory.count(TEA_SAPLING) < 1) return fail("no sapling");
+  if (g.away) return fail("cannot plant tree here");
+  if (!map.canPlantTree(x, y) || !isClear(g, map, x, y))
+    return fail("cannot plant tree here");
+  g.inventory.remove(TEA_SAPLING);
+  storeOf(g, map.indoors).teaBushes.add(x, y);
+  return { ok: true };
+}
+
+/**
+ * One swing of the axe at a tea bush. A young bush comes up in one swing; a
+ * mature one takes two swings and a gold or iridium axe. The sapling comes
+ * back (note 97). Refused when the backpack has no room, so it is never lost.
+ */
+function chopTeaBush(
+  g: GameState,
+  x: number,
+  y: number,
+  map?: FarmMap,
+): Outcome {
+  const bushes = storeOf(g, !!map?.indoors).teaBushes;
+  const b = bushes.at(x, y);
+  if (!b) return fail("nothing to chop");
+  const mature = isTeaMature(b);
+  if (mature && g.toolTiers.axe < TEA_CHOP_AXE_TIER)
+    return fail("needs a better axe");
+  const falls = !mature || b.hits + 1 >= TEA_CHOP_HITS;
+  if (falls && g.inventory.room(TEA_SAPLING) < 1) return fail("backpack full");
+  g.day.act(
+    swingCost(TOOL_ENERGY, g.toolTiers.axe, g.skills.level("foraging")),
+    0,
+  );
+  if (!falls) {
+    b.hits += 1;
+    return { ok: true };
+  }
+  g.inventory.add(TEA_SAPLING, 1);
+  noteGathered(g, TEA_SAPLING, 1);
+  bushes.remove(x, y);
+  return { ok: true, item: TEA_SAPLING };
+}
+
+/** Pick the waiting tea leaf by hand. */
+export function pickTeaLeaves(
+  g: GameState,
+  x: number,
+  y: number,
+  bushes: TeaBushes = g.teaBushes,
+): Outcome {
+  if (g.day.over) return fail("exhausted");
+  const b = bushes.at(x, y);
+  if (!b || b.leaves < 1) return fail("nothing ripe");
+  const take = Math.min(b.leaves, g.inventory.room(TEA_LEAF));
+  if (take < 1) return fail("backpack full");
+  g.inventory.add(TEA_LEAF, take);
+  noteGathered(g, TEA_LEAF, take);
+  b.leaves -= take;
+  return { ok: true, item: TEA_LEAF };
 }
 
 /** Shake the fruit off a mature tree by hand, all of it, at the tree's grade. */
@@ -605,20 +726,21 @@ export function plantTree(
     g.twigs.at(x, y) ||
     g.sprinklers.at(x, y) ||
     g.machines.at(x, y) ||
-    g.placed.get(FARM_STORE, x, y) ||
+    g.placed.covering(FARM_STORE, x, y) ||
     g.farm.plotAt(x, y) ||
     g.forage.itemAt(x, y)
   )
     return fail("cannot plant tree here");
   const mahogany = seedId === MAHOGANY_SEED;
+  const kind = kindOfSeed(seedId);
   // A Mahogany tree is not planted on a fruit tree's 3x3 (note 36).
   if (mahogany && fruitTreeNear(g.fruitTrees, x, y))
     return fail("cannot plant tree here");
   g.inventory.remove(seedId);
   g.trees.add(x, y, SEED_STAGE);
-  if (mahogany) {
+  if (kind) {
     const t = g.trees.at(x, y);
-    if (t) t.kind = "mahogany";
+    if (t) t.kind = kind as TreeKind;
   }
   return { ok: true };
 }
@@ -712,6 +834,7 @@ export function isClear(
       !map.canPlantTree(x, y) ||
       here.sprinklers.at(x, y) ||
       here.fruitTrees.at(x, y) ||
+      here.teaBushes.at(x, y) ||
       here.soil.plotAt(x, y)
     );
   }
@@ -722,10 +845,11 @@ export function isClear(
     g.sprinklers.at(x, y) ||
     g.machines.at(x, y) ||
     g.chests.onFarm(x, y) ||
-    g.placed.get(FARM_STORE, x, y) ||
+    g.placed.covering(FARM_STORE, x, y) ||
     g.farm.plotAt(x, y) ||
     g.trees.at(x, y) ||
     g.fruitTrees.at(x, y) ||
+    g.teaBushes.at(x, y) ||
     g.weeds.at(x, y) ||
     g.twigs.at(x, y) ||
     g.rocks.at(x, y) ||

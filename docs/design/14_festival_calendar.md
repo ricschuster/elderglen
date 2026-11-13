@@ -65,7 +65,7 @@ fall 16 and 27 and winter 8 and 25, from the saved Festivals page.
 - **Cake Day in summer, day 8.** Cake day suits a season of plenty, and a
   summer date keeps it clear of the parade so the two costume festivals are
   not back to back. Early in the season for the same reason as the parade.
-- **Lamplight Evening, summer day 20.** A calm counterpoint late in the run.
+- **Lamplight Evening, summer day 24 (was 20, see "Solstice festivals").** A calm counterpoint late in the run.
   It is also a natural place for the first light touch of the ember and ash
   theme later (a few lamps gutter), without any threat.
 - **Fall, days 9 and 21, and winter, day 8.** The same spacing as spring
@@ -132,9 +132,9 @@ change adds none. The year has 9 festivals with the Winter Night Market.
   22 to 28) stays for the other six. A solstice festival may fall late because
   neither is on a crop-rush day that matters: Midwinter has no crops in
   winter, and Lamplight Evening opens at dusk, after the day's chores.
-- **Still to build:** `festivals.json`, `tests/festivals.test.ts` and
-  `tests/showing.test.ts` hold the old days (summer 20, winter 20) and the
-  letter day. A build task, not done here.
+- **Built:** `festivals.json`, `tests/festivals.test.ts` and
+  `tests/showing.test.ts` hold the new days (summer 24, winter 25). The
+  steward's Winter 18 letter is not in `letters.json` yet.
 - The count is 9 once the Winter Night Market is added (below).
 
 ## Winter Night Market (decided 2026-11-10, owner)

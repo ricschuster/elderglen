@@ -179,7 +179,11 @@ describe("the crown and the tracker", () => {
     expect(ACHIEVEMENTS.find((a) => a.id === "whole-roster")?.threshold).toBe(
       52,
     );
-    for (const f of FISH) g.fishing.note(f.id, 10);
+    // Every fish but the pond's unique one is not yet the whole roster.
+    for (const f of FISH.filter((x) => x.id !== "fernscale"))
+      g.fishing.note(f.id, 10);
     expect(checkAchievements(g).map((a) => a.id)).not.toContain("whole-roster");
+    g.fishing.note("fernscale", 10);
+    expect(checkAchievements(g).map((a) => a.id)).toContain("whole-roster");
   });
 });

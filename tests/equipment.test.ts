@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { BOOTS, Equipment, RINGS, ringById } from "../src/core/equipment";
-import { buyBoots, Health } from "../src/core/combat";
+import { buyBoots, buyRing, claimSlayerRing, Health } from "../src/core/combat";
+import { RECIPES } from "../src/core/crafting";
 import { pickupRadius } from "../src/core/ground";
 import { Inventory } from "../src/core/inventory";
 import { itemById } from "../src/core/items";
+import { SLAYER_GOALS } from "../src/core/creatures";
 import { newGame, serialize, deserialize } from "../src/core/save";
 
 describe("rings", () => {
@@ -143,5 +145,82 @@ describe("boots", () => {
     const e = new Equipment();
     e.load({ rings: [null, null] });
     expect(e.wornBoots()).toBeUndefined();
+  });
+});
+
+describe("ring sources", () => {
+  it("the Defense rings are sold at the trainer, +1 after meeting her, and the +5 ring is not sold", () => {
+    const g = newGame();
+    g.money = 10000;
+    expect(buyRing(g, "defense-ring")).toBe("Meet the trainer first.");
+    g.combat.trainerMet = true;
+    expect(buyRing(g, "defense-ring")).toBeUndefined();
+    expect(g.money).toBe(9000);
+    expect(buyRing(g, "defense-ring")).toBe("You already have one.");
+    g.mines.deepest = 120;
+    expect(buyRing(g, "crabshell-ring")).toBe("She does not sell that.");
+    expect(g.money).toBe(9000);
+    expect(buyRing(g, "slime-proof-ring")).toBe("She does not sell that.");
+  });
+
+  it("a worn shop ring is not sold again", () => {
+    const g = newGame();
+    g.money = 5000;
+    g.combat.trainerMet = true;
+    buyRing(g, "defense-ring");
+    g.equipment.wear(g.inventory, 0, "defense-ring");
+    expect(buyRing(g, "defense-ring")).toBe("You already have one.");
+  });
+
+  it("the slime proof ring is the Gloop slayer reward: free once, then sold again", () => {
+    const g = newGame();
+    expect(claimSlayerRing(g, "slime-proof-ring")).toBe(
+      "That goal is not met yet.",
+    );
+    g.combat.kills["gloop"] = 600;
+    g.combat.kills["gloop-blue"] = 400;
+    expect(claimSlayerRing(g, "slime-proof-ring")).toBeUndefined();
+    expect(g.inventory.count("slime-proof-ring")).toBe(1);
+    expect(claimSlayerRing(g, "slime-proof-ring")).toBe("You already have it.");
+    g.inventory.remove("slime-proof-ring", 1);
+    g.money = 100;
+    expect(claimSlayerRing(g, "slime-proof-ring")).toBe("Not enough money.");
+    g.money = 30000;
+    expect(claimSlayerRing(g, "slime-proof-ring")).toBeUndefined();
+    expect(g.money).toBe(5000);
+  });
+
+  it("the crabshell ring (Defense +5) is the Rock Crab 60 reward, free once", () => {
+    const g = newGame();
+    const r = ringById("crabshell-ring")!;
+    expect(r.defense).toBe(5);
+    expect(r.shop).toBeUndefined();
+    expect(SLAYER_GOALS.find((s) => s.id === "rock-crab")?.goal).toBe(60);
+    g.combat.kills["rock-crab"] = 59;
+    expect(claimSlayerRing(g, "crabshell-ring")).toBe(
+      "That goal is not met yet.",
+    );
+    g.combat.kills["rock-crab"] = 60;
+    expect(claimSlayerRing(g, "crabshell-ring")).toBeUndefined();
+    expect(g.inventory.count("crabshell-ring")).toBe(1);
+    g.equipment.wear(g.inventory, 0, "crabshell-ring");
+    expect(g.equipment.defense()).toBe(5);
+  });
+
+  it("saves which slayer rings were handed over", () => {
+    const g = newGame();
+    g.combat.kills["gloop"] = 1000;
+    expect(claimSlayerRing(g, "slime-proof-ring")).toBeUndefined();
+    const back = deserialize(serialize(g));
+    expect(back!.combat.slayerClaimed).toEqual(["slime-proof-ring"]);
+    expect(newGame().combat.slayerClaimed).toEqual([]);
+  });
+
+  it("the sturdy band is crafted at combat level 1, not a shop or slayer reward", () => {
+    const r = RECIPES.find((x) => x.id === "sturdy-band")!;
+    expect(r.result.item).toBe("sturdy-band");
+    expect(r.sources).toEqual([{ kind: "level", skill: "combat", level: 1 }]);
+    expect(ringById("sturdy-band")?.shop).toBeUndefined();
+    expect(ringById("sturdy-band")?.slayer).toBeUndefined();
   });
 });

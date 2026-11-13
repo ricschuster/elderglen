@@ -108,10 +108,7 @@
     ],
     "required": 3,
     "reward": {
-      "item": {
-        "id": "mushroom-stew",
-        "count": 5
-      }
+      "recipe": "heavy-tapper"
     },
     "hint": "Rare things turn up now and then on a forage spot or deep in the mine. Keep an eye out across the year."
   },
@@ -270,6 +267,33 @@
     "hint": "Wool from the sheep or rabbit, and plant fibre from the weeds."
   },
   {
+    "id": "lamplighters",
+    "name": "Lamplighter's",
+    "room": "hearth",
+    "items": [
+      {
+        "id": "oil-lamp",
+        "count": 3
+      },
+      {
+        "id": "oil",
+        "count": 10
+      },
+      {
+        "id": "candle",
+        "count": 20
+      }
+    ],
+    "required": 2,
+    "reward": {
+      "item": {
+        "id": "small-glow-ring",
+        "count": 1
+      }
+    },
+    "hint": "Light for the long evenings: standing lamps, oil from the press, or candles made from beeswax."
+  },
+  {
     "id": "dyers",
     "name": "Dyer's",
     "room": "guests-board",
@@ -279,7 +303,13 @@
       "red-cabbage",
       "cranberry",
       "bramble-berry",
-      "crocus"
+      "crocus",
+      "tulip",
+      "cornflower",
+      "poppy",
+      "zinnia",
+      "sunflower",
+      "dahlia"
     ],
     "required": 4,
     "reward": {
@@ -437,6 +467,53 @@
       }
     },
     "hint": "Hay from the silo or the carpenter, grain from the fields, and roots from the cellar. The coop will want a heater come winter."
+  },
+  {
+    "id": "hosts",
+    "name": "Host's",
+    "room": "guests-board",
+    "items": [
+      "bread",
+      "honey-cake",
+      { "id": "any-tea", "name": "Tea", "anyOf": ["herb-tea", "green-tea"] }
+    ],
+    "reward": {
+      "hats": {
+        "choose": 3,
+        "from": [
+          "harvest-crown",
+          "snow-cap",
+          "holly-hat",
+          "seed-wreath",
+          "sun-bonnet"
+        ]
+      }
+    },
+    "hint": "A table worth sitting at: bread, honey cake and a pot of herb tea."
+  },
+  {
+    "id": "storytellers",
+    "name": "Storyteller's",
+    "room": "guests-board",
+    "items": [
+      {
+        "id": "any-rare-herb",
+        "name": "A rare herb",
+        "anyOf": ["wild-ginger", "snowcap"]
+      },
+      "old-seed-packet",
+      "carved-bead",
+      "faded-ribbon",
+      "pressed-flower"
+    ],
+    "required": 3,
+    "reward": {
+      "item": {
+        "id": "green-glass-lantern",
+        "count": 1
+      }
+    },
+    "hint": "Old things turn up under the hoe, and the quiet mine floors keep a few. Old Greencoat collects stories."
   },
   {
     "id": "harvest-feast",

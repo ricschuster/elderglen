@@ -10,6 +10,8 @@ import {
   placeSprinkler,
   plant,
   plantFruitTree,
+  plantTeaBush,
+  pickTeaLeaves,
   pickFruit,
   plantTree,
   shake,
@@ -18,8 +20,7 @@ import {
   water,
   type Outcome,
 } from "./actions";
-import { TREE_SEED } from "./trees";
-import { MAHOGANY_SEED } from "./mahogany";
+import { TREE_SEED_IDS } from "./mahogany";
 import { mine } from "./mining";
 import { digMineDirt, digSpot } from "./artifacts";
 import { areaOf } from "./areas";
@@ -30,8 +31,16 @@ import { HARDWOOD, cropOfSeed } from "./items";
 import { MIXED_SEED } from "./weeds";
 import { fertilizerById } from "./fertilizer";
 import { treeOfSapling } from "./fruittrees";
+import { TEA_SAPLING } from "./teabush";
 import { sprinklerById } from "./sprinklers";
 import { storeOf } from "./mapstore";
+import {
+  collectTap,
+  liftTapper,
+  placeTapper,
+  tapReady,
+  isTapperItem,
+} from "./tapper";
 import { handOnMachine, loadMachine, placeMachine } from "./machines";
 import { machineById } from "./processing";
 import type { Held } from "./toolbar";
@@ -73,6 +82,9 @@ export function useHeld(
     g.machines.at(x, y)
   )
     return handOnMachine(g, x, y);
+  // The pickaxe lifts a tapper off its tree (note 92).
+  if (held.kind === "tool" && held.tool === "pickaxe" && g.trees.at(x, y)?.tap)
+    return liftTapper(g, x, y);
   // Any tool gathers moss from a mossy mature tree in one use, no chop.
   if (held.kind === "tool" && g.trees.at(x, y)?.moss) {
     const moss = gatherMoss(g, x, y);
@@ -124,12 +136,15 @@ export function useHeld(
     if (area !== undefined && g.spots.at(x, y)) return digSpot(g, area, x, y);
     if (g.trees.at(x, y)) return clearSeedling(g, x, y, "hoe", map);
     if (g.fruitTrees.at(x, y)) return fail("a tree is in the way");
+    if (g.teaBushes.at(x, y)) return fail("a tea bush is in the way");
     return map.isTillable(x, y) ? till(g, x, y) : fail("cannot dig here");
   }
   if (held.kind === "tool" && held.tool === "can")
     return g.trees.at(x, y)
       ? clearSeedling(g, x, y, "can", map)
       : water(g, x, y);
+  if (held.kind === "item" && isTapperItem(held.id))
+    return placeTapper(g, x, y, held.id);
   if (g.machines.at(x, y)) {
     // A machine takes the held item; Action collects from it.
     if (held.kind === "item") return loadMachine(g, x, y, held.id);
@@ -144,12 +159,12 @@ export function useHeld(
     return fertilize(g, x, y, held.id);
   if (held.kind === "item" && sprinklerById(held.id))
     return placeSprinkler(g, map, x, y, held.id);
-  if (held.kind === "item" && held.id === TREE_SEED)
-    return plantTree(g, map, x, y);
-  if (held.kind === "item" && held.id === MAHOGANY_SEED)
-    return plantTree(g, map, x, y, MAHOGANY_SEED);
+  if (held.kind === "item" && TREE_SEED_IDS.includes(held.id))
+    return plantTree(g, map, x, y, held.id);
   if (held.kind === "item" && treeOfSapling(held.id))
     return plantFruitTree(g, map, x, y, held.id);
+  if (held.kind === "item" && held.id === TEA_SAPLING)
+    return plantTeaBush(g, map, x, y);
   // Picking, shaking and harvesting are the Action button's job (note 47).
   return fail("nothing to do here");
 }
@@ -167,14 +182,20 @@ function useInGreenhouse(
   x: number,
   y: number,
 ): Outcome {
-  const { soil, sprinklers, fruitTrees } = storeOf(g, true);
+  const { soil, sprinklers, fruitTrees, teaBushes } = storeOf(g, true);
   // Any tool, or the empty hand, lifts a placed sprinkler (SC-48).
   if (held.kind === "tool" && sprinklers.at(x, y))
     return pickUpSprinkler(g, x, y, sprinklers);
-  if (held.kind === "tool" && held.tool === "axe" && fruitTrees.at(x, y))
+  if (
+    held.kind === "tool" &&
+    held.tool === "axe" &&
+    (fruitTrees.at(x, y) || teaBushes.at(x, y))
+  )
     return chop(g, x, y, Math.random, map);
   if (held.kind === "tool" && held.tool === "hoe" && fruitTrees.at(x, y))
     return fail("a tree is in the way");
+  if (held.kind === "tool" && held.tool === "hoe" && teaBushes.at(x, y))
+    return fail("a tea bush is in the way");
   if (held.kind === "tool" && held.tool === "hoe")
     return map.isTillable(x, y)
       ? till(g, x, y, Math.random, soil)
@@ -188,6 +209,8 @@ function useInGreenhouse(
     return placeSprinkler(g, map, x, y, held.id);
   if (held.kind === "item" && treeOfSapling(held.id))
     return plantFruitTree(g, map, x, y, held.id);
+  if (held.kind === "item" && held.id === TEA_SAPLING)
+    return plantTeaBush(g, map, x, y);
   return fail("nothing to do here");
 }
 
@@ -196,8 +219,18 @@ export const NOTHING_TO_ACT_ON = "nothing to act on";
 
 /** Shake a tree, pick forage or harvest a crop: what the hand does on one tile. */
 function pick(g: GameState, x: number, y: number): Outcome {
-  if (g.trees.at(x, y)) return shake(g, x, y);
+  if (tapReady(g, g.trees.at(x, y))) return collectTap(g, x, y);
+  if (g.trees.at(x, y)) {
+    const shaken = shake(g, x, y);
+    // A tapped tree with nothing to shake says how long the tap has left.
+    return !shaken.ok &&
+      shaken.reason === "nothing to shake" &&
+      g.trees.at(x, y)?.tap
+      ? { ok: false, reason: "tap busy" }
+      : shaken;
+  }
   if (g.fruitTrees.at(x, y)) return pickFruit(g, x, y);
+  if (g.teaBushes.at(x, y)) return pickTeaLeaves(g, x, y);
   if (g.sprinklers.at(x, y)) return pickUpSprinkler(g, x, y);
   if (g.machines.at(x, y)) return handOnMachine(g, x, y);
   return g.forage.itemAt(x, y) ? forage(g, x, y) : harvest(g, x, y);
@@ -207,6 +240,7 @@ function pick(g: GameState, x: number, y: number): Outcome {
 function pickIndoors(g: GameState, x: number, y: number): Outcome {
   const here = storeOf(g, true);
   if (here.fruitTrees.at(x, y)) return pickFruit(g, x, y, here.fruitTrees);
+  if (here.teaBushes.at(x, y)) return pickTeaLeaves(g, x, y, here.teaBushes);
   if (here.sprinklers.at(x, y))
     return pickUpSprinkler(g, x, y, here.sprinklers);
   return harvest(g, x, y, Math.random, here.soil);
@@ -232,6 +266,7 @@ const QUIET = new Set(["nothing ripe", "nothing to shake", "nothing here"]);
 
 const REASONS: Record<string, string> = {
   exhausted: "You are too tired.",
+  "all eaten": "You have eaten every elderfruit there is.",
   "already tilled": "Already dug.",
   "nothing to water": "Dig the soil first.",
   "already watered": "Already watered.",
@@ -288,7 +323,13 @@ const REASONS: Record<string, string> = {
   "cask busy": "The cask is already ageing something.",
   "cask empty": "The cask is empty.",
   "cask not empty": "Take the good out of the cask first.",
-  "cask will not take that": "A cask takes wine, mead and cheese.",
+  "cask will not take that": "A cask takes wine, mead, beer and cheese.",
+  "no tapper": "Out of tappers.",
+  "already tapped": "This tree already has a tapper.",
+  "cosmetic tree": "This tree is for show. You can only shake it.",
+  "cannot tap this": "A tapper goes on a full-grown tree.",
+  "no tree here": "There is no tree there.",
+  "not tapped": "There is no tapper on that tree.",
   "no cask": "Out of casks.",
   "no cask here": "No cask here.",
   "machine will not take that": "It cannot use that.",

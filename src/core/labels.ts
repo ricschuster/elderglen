@@ -71,13 +71,17 @@ const SERVICES: Record<string, string> = {
   trader: "Road Trader",
   festival: "Village Green",
   "festival-leave": "Way Home",
+  "cake-table": "Cake Table",
   "hedge-chest": "Chest",
   "hedge-cart": "Cart Home",
+  cart: "Cart",
+  "herb-stall": "Herb Stall",
   "fisher-shop": "Fisher's Counter",
   "pin-stall": "Thalwen's Pin Stall",
   stonekeeper: "Stonekeeper",
   keeper: "Keeper's Counter",
   hermit: "Hermit",
+  "spirit-statue": "Spirit's Stone",
   camp: "Camp Fire",
   "tide-bridge": "Broken Footbridge",
   "quarry-bridge": "Broken Bridge",
@@ -86,6 +90,8 @@ const SERVICES: Record<string, string> = {
   "counter-inn": "Inn Counter",
   "counter-library": "Library Desk",
   "counter-hatter": "Hatter's Counter",
+  "sewing-machine": "Sewing Machine",
+  "dye-pots": "Dye Pots",
   "counter-outpost": "Post Counter",
 };
 
@@ -95,6 +101,11 @@ const FESTIVAL_BY_ID: Record<string, string> = {
   judge: "Judge",
   prizes: "Prize Counter",
   booth: "Booth",
+  "hat-counter": "Hat Counter",
+  "seed-stall": "Seed Stall",
+  "costume-stall": "Costume Stall",
+  "lantern-stall": "Lantern Stall",
+  "festival-counter": "Festival Counter",
 };
 
 /** Hall counters share the kind "hall", so they are named by id. */
@@ -121,15 +132,6 @@ export function serviceLabel(kind: string, id: string): string | undefined {
 }
 
 /**
- * What the Outpost's road news board says until its system exists (note 57,
- * built as a stand-in by Hearthwell part 1). Keyed by service kind. The
- * Special Orders board beside it is the working `orders` service.
- */
-export const BOARD_LINES: Record<string, string> = {
-  "board-news": "The road news board. Nothing is posted yet.",
-};
-
-/**
  * What the Hearthwell counters without a system yet say (note 77, interiors
  * built as shells by #646). Nobody stands behind them until villagers (#599).
  */
@@ -143,4 +145,4 @@ export const COUNTER_LINES: Record<string, string> = {
 
 /** The line a stand-in counter or board says, if the kind has one. */
 export const standInLine = (kind: string): string | undefined =>
-  BOARD_LINES[kind] ?? COUNTER_LINES[kind];
+  COUNTER_LINES[kind];

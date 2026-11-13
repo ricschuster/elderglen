@@ -52,6 +52,12 @@
         "chance": 0.5,
         "min": 1,
         "max": 2
+      },
+      {
+        "id": "bug-meat",
+        "chance": 0.3,
+        "min": 1,
+        "max": 1
       }
     ],
     "xp": 2,
@@ -119,6 +125,12 @@
         "chance": 0.3,
         "min": 1,
         "max": 1
+      },
+      {
+        "id": "bug-meat",
+        "chance": 0.3,
+        "min": 1,
+        "max": 2
       }
     ]
   },
@@ -151,7 +163,11 @@
         "min": 1,
         "max": 1
       }
-    ]
+    ],
+    "inflicts": {
+      "effect": "slimed",
+      "chance": 1
+    }
   },
   {
     "id": "frostnibbler",
@@ -184,7 +200,11 @@
         "min": 1,
         "max": 1
       }
-    ]
+    ],
+    "inflicts": {
+      "effect": "chilled",
+      "chance": 1
+    }
   },
   {
     "id": "icicle-hopper",
@@ -207,7 +227,15 @@
         "min": 1,
         "max": 1
       }
-    ]
+    ],
+    "inflicts": {
+      "effect": "chilled",
+      "chance": 1
+    },
+    "reward": {
+      "item": "bug-meat",
+      "count": 25
+    }
   },
   {
     "id": "cave-bat",
@@ -331,7 +359,11 @@
         "min": 1,
         "max": 1
       }
-    ]
+    ],
+    "inflicts": {
+      "effect": "burned",
+      "chance": 0.5
+    }
   },
   {
     "id": "lanternmoth",
@@ -357,6 +389,12 @@
       {
         "id": "gold-ore",
         "chance": 0.2,
+        "min": 1,
+        "max": 1
+      },
+      {
+        "id": "bug-meat",
+        "chance": 0.25,
         "min": 1,
         "max": 1
       }

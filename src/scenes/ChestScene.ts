@@ -7,6 +7,7 @@ import {
   type PlacedChest,
 } from "../core/chests";
 import { itemById } from "../core/items";
+import { orderById } from "../core/orders";
 import type { GameState } from "../core/save";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
@@ -34,7 +35,10 @@ export class ChestScene extends Phaser.Scene {
   }
 
   create(): void {
-    const name = chestById(this.chest.id)?.name ?? "Chest";
+    const bound = this.chest.order ? orderById(this.chest.order) : undefined;
+    const name = bound
+      ? `${bound.title} chest${this.chest.closed ? " (ended)" : ""}`
+      : (chestById(this.chest.id)?.name ?? "Chest");
     const { message } = frame(this, name, () => this.close());
     this.message = message;
     this.add.text(

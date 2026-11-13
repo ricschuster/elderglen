@@ -3,10 +3,12 @@
 Built 2026-11-07: hats (wardrobe on H or the Hats button, a placeholder block on
 the player, hats from the Hat Parade gift and counter). Furniture is built the same day: ten one tile
 pieces sold from the carpenter's daily stock and placed in the house. The
-wallpaper, floors, the hatter and achievement hats are not built.
+wallpaper and floors (`decor.ts`), the hatter and achievement hats
+(`achievements.ts`, `achievements.json`) are built since.
 
 Status: draft. Written from reader 1's feedback (decorating was raised three
-times) and the design talk of 2026-10-27. Nothing here is built. It is outside
+times) and the design talk of 2026-10-27. When written, nothing here was built (see
+above for what is built since). It was outside
 the first playable, so it needs this note before any code (see CLAUDE.md,
 Scope). Target: M3 for the first slice, more later.
 
@@ -18,6 +20,10 @@ the item is used up; a new floor or wallpaper replaces the old one. Saved as
 `decor` per room (old saves have none). Drawn as a flat tint on the floor and
 wall tiles. Not built: hall bundle rewards that give wallpaper, other shops, and
 whether Stardew's general store should sell them instead (still not asked).
+
+Built 2026-11-12: the Lamplight Evening keepsake lantern is a farm decoration (`keepsake-lantern`,
+a `decor` placeable, farm only, lifted by hand, not sold by the keeper), given once ever by
+the first lantern launch (note 82). Placeholder art.
 
 ## Why
 

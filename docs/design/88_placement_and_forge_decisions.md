@@ -1,7 +1,7 @@
 # 88 Placement system and Forge stock: owner decisions
 
-Status: decisions only (owner, 2026-11-12). The full placement design note is still to
-write. Nothing here is built.
+Status: owner decisions (2026-11-12). The full placement design is note 89
+(`89_placement_system.md`), which holds the built status.
 
 ## Settled
 

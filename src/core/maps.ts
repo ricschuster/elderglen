@@ -150,6 +150,19 @@ export class MapRegistry {
               )
             )
               continue;
+            // A service that sits behind the same condition as its own entry
+            // (the mine mouth cart, `from_cart-mine`) is not reached either.
+            if (
+              name.endsWith("(all conditions false)") &&
+              plain.entries.some(
+                (e) =>
+                  e.requires !== undefined &&
+                  p.startsWith(
+                    `service "${e.name.replace(/^from_/, "")}" cannot`,
+                  ),
+              )
+            )
+              continue;
             out.push(`${name}: ${p}`);
           }
         for (const exit of plain.exits) {

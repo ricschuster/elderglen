@@ -430,7 +430,9 @@ export class Hud {
         0,
         (HEALTH_W * health.current) / health.max,
       );
-      this.healthText.setText(`${Math.ceil(health.current)}/${health.max}`);
+      this.healthText.setText(
+        `${Math.ceil(health.current)}/${health.max} ${g.combat.effects.describe()}`.trim(),
+      );
     }
     const { clock, energy } = g.day;
     this.status.setText(

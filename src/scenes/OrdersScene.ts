@@ -3,7 +3,10 @@ import {
   askText,
   collectOwed,
   ORDERS_INTRO,
-  orderBase,
+  acceptOrder,
+  dropOrder,
+  handInTally,
+  orderChest,
   orderById,
   progressOf,
 } from "../core/orders";
@@ -106,13 +109,15 @@ export class OrdersScene extends Phaser.Scene {
           {
             text: "Take",
             run: () => {
-              const r = o.accept(def.id, day, orderBase(g));
+              const r = acceptOrder(g, def.id, day);
               this.say(
                 r === "ok"
                   ? `You took ${def.title}.`
                   : r === "one a week"
                     ? "You have taken an order this week. Another is open next week."
-                    : "That order is gone.",
+                    : r === "place taken"
+                      ? "Something stands where the chest would go. Clear it first."
+                      : "That order is gone.",
               );
             },
           },
@@ -128,13 +133,17 @@ export class OrdersScene extends Phaser.Scene {
       const def = orderById(a.id);
       if (!def) continue;
       rows.push({
-        label: `Taken: ${def.title}  ${progressOf(def, a)} of ${def.ask.count}`,
+        label: `Taken: ${def.title}  ${
+          def.ask.kind === "hand-in"
+            ? handInTally(def, orderChest(g, def)).progress
+            : progressOf(def, a)
+        } of ${def.ask.count}`,
         detail: `${askText(def)}. ${Math.max(a.due - day + 1, 0)} days left.`,
         buttons: [
           {
             text: "Drop",
             run: () => {
-              o.cancel(a.id);
+              dropOrder(g, a.id);
               this.say(`You dropped ${def.title}. It costs nothing.`);
             },
           },

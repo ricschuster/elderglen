@@ -1,0 +1,232 @@
+:root {
+  --bg: #fbf8f1;
+  --fg: #2b2a26;
+  --muted: #6b675c;
+  --line: #d9d2bf;
+  --accent: #2f6b3a;
+  --card: #fff;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1d201b;
+    --fg: #ece8dc;
+    --muted: #a8a38f;
+    --line: #3a3f35;
+    --accent: #8fcf8f;
+    --card: #262a23;
+  }
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font:
+    16px/1.5 system-ui,
+    sans-serif;
+}
+header {
+  border-bottom: 1px solid var(--line);
+  padding: 0.6rem 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.2rem;
+  align-items: center;
+}
+header a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+header .home {
+  font-size: 1.1rem;
+}
+header input {
+  margin-left: auto;
+  min-width: 12rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--fg);
+}
+main {
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 1rem 16px 3rem;
+}
+a {
+  color: var(--accent);
+}
+h1 {
+  margin: 0.4rem 0;
+}
+h2 {
+  margin-top: 1.6rem;
+  font-size: 1.15rem;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+th,
+td {
+  padding: 0.35rem 0.6rem;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+table.info {
+  float: right;
+  width: 19rem;
+  max-width: 100%;
+  margin: 0 0 1rem 1rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+}
+table.info th {
+  width: 6.5rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+@media (max-width: 640px) {
+  table.info {
+    float: none;
+    width: 100%;
+    margin: 0 0 1rem;
+  }
+}
+.pic {
+  width: 64px;
+  height: 64px;
+  image-rendering: pixelated;
+}
+.pic.none {
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--line);
+  color: var(--muted);
+  font-size: 0.65rem;
+  text-align: center;
+  padding: 2px;
+  overflow: hidden;
+  line-height: 1.1;
+}
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.tile {
+  display: block;
+  padding: 1rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--fg);
+}
+.tile span {
+  display: block;
+  color: var(--muted);
+}
+.ico {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+  vertical-align: middle;
+  margin-right: 0.35rem;
+}
+.hero {
+  display: block;
+  width: 100%;
+  height: 12rem;
+  object-fit: cover;
+  object-position: center;
+  image-rendering: pixelated;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+.figure {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+.strip {
+  height: 64px;
+  width: 256px;
+  image-rendering: pixelated;
+}
+.portrait {
+  width: 96px;
+  height: 96px;
+  image-rendering: pixelated;
+}
+.ico.gap {
+  display: inline-block;
+}
+.tile .ico {
+  margin-bottom: 0.4rem;
+}
+.tile strong {
+  display: block;
+}
+.thumb {
+  width: 12rem;
+  height: 7rem;
+  object-fit: cover;
+  image-rendering: pixelated;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+.num {
+  text-align: right;
+}
+th[data-sort] {
+  cursor: pointer;
+}
+ul.cols {
+  columns: 14rem;
+}
+.badge {
+  display: inline-block;
+  margin: 0;
+  padding: 0.1rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  border: 1px solid var(--line);
+}
+.prose {
+  max-width: 34rem;
+}
+#results {
+  position: absolute;
+  right: 16px;
+  top: 3rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0.3rem;
+  max-width: 22rem;
+  z-index: 5;
+}
+#results li a {
+  display: block;
+  padding: 0.2rem 0.5rem;
+  text-decoration: none;
+}
+#results small {
+  color: var(--muted);
+}

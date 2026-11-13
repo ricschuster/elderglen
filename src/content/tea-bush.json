@@ -1,0 +1,12 @@
+{
+  "_note": "Placeholder numbers, see docs/design/97_tea_bush.md. The days are Stardew's (saved Tea Bush page).",
+  "stageDays": 10,
+  "matureDays": 20,
+  "firstBearingDay": 22,
+  "maxLeaves": 1,
+  "chopHits": 2,
+  "chopAxeTier": 3,
+  "leafSellPrice": 50,
+  "leafEnergy": 20,
+  "saplingSellPrice": 250
+}

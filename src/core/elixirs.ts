@@ -35,9 +35,11 @@ export function drink(g: GameState, id: string): Outcome {
   if (g.inventory.count(id) < 1)
     return { ok: false, reason: "nothing to drink" };
   if (id === LIFE_ELIXIR) {
-    if (g.combat.health.full) return { ok: false, reason: "not hurt" };
+    if (g.combat.health.full && !g.combat.effects.any)
+      return { ok: false, reason: "not hurt" };
     g.inventory.remove(id);
     g.combat.health.fill();
+    g.combat.effects.clear();
     return { ok: true, item: id };
   }
   if (oilActive(g)) return { ok: false, reason: "already protected" };

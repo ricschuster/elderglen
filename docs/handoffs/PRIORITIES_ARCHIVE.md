@@ -410,3 +410,26 @@ Tablet check (#336), note 45 and 60 open items, barn stall wing, note 54 answer
 sheet.
 
 - #877 placement steps 1 to 7 built (2026-11-12, #893 and the 2026-11-12i run): placed store, lights, rod, lamp-posts, heater, bombs and Forge goods. Artifact spots and gem nodes (#879) built the same run.
+
+---
+
+## Built 2026-11-12, sessions 7d and 8 (moved from the live list)
+
+Session 7d: bundles 20, 24, 26 and the Last Seat gate (#869), gift tastes (#872),
+elderfruit (#874), goods (#875) hand-in, #870 Crystalarium, #871 room rewards, notes 91 to 94.
+Session 8: elderfruit seven sources and eat on receipt, burn can defeat, crusher uses the
+Diamond, mine cart stop at the mine mouth; note 96 tailoring; note 89 decor kind; note 93
+leftovers (cave-pool kind, pond hooks, report lines); #396 per-kind tree seeds; note 95 ring
+combining and unforge; tapper art and Heavy Tapper; #877 icons; generators emit cart tiles;
+the festival route layer and layouts (#876, note 82).
+
+---
+
+## Built 2026-11-12, session 9 (moved from the live list)
+
+Owner answers taken and built: #874 audit (sources 1, 2, 4, 5, 6 were built; fish letter text
+fixed); tapper crafted at Foraging 4 with the Heavy Tapper as the Rare Finds bundle reward
+(SC-168); trainer rings (Defense +1 and +5, slime proof at 1,000 gloop, Sturdy band crafted at
+Combat 1, SC-169); derived `hallRestored`; Hat Parade join cut-off 14:30; boots tailoring (SC-170);
+regrow outside the farm as stage 3 and the `cosmetic` tree property (#396); ADR 0014 and the
+generators moved to `scripts/drafts/`.

@@ -1,5 +1,6 @@
 import bootData from "../content/boots.json";
 import ringData from "../content/rings.json";
+import { resistChance } from "./effects";
 import type { Inventory } from "./inventory";
 
 /**
@@ -15,6 +16,20 @@ export interface RingDef {
   light: number;
   /** Extra pickup radius in tiles, added across worn rings (stacks). */
   magnet: number;
+  /** Health taken off every hit, added across worn rings and the boots. */
+  defense?: number;
+  /** Immunity points, added across worn rings and the boots (note 94). */
+  immunity?: number;
+  /** Blocks the slimed effect outright (note 37). */
+  slimeProof?: boolean;
+  /** Bad effects that land last half as long (note 37, the Sturdy ring). */
+  halfEffects?: boolean;
+  /** Sold at the trainer's counter (note 94). `minFloor` is the deepest mine floor reached that unlocks it. */
+  shop?: { price: number; minFloor?: number };
+  /** The slayer goal whose completion hands this ring over (note 22). */
+  slayer?: string;
+  /** What the trainer charges to hand a lost slayer reward over again (placeholder, note 07). */
+  rebuy?: number;
 }
 
 export const RINGS = ringData as RingDef[];
@@ -28,7 +43,7 @@ export interface BootsDef {
   name: string;
   /** Health taken off every hit, to a floor of 1 (placeholder rule, note 37 leaves it open). */
   defense: number;
-  /** Shortens bad effects. Stored and shown only: no bad effect exists yet. */
+  /** Immunity points: each resists 9.1 percent of bad effects (note 94). */
   immunity: number;
   /** Smith price in coin (placeholder). */
   price: number;
@@ -36,14 +51,91 @@ export interface BootsDef {
 
 export const BOOTS = bootData as BootsDef[];
 
+/** A custom-tailored pair's id joins the look pair and the stats pair with this (note 96). */
+export const TAILORED_SEP = "@";
+
+/** The look pair and stats pair of a custom-tailored pair, undefined for any other id. */
+export function tailoredParts(id: string): [string, string] | undefined {
+  const parts = id.split(TAILORED_SEP);
+  if (parts.length !== 2) return undefined;
+  const [look, stats] = parts as [string, string];
+  if (look === stats) return undefined;
+  if (!BOOTS.some((b) => b.id === look) || !BOOTS.some((b) => b.id === stats))
+    return undefined;
+  return [look, stats];
+}
+
+/**
+ * Boots by id. A custom-tailored pair (note 96) is made, not listed: it keeps the look
+ * and price of its look pair, takes the stats of its stats pair and is named
+ * "Custom-tailored [look name]".
+ */
 export function bootsById(id: string): BootsDef | undefined {
-  return BOOTS.find((b) => b.id === id);
+  const base = BOOTS.find((b) => b.id === id);
+  if (base) return base;
+  const parts = tailoredParts(id);
+  if (!parts) return undefined;
+  const look = BOOTS.find((b) => b.id === parts[0])!;
+  const stats = BOOTS.find((b) => b.id === parts[1])!;
+  return {
+    id,
+    name: `Custom-tailored ${look.name.toLowerCase()}`,
+    defense: stats.defense,
+    immunity: stats.immunity,
+    price: look.price,
+  };
 }
 
 export const RING_SLOTS = 2;
 
+/** A combined ring's id joins its two base ring ids with this (note 95). */
+export const COMBO_SEP = "+";
+
+/** The id of the ring made from two different base rings, order-free. */
+export function comboId(a: string, b: string): string {
+  return [a, b].sort().join(COMBO_SEP);
+}
+
+/** The two base ring ids of a combined ring, undefined for any other id. */
+export function comboParts(id: string): [string, string] | undefined {
+  const parts = id.split(COMBO_SEP);
+  if (parts.length !== 2) return undefined;
+  const [a, b] = parts as [string, string];
+  if (a === b || a > b) return undefined;
+  if (!RINGS.some((r) => r.id === a) || !RINGS.some((r) => r.id === b))
+    return undefined;
+  return [a, b];
+}
+
+/**
+ * A ring by id. A combined ring (note 95) is built from its two parts and
+ * stacks both effects as if worn together.
+ */
 export function ringById(id: string): RingDef | undefined {
-  return RINGS.find((r) => r.id === id);
+  const base = RINGS.find((r) => r.id === id);
+  if (base) return base;
+  const parts = comboParts(id);
+  if (!parts) return undefined;
+  const a = RINGS.find((r) => r.id === parts[0])!;
+  const b = RINGS.find((r) => r.id === parts[1])!;
+  const def: RingDef = {
+    id,
+    name: `${a.name} and ${b.name.toLowerCase()}`,
+    light: a.light + b.light,
+    magnet: a.magnet + b.magnet,
+  };
+  const defense = (a.defense ?? 0) + (b.defense ?? 0);
+  const immunity = (a.immunity ?? 0) + (b.immunity ?? 0);
+  if (defense) def.defense = defense;
+  if (immunity) def.immunity = immunity;
+  if (a.slimeProof || b.slimeProof) def.slimeProof = true;
+  if (a.halfEffects || b.halfEffects) def.halfEffects = true;
+  return def;
+}
+
+/** A ring that is itself a combination (it cannot be combined again). */
+export function isCombo(id: string): boolean {
+  return comboParts(id) !== undefined;
 }
 
 export interface EquipmentSave {
@@ -117,14 +209,39 @@ export class Equipment {
     return true;
   }
 
-  /** Health taken off each hit by the boots. */
+  /** Health taken off each hit, from the boots and the rings. */
   defense(): number {
-    return (this.boots && bootsById(this.boots)?.defense) || 0;
+    return (
+      ((this.boots && bootsById(this.boots)?.defense) || 0) +
+      this.sum((r) => r.defense ?? 0)
+    );
   }
 
-  /** Immunity from the boots. */
+  /** Immunity points, from the boots and the rings. */
   immunity(): number {
-    return (this.boots && bootsById(this.boots)?.immunity) || 0;
+    return (
+      ((this.boots && bootsById(this.boots)?.immunity) || 0) +
+      this.sum((r) => r.immunity ?? 0)
+    );
+  }
+
+  /** True with a slime proof ring on. */
+  slimeProof(): boolean {
+    return this.rings.some(
+      (id) => id !== undefined && ringById(id)?.slimeProof,
+    );
+  }
+
+  /** True with a ring on that halves bad effects. */
+  halvesEffects(): boolean {
+    return this.rings.some(
+      (id) => id !== undefined && ringById(id)?.halfEffects,
+    );
+  }
+
+  /** Immunity as a percent chance to resist, rounded, for the equipment screen. */
+  resistPercent(): number {
+    return Math.round(resistChance(this.immunity()) * 100);
   }
 
   /** Light radius from rings, in tiles. Zero with none worn. */

@@ -128,6 +128,14 @@
     "pickUp": "hand"
   },
   {
+    "id": "crystalarium",
+    "kind": "machine",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
     "id": "chest",
     "kind": "chest",
     "places": ["farm", "house"],
@@ -270,5 +278,107 @@
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "none"
+  },
+  {
+    "id": "geode-crusher",
+    "kind": "machine",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "worm-bin",
+    "kind": "machine",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
+    "id": "tapper",
+    "kind": "tapper",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": false,
+    "pickUp": "hand"
+  },
+  {
+    "id": "heavy-tapper",
+    "kind": "tapper",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": false,
+    "pickUp": "hand"
+  },
+  {
+    "id": "fish-pond",
+    "kind": "pond",
+    "places": ["farm"],
+    "footprint": [5, 5],
+    "blocksWalking": true,
+    "pickUp": "none"
+  },
+  {
+    "id": "ornamental-hay-bale",
+    "kind": "decor",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand",
+    "price": 250
+  },
+  {
+    "id": "doghouse",
+    "kind": "decor",
+    "places": ["farm"],
+    "footprint": [2, 2],
+    "blocksWalking": true,
+    "pickUp": "hand",
+    "price": 10000
+  },
+  {
+    "id": "dark-doghouse",
+    "kind": "decor",
+    "places": ["farm"],
+    "footprint": [2, 2],
+    "blocksWalking": true,
+    "pickUp": "hand",
+    "price": 10000
+  },
+  {
+    "id": "cat-tree",
+    "kind": "decor",
+    "places": ["farm"],
+    "footprint": [2, 2],
+    "blocksWalking": true,
+    "pickUp": "hand",
+    "price": 10000
+  },
+  {
+    "id": "dark-cat-tree",
+    "kind": "decor",
+    "places": ["farm"],
+    "footprint": [2, 2],
+    "blocksWalking": true,
+    "pickUp": "hand",
+    "price": 10000
+  },
+  {
+    "id": "bird-house",
+    "kind": "decor",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand",
+    "price": 5000
+  },
+  {
+    "id": "keepsake-lantern",
+    "kind": "decor",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
   }
 ]

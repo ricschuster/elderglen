@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { mapFiles, maps } from "../src/content/maps";
-import { BOARD_LINES, serviceLabel } from "../src/core/labels";
+import { serviceLabel } from "../src/core/labels";
 import { newGame } from "../src/core/save";
 import { Walker } from "../scripts/sim/world";
 
@@ -359,12 +359,11 @@ describe("the Hearthwell shell (note 77, #645)", () => {
     ).toBe(true);
   });
 
-  it("hangs the road news board on the Outpost wall as a stand-in", () => {
+  it("hangs the road news board on the Outpost wall", () => {
     const outpost = region("lot-outpost");
     const s = town.services.find((x) => x.id === "road-news")!;
     expect(s.kind).toBe("board-news");
     expect(s.y).toBe(outpost.y + outpost.h - 1);
-    expect(BOARD_LINES[s.kind]).toBeDefined();
     expect(serviceLabel(s.kind, s.id)).toBeDefined();
   });
 

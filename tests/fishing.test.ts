@@ -46,6 +46,8 @@ describe("fish data", () => {
       rare: [250, 500],
       // The five legends, 3000 to 4000g (note 21, note 07).
       legend: [3000, 4000],
+      // The Secret Woods pond's one fish (placeholder band, note 21).
+      unique: [200, 400],
     };
     for (const f of FISH) {
       // Cove fish are the rarest ordinary fish, 400 to 700g (note 21).

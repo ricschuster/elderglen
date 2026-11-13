@@ -57,10 +57,10 @@ Each had a Stardew option.
 | Slayer goals | 10 | Every goal on the mines' slayer list (`22_mines.md`) | 3 |
 | Friends | 12 | Every person at maximum hearts, children excluded | 4 |
 | Skills | 5 | Every skill at level 10. Owner, 2026-11-08: the category counts 5 skills of 10 levels, and the percentage drop this causes is accepted | 1 to 3 |
-| Rare boost items | 10 | Every one of the eight elderfruit (see "Settled with the owner" and "Eighth elderfruit") | 1 to 4 |
+| Rare boost items | 10 | Every one of the seven elderfruit (see "Settled with the owner" and "Seven elderfruit") | 1 to 4 |
 | Cooking | 10 | Every recipe cooked | 4 |
 | Crafting | 10 | Every item crafted | 1 |
-| Fish | 10 | Every fish caught, the five legends included (`21_fishing.md`), 47 ordinary fish since the Secret Woods pond's unique fish (owner, 2026-11-08) | 2 |
+| Fish | 10 | Every fish caught, the five legends included (`21_fishing.md`), 47 ordinary fish since the Secret Woods pond's unique fish (owner, 2026-11-08). Water finds are not Fish entries (owner, 2026-11-12, note 93) | 2 |
 
 Total 100. The 5 percent Stardew gives its late region's collectible was given
 back to ring 1's own categories, since ring 1 must be completable alone (shipped
@@ -316,11 +316,38 @@ Each had a Stardew option, and the owner took the recommended one.
 Stardew details above come from the saved Perfection Tracker, Stardrop and
 Movie Theater pages, read on 2026-10-31.
 
-## Eighth elderfruit (owner, 2026-11-12)
+## Seven elderfruit, eaten on receipt (owner, 2026-11-12)
 
-Stardew has seven stardrops; ours has eight. The eighth is the mailed gift of the fish
-seed letter (every ordinary fish landed, the legends and the pond fish not needed, trigger `fish-roster`, `src/content/letters.json`; split from the Whole Roster achievement 2026-11-12). It
-is the same item as the other seven: +34 maximum energy, eaten at once, 270 up to 542 in
-all. The points for the rare boost line are split in eighths, and the "Find every
-stardrop" counter reads eight. Update the counter, the achievement and the completion
-data when this is built.
+The "eighth source" is dropped: there are seven sources, as Stardew's seven stardrops
+(270 up to 508). The fish seed letter is source 6 and was never an extra. Every source eats the
+fruit the moment it is received (`absorbElderfruit` in `src/core/elderfruit.ts`, called by the
+counter, camp chest, mail, hermit and spirit), as Stardew eats a stardrop on pickup. The rare boost
+points are split in sevenths and the "Find every stardrop" counter and the "Every Elderfruit"
+achievement read seven. Built 2026-11-12.
+
+## Elderfruit build status (2026-11-12)
+
+Built (#874): `src/core/elderfruit.ts`, the `elderfruit` count on the game state (saved), and
+`Energy.max` (270 plus 34 for each one eaten; days, faints and `refillEnergy` use it). Eating the
+item from the pack (`eat`) raises the maximum by 34, fills the new space, and heals nothing. The
+rare boost line of the completion total reads fruit eaten of seven, and the "Every Elderfruit"
+achievement (hat: Elderfruit Circlet, 3,000g placeholder) fires at seven.
+
+| # | Source | State |
+| --- | --- | --- |
+| 1 | Harvest Showing counter, 2,000g, once (`once` flag on the counter line) | Built |
+| 2 | Camp chest, floor 100 | Built earlier (`camp-chest.json`) |
+| 3 | Spouse at 12.5 hearts | Not built (no marriage system) |
+| 4 | The hermit sells one at 20,000g, once (opens the shop screen from her tile) | Built |
+| 5 | Emberseed from the hermit's 4 heart event, ember berry (a `rare` crop: not on sale, not in the mixed seed, not in the shipped count), handed to the spirit's stone in the Secret Woods (service `spirit-statue`) | Built, placeholder art and text |
+| 6 | The fish seed letter (`fish-roster`) | Built earlier |
+| 7 | The full gallery set | Not built (no gallery) |
+
+Open after the build:
+
+- **Energy on eating.** Raising the maximum also adds 34 to current energy. Stardew's refill is
+  unchecked (add to the checks register if the owner wants it settled).
+- **Emberseed days to grow** are a 14 day placeholder. Planting in winter is simply refused, as
+  for every crop. The "waits for spring" rule needs a farm change that is not built.
+- The spirit's stone has no art and its line is placeholder text. The hermit's 4 heart event
+  text is placeholder, and the old field mushroom stand-in gift is replaced by the emberseed.

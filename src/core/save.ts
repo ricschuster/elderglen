@@ -26,6 +26,7 @@ import { Mines, type MinesSave } from "./mines";
 import { Combat, type CombatSave } from "./combat";
 import type { CreatureSave } from "./creatures";
 import { FruitTrees, fruitTreeById, type PlacedFruitTree } from "./fruittrees";
+import { TeaBushes, type PlacedTeaBush } from "./teabush";
 import { LIGHTNING_ROD } from "./lightning";
 import { Sprinklers, sprinklerById, type PlacedSprinkler } from "./sprinklers";
 import { QUALITIES, type Quality } from "./quality";
@@ -56,6 +57,7 @@ import { Decor, type DecorSave } from "./decor";
 import { Furniture, migrateCatalogue, type FurnitureSave } from "./furniture";
 import { Mailbox, type MailEntry } from "./mail";
 import { Friendship } from "./friendship";
+import { ELDERFRUIT_TOTAL, maxEnergyFor } from "./elderfruit";
 import { HeartEvents, type HeartEventsSave } from "./heartevents";
 import { Quests, type QuestsSave } from "./quests";
 import { FishLog, type FishingSave } from "./fishing";
@@ -109,6 +111,9 @@ export interface GameState {
   greenhouseSprinklers: Sprinklers;
   /** Fruit trees planted in the greenhouse: they bear in any season. */
   greenhouseFruitTrees: FruitTrees;
+  /** Tea bushes of the farm and the greenhouse (note 97). Not kept in areas. */
+  teaBushes: TeaBushes;
+  greenhouseTeaBushes: TeaBushes;
   /** Where the repaired greenhouse stands, once moved at the carpenter. Unset: its ruin site. */
   greenhouseSite?: { x: number; y: number };
   /** World flags that are up, such as `secret-log-cleared` (`core/worldflags.ts`). Absent until one is. */
@@ -160,6 +165,8 @@ export interface GameState {
   tomorrow: Weather;
   /** True once the end screen has been shown, so it shows only once. */
   endSeen: boolean;
+  /** Elderfruit eaten, each +34 maximum energy (`elderfruit.ts`, note 39). */
+  elderfruit: number;
   /** Festivals joined, as `joinKey` strings. */
   festivalsJoined: string[];
   /** Show tokens from the Harvest Showing, good for the year they were won. */
@@ -225,6 +232,8 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     fruitTrees: new FruitTrees(),
     greenhouseSprinklers: new Sprinklers(),
     greenhouseFruitTrees: new FruitTrees(),
+    teaBushes: new TeaBushes(),
+    greenhouseTeaBushes: new TeaBushes(),
     placed: new PlacedStore(),
     machines: new Machines(),
     casks: new Casks(),
@@ -242,6 +251,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     weather: "sunny",
     tomorrow: "sunny",
     endSeen: false,
+    elderfruit: 0,
     festivalsJoined: [],
     showTokens: { year: 0, count: 0 },
     cave: new FarmCave(),
@@ -302,7 +312,11 @@ interface SaveData {
    */
   mapItems?: Record<
     string,
-    { sprinklers?: PlacedSprinkler[]; fruitTrees?: PlacedFruitTree[] }
+    {
+      sprinklers?: PlacedSprinkler[];
+      fruitTrees?: PlacedFruitTree[];
+      teaBushes?: PlacedTeaBush[];
+    }
   >;
   /**
    * Sprinklers, machines and chests by map id (`placedstore.ts`). Absent in
@@ -357,6 +371,8 @@ interface SaveData {
   tomorrow?: Weather;
   /** Absent in saves made before the end screen existed. */
   endSeen?: boolean;
+  /** Absent until one is eaten. */
+  elderfruit?: number;
   /** Absent in saves made before festivals existed. */
   festivalsJoined?: string[];
   /** Absent in saves made before the Harvest Showing. */
@@ -448,6 +464,26 @@ function validFruitTrees(raw: unknown): PlacedFruitTree[] {
     : [];
 }
 
+/** The tea bushes of a saved list that are well formed. */
+function validTeaBushes(raw: unknown): PlacedTeaBush[] {
+  return Array.isArray(raw)
+    ? raw
+        .filter(
+          (b): b is PlacedTeaBush =>
+            isObject(b) &&
+            Number.isInteger(b.x) &&
+            Number.isInteger(b.y) &&
+            Number.isInteger(b.age),
+        )
+        .map((b) => ({
+          ...b,
+          age: Math.max(b.age, 0),
+          leaves: Number.isInteger(b.leaves) ? Math.max(b.leaves, 0) : 0,
+          hits: 0,
+        }))
+    : [];
+}
+
 /** The trees of a saved list that are well formed. */
 function validTrees(raw: unknown[]): Tree[] {
   return raw.filter(
@@ -515,8 +551,14 @@ export function serialize(g: GameState): string {
     rocks: home.rocks.save(),
     mines: g.mines.save(),
     mapItems: {
-      [FARM_STORE]: { fruitTrees: home.fruitTrees.save() },
-      [GREENHOUSE_STORE]: { fruitTrees: g.greenhouseFruitTrees.save() },
+      [FARM_STORE]: {
+        fruitTrees: home.fruitTrees.save(),
+        teaBushes: g.teaBushes.save(),
+      },
+      [GREENHOUSE_STORE]: {
+        fruitTrees: g.greenhouseFruitTrees.save(),
+        teaBushes: g.greenhouseTeaBushes.save(),
+      },
     },
     placed: collectPlaced(g).save(),
     ...(g.greenhouseSite ? { greenhouseSite: { ...g.greenhouseSite } } : {}),
@@ -551,6 +593,7 @@ export function serialize(g: GameState): string {
     weather: g.weather,
     tomorrow: g.tomorrow,
     endSeen: g.endSeen,
+    ...(g.elderfruit > 0 ? { elderfruit: g.elderfruit } : {}),
     festivalsJoined: [...g.festivalsJoined],
     showTokens: { ...g.showTokens },
     cave: g.cave.save(),
@@ -690,6 +733,10 @@ export function deserialize(text: string): GameState | undefined {
   const g = newGame(
     typeof raw.farmType === "string" ? raw.farmType : DEFAULT_FARM_TYPE,
   );
+  if (isCount(raw.elderfruit)) {
+    g.elderfruit = Math.min(raw.elderfruit, ELDERFRUIT_TOTAL);
+    g.day.energy.max = maxEnergyFor(g.elderfruit);
+  }
   g.day.restore(day, energy, isCount(raw.minutes) ? raw.minutes : undefined);
   g.money = money;
   g.weather = weather as Weather;
@@ -760,6 +807,8 @@ export function deserialize(text: string): GameState | undefined {
   );
   g.fruitTrees.load(validFruitTrees(farmItems.fruitTrees));
   g.greenhouseFruitTrees.load(validFruitTrees(houseItems.fruitTrees));
+  g.teaBushes.load(validTeaBushes(farmItems.teaBushes));
+  g.greenhouseTeaBushes.load(validTeaBushes(houseItems.teaBushes));
   if (
     isObject(raw.greenhouseSite) &&
     Number.isInteger(raw.greenhouseSite.x) &&

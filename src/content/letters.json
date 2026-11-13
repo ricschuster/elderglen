@@ -76,6 +76,19 @@
     }
   },
   {
+    "id": "odette-tea-sapling",
+    "sender": "Odette",
+    "title": "Tea from the back room",
+    "body": "PLACEHOLDER TEXT. You asked about the tea I keep behind the counter. Here is how to start a bush of your own.",
+    "trigger": {
+      "kind": "event",
+      "event": "odette-store-2"
+    },
+    "attachment": {
+      "recipe": "tea-sapling"
+    }
+  },
+  {
     "id": "hattie-recipe-5",
     "sender": "Hattie",
     "title": "Custard from the inn",
@@ -107,7 +120,7 @@
     "id": "fish-seed-letter",
     "sender": "The harbour fishers",
     "title": "Every fish on the line",
-    "body": "PLACEHOLDER TEXT. Word came up the coast that you have landed every fish the valley holds. We have kept something back for such a day. Plant it, eat it, or keep it on the shelf. It is yours.",
+    "body": "PLACEHOLDER TEXT. Word came up the coast that you have landed every fish the valley holds. We have kept something back for such a day. It is an elderfruit, and it is yours.",
     "trigger": { "kind": "fish-roster" },
     "attachment": { "items": [{ "id": "elderfruit", "count": 1 }] }
   }

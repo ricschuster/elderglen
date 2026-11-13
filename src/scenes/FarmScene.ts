@@ -27,15 +27,44 @@ import {
   coopSite,
   coopVisibleTier,
 } from "../core/animals";
+import { pondBlocks, pondCovering, pondUse, takeFish } from "../core/pond";
 import { fertilizerById } from "../core/fertilizer";
 import Phaser from "phaser";
+import { animalKey } from "./art-animals";
 import { saveSettings } from "../core/bindings";
 import { sleep } from "../core/sleep";
 import { areaOf, enterArea, isAreaMap, leaveArea } from "../core/areas";
 import { eventAtTile } from "../core/eventrun";
 import { declinedToday } from "./HeartEventScene";
+import {
+  awardHuntPrize,
+  finishHunt,
+  huntEndLine,
+  huntLine,
+  huntOffer,
+  pickUp as pickUpPacket,
+  tickHunt,
+  type HuntState,
+} from "../core/seedhunt";
+import {
+  awardIcePrize,
+  finishIceFishing,
+  iceOffer,
+  isHole,
+  lakeShut,
+  startIceFishing,
+  type IceFishing,
+} from "../core/icefishing";
+import { cakeProblem, handInCake } from "../core/cakeday";
+import {
+  buyLantern,
+  lanternBuyProblem,
+  launchLantern,
+  launchProblem,
+} from "../core/lanterns";
 import { meet, presentAt, villagersOn, type Present } from "../core/townfolk";
 import { stageOf as fruitStageOf } from "../core/fruittrees";
+import { teaStageOf } from "../core/teabush";
 import type { GameState } from "../core/save";
 import { TOOLS, cycle, heldAt, nextRow, toolbarSize } from "../core/toolbar";
 import { pendingChoice } from "../core/professions";
@@ -53,11 +82,13 @@ import {
 } from "../core/festivals";
 import { openChest } from "../core/maze";
 import { rodById, waterAhead } from "../core/fishing";
+import { festivalHolds } from "../core/festivalroutes";
 import { holdsOf } from "../core/worldflags";
 import { gateOpen, gateShutLine, parseGate } from "../core/gates";
 import { mendTideBridge, TIDE_BRIDGE_WOOD } from "../core/tidebridge";
 import { logCleared } from "../core/logs";
 import { CAMP_LINE, HERMIT_LINE } from "../core/forestfolk";
+import { SPIRIT_STATUE, giveToSpirit, hermitStock } from "../core/elderfruit";
 import { STONEKEEPER_LINE } from "../core/smith";
 import {
   campLine,
@@ -73,6 +104,11 @@ import { NOTHING_TO_ACT_ON, act, reasonText, useHeld } from "../core/tools";
 import { cropById } from "../core/crops";
 import { mapFiles, maps } from "../content/maps";
 import { START } from "../core/maps";
+import { HAT_KEY, villagerKey } from "./art-people";
+import { DEPTH, sortDepth, tileDepth } from "./depth";
+import { drawMapArt } from "./mapart";
+import { MAP_PASSES } from "./map-passes";
+import { creatureTexture } from "./art-creatures";
 import { storeOf } from "../core/mapstore";
 import { mapWithDoors } from "../core/placement";
 import { farmMapOf, isFarmMap, resolveMapId } from "../core/farmtypes";
@@ -90,6 +126,7 @@ import {
   speedFactor,
 } from "../core/horse";
 import {
+  CART_KIND,
   exitOpen,
   FarmMap,
   layersAtTier,
@@ -100,6 +137,12 @@ import {
 import { counterShutLine, doorShutLine } from "../core/shophours";
 import { roadNews } from "../core/roadnews";
 import { traderProblem } from "../core/trader";
+import {
+  CART_IDLE_LINE,
+  cartsRunning,
+  herbStallProblem,
+  stopOfService,
+} from "../core/roomrewards";
 import { exitLabel, serviceLabel, standInLine } from "../core/labels";
 import {
   facingFrom,
@@ -114,12 +157,14 @@ import { aimAt } from "../core/aim";
 import { createControls, type Controls } from "./controls";
 import { planTap, planUse, type TapPlan } from "../core/pathing";
 import { tapPick, tapUse } from "../core/tapuse";
+import { isTapperItem, tapReady, tapStatus } from "../core/tapper";
 import {
   browserSettingsStore,
   browserStore,
   loadDeviceSettings,
 } from "./storage";
 import { saveGame } from "../core/save";
+import { hallRestored } from "../core/bundles";
 import {
   healthShown,
   isWeapon,
@@ -160,6 +205,7 @@ import {
   placeLight,
 } from "../core/lights";
 import { drink, isDrink, oilCalms } from "../core/elixirs";
+import { effectById } from "../core/effects";
 import {
   type LitBomb,
   blastCreatures,
@@ -188,6 +234,18 @@ import {
 } from "../core/pots";
 import { baitById } from "../core/tackle";
 import { greencoatDue, takeCampGift } from "../core/camp";
+import {
+  decorTiles,
+  farmDecorAt,
+  isFarmDecor,
+  pickUpFarmDecor,
+  placeFarmDecor,
+} from "../core/farmdecor";
+import {
+  DYE_POTS_SERVICE,
+  SEWING_SERVICE,
+  tailoringLine,
+} from "../core/tailoring";
 import {
   CAVE_MAP,
   caveDehydratorDone,
@@ -239,6 +297,7 @@ import {
   sprinklerKey,
   furnitureKey,
   chestKey,
+  farmDecorKey,
   lightKey,
   POT_KEY,
   POT_READY_KEY,
@@ -269,12 +328,7 @@ import {
   ZOOM_MAX,
   ZOOM_MIN,
 } from "../core/view";
-import {
-  makePlaceholderTextures,
-  PLAYER_KEY,
-  TILES_KEY,
-  TILESET_NAME,
-} from "./placeholder-textures";
+import { makePlaceholderTextures, PLAYER_KEY } from "./placeholder-textures";
 
 /** Real milliseconds per 10 game minutes (Stardew pace). */
 const TICK_MS = 7000;
@@ -301,26 +355,8 @@ const DEV_SPEED = import.meta.env.DEV
 const SPEED = 80;
 /** How far the rider is drawn above the ground, so the horse shows under them. */
 const RIDER_LIFT = 6;
-/** The map of every farm type: where the horse can be ridden, with the village green. */
 /** A creature's feet box, in world pixels. */
 const CREATURE_BODY: Body = { hw: 5, h: 5 };
-/** Placeholder colours for the first creatures, until the art pass. */
-const CREATURE_COLOURS: Record<string, number> = {
-  pebbleback: 0x8c8c94,
-  dustmoth: 0xd9c08a,
-  "rock-crab": 0x7a6a5a,
-  mossbeetle: 0x5f8f4a,
-  gloop: 0x6fd16f,
-  frostnibbler: 0xbfe6f5,
-  "icicle-hopper": 0x8fc8e8,
-  "cave-bat": 0x5a4a78,
-  nabbler: 0xc99a52,
-  "gloop-blue": 0x5f9fe8,
-  "cinder-pup": 0xe8703a,
-  lanternmoth: 0xf5d76e,
-  "old-digger": 0xe8e0cc,
-  "gloop-red": 0xe85a5a,
-};
 /** The player's feet box, in world pixels. */
 const PLAYER: Body = { hw: 5, h: 6 };
 
@@ -341,11 +377,6 @@ interface SceneData {
   entry: string;
 }
 
-/**
- * A walkable map, a player and one `GameState`. The use key uses the held
- * tool, the end-day key sleeps (both rebindable, see `core/bindings.ts`). Walking through an exit restarts the scene on the next map; the
- * state and the selected toolbar slot survive in the game registry.
- */
 /** The tile step a push takes for each way the farmer faces. */
 const PUSH: Record<Facing, { x: number; y: number }> = {
   up: { x: 0, y: -1 },
@@ -354,6 +385,11 @@ const PUSH: Record<Facing, { x: number; y: number }> = {
   right: { x: 1, y: 0 },
 };
 
+/**
+ * A walkable map, a player and one `GameState`. The use key uses the held
+ * tool, the end-day key sleeps (both rebindable, see `core/bindings.ts`). Walking through an exit restarts the scene on the next map; the
+ * state and the selected toolbar slot survive in the game registry.
+ */
 export class FarmScene extends Phaser.Scene {
   private state!: GameState;
   private selected = 0;
@@ -376,7 +412,8 @@ export class FarmScene extends Phaser.Scene {
   private mendAsked = false;
   private hud!: Hud;
   private uiCamera!: Phaser.Cameras.Scene2D.Camera;
-  private sprites!: Phaser.GameObjects.Container;
+  /** The pictures of things on the map, redrawn by `drawGround`. */
+  private sprites: Phaser.GameObjects.Image[] = [];
   private ground!: Phaser.GameObjects.Graphics;
   /** The light layer: glow rings of placed lights and the worn ring (note 89). */
   private glow!: Phaser.GameObjects.Graphics;
@@ -391,24 +428,27 @@ export class FarmScene extends Phaser.Scene {
   private tier = 0;
   /** Drawn layers that show only while a condition holds (`when` or `unless`), such as the log. */
   private conditional: {
-    drawn: Phaser.GameObjects.GameObject & { setVisible(v: boolean): unknown };
+    drawn: { setVisible(v: boolean): unknown };
     layer: TiledLayer;
   }[] = [];
   private controls!: Controls;
   private player!: Phaser.GameObjects.Image;
   private target!: Phaser.GameObjects.Rectangle;
   /** Placeholder hat drawn on the player. */
-  private hat!: Phaser.GameObjects.Rectangle;
+  private hat!: Phaser.GameObjects.Image;
   /** One placeholder block per creature on this floor, by creature id. */
-  private creatureSprites = new Map<number, Phaser.GameObjects.Rectangle>();
+  private creatureSprites = new Map<number, Phaser.GameObjects.Image>();
   /** The swing flash, drawn in the world. */
   private swingFx!: Phaser.GameObjects.Graphics;
   /** The scene time before which the next weapon swing is refused. */
   private swingReady = 0;
+  /** Burn damage not yet a whole point of health. */
+  private burnDebt = 0;
   /** True while the naming dialog is open for the first ride. */
   private namingHorse = false;
   /** The horse under the rider while mounted (a placeholder block). */
-  private steed!: Phaser.GameObjects.Rectangle;
+  private steed!: Phaser.GameObjects.Image;
+  private animalImages: Phaser.GameObjects.Image[] = [];
   private pos: Vec = { x: 0, y: 0 };
   private facing: Facing = "down";
   private heldMs = 0;
@@ -426,11 +466,17 @@ export class FarmScene extends Phaser.Scene {
   private villagers: Present[] = [];
   private villagerSprites = new Map<
     string,
-    { box: Phaser.GameObjects.Rectangle; tag: Phaser.GameObjects.Text }
+    { box: Phaser.GameObjects.Image; tag: Phaser.GameObjects.Text }
   >();
   /** The tile last checked for a heart event. */
   private eventTile = "";
   private villagerStamp = -1;
+  /** The running Seedswap hunt (placeholder markers and countdown). */
+  private hunt?: HuntState;
+  private huntGfx?: Phaser.GameObjects.Graphics;
+  private huntText?: Phaser.GameObjects.Text;
+  /** The Frostday ice fishing count (placeholder, note 82). */
+  private ice?: IceFishing;
   private tapAct?: Vec;
   /** True when the route ends in using the held item on `tapAct` (note 27). */
   private tapActUses = false;
@@ -455,7 +501,6 @@ export class FarmScene extends Phaser.Scene {
     this.state = this.registry.get(STATE_KEY) as GameState;
     this.mapId = resolveMapId(data.map ?? START.map, this.state.farmType);
     this.entryName = data.entry ?? START.entry;
-    this.state = this.registry.get(STATE_KEY) as GameState;
     // An area map (the Forest) has its own trees, rocks and forage: set them in
     // the state while the player is here, and put the farm's back anywhere else.
     leaveArea(this.state);
@@ -467,6 +512,8 @@ export class FarmScene extends Phaser.Scene {
     this.exitArmed = false;
     this.floor = mineFloorOf(this.mapId);
     this.floorState = undefined;
+    // A bad effect never leaves the floor it was caught on (note 94).
+    this.state.combat.effects.clear();
     this.conditional = [];
     this.refreshHolds();
     this.heldMs = 0;
@@ -507,6 +554,9 @@ export class FarmScene extends Phaser.Scene {
       this.state.houseRenos,
     ))
       holds.add(h);
+    // A festival day shows its layout on the map (note 82).
+    for (const h of festivalHolds(day, hallRestored(this.state.hall)))
+      holds.add(h);
     this.map = mineLayout
       ? FarmMap.fromTiled(json)
       : maps.getWith(id, holds, this.tier);
@@ -515,34 +565,39 @@ export class FarmScene extends Phaser.Scene {
     if (isHouseMap(id)) carryFurniture(this.state, this.map, id);
     if (this.floor !== undefined)
       this.floorState = this.state.mines.visit(this.floor, day);
-    const cacheKey = mineLayout ? `${id}@${day}` : id;
-    if (!this.cache.tilemap.exists(cacheKey))
-      this.cache.tilemap.add(cacheKey, {
-        format: Phaser.Tilemaps.Formats.TILED_JSON,
-        data: json,
-      });
-
-    // World objects: the tile layers, the player and the facing marker.
-    const tilemap = this.make.tilemap({ key: cacheKey });
-    const tileset = tilemap.addTilesetImage(TILESET_NAME, TILES_KEY)!;
+    // World objects: the painted map, the player and the facing marker.
     const world: Phaser.GameObjects.GameObject[] = [];
-    for (const layer of layersAtTier(json, this.tier, holds)) {
-      if (layer.type !== "tilelayer" || layer.visible === false) continue;
-      const drawn = tilemap.createLayer(layer.name, tileset);
-      if (drawn) world.push(drawn);
+    const painted = drawMapArt(
+      this,
+      {
+        mapId: id,
+        json,
+        layers: layersAtTier(json, this.tier, holds).filter(
+          (layer) => layer.type === "tilelayer" && layer.visible !== false,
+        ),
+        // Every map under the sky has an `objects` layer; interiors and caves do not.
+        outdoors: json.layers.some((layer) => layer.name === "objects"),
+        floor: this.floor,
+        season: dateOf(day).season,
+      },
+      MAP_PASSES,
+    );
+    for (const drawn of painted) {
+      world.push(...drawn.objects);
       if (
-        drawn &&
-        layer.properties?.some((q) => q.name === "when" || q.name === "unless")
+        drawn.layer.properties?.some(
+          (q) => q.name === "when" || q.name === "unless",
+        )
       )
-        this.conditional.push({ drawn, layer });
+        this.conditional.push({ drawn, layer: drawn.layer });
     }
 
     const ts = this.map.tileSize;
     // Plots and forage sit on the tiles, under the player.
-    this.ground = this.add.graphics();
-    this.sprites = this.add.container(0, 0);
-    this.wash = this.add.graphics();
-    world.push(this.ground, this.sprites, this.wash);
+    this.ground = this.add.graphics().setDepth(DEPTH.decal);
+    this.sprites = [];
+    this.wash = this.add.graphics().setDepth(DEPTH.decal + 1);
+    world.push(this.ground, this.wash);
     world.push(...this.drawLabels());
     let spawn: { x: number; y: number } = this.map.entry(this.entryName)!;
     // Coming up from below lands on the ladder that was taken down.
@@ -553,18 +608,19 @@ export class FarmScene extends Phaser.Scene {
     }
     this.pos = { x: (spawn.x + 0.5) * ts, y: (spawn.y + 1) * ts - 2 };
     this.steed = this.add
-      .rectangle(this.pos.x, this.pos.y, 26, 14, 0x8a5a33)
+      .image(this.pos.x, this.pos.y, "steed")
       .setOrigin(0.5, 1)
       .setVisible(false);
     world.push(this.steed);
     this.player = this.add
       .image(this.pos.x, this.pos.y, PLAYER_KEY)
       .setOrigin(0.5, 0.875);
-    this.hat = this.add.rectangle(0, 0, 10, 5, 0xffffff).setVisible(false);
+    this.hat = this.add.image(0, 0, HAT_KEY).setVisible(false);
     this.target = this.add
       .rectangle(0, 0, ts, ts)
       .setOrigin(0)
-      .setStrokeStyle(1, 0xffffff, 0.6);
+      .setStrokeStyle(1, 0xffffff, 0.6)
+      .setDepth(DEPTH.decal + 2);
     world.push(this.player, this.hat, this.target);
     this.swingFx = this.add.graphics().setDepth(900);
     world.push(this.swingFx);
@@ -576,6 +632,8 @@ export class FarmScene extends Phaser.Scene {
     this.syncCombatSettings();
     for (const c of this.floorState?.creatures ?? [])
       world.push(this.addCreatureSprite(c));
+    this.hunt = this.huntGfx = this.huntText = undefined;
+    this.ice = undefined;
     this.villagers = [];
     this.villagerSprites = new Map();
     this.villagerStamp = -1;
@@ -888,6 +946,7 @@ export class FarmScene extends Phaser.Scene {
     this.drawGlow();
     this.updateBombs(dt);
     this.syncVillagers();
+    this.updateHunt(dt);
     this.checkHeartEvent();
     const walking = this.tapPath.length > 0;
     const v = walking ? this.tapVector(dt) : this.controls.vector();
@@ -896,12 +955,13 @@ export class FarmScene extends Phaser.Scene {
     if (v.x !== 0 || v.y !== 0) this.keyAim();
     const ts = this.map.tileSize;
     const before = { ...this.pos };
+    const slowed = this.state.combat.effects.speedFactor();
     for (let i = 0; i < DEV_SPEED; i++)
       this.pos = move(
         this.pos,
         {
-          x: v.x * SPEED * speedFactor(this.state) * dt,
-          y: v.y * SPEED * speedFactor(this.state) * dt,
+          x: v.x * SPEED * speedFactor(this.state) * slowed * dt,
+          y: v.y * SPEED * speedFactor(this.state) * slowed * dt,
         },
         PLAYER,
         ts,
@@ -940,8 +1000,15 @@ export class FarmScene extends Phaser.Scene {
       }
     }
     const riding = this.state.animals.mounted;
-    this.steed.setVisible(riding).setPosition(this.pos.x, this.pos.y);
-    this.player.setPosition(this.pos.x, this.pos.y - (riding ? RIDER_LIFT : 0));
+    const depth = sortDepth(this.pos.y);
+    this.steed
+      .setVisible(riding)
+      .setPosition(this.pos.x, this.pos.y)
+      .setDepth(depth);
+    this.player
+      .setPosition(this.pos.x, this.pos.y - (riding ? RIDER_LIFT : 0))
+      .setDepth(depth);
+    this.hat.setDepth(depth);
     this.drawHat();
     this.repeatUse(delta * DEV_SPEED);
     this.dragSoilWork();
@@ -981,7 +1048,7 @@ export class FarmScene extends Phaser.Scene {
 
   /**
    * True for an exit you walk onto: one on the map edge that is three or more
-   * tiles wide (open land), or any edge exit inside a building (leaving).
+   * tiles wide (open land), or any edge exit inside a building, or its door (leaving).
    * Going into a building still needs the door opened (click or Action).
    */
   private isWalkThrough(e: Exit): boolean {
@@ -990,6 +1057,8 @@ export class FarmScene extends Phaser.Scene {
       e.y === 0 ||
       e.x + e.w >= this.map.width ||
       e.y + e.h >= this.map.height;
+    // Rebuilt interiors keep their door a tile inside the walls, so the way out is the exit named "door".
+    if (!this.outdoorWorld && e.id === "door") return true;
     return edge && (!this.outdoorWorld || Math.max(e.w, e.h) >= 3);
   }
 
@@ -1045,12 +1114,14 @@ export class FarmScene extends Phaser.Scene {
       (log !== undefined && !logCleared(this.state, log)) ||
       (this.outdoorWorld && this.state.trees.blocks(x, y)) ||
       !!this.store.fruitTrees.at(x, y) ||
+      !!this.store.teaBushes.at(x, y) ||
       !!this.rocks()?.at(x, y) ||
       this.furnaceAt(x, y) ||
       coopBlocks(this.state, this.mapId, x, y) ||
       barnBlocks(this.state, this.mapId, x, y) ||
       siloBlocks(this.state, this.mapId, x, y) ||
       stableBlocks(this.state, this.mapId, x, y) ||
+      pondBlocks(this.state, this.mapId, x, y) ||
       ((this.mapId === COOP_MAP || this.mapId === BARN_MAP) &&
         animalSlots(this.state, this.mapId === COOP_MAP ? "coop" : "barn").some(
           (s) => s.x === x && s.y === y,
@@ -1058,7 +1129,7 @@ export class FarmScene extends Phaser.Scene {
       this.state.furniture.blocks(this.mapId, x, y) ||
       (this.mapId === CELLAR_MAP && this.state.casks.at(x, y)) ||
       !!this.state.chests.at(this.mapId, x, y) ||
-      !!lightAt(this.state, this.mapId, x, y) ||
+      !!this.state.placed.covering(lightMapKey(this.mapId), x, y) ||
       (isFarmMap(this.mapId) && !!rodAt(this.state, x, y)) ||
       this.map.serviceAt(x, y)?.kind === "camp-chest" ||
       !!this.store.sprinklers.at(x, y) ||
@@ -1171,7 +1242,9 @@ export class FarmScene extends Phaser.Scene {
         hand ||
         (this.tapObject(tap.x, tap.y) && this.tileBlocked(tap.x, tap.y));
       const exit = !!this.map.exitAt(tap.x, tap.y);
-      if (fit === "use" && !this.tileBlocked(tap.x, tap.y)) {
+      // A tapper goes on a tree, whose tile is blocked (note 92).
+      const tapper = held.kind === "item" && isTapperItem(held.id);
+      if (fit === "use" && (tapper || !this.tileBlocked(tap.x, tap.y))) {
         // A drag uses each new tile beside the farmer at once.
         if (beside) {
           this.cancelTap();
@@ -1295,18 +1368,7 @@ export class FarmScene extends Phaser.Scene {
     for (const v of this.villagers) {
       let s = this.villagerSprites.get(v.id);
       if (!s) {
-        let hash = 0;
-        for (const ch of v.id) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
-        const colour = Phaser.Display.Color.HSLToColor(
-          (hash % 360) / 360,
-          0.5,
-          0.55,
-        ).color;
-        const box = this.add
-          .rectangle(0, 0, 10, 12, colour)
-          .setOrigin(0.5, 1)
-          .setStrokeStyle(1, 0x000000, 0.6)
-          .setDepth(5);
+        const box = this.add.image(0, 0, villagerKey(v.id)).setOrigin(0.5, 1);
         const tag = this.add
           .text(0, 0, v.name, {
             fontSize: "8px",
@@ -1323,7 +1385,7 @@ export class FarmScene extends Phaser.Scene {
       }
       const px = (v.x + 0.5) * ts;
       const py = (v.y + 1) * ts - 1;
-      s.box.setPosition(px, py);
+      s.box.setPosition(px, py).setDepth(sortDepth(py));
       s.tag.setPosition(px, py - 13);
     }
   }
@@ -1332,6 +1394,22 @@ export class FarmScene extends Phaser.Scene {
   private meetVillager(tile: Vec): boolean {
     const who = presentAt(this.villagers, tile.x, tile.y);
     if (!who) return false;
+    const offer = this.hunt
+      ? undefined
+      : huntOffer(
+          festivalDayToday(this.state.day.clock.day),
+          this.mapId,
+          who.id,
+          this.state.day.clock.day,
+          this.state.day.clock.minutes,
+        );
+    if (offer) {
+      this.hunt = offer.state;
+      this.message = offer.message ?? "";
+      this.render();
+      return true;
+    }
+    if (this.iceTalk(who.id)) return true;
     const held = heldAt(this.state, this.selected);
     const r = meet(
       this.state,
@@ -1361,7 +1439,8 @@ export class FarmScene extends Phaser.Scene {
     if (this.tapHand(tile)) return this.action();
     const tree =
       (!this.map.indoors && this.state.trees.at(tile.x, tile.y)) ||
-      this.store.fruitTrees.at(tile.x, tile.y);
+      this.store.fruitTrees.at(tile.x, tile.y) ||
+      this.store.teaBushes.at(tile.x, tile.y);
     const rock = this.rocks()?.at(tile.x, tile.y);
     if (tree || rock) {
       this.select(TOOLS.indexOf(tree ? "axe" : "pickaxe"));
@@ -1514,7 +1593,8 @@ export class FarmScene extends Phaser.Scene {
       held.tool === "axe" &&
       !!(
         (!this.map.indoors && this.state.trees.at(front.x, front.y)) ||
-        this.store.fruitTrees.at(front.x, front.y)
+        this.store.fruitTrees.at(front.x, front.y) ||
+        this.store.teaBushes.at(front.x, front.y)
       );
     const pick =
       held.kind === "tool" &&
@@ -1588,18 +1668,24 @@ export class FarmScene extends Phaser.Scene {
   /**
    * True when the exit lands in a festival place that is not open yet
    * (note 82 decision 12). Only exits whose target map is built are checked.
-   * Placeholder: the hall counts as not restored until that is tracked.
+   * The hall's restored state is derived from the bundles (`hallRestored`).
    */
   private exitShutForFestival(exit: Exit): boolean {
     const target = maps.get(resolveMapId(exit.map, this.state.farmType));
     const at = target?.entry(exit.entry);
     if (!at) return false;
     const clock = this.state.day.clock;
-    return festivalStepShut(clock.day, clock.minutes, this.hereTile(), {
-      map: resolveMapId(exit.map, this.state.farmType),
-      x: at.x,
-      y: at.y,
-    });
+    return festivalStepShut(
+      clock.day,
+      clock.minutes,
+      this.hereTile(),
+      {
+        map: resolveMapId(exit.map, this.state.farmType),
+        x: at.x,
+        y: at.y,
+      },
+      hallRestored(this.state.hall),
+    );
   }
 
   /** True when walking onto this tile of the current map is shut by a festival setting up. */
@@ -1616,11 +1702,17 @@ export class FarmScene extends Phaser.Scene {
 
   private tileShutForFestival(x: number, y: number): boolean {
     const clock = this.state.day.clock;
-    return festivalStepShut(clock.day, clock.minutes, this.hereTile(), {
-      map: this.mapId,
-      x,
-      y,
-    });
+    return festivalStepShut(
+      clock.day,
+      clock.minutes,
+      this.hereTile(),
+      {
+        map: this.mapId,
+        x,
+        y,
+      },
+      hallRestored(this.state.hall),
+    );
   }
 
   private leave(exit: Exit): void {
@@ -1850,7 +1942,7 @@ export class FarmScene extends Phaser.Scene {
     const lift = this.state.animals.mounted ? RIDER_LIFT : 0;
     const head = this.pos.y - lift - this.player.displayHeight * 0.875;
     this.hat
-      .setFillStyle(Phaser.Display.Color.HexStringToColor(def.color).color)
+      .setTint(Phaser.Display.Color.HexStringToColor(def.color).color)
       .setPosition(this.pos.x, head + 1);
   }
 
@@ -1913,6 +2005,12 @@ export class FarmScene extends Phaser.Scene {
     if (presentAt(this.villagers, front.x, front.y)) return;
     if (this.useSilo(front.x, front.y)) return;
     const held = heldAt(this.state, this.selected);
+    // The rod lifts a fish out of a pond: no bar, no bait (note 93).
+    const pond = isFarmMap(this.mapId)
+      ? pondCovering(this.state, front.x, front.y)
+      : undefined;
+    if (pond && held.kind === "item" && rodById(held.id))
+      return this.report(takeFish(this.state, pond.x, pond.y));
     if (held.kind === "item" && rodById(held.id)) return this.cast(held.id);
     // A pot goes on the water, bait goes in a pot, and the axe or pickaxe takes an empty one up.
     if (held.kind === "item" && held.id === POT_ITEM)
@@ -1949,6 +2047,21 @@ export class FarmScene extends Phaser.Scene {
       if (lit.ok) this.litBombs.push(lit.bomb);
       return this.report(lit.ok ? { ok: true } : lit);
     }
+    // A farm decoration is stood down from the pack and lifted by hand, like a light (note 89).
+    if (held.kind === "item" && isFarmDecor(held.id))
+      return this.report(
+        placeFarmDecor(
+          this.state,
+          this.map,
+          this.mapId,
+          front.x,
+          front.y,
+          held.id,
+          (x, y) => !!this.rocks()?.at(x, y),
+        ),
+      );
+    if (isFarmMap(this.mapId) && farmDecorAt(this.state, front.x, front.y))
+      return this.report(pickUpFarmDecor(this.state, front.x, front.y));
     // A light is stood down from the backpack, and any tool or the empty hand lifts one.
     if (held.kind === "item" && isLight(held.id))
       return this.report(
@@ -2047,6 +2160,37 @@ export class FarmScene extends Phaser.Scene {
     this.refreshHolds();
   }
 
+  /** The Frostday contest for a cast landing on this tile: the state at a hole, "shut" before opening. */
+  private iceFor(x: number, y: number): IceFishing | "shut" | undefined {
+    const f = festivalDayToday(this.state.day.clock.day);
+    if (f?.id !== "frostday" || this.mapId !== "forest") return undefined;
+    if (lakeShut(f, this.state.day.clock.minutes)) return "shut";
+    if (!isHole(f, x, y)) return undefined;
+    this.ice ??= startIceFishing(f);
+    return this.ice;
+  }
+
+  /** Talk to Cuthbert at the contest: the count, or the judging, the prize and the end of the festival. */
+  private iceTalk(who: string): boolean {
+    const f = festivalDayToday(this.state.day.clock.day);
+    if (f?.id !== "frostday" || this.mapId !== "forest") return false;
+    this.ice ??= startIceFishing(f);
+    const line = iceOffer(this.ice, who, this.state.day.clock.minutes);
+    if (!line) return false;
+    this.message = line;
+    const s = this.ice;
+    if (s && s.status !== "fishing") {
+      const won = awardIcePrize(this.state, s);
+      if (won)
+        this.message +=
+          ` ${won.hat ? `You get the ${hatById(won.hat)?.name ?? "hat"}. ` : ""}${won.frostfin ? "You get a Frostfin." : ""}`.trim();
+      finishIceFishing(this.state, s);
+      this.ice = undefined;
+    }
+    this.render();
+    return true;
+  }
+
   /** Use a rod: it needs water in front of the player within the rod's range (note 21). */
   private cast(rodId: string): void {
     const rod = rodById(rodId)!;
@@ -2065,7 +2209,12 @@ export class FarmScene extends Phaser.Scene {
       here.x + step.x * first,
       here.y + step.y * first,
     );
-    this.open("fishing", { rod: rodId, water, at: here, kind });
+    const ice = this.iceFor(here.x + step.x * first, here.y + step.y * first);
+    if (ice === "shut") {
+      this.message = "The lake opens at noon.";
+      return this.render();
+    }
+    this.open("fishing", { rod: rodId, water, at: here, kind, ice });
   }
 
   /**
@@ -2081,6 +2230,7 @@ export class FarmScene extends Phaser.Scene {
     const spot = this.horseSpot();
     if (spot && spot.x === front.x && spot.y === front.y) return this.getOn();
     if (this.meetVillager(front)) return;
+    if (this.onLaunchLine(front)) return this.launchLantern();
     const service = this.map.serviceAt(front.x, front.y);
     if (service?.kind !== "tide-bridge") this.mendAsked = false;
     const shut = service
@@ -2090,13 +2240,41 @@ export class FarmScene extends Phaser.Scene {
       this.message = shut;
       return this.render();
     }
+    if (service?.kind === CART_KIND) return this.rideCart(service.id);
+    if (
+      service?.kind === SEWING_SERVICE ||
+      service?.kind === DYE_POTS_SERVICE
+    ) {
+      const line = tailoringLine(this.state);
+      if (line) {
+        this.message = line;
+        return this.render();
+      }
+      return this.open("tailor", {
+        mode: service.kind === SEWING_SERVICE ? "sew" : "dye",
+      });
+    }
+    if (service?.kind === "herb-stall") {
+      const closed = herbStallProblem(this.state);
+      if (closed) {
+        this.message = closed;
+        return this.render();
+      }
+      return this.open("shop", { stock: "herb" });
+    }
     if (service?.kind === "fisher-shop")
       return this.open("shop", { stock: "fisher" });
     if (service?.kind === "pin-stall")
       return this.open("shop", { stock: "pin" });
     if (service?.kind === "keeper") return this.open("keeper");
     if (service?.kind === "hermit") {
+      if (hermitStock(this.state).length > 0)
+        return this.open("shop", { stock: "hermit" });
       this.message = HERMIT_LINE;
+      return this.render();
+    }
+    if (service?.kind === SPIRIT_STATUE) {
+      this.message = giveToSpirit(this.state);
       return this.render();
     }
     if (service?.kind === "camp") {
@@ -2148,7 +2326,7 @@ export class FarmScene extends Phaser.Scene {
     }
     if (service?.kind === "stairs")
       return this.travel(mineMapId(1), "from_above");
-    if (service && isFestivalMap(this.mapId))
+    if (service && (isFestivalMap(this.mapId) || service.kind === "cake-table"))
       return this.festivalAction(service);
     if (this.mapId === CAVE_MAP) return this.caveAction(front, service?.kind);
     if (service?.kind === "furnace") {
@@ -2210,6 +2388,21 @@ export class FarmScene extends Phaser.Scene {
       return this.report(
         pickUpFurniture(this.state, this.mapId, front.x, front.y),
       );
+    const pondHere = isFarmMap(this.mapId)
+      ? pondCovering(this.state, front.x, front.y)
+      : undefined;
+    if (pondHere) {
+      const h = heldAt(this.state, this.selected);
+      const r = pondUse(
+        this.state,
+        pondHere,
+        h.kind === "item" ? h.id : undefined,
+      );
+      // Nothing to put in, take or give: the pond menu shows how it stands.
+      if (r.ok && r.item === undefined)
+        return this.open("pond", { x: pondHere.x, y: pondHere.y });
+      return this.report(r);
+    }
     const result = act(this.state, this.map, front.x, front.y);
     if (!result.ok && result.reason === NOTHING_TO_ACT_ON) {
       const held = heldAt(this.state, this.selected);
@@ -2245,6 +2438,16 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** The cove's hidden chest: one a season, opened with Action (note 76, decision 8). */
+  /** The Hearth room's cart: free once it runs (note 16), an empty cart before. */
+  private rideCart(serviceId: string): void {
+    const stop = stopOfService(serviceId);
+    if (!stop || !cartsRunning(this.state)) {
+      this.message = CART_IDLE_LINE;
+      return this.render();
+    }
+    this.open("cart", { from: stop.id });
+  }
+
   private openTreasure(): void {
     const r = takeTreasure(this.state);
     if (r.ok) {
@@ -2298,7 +2501,9 @@ export class FarmScene extends Phaser.Scene {
           ? statusText(this.state, front.x, front.y)
           : result.reason === "cask busy"
             ? caskStatus(this.state, front.x, front.y)
-            : reasonText(result.reason);
+            : result.reason === "tap busy"
+              ? tapStatus(this.state, front.x, front.y)
+              : reasonText(result.reason);
     } else if (result.note) {
       this.message = result.note;
     } else if (result.ladder) {
@@ -2318,6 +2523,8 @@ export class FarmScene extends Phaser.Scene {
    * hedge chest and cart finish the maze.
    */
   private festivalAction(service: { id: string; kind: string }): void {
+    if (service.kind === "cake-table") return this.cakeTable();
+    if (service.id === "lantern-stall") return this.lanternStall();
     const f = festivalOfMap(this.mapId);
     if (!f) return;
     switch (service.kind) {
@@ -2336,6 +2543,100 @@ export class FarmScene extends Phaser.Scene {
         this.message = sightLine(f, service.id) ?? "";
         return this.render();
     }
+  }
+
+  /** Lamplight Evening stall: buys a paper lantern (placeholder price). */
+  private lanternStall(): void {
+    const problem = lanternBuyProblem(this.state);
+    this.message =
+      problem ??
+      (buyLantern(this.state)
+        ? "You buy a paper lantern. Set it afloat from the shore."
+        : "");
+    this.render();
+  }
+
+  /** True when the player stands on, or faces, a tile of the launch line (Beach, Lamplight Evening). */
+  private onLaunchLine(front: { x: number; y: number }): boolean {
+    const line = this.map.regions.find((r) => r.id === "launch-line");
+    if (!line) return false;
+    const here = tileOf(this.pos, PLAYER, this.map.tileSize);
+    const inside = (t: { x: number; y: number }) =>
+      t.x >= line.x &&
+      t.x < line.x + line.w &&
+      t.y >= line.y &&
+      t.y < line.y + line.h;
+    return inside(here) || inside(front);
+  }
+
+  /** Sets the held lantern afloat (placeholder: no drifting yet). */
+  private launchLantern(): void {
+    const problem = launchProblem(this.state);
+    if (problem) {
+      this.message = problem;
+      return this.render();
+    }
+    const r = launchLantern(this.state);
+    this.message = r
+      ? `Your lantern drifts out with the rest. They like you a little more.${r.keepsake ? " You keep a small lantern." : ""}`
+      : "";
+    this.render();
+  }
+
+  /** Cake Day table: hands in the held cooked dish (placeholder, no picker yet). */
+  private cakeTable(): void {
+    const held = heldAt(this.state, this.selected);
+    const id = held.kind === "item" ? held.id : "";
+    const problem = cakeProblem(this.state, id);
+    if (problem) {
+      this.message = id ? problem : "Hold a cooked dish to put on the table.";
+      return this.render();
+    }
+    const r = handInCake(this.state, id);
+    this.message = r
+      ? `Everyone tastes your ${itemById(id)?.name.toLowerCase() ?? "dish"} (${r.quality}). They like you a little more.`
+      : "";
+    this.render();
+  }
+
+  /** The Seedswap hunt: clock, pick-up by walking, packet markers and the end (placeholder). */
+  private updateHunt(dt: number): void {
+    const s = this.hunt;
+    if (!s) return;
+    const ts = this.map.tileSize;
+    const f = festivalDayToday(this.state.day.clock.day);
+    if (!this.huntGfx) {
+      this.huntGfx = this.add.graphics().setDepth(850);
+      this.uiCamera.ignore(this.huntGfx);
+      const { width } = this.scale.gameSize;
+      this.huntText = this.add
+        .text(width / 2, 48, "", { fontSize: "18px", color: "#ffffff" })
+        .setOrigin(0.5, 0)
+        .setScrollFactor(0)
+        .setDepth(2000);
+      this.cameras.main.ignore(this.huntText);
+    }
+    const here = tileOf(this.pos, PLAYER, ts);
+    pickUpPacket(s, here.x, here.y);
+    tickHunt(s, dt);
+    this.huntGfx.clear().fillStyle(0xf0d040, 1);
+    for (const t of s.packets)
+      this.huntGfx.fillRect(t[0] * ts + 4, t[1] * ts + 4, ts - 8, ts - 8);
+    this.huntText?.setText(huntLine(s));
+    if (s.status === "running" || !f) return;
+    this.message = huntEndLine(f, s) ?? "";
+    const won = awardHuntPrize(this.state, s);
+    if (won)
+      this.message +=
+        ` ${won.hat ? `You get the ${hatById(won.hat)?.name ?? "hat"}.` : ""}${won.packet ? " You get a rare seed packet." : ""}`.replace(
+          / +/g,
+          " ",
+        );
+    finishHunt(this.state, f, s);
+    this.huntGfx.destroy();
+    this.huntText?.destroy();
+    this.huntGfx = this.huntText = this.hunt = undefined;
+    this.render();
   }
 
   /** Placeholder props on a festival map: tables, booths, villagers and the chest. */
@@ -2423,6 +2724,11 @@ export class FarmScene extends Phaser.Scene {
     ))
       this.holds.add(h);
     for (const h of greenhouseHolds(this.state)) this.holds.add(h);
+    for (const h of festivalHolds(
+      this.state.day.clock.day,
+      hallRestored(this.state.hall),
+    ))
+      this.holds.add(h);
     for (const c of this.conditional)
       c.drawn.setVisible(layerShows(c.layer, this.holds));
   }
@@ -2617,21 +2923,27 @@ export class FarmScene extends Phaser.Scene {
   /** Draw plots, crops and forage on the tiles. */
   private drawGround(): void {
     this.ground.clear();
-    this.sprites.removeAll(true);
+    for (const image of this.sprites) image.destroy();
+    this.sprites = [];
     const ts = this.map.tileSize;
+    // A picture stands on its tile: a taller or wider one rises and spreads from the
+    // tile's bottom centre, and sorts with the figures by that row (note 99).
     const put = (x: number, y: number, key: string) => {
-      const image = this.add.image(x * ts, y * ts, key).setOrigin(0);
+      const image = this.add
+        .image((x + 0.5) * ts, (y + 1) * ts, key)
+        .setOrigin(0.5, 1)
+        .setDepth(tileDepth(y, ts));
       this.uiCamera.ignore(image); // the UI camera does not draw the world
-      this.sprites.add(image);
+      this.sprites.push(image);
       return image;
     };
     for (const r of this.rocks()?.each() ?? [])
       put(r.x, r.y, ROCK_KEYS[r.kind]);
     if (this.floor !== undefined) {
       const up = this.map.exits.find((e) => e.id === "up");
-      if (up) put(up.x, up.y, LADDER_KEY).setAlpha(0.6);
+      if (up) put(up.x, up.y, LADDER_KEY).setAlpha(0.6).setDepth(DEPTH.decal);
       const down = this.floorState?.ladder;
-      if (down) put(down.x, down.y, LADDER_KEY);
+      if (down) put(down.x, down.y, LADDER_KEY).setDepth(DEPTH.decal);
     }
     if (isHouseMap(this.mapId)) this.drawDecor();
     for (const p of this.state.furniture.each(this.mapId))
@@ -2640,8 +2952,12 @@ export class FarmScene extends Phaser.Scene {
       if (s.kind === "camp-chest") put(s.x, s.y, chestKey("big-chest"));
     for (const c of this.state.chests.each(this.mapId))
       put(c.x, c.y, chestKey(c.id));
-    for (const l of this.state.placed.each(lightMapKey(this.mapId)))
-      put(l.x, l.y, lightKey(l.id));
+    for (const l of this.state.placed.each(lightMapKey(this.mapId))) {
+      if (isFarmDecor(l.id))
+        for (const t of decorTiles(l.id, l.x, l.y))
+          put(t.x, t.y, farmDecorKey(l.id));
+      else put(l.x, l.y, lightKey(l.id));
+    }
     if (isFarmMap(this.mapId))
       for (const p of this.state.placed.each(lightMapKey(this.mapId)))
         if (p.id === LIGHTNING_ROD && p.state?.pack === true)
@@ -2667,9 +2983,9 @@ export class FarmScene extends Phaser.Scene {
   ): void {
     const soil = this.map.indoors ? this.state.greenhouse : this.state.farm;
     for (const { x, y, plot } of soil.each()) {
-      put(x, y, soilKey(plot.wateredToday));
+      put(x, y, soilKey(plot.wateredToday)).setDepth(DEPTH.decal);
       const fert = fertilizerById(plot.fertilizer);
-      if (fert) put(x, y, fertKey(fert.line));
+      if (fert) put(x, y, fertKey(fert.line)).setDepth(DEPTH.decal);
       const crop = plot.crop;
       const def = crop && cropById(crop.id);
       if (!crop || !def) continue;
@@ -2683,6 +2999,9 @@ export class FarmScene extends Phaser.Scene {
       put(t.x, t.y, fruitTreeKey(fruitStageOf(t.age)));
       if (t.fruit > 0) put(t.x, t.y, fruitOnTreeKey(t.id));
     }
+    // Placeholder art: the fruit tree sprites, tinted green (note 97).
+    for (const b of here.teaBushes.each())
+      put(b.x, b.y, fruitTreeKey(teaStageOf(b.age) * 2)).setTint(0x7fd66a);
   }
 
   /** What stands and lies outdoors: forage, weeds, twigs, machines, trees and goods on the ground. */
@@ -2692,15 +3011,22 @@ export class FarmScene extends Phaser.Scene {
     if (!this.outdoorWorld) return;
     for (const { x, y, id } of this.state.forage.each())
       put(x, y, forageKey(id));
-    for (const s of this.state.spots.each()) put(s.x, s.y, SPOT_KEY);
-    for (const w of this.state.weeds.each()) put(w.x, w.y, WEED_KEY);
-    for (const t of this.state.twigs.each()) put(t.x, t.y, TWIG_KEY);
+    for (const s of this.state.spots.each())
+      put(s.x, s.y, SPOT_KEY).setDepth(DEPTH.decal);
+    for (const w of this.state.weeds.each())
+      put(w.x, w.y, WEED_KEY).setDepth(DEPTH.decal);
+    for (const t of this.state.twigs.each())
+      put(t.x, t.y, TWIG_KEY).setDepth(DEPTH.decal);
     for (const m of this.state.machines.each()) {
       put(m.x, m.y, machineKey(m.id));
       if (jobDone(this.state, m)) put(m.x, m.y, MACHINE_READY_KEY);
     }
-    for (const t of this.state.trees.each())
+    for (const t of this.state.trees.each()) {
       put(t.x, t.y, treeKey(t.stage, t.stump, t.large, t.regrow !== undefined));
+      if (t.tap)
+        put(t.x, t.y, t.tap.heavy ? "tapper-on-tree-heavy" : "tapper-on-tree");
+      if (tapReady(this.state, t)) put(t.x, t.y, MACHINE_READY_KEY);
+    }
     for (const p of this.state.ground.each()) {
       const key = iconKey(p.id);
       if (key) put(p.x, p.y, key);
@@ -3042,6 +3368,8 @@ export class FarmScene extends Phaser.Scene {
 
   /** Inside the coop or barn: the feeding bench along the back wall and the animals as blocks. */
   private drawCoopInside(): void {
+    for (const im of this.animalImages) im.destroy();
+    this.animalImages = [];
     const coop = this.mapId === COOP_MAP;
     if (!coop && this.mapId !== BARN_MAP) return;
     const ts = this.map.tileSize;
@@ -3094,26 +3422,16 @@ export class FarmScene extends Phaser.Scene {
         2 * ts - 8,
       );
     }
-    const colours: Record<string, number> = {
-      chicken: 0xf4efe0,
-      duck: 0xb59a6a,
-      rabbit: 0xcfc6bd,
-      cow: 0xf0f0f0,
-      goat: 0xd8c8a8,
-      sheep: 0xe8e4d8,
-      pig: 0xe8a4a0,
-    };
     for (const { animal: an, x, y } of animalSlots(
       this.state,
       coop ? "coop" : "barn",
     )) {
       const grown = an.age >= GROW_DAYS;
-      const big = an.species === "cow" || an.species === "pig";
-      const size = grown ? ts - (big ? 2 : 4) : ts - 8;
-      g.fillStyle(
-        grown ? (colours[an.species] ?? 0xffffff) : 0xf2d95c,
-        1,
-      ).fillRect(x * ts + (ts - size) / 2, y * ts + ts - size - 1, size, size);
+      const image = this.add
+        .image(x * ts + ts / 2, y * ts + ts - 1, animalKey(an.species, grown))
+        .setOrigin(0.5, 1);
+      this.uiCamera.ignore(image);
+      this.animalImages.push(image);
       if (an.product)
         g.fillStyle(0xffffff, 1).fillRect(x * ts + 6, y * ts + ts, 4, 3);
     }
@@ -3160,6 +3478,17 @@ export class FarmScene extends Phaser.Scene {
     if (!floor || combat.noCreatures) return;
     combat.sync(this.state.skills);
     combat.health.tick(dt);
+    const burn = combat.effects.tick(dt);
+    if (burn > 0) {
+      this.burnDebt += burn;
+      if (this.burnDebt >= 1) {
+        const whole = Math.floor(this.burnDebt);
+        this.burnDebt -= whole;
+        const lost = combat.health.drain(whole);
+        if (lost > 0)
+          this.floatText(this.pos.x, this.pos.y - 14, `-${lost}`, "#ff9a40");
+      }
+    } else this.burnDebt = 0;
     const ts = this.map.tileSize;
     for (const c of floor.creatures) {
       const result = stepCreature(c, dt, {
@@ -3185,6 +3514,19 @@ export class FarmScene extends Phaser.Scene {
         );
         if (lost > 0) {
           this.message = `${creatureById(c.kind)?.name ?? "It"} hits you for ${lost}.`;
+          const inflicts = creatureById(c.kind)?.inflicts;
+          if (inflicts && Math.random() < inflicts.chance) {
+            const eq = this.state.equipment;
+            const r = combat.effects.inflict(inflicts.effect, Math.random, {
+              immunity: eq.immunity(),
+              slimeProof: eq.slimeProof(),
+              halfLength: eq.halvesEffects(),
+            });
+            const name = effectById(inflicts.effect)?.name.toLowerCase();
+            if (r === "afflicted") this.message += ` You are ${name}.`;
+            else if (r === "resisted")
+              this.message += ` You shrug off ${name}.`;
+          }
           this.floatText(this.pos.x, this.pos.y - 14, `-${lost}`, "#ff8080");
           this.render();
         }
@@ -3194,18 +3536,12 @@ export class FarmScene extends Phaser.Scene {
     if (combat.health.down && !combat.defeatPending) this.knockedOut();
   }
 
-  /** One placeholder block for a creature, kept in `creatureSprites`. */
-  private addCreatureSprite(c: Creature): Phaser.GameObjects.Rectangle {
+  /** One painted sprite for a creature, kept in `creatureSprites`. */
+  private addCreatureSprite(c: Creature): Phaser.GameObjects.Image {
     const block = this.add
-      .rectangle(
-        c.x,
-        c.y,
-        c.small ? 8 : 12,
-        c.small ? 7 : 10,
-        CREATURE_COLOURS[c.kind] ?? 0xffffff,
-      )
+      .image(c.x, c.y, creatureTexture(this, c.kind))
       .setOrigin(0.5, 1)
-      .setStrokeStyle(1, 0x000000, 0.6)
+      .setScale(c.small ? 0.65 : 1)
       .setVisible(!this.state.combat.noCreatures);
     this.creatureSprites.set(c.uid, block);
     return block;
@@ -3214,17 +3550,16 @@ export class FarmScene extends Phaser.Scene {
   private drawCreature(c: Creature): void {
     const block = this.creatureSprites.get(c.uid);
     if (!block) return;
-    block.setPosition(c.x, c.y);
-    // The wind up is the warning: a swelling, blinking block (note 22).
+    block.setPosition(c.x, c.y).setDepth(sortDepth(c.y));
+    // The wind up is the warning: a swelling, blinking sprite (note 22).
     const winding = c.state === "windup";
-    block.setScale(winding ? 1.35 : 1);
-    block.setFillStyle(
-      winding && Math.floor(this.time.now / 100) % 2
-        ? 0xff9a40
-        : c.state === "stagger"
-          ? 0xffffff
-          : (CREATURE_COLOURS[c.kind] ?? 0xffffff),
-    );
+    const base = c.small ? 0.65 : 1;
+    block.setScale(winding ? base * 1.35 : base);
+    if (winding && Math.floor(this.time.now / 100) % 2) {
+      block.setTint(0xff9a40).setTintMode(Phaser.TintModes.MULTIPLY);
+    } else if (c.state === "stagger") {
+      block.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
+    } else block.clearTint();
     // A sleeping rock crab looks like a dull rock until the player comes near.
     const asleep = creatureById(c.kind)?.sleeper && c.state === "wander";
     block.setAlpha(c.state === "recover" ? 0.6 : asleep ? 0.55 : 1);
@@ -3260,7 +3595,9 @@ export class FarmScene extends Phaser.Scene {
    */
   private swing(weapon: WeaponDef): void {
     if (this.time.now < this.swingReady) return;
-    this.swingReady = this.time.now + weapon.cooldown * 1000;
+    this.swingReady =
+      this.time.now +
+      weapon.cooldown * this.state.combat.effects.swingFactor() * 1000;
     const ts = this.map.tileSize;
     // The sling shoots toward the mouse pointer, or the tapped spot on touch
     // (note 22, SC-94). Everything else, and a sling with no aim, goes the faced way.

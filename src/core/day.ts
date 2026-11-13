@@ -1,5 +1,5 @@
 import { Clock, DAY_END, DAY_START } from "./clock";
-import { Energy, MAX_ENERGY } from "./energy";
+import { Energy } from "./energy";
 
 /**
  * Passing out is a mild, recoverable loss: a share of money, capped, and a
@@ -22,7 +22,7 @@ export class Day {
   restore(day: number, energy: number, minutes = DAY_START): void {
     this.clock.day = day;
     this.clock.minutes = Math.min(Math.max(minutes, DAY_START), DAY_END);
-    this.energy.current = Math.min(Math.max(energy, 0), MAX_ENERGY);
+    this.energy.current = Math.min(Math.max(energy, 0), this.energy.max);
   }
 
   /** True once energy or time has run out, so the day must end. */
@@ -46,10 +46,12 @@ export class Day {
     const reason = this.energy.empty ? "energy" : "time";
     this.clock.nextDay();
     if (!passedOut) {
-      this.energy.restore(MAX_ENERGY);
+      this.energy.restore(this.energy.max);
       return { passedOut: false };
     }
-    this.energy.current = Math.round(MAX_ENERGY * PASS_OUT_WAKE_ENERGY[reason]);
+    this.energy.current = Math.round(
+      this.energy.max * PASS_OUT_WAKE_ENERGY[reason],
+    );
     return {
       passedOut: true,
       reason,

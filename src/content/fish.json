@@ -614,5 +614,17 @@
     "difficulty": 85,
     "sellPrice": 3000,
     "length": [150, 220]
+  },
+  {
+    "id": "fernscale",
+    "name": "Fernscale",
+    "water": "woods-pond",
+    "seasons": ["spring", "summer", "fall", "winter"],
+    "time": "dusk",
+    "rarity": "unique",
+    "behaviour": "sinker",
+    "difficulty": 60,
+    "sellPrice": 250,
+    "length": [25, 60]
   }
 ]

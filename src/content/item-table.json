@@ -1,0 +1,3713 @@
+[
+  {
+    "id": "algae-soup",
+    "name": "Algae soup",
+    "sellPrice": 100,
+    "energy": 80
+  },
+  {
+    "id": "amber-drop",
+    "name": "Amber drop",
+    "sellPrice": 80
+  },
+  {
+    "id": "amber-fly",
+    "name": "Amber-set fly",
+    "sellPrice": 140
+  },
+  {
+    "id": "apple",
+    "name": "Apple",
+    "sellPrice": 100,
+    "energy": 38
+  },
+  {
+    "id": "apple-dried",
+    "name": "Dried apple",
+    "sellPrice": 775,
+    "energy": 114
+  },
+  {
+    "id": "apple-jam",
+    "name": "Apple jam",
+    "sellPrice": 250
+  },
+  {
+    "id": "apple-sapling",
+    "name": "Apple sapling",
+    "sellPrice": 2000,
+    "buyPrice": 4000
+  },
+  {
+    "id": "apple-wine",
+    "name": "Apple wine",
+    "sellPrice": 300
+  },
+  {
+    "id": "apricot",
+    "name": "Apricot",
+    "sellPrice": 50,
+    "energy": 38
+  },
+  {
+    "id": "apricot-dried",
+    "name": "Dried apricot",
+    "sellPrice": 400,
+    "energy": 114
+  },
+  {
+    "id": "apricot-jam",
+    "name": "Apricot jam",
+    "sellPrice": 150
+  },
+  {
+    "id": "apricot-sapling",
+    "name": "Apricot sapling",
+    "sellPrice": 1000,
+    "buyPrice": 2000
+  },
+  {
+    "id": "apricot-wine",
+    "name": "Apricot wine",
+    "sellPrice": 150
+  },
+  {
+    "id": "arctic-char",
+    "name": "Arctic Char",
+    "sellPrice": 60
+  },
+  {
+    "id": "arctic-char-aged-roe",
+    "name": "Aged arctic char roe",
+    "sellPrice": 60
+  },
+  {
+    "id": "arctic-char-roe",
+    "name": "Arctic Char roe",
+    "sellPrice": 30
+  },
+  {
+    "id": "armchair",
+    "name": "Armchair",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "artichoke",
+    "name": "Artichoke",
+    "sellPrice": 160,
+    "energy": 30
+  },
+  {
+    "id": "artichoke-juice",
+    "name": "Artichoke juice",
+    "sellPrice": 360
+  },
+  {
+    "id": "artichoke-pickles",
+    "name": "Artichoke pickles",
+    "sellPrice": 370
+  },
+  {
+    "id": "artichoke-seed",
+    "name": "Artichoke seeds",
+    "sellPrice": 15,
+    "buyPrice": 30
+  },
+  {
+    "id": "baked-potato",
+    "name": "Baked potato",
+    "sellPrice": 70,
+    "energy": 90
+  },
+  {
+    "id": "basalt-onyx",
+    "name": "Basalt onyx",
+    "sellPrice": 150
+  },
+  {
+    "id": "basic-fertilizer",
+    "name": "Basic fertilizer",
+    "sellPrice": 2,
+    "buyPrice": 100
+  },
+  {
+    "id": "basic-retaining-soil",
+    "name": "Basic retaining soil",
+    "sellPrice": 4,
+    "buyPrice": 100
+  },
+  {
+    "id": "bat-wing",
+    "name": "Bat wing",
+    "sellPrice": 40
+  },
+  {
+    "id": "battery-pack",
+    "name": "Battery pack",
+    "sellPrice": 500
+  },
+  {
+    "id": "bee-house",
+    "name": "Bee house",
+    "sellPrice": 200
+  },
+  {
+    "id": "beer",
+    "name": "Beer",
+    "sellPrice": 200
+  },
+  {
+    "id": "beet",
+    "name": "Beet",
+    "sellPrice": 100,
+    "energy": 30
+  },
+  {
+    "id": "beet-juice",
+    "name": "Beet juice",
+    "sellPrice": 225
+  },
+  {
+    "id": "beet-pickles",
+    "name": "Beet pickles",
+    "sellPrice": 250
+  },
+  {
+    "id": "beet-seed",
+    "name": "Beet seeds",
+    "sellPrice": 10,
+    "buyPrice": 20
+  },
+  {
+    "id": "bent-key",
+    "name": "Bent key",
+    "sellPrice": 50
+  },
+  {
+    "id": "bent-spoon",
+    "name": "Bent spoon",
+    "sellPrice": 1
+  },
+  {
+    "id": "big-chest",
+    "name": "Big chest",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "big-stone-chest",
+    "name": "Big stone chest",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "bird-house",
+    "name": "Bird house",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "blue-dye",
+    "name": "Blue dye",
+    "sellPrice": 120
+  },
+  {
+    "id": "bogwhisker",
+    "name": "Bogwhisker",
+    "sellPrice": 50
+  },
+  {
+    "id": "bogwhisker-aged-roe",
+    "name": "Aged bogwhisker roe",
+    "sellPrice": 50
+  },
+  {
+    "id": "bogwhisker-roe",
+    "name": "Bogwhisker roe",
+    "sellPrice": 25
+  },
+  {
+    "id": "bomb",
+    "name": "Bomb",
+    "sellPrice": 0,
+    "buyPrice": 1000,
+    "keep": true
+  },
+  {
+    "id": "bookshelf",
+    "name": "Bookshelf",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "braided-rug",
+    "name": "Braided rug",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "bramble-berry",
+    "name": "Bramble berry",
+    "sellPrice": 20,
+    "energy": 25
+  },
+  {
+    "id": "bramble-berry-dried",
+    "name": "Dried bramble berry",
+    "sellPrice": 175,
+    "energy": 75
+  },
+  {
+    "id": "bramble-berry-jam",
+    "name": "Bramble berry jam",
+    "sellPrice": 90
+  },
+  {
+    "id": "bramble-berry-wine",
+    "name": "Bramble berry wine",
+    "sellPrice": 60
+  },
+  {
+    "id": "brass-button",
+    "name": "Brass Button",
+    "sellPrice": 60
+  },
+  {
+    "id": "bread",
+    "name": "Bread",
+    "sellPrice": 60,
+    "energy": 60
+  },
+  {
+    "id": "bronze-buckle",
+    "name": "Bronze buckle",
+    "sellPrice": 160
+  },
+  {
+    "id": "brook-jelly",
+    "name": "Brook jelly",
+    "sellPrice": 120
+  },
+  {
+    "id": "brookslip",
+    "name": "Brookslip",
+    "sellPrice": 45
+  },
+  {
+    "id": "brookslip-aged-roe",
+    "name": "Aged brookslip roe",
+    "sellPrice": 44
+  },
+  {
+    "id": "brookslip-roe",
+    "name": "Brookslip roe",
+    "sellPrice": 22
+  },
+  {
+    "id": "bug-meat",
+    "name": "Bug meat",
+    "sellPrice": 8
+  },
+  {
+    "id": "bullhead",
+    "name": "Bullhead",
+    "sellPrice": 120
+  },
+  {
+    "id": "bullhead-aged-roe",
+    "name": "Aged bullhead roe",
+    "sellPrice": 120
+  },
+  {
+    "id": "bullhead-roe",
+    "name": "Bullhead roe",
+    "sellPrice": 60
+  },
+  {
+    "id": "campfire",
+    "name": "Campfire",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "candle",
+    "name": "Candle",
+    "sellPrice": 60
+  },
+  {
+    "id": "carp",
+    "name": "Carp",
+    "sellPrice": 50
+  },
+  {
+    "id": "carp-aged-roe",
+    "name": "Aged carp roe",
+    "sellPrice": 50
+  },
+  {
+    "id": "carp-roe",
+    "name": "Carp roe",
+    "sellPrice": 25
+  },
+  {
+    "id": "carved-bead",
+    "name": "Carved bead",
+    "sellPrice": 55
+  },
+  {
+    "id": "cask",
+    "name": "Cask",
+    "sellPrice": 200
+  },
+  {
+    "id": "cat-tree",
+    "name": "Cat tree",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "catfish",
+    "name": "Catfish",
+    "sellPrice": 130
+  },
+  {
+    "id": "catfish-aged-roe",
+    "name": "Aged catfish roe",
+    "sellPrice": 130
+  },
+  {
+    "id": "catfish-roe",
+    "name": "Catfish roe",
+    "sellPrice": 65
+  },
+  {
+    "id": "cauliflower",
+    "name": "Cauliflower",
+    "sellPrice": 175,
+    "energy": 75
+  },
+  {
+    "id": "cauliflower-juice",
+    "name": "Cauliflower juice",
+    "sellPrice": 393
+  },
+  {
+    "id": "cauliflower-pickles",
+    "name": "Cauliflower pickles",
+    "sellPrice": 400
+  },
+  {
+    "id": "cauliflower-seed",
+    "name": "Cauliflower seeds",
+    "sellPrice": 40,
+    "buyPrice": 80
+  },
+  {
+    "id": "cave-mushroom",
+    "name": "Cave mushroom",
+    "sellPrice": 200,
+    "energy": 25
+  },
+  {
+    "id": "cave-mushroom-dried",
+    "name": "Dried cave mushroom",
+    "sellPrice": 1525,
+    "energy": 75
+  },
+  {
+    "id": "chanterelle",
+    "name": "Chanterelle",
+    "sellPrice": 160,
+    "energy": 75
+  },
+  {
+    "id": "chanterelle-dried",
+    "name": "Dried chanterelle",
+    "sellPrice": 1225,
+    "energy": 225
+  },
+  {
+    "id": "charcoal-kiln",
+    "name": "Charcoal kiln",
+    "sellPrice": 100
+  },
+  {
+    "id": "cheese",
+    "name": "Cheese",
+    "sellPrice": 300
+  },
+  {
+    "id": "cheese-melt",
+    "name": "Cheese melt",
+    "sellPrice": 240,
+    "energy": 160
+  },
+  {
+    "id": "cheese-press",
+    "name": "Cheese press",
+    "sellPrice": 200
+  },
+  {
+    "id": "cherry",
+    "name": "Cherry",
+    "sellPrice": 80,
+    "energy": 38
+  },
+  {
+    "id": "cherry-bomb",
+    "name": "Cherry bomb",
+    "sellPrice": 0,
+    "buyPrice": 450,
+    "keep": true
+  },
+  {
+    "id": "cherry-dried",
+    "name": "Dried cherry",
+    "sellPrice": 625,
+    "energy": 114
+  },
+  {
+    "id": "cherry-jam",
+    "name": "Cherry jam",
+    "sellPrice": 210
+  },
+  {
+    "id": "cherry-sapling",
+    "name": "Cherry sapling",
+    "sellPrice": 1700,
+    "buyPrice": 3400
+  },
+  {
+    "id": "cherry-wine",
+    "name": "Cherry wine",
+    "sellPrice": 240
+  },
+  {
+    "id": "chest",
+    "name": "Chest",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "chestnut",
+    "name": "Chestnut",
+    "sellPrice": 50,
+    "energy": 30
+  },
+  {
+    "id": "cinder-crystal",
+    "name": "Cinder crystal",
+    "sellPrice": 100
+  },
+  {
+    "id": "cinder-die",
+    "name": "Cinder die",
+    "sellPrice": 250
+  },
+  {
+    "id": "cinder-ruby",
+    "name": "Cinder ruby",
+    "sellPrice": 200
+  },
+  {
+    "id": "clay",
+    "name": "Clay",
+    "sellPrice": 20
+  },
+  {
+    "id": "clay-bottle",
+    "name": "Clay bottle",
+    "sellPrice": 65
+  },
+  {
+    "id": "climbers-pick",
+    "name": "Old climber's pick",
+    "sellPrice": 230
+  },
+  {
+    "id": "cloth",
+    "name": "Cloth",
+    "sellPrice": 470
+  },
+  {
+    "id": "clothes-chest",
+    "name": "Clothes chest",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "coal",
+    "name": "Coal",
+    "sellPrice": 15,
+    "buyPrice": 50
+  },
+  {
+    "id": "cockleshell",
+    "name": "Cockleshell",
+    "sellPrice": 60
+  },
+  {
+    "id": "cod",
+    "name": "Cod",
+    "sellPrice": 70
+  },
+  {
+    "id": "cod-aged-roe",
+    "name": "Aged cod roe",
+    "sellPrice": 70
+  },
+  {
+    "id": "cod-roe",
+    "name": "Cod roe",
+    "sellPrice": 35
+  },
+  {
+    "id": "cold-iron-ring",
+    "name": "Cold iron ring",
+    "sellPrice": 210
+  },
+  {
+    "id": "cold-quill",
+    "name": "Cold Quill",
+    "sellPrice": 50
+  },
+  {
+    "id": "cold-quill-aged-roe",
+    "name": "Aged cold quill roe",
+    "sellPrice": 50
+  },
+  {
+    "id": "cold-quill-roe",
+    "name": "Cold Quill roe",
+    "sellPrice": 25
+  },
+  {
+    "id": "coop-heater",
+    "name": "Coop heater",
+    "sellPrice": 0,
+    "buyPrice": 2000,
+    "keep": true
+  },
+  {
+    "id": "copper-bar",
+    "name": "Copper bar",
+    "sellPrice": 60
+  },
+  {
+    "id": "copper-ore",
+    "name": "Copper ore",
+    "sellPrice": 5,
+    "buyPrice": 25
+  },
+  {
+    "id": "copper-rolling-pin",
+    "name": "Copper Rolling Pin",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "copper-sling",
+    "name": "Copper Sling",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "copper-switch",
+    "name": "Copper Switch",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "corn",
+    "name": "Corn",
+    "sellPrice": 50,
+    "energy": 25
+  },
+  {
+    "id": "corn-juice",
+    "name": "Corn juice",
+    "sellPrice": 112
+  },
+  {
+    "id": "corn-pickles",
+    "name": "Corn pickles",
+    "sellPrice": 150
+  },
+  {
+    "id": "corn-seed",
+    "name": "Corn seeds",
+    "sellPrice": 75,
+    "buyPrice": 150
+  },
+  {
+    "id": "cornflower",
+    "name": "Cornflower",
+    "sellPrice": 50
+  },
+  {
+    "id": "cornflower-honey",
+    "name": "Cornflower honey",
+    "sellPrice": 200
+  },
+  {
+    "id": "cornflower-seed",
+    "name": "Cornflower seeds",
+    "sellPrice": 15,
+    "buyPrice": 30
+  },
+  {
+    "id": "cove-lantern",
+    "name": "Cove Lantern",
+    "sellPrice": 450
+  },
+  {
+    "id": "cove-lantern-aged-roe",
+    "name": "Aged cove lantern roe",
+    "sellPrice": 450
+  },
+  {
+    "id": "cove-lantern-roe",
+    "name": "Cove Lantern roe",
+    "sellPrice": 225
+  },
+  {
+    "id": "crab",
+    "name": "Crab",
+    "sellPrice": 60
+  },
+  {
+    "id": "crab-aged-roe",
+    "name": "Aged crab roe",
+    "sellPrice": 60
+  },
+  {
+    "id": "crab-apple",
+    "name": "Crab apple",
+    "sellPrice": 30,
+    "energy": 20
+  },
+  {
+    "id": "crab-apple-dried",
+    "name": "Dried crab apple",
+    "sellPrice": 250,
+    "energy": 60
+  },
+  {
+    "id": "crab-apple-jam",
+    "name": "Crab apple jam",
+    "sellPrice": 110
+  },
+  {
+    "id": "crab-apple-wine",
+    "name": "Crab apple wine",
+    "sellPrice": 90
+  },
+  {
+    "id": "crab-roe",
+    "name": "Crab roe",
+    "sellPrice": 30
+  },
+  {
+    "id": "crabshell-ring",
+    "name": "Crabshell ring",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "cracked-jar",
+    "name": "Cracked jar",
+    "sellPrice": 1
+  },
+  {
+    "id": "cracked-locket",
+    "name": "Cracked Locket",
+    "sellPrice": 90
+  },
+  {
+    "id": "cranberry",
+    "name": "Cranberry",
+    "sellPrice": 75,
+    "energy": 38
+  },
+  {
+    "id": "cranberry-dried",
+    "name": "Dried cranberry",
+    "sellPrice": 587,
+    "energy": 114
+  },
+  {
+    "id": "cranberry-jam",
+    "name": "Cranberry jam",
+    "sellPrice": 200
+  },
+  {
+    "id": "cranberry-seed",
+    "name": "Cranberry seeds",
+    "sellPrice": 120,
+    "buyPrice": 240
+  },
+  {
+    "id": "cranberry-wine",
+    "name": "Cranberry wine",
+    "sellPrice": 225
+  },
+  {
+    "id": "crayfish",
+    "name": "Crayfish",
+    "sellPrice": 40
+  },
+  {
+    "id": "crayfish-aged-roe",
+    "name": "Aged crayfish roe",
+    "sellPrice": 40
+  },
+  {
+    "id": "crayfish-roe",
+    "name": "Crayfish roe",
+    "sellPrice": 20
+  },
+  {
+    "id": "crocus",
+    "name": "Crocus",
+    "sellPrice": 60
+  },
+  {
+    "id": "crowned-tunny",
+    "name": "Crowned Tunny",
+    "sellPrice": 350
+  },
+  {
+    "id": "crowned-tunny-aged-roe",
+    "name": "Aged crowned tunny roe",
+    "sellPrice": 350
+  },
+  {
+    "id": "crowned-tunny-roe",
+    "name": "Crowned Tunny roe",
+    "sellPrice": 175
+  },
+  {
+    "id": "crystalarium",
+    "name": "Crystalarium",
+    "sellPrice": 500
+  },
+  {
+    "id": "daffodil",
+    "name": "Daffodil",
+    "sellPrice": 30
+  },
+  {
+    "id": "dahlia",
+    "name": "Dahlia",
+    "sellPrice": 290
+  },
+  {
+    "id": "dahlia-honey",
+    "name": "Dahlia honey",
+    "sellPrice": 680
+  },
+  {
+    "id": "dahlia-seed",
+    "name": "Dahlia seeds",
+    "sellPrice": 100,
+    "buyPrice": 200
+  },
+  {
+    "id": "dandelion",
+    "name": "Dandelion",
+    "sellPrice": 40,
+    "energy": 25
+  },
+  {
+    "id": "dark-cat-tree",
+    "name": "Dark cat tree",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "dark-doghouse",
+    "name": "Dark doghouse",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "deepglow",
+    "name": "Deepglow",
+    "sellPrice": 700
+  },
+  {
+    "id": "deepglow-aged-roe",
+    "name": "Aged deepglow roe",
+    "sellPrice": 700
+  },
+  {
+    "id": "deepglow-roe",
+    "name": "Deepglow roe",
+    "sellPrice": 350
+  },
+  {
+    "id": "deepmark-key",
+    "name": "Deepmark key",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "deepwater-aquamarine",
+    "name": "Deepwater aquamarine",
+    "sellPrice": 150
+  },
+  {
+    "id": "defense-ring",
+    "name": "Defense ring",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "dehydrator",
+    "name": "Dehydrator",
+    "sellPrice": 300
+  },
+  {
+    "id": "delvers-boots",
+    "name": "Delver's boots",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "doghouse",
+    "name": "Doghouse",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "driftwood",
+    "name": "Driftwood",
+    "sellPrice": 1
+  },
+  {
+    "id": "drowned-locket",
+    "name": "Drowned locket",
+    "sellPrice": 190
+  },
+  {
+    "id": "duck-egg",
+    "name": "Duck egg",
+    "sellPrice": 95,
+    "energy": 75
+  },
+  {
+    "id": "duck-mayonnaise",
+    "name": "Duck mayonnaise",
+    "sellPrice": 285
+  },
+  {
+    "id": "dune-jade",
+    "name": "Dune jade",
+    "sellPrice": 100
+  },
+  {
+    "id": "dusk-opal",
+    "name": "Dusk Opal",
+    "sellPrice": 620
+  },
+  {
+    "id": "dusk-opal-aged-roe",
+    "name": "Aged dusk opal roe",
+    "sellPrice": 620
+  },
+  {
+    "id": "dusk-opal-roe",
+    "name": "Dusk Opal roe",
+    "sellPrice": 310
+  },
+  {
+    "id": "dwarf-cup",
+    "name": "Old dwarf cup",
+    "sellPrice": 40
+  },
+  {
+    "id": "dye-vat",
+    "name": "Dye vat",
+    "sellPrice": 250
+  },
+  {
+    "id": "echo-pike",
+    "name": "Echo Pike",
+    "sellPrice": 150
+  },
+  {
+    "id": "echo-pike-aged-roe",
+    "name": "Aged echo pike roe",
+    "sellPrice": 150
+  },
+  {
+    "id": "echo-pike-roe",
+    "name": "Echo Pike roe",
+    "sellPrice": 75
+  },
+  {
+    "id": "egg",
+    "name": "Egg",
+    "sellPrice": 50,
+    "energy": 50
+  },
+  {
+    "id": "eggplant",
+    "name": "Eggplant",
+    "sellPrice": 60,
+    "energy": 20
+  },
+  {
+    "id": "eggplant-juice",
+    "name": "Eggplant juice",
+    "sellPrice": 135
+  },
+  {
+    "id": "eggplant-pickles",
+    "name": "Eggplant pickles",
+    "sellPrice": 170
+  },
+  {
+    "id": "eggplant-seed",
+    "name": "Eggplant seeds",
+    "sellPrice": 10,
+    "buyPrice": 20
+  },
+  {
+    "id": "elderfruit",
+    "name": "Elderfruit",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "elf-letter",
+    "name": "Letter to the elves",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "ember-berry",
+    "name": "Ember berry",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "ember-berry-seed",
+    "name": "Emberseed",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "ember-boots",
+    "name": "Ember boots",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "ember-lantern",
+    "name": "Ember lantern",
+    "sellPrice": 200
+  },
+  {
+    "id": "ember-signet",
+    "name": "Ember signet",
+    "sellPrice": 450
+  },
+  {
+    "id": "ember-topaz",
+    "name": "Ember topaz",
+    "sellPrice": 220
+  },
+  {
+    "id": "ember-trout",
+    "name": "Ember Trout",
+    "sellPrice": 140
+  },
+  {
+    "id": "ember-trout-aged-roe",
+    "name": "Aged ember trout roe",
+    "sellPrice": 140
+  },
+  {
+    "id": "ember-trout-roe",
+    "name": "Ember Trout roe",
+    "sellPrice": 70
+  },
+  {
+    "id": "faded-ribbon",
+    "name": "Faded ribbon",
+    "sellPrice": 45
+  },
+  {
+    "id": "feather",
+    "name": "Duck feather",
+    "sellPrice": 250
+  },
+  {
+    "id": "fernfin",
+    "name": "Fernfin",
+    "sellPrice": 130
+  },
+  {
+    "id": "fernfin-aged-roe",
+    "name": "Aged fernfin roe",
+    "sellPrice": 130
+  },
+  {
+    "id": "fernfin-roe",
+    "name": "Fernfin roe",
+    "sellPrice": 65
+  },
+  {
+    "id": "fernscale",
+    "name": "Fernscale",
+    "sellPrice": 250
+  },
+  {
+    "id": "fernscale-aged-roe",
+    "name": "Aged fernscale roe",
+    "sellPrice": 250
+  },
+  {
+    "id": "fernscale-roe",
+    "name": "Fernscale roe",
+    "sellPrice": 125
+  },
+  {
+    "id": "ferrywhisker",
+    "name": "Ferrywhisker",
+    "sellPrice": 120
+  },
+  {
+    "id": "ferrywhisker-aged-roe",
+    "name": "Aged ferrywhisker roe",
+    "sellPrice": 120
+  },
+  {
+    "id": "ferrywhisker-roe",
+    "name": "Ferrywhisker roe",
+    "sellPrice": 60
+  },
+  {
+    "id": "fiber",
+    "name": "Fiber",
+    "sellPrice": 1
+  },
+  {
+    "id": "fiddlehead-fern",
+    "name": "Fiddlehead fern",
+    "sellPrice": 90,
+    "energy": 25
+  },
+  {
+    "id": "field-mushroom",
+    "name": "Field mushroom",
+    "sellPrice": 40,
+    "energy": 38
+  },
+  {
+    "id": "field-mushroom-dried",
+    "name": "Dried field mushroom",
+    "sellPrice": 325,
+    "energy": 114
+  },
+  {
+    "id": "fine-bait",
+    "name": "Fine Bait",
+    "sellPrice": 0,
+    "buyPrice": 12,
+    "keep": true
+  },
+  {
+    "id": "fireside-chair",
+    "name": "Fireside chair",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "first-hall-nail",
+    "name": "First hall nail",
+    "sellPrice": 500
+  },
+  {
+    "id": "fisher-stew",
+    "name": "Fisher's stew",
+    "sellPrice": 220,
+    "energy": 150
+  },
+  {
+    "id": "flint-arrowhead",
+    "name": "Flint arrowhead",
+    "sellPrice": 70
+  },
+  {
+    "id": "floor-planks",
+    "name": "Plank flooring",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "floor-slate",
+    "name": "Slate flooring",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "forge-jasper",
+    "name": "Forge jasper",
+    "sellPrice": 180
+  },
+  {
+    "id": "fox-tooth-whistle",
+    "name": "Fox tooth whistle",
+    "sellPrice": 200
+  },
+  {
+    "id": "fried-egg",
+    "name": "Fried egg",
+    "sellPrice": 35,
+    "energy": 75
+  },
+  {
+    "id": "frost-berry",
+    "name": "Frost berry",
+    "sellPrice": 40,
+    "energy": 30
+  },
+  {
+    "id": "frost-opal",
+    "name": "Frost opal",
+    "sellPrice": 120
+  },
+  {
+    "id": "frost-root",
+    "name": "Frost root",
+    "sellPrice": 70,
+    "energy": 10
+  },
+  {
+    "id": "frost-shelf",
+    "name": "Frost shelf",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "frostfin",
+    "name": "Frostfin",
+    "sellPrice": 300
+  },
+  {
+    "id": "frozen-geode",
+    "name": "Frozen Geode",
+    "sellPrice": 100
+  },
+  {
+    "id": "frozen-thimble",
+    "name": "Frozen thimble",
+    "sellPrice": 100
+  },
+  {
+    "id": "furnace",
+    "name": "Furnace",
+    "sellPrice": 150
+  },
+  {
+    "id": "furniture-catalogue",
+    "name": "Furniture Catalogue",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "garden-salad",
+    "name": "Garden salad",
+    "sellPrice": 110,
+    "energy": 110
+  },
+  {
+    "id": "garlic",
+    "name": "Garlic",
+    "sellPrice": 60,
+    "energy": 20
+  },
+  {
+    "id": "garlic-juice",
+    "name": "Garlic juice",
+    "sellPrice": 135
+  },
+  {
+    "id": "garlic-pickles",
+    "name": "Garlic pickles",
+    "sellPrice": 170
+  },
+  {
+    "id": "garlic-seed",
+    "name": "Garlic seeds",
+    "sellPrice": 20,
+    "buyPrice": 40
+  },
+  {
+    "id": "gem-high-a",
+    "name": "High gem A",
+    "sellPrice": 400
+  },
+  {
+    "id": "gem-high-b",
+    "name": "Diamond",
+    "sellPrice": 750
+  },
+  {
+    "id": "gem-low-a",
+    "name": "Low gem A",
+    "sellPrice": 50
+  },
+  {
+    "id": "gem-low-b",
+    "name": "Low gem B",
+    "sellPrice": 75
+  },
+  {
+    "id": "gem-mid-a",
+    "name": "Mid gem A",
+    "sellPrice": 150
+  },
+  {
+    "id": "gem-mid-b",
+    "name": "Mid gem B",
+    "sellPrice": 250
+  },
+  {
+    "id": "geode",
+    "name": "Geode",
+    "sellPrice": 50
+  },
+  {
+    "id": "geode-crusher",
+    "name": "Geode crusher",
+    "sellPrice": 300
+  },
+  {
+    "id": "glacier-ghost",
+    "name": "Glacier Ghost",
+    "sellPrice": 320
+  },
+  {
+    "id": "glacier-ghost-aged-roe",
+    "name": "Aged glacier ghost roe",
+    "sellPrice": 320
+  },
+  {
+    "id": "glacier-ghost-roe",
+    "name": "Glacier Ghost roe",
+    "sellPrice": 160
+  },
+  {
+    "id": "glacier-topaz",
+    "name": "Glacier topaz",
+    "sellPrice": 130
+  },
+  {
+    "id": "glass-bead",
+    "name": "Glass Bead",
+    "sellPrice": 45
+  },
+  {
+    "id": "glassy-elver",
+    "name": "Glassy Elver",
+    "sellPrice": 300
+  },
+  {
+    "id": "glassy-elver-aged-roe",
+    "name": "Aged glassy elver roe",
+    "sellPrice": 300
+  },
+  {
+    "id": "glassy-elver-roe",
+    "name": "Glassy Elver roe",
+    "sellPrice": 150
+  },
+  {
+    "id": "glimmerstone",
+    "name": "Glimmerstone",
+    "sellPrice": 1000
+  },
+  {
+    "id": "glint-lure",
+    "name": "Glint Lure",
+    "sellPrice": 0,
+    "buyPrice": 250,
+    "keep": true
+  },
+  {
+    "id": "gloop-jelly",
+    "name": "Gloop jelly",
+    "sellPrice": 12
+  },
+  {
+    "id": "glow-jelly",
+    "name": "Glow jelly",
+    "sellPrice": 180
+  },
+  {
+    "id": "glow-ring",
+    "name": "Glow ring",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "goat-cheese",
+    "name": "Goat cheese",
+    "sellPrice": 540
+  },
+  {
+    "id": "goat-milk",
+    "name": "Goat milk",
+    "sellPrice": 225
+  },
+  {
+    "id": "gold-bar",
+    "name": "Gold bar",
+    "sellPrice": 250
+  },
+  {
+    "id": "gold-ore",
+    "name": "Gold ore",
+    "sellPrice": 25,
+    "buyPrice": 100
+  },
+  {
+    "id": "gold-rolling-pin",
+    "name": "Gold Rolling Pin",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "gold-sling",
+    "name": "Gold Sling",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "gold-switch",
+    "name": "Gold Switch",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "gourd-lamp",
+    "name": "Carved gourd lamp",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "grandmother-hush",
+    "name": "Grandmother Hush",
+    "sellPrice": 3000
+  },
+  {
+    "id": "grandmother-hush-aged-roe",
+    "name": "Aged grandmother hush roe",
+    "sellPrice": 3000
+  },
+  {
+    "id": "grandmother-hush-roe",
+    "name": "Grandmother Hush roe",
+    "sellPrice": 1500
+  },
+  {
+    "id": "granite-gudgeon",
+    "name": "Granite Gudgeon",
+    "sellPrice": 120
+  },
+  {
+    "id": "granite-gudgeon-aged-roe",
+    "name": "Aged granite gudgeon roe",
+    "sellPrice": 120
+  },
+  {
+    "id": "granite-gudgeon-roe",
+    "name": "Granite Gudgeon roe",
+    "sellPrice": 60
+  },
+  {
+    "id": "grape",
+    "name": "Wild grape",
+    "sellPrice": 80,
+    "energy": 38
+  },
+  {
+    "id": "grape-dried",
+    "name": "Dried wild grape",
+    "sellPrice": 625,
+    "energy": 114
+  },
+  {
+    "id": "grape-jam",
+    "name": "Wild grape jam",
+    "sellPrice": 210
+  },
+  {
+    "id": "grape-wine",
+    "name": "Wild grape wine",
+    "sellPrice": 240
+  },
+  {
+    "id": "great-hearthfin",
+    "name": "Great Hearthfin",
+    "sellPrice": 3000
+  },
+  {
+    "id": "great-hearthfin-aged-roe",
+    "name": "Aged great hearthfin roe",
+    "sellPrice": 3000
+  },
+  {
+    "id": "great-hearthfin-roe",
+    "name": "Great Hearthfin roe",
+    "sellPrice": 1500
+  },
+  {
+    "id": "green-bean",
+    "name": "Green bean",
+    "sellPrice": 40,
+    "energy": 25
+  },
+  {
+    "id": "green-bean-juice",
+    "name": "Green bean juice",
+    "sellPrice": 90
+  },
+  {
+    "id": "green-bean-pickles",
+    "name": "Green bean pickles",
+    "sellPrice": 130
+  },
+  {
+    "id": "green-bean-seed",
+    "name": "Green bean seeds",
+    "sellPrice": 30,
+    "buyPrice": 60
+  },
+  {
+    "id": "green-dye",
+    "name": "Green dye",
+    "sellPrice": 120
+  },
+  {
+    "id": "green-glass-lantern",
+    "name": "Green-glass lantern",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "green-tea",
+    "name": "Green tea",
+    "sellPrice": 100
+  },
+  {
+    "id": "hanging-planter",
+    "name": "Hanging planter",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "harbour-ray",
+    "name": "Harbour Ray",
+    "sellPrice": 160
+  },
+  {
+    "id": "harbour-ray-aged-roe",
+    "name": "Aged harbour ray roe",
+    "sellPrice": 160
+  },
+  {
+    "id": "harbour-ray-roe",
+    "name": "Harbour Ray roe",
+    "sellPrice": 80
+  },
+  {
+    "id": "hardwood",
+    "name": "Hardwood",
+    "sellPrice": 15
+  },
+  {
+    "id": "harvest-bench",
+    "name": "Harvest bench",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "harvest-hotpot",
+    "name": "Harvest hotpot",
+    "sellPrice": 240,
+    "energy": 170
+  },
+  {
+    "id": "hay",
+    "name": "Hay",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "hay-bale-seat",
+    "name": "Hay bale seat",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "hazel-rod",
+    "name": "Hazel Rod",
+    "sellPrice": 0,
+    "buyPrice": 400,
+    "keep": true
+  },
+  {
+    "id": "hazel-stone",
+    "name": "Hazel stone",
+    "sellPrice": 60
+  },
+  {
+    "id": "hazel-switch",
+    "name": "Hazel Switch",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "hazelnut",
+    "name": "Hazelnut",
+    "sellPrice": 90,
+    "energy": 30
+  },
+  {
+    "id": "heartfire-diamond",
+    "name": "Heartfire diamond",
+    "sellPrice": 250
+  },
+  {
+    "id": "hearthside-dace",
+    "name": "Hearthside Dace",
+    "sellPrice": 110
+  },
+  {
+    "id": "hearthside-dace-aged-roe",
+    "name": "Aged hearthside dace roe",
+    "sellPrice": 110
+  },
+  {
+    "id": "hearthside-dace-roe",
+    "name": "Hearthside Dace roe",
+    "sellPrice": 55
+  },
+  {
+    "id": "hearthsilver-bar",
+    "name": "Hearthsilver bar",
+    "sellPrice": 1000
+  },
+  {
+    "id": "hearthsilver-ore",
+    "name": "Hearthsilver ore",
+    "sellPrice": 100
+  },
+  {
+    "id": "hearthsilver-rolling-pin",
+    "name": "Hearthsilver Rolling Pin",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "hearthsilver-sling",
+    "name": "Hearthsilver Sling",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "hearthsilver-switch",
+    "name": "Hearthsilver Switch",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "hearthwell-carp",
+    "name": "The Hearthwell Carp",
+    "sellPrice": 4000
+  },
+  {
+    "id": "hearthwell-carp-aged-roe",
+    "name": "Aged the hearthwell carp roe",
+    "sellPrice": 4000
+  },
+  {
+    "id": "hearthwell-carp-roe",
+    "name": "The Hearthwell Carp roe",
+    "sellPrice": 2000
+  },
+  {
+    "id": "hearthwell-rod",
+    "name": "Hearthwell Rod",
+    "sellPrice": 0,
+    "buyPrice": 4000,
+    "keep": true
+  },
+  {
+    "id": "hearty-omelette",
+    "name": "Hearty omelette",
+    "sellPrice": 100,
+    "energy": 125
+  },
+  {
+    "id": "heavy-tapper",
+    "name": "Heavy tapper",
+    "sellPrice": 100
+  },
+  {
+    "id": "herb-tea",
+    "name": "Herb tea",
+    "sellPrice": 80,
+    "energy": 50
+  },
+  {
+    "id": "hermit-trout",
+    "name": "Hermit Trout",
+    "sellPrice": 300
+  },
+  {
+    "id": "hermit-trout-aged-roe",
+    "name": "Aged hermit trout roe",
+    "sellPrice": 300
+  },
+  {
+    "id": "hermit-trout-roe",
+    "name": "Hermit Trout roe",
+    "sellPrice": 150
+  },
+  {
+    "id": "hermits-ledger",
+    "name": "Hermit's ledger",
+    "sellPrice": 240
+  },
+  {
+    "id": "heron-quill-pen",
+    "name": "Heron quill pen",
+    "sellPrice": 85
+  },
+  {
+    "id": "heron-rod",
+    "name": "Heron Rod",
+    "sellPrice": 0,
+    "buyPrice": 1500,
+    "keep": true
+  },
+  {
+    "id": "herring",
+    "name": "Herring",
+    "sellPrice": 100
+  },
+  {
+    "id": "herring-aged-roe",
+    "name": "Aged herring roe",
+    "sellPrice": 100
+  },
+  {
+    "id": "herring-roe",
+    "name": "Herring roe",
+    "sellPrice": 50
+  },
+  {
+    "id": "hollow-acorn-charm",
+    "name": "Hollow acorn charm",
+    "sellPrice": 90
+  },
+  {
+    "id": "holly-sprig",
+    "name": "Holly sprig",
+    "sellPrice": 80
+  },
+  {
+    "id": "homeward-pin",
+    "name": "Homeward pin",
+    "sellPrice": 0,
+    "buyPrice": 1500000,
+    "keep": true
+  },
+  {
+    "id": "honey",
+    "name": "Honey",
+    "sellPrice": 100
+  },
+  {
+    "id": "honey-cake",
+    "name": "Honey cake",
+    "sellPrice": 160,
+    "energy": 120
+  },
+  {
+    "id": "hops",
+    "name": "Hops",
+    "sellPrice": 25
+  },
+  {
+    "id": "hops-seed",
+    "name": "Hops seeds",
+    "sellPrice": 30,
+    "buyPrice": 60
+  },
+  {
+    "id": "horseradish",
+    "name": "Wild horseradish",
+    "sellPrice": 50,
+    "energy": 13
+  },
+  {
+    "id": "hot-pepper",
+    "name": "Hot pepper",
+    "sellPrice": 40,
+    "energy": 13
+  },
+  {
+    "id": "hot-pepper-dried",
+    "name": "Dried hot pepper",
+    "sellPrice": 325,
+    "energy": 39
+  },
+  {
+    "id": "hot-pepper-jam",
+    "name": "Hot pepper jam",
+    "sellPrice": 130
+  },
+  {
+    "id": "hot-pepper-seed",
+    "name": "Hot pepper seeds",
+    "sellPrice": 20,
+    "buyPrice": 40
+  },
+  {
+    "id": "hot-pepper-wine",
+    "name": "Hot pepper wine",
+    "sellPrice": 120
+  },
+  {
+    "id": "hush",
+    "name": "Hush",
+    "sellPrice": 650
+  },
+  {
+    "id": "hush-aged-roe",
+    "name": "Aged hush roe",
+    "sellPrice": 650
+  },
+  {
+    "id": "hush-roe",
+    "name": "Hush roe",
+    "sellPrice": 325
+  },
+  {
+    "id": "ice-bell",
+    "name": "Ice bell",
+    "sellPrice": 120
+  },
+  {
+    "id": "ice-shard",
+    "name": "Ice shard",
+    "sellPrice": 20
+  },
+  {
+    "id": "indigo-dye",
+    "name": "Indigo dye",
+    "sellPrice": 120
+  },
+  {
+    "id": "inn-custard",
+    "name": "Inn custard",
+    "sellPrice": 130,
+    "energy": 120
+  },
+  {
+    "id": "innkeepers-roast",
+    "name": "Innkeeper's roast",
+    "sellPrice": 260,
+    "energy": 180
+  },
+  {
+    "id": "iron-bar",
+    "name": "Iron bar",
+    "sellPrice": 120
+  },
+  {
+    "id": "iron-lamp-post",
+    "name": "Iron lamp-post",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "iron-ore",
+    "name": "Iron ore",
+    "sellPrice": 10,
+    "buyPrice": 50
+  },
+  {
+    "id": "iron-rolling-pin",
+    "name": "Iron Rolling Pin",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "iron-sling",
+    "name": "Iron Sling",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "iron-switch",
+    "name": "Iron Switch",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "kale",
+    "name": "Kale",
+    "sellPrice": 110,
+    "energy": 50
+  },
+  {
+    "id": "kale-juice",
+    "name": "Kale juice",
+    "sellPrice": 247
+  },
+  {
+    "id": "kale-pickles",
+    "name": "Kale pickles",
+    "sellPrice": 270
+  },
+  {
+    "id": "kale-seed",
+    "name": "Kale seeds",
+    "sellPrice": 35,
+    "buyPrice": 70
+  },
+  {
+    "id": "keepsake-lantern",
+    "name": "Keepsake lantern",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "keg",
+    "name": "Keg",
+    "sellPrice": 250
+  },
+  {
+    "id": "kelp-ribbon",
+    "name": "Kelp Ribbon",
+    "sellPrice": 110
+  },
+  {
+    "id": "kelp-ribbon-aged-roe",
+    "name": "Aged kelp ribbon roe",
+    "sellPrice": 110
+  },
+  {
+    "id": "kelp-ribbon-roe",
+    "name": "Kelp Ribbon roe",
+    "sellPrice": 55
+  },
+  {
+    "id": "ladle-snail",
+    "name": "Ladle Snail",
+    "sellPrice": 70
+  },
+  {
+    "id": "ladle-snail-aged-roe",
+    "name": "Aged ladle snail roe",
+    "sellPrice": 70
+  },
+  {
+    "id": "ladle-snail-roe",
+    "name": "Ladle Snail roe",
+    "sellPrice": 35
+  },
+  {
+    "id": "lamp-wick-tin",
+    "name": "Lamp wick tin",
+    "sellPrice": 65
+  },
+  {
+    "id": "lantern-squid",
+    "name": "Lantern Squid",
+    "sellPrice": 170
+  },
+  {
+    "id": "lantern-squid-aged-roe",
+    "name": "Aged lantern squid roe",
+    "sellPrice": 170
+  },
+  {
+    "id": "lantern-squid-roe",
+    "name": "Lantern Squid roe",
+    "sellPrice": 85
+  },
+  {
+    "id": "lava-glass",
+    "name": "Lava glass",
+    "sellPrice": 160
+  },
+  {
+    "id": "leek",
+    "name": "Wild leek",
+    "sellPrice": 60,
+    "energy": 40
+  },
+  {
+    "id": "life-elixir",
+    "name": "Life Elixir",
+    "sellPrice": 0,
+    "buyPrice": 2000,
+    "keep": true
+  },
+  {
+    "id": "lightning-rod",
+    "name": "Lightning rod",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "loam-crystal",
+    "name": "Loam crystal",
+    "sellPrice": 50
+  },
+  {
+    "id": "loom",
+    "name": "Loom",
+    "sellPrice": 250
+  },
+  {
+    "id": "mackerel",
+    "name": "Mackerel",
+    "sellPrice": 60
+  },
+  {
+    "id": "mackerel-aged-roe",
+    "name": "Aged mackerel roe",
+    "sellPrice": 60
+  },
+  {
+    "id": "mackerel-roe",
+    "name": "Mackerel roe",
+    "sellPrice": 30
+  },
+  {
+    "id": "magma-geode",
+    "name": "Magma Geode",
+    "sellPrice": 150
+  },
+  {
+    "id": "magnet-ring",
+    "name": "Magnet ring",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "magpie-hook",
+    "name": "Magpie Hook",
+    "sellPrice": 0,
+    "buyPrice": 300,
+    "keep": true
+  },
+  {
+    "id": "mahogany-seed",
+    "name": "Mahogany Seed",
+    "sellPrice": 20
+  },
+  {
+    "id": "maple-seed",
+    "name": "Maple seed",
+    "sellPrice": 5
+  },
+  {
+    "id": "maple-syrup",
+    "name": "Maple syrup",
+    "sellPrice": 200
+  },
+  {
+    "id": "market-pie",
+    "name": "Market pie",
+    "sellPrice": 160,
+    "energy": 140
+  },
+  {
+    "id": "marsh-clam",
+    "name": "Marsh Clam",
+    "sellPrice": 90
+  },
+  {
+    "id": "marsh-clam-aged-roe",
+    "name": "Aged marsh clam roe",
+    "sellPrice": 90
+  },
+  {
+    "id": "marsh-clam-roe",
+    "name": "Marsh Clam roe",
+    "sellPrice": 45
+  },
+  {
+    "id": "marshlight",
+    "name": "Marshlight",
+    "sellPrice": 45
+  },
+  {
+    "id": "marshlight-aged-roe",
+    "name": "Aged marshlight roe",
+    "sellPrice": 44
+  },
+  {
+    "id": "marshlight-roe",
+    "name": "Marshlight roe",
+    "sellPrice": 22
+  },
+  {
+    "id": "mayo-slaw",
+    "name": "Mayonnaise slaw",
+    "sellPrice": 260,
+    "energy": 140
+  },
+  {
+    "id": "mayonnaise",
+    "name": "Mayonnaise",
+    "sellPrice": 150
+  },
+  {
+    "id": "mayonnaise-machine",
+    "name": "Mayonnaise machine",
+    "sellPrice": 200
+  },
+  {
+    "id": "mead",
+    "name": "Mead",
+    "sellPrice": 300
+  },
+  {
+    "id": "mega-bomb",
+    "name": "Mega bomb",
+    "sellPrice": 0,
+    "buyPrice": 1600,
+    "keep": true
+  },
+  {
+    "id": "melon",
+    "name": "Melon",
+    "sellPrice": 250,
+    "energy": 113
+  },
+  {
+    "id": "melon-dried",
+    "name": "Dried melon",
+    "sellPrice": 1900,
+    "energy": 339
+  },
+  {
+    "id": "melon-jam",
+    "name": "Melon jam",
+    "sellPrice": 550
+  },
+  {
+    "id": "melon-seed",
+    "name": "Melon seeds",
+    "sellPrice": 40,
+    "buyPrice": 80
+  },
+  {
+    "id": "melon-wine",
+    "name": "Melon wine",
+    "sellPrice": 750
+  },
+  {
+    "id": "milk",
+    "name": "Milk",
+    "sellPrice": 125
+  },
+  {
+    "id": "millrun",
+    "name": "Millrun",
+    "sellPrice": 55
+  },
+  {
+    "id": "millrun-aged-roe",
+    "name": "Aged millrun roe",
+    "sellPrice": 54
+  },
+  {
+    "id": "millrun-roe",
+    "name": "Millrun roe",
+    "sellPrice": 27
+  },
+  {
+    "id": "miners-button",
+    "name": "Miner's button",
+    "sellPrice": 75
+  },
+  {
+    "id": "miners-treat",
+    "name": "Miner's Treat",
+    "sellPrice": 0,
+    "buyPrice": 1000,
+    "energy": 100,
+    "keep": true
+  },
+  {
+    "id": "mixed-seed",
+    "name": "Mixed seeds",
+    "sellPrice": 5
+  },
+  {
+    "id": "moonlit-mother",
+    "name": "Moonlit Mother",
+    "sellPrice": 3500
+  },
+  {
+    "id": "moonlit-mother-aged-roe",
+    "name": "Aged moonlit mother roe",
+    "sellPrice": 3500
+  },
+  {
+    "id": "moonlit-mother-roe",
+    "name": "Moonlit Mother roe",
+    "sellPrice": 1750
+  },
+  {
+    "id": "moonmirror",
+    "name": "Moonmirror",
+    "sellPrice": 160
+  },
+  {
+    "id": "moonmirror-aged-roe",
+    "name": "Aged moonmirror roe",
+    "sellPrice": 160
+  },
+  {
+    "id": "moonmirror-roe",
+    "name": "Moonmirror roe",
+    "sellPrice": 80
+  },
+  {
+    "id": "moonwool",
+    "name": "Moonwool",
+    "sellPrice": 1200
+  },
+  {
+    "id": "morel",
+    "name": "Morel",
+    "sellPrice": 150,
+    "energy": 20
+  },
+  {
+    "id": "morel-dried",
+    "name": "Dried morel",
+    "sellPrice": 1150,
+    "energy": 60
+  },
+  {
+    "id": "moss",
+    "name": "Moss",
+    "sellPrice": 5
+  },
+  {
+    "id": "moss-agate",
+    "name": "Moss agate",
+    "sellPrice": 50
+  },
+  {
+    "id": "mossy-compass",
+    "name": "Mossy compass",
+    "sellPrice": 150
+  },
+  {
+    "id": "moth-dust",
+    "name": "Moth dust",
+    "sellPrice": 30
+  },
+  {
+    "id": "moth-lure",
+    "name": "Moth Lure",
+    "sellPrice": 0,
+    "buyPrice": 150,
+    "keep": true
+  },
+  {
+    "id": "mudlark-trinket",
+    "name": "Mudlark trinket",
+    "sellPrice": 95
+  },
+  {
+    "id": "mullet",
+    "name": "Mullet",
+    "sellPrice": 55
+  },
+  {
+    "id": "mullet-aged-roe",
+    "name": "Aged mullet roe",
+    "sellPrice": 54
+  },
+  {
+    "id": "mullet-roe",
+    "name": "Mullet roe",
+    "sellPrice": 27
+  },
+  {
+    "id": "mushroom-loach",
+    "name": "Mushroom Loach",
+    "sellPrice": 140
+  },
+  {
+    "id": "mushroom-loach-aged-roe",
+    "name": "Aged mushroom loach roe",
+    "sellPrice": 140
+  },
+  {
+    "id": "mushroom-loach-roe",
+    "name": "Mushroom Loach roe",
+    "sellPrice": 70
+  },
+  {
+    "id": "mushroom-stew",
+    "name": "Mushroom stew",
+    "sellPrice": 190,
+    "energy": 150
+  },
+  {
+    "id": "net-sinker",
+    "name": "Stone net sinker",
+    "sellPrice": 180
+  },
+  {
+    "id": "oak-chair",
+    "name": "Oak chair",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "oak-resin",
+    "name": "Oak resin",
+    "sellPrice": 150
+  },
+  {
+    "id": "oil",
+    "name": "Oil",
+    "sellPrice": 100
+  },
+  {
+    "id": "oil-lamp",
+    "name": "Standing lamp",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "oil-maker",
+    "name": "Oil maker",
+    "sellPrice": 300
+  },
+  {
+    "id": "oil-of-garlic",
+    "name": "Oil of Garlic",
+    "sellPrice": 0,
+    "buyPrice": 3000,
+    "keep": true
+  },
+  {
+    "id": "old-boot",
+    "name": "Old boot",
+    "sellPrice": 1
+  },
+  {
+    "id": "old-mossback",
+    "name": "Old Mossback",
+    "sellPrice": 280
+  },
+  {
+    "id": "old-mossback-aged-roe",
+    "name": "Aged old mossback roe",
+    "sellPrice": 280
+  },
+  {
+    "id": "old-mossback-roe",
+    "name": "Old Mossback roe",
+    "sellPrice": 140
+  },
+  {
+    "id": "old-seed-packet",
+    "name": "Old seed packet",
+    "sellPrice": 40
+  },
+  {
+    "id": "old-tools",
+    "name": "Old tools",
+    "sellPrice": 50
+  },
+  {
+    "id": "old-ward-stone",
+    "name": "Old ward stone",
+    "sellPrice": 330
+  },
+  {
+    "id": "omni-geode",
+    "name": "Omni Geode",
+    "sellPrice": 300
+  },
+  {
+    "id": "orange",
+    "name": "Orange",
+    "sellPrice": 100,
+    "energy": 38
+  },
+  {
+    "id": "orange-dried",
+    "name": "Dried orange",
+    "sellPrice": 775,
+    "energy": 114
+  },
+  {
+    "id": "orange-dye",
+    "name": "Orange dye",
+    "sellPrice": 120
+  },
+  {
+    "id": "orange-jam",
+    "name": "Orange jam",
+    "sellPrice": 250
+  },
+  {
+    "id": "orange-sapling",
+    "name": "Orange sapling",
+    "sellPrice": 2000,
+    "buyPrice": 4000
+  },
+  {
+    "id": "orange-wine",
+    "name": "Orange wine",
+    "sellPrice": 300
+  },
+  {
+    "id": "ornamental-hay-bale",
+    "name": "Ornamental hay bale",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "padded-boots",
+    "name": "Padded boots",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "pale-ale",
+    "name": "Pale ale",
+    "sellPrice": 300
+  },
+  {
+    "id": "pale-lichen",
+    "name": "Pale lichen",
+    "sellPrice": 25
+  },
+  {
+    "id": "pale-moonstone",
+    "name": "Pale moonstone",
+    "sellPrice": 100
+  },
+  {
+    "id": "paper-lantern",
+    "name": "Paper lantern",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "parsnip",
+    "name": "Parsnip",
+    "sellPrice": 35,
+    "energy": 25
+  },
+  {
+    "id": "parsnip-juice",
+    "name": "Parsnip juice",
+    "sellPrice": 78
+  },
+  {
+    "id": "parsnip-pickles",
+    "name": "Parsnip pickles",
+    "sellPrice": 120
+  },
+  {
+    "id": "parsnip-seed",
+    "name": "Parsnip seeds",
+    "sellPrice": 10,
+    "buyPrice": 20
+  },
+  {
+    "id": "peach",
+    "name": "Peach",
+    "sellPrice": 140,
+    "energy": 38
+  },
+  {
+    "id": "peach-dried",
+    "name": "Dried peach",
+    "sellPrice": 1075,
+    "energy": 114
+  },
+  {
+    "id": "peach-jam",
+    "name": "Peach jam",
+    "sellPrice": 330
+  },
+  {
+    "id": "peach-sapling",
+    "name": "Peach sapling",
+    "sellPrice": 3000,
+    "buyPrice": 6000
+  },
+  {
+    "id": "peach-wine",
+    "name": "Peach wine",
+    "sellPrice": 420
+  },
+  {
+    "id": "pearl-lobster",
+    "name": "Pearl Lobster",
+    "sellPrice": 800
+  },
+  {
+    "id": "pearl-lobster-aged-roe",
+    "name": "Aged pearl lobster roe",
+    "sellPrice": 800
+  },
+  {
+    "id": "pearl-lobster-roe",
+    "name": "Pearl Lobster roe",
+    "sellPrice": 400
+  },
+  {
+    "id": "pearlback",
+    "name": "Pearlback",
+    "sellPrice": 400
+  },
+  {
+    "id": "pearlback-aged-roe",
+    "name": "Aged pearlback roe",
+    "sellPrice": 400
+  },
+  {
+    "id": "pearlback-roe",
+    "name": "Pearlback roe",
+    "sellPrice": 200
+  },
+  {
+    "id": "pearly-shell",
+    "name": "Pearly shell",
+    "sellPrice": 180
+  },
+  {
+    "id": "perch",
+    "name": "Perch",
+    "sellPrice": 45
+  },
+  {
+    "id": "perch-aged-roe",
+    "name": "Aged perch roe",
+    "sellPrice": 44
+  },
+  {
+    "id": "perch-roe",
+    "name": "Perch roe",
+    "sellPrice": 22
+  },
+  {
+    "id": "periwinkle",
+    "name": "Periwinkle",
+    "sellPrice": 20
+  },
+  {
+    "id": "pin-urchin",
+    "name": "Pin urchin",
+    "sellPrice": 160
+  },
+  {
+    "id": "pin-urchin-aged-roe",
+    "name": "Aged pin urchin roe",
+    "sellPrice": 160
+  },
+  {
+    "id": "pin-urchin-roe",
+    "name": "Pin urchin roe",
+    "sellPrice": 80
+  },
+  {
+    "id": "pine-cone",
+    "name": "Pine cone",
+    "sellPrice": 5
+  },
+  {
+    "id": "pine-nut",
+    "name": "Pine nut",
+    "sellPrice": 70,
+    "energy": 25
+  },
+  {
+    "id": "pine-tar",
+    "name": "Pine tar",
+    "sellPrice": 100
+  },
+  {
+    "id": "pine-wardrobe",
+    "name": "Pine wardrobe",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "pink-dye",
+    "name": "Pink dye",
+    "sellPrice": 120
+  },
+  {
+    "id": "plain-bait",
+    "name": "Plain Bait",
+    "sellPrice": 0,
+    "buyPrice": 3,
+    "keep": true
+  },
+  {
+    "id": "pocket-coin",
+    "name": "Pocket coin",
+    "sellPrice": 15
+  },
+  {
+    "id": "pocket-sling",
+    "name": "Pocket Sling",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "pomegranate",
+    "name": "Pomegranate",
+    "sellPrice": 140,
+    "energy": 38
+  },
+  {
+    "id": "pomegranate-dried",
+    "name": "Dried pomegranate",
+    "sellPrice": 1075,
+    "energy": 114
+  },
+  {
+    "id": "pomegranate-jam",
+    "name": "Pomegranate jam",
+    "sellPrice": 330
+  },
+  {
+    "id": "pomegranate-sapling",
+    "name": "Pomegranate sapling",
+    "sellPrice": 3000,
+    "buyPrice": 6000
+  },
+  {
+    "id": "pomegranate-wine",
+    "name": "Pomegranate wine",
+    "sellPrice": 420
+  },
+  {
+    "id": "pondweed",
+    "name": "Pondweed",
+    "sellPrice": 15
+  },
+  {
+    "id": "poppy",
+    "name": "Poppy",
+    "sellPrice": 140
+  },
+  {
+    "id": "poppy-honey",
+    "name": "Poppy honey",
+    "sellPrice": 380
+  },
+  {
+    "id": "poppy-seed",
+    "name": "Poppy seeds",
+    "sellPrice": 50,
+    "buyPrice": 100
+  },
+  {
+    "id": "potato",
+    "name": "Potato",
+    "sellPrice": 80,
+    "energy": 25
+  },
+  {
+    "id": "potato-juice",
+    "name": "Potato juice",
+    "sellPrice": 180
+  },
+  {
+    "id": "potato-pickles",
+    "name": "Potato pickles",
+    "sellPrice": 210
+  },
+  {
+    "id": "potato-seed",
+    "name": "Potato seeds",
+    "sellPrice": 25,
+    "buyPrice": 50
+  },
+  {
+    "id": "potted-fern",
+    "name": "Potted fern",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "preserves-jar",
+    "name": "Preserves jar",
+    "sellPrice": 150
+  },
+  {
+    "id": "pressed-flower",
+    "name": "Pressed flower",
+    "sellPrice": 50
+  },
+  {
+    "id": "pumpkin",
+    "name": "Pumpkin",
+    "sellPrice": 320
+  },
+  {
+    "id": "pumpkin-juice",
+    "name": "Pumpkin juice",
+    "sellPrice": 720
+  },
+  {
+    "id": "pumpkin-pickles",
+    "name": "Pumpkin pickles",
+    "sellPrice": 690
+  },
+  {
+    "id": "pumpkin-seed",
+    "name": "Pumpkin seeds",
+    "sellPrice": 50,
+    "buyPrice": 100
+  },
+  {
+    "id": "pumpkin-soup",
+    "name": "Pumpkin soup",
+    "sellPrice": 400,
+    "energy": 200
+  },
+  {
+    "id": "purple-dye",
+    "name": "Purple dye",
+    "sellPrice": 120
+  },
+  {
+    "id": "quality-fertilizer",
+    "name": "Quality fertilizer",
+    "sellPrice": 10,
+    "buyPrice": 150
+  },
+  {
+    "id": "quality-retaining-soil",
+    "name": "Quality retaining soil",
+    "sellPrice": 5,
+    "buyPrice": 150
+  },
+  {
+    "id": "quality-sprinkler",
+    "name": "Quality sprinkler",
+    "sellPrice": 450
+  },
+  {
+    "id": "quartz-crystal",
+    "name": "Quartz crystal",
+    "sellPrice": 25
+  },
+  {
+    "id": "radish",
+    "name": "Radish",
+    "sellPrice": 90,
+    "energy": 45
+  },
+  {
+    "id": "radish-juice",
+    "name": "Radish juice",
+    "sellPrice": 202
+  },
+  {
+    "id": "radish-pickles",
+    "name": "Radish pickles",
+    "sellPrice": 230
+  },
+  {
+    "id": "radish-seed",
+    "name": "Radish seeds",
+    "sellPrice": 20,
+    "buyPrice": 40
+  },
+  {
+    "id": "rag-rug",
+    "name": "Rag rug",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "razor-clam",
+    "name": "Razor clam",
+    "sellPrice": 40
+  },
+  {
+    "id": "recycler",
+    "name": "Recycler",
+    "sellPrice": 200
+  },
+  {
+    "id": "red-cabbage",
+    "name": "Red cabbage",
+    "sellPrice": 260,
+    "energy": 75
+  },
+  {
+    "id": "red-cabbage-juice",
+    "name": "Red cabbage juice",
+    "sellPrice": 585
+  },
+  {
+    "id": "red-cabbage-pickles",
+    "name": "Red cabbage pickles",
+    "sellPrice": 570
+  },
+  {
+    "id": "red-cabbage-seed",
+    "name": "Red cabbage seeds",
+    "sellPrice": 50,
+    "buyPrice": 100
+  },
+  {
+    "id": "red-dye",
+    "name": "Red dye",
+    "sellPrice": 120
+  },
+  {
+    "id": "reed-cat",
+    "name": "Reed Cat",
+    "sellPrice": 150
+  },
+  {
+    "id": "reed-cat-aged-roe",
+    "name": "Aged reed cat roe",
+    "sellPrice": 150
+  },
+  {
+    "id": "reed-cat-roe",
+    "name": "Reed Cat roe",
+    "sellPrice": 75
+  },
+  {
+    "id": "reed-flute",
+    "name": "Reed flute",
+    "sellPrice": 120
+  },
+  {
+    "id": "reed-mat",
+    "name": "Reed mat",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "reed-pole",
+    "name": "Reed Pole",
+    "sellPrice": 0,
+    "buyPrice": 50,
+    "keep": true
+  },
+  {
+    "id": "reedling",
+    "name": "Reedling",
+    "sellPrice": 40
+  },
+  {
+    "id": "reedling-aged-roe",
+    "name": "Aged reedling roe",
+    "sellPrice": 40
+  },
+  {
+    "id": "reedling-roe",
+    "name": "Reedling roe",
+    "sellPrice": 20
+  },
+  {
+    "id": "reef-periwinkle",
+    "name": "Reef Periwinkle",
+    "sellPrice": 50
+  },
+  {
+    "id": "reef-periwinkle-aged-roe",
+    "name": "Aged reef periwinkle roe",
+    "sellPrice": 50
+  },
+  {
+    "id": "reef-periwinkle-roe",
+    "name": "Reef Periwinkle roe",
+    "sellPrice": 25
+  },
+  {
+    "id": "rime-crystal",
+    "name": "Rime crystal",
+    "sellPrice": 75
+  },
+  {
+    "id": "rimed-chisel",
+    "name": "Rimed chisel",
+    "sellPrice": 170
+  },
+  {
+    "id": "ring-box",
+    "name": "Ring Box",
+    "sellPrice": 120
+  },
+  {
+    "id": "river-garnet",
+    "name": "River garnet",
+    "sellPrice": 90
+  },
+  {
+    "id": "river-mussel",
+    "name": "River Mussel",
+    "sellPrice": 45
+  },
+  {
+    "id": "river-mussel-aged-roe",
+    "name": "Aged river mussel roe",
+    "sellPrice": 44
+  },
+  {
+    "id": "river-mussel-roe",
+    "name": "River Mussel roe",
+    "sellPrice": 22
+  },
+  {
+    "id": "rolling-pin",
+    "name": "Rolling Pin",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "rose-hip",
+    "name": "Rose hip",
+    "sellPrice": 45,
+    "energy": 15
+  },
+  {
+    "id": "rose-hip-dried",
+    "name": "Dried rose hip",
+    "sellPrice": 362,
+    "energy": 45
+  },
+  {
+    "id": "rose-hip-jam",
+    "name": "Rose hip jam",
+    "sellPrice": 140
+  },
+  {
+    "id": "rose-hip-wine",
+    "name": "Rose hip wine",
+    "sellPrice": 135
+  },
+  {
+    "id": "round-table",
+    "name": "Round table",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "rust-jasper",
+    "name": "Rust jasper",
+    "sellPrice": 40
+  },
+  {
+    "id": "rusted-hoe-head",
+    "name": "Rusted hoe head",
+    "sellPrice": 60
+  },
+  {
+    "id": "salmon",
+    "name": "Salmon",
+    "sellPrice": 150
+  },
+  {
+    "id": "salmon-aged-roe",
+    "name": "Aged salmon roe",
+    "sellPrice": 150
+  },
+  {
+    "id": "salmon-roe",
+    "name": "Salmon roe",
+    "sellPrice": 75
+  },
+  {
+    "id": "salmonberry",
+    "name": "Salmonberry",
+    "sellPrice": 5,
+    "energy": 25
+  },
+  {
+    "id": "salmonberry-dried",
+    "name": "Dried salmonberry",
+    "sellPrice": 62,
+    "energy": 75
+  },
+  {
+    "id": "salmonberry-jam",
+    "name": "Salmonberry jam",
+    "sellPrice": 60
+  },
+  {
+    "id": "salmonberry-wine",
+    "name": "Salmonberry wine",
+    "sellPrice": 15
+  },
+  {
+    "id": "salted-bait",
+    "name": "Salted Bait",
+    "sellPrice": 0,
+    "buyPrice": 8,
+    "keep": true
+  },
+  {
+    "id": "sap",
+    "name": "Sap",
+    "sellPrice": 2
+  },
+  {
+    "id": "sardine",
+    "name": "Sardine",
+    "sellPrice": 40
+  },
+  {
+    "id": "sardine-aged-roe",
+    "name": "Aged sardine roe",
+    "sellPrice": 40
+  },
+  {
+    "id": "sardine-roe",
+    "name": "Sardine roe",
+    "sellPrice": 20
+  },
+  {
+    "id": "scrimshaw-tooth",
+    "name": "Scrimshaw tooth",
+    "sellPrice": 300
+  },
+  {
+    "id": "sea-fan",
+    "name": "Sea fan",
+    "sellPrice": 90
+  },
+  {
+    "id": "sea-fan-aged-roe",
+    "name": "Aged sea fan roe",
+    "sellPrice": 90
+  },
+  {
+    "id": "sea-fan-roe",
+    "name": "Sea fan roe",
+    "sellPrice": 45
+  },
+  {
+    "id": "sea-glass-lantern",
+    "name": "Sea glass lantern",
+    "sellPrice": 130
+  },
+  {
+    "id": "seaweed",
+    "name": "Seaweed",
+    "sellPrice": 20
+  },
+  {
+    "id": "seed-maker",
+    "name": "Seed maker",
+    "sellPrice": 200
+  },
+  {
+    "id": "shell",
+    "name": "Shell",
+    "sellPrice": 25
+  },
+  {
+    "id": "shell-comb",
+    "name": "Shell comb",
+    "sellPrice": 75
+  },
+  {
+    "id": "shell-ghost",
+    "name": "Shell Ghost",
+    "sellPrice": 680
+  },
+  {
+    "id": "shell-ghost-aged-roe",
+    "name": "Aged shell ghost roe",
+    "sellPrice": 680
+  },
+  {
+    "id": "shell-ghost-roe",
+    "name": "Shell Ghost roe",
+    "sellPrice": 340
+  },
+  {
+    "id": "shellfish-pot",
+    "name": "Shellfish pot",
+    "sellPrice": 0,
+    "buyPrice": 150,
+    "keep": true
+  },
+  {
+    "id": "ship-bell",
+    "name": "Small ship bell",
+    "sellPrice": 260
+  },
+  {
+    "id": "silverthread",
+    "name": "Silverthread",
+    "sellPrice": 320
+  },
+  {
+    "id": "silverthread-aged-roe",
+    "name": "Aged silverthread roe",
+    "sellPrice": 320
+  },
+  {
+    "id": "silverthread-roe",
+    "name": "Silverthread roe",
+    "sellPrice": 160
+  },
+  {
+    "id": "skiff-sprat",
+    "name": "Skiff Sprat",
+    "sellPrice": 40
+  },
+  {
+    "id": "skiff-sprat-aged-roe",
+    "name": "Aged skiff sprat roe",
+    "sellPrice": 40
+  },
+  {
+    "id": "skiff-sprat-roe",
+    "name": "Skiff Sprat roe",
+    "sellPrice": 20
+  },
+  {
+    "id": "slag-figurine",
+    "name": "Slag figurine",
+    "sellPrice": 300
+  },
+  {
+    "id": "slate-tablet",
+    "name": "Slate tablet",
+    "sellPrice": 110
+  },
+  {
+    "id": "slime-proof-ring",
+    "name": "Slime proof ring",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "small-glow-ring",
+    "name": "Small glow ring",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "small-magnet-ring",
+    "name": "Small magnet ring",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "smelters-tongs",
+    "name": "Smelter's tongs",
+    "sellPrice": 360
+  },
+  {
+    "id": "snow-beryl",
+    "name": "Snow beryl",
+    "sellPrice": 110
+  },
+  {
+    "id": "snow-lamp",
+    "name": "Snow lamp",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "snow-tuber",
+    "name": "Snow tuber",
+    "sellPrice": 100,
+    "energy": 30
+  },
+  {
+    "id": "snowcap",
+    "name": "Snowcap mushroom",
+    "sellPrice": 140,
+    "energy": 15
+  },
+  {
+    "id": "snowcap-dried",
+    "name": "Dried snowcap mushroom",
+    "sellPrice": 1075,
+    "energy": 45
+  },
+  {
+    "id": "snowdrop",
+    "name": "Snowdrop",
+    "sellPrice": 80
+  },
+  {
+    "id": "sodden-rope",
+    "name": "Sodden rope",
+    "sellPrice": 1
+  },
+  {
+    "id": "sounding-float",
+    "name": "Sounding Float",
+    "sellPrice": 0,
+    "buyPrice": 200,
+    "keep": true
+  },
+  {
+    "id": "speed-fertilizer",
+    "name": "Speed fertilizer",
+    "sellPrice": 20,
+    "buyPrice": 100
+  },
+  {
+    "id": "spice-berry",
+    "name": "Spice berry",
+    "sellPrice": 80,
+    "energy": 25
+  },
+  {
+    "id": "spice-berry-dried",
+    "name": "Dried spice berry",
+    "sellPrice": 625,
+    "energy": 75
+  },
+  {
+    "id": "spice-berry-jam",
+    "name": "Spice berry jam",
+    "sellPrice": 210
+  },
+  {
+    "id": "spice-berry-wine",
+    "name": "Spice berry wine",
+    "sellPrice": 240
+  },
+  {
+    "id": "spiny-shrimp",
+    "name": "Spiny Shrimp",
+    "sellPrice": 100
+  },
+  {
+    "id": "spiny-shrimp-aged-roe",
+    "name": "Aged spiny shrimp roe",
+    "sellPrice": 100
+  },
+  {
+    "id": "spiny-shrimp-roe",
+    "name": "Spiny Shrimp roe",
+    "sellPrice": 50
+  },
+  {
+    "id": "spiral-shell",
+    "name": "Spiral shell",
+    "sellPrice": 200
+  },
+  {
+    "id": "spring-onion",
+    "name": "Spring onion",
+    "sellPrice": 8,
+    "energy": 5
+  },
+  {
+    "id": "sprinkler",
+    "name": "Sprinkler",
+    "sellPrice": 100
+  },
+  {
+    "id": "steadfast-lamp",
+    "name": "Steadfast lamp",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "still-water-gar",
+    "name": "Still-water Gar",
+    "sellPrice": 420
+  },
+  {
+    "id": "still-water-gar-aged-roe",
+    "name": "Aged still-water gar roe",
+    "sellPrice": 420
+  },
+  {
+    "id": "still-water-gar-roe",
+    "name": "Still-water Gar roe",
+    "sellPrice": 210
+  },
+  {
+    "id": "stone",
+    "name": "Stone",
+    "sellPrice": 2
+  },
+  {
+    "id": "stone-brazier",
+    "name": "Stone brazier",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "stone-chest",
+    "name": "Stone chest",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "stone-hearth-screen",
+    "name": "Hearth screen",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "storm-lure",
+    "name": "Storm Lure",
+    "sellPrice": 0,
+    "buyPrice": 150,
+    "keep": true
+  },
+  {
+    "id": "sturdy-band",
+    "name": "Sturdy band",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "sturdy-boots",
+    "name": "Sturdy boots",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "sunflower",
+    "name": "Sunflower",
+    "sellPrice": 80
+  },
+  {
+    "id": "sunflower-honey",
+    "name": "Sunflower honey",
+    "sellPrice": 260
+  },
+  {
+    "id": "sunflower-seed",
+    "name": "Sunflower seeds",
+    "sellPrice": 100,
+    "buyPrice": 200
+  },
+  {
+    "id": "sunk-boot-loach",
+    "name": "Sunk Boot Loach",
+    "sellPrice": 40
+  },
+  {
+    "id": "sunk-boot-loach-aged-roe",
+    "name": "Aged sunk boot loach roe",
+    "sellPrice": 40
+  },
+  {
+    "id": "sunk-boot-loach-roe",
+    "name": "Sunk Boot Loach roe",
+    "sellPrice": 20
+  },
+  {
+    "id": "sweet-pea",
+    "name": "Sweet pea",
+    "sellPrice": 50
+  },
+  {
+    "id": "sweet-potato",
+    "name": "Sweet potato",
+    "sellPrice": 160,
+    "energy": 45
+  },
+  {
+    "id": "sweet-potato-juice",
+    "name": "Sweet potato juice",
+    "sellPrice": 360
+  },
+  {
+    "id": "sweet-potato-pickles",
+    "name": "Sweet potato pickles",
+    "sellPrice": 370
+  },
+  {
+    "id": "sweet-potato-seed",
+    "name": "Sweet potato seeds",
+    "sellPrice": 30,
+    "buyPrice": 60
+  },
+  {
+    "id": "tallow-eel",
+    "name": "Tallow Eel",
+    "sellPrice": 170
+  },
+  {
+    "id": "tallow-eel-aged-roe",
+    "name": "Aged tallow eel roe",
+    "sellPrice": 170
+  },
+  {
+    "id": "tallow-eel-roe",
+    "name": "Tallow Eel roe",
+    "sellPrice": 85
+  },
+  {
+    "id": "tangled-line",
+    "name": "Tangled line",
+    "sellPrice": 1
+  },
+  {
+    "id": "tapper",
+    "name": "Tapper",
+    "sellPrice": 50
+  },
+  {
+    "id": "tea-leaf",
+    "name": "Tea leaf",
+    "sellPrice": 50,
+    "energy": 20
+  },
+  {
+    "id": "tea-sapling",
+    "name": "Tea sapling",
+    "sellPrice": 250
+  },
+  {
+    "id": "tide-jelly",
+    "name": "Tide jelly",
+    "sellPrice": 150
+  },
+  {
+    "id": "tide-worn-coin",
+    "name": "Tide-worn coin",
+    "sellPrice": 80
+  },
+  {
+    "id": "tin-spoon",
+    "name": "Tin Spoon",
+    "sellPrice": 30
+  },
+  {
+    "id": "tomato",
+    "name": "Tomato",
+    "sellPrice": 60,
+    "energy": 20
+  },
+  {
+    "id": "tomato-dried",
+    "name": "Dried tomato",
+    "sellPrice": 475,
+    "energy": 60
+  },
+  {
+    "id": "tomato-jam",
+    "name": "Tomato jam",
+    "sellPrice": 170
+  },
+  {
+    "id": "tomato-seed",
+    "name": "Tomato seeds",
+    "sellPrice": 25,
+    "buyPrice": 50
+  },
+  {
+    "id": "tomato-wine",
+    "name": "Tomato wine",
+    "sellPrice": 180
+  },
+  {
+    "id": "torch",
+    "name": "Torch",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "tree-seed",
+    "name": "Acorn",
+    "sellPrice": 5
+  },
+  {
+    "id": "truffle",
+    "name": "Truffle",
+    "sellPrice": 625
+  },
+  {
+    "id": "truffle-oil",
+    "name": "Truffle oil",
+    "sellPrice": 1250
+  },
+  {
+    "id": "tulip",
+    "name": "Tulip",
+    "sellPrice": 30
+  },
+  {
+    "id": "tulip-honey",
+    "name": "Tulip honey",
+    "sellPrice": 160
+  },
+  {
+    "id": "tulip-seed",
+    "name": "Tulip seeds",
+    "sellPrice": 10,
+    "buyPrice": 20
+  },
+  {
+    "id": "valley-king",
+    "name": "The Valley King",
+    "sellPrice": 3500
+  },
+  {
+    "id": "valley-king-aged-roe",
+    "name": "Aged the valley king roe",
+    "sellPrice": 3500
+  },
+  {
+    "id": "valley-king-roe",
+    "name": "The Valley King roe",
+    "sellPrice": 1750
+  },
+  {
+    "id": "velvet-koi",
+    "name": "Velvet Koi",
+    "sellPrice": 600
+  },
+  {
+    "id": "velvet-koi-aged-roe",
+    "name": "Aged velvet koi roe",
+    "sellPrice": 600
+  },
+  {
+    "id": "velvet-koi-roe",
+    "name": "Velvet Koi roe",
+    "sellPrice": 300
+  },
+  {
+    "id": "violet-dye",
+    "name": "Violet dye",
+    "sellPrice": 120
+  },
+  {
+    "id": "wallpaper-linen",
+    "name": "Linen wallpaper",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "wallpaper-moss",
+    "name": "Mossy wallpaper",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "warded-boots",
+    "name": "Warded boots",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "warm-ember",
+    "name": "Warm ember",
+    "sellPrice": 35
+  },
+  {
+    "id": "warm-rug",
+    "name": "Warm rug",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "warp-totem-beach",
+    "name": "Beach warp totem",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "wax",
+    "name": "Beeswax",
+    "sellPrice": 40
+  },
+  {
+    "id": "wheat",
+    "name": "Wheat",
+    "sellPrice": 25
+  },
+  {
+    "id": "wheat-seed",
+    "name": "Wheat seeds",
+    "sellPrice": 5,
+    "buyPrice": 10
+  },
+  {
+    "id": "whelk",
+    "name": "Whelk",
+    "sellPrice": 55
+  },
+  {
+    "id": "whirligig",
+    "name": "Whirligig",
+    "sellPrice": 0,
+    "buyPrice": 200,
+    "keep": true
+  },
+  {
+    "id": "wide-float",
+    "name": "Wide Float",
+    "sellPrice": 0,
+    "buyPrice": 200,
+    "keep": true
+  },
+  {
+    "id": "wild-garlic",
+    "name": "Wild garlic",
+    "sellPrice": 35,
+    "energy": 15
+  },
+  {
+    "id": "wild-ginger",
+    "name": "Wild ginger",
+    "sellPrice": 120,
+    "energy": 20
+  },
+  {
+    "id": "wild-plum",
+    "name": "Wild plum",
+    "sellPrice": 80,
+    "energy": 25
+  },
+  {
+    "id": "wild-plum-dried",
+    "name": "Dried wild plum",
+    "sellPrice": 625,
+    "energy": 75
+  },
+  {
+    "id": "wild-plum-jam",
+    "name": "Wild plum jam",
+    "sellPrice": 210
+  },
+  {
+    "id": "wild-plum-wine",
+    "name": "Wild plum wine",
+    "sellPrice": 240
+  },
+  {
+    "id": "window-bench",
+    "name": "Window bench",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "winter-cress",
+    "name": "Winter cress",
+    "sellPrice": 40,
+    "energy": 20
+  },
+  {
+    "id": "winter-pearl",
+    "name": "Winter pearl",
+    "sellPrice": 140
+  },
+  {
+    "id": "winter-wreath",
+    "name": "Winter wreath",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "wood",
+    "name": "Wood",
+    "sellPrice": 2
+  },
+  {
+    "id": "wood-brazier",
+    "name": "Wood brazier",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "wood-lamp-post",
+    "name": "Wood lamp-post",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "wooden-spindle",
+    "name": "Wooden spindle",
+    "sellPrice": 70
+  },
+  {
+    "id": "wooden-stool",
+    "name": "Wooden stool",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "wool",
+    "name": "Wool",
+    "sellPrice": 340
+  },
+  {
+    "id": "workbench",
+    "name": "Workbench",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "worm-bin",
+    "name": "Worm bin",
+    "sellPrice": 100
+  },
+  {
+    "id": "worn-boots",
+    "name": "Worn boots",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "writing-desk",
+    "name": "Writing desk",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "yellow-dye",
+    "name": "Yellow dye",
+    "sellPrice": 120
+  },
+  {
+    "id": "zinnia",
+    "name": "Zinnia",
+    "sellPrice": 90
+  },
+  {
+    "id": "zinnia-honey",
+    "name": "Zinnia honey",
+    "sellPrice": 280
+  },
+  {
+    "id": "zinnia-seed",
+    "name": "Zinnia seeds",
+    "sellPrice": 25,
+    "buyPrice": 50
+  }
+]

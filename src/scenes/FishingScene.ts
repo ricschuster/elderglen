@@ -19,6 +19,7 @@ import {
   type RodDef,
   legendGates,
 } from "../core/fishing";
+import { iceBite, noteHoleCatch, type IceFishing } from "../core/icefishing";
 import {
   BAITS,
   LURES,
@@ -37,6 +38,7 @@ import {
 } from "../core/tackle";
 import { treasureChance } from "../core/professions";
 import { landLobster, landTrash } from "../core/pots";
+import { landFind } from "../core/waterfinds";
 import { isRaining } from "../core/weather";
 import type { Quality } from "../core/quality";
 import type { GameState } from "../core/save";
@@ -54,6 +56,8 @@ export interface FishingData {
   at: { x: number; y: number };
   /** The kind of water fished (note 71). Absent means the river. */
   kind?: WaterKind;
+  /** The Frostday contest, when the cast went into an ice hole (note 82). */
+  ice?: IceFishing;
 }
 
 type Phase = "aim" | "wait" | "hook" | "fight" | "result";
@@ -346,6 +350,8 @@ export class FishingScene extends Phaser.Scene {
       this.tutorial,
       fx,
     );
+    if (this.cfg.ice)
+      this.pending = iceBite(this.pending, this.tutorial, Math.random);
     // A cast takes game time, win or lose, and spends the bait and a lure cast.
     g.day.act(cost, CAST_MINUTES);
     const gone = g.tackle.spend(this.rod.id);
@@ -370,7 +376,7 @@ export class FishingScene extends Phaser.Scene {
     // The Sounding Float names what is on the line.
     this.text.setText(
       this.effects.sounding
-        ? `A bite! It feels like a ${b.kind === "fish" ? b.fish.name : b.kind === "trash" ? "Something heavy" : "Pearl Lobster"}. Press now.`
+        ? `A bite! It feels like a ${b.kind === "fish" ? b.fish.name : b.kind === "trash" || b.kind === "find" ? "Something heavy" : "Pearl Lobster"}. Press now.`
         : "A bite! Press now.",
     );
   }
@@ -388,6 +394,7 @@ export class FishingScene extends Phaser.Scene {
     const b = this.pending;
     if (b.kind === "lobster") return this.landPearlLobster();
     if (b.kind === "trash") return this.landTrashCatch(b.item);
+    if (b.kind === "find") return this.landFindCatch(b.item);
     if (b.kind !== "fish") return;
     if (this.assist === 2) {
       // The fight is skipped: no bar, and never a perfect catch.
@@ -431,6 +438,16 @@ export class FishingScene extends Phaser.Scene {
     this.rest();
   }
 
+  /** A water plant or jelly is lifted with no bar (note 93). */
+  private landFindCatch(item: string): void {
+    const r = landFind(this.state, this.cfg.at, item);
+    this.text.setText(
+      `You lift ${itemById(item)?.name ?? item} from the water.${r.dropped ? " Your pack is full, so it lies at your feet." : ""}${r.levelUp ? ` Fishing is now level ${r.levelUp}.` : ""}`,
+    );
+    this.info.setText("Cast again with Space.");
+    this.rest();
+  }
+
   /** The Pearl Lobster takes the line without a fight (note 21). */
   private landPearlLobster(): void {
     const r = landLobster(this.state, this.cfg.at, this.distance, Math.random);
@@ -451,6 +468,7 @@ export class FishingScene extends Phaser.Scene {
       random: Math.random,
       at: this.cfg.at,
     });
+    if (this.cfg.ice) noteHoleCatch(this.cfg.ice, this.cfg.kind, true);
     // The chest pays only when it was fetched as well as the fish.
     const prize = chest ? this.chestPrize : undefined;
     if (prize) giveTreasure(g, prize, this.cfg.at);

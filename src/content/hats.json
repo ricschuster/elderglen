@@ -35,6 +35,11 @@
     "color": "#b8782a"
   },
   {
+    "id": "icewarden-cap",
+    "name": "Icewarden's Cap",
+    "color": "#9cc4e0"
+  },
+  {
     "id": "snow-cap",
     "name": "Snow Cap",
     "color": "#e8f0f8"
@@ -140,8 +145,63 @@
     "color": "#4a7a8a"
   },
   {
+    "id": "elderfruit-circlet",
+    "name": "Elderfruit Circlet",
+    "color": "#8a4a8a"
+  },
+  {
     "id": "summit-crown",
     "name": "Summit Crown",
     "color": "#d8c070"
+  },
+  {
+    "id": "seed-wreath",
+    "name": "Seed Wreath",
+    "color": "#8fbf5a"
+  },
+  {
+    "id": "sun-bonnet",
+    "name": "Sun Bonnet",
+    "color": "#f0c860"
+  },
+  {
+    "id": "tailored-sunhat",
+    "name": "Tailored Sunhat",
+    "color": "#e0c070"
+  },
+  {
+    "id": "tailored-pillbox",
+    "name": "Pillbox Cap",
+    "color": "#b04a5a"
+  },
+  {
+    "id": "tailored-bucket",
+    "name": "Bucket Hat",
+    "color": "#6a8a68"
+  },
+  {
+    "id": "tailored-cloche",
+    "name": "Cloche",
+    "color": "#8a7aa8"
+  },
+  {
+    "id": "tailored-flatcap",
+    "name": "Flat Cap",
+    "color": "#6a5a48"
+  },
+  {
+    "id": "tailored-hood",
+    "name": "Quilted Hood",
+    "color": "#4a6890"
+  },
+  {
+    "id": "tailored-tricorn",
+    "name": "Tricorn",
+    "color": "#3a3a48"
+  },
+  {
+    "id": "tailored-turban",
+    "name": "Silk Wrap",
+    "color": "#d8803a"
   }
 ]

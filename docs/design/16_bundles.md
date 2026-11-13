@@ -75,7 +75,7 @@ Room reward: Old Greencoat sets up a herb and seed stall at the hall.
 | 3 | Autumn Foraging | 4 of 6 | 15 autumn seeds | Autumn forage and crop |
 | 4 | Winter Foraging | 3 of 5 | Seed maker | Winter forage, seed maker |
 | 5 | Woodland | All: 50 wood, 50 stone, 30 fibre | Charcoal kiln | Gathering, crafting |
-| 6 | Rare Finds | 3 of 5 rare forage | 5 forage dishes | New forage, eating (exists) |
+| 6 | Rare Finds | 3 of 5 rare forage | Heavy Tapper recipe (was 5 forage dishes, note 92) | New forage, eating (exists) |
 
 ### 2. Larder
 
@@ -263,3 +263,12 @@ its room is finished, but the Stardew wiki was not checked for this note.
   are open.
 - Both of the last two are ours, with no Stardew equivalent. The glow ring (bundle 16) and
   Beach warp totem (bundle 15) placeholders are still to check.
+
+### Built status (2026-11-12, #871)
+
+Built: `src/core/roomrewards.ts`, `src/content/carts.json`, `src/content/herb-stall.json`, `CartScene`.
+
+- **Guests' Board:** `rooms.json` now says `friendship-boost`. `payGuestsBoard` calls `Friendship.bundleBonus()` once (world flag `guests-board-paid`), when the hall scene finishes the last bundle, with a night catch-up for a room finished any other way.
+- **Carts:** `carts-running` is raised the first night after the Hearth room is done (so they run the next morning, with a report line). `cart` services sit at the town square (66,58), beside the hall door in Hearthwell, on both farm maps, and on the Mountain road at (66,20). The cart screen lists the other three stops and rides for free. Before then the cart shows an idle line.
+- **Herb stall:** a `herb-stall` service in the hall opens the shop screen once the Foragers' Shelf is done. Stock is 3 to 5 goods a week from `herb-stall.json` at 1.5 times sell value (the trader's markup, all placeholders).
+- **Placeholders and gaps:** the mine mouth stop is below the rockfall, not in the pocket at (68, 13), since the pocket is cut off until the mines open and a cart there would skip it. Forage plant seeds are not built, so the stall sells herbs and forage only. Stop places other than the square, the cart fare for later stops (Quarry, Lake cove), and cart art are open.

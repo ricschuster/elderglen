@@ -1,0 +1,48 @@
+{
+  "tapper": {
+    "id": "tapper",
+    "name": "Tapper",
+    "sellPrice": 50
+  },
+  "goods": [
+    {
+      "kind": "oak",
+      "item": "oak-resin",
+      "name": "Oak resin",
+      "sellPrice": 150,
+      "days": 7
+    },
+    {
+      "kind": "maple",
+      "item": "maple-syrup",
+      "name": "Maple syrup",
+      "sellPrice": 200,
+      "days": 9
+    },
+    {
+      "kind": "pine",
+      "item": "pine-tar",
+      "name": "Pine tar",
+      "sellPrice": 100,
+      "days": 5
+    },
+    {
+      "kind": "mahogany",
+      "item": "sap",
+      "name": "Sap",
+      "sellPrice": 2,
+      "days": 1
+    }
+  ],
+  "heavy": {
+    "id": "heavy-tapper",
+    "name": "Heavy tapper",
+    "sellPrice": 100,
+    "days": {
+      "oak": 3,
+      "maple": 4,
+      "pine": 2,
+      "mahogany": 1
+    }
+  }
+}

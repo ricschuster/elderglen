@@ -1,11 +1,18 @@
 import bombData from "../content/bombs.json";
-import { CROPS, cropById } from "./crops";
+import { ALL_CROPS, cropById } from "./crops";
 import {
   MAHOGANY_SEED,
   MAHOGANY_SEED_NAME,
   MAHOGANY_SEED_PRICE,
 } from "./mahogany";
-import { BOOTS, RINGS } from "./equipment";
+import {
+  BOOTS,
+  RINGS,
+  bootsById,
+  isCombo,
+  ringById,
+  tailoredParts,
+} from "./equipment";
 import { FERTILIZERS } from "./fertilizer";
 import { FORAGE } from "./forage";
 import {
@@ -21,12 +28,22 @@ import {
 } from "./ore";
 import { SPRINKLERS } from "./sprinklers";
 import { FRUIT_TREES, saplingId } from "./fruittrees";
+import {
+  TEA_LEAF,
+  TEA_LEAF_ENERGY,
+  TEA_LEAF_SELL_PRICE,
+  TEA_SAPLING,
+  TEA_SAPLING_SELL_PRICE,
+} from "./teabush";
 import decorData from "../content/decor.json";
 import creatureGoods from "../content/creature-goods.json";
+import iceFishing from "../content/ice-fishing.json";
+import lanternFloat from "../content/lantern-float.json";
 import weaponData from "../content/weapons.json";
 import furnitureData from "../content/furniture.json";
 import { ARTISAN_GOODS } from "./artisan";
 import { MACHINES } from "./processing";
+import { HEAVY_TAPPER_DEF, TAP_GOODS, TAPPER, TAPPER_DEF } from "./tapper";
 import { DISHES } from "./dishes";
 import { CHESTS } from "./chestdefs";
 import { GEODE_ITEMS } from "./geodes";
@@ -36,6 +53,14 @@ import artifactData from "../content/artifacts.json";
 /** The found old things, read from data here so this list has no cycle with `artifacts.ts`. */
 const ARTIFACTS = artifactData.artifacts;
 import { FISH, RODS } from "./fishing";
+import { WATER_FINDS } from "./waterfinds";
+import {
+  POND_SPECIES,
+  agedRoeOf,
+  agedRoePrice,
+  roeOf,
+  roePrice,
+} from "./pondspecies";
 import { BAITS, LURES, TRINKETS } from "./tackle";
 import { JUNK, POT_ITEM, POT_NAME, POT_PRICE, SHELLFISH } from "./pots";
 import { ENERGY_MULTIPLIER, QUALITY_MULTIPLIER, splitQuality } from "./quality";
@@ -57,18 +82,20 @@ export interface ItemDef {
 }
 
 const items = new Map<string, ItemDef>();
-for (const c of CROPS) {
+for (const c of ALL_CROPS) {
+  // A rare crop is kept for its hand-in and its seed is a gift, never on sale (the ember berry, note 39).
   items.set(c.id, {
     id: c.id,
     name: c.name,
-    sellPrice: c.sellPrice,
+    sellPrice: c.rare ? 0 : c.sellPrice,
     energy: c.energy,
+    ...(c.rare ? { keep: true } : {}),
   });
   items.set(seedId(c.id), {
     id: seedId(c.id),
-    name: `${c.name} seeds`,
-    sellPrice: Math.floor(c.seedPrice / 2),
-    buyPrice: c.seedPrice,
+    name: c.seedName ?? `${c.name} seeds`,
+    sellPrice: c.rare ? 0 : Math.floor(c.seedPrice / 2),
+    ...(c.rare ? { keep: true } : { buyPrice: c.seedPrice }),
   });
 }
 
@@ -141,6 +168,12 @@ for (const d of decorData)
 /** Tree goods (`docs/design/36_gathering_trees_sap_fiber.md`). Wood and sap sell as Stardew's do. */
 items.set("wood", { id: "wood", name: "Wood", sellPrice: 2 });
 items.set("sap", { id: "sap", name: "Sap", sellPrice: 2 });
+/** The tapper and what it gives (note 92). Prices are placeholders, see `tapper.json`. */
+items.set(TAPPER, { ...TAPPER_DEF });
+items.set(HEAVY_TAPPER_DEF.id, { ...HEAVY_TAPPER_DEF });
+for (const g of TAP_GOODS)
+  if (g.item !== "sap")
+    items.set(g.item, { id: g.item, name: g.name, sellPrice: g.sellPrice });
 /** Hardwood comes from large stumps (`docs/design/43_wood_source.md`). Sells for 15g, as the saved Hardwood page. */
 export const HARDWOOD = "hardwood";
 items.set(HARDWOOD, { id: HARDWOOD, name: "Hardwood", sellPrice: 15 });
@@ -166,6 +199,48 @@ items.set("milk", { id: "milk", name: "Milk", sellPrice: 125 });
 items.set("goat-milk", { id: "goat-milk", name: "Goat milk", sellPrice: 225 });
 items.set("truffle", { id: "truffle", name: "Truffle", sellPrice: 625 });
 items.set("moonwool", { id: "moonwool", name: "Moonwool", sellPrice: 1200 });
+/** The water finds (note 93). Seaweed is already a forage item. */
+for (const f of WATER_FINDS)
+  if (!items.has(f.id))
+    items.set(f.id, { id: f.id, name: f.name, sellPrice: f.sellPrice });
+/** Roe and aged roe, one item each per pond species (note 93). */
+for (const s of POND_SPECIES) {
+  items.set(roeOf(s.id), {
+    id: roeOf(s.id),
+    name: `${s.name} roe`,
+    sellPrice: roePrice(s),
+  });
+  items.set(agedRoeOf(s.id), {
+    id: agedRoeOf(s.id),
+    name: `Aged ${s.name.toLowerCase()} roe`,
+    sellPrice: agedRoePrice(s),
+  });
+}
+/** Algae soup: a pond reward only, no recipe (note 93). Stats are placeholders. */
+export const ALGAE_SOUP = "algae-soup";
+items.set(ALGAE_SOUP, {
+  id: ALGAE_SOUP,
+  name: "Algae soup",
+  sellPrice: 100,
+  energy: 80,
+});
+/** Tea bush goods (note 97). Prices are placeholders, see `tea-bush.json`. */
+items.set(TEA_SAPLING, {
+  id: TEA_SAPLING,
+  name: "Tea sapling",
+  sellPrice: TEA_SAPLING_SELL_PRICE,
+});
+items.set(TEA_LEAF, {
+  id: TEA_LEAF,
+  name: "Tea leaf",
+  sellPrice: TEA_LEAF_SELL_PRICE,
+  energy: TEA_LEAF_ENERGY,
+});
+/** Beeswax from the bee house and the candle made from it (note 63, bundle 20). Prices are placeholders, ours. */
+export const WAX = "wax";
+export const CANDLE = "candle";
+items.set(WAX, { id: WAX, name: "Beeswax", sellPrice: 40 });
+items.set(CANDLE, { id: CANDLE, name: "Candle", sellPrice: 60 });
 /** Mixed seeds plant a random crop that suits the season. Sell price is ours. */
 items.set("mixed-seed", {
   id: "mixed-seed",
@@ -173,7 +248,10 @@ items.set("mixed-seed", {
   sellPrice: 5,
 });
 /** Sell price is ours, a placeholder. */
-items.set("tree-seed", { id: "tree-seed", name: "Tree seed", sellPrice: 5 });
+items.set("tree-seed", { id: "tree-seed", name: "Acorn", sellPrice: 5 });
+/** The Maple and Pine seeds (note 36, SC-30). The Acorn keeps the old `tree-seed` id so saves stay valid. */
+items.set("maple-seed", { id: "maple-seed", name: "Maple seed", sellPrice: 5 });
+items.set("pine-cone", { id: "pine-cone", name: "Pine cone", sellPrice: 5 });
 items.set(MAHOGANY_SEED, {
   id: MAHOGANY_SEED,
   name: MAHOGANY_SEED_NAME,
@@ -213,6 +291,24 @@ export const MOTH_DUST = "moth-dust";
 items.set(MOTH_DUST, { id: MOTH_DUST, name: "Moth dust", sellPrice: 30 });
 /** The other creature drops (note 22). Sell prices are placeholders, ours. Frost berry is food. */
 for (const g of creatureGoods) items.set(g.id, { ...g });
+/** Lamplight Evening lanterns (note 82, placeholders): the bought one is spent on the launch, the keepsake stays. */
+items.set(lanternFloat.lantern.id, {
+  id: lanternFloat.lantern.id,
+  name: lanternFloat.lantern.name,
+  sellPrice: 0,
+  keep: true,
+});
+items.set(iceFishing.frostfin.id, {
+  id: iceFishing.frostfin.id,
+  name: iceFishing.frostfin.name,
+  sellPrice: iceFishing.frostfin.sellPrice,
+});
+items.set(lanternFloat.keepsake.id, {
+  id: lanternFloat.keepsake.id,
+  name: lanternFloat.keepsake.name,
+  sellPrice: 0,
+  keep: true,
+});
 
 /** Fish (note 21). Prices are placeholders in the bands of note 07. */
 for (const f of FISH)
@@ -291,6 +387,16 @@ for (const [id, name] of [
   ["iron-lamp-post", "Iron lamp-post"],
 ] as const)
   items.set(id, { id, name, sellPrice: 0, keep: true });
+/** Farm decoration (note 89, the seventh placeable kind): carried, stood on the farm, kept. Sold by the keeper (`farmdecor.ts`). */
+for (const [id, name] of [
+  ["ornamental-hay-bale", "Ornamental hay bale"],
+  ["doghouse", "Doghouse"],
+  ["dark-doghouse", "Dark doghouse"],
+  ["cat-tree", "Cat tree"],
+  ["dark-cat-tree", "Dark cat tree"],
+  ["bird-house", "Bird house"],
+] as const)
+  items.set(id, { id, name, sellPrice: 0, keep: true });
 /** Bombs (note 89): bought at the Forge, lit on a tile, used up. Prices from `bombs.json`. */
 for (const b of bombData)
   items.set(b.id, {
@@ -347,9 +453,9 @@ items.set(WARP_TOTEM_BEACH, {
   keep: true,
 });
 /**
- * Last Seat and Fodder rewards whose systems are not built (note 63, issue #603): the coop heater
- * (no winter mood rule yet), the Crystalarium (no gem machine yet) and Old Greencoat's letter to
- * the elves (a story item). Kept and do nothing yet, like the Beach warp totem.
+ * Last Seat and Fodder rewards (note 63, issue #603): the coop heater, placed in a
+ * coop or barn to stop the winter mood loss (`hasHeater` in animals.ts), and Old
+ * Greencoat's letter to the elves, a story item that does nothing yet.
  */
 export const COOP_HEATER = "coop-heater";
 export const CRYSTALARIUM = "crystalarium";
@@ -363,11 +469,12 @@ items.set(COOP_HEATER, {
   buyPrice: HEATER_PRICE,
   keep: true,
 });
-for (const [id, name] of [
-  [CRYSTALARIUM, "Crystalarium"],
-  [ELF_LETTER, "Letter to the elves"],
-] as const)
-  items.set(id, { id, name, sellPrice: 0, keep: true });
+items.set(ELF_LETTER, {
+  id: ELF_LETTER,
+  name: "Letter to the elves",
+  sellPrice: 0,
+  keep: true,
+});
 /** The shellfish pot is bought and kept (note 21). Its catches and junk sell as set in `pots.json`. */
 items.set(POT_ITEM, {
   id: POT_ITEM,
@@ -386,26 +493,29 @@ for (const t of TRINKETS)
 
 /** Heading each item for the dev menu's picker, in the order the groups list. */
 const GROUPS: [string, string[]][] = [
-  ["Crops", CROPS.map((c) => c.id)],
+  ["Crops", ALL_CROPS.map((c) => c.id)],
   [
     "Seeds and saplings",
     [
-      ...CROPS.map((c) => seedId(c.id)),
+      ...ALL_CROPS.map((c) => seedId(c.id)),
       ...FRUIT_TREES.map((t) => saplingId(t.id)),
+      TEA_SAPLING,
       "mixed-seed",
       "tree-seed",
+      "maple-seed",
+      "pine-cone",
       MAHOGANY_SEED,
     ],
   ],
   ["Fruit", FRUIT_TREES.map((t) => t.id)],
-  ["Forage", FORAGE.map((f) => f.id)],
+  ["Forage", [...FORAGE.map((f) => f.id), TEA_LEAF]],
   ["Fertilizer", FERTILIZERS.map((f) => f.id)],
   [
     "Machines, sprinklers and chests",
     [...SPRINKLERS, ...MACHINES, ...CHESTS].map((m) => m.id),
   ],
   ["Artisan goods", ARTISAN_GOODS.map((a) => a.id)],
-  ["Dishes", DISHES.map((d) => d.id)],
+  ["Dishes", [...DISHES.map((d) => d.id), ALGAE_SOUP]],
   [
     "Animal goods",
     [
@@ -440,6 +550,12 @@ const GROUPS: [string, string[]][] = [
       "campfire",
       "wood-brazier",
       "stone-brazier",
+      "ornamental-hay-bale",
+      "doghouse",
+      "dark-doghouse",
+      "cat-tree",
+      "dark-cat-tree",
+      "bird-house",
       ...bombData.map((b) => b.id),
       LIFE_ELIXIR,
       MINERS_TREAT,
@@ -468,16 +584,44 @@ const GROUPS: [string, string[]][] = [
       ...TRINKETS,
       ...SHELLFISH,
       ...JUNK,
+      ...WATER_FINDS,
+      ...POND_SPECIES.flatMap((s) => [
+        { id: roeOf(s.id) },
+        { id: agedRoeOf(s.id) },
+      ]),
       { id: POT_ITEM },
+      { id: iceFishing.frostfin.id },
     ].map((f) => f.id),
   ],
   [
     "Keepsakes",
-    [HOMEWARD_PIN, WARP_TOTEM_BEACH, COOP_HEATER, CRYSTALARIUM, ELF_LETTER],
+    [
+      HOMEWARD_PIN,
+      WARP_TOTEM_BEACH,
+      COOP_HEATER,
+      ELF_LETTER,
+      lanternFloat.lantern.id,
+      lanternFloat.keepsake.id,
+    ],
   ],
   ["Rings", RINGS.map((r) => r.id)],
   ["Boots", BOOTS.map((b) => b.id)],
-  ["Wood and fibre", ["wood", "hardwood", "sap", "fiber", "clay", "hay"]],
+  [
+    "Wood and fibre",
+    [
+      "wood",
+      "hardwood",
+      "sap",
+      "fiber",
+      "clay",
+      "hay",
+      WAX,
+      CANDLE,
+      TAPPER,
+      HEAVY_TAPPER_DEF.id,
+      ...TAP_GOODS.map((g) => g.item).filter((i) => i !== "sap"),
+    ],
+  ],
 ];
 for (const [group, ids] of GROUPS)
   for (const id of ids) {
@@ -501,7 +645,18 @@ const QUALITY_NAME = { silver: "Silver", gold: "Gold" } as const;
 /** An item by id. A good with a quality suffix sells for more, per tier. */
 export function itemById(id: string): ItemDef | undefined {
   const { base, quality } = splitQuality(id);
-  const def = items.get(base);
+  let def = items.get(base);
+  if (!def) {
+    // A combined ring (note 95) is made, not listed.
+    const ring = isCombo(base) ? ringById(base) : undefined;
+    if (ring) def = { id: ring.id, name: ring.name, sellPrice: 0, keep: true };
+  }
+  if (!def) {
+    // A custom-tailored pair of boots (note 96) is made, not listed.
+    const boots = tailoredParts(base) ? bootsById(base) : undefined;
+    if (boots)
+      def = { id: boots.id, name: boots.name, sellPrice: 0, keep: true };
+  }
   if (!def || quality === "normal") return def;
   return {
     id,

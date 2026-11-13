@@ -8,7 +8,7 @@ The workflow is:
 1. Branch from `main` (one short-lived branch per change).
 2. Keep changes small and focused.
 3. Run `npm run check` locally before pushing (format, lint, typecheck, tests,
-   build).
+   build, overview and valley map checks).
 4. Open a pull request into `main`. CI must pass before merge.
 
 ## Setup

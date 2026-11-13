@@ -16,6 +16,7 @@ import {
   endDay as animalsEndDay,
   type AnimalNews,
 } from "./animals";
+import { advancePonds, pondNews, pondNight } from "./pond";
 import { checkAchievements } from "./achievements";
 import { SUMMIT_ACHIEVEMENT } from "./summit";
 import { ringProgress, valleyPercent } from "./completion";
@@ -27,6 +28,7 @@ import type { Settlement } from "./shipping";
 import { fruitTreeById } from "./fruittrees";
 import { CAVE_MAP } from "./cave";
 import { returnDebris } from "./debris";
+import { fillBins } from "./machines";
 import { endDayOrders, type OrdersNews } from "./orders";
 import { loseItems, type Lost } from "./combat";
 import { maps } from "../content/maps";
@@ -34,6 +36,7 @@ import { storeOf } from "./mapstore";
 import { areasEndDay, leaveArea } from "./areas";
 import { quarryBridgeNews } from "./quarry";
 import { ferryNews } from "./cove";
+import { cartNews, payGuestsBoard } from "./roomrewards";
 
 /**
  * True when something stands in the 3x3 around a tile that stops a young fruit
@@ -61,7 +64,7 @@ export function blocksGrowth(
         (!self && g.fruitTrees.at(tx, ty)) ||
         g.sprinklers.at(tx, ty) ||
         g.machines.at(tx, ty) ||
-        g.placed.get(FARM_STORE, tx, ty) ||
+        g.placed.covering(FARM_STORE, tx, ty) ||
         g.chests.onFarm(tx, ty) ||
         g.farm.plotAt(tx, ty)?.crop ||
         g.forage.itemAt(tx, ty)
@@ -119,6 +122,10 @@ export interface SleepReport {
   horseWasOut: boolean;
   /** True when the carpenter finished the silo this morning. */
   siloFinished: boolean;
+  /** Fish ponds the carpenter opened this morning (note 93). */
+  pondsFinished?: number;
+  /** Ponds with something to take, and ponds with a fish asking for an item (note 93). */
+  pondNews?: { ready: number; quests: number };
   /** Set when the player was knocked out in a fight: what the defeat took (note 22). */
   defeat?: { lost: Lost[]; posted: boolean };
   /** What the night did to the animals. */
@@ -149,6 +156,10 @@ export interface SleepReport {
   quarryBridge: boolean;
   /** True on the first morning after the Water room is done: the ferry is repaired (note 76). */
   ferryMended: boolean;
+  /** True on the first morning after the Hearth room is done: the carts run (note 16). */
+  cartsRunning: boolean;
+  /** Ids paid the Guests' Board bonus tonight (a catch-up: the hall pays it on hand-in). */
+  guestsBonus: string[];
   /** Names of young fruit trees that could not grow, since something stood in their 3x3. */
   stuckTrees: string[];
 }
@@ -182,6 +193,7 @@ export function sleep(
   // Any night's sleep restores health.
   g.combat.sync(g.skills);
   g.combat.health.fill();
+  g.combat.effects.clear();
   // The bin pays after the pass-out cost, which takes cash carried only.
   const shipped = g.bin.settle(g);
   const orders = endDayOrders(g, shipped.lines, g.day.clock.day);
@@ -202,6 +214,7 @@ export function sleep(
   g.sprinklers.water(g.farm);
   chargeRods(g);
   g.greenhouseSprinklers.water(g.greenhouse);
+  fillBins(g, random);
   g.trees.endDay(
     season,
     random,
@@ -215,7 +228,7 @@ export function sleep(
       !g.rocks.at(x, y) &&
       !g.sprinklers.at(x, y) &&
       !g.machines.at(x, y) &&
-      !g.placed.get(FARM_STORE, x, y) &&
+      !g.placed.covering(FARM_STORE, x, y) &&
       !g.chests.onFarm(x, y) &&
       !g.fruitTrees.at(x, y) &&
       g.ground.at(x, y).length === 0,
@@ -236,7 +249,7 @@ export function sleep(
         !g.twigs.at(x, y) &&
         !g.sprinklers.at(x, y) &&
         !g.machines.at(x, y) &&
-        !g.placed.get(FARM_STORE, x, y) &&
+        !g.placed.covering(FARM_STORE, x, y) &&
         !g.farm.plotAt(x, y)?.crop &&
         !g.forage.itemAt(x, y) &&
         g.ground.at(x, y).length === 0,
@@ -260,7 +273,7 @@ export function sleep(
         !g.trees.at(x, y) &&
         !g.sprinklers.at(x, y) &&
         !g.machines.at(x, y) &&
-        !g.placed.get(FARM_STORE, x, y) &&
+        !g.placed.covering(FARM_STORE, x, y) &&
         !g.chests.onFarm(x, y) &&
         !g.farm.plotAt(x, y) &&
         !g.forage.itemAt(x, y) &&
@@ -278,6 +291,9 @@ export function sleep(
       true,
     ),
   );
+  const dayOfSeason = dateOf(g.day.clock.day).dayOfSeason;
+  g.teaBushes.endDay(season, dayOfSeason);
+  g.greenhouseTeaBushes.endDay(season, dayOfSeason, true);
   g.forage.respawn(
     season,
     spots.filter(
@@ -287,7 +303,7 @@ export function sleep(
         !g.weeds.at(s.x, s.y) &&
         !g.sprinklers.at(s.x, s.y) &&
         !g.machines.at(s.x, s.y) &&
-        !g.placed.get(FARM_STORE, s.x, s.y) &&
+        !g.placed.covering(FARM_STORE, s.x, s.y) &&
         !g.chests.onFarm(s.x, s.y),
     ),
     random,
@@ -303,6 +319,10 @@ export function sleep(
   const houseFinished = advanceBuild(g);
   const animalJob = advanceBuilding(g);
   const siloFinished = advanceSilo(g);
+  const pondsFinished = advancePonds(g);
+  // Built ponds breed, make roe and tick their quests (note 93).
+  pondNight(g, random);
+  const pondReport = pondNews(g);
   const animals = animalsEndDay(g, random);
   const horseWasOut = horseEndDay(g);
   const furnaceGifted = deliverFurnace(g);
@@ -334,6 +354,10 @@ export function sleep(
     stableFinished: animalJob === "stable",
     horseWasOut,
     siloFinished,
+    pondsFinished,
+    ...(pondReport.ready + pondReport.quests > 0
+      ? { pondNews: pondReport }
+      : {}),
     animals,
     furnaceGifted,
     achievements,
@@ -349,6 +373,8 @@ export function sleep(
     stuckTrees: stuck.map((t) => fruitTreeById(t.id)?.name ?? t.id),
     quarryBridge: quarryBridgeNews(g),
     ferryMended: ferryNews(g),
+    cartsRunning: cartNews(g),
+    guestsBonus: payGuestsBoard(g),
   };
 }
 

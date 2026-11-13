@@ -5,6 +5,7 @@ import { categoryOf } from "./artisan";
 import { itemById } from "./items";
 import { QUALITIES, splitQuality, type Quality } from "./quality";
 import type { Wallet } from "./shop";
+import type { Wardrobe } from "./hats";
 
 /** One good a bundle takes, how many of it, and the lowest quality allowed. */
 export interface BundleItem {
@@ -22,6 +23,14 @@ export interface BundleReward {
   item?: { id: string; count: number };
   /** A furniture piece. Named in the reward text, not yet placed (no furniture system). */
   furniture?: string;
+  /**
+   * A recipe the bundle teaches, by recipe id (which is also its result's item id).
+   * It is learned through the recipe's own `bundle` source in `recipes.json`; this
+   * field only names it in the reward text.
+   */
+  recipe?: string;
+  /** A choice of hats: the player takes `choose` of `from` (note 63, bundle 24). Taken at the hall with `claimHat`. */
+  hats?: { choose: number; from: string[] };
 }
 
 export interface BundleDef {
@@ -39,8 +48,8 @@ export interface BundleDef {
 export interface RoomDef {
   id: string;
   name: string;
-  /** Bundles finished in the other rooms before this room appears. */
-  opensAfter: number;
+  /** Bundles finished in the other rooms before this room appears, or "all" of them (the Last Seat). */
+  opensAfter: number | "all";
   /** What finishing every bundle here unlocks. Granted by a later system. */
   unlock?: string;
 }
@@ -86,6 +95,21 @@ export const ROOMS = roomData as RoomDef[];
 
 /** The room whose completion mends the bridge to ring 2. */
 export const LAST_ROOM = "last-seat";
+
+/**
+ * True when the hall counts as restored for festival places (the Midwinter
+ * Feast moves into it, note 82): every bundle is done and the Last Seat is
+ * open. Derived, never saved (owner, 2026-11-12). A hall with no bundles is
+ * never restored.
+ */
+export function hallRestored(hall: Hall): boolean {
+  return (
+    hall.bundles.length > 0 &&
+    hall.allComplete &&
+    hall.roomOpen(LAST_ROOM) &&
+    hall.roomComplete(LAST_ROOM)
+  );
+}
 
 export type RoomStatus = "done" | "ready" | "locked" | "empty";
 
@@ -161,6 +185,13 @@ export class Hall {
     return this.bundles.every((b) => this.complete(b.id));
   }
 
+  /** How many bundles in the other rooms must be done before a room opens. */
+  private gateCount(room: RoomDef): number {
+    return room.opensAfter === "all"
+      ? this.bundles.filter((b) => b.room !== room.id).length
+      : room.opensAfter;
+  }
+
   /** Bundles finished, not counting those in one room. */
   finishedOutside(roomId: string): number {
     return this.bundles.filter((b) => b.room !== roomId && this.complete(b.id))
@@ -170,7 +201,7 @@ export class Hall {
   /** The soft gate: a room appears once enough bundles are done elsewhere. */
   roomOpen(roomId: string): boolean {
     const room = this.rooms.find((r) => r.id === roomId);
-    return !!room && this.finishedOutside(roomId) >= room.opensAfter;
+    return !!room && this.finishedOutside(roomId) >= this.gateCount(room);
   }
 
   /** True when every bundle in the room is done (and the room has bundles). */
@@ -209,8 +240,27 @@ export class Hall {
   gateRemaining(roomId: string): number {
     const room = this.rooms.find((r) => r.id === roomId);
     return room
-      ? Math.max(0, room.opensAfter - this.finishedOutside(roomId))
+      ? Math.max(0, this.gateCount(room) - this.finishedOutside(roomId))
       : 0;
+  }
+
+  /**
+   * Hats still to take from a finished bundle with a hat reward. Nothing is
+   * stored: the hats owned from the set are the picks used.
+   */
+  hatPicksLeft(bundleId: string, wardrobe: Wardrobe): number {
+    const hats = this.bundles.find((b) => b.id === bundleId)?.reward.hats;
+    if (!hats || !this.complete(bundleId)) return 0;
+    const taken = hats.from.filter((h) => wardrobe.has(h)).length;
+    return Math.max(0, hats.choose - taken);
+  }
+
+  /** Take one hat of a finished bundle's set. False if it is not on offer, is owned, or no picks are left. */
+  claimHat(bundleId: string, hatId: string, wardrobe: Wardrobe): boolean {
+    const hats = this.bundles.find((b) => b.id === bundleId)?.reward.hats;
+    if (!hats || !hats.from.includes(hatId)) return false;
+    if (this.hatPicksLeft(bundleId, wardrobe) < 1) return false;
+    return wardrobe.add(hatId);
   }
 
   /** Bundles in rooms that have appeared. */
@@ -284,5 +334,13 @@ export function rewardText(def: BundleDef): string {
   if (prize)
     parts.push(`${prize.count} ${itemById(prize.id)?.name ?? prize.id}`);
   if (def.reward.furniture) parts.push(def.reward.furniture);
+  if (def.reward.recipe)
+    parts.push(
+      `the ${itemById(def.reward.recipe)?.name ?? def.reward.recipe} recipe`,
+    );
+  if (def.reward.hats)
+    parts.push(
+      `${def.reward.hats.choose} hats of your choice from ${def.reward.hats.from.length}`,
+    );
   return parts.join(" and ") || "nothing";
 }

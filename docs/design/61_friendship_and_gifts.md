@@ -172,7 +172,8 @@ its data, or none.
   is data (a `hate` flag on the item, or a category rule), never code:
   - **Whole categories:** all bait, all found things (our fossil and artifact
     equivalent, note 63), all monster drops, all trash. The exceptions that are
-    only disliked follow Stardew's pattern: driftwood among the trash, and the
+    only disliked follow Stardew's pattern: driftwood among the trash (built
+    2026-11-13 as rod and pot junk, `pots.json`), and the
     two rare essences among the drops once those exist.
   - **Named items, by kind:** raw ores and coal (copper ore, iron ore),
     warp totems and other travel items, the placed or tool-like items (cookout

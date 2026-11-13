@@ -460,6 +460,10 @@
       {
         "kind": "bundle",
         "bundle": "animal-goods"
+      },
+      {
+        "kind": "order",
+        "order": "spring-leeks"
       }
     ]
   },
@@ -765,6 +769,222 @@
         "kind": "level",
         "skill": "farming",
         "level": 9
+      }
+    ]
+  },
+  {
+    "id": "tapper",
+    "ingredients": [
+      {
+        "item": "wood",
+        "count": 40
+      },
+      {
+        "item": "copper-bar",
+        "count": 2
+      }
+    ],
+    "result": {
+      "item": "tapper",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "level",
+        "skill": "foraging",
+        "level": 4
+      }
+    ]
+  },
+  {
+    "id": "heavy-tapper",
+    "ingredients": [
+      {
+        "item": "hardwood",
+        "count": 30
+      },
+      {
+        "item": "hearthsilver-bar",
+        "count": 1
+      }
+    ],
+    "result": {
+      "item": "heavy-tapper",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "bundle",
+        "bundle": "rare-finds"
+      }
+    ]
+  },
+  {
+    "id": "geode-crusher",
+    "ingredients": [
+      {
+        "item": "gold-bar",
+        "count": 2
+      },
+      {
+        "item": "stone",
+        "count": 50
+      },
+      {
+        "item": "gem-high-b",
+        "count": 1
+      }
+    ],
+    "result": {
+      "item": "geode-crusher",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "order",
+        "order": "cave-patrol"
+      }
+    ]
+  },
+  {
+    "id": "worm-bin",
+    "ingredients": [
+      {
+        "item": "hardwood",
+        "count": 15
+      },
+      {
+        "item": "gold-bar",
+        "count": 1
+      },
+      {
+        "item": "iron-bar",
+        "count": 1
+      },
+      {
+        "item": "fiber",
+        "count": 50
+      }
+    ],
+    "result": {
+      "item": "worm-bin",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "level",
+        "skill": "fishing",
+        "level": 4
+      }
+    ]
+  },
+  {
+    "id": "candle",
+    "ingredients": [
+      {
+        "item": "wax",
+        "count": 1
+      },
+      {
+        "item": "fiber",
+        "count": 1
+      }
+    ],
+    "result": {
+      "item": "candle",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "level",
+        "skill": "farming",
+        "level": 3
+      }
+    ]
+  },
+  {
+    "id": "crystalarium",
+    "ingredients": [
+      {
+        "item": "stone",
+        "count": 99
+      },
+      {
+        "item": "gold-bar",
+        "count": 5
+      },
+      {
+        "item": "hearthsilver-bar",
+        "count": 2
+      },
+      {
+        "item": "battery-pack",
+        "count": 1
+      }
+    ],
+    "result": {
+      "item": "crystalarium",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "bundle",
+        "bundle": "harvest-feast"
+      }
+    ]
+  },
+  {
+    "id": "sturdy-band",
+    "ingredients": [
+      {
+        "item": "copper-bar",
+        "count": 2
+      },
+      {
+        "item": "bug-meat",
+        "count": 25
+      },
+      {
+        "item": "gloop-jelly",
+        "count": 25
+      }
+    ],
+    "result": {
+      "item": "sturdy-band",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "level",
+        "skill": "combat",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "tea-sapling",
+    "ingredients": [
+      {
+        "item": "mixed-seed",
+        "count": 2
+      },
+      {
+        "item": "fiber",
+        "count": 5
+      },
+      {
+        "item": "wood",
+        "count": 5
+      }
+    ],
+    "result": {
+      "item": "tea-sapling",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "letter",
+        "letter": "odette-tea-sapling"
       }
     ]
   }

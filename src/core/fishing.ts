@@ -1,6 +1,7 @@
 import fishData from "../content/fish.json";
 import potData from "../content/pots.json";
 import rodData from "../content/rods.json";
+import tableData from "../content/fish-tables.json";
 import { dateOf, type Season } from "./calendar";
 import { NIGHTFALL } from "./clock";
 import { withQuality, type Quality } from "./quality";
@@ -8,6 +9,7 @@ import { harvestXp } from "./skills";
 import type { WaterKind } from "./map";
 import type { GameState } from "./save";
 import { hasFlag, setFlag } from "./worldflags";
+import { rollFind } from "./waterfinds";
 
 /**
  * Fishing, slices 1 to 3 of note 21: a cast, a bite, the bar, the size roll,
@@ -15,7 +17,7 @@ import { hasFlag, setFlag } from "./worldflags";
  * the legends are built (slice 4, note 21). Content is `src/content/fish.json` and `rods.json`. Numbers are
  * placeholders (`docs/design/07_tuning_numbers.md`). Pure rules, no Phaser.
  */
-export type Rarity = "common" | "uncommon" | "rare" | "legend";
+export type Rarity = "common" | "uncommon" | "rare" | "legend" | "unique";
 export type Behaviour = "mixed" | "smooth" | "sinker" | "floater" | "dart";
 export type Time = "any" | "dawn" | "day" | "dusk" | "night" | "rain";
 /** A body of water: each kind has its own fish table (note 71). */
@@ -47,8 +49,13 @@ export interface FishDef {
 }
 
 export const FISH = fishData as FishDef[];
-/** The ordinary roster: every fish that is not a legend (the fish seed letter counts these). */
-export const ORDINARY_FISH = FISH.filter((f) => f.rarity !== "legend");
+/**
+ * The ordinary roster: every fish that is neither a legend nor the Secret Woods pond's unique
+ * fish (the fish seed letter counts these, note 21).
+ */
+export const ORDINARY_FISH = FISH.filter(
+  (f) => f.rarity !== "legend" && f.rarity !== "unique",
+);
 
 export function fishById(id: string): FishDef | undefined {
   return FISH.find((f) => f.id === id);
@@ -96,6 +103,8 @@ export const RARITY_WEIGHT: Record<Rarity, number> = {
   rare: 1,
   /** A legend is a lucky bite: a third of a common fish's weight (placeholder). */
   legend: 2,
+  /** The Secret Woods pond's one fish: a shy bite, half a common's weight (placeholder). */
+  unique: 3,
 };
 
 /** The rod a legend needs (note 21, decision 13). */
@@ -166,15 +175,25 @@ export function tableOf(water: Water): Water {
   return water === "farm-pond" ? "forest-lake" : water;
 }
 
+/**
+ * Ordinary fish a water borrows from other waters' tables (`fish-tables.json`, note 73): the
+ * Secret Woods pond holds two common fish already in the roster.
+ */
+export function borrowedFish(water: Water): string[] {
+  return (tableData.borrow as Record<string, string[]>)[water] ?? [];
+}
+
 /** Fish of a water that the season, time and weather allow, whatever the rod. */
 export function fishAvailable(water: Water, c: Conditions): FishDef[] {
   const slot = timeSlot(c.season, c.minutes);
   const rain = c.raining;
+  const borrowed = borrowedFish(water);
   return FISH.filter(
     (f) =>
-      f.water === tableOf(water) &&
+      (f.water === tableOf(water) || borrowed.includes(f.id)) &&
       // A legend keeps to its own water: the pond only borrows the ordinary table.
       (f.rarity !== "legend" || f.water === water) &&
+      (f.rarity !== "unique" || f.water === water) &&
       f.seasons.includes(c.season) &&
       (f.time === "any" || (f.time === "rain" ? rain : f.time === slot)) &&
       (f.weather === undefined || (f.weather === "rain") === rain) &&
@@ -212,7 +231,9 @@ export type Bite =
   /** The Pearl Lobster, on the sea only (`pots.ts`). */
   | { kind: "lobster" }
   /** A piece of trash, hauled in with no bar (`pots.ts`, `rodTrashChance`). */
-  | { kind: "trash"; item: string };
+  | { kind: "trash"; item: string }
+  /** A water plant or jelly lifted with the rod, no bar (`waterfinds.ts`, note 93). */
+  | { kind: "find"; item: string };
 
 /**
  * What bites. Every rod can hook any fish the conditions allow, and no level
@@ -226,7 +247,8 @@ export function bite(
   tutorial = false,
   odds: Odds = {},
 ): Bite {
-  // The sea sometimes gives the rare Pearl Lobster instead of a fish.
+  // The sea sometimes gives the rare Pearl Lobster instead of a fish
+  // (`rodLobsterChance` in pots.json, note 21, placeholder).
   if (water === "sea" && !tutorial && random() < potData.rodLobsterChance)
     return { kind: "lobster" };
   // Weak waters sometimes give trash: no bar, never on the tutorial cast.
@@ -240,12 +262,19 @@ export function bite(
         )
       ]!.id,
     };
+  // A water plant or a jelly, no bar. Never on the tutorial cast.
+  if (!tutorial) {
+    const found = rollFind(water, c.season, random);
+    if (found) return { kind: "find", item: found.id };
+  }
   let pool = fishAvailable(water, c);
   if (tutorial) pool = pool.filter((f) => f.rarity === "common");
   if (pool.length === 0) {
     if (!tutorial) return { kind: "none" };
     const stand = FISH.find(
-      (f) => f.water === tableOf(water) && f.rarity === "common",
+      (f) =>
+        f.rarity === "common" &&
+        (f.water === tableOf(water) || borrowedFish(water).includes(f.id)),
     );
     return stand ? { kind: "fish", fish: stand } : { kind: "none" };
   }
@@ -590,11 +619,26 @@ export interface FishRecord {
 
 export interface FishingSave {
   caught: Record<string, FishRecord>;
+  /** Water finds lifted (note 93). Absent in older saves. */
+  finds?: number;
 }
 
 /** What has been caught: how many of each fish and the longest. Saved with the game. */
 export class FishLog {
   private caught = new Map<string, FishRecord>();
+  private finds = 0;
+
+  /**
+   * Water finds lifted. They count toward the "catch N fish" total only, never the kinds,
+   * the roster or the Fish completion category (note 93, owner 2026-11-12).
+   */
+  get findsLifted(): number {
+    return this.finds;
+  }
+
+  noteFind(): void {
+    this.finds += 1;
+  }
 
   record(id: string): FishRecord | undefined {
     return this.caught.get(id);
@@ -604,7 +648,7 @@ export class FishLog {
   get total(): number {
     let n = 0;
     for (const r of this.caught.values()) n += r.count;
-    return n;
+    return n + this.finds;
   }
 
   /** Different fish landed. */
@@ -632,12 +676,17 @@ export class FishLog {
       caught: Object.fromEntries(
         [...this.caught].map(([id, r]) => [id, { ...r }]),
       ),
+      ...(this.finds > 0 ? { finds: this.finds } : {}),
     };
   }
 
   load(raw: unknown): void {
     this.caught = new Map();
+    this.finds = 0;
     if (typeof raw !== "object" || raw === null) return;
+    const finds = (raw as Partial<FishingSave>).finds;
+    if (typeof finds === "number" && Number.isFinite(finds) && finds > 0)
+      this.finds = Math.floor(finds);
     const caught = (raw as Partial<FishingSave>).caught;
     if (typeof caught !== "object" || caught === null) return;
     for (const [id, r] of Object.entries(caught)) {

@@ -4,6 +4,7 @@ import {
   Hall,
   LAST_ROOM,
   ROOMS,
+  hallRestored,
   normalizeBundle,
   rewardText,
   type BundleDef,
@@ -20,10 +21,11 @@ import { CATEGORY_NAMES, type ArtisanCategory } from "../src/core/artisan";
 import { FISH } from "../src/core/fishing";
 import { SHELLFISH } from "../src/core/pots";
 import { DISHES } from "../src/core/dishes";
+import { ARTIFACTS } from "../src/core/artifacts";
 import { fillHall } from "./hall-helpers";
 
 describe("bundle data", () => {
-  it("has the twenty-seven built bundles with known items and sane requirements", () => {
+  it("has the thirty built bundles with known items and sane requirements", () => {
     expect(BUNDLES.map((b) => b.id)).toEqual([
       "spring-foraging",
       "summer-foraging",
@@ -39,6 +41,7 @@ describe("bundle data", () => {
       "artisan-goods",
       "smiths",
       "weavers",
+      "lamplighters",
       "dyers",
       "cooks",
       "stream-fish",
@@ -48,6 +51,8 @@ describe("bundle data", () => {
       "specialty-fish",
       "trap-catch",
       "fodder",
+      "hosts",
+      "storytellers",
       "harvest-feast",
       "the-catch",
       "hearth-fire",
@@ -384,7 +389,7 @@ describe("saves", () => {
 });
 
 describe("rooms and the bridge", () => {
-  it("lists all six rooms, with the Last Seat last and opening at 23", () => {
+  it("lists all six rooms, with the Last Seat last and opening after all the others", () => {
     expect(ROOMS.map((r) => r.id)).toEqual([
       "foragers-shelf",
       "larder",
@@ -393,7 +398,7 @@ describe("rooms and the bridge", () => {
       "guests-board",
       "last-seat",
     ]);
-    expect(ROOMS.map((r) => r.opensAfter)).toEqual([0, 1, 1, 2, 3, 23]);
+    expect(ROOMS.map((r) => r.opensAfter)).toEqual([0, 1, 1, 2, 3, "all"]);
     expect(ROOMS.every((r) => r.unlock)).toBe(true);
   });
 
@@ -414,6 +419,42 @@ describe("rooms and the bridge", () => {
     expect(hall.bridgeMended).toBe(false);
     const done = new Hall(bundles, { f1: ["leek"], l1: ["leek"] }, rooms);
     expect(done.bridgeMended).toBe(true);
+  });
+});
+
+describe("hallRestored", () => {
+  const mk = (id: string, room: string) =>
+    normalizeBundle({
+      id,
+      name: id,
+      room,
+      hint: "h",
+      items: ["leek"],
+      reward: {},
+    });
+  const bundles = [mk("f1", "foragers-shelf"), mk("l1", LAST_ROOM)];
+  const rooms = ROOMS.map((r) => ({ ...r, opensAfter: 0 }));
+
+  it("is false for a fresh hall and a hall with only the other rooms done", () => {
+    expect(hallRestored(new Hall())).toBe(false);
+    expect(hallRestored(new Hall(bundles, { f1: ["leek"] }, rooms))).toBe(
+      false,
+    );
+  });
+
+  it("is true once every bundle is done and the Last Seat is done", () => {
+    const done = new Hall(bundles, { f1: ["leek"], l1: ["leek"] }, rooms);
+    expect(hallRestored(done)).toBe(true);
+  });
+
+  it("is never true for a hall with no bundles", () => {
+    expect(hallRestored(new Hall([], {}, rooms))).toBe(false);
+  });
+
+  it("is true for the real hall once filled", () => {
+    const hall = new Hall();
+    fillHall(hall, new Inventory(), { money: 0 });
+    expect(hallRestored(hall)).toBe(true);
   });
 });
 
@@ -492,6 +533,12 @@ describe("the slice 1 hall", () => {
       "jam",
       "pickles",
       "honey",
+      // Lamps, oil and candles (note 63).
+      "oil-lamp",
+      "oil",
+      "candle",
+      // Old things from artifact spots (note 69).
+      ...ARTIFACTS.map((a) => a.id),
       // Animal goods come from the coop and barn (note 23).
       "egg",
       "duck-egg",

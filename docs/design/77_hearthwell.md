@@ -237,7 +237,7 @@ The two arms **rejoin south of the town**, with the hall on the island between t
 ## Built status (2026-11-09, #661)
 
 The river layout Tiled pass is built: `src/content/maps/hearthwell.json`, 120 by 110,
-drafted by `scripts/gen-hearthwell-map.mjs` (the JSON is the source from then on).
+drafted by `scripts/drafts/gen-hearthwell-map.mjs` (the JSON is the source from then on).
 Properties `rideable: true` and `waterKind: river`. Terrain only. **No building, door,
 exit, farm map change, trees, forage or weeds**: those are #645 and later. The map is
 not reachable in play yet (no exit leads to it). Tests: `tests/hearthwell.test.ts`.
@@ -333,10 +333,10 @@ north exit. Tests: `tests/hearthwell.test.ts` ("the Hearthwell shell"). Playtest
 - **The smith menu is split (#708).** The Hearthwell smithy counter (kind `smithy`) does tool
   upgrades and geode cracking (it still lists geodes for sale, as before). Ore, coal and weapons
   stay at the Mountain forge dwarf (kind `smith`). Weapons are bought there, not forged.
-- **Outpost boards.** The road news board (`board-news`, x 86) is a stand-in that shows one
-  line ("Nothing is posted yet"); road news is not built (note 57 step 1). The board beside it
+- **Outpost boards.** The road news board (`board-news`, x 86) was a one-line stand-in; road
+  news is built since (`roadnews.ts`, note 57 step 1). The board beside it
   (x 90) is the working Special Orders board since 2026-11-10 (see the last section). The Outpost's
-  door is a shut tile and the stall yard is only a region. The trader (note 57 step 3) is not built.
+  door is a shut tile and the stall yard is only a region. The trader (note 57 step 3) is built since (`trader.ts`).
 - **The cart stop** (66, 58) stays a region. No `cart` service, since the cart screen is undesigned.
 - **Door tiles for counters are blocked.** A counter on a door tile is used from the street
   below, facing up, like a farm counter. Real doors (hall, sawmill) are walkable exits that open
@@ -356,7 +356,7 @@ north exit. Tests: `tests/hearthwell.test.ts` ("the Hearthwell shell"). Playtest
 Eleven interior maps are built as shells with a counter and furniture, no people, and the ten shut
 lot doors in `hearthwell.json` are now walkable exits (the door tile is open, the exit id is the lot
 id, entry `door` on the interior, return entry `from_<id>`). Generated once by
-`scripts/gen-hearthwell-interiors.mjs`; the JSON is the source from then on. Tests:
+`scripts/drafts/gen-hearthwell-interiors.mjs`; the JSON is the source from then on. Tests:
 `tests/hearthwell-interiors.test.ts`. Playtest: `npm run playtest:hearthwell` now goes in and out of
 every interior.
 
@@ -397,8 +397,9 @@ every interior.
   says "a stair or door"), return entry `from_rooms`.
 - **Furniture is placeholder tiles** from the existing tileset (crate, bed, scroll), all solid, no
   furniture objects or art. Interiors carry no day state (open in note 58, and #599).
-- **Not built:** people and schedules (#599), shop hours and festival closures, any system behind the
-  four stand-in counters, the trader and stalls, the festival variant, and interior lighting.
+- **Not built:** any system behind the four stand-in counters, the stalls, the festival variant, and
+  interior lighting. Built since: people and schedules (`villagers.ts`, #599), shop hours and
+  festival closures (`shophours.ts`) and the trader (`trader.ts`).
 
 ## Owner decisions 2026-11-09 (after the map builds)
 
