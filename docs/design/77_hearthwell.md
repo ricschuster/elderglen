@@ -237,7 +237,7 @@ The two arms **rejoin south of the town**, with the hall on the island between t
 ## Built status (2026-11-09, #661)
 
 The river layout Tiled pass is built: `src/content/maps/hearthwell.json`, 120 by 110,
-drafted by `scripts/gen-hearthwell-map.mjs` (the JSON is the source from then on).
+drafted by `scripts/drafts/gen-hearthwell-map.mjs` (the JSON is the source from then on).
 Properties `rideable: true` and `waterKind: river`. Terrain only. **No building, door,
 exit, farm map change, trees, forage or weeds**: those are #645 and later. The map is
 not reachable in play yet (no exit leads to it). Tests: `tests/hearthwell.test.ts`.
@@ -356,7 +356,7 @@ north exit. Tests: `tests/hearthwell.test.ts` ("the Hearthwell shell"). Playtest
 Eleven interior maps are built as shells with a counter and furniture, no people, and the ten shut
 lot doors in `hearthwell.json` are now walkable exits (the door tile is open, the exit id is the lot
 id, entry `door` on the interior, return entry `from_<id>`). Generated once by
-`scripts/gen-hearthwell-interiors.mjs`; the JSON is the source from then on. Tests:
+`scripts/drafts/gen-hearthwell-interiors.mjs`; the JSON is the source from then on. Tests:
 `tests/hearthwell-interiors.test.ts`. Playtest: `npm run playtest:hearthwell` now goes in and out of
 every interior.
 

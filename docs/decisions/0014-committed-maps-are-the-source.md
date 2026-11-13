@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed (2026-11-12). For the owner to accept or change. Builds on ADR 0005 (map
+Accepted (owner, 2026-11-12). Builds on ADR 0005 (map
 style) and note 81 ("The committed JSON is the source").
 
 ## Context

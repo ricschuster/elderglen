@@ -1,9 +1,13 @@
+// DRAFT ONLY, DO NOT RUN (ADR 0014). This script overwrites a committed map that has
+// since been edited by hand, so running it would drop working features. The committed
+// JSON in src/content/maps/ is the source. Kept as a record of the first draft.
+//
 // Writes the Lake cove map (Tiled JSON) and patches the delta with the ferry,
 // build slices 1, 2 and 4 of docs/design/76_lake_cove.md: the 50 by 40 cove with
 // its dock, lake, shore path, lanterns, bench, treasure ledge and forage spots;
 // on the delta, the dock, the gated ferry exit `ferry`, the entry `from_ferry`
 // and the ruined and repaired boat art.
-// Run once: node scripts/gen-cove-map.mjs && npx prettier --write src/content/maps/cove.json src/content/maps/delta.json
+// Run once: node scripts/drafts/gen-cove-map.mjs && npx prettier --write src/content/maps/cove.json src/content/maps/delta.json
 // The files it writes are the source from then on: edit them by hand or in
 // Tiled. This script only authored the first draft, with a fixed seed so a
 // re-run gives the same cove. (The delta patch is idempotent.)

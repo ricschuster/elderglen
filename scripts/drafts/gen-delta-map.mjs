@@ -1,7 +1,11 @@
+// DRAFT ONLY, DO NOT RUN (ADR 0014). This script overwrites a committed map that has
+// since been edited by hand, so running it would drop working features. The committed
+// JSON in src/content/maps/ is the source. Kept as a record of the first draft.
+//
 // Writes the River delta and Beach map and the fisher's hut interior (Tiled
 // JSON), steps 1 to 4 of docs/design/75_river_delta_and_beach.md, and cuts the
 // farm's south exit into both farm maps.
-// Run once: node scripts/gen-delta-map.mjs
+// Run once: node scripts/drafts/gen-delta-map.mjs
 // The files it writes, src/content/maps/delta.json and fisher-hut.json, are the
 // source from then on: edit them by hand or in Tiled. This script only authored
 // the first draft, with a fixed seed so a re-run gives the same files. (The

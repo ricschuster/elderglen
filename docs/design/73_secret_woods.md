@@ -172,7 +172,7 @@ The pond's unique fish is the **Fernscale** (renamed from the working name Mossb
 Build order steps 1 to 4 and the stand-in removal are built.
 
 - **Map:** `src/content/maps/secret-woods.json`, 48 by 40, drafted by
-  `scripts/gen-secret-woods-map.mjs` (the JSON is the source from then on).
+  `scripts/drafts/gen-secret-woods-map.mjs` (the JSON is the source from then on).
   Properties `wild`, `rideable`, `waterKind` woods-pond and `stumpRegrowDays` 1.
   Glade, covered passage (x 38 to 39, y 22 to 26) and hollow as in the sketch,
   six `stump` objects (kind oak) at the note's tiles, 22 cosmetic trees in each

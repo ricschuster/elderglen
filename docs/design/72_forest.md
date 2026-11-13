@@ -211,7 +211,7 @@ Work packages: "Forest map part 1" (steps 2 to 4) and "Forest part 2" (steps 5 a
 
 **Part 1, #637 (2026-11-09): slices 2 to 4 are built.** Map `forest.json` (120 by
 120, `placeholder`, `rideable`, `wild`, `waterKind` forest-lake), authored once by
-`scripts/gen-forest-map.mjs` and now edited by hand or in Tiled.
+`scripts/drafts/gen-forest-map.mjs` and now edited by hand or in Tiled.
 
 Built:
 
@@ -267,7 +267,7 @@ y 60 to 66) leads to the Mountain's `from_forest`, with entry `from_mountain` (1
 
 **Part 2, #638 (2026-11-09): slices 5 and 6 are built.** The farmstead, the hermit's
 tower and the Wanderer's camp are cut into `forest.json` by the one-off
-`scripts/gen-forest-part2.mjs`, which also wrote the two interiors. Placeholder art, role
+`scripts/drafts/gen-forest-part2.mjs`, which also wrote the two interiors. Placeholder art, role
 labels, no names.
 
 Built:

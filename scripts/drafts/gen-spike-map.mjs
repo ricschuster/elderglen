@@ -1,5 +1,9 @@
+// DRAFT ONLY, DO NOT RUN (ADR 0014). This script overwrites a committed map that has
+// since been edited by hand, so running it would drop working features. The committed
+// JSON in src/content/maps/ is the source. Kept as a record of the first draft.
+//
 // Writes a large Tiled-format map (JSON) for the performance spike.
-// Run: node scripts/gen-spike-map.mjs
+// Run: node scripts/drafts/gen-spike-map.mjs
 import { writeFileSync } from "node:fs";
 
 const W = 128;

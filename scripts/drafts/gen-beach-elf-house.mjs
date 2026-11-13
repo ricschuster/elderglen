@@ -1,6 +1,10 @@
+// DRAFT ONLY, DO NOT RUN (ADR 0014). This script overwrites a committed map that has
+// since been edited by hand, so running it would drop working features. The committed
+// JSON in src/content/maps/ is the source. Kept as a record of the first draft.
+//
 // Writes Thalwen's cottage (Tiled JSON), build issue #641, note 75 and note 09:
 // the cottage on the Beach dunes in delta.json and the interior beach-elf-house.json.
-// Run once: node scripts/gen-beach-elf-house.mjs && npx prettier --write src/content/maps/*.json
+// Run once: node scripts/drafts/gen-beach-elf-house.mjs && npx prettier --write src/content/maps/*.json
 // The files it writes are the source from then on: edit them by hand or in Tiled.
 import { readFileSync, writeFileSync } from "node:fs";
 

@@ -1,9 +1,13 @@
+// DRAFT ONLY, DO NOT RUN (ADR 0014). This script overwrites a committed map that has
+// since been edited by hand, so running it would drop working features. The committed
+// JSON in src/content/maps/ is the source. Kept as a record of the first draft.
+//
 // Writes the Standard farm map, src/content/maps/farm.json, from the checked
 // layout in docs/design/55_farm_layout.md (issue #776). The ground comes from
 // the Tiled draft, docs/design/drafts/farm-draft/farm-draft.tmj; this script
 // turns its colour swatches into the placeholder tileset, adds the markers
 // and scatters the starting clutter from a fixed seed.
-// Run once: node scripts/gen-farm-map.mjs
+// Run once: node scripts/drafts/gen-farm-map.mjs
 // The file it writes is the source from then on: edit it by hand or in Tiled.
 // A re-run replaces the map, so it also replaces hand edits.
 import { readFileSync, writeFileSync } from "node:fs";
