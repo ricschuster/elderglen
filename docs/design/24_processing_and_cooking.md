@@ -222,8 +222,8 @@ Settled where the notes left gaps. All numbers are placeholders (note 07).
 - **Use.** Hold a good and face the cask to load it. Action reads the cask
   and takes a gold good out. The axe or pickaxe takes the good out at any time,
   or an empty cask up, so a stray press never resets the ageing. A gold good
-  shows the ready mark. Not built: ale and pale ale (no grain), cask count
-  upgrades, a cask in the farm cave.
+  shows the ready mark. Beer and pale ale are built (keg in `processing.ts`,
+  cask days in `cask.ts`). Not built: cask count upgrades, a cask in the farm cave.
 - **The dye vat** is the Dyer's bundle (23) reward, a machine on the farm like
   the keg, and its recipe comes with the bundle only (40 wood, 10 stone, 10
   fiber). One flower, berry or crop in, one dye out after 1 day:
@@ -261,7 +261,7 @@ Settled where the notes left gaps. All numbers are placeholders (note 07).
 
 ## Left for later
 
-- **Ale and pale ale** for the cask, once grain exists (the cask is built, see above).
+- **Ale and pale ale** for the cask: built (beer from wheat, pale ale from hops, `processing.ts` and `cask.ts`).
 - **A dehydrator** is built (placeable and recipe, farm cave).
 - **Recycling and a worm bin:** the recycler and worm bin are built placeables. Recycling for trash is in `21_fishing.md`.
 - **Artisan goods from trees and tapping** (maple syrup and similar). They need

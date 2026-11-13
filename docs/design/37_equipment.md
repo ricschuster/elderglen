@@ -113,8 +113,9 @@ The slot and the first rings do not need all of this. See the order below.
    The weapon stats in `22_mines.md` get crit, attack and knockback then.
 
 Bundle 16's glow ring has a placeholder reward until the slot exists
-(`33_build_order.md`). Built 2026-11-10: `glow-ring` is a kept item that does
-nothing yet. The slot itself is not built.
+(`33_build_order.md`). Built 2026-11-10: `glow-ring` is a kept item. The ring
+slots are built since (`equipment.ts`), and the glow ring gives light 10
+(`rings.json`).
 
 ## Built (2026-11-10, #597)
 

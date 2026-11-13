@@ -20,8 +20,8 @@ the dark edge is Could.
 | --- | --- | --- | --- | --- |
 | M1 | Define the first playable | The first playable's scope and done list are written below, and the audience, identity, core loop of a day and multiplayer questions are answered. | Done | None |
 | M2 | First playable | Day and energy cycle, farming, selling and a small centre 1 run in the home valley, with rough art. Engine chosen in an ADR. | Done (2026-11-07) | None |
-| M3 | Vertical slice | Slice 1 and the work pulled forward from later slices (`33_build_order.md`). Done when the owner has played the coop, barn, machines and cooking by hand and the open issues are closed or moved. | In progress | The owner's hands-on play |
-| M3b | Ring 1 systems | Fishing and the Water room (slice 2), combat and the deeper mines (slice 3), friendship, the cast, gifts and heart events (slice 4), the horse, the cask and cellar, the dye vat and the greenhouse, and the map areas of the home valley (Forest, Secret Woods, River delta with the Beach, Mountain, Quarry, Lake cove, then Hearthwell with #599; notes 71 to 78). Bundles 1 to 26 can be filled. | In progress. Built: fishing, pots and legends, combat and the deeper mines, the horse, the cask and cellar, the dye vat, the greenhouse, every map area to shell level, villagers with schedules, friendship, gifts, shops and the first heart events. Also built (2026-11-12): bundles 1 to 26 can be filled in code (the Last Seat opens after all others), the room rewards, gift tastes for all 30 people, goods hand-in, the lightning rod and lamp placement, tailoring, decor, ring combining and the festival route layer. Not yet: the real heart event list (#873), the Secret Woods statue and pond fish (#878), festival activities (#876), the pond screen, boots tailoring, cosmetic trees, and a browser look at the new screens. Open work is in the M3b GitHub milestone | The owner's play (the exit test), the heart event list (#873), the owner's answers in `docs/handoffs/PRIORITIES.md` |
+| M3 | Vertical slice | Slice 1 and the work pulled forward from later slices (`33_build_order.md`). Done when the owner has played the coop, barn, machines and cooking by hand and the open issues are closed or moved. | Waits on the owner's play (the GitHub milestone M3 is closed) | The owner's hands-on play |
+| M3b | Ring 1 systems | Fishing and the Water room (slice 2), combat and the deeper mines (slice 3), friendship, the cast, gifts and heart events (slice 4), the horse, the cask and cellar, the dye vat and the greenhouse, and the map areas of the home valley (Forest, Secret Woods, River delta with the Beach, Mountain, Quarry, Lake cove, then Hearthwell with #599; notes 71 to 78). Bundles 1 to 26 can be filled. | In progress. Built: fishing, pots and legends, combat and the deeper mines, the horse, the cask and cellar, the dye vat, the greenhouse, every map area to shell level, villagers with schedules, friendship, gifts, shops and the first heart events. Also built (2026-11-12): bundles 1 to 26 can be filled in code (the Last Seat opens after all others), the room rewards, gift tastes for all 30 people, goods hand-in, the lightning rod and lamp placement, tailoring, decor, ring combining, the festival route layer, the pond screen (`PondScene.ts`) and boots tailoring (`tailoring.ts`). Not yet: the real heart event list (#873), the Secret Woods statue and pond fish (#878), festival activities (#876), cosmetic trees, and a browser look at the new screens. Open work is in the M3b GitHub milestone | The owner's play (the exit test), the heart event list (#873), the owner's answers in `docs/handoffs/PRIORITIES.md` |
 | M4 | Multiplayer | Up to 8 players share one valley on one network, designed in `53_multiplayer.md` (ADR 0007, `docs/decisions/0007-multiplayer-milestone.md`). Moved to follow M3b (ADR 0012). | Not started | M3b, the wrapper ADR (done, ADR 0008), a hosting spike |
 | M3c | Ring 1 story and ending | The story spine, the Last Seat (slice 5) and its numbers, the year two rules. The Forest and Mountain maps moved to M3b on 2026-11-08 (owner, note 71) and take tree types with them. Ring 1 plays from start to ending. | Not started | M4, the story spine design (#176 to #178) |
 | M3d | Ring 1 polish | Art, audio, onboarding, balance, minigames, packaging and the name register check. Ring 1 is releasable as a full game. | Not started | M3c |
@@ -63,8 +63,8 @@ multiplayer (planned as M4, after M3), generated content, deep relationships, fi
   little money, to be tuned). Finishing all of them ends the first playable with a
   simple end screen.
 - **Quality tiers, skill gates, tool upgrades.** Planned for M3, but quality
-  tiers and tool upgrades were built early (#94, #97). Skill gates and
-  professions are not built.
+  tiers and tool upgrades were built early (#94, #97). Skill gates (recipe
+  levels in `crafting.ts`) and professions (`professions.ts`) are built since.
 
 ### Done list
 
@@ -113,7 +113,7 @@ scope is in `13_m3_scope.md` (accepted, #130).
 - Tree types by region, as Stardew (`36_gathering_trees_sap_fiber.md`, SC-30):
   three types in fixed places outside the farm, regrowing when chopped, and some
   cosmetic ones that cannot be chopped. Decided 2026-11-06 for M3, not M2: #396.
-- Later, not M3: marriage, which needs its own design note (#137, parked).
+- Later, not M3: marriage, which needs its own design note (#137, closed, parked).
   The ring 1 cast list (#136, note 20) and the final name (#138, Elderglen,
   ADR 0011) are settled and closed.
 

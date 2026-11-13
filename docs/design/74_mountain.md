@@ -217,15 +217,16 @@ map allows.
   `forage-areas.json` gains `mountain` (cap 4, the four seasonal tables of this note).
 - **Fish:** the six lake fish of note 21 in `fish.json` (Cold Quill, Arctic Char,
   Granite Gudgeon, Echo Pike, Ember Trout, Glacier Ghost; prices and lengths are
-  placeholders). The river is the shared river table. Not built: Moonlit Mother and
-  pots.
+  placeholders). The river is the shared river table. The Moonlit Mother is built
+  (`fish.json`, water `mountain-lake`). Not built: pots.
 - **Sim:** the headless bot's `enter` now finds a route over the map graph (farm,
   Forest, Mountain, mine hall), reads maps with their conditions, and keeps flood
   distances for maps with no soil. Expert seed 1 still plays every bundle it plays.
-- **Not built:** the forge hut and its counter (#643), the stonekeeper's yard and the
-  dwarf placeholders (#643), the Quarry bridge and exit (#649), the Hearthwell exit, the
-  cart stop, the Moonlit Mother legend, pots, ruined and cleared art (placeholder tiles
-  stand in), and the smith menu is still the stand-in at the mine hall.
+- **Not built:** the dwarf placeholders (#643), pots, ruined and cleared art (placeholder
+  tiles stand in). Built since: the forge hut and its counter (`maps/forge.json`, the `forge`
+  shop in `shops.json`), the stonekeeper's yard, the Quarry bridge and exit, the Hearthwell
+  exit and the cart stop (all in `mountain.json`), the Moonlit Mother (`fish.json`), and the
+  smith menu now sits at the forge (note 77, #708).
 - **Playtest:** `npm run playtest:mountain`.
 
 ## Built status (2026-11-09, #643)

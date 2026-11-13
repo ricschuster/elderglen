@@ -46,7 +46,7 @@ Crops (season, days to grow, seed price, sell price):
 - Hot pepper: summer, 5 days then regrows every 3, 40g, 40g. From memory.
 - Corn: summer, 14 days then regrows every 4, 150g, 50g. From memory.
 - Red cabbage: summer, 9 days, 100g, 260g. Checked against the saved Crops page (2026-11-06). Stardew sells its seed from year two only. We do not.
-- Wheat: summer and fall, 4 days, seeds 10g, sells 25g, inedible, grain for the Fodder bundle (`63_bundle_pools_part_two.md`). Checked against the saved Crops page (2026-11-06). **Not built:** it is not in `crops.json` or `src/`, so the Fodder bundle and beer have no grain yet. Whether to add it is the owner's call (audit, 2026-11-10).
+- Wheat: summer and fall, 4 days, seeds 10g, sells 25g, inedible, grain for the Fodder bundle (`63_bundle_pools_part_two.md`). Checked against the saved Crops page (2026-11-06). Built: in `crops.json`, and the keg makes beer from it (`processing.ts`).
 
 Fall crops (decided 2026-10-31, `35_bundle_pools.md`). The owner chose to match
 the saved Stardew Fall Crops page for our equivalents, as spring and summer do.
@@ -66,8 +66,8 @@ Our names and items. Unchecked in play:
 - Crops that are alive when fall ends die, as spring and summer crops do. There
   are no winter crops outdoors, and the greenhouse is built (`greenhouse.ts`).
 
-A crop grows one day for each day it was watered. It does not regrow after
-harvest, and it withers when its season ends. Rain waters every plot overnight.
+A crop grows one day for each day it was watered, and withers when its season
+ends. Only crops with `regrowDays` in `crops.json` regrow after harvest. Rain waters every plot overnight.
 
 ## Seasons and weather
 
@@ -323,7 +323,7 @@ Built numbers (`src/core/fishing.ts`, `src/content/fish.json`, `rods.json`):
 
 Source: `src/content/bundles.json`.
 
-- Nineteen bundles are built (thirteen at first, then the Water room's six; the Pantry was dropped 2026-10-31, see
+- All 30 bundles are built in `bundles.json` (thirteen at first, then the Water room's six, then the rest; the Pantry was dropped 2026-10-31, see
   `16_bundles.md`): the ten below, plus Animal Goods and the Weaver's
   ("Animal-goods machines" section) and the Dyer's ("Cask and dye vat" section). First
   slice: Spring Foraging (any 4 of 6, 15 parsnip seeds), Summer Foraging (any 3
@@ -353,18 +353,17 @@ Source: `src/content/bundles.json`.
   percentile 9) and Summer Foraging in 3 (90th percentile 6), with no failures
   in 2000 runs. A real player walks and spends time, so expect longer.
 
-## Full hall (proposed, 13 of 30 built)
+## Full hall (proposed, 30 of 30 built)
 
 Source: `16_bundles.md`. All placeholders, ours unless marked.
 
 - 30 bundles in six rooms (6, 6, 6, 3, 5, 4). The counts follow Stardew.
-  Built so far (audit, 2026-11-10): 13 bundles across Foragers' Shelf (4),
-  Larder (6), Hearth (2) and Guests' Board (1), and all six rooms in
-  `rooms.json` with the thresholds below. The Water room and The Last Seat have
-  no bundles yet (the Water room waits on bundles 13 to 18).
+  Built: all 30 bundles in `bundles.json` (6, 6, 6, 3, 5, 4 across Foragers'
+  Shelf, Larder, Water room, Hearth, Guests' Board and The Last Seat), and all
+  six rooms in `rooms.json` with the thresholds below.
 - Rooms appear by bundles finished: Foragers' Shelf at the start, Larder and
   Water room after 1, Hearth after 2, Guests' Board after 3, The Last Seat after
-  20 of the other 26. Stardew's pattern comes from a forum reply and is
+  all of the other 26 (`opensAfter` "all" in `rooms.json`). Stardew's pattern comes from a forum reply and is
   unchecked.
 - The Last Seat asks for 3 of each of four dishes, four gold fish, 10 bars, 5
   lamps, 5 bolts of cloth, 3 dyes, and for the last bundle 100 wood, 100
@@ -669,7 +668,7 @@ the farm growth section above; these are the rest.
 - Jar and keg take fruit or vegetable. Fruit is melon, tomato, hot pepper, and
   the wild grape, spice berry and salmonberry. Every other crop is a vegetable.
   Jam and wine from fruit, pickles and juice from vegetables. Honey goes to the
-  keg for mead (600 minutes, 300g). Beer waits for a grain crop.
+  keg for mead (600 minutes, 300g). Beer from wheat and pale ale from hops are built (`processing.ts`).
 - Each input makes its own good (`melon-jam`, `parsnip-pickles`), priced from its
   own base: jam and pickles 2 x base + 50, wine 3 x base, juice 2.25 x base
   rounded down. A bundle slot such as "Any jam" takes every one.
@@ -739,7 +738,7 @@ Source: `22_mines.md`. Code: `mines.ts`, `mining.ts`, `rocks.ts`, `ore.ts`.
   on a floor always hides it. Floor 120 has none.
 - Pickaxe swing: 2 energy, less 0.1 per mining level, never under 0.5. XP per
   rock: stone 2, copper 5, coal 4.
-- The farm has 16 stone rocks and none respawn yet.
+- The farm has 16 stone rocks. Some return on day 1 of spring, summer and fall (`debris.ts`, see "Special Orders and seasonal debris").
 - Prices: stone sells 2g, coal 15g (smith 50g), copper ore 5g (25g), iron ore 10g
   (50g), gold ore 25g (100g), bars 60g, 120g and 250g. Smelt: 5 ore and 1 coal,
   30 minutes, 2 hours and 5 hours of game time, one batch at a time.
@@ -823,27 +822,27 @@ Source: `src/content/farm-types.json` and the farm map JSON.
 
 Source: `src/content/hats.json`, `src/content/festivals.json`.
 
-- Hats: 28 now in `hats.json` (this paragraph describes the first four), drawn as
+- Hats: 40 now in `hats.json` (this paragraph describes the first four), drawn as
   a coloured block on the player. The Parade
   Ribbon is free, given the first time the player goes to the Hat Parade. The
   Straw Boater (300g), Feathered Cap (500g) and Wool Beret (400g) sell at the
   parade's counter, once each. The counter only opens after the player has gone
   in. Stardew's hat prices run from 1,000g up (note 10), so these are low on
-  purpose, since the hatter's shop and achievement hats are not built.
+  purpose. The hatter and achievement hats are built since (`achievements.ts`).
 - Built since (audit 2026-11-10): Harvest Showing (fall 9, showing and token
   counter), Hollow Eve (fall 21, maze), Frostday (winter 8) and Midwinter Feast
-  (winter 20), each with a counter of hats and furniture. Only Cake Day and
+  (winter 25), each with a counter of hats and furniture. Only Cake Day and
   Lamplight Evening still have an empty counter.
 - Seedswap Fair (spring 21): the counter sells mixed seeds at 20g each, no
   limit. Mixed seeds sell for 5g, so this is a cheap way to try a random crop.
-- Cake Day (summer 8) and Lamplight Evening (summer 20): in the calendar with
+- Cake Day (summer 8) and Lamplight Evening (summer 24): in the calendar with
   a blurb and an empty counter. Their content waits for a note.
 
 ## Furniture (build 8, placeholders, ours)
 
 Source: `src/content/furniture.json`, `src/core/furniture.ts`.
 
-- 26 entries now in `furniture.json` (the first ten are described here; the
+- 28 entries now in `furniture.json` (the first ten are described here; the
   rest are festival pieces, winter pieces up to the 520g pine wardrobe, the
   2,000g workbench and the 200,000g Furniture Catalogue).
 - The first ten were one tile pieces (stool 60g, chair 90g, mat 80g up to armchair 400g).
@@ -858,7 +857,7 @@ Source: `src/content/furniture.json`, `src/core/furniture.ts`.
 - The Furniture Catalogue is built: 200,000g at the carpenter once the house is
   tier 1, placed in the house, and Action on it gives copies of catalogue pieces
   at 0g (`furniture.ts`).
-- Not built: wallpaper and floors, bundle furniture
+- Wallpaper and floors are built (`decor.ts`). Not built: bundle furniture
   rewards (no bundle names one yet), the per-people catalogues.
 
 ## Dehydrator (build 5, 2026-11-07, note 66, placeholders)
@@ -946,7 +945,7 @@ Source: `src/core/quests.ts`, `src/content/requests.json`.
   cannot be sold back. A little under Stardew's Return Scepter at 2,000,000g (saved Krobus
   page), so year 1 is unlikely (note 09). Not gated at 3 hearts until friendship exists.
 
-## Placement, bombs and Forge stock (decided 2026-11-12, notes 88 and 89, placeholders, not built)
+## Placement, bombs and Forge stock (decided 2026-11-12, notes 88 and 89, placeholders, mostly built)
 
 - Bombs (Stardew, from memory, SC-149): cherry bomb radius 1, bomb 2, mega bomb 3. Fuse 1.5
   seconds. Damage to monsters 15, 30, 50; to the player 10, 20, 30 percent of maximum health,
@@ -962,7 +961,7 @@ Source: `src/core/quests.ts`, `src/content/requests.json`.
   `minLevel`s (iron 2, gold 5, Hearthsilver 8), a lit bomb goes off at once on leaving the map.
 - Forge goods built 2026-11-12: Miner's Treat gives 100 energy; Oil of Garlic calms monsters that
   live only in bands 1 and 2 (`OIL_TIER` 3) until the next morning.
-- Heater: 1,000g at the ranch shop, covers the whole building on winter nights (SC-131 open).
+- Heater: 2,000g at the ranch shop (`HEATER_PRICE`, `items.ts`), covers the whole building on winter nights (SC-131 and SC-149 done).
 - Forge: Life Elixir 2,000g (health to full), Miner's Treat 1,000g (100 energy), Oil of
   Garlic 3,000g (monsters below a tier ignore you for the day).
 - Lightning rod: a strike yields a battery pack, 500g.
