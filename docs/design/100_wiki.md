@@ -1,8 +1,8 @@
 # 100 In-house wiki (draft)
 
-Status: **draft 2026-11-13** (issue #910). Owner answers: the audience is public later, fish and
-bundles come first, and it sits beside `docs/overview.html` rather than replacing it. Nothing is
-built. This note settles what a page is, where its facts come from and how it is kept true, so
+Status: **settled with the owner 2026-11-13** (issue #910). The audience is public later, fish and
+bundles come first, it sits beside `docs/overview.html` rather than replacing it, and the seven
+open questions are answered (see "Decided"). Nothing is built. This note settles what a page is, where its facts come from and how it is kept true, so
 the first build (fish and bundles) does not need to be redone for the other categories.
 
 ## Why
@@ -18,7 +18,7 @@ Every word and picture is ours (ADR 0002).
   answers "what is this thing and is it in the game". The two link to each other.
 - Not hand-written pages. Anything a data file already says is generated, so it cannot drift.
 - Not hosted yet. It is a folder of static files opened from disk, like the overview.
-- Not a spoiler policy decision. See open question 2.
+- Not secret-keeping: the public pages list everything (decision 2 under "Decided").
 
 ## Decisions
 
@@ -36,15 +36,14 @@ Every word and picture is ours (ADR 0002).
    status badges mention unbuilt work. See "Status" below.
 4. **Read the data, not the code.** The generator reads `src/content/*.json` directly. It must
    not import Phaser or the TypeScript game code. Item names and ids come from the same JSON.
-   Where the JSON is not enough (the display name of a non-fish item in a bundle, a recipe's
-   output), the generator needs a data-only item table. See open question 4.
+   Item names come from the shared JSON item table (decision 4 under "Decided").
 5. **Prose is separate from facts.** Hand-written text lives in `docs/wiki-text/<category>.json`,
    keyed by id (one short description per page, optional "tips"). The generator never edits it.
    A page with no prose still builds from facts alone. `wiki:check` lists pages with none, as
    information, not as a failure.
-6. **Our own voice and art.** No Stardew names, text or art. Item pictures come from the game's
-   own code-drawn art once the generator can render it (see open question 5); until then a plain
-   labelled box stands in.
+6. **Our own voice and art.** No Stardew names, text or art. Item pictures are the game's current
+   code-drawn art, rendered at build time (decision 5); a plain labelled box stands in when an
+   item has none.
 
 ## Page types (first build)
 
@@ -136,36 +135,35 @@ overview, so the diff is readable.
 ## Build order
 
 1. This note, then an ADR only if the tool choice needs one (it does not: no new dependency).
-2. `scripts/wiki/build.mjs` with the fish category end to end: page template, infobox, table,
+2. Item table refactor (decision 4), its own PR. Then `scripts/wiki/build.mjs` with the fish category end to end: page template, infobox, table,
    `wiki:check`, the CSS, the search index. Gate added to `npm run check`.
 3. Bundles and rooms on the same template.
 4. Owner looks at fish and bundles and the internal view; fix the template before more
    categories.
 5. Later categories in the order the owner picks (crops, forage, people, recipes, places).
-6. Hosting (GitHub Pages from a tagged release) and the public text pass, after M3d art.
+6. Prose written now and revised with the voice sheets in M3d. Hosting (GitHub Pages from a
+   tagged release) after M3d art and the licence ADR.
 
-## Open questions
+## Decided (owner, 2026-11-13)
 
-1. **Public wording of "where".** The game has hidden or late places (lake cove, the legend
-   conditions). Should the public pages show them from the start, or only after the player has
-   reached them? Recommended: show everything, since the wiki is not in the game. Stardew
-   wiki: shows everything on the page, spoilers included (from memory, not checked).
-2. **Spoilers in the owner's internal view versus public.** Same question for legends and heart
-   event rewards. Recommended: public pages list legend conditions, the way a player wiki would;
-   revisit if the owner would rather keep them secret. Stardew: its wiki lists them.
-3. **Item pages.** A bundle holds non-fish items (wood, stone, forage, crops). First build links
-   them to a plain item stub with a name and sell price. Recommended: yes, a stub. Stardew: every
-   item has a page.
-4. **A data-only item table.** Item names live in `src/core/items.ts` today. Recommended:
-   extract a JSON item table the game and the wiki both read (a small refactor, its own PR,
-   before step 2). The alternative is to parse `items.ts`, which is fragile.
-5. **Pictures.** Item art is drawn in code at runtime. Recommended: a one-off script renders each
-   item to a PNG into `docs/wiki/img/` during the build, once the art pass (note 99) settles;
-   labelled boxes until then.
-6. **Public text.** Who writes the prose, and when. Recommended: after M3d, from the voice
-   sheets, so the wiki does not carry placeholder text out to the public.
-7. **Licence and credit line** on the public site (original art and text, MIT or other). Settle
-   with the ADR on generated-art licences (M3d, step 13 to 16 of the layout track).
+1. **Public wording of "where".** Show everything, hidden and late places included. The wiki is
+   not in the game. Stardew's wiki does the same (from memory, not checked).
+2. **Spoilers.** Public pages list legend conditions and heart event rewards, as a player wiki
+   would. Revisit only if the owner changes their mind. Stardew's wiki lists them.
+3. **Item pages.** Every item a bundle or recipe names gets a plain page (name, picture, sell
+   price, where it comes from, used in). Stardew gives every item a page.
+4. **Data-only item table.** Item names move out of `src/core/items.ts` into a JSON table that
+   the game and the wiki both read. A small refactor in its own PR, before the generator (build
+   order step 2). The generator never parses TypeScript.
+5. **Pictures.** Use the pictures the game has now. The build renders each item's current
+   code-drawn art to a PNG in `docs/wiki/img/`; an item with no art gets a plain labelled box.
+   Pictures refresh on every build, so the art pass (note 99) flows through without wiki work.
+6. **Public text.** Write the prose now, in `docs/wiki-text/`, from the notes and data, and update
+   it when the voice sheets arrive (M3d). It is original text, free of Stardew wording. Pages
+   marked `"draft": true` in the text file show in the internal view only; a `draft` page's
+   prose is left out of the public build until the owner clears the flag.
+7. **Licence and credit line** on the public site: settle with the ADR on generated-art licences
+   (M3d, steps 13 to 16 of the layout track). Not needed before hosting.
 
 ## Relation to other notes
 
