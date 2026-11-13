@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en" data-base="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fish - Elderglen wiki</title>
+    <link rel="stylesheet" href="../wiki.css" />
+  </head>
+  <body>
+    <header>
+      <a class="home" href="../index.html">Elderglen wiki</a
+      ><a href="../fish/index.html">Fish</a
+      ><a href="../bundles/index.html">Bundles</a
+      ><a href="../items/index.html">Items</a
+      ><input
+        id="q"
+        type="search"
+        placeholder="Search"
+        aria-label="Search the wiki"
+        autocomplete="off"
+      />
+      <ul id="results" hidden></ul>
+    </header>
+    <main>
+      <h1>Fish</h1>
+      <p>51 fish. Click a column heading to sort.</p>
+      <table class="sortable">
+        <thead>
+          <tr>
+            <th>Fish</th>
+            <th>Where</th>
+            <th>Season</th>
+            <th>Time</th>
+            <th>Rarity</th>
+            <th>Sells for</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-water="mountain-lake" data-season="winter spring">
+            <td><a href="../fish/arctic-char.html">Arctic Char</a></td>
+            <td>Mountain lake</td>
+            <td>Winter, Spring</td>
+            <td>Daytime</td>
+            <td>Common</td>
+            <td class="num">60</td>
+          </tr>
+          <tr data-water="marsh-lake" data-season="spring summer">
+            <td><a href="../fish/bogwhisker.html">Bogwhisker</a></td>
+            <td>Delta marsh lake</td>
+            <td>Spring, Summer</td>
+            <td>Daytime</td>
+            <td>Common</td>
+            <td class="num">50</td>
+          </tr>
+          <tr data-water="river" data-season="spring">
+            <td><a href="../fish/brookslip.html">Brookslip</a></td>
+            <td>River</td>
+            <td>Spring</td>
+            <td>Daytime</td>
+            <td>Common</td>
+            <td class="num">45</td>
+          </tr>
+          <tr data-water="marsh-lake" data-season="all">
+            <td><a href="../fish/bullhead.html">Bullhead</a></td>
+            <td>Delta marsh lake</td>
+            <td>Any</td>
+            <td>Rain</td>
+            <td>Uncommon</td>
+            <td class="num">120</td>
+          </tr>
+          <tr data-water="forest-lake" data-season="all">
+            <td><a href="../fish/carp.html">Carp</a></td>
+            <td>Forest lake</td>
+            <td>Any</td>
+            <td>Daytime</td>
+            <td>Common</td>
+            <td class="num">50</td>
+          </tr>
+          <tr data-water="marsh-lake" data-season="all">
+            <td><a href="../fish/catfish.html">Catfish</a></td>
+            <td>Delta marsh lake</td>
+            <td>Any</td>
+            <td>Dusk</td>
+            <td>Uncommon</td>
+            <td class="num">130</td>
+          </tr>
+          <tr data-water="sea" data-season="winter">
+            <td><a href="../fish/cod.html">Cod</a></td>
+            <td>Sea (the Beach)</td>
+            <td>Winter</td>
+            <td>Daytime</td>
+            <td>Common</td>
+            <td class="num">70</td>
+          </tr>
+          <tr data-water="mountain-lake" data-season="all">
+            <td><a href="../fish/cold-quill.html">Cold Quill</a></td>
+            <td>Mountain lake</td>
+            <td>Any</td>
+            <td>Daytime</td>
+            <td>Common</td>
+            <td class="num">50</td>
+          </tr>
+          <tr data-water="cove" data-season="all">
+            <td><a href="../fish/cove-lantern.html">Cove Lantern</a></td>
+            <td>Lake cove</td>
+            <td>Any</td>
+            <td>Night</td>
+            <td>Uncommon</td>
+            <td class="num">450</td>
+          </tr>
+          <tr data-water="sea" data-season="summer fall">
+            <td><a href="../fish/crowned-tunny.html">Crowned Tunny</a></td>
+            <td>Sea (the Beach)</td>
+            <td>Summer, Fall</td>
+            <td>Daytime</td>
+            <td>Rare</td>
+            <td class="num">350</td>
+          </tr>
+          <tr data-water="cove" data-season="winter">
+            <td><a href="../fish/deepglow.html">Deepglow</a></td>
+            <td>Lake cove</td>
+            <td>Winter</td>
+            <td>Night</td>
+            <td>Rare</td>
+            <td class="num">700</td>
+          </tr>
+          <tr data-water="cove" data-season="all">
+            <td><a href="../fish/dusk-opal.html">Dusk Opal</a></td>
+            <td>Lake cove</td>
+            <td>Any</td>
+            <td>Dusk</td>
+            <td>Rare</td>
+            <td class="num">620</td>
+          </tr>
+          <tr data-water="mountain-lake" data-season="all">
+            <td><a href="../fish/echo-pike.html">Echo Pike</a></td>
+            <td>Mountain lake</td>
+            <td>Any</td>
+            <td>Rain</td>
+            <td>Uncommon</td>
+            <td class="num">150</td>
+          </tr>
+          <tr data-water="mountain-lake" data-season="summer">
+            <td><a href="../fish/ember-trout.html">Ember Trout</a></td>
+            <td>Mountain lake</td>
+            <td>Summer</td>
+            <td>Dusk</td>
+            <td>Uncommon</td>
+            <td class="num">140</td>
+          </tr>
+          <tr data-water="forest-lake" data-season="summer">
+            <td><a href="../fish/fernfin.html">Fernfin</a></td>
+            <td>Forest lake</td>
+            <td>Summer</td>
+            <td>Daytime</td>
+            <td>Uncommon</td>
+            <td class="num">130</td>
+          </tr>
+          <tr data-water="river" data-season="fall">
+            <td><a href="../fish/ferrywhisker.html">Ferrywhisker</a></td>
+            <td>River</td>
+            <td>Fall</td>
+            <td>Any time</td>
+            <td>Uncommon</td>
+            <td class="num">120</td>
+          </tr>
+          <tr data-water="mountain-lake" data-season="winter">
+            <td><a href="../fish/glacier-ghost.html">Glacier Ghost</a></td>
+            <td>Mountain lake</td>
+            <td>Winter</td>
+            <td>Night</td>
+            <td>Rare</td>
+            <td class="num">320</td>
+          </tr>
+          <tr data-water="marsh-lake" data-season="spring">
+            <td><a href="../fish/glassy-elver.html">Glassy Elver</a></td>
+            <td>Delta marsh lake</td>
+            <td>Spring</td>
+            <td>Dawn</td>
+            <td>Rare</td>
+            <td class="num">300</td>
+          </tr>
+          <tr data-water="forest-lake" data-season="spring">
+            <td>
+              <a href="../fish/grandmother-hush.html">Grandmother Hush</a>
+            </td>
+            <td>Forest lake</td>
+            <td>Spring</td>
+            <td>Dusk</td>
+            <td>Legend</td>
+            <td class="num">3000</td>
+          </tr>
+          <tr data-water="mountain-lake" data-season="all">
+            <td><a href="../fish/granite-gudgeon.html">Granite Gudgeon</a></td>
+            <td>Mountain lake</td>
+            <td>Any</td>
+            <td>Any time</td>
+            <td>Uncommon</td>
+            <td class="num">120</td>
+          </tr>
+          <tr data-water="sea" data-season="summer">
+            <td><a href="../fish/great-hearthfin.html">Great Hearthfin</a></td>
+            <td>Sea (the Beach)</td>
+            <td>Summer</td>
+            <td>Daytime</td>
+            <td>Legend</td>
+            <td class="num">3000</td>
+          </tr>
+          <tr data-water="sea" data-season="summer">
+            <td><a href="../fish/harbour-ray.html">Harbour Ray</a></td>
+            <td>Sea (the Beach)</td>
+            <td>Summer</td>
+            <td>Any time</td>
+            <td>Uncommon</td>
+            <td class="num">160</td>
+          </tr>
+          <tr data-water="river" data-season="all">
+            <td><a href="../fish/hearthside-dace.html">Hearthside Dace</a></td>
+            <td>River</td>
+            <td>Any</td>
+            <td>Dusk</td>
+            <td>Uncommon</td>
+            <td class="num">110</td>
+          </tr>
+          <tr data-water="forest-lake" data-season="all">
+            <td><a href="../fish/hermit-trout.html">Hermit Trout</a></td>
+            <td>Forest lake</td>
+            <td>Any</td>
+            <td>Rain</td>
+            <td>Rare</td>
+            <td class="num">300</td>
+          </tr>
+          <tr data-water="sea" data-season="all">
+            <td><a href="../fish/herring.html">Herring</a></td>
+            <td>Sea (the Beach)</td>
+            <td>Any</td>
+            <td>Night</td>
+            <td>Uncommon</td>
+            <td class="num">100</td>
+          </tr>
+          <tr data-water="cove" data-season="all">
+            <td><a href="../fish/hush.html">Hush</a></td>
+            <td>Lake cove</td>
+            <td>Any</td>
+            <td>Dawn</td>
+            <td>Rare</td>
+            <td class="num">650</td>
+          </tr>
+          <tr data-water="sea" data-season="all">
+            <td><a href="../fish/kelp-ribbon.html">Kelp Ribbon</a></td>
+            <td>Sea (the Beach)</td>
+            <td>Any</td>
+            <td>Dusk</td>
+            <td>Uncommon</td>
+            <td class="num">110</td>
+          </tr>
+          <tr data-water="sea" data-season="fall winter">
+            <td><a href="../fish/lantern-squid.html">Lantern Squid</a></td>
+            <td>Sea (the Beach)</td>
+            <td>Fall, Winter</td>
+            <td>Night</td>
+            <td>Uncommon</td>
+            <td class="num">170</td>
+          </tr>
+          <tr data-water="sea" data-season="summer fall">
+            <td><a href="../fish/mackerel.html">Mackerel</a></td>
+            <td>Sea (the Beach)</td>
+            <td>Summer, Fall</td>
+            <td>Daytime</td>
+            <td>Common</td>
+            <td class="num">60</td>
+          </tr>
+          <tr data-water="marsh-lake" data-season="all">
+            <td><a href="../fish/marshlight.html">Marshlight</a></td>
+            <td>Delta marsh lake</td>
+            <td>Any</td>
+            <td>Daytime</td>
+            <td>Common</td>
+            <td class="num">45</td>
+          </tr>
+          <tr data-water="river" data-season="summer">
+            <td><a href="../fish/millrun.html">Millrun</a></td>
+            <td>River</td>
+            <td>Summer</td>
+            <td>Daytime</td>
+            <td>Common</td>
+            <td class="num">55</td>
+          </tr>
+          <tr data-water="mountain-lake" data-season="winter">
+            <td><a href="../fish/moonlit-mother.html">Moonlit Mother</a></td>
+            <td>Mountain lake</td>
+            <td>Winter</td>
+            <td>Night</td>
+            <td>Legend</td>
+            <td class="num">3500</td>
+          </tr>
+          <tr data-water="forest-lake" data-season="all">
+            <td><a href="../fish/moonmirror.html">Moonmirror</a></td>
+            <td>Forest lake</td>
+            <td>Any</td>
+            <td>Night</td>
+            <td>Uncommon</td>
+            <td class="num">160</td>
+          </tr>
+          <tr data-water="sea" data-season="spring">
+            <td><a href="../fish/mullet.html">Mullet</a></td>
+            <td>Sea (the Beach)</td>
+            <td>Spring</td>
+            <td>Dawn</td>
+            <td>Common</td>
+            <td class="num">55</td>
+          </tr>
+          <tr data-water="forest-lake" data-season="fall">
+            <td><a href="../fish/mushroom-loach.html">Mushroom Loach</a></td>
+            <td>Forest lake</td>
+            <td>Fall</td>
+            <td>Dusk</td>
+            <td>Uncommon</td>
+            <td class="num">140</td>
+          </tr>
+          <tr data-water="river" data-season="fall">
+            <td><a href="../fish/old-mossback.html">Old Mossback</a></td>
+            <td>River</td>
+            <td>Fall</td>
+            <td>Rain</td>
+            <td>Rare</td>
+            <td class="num">280</td>
+          </tr>
+          <tr data-water="cove" data-season="all">
+            <td><a href="../fish/pearlback.html">Pearlback</a></td>
+            <td>Lake cove</td>
+            <td>Any</td>
+            <td>Daytime</td>
+            <td>Uncommon</td>
+            <td class="num">400</td>
+          </tr>
+          <tr data-water="forest-lake" data-season="spring">
+            <td><a href="../fish/perch.html">Perch</a></td>
+            <td>Forest lake</td>
+            <td>Spring</td>
+            <td>Daytime</td>
+            <td>Common</td>
+            <td class="num">45</td>
+          </tr>
+          <tr data-water="marsh-lake" data-season="all">
+            <td><a href="../fish/reed-cat.html">Reed Cat</a></td>
+            <td>Delta marsh lake</td>
+            <td>Any</td>
+            <td>Night</td>
+            <td>Uncommon</td>
+            <td class="num">150</td>
+          </tr>
+          <tr data-water="river" data-season="all">
+            <td><a href="../fish/reedling.html">Reedling</a></td>
+            <td>River</td>
+            <td>Any</td>
+            <td>Daytime</td>
+            <td>Common</td>
+            <td class="num">40</td>
+          </tr>
+          <tr data-water="river" data-season="fall">
+            <td><a href="../fish/salmon.html">Salmon</a></td>
+            <td>River</td>
+            <td>Fall</td>
+            <td>Daytime</td>
+            <td>Uncommon</td>
+            <td class="num">150</td>
+          </tr>
+          <tr data-water="sea" data-season="all">
+            <td><a href="../fish/sardine.html">Sardine</a></td>
+            <td>Sea (the Beach)</td>
+            <td>Any</td>
+            <td>Daytime</td>
+            <td>Common</td>
+            <td class="num">40</td>
+          </tr>
+          <tr data-water="cove" data-season="all">
+            <td><a href="../fish/shell-ghost.html">Shell Ghost</a></td>
+            <td>Lake cove</td>
+            <td>Any</td>
+            <td>Rain</td>
+            <td>Rare</td>
+            <td class="num">680</td>
+          </tr>
+          <tr data-water="river" data-season="all">
+            <td><a href="../fish/silverthread.html">Silverthread</a></td>
+            <td>River</td>
+            <td>Any</td>
+            <td>Dawn</td>
+            <td>Rare</td>
+            <td class="num">320</td>
+          </tr>
+          <tr data-water="sea" data-season="all">
+            <td><a href="../fish/skiff-sprat.html">Skiff Sprat</a></td>
+            <td>Sea (the Beach)</td>
+            <td>Any</td>
+            <td>Daytime</td>
+            <td>Common</td>
+            <td class="num">40</td>
+          </tr>
+          <tr data-water="cove" data-season="spring summer">
+            <td><a href="../fish/still-water-gar.html">Still-water Gar</a></td>
+            <td>Lake cove</td>
+            <td>Spring, Summer</td>
+            <td>Daytime</td>
+            <td>Uncommon</td>
+            <td class="num">420</td>
+          </tr>
+          <tr data-water="marsh-lake" data-season="all">
+            <td><a href="../fish/sunk-boot-loach.html">Sunk Boot Loach</a></td>
+            <td>Delta marsh lake</td>
+            <td>Any</td>
+            <td>Any time</td>
+            <td>Common</td>
+            <td class="num">40</td>
+          </tr>
+          <tr data-water="river" data-season="winter">
+            <td><a href="../fish/tallow-eel.html">Tallow Eel</a></td>
+            <td>River</td>
+            <td>Winter</td>
+            <td>Night</td>
+            <td>Uncommon</td>
+            <td class="num">170</td>
+          </tr>
+          <tr data-water="cove" data-season="fall">
+            <td>
+              <a href="../fish/hearthwell-carp.html">The Hearthwell Carp</a>
+            </td>
+            <td>Lake cove</td>
+            <td>Fall</td>
+            <td>Dusk</td>
+            <td>Legend</td>
+            <td class="num">4000</td>
+          </tr>
+          <tr data-water="river" data-season="fall">
+            <td><a href="../fish/valley-king.html">The Valley King</a></td>
+            <td>River</td>
+            <td>Fall</td>
+            <td>Dawn</td>
+            <td>Legend</td>
+            <td class="num">3500</td>
+          </tr>
+          <tr data-water="cove" data-season="fall">
+            <td><a href="../fish/velvet-koi.html">Velvet Koi</a></td>
+            <td>Lake cove</td>
+            <td>Fall</td>
+            <td>Dusk</td>
+            <td>Rare</td>
+            <td class="num">600</td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+    <script src="../search-index.js"></script>
+    <script src="../search.js"></script>
+  </body>
+</html>

@@ -9,6 +9,8 @@ export default tseslint.config(
       "node_modules",
       "scripts",
       "docs/reference",
+      "docs/wiki",
+      "docs/wiki-internal",
       ".claude",
     ],
   },
