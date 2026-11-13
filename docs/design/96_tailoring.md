@@ -1,7 +1,7 @@
 # 96 Tailoring
 
 Status: design settled with the owner's answers of 2026-11-12. Numbers are placeholders.
-Built in part (see "Built status"). Parts of Stardew's behaviour are from memory (SC-161 to SC-163, SC-168).
+Built in part (see "Built status"). Parts of Stardew's behaviour are from memory (SC-161 to SC-163, SC-170).
 
 Part of note 10 ("Tailoring" and "Dyes"). Ring 1 only, art waits for M3d.
 
