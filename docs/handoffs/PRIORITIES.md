@@ -37,8 +37,7 @@ table, lantern floating and ice fishing rules with thin scene hooks, pond menu a
 
 Open, top to bottom:
 
-1. **Owner answers left:** herb tea with tea leaves (second recipe, or a new dish, or green tea in
-   the keg; bundle 24), garden pot item for tea bushes, Frostfin price and bundle use, hat for
+1. **Owner answers left:** garden pot item for tea bushes, Frostfin price and bundle use, hat for
    Frostday (`snow-cap` placeholder), crop for the rare seed packet, which fish gives algae soup
    once the species table is filled, aged roe quality rule.
 2. **#873 heart events** (note 62), needs the list per person, then scenes as data.

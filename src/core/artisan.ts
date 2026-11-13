@@ -17,6 +17,7 @@ export type ArtisanCategory =
   | "honey"
   | "mead"
   | "beer"
+  | "tea"
   | "cheese"
   | "mayonnaise"
   | "cloth"
@@ -36,6 +37,7 @@ export const HONEY = "honey";
 export const MEAD = "mead";
 export const BEER = "beer";
 export const PALE_ALE = "pale-ale";
+export const GREEN_TEA = "green-tea";
 
 /** Words for each category, for bundle lists. */
 export const CATEGORY_NAMES: Record<ArtisanCategory, string> = {
@@ -46,6 +48,7 @@ export const CATEGORY_NAMES: Record<ArtisanCategory, string> = {
   honey: "Honey",
   mead: "Mead",
   beer: "Any beer",
+  tea: "Green tea",
   dried: "Any dried goods",
   cheese: "Any cheese",
   mayonnaise: "Any mayonnaise",
@@ -181,6 +184,13 @@ defs.set(PALE_ALE, {
   name: "Pale ale",
   category: "beer",
   sellPrice: 300,
+});
+/** Green tea: 1 tea leaf in the keg (note 97, owner 2026-11-13, saved Artisan Goods page, SC-173). */
+defs.set(GREEN_TEA, {
+  id: GREEN_TEA,
+  name: "Green tea",
+  category: "tea",
+  sellPrice: 100,
 });
 
 /**

@@ -966,10 +966,14 @@
     "ingredients": [
       {
         "item": "mixed-seed",
-        "count": 4
+        "count": 2
       },
       {
         "item": "fiber",
+        "count": 5
+      },
+      {
+        "item": "wood",
         "count": 5
       }
     ],
@@ -979,9 +983,8 @@
     },
     "sources": [
       {
-        "kind": "level",
-        "skill": "foraging",
-        "level": 3
+        "kind": "letter",
+        "letter": "odette-tea-sapling"
       }
     ]
   }

@@ -472,7 +472,11 @@
     "id": "hosts",
     "name": "Host's",
     "room": "guests-board",
-    "items": ["bread", "honey-cake", "herb-tea"],
+    "items": [
+      "bread",
+      "honey-cake",
+      { "id": "any-tea", "name": "Tea", "anyOf": ["herb-tea", "green-tea"] }
+    ],
     "reward": {
       "hats": {
         "choose": 3,

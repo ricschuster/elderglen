@@ -22,7 +22,7 @@ season. Placeholder numbers are marked.
 
 | Stardew | Ours |
 | --- | --- |
-| Tea Sapling, crafted (owner: Stardew shape) | `tea-sapling`, recipe `tea-sapling` in `recipes.json`: 4 mixed seeds (our wild seeds) and 5 fiber, Foraging level 3. Placeholder, SC-171. |
+| Tea Sapling, crafted: 2 wild seeds, 5 fiber, 5 wood, recipe by mail the day after Caroline's 2 heart event (saved Crafting page, SC-171) | `tea-sapling`, recipe in `recipes.json`: 2 mixed seeds (our wild seeds), 5 fiber, 5 wood. Taught by Odette's letter `odette-tea-sapling` (`letters.json`, trigger `event`), queued once her 2 heart event `odette-store-2` is seen, so it arrives the next morning. Owner 2026-11-13. Until heart events play (#873) the recipe cannot be learned. |
 | 20 days, 10 a stage | `TEA_STAGE_DAYS` 10, `TEA_MATURE_DAYS` 20 (`tea-bush.json`), grows every night, no clear-ground rule and no water. |
 | Leaf a day, 22nd to 28th | `bearsOn`: day 22 to 28, spring, summer, fall; winter only in the greenhouse. The greenhouse bears in the last week of every season. |
 | Leaves held | A bush holds 1 leaf (`maxLeaves`), picked with the Action button. Placeholder, SC-172. |
@@ -46,19 +46,16 @@ season. Placeholder numbers are marked.
   sprites tinted green as placeholder art.
 - Tests: `tests/teabush.test.ts`.
 
-## Herb tea and bundle 24
+## Green tea and bundle 24
 
-Herb tea already exists (`dishes.json`: 2 dandelions, Foraging level 2, note 63)
-and notes 16 and 63 settle it as a dandelion dish. The notes do not say tea
-leaves feed it, so it is unchanged. Open question: should herb tea also take
-tea leaves (for example a second recipe, 2 tea leaves), or should tea leaves
-feed a new dish or a keg product (Stardew's green tea is a keg good, from
-memory, unchecked)? Until the owner decides, the tea bush has no consumer other
-than selling and eating the leaf.
+Owner, 2026-11-13 (Stardew, saved Artisan Goods page, SC-173): tea leaves go in the keg
+and come out as **green tea** after 180 minutes, selling for 100g (`GREEN_TEA` in
+`artisan.ts`, keg rule in `processing.ts`). Herb tea stays the dandelion dish. Bundle 24's
+tea slot is now "Tea", any of herb tea or green tea (`anyOf` in `bundles.json`). Green tea's
+buffs are not built. The leaf's own sale price is still ours (SC-173).
 
 ## Open
 
 - Garden pots as a planting place (needs the pot item).
-- Whether herb tea or a green tea uses leaves (above).
 - Every placeholder number: recipe, leaf price, leaf energy, sapling price,
   cap of 1 leaf. Real art.

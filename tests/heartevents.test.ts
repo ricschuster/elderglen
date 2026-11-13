@@ -291,7 +291,11 @@ describe("scene validator", () => {
 });
 
 describe("recipe mail", () => {
-  const recipeLetters = LETTERS.filter((l) => l.attachment?.recipe);
+  // Dish letters at heart steps; the tea sapling letter (a crafting recipe after a
+  // heart event, note 97) is tested in teabush.test.ts.
+  const recipeLetters = LETTERS.filter(
+    (l) => l.attachment?.recipe && l.trigger.kind === "hearts",
+  );
 
   it("has letters at 5 and 10 hearts whose recipes exist and are letter-sourced", () => {
     expect(recipeLetters.length).toBeGreaterThanOrEqual(4);

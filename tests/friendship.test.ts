@@ -25,6 +25,10 @@ const met = (id = "odette") => {
 };
 
 describe("taste", () => {
+  it("dislikes driftwood though trash is hated, as Stardew (note 61)", () => {
+    expect(tasteOf("odette", "old-boot")).toBe("hate");
+    expect(tasteOf("odette", "driftwood")).toBe("dislike");
+  });
   it("uses the personal item list first", () => {
     expect(tasteOf("tilda", "copper-bar")).toBe("love");
     expect(tasteOf("tilda", "tomato")).toBe("like");
@@ -150,13 +154,9 @@ describe("data", () => {
       if (e.startsWith("#")) expect(tags.has(e.slice(1)), e).toBe(true);
       else if (!itemById(e)) unbuilt.add(e);
     }
-    // Named in the design but not built yet: the Harvest Showing prize (note 14),
-    // driftwood among the trash (note 61), smoked fish.
-    expect([...unbuilt].sort()).toEqual([
-      "blue-ribbon-melon",
-      "driftwood",
-      "smoked-fish",
-    ]);
+    // Named in the design but not built yet: the Harvest Showing prize (note 14)
+    // and smoked fish.
+    expect([...unbuilt].sort()).toEqual(["blue-ribbon-melon", "smoked-fish"]);
   });
   it("gives every villager a birthday that isBirthday finds once a year", () => {
     for (const v of VILLAGERS) {

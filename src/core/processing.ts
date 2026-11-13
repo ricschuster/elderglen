@@ -1,6 +1,7 @@
 import {
   artisanId,
   BEER,
+  GREEN_TEA,
   PALE_ALE,
   CHEESE,
   CLOTH,
@@ -23,6 +24,7 @@ import geodeData from "../content/geodes.json";
 import { cropById } from "./crops";
 import { BARS, COAL, coalFor, ORE_PER_BAR, QUARTZ } from "./ore";
 import { agedRoeOf, roeSpeciesOf } from "./pondspecies";
+import { TEA_LEAF } from "./teabush";
 import { splitQuality, type Quality } from "./quality";
 
 /**
@@ -123,8 +125,10 @@ const MEAD_MINUTES = 600;
 /** Pale ale 2,250 minutes (saved Artisan Goods page). Beer 1,750 also matches that page (SC-165). */
 const PALE_ALE_MINUTES = 2250;
 const BEER_MINUTES = 1750;
-/** Aged roe takes 4 days in the jar (ours, placeholder; Stardew's time is from memory, SC-174). */
-export const AGED_ROE_MINUTES = 4 * MINUTES_PER_DAY;
+/** Green tea 180 minutes, as Stardew (saved Artisan Goods page, SC-173). */
+const GREEN_TEA_MINUTES = 180;
+/** Aged roe takes 4,000 minutes in the jar, as Stardew (saved Artisan Goods page, SC-174, owner 2026-11-13). */
+export const AGED_ROE_MINUTES = 4000;
 const KILN_MINUTES = 30;
 /** The geode crusher takes 1 game hour a geode and burns no fuel (Stardew, SC-157). */
 const CRUSHER_MINUTES = 60;
@@ -360,6 +364,8 @@ export function processFor(
       return { ...one, output: PALE_ALE, minutes: PALE_ALE_MINUTES };
     if (input === "wheat")
       return { ...one, output: BEER, minutes: BEER_MINUTES };
+    if (input === TEA_LEAF)
+      return { ...one, output: GREEN_TEA, minutes: GREEN_TEA_MINUTES };
     const produce = produceOf(input);
     if (!produce) return undefined;
     const kind = KEG[produce];

@@ -246,7 +246,8 @@ and rewards below are placeholders for tuning, except where marked as the owner'
   The treat is whatever treat a festival stall sells, and each festival sells a
   different one (owner), so no one festival blocks it. The reward is a set of
   **3** festival hats (owner). Which three hats is open (note 10 and note 14).
-  Bread, honey cake and herb tea are not in `dishes.json` yet.
+  Bread, honey cake and herb tea are not in `dishes.json` yet. (Built since; the tea slot
+  takes herb tea or green tea, owner 2026-11-13, note 97.)
 - **Bundle 26 Storyteller's: 3 of 5 of a rare herb, an old seed packet, a carved
   bead, a faded ribbon and a pressed flower.** The four old things are dug up by
   the hoe on **artifact spots** in the valley (owner, Stardew's pattern, saved
