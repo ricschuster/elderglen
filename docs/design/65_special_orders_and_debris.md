@@ -202,3 +202,7 @@ check in `src/core/orders.ts`; the binding is `order` and `closed` on a placed c
 - Whether the board shows two orders or a different number (SC-32).
 - The grass spread rate and whether grass exists as a tile before slice 1.
 - Whether an order's goods can be returned in full if the window lapses.
+
+## Decided 2026-11-13: keep the bound chest
+
+Stardew takes the goods by hand at the order board and they cannot be taken back (owner's play memory, SC-166). We keep our bound chest, where goods can be taken back by hand until the order ends. It is gentler and fits the cozy brief. Nothing to change in code.

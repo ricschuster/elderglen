@@ -156,7 +156,7 @@ describe("data", () => {
     }
     // Named in the design but not built yet: the Harvest Showing prize (note 14)
     // and smoked fish.
-    expect([...unbuilt].sort()).toEqual(["blue-ribbon-melon", "smoked-fish"]);
+    expect([...unbuilt].sort()).toEqual(["smoked-fish"]);
   });
   it("gives every villager a birthday that isBirthday finds once a year", () => {
     for (const v of VILLAGERS) {

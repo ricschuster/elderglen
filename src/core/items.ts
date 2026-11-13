@@ -199,6 +199,12 @@ items.set("milk", { id: "milk", name: "Milk", sellPrice: 125 });
 items.set("goat-milk", { id: "goat-milk", name: "Goat milk", sellPrice: 225 });
 items.set("truffle", { id: "truffle", name: "Truffle", sellPrice: 625 });
 items.set("moonwool", { id: "moonwool", name: "Moonwool", sellPrice: 1200 });
+/** The Harvest Showing first prize, once a year (notes 14 and 66). Never bought. The name is a placeholder. */
+items.set("blue-ribbon-melon", {
+  id: "blue-ribbon-melon",
+  name: "Blue Ribbon Melon",
+  sellPrice: 1500,
+});
 /** The water finds (note 93). Seaweed is already a forage item. */
 for (const f of WATER_FINDS)
   if (!items.has(f.id))
@@ -527,6 +533,7 @@ const GROUPS: [string, string[]][] = [
       "goat-milk",
       "truffle",
       "moonwool",
+      "blue-ribbon-melon",
     ],
   ],
   ["Furniture", furnitureData.map((f) => f.id)],
