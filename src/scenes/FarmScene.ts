@@ -328,10 +328,7 @@ import {
   ZOOM_MAX,
   ZOOM_MIN,
 } from "../core/view";
-import {
-  makePlaceholderTextures,
-  PLAYER_KEY,
-} from "./placeholder-textures";
+import { makePlaceholderTextures, PLAYER_KEY } from "./placeholder-textures";
 
 /** Real milliseconds per 10 game minutes (Stardew pace). */
 const TICK_MS = 7000;
