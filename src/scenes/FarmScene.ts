@@ -105,6 +105,9 @@ import { cropById } from "../core/crops";
 import { mapFiles, maps } from "../content/maps";
 import { START } from "../core/maps";
 import { HAT_KEY, villagerKey } from "./art-people";
+import { DEPTH, sortDepth, tileDepth } from "./depth";
+import { drawMapArt } from "./mapart";
+import { MAP_PASSES } from "./map-passes";
 import { creatureTexture } from "./art-creatures";
 import { storeOf } from "../core/mapstore";
 import { mapWithDoors } from "../core/placement";
@@ -328,8 +331,6 @@ import {
 import {
   makePlaceholderTextures,
   PLAYER_KEY,
-  TILES_KEY,
-  TILESET_NAME,
 } from "./placeholder-textures";
 
 /** Real milliseconds per 10 game minutes (Stardew pace). */
@@ -414,7 +415,8 @@ export class FarmScene extends Phaser.Scene {
   private mendAsked = false;
   private hud!: Hud;
   private uiCamera!: Phaser.Cameras.Scene2D.Camera;
-  private sprites!: Phaser.GameObjects.Container;
+  /** The pictures of things on the map, redrawn by `drawGround`. */
+  private sprites: Phaser.GameObjects.Image[] = [];
   private ground!: Phaser.GameObjects.Graphics;
   /** The light layer: glow rings of placed lights and the worn ring (note 89). */
   private glow!: Phaser.GameObjects.Graphics;
@@ -429,7 +431,7 @@ export class FarmScene extends Phaser.Scene {
   private tier = 0;
   /** Drawn layers that show only while a condition holds (`when` or `unless`), such as the log. */
   private conditional: {
-    drawn: Phaser.GameObjects.GameObject & { setVisible(v: boolean): unknown };
+    drawn: { setVisible(v: boolean): unknown };
     layer: TiledLayer;
   }[] = [];
   private controls!: Controls;
@@ -566,34 +568,38 @@ export class FarmScene extends Phaser.Scene {
     if (isHouseMap(id)) carryFurniture(this.state, this.map, id);
     if (this.floor !== undefined)
       this.floorState = this.state.mines.visit(this.floor, day);
-    const cacheKey = mineLayout ? `${id}@${day}` : id;
-    if (!this.cache.tilemap.exists(cacheKey))
-      this.cache.tilemap.add(cacheKey, {
-        format: Phaser.Tilemaps.Formats.TILED_JSON,
-        data: json,
-      });
-
-    // World objects: the tile layers, the player and the facing marker.
-    const tilemap = this.make.tilemap({ key: cacheKey });
-    const tileset = tilemap.addTilesetImage(TILESET_NAME, TILES_KEY)!;
+    // World objects: the painted map, the player and the facing marker.
     const world: Phaser.GameObjects.GameObject[] = [];
-    for (const layer of layersAtTier(json, this.tier, holds)) {
-      if (layer.type !== "tilelayer" || layer.visible === false) continue;
-      const drawn = tilemap.createLayer(layer.name, tileset);
-      if (drawn) world.push(drawn);
+    const painted = drawMapArt(
+      this,
+      {
+        mapId: id,
+        json,
+        layers: layersAtTier(json, this.tier, holds).filter(
+          (layer) => layer.type === "tilelayer" && layer.visible !== false,
+        ),
+        outdoors: !this.map.indoors && (this.map.hasSoil || isAreaMap(id)),
+        floor: this.floor,
+        season: dateOf(day).season,
+      },
+      MAP_PASSES,
+    );
+    for (const drawn of painted) {
+      world.push(...drawn.objects);
       if (
-        drawn &&
-        layer.properties?.some((q) => q.name === "when" || q.name === "unless")
+        drawn.layer.properties?.some(
+          (q) => q.name === "when" || q.name === "unless",
+        )
       )
-        this.conditional.push({ drawn, layer });
+        this.conditional.push({ drawn, layer: drawn.layer });
     }
 
     const ts = this.map.tileSize;
     // Plots and forage sit on the tiles, under the player.
-    this.ground = this.add.graphics();
-    this.sprites = this.add.container(0, 0);
-    this.wash = this.add.graphics();
-    world.push(this.ground, this.sprites, this.wash);
+    this.ground = this.add.graphics().setDepth(DEPTH.decal);
+    this.sprites = [];
+    this.wash = this.add.graphics().setDepth(DEPTH.decal + 1);
+    world.push(this.ground, this.wash);
     world.push(...this.drawLabels());
     let spawn: { x: number; y: number } = this.map.entry(this.entryName)!;
     // Coming up from below lands on the ladder that was taken down.
@@ -615,7 +621,8 @@ export class FarmScene extends Phaser.Scene {
     this.target = this.add
       .rectangle(0, 0, ts, ts)
       .setOrigin(0)
-      .setStrokeStyle(1, 0xffffff, 0.6);
+      .setStrokeStyle(1, 0xffffff, 0.6)
+      .setDepth(DEPTH.decal + 2);
     world.push(this.player, this.hat, this.target);
     this.swingFx = this.add.graphics().setDepth(900);
     world.push(this.swingFx);
@@ -995,8 +1002,15 @@ export class FarmScene extends Phaser.Scene {
       }
     }
     const riding = this.state.animals.mounted;
-    this.steed.setVisible(riding).setPosition(this.pos.x, this.pos.y);
-    this.player.setPosition(this.pos.x, this.pos.y - (riding ? RIDER_LIFT : 0));
+    const depth = sortDepth(this.pos.y);
+    this.steed
+      .setVisible(riding)
+      .setPosition(this.pos.x, this.pos.y)
+      .setDepth(depth);
+    this.player
+      .setPosition(this.pos.x, this.pos.y - (riding ? RIDER_LIFT : 0))
+      .setDepth(depth);
+    this.hat.setDepth(depth);
     this.drawHat();
     this.repeatUse(delta * DEV_SPEED);
     this.dragSoilWork();
@@ -1356,10 +1370,7 @@ export class FarmScene extends Phaser.Scene {
     for (const v of this.villagers) {
       let s = this.villagerSprites.get(v.id);
       if (!s) {
-        const box = this.add
-          .image(0, 0, villagerKey(v.id))
-          .setOrigin(0.5, 1)
-          .setDepth(5);
+        const box = this.add.image(0, 0, villagerKey(v.id)).setOrigin(0.5, 1);
         const tag = this.add
           .text(0, 0, v.name, {
             fontSize: "8px",
@@ -1376,7 +1387,7 @@ export class FarmScene extends Phaser.Scene {
       }
       const px = (v.x + 0.5) * ts;
       const py = (v.y + 1) * ts - 1;
-      s.box.setPosition(px, py);
+      s.box.setPosition(px, py).setDepth(sortDepth(py));
       s.tag.setPosition(px, py - 13);
     }
   }
@@ -2914,21 +2925,27 @@ export class FarmScene extends Phaser.Scene {
   /** Draw plots, crops and forage on the tiles. */
   private drawGround(): void {
     this.ground.clear();
-    this.sprites.removeAll(true);
+    for (const image of this.sprites) image.destroy();
+    this.sprites = [];
     const ts = this.map.tileSize;
+    // A picture stands on its tile: a taller or wider one rises and spreads from the
+    // tile's bottom centre, and sorts with the figures by that row (note 99).
     const put = (x: number, y: number, key: string) => {
-      const image = this.add.image(x * ts, y * ts, key).setOrigin(0);
+      const image = this.add
+        .image((x + 0.5) * ts, (y + 1) * ts, key)
+        .setOrigin(0.5, 1)
+        .setDepth(tileDepth(y, ts));
       this.uiCamera.ignore(image); // the UI camera does not draw the world
-      this.sprites.add(image);
+      this.sprites.push(image);
       return image;
     };
     for (const r of this.rocks()?.each() ?? [])
       put(r.x, r.y, ROCK_KEYS[r.kind]);
     if (this.floor !== undefined) {
       const up = this.map.exits.find((e) => e.id === "up");
-      if (up) put(up.x, up.y, LADDER_KEY).setAlpha(0.6);
+      if (up) put(up.x, up.y, LADDER_KEY).setAlpha(0.6).setDepth(DEPTH.decal);
       const down = this.floorState?.ladder;
-      if (down) put(down.x, down.y, LADDER_KEY);
+      if (down) put(down.x, down.y, LADDER_KEY).setDepth(DEPTH.decal);
     }
     if (isHouseMap(this.mapId)) this.drawDecor();
     for (const p of this.state.furniture.each(this.mapId))
@@ -2968,9 +2985,9 @@ export class FarmScene extends Phaser.Scene {
   ): void {
     const soil = this.map.indoors ? this.state.greenhouse : this.state.farm;
     for (const { x, y, plot } of soil.each()) {
-      put(x, y, soilKey(plot.wateredToday));
+      put(x, y, soilKey(plot.wateredToday)).setDepth(DEPTH.decal);
       const fert = fertilizerById(plot.fertilizer);
-      if (fert) put(x, y, fertKey(fert.line));
+      if (fert) put(x, y, fertKey(fert.line)).setDepth(DEPTH.decal);
       const crop = plot.crop;
       const def = crop && cropById(crop.id);
       if (!crop || !def) continue;
@@ -2996,9 +3013,12 @@ export class FarmScene extends Phaser.Scene {
     if (!this.outdoorWorld) return;
     for (const { x, y, id } of this.state.forage.each())
       put(x, y, forageKey(id));
-    for (const s of this.state.spots.each()) put(s.x, s.y, SPOT_KEY);
-    for (const w of this.state.weeds.each()) put(w.x, w.y, WEED_KEY);
-    for (const t of this.state.twigs.each()) put(t.x, t.y, TWIG_KEY);
+    for (const s of this.state.spots.each())
+      put(s.x, s.y, SPOT_KEY).setDepth(DEPTH.decal);
+    for (const w of this.state.weeds.each())
+      put(w.x, w.y, WEED_KEY).setDepth(DEPTH.decal);
+    for (const t of this.state.twigs.each())
+      put(t.x, t.y, TWIG_KEY).setDepth(DEPTH.decal);
     for (const m of this.state.machines.each()) {
       put(m.x, m.y, machineKey(m.id));
       if (jobDone(this.state, m)) put(m.x, m.y, MACHINE_READY_KEY);
@@ -3532,7 +3552,7 @@ export class FarmScene extends Phaser.Scene {
   private drawCreature(c: Creature): void {
     const block = this.creatureSprites.get(c.uid);
     if (!block) return;
-    block.setPosition(c.x, c.y);
+    block.setPosition(c.x, c.y).setDepth(sortDepth(c.y));
     // The wind up is the warning: a swelling, blinking sprite (note 22).
     const winding = c.state === "windup";
     const base = c.small ? 0.65 : 1;
