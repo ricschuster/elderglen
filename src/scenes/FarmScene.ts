@@ -575,7 +575,8 @@ export class FarmScene extends Phaser.Scene {
         layers: layersAtTier(json, this.tier, holds).filter(
           (layer) => layer.type === "tilelayer" && layer.visible !== false,
         ),
-        outdoors: !this.map.indoors && (this.map.hasSoil || isAreaMap(id)),
+        // Every map under the sky has an `objects` layer; interiors and caves do not.
+        outdoors: json.layers.some((layer) => layer.name === "objects"),
         floor: this.floor,
         season: dateOf(day).season,
       },

@@ -31,7 +31,7 @@ export interface MapArtOptions {
   json: TiledMapJson;
   /** The visible tile layers at this tier, in draw order. */
   layers: readonly TiledLayer[];
-  /** Under the sky: the farm and the area maps. False in interiors, caves and the mines. */
+  /** Under the sky: the farm, the valley areas and the village. False in interiors, caves and the mines. */
   outdoors: boolean;
   /** The mine floor number, on a mine floor. */
   floor?: number;

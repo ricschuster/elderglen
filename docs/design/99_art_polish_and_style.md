@@ -44,9 +44,10 @@ screen, the title screen, light and weather.
   placeholder tile ids (ADR 0014: the committed map JSON is the source). The scene no
   longer stamps one picture per id. Each visible tile layer is painted once onto a canvas
   by passes that see a cell's neighbours, the layers under it, the season and the kind of
-  place: `art-terrain.ts` (grass, flowers, path, water, earth, map trees) and
-  `art-structures.ts` (wall, roof, door and the fixture ids). A pass can also add tall,
-  depth sorted props and moving water.
+  place. Under the sky `art-terrain.ts` paints grass, flowers, path, water, earth and
+  the map trees, and `art-structures.ts` paints wall, roof, door and bin as buildings,
+  stone walls and bridges. Indoors and underground `art-interiors.ts` paints every id.
+  A pass can also add tall, depth sorted props and moving water.
 - **Sprites** are canvas textures painted at start up, as before: `art.ts` and its
   companions. A picture taller or wider than a tile stands on its tile's bottom centre.
 - **The interface** has its own pixel font and framed panels, shared by the HUD and every
