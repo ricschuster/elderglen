@@ -1,13 +1,8 @@
 import Phaser from "phaser";
 import { resistChance } from "../core/effects";
-import {
-  BOOTS,
-  bootsById,
-  RING_SLOTS,
-  RINGS,
-  ringById,
-} from "../core/equipment";
+import { bootsById, RING_SLOTS, RINGS, ringById } from "../core/equipment";
 import { packRings } from "../core/forge";
+import { packBoots } from "../core/tailoring";
 import type { GameState } from "../core/save";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
@@ -89,9 +84,8 @@ export class EquipmentScene extends Phaser.Scene {
           ]
         : [],
     });
-    for (const b of BOOTS) {
-      const n = inv.count(b.id);
-      if (n < 1) continue;
+    for (const id of packBoots(this.state)) {
+      const b = bootsById(id)!;
       rows.push({
         label: b.name,
         detail: `Defense ${b.defense}, resist ${Math.round(resistChance(b.immunity) * 100)} percent`,

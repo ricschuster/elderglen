@@ -1,6 +1,13 @@
 import { POT_ITEM } from "../core/pots";
 import { isBomb } from "../core/bombs";
-import { BOOTS, RINGS, comboId, comboParts, ringById } from "../core/equipment";
+import {
+  BOOTS,
+  RINGS,
+  comboId,
+  comboParts,
+  ringById,
+  tailoredParts,
+} from "../core/equipment";
 import { LIFE_ELIXIR, MINERS_TREAT, OIL_OF_GARLIC } from "../core/items";
 import { farmDecorIds, isFarmDecor } from "../core/farmdecor";
 import { isLight } from "../core/lights";
@@ -1289,6 +1296,8 @@ export function iconKey(itemId: string): string | undefined {
   if (isLight(base) || isBomb(base) || base === LIGHTNING_ROD)
     return lightKey(base);
   if (base === "tapper" || base === "heavy-tapper") return `icon-${base}`;
+  const tailored = tailoredParts(base);
+  if (tailored) return forgeKey(tailored[0]);
   if (
     ringById(base) ||
     comboParts(base) ||
