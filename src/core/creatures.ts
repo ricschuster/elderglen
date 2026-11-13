@@ -46,6 +46,8 @@ export interface CreatureDef {
   xp: number;
   /** Kills that meet its slayer goal (note 22). Kinds sharing a `group` share one goal. */
   goal: number;
+  /** An item stack handed over free, once, when the slayer goal is met (ours; rings use rings.json `slayer`). */
+  reward?: { item: string; count: number };
   /** Slayer group, for kinds that count together (the Gloop colours). */
   group?: string;
   /** A dasher's fixed dash: pixels a second and seconds it lasts. */
@@ -446,6 +448,8 @@ export interface SlayerGoal {
   name: string;
   kinds: string[];
   goal: number;
+  /** A one-off item stack for meeting the goal, when it is not a ring. */
+  reward?: { item: string; count: number };
 }
 
 export const SLAYER_GOALS: SlayerGoal[] = (() => {
@@ -460,6 +464,7 @@ export const SLAYER_GOALS: SlayerGoal[] = (() => {
         name: c.group ? c.name.replace(/^\w+ /, "") : c.name,
         kinds: [c.id],
         goal: c.goal,
+        ...(c.reward ? { reward: c.reward } : {}),
       });
   }
   return out;

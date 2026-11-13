@@ -31,15 +31,15 @@ describe("ring combining", () => {
   });
 
   it("stacks both effects when worn", () => {
-    const inv = pack("glow-ring", "iron-defense-ring");
-    const r = combineRings(inv, "glow-ring", "iron-defense-ring");
+    const inv = pack("glow-ring", "crabshell-ring");
+    const r = combineRings(inv, "glow-ring", "crabshell-ring");
     if (!r.ok) throw new Error(r.reason);
     const eq = new Equipment();
     expect(eq.wear(inv, 0, r.id)).toBe(true);
     expect(eq.lightRadius()).toBe(10);
     expect(eq.defense()).toBe(5);
     expect(itemById(r.id)?.keep).toBe(true);
-    expect(ringById(r.id)?.name).toContain("Glow ring");
+    expect(ringById(r.id)?.name).toContain("glow ring");
   });
 
   it("refuses the same ring twice, a combined ring and short ore", () => {
