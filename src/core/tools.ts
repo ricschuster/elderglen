@@ -310,6 +310,7 @@ const REASONS: Record<string, string> = {
   "cask will not take that": "A cask takes wine, mead, beer and cheese.",
   "no tapper": "Out of tappers.",
   "already tapped": "This tree already has a tapper.",
+  "cosmetic tree": "This tree is for show. You can only shake it.",
   "cannot tap this": "A tapper goes on a full-grown tree.",
   "no tree here": "There is no tree there.",
   "not tapped": "There is no tapper on that tree.",

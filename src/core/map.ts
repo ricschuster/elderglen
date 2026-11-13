@@ -187,6 +187,11 @@ export interface TreeSpot extends Spot {
   kind?: TreeKind;
   /** A large stump that regrows after it is chopped (`core/trees.ts`). Stage is 5. */
   large?: boolean;
+  /**
+   * A village tree for show (Tiled property `cosmetic`, true): it can be shaken but
+   * not chopped or tapped, as Stardew's Town trees west of the river (SC-30).
+   */
+  cosmetic?: boolean;
 }
 
 /** Weeds and twigs placed on a map by hand (the object classes `weed` and `twig`). */
@@ -345,6 +350,9 @@ const num = (o: TiledObject, key: string): number | undefined => {
   const value = o.properties?.find((p) => p.name === key)?.value;
   return typeof value === "number" ? value : undefined;
 };
+
+const flag = (o: TiledObject, key: string): boolean =>
+  o.properties?.find((p) => p.name === key)?.value === true;
 
 const text = (o: TiledObject, key: string): string | undefined => {
   const value = o.properties?.find((p) => p.name === key)?.value;
@@ -607,6 +615,7 @@ export class FarmMap {
             ...spot,
             stage: num(o, "stage") ?? 5,
             ...treeKindOf(o),
+            ...(flag(o, "cosmetic") ? { cosmetic: true } : {}),
           });
         else if (cls === "stump")
           trees.push({ ...spot, stage: 5, large: true, ...treeKindOf(o) });

@@ -6,25 +6,22 @@ import {
   areaMaps,
   areasEndDay,
   enterArea,
+  GROVE_REGROW_STAGE,
   homeWorld,
   isAreaMap,
   leaveArea,
   regrowGroves,
   respawnAreaForage,
 } from "../src/core/areas";
-import { chop, forage } from "../src/core/actions";
+import { chop, forage, shake } from "../src/core/actions";
+import { mayTap } from "../src/core/tapper";
 import { fishAvailable, FISH } from "../src/core/fishing";
 import { FORAGE_AREAS, forageCap } from "../src/core/forageareas";
 import { useHeld } from "../src/core/tools";
 import { deserialize, newGame, serialize } from "../src/core/save";
 import { sleep } from "../src/core/sleep";
 import { farmMapOf } from "../src/core/farmtypes";
-import {
-  MATURE_STAGE,
-  SEED_STAGE,
-  swingsToFell,
-  Trees,
-} from "../src/core/trees";
+import { MATURE_STAGE, swingsToFell, Trees } from "../src/core/trees";
 import { dateOf } from "../src/core/calendar";
 
 const forest = maps.get("forest");
@@ -330,7 +327,10 @@ describe("grove regrowth (SC-30)", () => {
     expect(regrowGroves(trees, spots, never, () => true)).toBe(0);
     expect(trees.at(1, 1)).toBeUndefined();
     expect(regrowGroves(trees, spots, always, () => true)).toBe(1);
-    expect(trees.at(1, 1)).toMatchObject({ stage: SEED_STAGE, kind: "maple" });
+    expect(trees.at(1, 1)).toMatchObject({
+      stage: GROVE_REGROW_STAGE,
+      kind: "maple",
+    });
     // A stump still stands there: nothing sprouts until it is uprooted.
     expect(trees.at(3, 1)?.stage).toBe(MATURE_STAGE);
   });
@@ -426,5 +426,59 @@ describe("weed and twig objects", () => {
     expect(twig.litter.twigs).toEqual([{ x: 0, y: 0 }]);
     const bad = FarmMap.fromTiled(small("twig", 1, 1));
     expect(bad.problems().join()).toContain("twig at 1,0 is on a blocked");
+  });
+});
+
+describe("regrow rules (SC-09, note 36)", () => {
+  it("regrows in winter at a stage 3, and never on the farm", () => {
+    const g = newGame();
+    const w = g.areas["forest"]!;
+    for (const t of [...w.trees.each()]) w.trees.remove(t.x, t.y);
+    // A season is 28 days, so day 85 is in winter.
+    g.day.clock.day = 85;
+    expect(dateOf(g.day.clock.day).season).toBe("winter");
+    areasEndDay(g, () => 0);
+    expect(w.trees.count).toBeGreaterThan(0);
+    for (const t of w.trees.each()) expect(t.stage).toBe(GROVE_REGROW_STAGE);
+    // The farm's own trees are untouched by areasEndDay.
+    const farmTrees = g.trees.count;
+    areasEndDay(g, () => 0);
+    expect(g.trees.count).toBe(farmTrees);
+  });
+});
+
+describe("cosmetic trees", () => {
+  const spots = [{ x: 1, y: 1, stage: 5, cosmetic: true }];
+
+  it("are marked by the map object property and carried to the tree", () => {
+    expect(new Trees(spots).at(1, 1)?.cosmetic).toBe(true);
+    expect(new Trees([{ x: 1, y: 1, stage: 5 }]).at(1, 1)?.cosmetic).toBe(
+      undefined,
+    );
+  });
+
+  it("refuse the axe and the tapper but let the hand shake a seed", () => {
+    const g = newGame();
+    g.trees = new Trees(spots);
+    const t = g.trees.at(1, 1)!;
+    t.seed = true;
+    expect(chop(g, 1, 1, () => 0)).toEqual({
+      ok: false,
+      reason: "cosmetic tree",
+    });
+    expect(g.trees.at(1, 1)?.stump).toBe(false);
+    expect(mayTap(t)).toBe(false);
+    expect(shake(g, 1, 1).ok).toBe(true);
+  });
+
+  it("are never a grove spot to regrow", () => {
+    expect(
+      regrowGroves(
+        new Trees(),
+        spots,
+        () => 0,
+        () => true,
+      ),
+    ).toBe(0);
   });
 });

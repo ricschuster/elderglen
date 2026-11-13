@@ -144,10 +144,15 @@ export function areaOf(g: GameState): string | undefined {
 /** Chance a night that an empty grove spot sprouts a seed. SC-30: 20 percent a night once the stump is gone. */
 export const GROVE_REGROW_CHANCE = 0.2;
 
+/** A regrown tree comes back as a stage 3 seedling, as Stardew (SC-09). */
+export const GROVE_REGROW_STAGE = 3;
+
 /**
- * Grove regrowth: any spot where the map placed a tree, and that now holds
- * nothing (felled and its stump uprooted), may sprout a seed of the same kind
- * tonight. The seed then grows by the normal stages (`Trees.endDay`).
+ * Grove regrowth (note 36): any spot where the map placed a tree (an original
+ * tree, never one the player planted), and that now holds nothing (felled and
+ * its stump uprooted), may return tonight as a stage 3 seedling of the same
+ * kind, in any season. A stump left standing stops it. It then grows by the
+ * normal stages (`Trees.endDay`). Only area maps call this, never the farm.
  */
 export function regrowGroves(
   trees: Trees,
@@ -157,9 +162,10 @@ export function regrowGroves(
 ): number {
   let sprouted = 0;
   for (const s of spots) {
-    if (s.large || trees.at(s.x, s.y) || !free(s.x, s.y)) continue;
+    if (s.large || s.cosmetic || trees.at(s.x, s.y) || !free(s.x, s.y))
+      continue;
     if (random() >= GROVE_REGROW_CHANCE) continue;
-    if (!trees.add(s.x, s.y, SEED_STAGE)) continue;
+    if (!trees.add(s.x, s.y, GROVE_REGROW_STAGE)) continue;
     const t = trees.at(s.x, s.y);
     if (t && s.kind) t.kind = s.kind;
     sprouted += 1;
