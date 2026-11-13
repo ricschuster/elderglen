@@ -15,6 +15,7 @@ import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { format } from "prettier";
 import { buildMore } from "./more.mjs";
+import { buildPeople } from "./people.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const read = (p) => JSON.parse(readFileSync(join(root, p), "utf8"));
@@ -91,6 +92,7 @@ export function load() {
     "forage",
     "recipes",
     "places",
+    "people",
   ]) {
     const f = join(textDir, `${cat}.json`);
     text[cat] = existsSync(f) ? JSON.parse(readFileSync(f, "utf8")) : {};
@@ -123,6 +125,8 @@ export function load() {
     orders: content("orders"),
     letters: content("letters"),
     villagers: content("villagers"),
+    friendship: content("friendship"),
+    heartEvents: content("heart-events"),
     spawns: content("spawns"),
     maps,
     planned,
@@ -407,6 +411,19 @@ ${prose("rooms", r.id)}<h2>Bundles</h2><ul>${list}</ul>`,
     bundleLinks: (id) => bundleLinks("", id),
   });
 
+  buildPeople({
+    d,
+    esc,
+    cap,
+    link,
+    status,
+    prose,
+    infobox,
+    add,
+    errors,
+    internal,
+  });
+
   // ---- Item pages for everything linked above (not fish, crops or forage)
   const usedAsReward = new Map();
   for (const b of d.bundles)
@@ -468,6 +485,7 @@ ${prose("items", id)}${ub || rw ? `<h2>Used in</h2><ul>${ub ? `<li>Hall bundles 
       ["crops", "Crops", d.crops.map((x) => x.id)],
       ["forage", "Forage", d.forage.map((x) => x.id)],
       ["recipes", "Recipes", [...d.recipes, ...d.dishes].map((x) => x.id)],
+      ["people", "People", d.villagers.villagers.map((x) => x.id)],
       [
         "places",
         "Places",
@@ -492,7 +510,7 @@ ${prose("items", id)}${ub || rw ? `<h2>Used in</h2><ul>${ub ? `<li>Hall bundles 
       })
       .join("");
     return `<table><thead><tr><th>Category</th><th>Pages</th><th>With prose</th><th>Still draft</th><th>No prose</th></tr></thead><tbody>${rows}</tbody></table>
-<p>Not yet in the wiki: people pages (note 100 lists them as a later category), hosting and the licence line (M3d), fish pictures (no art), and the owner clearing <code>draft</code> flags so prose shows publicly.</p>`;
+<p>Not yet in the wiki: hosting and the licence line (M3d), fish pictures (no art), and the owner clearing <code>draft</code> flags so prose shows publicly.</p>`;
   };
 
   // ---- What is left (internal view only): the NOW section of the priority list.
@@ -552,6 +570,7 @@ ${internal ? '<a class="tile" href="@left.html"><strong>What is left</strong><sp
 <a class="tile" href="@forage/index.html"><strong>Forage</strong><span>${d.forage.length} things to gather</span></a>
 <a class="tile" href="@recipes/index.html"><strong>Recipes</strong><span>${d.recipes.length + d.dishes.length} dishes and craftable things</span></a>
 <a class="tile" href="@places/index.html"><strong>Places</strong><span>The areas of the home valley</span></a>
+<a class="tile" href="@people/index.html"><strong>People</strong><span>The 30 named people, their days and gifts</span></a>
 ${internal ? `<a class="tile" href="@planned.html"><strong>Planned</strong><span>${d.planned.length} decided, not built (internal)</span></a>` : ""}
 <a class="tile" href="@items/index.html"><strong>Items</strong><span>Goods the hall and the ponds ask for</span></a>
 </div>`,
@@ -606,7 +625,7 @@ function shell(path, title, body, internal) {
 <link rel="stylesheet" href="${base}wiki.css">
 </head>
 <body>
-<header><a class="home" href="${base}index.html">Elderglen wiki</a><a href="${base}fish/index.html">Fish</a><a href="${base}bundles/index.html">Bundles</a><a href="${base}crops/index.html">Crops</a><a href="${base}forage/index.html">Forage</a><a href="${base}recipes/index.html">Recipes</a><a href="${base}places/index.html">Places</a><a href="${base}items/index.html">Items</a>${internal ? `<a href="${base}planned.html">Planned</a><a href="${base}left.html">What is left</a>` : ""}<input id="q" type="search" placeholder="Search" aria-label="Search the wiki" autocomplete="off"><ul id="results" hidden></ul></header>
+<header><a class="home" href="${base}index.html">Elderglen wiki</a><a href="${base}fish/index.html">Fish</a><a href="${base}bundles/index.html">Bundles</a><a href="${base}crops/index.html">Crops</a><a href="${base}forage/index.html">Forage</a><a href="${base}recipes/index.html">Recipes</a><a href="${base}places/index.html">Places</a><a href="${base}people/index.html">People</a><a href="${base}items/index.html">Items</a>${internal ? `<a href="${base}planned.html">Planned</a><a href="${base}left.html">What is left</a>` : ""}<input id="q" type="search" placeholder="Search" aria-label="Search the wiki" autocomplete="off"><ul id="results" hidden></ul></header>
 <main>
 ${html}
 </main>

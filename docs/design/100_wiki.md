@@ -181,6 +181,24 @@ items (bundles already show the hint text); the owner clearing `draft` flags; re
 `status` values other than `built` (stubs for decided, unbuilt fish and bundles); the public
 view for people who have not reached a place; more categories; hosting.
 
+## People (owner, 2026-11-13)
+
+One page per named person (30), generated from `villagers.json`, `friendship.json` and
+`heart-events.json`, in `scripts/wiki/people.mjs`. Files: `people/<id>.html` and `people/index.html`
+(a table plus birthdays by season). Infobox: role, also known as, age band, birthday, home, work
+place, whether the person can be courted.
+
+1. **Gift tastes:** loved, liked, disliked and hated lists, plus what everyone loves or hates,
+   shown on the public page only once `"giftsDraft": false` is set for that person in
+   `docs/wiki-text/people.json` (all 30 start `true`, because the lists are the owner's draft from
+   note 61). The internal view always shows them. Stardew's wiki lists every taste openly.
+2. **Schedules:** the full daily route with clock times, the rainy-day route and the weekday and
+   season changes, as Stardew's wiki does. Times and spots are rough until tuned in play, and the
+   page says so.
+3. **Heart events:** internal view only (hearts, place, window, items given), never the scene text,
+   until the text is real. The public pages list none.
+4. Prose for people is not written yet (`docs/wiki-text/people.json` holds only the flags).
+
 ## Relation to other notes
 
 - Fish data and roster: note 21. Ponds: note 93. Bundles: notes 16, 35 and 63.
