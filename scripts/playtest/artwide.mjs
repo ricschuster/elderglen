@@ -36,12 +36,11 @@ const PLACES = {
   house: { map: "house", entry: "door" },
   forest: { map: "forest", entry: "from_farm" },
   hearthwell: { map: "hearthwell", entry: "from_farm" },
-  mountain: { map: "mountain", entry: "from_farm" },
-  delta: { map: "delta", entry: "from_forest" },
-  cove: { map: "cove", entry: "from_mountain" },
+  mountain: { map: "mountain", entry: "from_hearthwell" },
+  delta: { map: "delta", entry: "from_farm" },
+  cove: { map: "cove", entry: "from_ferry" },
   hall: { map: "hall", entry: "door" },
   store: { map: "general-store", entry: "door" },
-  mine: { map: "mine-5", entry: "from_above" },
   coop: { map: "coop", entry: "door" },
 };
 const want = (process.env.PLACES ?? Object.keys(PLACES).join(",")).split(",");
