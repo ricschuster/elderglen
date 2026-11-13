@@ -46,7 +46,7 @@ errors. The game's weather and forage are random, so reruns differ.
    and wood to reach 450 wood (`WOOD_TARGET` changes it). About 3 minutes.
 
 10. `npm run sim -- <expert|intermediate|casual> [runs] [maxDay]` is not a browser
-   run. It plays the rules in `src/core/` headless (`docs/design/46_headless_playtest.md`),
+   run. It plays the rules in `src/core/` headless (`docs/design/98_headless_playtest.md`),
    charges game minutes for walking and key presses, and prints the days to each
    hall bundle over many seeds (the bot does not play Woodland, Artisan Goods or
    the Smith's, and "all played bundles" leaves them out) (default 100 runs to day 84). Runs are exactly

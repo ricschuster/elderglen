@@ -1,4 +1,7 @@
-# 46 Headless playtest (draft)
+# 98 Headless playtest (draft)
+
+Renumbered from 46 on 2026-11-13: two notes had the number 46. Older notes and
+handoffs that say "note 46" about the headless sim mean this note.
 
 Status: decided 2026-11-01 for issue #319. Built the same day (`npm run sim`).
 

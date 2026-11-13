@@ -1,5 +1,5 @@
 // The headless player: the real core rules, plus the two things the scene
-// supplies, a position on a map and the passing of game time (note 46).
+// supplies, a position on a map and the passing of game time (note 98).
 import { holdsOf } from "../../src/core/worldflags";
 import { maps } from "../../src/content/maps";
 import { HOUSE_MAP, houseVisibleTier, isHouseMap } from "../../src/core/house";

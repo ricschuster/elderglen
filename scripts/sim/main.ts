@@ -1,6 +1,6 @@
 // `npm run sim -- <expert|intermediate|casual> [runs] [maxDay]`
 // Plays the core rules headless over many seeds and prints how fast the hall
-// bundles get done (note 46). Not a gate, like the browser playtests.
+// bundles get done (note 98). Not a gate, like the browser playtests.
 import { BUNDLES } from "../../src/core/bundles";
 import { clockText } from "../../src/core/clock";
 import { playGame, UNPLAYED_BUNDLES, type RunResult } from "./bot";

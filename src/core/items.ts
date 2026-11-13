@@ -460,9 +460,9 @@ items.set(WARP_TOTEM_BEACH, {
   keep: true,
 });
 /**
- * Last Seat and Fodder rewards whose systems are not built (note 63, issue #603): the coop heater
- * (no winter mood rule yet) and Old Greencoat's letter to
- * the elves (a story item). Kept and do nothing yet, like the Beach warp totem.
+ * Last Seat and Fodder rewards (note 63, issue #603): the coop heater, placed in a
+ * coop or barn to stop the winter mood loss (`hasHeater` in animals.ts), and Old
+ * Greencoat's letter to the elves, a story item that does nothing yet.
  */
 export const COOP_HEATER = "coop-heater";
 export const CRYSTALARIUM = "crystalarium";
