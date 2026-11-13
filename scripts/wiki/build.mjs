@@ -112,7 +112,7 @@ export function load() {
   );
   // Pictures in sub folders (places, people, crops), as "folder/name".
   const shots = new Set();
-  for (const dir of ["places", "people", "crops"]) {
+  for (const dir of ["places", "people", "crops", "rooms"]) {
     const f = join(root, "docs/wiki/img", dir);
     if (existsSync(f))
       for (const n of readdirSync(f))
@@ -398,14 +398,14 @@ ${infobox([
   ["Opens", esc(opens)],
   ["When finished", esc(UNLOCKS[r.unlock] ?? r.unlock)],
 ])}
-${prose("rooms", r.id)}<h2>Bundles</h2><ul>${list}</ul>`,
+${prose("rooms", r.id)}${shot(`rooms/${r.id}`, `The ${r.name} counter in the village hall`, "figure", 192, 128)}<h2>Bundles</h2><ul>${list}</ul>`,
       "Hall room",
     );
   }
   add(
     "bundles/index.html",
     "Bundles",
-    `<h1>Hall bundles</h1><p>${d.bundles.length} bundles in ${d.rooms.length} rooms of the village hall.</p>${d.rooms
+    `<h1>Hall bundles</h1><p>${d.bundles.length} bundles in ${d.rooms.length} rooms of the village hall.</p>${shot("rooms/hall", "The village hall", "figure", 768, 320)}${d.rooms
       .map(
         (r) =>
           `<h2><a href="@rooms/${r.id}.html">${esc(r.name)}</a></h2><ul>${d.bundles

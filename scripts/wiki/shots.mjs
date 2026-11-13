@@ -10,7 +10,7 @@ import { launch, log, sleepMs } from "../playtest/lib.mjs";
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const read = (p) => JSON.parse(fs.readFileSync(`${root}${p}`, "utf8"));
 const out = `${root}docs/wiki/img`;
-for (const d of ["places", "people", "crops"]) {
+for (const d of ["places", "people", "crops", "rooms"]) {
   fs.rmSync(`${out}/${d}`, { recursive: true, force: true });
   fs.mkdirSync(`${out}/${d}`, { recursive: true });
 }
@@ -116,5 +116,52 @@ for (const id of places) {
   await sleepMs(600);
   await p.screenshot({ path: `${out}/places/${id}.png` });
   log(`${id}: ${W}x${H}`);
+}
+// Hall rooms: the whole hall, then a close-up of each room's counter (its service point).
+{
+  const m = read("src/content/maps/hall.json");
+  const W = m.width * 16;
+  const H = m.height * 16;
+  const entry = entryOf("hall").entry;
+  await p.setViewportSize({ width: W, height: H });
+  await sleepMs(300);
+  await p.evaluate(
+    async ({ entry }) => {
+      const g = window.__game;
+      g.scene.getScene("farm").scene.restart({ map: "hall", entry });
+      await new Promise((r) => setTimeout(r, 1500));
+      const f = g.scene.getScene("farm");
+      f.uiCamera.setVisible(false);
+      f.player.setVisible(false);
+      for (const o of f.children.list)
+        if (
+          o.type === "Text" ||
+          o.type === "Rectangle" ||
+          o.type === "Graphics"
+        )
+          o.setVisible(false);
+      const cam = f.cameras.main;
+      cam.stopFollow();
+      cam.removeBounds?.();
+      cam.setZoom(1);
+      cam.centerOn((cam.width / 2) | 0, (cam.height / 2) | 0);
+    },
+    { entry },
+  );
+  await sleepMs(600);
+  await p.screenshot({ path: `${out}/rooms/hall.png` });
+  const rooms = read("src/content/rooms.json").map((r) => r.id);
+  const CW = 192;
+  const CH = 128;
+  for (const o of m.layers.flatMap((l) => l.objects ?? [])) {
+    if (o.class !== "service" || !rooms.includes(o.name)) continue;
+    const x = Math.max(0, Math.min(W - CW, Math.round(o.x - CW / 2)));
+    const y = Math.max(0, Math.min(H - CH, Math.round(o.y - CH / 2)));
+    await p.screenshot({
+      path: `${out}/rooms/${o.name}.png`,
+      clip: { x, y, width: CW, height: CH },
+    });
+    log(`room ${o.name}`);
+  }
 }
 await b.close();
