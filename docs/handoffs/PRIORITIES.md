@@ -52,7 +52,7 @@ Open, top to bottom:
 7. A browser look at everything built since the owner last played: hat picker, cart, herb stall,
    tapper, lights, rod, bombs, festival maps and activities, tailoring, pond screens, tea bush.
 
-Alongside: `docs/overview.json` (behind since 2026-11-11), Stardew checks rows (SC-122, 135, 160 to 174), and file the M4
+Alongside: `docs/overview.json` (behind since 2026-11-11), Stardew checks rows (SC-122, 135, 160 to 170, 172, 173), and file the M4
 hosting spike before M4 (also farm player state size in the save, ADR 0014).
 
 ## Milestone order (ADR 0012)
@@ -105,6 +105,8 @@ Done, owner checked (2026-11-11): step 1 farm (note 55, #776), step 2 festival s
 ## Leftovers and housekeeping
 
 - Slice 1 leftovers: #522 closed 2026-11-12 (art item moved to #335). Bundles: #181 (note 63; #201 closed).
+- Refactor proposal #904 (FarmScene split, rules into core, shared helpers): settle in a
+  short note before moving code. Repo hygiene pass done 2026-11-13 (handoff 2026-11-13).
 - Art polish pass done 2026-11-12 ahead of M3d (handoff 2026-11-12q); look with
   `node scripts/playtest/artsheet.mjs`.
 - Tablet follow-ups (#523; #336 closed), notes 45 and 60 open items, barn stall wing, note 54 answer
