@@ -101,7 +101,7 @@ const isBoots = (id: string): boolean => bootsById(id) !== undefined;
 /**
  * Why a pair of boots cannot be tailored, or undefined when it can. The feed pair
  * keeps its look and name; the spool pair gives its stats and is used up. No cloth
- * (owner, 2026-11-12; which slot is which is unchecked, SC-168). Only pairs in the
+ * (owner, 2026-11-12; which slot is which is unchecked, SC-170). Only pairs in the
  * pack count, so a worn pair must come off first.
  */
 export function bootsTailorProblem(

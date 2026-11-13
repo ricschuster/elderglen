@@ -28,7 +28,7 @@ Part of note 10 ("Tailoring" and "Dyes"). Ring 1 only, art waits for M3d.
   donor pair is used up. No cloth. The saved Footwear page confirms only the stat
   transfer and that the result is named "Custom-tailored [name of shoe/boot]". Which slot
   is which is not on the page: ours is feed = the pair whose look and name are kept,
-  spool = the pair whose stats are taken and which is used up (SC-168). The same pair, or
+  spool = the pair whose stats are taken and which is used up (SC-170). The same pair, or
   two pairs with the same stats, are refused. A custom pair keeps its original look and
   can be tailored again. It is a made item (`look@stats` id), not a listed one.
 - **Dye.** Six pots (red, orange, yellow, green, blue, purple), one item each, all six
