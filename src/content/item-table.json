@@ -213,6 +213,11 @@
     "sellPrice": 120
   },
   {
+    "id": "blue-ribbon-melon",
+    "name": "Blue Ribbon Melon",
+    "sellPrice": 1500
+  },
+  {
     "id": "bogwhisker",
     "name": "Bogwhisker",
     "sellPrice": 50

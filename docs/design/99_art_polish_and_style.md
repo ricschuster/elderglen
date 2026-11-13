@@ -61,3 +61,15 @@ close ups) and `node scripts/playtest/artwide.mjs` (whole screens at the game's 
 ## Built status
 
 Filled in by the handoff of each session that works on the pass.
+
+## Fish pictures (decided 2026-11-13)
+
+The game has no fish art; fish only appear as names. The owner decided to draw simple fish art
+once, in code, and use it in the game (bag, catch popup, journal) and in the wiki. Rules:
+
+- One 16 by 16 item picture per fish, painted in `src/scenes/art-fish.ts` like the other items,
+  with a one pixel outline and the shared ramps above.
+- A small set of body shapes (slim, round, flat, eel, shellfish, crab, ray) recoloured per fish
+  from a palette row in the data, so 51 fish need a handful of painters, not 51.
+- The wiki picks the pictures up through `npm run wiki:images` like other items.
+- Left: the shape and colour table per fish, then the painter. Build status: not built.

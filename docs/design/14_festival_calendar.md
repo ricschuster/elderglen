@@ -97,7 +97,7 @@ festival to look ahead to.
 
 The first place crop wins one **Blue Ribbon Melon** (name a placeholder), once
 per year. It is a universal gift love (`61_friendship_and_gifts.md`) and cannot
-be bought. Judging uses a crop of the player's own, scored on quality, with a
+be bought. Built 2026-11-13: first place in the Showing (note 66) also gives one `blue-ribbon-melon` (sells 1,500, placeholder, never bought). Judging uses a crop of the player's own, scored on quality, with a
 top quality melon needed for first place. The scoring, number of entries and
 the other prizes are not settled and need the festival note before #132 builds
 it.
