@@ -645,7 +645,8 @@ Placeholder numbers where marked.
   `pots.json`), never on the first tutorial cast. There is no bar fight (the
   note sets none). It takes the pot's quality roll (never perfect), gives harvest
   XP on its price and counts as a shellfish catch for the tracker.
-- **Not built:** the Great Hearthfin and the other legends, bundles 13 to 18, the lobster's own bar fight if one is wanted.
+- **Not built:** the lobster's own bar fight if one is wanted. (The legends and bundles 13
+  to 18 were built later in slice 4, below.)
 
 ## Built in slice 4, part four: rod trash and the recycler (2026-11-11, issue #596)
 
@@ -801,13 +802,13 @@ Bundles 13 to 18 are in `src/content/bundles.json`, room `water-room`, and finis
   slots, so each pool is a chosen subset. Hand-ins are kept across seasons, so no
   season blocks a bundle. Every pool keeps the waters the note names (stream, the
   three lakes, sea, night fish). No cove fish is used (a test checks it).
-- **Placeholders:** the Beach warp totem and the glow ring are kept items that do
-  nothing yet (the totem has no use, the equipment slot of note 37 is not built),
-  like the Homeward pin. Fisher's stew is a new dish (1 Carp, 1 Potato, 150
+- **Placeholders:** the Beach warp totem is a kept item that does nothing yet (the
+  totem has no use), like the Homeward pin. The glow ring now works: ring slots are
+  built (`src/core/equipment.ts`, `src/content/rings.json`). Fisher's stew is a new dish (1 Carp, 1 Potato, 150
   energy, 220g, learned when bundle 17 is finished), since cooking exists but had
   no fish dish. All numbers are placeholders for note 07.
 - **The Pearl Lobster** is in both 17 and 18, so a player who wants both needs two.
   Bundle 18 has seven other choices, so it is never required.
 - The sim bot does not fish, so the six are in `UNPLAYED_BUNDLES`.
-- **Not built (issue #596 stays open):** the five legends and the crown, water
-  plants, trash and the recycler, the warp totem's use, the glow ring's slot.
+- **Not built:** the warp totem's use. (Issue #596 is closed; the legends and the
+  crown, water plants, trash and the recycler, and ring slots were built later.)

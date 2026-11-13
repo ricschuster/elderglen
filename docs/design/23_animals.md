@@ -342,7 +342,8 @@ Our draft, to be tuned in playtests and copied into `07_tuning_numbers.md`.
   animal. This softens the earlier "winter needs the coop heater to keep mood up".
   **Both the coop and the barn have a heater (owner, 2026-11-11, Stardew's
   pattern, SC-131 unchecked).** The mood loss without one is a placeholder of 10
-  points a winter day on the 0 to 255 mood scale, to tune. Not built.
+  points a winter day on the 0 to 255 mood scale, to tune. Built
+  (`WINTER_COLD_MOOD` in `src/core/animals.ts`).
 
 ## The keeper's shop list (owner, 2026-11-12)
 
