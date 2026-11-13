@@ -46,6 +46,7 @@ import {
   removeProblem,
   type Placeable,
 } from "../core/placement";
+import { pondCostLine, pondOrderProblem } from "../core/pond";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
@@ -238,6 +239,13 @@ export class CarpenterScene extends Phaser.Scene {
         dim: siloProblem(g) !== undefined,
         buttons: [{ text: "Order", run: () => this.orderSilo() }],
       });
+    // The fish pond (note 93): any number, each placed on the farm.
+    rows.push({
+      label: "Fish pond",
+      detail: pondOrderProblem(g) ?? pondCostLine(),
+      dim: pondOrderProblem(g) !== undefined,
+      buttons: [{ text: "Place", run: () => this.placePond() }],
+    });
     if (!g.houseBuild && !g.catalogue && g.houseTier >= 1) {
       rows.push({
         label: "Furniture Catalogue",
@@ -318,6 +326,17 @@ export class CarpenterScene extends Phaser.Scene {
       }
     }
     this.scene.launch("placement", { building: id, mode });
+    this.scene.pause();
+  }
+
+  private placePond(): void {
+    this.removing = undefined;
+    const problem = pondOrderProblem(this.state);
+    if (problem !== undefined) {
+      this.message.setText(problem);
+      return this.refresh();
+    }
+    this.scene.launch("placement", { building: "pond", mode: "order" });
     this.scene.pause();
   }
 

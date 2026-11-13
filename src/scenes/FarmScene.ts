@@ -2313,9 +2313,15 @@ export class FarmScene extends Phaser.Scene {
       : undefined;
     if (pondHere) {
       const h = heldAt(this.state, this.selected);
-      return this.report(
-        pondUse(this.state, pondHere, h.kind === "item" ? h.id : undefined),
+      const r = pondUse(
+        this.state,
+        pondHere,
+        h.kind === "item" ? h.id : undefined,
       );
+      // Nothing to put in, take or give: the pond menu shows how it stands.
+      if (r.ok && r.item === undefined)
+        return this.open("pond", { x: pondHere.x, y: pondHere.y });
+      return this.report(r);
     }
     const result = act(this.state, this.map, front.x, front.y);
     if (!result.ok && result.reason === NOTHING_TO_ACT_ON) {

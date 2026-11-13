@@ -19,6 +19,7 @@ import { NameScene } from "./scenes/NameScene";
 import { ShopScene } from "./scenes/ShopScene";
 import { CatalogueScene } from "./scenes/CatalogueScene";
 import { CarpenterScene } from "./scenes/CarpenterScene";
+import { PondScene } from "./scenes/PondScene";
 import { KeeperScene } from "./scenes/KeeperScene";
 import { PlacementScene } from "./scenes/PlacementScene";
 import { BarnScene } from "./scenes/BarnScene";
@@ -75,6 +76,7 @@ const game = new Phaser.Game({
     CarpenterScene,
     KeeperScene,
     PlacementScene,
+    PondScene,
     CoopScene,
     BarnScene,
     CatalogueScene,

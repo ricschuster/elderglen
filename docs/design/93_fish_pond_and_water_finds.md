@@ -109,11 +109,7 @@ Core rules, content and tests are built. The scenes are not.
   after the pond fills and ticks only while it is full, items by water group
   (`questItems` in `pond.json`) and the top quest a made good or gem, XP 20 plus 5 per
   spawn day, the spawn clock resets. Removing fish pauses it, the same item comes back.
-- **Not built:** the carpenter menu line and the placing screen for the pond, the pond
-  menu, drawing the pond (art), the interact hooks in `FarmScene` (put in, take out with the
-  rod, take the roe, give the quest item), the morning report line for a finished pond, aged
-  roe in the preserves jar (note 24), the water finds in the fishing completion count and
-  cooking (algae soup), and the dev menu picks.
+- **Not built:** see the second and third passes below for what is still open.
 
 ### Gaps found while building (design to settle, not invented)
 
@@ -153,10 +149,34 @@ product, then a held fish, else the pond's status line); `pondNews` and three mo
 lines (pond finished, something to take, a fish asking); `FarmScene` hooks: Action on any
 pond tile runs `pondUse`, the rod on a pond tile lifts a fish (`takeFish`) instead of casting.
 
-Still not built: the carpenter menu line and placing screen for the pond, the pond menu
-(counts, the empty button), drawing the pond (art), aged roe in the preserves jar, water
-finds in the fishing completion count and cooking, dev menu picks, a pool on any map, and the
-species table (still empty, see the gaps).
+## Built status, third pass (2026-11-12)
+
+Built, with `tests/pondmenu.test.ts`: the carpenter menu line "Fish pond" (`pondOrderProblem`,
+`pondCostLine`: price, or what is lacking or the busy job, before a spot is chosen); the
+pond on the placing screen (`PlacementScene` takes `"pond"`; `pondBlockers` gives the red
+tiles, a spot is not free until the price is in hand; the same rules as `pondProblem`); the
+pond menu (`PondScene`, `pondMenu`: fish, count against the cap, the ask, a waiting product)
+with an Empty button (`emptyPond`). Action on a pond with nothing to put in, take or give opens
+the menu. The dev menu already lists the water finds and every roe item (item groups), so no
+dev pick was added; the pond itself is a building, not an item.
+
+Empty is taken, owner can correct: every fish goes to the pack (refused unless the pack has
+room for all), which resets the pond, as the rod's `takeFish` does one at a time. The note only
+says "the empty button".
+
+Still not built: drawing the pond (art), aged roe in the preserves jar (see open question
+below), water finds in the fishing completion count and cooking, a pool on any map, and the
+species table (still empty, see the gaps). The coop, barn, stable, silo and house placing
+rules still do not check for a pond (a building can be put over a pond: `placementBlockers`
+is blind to ponds, and the other carpenter jobs do not wait for a pond under way).
+
+## Open question: aged roe in the preserves jar (not built)
+
+Note 24 names roe only as an input that takes its colour in the dye pots. Nothing decides roe
+in the jar: no recipe for "aged roe", no days, no price multiplier, no quality rule, and the
+jar's input list has no roe row. To settle: days in the jar, the price (Stardew's rule is from memory and
+not checked: add a row to `54_stardew_checks.md` when settling), whether sea urchin and coral roe count, and the output item
+name and colour.
 
 ## Open questions found 2026-11-12 (water finds in completion and cooking, not built)
 
