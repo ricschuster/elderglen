@@ -105,6 +105,8 @@ Done, owner checked (2026-11-11): step 1 farm (note 55, #776), step 2 festival s
 
 ## Leftovers and housekeeping
 
-- Slice 1 leftovers are tracked in #522 and #521. Bundles: #181, #201 (note 63).
+- Slice 1 leftovers: #522 closed 2026-11-12 (art item moved to #335). Bundles: #181, #201 (note 63).
+- Art polish pass done 2026-11-12 ahead of M3d (handoff 2026-11-12q); look with
+  `node scripts/playtest/artsheet.mjs`.
 - Tablet check (#336), notes 45 and 60 open items, barn stall wing, note 54 answer
   sheet.
