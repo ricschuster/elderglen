@@ -932,5 +932,33 @@
         "bundle": "harvest-feast"
       }
     ]
+  },
+  {
+    "id": "sturdy-band",
+    "ingredients": [
+      {
+        "item": "copper-bar",
+        "count": 2
+      },
+      {
+        "item": "moth-dust",
+        "count": 25
+      },
+      {
+        "item": "gloop-jelly",
+        "count": 25
+      }
+    ],
+    "result": {
+      "item": "sturdy-band",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "level",
+        "skill": "combat",
+        "level": 1
+      }
+    ]
   }
 ]

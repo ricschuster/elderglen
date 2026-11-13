@@ -177,6 +177,8 @@ export const PARADE_PATH: readonly Tile[] = [
 
 /** The march starts at 14:00 (placeholder, note 82). */
 export const PARADE_START = 14 * 60;
+/** A player who arrives after 14:30 cannot join at the tail and only sees the march (owner, 2026-11-12). */
+export const PARADE_JOIN_CUTOFF = 14 * 60 + 30;
 /** Game minutes between one marcher and the next reaching the square mouth. */
 export const PARADE_STAGGER = 1;
 /** Game minutes per tile while marching (slow) and while walking to or from the line. */
@@ -194,6 +196,7 @@ const manhattan = (a: Tile, b: Tile): number =>
  */
 export function paradeLaps(joinedAt?: number, start = PARADE_START): number[] {
   if (joinedAt === undefined || joinedAt <= start) return [start];
+  if (joinedAt > PARADE_JOIN_CUTOFF) return [start];
   const firstEnd = start + paradeLapMinutes(PARADE_TAIL, PARADE_PATH[0]!);
   return [start, Math.max(joinedAt, firstEnd)];
 }

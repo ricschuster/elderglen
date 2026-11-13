@@ -385,7 +385,7 @@ the Adventurer's Guild sells lost rewards again (checked on the saved page).
 | Old Digger | 50 | A skull mask hat | Skeletons 50, skeleton mask |
 | Pebbleback | 30 | A hard hat | Duggies 30, hard hat |
 | Frostnibbler | 100 | Protection ring | None (ours) |
-| Icicle Hopper | 100 | Sturdy band | None (ours) |
+| Icicle Hopper | 100 | Open (the Sturdy band is crafted, note 94) | None (ours) |
 | Nabbler | 60 | Thorns ring | None (ours) |
 
 - **Optional, never needed for tools or bundles.** With "no creatures" on, the

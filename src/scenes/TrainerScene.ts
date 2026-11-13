@@ -1,5 +1,16 @@
 import Phaser from "phaser";
-import { STARTERS, buyBack, recoveryFee, takeStarter } from "../core/combat";
+import {
+  SHOP_RINGS,
+  SLAYER_RINGS,
+  STARTERS,
+  buyBack,
+  buyRing,
+  claimSlayerRing,
+  recoveryFee,
+  ringLocked,
+  slayerRingEarned,
+  takeStarter,
+} from "../core/combat";
 import { itemById } from "../core/items";
 import type { GameState } from "../core/save";
 import { frame, Menu, type Row } from "./panel";
@@ -96,7 +107,49 @@ export class TrainerScene extends Phaser.Scene {
         ],
       };
     });
-    this.menu.setRows([...rows, ...found]);
+    const rings: Row[] = SHOP_RINGS.map((r) => {
+      const locked = ringLocked(g, r);
+      return {
+        label: r.name,
+        detail: locked ?? `${r.shop?.price}g, defense ${r.defense ?? 0}`,
+        dim: !!locked || g.money < (r.shop?.price ?? 0),
+        buttons: [
+          {
+            text: "Buy",
+            run: () => {
+              this.message.setText(
+                buyRing(g, r.id) ??
+                  `She hands you the ${r.name.toLowerCase()}.`,
+              );
+              this.refresh();
+            },
+          },
+        ],
+      };
+    });
+    const rewards: Row[] = SLAYER_RINGS.filter((r) =>
+      slayerRingEarned(g, r),
+    ).map((r) => {
+      const again = g.combat.slayerClaimed.includes(r.id);
+      return {
+        label: `Slayer reward: ${r.name}`,
+        detail: again ? `${r.rebuy ?? 0}g, lost ones are sold again` : "Free",
+        dim: again && g.money < (r.rebuy ?? 0),
+        buttons: [
+          {
+            text: again ? "Buy" : "Take",
+            run: () => {
+              this.message.setText(
+                claimSlayerRing(g, r.id) ??
+                  `She hands you the ${r.name.toLowerCase()}.`,
+              );
+              this.refresh();
+            },
+          },
+        ],
+      };
+    });
+    this.menu.setRows([...rows, ...rings, ...rewards, ...found]);
   }
 
   private close(): void {

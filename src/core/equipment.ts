@@ -24,6 +24,12 @@ export interface RingDef {
   slimeProof?: boolean;
   /** Bad effects that land last half as long (note 37, the Sturdy ring). */
   halfEffects?: boolean;
+  /** Sold at the trainer's counter (note 94). `minFloor` is the deepest mine floor reached that unlocks it. */
+  shop?: { price: number; minFloor?: number };
+  /** The slayer goal whose completion hands this ring over (note 22). */
+  slayer?: string;
+  /** What the trainer charges to hand a lost slayer reward over again (placeholder, note 07). */
+  rebuy?: number;
 }
 
 export const RINGS = ringData as RingDef[];

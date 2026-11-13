@@ -4,6 +4,7 @@ import {
   Hall,
   LAST_ROOM,
   ROOMS,
+  hallRestored,
   normalizeBundle,
   rewardText,
   type BundleDef,
@@ -418,6 +419,42 @@ describe("rooms and the bridge", () => {
     expect(hall.bridgeMended).toBe(false);
     const done = new Hall(bundles, { f1: ["leek"], l1: ["leek"] }, rooms);
     expect(done.bridgeMended).toBe(true);
+  });
+});
+
+describe("hallRestored", () => {
+  const mk = (id: string, room: string) =>
+    normalizeBundle({
+      id,
+      name: id,
+      room,
+      hint: "h",
+      items: ["leek"],
+      reward: {},
+    });
+  const bundles = [mk("f1", "foragers-shelf"), mk("l1", LAST_ROOM)];
+  const rooms = ROOMS.map((r) => ({ ...r, opensAfter: 0 }));
+
+  it("is false for a fresh hall and a hall with only the other rooms done", () => {
+    expect(hallRestored(new Hall())).toBe(false);
+    expect(hallRestored(new Hall(bundles, { f1: ["leek"] }, rooms))).toBe(
+      false,
+    );
+  });
+
+  it("is true once every bundle is done and the Last Seat is done", () => {
+    const done = new Hall(bundles, { f1: ["leek"], l1: ["leek"] }, rooms);
+    expect(hallRestored(done)).toBe(true);
+  });
+
+  it("is never true for a hall with no bundles", () => {
+    expect(hallRestored(new Hall([], {}, rooms))).toBe(false);
+  });
+
+  it("is true for the real hall once filled", () => {
+    const hall = new Hall();
+    fillHall(hall, new Inventory(), { money: 0 });
+    expect(hallRestored(hall)).toBe(true);
   });
 });
 
