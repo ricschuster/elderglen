@@ -120,7 +120,7 @@ const KEG: Record<"fruit" | "vegetable", ArtisanKind> = {
 const JAR_MINUTES = 4000;
 const KEG_MINUTES = { wine: 10000, juice: 6000 } as const;
 const MEAD_MINUTES = 600;
-/** Pale ale 2,250 minutes (saved Artisan Goods page). Beer 1,750 is from memory, unchecked. */
+/** Pale ale 2,250 minutes (saved Artisan Goods page). Beer 1,750 also matches that page (SC-165). */
 const PALE_ALE_MINUTES = 2250;
 const BEER_MINUTES = 1750;
 /** Aged roe takes 4 days in the jar (ours, placeholder; Stardew's time is from memory, SC-174). */
