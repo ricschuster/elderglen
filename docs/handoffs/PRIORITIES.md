@@ -39,7 +39,7 @@ Open, top to bottom:
 
 1. **Owner answers left:** none. Decided 2026-11-13: garden pot is clay 1, stone 10 and a refined crystal (smelted quartz, Stardew), taught by Alder (still to build, with a smelt recipe); Frostfin 300g, no bundle slot; Frostday cap is Icewarden's Cap (built); the hunt prize is the emberseed (built); aged roe quality closed. Algae soup is the glassy-elver's reward (note 93).
 2. **#873 heart events** (note 62): the list per person is drafted (58 new events at 2 and 6 hearts, placeholder text, built in `heart-events.json`). Decided 2026-11-13: no unlock rewards, all 6 heart rewards are plain items (Stardew). Left: owner edits to seeds, windows and rewards, splitting the file per person if wanted, then 4, 8 and 10 with the voice sheets (M3d).
-3. **#878 Secret Woods statue and pond fish**, after note 93 (the species table is built).
+3. **#878 Secret Woods pond fish:** built (Fernscale and two borrowed commons). Left: the statue, if the owner still wants it.
 4. **Note 93 left:** the species numbers to tune in play (built as placeholders), pond art, a cave pool on a map.
 5. **#876 left:** judging (Harvest Showing), cake table dish picker (it takes the held item now),
    scene walking villagers and marchers, even-year hedge maze and niche lines, lantern drift
@@ -50,7 +50,7 @@ Open, top to bottom:
 7. A browser look at everything built since the owner last played: hat picker, cart, herb stall,
    tapper, lights, rod, bombs, festival maps and activities, tailoring, pond screens, tea bush.
 
-Alongside: the wiki (#910, note 100; built for fish, bundles, rooms, items; left: more categories, stubs, hosting after M3d), `docs/overview.json` (behind since 2026-11-11), Stardew checks rows (SC-122, 135, 160 to 170, 172, 173), and file the M4
+Alongside: the wiki (#910, note 100; built for fish, bundles, rooms, items, crops, forage, recipes, places, people; left: owner clears `draft` flags, prose for people, bundles and recipes, hosting after M3d), `docs/overview.json` (behind since 2026-11-11), Stardew checks rows (open: SC-122, 135, 160, 161, 170, 172; SC-166 needs the owner's call, note 65), and file the M4
 hosting spike before M4 (also farm player state size in the save, ADR 0014).
 
 ## Milestone order (ADR 0012)

@@ -14,6 +14,8 @@ import {
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { format } from "prettier";
+import { buildMore } from "./more.mjs";
+import { buildPeople } from "./people.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const read = (p) => JSON.parse(readFileSync(join(root, p), "utf8"));
@@ -25,6 +27,7 @@ const WATERS = {
   "mountain-lake": "Mountain lake",
   "marsh-lake": "Delta marsh lake",
   sea: "Sea (the Beach)",
+  "woods-pond": "Secret Woods pond",
   cove: "Lake cove",
 };
 const SEASONS = ["spring", "summer", "fall", "winter"];
@@ -80,10 +83,26 @@ export function load() {
   const dishes = content("dishes");
   const textDir = join(root, "docs/wiki-text");
   const text = {};
-  for (const cat of ["fish", "bundles", "rooms", "items"]) {
+  for (const cat of [
+    "fish",
+    "bundles",
+    "rooms",
+    "items",
+    "crops",
+    "forage",
+    "recipes",
+    "places",
+    "people",
+  ]) {
     const f = join(textDir, `${cat}.json`);
     text[cat] = existsSync(f) ? JSON.parse(readFileSync(f, "utf8")) : {};
   }
+  const planned = JSON.parse(
+    readFileSync(join(textDir, "planned.json"), "utf8"),
+  );
+  const maps = {};
+  for (const id of readdirSync(join(root, "src/content/maps")))
+    maps[id.replace(/\.json$/, "")] = read(`src/content/maps/${id}`);
   const images = new Set(
     existsSync(join(root, "docs/wiki/img"))
       ? readdirSync(join(root, "docs/wiki/img")).map((f) =>
@@ -100,6 +119,17 @@ export function load() {
     pond,
     recipes,
     dishes,
+    crops: content("crops"),
+    forage: content("forage"),
+    forageAreas: content("forage-areas"),
+    orders: content("orders"),
+    letters: content("letters"),
+    villagers: content("villagers"),
+    friendship: content("friendship"),
+    heartEvents: content("heart-events"),
+    spawns: content("spawns"),
+    maps,
+    planned,
     text,
     images,
   };
@@ -123,8 +153,16 @@ export function build(d, { internal }) {
 
   const itemName = (id) => d.items.get(id)?.name ?? KINDS[id];
   /** Path of the page for an id (fish page, else item page). */
+  const cropIds = new Set(d.crops.map((c) => c.id));
+  const forageIds = new Set(d.forage.map((f) => f.id));
   const pathOf = (id) =>
-    fishById.has(id) ? `fish/${id}.html` : `items/${id}.html`;
+    fishById.has(id)
+      ? `fish/${id}.html`
+      : cropIds.has(id)
+        ? `crops/${id}.html`
+        : forageIds.has(id)
+          ? `forage/${id}.html`
+          : `items/${id}.html`;
   const link = (from, id, count) => {
     const name = itemName(id);
     if (!name) {
@@ -358,7 +396,35 @@ ${prose("rooms", r.id)}<h2>Bundles</h2><ul>${list}</ul>`,
     null,
   );
 
-  // ---- Item pages for everything linked above (not fish)
+  buildMore({
+    d,
+    esc,
+    cap,
+    link,
+    pic,
+    status,
+    prose,
+    infobox,
+    add,
+    errors,
+    internal,
+    bundleLinks: (id) => bundleLinks("", id),
+  });
+
+  buildPeople({
+    d,
+    esc,
+    cap,
+    link,
+    status,
+    prose,
+    infobox,
+    add,
+    errors,
+    internal,
+  });
+
+  // ---- Item pages for everything linked above (not fish, crops or forage)
   const usedAsReward = new Map();
   for (const b of d.bundles)
     if (b.reward.item) {
@@ -367,7 +433,7 @@ ${prose("rooms", r.id)}<h2>Bundles</h2><ul>${list}</ul>`,
       usedAsReward.get(id).push(b.id);
     }
   for (const id of [...referenced].sort()) {
-    if (fishById.has(id)) continue;
+    if (fishById.has(id) || cropIds.has(id) || forageIds.has(id)) continue;
     const it = d.items.get(id);
     if (!it) continue;
     const from = `item ${id}`;
@@ -391,7 +457,13 @@ ${prose("items", id)}${ub || rw ? `<h2>Used in</h2><ul>${ub ? `<li>Hall bundles 
     add(`items/${id}.html`, it.name, body, "Item");
   }
   const itemRows = [...referenced]
-    .filter((id) => !fishById.has(id) && d.items.has(id))
+    .filter(
+      (id) =>
+        !fishById.has(id) &&
+        !cropIds.has(id) &&
+        !forageIds.has(id) &&
+        d.items.has(id),
+    )
     .sort((a, b) => itemName(a).localeCompare(itemName(b)))
     .map(
       (id) => `<li><a href="@items/${id}.html">${esc(itemName(id))}</a></li>`,
@@ -400,9 +472,46 @@ ${prose("items", id)}${ub || rw ? `<h2>Used in</h2><ul>${ub ? `<li>Hall bundles 
   add(
     "items/index.html",
     "Items",
-    `<h1>Items</h1><p>Items named by a bundle or a fish page.</p><ul class="cols">${itemRows}</ul>`,
+    `<h1>Items</h1><p>Items named by a bundle, a recipe or another page. Crops, forage and fish have their own pages.</p><ul class="cols">${itemRows}</ul>`,
     null,
   );
+
+  /** Counts of pages and prose, so the "What is left" page stays true. */
+  const wikiLeft = () => {
+    const cats = [
+      ["fish", "Fish", d.fish.map((x) => x.id)],
+      ["bundles", "Bundles", d.bundles.map((x) => x.id)],
+      ["rooms", "Hall rooms", d.rooms.map((x) => x.id)],
+      ["crops", "Crops", d.crops.map((x) => x.id)],
+      ["forage", "Forage", d.forage.map((x) => x.id)],
+      ["recipes", "Recipes", [...d.recipes, ...d.dishes].map((x) => x.id)],
+      ["people", "People", d.villagers.villagers.map((x) => x.id)],
+      [
+        "places",
+        "Places",
+        [...pages.keys()]
+          .filter((k) => /^places\/(?!index)/.test(k))
+          .map((k) => k.slice(7, -5)),
+      ],
+      [
+        "items",
+        "Items",
+        [...pages.keys()]
+          .filter((k) => /^items\/(?!index)/.test(k))
+          .map((k) => k.slice(6, -5)),
+      ],
+    ];
+    const rows = cats
+      .map(([cat, label, ids]) => {
+        const t = d.text[cat];
+        const none = ids.filter((i) => !t[i]?.text).length;
+        const draft = ids.filter((i) => t[i]?.text && t[i].draft).length;
+        return `<tr><td>${label}</td><td class="num">${ids.length}</td><td class="num">${ids.length - none}</td><td class="num">${draft}</td><td class="num">${none}</td></tr>`;
+      })
+      .join("");
+    return `<table><thead><tr><th>Category</th><th>Pages</th><th>With prose</th><th>Still draft</th><th>No prose</th></tr></thead><tbody>${rows}</tbody></table>
+<p>Not yet in the wiki: hosting and the licence line (M3d), fish pictures (no art), and the owner clearing <code>draft</code> flags so prose shows publicly.</p>`;
+  };
 
   // ---- What is left (internal view only): the NOW section of the priority list.
   if (internal) {
@@ -422,7 +531,27 @@ ${prose("items", id)}${ub || rw ? `<h2>Used in</h2><ul>${ub ? `<li>Hall bundles 
     add(
       "left.html",
       "What is left",
-      `<h1>What is left (M3b)</h1><p><em>Internal view. Copied from the priority list when this page was built.</em></p>${html}`,
+      `<h1>What is left (M3b)</h1><p><em>Internal view. Copied from the priority list when this page was built.</em></p>${html}
+<h2>Planned things</h2><p>${d.planned.length} decided things are not built yet. See <a href="@planned.html">Planned</a>.</p>
+<h2>The wiki itself</h2>${wikiLeft()}`,
+      null,
+    );
+    const kinds = [...new Set(d.planned.map((p) => p.kind))].sort();
+    add(
+      "planned.html",
+      "Planned",
+      `<h1>Planned</h1><p><em>Internal view. Decided in a design note or the priority list, not built. Source: <code>docs/wiki-text/planned.json</code>.</em></p>${kinds
+        .map(
+          (k) =>
+            `<h2>${esc(k)}</h2><table><thead><tr><th>Name</th><th>What</th><th>Note</th></tr></thead><tbody>${d.planned
+              .filter((p) => p.kind === k)
+              .map(
+                (p) =>
+                  `<tr><td>${esc(p.name)} <span class="badge decided">Decided, not built</span></td><td>${esc(p.line)}</td><td><code>${esc(p.note)}</code></td></tr>`,
+              )
+              .join("")}</tbody></table>`,
+        )
+        .join("")}`,
       null,
     );
   }
@@ -437,6 +566,12 @@ ${prose("items", id)}${ub || rw ? `<h2>Used in</h2><ul>${ub ? `<li>Hall bundles 
 <a class="tile" href="@fish/index.html"><strong>Fish</strong><span>${d.fish.length} fish, by water, season and time</span></a>
 <a class="tile" href="@bundles/index.html"><strong>Bundles</strong><span>${d.bundles.length} hall bundles in ${d.rooms.length} rooms</span></a>
 ${internal ? '<a class="tile" href="@left.html"><strong>What is left</strong><span>The M3b list (internal)</span></a>' : ""}
+<a class="tile" href="@crops/index.html"><strong>Crops</strong><span>${d.crops.length} crops, by season and growing time</span></a>
+<a class="tile" href="@forage/index.html"><strong>Forage</strong><span>${d.forage.length} things to gather</span></a>
+<a class="tile" href="@recipes/index.html"><strong>Recipes</strong><span>${d.recipes.length + d.dishes.length} dishes and craftable things</span></a>
+<a class="tile" href="@places/index.html"><strong>Places</strong><span>The areas of the home valley</span></a>
+<a class="tile" href="@people/index.html"><strong>People</strong><span>The 30 named people, their days and gifts</span></a>
+${internal ? `<a class="tile" href="@planned.html"><strong>Planned</strong><span>${d.planned.length} decided, not built (internal)</span></a>` : ""}
 <a class="tile" href="@items/index.html"><strong>Items</strong><span>Goods the hall and the ponds ask for</span></a>
 </div>`,
     null,
@@ -490,7 +625,7 @@ function shell(path, title, body, internal) {
 <link rel="stylesheet" href="${base}wiki.css">
 </head>
 <body>
-<header><a class="home" href="${base}index.html">Elderglen wiki</a><a href="${base}fish/index.html">Fish</a><a href="${base}bundles/index.html">Bundles</a><a href="${base}items/index.html">Items</a><input id="q" type="search" placeholder="Search" aria-label="Search the wiki" autocomplete="off"><ul id="results" hidden></ul></header>
+<header><a class="home" href="${base}index.html">Elderglen wiki</a><a href="${base}fish/index.html">Fish</a><a href="${base}bundles/index.html">Bundles</a><a href="${base}crops/index.html">Crops</a><a href="${base}forage/index.html">Forage</a><a href="${base}recipes/index.html">Recipes</a><a href="${base}places/index.html">Places</a><a href="${base}people/index.html">People</a><a href="${base}items/index.html">Items</a>${internal ? `<a href="${base}planned.html">Planned</a><a href="${base}left.html">What is left</a>` : ""}<input id="q" type="search" placeholder="Search" aria-label="Search the wiki" autocomplete="off"><ul id="results" hidden></ul></header>
 <main>
 ${html}
 </main>

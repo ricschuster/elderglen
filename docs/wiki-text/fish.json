@@ -202,5 +202,9 @@
   "great-hearthfin": {
     "text": "A legend. A huge sea fish, and the one legend that bites in any weather. Catch it by day in summer.",
     "draft": true
+  },
+  "fernscale": {
+    "text": "A rare fish of the woods pond that bites at dusk in every season. Only one can be caught.",
+    "draft": true
   }
 }

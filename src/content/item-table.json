@@ -1060,6 +1060,21 @@
     "sellPrice": 65
   },
   {
+    "id": "fernscale",
+    "name": "Fernscale",
+    "sellPrice": 250
+  },
+  {
+    "id": "fernscale-aged-roe",
+    "name": "Aged fernscale roe",
+    "sellPrice": 250
+  },
+  {
+    "id": "fernscale-roe",
+    "name": "Fernscale roe",
+    "sellPrice": 125
+  },
+  {
     "id": "ferrywhisker",
     "name": "Ferrywhisker",
     "sellPrice": 120

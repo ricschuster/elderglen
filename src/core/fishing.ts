@@ -1,6 +1,7 @@
 import fishData from "../content/fish.json";
 import potData from "../content/pots.json";
 import rodData from "../content/rods.json";
+import tableData from "../content/fish-tables.json";
 import { dateOf, type Season } from "./calendar";
 import { NIGHTFALL } from "./clock";
 import { withQuality, type Quality } from "./quality";
@@ -16,7 +17,7 @@ import { rollFind } from "./waterfinds";
  * the legends are built (slice 4, note 21). Content is `src/content/fish.json` and `rods.json`. Numbers are
  * placeholders (`docs/design/07_tuning_numbers.md`). Pure rules, no Phaser.
  */
-export type Rarity = "common" | "uncommon" | "rare" | "legend";
+export type Rarity = "common" | "uncommon" | "rare" | "legend" | "unique";
 export type Behaviour = "mixed" | "smooth" | "sinker" | "floater" | "dart";
 export type Time = "any" | "dawn" | "day" | "dusk" | "night" | "rain";
 /** A body of water: each kind has its own fish table (note 71). */
@@ -48,8 +49,13 @@ export interface FishDef {
 }
 
 export const FISH = fishData as FishDef[];
-/** The ordinary roster: every fish that is not a legend (the fish seed letter counts these). */
-export const ORDINARY_FISH = FISH.filter((f) => f.rarity !== "legend");
+/**
+ * The ordinary roster: every fish that is neither a legend nor the Secret Woods pond's unique
+ * fish (the fish seed letter counts these, note 21).
+ */
+export const ORDINARY_FISH = FISH.filter(
+  (f) => f.rarity !== "legend" && f.rarity !== "unique",
+);
 
 export function fishById(id: string): FishDef | undefined {
   return FISH.find((f) => f.id === id);
@@ -97,6 +103,8 @@ export const RARITY_WEIGHT: Record<Rarity, number> = {
   rare: 1,
   /** A legend is a lucky bite: a third of a common fish's weight (placeholder). */
   legend: 2,
+  /** The Secret Woods pond's one fish: a shy bite, half a common's weight (placeholder). */
+  unique: 3,
 };
 
 /** The rod a legend needs (note 21, decision 13). */
@@ -167,15 +175,25 @@ export function tableOf(water: Water): Water {
   return water === "farm-pond" ? "forest-lake" : water;
 }
 
+/**
+ * Ordinary fish a water borrows from other waters' tables (`fish-tables.json`, note 73): the
+ * Secret Woods pond holds two common fish already in the roster.
+ */
+export function borrowedFish(water: Water): string[] {
+  return (tableData.borrow as Record<string, string[]>)[water] ?? [];
+}
+
 /** Fish of a water that the season, time and weather allow, whatever the rod. */
 export function fishAvailable(water: Water, c: Conditions): FishDef[] {
   const slot = timeSlot(c.season, c.minutes);
   const rain = c.raining;
+  const borrowed = borrowedFish(water);
   return FISH.filter(
     (f) =>
-      f.water === tableOf(water) &&
+      (f.water === tableOf(water) || borrowed.includes(f.id)) &&
       // A legend keeps to its own water: the pond only borrows the ordinary table.
       (f.rarity !== "legend" || f.water === water) &&
+      (f.rarity !== "unique" || f.water === water) &&
       f.seasons.includes(c.season) &&
       (f.time === "any" || (f.time === "rain" ? rain : f.time === slot)) &&
       (f.weather === undefined || (f.weather === "rain") === rain) &&
@@ -254,7 +272,9 @@ export function bite(
   if (pool.length === 0) {
     if (!tutorial) return { kind: "none" };
     const stand = FISH.find(
-      (f) => f.water === tableOf(water) && f.rarity === "common",
+      (f) =>
+        f.rarity === "common" &&
+        (f.water === tableOf(water) || borrowedFish(water).includes(f.id)),
     );
     return stand ? { kind: "fish", fish: stand } : { kind: "none" };
   }
