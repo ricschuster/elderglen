@@ -28,6 +28,14 @@ import { paintAnimals } from "./art-animals";
 import { paintCropStage, paintSeedPacket } from "./art-crops";
 import { paintCreatures } from "./art-creatures";
 import { FISH_LOOKS, fishKey, paintFish } from "./art-fish";
+import {
+  MELON_KEY,
+  PRIZE_MELON,
+  SHELL_LOOKS,
+  paintShellGoods,
+  roeIconKey,
+  shellKey,
+} from "./art-shell";
 import { PLAYER_LOOK, paintPeople, paintPerson } from "./art-people";
 import { ALL_CROPS } from "../core/crops";
 import { FORAGE } from "../core/forage";
@@ -2325,7 +2333,9 @@ export function iconKey(itemId: string): string | undefined {
     return cropKey(base, CROP_STAGES - 1);
   if (FORAGE.some((f) => f.id === base)) return forageKey(base);
   if (FISH_LOOKS[base]) return fishKey(base);
-  return undefined;
+  if (SHELL_LOOKS[base]) return shellKey(base);
+  if (base === PRIZE_MELON) return MELON_KEY;
+  return roeIconKey(base);
 }
 
 /** Make every texture the farm scene and the toolbar use. */
@@ -2352,6 +2362,7 @@ export function makeArt(
   paintAnimals(scene);
   paintCreatures(scene);
   paintFish(scene);
+  paintShellGoods(scene);
   paintFurniture(scene);
   paintDecor(scene);
   paintChests(scene);

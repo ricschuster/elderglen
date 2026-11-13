@@ -1,92 +1,152 @@
 {
   "odette": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "Keeps the general store in Hearthwell, where seeds and everyday goods are sold. Lives above the shop with Dorrie and Fitch.",
+    "draft": true
   },
   "dorrie": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "Odette's partner. Helps keep the household and the general store running.",
+    "draft": true
   },
   "fitch": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "The store keeper's child, growing up among the shelves and the village square.",
+    "draft": true
   },
   "alder": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "The village gardener. Tends the beds around Hearthwell and knows the soil better than anyone.",
+    "draft": true
   },
   "bramwell": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "The village smith. Sells tools and metalwork from the smithy.",
+    "draft": true
   },
   "hattie": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "Runs the inn at the heart of the village, where the evening crowd gathers.",
+    "draft": true
   },
   "podge": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "Hattie's partner, who shares the work of the inn and its kitchen.",
+    "draft": true
   },
   "pim": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "The inn keepers' child, who knows every guest and every corner of the inn.",
+    "draft": true
   },
   "aurelle": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "The healer. Keeps a small clinic for those who come back from the mines worse for wear.",
+    "draft": true
   },
   "dunmar": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "The librarian. Looks after the village library and its collection of old books.",
+    "draft": true
   },
   "tilda": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "The carpenter. Runs the sawmill, builds and upgrades buildings, and sells timber.",
+    "draft": true
   },
   "rufus": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "Tilda's partner, who works beside the carpenter at the sawmill.",
+    "draft": true
   },
   "wren": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "The carpenter's child, often found around the sawmill among the wood shavings.",
+    "draft": true
   },
   "cuthbert": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "The reeve, who is also steward of the village hall and keeper of the post. Tracks the hall's community projects.",
+    "draft": true
   },
   "cordelia": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "The village hat-maker, with a shop full of hats for every season and festival.",
+    "draft": true
   },
   "barnaby": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "Cordelia's sibling, who lives and works at the hatter's shop.",
+    "draft": true
   },
   "linnet": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "A young adult from the village who works at the inn.",
+    "draft": true
   },
   "thistle": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "A young adult from the village who works at the inn.",
+    "draft": true
   },
   "hester": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "A retired villager who has seen many seasons come and go in the valley, and lives with Walter and their grandchild Toby.",
+    "draft": true
   },
   "walter": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "A retired villager who shares a home with Hester and their grandchild Toby.",
+    "draft": true
   },
   "toby": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "Hester and Walter's grandchild, who spends the days running about Hearthwell.",
+    "draft": true
   },
   "dilly": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "Keeps animals on the farmstead in the forest.",
+    "draft": true
   },
   "rosmarin": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "A hermit witch who lives in a tower deep in the forest and keeps to herself.",
+    "draft": true
   },
   "rundahl": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "An old wanderer who makes camp in the forest and knows its paths.",
+    "draft": true
   },
   "korvi": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "A dwarf smith who works a forge high on the mountain.",
+    "draft": true
   },
   "marl": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "A dwarf who keeps the quarry and its stone.",
+    "draft": true
   },
   "maren": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "Trains fighters at the hall by the mines and knows what waits below.",
+    "draft": true
   },
   "rushie": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "A fisher who lives on the river delta and sells fishing gear from a hut.",
+    "draft": true
   },
   "thalwen": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "A sea elf who lives in a cottage on the beach and keeps a stall there.",
+    "draft": true
   },
   "aldreth": {
-    "giftsDraft": true
+    "giftsDraft": true,
+    "text": "A courier who lodges at the inn and carries letters across the valley.",
+    "draft": true
   }
 }

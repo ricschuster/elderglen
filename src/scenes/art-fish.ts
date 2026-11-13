@@ -371,7 +371,10 @@ export function darken(colour: string, by = 0.55): string {
 }
 
 /** The colour of one map letter for a look, or undefined for clear. */
-export function colourOf(ch: string, k: FishLook): string | undefined {
+export function colourOf(
+  ch: string,
+  k: Pick<FishLook, "d" | "b" | "l" | "f" | "m">,
+): string | undefined {
   switch (ch) {
     case "o":
       return darken(k.d);

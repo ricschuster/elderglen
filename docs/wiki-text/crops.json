@@ -1,110 +1,83 @@
 {
   "parsnip": {
-    "text": "Grown in spring. It is ready 4 days after planting.",
-    "draft": true
+    "text": "Grown in spring. It is ready 4 days after planting."
   },
   "potato": {
-    "text": "Grown in spring. It is ready 6 days after planting.",
-    "draft": true
+    "text": "Grown in spring. It is ready 6 days after planting."
   },
   "cauliflower": {
-    "text": "Grown in spring. It is ready 12 days after planting.",
-    "draft": true
+    "text": "Grown in spring. It is ready 12 days after planting."
   },
   "melon": {
-    "text": "Grown in summer. It is ready 12 days after planting.",
-    "draft": true
+    "text": "Grown in summer. It is ready 12 days after planting."
   },
   "tomato": {
-    "text": "Grown in summer. It takes 11 days to ripen, then gives a fresh harvest every 4 days.",
-    "draft": true
+    "text": "Grown in summer. It takes 11 days to ripen, then gives a fresh harvest every 4 days."
   },
   "radish": {
-    "text": "Grown in summer. It is ready 6 days after planting.",
-    "draft": true
+    "text": "Grown in summer. It is ready 6 days after planting."
   },
   "green-bean": {
-    "text": "Grown in spring. It takes 10 days to ripen, then gives a fresh harvest every 3 days.",
-    "draft": true
+    "text": "Grown in spring. It takes 10 days to ripen, then gives a fresh harvest every 3 days."
   },
   "kale": {
-    "text": "Grown in spring. It is ready 6 days after planting.",
-    "draft": true
+    "text": "Grown in spring. It is ready 6 days after planting."
   },
   "garlic": {
-    "text": "Grown in spring. It is ready 4 days after planting.",
-    "draft": true
+    "text": "Grown in spring. It is ready 4 days after planting."
   },
   "hot-pepper": {
-    "text": "Grown in summer. It takes 5 days to ripen, then gives a fresh harvest every 3 days.",
-    "draft": true
+    "text": "Grown in summer. It takes 5 days to ripen, then gives a fresh harvest every 3 days."
   },
   "corn": {
-    "text": "Grown in summer and fall. It takes 14 days to ripen, then gives a fresh harvest every 4 days.",
-    "draft": true
+    "text": "Grown in summer and fall. It takes 14 days to ripen, then gives a fresh harvest every 4 days."
   },
   "red-cabbage": {
-    "text": "Grown in summer. It is ready 9 days after planting.",
-    "draft": true
+    "text": "Grown in summer. It is ready 9 days after planting."
   },
   "pumpkin": {
-    "text": "Grown in fall. It is ready 13 days after planting.",
-    "draft": true
+    "text": "Grown in fall. It is ready 13 days after planting."
   },
   "eggplant": {
-    "text": "Grown in fall. It takes 5 days to ripen, then gives a fresh harvest every 5 days.",
-    "draft": true
+    "text": "Grown in fall. It takes 5 days to ripen, then gives a fresh harvest every 5 days."
   },
   "sweet-potato": {
-    "text": "Grown in fall. It is ready 10 days after planting.",
-    "draft": true
+    "text": "Grown in fall. It is ready 10 days after planting."
   },
   "beet": {
-    "text": "Grown in fall. It is ready 6 days after planting.",
-    "draft": true
+    "text": "Grown in fall. It is ready 6 days after planting."
   },
   "cranberry": {
-    "text": "Grown in fall. It takes 7 days to ripen, then gives a fresh harvest every 5 days.",
-    "draft": true
+    "text": "Grown in fall. It takes 7 days to ripen, then gives a fresh harvest every 5 days."
   },
   "artichoke": {
-    "text": "Grown in fall. It is ready 8 days after planting.",
-    "draft": true
+    "text": "Grown in fall. It is ready 8 days after planting."
   },
   "wheat": {
-    "text": "Grown in summer and fall. It is ready 4 days after planting.",
-    "draft": true
+    "text": "Grown in summer and fall. It is ready 4 days after planting."
   },
   "ember-berry": {
-    "text": "A rare crop grown from a seed you cannot buy. It takes 14 days.",
-    "draft": true
+    "text": "A rare crop grown from a seed you cannot buy. It takes 14 days."
   },
   "hops": {
-    "text": "Grown in summer. It takes 11 days to ripen, then gives a fresh harvest every 1 days.",
-    "draft": true
+    "text": "Grown in summer. It takes 11 days to ripen, then gives a fresh harvest every 1 days."
   },
   "tulip": {
-    "text": "Grown in spring. It is ready 6 days after planting.",
-    "draft": true
+    "text": "Grown in spring. It is ready 6 days after planting."
   },
   "cornflower": {
-    "text": "Grown in spring. It is ready 7 days after planting.",
-    "draft": true
+    "text": "Grown in spring. It is ready 7 days after planting."
   },
   "poppy": {
-    "text": "Grown in summer. It is ready 7 days after planting.",
-    "draft": true
+    "text": "Grown in summer. It is ready 7 days after planting."
   },
   "zinnia": {
-    "text": "Grown in summer. It is ready 8 days after planting.",
-    "draft": true
+    "text": "Grown in summer. It is ready 8 days after planting."
   },
   "sunflower": {
-    "text": "Grown in summer and fall. It is ready 8 days after planting.",
-    "draft": true
+    "text": "Grown in summer and fall. It is ready 8 days after planting."
   },
   "dahlia": {
-    "text": "Grown in fall. It is ready 12 days after planting.",
-    "draft": true
+    "text": "Grown in fall. It is ready 12 days after planting."
   }
 }

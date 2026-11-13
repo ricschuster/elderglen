@@ -539,7 +539,7 @@ ${prose("items", id)}${ub || rw ? `<h2>Used in</h2><ul>${ub ? `<li>Hall bundles 
       })
       .join("");
     return `<table><thead><tr><th>Category</th><th>Pages</th><th>With prose</th><th>Still draft</th><th>No prose</th></tr></thead><tbody>${rows}</tbody></table>
-<p>Not yet in the wiki: hosting and the licence line (M3d), fish pictures (no art), and the owner clearing <code>draft</code> flags so prose shows publicly.</p>`;
+<p>Not yet in the wiki: hosting and the licence line (M3d), shellfish and roe pictures are in; the owner clearing the <code>draft</code> flags on the new bundle, recipe and people text so it shows publicly.</p>`;
   };
 
   // ---- What is left (internal view only): the NOW section of the priority list.
