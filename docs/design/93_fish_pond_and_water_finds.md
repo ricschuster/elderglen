@@ -157,3 +157,18 @@ Still not built: the carpenter menu line and placing screen for the pond, the po
 (counts, the empty button), drawing the pond (art), aged roe in the preserves jar, water
 finds in the fishing completion count and cooking, dev menu picks, a pool on any map, and the
 species table (still empty, see the gaps).
+
+## Open questions found 2026-11-12 (water finds in completion and cooking, not built)
+
+The note says the finds "feed" the fishing completion count and cooking (algae soup), but
+does not decide the rules, so neither is built. To settle:
+
+- **Completion count.** Do the six finds join the Fish category (note 39) as six more
+  one-time entries (47 fish plus shellfish plus six), or do they only count toward the
+  "catch N fish" achievements (note 38 says plants count there, trash does not)? A new
+  entry needs a saved found-once record (`FishLog.load` drops ids that are not fish).
+  Pale lichen and Glow jelly bite on no map yet (`cave-pool`), so counting them would make
+  the category impossible to finish until a map carries a pool.
+- **Algae soup.** No recipe is decided: ingredients (which find, how many), energy, sell
+  price, and how it is learned (a level, a letter or a shop). No other dish is named for the
+  finds. Do the jellies feed a dish at all?

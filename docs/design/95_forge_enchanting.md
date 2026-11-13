@@ -132,5 +132,4 @@ effects stack. The menu is extra rows on the smith counter at the Mountain forge
 (`SmithScene`), one Combine row per pair of rings in the pack and one Unforge row per combined
 ring. The equipment screen lists combined rings. Tests: `tests/forge.test.ts`.
 
-Not built: the four new rings of note 94 have no source (owner to choose where they come
-from), a dedicated forge scene with three tabs, gem forging and enchanting (ring 2 or 3).
+The rings of note 94 have sources now (trainer shop, slayer goals, Sturdy band recipe). Not built: a dedicated forge scene with three tabs, gem forging and enchanting (ring 2 or 3).

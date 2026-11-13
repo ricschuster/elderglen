@@ -20,7 +20,9 @@ import {
   tailoringLine,
   undye,
 } from "../src/core/tailoring";
-import { hasFlag } from "../src/core/worldflags";
+import { completeEvent, eventById, nextEvent } from "../src/core/heartevents";
+import { HEART } from "../src/core/friendship";
+import { setFlag } from "../src/core/worldflags";
 
 const tint = { h: 120, s: 0.5, v: 0.8 };
 
@@ -95,14 +97,45 @@ describe("the sewing machine", () => {
     expect(sewableSpool(g)).toEqual(["wool"]);
   });
 
-  it("opens on the first cloth, with no skill gate", () => {
+  it("opens only after Cordelia's 4 heart event, with no skill gate", () => {
     const g = newGame();
-    expect(tailoringLine(g)).toMatch(/bring me/);
-    expect(hasFlag(g, TAILORING_OPEN)).toBe(false);
     g.inventory.add("cloth");
-    expect(tailoringLine(g)).toMatch(/yours/);
-    expect(hasFlag(g, TAILORING_OPEN)).toBe(true);
+    expect(tailoringLine(g)).toMatch(/keeps it to herself/);
+    const e = eventById("cordelia-machine-4")!;
+    completeEvent(g, e, 5);
+    expect(g.heartEvents.hasFlag(TAILORING_OPEN)).toBe(true);
     expect(tailoringLine(g)).toBeUndefined();
+  });
+
+  it("keeps the machine open on a save that has the old world flag", () => {
+    const g = newGame();
+    setFlag(g, TAILORING_OPEN);
+    expect(tailoringLine(g)).toBeUndefined();
+  });
+
+  it("offers the event at 4 hearts and not before", () => {
+    const g = newGame();
+    const at = { day: 3, weather: "sunny" as const, place: "hw:hatter" };
+    const set = (n: number) =>
+      g.friendship.load({
+        cordelia: {
+          points: n * HEART,
+          met: true,
+          talkDay: 0,
+          giftDay: 0,
+          week: 0,
+          weekGifts: 0,
+          bouquet: false,
+          log: {},
+        },
+      });
+    set(3);
+    expect(nextEvent(g, { ...at, minute: 11 * 60 })).toBeUndefined();
+    set(4);
+    expect(nextEvent(g, { ...at, minute: 11 * 60 })?.id).toBe(
+      "cordelia-machine-4",
+    );
+    expect(nextEvent(g, { ...at, minute: 18 * 60 })).toBeUndefined();
   });
 
   it("has the machine and the pots in the Hatter's house", () => {
@@ -173,6 +206,15 @@ describe("the dye pots", () => {
     expect(potColourOf("gem-mid-a")).toBe("green");
     expect(potColourOf("cranberry@gold")).toBe("red");
     expect(potColourOf("stone")).toBeUndefined();
+  });
+
+  it("processed goods take their ingredient's pot colour", () => {
+    expect(potColourOf("tomato-jam")).toBe("red");
+    expect(potColourOf("grape-wine")).toBe("purple");
+    expect(potColourOf("pumpkin-juice@gold")).toBe("orange");
+    expect(potColourOf("chanterelle-dried")).toBe("yellow");
+    expect(potColourOf("bramble-berry-jam")).toBe("blue");
+    expect(potColourOf("honey-jam")).toBeUndefined();
   });
 
   it("uses all six items and tints the worn piece", () => {
