@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
+    "items:export": "UPDATE_ITEM_TABLE=1 vitest run tests/itemtable.test.ts",
     "overview": "node scripts/overview/build.mjs",
     "overview:refresh": "node scripts/overview/build.mjs --refresh",
     "overview:check": "node scripts/overview/build.mjs --check",
