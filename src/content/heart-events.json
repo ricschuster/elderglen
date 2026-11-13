@@ -4,7 +4,65 @@
     "odette-store-seen",
     "hattie-rain-seen",
     "rosmarin-ring-seen",
-    "tailoring-open"
+    "tailoring-open",
+    "odette-6-seen",
+    "dorrie-2-seen",
+    "dorrie-6-seen",
+    "fitch-2-seen",
+    "fitch-6-seen",
+    "alder-2-seen",
+    "alder-6-seen",
+    "bramwell-2-seen",
+    "bramwell-6-seen",
+    "hattie-6-seen",
+    "podge-2-seen",
+    "podge-6-seen",
+    "pim-2-seen",
+    "pim-6-seen",
+    "aurelle-2-seen",
+    "aurelle-6-seen",
+    "dunmar-2-seen",
+    "dunmar-6-seen",
+    "tilda-2-seen",
+    "tilda-6-seen",
+    "rufus-2-seen",
+    "rufus-6-seen",
+    "wren-2-seen",
+    "wren-6-seen",
+    "cuthbert-2-seen",
+    "cuthbert-6-seen",
+    "cordelia-2-seen",
+    "cordelia-6-seen",
+    "barnaby-2-seen",
+    "barnaby-6-seen",
+    "linnet-2-seen",
+    "linnet-6-seen",
+    "thistle-2-seen",
+    "thistle-6-seen",
+    "hester-2-seen",
+    "hester-6-seen",
+    "walter-2-seen",
+    "walter-6-seen",
+    "toby-2-seen",
+    "toby-6-seen",
+    "dilly-2-seen",
+    "dilly-6-seen",
+    "rosmarin-2-seen",
+    "rosmarin-6-seen",
+    "rundahl-2-seen",
+    "rundahl-6-seen",
+    "korvi-2-seen",
+    "korvi-6-seen",
+    "marl-2-seen",
+    "marl-6-seen",
+    "maren-2-seen",
+    "maren-6-seen",
+    "rushie-2-seen",
+    "rushie-6-seen",
+    "thalwen-2-seen",
+    "thalwen-6-seen",
+    "aldreth-2-seen",
+    "aldreth-6-seen"
   ],
   "emotes": ["smile", "content", "surprise", "think", "heart", "sweat"],
   "lines": {
@@ -22,7 +80,413 @@
     "cordelia_4_a": "PLACEHOLDER TEXT. Come round the back a moment. I have wanted to show you something.",
     "cordelia_4_b": "PLACEHOLDER TEXT. That is my sewing machine. It was my mother's, and it still runs true.",
     "cordelia_4_c": "PLACEHOLDER TEXT. Feed in a bolt of cloth, set something on the spool, and see what comes out.",
-    "cordelia_4_d": "PLACEHOLDER TEXT. The dye pots are beside it. Use them whenever the shop is open."
+    "cordelia_4_d": "PLACEHOLDER TEXT. The dye pots are beside it. Use them whenever the shop is open.",
+    "odette_6_a": "PLACEHOLDER TEXT. Shows the shop's old ledger and the first jar she sold.",
+    "odette_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "odette_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "odette_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "odette_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "odette_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "odette_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "dorrie_2_a": "PLACEHOLDER TEXT. Walks the green, asks what the player is growing.",
+    "dorrie_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "dorrie_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "dorrie_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "dorrie_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "dorrie_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "dorrie_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "dorrie_6_a": "PLACEHOLDER TEXT. Finds a ledger mistake and the player helps find it.",
+    "dorrie_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "dorrie_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "dorrie_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "dorrie_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "dorrie_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "dorrie_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "fitch_2_a": "PLACEHOLDER TEXT. Wants to trade a shiny find.",
+    "fitch_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "fitch_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "fitch_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "fitch_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "fitch_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "fitch_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "fitch_6_a": "PLACEHOLDER TEXT. Proud of a hoard, hides one thing for the player.",
+    "fitch_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "fitch_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "fitch_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "fitch_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "fitch_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "fitch_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "alder_2_a": "PLACEHOLDER TEXT. Weeding, grumbles about slugs.",
+    "alder_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "alder_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "alder_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "alder_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "alder_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "alder_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "alder_6_a": "PLACEHOLDER TEXT. Brings a seedling to the store and asks for a name.",
+    "alder_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "alder_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "alder_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "alder_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "alder_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "alder_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "bramwell_2_a": "PLACEHOLDER TEXT. Forge cools, asks the player to hold a tong.",
+    "bramwell_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "bramwell_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "bramwell_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "bramwell_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "bramwell_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "bramwell_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "bramwell_6_a": "PLACEHOLDER TEXT. Shows the first blade he made, mends a tool.",
+    "bramwell_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "bramwell_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "bramwell_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "bramwell_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "bramwell_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "bramwell_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "hattie_6_a": "PLACEHOLDER TEXT. The kitchen is short staffed, the player carries trays.",
+    "hattie_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "hattie_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "hattie_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "hattie_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "hattie_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "hattie_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "podge_2_a": "PLACEHOLDER TEXT. Tastes the stalls and offers a spoon.",
+    "podge_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "podge_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "podge_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "podge_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "podge_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "podge_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "podge_6_a": "PLACEHOLDER TEXT. Teaches a stew in the kitchen.",
+    "podge_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "podge_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "podge_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "podge_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "podge_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "podge_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "pim_2_a": "PLACEHOLDER TEXT. Wants to play a game, will not take no.",
+    "pim_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "pim_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "pim_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "pim_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "pim_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "pim_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "pim_6_a": "PLACEHOLDER TEXT. Dares the player to cross the stones.",
+    "pim_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "pim_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "pim_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "pim_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "pim_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "pim_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "aurelle_2_a": "PLACEHOLDER TEXT. Evening walk, notices a herb on the bank.",
+    "aurelle_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "aurelle_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "aurelle_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "aurelle_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "aurelle_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "aurelle_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "aurelle_6_a": "PLACEHOLDER TEXT. Needs a remedy brewed, the player gathers.",
+    "aurelle_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "aurelle_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "aurelle_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "aurelle_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "aurelle_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "aurelle_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "dunmar_2_a": "PLACEHOLDER TEXT. A book is missing and he suspects a thief.",
+    "dunmar_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "dunmar_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "dunmar_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "dunmar_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "dunmar_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "dunmar_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "dunmar_6_a": "PLACEHOLDER TEXT. Shows his favour ledger and where the player stands.",
+    "dunmar_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "dunmar_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "dunmar_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "dunmar_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "dunmar_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "dunmar_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "tilda_2_a": "PLACEHOLDER TEXT. A beam is stuck, asks for a hand.",
+    "tilda_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "tilda_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "tilda_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "tilda_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "tilda_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "tilda_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "tilda_6_a": "PLACEHOLDER TEXT. Shows drafts for the player's farm.",
+    "tilda_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "tilda_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "tilda_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "tilda_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "tilda_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "tilda_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "rufus_2_a": "PLACEHOLDER TEXT. Whittles a bird and asks which it is.",
+    "rufus_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "rufus_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "rufus_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "rufus_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "rufus_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "rufus_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "rufus_6_a": "PLACEHOLDER TEXT. Fishing, tells where he caught nothing.",
+    "rufus_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "rufus_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "rufus_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "rufus_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "rufus_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "rufus_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "wren_2_a": "PLACEHOLDER TEXT. Climbs a tree, cannot get down.",
+    "wren_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "wren_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "wren_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "wren_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "wren_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "wren_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "wren_6_a": "PLACEHOLDER TEXT. Found a nest, wants it kept secret.",
+    "wren_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "wren_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "wren_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "wren_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "wren_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "wren_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "cuthbert_2_a": "PLACEHOLDER TEXT. Eats lunch, asks about the hall's progress.",
+    "cuthbert_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "cuthbert_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "cuthbert_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "cuthbert_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "cuthbert_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "cuthbert_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "cuthbert_6_a": "PLACEHOLDER TEXT. Walks the square and tells the valley's founding.",
+    "cuthbert_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "cuthbert_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "cuthbert_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "cuthbert_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "cuthbert_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "cuthbert_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "cordelia_2_a": "PLACEHOLDER TEXT. Matches a hat to the player's face.",
+    "cordelia_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "cordelia_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "cordelia_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "cordelia_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "cordelia_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "cordelia_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "cordelia_6_a": "PLACEHOLDER TEXT. A hat for a festival, the player picks the trim.",
+    "cordelia_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "cordelia_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "cordelia_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "cordelia_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "cordelia_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "cordelia_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "barnaby_2_a": "PLACEHOLDER TEXT. Sketches the player in the wrong hat.",
+    "barnaby_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "barnaby_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "barnaby_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "barnaby_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "barnaby_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "barnaby_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "barnaby_6_a": "PLACEHOLDER TEXT. Plays a prank on Cordelia, the player is in on it.",
+    "barnaby_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "barnaby_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "barnaby_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "barnaby_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "barnaby_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "barnaby_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "linnet_2_a": "PLACEHOLDER TEXT. Running, challenges the player to a race.",
+    "linnet_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "linnet_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "linnet_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "linnet_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "linnet_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "linnet_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "linnet_6_a": "PLACEHOLDER TEXT. Wants to try the player's job for a day.",
+    "linnet_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "linnet_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "linnet_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "linnet_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "linnet_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "linnet_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "thistle_2_a": "PLACEHOLDER TEXT. Reads under a counter, hides the book.",
+    "thistle_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "thistle_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "thistle_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "thistle_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "thistle_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "thistle_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "thistle_6_a": "PLACEHOLDER TEXT. Reads a poem aloud to the river.",
+    "thistle_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "thistle_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "thistle_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "thistle_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "thistle_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "thistle_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "hester_2_a": "PLACEHOLDER TEXT. Knits on the bench and asks the news.",
+    "hester_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "hester_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "hester_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "hester_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "hester_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "hester_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "hester_6_a": "PLACEHOLDER TEXT. Tells a scandal about Walter.",
+    "hester_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "hester_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "hester_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "hester_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "hester_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "hester_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "walter_2_a": "PLACEHOLDER TEXT. Fishing, a long tale about the one that got away.",
+    "walter_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "walter_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "walter_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "walter_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "walter_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "walter_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "walter_6_a": "PLACEHOLDER TEXT. Shows a lucky lure.",
+    "walter_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "walter_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "walter_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "walter_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "walter_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "walter_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "toby_2_a": "PLACEHOLDER TEXT. Shows a beetle.",
+    "toby_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "toby_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "toby_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "toby_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "toby_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "toby_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "toby_6_a": "PLACEHOLDER TEXT. Finds a shell no one has seen.",
+    "toby_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "toby_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "toby_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "toby_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "toby_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "toby_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "dilly_2_a": "PLACEHOLDER TEXT. Feeding time, asks the player to hold a lamb.",
+    "dilly_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "dilly_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "dilly_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "dilly_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "dilly_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "dilly_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "dilly_6_a": "PLACEHOLDER TEXT. A sick animal, the player fetches a remedy.",
+    "dilly_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "dilly_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "dilly_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "dilly_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "dilly_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "dilly_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "rosmarin_2_a": "PLACEHOLDER TEXT. Catches the player at the fence, sets a test.",
+    "rosmarin_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "rosmarin_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "rosmarin_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "rosmarin_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "rosmarin_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "rosmarin_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "rosmarin_6_a": "PLACEHOLDER TEXT. Brews something, shows the tower room.",
+    "rosmarin_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "rosmarin_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "rosmarin_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "rosmarin_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "rosmarin_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "rosmarin_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "rundahl_2_a": "PLACEHOLDER TEXT. Offers tea at the fire, asks nothing.",
+    "rundahl_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "rundahl_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "rundahl_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "rundahl_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "rundahl_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "rundahl_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "rundahl_6_a": "PLACEHOLDER TEXT. A story of the road, hints at the wardens.",
+    "rundahl_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "rundahl_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "rundahl_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "rundahl_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "rundahl_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "rundahl_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "korvi_2_a": "PLACEHOLDER TEXT. Sparks fly, asks for ore.",
+    "korvi_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "korvi_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "korvi_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "korvi_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "korvi_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "korvi_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "korvi_6_a": "PLACEHOLDER TEXT. Shows a dwarven alloy.",
+    "korvi_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "korvi_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "korvi_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "korvi_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "korvi_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "korvi_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "marl_2_a": "PLACEHOLDER TEXT. Cracks a stone, names the vein.",
+    "marl_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "marl_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "marl_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "marl_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "marl_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "marl_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "marl_6_a": "PLACEHOLDER TEXT. Hums while checking the bridge, tells its history.",
+    "marl_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "marl_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "marl_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "marl_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "marl_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "marl_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "maren_2_a": "PLACEHOLDER TEXT. Counts reps, asks the player to spot.",
+    "maren_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "maren_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "maren_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "maren_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "maren_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "maren_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "maren_6_a": "PLACEHOLDER TEXT. A bout against the dummy.",
+    "maren_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "maren_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "maren_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "maren_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "maren_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "maren_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "rushie_2_a": "PLACEHOLDER TEXT. Laughs at a tangled line.",
+    "rushie_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "rushie_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "rushie_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "rushie_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "rushie_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "rushie_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "rushie_6_a": "PLACEHOLDER TEXT. Shows a favourite spot at dusk.",
+    "rushie_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "rushie_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "rushie_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "rushie_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "rushie_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "rushie_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "thalwen_2_a": "PLACEHOLDER TEXT. Gazes at the land and asks what a tree is.",
+    "thalwen_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "thalwen_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "thalwen_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "thalwen_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "thalwen_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "thalwen_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "thalwen_6_a": "PLACEHOLDER TEXT. Shows a sea song, the tide answers.",
+    "thalwen_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "thalwen_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "thalwen_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "thalwen_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "thalwen_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "thalwen_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "aldreth_2_a": "PLACEHOLDER TEXT. Sorts bags, asks the player to carry one.",
+    "aldreth_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "aldreth_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "aldreth_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "aldreth_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "aldreth_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "aldreth_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "aldreth_6_a": "PLACEHOLDER TEXT. Tired of roads, says what the warden's work costs.",
+    "aldreth_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "aldreth_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "aldreth_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "aldreth_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "aldreth_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "aldreth_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
   },
   "events": [
     {
@@ -309,6 +773,6614 @@
         {
           "cmd": "setFlag",
           "flag": "tailoring-open"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "odette-store-6",
+      "villager": "odette",
+      "place": "hw:store",
+      "hearts": 6,
+      "window": {
+        "from": "17:00",
+        "until": "18:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "odette",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "odette"
+        },
+        {
+          "cmd": "say",
+          "who": "odette",
+          "line": "odette_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "odette",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "odette",
+          "line": "odette_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "odette_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "odette_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "odette",
+          "line": "odette_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "odette",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "odette",
+          "line": "odette_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "odette",
+          "line": "odette_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "melon",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "odette-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "dorrie-green-2",
+      "villager": "dorrie",
+      "place": "hw:green",
+      "hearts": 2,
+      "window": {
+        "from": "9:00",
+        "until": "11:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "dorrie",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "dorrie"
+        },
+        {
+          "cmd": "say",
+          "who": "dorrie",
+          "line": "dorrie_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "dorrie",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "dorrie",
+          "line": "dorrie_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "dorrie_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "dorrie_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "dorrie",
+          "line": "dorrie_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "dorrie",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "dorrie",
+          "line": "dorrie_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "dorrie",
+          "line": "dorrie_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "peach",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "dorrie-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "dorrie-store-6",
+      "villager": "dorrie",
+      "place": "hw:store",
+      "hearts": 6,
+      "window": {
+        "from": "11:00",
+        "until": "14:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "dorrie",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "dorrie"
+        },
+        {
+          "cmd": "say",
+          "who": "dorrie",
+          "line": "dorrie_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "dorrie",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "dorrie",
+          "line": "dorrie_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "dorrie_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "dorrie_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "dorrie",
+          "line": "dorrie_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "dorrie",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "dorrie",
+          "line": "dorrie_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "dorrie",
+          "line": "dorrie_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "market-pie",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "dorrie-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "fitch-green-2",
+      "villager": "fitch",
+      "place": "hw:green",
+      "hearts": 2,
+      "window": {
+        "from": "9:30",
+        "until": "12:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "fitch",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "fitch"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "fitch",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "fitch_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "fitch_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "fitch",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "apple",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "fitch-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "fitch-green-6",
+      "villager": "fitch",
+      "place": "hw:green",
+      "hearts": 6,
+      "window": {
+        "from": "13:30",
+        "until": "17:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "fitch",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "fitch"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "fitch",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "fitch_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "fitch_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "fitch",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "pocket-coin",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "fitch-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "alder-burrow-garden-2",
+      "villager": "alder",
+      "place": "hw:burrow-garden",
+      "hearts": 2,
+      "window": {
+        "from": "8:00",
+        "until": "9:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "alder",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "alder"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "alder",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "alder_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "alder_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "alder",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "kale",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "alder-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "alder-store-6",
+      "villager": "alder",
+      "place": "hw:store",
+      "hearts": 6,
+      "window": {
+        "from": "9:00",
+        "until": "13:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "alder",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "alder"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "alder",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "alder_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "alder_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "alder",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "red-cabbage",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "alder-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "bramwell-smithy-2",
+      "villager": "bramwell",
+      "place": "hw:smithy",
+      "hearts": 2,
+      "window": {
+        "from": "16:00",
+        "until": "19:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "bramwell",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "bramwell"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "bramwell",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "bramwell_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "bramwell_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "bramwell",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "iron-bar",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "bramwell-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "bramwell-smithy-6",
+      "villager": "bramwell",
+      "place": "hw:smithy",
+      "hearts": 6,
+      "window": {
+        "from": "16:00",
+        "until": "19:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "bramwell",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "bramwell"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "bramwell",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "bramwell_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "bramwell_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "bramwell",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "gold-bar",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "bramwell-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "hattie-inn-6",
+      "villager": "hattie",
+      "place": "hw:inn",
+      "hearts": 6,
+      "window": {
+        "from": "12:00",
+        "until": "17:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "hattie",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "hattie"
+        },
+        {
+          "cmd": "say",
+          "who": "hattie",
+          "line": "hattie_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "hattie",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "hattie",
+          "line": "hattie_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "hattie_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "hattie_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "hattie",
+          "line": "hattie_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "hattie",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "hattie",
+          "line": "hattie_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "hattie",
+          "line": "hattie_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "beer",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "hattie-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "podge-square-2",
+      "villager": "podge",
+      "place": "hw:square",
+      "hearts": 2,
+      "window": {
+        "from": "11:00",
+        "until": "12:30"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "podge",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "podge"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "podge",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "podge_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "podge_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "podge",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "chanterelle",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "podge-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "podge-inn-6",
+      "villager": "podge",
+      "place": "hw:inn",
+      "hearts": 6,
+      "window": {
+        "from": "12:30",
+        "until": "17:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "podge",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "podge"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "podge",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "podge_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "podge_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "podge",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "mushroom-stew",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "podge-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "pim-green-2",
+      "villager": "pim",
+      "place": "hw:green",
+      "hearts": 2,
+      "window": {
+        "from": "9:30",
+        "until": "12:30"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "pim",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "pim"
+        },
+        {
+          "cmd": "say",
+          "who": "pim",
+          "line": "pim_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "pim",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "pim",
+          "line": "pim_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "pim_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "pim_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "pim",
+          "line": "pim_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "pim",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "pim",
+          "line": "pim_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "pim",
+          "line": "pim_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "honey",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "pim-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "pim-river-path-6",
+      "villager": "pim",
+      "place": "hw:river-path",
+      "hearts": 6,
+      "window": {
+        "from": "14:00",
+        "until": "17:30"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "pim",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "pim"
+        },
+        {
+          "cmd": "say",
+          "who": "pim",
+          "line": "pim_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "pim",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "pim",
+          "line": "pim_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "pim_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "pim_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "pim",
+          "line": "pim_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "pim",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "pim",
+          "line": "pim_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "pim",
+          "line": "pim_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "inn-custard",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "pim-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "aurelle-river-path-2",
+      "villager": "aurelle",
+      "place": "hw:river-path",
+      "hearts": 2,
+      "window": {
+        "from": "19:00",
+        "until": "21:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "aurelle",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "aurelle"
+        },
+        {
+          "cmd": "say",
+          "who": "aurelle",
+          "line": "aurelle_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "aurelle",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "aurelle",
+          "line": "aurelle_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "aurelle_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "aurelle_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "aurelle",
+          "line": "aurelle_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "aurelle",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "aurelle",
+          "line": "aurelle_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "aurelle",
+          "line": "aurelle_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "fiddlehead-fern",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "aurelle-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "aurelle-healer-6",
+      "villager": "aurelle",
+      "place": "hw:healer",
+      "hearts": 6,
+      "window": {
+        "from": "8:50",
+        "until": "17:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "aurelle",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "aurelle"
+        },
+        {
+          "cmd": "say",
+          "who": "aurelle",
+          "line": "aurelle_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "aurelle",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "aurelle",
+          "line": "aurelle_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "aurelle_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "aurelle_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "aurelle",
+          "line": "aurelle_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "aurelle",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "aurelle",
+          "line": "aurelle_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "aurelle",
+          "line": "aurelle_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "daffodil",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "aurelle-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "dunmar-library-2",
+      "villager": "dunmar",
+      "place": "hw:library",
+      "hearts": 2,
+      "window": {
+        "from": "9:50",
+        "until": "18:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "dunmar",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "dunmar"
+        },
+        {
+          "cmd": "say",
+          "who": "dunmar",
+          "line": "dunmar_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "dunmar",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "dunmar",
+          "line": "dunmar_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "dunmar_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "dunmar_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "dunmar",
+          "line": "dunmar_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "dunmar",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "dunmar",
+          "line": "dunmar_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "dunmar",
+          "line": "dunmar_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "quartz-crystal",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "dunmar-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "dunmar-library-6",
+      "villager": "dunmar",
+      "place": "hw:library",
+      "hearts": 6,
+      "window": {
+        "from": "18:00",
+        "until": "19:30"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "dunmar",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "dunmar"
+        },
+        {
+          "cmd": "say",
+          "who": "dunmar",
+          "line": "dunmar_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "dunmar",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "dunmar",
+          "line": "dunmar_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "dunmar_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "dunmar_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "dunmar",
+          "line": "dunmar_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "dunmar",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "dunmar",
+          "line": "dunmar_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "dunmar",
+          "line": "dunmar_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "mushroom-stew",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "dunmar-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "tilda-sawmill-2",
+      "villager": "tilda",
+      "place": "hw:sawmill",
+      "hearts": 2,
+      "window": {
+        "from": "7:30",
+        "until": "9:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "tilda",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "tilda"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "tilda",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "tilda_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "tilda_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "tilda",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "wood",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "tilda-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "tilda-sawmill-6",
+      "villager": "tilda",
+      "place": "hw:sawmill",
+      "hearts": 6,
+      "window": {
+        "from": "9:00",
+        "until": "17:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "tilda",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "tilda"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "tilda",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "tilda_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "tilda_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "tilda",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "copper-bar",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "tilda-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "rufus-sawmill-2",
+      "villager": "rufus",
+      "place": "hw:sawmill",
+      "hearts": 2,
+      "window": {
+        "from": "8:00",
+        "until": "12:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "rufus",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "rufus"
+        },
+        {
+          "cmd": "say",
+          "who": "rufus",
+          "line": "rufus_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "rufus",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "rufus",
+          "line": "rufus_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "rufus_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "rufus_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "rufus",
+          "line": "rufus_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "rufus",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "rufus",
+          "line": "rufus_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "rufus",
+          "line": "rufus_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "corn",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "rufus-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "rufus-river-path-6",
+      "villager": "rufus",
+      "place": "hw:river-path",
+      "hearts": 6,
+      "window": {
+        "from": "12:00",
+        "until": "13:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "rufus",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "rufus"
+        },
+        {
+          "cmd": "say",
+          "who": "rufus",
+          "line": "rufus_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "rufus",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "rufus",
+          "line": "rufus_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "rufus_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "rufus_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "rufus",
+          "line": "rufus_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "rufus",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "rufus",
+          "line": "rufus_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "rufus",
+          "line": "rufus_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "wood",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "rufus-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "wren-river-path-2",
+      "villager": "wren",
+      "place": "hw:river-path",
+      "hearts": 2,
+      "window": {
+        "from": "13:30",
+        "until": "17:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "wren",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "wren"
+        },
+        {
+          "cmd": "say",
+          "who": "wren",
+          "line": "wren_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "wren",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "wren",
+          "line": "wren_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "wren_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "wren_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "wren",
+          "line": "wren_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "wren",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "wren",
+          "line": "wren_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "wren",
+          "line": "wren_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "pine-nut",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "wren-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "wren-green-6",
+      "villager": "wren",
+      "place": "hw:green",
+      "hearts": 6,
+      "window": {
+        "from": "9:30",
+        "until": "12:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "wren",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "wren"
+        },
+        {
+          "cmd": "say",
+          "who": "wren",
+          "line": "wren_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "wren",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "wren",
+          "line": "wren_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "wren_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "wren_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "wren",
+          "line": "wren_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "wren",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "wren",
+          "line": "wren_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "wren",
+          "line": "wren_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "chestnut",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "wren-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "cuthbert-outpost-yard-2",
+      "villager": "cuthbert",
+      "place": "hw:outpost-yard",
+      "hearts": 2,
+      "window": {
+        "from": "12:00",
+        "until": "13:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "cuthbert",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "cuthbert"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "cuthbert",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "cuthbert_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "cuthbert_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "cuthbert",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "honey",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "cuthbert-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "cuthbert-square-6",
+      "villager": "cuthbert",
+      "place": "hw:square",
+      "hearts": 6,
+      "window": {
+        "from": "18:00",
+        "until": "19:30"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "cuthbert",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "cuthbert"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "cuthbert",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "cuthbert_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "cuthbert_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "cuthbert",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "mead",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "cuthbert-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "cordelia-hatter-2",
+      "villager": "cordelia",
+      "place": "hw:hatter",
+      "hearts": 2,
+      "window": {
+        "from": "9:50",
+        "until": "17:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "cordelia",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "cordelia"
+        },
+        {
+          "cmd": "say",
+          "who": "cordelia",
+          "line": "cordelia_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "cordelia",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "cordelia",
+          "line": "cordelia_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "cordelia_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "cordelia_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "cordelia",
+          "line": "cordelia_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "cordelia",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "cordelia",
+          "line": "cordelia_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "cordelia",
+          "line": "cordelia_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "cloth",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "cordelia-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "cordelia-hatter-6",
+      "villager": "cordelia",
+      "place": "hw:hatter",
+      "hearts": 6,
+      "window": {
+        "from": "17:00",
+        "until": "19:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "cordelia",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "cordelia"
+        },
+        {
+          "cmd": "say",
+          "who": "cordelia",
+          "line": "cordelia_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "cordelia",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "cordelia",
+          "line": "cordelia_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "cordelia_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "cordelia_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "cordelia",
+          "line": "cordelia_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "cordelia",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "cordelia",
+          "line": "cordelia_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "cordelia",
+          "line": "cordelia_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "grape",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "cordelia-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "barnaby-green-2",
+      "villager": "barnaby",
+      "place": "hw:green",
+      "hearts": 2,
+      "window": {
+        "from": "17:00",
+        "until": "19:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "barnaby",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "barnaby"
+        },
+        {
+          "cmd": "say",
+          "who": "barnaby",
+          "line": "barnaby_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "barnaby",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "barnaby",
+          "line": "barnaby_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "barnaby_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "barnaby_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "barnaby",
+          "line": "barnaby_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "barnaby",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "barnaby",
+          "line": "barnaby_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "barnaby",
+          "line": "barnaby_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "grape-wine",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "barnaby-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "barnaby-inn-6",
+      "villager": "barnaby",
+      "place": "hw:inn",
+      "hearts": 6,
+      "window": {
+        "from": "19:00",
+        "until": "22:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "barnaby",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "barnaby"
+        },
+        {
+          "cmd": "say",
+          "who": "barnaby",
+          "line": "barnaby_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "barnaby",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "barnaby",
+          "line": "barnaby_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "barnaby_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "barnaby_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "barnaby",
+          "line": "barnaby_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "barnaby",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "barnaby",
+          "line": "barnaby_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "barnaby",
+          "line": "barnaby_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "pomegranate",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "barnaby-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "linnet-river-path-2",
+      "villager": "linnet",
+      "place": "hw:river-path",
+      "hearts": 2,
+      "window": {
+        "from": "9:00",
+        "until": "10:30"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "linnet",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "linnet"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "linnet",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "linnet_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "linnet_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "linnet",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "peach",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "linnet-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "linnet-inn-6",
+      "villager": "linnet",
+      "place": "hw:inn",
+      "hearts": 6,
+      "window": {
+        "from": "18:00",
+        "until": "22:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "linnet",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "linnet"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "linnet",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "linnet_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "linnet_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "linnet",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "garden-salad",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "linnet-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "thistle-library-2",
+      "villager": "thistle",
+      "place": "hw:library",
+      "hearts": 2,
+      "window": {
+        "from": "10:00",
+        "until": "14:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "thistle",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "thistle"
+        },
+        {
+          "cmd": "say",
+          "who": "thistle",
+          "line": "thistle_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "thistle",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "thistle",
+          "line": "thistle_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "thistle_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "thistle_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "thistle",
+          "line": "thistle_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "thistle",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "thistle",
+          "line": "thistle_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "thistle",
+          "line": "thistle_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "crocus",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "thistle-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "thistle-river-path-6",
+      "villager": "thistle",
+      "place": "hw:river-path",
+      "hearts": 6,
+      "window": {
+        "from": "16:00",
+        "until": "18:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "thistle",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "thistle"
+        },
+        {
+          "cmd": "say",
+          "who": "thistle",
+          "line": "thistle_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "thistle",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "thistle",
+          "line": "thistle_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "thistle_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "thistle_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "thistle",
+          "line": "thistle_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "thistle",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "thistle",
+          "line": "thistle_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "thistle",
+          "line": "thistle_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "cherry",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "thistle-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "hester-square-2",
+      "villager": "hester",
+      "place": "hw:square",
+      "hearts": 2,
+      "window": {
+        "from": "9:00",
+        "until": "11:30"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "hester",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "hester"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "hester",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "hester_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "hester_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "hester",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "wool",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "hester-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "hester-river-path-6",
+      "villager": "hester",
+      "place": "hw:river-path",
+      "hearts": 6,
+      "window": {
+        "from": "14:00",
+        "until": "16:30"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "hester",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "hester"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "hester",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "hester_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "hester_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "hester",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "cloth",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "hester-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "walter-river-path-2",
+      "villager": "walter",
+      "place": "hw:river-path",
+      "hearts": 2,
+      "window": {
+        "from": "9:30",
+        "until": "12:30"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "walter",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "walter"
+        },
+        {
+          "cmd": "say",
+          "who": "walter",
+          "line": "walter_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "walter",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "walter",
+          "line": "walter_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "walter_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "walter_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "walter",
+          "line": "walter_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "walter",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "walter",
+          "line": "walter_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "walter",
+          "line": "walter_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "perch",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "walter-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "walter-inn-6",
+      "villager": "walter",
+      "place": "hw:inn",
+      "hearts": 6,
+      "window": {
+        "from": "19:30",
+        "until": "21:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "walter",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "walter"
+        },
+        {
+          "cmd": "say",
+          "who": "walter",
+          "line": "walter_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "walter",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "walter",
+          "line": "walter_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "walter_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "walter_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "walter",
+          "line": "walter_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "walter",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "walter",
+          "line": "walter_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "walter",
+          "line": "walter_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "catfish",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "walter-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "toby-green-2",
+      "villager": "toby",
+      "place": "hw:green",
+      "hearts": 2,
+      "window": {
+        "from": "9:30",
+        "until": "12:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "toby",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "toby"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "toby",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "toby_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "toby_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "toby",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "cockleshell",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "toby-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "toby-river-path-6",
+      "villager": "toby",
+      "place": "hw:river-path",
+      "hearts": 6,
+      "window": {
+        "from": "14:00",
+        "until": "17:30"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "toby",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "toby"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "toby",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "toby_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "toby_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "toby",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "pearly-shell",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "toby-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "dilly-paddock-2",
+      "villager": "dilly",
+      "place": "forest:paddock",
+      "hearts": 2,
+      "window": {
+        "from": "7:30",
+        "until": "9:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "dilly",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "dilly"
+        },
+        {
+          "cmd": "say",
+          "who": "dilly",
+          "line": "dilly_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "dilly",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "dilly",
+          "line": "dilly_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "dilly_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "dilly_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "dilly",
+          "line": "dilly_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "dilly",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "dilly",
+          "line": "dilly_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "dilly",
+          "line": "dilly_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "egg",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "dilly-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "dilly-paddock-6",
+      "villager": "dilly",
+      "place": "forest:paddock",
+      "hearts": 6,
+      "window": {
+        "from": "16:00",
+        "until": "18:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "dilly",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "dilly"
+        },
+        {
+          "cmd": "say",
+          "who": "dilly",
+          "line": "dilly_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "dilly",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "dilly",
+          "line": "dilly_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "dilly_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "dilly_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "dilly",
+          "line": "dilly_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "dilly",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "dilly",
+          "line": "dilly_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "dilly",
+          "line": "dilly_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "goat-milk",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "dilly-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "rosmarin-hermit-garden-2",
+      "villager": "rosmarin",
+      "place": "forest:hermit-garden",
+      "hearts": 2,
+      "window": {
+        "from": "9:00",
+        "until": "12:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "rosmarin",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "rosmarin"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "rosmarin",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "rosmarin_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "rosmarin_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "rosmarin",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "wild-ginger",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "rosmarin-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "rosmarin-hermit-tower-6",
+      "villager": "rosmarin",
+      "place": "forest:hermit-tower",
+      "hearts": 6,
+      "window": {
+        "from": "12:00",
+        "until": "15:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "rosmarin",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "rosmarin"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "rosmarin",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "rosmarin_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "rosmarin_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "rosmarin",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "frost-root",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "rosmarin-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "rundahl-camp-2",
+      "villager": "rundahl",
+      "place": "forest:camp",
+      "hearts": 2,
+      "window": {
+        "from": "8:00",
+        "until": "10:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "rundahl",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "rundahl"
+        },
+        {
+          "cmd": "say",
+          "who": "rundahl",
+          "line": "rundahl_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "rundahl",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "rundahl",
+          "line": "rundahl_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "rundahl_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "rundahl_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "rundahl",
+          "line": "rundahl_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "rundahl",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "rundahl",
+          "line": "rundahl_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "rundahl",
+          "line": "rundahl_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "wild-garlic",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "rundahl-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "rundahl-camp-6",
+      "villager": "rundahl",
+      "place": "forest:camp",
+      "hearts": 6,
+      "window": {
+        "from": "13:00",
+        "until": "16:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "rundahl",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "rundahl"
+        },
+        {
+          "cmd": "say",
+          "who": "rundahl",
+          "line": "rundahl_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "rundahl",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "rundahl",
+          "line": "rundahl_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "rundahl_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "rundahl_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "rundahl",
+          "line": "rundahl_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "rundahl",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "rundahl",
+          "line": "rundahl_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "rundahl",
+          "line": "rundahl_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "fiddlehead-fern",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "rundahl-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "korvi-forge-2",
+      "villager": "korvi",
+      "place": "mtn:forge",
+      "hearts": 2,
+      "window": {
+        "from": "8:00",
+        "until": "17:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "korvi",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "korvi"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "korvi",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "korvi_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "korvi_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "korvi",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "copper-bar",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "korvi-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "korvi-forge-6",
+      "villager": "korvi",
+      "place": "mtn:forge",
+      "hearts": 6,
+      "window": {
+        "from": "17:00",
+        "until": "20:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "korvi",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "korvi"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "korvi",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "korvi_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "korvi_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "korvi",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "gold-bar",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "korvi-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "marl-yard-2",
+      "villager": "marl",
+      "place": "quarry:yard",
+      "hearts": 2,
+      "window": {
+        "from": "8:00",
+        "until": "12:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "marl",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "marl"
+        },
+        {
+          "cmd": "say",
+          "who": "marl",
+          "line": "marl_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "marl",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "marl",
+          "line": "marl_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "marl_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "marl_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "marl",
+          "line": "marl_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "marl",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "marl",
+          "line": "marl_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "marl",
+          "line": "marl_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "quartz-crystal",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "marl-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "marl-bridge-6",
+      "villager": "marl",
+      "place": "quarry:bridge",
+      "hearts": 6,
+      "window": {
+        "from": "13:00",
+        "until": "17:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "marl",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "marl"
+        },
+        {
+          "cmd": "say",
+          "who": "marl",
+          "line": "marl_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "marl",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "marl",
+          "line": "marl_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "marl_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "marl_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "marl",
+          "line": "marl_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "marl",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "marl",
+          "line": "marl_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "marl",
+          "line": "marl_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "granite-gudgeon",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "marl-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "maren-hall-2",
+      "villager": "maren",
+      "place": "mines:hall",
+      "hearts": 2,
+      "window": {
+        "from": "8:00",
+        "until": "12:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "maren",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "maren"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "maren",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "maren_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "maren_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "maren",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "hearty-omelette",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "maren-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "maren-hall-6",
+      "villager": "maren",
+      "place": "mines:hall",
+      "hearts": 6,
+      "window": {
+        "from": "13:00",
+        "until": "19:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "maren",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "maren"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "maren",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "maren_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "maren_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "maren",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "harvest-hotpot",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "maren-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "rushie-dock-2",
+      "villager": "rushie",
+      "place": "delta:dock",
+      "hearts": 2,
+      "window": {
+        "from": "6:30",
+        "until": "9:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "rushie",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "rushie"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "rushie",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "rushie_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "rushie_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "rushie",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "mackerel",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "rushie-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "rushie-dock-6",
+      "villager": "rushie",
+      "place": "delta:dock",
+      "hearts": 6,
+      "window": {
+        "from": "17:00",
+        "until": "20:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "rushie",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "rushie"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "rushie",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "rushie_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "rushie_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "rushie",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "cod",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "rushie-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "thalwen-dunes-2",
+      "villager": "thalwen",
+      "place": "beach:dunes",
+      "hearts": 2,
+      "window": {
+        "from": "9:00",
+        "until": "12:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "thalwen",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "thalwen"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "thalwen",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "thalwen_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "thalwen_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "thalwen",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "razor-clam",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "thalwen-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "thalwen-shore-6",
+      "villager": "thalwen",
+      "place": "beach:shore",
+      "hearts": 6,
+      "window": {
+        "from": "14:00",
+        "until": "18:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "thalwen",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "thalwen"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "thalwen",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "thalwen_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "thalwen_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "thalwen",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "pearlback",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "thalwen-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "aldreth-outpost-yard-2",
+      "villager": "aldreth",
+      "place": "hw:outpost-yard",
+      "hearts": 2,
+      "window": {
+        "from": "8:30",
+        "until": "12:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "aldreth",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "aldreth"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "aldreth",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "aldreth_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "aldreth_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "aldreth",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "fried-egg",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "aldreth-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "aldreth-inn-6",
+      "villager": "aldreth",
+      "place": "hw:inn",
+      "hearts": 6,
+      "window": {
+        "from": "18:00",
+        "until": "22:30"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "aldreth",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "aldreth"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "aldreth",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "aldreth_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "aldreth_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "aldreth",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "hearty-omelette",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "aldreth-6-seen"
         },
         {
           "cmd": "snap"
