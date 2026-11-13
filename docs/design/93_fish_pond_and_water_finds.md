@@ -194,7 +194,7 @@ is blind to ponds, and the other carpenter jobs do not wait for a pond under way
 
 ## Open question: aged roe quality (new)
 
-Quality of the input is ignored and aged roe is normal quality (as the jar ignores quality).
+Quality of the input is ignored and aged roe is normal quality (as the jar ignores quality). Closed 2026-11-13: the saved Artisan Goods page gives only "2 x base roe price", no quality rule, so this stands.
 
 ## Open questions found 2026-11-12 (answered above: completion and soup)
 

@@ -157,3 +157,92 @@ Checked at build time and in a unit test, as for conversations
 - **Build order.** Gift tastes (#872), then the event list per person as a table in this
   note, then the scenes as data in `heart-events.json`, one person per file as note 62
   says. Scenes reuse the proof engine, so they are a data job a subagent can do.
+
+## Event list, first draft (2026-11-13, for owner edit)
+
+Owner chose on 2026-11-13: Claude drafts the whole list, the owner edits. The four built
+events stay, and Rosmarin 4 and Cordelia 4 are extra slots (those two people have 2, 4 and
+6). Odette 2 and Hattie 2 (rain) fill their 2 heart slots. So 58 events are new.
+
+How to read it: **Place** is a note 80 id and **Window** is a stretch the person's default
+route holds them there, so the note 84 overlap test should pass. A weekday or season in the
+Condition column is a first guess. **Seed** is one line of story, ours, for the voice sheets
+to expand in M3d. **Reward** follows the fixed pattern: 2 hearts a small gift item the person
+loves or likes (note 61 and 90 ids), 6 hearts a useful item, recipe or unlock. Every 6 heart
+reward and every story seed is a placeholder to edit. Times are placeholders.
+
+| Person | Hearts | Place | Window | Condition | Seed | Reward |
+| --- | --- | --- | --- | --- | --- | --- |
+| Odette | 2 | hw:store | 9:00 to 16:00 | built | Counts coins, asks for help with a late order | Letter later teaches the tea sapling |
+| Odette | 6 | hw:store | 17:00 to 18:00 | none | Shows the shop's old ledger and the first jar she sold | A jam craft recipe |
+| Dorrie | 2 | hw:green | 9:00 to 11:00 | dry | Walks the green, asks what the player is growing | peach |
+| Dorrie | 6 | hw:store | 11:00 to 14:00 | none | Finds a ledger mistake and the player helps find it | Small shop price cut on seeds (placeholder) |
+| Fitch | 2 | hw:green | 9:30 to 12:00 | dry | Wants to trade a shiny find | apple |
+| Fitch | 6 | hw:green | 13:30 to 17:00 | dry | Proud of a hoard, hides one thing for the player | pocket-coin |
+| Alder | 2 | hw:burrow-garden | 8:00 to 9:00 | none | Weeding, grumbles about slugs | kale |
+| Alder | 6 | hw:store | 9:00 to 13:00 | none | Brings a seedling to the store and asks for a name | A rare seed packet (placeholder) |
+| Bramwell | 2 | hw:smithy | 16:00 to 19:00 | none | Forge cools, asks the player to hold a tong | iron-bar |
+| Bramwell | 6 | hw:smithy | 16:00 to 19:00 | none | Shows the first blade he made, mends a tool | Smithy tool upgrade discount (placeholder) |
+| Hattie | 2 | hw:inn | any open | rain | Built | Built |
+| Hattie | 6 | hw:inn | 12:00 to 17:00 | none | The kitchen is short staffed, the player carries trays | A dish recipe |
+| Podge | 2 | hw:square | 11:00 to 12:30 | dry | Tastes the stalls and offers a spoon | chanterelle |
+| Podge | 6 | hw:inn | 12:30 to 17:00 | none | Teaches a stew in the kitchen | mushroom-stew recipe |
+| Pim | 2 | hw:green | 9:30 to 12:30 | dry | Wants to play a game, will not take no | honey |
+| Pim | 6 | hw:river-path | 14:00 to 17:30 | dry | Dares the player to cross the stones | A toy keepsake (placeholder) |
+| Aurelle | 2 | hw:river-path | 19:00 to 21:00 | dry | Evening walk, notices a herb on the bank | fiddlehead-fern |
+| Aurelle | 6 | hw:healer | 8:50 to 17:00 | none | Needs a remedy brewed, the player gathers | A healing tonic recipe |
+| Dunmar | 2 | hw:library | 9:50 to 18:00 | none | A book is missing and he suspects a thief | quartz-crystal |
+| Dunmar | 6 | hw:library | 18:00 to 19:30 | none | Shows his favour ledger and where the player stands | A library card perk (placeholder) |
+| Tilda | 2 | hw:sawmill | 7:30 to 9:00 | none | A beam is stuck, asks for a hand | wood |
+| Tilda | 6 | hw:sawmill | 9:00 to 17:00 | none | Shows drafts for the player's farm | Build cost cut on one building (placeholder) |
+| Rufus | 2 | hw:sawmill | 8:00 to 12:00 | none | Whittles a bird and asks which it is | corn |
+| Rufus | 6 | hw:river-path | 12:00 to 13:00 | none | Fishing, tells where he caught nothing | beer or a bait recipe (placeholder) |
+| Wren | 2 | hw:river-path | 13:30 to 17:00 | dry | Climbs a tree, cannot get down | pine-nut |
+| Wren | 6 | hw:green | 9:30 to 12:00 | dry | Found a nest, wants it kept secret | A keepsake feather (placeholder) |
+| Cuthbert | 2 | hw:outpost-yard | 12:00 to 13:00 | none | Eats lunch, asks about the hall's progress | honey |
+| Cuthbert | 6 | hw:square | 18:00 to 19:30 | none | Walks the square and tells the valley's founding | A hall hint recipe or map note (placeholder) |
+| Cordelia | 2 | hw:hatter | 9:50 to 17:00 | none | Matches a hat to the player's face | cloth |
+| Cordelia | 4 | hw:hatter | built | built | Machine event | Unlocks tailoring |
+| Cordelia | 6 | hw:hatter | 17:00 to 19:00 | none | A hat for a festival, the player picks the trim | A hat (placeholder) |
+| Barnaby | 2 | hw:green | 17:00 to 19:00 | none | Sketches the player in the wrong hat | grape-wine (a keg wine) |
+| Barnaby | 6 | hw:inn | 19:00 to 22:00 | none | Plays a prank on Cordelia, the player is in on it | A joke hat (placeholder) |
+| Linnet | 2 | hw:river-path | 9:00 to 10:30 | dry | Running, challenges the player to a race | peach |
+| Linnet | 6 | hw:inn | 18:00 to 22:00 | none | Wants to try the player's job for a day | A sport recipe (placeholder) |
+| Thistle | 2 | hw:library | 10:00 to 14:00 (rest) | none | Reads under a counter, hides the book | crocus |
+| Thistle | 6 | hw:river-path | 16:00 to 18:00 | dry | Reads a poem aloud to the river | A book (placeholder) |
+| Hester | 2 | hw:square | 9:00 to 11:30 | dry | Knits on the bench and asks the news | wool |
+| Hester | 6 | hw:river-path | 14:00 to 16:30 | dry | Tells a scandal about Walter | A knit hat (placeholder) |
+| Walter | 2 | hw:river-path | 9:30 to 12:30 | dry | Fishing, a long tale about the one that got away | perch |
+| Walter | 6 | hw:inn | 19:30 to 21:00 | none | Shows a lucky lure | A tackle (placeholder) |
+| Toby | 2 | hw:green | 9:30 to 12:00 | dry | Shows a beetle | cockleshell |
+| Toby | 6 | hw:river-path | 14:00 to 17:30 | dry | Finds a shell no one has seen | A shell keepsake (placeholder) |
+| Dilly | 2 | forest:paddock | 7:30 to 9:00 | none | Feeding time, asks the player to hold a lamb | egg |
+| Dilly | 6 | forest:paddock | 16:00 to 18:00 | none | A sick animal, the player fetches a remedy | An animal feed recipe (placeholder) |
+| Rosmarin | 2 | forest:hermit-garden | 9:00 to 12:00 | none | Catches the player at the fence, sets a test | wild-ginger |
+| Rosmarin | 4 | forest:fairy-ring | built | built | Fairy ring event | Letter flag, tea sapling chain |
+| Rosmarin | 6 | forest:hermit-tower | 12:00 to 15:00 | none | Brews something, shows the tower room | A potion recipe (placeholder) |
+| Rundahl | 2 | forest:camp | 8:00 to 10:00 | none | Offers tea at the fire, asks nothing | wild-garlic |
+| Rundahl | 6 | forest:camp | 13:00 to 16:00 | none | A story of the road, hints at the wardens | Rundahl's trail map (placeholder) |
+| Korvi | 2 | mtn:forge | 8:00 to 17:00 | none | Sparks fly, asks for ore | copper-bar |
+| Korvi | 6 | mtn:forge | 17:00 to 20:00 | none | Shows a dwarven alloy | An alloy recipe (placeholder) |
+| Marl | 2 | quarry:yard | 8:00 to 12:00 | none | Cracks a stone, names the vein | quartz-crystal |
+| Marl | 6 | quarry:bridge | 13:00 to 17:00 | none | Hums while checking the bridge, tells its history | A quarry tool perk (placeholder) |
+| Maren | 2 | mines:hall | 8:00 to 12:00 | none | Counts reps, asks the player to spot | hearty-omelette |
+| Maren | 6 | mines:hall | 13:00 to 19:00 | none | A bout against the dummy | A combat tip recipe (placeholder) |
+| Rushie | 2 | delta:dock | 6:30 to 9:00 | none | Laughs at a tangled line | mackerel |
+| Rushie | 6 | delta:dock | 17:00 to 20:00 | none | Shows a favourite spot at dusk | A fishing tackle (placeholder) |
+| Thalwen | 2 | beach:dunes | 9:00 to 12:00 | dry | Gazes at the land and asks what a tree is | #shell item, razor-clam |
+| Thalwen | 6 | beach:shore | 14:00 to 18:00 | dry | Shows a sea song, the tide answers | A sea keepsake (placeholder) |
+| Aldreth | 2 | hw:outpost-yard | 8:30 to 12:00 | none | Sorts bags, asks the player to carry one | fried-egg |
+| Aldreth | 6 | hw:inn | 18:00 to 22:30 | none | Tired of roads, says what the warden's work costs | A road pass (placeholder) |
+
+### Notes on the draft
+
+- Hester, Walter and the children rest at home when it rains, so every event for them is
+  dry weather. Rain events (like Hattie 2) are worth adding for a few people; the rain
+  route sends people to rooms, which gives a closed in feel.
+- Dry-weather events for the area residents (Rushie, Thalwen, Dilly) rely on their
+  town trip days not removing them from the area. The validator test must check that.
+- Thalwen 2 gives a `#shell` item or razor-clam, the person's own loves, not a new item.
+- Rewards that are an unlock (price cut, tool perk, road pass) need a built effect before
+  they work. Until then the reward can be a plain item. Decide which unlocks are real.
