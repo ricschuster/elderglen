@@ -108,10 +108,7 @@
     ],
     "required": 3,
     "reward": {
-      "item": {
-        "id": "mushroom-stew",
-        "count": 5
-      }
+      "recipe": "heavy-tapper"
     },
     "hint": "Rare things turn up now and then on a forage spot or deep in the mine. Keep an eye out across the year."
   },

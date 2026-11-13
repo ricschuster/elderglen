@@ -29,8 +29,8 @@ Stardew facts are from the saved Trees, Artisan Goods, Crops and Worm Bin pages 
   keeps running in winter (as Stardew, from the page, which lists no winter pause).
 - **Recipe.** 40 wood and 2 copper bars, learned at Foraging level 4 (Stardew, saved
   Tapper page, SC-156; owner chose it 2026-11-12). The Lumberjack and Tapper professions (note 07) stay
-  later, the **Heavy Tapper** (cycles 3, 4, 2 days, mahogany daily, saved page) is a later
-  upgrade and not built here.
+  later. The **Heavy Tapper** (cycles 3, 4, 2 days, mahogany daily, saved page) is a bundle
+  reward, see Built below.
 - **Mahogany** was waiting on the tapper (note 36): daily sap, the tapped tree is still
   fellable for 10 Hardwood.
 - **Regional trees (#396)** stay open: which tree types stand in which area. The tapper
@@ -118,7 +118,14 @@ Mountain and is listed only once the mines open (`requires: "mines-open"` in `ca
 Built (2026-11-12, art pass): placeholder tapper art. Item icons `icon-tapper` and
 `icon-heavy-tapper`, and a spout and bucket drawn on a tapped tree (`tapper-on-tree`, a gold
 band for the heavy one), under the green ready mark. The Heavy Tapper is built: item, placeable,
-recipe (placeholder: 30 hardwood and 1 gold bar, Foraging level 8), a `heavy` flag on the tree's
+recipe (see the 2026-11-12 line below), a `heavy` flag on the tree's
 `tap`, cycles 3, 4, 2 days and mahogany daily from `tapper.json`. Tests in `tests/tapper.test.ts`.
-Still not built: tool shop rows. Where a tapper is sold (and at what price) is not settled in
-this note, and Stardew sells none (SC-156 unchecked), so no shop carries one yet.
+Decided and built (2026-11-12, owner): both tappers are crafted only, no shop sells one. The
+Tapper is 40 Wood and 2 Copper Bars at Foraging level 4. The Heavy Tapper is 30 Hardwood and 1
+Hearthsilver bar (our stand-in for Stardew's Radioactive Bar, the top rare bar we have), and its
+recipe is the reward of the Rare Finds bundle (bundle 6, the rare forage one, whose reward was 5
+mushroom stews; the stew reward is gone). There is no level source for it. Stardew gives the recipe
+from the Forager's Bundle (owner, 2026-11-12), so this is our nearest bundle. Open: the Heavy
+Tapper's cycles (3, 4, 2 days, mahogany daily) are from the saved Trees page, but whether Stardew's
+Heavy Tapper also yields more per cycle is not checked here, so no extra yield is built.
+Nothing here was verified by play.
