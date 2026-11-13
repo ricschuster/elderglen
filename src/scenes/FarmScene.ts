@@ -45,6 +45,12 @@ import {
   type HuntState,
 } from "../core/seedhunt";
 import { cakeProblem, handInCake } from "../core/cakeday";
+import {
+  buyLantern,
+  lanternBuyProblem,
+  launchLantern,
+  launchProblem,
+} from "../core/lanterns";
 import { meet, presentAt, villagersOn, type Present } from "../core/townfolk";
 import { stageOf as fruitStageOf } from "../core/fruittrees";
 import type { GameState } from "../core/save";
@@ -2182,6 +2188,7 @@ export class FarmScene extends Phaser.Scene {
     const spot = this.horseSpot();
     if (spot && spot.x === front.x && spot.y === front.y) return this.getOn();
     if (this.meetVillager(front)) return;
+    if (this.onLaunchLine(front)) return this.launchLantern();
     const service = this.map.serviceAt(front.x, front.y);
     if (service?.kind !== "tide-bridge") this.mendAsked = false;
     const shut = service
@@ -2475,6 +2482,7 @@ export class FarmScene extends Phaser.Scene {
    */
   private festivalAction(service: { id: string; kind: string }): void {
     if (service.kind === "cake-table") return this.cakeTable();
+    if (service.id === "lantern-stall") return this.lanternStall();
     const f = festivalOfMap(this.mapId);
     if (!f) return;
     switch (service.kind) {
@@ -2493,6 +2501,44 @@ export class FarmScene extends Phaser.Scene {
         this.message = sightLine(f, service.id) ?? "";
         return this.render();
     }
+  }
+
+  /** Lamplight Evening stall: buys a paper lantern (placeholder price). */
+  private lanternStall(): void {
+    const problem = lanternBuyProblem(this.state);
+    this.message =
+      problem ??
+      (buyLantern(this.state)
+        ? "You buy a paper lantern. Set it afloat from the shore."
+        : "");
+    this.render();
+  }
+
+  /** True when the player stands on, or faces, a tile of the launch line (Beach, Lamplight Evening). */
+  private onLaunchLine(front: { x: number; y: number }): boolean {
+    const line = this.map.regions.find((r) => r.id === "launch-line");
+    if (!line) return false;
+    const here = tileOf(this.pos, PLAYER, this.map.tileSize);
+    const inside = (t: { x: number; y: number }) =>
+      t.x >= line.x &&
+      t.x < line.x + line.w &&
+      t.y >= line.y &&
+      t.y < line.y + line.h;
+    return inside(here) || inside(front);
+  }
+
+  /** Sets the held lantern afloat (placeholder: no drifting yet). */
+  private launchLantern(): void {
+    const problem = launchProblem(this.state);
+    if (problem) {
+      this.message = problem;
+      return this.render();
+    }
+    const r = launchLantern(this.state);
+    this.message = r
+      ? `Your lantern drifts out with the rest. They like you a little more.${r.keepsake ? " You keep a small lantern." : ""}`
+      : "";
+    this.render();
   }
 
   /** Cake Day table: hands in the held cooked dish (placeholder, no picker yet). */

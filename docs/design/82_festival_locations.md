@@ -646,8 +646,18 @@ placeholders to check in play.
   a countdown text, picks up by walking onto a tile, then shows the win or lose line and
   calls `finishHunt`. The `cake-table` service hands in the held cooked dish
   (`handInCake`); there is no dish picker list yet. No new data was needed.
+- **Lantern floating built as rules (2026-11-12, tests `tests/lanterns.test.ts`):** `src/core/lanterns.ts`
+  and `src/content/lantern-float.json`. Buy one paper lantern at the stall (open hours, one per
+  year, money), set it afloat once a year from the launch line; every attendee gains points via
+  `Friendship.award`, and the first launch ever also gives the keepsake lantern (tracked in
+  `festivalsJoined` as `lantern-launch:<year>` and `lantern-keepsake`). Both items are defined in
+  `items.ts` from the JSON (`keep`, Keepsakes category). Placeholders, open in the note: price 100,
+  gain 20 points, the names and art of the lantern and keepsake. Scene hooks, unplayed: the
+  `lantern-stall` counter buys (`FarmScene.lanternStall`), and acting while standing on or facing
+  the `launch-line` region launches (`launchLantern`). No drifting animation, no dusk tint. Open
+  question: "keepsake lantern for the farm" is built as a carried keepsake item, not a placeable.
 - **Not built (open or blocked):** the hunt prize (rare packet and hat, both open); multiplayer packet counts; the even-year maze and its niches; Hollow Eve niche
   lines; who walks the villagers between standing tiles (scene); the hall-restored state
   (the feast always uses the square until it is tracked); Frostday
-  activities; the cake table scene, lantern floating and costume stall behaviour; the shut zone
+  activities; the cake table scene, the lantern drifting animation and costume stall behaviour; the shut zone
   for the Frostday south shore (the zone stays the lake, since the shore is the Forest road).
