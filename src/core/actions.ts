@@ -405,6 +405,7 @@ export function chop(
   const plan = planChop(g, x, y, random);
   const t = g.trees.at(x, y);
   if (!plan || !t) return fail("nothing to chop");
+  if (t.cosmetic) return fail("cosmetic tree");
   if (t.large && g.toolTiers.axe < LARGE_STUMP_TIER)
     return fail("needs a better axe");
   g.day.act(

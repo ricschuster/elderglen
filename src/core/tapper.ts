@@ -57,6 +57,7 @@ export function mayTap(t: Tree | undefined): boolean {
     !!t &&
     !t.stump &&
     !t.large &&
+    !t.cosmetic &&
     t.stage === MATURE_STAGE &&
     t.tap === undefined
   );
