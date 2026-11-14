@@ -2583,7 +2583,8 @@ export class FarmScene extends Phaser.Scene {
       case "hedge-cart":
         return this.travel(this.mapId, "door");
       case "sight":
-        this.message = sightLine(f, service.id) ?? "";
+        this.message =
+          sightLine(f, service.id, dateOf(this.state.day.clock.day).year) ?? "";
         return this.render();
     }
   }

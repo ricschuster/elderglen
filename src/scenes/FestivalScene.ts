@@ -1,10 +1,12 @@
 import Phaser from "phaser";
+import { dateOf } from "../core/calendar";
 import {
   buyAtCounter,
   counterName,
   counterProblem,
   type CounterEntry,
   enterFestival,
+  festivalMapFor,
   type Festival,
   enterProblem,
   FESTIVAL_RETURN,
@@ -115,8 +117,9 @@ export class FestivalScene extends Phaser.Scene {
         : enterFestival(this.state);
     if (!f) return this.close(false);
     // A festival with a map is played there, not on this screen.
-    if (f.map && this.mode === "ask")
-      return this.close(false, { map: f.map, entry: "door" });
+    const built = festivalMapFor(f, dateOf(this.state.day.clock.day).year);
+    if (built && this.mode === "ask")
+      return this.close(false, { map: built, entry: "door" });
     this.inside = true;
     this.asking.forEach((o) => o.destroy());
     this.add

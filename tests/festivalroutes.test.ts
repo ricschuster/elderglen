@@ -42,6 +42,7 @@ const AREA_AT: Record<string, string[]> = {
   "hat-parade": [],
   "cake-day": [],
   "hollow-eve": [],
+  "hollow-eve@even": [],
 };
 
 describe("festival layouts (note 82)", () => {
@@ -392,5 +393,20 @@ describe("the Hat Parade march", () => {
     const none = festivalWhere(v("cuthbert"), hat, lapAt)!;
     expect(none.state).toBe("standing");
     expect(PARADE_TAIL).toBe(PARADE_LINE.length);
+  });
+});
+
+describe("Hollow Eve in even years (note 82)", () => {
+  const eve = fest("hollow-eve");
+  it("stands people on the even-year maze, with Toby in a niche", () => {
+    const odd = festivalWhere(v("toby"), eve, eve.opens, { year: 1 })!;
+    const even = festivalWhere(v("toby"), eve, eve.opens, { year: 2 })!;
+    expect(odd.map).toBe("hedge");
+    expect(even.map).toBe("hedge-even");
+    expect(festivalLayout(eve, false, 2)!.niches).toContainEqual([
+      even.x,
+      even.y,
+    ]);
+    expect(festivalHolds(dayOf("fall", 21) + 112)).toEqual([]);
   });
 });

@@ -79,6 +79,8 @@ export interface Festival {
    * door leads there, every other door on it is shut, and time stands still.
    */
   map?: string;
+  /** The map and zone used in even years instead (the larger Hollow Eve maze, note 82). */
+  evenYear?: { map: string; zone: Zone };
   /** What the festival's counter sells. Hats sell once, items without limit. */
   counter: CounterEntry[];
   /** Id of the festival game, or null for none (see `11_minigames.md`). */
@@ -119,9 +121,15 @@ export function festivalDayToday(day: number): Festival | undefined {
 export function festivalPlace(
   f: Festival,
   hallRestored: boolean,
+  year = 1,
 ): FestivalPlace {
+  if (f.evenYear && year % 2 === 0) return f.evenYear;
   return f.placeUpgrade && hallRestored ? f.placeUpgrade : f.place;
 }
+
+/** The built map a festival is played on in a year (the even-year maze differs), if it has one. */
+export const festivalMapFor = (f: Festival, year = 1): string | undefined =>
+  f.evenYear && year % 2 === 0 ? f.evenYear.map : f.map;
 
 export const inZone = (z: Zone, x: number, y: number): boolean =>
   x >= z.x && x < z.x + z.w && y >= z.y && y < z.y + z.h;
@@ -143,7 +151,7 @@ export function festivalAreaShut(
 ): boolean {
   const f = festivalDayToday(day);
   if (!f || minutes >= f.opens) return false;
-  const p = festivalPlace(f, hallRestored);
+  const p = festivalPlace(f, hallRestored, dateOf(day).year);
   return p.map === mapId && inZone(p.zone, x, y);
 }
 
@@ -289,7 +297,7 @@ export const FESTIVAL_RETURN = "from_festival";
 
 /** The festival whose map this is, if it is a festival map. */
 export function festivalOfMap(mapId: string): Festival | undefined {
-  return FESTIVALS.find((f) => f.map === mapId);
+  return FESTIVALS.find((f) => f.map === mapId || f.evenYear?.map === mapId);
 }
 
 /** True for a map that only exists for a festival: the green and the hedge maze. */

@@ -514,16 +514,20 @@ the reward are open. The rule is the same: a niche per villager, never a corrido
 tile. In even years one child goes in with a talker, as Stardew's Vincent with Sam
 (proposal: Toby with Walter); the other three stay at the fire.
 
-**Built status (2026-11-13).** Core and data only, no map or scene yet. The even-year maze is
-`src/content/maze-even.json`: 27 by 21, generated (seed fixed, a few loops added), 4 scares and a
-talker on dead ends, a hidden gap that saves 32 steps, with the same S and E markers (`MAZE_EVEN`,
-`mazeForYear(year)` in `maze.ts`; tests in `tests/showing.test.ts`). The even-year reward (default, the
-note was silent): the hat the first time, else a bigger sack, 4 hazelnuts, 4 cranberries and a pumpkin
-(about 980g, against about 530g in odd years). The villagers' niche lines are placeholders, one per
-person, in `src/content/hollow-eve-lines.json` (`nicheLine(id)`). Not built: the even-year Tiled map
-(`hedge-even`, plaza, booth, niches), its layout spots (Toby with Walter), choosing the map by year, and
-any scene that walks or talks to festival villagers (no scene shows them yet, so the lines are unused).
-The scene still serves the odd-year maze every year.
+**Built status (2026-11-14).** The even-year maze is `src/content/maze-even.json`: 27 by 21, generated (seed
+fixed, a few loops added), 4 scares and a talker on dead ends, a hidden gap that saves 32 steps, with the same S
+and E markers (`MAZE_EVEN`, `mazeForYear(year)` in `maze.ts`). The even-year reward (default, the note was
+silent): the hat the first time, else a bigger sack, 4 hazelnuts, 4 cranberries and a pumpkin (about 980g,
+against about 530g in odd years). The villagers' niche lines are placeholders, one per person, in
+`src/content/hollow-eve-lines.json`. The even-year Tiled map is `src/content/maps/hedge-even.json` (32 by 23, the
+plaza strip at x 1 to 3 as in the odd map with a second lantern group, the maze at map x 4 to 30, y 1 to 21, an
+east back wall column), chosen by year: the festival has `evenYear` (map `hedge-even`), `festivalMapFor(f, year)`,
+`festivalPlace(f, hall, year)`, and the layout key `hollow-eve@even` in `festival-spots.json` (`festivalLayout(f,
+hall, year)`, `FestivalOpts.year`). It has 14 niches (a placeholder draft: the 13 of the odd year plus Toby, who
+goes in as the note proposed; Walter and Toby are in neighbouring bottom niches, 5 tiles apart), Dunmar and
+Aldreth on two dead ends, and Fitch, Wren and Pim at the fire. Starts, booth, gate and leave marker are as in the
+odd map. Tests: `tests/festivalmaps.test.ts` ("the even-year hedge map"), `tests/festivalroutes.test.ts`.
+The niche and dead end tiles are a draft for the owner to check in play.
 
 Open: the villager lines (final text, with the voice sheets), the
 booth's stock beyond the built three items, the even-year maze and its niches, the
