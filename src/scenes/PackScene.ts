@@ -2,12 +2,15 @@ import Phaser from "phaser";
 import { dateText } from "../core/calendar";
 import { farmTypeById } from "../core/farmtypes";
 import { itemById } from "../core/items";
+import { bootsById, ringById } from "../core/equipment";
 import {
   moveStack,
   needsTrashConfirm,
   sortPack,
   splitStack,
+  takeOff,
   trashSlot,
+  wearFromPack,
 } from "../core/packmenu";
 import { splitQuality } from "../core/quality";
 import type { GameState } from "../core/save";
@@ -43,6 +46,12 @@ export class PackScene extends Phaser.Scene {
   private note!: Phaser.GameObjects.Text;
   private splitLabel!: Phaser.GameObjects.Text;
   private trashLabel!: Phaser.GameObjects.Text;
+  private worn: {
+    slot: number | "boots";
+    box: Phaser.GameObjects.Rectangle;
+    icon: Phaser.GameObjects.Image;
+    label: Phaser.GameObjects.Text;
+  }[] = [];
 
   constructor() {
     super("pack");
@@ -55,6 +64,7 @@ export class PackScene extends Phaser.Scene {
     this.splitting = false;
     this.trashAsked = false;
     this.cells = [];
+    this.worn = [];
   }
 
   create(): void {
@@ -95,15 +105,18 @@ export class PackScene extends Phaser.Scene {
       color: "#ffe9a0",
       lineSpacing: 6,
     });
-    this.button(560, panelY, "Sort", () => this.sort());
-    this.splitLabel = this.button(660, panelY, "Split", () =>
+    this.button(500, panelY, "Sort", () => this.sort());
+    this.splitLabel = this.button(604, panelY, "Split", () =>
       this.toggleSplit(),
     );
-    this.trashLabel = this.button(770, panelY, "Trash", () => this.trash());
+    this.trashLabel = this.button(708, panelY, "Trash", () => this.trash());
+    this.splitLabel.setText("Split");
+    this.button(812, panelY, "Wear", () => this.wear());
+    this.equipmentStrip(panelY + 58);
     this.add.text(
       LEFT,
       516,
-      "Tap a stack, then a slot to move or swap.   Esc or E: close   Page Up, Page Down: tabs",
+      "Tap a stack, then a slot to move or swap, or Wear.   Esc or E: close   Page Up, Page Down: tabs",
       { fontSize: "13px", color: "#ffffffaa" },
     );
 
@@ -113,6 +126,58 @@ export class PackScene extends Phaser.Scene {
     kb?.on("keydown-UP", () => this.moveCursor(-COLS));
     kb?.on("keydown-DOWN", () => this.moveCursor(COLS));
     kb?.on("keydown-ENTER", () => this.tap(this.cursor));
+    this.refresh();
+  }
+
+  /** Two ring slots and the boots under the backpack (note 37). Tap a worn one to take it off. */
+  private equipmentStrip(y: number): void {
+    this.add.text(LEFT, y, "Worn (tap to take off):", {
+      fontSize: "16px",
+      color: "#ffffffcc",
+    });
+    (["0", "1", "boots"] as const).forEach((k, n) => {
+      const slot = k === "boots" ? "boots" : Number(k);
+      const x = LEFT + 230 + n * 150;
+      const box = this.add
+        .rectangle(x, y - 6, 140, 40, 0x000000, 0.5)
+        .setOrigin(0)
+        .setStrokeStyle(2, 0xffffff, 0.4)
+        .setInteractive({ useHandCursor: true });
+      box.on("pointerdown", () => this.takeOffSlot(slot));
+      const icon = this.add
+        .image(x + 20, y + 14, "__DEFAULT")
+        .setDisplaySize(28, 28)
+        .setVisible(false);
+      const label = this.add
+        .text(x + 38, y + 14, "", { fontSize: "14px", color: "#ffffff" })
+        .setOrigin(0, 0.5);
+      this.worn.push({ slot, box, icon, label });
+    });
+  }
+
+  private wear(): void {
+    const stack =
+      this.selected === undefined
+        ? undefined
+        : this.state.inventory.slot(this.selected);
+    if (!stack) {
+      this.note.setText("Tap a ring or boots first, then Wear.");
+      return;
+    }
+    const r = wearFromPack(
+      this.state.equipment,
+      this.state.inventory,
+      stack.id,
+    );
+    if (r === "none") this.note.setText("That cannot be worn.");
+    else if (r === "full") this.note.setText("The pack is full.");
+    else this.selected = undefined;
+    this.refresh();
+  }
+
+  private takeOffSlot(slot: number | "boots"): void {
+    if (!takeOff(this.state.equipment, this.state.inventory, slot))
+      this.note.setText("Nothing to take off, or the pack is full.");
     this.refresh();
   }
 
@@ -215,6 +280,16 @@ export class PackScene extends Phaser.Scene {
     this.info.setText(
       `Funds: ${this.state.money} gold\n${dateText(this.state.day.clock.day)}\nFarm: ${farmTypeById(this.state.farmType).name}`,
     );
+    const eq = this.state.equipment;
+    for (const w of this.worn) {
+      const id = w.slot === "boots" ? eq.wornBoots() : eq.worn()[w.slot];
+      const def = id ? (ringById(id) ?? bootsById(id)) : undefined;
+      const key = id ? iconKey(id) : undefined;
+      w.icon.setVisible(key !== undefined);
+      if (key) w.icon.setTexture(key).setDisplaySize(28, 28);
+      const empty = w.slot === "boots" ? "Boots" : `Ring ${w.slot + 1}`;
+      w.label.setText(def?.name ?? empty).setAlpha(def ? 1 : 0.5);
+    }
     this.splitLabel.setText(this.splitting ? "Split: on" : "Split");
     this.trashLabel.setText("Trash");
     const at = this.selected ?? this.cursor;
