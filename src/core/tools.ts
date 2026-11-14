@@ -48,10 +48,13 @@ import { toolAway } from "./upgrades";
 import {
   GARDEN_POT,
   actOnPot,
+  digOutOfPot,
+  fertilizePot,
   pickUpGardenPot,
   placeGardenPot,
   plantInPot,
   potAt,
+  potInUse,
   waterPot,
 } from "./gardenpot";
 
@@ -197,8 +200,18 @@ function useOnPot(
   if (!potAt(g, map, x, y)) return undefined;
   if (held.kind === "tool" && held.tool === "can")
     return waterPot(g, map, x, y);
-  if (held.kind === "tool" && held.tool === "hoe")
-    return pickUpGardenPot(g, map, x, y);
+  if (
+    held.kind === "tool" &&
+    (held.tool === "hoe" || held.tool === "pickaxe" || held.tool === "axe")
+  ) {
+    const here = potAt(g, map, x, y);
+    // A planted pot is dug out first; an empty one comes up with the hoe.
+    if (here && potInUse(here)) return digOutOfPot(g, map, x, y, held.tool);
+    if (held.tool === "hoe") return pickUpGardenPot(g, map, x, y);
+    return undefined;
+  }
+  if (held.kind === "item" && fertilizerById(held.id))
+    return fertilizePot(g, map, x, y, held.id);
   if (
     held.kind === "item" &&
     (cropOfSeed(held.id) || held.id === MIXED_SEED || held.id === TEA_SAPLING)

@@ -74,7 +74,7 @@ export type Outcome =
 const fail = (reason: string): Outcome => ({ ok: false, reason });
 
 /** Spend tool energy. The clock runs in real time, so actions take no game minutes. */
-function swing(g: GameState, tool: Upgradable): void {
+export function swing(g: GameState, tool: Upgradable): void {
   const cost = swingCost(
     TOOL_ENERGY,
     g.toolTiers[tool],
