@@ -1,5 +1,14 @@
 import fs from "node:fs";
-import { launch, Bot, log, sleepMs, finding, findings, OUT } from "./lib.mjs";
+import {
+  launch,
+  Bot,
+  log,
+  sleepMs,
+  finding,
+  findings,
+  isWalk,
+  OUT,
+} from "./lib.mjs";
 import { fileURLToPath } from "node:url";
 
 const crops = JSON.parse(
@@ -126,10 +135,42 @@ async function uiText(key) {
 }
 
 // ---------- planning from live state
+/**
+ * A new farm starts with trees, a rock and other blockers on the plot rows, so
+ * the fixed rows A and B above are only a template. This maps each template
+ * cell to the nth free tile on the same row, read once from the game.
+ */
+const cellMap = new Map();
+async function mapFreeCells() {
+  await bot.refreshMap();
+  // `isWalk` also rules out door and exit tiles, such as the greenhouse ruin
+  // at 26,13, which cannot be tilled.
+  const blocked = {
+    has: (k) => {
+      const [x, y] = k.split(",").map(Number);
+      return !isWalk(x, y);
+    },
+  };
+  for (const [row, x0] of [
+    [A, 16],
+    [B, 14],
+  ]) {
+    const y = row[0].y;
+    const free = [];
+    for (let x = x0; x < 44 && free.length < row.length; x++)
+      if (!blocked.has(`${x},${y}`)) free.push({ x, y });
+    row.forEach((c, i) => cellMap.set(`${c.x},${c.y}`, free[i] ?? c));
+  }
+  log(
+    "plot cells moved off blocked tiles:",
+    [...cellMap].filter(([k, v]) => k !== `${v.x},${v.y}`).length,
+  );
+}
 function wanted(s) {
   const slots = PROFILE[seasonOf(s.day)];
   const out = [];
-  for (const sl of slots) {
+  for (const t of slots) {
+    const sl = { ...t, ...(cellMap.get(`${t.x},${t.y}`) ?? {}) };
     const plot = s.plots.find((p) => p.x === sl.x && p.y === sl.y);
     if (plot?.crop) continue;
     if (!plantable(sl.crop, s.day) || dos(s.day) < sl.from) continue;
@@ -272,8 +313,13 @@ async function walkThrough(dir, _ms, want) {
   await bot.key("KeyX", 90);
   await sleepMs(1200);
   const d = await bot.dbg();
-  if (d.map !== want)
-    finding(`expected map ${want} after the door, on ${d.map}`);
+  if (d.map !== want) {
+    finding(
+      `expected map ${want} after the door, on ${d.map}; message "${d.message}"`,
+    );
+    return false;
+  }
+  return true;
 }
 
 async function visitHall() {
@@ -349,13 +395,30 @@ async function endScreen() {
 
 /** The store is in Hearthwell: out of the farm's east exit, along to the store door, in. */
 async function enterStore() {
+  // The store opens at 9:00 (shophours.ts). The day starts at 6:00, so wait
+  // for the clock on the farm, where the walk is shortest, before leaving.
+  for (let n = 0; n < 400; n++) {
+    const { minutes } = await bot.snap();
+    if (minutes >= 9 * 60 || minutes < 6 * 60) break;
+    if (n === 0) log(`store opens at 9:00, clock ${minutes}: waiting`);
+    await sleepMs(1500);
+  }
   await bot.walkTo(78, 14);
   await walkThrough("right", 1200, "hearthwell");
   await bot.walkTo(22, 29);
-  await walkThrough("up", 1200, "general-store");
+  // The store keeps a closed day (shops.json), which is not a bug: go home.
+  await bot.face("up");
+  await bot.key("KeyX", 90);
+  await sleepMs(1200);
+  const d = await bot.dbg();
+  if (d.map === "general-store") return true;
+  log(`store door shut, skipping the shop: "${d.message}"`);
+  await bot.walkTo(1, 61);
+  await walkThrough("left", 1200, "farm");
+  return false;
 }
 async function leaveStore() {
-  await bot.walkTo(7, 8);
+  await bot.walkTo(9, 28);
   await walkThrough("down", 1200, "hearthwell");
   await bot.walkTo(1, 61);
   await walkThrough("left", 1200, "farm");
@@ -378,8 +441,8 @@ async function visitShop(day) {
   const def = seedDeficit(s0);
   if (sells.length === 0 && Object.keys(def).length === 0) return;
   log("shop: sell", JSON.stringify(sells), "deficit", JSON.stringify(def));
-  await enterStore();
-  await openService(5, 2, "shop", "up");
+  if (!(await enterStore())) return;
+  await openService(6, 19, "shop", "up");
   await bot.shot(`shop-d${day}`);
   // Sell first so the money funds the seeds.
   if (sells.length > 0) {
@@ -491,7 +554,15 @@ async function forageSweep(max = 99) {
     );
     const f = todo.shift();
     const before = await bot.snap();
-    await bot.actAt(f.x, f.y);
+    try {
+      await bot.actAt(f.x, f.y);
+    } catch (e) {
+      // Forage can spawn in a pocket the farmer cannot reach (trees on every
+      // side). That is the map, not the bot: note it and move on.
+      if (!/no stand tile|no path|could not reach/.test(e.message)) throw e;
+      log(`forage ${f.id} at ${f.x},${f.y} is walled in, skipped`);
+      continue;
+    }
     const after = await bot.snap();
     if (bot.countBase(after, f.id) !== bot.countBase(before, f.id) + 1) {
       const m = (await bot.dbg()).message;
@@ -597,6 +668,9 @@ async function sleepNight(prev) {
       );
   }
   await bot.key("Enter", 500);
+  // A story screen the game opens by itself in the morning (the orders board
+  // intro, the Greencoat) is not a report that failed to close.
+  await bot.dismissModals();
   s = await bot.snap();
   if (s.scenes.includes("report") || !s.scenes.includes("farm"))
     finding(`report did not close: ${s.scenes}`);
@@ -715,6 +789,7 @@ async function main() {
   let reloaded = false;
   // The house, once, for coverage.
   await visitHouse();
+  await mapFreeCells();
   for (;;) {
     let s = await bot.snap();
     if (s.day > MAX_DAY) break;

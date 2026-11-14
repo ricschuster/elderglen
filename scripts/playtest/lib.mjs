@@ -372,12 +372,21 @@ export class Bot {
       log(`hookWalk: no route to ${tx},${ty}`);
       return false;
     }
-    const limit = Date.now() + 20000;
+    // Long routes take a while on a busy machine, so give up only when the
+    // player has made no progress for a while (or after two minutes in all).
+    const hardLimit = Date.now() + 120000;
+    let lastKey = "";
+    let lastMove = Date.now();
     for (;;) {
       await sleepMs(25);
       const d = await this.dbg();
       if (!d.walking) return d.tile.x === tx && d.tile.y === ty;
-      if (Date.now() > limit) {
+      const k = `${d.tile.x},${d.tile.y}`;
+      if (k !== lastKey) {
+        lastKey = k;
+        lastMove = Date.now();
+      }
+      if (Date.now() - lastMove > 8000 || Date.now() > hardLimit) {
         const sn = await this.snap();
         log(
           `hookWalk timed out: tile ${JSON.stringify(d.tile)} map ${d.map} scenes ${sn.scenes} target ${tx},${ty}`,
