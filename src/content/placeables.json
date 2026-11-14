@@ -388,5 +388,13 @@
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"
+  },
+  {
+    "id": "hollow-lantern",
+    "kind": "decor",
+    "places": ["farm"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
   }
 ]

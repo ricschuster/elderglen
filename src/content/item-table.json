@@ -1753,6 +1753,12 @@
     "sellPrice": 90
   },
   {
+    "id": "hollow-lantern",
+    "name": "Hollow lantern",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "holly-sprig",
     "name": "Holly sprig",
     "sellPrice": 80

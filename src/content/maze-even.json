@@ -35,7 +35,7 @@
   "talkers": {
     "v": "A villager waits at a bend. \"This one is bigger than I remember. Keep left and you will be fine.\""
   },
-  "chestHat": "lantern-hood",
+  "chestItem": "hollow-lantern",
   "sack": [
     {
       "id": "hazelnut",
@@ -43,7 +43,7 @@
     },
     {
       "id": "cranberry",
-      "count": 4
+      "count": 2
     },
     {
       "id": "pumpkin",

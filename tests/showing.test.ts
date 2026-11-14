@@ -281,7 +281,7 @@ describe("the Hollow Eve maze", () => {
     const g = newGame();
     g.day.clock.day = dayOf("fall", 21);
     expect(openChest(g)).toMatch(/Lantern Hood/);
-    expect(g.wardrobe.has(MAZE.chestHat)).toBe(true);
+    expect(g.wardrobe.has(MAZE.chestHat!)).toBe(true);
     expect(chestOpened(g)).toBe(true);
     expect(openChest(g)).toMatch(/empty/);
     g.day.clock.day += 8 * DAYS_PER_SEASON;
@@ -292,18 +292,35 @@ describe("the Hollow Eve maze", () => {
     expect(sackValue()).toBeLessThanOrEqual(600);
   });
 
-  it("gives a bigger sack in an even year, from the larger maze", () => {
+  it("gives a lantern the first even year, then a sack worth about 800g", () => {
     const g = newGame();
     g.day.clock.day = dayOf("fall", 21) + 4 * DAYS_PER_SEASON;
     expect(dateOf(g.day.clock.day).year).toBe(2);
-    g.wardrobe.add(MAZE.chestHat);
+    expect(openChest(g)).toMatch(/hollow lantern/);
+    expect(g.inventory.count("hollow-lantern")).toBe(1);
+    expect(g.wardrobe.has("lantern-hood")).toBe(false);
+    expect(openChest(g)).toMatch(/empty/);
+    g.day.clock.day += 8 * DAYS_PER_SEASON;
+    expect(dateOf(g.day.clock.day).year).toBe(4);
     expect(openChest(g)).toMatch(/sack/);
+    expect(g.inventory.count("hollow-lantern")).toBe(1);
     expect(g.inventory.count("hazelnut")).toBe(4);
     expect(g.inventory.count("pumpkin")).toBe(1);
-    expect(sackValue(MAZE_EVEN)).toBeGreaterThan(sackValue() * 1.5);
+    expect(sackValue(MAZE_EVEN)).toBeGreaterThanOrEqual(750);
+    expect(sackValue(MAZE_EVEN)).toBeLessThanOrEqual(850);
+    expect(sackValue(MAZE_EVEN)).toBeGreaterThan(sackValue() * 1.4);
     expect(mazeForYear(1)).toBe(MAZE);
     expect(mazeForYear(2)).toBe(MAZE_EVEN);
     expect(mazeForYear(3)).toBe(MAZE);
+  });
+
+  it("keeps the odd-year hat once and the lantern separate from it", () => {
+    const g = newGame();
+    g.day.clock.day = dayOf("fall", 21);
+    expect(openChest(g)).toMatch(/Lantern Hood/);
+    g.day.clock.day += 4 * DAYS_PER_SEASON;
+    expect(openChest(g)).toMatch(/hollow lantern/);
+    expect(g.inventory.count("hollow-lantern")).toBe(1);
   });
 
   describe("the even-year maze", () => {
@@ -405,7 +422,7 @@ describe("the Hollow Eve maze", () => {
   it("keeps the chest shut while the pack is too full for the sack", () => {
     const g = newGame();
     g.day.clock.day = dayOf("fall", 21);
-    g.wardrobe.add(MAZE.chestHat);
+    g.wardrobe.add(MAZE.chestHat!);
     while (g.inventory.add("wood", 50)) continue;
     while (g.inventory.add("sap", 1)) continue;
     expect(openChest(g)).toMatch(/too full/);

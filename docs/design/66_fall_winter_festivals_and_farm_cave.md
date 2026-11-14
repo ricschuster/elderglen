@@ -84,9 +84,13 @@ and one line each) and the mushroom cave. Both are below. The farm cave mark
   pumpkin that grins, a ghost sheet that drifts. Villagers stand inside and
   react to them in a line each (Stardew's maze has talkers inside, checked).
   A second, larger maze for year two is parked.
-- A chest sits at the end. The first time, it holds a unique reward (a hat, name
-  open). Each later year it holds a mixed sack worth about 500g of forage and
-  fall goods. A cart or shortcut brings the player back to the entrance.
+- A chest sits at the end. Odd years: the first time, a unique hat, then each
+  later odd year a mixed sack worth about 500g of forage and fall goods. Even
+  years (owner, 2026-11-14): the first time in an even year, a unique placeable
+  decor lantern (the Hollow lantern, a placeholder name, a keepsake that is
+  never sold or bought and stands on the farm like the other farm decoration),
+  then each later even year a richer sack worth about 800g of forage and fall
+  goods. A cart or shortcut brings the player back to the entrance.
 - A booth outside the maze sells fall decor: a carved gourd lamp and two
   furniture pieces. It uses the festival counter built in build 8.
 
@@ -213,7 +217,7 @@ screens stay until the maps exist.
    had parked. The current 19 by 15 grid in `src/content/maze.json` is the
    odd-year maze. The even-year maze is new and larger, with a different
    layout. The two prizes are two chests: the first-year unique reward in odd
-   years and a better one in even years (the even-year reward is open).
+   years and a better one in even years (the even-year reward is a placeable lantern then a sack, note 66).
 4. **A hidden passage and a shortcut back (Stardew).** A gap in the hedge, found
    by looking, leads to the chest room in each maze, and a shortcut after the
    chest sends the player back to the entrance. Stardew's odd-year maze has
@@ -260,3 +264,8 @@ stay screens).
 **Built (2026-11-14, owner's answers):** the Showing now has eight groups (fish
 and animal products added), Stardew's price bands by quality for value points
 (top 6 an item), and the places at 77, 64 and 51 of a possible 107.
+
+**Built (2026-11-14):** the even-year chest gives the Hollow lantern the first
+even year (a farm decoration, placeholder colour art, never sold), then a sack
+of 4 hazelnuts, 2 cranberries and a pumpkin (830g). The odd-year chest is
+unchanged. `chestHat` and `chestItem` are optional fields in the maze data.

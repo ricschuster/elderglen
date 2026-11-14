@@ -293,6 +293,7 @@ for (const b of BARS)
 for (const w of weaponData)
   items.set(w.id, { id: w.id, name: w.name, sellPrice: 0, keep: true });
 /** Moth dust, a Dustmoth drop and a crafting good (note 22). Sell price is a placeholder, ours. */
+export const HOLLOW_LANTERN = "hollow-lantern";
 export const MOTH_DUST = "moth-dust";
 items.set(MOTH_DUST, { id: MOTH_DUST, name: "Moth dust", sellPrice: 30 });
 /** The other creature drops (note 22). Sell prices are placeholders, ours. Frost berry is food. */
@@ -312,6 +313,14 @@ items.set(iceFishing.frostfin.id, {
 items.set(lanternFloat.keepsake.id, {
   id: lanternFloat.keepsake.id,
   name: lanternFloat.keepsake.name,
+  sellPrice: 0,
+  keep: true,
+});
+
+/** The even-year Hollow Eve chest's keepsake (note 66): a placeable farm decoration, never bought. Placeholder name. */
+items.set(HOLLOW_LANTERN, {
+  id: HOLLOW_LANTERN,
+  name: "Hollow lantern",
   sellPrice: 0,
   keep: true,
 });
@@ -618,6 +627,7 @@ const GROUPS: [string, string[]][] = [
       ELF_LETTER,
       lanternFloat.lantern.id,
       lanternFloat.keepsake.id,
+      HOLLOW_LANTERN,
     ],
   ],
   ["Rings", RINGS.map((r) => r.id)],
