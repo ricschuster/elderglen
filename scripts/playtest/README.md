@@ -62,7 +62,10 @@ Dev hooks the scripts can call: `window.farmGive(id, n)` adds items (returns
 `"ok"`, `"unknown"` or `"full"`), `window.farmMoney(n)` adds money,
 `window.farmWalk(x, y)` starts the tap route to a tile (false when there is no
 route; `farmDebug().walking` is true until it ends), `window.farmBlocked()` lists
-the tiles the farmer cannot stand on now. By hand, the
+the tiles the farmer cannot stand on now, `window.farmState(patch)` jumps to a state in one
+call and restarts the scene (keys: `day` or `season`/`dayOfSeason`/`year`, `money`, `items`,
+`skills` (levels), `hallRooms`, `hallBundles`, `flags`, `hearts`; returns `{problems}`; see
+`src/core/statepatch.ts`; `node scripts/playtest/state.mjs` checks it). By hand, the
 debug menu (`docs/design/42_debug_menu.md`) opens with the backtick key or the
 DBG button. Both exist in dev builds only.
 
