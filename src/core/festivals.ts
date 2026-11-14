@@ -3,7 +3,7 @@ import { DAYS_PER_SEASON, SEASONS, dateOf, type Season } from "./calendar";
 import { hatById } from "./hats";
 import { absorbElderfruit } from "./elderfruit";
 import { ELDERFRUIT, itemById } from "./items";
-import { MAZE } from "./maze";
+import { mazeForYear } from "./maze";
 import type { GameState } from "./save";
 import { showTokens, spendTokens } from "./showing";
 import { hasFlag, setFlag } from "./worldflags";
@@ -301,11 +301,17 @@ export const isFestivalMap = (mapId: string): boolean =>
  * green's villagers are `sight-N` (the festival's `sights`), and the hedge's
  * are `scare-x` and `talk-x` (the maze file). Undefined for any other id.
  */
-export function sightLine(f: Festival, id: string): string | undefined {
+export function sightLine(
+  f: Festival,
+  id: string,
+  year = 1,
+): string | undefined {
   const n = /^sight-(\d+)$/.exec(id);
   if (n) return f.sights?.[Number(n[1])]?.line;
   const m = /^(scare|talk)-(.)$/.exec(id);
   if (m && f.activity === "maze")
-    return (m[1] === "scare" ? MAZE.scares : MAZE.talkers)[m[2]!];
+    return (
+      m[1] === "scare" ? mazeForYear(year).scares : mazeForYear(year).talkers
+    )[m[2]!];
   return undefined;
 }

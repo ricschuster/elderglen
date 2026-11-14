@@ -57,8 +57,13 @@ buffs are not built. The leaf's own sale price is still ours (SC-173).
 ## Open
 
 - Garden pots: drawn (placeholder terracotta pot, `GARDEN_POT_KEY`, with the crop or tea bush in it) and
-  block walking (2026-11-13); placing is the held pot, as for other placeables. Left: real art. Digging a crop or bush out of a pot (the pot stays full
-  until the crop is harvested or withers). Fertilizer in a pot. Whether rain waters an outdoor
-  pot is from memory (Stardew check, register row to add).
+  block walking (2026-11-13); placing is the held pot, as for other placeables. Left: real art.
+- Built 2026-11-13: digging out and fertilizer. The hoe or pickaxe digs a crop out of a pot (one swing, the crop is
+  lost, the pot and its soil stay); the axe digs a tea bush out (any tier, one swing, bush lost). An empty pot is
+  still lifted with the hoe. Fertilizer is mixed in by holding it on the pot, under the field rules (one per pot,
+  quality and retaining before the seed sprouts, speed any time); an empty pot takes it too. It wears off at a season
+  change outdoors when no crop is in it. Tea bushes take no fertilizer. From memory, SC-176. `digOutOfPot`,
+  `fertilizePot` in `gardenpot.ts`.
+- Whether rain waters an outdoor pot is from memory (SC-175).
 - Every placeholder number: recipe, leaf price, leaf energy, sapling price,
   cap of 1 leaf. Real art.

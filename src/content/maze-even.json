@@ -1,0 +1,53 @@
+{
+  "rows": [
+    "###########################",
+    "#S..#...#...........#.....#",
+    "###.#.#.#.#####.###.#.#.#.#",
+    "#...#.#...#...#..E#...#.#.#",
+    "#.#########.#.#########.#.#",
+    "#...........#...#.....#.#.#",
+    "###############.#.###.#.###",
+    "#..........c#...#.#v#.#...#",
+    "#.###.#.#.###.###.#.#.###.#",
+    "#.#...#.#.#.......#...#...#",
+    "#.###.###.#.#.#.###.###.###",
+    "#...#.....#.#...#...#.....#",
+    "#.#.#####.#.###.###.#####.#",
+    "#...#d....#...#...#...#...#",
+    "#.#.#########.###.###.#.#.#",
+    "#.#.#......b#...#...#...#.#",
+    "###.#.#.#.#####.###.#####.#",
+    "#...#........a#.....#...#.#",
+    "#.#####.###.#########.#.#.#",
+    "#.........#...........#...#",
+    "###########################"
+  ],
+  "gap": {
+    "x": 22,
+    "y": 5
+  },
+  "scares": {
+    "a": "A scarecrow in a bigger hat turns to watch you. It is still only straw.",
+    "b": "A pumpkin stack wobbles and grins. The top one has a tiny candle.",
+    "c": "A ghost sheet floats over the hedge and waves a sleeve at you.",
+    "d": "A raven on a post tilts its head. It looks wooden, but it blinks."
+  },
+  "talkers": {
+    "v": "A villager waits at a bend. \"This one is bigger than I remember. Keep left and you will be fine.\""
+  },
+  "chestHat": "lantern-hood",
+  "sack": [
+    {
+      "id": "hazelnut",
+      "count": 4
+    },
+    {
+      "id": "cranberry",
+      "count": 4
+    },
+    {
+      "id": "pumpkin",
+      "count": 1
+    }
+  ]
+}

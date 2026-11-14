@@ -514,7 +514,18 @@ the reward are open. The rule is the same: a niche per villager, never a corrido
 tile. In even years one child goes in with a talker, as Stardew's Vincent with Sam
 (proposal: Toby with Walter); the other three stay at the fire.
 
-Open: the villager lines (one each, a draft per person with the voice sheets), the
+**Built status (2026-11-13).** Core and data only, no map or scene yet. The even-year maze is
+`src/content/maze-even.json`: 27 by 21, generated (seed fixed, a few loops added), 4 scares and a
+talker on dead ends, a hidden gap that saves 32 steps, with the same S and E markers (`MAZE_EVEN`,
+`mazeForYear(year)` in `maze.ts`; tests in `tests/showing.test.ts`). The even-year reward (default, the
+note was silent): the hat the first time, else a bigger sack, 4 hazelnuts, 4 cranberries and a pumpkin
+(about 980g, against about 530g in odd years). The villagers' niche lines are placeholders, one per
+person, in `src/content/hollow-eve-lines.json` (`nicheLine(id)`). Not built: the even-year Tiled map
+(`hedge-even`, plaza, booth, niches), its layout spots (Toby with Walter), choosing the map by year, and
+any scene that walks or talks to festival villagers (no scene shows them yet, so the lines are unused).
+The scene still serves the odd-year maze every year.
+
+Open: the villager lines (final text, with the voice sheets), the
 booth's stock beyond the built three items, the even-year maze and its niches, the
 reward chest items, whether Hester should be placed at all after 20:30, and whether
 the gate needs Cuthbert (he only greets).
@@ -683,3 +694,17 @@ placeholders to check in play.
 **Built 2026-11-13 (#876):** the ice fishing count shows on the status line while the contest runs
 (`iceCounter`); the cake table opens `CakeScene`, a dish picker; the lantern launch drifts a glowing
 dot north and fades it (`driftLantern`, placeholder look).
+
+## Built status (2026-11-13, scene walking)
+
+`villagersOn` (`townfolk.ts`) now takes the festival layer first (`villagerNow`), so on a festival day
+everyone in the layout stands at their spot from opening on every map the festival uses, Hester goes home
+at 20:30, and the Hat Parade marchers walk the line (`Present.marching`). `FarmScene.syncVillagers` runs the
+minute on between the 10 minute clock ticks on festival days, so the march moves a tile a minute, and a
+marcher glides between tiles (a 600 ms tween, placeholder). Defaults where the note was silent: villagers pop
+in at their spot when the festival opens (no walk from their normal place; only the walk to and from the
+march line); the green and the hedge show the layout villagers too (time is frozen there, so they stand);
+in the hedge, talking to a villager shows `nicheLine(id)` with their name instead of the normal talk (no
+gift or friendship step there). Not built: the player joining the march at the tail (input off, `paradeJoinedAt`
+is never set, so there is no extra lap), the walk-in at opening, the even-year map. Tests in
+`tests/townfolk.test.ts`. Not looked at in a browser.

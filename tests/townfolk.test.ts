@@ -148,3 +148,29 @@ describe("morning rollover", () => {
     sleep(back!, [], () => 0.99);
   });
 });
+
+describe("villagersOn on a festival day (note 82)", () => {
+  const PARADE_DAY = 10; // Spring 10
+  const hmap = "hearthwell";
+  it("stands everyone at their festival spot at 12:00", () => {
+    const g = newGame();
+    const list = villagersOn(g, hmap, PARADE_DAY, at(12));
+    expect(list.length).toBeGreaterThanOrEqual(20);
+    expect(list.every((p) => !p.marching)).toBe(true);
+  });
+  it("walks marchers during the march, in line order along the out lane", () => {
+    const g = newGame();
+    const list = villagersOn(g, hmap, PARADE_DAY, 14 * 60 + 5);
+    const marching = list.filter((p) => p.marching);
+    expect(marching.length).toBeGreaterThan(3);
+    const head = list.find((p) => p.id === "cuthbert")!;
+    const tail = list.find((p) => p.id === "fitch")!;
+    expect(head.x).toBeLessThanOrEqual(tail.x);
+  });
+  it("gives the normal route on a plain day", () => {
+    const g = newGame();
+    expect(villagersOn(g, hmap, 3, 14 * 60 + 5).some((p) => p.marching)).toBe(
+      false,
+    );
+  });
+});

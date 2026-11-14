@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { DAYS_PER_SEASON, SEASONS } from "../src/core/calendar";
+import { DAYS_PER_SEASON, SEASONS, dateOf } from "../src/core/calendar";
+import { festivalLayout } from "../src/core/festivalroutes";
 import {
   buyAtCounter,
   counterProblem,
@@ -9,6 +10,9 @@ import {
 } from "../src/core/festivals";
 import {
   MAZE,
+  MAZE_EVEN,
+  mazeForYear,
+  nicheLine,
   atChest,
   cellAt,
   chestOpened,
@@ -254,12 +258,122 @@ describe("the Hollow Eve maze", () => {
     expect(g.wardrobe.has(MAZE.chestHat)).toBe(true);
     expect(chestOpened(g)).toBe(true);
     expect(openChest(g)).toMatch(/empty/);
-    g.day.clock.day += 4 * DAYS_PER_SEASON;
+    g.day.clock.day += 8 * DAYS_PER_SEASON;
     expect(chestOpened(g)).toBe(false);
     expect(openChest(g)).toMatch(/sack/);
     expect(g.inventory.count("hazelnut")).toBe(3);
     expect(sackValue()).toBeGreaterThanOrEqual(450);
     expect(sackValue()).toBeLessThanOrEqual(600);
+  });
+
+  it("gives a bigger sack in an even year, from the larger maze", () => {
+    const g = newGame();
+    g.day.clock.day = dayOf("fall", 21) + 4 * DAYS_PER_SEASON;
+    expect(dateOf(g.day.clock.day).year).toBe(2);
+    g.wardrobe.add(MAZE.chestHat);
+    expect(openChest(g)).toMatch(/sack/);
+    expect(g.inventory.count("hazelnut")).toBe(4);
+    expect(g.inventory.count("pumpkin")).toBe(1);
+    expect(sackValue(MAZE_EVEN)).toBeGreaterThan(sackValue() * 1.5);
+    expect(mazeForYear(1)).toBe(MAZE);
+    expect(mazeForYear(2)).toBe(MAZE_EVEN);
+    expect(mazeForYear(3)).toBe(MAZE);
+  });
+
+  describe("the even-year maze", () => {
+    const M = MAZE_EVEN;
+    const at = (x: number, y: number) => M.rows[y]?.[x] ?? "#";
+    const find = (ch: string) => {
+      const y = M.rows.findIndex((r) => r.includes(ch));
+      return { x: M.rows[y]!.indexOf(ch), y };
+    };
+    const reach = (open: boolean) => {
+      const s = find("S");
+      const seen = new Map<string, number>([[`${s.x},${s.y}`, 0]]);
+      const q = [s];
+      for (let i = 0; i < q.length; i++) {
+        const c = q[i]!;
+        for (const [dx, dy] of [
+          [1, 0],
+          [-1, 0],
+          [0, 1],
+          [0, -1],
+        ] as const) {
+          const n = { x: c.x + dx, y: c.y + dy };
+          const ch = at(n.x, n.y);
+          const gap = open && n.x === M.gap.x && n.y === M.gap.y;
+          const wall =
+            (ch === "#" && !gap) || ch in M.scares || ch in M.talkers;
+          if (wall || seen.has(`${n.x},${n.y}`)) continue;
+          seen.set(`${n.x},${n.y}`, seen.get(`${c.x},${c.y}`)! + 1);
+          q.push(n);
+        }
+      }
+      const e = find("E");
+      return seen.get(`${e.x},${e.y}`);
+    };
+
+    it("is larger than the odd-year maze, rectangular and walled all round", () => {
+      expect(M.rows.length).toBeGreaterThan(MAZE.rows.length);
+      expect(M.rows[0]!.length).toBeGreaterThan(MAZE.rows[0]!.length);
+      for (const r of M.rows) expect(r.length).toBe(M.rows[0]!.length);
+      for (let x = 0; x < M.rows[0]!.length; x++) {
+        expect(at(x, 0)).toBe("#");
+        expect(at(x, M.rows.length - 1)).toBe("#");
+      }
+      for (let y = 0; y < M.rows.length; y++) {
+        expect(at(0, y)).toBe("#");
+        expect(at(M.rows[0]!.length - 1, y)).toBe("#");
+      }
+    });
+
+    it("lets you reach the chest with the scares in place, the gap only a shortcut", () => {
+      expect(at(M.gap.x, M.gap.y)).toBe("#");
+      expect(reach(false)).toBeDefined();
+      expect(reach(true)!).toBeLessThan(reach(false)!);
+    });
+
+    it("has every scare and talker once, with a line, and no scare walling anyone off", () => {
+      for (const k of [...Object.keys(M.scares), ...Object.keys(M.talkers)]) {
+        expect(M.rows.join("").split(k).length - 1, k).toBe(1);
+      }
+      // Every corridor tile (not a scare) is still reachable from the start.
+      const s = find("S");
+      const seen = new Set([`${s.x},${s.y}`]);
+      const q = [s];
+      for (let i = 0; i < q.length; i++) {
+        const c = q[i]!;
+        for (const [dx, dy] of [
+          [1, 0],
+          [-1, 0],
+          [0, 1],
+          [0, -1],
+        ] as const) {
+          const n = { x: c.x + dx, y: c.y + dy };
+          const ch = at(n.x, n.y);
+          if (
+            ch === "#" ||
+            ch in M.scares ||
+            ch in M.talkers ||
+            seen.has(`${n.x},${n.y}`)
+          )
+            continue;
+          seen.add(`${n.x},${n.y}`);
+          q.push(n);
+        }
+      }
+      const open = M.rows.join("").replace(/[#abcdv]/g, "").length;
+      expect(seen.size).toBe(open);
+    });
+  });
+
+  it("has one placeholder line for every villager at Hollow Eve", () => {
+    const layout = festivalLayout(
+      FESTIVALS.find((f) => f.id === "hollow-eve")!,
+    )!;
+    for (const id of Object.keys(layout.spots))
+      expect(nicheLine(id), id).toMatch(/\S/);
+    expect(nicheLine("nobody")).toBeUndefined();
   });
 
   it("keeps the chest shut while the pack is too full for the sack", () => {

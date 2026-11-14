@@ -6,6 +6,7 @@ import { collect, smelt } from "../src/core/furnace";
 import {
   GARDEN_POT,
   actOnPot,
+  potInUse,
   placeGardenPot,
   potAt,
   potLook,
@@ -207,5 +208,54 @@ describe("garden pot drawing", () => {
       daysGrown: 0,
       ripe: false,
     });
+  });
+});
+
+describe("garden pot dig out and fertilizer", () => {
+  function potted(seed = "parsnip-seed") {
+    const g = newGame();
+    const map = soilMap();
+    g.inventory.add(GARDEN_POT);
+    g.inventory.add(seed);
+    placeGardenPot(g, map, 3, 3);
+    useHeld(g, map, held(seed), 3, 3);
+    return { g, map };
+  }
+
+  it("digs a crop out with the hoe or pickaxe, and the pot stays", () => {
+    for (const t of ["hoe", "pickaxe"]) {
+      const { g, map } = potted();
+      expect(useHeld(g, map, tool(t), 3, 3).ok).toBe(true);
+      const pot = potAt(g, map, 3, 3)!;
+      expect(pot).toBeDefined();
+      expect(potInUse(pot)).toBe(false);
+      expect(useHeld(g, map, tool("hoe"), 3, 3).ok).toBe(true);
+      expect(potAt(g, map, 3, 3)).toBeUndefined();
+    }
+  });
+
+  it("digs a tea bush out with the axe only", () => {
+    const { g, map } = potted(TEA_SAPLING);
+    expect(useHeld(g, map, tool("hoe"), 3, 3).ok).toBe(false);
+    expect(potInUse(potAt(g, map, 3, 3)!)).toBe(true);
+    expect(useHeld(g, map, tool("axe"), 3, 3).ok).toBe(true);
+    expect(potInUse(potAt(g, map, 3, 3)!)).toBe(false);
+  });
+
+  it("takes fertilizer in an empty pot and a planted one", () => {
+    const g = newGame();
+    const map = soilMap();
+    g.inventory.add(GARDEN_POT);
+    g.inventory.add("basic-fertilizer", 2);
+    g.inventory.add("parsnip-seed");
+    placeGardenPot(g, map, 3, 3);
+    expect(useHeld(g, map, held("basic-fertilizer"), 3, 3).ok).toBe(true);
+    expect(useHeld(g, map, held("basic-fertilizer"), 3, 3).ok).toBe(false);
+    expect(g.inventory.count("basic-fertilizer")).toBe(1);
+    expect(useHeld(g, map, held("parsnip-seed"), 3, 3).ok).toBe(true);
+    const back = deserialize(serialize(g))!;
+    expect(JSON.stringify(potAt(back, map, 3, 3)?.state)).toContain(
+      "basic-fertilizer",
+    );
   });
 });

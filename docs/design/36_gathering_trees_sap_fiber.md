@@ -186,8 +186,7 @@ Owner decisions, 2026-11-12. Built, with tests in `tests/forest.test.ts`:
   only shake it."), a tapper is refused (`mayTap`), the hand still shakes a seed, and a cosmetic
   spot never regrows. The tree stays in the map's tree list and blocks like any tree.
 
-Not built: Hearthwell's map (`hearthwell.json`) has no tree objects, so no village tree is marked
-yet. Placing the village trees, with `cosmetic` set, is a layout task (note 87). `farm.json` and
+Village trees: built 2026-11-13, 24 cosmetic oaks in `hearthwell.json` (note 77, "Village trees built"). `farm.json` and
 `mountain.json` were not touched. The Tiled property is not yet read in a map test (only the tree
 rules are), and nothing was verified by play. Per-type yields are the common tree's (12 wood
 and Foraging bonus, 5 sap).

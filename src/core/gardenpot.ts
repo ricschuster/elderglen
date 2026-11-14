@@ -1,5 +1,7 @@
 import {
+  fertilize,
   harvest,
+  swing,
   isClear,
   pickTeaLeaves,
   plant,
@@ -130,8 +132,8 @@ function withSoil<T>(
   const out = run(soil);
   const next = soil.plotAt(p.x, p.y);
   const state = { ...stateOf(p) };
-  if (next?.crop) state.plot = structuredClone(next);
-  else if (next && stateOf(p).plot) state.plot = structuredClone(next);
+  if (next && (next.crop || stateOf(p).plot || dig))
+    state.plot = structuredClone(next);
   keep(p, state);
   return out;
 }
@@ -164,6 +166,49 @@ export function plantInPot(
     true,
   );
   return result;
+}
+
+/** Mix a fertilizer into a pot's soil. Same rules as a field plot; an empty pot takes it too. */
+export function fertilizePot(
+  g: GameState,
+  map: FarmMap,
+  x: number,
+  y: number,
+  id: string,
+): Outcome {
+  const p = potAt(g, map, x, y);
+  if (!p || stateOf(p).tea) return fail("nothing to fertilize");
+  return withSoil(map, p, (soil) => fertilize(g, x, y, id, soil), true);
+}
+
+/**
+ * Dig what grows in a pot out with the hoe or pickaxe (crop) or the axe (tea
+ * bush). The plant is lost, as in a field; the pot and its soil stay. Costs one swing.
+ */
+export function digOutOfPot(
+  g: GameState,
+  map: FarmMap,
+  x: number,
+  y: number,
+  tool: "hoe" | "pickaxe" | "axe",
+): Outcome {
+  const p = potAt(g, map, x, y);
+  if (!p) return fail("nothing to act on");
+  const st = stateOf(p);
+  if (g.day.over) return fail("exhausted");
+  if (st.tea && tool === "axe") {
+    swing(g, "axe");
+    delete st.tea;
+    keep(p, st);
+    return { ok: true };
+  }
+  if (st.plot?.crop && tool !== "axe") {
+    swing(g, tool);
+    delete st.plot.crop;
+    keep(p, st);
+    return { ok: true };
+  }
+  return fail("garden pot in use");
 }
 
 /** Water the crop in a pot with the can. */
