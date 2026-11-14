@@ -438,5 +438,61 @@
   },
   "wax": {
     "text": "Beeswax from the apiary. Sells for 40 coins."
+  },
+  "blue-ribbon-melon": {
+    "text": "The prize for first place at the Harvest Showing, given once a year. Every villager loves it as a gift.",
+    "draft": true
+  },
+  "glimmerstone": {
+    "text": "A rare gem found deep in the mines, from floor 100 down. It sells for 1,000 coins.",
+    "draft": true
+  },
+  "frost-berry": {
+    "text": "A cold blue berry dropped by Frostnibblers in the icy parts of the mines.",
+    "draft": true
+  },
+  "ice-shard": {
+    "text": "A sliver of clear ice dropped by Icicle Hoppers. It never quite melts.",
+    "draft": true
+  },
+  "driftwood": {
+    "text": "A weathered stick, sometimes pulled up in a crab or lobster pot. It is worth almost nothing, and the villagers do not care for it as a gift.",
+    "draft": true
+  },
+  "beer": {
+    "text": "Brewed in a keg. Any beer sells for 200 coins.",
+    "draft": true
+  },
+  "peach": {
+    "text": "A soft summer fruit from the peach tree, which takes a sapling bought for 6,000 coins. It sells for 140 coins.",
+    "draft": true
+  },
+  "truffle-oil": {
+    "text": "A rich oil pressed from a truffle. Some villagers love it as a gift, and it sells for 1,250 coins.",
+    "draft": true
+  },
+  "goat-cheese": {
+    "text": "Cheese pressed from goat milk, worth more than cheese from cow milk. It sells for 540 coins.",
+    "draft": true
+  },
+  "grape-wine": {
+    "text": "Wine made from wild grapes, left to turn in a keg. It sells for 240 coins.",
+    "draft": true
+  },
+  "mead": {
+    "text": "A sweet drink made from honey. It sells for 300 coins.",
+    "draft": true
+  },
+  "moonwool": {
+    "text": "A pale, silvery tuft that a sheep may leave beside its wool once it trusts you well enough. The tailor can make night trousers from it.",
+    "draft": true
+  },
+  "pomegranate": {
+    "text": "A tart fall fruit from the pomegranate tree, which takes a sapling bought for 6,000 coins. It sells for 140 coins.",
+    "draft": true
+  },
+  "pocket-coin": {
+    "text": "A small coin dropped by Nabblers. Fitch and Wren both love to be given one. It sells for 15 coins.",
+    "draft": true
   }
 }

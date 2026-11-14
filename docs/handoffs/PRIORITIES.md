@@ -50,7 +50,7 @@ Open, top to bottom:
 7. A browser look at everything built since the owner last played: hat picker, cart, herb stall,
    tapper, lights, rod, bombs, festival maps and activities, tailoring, pond screens, tea bush.
 
-Alongside: the wiki (#910, note 100; built for every category with pictures, including fish, shellfish, roe and the melon; text cleared for crops, fish, forage, items, places and rooms; draft text left for bundles, recipes, people and five gem names; left: owner reads the draft text and clears flags, gift lists (`giftsDraft`), people prose with the voice sheets, hosting after M3d), `docs/overview.json` (behind since 2026-11-11), Stardew checks rows (open: SC-122, 135, 160, 161, 170, 172), and file the M4
+Alongside: the wiki (#910, note 100; built for every category, every item has a picture; text cleared for crops, fish, forage, items, places and rooms; draft text left for bundles, recipes, people and five gem names; left: owner reads the draft text and clears flags, gift lists (`giftsDraft`), people prose with the voice sheets, hosting after M3d), `docs/overview.json` (behind since 2026-11-11), Stardew checks rows (open: SC-122, 135, 160, 161, 170, 172), and file the M4
 hosting spike before M4 (also farm player state size in the save, ADR 0014).
 
 ## Milestone order (ADR 0012)
