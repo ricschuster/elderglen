@@ -120,8 +120,7 @@ placeholder are ours to tune (note 07).
   (ours, not Stardew). A mature Mahogany tree gives a seed back, so a grove is
   self-seeding.
 - **Build order.** The stump chance and the planting rules can be built now. The
-  monster drop waits for Secret Woods creatures, which note 73 left for the
-  combat notes. Until then the stump chance is the only seed source.
+  monster drop is built with the Secret Woods creatures (note 73, 2026-11-14).
 - **Effect on Hardwood.** The six daily stumps stay the early supply. A planted
   grove is the later one: ten trees give 100 Hardwood, about one stable or house
   tier, once grown.
@@ -135,9 +134,8 @@ a Secret Woods daily stump. Numbers are data in `src/content/mahogany.json`,
 rules in `src/core/mahogany.ts`. **Built later (2026-11-12, note 92):** tapping
 for daily sap with either tapper (Tapper 40 Wood and 2 Copper Bars at Foraging level 4, crafted
 only; Heavy Tapper from the Rare Finds bundle). **Not built:** tree fertilizer on common trees (none
-exists yet), the Forester bonus (12 or 13 Hardwood, no profession yet), the
-monster seed drop (waits for Secret Woods creatures), and Mahogany art (it
-borrows the oak sprites).
+exists yet), the Forester bonus (12 or 13 Hardwood, no profession yet),
+and Mahogany art (it borrows the oak sprites). The monster seed drop is built (2026-11-14, note 73: 10 percent per woods creature kill).
 
 ## Open
 

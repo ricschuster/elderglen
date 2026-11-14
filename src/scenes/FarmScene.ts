@@ -41,7 +41,14 @@ import Phaser from "phaser";
 import { animalKey } from "./art-animals";
 import { saveSettings } from "../core/bindings";
 import { sleep } from "../core/sleep";
-import { areaOf, enterArea, isAreaMap, leaveArea } from "../core/areas";
+import {
+  areaOf,
+  ensureMapCreatures,
+  enterArea,
+  isAreaMap,
+  leaveArea,
+} from "../core/areas";
+import { creatureSpawnsOf, mapDrops } from "../core/mapcreatures";
 import { eventAtTile } from "../core/eventrun";
 import { declinedToday } from "./HeartEventScene";
 import {
@@ -203,6 +210,7 @@ import {
   stepCreature,
   swingDamage,
   type Creature,
+  type CreatureDef,
 } from "../core/creatures";
 import { absoluteMinutes } from "../core/furnace";
 import { jobDone, statusText } from "../core/machines";
@@ -658,7 +666,13 @@ export class FarmScene extends Phaser.Scene {
     this.events.once("shutdown", () => this.detonateAll(true));
     this.creatureSprites = new Map();
     this.syncCombatSettings();
-    for (const c of this.floorState?.creatures ?? [])
+    // A map with a creature spawn table (the Secret Woods) places its morning's creatures.
+    if (isAreaMap(this.mapId))
+      ensureMapCreatures(this.state, this.mapId, Math.random, {
+        x: Math.floor(this.pos.x / this.map.tileSize),
+        y: Math.floor(this.pos.y / this.map.tileSize),
+      });
+    for (const c of this.fightState()?.creatures ?? [])
       world.push(this.addCreatureSprite(c));
     this.hunt = this.huntGfx = this.huntText = undefined;
     this.ice = undefined;
@@ -949,7 +963,7 @@ export class FarmScene extends Phaser.Scene {
         mounted: this.state.animals.mounted,
         horse: this.state.animals.horse,
         health: this.state.combat.health.current,
-        creatures: (this.floorState?.creatures ?? []).map((c) => ({
+        creatures: (this.fightState()?.creatures ?? []).map((c) => ({
           uid: c.uid,
           kind: c.kind,
           x: c.x,
@@ -3016,7 +3030,7 @@ export class FarmScene extends Phaser.Scene {
     const ts = this.map.tileSize;
     const rocks = this.rocks();
     const broken = rocks ? blastRocks(g, rocks, this.floor, b) : undefined;
-    const floor = this.floorState;
+    const floor = this.fightState();
     const dead = floor ? blastCreatures(floor.creatures, b, ts) : [];
     const lost = blastPlayer(g.combat.health, b, {
       x: Math.floor(this.pos.x / ts),
@@ -3655,10 +3669,21 @@ export class FarmScene extends Phaser.Scene {
     );
   }
 
+  /** What holds the creatures here: a mine floor, or the day's creatures of a map with a spawn table. */
+  private fightState(): { creatures: Creature[] } | undefined {
+    if (this.floorState) return this.floorState;
+    if (!creatureSpawnsOf(this.mapId)) return undefined;
+    const w = this.state.areas[this.mapId];
+    if (!w) return undefined;
+    w.creatures ??= [];
+    return w as { creatures: Creature[] };
+  }
+
   /** True where health can be lost, so the bar shows (note 22, decision 17). */
   private showHealth(): boolean {
     return healthShown(
-      this.floor !== undefined && floorHasCreatures(this.floor),
+      (this.floor !== undefined && floorHasCreatures(this.floor)) ||
+        creatureSpawnsOf(this.mapId) !== undefined,
       this.state.combat.noCreatures,
     );
   }
@@ -3675,7 +3700,7 @@ export class FarmScene extends Phaser.Scene {
   /** Step every creature on the floor, take hits and handle a knock out. */
   private updateCombat(dt: number): void {
     const combat = this.state.combat;
-    const floor = this.floorState;
+    const floor = this.fightState();
     this.player.setAlpha(
       combat.health.grace > 0 && Math.floor(this.time.now / 90) % 2 ? 0.4 : 1,
     );
@@ -3848,7 +3873,7 @@ export class FarmScene extends Phaser.Scene {
       if (this.tileBlocked(tx, ty)) break;
     }
 
-    const floor = this.floorState;
+    const floor = this.fightState();
     if (!floor || this.state.combat.noCreatures) return;
     const hits = swingTargets(
       weapon,
@@ -3899,7 +3924,7 @@ export class FarmScene extends Phaser.Scene {
 
   /** A creature is beaten: its goods, the kill tally and a ladder roll. */
   private beaten(c: Creature): void {
-    const floor = this.floorState!;
+    const floor = this.fightState()!;
     const def = creatureById(c.kind);
     floor.creatures = floor.creatures.filter((o) => o.uid !== c.uid);
     this.creatureSprites.get(c.uid)?.destroy();
@@ -3909,13 +3934,16 @@ export class FarmScene extends Phaser.Scene {
     const levelUp = this.state.skills.gain("combat", creatureXp(c));
     const got: string[] = [];
     let left = false;
-    const bonus = this.state.mines.killBonus(
-      this.floor!,
-      this.state.day.clock.day,
-    );
+    const onFloor = this.floor !== undefined;
+    const bonus = onFloor
+      ? this.state.mines.killBonus(this.floor!, this.state.day.clock.day)
+      : { extraKill: false, extraDrop: false };
     if (bonus.extraKill) this.state.combat.noteKill(c.kind);
+    // A map's spawn table adds drops to every creature beaten there (note 73: Mahogany Seed).
+    const extra: CreatureDef = { ...def, drops: mapDrops(this.mapId) };
     const rolls = [
       ...rollDrops(def, Math.random),
+      ...rollDrops(extra, Math.random),
       ...(bonus.extraDrop ? rollDrops(def, Math.random) : []),
     ];
     for (const d of rolls) {
@@ -3924,13 +3952,15 @@ export class FarmScene extends Phaser.Scene {
       else left = true;
     }
     const tile = creatureTile(c, this.map.tileSize);
-    const ladder = this.state.mines.creatureBeaten(
-      this.floor!,
-      this.state.day.clock.day,
-      tile.x,
-      tile.y,
-      Math.random,
-    );
+    const ladder = onFloor
+      ? this.state.mines.creatureBeaten(
+          this.floor!,
+          this.state.day.clock.day,
+          tile.x,
+          tile.y,
+          Math.random,
+        )
+      : false;
     this.message = `${def.name} beaten.${levelUp ? ` Combat is now level ${levelUp}.` : ""}${got.length ? ` Got ${got.join(", ")}.` : ""}${left ? " Your pack is full, so something was left behind." : ""}${ladder ? " A ladder is revealed!" : ""}`;
     this.render();
     if (levelUp && pendingChoice(this.state.skills)) this.open("profession");

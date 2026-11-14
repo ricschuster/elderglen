@@ -158,7 +158,7 @@ Work package: "Secret Woods map, hardwood stumps and the massive log" (steps 1 t
 
 - The unique pond fish: its name, price and bar motion (design with note 21's
   roster, which says 46 and needs a 47th row).
-- Creatures: designed 2026-11-14 (section "Creatures (decided 2026-11-14)"), not built. The 10 percent Mahogany seed chance on a daily stump is built (note 36, #724).
+- Creatures: built 2026-11-14 (see "Built status, creatures"). The 10 percent Mahogany seed chance on a daily stump is built (note 36, #724).
 - The stump swing count and the yield of a stump at tier 2 and above are tuning.
 - Whether the saved page's "lost items shop" idea has a use: our tools return
   (SC-79) and there are no unique unrecoverable items, so it is not in scope.
@@ -244,3 +244,22 @@ queued; the Mahogany seed drop in note 36 rides with it.
 - **Build notes.** Needs a per-map creature spawn table (the mines place creatures by band, so
   this is new), the `woods-seed` drop override, the Burrmouse row in `creatures.json` (no goal),
   placeholder art, and tests that no spawn lands on a stump, in the passage or at the pond.
+
+## Built status, creatures (2026-11-14)
+
+- **Spawn table:** `src/content/creature-spawns.json` (new, by map id; the mines still place by band),
+  read by `src/core/mapcreatures.ts`. The woods entry lists the upper glade and lower hollow as
+  regions, the covered passage as an avoid area, a pond margin of 1 tile, 5 tiles kept clear of
+  the arrival, the mix (2 Gloop, 1 blue Gloop, 1 Burrmouse) and the extra drop.
+- **Placement:** `ensureMapCreatures` (`core/areas.ts`) places the day's four when the player first
+  arrives that day, on open tiles off every stump, rock and world item, and keeps them until the
+  next day (none refill). They are kept on the area's world and saved with it.
+- **Burrmouse:** a row in `creatures.json` with `bands: []` (no mine places it), `dasher`, hp 3,
+  touch 5, fibre and moss, no `goal` (`goal` is now optional; `SLAYER_GOALS` skips a kind without
+  one, so the list stays 12). Placeholder 16 by 9 sprite in `art-creatures.ts`.
+- **Mahogany Seed:** the table's `drops` (10 percent, 1) roll for every creature beaten on that map,
+  in `FarmScene.beaten`. The creatures' own drop lists are unchanged.
+- **Scene:** `FarmScene.fightState()` gives the mine floor's or the area's creatures to the existing
+  step, swing, bomb and beaten code, so the health bar, defeat, assist, "no creatures" and lose
+  interest rules apply unchanged. No ladder or kill-bonus rules run off the mines.
+- **Tests:** `tests/woodscreatures.test.ts`.

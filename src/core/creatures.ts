@@ -44,8 +44,8 @@ export interface CreatureDef {
   drops: DropDef[];
   /** Combat XP for a beaten one, by band (placeholder). */
   xp: number;
-  /** Kills that meet its slayer goal (note 22). Kinds sharing a `group` share one goal. */
-  goal: number;
+  /** Kills that meet its slayer goal (note 22). Kinds sharing a `group` share one goal. Absent: no goal (the Burrmouse, note 73). */
+  goal?: number;
   /** An item stack handed over free, once, when the slayer goal is met (ours; rings use rings.json `slayer`). */
   reward?: { item: string; count: number };
   /** Slayer group, for kinds that count together (the Gloop colours). */
@@ -455,6 +455,7 @@ export interface SlayerGoal {
 export const SLAYER_GOALS: SlayerGoal[] = (() => {
   const out: SlayerGoal[] = [];
   for (const c of CREATURES) {
+    if (c.goal === undefined) continue;
     const id = c.group ?? c.id;
     const have = out.find((g) => g.id === id);
     if (have) have.kinds.push(c.id);

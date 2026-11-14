@@ -24,7 +24,7 @@ import { Orders, orderById, type OrdersSave } from "./orders";
 import { Rocks, type Rock, ROCK_KINDS } from "./rocks";
 import { Mines, type MinesSave } from "./mines";
 import { Combat, type CombatSave } from "./combat";
-import type { CreatureSave } from "./creatures";
+import { loadCreature, saveCreature, type CreatureSave } from "./creatures";
 import { FruitTrees, fruitTreeById, type PlacedFruitTree } from "./fruittrees";
 import { TeaBushes, type PlacedTeaBush } from "./teabush";
 import { LIGHTNING_ROD } from "./lightning";
@@ -420,6 +420,8 @@ interface AreaSave {
   weeds?: Weed[];
   twigs?: Twig[];
   rocks?: Rock[];
+  creatures?: CreatureSave[];
+  creaturesDay?: number;
 }
 
 /** Where saves live. The scene supplies one backed by the browser. */
@@ -572,6 +574,12 @@ export function serialize(g: GameState): string {
           weeds: w.weeds.save(),
           twigs: w.twigs.save(),
           rocks: w.rocks.save(),
+          ...(w.creatures
+            ? {
+                creatures: w.creatures.map(saveCreature),
+                creaturesDay: w.creaturesDay,
+              }
+            : {}),
         },
       ]),
     ),
@@ -773,6 +781,12 @@ export function deserialize(text: string): GameState | undefined {
       if (Array.isArray(a.weeds)) w.weeds.load(validWeeds(a.weeds));
       if (Array.isArray(a.twigs)) w.twigs.load(validTwigs(a.twigs));
       if (Array.isArray(a.rocks)) w.rocks.load(rocksFrom(a.rocks));
+      if (Array.isArray(a.creatures) && isCount(a.creaturesDay)) {
+        w.creatures = a.creatures.flatMap((c) =>
+          isObject(c) ? (loadCreature(c as unknown as CreatureSave) ?? []) : [],
+        );
+        w.creaturesDay = a.creaturesDay;
+      }
     }
   const saved = savedOrders(raw.orders);
   if (saved) g.orders.load(saved);
