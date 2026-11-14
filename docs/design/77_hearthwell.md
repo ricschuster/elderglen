@@ -348,7 +348,7 @@ north exit. Tests: `tests/hearthwell.test.ts` ("the Hearthwell shell"). Playtest
   the fewest doors (farm, Hearthwell, door), so each hall visit now costs the bot the walk
   across town. `play.mjs` and `touch.mjs` walk out of the farm's east exit, along the middle
   street, in by the hall door, and back the same way.
-- **Not built:** the other ten interiors, people, forage, weeds, cosmetic trees, pots and
+- **Not built:** the other ten interiors, people, forage, weeds, pots and
   fishing zones on the river, the Outpost's stalls and trader, the cart, and the festival variant.
 
 ## Interiors built (2026-11-09, #646)
@@ -481,3 +481,13 @@ chose the notes' side each time, and all three are built.
   in the Outpost yard (tile 92, 16) opens `ShopScene` with `stock: "trader"`. Tests: `tests/trader.test.ts`.
   The goods are a placeholder mix of rare forage, bars, geodes and dishes (no rare seed, recipe or decor
   yet; decor has no shop item).
+
+## Village trees built (2026-11-13)
+
+24 mature oak `tree` objects with `cosmetic` true are placed in the `markers` layer of
+`hearthwell.json`, as note 36 describes: drawn, blocking, shake only, no wood, no tap, no regrow.
+Layout is mine (the notes gave none): pairs flanking the avenue (x 28 and 34), a row along the
+north street, a few on the west edges of the middle and south streets, and four down each side of
+the island road, all on open grass off the streets, lots, yards and green. Placeholder art is the
+oak sprite. Tests: `tests/hearthwell.test.ts`. Not verified by play; the owner may want the
+spacing or the count changed (edit the objects in the JSON, note 87).

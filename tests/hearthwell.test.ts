@@ -410,3 +410,24 @@ describe("the Hearthwell shell (note 77, #645)", () => {
     }
   });
 });
+
+describe("village trees (note 77 decision 6)", () => {
+  it("are placed, all cosmetic oaks, and the maps still validate", () => {
+    expect(town.trees.length).toBeGreaterThanOrEqual(20);
+    expect(town.trees.every((t) => t.cosmetic === true)).toBe(true);
+    expect(maps.problems()).toEqual([]);
+  });
+  it("are mature, off the streets, and stay reachable around", () => {
+    for (const t of town.trees) {
+      expect(t.stage).toBe(5);
+      expect(town.canPlantTree(t.x, t.y)).toBe(true);
+    }
+    const entry = town.entry("from_farm");
+    expect(entry).toBeDefined();
+    const seen = town.reachable(entry as { x: number; y: number });
+    for (const id of DOORS) {
+      const e = town.entry(`from_${id}`);
+      expect(seen.has(`${e?.x},${e?.y}`)).toBe(true);
+    }
+  });
+});
