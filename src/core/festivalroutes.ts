@@ -1,3 +1,4 @@
+import { dateOf } from "./calendar";
 import data from "../content/festival-spots.json";
 import { festivalDayToday, festivalToday, type Festival } from "./festivals";
 import {
@@ -101,15 +102,21 @@ export const LAYOUTS: readonly FestivalLayout[] = Object.entries(
 export function festivalLayout(
   f: Festival,
   hallRestored = false,
+  year = 1,
 ): FestivalLayout | undefined {
-  const key = f.placeUpgrade && hallRestored ? `${f.id}@hall` : f.id;
+  const key =
+    f.evenYear && year % 2 === 0
+      ? `${f.id}@even`
+      : f.placeUpgrade && hallRestored
+        ? `${f.id}@hall`
+        : f.id;
   return LAYOUTS.find((l) => l.key === key);
 }
 
 /** The map conditions to hold on a game day so today's festival layout shows. Empty on other days. */
 export function festivalHolds(day: number, hallRestored = false): string[] {
   const f = festivalDayToday(day);
-  const hold = f && festivalLayout(f, hallRestored)?.hold;
+  const hold = f && festivalLayout(f, hallRestored, dateOf(day).year)?.hold;
   return hold ? [hold] : [];
 }
 
@@ -242,7 +249,7 @@ export function paradeSteps(
 }
 
 /** The tile on a timed path at a minute, or undefined outside it. */
-function along(steps: readonly Step[], t: number): Tile | undefined {
+export function along(steps: readonly Step[], t: number): Tile | undefined {
   const first = steps[0]!;
   const last = steps[steps.length - 1]!;
   if (t < first.t || t > last.t) return undefined;
@@ -272,6 +279,8 @@ export interface FestivalOpts {
   hallRestored?: boolean;
   /** The minute the player joined the Hat Parade, if they have. A late joiner adds a lap. */
   paradeJoinedAt?: number;
+  /** The calendar year, for the even-year Hollow Eve layout. Defaults to year 1. */
+  year?: number;
 }
 
 /**
@@ -287,7 +296,7 @@ export function festivalWhere(
   t: number,
   opts: FestivalOpts = {},
 ): FestivalWhere | undefined {
-  const layout = festivalLayout(f, opts.hallRestored);
+  const layout = festivalLayout(f, opts.hallRestored, opts.year);
   const stand = layout?.spots[v.id];
   if (!layout || !stand) return undefined;
   if (t < f.opens || t >= f.ends) return undefined;
@@ -323,7 +332,10 @@ export function villagerNow(
   | { festival: FestivalWhere }
   | { festival?: undefined; route: ReturnType<typeof whereAt> } {
   const f = festivalToday(day);
-  const fw = f && !f.evening ? festivalWhere(v, f, t, opts) : undefined;
+  const fw =
+    f && !f.evening
+      ? festivalWhere(v, f, t, { ...opts, year: dateOf(day).year })
+      : undefined;
   if (fw) return { festival: fw };
   return { route: whereAt(v, ctx, t) };
 }

@@ -129,7 +129,12 @@ describe("garden pot", () => {
       sleep(g, [], () => 0.5, map);
     }
     expect(act(g, map, 4, 4).ok).toBe(true);
-    expect(g.inventory.count("parsnip")).toBeGreaterThan(0);
+    // Harvest quality rolls Math.random, so count every quality of the crop.
+    const got = ["parsnip", "parsnip@silver", "parsnip@gold"].reduce(
+      (n, id) => n + g.inventory.count(id),
+      0,
+    );
+    expect(got).toBeGreaterThan(0);
   });
 
   it("refuses an out of season seed outdoors but takes it in the greenhouse", () => {

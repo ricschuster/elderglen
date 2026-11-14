@@ -3,6 +3,8 @@ import { returnDebris, Twigs } from "./debris";
 import { ForageField, type Spot } from "./forage";
 import { ArtifactSpots, ARTIFACT_AREAS, rollAreaSpots } from "./artifacts";
 import { Farm } from "./farm";
+import type { Creature } from "./creatures";
+import { creatureSpawnsOf, placeMapCreatures } from "./mapcreatures";
 import { FruitTrees } from "./fruittrees";
 import { GroundItems } from "./ground";
 import { Machines } from "./machines";
@@ -55,6 +57,9 @@ export interface World {
   sprinklers: Sprinklers;
   fruitTrees: FruitTrees;
   machines: Machines;
+  /** Creatures placed today on a map with a creature spawn table (note 73), and the day they were placed. */
+  creatures?: Creature[];
+  creaturesDay?: number;
 }
 
 /** The world of a map at the start of a new game: the trees, rocks, weeds and twigs it places. */
@@ -296,4 +301,32 @@ export function areasEndDay(g: GameState, random: () => number): void {
         placeSpawn(w, spawn);
   }
   respawnAreaForage(g, random);
+}
+
+/**
+ * The morning's creatures on a map with a creature spawn table (note 73), placed
+ * the first time the player is there each day and kept until the next. Returns
+ * the day's list, or undefined for a map with no table.
+ */
+export function ensureMapCreatures(
+  g: GameState,
+  mapId: string,
+  random: () => number,
+  arrive: Spot,
+): Creature[] | undefined {
+  const table = creatureSpawnsOf(mapId);
+  const w = g.areas[mapId];
+  if (!table || !w) return undefined;
+  const day = g.day.clock.day;
+  if (w.creaturesDay !== day || !w.creatures) {
+    w.creaturesDay = day;
+    w.creatures = placeMapCreatures(
+      table,
+      maps.get(mapId),
+      random,
+      arrive,
+      (x, y) => emptyAt(w, x, y),
+    );
+  }
+  return w.creatures;
 }

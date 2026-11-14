@@ -1,9 +1,12 @@
 import { artisanById } from "./artisan";
 import { cropById } from "./crops";
+import { dishById } from "./dishes";
 import { dateOf } from "./calendar";
 import { fruitTreeById } from "./fruittrees";
 import { forageById } from "./forage";
 import { itemById } from "./items";
+import { SPECIES, FEATHER, MOONWOOL } from "./animals";
+import { fishById } from "./fishing";
 import { BARS, COAL, ORES } from "./ore";
 import { QUALITIES, splitQuality } from "./quality";
 import type { GameState } from "./save";
@@ -11,7 +14,7 @@ import type { GameState } from "./save";
 /**
  * The Harvest Showing's display (`docs/design/66_fall_winter_festivals_and_farm_cave.md`).
  * The player sets up to nine goods on a table and the judge scores them. The
- * shape is Stardew's, the weights are ours and every number is a placeholder.
+ * shape and the value bands are Stardew's, the other weights are ours.
  * Goods are never taken from the pack, so nothing is lost.
  */
 export const TABLE_SIZE = 9;
@@ -21,11 +24,27 @@ export const ITEM_POINTS = 2;
 export const ITEM_OFFSET = 9;
 export const GROUP_POINTS = 5;
 export const MAX_GROUP_POINTS = 30;
-/** Most value points one item can earn: quality (0 to 2) plus price (up to 3). */
-export const MAX_ITEM_VALUE = 5;
-export const MAX_PRICE_POINTS = 3;
 
-/** The groups of goods that count, six in slice 1. Fish and animal goods join later. */
+/**
+ * Value points by sell price band and quality (Stardew's Grange table, saved
+ * Stardew Valley Fair page, SC-53). Each row is a band that starts at `from`
+ * gold of actual sell price; the points are for normal, silver and gold. We
+ * have no iridium quality, so that column is dropped and the most an item can
+ * earn is 6 (Stardew's is 8).
+ */
+export const VALUE_BANDS: { from: number; points: [number, number, number] }[] =
+  [
+    { from: 0, points: [1, 2, 3] },
+    { from: 20, points: [2, 3, 4] },
+    { from: 90, points: [3, 4, 5] },
+    { from: 200, points: [4, 5, 6] },
+    { from: 300, points: [5, 6, 6] },
+    { from: 400, points: [6, 6, 6] },
+  ];
+/** Most value points one item can earn. */
+export const MAX_ITEM_VALUE = 6;
+
+/** The groups of goods that count: eight, so six of them fill the group mark. */
 export const SHOW_GROUPS = [
   "artisan",
   "dish",
@@ -33,13 +52,27 @@ export const SHOW_GROUPS = [
   "fruit",
   "vegetable",
   "mineral",
+  "fish",
+  "animal",
 ] as const;
 export type ShowGroup = (typeof SHOW_GROUPS)[number];
+
+/**
+ * Animal products: what the species make, plus feathers and moonwool. Roe and
+ * aged roe are not (Stardew does not count roe or dinosaur egg either).
+ */
+const isAnimalGood = (id: string) =>
+  id === FEATHER ||
+  id === MOONWOOL ||
+  Object.values(SPECIES).some((s) => s.item === id);
 
 /** Which group a good is in, or undefined if it cannot be shown. */
 export function groupOf(id: string): ShowGroup | undefined {
   const { base } = splitQuality(id);
   if (artisanById(base)) return "artisan";
+  if (dishById(base)) return "dish";
+  if (fishById(base)) return "fish";
+  if (isAnimalGood(base)) return "animal";
   if (forageById(base)) return "forage";
   if (fruitTreeById(base)) return "fruit";
   const crop = cropById(base);
@@ -53,15 +86,14 @@ export function groupOf(id: string): ShowGroup | undefined {
   return undefined;
 }
 
-/** Value points for one good: quality 0 to 2, plus 1 for each 100g of price up to 3. */
+/** Value points for one good: its price band and quality in `VALUE_BANDS`, 0 if unlisted. */
 export function valuePoints(id: string): number {
   const def = itemById(id);
   if (!def) return 0;
   const q = QUALITIES.indexOf(splitQuality(id).quality);
-  return Math.min(
-    q + Math.min(Math.floor(def.sellPrice / 100), MAX_PRICE_POINTS),
-    MAX_ITEM_VALUE,
-  );
+  let row = VALUE_BANDS[0]!;
+  for (const b of VALUE_BANDS) if (def.sellPrice >= b.from) row = b;
+  return row.points[q] ?? 0;
 }
 
 export interface ShowScore {
@@ -95,11 +127,15 @@ export interface Place {
   tokens: number;
 }
 
-/** Placeholder thresholds and prizes (note 66): 1,000, 500, 250 and 50 show tokens. */
+/**
+ * Thresholds and prizes (note 66): 1,000, 500, 250 and 50 show tokens. The top
+ * score is 107, and the places sit at 72, 60 and 48 percent of it (Stardew's
+ * 90, 75 and 60 of 125, scaled), rounded: 77, 64 and 51.
+ */
 export const PLACES: Place[] = [
-  { place: 1, min: 85, tokens: 1000 },
-  { place: 2, min: 70, tokens: 500 },
-  { place: 3, min: 55, tokens: 250 },
+  { place: 1, min: 77, tokens: 1000 },
+  { place: 2, min: 64, tokens: 500 },
+  { place: 3, min: 51, tokens: 250 },
   { place: 4, min: -Infinity, tokens: 50 },
 ];
 

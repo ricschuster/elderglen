@@ -158,7 +158,7 @@ Work package: "Secret Woods map, hardwood stumps and the massive log" (steps 1 t
 
 - The unique pond fish: its name, price and bar motion (design with note 21's
   roster, which says 46 and needs a 47th row).
-- Creatures come later, with the combat notes (owner, 2026-11-08). The 10 percent Mahogany seed chance on a daily stump is built (note 36, #724); the creature drop waits for the creatures.
+- Creatures: built 2026-11-14 (see "Built status, creatures"). The 10 percent Mahogany seed chance on a daily stump is built (note 36, #724).
 - The stump swing count and the yield of a stump at tier 2 and above are tuning.
 - Whether the saved page's "lost items shop" idea has a use: our tools return
   (SC-79) and there are no unique unrecoverable items, so it is not in scope.
@@ -215,3 +215,51 @@ Build order steps 1 to 4 and the stand-in removal are built.
   time (dusk, all seasons) and length (25 to 60 cm); which two common fish the pond holds (Carp
   and Perch are a guess, and both bite by day only); and the Fernscale's pond goods (roe only
   for now, note 93 says a pond pearl and no such item exists).
+
+## Creatures (decided 2026-11-14)
+
+Owner answers, 2026-11-14. Replaces decision 8's "no creatures in the first build". Build is
+queued; the Mahogany seed drop in note 36 rides with it.
+
+- **Roster.** Green and blue Gloops (existing, note 22) plus one new woods-only creature, the
+  **Burrmouse**. Ember Gloop stays in the deep mines. Stardew's woods has slimes only, each with a
+  10 percent Mahogany Seed drop (saved Secret Woods page, version 1.5); the Burrmouse is ours.
+- **Burrmouse.** A burr-covered mouse that sits by a stump, then makes a short telegraphed dash to
+  the next stump and bumps. It uses the existing `dasher` behaviour (as the Mossbeetle and
+  Nabbler), small hp, touch 5 (placeholder numbers, tune in play). Its drops are existing goods
+  only: fibre and moss. No new item and no new crafting good.
+- **Spawning.** Four a morning, none refill in the day: two green Gloops, one blue Gloop, one
+  Burrmouse. They are placed when the player arrives each day and spawn in the upper glade and the
+  lower hollow, off the stump tiles, and never in the covered passage (x 38 to 39, y 22 to 26) or
+  at the pond edge. Placeholder mix, to tune. The "no creatures" setting removes them
+  (note 22), and so removes this seed source (stumps still give a 10 percent chance).
+- **Mahogany seed.** 10 percent per kill, any creature in the woods (Stardew), added to each
+  woods creature's drop table through a per-map spawn table, not to the creature everywhere.
+  About four rolls a day, so a seed about every two to three days from kills alone.
+- **No slayer goal.** The list stays at twelve (note 22). Woods Gloops count toward the Gloop
+  goal. The Burrmouse has no goal, and the tracker's creature count does not grow.
+- **Rules that apply:** note 22's health bar shows where loss is possible, defeat applies here, the
+  assist toggle works, creatures lose interest at 6 tiles, and no creature is faster than walking
+  except a shown dash.
+- **Build notes.** Needs a per-map creature spawn table (the mines place creatures by band, so
+  this is new), the `woods-seed` drop override, the Burrmouse row in `creatures.json` (no goal),
+  placeholder art, and tests that no spawn lands on a stump, in the passage or at the pond.
+
+## Built status, creatures (2026-11-14)
+
+- **Spawn table:** `src/content/creature-spawns.json` (new, by map id; the mines still place by band),
+  read by `src/core/mapcreatures.ts`. The woods entry lists the upper glade and lower hollow as
+  regions, the covered passage as an avoid area, a pond margin of 1 tile, 5 tiles kept clear of
+  the arrival, the mix (2 Gloop, 1 blue Gloop, 1 Burrmouse) and the extra drop.
+- **Placement:** `ensureMapCreatures` (`core/areas.ts`) places the day's four when the player first
+  arrives that day, on open tiles off every stump, rock and world item, and keeps them until the
+  next day (none refill). They are kept on the area's world and saved with it.
+- **Burrmouse:** a row in `creatures.json` with `bands: []` (no mine places it), `dasher`, hp 3,
+  touch 5, fibre and moss, no `goal` (`goal` is now optional; `SLAYER_GOALS` skips a kind without
+  one, so the list stays 12). Placeholder 16 by 9 sprite in `art-creatures.ts`.
+- **Mahogany Seed:** the table's `drops` (10 percent, 1) roll for every creature beaten on that map,
+  in `FarmScene.beaten`. The creatures' own drop lists are unchanged.
+- **Scene:** `FarmScene.fightState()` gives the mine floor's or the area's creatures to the existing
+  step, swing, bomb and beaten code, so the health bar, defeat, assist, "no creatures" and lose
+  interest rules apply unchanged. No ladder or kill-bonus rules run off the mines.
+- **Tests:** `tests/woodscreatures.test.ts`.

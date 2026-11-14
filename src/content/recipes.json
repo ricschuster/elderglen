@@ -991,11 +991,51 @@
   {
     "id": "garden-pot",
     "ingredients": [
-      { "item": "clay", "count": 1 },
-      { "item": "stone", "count": 10 },
-      { "item": "refined-crystal", "count": 1 }
+      {
+        "item": "clay",
+        "count": 1
+      },
+      {
+        "item": "stone",
+        "count": 10
+      },
+      {
+        "item": "refined-crystal",
+        "count": 1
+      }
     ],
-    "result": { "item": "garden-pot", "count": 1 },
-    "sources": [{ "kind": "letter", "letter": "alder-garden-pot" }]
+    "result": {
+      "item": "garden-pot",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "letter",
+        "letter": "alder-garden-pot"
+      }
+    ]
+  },
+  {
+    "id": "gourd-lantern",
+    "ingredients": [
+      {
+        "item": "pumpkin",
+        "count": 1
+      },
+      {
+        "item": "torch",
+        "count": 1
+      }
+    ],
+    "result": {
+      "item": "gourd-lantern",
+      "count": 1
+    },
+    "sources": [
+      {
+        "kind": "flag",
+        "flag": "recipe:gourd-lantern"
+      }
+    ]
   }
 ]

@@ -18,7 +18,12 @@ export interface MazeData {
   gap: Cell;
   scares: Record<string, string>;
   talkers: Record<string, string>;
-  chestHat: string;
+  /** Signposts (the hidden gap's tell, note 66): a lantern mark one tile from the gap. */
+  signs: Record<string, string>;
+  /** The unique hat the first time (odd years). */
+  chestHat?: string;
+  /** The unique placeable keepsake the first time (even years), kept in the pack. */
+  chestItem?: string;
   sack: { id: string; count: number }[];
 }
 
@@ -97,24 +102,31 @@ export const chestOpened = (g: GameState) =>
   g.festivalsJoined.includes(chestKey(g.day.clock.day));
 
 /**
- * Open the chest at the end. The first time it holds the hat, and each later
- * year a sack of forage and fall goods (about 500g in odd years, about 1000g
- * in even years, when the larger maze is walked). Once a year. Returns a
- * line for the player: what was found, or why not. A full pack leaves the
- * chest shut, so nothing is lost.
+ * Open the chest at the end. The first time it holds the maze's unique reward:
+ * the hat in odd years, a placeable lantern in even years (each kept once ever,
+ * note 66). Each later year of that kind it holds a sack of forage and fall
+ * goods (about 500g in odd years, about 800g in even years, when the larger
+ * maze is walked). Once a year. Returns a line for the player: what was found,
+ * or why not. A full pack leaves the chest shut, so nothing is lost.
  */
 export function openChest(g: GameState): string {
   if (chestOpened(g))
     return "The chest is empty. You have had this year's prize.";
   const maze = mazeForYear(dateOf(g.day.clock.day).year);
-  if (
-    g.wardrobe.has(maze.chestHat) &&
-    maze.sack.some((s) => g.inventory.room(s.id) < s.count)
-  )
+  const keepKey = maze.chestItem ? `hollow-eve-keepsake:${maze.chestItem}` : "";
+  if (maze.chestItem && !g.festivalsJoined.includes(keepKey)) {
+    if (g.inventory.room(maze.chestItem) < 1)
+      return "Your pack is too full for the chest's prize. Make room and come back.";
+    g.festivalsJoined.push(chestKey(g.day.clock.day), keepKey);
+    g.inventory.add(maze.chestItem);
+    return `The chest holds a ${itemById(maze.chestItem)?.name.toLowerCase() ?? "keepsake"}.`;
+  }
+  const hatDue = maze.chestHat !== undefined && !g.wardrobe.has(maze.chestHat);
+  if (!hatDue && maze.sack.some((s) => g.inventory.room(s.id) < s.count))
     return "Your pack is too full for the sack. Make room and come back.";
   g.festivalsJoined.push(chestKey(g.day.clock.day));
-  if (g.wardrobe.add(maze.chestHat))
-    return `The chest holds a ${hatById(maze.chestHat)?.name ?? "hat"}.`;
+  if (hatDue && g.wardrobe.add(maze.chestHat!))
+    return `The chest holds a ${hatById(maze.chestHat!)?.name ?? "hat"}.`;
   const parts: string[] = [];
   for (const { id, count } of maze.sack) {
     g.inventory.add(id, count);

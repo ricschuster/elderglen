@@ -293,6 +293,7 @@ for (const b of BARS)
 for (const w of weaponData)
   items.set(w.id, { id: w.id, name: w.name, sellPrice: 0, keep: true });
 /** Moth dust, a Dustmoth drop and a crafting good (note 22). Sell price is a placeholder, ours. */
+export const HOLLOW_LANTERN = "hollow-lantern";
 export const MOTH_DUST = "moth-dust";
 items.set(MOTH_DUST, { id: MOTH_DUST, name: "Moth dust", sellPrice: 30 });
 /** The other creature drops (note 22). Sell prices are placeholders, ours. Frost berry is food. */
@@ -312,6 +313,14 @@ items.set(iceFishing.frostfin.id, {
 items.set(lanternFloat.keepsake.id, {
   id: lanternFloat.keepsake.id,
   name: lanternFloat.keepsake.name,
+  sellPrice: 0,
+  keep: true,
+});
+
+/** The even-year Hollow Eve chest's keepsake (note 66): a placeable farm decoration, never bought. Placeholder name. */
+items.set(HOLLOW_LANTERN, {
+  id: HOLLOW_LANTERN,
+  name: "Hollow lantern",
   sellPrice: 0,
   keep: true,
 });
@@ -391,6 +400,7 @@ for (const [id, name] of [
   ["stone-brazier", "Stone brazier"],
   ["wood-lamp-post", "Wood lamp-post"],
   ["iron-lamp-post", "Iron lamp-post"],
+  ["gourd-lantern", "Gourd lantern"],
 ] as const)
   items.set(id, { id, name, sellPrice: 0, keep: true });
 /** Farm decoration (note 89, the seventh placeable kind): carried, stood on the farm, kept. Sold by the keeper (`farmdecor.ts`). */
@@ -401,6 +411,7 @@ for (const [id, name] of [
   ["cat-tree", "Cat tree"],
   ["dark-cat-tree", "Dark cat tree"],
   ["bird-house", "Bird house"],
+  ["gravestone", "Gravestone"],
 ] as const)
   items.set(id, { id, name, sellPrice: 0, keep: true });
 /** The garden pot (note 97): crafted, stood on the farm or in the greenhouse, kept. */
@@ -572,12 +583,14 @@ const GROUPS: [string, string[]][] = [
       "cat-tree",
       "dark-cat-tree",
       "bird-house",
+      "gravestone",
       ...bombData.map((b) => b.id),
       LIFE_ELIXIR,
       MINERS_TREAT,
       OIL_OF_GARLIC,
       "wood-lamp-post",
       "iron-lamp-post",
+      "gourd-lantern",
       ELDERFRUIT,
       DEEPMARK_KEY,
     ],
@@ -618,6 +631,7 @@ const GROUPS: [string, string[]][] = [
       ELF_LETTER,
       lanternFloat.lantern.id,
       lanternFloat.keepsake.id,
+      HOLLOW_LANTERN,
     ],
   ],
   ["Rings", RINGS.map((r) => r.id)],

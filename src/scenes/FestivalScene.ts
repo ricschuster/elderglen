@@ -1,15 +1,18 @@
 import Phaser from "phaser";
+import { dateOf } from "../core/calendar";
 import {
   buyAtCounter,
   counterName,
   counterProblem,
   type CounterEntry,
   enterFestival,
+  festivalMapFor,
   type Festival,
   enterProblem,
   FESTIVAL_RETURN,
   festivalDayToday,
   leaveFestival,
+  counterOf,
 } from "../core/festivals";
 import { itemById } from "../core/items";
 import type { GameState } from "../core/save";
@@ -115,8 +118,9 @@ export class FestivalScene extends Phaser.Scene {
         : enterFestival(this.state);
     if (!f) return this.close(false);
     // A festival with a map is played there, not on this screen.
-    if (f.map && this.mode === "ask")
-      return this.close(false, { map: f.map, entry: "door" });
+    const built = festivalMapFor(f, dateOf(this.state.day.clock.day).year);
+    if (built && this.mode === "ask")
+      return this.close(false, { map: built, entry: "door" });
     this.inside = true;
     this.asking.forEach((o) => o.destroy());
     this.add
@@ -206,7 +210,7 @@ export class FestivalScene extends Phaser.Scene {
     this.menu = menu;
     menu.setFocus(true);
     const rows = () =>
-      f.counter.map((e) => ({
+      counterOf(f, dateOf(this.state.day.clock.day).year).map((e) => ({
         label: counterName(e),
         detail: `${e.price}${unit(e)}`,
         dim: counterProblem(this.state, f, e) !== undefined,

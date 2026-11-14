@@ -1,0 +1,17 @@
+{
+  "secret-woods": {
+    "regions": [
+      { "name": "upper glade", "x": 6, "y": 4, "w": 39, "h": 19 },
+      { "name": "lower hollow", "x": 12, "y": 26, "w": 31, "h": 13 }
+    ],
+    "avoid": [{ "name": "covered passage", "x": 38, "y": 22, "w": 2, "h": 5 }],
+    "pondMargin": 1,
+    "keepAway": 5,
+    "creatures": [
+      { "kind": "gloop", "count": 2 },
+      { "kind": "gloop-blue", "count": 1 },
+      { "kind": "burrmouse", "count": 1 }
+    ],
+    "drops": [{ "id": "mahogany-seed", "chance": 0.1, "min": 1, "max": 1 }]
+  }
+}

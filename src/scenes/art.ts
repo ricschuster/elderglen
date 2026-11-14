@@ -1774,6 +1774,72 @@ export const POT_READY_KEY = "shellfish-pot-ready";
 /** The garden pot standing on the ground (note 97). Placeholder art. */
 export const GARDEN_POT_KEY = "garden-pot-placed";
 
+/** The fish pond, 5 by 5 tiles drawn as one picture (note 93), and its dug pit. Placeholder art. */
+export const POND_KEY = "fish-pond";
+export const POND_PIT_KEY = "fish-pond-pit";
+const POND_PX = 80;
+
+/** A rounded bank test: true when a pixel is inside the pond's rounded square. */
+const pondInside = (x: number, y: number, inset: number): boolean => {
+  const r = 12;
+  const dx = Math.max(inset + r - x, 0, x - (POND_PX - 1 - inset - r));
+  const dy = Math.max(inset + r - y, 0, y - (POND_PX - 1 - inset - r));
+  return (
+    x >= inset &&
+    y >= inset &&
+    x < POND_PX - inset &&
+    y < POND_PX - inset &&
+    dx * dx + dy * dy <= r * r
+  );
+};
+
+/** A pond of still water with a stone and earth bank, and a pit with stakes while it is dug. */
+function paintPond(scene: Phaser.Scene): void {
+  const rand = rng(93);
+  const water = scene.textures.createCanvas(POND_KEY, POND_PX, POND_PX)!;
+  const c = water.getContext();
+  const pit = scene.textures.createCanvas(POND_PIT_KEY, POND_PX, POND_PX)!;
+  const q = pit.getContext();
+  for (let y = 0; y < POND_PX; y++)
+    for (let x = 0; x < POND_PX; x++) {
+      if (!pondInside(x, y, 0)) continue;
+      const bank = !pondInside(x, y, 3);
+      const stone = rand() < 0.35;
+      px(c, bank ? (stone ? "#8a8a84" : "#6b5a3c") : "#3b80c4", x, y);
+      px(q, bank ? "#6b5a3c" : "#4a3624", x, y);
+    }
+  // lighter ripples across the water
+  for (let i = 0; i < 14; i++) {
+    const x = 10 + Math.floor(rand() * 54);
+    const y = 10 + Math.floor(rand() * 58);
+    if (pondInside(x, y, 8) && pondInside(x + 6, y, 8))
+      px(c, "#8fc4f0", x, y, 6, 1);
+  }
+  // reeds in a corner
+  for (const [x, y] of [
+    [8, 14],
+    [11, 12],
+    [14, 15],
+  ] as const) {
+    px(c, "#3a7a3a", x, y, 1, 6);
+    px(c, "#6a4a22", x, y - 2, 1, 3);
+  }
+  // stakes and a plank over the pit
+  for (const [x, y] of [
+    [14, 14],
+    [64, 14],
+    [14, 62],
+    [64, 62],
+  ] as const) {
+    px(q, "#9a7a3c", x, y, 3, 10);
+    px(q, "#c09a52", x, y, 1, 10);
+  }
+  px(q, "#9a7a3c", 14, 38, 52, 3);
+  px(q, "#c09a52", 14, 38, 52, 1);
+  water.refresh();
+  pit.refresh();
+}
+
 /** A terracotta pot with soil in it. Placeholder art. */
 function paintGardenPot(scene: Phaser.Scene): void {
   const t = scene.textures.createCanvas(GARDEN_POT_KEY, SIZE, SIZE)!;
@@ -1933,6 +1999,8 @@ function paintFarmDecor(scene: Phaser.Scene): void {
     "dark-cat-tree": ["#6a5a6a", "#3a2e3a"],
     "bird-house": ["#9a7a4a", "#c8503c"],
     "keepsake-lantern": ["#f0c860", "#8a5a2a"],
+    "hollow-lantern": ["#e8802a", "#3a2a4a"],
+    gravestone: ["#9a9aa2", "#5a5a64"],
   };
   for (const id of farmDecorIds()) {
     const [body, trim] = colours[id] ?? ["#a08060", "#604830"];
@@ -2094,6 +2162,15 @@ function paintLights(scene: Phaser.Scene): void {
       px(c, iron ? "#3a3a44" : "#3e2a16", 8, 5, 1, 9);
       px(c, "#ffffff33", 5, 12, 6, 1);
     });
+  draw("gourd-lantern", (c) => {
+    groundShadow(c, 8, 15, 10);
+    px(c, "#c8601a", 3, 6, 10, 8);
+    px(c, "#e8802a", 4, 7, 8, 6);
+    px(c, "#5a7a2a", 7, 4, 2, 2);
+    px(c, "#ffe9a0", 5, 8, 2, 2);
+    px(c, "#ffe9a0", 9, 8, 2, 2);
+    px(c, "#ffe9a0", 6, 11, 4, 1);
+  });
   for (const stone of [false, true])
     draw(stone ? "stone-brazier" : "wood-brazier", (c) => {
       groundShadow(c, 8, 15, 10);
@@ -2389,4 +2466,5 @@ export function makeArt(
   paintFarmDecor(scene);
   paintPot(scene);
   paintGardenPot(scene);
+  paintPond(scene);
 }

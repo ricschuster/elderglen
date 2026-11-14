@@ -290,3 +290,12 @@ About one mine floor in four (`POOL_CHANCE`, placeholder) has a 3 by 2 pool of `
 so it never cuts a floor in two; rocks, ladders, the camp chest and creatures keep off it. The rod now
 casts on mine floors, so Pale lichen and Glow jelly can bite. `tests/cavepool.test.ts`. Left: art, the
 farm cave has no pool, and the pool's size and odds are placeholders.
+
+## Built status, pond art (2026-11-14)
+
+The pond is drawn on the farm (`paintPond` in `art.ts`, `FarmScene.drawPonds`): a 5 by 5 picture, a stone and
+earth bank round still water with ripples and reeds, a dug pit with stakes and a plank while the carpenter works,
+the fish as small copies of the species' own item picture (the population up to ten, `POND_FISH_SPOTS`), a blue
+tint for sea water, and the ready mark when a product waits. `pondLook` in `pond.ts` says what to draw; tests in
+`tests/pondlook.test.ts`. All placeholder colour art, not looked at in a browser. Still left: art for the cave
+pools, and real art for the pond.

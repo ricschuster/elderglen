@@ -142,6 +142,34 @@
         "once": "elderfruit-showing"
       }
     ],
+    "rotation": {
+      "perYear": 2,
+      "pool": [
+        {
+          "item": "small-glow-ring",
+          "price": 700,
+          "tokens": true
+        },
+        {
+          "item": "mixed-seed",
+          "price": 300,
+          "tokens": true,
+          "count": 10
+        },
+        {
+          "item": "hay",
+          "price": 150,
+          "tokens": true,
+          "count": 10
+        },
+        {
+          "item": "pumpkin-soup",
+          "price": 250,
+          "tokens": true,
+          "count": 3
+        }
+      ]
+    },
     "minigame": null,
     "map": "green",
     "sights": [
@@ -190,10 +218,27 @@
       {
         "item": "harvest-bench",
         "price": 260
+      },
+      {
+        "item": "gravestone",
+        "price": 400
+      },
+      {
+        "recipe": "gourd-lantern",
+        "price": 2000
       }
     ],
     "minigame": null,
     "map": "hedge",
+    "evenYear": {
+      "map": "hedge-even",
+      "zone": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 23
+      }
+    },
     "place": {
       "map": "hedge",
       "zone": {

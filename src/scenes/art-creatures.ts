@@ -268,6 +268,28 @@ const SPRITES: Record<string, Sprite> = {
       "..ooo..ooo......",
     ],
   },
+  // A small burr-covered mouse (the Secret Woods, note 73).
+  burrmouse: {
+    palette: {
+      b: "#9a7a52",
+      l: "#c4a276",
+      d: "#6e5236",
+      e: "#14141c",
+      s: "#4a6a30",
+      n: "#d89090",
+    },
+    rows: [
+      "..oo....oo......",
+      ".onno..onno.....",
+      ".oobbsbsbboo....",
+      "..obsbbsbsbo....",
+      ".obbebbbsbbbo...",
+      ".onbbbbbbbbbbo..",
+      "..obdsbsbsdbo.oo",
+      "...oodddddoo.o..",
+      "....oo..oo..oo..",
+    ],
+  },
 };
 
 function blob(b: string, l: string, d: string): Sprite {

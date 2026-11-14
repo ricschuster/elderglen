@@ -12,6 +12,8 @@ import { hasFlag, setFlag } from "./worldflags";
 export interface CounterEntry {
   item?: string;
   hat?: string;
+  /** A crafting recipe id, taught on purchase (raises `recipeFlag`) and sold out after. */
+  recipe?: string;
   /** How many of the item one purchase gives. Defaults to 1. */
   count?: number;
   /** Paid in show tokens (Harvest Showing) instead of gold. */
@@ -79,13 +81,33 @@ export interface Festival {
    * door leads there, every other door on it is shut, and time stands still.
    */
   map?: string;
+  /** The map and zone used in even years instead (the larger Hollow Eve maze, note 82). */
+  evenYear?: { map: string; zone: Zone };
   /** What the festival's counter sells. Hats sell once, items without limit. */
   counter: CounterEntry[];
+  /**
+   * Lines that rotate by year (Harvest Showing, note 66): `perYear` of the `pool`
+   * join the counter, taken in order from where the last year stopped, so the
+   * pool cycles and a year always shows the same ones.
+   */
+  rotation?: { perYear: number; pool: CounterEntry[] };
   /** Id of the festival game, or null for none (see `11_minigames.md`). */
   minigame: string | null;
 }
 
 export const FESTIVALS = festivalData as Festival[];
+
+/** The counter lines of a festival in a game year (1 based): the fixed ones, then the year's rotation. */
+export function counterOf(f: Festival, year: number): CounterEntry[] {
+  const r = f.rotation;
+  if (!r || r.pool.length === 0) return f.counter;
+  const picks: CounterEntry[] = [];
+  for (let i = 0; i < Math.min(r.perYear, r.pool.length); i++)
+    picks.push(
+      r.pool[((Math.max(1, year) - 1) * r.perYear + i) % r.pool.length]!,
+    );
+  return [...f.counter, ...picks];
+}
 
 /** The festival on a calendar day, if there is one. */
 export function festivalOn(
@@ -119,9 +141,15 @@ export function festivalDayToday(day: number): Festival | undefined {
 export function festivalPlace(
   f: Festival,
   hallRestored: boolean,
+  year = 1,
 ): FestivalPlace {
+  if (f.evenYear && year % 2 === 0) return f.evenYear;
   return f.placeUpgrade && hallRestored ? f.placeUpgrade : f.place;
 }
+
+/** The built map a festival is played on in a year (the even-year maze differs), if it has one. */
+export const festivalMapFor = (f: Festival, year = 1): string | undefined =>
+  f.evenYear && year % 2 === 0 ? f.evenYear.map : f.map;
 
 export const inZone = (z: Zone, x: number, y: number): boolean =>
   x >= z.x && x < z.x + z.w && y >= z.y && y < z.y + z.h;
@@ -143,7 +171,7 @@ export function festivalAreaShut(
 ): boolean {
   const f = festivalDayToday(day);
   if (!f || minutes >= f.opens) return false;
-  const p = festivalPlace(f, hallRestored);
+  const p = festivalPlace(f, hallRestored, dateOf(day).year);
   return p.map === mapId && inZone(p.zone, x, y);
 }
 
@@ -240,8 +268,12 @@ export function enterFestival(g: GameState): Festival | undefined {
   return f;
 }
 
+/** The world flag a bought recipe raises (the recipe's `flag` source names the same one). */
+export const recipeFlag = (recipeId: string) => `recipe:${recipeId}`;
+
 /** The counter line's name, for the screen. */
 export function counterName(e: CounterEntry): string {
+  if (e.recipe) return `${itemById(e.recipe)?.name ?? e.recipe} recipe`;
   if (e.hat) return hatById(e.hat)?.name ?? e.hat;
   const name = (e.item && itemById(e.item)?.name) || e.item || "";
   return e.count && e.count > 1 ? `${e.count} ${name.toLowerCase()}` : name;
@@ -253,10 +285,13 @@ export function counterProblem(
   f: Festival,
   e: CounterEntry,
 ): string | undefined {
-  if (!f.counter.includes(e)) return "That is not on sale here.";
+  if (!counterOf(f, dateOf(g.day.clock.day).year).includes(e))
+    return "That is not on sale here.";
   if (!g.festivalsJoined.includes(joinKey(f, g.day.clock.day)))
     return "Go to the festival first.";
   if (e.hat && g.wardrobe.has(e.hat)) return "You already have that hat.";
+  if (e.recipe && hasFlag(g, recipeFlag(e.recipe)))
+    return "You already know that recipe.";
   if (e.once && hasFlag(g, e.once))
     return "Sold out. You have bought one already.";
   if (e.tokens) {
@@ -276,6 +311,7 @@ export function buyAtCounter(
 ): boolean {
   if (counterProblem(g, f, e) !== undefined) return false;
   if (e.hat) g.wardrobe.add(e.hat);
+  else if (e.recipe) setFlag(g, recipeFlag(e.recipe));
   else if (e.item && !g.inventory.add(e.item, e.count ?? 1)) return false;
   if (e.tokens) spendTokens(g, e.price);
   else g.money -= e.price;
@@ -289,7 +325,7 @@ export const FESTIVAL_RETURN = "from_festival";
 
 /** The festival whose map this is, if it is a festival map. */
 export function festivalOfMap(mapId: string): Festival | undefined {
-  return FESTIVALS.find((f) => f.map === mapId);
+  return FESTIVALS.find((f) => f.map === mapId || f.evenYear?.map === mapId);
 }
 
 /** True for a map that only exists for a festival: the green and the hedge maze. */
@@ -299,7 +335,7 @@ export const isFestivalMap = (mapId: string): boolean =>
 /**
  * The line for a villager or decoration on a festival map, by service id. The
  * green's villagers are `sight-N` (the festival's `sights`), and the hedge's
- * are `scare-x` and `talk-x` (the maze file). Undefined for any other id.
+ * are `scare-x`, `talk-x` and `sign-x` (the maze file). Undefined for any other id.
  */
 export function sightLine(
   f: Festival,
@@ -308,10 +344,14 @@ export function sightLine(
 ): string | undefined {
   const n = /^sight-(\d+)$/.exec(id);
   if (n) return f.sights?.[Number(n[1])]?.line;
-  const m = /^(scare|talk)-(.)$/.exec(id);
+  const m = /^(scare|talk|sign)-(.)$/.exec(id);
   if (m && f.activity === "maze")
     return (
-      m[1] === "scare" ? mazeForYear(year).scares : mazeForYear(year).talkers
+      m[1] === "scare"
+        ? mazeForYear(year).scares
+        : m[1] === "sign"
+          ? mazeForYear(year).signs
+          : mazeForYear(year).talkers
     )[m[2]!];
   return undefined;
 }

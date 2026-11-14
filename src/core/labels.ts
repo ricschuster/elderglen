@@ -127,7 +127,11 @@ export function serviceLabel(kind: string, id: string): string | undefined {
   if (kind === "showing" || kind === "festival-counter")
     return FESTIVAL_BY_ID[id];
   if (kind === "sight")
-    return id.startsWith("scare") ? "Decoration" : "Villager";
+    return id.startsWith("scare")
+      ? "Decoration"
+      : id.startsWith("sign")
+        ? "Signpost"
+        : "Villager";
   return SERVICES[kind];
 }
 

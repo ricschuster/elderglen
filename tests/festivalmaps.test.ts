@@ -3,13 +3,21 @@ import { maps } from "../src/content/maps";
 import {
   FESTIVAL_RETURN,
   FESTIVALS,
+  festivalMapFor,
+  festivalPlace,
   festivalOfMap,
   isFestivalMap,
   sightLine,
 } from "../src/core/festivals";
 import { festivalLayout } from "../src/core/festivalroutes";
 import { serviceLabel } from "../src/core/labels";
-import { MAZE, cellAt, mazeChest, mazeStart } from "../src/core/maze";
+import {
+  MAZE,
+  MAZE_EVEN,
+  cellAt,
+  mazeChest,
+  mazeStart,
+} from "../src/core/maze";
 import { isFarmMap, FARM_TYPES } from "../src/core/farmtypes";
 import type { FarmMap } from "../src/core/map";
 
@@ -131,6 +139,22 @@ describe("the hedge map", () => {
       expect(ids).toContain(`talk-${k}`);
   });
 
+  it("puts a signpost one tile from the hidden gap, on a hedge tile beside a corridor", () => {
+    expect(Object.keys(MAZE.signs)).toEqual(["g"]);
+    const sign = map.services.find((s) => s.id === "sign-g")!;
+    expect(sign).toBeDefined();
+    expect(
+      sightLine(
+        FESTIVALS.find((f) => f.id === "hollow-eve")!,
+        "sign-g",
+      ),
+    ).toMatch(/lantern/);
+    expect(Math.abs(sign.x - OX - MAZE.gap.x)).toBeLessThanOrEqual(1);
+    expect(Math.abs(sign.y - OY - MAZE.gap.y)).toBeLessThanOrEqual(1);
+    expect(map.isBlocked(sign.x, sign.y)).toBe(true);
+    expect(map.isBlocked(sign.x, sign.y + 1)).toBe(false);
+  });
+
   it("puts the chest at the maze end and a cart beside it back to the door", () => {
     const e = mazeChest();
     const chest = map.services.find((s) => s.kind === "hedge-chest")!;
@@ -176,5 +200,95 @@ describe("the hedge map", () => {
     expect(dist(false)).toBeDefined();
     expect(dist(true)!).toBeLessThan(dist(false)!);
     expect(map.isBlocked(MAZE.gap.x + OX, MAZE.gap.y + OY)).toBe(false);
+  });
+});
+
+describe("the even-year hedge map (note 82)", () => {
+  const map = maps.get("hedge-even");
+  const f = FESTIVALS.find((x) => x.id === "hollow-eve")!;
+  const l = festivalLayout(f, false, 2)!;
+
+  it("is chosen in even years and the odd map in odd years", () => {
+    expect(festivalMapFor(f, 1)).toBe("hedge");
+    expect(festivalMapFor(f, 2)).toBe("hedge-even");
+    expect(festivalOfMap("hedge-even")?.id).toBe("hollow-eve");
+    expect(isFestivalMap("hedge-even")).toBe(true);
+    expect(festivalLayout(f, false, 1)!.map).toBe("hedge");
+    expect(l.map).toBe("hedge-even");
+    expect(festivalPlace(f, false, 2).zone.w).toBe(map.width);
+  });
+
+  it("is the even-year maze tile for tile, except the niches and the opening", () => {
+    const niches = new Set(l.niches.map(String));
+    for (let y = 0; y < MAZE_EVEN.rows.length; y++)
+      for (let x = 1; x < MAZE_EVEN.rows[0]!.length; x++) {
+        if (niches.has(String([x + OX, y + OY]))) continue;
+        const c = MAZE_EVEN.rows[y]![x]!;
+        const gap = x === MAZE_EVEN.gap.x && y === MAZE_EVEN.gap.y;
+        const solid =
+          (c === "#" && !gap) ||
+          c in MAZE_EVEN.scares ||
+          c in MAZE_EVEN.talkers ||
+          c === "E";
+        expect(map.isBlocked(x + OX, y + OY), `${x},${y}`).toBe(solid);
+      }
+    expect(map.width).toBe(MAZE_EVEN.rows[0]!.length + OX + 1);
+    expect(map.height).toBe(MAZE_EVEN.rows.length + 2);
+  });
+
+  it("has the services, a reachable chest and cart, and a way home", () => {
+    const ids = map.services.map((s) => s.id);
+    for (const k of Object.keys(MAZE_EVEN.scares))
+      expect(ids).toContain(`scare-${k}`);
+    for (const k of Object.keys(MAZE_EVEN.talkers))
+      expect(ids).toContain(`talk-${k}`);
+    const sign = map.services.find((s) => s.id === "sign-g")!;
+    expect(sign).toBeDefined();
+    expect(Math.abs(sign.x - OX - MAZE_EVEN.gap.x)).toBeLessThanOrEqual(1);
+    expect(Math.abs(sign.y - OY - MAZE_EVEN.gap.y)).toBeLessThanOrEqual(1);
+    expect(map.isBlocked(sign.x, sign.y)).toBe(true);
+    expect(map.isBlocked(sign.x, sign.y + 1)).toBe(false);
+    expect(map.exits).toEqual([]);
+    expect(map.problems()).toEqual([]);
+    const reach = map.reachable(map.entry("door")!);
+    const chest = map.services.find((s) => s.kind === "hedge-chest")!;
+    const ey = MAZE_EVEN.rows.findIndex((r) => r.includes("E"));
+    const e = { x: MAZE_EVEN.rows[ey]!.indexOf("E"), y: ey };
+    expect(chest).toMatchObject({ x: e.x + OX, y: e.y + OY });
+    expect(reach.has(`${chest.x - 1},${chest.y}`)).toBe(true);
+    const cart = map.services.find((s) => s.kind === "hedge-cart")!;
+    expect(reach.has(`${cart.x},${cart.y + 1}`)).toBe(true);
+    const leave = map.services.find((s) => s.kind === "festival-leave")!;
+    expect(reach.has(`${leave.x},${leave.y - 1}`)).toBe(true);
+  });
+
+  it("cuts a niche per villager as dead ends of length one, never touching", () => {
+    expect(l.niches).toHaveLength(14);
+    for (const [x, y] of l.niches) {
+      expect(map.isBlocked(x, y), `${x},${y}`).toBe(false);
+      const open = [
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1],
+      ].filter(([dx, dy]) => !map.isBlocked(x + dx!, y + dy!));
+      expect(open, `${x},${y} has one way in`).toHaveLength(1);
+      for (const [ox, oy] of l.niches)
+        if (ox !== x || oy !== y)
+          expect(Math.max(Math.abs(ox - x), Math.abs(oy - y))).toBeGreaterThan(
+            1,
+          );
+    }
+    expect(map.isBlocked(map.width - 1, 3)).toBe(true);
+  });
+
+  it("keeps every villager and start reachable with the villagers standing in the way", () => {
+    // Any one villager's tile can be blocked without cutting the chest off from the start.
+    const start = l.starts[0]!;
+    const chest = map.services.find((s) => s.kind === "hedge-chest")!;
+    const reach = map.reachable({ x: start[0], y: start[1] });
+    expect(reach.has(`${chest.x - 1},${chest.y}`)).toBe(true);
+    for (const t of Object.values(l.spots))
+      expect(reach.has(`${t[0]},${t[1]}`) || t[0] <= 3).toBe(true);
   });
 });

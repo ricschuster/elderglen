@@ -1429,6 +1429,12 @@
     "keep": true
   },
   {
+    "id": "gourd-lantern",
+    "name": "Gourd lantern",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "grandmother-hush",
     "name": "Grandmother Hush",
     "sellPrice": 3000
@@ -1479,6 +1485,12 @@
     "id": "grape-wine",
     "name": "Wild grape wine",
     "sellPrice": 240
+  },
+  {
+    "id": "gravestone",
+    "name": "Gravestone",
+    "sellPrice": 0,
+    "keep": true
   },
   {
     "id": "great-hearthfin",
@@ -1751,6 +1763,12 @@
     "id": "hollow-acorn-charm",
     "name": "Hollow acorn charm",
     "sellPrice": 90
+  },
+  {
+    "id": "hollow-lantern",
+    "name": "Hollow lantern",
+    "sellPrice": 0,
+    "keep": true
   },
   {
     "id": "holly-sprig",

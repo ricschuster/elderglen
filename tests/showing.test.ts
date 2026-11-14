@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { DAYS_PER_SEASON, SEASONS, dateOf } from "../src/core/calendar";
+import { DISHES } from "../src/core/dishes";
+import { itemById } from "../src/core/items";
 import { festivalLayout } from "../src/core/festivalroutes";
+import { known, recipeById } from "../src/core/crafting";
 import {
+  counterName,
+  counterOf,
   buyAtCounter,
   counterProblem,
   enterFestival,
@@ -39,9 +44,13 @@ import {
   scoreTable,
   showTokens,
   valuePoints,
+  MAX_ITEM_VALUE,
+  SHOW_GROUPS,
 } from "../src/core/showing";
+import { FISH } from "../src/core/fishing";
 import { dailyStock } from "../src/core/furniture";
 
+const fishId = FISH[0]!.id;
 const dayOf = (season: string, d: number) =>
   SEASONS.indexOf(season as never) * DAYS_PER_SEASON + d;
 
@@ -71,7 +80,7 @@ describe("fall and winter festival data", () => {
 });
 
 describe("the Harvest Showing", () => {
-  it("scores a full table of top goods in five groups (no dishes yet)", () => {
+  it("scores a full table of top goods in five groups", () => {
     // Artisan, forage, fruit, vegetable, mineral, plus filler at gold quality.
     const table = [
       "melon-wine@gold",
@@ -86,9 +95,9 @@ describe("the Harvest Showing", () => {
     ];
     const s = scoreTable(table);
     expect(s.items).toBe(9);
-    expect(s.categories).toBe(25); // five groups here (no dish yet)
+    expect(s.categories).toBe(25); // five groups here
     expect(s.total).toBe(14 + 9 + 25 + s.value);
-    expect(s.value).toBeLessThanOrEqual(45);
+    expect(s.value).toBeLessThanOrEqual(54);
   });
 
   it("gives an empty table minus 9 items points and a full table 9", () => {
@@ -96,15 +105,37 @@ describe("the Harvest Showing", () => {
     expect(scoreTable(Array(TABLE_SIZE).fill("parsnip")).items).toBe(9);
   });
 
-  it("counts quality and price, up to 5 an item", () => {
-    expect(valuePoints("parsnip")).toBe(0);
-    expect(valuePoints("parsnip@gold")).toBe(2);
-    expect(valuePoints("melon")).toBe(2); // 250g
-    expect(valuePoints("pumpkin@gold")).toBe(5); // 320g is 3, plus 2
-    expect(valuePoints("gold-bar@gold")).toBeLessThanOrEqual(5);
+  it("scores value by price band and quality, up to 6 an item", () => {
+    expect(valuePoints("no-such-item")).toBe(0);
+    expect(valuePoints("parsnip")).toBe(2); // 35g, band 20+, normal
+    expect(valuePoints("parsnip@gold")).toBe(4); // 52g, band 20+, gold
+    expect(valuePoints("melon")).toBe(4); // 250g, band 200+, normal
+    expect(valuePoints("pumpkin@gold")).toBe(6); // 480g, band 400+
+    for (const id of ["gold-bar@gold", "melon-wine@gold", "pumpkin@silver"])
+      expect(valuePoints(id)).toBeLessThanOrEqual(MAX_ITEM_VALUE);
   });
 
-  it("sorts goods into the six groups", () => {
+  it("has eight groups and fills the mark at six", () => {
+    expect(SHOW_GROUPS.length).toBe(8);
+    const six = [
+      "melon-wine",
+      "hazelnut",
+      "apple",
+      "parsnip",
+      "iron-bar",
+      "egg",
+    ];
+    expect(scoreTable(six).categories).toBe(30);
+    expect(scoreTable([...six, "wood"]).categories).toBe(30);
+  });
+
+  it("sorts goods into the groups, fish and animal goods included", () => {
+    expect(groupOf("egg")).toBe("animal");
+    expect(groupOf("wool@silver")).toBe("animal");
+    expect(groupOf("milk")).toBe("animal");
+    expect(groupOf(fishId)).toBe("fish");
+    expect(groupOf("arctic-char-roe")).toBeUndefined(); // roe is not shown
+
     expect(groupOf("melon-wine")).toBe("artisan");
     expect(groupOf("hazelnut")).toBe("forage");
     expect(groupOf("apple")).toBe("fruit");
@@ -114,11 +145,37 @@ describe("the Harvest Showing", () => {
     expect(groupOf("wood")).toBeUndefined();
   });
 
+  it("puts every cooked dish in the dish group, at any quality", () => {
+    expect(DISHES.length).toBeGreaterThan(0);
+    for (const d of DISHES) {
+      expect(groupOf(d.id), d.id).toBe("dish");
+      expect(groupOf(`${d.id}@gold`), d.id).toBe("dish");
+    }
+  });
+
+  it("keeps the top score at 107 with a dish among eight groups", () => {
+    const top = [
+      "pumpkin-soup@gold",
+      "melon-wine@gold",
+      "hazelnut@gold",
+      "melon@gold",
+      "pumpkin@gold",
+      "gold-bar@gold",
+      "egg@gold",
+      "pumpkin@gold",
+      "pumpkin@gold",
+    ];
+    const s = scoreTable(top);
+    expect(s.categories).toBe(30);
+    expect(s.value).toBeLessThanOrEqual(54);
+    expect(s.total).toBeLessThanOrEqual(107);
+  });
+
   it("places by points", () => {
-    expect(placeOf(85).place).toBe(1);
-    expect(placeOf(84).place).toBe(2);
-    expect(placeOf(70).place).toBe(2);
-    expect(placeOf(55).place).toBe(3);
+    expect(placeOf(77).place).toBe(1);
+    expect(placeOf(76).place).toBe(2);
+    expect(placeOf(64).place).toBe(2);
+    expect(placeOf(51).place).toBe(3);
     expect(placeOf(-9).place).toBe(4);
     expect(PLACES.map((p) => p.tokens)).toEqual([1000, 500, 250, 50]);
   });
@@ -184,6 +241,103 @@ describe("the Harvest Showing", () => {
     expect(g.inventory.count(seed.item!)).toBe(seed.count);
     expect(showTokens(g)).toBe(1000 - seed.price);
     expect(g.money).toBe(0);
+  });
+});
+
+describe("the Harvest Showing counter rotation (note 66)", () => {
+  const f = festivalOn("fall", 9)!;
+  const rot = f.rotation!;
+
+  it("has four pool lines in tokens at the owner's placeholder prices", () => {
+    expect(rot.perYear).toBe(2);
+    expect(rot.pool.map((e) => [e.item, e.price])).toEqual([
+      ["small-glow-ring", 700],
+      ["mixed-seed", 300],
+      ["hay", 150],
+      ["pumpkin-soup", 250],
+    ]);
+    for (const e of rot.pool) {
+      expect(e.tokens).toBe(true);
+      expect(itemById(e.item!), e.item).toBeDefined();
+    }
+  });
+
+  it("picks the same two lines for a year every time, and cycles the pool", () => {
+    const ids = (y: number) => counterOf(f, y).map((e) => e.item);
+    const fixed = f.counter.map((e) => e.item);
+    expect(ids(1)).toEqual([...fixed, "small-glow-ring", "mixed-seed"]);
+    expect(ids(2)).toEqual([...fixed, "hay", "pumpkin-soup"]);
+    expect(ids(3)).toEqual(ids(1));
+    expect(ids(1)).toEqual(ids(1));
+    expect(counterOf(f, 1)[f.counter.length]).toBe(rot.pool[0]);
+  });
+
+  it("leaves a festival with no rotation as it was", () => {
+    const fair = festivalOn("spring", 21)!;
+    expect(counterOf(fair, 5)).toBe(fair.counter);
+  });
+
+  it("sells only the year's lines", () => {
+    const g = newGame();
+    g.day.clock.day = dayOf("fall", 9);
+    g.day.clock.minutes = f.opens;
+    enterFestival(g);
+    g.showTokens = { year: 1, count: 1000 };
+    expect(counterProblem(g, f, rot.pool[0]!)).toBeUndefined();
+    expect(counterProblem(g, f, rot.pool[2]!)).toMatch(/not on sale/);
+  });
+
+  it("keeps the counter total above the first place prize", () => {
+    const total = (y: number) =>
+      counterOf(f, y)
+        .filter((e) => e.tokens)
+        .reduce((n, e) => n + e.price, 0);
+    expect(total(1)).toBeGreaterThan(1000);
+    expect(total(2)).toBeGreaterThan(1000);
+  });
+});
+
+describe("the Hollow Eve booth", () => {
+  const f = festivalOn("fall", 21)!;
+  const at = () => {
+    const g = newGame();
+    g.day.clock.day = dayOf("fall", 21);
+    g.day.clock.minutes = f.opens;
+    enterFestival(g);
+    g.money = 10000;
+    return g;
+  };
+
+  it("keeps the gourd lamp and two furniture pieces and adds a gravestone and a lamp recipe", () => {
+    const names = f.counter.map((e) => e.item ?? e.recipe);
+    expect(names).toEqual([
+      "gourd-lamp",
+      "hay-bale-seat",
+      "harvest-bench",
+      "gravestone",
+      "gourd-lantern",
+    ]);
+  });
+
+  it("sells the gravestone for gold into the pack", () => {
+    const g = at();
+    const e = f.counter.find((x) => x.item === "gravestone")!;
+    expect(buyAtCounter(g, f, e)).toBe(true);
+    expect(g.inventory.count("gravestone")).toBe(1);
+    expect(g.money).toBe(10000 - e.price);
+  });
+
+  it("teaches the lantern recipe once, for gold, and then it is sold out", () => {
+    const g = at();
+    const e = f.counter.find((x) => x.recipe)!;
+    const r = recipeById("gourd-lantern")!;
+    expect(known(g, r)).toBe(false);
+    expect(buyAtCounter(g, f, e)).toBe(true);
+    expect(known(g, r)).toBe(true);
+    expect(g.money).toBe(10000 - e.price);
+    expect(counterProblem(g, f, e)).toMatch(/already know/);
+    expect(buyAtCounter(g, f, e)).toBe(false);
+    expect(counterName(e)).toMatch(/recipe/);
   });
 });
 
@@ -255,7 +409,7 @@ describe("the Hollow Eve maze", () => {
     const g = newGame();
     g.day.clock.day = dayOf("fall", 21);
     expect(openChest(g)).toMatch(/Lantern Hood/);
-    expect(g.wardrobe.has(MAZE.chestHat)).toBe(true);
+    expect(g.wardrobe.has(MAZE.chestHat!)).toBe(true);
     expect(chestOpened(g)).toBe(true);
     expect(openChest(g)).toMatch(/empty/);
     g.day.clock.day += 8 * DAYS_PER_SEASON;
@@ -266,18 +420,35 @@ describe("the Hollow Eve maze", () => {
     expect(sackValue()).toBeLessThanOrEqual(600);
   });
 
-  it("gives a bigger sack in an even year, from the larger maze", () => {
+  it("gives a lantern the first even year, then a sack worth about 800g", () => {
     const g = newGame();
     g.day.clock.day = dayOf("fall", 21) + 4 * DAYS_PER_SEASON;
     expect(dateOf(g.day.clock.day).year).toBe(2);
-    g.wardrobe.add(MAZE.chestHat);
+    expect(openChest(g)).toMatch(/hollow lantern/);
+    expect(g.inventory.count("hollow-lantern")).toBe(1);
+    expect(g.wardrobe.has("lantern-hood")).toBe(false);
+    expect(openChest(g)).toMatch(/empty/);
+    g.day.clock.day += 8 * DAYS_PER_SEASON;
+    expect(dateOf(g.day.clock.day).year).toBe(4);
     expect(openChest(g)).toMatch(/sack/);
+    expect(g.inventory.count("hollow-lantern")).toBe(1);
     expect(g.inventory.count("hazelnut")).toBe(4);
     expect(g.inventory.count("pumpkin")).toBe(1);
-    expect(sackValue(MAZE_EVEN)).toBeGreaterThan(sackValue() * 1.5);
+    expect(sackValue(MAZE_EVEN)).toBeGreaterThanOrEqual(750);
+    expect(sackValue(MAZE_EVEN)).toBeLessThanOrEqual(850);
+    expect(sackValue(MAZE_EVEN)).toBeGreaterThan(sackValue() * 1.4);
     expect(mazeForYear(1)).toBe(MAZE);
     expect(mazeForYear(2)).toBe(MAZE_EVEN);
     expect(mazeForYear(3)).toBe(MAZE);
+  });
+
+  it("keeps the odd-year hat once and the lantern separate from it", () => {
+    const g = newGame();
+    g.day.clock.day = dayOf("fall", 21);
+    expect(openChest(g)).toMatch(/Lantern Hood/);
+    g.day.clock.day += 4 * DAYS_PER_SEASON;
+    expect(openChest(g)).toMatch(/hollow lantern/);
+    expect(g.inventory.count("hollow-lantern")).toBe(1);
   });
 
   describe("the even-year maze", () => {
@@ -379,7 +550,7 @@ describe("the Hollow Eve maze", () => {
   it("keeps the chest shut while the pack is too full for the sack", () => {
     const g = newGame();
     g.day.clock.day = dayOf("fall", 21);
-    g.wardrobe.add(MAZE.chestHat);
+    g.wardrobe.add(MAZE.chestHat!);
     while (g.inventory.add("wood", 50)) continue;
     while (g.inventory.add("sap", 1)) continue;
     expect(openChest(g)).toMatch(/too full/);

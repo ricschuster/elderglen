@@ -44,16 +44,23 @@ and one line each) and the mushroom cave. Both are below. The farm cave mark
   - Items: 2 per item shown, minus 9, so a full table gives 9 and an empty one
     gives minus 9. Filling the table always helps (the shape is Stardew's, from
     the saved page).
-  - Categories: 5 for each of the groups shown, up to 30. Our groups for
-    slice 1 are artisan goods, cooked dishes, foraged goods, fruit, vegetables
-    and minerals. Six groups, so six is the full mark. Fish and animal products
-    join in slices 2 and 3.
-  - Value: per item, quality points (normal 0, silver 1, gold 2) plus 1 for
-    every 100g of sell price, up to 3. At most 5 an item, 45 in all. Stardew's
-    own value rule was not in the saved page (SC-53).
-  - A table of nine goods in six groups at top value scores 98.
-- **Places** (placeholder): first 85 points or more, second 70, third 55,
-  otherwise fourth.
+  - Categories: 5 for each of the groups shown, up to 30. Eight groups:
+    artisan goods, cooked dishes, foraged goods, fruit, vegetables, minerals,
+    fish and animal products (eggs, milk, wool and the like). Six of eight fill
+    the mark, as in Stardew (owner, 2026-11-14). Roe is not a fish and not an
+    animal product (Stardew does not count roe or dinosaur egg as animal
+    products). Dishes are in the group in the code (built 2026-11-14).
+  - Value: per item, Stardew's price bands by quality (saved Stardew Valley
+    Fair page, SC-53). The price is the actual sell price, quality included.
+    Bands 0+, 20+, 90+, 200+, 300+, 400+ give 1/2/3, 2/3/4, 3/4/5, 4/5/6,
+    5/6/6 and 6/6/6 for normal, silver and gold. Stardew has a fourth,
+    iridium, column topping at 8; we have no iridium, so our top is 6 an item,
+    54 in all.
+  - A table of nine goods in six or more groups at top value scores 107
+    (14 + 9 + 30 + 54).
+- **Places**: first 77 points or more, second 64, third 51, otherwise fourth.
+  Stardew's first place needs about 90 of a possible 125 (72 percent), so ours
+  sit at 72, 60 and 48 percent of 107, rounded.
 - **Prize**: show tokens. 1,000 for first, 500 for second, 250 for third, 50 for
   fourth. Tokens do not carry between years. Stardew's amounts and pacing are
   from the saved page, ours are the same on purpose.
@@ -77,11 +84,18 @@ and one line each) and the mushroom cave. Both are below. The farm cave mark
   pumpkin that grins, a ghost sheet that drifts. Villagers stand inside and
   react to them in a line each (Stardew's maze has talkers inside, checked).
   A second, larger maze for year two is parked.
-- A chest sits at the end. The first time, it holds a unique reward (a hat, name
-  open). Each later year it holds a mixed sack worth about 500g of forage and
-  fall goods. A cart or shortcut brings the player back to the entrance.
+- A chest sits at the end. Odd years: the first time, a unique hat, then each
+  later odd year a mixed sack worth about 500g of forage and fall goods. Even
+  years (owner, 2026-11-14): the first time in an even year, a unique placeable
+  decor lantern (the Hollow lantern, a placeholder name, a keepsake that is
+  never sold or bought and stands on the farm like the other farm decoration),
+  then each later even year a richer sack worth about 800g of forage and fall
+  goods. A cart or shortcut brings the player back to the entrance.
 - A booth outside the maze sells fall decor: a carved gourd lamp and two
-  furniture pieces. It uses the festival counter built in build 8.
+  furniture pieces, and (owner, 2026-11-14) a gravestone farm decoration and a
+  craftable lamp recipe, both for gold. It uses the festival counter built in
+  build 8. Stardew sells its Jack-O-Lantern recipe at 2,000g and the lantern at
+  750g; ours are placeholders.
 
 ## Frostday (Winter 8)
 
@@ -206,7 +220,7 @@ screens stay until the maps exist.
    had parked. The current 19 by 15 grid in `src/content/maze.json` is the
    odd-year maze. The even-year maze is new and larger, with a different
    layout. The two prizes are two chests: the first-year unique reward in odd
-   years and a better one in even years (the even-year reward is open).
+   years and a better one in even years (the even-year reward is a placeable lantern then a sack, note 66).
 4. **A hidden passage and a shortcut back (Stardew).** A gap in the hedge, found
    by looking, leads to the chest room in each maze, and a shortcut after the
    chest sends the player back to the entrance. Stardew's odd-year maze has
@@ -224,8 +238,7 @@ screens stay until the maps exist.
    keeps its own place. This settles note 71's question 9, and SC-90 (that
    Stardew does this for the town) stays an unchecked memory claim.
 
-Open: the even-year maze layout and reward, the hidden gap's tell (a lantern
-out of line is the proposal), festival spots for villagers on the green, and
+Open: festival spots for villagers on the green, and
 the green map's festival props. These need the village map from note 56.
 
 **Built (2026-11-08, #522):** the Harvest Showing is played on a new green map
@@ -247,5 +260,35 @@ stay screens).
 ## Still open
 
 - The villager who asks to use the cave, and the Hollow Eve first-time hat.
-- The Harvest Showing prize counter list and the points thresholds.
-- Stardew's value-point rule for the Grange (SC-53).
+- The Harvest Showing prize counter list: the owner chose the fixed lines plus a yearly rotation (built, see below).
+
+**Built (2026-11-14, owner's answers):** the Showing now has eight groups (fish
+and animal products added), Stardew's price bands by quality for value points
+(top 6 an item), and the places at 77, 64 and 51 of a possible 107.
+
+**Built (2026-11-14, dishes):** `groupOf` maps every cooked dish to the dish group. The top score stays 107: the group points already cap at 30 with six groups, and a dish's value is capped at 6 like any good.
+
+**Built (2026-11-14, counter rotation):** the Harvest Showing counter keeps its fixed lines and adds
+two of a pool of four each year, in order, so year 1 shows the small glow ring (700 tokens) and ten
+mixed seeds (300), year 2 ten hay (150) and three pumpkin soups (250), then it repeats. `rotation`
+in `festivals.json`, `counterOf(f, year)` in `core/festivals.ts`. The counter total stays above
+the 1,000 first place prize on purpose ("choose a few things each year"). Prices are placeholders.
+The hat stays the Harvest Crown and the even-year lantern the Hollow lantern.
+
+**Built (2026-11-14):** the even-year chest gives the Hollow lantern the first
+even year (a farm decoration, placeholder colour art, never sold), then a sack
+of 4 hazelnuts, 2 cranberries and a pumpkin (830g). The odd-year chest is
+unchanged. `chestHat` and `chestItem` are optional fields in the maze data.
+
+**Built (2026-11-14):** the hidden gap's tell is a small signpost with a lantern
+mark (`sign-g`, a `sight` marker with placeholder colour art) on the hedge tile
+diagonal to the gap, beside the corridor, in both hedge maps. Its line is the
+`signs` entry in the maze file. The gap stays the shorter way, never the only
+one.
+
+**Built (2026-11-14):** the booth adds a Gravestone (400g, a farm decoration,
+never sold by the keeper) and the Gourd lantern recipe (2,000g, taught once;
+a counter line with a `recipe` field raises the world flag `recipe:gourd-lantern`,
+and the recipe's `flag` source reads it). The Gourd lantern is a placeable light
+(radius 5, farm only) made from a pumpkin and a torch. Names, prices and colour
+art are placeholders.

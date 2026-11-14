@@ -38,17 +38,12 @@ table, lantern floating and ice fishing rules with thin scene hooks, pond menu a
 Open, top to bottom:
 
 1. **Owner answers left:** none. Decided 2026-11-13: garden pot is clay 1, stone 10 and a refined crystal (smelted quartz, Stardew), taught by Alder (still to build, with a smelt recipe); Frostfin 300g, no bundle slot; Frostday cap is Icewarden's Cap (built); the hunt prize is the emberseed (built); aged roe quality closed. Algae soup is the glassy-elver's reward (note 93).
-2. **#873 heart events** (note 62): 62 events, one file per person in `src/content/heart-events/`, rewards real (2026-11-14: dish recipes, decor, hats, lures; four rain events). Left: the owner's play, seed and window edits, then 4, 8 and 10 with the voice sheets (M3d).
-3. **#878 Secret Woods pond fish:** built (Fernscale and two borrowed commons). Left: the statue, if the owner still wants it.
-4. **Note 93 left:** the species numbers to tune in play (built as placeholders), pond art. Cave pools on mine floors built 2026-11-13 (the farm cave has none).
-5. **#876 left:** judging (Harvest Showing; core and panel exist, unclear what is missing), scene
-   walking villagers and marchers built 2026-11-13 (player joining the march left), even-year hedge map, multiplayer counts (M4).
-   Cake dish picker, lantern drift and ice count built 2026-11-13.
-6. **Decided, still to build:** garden pot art (digging out and fertilizer built 2026-11-13), village trees built
-   (layout is a guess, note 77), even-year hedge map (core and data built, no Tiled map), mahogany monster seed
-   (needs Secret Woods creatures), #874 elderfruit sources left: spouse and gallery set (blocked, no marriage).
-7. A browser look at everything built since the owner last played: hat picker, cart, herb stall,
-   tapper, lights, rod, bombs, festival maps and activities, tailoring, pond screens, tea bush.
+2. **#873 heart events** (note 62): 62 events, rewards real. Left: the owner's play, seed and window edits, then 4, 8 and 10 with the voice sheets (M3d).
+3. **#878 Secret Woods:** fully built (statue, pond fish, creatures with the Burrmouse and the Mahogany seed drop, 2026-11-14). Left: tune in play.
+4. **Note 93 left:** species numbers to tune in play; pond art is placeholder only (built 2026-11-14).
+5. **#876 festivals:** built 2026-11-14: Showing judging (eight groups, Stardew price bands, dishes count), rotating token counter, even-year hedge map and chest, gap signpost, booth gravestone and gourd lantern recipe, player joins the march (auto-join, owner kept). Left: multiplayer counts (M4), the owner's play.
+6. **Decided, still to build (batch 4, next session):** hall counters need a second player tile each (keep the footprint, corridors stay 2 wide for the ceremony crowd), renovation decor zones (note 85 "Decoration zones"), refresh `docs/overview.json` and `valley-map.json`, wiki people gift lists (`giftsDraft`), draft the M4 hosting spike issue text (owner approves before filing). Then one playtest run (`npm run playtest`, background jobs). Real garden pot art waits for M3d. Village trees: owner kept the layout, judge in play. #874 spouse and gallery set blocked (no marriage). Friendship doors are built (`gates.ts`).
+7. A browser look at everything built since the owner last played: hat picker, cart, herb stall, tapper, lights, rod, bombs, festival maps and activities, tailoring, pond screens and art, tea bush, woods creatures, even-year maze.
 
 Alongside: the wiki (#910, note 100; built for every category, every item has a picture; text cleared for crops, fish, forage, items, places and rooms; draft text left for bundles, recipes, people and five gem names; left: owner reads the draft text and clears flags, gift lists (`giftsDraft`), people prose with the voice sheets, hosting after M3d), `docs/overview.json` (behind since 2026-11-11), Stardew checks rows (open: SC-122, 135, 160, 161, 170, 172), and file the M4
 hosting spike before M4 (also farm player state size in the save, ADR 0014).

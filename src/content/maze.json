@@ -16,7 +16,10 @@
     "#.......#.....#..E#",
     "###################"
   ],
-  "gap": { "x": 6, "y": 5 },
+  "gap": {
+    "x": 6,
+    "y": 5
+  },
   "scares": {
     "a": "A scarecrow turns its head to watch you. It is only straw.",
     "b": "A pumpkin grins up from the hedge. Its candle gutters, friendly enough.",
@@ -27,8 +30,20 @@
   },
   "chestHat": "lantern-hood",
   "sack": [
-    { "id": "hazelnut", "count": 3 },
-    { "id": "wild-plum", "count": 2 },
-    { "id": "chestnut", "count": 2 }
-  ]
+    {
+      "id": "hazelnut",
+      "count": 3
+    },
+    {
+      "id": "wild-plum",
+      "count": 2
+    },
+    {
+      "id": "chestnut",
+      "count": 2
+    }
+  ],
+  "signs": {
+    "g": "A small signpost with a lantern painted on it. The lantern points at a gap in the hedge next door."
+  }
 }
