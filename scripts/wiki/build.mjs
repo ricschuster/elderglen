@@ -7,6 +7,7 @@ import {
   existsSync,
   mkdirSync,
   readFileSync,
+  cpSync,
   readdirSync,
   rmSync,
   writeFileSync,
@@ -766,6 +767,9 @@ async function main() {
     mkdirSync(dirname(join(out, path)), { recursive: true });
     writeFileSync(join(out, path), content);
   }
+  // The internal wiki links the same pictures as the public one (../img/), so copy them in.
+  if (internal && existsSync(join(root, "docs/wiki/img")))
+    cpSync(join(root, "docs/wiki/img"), join(out, "img"), { recursive: true });
   console.log(`wiki: wrote ${files.size} files to ${relative(root, out)}`);
 }
 
