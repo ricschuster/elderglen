@@ -10,6 +10,7 @@ export const MENU_TABS = [
   { key: "animals", label: "Animals" },
   { key: "special", label: "Special" },
   { key: "collections", label: "Collect" },
+  { key: "guide", label: "Guide" },
   { key: "options", label: "Options" },
   { key: "exit", label: "Exit" },
 ] as const;

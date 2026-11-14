@@ -128,6 +128,8 @@ Three sections, switched with Left and Right or a tap.
 
 ## Built status
 
+- 2026-11-14: a Guide tab after Collect (note 101).
+
 - 2026-11-14: `MenuScene` (tab strip, Esc or E, Page Up and Page Down), Pack tab
   (`PackScene`; move, split, sort and trash rules in `src/core/packmenu.ts`),
   Skills, Crafting, Collections and Options hosted as tabs, Exit tab (asks
