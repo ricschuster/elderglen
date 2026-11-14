@@ -1,4 +1,7 @@
 import Phaser from "phaser";
+import { hiddenTabs } from "../core/menupages";
+import type { GameState } from "../core/save";
+import { STATE_KEY } from "./state";
 
 /** The tabs of the in-game menu, in Stardew's order (note 49). */
 export const MENU_TABS = [
@@ -25,9 +28,9 @@ interface TabHooks {
   beforeMenuClose?: () => void;
 }
 
-const TAB_W = 82;
+const TAB_W = 72;
 const TAB_H = 40;
-const TAB_GAP = 4;
+const TAB_GAP = 3;
 
 /**
  * The tabbed in-game menu (note 49). It draws only the tab strip. Each tab is
@@ -37,6 +40,8 @@ const TAB_GAP = 4;
  */
 export class MenuScene extends Phaser.Scene {
   private tab: MenuTab = "pack";
+  /** The tabs shown: Animals and Special Items stay hidden until they have something (note 49). */
+  private tabs: (typeof MENU_TABS)[number][] = [...MENU_TABS];
   private boxes: Phaser.GameObjects.Rectangle[] = [];
 
   constructor() {
@@ -48,11 +53,15 @@ export class MenuScene extends Phaser.Scene {
       ? (data!.tab as MenuTab)
       : "pack";
     this.boxes = [];
+    const g = this.registry.get(STATE_KEY) as GameState | undefined;
+    const hide = g ? hiddenTabs(g) : [];
+    this.tabs = MENU_TABS.filter((t) => !hide.includes(t.key));
+    if (!this.tabs.some((t) => t.key === this.tab)) this.tab = "pack";
   }
 
   create(): void {
     const left = 8;
-    MENU_TABS.forEach((t, i) => {
+    this.tabs.forEach((t, i) => {
       const x = left + i * (TAB_W + TAB_GAP);
       const box = this.add
         .rectangle(x, 4, TAB_W, TAB_H, 0x2f4a35, 1)
@@ -63,7 +72,7 @@ export class MenuScene extends Phaser.Scene {
       box.on("pointerdown", () => this.show(t.key));
       this.add
         .text(x + TAB_W / 2, 4 + TAB_H / 2, t.label, {
-          fontSize: "17px",
+          fontSize: "15px",
           color: "#ffffff",
         })
         .setOrigin(0.5)
@@ -108,8 +117,8 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private step(by: number): void {
-    const i = MENU_TABS.findIndex((t) => t.key === this.tab);
-    this.show(MENU_TABS[(i + by + MENU_TABS.length) % MENU_TABS.length]!.key);
+    const i = this.tabs.findIndex((t) => t.key === this.tab);
+    this.show(this.tabs[(i + by + this.tabs.length) % this.tabs.length]!.key);
   }
 
   private launchTab(): void {
@@ -119,7 +128,7 @@ export class MenuScene extends Phaser.Scene {
     this.scene.bringToTop(this.tab);
     this.scene.bringToTop();
     this.boxes.forEach((b, i) => {
-      const on = MENU_TABS[i]!.key === this.tab;
+      const on = this.tabs[i]!.key === this.tab;
       b.setFillStyle(on ? 0xa0482e : 0x2f4a35, 1);
       b.setStrokeStyle(on ? 3 : 2, 0xffffff, on ? 1 : 0.6);
     });

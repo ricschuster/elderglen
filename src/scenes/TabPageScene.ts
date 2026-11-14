@@ -29,23 +29,8 @@ export class TabPageScene extends Phaser.Scene {
 /** The placeholder tabs, in tab order. */
 export const PLACEHOLDER_TABS: TabPageScene[] = [
   new TabPageScene(
-    "social",
-    "Social",
-    "Hearts for each neighbour, who you have spoken to today, and a gift log of the tastes you have learned. This page comes with the friendship screens.",
-  ),
-  new TabPageScene(
     "map",
     "Map",
     "A map of the valley with a marker for where you stand. Not drawn yet.",
-  ),
-  new TabPageScene(
-    "animals",
-    "Animals",
-    "Your pets, horse and farm animals, with their hearts and whether you have petted them today. Not built yet.",
-  ),
-  new TabPageScene(
-    "special",
-    "Special Items",
-    "Keys, charms and powers you have earned, and what each one does. Nothing here yet.",
   ),
 ];

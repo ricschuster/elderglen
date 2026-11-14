@@ -272,6 +272,16 @@ export class Friendship {
     return this.rows.get(id)?.met ?? false;
   }
 
+  /** True when they were talked to on this day. */
+  talkedOn(id: string, day: number): boolean {
+    return this.rows.get(id)?.talkDay === day;
+  }
+
+  /** True when they had a gift on this day. */
+  giftedOn(id: string, day: number): boolean {
+    return this.rows.get(id)?.giftDay === day;
+  }
+
   hasBouquet(id: string): boolean {
     return this.rows.get(id)?.bouquet ?? false;
   }
