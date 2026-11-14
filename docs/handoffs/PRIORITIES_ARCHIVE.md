@@ -433,3 +433,25 @@ fixed); tapper crafted at Foraging 4 with the Heavy Tapper as the Rare Finds bun
 Combat 1, SC-169); derived `hallRestored`; Hat Parade join cut-off 14:30; boots tailoring (SC-170);
 regrow outside the farm as stage 3 and the `cosmetic` tree property (#396); ADR 0014 and the
 generators moved to `scripts/drafts/`.
+
+---
+
+## Moved out of PRIORITIES.md on 2026-11-14
+
+Decided 2026-11-12 (session 9): ADR 0014, committed map JSON is the source, generators moved to
+`scripts/drafts/`. Elderfruit sources confirmed. Tapper crafted at Foraging 4, no shop; Heavy
+Tapper is the Rare Finds bundle reward. Rings from the trainer and slayer goal; Sturdy band
+crafted at Combat 1. Boots tailoring built. Regrow outside the farm 20 percent a night, stage 3.
+Hat Parade join until 14:30. Hall restored is derived. Dye redo costs the six pot items.
+
+Built 2026-11-12 (sessions 7d, 8 and 8b), all awaiting the owner's play. Bundles 1 to 26 can be
+filled in code; the exit test needs the owner's play. Detail is in the notes' "Built status",
+the 2026-11-12l, 2026-11-12m and 2026-11-12n handoffs and `PRIORITIES_ARCHIVE.md`.
+
+Decided 2026-11-12 (session 10): Crabshell ring is the Rock Crab 60 reward; Bug Meat added (Sturdy
+band, Icicle Hopper reward); Cordelia's 4 heart event unlocks tailoring; Heavy Tapper twice as fast
+(saved page, SC-168); finds count only toward "catch N fish", algae soup is a pond reward only, aged
+roe in the jar; tea bush crafted (note 97); Cake Day points 60/90/120; hunt prize Straw Boater plus a
+yearly rare seed; keepsake lantern placeable. Built, awaiting play: all of these, plus hunt, cake
+table, lantern floating and ice fishing rules with thin scene hooks, pond menu and placing screen.
+
