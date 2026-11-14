@@ -491,3 +491,5 @@ north street, a few on the west edges of the middle and south streets, and four 
 the island road, all on open grass off the streets, lots, yards and green. Placeholder art is the
 oak sprite. Tests: `tests/hearthwell.test.ts`. Not verified by play; the owner may want the
 spacing or the count changed (edit the objects in the JSON, note 87).
+
+Decided (owner, 2026-11-14): keep this layout and judge it in play.
