@@ -1,0 +1,249 @@
+{
+  "lines": {
+    "podge_2_a": "PLACEHOLDER TEXT. Tastes the stalls and offers a spoon.",
+    "podge_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "podge_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "podge_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "podge_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "podge_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "podge_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "podge_6_a": "PLACEHOLDER TEXT. Teaches a stew in the kitchen.",
+    "podge_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "podge_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "podge_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "podge_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "podge_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "podge_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+  },
+  "events": [
+    {
+      "id": "podge-square-2",
+      "villager": "podge",
+      "place": "hw:square",
+      "hearts": 2,
+      "window": {
+        "from": "11:00",
+        "until": "12:30"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "podge",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "podge"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "podge",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "podge_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "podge_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "podge",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "chanterelle",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "podge-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "podge-inn-6",
+      "villager": "podge",
+      "place": "hw:inn",
+      "hearts": 6,
+      "window": {
+        "from": "12:30",
+        "until": "17:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "podge",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "podge"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "podge",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "podge_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "podge_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "podge",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "mushroom-stew",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "podge-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    }
+  ]
+}

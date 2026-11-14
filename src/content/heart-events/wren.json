@@ -1,0 +1,251 @@
+{
+  "lines": {
+    "wren_2_a": "PLACEHOLDER TEXT. Climbs a tree, cannot get down.",
+    "wren_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "wren_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "wren_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "wren_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "wren_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "wren_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "wren_6_a": "PLACEHOLDER TEXT. Found a nest, wants it kept secret.",
+    "wren_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "wren_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "wren_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "wren_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "wren_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "wren_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+  },
+  "events": [
+    {
+      "id": "wren-river-path-2",
+      "villager": "wren",
+      "place": "hw:river-path",
+      "hearts": 2,
+      "window": {
+        "from": "13:30",
+        "until": "17:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "wren",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "wren"
+        },
+        {
+          "cmd": "say",
+          "who": "wren",
+          "line": "wren_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "wren",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "wren",
+          "line": "wren_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "wren_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "wren_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "wren",
+          "line": "wren_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "wren",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "wren",
+          "line": "wren_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "wren",
+          "line": "wren_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "pine-nut",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "wren-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "wren-green-6",
+      "villager": "wren",
+      "place": "hw:green",
+      "hearts": 6,
+      "window": {
+        "from": "9:30",
+        "until": "12:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "wren",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "wren"
+        },
+        {
+          "cmd": "say",
+          "who": "wren",
+          "line": "wren_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "wren",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "wren",
+          "line": "wren_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "wren_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "wren_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "wren",
+          "line": "wren_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "wren",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "wren",
+          "line": "wren_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "wren",
+          "line": "wren_6_c"
+        },
+        {
+          "cmd": "give",
+          "furniture": "feather-jar"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "wren-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    }
+  ]
+}

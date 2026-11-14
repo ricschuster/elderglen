@@ -21,6 +21,20 @@ import { buildPeople } from "./people.mjs";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const read = (p) => JSON.parse(readFileSync(join(root, p), "utf8"));
 const content = (n) => read(`src/content/${n}.json`);
+/** The per-person heart event files (#873) merged into one record. */
+const heartEvents = () => {
+  const dir = join(root, "src/content/heart-events");
+  const out = { lines: {}, events: [] };
+  for (const f of readdirSync(dir).sort()) {
+    const d = JSON.parse(readFileSync(join(dir, f), "utf8"));
+    if (f === "_shared.json") Object.assign(out, d);
+    else {
+      Object.assign(out.lines, d.lines);
+      out.events.push(...d.events);
+    }
+  }
+  return out;
+};
 
 const WATERS = {
   river: "River",
@@ -136,7 +150,7 @@ export function load() {
     letters: content("letters"),
     villagers: content("villagers"),
     friendship: content("friendship"),
-    heartEvents: content("heart-events"),
+    heartEvents: heartEvents(),
     spawns: content("spawns"),
     maps,
     planned,

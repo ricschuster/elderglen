@@ -1,0 +1,299 @@
+{
+  "lines": {
+    "rosmarin_4_a": "PLACEHOLDER TEXT. You walk quietly. The fairy ring noticed.",
+    "rosmarin_4_b": "PLACEHOLDER TEXT. Take this seed. Plant it where the sun stays long, and bring the fruit to the old stone in the Secret Woods.",
+    "rosmarin_2_a": "PLACEHOLDER TEXT. Catches the player at the fence, sets a test.",
+    "rosmarin_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "rosmarin_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "rosmarin_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "rosmarin_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "rosmarin_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "rosmarin_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "rosmarin_6_a": "PLACEHOLDER TEXT. Brews something, shows the tower room.",
+    "rosmarin_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "rosmarin_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "rosmarin_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "rosmarin_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "rosmarin_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "rosmarin_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+  },
+  "events": [
+    {
+      "id": "rosmarin-fairy-ring-4",
+      "villager": "rosmarin",
+      "place": "forest:fairy-ring",
+      "hearts": 4,
+      "window": {
+        "from": "15:00",
+        "until": "18:00"
+      },
+      "scene": [
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "ring_edge"
+        },
+        {
+          "cmd": "place",
+          "who": "rosmarin",
+          "mark": "ring_centre"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_4_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "rosmarin",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_4_b"
+        },
+        {
+          "cmd": "give",
+          "item": "ember-berry-seed",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "rosmarin-ring-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "rosmarin-hermit-garden-2",
+      "villager": "rosmarin",
+      "place": "forest:hermit-garden",
+      "hearts": 2,
+      "window": {
+        "from": "9:00",
+        "until": "12:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "rosmarin",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "rosmarin"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "rosmarin",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "rosmarin_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "rosmarin_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "rosmarin",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "wild-ginger",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "rosmarin-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "rosmarin-hermit-tower-6",
+      "villager": "rosmarin",
+      "place": "forest:hermit-tower",
+      "hearts": 6,
+      "window": {
+        "from": "12:00",
+        "until": "15:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "rosmarin",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "rosmarin"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "rosmarin",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "rosmarin_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "rosmarin_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "rosmarin",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "rosmarin",
+          "line": "rosmarin_6_c"
+        },
+        {
+          "cmd": "give",
+          "recipe": "tower-tonic"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "rosmarin-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    }
+  ]
+}

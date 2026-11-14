@@ -733,6 +733,7 @@ window.WIKI_INDEX = [
     kw: "winter",
   },
   { name: "Algae soup", cat: "Item", path: "items/algae-soup.html", kw: "" },
+  { name: "Apple jam", cat: "Item", path: "items/apple-jam.html", kw: "" },
   { name: "Apple", cat: "Item", path: "items/apple.html", kw: "" },
   {
     name: "Artichoke seeds",
@@ -776,6 +777,12 @@ window.WIKI_INDEX = [
   },
   { name: "Bread", cat: "Item", path: "items/bread.html", kw: "" },
   { name: "Bug meat", cat: "Item", path: "items/bug-meat.html", kw: "" },
+  {
+    name: "Camp scramble",
+    cat: "Item",
+    path: "items/camp-scramble.html",
+    kw: "",
+  },
   { name: "Campfire", cat: "Item", path: "items/campfire.html", kw: "" },
   { name: "Candle", cat: "Item", path: "items/candle.html", kw: "" },
   { name: "Carved bead", cat: "Item", path: "items/carved-bead.html", kw: "" },
@@ -858,6 +865,12 @@ window.WIKI_INDEX = [
     path: "items/faded-ribbon.html",
     kw: "",
   },
+  {
+    name: "Farmhouse stew",
+    cat: "Item",
+    path: "items/farmhouse-stew.html",
+    kw: "",
+  },
   { name: "Fiber", cat: "Item", path: "items/fiber.html", kw: "" },
   {
     name: "Fisher's stew",
@@ -914,6 +927,12 @@ window.WIKI_INDEX = [
   },
   { name: "Hay", cat: "Item", path: "items/hay.html", kw: "" },
   {
+    name: "Healing broth",
+    cat: "Item",
+    path: "items/healing-broth.html",
+    kw: "",
+  },
+  {
     name: "Hearthsilver bar",
     cat: "Item",
     path: "items/hearthsilver-bar.html",
@@ -934,6 +953,12 @@ window.WIKI_INDEX = [
   { name: "Herb tea", cat: "Item", path: "items/herb-tea.html", kw: "" },
   { name: "Honey cake", cat: "Item", path: "items/honey-cake.html", kw: "" },
   { name: "Honey", cat: "Item", path: "items/honey.html", kw: "" },
+  {
+    name: "Honeyed milk",
+    cat: "Item",
+    path: "items/honeyed-milk.html",
+    kw: "",
+  },
   { name: "Hops seeds", cat: "Item", path: "items/hops-seed.html", kw: "" },
   {
     name: "Hot pepper seeds",
@@ -956,6 +981,7 @@ window.WIKI_INDEX = [
     kw: "",
   },
   { name: "Iron ore", cat: "Item", path: "items/iron-ore.html", kw: "" },
+  { name: "Jam tart", cat: "Item", path: "items/jam-tart.html", kw: "" },
   { name: "Kale seeds", cat: "Item", path: "items/kale-seed.html", kw: "" },
   { name: "Keg", cat: "Item", path: "items/keg.html", kw: "" },
   { name: "Ladle Snail", cat: "Item", path: "items/ladle-snail.html", kw: "" },
@@ -1078,6 +1104,12 @@ window.WIKI_INDEX = [
     path: "items/river-mussel.html",
     kw: "",
   },
+  {
+    name: "Runner's porridge",
+    cat: "Item",
+    path: "items/runners-porridge.html",
+    kw: "",
+  },
   { name: "Sap", cat: "Item", path: "items/sap.html", kw: "" },
   { name: "Seed maker", cat: "Item", path: "items/seed-maker.html", kw: "" },
   {
@@ -1124,6 +1156,7 @@ window.WIKI_INDEX = [
   { name: "Tea sapling", cat: "Item", path: "items/tea-sapling.html", kw: "" },
   { name: "Tomato seeds", cat: "Item", path: "items/tomato-seed.html", kw: "" },
   { name: "Torch", cat: "Item", path: "items/torch.html", kw: "" },
+  { name: "Tower tonic", cat: "Item", path: "items/tower-tonic.html", kw: "" },
   { name: "Tulip seeds", cat: "Item", path: "items/tulip-seed.html", kw: "" },
   {
     name: "Beach warp totem",
@@ -1370,6 +1403,12 @@ window.WIKI_INDEX = [
     kw: "Cooking Wheat",
   },
   {
+    name: "Camp scramble",
+    cat: "Recipe",
+    path: "recipes/camp-scramble.html",
+    kw: "Cooking Chanterelle Egg",
+  },
+  {
     name: "Campfire",
     cat: "Recipe",
     path: "recipes/campfire.html",
@@ -1430,6 +1469,12 @@ window.WIKI_INDEX = [
     kw: "Crafting Wood Stone Fiber",
   },
   {
+    name: "Farmhouse stew",
+    cat: "Recipe",
+    path: "recipes/farmhouse-stew.html",
+    kw: "Cooking Potato Kale",
+  },
+  {
     name: "Fisher's stew",
     cat: "Recipe",
     path: "recipes/fisher-stew.html",
@@ -1472,6 +1517,12 @@ window.WIKI_INDEX = [
     kw: "Cooking Pumpkin Field mushroom Potato",
   },
   {
+    name: "Healing broth",
+    cat: "Recipe",
+    path: "recipes/healing-broth.html",
+    kw: "Cooking Wild ginger Fiddlehead fern",
+  },
+  {
     name: "Hearty omelette",
     cat: "Recipe",
     path: "recipes/hearty-omelette.html",
@@ -1496,6 +1547,12 @@ window.WIKI_INDEX = [
     kw: "Cooking Honey Wheat Egg",
   },
   {
+    name: "Honeyed milk",
+    cat: "Recipe",
+    path: "recipes/honeyed-milk.html",
+    kw: "Cooking Goat milk Honey",
+  },
+  {
     name: "Inn custard",
     cat: "Recipe",
     path: "recipes/inn-custard.html",
@@ -1512,6 +1569,12 @@ window.WIKI_INDEX = [
     cat: "Recipe",
     path: "recipes/iron-lamp-post.html",
     kw: "Crafting Iron bar Battery pack",
+  },
+  {
+    name: "Jam tart",
+    cat: "Recipe",
+    path: "recipes/jam-tart.html",
+    kw: "Cooking Apple jam Egg",
   },
   {
     name: "Keg",
@@ -1586,6 +1649,12 @@ window.WIKI_INDEX = [
     kw: "Crafting Wood Stone Iron bar",
   },
   {
+    name: "Runner's porridge",
+    cat: "Recipe",
+    path: "recipes/runners-porridge.html",
+    kw: "Cooking Corn Honey",
+  },
+  {
     name: "Seed maker",
     cat: "Recipe",
     path: "recipes/seed-maker.html",
@@ -1632,6 +1701,12 @@ window.WIKI_INDEX = [
     cat: "Recipe",
     path: "recipes/torch.html",
     kw: "Crafting Wood Sap",
+  },
+  {
+    name: "Tower tonic",
+    cat: "Recipe",
+    path: "recipes/tower-tonic.html",
+    kw: "Cooking Frost root Honey",
   },
   {
     name: "Wood brazier",

@@ -1,0 +1,251 @@
+{
+  "lines": {
+    "pim_2_a": "PLACEHOLDER TEXT. Wants to play a game, will not take no.",
+    "pim_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "pim_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "pim_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "pim_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "pim_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "pim_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "pim_6_a": "PLACEHOLDER TEXT. Dares the player to cross the stones.",
+    "pim_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "pim_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "pim_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "pim_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "pim_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "pim_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+  },
+  "events": [
+    {
+      "id": "pim-green-2",
+      "villager": "pim",
+      "place": "hw:green",
+      "hearts": 2,
+      "window": {
+        "from": "9:30",
+        "until": "12:30"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "pim",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "pim"
+        },
+        {
+          "cmd": "say",
+          "who": "pim",
+          "line": "pim_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "pim",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "pim",
+          "line": "pim_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "pim_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "pim_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "pim",
+          "line": "pim_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "pim",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "pim",
+          "line": "pim_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "pim",
+          "line": "pim_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "honey",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "pim-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "pim-river-path-6",
+      "villager": "pim",
+      "place": "hw:river-path",
+      "hearts": 6,
+      "window": {
+        "from": "14:00",
+        "until": "17:30"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "pim",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "pim"
+        },
+        {
+          "cmd": "say",
+          "who": "pim",
+          "line": "pim_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "pim",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "pim",
+          "line": "pim_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "pim_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "pim_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "pim",
+          "line": "pim_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "pim",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "pim",
+          "line": "pim_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "pim",
+          "line": "pim_6_c"
+        },
+        {
+          "cmd": "give",
+          "furniture": "spinning-top"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "pim-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    }
+  ]
+}

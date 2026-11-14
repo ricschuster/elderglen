@@ -1,0 +1,246 @@
+{
+  "lines": {
+    "rushie_2_a": "PLACEHOLDER TEXT. Laughs at a tangled line.",
+    "rushie_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "rushie_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "rushie_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "rushie_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "rushie_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "rushie_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "rushie_6_a": "PLACEHOLDER TEXT. Shows a favourite spot at dusk.",
+    "rushie_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "rushie_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "rushie_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "rushie_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "rushie_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "rushie_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+  },
+  "events": [
+    {
+      "id": "rushie-dock-2",
+      "villager": "rushie",
+      "place": "delta:dock",
+      "hearts": 2,
+      "window": {
+        "from": "6:30",
+        "until": "9:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "rushie",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "rushie"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "rushie",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "rushie_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "rushie_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "rushie",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "mackerel",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "rushie-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "rushie-dock-6",
+      "villager": "rushie",
+      "place": "delta:dock",
+      "hearts": 6,
+      "window": {
+        "from": "17:00",
+        "until": "20:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "rushie",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "rushie"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "rushie",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "rushie_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "rushie_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "rushie",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "moth-lure",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "rushie-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    }
+  ]
+}

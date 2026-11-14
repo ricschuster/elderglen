@@ -330,6 +330,12 @@
     "sellPrice": 60
   },
   {
+    "id": "camp-scramble",
+    "name": "Camp scramble",
+    "sellPrice": 170,
+    "energy": 170
+  },
+  {
     "id": "campfire",
     "name": "Campfire",
     "sellPrice": 0,
@@ -1045,9 +1051,21 @@
     "sellPrice": 45
   },
   {
+    "id": "farmhouse-stew",
+    "name": "Farmhouse stew",
+    "sellPrice": 180,
+    "energy": 150
+  },
+  {
     "id": "feather",
     "name": "Duck feather",
     "sellPrice": 250
+  },
+  {
+    "id": "feather-jar",
+    "name": "Feather jar",
+    "sellPrice": 0,
+    "keep": true
   },
   {
     "id": "fernfin",
@@ -1590,6 +1608,12 @@
     "energy": 30
   },
   {
+    "id": "healing-broth",
+    "name": "Healing broth",
+    "sellPrice": 200,
+    "energy": 180
+  },
+  {
     "id": "heartfire-diamond",
     "name": "Heartfire diamond",
     "sellPrice": 250
@@ -1752,6 +1776,12 @@
     "energy": 120
   },
   {
+    "id": "honeyed-milk",
+    "name": "Honeyed milk",
+    "sellPrice": 140,
+    "energy": 120
+  },
+  {
     "id": "hops",
     "name": "Hops",
     "sellPrice": 25
@@ -1872,6 +1902,12 @@
     "name": "Iron Switch",
     "sellPrice": 0,
     "keep": true
+  },
+  {
+    "id": "jam-tart",
+    "name": "Jam tart",
+    "sellPrice": 170,
+    "energy": 130
   },
   {
     "id": "kale",
@@ -2594,6 +2630,12 @@
     "keep": true
   },
   {
+    "id": "poetry-book-stand",
+    "name": "Poetry book stand",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "pomegranate",
     "name": "Pomegranate",
     "sellPrice": 140,
@@ -2937,6 +2979,12 @@
     "keep": true
   },
   {
+    "id": "runners-porridge",
+    "name": "Runner's porridge",
+    "sellPrice": 150,
+    "energy": 160
+  },
+  {
     "id": "rust-jasper",
     "name": "Rust jasper",
     "sellPrice": 40
@@ -3054,6 +3102,12 @@
     "id": "shell-comb",
     "name": "Shell comb",
     "sellPrice": 75
+  },
+  {
+    "id": "shell-dish",
+    "name": "Shell dish",
+    "sellPrice": 0,
+    "keep": true
   },
   {
     "id": "shell-ghost",
@@ -3218,6 +3272,12 @@
     "id": "spice-berry-wine",
     "name": "Spice berry wine",
     "sellPrice": 240
+  },
+  {
+    "id": "spinning-top",
+    "name": "Spinning top",
+    "sellPrice": 0,
+    "keep": true
   },
   {
     "id": "spiny-shrimp",
@@ -3408,6 +3468,12 @@
     "sellPrice": 250
   },
   {
+    "id": "tide-bowl",
+    "name": "Tide bowl",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "tide-jelly",
     "name": "Tide jelly",
     "sellPrice": 150
@@ -3455,6 +3521,12 @@
     "name": "Torch",
     "sellPrice": 0,
     "keep": true
+  },
+  {
+    "id": "tower-tonic",
+    "name": "Tower tonic",
+    "sellPrice": 230,
+    "energy": 200
   },
   {
     "id": "tree-seed",

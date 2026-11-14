@@ -109,6 +109,12 @@ export function buildMore(c) {
       return `Sent in a letter from ${esc(l?.sender ?? "a neighbour")} ("${esc(l?.title ?? s.letter)}")`;
     }
     if (s.kind === "cellar") return "Found in the cellar";
+    if (s.kind === "event") {
+      const e = d.heartEvents.events.find((x) => x.id === s.event);
+      if (!e) errors.push(`${from}: unknown heart event ${s.event}`);
+      const who = d.villagers.villagers.find((v) => v.id === e?.villager);
+      return `Taught by ${esc(who?.name ?? "a neighbour")} at ${e?.hearts ?? "?"} hearts`;
+    }
     errors.push(`${from}: unknown recipe source ${JSON.stringify(s)}`);
     return "";
   };

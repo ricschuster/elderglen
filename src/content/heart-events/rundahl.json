@@ -1,0 +1,246 @@
+{
+  "lines": {
+    "rundahl_2_a": "PLACEHOLDER TEXT. Offers tea at the fire, asks nothing.",
+    "rundahl_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "rundahl_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "rundahl_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "rundahl_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "rundahl_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "rundahl_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "rundahl_6_a": "PLACEHOLDER TEXT. A story of the road, hints at the wardens.",
+    "rundahl_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "rundahl_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "rundahl_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "rundahl_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "rundahl_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "rundahl_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+  },
+  "events": [
+    {
+      "id": "rundahl-camp-2",
+      "villager": "rundahl",
+      "place": "forest:camp",
+      "hearts": 2,
+      "window": {
+        "from": "8:00",
+        "until": "10:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "rundahl",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "rundahl"
+        },
+        {
+          "cmd": "say",
+          "who": "rundahl",
+          "line": "rundahl_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "rundahl",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "rundahl",
+          "line": "rundahl_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "rundahl_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "rundahl_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "rundahl",
+          "line": "rundahl_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "rundahl",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "rundahl",
+          "line": "rundahl_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "rundahl",
+          "line": "rundahl_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "wild-garlic",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "rundahl-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "rundahl-camp-6",
+      "villager": "rundahl",
+      "place": "forest:camp",
+      "hearts": 6,
+      "window": {
+        "from": "13:00",
+        "until": "16:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "rundahl",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "rundahl"
+        },
+        {
+          "cmd": "say",
+          "who": "rundahl",
+          "line": "rundahl_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "rundahl",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "rundahl",
+          "line": "rundahl_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "rundahl_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "rundahl_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "rundahl",
+          "line": "rundahl_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "rundahl",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "rundahl",
+          "line": "rundahl_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "rundahl",
+          "line": "rundahl_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "fiddlehead-fern",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "rundahl-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    }
+  ]
+}

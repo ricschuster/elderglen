@@ -1,0 +1,248 @@
+{
+  "lines": {
+    "linnet_2_a": "PLACEHOLDER TEXT. Running, challenges the player to a race.",
+    "linnet_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "linnet_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "linnet_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "linnet_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "linnet_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "linnet_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "linnet_6_a": "PLACEHOLDER TEXT. Wants to try the player's job for a day.",
+    "linnet_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "linnet_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "linnet_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "linnet_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "linnet_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "linnet_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+  },
+  "events": [
+    {
+      "id": "linnet-river-path-2",
+      "villager": "linnet",
+      "place": "hw:river-path",
+      "hearts": 2,
+      "window": {
+        "from": "9:00",
+        "until": "10:30"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "linnet",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "linnet"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "linnet",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "linnet_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "linnet_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "linnet",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "peach",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "linnet-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "linnet-inn-6",
+      "villager": "linnet",
+      "place": "hw:inn",
+      "hearts": 6,
+      "window": {
+        "from": "18:00",
+        "until": "22:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "linnet",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "linnet"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "linnet",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "linnet_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "linnet_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "linnet",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_6_c"
+        },
+        {
+          "cmd": "give",
+          "recipe": "runners-porridge"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "linnet-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    }
+  ]
+}

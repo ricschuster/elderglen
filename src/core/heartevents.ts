@@ -1,10 +1,10 @@
-import data from "../content/heart-events.json";
 import villagerData from "../content/villagers.json";
 import { BUNDLES } from "./bundles";
 import { WEEKDAYS, dateOf, type Season } from "./calendar";
 import { dishById } from "./dishes";
 import { festivalDayToday } from "./festivals";
 import { furnitureById } from "./furniture";
+import { hatById } from "./hats";
 import { itemById } from "./items";
 import { letterById, type LetterDef } from "./mail";
 import type { GameState } from "./save";
@@ -21,10 +21,9 @@ import type { Weather } from "./weather";
  * Heart events (`docs/design/62_heart_events.md`, #600 slice 1). Pure rules:
  * which events are due, the once-only seen record, the scene command list and
  * its validator. The scene RUNNER (camera, sprites) is not here and is a later
- * slice, so a scene is data only. Event data is `src/content/heart-events.json`.
+ * slice, so a scene is data only. Event data is one file per person in `src/content/heart-events/`.
  *
- * Open points, all placeholders: events live in one file, not one per person;
- * stage marks, paths, poses and music ids are not checked (no per-map stage
+ * Open points, all placeholders: stage marks, paths, poses and music ids are not checked (no per-map stage
  * data exists yet); `rise` is recorded and not yet read by friendship.
  */
 
@@ -67,6 +66,7 @@ export type Cmd =
       count?: number;
       recipe?: string;
       furniture?: string;
+      hat?: string;
     }
   | { cmd: "rise"; who: string; speed: number }
   | { cmd: "unlockMail"; letter: string };
@@ -111,10 +111,32 @@ export interface HeartEvent {
   scene: Cmd[];
 }
 
-export const FLAGS: readonly string[] = data.flags;
-export const EMOTES: readonly string[] = data.emotes;
-export const LINES = data.lines as Record<string, string>;
-export const HEART_EVENTS = data.events as HeartEvent[];
+interface PersonFile {
+  lines: Record<string, string>;
+  events: HeartEvent[];
+}
+
+// One file per person (#873) plus `_shared.json` for flags and emotes.
+const files = import.meta.glob<PersonFile>("../content/heart-events/*.json", {
+  eager: true,
+  import: "default",
+});
+const shared = files["../content/heart-events/_shared.json"] as unknown as {
+  flags: string[];
+  emotes: string[];
+};
+const people = Object.entries(files)
+  .filter(([path]) => !path.endsWith("/_shared.json"))
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, f]) => f);
+
+export const FLAGS: readonly string[] = shared.flags;
+export const EMOTES: readonly string[] = shared.emotes;
+export const LINES: Record<string, string> = Object.assign(
+  {},
+  ...people.map((f) => f.lines),
+);
+export const HEART_EVENTS: HeartEvent[] = people.flatMap((f) => f.events);
 
 export const eventById = (
   id: string,
@@ -306,6 +328,10 @@ export function completeEvent(
       const l = letterById(c.letter);
       if (l) g.mail.queue(l.id, day + 1);
     } else if (c.cmd === "give") {
+      if (c.hat) {
+        if (g.wardrobe.add(c.hat)) words.push(`A hat: ${hatById(c.hat)?.name}`);
+        continue;
+      }
       const id = c.item ?? c.furniture;
       if (id) {
         const n = c.item ? (c.count ?? 1) : 1;
@@ -442,9 +468,12 @@ export function validateScene(
           out.push(`#${i}: unknown flag "${c.flag}"`);
         break;
       case "give": {
-        const n = [c.item, c.recipe, c.furniture].filter(Boolean).length;
+        const n = [c.item, c.recipe, c.furniture, c.hat].filter(Boolean).length;
         if (n !== 1)
-          out.push(`#${i}: give names exactly one of item, recipe, furniture`);
+          out.push(
+            `#${i}: give names exactly one of item, recipe, furniture, hat`,
+          );
+        if (c.hat && !hatById(c.hat)) out.push(`#${i}: unknown hat "${c.hat}"`);
         if (c.item && !itemById(c.item))
           out.push(`#${i}: unknown item "${c.item}"`);
         if (c.recipe && !dishById(c.recipe))

@@ -1,0 +1,245 @@
+{
+  "lines": {
+    "dilly_2_a": "PLACEHOLDER TEXT. Feeding time, asks the player to hold a lamb.",
+    "dilly_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "dilly_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "dilly_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "dilly_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "dilly_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "dilly_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "dilly_6_a": "PLACEHOLDER TEXT. A sick animal, the player fetches a remedy.",
+    "dilly_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "dilly_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "dilly_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "dilly_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "dilly_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "dilly_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+  },
+  "events": [
+    {
+      "id": "dilly-paddock-2",
+      "villager": "dilly",
+      "place": "forest:paddock",
+      "hearts": 2,
+      "window": {
+        "from": "7:30",
+        "until": "9:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "dilly",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "dilly"
+        },
+        {
+          "cmd": "say",
+          "who": "dilly",
+          "line": "dilly_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "dilly",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "dilly",
+          "line": "dilly_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "dilly_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "dilly_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "dilly",
+          "line": "dilly_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "dilly",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "dilly",
+          "line": "dilly_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "dilly",
+          "line": "dilly_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "egg",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "dilly-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "dilly-paddock-6",
+      "villager": "dilly",
+      "place": "forest:paddock",
+      "hearts": 6,
+      "window": {
+        "from": "16:00",
+        "until": "18:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "dilly",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "dilly"
+        },
+        {
+          "cmd": "say",
+          "who": "dilly",
+          "line": "dilly_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "dilly",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "dilly",
+          "line": "dilly_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "dilly_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "dilly_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "dilly",
+          "line": "dilly_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "dilly",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "dilly",
+          "line": "dilly_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "dilly",
+          "line": "dilly_6_c"
+        },
+        {
+          "cmd": "give",
+          "recipe": "honeyed-milk"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "dilly-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    }
+  ]
+}

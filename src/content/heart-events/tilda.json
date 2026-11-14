@@ -1,0 +1,246 @@
+{
+  "lines": {
+    "tilda_2_a": "PLACEHOLDER TEXT. A beam is stuck, asks for a hand.",
+    "tilda_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "tilda_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "tilda_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "tilda_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "tilda_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "tilda_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "tilda_6_a": "PLACEHOLDER TEXT. Shows drafts for the player's farm.",
+    "tilda_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "tilda_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "tilda_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "tilda_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "tilda_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "tilda_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+  },
+  "events": [
+    {
+      "id": "tilda-sawmill-2",
+      "villager": "tilda",
+      "place": "hw:sawmill",
+      "hearts": 2,
+      "window": {
+        "from": "7:30",
+        "until": "9:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "tilda",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "tilda"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "tilda",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "tilda_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "tilda_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "tilda",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "wood",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "tilda-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "tilda-sawmill-6",
+      "villager": "tilda",
+      "place": "hw:sawmill",
+      "hearts": 6,
+      "window": {
+        "from": "9:00",
+        "until": "17:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "tilda",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "tilda"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "tilda",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "tilda_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "tilda_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "tilda",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "copper-bar",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "tilda-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    }
+  ]
+}

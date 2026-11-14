@@ -1,0 +1,368 @@
+{
+  "lines": {
+    "odette_2_a": "PLACEHOLDER TEXT. Oh, it is you. Come in out of the road.",
+    "odette_2_b": "PLACEHOLDER TEXT. I keep meaning to ask how the farm is doing.",
+    "odette_2_ans1": "PLACEHOLDER TEXT. Busy, but good.",
+    "odette_2_ans2": "PLACEHOLDER TEXT. Tired, honestly.",
+    "odette_2_r1": "PLACEHOLDER TEXT. Good. Busy is how a farm should be.",
+    "odette_2_r2": "PLACEHOLDER TEXT. Then sit a minute. The shop will keep.",
+    "odette_2_c": "PLACEHOLDER TEXT. Take these. They are going soft on the shelf.",
+    "odette_6_a": "PLACEHOLDER TEXT. Shows the shop's old ledger and the first jar she sold.",
+    "odette_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "odette_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "odette_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "odette_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "odette_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "odette_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "odette_rain4_a": "PLACEHOLDER TEXT. Closes the shutters early and tells how the shop got through a flood.",
+    "odette_rain4_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "odette_rain4_ans1": "PLACEHOLDER TEXT. Of course.",
+    "odette_rain4_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "odette_rain4_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "odette_rain4_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "odette_rain4_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+  },
+  "events": [
+    {
+      "id": "odette-store-2",
+      "villager": "odette",
+      "place": "hw:store",
+      "hearts": 2,
+      "window": {
+        "from": "9:00",
+        "until": "16:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "odette",
+          "mark": "counter"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "odette"
+        },
+        {
+          "cmd": "say",
+          "who": "odette",
+          "line": "odette_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "odette",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "odette",
+          "line": "odette_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "odette_2_ans1",
+              "goto": "busy"
+            },
+            {
+              "line": "odette_2_ans2",
+              "goto": "tired"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "busy"
+        },
+        {
+          "cmd": "say",
+          "who": "odette",
+          "line": "odette_2_r1"
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "tired"
+        },
+        {
+          "cmd": "say",
+          "who": "odette",
+          "line": "odette_2_r2"
+        },
+        {
+          "cmd": "rise",
+          "who": "odette",
+          "speed": 1.5
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "odette",
+          "line": "odette_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "potato",
+          "count": 2
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "odette-store-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "odette-store-6",
+      "villager": "odette",
+      "place": "hw:store",
+      "hearts": 6,
+      "window": {
+        "from": "17:00",
+        "until": "18:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "odette",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "odette"
+        },
+        {
+          "cmd": "say",
+          "who": "odette",
+          "line": "odette_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "odette",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "odette",
+          "line": "odette_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "odette_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "odette_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "odette",
+          "line": "odette_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "odette",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "odette",
+          "line": "odette_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "odette",
+          "line": "odette_6_c"
+        },
+        {
+          "cmd": "give",
+          "recipe": "jam-tart"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "odette-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "odette-store-rain-4",
+      "villager": "odette",
+      "place": "hw:store",
+      "hearts": 4,
+      "conditions": {
+        "weather": ["rainy", "stormy"]
+      },
+      "window": {
+        "from": "10:00",
+        "until": "15:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "odette",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "odette"
+        },
+        {
+          "cmd": "say",
+          "who": "odette",
+          "line": "odette_rain4_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "odette",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "odette",
+          "line": "odette_rain4_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "odette_rain4_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "odette_rain4_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "odette",
+          "line": "odette_rain4_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "odette",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "odette",
+          "line": "odette_rain4_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "odette",
+          "line": "odette_rain4_c"
+        },
+        {
+          "cmd": "give",
+          "item": "melon",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "odette-rain-4-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    }
+  ]
+}

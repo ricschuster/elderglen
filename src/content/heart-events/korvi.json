@@ -1,0 +1,246 @@
+{
+  "lines": {
+    "korvi_2_a": "PLACEHOLDER TEXT. Sparks fly, asks for ore.",
+    "korvi_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "korvi_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "korvi_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "korvi_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "korvi_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "korvi_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "korvi_6_a": "PLACEHOLDER TEXT. Shows a dwarven alloy.",
+    "korvi_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "korvi_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "korvi_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "korvi_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "korvi_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "korvi_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+  },
+  "events": [
+    {
+      "id": "korvi-forge-2",
+      "villager": "korvi",
+      "place": "mtn:forge",
+      "hearts": 2,
+      "window": {
+        "from": "8:00",
+        "until": "17:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "korvi",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "korvi"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "korvi",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "korvi_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "korvi_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "korvi",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "copper-bar",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "korvi-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "korvi-forge-6",
+      "villager": "korvi",
+      "place": "mtn:forge",
+      "hearts": 6,
+      "window": {
+        "from": "17:00",
+        "until": "20:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "korvi",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "korvi"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "korvi",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "korvi_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "korvi_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "korvi",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "hearthsilver-bar",
+          "count": 2
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "korvi-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    }
+  ]
+}

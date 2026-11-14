@@ -1,0 +1,245 @@
+{
+  "lines": {
+    "barnaby_2_a": "PLACEHOLDER TEXT. Sketches the player in the wrong hat.",
+    "barnaby_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "barnaby_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "barnaby_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "barnaby_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "barnaby_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "barnaby_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "barnaby_6_a": "PLACEHOLDER TEXT. Plays a prank on Cordelia, the player is in on it.",
+    "barnaby_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "barnaby_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "barnaby_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "barnaby_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "barnaby_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "barnaby_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+  },
+  "events": [
+    {
+      "id": "barnaby-green-2",
+      "villager": "barnaby",
+      "place": "hw:green",
+      "hearts": 2,
+      "window": {
+        "from": "17:00",
+        "until": "19:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "barnaby",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "barnaby"
+        },
+        {
+          "cmd": "say",
+          "who": "barnaby",
+          "line": "barnaby_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "barnaby",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "barnaby",
+          "line": "barnaby_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "barnaby_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "barnaby_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "barnaby",
+          "line": "barnaby_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "barnaby",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "barnaby",
+          "line": "barnaby_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "barnaby",
+          "line": "barnaby_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "grape-wine",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "barnaby-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "barnaby-inn-6",
+      "villager": "barnaby",
+      "place": "hw:inn",
+      "hearts": 6,
+      "window": {
+        "from": "19:00",
+        "until": "22:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "barnaby",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "barnaby"
+        },
+        {
+          "cmd": "say",
+          "who": "barnaby",
+          "line": "barnaby_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "barnaby",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "barnaby",
+          "line": "barnaby_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "barnaby_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "barnaby_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "barnaby",
+          "line": "barnaby_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "barnaby",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "barnaby",
+          "line": "barnaby_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "barnaby",
+          "line": "barnaby_6_c"
+        },
+        {
+          "cmd": "give",
+          "hat": "jesters-cap"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "barnaby-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    }
+  ]
+}
