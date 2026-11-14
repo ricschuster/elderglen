@@ -44,8 +44,9 @@ Open, top to bottom:
 5. **#876 left:** judging (Harvest Showing; core and panel exist, unclear what is missing), scene
    walking villagers and marchers built 2026-11-13 (player joining the march left), even-year hedge map, multiplayer counts (M4).
    Cake dish picker, lantern drift and ice count built 2026-11-13.
-6. **Decided, still to build:** garden pot leftovers (digging out, fertilizer, art, note 97), mahogany monster seed
-   (needs Secret Woods creatures), #874 elderfruit sources left: spouse and gallery set.
+6. **Decided, still to build:** garden pot art (digging out and fertilizer built 2026-11-13), village trees built
+   (layout is a guess, note 77), even-year hedge map (core and data built, no Tiled map), mahogany monster seed
+   (needs Secret Woods creatures), #874 elderfruit sources left: spouse and gallery set (blocked, no marriage).
 7. A browser look at everything built since the owner last played: hat picker, cart, herb stall,
    tapper, lights, rod, bombs, festival maps and activities, tailoring, pond screens, tea bush.
 
