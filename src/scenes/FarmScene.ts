@@ -942,7 +942,10 @@ export class FarmScene extends Phaser.Scene {
         patch: StatePatch,
       ) => {
         const result = applyStatePatch(this.state, patch);
-        const data: SceneData = { map: this.mapId, entry: this.entryName };
+        const data: SceneData = {
+          map: patch.map ?? this.mapId,
+          entry: patch.map ? (patch.entry ?? "door") : this.entryName,
+        };
         this.scene.restart(data);
         return result;
       };

@@ -1,12 +1,15 @@
 import { DAYS_PER_SEASON, SEASONS, type Season } from "./calendar";
 import { DAY_START } from "./clock";
 import { giveItem } from "./debug";
+import { eventById } from "./heartevents";
 import { HEART } from "./friendship";
 import { Inventory } from "./inventory";
 import { LEVEL_XP, MAX_LEVEL, SKILLS, type Skill } from "./skills";
 import type { GameState } from "./save";
 import { setFlag } from "./worldflags";
 import { villagerById } from "./villagers";
+import type { Weather } from "./weather";
+import { WEATHERS } from "./weather";
 import type { Quality } from "./quality";
 import { withQuality } from "./quality";
 
@@ -24,6 +27,16 @@ export interface StatePatch {
   season?: Season;
   dayOfSeason?: number;
   year?: number;
+  /** Set the clock to this many minutes since midnight (after `day`/`season`, so it wins over the morning time). */
+  minutes?: number;
+  /** Set today's weather. */
+  weather?: Weather;
+  /** Mark these heart events as seen (a story that needs an order, `after`). */
+  eventsSeen?: string[];
+  /** The map to stand on after the jump (read by the `farmState` hook, not here). Default: stay. */
+  map?: string;
+  /** The entry on that map (read by the hook). Default "door". */
+  entry?: string;
   /** Set the money to exactly this. */
   money?: number;
   /** Add items to the backpack: id to count. Stops with a problem when it is full. */
@@ -76,7 +89,7 @@ function fillBundle(g: GameState, bundleId: string, problems: string[]): void {
   }
 }
 
-/** Apply a patch to a game state. Order: day, money, skills, hall, flags, hearts, items. */
+/** Apply a patch to a game state. Order: day, minutes, weather, seen events, money, skills, hall, flags, hearts, items. */
 export function applyStatePatch(g: GameState, p: StatePatch): PatchResult {
   const problems: string[] = [];
 
@@ -92,6 +105,23 @@ export function applyStatePatch(g: GameState, p: StatePatch): PatchResult {
   if (day !== undefined) {
     if (!Number.isInteger(day) || day < 1) problems.push(`bad day ${day}`);
     else g.day.restore(day, g.day.energy.max, DAY_START);
+  }
+
+  if (p.minutes !== undefined) {
+    if (!Number.isInteger(p.minutes) || p.minutes < 0 || p.minutes > 1559)
+      problems.push(`bad minutes ${p.minutes}`);
+    else g.day.restore(g.day.clock.day, g.day.energy.max, p.minutes);
+  }
+
+  if (p.weather !== undefined) {
+    if (!WEATHERS.includes(p.weather))
+      problems.push(`bad weather ${p.weather}`);
+    else g.weather = p.weather;
+  }
+
+  for (const id of p.eventsSeen ?? []) {
+    if (!eventById(id)) problems.push(`unknown event ${id}`);
+    else g.heartEvents.mark(id, 0);
   }
 
   if (p.money !== undefined) g.money = Math.max(0, Math.floor(p.money));

@@ -6,6 +6,7 @@ import { applyStatePatch } from "../src/core/statepatch";
 import { hasFlag } from "../src/core/worldflags";
 import { ROOMS } from "../src/core/bundles";
 import { LEVEL_XP } from "../src/core/skills";
+import { HEART_EVENTS } from "../src/core/heartevents";
 import { VILLAGERS } from "../src/core/villagers";
 
 describe("applyStatePatch", () => {
@@ -74,5 +75,24 @@ describe("applyStatePatch", () => {
     expect(g.friendship.points(who)).toBe(4 * HEART);
     expect(g.friendship.met(who)).toBe(true);
     expect(r.problems).toEqual(["unknown villager ghost"]);
+  });
+
+  it("sets the time, the weather and seen events", () => {
+    const g = newGame();
+    const r = applyStatePatch(g, {
+      day: 12,
+      minutes: 14 * 60,
+      weather: "rainy",
+      eventsSeen: [HEART_EVENTS[0]!.id, "nonsense"],
+    });
+    expect(g.day.clock.minutes).toBe(14 * 60);
+    expect(g.day.clock.day).toBe(12);
+    expect(g.weather).toBe("rainy");
+    expect(g.heartEvents.seen(HEART_EVENTS[0]!.id)).toBe(true);
+    expect(r.problems).toEqual(["unknown event nonsense"]);
+    expect(applyStatePatch(g, { minutes: -5 }).problems).toHaveLength(1);
+    expect(
+      applyStatePatch(g, { weather: "hail" as "rainy" }).problems,
+    ).toHaveLength(1);
   });
 });
