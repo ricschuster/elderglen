@@ -18,6 +18,8 @@ export interface MazeData {
   gap: Cell;
   scares: Record<string, string>;
   talkers: Record<string, string>;
+  /** Signposts (the hidden gap's tell, note 66): a lantern mark one tile from the gap. */
+  signs: Record<string, string>;
   /** The unique hat the first time (odd years). */
   chestHat?: string;
   /** The unique placeable keepsake the first time (even years), kept in the pack. */

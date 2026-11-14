@@ -139,6 +139,22 @@ describe("the hedge map", () => {
       expect(ids).toContain(`talk-${k}`);
   });
 
+  it("puts a signpost one tile from the hidden gap, on a hedge tile beside a corridor", () => {
+    expect(Object.keys(MAZE.signs)).toEqual(["g"]);
+    const sign = map.services.find((s) => s.id === "sign-g")!;
+    expect(sign).toBeDefined();
+    expect(
+      sightLine(
+        FESTIVALS.find((f) => f.id === "hollow-eve")!,
+        "sign-g",
+      ),
+    ).toMatch(/lantern/);
+    expect(Math.abs(sign.x - OX - MAZE.gap.x)).toBeLessThanOrEqual(1);
+    expect(Math.abs(sign.y - OY - MAZE.gap.y)).toBeLessThanOrEqual(1);
+    expect(map.isBlocked(sign.x, sign.y)).toBe(true);
+    expect(map.isBlocked(sign.x, sign.y + 1)).toBe(false);
+  });
+
   it("puts the chest at the maze end and a cart beside it back to the door", () => {
     const e = mazeChest();
     const chest = map.services.find((s) => s.kind === "hedge-chest")!;
@@ -226,6 +242,12 @@ describe("the even-year hedge map (note 82)", () => {
       expect(ids).toContain(`scare-${k}`);
     for (const k of Object.keys(MAZE_EVEN.talkers))
       expect(ids).toContain(`talk-${k}`);
+    const sign = map.services.find((s) => s.id === "sign-g")!;
+    expect(sign).toBeDefined();
+    expect(Math.abs(sign.x - OX - MAZE_EVEN.gap.x)).toBeLessThanOrEqual(1);
+    expect(Math.abs(sign.y - OY - MAZE_EVEN.gap.y)).toBeLessThanOrEqual(1);
+    expect(map.isBlocked(sign.x, sign.y)).toBe(true);
+    expect(map.isBlocked(sign.x, sign.y + 1)).toBe(false);
     expect(map.exits).toEqual([]);
     expect(map.problems()).toEqual([]);
     const reach = map.reachable(map.entry("door")!);

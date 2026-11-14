@@ -307,7 +307,7 @@ export const isFestivalMap = (mapId: string): boolean =>
 /**
  * The line for a villager or decoration on a festival map, by service id. The
  * green's villagers are `sight-N` (the festival's `sights`), and the hedge's
- * are `scare-x` and `talk-x` (the maze file). Undefined for any other id.
+ * are `scare-x`, `talk-x` and `sign-x` (the maze file). Undefined for any other id.
  */
 export function sightLine(
   f: Festival,
@@ -316,10 +316,14 @@ export function sightLine(
 ): string | undefined {
   const n = /^sight-(\d+)$/.exec(id);
   if (n) return f.sights?.[Number(n[1])]?.line;
-  const m = /^(scare|talk)-(.)$/.exec(id);
+  const m = /^(scare|talk|sign)-(.)$/.exec(id);
   if (m && f.activity === "maze")
     return (
-      m[1] === "scare" ? mazeForYear(year).scares : mazeForYear(year).talkers
+      m[1] === "scare"
+        ? mazeForYear(year).scares
+        : m[1] === "sign"
+          ? mazeForYear(year).signs
+          : mazeForYear(year).talkers
     )[m[2]!];
   return undefined;
 }

@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 6,
-  "nextobjectid": 19,
+  "nextobjectid": 20,
   "properties": [
     {
       "name": "placeholder",
@@ -457,6 +457,26 @@
           "rotation": 0,
           "visible": true,
           "point": true
+        },
+        {
+          "id": 19,
+          "name": "sign-g",
+          "class": "service",
+          "type": "service",
+          "x": 400,
+          "y": 80,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "sight"
+            }
+          ]
         }
       ]
     }

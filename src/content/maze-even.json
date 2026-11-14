@@ -49,5 +49,8 @@
       "id": "pumpkin",
       "count": 1
     }
-  ]
+  ],
+  "signs": {
+    "g": "A small signpost with a lantern painted on it. The lantern points at a gap in the hedge next door."
+  }
 }

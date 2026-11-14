@@ -2797,7 +2797,9 @@ export class FarmScene extends Phaser.Scene {
         s.kind === "sight"
           ? s.id.startsWith("scare")
             ? 0xe8802a
-            : 0x4a9fd8
+            : s.id.startsWith("sign")
+              ? 0xf0c860
+              : 0x4a9fd8
           : colour[s.kind];
       if (c === undefined) continue;
       this.ground

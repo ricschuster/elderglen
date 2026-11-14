@@ -235,8 +235,7 @@ screens stay until the maps exist.
    keeps its own place. This settles note 71's question 9, and SC-90 (that
    Stardew does this for the town) stays an unchecked memory claim.
 
-Open: the even-year maze layout and reward, the hidden gap's tell (a lantern
-out of line is the proposal), festival spots for villagers on the green, and
+Open: festival spots for villagers on the green, and
 the green map's festival props. These need the village map from note 56.
 
 **Built (2026-11-08, #522):** the Harvest Showing is played on a new green map
@@ -269,3 +268,9 @@ and animal products added), Stardew's price bands by quality for value points
 even year (a farm decoration, placeholder colour art, never sold), then a sack
 of 4 hazelnuts, 2 cranberries and a pumpkin (830g). The odd-year chest is
 unchanged. `chestHat` and `chestItem` are optional fields in the maze data.
+
+**Built (2026-11-14):** the hidden gap's tell is a small signpost with a lantern
+mark (`sign-g`, a `sight` marker with placeholder colour art) on the hedge tile
+diagonal to the gap, beside the corridor, in both hedge maps. Its line is the
+`signs` entry in the maze file. The gap stays the shorter way, never the only
+one.
