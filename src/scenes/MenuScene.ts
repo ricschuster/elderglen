@@ -24,7 +24,7 @@ interface TabHooks {
   beforeMenuClose?: () => void;
 }
 
-const TAB_W = 90;
+const TAB_W = 82;
 const TAB_H = 40;
 const TAB_GAP = 4;
 
@@ -50,7 +50,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   create(): void {
-    const left = (960 - (MENU_TABS.length * (TAB_W + TAB_GAP) - TAB_GAP)) / 2;
+    const left = 8;
     MENU_TABS.forEach((t, i) => {
       const x = left + i * (TAB_W + TAB_GAP);
       const box = this.add
@@ -69,6 +69,18 @@ export class MenuScene extends Phaser.Scene {
         .setDepth(11);
       this.boxes.push(box);
     });
+    // A touch screen has no Esc: a Close button ends the strip.
+    this.add
+      .rectangle(888, 4, 64, TAB_H, 0xa0482e, 1)
+      .setOrigin(0)
+      .setStrokeStyle(2, 0xffffff, 0.8)
+      .setInteractive({ useHandCursor: true })
+      .setDepth(10)
+      .on("pointerdown", () => this.close());
+    this.add
+      .text(920, 4 + TAB_H / 2, "X", { fontSize: "22px", color: "#ffffff" })
+      .setOrigin(0.5)
+      .setDepth(11);
     const kb = this.input.keyboard;
     kb?.on("keydown-ESC", () => this.close());
     kb?.on("keydown-E", () => this.close());
