@@ -44,16 +44,23 @@ and one line each) and the mushroom cave. Both are below. The farm cave mark
   - Items: 2 per item shown, minus 9, so a full table gives 9 and an empty one
     gives minus 9. Filling the table always helps (the shape is Stardew's, from
     the saved page).
-  - Categories: 5 for each of the groups shown, up to 30. Our groups for
-    slice 1 are artisan goods, cooked dishes, foraged goods, fruit, vegetables
-    and minerals. Six groups, so six is the full mark. Fish and animal products
-    join in slices 2 and 3.
-  - Value: per item, quality points (normal 0, silver 1, gold 2) plus 1 for
-    every 100g of sell price, up to 3. At most 5 an item, 45 in all. Stardew's
-    own value rule was not in the saved page (SC-53).
-  - A table of nine goods in six groups at top value scores 98.
-- **Places** (placeholder): first 85 points or more, second 70, third 55,
-  otherwise fourth.
+  - Categories: 5 for each of the groups shown, up to 30. Eight groups:
+    artisan goods, cooked dishes, foraged goods, fruit, vegetables, minerals,
+    fish and animal products (eggs, milk, wool and the like). Six of eight fill
+    the mark, as in Stardew (owner, 2026-11-14). Roe is not a fish and not an
+    animal product (Stardew does not count roe or dinosaur egg as animal
+    products). Dishes have no group entry in the code yet.
+  - Value: per item, Stardew's price bands by quality (saved Stardew Valley
+    Fair page, SC-53). The price is the actual sell price, quality included.
+    Bands 0+, 20+, 90+, 200+, 300+, 400+ give 1/2/3, 2/3/4, 3/4/5, 4/5/6,
+    5/6/6 and 6/6/6 for normal, silver and gold. Stardew has a fourth,
+    iridium, column topping at 8; we have no iridium, so our top is 6 an item,
+    54 in all.
+  - A table of nine goods in six or more groups at top value scores 107
+    (14 + 9 + 30 + 54).
+- **Places**: first 77 points or more, second 64, third 51, otherwise fourth.
+  Stardew's first place needs about 90 of a possible 125 (72 percent), so ours
+  sit at 72, 60 and 48 percent of 107, rounded.
 - **Prize**: show tokens. 1,000 for first, 500 for second, 250 for third, 50 for
   fourth. Tokens do not carry between years. Stardew's amounts and pacing are
   from the saved page, ours are the same on purpose.
@@ -247,5 +254,9 @@ stay screens).
 ## Still open
 
 - The villager who asks to use the cave, and the Hollow Eve first-time hat.
-- The Harvest Showing prize counter list and the points thresholds.
-- Stardew's value-point rule for the Grange (SC-53).
+- The Harvest Showing prize counter list.
+- 
+
+**Built (2026-11-14, owner's answers):** the Showing now has eight groups (fish
+and animal products added), Stardew's price bands by quality for value points
+(top 6 an item), and the places at 77, 64 and 51 of a possible 107.

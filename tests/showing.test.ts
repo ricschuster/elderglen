@@ -39,9 +39,13 @@ import {
   scoreTable,
   showTokens,
   valuePoints,
+  MAX_ITEM_VALUE,
+  SHOW_GROUPS,
 } from "../src/core/showing";
+import { FISH } from "../src/core/fishing";
 import { dailyStock } from "../src/core/furniture";
 
+const fishId = FISH[0]!.id;
 const dayOf = (season: string, d: number) =>
   SEASONS.indexOf(season as never) * DAYS_PER_SEASON + d;
 
@@ -88,7 +92,7 @@ describe("the Harvest Showing", () => {
     expect(s.items).toBe(9);
     expect(s.categories).toBe(25); // five groups here (no dish yet)
     expect(s.total).toBe(14 + 9 + 25 + s.value);
-    expect(s.value).toBeLessThanOrEqual(45);
+    expect(s.value).toBeLessThanOrEqual(54);
   });
 
   it("gives an empty table minus 9 items points and a full table 9", () => {
@@ -96,15 +100,37 @@ describe("the Harvest Showing", () => {
     expect(scoreTable(Array(TABLE_SIZE).fill("parsnip")).items).toBe(9);
   });
 
-  it("counts quality and price, up to 5 an item", () => {
-    expect(valuePoints("parsnip")).toBe(0);
-    expect(valuePoints("parsnip@gold")).toBe(2);
-    expect(valuePoints("melon")).toBe(2); // 250g
-    expect(valuePoints("pumpkin@gold")).toBe(5); // 320g is 3, plus 2
-    expect(valuePoints("gold-bar@gold")).toBeLessThanOrEqual(5);
+  it("scores value by price band and quality, up to 6 an item", () => {
+    expect(valuePoints("no-such-item")).toBe(0);
+    expect(valuePoints("parsnip")).toBe(2); // 35g, band 20+, normal
+    expect(valuePoints("parsnip@gold")).toBe(4); // 52g, band 20+, gold
+    expect(valuePoints("melon")).toBe(4); // 250g, band 200+, normal
+    expect(valuePoints("pumpkin@gold")).toBe(6); // 480g, band 400+
+    for (const id of ["gold-bar@gold", "melon-wine@gold", "pumpkin@silver"])
+      expect(valuePoints(id)).toBeLessThanOrEqual(MAX_ITEM_VALUE);
   });
 
-  it("sorts goods into the six groups", () => {
+  it("has eight groups and fills the mark at six", () => {
+    expect(SHOW_GROUPS.length).toBe(8);
+    const six = [
+      "melon-wine",
+      "hazelnut",
+      "apple",
+      "parsnip",
+      "iron-bar",
+      "egg",
+    ];
+    expect(scoreTable(six).categories).toBe(30);
+    expect(scoreTable([...six, "wood"]).categories).toBe(30);
+  });
+
+  it("sorts goods into the groups, fish and animal goods included", () => {
+    expect(groupOf("egg")).toBe("animal");
+    expect(groupOf("wool@silver")).toBe("animal");
+    expect(groupOf("milk")).toBe("animal");
+    expect(groupOf(fishId)).toBe("fish");
+    expect(groupOf("arctic-char-roe")).toBeUndefined(); // roe is not shown
+
     expect(groupOf("melon-wine")).toBe("artisan");
     expect(groupOf("hazelnut")).toBe("forage");
     expect(groupOf("apple")).toBe("fruit");
@@ -115,10 +141,10 @@ describe("the Harvest Showing", () => {
   });
 
   it("places by points", () => {
-    expect(placeOf(85).place).toBe(1);
-    expect(placeOf(84).place).toBe(2);
-    expect(placeOf(70).place).toBe(2);
-    expect(placeOf(55).place).toBe(3);
+    expect(placeOf(77).place).toBe(1);
+    expect(placeOf(76).place).toBe(2);
+    expect(placeOf(64).place).toBe(2);
+    expect(placeOf(51).place).toBe(3);
     expect(placeOf(-9).place).toBe(4);
     expect(PLACES.map((p) => p.tokens)).toEqual([1000, 500, 250, 50]);
   });
