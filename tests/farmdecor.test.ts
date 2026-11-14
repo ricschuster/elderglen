@@ -48,6 +48,7 @@ describe("farm decoration rows", () => {
       "bird-house",
       "keepsake-lantern",
       "hollow-lantern",
+      "gravestone",
     ]);
     for (const id of farmDecorIds()) {
       const p = placeableById(id)!;

@@ -400,6 +400,7 @@ for (const [id, name] of [
   ["stone-brazier", "Stone brazier"],
   ["wood-lamp-post", "Wood lamp-post"],
   ["iron-lamp-post", "Iron lamp-post"],
+  ["gourd-lantern", "Gourd lantern"],
 ] as const)
   items.set(id, { id, name, sellPrice: 0, keep: true });
 /** Farm decoration (note 89, the seventh placeable kind): carried, stood on the farm, kept. Sold by the keeper (`farmdecor.ts`). */
@@ -410,6 +411,7 @@ for (const [id, name] of [
   ["cat-tree", "Cat tree"],
   ["dark-cat-tree", "Dark cat tree"],
   ["bird-house", "Bird house"],
+  ["gravestone", "Gravestone"],
 ] as const)
   items.set(id, { id, name, sellPrice: 0, keep: true });
 /** The garden pot (note 97): crafted, stood on the farm or in the greenhouse, kept. */
@@ -581,12 +583,14 @@ const GROUPS: [string, string[]][] = [
       "cat-tree",
       "dark-cat-tree",
       "bird-house",
+      "gravestone",
       ...bombData.map((b) => b.id),
       LIFE_ELIXIR,
       MINERS_TREAT,
       OIL_OF_GARLIC,
       "wood-lamp-post",
       "iron-lamp-post",
+      "gourd-lantern",
       ELDERFRUIT,
       DEEPMARK_KEY,
     ],

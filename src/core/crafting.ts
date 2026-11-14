@@ -6,6 +6,7 @@ import { orderById } from "./orders";
 import type { Skill } from "./skills";
 import type { PlacedChest } from "./chests";
 import type { GameState } from "./save";
+import { hasFlag } from "./worldflags";
 
 /**
  * Crafting (`docs/design/34_crafting.md`). Recipes are data in
@@ -31,7 +32,9 @@ export type RecipeSource =
   /** Taught by a letter (friendship mail, note 24): known once that letter is taken. */
   | { kind: "letter"; letter: string }
   /** Taught by a heart event: known once that event has been seen (note 62). */
-  | { kind: "event"; event: string };
+  | { kind: "event"; event: string }
+  /** Bought as a recipe (a festival counter, note 66): known once the world flag is raised. */
+  | { kind: "flag"; flag: string };
 
 export interface Recipe {
   id: string;
@@ -67,7 +70,9 @@ export function known(g: GameState, r: { sources: RecipeSource[] }): boolean {
               ? g.mail.entry(s.letter)?.state === "taken"
               : s.kind === "event"
                 ? g.heartEvents.seen(s.event)
-                : g.hall.complete(s.bundle),
+                : s.kind === "flag"
+                  ? hasFlag(g, s.flag)
+                  : g.hall.complete(s.bundle),
   );
 }
 
@@ -86,6 +91,7 @@ export function sourceText(r: { sources: RecipeSource[] }): string {
     if (s.kind === "cellar") return ["the cellar stairs"];
     if (s.kind === "letter") return ["a letter from a friend"];
     if (s.kind === "event") return ["a friend's story"];
+    if (s.kind === "flag") return ["a festival booth"];
     return [];
   });
   return parts.length === 0

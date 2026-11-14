@@ -906,6 +906,12 @@ window.WIKI_INDEX = [
   { name: "Goat milk", cat: "Item", path: "items/goat-milk.html", kw: "" },
   { name: "Gold bar", cat: "Item", path: "items/gold-bar.html", kw: "" },
   {
+    name: "Gourd lantern",
+    cat: "Item",
+    path: "items/gourd-lantern.html",
+    kw: "",
+  },
+  {
     name: "Green bean seeds",
     cat: "Item",
     path: "items/green-bean-seed.html",
@@ -1509,6 +1515,12 @@ window.WIKI_INDEX = [
     cat: "Recipe",
     path: "recipes/geode-crusher.html",
     kw: "Crafting Gold bar Stone Diamond",
+  },
+  {
+    name: "Gourd lantern",
+    cat: "Recipe",
+    path: "recipes/gourd-lantern.html",
+    kw: "Crafting Pumpkin Torch",
   },
   {
     name: "Harvest hotpot",

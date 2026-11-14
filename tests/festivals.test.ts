@@ -52,7 +52,7 @@ describe("festival data", () => {
       expect(f.ends, f.id).toBeGreaterThanOrEqual(f.closes);
       for (const e of f.counter) {
         expect(e.price, f.id).toBeGreaterThan(0);
-        expect(Boolean(e.item) !== Boolean(e.hat), f.id).toBe(true);
+        expect([e.item, e.hat, e.recipe].filter(Boolean).length, f.id).toBe(1);
         if (e.item) expect(itemById(e.item), e.item).toBeDefined();
         if (e.hat) expect(hatById(e.hat), e.hat).toBeDefined();
       }

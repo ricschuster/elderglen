@@ -92,7 +92,10 @@ and one line each) and the mushroom cave. Both are below. The farm cave mark
   then each later even year a richer sack worth about 800g of forage and fall
   goods. A cart or shortcut brings the player back to the entrance.
 - A booth outside the maze sells fall decor: a carved gourd lamp and two
-  furniture pieces. It uses the festival counter built in build 8.
+  furniture pieces, and (owner, 2026-11-14) a gravestone farm decoration and a
+  craftable lamp recipe, both for gold. It uses the festival counter built in
+  build 8. Stardew sells its Jack-O-Lantern recipe at 2,000g and the lantern at
+  750g; ours are placeholders.
 
 ## Frostday (Winter 8)
 
@@ -274,3 +277,10 @@ mark (`sign-g`, a `sight` marker with placeholder colour art) on the hedge tile
 diagonal to the gap, beside the corridor, in both hedge maps. Its line is the
 `signs` entry in the maze file. The gap stays the shorter way, never the only
 one.
+
+**Built (2026-11-14):** the booth adds a Gravestone (400g, a farm decoration,
+never sold by the keeper) and the Gourd lantern recipe (2,000g, taught once;
+a counter line with a `recipe` field raises the world flag `recipe:gourd-lantern`,
+and the recipe's `flag` source reads it). The Gourd lantern is a placeable light
+(radius 5, farm only) made from a pumpkin and a torch. Names, prices and colour
+art are placeholders.

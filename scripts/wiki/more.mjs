@@ -115,6 +115,7 @@ export function buildMore(c) {
       const who = d.villagers.villagers.find((v) => v.id === e?.villager);
       return `Taught by ${esc(who?.name ?? "a neighbour")} at ${e?.hearts ?? "?"} hearts`;
     }
+    if (s.kind === "flag") return "Sold at the Hollow Eve booth";
     errors.push(`${from}: unknown recipe source ${JSON.stringify(s)}`);
     return "";
   };

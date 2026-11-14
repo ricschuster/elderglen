@@ -2000,6 +2000,7 @@ function paintFarmDecor(scene: Phaser.Scene): void {
     "bird-house": ["#9a7a4a", "#c8503c"],
     "keepsake-lantern": ["#f0c860", "#8a5a2a"],
     "hollow-lantern": ["#e8802a", "#3a2a4a"],
+    gravestone: ["#9a9aa2", "#5a5a64"],
   };
   for (const id of farmDecorIds()) {
     const [body, trim] = colours[id] ?? ["#a08060", "#604830"];
@@ -2161,6 +2162,15 @@ function paintLights(scene: Phaser.Scene): void {
       px(c, iron ? "#3a3a44" : "#3e2a16", 8, 5, 1, 9);
       px(c, "#ffffff33", 5, 12, 6, 1);
     });
+  draw("gourd-lantern", (c) => {
+    groundShadow(c, 8, 15, 10);
+    px(c, "#c8601a", 3, 6, 10, 8);
+    px(c, "#e8802a", 4, 7, 8, 6);
+    px(c, "#5a7a2a", 7, 4, 2, 2);
+    px(c, "#ffe9a0", 5, 8, 2, 2);
+    px(c, "#ffe9a0", 9, 8, 2, 2);
+    px(c, "#ffe9a0", 6, 11, 4, 1);
+  });
   for (const stone of [false, true])
     draw(stone ? "stone-brazier" : "wood-brazier", (c) => {
       groundShadow(c, 8, 15, 10);

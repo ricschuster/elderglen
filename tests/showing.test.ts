@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { DAYS_PER_SEASON, SEASONS, dateOf } from "../src/core/calendar";
 import { festivalLayout } from "../src/core/festivalroutes";
+import { known, recipeById } from "../src/core/crafting";
 import {
+  counterName,
   buyAtCounter,
   counterProblem,
   enterFestival,
@@ -210,6 +212,50 @@ describe("the Harvest Showing", () => {
     expect(g.inventory.count(seed.item!)).toBe(seed.count);
     expect(showTokens(g)).toBe(1000 - seed.price);
     expect(g.money).toBe(0);
+  });
+});
+
+describe("the Hollow Eve booth", () => {
+  const f = festivalOn("fall", 21)!;
+  const at = () => {
+    const g = newGame();
+    g.day.clock.day = dayOf("fall", 21);
+    g.day.clock.minutes = f.opens;
+    enterFestival(g);
+    g.money = 10000;
+    return g;
+  };
+
+  it("keeps the gourd lamp and two furniture pieces and adds a gravestone and a lamp recipe", () => {
+    const names = f.counter.map((e) => e.item ?? e.recipe);
+    expect(names).toEqual([
+      "gourd-lamp",
+      "hay-bale-seat",
+      "harvest-bench",
+      "gravestone",
+      "gourd-lantern",
+    ]);
+  });
+
+  it("sells the gravestone for gold into the pack", () => {
+    const g = at();
+    const e = f.counter.find((x) => x.item === "gravestone")!;
+    expect(buyAtCounter(g, f, e)).toBe(true);
+    expect(g.inventory.count("gravestone")).toBe(1);
+    expect(g.money).toBe(10000 - e.price);
+  });
+
+  it("teaches the lantern recipe once, for gold, and then it is sold out", () => {
+    const g = at();
+    const e = f.counter.find((x) => x.recipe)!;
+    const r = recipeById("gourd-lantern")!;
+    expect(known(g, r)).toBe(false);
+    expect(buyAtCounter(g, f, e)).toBe(true);
+    expect(known(g, r)).toBe(true);
+    expect(g.money).toBe(10000 - e.price);
+    expect(counterProblem(g, f, e)).toMatch(/already know/);
+    expect(buyAtCounter(g, f, e)).toBe(false);
+    expect(counterName(e)).toMatch(/recipe/);
   });
 });
 

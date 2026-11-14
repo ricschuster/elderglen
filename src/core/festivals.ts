@@ -12,6 +12,8 @@ import { hasFlag, setFlag } from "./worldflags";
 export interface CounterEntry {
   item?: string;
   hat?: string;
+  /** A crafting recipe id, taught on purchase (raises `recipeFlag`) and sold out after. */
+  recipe?: string;
   /** How many of the item one purchase gives. Defaults to 1. */
   count?: number;
   /** Paid in show tokens (Harvest Showing) instead of gold. */
@@ -248,8 +250,12 @@ export function enterFestival(g: GameState): Festival | undefined {
   return f;
 }
 
+/** The world flag a bought recipe raises (the recipe's `flag` source names the same one). */
+export const recipeFlag = (recipeId: string) => `recipe:${recipeId}`;
+
 /** The counter line's name, for the screen. */
 export function counterName(e: CounterEntry): string {
+  if (e.recipe) return `${itemById(e.recipe)?.name ?? e.recipe} recipe`;
   if (e.hat) return hatById(e.hat)?.name ?? e.hat;
   const name = (e.item && itemById(e.item)?.name) || e.item || "";
   return e.count && e.count > 1 ? `${e.count} ${name.toLowerCase()}` : name;
@@ -265,6 +271,8 @@ export function counterProblem(
   if (!g.festivalsJoined.includes(joinKey(f, g.day.clock.day)))
     return "Go to the festival first.";
   if (e.hat && g.wardrobe.has(e.hat)) return "You already have that hat.";
+  if (e.recipe && hasFlag(g, recipeFlag(e.recipe)))
+    return "You already know that recipe.";
   if (e.once && hasFlag(g, e.once))
     return "Sold out. You have bought one already.";
   if (e.tokens) {
@@ -284,6 +292,7 @@ export function buyAtCounter(
 ): boolean {
   if (counterProblem(g, f, e) !== undefined) return false;
   if (e.hat) g.wardrobe.add(e.hat);
+  else if (e.recipe) setFlag(g, recipeFlag(e.recipe));
   else if (e.item && !g.inventory.add(e.item, e.count ?? 1)) return false;
   if (e.tokens) spendTokens(g, e.price);
   else g.money -= e.price;
