@@ -5,7 +5,7 @@
 // FINDINGS (a table and playtest-out/sweep.json), not script errors.
 //
 // Run: npm run dev (any port), then `BASE_URL=http://localhost:5173/ npm run playtest:sweep`.
-// Env: WORKERS (default 12), ONLY (a substring filter on item ids), KIND
+// Env: WORKERS (default 4), ONLY (a substring filter on item ids), KIND
 // (festival or event), BRANCHES=0 to run each heart event once instead of once
 // per choice answer.
 import fs from "node:fs";
@@ -18,7 +18,7 @@ process.on("unhandledRejection", (e) => {
     console.error("unhandled", e);
 });
 
-const WORKERS = Math.max(1, Number(process.env.WORKERS) || 12);
+const WORKERS = Math.max(1, Number(process.env.WORKERS) || 4);
 const ONLY = process.env.ONLY ?? "";
 const KIND = process.env.KIND ?? "";
 const BRANCHES = process.env.BRANCHES !== "0";
@@ -180,7 +180,11 @@ async function patch(w, run, p) {
   await dismiss(w);
 }
 
-/** Walk to a tile or the nearest one within `radius` that has a route. True on arrival. */
+/**
+ * Walk to a tile or the nearest one within `radius` (a square, as the game's
+ * PLACE_RADIUS is) that has a route. True on arrival, "noroute" when no tile in
+ * reach has a route at all, false when a walk started but did not arrive.
+ */
 async function walkNear(w, x, y, radius = 0) {
   const cands = [];
   for (let dy = -radius; dy <= radius; dy++)
@@ -192,7 +196,9 @@ async function walkNear(w, x, y, radius = 0) {
     if (here.tile.x === cx && here.tile.y === cy) return true;
     const ok = await w.p.evaluate(([a, b]) => window.farmWalk(a, b), [cx, cy]);
     if (!ok) continue;
-    for (let i = 0; i < 600; i++) {
+    // Time based: a long walk across Hearthwell is slow with many pages open.
+    const until = Date.now() + 90000;
+    for (let i = 0; Date.now() < until; i++) {
       await sleepMs(30);
       if (i % 10 === 9) await dismiss(w);
       const d = await w.bot.dbg();
@@ -201,7 +207,7 @@ async function walkNear(w, x, y, radius = 0) {
     }
     return false;
   }
-  return false;
+  return "noroute";
 }
 
 /** Stand next to a service tile, face it and press Action. */
@@ -566,18 +572,25 @@ async function runEvent(w, run) {
 
   // Trigger: step to the place (or within two tiles of it).
   let started = (await scenes(w)).includes("heart-event");
+  let unreachable = false;
   if (!started) {
-    await walkNear(w, place.x, place.y, 2);
+    const walked = await walkNear(w, place.x, place.y, 2);
     started = await waitFor(
       w,
       async () => (await scenes(w)).includes("heart-event"),
       2500,
     );
+    unreachable = !started && walked === "noroute";
+    if (unreachable)
+      run.fail(
+        `${e.place} cannot be reached: no walkable tile within 2 of its tile (${place.map} ${place.x},${place.y}), so the event can never start by walking`,
+      );
   }
   if (!started) {
-    run.fail(
-      `did not start on arriving at ${e.place} (${place.map} ${place.x},${place.y}) at ${e.window?.from} (scenes ${await scenes(w)}, tile ${JSON.stringify((await w.bot.dbg()).tile)})`,
-    );
+    if (!unreachable)
+      run.fail(
+        `did not start on arriving at ${e.place} (${place.map} ${place.x},${place.y}) at ${e.window?.from} (scenes ${await scenes(w)}, tile ${JSON.stringify((await w.bot.dbg()).tile)})`,
+      );
     // Open it directly, so the scene and its rewards are still checked.
     await w.p.evaluate(
       (id) =>
@@ -612,6 +625,7 @@ async function runEvent(w, run) {
     });
     if (!cur) break;
     if (cur.pos !== last) {
+      tr("step", cur.pos, cur.cmd);
       last = cur.pos;
       stuckSince = Date.now();
     }
