@@ -2900,8 +2900,8 @@ export class FarmScene extends Phaser.Scene {
     else this.render();
   }
 
-  /** Save to the browser. The clock is not saved, so a reload is a new morning. */
-  private save(): void {
+  /** Save to the browser, with the time of day, so Continue resumes the day. */
+  save(): void {
     // A save made in the cellar loads there (`resumeAt`); anywhere else clears it.
     this.state.resumeMap = this.mapId === CELLAR_MAP ? CELLAR_MAP : undefined;
     saveGame(browserStore, this.state);
