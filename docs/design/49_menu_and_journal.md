@@ -10,8 +10,10 @@ and the options door (`45`). This note gives them one home.
 
 - **One tabbed menu (Stardew, decided 2026-11-02).** Esc or E opens it. Its tabs
   replace today's one-off screens. Skills, now its own screen on K, moves inside
-  it. Stardew's real tabs (owner screenshot, SC-06): Inventory, Skills, Social,
-  Map, Crafting, Collections, Options, Exit. We follow that order, and there is
+  it. Stardew's tabs (owner screenshot, SC-06; saved Player Menu page, 1.6):
+  Inventory, Skills, Social, Map, Crafting, Animals, Special Items & Powers,
+  Collections, Options, Exit. We follow that order (Animals and Special Items
+  added 2026-11-14, owner chose both), and there is
   no Wear tab (decided 2026-11-03): the equipment slots and paper doll sit on
   the Pack tab under the backpack, and items are worn from the pack
   (`37_equipment.md`).
@@ -37,6 +39,8 @@ and the options door (`45`). This note gives them one home.
 | Social | A placeholder page until villager hearts exist (`18_dialogue.md`) | no | Stardew tab |
 | Map | A placeholder page until there is a map worth showing | no | Stardew tab |
 | Crafting | Known recipes. Crafts from the pack only | no | `34` |
+| Animals | Pets, horse and farm animals with friendship hearts and whether each was petted today (Stardew 1.6). Hidden until the player has an animal | no | `23`, `25` |
+| Special Items | Special items, book powers and mastery powers collected (Stardew 1.6): name and what it does. Hidden until the first one is held. Ours: keepsakes and keys we already have (Deepmark Key, Homeward Pin and so on) count as special items | no | saved page |
 | Collections | Shipped items, finds and the Achievements tab | no | `38` |
 | Options | The existing controls screen, as the in-game door | screen exists | `45` |
 | Exit | Save the day in progress and return to the title. No confirm | no | `52` (Stardew discards, from memory) |
@@ -51,6 +55,25 @@ and the options door (`45`). This note gives them one home.
   the wrapper ADR.
 - **K is dropped (Stardew, decided 2026-11-02).** Stardew has no skills key.
   Skills is a tab, reached by Esc or E.
+- **The Pack tab's info panel (Stardew, saved Inventory page, 2026-11-14):**
+  farm name, current funds, total earnings and the date. Built so far: funds,
+  date and farm type. The game has no farm name or lifetime earnings counter
+  yet, so those two wait for a name field and a counter in the save. The
+  four tools are carried outside the backpack here, so they show in a strip above
+  the grid and cannot be moved or trashed.
+- **The Skills tab (Stardew 1.6) also shows:** the title from total skill levels,
+  the farmhouse upgrade level, the deepest mine floor and the stardrop-like
+  finds, when each exists. Professions show on hover or long press. Added as
+  those systems allow.
+- **The Social tab gets a gift log (note 61):** pick a villager to see the gift
+  tastes learned so far.
+- **Tab order of the first build (2026-11-14):** Pack, Skills, Social, Map,
+  Crafting, Animals, Special Items, Collections, Options, Exit. Social, Map,
+  Animals and Special Items show a short "not yet" page for now, so the strip
+  already has its final shape. The "hidden, not greyed" rule below applies to
+  Animals and Special Items once their pages are real.
+- **Opening (Stardew):** Esc or E on desktop, a menu button on touch. Stardew's
+  mobile page shows a three-line menu icon.
 - Any other tab with nothing to show yet is hidden, not greyed. The first build
   needs Pack, Skills, Options and Exit, plus the two placeholders.
 - **Touch:** tabs are tapped. Stacks move by tap a stack, tap a slot. No drag is
@@ -102,6 +125,17 @@ Three sections, switched with Left and Right or a tap.
   pages give Stardew's controller shoulder buttons only, so the PC keyboard way
   there is unchecked. These two keys are fixed with the other menu keys
   (note 45).
+
+## Built status
+
+- 2026-11-14: `MenuScene` (tab strip, Esc or E, Page Up and Page Down), Pack tab
+  (`PackScene`; move, split, sort and trash rules in `src/core/packmenu.ts`),
+  Skills, Crafting, Collections and Options hosted as tabs, Exit tab (asks
+  twice, since the resume record of note 52 is not built), placeholder pages for
+  Social, Map, Animals and Special Items. K and R open the menu on Skills and
+  Crafting, and the HUD Skills button is now Menu. Left: equipment slots on the
+  Pack tab, the trash can as a drop target, Skills tab extras, Social gift log,
+  real Animals and Special Items pages, the journal.
 
 ## Open
 

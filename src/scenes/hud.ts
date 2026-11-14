@@ -261,7 +261,7 @@ export class Hud {
       .setInteractive({ useHandCursor: true });
     skills.on("pointerdown", onSkills);
     const skillsText = scene.add
-      .text(skills.x + 45, 36, "Skills", { fontSize: "18px", color: "#ffffff" })
+      .text(skills.x + 45, 36, "Menu", { fontSize: "18px", color: "#ffffff" })
       .setOrigin(0.5);
     const craft = scene.add
       .rectangle(skills.x - 96, 16, 90, 40, 0x000000, 0.5)

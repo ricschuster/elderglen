@@ -13,7 +13,9 @@ import {
 } from "../core/bindings";
 import {
   centreView,
+  closeWindow,
   frame,
+  isHosted,
   Menu,
   type Row,
   UI_SIZE_KEY,
@@ -117,6 +119,16 @@ export class OptionsScene extends Phaser.Scene {
   }
 
   /** Esc backs out of a key prompt first, and closes the screen otherwise. */
+  /** The menu asks before it closes or switches tab: a key capture owns Esc and E. */
+  menuBusy(): boolean {
+    return this.capturing !== undefined || this.clash !== undefined;
+  }
+
+  /** The menu is closing: keep what was changed. */
+  beforeMenuClose(): void {
+    saveSettings(browserSettingsStore, this.settings);
+  }
+
   private escape(): void {
     if (this.capturing || this.clash) {
       this.capturing = undefined;
@@ -344,6 +356,8 @@ export class OptionsScene extends Phaser.Scene {
 
   private close(): void {
     saveSettings(browserSettingsStore, this.settings);
+    // As a tab of the in-game menu it closes back to the farm, not the title.
+    if (isHosted(this)) return closeWindow(this);
     this.scene.start("title");
   }
 }

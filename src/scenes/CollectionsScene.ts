@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import { ringProgress, valleyPercent } from "../core/completion";
 import type { CategoryProgress } from "../core/completion";
 import type { GameState } from "../core/save";
-import { frame, Menu, type Row } from "./panel";
+import { closeWindow, frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
 /**
@@ -103,7 +103,6 @@ export class CollectionsScene extends Phaser.Scene {
   }
 
   private close(): void {
-    this.scene.stop();
-    this.scene.resume("farm");
+    closeWindow(this);
   }
 }

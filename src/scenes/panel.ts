@@ -253,7 +253,27 @@ export class Menu {
   }
 }
 
-/** The dim backdrop and close button every screen shares. */
+/** True when the scene was launched as a tab of the in-game menu (note 49). */
+export function isHosted(scene: Phaser.Scene): boolean {
+  const data = scene.scene.settings.data as { menuHost?: boolean } | undefined;
+  return data?.menuHost === true;
+}
+
+/**
+ * Close a screen that was opened over the farm. A tab of the in-game menu also
+ * closes the menu that hosts it. Resumes the paused farm.
+ */
+export function closeWindow(scene: Phaser.Scene): void {
+  if (isHosted(scene)) scene.scene.stop("menu");
+  scene.scene.stop();
+  scene.scene.resume("farm");
+}
+
+/**
+ * The dim backdrop and close button every screen shares. As a menu tab it
+ * leaves the top strip to the tab bar, has no title or Close button of its
+ * own, and lets the menu handle Esc.
+ */
 export function frame(
   scene: Phaser.Scene,
   title: string,
@@ -279,14 +299,17 @@ export function frame(
       UI_FRAME_EDGE,
     )
     .setOrigin(0);
-  scene.add.text(24, 16, title, { fontSize: "30px", color: "#ffffff" });
+  const hosted = isHosted(scene);
+  if (!hosted)
+    scene.add.text(24, 16, title, { fontSize: "30px", color: "#ffffff" });
   const money = scene.add
-    .text(720, 22, "", { fontSize: "22px", color: "#ffe9a0" })
+    .text(720, hosted ? 54 : 22, "", { fontSize: "22px", color: "#ffe9a0" })
     .setOrigin(0, 0);
   const message = scene.add.text(24, 470, "", {
     fontSize: "18px",
     color: "#ffe9a0",
   });
+  if (hosted) return { money, message };
   const close = scene.add
     .rectangle(836, 480, 100, 44, 0xa0482e, 1)
     .setOrigin(0)

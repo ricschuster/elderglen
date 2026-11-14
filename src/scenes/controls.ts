@@ -13,6 +13,7 @@ export interface Intents {
   use?: () => void;
   action?: () => void;
   eat?: () => void;
+  openMenu?: () => void;
   openSkills?: () => void;
   openCraft?: () => void;
   openHats?: () => void;
@@ -70,6 +71,7 @@ class DesktopControls implements Controls {
         use: intents.use,
         action: intents.action,
         eat: intents.eat,
+        menu: intents.openMenu,
         skills: intents.openSkills,
         craft: intents.openCraft,
         hats: intents.openHats,
