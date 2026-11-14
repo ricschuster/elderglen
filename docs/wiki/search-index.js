@@ -867,6 +867,7 @@ window.WIKI_INDEX = [
   },
   { name: "Fried egg", cat: "Item", path: "items/fried-egg.html", kw: "" },
   { name: "Furnace", cat: "Item", path: "items/furnace.html", kw: "" },
+  { name: "Garden pot", cat: "Item", path: "items/garden-pot.html", kw: "" },
   {
     name: "Garden salad",
     cat: "Item",
@@ -1063,6 +1064,12 @@ window.WIKI_INDEX = [
     name: "Reef Periwinkle",
     cat: "Item",
     path: "items/reef-periwinkle.html",
+    kw: "",
+  },
+  {
+    name: "Refined crystal",
+    cat: "Item",
+    path: "items/refined-crystal.html",
     kw: "",
   },
   {
@@ -1439,6 +1446,12 @@ window.WIKI_INDEX = [
     cat: "Recipe",
     path: "recipes/furnace.html",
     kw: "Crafting Copper ore Stone",
+  },
+  {
+    name: "Garden pot",
+    cat: "Recipe",
+    path: "recipes/garden-pot.html",
+    kw: "Crafting Clay Stone Refined crystal",
   },
   {
     name: "Garden salad",

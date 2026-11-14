@@ -89,6 +89,19 @@
     }
   },
   {
+    "id": "alder-garden-pot",
+    "sender": "Alder",
+    "title": "Pots for the greenhouse",
+    "body": "PLACEHOLDER TEXT. The Larder is mended, and the glass wants something growing in it. A pot takes a little clay, some stone and a clear crystal. Here is how it is made.",
+    "trigger": {
+      "kind": "room",
+      "room": "larder"
+    },
+    "attachment": {
+      "recipe": "garden-pot"
+    }
+  },
+  {
     "id": "hattie-recipe-5",
     "sender": "Hattie",
     "title": "Custard from the inn",

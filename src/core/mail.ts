@@ -37,7 +37,9 @@ export type LetterTrigger =
   /** Friendship mail (note 61 rule 8): a villager reaches this many hearts. */
   | { kind: "hearts"; villager: string; hearts: number }
   /** A heart event has been seen; the letter comes the next morning (note 97, SC-171). */
-  | { kind: "event"; event: string };
+  | { kind: "event"; event: string }
+  /** A village hall room is restored (note 97, the garden pot); the letter comes the next morning. */
+  | { kind: "room"; room: string };
 
 export interface LetterDef {
   id: string;
@@ -181,6 +183,7 @@ export class Mailbox {
 function triggered(g: GameState, t: LetterTrigger): boolean {
   if (t.kind === "hearts") return g.friendship.hearts(t.villager) >= t.hearts;
   if (t.kind === "event") return g.heartEvents.seen(t.event);
+  if (t.kind === "room") return g.hall.roomComplete(t.room);
   if (t.kind === "fish-roster")
     return ORDINARY_FISH.every((f) => g.fishing.has(f.id));
   return t.kind === "first-achievement"
