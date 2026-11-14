@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { guideCategories } from "../src/core/guide";
+import { guideCategories, shopHoursLines } from "../src/core/guide";
+import { clockText } from "../src/core/clock";
+import { SHOPS } from "../src/core/villagers";
 import { deserialize, newGame, serialize } from "../src/core/save";
 import { VILLAGERS } from "../src/core/villagers";
 import { tasteListOf } from "../src/core/friendship";
@@ -102,5 +104,29 @@ describe("the Guide (note 101)", () => {
     const ids = cat(g, "bundles").entries.map((e) => e.id);
     expect(ids.length).toBeGreaterThan(0);
     expect(ids).not.toContain("last-seat");
+  });
+
+  it("shows shop hours on a card only after a visit during them", () => {
+    const g = newGame();
+    const v = VILLAGERS.find((x) => x.shop)!;
+    g.friendship.meet(v.id);
+    const card = () => cat(g, "people").entries.find((e) => e.id === v.id)!;
+    expect(card().lines.join(" ")).not.toMatch(/Open \d/);
+    g.guide.visitShop(v.shop!);
+    const lines = card().lines;
+    expect(lines.some((l) => l.startsWith("Open "))).toBe(true);
+    const back = deserialize(serialize(g))!;
+    expect(back.guide.shopSeen(v.shop!)).toBe(true);
+  });
+
+  it("reads hours and the closed day from the shop data", () => {
+    const shop = SHOPS.find((s) => s.closedDay)!;
+    const text = shopHoursLines(shop).join(" ");
+    expect(text).toContain(clockText(shop.open));
+    expect(text).toContain(clockText(shop.close));
+    expect(text).toMatch(/Shut on \w+days/);
+    expect(shopHoursLines({ ...shop, closedDay: null }).join(" ")).toContain(
+      "every day",
+    );
   });
 });

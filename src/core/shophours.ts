@@ -91,3 +91,6 @@ export function doorShutLine(g: GameState, exitId: string): string {
   const state = stateOf(g, id);
   return !state || state !== "closed" ? "" : shutLine(g, id, state);
 }
+
+/** The shop a Hearthwell door belongs to, if any. */
+export const doorShopId = (exitId: string): string | undefined => DOORS[exitId];

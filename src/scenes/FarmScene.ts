@@ -161,7 +161,12 @@ import {
   type Exit,
   type TiledLayer,
 } from "../core/map";
-import { counterShutLine, doorShutLine } from "../core/shophours";
+import {
+  counterShopId,
+  counterShutLine,
+  doorShopId,
+  doorShutLine,
+} from "../core/shophours";
 import { roadNews } from "../core/roadnews";
 import { traderProblem } from "../core/trader";
 import {
@@ -1805,6 +1810,10 @@ export class FarmScene extends Phaser.Scene {
     this.refreshHolds();
     const doorShut =
       this.mapId === "hearthwell" ? doorShutLine(this.state, exit.id) : "";
+    if (!doorShut && this.mapId === "hearthwell") {
+      const sid = doorShopId(exit.id);
+      if (sid) this.state.guide.visitShop(sid);
+    }
     if (doorShut) {
       this.message = doorShut;
       this.render();
@@ -2426,6 +2435,10 @@ export class FarmScene extends Phaser.Scene {
     if (shut) {
       this.message = shut;
       return this.render();
+    }
+    if (service) {
+      const sid = counterShopId(this.mapId, service.kind);
+      if (sid) this.state.guide.visitShop(sid);
     }
     if (service?.kind === CART_KIND) return this.rideCart(service.id);
     if (

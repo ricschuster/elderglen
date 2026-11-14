@@ -20,7 +20,8 @@ import { FORAGE } from "./forage";
 import { shippedOf } from "./achievements";
 import { seedId, itemById } from "./items";
 import { splitQuality } from "./quality";
-import { SHOPS, VILLAGERS, type Villager } from "./villagers";
+import { clockText } from "./clock";
+import { SHOPS, VILLAGERS, type ShopHours, type Villager } from "./villagers";
 import type { Taste } from "./friendship";
 import type { GameState } from "./save";
 
@@ -36,6 +37,16 @@ import type { GameState } from "./save";
 export class Guide {
   private held = new Set<string>();
   private places = new Set<string>();
+  private shops = new Set<string>();
+
+  /** Note a shop visited during its hours (note 101: hours are learned on the first such visit). */
+  visitShop(shopId: string): void {
+    this.shops.add(shopId);
+  }
+
+  shopSeen(shopId: string): boolean {
+    return this.shops.has(shopId);
+  }
 
   /** Note a map the player has stood on. Only places in the Guide's list show. */
   visit(mapId: string): void {
@@ -67,9 +78,16 @@ export class Guide {
     return [...this.places].sort();
   }
 
-  load(raw: unknown, places?: unknown): void {
+  saveShops(): string[] {
+    return [...this.shops].sort();
+  }
+
+  load(raw: unknown, places?: unknown, shops?: unknown): void {
     this.held = new Set();
     this.places = new Set();
+    this.shops = new Set();
+    if (Array.isArray(shops))
+      for (const id of shops) if (typeof id === "string") this.shops.add(id);
     if (Array.isArray(raw))
       for (const id of raw) if (typeof id === "string") this.held.add(id);
     if (Array.isArray(places))
@@ -189,6 +207,35 @@ const TASTE_WORDS: Record<Taste, string> = {
 };
 const TASTE_ORDER: Taste[] = ["love", "like", "neutral", "dislike", "hate"];
 
+const WEEKDAYS: Record<string, string> = {
+  Mon: "Monday",
+  Tue: "Tuesday",
+  Wed: "Wednesday",
+  Thu: "Thursday",
+  Fri: "Friday",
+  Sat: "Saturday",
+  Sun: "Sunday",
+};
+
+/** A shop's hours as card lines, read from the shop data (note 79). Pure. */
+export function shopHoursLines(shop: ShopHours): string[] {
+  const out = [`Open ${clockText(shop.open)} to ${clockText(shop.close)}`];
+  if (shop.doorClose !== null && shop.doorClose > shop.close)
+    out.push(`The door stays open until ${clockText(shop.doorClose)}`);
+  if (shop.closedDay) {
+    const extra = [
+      ...(shop.rainOpen ? ["open on rainy days"] : []),
+      ...(shop.dailyAfterHall
+        ? ["open daily once the hall's last project is done"]
+        : []),
+    ];
+    out.push(
+      `Shut on ${WEEKDAYS[shop.closedDay] ?? shop.closedDay}s${extra.length ? ` (${extra.join(", ")})` : ""}`,
+    );
+  } else out.push("Open every day");
+  return out;
+}
+
 function personEntry(g: GameState, v: Villager): GuideEntry | undefined {
   if (!g.friendship.met(v.id)) return undefined;
   const lines = [
@@ -204,7 +251,10 @@ function personEntry(g: GameState, v: Villager): GuideEntry | undefined {
     if (names.length) lines.push(`${TASTE_WORDS[t]}: ${names.join(", ")}`);
   }
   const shop = SHOPS.find((s) => s.id === v.shop);
-  if (shop) lines.push(`Keeps ${shop.name}`);
+  if (shop) {
+    lines.push(`Keeps ${shop.name}`);
+    if (g.guide.shopSeen(shop.id)) lines.push(...shopHoursLines(shop));
+  }
   return {
     id: v.id,
     name: v.knownAs ?? v.name,

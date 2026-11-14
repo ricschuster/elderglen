@@ -412,6 +412,7 @@ interface SaveData {
   /** Absent in saves made before the Guide. */
   guide?: string[];
   guidePlaces?: string[];
+  guideShops?: string[];
   /** Absent in saves made before bait and lures. */
   tackle?: TackleSave;
   /** Absent in saves made before shellfish pots. */
@@ -626,6 +627,7 @@ export function serialize(g: GameState): string {
     fishing: g.fishing.save(),
     guide: (g.guide.sweep(g), g.guide.save()),
     guidePlaces: g.guide.savePlaces(),
+    guideShops: g.guide.saveShops(),
     tackle: g.tackle.save(),
     pots: g.pots.save(),
     combat: g.combat.save(),
@@ -1085,7 +1087,7 @@ export function deserialize(text: string): GameState | undefined {
   g.heartEvents.load(raw.heartEvents);
   g.quests.load(raw.quests);
   g.fishing.load(raw.fishing);
-  g.guide.load(raw.guide, raw.guidePlaces);
+  g.guide.load(raw.guide, raw.guidePlaces, raw.guideShops);
   g.guide.sweep(g);
   g.tackle.load(raw.tackle);
   g.pots.load(raw.pots);
