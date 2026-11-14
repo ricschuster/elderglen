@@ -709,6 +709,18 @@ marcher glides between tiles (a 600 ms tween, placeholder). Defaults where the n
 in at their spot when the festival opens (no walk from their normal place; only the walk to and from the
 march line); the green and the hedge show the layout villagers too (time is frozen there, so they stand);
 in the hedge, talking to a villager shows `nicheLine(id)` with their name instead of the normal talk (no
-gift or friendship step there). Not built: the player joining the march at the tail (input off, `paradeJoinedAt`
-is never set, so there is no extra lap), the walk-in at opening, the even-year map. Tests in
+gift or friendship step there). Not built: the walk-in at opening. The player joining the march and the even-year map are built (below and above). Tests in
 `tests/townfolk.test.ts`. Not looked at in a browser.
+
+## Built status (2026-11-14, the player joins the march, #876)
+
+`src/core/parade.ts` and `FarmScene.updateParade`. A player standing on the square (x 64 to 80, y 54 to 70) with a
+hat worn, from 14:00 to 14:30, falls in at the tail with no prompt (the note said "joins the line"; a player who
+does not want it stays off the square or goes hatless). Input is off from that moment (use, action, taps, doors
+and walking), the farmer waits on the tile they stood on until the line reaches them, marches out to the turn and
+back as slot 22, and walks back to the tile. A late join (after 14:00) sets `paradeJoinedAt`, so the villagers do
+the extra lap (`paradeLaps`). The join is kept in `festivalsJoined` as `hat-parade-march:YEAR:MINUTE:X:Y`, once a
+year. At the end `finishParade` gives +20 friendship with each of the 22 marchers (`PARADE_FRIENDSHIP`, once a
+year) and shows Cuthbert's closing line as a message (placeholder text, he does not walk to (66,65)). The lock
+lasts from the join to the end of the march: about 45 game minutes for the 14:00 join, up to about 80 for a
+14:30 join, 30 to 60 seconds of play. A hat is any hat. Tests: `tests/parade.test.ts`. Not looked at in a browser.

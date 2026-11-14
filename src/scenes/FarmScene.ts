@@ -64,6 +64,15 @@ import {
   launchProblem,
 } from "../core/lanterns";
 import { meet, presentAt, villagersOn, type Present } from "../core/townfolk";
+import {
+  PARADE_FESTIVAL,
+  PARADE_MAP,
+  finishParade,
+  joinParade,
+  paradeJoin,
+  paradeJoinedAt,
+  playerMarchAt,
+} from "../core/parade";
 import { stageOf as fruitStageOf } from "../core/fruittrees";
 import { teaStageOf } from "../core/teabush";
 import { potAt, potLook, potsOf } from "../core/gardenpot";
@@ -412,6 +421,8 @@ export class FarmScene extends Phaser.Scene {
   /** Conditions that currently hold, for gated exits: "mines-open" from spring 5. */
   private holds = new Set<string>();
   private message = "";
+  /** True while the Hat Parade script holds the farmer in the line (input off, note 82). */
+  private marching = false;
   /** True after the first Action press on the ruined footbridge, which asks first. */
   private mendAsked = false;
   private hud!: Hud;
@@ -514,6 +525,7 @@ export class FarmScene extends Phaser.Scene {
     this.selected =
       (this.registry.get(SELECTED_KEY) as number | undefined) ?? 0;
     this.leaving = false;
+    this.marching = false;
     this.ladderArmed = true;
     this.exitArmed = false;
     this.floor = mineFloorOf(this.mapId);
@@ -955,8 +967,14 @@ export class FarmScene extends Phaser.Scene {
     this.syncVillagers();
     this.updateHunt(dt);
     this.checkHeartEvent();
-    const walking = this.tapPath.length > 0;
-    const v = walking ? this.tapVector(dt) : this.controls.vector();
+    const marching = this.updateParade(dt);
+    if (marching) this.cancelTap();
+    const walking = !marching && this.tapPath.length > 0;
+    const v = marching
+      ? { x: 0, y: 0 }
+      : walking
+        ? this.tapVector(dt)
+        : this.controls.vector();
     if (!walking && (v.x !== 0 || v.y !== 0)) this.cancelTap();
     this.facing = facingFrom(v, this.facing);
     if (v.x !== 0 || v.y !== 0) this.keyAim();
@@ -1047,7 +1065,7 @@ export class FarmScene extends Phaser.Scene {
     const found = this.map.exitAt(here.x, here.y);
     const onExit = found && this.isWalkThrough(found) ? found : undefined;
     if (!onExit) this.exitArmed = true;
-    else if (this.exitArmed && !this.leaving) {
+    else if (this.exitArmed && !this.leaving && !this.marching) {
       this.exitArmed = false;
       this.useDoor(onExit);
     }
@@ -1210,7 +1228,11 @@ export class FarmScene extends Phaser.Scene {
     const mine = (
       p: Phaser.Input.Pointer,
       over?: Phaser.GameObjects.GameObject[],
-    ): boolean => !over?.length && !this.hud.covers(p.x, p.y) && !this.leaving;
+    ): boolean =>
+      !over?.length &&
+      !this.hud.covers(p.x, p.y) &&
+      !this.leaving &&
+      !this.marching;
     const aimAtTap = (p: Phaser.Input.Pointer, fresh: boolean): void => {
       // With a sling held on a mine floor a tap shoots at the spot, no walking.
       if (fresh && this.floorState && this.slingHeld()) {
@@ -1351,6 +1373,62 @@ export class FarmScene extends Phaser.Scene {
     );
   }
 
+  /** The game minute, run on between clock ticks on a festival day so the march moves a tile a minute. */
+  private festivalMinutes(): number {
+    const clock = this.state.day.clock;
+    const smooth = !!festivalToday(clock.day) && !isFestivalMap(this.mapId);
+    return smooth
+      ? clock.minutes +
+          Math.min(1, (this.time.now - this.tickAt) / (TICK_MS / DEV_SPEED)) *
+            TICK_MINUTES
+      : clock.minutes;
+  }
+
+  /**
+   * The Hat Parade, the player's part (note 82): a hatted player on the square
+   * between 14:00 and 14:30 falls in at the tail and the script walks them out
+   * to the turn and back with input off. Returns true while the script holds them.
+   */
+  private updateParade(dt: number): boolean {
+    const clock = this.state.day.clock;
+    if (
+      this.mapId !== PARADE_MAP ||
+      festivalDayToday(clock.day)?.id !== PARADE_FESTIVAL
+    ) {
+      this.marching = false;
+      return false;
+    }
+    const ts = this.map.tileSize;
+    let join = paradeJoin(this.state);
+    if (!join && !this.leaving) {
+      const at = tileOf(this.pos, PLAYER, ts);
+      if (!joinParade(this.state, this.mapId, at.x, at.y)) {
+        join = paradeJoin(this.state);
+        this.villagerStamp = -1;
+        this.message = "The march forms. You fall in at the tail of the line.";
+        this.render();
+      }
+    }
+    if (!join) return false;
+    const at = playerMarchAt(join, this.festivalMinutes());
+    if (at.state === "done") {
+      if (this.marching) {
+        this.marching = false;
+        this.message = finishParade(this.state);
+        this.render();
+      }
+      return false;
+    }
+    this.marching = true;
+    const k = Math.min(1, dt * 8);
+    const goal = { x: (at.tile[0] + 0.5) * ts, y: (at.tile[1] + 1) * ts - 2 };
+    this.pos = {
+      x: this.pos.x + (goal.x - this.pos.x) * k,
+      y: this.pos.y + (goal.y - this.pos.y) * k,
+    };
+    return true;
+  }
+
   /**
    * Show the villagers the schedule puts on this map (#599). Runs each frame
    * but only does work when the game minute or day changes. Placeholder blocks
@@ -1360,19 +1438,14 @@ export class FarmScene extends Phaser.Scene {
     const clock = this.state.day.clock;
     // The clock ticks 10 minutes at a time, but the Hat Parade walks a tile a
     // minute, so on a festival day the minute runs on between ticks (note 82).
-    const festival = festivalToday(clock.day);
-    const smooth = !!festival && !isFestivalMap(this.mapId);
-    const minutes = smooth
-      ? clock.minutes +
-        Math.min(1, (this.time.now - this.tickAt) / (TICK_MS / DEV_SPEED)) *
-          TICK_MINUTES
-      : clock.minutes;
+    const minutes = this.festivalMinutes();
     const stamp = clock.day * 2000 + Math.floor(minutes);
     if (stamp === this.villagerStamp) return;
     this.villagerStamp = stamp;
     // Time stands still on a festival map; the festival layer places people on it too.
     this.villagers = villagersOn(this.state, this.mapId, clock.day, minutes, {
       hallRestored: hallRestored(this.state.hall),
+      paradeJoinedAt: paradeJoinedAt(this.state),
     });
     const ts = this.map.tileSize;
     const here = new Set(this.villagers.map((v) => v.id));
@@ -1672,7 +1745,7 @@ export class FarmScene extends Phaser.Scene {
    * false when there is no door there. A door that is not open yet says so.
    */
   private useDoor(at: Exit | undefined = this.exitAtAim()): boolean {
-    if (this.leaving) return false;
+    if (this.leaving || this.marching) return false;
     const exit = at;
     if (!exit) return false;
     // The Larder may have been finished at the hall since the last morning.
@@ -2028,7 +2101,7 @@ export class FarmScene extends Phaser.Scene {
 
   /** Use the held tool on the tile the player faces. Services are Action's. */
   private use(): void {
-    if (this.leaving) return;
+    if (this.leaving || this.marching) return;
     if (this.useDoor()) return;
     if (this.state.animals.mounted) {
       this.message = `${this.getOffHint()} to get off ${horseName(this.state)} first.`;
@@ -2266,7 +2339,7 @@ export class FarmScene extends Phaser.Scene {
    * nothing edible held, does nothing and says nothing.
    */
   private action(): void {
-    if (this.leaving) return;
+    if (this.leaving || this.marching) return;
     if (this.useDoor()) return;
     if (this.state.animals.mounted) return this.getOff();
     const front = this.aimTile();
@@ -2742,7 +2815,7 @@ export class FarmScene extends Phaser.Scene {
 
   /** Eat the held item, if it is food. */
   private eatHeld(): void {
-    if (this.leaving) return;
+    if (this.leaving || this.marching) return;
     const held = heldAt(this.state, this.selected);
     const drinking = held.kind === "item" && isDrink(held.id);
     const result =

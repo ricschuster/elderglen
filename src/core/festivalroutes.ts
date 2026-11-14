@@ -249,7 +249,7 @@ export function paradeSteps(
 }
 
 /** The tile on a timed path at a minute, or undefined outside it. */
-function along(steps: readonly Step[], t: number): Tile | undefined {
+export function along(steps: readonly Step[], t: number): Tile | undefined {
   const first = steps[0]!;
   const last = steps[steps.length - 1]!;
   if (t < first.t || t > last.t) return undefined;
