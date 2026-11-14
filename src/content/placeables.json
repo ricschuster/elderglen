@@ -136,6 +136,14 @@
     "pickUp": "hand"
   },
   {
+    "id": "garden-pot",
+    "kind": "pot",
+    "places": ["farm", "greenhouse"],
+    "footprint": [1, 1],
+    "blocksWalking": true,
+    "pickUp": "hand"
+  },
+  {
     "id": "chest",
     "kind": "chest",
     "places": ["farm", "house"],

@@ -22,7 +22,7 @@ import { JUNK } from "./pots";
 import { GEMS, GLIMMERSTONE } from "./gems";
 import geodeData from "../content/geodes.json";
 import { cropById } from "./crops";
-import { BARS, COAL, coalFor, ORE_PER_BAR, QUARTZ } from "./ore";
+import { BARS, COAL, coalFor, orePerBatch, QUARTZ } from "./ore";
 import { agedRoeOf, roeSpeciesOf } from "./pondspecies";
 import { TEA_LEAF } from "./teabush";
 import { splitQuality, type Quality } from "./quality";
@@ -280,7 +280,7 @@ export function processFor(
     return bar
       ? {
           input,
-          use: ORE_PER_BAR,
+          use: orePerBatch(bar),
           output: bar.id,
           count: 1,
           minutes: bar.minutes,

@@ -647,7 +647,7 @@ placeholders to check in play.
   talks to Cuthbert on the Forest (`huntOffer`), draws the packets as yellow squares, shows
   a countdown text, picks up by walking onto a tile, then shows the win or lose line and
   calls `finishHunt`. The `cake-table` service hands in the held cooked dish
-  (`handInCake`); there is no dish picker list yet. No new data was needed.
+  (`handInCake`); `CakeScene` (2026-11-13) lists the dishes in the pack (`cakeDishes`) and hands in the chosen one. No new data was needed.
 - **Lantern floating built as rules (2026-11-12, tests `tests/lanterns.test.ts`):** `src/core/lanterns.ts`
   and `src/content/lantern-float.json`. Buy one paper lantern at the stall (open hours, one per
   year, money), set it afloat once a year from the launch line; every attendee gains points via
@@ -679,3 +679,7 @@ placeholders to check in play.
   in the fish log's saved kinds (`FishLog.load` drops unknown ids, so it only counts toward
   the total until a fish.json entry is chosen), and a hole cast needs the player to face the
   hole with ice between (the first water tile is the hole), not checked in play.
+
+**Built 2026-11-13 (#876):** the ice fishing count shows on the status line while the contest runs
+(`iceCounter`); the cake table opens `CakeScene`, a dish picker; the lantern launch drifts a glowing
+dot north and fades it (`driftLantern`, placeholder look).

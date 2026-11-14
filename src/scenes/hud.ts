@@ -420,6 +420,7 @@ export class Hud {
     selected: number,
     message: string,
     showHealth = false,
+    note = "",
   ): void {
     const { health } = g.combat;
     this.healthBack.setVisible(showHealth);
@@ -436,7 +437,7 @@ export class Hud {
     }
     const { clock, energy } = g.day;
     this.status.setText(
-      `${dateText(clock.day)}  ${clock.format()}${festivalToday(clock.day) ? "  Festival" : ""}\nEnergy ${Math.ceil(energy.current)}  ${g.money}g`,
+      `${dateText(clock.day)}  ${clock.format()}${festivalToday(clock.day) ? "  Festival" : ""}${note ? `  ${note}` : ""}\nEnergy ${Math.ceil(energy.current)}  ${g.money}g`,
     );
     this.message.setText(message);
     const now = heldAt(g, selected);

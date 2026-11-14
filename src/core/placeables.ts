@@ -21,7 +21,8 @@ export type PlaceableKind =
   | "heater"
   | "bomb"
   | "pond"
-  | "decor";
+  | "decor"
+  | "pot";
 
 /** The kinds of place the table reads. A map says which it is (`placeTag`). */
 export type PlaceTag =

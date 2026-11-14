@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import { clockText } from "../core/clock";
 import { collect, minutesLeft, ready, smelt } from "../core/furnace";
 import { itemById } from "../core/items";
-import { BARS, coalFor, ORE_PER_BAR } from "../core/ore";
+import { BARS, coalFor, orePerBatch, QUARTZ } from "../core/ore";
 import { reasonText } from "../core/tools";
 import type { GameState } from "../core/save";
 import { frame, Menu, type Row } from "./panel";
@@ -91,7 +91,7 @@ export class FurnaceScene extends Phaser.Scene {
     for (const bar of BARS)
       rows.push({
         label: bar.name,
-        detail: `${ORE_PER_BAR} ore, ${coalFor(bar)} coal, ${span(bar.minutes)}   have ${g.inventory.count(bar.ore)} ore`,
+        detail: `${orePerBatch(bar)} ${bar.ore === QUARTZ ? "quartz" : "ore"}, ${coalFor(bar)} coal, ${span(bar.minutes)}   have ${g.inventory.count(bar.ore)}`,
         dim: job !== undefined,
         buttons: [
           {

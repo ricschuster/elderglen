@@ -3,7 +3,7 @@ import type { Spot } from "./forage";
 import bandData from "../content/mine-bands.json";
 import { GEODE_SHARE } from "./geodes";
 import { gemShare } from "./gems";
-import type { TiledMapJson } from "./map";
+import { WATER_TILE, type TiledMapJson } from "./map";
 import { Rocks, type Rock, type RockKind } from "./rocks";
 import {
   loadCreature,
@@ -162,9 +162,16 @@ export interface FloorLayout {
   ladder: Spot | undefined;
   /** The camp chest, on a camp floor. */
   camp: Spot | undefined;
+  /** The tiles of a cave pool (note 93), empty on most floors. Water: fishable, never walkable. */
+  pool: Spot[];
   /** An infested or geode floor, if it is one today. */
   special: SpecialFloor | undefined;
 }
+
+/** About one floor in four has a cave pool, 3 tiles wide and 2 high, with open ground all round it. */
+export const POOL_CHANCE = 0.25;
+export const POOL_WIDTH = 3;
+export const POOL_HEIGHT = 2;
 
 const UP: Spot = { x: 1, y: 1 };
 const ARRIVE: Spot = { x: 2, y: 1 };
@@ -199,6 +206,28 @@ export function floorLayout(floor: number, day: number): FloorLayout {
   const free = (x: number, y: number) =>
     !walls[at(x, y)] && !near({ x, y }, UP, 2);
   const taken = new Set<string>();
+
+  // A cave pool, from its own stream so the rest of the floor does not change. Every tile
+  // around it must be open ground, so it never cuts the floor in two.
+  const pool: Spot[] = [];
+  const poolRandom = seeded(day * 31 + floor * 101 + 5);
+  if (poolRandom() < POOL_CHANCE) {
+    for (let tries = 0; tries < 60 && pool.length === 0; tries++) {
+      const x0 = 2 + Math.floor(poolRandom() * (FLOOR_WIDTH - 4 - POOL_WIDTH));
+      const y0 =
+        2 + Math.floor(poolRandom() * (FLOOR_HEIGHT - 4 - POOL_HEIGHT));
+      let clear = !near({ x: x0 + 1, y: y0 }, UP, 4);
+      for (let y = y0 - 1; y <= y0 + POOL_HEIGHT && clear; y++)
+        for (let x = x0 - 1; x <= x0 + POOL_WIDTH && clear; x++)
+          if (walls[at(x, y)]) clear = false;
+      if (!clear) continue;
+      for (let y = y0; y < y0 + POOL_HEIGHT; y++)
+        for (let x = x0; x < x0 + POOL_WIDTH; x++) {
+          pool.push({ x, y });
+          taken.add(`${x},${y}`);
+        }
+    }
+  }
   const pick = (ok: (s: Spot) => boolean): Spot | undefined => {
     for (let tries = 0; tries < 400; tries++) {
       const s = {
@@ -244,6 +273,7 @@ export function floorLayout(floor: number, day: number): FloorLayout {
     ladder,
     camp,
     special,
+    pool,
   };
 }
 
@@ -252,9 +282,13 @@ export function floorMapJson(layout: FloorLayout): TiledMapJson & {
   tilesets: unknown[];
 } {
   const { walls, floor } = layout;
-  // Tile 7 is wall and tile 3 is path in the placeholder tileset.
-  const ground = walls.map((w) => (w ? 7 : 3));
+  // Tile 7 is wall, tile 3 is path and tile 4 is water in the placeholder tileset.
+  const ground: number[] = walls.map((w) => (w ? 7 : 3));
   const collision = walls.map((w) => (w ? 1 : 0));
+  for (const p of layout.pool) {
+    ground[p.y * FLOOR_WIDTH + p.x] = WATER_TILE;
+    collision[p.y * FLOOR_WIDTH + p.x] = 1;
+  }
   const point = (cls: string, name: string, s: Spot) => ({
     name,
     class: cls,
@@ -285,6 +319,7 @@ export function floorMapJson(layout: FloorLayout): TiledMapJson & {
     height: FLOOR_HEIGHT,
     tilewidth: 16,
     tileheight: 16,
+    properties: [{ name: "waterKind", value: "cave-pool" }],
     layers: [
       layer(1, "ground", ground),
       layer(2, "collision", collision, false),
@@ -359,6 +394,7 @@ export function floorCreatures(floor: number, day: number): Creature[] {
   const taken = new Set(layout.rocks.map((r) => `${r.x},${r.y}`));
   if (layout.ladder) taken.add(`${layout.ladder.x},${layout.ladder.y}`);
   if (layout.camp) taken.add(`${layout.camp.x},${layout.camp.y}`);
+  for (const p of layout.pool) taken.add(`${p.x},${p.y}`);
   return spawnCreatures(
     floor,
     random,

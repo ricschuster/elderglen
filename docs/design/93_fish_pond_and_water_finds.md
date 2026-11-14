@@ -282,3 +282,11 @@ gem-high-a (and roe).
 Built 2026-11-13: the rows are in `pond.json` (`species`, 36 rows) and
 `tests/pondspeciestable.test.ts` checks the tiers and that each item exists. Left: the numbers
 (what a good is worth against its minimum population), and the pond art.
+
+## Built status, cave pools (2026-11-13)
+
+About one mine floor in four (`POOL_CHANCE`, placeholder) has a 3 by 2 pool of `cave-pool` water
+(`floorLayout().pool`, `floorMapJson`: tile 4 and the map property `waterKind`). Open ground rings it
+so it never cuts a floor in two; rocks, ladders, the camp chest and creatures keep off it. The rod now
+casts on mine floors, so Pale lichen and Glow jelly can bite. `tests/cavepool.test.ts`. Left: art, the
+farm cave has no pool, and the pool's size and odds are placeholders.

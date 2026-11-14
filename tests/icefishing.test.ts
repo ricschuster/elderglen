@@ -8,6 +8,7 @@ import {
   awardIcePrize,
   finishIceFishing,
   iceBite,
+  iceCounter,
   iceEndLine,
   iceOffer,
   iceWinner,
@@ -102,5 +103,16 @@ describe("ice fishing", () => {
     expect(finishIceFishing(g, s)).toBe(false);
     expect(finishIceFishing(g, won())).toBe(true);
     expect(g.day.clock.minutes).toBeGreaterThanOrEqual(f.ends);
+  });
+});
+
+describe("ice fishing counter", () => {
+  it("shows the catch against the target while fishing, then clears", () => {
+    const s = startIceFishing(f)!;
+    expect(iceCounter(s)).toBe(`Ice fish 0/${ICE_FISHING.win}`);
+    noteHoleCatch(s, "forest-lake", true);
+    expect(iceCounter(s)).toBe(`Ice fish 1/${ICE_FISHING.win}`);
+    s.status = "won";
+    expect(iceCounter(s)).toBe("");
   });
 });

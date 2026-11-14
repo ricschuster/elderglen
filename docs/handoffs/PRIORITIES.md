@@ -40,11 +40,11 @@ Open, top to bottom:
 1. **Owner answers left:** none. Decided 2026-11-13: garden pot is clay 1, stone 10 and a refined crystal (smelted quartz, Stardew), taught by Alder (still to build, with a smelt recipe); Frostfin 300g, no bundle slot; Frostday cap is Icewarden's Cap (built); the hunt prize is the emberseed (built); aged roe quality closed. Algae soup is the glassy-elver's reward (note 93).
 2. **#873 heart events** (note 62): the list per person is drafted (58 new events at 2 and 6 hearts, placeholder text, built in `heart-events.json`). Decided 2026-11-13: no unlock rewards, all 6 heart rewards are plain items (Stardew). Left: owner edits to seeds, windows and rewards, splitting the file per person if wanted, then 4, 8 and 10 with the voice sheets (M3d).
 3. **#878 Secret Woods pond fish:** built (Fernscale and two borrowed commons). Left: the statue, if the owner still wants it.
-4. **Note 93 left:** the species numbers to tune in play (built as placeholders), pond art, a cave pool on a map.
-5. **#876 left:** judging (Harvest Showing), cake table dish picker (it takes the held item now),
-   scene walking villagers and marchers, even-year hedge maze and niche lines, lantern drift
-   animation, on-screen ice fishing counter, multiplayer counts (M4).
-6. **Decided, still to build:** cave-pool water on mine floors (no map has water), village trees
+4. **Note 93 left:** the species numbers to tune in play (built as placeholders), pond art. Cave pools on mine floors built 2026-11-13 (the farm cave has none).
+5. **#876 left:** judging (Harvest Showing; core and panel exist, unclear what is missing), scene
+   walking villagers and marchers, even-year hedge maze and niche lines, multiplayer counts (M4).
+   Cake dish picker, lantern drift and ice count built 2026-11-13.
+6. **Decided, still to build:** garden pot leftovers (digging out, fertilizer, art, note 97), village trees
    marked `cosmetic` (needs tree objects in `hearthwell.json`, note 87), mahogany monster seed
    (needs Secret Woods creatures), #874 elderfruit sources left: spouse and gallery set.
 7. A browser look at everything built since the owner last played: hat picker, cart, herb stall,

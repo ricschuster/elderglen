@@ -31,7 +31,7 @@ import {
 } from "./trees";
 import { swingCost, type Upgradable } from "./upgrades";
 import { sprinklerById, type Sprinklers } from "./sprinklers";
-import { FARM_STORE, storeOf } from "./mapstore";
+import { FARM_STORE, GREENHOUSE_STORE, storeOf } from "./mapstore";
 import {
   isMature,
   saplingId,
@@ -110,6 +110,8 @@ export function till(
   if (here.teaBushes.at(x, y)) return fail("a tea bush is in the way");
   if (here.sprinklers.at(x, y)) return fail("a sprinkler is in the way");
   // Trees, weeds and the rest stand on the farm's tiles, not the greenhouse's.
+  if (soil.indoors && g.placed.covering(GREENHOUSE_STORE, x, y))
+    return fail("garden pot in the way");
   if (!soil.indoors) {
     if (g.trees.at(x, y)) return fail("a tree is in the way");
     if (g.weeds.at(x, y)) return fail("a weed is in the way");
@@ -835,6 +837,7 @@ export function isClear(
       here.sprinklers.at(x, y) ||
       here.fruitTrees.at(x, y) ||
       here.teaBushes.at(x, y) ||
+      g.placed.covering(GREENHOUSE_STORE, x, y) ||
       here.soil.plotAt(x, y)
     );
   }
