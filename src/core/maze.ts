@@ -1,4 +1,6 @@
 import mazeData from "../content/maze.json";
+import mazeEvenData from "../content/maze-even.json";
+import lineData from "../content/hollow-eve-lines.json";
 import { dateOf } from "./calendar";
 import { hatById } from "./hats";
 import { itemById } from "./items";
@@ -21,6 +23,20 @@ export interface MazeData {
 }
 
 export const MAZE = mazeData as MazeData;
+
+/** The even-year maze (note 82, note 66 decision 3): larger, more scares, a better sack. */
+export const MAZE_EVEN = mazeEvenData as MazeData;
+
+/** The maze for a year: odd years the small one, even years the large one. */
+export const mazeForYear = (year: number): MazeData =>
+  year % 2 === 0 ? MAZE_EVEN : MAZE;
+
+/**
+ * The one line a villager says from a niche or a corner of the maze when
+ * talked to (note 82; placeholder text, `src/content/hollow-eve-lines.json`).
+ */
+export const nicheLine = (villagerId: string): string | undefined =>
+  (lineData.lines as Record<string, string>)[villagerId];
 
 export interface Cell {
   x: number;
@@ -82,23 +98,25 @@ export const chestOpened = (g: GameState) =>
 
 /**
  * Open the chest at the end. The first time it holds the hat, and each later
- * year a sack of forage and fall goods (about 500g). Once a year. Returns a
+ * year a sack of forage and fall goods (about 500g in odd years, about 1000g
+ * in even years, when the larger maze is walked). Once a year. Returns a
  * line for the player: what was found, or why not. A full pack leaves the
  * chest shut, so nothing is lost.
  */
 export function openChest(g: GameState): string {
   if (chestOpened(g))
     return "The chest is empty. You have had this year's prize.";
+  const maze = mazeForYear(dateOf(g.day.clock.day).year);
   if (
-    g.wardrobe.has(MAZE.chestHat) &&
-    MAZE.sack.some((s) => g.inventory.room(s.id) < s.count)
+    g.wardrobe.has(maze.chestHat) &&
+    maze.sack.some((s) => g.inventory.room(s.id) < s.count)
   )
     return "Your pack is too full for the sack. Make room and come back.";
   g.festivalsJoined.push(chestKey(g.day.clock.day));
-  if (g.wardrobe.add(MAZE.chestHat))
-    return `The chest holds a ${hatById(MAZE.chestHat)?.name ?? "hat"}.`;
+  if (g.wardrobe.add(maze.chestHat))
+    return `The chest holds a ${hatById(maze.chestHat)?.name ?? "hat"}.`;
   const parts: string[] = [];
-  for (const { id, count } of MAZE.sack) {
+  for (const { id, count } of maze.sack) {
     g.inventory.add(id, count);
     parts.push(`${count} ${itemById(id)?.name.toLowerCase() ?? id}`);
   }
@@ -106,5 +124,5 @@ export function openChest(g: GameState): string {
 }
 
 /** Sell value of the sack, for tuning. */
-export const sackValue = () =>
-  MAZE.sack.reduce((n, s) => n + (itemById(s.id)?.sellPrice ?? 0) * s.count, 0);
+export const sackValue = (maze: MazeData = MAZE) =>
+  maze.sack.reduce((n, s) => n + (itemById(s.id)?.sellPrice ?? 0) * s.count, 0);
