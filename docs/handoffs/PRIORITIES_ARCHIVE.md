@@ -454,4 +454,3 @@ band, Icicle Hopper reward); Cordelia's 4 heart event unlocks tailoring; Heavy T
 roe in the jar; tea bush crafted (note 97); Cake Day points 60/90/120; hunt prize Straw Boater plus a
 yearly rare seed; keepsake lantern placeable. Built, awaiting play: all of these, plus hunt, cake
 table, lantern floating and ice fishing rules with thin scene hooks, pond menu and placing screen.
-
