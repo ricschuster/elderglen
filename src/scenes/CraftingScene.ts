@@ -11,7 +11,7 @@ import {
 import { itemById } from "../core/items";
 import { reasonText } from "../core/tools";
 import type { GameState } from "../core/save";
-import { frame, Menu, type Row } from "./panel";
+import { closeWindow, frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
 /**
@@ -100,7 +100,6 @@ export class CraftingScene extends Phaser.Scene {
   }
 
   private close(): void {
-    this.scene.stop();
-    this.scene.resume("farm");
+    closeWindow(this);
   }
 }

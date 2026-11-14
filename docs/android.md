@@ -26,8 +26,11 @@ debugging, Pair device with pairing code. Then on this machine:
 npm run android:install
 ```
 
-`npm run android:install` installs on every tablet that adb can see, replaces
-an older copy, and starts the game. Saves survive a reinstall of the same app,
+`npm run android:install` first reconnects every paired wireless tablet by asking
+mDNS where it is now, so a changed IP or port needs no manual step (the tablet must
+be on the same Wi-Fi with Wireless debugging on). It then installs once per
+physical tablet (USB and Wi-Fi entries of the same tablet are merged), replaces an
+older copy, and starts the game. Saves survive a reinstall of the same app,
 but not an uninstall.
 
 ## Update after a code change

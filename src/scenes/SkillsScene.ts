@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import type { GameState } from "../core/save";
 import { professionById } from "../core/professions";
 import { MAX_LEVEL, skillRows } from "../core/skills";
-import { frame } from "./panel";
+import { closeWindow, frame } from "./panel";
 import { STATE_KEY } from "./state";
 
 const NAMES = {
@@ -23,7 +23,7 @@ export class SkillsScene extends Phaser.Scene {
     const g = this.registry.get(STATE_KEY) as GameState;
     frame(this, "Skills", () => this.close());
     skillRows(g.skills).forEach((row, i) => {
-      const y = 84 + i * 76;
+      const y = 70 + i * 76;
       const pro = professionById(g.skills.professionOf(row.skill) ?? "");
       const top = professionById(g.skills.topProfessionOf(row.skill) ?? "");
       this.add.text(
@@ -40,7 +40,7 @@ export class SkillsScene extends Phaser.Scene {
         row.level >= MAX_LEVEL
           ? `${row.xp} XP, top level`
           : `${row.xp} of ${row.next} XP to level ${row.level + 1}`;
-      this.add.text(48, y + 74, detail, {
+      this.add.text(48 + bar + 16, y + 48, detail, {
         fontSize: "16px",
         color: "#ffffffcc",
       });
@@ -54,7 +54,6 @@ export class SkillsScene extends Phaser.Scene {
   }
 
   private close(): void {
-    this.scene.stop();
-    this.scene.resume("farm");
+    closeWindow(this);
   }
 }

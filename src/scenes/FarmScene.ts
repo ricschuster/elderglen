@@ -709,13 +709,16 @@ export class FarmScene extends Phaser.Scene {
       (i) => this.select(i),
       () => this.use(),
       () => this.action(),
-      () => this.open("skills"),
-      () => this.open("crafting"),
+      () => this.openMenu("pack"),
+      () => this.openMenu("crafting"),
       () => this.open("hats"),
       () => this.select(nextRow(this.state, this.selected)),
       () => this.open("debug"),
       settings,
     );
+    // Esc opens the menu (fixed key, note 45).
+    this.events.on("resume", () => (this.resumedAt = performance.now()));
+    this.input.keyboard?.on("keydown-ESC", () => this.openMenu("pack"));
     this.controls = createControls(
       this,
       settings,
@@ -723,8 +726,9 @@ export class FarmScene extends Phaser.Scene {
         use: () => (this.keyAim(), this.use()),
         action: () => (this.keyAim(), this.action()),
         eat: () => this.eatHeld(),
-        openSkills: () => this.open("skills"),
-        openCraft: () => this.open("crafting"),
+        openSkills: () => this.openMenu("skills"),
+        openCraft: () => this.openMenu("crafting"),
+        openMenu: () => this.openMenu("pack"),
         openHats: () => this.open("hats"),
         endDay: () => this.endDay(),
         toggleHints: () => {
@@ -2124,6 +2128,17 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** Open a screen over the farm. The farm is paused until it closes. */
+  /** The tabbed in-game menu (note 49), on a tab. */
+  private resumedAt = 0;
+
+  private openMenu(tab: string): void {
+    if (this.leaving || this.marching) return;
+    // A menu that closes on Esc or E resumes the farm in the same key event:
+    // do not open it again.
+    if (performance.now() - this.resumedAt < 250) return;
+    this.open("menu", { tab });
+  }
+
   private open(kind: string, data?: object): void {
     this.scene.launch(kind, data);
     this.scene.pause();

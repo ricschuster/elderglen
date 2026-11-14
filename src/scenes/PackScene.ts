@@ -1,0 +1,230 @@
+import Phaser from "phaser";
+import { dateText } from "../core/calendar";
+import { farmTypeById } from "../core/farmtypes";
+import { itemById } from "../core/items";
+import {
+  moveStack,
+  needsTrashConfirm,
+  sortPack,
+  splitStack,
+  trashSlot,
+} from "../core/packmenu";
+import { splitQuality } from "../core/quality";
+import type { GameState } from "../core/save";
+import { iconKey } from "./art";
+import { frame } from "./panel";
+import { STATE_KEY } from "./state";
+
+const COLS = 12;
+const CELL = 64;
+const GAP = 8;
+const LEFT = (960 - (COLS * (CELL + GAP) - GAP)) / 2;
+const TOP = 90;
+const TINT = { normal: 0xffffff, silver: 0xc8d8ff, gold: 0xffd860 };
+
+/**
+ * The Pack tab (note 49): the whole backpack, with the tools noted above it.
+ * Tap a stack, then tap a slot to move or swap it. Split puts half of the
+ * selected stack where you tap next. Sort merges and orders; Trash destroys
+ * the selected stack, asking first for anything of value.
+ */
+export class PackScene extends Phaser.Scene {
+  private state!: GameState;
+  private selected: number | undefined;
+  private cursor = 0;
+  private splitting = false;
+  private trashAsked = false;
+  private cells: {
+    box: Phaser.GameObjects.Rectangle;
+    icon: Phaser.GameObjects.Image;
+    count: Phaser.GameObjects.Text;
+  }[] = [];
+  private info!: Phaser.GameObjects.Text;
+  private note!: Phaser.GameObjects.Text;
+  private splitLabel!: Phaser.GameObjects.Text;
+  private trashLabel!: Phaser.GameObjects.Text;
+
+  constructor() {
+    super("pack");
+  }
+
+  init(): void {
+    this.state = this.registry.get(STATE_KEY) as GameState;
+    this.selected = undefined;
+    this.cursor = 0;
+    this.splitting = false;
+    this.trashAsked = false;
+    this.cells = [];
+  }
+
+  create(): void {
+    const { message } = frame(this, "Pack", () => undefined);
+    this.note = message;
+    this.add.text(
+      LEFT,
+      56,
+      "Tools (hoe, watering can, axe, pickaxe) are always carried. The backpack:",
+      { fontSize: "16px", color: "#ffffffcc" },
+    );
+    for (let i = 0; i < this.state.inventory.size; i++) {
+      const x = LEFT + (i % COLS) * (CELL + GAP);
+      const y = TOP + Math.floor(i / COLS) * (CELL + GAP);
+      const box = this.add
+        .rectangle(x, y, CELL, CELL, 0x000000, 0.5)
+        .setOrigin(0)
+        .setStrokeStyle(2, 0xffffff, 0.3)
+        .setInteractive({ useHandCursor: true });
+      box.on("pointerdown", () => this.tap(i));
+      const icon = this.add
+        .image(x + CELL / 2, y + CELL / 2 - 4, "__DEFAULT")
+        .setDisplaySize(40, 40)
+        .setVisible(false);
+      const count = this.add
+        .text(x + CELL - 4, y + CELL - 3, "", {
+          fontSize: "14px",
+          color: "#ffffff",
+        })
+        .setOrigin(1, 1);
+      this.cells.push({ box, icon, count });
+    }
+
+    const rows = Math.ceil(this.state.inventory.size / COLS);
+    const panelY = TOP + rows * (CELL + GAP) + 12;
+    this.info = this.add.text(LEFT, panelY, "", {
+      fontSize: "20px",
+      color: "#ffe9a0",
+      lineSpacing: 6,
+    });
+    this.button(560, panelY, "Sort", () => this.sort());
+    this.splitLabel = this.button(660, panelY, "Split", () =>
+      this.toggleSplit(),
+    );
+    this.trashLabel = this.button(770, panelY, "Trash", () => this.trash());
+    this.add.text(
+      LEFT,
+      516,
+      "Tap a stack, then a slot to move or swap.   Esc or E: close   Page Up, Page Down: tabs",
+      { fontSize: "13px", color: "#ffffffaa" },
+    );
+
+    const kb = this.input.keyboard;
+    kb?.on("keydown-LEFT", () => this.moveCursor(-1));
+    kb?.on("keydown-RIGHT", () => this.moveCursor(1));
+    kb?.on("keydown-UP", () => this.moveCursor(-COLS));
+    kb?.on("keydown-DOWN", () => this.moveCursor(COLS));
+    kb?.on("keydown-ENTER", () => this.tap(this.cursor));
+    this.refresh();
+  }
+
+  private button(
+    x: number,
+    y: number,
+    label: string,
+    run: () => void,
+  ): Phaser.GameObjects.Text {
+    this.add
+      .rectangle(x, y, 94, 44, 0xa0482e, 1)
+      .setOrigin(0)
+      .setStrokeStyle(2, 0xffffff, 0.8)
+      .setInteractive({ useHandCursor: true })
+      .on("pointerdown", run);
+    return this.add
+      .text(x + 47, y + 22, label, { fontSize: "18px", color: "#ffffff" })
+      .setOrigin(0.5);
+  }
+
+  private moveCursor(by: number): void {
+    const next = this.cursor + by;
+    if (next < 0 || next >= this.state.inventory.size) return;
+    this.cursor = next;
+    this.refresh();
+  }
+
+  private tap(i: number): void {
+    this.cursor = i;
+    this.trashAsked = false;
+    const inv = this.state.inventory;
+    if (this.selected === undefined) {
+      if (inv.slot(i)) this.selected = i;
+    } else if (this.selected === i) {
+      this.selected = undefined;
+      this.splitting = false;
+    } else {
+      const from = this.selected;
+      const ok = this.splitting
+        ? splitStack(inv, from, i)
+        : moveStack(inv, from, i);
+      if (ok) {
+        // After a split the stack stays selected to split again; a move lets go.
+        this.selected = this.splitting && inv.slot(from) ? from : undefined;
+        if (!this.selected) this.splitting = false;
+      }
+    }
+    this.refresh();
+  }
+
+  private toggleSplit(): void {
+    this.splitting = !this.splitting && this.selected !== undefined;
+    this.refresh();
+  }
+
+  private sort(): void {
+    this.selected = undefined;
+    this.splitting = false;
+    sortPack(this.state.inventory);
+    this.refresh();
+  }
+
+  private trash(): void {
+    const i = this.selected;
+    const stack = i === undefined ? undefined : this.state.inventory.slot(i);
+    if (i === undefined || !stack) {
+      this.note.setText("Tap a stack first, then Trash.");
+      return;
+    }
+    if (needsTrashConfirm(stack.id, stack.count) && !this.trashAsked) {
+      this.trashAsked = true;
+      this.note.setText(
+        "That is worth something. Press Trash again to destroy it.",
+      );
+      return;
+    }
+    trashSlot(this.state.inventory, i);
+    this.selected = undefined;
+    this.splitting = false;
+    this.trashAsked = false;
+    this.refresh();
+  }
+
+  private refresh(): void {
+    const inv = this.state.inventory;
+    this.cells.forEach((c, i) => {
+      const stack = inv.slot(i);
+      const picked = i === this.selected;
+      const here = i === this.cursor;
+      c.box.setFillStyle(picked ? 0xf2d16b : 0x000000, picked ? 0.45 : 0.5);
+      c.box.setStrokeStyle(here ? 3 : 2, 0xffffff, here ? 1 : 0.3);
+      const key = stack ? iconKey(stack.id) : undefined;
+      c.icon.setVisible(key !== undefined);
+      if (key) {
+        c.icon.setTexture(key).setDisplaySize(40, 40);
+        c.icon.setTint(TINT[splitQuality(stack!.id).quality]);
+      }
+      c.count.setText(stack && stack.count > 1 ? String(stack.count) : "");
+    });
+    this.info.setText(
+      `Funds: ${this.state.money} gold\n${dateText(this.state.day.clock.day)}\nFarm: ${farmTypeById(this.state.farmType).name}`,
+    );
+    this.splitLabel.setText(this.splitting ? "Split: on" : "Split");
+    this.trashLabel.setText("Trash");
+    const at = this.selected ?? this.cursor;
+    const stack = inv.slot(at);
+    if (stack) {
+      const { base, quality } = splitQuality(stack.id);
+      const name = itemById(base)?.name ?? base;
+      this.note.setText(
+        `${name}${quality === "normal" ? "" : ` (${quality})`} x${stack.count}`,
+      );
+    } else this.note.setText("");
+  }
+}
