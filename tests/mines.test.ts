@@ -65,7 +65,7 @@ describe("the mine floors", () => {
       const layout = floorLayout(floor, 5 + floor);
       const map = FarmMap.fromTiled(floorMapJson(layout));
       expect(map.problems()).toEqual([]);
-      const open = layout.walls.filter((w) => !w).length;
+      const open = layout.walls.filter((w) => !w).length - layout.pool.length;
       expect(map.reachable(layout.arrive).size).toBe(open);
       for (const r of layout.rocks) expect(map.isBlocked(r.x, r.y)).toBe(false);
     }

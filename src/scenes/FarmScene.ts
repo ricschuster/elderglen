@@ -2198,7 +2198,9 @@ export class FarmScene extends Phaser.Scene {
     const here = tileOf(this.pos, PLAYER, this.map.tileSize);
     const step = PUSH[this.facing];
     const water =
-      isFarmMap(this.mapId) || isAreaMap(this.mapId)
+      isFarmMap(this.mapId) ||
+      isAreaMap(this.mapId) ||
+      mineFloorOf(this.mapId) !== undefined
         ? waterAhead(this.map, here.x, here.y, step.x, step.y, rod.range)
         : [];
     if (water.length === 0) {
