@@ -113,6 +113,10 @@ export class PackScene extends Phaser.Scene {
     this.splitLabel.setText("Split");
     this.button(812, panelY, "Wear", () => this.wear());
     this.equipmentStrip(panelY + 58);
+    this.button(812, panelY + 52, "Projects", () => {
+      this.scene.stop("menu");
+      this.scene.launch("journal", { section: "projects" });
+    });
     this.add.text(
       LEFT,
       516,

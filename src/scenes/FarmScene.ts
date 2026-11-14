@@ -714,6 +714,7 @@ export class FarmScene extends Phaser.Scene {
       () => this.openMenu("pack"),
       () => this.openMenu("crafting"),
       () => this.open("hats"),
+      () => this.openJournal(),
       () => this.select(nextRow(this.state, this.selected)),
       () => this.open("debug"),
       settings,
@@ -732,6 +733,7 @@ export class FarmScene extends Phaser.Scene {
         openCraft: () => this.openMenu("crafting"),
         openMenu: () => this.openMenu("pack"),
         openHats: () => this.open("hats"),
+        openJournal: () => this.openJournal(),
         endDay: () => this.endDay(),
         toggleHints: () => {
           settings.showHints = !settings.showHints;
@@ -2154,6 +2156,13 @@ export class FarmScene extends Phaser.Scene {
     // do not open it again.
     if (performance.now() - this.resumedAt < 250) return;
     this.open("menu", { tab });
+  }
+
+  /** The journal window (note 49), on J or its HUD button. */
+  private openJournal(): void {
+    if (this.leaving || this.marching) return;
+    if (performance.now() - this.resumedAt < 250) return;
+    this.open("journal");
   }
 
   private open(kind: string, data?: object): void {
