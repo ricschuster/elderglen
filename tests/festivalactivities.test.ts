@@ -15,7 +15,12 @@ import {
   startHunt,
   tickHunt,
 } from "../src/core/seedhunt";
-import { CAKE_POINTS, cakeProblem, handInCake } from "../src/core/cakeday";
+import {
+  CAKE_POINTS,
+  cakeDishes,
+  cakeProblem,
+  handInCake,
+} from "../src/core/cakeday";
 import { attendees, festivalLayout } from "../src/core/festivalroutes";
 
 const fest = (id: string) => FESTIVALS.find((f) => f.id === id)!;
@@ -144,6 +149,19 @@ describe("cake table", () => {
     expect(cakeProblem(g, dish)).toBe("Your dish is already on the table.");
     g.day.clock.day = dayOf("summer", 8, 2);
     expect(cakeProblem(g, dish)).toBeUndefined();
+  });
+});
+
+describe("cake table picker", () => {
+  it("lists each cooked dish in the pack once, and nothing else", () => {
+    const g = newGame();
+    g.day.clock.day = dayOf("summer", 8);
+    g.inventory.add("parsnip", 3);
+    g.inventory.add("fried-egg", 1);
+    g.inventory.add("fried-egg@gold", 1);
+    expect(cakeDishes(g).sort()).toEqual(["fried-egg", "fried-egg@gold"]);
+    g.day.clock.day = dayOf("summer", 9);
+    expect(cakeDishes(g)).toEqual([]);
   });
 });
 

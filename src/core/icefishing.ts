@@ -56,6 +56,10 @@ export interface IceFishing {
   status: IceStatus;
 }
 
+/** The on-screen count while the contest runs, for the status line. */
+export const iceCounter = (s: IceFishing): string =>
+  s.status === "fishing" ? `Ice fish ${s.caught}/${s.win}` : "";
+
 /** Begin a contest. Always possible while the festival runs. */
 export function startIceFishing(f: Festival): IceFishing | undefined {
   if (f.id !== "frostday") return undefined;

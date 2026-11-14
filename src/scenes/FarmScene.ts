@@ -49,13 +49,14 @@ import {
 import {
   awardIcePrize,
   finishIceFishing,
+  iceCounter,
   iceOffer,
   isHole,
   lakeShut,
   startIceFishing,
   type IceFishing,
 } from "../core/icefishing";
-import { cakeProblem, handInCake } from "../core/cakeday";
+import { cakeProblem } from "../core/cakeday";
 import {
   buyLantern,
   lanternBuyProblem,
@@ -2569,7 +2570,25 @@ export class FarmScene extends Phaser.Scene {
     return inside(here) || inside(front);
   }
 
-  /** Sets the held lantern afloat (placeholder: no drifting yet). */
+  /** A glowing dot that drifts away from the player over the water and fades, for the lantern launch. */
+  private driftLantern(): void {
+    const ts = this.map.tileSize;
+    const dot = this.add
+      .circle(this.pos.x + ts / 2, this.pos.y, 5, 0xffc860, 1)
+      .setDepth(850);
+    this.uiCamera.ignore(dot);
+    this.tweens.add({
+      targets: dot,
+      x: dot.x + Phaser.Math.Between(-3, 3) * ts,
+      y: dot.y - 5 * ts,
+      alpha: 0,
+      duration: 5000,
+      ease: "Sine.easeIn",
+      onComplete: () => dot.destroy(),
+    });
+  }
+
+  /** Sets the held lantern afloat and lets it drift off. */
   private launchLantern(): void {
     const problem = launchProblem(this.state);
     if (problem) {
@@ -2577,26 +2596,24 @@ export class FarmScene extends Phaser.Scene {
       return this.render();
     }
     const r = launchLantern(this.state);
+    if (r) this.driftLantern();
     this.message = r
       ? `Your lantern drifts out with the rest. They like you a little more.${r.keepsake ? " You keep a small lantern." : ""}`
       : "";
     this.render();
   }
 
-  /** Cake Day table: hands in the held cooked dish (placeholder, no picker yet). */
+  /** Cake Day table: opens the dish picker, or says why there is nothing to do. */
   private cakeTable(): void {
-    const held = heldAt(this.state, this.selected);
-    const id = held.kind === "item" ? held.id : "";
-    const problem = cakeProblem(this.state, id);
-    if (problem) {
-      this.message = id ? problem : "Hold a cooked dish to put on the table.";
+    const problem = cakeProblem(this.state, "");
+    if (
+      problem === "There is no cake table today." ||
+      problem === "Your dish is already on the table."
+    ) {
+      this.message = problem;
       return this.render();
     }
-    const r = handInCake(this.state, id);
-    this.message = r
-      ? `Everyone tastes your ${itemById(id)?.name.toLowerCase() ?? "dish"} (${r.quality}). They like you a little more.`
-      : "";
-    this.render();
+    this.open("cake");
   }
 
   /** The Seedswap hunt: clock, pick-up by walking, packet markers and the end (placeholder). */
@@ -3448,7 +3465,13 @@ export class FarmScene extends Phaser.Scene {
     this.drawMailbox();
     this.drawRequestMark();
     this.drawBuild();
-    this.hud.update(this.state, this.selected, this.message, this.showHealth());
+    this.hud.update(
+      this.state,
+      this.selected,
+      this.message,
+      this.showHealth(),
+      this.ice ? iceCounter(this.ice) : "",
+    );
   }
 
   /** True where health can be lost, so the bar shows (note 22, decision 17). */

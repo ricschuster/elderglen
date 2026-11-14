@@ -31,6 +31,17 @@ export function cakeProblem(g: GameState, itemId: string): string | undefined {
   return undefined;
 }
 
+/** The dishes in the pack that can go on the table, one entry per item id. */
+export function cakeDishes(g: GameState): string[] {
+  const ids: string[] = [];
+  for (let i = 0; i < g.inventory.size; i++) {
+    const id = g.inventory.slot(i)?.id;
+    if (id && !ids.includes(id) && cakeProblem(g, id) === undefined)
+      ids.push(id);
+  }
+  return ids;
+}
+
 export interface CakeResult {
   quality: Quality;
   /** Friendship points gained per person who tasted it (after the heart cap). */
