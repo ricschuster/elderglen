@@ -86,6 +86,14 @@ They move into `src/core/debug.ts`'s functions so the menu and the console
 share one code path: `farmGive` calls `giveItem`, and a new `farmMoney` calls
 `giveMoney`. All stay behind `import.meta.env.DEV`.
 
+`window.farmState(patch)` jumps to a chosen state in one call, for playtests
+(`applyStatePatch` in `src/core/statepatch.ts`, unit tested). Keys, all optional:
+`day` (or `season`, `dayOfSeason`, `year`), `money` (set), `items` (add), `skills`
+(raise to a level), `hallRooms` and `hallBundles` (filled through the Hall's own
+hand-in, with no reward paid, so a locked room stays a reported problem), `flags`,
+`hearts`. It then restarts the scene. The day is set, not simulated: crops, weather
+and the forecast are not advanced. It returns `{ problems }` for unknown ids.
+
 ## Build order
 
 1. `src/core/debug.ts` and `allItems()`, with unit tests (money, items with a

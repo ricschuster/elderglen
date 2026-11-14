@@ -54,15 +54,36 @@ errors. The game's weather and forage are random, so reruns differ.
    about 1 s a run. The time model is in `scripts/sim/world.ts` (`TIME`). Compare
    two builds by running the same personas on both.
 
+`npm run playtest:bundles` checks the M3b exit test "every hall bundle can be filled" in the real UI
+(about 80 seconds, `SPEED=4`): it gives the exact goods with `farmGive`, walks to each room's scroll in the
+hall, hands every good in on the hall screen with the keyboard (pool slots such as "Any meal" use a
+different member for each unit), and checks the bundle, its reward (money, item, recipe, the three hats), the
+room and the Last Seat (locked until the last other bundle). A bundle that cannot be filled is reported as a
+FINDING. One screenshot per room.
+
 `node scripts/playtest/smoke.mjs` (about 75 seconds) opens the newer scenes once each, including the
 hat box Collections row, buying and placing the Furniture Catalogue, taking a copy, and the
 morning report, and fails on any console error.
+
+`npm run playtest:sweep` opens every festival and every heart event in the real game, in parallel browser
+pages (`WORKERS`, default 4), through `farmState`. A festival: the green on the farm, the invitation, the
+screen or the festival map (panels, the way out), and the state after leaving (clock, visit recorded, hat, the
+farm running and the farmer moving). A heart event: sets hearts, flags, weather, season and a time inside its
+window, goes to the map and walks to the event's place so it starts by itself, steps through it with Enter
+(once per choice answer, `BRANCHES=0` for one run), then checks the reward, the seen record and that it does not
+start again the next day. Every problem is a FINDING in the table printed at the end and in
+`playtest-out/sweep.json`; console and page errors count. Env: `ONLY=<id part>`, `KIND=festival|event`, `TRACE=1`.
+Screenshots: `playtest-out/shots/sweep-*.png` (every festival, a sample of events). About 8 minutes with the branches.
 
 Dev hooks the scripts can call: `window.farmGive(id, n)` adds items (returns
 `"ok"`, `"unknown"` or `"full"`), `window.farmMoney(n)` adds money,
 `window.farmWalk(x, y)` starts the tap route to a tile (false when there is no
 route; `farmDebug().walking` is true until it ends), `window.farmBlocked()` lists
-the tiles the farmer cannot stand on now. By hand, the
+the tiles the farmer cannot stand on now, `window.farmState(patch)` jumps to a state in one
+call and restarts the scene (keys: `day` or `season`/`dayOfSeason`/`year`, `money`, `items`,
+`skills` (levels), `hallRooms`, `hallBundles`, `flags`, `hearts`, `minutes` (clock), `weather`, `eventsSeen`,
+`map` and `entry` (stand on that map); returns `{problems}`; see
+`src/core/statepatch.ts`; `node scripts/playtest/state.mjs` checks it). By hand, the
 debug menu (`docs/design/42_debug_menu.md`) opens with the backtick key or the
 DBG button. Both exist in dev builds only.
 

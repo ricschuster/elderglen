@@ -352,6 +352,7 @@ import {
   WEED_KEY,
 } from "./art";
 import { giveItem, giveMoney } from "../core/debug";
+import { applyStatePatch, type StatePatch } from "../core/statepatch";
 import { pickupRadius } from "../core/ground";
 import { Hud, HUD_FIT_W } from "./hud";
 import { UI_SIZE_KEY, WORLD_ZOOM_KEY } from "./panel";
@@ -932,6 +933,21 @@ export class FarmScene extends Phaser.Scene {
         if (!plan) return false;
         this.tapPath = plan.path;
         return true;
+      };
+    // Dev hook for the playtest bot: jump to a chosen state in one call
+    // (`core/statepatch.ts`), then restart the scene (at the entry it was
+    // entered by) so the HUD and map match.
+    if (import.meta.env.DEV)
+      (window as unknown as { farmState: unknown }).farmState = (
+        patch: StatePatch,
+      ) => {
+        const result = applyStatePatch(this.state, patch);
+        const data: SceneData = {
+          map: patch.map ?? this.mapId,
+          entry: patch.map ? (patch.entry ?? "door") : this.entryName,
+        };
+        this.scene.restart(data);
+        return result;
       };
     // Dev hook for the playtest bot: an item's display name, to find its row
     // in a shop list by label.

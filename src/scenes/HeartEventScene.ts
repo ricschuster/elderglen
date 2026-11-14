@@ -168,11 +168,25 @@ export class HeartEventScene extends Phaser.Scene {
       ...button(390, "Go on", "1", () => accept()),
       ...button(570, "Not now", "2", () => refuse()),
     ];
+    // The warning's key listeners must go with the warning, or a later choice
+    // answered with 1 or 2 would also "go on" or "not now" it.
+    const onOne = (): void => {
+      if (!this.over) accept();
+    };
+    const onTwo = (): void => {
+      if (!this.over) refuse();
+    };
+    const dropKeys = (): void => {
+      this.input.keyboard?.off("keydown-ONE", onOne);
+      this.input.keyboard?.off("keydown-TWO", onTwo);
+    };
     const accept = (): void => {
+      dropKeys();
       for (const p of parts) p.destroy();
       this.step();
     };
     const refuse = (): void => {
+      dropKeys();
       // The event waits: nothing is recorded, and it is not offered again today.
       const day = this.state.day.clock.day;
       if (declined.day !== day) {
@@ -182,8 +196,8 @@ export class HeartEventScene extends Phaser.Scene {
       declined.ids.push(this.event.id);
       this.close();
     };
-    this.input.keyboard?.once("keydown-ONE", () => !this.over && accept());
-    this.input.keyboard?.once("keydown-TWO", () => !this.over && refuse());
+    this.input.keyboard?.on("keydown-ONE", onOne);
+    this.input.keyboard?.on("keydown-TWO", onTwo);
   }
 
   // ---- Running the commands -------------------------------------------------
