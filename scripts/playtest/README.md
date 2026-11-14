@@ -54,6 +54,13 @@ errors. The game's weather and forage are random, so reruns differ.
    about 1 s a run. The time model is in `scripts/sim/world.ts` (`TIME`). Compare
    two builds by running the same personas on both.
 
+`npm run playtest:bundles` checks the M3b exit test "every hall bundle can be filled" in the real UI
+(about 80 seconds, `SPEED=4`): it gives the exact goods with `farmGive`, walks to each room's scroll in the
+hall, hands every good in on the hall screen with the keyboard (pool slots such as "Any meal" use a
+different member for each unit), and checks the bundle, its reward (money, item, recipe, the three hats), the
+room and the Last Seat (locked until the last other bundle). A bundle that cannot be filled is reported as a
+FINDING. One screenshot per room.
+
 `node scripts/playtest/smoke.mjs` (about 75 seconds) opens the newer scenes once each, including the
 hat box Collections row, buying and placing the Furniture Catalogue, taking a copy, and the
 morning report, and fails on any console error.
