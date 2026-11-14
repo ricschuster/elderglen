@@ -546,6 +546,7 @@ export class FarmScene extends Phaser.Scene {
     // the state while the player is here, and put the farm's back anywhere else.
     leaveArea(this.state);
     enterArea(this.state, this.mapId);
+    this.state.guide.visit(this.mapId);
     this.selected =
       (this.registry.get(SELECTED_KEY) as number | undefined) ?? 0;
     this.leaving = false;
