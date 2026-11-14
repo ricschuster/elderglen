@@ -6,6 +6,7 @@ import {
   water,
   type Outcome,
 } from "./actions";
+import { cropById } from "./crops";
 import { Farm, type Plot } from "./farm";
 import type { FarmMap } from "./map";
 import { FARM_STORE, GREENHOUSE_STORE } from "./mapstore";
@@ -58,6 +59,29 @@ const keep = (p: PlacedItem, s: PotState): void => {
 /** True when the pot holds a crop or a bush. */
 export const potInUse = (p: PlacedItem): boolean =>
   !!stateOf(p).plot?.crop || !!stateOf(p).tea;
+
+/** Every pot on this map, for drawing. */
+export const potsOf = (g: GameState, map: FarmMap): PlacedItem[] =>
+  [...g.placed.each(storeKey(map))].filter((p) => p.id === GARDEN_POT);
+
+/** What to draw in a pot: a crop with its growth, a tea bush with its age, or nothing. */
+export type PotLook =
+  | { kind: "crop"; id: string; daysGrown: number; ripe: boolean }
+  | { kind: "tea"; age: number };
+
+export function potLook(p: PlacedItem): PotLook | undefined {
+  const st = stateOf(p);
+  if (st.tea) return { kind: "tea", age: st.tea.age };
+  const crop = st.plot?.crop;
+  if (!crop) return undefined;
+  const def = cropById(crop.id);
+  return {
+    kind: "crop",
+    id: crop.id,
+    daysGrown: crop.daysGrown,
+    ripe: !!def && crop.daysGrown >= def.growDays,
+  };
+}
 
 /** Stand a pot from the backpack on a clear tile of the farm or the greenhouse. Free. */
 export function placeGardenPot(

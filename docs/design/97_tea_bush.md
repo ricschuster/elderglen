@@ -56,8 +56,8 @@ buffs are not built. The leaf's own sale price is still ours (SC-173).
 
 ## Open
 
-- Garden pots: no scene work yet (drawing the pot and its plant, blocking the tile for walking,
-  placing from the hotbar with art). Digging a crop or bush out of a pot (the pot stays full
+- Garden pots: drawn (placeholder terracotta pot, `GARDEN_POT_KEY`, with the crop or tea bush in it) and
+  block walking (2026-11-13); placing is the held pot, as for other placeables. Left: real art. Digging a crop or bush out of a pot (the pot stays full
   until the crop is harvested or withers). Fertilizer in a pot. Whether rain waters an outdoor
   pot is from memory (Stardew check, register row to add).
 - Every placeholder number: recipe, leaf price, leaf energy, sapling price,

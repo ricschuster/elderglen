@@ -1771,6 +1771,21 @@ export const farmDecorKey = (id: string) => `farmdecor-${id}`;
 export const POT_KEY = "shellfish-pot";
 export const POT_READY_KEY = "shellfish-pot-ready";
 
+/** The garden pot standing on the ground (note 97). Placeholder art. */
+export const GARDEN_POT_KEY = "garden-pot-placed";
+
+/** A terracotta pot with soil in it. Placeholder art. */
+function paintGardenPot(scene: Phaser.Scene): void {
+  const t = scene.textures.createCanvas(GARDEN_POT_KEY, SIZE, SIZE)!;
+  const c = t.getContext();
+  px(c, "#3a2a1a", 3, 9, 10, 2);
+  px(c, "#b8602c", 4, 10, 8, 5);
+  px(c, "#d8803c", 4, 10, 8, 1);
+  px(c, "#8a4420", 5, 14, 6, 1);
+  px(c, "#5a3a20", 4, 9, 8, 1);
+  t.refresh();
+}
+
 /** A wicker pot with a float. Placeholder art. */
 function paintPot(scene: Phaser.Scene): void {
   const t = scene.textures.createCanvas(POT_KEY, SIZE, SIZE)!;
@@ -2373,4 +2388,5 @@ export function makeArt(
   paintForgeGoods(scene);
   paintFarmDecor(scene);
   paintPot(scene);
+  paintGardenPot(scene);
 }

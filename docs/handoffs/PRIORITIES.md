@@ -44,8 +44,7 @@ Open, top to bottom:
 5. **#876 left:** judging (Harvest Showing; core and panel exist, unclear what is missing), scene
    walking villagers and marchers, even-year hedge maze and niche lines, multiplayer counts (M4).
    Cake dish picker, lantern drift and ice count built 2026-11-13.
-6. **Decided, still to build:** garden pot scene work (drawing, blocking, placing, note 97; the
-   rules and recipes are built), village trees
+6. **Decided, still to build:** garden pot leftovers (digging out, fertilizer, art, note 97), village trees
    marked `cosmetic` (needs tree objects in `hearthwell.json`, note 87), mahogany monster seed
    (needs Secret Woods creatures), #874 elderfruit sources left: spouse and gallery set.
 7. A browser look at everything built since the owner last played: hat picker, cart, herb stall,

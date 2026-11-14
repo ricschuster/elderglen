@@ -8,6 +8,8 @@ import {
   actOnPot,
   placeGardenPot,
   potAt,
+  potLook,
+  potsOf,
 } from "../src/core/gardenpot";
 import { GREENHOUSE_MAP } from "../src/core/greenhouse";
 import { itemById } from "../src/core/items";
@@ -185,5 +187,25 @@ describe("garden pot", () => {
     const back = deserialize(serialize(g))!;
     const pot = potAt(back, map, 3, 3);
     expect(JSON.stringify(pot?.state)).toContain("parsnip");
+  });
+});
+
+describe("garden pot drawing", () => {
+  it("lists the pots on the map and says what grows in each", () => {
+    const g = newGame();
+    const map = soilMap();
+    g.inventory.add(GARDEN_POT, 2);
+    g.inventory.add("parsnip-seed", 1);
+    placeGardenPot(g, map, 4, 4);
+    placeGardenPot(g, map, 6, 4);
+    expect(potsOf(g, map)).toHaveLength(2);
+    expect(potLook(potAt(g, map, 4, 4)!)).toBeUndefined();
+    useHeld(g, map, held("parsnip-seed"), 4, 4);
+    expect(potLook(potAt(g, map, 4, 4)!)).toMatchObject({
+      kind: "crop",
+      id: "parsnip",
+      daysGrown: 0,
+      ripe: false,
+    });
   });
 });

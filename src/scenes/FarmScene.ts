@@ -66,6 +66,7 @@ import {
 import { meet, presentAt, villagersOn, type Present } from "../core/townfolk";
 import { stageOf as fruitStageOf } from "../core/fruittrees";
 import { teaStageOf } from "../core/teabush";
+import { potAt, potLook, potsOf } from "../core/gardenpot";
 import type { GameState } from "../core/save";
 import { TOOLS, cycle, heldAt, nextRow, toolbarSize } from "../core/toolbar";
 import { pendingChoice } from "../core/professions";
@@ -300,6 +301,7 @@ import {
   chestKey,
   farmDecorKey,
   lightKey,
+  GARDEN_POT_KEY,
   POT_KEY,
   POT_READY_KEY,
   machineKey,
@@ -1134,6 +1136,7 @@ export class FarmScene extends Phaser.Scene {
       (isFarmMap(this.mapId) && !!rodAt(this.state, x, y)) ||
       this.map.serviceAt(x, y)?.kind === "camp-chest" ||
       !!this.store.sprinklers.at(x, y) ||
+      !!potAt(this.state, this.map, x, y) ||
       (this.outdoorSoil && !!this.state.machines.at(x, y))
     );
   }
@@ -3021,6 +3024,28 @@ export class FarmScene extends Phaser.Scene {
     // Placeholder art: the fruit tree sprites, tinted green (note 97).
     for (const b of here.teaBushes.each())
       put(b.x, b.y, fruitTreeKey(teaStageOf(b.age) * 2)).setTint(0x7fd66a);
+    this.drawGardenPots(put);
+  }
+
+  /** Garden pots (note 97): the pot, and the crop or tea bush growing in it. */
+  private drawGardenPots(
+    put: (x: number, y: number, key: string) => Phaser.GameObjects.Image,
+  ): void {
+    for (const p of potsOf(this.state, this.map)) {
+      put(p.x, p.y, GARDEN_POT_KEY);
+      const look = potLook(p);
+      if (look?.kind === "tea")
+        put(p.x, p.y, fruitTreeKey(teaStageOf(look.age) * 2)).setTint(0x7fd66a);
+      else if (look?.kind === "crop") {
+        const def = cropById(look.id);
+        if (def)
+          put(
+            p.x,
+            p.y,
+            cropKey(look.id, stageOf(look.daysGrown / def.growDays, look.ripe)),
+          );
+      }
+    }
   }
 
   /** What stands and lies outdoors: forage, weeds, twigs, machines, trees and goods on the ground. */
