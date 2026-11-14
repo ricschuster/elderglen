@@ -27,7 +27,15 @@ import {
   coopSite,
   coopVisibleTier,
 } from "../core/animals";
-import { pondBlocks, pondCovering, pondUse, takeFish } from "../core/pond";
+import {
+  FISH_POND,
+  POND_FISH_SPOTS,
+  pondBlocks,
+  pondCovering,
+  pondLook,
+  pondUse,
+  takeFish,
+} from "../core/pond";
 import { fertilizerById } from "../core/fertilizer";
 import Phaser from "phaser";
 import { animalKey } from "./art-animals";
@@ -121,7 +129,7 @@ import { DEPTH, sortDepth, tileDepth } from "./depth";
 import { drawMapArt } from "./mapart";
 import { MAP_PASSES } from "./map-passes";
 import { creatureTexture } from "./art-creatures";
-import { storeOf } from "../core/mapstore";
+import { FARM_STORE, storeOf } from "../core/mapstore";
 import { mapWithDoors } from "../core/placement";
 import { farmMapOf, isFarmMap, resolveMapId } from "../core/farmtypes";
 import {
@@ -312,6 +320,8 @@ import {
   farmDecorKey,
   lightKey,
   GARDEN_POT_KEY,
+  POND_KEY,
+  POND_PIT_KEY,
   POT_KEY,
   POT_READY_KEY,
   machineKey,
@@ -3108,6 +3118,37 @@ export class FarmScene extends Phaser.Scene {
     if (isFestivalMap(this.mapId)) this.drawFestivalProps();
     if (this.map.hasSoil) this.drawSoil(put);
     this.drawWorld(put);
+    this.drawPonds(put);
+  }
+
+  /** Fish ponds (note 93): the pit while dug, then the water with its fish swimming in it. Placeholder art. */
+  private drawPonds(
+    put: (x: number, y: number, key: string) => Phaser.GameObjects.Image,
+  ): void {
+    if (!isFarmMap(this.mapId)) return;
+    const ts = this.map.tileSize;
+    for (const p of this.state.placed.each(FARM_STORE)) {
+      if (p.id !== FISH_POND) continue;
+      const look = pondLook(p);
+      const body = put(
+        p.x + 2,
+        p.y + 4,
+        look.building ? POND_PIT_KEY : POND_KEY,
+      );
+      body.setDepth(DEPTH.decal);
+      if (look.sea) body.setTint(0x9fb8ff);
+      const icon = look.species && iconKey(look.species);
+      if (icon)
+        for (const [fx, fy] of POND_FISH_SPOTS.slice(0, look.fish)) {
+          const fish = this.add
+            .image(p.x * ts + fx, p.y * ts + fy, icon)
+            .setScale(0.6)
+            .setDepth(DEPTH.decal + 1);
+          this.uiCamera.ignore(fish);
+          this.sprites.push(fish);
+        }
+      if (look.ready) put(p.x + 4, p.y + 1, MACHINE_READY_KEY);
+    }
   }
 
   /** The dug soil, crops, fertilizer, sprinklers and fruit trees of the map. */

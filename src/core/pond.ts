@@ -671,3 +671,50 @@ export function emptyPond(g: GameState, x: number, y: number): Outcome {
   for (let n = s.count; n > 0; n--) takeFish(g, x, y);
   return { ok: true, item };
 }
+
+/**
+ * Where a pond's fish swim, in sixteenths of a tile from the pond's top left
+ * (the pond is 5 by 5 tiles, so 0 to 80). Ten fixed spots inside the water,
+ * so the picture is the same every frame and the first spots fill first.
+ */
+export const POND_FISH_SPOTS: readonly (readonly [number, number])[] = [
+  [28, 26],
+  [50, 34],
+  [36, 48],
+  [20, 40],
+  [56, 52],
+  [42, 22],
+  [24, 56],
+  [60, 24],
+  [48, 62],
+  [34, 36],
+];
+
+/** What the picture of a pond shows (note 93, placeholder art). */
+export interface PondLook {
+  /** The carpenter is still digging: draw the dug pit. */
+  building: boolean;
+  /** The species swimming in it and its water, if any. */
+  species?: string;
+  sea: boolean;
+  /** How many fish to draw: the population, up to the ten spots. */
+  fish: number;
+  /** A product waits to be taken. */
+  ready: boolean;
+  /** The fish ask for something. */
+  asks: boolean;
+}
+
+export function pondLook(p: PlacedItem): PondLook {
+  const s = stateOf(p);
+  const sp = speciesById(s.species);
+  return {
+    building: s.building > 0,
+    ...(sp && s.building === 0 ? { species: sp.id } : {}),
+    sea: sp ? sp.group === "sea" : false,
+    fish:
+      sp && s.building === 0 ? Math.min(s.count, POND_FISH_SPOTS.length) : 0,
+    ready: s.out !== undefined,
+    asks: s.quest !== undefined,
+  };
+}
