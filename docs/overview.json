@@ -1308,6 +1308,11 @@
           "s": "decided",
           "t": "In-house wiki built from src/content and docs/wiki-text, with an internal view; the owner clears draft text flags",
           "ref": "100_wiki.md#Built status (2026-11-13)"
+        },
+        {
+          "s": "decided",
+          "t": "In-game Guide tab after Collect: discovery gated, built from the same data as the wiki, people learned one fact at a time, pauses the clock; first slice built (crops, fish, forage, items, people)",
+          "ref": "101_in_game_guide.md#Built status"
         }
       ],
       "deps": [],

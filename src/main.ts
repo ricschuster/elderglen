@@ -50,6 +50,7 @@ import { OrdersScene } from "./scenes/OrdersScene";
 import { RequestsScene } from "./scenes/RequestsScene";
 import { AchievementsScene } from "./scenes/AchievementsScene";
 import { CollectionsScene } from "./scenes/CollectionsScene";
+import { GuideScene } from "./scenes/GuideScene";
 import { MailScene } from "./scenes/MailScene";
 import { centreMenus, UI_SIZE_KEY, WORLD_ZOOM_KEY } from "./scenes/panel";
 import { loadDeviceSettings } from "./scenes/storage";
@@ -94,6 +95,7 @@ const game = new Phaser.Game({
     GreencoatScene,
     AchievementsScene,
     CollectionsScene,
+    GuideScene,
     MailScene,
     OrdersScene,
     RequestsScene,

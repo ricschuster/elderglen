@@ -18,22 +18,7 @@ unless the owner says so.
 Decided 2026-11-12: the Last Seat opens after ALL other bundles (built). #876 and #879
 stay in M3b (#879 closed 2026-11-12). Guests' Board +500 friendship (built), up to five heart events a person.
 
-Decided 2026-11-12 (session 9): ADR 0014, committed map JSON is the source, generators moved to
-`scripts/drafts/`. Elderfruit sources confirmed. Tapper crafted at Foraging 4, no shop; Heavy
-Tapper is the Rare Finds bundle reward. Rings from the trainer and slayer goal; Sturdy band
-crafted at Combat 1. Boots tailoring built. Regrow outside the farm 20 percent a night, stage 3.
-Hat Parade join until 14:30. Hall restored is derived. Dye redo costs the six pot items.
-
-Built 2026-11-12 (sessions 7d, 8 and 8b), all awaiting the owner's play. Bundles 1 to 26 can be
-filled in code; the exit test needs the owner's play. Detail is in the notes' "Built status",
-the 2026-11-12l, 2026-11-12m and 2026-11-12n handoffs and `PRIORITIES_ARCHIVE.md`.
-
-Decided 2026-11-12 (session 10): Crabshell ring is the Rock Crab 60 reward; Bug Meat added (Sturdy
-band, Icicle Hopper reward); Cordelia's 4 heart event unlocks tailoring; Heavy Tapper twice as fast
-(saved page, SC-168); finds count only toward "catch N fish", algae soup is a pond reward only, aged
-roe in the jar; tea bush crafted (note 97); Cake Day points 60/90/120; hunt prize Straw Boater plus a
-yearly rare seed; keepsake lantern placeable. Built, awaiting play: all of these, plus hunt, cake
-table, lantern floating and ice fishing rules with thin scene hooks, pond menu and placing screen.
+Decisions and built detail for sessions 7 to 10 (2026-11-12) are in `PRIORITIES_ARCHIVE.md`.
 
 Open, top to bottom:
 
@@ -45,6 +30,7 @@ Open, top to bottom:
 6. **Batch 4 built 2026-11-14** (hall counter second tiles, renovation decor zones, overview and valley-map refresh, wiki gift lists stay draft, M4 hosting spike text drafted in `docs/design/drafts/m4-hosting-spike-issue.md`, owner approves before filing). Left: the owner's play. Real garden pot art waits for M3d. Village trees: owner kept the layout, judge in play. #874 spouse and gallery set blocked (no marriage). Friendship doors are built (`gates.ts`).
 6b. **Playtest scripts fixed 2026-11-14** (handoff 2026-11-14d). Left: a full pass of all three personas at `SPEED=2`, the expert's day 5 east-door failure, a bot boxed in at 22,43.
 6c. **In-game menu built 2026-11-14** (note 49, handoff 2026-11-14e): tab strip, Pack tab, Exit, placeholders. Left: equipment on Pack, Social, Animals, Special Items, Skills extras, the journal, a saving Exit (note 52). The owner checks it on a tablet.
+6d. **In-game Guide first slice built 2026-11-14** (note 101): Guide tab, Crops, Fish, Forage, Items, People. Left: Recipes, Bundles, Places, shop hours, the owner checks it and the tab count on a tablet.
 7. A browser look at everything built since the owner last played: hat picker, cart, herb stall, tapper, lights, rod, bombs, festival maps and activities, tailoring, pond screens and art, tea bush, woods creatures, even-year maze.
 
 Alongside: the wiki (#910, note 100; built for every category, every item has a picture; text cleared for crops, fish, forage, items, places and rooms; draft text left for bundles, recipes, people and five gem names; left: owner reads the draft text and clears flags, gift lists (`giftsDraft`), people prose with the voice sheets, hosting after M3d), Stardew checks rows (open: SC-122, 135, 160, 161, 170, 172), and file the M4

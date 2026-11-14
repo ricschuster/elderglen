@@ -61,6 +61,7 @@ import { ELDERFRUIT_TOTAL, maxEnergyFor } from "./elderfruit";
 import { HeartEvents, type HeartEventsSave } from "./heartevents";
 import { Quests, type QuestsSave } from "./quests";
 import { FishLog, type FishingSave } from "./fishing";
+import { Guide } from "./guide";
 import { Tackle, type TackleSave } from "./tackle";
 import { Pots, type PotsSave } from "./pots";
 import { Equipment } from "./equipment";
@@ -197,6 +198,8 @@ export interface GameState {
   heartEvents: HeartEvents;
   /** Fish caught, with the longest of each (note 21). */
   fishing: FishLog;
+  /** What the in-game Guide has seen (note 101). */
+  guide: Guide;
   /** Bait and lures on each rod (note 21). */
   tackle: Tackle;
   /** Shellfish pots on the water, and the shellfish landed. */
@@ -267,6 +270,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     heartEvents: new HeartEvents(),
     quests: new Quests(),
     fishing: new FishLog(),
+    guide: new Guide(),
     tackle: new Tackle(),
     pots: new Pots(),
     combat: new Combat(),
@@ -405,6 +409,8 @@ interface SaveData {
   quests?: QuestsSave;
   /** Absent in saves made before fishing. */
   fishing?: FishingSave;
+  /** Absent in saves made before the Guide. */
+  guide?: string[];
   /** Absent in saves made before bait and lures. */
   tackle?: TackleSave;
   /** Absent in saves made before shellfish pots. */
@@ -617,6 +623,7 @@ export function serialize(g: GameState): string {
     heartEvents: g.heartEvents.save(),
     quests: g.quests.save(),
     fishing: g.fishing.save(),
+    guide: (g.guide.sweep(g), g.guide.save()),
     tackle: g.tackle.save(),
     pots: g.pots.save(),
     combat: g.combat.save(),
@@ -1076,6 +1083,8 @@ export function deserialize(text: string): GameState | undefined {
   g.heartEvents.load(raw.heartEvents);
   g.quests.load(raw.quests);
   g.fishing.load(raw.fishing);
+  g.guide.load(raw.guide);
+  g.guide.sweep(g);
   g.tackle.load(raw.tackle);
   g.pots.load(raw.pots);
   g.combat.load(raw.combat, g.skills);
