@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-10",
+  "updated": "2026-11-14",
   "about": "Hand-kept map of the design. Edit this file, then run npm run overview. Issue titles and states come from docs/overview-issues.json, refreshed with npm run overview:refresh (needs gh). npm run overview:check fails if a note, heading, area or issue reference is wrong, or if overview.html is stale.",
   "groups": {
     "core": "Core loop",
@@ -73,7 +73,7 @@
       "group": "core",
       "pos": [20, 320],
       "built": "partial",
-      "builtNote": "Four seasons, weather and the forecast, forage and crops for every season, and the area forage tables are built. Storm strikes are not (slice 3).",
+      "builtNote": "Four seasons, weather and the forecast, forage and crops for every season, and the area forage tables are built. Storm strikes, lightning rods, artifact spots and gem nodes are built too (2026-11-12). Trees outside the farm regrow 20 percent a night at stage 3.",
       "summary": "What grows and what can be found changes with the season.",
       "items": [
         {
@@ -130,7 +130,7 @@
       "group": "core",
       "pos": [260, 330],
       "built": "partial",
-      "builtNote": "Nineteen of the 30 bundles work (note 07, \"Village hall\"): the Foragers' Shelf has four, the Larder six, the Water room six (13 to 18, 2026-11-10), the Hearth two and the Guests' Board one (the Dyer's). The Last Seat has none yet. Finishing the Water room opens the Lake cove ferry.",
+      "builtNote": "Bundles 1 to 26 can be filled in code (2026-11-12), with room rewards, the hand-in, the Crystalarium and Guests' Board +500 friendship. The Last Seat opens after all the other bundles. The exit test for M3b is the owner's play, not yet done.",
       "summary": "Six rooms, 30 bundles, ending at The Last Seat, the one gate to ring 2.",
       "items": [
         {
@@ -264,6 +264,15 @@
           "s": "decided",
           "t": "The lightning rod needs Cave Bat bat wing as in Stardew, so rods, packs and lamp-posts arrive in slice 3 and slice 1 storms are weather only",
           "ref": "34_crafting.md#Items this list needs"
+        },
+        {
+          "s": "decided",
+          "t": "The Last Seat opens only after all other bundles are done; the Guests' Board gives +500 friendship; the hall is restored by derivation, not a flag",
+          "ref": "16_bundles.md#Rooms and bundles"
+        },
+        {
+          "s": "decided",
+          "t": "Hall counters need a second player tile each by widening the approaches (corridors stay 2 wide for the ceremony crowd); built 2026-11-14"
         }
       ],
       "deps": [
@@ -282,7 +291,7 @@
       "group": "world",
       "pos": [260, 60],
       "built": "partial",
-      "builtNote": "Every home valley map is built to shell level (2026-11-09): Forest, Secret Woods, River delta and Beach, Mountain, Quarry, Lake cove and Hearthwell with eleven interiors. No villagers stand in them yet (#599), and the owner has not played them.",
+      "builtNote": "Every home valley map is built to shell level, and the interiors are built from the checked plans (2026-11-12). Villagers stand at festival spots and march in the Hat Parade; the Secret Woods now has its pond fish and creatures (2026-11-14), and committed map JSON is the source (ADR 0014). The owner has not played them.",
       "summary": "Separate areas joined by exits, buildings as interiors. Nine valley areas on eight maps (the Beach shares the River delta map), one river line, ring 2 across the bridge.",
       "items": [
         {
@@ -425,6 +434,26 @@
           "t": "Smith split (owner, 2026-11-08): the Hearthwell blacksmith does tool upgrades, geode cracking and ore and does not buy geodes; the Mountain smith dwarf is a Mines-side trader (lamps, rest-camp supplies, buys ore, no upgrades). Built 2026-11-10 (#708): upgrades and geode cracking at the Hearthwell smithy, which buys no geodes; the dwarf buys ore and sells coal and weapons for coin (no weapon forging until a later forge, as Stardew's Ginger Island); the forge hut has no gate; lamps not built. Since 2026-11-10 the smithy also sells and buys ore and sells coal, at the dwarf's prices",
           "ref": "74_mountain.md#What lives there",
           "issue": 643
+        },
+        {
+          "s": "decided",
+          "t": "Secret Woods creatures (2026-11-14): four a morning from a per-map spawn table, two Gloops, a blue Gloop and the Burrmouse, 10 percent Mahogany seed per kill, no new slayer goal",
+          "ref": "73_secret_woods.md#Built status, creatures (2026-11-14)"
+        },
+        {
+          "s": "decided",
+          "t": "Secret Woods pond holds the Fernscale and two borrowed common fish; the spirit statue is built (#878 closed)",
+          "ref": "73_secret_woods.md#Built status, pond fish and statue (2026-11-13, #878)"
+        },
+        {
+          "s": "decided",
+          "t": "Farmhouse and cabin built with renovations, spouse corner and reachability tests; the other interiors built from the checked drafts (2026-11-12)",
+          "ref": "85_house_and_cabin_layout.md#Status per map (note 81 decision 7)"
+        },
+        {
+          "s": "decided",
+          "t": "Painted map pipeline and art style sheet (2026-11-13); committed map JSON is the source and generators moved to scripts/drafts (ADR 0014)",
+          "ref": "99_art_polish_and_style.md#Built status"
         }
       ],
       "deps": [],
@@ -515,7 +544,7 @@
       "group": "people",
       "pos": [740, 330],
       "built": "none",
-      "builtNote": "No villager data exists yet.",
+      "builtNote": "The 30 people have data (villagers.json), friendship, gifts and Hearthwell gates. Heart events are written for all 30 (2 and 6 hearts; 62 events with real rewards, 2026-11-14), split into one file per person. Dialogue lines and voice sheets are not written.",
       "summary": "About 30 named villagers in ring 1. Almost none are named.",
       "items": [
         {
@@ -585,6 +614,15 @@
           "s": "decided",
           "t": "Farmhouse and cabin layout (note 85, 2026-11-11, Tiled draft in docs/design/drafts/house-draft): one shared spouse room right of the bedroom, set up on marriage from tier 1 (corrects note 41), reached by a hall that changes between tiers so no tile moves; the door stays 1 wide; on divorce the room and corner vanish and items go to a chest; the spouse corner is x 70 to 71, y 4 to 11 on the farm; a cabin is the farmhouse map with per-player state; the nursery has a crib and two child beds from tier 2 (Stardew); round 2 redrew the connectors from the screenshots (open kitchen, 4 row bedroom passage, 3 wide stairs, 2 wide door, three ways upstairs) and designed all eight Stardew renovations (open bedroom, southern room, corner room, expanded corner room, attic, cubby, dining room, open dining room) in one last 74 by 44 frame; drafts for every tier, every renovation and the cellar. The sketch waits for the owner check, SC-140 (door width) is unchecked",
           "ref": "85_house_and_cabin_layout.md#Decided (owner, 2026-11-11)"
+        },
+        {
+          "s": "decided",
+          "t": "Heart events: 62 events with real rewards (seven taught dishes, decor keepsakes, hats, bait, lures), four rain events at 4 hearts, one file per person; the owner still edits seeds and windows",
+          "ref": "62_heart_events.md#Decided (2026-11-06)"
+        },
+        {
+          "s": "open",
+          "t": "Heart events at 4, 8 and 10 hearts wait for the voice sheets (M3d)"
         }
       ],
       "deps": ["valley-map", "dialogue"],
@@ -692,7 +730,7 @@
       "group": "systems",
       "pos": [260, 520],
       "built": "partial",
-      "builtNote": "Built 2026-11-08: 120 floors in bands, health, three weapon families in five tiers, the trainer, twelve creatures, the Combat skill and defeat. The smith dwarf sells weapons for coin (2026-11-09). Not built: lamps, rest-camp supplies and the lightning rod (#598).",
+      "builtNote": "Built 2026-11-08: 120 floors in bands, health, three weapon families in five tiers, the trainer, creatures, the Combat skill and defeat. Since then: camps and special floors, lightning rod and storm strikes, placeable lights, rings from the trainer and the slayer goals, the Crabshell ring, bombs, gem nodes and artifact spots (2026-11-12). Woods creatures arrived 2026-11-14.",
       "summary": "Opens Spring day 5, 120 floors in three bands. Combat is real-time, gentle and optional, and mining works without it.",
       "items": [
         {
@@ -765,6 +803,11 @@
           "s": "decided",
           "t": "Geodes (draft): Geode, Frozen, Magma and Omni drop by depth band as Stardew does, each with its own mineral pool, Omni drawing from all; names and prices are placeholders",
           "ref": "69_geodes_and_minerals.md"
+        },
+        {
+          "s": "decided",
+          "t": "Rings: Defense +1 from the trainer, the Crabshell ring (Defense +5) as the Rock Crab 60 reward, a Sturdy band crafted at Combat 1",
+          "ref": "94_defense_immunity_bad_effects.md#Built (2026-11-12)"
         }
       ],
       "deps": [],
@@ -776,7 +819,7 @@
       "group": "systems",
       "pos": [20, 580],
       "built": "partial",
-      "builtNote": "Fishing slices 1 and 2 are built: 46 fish in six waters, four rods, bait, lures and the fisher's hut on the delta. Shellfish pots are built (2026-11-10). The Water room bundles 13 to 18 are built (2026-11-10). The five legends and the crown are built (2026-11-10). Not built: trash and the recycler (#596).",
+      "builtNote": "Fishing slices 1 and 2 are built: 52 fish in six waters plus the Secret Woods pond, four rods, bait, lures, shellfish pots, the five legends and the fisher's hut. The fish pond with species, a pond menu and placing screen, cave pools, ice fishing and fish art for all 52 fish are built (2026-11-12 to 2026-11-14). Pond numbers and art are placeholders until the owner plays.",
       "summary": "Six Water room bundles and one Last Seat bundle depend on it.",
       "items": [
         {
@@ -908,6 +951,16 @@
           "s": "open",
           "t": "Legend times, weather and prices, and the tracker design (what counts, weights, reward)",
           "ref": "21_fishing.md#Open"
+        },
+        {
+          "s": "decided",
+          "t": "Fish pond: species table, pond rewards (algae soup is the glassy-elver's), pond screens, and pond art; numbers are placeholders to tune in play",
+          "ref": "93_fish_pond_and_water_finds.md#Built status, pond art (2026-11-14)"
+        },
+        {
+          "s": "decided",
+          "t": "Fish art for all 52 fish, painted in code and used in the game and the wiki",
+          "ref": "99_art_polish_and_style.md#Fish pictures (decided 2026-11-13)"
         }
       ],
       "deps": [],
@@ -919,7 +972,7 @@
       "group": "systems",
       "pos": [500, 520],
       "built": "partial",
-      "builtNote": "Built 2026-11-08: coop and barn with tiers, chickens, ducks, rabbits, cow, goat, sheep, pig, incubator, hay silo, animal-goods machines and a first cooking pass (stove, eight placeholder dishes). The Forest keeper sells young animals and hay (2026-11-09). Not built: heater, animal professions, animal art, most recipes.",
+      "builtNote": "Built 2026-11-08: coop and barn with tiers, animals, incubator, hay silo, animal-goods machines and cooking. Since then: the heater (2,000g as the keeper's list), the Crystalarium, the tapper (Foraging 4), a tea bush, the garden pot, the herb stall and many recipes (2026-11-12 to 2026-11-14). Animal professions are not built.",
       "summary": "Machines, cooking, coops and bees. Needed by many bundles. Animals are designed in 23_animals.md; processing and cooking are not.",
       "items": [
         {
@@ -962,6 +1015,15 @@
           "s": "open",
           "t": "Bundle 27 gives a crystalarium; craft ingredient stand-ins and seed maker and smoker sources to check",
           "ref": "24_processing_and_cooking.md#Open"
+        },
+        {
+          "s": "decided",
+          "t": "Tapper crafted at Foraging 4 with no shop; the Heavy Tapper (twice as fast) is the Rare Finds bundle reward; tea bush crafted",
+          "ref": "97_tea_bush.md"
+        },
+        {
+          "s": "decided",
+          "t": "Garden pot: clay 1, stone 10 and a refined crystal (smelted quartz), taught by Alder; real pot art waits for M3d"
         }
       ],
       "deps": [],
@@ -995,7 +1057,7 @@
       "group": "systems",
       "pos": [20, 440],
       "built": "partial",
-      "builtNote": "Hats (festival and achievement), furniture, wallpaper and flooring, and the furniture catalogue are built. Clothing, tailoring and farm decoration are not.",
+      "builtNote": "Hats, furniture, wallpaper and flooring, the catalogue, tailoring (taught at Cordelia's 4 hearts, dyes, boots) and the farm placement system with decor zones are built or designed (2026-11-12). Renovation decor zones are built (2026-11-14). Heart events reward new hats and decor keepsakes with placeholder art.",
       "summary": "Furniture, clothing, dyes and hats.",
       "items": [
         {
@@ -1048,6 +1110,20 @@
           "s": "open",
           "t": "House room sizes and floor plans; built with placeholders: catalogue at 200,000g and flooring and wallpaper at 200g at the carpenter (where they are sold is still open)",
           "ref": "41_house.md#Open"
+        },
+        {
+          "s": "decided",
+          "t": "Tailoring: processed goods take their ingredient's colour; dye redo costs the six pot items; boots tailoring built",
+          "ref": "96_tailoring.md#Built status (2026-11-12)"
+        },
+        {
+          "s": "decided",
+          "t": "Placement system: sprinklers, machines, chests, lights, lightning rods and decor share one placed list per map",
+          "ref": "89_placement_system.md#Built status"
+        },
+        {
+          "s": "decided",
+          "t": "Renovation decor zones (note 85, Decoration zones): built 2026-11-14"
         }
       ],
       "deps": [],
@@ -1059,7 +1135,7 @@
       "group": "systems",
       "pos": [500, 680],
       "built": "partial",
-      "builtNote": "All eight festivals are built as screens (2026-11-07): Harvest Showing table and token counter, Hollow Eve maze, Frostday sights, counters. Maps built 2026-11-08 for the Harvest Showing (village green) and Hollow Eve (hedge map, odd-year maze); other festival maps, the even-year maze and villager spots wait for the village map. The farm cave is built too (note 66).",
+      "builtNote": "All eight festivals are built as screens and now on their maps (2026-11-12 to 2026-11-14): villagers stand at spots, the Hat Parade march (the player joins), Harvest Showing judging with eight groups, rotating token counter, odd and even-year hedge mazes with chests, hunt, cake table, lantern floating and ice fishing. Multiplayer counts wait for M4 and the owner's play.",
       "summary": "Two festivals a season; the Hat Parade comes first.",
       "items": [
         {
@@ -1106,6 +1182,20 @@
           "s": "proposed",
           "t": "Random seasonal events with positive or neutral results",
           "ref": "17_call_feedback_2026-10-28.md#Late-game surprises"
+        },
+        {
+          "s": "decided",
+          "t": "Harvest Showing judging: eight groups, Stardew's price bands by quality, dishes count, counter rotates two token lines a year from four",
+          "ref": "82_festival_locations.md#Built status (2026-11-12, #876)"
+        },
+        {
+          "s": "decided",
+          "t": "The player joins the Hat Parade march automatically; +20 friendship with the 22 marchers once a year",
+          "ref": "82_festival_locations.md#Built status (2026-11-14, the player joins the march, #876)"
+        },
+        {
+          "s": "decided",
+          "t": "Hollow Eve even-year maze gives a Hollow Lantern then a sack worth 830g; a signpost marks the hidden gap; the booth sells a gravestone and the gourd lantern recipe"
         }
       ],
       "deps": ["cast"],
@@ -1117,7 +1207,7 @@
       "group": "craft",
       "pos": [740, 60],
       "built": "partial",
-      "builtNote": "Placeholder art. A portrait and shared sprite body is designed (#58).",
+      "builtNote": "Placeholder art, with a polish pass on people, animals, creatures, crops, forage and tiles, fish art for all 52 fish, pond art and a painted map pipeline (2026-11-13). A portrait and shared sprite body is designed (#58). Sound has no plan yet.",
       "summary": "Portraits over a shared sprite body; sound has no plan yet.",
       "items": [
         {
@@ -1149,7 +1239,7 @@
       "group": "craft",
       "pos": [20, 740],
       "built": "partial",
-      "builtNote": "Runs in the browser and as an Android app (Capacitor, ADR 0008), installed on three tablets. The real-tablet play check is not done (#523).",
+      "builtNote": "Runs in the browser and as an Android app (Capacitor, ADR 0008), installed on three tablets. The real-tablet play check is not done (#523). An in-house wiki (note 100) is built for every category, with a picture for every item.",
       "summary": "Browser and tablet; installed wrapper later.",
       "items": [
         {
@@ -1213,6 +1303,11 @@
           "s": "open",
           "t": "Real-tablet check",
           "ref": "08_playtest_personas.md#Touch persona"
+        },
+        {
+          "s": "decided",
+          "t": "In-house wiki built from src/content and docs/wiki-text, with an internal view; the owner clears draft text flags",
+          "ref": "100_wiki.md#Built status (2026-11-13)"
         }
       ],
       "deps": [],

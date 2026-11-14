@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-11-11",
+  "fetched": "2026-11-14",
   "issues": {
     "5": {
       "t": "Design: what is the third community project?",
@@ -217,7 +217,7 @@
       "labels": ["design-question"]
     },
     "196": {
-      "t": "Design: a completion tracker (Perfection-style) for the whole game",
+      "t": "Completion tracker leftovers: real lines, art, browser look at the summit scene",
       "state": "open",
       "labels": []
     },
@@ -288,7 +288,7 @@
     },
     "396": {
       "t": "Tree types by region (M3)",
-      "state": "open",
+      "state": "closed",
       "labels": ["enhancement"]
     },
     "421": {
@@ -313,7 +313,7 @@
     },
     "522": {
       "t": "Slice 1 leftovers",
-      "state": "open",
+      "state": "closed",
       "labels": ["enhancement"]
     },
     "523": {
@@ -368,27 +368,27 @@
     },
     "596": {
       "t": "WP: Fishing slices 3 and 4, bait, lures, conditions, pots, the cove and the legend",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "597": {
       "t": "WP: Mines proper part 1, health, weapons, trainer and first creatures",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "598": {
       "t": "WP: Mines proper part 2, deeper bands, creatures, combat skill, rest camps, lightning rod",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "599": {
       "t": "WP: Villagers, schedules and friendship with gifts",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "600": {
       "t": "WP: Heart events and recipe mail",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "601": { "t": "WP: Horse", "state": "closed", "labels": ["work-package"] },
@@ -398,7 +398,7 @@
       "labels": ["work-package"]
     },
     "603": {
-      "t": "WP: The Last Seat, bundles 27 to 30, the bridge and the letter",
+      "t": "WP: The Last Seat ending, the bridge scene and the letter",
       "state": "open",
       "labels": ["work-package"]
     },
@@ -439,7 +439,7 @@
     },
     "639": {
       "t": "WP: Secret Woods map, daily hardwood stumps and the massive log",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "640": {
@@ -541,6 +541,156 @@
       "t": "Mahogany trees: planting, growth, Hardwood yield, Secret Woods stump seed",
       "state": "closed",
       "labels": ["work-package"]
+    },
+    "776": {
+      "t": "Author the real farm.json from the checked layout (note 55)",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "832": {
+      "t": "House: frame shift by (20, 11) and the connector changes",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "833": {
+      "t": "House: spouse room layers (spouse condition)",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "834": {
+      "t": "House: eight renovations, layers and the carpenter's Renovations tab",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "835": {
+      "t": "House: fixtures, nursery crib and child beds, divorce chest, named marks",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "836": {
+      "t": "Farm: spouse corner zone and idle mark",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "837": {
+      "t": "House: carpenter and morning report text (spare room only)",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "838": {
+      "t": "House: reachability tests for every tier, spouse and renovation combination",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "853": {
+      "t": "Interiors: rebuild the general store from the pilot draft",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "854": {
+      "t": "Interiors: shared reachability test over every interior map",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "855": {
+      "t": "Interiors: interior doors 2 wide across the 14 built shells",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "856": {
+      "t": "Interiors batch 1: sawmill, healer, smithy",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "857": {
+      "t": "Interiors batch 2: library, hatter, forest farmstead",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "858": {
+      "t": "Interiors batch 3: the three burrows",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "859": {
+      "t": "Interiors batch 4: tower, outpost and rooms, forge, elf's house, inn",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "860": {
+      "t": "Interiors: fisher's hut and loft (ladder, gated)",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "869": {
+      "t": "WP: Bundles 20, 24 and 26, their items and the Last Seat gate rule",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "870": {
+      "t": "WP: Crystalarium machine",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "871": {
+      "t": "WP: Wire the room rewards that do nothing",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "872": {
+      "t": "WP: Gift tastes for the other 22 villagers",
+      "state": "closed",
+      "labels": ["work-package"]
+    },
+    "873": {
+      "t": "Design: the heart event list, then build",
+      "state": "open",
+      "labels": ["design-question"]
+    },
+    "874": {
+      "t": "Elderfruit sources left: spouse and gallery set",
+      "state": "open",
+      "labels": ["design-question"]
+    },
+    "875": {
+      "t": "Design: goods hand-in to a named place",
+      "state": "closed",
+      "labels": ["design-question"]
+    },
+    "876": {
+      "t": "WP: Festival route layer and the other seven festival maps",
+      "state": "open",
+      "labels": ["work-package"]
+    },
+    "877": {
+      "t": "Design: one placement system for lightning rod, lamps and lamp-posts",
+      "state": "closed",
+      "labels": ["design-question"]
+    },
+    "878": {
+      "t": "WP: Secret Woods statue and the pond fish",
+      "state": "open",
+      "labels": ["work-package"]
+    },
+    "879": {
+      "t": "Design: undesigned gathering, machines and fishing leftovers",
+      "state": "closed",
+      "labels": ["design-question"]
+    },
+    "880": {
+      "t": "Docs: fix stale M3b status and not-built lines",
+      "state": "closed",
+      "labels": ["enhancement"]
+    },
+    "904": {
+      "t": "Refactor: split FarmScene, move scene rules into core, shared helpers",
+      "state": "open",
+      "labels": ["enhancement"]
+    },
+    "910": {
+      "t": "Design an in-house wiki (Stardew-wiki style) showing what exists and its build status",
+      "state": "open",
+      "labels": []
     }
   }
 }

@@ -15,7 +15,8 @@
     "x": 20,
     "y": 21,
     "w": 11,
-    "h": 12
+    "h": 12,
+    "joins": [{ "when": "reno-dining-open", "with": "dining" }]
   },
   {
     "id": "bedroom",
@@ -24,7 +25,8 @@
     "x": 42,
     "y": 21,
     "w": 13,
-    "h": 12
+    "h": 12,
+    "joins": [{ "when": "reno-open-bedroom", "with": "start" }]
   },
   {
     "id": "spare",
@@ -43,5 +45,70 @@
     "y": 11,
     "w": 19,
     "h": 10
+  },
+  {
+    "id": "spouse",
+    "name": "Spouse room",
+    "tier": 1,
+    "x": 55,
+    "y": 21,
+    "w": 12,
+    "h": 12,
+    "when": ["spouse"]
+  },
+  {
+    "id": "south",
+    "name": "Southern room",
+    "tier": 2,
+    "x": 43,
+    "y": 33,
+    "w": 12,
+    "h": 11,
+    "when": ["reno-south"]
+  },
+  {
+    "id": "corner",
+    "name": "Corner room",
+    "tier": 2,
+    "x": 55,
+    "y": 11,
+    "w": 13,
+    "h": 10,
+    "when": ["reno-corner"],
+    "wings": [
+      { "when": ["reno-corner-big"], "x": 55, "y": 0, "w": 13, "h": 11 },
+      { "when": ["reno-corner-big"], "x": 68, "y": 12, "w": 6, "h": 8 }
+    ]
+  },
+  {
+    "id": "attic",
+    "name": "Attic",
+    "tier": 2,
+    "x": 21,
+    "y": 0,
+    "w": 15,
+    "h": 11,
+    "when": ["reno-attic"]
+  },
+  {
+    "id": "cubby",
+    "name": "Cubby",
+    "tier": 2,
+    "x": 35,
+    "y": 33,
+    "w": 7,
+    "h": 4,
+    "when": ["reno-cubby"]
+  },
+  {
+    "id": "dining",
+    "name": "Dining room",
+    "tier": 2,
+    "x": 0,
+    "y": 21,
+    "w": 20,
+    "h": 12,
+    "when": ["reno-dining"],
+    "joins": [{ "when": "reno-dining-open", "with": "kitchen" }]
   }
 ]

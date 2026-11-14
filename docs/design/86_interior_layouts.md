@@ -986,8 +986,10 @@ Final art waits for M3d (ADR 0012).
 
 ## Open
 
-- The hall has no draft and its six counters have one player tile each, so it stays on
-  `PENDING` in `tests/interior-reach.test.ts`. It needs a layout pass.
+- Built (batch 4): the hall's six counters each have a second player tile. Each counter
+  keeps its one tile footprint in the wall; two wall tiles beside it are opened (the
+  approach is 2 wide) and the corridors and rooms are unchanged. `PENDING` in
+  `tests/interior-reach.test.ts` is now empty.
 - Every rebuilt map lists its one tile wide spots in `AISLE_EXCEPTIONS`
   (`tests/helpers/interior.ts`). Some are by design (gated doors, bedside nooks); the
   keeper's aisles and the kitchen table rings are the owner's call.

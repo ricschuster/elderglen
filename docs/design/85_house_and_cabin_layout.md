@@ -318,6 +318,22 @@ bedroom joins start room and bedroom, open dining room joins kitchen and dining
 room. The hall and stairs follow the room they open on (Stardew, 1.1 history:
 hallways take wallpaper).
 
+**Built status (batch 4).** Zones are the entries of `src/content/house-rooms.json`
+(`RoomDef` in `src/core/decor.ts`): the five tier rooms plus `spouse`, `south`,
+`corner`, `attic`, `cubby` and `dining`. A zone has `when` (the house conditions
+`spouse` or `reno-<id>` that show it), optional `wings` (the expanded corner room's
+two rectangles, under `reno-corner-big`) and `joins` (open rooms). `roomAt`,
+`zoneRects` and `roomTiles` take the conditions from `zoneHolds(g)`; the scene's
+`drawDecor` and `applyDecor` use them. An open room joins its neighbour: while
+`reno-open-bedroom` holds, main room and bedroom share one covering, and so do the
+kitchen and dining room under `reno-dining-open`; applying decor sets every zone in
+the group. Defaults chosen where the note is silent: the hall takes the bedroom's
+zone (it lies inside the bedroom rectangle) and stairs are not tinted (only floor
+and wall tiles are); shared wall rows go to the room built first (the corner room's
+south wall to the spouse room, the bedroom keeps the southern room's top row; the start room keeps its bottom wall and the cubby starts one row lower);
+coverings are kept in the save if a renovation is taken back and show again if it is
+rebuilt. Tests: `tests/decor.test.ts`.
+
 ## Frame and saves
 
 The attic and the expanded corner room need rows north of row 0, and the dining

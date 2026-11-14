@@ -205,6 +205,9 @@ place, whether the person can be courted.
    page says so.
 3. **Heart events:** internal view only (hearts, place, window, items given), never the scene text,
    until the text is real. The public pages list none.
+   Built (2026-11-14): the lists come from `friendship.json` at build time, so they cannot drift.
+   Neutral is not listed (the data holds no neutral list; anything unlisted is neutral). The
+   internal heart-event lines now name recipe, hat and furniture gifts too.
 4. Prose for people is not written yet (`docs/wiki-text/people.json` holds only the flags).
 
 ## Relation to other notes

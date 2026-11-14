@@ -8,8 +8,12 @@ import {
   decorProblem,
   roomAt,
   roomTiles,
+  zoneGroup,
+  zoneHolds,
+  zoneRects,
 } from "../src/core/decor";
 import { itemById } from "../src/core/items";
+import { RENOVATIONS, houseHolds } from "../src/core/house";
 import { deserialize, newGame, serialize } from "../src/core/save";
 
 describe("decor data", () => {
@@ -20,17 +24,49 @@ describe("decor data", () => {
     for (const d of DECOR) expect(itemById(d.id)?.keep, d.id).toBe(true);
   });
 
-  it("gives every built room floor and wall tiles", () => {
+  it("gives every zone floor and wall tiles with everything built", () => {
+    const holds = new Set(
+      houseHolds(
+        3,
+        true,
+        RENOVATIONS.map((r) => r.id),
+      ),
+    );
     for (const r of ROOMS) {
-      const t = roomTiles(mapFiles.house!, r.tier === 0 ? 0 : r.tier, r);
+      const t = roomTiles(mapFiles.house!, 3, r, holds);
       expect(t.floor.length, r.id).toBeGreaterThan(10);
-      expect(t.wall.length, r.id).toBeGreaterThan(10);
+      expect(t.wall.length, r.id).toBeGreaterThan(5);
     }
   });
 
-  it("has no room overlapping another", () => {
-    for (const a of ROOMS)
-      for (const b of ROOMS)
+  it("names a zone for every renovation room and the spouse room", () => {
+    const ids = ROOMS.map((r) => r.id);
+    for (const id of ["spouse", "south", "corner", "attic", "cubby", "dining"])
+      expect(ids, id).toContain(id);
+    for (const r of ROOMS)
+      for (const h of [
+        ...(r.when ?? []),
+        ...(r.wings ?? []).flatMap((w) => w.when ?? []),
+      ])
+        expect(
+          h === "spouse" || RENOVATIONS.some((n) => `reno-${n.id}` === h),
+          h,
+        ).toBe(true);
+  });
+
+  it("has no zone rectangle overlapping another with everything built", () => {
+    const holds = new Set(
+      houseHolds(
+        3,
+        true,
+        RENOVATIONS.map((r) => r.id),
+      ),
+    );
+    const rects = ROOMS.flatMap((r) =>
+      zoneRects(r, 3, holds).map((rc) => ({ id: r.id, ...rc })),
+    );
+    for (const a of rects)
+      for (const b of rects)
         if (a !== b)
           expect(
             a.x < b.x + b.w &&
@@ -39,6 +75,70 @@ describe("decor data", () => {
               b.y < a.y + a.h,
             `${a.id} ${b.id}`,
           ).toBe(false);
+  });
+});
+
+describe("renovation zones", () => {
+  const g = () => {
+    const s = newGame();
+    s.houseTier = 2;
+    return s;
+  };
+
+  it("exist only while their renovation is built", () => {
+    const s = g();
+    expect(roomAt(2, 28, 5, zoneHolds(s))).toBeUndefined();
+    s.houseRenos = ["attic"];
+    expect(roomAt(2, 28, 5, zoneHolds(s))?.id).toBe("attic");
+    s.houseRenos = [];
+    expect(roomAt(2, 28, 5, zoneHolds(s))).toBeUndefined();
+  });
+
+  it("need the house tier", () => {
+    const s = g();
+    s.houseRenos = ["cubby"];
+    s.houseTier = 1;
+    expect(roomAt(1, 38, 34, zoneHolds(s))).toBeUndefined();
+  });
+
+  it("covers the spouse room only while married", () => {
+    const s = g();
+    expect(roomAt(2, 60, 26, zoneHolds(s))).toBeUndefined();
+    s.flags = ["spouse"];
+    expect(roomAt(2, 60, 26, zoneHolds(s))?.id).toBe("spouse");
+  });
+
+  it("adds the corner room's wings only with the expansion", () => {
+    const s = g();
+    s.houseRenos = ["corner"];
+    expect(roomAt(2, 60, 5, zoneHolds(s))).toBeUndefined();
+    expect(roomAt(2, 60, 15, zoneHolds(s))?.id).toBe("corner");
+    s.houseRenos = ["corner", "corner-big"];
+    expect(roomAt(2, 60, 5, zoneHolds(s))?.id).toBe("corner");
+    expect(roomAt(2, 70, 15, zoneHolds(s))?.id).toBe("corner");
+  });
+
+  it("applies a covering to a built renovation room, and refuses an unbuilt one", () => {
+    const s = g();
+    s.inventory.add("floor-slate");
+    expect(applyDecor(s, "house", 5, 26, "floor-slate").ok).toBe(false);
+    s.houseRenos = ["dining"];
+    expect(applyDecor(s, "house", 5, 26, "floor-slate").ok).toBe(true);
+    expect(s.decor.get("dining").floor).toBe("floor-slate");
+  });
+
+  it("joins open rooms to their neighbours", () => {
+    const open = new Set(["reno-open-bedroom", "reno-dining-open"]);
+    expect(zoneGroup("start")).toEqual(["start"]);
+    expect(zoneGroup("start", open).sort()).toEqual(["bedroom", "start"]);
+    expect(zoneGroup("dining", open).sort()).toEqual(["dining", "kitchen"]);
+    const s = g();
+    s.houseRenos = ["open-bedroom"];
+    s.inventory.add("wallpaper-moss");
+    expect(applyDecor(s, "house", 35, 26, "wallpaper-moss").ok).toBe(true);
+    expect(s.decor.get("start").wallpaper).toBe("wallpaper-moss");
+    expect(s.decor.get("bedroom").wallpaper).toBe("wallpaper-moss");
+    expect(s.decor.get("kitchen").wallpaper).toBeUndefined();
   });
 });
 
