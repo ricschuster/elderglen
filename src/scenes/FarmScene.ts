@@ -79,10 +79,11 @@ import {
   festivalDayToday,
   festivalShutLine,
   festivalStepShut,
+  festivalToday,
   isFestivalMap,
   sightLine,
 } from "../core/festivals";
-import { openChest } from "../core/maze";
+import { nicheLine, openChest } from "../core/maze";
 import { rodById, waterAhead } from "../core/fishing";
 import { festivalHolds } from "../core/festivalroutes";
 import { holdsOf } from "../core/worldflags";
@@ -474,6 +475,8 @@ export class FarmScene extends Phaser.Scene {
   /** The tile last checked for a heart event. */
   private eventTile = "";
   private villagerStamp = -1;
+  /** When the game clock last ticked (scene time), to walk the parade between ticks. */
+  private tickAt = 0;
   /** The running Seedswap hunt (placeholder markers and countdown). */
   private hunt?: HuntState;
   private huntGfx?: Phaser.GameObjects.Graphics;
@@ -795,6 +798,7 @@ export class FarmScene extends Phaser.Scene {
       callback: () => {
         // Time stands still on a festival map, as in Stardew.
         if (isFestivalMap(this.mapId)) return;
+        this.tickAt = this.time.now;
         this.state.day.act(0, TICK_MINUTES);
         this.strikeFlash(rollStrikes(this.state, TICK_MINUTES, Math.random));
         this.afterAction();
@@ -1354,13 +1358,22 @@ export class FarmScene extends Phaser.Scene {
    */
   private syncVillagers(world?: Phaser.GameObjects.GameObject[]): void {
     const clock = this.state.day.clock;
-    const stamp = clock.day * 2000 + clock.minutes;
+    // The clock ticks 10 minutes at a time, but the Hat Parade walks a tile a
+    // minute, so on a festival day the minute runs on between ticks (note 82).
+    const festival = festivalToday(clock.day);
+    const smooth = !!festival && !isFestivalMap(this.mapId);
+    const minutes = smooth
+      ? clock.minutes +
+        Math.min(1, (this.time.now - this.tickAt) / (TICK_MS / DEV_SPEED)) *
+          TICK_MINUTES
+      : clock.minutes;
+    const stamp = clock.day * 2000 + Math.floor(minutes);
     if (stamp === this.villagerStamp) return;
     this.villagerStamp = stamp;
-    // Time stands still on a festival map, and the festival routes are not built.
-    this.villagers = isFestivalMap(this.mapId)
-      ? []
-      : villagersOn(this.state, this.mapId, clock.day, clock.minutes);
+    // Time stands still on a festival map; the festival layer places people on it too.
+    this.villagers = villagersOn(this.state, this.mapId, clock.day, minutes, {
+      hallRestored: hallRestored(this.state.hall),
+    });
     const ts = this.map.tileSize;
     const here = new Set(this.villagers.map((v) => v.id));
     for (const [id, s] of this.villagerSprites)
@@ -1389,8 +1402,23 @@ export class FarmScene extends Phaser.Scene {
       }
       const px = (v.x + 0.5) * ts;
       const py = (v.y + 1) * ts - 1;
-      s.box.setPosition(px, py).setDepth(sortDepth(py));
-      s.tag.setPosition(px, py - 13);
+      if (v.marching && s.box.x !== 0 && s.box.x !== px) {
+        // A marcher glides to the next tile instead of jumping.
+        const to = { x: px, y: py };
+        this.tweens.killTweensOf([s.box, s.tag]);
+        this.tweens.add({
+          targets: s.box,
+          ...to,
+          duration: 600,
+          onUpdate: () => {
+            s.box.setDepth(sortDepth(s.box.y));
+            s.tag.setPosition(s.box.x, s.box.y - 13);
+          },
+        });
+      } else {
+        s.box.setPosition(px, py).setDepth(sortDepth(py));
+        s.tag.setPosition(px, py - 13);
+      }
     }
   }
 
@@ -1398,6 +1426,15 @@ export class FarmScene extends Phaser.Scene {
   private meetVillager(tile: Vec): boolean {
     const who = presentAt(this.villagers, tile.x, tile.y);
     if (!who) return false;
+    // In a hedge niche a villager says their one Hollow Eve line (note 82).
+    if (festivalOfMap(this.mapId)?.activity === "maze") {
+      const line = nicheLine(who.id);
+      if (line) {
+        this.message = `${who.name}: ${line}`;
+        this.render();
+        return true;
+      }
+    }
     const offer = this.hunt
       ? undefined
       : huntOffer(

@@ -42,7 +42,7 @@ Open, top to bottom:
 3. **#878 Secret Woods pond fish:** built (Fernscale and two borrowed commons). Left: the statue, if the owner still wants it.
 4. **Note 93 left:** the species numbers to tune in play (built as placeholders), pond art. Cave pools on mine floors built 2026-11-13 (the farm cave has none).
 5. **#876 left:** judging (Harvest Showing; core and panel exist, unclear what is missing), scene
-   walking villagers and marchers, even-year hedge maze and niche lines, multiplayer counts (M4).
+   walking villagers and marchers built 2026-11-13 (player joining the march left), even-year hedge map, multiplayer counts (M4).
    Cake dish picker, lantern drift and ice count built 2026-11-13.
 6. **Decided, still to build:** garden pot leftovers (digging out, fertilizer, art, note 97), mahogany monster seed
    (needs Secret Woods creatures), #874 elderfruit sources left: spouse and gallery set.

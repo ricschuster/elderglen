@@ -1,5 +1,6 @@
 import { dateOf } from "./calendar";
 import { clockText } from "./clock";
+import { villagerNow, type FestivalOpts } from "./festivalroutes";
 import { HEART, Friendship, isBirthday, type Taste } from "./friendship";
 import type { GameState } from "./save";
 import {
@@ -8,7 +9,6 @@ import {
   shopState,
   villagerById,
   VILLAGERS,
-  whereAt,
 } from "./villagers";
 
 /**
@@ -26,6 +26,8 @@ export interface Present {
   y: number;
   /** True when the tile is a stand-in until the maps place the person. */
   placeholder: boolean;
+  /** True while a festival marcher is walking the parade (the scene walks the sprite, note 82). */
+  marching?: boolean;
 }
 
 /**
@@ -38,11 +40,26 @@ export function villagersOn(
   mapId: string,
   day: number,
   minutes: number,
+  opts: FestivalOpts = {},
 ): Present[] {
   const ctx = dayContext(day, g.weather);
   const out: Present[] = [];
   for (const v of VILLAGERS) {
-    const w = whereAt(v, ctx, minutes);
+    // The festival layer comes first (note 79 selection order, note 82).
+    const n = villagerNow(v, day, ctx, minutes, opts);
+    if (n.festival) {
+      if (n.festival.map !== mapId) continue;
+      out.push({
+        id: v.id,
+        name: v.name,
+        x: n.festival.x,
+        y: n.festival.y,
+        placeholder: false,
+        ...(n.festival.state === "marching" ? { marching: true } : {}),
+      });
+      continue;
+    }
+    const w = n.route;
     if (w.asleep || w.where.transit || w.where.map !== mapId) continue;
     out.push({
       id: v.id,
