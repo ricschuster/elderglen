@@ -42,10 +42,10 @@ Open, top to bottom:
 3. **#878 Secret Woods:** fully built (statue, pond fish, creatures with the Burrmouse and the Mahogany seed drop, 2026-11-14). Left: tune in play.
 4. **Note 93 left:** species numbers to tune in play; pond art is placeholder only (built 2026-11-14).
 5. **#876 festivals:** built 2026-11-14: Showing judging (eight groups, Stardew price bands, dishes count), rotating token counter, even-year hedge map and chest, gap signpost, booth gravestone and gourd lantern recipe, player joins the march (auto-join, owner kept). Left: multiplayer counts (M4), the owner's play.
-6. **Decided, still to build (batch 4, next session):** hall counters need a second player tile each (keep the footprint, corridors stay 2 wide for the ceremony crowd), renovation decor zones (note 85 "Decoration zones"), refresh `docs/overview.json` and `valley-map.json`, wiki people gift lists (`giftsDraft`), draft the M4 hosting spike issue text (owner approves before filing). Then one playtest run (`npm run playtest`, background jobs). Real garden pot art waits for M3d. Village trees: owner kept the layout, judge in play. #874 spouse and gallery set blocked (no marriage). Friendship doors are built (`gates.ts`).
+6. **Batch 4 built 2026-11-14** (hall counter second tiles, renovation decor zones, overview and valley-map refresh, wiki gift lists stay draft, M4 hosting spike text drafted in `docs/design/drafts/m4-hosting-spike-issue.md`, owner approves before filing). Left: the owner's play. Real garden pot art waits for M3d. Village trees: owner kept the layout, judge in play. #874 spouse and gallery set blocked (no marriage). Friendship doors are built (`gates.ts`).
 7. A browser look at everything built since the owner last played: hat picker, cart, herb stall, tapper, lights, rod, bombs, festival maps and activities, tailoring, pond screens and art, tea bush, woods creatures, even-year maze.
 
-Alongside: the wiki (#910, note 100; built for every category, every item has a picture; text cleared for crops, fish, forage, items, places and rooms; draft text left for bundles, recipes, people and five gem names; left: owner reads the draft text and clears flags, gift lists (`giftsDraft`), people prose with the voice sheets, hosting after M3d), `docs/overview.json` (behind since 2026-11-11), Stardew checks rows (open: SC-122, 135, 160, 161, 170, 172), and file the M4
+Alongside: the wiki (#910, note 100; built for every category, every item has a picture; text cleared for crops, fish, forage, items, places and rooms; draft text left for bundles, recipes, people and five gem names; left: owner reads the draft text and clears flags, gift lists (`giftsDraft`), people prose with the voice sheets, hosting after M3d), Stardew checks rows (open: SC-122, 135, 160, 161, 170, 172), and file the M4
 hosting spike before M4 (also farm player state size in the save, ADR 0014).
 
 ## Milestone order (ADR 0012)
@@ -90,10 +90,8 @@ Done, owner checked (2026-11-11): step 1 farm (note 55, #776), step 2 festival s
   style sheet, licence ADR for generated art, the art swap.
 - The other interiors are built (note 86, #853 to #860) from the checked drafts (doors 1 tile, 2026-11-12), with the
   shared test `tests/interior-reach.test.ts` and the converter
-  `scripts/interiors/tmj-to-map.mjs`. Left: the hall layout (no draft, one player tile at
-  each counter), the owner's call on the `AISLE_EXCEPTIONS` lists, game code that reads
-  `gate` (friendship doors), spouse route code (note 84), decor zones for renovation
-  rooms, the cabin (M4).
+  `scripts/interiors/tmj-to-map.mjs`. Left: the owner's call on the `AISLE_EXCEPTIONS` lists, game code that reads
+  `gate` (friendship doors), spouse route code (note 84), the cabin (M4).
 
 ## Leftovers and housekeeping
 

@@ -293,7 +293,13 @@ import {
   type Floor,
 } from "../core/mines";
 import type { Rocks } from "../core/rocks";
-import { ROOMS, applyDecor, decorById, roomTiles } from "../core/decor";
+import {
+  ROOMS,
+  applyDecor,
+  decorById,
+  roomTiles,
+  zoneHolds,
+} from "../core/decor";
 import {
   CATALOGUE_ITEM,
   carryFurniture,
@@ -2949,13 +2955,13 @@ export class FarmScene extends Phaser.Scene {
     const json = mapFiles[this.mapId];
     if (!json) return;
     const ts = this.map.tileSize;
+    const holds = zoneHolds(this.state);
     for (const room of ROOMS) {
-      if (room.tier > this.state.houseTier) continue;
       const cover = this.state.decor.get(room.id);
       const floor = decorById(cover.floor);
       const wall = decorById(cover.wallpaper);
       if (!floor && !wall) continue;
-      const tiles = roomTiles(json, this.tier, room);
+      const tiles = roomTiles(json, this.tier, room, holds);
       for (const [def, cells] of [
         [floor, tiles.floor],
         [wall, tiles.wall],

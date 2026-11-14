@@ -138,7 +138,15 @@ export function buildPeople(c) {
           .map((e) => {
             const gives = e.scene
               .filter((s) => s.cmd === "give")
-              .map((s) => link(from, s.item, s.count))
+              .map((s) =>
+                s.item
+                  ? link(from, s.item, s.count)
+                  : s.recipe
+                    ? `the ${esc(nice(s.recipe))} recipe`
+                    : s.hat
+                      ? `the ${esc(nice(s.hat))} hat`
+                      : `the ${esc(nice(s.furniture ?? "gift"))} furniture`,
+              )
               .join(", ");
             return `<li>${e.hearts} hearts, ${spotText(e.place)}, ${esc(clock(e.window.from))} to ${esc(clock(e.window.until))}${gives ? `, gives ${gives}` : ""}</li>`;
           })

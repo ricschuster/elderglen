@@ -16,10 +16,10 @@ import {
 /**
  * Interiors not yet rebuilt or widened to the note 86 layouts. They are skipped
  * so the gate stays green. Every batch (#853, #856 to #860) removed its
- * maps from this set as it rebuilt them. Only the hall is left: it has no
- * draft and its counters have one player tile each.
+ * maps from this set as it rebuilt them. It is empty now: the hall's six
+ * counters each got a second player tile (batch 4), so every interior passes.
  */
-export const PENDING = new Set<string>(["hall"]);
+export const PENDING = new Set<string>();
 
 const all = interiorIds();
 
