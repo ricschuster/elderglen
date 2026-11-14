@@ -1,5 +1,6 @@
 import { artisanById } from "./artisan";
 import { cropById } from "./crops";
+import { dishById } from "./dishes";
 import { dateOf } from "./calendar";
 import { fruitTreeById } from "./fruittrees";
 import { forageById } from "./forage";
@@ -69,6 +70,7 @@ const isAnimalGood = (id: string) =>
 export function groupOf(id: string): ShowGroup | undefined {
   const { base } = splitQuality(id);
   if (artisanById(base)) return "artisan";
+  if (dishById(base)) return "dish";
   if (fishById(base)) return "fish";
   if (isAnimalGood(base)) return "animal";
   if (forageById(base)) return "forage";

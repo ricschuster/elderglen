@@ -49,7 +49,7 @@ and one line each) and the mushroom cave. Both are below. The farm cave mark
     fish and animal products (eggs, milk, wool and the like). Six of eight fill
     the mark, as in Stardew (owner, 2026-11-14). Roe is not a fish and not an
     animal product (Stardew does not count roe or dinosaur egg as animal
-    products). Dishes have no group entry in the code yet.
+    products). Dishes are in the group in the code (built 2026-11-14).
   - Value: per item, Stardew's price bands by quality (saved Stardew Valley
     Fair page, SC-53). The price is the actual sell price, quality included.
     Bands 0+, 20+, 90+, 200+, 300+, 400+ give 1/2/3, 2/3/4, 3/4/5, 4/5/6,
@@ -265,6 +265,8 @@ stay screens).
 **Built (2026-11-14, owner's answers):** the Showing now has eight groups (fish
 and animal products added), Stardew's price bands by quality for value points
 (top 6 an item), and the places at 77, 64 and 51 of a possible 107.
+
+**Built (2026-11-14, dishes):** `groupOf` maps every cooked dish to the dish group. The top score stays 107: the group points already cap at 30 with six groups, and a dish's value is capped at 6 like any good.
 
 **Built (2026-11-14, counter rotation):** the Harvest Showing counter keeps its fixed lines and adds
 two of a pool of four each year, in order, so year 1 shows the small glow ring (700 tokens) and ten

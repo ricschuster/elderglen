@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DAYS_PER_SEASON, SEASONS, dateOf } from "../src/core/calendar";
+import { DISHES } from "../src/core/dishes";
 import { itemById } from "../src/core/items";
 import { festivalLayout } from "../src/core/festivalroutes";
 import { known, recipeById } from "../src/core/crafting";
@@ -79,7 +80,7 @@ describe("fall and winter festival data", () => {
 });
 
 describe("the Harvest Showing", () => {
-  it("scores a full table of top goods in five groups (no dishes yet)", () => {
+  it("scores a full table of top goods in five groups", () => {
     // Artisan, forage, fruit, vegetable, mineral, plus filler at gold quality.
     const table = [
       "melon-wine@gold",
@@ -94,7 +95,7 @@ describe("the Harvest Showing", () => {
     ];
     const s = scoreTable(table);
     expect(s.items).toBe(9);
-    expect(s.categories).toBe(25); // five groups here (no dish yet)
+    expect(s.categories).toBe(25); // five groups here
     expect(s.total).toBe(14 + 9 + 25 + s.value);
     expect(s.value).toBeLessThanOrEqual(54);
   });
@@ -142,6 +143,32 @@ describe("the Harvest Showing", () => {
     expect(groupOf("parsnip@silver")).toBe("vegetable");
     expect(groupOf("iron-bar")).toBe("mineral");
     expect(groupOf("wood")).toBeUndefined();
+  });
+
+  it("puts every cooked dish in the dish group, at any quality", () => {
+    expect(DISHES.length).toBeGreaterThan(0);
+    for (const d of DISHES) {
+      expect(groupOf(d.id), d.id).toBe("dish");
+      expect(groupOf(`${d.id}@gold`), d.id).toBe("dish");
+    }
+  });
+
+  it("keeps the top score at 107 with a dish among eight groups", () => {
+    const top = [
+      "pumpkin-soup@gold",
+      "melon-wine@gold",
+      "hazelnut@gold",
+      "melon@gold",
+      "pumpkin@gold",
+      "gold-bar@gold",
+      "egg@gold",
+      "pumpkin@gold",
+      "pumpkin@gold",
+    ];
+    const s = scoreTable(top);
+    expect(s.categories).toBe(30);
+    expect(s.value).toBeLessThanOrEqual(54);
+    expect(s.total).toBeLessThanOrEqual(107);
   });
 
   it("places by points", () => {
