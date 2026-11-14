@@ -1,0 +1,241 @@
+{
+  "lines": {
+    "cuthbert_2_a": "PLACEHOLDER TEXT. Eats lunch, asks about the hall's progress.",
+    "cuthbert_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "cuthbert_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "cuthbert_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "cuthbert_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "cuthbert_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "cuthbert_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "cuthbert_6_a": "PLACEHOLDER TEXT. Walks the square and tells the valley's founding.",
+    "cuthbert_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "cuthbert_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "cuthbert_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "cuthbert_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "cuthbert_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "cuthbert_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+  },
+  "events": [
+    {
+      "id": "cuthbert-outpost-yard-2",
+      "villager": "cuthbert",
+      "place": "hw:outpost-yard",
+      "hearts": 2,
+      "window": {
+        "from": "12:00",
+        "until": "13:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "cuthbert",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "cuthbert"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "cuthbert",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "cuthbert_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "cuthbert_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "cuthbert",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "honey",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "cuthbert-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "cuthbert-square-6",
+      "villager": "cuthbert",
+      "place": "hw:square",
+      "hearts": 6,
+      "window": {
+        "from": "18:00",
+        "until": "19:30"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "cuthbert",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "cuthbert"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "cuthbert",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "cuthbert_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "cuthbert_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "cuthbert",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_6_c"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "cuthbert-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    }
+  ]
+}

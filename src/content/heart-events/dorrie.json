@@ -1,0 +1,249 @@
+{
+  "lines": {
+    "dorrie_2_a": "PLACEHOLDER TEXT. Walks the green, asks what the player is growing.",
+    "dorrie_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "dorrie_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "dorrie_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "dorrie_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "dorrie_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "dorrie_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "dorrie_6_a": "PLACEHOLDER TEXT. Finds a ledger mistake and the player helps find it.",
+    "dorrie_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "dorrie_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "dorrie_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "dorrie_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "dorrie_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "dorrie_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+  },
+  "events": [
+    {
+      "id": "dorrie-green-2",
+      "villager": "dorrie",
+      "place": "hw:green",
+      "hearts": 2,
+      "window": {
+        "from": "9:00",
+        "until": "11:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "dorrie",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "dorrie"
+        },
+        {
+          "cmd": "say",
+          "who": "dorrie",
+          "line": "dorrie_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "dorrie",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "dorrie",
+          "line": "dorrie_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "dorrie_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "dorrie_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "dorrie",
+          "line": "dorrie_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "dorrie",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "dorrie",
+          "line": "dorrie_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "dorrie",
+          "line": "dorrie_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "peach",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "dorrie-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "dorrie-store-6",
+      "villager": "dorrie",
+      "place": "hw:store",
+      "hearts": 6,
+      "window": {
+        "from": "11:00",
+        "until": "14:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "dorrie",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "dorrie"
+        },
+        {
+          "cmd": "say",
+          "who": "dorrie",
+          "line": "dorrie_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "dorrie",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "dorrie",
+          "line": "dorrie_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "dorrie_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "dorrie_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "dorrie",
+          "line": "dorrie_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "dorrie",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "dorrie",
+          "line": "dorrie_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "dorrie",
+          "line": "dorrie_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "market-pie",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "dorrie-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    }
+  ]
+}

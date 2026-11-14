@@ -345,3 +345,19 @@ describe("recipe mail", () => {
     expect(dishKnown(g, dishById("market-pie")!)).toBe(false);
   });
 });
+
+describe("event-taught dishes (#873)", () => {
+  it("every dish with an event source names a real event that gives it", async () => {
+    const { DISHES } = await import("../src/core/dishes");
+    for (const d of DISHES)
+      for (const s of d.sources)
+        if (s.kind === "event") {
+          const e = HEART_EVENTS.find((x) => x.id === s.event);
+          expect(e, d.id).toBeDefined();
+          expect(
+            e!.scene.some((c) => c.cmd === "give" && c.recipe === d.id),
+            d.id,
+          ).toBe(true);
+        }
+  });
+});

@@ -1,0 +1,249 @@
+{
+  "lines": {
+    "walter_2_a": "PLACEHOLDER TEXT. Fishing, a long tale about the one that got away.",
+    "walter_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "walter_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "walter_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "walter_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "walter_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "walter_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "walter_6_a": "PLACEHOLDER TEXT. Shows a lucky lure.",
+    "walter_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "walter_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "walter_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "walter_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "walter_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "walter_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+  },
+  "events": [
+    {
+      "id": "walter-river-path-2",
+      "villager": "walter",
+      "place": "hw:river-path",
+      "hearts": 2,
+      "window": {
+        "from": "9:30",
+        "until": "12:30"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "walter",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "walter"
+        },
+        {
+          "cmd": "say",
+          "who": "walter",
+          "line": "walter_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "walter",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "walter",
+          "line": "walter_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "walter_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "walter_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "walter",
+          "line": "walter_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "walter",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "walter",
+          "line": "walter_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "walter",
+          "line": "walter_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "perch",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "walter-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "walter-inn-6",
+      "villager": "walter",
+      "place": "hw:inn",
+      "hearts": 6,
+      "window": {
+        "from": "19:30",
+        "until": "21:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "walter",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "walter"
+        },
+        {
+          "cmd": "say",
+          "who": "walter",
+          "line": "walter_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "walter",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "walter",
+          "line": "walter_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "walter_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "walter_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "walter",
+          "line": "walter_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "walter",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "walter",
+          "line": "walter_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "walter",
+          "line": "walter_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "glint-lure",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "walter-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    }
+  ]
+}

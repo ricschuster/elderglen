@@ -38,7 +38,7 @@ table, lantern floating and ice fishing rules with thin scene hooks, pond menu a
 Open, top to bottom:
 
 1. **Owner answers left:** none. Decided 2026-11-13: garden pot is clay 1, stone 10 and a refined crystal (smelted quartz, Stardew), taught by Alder (still to build, with a smelt recipe); Frostfin 300g, no bundle slot; Frostday cap is Icewarden's Cap (built); the hunt prize is the emberseed (built); aged roe quality closed. Algae soup is the glassy-elver's reward (note 93).
-2. **#873 heart events** (note 62): the list per person is drafted (58 new events at 2 and 6 hearts, placeholder text, built in `heart-events.json`). Decided 2026-11-13: no unlock rewards, all 6 heart rewards are plain items (Stardew). Left: owner edits to seeds, windows and rewards, splitting the file per person if wanted, then 4, 8 and 10 with the voice sheets (M3d).
+2. **#873 heart events** (note 62): 62 events, one file per person in `src/content/heart-events/`, rewards real (2026-11-14: dish recipes, decor, hats, lures; four rain events). Left: the owner's play, seed and window edits, then 4, 8 and 10 with the voice sheets (M3d).
 3. **#878 Secret Woods pond fish:** built (Fernscale and two borrowed commons). Left: the statue, if the owner still wants it.
 4. **Note 93 left:** the species numbers to tune in play (built as placeholders), pond art. Cave pools on mine floors built 2026-11-13 (the farm cave has none).
 5. **#876 left:** judging (Harvest Showing; core and panel exist, unclear what is missing), scene

@@ -359,5 +359,159 @@
         "level": 4
       }
     ]
+  },
+  {
+    "id": "jam-tart",
+    "name": "Jam tart",
+    "ingredients": [
+      {
+        "item": "apple-jam",
+        "count": 1
+      },
+      {
+        "item": "egg",
+        "count": 1
+      }
+    ],
+    "energy": 130,
+    "sellPrice": 170,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "odette-store-6"
+      }
+    ]
+  },
+  {
+    "id": "farmhouse-stew",
+    "name": "Farmhouse stew",
+    "ingredients": [
+      {
+        "item": "potato",
+        "count": 1
+      },
+      {
+        "item": "kale",
+        "count": 1
+      }
+    ],
+    "energy": 150,
+    "sellPrice": 180,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "hattie-inn-6"
+      }
+    ]
+  },
+  {
+    "id": "healing-broth",
+    "name": "Healing broth",
+    "ingredients": [
+      {
+        "item": "wild-ginger",
+        "count": 1
+      },
+      {
+        "item": "fiddlehead-fern",
+        "count": 1
+      }
+    ],
+    "energy": 180,
+    "sellPrice": 200,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "aurelle-healer-6"
+      }
+    ]
+  },
+  {
+    "id": "runners-porridge",
+    "name": "Runner's porridge",
+    "ingredients": [
+      {
+        "item": "corn",
+        "count": 1
+      },
+      {
+        "item": "honey",
+        "count": 1
+      }
+    ],
+    "energy": 160,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "linnet-inn-6"
+      }
+    ]
+  },
+  {
+    "id": "camp-scramble",
+    "name": "Camp scramble",
+    "ingredients": [
+      {
+        "item": "chanterelle",
+        "count": 1
+      },
+      {
+        "item": "egg",
+        "count": 1
+      }
+    ],
+    "energy": 170,
+    "sellPrice": 170,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "maren-hall-6"
+      }
+    ]
+  },
+  {
+    "id": "honeyed-milk",
+    "name": "Honeyed milk",
+    "ingredients": [
+      {
+        "item": "goat-milk",
+        "count": 1
+      },
+      {
+        "item": "honey",
+        "count": 1
+      }
+    ],
+    "energy": 120,
+    "sellPrice": 140,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "dilly-paddock-6"
+      }
+    ]
+  },
+  {
+    "id": "tower-tonic",
+    "name": "Tower tonic",
+    "ingredients": [
+      {
+        "item": "frost-root",
+        "count": 1
+      },
+      {
+        "item": "honey",
+        "count": 1
+      }
+    ],
+    "energy": 200,
+    "sellPrice": 230,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "rosmarin-hermit-tower-6"
+      }
+    ]
   }
 ]

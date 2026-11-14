@@ -1,0 +1,246 @@
+{
+  "lines": {
+    "aldreth_2_a": "PLACEHOLDER TEXT. Sorts bags, asks the player to carry one.",
+    "aldreth_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "aldreth_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "aldreth_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "aldreth_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "aldreth_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "aldreth_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "aldreth_6_a": "PLACEHOLDER TEXT. Tired of roads, says what the warden's work costs.",
+    "aldreth_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "aldreth_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "aldreth_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "aldreth_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "aldreth_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "aldreth_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+  },
+  "events": [
+    {
+      "id": "aldreth-outpost-yard-2",
+      "villager": "aldreth",
+      "place": "hw:outpost-yard",
+      "hearts": 2,
+      "window": {
+        "from": "8:30",
+        "until": "12:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "aldreth",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "aldreth"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "aldreth",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "aldreth_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "aldreth_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "aldreth",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "fried-egg",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "aldreth-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "aldreth-inn-6",
+      "villager": "aldreth",
+      "place": "hw:inn",
+      "hearts": 6,
+      "window": {
+        "from": "18:00",
+        "until": "22:30"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "aldreth",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "aldreth"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "aldreth",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "aldreth_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "aldreth_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "aldreth",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "hearty-omelette",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "aldreth-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    }
+  ]
+}

@@ -134,7 +134,26 @@
     "sender": "The harbour fishers",
     "title": "Every fish on the line",
     "body": "PLACEHOLDER TEXT. Word came up the coast that you have landed every fish the valley holds. We have kept something back for such a day. It is an elderfruit, and it is yours.",
-    "trigger": { "kind": "fish-roster" },
-    "attachment": { "items": [{ "id": "elderfruit", "count": 1 }] }
+    "trigger": {
+      "kind": "fish-roster"
+    },
+    "attachment": {
+      "items": [
+        {
+          "id": "elderfruit",
+          "count": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "cuthbert-hall-hint",
+    "sender": "Cuthbert",
+    "title": "A word about the hall",
+    "body": "PLACEHOLDER TEXT. The next bundle the hall wants is the one you are closest to. Look at the board by the door, then come and tell me how it goes.",
+    "trigger": {
+      "kind": "event",
+      "event": "cuthbert-square-6"
+    }
   }
 ]

@@ -1,0 +1,246 @@
+{
+  "lines": {
+    "marl_2_a": "PLACEHOLDER TEXT. Cracks a stone, names the vein.",
+    "marl_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "marl_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "marl_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "marl_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "marl_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "marl_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "marl_6_a": "PLACEHOLDER TEXT. Hums while checking the bridge, tells its history.",
+    "marl_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "marl_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "marl_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "marl_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "marl_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "marl_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+  },
+  "events": [
+    {
+      "id": "marl-yard-2",
+      "villager": "marl",
+      "place": "quarry:yard",
+      "hearts": 2,
+      "window": {
+        "from": "8:00",
+        "until": "12:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "marl",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "marl"
+        },
+        {
+          "cmd": "say",
+          "who": "marl",
+          "line": "marl_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "marl",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "marl",
+          "line": "marl_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "marl_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "marl_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "marl",
+          "line": "marl_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "marl",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "marl",
+          "line": "marl_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "marl",
+          "line": "marl_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "quartz-crystal",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "marl-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "marl-bridge-6",
+      "villager": "marl",
+      "place": "quarry:bridge",
+      "hearts": 6,
+      "window": {
+        "from": "13:00",
+        "until": "17:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "marl",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "marl"
+        },
+        {
+          "cmd": "say",
+          "who": "marl",
+          "line": "marl_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "marl",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "marl",
+          "line": "marl_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "marl_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "marl_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "marl",
+          "line": "marl_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "marl",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "marl",
+          "line": "marl_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "marl",
+          "line": "marl_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "granite-gudgeon",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "marl-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,246 @@
+{
+  "lines": {
+    "rufus_2_a": "PLACEHOLDER TEXT. Whittles a bird and asks which it is.",
+    "rufus_2_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "rufus_2_ans1": "PLACEHOLDER TEXT. Of course.",
+    "rufus_2_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "rufus_2_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "rufus_2_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "rufus_2_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "rufus_6_a": "PLACEHOLDER TEXT. Fishing, tells where he caught nothing.",
+    "rufus_6_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "rufus_6_ans1": "PLACEHOLDER TEXT. Of course.",
+    "rufus_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "rufus_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "rufus_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "rufus_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+  },
+  "events": [
+    {
+      "id": "rufus-sawmill-2",
+      "villager": "rufus",
+      "place": "hw:sawmill",
+      "hearts": 2,
+      "window": {
+        "from": "8:00",
+        "until": "12:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "rufus",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "rufus"
+        },
+        {
+          "cmd": "say",
+          "who": "rufus",
+          "line": "rufus_2_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "rufus",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "rufus",
+          "line": "rufus_2_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "rufus_2_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "rufus_2_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "rufus",
+          "line": "rufus_2_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "rufus",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "rufus",
+          "line": "rufus_2_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "rufus",
+          "line": "rufus_2_c"
+        },
+        {
+          "cmd": "give",
+          "item": "corn",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "rufus-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "rufus-river-path-6",
+      "villager": "rufus",
+      "place": "hw:river-path",
+      "hearts": 6,
+      "window": {
+        "from": "12:00",
+        "until": "13:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "rufus",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "rufus"
+        },
+        {
+          "cmd": "say",
+          "who": "rufus",
+          "line": "rufus_6_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "rufus",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "rufus",
+          "line": "rufus_6_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "rufus_6_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "rufus_6_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "rufus",
+          "line": "rufus_6_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "rufus",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "rufus",
+          "line": "rufus_6_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "rufus",
+          "line": "rufus_6_c"
+        },
+        {
+          "cmd": "give",
+          "item": "fine-bait",
+          "count": 10
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "rufus-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    }
+  ]
+}

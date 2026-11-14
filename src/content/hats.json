@@ -203,5 +203,20 @@
     "id": "tailored-turban",
     "name": "Silk Wrap",
     "color": "#d8803a"
+  },
+  {
+    "id": "trimmed-festival-hat",
+    "name": "Trimmed Festival Hat",
+    "color": "#c0504d"
+  },
+  {
+    "id": "jesters-cap",
+    "name": "Jester's Cap",
+    "color": "#7a4fb5"
+  },
+  {
+    "id": "hester-knit-cap",
+    "name": "Hester's Knit Cap",
+    "color": "#8fa86a"
   }
 ]

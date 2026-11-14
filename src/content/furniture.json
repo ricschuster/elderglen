@@ -188,5 +188,35 @@
     "price": 0,
     "color": "#5fa87a",
     "keepsake": true
+  },
+  {
+    "id": "spinning-top",
+    "name": "Spinning top",
+    "price": 120,
+    "color": "#d9a441"
+  },
+  {
+    "id": "feather-jar",
+    "name": "Feather jar",
+    "price": 120,
+    "color": "#9ec3d6"
+  },
+  {
+    "id": "poetry-book-stand",
+    "name": "Poetry book stand",
+    "price": 120,
+    "color": "#6b4f7a"
+  },
+  {
+    "id": "shell-dish",
+    "name": "Shell dish",
+    "price": 120,
+    "color": "#e8c9b0"
+  },
+  {
+    "id": "tide-bowl",
+    "name": "Tide bowl",
+    "price": 120,
+    "color": "#5b9fb0"
   }
 ]
