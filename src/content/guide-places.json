@@ -1,0 +1,67 @@
+[
+  {
+    "id": "farm",
+    "name": "The farm",
+    "line": "Your land, with the house, the barn and the fields."
+  },
+  {
+    "id": "forest",
+    "name": "The Forest",
+    "line": "Trees, forage and a lake west of the farm."
+  },
+  {
+    "id": "mountain",
+    "name": "The mountain",
+    "line": "Rock, ore and a lake high above the valley."
+  },
+  {
+    "id": "delta",
+    "name": "The delta",
+    "line": "Marsh and river mouth, good for fish and wild plants."
+  },
+  {
+    "id": "green",
+    "name": "The green",
+    "line": "The open ground at the middle of the village."
+  },
+  {
+    "id": "hearthwell",
+    "name": "Hearthwell",
+    "line": "The hearth town beyond the green."
+  },
+  {
+    "id": "hall",
+    "name": "The village hall",
+    "line": "Where the bundles are handed in."
+  },
+  {
+    "id": "mine",
+    "name": "The mines",
+    "line": "Floors of rock, ore and creatures."
+  },
+  {
+    "id": "quarry",
+    "name": "The quarry",
+    "line": "Broken stone, and the rocks that come from it."
+  },
+  {
+    "id": "outpost",
+    "name": "The outpost",
+    "line": "A waystation at the edge of the home valley."
+  },
+  {
+    "id": "cove",
+    "name": "The lake cove",
+    "line": "A quiet cove on the lake."
+  },
+  {
+    "id": "secret-woods",
+    "name": "The Secret Woods",
+    "line": "A hidden wood behind the Forest."
+  },
+  {
+    "id": "hedge",
+    "name": "The hedge maze",
+    "line": "A maze of hedges, open on festival days."
+  }
+]

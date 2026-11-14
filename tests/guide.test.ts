@@ -11,7 +11,8 @@ describe("the Guide (note 101)", () => {
   it("lists nothing in a new game except nobody met", () => {
     const g = newGame();
     for (const c of guideCategories(g))
-      if (c.id !== "items") expect(c.entries).toEqual([]);
+      if (!["items", "recipes", "bundles"].includes(c.id))
+        expect(c.entries).toEqual([]);
   });
 
   it("shows a crop as seen with a seed, known once the produce is held", () => {
@@ -76,5 +77,30 @@ describe("the Guide (note 101)", () => {
     const raw = JSON.parse(serialize(newGame()));
     delete raw.guide;
     expect(() => deserialize(JSON.stringify(raw))).not.toThrow();
+  });
+
+  it("lists a recipe once learned and shows its source only once made", () => {
+    const g = newGame();
+    const r = cat(g, "recipes").entries[0];
+    expect(r).toBeDefined();
+    expect(r!.state).toBe("seen");
+    expect(r!.lines.join(" ")).not.toMatch(/Learned|level/);
+  });
+
+  it("lists places only once visited, and keeps them in the save", () => {
+    const g = newGame();
+    expect(cat(g, "places").entries).toEqual([]);
+    g.guide.visit("forest");
+    g.guide.visit("not-a-listed-map");
+    expect(cat(g, "places").entries.map((e) => e.id)).toEqual(["forest"]);
+    const back = deserialize(serialize(g))!;
+    expect(cat(back, "places").entries.map((e) => e.id)).toEqual(["forest"]);
+  });
+
+  it("lists bundles only for rooms that have opened", () => {
+    const g = newGame();
+    const ids = cat(g, "bundles").entries.map((e) => e.id);
+    expect(ids.length).toBeGreaterThan(0);
+    expect(ids).not.toContain("last-seat");
   });
 });

@@ -108,7 +108,11 @@ Categories built: Crops (seen with the seed, known with the produce or a shipmen
 caught), Forage and Items (known once held), People (met; birthday and role at once, gift tastes only
 from the gift log, no shop hours yet).
 
-Left, in the order above: Recipes, Bundles and Places. Shop hours on a person's card need a visit record.
+Built 2026-11-14 (second slice): Recipes (seen once learned, known once crafted or cooked; the source line shows
+only once made), Bundles (rooms that have opened, items ticked, reward once done) and Places (a `guidePlaces`
+save list noted when a map loads, names and lines in `src/content/guide-places.json`; interiors are not listed).
+
+Left: shop hours on a person's card need a visit record.
 Seen fish (in a pond), heart events seen on a card, a search box, the tab count check on a tablet, and
 cards with pictures. Items are noted from the backpack only, so something that was only ever in a
 chest or the bin stays hidden until held.

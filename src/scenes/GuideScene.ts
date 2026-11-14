@@ -101,7 +101,7 @@ export class GuideScene extends Phaser.Scene {
       this.card.setText(
         this.open
           ? ""
-          : "Pick a category to read what you have found: crops, fish, forage, the people you have met and the things you have held.",
+          : "Pick a category to read what you have found: crops, fish, forage, recipes, hall bundles, places, the people you have met and the things you have held.",
       );
       return;
     }

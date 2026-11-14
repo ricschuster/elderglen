@@ -1,4 +1,19 @@
 import guideText from "../content/guide-text.json";
+import guidePlaces from "../content/guide-places.json";
+import { BUNDLES, ROOMS, rewardText } from "./bundles";
+import {
+  dishKnown,
+  cookable,
+  dishIngredientText,
+  dishSourceText,
+} from "./cooking";
+import { DISHES } from "./dishes";
+import {
+  RECIPES,
+  buildable,
+  known as recipeKnown,
+  sourceText,
+} from "./crafting";
 import { ALL_CROPS, type CropDef } from "./crops";
 import { FISH, type FishDef } from "./fishing";
 import { FORAGE } from "./forage";
@@ -20,6 +35,16 @@ import type { GameState } from "./save";
 /** Items the player has ever held, noted by `sweep`. The one save field the Guide adds. */
 export class Guide {
   private held = new Set<string>();
+  private places = new Set<string>();
+
+  /** Note a map the player has stood on. Only places in the Guide's list show. */
+  visit(mapId: string): void {
+    this.places.add(mapId);
+  }
+
+  visited(mapId: string): boolean {
+    return this.places.has(mapId);
+  }
 
   has(base: string): boolean {
     return this.held.has(base);
@@ -38,10 +63,17 @@ export class Guide {
     return [...this.held].sort();
   }
 
-  load(raw: unknown): void {
+  savePlaces(): string[] {
+    return [...this.places].sort();
+  }
+
+  load(raw: unknown, places?: unknown): void {
     this.held = new Set();
-    if (!Array.isArray(raw)) return;
-    for (const id of raw) if (typeof id === "string") this.held.add(id);
+    this.places = new Set();
+    if (Array.isArray(raw))
+      for (const id of raw) if (typeof id === "string") this.held.add(id);
+    if (Array.isArray(places))
+      for (const id of places) if (typeof id === "string") this.places.add(id);
   }
 }
 
@@ -207,6 +239,85 @@ function itemEntries(g: GameState): GuideEntry[] {
   return out;
 }
 
+/** Recipes: seen once learned, known once made. The how-to-learn text is shown only for what is known. */
+function recipeEntries(g: GameState): GuideEntry[] {
+  const out: GuideEntry[] = [];
+  const add = (
+    id: string,
+    resultId: string,
+    made: boolean,
+    ingredients: string,
+    source: string,
+  ) => {
+    const name = itemById(resultId)?.name ?? id;
+    const lines = [`Needs: ${ingredients}`];
+    if (made) lines.push(source);
+    out.push({ id, name, state: made ? "known" : "seen", lines });
+  };
+  for (const r of RECIPES) {
+    if (!buildable(r) || !recipeKnown(g, r)) continue;
+    const ing = r.ingredients
+      .map(
+        (i) => `${i.count} ${itemById(i.item)?.name.toLowerCase() ?? i.item}`,
+      )
+      .join(", ");
+    add(
+      `craft-${r.id}`,
+      r.result.item,
+      g.achievements.hasCrafted(r.id),
+      ing,
+      sourceText(r),
+    );
+  }
+  for (const d of DISHES) {
+    if (!cookable(d) || !dishKnown(g, d)) continue;
+    add(
+      `dish-${d.id}`,
+      d.id,
+      g.achievements.hasCooked(d.id),
+      dishIngredientText(d),
+      dishSourceText(d),
+    );
+  }
+  return out;
+}
+
+/** Bundles of rooms that have opened. A finished bundle lists what it took and gave. */
+function bundleEntries(g: GameState): GuideEntry[] {
+  const out: GuideEntry[] = [];
+  const hall = g.hall;
+  for (const b of BUNDLES) {
+    if (!hall.roomOpen(b.room)) continue;
+    const room = ROOMS.find((r) => r.id === b.room);
+    const done = hall.complete(b.id);
+    const lines = [`Room: ${room?.name ?? b.room}`, b.hint];
+    for (const it of b.items) {
+      const have = hall.have(b.id, it.id);
+      const label = it.name ?? itemById(it.id)?.name ?? it.id;
+      lines.push(
+        `${have >= it.count ? "[x]" : "[ ]"} ${label}${it.count > 1 ? ` x${it.count}` : ""}`,
+      );
+    }
+    if (b.required < b.items.length)
+      lines.push(`Fill ${b.required} of ${b.items.length}.`);
+    if (done) lines.push(`Reward: ${rewardText(b)}`);
+    out.push({ id: b.id, name: b.name, state: done ? "known" : "seen", lines });
+  }
+  return out;
+}
+
+interface PlaceRow {
+  id: string;
+  name: string;
+  line: string;
+}
+
+function placeEntries(g: GameState): GuideEntry[] {
+  return (guidePlaces as PlaceRow[])
+    .filter((p) => g.guide.visited(p.id))
+    .map((p) => ({ id: p.id, name: p.name, state: "known", lines: [p.line] }));
+}
+
 const byName = (a: GuideEntry, b: GuideEntry) => a.name.localeCompare(b.name);
 
 /** Every category with the entries the player has earned. Empty categories are kept so the page shows them. */
@@ -231,5 +342,8 @@ export function guideCategories(g: GameState): GuideCategory[] {
       entries: some(VILLAGERS.map((v) => personEntry(g, v))).sort(byName),
     },
     { id: "items", name: "Items", entries: itemEntries(g).sort(byName) },
+    { id: "recipes", name: "Recipes", entries: recipeEntries(g).sort(byName) },
+    { id: "bundles", name: "Bundles", entries: bundleEntries(g) },
+    { id: "places", name: "Places", entries: placeEntries(g) },
   ];
 }
