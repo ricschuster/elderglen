@@ -987,5 +987,15 @@
         "letter": "odette-tea-sapling"
       }
     ]
+  },
+  {
+    "id": "garden-pot",
+    "ingredients": [
+      { "item": "clay", "count": 1 },
+      { "item": "stone", "count": 10 },
+      { "item": "refined-crystal", "count": 1 }
+    ],
+    "result": { "item": "garden-pot", "count": 1 },
+    "sources": [{ "kind": "letter", "letter": "alder-garden-pot" }]
   }
 ]

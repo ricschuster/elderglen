@@ -1,5 +1,6 @@
 import { dateOf, type Season } from "./calendar";
 import { FARM_STORE } from "./mapstore";
+import { growPots, rainOnPots } from "./gardenpot";
 import { clearMineLights } from "./lights";
 import { festivalDayToday } from "./festivals";
 import { growthRate } from "./professions";
@@ -204,10 +205,21 @@ export function sleep(
   g.farm.endDay(season, growthRate(g.skills), random, season !== before);
   // The greenhouse grows in every season and rain does not reach it.
   g.greenhouse.endDay(season, growthRate(g.skills), random, season !== before);
+  growPots(
+    g,
+    growthRate(g.skills),
+    season,
+    dateOf(g.day.clock.day).dayOfSeason,
+    random,
+    season !== before,
+  );
   g.weather = g.tomorrow;
   const next = dateOf(g.day.clock.day + 1);
   g.tomorrow = rollWeather(next.season, next.dayOfSeason, random);
-  if (isRaining(g.weather)) g.farm.waterAll();
+  if (isRaining(g.weather)) {
+    g.farm.waterAll();
+    rainOnPots(g);
+  }
   // The new day: last week's gifts pay the weekly friendship bonus (note 61).
   g.friendship.startDay(g.day.clock.day);
   clearMineLights(g);

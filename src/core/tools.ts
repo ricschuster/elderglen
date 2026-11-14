@@ -45,6 +45,15 @@ import { handOnMachine, loadMachine, placeMachine } from "./machines";
 import { machineById } from "./processing";
 import type { Held } from "./toolbar";
 import { toolAway } from "./upgrades";
+import {
+  GARDEN_POT,
+  actOnPot,
+  pickUpGardenPot,
+  placeGardenPot,
+  plantInPot,
+  potAt,
+  waterPot,
+} from "./gardenpot";
 
 const fail = (reason: string): Outcome => ({ ok: false, reason });
 
@@ -71,6 +80,8 @@ export function useHeld(
   if (held.kind === "empty") return fail("nothing held");
   if (held.kind === "tool" && toolAway(g, held.tool))
     return fail("at the smithy");
+  const pot = useOnPot(g, map, held, x, y);
+  if (pot) return pot;
   if (map.indoors) return useInGreenhouse(g, map, held, x, y);
   // Any tool, or the empty hand, lifts a placed sprinkler (SC-48).
   if (held.kind === "tool" && g.sprinklers.at(x, y))
@@ -170,6 +181,33 @@ export function useHeld(
 }
 
 /**
+ * A garden pot (note 97): the can waters it, a seed or tea sapling fills it, the
+ * hoe lifts an empty one, and a pot from the backpack is stood on clear ground.
+ * Undefined when the held thing has nothing to do with a pot on this tile.
+ */
+function useOnPot(
+  g: GameState,
+  map: FarmMap,
+  held: Held,
+  x: number,
+  y: number,
+): Outcome | undefined {
+  if (held.kind === "item" && held.id === GARDEN_POT)
+    return placeGardenPot(g, map, x, y);
+  if (!potAt(g, map, x, y)) return undefined;
+  if (held.kind === "tool" && held.tool === "can")
+    return waterPot(g, map, x, y);
+  if (held.kind === "tool" && held.tool === "hoe")
+    return pickUpGardenPot(g, map, x, y);
+  if (
+    held.kind === "item" &&
+    (cropOfSeed(held.id) || held.id === MIXED_SEED || held.id === TEA_SAPLING)
+  )
+    return plantInPot(g, map, x, y, held.id);
+  return undefined;
+}
+
+/**
  * The greenhouse: the hoe, can, seeds and fertilizer work its own soil, and
  * sprinklers and fruit trees stand in its own store (`mapstore.ts`). The farm's
  * trees, weeds and machines are stored by tile and belong to the farm map, so
@@ -256,7 +294,9 @@ function pickIndoors(g: GameState, x: number, y: number): Outcome {
  */
 export function act(g: GameState, map: FarmMap, x: number, y: number): Outcome {
   if (!map.hasSoil && !map.wild) return fail(NOTHING_TO_ACT_ON);
-  const result = map.indoors ? pickIndoors(g, x, y) : pick(g, x, y);
+  const result =
+    actOnPot(g, map, x, y) ??
+    (map.indoors ? pickIndoors(g, x, y) : pick(g, x, y));
   if (result.ok) return result;
   return QUIET.has(result.reason) ? fail(NOTHING_TO_ACT_ON) : result;
 }
@@ -294,6 +334,9 @@ const REASONS: Record<string, string> = {
   "furniture needs the house": "Furniture goes in the house.",
   "not furniture": "That is not furniture.",
   "no furniture": "Out of furniture.",
+  "garden pot in the way": "A garden pot is there.",
+  "garden pot in use": "Something is growing in that pot.",
+  "no garden pot": "Out of garden pots.",
   "a machine is in the way": "A machine is there. Pick it up first.",
   "machine in the way": "A machine is there.",
   "a chest is in the way": "A chest is there. Empty it and pick it up first.",

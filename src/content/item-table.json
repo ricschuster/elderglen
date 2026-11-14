@@ -1224,6 +1224,12 @@
     "keep": true
   },
   {
+    "id": "garden-pot",
+    "name": "Garden pot",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "garden-salad",
     "name": "Garden salad",
     "sellPrice": 110,
@@ -2855,6 +2861,11 @@
     "id": "reef-periwinkle-roe",
     "name": "Reef Periwinkle roe",
     "sellPrice": 25
+  },
+  {
+    "id": "refined-crystal",
+    "name": "Refined crystal",
+    "sellPrice": 50
   },
   {
     "id": "rime-crystal",

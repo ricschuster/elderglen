@@ -403,6 +403,13 @@ for (const [id, name] of [
   ["bird-house", "Bird house"],
 ] as const)
   items.set(id, { id, name, sellPrice: 0, keep: true });
+/** The garden pot (note 97): crafted, stood on the farm or in the greenhouse, kept. */
+items.set("garden-pot", {
+  id: "garden-pot",
+  name: "Garden pot",
+  sellPrice: 0,
+  keep: true,
+});
 /** Bombs (note 89): bought at the Forge, lit on a tile, used up. Prices from `bombs.json`. */
 for (const b of bombData)
   items.set(b.id, {
@@ -518,7 +525,9 @@ const GROUPS: [string, string[]][] = [
   ["Fertilizer", FERTILIZERS.map((f) => f.id)],
   [
     "Machines, sprinklers and chests",
-    [...SPRINKLERS, ...MACHINES, ...CHESTS].map((m) => m.id),
+    [...SPRINKLERS, ...MACHINES, ...CHESTS]
+      .map((m) => m.id)
+      .concat("garden-pot"),
   ],
   ["Artisan goods", ARTISAN_GOODS.map((a) => a.id)],
   ["Dishes", [...DISHES.map((d) => d.id), ALGAE_SOUP]],

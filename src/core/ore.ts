@@ -23,6 +23,8 @@ export interface BarDef {
   minutes: number;
   /** Coal for one bar, if not COAL_PER_BAR (Hearthsilver takes 2, note 22). */
   coal?: number;
+  /** Input items for one batch, if not ORE_PER_BAR (a refined crystal takes 1 quartz). */
+  oreCount?: number;
 }
 
 /** Ore needed for one bar. */
@@ -53,6 +55,9 @@ export const ORES: OreDef[] = [
   { id: "iron-ore", name: "Iron ore", sellPrice: 10, buyPrice: 50 },
   { id: "gold-ore", name: "Gold ore", sellPrice: 25, buyPrice: 100 },
 ];
+
+/** The refined crystal: one quartz crystal and one coal in the furnace (Stardew's refined quartz). */
+export const REFINED_CRYSTAL = "refined-crystal";
 
 export const BARS: BarDef[] = [
   {
@@ -85,7 +90,19 @@ export const BARS: BarDef[] = [
     minutes: 480,
     coal: 2,
   },
+  // Not a bar: a smelted quartz crystal (note 97, garden pots). 90 minutes and 50g are placeholders until the Furnace page is checked.
+  {
+    id: REFINED_CRYSTAL,
+    name: "Refined crystal",
+    ore: QUARTZ,
+    sellPrice: 50,
+    minutes: 90,
+    oreCount: 1,
+  },
 ];
+
+/** Input items one batch takes. */
+export const orePerBatch = (bar: BarDef): number => bar.oreCount ?? ORE_PER_BAR;
 
 /** Coal one bar takes. */
 export const coalFor = (bar: BarDef): number => bar.coal ?? COAL_PER_BAR;

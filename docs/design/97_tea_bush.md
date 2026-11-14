@@ -30,7 +30,7 @@ season. Placeholder numbers are marked.
 | Impassable | The scene blocks the tile at every stage. Hoe, building placement and planting treat it as an object. Unlike a fruit tree it needs no clear 3x3, so a row of bushes works as a fence. |
 | Tree Fertilizer no | Nothing applies fertilizer to it. |
 | Tea Leaves | `tea-leaf`, sells for 50, energy 20 (placeholders, SC-173). |
-| Garden pots | Not built. Decided 2026-11-13 (owner, Stardew): craftable from clay 1, stone 10 and one refined input, taught by a story moment after the Larder room (greenhouse) is restored. Stardew (saved Tea Bush and Crafting pages): any season indoors, seasonal crops only outdoors, sprinklers do not water it, a tea bush in a pot grows and bears leaves. Decided 2026-11-13 (owner): the refined input is a refined crystal, a quartz crystal smelted in the furnace (Stardew's refined quartz; needs a smelt recipe), and Alder (the gardener) teaches it in the story moment. Still to build. |
+| Garden pots | Built 2026-11-13 (owner, Stardew; saved Tea Bush and Crafting pages). `garden-pot`, crafted from clay 1, stone 10 and one refined crystal (`recipes.json`). The refined crystal is a quartz crystal smelted in the furnace with 1 coal in 90 minutes, a `BARS` row with `oreCount` 1 (`ore.ts`; time and 50g price are placeholders). Alder (the gardener) teaches the recipe by the letter `alder-garden-pot`, trigger `room` (the Larder is restored), the next morning. The pot is a `pot` placeable (farm and greenhouse), kept in `g.placed` with its contents in `state`: any season indoors, seasonal crops only outdoors, sprinklers never water it (the can does, and rain outdoors), a tea bush in a pot grows and bears. It cannot be lifted while something grows in it. `src/core/gardenpot.ts`, tests `tests/gardenpot.test.ts`. |
 
 ## Build
 
@@ -56,6 +56,9 @@ buffs are not built. The leaf's own sale price is still ours (SC-173).
 
 ## Open
 
-- Garden pots as a planting place (needs the pot item).
+- Garden pots: no scene work yet (drawing the pot and its plant, blocking the tile for walking,
+  placing from the hotbar with art). Digging a crop or bush out of a pot (the pot stays full
+  until the crop is harvested or withers). Fertilizer in a pot. Whether rain waters an outdoor
+  pot is from memory (Stardew check, register row to add).
 - Every placeholder number: recipe, leaf price, leaf energy, sapling price,
   cap of 1 leaf. Real art.
