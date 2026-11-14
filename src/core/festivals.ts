@@ -85,11 +85,29 @@ export interface Festival {
   evenYear?: { map: string; zone: Zone };
   /** What the festival's counter sells. Hats sell once, items without limit. */
   counter: CounterEntry[];
+  /**
+   * Lines that rotate by year (Harvest Showing, note 66): `perYear` of the `pool`
+   * join the counter, taken in order from where the last year stopped, so the
+   * pool cycles and a year always shows the same ones.
+   */
+  rotation?: { perYear: number; pool: CounterEntry[] };
   /** Id of the festival game, or null for none (see `11_minigames.md`). */
   minigame: string | null;
 }
 
 export const FESTIVALS = festivalData as Festival[];
+
+/** The counter lines of a festival in a game year (1 based): the fixed ones, then the year's rotation. */
+export function counterOf(f: Festival, year: number): CounterEntry[] {
+  const r = f.rotation;
+  if (!r || r.pool.length === 0) return f.counter;
+  const picks: CounterEntry[] = [];
+  for (let i = 0; i < Math.min(r.perYear, r.pool.length); i++)
+    picks.push(
+      r.pool[((Math.max(1, year) - 1) * r.perYear + i) % r.pool.length]!,
+    );
+  return [...f.counter, ...picks];
+}
 
 /** The festival on a calendar day, if there is one. */
 export function festivalOn(
@@ -267,7 +285,8 @@ export function counterProblem(
   f: Festival,
   e: CounterEntry,
 ): string | undefined {
-  if (!f.counter.includes(e)) return "That is not on sale here.";
+  if (!counterOf(f, dateOf(g.day.clock.day).year).includes(e))
+    return "That is not on sale here.";
   if (!g.festivalsJoined.includes(joinKey(f, g.day.clock.day)))
     return "Go to the festival first.";
   if (e.hat && g.wardrobe.has(e.hat)) return "You already have that hat.";

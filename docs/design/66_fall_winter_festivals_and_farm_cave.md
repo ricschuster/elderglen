@@ -260,12 +260,18 @@ stay screens).
 ## Still open
 
 - The villager who asks to use the cave, and the Hollow Eve first-time hat.
-- The Harvest Showing prize counter list.
-- 
+- The Harvest Showing prize counter list: the owner chose the fixed lines plus a yearly rotation (built, see below).
 
 **Built (2026-11-14, owner's answers):** the Showing now has eight groups (fish
 and animal products added), Stardew's price bands by quality for value points
 (top 6 an item), and the places at 77, 64 and 51 of a possible 107.
+
+**Built (2026-11-14, counter rotation):** the Harvest Showing counter keeps its fixed lines and adds
+two of a pool of four each year, in order, so year 1 shows the small glow ring (700 tokens) and ten
+mixed seeds (300), year 2 ten hay (150) and three pumpkin soups (250), then it repeats. `rotation`
+in `festivals.json`, `counterOf(f, year)` in `core/festivals.ts`. The counter total stays above
+the 1,000 first place prize on purpose ("choose a few things each year"). Prices are placeholders.
+The hat stays the Harvest Crown and the even-year lantern the Hollow lantern.
 
 **Built (2026-11-14):** the even-year chest gives the Hollow lantern the first
 even year (a farm decoration, placeholder colour art, never sold), then a sack

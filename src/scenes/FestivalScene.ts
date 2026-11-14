@@ -12,6 +12,7 @@ import {
   FESTIVAL_RETURN,
   festivalDayToday,
   leaveFestival,
+  counterOf,
 } from "../core/festivals";
 import { itemById } from "../core/items";
 import type { GameState } from "../core/save";
@@ -209,7 +210,7 @@ export class FestivalScene extends Phaser.Scene {
     this.menu = menu;
     menu.setFocus(true);
     const rows = () =>
-      f.counter.map((e) => ({
+      counterOf(f, dateOf(this.state.day.clock.day).year).map((e) => ({
         label: counterName(e),
         detail: `${e.price}${unit(e)}`,
         dim: counterProblem(this.state, f, e) !== undefined,

@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { DAYS_PER_SEASON, SEASONS, dateOf } from "../src/core/calendar";
+import { itemById } from "../src/core/items";
 import { festivalLayout } from "../src/core/festivalroutes";
 import { known, recipeById } from "../src/core/crafting";
 import {
   counterName,
+  counterOf,
   buyAtCounter,
   counterProblem,
   enterFestival,
@@ -212,6 +214,59 @@ describe("the Harvest Showing", () => {
     expect(g.inventory.count(seed.item!)).toBe(seed.count);
     expect(showTokens(g)).toBe(1000 - seed.price);
     expect(g.money).toBe(0);
+  });
+});
+
+describe("the Harvest Showing counter rotation (note 66)", () => {
+  const f = festivalOn("fall", 9)!;
+  const rot = f.rotation!;
+
+  it("has four pool lines in tokens at the owner's placeholder prices", () => {
+    expect(rot.perYear).toBe(2);
+    expect(rot.pool.map((e) => [e.item, e.price])).toEqual([
+      ["small-glow-ring", 700],
+      ["mixed-seed", 300],
+      ["hay", 150],
+      ["pumpkin-soup", 250],
+    ]);
+    for (const e of rot.pool) {
+      expect(e.tokens).toBe(true);
+      expect(itemById(e.item!), e.item).toBeDefined();
+    }
+  });
+
+  it("picks the same two lines for a year every time, and cycles the pool", () => {
+    const ids = (y: number) => counterOf(f, y).map((e) => e.item);
+    const fixed = f.counter.map((e) => e.item);
+    expect(ids(1)).toEqual([...fixed, "small-glow-ring", "mixed-seed"]);
+    expect(ids(2)).toEqual([...fixed, "hay", "pumpkin-soup"]);
+    expect(ids(3)).toEqual(ids(1));
+    expect(ids(1)).toEqual(ids(1));
+    expect(counterOf(f, 1)[f.counter.length]).toBe(rot.pool[0]);
+  });
+
+  it("leaves a festival with no rotation as it was", () => {
+    const fair = festivalOn("spring", 21)!;
+    expect(counterOf(fair, 5)).toBe(fair.counter);
+  });
+
+  it("sells only the year's lines", () => {
+    const g = newGame();
+    g.day.clock.day = dayOf("fall", 9);
+    g.day.clock.minutes = f.opens;
+    enterFestival(g);
+    g.showTokens = { year: 1, count: 1000 };
+    expect(counterProblem(g, f, rot.pool[0]!)).toBeUndefined();
+    expect(counterProblem(g, f, rot.pool[2]!)).toMatch(/not on sale/);
+  });
+
+  it("keeps the counter total above the first place prize", () => {
+    const total = (y: number) =>
+      counterOf(f, y)
+        .filter((e) => e.tokens)
+        .reduce((n, e) => n + e.price, 0);
+    expect(total(1)).toBeGreaterThan(1000);
+    expect(total(2)).toBeGreaterThan(1000);
   });
 });
 
