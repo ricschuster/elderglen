@@ -1,3 +1,4 @@
+import { childById, childrenOn, talkToChild } from "./children";
 import { dateOf } from "./calendar";
 import { clockText } from "./clock";
 import { courtGift } from "./courtship";
@@ -45,7 +46,8 @@ export interface Present {
  * table is partly placeholder, see `resolvePlace`).
  */
 export function villagersOn(
-  g: Pick<GameState, "weather"> & Partial<Pick<GameState, "marriage">>,
+  g: Pick<GameState, "weather"> &
+    Partial<Pick<GameState, "marriage" | "houseTier">>,
   mapId: string,
   day: number,
   minutes: number,
@@ -80,6 +82,15 @@ export function villagersOn(
       placeholder: w.where.placeholder,
     });
   }
+  // The children walk their stage's route in the house (note 12, slice 5).
+  if (g.marriage && "houseTier" in g)
+    for (const c of childrenOn(
+      g as Pick<GameState, "weather" | "marriage" | "houseTier">,
+      mapId,
+      day,
+      minutes,
+    ))
+      out.push({ ...c, placeholder: false });
   return out;
 }
 
@@ -160,6 +171,7 @@ export function meet(
   id: string,
   held: string | undefined,
 ): MeetResult {
+  if (childById(g, id)) return { message: talkToChild(g, id).message };
   const v = villagerById(id);
   if (!v) return { message: "" };
   const f: Friendship = g.friendship;

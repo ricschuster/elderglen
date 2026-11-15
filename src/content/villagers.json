@@ -278,6 +278,26 @@
     "spouse-room": {
       "x": 63,
       "y": 27
+    },
+    "child-crib": {
+      "x": 39,
+      "y": 14
+    },
+    "child-bed-1": {
+      "x": 46,
+      "y": 14
+    },
+    "child-bed-2": {
+      "x": 50,
+      "y": 14
+    },
+    "nursery-1": {
+      "x": 43,
+      "y": 16
+    },
+    "nursery-2": {
+      "x": 48,
+      "y": 16
     }
   },
   "idleKeys": [

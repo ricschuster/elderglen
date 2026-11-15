@@ -1,4 +1,5 @@
 import { HOUSE_MAP, DIVORCE_CHEST_TILE, spouseRoomArea } from "./house";
+import { childDivorceLine } from "./children";
 import { DIVORCE_FEE, exFlag, exSpouses } from "./marriage";
 import type { GameState } from "./save";
 import { villagerById } from "./villagers";
@@ -110,7 +111,7 @@ export interface DivorceNews {
   name: string;
   /** Hearts kept, whole. */
   hearts: number;
-  /** Children at the time. Slice 5 decides what happens to them: today they are dropped with the marriage. */
+  /** Children at the time. They stay with the player on the farm (note 12, slice 5). */
   children: number;
 }
 
@@ -126,7 +127,7 @@ export function divorceMorning(g: GameState): DivorceNews | undefined {
   const id = m.spouse;
   if (!m.married || !m.divorcing || !id) return undefined;
   const children = m.children;
-  m.end();
+  m.end(); // the children stay
   g.friendship.setSpouse(null);
   setFlag(g, exFlag(id));
   g.friendship.setExes(exSpouses(g));
@@ -143,5 +144,6 @@ export function divorceReportLines(n: DivorceNews | undefined): string[] {
   if (!n) return [];
   return [
     `PLACEHOLDER TEXT: the ledger is closed. ${n.name} has moved back to their own home, and bears you no ill will.`,
+    ...(n.children > 0 ? [childDivorceLine(n.name)] : []),
   ];
 }

@@ -53,12 +53,12 @@ describe("stages", () => {
 
   it("allows children only when married, up to the limit", () => {
     const m = new Marriage();
-    expect(m.addChild()).toBe(false);
+    expect(m.addChild()).toBeUndefined();
     court(m);
     m.engage("bramwell", 99999, 1);
     m.marry(4);
-    for (let i = 0; i < MAX_CHILDREN; i++) expect(m.addChild()).toBe(true);
-    expect(m.addChild()).toBe(false);
+    for (let i = 0; i < MAX_CHILDREN; i++) expect(m.addChild()).toBeDefined();
+    expect(m.addChild()).toBeUndefined();
   });
 
   it("ends cleanly and can start again", () => {
@@ -90,6 +90,7 @@ describe("save", () => {
       spouse: "bramwell",
       weddingDay: 8,
       children: 1,
+      kids: [{ id: "child-1", name: "Wren", born: 0, points: 0, talkDay: 0 }],
       kissDay: 0,
     });
   });

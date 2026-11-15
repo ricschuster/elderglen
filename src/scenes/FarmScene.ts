@@ -3002,9 +3002,10 @@ export class FarmScene extends Phaser.Scene {
     this.save();
     this.render();
     // The shipping summary comes first when the bin paid; it opens the report.
-    this.open(report.shipped.lines.length > 0 ? "shipping" : "report", {
-      report,
-    });
+    const shipping = report.shipped.lines.length > 0;
+    // The spouse's question comes first (note 12, slice 5); it hands on to the report.
+    if (report.childAsk) this.open("childask", { report, shipping });
+    else this.open(shipping ? "shipping" : "report", { report });
   }
 
   /**

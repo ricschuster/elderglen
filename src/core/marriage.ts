@@ -1,3 +1,4 @@
+import childData from "../content/children.json";
 import { HEART, isCandidate } from "./friendship";
 
 /**
@@ -35,13 +36,36 @@ export function exSpouses(g: { flags?: string[] }): string[] {
     .filter(isCandidate);
 }
 
+/** A child of the farm (note 12, slice 5). Lives with the player whatever happens to the marriage. */
+export interface Child {
+  /** `child-<slot>`, the slot being 1 or 2 (the nursery's two beds). */
+  id: string;
+  name: string;
+  /** The day the child arrived: age and stage come from it. */
+  born: number;
+  /** Friendship points, own counter (the child is not a villager row). */
+  points: number;
+  /** The last day the child was talked to, 0 for never. */
+  talkDay: number;
+}
+
+export const childId = (slot: number): string => `child-${slot}`;
+export const isChildId = (id: string): boolean => /^child-[1-9]$/.test(id);
+
 export interface MarriageSave {
   stage: Stage;
   /** The villager id of the person being courted, engaged to or married to. */
   spouse: string | null;
   /** The day the wedding is set for while engaged, or took place once married. */
   weddingDay: number;
+  /** Child count, kept for old readers. `kids` is the truth when present. */
   children: number;
+  /** The children, by slot. Absent in saves from before slice 5: `children` is then read as a count. */
+  kids?: Child[];
+  /** The day a child arrives, after a yes. Absent for none. */
+  childDue?: number;
+  /** The last day the child ask was put, answered either way. Absent for never. */
+  askDay?: number;
   /** The last day the spouse was kissed, for the daily energy (note 12). */
   kissDay?: number;
   /** A divorce is filed and takes effect next morning unless cancelled (note 12). */
@@ -53,15 +77,70 @@ const STAGES: readonly Stage[] = ["none", "courting", "engaged", "married"];
 const isCount = (n: unknown): n is number =>
   typeof n === "number" && Number.isInteger(n) && n >= 0;
 
+const isCandidateId = (v: unknown): boolean =>
+  typeof v === "string" && isCandidate(v);
+
+/**
+ * Read the children. A list is validated one by one (known slot, once each);
+ * an old save with only a count gets that many placeholder children, born
+ * on day 1, so a count is never lost. Anything else loads as none.
+ */
+function loadKids(o: Record<string, unknown>, married: boolean): Child[] {
+  const out: Child[] = [];
+  if (Array.isArray(o.kids)) {
+    for (const r of o.kids as unknown[]) {
+      if (typeof r !== "object" || r === null) continue;
+      const k = r as Record<string, unknown>;
+      const slot = Number(String(k.id).slice(6));
+      if (
+        typeof k.id !== "string" ||
+        !isChildId(k.id) ||
+        slot > MAX_CHILDREN ||
+        out.some((c) => c.id === k.id)
+      )
+        continue;
+      out.push({
+        id: k.id,
+        name:
+          typeof k.name === "string" && k.name !== ""
+            ? k.name.slice(0, 24)
+            : (childData.names[slot - 1] ?? `Child ${slot}`),
+        born: isCount(k.born) ? k.born : 1,
+        points: isCount(k.points) ? k.points : 0,
+        talkDay: isCount(k.talkDay) ? k.talkDay : 0,
+      });
+    }
+  } else if (married && isCount(o.children)) {
+    for (let n = 1; n <= Math.min(o.children, MAX_CHILDREN); n++)
+      out.push({
+        id: childId(n),
+        name: childData.names[n - 1] ?? `Child ${n}`,
+        born: 1,
+        points: 0,
+        talkDay: 0,
+      });
+  }
+  return out.sort((a, b) => a.id.localeCompare(b.id));
+}
+
 export class Marriage {
   stage: Stage = "none";
   spouse: string | null = null;
   weddingDay = 0;
-  children = 0;
+  kids: Child[] = [];
+  /** The day a child arrives after a yes, 0 for none. */
+  childDue = 0;
+  /** The last day the ask was put, 0 for never. */
+  askDay = 0;
   /** The last day the spouse was kissed, 0 for never. */
   kissDay = 0;
   /** A divorce is filed at the hall ledger: it takes effect next morning unless cancelled. */
   divorcing = false;
+
+  /** How many children the farm has. */
+  get children(): number {
+    return this.kids.length;
+  }
 
   /** Whether `id` is the person being courted, engaged to or married to. */
   isPartner(id: string): boolean {
@@ -117,17 +196,35 @@ export class Marriage {
     this.stage = "none";
     this.spouse = null;
     this.weddingDay = 0;
-    this.children = 0;
     this.kissDay = 0;
     this.divorcing = false;
+    // The children stay with the player (note 12, slice 5). A child still on the way does not come, and the ask restarts.
+    this.childDue = 0;
+    this.askDay = 0;
     return true;
   }
 
-  /** A child, by the player's choice, once married and below the limit. */
-  addChild(): boolean {
-    if (this.stage !== "married" || this.children >= MAX_CHILDREN) return false;
-    this.children += 1;
-    return true;
+  /** The first free slot, 1 or 2, or 0 when the nursery is full. */
+  private freeSlot(): number {
+    for (let n = 1; n <= MAX_CHILDREN; n++)
+      if (!this.kids.some((k) => k.id === childId(n))) return n;
+    return 0;
+  }
+
+  /** A child, by the player's choice, once married and below the limit. `name` is the placeholder pool's by default. */
+  addChild(born = 0, name?: string): Child | undefined {
+    const slot = this.freeSlot();
+    if (this.stage !== "married" || slot === 0) return undefined;
+    const kid: Child = {
+      id: childId(slot),
+      name: name ?? childData.names[slot - 1] ?? `Child ${slot}`,
+      born,
+      points: 0,
+      talkDay: 0,
+    };
+    this.kids.push(kid);
+    this.kids.sort((a, b) => a.id.localeCompare(b.id));
+    return kid;
   }
 
   save(): MarriageSave {
@@ -136,6 +233,11 @@ export class Marriage {
       spouse: this.spouse,
       weddingDay: this.weddingDay,
       children: this.children,
+      ...(this.kids.length > 0
+        ? { kids: this.kids.map((k) => ({ ...k })) }
+        : {}),
+      ...(this.childDue > 0 ? { childDue: this.childDue } : {}),
+      ...(this.askDay > 0 ? { askDay: this.askDay } : {}),
       kissDay: this.kissDay,
       ...(this.divorcing ? { divorcing: true } : {}),
     };
@@ -146,11 +248,17 @@ export class Marriage {
     this.stage = "none";
     this.spouse = null;
     this.weddingDay = 0;
-    this.children = 0;
+    this.kids = [];
+    this.childDue = 0;
+    this.askDay = 0;
     this.kissDay = 0;
     this.divorcing = false;
     if (typeof raw !== "object" || raw === null) return;
     const o = raw as Record<string, unknown>;
+    const married = o.stage === "married" && isCandidateId(o.spouse);
+    // The children outlive the marriage, so they load whatever the stage is.
+    if (married || o.stage === "none" || o.kids !== undefined)
+      this.kids = loadKids(o, married);
     if (
       !STAGES.includes(o.stage as Stage) ||
       o.stage === "none" ||
@@ -161,10 +269,10 @@ export class Marriage {
     this.stage = o.stage as Stage;
     this.spouse = o.spouse;
     this.weddingDay = isCount(o.weddingDay) ? o.weddingDay : 0;
-    this.children =
-      this.stage === "married" && isCount(o.children)
-        ? Math.min(o.children, MAX_CHILDREN)
-        : 0;
+    if (this.stage === "married") {
+      this.childDue = isCount(o.childDue) ? o.childDue : 0;
+      this.askDay = isCount(o.askDay) ? o.askDay : 0;
+    }
     this.kissDay = this.married && isCount(o.kissDay) ? o.kissDay : 0;
     this.divorcing = this.married && o.divorcing === true;
   }

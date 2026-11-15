@@ -137,9 +137,31 @@ Slice 4 built (#937, `src/core/divorce.ts`, `src/scenes/LedgerScene.ts`, `tests/
 ledger is a new service (`ledger`, kind `ledger`) in the hall map. The fee is paid on filing and handed
 back on cancel (our choice, Stardew's refund is unchecked). The next morning `sleep()` ends the marriage,
 drops the spouse cap, raises `ex-<id>`, and moves the spouse room's furniture and chests into the divorce
-chest at (51, 31). The ex is a friend only (no second bouquet; open question). Children are dropped with
-the marriage for now (`DivorceNews.children` is the hook for slice 5). `attendsWedding` is the guest
+chest at (51, 31). The ex is a friend only (no second bouquet; open question). Children: see slice 5. `attendsWedding` is the guest
 filter; the wedding scene has no guest list yet.
+
+Slice 5 built (#938, `src/core/children.ts`, `src/content/children.json`, `src/scenes/ChildAskScene.ts`,
+`tests/children.test.ts`): children, by player choice only. The ask: `sleep()` sets `childAsk` on the
+report when `childAskDue` holds (married, not divorcing, house tier 2 so the nursery exists, a free bed,
+no child already on the way, 7 days after the wedding, 7 days after the last ask). The scene
+`childask` puts yes or not now before the morning report. "Not now" only waits the gap, so it never
+blocks and is never pressed. A yes sets `childDue` 3 days on and `childMorning` (in `sleep()`) brings the
+child. A child is `Child` in `marriage.kids` (`child-1`, `child-2`, name, birth day, points, last talk
+day); MAX_CHILDREN stays 2, matching the nursery's two beds. The old `children` count still saves and
+loads (an old count becomes placeholder children). Stages: baby (days 0 to 13, in the crib all day),
+toddler (14 to 41) and child (42 on), by age in days, each a route in data; `childVillager` builds a
+villager row so `whereAt` and `villagersOn` place them with no per-child code (nursery, kitchen, bed
+spots in the house map, placeholder tiles). Talking (`meet` routes child ids to `talkToChild`) gives a
+line by stage and +20 points once a day, up to 10 hearts, from the child's own counter (not the
+friendship model, which is keyed by villager rows). No needs, no neglect, no chores. Names and lines
+are placeholders; child sprites reuse a villager sprite until M3d.
+
+Divorce and children (our choice, flagged for the owner, notes say nothing): the children stay with the
+player on the farm with their hearts, and the marriage's end changes nothing for them. A child still on
+the way does not come, and the ask restarts if the player marries again. The ex is a friend only and
+does not visit: the simplest thing consistent with "no anger, ex stays a friend". A report line says
+the children stay. Not built: the ex visiting the children, children at festivals, events, adult
+children.
 
 ## Earlier suggested slices (superseded by the list above)
 

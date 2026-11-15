@@ -4,6 +4,7 @@ import { ordersReportLines } from "./orders";
 import type { SleepReport } from "./sleep";
 import { itemById } from "./items";
 import { divorceReportLines } from "./divorce";
+import { childReportLines } from "./children";
 import { spouseReportLines } from "./spouse";
 import { SUMMIT_TEXT } from "./summit";
 
@@ -68,6 +69,7 @@ export function reportLines(r: SleepReport): string[] {
     );
   lines.push(...spouseReportLines(r.spouse));
   lines.push(...divorceReportLines(r.divorce));
+  lines.push(...childReportLines(r.child));
   if (r.houseFinished) {
     lines.push("The carpenter has finished. Your new rooms are ready.");
     if (r.houseTier === 2) lines.push(WAITING_ROOMS_LINE);

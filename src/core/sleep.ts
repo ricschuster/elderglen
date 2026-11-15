@@ -1,5 +1,6 @@
 import { dateOf, type Season } from "./calendar";
 import { divorceMorning, type DivorceNews } from "./divorce";
+import { childAskDue, childMorning, type ChildNews } from "./children";
 import { spouseMorning, type SpouseNews } from "./spouse";
 import { FARM_STORE } from "./mapstore";
 import { growPots, rainOnPots } from "./gardenpot";
@@ -169,6 +170,10 @@ export interface SleepReport {
   spouse?: SpouseNews;
   /** A filed divorce took effect this morning (note 12, slice 4). */
   divorce?: DivorceNews;
+  /** A child arrived in the nursery this morning (note 12, slice 5). */
+  child?: ChildNews;
+  /** The spouse will ask about a child: the scene puts the yes or not now question (note 12, slice 5). */
+  childAsk?: boolean;
 }
 
 /**
@@ -348,6 +353,9 @@ export function sleep(
   const divorce = divorceMorning(g);
   // The spouse feeds the animals and waters a few crops, after the night's own work (note 12).
   const spouse = spouseMorning(g, random);
+  // A child that was said yes to arrives, and the ask is put again once it is due (never pressed).
+  const child = childMorning(g);
+  const childAsk = childAskDue(g);
 
   const achievements = checkAchievements(g).map((a) => a.name);
   // The summit: tonight's check arms the call; the steward comes this morning
@@ -399,6 +407,8 @@ export function sleep(
     guestsBonus: payGuestsBoard(g),
     ...(spouse ? { spouse } : {}),
     ...(divorce ? { divorce } : {}),
+    ...(child ? { child } : {}),
+    ...(childAsk ? { childAsk } : {}),
   };
 }
 

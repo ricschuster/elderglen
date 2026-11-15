@@ -979,7 +979,7 @@ Source: `src/core/quests.ts`, `src/content/requests.json`.
   `villagers.json`; the 8 and 10 caps before and after the bouquet stay in `friendship.json`).
 - Promise token: 5,000g at the rainy day seller. Divorce fee: 50,000g, player-only.
 - Spouse perk: a one-off item at 12.5 hearts (Stardew gives a Stardrop there, from memory).
-- Children: at most 2 per farm (placeholder, slice 5 may change it).
+- Children: at most 2 per farm (`MAX_CHILDREN`, the nursery's two beds, kept in slice 5).
 
 ## Courtship to wedding (slice 2, 2026-11-14, note 12, placeholders)
 
@@ -1017,3 +1017,14 @@ after the wedding. They never fail for a late or absent player and never repair.
   the day ends. Takes effect the next morning (`divorceMorning`, called from `sleep()`).
 - Friendship stays at the old points. The cap drops to the pre-marriage 10 hearts without clamping
   points down (`Friendship.setExes`). The ex-spouse is a friend only (no new bouquet).
+
+## Children (slice 5, 2026-11-14, note 12, placeholders)
+
+All in `src/content/children.json`.
+
+- The ask: after bed, once the nursery exists (house tier 2), at least 7 days after the wedding.
+  "Not now" (or a yes) waits 7 days before the next ask, so it is never pressed (`ASK_GAP_DAYS`).
+- A yes brings the child 3 days later (`ARRIVAL_DAYS`).
+- Stages by age in days: baby 0, toddler 14, child 42. Bedtimes 22:00, 20:00, 21:00.
+- Talk: +20 points (the villager talk value) once a day, cap 10 hearts, own counter.
+- Names: Wren, Pip (placeholders, one per slot).
