@@ -16,12 +16,13 @@ only a display, GPU driver or Claude session problem. Each freeze came within mi
 many-worker sweep starting (8 to 13 headless Chromium browsers):
 
 | # | Time | Kernel evidence | What was running |
-|---|------|-----------------|------------------|
+| - | - | - | - |
 | 1 | 09:32 oops, froze about 09:40 | Oops in `chrome-headless` exit, `sched_mm_cid_remove_user` | A sub-agent's festival sweep at `WORKERS=11` then `12` (09:19 to 09:31), several dev servers on port 5199, `pkill -f chrom`, then `npm run check` |
 | 2 | 18:41 | Oops in `__schedule` via `sched_yield` (a write to a kernel-text address) at 18:41:29; hard-lockup watchdogs on many CPUs in `native_queued_spin_lock_slowpath` at 18:41:50 | secret-woods, sweep and vitest launched together at 18:39; about 8 Chromium scopes started 18:39:51 to :56 |
 | 3 | about 10:27 | None: the log just stops (last line 10:27:51), so it froze before anything reached the disk | A foreground `sweep.mjs` started 10:25:12; 13 Chromium scopes started at 10:25 |
 
 Notes on the table:
+
 - Crash 1: the machine kept running for minutes after the oops (agent commands continue to
   09:38), then wedged. A scheduler oops can leave a lock held.
 - Crash 2: all CPUs stuck waiting on one spinlock after a scheduler oops fits a runqueue
@@ -114,6 +115,7 @@ one playtest at a time, which is a working habit, not a fix.)
 
 The session scratchpad is lost after a reboot, so a mirror copies the logs every 10 s to
 `playtest-out/crash-trace/` (git-ignored, in the repo folder):
+
 - `heartbeat.txt`: time the mirror last ran. If it goes stale, that is the freeze time.
 - `steps.log`: which stress step was running.
 - `r3-sampler.log`: load, free memory, Chromium count every 3 s. `sampler.log` is the baseline.
