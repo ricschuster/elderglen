@@ -339,7 +339,12 @@ export class Friendship {
     if (!r.met) return "unmet";
     if (r.giftDay === day) return "today";
     this.sync(r, id, day);
-    if (!isBirthday(id, day) && r.weekGifts >= POINTS.weeklyGifts)
+    // A spouse takes a gift every day, with no weekly limit (note 61, note 84 rule 3).
+    if (
+      id !== this.spouseId &&
+      !isBirthday(id, day) &&
+      r.weekGifts >= POINTS.weeklyGifts
+    )
       return "week";
     return undefined;
   }
@@ -356,8 +361,10 @@ export class Friendship {
     const { base, quality } = splitQuality(itemId);
     const taste = tasteOf(id, base);
     const birthday = isBirthday(id, day);
-    const raw =
+    const full =
       giftPoints(taste, quality) * (birthday ? POINTS.birthdayMultiplier : 1);
+    // A spouse's gains and losses are halved (note 61).
+    const raw = id === this.spouseId ? Math.trunc(full / 2) : full;
     const points = this.add(r, id, raw);
     r.giftDay = day;
     if (!birthday) r.weekGifts += 1;

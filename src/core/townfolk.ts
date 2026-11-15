@@ -1,6 +1,14 @@
 import { dateOf } from "./calendar";
 import { clockText } from "./clock";
 import { courtGift } from "./courtship";
+import {
+  jealousyLine,
+  kiss,
+  kissLine,
+  spouseId,
+  spouseLine,
+  villagerForDay,
+} from "./spouse";
 import { villagerNow, type FestivalOpts } from "./festivalroutes";
 import { HEART, Friendship, isBirthday, type Taste } from "./friendship";
 import type { GameState } from "./save";
@@ -37,7 +45,7 @@ export interface Present {
  * table is partly placeholder, see `resolvePlace`).
  */
 export function villagersOn(
-  g: Pick<GameState, "weather">,
+  g: Pick<GameState, "weather"> & Partial<Pick<GameState, "marriage">>,
   mapId: string,
   day: number,
   minutes: number,
@@ -45,7 +53,9 @@ export function villagersOn(
 ): Present[] {
   const ctx = dayContext(day, g.weather);
   const out: Present[] = [];
-  for (const v of VILLAGERS) {
+  for (const row of VILLAGERS) {
+    // The spouse keeps a route built from their own from the morning after the wedding (note 84).
+    const v = villagerForDay(g, row, day, g.weather);
     // The festival layer comes first (note 79 selection order, note 82).
     const n = villagerNow(v, day, ctx, minutes, opts);
     if (n.festival) {
@@ -127,6 +137,8 @@ export interface MeetResult {
   message: string;
   /** The gift item taken from the pack, if one was given. */
   consumed?: string;
+  /** True when the first kiss of the day was given: the scene shows hearts. */
+  kiss?: boolean;
 }
 
 const TASTE_KEY: Record<Taste, keyof typeof LINES> = {
@@ -169,13 +181,26 @@ export function meet(
     const r = f.gift(id, held, day);
     if (r.ok) {
       g.inventory.remove(held, 1);
+      const jealous = jealousyLine(g, id, r.taste);
       return {
-        message: line(TASTE_KEY[r.taste], v.name) + tail(),
+        message:
+          line(TASTE_KEY[r.taste], v.name) +
+          (jealous ? ` ${jealous}` : "") +
+          tail(),
         consumed: held,
       };
     }
   }
   const t = f.talk(id, day);
+  // The spouse has a line by heart level, and the first kiss of the day restores energy (note 12).
+  if (spouseId(g) === id) {
+    const kissed = kiss(g, id) !== undefined;
+    return {
+      message:
+        spouseLine(g, id, day) + (kissed ? ` ${kissLine(id)}` : "") + tail(),
+      ...(kissed ? { kiss: true } : {}),
+    };
+  }
   return {
     message:
       (t.ok

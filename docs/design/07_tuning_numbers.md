@@ -989,3 +989,24 @@ Source: `src/core/quests.ts`, `src/content/requests.json`.
   the road trader's yard. Sells one token at a time.
 - Wedding: the morning of the third day after the token. A festival day or a rain day puts it off
   one day at a time. The wedding day is free; the spouse room appears at once.
+
+## Spouse life (slice 3, 2026-11-14, note 12, placeholders)
+
+All in `src/content/spouse.json`. Chores run on the morning after the night, from the morning
+after the wedding. They never fail for a late or absent player and never repair.
+
+- Day: wake 6:00, chores 6:30, breakfast 7:30, leave not before 7:45 (walk time by area of the
+  first work stop: Hearthwell 30 min, Forest and delta 40, Mountain and beach 50, Quarry and
+  mines 60), work stops of the old route from 9:00 to 17:00 with home stops dropped, evening at
+  the outside corner in fair weather (room in rain, snow and winter) from 18:00, room from 21:30,
+  bed 22:00. Rain, a closed counter day and festivals keep the spouse at the farm.
+- Waters 4 to 6 crop tiles nearest the house door, within 12 tiles, growing seasons only, dry
+  mornings only (rain waters all). It never waters a full field, so a big farm still needs the player.
+- Feeds all animals once a day with hay from the silo only (not the pack). It costs hay, and with
+  an empty silo the animals stay unfed. Note 23: "a spouse feeds hay only".
+- First kiss of the day: +50 energy (about a fifth of 270). Stardew restores exhaustion and the
+  amount is not checked (SC-180). Later kisses the same day do nothing.
+- 12.5 hearts (3,125 points): one elderfruit, once per save, eaten on receipt (note 39 source 3).
+  If the pack is full it waits for the next morning.
+- Spouse gifts: one a day, no weekly limit, gains and losses halved (note 61).
+- Jealousy: one line, no friendship change.

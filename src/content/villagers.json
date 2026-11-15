@@ -21,6 +21,9 @@
     },
     "beach": {
       "map": null
+    },
+    "farm": {
+      "map": "farm"
     }
   },
   "places": {
@@ -221,6 +224,22 @@
     },
     "road:beach": {
       "transit": true
+    },
+    "farm:house": {
+      "interior": "house"
+    },
+    "farm:yard": {
+      "x": 62,
+      "y": 12,
+      "placeholder": true
+    },
+    "farm:corner": {
+      "x": 70,
+      "y": 9,
+      "placeholder": true
+    },
+    "road:hw": {
+      "transit": true
     }
   },
   "interiorSpots": {
@@ -247,6 +266,18 @@
     "dummy": {
       "x": 6,
       "y": 5
+    },
+    "spouse-bed": {
+      "x": 48,
+      "y": 24
+    },
+    "spouse-kitchen": {
+      "x": 25,
+      "y": 23
+    },
+    "spouse-room": {
+      "x": 63,
+      "y": 27
     }
   },
   "idleKeys": [

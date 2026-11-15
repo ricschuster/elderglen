@@ -1,6 +1,7 @@
 import { CATEGORY_NAMES, type ArtisanCategory } from "./artisan";
 import { rewardText, ROOMS } from "./bundles";
 import { dateOf } from "./calendar";
+import { weddingMark } from "./courtship";
 import { itemById } from "./items";
 import { letterOf } from "./mail";
 import { daysLeft, ready, wantText } from "./quests";
@@ -22,13 +23,16 @@ export type JournalSection = (typeof JOURNAL_SECTIONS)[number]["key"];
 /** The open requests, each with its want, pay, time left and progress. */
 export function questLines(g: GameState): string[] {
   const open = g.quests.open();
+  const wedding = weddingMark(g);
+  const mark = wedding ? [wedding] : [];
   if (open.length === 0)
     return [
+      ...mark,
       "No open requests.",
       "Take one from the request board and it will be listed here.",
     ];
   const day = g.day.clock.day;
-  const lines: string[] = [];
+  const lines: string[] = [...mark];
   for (const q of open) {
     lines.push(wantText(q));
     const left = daysLeft(q, day);

@@ -1,0 +1,187 @@
+{
+  "_note": "Spouse life (note 12 slice 3, #936). Every time, number and line is a placeholder (note 07, voice sheets are M3d). Times are H:MM on the 6:00 to 26:00 day. The route is built from the person's own route in src/core/spouse.ts.",
+  "times": {
+    "wake": "6:00",
+    "chores": "6:30",
+    "breakfast": "7:30",
+    "leaveFloor": "7:45",
+    "workFrom": "9:00",
+    "workUntil": "17:00",
+    "home": "18:00",
+    "indoors": "21:30",
+    "bed": "22:00"
+  },
+  "travel": {
+    "_note": "Game minutes from the farm to the first work stop, by the area of that stop.",
+    "default": 30,
+    "hw": 30,
+    "forest": 40,
+    "delta": 40,
+    "mtn": 50,
+    "beach": 50,
+    "quarry": 60,
+    "mines": 60
+  },
+  "chores": {
+    "_note": "Waters this many crop tiles nearest the house door, in growing seasons only. Feeds hay only (draws on the silo).",
+    "waterMin": 4,
+    "waterMax": 6,
+    "door": {
+      "x": 62,
+      "y": 12
+    },
+    "radius": 12
+  },
+  "kiss": {
+    "energy": 50,
+    "fx": "hearts"
+  },
+  "perk": {
+    "hearts": 12.5,
+    "line": "PLACEHOLDER TEXT: {name} left something small and bright on the table. It is for you."
+  },
+  "idleDefault": "rest",
+  "lines": [
+    {
+      "from": 0,
+      "lines": [
+        "PLACEHOLDER TEXT: {name} says good morning and hands you a cup.",
+        "PLACEHOLDER TEXT: {name} asks how the fields look today.",
+        "PLACEHOLDER TEXT: {name} hums while tidying the table."
+      ]
+    },
+    {
+      "from": 6,
+      "lines": [
+        "PLACEHOLDER TEXT: {name} says the house feels like home now.",
+        "PLACEHOLDER TEXT: {name} saved you the warm end of the loaf.",
+        "PLACEHOLDER TEXT: {name} tells you a small story from the village."
+      ]
+    },
+    {
+      "from": 10,
+      "lines": [
+        "PLACEHOLDER TEXT: {name} takes your hand and says nothing, which says plenty.",
+        "PLACEHOLDER TEXT: {name} says every day here is a good one.",
+        "PLACEHOLDER TEXT: {name} says the two ledgers read well together."
+      ]
+    },
+    {
+      "from": 12,
+      "lines": [
+        "PLACEHOLDER TEXT: {name} says there is nobody they would rather share a roof with.",
+        "PLACEHOLDER TEXT: {name} says the valley was waiting for you.",
+        "PLACEHOLDER TEXT: {name} says they are happy, simply and fully."
+      ]
+    }
+  ],
+  "kissLine": "PLACEHOLDER TEXT: {name} kisses you. You feel rested.",
+  "jealousy": "PLACEHOLDER TEXT: {spouse} sees the gift and smiles a little wistfully.",
+  "props": {
+    "_note": "Per-spouse prop block, 4 by 4 tiles at the spouse-props mark (back right corner of the spouse room, note 85). Each prop: name, dx, dy, w, h inside the block. Placeholder rectangles until the art pass.",
+    "default": [
+      ["Shelf", 0, 0, 2, 1],
+      ["Chair", 2, 2, 1, 1]
+    ]
+  },
+  "spouses": {
+    "alder": {
+      "idle": "weed",
+      "props": [
+        ["Seed shelf", 0, 0, 2, 1],
+        ["Potted seedlings", 2, 1, 1, 1]
+      ]
+    },
+    "bramwell": {
+      "idle": "hammer",
+      "props": [
+        ["Small anvil", 0, 0, 1, 1],
+        ["Tool rack", 1, 0, 2, 1]
+      ]
+    },
+    "aurelle": {
+      "idle": "study",
+      "props": [
+        ["Herb shelf", 0, 0, 2, 1],
+        ["Mortar table", 2, 2, 2, 1]
+      ]
+    },
+    "dunmar": {
+      "idle": "read",
+      "props": [
+        ["Ledger desk", 0, 0, 2, 1],
+        ["Book stack", 2, 1, 1, 1]
+      ]
+    },
+    "cordelia": {
+      "idle": "sew",
+      "props": [
+        ["Hat stand", 0, 0, 1, 2],
+        ["Sewing table", 2, 1, 2, 1]
+      ]
+    },
+    "barnaby": {
+      "idle": "sketch",
+      "props": [
+        ["Easel", 0, 0, 1, 2],
+        ["Sketch pile", 2, 2, 1, 1]
+      ]
+    },
+    "linnet": {
+      "idle": "run",
+      "props": [
+        ["Race ribbons", 0, 0, 2, 1],
+        ["Boot rack", 2, 2, 2, 1]
+      ]
+    },
+    "thistle": {
+      "idle": "cook",
+      "props": [
+        ["Spice rack", 0, 0, 2, 1],
+        ["Small stove", 2, 0, 1, 1]
+      ]
+    },
+    "dilly": {
+      "idle": "tend",
+      "props": [
+        ["Feed bins", 0, 0, 2, 1],
+        ["Hay bale", 2, 2, 1, 1]
+      ]
+    },
+    "korvi": {
+      "idle": "forge",
+      "props": [
+        ["Ore samples", 0, 0, 2, 1],
+        ["Bench", 1, 2, 2, 1]
+      ]
+    },
+    "marl": {
+      "idle": "work",
+      "props": [
+        ["Surveyor's table", 0, 0, 2, 1],
+        ["Rock samples", 2, 2, 1, 1]
+      ]
+    },
+    "maren": {
+      "idle": "spar",
+      "props": [
+        ["Practice dummy", 0, 0, 1, 1],
+        ["Weapon rack", 1, 0, 2, 1]
+      ]
+    },
+    "rushie": {
+      "idle": "fish",
+      "props": [
+        ["Rod rack", 0, 0, 2, 1],
+        ["Tackle chest", 2, 1, 1, 1]
+      ]
+    },
+    "thalwen": {
+      "idle": "gaze",
+      "props": [
+        ["Shell shelf", 0, 0, 2, 1],
+        ["Star chart", 2, 0, 2, 1]
+      ]
+    }
+  }
+}

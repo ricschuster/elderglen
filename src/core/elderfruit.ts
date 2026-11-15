@@ -51,6 +51,7 @@ export const SOURCE_FLAGS = {
   hermit: "elderfruit-hermit",
   spirit: "elderfruit-spirit",
   emberseed: "emberseed-given",
+  spouse: "elderfruit-spouse",
 } as const;
 
 /** Source 1: the Harvest Showing's counter price, and source 4: the hermit's. Placeholders (note 39). */

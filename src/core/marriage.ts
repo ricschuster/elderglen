@@ -31,6 +31,8 @@ export interface MarriageSave {
   /** The day the wedding is set for while engaged, or took place once married. */
   weddingDay: number;
   children: number;
+  /** The last day the spouse was kissed, for the daily energy (note 12). */
+  kissDay?: number;
 }
 
 const STAGES: readonly Stage[] = ["none", "courting", "engaged", "married"];
@@ -43,6 +45,8 @@ export class Marriage {
   spouse: string | null = null;
   weddingDay = 0;
   children = 0;
+  /** The last day the spouse was kissed, 0 for never. */
+  kissDay = 0;
 
   /** Whether `id` is the person being courted, engaged to or married to. */
   isPartner(id: string): boolean {
@@ -99,6 +103,7 @@ export class Marriage {
     this.spouse = null;
     this.weddingDay = 0;
     this.children = 0;
+    this.kissDay = 0;
     return true;
   }
 
@@ -115,6 +120,7 @@ export class Marriage {
       spouse: this.spouse,
       weddingDay: this.weddingDay,
       children: this.children,
+      kissDay: this.kissDay,
     };
   }
 
@@ -124,6 +130,7 @@ export class Marriage {
     this.spouse = null;
     this.weddingDay = 0;
     this.children = 0;
+    this.kissDay = 0;
     if (typeof raw !== "object" || raw === null) return;
     const o = raw as Record<string, unknown>;
     if (
@@ -140,5 +147,6 @@ export class Marriage {
       this.stage === "married" && isCount(o.children)
         ? Math.min(o.children, MAX_CHILDREN)
         : 0;
+    this.kissDay = this.married && isCount(o.kissDay) ? o.kissDay : 0;
   }
 }

@@ -71,6 +71,7 @@ describe("stages", () => {
       spouse: null,
       weddingDay: 0,
       children: 0,
+      kissDay: 0,
     });
     expect(m.court("aurelle", 99999)).toBe(true);
   });
@@ -89,6 +90,7 @@ describe("save", () => {
       spouse: "bramwell",
       weddingDay: 8,
       children: 1,
+      kissDay: 0,
     });
   });
 

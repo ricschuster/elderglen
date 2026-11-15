@@ -1,6 +1,6 @@
 # 12 Marriage (draft)
 
-Status: draft. Slice 2 (courtship to wedding) built 2026-11-14. Written from the design talk of 2026-10-27; the open questions
+Status: draft. Slice 2 (courtship to wedding) and slice 3 (spouse life) built 2026-11-14. Written from the design talk of 2026-10-27; the open questions
 were settled on 2026-10-29 and 2026-11-14 (see Decided). Nothing here is
 built. Marriage is not in the first playable or M3. Since 2026-11-14 it is in
 M3b (owner), built in the slices below. This note is the design note CLAUDE.md asks for.
@@ -118,6 +118,20 @@ M3d. Numbers go in `07_tuning_numbers.md`.
 
 Slice 2 is the risk: it touches friendship, items, festival scene, schedules and the
 save at once. Keep multiplayer in mind (M4, ADR 0007): spouse state is per farm.
+
+Slice 3 built (#936, `src/core/spouse.ts`, `src/content/spouse.json`, `tests/spouse.test.ts`): the
+spouse route built from the person's own (`spousePlan`, `spouseVillager`, read by `villagersOn`) from
+the morning after the wedding; the farm places (`farm:house/spouse-bed`, `-kitchen`, `-room`,
+`farm:yard`, `farm:corner`) in `villagers.json`; the spouse morning in `sleep()` (feeds hay from the
+silo only, waters 4 to 6 crops nearest the door, growing seasons, dry mornings); the daily kiss
+(`kiss`, energy once a day, a heart float in the scene, `kissDay` in the marriage save); daily lines
+by heart level; the gentle jealousy line; the 12.5 heart elderfruit (note 39 source 3, flag
+`elderfruit-spouse`) left at wake-up; a spouse takes a gift every day, with no weekly limit and
+halved points (note 61); the `spouse-props` mark and the placeholder prop block drawn in the
+spouse room; a journal mark for the wedding day; the heart event cap raised to 14, spouse events
+(above 10 hearts) read the spouse route and start only for the married person. Not built: divorce
+(slice 4), children (slice 5), the real spouse events and lines (M3d), the ex-spouse not attending.
+Wedding put-off for a town square event was built in slice 2 (`weddingBlock`: any festival day).
 
 ## Earlier suggested slices (superseded by the list above)
 

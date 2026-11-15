@@ -1,4 +1,5 @@
 import { dateOf, type Season } from "./calendar";
+import { spouseMorning, type SpouseNews } from "./spouse";
 import { FARM_STORE } from "./mapstore";
 import { growPots, rainOnPots } from "./gardenpot";
 import { clearMineLights } from "./lights";
@@ -163,6 +164,8 @@ export interface SleepReport {
   guestsBonus: string[];
   /** Names of young fruit trees that could not grow, since something stood in their 3x3. */
   stuckTrees: string[];
+  /** What the spouse did this morning, from the day after the wedding (note 12). */
+  spouse?: SpouseNews;
 }
 
 /**
@@ -338,6 +341,8 @@ export function sleep(
   const animals = animalsEndDay(g, random);
   const horseWasOut = horseEndDay(g);
   const furnaceGifted = deliverFurnace(g);
+  // The spouse feeds the animals and waters a few crops, after the night's own work (note 12).
+  const spouse = spouseMorning(g, random);
 
   const achievements = checkAchievements(g).map((a) => a.name);
   // The summit: tonight's check arms the call; the steward comes this morning
@@ -387,6 +392,7 @@ export function sleep(
     ferryMended: ferryNews(g),
     cartsRunning: cartNews(g),
     guestsBonus: payGuestsBoard(g),
+    ...(spouse ? { spouse } : {}),
   };
 }
 

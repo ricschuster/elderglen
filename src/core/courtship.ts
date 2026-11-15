@@ -1,4 +1,5 @@
 import courtshipData from "../content/courtship.json";
+import { dateOf } from "./calendar";
 import { clockText } from "./clock";
 import { festivalDayToday } from "./festivals";
 import { COURT_HEARTS, PROPOSE_HEARTS, TOKEN_PRICE } from "./marriage";
@@ -145,6 +146,20 @@ export function weddingMorning(g: GameState): "go" | "postponed" | "none" {
     return "postponed";
   }
   return "go";
+}
+
+/**
+ * The calendar mark for the wedding day (note 84): a journal line while engaged,
+ * or "" otherwise. A festival or a rain day moves the day, and this follows it.
+ */
+export function weddingMark(g: Pick<GameState, "marriage" | "day">): string {
+  const m = g.marriage;
+  if (m.stage !== "engaged" || !m.spouse) return "";
+  const { season, dayOfSeason } = dateOf(m.weddingDay);
+  const left = m.weddingDay - g.day.clock.day;
+  const when =
+    left <= 0 ? "today" : left === 1 ? "tomorrow" : `in ${left} days`;
+  return `Wedding with ${nameOf(m.spouse)}: ${season} ${dayOfSeason}, ${when}. A festival or a rain day puts it off a day.`;
 }
 
 export const weddingId = (spouse: string): string => `wedding-${spouse}`;

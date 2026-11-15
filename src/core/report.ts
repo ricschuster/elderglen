@@ -3,6 +3,7 @@ import { WAITING_ROOMS_LINE } from "./house";
 import { ordersReportLines } from "./orders";
 import type { SleepReport } from "./sleep";
 import { itemById } from "./items";
+import { spouseReportLines } from "./spouse";
 import { SUMMIT_TEXT } from "./summit";
 
 /** The words for the morning after: what happened overnight, one per line. */
@@ -64,6 +65,7 @@ export function reportLines(r: SleepReport): string[] {
     lines.push(
       "The Guests' Board is done. The people you have met think the better of you.",
     );
+  lines.push(...spouseReportLines(r.spouse));
   if (r.houseFinished) {
     lines.push("The carpenter has finished. Your new rooms are ready.");
     if (r.houseTier === 2) lines.push(WAITING_ROOMS_LINE);

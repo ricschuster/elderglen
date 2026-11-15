@@ -170,6 +170,7 @@ import {
 import { roadNews } from "../core/roadnews";
 import { traderProblem } from "../core/trader";
 import { sellerProblem } from "../core/courtship";
+import { PROPS_MARK, propsOf, spouseId } from "../core/spouse";
 import { weddingId, weddingMorning } from "../core/courtship";
 import {
   CART_IDLE_LINE,
@@ -650,6 +651,7 @@ export class FarmScene extends Phaser.Scene {
     this.wash = this.add.graphics().setDepth(DEPTH.decal + 1);
     world.push(this.ground, this.wash);
     world.push(...this.drawLabels());
+    world.push(...this.drawSpouseProps(holds));
     let spawn: { x: number; y: number } = this.map.entry(this.entryName)!;
     // Coming up from below lands on the ladder that was taken down.
     const ladder = this.floorState?.ladder;
@@ -1592,6 +1594,13 @@ export class FarmScene extends Phaser.Scene {
       held.kind === "item" ? held.id : undefined,
     );
     this.message = r.message;
+    if (r.kiss)
+      this.floatText(
+        (tile.x + 0.5) * this.map.tileSize,
+        tile.y * this.map.tileSize - 4,
+        "\u2665",
+        "#ff7aa8",
+      );
     this.render();
     return true;
   }
@@ -3033,6 +3042,45 @@ export class FarmScene extends Phaser.Scene {
         .setDepth(900);
       return label;
     });
+  }
+
+  /**
+   * The spouse's placeholder props in the 4 by 4 block at the back right corner
+   * of the spouse room (note 85): one coloured block and a name tag per prop,
+   * from `spouse.json`. They do not block movement. Art comes with the art pass.
+   */
+  private drawSpouseProps(
+    holds: ReadonlySet<string>,
+  ): Phaser.GameObjects.GameObject[] {
+    const who = spouseId(this.state);
+    if (!who || !isHouseMap(this.mapId)) return [];
+    const mark = maps
+      .marksWith(this.mapId, holds, this.tier)
+      .marks.find((m) => m.name === PROPS_MARK);
+    if (!mark) return [];
+    const ts = this.map.tileSize;
+    const out: Phaser.GameObjects.GameObject[] = [];
+    for (const p of propsOf(who)) {
+      const x = (mark.x + p.dx) * ts;
+      const y = (mark.y + p.dy) * ts;
+      out.push(
+        this.add
+          .rectangle(x, y, p.w * ts, p.h * ts, 0x9a7b5a, 0.85)
+          .setOrigin(0)
+          .setStrokeStyle(1, 0x3b2a1a, 0.9)
+          .setDepth(DEPTH.decal + 1),
+        this.add
+          .text(x + (p.w * ts) / 2, y + (p.h * ts) / 2, p.name, {
+            fontSize: "6px",
+            color: "#ffffff",
+            wordWrap: { width: p.w * ts },
+            align: "center",
+          })
+          .setOrigin(0.5)
+          .setDepth(DEPTH.decal + 2),
+      );
+    }
+    return out;
   }
 
   /** Tint each built room's floor and walls with its wallpaper and flooring (note 10). */
