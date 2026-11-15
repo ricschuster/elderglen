@@ -20,7 +20,7 @@
       "map": "delta"
     },
     "beach": {
-      "map": null
+      "map": "cove"
     },
     "farm": {
       "map": "farm"
@@ -30,12 +30,12 @@
     "hw:store": {
       "interior": "general-store",
       "x": 22,
-      "y": 24
+      "y": 28
     },
     "hw:healer": {
       "interior": "healer",
       "x": 41,
-      "y": 24
+      "y": 28
     },
     "hw:inn": {
       "interior": "inn",
@@ -176,8 +176,8 @@
       "placeholder": true
     },
     "mines:hall": {
-      "x": 10,
-      "y": 10,
+      "x": 6,
+      "y": 4,
       "placeholder": true
     },
     "delta:hut": {
@@ -198,12 +198,12 @@
       "placeholder": true
     },
     "beach:dunes": {
-      "x": 10,
+      "x": 9,
       "y": 15,
       "placeholder": true
     },
     "beach:shore": {
-      "x": 25,
+      "x": 12,
       "y": 30,
       "placeholder": true
     },

@@ -306,7 +306,7 @@ describe("schedule engine", () => {
     expect(resolvePlace("hw:store")).toMatchObject({
       map: "hearthwell",
       x: 22,
-      y: 24,
+      y: 28,
       placeholder: false,
       indoors: false,
     });
@@ -320,7 +320,7 @@ describe("schedule engine", () => {
       indoors: true,
     });
     expect(resolvePlace("hw:square")?.placeholder).toBe(true);
-    expect(resolvePlace("beach:dunes")?.map).toBeNull();
+    expect(resolvePlace("beach:dunes")?.map).toBe("cove");
     expect(resolvePlace("nowhere:else")).toBeUndefined();
   });
 });
