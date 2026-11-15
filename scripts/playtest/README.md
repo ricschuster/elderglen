@@ -66,7 +66,7 @@ hat box Collections row, buying and placing the Furniture Catalogue, taking a co
 morning report, and fails on any console error.
 
 `npm run playtest:sweep` opens every festival and every heart event in the real game, in parallel browser
-pages (`WORKERS`, default 4), through `farmState`. A festival: the green on the farm, the invitation, the
+pages (`WORKERS`, default 12), through `farmState`. A festival: the green on the farm, the invitation, the
 screen or the festival map (panels, the way out), and the state after leaving (clock, visit recorded, hat, the
 farm running and the farmer moving). A heart event: sets hearts, flags, weather, season and a time inside its
 window, goes to the map and walks to the event's place so it starts by itself, steps through it with Enter

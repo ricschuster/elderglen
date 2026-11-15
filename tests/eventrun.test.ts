@@ -162,39 +162,39 @@ describe("eventAtTile", () => {
   it("finds the store event beside the store door once hearts are met", () => {
     const g = newGame();
     const e = eventById("odette-store-2")!;
-    expect(placesAt("hearthwell", 23, 25)).toContain(e.place);
-    expect(eventAtTile(g, "hearthwell", 22, 24, ctx)).toBeUndefined();
+    expect(placesAt("hearthwell", 23, 29)).toContain(e.place);
+    expect(eventAtTile(g, "hearthwell", 22, 28, ctx)).toBeUndefined();
     setHearts(g, "odette", 2);
-    expect(eventAtTile(g, "hearthwell", 22, 24, ctx)?.id).toBe(e.id);
+    expect(eventAtTile(g, "hearthwell", 22, 28, ctx)?.id).toBe(e.id);
     expect(eventAtTile(g, "hearthwell", 5, 5, ctx)).toBeUndefined();
   });
   it("not now: a declined event is not offered again, and is not recorded", () => {
     const g = newGame();
     setHearts(g, "odette", 2);
     expect(
-      eventAtTile(g, "hearthwell", 22, 24, ctx, ["odette-store-2"]),
+      eventAtTile(g, "hearthwell", 22, 28, ctx, ["odette-store-2"]),
     ).toBeUndefined();
     expect(g.heartEvents.seen("odette-store-2")).toBe(false);
-    expect(eventAtTile(g, "hearthwell", 22, 24, ctx)).toBeDefined();
+    expect(eventAtTile(g, "hearthwell", 22, 28, ctx)).toBeDefined();
   });
   it("is seen only on completion, then never again", () => {
     const g = newGame();
     setHearts(g, "odette", 2);
-    const e = eventAtTile(g, "hearthwell", 22, 24, ctx)!;
+    const e = eventAtTile(g, "hearthwell", 22, 28, ctx)!;
     expect(g.heartEvents.seen(e.id)).toBe(false);
     completeEvent(g, e, 3);
     expect(g.heartEvents.seen(e.id)).toBe(true);
     expect(
-      eventAtTile(g, "hearthwell", 22, 24, { ...ctx, day: 4 }),
+      eventAtTile(g, "hearthwell", 22, 28, { ...ctx, day: 4 }),
     ).toBeUndefined();
   });
   it("none on the day an event already ran", () => {
     const g = newGame();
     setHearts(g, "odette", 2);
     setHearts(g, "hattie", 2);
-    const e = eventAtTile(g, "hearthwell", 22, 24, ctx)!;
+    const e = eventAtTile(g, "hearthwell", 22, 28, ctx)!;
     completeEvent(g, e, 3);
-    expect(eventAtTile(g, "hearthwell", 22, 24, ctx)).toBeUndefined();
+    expect(eventAtTile(g, "hearthwell", 22, 28, ctx)).toBeUndefined();
   });
   it("the warning names the person", () => {
     expect(warningText(eventById("odette-store-2")!)).toContain("Odette");
