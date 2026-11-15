@@ -113,7 +113,7 @@ scope is in `13_m3_scope.md` (accepted, #130).
 - Tree types by region, as Stardew (`36_gathering_trees_sap_fiber.md`, SC-30):
   three types in fixed places outside the farm, regrowing when chopped, and some
   cosmetic ones that cannot be chopped. Decided 2026-11-06 for M3, not M2: #396.
-- Marriage: moved into M3b on 2026-11-14 (owner), built from note 12 (#137, closed).
+- Marriage: moved into M3b on 2026-11-14 (owner), built from note 12 (#137, closed), slices 1 to 6 (#934 to #939) built to shell level on 2026-11-14.
   The ring 1 cast list (#136, note 20) and the final name (#138, Elderglen,
   ADR 0011) are settled and closed.
 

@@ -494,5 +494,13 @@
   "pocket-coin": {
     "text": "A small coin dropped by Nabblers. Fitch and Wren both love to be given one. It sells for 15 coins.",
     "draft": true
+  },
+  "bouquet": {
+    "text": "A bunch of wildflowers from the general store. Give it to someone you know well (8 hearts) to begin courting. Placeholder text.",
+    "draft": true
+  },
+  "promise-token": {
+    "text": "A small promise token, sold by the rain peddler on rainy days for 5,000 coins. Give it to the person you are courting (10 hearts) to ask them to marry you. Placeholder text.",
+    "draft": true
   }
 }

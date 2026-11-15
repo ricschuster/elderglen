@@ -1,9 +1,10 @@
 # 12 Marriage (draft)
 
-Status: draft. Slice 2 (courtship to wedding) and slice 3 (spouse life) built 2026-11-14. Written from the design talk of 2026-10-27; the open questions
-were settled on 2026-10-29 and 2026-11-14 (see Decided). Nothing here is
-built. Marriage is not in the first playable or M3. Since 2026-11-14 it is in
-M3b (owner), built in the slices below. This note is the design note CLAUDE.md asks for.
+Status: built to shell level (2026-11-14, slices 1 to 6, issues #934 to #939), with placeholder text, numbers and art. Written from the design talk of 2026-10-27; the open questions
+were settled on 2026-10-29 and 2026-11-14 (see Decided). Marriage is not in the first playable or M3. Since 2026-11-14 it is in
+M3b (owner). Left: the owner's play (nothing in slices 2 to 5 has been seen in a browser by the owner), the open owner
+questions in the handoff 2026-11-14j (cancel refund, no remarrying an ex, children at divorce, ledger placement, the
+bouquet sold at the general store, kiss energy, heart cap, MAX_CHILDREN), real lines, events and art (M3d), the ex at weddings and visiting the children, and multiplayer (M4). This note is the design note CLAUDE.md asks for.
 
 ## Why
 
@@ -113,7 +114,7 @@ M3d. Numbers go in `07_tuning_numbers.md`.
    room and chores removed next morning, wedding state cleared.
 5. **Children.** Nursery at house tier 2 (note 85), the ask after bed, child as a villager
    with hearts, lines and small actions, no needs.
-6. **Docs and checks.** Wiki and Guide rows, overview and valley-map JSON, playtest bot
+6. **Docs and checks (built, #939: wiki draft text for the bouquet and token, planned-list entry, overview and valley-map rows, `npm run playtest:marriage`, handoff).** Wiki and Guide rows, overview and valley-map JSON, playtest bot
    covers a wedding, handoff.
 
 Slice 2 is the risk: it touches friendship, items, festival scene, schedules and the

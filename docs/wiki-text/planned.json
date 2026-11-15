@@ -42,10 +42,10 @@
     "line": "A way to find a mahogany seed from a monster. Needs the Secret Woods creatures."
   },
   {
-    "name": "Elderfruit from the spouse and the gallery set",
+    "name": "Elderfruit from the gallery set",
     "kind": "Item",
     "note": "39_completion_total.md",
-    "line": "Two of the seven elderfruit sources are still to build."
+    "line": "One of the seven elderfruit sources is still to build. The spouse source is built (12.5 hearts, note 12)."
   },
   {
     "name": "Harvest Showing judging",
@@ -118,5 +118,11 @@
     "kind": "Place",
     "note": "03_milestones.md",
     "line": "Regions beyond the home valley, milestone M5."
+  },
+  {
+    "name": "Marriage: wedding, spouse and children",
+    "kind": "People",
+    "note": "12_marriage.md",
+    "line": "Built to shell level with placeholder text: bouquet and promise token (item pages appear once a bundle or recipe names them), the rain peddler in Hearthwell, the wedding, the spouse room, the daily kiss, divorce at the hall ledger and children. Real lines, events and art wait for the voice sheets and M3d."
   }
 ]
