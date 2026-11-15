@@ -22,7 +22,7 @@ Decisions and built detail for sessions 7 to 10 (2026-11-12) are in `PRIORITIES_
 
 Open, top to bottom:
 
-0. **Find the playtest crash cause (next session, first).** Sessions keep dying with playtests or sweeps running (last: secret-woods, sweep and vitest launched together, handoff 2026-11-14k). Find the cause (memory, browser count, workers, detached launch); run playtests one at a time until then.
+0. **Machine freezes (5 on 2026-11-14): leading cause is the root NVMe (Samsung 960 PRO, btrfs) dropping out, not the playtests.** Freeze 5 had no playtest; a screen photo showed btrfs EIO write errors. SMART is clean. Owner: back up, add `nvme_core.default_ps_max_latency_us=0 pcie_aspm=off`, reseat the drive, scrub. See `~/Projects/machine-freeze-investigation/README.md` (its own repo, not part of the game). Ask for the top of the screen or `ssh dmesg -w` at the next freeze.
 1. **Owner answers left:** none. Decided 2026-11-13: garden pot is clay 1, stone 10 and a refined crystal (smelted quartz, Stardew), taught by Alder (still to build, with a smelt recipe); Frostfin 300g, no bundle slot; Frostday cap is Icewarden's Cap (built); the hunt prize is the emberseed (built); aged roe quality closed. Algae soup is the glassy-elver's reward (note 93).
 2. **#873 heart events** (note 62): 66 events (62 plus four rain events), rewards real. Left: the owner's play, seed and window edits, then 4, 8 and 10 with the voice sheets (M3d).
 3. **#878 Secret Woods:** fully built (statue, pond fish, creatures with the Burrmouse and the Mahogany seed drop, 2026-11-14). Left: tune in play.
