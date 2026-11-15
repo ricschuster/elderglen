@@ -34,7 +34,7 @@ of slice 1, and slices fish, mines and animals into later slices.
 | Neglect and tone rules, villagers | #135 | In, as a rule only. No villager decay and no lose state are already how the game works. | Nothing to build. Record it and keep the tests honest. |
 | Neglect rules, animals | #135 | Out of M3. | There are no animals in the game yet. The rule is written (`09_story_and_lore.md`) and applies when animals are built. |
 | Ring 1 cast list | #136 | Out. Draft after the scope is settled. | A design task, not a build task. The slice needs only a few named villagers (see below). |
-| Marriage | #137 | Out. | Already "later, not M3". |
+| Marriage | #137 | Out of M3; in M3b since 2026-11-14 (note 12). | Was "later, not M3". |
 | Final name | #138 | Out. | Chosen: Elderglen (ADR 0011). The rename in code is separate. |
 
 ## The slice, in one paragraph

@@ -1,10 +1,9 @@
 # 12 Marriage (draft)
 
 Status: draft. Written from the design talk of 2026-10-27; the open questions
-were settled on 2026-10-29 (see Decided). Nothing here is
-built. Marriage is not in the first playable or M3; it follows once the
-friendship system (M3) and ring 1's cast exist. Needs this note before any
-code (see CLAUDE.md, Scope). Target: after M3, with the ring 1 cast.
+were settled on 2026-10-29 and 2026-11-14 (see Decided). Nothing here is
+built. Marriage is not in the first playable or M3. Since 2026-11-14 it is in
+M3b (owner), built in the slices below. This note is the design note CLAUDE.md asks for.
 
 ## Why
 
@@ -95,7 +94,32 @@ ADR 0002.
   and a home placement in the house.
 - Sprites for each candidate: wedding clothes, home animations.
 
-## Suggested slices
+## Build slices (M3b, drafted 2026-11-14)
+
+Each slice ends with `npm run check` and is playable. Placeholder art and text until
+M3d. Numbers go in `07_tuning_numbers.md`.
+
+1. **Data and state.** Candidate flag and heart cap on the 14 villager rows; save fields
+   for courting, engaged, married, spouse id, wedding day, child count; save version bump
+   and migration test. Core code in `src/core/`, no Phaser.
+2. **Courtship to wedding.** Bouquet at 8 hearts sets courting; the token (5,000g, rainy
+   day seller, own item) at 10 hearts; wedding three days later on the festival green
+   (note 84), a day off, spouse moves in. Heart events above 8 (note 62) unlock after the
+   bouquet. One candidate end to end first, then all 14 as data.
+3. **Spouse life.** Spouse room (note 85, shared, per-spouse prop block), daily routine
+   and lines (notes 79, 80, 84), chores (4 to 6 tiles, feeding), the daily kiss that restores
+   player energy, gentle jealousy line, 12.5 heart one-off item. Unblocks #874.
+4. **Divorce.** 50,000g, a ledger scene, cancel before day end, ex-spouse keeps hearts,
+   room and chores removed next morning, wedding state cleared.
+5. **Children.** Nursery at house tier 2 (note 85), the ask after bed, child as a villager
+   with hearts, lines and small actions, no needs.
+6. **Docs and checks.** Wiki and Guide rows, overview and valley-map JSON, playtest bot
+   covers a wedding, handoff.
+
+Slice 2 is the risk: it touches friendship, items, festival scene, schedules and the
+save at once. Keep multiplayer in mind (M4, ADR 0007): spouse state is per farm.
+
+## Earlier suggested slices (superseded by the list above)
 
 1. Marriage flag and heart cap in villager data, built with friendship (M3).
 2. One candidate's courtship, proposal and wedding, end to end, to prove the
@@ -135,6 +159,28 @@ Settled with the owner, closing issue #137.
   counts are set in those ring notes.
 - **Wedding look: left to the art pass** (#58). It is a ledger-joining scene
   with a day off.
+
+## Decided (2026-11-14, question batch)
+
+- **Milestone: folded into M3b** (owner). Supersedes "after M3" in the status line and
+  "Later, not M3" in note 03. Update `03_milestones.md`, ADR 0012's scope and CLAUDE.md
+  when it is built. #874 (spouse source) unblocks with it.
+- **Courtship: bouquet at 8 hearts, proposal at 10 hearts** (Stardew). No breakup
+  mechanic, since there is no decay or anger.
+- **Proposal token: 5,000g from a rainy-day seller** (Stardew's pendant structure, our
+  own item and seller).
+- **Divorce: 50,000g, can be cancelled before the day ends** (Stardew). Friendship stays
+  at its old level (our rule, not Stardew's reset to 0).
+- **Spouse chores: waters 4 to 6 tiles near the house, feeds animals, no repairs.**
+- **Spouse perk: a Stardrop-like one-off at 12.5 hearts** (Stardew). Our own item.
+- **Children: lines and small ambient actions, the child can be talked to and has hearts
+  that grow.** No needs, no neglect.
+- **Exhaustion: the player's, as Stardew (SC-180).** The first kiss of the day restores
+  the player's energy. The spouse does not tire and never skips chores. Confirmed with
+  the owner 2026-11-14 after the first answer was found to describe a different idea.
+- **Jealousy: a gentle comment only**, no penalty. **Messy house: not in** (no answer
+  given; treated as out under the no-nag rule).
+- **Spouse room:** one shared room for all 14, with a per-spouse prop block (note 85).
 
 ## Open
 
