@@ -24,6 +24,17 @@ export const SPOUSE_PERK_HEARTS = 12.5;
 /** Most children a farm can have. */
 export const MAX_CHILDREN = 2;
 
+/** The world flag a divorce raises for a former spouse (note 84). */
+export const exFlag = (id: string): string => `ex-${id}`;
+
+/** The candidates the player has been divorced from, read from the `ex-<id>` flags. */
+export function exSpouses(g: { flags?: string[] }): string[] {
+  return (g.flags ?? [])
+    .filter((f) => f.startsWith("ex-"))
+    .map((f) => f.slice(3))
+    .filter(isCandidate);
+}
+
 export interface MarriageSave {
   stage: Stage;
   /** The villager id of the person being courted, engaged to or married to. */
@@ -33,6 +44,8 @@ export interface MarriageSave {
   children: number;
   /** The last day the spouse was kissed, for the daily energy (note 12). */
   kissDay?: number;
+  /** A divorce is filed and takes effect next morning unless cancelled (note 12). */
+  divorcing?: boolean;
 }
 
 const STAGES: readonly Stage[] = ["none", "courting", "engaged", "married"];
@@ -47,6 +60,8 @@ export class Marriage {
   children = 0;
   /** The last day the spouse was kissed, 0 for never. */
   kissDay = 0;
+  /** A divorce is filed at the hall ledger: it takes effect next morning unless cancelled. */
+  divorcing = false;
 
   /** Whether `id` is the person being courted, engaged to or married to. */
   isPartner(id: string): boolean {
@@ -104,6 +119,7 @@ export class Marriage {
     this.weddingDay = 0;
     this.children = 0;
     this.kissDay = 0;
+    this.divorcing = false;
     return true;
   }
 
@@ -121,6 +137,7 @@ export class Marriage {
       weddingDay: this.weddingDay,
       children: this.children,
       kissDay: this.kissDay,
+      ...(this.divorcing ? { divorcing: true } : {}),
     };
   }
 
@@ -131,6 +148,7 @@ export class Marriage {
     this.weddingDay = 0;
     this.children = 0;
     this.kissDay = 0;
+    this.divorcing = false;
     if (typeof raw !== "object" || raw === null) return;
     const o = raw as Record<string, unknown>;
     if (
@@ -148,5 +166,6 @@ export class Marriage {
         ? Math.min(o.children, MAX_CHILDREN)
         : 0;
     this.kissDay = this.married && isCount(o.kissDay) ? o.kissDay : 0;
+    this.divorcing = this.married && o.divorcing === true;
   }
 }

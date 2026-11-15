@@ -77,6 +77,7 @@ const SERVICES: Record<string, string> = {
   "hedge-cart": "Cart Home",
   cart: "Cart",
   "herb-stall": "Herb Stall",
+  ledger: "The Ledger",
   "fisher-shop": "Fisher's Counter",
   "pin-stall": "Thalwen's Pin Stall",
   stonekeeper: "Stonekeeper",

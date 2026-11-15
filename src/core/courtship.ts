@@ -2,13 +2,13 @@ import courtshipData from "../content/courtship.json";
 import { dateOf } from "./calendar";
 import { clockText } from "./clock";
 import { festivalDayToday } from "./festivals";
-import { COURT_HEARTS, PROPOSE_HEARTS, TOKEN_PRICE } from "./marriage";
+import { COURT_HEARTS, PROPOSE_HEARTS, TOKEN_PRICE, exFlag } from "./marriage";
 import { HEART, isCandidate } from "./friendship";
 import type { Cmd, HeartEvent } from "./heartevents";
 import type { GameState } from "./save";
 import { parseTime, villagerById } from "./villagers";
 import { isRaining } from "./weather";
-import { setFlag } from "./worldflags";
+import { hasFlag, setFlag } from "./worldflags";
 
 /**
  * Courtship, the proposal and the wedding (note 12, slice 2, #935). Pure rules
@@ -87,6 +87,9 @@ export function courtGift(
     return no(`${name} smiles kindly. This is not a gift for a friend.`);
   const points = g.friendship.points(id);
   if (held === BOUQUET) {
+    // A former spouse stays a friend only (note 12, slice 4; the question is open).
+    if (hasFlag(g, exFlag(id)))
+      return no(`${name} smiles warmly. You are friends, and that is enough.`);
     if (m.isPartner(id))
       return no(`${name} already has your bouquet. Thank you again.`);
     if (m.stage !== "none")

@@ -133,6 +133,14 @@ spouse room; a journal mark for the wedding day; the heart event cap raised to 1
 (slice 4), children (slice 5), the real spouse events and lines (M3d), the ex-spouse not attending.
 Wedding put-off for a town square event was built in slice 2 (`weddingBlock`: any festival day).
 
+Slice 4 built (#937, `src/core/divorce.ts`, `src/scenes/LedgerScene.ts`, `tests/divorce.test.ts`): the
+ledger is a new service (`ledger`, kind `ledger`) in the hall map. The fee is paid on filing and handed
+back on cancel (our choice, Stardew's refund is unchecked). The next morning `sleep()` ends the marriage,
+drops the spouse cap, raises `ex-<id>`, and moves the spouse room's furniture and chests into the divorce
+chest at (51, 31). The ex is a friend only (no second bouquet; open question). Children are dropped with
+the marriage for now (`DivorceNews.children` is the hook for slice 5). `attendsWedding` is the guest
+filter; the wedding scene has no guest list yet.
+
 ## Earlier suggested slices (superseded by the list above)
 
 1. Marriage flag and heart cap in villager data, built with friendship (M3).

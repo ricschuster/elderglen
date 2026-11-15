@@ -93,8 +93,7 @@ export const CELLAR_OPEN = "cellar-open";
 /** The condition under which the spouse room and its hall exist (note 85, from marriage). */
 export const SPOUSE_HOLD = "spouse";
 
-/** The condition under which the divorce chest shows in the bedroom (note 85, "Divorce"). */
-export const DIVORCE_CHEST_HOLD = "divorce-chest";
+export { DIVORCE_CHEST_HOLD, DIVORCE_CHEST_TILE } from "./divorcechest";
 
 /**
  * True while the player is married (the marriage state, note 12). The world
@@ -176,11 +175,16 @@ export function houseHolds(
  * room): `x,y` keys, so the layers stay the one source.
  */
 export function renoArea(id: string): Set<string> {
-  const json = mapFiles[HOUSE_MAP]!;
-  const names =
+  return layerArea(
     id === "corner"
       ? ["ground-reno-corner-t2", "ground-corner-stairs-t2"]
-      : [`ground-reno-${id}-t2`];
+      : [`ground-reno-${id}-t2`],
+  );
+}
+
+/** The `x,y` keys of every painted tile on the named house layers. */
+function layerArea(names: readonly string[]): Set<string> {
+  const json = mapFiles[HOUSE_MAP]!;
   const out = new Set<string>();
   for (const l of json.layers)
     if (names.includes(l.name) && l.data)
@@ -189,6 +193,10 @@ export function renoArea(id: string): Set<string> {
       });
   return out;
 }
+
+/** The tiles of the spouse room and its hall (the `spouse` ground layers, note 85). */
+export const spouseRoomArea = (): Set<string> =>
+  layerArea(["ground-spouse-t1", "ground-spouse-t2"]);
 
 type RenoState = Pick<
   GameState,

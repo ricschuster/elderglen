@@ -1010,3 +1010,10 @@ after the wedding. They never fail for a late or absent player and never repair.
   If the pack is full it waits for the next morning.
 - Spouse gifts: one a day, no weekly limit, gains and losses halved (note 61).
 - Jealousy: one line, no friendship change.
+
+## Divorce (slice 4, 2026-11-14, note 12, placeholders)
+
+- Fee: 50,000g (`DIVORCE_FEE`), paid when filed at the hall ledger, handed back if cancelled before
+  the day ends. Takes effect the next morning (`divorceMorning`, called from `sleep()`).
+- Friendship stays at the old points. The cap drops to the pre-marriage 10 hearts without clamping
+  points down (`Friendship.setExes`). The ex-spouse is a friend only (no new bouquet).

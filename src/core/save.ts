@@ -57,7 +57,7 @@ import { Decor, type DecorSave } from "./decor";
 import { Furniture, migrateCatalogue, type FurnitureSave } from "./furniture";
 import { Mailbox, type MailEntry } from "./mail";
 import { Friendship } from "./friendship";
-import { Marriage, type MarriageSave } from "./marriage";
+import { Marriage, exSpouses, type MarriageSave } from "./marriage";
 import { ELDERFRUIT_TOTAL, maxEnergyFor } from "./elderfruit";
 import { HeartEvents, type HeartEventsSave } from "./heartevents";
 import { Quests, type QuestsSave } from "./quests";
@@ -1101,6 +1101,7 @@ export function deserialize(text: string): GameState | undefined {
   g.marriage.load(raw.marriage);
   // The married cap must be known before friendship loads, or points above the bouquet cap are clamped.
   g.friendship.setSpouse(g.marriage.married ? g.marriage.spouse : null);
+  g.friendship.setExes(exSpouses(g));
   g.friendship.load(raw.friendship);
   g.heartEvents.load(raw.heartEvents);
   g.quests.load(raw.quests);

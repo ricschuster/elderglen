@@ -1,4 +1,5 @@
 import { dateOf, type Season } from "./calendar";
+import { divorceMorning, type DivorceNews } from "./divorce";
 import { spouseMorning, type SpouseNews } from "./spouse";
 import { FARM_STORE } from "./mapstore";
 import { growPots, rainOnPots } from "./gardenpot";
@@ -166,6 +167,8 @@ export interface SleepReport {
   stuckTrees: string[];
   /** What the spouse did this morning, from the day after the wedding (note 12). */
   spouse?: SpouseNews;
+  /** A filed divorce took effect this morning (note 12, slice 4). */
+  divorce?: DivorceNews;
 }
 
 /**
@@ -341,6 +344,8 @@ export function sleep(
   const animals = animalsEndDay(g, random);
   const horseWasOut = horseEndDay(g);
   const furnaceGifted = deliverFurnace(g);
+  // A filed divorce takes effect first, so the ex-spouse does no chores today (note 12).
+  const divorce = divorceMorning(g);
   // The spouse feeds the animals and waters a few crops, after the night's own work (note 12).
   const spouse = spouseMorning(g, random);
 
@@ -393,6 +398,7 @@ export function sleep(
     cartsRunning: cartNews(g),
     guestsBonus: payGuestsBoard(g),
     ...(spouse ? { spouse } : {}),
+    ...(divorce ? { divorce } : {}),
   };
 }
 
