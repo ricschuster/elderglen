@@ -53,7 +53,8 @@ function entryOf(map) {
   const m = JSON.parse(fs.readFileSync(f, "utf8"));
   for (const l of m.layers)
     for (const o of l.objects ?? [])
-      if (o.class === "entry" && !o.name.includes("_start_")) return o.name;
+      if ((o.class ?? o.type) === "entry" && !o.name.includes("_start_"))
+        return o.name;
   return "door";
 }
 

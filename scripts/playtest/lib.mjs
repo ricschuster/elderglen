@@ -40,7 +40,7 @@ const MAPS = Object.fromEntries(
     const exits = new Set();
     for (const layer of map.layers)
       for (const o of layer.objects ?? [])
-        if (o.class === "exit")
+        if ((o.class ?? o.type) === "exit")
           for (let y = 0; y < Math.max(1, o.height / 16); y++)
             for (let x = 0; x < Math.max(1, o.width / 16); x++)
               exits.add(
@@ -51,7 +51,7 @@ const MAPS = Object.fromEntries(
     for (const layer of map.layers)
       for (const o of layer.objects ?? [])
         if (
-          o.class === "tree" &&
+          (o.class ?? o.type) === "tree" &&
           (o.properties?.find((p) => p.name === "stage")?.value ?? 5) > 1
         )
           trees.add(`${Math.floor(o.x / 16)},${Math.floor(o.y / 16)}`);
@@ -94,6 +94,19 @@ const blockedT = (x, y) => {
     y >= H ||
     col[y * W + x] !== 0 ||
     (!liveRead && trees.has(`${x},${y}`))
+  );
+};
+/** A tile the game blocks only because something stands on it (a tree, a rock). */
+const clearable = (x, y) => {
+  const { W, H, col, exits } = MAPS[here];
+  return (
+    live.has(`${x},${y}`) &&
+    x >= 0 &&
+    y >= 0 &&
+    x < W &&
+    y < H &&
+    col[y * W + x] === 0 &&
+    !exits.has(`${x},${y}`)
   );
 };
 export const isWalk = (x, y) =>
@@ -353,6 +366,70 @@ export class Bot {
     for (let c = to; c; c = prev.get(key(c.x, c.y))) path.push(c);
     return path.reverse();
   }
+  /**
+   * Boxed in (trees spread and regrow on the farm): find the shortest route to
+   * the target that may pass through blocked tiles, and cut the first one with
+   * the axe, then the pickaxe. A player can do the same, so being walled in is
+   * a bot limit, not a game bug. Returns true when a tile was cleared.
+   */
+  async clearWay(from, to) {
+    const key = (x, y) => `${x},${y}`;
+    const prev = new Map([[key(from.x, from.y), null]]);
+    const q = [from];
+    for (let i = 0; i < q.length; i++) {
+      const c = q[i];
+      if (c.x === to.x && c.y === to.y) break;
+      for (const [dx, dy] of [
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1],
+      ]) {
+        const nx = c.x + dx,
+          ny = c.y + dy,
+          k = key(nx, ny);
+        if (prev.has(k) || !(isWalk(nx, ny) || clearable(nx, ny))) continue;
+        prev.set(k, c);
+        q.push({ x: nx, y: ny });
+      }
+    }
+    if (!prev.has(key(to.x, to.y))) return false;
+    const path = [];
+    for (let c = to; c; c = prev.get(key(c.x, c.y))) path.push(c);
+    path.reverse();
+    const bi = path.findIndex((c) => !isWalk(c.x, c.y));
+    if (bi < 1) return false;
+    const stand = path[bi - 1],
+      blk = path[bi];
+    log(`boxed in: clearing ${blk.x},${blk.y} from ${stand.x},${stand.y}`);
+    if (stand.x !== from.x || stand.y !== from.y)
+      await this.walkTo(stand.x, stand.y);
+    const dir =
+      blk.x > stand.x
+        ? "right"
+        : blk.x < stand.x
+          ? "left"
+          : blk.y > stand.y
+            ? "down"
+            : "up";
+    for (const slot of [2, 3]) {
+      await this.select(slot);
+      await this.face(dir);
+      // Hold Use, as a player chops. A felled tree leaves a stump that blocks
+      // too, so keep holding until the tile is free (or 25 s have passed).
+      const t0 = Date.now();
+      await this.p.keyboard.down("KeyC");
+      while (Date.now() - t0 < 25000) {
+        await sleepMs(200);
+        await this.refreshMap();
+        if (isWalk(blk.x, blk.y)) break;
+      }
+      await this.p.keyboard.up("KeyC");
+      await sleepMs(100);
+      if (isWalk(blk.x, blk.y)) return true;
+    }
+    return false;
+  }
   dist(from, to) {
     const p = this.bfs(from, to);
     return p ? p.length : Infinity;
@@ -426,8 +503,10 @@ export class Bot {
         return;
       }
       const path = this.bfs(d.tile, { x: tx, y: ty });
-      if (!path)
+      if (!path) {
+        if (await this.clearWay(d.tile, { x: tx, y: ty })) continue;
         throw new Error(`no path ${JSON.stringify(d.tile)} -> ${tx},${ty}`);
+      }
       // split into straight runs
       let i = 0;
       while (i < path.length - 1) {
