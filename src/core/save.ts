@@ -1098,8 +1098,10 @@ export function deserialize(text: string): GameState | undefined {
   g.achievements.load(raw.achievements);
   g.summit.load(raw.summit);
   g.mail.load(raw.mail);
-  g.friendship.load(raw.friendship);
   g.marriage.load(raw.marriage);
+  // The married cap must be known before friendship loads, or points above the bouquet cap are clamped.
+  g.friendship.setSpouse(g.marriage.married ? g.marriage.spouse : null);
+  g.friendship.load(raw.friendship);
   g.heartEvents.load(raw.heartEvents);
   g.quests.load(raw.quests);
   g.fishing.load(raw.fishing);

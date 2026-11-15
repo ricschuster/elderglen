@@ -213,8 +213,13 @@ export const isCandidate = (id: string): boolean =>
   villagerById(id)?.candidate === true;
 
 /** The heart cap in hearts for a person (note 61). */
-export function heartCap(id: string, bouquet: boolean): number {
+export function heartCap(
+  id: string,
+  bouquet: boolean,
+  married = false,
+): number {
   if (!isCandidate(id)) return data.caps.friend;
+  if (married) return villagerById(id)?.heartCap ?? data.caps.friend;
   return bouquet
     ? data.caps.candidateAfterBouquet
     : data.caps.candidateBeforeBouquet;
@@ -222,6 +227,18 @@ export function heartCap(id: string, bouquet: boolean): number {
 
 export class Friendship {
   private rows = new Map<string, FriendshipRow>();
+  /** The married candidate, whose cap is their row's `heartCap` (note 12). Set from the marriage state, not saved here. */
+  private spouseId: string | null = null;
+
+  /** Lift (or drop, with null) the married candidate's heart cap. Call before `load`. */
+  setSpouse(id: string | null): void {
+    this.spouseId = id;
+  }
+
+  /** The heart cap in hearts for a person now: friend, candidate, bouquet or spouse. */
+  capHearts(id: string): number {
+    return heartCap(id, this.hasBouquet(id), id === this.spouseId);
+  }
 
   private row(id: string): FriendshipRow | undefined {
     if (!villagerById(id)) return undefined;
@@ -235,7 +252,7 @@ export class Friendship {
 
   private add(r: FriendshipRow, id: string, n: number): number {
     const before = r.points;
-    const max = heartCap(id, r.bouquet) * HEART;
+    const max = heartCap(id, r.bouquet, id === this.spouseId) * HEART;
     r.points = Math.max(0, Math.min(max, r.points + n));
     return r.points - before;
   }
@@ -392,7 +409,7 @@ export class Friendship {
       const o = v as Record<string, unknown>;
       const r = newRow();
       const bouquet = o.bouquet === true && isCandidate(id);
-      const max = heartCap(id, bouquet) * HEART;
+      const max = heartCap(id, bouquet, id === this.spouseId) * HEART;
       r.bouquet = bouquet;
       r.points = count(o.points) ? Math.min(o.points, max) : 0;
       r.met = o.met === true;

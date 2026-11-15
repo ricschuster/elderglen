@@ -1,5 +1,6 @@
 import { dateOf } from "./calendar";
 import { clockText } from "./clock";
+import { courtGift } from "./courtship";
 import { villagerNow, type FestivalOpts } from "./festivalroutes";
 import { HEART, Friendship, isBirthday, type Taste } from "./friendship";
 import type { GameState } from "./save";
@@ -158,6 +159,12 @@ export function meet(
     f.talk(id, day);
     return { message: line("first", v.name) + tail() };
   }
+  const court = courtGift(g, id, held);
+  if (court)
+    return {
+      message: court.message + tail(),
+      ...(court.consumed ? { consumed: held } : {}),
+    };
   if (held && f.canGift(id, day) && g.inventory.count(held) > 0) {
     const r = f.gift(id, held, day);
     if (r.ok) {

@@ -980,3 +980,12 @@ Source: `src/core/quests.ts`, `src/content/requests.json`.
 - Promise token: 5,000g at the rainy day seller. Divorce fee: 50,000g, player-only.
 - Spouse perk: a one-off item at 12.5 hearts (Stardew gives a Stardrop there, from memory).
 - Children: at most 2 per farm (placeholder, slice 5 may change it).
+
+## Courtship to wedding (slice 2, 2026-11-14, note 12, placeholders)
+
+- Wildflower bouquet: 200g at the general store (Stardew's bouquet is 200g, from memory).
+  Promise token: 5,000g, only from the rain peddler. Both are data in `src/content/courtship.json`.
+- Rain peddler: stalls on rain and storm days, 9:00 to 20:00, on the Hearthwell square beside
+  the road trader's yard. Sells one token at a time.
+- Wedding: the morning of the third day after the token. A festival day or a rain day puts it off
+  one day at a time. The wedding day is free; the spouse room appears at once.

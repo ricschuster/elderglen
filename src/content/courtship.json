@@ -1,0 +1,18 @@
+{
+  "_note": "Courtship items and the rainy-day seller (note 12, slice 2, #935). Names, prices and hours are placeholders (note 07). The bouquet is sold at the general store; the promise token only by the rain peddler, on a rain day.",
+  "bouquet": {
+    "id": "bouquet",
+    "name": "Wildflower bouquet",
+    "price": 200
+  },
+  "token": {
+    "id": "promise-token",
+    "name": "Promise token",
+    "price": 5000
+  },
+  "seller": {
+    "name": "Rain peddler",
+    "opens": "9:00",
+    "closes": "20:00"
+  }
+}

@@ -69,6 +69,7 @@ const SERVICES: Record<string, string> = {
   requests: "Request Board",
   "board-news": "Road News Board",
   trader: "Road Trader",
+  "rain-seller": "Rain Peddler",
   festival: "Village Green",
   "festival-leave": "Way Home",
   "cake-table": "Cake Table",

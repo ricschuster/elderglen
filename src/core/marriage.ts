@@ -80,6 +80,13 @@ export class Marriage {
     return true;
   }
 
+  /** The wedding is put off a day (a festival or a rain day). */
+  postpone(): boolean {
+    if (this.stage !== "engaged") return false;
+    this.weddingDay += 1;
+    return true;
+  }
+
   /** Whether a wedding is set for `today`. */
   weddingToday(today: number): boolean {
     return this.stage === "engaged" && this.weddingDay === today;

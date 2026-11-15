@@ -97,13 +97,17 @@ export const SPOUSE_HOLD = "spouse";
 export const DIVORCE_CHEST_HOLD = "divorce-chest";
 
 /**
- * True while the player is married. Marriage is not built yet (note 84), so
- * the world flag `spouse` stands in for it; the flag is the only thing to
- * swap when the marriage state lands. `holdsOf` (`worldflags.ts`) already carries
- * every flag as a condition, so the map build sees `spouse` through it.
+ * True while the player is married (the marriage state, note 12). The world
+ * flag `spouse` still counts, so a debug flag works as before. `holdsOf`
+ * (`worldflags.ts`) raises `spouse` for a marriage, so the map build sees it.
  */
-export function houseSpouse(g: { flags?: string[] }): boolean {
-  return g.flags?.includes(SPOUSE_HOLD) === true;
+export function houseSpouse(g: {
+  flags?: string[];
+  marriage?: { married: boolean };
+}): boolean {
+  return (
+    g.marriage?.married === true || g.flags?.includes(SPOUSE_HOLD) === true
+  );
 }
 
 /** The house tier from which the renovations can be bought and show (note 85, "Renovations"). */

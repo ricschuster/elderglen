@@ -1,8 +1,11 @@
 import villagerData from "../content/villagers.json";
 import { BUNDLES } from "./bundles";
 import { WEEKDAYS, dateOf, type Season } from "./calendar";
+import { isWeddingId, weddingEvent } from "./courtship";
 import { dishById } from "./dishes";
 import { festivalDayToday } from "./festivals";
+import { isCandidate } from "./friendship";
+import { COURT_HEARTS } from "./marriage";
 import { furnitureById } from "./furniture";
 import { hatById } from "./hats";
 import { itemById } from "./items";
@@ -141,7 +144,9 @@ export const HEART_EVENTS: HeartEvent[] = people.flatMap((f) => f.events);
 export const eventById = (
   id: string,
   defs: HeartEvent[] = HEART_EVENTS,
-): HeartEvent | undefined => defs.find((e) => e.id === id);
+): HeartEvent | undefined =>
+  defs.find((e) => e.id === id) ??
+  (isWeddingId(id) ? weddingEvent(id.slice("wedding-".length)) : undefined);
 
 // ---- State -----------------------------------------------------------------
 
@@ -246,6 +251,13 @@ export function conditionsMet(
   ctx: Pick<TriggerContext, "day" | "weather">,
 ): boolean {
   if (g.friendship.hearts(e.villager) < e.hearts) return false;
+  // Courtship events above 8 hearts unlock after the bouquet (note 62).
+  if (
+    e.hearts > COURT_HEARTS &&
+    isCandidate(e.villager) &&
+    !g.friendship.hasBouquet(e.villager)
+  )
+    return false;
   const c = e.conditions;
   if (!c) return true;
   if (c.season && dateOf(ctx.day).season !== c.season) return false;

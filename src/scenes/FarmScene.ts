@@ -169,6 +169,8 @@ import {
 } from "../core/shophours";
 import { roadNews } from "../core/roadnews";
 import { traderProblem } from "../core/trader";
+import { sellerProblem } from "../core/courtship";
+import { weddingId, weddingMorning } from "../core/courtship";
 import {
   CART_IDLE_LINE,
   cartsRunning,
@@ -1025,6 +1027,7 @@ export class FarmScene extends Phaser.Scene {
     this.syncVillagers();
     this.updateHunt(dt);
     this.checkHeartEvent();
+    this.checkWedding();
     const marching = this.updateParade(dt);
     if (marching) this.cancelTap();
     const walking = !marching && this.tapPath.length > 0;
@@ -2129,6 +2132,26 @@ export class FarmScene extends Phaser.Scene {
     this.open("orders", { intro: true });
   }
 
+  private weddingDay = -1;
+
+  /**
+   * The wedding morning (note 12, 84): once a day, when it is the wedding day
+   * the scene starts at once. A festival or a rain day puts it off a day.
+   */
+  private checkWedding(): void {
+    const g = this.state;
+    const day = g.day.clock.day;
+    if (this.weddingDay === day || g.marriage.stage !== "engaged") return;
+    this.weddingDay = day;
+    const r = weddingMorning(g);
+    if (r === "postponed") {
+      this.message =
+        "The wedding is put off a day. PLACEHOLDER TEXT: not in a festival or the rain.";
+      this.render();
+    } else if (r === "go" && g.marriage.spouse)
+      this.open("heart-event", { id: weddingId(g.marriage.spouse) });
+  }
+
   /**
    * Stepping near an event's place starts its scene (note 62). The scene asks
    * first, and "not now" lets it wait. Checked when the tile changes.
@@ -2490,6 +2513,14 @@ export class FarmScene extends Phaser.Scene {
       const g = this.state;
       this.message = roadNews(g.day.clock.day, g.tomorrow);
       return this.render();
+    }
+    if (service?.kind === "rain-seller") {
+      const closed = sellerProblem(this.state);
+      if (closed) {
+        this.message = closed;
+        return this.render();
+      }
+      return this.open("shop", { stock: "rain" });
     }
     if (service?.kind === "trader") {
       const g = this.state;

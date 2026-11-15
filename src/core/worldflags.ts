@@ -29,6 +29,8 @@ export function holdsOf(g: GameState): Set<string> {
     ...coveHolds(g),
     ...(g.flags ?? []),
   ]);
+  // A married player has the spouse room and corner (note 85).
+  if (g.marriage?.married) holds.add("spouse");
   // The rockfall below the mine mouth is cleared on the day the mines open.
   if (minesOpen(g.day.clock.day)) holds.add("mines-open");
   return holds;

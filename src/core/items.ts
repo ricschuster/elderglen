@@ -49,6 +49,7 @@ import { CHESTS } from "./chestdefs";
 import { GEODE_ITEMS } from "./geodes";
 import { GEM_ITEMS } from "./gems";
 import artifactData from "../content/artifacts.json";
+import courtshipData from "../content/courtship.json";
 
 /** The found old things, read from data here so this list has no cycle with `artifacts.ts`. */
 const ARTIFACTS = artifactData.artifacts;
@@ -164,6 +165,16 @@ for (const f of furnitureData)
 /** Wallpaper and flooring ride in the backpack and cannot be sold (note 10). */
 for (const d of decorData)
   items.set(d.id, { id: d.id, name: d.name, sellPrice: 0, keep: true });
+
+/** The courtship gifts (note 12, slice 2). Never sold back; the bouquet is bought, the token is the rain peddler's. */
+for (const c of [courtshipData.bouquet, courtshipData.token])
+  items.set(c.id, {
+    id: c.id,
+    name: c.name,
+    sellPrice: 0,
+    buyPrice: c.price,
+    keep: true,
+  });
 
 /** Tree goods (`docs/design/36_gathering_trees_sap_fiber.md`). Wood and sap sell as Stardew's do. */
 items.set("wood", { id: "wood", name: "Wood", sellPrice: 2 });
@@ -556,6 +567,7 @@ const GROUPS: [string, string[]][] = [
       "blue-ribbon-melon",
     ],
   ],
+  ["Courtship", [courtshipData.bouquet.id, courtshipData.token.id]],
   ["Furniture", furnitureData.map((f) => f.id)],
   ["Wallpaper and flooring", decorData.map((d) => d.id)],
   [

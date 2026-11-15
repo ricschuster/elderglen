@@ -1,6 +1,6 @@
 # 12 Marriage (draft)
 
-Status: draft. Written from the design talk of 2026-10-27; the open questions
+Status: draft. Slice 2 (courtship to wedding) built 2026-11-14. Written from the design talk of 2026-10-27; the open questions
 were settled on 2026-10-29 and 2026-11-14 (see Decided). Nothing here is
 built. Marriage is not in the first playable or M3. Since 2026-11-14 it is in
 M3b (owner), built in the slices below. This note is the design note CLAUDE.md asks for.
