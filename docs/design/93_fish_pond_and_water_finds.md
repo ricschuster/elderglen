@@ -169,10 +169,9 @@ Empty is taken, owner can correct: every fish goes to the pack (refused unless t
 room for all), which resets the pond, as the rod's `takeFish` does one at a time. The note only
 says "the empty button".
 
-Still not built: drawing the pond (art), a pool on any map, and the
-species table (still empty, see the gaps). The coop, barn, stable, silo and house placing
-rules still do not check for a pond (a building can be put over a pond: `placementBlockers`
-is blind to ponds, and the other carpenter jobs do not wait for a pond under way).
+Built since: the pond art, a pool on mine floors (cave pools), the species table, and the
+pond checks in `placementBlockers` (`pondRects`) and in the coop, barn, stable, silo and house
+jobs, which wait while a pond is dug (`pondDigging`).
 
 ## Settled by the owner and built (2026-11-12)
 
