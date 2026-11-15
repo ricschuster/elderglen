@@ -41,7 +41,9 @@ export function buildPeople(c) {
   const nice = (s) => cap(s.replace(/-/g, " "));
   const people = d.villagers.villagers;
   const tastes = d.friendship.people;
-  const candidates = new Set(d.friendship.candidates);
+  const candidates = new Set(
+    people.filter((p) => p.candidate).map((p) => p.id),
+  );
   const eventsBy = new Map();
   for (const e of d.heartEvents.events) {
     if (!eventsBy.has(e.villager)) eventsBy.set(e.villager, []);

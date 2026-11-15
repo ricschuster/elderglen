@@ -39,6 +39,10 @@ export interface Villager {
   role: string;
   ageBand: "child" | "young-adult" | "adult" | "elder";
   birthday: { season: Season; day: number };
+  /** Can be courted by any player (note 12, 14 in ring 1). */
+  candidate: boolean;
+  /** Hearts a married candidate can reach (note 12). Equals the friend cap for everyone else. */
+  heartCap: number;
   home: string;
   shop?: string;
   area?: string;
@@ -109,6 +113,8 @@ export const VILLAGERS: readonly Villager[] = data.villagers.map((v) => {
     role: v.role,
     ageBand: v.ageBand as Villager["ageBand"],
     birthday: { season: v.birthday.season as Season, day: v.birthday.day },
+    candidate: "candidate" in v && v.candidate === true,
+    heartCap: "heartCap" in v ? (v.heartCap as number) : 10,
     home: v.home,
     ...(raw.shop ? { shop: raw.shop } : {}),
     ...(raw.area ? { area: raw.area } : {}),

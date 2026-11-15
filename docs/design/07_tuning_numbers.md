@@ -970,3 +970,13 @@ Source: `src/core/quests.ts`, `src/content/requests.json`.
 - Pond fish, the Fernscale: base price 750g, a hard bar (note 21).
 - Elderfruit: +34 maximum energy, seven sources, eaten on receipt (note 39).
 - Elderfruit placeholder prices: Harvest Showing counter 2,000g (once), hermit 20,000g (once); emberseed 14 days to grow (note 39).
+
+## Marriage (slice 1, 2026-11-14, note 12, placeholders)
+
+- Candidate thresholds: the bouquet (courting) at 8 hearts, the promise token (proposal) at
+  10 hearts. Wedding 3 days after the proposal. Constants in `src/core/marriage.ts`.
+- Heart cap: 10 until married, 14 once married (`heartCap` on each candidate row in
+  `villagers.json`; the 8 and 10 caps before and after the bouquet stay in `friendship.json`).
+- Promise token: 5,000g at the rainy day seller. Divorce fee: 50,000g, player-only.
+- Spouse perk: a one-off item at 12.5 hearts (Stardew gives a Stardrop there, from memory).
+- Children: at most 2 per farm (placeholder, slice 5 may change it).

@@ -209,7 +209,8 @@ const newRow = (): FriendshipRow => ({
   log: {},
 });
 
-const isCandidate = (id: string): boolean => data.candidates.includes(id);
+export const isCandidate = (id: string): boolean =>
+  villagerById(id)?.candidate === true;
 
 /** The heart cap in hearts for a person (note 61). */
 export function heartCap(id: string, bouquet: boolean): number {

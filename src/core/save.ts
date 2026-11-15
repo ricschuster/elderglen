@@ -57,6 +57,7 @@ import { Decor, type DecorSave } from "./decor";
 import { Furniture, migrateCatalogue, type FurnitureSave } from "./furniture";
 import { Mailbox, type MailEntry } from "./mail";
 import { Friendship } from "./friendship";
+import { Marriage, type MarriageSave } from "./marriage";
 import { ELDERFRUIT_TOTAL, maxEnergyFor } from "./elderfruit";
 import { HeartEvents, type HeartEventsSave } from "./heartevents";
 import { Quests, type QuestsSave } from "./quests";
@@ -194,6 +195,8 @@ export interface GameState {
   quests: Quests;
   /** Friendship points, talks and gifts per villager (note 61). */
   friendship: Friendship;
+  /** Courtship, spouse, wedding day and children, per farm (note 12). */
+  marriage: Marriage;
   /** Heart events seen, story flags and the day of the last event (note 62). */
   heartEvents: HeartEvents;
   /** Fish caught, with the longest of each (note 21). */
@@ -267,6 +270,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     summit: new SummitCall(),
     mail: new Mailbox(),
     friendship: new Friendship(),
+    marriage: new Marriage(),
     heartEvents: new HeartEvents(),
     quests: new Quests(),
     fishing: new FishLog(),
@@ -280,7 +284,9 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
   };
 }
 
-export const SAVE_VERSION = 2;
+/** 3 added marriage (note 12). Version 2 saves load with the defaults. */
+export const SAVE_VERSION = 3;
+const OLDEST_SAVE_VERSION = 2;
 
 interface SaveData {
   version: number;
@@ -403,6 +409,8 @@ interface SaveData {
   mail?: MailEntry[];
   /** Absent in saves made before friendship: nobody met, no points. */
   friendship?: ReturnType<Friendship["save"]>;
+  /** Absent in saves made before marriage (version 2): unmarried. */
+  marriage?: MarriageSave;
   /** Absent in saves made before heart events: none seen. */
   heartEvents?: HeartEventsSave;
   /** Absent in saves made before the request board. */
@@ -622,6 +630,7 @@ export function serialize(g: GameState): string {
     summit: g.summit.save(),
     mail: g.mail.save(),
     friendship: g.friendship.save(),
+    marriage: g.marriage.save(),
     heartEvents: g.heartEvents.save(),
     quests: g.quests.save(),
     fishing: g.fishing.save(),
@@ -710,7 +719,13 @@ export function deserialize(text: string): GameState | undefined {
   } catch {
     return undefined;
   }
-  if (!isObject(raw) || raw.version !== SAVE_VERSION) return undefined;
+  if (
+    !isObject(raw) ||
+    !isCount(raw.version) ||
+    raw.version < OLDEST_SAVE_VERSION ||
+    raw.version > SAVE_VERSION
+  )
+    return undefined;
   const { day, energy, money, inventory, farm, skills, hall, weather } = raw;
   if (!isCount(day) || day < 1 || !isCount(energy) || !isCount(money))
     return undefined;
@@ -1084,6 +1099,7 @@ export function deserialize(text: string): GameState | undefined {
   g.summit.load(raw.summit);
   g.mail.load(raw.mail);
   g.friendship.load(raw.friendship);
+  g.marriage.load(raw.marriage);
   g.heartEvents.load(raw.heartEvents);
   g.quests.load(raw.quests);
   g.fishing.load(raw.fishing);
