@@ -620,15 +620,17 @@ placeholders to check in play.
   `home` at 20:30), `villagerNow` picks it before the normal route, `festivalHolds` names
   the map condition of today's layout. `RIVALS` (Seedswap: Linnet; Frostday: Rushie) and
   `ENDS_AFTER_MAIN_EVENT` (Seedswap, Frostday) hold the 2026-11-12 decisions as data and
-  helpers. The activities themselves (hunt, judging, ice fishing, lantern floating, cake
-  table) are not built, so nothing yet ends the festival after its event.
+  helpers. The hunt, judging, ice fishing, lantern floating and cake table were built
+  after this pass (see the activities below and note 66), and `finishHunt` ends the Seedswap
+  and Frostday festivals after their event.
 - **Hat Parade march:** a timed waypoint path per marcher (stand tile, mouth (64,61), out
   lane y 61, turn (48,61), back lane y 63, mouth (64,63), stand tile). Placeholder pace:
   1 game minute per tile while marching, 0.5 while walking to and from the line, 1 minute
   between marchers; the whole march runs from 14:00 to about 14:55. `paradeLaps(joinedAt)`:
   one lap, or a second lap when the player joins after 14:00, starting at the join minute
   or when the first lap ends, whichever is later. The player is slot 22, the tail. The
-  scene does not walk the line yet.
+  scene now walks the player along it (`FarmScene.updateParade`, `playerMarchAt`); that the
+  villagers' line matches is left for play.
 - **Maps:** a festival layout is a set of conditional layers (`when` the hold, note 81 and 71)
   on the existing map, not a new map id: `festival-hat-parade`, `festival-cake-day` and
   `festival-midwinter-feast` on Hearthwell, `festival-seedswap-fair` and `festival-frostday`
