@@ -109,6 +109,7 @@ export class Hud {
     onSkills: () => void,
     onCraft: () => void,
     onHats: () => void,
+    onJournal: () => void,
     onRow: () => void,
     onDebug: (() => void) | undefined,
     settings: Settings,
@@ -281,7 +282,21 @@ export class Hud {
     const hatsText = scene.add
       .text(hats.x + 45, 36, "Hats", { fontSize: "18px", color: "#ffffff" })
       .setOrigin(0.5);
+    const journal = scene.add
+      .rectangle(hats.x - 96, 16, 90, 40, 0x000000, 0.5)
+      .setOrigin(0)
+      .setStrokeStyle(2, 0xffffff, 0.5)
+      .setInteractive({ useHandCursor: true });
+    journal.on("pointerdown", onJournal);
+    const journalText = scene.add
+      .text(journal.x + 45, 36, "Journal", {
+        fontSize: "18px",
+        color: "#ffffff",
+      })
+      .setOrigin(0.5);
     this.objects.push(
+      journal,
+      journalText,
       use,
       useText,
       eat,
@@ -307,7 +322,16 @@ export class Hud {
         this.rowText,
       ]);
     this.pin("r", "b", [use, useText, eat, eatText]);
-    this.pin("r", "t", [skills, skillsText, craft, craftText, hats, hatsText]);
+    this.pin("r", "t", [
+      skills,
+      skillsText,
+      craft,
+      craftText,
+      hats,
+      hatsText,
+      journal,
+      journalText,
+    ]);
     // Tap-to-move has no Use button: a tap on the tile beside the farmer uses
     // the held tool (note 27).
     if (this.touch && settings.touchScheme === "tap") {
@@ -329,6 +353,8 @@ export class Hud {
         craftText,
         hats,
         hatsText,
+        journal,
+        journalText,
       ])
         o.setVisible(false).disableInteractive();
     // Dev builds only: the debug menu's touch button (`42_debug_menu.md`).

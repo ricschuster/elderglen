@@ -161,7 +161,12 @@ import {
   type Exit,
   type TiledLayer,
 } from "../core/map";
-import { counterShutLine, doorShutLine } from "../core/shophours";
+import {
+  counterShopId,
+  counterShutLine,
+  doorShopId,
+  doorShutLine,
+} from "../core/shophours";
 import { roadNews } from "../core/roadnews";
 import { traderProblem } from "../core/trader";
 import {
@@ -714,6 +719,7 @@ export class FarmScene extends Phaser.Scene {
       () => this.openMenu("pack"),
       () => this.openMenu("crafting"),
       () => this.open("hats"),
+      () => this.openJournal(),
       () => this.select(nextRow(this.state, this.selected)),
       () => this.open("debug"),
       settings,
@@ -732,6 +738,7 @@ export class FarmScene extends Phaser.Scene {
         openCraft: () => this.openMenu("crafting"),
         openMenu: () => this.openMenu("pack"),
         openHats: () => this.open("hats"),
+        openJournal: () => this.openJournal(),
         endDay: () => this.endDay(),
         toggleHints: () => {
           settings.showHints = !settings.showHints;
@@ -1803,6 +1810,10 @@ export class FarmScene extends Phaser.Scene {
     this.refreshHolds();
     const doorShut =
       this.mapId === "hearthwell" ? doorShutLine(this.state, exit.id) : "";
+    if (!doorShut && this.mapId === "hearthwell") {
+      const sid = doorShopId(exit.id);
+      if (sid) this.state.guide.visitShop(sid);
+    }
     if (doorShut) {
       this.message = doorShut;
       this.render();
@@ -2156,6 +2167,13 @@ export class FarmScene extends Phaser.Scene {
     this.open("menu", { tab });
   }
 
+  /** The journal window (note 49), on J or its HUD button. */
+  private openJournal(): void {
+    if (this.leaving || this.marching) return;
+    if (performance.now() - this.resumedAt < 250) return;
+    this.open("journal");
+  }
+
   private open(kind: string, data?: object): void {
     this.scene.launch(kind, data);
     this.scene.pause();
@@ -2417,6 +2435,10 @@ export class FarmScene extends Phaser.Scene {
     if (shut) {
       this.message = shut;
       return this.render();
+    }
+    if (service) {
+      const sid = counterShopId(this.mapId, service.kind);
+      if (sid) this.state.guide.visitShop(sid);
     }
     if (service?.kind === CART_KIND) return this.rideCart(service.id);
     if (
@@ -2900,8 +2922,8 @@ export class FarmScene extends Phaser.Scene {
     else this.render();
   }
 
-  /** Save to the browser. The clock is not saved, so a reload is a new morning. */
-  private save(): void {
+  /** Save to the browser, with the time of day, so Continue resumes the day. */
+  save(): void {
     // A save made in the cellar loads there (`resumeAt`); anywhere else clears it.
     this.state.resumeMap = this.mapId === CELLAR_MAP ? CELLAR_MAP : undefined;
     saveGame(browserStore, this.state);

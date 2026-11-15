@@ -29,6 +29,8 @@ import { SkillsScene } from "./scenes/SkillsScene";
 import { MenuScene } from "./scenes/MenuScene";
 import { PackScene } from "./scenes/PackScene";
 import { ExitScene } from "./scenes/ExitScene";
+import { AnimalsScene, SocialScene, SpecialScene } from "./scenes/InfoTabs";
+import { JournalScene } from "./scenes/JournalScene";
 import { PLACEHOLDER_TABS } from "./scenes/TabPageScene";
 import { LiftScene } from "./scenes/LiftScene";
 import { SmithScene } from "./scenes/SmithScene";
@@ -119,8 +121,12 @@ const game = new Phaser.Game({
     BedScene,
     SkillsScene,
     MenuScene,
+    JournalScene,
     PackScene,
     ExitScene,
+    SocialScene,
+    AnimalsScene,
+    SpecialScene,
     ...PLACEHOLDER_TABS,
     // Dev builds only: Vite drops the debug menu from `npm run build`.
     ...(import.meta.env.DEV ? [DebugScene] : []),

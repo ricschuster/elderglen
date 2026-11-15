@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import type { GameState } from "../core/save";
 import { professionById } from "../core/professions";
+import { skillExtras } from "../core/menupages";
 import { MAX_LEVEL, skillRows } from "../core/skills";
 import { closeWindow, frame } from "./panel";
 import { STATE_KEY } from "./state";
@@ -44,6 +45,10 @@ export class SkillsScene extends Phaser.Scene {
         fontSize: "16px",
         color: "#ffffffcc",
       });
+    });
+    this.add.text(48, 448, skillExtras(g).join("     "), {
+      fontSize: "18px",
+      color: "#ffe9a0",
     });
     this.add.text(
       24,

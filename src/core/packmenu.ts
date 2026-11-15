@@ -1,3 +1,4 @@
+import { bootsById, ringById, type Equipment } from "./equipment";
 import { STACK_SIZE, type Inventory } from "./inventory";
 import { allItems, itemById } from "./items";
 import { splitQuality } from "./quality";
@@ -124,4 +125,32 @@ export function trashSlot(
   if (!stack) return undefined;
   edit(inv, (s) => ((s[i] = null), true));
   return stack;
+}
+
+/** What `wearFromPack` did: a ring or boots went on, or the item cannot be worn. */
+export type WearResult = "ring" | "boots" | "none" | "full";
+
+/**
+ * Wear an item from the pack (note 37, note 49: items are worn from the pack).
+ * A ring takes the first free ring slot, or slot 1 when both are taken (the old
+ * ring goes back to the pack). Boots replace the boots worn.
+ */
+export function wearFromPack(
+  eq: Equipment,
+  inv: Inventory,
+  id: string,
+): WearResult {
+  if (bootsById(id)) return eq.wearBoots(inv, id) ? "boots" : "full";
+  if (!ringById(id)) return "none";
+  const free = eq.worn().findIndex((r) => r === undefined);
+  return eq.wear(inv, free >= 0 ? free : 0, id) ? "ring" : "full";
+}
+
+/** Take off what is worn in a slot: 0 and 1 are rings, "boots" the boots. False if empty or the pack is full. */
+export function takeOff(
+  eq: Equipment,
+  inv: Inventory,
+  slot: number | "boots",
+): boolean {
+  return slot === "boots" ? eq.removeBoots(inv) : eq.remove(inv, slot);
 }

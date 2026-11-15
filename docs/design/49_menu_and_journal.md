@@ -135,9 +135,25 @@ Three sections, switched with Left and Right or a tap.
   Skills, Crafting, Collections and Options hosted as tabs, Exit tab (asks
   twice, since the resume record of note 52 is not built), placeholder pages for
   Social, Map, Animals and Special Items. K and R open the menu on Skills and
-  Crafting, and the HUD Skills button is now Menu. Left: equipment slots on the
-  Pack tab, the trash can as a drop target, Skills tab extras, Social gift log,
-  real Animals and Special Items pages, the journal.
+  Crafting, and the HUD Skills button is now Menu.
+- 2026-11-14 (later): equipment on the Pack tab (two ring slots and the boots
+  under the backpack; select a stack and press Wear, tap a worn slot to take it
+  off; rules `wearFromPack` and `takeOff` in `src/core/packmenu.ts`). Social tab
+  (everyone met, hearts, talked and gift today, tap a person for the gift log),
+  Animals tab (horse and farm animals, hearts out of 5, petted today), Special
+  Items tab (Homeward pin, Deepmark key, Furniture Catalogue); rules in
+  `src/core/menupages.ts`. Animals and Special Items are hidden until they have
+  something. Skills tab shows farmhouse upgrade, deepest mine floor and
+  elderfruit eaten. The journal (`JournalScene`, `src/core/journal.ts`): J
+  (rebindable) and a HUD button, Quests, Projects and Mail sections, Left and
+  Right to switch, Up and Down or the wheel to scroll, and a Projects shortcut
+  button on the Pack tab. Exit saves (note 52).
+- Left: the trash can as a drop target, Pack farm name and total earnings (no
+  field in the save), the paper doll (no art), the Skills title from total
+  levels (the title names are not settled), the "stardrop-like finds" beyond
+  elderfruit, profession details on hover, Quests expand and cancel, reread
+  conversations (waits for dialogue), the Special Items book and mastery powers
+  (the systems do not exist). The Special Items page does not search chests.
 
 ## Open
 

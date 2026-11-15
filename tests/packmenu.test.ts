@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { Inventory, STACK_SIZE } from "../src/core/inventory";
+import { BOOTS, Equipment, RINGS } from "../src/core/equipment";
 import {
+  takeOff,
+  wearFromPack,
   moveStack,
   needsTrashConfirm,
   sortPack,
@@ -86,5 +89,42 @@ describe("trashSlot", () => {
   it("asks first for unknown or valuable stacks", () => {
     expect(needsTrashConfirm("no-such-item", 1)).toBe(true);
     expect(needsTrashConfirm("wood", 1)).toBe(false);
+  });
+});
+
+describe("wearFromPack and takeOff", () => {
+  const ringId = RINGS[0]!.id;
+  const bootId = BOOTS[0]!.id;
+  it("wears a ring into the first free slot", () => {
+    const i = inv([ringId, 2]);
+    const eq = new Equipment();
+    expect(wearFromPack(eq, i, ringId)).toBe("ring");
+    expect(wearFromPack(eq, i, ringId)).toBe("ring");
+    expect(eq.worn()).toEqual([ringId, ringId]);
+    expect(i.count(ringId)).toBe(0);
+  });
+  it("swaps into slot 1 when both are taken", () => {
+    const other = RINGS[1]!.id;
+    const i = inv([ringId, 1], [other, 1]);
+    const eq = new Equipment();
+    eq.wear(i, 0, ringId);
+    eq.wear(i, 1, other);
+    i.add(ringId, 1);
+    expect(wearFromPack(eq, i, ringId)).toBe("ring");
+    expect(eq.worn()[0]).toBe(ringId);
+  });
+  it("wears boots and takes them off", () => {
+    const i = inv([bootId, 1]);
+    const eq = new Equipment();
+    expect(wearFromPack(eq, i, bootId)).toBe("boots");
+    expect(eq.wornBoots()).toBe(bootId);
+    expect(takeOff(eq, i, "boots")).toBe(true);
+    expect(i.count(bootId)).toBe(1);
+    expect(takeOff(eq, i, "boots")).toBe(false);
+  });
+  it("refuses a non-wearable item", () => {
+    expect(wearFromPack(new Equipment(), inv(["turnip", 1]), "turnip")).toBe(
+      "none",
+    );
   });
 });

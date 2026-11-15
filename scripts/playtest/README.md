@@ -174,6 +174,21 @@ runs out, so that persona's pass-out checks are valid at 1x only.
 
 If a walk fails now, look at `farmBlocked()` and the plan first.
 
+Found 2026-11-14 (priorities item 6b):
+
+- Tiled JSON stores an object's kind as `class` in some maps and `type` in others (the farm uses
+  `type`). `lib.mjs` read only `class`, so the bot knew no exits or trees on the farm. That is why the
+  greenhouse ruin door (26,13) was picked as a plot cell. It now reads `class ?? type`.
+- The expert's day 5 east-door failure: the Greencoat story screen opens by itself that morning and
+  pauses the clock and swallows keys. The store-opening wait never ended (10 minutes) and the Action
+  key at the door was lost. `enterStore` now dismisses modals while it waits, and `walkThrough` does
+  before the door and retries once. Not a game bug.
+- A bot "boxed in" at 22,43: trees spread and regrow on the farm, and the bot never cut its way out.
+  A player can chop out, so it is a bot limit. `walkTo` now calls `Bot.clearWay` when there is no
+  path (axe, then pickaxe, held until the tile is free). `node scripts/playtest/boxed.mjs` (about 20
+  seconds) walls the bot in on four sides and checks it gets out. The original 22,43 case was not
+  reproduced (it needs an intermediate run past day 31), the static map has free tiles around it.
+
 ## Smoke test
 
 `node scripts/playtest/smoke.mjs` (about 60 seconds) opens the newer scenes in a

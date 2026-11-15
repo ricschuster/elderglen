@@ -96,6 +96,14 @@ the loader defaults, so the version bumps only when a field changes meaning or
 becomes required. A migration is written then if players exist who need one. The two records are
 written together, so they share a version.
 
+## Built status
+
+- 2026-11-14: Exit saves the day in progress (with the clock) and goes to the
+  title, no confirm, so Continue resumes it. This uses the one slot record the
+  game already writes. The split into a night record and a resume record is
+  not built, so there is no Restart this day, no page-hidden write, and Exit
+  overwrites the morning save. The stale comment above `save()` is fixed.
+
 ## Build order
 
 1. The two records in `src/core/save.ts`, with forage saved, and tests: night

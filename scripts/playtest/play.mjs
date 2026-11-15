@@ -309,10 +309,20 @@ async function closeScreen(kind) {
  * and press Action, then wait for the next map.
  */
 async function walkThrough(dir, _ms, want) {
+  // A story screen that opened on the way (the Greencoat on day 5) swallows
+  // the Action key, so close it before facing the door.
+  await bot.dismissModals();
   await bot.face(dir);
   await bot.key("KeyX", 90);
   await sleepMs(1200);
-  const d = await bot.dbg();
+  let d = await bot.dbg();
+  if (d.map !== want) {
+    await bot.dismissModals();
+    await bot.face(dir);
+    await bot.key("KeyX", 90);
+    await sleepMs(1200);
+    d = await bot.dbg();
+  }
   if (d.map !== want) {
     finding(
       `expected map ${want} after the door, on ${d.map}; message "${d.message}"`,
@@ -401,6 +411,9 @@ async function enterStore() {
     const { minutes } = await bot.snap();
     if (minutes >= 9 * 60 || minutes < 6 * 60) break;
     if (n === 0) log(`store opens at 9:00, clock ${minutes}: waiting`);
+    // A story screen (the Greencoat on day 5) pauses the clock, so the wait
+    // would never end: close it first.
+    await bot.dismissModals();
     await sleepMs(1500);
   }
   await bot.walkTo(78, 14);
