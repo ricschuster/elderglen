@@ -169,6 +169,9 @@ import {
 } from "../core/shophours";
 import { roadNews } from "../core/roadnews";
 import { traderProblem } from "../core/trader";
+import { sellerProblem } from "../core/courtship";
+import { PROPS_MARK, propsOf, spouseId } from "../core/spouse";
+import { weddingId, weddingMorning } from "../core/courtship";
 import {
   CART_IDLE_LINE,
   cartsRunning,
@@ -648,6 +651,7 @@ export class FarmScene extends Phaser.Scene {
     this.wash = this.add.graphics().setDepth(DEPTH.decal + 1);
     world.push(this.ground, this.wash);
     world.push(...this.drawLabels());
+    world.push(...this.drawSpouseProps(holds));
     let spawn: { x: number; y: number } = this.map.entry(this.entryName)!;
     // Coming up from below lands on the ladder that was taken down.
     const ladder = this.floorState?.ladder;
@@ -1025,6 +1029,7 @@ export class FarmScene extends Phaser.Scene {
     this.syncVillagers();
     this.updateHunt(dt);
     this.checkHeartEvent();
+    this.checkWedding();
     const marching = this.updateParade(dt);
     if (marching) this.cancelTap();
     const walking = !marching && this.tapPath.length > 0;
@@ -1589,6 +1594,13 @@ export class FarmScene extends Phaser.Scene {
       held.kind === "item" ? held.id : undefined,
     );
     this.message = r.message;
+    if (r.kiss)
+      this.floatText(
+        (tile.x + 0.5) * this.map.tileSize,
+        tile.y * this.map.tileSize - 4,
+        "\u2665",
+        "#ff7aa8",
+      );
     this.render();
     return true;
   }
@@ -2129,6 +2141,26 @@ export class FarmScene extends Phaser.Scene {
     this.open("orders", { intro: true });
   }
 
+  private weddingDay = -1;
+
+  /**
+   * The wedding morning (note 12, 84): once a day, when it is the wedding day
+   * the scene starts at once. A festival or a rain day puts it off a day.
+   */
+  private checkWedding(): void {
+    const g = this.state;
+    const day = g.day.clock.day;
+    if (this.weddingDay === day || g.marriage.stage !== "engaged") return;
+    this.weddingDay = day;
+    const r = weddingMorning(g);
+    if (r === "postponed") {
+      this.message =
+        "The wedding is put off a day. PLACEHOLDER TEXT: not in a festival or the rain.";
+      this.render();
+    } else if (r === "go" && g.marriage.spouse)
+      this.open("heart-event", { id: weddingId(g.marriage.spouse) });
+  }
+
   /**
    * Stepping near an event's place starts its scene (note 62). The scene asks
    * first, and "not now" lets it wait. Checked when the tile changes.
@@ -2490,6 +2522,14 @@ export class FarmScene extends Phaser.Scene {
       const g = this.state;
       this.message = roadNews(g.day.clock.day, g.tomorrow);
       return this.render();
+    }
+    if (service?.kind === "rain-seller") {
+      const closed = sellerProblem(this.state);
+      if (closed) {
+        this.message = closed;
+        return this.render();
+      }
+      return this.open("shop", { stock: "rain" });
     }
     if (service?.kind === "trader") {
       const g = this.state;
@@ -2962,9 +3002,10 @@ export class FarmScene extends Phaser.Scene {
     this.save();
     this.render();
     // The shipping summary comes first when the bin paid; it opens the report.
-    this.open(report.shipped.lines.length > 0 ? "shipping" : "report", {
-      report,
-    });
+    const shipping = report.shipped.lines.length > 0;
+    // The spouse's question comes first (note 12, slice 5); it hands on to the report.
+    if (report.childAsk) this.open("childask", { report, shipping });
+    else this.open(shipping ? "shipping" : "report", { report });
   }
 
   /**
@@ -3002,6 +3043,45 @@ export class FarmScene extends Phaser.Scene {
         .setDepth(900);
       return label;
     });
+  }
+
+  /**
+   * The spouse's placeholder props in the 4 by 4 block at the back right corner
+   * of the spouse room (note 85): one coloured block and a name tag per prop,
+   * from `spouse.json`. They do not block movement. Art comes with the art pass.
+   */
+  private drawSpouseProps(
+    holds: ReadonlySet<string>,
+  ): Phaser.GameObjects.GameObject[] {
+    const who = spouseId(this.state);
+    if (!who || !isHouseMap(this.mapId)) return [];
+    const mark = maps
+      .marksWith(this.mapId, holds, this.tier)
+      .marks.find((m) => m.name === PROPS_MARK);
+    if (!mark) return [];
+    const ts = this.map.tileSize;
+    const out: Phaser.GameObjects.GameObject[] = [];
+    for (const p of propsOf(who)) {
+      const x = (mark.x + p.dx) * ts;
+      const y = (mark.y + p.dy) * ts;
+      out.push(
+        this.add
+          .rectangle(x, y, p.w * ts, p.h * ts, 0x9a7b5a, 0.85)
+          .setOrigin(0)
+          .setStrokeStyle(1, 0x3b2a1a, 0.9)
+          .setDepth(DEPTH.decal + 1),
+        this.add
+          .text(x + (p.w * ts) / 2, y + (p.h * ts) / 2, p.name, {
+            fontSize: "6px",
+            color: "#ffffff",
+            wordWrap: { width: p.w * ts },
+            align: "center",
+          })
+          .setOrigin(0.5)
+          .setDepth(DEPTH.decal + 2),
+      );
+    }
+    return out;
   }
 
   /** Tint each built room's floor and walls with its wallpaper and flooring (note 10). */

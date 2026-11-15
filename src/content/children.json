@@ -1,0 +1,68 @@
+{
+  "_note": "Children (note 12 slice 5, #938). Every number, name and line is a placeholder (note 07; child sprites and writing are M3d). Times are H:MM on the 6:00 to 26:00 day. {n} is the child's slot, 1 or 2, which picks the bed and the play spot.",
+  "ask": {
+    "_note": "The spouse asks after the player goes to bed, once the nursery exists. 'Not now' is never a no: it only waits. All in days.",
+    "afterWeddingDays": 7,
+    "gapDays": 7,
+    "arrivalDays": 3,
+    "text": "PLACEHOLDER TEXT: {name} sits on the edge of the bed. Would you like to start a family? There is no hurry.",
+    "yes": "PLACEHOLDER TEXT: {name} smiles. A child will join you in a few days.",
+    "notNow": "PLACEHOLDER TEXT: {name} nods. We can ask again another time."
+  },
+  "arrival": "PLACEHOLDER TEXT: A child, {child}, has come to the nursery.",
+  "names": ["Wren", "Pip"],
+  "heartCap": 10,
+  "stages": [
+    { "id": "baby", "from": 0 },
+    { "id": "toddler", "from": 14 },
+    { "id": "child", "from": 42 }
+  ],
+  "routes": {
+    "baby": {
+      "bed": "22:00",
+      "stops": ["6:30 farm:house/child-crib (rest)"]
+    },
+    "toddler": {
+      "bed": "20:00",
+      "stops": [
+        "7:00 farm:house/child-bed-{n} (rest)",
+        "7:30 farm:house/spouse-kitchen (eat)",
+        "8:30 farm:house/nursery-{n} (play)",
+        "12:00 farm:house/spouse-kitchen (eat)",
+        "13:00 farm:house/nursery-{n} (play)",
+        "18:00 farm:house/spouse-kitchen (eat)",
+        "19:00 farm:house/nursery-{n} (play)"
+      ]
+    },
+    "child": {
+      "bed": "21:00",
+      "stops": [
+        "7:00 farm:house/child-bed-{n} (rest)",
+        "7:30 farm:house/spouse-kitchen (eat)",
+        "8:30 farm:house/nursery-{n} (play)",
+        "12:00 farm:house/spouse-kitchen (eat)",
+        "13:00 farm:house/nursery-{n} (play)",
+        "18:00 farm:house/spouse-kitchen (eat)",
+        "19:00 farm:house/nursery-{n} (play)"
+      ]
+    }
+  },
+  "lines": {
+    "baby": [
+      "PLACEHOLDER TEXT: {name} gurgles and reaches for your finger.",
+      "PLACEHOLDER TEXT: {name} blinks up at you, calm and round-eyed."
+    ],
+    "toddler": [
+      "PLACEHOLDER TEXT: {name} holds up a wooden spoon. A gift!",
+      "PLACEHOLDER TEXT: {name} giggles and hides behind the crib.",
+      "PLACEHOLDER TEXT: {name} says a word that might be your name."
+    ],
+    "child": [
+      "PLACEHOLDER TEXT: {name} asks how the crops are doing.",
+      "PLACEHOLDER TEXT: {name} shows you a drawing of the farm.",
+      "PLACEHOLDER TEXT: {name} wants to know what is in the village today."
+    ]
+  },
+  "already": "PLACEHOLDER TEXT: {name} is busy playing and has nothing new to say today.",
+  "divorce": "PLACEHOLDER TEXT: Your children stay with you on the farm. {name} remains a friend."
+}

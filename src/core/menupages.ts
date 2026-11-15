@@ -3,7 +3,7 @@ import { HOMEWARD_PIN, DEEPMARK_KEY, itemById } from "./items";
 import { hasHorse } from "./horse";
 import { MAX_HOUSE_TIER } from "./house";
 import { ELDERFRUIT_TOTAL } from "./elderfruit";
-import { heartCap, type Taste } from "./friendship";
+import type { Taste } from "./friendship";
 import { VILLAGERS } from "./villagers";
 import type { GameState } from "./save";
 
@@ -31,7 +31,7 @@ export function socialRows(g: GameState): SocialRow[] {
     id: v.id,
     name: v.name,
     hearts: g.friendship.hearts(v.id),
-    maxHearts: heartCap(v.id, g.friendship.hasBouquet(v.id)),
+    maxHearts: g.friendship.capHearts(v.id),
     talkedToday: g.friendship.talkedOn(v.id, day),
     giftedToday: g.friendship.giftedOn(v.id, day),
   }));

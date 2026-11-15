@@ -26,22 +26,6 @@
     "candidateBeforeBouquet": 8,
     "candidateAfterBouquet": 10
   },
-  "candidates": [
-    "bramwell",
-    "aurelle",
-    "dunmar",
-    "cordelia",
-    "barnaby",
-    "linnet",
-    "thistle",
-    "alder",
-    "dilly",
-    "korvi",
-    "marl",
-    "maren",
-    "rushie",
-    "thalwen"
-  ],
   "tags": {
     "_note": "Hand-kept tag lists. Other tags come from the item data (artisan kind, dishes, crops, forage, bait, drops, junk, geodes).",
     "flower": [

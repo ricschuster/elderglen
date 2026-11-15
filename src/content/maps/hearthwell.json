@@ -23,7 +23,7 @@
   "width": 120,
   "height": 110,
   "nextlayerid": 15,
-  "nextobjectid": 120,
+  "nextobjectid": 121,
   "properties": [
     {
       "name": "placeholder",
@@ -2435,6 +2435,26 @@
               "name": "kind",
               "type": "string",
               "value": "orders"
+            }
+          ],
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 120,
+          "name": "rain-seller-stall",
+          "class": "service",
+          "type": "service",
+          "x": 1448,
+          "y": 264,
+          "width": 0,
+          "height": 0,
+          "point": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "rain-seller"
             }
           ],
           "rotation": 0,

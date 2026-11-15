@@ -209,11 +209,17 @@ const newRow = (): FriendshipRow => ({
   log: {},
 });
 
-const isCandidate = (id: string): boolean => data.candidates.includes(id);
+export const isCandidate = (id: string): boolean =>
+  villagerById(id)?.candidate === true;
 
 /** The heart cap in hearts for a person (note 61). */
-export function heartCap(id: string, bouquet: boolean): number {
+export function heartCap(
+  id: string,
+  bouquet: boolean,
+  married = false,
+): number {
   if (!isCandidate(id)) return data.caps.friend;
+  if (married) return villagerById(id)?.heartCap ?? data.caps.friend;
   return bouquet
     ? data.caps.candidateAfterBouquet
     : data.caps.candidateBeforeBouquet;
@@ -221,6 +227,26 @@ export function heartCap(id: string, bouquet: boolean): number {
 
 export class Friendship {
   private rows = new Map<string, FriendshipRow>();
+  /** The married candidate, whose cap is their row's `heartCap` (note 12). Set from the marriage state, not saved here. */
+  private spouseId: string | null = null;
+
+  /** Former spouses (the `ex-<id>` flags): they keep the points they had, whatever the cap. Set before `load`. */
+  private exes = new Set<string>();
+
+  /** Mark who is a former spouse. Call before `load`. */
+  setExes(ids: Iterable<string>): void {
+    this.exes = new Set(ids);
+  }
+
+  /** Lift (or drop, with null) the married candidate's heart cap. Call before `load`. */
+  setSpouse(id: string | null): void {
+    this.spouseId = id;
+  }
+
+  /** The heart cap in hearts for a person now: friend, candidate, bouquet or spouse. */
+  capHearts(id: string): number {
+    return heartCap(id, this.hasBouquet(id), id === this.spouseId);
+  }
 
   private row(id: string): FriendshipRow | undefined {
     if (!villagerById(id)) return undefined;
@@ -234,7 +260,9 @@ export class Friendship {
 
   private add(r: FriendshipRow, id: string, n: number): number {
     const before = r.points;
-    const max = heartCap(id, r.bouquet) * HEART;
+    const cap = heartCap(id, r.bouquet, id === this.spouseId) * HEART;
+    // A former spouse above the cap keeps their points: gains stop, nothing is clamped down.
+    const max = this.exes.has(id) ? Math.max(cap, r.points) : cap;
     r.points = Math.max(0, Math.min(max, r.points + n));
     return r.points - before;
   }
@@ -321,7 +349,12 @@ export class Friendship {
     if (!r.met) return "unmet";
     if (r.giftDay === day) return "today";
     this.sync(r, id, day);
-    if (!isBirthday(id, day) && r.weekGifts >= POINTS.weeklyGifts)
+    // A spouse takes a gift every day, with no weekly limit (note 61, note 84 rule 3).
+    if (
+      id !== this.spouseId &&
+      !isBirthday(id, day) &&
+      r.weekGifts >= POINTS.weeklyGifts
+    )
       return "week";
     return undefined;
   }
@@ -338,8 +371,10 @@ export class Friendship {
     const { base, quality } = splitQuality(itemId);
     const taste = tasteOf(id, base);
     const birthday = isBirthday(id, day);
-    const raw =
+    const full =
       giftPoints(taste, quality) * (birthday ? POINTS.birthdayMultiplier : 1);
+    // A spouse's gains and losses are halved (note 61).
+    const raw = id === this.spouseId ? Math.trunc(full / 2) : full;
     const points = this.add(r, id, raw);
     r.giftDay = day;
     if (!birthday) r.weekGifts += 1;
@@ -391,7 +426,9 @@ export class Friendship {
       const o = v as Record<string, unknown>;
       const r = newRow();
       const bouquet = o.bouquet === true && isCandidate(id);
-      const max = heartCap(id, bouquet) * HEART;
+      const max =
+        heartCap(id, bouquet, id === this.spouseId || this.exes.has(id)) *
+        HEART;
       r.bouquet = bouquet;
       r.points = count(o.points) ? Math.min(o.points, max) : 0;
       r.met = o.met === true;

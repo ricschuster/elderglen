@@ -337,7 +337,7 @@ achievement (hat: Elderfruit Circlet, 3,000g placeholder) fires at seven.
 | --- | --- | --- |
 | 1 | Harvest Showing counter, 2,000g, once (`once` flag on the counter line) | Built |
 | 2 | Camp chest, floor 100 | Built earlier (`camp-chest.json`) |
-| 3 | Spouse at 12.5 hearts | Not built (no marriage system) |
+| 3 | Spouse at 12.5 hearts | Built (#936): `leaveGift` in `spouse.ts`, left at wake-up, flag `elderfruit-spouse` |
 | 4 | The hermit sells one at 20,000g, once (opens the shop screen from her tile) | Built |
 | 5 | Emberseed from the hermit's 4 heart event, ember berry (a `rare` crop: not on sale, not in the mixed seed, not in the shipped count), handed to the spirit's stone in the Secret Woods (service `spirit-statue`) | Built, placeholder art and text |
 | 6 | The fish seed letter (`fish-roster`) | Built earlier |

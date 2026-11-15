@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-11-14",
+  "fetched": "2026-11-15",
   "issues": {
     "5": {
       "t": "Design: what is the third community project?",
@@ -691,6 +691,36 @@
       "t": "Design an in-house wiki (Stardew-wiki style) showing what exists and its build status",
       "state": "open",
       "labels": []
+    },
+    "934": {
+      "t": "Marriage 1: data and save state",
+      "state": "open",
+      "labels": ["enhancement"]
+    },
+    "935": {
+      "t": "Marriage 2: courtship to wedding",
+      "state": "open",
+      "labels": ["enhancement"]
+    },
+    "936": {
+      "t": "Marriage 3: spouse life",
+      "state": "open",
+      "labels": ["enhancement"]
+    },
+    "937": {
+      "t": "Marriage 4: divorce",
+      "state": "open",
+      "labels": ["enhancement"]
+    },
+    "938": {
+      "t": "Marriage 5: children",
+      "state": "open",
+      "labels": ["enhancement"]
+    },
+    "939": {
+      "t": "Marriage 6: docs, wiki and playtest",
+      "state": "open",
+      "labels": ["enhancement"]
     }
   }
 }

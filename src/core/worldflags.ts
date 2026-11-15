@@ -1,4 +1,9 @@
 import { coveHolds } from "./cove";
+import {
+  DIVORCE_CHEST_HOLD,
+  DIVORCE_CHEST_MAP,
+  DIVORCE_CHEST_TILE,
+} from "./divorcechest";
 import { greenhouseHolds } from "./greenhouse";
 import { minesOpen } from "./mines";
 import { quarryHolds } from "./quarry";
@@ -29,6 +34,11 @@ export function holdsOf(g: GameState): Set<string> {
     ...coveHolds(g),
     ...(g.flags ?? []),
   ]);
+  // A married player has the spouse room and corner (note 85).
+  if (g.marriage?.married) holds.add("spouse");
+  // The divorce chest shows once a divorce has made it (note 85, "Divorce").
+  const c = DIVORCE_CHEST_TILE;
+  if (g.chests?.get(DIVORCE_CHEST_MAP, c.x, c.y)) holds.add(DIVORCE_CHEST_HOLD);
   // The rockfall below the mine mouth is cleared on the day the mines open.
   if (minesOpen(g.day.clock.day)) holds.add("mines-open");
   return holds;

@@ -970,3 +970,61 @@ Source: `src/core/quests.ts`, `src/content/requests.json`.
 - Pond fish, the Fernscale: base price 750g, a hard bar (note 21).
 - Elderfruit: +34 maximum energy, seven sources, eaten on receipt (note 39).
 - Elderfruit placeholder prices: Harvest Showing counter 2,000g (once), hermit 20,000g (once); emberseed 14 days to grow (note 39).
+
+## Marriage (slice 1, 2026-11-14, note 12, placeholders)
+
+- Candidate thresholds: the bouquet (courting) at 8 hearts, the promise token (proposal) at
+  10 hearts. Wedding 3 days after the proposal. Constants in `src/core/marriage.ts`.
+- Heart cap: 10 until married, 14 once married (`heartCap` on each candidate row in
+  `villagers.json`; the 8 and 10 caps before and after the bouquet stay in `friendship.json`).
+- Promise token: 5,000g at the rainy day seller. Divorce fee: 50,000g, player-only.
+- Spouse perk: a one-off item at 12.5 hearts (Stardew gives a Stardrop there, from memory).
+- Children: at most 2 per farm (`MAX_CHILDREN`, the nursery's two beds, kept in slice 5).
+
+## Courtship to wedding (slice 2, 2026-11-14, note 12, placeholders)
+
+- Wildflower bouquet: 200g at the general store (Stardew's bouquet is 200g, from memory).
+  Promise token: 5,000g, only from the rain peddler. Both are data in `src/content/courtship.json`.
+- Rain peddler: stalls on rain and storm days, 9:00 to 20:00, on the Hearthwell square beside
+  the road trader's yard. Sells one token at a time.
+- Wedding: the morning of the third day after the token. A festival day or a rain day puts it off
+  one day at a time. The wedding day is free; the spouse room appears at once.
+
+## Spouse life (slice 3, 2026-11-14, note 12, placeholders)
+
+All in `src/content/spouse.json`. Chores run on the morning after the night, from the morning
+after the wedding. They never fail for a late or absent player and never repair.
+
+- Day: wake 6:00, chores 6:30, breakfast 7:30, leave not before 7:45 (walk time by area of the
+  first work stop: Hearthwell 30 min, Forest and delta 40, Mountain and beach 50, Quarry and
+  mines 60), work stops of the old route from 9:00 to 17:00 with home stops dropped, evening at
+  the outside corner in fair weather (room in rain, snow and winter) from 18:00, room from 21:30,
+  bed 22:00. Rain, a closed counter day and festivals keep the spouse at the farm.
+- Waters 4 to 6 crop tiles nearest the house door, within 12 tiles, growing seasons only, dry
+  mornings only (rain waters all). It never waters a full field, so a big farm still needs the player.
+- Feeds all animals once a day with hay from the silo only (not the pack). It costs hay, and with
+  an empty silo the animals stay unfed. Note 23: "a spouse feeds hay only".
+- First kiss of the day: +50 energy (about a fifth of 270). Stardew restores exhaustion and the
+  amount is not checked (SC-180). Later kisses the same day do nothing.
+- 12.5 hearts (3,125 points): one elderfruit, once per save, eaten on receipt (note 39 source 3).
+  If the pack is full it waits for the next morning.
+- Spouse gifts: one a day, no weekly limit, gains and losses halved (note 61).
+- Jealousy: one line, no friendship change.
+
+## Divorce (slice 4, 2026-11-14, note 12, placeholders)
+
+- Fee: 50,000g (`DIVORCE_FEE`), paid when filed at the hall ledger, handed back if cancelled before
+  the day ends. Takes effect the next morning (`divorceMorning`, called from `sleep()`).
+- Friendship stays at the old points. The cap drops to the pre-marriage 10 hearts without clamping
+  points down (`Friendship.setExes`). The ex-spouse is a friend only (no new bouquet).
+
+## Children (slice 5, 2026-11-14, note 12, placeholders)
+
+All in `src/content/children.json`.
+
+- The ask: after bed, once the nursery exists (house tier 2), at least 7 days after the wedding.
+  "Not now" (or a yes) waits 7 days before the next ask, so it is never pressed (`ASK_GAP_DAYS`).
+- A yes brings the child 3 days later (`ARRIVAL_DAYS`).
+- Stages by age in days: baby 0, toddler 14, child 42. Bedtimes 22:00, 20:00, 21:00.
+- Talk: +20 points (the villager talk value) once a day, cap 10 hearts, own counter.
+- Names: Wren, Pip (placeholders, one per slot).

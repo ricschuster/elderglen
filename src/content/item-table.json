@@ -246,6 +246,13 @@
     "keep": true
   },
   {
+    "id": "bouquet",
+    "name": "Wildflower bouquet",
+    "sellPrice": 0,
+    "buyPrice": 200,
+    "keep": true
+  },
+  {
     "id": "braided-rug",
     "name": "Braided rug",
     "sellPrice": 0,
@@ -2739,6 +2746,13 @@
     "id": "pressed-flower",
     "name": "Pressed flower",
     "sellPrice": 50
+  },
+  {
+    "id": "promise-token",
+    "name": "Promise token",
+    "sellPrice": 0,
+    "buyPrice": 5000,
+    "keep": true
   },
   {
     "id": "pumpkin",

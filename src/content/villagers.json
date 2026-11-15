@@ -1,31 +1,112 @@
 {
   "_note": "Villagers slice 1 (#599). Source: notes 79 and 80, birthdays in note 61. Times are game clock H:MM on the 6:00 to 26:00 day. A stop is 'H:MM place (idle)'. Every time, spot and tile is a placeholder tuned here, not in code.",
   "areas": {
-    "hw": { "map": "hearthwell" },
-    "forest": { "map": "forest" },
-    "mtn": { "map": "mountain" },
-    "quarry": { "map": "quarry" },
-    "mines": { "map": "mine" },
-    "delta": { "map": "delta" },
-    "beach": { "map": null }
+    "hw": {
+      "map": "hearthwell"
+    },
+    "forest": {
+      "map": "forest"
+    },
+    "mtn": {
+      "map": "mountain"
+    },
+    "quarry": {
+      "map": "quarry"
+    },
+    "mines": {
+      "map": "mine"
+    },
+    "delta": {
+      "map": "delta"
+    },
+    "beach": {
+      "map": null
+    },
+    "farm": {
+      "map": "farm"
+    }
   },
   "places": {
-    "hw:store": { "interior": "general-store", "x": 22, "y": 24 },
-    "hw:healer": { "interior": "healer", "x": 41, "y": 24 },
-    "hw:inn": { "interior": "inn", "x": 22, "y": 53 },
-    "hw:library": { "interior": "library", "x": 41, "y": 53 },
-    "hw:smithy": { "interior": "smithy", "x": 22, "y": 82 },
-    "hw:hatter": { "interior": "hatter", "x": 41, "y": 82 },
-    "hw:sawmill": { "interior": "sawmill", "x": 48, "y": 66 },
-    "hw:outpost": { "interior": "outpost", "x": 88, "y": 12 },
-    "hw:burrow-gardener": { "interior": "burrow-gardener", "x": 68, "y": 32 },
-    "hw:burrow-retired": { "interior": "burrow-retired", "x": 67, "y": 86 },
-    "hw:burrow-young": { "interior": "burrow-young", "x": 8, "y": 51 },
-    "hw:square": { "x": 59, "y": 62, "placeholder": true },
-    "hw:green": { "x": 88, "y": 90, "placeholder": true },
-    "hw:river-path": { "x": 56, "y": 45, "placeholder": true },
-    "hw:outpost-yard": { "x": 88, "y": 16, "placeholder": true },
-    "hw:burrow-garden": { "x": 70, "y": 30, "placeholder": true },
+    "hw:store": {
+      "interior": "general-store",
+      "x": 22,
+      "y": 24
+    },
+    "hw:healer": {
+      "interior": "healer",
+      "x": 41,
+      "y": 24
+    },
+    "hw:inn": {
+      "interior": "inn",
+      "x": 22,
+      "y": 53
+    },
+    "hw:library": {
+      "interior": "library",
+      "x": 41,
+      "y": 53
+    },
+    "hw:smithy": {
+      "interior": "smithy",
+      "x": 22,
+      "y": 82
+    },
+    "hw:hatter": {
+      "interior": "hatter",
+      "x": 41,
+      "y": 82
+    },
+    "hw:sawmill": {
+      "interior": "sawmill",
+      "x": 48,
+      "y": 66
+    },
+    "hw:outpost": {
+      "interior": "outpost",
+      "x": 88,
+      "y": 12
+    },
+    "hw:burrow-gardener": {
+      "interior": "burrow-gardener",
+      "x": 68,
+      "y": 32
+    },
+    "hw:burrow-retired": {
+      "interior": "burrow-retired",
+      "x": 67,
+      "y": 86
+    },
+    "hw:burrow-young": {
+      "interior": "burrow-young",
+      "x": 8,
+      "y": 51
+    },
+    "hw:square": {
+      "x": 59,
+      "y": 62,
+      "placeholder": true
+    },
+    "hw:green": {
+      "x": 88,
+      "y": 90,
+      "placeholder": true
+    },
+    "hw:river-path": {
+      "x": 56,
+      "y": 45,
+      "placeholder": true
+    },
+    "hw:outpost-yard": {
+      "x": 88,
+      "y": 16,
+      "placeholder": true
+    },
+    "hw:burrow-garden": {
+      "x": 70,
+      "y": 30,
+      "placeholder": true
+    },
     "forest:farmstead": {
       "interior": "forest-farmstead",
       "x": 60,
@@ -38,47 +119,186 @@
       "y": 20,
       "placeholder": true
     },
-    "forest:paddock": { "x": 55, "y": 65, "placeholder": true },
-    "forest:hermit-garden": { "x": 22, "y": 24, "placeholder": true },
-    "forest:fairy-ring": { "x": 30, "y": 30, "placeholder": true },
-    "forest:camp": { "x": 80, "y": 40, "placeholder": true },
-    "forest:farm-road": { "x": 60, "y": 90, "placeholder": true },
-    "forest:wood-path": { "x": 40, "y": 70, "placeholder": true },
-    "forest:lake": { "x": 90, "y": 80, "placeholder": true },
-    "mtn:forge": { "interior": "forge", "x": 30, "y": 30, "placeholder": true },
-    "quarry:camp": { "x": 10, "y": 10, "placeholder": true },
-    "quarry:yard": { "x": 30, "y": 20, "placeholder": true },
-    "quarry:bridge": { "x": 45, "y": 25, "placeholder": true },
-    "mines:hall": { "x": 10, "y": 10, "placeholder": true },
+    "forest:paddock": {
+      "x": 55,
+      "y": 65,
+      "placeholder": true
+    },
+    "forest:hermit-garden": {
+      "x": 22,
+      "y": 24,
+      "placeholder": true
+    },
+    "forest:fairy-ring": {
+      "x": 30,
+      "y": 30,
+      "placeholder": true
+    },
+    "forest:camp": {
+      "x": 80,
+      "y": 40,
+      "placeholder": true
+    },
+    "forest:farm-road": {
+      "x": 60,
+      "y": 90,
+      "placeholder": true
+    },
+    "forest:wood-path": {
+      "x": 40,
+      "y": 70,
+      "placeholder": true
+    },
+    "forest:lake": {
+      "x": 90,
+      "y": 80,
+      "placeholder": true
+    },
+    "mtn:forge": {
+      "interior": "forge",
+      "x": 30,
+      "y": 30,
+      "placeholder": true
+    },
+    "quarry:camp": {
+      "x": 10,
+      "y": 10,
+      "placeholder": true
+    },
+    "quarry:yard": {
+      "x": 30,
+      "y": 20,
+      "placeholder": true
+    },
+    "quarry:bridge": {
+      "x": 45,
+      "y": 25,
+      "placeholder": true
+    },
+    "mines:hall": {
+      "x": 10,
+      "y": 10,
+      "placeholder": true
+    },
     "delta:hut": {
       "interior": "fisher-hut",
       "x": 30,
       "y": 30,
       "placeholder": true
     },
-    "delta:dock": { "x": 40, "y": 40, "placeholder": true },
+    "delta:dock": {
+      "x": 40,
+      "y": 40,
+      "placeholder": true
+    },
     "beach:cottage": {
       "interior": "beach-elf-house",
       "x": 20,
       "y": 20,
       "placeholder": true
     },
-    "beach:dunes": { "x": 10, "y": 15, "placeholder": true },
-    "beach:shore": { "x": 25, "y": 30, "placeholder": true },
-    "road:forest": { "transit": true },
-    "road:mtn": { "transit": true },
-    "road:quarry": { "transit": true },
-    "road:mines": { "transit": true },
-    "road:delta": { "transit": true },
-    "road:beach": { "transit": true }
+    "beach:dunes": {
+      "x": 10,
+      "y": 15,
+      "placeholder": true
+    },
+    "beach:shore": {
+      "x": 25,
+      "y": 30,
+      "placeholder": true
+    },
+    "road:forest": {
+      "transit": true
+    },
+    "road:mtn": {
+      "transit": true
+    },
+    "road:quarry": {
+      "transit": true
+    },
+    "road:mines": {
+      "transit": true
+    },
+    "road:delta": {
+      "transit": true
+    },
+    "road:beach": {
+      "transit": true
+    },
+    "farm:house": {
+      "interior": "house"
+    },
+    "farm:yard": {
+      "x": 62,
+      "y": 12,
+      "placeholder": true
+    },
+    "farm:corner": {
+      "x": 70,
+      "y": 9,
+      "placeholder": true
+    },
+    "road:hw": {
+      "transit": true
+    }
   },
   "interiorSpots": {
-    "counter": { "x": 5, "y": 4 },
-    "home": { "x": 3, "y": 7 },
-    "room": { "x": 9, "y": 6 },
-    "common": { "x": 7, "y": 6 },
-    "yard": { "x": 7, "y": 2 },
-    "dummy": { "x": 6, "y": 5 }
+    "counter": {
+      "x": 5,
+      "y": 4
+    },
+    "home": {
+      "x": 3,
+      "y": 7
+    },
+    "room": {
+      "x": 9,
+      "y": 6
+    },
+    "common": {
+      "x": 7,
+      "y": 6
+    },
+    "yard": {
+      "x": 7,
+      "y": 2
+    },
+    "dummy": {
+      "x": 6,
+      "y": 5
+    },
+    "spouse-bed": {
+      "x": 48,
+      "y": 24
+    },
+    "spouse-kitchen": {
+      "x": 25,
+      "y": 23
+    },
+    "spouse-room": {
+      "x": 63,
+      "y": 27
+    },
+    "child-crib": {
+      "x": 39,
+      "y": 14
+    },
+    "child-bed-1": {
+      "x": 46,
+      "y": 14
+    },
+    "child-bed-2": {
+      "x": 50,
+      "y": 14
+    },
+    "nursery-1": {
+      "x": 43,
+      "y": 16
+    },
+    "nursery-2": {
+      "x": 48,
+      "y": 16
+    }
   },
   "idleKeys": [
     "work",
@@ -140,7 +360,10 @@
       "name": "Odette",
       "role": "Store keeper",
       "ageBand": "adult",
-      "birthday": { "season": "summer", "day": 25 },
+      "birthday": {
+        "season": "summer",
+        "day": 25
+      },
       "home": "hw:store/home",
       "shop": "store",
       "bed": "22:30",
@@ -183,7 +406,10 @@
       "name": "Dorrie",
       "role": "Store keeper's partner",
       "ageBand": "adult",
-      "birthday": { "season": "winter", "day": 6 },
+      "birthday": {
+        "season": "winter",
+        "day": 6
+      },
       "home": "hw:store/home",
       "bed": "22:00",
       "route": [
@@ -232,7 +458,10 @@
       "name": "Fitch",
       "role": "Store keeper's child",
       "ageBand": "child",
-      "birthday": { "season": "summer", "day": 2 },
+      "birthday": {
+        "season": "summer",
+        "day": 2
+      },
       "home": "hw:store/home",
       "bed": "20:00",
       "route": [
@@ -283,7 +512,12 @@
       "name": "Alder",
       "role": "Gardener",
       "ageBand": "adult",
-      "birthday": { "season": "summer", "day": 13 },
+      "birthday": {
+        "season": "summer",
+        "day": 13
+      },
+      "candidate": true,
+      "heartCap": 14,
       "home": "hw:burrow-gardener/home",
       "bed": "22:30",
       "route": [
@@ -333,7 +567,12 @@
       "name": "Bramwell",
       "role": "Smith",
       "ageBand": "adult",
-      "birthday": { "season": "spring", "day": 12 },
+      "birthday": {
+        "season": "spring",
+        "day": 12
+      },
+      "candidate": true,
+      "heartCap": 14,
       "home": "hw:smithy/home",
       "shop": "smithy",
       "bed": "23:00",
@@ -377,7 +616,10 @@
       "name": "Hattie",
       "role": "Inn keeper",
       "ageBand": "adult",
-      "birthday": { "season": "winter", "day": 12 },
+      "birthday": {
+        "season": "winter",
+        "day": 12
+      },
       "home": "hw:inn/home",
       "shop": "inn",
       "bed": "24:30",
@@ -420,7 +662,10 @@
       "name": "Podge",
       "role": "Inn keeper's partner",
       "ageBand": "adult",
-      "birthday": { "season": "summer", "day": 28 },
+      "birthday": {
+        "season": "summer",
+        "day": 28
+      },
       "home": "hw:inn/home",
       "bed": "23:00",
       "route": [
@@ -464,7 +709,10 @@
       "name": "Pim",
       "role": "Inn keeper's child",
       "ageBand": "child",
-      "birthday": { "season": "winter", "day": 3 },
+      "birthday": {
+        "season": "winter",
+        "day": 3
+      },
       "home": "hw:inn/home",
       "bed": "20:00",
       "route": [
@@ -515,7 +763,12 @@
       "name": "Aurelle",
       "role": "Healer",
       "ageBand": "adult",
-      "birthday": { "season": "spring", "day": 26 },
+      "birthday": {
+        "season": "spring",
+        "day": 26
+      },
+      "candidate": true,
+      "heartCap": 14,
       "home": "hw:healer/home",
       "shop": "healer",
       "bed": "22:30",
@@ -564,7 +817,12 @@
       "name": "Dunmar",
       "role": "Librarian",
       "ageBand": "adult",
-      "birthday": { "season": "summer", "day": 16 },
+      "birthday": {
+        "season": "summer",
+        "day": 16
+      },
+      "candidate": true,
+      "heartCap": 14,
       "home": "hw:library/home",
       "shop": "library",
       "bed": "23:00",
@@ -608,7 +866,10 @@
       "name": "Tilda",
       "role": "Carpenter",
       "ageBand": "adult",
-      "birthday": { "season": "fall", "day": 4 },
+      "birthday": {
+        "season": "fall",
+        "day": 4
+      },
       "home": "hw:sawmill/home",
       "shop": "sawmill",
       "bed": "22:00",
@@ -659,7 +920,10 @@
       "name": "Rufus",
       "role": "Carpenter's partner",
       "ageBand": "adult",
-      "birthday": { "season": "fall", "day": 24 },
+      "birthday": {
+        "season": "fall",
+        "day": 24
+      },
       "home": "hw:sawmill/home",
       "bed": "22:00",
       "route": [
@@ -696,7 +960,10 @@
       "name": "Wren",
       "role": "Carpenter's child",
       "ageBand": "child",
-      "birthday": { "season": "fall", "day": 2 },
+      "birthday": {
+        "season": "fall",
+        "day": 2
+      },
       "home": "hw:sawmill/home",
       "bed": "20:00",
       "route": [
@@ -747,7 +1014,10 @@
       "name": "Cuthbert",
       "role": "Reeve, hall steward and postmaster",
       "ageBand": "adult",
-      "birthday": { "season": "winter", "day": 26 },
+      "birthday": {
+        "season": "winter",
+        "day": 26
+      },
       "home": "hw:outpost/home",
       "shop": "outpost",
       "bed": "22:00",
@@ -802,7 +1072,12 @@
       "name": "Cordelia",
       "role": "Hat-maker",
       "ageBand": "adult",
-      "birthday": { "season": "spring", "day": 14 },
+      "birthday": {
+        "season": "spring",
+        "day": 14
+      },
+      "candidate": true,
+      "heartCap": 14,
       "home": "hw:hatter/home",
       "shop": "hatter",
       "bed": "22:30",
@@ -846,7 +1121,12 @@
       "name": "Barnaby",
       "role": "Hat-maker's sibling",
       "ageBand": "adult",
-      "birthday": { "season": "summer", "day": 11 },
+      "birthday": {
+        "season": "summer",
+        "day": 11
+      },
+      "candidate": true,
+      "heartCap": 14,
       "home": "hw:hatter/home",
       "bed": "23:00",
       "route": [
@@ -898,7 +1178,12 @@
       "name": "Linnet",
       "role": "Young adult, works at the inn",
       "ageBand": "young-adult",
-      "birthday": { "season": "spring", "day": 7 },
+      "birthday": {
+        "season": "spring",
+        "day": 7
+      },
+      "candidate": true,
+      "heartCap": 14,
       "home": "hw:burrow-young/home",
       "bed": "23:00",
       "route": [
@@ -947,7 +1232,12 @@
       "name": "Thistle",
       "role": "Young adult, works at the inn",
       "ageBand": "young-adult",
-      "birthday": { "season": "fall", "day": 12 },
+      "birthday": {
+        "season": "fall",
+        "day": 12
+      },
+      "candidate": true,
+      "heartCap": 14,
       "home": "hw:burrow-young/home",
       "bed": "23:30",
       "route": [
@@ -990,7 +1280,10 @@
       "name": "Hester",
       "role": "Retiree",
       "ageBand": "elder",
-      "birthday": { "season": "summer", "day": 22 },
+      "birthday": {
+        "season": "summer",
+        "day": 22
+      },
       "home": "hw:burrow-retired/home",
       "bed": "21:00",
       "route": [
@@ -1036,7 +1329,10 @@
       "name": "Walter",
       "role": "Retiree",
       "ageBand": "elder",
-      "birthday": { "season": "winter", "day": 24 },
+      "birthday": {
+        "season": "winter",
+        "day": 24
+      },
       "home": "hw:burrow-retired/home",
       "bed": "21:30",
       "route": [
@@ -1080,7 +1376,10 @@
       "name": "Toby",
       "role": "Retirees' grandchild",
       "ageBand": "child",
-      "birthday": { "season": "spring", "day": 3 },
+      "birthday": {
+        "season": "spring",
+        "day": 3
+      },
       "home": "hw:burrow-retired/home",
       "bed": "20:00",
       "route": [
@@ -1134,7 +1433,12 @@
       "name": "Dilly",
       "role": "Forest animal keeper",
       "ageBand": "adult",
-      "birthday": { "season": "fall", "day": 17 },
+      "birthday": {
+        "season": "fall",
+        "day": 17
+      },
+      "candidate": true,
+      "heartCap": 14,
       "home": "forest:farmstead/home",
       "shop": "farmstead",
       "bed": "22:00",
@@ -1208,7 +1512,10 @@
       "name": "Rosmarin",
       "role": "Forest hermit witch",
       "ageBand": "adult",
-      "birthday": { "season": "fall", "day": 27 },
+      "birthday": {
+        "season": "fall",
+        "day": 27
+      },
       "home": "forest:hermit-tower/home",
       "bed": "23:30",
       "area": "forest",
@@ -1247,7 +1554,10 @@
       "knownAs": "Old Greencoat",
       "role": "Forest wanderer",
       "ageBand": "elder",
-      "birthday": { "season": "winter", "day": 22 },
+      "birthday": {
+        "season": "winter",
+        "day": 22
+      },
       "home": "forest:camp",
       "bed": "22:00",
       "bedPlaceholder": true,
@@ -1299,7 +1609,12 @@
       "name": "Korvi",
       "role": "Mountain smith dwarf",
       "ageBand": "adult",
-      "birthday": { "season": "fall", "day": 7 },
+      "birthday": {
+        "season": "fall",
+        "day": 7
+      },
+      "candidate": true,
+      "heartCap": 14,
       "home": "mtn:forge/home",
       "shop": "forge",
       "bed": "23:00",
@@ -1344,7 +1659,12 @@
       "name": "Marl",
       "role": "Quarry stonekeeper dwarf",
       "ageBand": "adult",
-      "birthday": { "season": "spring", "day": 18 },
+      "birthday": {
+        "season": "spring",
+        "day": 18
+      },
+      "candidate": true,
+      "heartCap": 14,
       "home": "quarry:camp/home",
       "shop": "quarry-dwarf",
       "bed": "22:00",
@@ -1396,7 +1716,12 @@
       "name": "Maren",
       "role": "Mines trainer",
       "ageBand": "adult",
-      "birthday": { "season": "summer", "day": 5 },
+      "birthday": {
+        "season": "summer",
+        "day": 5
+      },
+      "candidate": true,
+      "heartCap": 14,
       "home": "mines:hall/home",
       "bed": "22:00",
       "area": "mines",
@@ -1435,7 +1760,12 @@
       "name": "Rushie",
       "role": "Delta fisher",
       "ageBand": "adult",
-      "birthday": { "season": "spring", "day": 23 },
+      "birthday": {
+        "season": "spring",
+        "day": 23
+      },
+      "candidate": true,
+      "heartCap": 14,
       "home": "delta:hut/home",
       "shop": "delta-fisher",
       "bed": "21:30",
@@ -1490,7 +1820,12 @@
       "name": "Thalwen",
       "role": "Beach sea elf",
       "ageBand": "adult",
-      "birthday": { "season": "winter", "day": 15 },
+      "birthday": {
+        "season": "winter",
+        "day": 15
+      },
+      "candidate": true,
+      "heartCap": 14,
       "home": "beach:cottage/home",
       "shop": "beach-stall",
       "bed": "23:00",
@@ -1541,7 +1876,10 @@
       "knownAs": "Lane",
       "role": "Courier, lodges at the inn",
       "ageBand": "adult",
-      "birthday": { "season": "spring", "day": 28 },
+      "birthday": {
+        "season": "spring",
+        "day": 28
+      },
       "home": "hw:inn/home",
       "bed": "23:30",
       "route": [

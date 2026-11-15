@@ -1,4 +1,7 @@
 import { dateOf, type Season } from "./calendar";
+import { divorceMorning, type DivorceNews } from "./divorce";
+import { childAskDue, childMorning, type ChildNews } from "./children";
+import { spouseMorning, type SpouseNews } from "./spouse";
 import { FARM_STORE } from "./mapstore";
 import { growPots, rainOnPots } from "./gardenpot";
 import { clearMineLights } from "./lights";
@@ -163,6 +166,14 @@ export interface SleepReport {
   guestsBonus: string[];
   /** Names of young fruit trees that could not grow, since something stood in their 3x3. */
   stuckTrees: string[];
+  /** What the spouse did this morning, from the day after the wedding (note 12). */
+  spouse?: SpouseNews;
+  /** A filed divorce took effect this morning (note 12, slice 4). */
+  divorce?: DivorceNews;
+  /** A child arrived in the nursery this morning (note 12, slice 5). */
+  child?: ChildNews;
+  /** The spouse will ask about a child: the scene puts the yes or not now question (note 12, slice 5). */
+  childAsk?: boolean;
 }
 
 /**
@@ -338,6 +349,13 @@ export function sleep(
   const animals = animalsEndDay(g, random);
   const horseWasOut = horseEndDay(g);
   const furnaceGifted = deliverFurnace(g);
+  // A filed divorce takes effect first, so the ex-spouse does no chores today (note 12).
+  const divorce = divorceMorning(g);
+  // The spouse feeds the animals and waters a few crops, after the night's own work (note 12).
+  const spouse = spouseMorning(g, random);
+  // A child that was said yes to arrives, and the ask is put again once it is due (never pressed).
+  const child = childMorning(g);
+  const childAsk = childAskDue(g);
 
   const achievements = checkAchievements(g).map((a) => a.name);
   // The summit: tonight's check arms the call; the steward comes this morning
@@ -387,6 +405,10 @@ export function sleep(
     ferryMended: ferryNews(g),
     cartsRunning: cartNews(g),
     guestsBonus: payGuestsBoard(g),
+    ...(spouse ? { spouse } : {}),
+    ...(divorce ? { divorce } : {}),
+    ...(child ? { child } : {}),
+    ...(childAsk ? { childAsk } : {}),
   };
 }
 

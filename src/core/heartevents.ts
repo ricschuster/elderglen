@@ -1,8 +1,12 @@
 import villagerData from "../content/villagers.json";
 import { BUNDLES } from "./bundles";
 import { WEEKDAYS, dateOf, type Season } from "./calendar";
+import { isWeddingId, weddingEvent } from "./courtship";
 import { dishById } from "./dishes";
 import { festivalDayToday } from "./festivals";
+import { isCandidate } from "./friendship";
+import { COURT_HEARTS, PROPOSE_HEARTS } from "./marriage";
+import { spousePlan } from "./spouse";
 import { furnitureById } from "./furniture";
 import { hatById } from "./hats";
 import { itemById } from "./items";
@@ -26,6 +30,9 @@ import type { Weather } from "./weather";
  * Open points, all placeholders: stage marks, paths, poses and music ids are not checked (no per-map stage
  * data exists yet); `rise` is recorded and not yet read by friendship.
  */
+
+/** The highest heart level an event can sit at: a spouse's cap (note 12, note 84). */
+export const MAX_EVENT_HEARTS = 14;
 
 // ---- Scene commands (note 62 table) ----------------------------------------
 
@@ -141,7 +148,9 @@ export const HEART_EVENTS: HeartEvent[] = people.flatMap((f) => f.events);
 export const eventById = (
   id: string,
   defs: HeartEvent[] = HEART_EVENTS,
-): HeartEvent | undefined => defs.find((e) => e.id === id);
+): HeartEvent | undefined =>
+  defs.find((e) => e.id === id) ??
+  (isWeddingId(id) ? weddingEvent(id.slice("wedding-".length)) : undefined);
 
 // ---- State -----------------------------------------------------------------
 
@@ -246,6 +255,19 @@ export function conditionsMet(
   ctx: Pick<TriggerContext, "day" | "weather">,
 ): boolean {
   if (g.friendship.hearts(e.villager) < e.hearts) return false;
+  // Courtship events above 8 hearts unlock after the bouquet (note 62).
+  if (
+    e.hearts > COURT_HEARTS &&
+    isCandidate(e.villager) &&
+    !g.friendship.hasBouquet(e.villager)
+  )
+    return false;
+  // Spouse events (11 to 14 hearts) belong to the married person only (note 84).
+  if (
+    e.hearts > PROPOSE_HEARTS &&
+    !(g.marriage.married && g.marriage.spouse === e.villager)
+  )
+    return false;
   const c = e.conditions;
   if (!c) return true;
   if (c.season && dateOf(ctx.day).season !== c.season) return false;
@@ -574,7 +596,11 @@ export function presenceOverlaps(e: HeartEvent): boolean {
     for (let wd = 0; wd < WEEKDAYS.length; wd++)
       for (const weather of weathers) {
         const day = SEASONS.indexOf(season) * 28 + 1 + wd;
-        const plan = planDay(v, dayContext(day, weather));
+        // A spouse event is read on the spouse route (note 84).
+        const plan =
+          e.hearts > PROPOSE_HEARTS
+            ? spousePlan(v, day, weather)
+            : planDay(v, dayContext(day, weather));
         for (let i = 0; i < plan.stops.length; i++) {
           const s = plan.stops[i]!;
           const end = plan.stops[i + 1]?.time ?? plan.bed;
@@ -603,8 +629,14 @@ export function validateEvents(defs: HeartEvent[] = HEART_EVENTS): string[] {
     ids.add(e.id);
     if (!villagerById(e.villager)) at(`unknown villager "${e.villager}"`);
     if (!places.includes(e.place)) at(`unknown place "${e.place}"`);
-    if (!Number.isInteger(e.hearts) || e.hearts < 1 || e.hearts > 10)
-      at("hearts must be a whole number from 1 to 10");
+    if (
+      !Number.isInteger(e.hearts) ||
+      e.hearts < 1 ||
+      e.hearts > MAX_EVENT_HEARTS
+    )
+      at(`hearts must be a whole number from 1 to ${MAX_EVENT_HEARTS}`);
+    else if (e.hearts > PROPOSE_HEARTS && !villagerById(e.villager)?.candidate)
+      at("only a candidate can have an event above 10 hearts");
     const c = e.conditions;
     for (const f of c?.flags ?? [])
       if (!FLAGS.includes(f)) at(`unknown condition flag "${f}"`);

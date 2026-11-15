@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 45,
-  "nextobjectid": 139,
+  "nextobjectid": 140,
   "properties": [
     {
       "name": "placeholder",
@@ -5605,6 +5605,19 @@
           "type": "mark",
           "x": 1008,
           "y": 432,
+          "rotation": 0,
+          "visible": true,
+          "width": 0,
+          "height": 0,
+          "point": true
+        },
+        {
+          "id": 139,
+          "name": "spouse-props",
+          "class": "mark",
+          "type": "mark",
+          "x": 992,
+          "y": 352,
           "rotation": 0,
           "visible": true,
           "width": 0,

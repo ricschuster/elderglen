@@ -666,8 +666,8 @@
       "name": "Friendship and marriage",
       "group": "people",
       "pos": [740, 520],
-      "built": "none",
-      "builtNote": "",
+      "built": "partial",
+      "builtNote": "Marriage is built to shell level with placeholder text and art (2026-11-14, #934 to #939): bouquet at 8 hearts, promise token (5,000g, rain peddler stall in Hearthwell) at 10, the wedding three days later, the spouse room, daily kiss and chores, the 12.5 heart elderfruit, divorce at the hall ledger (tile 30,5, 50,000g, cancel before day end, divorce chest), and up to two children from the house tier 2 nursery. Real lines, events and art wait for M3d.",
       "summary": "Friendship rides on the cast; marriage follows Stardew's shape in our own content.",
       "items": [
         {
@@ -717,12 +717,12 @@
         },
         {
           "s": "open",
-          "t": "Item forms, divorce fee, child room upgrade, ring 2 and 3 counts (the spouse now keeps their village job, note 84)",
+          "t": "Owner questions on built marriage: cancel refund on divorce, no remarrying an ex, children stay with the player at divorce (SC-183), ledger placement, bouquet sold at the general store, kiss energy 50, heart cap 14, MAX_CHILDREN 2; ring 2 and 3 counts",
           "ref": "12_marriage.md#Open"
         }
       ],
       "deps": ["cast"],
-      "issues": [137]
+      "issues": [137, 934, 935, 936, 937, 938, 939]
     },
     {
       "id": "mines-combat",

@@ -225,7 +225,7 @@
           "kind": "building",
           "x": 660,
           "y": 530,
-          "note": "North-east corner of the farm.",
+          "note": "North-east corner of the farm. After a wedding it holds the shared spouse room (placeholder prop block) and, from tier 2, the nursery; the divorce chest is at the foot of the bedroom (12_marriage.md).",
           "ref": "55_farm_layout.md"
         },
         {
@@ -549,8 +549,16 @@
           "kind": "building",
           "x": 1180,
           "y": 400,
-          "note": "The village hall, on the island between the river arms. Nobody lives here. The steward from the Outpost opens it. The arms' detailed layout is an open design item.",
+          "note": "The village hall, on the island between the river arms. Nobody lives here. The steward from the Outpost opens it. The arms' detailed layout is an open design item. The divorce ledger stands inside at tile (30,5).",
           "ref": "40_hall_layout.md"
+        },
+        {
+          "name": "Rain peddler stall",
+          "kind": "landmark",
+          "x": 920,
+          "y": 470,
+          "note": "Appears on rain days only (9:00 to 20:00) and sells the promise token for 5,000g. The wildflower bouquet is sold at the general store (12_marriage.md).",
+          "ref": "12_marriage.md"
         },
         {
           "name": "Broken bridge",

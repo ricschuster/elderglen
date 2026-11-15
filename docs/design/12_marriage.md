@@ -1,10 +1,10 @@
 # 12 Marriage (draft)
 
-Status: draft. Written from the design talk of 2026-10-27; the open questions
-were settled on 2026-10-29 (see Decided). Nothing here is
-built. Marriage is not in the first playable or M3; it follows once the
-friendship system (M3) and ring 1's cast exist. Needs this note before any
-code (see CLAUDE.md, Scope). Target: after M3, with the ring 1 cast.
+Status: built to shell level (2026-11-14, slices 1 to 6, issues #934 to #939), with placeholder text, numbers and art. Written from the design talk of 2026-10-27; the open questions
+were settled on 2026-10-29 and 2026-11-14 (see Decided). Marriage is not in the first playable or M3. Since 2026-11-14 it is in
+M3b (owner). Left: the owner's play (nothing in slices 2 to 5 has been seen in a browser by the owner), the open owner
+questions in the handoff 2026-11-14j (cancel refund, no remarrying an ex, children at divorce, ledger placement, the
+bouquet sold at the general store, kiss energy, heart cap, MAX_CHILDREN), real lines, events and art (M3d), the ex at weddings and visiting the children, and multiplayer (M4). This note is the design note CLAUDE.md asks for.
 
 ## Why
 
@@ -95,7 +95,76 @@ ADR 0002.
   and a home placement in the house.
 - Sprites for each candidate: wedding clothes, home animations.
 
-## Suggested slices
+## Build slices (M3b, drafted 2026-11-14)
+
+Each slice ends with `npm run check` and is playable. Placeholder art and text until
+M3d. Numbers go in `07_tuning_numbers.md`.
+
+1. **Data and state.** Candidate flag and heart cap on the 14 villager rows; save fields
+   for courting, engaged, married, spouse id, wedding day, child count; save version bump
+   and migration test. Core code in `src/core/`, no Phaser.
+2. **Courtship to wedding.** Bouquet at 8 hearts sets courting; the token (5,000g, rainy
+   day seller, own item) at 10 hearts; wedding three days later on the festival green
+   (note 84), a day off, spouse moves in. Heart events above 8 (note 62) unlock after the
+   bouquet. One candidate end to end first, then all 14 as data.
+3. **Spouse life.** Spouse room (note 85, shared, per-spouse prop block), daily routine
+   and lines (notes 79, 80, 84), chores (4 to 6 tiles, feeding), the daily kiss that restores
+   player energy, gentle jealousy line, 12.5 heart one-off item. Unblocks #874.
+4. **Divorce.** 50,000g, a ledger scene, cancel before day end, ex-spouse keeps hearts,
+   room and chores removed next morning, wedding state cleared.
+5. **Children.** Nursery at house tier 2 (note 85), the ask after bed, child as a villager
+   with hearts, lines and small actions, no needs.
+6. **Docs and checks (built, #939: wiki draft text for the bouquet and token, planned-list entry, overview and valley-map rows, `npm run playtest:marriage`, handoff).** Wiki and Guide rows, overview and valley-map JSON, playtest bot
+   covers a wedding, handoff.
+
+Slice 2 is the risk: it touches friendship, items, festival scene, schedules and the
+save at once. Keep multiplayer in mind (M4, ADR 0007): spouse state is per farm.
+
+Slice 3 built (#936, `src/core/spouse.ts`, `src/content/spouse.json`, `tests/spouse.test.ts`): the
+spouse route built from the person's own (`spousePlan`, `spouseVillager`, read by `villagersOn`) from
+the morning after the wedding; the farm places (`farm:house/spouse-bed`, `-kitchen`, `-room`,
+`farm:yard`, `farm:corner`) in `villagers.json`; the spouse morning in `sleep()` (feeds hay from the
+silo only, waters 4 to 6 crops nearest the door, growing seasons, dry mornings); the daily kiss
+(`kiss`, energy once a day, a heart float in the scene, `kissDay` in the marriage save); daily lines
+by heart level; the gentle jealousy line; the 12.5 heart elderfruit (note 39 source 3, flag
+`elderfruit-spouse`) left at wake-up; a spouse takes a gift every day, with no weekly limit and
+halved points (note 61); the `spouse-props` mark and the placeholder prop block drawn in the
+spouse room; a journal mark for the wedding day; the heart event cap raised to 14, spouse events
+(above 10 hearts) read the spouse route and start only for the married person. Not built: divorce
+(slice 4), children (slice 5), the real spouse events and lines (M3d), the ex-spouse not attending.
+Wedding put-off for a town square event was built in slice 2 (`weddingBlock`: any festival day).
+
+Slice 4 built (#937, `src/core/divorce.ts`, `src/scenes/LedgerScene.ts`, `tests/divorce.test.ts`): the
+ledger is a new service (`ledger`, kind `ledger`) in the hall map. The fee is paid on filing and handed
+back on cancel (our choice, Stardew's refund is unchecked). The next morning `sleep()` ends the marriage,
+drops the spouse cap, raises `ex-<id>`, and moves the spouse room's furniture and chests into the divorce
+chest at (51, 31). The ex is a friend only (no second bouquet; open question). Children: see slice 5. `attendsWedding` is the guest
+filter; the wedding scene has no guest list yet.
+
+Slice 5 built (#938, `src/core/children.ts`, `src/content/children.json`, `src/scenes/ChildAskScene.ts`,
+`tests/children.test.ts`): children, by player choice only. The ask: `sleep()` sets `childAsk` on the
+report when `childAskDue` holds (married, not divorcing, house tier 2 so the nursery exists, a free bed,
+no child already on the way, 7 days after the wedding, 7 days after the last ask). The scene
+`childask` puts yes or not now before the morning report. "Not now" only waits the gap, so it never
+blocks and is never pressed. A yes sets `childDue` 3 days on and `childMorning` (in `sleep()`) brings the
+child. A child is `Child` in `marriage.kids` (`child-1`, `child-2`, name, birth day, points, last talk
+day); MAX_CHILDREN stays 2, matching the nursery's two beds. The old `children` count still saves and
+loads (an old count becomes placeholder children). Stages: baby (days 0 to 13, in the crib all day),
+toddler (14 to 41) and child (42 on), by age in days, each a route in data; `childVillager` builds a
+villager row so `whereAt` and `villagersOn` place them with no per-child code (nursery, kitchen, bed
+spots in the house map, placeholder tiles). Talking (`meet` routes child ids to `talkToChild`) gives a
+line by stage and +20 points once a day, up to 10 hearts, from the child's own counter (not the
+friendship model, which is keyed by villager rows). No needs, no neglect, no chores. Names and lines
+are placeholders; child sprites reuse a villager sprite until M3d.
+
+Divorce and children (our choice, flagged for the owner, notes say nothing): the children stay with the
+player on the farm with their hearts, and the marriage's end changes nothing for them. A child still on
+the way does not come, and the ask restarts if the player marries again. The ex is a friend only and
+does not visit: the simplest thing consistent with "no anger, ex stays a friend". A report line says
+the children stay. Not built: the ex visiting the children, children at festivals, events, adult
+children.
+
+## Earlier suggested slices (superseded by the list above)
 
 1. Marriage flag and heart cap in villager data, built with friendship (M3).
 2. One candidate's courtship, proposal and wedding, end to end, to prove the
@@ -135,6 +204,28 @@ Settled with the owner, closing issue #137.
   counts are set in those ring notes.
 - **Wedding look: left to the art pass** (#58). It is a ledger-joining scene
   with a day off.
+
+## Decided (2026-11-14, question batch)
+
+- **Milestone: folded into M3b** (owner). Supersedes "after M3" in the status line and
+  "Later, not M3" in note 03. Update `03_milestones.md`, ADR 0012's scope and CLAUDE.md
+  when it is built. #874 (spouse source) unblocks with it.
+- **Courtship: bouquet at 8 hearts, proposal at 10 hearts** (Stardew). No breakup
+  mechanic, since there is no decay or anger.
+- **Proposal token: 5,000g from a rainy-day seller** (Stardew's pendant structure, our
+  own item and seller).
+- **Divorce: 50,000g, can be cancelled before the day ends** (Stardew). Friendship stays
+  at its old level (our rule, not Stardew's reset to 0).
+- **Spouse chores: waters 4 to 6 tiles near the house, feeds animals, no repairs.**
+- **Spouse perk: a Stardrop-like one-off at 12.5 hearts** (Stardew). Our own item.
+- **Children: lines and small ambient actions, the child can be talked to and has hearts
+  that grow.** No needs, no neglect.
+- **Exhaustion: the player's, as Stardew (SC-180).** The first kiss of the day restores
+  the player's energy. The spouse does not tire and never skips chores. Confirmed with
+  the owner 2026-11-14 after the first answer was found to describe a different idea.
+- **Jealousy: a gentle comment only**, no penalty. **Messy house: not in** (no answer
+  given; treated as out under the no-nag rule).
+- **Spouse room:** one shared room for all 14, with a per-spouse prop block (note 85).
 
 ## Open
 

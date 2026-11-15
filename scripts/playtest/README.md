@@ -311,3 +311,7 @@ It writes `playtest-out/shots/art-sheet.png`, `art-figures.png`, `art-world.png`
 of the farm, forest, Hearthwell, two mine floors, coop, barn and riding. `SHEETS_ONLY=1`
 writes only the sheets (about 5 seconds); `ONLY=coop,barn` shoots only some places. Outdoor
 shots take about a minute each.
+
+`npm run playtest:marriage` (about 15 seconds): courts, proposes, sleeps to the wedding and plays it, checks the
+daily kiss, then files, cancels and refiles a divorce and sleeps to the end of the marriage. State is set with
+`farmState` and the core rules, so it checks the wiring and the scenes, not the walking.

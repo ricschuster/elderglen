@@ -29,9 +29,9 @@ the current focus until M3b is done, then ask what to design from it.
 The first playable (M2) was one farm, two seasons, selling, farming and foraging
 skills, and a few village hall bundles. The work now is ring 1, the home valley
 (M3 and M3b, `docs/design/03_milestones.md`): four seasons, fishing, the mines
-with combat, animals, the map areas and Hearthwell. It is deliberately NOT yet:
+with combat, animals, the map areas, Hearthwell and marriage (note 12, added 2026-11-14). It is deliberately NOT yet:
 regions beyond the home valley (M5), multiplayer (milestone M4, after M3b,
-ADRs 0007 and 0012), marriage, generated content, or final art. Do not expand scope without a design note in
+ADRs 0007 and 0012), generated content, or final art. Do not expand scope without a design note in
 `docs/design/` or an ADR in `docs/decisions/`.
 
 This project is Stardew Valley inspired. Do not copy its name, art, audio,

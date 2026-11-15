@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { finishWedding, isWeddingId } from "../core/courtship";
 import { actorName, SceneRun, warningText, worldOf } from "../core/eventrun";
 import {
   completeEvent,
@@ -400,6 +401,7 @@ export class HeartEventScene extends Phaser.Scene {
     this.token += 1;
     this.fadeRect.setFillStyle(0x000000, 0);
     if (this.replay) return this.close();
+    if (isWeddingId(this.event.id)) finishWedding(this.state);
     const words = completeEvent(
       this.state,
       this.event,

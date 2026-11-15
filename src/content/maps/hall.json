@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 11,
-  "nextobjectid": 109,
+  "nextobjectid": 111,
   "properties": [
     {
       "name": "placeholder",
@@ -400,6 +400,26 @@
               "name": "kind",
               "type": "string",
               "value": "herb-stall"
+            }
+          ]
+        },
+        {
+          "id": 110,
+          "name": "ledger",
+          "class": "service",
+          "type": "service",
+          "x": 488,
+          "y": 88,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "ledger"
             }
           ]
         }
