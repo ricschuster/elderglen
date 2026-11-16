@@ -12,12 +12,18 @@ import {
   ZOOM_MAX,
   ZOOM_MIN,
 } from "./view";
+import {
+  DEFAULT_SCHEME,
+  SCHEME_IDS,
+  migrateScheme,
+  type SchemeId,
+} from "./controlschemes";
 
 export type Profile = "desktop" | "touch";
-export type TouchScheme = "tap" | "stick";
+export type TouchScheme = SchemeId;
 
 export const PROFILES: readonly Profile[] = ["desktop", "touch"];
-export const TOUCH_SCHEMES: readonly TouchScheme[] = ["tap", "stick"];
+export const TOUCH_SCHEMES: readonly TouchScheme[] = SCHEME_IDS;
 
 export interface ActionInfo {
   id: string;
@@ -195,7 +201,7 @@ export function chooseProfile(coarsePointer: boolean): Profile {
 export function defaultSettings(coarsePointer = false): Settings {
   return {
     profile: chooseProfile(coarsePointer),
-    touchScheme: "tap",
+    touchScheme: DEFAULT_SCHEME,
     bindings: defaultBindings(),
     worldZoom: DEFAULT_PERCENT,
     uiSize: DEFAULT_PERCENT,
@@ -247,8 +253,7 @@ export function deserializeSettings(
   if (!isObject(raw) || raw.version !== SETTINGS_VERSION) return base;
   return {
     profile: PROFILES.find((p) => p === raw.profile) ?? base.profile,
-    touchScheme:
-      TOUCH_SCHEMES.find((t) => t === raw.touchScheme) ?? base.touchScheme,
+    touchScheme: migrateScheme(raw.touchScheme),
     bindings: cleanBindings(raw.bindings),
     worldZoom: clampPercent(
       raw.worldZoom ?? base.worldZoom,

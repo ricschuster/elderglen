@@ -104,7 +104,7 @@ describe("settings record", () => {
   it("round trips", () => {
     const s = defaultSettings();
     s.profile = "touch";
-    s.touchScheme = "stick";
+    s.touchScheme = "stickButtons";
     const r = rebind(s.bindings, "use", "KeyV");
     if (r.kind !== "ok") throw new Error("expected ok");
     s.bindings = r.bindings;
@@ -122,12 +122,12 @@ describe("settings record", () => {
     const text = JSON.stringify({
       version: 1,
       profile: "gamepad",
-      touchScheme: "stick",
+      touchScheme: "stickButtons",
       bindings: { use: "KeyV", eat: 7 },
     });
     const s = deserializeSettings(text);
     expect(s.profile).toBe("desktop");
-    expect(s.touchScheme).toBe("stick");
+    expect(s.touchScheme).toBe("stickButtons");
     expect(s.bindings.use).toBe("KeyV");
     expect(s.bindings.eat).toBe("KeyF");
   });
@@ -146,7 +146,7 @@ describe("settings record", () => {
       write: (t) => (text = t),
     };
     expect(loadSettings(store)).toEqual(defaultSettings());
-    const s = { ...defaultSettings(), touchScheme: "stick" as const };
+    const s = { ...defaultSettings(), touchScheme: "stickButtons" as const };
     saveSettings(store, s);
     expect(loadSettings(store)).toEqual(s);
   });

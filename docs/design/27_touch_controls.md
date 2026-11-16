@@ -124,7 +124,37 @@ Ours today: tap-to-move (default, no buttons) and a floating stick with use and
 action buttons. Rows 2, 6 and 7 are about weapons in the mines; rows 3 and 4 use
 an invisible stick so nothing sits on the screen.
 
-**Open question (queued, owner to answer, not part of note 102):** which of
-these should we offer? Candidates: an attack aim control for the mines (rows 2,
-6, 7), an invisible stick scheme (rows 3, 4), and whether the choice is a list
-on the Options tab as in Stardew. Check the full list in play (SC-188).
+## Control schemes list (decided 2026-11-16, built 2026-11-16)
+
+Owner decision: the Options tab offers a list of the nine, named as Stardew names
+them. Default stays tap-to-move and Auto-Attack. The old two-way setting still
+loads: "tap" becomes Tap-to-move and Auto-Attack, "stick" becomes Joystick and
+Buttons. Each scheme is a recipe of parts in `src/core/controlschemes.ts`
+(tested in `tests/controlschemes.test.ts`); `src/scenes/controls.ts` builds the
+sticks and `hud.ts` shows the buttons.
+
+Parts: tap-to-move, a move stick (visible ring or invisible), a Use and an Action
+button (or one combined button), an Auto-Attack, an attack-aim stick. Behaviour
+of each Stardew scheme is unchecked (SC-188), so these are our readings:
+
+| # | Scheme | Our reading |
+|---|--------|-------------|
+| 1 | Tap-to-move and Auto-Attack | As before, plus a held weapon swings by itself at the nearest creature in reach. Stardew's exact auto-attack rule is unknown. |
+| 2 | Tap-to-move and Attack Joystick | Tap-to-move, plus an aim stick in the lower-right corner while a weapon is held: push to face and swing that way (a sling shoots along it). Guess. |
+| 3 | Invisible Joystick and 2 Buttons | The floating stick with nothing drawn, plus Use and Action. Guess. |
+| 4 | Invisible Joystick and 1 Button | Invisible stick and one "Do" button: it acts on a person, service, ripe crop or the horse ahead, else uses the held item. Guess. |
+| 5 | Tap-to-move and Joystick and Buttons | Tap-to-move, a visible stick, Use and Action. Guess. |
+| 6 | Tap-to-move and (Joystick and Buttons) (weapons) | Tap-to-move; the stick and both buttons appear only while a weapon is held. Guess. |
+| 7 | Tap-to-move and Joystick and (Buttons) (weapons) | Tap-to-move and the stick always; the buttons appear only with a weapon. Guess. |
+| 8 | Tap-to-move and Joystick | Tap-to-move and a visible stick, no buttons. Guess. |
+| 9 | Joystick and Buttons | Our existing stick scheme (left half, Use and Action). |
+
+Rules for the combined schemes: with tap-to-move on, the move stick takes only
+the lower-left corner of the screen (below 45 percent of the height), so taps
+elsewhere still walk; a push on the stick cancels a tap route. Without
+tap-to-move the stick takes the whole left half as before. A finger a stick has
+claimed never reaches the tap handler. Placeholders to settle on the tablet: the
+zone sizes, the aim stick's corner, the one-button rule, whether Auto-Attack
+should also run in schemes 3 to 9 (it does not now), and the Options list
+layout (nine rows, one "Use this" button each). Schemes 1 and 9 are the only
+ones that match something we had before; the rest are guesses (SC-188).
