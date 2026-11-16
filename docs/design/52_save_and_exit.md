@@ -1,11 +1,10 @@
 # 52 Save and exit (draft)
 
-Status: draft. The build design for the split is "Build design (2026-11-16)" below. Decided with the owner on 2026-11-02. Nothing here is built
-except what the code already does: one save in `localStorage`, written on
-sleeping and when a menu closes, with the time of day stored
-(`src/core/save.ts`, `src/scenes/storage.ts`). Stardew's behaviour here is from
-memory; SC-01 (owner, 2026-11-03) confirms it saves only on sleeping and that
-Exit to Title discards the day.
+Status: built (2026-11-16), see "Built status". The build design for the split
+is "Build design (2026-11-16)" below, and the owner settled its open questions
+the same day ("Decisions of 2026-11-16"). Decided with the owner on
+2026-11-02. Stardew's behaviour here is from memory; SC-01 (owner, 2026-11-03)
+confirms it saves only on sleeping and that Exit to Title discards the day.
 
 ## Why not Stardew's strict save
 
@@ -97,6 +96,29 @@ becomes required. A migration is written then if players exist who need one. The
 written together, so they share a version.
 
 ## Built status
+
+- 2026-11-16: the split is built, steps 1 to 8 of the plan. Code:
+  `src/core/records.ts` (`saveNight`, `saveResume`, `loadSlot`, `restartDay`,
+  `clearSlot`, `ResumeGate`), `src/core/saveexport.ts`, `src/core/slots.ts`
+  (`slotStores`, `resumeKey`, `prevKey`), `src/scenes/storage.ts`
+  (`nightSave`, `resumeSave`, the failed-write notice, `storage.persist()`),
+  `FarmScene.saveResume`, `TitleScene` and `OptionsScene` (Export and
+  Import). `saveGame` is deleted. Forage is stored (farm field and every area)
+  and `TitleScene.begin` rolls it only when the save lacks it. Tests:
+  `tests/records.test.ts`, `tests/saveexport.test.ts`.
+  Differences from the design, small: `WriteResult` has one failure reason
+  (`refused`; quota errors are refused writes); `serialize(g, record?)` takes
+  the record kind and the player's tile; the dirty flag is a comparison of the
+  serialized state with the last write (`ResumeGate`), so no `render()` hook is
+  needed; Import fills the first empty slot instead of asking which slot
+  (all five used: delete one first); the two-tab check on `savedAt` and the
+  "from a newer version" card text are not built; the card shows the second
+  line at 58 px spacing 64 (the heading stayed). Artifact spots are still
+  rolled again on Continue (they are not stored yet).
+- Size, measured 2026-11-16: a new game with forage written is 61 KB of JSON
+  (the area worlds dominate). Three records a slot (night, resume, previous
+  night) at five slots is under 1 MB of the 5 MB origin budget. A late-game
+  record is not measured; re-check when one exists.
 
 - 2026-11-14: Exit saves the day in progress (with the clock) and goes to the
   title, no confirm, so Continue resumes it. This uses the one slot record the
@@ -373,37 +395,37 @@ Each step leaves `npm run check` green and is testable alone.
    `elderglen-prev-slot-N` first. Only if the owner wants it (question 5).
 9. **Docs.** Update Built status here, the Exit row in note 49, the handoff.
 
+## Decisions of 2026-11-16
+
+The owner answered the questions this design left open:
+
+1. Continue after a mid-day resume puts the player back on their saved tile.
+   In the mines and combat areas `at` is omitted and Continue uses the map
+   entry. (Stardew returns to the start of the day, in bed on desktop; mobile
+   unchecked, SC-195.)
+2. Keep the Restart this day button, shown only when a day is in progress,
+   with a "Sure?" press. (Stardew has no such button; Exit is its restart.)
+3. Write the resume record on every device. (Stardew desktop never saves
+   mid-day; only mobile does.)
+4. The export file holds both records. (Stardew: the morning state only, and
+   no in-game export, SC-197.)
+5. Keep one previous night record per slot as a backup, at
+   `elderglen-prev-slot-N`, copied on each night write and on an import.
+   Deleting a slot removes it. (Stardew keeps an older copy, from memory,
+   SC-196.)
+6. Old saves that Exit wrote mid-day load as the night record, so Continue
+   plays them as they stand, and Restart this day stays hidden until a resume
+   record exists. (Not applicable to Stardew.)
+
 ## Open
 
-Questions for the owner from this design, each with Stardew first (claims in
-SC-195 to SC-198, unchecked ones marked there):
-
-1. Where Continue puts the player after a mid-day resume. (Stardew) The start
-   of the day, in bed on desktop; the mobile behaviour is unchecked (SC-195).
-   Ours (Recommended): back on the tile where they stood, except in the mines
-   and combat areas, which use the map entry.
-2. Restart this day. (Stardew) No such button: exiting mid-day on desktop
-   returns you to the morning, so Exit is the restart. Ours (Recommended):
-   keep the button, shown only when a day is in progress, with a Sure? press.
-3. Writing the resume record on desktop. (Stardew) Desktop never saves
-   mid-day; only mobile does (saved Player Menu page). Ours (Recommended): write
-   it on every device, so a crash or closed tab never loses a day.
-4. What an export holds. (Stardew) The save file is the morning state only, and
-   there is no in-game export (from memory, SC-197). Ours (Recommended): both
-   records in one file, so a day in progress travels too. The alternative is
-   the morning only.
-5. A backup of the previous night. (Stardew) Keeps an older copy of the save
-   file, from memory, unchecked (SC-196). Ours (Recommended): keep one previous
-   night record per slot, so a bad night write can be undone. The alternative
-   is none.
-6. Old saves written mid-day by Exit. (Stardew) Not applicable, since it never
-   saved them. Ours (Recommended): load as the morning record as is, with
-   Restart hidden until a resume exists. The alternative is to copy the old
-   record into both records, so Restart returns to that same point at once.
-
-Also open:
+Still open:
 
 - Whether `navigator.storage.persist()` helps on a tablet browser, found by
   trying it on the real device (#59, #63).
-- Whether a late-game record is small enough for five slots of two records
-  (measure in step 1).
+- Whether a late-game record is small enough for five slots of three records
+  (a new game measures 61 KB; see Built status).
+- Import asks no slot question yet (first empty slot); add the pick and the
+  replace confirm if the owner wants them.
+- The installed app's file path for Export (ADR 0008).
+- Two-tab guard on `savedAt`, and the "from a newer version" card text.

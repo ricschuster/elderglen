@@ -1,4 +1,12 @@
-import { deserialize, type GameState, type SaveStore } from "./save";
+import {
+  clearSlot,
+  loadSlot,
+  type LoadedSlot,
+  type SlotNote,
+  type SlotStores,
+} from "./records";
+import { clockText } from "./clock";
+import type { GameState } from "./save";
 
 /** Five fixed save slots (note 52). */
 export const SLOT_COUNT = 5;
@@ -12,11 +20,18 @@ export const ACTIVE_SLOT_KEY = "elderglen-active-slot";
 /** Plain key and value storage, so the slot rules run without a browser. */
 export interface KeyValue {
   get(key: string): string | null;
-  set(key: string, value: string): void;
+  /** False when the store refused the write (private window, full storage). */
+  set(key: string, value: string): boolean;
   remove(key: string): void;
 }
 
+/** The night record of a slot. Unchanged from before the split, so no save moves. */
 export const slotKey = (slot: number): string => `elderglen-save-slot-${slot}`;
+/** The resume record: the day in progress (note 52). */
+export const resumeKey = (slot: number): string =>
+  `elderglen-resume-slot-${slot}`;
+/** The night record before the latest, kept as a backup. */
+export const prevKey = (slot: number): string => `elderglen-prev-slot-${slot}`;
 
 export const isSlot = (n: unknown): n is number =>
   Number.isInteger(n) && (n as number) >= 1 && (n as number) <= SLOT_COUNT;
@@ -48,25 +63,34 @@ export function setActiveSlot(kv: KeyValue, slot: number): void {
   if (isSlot(slot)) kv.set(ACTIVE_SLOT_KEY, String(slot));
 }
 
-/** A save store over one slot. */
-export function slotStore(kv: KeyValue, slot: number): SaveStore {
+/** The records of one slot over plain key and value storage. */
+export function slotStores(kv: KeyValue, slot: number): SlotStores {
+  const over = (key: string) => ({
+    read: () => kv.get(key),
+    write: (text: string) => kv.set(key, text),
+    clear: () => kv.remove(key),
+  });
   return {
-    read: () => kv.get(slotKey(slot)),
-    write: (text) => kv.set(slotKey(slot), text),
+    night: over(slotKey(slot)),
+    resume: over(resumeKey(slot)),
+    prev: over(prevKey(slot)),
   };
 }
 
 export type SlotInfo =
   | { slot: number; status: "empty" }
   | { slot: number; status: "broken" }
-  | { slot: number; status: "used"; game: GameState };
+  | (Extract<LoadedSlot, { status: "used" }> & {
+      slot: number;
+      /** What Continue plays. Same as `play`. */
+      game: GameState;
+    });
 
-/** What a slot holds: nothing, a save that cannot be read, or a game. */
+/** What a slot holds: nothing, records that cannot be read, or a game. */
 export function slotInfo(kv: KeyValue, slot: number): SlotInfo {
-  const text = kv.get(slotKey(slot));
-  if (text === null) return { slot, status: "empty" };
-  const game = deserialize(text);
-  return game ? { slot, status: "used", game } : { slot, status: "broken" };
+  const loaded = loadSlot(slotStores(kv, slot));
+  if (loaded.status !== "used") return { slot, status: loaded.status };
+  return { ...loaded, slot, game: loaded.play };
 }
 
 /** Every slot, in order. */
@@ -74,7 +98,22 @@ export function allSlots(kv: KeyValue): SlotInfo[] {
   return Array.from({ length: SLOT_COUNT }, (_, i) => slotInfo(kv, i + 1));
 }
 
-/** Empty one slot. The others are untouched. */
+/** Empty one slot, all its records. The others are untouched. */
 export function deleteSlot(kv: KeyValue, slot: number): void {
-  if (isSlot(slot)) kv.remove(slotKey(slot));
+  if (isSlot(slot)) clearSlot(slotStores(kv, slot));
+}
+
+/** The title card's second line for a day in progress, from the resume record. */
+export function resumeLine(g: GameState): string {
+  const gold = g.money.toLocaleString("en-US");
+  return `Day in progress, ${clockText(g.day.clock.minutes)}, ${gold}g`;
+}
+
+/** What the title says once about a record that could not be read. */
+export function slotNote(note: SlotNote | undefined): string | undefined {
+  if (note === "resume-unreadable")
+    return "Today's progress could not be read. Continuing from the morning.";
+  if (note === "night-unreadable")
+    return "The morning save could not be read. Continuing the day in progress.";
+  return undefined;
 }

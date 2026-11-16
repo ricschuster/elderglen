@@ -43,9 +43,31 @@ export const MAX_FILL = 0.25;
 /** Share of forage spawns that are a rare find, when one is in season. Placeholder (note 07). */
 export const RARE_CHANCE = 0.05;
 
+/** The day's wild goods as saved: rolled once, then stored (note 52). */
+export type ForageSave = Array<{ x: number; y: number; id: string }>;
+
 /** Wild goods lying on the ground. They reset each morning. */
 export class ForageField {
   private found = new Map<string, string>();
+  /** True once `load` has set the field from a save, so a load does not roll it again. */
+  loaded = false;
+
+  save(): ForageSave {
+    return [...this.each()];
+  }
+
+  /** Set the field from a save. Anything malformed is skipped. */
+  load(raw: unknown): void {
+    if (!Array.isArray(raw)) return;
+    this.found.clear();
+    for (const e of raw) {
+      if (typeof e !== "object" || e === null) continue;
+      const { x, y, id } = e as { x: unknown; y: unknown; id: unknown };
+      if (Number.isInteger(x) && Number.isInteger(y) && typeof id === "string")
+        this.found.set(`${x as number},${y as number}`, id);
+    }
+    this.loaded = true;
+  }
 
   itemAt(x: number, y: number): string | undefined {
     return this.found.get(`${x},${y}`);

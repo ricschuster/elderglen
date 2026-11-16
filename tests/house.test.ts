@@ -589,11 +589,23 @@ describe("cellar map", () => {
   it("loads a save made in the cellar back into the cellar", () => {
     const g = newGame();
     g.houseTier = 3;
-    g.resumeMap = CELLAR_MAP;
-    const back = deserialize(serialize(g))!;
+    // A record from before `at` holds the cellar marker only.
+    const raw = JSON.parse(serialize(g));
+    raw.resumeMap = CELLAR_MAP;
+    const back = deserialize(JSON.stringify(raw))!;
     expect(resumeAt(back)).toEqual({ map: CELLAR_MAP, entry: "from_above" });
-    const home = deserialize(serialize({ ...g, resumeMap: undefined }))!;
-    expect(resumeAt(home)).toBeUndefined();
+    expect(resumeAt(deserialize(serialize(g))!)).toBeUndefined();
+  });
+
+  it("puts a resumed player back on the tile they stood on", () => {
+    const g = newGame();
+    g.houseTier = 3;
+    const raw = JSON.parse(serialize(g, { kind: "resume" }));
+    raw.at = { map: CELLAR_MAP, x: 2, y: 2 };
+    const back = deserialize(JSON.stringify(raw))!;
+    expect(resumeAt(back)).toMatchObject({ map: CELLAR_MAP, x: 2, y: 2 });
+    // No stairs open: the cellar spot is not offered.
+    expect(resumeAt({ ...back, houseTier: 0 })).toBeUndefined();
   });
 
   it("starts at the farm if the stairs are not open", () => {

@@ -32,7 +32,9 @@ export class ExitScene extends Phaser.Scene {
   }
 
   private press(): void {
-    (this.scene.get("farm") as unknown as { save(): void }).save();
+    (
+      this.scene.get("farm") as unknown as { saveResume(force: boolean): void }
+    ).saveResume(true);
     this.scene.stop("menu");
     this.scene.stop("farm");
     this.scene.start("title");

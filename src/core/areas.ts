@@ -228,24 +228,32 @@ export function placeSpawn(w: World, s: Spawn): boolean {
   return w.rocks.add(s.x, s.y, kind);
 }
 
-/** Scatter the day's forage on every area (the morning, and a new or loaded game). */
-export function respawnAreaForage(g: GameState, random: () => number): void {
+/**
+ * Scatter the day's forage on every area (the morning, and a new or loaded game).
+ * With `keepLoaded`, a field that came from a save is left as saved.
+ */
+export function respawnAreaForage(
+  g: GameState,
+  random: () => number,
+  keepLoaded = false,
+): void {
   const { season } = dateOf(g.day.clock.day);
   for (const [id, w] of Object.entries(g.areas)) {
     const map = maps.get(id);
-    w.forage.respawnArea(
-      id,
-      season,
-      map.forageSpots.filter(
-        (s) =>
-          !w.trees.at(s.x, s.y) &&
-          !w.rocks.at(s.x, s.y) &&
-          !w.weeds.at(s.x, s.y) &&
-          !w.twigs.at(s.x, s.y),
-      ),
-      (s) => map.forageTableAt(s.x, s.y),
-      random,
-    );
+    if (!(keepLoaded && w.forage.loaded))
+      w.forage.respawnArea(
+        id,
+        season,
+        map.forageSpots.filter(
+          (s) =>
+            !w.trees.at(s.x, s.y) &&
+            !w.rocks.at(s.x, s.y) &&
+            !w.weeds.at(s.x, s.y) &&
+            !w.twigs.at(s.x, s.y),
+        ),
+        (s) => map.forageTableAt(s.x, s.y),
+        random,
+      );
     if (ARTIFACT_AREAS.includes(id)) {
       const free = (s: Spot) => emptyAt(w, s.x, s.y);
       const open = map.forageSpots.filter(free);

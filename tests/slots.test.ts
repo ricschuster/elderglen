@@ -12,7 +12,7 @@ import {
   setActiveSlot,
   slotInfo,
   slotKey,
-  slotStore,
+  slotStores,
   type KeyValue,
 } from "../src/core/slots";
 
@@ -23,7 +23,7 @@ function memory(start: Record<string, string> = {}): KeyValue & {
   return {
     data,
     get: (k) => data.get(k) ?? null,
-    set: (k, v) => void data.set(k, v),
+    set: (k, v) => (data.set(k, v), true),
     remove: (k) => void data.delete(k),
   };
 }
@@ -42,8 +42,8 @@ describe("save slots", () => {
     a.money = 111;
     const b = newGame();
     b.money = 222;
-    slotStore(kv, 1).write(serialize(a));
-    slotStore(kv, 3).write(serialize(b));
+    slotStores(kv, 1).night.write(serialize(a));
+    slotStores(kv, 3).night.write(serialize(b));
     const one = slotInfo(kv, 1);
     const three = slotInfo(kv, 3);
     expect(one.status === "used" && one.game.money).toBe(111);
@@ -58,8 +58,8 @@ describe("save slots", () => {
 
   it("deletes only the chosen slot", () => {
     const kv = memory();
-    slotStore(kv, 1).write(serialize(newGame()));
-    slotStore(kv, 2).write(serialize(newGame()));
+    slotStores(kv, 1).night.write(serialize(newGame()));
+    slotStores(kv, 2).night.write(serialize(newGame()));
     deleteSlot(kv, 1);
     expect(slotInfo(kv, 1).status).toBe("empty");
     expect(slotInfo(kv, 2).status).toBe("used");

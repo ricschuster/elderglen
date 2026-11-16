@@ -1,9 +1,9 @@
 import Phaser from "phaser";
 import { answerAsk, askText } from "../core/children";
-import { saveGame, type GameState } from "../core/save";
+import type { GameState } from "../core/save";
 import type { SleepReport } from "../core/sleep";
 import { villagerById } from "../core/villagers";
-import { browserStore } from "./storage";
+import { nightSave } from "./storage";
 import { frame, Menu } from "./panel";
 import { STATE_KEY } from "./state";
 
@@ -65,7 +65,7 @@ export class ChildAskScene extends Phaser.Scene {
 
   private answer(yes: boolean, name: string): void {
     answerAsk(this.state, yes, name);
-    saveGame(browserStore, this.state);
+    nightSave(this.state);
     this.scene.stop();
     // The farm is still paused: the report opens over it as it would have.
     this.scene.launch(this.shipping ? "shipping" : "report", {

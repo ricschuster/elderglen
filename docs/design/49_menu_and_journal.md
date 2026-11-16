@@ -43,15 +43,16 @@ and the options door (`45`). This note gives them one home.
 | Special Items | Special items, book powers and mastery powers collected (Stardew 1.6): name and what it does. Hidden until the first one is held. Ours: keepsakes and keys we already have (Deepmark Key, Homeward Pin and so on) count as special items | no | saved page |
 | Collections | Shipped items, finds and the Achievements tab | no | `38` |
 | Options | The existing controls screen, as the in-game door | screen exists | `45` |
-| Exit | Save the day in progress and return to the title. No confirm | no | `52` (Stardew discards, from memory) |
+| Exit | Save the day in progress and return to the title. No confirm | built | `52` (Stardew discards, from memory) |
 
 - **Social and Map are in the tab list as placeholders (decided 2026-11-02).**
   Each shows a short "not yet" page until its system is built. They match
   Stardew's tab list.
 - **Exit saves the day in progress, then returns to the title (decided
   2026-11-02, ours; Stardew discards it, from memory).** It writes the resume
-  record of note 52, so Continue picks up mid-day and nothing is lost, which is
-  why it needs no confirm. Exit Game is for an installed app only and waits for
+  record of note 52 (built 2026-11-16; the morning night record is no longer
+  overwritten), so Continue picks up mid-day on the saved tile and nothing is
+  lost, which is why it needs no confirm. Exit Game is for an installed app only and waits for
   the wrapper ADR.
 - **K is dropped (Stardew, decided 2026-11-02).** Stardew has no skills key.
   Skills is a tab, reached by Esc or E.
