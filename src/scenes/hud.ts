@@ -494,6 +494,23 @@ export class Hud {
     );
   }
 
+  /** Show a tip above a screen box (for example a tile), kept on screen. */
+  showTipOver(
+    tip: ItemTip,
+    box: { x: number; y: number; w: number; h: number },
+  ): void {
+    this.tooltip.show(
+      tip,
+      {
+        x: box.x / this.scale,
+        y: box.y / this.scale,
+        w: box.w / this.scale,
+        h: box.h / this.scale,
+      },
+      { w: this.uw, h: this.uh },
+    );
+  }
+
   hideTip(): void {
     this.tooltip.hide();
   }

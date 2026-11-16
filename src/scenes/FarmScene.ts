@@ -189,6 +189,7 @@ import {
   type Vec,
 } from "../core/movement";
 import { aimAt } from "../core/aim";
+import { isLongPress, tileScreenRect } from "../core/tipanchor";
 import { createControls, type Controls } from "./controls";
 import { planTap, planUse, type TapPlan } from "../core/pathing";
 import { tapPick, tapUse } from "../core/tapuse";
@@ -1414,10 +1415,28 @@ export class FarmScene extends Phaser.Scene {
     ): void => {
       if (!mine(p, over)) return;
       this.tapDown = true;
+      const t = this.tileAtPointer(p);
+      if (p.wasTouch && this.state.chests.get(this.mapId, t.x, t.y)) {
+        // Wait: a held finger shows the chest tip, a quick tap opens it.
+        pending = { p, at: this.time.now, x: p.x, y: p.y };
+        return;
+      }
       aimAtTap(p, true);
     };
+    const settle = (act: boolean): void => {
+      const w = pending;
+      pending = undefined;
+      if (w && act) aimAtTap(w.p, true);
+    };
     let last = "";
+    let pending:
+      { p: Phaser.Input.Pointer; at: number; x: number; y: number } | undefined;
     const onMove = (p: Phaser.Input.Pointer): void => {
+      if (pending) {
+        // A drag off the chest is a move, not a press.
+        if (Math.hypot(p.x - pending.x, p.y - pending.y) > 12) settle(true);
+        else return;
+      }
       if (!this.tapDown || !p.isDown || this.hud.covers(p.x, p.y)) return;
       const t = this.tileAtPointer(p);
       const k = `${t.x},${t.y}`;
@@ -1426,6 +1445,7 @@ export class FarmScene extends Phaser.Scene {
       aimAtTap(p, false);
     };
     const onUp = (): void => {
+      if (pending) settle(!isLongPress(this.time.now - pending.at));
       this.tapDown = false;
       last = "";
     };
@@ -1448,8 +1468,13 @@ export class FarmScene extends Phaser.Scene {
       if (this.hud.covers(p.x, p.y) || this.leaving) return this.hud.hideTip();
       const t = this.tileAtPointer(p);
       const chest = this.state.chests.get(this.mapId, t.x, t.y);
-      if (chest) this.hud.showTipAt(placedChestTip(chest), p.x, p.y);
-      else this.hud.hideTip();
+      if (chest) {
+        const cam = this.cameras.main;
+        this.hud.showTipOver(
+          placedChestTip(chest),
+          tileScreenRect(t.x, t.y, this.map.tileSize, cam.worldView, cam.zoom),
+        );
+      } else this.hud.hideTip();
     };
     let timer: Phaser.Time.TimerEvent | undefined;
     let from = { x: 0, y: 0 };
