@@ -14,6 +14,7 @@ import {
 import type { Taste } from "../core/friendship";
 import type { GameState } from "../core/save";
 import { frame } from "./panel";
+import { addPortrait } from "./portrait";
 import { STATE_KEY } from "./state";
 
 const TITLE = { fontSize: "30px", color: "#ffe9a0" };
@@ -43,13 +44,6 @@ const ROW_H = 56;
 const LIST_X = 24;
 const LIST_W = 890;
 const BAR_X = 928;
-
-/** The colour of a placeholder portrait, from the id so it stays the same. */
-function tint(id: string): number {
-  let h = 0;
-  for (const c of id) h = (h * 31 + c.charCodeAt(0)) % 360;
-  return Phaser.Display.Color.HSLToColor(h / 360, 0.35, 0.5).color;
-}
 
 /**
  * The Social tab (note 49, 102): everyone in the roster in fixed order, with
@@ -238,19 +232,8 @@ export class SocialScene extends Phaser.Scene {
         )
         .setOrigin(0),
     );
-    add(
-      this.add
-        .rectangle(LIST_X + 6, y + 6, 40, 40, r.met ? tint(r.id) : 0x444444)
-        .setOrigin(0),
-    );
-    add(
-      this.add
-        .text(LIST_X + 26, y + 26, r.met ? r.name.charAt(0) : "?", {
-          fontSize: "22px",
-          color: "#ffffff",
-        })
-        .setOrigin(0.5),
-    );
+    for (const o of addPortrait(this, r.id, LIST_X + 6, y + 6, 40, r.met))
+      add(o);
     const dim = r.met ? "#ffffff" : "#ffffff77";
     add(
       this.add.text(LIST_X + 56, y + 6, r.name, {
@@ -296,19 +279,15 @@ export class SocialScene extends Phaser.Scene {
         .setOrigin(0)
         .setInteractive(),
     );
-    add(
-      this.add
-        .rectangle(LIST_X + 16, LIST_TOP + 40, 120, 120, tint(r.id))
-        .setOrigin(0),
-    );
-    add(
-      this.add
-        .text(LIST_X + 76, LIST_TOP + 100, r.name.charAt(0), {
-          fontSize: "64px",
-          color: "#ffffff",
-        })
-        .setOrigin(0.5),
-    );
+    for (const o of addPortrait(
+      this,
+      r.id,
+      LIST_X + 16,
+      LIST_TOP + 40,
+      120,
+      true,
+    ))
+      add(o);
     add(this.add.text(LIST_X + 160, LIST_TOP + 36, r.name, TITLE));
     add(
       this.add.text(

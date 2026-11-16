@@ -81,6 +81,8 @@ Status: draft, owner feedback 2026-11-16. Design before build. Extends notes 49
   bottom with the same panel and bar. Check on the owner's tablet that the panel
   and buttons clear the notch and the Android edge.
 
+The pack stays at 12 slots including the four tools (Stardew).
+
 ## Built status
 
 - **Batch A, Social tab: built (2026-11-16).** `socialRows` returns the whole
@@ -102,6 +104,11 @@ Status: draft, owner feedback 2026-11-16. Design before build. Extends notes 49
   bar each resize. The Pack tab already used 64 px cells inside the menu box,
   which `menuZoom` shrinks to fit, and no other grid shares the HUD constant.
   Not checked in a browser.
+- **Batch E, portraits: built (2026-11-16).** Portraits are the head and shoulders
+  of the current villager sprite, scaled by a whole number with nearest-neighbour
+  filtering in a frame (`src/scenes/portrait.ts`, maths in `src/core/portrait.ts`);
+  unmet rows show a flat grey silhouette. They come from the current sprites until
+  real art in M3d. Not checked in a browser.
 - Not built: clock panel, energy bar, touch HUD.
 
 ## Checks added
