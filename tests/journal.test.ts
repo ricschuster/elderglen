@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  cancelQuest,
   defaultExpanded,
   journalLines,
   projectLines,
@@ -75,10 +76,36 @@ describe("quest expand", () => {
 
   it("shows details only for open entries and tags titles", () => {
     const view = questView(entries, new Set(["b"]), "a");
-    expect(view.map((l) => l.quest)).toEqual(["a", "b", undefined, undefined]);
+    expect(view.map((l) => l.quest)).toEqual([
+      "a",
+      "b",
+      undefined,
+      undefined,
+      undefined,
+    ]);
     expect(view[0]!.text).toContain("[+] Hand in 2 Turnip");
     expect(view[0]!.text.startsWith(">")).toBe(true);
     expect(view[1]!.text).toContain("[-]");
     expect(view[3]!.text).toContain("Pays 20g.");
+    expect(view[4]!.cancel).toBe("b");
+  });
+});
+
+describe("quest cancel", () => {
+  it("shows a Cancel line under an open request and gives it up for free", () => {
+    const g = newGame();
+    let day = 2;
+    while (g.quests.posted(day).length === 0 && day < 60) day++;
+    const offer = g.quests.posted(day)[0]!;
+    g.quests.accept(offer.id, day);
+    const entries = [{ id: offer.id, title: "t", details: ["d"] }];
+    const lines = questView(entries, new Set([offer.id]));
+    expect(lines.find((l) => l.cancel)?.cancel).toBe(offer.id);
+    expect(questView(entries, new Set()).some((l) => l.cancel)).toBe(false);
+    const gold = g.money;
+    expect(cancelQuest(g, offer.id)).toBe(true);
+    expect(g.quests.open()).toHaveLength(0);
+    expect(cancelQuest(g, offer.id)).toBe(false);
+    expect(g.money).toBe(gold);
   });
 });

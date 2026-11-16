@@ -68,4 +68,4 @@ shows a tooltip (name, kind, one line of text, as Stardew's Scythe tip: "Scythe"
 
 **Built 2026-11-16, build steps 1 (scythe part) and 3:** `scythe` is the fifth tool
 (`toolitems.ts`, `tools.ts`), grass is `src/core/grass.ts` with tests in `tests/grass.test.ts`.
-Left: scythe tooltip text, the sim bot cutting grass, final art for the scythe and grass.
+Sim bot rule built 2026-11-16 (`tidyGrass`: scythes the nearest 6 grass tiles a day). Left: scythe tooltip text, final art for the scythe and grass.

@@ -66,6 +66,13 @@ export function toggleExpanded(open: Set<string>, id: string): Set<string> {
 export interface JournalLine {
   text: string;
   quest?: string;
+  /** The quest id when this line is a Cancel button (tap target). */
+  cancel?: string;
+}
+
+/** Give a request up from the journal. Costs nothing (note 50). True if it was open. */
+export function cancelQuest(g: GameState, id: string): boolean {
+  return g.quests.cancel(id);
 }
 
 /** Quest entries as lines: a marker and title, then details if expanded. */
@@ -81,7 +88,10 @@ export function questView(
       text: `${e.id === selected ? ">" : " "} ${isOpen ? "[-]" : "[+]"} ${e.title}`,
       quest: e.id,
     });
-    if (isOpen) for (const d of e.details) out.push({ text: `       ${d}` });
+    if (isOpen) {
+      for (const d of e.details) out.push({ text: `       ${d}` });
+      out.push({ text: "       [ Cancel request ]", cancel: e.id });
+    }
   }
   return out;
 }

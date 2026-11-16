@@ -362,10 +362,31 @@ interface PlaceRow {
   line: string;
 }
 
+/** Shops no villager keeps have no People card, so their hours show here once seen (note 101). */
+export function keeperlessShops(g: GameState): ShopHours[] {
+  return SHOPS.filter(
+    (s) => !VILLAGERS.some((v) => v.shop === s.id) && g.guide.shopSeen(s.id),
+  );
+}
+
 function placeEntries(g: GameState): GuideEntry[] {
-  return (guidePlaces as PlaceRow[])
-    .filter((p) => g.guide.visited(p.id))
-    .map((p) => ({ id: p.id, name: p.name, state: "known", lines: [p.line] }));
+  const shops: GuideEntry[] = keeperlessShops(g).map((s) => ({
+    id: `shop-${s.id}`,
+    name: s.name,
+    state: "known",
+    lines: shopHoursLines(s),
+  }));
+  return [
+    ...(guidePlaces as PlaceRow[])
+      .filter((p) => g.guide.visited(p.id))
+      .map((p) => ({
+        id: p.id,
+        name: p.name,
+        state: "known" as const,
+        lines: [p.line],
+      })),
+    ...shops,
+  ];
 }
 
 const byName = (a: GuideEntry, b: GuideEntry) => a.name.localeCompare(b.name);

@@ -30,6 +30,8 @@ import {
   placeMachine,
 } from "../../src/core/machines";
 import { chop, eat } from "../../src/core/actions";
+import { siloCapacity } from "../../src/core/animals";
+import { cutGrass } from "../../src/core/grass";
 import { smelt, collect, ready as furnaceReady } from "../../src/core/furnace";
 import { mine } from "../../src/core/mining";
 import { minesOpen } from "../../src/core/mines";
@@ -74,6 +76,8 @@ const SEED_RESERVE = 1500;
 
 /** Young trees a day the bot cuts back. */
 const TIDY_TREES = 8;
+/** Grass tiles the bot scythes a day once it has a silo: free, but each swing costs time (note 103). */
+const TIDY_GRASS = 6;
 
 /** `SIM_ORCHARD_RESERVE`: gold kept back after buying an orchard tree (default 300). A high value buys the tree only when flush. */
 const ORCHARD_RESERVE = Number(
@@ -265,6 +269,7 @@ class Bot {
     if (this.dueFor(this.p.hallEvery)) this.visitHall();
     if (this.p.keepsForHall) this.tendFurnace();
     this.tidyTrees();
+    this.tidyGrass();
     this.shipSurplus();
   }
 
@@ -396,6 +401,25 @@ class Bot {
       if (this.shortOf("stone") > 0 && spare() && this.walker.descend(1))
         this.breakRocks(1);
     }
+  }
+
+  /** Scythe a few of the nearest grass tiles a day: no energy, hay to the silo when there is one. */
+  private tidyGrass(): void {
+    const g = this.g;
+    // Grass is only worth a walk for hay, so the bot cuts it once it has a silo
+    // (tilling clears the grass where it plants, so it never blocks a field).
+    if (this.lateNight || g.grass.count === 0 || siloCapacity(g) === 0) return;
+    this.walker.enter("farm");
+    const grass = [...g.grass.each()];
+    const costs = this.walker.costsNextTo(grass);
+    const order = grass
+      .map((t, i) => ({ t, c: costs[i] as number }))
+      .filter((o) => o.c < Infinity)
+      .sort((a, b) => a.c - b.c)
+      .slice(0, TIDY_GRASS);
+    for (const { t } of order)
+      if (g.grass.at(t.x, t.y))
+        this.act(t, () => cutGrass(g, t.x, t.y, this.random));
   }
 
   /** Cut a few of the nearest young trees each day, so the farm is not grown over and the doors stay open. */

@@ -115,7 +115,7 @@ save list noted when a map loads, names and lines in `src/content/guide-places.j
 Built 2026-11-14 (third slice): shop hours. A `guideShops` save list is noted when a counter or Hearthwell door
 is used while open; the keeper's card then shows the open and close times, the door-only time, and the closed day
 (with the rain and hall exceptions), all read from `src/content/shops.json`. Shops with no keeper villager have no
-card, so their hours are not listed (the note does not say where else they would show).
+card, so once seen their hours show as an entry under Places (added 2026-11-16, `keeperlessShops`).
 
 Left: seen fish (in a pond), heart events seen on a card, a search box, the tab count check on a tablet, and
 cards with pictures. Items are noted from the backpack only, so something that was only ever in a
