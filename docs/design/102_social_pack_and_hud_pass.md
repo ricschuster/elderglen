@@ -96,7 +96,13 @@ Status: draft, owner feedback 2026-11-16. Design before build. Extends notes 49
   fixed strip is gone; `findTool` serves auto-pick. Tools are safe from defeat
   and sort first. Tools use pack slots, so a new pack has 8 free slots (the sim
   bot gets 4 extra). Not checked in a browser.
-- Not built: slot size, clock panel, energy bar, touch HUD.
+- **Batch D, slot size: built (2026-11-16).** `hudSlot` in `src/core/view.ts`
+  picks 64 on a desktop window wide enough for the whole bar at the UI size set,
+  else 44; touch stays 44. `Hud.layout` takes the slot and re-places the bottom
+  bar each resize. The Pack tab already used 64 px cells inside the menu box,
+  which `menuZoom` shrinks to fit, and no other grid shares the HUD constant.
+  Not checked in a browser.
+- Not built: clock panel, energy bar, touch HUD.
 
 ## Checks added
 

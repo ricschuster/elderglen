@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { heldAt, rowOf, TOOLBAR_SIZE, type Held } from "../core/toolbar";
 import { SLOT_COUNT } from "../core/inventory";
+import { barWidth, SLOT_SMALL } from "../core/view";
 import { iconKey as itemIcon, TOOL_ICONS } from "./art";
 import { dateText } from "../core/calendar";
 import { festivalToday } from "../core/festivals";
@@ -12,14 +13,14 @@ import type { Settings } from "../core/bindings";
 import { desktopHint } from "./controls";
 import { TIER_NAMES, toolAway, type Upgradable } from "../core/upgrades";
 
-const SLOT = 44;
+/** The touch slot, and the desktop slot on a window too small for the big one. */
+const SLOT = SLOT_SMALL;
 const GAP = 4;
-const BAR_W = TOOLBAR_SIZE * (SLOT + GAP) - GAP;
 // Layout is drawn for a 960 by 540 window, then each object is shifted by its
 // anchor when the real window size is known (`layout`).
 const BASE_W = 960;
 const BASE_H = 540;
-const BAR_Y = BASE_H - SLOT - 8;
+const BAR_MARGIN = 8;
 /** Touch: the toolbar is a column down the left edge, with the map drawn beside it. */
 const STEP = SLOT + GAP;
 const COL_X = 8;
@@ -27,8 +28,6 @@ const COL_TOP = 8;
 const COL_W = SLOT + 2 * COL_X;
 /** A drag moves the column when the finger travels this far, in HUD units. */
 const DRAG_MIN = 6;
-/** The widest HUD row, toolbar and a margin, in HUD units: it must fit the window. */
-export const HUD_FIT_W = BAR_W + 16;
 const USE_R = 52;
 const EAT_R = 36;
 const HEALTH_W = 160;
@@ -99,6 +98,8 @@ export class Hud {
   private scrollTop = 0;
   private visibleCount = 1;
   private lastAt = -1;
+  /** Desktop bar slot size in HUD units (note 102): 64, or 44 in a small window. */
+  private slot = SLOT;
   private drag: { y: number; top: number; moved: boolean } | undefined;
 
   constructor(
@@ -166,6 +167,8 @@ export class Hud {
       this.message,
     );
 
+    const BAR_W = barWidth(SLOT);
+    const BAR_Y = BASE_H - SLOT - BAR_MARGIN;
     const left = (BASE_W - BAR_W) / 2;
     this.heldName = scene.add
       .text(BASE_W / 2, BAR_Y - 14, "", { fontSize: "16px", color: "#ffffff" })
@@ -312,15 +315,7 @@ export class Hud {
       // The column is placed from the top in `update`; only these ride the foot.
       this.heldName.setOrigin(0, 1).setPosition(COL_W + 8, BASE_H - 56);
       this.pin("l", "b", [this.heldName, this.rowButton, this.rowText]);
-    } else
-      this.pin("c", "b", [
-        this.heldName,
-        ...this.slots,
-        ...this.captions,
-        ...this.icons,
-        this.rowButton,
-        this.rowText,
-      ]);
+    }
     this.pin("r", "b", [use, useText, eat, eatText]);
     this.pin("r", "t", [
       skills,
@@ -387,7 +382,8 @@ export class Hud {
    * The status readout stays top left; the toolbar sits bottom centre, the
    * buttons bottom right and top right.
    */
-  layout(uw: number, uh: number, scale: number): void {
+  layout(uw: number, uh: number, scale: number, slot = SLOT): void {
+    this.slot = this.touch ? SLOT : slot;
     this.uw = uw;
     this.uh = uh;
     this.scale = scale;
@@ -401,6 +397,28 @@ export class Hud {
       p.o.x = p.x + (p.h === "l" ? 0 : p.h === "c" ? dx / 2 : dx);
       p.o.y = p.y + (p.v === "b" ? dy : 0);
     }
+    if (!this.touch) this.placeBar();
+  }
+
+  /** Desktop: size and place the bottom bar for the slot size and window. */
+  private placeBar(): void {
+    const s = this.slot;
+    const left = (this.uw - barWidth(s)) / 2;
+    const barY = this.uh - s - BAR_MARGIN;
+    this.heldName.setPosition(this.uw / 2, barY - 14);
+    this.rowButton.setPosition(left, barY - 46);
+    this.rowText.setPosition(left + 45, barY - 26);
+    this.slots.forEach((box, i) => {
+      const x = left + i * (s + GAP);
+      box.setPosition(x, barY).setSize(s, s);
+      this.captions[i]!.setPosition(x + s / 2, barY + s - 2).setWordWrapWidth(
+        s - 4,
+      );
+      this.icons[i]!.setPosition(
+        x + s / 2,
+        barY + Math.round(s * 0.34),
+      ).setScale(s / SLOT);
+    });
   }
 
   /** Show or hide the control hint box. Touch has no keyboard hint. */
@@ -437,8 +455,11 @@ export class Hud {
     const uy = y / this.scale;
     // On touch the whole left strip is the toolbar's; the map starts beside it.
     if (this.touch) return ux <= COL_W;
-    const left = (this.uw - BAR_W) / 2;
-    return uy >= BAR_Y + (this.uh - BASE_H) && ux >= left && ux <= left + BAR_W;
+    const bar = barWidth(this.slot);
+    const left = (this.uw - bar) / 2;
+    return (
+      uy >= this.uh - this.slot - BAR_MARGIN && ux >= left && ux <= left + bar
+    );
   }
 
   update(

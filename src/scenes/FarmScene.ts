@@ -362,12 +362,14 @@ import {
 import { giveItem, giveMoney } from "../core/debug";
 import { applyStatePatch, type StatePatch } from "../core/statepatch";
 import { pickupRadius } from "../core/ground";
-import { Hud, HUD_FIT_W } from "./hud";
+import { Hud } from "./hud";
 import { UI_SIZE_KEY, WORLD_ZOOM_KEY } from "./panel";
 import {
   cameraBounds,
   cornerScroll,
   hudScale,
+  hudSlot,
+  hudContentW,
   pinchPercent,
   stepPercent,
   worldZoom,
@@ -1981,12 +1983,9 @@ export class FarmScene extends Phaser.Scene {
     const uiPercent =
       (this.registry.get(UI_SIZE_KEY) as number | undefined) ?? 100;
     const ts = this.map.tileSize;
-    const scale = hudScale(
-      uiPercent,
-      this.controls.profile === "touch",
-      width,
-      HUD_FIT_W,
-    );
+    const touchProfile = this.controls.profile === "touch";
+    const slot = hudSlot(uiPercent, touchProfile, width);
+    const scale = hudScale(uiPercent, touchProfile, width, hudContentW(slot));
     // On touch the toolbar is a column down the left, and the map is drawn
     // beside it, so no tile is ever under a button.
     const inset = Math.round(this.hud.insetLeft(scale));
@@ -2013,7 +2012,7 @@ export class FarmScene extends Phaser.Scene {
       .setSize(width, height)
       .setZoom(scale)
       .setScroll(corner.x, corner.y);
-    this.hud.layout(width / scale, height / scale, scale);
+    this.hud.layout(width / scale, height / scale, scale, slot);
     this.controls.setUiScale(scale);
   }
 
