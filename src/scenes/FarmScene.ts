@@ -104,6 +104,7 @@ import {
   festivalShutLine,
   festivalSignLine,
   walkIntoFestival,
+  walkIntoPlace,
   festivalStepShut,
   festivalToday,
   isFestivalMap,
@@ -1182,6 +1183,7 @@ export class FarmScene extends Phaser.Scene {
     // Walking onto an open-land exit, or out of a building, takes it. Doors into buildings need opening (click or Action).
     const found = this.map.exitAt(here.x, here.y);
     const onExit = found && this.isWalkThrough(found) ? found : undefined;
+    this.walkIntoPlaceHere(here);
     if (!onExit) this.exitArmed = true;
     else if (this.exitArmed && !this.leaving && !this.marching) {
       this.exitArmed = false;
@@ -2017,6 +2019,27 @@ export class FarmScene extends Phaser.Scene {
     );
   }
 
+  /** The last tile checked for walking into a festival held in place. */
+  private placeTile = "";
+
+  /** Standing in today's festival place while it is open joins it (note 82 decision 11). */
+  private walkIntoPlaceHere(here: { x: number; y: number }): void {
+    const key = `${this.mapId}:${here.x},${here.y}`;
+    if (key === this.placeTile) return;
+    this.placeTile = key;
+    const f = walkIntoPlace(
+      this.state,
+      this.mapId,
+      here.x,
+      here.y,
+      hallRestored(this.state.hall),
+    );
+    if (f) {
+      this.message = `You join the ${f.name}.`;
+      this.render();
+    }
+  }
+
   private tileShutForFestival(x: number, y: number): boolean {
     const clock = this.state.day.clock;
     return festivalStepShut(
@@ -2778,7 +2801,13 @@ export class FarmScene extends Phaser.Scene {
     }
     if (service?.kind === "stairs")
       return this.travel(mineMapId(1), "from_above");
-    if (service && (isFestivalMap(this.mapId) || service.kind === "cake-table"))
+    if (
+      service &&
+      (isFestivalMap(this.mapId) ||
+        service.kind === "cake-table" ||
+        (service.kind === "festival-counter" &&
+          festivalDayToday(this.state.day.clock.day)))
+    )
       return this.festivalAction(service);
     if (this.mapId === CAVE_MAP) return this.caveAction(front, service?.kind);
     if (service?.kind === "furnace") {
@@ -2977,7 +3006,8 @@ export class FarmScene extends Phaser.Scene {
   private festivalAction(service: { id: string; kind: string }): void {
     if (service.kind === "cake-table") return this.cakeTable();
     if (service.id === "lantern-stall") return this.lanternStall();
-    const f = festivalOfMap(this.mapId);
+    const f =
+      festivalOfMap(this.mapId) ?? festivalDayToday(this.state.day.clock.day);
     if (!f) return;
     switch (service.kind) {
       case "showing":

@@ -64,6 +64,14 @@ home still asks first. Left: the Seedswap Fair, Lamplight, Frostday, Hat Parade,
 and Feast have no festival map yet, so nothing to walk to; the exit tile positions are
 placeholders until the Hearthwell variant is drawn.
 
+Built 2026-11-16 (second pass): the other day festivals are held in place (their layouts are
+conditional layers on the Forest, the Beach, Hearthwell and the hall, so there is no map of
+their own and no extra exit to build; the roads there already exist). Standing in today's
+festival place while it is open joins it (`walkIntoPlace`, called by `FarmScene` on each new
+tile), the farm sign says where (`PLACE_WHERE`), and the festival counter on those maps opens
+the counter panel. The place is shut before opening by `festivalStepShut`. Not done: the
+Night Market is an evening festival and never joins by this walk.
+
 ## Decided 2026-11-12 (owner)
 
 - **A festival ends after its main event (Stardew, checked on the saved Festivals page).**
