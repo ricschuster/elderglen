@@ -454,3 +454,7 @@ band, Icicle Hopper reward); Cordelia's 4 heart event unlocks tailoring; Heavy T
 roe in the jar; tea bush crafted (note 97); Cake Day points 60/90/120; hunt prize Straw Boater plus a
 yearly rare seed; keepsake lantern placeable. Built, awaiting play: all of these, plus hunt, cake
 table, lantern floating and ice fishing rules with thin scene hooks, pond menu and placing screen.
+
+## Batch 4 detail (moved 2026-11-16)
+
+6. **Batch 4 built 2026-11-14** (hall counter second tiles, renovation decor zones, overview and valley-map refresh, wiki gift lists stay draft, M4 hosting spike text drafted in `docs/design/drafts/m4-hosting-spike-issue.md`, owner approves before filing). Left: the owner's play. Real garden pot art waits for M3d. Village trees: owner kept the layout, judge in play. #874 spouse source built with marriage; the gallery set is left. Friendship doors are built (`gates.ts`).
