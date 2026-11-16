@@ -2,9 +2,9 @@
 
 Status: built to shell level (2026-11-14, slices 1 to 6, issues #934 to #939), with placeholder text, numbers and art. Written from the design talk of 2026-10-27; the open questions
 were settled on 2026-10-29 and 2026-11-14 (see Decided). Marriage is not in the first playable or M3. Since 2026-11-14 it is in
-M3b (owner). Left: the owner's play (nothing in slices 2 to 5 has been seen in a browser by the owner), the open owner
-questions in the handoff 2026-11-14j (cancel refund, no remarrying an ex, children at divorce, ledger placement, the
-bouquet sold at the general store, kiss energy, heart cap, MAX_CHILDREN), real lines, events and art (M3d), the ex at weddings and visiting the children, and multiplayer (M4). This note is the design note CLAUDE.md asks for.
+M3b (owner). Left: the owner's play (nothing in slices 2 to 5 has been seen in a browser by the owner), the still open
+questions (kiss energy, heart cap, MAX_CHILDREN), real lines, events and art (M3d), and multiplayer (M4).
+The questions of handoff 2026-11-14j were settled on 2026-11-16 (see "Decided 2026-11-16"). This note is the design note CLAUDE.md asks for.
 
 ## Why
 
@@ -138,8 +138,8 @@ Slice 4 built (#937, `src/core/divorce.ts`, `src/scenes/LedgerScene.ts`, `tests/
 ledger is a new service (`ledger`, kind `ledger`) in the hall map. The fee is paid on filing and handed
 back on cancel (our choice, Stardew's refund is unchecked). The next morning `sleep()` ends the marriage,
 drops the spouse cap, raises `ex-<id>`, and moves the spouse room's furniture and chests into the divorce
-chest at (51, 31). The ex is a friend only (no second bouquet; open question). Children: see slice 5. `attendsWedding` is the guest
-filter; the wedding scene has no guest list yet.
+chest at (51, 31). An ex can be courted again (see "Decided 2026-11-16"). Children: see slice 5. `weddingGuests` is the guest
+list of the wedding scene (see "Decided 2026-11-16").
 
 Slice 5 built (#938, `src/core/children.ts`, `src/content/children.json`, `src/scenes/ChildAskScene.ts`,
 `tests/children.test.ts`): children, by player choice only. The ask: `sleep()` sets `childAsk` on the
@@ -159,10 +159,9 @@ are placeholders; child sprites reuse a villager sprite until M3d.
 
 Divorce and children (our choice, flagged for the owner, notes say nothing): the children stay with the
 player on the farm with their hearts, and the marriage's end changes nothing for them. A child still on
-the way does not come, and the ask restarts if the player marries again. The ex is a friend only and
-does not visit: the simplest thing consistent with "no anger, ex stays a friend". A report line says
-the children stay. Not built: the ex visiting the children, children at festivals, events, adult
-children.
+the way does not come, and the ask restarts if the player marries again. The ex visits them
+weekly (see "Decided 2026-11-16"). A report line says the children stay. Not built: children at
+festivals, events, adult children.
 
 ## Earlier suggested slices (superseded by the list above)
 
@@ -182,8 +181,8 @@ Settled with the owner, closing issue #137.
   layer 3 for anyone (`18_dialogue.md`).
 - **Pairing limits: none, and one spouse at a time.** Relatives and friends of a
   candidate (the hat-maker and their sibling, say) stay courtable.
-- **Courtship gift: flowers.** A bouquet, made from our own flowers. The
-  traditional gesture, kept simple.
+- **Courtship gift: flowers.** A bouquet, bought at the general store (200g, decided 2026-11-16; not
+  crafted). The traditional gesture, kept simple.
 - **Proposal item: a ring-like token that is not worn.** Our own object, not
   wearable, so the item set has no clothing in it. Its form and name are open
   until the item notes (a placeholder is "promise token"). The wedding as a
@@ -238,3 +237,27 @@ Settled with the owner, closing issue #137.
   furnished with a crib and two child beds (note 85, Stardew checked). Ours has no
   "remove crib" choice, since the offer is never pressed.
 - The look of the wedding scene and festival (art pass, #58).
+
+## Decided 2026-11-16
+
+Settled with the owner after the shell build. Slice 4 and 5 text above is updated to match.
+
+- **Cancel refunds the fee.** Filing the divorce takes the 50,000g, and cancelling before day end hands it
+  back (as built). Stardew's refund is unchecked (SC-201).
+- **An ex can be dated and married again.** The bouquet works on an ex like on anyone: 8 hearts or more,
+  nobody else courted. Accepting it lifts the `ex-<id>` flag, so they are an ordinary courted person again
+  and the token and the wedding follow as usual. Heart level: friendship is left as the divorce left it
+  (the rule of slice 4, no anger and no reset), so an ex at 8 hearts or more can be courted at once. A
+  Stardew-like lowered level was considered and not taken, to keep "no loss" (note 61). Stardew's own rule
+  is unchecked (SC-202). Core: `courtGift` in `courtship.ts`.
+- **The children stay with the player, and the ex visits.** The most recent ex comes to the farm yard once a
+  week, on the last day of the week (Sun), 10:00 to 15:00, on dry days that are not a festival, while the
+  farm has at least one child. Built as a route override in `src/core/exvisit.ts` (`exVisitor`,
+  `exVisitVillager`, read by `villagerForDay`), so it needs no save field. Talking to the ex is ordinary
+  friendship. If the player is courting or married to that same person again, the visit does not apply.
+  Stardew's own rule is unchecked (SC-183, SC-203).
+- **An ex attends weddings as a guest.** At the player's wedding, every ex bar the person being married is placed
+  on the green as a guest (`weddingGuests` in `divorce.ts`, passed to `weddingEvent`). A festival wedding
+  scene does not exist yet; when one is built, it reads the same guest list (SC-203).
+- **The ledger stays in the hall at (30,5), and the bouquet stays sold at the general store.** The text
+  "made from our own flowers" is dropped.

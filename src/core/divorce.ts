@@ -26,14 +26,19 @@ export const isEx = (g: Pick<GameState, "flags">, id: string): boolean =>
 export const exesOf = (g: Pick<GameState, "flags">): string[] => exSpouses(g);
 
 /**
- * A former spouse does not come to a later wedding (note 84, Stardew checked).
- * The wedding scene is built from the id with no guest list yet, so a guest
- * list filters through this when one exists.
+ * Former spouses come to the player's wedding as guests (owner, 2026-11-16;
+ * Stardew's rule is unchecked, SC-203). The one being married is not a guest.
  */
 export const attendsWedding = (
   g: Pick<GameState, "flags">,
   id: string,
-): boolean => !isEx(g, id);
+): boolean => isEx(g, id);
+
+/** The guests at a wedding to `spouse`: every ex, in the order divorced, bar the one marrying. */
+export const weddingGuests = (
+  g: Pick<GameState, "flags">,
+  spouse: string,
+): string[] => exesOf(g).filter((id) => id !== spouse);
 
 /** Why the ledger cannot be filed now, in words, or "" when it can. */
 export function divorceProblem(
