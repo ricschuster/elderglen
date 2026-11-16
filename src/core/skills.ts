@@ -1,3 +1,4 @@
+import titleData from "../content/skill-titles.json";
 export const SKILLS = [
   "farming",
   "foraging",
@@ -119,4 +120,16 @@ export function skillRows(skills: Skills): SkillRow[] {
     const level = skills.level(skill);
     return { skill, level, xp: skills.xpOf(skill), next: LEVEL_XP[level] };
   });
+}
+
+/** The sum of the five skill levels. */
+export function totalLevels(skills: Skills): number {
+  return SKILLS.reduce((n, s) => n + skills.level(s), 0);
+}
+
+/** The title for a total of skill levels: the highest band reached. */
+export function skillTitle(total: number): string {
+  let name = titleData.titles[0]!.name;
+  for (const t of titleData.titles) if (total >= t.from) name = t.name;
+  return name;
 }

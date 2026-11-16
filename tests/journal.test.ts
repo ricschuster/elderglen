@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { journalLines, projectLines, questLines } from "../src/core/journal";
+import {
+  defaultExpanded,
+  journalLines,
+  projectLines,
+  questLines,
+  questView,
+  toggleExpanded,
+  type QuestEntry,
+} from "../src/core/journal";
 import { newGame } from "../src/core/save";
 import { ROOMS } from "../src/core/bundles";
 
@@ -18,8 +26,8 @@ describe("journal", () => {
     expect(offer).toBeDefined();
     g.quests.accept(offer.id, day);
     const lines = questLines(g);
-    expect(lines).toHaveLength(2);
-    expect(lines[1]).toContain(`Pays ${offer.reward.gold}g`);
+    expect(lines).toHaveLength(3);
+    expect(lines[2]).toContain(`Pays ${offer.reward.gold}g`);
   });
 
   it("lists the open room's bundles and what they still need", () => {
@@ -43,5 +51,34 @@ describe("journal", () => {
     const [line] = journalLines(g, "mail");
     expect(line).toContain("Hello");
     expect(line).toContain("unread");
+  });
+});
+
+describe("quest expand", () => {
+  const entries: QuestEntry[] = [
+    { id: "a", title: "Hand in 2 Turnip", details: ["Not yet.", "Pays 10g."] },
+    { id: "b", title: "Gather 3 Berry", details: ["1 of 3.", "Pays 20g."] },
+  ];
+
+  it("starts with only the newest entry open", () => {
+    expect([...defaultExpanded(entries)]).toEqual(["b"]);
+    expect(defaultExpanded([]).size).toBe(0);
+  });
+
+  it("toggles an entry open and shut without changing the old set", () => {
+    const start = defaultExpanded(entries);
+    const both = toggleExpanded(start, "a");
+    expect(both.has("a")).toBe(true);
+    expect(start.has("a")).toBe(false);
+    expect(toggleExpanded(both, "a").has("a")).toBe(false);
+  });
+
+  it("shows details only for open entries and tags titles", () => {
+    const view = questView(entries, new Set(["b"]), "a");
+    expect(view.map((l) => l.quest)).toEqual(["a", "b", undefined, undefined]);
+    expect(view[0]!.text).toContain("[+] Hand in 2 Turnip");
+    expect(view[0]!.text.startsWith(">")).toBe(true);
+    expect(view[1]!.text).toContain("[-]");
+    expect(view[3]!.text).toContain("Pays 20g.");
   });
 });

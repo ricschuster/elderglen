@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import type { GameState } from "../core/save";
 import { professionById } from "../core/professions";
 import { skillExtras } from "../core/menupages";
-import { MAX_LEVEL, skillRows } from "../core/skills";
+import { MAX_LEVEL, skillRows, skillTitle, totalLevels } from "../core/skills";
 import { closeWindow, frame } from "./panel";
 import { STATE_KEY } from "./state";
 
@@ -23,6 +23,14 @@ export class SkillsScene extends Phaser.Scene {
   create(): void {
     const g = this.registry.get(STATE_KEY) as GameState;
     frame(this, "Skills", () => this.close());
+    this.add
+      .text(
+        48,
+        46,
+        `${skillTitle(totalLevels(g.skills))}  (levels ${totalLevels(g.skills)} of ${MAX_LEVEL * 5})`,
+        { fontSize: "18px", color: "#ffe9a0" },
+      )
+      .setOrigin(0, 0);
     skillRows(g.skills).forEach((row, i) => {
       const y = 70 + i * 76;
       const pro = professionById(g.skills.professionOf(row.skill) ?? "");

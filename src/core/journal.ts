@@ -20,21 +20,17 @@ export const JOURNAL_SECTIONS = [
 
 export type JournalSection = (typeof JOURNAL_SECTIONS)[number]["key"];
 
-/** The open requests, each with its want, pay, time left and progress. */
-export function questLines(g: GameState): string[] {
-  const open = g.quests.open();
-  const wedding = weddingMark(g);
-  const mark = wedding ? [wedding] : [];
-  if (open.length === 0)
-    return [
-      ...mark,
-      "No open requests.",
-      "Take one from the request board and it will be listed here.",
-    ];
+/** One open request: its title and the detail lines shown when expanded. */
+export interface QuestEntry {
+  id: string;
+  title: string;
+  details: string[];
+}
+
+/** The open requests as entries: title, then progress, pay and time left. */
+export function questEntries(g: GameState): QuestEntry[] {
   const day = g.day.clock.day;
-  const lines: string[] = [...mark];
-  for (const q of open) {
-    lines.push(wantText(q));
+  return g.quests.open().map((q) => {
     const left = daysLeft(q, day);
     const progress =
       q.type === "gathering"
@@ -42,11 +38,69 @@ export function questLines(g: GameState): string[] {
         : ready(g, q)
           ? "You have it in the pack"
           : "Not enough in the pack yet";
-    lines.push(
-      `   ${progress}. Pays ${q.reward.gold}g. ${left} ${left === 1 ? "day" : "days"} left.`,
-    );
+    return {
+      id: q.id,
+      title: wantText(q),
+      details: [
+        `${progress}.`,
+        `Pays ${q.reward.gold}g. ${left} ${left === 1 ? "day" : "days"} left.`,
+      ],
+    };
+  });
+}
+
+/** Which entries start open: only the one just added (the newest). */
+export function defaultExpanded(entries: QuestEntry[]): Set<string> {
+  const last = entries[entries.length - 1];
+  return new Set(last ? [last.id] : []);
+}
+
+/** Flip one entry open or shut. Returns a new set. */
+export function toggleExpanded(open: Set<string>, id: string): Set<string> {
+  const next = new Set(open);
+  if (!next.delete(id)) next.add(id);
+  return next;
+}
+
+/** A journal line, with the quest id when it is an entry title (tap target). */
+export interface JournalLine {
+  text: string;
+  quest?: string;
+}
+
+/** Quest entries as lines: a marker and title, then details if expanded. */
+export function questView(
+  entries: QuestEntry[],
+  open: Set<string>,
+  selected?: string,
+): JournalLine[] {
+  const out: JournalLine[] = [];
+  for (const e of entries) {
+    const isOpen = open.has(e.id);
+    out.push({
+      text: `${e.id === selected ? ">" : " "} ${isOpen ? "[-]" : "[+]"} ${e.title}`,
+      quest: e.id,
+    });
+    if (isOpen) for (const d of e.details) out.push({ text: `       ${d}` });
   }
-  return lines;
+  return out;
+}
+
+/** The open requests, all expanded, as plain lines (also the empty text). */
+export function questLines(g: GameState): string[] {
+  const entries = questEntries(g);
+  const wedding = weddingMark(g);
+  const mark = wedding ? [wedding] : [];
+  if (entries.length === 0)
+    return [
+      ...mark,
+      "No open requests.",
+      "Take one from the request board and it will be listed here.",
+    ];
+  return [
+    ...mark,
+    ...entries.flatMap((e) => [e.title, ...e.details.map((d) => `   ${d}`)]),
+  ];
 }
 
 const goodName = (id: string): string =>

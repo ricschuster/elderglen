@@ -62,7 +62,9 @@ and the options door (`45`). This note gives them one home.
   four tools are ordinary stacks in the grid (note 102): they move and swap like
   any item, and can go in chests, but are never trashed, sold, shipped or dropped.
   There is no fixed tool strip. Built 2026-11-16.
-- **The Skills tab (Stardew 1.6) also shows:** the title from total skill levels,
+- **The Skills tab (Stardew 1.6) also shows:** the title from total skill levels
+  (built 2026-11-16: eight placeholder bands in `src/content/skill-titles.json`,
+  shown under the heading; the names are the owner's to rename),
   the farmhouse upgrade level, the deepest mine floor and the stardrop-like
   finds, when each exists. Professions show on hover or long press. Added as
   those systems allow.
@@ -85,7 +87,9 @@ and the options door (`45`). This note gives them one home.
 Three sections, switched with Left and Right or a tap.
 
 - **Quests.** Each open request by title. Expand one to read it and see its
-  progress under it. The sources are the daily request board and any story
+  progress under it. Built 2026-11-16: collapsed to the title, tap, click or
+  Enter to open (Up and Down move the mark); only the newest is open at first;
+  rules in `src/core/journal.ts`. The sources are the daily request board and any story
   letters (`50_request_board_and_quests.md`). Stardew also has a cancel button on a quest. We have no quests
   built yet, so this section starts empty and says so.
 - **Projects.** Each village hall project with the goods it still needs and the
@@ -150,9 +154,8 @@ Three sections, switched with Left and Right or a tap.
   Right to switch, Up and Down or the wheel to scroll, and a Projects shortcut
   button on the Pack tab. Exit saves (note 52).
 - Left: the trash can as a drop target, Pack farm name and total earnings (no
-  field in the save), the paper doll (no art), the Skills title from total
-  levels (the title names are not settled), the "stardrop-like finds" beyond
-  elderfruit, profession details on hover, Quests expand and cancel, reread
+  field in the save), the paper doll (no art), the "stardrop-like finds" beyond
+  elderfruit, profession details on hover, Quests cancel, reread
   conversations (waits for dialogue), the Special Items book and mastery powers
   (the systems do not exist). The Special Items page does not search chests.
 
