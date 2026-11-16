@@ -357,6 +357,7 @@ import {
   stageOf,
   treeKey,
   TWIG_KEY,
+  GRASS_KEY,
   WEED_KEY,
 } from "./art";
 import { giveItem, giveMoney } from "../core/debug";
@@ -1339,7 +1340,12 @@ export class FarmScene extends Phaser.Scene {
       const exit = !!this.map.exitAt(tap.x, tap.y);
       // A tapper goes on a tree, whose tile is blocked (note 92).
       const tapper = held.kind === "item" && isTapperItem(held.id);
-      if (fit === "use" && (tapper || !this.tileBlocked(tap.x, tap.y))) {
+      if (
+        fit === "use" &&
+        (tapper ||
+          !this.tileBlocked(tap.x, tap.y) ||
+          this.map.isWater(tap.x, tap.y))
+      ) {
         // A drag uses each new tile beside the farmer at once.
         if (beside) {
           this.cancelTap();
@@ -3367,6 +3373,9 @@ export class FarmScene extends Phaser.Scene {
       put(x, y, forageKey(id));
     for (const s of this.state.spots.each())
       put(s.x, s.y, SPOT_KEY).setDepth(DEPTH.decal);
+    if (this.outdoorSoil && areaOf(this.state) === undefined)
+      for (const t of this.state.grass.each())
+        put(t.x, t.y, GRASS_KEY).setDepth(DEPTH.decal);
     for (const w of this.state.weeds.each())
       put(w.x, w.y, WEED_KEY).setDepth(DEPTH.decal);
     for (const t of this.state.twigs.each())

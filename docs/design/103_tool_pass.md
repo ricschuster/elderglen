@@ -1,6 +1,7 @@
 # 103 Tool pass: art, can water, hover tips, scythe and grass
 
-Status: settled with the owner 2026-11-16 (feedback on note 102). Not built.
+Status: settled with the owner 2026-11-16 (feedback on note 102). Build step 2 (water in the can) built 2026-11-16: `src/core/canwater.ts`, meter in the
+toolbar and pack slots, tooltip line "Water: n/max". Scythe and grass are separate steps.
 Builds on notes 70 and 102 (tools in the pack), 23 (silo and hay), 29 and 36 (weeds,
 fibre, grass).
 
@@ -61,3 +62,7 @@ shows a tooltip (name, kind, one line of text, as Stardew's Scythe tip: "Scythe"
   unchecked). Add it to `54_stardew_checks.md` with the build.
 - Whether water meter shows on the can slot of the Pack tab only or also in the HUD
   (decided: both).
+
+**Built 2026-11-16, build steps 1 (scythe part) and 3:** `scythe` is the fifth tool
+(`toolitems.ts`, `tools.ts`), grass is `src/core/grass.ts` with tests in `tests/grass.test.ts`.
+Left: scythe tooltip text, the sim bot cutting grass, final art for the scythe and grass.

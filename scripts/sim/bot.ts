@@ -54,7 +54,7 @@ import {
 } from "../../src/core/professions";
 import { buy, seedStock } from "../../src/core/shop";
 import { sleep } from "../../src/core/sleep";
-import { startGame } from "../../src/core/toolbar";
+import { startGame, TOOLS } from "../../src/core/toolbar";
 import type { GameState } from "../../src/core/save";
 import { START } from "../../src/core/maps";
 import { isRaining } from "../../src/core/weather";
@@ -154,9 +154,13 @@ export function playGame(
   /** Called after each day's play, to watch a run. */
   onDay?: (g: GameState) => void,
 ): RunResult {
-  const g = startGame();
-  // The four tools now fill pack slots (note 102): give the bot the room it had.
-  g.inventory.grow(g.inventory.size + 4);
+  // Grass is laid with its own stream so it does not shift the bot's dice.
+  let seed = 12345;
+  const grassRandom = () =>
+    (seed = (seed * 1664525 + 1013904223) >>> 0) / 2 ** 32;
+  const g = startGame(undefined, grassRandom);
+  // The five tools now fill pack slots (note 102): give the bot the room it had.
+  g.inventory.grow(g.inventory.size + TOOLS.length);
   g.forage.respawn(dateOf(1).season, maps.get(START.map).forageSpots, random);
   const bot = new Bot(g, persona, random);
   const result: RunResult = {

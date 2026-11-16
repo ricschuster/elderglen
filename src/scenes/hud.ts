@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import { heldAt, rowOf, TOOLBAR_SIZE, type Held } from "../core/toolbar";
 import { SLOT_COUNT } from "../core/inventory";
 import { barWidth, SLOT_SMALL } from "../core/view";
-import { iconKey as itemIcon, TOOL_ICONS } from "./art";
+import { iconKey as itemIcon, TOOL_ICONS, toolTierKey } from "./art";
 import { splitQuality } from "../core/quality";
 import { itemById } from "../core/items";
 import type { GameState } from "../core/save";
@@ -10,7 +10,10 @@ import { weaponById } from "../core/combat";
 import type { Settings } from "../core/bindings";
 import { desktopHint } from "./controls";
 import { HudPanel, PANEL_BOTTOM, PANEL_LEFT_BASE } from "./hudpanel";
-import { TIER_NAMES, toolAway, type Upgradable } from "../core/upgrades";
+import { itemTip } from "../core/itemtip";
+import { canFraction, canWaterLine } from "../core/canwater";
+import { Tooltip } from "./tooltip";
+import { toolAway, type Upgradable } from "../core/upgrades";
 
 /** The touch slot, and the desktop slot on a window too small for the big one. */
 const SLOT = SLOT_SMALL;
@@ -32,21 +35,11 @@ const EAT_R = 36;
 
 const QUALITY_TINT = { normal: 0xffffff, silver: 0xc8d8ff, gold: 0xffd860 };
 
-const TOOL_LABEL = {
-  hoe: "Hoe",
-  can: "Can",
-  axe: "Axe",
-  pickaxe: "Pickaxe",
-} as const;
-
 /** Short text for a slot, until the art pass gives items icons. */
 function caption(held: Held, g: GameState): string {
   if (held.kind === "tool") {
-    if (toolAway(g, held.tool)) return `${TOOL_LABEL[held.tool]} (smithy)`;
-    const tier = g.toolTiers[held.tool as Upgradable];
-    return tier > 0
-      ? `${TIER_NAMES[tier]} ${TOOL_LABEL[held.tool].toLowerCase()}`
-      : TOOL_LABEL[held.tool];
+    // The icon and its tooltip name the tool and its tier; only "away" needs words.
+    return toolAway(g, held.tool) ? "(smithy)" : "";
   }
   if (held.kind === "empty") return "";
   const weapon = weaponById(held.id);
@@ -68,6 +61,11 @@ export class Hud {
   private readonly hintBox: Phaser.GameObjects.Rectangle;
   private readonly slots: Phaser.GameObjects.Rectangle[] = [];
   private readonly captions: Phaser.GameObjects.Text[] = [];
+  /** The can's water bar under its icon: a dark track and a blue fill per slot (note 103). */
+  private readonly meters: {
+    back: Phaser.GameObjects.Rectangle;
+    fill: Phaser.GameObjects.Rectangle;
+  }[] = [];
   private readonly icons: Phaser.GameObjects.Image[] = [];
   private readonly heldName: Phaser.GameObjects.Text;
   private readonly rowButton: Phaser.GameObjects.Rectangle;
@@ -96,6 +94,8 @@ export class Hud {
   private lastAt = -1;
   /** Desktop bar slot size in HUD units (note 102): 64, or 44 in a small window. */
   private slot = SLOT;
+  private readonly tooltip: Tooltip;
+  private lastState: GameState | undefined;
   private drag: { y: number; top: number; moved: boolean } | undefined;
 
   constructor(
@@ -154,6 +154,8 @@ export class Hud {
       .text(BASE_W / 2, BAR_Y - 14, "", { fontSize: "16px", color: "#ffffff" })
       .setOrigin(0.5, 1);
     this.objects.push(this.heldName);
+    this.tooltip = new Tooltip(scene);
+    this.objects.push(...this.tooltip.objects);
     for (let i = 0; i < TOOLBAR_SIZE; i++) {
       const x = left + i * (SLOT + GAP);
       const box = scene.add
@@ -184,10 +186,36 @@ export class Hud {
       const icon = scene.add
         .image(x + SLOT / 2, BAR_Y + 15, TOOL_ICONS.hoe)
         .setVisible(false);
+      this.tooltip.attach(
+        box,
+        () => {
+          const g = this.lastState;
+          if (!g) return undefined;
+          const held = heldAt(g, this.indexOf(i));
+          if (held.kind === "empty") return undefined;
+          return held.kind === "tool"
+            ? itemTip(
+                `tool:${held.tool}`,
+                g.toolTiers[held.tool as Upgradable],
+                held.tool === "can" ? canWaterLine(g) : undefined,
+              )
+            : itemTip(held.id);
+        },
+        () => ({ w: this.uw, h: this.uh }),
+      );
       this.slots.push(box);
       this.captions.push(text);
       this.icons.push(icon);
-      this.objects.push(box, icon, text);
+      const back = scene.add
+        .rectangle(x, BAR_Y, SLOT - 8, 4, 0x000000, 0.7)
+        .setOrigin(0)
+        .setVisible(false);
+      const fill = scene.add
+        .rectangle(x, BAR_Y, SLOT - 8, 4, 0x4aa8ff)
+        .setOrigin(0)
+        .setVisible(false);
+      this.meters.push({ back, fill });
+      this.objects.push(box, icon, text, back, fill);
     }
 
     if (this.touch)
@@ -424,8 +452,8 @@ export class Hud {
       );
       this.icons[i]!.setPosition(
         x + s / 2,
-        barY + Math.round(s * 0.34),
-      ).setScale(s / SLOT);
+        barY + Math.round(s * 0.4),
+      ).setDisplaySize(Math.round(s * 0.76), Math.round(s * 0.76));
     });
   }
 
@@ -477,6 +505,7 @@ export class Hud {
     showHealth = false,
     note = "",
   ): void {
+    this.lastState = g;
     this.panel.update(g, showHealth);
     this.status.setText(note);
     this.message.setText(message);
@@ -525,17 +554,39 @@ export class Hud {
       const held = heldAt(g, index);
       const iconKey =
         held.kind === "tool"
-          ? TOOL_ICONS[held.tool]
+          ? toolTierKey(
+              TOOL_ICONS[held.tool],
+              g.toolTiers[held.tool as Upgradable] ?? 0,
+            )
           : held.kind === "item"
             ? itemIcon(held.id)
             : undefined;
       const icon = this.icons[i]!;
       icon.setVisible(shown && iconKey !== undefined);
-      if (iconKey) icon.setTexture(iconKey);
+      if (iconKey) {
+        icon.setTexture(iconKey);
+        if (!this.touch) {
+          const d = Math.round(this.slot * 0.76);
+          icon.setDisplaySize(d, d);
+        }
+      }
       const quality =
         held.kind === "item" ? splitQuality(held.id).quality : "normal";
       icon.setTint(QUALITY_TINT[quality]);
       this.captions[i]!.setText(caption(held, g));
+      const m = this.meters[i]!;
+      const frac =
+        held.kind === "tool" && held.tool === "can" ? canFraction(g) : -1;
+      const showMeter = shown && frac >= 0;
+      const mw = box.width - 8;
+      m.back
+        .setVisible(showMeter)
+        .setPosition(box.x + 4, box.y + box.height - 8);
+      m.back.setSize(mw, 4);
+      m.fill
+        .setVisible(showMeter && frac > 0)
+        .setPosition(box.x + 4, box.y + box.height - 8);
+      m.fill.setSize(Math.max(1, Math.round(mw * frac)), 4);
     });
   }
 }

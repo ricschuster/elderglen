@@ -19,6 +19,7 @@ import { Farm } from "./farm";
 import { Trees, type Tree } from "./trees";
 import { GroundItems, type Pile } from "./ground";
 import { Weeds, type Weed } from "./weeds";
+import { Grass, type GrassTile } from "./grass";
 import { Twigs, type Twig } from "./debris";
 import { Orders, orderById, type OrdersSave } from "./orders";
 import { Rocks, type Rock, ROCK_KINDS } from "./rocks";
@@ -67,6 +68,7 @@ import { Guide } from "./guide";
 import { Tackle, type TackleSave } from "./tackle";
 import { Pots, type PotsSave } from "./pots";
 import { Equipment } from "./equipment";
+import { canCapacity } from "./canwater";
 import { Wardrobe, type WardrobeSave } from "./hats";
 import {
   BUILD_DAYS,
@@ -98,6 +100,8 @@ export interface GameState {
   ground: GroundItems;
   /** Weeds on the farm. */
   weeds: Weeds;
+  /** Grass on the home farm (note 103). Only the scythe cuts it. */
+  grass: Grass;
   /** Twigs on the farm, cleared with any tool for wood. */
   twigs: Twigs;
   /** Special Orders: the board, accepted orders and what is done. */
@@ -147,6 +151,8 @@ export interface GameState {
   skills: Skills;
   /** Tier of the hoe and can, 0 for basic. */
   toolTiers: ToolTiers;
+  /** Water left in the can (note 103). */
+  canWater: number;
   /** The tool the smith is upgrading, if any. */
   toolOrder: ToolOrder | undefined;
   hall: Hall;
@@ -231,6 +237,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     trees: new Trees(farmMap.trees),
     ground: new GroundItems(),
     weeds: new Weeds(),
+    grass: new Grass(),
     twigs: new Twigs(),
     orders: new Orders(),
     rocks: new Rocks(farmMap.rocks),
@@ -248,6 +255,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     bin: new ShippingBin(),
     skills: new Skills(),
     toolTiers: { hoe: 0, can: 0, pickaxe: 0, axe: 0 },
+    canWater: 40,
     toolOrder: undefined,
     hall: new Hall(),
     houseTier: 0,
@@ -306,6 +314,8 @@ interface SaveData {
   ground?: Pile[];
   /** Absent in saves made before weeds existed. */
   weeds?: Weed[];
+  /** Absent in saves made before grass (note 103). */
+  grass?: GrassTile[];
   /** Absent in saves made before seasonal debris. */
   twigs?: Twig[];
   /** Absent in saves made before Special Orders. */
@@ -363,6 +373,8 @@ interface SaveData {
   topProfessions?: ReturnType<Skills["saveTopProfessions"]>;
   /** Absent in saves made before tool upgrades existed. */
   toolTiers?: ToolTiers;
+  /** Absent in saves made before the can held water (they start full). */
+  canWater?: number;
   /** Absent when no tool is at the smith, and in older saves. */
   toolOrder?: ToolOrder;
   /** Absent in saves made before the house had tiers. */
@@ -565,6 +577,7 @@ export function serialize(g: GameState): string {
     trees: home.trees.save(),
     ground: home.ground.save(),
     weeds: home.weeds.save(),
+    grass: g.grass.save(),
     twigs: home.twigs.save(),
     orders: g.orders.save(),
     rocks: home.rocks.save(),
@@ -608,6 +621,7 @@ export function serialize(g: GameState): string {
     topProfessions: g.skills.saveTopProfessions(),
     hall: g.hall.save(),
     toolTiers: { ...g.toolTiers },
+    canWater: g.canWater,
     toolOrder: g.toolOrder ? { ...g.toolOrder } : undefined,
     houseTier: g.houseTier,
     catalogue: g.catalogue,
@@ -799,6 +813,7 @@ export function deserialize(text: string): GameState | undefined {
   if (Array.isArray(raw.trees)) g.trees.load(validTrees(raw.trees));
   if (Array.isArray(raw.ground)) g.ground.load(validPiles(raw.ground));
   if (Array.isArray(raw.weeds)) g.weeds.load(validWeeds(raw.weeds));
+  if (Array.isArray(raw.grass)) g.grass.load(validWeeds(raw.grass));
   if (Array.isArray(raw.twigs)) g.twigs.load(validTwigs(raw.twigs));
   // An area missing from the save keeps its starting world.
   if (isObject(raw.areas))
@@ -1040,6 +1055,9 @@ export function deserialize(text: string): GameState | undefined {
       if (isCount(v)) g.toolTiers[t] = Math.min(Math.floor(v), MAX_TIER);
     }
   }
+  g.canWater = isCount(raw.canWater)
+    ? Math.min(raw.canWater, canCapacity(g))
+    : canCapacity(g);
   const order = raw.toolOrder;
   if (
     isObject(order) &&

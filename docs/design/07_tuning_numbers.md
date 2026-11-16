@@ -1028,3 +1028,22 @@ All in `src/content/children.json`.
 - Stages by age in days: baby 0, toddler 14, child 42. Bedtimes 22:00, 20:00, 21:00.
 - Talk: +20 points (the villager talk value) once a day, cap 10 hearts, own counter.
 - Names: Wren, Pip (placeholders, one per slot).
+
+## Water in the can (2026-11-16, note 103, placeholders)
+
+| Number | Value |
+| --- | --- |
+| Can capacity per tier (basic, copper, steel, gold, top) | 40, 55, 70, 85, 100 |
+| Water used per watered tile (soil or pot) | 1 |
+| Refill | at any water tile, a new day, or collecting an upgraded can |
+
+## Grass and the scythe (2026-11-16, note 103, placeholders)
+
+| Number | Value |
+| --- | --- |
+| Grass tiles on a new farm (scatter over free tillable tiles) | 40 |
+| Grass tiles scattered on day 1 of spring, summer and fall | 30 |
+| Grass spread a night, per free edge of a grass tile (none in winter) | 2 percent |
+| Winter day 1 | clears all grass |
+| Hay from a cut grass tile, into the silo | 50 percent (Stardew, SC-190 to check) |
+| Scythe energy | 0, one hit, not upgradable |

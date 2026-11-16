@@ -1,0 +1,10 @@
+{
+  "hoe": { "name": "Hoe", "text": "Digs the ground ready for planting." },
+  "can": { "name": "Watering can", "text": "Waters planted crops." },
+  "axe": { "name": "Axe", "text": "Chops trees, stumps and logs." },
+  "pickaxe": { "name": "Pickaxe", "text": "Breaks rocks and ore." },
+  "scythe": {
+    "name": "Scythe",
+    "text": "It can cut grass into hay, if you've built a silo."
+  }
+}
