@@ -280,6 +280,34 @@
     }
   },
   {
+    "id": "curator",
+    "name": "Curator",
+    "goal": "Donate 40 different items to the library gallery",
+    "kind": "donate",
+    "threshold": 40,
+    "secret": false,
+    "hat": {
+      "id": "linen-bonnet",
+      "name": "Linen Bonnet",
+      "color": "#d8cdb0",
+      "price": 1000
+    }
+  },
+  {
+    "id": "whole-collection",
+    "name": "The Whole Collection",
+    "goal": "Complete the library gallery",
+    "kind": "donateAll",
+    "threshold": 1,
+    "secret": false,
+    "hat": {
+      "id": "wide-leather-hat",
+      "name": "Wide Leather Hat",
+      "color": "#8a5a32",
+      "price": 10000
+    }
+  },
+  {
     "id": "summit",
     "name": "Summit",
     "goal": "Complete the home valley to 100 percent",
