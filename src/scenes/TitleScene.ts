@@ -45,10 +45,10 @@ export class TitleScene extends Phaser.Scene {
     const slots = allSlots(browserKv);
     const last = activeSlot(browserKv);
     this.add
-      .text(480, 56, "Elderglen", { fontSize: "44px", color: "#ffe9a0" })
+      .text(480, 46, "Elderglen", { fontSize: "44px", color: "#ffe9a0" })
       .setOrigin(0.5);
     this.add
-      .text(480, 100, "A quiet farm in a valley.", {
+      .text(480, 88, "A quiet farm in a valley.", {
         fontSize: "16px",
         color: "#ffffff",
       })
@@ -86,7 +86,7 @@ export class TitleScene extends Phaser.Scene {
   /** One slot: what it holds, with Continue, Restart and Delete, or New game when empty. */
   private card(info: SlotInfo, y: number): void {
     this.add
-      .rectangle(480, y, 760, 58, 0x1f2a22, 0.9)
+      .rectangle(480, y, 920, 58, 0x1f2a22, 0.9)
       .setStrokeStyle(2, 0xffffff, 0.35);
     let label = `Slot ${info.slot}: empty`;
     let second = "";
@@ -101,18 +101,18 @@ export class TitleScene extends Phaser.Scene {
       if (note) second = note;
     }
     this.add
-      .text(120, second ? y - 10 : y, label, {
-        fontSize: "16px",
+      .text(40, second ? y - 10 : y, label, {
+        fontSize: "15px",
         color: "#d8e8c8",
       })
       .setOrigin(0, 0.5);
     if (second)
       this.add
-        .text(120, y + 12, second, { fontSize: "12px", color: "#ffe9a0" })
+        .text(40, y + 12, second, { fontSize: "12px", color: "#ffe9a0" })
         .setOrigin(0, 0.5);
     if (info.status === "used")
       this.button(
-        520,
+        600,
         y,
         "Continue",
         0x3f7d3a,
@@ -122,10 +122,10 @@ export class TitleScene extends Phaser.Scene {
         16,
       );
     if (info.status === "used" && info.resume && info.night)
-      this.restartButton(info.slot, 655, y);
+      this.restartButton(info.slot, 745, y);
     if (info.status === "empty")
       this.button(
-        640,
+        745,
         y,
         "New game",
         0x3f7d3a,
@@ -137,7 +137,7 @@ export class TitleScene extends Phaser.Scene {
         38,
         16,
       );
-    if (info.status !== "empty") this.deleteButton(info.slot, 800, y);
+    if (info.status !== "empty") this.deleteButton(info.slot, 880, y);
   }
 
   /** Restart this day drops the day in progress for the morning. It asks twice. */
@@ -161,7 +161,7 @@ export class TitleScene extends Phaser.Scene {
         else this.scene.restart();
       });
     const label = this.add
-      .text(x, y, "Restart this day", { fontSize: "15px", color: "#ffffff" })
+      .text(x, y, "Restart this day", { fontSize: "14px", color: "#ffffff" })
       .setOrigin(0.5);
   }
 
