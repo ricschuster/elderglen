@@ -2752,6 +2752,7 @@ export class FarmScene extends Phaser.Scene {
       }
       return this.open("shop", { stock: "trader" });
     }
+    if (service?.kind === "counter-library") return this.open("gallery");
     if (service && standInLine(service.kind)) {
       this.message = standInLine(service.kind) as string;
       return this.render();

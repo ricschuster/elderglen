@@ -49,6 +49,7 @@ import { TailorScene } from "./scenes/TailorScene";
 import { FishingScene } from "./scenes/FishingScene";
 import { FurnaceScene } from "./scenes/FurnaceScene";
 import { ChestScene } from "./scenes/ChestScene";
+import { GalleryScene } from "./scenes/GalleryScene";
 import { GreencoatScene } from "./scenes/GreencoatScene";
 import { OrdersScene } from "./scenes/OrdersScene";
 import { RequestsScene } from "./scenes/RequestsScene";
@@ -98,6 +99,7 @@ const game = new Phaser.Game({
     TrainerScene,
     FurnaceScene,
     ChestScene,
+    GalleryScene,
     GreencoatScene,
     AchievementsScene,
     CollectionsScene,

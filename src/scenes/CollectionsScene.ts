@@ -91,9 +91,20 @@ export class CollectionsScene extends Phaser.Scene {
           ? "Locked"
           : `${c.done}/${c.total}  ${Math.floor(c.progress * 100)}%`,
         dim: c.locked,
-        buttons: [{ text: "Missing", run: () => this.show(c) }],
+        buttons: [
+          { text: "Missing", run: () => this.show(c) },
+          ...(c.id === "gallery"
+            ? [{ text: "Shelf", run: () => this.openGallery() }]
+            : []),
+        ],
       })),
     );
+  }
+
+  /** The gallery shelf, read only, so missing pieces can be checked away from the library. */
+  private openGallery(): void {
+    this.scene.pause();
+    this.scene.launch("gallery", { readOnly: true, back: "collections" });
   }
 
   private show(c: CategoryProgress | undefined): void {

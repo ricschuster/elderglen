@@ -145,6 +145,16 @@
     "color": "#4a7a8a"
   },
   {
+    "id": "linen-bonnet",
+    "name": "Linen Bonnet",
+    "color": "#d8cdb0"
+  },
+  {
+    "id": "wide-leather-hat",
+    "name": "Wide Leather Hat",
+    "color": "#8a5a32"
+  },
+  {
     "id": "elderfruit-circlet",
     "name": "Elderfruit Circlet",
     "color": "#8a4a8a"
