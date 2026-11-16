@@ -1,6 +1,9 @@
 import { SLOT_COUNT } from "./inventory";
 import { seedId } from "./items";
 import { farmTypeById } from "./farmtypes";
+import { maps } from "../content/maps";
+import { START_GRASS } from "./grass";
+import { grassFree } from "./sleep";
 import { newGame, type GameState } from "./save";
 import { ensureTools, toolOfId, type Tool } from "./toolitems";
 
@@ -49,10 +52,20 @@ export function cycle(
 }
 
 /** A new game on a farm type, with its starting seeds in the backpack. */
-export function startGame(farmType?: string): GameState {
+export function startGame(
+  farmType?: string,
+  random: () => number = Math.random,
+): GameState {
   const g = newGame(farmType);
   ensureTools(g.inventory);
   const seeds = farmTypeById(g.farmType).startSeeds;
   g.inventory.add(seedId(seeds.crop), seeds.count);
+  const map = maps.get(farmTypeById(g.farmType).map);
+  g.grass.scatter(
+    START_GRASS,
+    random,
+    (x, y) => grassFree(g, map, x, y),
+    () => map.tillableTiles(),
+  );
   return g;
 }

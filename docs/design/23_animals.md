@@ -368,3 +368,7 @@ Stardew's; ours match them. Only the first rows exist now.
 stands on the farm, blocks walking and lifts by hand (note 89). It needs a seventh
 `PlaceableKind` and the same save list, render and lift code as a light. Design it in
 note 89 before building; until then the keeper sells none of these.
+
+**Built 2026-11-16 (note 103):** the scythe and grass tiles (`src/core/grass.ts`). Cut grass
+gives hay 50 percent of the time straight into the silo, a line when the silo is full, a
+once-a-day hint with no silo. Cut weeds give no hay.

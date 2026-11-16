@@ -64,7 +64,7 @@ function fits(
   if (held.kind === "tool") {
     if (held.tool === "hoe")
       return map.isTillable(x, y) && isClear(g, map, x, y);
-    return !!plot && !plot.wateredToday;
+    return map.isWater(x, y) || (!!plot && !plot.wateredToday);
   }
   if (held.kind !== "item") return false;
   if (cropOfSeed(held.id) || held.id === MIXED_SEED) {

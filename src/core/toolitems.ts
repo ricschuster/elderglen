@@ -1,12 +1,12 @@
 import type { Inventory } from "./inventory";
 
 /**
- * The four tools (note 102). Each is an ordinary one-item stack in the pack, so
+ * The five tools (note 102). Each is an ordinary one-item stack in the pack, so
  * it can be moved, swapped and put on any toolbar slot, but it is never trashed,
  * sold, shipped, stored in a chest or lost in a defeat. Its upgrade tier lives
  * in `GameState.toolTiers`, so an upgrade never has to find the stack.
  */
-export const TOOLS = ["hoe", "can", "axe", "pickaxe"] as const;
+export const TOOLS = ["hoe", "can", "axe", "pickaxe", "scythe"] as const;
 export type Tool = (typeof TOOLS)[number];
 
 const PREFIX = "tool:";

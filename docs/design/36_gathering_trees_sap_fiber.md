@@ -188,3 +188,6 @@ Village trees: built 2026-11-13, 24 cosmetic oaks in `hearthwell.json` (note 77,
 `mountain.json` were not touched. The Tiled property is not yet read in a map test (only the tree
 rules are), and nothing was verified by play. Per-type yields are the common tree's (12 wood
 and Foraging bonus, 5 sap).
+
+**Built 2026-11-16 (note 103):** grass tiles on the farm (starting scatter, seasonal regrowth,
+slow spread, winter day 1 clears, tilling clears), cut only by the scythe. Grass drops no fiber.
