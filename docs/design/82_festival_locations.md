@@ -53,6 +53,17 @@ Hearthwell south green: only the Harvest Showing is on the green now.
     only the festival zone, since the Forest and the delta are also roads to other
     places; the owner said "most" areas, so some stay open.
 
+## Built 2026-11-16: the plain walk (decision 11) for the green and the hedge
+
+The farm sign no longer opens `FestivalScene`; it says where and when (`festivalSignLine`).
+Hearthwell has two exits, `to_green` (tile 70,88) and `to_hedge` (tile 104,88), gated by
+`festival-gate-green` and `festival-gate-hedge` holds that `festivalGateHolds` raises only on
+the day of that festival (the even-year hedge uses the hedge gate too). Walking through one
+joins the festival (`walkIntoFestival`: `enterProblem` first, then `enterFestival`). The way
+home still asks first. Left: the Seedswap Fair, Lamplight, Frostday, Hat Parade, Cake Day
+and Feast have no festival map yet, so nothing to walk to; the exit tile positions are
+placeholders until the Hearthwell variant is drawn.
+
 ## Decided 2026-11-12 (owner)
 
 - **A festival ends after its main event (Stardew, checked on the saved Festivals page).**

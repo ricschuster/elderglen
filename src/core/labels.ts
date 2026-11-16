@@ -24,6 +24,8 @@ const EXITS: Record<string, string> = {
   to_mountain: "Mountain",
   to_quarry: "Quarry",
   to_delta: "River delta",
+  to_green: "Festival green",
+  to_hedge: "Hedge maze",
   ferry: "Ferry to the Lake cove",
   delta: "River delta",
   fisher: "Fisher's hut",

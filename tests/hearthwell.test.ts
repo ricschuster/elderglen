@@ -249,6 +249,8 @@ describe("the Hearthwell shell (note 77, #645)", () => {
         "sawmill",
         "to_delta",
         "to_farm",
+        "to_green",
+        "to_hedge",
         "to_mountain",
       ].sort(),
     );
