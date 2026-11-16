@@ -5,6 +5,8 @@ import {
   takeOff,
   wearFromPack,
   moveStack,
+  dropOnTrash,
+  dropStack,
   needsTrashConfirm,
   sortPack,
   splitStack,
@@ -126,5 +128,28 @@ describe("wearFromPack and takeOff", () => {
     expect(wearFromPack(new Equipment(), inv(["turnip", 1]), "turnip")).toBe(
       "none",
     );
+  });
+});
+
+describe("dropOnTrash and dropStack", () => {
+  it("trashes cheap stacks, asks for valuable ones, refuses tools", () => {
+    const i = inv(["wood", 2], ["tool:hoe", 1], ["no-such-item", 1]);
+    expect(dropOnTrash(i, 0, false)).toEqual({
+      kind: "trashed",
+      id: "wood",
+      count: 2,
+    });
+    expect(dropOnTrash(i, 0, false)).toEqual({ kind: "empty" });
+    expect(dropOnTrash(i, 1, true)).toEqual({ kind: "refused" });
+    expect(i.slot(1)?.id).toBe("tool:hoe");
+    expect(dropOnTrash(i, 2, false)).toEqual({ kind: "confirm" });
+    expect(i.slot(2)).not.toBeNull();
+    expect(dropOnTrash(i, 2, true).kind).toBe("trashed");
+  });
+  it("drops onto a slot like a move, and outside cancels", () => {
+    const i = inv(["wood", 2]);
+    expect(dropStack(i, 0, undefined)).toBe(false);
+    expect(dropStack(i, 0, 2)).toBe(true);
+    expect(i.slot(2)?.id).toBe("wood");
   });
 });

@@ -81,6 +81,13 @@ and the options door (`45`). This note gives them one home.
   needs Pack, Skills, Options and Exit, plus the two placeholders.
 - **Touch:** tabs are tapped. Stacks move by tap a stack, tap a slot. No drag is
   needed (`27_touch_controls.md`).
+- **Drag and trash (built, batch F):** on desktop a mouse press on a stack, moved
+  a few pixels, drags it; release on a slot moves, swaps or merges (the same
+  `moveStack` rules), release outside any slot cancels. Release on the Trash
+  button trashes (`dropOnTrash` in `src/core/packmenu.ts`): tools are refused
+  with a short message, valuable or unsellable stacks ask first (drop again).
+  Touch is unchanged: tap a stack, then a slot or Trash. Not yet checked by
+  hand in the browser.
 
 ## The journal
 
