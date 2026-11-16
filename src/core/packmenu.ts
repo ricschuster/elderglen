@@ -161,3 +161,43 @@ export function takeOff(
 ): boolean {
   return slot === "boots" ? eq.removeBoots(inv) : eq.remove(inv, slot);
 }
+
+/** What the trash target did with a stack. */
+export type TrashResult =
+  | { kind: "trashed"; id: string; count: number }
+  | { kind: "confirm" }
+  | { kind: "refused" }
+  | { kind: "empty" };
+
+/** Tools (and anything else that must stay) are never trashed. */
+export const canTrash = (id: string): boolean => !isToolId(id);
+
+/**
+ * Drop the stack in `i` on the trash target. Tools are refused. A valuable
+ * stack asks first (`confirmed` false gives "confirm"; call again with true).
+ */
+export function dropOnTrash(
+  inv: Inventory,
+  i: number,
+  confirmed: boolean,
+): TrashResult {
+  const stack = inRange(inv, i) ? inv.slot(i) : undefined;
+  if (!stack) return { kind: "empty" };
+  if (!canTrash(stack.id)) return { kind: "refused" };
+  if (!confirmed && needsTrashConfirm(stack.id, stack.count))
+    return { kind: "confirm" };
+  trashSlot(inv, i);
+  return { kind: "trashed", ...stack };
+}
+
+/**
+ * Drop a dragged stack. `to` is the slot under the pointer, or undefined when
+ * released outside every slot, which cancels. Same rules as tap then tap.
+ */
+export function dropStack(
+  inv: Inventory,
+  from: number,
+  to: number | undefined,
+): boolean {
+  return to === undefined ? false : moveStack(inv, from, to);
+}
