@@ -97,8 +97,8 @@ Three sections, switched with Left and Right or a tap.
   progress under it. Built 2026-11-16: collapsed to the title, tap, click or
   Enter to open (Up and Down move the mark); only the newest is open at first;
   rules in `src/core/journal.ts`. The sources are the daily request board and any story
-  letters (`50_request_board_and_quests.md`). Stardew also has a cancel button on a quest. We have no quests
-  built yet, so this section starts empty and says so.
+  letters (`50_request_board_and_quests.md`). Cancel built 2026-11-16 (note 50 settles it: Stardew, free,
+  any open request): an expanded request shows a `[ Cancel request ]` line, tap it or press X on the marked one.
 - **Projects.** Each village hall project with the goods it still needs and the
   ones already handed in. This reads the same data as the hall screen
   (`40_hall_layout.md`) and never changes it.

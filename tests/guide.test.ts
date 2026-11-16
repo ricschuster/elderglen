@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { guideCategories, shopHoursLines } from "../src/core/guide";
+import {
+  guideCategories,
+  keeperlessShops,
+  shopHoursLines,
+} from "../src/core/guide";
 import { clockText } from "../src/core/clock";
 import { SHOPS } from "../src/core/villagers";
 import { deserialize, newGame, serialize } from "../src/core/save";
@@ -117,6 +121,17 @@ describe("the Guide (note 101)", () => {
     expect(lines.some((l) => l.startsWith("Open "))).toBe(true);
     const back = deserialize(serialize(g))!;
     expect(back.guide.shopSeen(v.shop!)).toBe(true);
+  });
+
+  it("lists the hours of a shop with no keeper under Places once seen", () => {
+    const g = newGame();
+    const shop = SHOPS.find((s) => !VILLAGERS.some((v) => v.shop === s.id));
+    if (!shop) return;
+    expect(keeperlessShops(g)).toHaveLength(0);
+    g.guide.visitShop(shop.id);
+    const e = cat(g, "places").entries.find((x) => x.id === `shop-${shop.id}`)!;
+    expect(e.name).toBe(shop.name);
+    expect(e.lines[0]).toContain(clockText(shop.open));
   });
 
   it("reads hours and the closed day from the shop data", () => {
