@@ -1,6 +1,7 @@
 # 104 The library gallery
 
-Status: draft, design only, 2026-11-16. Nothing is built. Extends note 39 (the
+Status: settled by the owner 2026-11-16 (open questions answered). The minerals are
+added as data; the gallery itself is not built. Extends note 39 (the
 completion total and elderfruit source 7), note 38 (achievements), note 69
 (geodes, minerals, artifacts), note 86 (the library interior) and note 20
 (the librarian). Stardew claims are from the saved Museum page (read
@@ -15,8 +16,8 @@ completion total and elderfruit source 7), note 38 (achievements), note 69
   "not built" (note 39). Two achievements wait: "Donate 40 different items"
   (Linen Bonnet) and "Complete the museum collection" (Wide Leather Hat,
   10,000g) (note 38).
-- Data that already exists: `src/content/artifacts.json` (42 artifacts),
-  `src/content/geodes.json` (18 geode minerals, 3 foraged crystals),
+- Data that exists: `src/content/artifacts.json` (42 artifacts),
+  `src/content/geodes.json` (43 geode minerals, 3 foraged crystals),
   `src/content/gems.json` (6 gems and the Glimmerstone). The library map
   (`src/content/maps/library.json`) has a reading hall with a display case.
 - Special orders (note 65) postpone "the museum order" until the gallery exists.
@@ -27,30 +28,34 @@ completion total and elderfruit source 7), note 38 (achievements), note 69
   86, batch 2) is the donation point, and the hall's shelf blocks hold the
   exhibits. The hall is about 24 by 19 tiles, the size of Stardew's museum
   (note 86). No new interior is needed for the first build.
-- **Dunmar the librarian** takes donations at the counter and runs the hours of
-  the library. Stardew's museum is open 8:00 to 18:00 and closed on festival days
-  (saved Museum page).
-- The librarian says one short line when each piece is first donated (70 lines,
+- **Dunmar the librarian** takes donations at the counter. Hours are the library's
+  own (owner decision 2026-11-16; Stardew's museum is open 8:00 to 18:00 and
+  closed on festival days, saved Museum page).
+- The librarian says one short line when each piece is first donated (95 lines,
   written with the voice sheets, M3d). Until a piece is donated its item
   description says Dunmar can tell more if it is donated (Stardew's shape, saved
   page).
 
-## The donation list (derived from data, 70 items)
+## The donation list (derived from data, 95 items)
 
 | Group | Count | Source in data |
 | --- | --- | --- |
-| Geode minerals | 18 | `pools[].minerals` in `geodes.json`: 6 each for the Geode, Frozen and Magma pools |
+| Geode minerals | 43 | `pools[].minerals` in `geodes.json`: 14 each for the Geode and Frozen pools, 15 for the Magma pool |
 | Foraged crystals | 3 | `pools[].foraged`: loam, rime and cinder crystal |
 | Gems | 6 | `gems.json` `gems` |
 | Glimmerstone | 1 | `gems.json` `glimmerstone` |
 | Artifacts | 42 | `artifacts.json` (includes the geode artifacts dwarf cup, ice bell, ember lantern, and bundle 26's four old things) |
-| **Total** | **70** | |
+| **Total** | **95** | 53 minerals and 42 artifacts |
 
-- **Minerals 28, artifacts 42.** Stardew has 53 minerals, 42 artifacts and 95
-  in all (saved Museum page). Ours is smaller on the mineral side. Note 39 says
-  the weight stays 5. The count is derived, never typed: the list is built from
-  the data above, so adding a mineral later grows the gallery and the elderfruit
-  condition with it.
+- **Minerals 53, artifacts 42**, the same split as Stardew (saved Museum page).
+  Owner decision 2026-11-16: the list is near Stardew's 95, and gems and the
+  Glimmerstone count as minerals (SC-199 stays open for the Stardew side). The
+  25 minerals added to reach 53 are placeholder names and prices in
+  `geodes.json` (note 69 holds the pools): 8 more in the Geode pool, 8 in Frozen
+  and 9 in Magma. The count is derived, never typed: the list is built from the
+  data above, so adding a mineral later grows the gallery and the elderfruit
+  condition with it. Per-mineral crack chance was lowered (0.0138) so the total
+  mineral chance per geode stays about as before.
 - **Lore found things are the artifacts.** Note 22's found things (old dwarf
   cups, bent key, Old Diggers' tools) are already in the 42 (`dwarf-cup`,
   `bent-key`), so there is no third group. Letters and books are not on the list.
@@ -58,14 +63,18 @@ completion total and elderfruit source 7), note 38 (achievements), note 69
 - **One copy each.** Spares stay as gifts and sellables, and a donated item found
   again still works as a find (note 69).
 - **Not on the list:** ore, coal, clay, plain stone, geodes, bars.
+- **Pictures:** the new minerals use the placeholder item art from their colours.
+  `npm run wiki:images` (needs `npm run dev`) must be run to render their wiki
+  pictures.
 
 ## Rewards by donation count
 
 Stardew gives a reward at 5, 10, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80 and 90
 donations, a final Stardrop at 95, mineral rewards at 11, 21, 31, 41 and 50, and
 artifact rewards at 3, 5, 11, 15 and 20 (saved Museum page). Ours keeps the shape
-over the 70 list. Every reward is a placeholder and uses items and decor the game
-has or will have, with no new systems.
+over the 95 list. Owner decision 2026-11-16: rewards are useful items, seeds and
+decor, and set rewards for particular artifact sets (as Stardew). Every reward
+is a placeholder and uses items and decor the game has or will have.
 
 | Donated | Reward (placeholder) |
 | --- | --- |
@@ -79,12 +88,17 @@ has or will have, with no new systems.
 | 40 | A scarecrow variant, and the "Donate 40" achievement (Linen Bonnet, note 38) |
 | 50 | A statue (decor) |
 | 60 | A key to a shortcut door (named with that design) |
-| 70 (all) | The seventh elderfruit, and the "Complete the collection" achievement (Wide Leather Hat, note 38) |
+| 70 | A useful item (a tool upgrade voucher or rare ingredient) |
+| 80 | A decor set piece |
+| 90 | A big decor piece |
+| 95 (all) | The seventh elderfruit, and the "Complete the collection" achievement (Wide Leather Hat, note 38) |
 
-- **Per-group rewards** (placeholder): minerals at 7, 14, 21 and 28; artifacts at
-  10, 20, 30 and 42. Small gifts such as a decor piece or a recipe.
-- **Set rewards** (Stardew gives a recipe and tool-like items for particular
-  artifacts) are left out of the first build.
+- **Per-group rewards** (placeholder): minerals at 11, 21, 31, 41 and 53;
+  artifacts at 5, 11, 20, 30 and 42. Small gifts such as a decor piece or a
+  recipe.
+- **Set rewards:** named sets (for example the three geode artifacts, or the
+  four old things of bundle 26) give a recipe or a useful item when all are
+  donated. Sets are data in `src/content/gallery.json`, designed with the rewards.
 - Rewards are collected from the librarian, and are held for pickup if the pack
   is full (Stardew delivers the rusty key the next day, saved page).
 
@@ -92,14 +106,15 @@ has or will have, with no new systems.
 
 - **Completion total (note 39).** The "gallery" category gets `counter: gallery`.
   Progress is donated over the list length, weight 5, partial progress counts,
-  rounded down. The page reads "N of 70".
+  rounded down. The page reads "N of 95".
 - **Elderfruit source 7 (note 39).** Paid when donated equals the list length.
   It reuses `absorbElderfruit` and the flag pattern of the other six sources.
 - **Achievements (note 38).** Both gallery achievements fire from the same
   counter, at 40 and at the full list.
 - **Special orders (note 65).** The museum order can be switched on once the
   list exists.
-- **Multiplayer (note 53).** The gallery is shared by the farm. See question 5.
+- **Multiplayer (note 53).** One shared collection for the farm; each player
+  claims the rewards (SC-200 stays open for the Stardew side).
 - **Wiki (note 100).** A generated Gallery page from the same list, with each
   item's group and where it is found, and a "Gallery" line on item pages. Counts
   come from data, not typed prose. Remove any planned entry in
@@ -112,11 +127,11 @@ has or will have, with no new systems.
   chest screen (`ChestScene`, note 34): the pack on one side, the gallery shelf
   on the other. Items the librarian takes show a donate cue, others are dimmed.
   A click or tap donates one copy and plays the librarian's line.
-- **Shelf grid:** all 70 slots in a fixed order (minerals by band, then
+- **Shelf grid:** all 95 slots in a default order (minerals by band, then
   artifacts). Undonated slots show a dark silhouette and "?" on hover. Tooltips
   use the shared tooltip code (`src/core/tipanchor.ts`).
-- **Arrangement:** fixed slots first. Free arrangement (Stardew allows it) is a
-  later step.
+- **Arrangement:** free, as Stardew. Donated items can be placed on any free
+  exhibit spot in the hall and moved later. Undonated pieces have no spot.
 - **Collections page:** the gallery row opens the same grid read only, so missing
   pieces can be checked away from the library.
 - No new input handling: reuse the pack and chest drag and click paths.
@@ -124,16 +139,18 @@ has or will have, with no new systems.
 ## Save data
 
 - `gallery: string[]` of donated item ids on the game state (saved, with a
-  version bump and migration, note 52). Counts derive from it.
+  version bump and migration, note 52), plus the placed positions for free
+  arrangement. Counts derive from it.
 - `galleryClaimed: number[]` of reward thresholds already paid, so none is paid
-  twice, and a migrated save pays any threshold already passed.
+  twice, and a migrated save pays any threshold already passed. In multiplayer
+  it is per player (each claims), while `gallery` is shared.
 - Elderfruit source 7 uses its flag in the existing elderfruit flags.
-- In multiplayer it belongs to the shared farm state, not a player.
+- Not built yet: the save fields wait for the saves rebuild to land.
 
 ## Build plan (small steps, each green on `npm run check`)
 
 1. **List and counter.** `src/core/gallery.ts` builds the list from the three
-   data files, plus save fields. Tests: length is 70, ids unique and real,
+   data files, plus save fields. Tests: length is 95 (53 minerals, 42 artifacts), ids unique and real,
    partial progress and rounding.
 2. **Donate rule.** `donate(state, id)`: one copy only, takes one from the pack.
    Tests for duplicate and missing cases.
@@ -144,31 +161,4 @@ has or will have, with no new systems.
 5. **Library screen.** The counter or display case interaction, the two-grid
    donate screen, the shelf grid, the collections row.
 6. **Text and wiki.** Librarian lines, the Gallery wiki page, overview JSON.
-7. **Later:** arrangement, set rewards, the museum special order.
-
-## Open owner questions
-
-The Stardew option is first in each.
-
-1. **List size.**
-   a. (Stardew) A big list near 95, which needs about 25 more named minerals
-   and waits on note 69's open mineral work.
-   b. (Recommended) The 70 derived from data now, growing if minerals are added.
-   c. Artifacts only (42).
-2. **Do gems and the Glimmerstone count as minerals?**
-   a. (Stardew, from memory, SC-199) Yes, they are among its 53 minerals.
-   b. Keep them out, giving 63.
-3. **Reward kind.**
-   a. (Stardew) Useful items, seeds and decor, a final Stardrop (our elderfruit),
-   and recipes or items for particular artifact sets.
-   b. (Recommended) Items and decor only for the first build, set rewards later.
-4. **Rearranging the collection.**
-   a. (Stardew) Yes, free arrangement.
-   b. (Recommended) Fixed slots first, free arrangement later.
-5. **Multiplayer rewards.**
-   a. (Stardew, from memory, SC-200) One shared collection, rewards claimed by
-   each player.
-   b. (Recommended) One shared collection and one reward per farm.
-6. **Hours.**
-   a. (Stardew) Open 8:00 to 18:00, closed on festival days.
-   b. (Recommended) The library's own hours.
+7. **Later:** free arrangement UI, set rewards, the museum special order.

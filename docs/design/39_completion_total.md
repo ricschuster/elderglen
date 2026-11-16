@@ -358,5 +358,5 @@ An audit found sources 1 to 6 and the energy effect built and tested (`tests/eld
 
 - **Source 7, the full gallery set:** the seventh elderfruit is paid when every item on the gallery's list
   is donated (as Stardew's museum, 95 items, saved Stardrop page). Built with the gallery note, so the
-  count is the list length (70 on today's data). The gallery is designed in note 104 and not built yet.
+  count is the list length (95 on today's data). The gallery is designed in note 104 and not built yet.
 - **Energy on eating:** fills energy to full (Stardew, unchecked). Built 2026-11-16.

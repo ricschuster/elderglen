@@ -519,9 +519,9 @@ describe("geodes", () => {
     expect(g.inventory.count("frozen-geode")).toBe(1);
   });
 
-  it("have a real item for every pool entry, six minerals a pool", () => {
+  it("have a real item for every pool entry, 14 to 15 minerals a pool", () => {
     for (const p of geodeData.pools) {
-      expect(p.minerals).toHaveLength(6);
+      expect(p.minerals.length).toBeGreaterThanOrEqual(14);
       const ids = [
         p.artifact.item,
         p.foraged.item,
@@ -560,39 +560,44 @@ describe("geodes", () => {
   });
 
   it("crack to stone, clay or ore after the minerals, gated by depth", () => {
-    // Skip artifact, foraged and the six minerals, then the resource roll.
-    const after = (res: number, ...rest: number[]) => {
-      const v = [0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, res, ...rest];
+    // Skip artifact, foraged and every mineral of the pool, then the resource roll.
+    const after = (kind: string, res: number, ...rest: number[]) => {
+      const n = geodeData.pools.find((p) => p.kind === kind)!.minerals.length;
+      const v = [...Array(2 + n).fill(0.99), res, ...rest];
       let i = 0;
       return () => v[i++] ?? 0;
     };
-    expect(crackResult(after(0.05, 0.9), "geode")).toEqual({
+    expect(crackResult(after("geode", 0.05, 0.9), "geode")).toEqual({
       item: "stone",
       count: 2,
     });
-    expect(crackResult(after(0.15), "geode")).toEqual({
+    expect(crackResult(after("geode", 0.15), "geode")).toEqual({
       item: "clay",
       count: 1,
     });
     // Ore: roll 0 picks the first ore (coal), then amount 1.
-    expect(crackResult(after(0.5, 0, 0), "geode", 1)).toEqual({
+    expect(crackResult(after("geode", 0.5, 0, 0), "geode", 1)).toEqual({
       item: "coal",
       count: 1,
     });
     // Iron only from floor 26 on: the last roll of 0.99 picks it then, copper before.
-    expect(crackResult(after(0.5, 0.99, 0), "geode", 10).item).toBe(
+    expect(crackResult(after("geode", 0.5, 0.99, 0), "geode", 10).item).toBe(
       "copper-ore",
     );
-    expect(crackResult(after(0.5, 0.99, 0), "geode", 30).item).toBe("iron-ore");
-    // Gold in the Frozen pool only from floor 76 on.
-    expect(crackResult(after(0.5, 0.99, 0), "frozen-geode", 50).item).toBe(
+    expect(crackResult(after("geode", 0.5, 0.99, 0), "geode", 30).item).toBe(
       "iron-ore",
     );
-    expect(crackResult(after(0.5, 0.99, 0), "frozen-geode", 76).item).toBe(
-      "gold-ore",
-    );
+    // Gold in the Frozen pool only from floor 76 on.
+    expect(
+      crackResult(after("frozen-geode", 0.5, 0.99, 0), "frozen-geode", 50).item,
+    ).toBe("iron-ore");
+    expect(
+      crackResult(after("frozen-geode", 0.5, 0.99, 0), "frozen-geode", 76).item,
+    ).toBe("gold-ore");
     // Hearthsilver is the rare Magma ore, in its own amounts.
-    expect(crackResult(after(0.5, 0.99, 0.99), "magma-geode", 90)).toEqual({
+    expect(
+      crackResult(after("magma-geode", 0.5, 0.99, 0.99), "magma-geode", 90),
+    ).toEqual({
       item: "hearthsilver-ore",
       count: 11,
     });
