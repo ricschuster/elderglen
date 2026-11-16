@@ -13,7 +13,28 @@
     "maren_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
     "maren_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
     "maren_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
-    "maren_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+    "maren_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "maren_4_a": "PLACEHOLDER TEXT. Maren, scene for 4 hearts. The story comes with the voice sheet.",
+    "maren_4_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "maren_4_ans1": "PLACEHOLDER TEXT. Of course.",
+    "maren_4_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "maren_4_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "maren_4_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "maren_4_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "maren_8_a": "PLACEHOLDER TEXT. Maren, scene for 8 hearts. The story comes with the voice sheet.",
+    "maren_8_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "maren_8_ans1": "PLACEHOLDER TEXT. Of course.",
+    "maren_8_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "maren_8_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "maren_8_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "maren_8_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "maren_10_a": "PLACEHOLDER TEXT. Maren, scene for 10 hearts. The story comes with the voice sheet.",
+    "maren_10_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "maren_10_ans1": "PLACEHOLDER TEXT. Of course.",
+    "maren_10_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "maren_10_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "maren_10_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "maren_10_c": "PLACEHOLDER TEXT. Here, I want you to have this."
   },
   "events": [
     {
@@ -130,6 +151,118 @@
       ]
     },
     {
+      "id": "maren-hall-4",
+      "villager": "maren",
+      "place": "mines:hall",
+      "hearts": 4,
+      "window": {
+        "from": "8:00",
+        "until": "12:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "maren",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "maren"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_4_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "maren",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_4_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "maren_4_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "maren_4_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_4_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "maren",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_4_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_4_c"
+        },
+        {
+          "cmd": "give",
+          "recipe": "maren-supper"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "maren-4-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
       "id": "maren-hall-6",
       "villager": "maren",
       "place": "mines:hall",
@@ -232,6 +365,230 @@
         {
           "cmd": "setFlag",
           "flag": "maren-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "maren-hall-8",
+      "villager": "maren",
+      "place": "mines:hall",
+      "hearts": 8,
+      "window": {
+        "from": "13:00",
+        "until": "19:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "maren",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "maren"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_8_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "maren",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_8_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "maren_8_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "maren_8_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_8_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "maren",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_8_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_8_c"
+        },
+        {
+          "cmd": "give",
+          "furniture": "maren-token"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "maren-8-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "maren-hall-10",
+      "villager": "maren",
+      "place": "mines:hall",
+      "hearts": 10,
+      "window": {
+        "from": "13:00",
+        "until": "19:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "maren",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "maren"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_10_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "maren",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_10_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "maren_10_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "maren_10_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_10_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "maren",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_10_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "maren",
+          "line": "maren_10_c"
+        },
+        {
+          "cmd": "give",
+          "hat": "maren-ribbon"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "maren-10-seen"
         },
         {
           "cmd": "snap"

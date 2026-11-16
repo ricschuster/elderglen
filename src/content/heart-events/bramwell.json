@@ -13,7 +13,28 @@
     "bramwell_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
     "bramwell_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
     "bramwell_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
-    "bramwell_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+    "bramwell_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "bramwell_4_a": "PLACEHOLDER TEXT. Bramwell, scene for 4 hearts. The story comes with the voice sheet.",
+    "bramwell_4_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "bramwell_4_ans1": "PLACEHOLDER TEXT. Of course.",
+    "bramwell_4_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "bramwell_4_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "bramwell_4_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "bramwell_4_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "bramwell_8_a": "PLACEHOLDER TEXT. Bramwell, scene for 8 hearts. The story comes with the voice sheet.",
+    "bramwell_8_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "bramwell_8_ans1": "PLACEHOLDER TEXT. Of course.",
+    "bramwell_8_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "bramwell_8_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "bramwell_8_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "bramwell_8_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "bramwell_10_a": "PLACEHOLDER TEXT. Bramwell, scene for 10 hearts. The story comes with the voice sheet.",
+    "bramwell_10_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "bramwell_10_ans1": "PLACEHOLDER TEXT. Of course.",
+    "bramwell_10_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "bramwell_10_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "bramwell_10_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "bramwell_10_c": "PLACEHOLDER TEXT. Here, I want you to have this."
   },
   "events": [
     {
@@ -130,6 +151,118 @@
       ]
     },
     {
+      "id": "bramwell-smithy-4",
+      "villager": "bramwell",
+      "place": "hw:smithy",
+      "hearts": 4,
+      "window": {
+        "from": "16:00",
+        "until": "19:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "bramwell",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "bramwell"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_4_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "bramwell",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_4_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "bramwell_4_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "bramwell_4_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_4_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "bramwell",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_4_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_4_c"
+        },
+        {
+          "cmd": "give",
+          "recipe": "bramwell-supper"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "bramwell-4-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
       "id": "bramwell-smithy-6",
       "villager": "bramwell",
       "place": "hw:smithy",
@@ -233,6 +366,230 @@
         {
           "cmd": "setFlag",
           "flag": "bramwell-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "bramwell-smithy-8",
+      "villager": "bramwell",
+      "place": "hw:smithy",
+      "hearts": 8,
+      "window": {
+        "from": "16:00",
+        "until": "19:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "bramwell",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "bramwell"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_8_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "bramwell",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_8_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "bramwell_8_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "bramwell_8_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_8_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "bramwell",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_8_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_8_c"
+        },
+        {
+          "cmd": "give",
+          "furniture": "bramwell-token"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "bramwell-8-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "bramwell-smithy-10",
+      "villager": "bramwell",
+      "place": "hw:smithy",
+      "hearts": 10,
+      "window": {
+        "from": "16:00",
+        "until": "19:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "bramwell",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "bramwell"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_10_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "bramwell",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_10_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "bramwell_10_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "bramwell_10_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_10_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "bramwell",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_10_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "bramwell",
+          "line": "bramwell_10_c"
+        },
+        {
+          "cmd": "give",
+          "hat": "bramwell-ribbon"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "bramwell-10-seen"
         },
         {
           "cmd": "snap"

@@ -13,7 +13,28 @@
     "linnet_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
     "linnet_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
     "linnet_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
-    "linnet_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+    "linnet_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "linnet_4_a": "PLACEHOLDER TEXT. Linnet, scene for 4 hearts. The story comes with the voice sheet.",
+    "linnet_4_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "linnet_4_ans1": "PLACEHOLDER TEXT. Of course.",
+    "linnet_4_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "linnet_4_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "linnet_4_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "linnet_4_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "linnet_8_a": "PLACEHOLDER TEXT. Linnet, scene for 8 hearts. The story comes with the voice sheet.",
+    "linnet_8_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "linnet_8_ans1": "PLACEHOLDER TEXT. Of course.",
+    "linnet_8_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "linnet_8_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "linnet_8_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "linnet_8_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "linnet_10_a": "PLACEHOLDER TEXT. Linnet, scene for 10 hearts. The story comes with the voice sheet.",
+    "linnet_10_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "linnet_10_ans1": "PLACEHOLDER TEXT. Of course.",
+    "linnet_10_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "linnet_10_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "linnet_10_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "linnet_10_c": "PLACEHOLDER TEXT. Here, I want you to have this."
   },
   "events": [
     {
@@ -133,6 +154,121 @@
       ]
     },
     {
+      "id": "linnet-river-path-4",
+      "villager": "linnet",
+      "place": "hw:river-path",
+      "hearts": 4,
+      "window": {
+        "from": "9:00",
+        "until": "10:30"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "linnet",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "linnet"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_4_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "linnet",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_4_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "linnet_4_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "linnet_4_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_4_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "linnet",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_4_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_4_c"
+        },
+        {
+          "cmd": "give",
+          "recipe": "linnet-supper"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "linnet-4-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
       "id": "linnet-inn-6",
       "villager": "linnet",
       "place": "hw:inn",
@@ -235,6 +371,230 @@
         {
           "cmd": "setFlag",
           "flag": "linnet-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "linnet-inn-8",
+      "villager": "linnet",
+      "place": "hw:inn",
+      "hearts": 8,
+      "window": {
+        "from": "18:00",
+        "until": "22:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "linnet",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "linnet"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_8_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "linnet",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_8_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "linnet_8_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "linnet_8_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_8_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "linnet",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_8_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_8_c"
+        },
+        {
+          "cmd": "give",
+          "furniture": "linnet-token"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "linnet-8-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "linnet-inn-10",
+      "villager": "linnet",
+      "place": "hw:inn",
+      "hearts": 10,
+      "window": {
+        "from": "18:00",
+        "until": "22:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "linnet",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "linnet"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_10_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "linnet",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_10_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "linnet_10_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "linnet_10_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_10_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "linnet",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_10_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "linnet",
+          "line": "linnet_10_c"
+        },
+        {
+          "cmd": "give",
+          "hat": "linnet-ribbon"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "linnet-10-seen"
         },
         {
           "cmd": "snap"

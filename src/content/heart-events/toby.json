@@ -13,7 +13,28 @@
     "toby_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
     "toby_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
     "toby_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
-    "toby_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+    "toby_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "toby_4_a": "PLACEHOLDER TEXT. Toby, scene for 4 hearts. The story comes with the voice sheet.",
+    "toby_4_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "toby_4_ans1": "PLACEHOLDER TEXT. Of course.",
+    "toby_4_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "toby_4_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "toby_4_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "toby_4_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "toby_8_a": "PLACEHOLDER TEXT. Toby, scene for 8 hearts. The story comes with the voice sheet.",
+    "toby_8_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "toby_8_ans1": "PLACEHOLDER TEXT. Of course.",
+    "toby_8_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "toby_8_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "toby_8_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "toby_8_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "toby_10_a": "PLACEHOLDER TEXT. Toby, scene for 10 hearts. The story comes with the voice sheet.",
+    "toby_10_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "toby_10_ans1": "PLACEHOLDER TEXT. Of course.",
+    "toby_10_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "toby_10_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "toby_10_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "toby_10_c": "PLACEHOLDER TEXT. Here, I want you to have this."
   },
   "events": [
     {
@@ -133,6 +154,121 @@
       ]
     },
     {
+      "id": "toby-green-4",
+      "villager": "toby",
+      "place": "hw:green",
+      "hearts": 4,
+      "window": {
+        "from": "9:30",
+        "until": "12:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "toby",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "toby"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_4_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "toby",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_4_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "toby_4_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "toby_4_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_4_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "toby",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_4_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_4_c"
+        },
+        {
+          "cmd": "give",
+          "recipe": "toby-supper"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "toby-4-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
       "id": "toby-river-path-6",
       "villager": "toby",
       "place": "hw:river-path",
@@ -238,6 +374,236 @@
         {
           "cmd": "setFlag",
           "flag": "toby-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "toby-river-path-8",
+      "villager": "toby",
+      "place": "hw:river-path",
+      "hearts": 8,
+      "window": {
+        "from": "14:00",
+        "until": "17:30"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "toby",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "toby"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_8_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "toby",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_8_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "toby_8_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "toby_8_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_8_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "toby",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_8_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_8_c"
+        },
+        {
+          "cmd": "give",
+          "furniture": "toby-token"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "toby-8-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "toby-river-path-10",
+      "villager": "toby",
+      "place": "hw:river-path",
+      "hearts": 10,
+      "window": {
+        "from": "14:00",
+        "until": "17:30"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "toby",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "toby"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_10_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "toby",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_10_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "toby_10_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "toby_10_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_10_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "toby",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_10_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "toby",
+          "line": "toby_10_c"
+        },
+        {
+          "cmd": "give",
+          "hat": "toby-ribbon"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "toby-10-seen"
         },
         {
           "cmd": "snap"

@@ -218,5 +218,155 @@
     "id": "hester-knit-cap",
     "name": "Hester's Knit Cap",
     "color": "#8fa86a"
+  },
+  {
+    "id": "alder-ribbon",
+    "name": "Alder's Ribbon",
+    "color": "#bf9458"
+  },
+  {
+    "id": "aldreth-ribbon",
+    "name": "Aldreth's Ribbon",
+    "color": "#96bf58"
+  },
+  {
+    "id": "aurelle-ribbon",
+    "name": "Aurelle's Ribbon",
+    "color": "#58bf6f"
+  },
+  {
+    "id": "barnaby-ribbon",
+    "name": "Barnaby's Ribbon",
+    "color": "#58bbbf"
+  },
+  {
+    "id": "bramwell-ribbon",
+    "name": "Bramwell's Ribbon",
+    "color": "#5866bf"
+  },
+  {
+    "id": "cordelia-ribbon",
+    "name": "Cordelia's Ribbon",
+    "color": "#9f58bf"
+  },
+  {
+    "id": "cuthbert-ribbon",
+    "name": "Cuthbert's Ribbon",
+    "color": "#bf588b"
+  },
+  {
+    "id": "dilly-ribbon",
+    "name": "Dilly's Ribbon",
+    "color": "#bf7a58"
+  },
+  {
+    "id": "dorrie-ribbon",
+    "name": "Dorrie's Ribbon",
+    "color": "#b0bf58"
+  },
+  {
+    "id": "dunmar-ribbon",
+    "name": "Dunmar's Ribbon",
+    "color": "#5bbf58"
+  },
+  {
+    "id": "fitch-ribbon",
+    "name": "Fitch's Ribbon",
+    "color": "#58bfaa"
+  },
+  {
+    "id": "hattie-ribbon",
+    "name": "Hattie's Ribbon",
+    "color": "#5880bf"
+  },
+  {
+    "id": "hester-ribbon",
+    "name": "Hester's Ribbon",
+    "color": "#8658bf"
+  },
+  {
+    "id": "korvi-ribbon",
+    "name": "Korvi's Ribbon",
+    "color": "#bf58a4"
+  },
+  {
+    "id": "linnet-ribbon",
+    "name": "Linnet's Ribbon",
+    "color": "#bf6158"
+  },
+  {
+    "id": "maren-ribbon",
+    "name": "Maren's Ribbon",
+    "color": "#bfb658"
+  },
+  {
+    "id": "marl-ribbon",
+    "name": "Marl's Ribbon",
+    "color": "#74bf58"
+  },
+  {
+    "id": "odette-ribbon",
+    "name": "Odette's Ribbon",
+    "color": "#58bf91"
+  },
+  {
+    "id": "pim-ribbon",
+    "name": "Pim's Ribbon",
+    "color": "#5899bf"
+  },
+  {
+    "id": "podge-ribbon",
+    "name": "Podge's Ribbon",
+    "color": "#6c58bf"
+  },
+  {
+    "id": "rosmarin-ribbon",
+    "name": "Rosmarin's Ribbon",
+    "color": "#bf58be"
+  },
+  {
+    "id": "rufus-ribbon",
+    "name": "Rufus's Ribbon",
+    "color": "#bf5869"
+  },
+  {
+    "id": "rundahl-ribbon",
+    "name": "Rundahl's Ribbon",
+    "color": "#bf9c58"
+  },
+  {
+    "id": "rushie-ribbon",
+    "name": "Rushie's Ribbon",
+    "color": "#8ebf58"
+  },
+  {
+    "id": "thalwen-ribbon",
+    "name": "Thalwen's Ribbon",
+    "color": "#58bf78"
+  },
+  {
+    "id": "thistle-ribbon",
+    "name": "Thistle's Ribbon",
+    "color": "#58b2bf"
+  },
+  {
+    "id": "tilda-ribbon",
+    "name": "Tilda's Ribbon",
+    "color": "#585dbf"
+  },
+  {
+    "id": "toby-ribbon",
+    "name": "Toby's Ribbon",
+    "color": "#a858bf"
+  },
+  {
+    "id": "walter-ribbon",
+    "name": "Walter's Ribbon",
+    "color": "#bf5882"
+  },
+  {
+    "id": "wren-ribbon",
+    "name": "Wren's Ribbon",
+    "color": "#bf8358"
   }
 ]

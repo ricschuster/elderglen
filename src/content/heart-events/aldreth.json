@@ -13,7 +13,28 @@
     "aldreth_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
     "aldreth_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
     "aldreth_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
-    "aldreth_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+    "aldreth_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "aldreth_4_a": "PLACEHOLDER TEXT. Aldreth, scene for 4 hearts. The story comes with the voice sheet.",
+    "aldreth_4_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "aldreth_4_ans1": "PLACEHOLDER TEXT. Of course.",
+    "aldreth_4_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "aldreth_4_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "aldreth_4_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "aldreth_4_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "aldreth_8_a": "PLACEHOLDER TEXT. Aldreth, scene for 8 hearts. The story comes with the voice sheet.",
+    "aldreth_8_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "aldreth_8_ans1": "PLACEHOLDER TEXT. Of course.",
+    "aldreth_8_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "aldreth_8_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "aldreth_8_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "aldreth_8_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "aldreth_10_a": "PLACEHOLDER TEXT. Aldreth, scene for 10 hearts. The story comes with the voice sheet.",
+    "aldreth_10_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "aldreth_10_ans1": "PLACEHOLDER TEXT. Of course.",
+    "aldreth_10_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "aldreth_10_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "aldreth_10_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "aldreth_10_c": "PLACEHOLDER TEXT. Here, I want you to have this."
   },
   "events": [
     {
@@ -130,6 +151,118 @@
       ]
     },
     {
+      "id": "aldreth-outpost-yard-4",
+      "villager": "aldreth",
+      "place": "hw:outpost-yard",
+      "hearts": 4,
+      "window": {
+        "from": "8:30",
+        "until": "12:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "aldreth",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "aldreth"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_4_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "aldreth",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_4_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "aldreth_4_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "aldreth_4_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_4_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "aldreth",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_4_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_4_c"
+        },
+        {
+          "cmd": "give",
+          "recipe": "aldreth-supper"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "aldreth-4-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
       "id": "aldreth-inn-6",
       "villager": "aldreth",
       "place": "hw:inn",
@@ -233,6 +366,230 @@
         {
           "cmd": "setFlag",
           "flag": "aldreth-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "aldreth-inn-8",
+      "villager": "aldreth",
+      "place": "hw:inn",
+      "hearts": 8,
+      "window": {
+        "from": "18:00",
+        "until": "22:30"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "aldreth",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "aldreth"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_8_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "aldreth",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_8_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "aldreth_8_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "aldreth_8_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_8_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "aldreth",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_8_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_8_c"
+        },
+        {
+          "cmd": "give",
+          "furniture": "aldreth-token"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "aldreth-8-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "aldreth-inn-10",
+      "villager": "aldreth",
+      "place": "hw:inn",
+      "hearts": 10,
+      "window": {
+        "from": "18:00",
+        "until": "22:30"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "aldreth",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "aldreth"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_10_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "aldreth",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_10_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "aldreth_10_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "aldreth_10_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_10_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "aldreth",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_10_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "aldreth",
+          "line": "aldreth_10_c"
+        },
+        {
+          "cmd": "give",
+          "hat": "aldreth-ribbon"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "aldreth-10-seen"
         },
         {
           "cmd": "snap"
