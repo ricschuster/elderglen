@@ -10,7 +10,7 @@ import { weaponById } from "../core/combat";
 import type { Settings } from "../core/bindings";
 import { desktopHint } from "./controls";
 import { HudPanel, PANEL_BOTTOM, PANEL_LEFT_BASE } from "./hudpanel";
-import { itemTip } from "../core/itemtip";
+import { itemTip, type ItemTip } from "../core/itemtip";
 import { canFraction, canWaterLine } from "../core/canwater";
 import { Tooltip } from "./tooltip";
 import { toolAway, type Upgradable } from "../core/upgrades";
@@ -483,6 +483,19 @@ export class Hud {
   /** The toolbar index that bar slot i stands for, given the row shown. */
   private indexOf(i: number): number {
     return i + this.row * SLOT_COUNT;
+  }
+
+  /** Show a tip near a screen point (the world's hover and long press, such as over a chest). */
+  showTipAt(tip: ItemTip, sx: number, sy: number): void {
+    this.tooltip.show(
+      tip,
+      { x: sx / this.scale, y: sy / this.scale - 8, w: 0, h: 24 },
+      { w: this.uw, h: this.uh },
+    );
+  }
+
+  hideTip(): void {
+    this.tooltip.hide();
   }
 
   /** True if a screen point falls on the toolbar, which owns its touches. */

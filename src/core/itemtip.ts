@@ -1,4 +1,5 @@
 import toolText from "../content/tool-text.json";
+import { chestById } from "./chestdefs";
 import { itemById } from "./items";
 import { splitQuality } from "./quality";
 import { TIER_NAMES } from "./upgrades";
@@ -17,6 +18,11 @@ export const KIND_COLOURS: Record<string, string> = {
   Seed: "#a8e08a",
   Food: "#ffcf7a",
   Item: "#d8d8d8",
+  Chest: "#e0b070",
+  Friend: "#ffe9a0",
+  Dating: "#ffb0c0",
+  Engaged: "#ffb0c0",
+  Spouse: "#ff8aa0",
 };
 
 const TOOLS = toolText as Record<string, { name: string; text: string }>;
@@ -90,4 +96,48 @@ export function chestTip(
         ? `Empty. ${stacks.length} slots. Not for sale.`
         : `${items} items in ${used} of ${stacks.length} slots.\nContents sell for about ${worth}g.\nNot for sale.`,
   };
+}
+
+/** The parts of a placed chest a tip needs (kept structural so this file stays light). */
+export interface ChestLike {
+  id: string;
+  items: {
+    size: number;
+    slot(i: number): { id: string; count: number } | undefined;
+  };
+  order?: string;
+  closed?: boolean;
+}
+
+/** How many of the fullest item names a chest tip lists. */
+const CHEST_TIP_ITEMS = 3;
+
+/**
+ * The tip for a chest standing in the world: its name, how full it is and what
+ * most of it is. Hovered (desktop) or long-pressed (touch) on the farm.
+ */
+export function placedChestTip(chest: ChestLike): ItemTip {
+  const def = chestById(chest.id);
+  const totals = new Map<string, number>();
+  let used = 0;
+  for (let i = 0; i < chest.items.size; i++) {
+    const s = chest.items.slot(i);
+    if (!s) continue;
+    used++;
+    const base = splitQuality(s.id).base;
+    totals.set(base, (totals.get(base) ?? 0) + s.count);
+  }
+  const lines = [`${used} of ${chest.items.size} slots used.`];
+  if (used === 0) lines[0] = `Empty (${chest.items.size} slots).`;
+  else {
+    const top = [...totals.entries()]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .slice(0, CHEST_TIP_ITEMS)
+      .map(([id, n]) => `${itemById(id)?.name ?? id} x${n}`);
+    const more = totals.size - top.length;
+    lines.push(top.join(", ") + (more > 0 ? `, and ${more} more` : ""));
+  }
+  if (chest.order)
+    lines.push(chest.closed ? "Its order has ended." : "Bound to an order.");
+  return { name: def?.name ?? "Chest", kind: "Chest", text: lines.join("\n") };
 }

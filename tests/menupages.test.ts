@@ -8,6 +8,7 @@ import {
   hiddenTabs,
   skillExtras,
   socialRows,
+  socialTip,
   specialItems,
   unmetCount,
 } from "../src/core/menupages";
@@ -166,5 +167,36 @@ describe("skillExtras", () => {
     g.mines.deepest = 12;
     g.elderfruit = 2;
     expect(skillExtras(g)).toHaveLength(3);
+  });
+});
+
+describe("socialTip", () => {
+  it("only says unmet for a stranger", () => {
+    const g = newGame();
+    const tip = socialTip(g, socialRows(g)[0]!);
+    expect(tip.name).toBe("???");
+    expect(tip.text).toContain("not met");
+  });
+  it("shows hearts, gifts this week, talk and likes learned", () => {
+    const g = newGame();
+    const day = g.day.clock.day;
+    g.friendship.meet(first);
+    const row = () => socialRows(g).find((r) => r.id === first)!;
+    let tip = socialTip(g, row());
+    expect(tip.kind).toBe("Friend");
+    expect(tip.text).toContain("Hearts: 0 of");
+    expect(tip.text).toContain("Gifts this week: 0 of 2.");
+    expect(tip.text).toContain("Talked today: no.");
+    expect(tip.text).toContain("No loves or likes learned yet.");
+    g.friendship.talk(first, day);
+    g.inventory.add("turnip", 1);
+    g.friendship.gift(first, "turnip", day);
+    tip = socialTip(g, row());
+    expect(tip.text).toContain("Talked today: yes.");
+    expect(tip.text).toContain("Gifts this week: 1 of 2 (one today).");
+    const taste = g.friendship.giftLog(first)["turnip"];
+    if (taste === "love" || taste === "like")
+      expect(tip.text).toContain("Likes known: Turnip");
+    else expect(tip.text).toContain("No loves or likes learned yet.");
   });
 });

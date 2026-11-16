@@ -4,6 +4,7 @@ import { hasHorse } from "./horse";
 import { MAX_HOUSE_TIER } from "./house";
 import { ELDERFRUIT_TOTAL } from "./elderfruit";
 import { HEART, POINTS, type Taste } from "./friendship";
+import type { ItemTip } from "./itemtip";
 import { VILLAGERS } from "./villagers";
 import type { GameState } from "./save";
 
@@ -107,6 +108,53 @@ export function giftLogRows(g: GameState, id: string): GiftLogRow[] {
   return Object.entries(g.friendship.giftLog(id))
     .map(([item, taste]) => ({ item: itemById(item)?.name ?? item, taste }))
     .sort((a, b) => a.item.localeCompare(b.item));
+}
+
+const RELATION_KIND: Record<Relationship, string> = {
+  friend: "Friend",
+  dating: "Dating",
+  engaged: "Engaged",
+  spouse: "Spouse",
+};
+
+/** How many known loves and likes a Social tip lists before "and more". */
+const TIP_LIKES = 4;
+
+/**
+ * The hover tip for a Social row (note 102), from existing data only: hearts,
+ * gifts this week, whether you talked today, the birthday and the loves and
+ * likes learned so far. An unmet person only says so.
+ */
+export function socialTip(g: GameState, r: SocialRow): ItemTip {
+  if (!r.met)
+    return {
+      name: "???",
+      kind: "Item",
+      text: "You have not met this person yet.",
+    };
+  const lines = [
+    `Hearts: ${r.hearts} of ${r.maxHearts}.`,
+    r.spouse
+      ? "Gifts: daily."
+      : `Gifts this week: ${r.weekGifts} of ${r.weekGiftLimit}${r.giftedToday ? " (one today)" : ""}.`,
+    `Talked today: ${r.talkedToday ? "yes" : "no"}.`,
+    `Birthday: ${birthdayText(r.id)}.`,
+  ];
+  const known = giftLogRows(g, r.id);
+  const loved = known.filter((e) => e.taste === "love").map((e) => e.item);
+  const liked = known.filter((e) => e.taste === "like").map((e) => e.item);
+  const likes = [...loved, ...liked];
+  if (likes.length === 0) lines.push("No loves or likes learned yet.");
+  else {
+    const shown = likes.slice(0, TIP_LIKES).join(", ");
+    const more = likes.length - TIP_LIKES;
+    lines.push(`Likes known: ${shown}${more > 0 ? `, and ${more} more` : ""}.`);
+  }
+  return {
+    name: r.name,
+    kind: RELATION_KIND[r.relationship],
+    text: lines.join("\n"),
+  };
 }
 
 // ---- Animals -------------------------------------------------------------
