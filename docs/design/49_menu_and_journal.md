@@ -59,9 +59,12 @@ and the options door (`45`). This note gives them one home.
   farm name, current funds, total earnings and the date. Built so far: funds,
   date and farm type. The game has no farm name or lifetime earnings counter
   yet, so those two wait for a name field and a counter in the save. The
-  four tools are carried outside the backpack here, so they show in a strip above
-  the grid and cannot be moved or trashed.
-- **The Skills tab (Stardew 1.6) also shows:** the title from total skill levels,
+  four tools are ordinary stacks in the grid (note 102): they move and swap like
+  any item, and can go in chests, but are never trashed, sold, shipped or dropped.
+  There is no fixed tool strip. Built 2026-11-16.
+- **The Skills tab (Stardew 1.6) also shows:** the title from total skill levels
+  (built 2026-11-16: eight placeholder bands in `src/content/skill-titles.json`,
+  shown under the heading; the names are the owner's to rename),
   the farmhouse upgrade level, the deepest mine floor and the stardrop-like
   finds, when each exists. Professions show on hover or long press. Added as
   those systems allow.
@@ -78,13 +81,22 @@ and the options door (`45`). This note gives them one home.
   needs Pack, Skills, Options and Exit, plus the two placeholders.
 - **Touch:** tabs are tapped. Stacks move by tap a stack, tap a slot. No drag is
   needed (`27_touch_controls.md`).
+- **Drag and trash (built, batch F):** on desktop a mouse press on a stack, moved
+  a few pixels, drags it; release on a slot moves, swaps or merges (the same
+  `moveStack` rules), release outside any slot cancels. Release on the Trash
+  button trashes (`dropOnTrash` in `src/core/packmenu.ts`): tools are refused
+  with a short message, valuable or unsellable stacks ask first (drop again).
+  Touch is unchanged: tap a stack, then a slot or Trash. Not yet checked by
+  hand in the browser.
 
 ## The journal
 
 Three sections, switched with Left and Right or a tap.
 
 - **Quests.** Each open request by title. Expand one to read it and see its
-  progress under it. The sources are the daily request board and any story
+  progress under it. Built 2026-11-16: collapsed to the title, tap, click or
+  Enter to open (Up and Down move the mark); only the newest is open at first;
+  rules in `src/core/journal.ts`. The sources are the daily request board and any story
   letters (`50_request_board_and_quests.md`). Stardew also has a cancel button on a quest. We have no quests
   built yet, so this section starts empty and says so.
 - **Projects.** Each village hall project with the goods it still needs and the
@@ -115,9 +127,9 @@ Three sections, switched with Left and Right or a tap.
   never changes the held slot behind the menu. The saved pages do not say what
   Stardew's wheel does in a menu, so this is unchecked against Stardew.
 - **The Pack tab has three extras (Stardew's inventory menu).**
-  - A trash can destroys what is dropped on it. Most tools cannot be trashed. On
+  - A trash can destroys what is dropped on it. Tools are never trashed (note 102). On
     touch, tap a stack and then the can, with a confirm for anything of value.
-  - An Auto-Sort button sorts the pack into game order and leaves tools alone.
+  - An Auto-Sort button sorts the pack into game order, tools first.
   - A bundle icon opens the journal on its Projects section. It is only a
     shortcut, since the journal already holds that data.
 - **Page Up and Page Down switch tabs on the keyboard (ours).** E closes the
@@ -149,9 +161,8 @@ Three sections, switched with Left and Right or a tap.
   Right to switch, Up and Down or the wheel to scroll, and a Projects shortcut
   button on the Pack tab. Exit saves (note 52).
 - Left: the trash can as a drop target, Pack farm name and total earnings (no
-  field in the save), the paper doll (no art), the Skills title from total
-  levels (the title names are not settled), the "stardrop-like finds" beyond
-  elderfruit, profession details on hover, Quests expand and cancel, reread
+  field in the save), the paper doll (no art), the "stardrop-like finds" beyond
+  elderfruit, profession details on hover, Quests cancel, reread
   conversations (waits for dialogue), the Special Items book and mastery powers
   (the systems do not exist). The Special Items page does not search chests.
 

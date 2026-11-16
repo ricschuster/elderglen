@@ -51,6 +51,7 @@ import { homeWorld, newAreas, type World } from "./areas";
 import { type Weather, WEATHERS } from "./weather";
 import { Hall, type HallProgress } from "./bundles";
 import { Inventory } from "./inventory";
+import { ensureTools } from "./toolitems";
 import { Skills, SKILLS, type Skill } from "./skills";
 import { professionById } from "./professions";
 import { Decor, type DecorSave } from "./decor";
@@ -775,6 +776,8 @@ export function deserialize(text: string): GameState | undefined {
   g.money = money;
   g.weather = weather as Weather;
   g.inventory.load(inventory as ReturnType<Inventory["save"]>);
+  // Saves from before note 102 kept the tools apart: put them in the pack.
+  ensureTools(g.inventory);
   g.farm.load(farm as ReturnType<Farm["save"]>);
   if (isObject(raw.greenhouse)) {
     const plots = Object.entries(raw.greenhouse).filter(

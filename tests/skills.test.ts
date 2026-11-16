@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { MAX_LEVEL, Skills, harvestXp } from "../src/core/skills";
+import {
+  MAX_LEVEL,
+  Skills,
+  harvestXp,
+  skillTitle,
+  totalLevels,
+} from "../src/core/skills";
 
 describe("Skills", () => {
   it("starts at level 0", () => {
@@ -48,5 +54,22 @@ describe("skillRows", () => {
     expect(
       skillRows(s).find((r) => r.skill === "foraging")!.next,
     ).toBeUndefined();
+  });
+});
+
+describe("skill title", () => {
+  it("steps up by total levels and caps at the last band", () => {
+    expect(skillTitle(0)).toBe("Newcomer");
+    expect(skillTitle(4)).toBe("Newcomer");
+    expect(skillTitle(5)).toBe("Hand");
+    expect(skillTitle(50)).toBe("Elder of the Glen");
+    expect(skillTitle(999)).toBe("Elder of the Glen");
+  });
+
+  it("sums the five levels", () => {
+    const s = new Skills();
+    s.gain("farming", 100);
+    s.gain("mining", 380);
+    expect(totalLevels(s)).toBe(3);
   });
 });

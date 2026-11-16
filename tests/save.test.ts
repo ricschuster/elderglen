@@ -7,10 +7,11 @@ import {
   serialize,
   type SaveStore,
 } from "../src/core/save";
+import { startGame } from "../src/core/toolbar";
 import { DAY_START } from "../src/core/clock";
 
 function played() {
-  const g = newGame();
+  const g = startGame();
   g.farm.till(1, 2);
   g.farm.plant(1, 2, "parsnip", "spring");
   g.farm.water(1, 2);

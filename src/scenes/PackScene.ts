@@ -4,15 +4,16 @@ import { farmTypeById } from "../core/farmtypes";
 import { itemById } from "../core/items";
 import { bootsById, ringById } from "../core/equipment";
 import {
+  dropOnTrash,
+  dropStack,
   moveStack,
-  needsTrashConfirm,
   sortPack,
   splitStack,
   takeOff,
-  trashSlot,
   wearFromPack,
 } from "../core/packmenu";
 import { splitQuality } from "../core/quality";
+import { toolOfId } from "../core/toolitems";
 import type { GameState } from "../core/save";
 import { iconKey } from "./art";
 import { frame } from "./panel";
@@ -23,10 +24,16 @@ const CELL = 64;
 const GAP = 8;
 const LEFT = (960 - (COLS * (CELL + GAP) - GAP)) / 2;
 const TOP = 90;
+const TOOL_NAMES: Record<string, string> = {
+  hoe: "Hoe",
+  can: "Watering can",
+  axe: "Axe",
+  pickaxe: "Pickaxe",
+};
 const TINT = { normal: 0xffffff, silver: 0xc8d8ff, gold: 0xffd860 };
 
 /**
- * The Pack tab (note 49): the whole backpack, with the tools noted above it.
+ * The Pack tab (note 49): the whole backpack. The tools are stacks in it (note 102).
  * Tap a stack, then tap a slot to move or swap it. Split puts half of the
  * selected stack where you tap next. Sort merges and orders; Trash destroys
  * the selected stack, asking first for anything of value.
@@ -46,6 +53,11 @@ export class PackScene extends Phaser.Scene {
   private note!: Phaser.GameObjects.Text;
   private splitLabel!: Phaser.GameObjects.Text;
   private trashLabel!: Phaser.GameObjects.Text;
+  private trashBox!: Phaser.GameObjects.Rectangle;
+  private dragIcon!: Phaser.GameObjects.Image;
+  /** A mouse press on a stack, not yet a drag until the pointer moves a few pixels. */
+  private press: { slot: number; x: number; y: number } | undefined;
+  private dragging: number | undefined;
   private worn: {
     slot: number | "boots";
     box: Phaser.GameObjects.Rectangle;
@@ -63,6 +75,8 @@ export class PackScene extends Phaser.Scene {
     this.cursor = 0;
     this.splitting = false;
     this.trashAsked = false;
+    this.press = undefined;
+    this.dragging = undefined;
     this.cells = [];
     this.worn = [];
   }
@@ -73,7 +87,7 @@ export class PackScene extends Phaser.Scene {
     this.add.text(
       LEFT,
       56,
-      "Tools (hoe, watering can, axe, pickaxe) are always carried. The backpack:",
+      "The backpack. The tools are in it too: move them, but they cannot be trashed.",
       { fontSize: "16px", color: "#ffffffcc" },
     );
     for (let i = 0; i < this.state.inventory.size; i++) {
@@ -84,7 +98,7 @@ export class PackScene extends Phaser.Scene {
         .setOrigin(0)
         .setStrokeStyle(2, 0xffffff, 0.3)
         .setInteractive({ useHandCursor: true });
-      box.on("pointerdown", () => this.tap(i));
+      box.on("pointerdown", (p: Phaser.Input.Pointer) => this.down(i, p));
       const icon = this.add
         .image(x + CELL / 2, y + CELL / 2 - 4, "__DEFAULT")
         .setDisplaySize(40, 40)
@@ -110,6 +124,17 @@ export class PackScene extends Phaser.Scene {
       this.toggleSplit(),
     );
     this.trashLabel = this.button(708, panelY, "Trash", () => this.trash());
+    this.trashBox = this.trashLabel.getData(
+      "box",
+    ) as Phaser.GameObjects.Rectangle;
+    this.dragIcon = this.add
+      .image(0, 0, "__DEFAULT")
+      .setDisplaySize(40, 40)
+      .setAlpha(0.8)
+      .setDepth(100)
+      .setVisible(false);
+    this.input.on("pointermove", (p: Phaser.Input.Pointer) => this.move(p));
+    this.input.on("pointerup", (p: Phaser.Input.Pointer) => this.up(p));
     this.splitLabel.setText("Split");
     this.button(812, panelY, "Wear", () => this.wear());
     this.equipmentStrip(panelY + 58);
@@ -120,7 +145,7 @@ export class PackScene extends Phaser.Scene {
     this.add.text(
       LEFT,
       516,
-      "Tap a stack, then a slot to move or swap, or Wear.   Esc or E: close   Page Up, Page Down: tabs",
+      "Tap a stack, then a slot to move or swap (or drag it), Trash, or Wear.   Esc or E: close   Page Up, Page Down: tabs",
       { fontSize: "13px", color: "#ffffffaa" },
     );
 
@@ -191,7 +216,7 @@ export class PackScene extends Phaser.Scene {
     label: string,
     run: () => void,
   ): Phaser.GameObjects.Text {
-    this.add
+    const box = this.add
       .rectangle(x, y, 94, 44, 0xa0482e, 1)
       .setOrigin(0)
       .setStrokeStyle(2, 0xffffff, 0.8)
@@ -199,13 +224,66 @@ export class PackScene extends Phaser.Scene {
       .on("pointerdown", run);
     return this.add
       .text(x + 47, y + 22, label, { fontSize: "18px", color: "#ffffff" })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setData("box", box);
   }
 
   private moveCursor(by: number): void {
     const next = this.cursor + by;
     if (next < 0 || next >= this.state.inventory.size) return;
     this.cursor = next;
+    this.refresh();
+  }
+
+  /**
+   * Press on a slot. A mouse press on a stack may become a drag; a touch or an
+   * empty slot taps at once, so touch keeps tap then tap.
+   */
+  private down(i: number, p: Phaser.Input.Pointer): void {
+    if (p.wasTouch || !this.state.inventory.slot(i)) {
+      this.tap(i);
+      return;
+    }
+    this.press = { slot: i, x: p.x, y: p.y };
+  }
+
+  private move(p: Phaser.Input.Pointer): void {
+    if (!this.press) return;
+    if (this.dragging === undefined) {
+      if (Math.hypot(p.x - this.press.x, p.y - this.press.y) < 6) return;
+      this.dragging = this.press.slot;
+      const key = iconKey(this.state.inventory.slot(this.dragging)!.id);
+      if (key) this.dragIcon.setTexture(key).setDisplaySize(40, 40);
+      this.dragIcon.setVisible(key !== undefined);
+    }
+    this.dragIcon.setPosition(p.x, p.y);
+  }
+
+  private up(p: Phaser.Input.Pointer): void {
+    const press = this.press;
+    this.press = undefined;
+    if (!press) return;
+    const from = this.dragging;
+    this.dragging = undefined;
+    this.dragIcon.setVisible(false);
+    if (from === undefined) {
+      this.tap(press.slot);
+      return;
+    }
+    // A confirm only carries over when the same stack is dropped on Trash again.
+    this.trashAsked = this.trashAsked && this.selected === from;
+    this.selected = undefined;
+    this.splitting = false;
+    if (this.trashBox.getBounds().contains(p.x, p.y)) {
+      this.trashSlotAt(from);
+      return;
+    }
+    const to = this.cells.findIndex((c) =>
+      c.box.getBounds().contains(p.x, p.y),
+    );
+    if (dropStack(this.state.inventory, from, to < 0 ? undefined : to)) {
+      this.cursor = to;
+    }
     this.refresh();
   }
 
@@ -245,20 +323,29 @@ export class PackScene extends Phaser.Scene {
   }
 
   private trash(): void {
-    const i = this.selected;
-    const stack = i === undefined ? undefined : this.state.inventory.slot(i);
-    if (i === undefined || !stack) {
+    if (this.selected === undefined) {
       this.note.setText("Tap a stack first, then Trash.");
       return;
     }
-    if (needsTrashConfirm(stack.id, stack.count) && !this.trashAsked) {
+    this.trashSlotAt(this.selected);
+  }
+
+  private trashSlotAt(i: number): void {
+    const r = dropOnTrash(this.state.inventory, i, this.trashAsked);
+    if (r.kind === "refused") {
+      this.note.setText("Tools cannot be thrown away.");
+      this.refresh();
+      return;
+    }
+    if (r.kind === "confirm") {
+      this.selected = i;
       this.trashAsked = true;
+      this.refresh();
       this.note.setText(
-        "That is worth something. Press Trash again to destroy it.",
+        "That is worth something. Drop it on Trash again, or press Trash, to destroy it.",
       );
       return;
     }
-    trashSlot(this.state.inventory, i);
     this.selected = undefined;
     this.splitting = false;
     this.trashAsked = false;
@@ -300,7 +387,10 @@ export class PackScene extends Phaser.Scene {
     const stack = inv.slot(at);
     if (stack) {
       const { base, quality } = splitQuality(stack.id);
-      const name = itemById(base)?.name ?? base;
+      const tool = toolOfId(base);
+      const name = tool
+        ? (TOOL_NAMES[tool] ?? tool)
+        : (itemById(base)?.name ?? base);
       this.note.setText(
         `${name}${quality === "normal" ? "" : ` (${quality})`} x${stack.count}`,
       );

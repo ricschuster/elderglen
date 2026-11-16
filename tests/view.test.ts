@@ -5,6 +5,9 @@ import {
   clampPercent,
   cornerScroll,
   hudScale,
+  hudSlot,
+  hudContentW,
+  barWidth,
   menuZoom,
   pinchPercent,
   stepPercent,
@@ -140,5 +143,30 @@ describe("pinch zoom", () => {
   });
   it("ignores a zero start distance", () => {
     expect(pinchPercent(120, 0, 80)).toBe(120);
+  });
+});
+
+describe("hudSlot (note 102)", () => {
+  it("is 64 on a wide desktop window and 44 when it does not fit", () => {
+    expect(barWidth(64)).toBe(812);
+    expect(hudSlot(100, false, 1280)).toBe(64);
+    expect(hudSlot(100, false, hudContentW(64))).toBe(64);
+    expect(hudSlot(100, false, hudContentW(64) - 1)).toBe(44);
+  });
+  it("needs a wider window at a bigger UI size", () => {
+    expect(hudSlot(150, false, 1200)).toBe(44);
+    expect(hudSlot(150, false, 1250)).toBe(64);
+    expect(hudSlot(75, false, 700)).toBe(64);
+  });
+  it("keeps touch at 44", () => {
+    expect(hudSlot(100, true, 3000)).toBe(44);
+  });
+  it("the chosen bar always fits at the scale used", () => {
+    for (const w of [500, 700, 900, 1280, 1920]) {
+      const slot = hudSlot(100, false, w);
+      expect(
+        hudContentW(slot) * hudScale(100, false, w, hudContentW(slot)),
+      ).toBeLessThanOrEqual(w + 1e-6);
+    }
   });
 });

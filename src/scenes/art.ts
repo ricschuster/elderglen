@@ -1,4 +1,5 @@
 import { POT_ITEM } from "../core/pots";
+import { toolOfId } from "../core/toolitems";
 import { isBomb } from "../core/bombs";
 import {
   BOOTS,
@@ -2386,6 +2387,8 @@ function paintMineArt(scene: Phaser.Scene): void {
 /** The texture key for a backpack item, or undefined if it has no picture. */
 export function iconKey(itemId: string): string | undefined {
   const { base } = splitQuality(itemId);
+  const tool = toolOfId(base);
+  if (tool) return TOOL_ICONS[tool];
   if (fertilizerById(base)) return `icon-${base}`;
   if (base === MAHOGANY_SEED) return "icon-mahogany-seed";
   if (sprinklerById(base)) return sprinklerKey(base);

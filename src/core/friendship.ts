@@ -305,6 +305,12 @@ export class Friendship {
     return this.rows.get(id)?.talkDay === day;
   }
 
+  /** Counted gifts given this week (the week of `day`); birthday gifts do not count. */
+  weekGifts(id: string, day: number): number {
+    const r = this.rows.get(id);
+    return r && r.week === weekOf(day) ? r.weekGifts : 0;
+  }
+
   /** True when they had a gift on this day. */
   giftedOn(id: string, day: number): boolean {
     return this.rows.get(id)?.giftDay === day;

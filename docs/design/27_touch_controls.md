@@ -104,3 +104,27 @@ on it, SC-125 and SC-126):
 - Checked on a real tablet (#59, #63) before either scheme is called done. The
   dead margin width, the Eat button size and the give-up wait are placeholders
   until then.
+
+## Reference: Stardew's mobile control options (owner screenshot, 2026-11-16)
+
+Reference only (ADR 0002). The Stardew mobile options page offers a list of
+control schemes (names as shown, from the owner's tablet):
+
+1. Tap-to-move and Auto-Attack (selected by default)
+2. Tap-to-move and Attack Joystick
+3. Invisible Joystick and 2 Buttons
+4. Invisible Joystick and 1 Button
+5. Tap-to-move and Joystick and Buttons
+6. Tap-to-move and (Joystick and Buttons) (weapons)
+7. Tap-to-move and Joystick and (Buttons) (weapons)
+8. Tap-to-move and Joystick
+9. Joystick and Buttons
+
+Ours today: tap-to-move (default, no buttons) and a floating stick with use and
+action buttons. Rows 2, 6 and 7 are about weapons in the mines; rows 3 and 4 use
+an invisible stick so nothing sits on the screen.
+
+**Open question (queued, owner to answer, not part of note 102):** which of
+these should we offer? Candidates: an attack aim control for the mines (rows 2,
+6, 7), an invisible stick scheme (rows 3, 4), and whether the choice is a list
+on the Options tab as in Stardew. Check the full list in play (SC-188).

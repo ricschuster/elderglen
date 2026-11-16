@@ -1,0 +1,13 @@
+{
+  "_note": "Skills tab title by the total of the five skill levels (0 to 50). Placeholder names and bands (note 49, 07); the owner may rename. Each band starts at 'from'. Original names, not Stardew's.",
+  "titles": [
+    { "from": 0, "name": "Newcomer" },
+    { "from": 5, "name": "Hand" },
+    { "from": 10, "name": "Helper" },
+    { "from": 16, "name": "Settler" },
+    { "from": 23, "name": "Valley Regular" },
+    { "from": 30, "name": "Old Hand" },
+    { "from": 38, "name": "Glen Keeper" },
+    { "from": 46, "name": "Elder of the Glen" }
+  ]
+}

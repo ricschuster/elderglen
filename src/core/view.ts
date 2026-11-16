@@ -90,6 +90,37 @@ export function hudScale(
   return contentW > 0 ? Math.min(scale, windowW / contentW) : scale;
 }
 
+/** Toolbar slot sizes in HUD units (note 102): big on a wide desktop window. */
+export const SLOT_SMALL = 44;
+export const SLOT_BIG = 64;
+const BAR_SLOTS = 12;
+const BAR_GAP = 4;
+const BAR_MARGINS = 16;
+
+/** The toolbar's width in HUD units for a slot size. */
+export function barWidth(slot: number): number {
+  return BAR_SLOTS * (slot + BAR_GAP) - BAR_GAP;
+}
+
+/** The widest HUD row for a slot size, with a margin: it must fit the window. */
+export function hudContentW(slot: number): number {
+  return barWidth(slot) + BAR_MARGINS;
+}
+
+/**
+ * The base slot size: 64 on a desktop window wide enough to show the whole bar
+ * at the UI size set, otherwise 44. Touch always keeps 44.
+ */
+export function hudSlot(
+  percent: number,
+  touch: boolean,
+  windowW: number,
+): number {
+  if (touch) return SLOT_SMALL;
+  const scale = hudScale(percent, false);
+  return windowW >= hudContentW(SLOT_BIG) * scale ? SLOT_BIG : SLOT_SMALL;
+}
+
 /**
  * The zoom for a menu's 960 by 540 box: the UI size, but never so big that the
  * box leaves the window.

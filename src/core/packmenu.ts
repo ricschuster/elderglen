@@ -2,11 +2,12 @@ import { bootsById, ringById, type Equipment } from "./equipment";
 import { STACK_SIZE, type Inventory } from "./inventory";
 import { allItems, itemById } from "./items";
 import { splitQuality } from "./quality";
+import { isToolId, TOOLS, toolItemId } from "./toolitems";
 
 /**
- * The Pack tab's rules (note 49): move, split, sort and trash. Tools are not
- * in the backpack, so none of this touches them. Pure functions over the
- * backpack, free of Phaser, so the scene only draws and taps.
+ * The Pack tab's rules (note 49): move, split, sort and trash. Tools are
+ * ordinary stacks here (note 102): they move and swap freely, but never trash.
+ * Pure functions over the backpack, free of Phaser, so the scene only draws and taps.
  */
 
 type Stack = { id: string; count: number } | null;
@@ -86,6 +87,10 @@ export function sortPack(inv: Inventory): boolean {
   for (const s of inv.save())
     if (s) totals.set(s.id, (totals.get(s.id) ?? 0) + s.count);
   const ids = [...totals.keys()].sort((a, b) => {
+    // The tools stay first, in their own order.
+    const ta = isToolId(a) ? TOOL_ORDER.indexOf(a) : -1;
+    const tb = isToolId(b) ? TOOL_ORDER.indexOf(b) : -1;
+    if (ta >= 0 || tb >= 0) return (ta < 0 ? 99 : ta) - (tb < 0 ? 99 : tb);
     const ra = rank.get(splitQuality(a).base) ?? Number.MAX_SAFE_INTEGER;
     const rb = rank.get(splitQuality(b).base) ?? Number.MAX_SAFE_INTEGER;
     return ra - rb || a.localeCompare(b);
@@ -104,6 +109,8 @@ export function sortPack(inv: Inventory): boolean {
   return JSON.stringify(inv.save()) !== before;
 }
 
+const TOOL_ORDER = TOOLS.map(toolItemId);
+
 /** The most a stack may be worth before trashing it asks first (gold). */
 export const TRASH_CONFIRM_VALUE = 500;
 
@@ -115,14 +122,14 @@ export function needsTrashConfirm(id: string, count: number): boolean {
   return it.sellPrice * count >= TRASH_CONFIRM_VALUE;
 }
 
-/** Destroy the stack in a slot. Returns what was destroyed, if anything. */
+/** Destroy the stack in a slot. A tool is never destroyed. Returns what was destroyed, if anything. */
 export function trashSlot(
   inv: Inventory,
   i: number,
 ): { id: string; count: number } | undefined {
   if (!inRange(inv, i)) return undefined;
   const stack = inv.slot(i);
-  if (!stack) return undefined;
+  if (!stack || isToolId(stack.id)) return undefined;
   edit(inv, (s) => ((s[i] = null), true));
   return stack;
 }
@@ -153,4 +160,44 @@ export function takeOff(
   slot: number | "boots",
 ): boolean {
   return slot === "boots" ? eq.removeBoots(inv) : eq.remove(inv, slot);
+}
+
+/** What the trash target did with a stack. */
+export type TrashResult =
+  | { kind: "trashed"; id: string; count: number }
+  | { kind: "confirm" }
+  | { kind: "refused" }
+  | { kind: "empty" };
+
+/** Tools (and anything else that must stay) are never trashed. */
+export const canTrash = (id: string): boolean => !isToolId(id);
+
+/**
+ * Drop the stack in `i` on the trash target. Tools are refused. A valuable
+ * stack asks first (`confirmed` false gives "confirm"; call again with true).
+ */
+export function dropOnTrash(
+  inv: Inventory,
+  i: number,
+  confirmed: boolean,
+): TrashResult {
+  const stack = inRange(inv, i) ? inv.slot(i) : undefined;
+  if (!stack) return { kind: "empty" };
+  if (!canTrash(stack.id)) return { kind: "refused" };
+  if (!confirmed && needsTrashConfirm(stack.id, stack.count))
+    return { kind: "confirm" };
+  trashSlot(inv, i);
+  return { kind: "trashed", ...stack };
+}
+
+/**
+ * Drop a dragged stack. `to` is the slot under the pointer, or undefined when
+ * released outside every slot, which cancels. Same rules as tap then tap.
+ */
+export function dropStack(
+  inv: Inventory,
+  from: number,
+  to: number | undefined,
+): boolean {
+  return to === undefined ? false : moveStack(inv, from, to);
 }
