@@ -57,9 +57,17 @@
         "amber-drop",
         "rust-jasper",
         "dune-jade",
-        "hazel-stone"
+        "hazel-stone",
+        "creek-carnelian",
+        "fern-fluorite",
+        "heather-amethyst",
+        "barley-calcite",
+        "brook-tourmaline",
+        "lichen-serpentine",
+        "clover-peridot",
+        "tallow-chalcedony"
       ],
-      "mineralChance": 0.03333,
+      "mineralChance": 0.0138,
       "ores": [
         {
           "item": "coal",
@@ -95,9 +103,17 @@
         "snow-beryl",
         "pale-moonstone",
         "winter-pearl",
-        "deepwater-aquamarine"
+        "deepwater-aquamarine",
+        "icicle-selenite",
+        "hoar-sapphire",
+        "drift-kunzite",
+        "rime-labradorite",
+        "sleet-zircon",
+        "tundra-celestine",
+        "northlight-spinel",
+        "aurora-fluorite"
       ],
-      "mineralChance": 0.03333,
+      "mineralChance": 0.0138,
       "ores": [
         {
           "item": "coal",
@@ -138,9 +154,18 @@
         "lava-glass",
         "ember-topaz",
         "cinder-ruby",
-        "heartfire-diamond"
+        "heartfire-diamond",
+        "kiln-sardonyx",
+        "slag-obsidian",
+        "furnace-citrine",
+        "pyre-opal",
+        "scorch-agate",
+        "smoulder-kyanite",
+        "crucible-alexandrite",
+        "hearth-rhodonite",
+        "bellows-sunstone"
       ],
-      "mineralChance": 0.03333,
+      "mineralChance": 0.0138,
       "ores": [
         {
           "item": "coal",
@@ -352,6 +377,181 @@
       "sellPrice": 250,
       "color": "#f0e0d8",
       "light": "#ffffff"
+    },
+    {
+      "id": "creek-carnelian",
+      "name": "Creek carnelian",
+      "sellPrice": 70,
+      "color": "#c0603a",
+      "light": "#f0a070"
+    },
+    {
+      "id": "fern-fluorite",
+      "name": "Fern fluorite",
+      "sellPrice": 55,
+      "color": "#5a9a6a",
+      "light": "#b0e0b8"
+    },
+    {
+      "id": "heather-amethyst",
+      "name": "Heather amethyst",
+      "sellPrice": 95,
+      "color": "#8a5aa8",
+      "light": "#d0b0e8"
+    },
+    {
+      "id": "barley-calcite",
+      "name": "Barley calcite",
+      "sellPrice": 35,
+      "color": "#d8c890",
+      "light": "#f8f0d0"
+    },
+    {
+      "id": "brook-tourmaline",
+      "name": "Brook tourmaline",
+      "sellPrice": 85,
+      "color": "#3a8a7a",
+      "light": "#90d8c8"
+    },
+    {
+      "id": "lichen-serpentine",
+      "name": "Lichen serpentine",
+      "sellPrice": 45,
+      "color": "#7a9a4a",
+      "light": "#c8e090"
+    },
+    {
+      "id": "clover-peridot",
+      "name": "Clover peridot",
+      "sellPrice": 90,
+      "color": "#8ac040",
+      "light": "#d8f890"
+    },
+    {
+      "id": "tallow-chalcedony",
+      "name": "Tallow chalcedony",
+      "sellPrice": 65,
+      "color": "#d8d0b0",
+      "light": "#f8f4e0"
+    },
+    {
+      "id": "icicle-selenite",
+      "name": "Icicle selenite",
+      "sellPrice": 110,
+      "color": "#c8d8e0",
+      "light": "#f8fcff"
+    },
+    {
+      "id": "hoar-sapphire",
+      "name": "Hoar sapphire",
+      "sellPrice": 150,
+      "color": "#4a6ac0",
+      "light": "#a0b8f0"
+    },
+    {
+      "id": "drift-kunzite",
+      "name": "Drift kunzite",
+      "sellPrice": 130,
+      "color": "#d8a0c8",
+      "light": "#f8d8f0"
+    },
+    {
+      "id": "rime-labradorite",
+      "name": "Rime labradorite",
+      "sellPrice": 125,
+      "color": "#5a7a98",
+      "light": "#a8c8e0"
+    },
+    {
+      "id": "sleet-zircon",
+      "name": "Sleet zircon",
+      "sellPrice": 105,
+      "color": "#a0a8b8",
+      "light": "#e0e4f0"
+    },
+    {
+      "id": "tundra-celestine",
+      "name": "Tundra celestine",
+      "sellPrice": 115,
+      "color": "#98b8e0",
+      "light": "#e0f0ff"
+    },
+    {
+      "id": "northlight-spinel",
+      "name": "Northlight spinel",
+      "sellPrice": 160,
+      "color": "#7a4aa0",
+      "light": "#c0a0e0"
+    },
+    {
+      "id": "aurora-fluorite",
+      "name": "Aurora fluorite",
+      "sellPrice": 135,
+      "color": "#4ab8a0",
+      "light": "#a0f0e0"
+    },
+    {
+      "id": "kiln-sardonyx",
+      "name": "Kiln sardonyx",
+      "sellPrice": 170,
+      "color": "#9a4a2a",
+      "light": "#d89060"
+    },
+    {
+      "id": "slag-obsidian",
+      "name": "Slag obsidian",
+      "sellPrice": 155,
+      "color": "#1a1a22",
+      "light": "#5a5a6a"
+    },
+    {
+      "id": "furnace-citrine",
+      "name": "Furnace citrine",
+      "sellPrice": 190,
+      "color": "#d8a020",
+      "light": "#f8e070"
+    },
+    {
+      "id": "pyre-opal",
+      "name": "Pyre opal",
+      "sellPrice": 230,
+      "color": "#e07a4a",
+      "light": "#ffd8b0"
+    },
+    {
+      "id": "scorch-agate",
+      "name": "Scorch agate",
+      "sellPrice": 165,
+      "color": "#b05a2a",
+      "light": "#e8a870"
+    },
+    {
+      "id": "smoulder-kyanite",
+      "name": "Smoulder kyanite",
+      "sellPrice": 175,
+      "color": "#3a5ab0",
+      "light": "#90a8f0"
+    },
+    {
+      "id": "crucible-alexandrite",
+      "name": "Crucible alexandrite",
+      "sellPrice": 260,
+      "color": "#6a3a8a",
+      "light": "#e07090"
+    },
+    {
+      "id": "hearth-rhodonite",
+      "name": "Hearth rhodonite",
+      "sellPrice": 210,
+      "color": "#c04a6a",
+      "light": "#f0a0b8"
+    },
+    {
+      "id": "bellows-sunstone",
+      "name": "Bellows sunstone",
+      "sellPrice": 200,
+      "color": "#e08a30",
+      "light": "#ffe0a0"
     }
   ]
 }

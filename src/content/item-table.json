@@ -115,10 +115,20 @@
     "buyPrice": 30
   },
   {
+    "id": "aurora-fluorite",
+    "name": "Aurora fluorite",
+    "sellPrice": 135
+  },
+  {
     "id": "baked-potato",
     "name": "Baked potato",
     "sellPrice": 70,
     "energy": 90
+  },
+  {
+    "id": "barley-calcite",
+    "name": "Barley calcite",
+    "sellPrice": 35
   },
   {
     "id": "basalt-onyx",
@@ -178,6 +188,11 @@
     "name": "Beet seeds",
     "sellPrice": 10,
     "buyPrice": 20
+  },
+  {
+    "id": "bellows-sunstone",
+    "name": "Bellows sunstone",
+    "sellPrice": 200
   },
   {
     "id": "bent-key",
@@ -300,6 +315,11 @@
     "id": "brook-jelly",
     "name": "Brook jelly",
     "sellPrice": 120
+  },
+  {
+    "id": "brook-tourmaline",
+    "name": "Brook tourmaline",
+    "sellPrice": 85
   },
   {
     "id": "brookslip",
@@ -555,6 +575,11 @@
     "keep": true
   },
   {
+    "id": "clover-peridot",
+    "name": "Clover peridot",
+    "sellPrice": 90
+  },
+  {
     "id": "coal",
     "name": "Coal",
     "sellPrice": 15,
@@ -786,6 +811,11 @@
     "sellPrice": 20
   },
   {
+    "id": "creek-carnelian",
+    "name": "Creek carnelian",
+    "sellPrice": 70
+  },
+  {
     "id": "crocus",
     "name": "Crocus",
     "sellPrice": 60
@@ -804,6 +834,11 @@
     "id": "crowned-tunny-roe",
     "name": "Crowned Tunny roe",
     "sellPrice": 175
+  },
+  {
+    "id": "crucible-alexandrite",
+    "name": "Crucible alexandrite",
+    "sellPrice": 260
   },
   {
     "id": "crystalarium",
@@ -897,6 +932,11 @@
     "name": "Doghouse",
     "sellPrice": 0,
     "keep": true
+  },
+  {
+    "id": "drift-kunzite",
+    "name": "Drift kunzite",
+    "sellPrice": 130
   },
   {
     "id": "driftwood",
@@ -1075,6 +1115,11 @@
     "keep": true
   },
   {
+    "id": "fern-fluorite",
+    "name": "Fern fluorite",
+    "sellPrice": 55
+  },
+  {
     "id": "fernfin",
     "name": "Fernfin",
     "sellPrice": 130
@@ -1241,6 +1286,11 @@
     "id": "furnace",
     "name": "Furnace",
     "sellPrice": 150
+  },
+  {
+    "id": "furnace-citrine",
+    "name": "Furnace citrine",
+    "sellPrice": 190
   },
   {
     "id": "furniture-catalogue",
@@ -1638,6 +1688,11 @@
     "sellPrice": 250
   },
   {
+    "id": "hearth-rhodonite",
+    "name": "Hearth rhodonite",
+    "sellPrice": 210
+  },
+  {
     "id": "hearthside-dace",
     "name": "Hearthside Dace",
     "sellPrice": 110
@@ -1709,6 +1764,11 @@
     "energy": 125
   },
   {
+    "id": "heather-amethyst",
+    "name": "Heather amethyst",
+    "sellPrice": 95
+  },
+  {
     "id": "heavy-tapper",
     "name": "Heavy tapper",
     "sellPrice": 100
@@ -1765,6 +1825,11 @@
     "id": "herring-roe",
     "name": "Herring roe",
     "sellPrice": 50
+  },
+  {
+    "id": "hoar-sapphire",
+    "name": "Hoar sapphire",
+    "sellPrice": 150
   },
   {
     "id": "hollow-acorn-charm",
@@ -1877,6 +1942,11 @@
     "sellPrice": 20
   },
   {
+    "id": "icicle-selenite",
+    "name": "Icicle selenite",
+    "sellPrice": 110
+  },
+  {
     "id": "indigo-dye",
     "name": "Indigo dye",
     "sellPrice": 120
@@ -1983,6 +2053,11 @@
     "sellPrice": 55
   },
   {
+    "id": "kiln-sardonyx",
+    "name": "Kiln sardonyx",
+    "sellPrice": 170
+  },
+  {
     "id": "ladle-snail",
     "name": "Ladle Snail",
     "sellPrice": 70
@@ -2027,6 +2102,11 @@
     "name": "Wild leek",
     "sellPrice": 60,
     "energy": 40
+  },
+  {
+    "id": "lichen-serpentine",
+    "name": "Lichen serpentine",
+    "sellPrice": 45
   },
   {
     "id": "life-elixir",
@@ -2348,6 +2428,11 @@
     "id": "net-sinker",
     "name": "Stone net sinker",
     "sellPrice": 180
+  },
+  {
+    "id": "northlight-spinel",
+    "name": "Northlight spinel",
+    "sellPrice": 160
   },
   {
     "id": "oak-chair",
@@ -2787,6 +2872,11 @@
     "sellPrice": 120
   },
   {
+    "id": "pyre-opal",
+    "name": "Pyre opal",
+    "sellPrice": 230
+  },
+  {
     "id": "quality-fertilizer",
     "name": "Quality fertilizer",
     "sellPrice": 10,
@@ -2947,6 +3037,11 @@
     "sellPrice": 75
   },
   {
+    "id": "rime-labradorite",
+    "name": "Rime labradorite",
+    "sellPrice": 125
+  },
+  {
     "id": "rimed-chisel",
     "name": "Rimed chisel",
     "sellPrice": 170
@@ -3091,6 +3186,11 @@
     "sellPrice": 20
   },
   {
+    "id": "scorch-agate",
+    "name": "Scorch agate",
+    "sellPrice": 165
+  },
+  {
     "id": "scrimshaw-tooth",
     "name": "Scrimshaw tooth",
     "sellPrice": 300
@@ -3204,9 +3304,19 @@
     "sellPrice": 300
   },
   {
+    "id": "slag-obsidian",
+    "name": "Slag obsidian",
+    "sellPrice": 155
+  },
+  {
     "id": "slate-tablet",
     "name": "Slate tablet",
     "sellPrice": 110
+  },
+  {
+    "id": "sleet-zircon",
+    "name": "Sleet zircon",
+    "sellPrice": 105
   },
   {
     "id": "slime-proof-ring",
@@ -3230,6 +3340,11 @@
     "id": "smelters-tongs",
     "name": "Smelter's tongs",
     "sellPrice": 360
+  },
+  {
+    "id": "smoulder-kyanite",
+    "name": "Smoulder kyanite",
+    "sellPrice": 175
   },
   {
     "id": "snow-beryl",
@@ -3464,6 +3579,11 @@
     "buyPrice": 60
   },
   {
+    "id": "tallow-chalcedony",
+    "name": "Tallow chalcedony",
+    "sellPrice": 65
+  },
+  {
     "id": "tallow-eel",
     "name": "Tallow Eel",
     "sellPrice": 170
@@ -3590,6 +3710,11 @@
     "name": "Tulip seeds",
     "sellPrice": 10,
     "buyPrice": 20
+  },
+  {
+    "id": "tundra-celestine",
+    "name": "Tundra celestine",
+    "sellPrice": 115
   },
   {
     "id": "valley-king",

@@ -61,7 +61,7 @@ item and a use (open, see below).
 
 ### Minerals
 
-Three small pools of geode minerals, six each to begin with (Stardew has 15, 14
+Three pools of geode minerals, 14, 14 and 15 since 2026-11-16 (note 104; six each to begin with, Stardew has 15, 14
 and 12). Names are drafts, with the sell price in the 40 to 250g range:
 pools sell low in the plain pool and high in Magma. Placeholder ids go in
 `src/content/geodes.json`. Each pool also has its foraged mineral (Earth,
@@ -83,7 +83,7 @@ a placeholder item.
 ## Open
 
 - Minerals go in the library gallery (note 39, decided 2026-11-08, Stardew's
-  shape). Its donation list count and rewards wait for the final mineral lists.
+  shape). Its donation list is 95 (note 104); names and prices are placeholders.
 - Where clay comes from and what uses it.
 - Our artifacts: one per geode kind, from note 22's found things list.
 - Final mineral names and prices, and the count per pool.
