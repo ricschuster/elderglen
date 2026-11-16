@@ -1,27 +1,55 @@
 import Phaser from "phaser";
-import {
-  chestById,
-  contents,
-  putIn,
-  takeOut,
-  type PlacedChest,
-} from "../core/chests";
-import { itemById } from "../core/items";
+import { CHEST_COLOURS } from "../core/chestdefs";
+import { chestById, colourChest, type PlacedChest } from "../core/chests";
+import { fillStacks, quickMove, transfer } from "../core/chestmenu";
+import type { Inventory } from "../core/inventory";
+import { itemTip } from "../core/itemtip";
+import { sortPack } from "../core/packmenu";
 import { orderById } from "../core/orders";
+import { splitQuality } from "../core/quality";
+import { toolOfId } from "../core/toolitems";
 import type { GameState } from "../core/save";
-import { frame, Menu, type Row } from "./panel";
+import { canWaterLine } from "../core/canwater";
+import { iconKey, toolTierKey } from "./art";
+import { frame } from "./panel";
 import { STATE_KEY } from "./state";
+import { Tooltip } from "./tooltip";
+
+type Side = "chest" | "pack";
+
+const COLS = 12;
+const LEFT = 24;
+const TOP = 70;
+const BOTTOM = 478;
+const LABEL = 22;
+const TINT = { normal: 0xffffff, silver: 0xc8d8ff, gold: 0xffd860 };
+
+interface Cell {
+  box: Phaser.GameObjects.Rectangle;
+  icon: Phaser.GameObjects.Image;
+  count: Phaser.GameObjects.Text;
+}
 
 /**
- * A chest's contents (note 34): the stacks inside to take, then the stacks in
- * the backpack to put in. Enter moves one, Space moves the whole stack. The
- * farm is paused behind this screen.
+ * A chest's contents (note 34, as Stardew shows it): the chest's slots above,
+ * the backpack's below. Tap a stack then a slot, or drag it, to move it across
+ * (a different item swaps); Split moves half. Add to existing stacks tops up what the
+ * chest already holds, Organize tidies the chest. Space sends the stack under the
+ * cursor to the other side. The farm is paused behind this screen.
  */
 export class ChestScene extends Phaser.Scene {
   private state!: GameState;
-  private menu!: Menu;
-  private message!: Phaser.GameObjects.Text;
   private chest!: PlacedChest;
+  private note!: Phaser.GameObjects.Text;
+  private tooltip!: Tooltip;
+  private cells: Record<Side, Cell[]> = { chest: [], pack: [] };
+  private selected: { side: Side; slot: number } | undefined;
+  private cursor: { side: Side; slot: number } = { side: "chest", slot: 0 };
+  private splitting = false;
+  private splitLabel!: Phaser.GameObjects.Text;
+  private press: { side: Side; slot: number; x: number; y: number } | undefined;
+  private dragging: { side: Side; slot: number } | undefined;
+  private dragIcon!: Phaser.GameObjects.Image;
 
   constructor() {
     super("chest");
@@ -32,6 +60,16 @@ export class ChestScene extends Phaser.Scene {
     const c = this.state.chests.get(data.mapId, data.x, data.y);
     if (!c) throw new Error("no chest there");
     this.chest = c;
+    this.cells = { chest: [], pack: [] };
+    this.selected = undefined;
+    this.cursor = { side: "chest", slot: 0 };
+    this.splitting = false;
+    this.press = undefined;
+    this.dragging = undefined;
+  }
+
+  private inv(side: Side): Inventory {
+    return side === "chest" ? this.chest.items : this.state.inventory;
   }
 
   create(): void {
@@ -40,70 +78,353 @@ export class ChestScene extends Phaser.Scene {
       ? `${bound.title} chest${this.chest.closed ? " (ended)" : ""}`
       : (chestById(this.chest.id)?.name ?? "Chest");
     const { message } = frame(this, name, () => this.close());
-    this.message = message;
-    this.add.text(
-      24,
-      500,
-      "Arrows: move   Enter: move 1   Space: move all   Esc: close",
-      {
-        fontSize: "13px",
-        color: "#ffffffaa",
-      },
+    this.note = message;
+    this.tooltip = new Tooltip(this);
+
+    const rows =
+      Math.ceil(this.chest.items.size / COLS) +
+      Math.ceil(this.state.inventory.size / COLS);
+    const pitch = Math.min(
+      62,
+      Math.floor((BOTTOM - TOP - 2 * LABEL - 8) / rows),
     );
-    this.menu = new Menu(this, { x: 24, y: 64, w: 600, title: name });
+    const cell = pitch - 6;
+    let y = TOP;
+    for (const side of ["chest", "pack"] as const) {
+      this.add.text(LEFT, y, side === "chest" ? name : "Backpack", {
+        fontSize: "15px",
+        color: "#ffffffcc",
+      });
+      y += LABEL;
+      this.grid(side, y, pitch, cell);
+      y += Math.ceil(this.inv(side).size / COLS) * pitch + 8;
+    }
+
+    this.colourBar(TOP);
+    this.input.mouse?.disableContextMenu();
+
+    const bx = LEFT + COLS * pitch + 16;
+    this.button(bx, TOP + LABEL, "Add to existing stacks", () => this.fill());
+    this.button(bx, TOP + LABEL + 52, "Organize", () => this.sort());
+    this.splitLabel = this.button(bx, TOP + LABEL + 104, "Split", () => {
+      this.splitting = !this.splitting && this.selected !== undefined;
+      this.refresh();
+    });
+
+    this.dragIcon = this.add
+      .image(0, 0, "__DEFAULT")
+      .setDisplaySize(cell - 6, cell - 6)
+      .setAlpha(0.8)
+      .setDepth(100)
+      .setVisible(false);
+    this.input.on("pointermove", (p: Phaser.Input.Pointer) => this.move(p));
+    this.input.on("pointerup", (p: Phaser.Input.Pointer) => this.up(p));
+
+    this.add.text(
+      LEFT,
+      506,
+      "Tap a stack, then a slot (or drag it).   Right-click: send one (Shift: half)   Space: send all   Tab: other grid   Esc: close",
+      { fontSize: "13px", color: "#ffffffaa" },
+    );
     const kb = this.input.keyboard;
-    kb?.on("keydown-UP", () => this.menu.move(-1));
-    kb?.on("keydown-DOWN", () => this.menu.move(1));
-    kb?.on("keydown-ENTER", () => this.menu.press(0));
-    kb?.on("keydown-SPACE", () => this.menu.press(1));
-    this.menu.setFocus(true);
+    kb?.on("keydown-LEFT", () => this.step(-1, 0));
+    kb?.on("keydown-RIGHT", () => this.step(1, 0));
+    kb?.on("keydown-UP", () => this.step(0, -1));
+    kb?.on("keydown-DOWN", () => this.step(0, 1));
+    kb?.on("keydown-TAB", (e: KeyboardEvent) => {
+      e.preventDefault();
+      this.cursor = {
+        side: this.cursor.side === "chest" ? "pack" : "chest",
+        slot: 0,
+      };
+      this.refresh();
+    });
+    kb?.on("keydown-ENTER", () => this.tap(this.cursor.side, this.cursor.slot));
+    kb?.on("keydown-SPACE", () =>
+      this.send(this.cursor.side, this.cursor.slot),
+    );
     this.refresh();
   }
 
+  /** The colour bar: the original, then 20 colours, on the chest's title line. Free to change. */
+  private colourBar(y: number): void {
+    const size = 16;
+    const x0 = LEFT + 300;
+    const swatches: Phaser.GameObjects.Rectangle[] = [];
+    const mark = () =>
+      swatches.forEach((r, n) =>
+        r.setStrokeStyle(
+          (this.chest.colour ?? 0) === n ? 3 : 1,
+          0xffffff,
+          (this.chest.colour ?? 0) === n ? 1 : 0.5,
+        ),
+      );
+    for (let n = 0; n <= CHEST_COLOURS.length; n++) {
+      const r = this.add
+        .rectangle(
+          x0 + n * (size + 4),
+          y + 1,
+          size,
+          size,
+          n === 0 ? 0x8a5a2a : CHEST_COLOURS[n - 1]!,
+        )
+        .setOrigin(0)
+        .setInteractive({ useHandCursor: true })
+        .on("pointerdown", () => {
+          colourChest(this.chest, n);
+          mark();
+        });
+      swatches.push(r);
+    }
+    mark();
+  }
+
+  private grid(side: Side, top: number, pitch: number, cell: number): void {
+    const inv = this.inv(side);
+    for (let i = 0; i < inv.size; i++) {
+      const x = LEFT + (i % COLS) * pitch;
+      const y = top + Math.floor(i / COLS) * pitch;
+      const box = this.add
+        .rectangle(x, y, cell, cell, 0x000000, 0.5)
+        .setOrigin(0)
+        .setStrokeStyle(2, 0xffffff, 0.3)
+        .setInteractive({ useHandCursor: true });
+      box.on("pointerdown", (p: Phaser.Input.Pointer) => this.down(side, i, p));
+      this.tooltip.attach(
+        box,
+        () => {
+          const id = inv.slot(i)?.id;
+          if (!id) return undefined;
+          const base = splitQuality(id).base;
+          const tiers = this.state.toolTiers as Record<string, number>;
+          return itemTip(
+            id,
+            base.startsWith("tool:") ? (tiers[base.slice(5)] ?? 0) : 0,
+            base === "tool:can" ? canWaterLine(this.state) : undefined,
+          );
+        },
+        () => ({ w: 960, h: 540 }),
+      );
+      const icon = this.add
+        .image(x + cell / 2, y + cell / 2 - 2, "__DEFAULT")
+        .setDisplaySize(cell - 8, cell - 8)
+        .setVisible(false);
+      const count = this.add
+        .text(x + cell - 3, y + cell - 2, "", {
+          fontSize: "13px",
+          color: "#ffffff",
+        })
+        .setOrigin(1, 1);
+      this.cells[side].push({ box, icon, count });
+    }
+  }
+
+  private button(
+    x: number,
+    y: number,
+    label: string,
+    run: () => void,
+  ): Phaser.GameObjects.Text {
+    this.add
+      .rectangle(x, y, 132, 44, 0xa0482e, 1)
+      .setOrigin(0)
+      .setStrokeStyle(2, 0xffffff, 0.8)
+      .setInteractive({ useHandCursor: true })
+      .on("pointerdown", run);
+    return this.add
+      .text(x + 66, y + 22, label, {
+        fontSize: label.length > 12 ? "13px" : "18px",
+        color: "#ffffff",
+        align: "center",
+        wordWrap: { width: 120 },
+      })
+      .setOrigin(0.5);
+  }
+
   private say(text: string): void {
-    this.message.setText(text);
+    this.note.setText(text);
+  }
+
+  private step(dx: number, dy: number): void {
+    const { side, slot } = this.cursor;
+    const size = this.inv(side).size;
+    if (dy !== 0) {
+      const next = slot + dy * COLS;
+      if (next >= 0 && next < size) this.cursor = { side, slot: next };
+      else {
+        // Off the end of one grid onto the other, in the same column.
+        const col = slot % COLS;
+        if (side === "chest" && dy > 0)
+          this.cursor = { side: "pack", slot: col };
+        else if (side === "pack" && dy < 0) {
+          const last = this.chest.items.size - 1;
+          this.cursor = {
+            side: "chest",
+            slot: Math.min(last, Math.floor(last / COLS) * COLS + col),
+          };
+        }
+      }
+    } else {
+      const next = slot + dx;
+      if (next >= 0 && next < size) this.cursor = { side, slot: next };
+    }
+    this.refresh();
+  }
+
+  /** A mouse press on a stack may become a drag; a touch or an empty slot taps at once. */
+  private down(side: Side, slot: number, p: Phaser.Input.Pointer): void {
+    if (p.rightButtonDown()) {
+      // Right-click sends one, Shift with it half (Stardew, SC-192).
+      const a = this.inv(side).slot(slot);
+      if (a)
+        this.sendSome(
+          side,
+          slot,
+          p.event.shiftKey ? Math.ceil(a.count / 2) : 1,
+        );
+      return;
+    }
+    if (p.wasTouch || !this.inv(side).slot(slot)) {
+      this.tap(side, slot);
+      return;
+    }
+    this.press = { side, slot, x: p.worldX, y: p.worldY };
+  }
+
+  private move(p: Phaser.Input.Pointer): void {
+    if (!this.press) return;
+    if (!this.dragging) {
+      if (Math.hypot(p.worldX - this.press.x, p.worldY - this.press.y) < 6)
+        return;
+      this.dragging = { side: this.press.side, slot: this.press.slot };
+      const id = this.inv(this.dragging.side).slot(this.dragging.slot)!.id;
+      const key = iconKey(id);
+      if (key) this.dragIcon.setTexture(key);
+      this.dragIcon.setVisible(key !== undefined);
+    }
+    this.dragIcon.setPosition(p.worldX, p.worldY);
+  }
+
+  private up(p: Phaser.Input.Pointer): void {
+    const press = this.press;
+    this.press = undefined;
+    if (!press) return;
+    const from = this.dragging;
+    this.dragging = undefined;
+    this.dragIcon.setVisible(false);
+    if (!from) {
+      this.tap(press.side, press.slot);
+      return;
+    }
+    this.selected = undefined;
+    this.splitting = false;
+    for (const side of ["chest", "pack"] as const) {
+      const to = this.cells[side].findIndex((c) =>
+        c.box.getBounds().contains(p.worldX, p.worldY),
+      );
+      if (to >= 0) {
+        this.put(from, { side, slot: to }, false);
+        return;
+      }
+    }
+    this.refresh();
+  }
+
+  private put(
+    from: { side: Side; slot: number },
+    to: { side: Side; slot: number },
+    half: boolean,
+  ): boolean {
+    const ok = transfer(
+      this.inv(from.side),
+      from.slot,
+      this.inv(to.side),
+      to.slot,
+      { half, chestSide: this.chest.items },
+    );
+    this.say(ok ? "" : "That will not go there.");
+    this.refresh();
+    return ok;
+  }
+
+  private tap(side: Side, slot: number): void {
+    this.cursor = { side, slot };
+    const sel = this.selected;
+    if (!sel) {
+      if (this.inv(side).slot(slot)) this.selected = { side, slot };
+    } else if (sel.side === side && sel.slot === slot) {
+      this.selected = undefined;
+      this.splitting = false;
+    } else {
+      const ok = this.put(sel, { side, slot }, this.splitting);
+      const left = this.inv(sel.side).slot(sel.slot);
+      // After a split the stack stays selected to split again; a move lets go.
+      if (!(ok && this.splitting && left)) {
+        this.selected = undefined;
+        this.splitting = false;
+      }
+    }
+    this.refresh();
+  }
+
+  /** Send the stack in a slot to the other grid. */
+  private send(side: Side, slot: number): void {
+    this.sendSome(side, slot, Infinity);
+  }
+
+  private sendSome(side: Side, slot: number, most: number): void {
+    const other: Side = side === "chest" ? "pack" : "chest";
+    const n = quickMove(
+      this.inv(side),
+      slot,
+      this.inv(other),
+      this.chest.items,
+      most,
+    );
+    this.selected = undefined;
+    this.splitting = false;
+    this.say(n > 0 ? "" : "Nothing moved: no room, or a tool.");
+    this.refresh();
+  }
+
+  private fill(): void {
+    const n = fillStacks(this.state.inventory, this.chest.items);
+    this.say(n > 0 ? `Filled ${n} into the chest.` : "Nothing to fill.");
+    this.refresh();
+  }
+
+  private sort(): void {
+    this.selected = undefined;
+    sortPack(this.chest.items);
     this.refresh();
   }
 
   private refresh(): void {
-    const g = this.state;
-    const c = this.chest;
-    const nameOf = (id: string) => itemById(id)?.name ?? id;
-    const rows: Row[] = contents(c).map(({ id, count }) => ({
-      label: `Take: ${nameOf(id)}`,
-      detail: `${count} inside`,
-      buttons: [
-        {
-          text: "Take 1",
-          run: () => this.say(`Took ${takeOut(g, c, id, 1) || "none"}.`),
-        },
-        {
-          text: "Take all",
-          run: () => this.say(`Took ${takeOut(g, c, id, count) || "none"}.`),
-        },
-      ],
-    }));
-    const pack = new Map<string, number>();
-    for (let i = 0; i < g.inventory.size; i++) {
-      const s = g.inventory.slot(i);
-      if (s) pack.set(s.id, (pack.get(s.id) ?? 0) + s.count);
-    }
-    for (const [id, count] of pack)
-      rows.push({
-        label: `Put in: ${nameOf(id)}`,
-        detail: `${count} in the pack`,
-        buttons: [
-          {
-            text: "Put 1",
-            run: () => this.say(`Put in ${putIn(g, c, id, 1) || "none"}.`),
-          },
-          {
-            text: "Put all",
-            run: () => this.say(`Put in ${putIn(g, c, id, count) || "none"}.`),
-          },
-        ],
+    for (const side of ["chest", "pack"] as const) {
+      const inv = this.inv(side);
+      this.cells[side].forEach((c, i) => {
+        const stack = inv.slot(i);
+        const picked = this.selected?.side === side && this.selected.slot === i;
+        const here = this.cursor.side === side && this.cursor.slot === i;
+        c.box.setFillStyle(picked ? 0xf2d16b : 0x000000, picked ? 0.45 : 0.5);
+        c.box.setStrokeStyle(here ? 3 : 2, 0xffffff, here ? 1 : 0.3);
+        const toolId = stack
+          ? toolOfId(splitQuality(stack.id).base)
+          : undefined;
+        const tier = toolId
+          ? ((this.state.toolTiers as Record<string, number>)[toolId] ?? 0)
+          : 0;
+        const plain = stack ? iconKey(stack.id) : undefined;
+        const key = plain && toolId ? toolTierKey(plain, tier) : plain;
+        c.icon.setVisible(key !== undefined);
+        if (key) {
+          c.icon.setTexture(key);
+          c.icon.setTint(TINT[splitQuality(stack!.id).quality]);
+        }
+        c.count.setText(stack && stack.count > 1 ? String(stack.count) : "");
       });
-    this.menu.setRows(rows);
+    }
+    this.splitLabel.setText(this.splitting ? "Split: on" : "Split");
   }
 
   private close(): void {

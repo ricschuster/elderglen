@@ -174,6 +174,7 @@ export function collectPlaced(g: GameState): PlacedStore {
 /** A chest's saved state: its stacks, and the order it is bound to if any. */
 const chestState = (c: PlacedChest): Record<string, unknown> => ({
   slots: c.items.save(),
+  ...(c.colour ? { colour: c.colour } : {}),
   ...(c.order ? { order: c.order, ...(c.closed ? { closed: true } : {}) } : {}),
 });
 
@@ -214,6 +215,7 @@ export function splitPlaced(raw: unknown): LegacyLists {
           ...rowOf(p),
           map,
           slots: p.state?.slots,
+          colour: p.state?.colour,
           order: p.state?.order,
           closed: p.state?.closed,
         });

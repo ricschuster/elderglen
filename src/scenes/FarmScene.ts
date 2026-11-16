@@ -232,6 +232,7 @@ import {
   placeCask,
 } from "../core/cask";
 import { chestById, pickUpChest, placeChest, pushChest } from "../core/chests";
+import { CHEST_COLOURS } from "../core/chestdefs";
 import {
   isLight,
   lightAt,
@@ -2318,16 +2319,15 @@ export class FarmScene extends Phaser.Scene {
       );
     if (isFarmMap(this.mapId) && rodAt(this.state, front.x, front.y))
       return this.report(pickUpRod(this.state, front.x, front.y));
-    // A chest is stood down from the backpack, and the axe or pickaxe takes an empty one up.
+    // A chest is stood down from the backpack (a big one on a small one swaps it in).
     if (held.kind === "item" && chestById(held.id))
       return this.report(
         placeChest(this.state, this.map, this.mapId, front.x, front.y, held.id),
       );
-    // The axe or pickaxe takes an empty chest up, and pushes one with items in
-    // it one tile along (SC-56).
+    // Any tool takes an empty chest up, and pushes one with items in it one
+    // tile along (SC-56; the Chest wiki page says any tool).
     if (
       held.kind === "tool" &&
-      (held.tool === "axe" || held.tool === "pickaxe") &&
       this.state.chests.at(this.mapId, front.x, front.y)
     ) {
       const taken = pickUpChest(this.state, this.mapId, front.x, front.y);
@@ -3257,8 +3257,10 @@ export class FarmScene extends Phaser.Scene {
       put(p.x, p.y, furnitureKey(p.id));
     for (const s of this.map.services)
       if (s.kind === "camp-chest") put(s.x, s.y, chestKey("big-chest"));
-    for (const c of this.state.chests.each(this.mapId))
-      put(c.x, c.y, chestKey(c.id));
+    for (const c of this.state.chests.each(this.mapId)) {
+      const img = put(c.x, c.y, chestKey(c.id));
+      if (c.colour) img.setTint(CHEST_COLOURS[c.colour - 1]!);
+    }
     for (const l of this.state.placed.each(lightMapKey(this.mapId))) {
       if (isFarmDecor(l.id))
         for (const t of decorTiles(l.id, l.x, l.y))

@@ -834,21 +834,58 @@ export function isClear(
   x: number,
   y: number,
 ): boolean {
+  if (map.indoors) return isClearIndoors(g, x, y, map);
+  return map.isTillable(x, y) && isBareOutdoors(g, map, x, y);
+}
+
+/**
+ * True when an outdoor tile has nothing on it, tillable or not: open ground,
+ * path or grass, short of water, a wall, an exit, an entry or a counter. Chests
+ * stand on this (Stardew lets a chest go nearly anywhere), where seeds and
+ * sprinklers still need `isClear`.
+ */
+export function isOpenGround(
+  g: GameState,
+  map: FarmMap,
+  x: number,
+  y: number,
+): boolean {
+  if (map.indoors) return isClearIndoors(g, x, y, map);
+  // Paths are fine (unlike for trees); exits and entries stay open.
+  return (
+    !map.exitAt(x, y) &&
+    !map.entries.some((e) => e.x === x && e.y === y) &&
+    isBareOutdoors(g, map, x, y)
+  );
+}
+
+function isClearIndoors(
+  g: GameState,
+  x: number,
+  y: number,
+  map: FarmMap,
+): boolean {
   // The greenhouse: bare floor anywhere inside, border or plot, with its own
   // sprinklers, trees and soil (`mapstore.ts`).
-  if (map.indoors) {
-    const here = storeOf(g, true);
-    return !(
-      !map.canPlantTree(x, y) ||
-      here.sprinklers.at(x, y) ||
-      here.fruitTrees.at(x, y) ||
-      here.teaBushes.at(x, y) ||
-      g.placed.covering(GREENHOUSE_STORE, x, y) ||
-      here.soil.plotAt(x, y)
-    );
-  }
+  const here = storeOf(g, true);
   return !(
-    !map.isTillable(x, y) ||
+    !map.canPlantTree(x, y) ||
+    here.sprinklers.at(x, y) ||
+    here.fruitTrees.at(x, y) ||
+    here.teaBushes.at(x, y) ||
+    g.placed.covering(GREENHOUSE_STORE, x, y) ||
+    here.soil.plotAt(x, y)
+  );
+}
+
+/** Nothing stands on this outdoor tile: no blocking tile, object, soil, crop, plant or goods. */
+function isBareOutdoors(
+  g: GameState,
+  map: FarmMap,
+  x: number,
+  y: number,
+): boolean {
+  return !(
     map.isBlocked(x, y) ||
     map.serviceAt(x, y) ||
     g.sprinklers.at(x, y) ||
