@@ -88,7 +88,18 @@ Status: draft, owner feedback 2026-11-16. Design before build. Extends notes 49
   key scrolling with a bar, a detail page (gift log, birthday, back) and a
   children section. Portraits are placeholder tinted squares with an initial
   (no portrait art exists yet). Not yet checked in a browser or on touch.
-- Not built: tools in the pack, slot size, clock panel, energy bar, touch HUD.
+- **Batch C, HUD panel: built (2026-11-16).** `src/scenes/hudpanel.ts` draws the
+  clock panel top right (weekday and date, time, weather icon, festival or
+  birthday icon, gold in its own box, a clear spot kept for the dial) and the
+  vertical energy bar bottom right with its "E" label, plus a health bar beside
+  it that shows in the mines or while health is below full. Pure parts are in
+  `src/core/hudpanel.ts` with tests. Hover (or a tap on touch) shows exact
+  energy or health. The old status line and top left health bar are gone; the
+  status text keeps only the ice counter note. On touch, Menu and Journal stack
+  under the panel and Craft and Hats sit beside it. In the stick scheme the bars
+  step left of the use and action buttons rather than up. Placeholder shapes,
+  not checked in a browser or on the tablet.
+- Not built: tools in the pack, slot size.
 
 ## Checks added
 

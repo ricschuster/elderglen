@@ -2,14 +2,13 @@ import Phaser from "phaser";
 import { heldAt, rowOf, TOOLS, TOOLBAR_SIZE, type Held } from "../core/toolbar";
 import { SLOT_COUNT } from "../core/inventory";
 import { iconKey as itemIcon, TOOL_ICONS } from "./art";
-import { dateText } from "../core/calendar";
-import { festivalToday } from "../core/festivals";
 import { splitQuality } from "../core/quality";
 import { itemById } from "../core/items";
 import type { GameState } from "../core/save";
 import { weaponById } from "../core/combat";
 import type { Settings } from "../core/bindings";
 import { desktopHint } from "./controls";
+import { HudPanel, PANEL_BOTTOM, PANEL_LEFT_BASE } from "./hudpanel";
 import { TIER_NAMES, toolAway, type Upgradable } from "../core/upgrades";
 
 const SLOT = 44;
@@ -31,7 +30,6 @@ const DRAG_MIN = 6;
 export const HUD_FIT_W = BAR_W + 16;
 const USE_R = 52;
 const EAT_R = 36;
-const HEALTH_W = 160;
 
 const QUALITY_TINT = { normal: 0xffffff, silver: 0xc8d8ff, gold: 0xffd860 };
 
@@ -66,9 +64,7 @@ export class Hud {
   readonly objects: Phaser.GameObjects.GameObject[] = [];
   private readonly status: Phaser.GameObjects.Text;
   private readonly message: Phaser.GameObjects.Text;
-  private readonly healthBack: Phaser.GameObjects.Rectangle;
-  private readonly healthFill: Phaser.GameObjects.Rectangle;
-  private readonly healthText: Phaser.GameObjects.Text;
+  private readonly panel: HudPanel;
   private readonly hint: Phaser.GameObjects.Text;
   private readonly hintBox: Phaser.GameObjects.Rectangle;
   private readonly slots: Phaser.GameObjects.Rectangle[] = [];
@@ -140,31 +136,15 @@ export class Hud {
       fontSize: "18px",
       color: "#ffe9a0",
     });
-    // One health bar, drawn only where health can be lost (note 22, decision 17).
-    this.healthBack = scene.add
-      .rectangle(16 + ox, 74, HEALTH_W, 8, 0x000000, 0.6)
-      .setOrigin(0)
-      .setStrokeStyle(1, 0xffffff, 0.5)
-      .setVisible(false);
-    this.healthFill = scene.add
-      .rectangle(16 + ox, 74, HEALTH_W, 8, 0xd04a4a, 1)
-      .setOrigin(0)
-      .setVisible(false);
-    this.healthText = scene.add
-      .text(16 + ox + HEALTH_W + 8, 69, "", {
-        fontSize: "13px",
-        color: "#ffffff",
-      })
-      .setVisible(false);
-    this.objects.push(
-      this.status,
-      this.healthBack,
-      this.healthFill,
-      this.healthText,
-      this.hintBox,
-      this.hint,
-      this.message,
+    // Clock panel, energy and health bars (note 102).
+    this.panel = new HudPanel(
+      scene,
+      this.touch,
+      settings.touchScheme !== "tap",
+      USE_R,
     );
+    this.objects.push(...this.panel.objects);
+    this.objects.push(this.status, this.hintBox, this.hint, this.message);
 
     const left = (BASE_W - BAR_W) / 2;
     this.heldName = scene.add
@@ -294,6 +274,23 @@ export class Hud {
         color: "#ffffff",
       })
       .setOrigin(0.5);
+    if (this.touch) {
+      // Menu and Journal stack under the clock panel; Craft and Hats sit beside it.
+      const put = (
+        r: Phaser.GameObjects.Rectangle,
+        t: Phaser.GameObjects.Text,
+        x: number,
+        y: number,
+      ) => {
+        r.setPosition(x, y);
+        t.setPosition(x + 45, y + 20);
+      };
+      const colX = PANEL_LEFT_BASE + 86;
+      put(skills, skillsText, colX, PANEL_BOTTOM + 52);
+      put(journal, journalText, colX, PANEL_BOTTOM + 8);
+      put(craft, craftText, PANEL_LEFT_BASE - 96, 16);
+      put(hats, hatsText, PANEL_LEFT_BASE - 192, 16);
+    }
     this.objects.push(
       journal,
       journalText,
@@ -360,13 +357,23 @@ export class Hud {
     // Dev builds only: the debug menu's touch button (`42_debug_menu.md`).
     if (onDebug && this.touch && import.meta.env.DEV) {
       const dbg = scene.add
-        .rectangle(skills.x, 64, 90, 40, 0x000000, 0.5)
+        .rectangle(
+          skills.x,
+          this.touch ? PANEL_BOTTOM + 96 : 64,
+          90,
+          40,
+          0x000000,
+          0.5,
+        )
         .setOrigin(0)
         .setStrokeStyle(2, 0xffffff, 0.5)
         .setInteractive({ useHandCursor: true });
       dbg.on("pointerdown", onDebug);
       const dbgText = scene.add
-        .text(dbg.x + 45, 84, "DBG", { fontSize: "18px", color: "#ffffff" })
+        .text(dbg.x + 45, dbg.y + 20, "DBG", {
+          fontSize: "18px",
+          color: "#ffffff",
+        })
         .setOrigin(0.5);
       this.objects.push(dbg, dbgText);
       this.pin("r", "t", [dbg, dbgText]);
@@ -393,6 +400,7 @@ export class Hud {
     this.scale = scale;
     const dx = uw - BASE_W;
     const dy = uh - BASE_H;
+    this.panel.layout(uw, uh);
     this.visibleCount = Math.max(
       1,
       Math.floor((uh - 2 * COL_TOP + GAP) / STEP),
@@ -448,23 +456,8 @@ export class Hud {
     showHealth = false,
     note = "",
   ): void {
-    const { health } = g.combat;
-    this.healthBack.setVisible(showHealth);
-    this.healthFill.setVisible(showHealth);
-    this.healthText.setVisible(showHealth);
-    if (showHealth) {
-      this.healthFill.width = Math.max(
-        0,
-        (HEALTH_W * health.current) / health.max,
-      );
-      this.healthText.setText(
-        `${Math.ceil(health.current)}/${health.max} ${g.combat.effects.describe()}`.trim(),
-      );
-    }
-    const { clock, energy } = g.day;
-    this.status.setText(
-      `${dateText(clock.day)}  ${clock.format()}${festivalToday(clock.day) ? "  Festival" : ""}${note ? `  ${note}` : ""}\nEnergy ${Math.ceil(energy.current)}  ${g.money}g`,
-    );
+    this.panel.update(g, showHealth);
+    this.status.setText(note);
     this.message.setText(message);
     const now = heldAt(g, selected);
     this.heldName.setText(
