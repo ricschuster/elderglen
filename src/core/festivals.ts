@@ -345,6 +345,38 @@ export function festivalGateHolds(day: number): string[] {
   return map ? [festivalGate(map)] : [];
 }
 
+/**
+ * Walking into a festival held in place (note 82: the Forest clearing and lake,
+ * the Beach, the Hearthwell street and square, the hall). The festival has no
+ * map of its own, so it is joined the moment the player stands in its place
+ * while it is open. Returns the festival when this step newly joined it.
+ */
+export function walkIntoPlace(
+  g: GameState,
+  mapId: string,
+  x: number,
+  y: number,
+  hallRestored = false,
+): Festival | undefined {
+  const day = g.day.clock.day;
+  const f = festivalDayToday(day);
+  if (!f || festivalMapFor(f, dateOf(day).year)) return undefined;
+  const p = festivalPlace(f, hallRestored, dateOf(day).year);
+  if (p.map !== mapId || !inZone(p.zone, x, y)) return undefined;
+  if (g.festivalsJoined.includes(joinKey(f, day))) return undefined;
+  return enterFestival(g);
+}
+
+/** Where a festival is held, for the farm sign and the shut door. */
+const PLACE_WHERE: Readonly<Record<string, string>> = {
+  "hat-parade": "the Hearthwell street, from the square west to the bridge",
+  "seedswap-fair": "the forest clearing east of the lake path",
+  "cake-day": "the Hearthwell middle street, in front of the inn",
+  "lamplight-evening": "the Beach, past the footbridge",
+  frostday: "the frozen lake in the forest",
+  "midwinter-feast": "the Hearthwell square",
+};
+
 /** Where a festival map is, for the farm sign and the shut door. */
 const MAP_WHERE: Readonly<Record<string, string>> = {
   green: "the green, east of the square in Hearthwell",
@@ -360,7 +392,7 @@ export function festivalSignLine(day: number, minutes: number): string {
   const f = festivalDayToday(day);
   if (!f) return "The notice board is quiet today.";
   const map = festivalMapFor(f, dateOf(day).year);
-  const where = (map && MAP_WHERE[map]) || "the village";
+  const where = (map && MAP_WHERE[map]) || PLACE_WHERE[f.id] || "the village";
   if (minutes >= f.closes) return `${f.name} is over for today.`;
   return `${f.name} is today at ${where}. It runs from ${clockTextOf(f.opens)} to ${clockTextOf(f.closes)}. Walk there.`;
 }
