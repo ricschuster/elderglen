@@ -30,7 +30,7 @@ import {
   placeMachine,
 } from "../../src/core/machines";
 import { chop, eat } from "../../src/core/actions";
-import { siloCapacity } from "../../src/core/animals";
+import { orderSilo, siloCapacity, SILO_COST } from "../../src/core/animals";
 import { cutGrass } from "../../src/core/grass";
 import { smelt, collect, ready as furnaceReady } from "../../src/core/furnace";
 import { mine } from "../../src/core/mining";
@@ -73,6 +73,12 @@ const ARTISAN_MODE =
 
 /** Gold the bot keeps back for seeds before it buys ore. */
 const SEED_RESERVE = 1500;
+
+/** Gold the bot must hold before it gathers for a silo, so the bundles and seeds come first (note 103). */
+const SILO_MONEY = 8000;
+
+/** The silo is gathered for from this day on: the expert usually finishes the hall by day 100 (note 98). */
+const SILO_FROM_DAY = 100;
 
 /** Young trees a day the bot cuts back. */
 const TIDY_TREES = 8;
@@ -269,6 +275,7 @@ class Bot {
     if (this.dueFor(this.p.hallEvery)) this.visitHall();
     if (this.p.keepsForHall) this.tendFurnace();
     this.tidyTrees();
+    this.buildSilo();
     this.tidyGrass();
     this.shipSurplus();
   }
@@ -350,10 +357,32 @@ class Bot {
 
   /** Units of an item the hall still wants and the pack does not yet hold. */
   private shortOf(item: string): number {
-    const owed = [...this.wanted(), ...this.craftWants()].filter(
-      (w) => w.item === item,
-    ).length;
+    const owed =
+      [...this.wanted(), ...this.craftWants()].filter((w) => w.item === item)
+        .length + this.siloNeed(item);
     return Math.max(owed - this.g.inventory.count(item), 0);
+  }
+
+  /** Units of a material the silo still needs. Only asked once the bot is flush, so the hall is not slowed. */
+  private siloNeed(item: string): number {
+    const g = this.g;
+    if (g.animals.silo || g.animals.siloDays > 0 || g.money < SILO_MONEY)
+      return 0;
+    // The hall's own stone and bars come first, so the silo never delays a bundle.
+    if (!g.hall.complete("woodland") || !g.hall.complete("smiths")) return 0;
+    // And only past the day the bot usually finishes the hall, so its mine and furnace trips never delay a bundle.
+    if (this.day < SILO_FROM_DAY) return 0;
+    return item === "stone" || item === "copper-bar" ? SILO_COST[item] : 0;
+  }
+
+  /** Order the silo once the pack holds its materials: it lets the bot keep the hay from cut grass. */
+  private buildSilo(): void {
+    const g = this.g;
+    if (g.animals.silo || g.animals.siloDays > 0 || this.lateNight) return;
+    if (g.money < SILO_MONEY || this.day < SILO_FROM_DAY) return;
+    // Stone and bars owed to the hall stay in the pack first.
+    for (const id of ["stone", "copper-bar"]) if (this.shortOf(id) > 0) return;
+    orderSilo(g);
   }
 
   /** Chop trees, cut weeds and break rocks for the Woodland bundle. */
