@@ -39,6 +39,7 @@ import { maps } from "../content/maps";
 import { storeOf } from "./mapstore";
 import { areasEndDay, leaveArea } from "./areas";
 import { quarryBridgeNews } from "./quarry";
+import { fillCan } from "./canwater";
 import { ferryNews } from "./cove";
 import { cartNews, payGuestsBoard } from "./roomrewards";
 
@@ -206,6 +207,7 @@ export function sleep(
   g.combat.sync(g.skills);
   g.combat.health.fill();
   g.combat.effects.clear();
+  fillCan(g);
   // The bin pays after the pass-out cost, which takes cash carried only.
   const shipped = g.bin.settle(g);
   const orders = endDayOrders(g, shipped.lines, g.day.clock.day);
@@ -266,6 +268,7 @@ export function sleep(
       (x, y) =>
         map.isTillable(x, y) &&
         !map.isBlocked(x, y) &&
+        !g.grass.at(x, y) &&
         !g.trees.at(x, y) &&
         !g.fruitTrees.at(x, y) &&
         !g.rocks.at(x, y) &&
@@ -276,6 +279,13 @@ export function sleep(
         !g.farm.plotAt(x, y)?.crop &&
         !g.forage.itemAt(x, y) &&
         g.ground.at(x, y).length === 0,
+      () => map.tillableTiles(),
+    );
+    g.grass.endDay(
+      season,
+      today.dayOfSeason,
+      random,
+      (x, y) => grassFree(g, map, x, y),
       () => map.tillableTiles(),
     );
     // Rocks, twigs and the odd stump return, a few at a time (note 65).
@@ -420,4 +430,31 @@ export function finished(g: GameState): boolean {
 /** True when the end screen is due: all bundles done and not shown yet. */
 export function endDue(g: GameState): boolean {
   return finished(g) && !g.endSeen;
+}
+
+/** Whether a farm tile can take grass: free tillable ground, not dug and with nothing on it. */
+export function grassFree(
+  g: GameState,
+  map: FarmMap,
+  x: number,
+  y: number,
+): boolean {
+  return (
+    map.isTillable(x, y) &&
+    !map.isBlocked(x, y) &&
+    !map.serviceAt(x, y) &&
+    !g.weeds.at(x, y) &&
+    !g.twigs.at(x, y) &&
+    !g.rocks.at(x, y) &&
+    !g.trees.at(x, y) &&
+    !g.fruitTrees.at(x, y) &&
+    !g.teaBushes.at(x, y) &&
+    !g.sprinklers.at(x, y) &&
+    !g.machines.at(x, y) &&
+    !g.placed.covering(FARM_STORE, x, y) &&
+    !g.chests.onFarm(x, y) &&
+    !g.farm.plotAt(x, y) &&
+    !g.forage.itemAt(x, y) &&
+    g.ground.at(x, y).length === 0
+  );
 }

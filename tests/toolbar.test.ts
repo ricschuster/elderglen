@@ -15,7 +15,7 @@ describe("toolbar", () => {
     expect(heldAt(g, 0)).toEqual({ kind: "tool", tool: "hoe" });
     expect(heldAt(g, TOOLS.length - 1)).toEqual({
       kind: "tool",
-      tool: "pickaxe",
+      tool: "scythe",
     });
     expect(heldAt(g, TOOLS.length)).toMatchObject({
       kind: "item",
@@ -66,9 +66,9 @@ describe("tools in the pack (note 102)", () => {
 
   it("swaps a tool with an item and keeps both", () => {
     const g = startGame();
-    moveStack(g.inventory, 4, 0);
+    moveStack(g.inventory, TOOLS.length, 0);
     expect(heldAt(g, 0)).toMatchObject({ kind: "item", id: "parsnip-seed" });
-    expect(heldAt(g, 4)).toEqual({ kind: "tool", tool: "hoe" });
+    expect(heldAt(g, TOOLS.length)).toEqual({ kind: "tool", tool: "hoe" });
   });
 
   it("an upgrade follows the tool, whichever slot it is in", () => {

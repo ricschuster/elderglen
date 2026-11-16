@@ -1,3 +1,4 @@
+import { fillCan } from "./canwater";
 import { BACKPACK_SIZES, type Inventory } from "./inventory";
 import { itemById } from "./items";
 import type { GameState } from "./save";
@@ -116,6 +117,7 @@ export function collectUpgrade(g: GameState): Upgradable | undefined {
   const order = g.toolOrder;
   if (!order || !orderReady(g)) return undefined;
   g.toolTiers[order.tool] = order.tier;
+  if (order.tool === "can") fillCan(g);
   g.toolOrder = undefined;
   return order.tool;
 }

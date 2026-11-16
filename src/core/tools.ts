@@ -21,6 +21,7 @@ import {
   type Outcome,
 } from "./actions";
 import { TREE_SEED_IDS } from "./mahogany";
+import { cutGrass } from "./grass";
 import { mine } from "./mining";
 import { digMineDirt, digSpot } from "./artifacts";
 import { areaOf } from "./areas";
@@ -44,6 +45,7 @@ import {
 import { handOnMachine, loadMachine, placeMachine } from "./machines";
 import { machineById } from "./processing";
 import type { Held } from "./toolbar";
+import { fillCan } from "./canwater";
 import { toolAway } from "./upgrades";
 import {
   GARDEN_POT,
@@ -59,6 +61,18 @@ import {
 } from "./gardenpot";
 
 const fail = (reason: string): Outcome => ({ ok: false, reason });
+
+/**
+ * The scythe: one hit, no energy, on a weed or a grass tile. Never harms a crop,
+ * tree, rock or placed object. Grass lives on the home farm only.
+ */
+function useScythe(g: GameState, map: FarmMap, x: number, y: number): Outcome {
+  if (map.indoors || (!map.hasSoil && !map.wild)) return fail("nothing to cut");
+  if (g.weeds.at(x, y)) return clearWeed(g, x, y, "scythe", Math.random, map);
+  if (map.hasSoil && areaOf(g) === undefined && g.grass.at(x, y))
+    return cutGrass(g, x, y);
+  return fail("nothing to cut");
+}
 
 /**
  * Use what the player holds on one tile. The hoe digs soil, the can waters,
@@ -83,6 +97,14 @@ export function useHeld(
   if (held.kind === "empty") return fail("nothing held");
   if (held.kind === "tool" && toolAway(g, held.tool))
     return fail("at the smithy");
+  // The scythe cuts weeds and grass and touches nothing else (note 103).
+  if (held.kind === "tool" && held.tool === "scythe")
+    return useScythe(g, map, x, y);
+  // The can on a water tile fills it (note 103).
+  if (held.kind === "tool" && held.tool === "can" && map.isWater(x, y)) {
+    fillCan(g);
+    return { ok: true, note: "You fill the can." };
+  }
   const pot = useOnPot(g, map, held, x, y);
   if (pot) return pot;
   if (map.indoors) return useInGreenhouse(g, map, held, x, y);
@@ -323,6 +345,7 @@ const REASONS: Record<string, string> = {
   "already tilled": "Already dug.",
   "nothing to water": "Dig the soil first.",
   "already watered": "Already watered.",
+  "can empty": "The can is empty. Fill it at water.",
   "not a seed": "That cannot be planted.",
   "no seeds": "Out of seeds.",
   "cannot plant here": "Cannot plant here. Dig first, or wrong season.",
@@ -335,6 +358,8 @@ const REASONS: Record<string, string> = {
   "needs a better axe": "That needs a better axe.",
   "a weed is in the way": "Clear the weed first.",
   "no weed": "No weed here.",
+  "nothing to cut": "Nothing to cut here.",
+  "no grass": "No grass here.",
   "not a fertilizer": "That cannot be mixed into soil.",
   "no fertilizer": "Out of fertilizer.",
   "nothing to fertilize": "Dig the soil first.",

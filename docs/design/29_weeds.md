@@ -57,3 +57,6 @@ still pushes the player to keep up.
   weeds spread very slowly (SC-12), so 10 percent a night is likely too fast.
 - Whether fruit trees are blocked by weeds (farm note).
 - Whether valley and mine weeds come later.
+
+**Built 2026-11-16 (note 103):** the scythe cuts weeds free in one hit; the hoe, can and axe
+still clear them at their cost. Grass tiles stop weeds spreading onto them.

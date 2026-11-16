@@ -43,6 +43,7 @@ import { TWIG_WOOD } from "./debris";
 import { isRaining } from "./weather";
 import { noteGathered } from "./quests";
 import { goodOfTree, HEAVY_TAPPER, tapReady, TAPPER } from "./tapper";
+import { spendCanWater } from "./canwater";
 import { mayPlaceOn, placeTag } from "./placeables";
 import {
   MAHOGANY_HARDWOOD,
@@ -122,6 +123,8 @@ export function till(
       return fail("a light is in the way");
   }
   if (!soil.till(x, y)) return fail("already tilled");
+  // Tilling clears grass (note 103).
+  if (!soil.indoors) g.grass.remove(x, y);
   if (!soil.indoors && isRaining(g.weather)) soil.water(x, y);
   swing(g, "hoe");
   if (
@@ -149,6 +152,7 @@ export function water(
   const plot = soil.plotAt(x, y);
   if (!plot) return fail("nothing to water");
   if (plot.wateredToday) return fail("already watered");
+  if (!spendCanWater(g)) return fail("can empty");
   soil.water(x, y);
   swing(g, "can");
   return { ok: true };
@@ -757,20 +761,22 @@ export function clearWeed(
   g: GameState,
   x: number,
   y: number,
-  tool: "hoe" | "can" | "axe",
+  tool: "hoe" | "can" | "axe" | "scythe",
   random: () => number = Math.random,
   map?: FarmMap,
 ): Outcome {
   if (g.day.over) return fail("exhausted");
   if (!g.weeds.at(x, y)) return fail("no weed");
-  if (tool === "axe")
+  // The scythe cuts a weed free (note 103).
+  if (tool === "scythe") g.weeds.remove(x, y);
+  else if (tool === "axe")
     g.day.act(
       swingCost(TOOL_ENERGY, g.toolTiers.axe, g.skills.level("foraging")),
       0,
     );
   else swing(g, tool);
   g.weeds.remove(x, y);
-  // Hay waits for the scythe and grass tiles: it is bought until then (note 23).
+  // Cut weeds give no hay: it comes from grass and the scythe (notes 23 and 103).
   // Fiber at 50 percent. A weed that drops none may drop a mixed seed, at the
   // farm type's chance (notes 29 and 32).
   const drop =

@@ -28,6 +28,7 @@ import Phaser from "phaser";
 import { paintAnimals } from "./art-animals";
 import { paintCropStage, paintSeedPacket } from "./art-crops";
 import { paintCreatures } from "./art-creatures";
+import { paintToolIcons as paintToolPictures } from "./art-tools";
 import { FISH_LOOKS, fishKey, paintFish } from "./art-fish";
 import { GOOD_LOOKS, goodKey, paintGoods } from "./art-goods";
 import {
@@ -1099,64 +1100,18 @@ function paintForage(scene: Phaser.Scene, id: string): void {
 
 // ---- item and tool icons for the toolbar
 
+export { toolTierKey } from "./art-tools";
 export const TOOL_ICONS = {
   hoe: "icon-hoe",
   can: "icon-can",
   axe: "icon-axe",
   pickaxe: "icon-pickaxe",
+  scythe: "icon-scythe",
 };
 
 function paintToolIcons(scene: Phaser.Scene): void {
-  const draw = (key: string, paint: (c: Ctx) => void) => {
-    const t = scene.textures.createCanvas(key, SIZE, SIZE)!;
-    paint(t.getContext());
-    t.refresh();
-  };
-  draw(TOOL_ICONS.hoe, (c) => {
-    px(c, "#8a5c2a", 7, 2, 2, 12);
-    px(c, "#b07a3c", 7, 4, 1, 10);
-    px(c, "#5c3a18", 8, 4, 1, 10);
-    px(c, "#b8bcc4", 4, 2, 8, 2);
-    px(c, "#e4e8ee", 5, 2, 5, 1);
-    px(c, "#8a8e96", 4, 4, 2, 1);
-    px(c, "#6a6e76", 4, 3, 1, 2);
-  });
-  draw(TOOL_ICONS.can, (c) => {
-    px(c, "#5a8ec0", 3, 6, 8, 7);
-    px(c, "#3f6f9c", 3, 12, 8, 1);
-    px(c, "#5a8ec0", 11, 4, 3, 2);
-    px(c, "#5a8ec0", 12, 3, 3, 1);
-    px(c, "#8fc4f0", 4, 7, 2, 1);
-    px(c, "#3f6f9c", 4, 4, 5, 1);
-    px(c, "#3f6f9c", 4, 5, 1, 1);
-    px(c, "#3f6f9c", 8, 5, 1, 1);
-    px(c, "#7fb0dc", 3, 6, 8, 1);
-    px(c, "#2c5478", 3, 13, 8, 1);
-    px(c, "#3f6f9c", 10, 7, 1, 5);
-    px(c, "#2c5478", 14, 3);
-  });
-  draw(TOOL_ICONS.axe, (c) => {
-    px(c, "#8a5c2a", 7, 3, 2, 11);
-    px(c, "#b8bcc4", 3, 2, 5, 5);
-    px(c, "#8a8e96", 3, 6, 5, 1);
-    px(c, "#d8dce4", 4, 3, 2, 1);
-    px(c, "#6a6e76", 3, 7, 5, 1);
-    px(c, "#b07a3c", 7, 4, 1, 10);
-    px(c, "#5c3a18", 8, 4, 1, 10);
-    px(c, "#5c3a18", 7, 14, 2, 1);
-  });
-  draw(TOOL_ICONS.pickaxe, (c) => {
-    px(c, "#8a5c2a", 7, 4, 2, 10);
-    px(c, "#b8bcc4", 2, 3, 12, 2);
-    px(c, "#8a8e96", 2, 5, 2, 2);
-    px(c, "#8a8e96", 12, 5, 2, 2);
-    px(c, "#d8dce4", 5, 3, 3, 1);
-    px(c, "#6a6e76", 2, 7, 2, 1);
-    px(c, "#6a6e76", 12, 7, 2, 1);
-    px(c, "#b07a3c", 7, 5, 1, 9);
-    px(c, "#5c3a18", 8, 5, 1, 9);
-    px(c, "#5c3a18", 7, 14, 2, 1);
-  });
+  // Drawn in art-tools.ts: one map per tool, metal tinted per tier (`toolTierKey`).
+  paintToolPictures(scene, TOOL_ICONS);
 }
 
 function paintSeedIcon(scene: Phaser.Scene, cropId: string): void {
@@ -1170,6 +1125,7 @@ function paintSeedIcon(scene: Phaser.Scene, cropId: string): void {
 
 export const WEED_KEY = "weed";
 export const TWIG_KEY = "twig";
+export const GRASS_KEY = "grass";
 
 /** The picture of a sprinkler, on the ground and in the backpack. */
 /** Fruit tree pictures: growth stages 0 to 4 and, over a mature crown, the fruit it holds. */
@@ -1231,6 +1187,18 @@ function paintTrees(scene: Phaser.Scene): void {
     px(c, "#7ad064", 10, 8);
     px(c, "#2f6a24", 6, 12, 1, 2);
     px(c, "#2f6a24", 9, 11, 1, 3);
+  });
+  // Grass: a flat patch of short green blades (placeholder, note 103).
+  draw(GRASS_KEY, (c) => {
+    px(c, "#3f8a30", 2, 6, 12, 8);
+    px(c, "#56b044", 3, 5, 1, 4);
+    px(c, "#56b044", 6, 4, 1, 5);
+    px(c, "#56b044", 9, 5, 1, 4);
+    px(c, "#56b044", 12, 4, 1, 5);
+    px(c, "#7ad064", 4, 9, 1, 4);
+    px(c, "#7ad064", 8, 10, 1, 3);
+    px(c, "#7ad064", 11, 9, 1, 4);
+    px(c, "#2f6a24", 2, 12, 12, 2);
   });
   // A twig: two crossed bits of branch, flat enough to walk over.
   draw(TWIG_KEY, (c) => {

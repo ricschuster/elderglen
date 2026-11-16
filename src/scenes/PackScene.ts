@@ -13,9 +13,12 @@ import {
   wearFromPack,
 } from "../core/packmenu";
 import { splitQuality } from "../core/quality";
+import { itemTip } from "../core/itemtip";
+import { canFraction, canWaterLine } from "../core/canwater";
+import { Tooltip } from "./tooltip";
 import { toolOfId } from "../core/toolitems";
 import type { GameState } from "../core/save";
-import { iconKey } from "./art";
+import { iconKey, toolTierKey } from "./art";
 import { frame } from "./panel";
 import { STATE_KEY } from "./state";
 
@@ -29,6 +32,7 @@ const TOOL_NAMES: Record<string, string> = {
   can: "Watering can",
   axe: "Axe",
   pickaxe: "Pickaxe",
+  scythe: "Scythe",
 };
 const TINT = { normal: 0xffffff, silver: 0xc8d8ff, gold: 0xffd860 };
 
@@ -48,7 +52,10 @@ export class PackScene extends Phaser.Scene {
     box: Phaser.GameObjects.Rectangle;
     icon: Phaser.GameObjects.Image;
     count: Phaser.GameObjects.Text;
+    back: Phaser.GameObjects.Rectangle;
+    fill: Phaser.GameObjects.Rectangle;
   }[] = [];
+  private tooltip!: Tooltip;
   private info!: Phaser.GameObjects.Text;
   private note!: Phaser.GameObjects.Text;
   private splitLabel!: Phaser.GameObjects.Text;
@@ -90,6 +97,7 @@ export class PackScene extends Phaser.Scene {
       "The backpack. The tools are in it too: move them, but they cannot be trashed.",
       { fontSize: "16px", color: "#ffffffcc" },
     );
+    this.tooltip = new Tooltip(this);
     for (let i = 0; i < this.state.inventory.size; i++) {
       const x = LEFT + (i % COLS) * (CELL + GAP);
       const y = TOP + Math.floor(i / COLS) * (CELL + GAP);
@@ -99,9 +107,24 @@ export class PackScene extends Phaser.Scene {
         .setStrokeStyle(2, 0xffffff, 0.3)
         .setInteractive({ useHandCursor: true });
       box.on("pointerdown", (p: Phaser.Input.Pointer) => this.down(i, p));
+      this.tooltip.attach(
+        box,
+        () => {
+          const id = this.state.inventory.slot(i)?.id;
+          if (!id) return undefined;
+          const base = splitQuality(id).base;
+          const tiers = this.state.toolTiers as Record<string, number>;
+          return itemTip(
+            id,
+            base.startsWith("tool:") ? (tiers[base.slice(5)] ?? 0) : 0,
+            base === "tool:can" ? canWaterLine(this.state) : undefined,
+          );
+        },
+        () => ({ w: 960, h: 540 }),
+      );
       const icon = this.add
-        .image(x + CELL / 2, y + CELL / 2 - 4, "__DEFAULT")
-        .setDisplaySize(40, 40)
+        .image(x + CELL / 2, y + CELL / 2 - 3, "__DEFAULT")
+        .setDisplaySize(54, 54)
         .setVisible(false);
       const count = this.add
         .text(x + CELL - 4, y + CELL - 3, "", {
@@ -109,7 +132,15 @@ export class PackScene extends Phaser.Scene {
           color: "#ffffff",
         })
         .setOrigin(1, 1);
-      this.cells.push({ box, icon, count });
+      const back = this.add
+        .rectangle(x + 4, y + CELL - 8, CELL - 8, 4, 0x000000, 0.7)
+        .setOrigin(0)
+        .setVisible(false);
+      const fill = this.add
+        .rectangle(x + 4, y + CELL - 8, CELL - 8, 4, 0x4aa8ff)
+        .setOrigin(0)
+        .setVisible(false);
+      this.cells.push({ box, icon, count, back, fill });
     }
 
     const rows = Math.ceil(this.state.inventory.size / COLS);
@@ -129,7 +160,7 @@ export class PackScene extends Phaser.Scene {
     ) as Phaser.GameObjects.Rectangle;
     this.dragIcon = this.add
       .image(0, 0, "__DEFAULT")
-      .setDisplaySize(40, 40)
+      .setDisplaySize(54, 54)
       .setAlpha(0.8)
       .setDepth(100)
       .setVisible(false);
@@ -244,19 +275,20 @@ export class PackScene extends Phaser.Scene {
       this.tap(i);
       return;
     }
-    this.press = { slot: i, x: p.x, y: p.y };
+    this.press = { slot: i, x: p.worldX, y: p.worldY };
   }
 
   private move(p: Phaser.Input.Pointer): void {
     if (!this.press) return;
     if (this.dragging === undefined) {
-      if (Math.hypot(p.x - this.press.x, p.y - this.press.y) < 6) return;
+      if (Math.hypot(p.worldX - this.press.x, p.worldY - this.press.y) < 6)
+        return;
       this.dragging = this.press.slot;
       const key = iconKey(this.state.inventory.slot(this.dragging)!.id);
-      if (key) this.dragIcon.setTexture(key).setDisplaySize(40, 40);
+      if (key) this.dragIcon.setTexture(key).setDisplaySize(54, 54);
       this.dragIcon.setVisible(key !== undefined);
     }
-    this.dragIcon.setPosition(p.x, p.y);
+    this.dragIcon.setPosition(p.worldX, p.worldY);
   }
 
   private up(p: Phaser.Input.Pointer): void {
@@ -274,12 +306,12 @@ export class PackScene extends Phaser.Scene {
     this.trashAsked = this.trashAsked && this.selected === from;
     this.selected = undefined;
     this.splitting = false;
-    if (this.trashBox.getBounds().contains(p.x, p.y)) {
+    if (this.trashBox.getBounds().contains(p.worldX, p.worldY)) {
       this.trashSlotAt(from);
       return;
     }
     const to = this.cells.findIndex((c) =>
-      c.box.getBounds().contains(p.x, p.y),
+      c.box.getBounds().contains(p.worldX, p.worldY),
     );
     if (dropStack(this.state.inventory, from, to < 0 ? undefined : to)) {
       this.cursor = to;
@@ -360,13 +392,26 @@ export class PackScene extends Phaser.Scene {
       const here = i === this.cursor;
       c.box.setFillStyle(picked ? 0xf2d16b : 0x000000, picked ? 0.45 : 0.5);
       c.box.setStrokeStyle(here ? 3 : 2, 0xffffff, here ? 1 : 0.3);
-      const key = stack ? iconKey(stack.id) : undefined;
+      const toolId = stack ? toolOfId(splitQuality(stack.id).base) : undefined;
+      const tier = toolId
+        ? ((this.state.toolTiers as Record<string, number>)[toolId] ?? 0)
+        : 0;
+      const plain = stack ? iconKey(stack.id) : undefined;
+      const key = plain && toolId ? toolTierKey(plain, tier) : plain;
       c.icon.setVisible(key !== undefined);
       if (key) {
-        c.icon.setTexture(key).setDisplaySize(40, 40);
+        c.icon.setTexture(key).setDisplaySize(54, 54);
         c.icon.setTint(TINT[splitQuality(stack!.id).quality]);
       }
       c.count.setText(stack && stack.count > 1 ? String(stack.count) : "");
+      const isCan = stack?.id === "tool:can";
+      c.back.setVisible(isCan);
+      c.fill
+        .setVisible(isCan && canFraction(this.state) > 0)
+        .setSize(
+          Math.max(1, Math.round((CELL - 8) * canFraction(this.state))),
+          4,
+        );
     });
     this.info.setText(
       `Funds: ${this.state.money} gold\n${dateText(this.state.day.clock.day)}\nFarm: ${farmTypeById(this.state.farmType).name}`,

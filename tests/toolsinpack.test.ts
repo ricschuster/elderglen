@@ -15,7 +15,7 @@ import {
 } from "../src/core/toolitems";
 
 describe("tools in the pack (note 102)", () => {
-  it("a new game carries the four tools in slots 0 to 3", () => {
+  it("a new game carries the five tools in slots 0 to 4", () => {
     const g = startGame();
     TOOLS.forEach((t, i) =>
       expect(g.inventory.slot(i)?.id).toBe(toolItemId(t)),
@@ -30,7 +30,7 @@ describe("tools in the pack (note 102)", () => {
     const back = deserialize(serialize(g))!;
     expect(back.inventory.size).toBe(12);
     expect(back.inventory.slot(0)?.id).toBe("tool:hoe");
-    expect(back.inventory.slot(4)).toEqual({ id: "wood", count: 5 });
+    expect(back.inventory.slot(5)).toEqual({ id: "wood", count: 5 });
     expect(back.inventory.count("stone")).toBe(2);
     expect(back.toolTiers.axe).toBe(1);
     // A second round trip changes nothing.
@@ -41,7 +41,7 @@ describe("tools in the pack (note 102)", () => {
     const inv = new Inventory(12);
     for (let i = 0; i < 12; i++) inv.add(`junk${i}`, 1);
     expect(ensureTools(inv)).toBe(true);
-    expect(inv.size).toBe(16);
+    expect(inv.size).toBe(17);
     for (let i = 0; i < 12; i++) expect(inv.count(`junk${i}`)).toBe(1);
     expect(findTool(inv, "pickaxe")).toBeGreaterThanOrEqual(0);
   });
