@@ -79,6 +79,17 @@ Status: draft, owner feedback 2026-11-16. Design before build. Extends notes 49
   bottom with the same panel and bar. Check on the owner's tablet that the panel
   and buttons clear the notch and the Android edge.
 
+## Built status
+
+- **Batch A, Social tab: built (2026-11-16).** `socialRows` returns the whole
+  roster with met, relationship, weekGifts and spouse; `childRows` and
+  `birthdayText` added; `Friendship.weekGifts(id, day)` reads the week count.
+  `SocialScene` has rows, hearts, two gift boxes, a talk box, wheel, drag and
+  key scrolling with a bar, a detail page (gift log, birthday, back) and a
+  children section. Portraits are placeholder tinted squares with an initial
+  (no portrait art exists yet). Not yet checked in a browser or on touch.
+- Not built: tools in the pack, slot size, clock panel, energy bar, touch HUD.
+
 ## Checks added
 
 SC-184 to SC-187 in note 54.

@@ -375,3 +375,21 @@ describe("save", () => {
     expect(loaded.friendship.met("tilda")).toBe(false);
   });
 });
+
+describe("weekGifts", () => {
+  it("counts this week's gifts and resets on a new week", () => {
+    const f = met();
+    expect(f.weekGifts("odette", 1)).toBe(0);
+    f.gift("odette", "melon", 1);
+    f.gift("odette", "tomato", 2);
+    expect(f.weekGifts("odette", 2)).toBe(2);
+    expect(f.weekGifts("odette", 7)).toBe(2);
+    expect(f.weekGifts("odette", 8)).toBe(0);
+    expect(f.weekGifts("nobody", 1)).toBe(0);
+  });
+  it("does not count a birthday gift", () => {
+    const f = met("tilda");
+    f.gift("tilda", "melon", TILDA_BDAY);
+    expect(f.weekGifts("tilda", TILDA_BDAY)).toBe(0);
+  });
+});

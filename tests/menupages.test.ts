@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { DEEPMARK_KEY, HOMEWARD_PIN } from "../src/core/items";
 import {
   animalRows,
+  birthdayText,
+  childRows,
   giftLogRows,
   hiddenTabs,
   skillExtras,
@@ -9,23 +11,81 @@ import {
   specialItems,
   unmetCount,
 } from "../src/core/menupages";
+import { HEART } from "../src/core/friendship";
 import { newGame } from "../src/core/save";
 import { VILLAGERS } from "../src/core/villagers";
 
 const first = VILLAGERS[0]!.id;
 
 describe("socialRows", () => {
-  it("lists only people met, with hearts and today's doings", () => {
+  it("lists the whole roster in order, unmet as ???", () => {
     const g = newGame();
-    expect(socialRows(g)).toEqual([]);
+    const rows = socialRows(g);
+    expect(rows.map((r) => r.id)).toEqual(VILLAGERS.map((v) => v.id));
+    expect(rows.every((r) => !r.met && r.name === "???")).toBe(true);
+    expect(rows.every((r) => r.hearts === 0 && r.maxHearts === 0)).toBe(true);
     expect(unmetCount(g)).toBe(VILLAGERS.length);
+  });
+  it("fills in a person once met, with today's doings", () => {
+    const g = newGame();
     const day = g.day.clock.day;
     g.friendship.talk(first, day);
     const rows = socialRows(g);
-    expect(rows).toHaveLength(1);
+    expect(rows).toHaveLength(VILLAGERS.length);
+    expect(rows[0]!.met).toBe(true);
+    expect(rows[0]!.name).toBe(VILLAGERS[0]!.name);
     expect(rows[0]!.talkedToday).toBe(true);
     expect(rows[0]!.giftedToday).toBe(false);
+    expect(rows[0]!.relationship).toBe("friend");
+    expect(rows[0]!.spouse).toBe(false);
+    expect(rows[1]!.met).toBe(false);
     expect(unmetCount(g)).toBe(VILLAGERS.length - 1);
+  });
+  it("counts this week's gifts against the weekly rule", () => {
+    const g = newGame();
+    const day = g.day.clock.day;
+    g.friendship.meet(first);
+    expect(socialRows(g)[0]!.weekGifts).toBe(0);
+    expect(socialRows(g)[0]!.weekGiftLimit).toBe(2);
+    g.inventory.add("turnip", 1);
+    g.friendship.gift(first, "turnip", day);
+    expect(socialRows(g)[0]!.weekGifts).toBe(1);
+    expect(socialRows(g)[0]!.giftedToday).toBe(true);
+  });
+  it("marks a spouse and a courted person", () => {
+    const g = newGame();
+    const cand = VILLAGERS.find((v) => v.candidate)!.id;
+    g.friendship.meet(cand);
+    g.marriage.stage = "courting";
+    g.marriage.spouse = cand;
+    const row = () => socialRows(g).find((r) => r.id === cand)!;
+    expect(row().relationship).toBe("dating");
+    expect(row().spouse).toBe(false);
+    g.marriage.stage = "married";
+    expect(row().relationship).toBe("spouse");
+    expect(row().spouse).toBe(true);
+  });
+});
+
+describe("childRows", () => {
+  it("is empty without children and lists hearts when there are some", () => {
+    const g = newGame();
+    expect(childRows(g)).toEqual([]);
+    g.marriage.kids.push({
+      id: "child-1",
+      name: "Pip",
+      born: 1,
+      points: 4 * HEART,
+      talkDay: 0,
+    });
+    expect(childRows(g)).toEqual([{ id: "child-1", name: "Pip", hearts: 4 }]);
+  });
+});
+
+describe("birthdayText", () => {
+  it("names the season and day", () => {
+    expect(birthdayText(first)).toMatch(/^(Spring|Summer|Fall|Winter) \d+$/);
+    expect(birthdayText("nobody")).toBe("");
   });
 });
 
