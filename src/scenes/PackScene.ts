@@ -244,19 +244,20 @@ export class PackScene extends Phaser.Scene {
       this.tap(i);
       return;
     }
-    this.press = { slot: i, x: p.x, y: p.y };
+    this.press = { slot: i, x: p.worldX, y: p.worldY };
   }
 
   private move(p: Phaser.Input.Pointer): void {
     if (!this.press) return;
     if (this.dragging === undefined) {
-      if (Math.hypot(p.x - this.press.x, p.y - this.press.y) < 6) return;
+      if (Math.hypot(p.worldX - this.press.x, p.worldY - this.press.y) < 6)
+        return;
       this.dragging = this.press.slot;
       const key = iconKey(this.state.inventory.slot(this.dragging)!.id);
       if (key) this.dragIcon.setTexture(key).setDisplaySize(40, 40);
       this.dragIcon.setVisible(key !== undefined);
     }
-    this.dragIcon.setPosition(p.x, p.y);
+    this.dragIcon.setPosition(p.worldX, p.worldY);
   }
 
   private up(p: Phaser.Input.Pointer): void {
@@ -274,12 +275,12 @@ export class PackScene extends Phaser.Scene {
     this.trashAsked = this.trashAsked && this.selected === from;
     this.selected = undefined;
     this.splitting = false;
-    if (this.trashBox.getBounds().contains(p.x, p.y)) {
+    if (this.trashBox.getBounds().contains(p.worldX, p.worldY)) {
       this.trashSlotAt(from);
       return;
     }
     const to = this.cells.findIndex((c) =>
-      c.box.getBounds().contains(p.x, p.y),
+      c.box.getBounds().contains(p.worldX, p.worldY),
     );
     if (dropStack(this.state.inventory, from, to < 0 ? undefined : to)) {
       this.cursor = to;
