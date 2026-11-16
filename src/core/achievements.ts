@@ -7,6 +7,7 @@ import { splitQuality } from "./quality";
 import type { GameState } from "./save";
 import { SKILLS } from "./skills";
 import { ringProgress } from "./completion";
+import { GALLERY_TOTAL, donatedCount } from "./gallery";
 
 /**
  * Achievements and the hatter (`docs/design/38_achievements.md`). The slice 1
@@ -30,6 +31,10 @@ export type AchievementKind =
   | "fishAll"
   /** Elderfruit eaten reaches the threshold (note 39). */
   | "elderfruitAll"
+  /** Different items donated to the gallery reach the threshold (note 104). */
+  | "donate"
+  /** Every gallery item donated (note 104). */
+  | "donateAll"
   /** A ring's shown percent (rounded down) reaches the threshold (note 39). */
   | "summit";
 
@@ -161,6 +166,10 @@ export function met(g: GameState, a: AchievementDef): boolean {
       return g.fishing.total >= a.threshold;
     case "elderfruitAll":
       return g.elderfruit >= a.threshold;
+    case "donate":
+      return donatedCount(g) >= a.threshold;
+    case "donateAll":
+      return donatedCount(g) >= GALLERY_TOTAL;
     case "summit":
       return (
         (ringProgress(g).find((r) => r.id === "ring1")?.percent ?? 0) >=

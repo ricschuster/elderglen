@@ -1,6 +1,6 @@
 # 104 The library gallery
 
-Status: settled by the owner 2026-11-16 (open questions answered). The minerals are
+Status: settled by the owner 2026-11-16. Built to shell level 2026-11-16 (steps 1 to 6 and the free arrangement; set rewards are data, the museum special order and the shortcut-door key are not built). The minerals are
 added as data; the gallery itself is not built. Extends note 39 (the
 completion total and elderfruit source 7), note 38 (achievements), note 69
 (geodes, minerals, artifacts), note 86 (the library interior) and note 20

@@ -61,6 +61,7 @@ import { Mailbox, type MailEntry } from "./mail";
 import { Friendship } from "./friendship";
 import { Marriage, exSpouses, type MarriageSave } from "./marriage";
 import { ELDERFRUIT_TOTAL, maxEnergyFor } from "./elderfruit";
+import { GALLERY_TOTAL, inGallery } from "./gallery";
 import { HeartEvents, type HeartEventsSave } from "./heartevents";
 import { Quests, type QuestsSave } from "./quests";
 import { FishLog, type FishingSave } from "./fishing";
@@ -125,6 +126,12 @@ export interface GameState {
   greenhouseSite?: { x: number; y: number };
   /** World flags that are up, such as `secret-log-cleared` (`core/worldflags.ts`). Absent until one is. */
   flags?: string[];
+  /** Items donated to the library gallery, shared by the farm (`core/gallery.ts`, note 104). Absent until one is. */
+  gallery?: string[];
+  /** Where donated items stand on the shelf: item id to slot. Absent until one is moved. */
+  galleryPlaced?: Record<string, number>;
+  /** Gallery reward keys this player has collected. Per player in multiplayer (M4). */
+  galleryClaimed?: string[];
   /**
    * The worlds of the area maps by map id (`areas.ts`): their trees, rocks,
    * weeds, twigs and goods on the ground. The fields above are the farm's, or
@@ -362,6 +369,10 @@ interface SaveData {
   greenhouseSite?: { x: number; y: number };
   /** Absent until a world flag is raised. */
   flags?: string[];
+  /** Absent until something is donated (note 104). */
+  gallery?: string[];
+  galleryPlaced?: Record<string, number>;
+  galleryClaimed?: string[];
   /** Absent in saves made before the Forest: each area's starting world. */
   areas?: Record<string, AreaSave>;
   /** Absent in saves made before machines. */
@@ -610,6 +621,13 @@ export function serialize(
     placed: collectPlaced(g).save(),
     ...(g.greenhouseSite ? { greenhouseSite: { ...g.greenhouseSite } } : {}),
     ...(g.flags?.length ? { flags: [...g.flags] } : {}),
+    ...(g.gallery?.length ? { gallery: [...g.gallery] } : {}),
+    ...(g.galleryPlaced && Object.keys(g.galleryPlaced).length
+      ? { galleryPlaced: { ...g.galleryPlaced } }
+      : {}),
+    ...(g.galleryClaimed?.length
+      ? { galleryClaimed: [...g.galleryClaimed] }
+      : {}),
     areas: Object.fromEntries(
       Object.entries(g.areas).map(([id, w]) => [
         id,
@@ -906,6 +924,7 @@ export function deserialize(text: string): GameState | undefined {
     );
     if (flags.length > 0) g.flags = [...new Set(flags)];
   }
+  loadGallery(g, raw);
   const machineRows = placed ? placed.machines : raw.machines;
   if (Array.isArray(machineRows)) {
     const valid: PlacedMachine[] = [];
@@ -1173,4 +1192,32 @@ export function deserialize(text: string): GameState | undefined {
   // Loading rechecks, so a goal met under an older save is granted (note 38).
   checkAchievements(g);
   return g;
+}
+
+/** Read the gallery fields (note 104). Unknown ids and bad slots are dropped. */
+function loadGallery(g: GameState, raw: Record<string, unknown>): void {
+  const strings = (v: unknown): string[] =>
+    Array.isArray(v)
+      ? [
+          ...new Set(
+            v.filter((x): x is string => typeof x === "string" && x !== ""),
+          ),
+        ]
+      : [];
+  const donated = strings(raw.gallery).filter(inGallery);
+  if (donated.length > 0) g.gallery = donated;
+  if (isObject(raw.galleryPlaced)) {
+    const placed: Record<string, number> = {};
+    for (const [id, slot] of Object.entries(raw.galleryPlaced))
+      if (
+        donated.includes(id) &&
+        Number.isInteger(slot) &&
+        (slot as number) >= 0 &&
+        (slot as number) < GALLERY_TOTAL
+      )
+        placed[id] = slot as number;
+    if (Object.keys(placed).length > 0) g.galleryPlaced = placed;
+  }
+  const claimed = strings(raw.galleryClaimed);
+  if (claimed.length > 0) g.galleryClaimed = claimed;
 }

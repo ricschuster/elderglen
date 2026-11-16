@@ -20,7 +20,7 @@
           "id": "gallery",
           "name": "Gallery donations",
           "weight": 5,
-          "counter": null
+          "counter": "gallery"
         },
         {
           "id": "slayer",

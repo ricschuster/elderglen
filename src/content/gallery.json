@@ -1,0 +1,86 @@
+{
+  "note": "Placeholder rewards (note 104). Every reward is a stand-in until the reward design is settled. A reward with no item is paid as a mark only, because its decor or key is not built yet.",
+  "totalRewards": [
+    {
+      "at": 5,
+      "label": "A packet of seeds",
+      "item": "parsnip-seed",
+      "count": 5
+    },
+    {
+      "at": 10,
+      "label": "A bundle of mixed seeds",
+      "item": "mixed-seed",
+      "count": 10
+    },
+    { "at": 15, "label": "A rare seed", "item": "pumpkin-seed", "count": 5 },
+    {
+      "at": 20,
+      "label": "A framed print for the farmhouse (decor)",
+      "item": "wallpaper-linen",
+      "count": 1
+    },
+    {
+      "at": 25,
+      "label": "A second framed print (decor)",
+      "item": "wallpaper-moss",
+      "count": 1
+    },
+    {
+      "at": 30,
+      "label": "A big plush (decor)",
+      "item": "armchair",
+      "count": 1
+    },
+    {
+      "at": 35,
+      "label": "A stack of late crop seeds",
+      "item": "cranberry-seed",
+      "count": 10
+    },
+    { "at": 40, "label": "A scarecrow variant (not built yet)" },
+    { "at": 50, "label": "A statue (decor, not built yet)" },
+    { "at": 60, "label": "A key to a shortcut door (not built yet)" },
+    { "at": 70, "label": "A useful item", "item": "gold-bar", "count": 3 },
+    { "at": 80, "label": "A decor set piece", "item": "bookshelf", "count": 1 },
+    {
+      "at": 90,
+      "label": "A big decor piece",
+      "item": "round-table",
+      "count": 1
+    }
+  ],
+  "mineralRewards": [
+    { "at": 11, "label": "A small gift", "item": "iron-bar", "count": 3 },
+    { "at": 21, "label": "A small gift", "item": "gold-bar", "count": 1 },
+    { "at": 31, "label": "A decor piece", "item": "floor-slate", "count": 1 },
+    { "at": 41, "label": "A decor piece", "item": "floor-planks", "count": 1 },
+    { "at": 53, "label": "A recipe (not built yet)" }
+  ],
+  "artifactRewards": [
+    { "at": 5, "label": "A small gift", "item": "mixed-seed", "count": 5 },
+    { "at": 11, "label": "A small gift", "item": "iron-bar", "count": 2 },
+    { "at": 20, "label": "A decor piece", "item": "oak-chair", "count": 1 },
+    { "at": 30, "label": "A decor piece", "item": "wooden-stool", "count": 1 },
+    { "at": 42, "label": "A recipe (not built yet)" }
+  ],
+  "sets": [
+    {
+      "id": "geode-finds",
+      "name": "The geode finds",
+      "items": ["dwarf-cup", "ice-bell", "ember-lantern"],
+      "reward": { "label": "A useful item", "item": "gold-bar", "count": 2 }
+    },
+    {
+      "id": "old-things",
+      "name": "The old things",
+      "items": [
+        "old-seed-packet",
+        "carved-bead",
+        "faded-ribbon",
+        "pressed-flower"
+      ],
+      "reward": { "label": "A recipe (not built yet)" }
+    }
+  ]
+}
