@@ -110,6 +110,18 @@ The pack stays at 12 slots including the four tools (Stardew).
   unmet rows show a flat grey silhouette. They come from the current sprites until
   real art in M3d. Not checked in a browser.
 - Not built: clock panel, energy bar, touch HUD.
+- **Batch C, HUD panel: built (2026-11-16).** `src/scenes/hudpanel.ts` draws the
+  clock panel top right (weekday and date, time, weather icon, festival or
+  birthday icon, gold in its own box, a clear spot kept for the dial) and the
+  vertical energy bar bottom right with its "E" label, plus a health bar beside
+  it that shows in the mines or while health is below full. Pure parts are in
+  `src/core/hudpanel.ts` with tests. Hover (or a tap on touch) shows exact
+  energy or health. The old status line and top left health bar are gone; the
+  status text keeps only the ice counter note. On touch, Menu and Journal stack
+  under the panel and Craft and Hats sit beside it. In the stick scheme the bars
+  step left of the use and action buttons rather than up. Placeholder shapes,
+  not checked in a browser or on the tablet.
+- Not built: tools in the pack, slot size.
 
 ## Checks added
 
