@@ -1016,7 +1016,7 @@ after the wedding. They never fail for a late or absent player and never repair.
 - Fee: 50,000g (`DIVORCE_FEE`), paid when filed at the hall ledger, handed back if cancelled before
   the day ends. Takes effect the next morning (`divorceMorning`, called from `sleep()`).
 - Friendship stays at the old points. The cap drops to the pre-marriage 10 hearts without clamping
-  points down (`Friendship.setExes`). The ex-spouse is a friend only (no new bouquet).
+  points down (`Friendship.setExes`). An ex can be courted again (note 12). The ex visits the children on the last day of the week, 10:00 to 15:00.
 
 ## Children (slice 5, 2026-11-14, note 12, placeholders)
 

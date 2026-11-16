@@ -2,7 +2,13 @@ import courtshipData from "../content/courtship.json";
 import { dateOf } from "./calendar";
 import { clockText } from "./clock";
 import { festivalDayToday } from "./festivals";
-import { COURT_HEARTS, PROPOSE_HEARTS, TOKEN_PRICE, exFlag } from "./marriage";
+import {
+  COURT_HEARTS,
+  PROPOSE_HEARTS,
+  TOKEN_PRICE,
+  exFlag,
+  exSpouses,
+} from "./marriage";
 import { HEART, isCandidate } from "./friendship";
 import type { Cmd, HeartEvent } from "./heartevents";
 import type { GameState } from "./save";
@@ -87,9 +93,6 @@ export function courtGift(
     return no(`${name} smiles kindly. This is not a gift for a friend.`);
   const points = g.friendship.points(id);
   if (held === BOUQUET) {
-    // A former spouse stays a friend only (note 12, slice 4; the question is open).
-    if (hasFlag(g, exFlag(id)))
-      return no(`${name} smiles warmly. You are friends, and that is enough.`);
     if (m.isPartner(id))
       return no(`${name} already has your bouquet. Thank you again.`);
     if (m.stage !== "none")
@@ -98,10 +101,18 @@ export function courtGift(
       return no(
         `${name} is touched, but you do not know each other well enough yet.`,
       );
-    if (!m.court(id, points) || !g.friendship.giveBouquet(id))
+    if (
+      !m.court(id, points) ||
+      !(g.friendship.hasBouquet(id) || g.friendship.giveBouquet(id))
+    )
       return no(`${name} cannot take it.`);
     g.inventory.remove(held, 1);
     setFlag(g, `bouquet-${id}`);
+    // An ex can be courted again (owner, 2026-11-16): hearts are as the divorce left them, the ex mark is lifted.
+    if (hasFlag(g, exFlag(id))) {
+      g.flags = (g.flags ?? []).filter((f) => f !== exFlag(id));
+      g.friendship.setExes(exSpouses(g));
+    }
     return {
       message: `${name} takes the bouquet, blushing. PLACEHOLDER TEXT: you are courting.`,
       consumed: true,
@@ -173,12 +184,20 @@ export const isWeddingId = (id: string): boolean => id.startsWith("wedding-");
  * hat-maker's ledger reading is placeholder text on the festival green, every
  * line the same for all 14. Not in the heart event files: built from the id.
  */
-export function weddingEvent(spouse: string): HeartEvent {
+export function weddingEvent(
+  spouse: string,
+  guests: readonly string[] = [],
+): HeartEvent {
   const name = nameOf(spouse);
   const scene: Cmd[] = [
     { cmd: "fade", to: "black" },
     { cmd: "place", who: "player", mark: "green-left" },
     { cmd: "place", who: spouse, mark: "green-right" },
+    ...guests.map((who, i): Cmd => ({
+      cmd: "place",
+      who,
+      mark: `green-guest-${i + 1}`,
+    })),
     { cmd: "fade", to: "clear" },
     {
       cmd: "say",
