@@ -13,6 +13,7 @@ import {
   wearFromPack,
 } from "../core/packmenu";
 import { splitQuality } from "../core/quality";
+import { isToolId, toolOfId } from "../core/toolitems";
 import type { GameState } from "../core/save";
 import { iconKey } from "./art";
 import { frame } from "./panel";
@@ -23,10 +24,16 @@ const CELL = 64;
 const GAP = 8;
 const LEFT = (960 - (COLS * (CELL + GAP) - GAP)) / 2;
 const TOP = 90;
+const TOOL_NAMES: Record<string, string> = {
+  hoe: "Hoe",
+  can: "Watering can",
+  axe: "Axe",
+  pickaxe: "Pickaxe",
+};
 const TINT = { normal: 0xffffff, silver: 0xc8d8ff, gold: 0xffd860 };
 
 /**
- * The Pack tab (note 49): the whole backpack, with the tools noted above it.
+ * The Pack tab (note 49): the whole backpack. The tools are stacks in it (note 102).
  * Tap a stack, then tap a slot to move or swap it. Split puts half of the
  * selected stack where you tap next. Sort merges and orders; Trash destroys
  * the selected stack, asking first for anything of value.
@@ -73,7 +80,7 @@ export class PackScene extends Phaser.Scene {
     this.add.text(
       LEFT,
       56,
-      "Tools (hoe, watering can, axe, pickaxe) are always carried. The backpack:",
+      "The backpack. The tools are in it too: move them, but they cannot be trashed.",
       { fontSize: "16px", color: "#ffffffcc" },
     );
     for (let i = 0; i < this.state.inventory.size; i++) {
@@ -251,6 +258,10 @@ export class PackScene extends Phaser.Scene {
       this.note.setText("Tap a stack first, then Trash.");
       return;
     }
+    if (isToolId(stack.id)) {
+      this.note.setText("Tools cannot be thrown away.");
+      return;
+    }
     if (needsTrashConfirm(stack.id, stack.count) && !this.trashAsked) {
       this.trashAsked = true;
       this.note.setText(
@@ -300,7 +311,10 @@ export class PackScene extends Phaser.Scene {
     const stack = inv.slot(at);
     if (stack) {
       const { base, quality } = splitQuality(stack.id);
-      const name = itemById(base)?.name ?? base;
+      const tool = toolOfId(base);
+      const name = tool
+        ? (TOOL_NAMES[tool] ?? tool)
+        : (itemById(base)?.name ?? base);
       this.note.setText(
         `${name}${quality === "normal" ? "" : ` (${quality})`} x${stack.count}`,
       );

@@ -32,8 +32,12 @@ export class Inventory {
     return this.slots.map((s) => (s ? { ...s } : null));
   }
 
-  load(saved: ({ id: string; count: number } | null)[]): void {
-    const size = Math.min(Math.max(saved.length, SLOT_COUNT), this.max);
+  /** `keepAll` lets a load run past the usual limit, so nothing in a save is dropped. */
+  load(saved: ({ id: string; count: number } | null)[], keepAll = false): void {
+    const size = Math.max(
+      Math.min(Math.max(saved.length, SLOT_COUNT), this.max),
+      keepAll ? saved.length : 0,
+    );
     this.slots = Array.from({ length: size }, (_, i) => {
       const s = saved[i];
       return s ? { ...s } : undefined;

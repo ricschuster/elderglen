@@ -13,6 +13,7 @@ import {
 import type { Skills } from "./skills";
 import type { Facing, Vec } from "./movement";
 import type { GameState } from "./save";
+import { isToolId } from "./toolitems";
 
 /**
  * Gentle combat (`docs/design/22_mines.md`, build slice 3, part one): one health
@@ -341,7 +342,7 @@ export function takeStarter(g: GameState, id: string): string | undefined {
 /** Items a defeat never takes: tools, weapons, seeds, bundle goods and anything kept (rods, bait, furniture, chests). Note 22, decision 16. */
 export function isSafeFromDefeat(id: string): boolean {
   const { base } = splitQuality(id);
-  if (isWeapon(base)) return true;
+  if (isToolId(base) || isWeapon(base)) return true;
   if (itemById(id)?.keep) return true;
   if (/(^|-)(seed|sapling)$/.test(base)) return true;
   return BUNDLES.some((b) =>

@@ -155,6 +155,8 @@ export function playGame(
   onDay?: (g: GameState) => void,
 ): RunResult {
   const g = startGame();
+  // The four tools now fill pack slots (note 102): give the bot the room it had.
+  g.inventory.grow(g.inventory.size + 4);
   g.forage.respawn(dateOf(1).season, maps.get(START.map).forageSpots, random);
   const bot = new Bot(g, persona, random);
   const result: RunResult = {

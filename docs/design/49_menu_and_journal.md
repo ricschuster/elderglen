@@ -59,8 +59,9 @@ and the options door (`45`). This note gives them one home.
   farm name, current funds, total earnings and the date. Built so far: funds,
   date and farm type. The game has no farm name or lifetime earnings counter
   yet, so those two wait for a name field and a counter in the save. The
-  four tools are carried outside the backpack here, so they show in a strip above
-  the grid and cannot be moved or trashed.
+  four tools are ordinary stacks in the grid (note 102): they move and swap like
+  any item, and can go in chests, but are never trashed, sold, shipped or dropped.
+  There is no fixed tool strip. Built 2026-11-16.
 - **The Skills tab (Stardew 1.6) also shows:** the title from total skill levels,
   the farmhouse upgrade level, the deepest mine floor and the stardrop-like
   finds, when each exists. Professions show on hover or long press. Added as
@@ -115,9 +116,9 @@ Three sections, switched with Left and Right or a tap.
   never changes the held slot behind the menu. The saved pages do not say what
   Stardew's wheel does in a menu, so this is unchecked against Stardew.
 - **The Pack tab has three extras (Stardew's inventory menu).**
-  - A trash can destroys what is dropped on it. Most tools cannot be trashed. On
+  - A trash can destroys what is dropped on it. Tools are never trashed (note 102). On
     touch, tap a stack and then the can, with a confirm for anything of value.
-  - An Auto-Sort button sorts the pack into game order and leaves tools alone.
+  - An Auto-Sort button sorts the pack into game order, tools first.
   - A bundle icon opens the journal on its Projects section. It is only a
     shortcut, since the journal already holds that data.
 - **Page Up and Page Down switch tabs on the keyboard (ours).** E closes the

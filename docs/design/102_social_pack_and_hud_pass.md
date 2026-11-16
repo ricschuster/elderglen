@@ -44,10 +44,12 @@ Status: draft, owner feedback 2026-11-16. Design before build. Extends notes 49
 - **Spouse and children rows: settled 2026-11-16.** The spouse keeps their
   roster place with a spouse line. Children sit in a short section after the
   roster, hearts only (Stardew, from memory, SC-186).
-- **Tool rules: settled 2026-11-16.** Tools are free to move, but cannot be
-  trashed, sold or dropped. The touch tool button uses the first matching tool
-  in the pack, so moving a tool never breaks it. Old saves have tools in slots 0
-  to 3, so nothing to migrate.
+- **Tool rules: settled 2026-11-16, chests allowed (owner, same day).** Tools
+  are free to move and can go in chests, but cannot be trashed, sold, shipped or
+  dropped. The touch tool button and tap-to-move auto-pick use the first
+  matching tool in the pack (never a chest), so moving a tool never breaks them.
+  Old saves kept the tools apart, so load puts any missing tool in the front
+  slots and shifts the rest along (the pack grows if it is full).
 - **Slot size: settled 2026-11-16.** A larger base slot (64 px, up from 44) on
   desktop windows wide enough for it, still scaled by the UI size setting. Touch
   keeps its current size. The pack grid and toolbar re-flow to fit.
@@ -88,7 +90,13 @@ Status: draft, owner feedback 2026-11-16. Design before build. Extends notes 49
   key scrolling with a bar, a detail page (gift log, birthday, back) and a
   children section. Portraits are placeholder tinted squares with an initial
   (no portrait art exists yet). Not yet checked in a browser or on touch.
-- Not built: tools in the pack, slot size, clock panel, energy bar, touch HUD.
+- **Batch B, tools in the pack: built (2026-11-16).** Tools are stacks with ids
+  `tool:hoe` and so on (`src/core/toolitems.ts`); tiers stay in `toolTiers`, so
+  upgrades need no stack lookup. The toolbar is the pack's slots by index, so the
+  fixed strip is gone; `findTool` serves auto-pick. Tools are safe from defeat
+  and sort first. Tools use pack slots, so a new pack has 8 free slots (the sim
+  bot gets 4 extra). Not checked in a browser.
+- Not built: slot size, clock panel, energy bar, touch HUD.
 
 ## Checks added
 

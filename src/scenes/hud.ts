@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { heldAt, rowOf, TOOLS, TOOLBAR_SIZE, type Held } from "../core/toolbar";
+import { heldAt, rowOf, TOOLBAR_SIZE, type Held } from "../core/toolbar";
 import { SLOT_COUNT } from "../core/inventory";
 import { iconKey as itemIcon, TOOL_ICONS } from "./art";
 import { dateText } from "../core/calendar";
@@ -428,7 +428,7 @@ export class Hud {
 
   /** The toolbar index that bar slot i stands for, given the row shown. */
   private indexOf(i: number): number {
-    return i < TOOLS.length ? i : i + this.row * SLOT_COUNT;
+    return i + this.row * SLOT_COUNT;
   }
 
   /** True if a screen point falls on the toolbar, which owns its touches. */
@@ -470,14 +470,13 @@ export class Hud {
     this.heldName.setText(
       now.kind === "item" ? (itemById(now.id)?.name ?? now.id) : "",
     );
-    if (selected >= TOOLS.length) this.row = rowOf(selected);
+    this.row = rowOf(selected);
     const multiRow = g.inventory.size > SLOT_COUNT;
     this.rowButton.setVisible(multiRow && this.touch);
     this.rowText.setVisible(multiRow && this.touch);
-    // The tools sit on the first row only; later rows show backpack slots.
+    // Tools are ordinary pack stacks, so every row shows the same twelve slots.
     const order: number[] = [];
-    for (let i = 0; i < this.slots.length; i++)
-      if (this.row === 0 || i >= TOOLS.length) order.push(i);
+    for (let i = 0; i < this.slots.length; i++) order.push(i);
     if (this.touch) {
       // Keep the held slot in view, then clamp the scroll to the column.
       const at = order.indexOf(
@@ -494,7 +493,7 @@ export class Hud {
     }
     this.slots.forEach((box, i) => {
       const index = this.indexOf(i);
-      let shown = this.row === 0 || i >= TOOLS.length;
+      let shown = true;
       if (this.touch) {
         const k = order.indexOf(i) - this.scrollTop;
         shown = shown && k >= 0 && k < this.visibleCount;

@@ -92,7 +92,7 @@ import { stageOf as fruitStageOf } from "../core/fruittrees";
 import { teaStageOf } from "../core/teabush";
 import { potAt, potLook, potsOf } from "../core/gardenpot";
 import type { GameState } from "../core/save";
-import { TOOLS, cycle, heldAt, nextRow, toolbarSize } from "../core/toolbar";
+import { cycle, findTool, heldAt, nextRow, toolbarSize } from "../core/toolbar";
 import { pendingChoice } from "../core/professions";
 import { eat, type Outcome } from "../core/actions";
 import { dateOf } from "../core/calendar";
@@ -1627,7 +1627,10 @@ export class FarmScene extends Phaser.Scene {
       this.store.teaBushes.at(tile.x, tile.y);
     const rock = this.rocks()?.at(tile.x, tile.y);
     if (tree || rock) {
-      this.select(TOOLS.indexOf(tree ? "axe" : "pickaxe"));
+      // Find the tool by what it is: the first one in the pack, wherever it sits.
+      const at = findTool(this.state.inventory, tree ? "axe" : "pickaxe");
+      if (at < 0) return this.action();
+      this.select(at);
       this.tapSwinging = true;
       this.heldMs = 0;
       this.use();
