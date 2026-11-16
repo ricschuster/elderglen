@@ -149,3 +149,21 @@ export function inWindow(
   const row = Math.floor(i / cols);
   return row >= offset && row < offset + shown;
 }
+
+/** Pixels a touch must travel before a press on the chest grid becomes a swipe. */
+export const SWIPE_START_PX = 10;
+
+/**
+ * The first row shown after a vertical swipe: the grid follows the finger, so
+ * dragging up by one row pitch shows the next row. `dy` is the drag distance
+ * from where the touch began (negative is up); the result is clamped.
+ */
+export function swipeRowOffset(
+  startOffset: number,
+  dy: number,
+  pitch: number,
+  total: number,
+  shown: number,
+): number {
+  return clampRowOffset(startOffset - Math.round(dy / pitch), total, shown);
+}

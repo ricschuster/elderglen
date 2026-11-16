@@ -4,6 +4,8 @@ import { chestById, colourChest, type PlacedChest } from "../core/chests";
 import {
   TOUCH_CELL,
   clampRowOffset,
+  SWIPE_START_PX,
+  swipeRowOffset,
   fillStacks,
   inWindow,
   pressActions,
@@ -67,6 +69,8 @@ export class ChestScene extends Phaser.Scene {
   private offset = 0;
   private chestTop = 0;
   private menu: Phaser.GameObjects.GameObject[] = [];
+  /** A touch on the chest grid that may become a vertical swipe. */
+  private swipe: { y: number; offset: number; active: boolean } | undefined;
   private pressTimer: Phaser.Time.TimerEvent | undefined;
   private chestName = "Chest";
 
@@ -450,12 +454,16 @@ export class ChestScene extends Phaser.Scene {
         );
       return;
     }
-    if (!this.inv(side).slot(slot)) {
+    const scrollable = Math.ceil(this.chest.items.size / COLS) > this.shown;
+    const swipeable = p.wasTouch && side === "chest" && scrollable;
+    if (swipeable)
+      this.swipe = { y: p.worldY, offset: this.offset, active: false };
+    if (!this.inv(side).slot(slot) && !swipeable) {
       this.tap(side, slot);
       return;
     }
     this.press = { side, slot, x: p.worldX, y: p.worldY };
-    if (p.wasTouch) {
+    if (p.wasTouch && this.inv(side).slot(slot)) {
       // A long press opens the send menu; a short one still taps.
       this.pressTimer?.remove();
       this.pressTimer = this.time.delayedCall(LONG_PRESS_MS, () => {
@@ -468,6 +476,30 @@ export class ChestScene extends Phaser.Scene {
   }
 
   private move(p: Phaser.Input.Pointer): void {
+    const sw = this.swipe;
+    if (sw && !sw.active && this.press && !this.dragging) {
+      if (Math.abs(p.worldY - sw.y) >= SWIPE_START_PX) {
+        // A vertical drag scrolls: it ends the press, so no long press or tap.
+        sw.active = true;
+        this.pressTimer?.remove();
+        this.press = undefined;
+      }
+    }
+    if (sw?.active) {
+      const off = swipeRowOffset(
+        sw.offset,
+        p.worldY - sw.y,
+        PITCH,
+        Math.ceil(this.chest.items.size / COLS),
+        this.shown,
+      );
+      if (off !== this.offset) {
+        this.offset = off;
+        this.layoutChest();
+        this.refresh();
+      }
+      return;
+    }
     if (!this.press) return;
     if (!this.dragging) {
       if (Math.hypot(p.worldX - this.press.x, p.worldY - this.press.y) < 6)
@@ -483,6 +515,7 @@ export class ChestScene extends Phaser.Scene {
 
   private up(p: Phaser.Input.Pointer): void {
     this.pressTimer?.remove();
+    this.swipe = undefined;
     const press = this.press;
     this.press = undefined;
     if (!press) return;
