@@ -39,7 +39,7 @@ import {
 import { fertilizerById } from "../core/fertilizer";
 import Phaser from "phaser";
 import { animalKey } from "./art-animals";
-import { saveSettings } from "../core/bindings";
+import { saveSettings, type TouchScheme } from "../core/bindings";
 import { sleep } from "../core/sleep";
 import {
   areaOf,
@@ -193,6 +193,13 @@ import {
 import { aimAt } from "../core/aim";
 import { isLongPress, tileScreenRect } from "../core/tipanchor";
 import { createControls, type Controls } from "./controls";
+import {
+  DEFAULT_SCHEME,
+  partsFor,
+  schemeById,
+  usesTap,
+  type Parts,
+} from "../core/controlschemes";
 import { planTap, planUse, type TapPlan } from "../core/pathing";
 import { tapPick, tapUse } from "../core/tapuse";
 import { isTapperItem, tapReady, tapStatus } from "../core/tapper";
@@ -517,6 +524,7 @@ export class FarmScene extends Phaser.Scene {
   /** Tap-to-move (note 27): the route still to walk, and what to do at the end. */
   private tapPath: Vec[] = [];
   /** A tapped spot in the world the sling shoots at, for a moment. */
+  private scheme: TouchScheme = DEFAULT_SCHEME;
   private tapShot?: { x: number; y: number; until: number };
   /** Villagers on this map right now and the placeholder blocks that show them (#599). */
   private villagers: Present[] = [];
@@ -723,10 +731,11 @@ export class FarmScene extends Phaser.Scene {
 
     // UI objects, drawn by a second camera that does not zoom.
     const settings = loadDeviceSettings();
+    this.scheme = settings.touchScheme;
     this.hud = new Hud(
       this,
       (i) => this.select(i),
-      () => this.use(),
+      () => this.useButton(),
       () => this.action(),
       () => this.openMenu("pack"),
       () => this.openMenu("crafting"),
@@ -845,7 +854,7 @@ export class FarmScene extends Phaser.Scene {
       });
     }
 
-    if (this.controls.profile === "touch" && settings.touchScheme === "tap")
+    if (this.controls.profile === "touch" && usesTap(settings.touchScheme))
       this.initTapInput();
 
     this.initWorldTips();
@@ -1042,12 +1051,13 @@ export class FarmScene extends Phaser.Scene {
     this.checkWedding();
     const marching = this.updateParade(dt);
     if (marching) this.cancelTap();
+    const parts = this.updateParts();
+    const stick = marching ? { x: 0, y: 0 } : this.controls.vector();
+    // A push on the stick overrides a tap route (tap and stick schemes).
+    if (stick.x !== 0 || stick.y !== 0) this.cancelTap();
     const walking = !marching && this.tapPath.length > 0;
-    const v = marching
-      ? { x: 0, y: 0 }
-      : walking
-        ? this.tapVector(dt)
-        : this.controls.vector();
+    const v = marching ? { x: 0, y: 0 } : walking ? this.tapVector(dt) : stick;
+    this.updateAttack(parts);
     if (!walking && (v.x !== 0 || v.y !== 0)) this.cancelTap();
     this.facing = facingFrom(v, this.facing);
     if (v.x !== 0 || v.y !== 0) this.keyAim();
@@ -1303,6 +1313,7 @@ export class FarmScene extends Phaser.Scene {
       over?: Phaser.GameObjects.GameObject[],
     ): boolean =>
       !over?.length &&
+      !this.controls.claims?.(p) &&
       !this.hud.covers(p.x, p.y) &&
       !this.leaving &&
       !this.marching;
@@ -2139,8 +2150,7 @@ export class FarmScene extends Phaser.Scene {
 
   /** How the player gets off the horse: a tap on the farmer, or the Action key. */
   private getOffHint(): string {
-    return this.controls.profile === "touch" &&
-      loadDeviceSettings().touchScheme === "tap"
+    return this.controls.profile === "touch" && usesTap(this.scheme)
       ? "Tap yourself"
       : "Press Action";
   }
@@ -2297,6 +2307,86 @@ export class FarmScene extends Phaser.Scene {
   private open(kind: string, data?: object): void {
     this.scene.launch(kind, data);
     this.scene.pause();
+  }
+
+  /** True while the held item is a weapon. */
+  private weaponHeld(): boolean {
+    const h = heldAt(this.state, this.selected);
+    return h.kind === "item" && isWeapon(h.id);
+  }
+
+  /** The control parts showing now, given the scheme and the held item (note 27). */
+  private updateParts(): Parts {
+    const id = this.scheme;
+    const parts = partsFor(id, this.weaponHeld());
+    if (this.controls.profile === "touch") {
+      this.hud.setButtons(
+        parts.useButton,
+        parts.actionButton,
+        schemeById(id).oneButton,
+      );
+      this.controls.setParts?.(parts);
+    }
+    return parts;
+  }
+
+  /**
+   * The one-button schemes: the button acts on what is ahead (a person, a
+   * service, a ripe crop or the horse) and otherwise uses the held item. The
+   * two-button schemes keep Use as Use.
+   */
+  private useButton(): void {
+    const id = this.scheme;
+    if (!schemeById(id).oneButton) return this.use();
+    const front = this.aimTile();
+    const hand =
+      !!this.map.serviceAt(front.x, front.y) ||
+      !!presentAt(this.villagers, front.x, front.y) ||
+      this.tapHand(front);
+    if (hand) return this.action();
+    this.use();
+  }
+
+  /**
+   * The attack schemes (note 27). Auto-attack swings at the nearest creature
+   * in reach; the attack stick faces and swings the way it is pushed. The
+   * weapon's own cooldown paces both.
+   */
+  private updateAttack(parts: Parts): void {
+    if (this.controls.profile !== "touch") return;
+    if (this.leaving || this.marching || this.state.animals.mounted) return;
+    const floor = this.fightState();
+    if (!floor || this.state.combat.noCreatures) return;
+    const h = heldAt(this.state, this.selected);
+    const weapon =
+      h.kind === "item" && isWeapon(h.id) ? weaponById(h.id) : undefined;
+    if (!weapon) return;
+    const ts = this.map.tileSize;
+    const push = parts.aimStick ? this.controls.aim?.() : undefined;
+    let dir: Vec | undefined = push;
+    if (!dir && parts.autoAttack) {
+      let best = Infinity;
+      for (const c of floor.creatures) {
+        const dx = c.x - this.pos.x;
+        const dy = c.y - this.pos.y;
+        const d = Math.hypot(dx, dy);
+        if (d <= weapon.reach * ts && d < best) {
+          best = d;
+          dir = { x: dx, y: dy };
+        }
+      }
+    }
+    if (!dir || this.time.now < this.swingReady) return;
+    this.facing = facingFrom(dir, this.facing);
+    if (weapon.family === "sling") {
+      const len = Math.hypot(dir.x, dir.y) || 1;
+      this.tapShot = {
+        x: this.pos.x + (dir.x / len) * 64,
+        y: this.pos.y - 6 + (dir.y / len) * 64,
+        until: this.time.now + 300,
+      };
+    }
+    this.swing(weapon);
   }
 
   /** Use the held tool on the tile the player faces. Services are Action's. */

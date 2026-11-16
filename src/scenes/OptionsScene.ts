@@ -1,3 +1,4 @@
+import { SCHEMES } from "../core/controlschemes";
 import Phaser from "phaser";
 import {
   ACTIONS,
@@ -9,7 +10,6 @@ import {
   swapBinding,
   type Profile,
   type Settings,
-  type TouchScheme,
 } from "../core/bindings";
 import {
   centreView,
@@ -28,11 +28,6 @@ import { browserSettingsStore, loadDeviceSettings } from "./storage";
 export const PROFILE_NAMES: Record<Profile, string> = {
   desktop: "Desktop",
   touch: "Touch",
-};
-
-const SCHEME_NAMES: Record<TouchScheme, string> = {
-  tap: "Tap to move",
-  stick: "Stick",
 };
 
 /**
@@ -251,16 +246,19 @@ export class OptionsScene extends Phaser.Scene {
       },
     ];
     if (s.profile === "touch") {
-      rows.push({
-        label: "How to move",
-        buttons: (Object.keys(SCHEME_NAMES) as TouchScheme[]).map((t) => ({
-          text: this.mark(s.touchScheme === t, SCHEME_NAMES[t]),
-          run: () => {
-            s.touchScheme = t;
-            this.refresh();
-          },
-        })),
-      });
+      for (const d of SCHEMES)
+        rows.push({
+          label: d.name,
+          buttons: [
+            {
+              text: this.mark(s.touchScheme === d.id, "Use this"),
+              run: () => {
+                s.touchScheme = d.id;
+                this.refresh();
+              },
+            },
+          ],
+        });
     } else {
       for (const a of ACTIONS) {
         rows.push({

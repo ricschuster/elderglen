@@ -6,6 +6,7 @@ import {
   type Profile,
   type Settings,
 } from "../core/bindings";
+import { schemeById, type Parts, type StickLook } from "../core/controlschemes";
 import { keyVector, stickVector, type Vec } from "../core/movement";
 
 /** What a profile can ask the scene to do (note 45, "One input seam"). */
@@ -35,6 +36,12 @@ export interface Controls {
   vector(): Vec;
   /** True while the use control is held. */
   useHeld(): boolean;
+  /** Which parts show now (weapon-only parts come and go). */
+  setParts?(parts: Parts): void;
+  /** True while this finger holds a stick, so a tap handler leaves it alone. */
+  claims?(p: Phaser.Input.Pointer): boolean;
+  /** The attack stick's push, when it is held. */
+  aim?(): Vec | undefined;
   /** The UI camera's zoom, so touch drawing keeps its screen size. */
   setUiScale(scale: number): void;
 }
@@ -135,54 +142,121 @@ class DesktopControls implements Controls {
   setUiScale(): void {}
 }
 
-/**
- * The touch profile: a floating stick. Touch down on the left half of the
- * screen, then drag. The right half is left free for tools. It never reads the
- * keyboard.
- */
-class TouchControls implements Controls {
-  readonly profile = "touch";
-  readonly objects: Phaser.GameObjects.GameObject[];
-  private stick: Phaser.GameObjects.Graphics;
-  private stickId = -1;
+/** One floating stick on a screen zone. Draws a ring, or nothing when invisible. */
+class StickPad {
+  readonly gfx: Phaser.GameObjects.Graphics;
+  private id = -1;
   private anchor: Vec = { x: 0, y: 0 };
   private current: Vec = { x: 0, y: 0 };
+  look: StickLook = "visible";
+  enabled = true;
 
-  /** `ignore` lets the HUD claim a touch, so it does not start the stick. */
   constructor(
     scene: Phaser.Scene,
+    private inZone: (p: Phaser.Input.Pointer) => boolean,
     ignore: (p: Phaser.Input.Pointer) => boolean,
+    private tint: number,
   ) {
-    // A second finger is needed for the stick and a tool at the same time.
-    // The input manager outlives a scene restart, so add it only once.
-    if (scene.input.manager.pointers.length < 3) scene.input.addPointer(1);
-    this.stick = scene.add.graphics().setDepth(1000);
-    this.objects = [this.stick];
-
+    this.gfx = scene.add.graphics().setDepth(1000);
     scene.input.on("pointerdown", (p: Phaser.Input.Pointer) => {
-      if (this.stickId !== -1 || p.x >= scene.scale.gameSize.width / 2) return;
-      if (ignore(p)) return;
-      this.stickId = p.id;
+      if (!this.enabled || this.id !== -1 || !this.inZone(p) || ignore(p))
+        return;
+      this.id = p.id;
       this.anchor = { x: p.x, y: p.y };
       this.current = { ...this.anchor };
     });
     scene.input.on("pointermove", (p: Phaser.Input.Pointer) => {
-      if (p.id === this.stickId) this.current = { x: p.x, y: p.y };
+      if (p.id === this.id) this.current = { x: p.x, y: p.y };
     });
     const release = (p?: Phaser.Input.Pointer) => {
-      if (!p || p.id === this.stickId) this.stickId = -1;
+      if (!p || p.id === this.id) this.id = -1;
     };
     scene.input.on("pointerup", release);
     scene.input.on("gameout", () => release());
   }
 
+  claims(p: Phaser.Input.Pointer): boolean {
+    return p.id === this.id;
+  }
+
+  /** The push, length 0 to 1. Zero while no finger holds the stick. */
   vector(): Vec {
-    this.drawStick();
-    if (this.stickId === -1) return { x: 0, y: 0 };
+    if (!this.enabled) this.id = -1;
+    this.draw();
+    if (this.id === -1) return { x: 0, y: 0 };
     return stickVector(
       this.current.x - this.anchor.x,
       this.current.y - this.anchor.y,
     );
+  }
+
+  private draw(): void {
+    this.gfx.clear();
+    if (this.id === -1 || this.look !== "visible") return;
+    const { x, y } = this.anchor;
+    const knob = stickVector(this.current.x - x, this.current.y - y, 0, 40);
+    this.gfx.lineStyle(3, this.tint, 0.35).strokeCircle(x, y, 40);
+    this.gfx
+      .fillStyle(this.tint, 0.45)
+      .fillCircle(x + knob.x * 40, y + knob.y * 40, 18);
+  }
+}
+
+/**
+ * The touch profile: a floating move stick and, for the attack schemes, an aim
+ * stick (note 27). With tap-to-move the move stick takes only the lower-left
+ * corner, so taps elsewhere still walk; without it the stick takes the left
+ * half. The aim stick takes the lower-right corner. It never reads the keyboard.
+ */
+class TouchControls implements Controls {
+  readonly profile = "touch";
+  readonly objects: Phaser.GameObjects.GameObject[];
+  private move: StickPad;
+  private aimPad: StickPad;
+
+  /** `ignore` lets the HUD claim a touch, so it does not start a stick. */
+  constructor(
+    scene: Phaser.Scene,
+    tap: boolean,
+    ignore: (p: Phaser.Input.Pointer) => boolean,
+  ) {
+    // A second finger is needed for the stick and a tool at the same time.
+    // The input manager outlives a scene restart, so add it only once.
+    if (scene.input.manager.pointers.length < 3) scene.input.addPointer(1);
+    const size = () => scene.scale.gameSize;
+    this.move = new StickPad(
+      scene,
+      (p) => p.x < size().width / 2 && (!tap || p.y > size().height * 0.45),
+      ignore,
+      0xffffff,
+    );
+    this.aimPad = new StickPad(
+      scene,
+      (p) => p.x > size().width / 2 && p.y > size().height * 0.45,
+      ignore,
+      0xffb040,
+    );
+    this.aimPad.enabled = false;
+    this.objects = [this.move.gfx, this.aimPad.gfx];
+  }
+
+  setParts(parts: Parts): void {
+    this.move.enabled = parts.stick !== "none";
+    if (parts.stick !== "none") this.move.look = parts.stick;
+    this.aimPad.enabled = parts.aimStick;
+  }
+
+  claims(p: Phaser.Input.Pointer): boolean {
+    return this.move.claims(p) || this.aimPad.claims(p);
+  }
+
+  vector(): Vec {
+    return this.move.vector();
+  }
+
+  aim(): Vec | undefined {
+    const v = this.aimPad.vector();
+    return v.x === 0 && v.y === 0 ? undefined : v;
   }
 
   useHeld(): boolean {
@@ -190,19 +264,9 @@ class TouchControls implements Controls {
   }
 
   setUiScale(scale: number): void {
-    // The stick is drawn in screen pixels on a zoomed UI camera.
-    this.stick.setScale(1 / scale);
-  }
-
-  private drawStick(): void {
-    this.stick.clear();
-    if (this.stickId === -1) return;
-    const { x, y } = this.anchor;
-    const knob = stickVector(this.current.x - x, this.current.y - y, 0, 40);
-    this.stick.lineStyle(3, 0xffffff, 0.35).strokeCircle(x, y, 40);
-    this.stick
-      .fillStyle(0xffffff, 0.45)
-      .fillCircle(x + knob.x * 40, y + knob.y * 40, 18);
+    // The sticks are drawn in screen pixels on a zoomed UI camera.
+    this.move.gfx.setScale(1 / scale);
+    this.aimPad.gfx.setScale(1 / scale);
   }
 }
 
@@ -232,9 +296,10 @@ export function createControls(
 ): Controls {
   if (settings.profile !== "touch")
     return new DesktopControls(scene, settings.bindings, intents);
-  return settings.touchScheme === "stick"
-    ? new TouchControls(scene, ignore)
-    : new TapControls();
+  const def = schemeById(settings.touchScheme);
+  // Tap-only schemes need no pad at all.
+  if (def.stick === "none" && !def.aimStick) return new TapControls();
+  return new TouchControls(scene, def.tap, ignore);
 }
 
 /** The keyboard hint line for the desktop profile, from the bindings. */
