@@ -13,7 +13,28 @@
     "korvi_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
     "korvi_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
     "korvi_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
-    "korvi_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+    "korvi_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "korvi_4_a": "PLACEHOLDER TEXT. Korvi, scene for 4 hearts. The story comes with the voice sheet.",
+    "korvi_4_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "korvi_4_ans1": "PLACEHOLDER TEXT. Of course.",
+    "korvi_4_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "korvi_4_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "korvi_4_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "korvi_4_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "korvi_8_a": "PLACEHOLDER TEXT. Korvi, scene for 8 hearts. The story comes with the voice sheet.",
+    "korvi_8_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "korvi_8_ans1": "PLACEHOLDER TEXT. Of course.",
+    "korvi_8_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "korvi_8_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "korvi_8_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "korvi_8_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "korvi_10_a": "PLACEHOLDER TEXT. Korvi, scene for 10 hearts. The story comes with the voice sheet.",
+    "korvi_10_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "korvi_10_ans1": "PLACEHOLDER TEXT. Of course.",
+    "korvi_10_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "korvi_10_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "korvi_10_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "korvi_10_c": "PLACEHOLDER TEXT. Here, I want you to have this."
   },
   "events": [
     {
@@ -130,6 +151,118 @@
       ]
     },
     {
+      "id": "korvi-forge-4",
+      "villager": "korvi",
+      "place": "mtn:forge",
+      "hearts": 4,
+      "window": {
+        "from": "8:00",
+        "until": "17:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "korvi",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "korvi"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_4_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "korvi",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_4_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "korvi_4_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "korvi_4_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_4_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "korvi",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_4_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_4_c"
+        },
+        {
+          "cmd": "give",
+          "recipe": "korvi-supper"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "korvi-4-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
       "id": "korvi-forge-6",
       "villager": "korvi",
       "place": "mtn:forge",
@@ -233,6 +366,230 @@
         {
           "cmd": "setFlag",
           "flag": "korvi-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "korvi-forge-8",
+      "villager": "korvi",
+      "place": "mtn:forge",
+      "hearts": 8,
+      "window": {
+        "from": "17:00",
+        "until": "20:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "korvi",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "korvi"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_8_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "korvi",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_8_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "korvi_8_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "korvi_8_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_8_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "korvi",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_8_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_8_c"
+        },
+        {
+          "cmd": "give",
+          "furniture": "korvi-token"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "korvi-8-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "korvi-forge-10",
+      "villager": "korvi",
+      "place": "mtn:forge",
+      "hearts": 10,
+      "window": {
+        "from": "17:00",
+        "until": "20:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "korvi",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "korvi"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_10_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "korvi",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_10_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "korvi_10_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "korvi_10_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_10_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "korvi",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_10_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "korvi",
+          "line": "korvi_10_c"
+        },
+        {
+          "cmd": "give",
+          "hat": "korvi-ribbon"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "korvi-10-seen"
         },
         {
           "cmd": "snap"

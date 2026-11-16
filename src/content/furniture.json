@@ -218,5 +218,215 @@
     "name": "Tide bowl",
     "price": 120,
     "color": "#5b9fb0"
+  },
+  {
+    "id": "alder-token",
+    "name": "Alder's Token",
+    "price": 120,
+    "color": "#b8a446",
+    "keepsake": true
+  },
+  {
+    "id": "aldreth-token",
+    "name": "Aldreth's Token",
+    "price": 120,
+    "color": "#6eb846",
+    "keepsake": true
+  },
+  {
+    "id": "aurelle-token",
+    "name": "Aurelle's Token",
+    "price": 120,
+    "color": "#46b87b",
+    "keepsake": true
+  },
+  {
+    "id": "barnaby-token",
+    "name": "Barnaby's Token",
+    "price": 120,
+    "color": "#4697b8",
+    "keepsake": true
+  },
+  {
+    "id": "bramwell-token",
+    "name": "Bramwell's Token",
+    "price": 120,
+    "color": "#5246b8",
+    "keepsake": true
+  },
+  {
+    "id": "cordelia-token",
+    "name": "Cordelia's Token",
+    "price": 120,
+    "color": "#b146b8",
+    "keepsake": true
+  },
+  {
+    "id": "cuthbert-token",
+    "name": "Cuthbert's Token",
+    "price": 120,
+    "color": "#b84662",
+    "keepsake": true
+  },
+  {
+    "id": "dilly-token",
+    "name": "Dilly's Token",
+    "price": 120,
+    "color": "#b88846",
+    "keepsake": true
+  },
+  {
+    "id": "dorrie-token",
+    "name": "Dorrie's Token",
+    "price": 120,
+    "color": "#8bb846",
+    "keepsake": true
+  },
+  {
+    "id": "dunmar-token",
+    "name": "Dunmar's Token",
+    "price": 120,
+    "color": "#46b85f",
+    "keepsake": true
+  },
+  {
+    "id": "fitch-token",
+    "name": "Fitch's Token",
+    "price": 120,
+    "color": "#46b4b8",
+    "keepsake": true
+  },
+  {
+    "id": "hattie-token",
+    "name": "Hattie's Token",
+    "price": 120,
+    "color": "#4655b8",
+    "keepsake": true
+  },
+  {
+    "id": "hester-token",
+    "name": "Hester's Token",
+    "price": 120,
+    "color": "#9446b8",
+    "keepsake": true
+  },
+  {
+    "id": "korvi-token",
+    "name": "Korvi's Token",
+    "price": 120,
+    "color": "#b8467e",
+    "keepsake": true
+  },
+  {
+    "id": "linnet-token",
+    "name": "Linnet's Token",
+    "price": 120,
+    "color": "#b86b46",
+    "keepsake": true
+  },
+  {
+    "id": "maren-token",
+    "name": "Maren's Token",
+    "price": 120,
+    "color": "#a7b846",
+    "keepsake": true
+  },
+  {
+    "id": "marl-token",
+    "name": "Marl's Token",
+    "price": 120,
+    "color": "#49b846",
+    "keepsake": true
+  },
+  {
+    "id": "odette-token",
+    "name": "Odette's Token",
+    "price": 120,
+    "color": "#46b8a1",
+    "keepsake": true
+  },
+  {
+    "id": "pim-token",
+    "name": "Pim's Token",
+    "price": 120,
+    "color": "#4671b8",
+    "keepsake": true
+  },
+  {
+    "id": "podge-token",
+    "name": "Podge's Token",
+    "price": 120,
+    "color": "#7846b8",
+    "keepsake": true
+  },
+  {
+    "id": "rosmarin-token",
+    "name": "Rosmarin's Token",
+    "price": 120,
+    "color": "#b8469a",
+    "keepsake": true
+  },
+  {
+    "id": "rufus-token",
+    "name": "Rufus's Token",
+    "price": 120,
+    "color": "#b84f46",
+    "keepsake": true
+  },
+  {
+    "id": "rundahl-token",
+    "name": "Rundahl's Token",
+    "price": 120,
+    "color": "#b8ae46",
+    "keepsake": true
+  },
+  {
+    "id": "rushie-token",
+    "name": "Rushie's Token",
+    "price": 120,
+    "color": "#65b846",
+    "keepsake": true
+  },
+  {
+    "id": "thalwen-token",
+    "name": "Thalwen's Token",
+    "price": 120,
+    "color": "#46b885",
+    "keepsake": true
+  },
+  {
+    "id": "thistle-token",
+    "name": "Thistle's Token",
+    "price": 120,
+    "color": "#468eb8",
+    "keepsake": true
+  },
+  {
+    "id": "tilda-token",
+    "name": "Tilda's Token",
+    "price": 120,
+    "color": "#5c46b8",
+    "keepsake": true
+  },
+  {
+    "id": "toby-token",
+    "name": "Toby's Token",
+    "price": 120,
+    "color": "#b846b7",
+    "keepsake": true
+  },
+  {
+    "id": "walter-token",
+    "name": "Walter's Token",
+    "price": 120,
+    "color": "#b84658",
+    "keepsake": true
+  },
+  {
+    "id": "wren-token",
+    "name": "Wren's Token",
+    "price": 120,
+    "color": "#b89146",
+    "keepsake": true
   }
 ]

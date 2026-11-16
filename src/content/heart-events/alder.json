@@ -13,7 +13,28 @@
     "alder_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
     "alder_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
     "alder_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
-    "alder_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+    "alder_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "alder_4_a": "PLACEHOLDER TEXT. Alder, scene for 4 hearts. The story comes with the voice sheet.",
+    "alder_4_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "alder_4_ans1": "PLACEHOLDER TEXT. Of course.",
+    "alder_4_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "alder_4_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "alder_4_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "alder_4_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "alder_8_a": "PLACEHOLDER TEXT. Alder, scene for 8 hearts. The story comes with the voice sheet.",
+    "alder_8_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "alder_8_ans1": "PLACEHOLDER TEXT. Of course.",
+    "alder_8_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "alder_8_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "alder_8_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "alder_8_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "alder_10_a": "PLACEHOLDER TEXT. Alder, scene for 10 hearts. The story comes with the voice sheet.",
+    "alder_10_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "alder_10_ans1": "PLACEHOLDER TEXT. Of course.",
+    "alder_10_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "alder_10_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "alder_10_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "alder_10_c": "PLACEHOLDER TEXT. Here, I want you to have this."
   },
   "events": [
     {
@@ -130,6 +151,118 @@
       ]
     },
     {
+      "id": "alder-burrow-garden-4",
+      "villager": "alder",
+      "place": "hw:burrow-garden",
+      "hearts": 4,
+      "window": {
+        "from": "8:00",
+        "until": "9:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "alder",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "alder"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_4_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "alder",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_4_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "alder_4_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "alder_4_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_4_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "alder",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_4_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_4_c"
+        },
+        {
+          "cmd": "give",
+          "recipe": "alder-supper"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "alder-4-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
       "id": "alder-store-6",
       "villager": "alder",
       "place": "hw:store",
@@ -233,6 +366,230 @@
         {
           "cmd": "setFlag",
           "flag": "alder-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "alder-store-8",
+      "villager": "alder",
+      "place": "hw:store",
+      "hearts": 8,
+      "window": {
+        "from": "9:00",
+        "until": "13:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "alder",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "alder"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_8_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "alder",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_8_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "alder_8_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "alder_8_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_8_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "alder",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_8_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_8_c"
+        },
+        {
+          "cmd": "give",
+          "furniture": "alder-token"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "alder-8-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "alder-store-10",
+      "villager": "alder",
+      "place": "hw:store",
+      "hearts": 10,
+      "window": {
+        "from": "9:00",
+        "until": "13:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "alder",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "alder"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_10_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "alder",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_10_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "alder_10_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "alder_10_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_10_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "alder",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_10_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "alder",
+          "line": "alder_10_c"
+        },
+        {
+          "cmd": "give",
+          "hat": "alder-ribbon"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "alder-10-seen"
         },
         {
           "cmd": "snap"

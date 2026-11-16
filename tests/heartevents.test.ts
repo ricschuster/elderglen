@@ -139,7 +139,7 @@ describe("triggers", () => {
   it("is once only, one a day, and never on a festival day", () => {
     const g = newGame();
     setHearts(g, "odette", 4);
-    setHearts(g, "hattie", 4);
+    setHearts(g, "hattie", 2);
     const e = eventById("odette-store-2")!;
     expect(dueEvents(g, ctx("hw:store", 10))).toEqual([]); // Hat Parade
     completeEvent(g, e, 3);
@@ -359,5 +359,32 @@ describe("event-taught dishes (#873)", () => {
             d.id,
           ).toBe(true);
         }
+  });
+});
+
+describe("heart steps 2, 4, 6, 8 and 10 (#873, placeholder text until M3d)", () => {
+  it("every villager has an event at each of 2, 4, 6, 8 and 10 hearts", async () => {
+    const { VILLAGERS } = await import("../src/core/villagers");
+    for (const v of VILLAGERS)
+      for (const h of [2, 4, 6, 8, 10])
+        expect(
+          HEART_EVENTS.some((e) => e.villager === v.id && e.hearts === h),
+          `${v.id} at ${h}`,
+        ).toBe(true);
+  });
+  it("rewards follow the step: 8 and 10 a keepsake, a 4 a recipe in the new events", () => {
+    for (const e of HEART_EVENTS) {
+      const g = e.scene.find((c) => c.cmd === "give");
+      if (!g || g.cmd !== "give") continue;
+      if (e.hearts === 8) expect(g.furniture ?? g.hat, e.id).toBeTruthy();
+      if (e.hearts === 10) expect(g.hat ?? g.furniture, e.id).toBeTruthy();
+    }
+  });
+  it("every event at those steps is reachable and its scene valid", () => {
+    for (const e of HEART_EVENTS)
+      if ([4, 8, 10].includes(e.hearts)) {
+        expect(presenceOverlaps(e), e.id).toBe(true);
+        expect(validateScene(e.scene, e.villager), e.id).toEqual([]);
+      }
   });
 });

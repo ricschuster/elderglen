@@ -13,7 +13,28 @@
     "hester_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
     "hester_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
     "hester_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
-    "hester_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+    "hester_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "hester_4_a": "PLACEHOLDER TEXT. Hester, scene for 4 hearts. The story comes with the voice sheet.",
+    "hester_4_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "hester_4_ans1": "PLACEHOLDER TEXT. Of course.",
+    "hester_4_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "hester_4_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "hester_4_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "hester_4_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "hester_8_a": "PLACEHOLDER TEXT. Hester, scene for 8 hearts. The story comes with the voice sheet.",
+    "hester_8_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "hester_8_ans1": "PLACEHOLDER TEXT. Of course.",
+    "hester_8_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "hester_8_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "hester_8_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "hester_8_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "hester_10_a": "PLACEHOLDER TEXT. Hester, scene for 10 hearts. The story comes with the voice sheet.",
+    "hester_10_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "hester_10_ans1": "PLACEHOLDER TEXT. Of course.",
+    "hester_10_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "hester_10_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "hester_10_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "hester_10_c": "PLACEHOLDER TEXT. Here, I want you to have this."
   },
   "events": [
     {
@@ -133,6 +154,121 @@
       ]
     },
     {
+      "id": "hester-square-4",
+      "villager": "hester",
+      "place": "hw:square",
+      "hearts": 4,
+      "window": {
+        "from": "9:00",
+        "until": "11:30"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "hester",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "hester"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_4_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "hester",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_4_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "hester_4_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "hester_4_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_4_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "hester",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_4_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_4_c"
+        },
+        {
+          "cmd": "give",
+          "recipe": "hester-supper"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "hester-4-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
       "id": "hester-river-path-6",
       "villager": "hester",
       "place": "hw:river-path",
@@ -238,6 +374,236 @@
         {
           "cmd": "setFlag",
           "flag": "hester-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "hester-river-path-8",
+      "villager": "hester",
+      "place": "hw:river-path",
+      "hearts": 8,
+      "window": {
+        "from": "14:00",
+        "until": "16:30"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "hester",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "hester"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_8_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "hester",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_8_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "hester_8_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "hester_8_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_8_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "hester",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_8_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_8_c"
+        },
+        {
+          "cmd": "give",
+          "furniture": "hester-token"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "hester-8-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "hester-river-path-10",
+      "villager": "hester",
+      "place": "hw:river-path",
+      "hearts": 10,
+      "window": {
+        "from": "14:00",
+        "until": "16:30"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "hester",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "hester"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_10_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "hester",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_10_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "hester_10_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "hester_10_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_10_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "hester",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_10_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "hester",
+          "line": "hester_10_c"
+        },
+        {
+          "cmd": "give",
+          "hat": "hester-ribbon"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "hester-10-seen"
         },
         {
           "cmd": "snap"

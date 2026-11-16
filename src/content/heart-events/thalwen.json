@@ -13,7 +13,28 @@
     "thalwen_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
     "thalwen_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
     "thalwen_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
-    "thalwen_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+    "thalwen_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "thalwen_4_a": "PLACEHOLDER TEXT. Thalwen, scene for 4 hearts. The story comes with the voice sheet.",
+    "thalwen_4_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "thalwen_4_ans1": "PLACEHOLDER TEXT. Of course.",
+    "thalwen_4_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "thalwen_4_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "thalwen_4_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "thalwen_4_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "thalwen_8_a": "PLACEHOLDER TEXT. Thalwen, scene for 8 hearts. The story comes with the voice sheet.",
+    "thalwen_8_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "thalwen_8_ans1": "PLACEHOLDER TEXT. Of course.",
+    "thalwen_8_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "thalwen_8_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "thalwen_8_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "thalwen_8_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "thalwen_10_a": "PLACEHOLDER TEXT. Thalwen, scene for 10 hearts. The story comes with the voice sheet.",
+    "thalwen_10_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "thalwen_10_ans1": "PLACEHOLDER TEXT. Of course.",
+    "thalwen_10_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "thalwen_10_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "thalwen_10_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "thalwen_10_c": "PLACEHOLDER TEXT. Here, I want you to have this."
   },
   "events": [
     {
@@ -133,6 +154,121 @@
       ]
     },
     {
+      "id": "thalwen-dunes-4",
+      "villager": "thalwen",
+      "place": "beach:dunes",
+      "hearts": 4,
+      "window": {
+        "from": "9:00",
+        "until": "12:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "thalwen",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "thalwen"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_4_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "thalwen",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_4_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "thalwen_4_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "thalwen_4_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_4_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "thalwen",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_4_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_4_c"
+        },
+        {
+          "cmd": "give",
+          "recipe": "thalwen-supper"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "thalwen-4-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
       "id": "thalwen-shore-6",
       "villager": "thalwen",
       "place": "beach:shore",
@@ -238,6 +374,236 @@
         {
           "cmd": "setFlag",
           "flag": "thalwen-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "thalwen-shore-8",
+      "villager": "thalwen",
+      "place": "beach:shore",
+      "hearts": 8,
+      "window": {
+        "from": "14:00",
+        "until": "18:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "thalwen",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "thalwen"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_8_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "thalwen",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_8_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "thalwen_8_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "thalwen_8_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_8_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "thalwen",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_8_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_8_c"
+        },
+        {
+          "cmd": "give",
+          "furniture": "thalwen-token"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "thalwen-8-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "thalwen-shore-10",
+      "villager": "thalwen",
+      "place": "beach:shore",
+      "hearts": 10,
+      "window": {
+        "from": "14:00",
+        "until": "18:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "thalwen",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "thalwen"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_10_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "thalwen",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_10_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "thalwen_10_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "thalwen_10_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_10_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "thalwen",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_10_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "thalwen",
+          "line": "thalwen_10_c"
+        },
+        {
+          "cmd": "give",
+          "hat": "thalwen-ribbon"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "thalwen-10-seen"
         },
         {
           "cmd": "snap"

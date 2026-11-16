@@ -20,7 +20,21 @@
     "thistle_rain4_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
     "thistle_rain4_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
     "thistle_rain4_r2": "PLACEHOLDER TEXT. Then I will be quick.",
-    "thistle_rain4_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+    "thistle_rain4_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "thistle_8_a": "PLACEHOLDER TEXT. Thistle, scene for 8 hearts. The story comes with the voice sheet.",
+    "thistle_8_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "thistle_8_ans1": "PLACEHOLDER TEXT. Of course.",
+    "thistle_8_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "thistle_8_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "thistle_8_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "thistle_8_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "thistle_10_a": "PLACEHOLDER TEXT. Thistle, scene for 10 hearts. The story comes with the voice sheet.",
+    "thistle_10_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "thistle_10_ans1": "PLACEHOLDER TEXT. Of course.",
+    "thistle_10_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "thistle_10_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "thistle_10_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "thistle_10_c": "PLACEHOLDER TEXT. Here, I want you to have this."
   },
   "events": [
     {
@@ -127,6 +141,122 @@
         {
           "cmd": "setFlag",
           "flag": "thistle-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "thistle-inn-rain-4",
+      "villager": "thistle",
+      "place": "hw:inn",
+      "hearts": 4,
+      "conditions": {
+        "weather": ["rainy", "stormy"]
+      },
+      "window": {
+        "from": "10:00",
+        "until": "18:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "thistle",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "thistle"
+        },
+        {
+          "cmd": "say",
+          "who": "thistle",
+          "line": "thistle_rain4_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "thistle",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "thistle",
+          "line": "thistle_rain4_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "thistle_rain4_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "thistle_rain4_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "thistle",
+          "line": "thistle_rain4_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "thistle",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "thistle",
+          "line": "thistle_rain4_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "thistle",
+          "line": "thistle_rain4_c"
+        },
+        {
+          "cmd": "give",
+          "item": "crocus",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "thistle-rain-4-seen"
         },
         {
           "cmd": "snap"
@@ -252,16 +382,16 @@
       ]
     },
     {
-      "id": "thistle-inn-rain-4",
+      "id": "thistle-river-path-8",
       "villager": "thistle",
-      "place": "hw:inn",
-      "hearts": 4,
-      "conditions": {
-        "weather": ["rainy", "stormy"]
-      },
+      "place": "hw:river-path",
+      "hearts": 8,
       "window": {
-        "from": "10:00",
+        "from": "16:00",
         "until": "18:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
       },
       "scene": [
         {
@@ -289,7 +419,7 @@
         {
           "cmd": "say",
           "who": "thistle",
-          "line": "thistle_rain4_a"
+          "line": "thistle_8_a"
         },
         {
           "cmd": "emote",
@@ -299,17 +429,17 @@
         {
           "cmd": "say",
           "who": "thistle",
-          "line": "thistle_rain4_b"
+          "line": "thistle_8_b"
         },
         {
           "cmd": "choose",
           "answers": [
             {
-              "line": "thistle_rain4_ans1",
+              "line": "thistle_8_ans1",
               "goto": "yes"
             },
             {
-              "line": "thistle_rain4_ans2",
+              "line": "thistle_8_ans2",
               "goto": "later"
             }
           ]
@@ -321,7 +451,7 @@
         {
           "cmd": "say",
           "who": "thistle",
-          "line": "thistle_rain4_r1"
+          "line": "thistle_8_r1"
         },
         {
           "cmd": "rise",
@@ -339,7 +469,7 @@
         {
           "cmd": "say",
           "who": "thistle",
-          "line": "thistle_rain4_r2"
+          "line": "thistle_8_r2"
         },
         {
           "cmd": "label",
@@ -348,16 +478,130 @@
         {
           "cmd": "say",
           "who": "thistle",
-          "line": "thistle_rain4_c"
+          "line": "thistle_8_c"
         },
         {
           "cmd": "give",
-          "item": "crocus",
-          "count": 1
+          "furniture": "thistle-token"
         },
         {
           "cmd": "setFlag",
-          "flag": "thistle-rain-4-seen"
+          "flag": "thistle-8-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "thistle-river-path-10",
+      "villager": "thistle",
+      "place": "hw:river-path",
+      "hearts": 10,
+      "window": {
+        "from": "16:00",
+        "until": "18:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "thistle",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "thistle"
+        },
+        {
+          "cmd": "say",
+          "who": "thistle",
+          "line": "thistle_10_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "thistle",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "thistle",
+          "line": "thistle_10_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "thistle_10_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "thistle_10_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "thistle",
+          "line": "thistle_10_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "thistle",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "thistle",
+          "line": "thistle_10_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "thistle",
+          "line": "thistle_10_c"
+        },
+        {
+          "cmd": "give",
+          "hat": "thistle-ribbon"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "thistle-10-seen"
         },
         {
           "cmd": "snap"
