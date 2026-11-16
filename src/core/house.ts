@@ -256,14 +256,26 @@ export function refundRenovation(g: RenoState, id: string): boolean {
 }
 
 /**
- * Where a loaded game puts the player: the cellar if the save was made down
- * there and the stairs are still open, else the farm's start (saves keep the
- * map only for the cellar, since everywhere else a new morning starts at home).
+ * Where a loaded game puts the player. A resume record carries the tile where
+ * the player stood (`at`); Continue puts them back there. A save from before
+ * `at` that was made in the cellar still loads there, at the stairs. Anywhere
+ * else a new morning starts at the farm's start (undefined). The cellar is
+ * skipped if the stairs are no longer open.
  */
 export function resumeAt(g: {
   resumeMap?: string;
+  at?: { map: string; x: number; y: number };
   houseTier: number;
-}): { map: string; entry: string } | undefined {
+}): { map: string; entry: string; x?: number; y?: number } | undefined {
+  const at = g.at;
+  if (at && (at.map !== CELLAR_MAP || houseHasCellar(g.houseTier)))
+    // The entry only serves if the tile turns out blocked (the map changed).
+    return {
+      map: at.map,
+      entry: at.map === CELLAR_MAP ? "from_above" : "door",
+      x: at.x,
+      y: at.y,
+    };
   return g.resumeMap === CELLAR_MAP && houseHasCellar(g.houseTier)
     ? { map: CELLAR_MAP, entry: "from_above" }
     : undefined;

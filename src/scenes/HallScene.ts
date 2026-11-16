@@ -6,8 +6,7 @@ import { CATEGORY_NAMES, type ArtisanCategory } from "../core/artisan";
 import type { GameState } from "../core/save";
 import { payGuestsBoard } from "../core/roomrewards";
 import { endDue } from "../core/sleep";
-import { saveGame } from "../core/save";
-import { browserStore } from "./storage";
+import { resumeSave } from "./storage";
 import { frame, Menu, TOUCH_ROW_H, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
@@ -210,6 +209,6 @@ export class HallScene extends Phaser.Scene {
     } else {
       this.scene.resume("farm");
     }
-    saveGame(browserStore, this.state);
+    resumeSave(this.state);
   }
 }

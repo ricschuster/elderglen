@@ -1,9 +1,9 @@
 import Phaser from "phaser";
 import { cancelDivorce, divorceProblem, fileDivorce } from "../core/divorce";
 import { DIVORCE_FEE } from "../core/marriage";
-import { saveGame, type GameState } from "../core/save";
+import type { GameState } from "../core/save";
 import { villagerById } from "../core/villagers";
-import { browserStore } from "./storage";
+import { resumeSave } from "./storage";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
@@ -105,6 +105,6 @@ export class LedgerScene extends Phaser.Scene {
   private close(): void {
     this.scene.stop();
     this.scene.resume("farm");
-    saveGame(browserStore, this.state);
+    resumeSave(this.state);
   }
 }

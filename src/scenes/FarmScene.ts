@@ -196,10 +196,15 @@ import { tapPick, tapUse } from "../core/tapuse";
 import { isTapperItem, tapReady, tapStatus } from "../core/tapper";
 import {
   browserSettingsStore,
-  browserStore,
   loadDeviceSettings,
+  nightSave,
+  resumeSave,
+  setSpotProvider,
+  takeSaveNotice,
 } from "./storage";
-import { saveGame } from "../core/save";
+import { ResumeGate } from "../core/records";
+import { serialize, type ResumeSpot } from "../core/save";
+import { spawnTableOf } from "../core/spawns";
 import { hallRestored } from "../core/bundles";
 import {
   healthShown,
@@ -427,6 +432,9 @@ const NIGHT_ALPHA = 0.5;
 interface SceneData {
   map: string;
   entry: string;
+  /** A tile to stand on (a resumed day, note 52), if it is still open. */
+  x?: number;
+  y?: number;
 }
 
 /** The tile step a push takes for each way the farmer faces. */
@@ -447,6 +455,8 @@ export class FarmScene extends Phaser.Scene {
   private selected = 0;
   private mapId: string = START.map;
   private entryName: string = START.entry;
+  private restoreTile: { x: number; y: number } | undefined;
+  private gate = new ResumeGate();
   private leaving = false;
   /** The mine floor this map is, if it is one. */
   private floor: number | undefined;
@@ -557,6 +567,12 @@ export class FarmScene extends Phaser.Scene {
     this.state = this.registry.get(STATE_KEY) as GameState;
     this.mapId = resolveMapId(data.map ?? START.map, this.state.farmType);
     this.entryName = data.entry ?? START.entry;
+    this.restoreTile =
+      data.x !== undefined && data.y !== undefined
+        ? { x: data.x, y: data.y }
+        : undefined;
+    this.gate = new ResumeGate();
+    this.gate.seed(serialize(this.state));
     // An area map (the Forest) has its own trees, rocks and forage: set them in
     // the state while the player is here, and put the farm's back anywhere else.
     leaveArea(this.state);
@@ -658,7 +674,11 @@ export class FarmScene extends Phaser.Scene {
     world.push(this.ground, this.wash);
     world.push(...this.drawLabels());
     world.push(...this.drawSpouseProps(holds));
-    let spawn: { x: number; y: number } = this.map.entry(this.entryName)!;
+    let spawn: { x: number; y: number } =
+      this.map.entry(this.entryName) ?? this.map.entries[0]!;
+    // A resumed day puts the player back on the tile they left, if it is open.
+    const back = this.restoreTile;
+    if (back && !this.map.isBlocked(back.x, back.y)) spawn = back;
     // Coming up from below lands on the ladder that was taken down.
     const ladder = this.floorState?.ladder;
     if (this.entryName === "from_below" && ladder) {
@@ -781,6 +801,21 @@ export class FarmScene extends Phaser.Scene {
       this.events.off(Phaser.Scenes.Events.RESUME, relayout);
     });
 
+    // The resume record (note 52): written when the page is hidden or closed.
+    // Both writes are synchronous, which is why they work in `pagehide`.
+    setSpotProvider(() => this.resumeSpot());
+    const hidden = (): void => {
+      if (document.visibilityState === "hidden") this.saveResume(true);
+    };
+    const closing = (): void => this.saveResume(true);
+    document.addEventListener("visibilitychange", hidden);
+    window.addEventListener("pagehide", closing);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      document.removeEventListener("visibilitychange", hidden);
+      window.removeEventListener("pagehide", closing);
+      setSpotProvider(undefined);
+    });
+
     this.initZoomControl();
 
     // The mouse (note 46): moving the cursor hands it the aim, left-click uses
@@ -888,7 +923,7 @@ export class FarmScene extends Phaser.Scene {
         this.namingHorse = false;
         return this.getOn();
       }
-      this.save();
+      this.saveResume();
       // A new day on a mine floor: the floor is gone, so wake at home.
       if (
         this.floor !== undefined &&
@@ -2108,7 +2143,7 @@ export class FarmScene extends Phaser.Scene {
         here,
         facingTile(this.pos, PLAYER, this.facing, this.map.tileSize),
       );
-      this.save();
+      this.saveResume();
     }
     const data: SceneData = { map, entry };
     this.cameras.main.fadeOut(FADE_MS);
@@ -2148,7 +2183,7 @@ export class FarmScene extends Phaser.Scene {
     }
     mount(this.state, this.map);
     this.message = `You are riding ${horseName(this.state)}. ${this.getOffHint()} to get off.`;
-    this.save();
+    this.saveResume();
     this.render();
   }
 
@@ -2165,7 +2200,7 @@ export class FarmScene extends Phaser.Scene {
     this.message = spot
       ? `${horseName(this.state)} waits here.`
       : `${horseName(this.state)} trots back to the stable.`;
-    this.save();
+    this.saveResume();
     this.render();
   }
 
@@ -2214,7 +2249,7 @@ export class FarmScene extends Phaser.Scene {
   /** The short scene that opens the Special Orders board (note 65). Shown once. */
   private showOrdersIntro(): void {
     this.state.orders.opened = true;
-    this.save();
+    this.saveResume();
     this.open("orders", { intro: true });
   }
 
@@ -2749,7 +2784,7 @@ export class FarmScene extends Phaser.Scene {
           : "The footbridge is already mended.";
       return this.render();
     }
-    this.save();
+    this.saveResume();
     this.travel(this.mapId, "at_bridge");
   }
 
@@ -2769,7 +2804,7 @@ export class FarmScene extends Phaser.Scene {
     if (r.ok) {
       const name = itemById(r.id)?.name ?? r.id;
       this.message = `A chest under the ledge. Inside: ${r.count} ${name}.`;
-      this.save();
+      this.saveResume();
     } else
       this.message =
         r.reason === "taken"
@@ -3038,11 +3073,39 @@ export class FarmScene extends Phaser.Scene {
     else this.render();
   }
 
-  /** Save to the browser, with the time of day, so Continue resumes the day. */
-  save(): void {
-    // A save made in the cellar loads there (`resumeAt`); anywhere else clears it.
-    this.state.resumeMap = this.mapId === CELLAR_MAP ? CELLAR_MAP : undefined;
-    saveGame(browserStore, this.state);
+  /**
+   * Where the player stands, for the resume record. Not in the mines or on a
+   * map with a creature table: a tile inside a fight is not safe to restore.
+   */
+  private resumeSpot(): ResumeSpot | undefined {
+    if (this.floor !== undefined || spawnTableOf(this.mapId)) return undefined;
+    const ts = this.map.tileSize;
+    return {
+      map: this.mapId,
+      x: Math.floor(this.pos.x / ts),
+      y: Math.floor((this.pos.y - 1) / ts),
+    };
+  }
+
+  /**
+   * Write the resume record, so Continue picks the day up (note 52). Skipped
+   * when nothing changed or one was written under two seconds ago, unless
+   * forced (Exit, the page hidden). Never while the night is being written.
+   */
+  saveResume(force = false): void {
+    if (this.state.day.over) return;
+    const text = serialize(this.state);
+    const now = performance.now();
+    if (!this.gate.shouldWrite(text, now, force)) return;
+    resumeSave(this.state, this.resumeSpot());
+    this.gate.wrote(text, now);
+    this.noteSaveFailure();
+  }
+
+  /** Say once that a write was refused, so the player can export the game. */
+  private noteSaveFailure(): void {
+    if (takeSaveNotice())
+      this.message = "Could not save. Export from Options to keep your game.";
   }
 
   /** The conditions that open doors. Rebuilt after sleeping, when a building may have landed overnight. */
@@ -3075,7 +3138,8 @@ export class FarmScene extends Phaser.Scene {
     const report = sleep(g, farmMap.forageSpots, Math.random, farmMap);
     this.refreshHolds();
     this.message = "";
-    this.save();
+    nightSave(g);
+    this.noteSaveFailure();
     this.render();
     // The shipping summary comes first when the bin paid; it opens the report.
     const shipping = report.shipped.lines.length > 0;

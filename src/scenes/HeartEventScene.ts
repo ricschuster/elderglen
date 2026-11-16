@@ -8,10 +8,10 @@ import {
   type Cmd,
   type HeartEvent,
 } from "../core/heartevents";
-import { saveGame, type GameState } from "../core/save";
+import type { GameState } from "../core/save";
 import { WINDOW_FILL } from "./panel";
 import { STATE_KEY } from "./state";
-import { browserStore } from "./storage";
+import { resumeSave } from "./storage";
 
 export interface HeartEventData {
   id: string;
@@ -407,7 +407,7 @@ export class HeartEventScene extends Phaser.Scene {
       this.event,
       this.state.day.clock.day,
     );
-    saveGame(browserStore, this.state);
+    resumeSave(this.state);
     if (words.length === 0) return this.close();
     this.box.setVisible(true);
     this.speaker.setText("You were given");

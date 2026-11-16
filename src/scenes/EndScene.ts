@@ -1,8 +1,8 @@
 import Phaser from "phaser";
 import { SKILLS } from "../core/skills";
 import { dateOf } from "../core/calendar";
-import { newGame, saveGame, type GameState } from "../core/save";
-import { browserStore } from "./storage";
+import { newGame, type GameState } from "../core/save";
+import { nightSave } from "./storage";
 import { STATE_KEY } from "./state";
 import { WINDOW_FILL } from "./panel";
 
@@ -89,7 +89,7 @@ export class EndScene extends Phaser.Scene {
 
   /** Replace the save with a new game and reload, so every scene resets. */
   private startOver(): void {
-    saveGame(browserStore, newGame());
+    nightSave(newGame());
     location.href = `${location.pathname}?new`;
   }
 }

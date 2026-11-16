@@ -1,4 +1,5 @@
 import { respawnAreaForage } from "../core/areas";
+import { nightSave } from "./storage";
 import Phaser from "phaser";
 import { FARM_TYPES, type FarmTypeDef } from "../core/farmtypes";
 import { dateOf } from "../core/calendar";
@@ -149,6 +150,7 @@ export class FarmChoiceScene extends Phaser.Scene {
       Math.random,
     );
     respawnAreaForage(state, Math.random);
+    nightSave(state);
     this.registry.set(STATE_KEY, state);
     this.scene.start("farm");
   }
