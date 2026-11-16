@@ -5,8 +5,8 @@ import { Inventory } from "./inventory";
 import type { FarmMap } from "./map";
 import type { GameState } from "./save";
 import { canStand } from "./furniture";
-import { chestById } from "./chestdefs";
-import { isClear } from "./actions";
+import { CHEST_COLOURS, chestById } from "./chestdefs";
+import { isOpenGround } from "./actions";
 import { mayPlaceOn, placeTag } from "./placeables";
 
 /**
@@ -28,6 +28,8 @@ export interface PlacedChest {
   y: number;
   id: string;
   items: Inventory;
+  /** The colour bar's pick, 1 to 20 (`CHEST_COLOURS`); none is the original. */
+  colour?: number;
   /** The special order this chest is bound to (note 65, "Goods hand-in"). */
   order?: string;
   /** The order has ended; goods left inside can be taken back, and the chest goes when empty. */
@@ -40,6 +42,7 @@ export interface ChestSave {
   y: number;
   id: string;
   slots: ({ id: string; count: number } | null)[];
+  colour?: number;
   order?: string;
   closed?: boolean;
 }
@@ -55,6 +58,7 @@ export class Chests {
       y: c.y,
       id: c.id,
       slots: c.items.save(),
+      ...(c.colour ? { colour: c.colour } : {}),
       ...(c.order
         ? { order: c.order, ...(c.closed ? { closed: true } : {}) }
         : {}),
@@ -84,6 +88,7 @@ export class Chests {
         this.add(c.map, x, y, def.id);
       if (added) {
         added.items.load(c.slots);
+        if (validColour(c.colour)) added.colour = c.colour;
         if (typeof c.order === "string") {
           added.order = c.order;
           if (c.closed === true) added.closed = true;
@@ -156,6 +161,23 @@ export class Chests {
   }
 }
 
+/** True for a colour bar pick: a whole number from 1 to the palette's length. */
+export const validColour = (n: unknown): n is number =>
+  Number.isInteger(n) &&
+  (n as number) >= 1 &&
+  (n as number) <= CHEST_COLOURS.length;
+
+/** Colour a chest from the bar; 0 puts the original back. Free, any time. */
+export function colourChest(c: PlacedChest, colour: number): boolean {
+  if (colour === 0) {
+    delete c.colour;
+    return true;
+  }
+  if (!validColour(colour)) return false;
+  c.colour = colour;
+  return true;
+}
+
 /** True when a chest holds nothing. */
 export function isEmpty(c: PlacedChest): boolean {
   for (let i = 0; i < c.items.size; i++) if (c.items.slot(i)) return false;
@@ -175,8 +197,8 @@ export function contents(c: PlacedChest): { id: string; count: number }[] {
 const fail = (reason: string): Outcome => ({ ok: false, reason });
 
 /**
- * Stand a chest from the backpack on the faced tile: clear diggable ground on
- * the farm, or open floor in the house. Free.
+ * Stand a chest from the backpack on the faced tile: any bare open ground on
+ * the farm (not only tillable), or open floor in the house. Free.
  */
 export function placeChest(
   g: GameState,
@@ -188,14 +210,42 @@ export function placeChest(
 ): Outcome {
   if (!chestById(id)) return fail("not a chest");
   if (g.inventory.count(id) < 1) return fail("no chest");
+  const there = g.chests.get(mapId, x, y);
+  if (there) return upgradeChest(g, there, id);
   const tag = placeTag(map, mapId);
   const ok =
     mayPlaceOn(id, tag) &&
     !g.chests.get(mapId, x, y) &&
-    (tag === "house" ? canStand(g, map, mapId, x, y) : isClear(g, map, x, y));
+    (tag === "house"
+      ? canStand(g, map, mapId, x, y)
+      : isOpenGround(g, map, x, y));
   if (!ok) return fail("cannot place here");
   g.inventory.remove(id);
   g.chests.add(mapId, x, y, id);
+  return { ok: true };
+}
+
+/**
+ * A big chest used on a regular or stone chest replaces it, stacks and colour
+ * kept, and the old chest goes to the backpack (Stardew, SC-194). Not on a
+ * chest bound to an order, and not when the backpack has no room for it.
+ */
+function upgradeChest(g: GameState, old: PlacedChest, id: string): Outcome {
+  const big = chestById(id)!;
+  const was = chestById(old.id)!;
+  if (big.slots <= was.slots || old.order) return fail("cannot place here");
+  // The new chest is out of the pack first, so its slot is free for the old one.
+  g.inventory.remove(id);
+  if (g.inventory.room(old.id) < 1) {
+    g.inventory.add(id);
+    return fail("backpack full");
+  }
+  g.chests.remove(old.map, old.x, old.y);
+  const fresh = g.chests.add(old.map, old.x, old.y, id)!;
+  fresh.items.load(old.items.save());
+  fresh.items.grow(big.slots);
+  if (old.colour) fresh.colour = old.colour;
+  g.inventory.add(old.id);
   return { ok: true };
 }
 
@@ -239,7 +289,7 @@ export function pushChest(
   const ok = isHouseMap(mapId)
     ? canStand(g, map, mapId, nx, ny) && !g.chests.get(mapId, nx, ny)
     : isFarmMap(mapId) &&
-      isClear(g, map, nx, ny) &&
+      isOpenGround(g, map, nx, ny) &&
       !g.chests.get(mapId, nx, ny);
   if (!ok) return fail("chest will not move");
   g.chests.move(mapId, x, y, nx, ny);

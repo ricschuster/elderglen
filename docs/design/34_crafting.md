@@ -44,6 +44,22 @@ It is slice 1 work (`33_build_order.md`).
 - **Chests as in Stardew:** wood, stone, and big versions of each. A chest with
   items in it cannot be picked up, but the axe or pickaxe pushes it one tile
   forward (SC-56, built in parity pass 521).
+- **Chest placement and screen (2026-11-16, owner; read from the saved Chest, Stone
+  Chest and Big Chest wiki pages):** a chest stands on any bare outdoor tile,
+  tillable or not, path and grass included, short of water, walls, exits,
+  entries and counters (`isOpenGround`, SC-191). Any tool takes an empty chest up
+  and pushes a full one a tile. A big chest used on a small one swaps it in,
+  stacks and colour kept, the old chest to the pack (Stardew; owner agreed).
+  The screen is Stardew's two grids, the chest above, the backpack below, with a
+  colour bar (the original plus 20 placeholder tints, free, saved per chest,
+  SC-193) on the title line. Moves: tap then tap or drag, a different item
+  swaps; right-click sends one and Shift with right-click half (mouse); Split
+  does half on touch (owner chose both); Space sends the stack across; "Add to
+  existing stacks" and "Organize" are Stardew's button names. Tools never go in a
+  chest. Rules in `src/core/chestmenu.ts`. Not built: villagers pushing a chest
+  off their path (our villagers do not cross the farm), the colour palette's
+  real colours, Stardew's chest art (M3d), chests in the greenhouse (needs the
+  greenhouse plant check to see chests first).
 - **Every craftable is data**, in `src/content/`, with its ingredients, its
   source and its slice. New recipes are data files, not code.
 

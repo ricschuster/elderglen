@@ -458,3 +458,8 @@ table, lantern floating and ice fishing rules with thin scene hooks, pond menu a
 ## Batch 4 detail (moved 2026-11-16)
 
 Item 6: **Batch 4 built 2026-11-14** (hall counter second tiles, renovation decor zones, overview and valley-map refresh, wiki gift lists stay draft, M4 hosting spike text drafted in `docs/design/drafts/m4-hosting-spike-issue.md`, owner approves before filing). Left: the owner's play. Real garden pot art waits for M3d. Village trees: owner kept the layout, judge in play. #874 spouse source built with marriage; the gallery set is left. Friendship doors are built (`gates.ts`).
+
+## Moved 2026-11-16c
+
+6f. **Social, tools in the pack, HUD pass** (note 102, built 2026-11-16): Social roster, tools as pack stacks, 64 px slots, clock panel, bars, pack drag and trash. Left: the owner's browser and tablet check, real art (M3d), quest cancel.
+6h. **Tool pass** (note 103, built 2026-11-16): scythe, grass and silo hay, water in the can with meter, hover tooltips, redrawn tool icons. Left: the owner's play, tooltip quality and price (chests, touch long press), a sim-bot rule for grass, SC-189 and SC-190.
