@@ -96,12 +96,14 @@ import { cycle, findTool, heldAt, nextRow, toolbarSize } from "../core/toolbar";
 import { pendingChoice } from "../core/professions";
 import { eat, type Outcome } from "../core/actions";
 import { dateOf } from "../core/calendar";
-import { clockText, darkness } from "../core/clock";
+import { darkness } from "../core/clock";
 import {
   festivalOfMap,
-  festivalOpen,
   festivalDayToday,
+  festivalGateHolds,
   festivalShutLine,
+  festivalSignLine,
+  walkIntoFestival,
   festivalStepShut,
   festivalToday,
   isFestivalMap,
@@ -1846,8 +1848,9 @@ export class FarmScene extends Phaser.Scene {
       this.render();
     } else if (exitOpen(exit, this.holds)) this.leave(exit);
     else {
-      this.message =
-        exit.id === "greenhouse"
+      this.message = exit.requires?.startsWith("festival-gate")
+        ? "Nothing is on there today."
+        : exit.id === "greenhouse"
           ? "The greenhouse is a ruin. Finish the Larder bundles at the village hall to repair it."
           : exit.id === "to_quarry"
             ? QUARRY_BRIDGE_LINE
@@ -1916,6 +1919,14 @@ export class FarmScene extends Phaser.Scene {
   }
 
   private leave(exit: Exit): void {
+    // Walking onto a festival map joins the festival (note 82 decision 11).
+    if (!isFestivalMap(this.mapId)) {
+      const problem = walkIntoFestival(this.state, exit.map);
+      if (problem) {
+        this.message = problem;
+        return this.render();
+      }
+    }
     this.travel(exit.map, exit.entry);
   }
 
@@ -2934,16 +2945,10 @@ export class FarmScene extends Phaser.Scene {
     }
   }
 
-  /** The festival green: open only while today's festival is on. */
+  /** The farm sign: says where and when today's festival is. The player walks there (note 82 decision 11). */
   private openFestival(): void {
-    const f = festivalDayToday(this.state.day.clock.day);
-    if (f && festivalOpen(f, this.state.day.clock.minutes))
-      return this.open("festival");
-    if (!f) this.message = "The green is quiet today.";
-    else if (this.state.day.clock.minutes >= f.closes)
-      this.message = `${f.name} is over for today.`;
-    else
-      this.message = `${f.name} runs from ${clockText(f.opens)} to ${clockText(f.closes)}.`;
+    const clock = this.state.day.clock;
+    this.message = festivalSignLine(clock.day, clock.minutes);
     this.render();
   }
 
@@ -2995,6 +3000,8 @@ export class FarmScene extends Phaser.Scene {
       this.state.day.clock.day,
       hallRestored(this.state.hall),
     ))
+      this.holds.add(h);
+    for (const h of festivalGateHolds(this.state.day.clock.day))
       this.holds.add(h);
     for (const c of this.conditional)
       c.drawn.setVisible(layerShows(c.layer, this.holds));
