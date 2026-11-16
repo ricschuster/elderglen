@@ -6,6 +6,7 @@ import {
   CHILD_MAX_HEARTS,
   childRows,
   socialRows,
+  socialTip,
   specialItems,
   type ChildRow,
   type Relationship,
@@ -16,6 +17,7 @@ import type { GameState } from "../core/save";
 import { frame } from "./panel";
 import { addPortrait } from "./portrait";
 import { STATE_KEY } from "./state";
+import { Tooltip } from "./tooltip";
 
 const TITLE = { fontSize: "30px", color: "#ffe9a0" };
 const BODY = { fontSize: "20px", color: "#ffffff", lineSpacing: 8 };
@@ -61,6 +63,9 @@ export class SocialScene extends Phaser.Scene {
   private dragY = 0;
   private dragTop = 0;
   private moved = false;
+  private tooltip!: Tooltip;
+  private tipShown = false;
+  private pressTimer: Phaser.Time.TimerEvent | undefined;
 
   constructor() {
     super("social");
@@ -70,6 +75,8 @@ export class SocialScene extends Phaser.Scene {
     this.top = 0;
     this.items = [];
     this.detail = [];
+    this.tipShown = false;
+    this.pressTimer = undefined;
   }
 
   private get total(): number {
@@ -96,19 +103,38 @@ export class SocialScene extends Phaser.Scene {
       .zone(LIST_X, LIST_TOP, LIST_W, LIST_H)
       .setOrigin(0)
       .setInteractive();
+    this.tooltip = new Tooltip(this);
     zone.on("pointerdown", (p: Phaser.Input.Pointer) => {
       this.dragY = p.y;
       this.dragTop = this.top;
       this.moved = false;
+      this.tipShown = false;
+      if (p.wasTouch) {
+        this.pressTimer?.remove();
+        this.pressTimer = this.time.delayedCall(450, () => {
+          if (this.moved) return;
+          this.tipShown = this.showTip(g, p);
+        });
+      }
     });
+    zone.on("pointerout", () => this.hideTip());
     zone.on("pointermove", (p: Phaser.Input.Pointer) => {
-      if (!p.isDown || this.detail.length > 0) return;
+      if (this.detail.length > 0) return;
+      if (!p.isDown) {
+        if (!p.wasTouch) this.showTip(g, p);
+        return;
+      }
       const dy = (this.dragY - p.y) / (this.cameras.main.zoom || 1);
-      if (Math.abs(dy) > 6) this.moved = true;
+      if (Math.abs(dy) > 6) {
+        this.moved = true;
+        this.hideTip();
+      }
       if (this.moved) this.scrollTo(this.dragTop + dy);
     });
     zone.on("pointerup", (p: Phaser.Input.Pointer) => {
-      if (this.moved || this.detail.length > 0) return;
+      const held = this.tipShown;
+      this.hideTip();
+      if (this.moved || held || this.detail.length > 0) return;
       const row = this.rowAt(p);
       if (row && row.met) this.openDetail(g, row);
     });
@@ -122,6 +148,29 @@ export class SocialScene extends Phaser.Scene {
     this.draw();
   }
 
+  /** Show the hover or long-press tip for the person under the pointer; true if one showed. */
+  private showTip(g: GameState, p: Phaser.Input.Pointer): boolean {
+    const row = this.rowAt(p);
+    const i = row ? this.rows.indexOf(row) : -1;
+    if (!row || i < 0) {
+      this.tooltip.hide();
+      return false;
+    }
+    const y = LIST_TOP + i * ROW_H - this.top;
+    this.tooltip.show(
+      socialTip(g, row),
+      { x: LIST_X, y, w: LIST_W - 10, h: ROW_H - 6 },
+      { w: 960, h: 540 },
+    );
+    return true;
+  }
+
+  private hideTip(): void {
+    this.pressTimer?.remove();
+    this.pressTimer = undefined;
+    this.tooltip.hide();
+  }
+
   private rowAt(p: Phaser.Input.Pointer): SocialRow | undefined {
     const local = this.cameras.main.getWorldPoint(p.x, p.y);
     const i = Math.floor((local.y - LIST_TOP + this.top) / ROW_H);
@@ -132,6 +181,7 @@ export class SocialScene extends Phaser.Scene {
     const next = Math.max(0, Math.min(this.maxTop, Math.round(v)));
     if (next === this.top) return;
     this.top = next;
+    this.hideTip();
     this.draw();
   }
 

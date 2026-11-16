@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { itemTip } from "../src/core/itemtip";
+import { chestTip, itemTip } from "../src/core/itemtip";
 import { allItems } from "../src/core/items";
 
 describe("itemTip", () => {
@@ -23,5 +23,33 @@ describe("itemTip", () => {
     const seed = allItems().find((i) => i.id.endsWith("-seed"))!;
     expect(itemTip(seed.id).kind).toBe("Seed");
     expect(itemTip("nope").name).toBe("nope");
+  });
+});
+
+describe("chestTip", () => {
+  const chest = (slots: ({ id: string; count: number } | undefined)[]) => ({
+    id: "chest",
+    items: { size: slots.length, slot: (i: number) => slots[i] },
+  });
+  it("says an empty chest is empty", () => {
+    const t = chestTip(chest([undefined, undefined]));
+    expect(t).toMatchObject({ name: "Chest", kind: "Chest" });
+    expect(t.text).toBe("Empty (2 slots).");
+  });
+  it("counts slots and lists the fullest items", () => {
+    const t = chestTip(
+      chest([
+        { id: "wood", count: 5 },
+        { id: "wood", count: 3 },
+        { id: "carrot", count: 1 },
+        undefined,
+      ]),
+    );
+    expect(t.text).toContain("3 of 4 slots used.");
+    expect(t.text).toContain("Wood x8");
+  });
+  it("marks an order chest", () => {
+    const c = { ...chest([undefined]), order: "x", closed: true };
+    expect(chestTip(c).text).toContain("order has ended");
   });
 });

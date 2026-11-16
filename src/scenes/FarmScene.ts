@@ -332,6 +332,7 @@ import {
   isHouseMap,
 } from "../core/house";
 import { SELECTED_KEY, STATE_KEY } from "./state";
+import { chestTip } from "../core/itemtip";
 import {
   cropKey,
   fertKey,
@@ -843,6 +844,8 @@ export class FarmScene extends Phaser.Scene {
 
     if (this.controls.profile === "touch" && settings.touchScheme === "tap")
       this.initTapInput();
+
+    this.initWorldTips();
 
     this.cameras.main.fadeIn(FADE_MS);
     // The villager at the door asks about the cave, once a morning.
@@ -1433,6 +1436,46 @@ export class FarmScene extends Phaser.Scene {
       this.input.off("pointerdown", onDown);
       this.input.off("pointermove", onMove);
       this.input.off("pointerup", onUp);
+    });
+  }
+
+  /**
+   * The tip over a placed chest: a mouse hover on desktop, a held finger on
+   * touch (about half a second, no travel). Shown in the HUD's tooltip.
+   */
+  private initWorldTips(): void {
+    const tipAt = (p: Phaser.Input.Pointer): void => {
+      if (this.hud.covers(p.x, p.y) || this.leaving) return this.hud.hideTip();
+      const t = this.tileAtPointer(p);
+      const chest = this.state.chests.get(this.mapId, t.x, t.y);
+      if (chest) this.hud.showTipAt(chestTip(chest), p.x, p.y);
+      else this.hud.hideTip();
+    };
+    let timer: Phaser.Time.TimerEvent | undefined;
+    let from = { x: 0, y: 0 };
+    const stop = (): void => {
+      timer?.remove();
+      timer = undefined;
+      this.hud.hideTip();
+    };
+    const onMove = (p: Phaser.Input.Pointer): void => {
+      if (!p.wasTouch) return tipAt(p);
+      if (Math.hypot(p.x - from.x, p.y - from.y) > 12) stop();
+    };
+    const onDown = (p: Phaser.Input.Pointer): void => {
+      if (!p.wasTouch) return;
+      from = { x: p.x, y: p.y };
+      timer?.remove();
+      timer = this.time.delayedCall(450, () => tipAt(p));
+    };
+    this.input.on("pointermove", onMove);
+    this.input.on("pointerdown", onDown);
+    this.input.on("pointerup", stop);
+    this.events.once("shutdown", () => {
+      timer?.remove();
+      this.input.off("pointermove", onMove);
+      this.input.off("pointerdown", onDown);
+      this.input.off("pointerup", stop);
     });
   }
 

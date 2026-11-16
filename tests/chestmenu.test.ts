@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { fillStacks, quickMove, transfer } from "../src/core/chestmenu";
+import {
+  chestGridLayout,
+  clampRow,
+  fillStacks,
+  MIN_PITCH,
+  quickMove,
+  rowFromSwipe,
+  slotVisible,
+  transfer,
+} from "../src/core/chestmenu";
 import { Inventory } from "../src/core/inventory";
 import { maps } from "../src/content/maps";
 import { START } from "../src/core/maps";
@@ -130,5 +139,31 @@ describe("chest colour and upgrade", () => {
     expect(g.inventory.count("chest")).toBe(1);
     // A small chest does not replace a big one.
     expect(placeChest(g, farm, START.map, x, y, "chest").ok).toBe(false);
+  });
+});
+
+describe("chest grid scrolling", () => {
+  it("keeps a small chest whole and a big one in a window", () => {
+    const small = chestGridLayout(3, 3, 356);
+    expect(small.visible).toBe(3);
+    const big = chestGridLayout(6, 3, 356);
+    expect(big.pitch).toBeGreaterThanOrEqual(MIN_PITCH);
+    expect(big.visible).toBeLessThan(6);
+    expect(big.visible).toBeGreaterThan(0);
+  });
+  it("clamps the first row", () => {
+    expect(clampRow(-2, 6, 4)).toBe(0);
+    expect(clampRow(9, 6, 4)).toBe(2);
+    expect(clampRow(1.4, 6, 4)).toBe(1);
+    expect(clampRow(3, 3, 4)).toBe(0);
+  });
+  it("turns a swipe up into rows further down", () => {
+    expect(rowFromSwipe(0, 92, 46)).toBe(2);
+    expect(rowFromSwipe(2, -46, 46)).toBe(1);
+  });
+  it("knows which slots show", () => {
+    expect(slotVisible(0, 12, 1, 4)).toBe(false);
+    expect(slotVisible(12, 12, 1, 4)).toBe(true);
+    expect(slotVisible(60, 12, 1, 4)).toBe(false);
   });
 });

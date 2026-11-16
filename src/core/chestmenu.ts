@@ -89,3 +89,59 @@ export function fillStacks(pack: Inventory, chest: Inventory): number {
   }
   return moved;
 }
+
+/** The smallest slot pitch (px) before the chest grid scrolls instead of shrinking. */
+export const MIN_PITCH = 46;
+
+/**
+ * Lay the two grids in `avail` px of height (labels and gaps already taken):
+ * the pack is always whole; the chest shrinks its slots down to `MIN_PITCH`,
+ * then shows only `visible` rows and scrolls the rest (a big chest is 6 rows).
+ */
+export function chestGridLayout(
+  chestRows: number,
+  packRows: number,
+  avail: number,
+  maxPitch = 62,
+): { pitch: number; visible: number } {
+  const fit = Math.floor(avail / (chestRows + packRows));
+  if (fit >= MIN_PITCH)
+    return { pitch: Math.min(maxPitch, fit), visible: chestRows };
+  const rows = Math.max(1, Math.floor(avail / MIN_PITCH));
+  return {
+    pitch: MIN_PITCH,
+    visible: Math.max(1, Math.min(chestRows, rows - packRows)),
+  };
+}
+
+/** Keep a first-visible-row between 0 and the last row that still fills the window. */
+export function clampRow(
+  row: number,
+  totalRows: number,
+  visible: number,
+): number {
+  return Math.max(
+    0,
+    Math.min(Math.max(0, totalRows - visible), Math.round(row)),
+  );
+}
+
+/** The first row after dragging a finger `dy` px up (positive) or down from `startRow`. */
+export function rowFromSwipe(
+  startRow: number,
+  dy: number,
+  pitch: number,
+): number {
+  return startRow + dy / pitch;
+}
+
+/** Whether slot `i` shows in a window starting at row `top` of `cols` columns. */
+export function slotVisible(
+  i: number,
+  cols: number,
+  top: number,
+  visible: number,
+): boolean {
+  const row = Math.floor(i / cols);
+  return row >= top && row < top + visible;
+}

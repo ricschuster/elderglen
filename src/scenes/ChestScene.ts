@@ -1,7 +1,15 @@
 import Phaser from "phaser";
 import { CHEST_COLOURS } from "../core/chestdefs";
 import { chestById, colourChest, type PlacedChest } from "../core/chests";
-import { fillStacks, quickMove, transfer } from "../core/chestmenu";
+import {
+  chestGridLayout,
+  clampRow,
+  fillStacks,
+  quickMove,
+  rowFromSwipe,
+  slotVisible,
+  transfer,
+} from "../core/chestmenu";
 import type { Inventory } from "../core/inventory";
 import { itemTip } from "../core/itemtip";
 import { sortPack } from "../core/packmenu";
@@ -47,7 +55,24 @@ export class ChestScene extends Phaser.Scene {
   private cursor: { side: Side; slot: number } = { side: "chest", slot: 0 };
   private splitting = false;
   private splitLabel!: Phaser.GameObjects.Text;
-  private press: { side: Side; slot: number; x: number; y: number } | undefined;
+  private press:
+    | {
+        side: Side;
+        slot: number;
+        x: number;
+        y: number;
+        touch: boolean;
+        at: number;
+        baseRow: number;
+        swiped: boolean;
+      }
+    | undefined;
+  /** The chest grid's first visible row, and how many rows it shows (big chests scroll). */
+  private topRow = 0;
+  private visibleRows = 0;
+  private pitch = 0;
+  private gridTop = 0;
+  private scrollBar: Phaser.GameObjects.Rectangle | undefined;
   private dragging: { side: Side; slot: number } | undefined;
   private dragIcon!: Phaser.GameObjects.Image;
 
@@ -66,6 +91,12 @@ export class ChestScene extends Phaser.Scene {
     this.splitting = false;
     this.press = undefined;
     this.dragging = undefined;
+    this.topRow = 0;
+    this.scrollBar = undefined;
+  }
+
+  private get chestRows(): number {
+    return Math.ceil(this.chest.items.size / COLS);
   }
 
   private inv(side: Side): Inventory {
@@ -81,13 +112,15 @@ export class ChestScene extends Phaser.Scene {
     this.note = message;
     this.tooltip = new Tooltip(this);
 
-    const rows =
-      Math.ceil(this.chest.items.size / COLS) +
-      Math.ceil(this.state.inventory.size / COLS);
-    const pitch = Math.min(
-      62,
-      Math.floor((BOTTOM - TOP - 2 * LABEL - 8) / rows),
+    const packRows = Math.ceil(this.state.inventory.size / COLS);
+    const layout = chestGridLayout(
+      this.chestRows,
+      packRows,
+      BOTTOM - TOP - 2 * LABEL - 8,
     );
+    const pitch = layout.pitch;
+    this.pitch = pitch;
+    this.visibleRows = layout.visible;
     const cell = pitch - 6;
     let y = TOP;
     for (const side of ["chest", "pack"] as const) {
@@ -96,8 +129,13 @@ export class ChestScene extends Phaser.Scene {
         color: "#ffffffcc",
       });
       y += LABEL;
+      if (side === "chest") this.gridTop = y;
       this.grid(side, y, pitch, cell);
-      y += Math.ceil(this.inv(side).size / COLS) * pitch + 8;
+      const shown =
+        side === "chest"
+          ? this.visibleRows
+          : Math.ceil(this.inv(side).size / COLS);
+      y += shown * pitch + 8;
     }
 
     this.colourBar(TOP);
@@ -106,6 +144,7 @@ export class ChestScene extends Phaser.Scene {
     const bx = LEFT + COLS * pitch + 16;
     this.button(bx, TOP + LABEL, "Add to existing stacks", () => this.fill());
     this.button(bx, TOP + LABEL + 52, "Organize", () => this.sort());
+    if (this.chestRows > this.visibleRows) this.scrollControls(bx);
     this.splitLabel = this.button(bx, TOP + LABEL + 104, "Split", () => {
       this.splitting = !this.splitting && this.selected !== undefined;
       this.refresh();
@@ -119,6 +158,9 @@ export class ChestScene extends Phaser.Scene {
       .setVisible(false);
     this.input.on("pointermove", (p: Phaser.Input.Pointer) => this.move(p));
     this.input.on("pointerup", (p: Phaser.Input.Pointer) => this.up(p));
+    this.input.on("wheel", (_p: unknown, _o: unknown, _x: number, dy: number) =>
+      this.scrollTo(this.topRow + (dy > 0 ? 1 : -1)),
+    );
 
     this.add.text(
       LEFT,
@@ -143,6 +185,41 @@ export class ChestScene extends Phaser.Scene {
     kb?.on("keydown-SPACE", () =>
       this.send(this.cursor.side, this.cursor.slot),
     );
+    this.refresh();
+  }
+
+  /** Up and down buttons and a thin bar beside the chest grid, for a chest taller than its window. */
+  private scrollControls(bx: number): void {
+    const y = TOP + LABEL + 156;
+    for (const [n, label, d] of [
+      [0, "Up", -1],
+      [1, "Down", 1],
+    ] as const)
+      this.add
+        .text(bx + n * 68, y, label, {
+          fontSize: "16px",
+          color: "#ffffff",
+          backgroundColor: "#a0482e",
+          padding: { x: 14, y: 8 },
+        })
+        .setInteractive({ useHandCursor: true })
+        .on("pointerdown", () => this.scrollTo(this.topRow + d));
+    this.scrollBar = this.add
+      .rectangle(
+        LEFT + COLS * this.pitch + 2,
+        this.gridTop,
+        6,
+        20,
+        0xffe9a0,
+        0.6,
+      )
+      .setOrigin(0);
+  }
+
+  private scrollTo(row: number): void {
+    const next = clampRow(row, this.chestRows, this.visibleRows);
+    if (next === this.topRow) return;
+    this.topRow = next;
     this.refresh();
   }
 
@@ -219,6 +296,34 @@ export class ChestScene extends Phaser.Scene {
     }
   }
 
+  /** Place the chest grid's cells for the scroll row; slots outside the window hide. */
+  private layoutChest(): void {
+    const cell = this.pitch - 6;
+    this.cells.chest.forEach((c, i) => {
+      const vis = slotVisible(i, COLS, this.topRow, this.visibleRows);
+      const x = LEFT + (i % COLS) * this.pitch;
+      const y =
+        this.gridTop + (Math.floor(i / COLS) - this.topRow) * this.pitch;
+      c.box.setPosition(x, y).setVisible(vis);
+      c.icon.setPosition(x + cell / 2, y + cell / 2 - 2);
+      c.count.setPosition(x + cell - 3, y + cell - 2).setVisible(vis);
+    });
+    if (this.scrollBar) {
+      const span = this.visibleRows * this.pitch;
+      const h = Math.max(
+        20,
+        (span * this.visibleRows) / Math.max(1, this.chestRows),
+      );
+      const room = this.chestRows - this.visibleRows;
+      this.scrollBar
+        .setSize(6, h)
+        .setPosition(
+          this.scrollBar.x,
+          this.gridTop + (room > 0 ? (this.topRow / room) * (span - h) : 0),
+        );
+    }
+  }
+
   private button(
     x: number,
     y: number,
@@ -284,15 +389,37 @@ export class ChestScene extends Phaser.Scene {
         );
       return;
     }
-    if (p.wasTouch || !this.inv(side).slot(slot)) {
+    // A touch waits for the finger to lift: a swipe scrolls a tall chest, a
+    // long press shows the tip, a plain tap picks the stack.
+    if (!p.wasTouch && !this.inv(side).slot(slot)) {
       this.tap(side, slot);
       return;
     }
-    this.press = { side, slot, x: p.worldX, y: p.worldY };
+    this.press = {
+      side,
+      slot,
+      x: p.worldX,
+      y: p.worldY,
+      touch: p.wasTouch,
+      at: this.time.now,
+      baseRow: this.topRow,
+      swiped: false,
+    };
   }
 
   private move(p: Phaser.Input.Pointer): void {
     if (!this.press) return;
+    if (this.press.touch) {
+      if (Math.hypot(p.worldX - this.press.x, p.worldY - this.press.y) >= 8) {
+        this.press.swiped = true;
+        this.tooltip.hide();
+      }
+      if (this.press.swiped && this.press.side === "chest")
+        this.scrollTo(
+          rowFromSwipe(this.press.baseRow, this.press.y - p.worldY, this.pitch),
+        );
+      return;
+    }
     if (!this.dragging) {
       if (Math.hypot(p.worldX - this.press.x, p.worldY - this.press.y) < 6)
         return;
@@ -313,14 +440,17 @@ export class ChestScene extends Phaser.Scene {
     this.dragging = undefined;
     this.dragIcon.setVisible(false);
     if (!from) {
+      // A swipe or a long press (which showed the tip) is not a tap.
+      if (press.touch && (press.swiped || this.time.now - press.at >= 450))
+        return;
       this.tap(press.side, press.slot);
       return;
     }
     this.selected = undefined;
     this.splitting = false;
     for (const side of ["chest", "pack"] as const) {
-      const to = this.cells[side].findIndex((c) =>
-        c.box.getBounds().contains(p.worldX, p.worldY),
+      const to = this.cells[side].findIndex(
+        (c) => c.box.visible && c.box.getBounds().contains(p.worldX, p.worldY),
       );
       if (to >= 0) {
         this.put(from, { side, slot: to }, false);
@@ -400,6 +530,7 @@ export class ChestScene extends Phaser.Scene {
   }
 
   private refresh(): void {
+    this.layoutChest();
     for (const side of ["chest", "pack"] as const) {
       const inv = this.inv(side);
       this.cells[side].forEach((c, i) => {
@@ -416,7 +547,7 @@ export class ChestScene extends Phaser.Scene {
           : 0;
         const plain = stack ? iconKey(stack.id) : undefined;
         const key = plain && toolId ? toolTierKey(plain, tier) : plain;
-        c.icon.setVisible(key !== undefined);
+        c.icon.setVisible(key !== undefined && c.box.visible);
         if (key) {
           c.icon.setTexture(key);
           c.icon.setTint(TINT[splitQuality(stack!.id).quality]);
