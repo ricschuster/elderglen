@@ -42,7 +42,7 @@ describe("elderfruit", () => {
     expect(r.ok).toBe(true);
     expect(g.elderfruit).toBe(1);
     expect(g.day.energy.max).toBe(MAX_ENERGY + ELDERFRUIT_ENERGY);
-    expect(g.day.energy.current).toBe(100 + ELDERFRUIT_ENERGY);
+    expect(g.day.energy.current).toBe(g.day.energy.max);
     expect(g.inventory.count("elderfruit")).toBe(0);
   });
 

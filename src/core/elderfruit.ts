@@ -5,7 +5,7 @@ import type { GameState } from "./save";
 
 /**
  * The elderfruit (`docs/design/39_completion_total.md`), our counterpart of
- * Stardew's stardrop: each one eaten adds 34 to the maximum energy, with no
+ * Stardew's stardrop: each one eaten adds 34 to the maximum energy and fills energy to full (owner 2026-11-16), with no
  * health restored. There are seven sources and seven to find, 270 up to 508 (as Stardew's stardrops).
  * Each is eaten the moment it is received (`absorbElderfruit`).
  * The fruit is an item in the pack until it is eaten; the count eaten is the
@@ -20,7 +20,7 @@ export const maxEnergyFor = (eaten: number): number =>
   MAX_ENERGY +
   ELDERFRUIT_ENERGY * Math.min(Math.max(eaten, 0), ELDERFRUIT_TOTAL);
 
-/** Eat one elderfruit from the pack: raise the maximum and fill the new space. */
+/** Eat one elderfruit from the pack: raise the maximum and fill energy to full (Stardew, SC unchecked). */
 export function eatElderfruit(
   g: GameState,
 ): { ok: true } | { ok: false; reason: "nothing to eat" | "all eaten" } {
@@ -31,7 +31,7 @@ export function eatElderfruit(
   g.inventory.remove(ELDERFRUIT);
   g.elderfruit += 1;
   g.day.energy.max = maxEnergyFor(g.elderfruit);
-  g.day.energy.restore(ELDERFRUIT_ENERGY);
+  g.day.energy.current = g.day.energy.max;
   return { ok: true };
 }
 
