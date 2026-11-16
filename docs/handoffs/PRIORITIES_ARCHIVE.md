@@ -457,4 +457,4 @@ table, lantern floating and ice fishing rules with thin scene hooks, pond menu a
 
 ## Batch 4 detail (moved 2026-11-16)
 
-6. **Batch 4 built 2026-11-14** (hall counter second tiles, renovation decor zones, overview and valley-map refresh, wiki gift lists stay draft, M4 hosting spike text drafted in `docs/design/drafts/m4-hosting-spike-issue.md`, owner approves before filing). Left: the owner's play. Real garden pot art waits for M3d. Village trees: owner kept the layout, judge in play. #874 spouse source built with marriage; the gallery set is left. Friendship doors are built (`gates.ts`).
+Item 6: **Batch 4 built 2026-11-14** (hall counter second tiles, renovation decor zones, overview and valley-map refresh, wiki gift lists stay draft, M4 hosting spike text drafted in `docs/design/drafts/m4-hosting-spike-issue.md`, owner approves before filing). Left: the owner's play. Real garden pot art waits for M3d. Village trees: owner kept the layout, judge in play. #874 spouse source built with marriage; the gallery set is left. Friendship doors are built (`gates.ts`).
