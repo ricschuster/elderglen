@@ -7,6 +7,7 @@ import type { GameState } from "./save";
 import { canStand } from "./furniture";
 import { CHEST_COLOURS, chestById } from "./chestdefs";
 import { isOpenGround } from "./actions";
+import { GREENHOUSE_STORE } from "./mapstore";
 import { mayPlaceOn, placeTag } from "./placeables";
 
 /**
@@ -288,7 +289,7 @@ export function pushChest(
   const ny = y + dy;
   const ok = isHouseMap(mapId)
     ? canStand(g, map, mapId, nx, ny) && !g.chests.get(mapId, nx, ny)
-    : isFarmMap(mapId) &&
+    : (isFarmMap(mapId) || mapId === GREENHOUSE_STORE) &&
       isOpenGround(g, map, nx, ny) &&
       !g.chests.get(mapId, nx, ny);
   if (!ok) return fail("chest will not move");

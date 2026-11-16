@@ -81,6 +81,8 @@ export class Tooltip {
     box: Phaser.GameObjects.Rectangle,
     tip: () => ItemTip | undefined,
     bounds: () => { w: number; h: number },
+    /** False when a screen gives a long press its own meaning on touch. */
+    touch = true,
   ): void {
     let timer: Phaser.Time.TimerEvent | undefined;
     const open = () => {
@@ -99,7 +101,7 @@ export class Tooltip {
     });
     box.on("pointerout", close);
     box.on("pointerdown", (p: Phaser.Input.Pointer) => {
-      if (!p.wasTouch) return;
+      if (!p.wasTouch || !touch) return;
       timer?.remove();
       timer = this.scene.time.delayedCall(LONG_PRESS_MS, open);
     });

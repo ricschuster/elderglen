@@ -113,6 +113,8 @@ export function till(
   // Trees, weeds and the rest stand on the farm's tiles, not the greenhouse's.
   if (soil.indoors && g.placed.covering(GREENHOUSE_STORE, x, y))
     return fail("garden pot in the way");
+  if (soil.indoors && g.chests.get(GREENHOUSE_STORE, x, y))
+    return fail("a chest is in the way");
   if (!soil.indoors) {
     if (g.trees.at(x, y)) return fail("a tree is in the way");
     if (g.weeds.at(x, y)) return fail("a weed is in the way");
@@ -874,6 +876,7 @@ function isClearIndoors(
     here.fruitTrees.at(x, y) ||
     here.teaBushes.at(x, y) ||
     g.placed.covering(GREENHOUSE_STORE, x, y) ||
+    g.chests.get(GREENHOUSE_STORE, x, y) ||
     here.soil.plotAt(x, y)
   );
 }

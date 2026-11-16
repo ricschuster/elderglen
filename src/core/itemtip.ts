@@ -63,3 +63,31 @@ export function itemTip(id: string, tier = 0, extra?: string): ItemTip {
       (def?.keep ? "Not for sale." : def ? `Sells for ${def.sellPrice}g.` : ""),
   };
 }
+
+/**
+ * The tip for a placed chest: its name, how full it is, and what its contents
+ * would sell for (the chest itself is never for sale). Pure over the stacks.
+ */
+export function chestTip(
+  name: string,
+  stacks: readonly ({ id: string; count: number } | null | undefined)[],
+): ItemTip {
+  let used = 0;
+  let items = 0;
+  let worth = 0;
+  for (const s of stacks) {
+    if (!s) continue;
+    used++;
+    items += s.count;
+    const def = itemById(splitQuality(s.id).base);
+    if (def && !def.keep) worth += def.sellPrice * s.count;
+  }
+  return {
+    name,
+    kind: "Item",
+    text:
+      used === 0
+        ? `Empty. ${stacks.length} slots. Not for sale.`
+        : `${items} items in ${used} of ${stacks.length} slots.\nContents sell for about ${worth}g.\nNot for sale.`,
+  };
+}
