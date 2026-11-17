@@ -31,7 +31,7 @@ Open, top to bottom:
 6b. **Control schemes built 2026-11-16** (note 27, nine on Options): only 1 and 9 are real, 2 to 8 are guesses (SC-188).
 6c. **Marriage** (note 12): re-dating an ex, ex visits and ex at weddings built 2026-11-16 (SC-201 to 203). Left: the owner's play, real lines and art (M3d), festival wedding scene, M4.
 6d. **Chests, tool pass, Social, quest cancel, Guide hours** built 2026-11-16 (notes 34, 49, 101, 102, 103). Left: the owner's browser and tablet look, real art and colours (M3d).
-6e. **Sim:** full expert run 2026-11-16: 55 of 100 finished by day 112 (median 96). Compare with the main baseline in handoff 2026-11-16d. Left: the bot builds a silo only from day 100; playtest personas at `SPEED=2` one at a time.
+6e. **Sim:** full expert run 2026-11-16: 55 of 100 finished by day 112 (median 96); `main` baseline was 56, so no drift. Left: the bot builds a silo only from day 100; playtest personas at `SPEED=2` one at a time.
 7. A browser look at everything built since the owner last played: hat picker, cart, herb stall, tapper, lights, rod, bombs, festival maps, tailoring, ponds, tea bush, woods creatures, even-year maze, and all of the above.
 
 Alongside: the wiki (#910, note 100; built for every category, every item has a picture; text cleared for crops, fish, forage, items, places and rooms; draft text left for bundles, recipes, people and five gem names; left: owner reads the draft text and clears flags, gift lists (`giftsDraft`), people prose with the voice sheets, hosting after M3d), Stardew checks rows (open: SC-122, 135, 160, 161, 170, 172, 184 to 203). M4 hosting spike filed as #948.
