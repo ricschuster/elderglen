@@ -146,6 +146,12 @@ describe("dropOnTrash and dropStack", () => {
     expect(i.slot(2)).not.toBeNull();
     expect(dropOnTrash(i, 2, true).kind).toBe("trashed");
   });
+  it("asks first for even a cheap stack when askAlways is set", () => {
+    const i = inv(["wood", 2]);
+    expect(dropOnTrash(i, 0, false, true)).toEqual({ kind: "confirm" });
+    expect(i.slot(0)).not.toBeNull();
+    expect(dropOnTrash(i, 0, true, true).kind).toBe("trashed");
+  });
   it("drops onto a slot like a move, and outside cancels", () => {
     const i = inv(["wood", 2]);
     expect(dropStack(i, 0, undefined)).toBe(false);

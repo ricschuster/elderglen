@@ -14,6 +14,7 @@ import {
 } from "../core/menupages";
 import type { Taste } from "../core/friendship";
 import type { GameState } from "../core/save";
+import { takeEsc } from "./escape";
 import { frame } from "./panel";
 import { addPortrait } from "./portrait";
 import { STATE_KEY } from "./state";
@@ -66,6 +67,8 @@ export class SocialScene extends Phaser.Scene {
   private tooltip!: Tooltip;
   private tipShown = false;
   private pressTimer: Phaser.Time.TimerEvent | undefined;
+  /** True when the current press began on the list (not on the detail page). */
+  private pressed = false;
 
   constructor() {
     super("social");
@@ -77,6 +80,12 @@ export class SocialScene extends Phaser.Scene {
     this.detail = [];
     this.tipShown = false;
     this.pressTimer = undefined;
+    this.pressed = false;
+  }
+
+  /** The menu asks before Esc or a tab switch: an open detail page owns Esc. */
+  menuBusy(): boolean {
+    return this.detail.length > 0;
   }
 
   private get total(): number {
@@ -105,6 +114,7 @@ export class SocialScene extends Phaser.Scene {
       .setInteractive();
     this.tooltip = new Tooltip(this);
     zone.on("pointerdown", (p: Phaser.Input.Pointer) => {
+      this.pressed = this.detail.length === 0;
       this.dragY = p.y;
       this.dragTop = this.top;
       this.moved = false;
@@ -134,7 +144,9 @@ export class SocialScene extends Phaser.Scene {
     zone.on("pointerup", (p: Phaser.Input.Pointer) => {
       const held = this.tipShown;
       this.hideTip();
-      if (this.moved || held || this.detail.length > 0) return;
+      const pressed = this.pressed;
+      this.pressed = false;
+      if (!pressed || this.moved || held || this.detail.length > 0) return;
       const row = this.rowAt(p);
       if (row && row.met) this.openDetail(g, row);
     });
@@ -144,7 +156,11 @@ export class SocialScene extends Phaser.Scene {
     const kb = this.input.keyboard;
     kb?.on("keydown-UP", () => this.scrollTo(this.top - ROW_H));
     kb?.on("keydown-DOWN", () => this.scrollTo(this.top + ROW_H));
-    kb?.on("keydown-ESC", () => this.closeDetail());
+    kb?.on("keydown-ESC", () => {
+      if (this.detail.length === 0) return;
+      takeEsc(this);
+      this.closeDetail();
+    });
     this.draw();
   }
 
@@ -325,6 +341,8 @@ export class SocialScene extends Phaser.Scene {
       this.detail.push(o);
       return o;
     };
+    this.hideTip();
+    this.setListVisible(false);
     add(
       this.add
         .rectangle(LIST_X - 8, LIST_TOP - 8, 912, LIST_H + 16, 0x10201a, 1)
@@ -382,9 +400,20 @@ export class SocialScene extends Phaser.Scene {
     back.on("pointerdown", () => this.closeDetail());
   }
 
+  /** The roster rows and bar stay out of sight while a detail page is open. */
+  private setListVisible(on: boolean): void {
+    for (const o of this.items)
+      (
+        o as Phaser.GameObjects.Components.Visible &
+          Phaser.GameObjects.GameObject
+      ).setVisible(on);
+    this.bar.setVisible(on && this.maxTop > 0);
+  }
+
   private closeDetail(): void {
     for (const o of this.detail) o.destroy();
     this.detail = [];
+    this.setListVisible(true);
   }
 }
 

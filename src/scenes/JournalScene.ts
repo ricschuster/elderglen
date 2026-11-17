@@ -11,15 +11,18 @@ import {
   type JournalSection,
   type QuestEntry,
 } from "../core/journal";
+import { isDrag } from "../core/dragscroll";
 import { weddingMark } from "../core/courtship";
 import type { GameState } from "../core/save";
 import { closeWindow, frame } from "./panel";
 import { STATE_KEY } from "./state";
 
-/** Pixel room for the body text: from its top (76) to just above the footer hint (478). */
-const BODY_H = 396;
-/** A drag this far (screen pixels) moves the list one line. */
-const DRAG_STEP = 26;
+const VISIBLE = 13;
+const BODY_TOP = 76;
+const BODY_BOTTOM = 470;
+const LINE_GAP = 6;
+/** Pixels of drag that move the list by one line. */
+const ROW_GUESS = 28;
 
 /**
  * The journal (note 49): its own window, not a menu tab, on J or the HUD
@@ -38,10 +41,11 @@ export class JournalScene extends Phaser.Scene {
     box: Phaser.GameObjects.Rectangle;
     key: JournalSection;
   }[] = [];
-  private body!: Phaser.GameObjects.Text;
+  private rows: { obj: Phaser.GameObjects.Text; line: JournalLine }[] = [];
+  /** A request waiting on the yes or no after Cancel. */
+  private confirming: string | undefined;
+  private drag = { y: 0, top: 0, moved: false };
   private more!: Phaser.GameObjects.Text;
-  private dragY = 0;
-  private dragged = false;
 
   constructor() {
     super("journal");
@@ -56,6 +60,9 @@ export class JournalScene extends Phaser.Scene {
     this.entries = [];
     this.expanded = new Set();
     this.selected = 0;
+    this.rows = [];
+    this.confirming = undefined;
+    this.drag = { y: 0, top: 0, moved: false };
   }
 
   create(): void {
@@ -73,12 +80,6 @@ export class JournalScene extends Phaser.Scene {
         .setOrigin(0.5);
       this.tabs.push({ box, key: s.key });
     });
-    this.body = this.add.text(40, 76, "", {
-      fontSize: "19px",
-      color: "#ffffff",
-      lineSpacing: 6,
-      wordWrap: { width: 880 },
-    });
     this.more = this.add.text(40, 478, "", {
       fontSize: "14px",
       color: "#ffffffaa",
@@ -90,24 +91,25 @@ export class JournalScene extends Phaser.Scene {
     kb?.on("keydown-UP", () => this.move(-1));
     kb?.on("keydown-DOWN", () => this.move(1));
     kb?.on("keydown-ENTER", () => this.toggleSelected());
-    kb?.on("keydown-X", () => this.cancelSelected());
-    // A tap acts; a drag scrolls and does not tap (as the Social tab does).
+    kb?.on("keydown-X", () => this.askCancel());
+    kb?.on("keydown-Y", () => this.answer(true));
+    kb?.on("keydown-N", () => this.answer(false));
     this.input.on("pointerdown", (p: Phaser.Input.Pointer) => {
-      this.dragY = p.y;
-      this.dragged = false;
+      this.drag = { y: p.y, top: this.top, moved: false };
     });
     this.input.on("pointermove", (p: Phaser.Input.Pointer) => {
       if (!p.isDown) return;
-      const zoom = this.cameras.main.zoom || 1;
-      const dy = (this.dragY - p.y) / zoom;
-      if (Math.abs(dy) > 8) this.dragged = true;
-      if (!this.dragged || Math.abs(dy) < DRAG_STEP) return;
-      const steps = Math.trunc(dy / DRAG_STEP);
-      this.dragY -= steps * DRAG_STEP * zoom;
-      this.scroll(steps);
+      const dy = (this.drag.y - p.y) / (this.cameras.main.zoom || 1);
+      if (isDrag(0, dy)) this.drag.moved = true;
+      if (!this.drag.moved) return;
+      const next = this.clampTop(Math.round(this.drag.top + dy / ROW_GUESS));
+      if (next !== this.top) {
+        this.top = next;
+        this.draw();
+      }
     });
     this.input.on("pointerup", (p: Phaser.Input.Pointer) => {
-      if (!this.dragged) this.tap(this.cameras.main.getWorldPoint(p.x, p.y).y);
+      if (!this.drag.moved) this.tap(p);
     });
     this.input.on("wheel", (_p: unknown, _o: unknown, _x: number, dy: number) =>
       this.scroll(dy > 0 ? 1 : -1),
@@ -156,14 +158,19 @@ export class JournalScene extends Phaser.Scene {
       ];
       return;
     }
-    this.lines = [
-      ...head,
-      ...questView(
-        this.entries,
-        this.expanded,
-        this.entries[this.selected]?.id,
-      ),
-    ];
+    const view: JournalLine[] = [];
+    for (const l of questView(
+      this.entries,
+      this.expanded,
+      this.entries[this.selected]?.id,
+    )) {
+      if (l.cancel && l.cancel === this.confirming) {
+        view.push({ text: "       Cancel this request?" });
+        view.push({ text: "       [ Yes, cancel it ]", yes: l.cancel });
+        view.push({ text: "       [ No, keep it ]", no: l.cancel });
+      } else view.push(l);
+    }
+    this.lines = [...head, ...view];
   }
 
   private followSelected(): void {
@@ -172,38 +179,7 @@ export class JournalScene extends Phaser.Scene {
     );
     if (i < 0) return;
     if (i < this.top) this.top = i;
-    else
-      while (this.top < i && i >= this.top + this.pageLen(this.top)) this.top++;
-  }
-
-  /**
-   * How many lines, from `top`, fit in the body. A line that wraps takes more
-   * than one row of pixels, so this is measured on the text itself and never
-   * assumed. At least one line, so a very long line still shows.
-   */
-  private pageLen(top: number): number {
-    let text = "";
-    let n = 0;
-    for (let i = top; i < this.lines.length; i++) {
-      const next =
-        n === 0
-          ? this.lines[i]!.text
-          : `${text}
-${this.lines[i]!.text}`;
-      this.body.setText(next);
-      if (n > 0 && this.body.height > BODY_H) break;
-      text = next;
-      n++;
-    }
-    return n;
-  }
-
-  /** The first line of the last page: the lowest top that still reaches the end. */
-  private get maxTop(): number {
-    const n = this.lines.length;
-    let t = Math.max(0, n - 1);
-    while (t > 0 && t - 1 + this.pageLen(t - 1) >= n) t--;
-    return t;
+    else if (i >= this.top + VISIBLE) this.top = i - VISIBLE + 1;
   }
 
   private move(by: number): void {
@@ -227,6 +203,25 @@ ${this.lines[i]!.text}`;
     this.draw();
   }
 
+  /** Ask before giving up a request. */
+  private askCancel(id = this.entries[this.selected]?.id): void {
+    if (this.section !== "quests" || !id) return;
+    this.confirming = id;
+    this.build();
+    this.draw();
+  }
+
+  private answer(yes: boolean): void {
+    const id = this.confirming;
+    if (!id) return;
+    this.confirming = undefined;
+    if (yes) this.cancelSelected(id);
+    else {
+      this.build();
+      this.draw();
+    }
+  }
+
   /** Give up a request (costs nothing), then rebuild the list. */
   private cancelSelected(id = this.entries[this.selected]?.id): void {
     if (this.section !== "quests" || !id) return;
@@ -241,43 +236,71 @@ ${this.lines[i]!.text}`;
     this.draw();
   }
 
-  /** A tap on a quest title selects it and flips it open or shut; on Cancel it gives the request up. */
-  private tap(y: number): void {
+  /** A tap hits the line that is drawn under it (lines differ in height when they wrap). */
+  private tap(p: Phaser.Input.Pointer): void {
     if (this.section !== "quests") return;
-    const shown = this.pageLen(this.top);
-    if (shown === 0 || y < this.body.y) return;
-    const row = Math.floor((y - this.body.y) / (this.body.height / shown));
-    const line = this.lines[this.top + row];
-    if (line?.cancel) {
-      this.cancelSelected(line.cancel);
+    const y = this.cameras.main.getWorldPoint(p.x, p.y).y;
+    const hit = this.rows.find(
+      (r) => y >= r.obj.y && y < r.obj.y + r.obj.height + LINE_GAP,
+    );
+    const line = hit?.line;
+    if (!line) return;
+    if (line.yes) {
+      this.answer(true);
       return;
     }
-    const at = this.entries.findIndex((e) => e.id === line?.quest);
+    if (line.no) {
+      this.answer(false);
+      return;
+    }
+    if (line.cancel) {
+      this.askCancel(line.cancel);
+      return;
+    }
+    const at = this.entries.findIndex((e) => e.id === line.quest);
     if (at < 0) return;
+    this.confirming = undefined;
     this.selected = at;
     this.toggleSelected();
   }
 
+  /** Keep the top line in range; stop once the last line is on screen. */
+  private clampTop(v: number): number {
+    const max = Math.max(0, this.lines.length - VISIBLE);
+    const atEnd = this.top + this.rows.length >= this.lines.length;
+    return Math.max(0, Math.min(atEnd && v > this.top ? this.top : max, v));
+  }
+
   private scroll(by: number): void {
-    this.top = Math.max(0, Math.min(this.maxTop, this.top + by));
+    this.top = this.clampTop(this.top + by);
     this.draw();
   }
 
   private draw(): void {
     const hint =
       this.section === "quests" && this.entries.length
-        ? "   Enter or tap: open a request   X: cancel it"
+        ? "   Tap or Enter: open   X: cancel (Y or N to confirm)"
         : "";
-    const shown = this.pageLen(this.top);
-    this.body.setText(
-      this.lines
-        .slice(this.top, this.top + shown)
-        .map((l) => l.text)
-        .join("\n"),
-    );
+    for (const r of this.rows) r.obj.destroy();
+    this.rows = [];
+    let y = BODY_TOP;
+    for (let i = this.top; i < this.lines.length; i++) {
+      const line = this.lines[i]!;
+      const obj = this.add.text(40, y, line.text, {
+        fontSize: "19px",
+        color: "#ffffff",
+        wordWrap: { width: 880 },
+      });
+      if (y + obj.height > BODY_BOTTOM && this.rows.length > 0) {
+        obj.destroy();
+        break;
+      }
+      this.rows.push({ obj, line });
+      y += obj.height + LINE_GAP;
+    }
     this.more.setText(
-      this.top > 0 || this.top + shown < this.lines.length
-        ? `Up and Down, drag, or the wheel: scroll (${this.top + 1} of ${this.lines.length})   Left and Right: section   J or Esc: close${hint}`
+      this.lines.length > this.rows.length
+        ? `Drag, Up and Down, or the wheel: scroll (${this.top + 1} of ${this.lines.length})   Left and Right: section   J or Esc: close${hint}`
         : `Left and Right: section   J or Esc: close${hint}`,
     );
   }

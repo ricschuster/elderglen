@@ -26,13 +26,13 @@ export class SkillsScene extends Phaser.Scene {
     this.add
       .text(
         48,
-        46,
+        54,
         `${skillTitle(totalLevels(g.skills))}  (levels ${totalLevels(g.skills)} of ${MAX_LEVEL * 5})`,
         { fontSize: "18px", color: "#ffe9a0" },
       )
       .setOrigin(0, 0);
     skillRows(g.skills).forEach((row, i) => {
-      const y = 70 + i * 76;
+      const y = 84 + i * 72;
       const pro = professionById(g.skills.professionOf(row.skill) ?? "");
       const top = professionById(g.skills.topProfessionOf(row.skill) ?? "");
       this.add.text(

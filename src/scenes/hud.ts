@@ -18,6 +18,9 @@ import { Tooltip } from "./tooltip";
 import { toolAway, type Upgradable } from "../core/upgrades";
 
 /** The touch slot, and the desktop slot on a window too small for the big one. */
+/** Opaque, so rocks and crops behind an empty slot do not show through. */
+const SLOT_FILL = 0x16231b;
+const SLOT_FILL_ON = 0x6b5a2a;
 const SLOT = SLOT_SMALL;
 const GAP = 4;
 // Layout is drawn for a 960 by 540 window, then each object is shifted by its
@@ -165,7 +168,7 @@ export class Hud {
     for (let i = 0; i < TOOLBAR_SIZE; i++) {
       const x = left + i * (SLOT + GAP);
       const box = scene.add
-        .rectangle(x, BAR_Y, SLOT, SLOT, 0x000000, 0.5)
+        .rectangle(x, BAR_Y, SLOT, SLOT, SLOT_FILL, 1)
         .setOrigin(0)
         .setStrokeStyle(2, 0xffffff, 0.3)
         .setInteractive({ useHandCursor: true });
@@ -603,7 +606,7 @@ export class Hud {
       this.captions[i]!.setVisible(shown);
       const on = index === selected;
       box.setStrokeStyle(on ? 3 : 2, 0xffffff, on ? 1 : 0.3);
-      box.setFillStyle(on ? 0xf2d16b : 0x000000, on ? 0.45 : 0.5);
+      box.setFillStyle(on ? SLOT_FILL_ON : SLOT_FILL, 1);
       const held = heldAt(g, index);
       const iconKey =
         held.kind === "tool"

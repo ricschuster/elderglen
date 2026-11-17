@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { paintUiFrame, UI_FRAME_EDGE, UI_FRAME_KEY } from "./art";
 import { MENU_H, MENU_W, menuZoom } from "../core/view";
+import { dragFirst, isDrag } from "../core/dragscroll";
 
 /**
  * A backdrop rectangle centred on the menu box and bigger than any window, so
@@ -102,6 +103,9 @@ export class Menu {
   private readonly title: Phaser.GameObjects.Text;
   private readonly rowH: number;
   private readonly visible: number;
+  private drag = { y: 0, first: 0, on: false, moved: false };
+  /** A touch tap waits for the finger to lift, so a drag can scroll instead. */
+  private armed: (() => void) | undefined;
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -113,6 +117,88 @@ export class Menu {
       fontSize: "22px",
       color: "#ffe9a0",
     });
+    const input = scene.input;
+    input.on("pointerdown", this.onDown, this);
+    input.on("pointermove", this.onMove, this);
+    input.on("pointerup", this.onUp, this);
+    input.on("wheel", this.onWheel, this);
+    scene.events.once("shutdown", () => this.unhook());
+  }
+
+  private unhook(): void {
+    const input = this.scene.input;
+    input.off("pointerdown", this.onDown, this);
+    input.off("pointermove", this.onMove, this);
+    input.off("pointerup", this.onUp, this);
+    input.off("wheel", this.onWheel, this);
+  }
+
+  private inList(p: Phaser.Input.Pointer): boolean {
+    const w = this.scene.cameras.main.getWorldPoint(p.x, p.y);
+    const { x, y, w: width } = this.opts;
+    const top = y + 34;
+    return (
+      w.x >= x &&
+      w.x <= x + width &&
+      w.y >= top &&
+      w.y <= top + this.visible * this.rowH
+    );
+  }
+
+  private onDown(p: Phaser.Input.Pointer): void {
+    this.drag = {
+      y: p.y,
+      first: this.first,
+      on: this.inList(p) && this.rows.length > this.visible,
+      moved: false,
+    };
+  }
+
+  private onMove(p: Phaser.Input.Pointer): void {
+    if (!p.isDown || !this.drag.on) return;
+    const zoom = this.scene.cameras.main.zoom || 1;
+    const dy = (p.y - this.drag.y) / zoom;
+    if (!this.drag.moved && !isDrag(0, dy)) return;
+    this.drag.moved = true;
+    this.armed = undefined;
+    const next = dragFirst(
+      this.drag.first,
+      dy,
+      this.rowH,
+      this.rows.length,
+      this.visible,
+    );
+    if (next !== this.first) {
+      this.first = next;
+      this.draw();
+    }
+  }
+
+  private onUp(): void {
+    const act = this.armed;
+    this.armed = undefined;
+    if (act && !this.drag.moved) act();
+    this.drag.moved = false;
+  }
+
+  private onWheel(
+    p: Phaser.Input.Pointer,
+    _o: unknown,
+    _x: number,
+    dy: number,
+  ): void {
+    if (this.rows.length <= this.visible || !this.inList(p)) return;
+    this.first = Math.max(
+      0,
+      Math.min(this.rows.length - this.visible, this.first + (dy > 0 ? 1 : -1)),
+    );
+    this.draw();
+  }
+
+  /** Run a tap now for a mouse, or when the finger lifts for a touch. */
+  private tap(p: Phaser.Input.Pointer, act: () => void): void {
+    if (p.wasTouch) this.armed = act;
+    else act();
   }
 
   get row(): Row | undefined {
@@ -129,6 +215,7 @@ export class Menu {
   setRows(rows: Row[]): void {
     this.rows = rows;
     this.cursor = Math.min(this.cursor, Math.max(rows.length - 1, 0));
+    this.follow();
     this.draw();
   }
 
@@ -145,7 +232,19 @@ export class Menu {
       this.rows.length - 1,
     );
     this.opts.onCursor?.(this.cursor);
+    this.follow();
     this.draw();
+  }
+
+  /** Scroll just far enough to keep the cursor row on screen. */
+  private follow(): void {
+    if (this.cursor < this.first) this.first = this.cursor;
+    if (this.cursor >= this.first + this.visible)
+      this.first = this.cursor - this.visible + 1;
+    this.first = Math.max(
+      0,
+      Math.min(this.first, Math.max(0, this.rows.length - this.visible)),
+    );
   }
 
   /** Press button `n` (from 0) of the row under the cursor. */
@@ -158,9 +257,6 @@ export class Menu {
     for (const o of this.objects) o.destroy();
     this.objects.length = 0;
     const { x, y, w } = this.opts;
-    if (this.cursor < this.first) this.first = this.cursor;
-    if (this.cursor >= this.first + this.visible)
-      this.first = this.cursor - this.visible + 1;
     const top = y + 34;
     const shown = this.rows.slice(this.first, this.first + this.visible);
     shown.forEach((row, i) => {
@@ -184,12 +280,14 @@ export class Menu {
         .setOrigin(0)
         .setInteractive();
       // Tapping a row does its main action, so the whole row is the target.
-      bg.on("pointerdown", () => {
-        this.cursor = index;
-        this.opts.onCursor?.(index);
-        this.draw();
-        if (!this.opts.buttonsOnly) this.press(0);
-      });
+      bg.on("pointerdown", (p: Phaser.Input.Pointer) =>
+        this.tap(p, () => {
+          this.cursor = index;
+          this.opts.onCursor?.(index);
+          this.draw();
+          if (!this.opts.buttonsOnly) this.press(0);
+        }),
+      );
       const alpha = row.dim ? 0.45 : 1;
       const label = this.scene.add
         .text(x + 8, ry + this.rowH / 2 - 2, row.label, {
@@ -225,11 +323,13 @@ export class Menu {
           .setStrokeStyle(1, 0xffffff, usable ? 0.8 : 0.2);
         if (usable) {
           box.setInteractive({ useHandCursor: true });
-          box.on("pointerdown", () => {
-            this.cursor = index;
-            this.opts.onCursor?.(index);
-            b.run();
-          });
+          box.on("pointerdown", (p: Phaser.Input.Pointer) =>
+            this.tap(p, () => {
+              this.cursor = index;
+              this.opts.onCursor?.(index);
+              b.run();
+            }),
+          );
         }
         const text = this.scene.add
           .text(bx + bw / 2, ry + this.rowH / 2 - 2, b.text, {

@@ -175,16 +175,18 @@ export const canTrash = (id: string): boolean => !isToolId(id);
 /**
  * Drop the stack in `i` on the trash target. Tools are refused. A valuable
  * stack asks first (`confirmed` false gives "confirm"; call again with true).
+ * With `askAlways` every stack asks first, however cheap.
  */
 export function dropOnTrash(
   inv: Inventory,
   i: number,
   confirmed: boolean,
+  askAlways = false,
 ): TrashResult {
   const stack = inRange(inv, i) ? inv.slot(i) : undefined;
   if (!stack) return { kind: "empty" };
   if (!canTrash(stack.id)) return { kind: "refused" };
-  if (!confirmed && needsTrashConfirm(stack.id, stack.count))
+  if (!confirmed && (askAlways || needsTrashConfirm(stack.id, stack.count)))
     return { kind: "confirm" };
   trashSlot(inv, i);
   return { kind: "trashed", ...stack };

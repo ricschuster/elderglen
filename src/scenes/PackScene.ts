@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { isDrag } from "../core/dragscroll";
 import { dateText } from "../core/calendar";
 import { farmTypeById } from "../core/farmtypes";
 import { itemById } from "../core/items";
@@ -186,7 +187,7 @@ export class PackScene extends Phaser.Scene {
     this.add.text(
       LEFT,
       498,
-      "Tap a stack, then a slot to move or swap (or drag it), Trash, or Wear.   Esc or E: close   Page Up, Page Down: tabs",
+      "Tap a stack, then a slot to move or swap, or drag it to a slot or Trash. Wear, Split and Sort are the buttons.   Esc or E: close   Page Up, Page Down: tabs",
       {
         fontSize: "13px",
         color: "#ffffffaa",
@@ -286,11 +287,12 @@ export class PackScene extends Phaser.Scene {
   }
 
   /**
-   * Press on a slot. A mouse press on a stack may become a drag; a touch or an
-   * empty slot taps at once, so touch keeps tap then tap.
+   * Press on a slot. A press on a stack (mouse or touch) becomes a drag once it
+   * moves a few pixels, and a tap when it lifts without moving. An empty slot
+   * taps at once.
    */
   private down(i: number, p: Phaser.Input.Pointer): void {
-    if (p.wasTouch || !this.state.inventory.slot(i)) {
+    if (!this.state.inventory.slot(i)) {
       this.tap(i);
       return;
     }
@@ -300,8 +302,7 @@ export class PackScene extends Phaser.Scene {
   private move(p: Phaser.Input.Pointer): void {
     if (!this.press) return;
     if (this.dragging === undefined) {
-      if (Math.hypot(p.worldX - this.press.x, p.worldY - this.press.y) < 6)
-        return;
+      if (!isDrag(p.worldX - this.press.x, p.worldY - this.press.y)) return;
       this.dragging = this.press.slot;
       const key = iconKey(this.state.inventory.slot(this.dragging)!.id);
       if (key) this.dragIcon.setTexture(key).setDisplaySize(54, 54);
@@ -383,7 +384,7 @@ export class PackScene extends Phaser.Scene {
   }
 
   private trashSlotAt(i: number): void {
-    const r = dropOnTrash(this.state.inventory, i, this.trashAsked);
+    const r = dropOnTrash(this.state.inventory, i, this.trashAsked, true);
     if (r.kind === "refused") {
       this.flash = "Tools cannot be thrown away.";
       this.refresh();
@@ -392,8 +393,11 @@ export class PackScene extends Phaser.Scene {
     if (r.kind === "confirm") {
       this.selected = i;
       this.trashAsked = true;
-      this.flash =
-        "That is worth something. Drop it on Trash again, or press Trash, to destroy it.";
+      const stack = this.state.inventory.slot(i);
+      const name = stack
+        ? (itemById(splitQuality(stack.id).base)?.name ?? stack.id)
+        : "this";
+      this.flash = `Destroy ${name}${stack && stack.count > 1 ? ` x${stack.count}` : ""}? Drop it on Trash again, or press Trash, to confirm. Tap another slot to keep it.`;
       this.refresh();
       return;
     }

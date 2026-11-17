@@ -68,6 +68,9 @@ export interface JournalLine {
   quest?: string;
   /** The quest id when this line is a Cancel button (tap target). */
   cancel?: string;
+  /** Confirm-step buttons: the quest id they answer for. */
+  yes?: string;
+  no?: string;
 }
 
 /** Give a request up from the journal. Costs nothing (note 50). True if it was open. */
