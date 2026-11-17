@@ -1,6 +1,6 @@
-# 32 Farm types (draft)
+# 32 Farm types: the design and build status (draft)
 
-Status: draft. Built 2026-11-07 (slice 1 build 9): Standard and Woodland, the
+Status: draft. The reference check against Stardew is in `30_farm_types.md`. Built 2026-11-07 (slice 1 build 9): Standard and Woodland, the
 choice screen, the saved type and the data fields `map`, `startSeeds`,
 `mixedSeedChance` and `stumpRegrowDays`. Not built: the other three types, the
 water tile check in `problems`, per-farm fish tables, `startBuildings`,

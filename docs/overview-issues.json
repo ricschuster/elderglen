@@ -1,5 +1,5 @@
 {
-  "fetched": "2026-11-15",
+  "fetched": "2026-11-17",
   "issues": {
     "5": {
       "t": "Design: what is the third community project?",
@@ -644,12 +644,12 @@
     },
     "873": {
       "t": "Design: the heart event list, then build",
-      "state": "open",
+      "state": "closed",
       "labels": ["design-question"]
     },
     "874": {
       "t": "Elderfruit sources left: spouse and gallery set",
-      "state": "open",
+      "state": "closed",
       "labels": ["design-question"]
     },
     "875": {
@@ -660,7 +660,7 @@
     "876": {
       "t": "WP: Festival route layer and the other seven festival maps",
       "state": "open",
-      "labels": ["work-package"]
+      "labels": ["next-payoff", "work-package"]
     },
     "877": {
       "t": "Design: one placement system for lightning rod, lamps and lamp-posts",
@@ -669,7 +669,7 @@
     },
     "878": {
       "t": "WP: Secret Woods statue and the pond fish",
-      "state": "open",
+      "state": "closed",
       "labels": ["work-package"]
     },
     "879": {
@@ -694,33 +694,48 @@
     },
     "934": {
       "t": "Marriage 1: data and save state",
-      "state": "open",
+      "state": "closed",
       "labels": ["enhancement"]
     },
     "935": {
       "t": "Marriage 2: courtship to wedding",
-      "state": "open",
+      "state": "closed",
       "labels": ["enhancement"]
     },
     "936": {
       "t": "Marriage 3: spouse life",
-      "state": "open",
+      "state": "closed",
       "labels": ["enhancement"]
     },
     "937": {
       "t": "Marriage 4: divorce",
-      "state": "open",
+      "state": "closed",
       "labels": ["enhancement"]
     },
     "938": {
       "t": "Marriage 5: children",
-      "state": "open",
+      "state": "closed",
       "labels": ["enhancement"]
     },
     "939": {
       "t": "Marriage 6: docs, wiki and playtest",
+      "state": "closed",
+      "labels": ["enhancement"]
+    },
+    "948": {
+      "t": "M4 hosting spike: prove a host and guests on a real router, size the tablet host and the farm state",
+      "state": "open",
+      "labels": []
+    },
+    "950": {
+      "t": "Polish: real heart event text and rewards (4, 8, 10 hearts) and pond art",
       "state": "open",
       "labels": ["enhancement"]
+    },
+    "951": {
+      "t": "Play M3b end to end: a checklist, and a stage jumper to reach each check fast",
+      "state": "open",
+      "labels": ["enhancement", "next-payoff"]
     }
   }
 }
