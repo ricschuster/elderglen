@@ -1,10 +1,10 @@
-// Install the debug APK on every tablet that adb can see (USB or wireless).
+// Install the APK (`--debug`: the Elderglen DBG one) on every tablet that adb can see (USB or wireless).
 import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
-import { adb, apk, env } from "./env.mjs";
+import { adb, apk, appId, env } from "./env.mjs";
 
 if (!existsSync(apk)) {
-  console.error("No APK yet. Run: npm run android:apk");
+  console.error(`No APK yet. Run: npm run android:apk${apk.includes("dbg") ? " -- --debug" : ""}`);
   process.exit(1);
 }
 const run = (...args) =>
@@ -57,7 +57,7 @@ for (const id of devices) {
   });
   execFileSync(
     adb,
-    ["-s", id, "shell", "monkey", "-p", "app.elderglen.game", "1"],
+    ["-s", id, "shell", "monkey", "-p", appId, "1"],
     { stdio: "ignore", env },
   );
 }

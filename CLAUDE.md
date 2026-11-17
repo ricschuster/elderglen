@@ -108,9 +108,12 @@ Node 22 and npm. Gates run in CI and a non-zero exit blocks a merge.
   "(Recommended)" as well when the Stardew option is not the recommended one.
 - Stardew checks register: `docs/design/54_stardew_checks.md` lists every
   Stardew claim that is from memory or unchecked, with how to check it (owner
-  plays, saved wiki page, Guidebook). Add a row when a note makes such a claim,
-  and offer the owner a question batch at session start when five or more are
-  open. Black box only: never reverse engineer Stardew (ADR 0002).
+  plays, saved wiki page, Guidebook). Add a row when a note makes such a claim.
+  What matters is what we want for Elderglen, not what Stardew does. Ask the
+  owner a Stardew fact question only when a decision hinges on it: a behaviour
+  players of the genre will assume, or a number or rule we chose to copy. Close
+  every other row as "ours, on purpose", and do not offer a question batch just
+  because rows are open. Black box only: never reverse engineer Stardew (ADR 0002).
 - Stardew wiki pages: the wiki blocks Claude's crawler, so never fetch it (no WebFetch,
   curl, Playwright). Write page URLs, one per line, to
   `docs/reference/stardew/urls_<topic>.txt`; the owner saves each page there by hand.
