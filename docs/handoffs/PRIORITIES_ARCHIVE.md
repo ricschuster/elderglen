@@ -479,3 +479,9 @@ Item 6: **Batch 4 built 2026-11-14** (hall counter second tiles, renovation deco
 - (6i) **Chests as Stardew** (note 34, built 2026-11-16): any open ground, any tool lifts or pushes, big chest swaps in, two-grid screen with colour bar, right-click one, Shift half, Add to existing stacks, Organize. Left: the owner's look (not seen in a browser), real colours and art (SC-193), greenhouse chests, a touch long-press menu.
 - (6g) **Question queued (note 27):** which of Stardew's nine mobile control schemes to offer (attack aim for the mines, invisible stick, a list on Options; SC-188).
 - (7) A browser look at everything built since the owner last played: hat picker, cart, herb stall, tapper, lights, rod, bombs, festival maps and activities, tailoring, pond screens and art, tea bush, woods creatures, even-year maze.
+
+## Moved 2026-11-17b
+
+- **Owner answers left:** none. Decided 2026-11-13: garden pot is clay 1, stone 10 and a refined crystal (smelted quartz, Stardew), taught by Alder (built: smelt recipe, letter and craft recipe); Frostfin 300g, no bundle slot; Frostday cap is Icewarden's Cap (built); the hunt prize is the emberseed (built); aged roe quality closed. Algae soup is the glassy-elver's reward (note 93).
+- **Heart events** (#873, closed) and the **Secret Woods and ponds** (#878, closed) are built; real text, pond art and tuning are #950 (M3d).
+- **Tablet debug app (2026-11-17).** `npm run android:apk -- --debug` and `android:install -- --debug` build "Elderglen DBG" (stage jumper, debug menu; own package id and saves), beside the normal app (docs/android.md, note 42).
