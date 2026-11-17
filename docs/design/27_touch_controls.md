@@ -138,7 +138,7 @@ button (or one combined button), an Auto-Attack, an attack-aim stick. Behaviour
 of each Stardew scheme is unchecked (SC-188), so these are our readings:
 
 | # | Scheme | Our reading |
-|---|--------|-------------|
+| --- | ------ | ----------- |
 | 1 | Tap-to-move and Auto-Attack | As before, plus a held weapon swings by itself at the nearest creature in reach. Stardew's exact auto-attack rule is unknown. |
 | 2 | Tap-to-move and Attack Joystick | Tap-to-move, plus an aim stick in the lower-right corner while a weapon is held: push to face and swing that way (a sling shoots along it). Guess. |
 | 3 | Invisible Joystick and 2 Buttons | The floating stick with nothing drawn, plus Use and Action. Guess. |
