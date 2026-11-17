@@ -146,7 +146,8 @@
         },
         "minesDeepest": 60,
         "map": "mine-60",
-        "entry": "from_below"
+        "entry": "from_below",
+        "autoProfessions": true
       }
     },
     {
@@ -165,7 +166,8 @@
         },
         "minesDeepest": 100,
         "map": "mine-100",
-        "entry": "from_below"
+        "entry": "from_below",
+        "autoProfessions": true
       }
     },
     {
@@ -456,7 +458,8 @@
         },
         "items": {
           "heron-rod": 1
-        }
+        },
+        "autoProfessions": true
       }
     },
     {
@@ -472,7 +475,8 @@
         },
         "items": {
           "hearthwell-rod": 1
-        }
+        },
+        "autoProfessions": true
       }
     },
     {
