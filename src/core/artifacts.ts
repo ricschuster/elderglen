@@ -56,9 +56,31 @@ export interface SpotTile {
 
 const key = (x: number, y: number) => `${x},${y}`;
 
-/** The marked spots lying on one map today. Not saved: they roll each morning. */
+/**
+ * The marked spots lying on one map today. They roll each morning and are
+ * saved with the area (note 52), so a Continue does not roll them again.
+ */
 export class ArtifactSpots {
   private spots = new Set<string>();
+  /** True once the spots came from a save, so a load keeps them. */
+  loaded = false;
+
+  save(): SpotTile[] {
+    return [...this.each()];
+  }
+
+  /** Set the spots from a save. Anything malformed is skipped; a missing list leaves the field to roll. */
+  load(raw: unknown): void {
+    if (!Array.isArray(raw)) return;
+    this.spots.clear();
+    for (const e of raw) {
+      if (typeof e !== "object" || e === null) continue;
+      const { x, y } = e as { x: unknown; y: unknown };
+      if (Number.isInteger(x) && Number.isInteger(y))
+        this.add(x as number, y as number);
+    }
+    this.loaded = true;
+  }
 
   at(x: number, y: number): boolean {
     return this.spots.has(key(x, y));

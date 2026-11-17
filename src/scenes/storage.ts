@@ -12,6 +12,7 @@ import {
   slotStores,
   type KeyValue,
 } from "../core/slots";
+import { TabGuard } from "../core/tabguard";
 import {
   loadSettings,
   type Settings,
@@ -84,13 +85,24 @@ export function setSpotProvider(
   spotProvider = p;
 }
 
+/** This tab's claim on the saves; a second tab is blocked (note 52, `installTabGuard`). */
+export const tabGuard = new TabGuard(
+  browserKv,
+  Math.random().toString(36).slice(2),
+  Date.now,
+);
+
+const BLOCKED: WriteResult = { ok: false, reason: "refused" };
+
 /** Write the night record (after sleeping, a new game, start over). */
 export function nightSave(g: GameState): WriteResult {
+  if (tabGuard.blocked) return BLOCKED;
   return noted(saveNight(browserStores(), g));
 }
 
 /** Write the resume record, with the player's tile where the farm gives one. */
 export function resumeSave(g: GameState, at?: ResumeSpot): WriteResult {
+  if (tabGuard.blocked) return BLOCKED;
   return noted(saveResume(browserStores(), g, at ?? spotProvider?.()));
 }
 

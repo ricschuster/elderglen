@@ -83,7 +83,15 @@ the tiles the farmer cannot stand on now, `window.farmState(patch)` jumps to a s
 call and restarts the scene (keys: `day` or `season`/`dayOfSeason`/`year`, `money`, `items`,
 `skills` (levels), `hallRooms`, `hallBundles`, `flags`, `hearts`, `minutes` (clock), `weather`, `eventsSeen`,
 `map` and `entry` (stand on that map); returns `{problems}`; see
-`src/core/statepatch.ts`; `node scripts/playtest/state.mjs` checks it). By hand, the
+`src/core/statepatch.ts`; `node scripts/playtest/state.mjs` checks it). `window.farmStage(name)` starts a
+NEW game at a named stage (`src/content/stages.json`, in the last save slot; `window.farmStages()` lists
+them): `new-game`, `day-28-first-bundle`, `season-summer|fall|winter`, `year-2-spring`, `hall-1` to `hall-6`
+(`hall-5` leaves the Last Seat open), `mines-30|60|100`, `courting`, `engaged`, `married`, `married-child`,
+`married-two-children`, `<festival>-eve` (hat-parade, seedswap-fair, cake-day, lamplight-evening,
+harvest-showing, frostday, midwinter-feast), `hollow-eve-eve-odd|even`, `night-market-eve`,
+`night-market-evening-1|2|3`, `fishing-reed-pole|hazel-rod|heron-rod|hearthwell-rod`, `late-game-100`.
+Any script that uses `launch()` takes `--stage <name>` (or `STAGE=<name>`) and starts there; `node
+scripts/playtest/<script>.mjs --stage married`. By hand, the
 debug menu (`docs/design/42_debug_menu.md`) opens with the backtick key or the
 DBG button. Both exist in dev builds only.
 

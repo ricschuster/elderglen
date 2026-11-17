@@ -1,5 +1,6 @@
 import {
   deserialize,
+  isNewerSave,
   serialize,
   type GameState,
   type ResumeSpot,
@@ -43,6 +44,8 @@ const done = (took: boolean): WriteResult =>
  */
 export function saveNight(stores: SlotStores, g: GameState): WriteResult {
   const old = stores.night.read();
+  // A save from a newer game is never overwritten by this older build.
+  if (old !== null && isNewerSave(old)) return { ok: false, reason: "refused" };
   if (!stores.night.write(serialize(g, { kind: "night" })))
     return { ok: false, reason: "refused" };
   if (old !== null) stores.prev.write(old);
@@ -56,6 +59,9 @@ export function saveResume(
   g: GameState,
   at?: ResumeSpot,
 ): WriteResult {
+  const night = stores.night.read();
+  if (night !== null && isNewerSave(night))
+    return { ok: false, reason: "refused" };
   return done(
     stores.resume.write(
       serialize(g, { kind: "resume", ...(at ? { at } : {}) }),
@@ -68,6 +74,8 @@ export type SlotNote = "resume-unreadable" | "night-unreadable";
 export type LoadedSlot =
   | { status: "empty" }
   | { status: "broken" }
+  /** A record was written by a newer game: nothing is played or overwritten. */
+  | { status: "newer" }
   | {
       status: "used";
       night?: GameState;
@@ -83,6 +91,11 @@ export function loadSlot(stores: SlotStores): LoadedSlot {
   const nightText = stores.night.read();
   const resumeText = stores.resume.read();
   if (nightText === null && resumeText === null) return { status: "empty" };
+  if (
+    (nightText !== null && isNewerSave(nightText)) ||
+    (resumeText !== null && isNewerSave(resumeText))
+  )
+    return { status: "newer" };
   const night = nightText === null ? undefined : deserialize(nightText);
   const parsed = resumeText === null ? undefined : deserialize(resumeText);
   // A resume of another day is stale: sleeping moved the day on.

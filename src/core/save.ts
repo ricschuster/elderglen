@@ -47,7 +47,7 @@ import { ShippingBin, type BinLine, type BinSave } from "./shipping";
 import { maps } from "../content/maps";
 import { DEFAULT_FARM_TYPE, farmTypeById } from "./farmtypes";
 import { ForageField, type ForageSave } from "./forage";
-import { ArtifactSpots } from "./artifacts";
+import { ARTIFACT_AREAS, ArtifactSpots } from "./artifacts";
 import { homeWorld, newAreas, type World } from "./areas";
 import { type Weather, WEATHERS } from "./weather";
 import { Hall, type HallProgress } from "./bundles";
@@ -480,6 +480,8 @@ interface AreaSave {
   creatures?: CreatureSave[];
   creaturesDay?: number;
   forage?: ForageSave;
+  /** The day's artifact spots (areas that have them), stored so a load does not roll them again. */
+  spots?: { x: number; y: number }[];
 }
 
 /** The sprinklers of a saved list that are well formed. */
@@ -638,6 +640,7 @@ export function serialize(
           twigs: w.twigs.save(),
           rocks: w.rocks.save(),
           forage: w.forage.save(),
+          ...(ARTIFACT_AREAS.includes(id) ? { spots: w.spots.save() } : {}),
           ...(w.creatures
             ? {
                 creatures: w.creatures.map(saveCreature),
@@ -768,6 +771,21 @@ function savedOrders(raw: unknown): OrdersSave | undefined {
   };
 }
 
+/**
+ * True when the record was written by a newer game than this build
+ * (its `version` is above `SAVE_VERSION`). `deserialize` refuses such a
+ * record; this says why, so the title can say "newer version" and nothing
+ * overwrites it.
+ */
+export function isNewerSave(text: string): boolean {
+  try {
+    const raw: unknown = JSON.parse(text);
+    return isObject(raw) && isCount(raw.version) && raw.version > SAVE_VERSION;
+  } catch {
+    return false;
+  }
+}
+
 export function deserialize(text: string): GameState | undefined {
   let raw: unknown;
   try {
@@ -867,6 +885,7 @@ export function deserialize(text: string): GameState | undefined {
       if (Array.isArray(a.twigs)) w.twigs.load(validTwigs(a.twigs));
       if (Array.isArray(a.rocks)) w.rocks.load(rocksFrom(a.rocks));
       w.forage.load(a.forage);
+      w.spots.load(a.spots);
       if (Array.isArray(a.creatures) && isCount(a.creaturesDay)) {
         w.creatures = a.creatures.flatMap((c) =>
           isObject(c) ? (loadCreature(c as unknown as CreatureSave) ?? []) : [],

@@ -333,6 +333,20 @@ background for what we chose not to do.
 - **Seller names (owner, 2026-11-11).** Placeholder role names in the data
   ("the hat-maker", "the pier keeper"); real names come with the voice sheets and
   art, as for the road trader.
+- **Built status (2026-11-16).** Built: the four stalls (lantern, curio, road trader,
+  hat-maker) with their stock per evening and year (`src/content/night-market.json`,
+  `src/core/nightmarket.ts`), the stall panel (`MarketScene`, closed lines before 17:00 and
+  after midnight, no festival "joined" key needed), the four market-only decor pieces, the
+  market fireplace and the nine hats as data (`furniture.json`, `hats.json`), the square's
+  conditional layers on `hearthwell` (hold `festival-night-market`, all three days, stalls
+  2 by 2 with `market-stall` services and lantern-string props, doors left open), and the
+  18-person crowd with per-person windows (`night-market` in `festival-spots.json`, used by
+  `villagerNow`). Placeholder: all art (the stalls and strings are the shared prop tile, the
+  hats and decor are colour swatches), keeper names, keeper lines, the villagers' lines, the
+  stand tiles and the curio's evening 3 pair (existing fireside chair and frost shelf).
+  Not built here: the pier, its permit, the market-only fish and the pearl, the lantern
+  float and the road trader's free hot drink (a separate slice), and the festival's
+  well and benches as props.
 - **Still open:** the owner's check of the placeholder stock, prices, spots, layout and fish above, the hats' art and names, and the festival spots for the other festivals (note 80 open item 3). The design is otherwise complete for a build.
 
 ## Open
@@ -341,3 +355,22 @@ background for what we chose not to do.
   `66_fall_winter_festivals_and_farm_cave.md` (2026-11-07): Harvest Showing
   display scoring, a Hollow Eve maze, Frostday as an ice sculpture day until
   fishing arrives. Maps and the prize counter lists are still build tasks.
+
+**Built status, Night Market attractions 5 and 6 (the pier).** Built in
+`src/core/marketpier.ts` with `src/content/market-pier.json` and
+`tests/marketpier.test.ts`; the fish are in note 21 ("Market-only fish: built
+status"). The pier keeper (service kind `market-pier`, tile 63,64) sells the
+1,000g permit, a day-keyed world flag, bought from 17:00 and good until the pier
+closes at 23:00; casting from a pier tile (the bank strip x 63, y 65 to 69)
+without it is refused with a line, and fishing anywhere else is unchanged. The
+lantern float (kind `market-float`, post at 63,70) is 50g, once an evening: a
+drifting-dot scene (`FarmScene.driftLantern`), one keeper line and a luck buff
+(a day-keyed flag, so it ends with the day) that lifts the rare-bite weight.
+The map markers, post and plank tiles are separate conditional layers
+(`*-night-market-pier`, `when` = `festival-night-market`) in `hearthwell.json`.
+The planks sit on the bank tile x 63, not on the water tile x 62, because water
+tiles cannot be made walkable by a conditional layer, so the cast faces west
+into the river arm. The road trader's free hot drink (40 energy, once an
+evening) is `claimHotDrink(g)` in `marketpier.ts`; the trader stall's scene must
+call it. Placeholders: all prices, odds, the luck and the drink amount; art is
+placeholder fish bodies.

@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { hiddenTabs } from "../core/menupages";
 import type { GameState } from "../core/save";
+import { escTaken } from "./escape";
 import { STATE_KEY } from "./state";
 
 /** The tabs of the in-game menu, in Stardew's order (note 49). */
@@ -92,7 +93,9 @@ export class MenuScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(11);
     const kb = this.input.keyboard;
-    kb?.on("keydown-ESC", () => this.close());
+    kb?.on("keydown-ESC", () => {
+      if (!escTaken(this)) this.close();
+    });
     kb?.on("keydown-E", () => this.close());
     kb?.on("keydown-PAGE_UP", () => this.step(-1));
     kb?.on("keydown-PAGE_DOWN", () => this.step(1));
@@ -105,6 +108,8 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private busy(): boolean {
+    // A screen opened over the tab (the gallery shelf) pauses it and owns Esc.
+    if (this.scene.isPaused(this.tab)) return true;
     return this.hooks().menuBusy?.() === true;
   }
 

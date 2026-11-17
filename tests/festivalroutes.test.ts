@@ -58,7 +58,8 @@ describe("festival layouts (note 82)", () => {
   });
 
   it("sends exactly the people note 82 names to each festival", () => {
-    for (const l of LAYOUTS) {
+    // The Night Market's 18 attendees are checked in tests/nightmarket.test.ts.
+    for (const l of LAYOUTS.filter((x) => x.key !== "night-market")) {
       const want = [...TOWN, ...AREA_AT[l.key]!].sort();
       expect(attendees(l).sort(), l.key).toEqual(want);
       expect(attendees(l)).not.toContain("rosmarin");

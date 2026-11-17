@@ -29,6 +29,12 @@ export interface FestivalLayout {
   starts: readonly Tile[];
   /** One standing tile per person (the note 79 festival spot). */
   spots: Readonly<Record<string, Tile>>;
+  /**
+   * An evening festival's stay per person, as `[from, to)` minutes (the Night
+   * Market, note 14). A person with a window stands at their spot only inside
+   * it; everyone else, and every day festival, stands from opening to the end.
+   */
+  windows: Readonly<Record<string, readonly [number, number]>>;
   /** People who sit on a prop (a bench) rather than stand on free ground. */
   seated: readonly string[];
   /** Hedge niches cut for Hollow Eve, odd year. */
@@ -55,6 +61,7 @@ interface RawLayout {
   hold: string | null;
   starts: number[][];
   spots: Record<string, number[]>;
+  windows?: Record<string, string[]>;
   seated?: string[];
   niches?: number[][];
   keepClear?: number[][];
@@ -80,6 +87,12 @@ export const LAYOUTS: readonly FestivalLayout[] = Object.entries(
   starts: tiles(r.starts),
   spots: Object.fromEntries(
     Object.entries(r.spots).map(([id, t]) => [id, [t[0]!, t[1]!] as const]),
+  ),
+  windows: Object.fromEntries(
+    Object.entries(r.windows ?? {}).map(([id, w]) => [
+      id,
+      [parseTime(w[0]!), parseTime(w[1]!)] as const,
+    ]),
   ),
   seated: r.seated ?? [],
   niches: tiles(r.niches),
@@ -299,6 +312,11 @@ export function festivalWhere(
   const layout = festivalLayout(f, opts.hallRestored, opts.year);
   const stand = layout?.spots[v.id];
   if (!layout || !stand) return undefined;
+  const stay = layout.windows[v.id];
+  if (stay) {
+    if (t < stay[0] || t >= stay[1]) return undefined;
+    return { map: layout.map, x: stand[0], y: stand[1], state: "standing" };
+  }
   if (t < f.opens || t >= f.ends) return undefined;
   const leaves = LEAVES[v.id];
   if (leaves !== undefined && t >= leaves) {
@@ -320,7 +338,8 @@ export function festivalWhere(
 /**
  * Where a villager is on a game day at a time: the festival layer if a festival
  * is on and they go, else the normal route (`whereAt`). The Night Market is an
- * evening festival with its own spots (note 14) and has no layout here.
+ * evening festival: its people stand at their spots only inside their window
+ * (note 14), and every other hour follows the normal route.
  */
 export function villagerNow(
   v: Villager,
@@ -332,10 +351,9 @@ export function villagerNow(
   | { festival: FestivalWhere }
   | { festival?: undefined; route: ReturnType<typeof whereAt> } {
   const f = festivalToday(day);
-  const fw =
-    f && !f.evening
-      ? festivalWhere(v, f, t, { ...opts, year: dateOf(day).year })
-      : undefined;
+  const fw = f
+    ? festivalWhere(v, f, t, { ...opts, year: dateOf(day).year })
+    : undefined;
   if (fw) return { festival: fw };
   return { route: whereAt(v, ctx, t) };
 }

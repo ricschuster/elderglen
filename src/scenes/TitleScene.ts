@@ -92,6 +92,10 @@ export class TitleScene extends Phaser.Scene {
     let second = "";
     if (info.status === "broken")
       label = `Slot ${info.slot}: could not be read`;
+    if (info.status === "newer") {
+      label = `Slot ${info.slot}: saved by a newer version of the game`;
+      second = "Update the game to open it. It has not been changed.";
+    }
     if (info.status === "used") {
       const g = info.night ?? info.game;
       const { season, dayOfSeason, year } = dateOf(g.day.clock.day);

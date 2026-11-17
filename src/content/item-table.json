@@ -1365,6 +1365,12 @@
     "energy": 30
   },
   {
+    "id": "frost-glass-candle",
+    "name": "Frost-glass candle",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "frost-opal",
     "name": "Frost opal",
     "sellPrice": 120
@@ -1385,6 +1391,11 @@
     "id": "frostfin",
     "name": "Frostfin",
     "sellPrice": 300
+  },
+  {
+    "id": "frostveil",
+    "name": "Frostveil",
+    "sellPrice": 400
   },
   {
     "id": "frozen-geode",
@@ -2065,6 +2076,11 @@
     "sellPrice": 650
   },
   {
+    "id": "hush-lantern",
+    "name": "Hush Lantern",
+    "sellPrice": 800
+  },
+  {
     "id": "hush-roe",
     "name": "Hush roe",
     "sellPrice": 325
@@ -2223,6 +2239,11 @@
     "sellPrice": 35
   },
   {
+    "id": "lamp-minnow",
+    "name": "Lamp Minnow",
+    "sellPrice": 120
+  },
+  {
     "id": "lamp-wick-tin",
     "name": "Lamp wick tin",
     "sellPrice": 65
@@ -2241,6 +2262,12 @@
     "id": "lantern-squid-roe",
     "name": "Lantern Squid roe",
     "sellPrice": 85
+  },
+  {
+    "id": "lantern-string",
+    "name": "Lantern string",
+    "sellPrice": 0,
+    "keep": true
   },
   {
     "id": "lava-glass",
@@ -2354,6 +2381,12 @@
     "keep": true
   },
   {
+    "id": "market-fireplace",
+    "name": "Market fireplace",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "market-pie",
     "name": "Market pie",
     "sellPrice": 160,
@@ -2456,6 +2489,11 @@
     "id": "melon-wine",
     "name": "Melon wine",
     "sellPrice": 750
+  },
+  {
+    "id": "midnight-gar",
+    "name": "Midnight Gar",
+    "sellPrice": 650
   },
   {
     "id": "milk",
@@ -2817,6 +2855,11 @@
     "sellPrice": 420
   },
   {
+    "id": "pearl",
+    "name": "Pearl",
+    "sellPrice": 500
+  },
+  {
     "id": "pearl-lobster",
     "name": "Pearl Lobster",
     "sellPrice": 800
@@ -2902,6 +2945,12 @@
     "id": "pine-cone",
     "name": "Pine cone",
     "sellPrice": 5
+  },
+  {
+    "id": "pine-garland",
+    "name": "Pine garland",
+    "sellPrice": 0,
+    "keep": true
   },
   {
     "id": "pine-nut",
@@ -3575,6 +3624,12 @@
     "id": "sleet-zircon",
     "name": "Sleet zircon",
     "sellPrice": 105
+  },
+  {
+    "id": "sleigh-bench",
+    "name": "Sleigh bench",
+    "sellPrice": 0,
+    "keep": true
   },
   {
     "id": "slime-proof-ring",

@@ -21,6 +21,12 @@ import {
 } from "../core/fishing";
 import { iceBite, noteHoleCatch, type IceFishing } from "../core/icefishing";
 import {
+  PIER_NIGHT_MINUTES,
+  luckRare,
+  pierBite,
+  rollPearl,
+} from "../core/marketpier";
+import {
   BAITS,
   LURES,
   baitById,
@@ -58,6 +64,8 @@ export interface FishingData {
   kind?: WaterKind;
   /** The Frostday contest, when the cast went into an ice hole (note 82). */
   ice?: IceFishing;
+  /** A cast from the Night Market pier with a permit (note 14): market fish and a pearl. */
+  pier?: boolean;
 }
 
 type Phase = "aim" | "wait" | "hook" | "fight" | "result";
@@ -336,13 +344,16 @@ export class FishingScene extends Phaser.Scene {
     const g = this.state;
     const { season } = dateOf(g.day.clock.day);
     this.tutorial = g.fishing.total === 0;
-    const fx = g.tackle.effects(this.rod.id, this.cfg.kind === "sea");
+    const base = g.tackle.effects(this.rod.id, this.cfg.kind === "sea");
+    // A floated lantern's luck lifts the rare bites until morning (placeholder).
+    const fx = { ...base, rare: base.rare * luckRare(g) };
     this.effects = fx;
     this.pending = bite(
       this.cfg.kind ?? "river",
       {
         season,
-        minutes: g.day.clock.minutes,
+        // The pier draws the night odds from 17:00 to 23:00 (note 14).
+        minutes: this.cfg.pier ? PIER_NIGHT_MINUTES : g.day.clock.minutes,
         raining: isRaining(g.weather),
         ...legendGates(g, this.rod.id),
       },
@@ -352,6 +363,13 @@ export class FishingScene extends Phaser.Scene {
     );
     if (this.cfg.ice)
       this.pending = iceBite(this.pending, this.tutorial, Math.random);
+    if (this.cfg.pier)
+      this.pending = pierBite(
+        this.pending,
+        this.tutorial,
+        Math.random,
+        luckRare(g),
+      );
     // A cast takes game time, win or lose, and spends the bait and a lure cast.
     g.day.act(cost, CAST_MINUTES);
     const gone = g.tackle.spend(this.rod.id);
@@ -469,11 +487,16 @@ export class FishingScene extends Phaser.Scene {
       at: this.cfg.at,
     });
     if (this.cfg.ice) noteHoleCatch(this.cfg.ice, this.cfg.kind, true);
+    const pearl = this.cfg.pier && rollPearl(g, this.cfg.at, Math.random);
     // The chest pays only when it was fetched as well as the fish.
     const prize = chest ? this.chestPrize : undefined;
     if (prize) giveTreasure(g, prize, this.cfg.at);
     this.text.setText(
-      [this.describe(r), prize ? treasureText(prize) : ""]
+      [
+        this.describe(r),
+        pearl ? "A pearl was caught in the line! A rare find." : "",
+        prize ? treasureText(prize) : "",
+      ]
         .filter((l) => l)
         .join("\n"),
     );

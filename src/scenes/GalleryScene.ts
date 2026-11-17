@@ -1,5 +1,12 @@
 import Phaser from "phaser";
-import { TOUCH_CELL } from "../core/chestmenu";
+import {
+  SWIPE_START_PX,
+  TOUCH_CELL,
+  clampRowOffset,
+  inWindow,
+  swipeRowOffset,
+  visibleRows,
+} from "../core/chestmenu";
 import {
   GALLERY_TOTAL,
   canDonate,
@@ -15,6 +22,7 @@ import {
 import { itemTip, type ItemTip } from "../core/itemtip";
 import type { GameState } from "../core/save";
 import { iconKey } from "./art";
+import { takeEsc } from "./escape";
 import { closeWindow, frame } from "./panel";
 import { STATE_KEY } from "./state";
 import { Tooltip } from "./tooltip";
@@ -25,6 +33,8 @@ const SHELF_COLS = 12;
 const SHELF_X = 24;
 const SHELF_TOP = 84;
 const PACK_COLS = 6;
+/** The shelf's lowest pixel row, above the message line. */
+const SHELF_BOTTOM = 464;
 const PACK_X = SHELF_X + SHELF_COLS * PITCH + 20;
 
 interface Cell {
@@ -49,6 +59,12 @@ export class GalleryScene extends Phaser.Scene {
   private shelfCells: Cell[] = [];
   private packCells: Cell[] = [];
   private picked: number | undefined;
+  /** First shelf row shown, and how many rows fit. */
+  private offset = 0;
+  private shown = 1;
+  /** A press on a shelf cell that may become a swipe (then no tap) on release. */
+  private touch:
+    { slot: number; y: number; offset: number; active: boolean } | undefined;
 
   constructor() {
     super("gallery");
@@ -61,6 +77,8 @@ export class GalleryScene extends Phaser.Scene {
     this.shelfCells = [];
     this.packCells = [];
     this.picked = undefined;
+    this.offset = 0;
+    this.touch = undefined;
   }
 
   create(): void {
@@ -71,7 +89,14 @@ export class GalleryScene extends Phaser.Scene {
       fontSize: "16px",
       color: "#ffe9a0",
     });
+    this.shown = visibleRows(
+      this.shelfRows(),
+      0,
+      SHELF_BOTTOM - SHELF_TOP,
+      PITCH,
+    );
     for (let i = 0; i < GALLERY_TOTAL; i++) this.shelfCell(i);
+    this.setupScroll();
     if (!this.readOnly) {
       this.add.text(PACK_X, 52, "Backpack", {
         fontSize: "16px",
@@ -84,11 +109,12 @@ export class GalleryScene extends Phaser.Scene {
       24,
       506,
       this.readOnly
-        ? "Hover a piece to read it.   Esc: close"
+        ? "Hover a piece to read it.   Wheel or swipe: scroll.   Esc: close"
         : "Tap a pack item to donate one.   Tap a shelf piece, then a slot, to move it.   Esc: close",
       { fontSize: "13px", color: "#ffffffaa" },
     );
-    this.input.keyboard?.on("keydown-ESC", () => this.close());
+    this.input.on("pointerup", () => this.up());
+    this.input.on("pointerupoutside", () => this.up());
     this.refresh();
   }
 
@@ -120,9 +146,62 @@ export class GalleryScene extends Phaser.Scene {
         x,
         y,
         () => this.shelfTip(i),
-        () => this.pressShelf(i),
+        () => this.down(i),
       ),
     );
+  }
+
+  private shelfRows(): number {
+    return Math.ceil(GALLERY_TOTAL / SHELF_COLS);
+  }
+
+  private scrollTo(offset: number): void {
+    const off = clampRowOffset(offset, this.shelfRows(), this.shown);
+    if (off === this.offset) return;
+    this.offset = off;
+    this.refresh();
+  }
+
+  /** Wheel, drag and swipe scroll the shelf when it has more rows than fit. */
+  private setupScroll(): void {
+    if (this.shelfRows() <= this.shown) return;
+    this.input.on(
+      "wheel",
+      (_p: unknown, _o: unknown, _dx: number, dy: number) =>
+        this.scrollTo(this.offset + (dy > 0 ? 1 : -1)),
+    );
+    this.input.on("pointermove", (p: Phaser.Input.Pointer) => {
+      const t = this.touch;
+      if (!t) return;
+      if (!t.active && Math.abs(p.worldY - t.y) >= SWIPE_START_PX)
+        t.active = true;
+      if (t.active)
+        this.scrollTo(
+          swipeRowOffset(
+            t.offset,
+            p.worldY - t.y,
+            PITCH,
+            this.shelfRows(),
+            this.shown,
+          ),
+        );
+    });
+  }
+
+  /** A press waits for the release, so a swipe on the shelf scrolls and does not pick. */
+  private down(slot: number): void {
+    this.touch = {
+      slot,
+      y: this.input.activePointer.worldY,
+      offset: this.offset,
+      active: false,
+    };
+  }
+
+  private up(): void {
+    const t = this.touch;
+    this.touch = undefined;
+    if (t && !t.active) this.pressShelf(t.slot);
   }
 
   private packCell(i: number): void {
@@ -225,7 +304,12 @@ export class GalleryScene extends Phaser.Scene {
       const c = this.shelfCells[i]!;
       const id = s.id ?? s.ghost;
       const key = id ? iconKey(id) : undefined;
-      c.icon.setVisible(key !== undefined);
+      const on = inWindow(i, SHELF_COLS, this.offset, this.shown);
+      const x = SHELF_X + (i % SHELF_COLS) * PITCH;
+      const y = SHELF_TOP + (Math.floor(i / SHELF_COLS) - this.offset) * PITCH;
+      c.box.setPosition(x, y).setVisible(on);
+      c.icon.setPosition(x + CELL / 2, y + CELL / 2);
+      c.icon.setVisible(key !== undefined && on);
       if (key) {
         c.icon.setTexture(key);
         if (s.id) c.icon.clearTint();
@@ -248,6 +332,7 @@ export class GalleryScene extends Phaser.Scene {
   }
 
   private close(): void {
+    takeEsc(this);
     if (this.back) {
       this.scene.stop();
       this.scene.resume(this.back);

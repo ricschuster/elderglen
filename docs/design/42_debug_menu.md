@@ -108,3 +108,89 @@ and the forecast are not advanced. It returns `{ problems }` for unknown ids.
 
 - Touch opens it with a visible DBG button in dev builds.
 - The first version has every row in the table above.
+
+## Stages (named save points, #951)
+
+Status: designed 2026-11-16, core built (`src/core/stages.ts`, `src/content/stages.json`,
+`tests/stages.test.ts`). Why: the M3b play checklist (#951) needs a known state for each check, and
+playing many game days to reach it is slow. One pick, for the owner and the playtest bots alike.
+
+What Stardew does: not checked. Its console commands are not a source (ADR 0002), and this is a
+developer tool, not a game feature.
+
+### What a stage is
+
+A stage is a `StatePatch` (`statepatch.ts`) with an id, a menu group, a label and an optional `base`
+stage that is applied first. Data only, in `src/content/stages.json`; no code per stage. The "declared
+extras" a patch cannot do are new patch keys, added to `applyStatePatch` so they run through the game's
+rules and are unit tested: `houseTier` (raise only), `minesDeepest` (through `Mines.visit`), `marriage`
+(`{spouse, stage, children}` through `Marriage.court/engage/marry/addChild` and the friendship bouquet,
+so hearts, flags and caps come out as in play) and `fillPack` (one of every item until the pack is full,
+through `Inventory`). There is no "run actions" extra: a state that needs actions is a missing patch key.
+
+### Rules
+
+- **Always a NEW game.** A stage starts from `startGame()` (tools and seeds as a new farm), applies the
+  `base` chain then the stage's patch, then respawns forage as the title screen does. It never edits a
+  live game, so it is reproducible, and the stage test is the same call.
+- **Own save slot.** The hooks switch to the last slot (5) before restarting, so autosave never
+  overwrites a real save in slots 1 to 4. A real save in slot 5 would be overwritten: the menu row says
+  "plays in slot 5".
+- **Never writes derived fields** (anything other code computes: crop stage from the day, friendship
+  hearts, bundle counts by hand, the forecast). A stage sets stored inputs through patch keys only.
+  The day is set, not simulated, as for `farmState`.
+- **Dev builds only.** `window.farmStage`, `window.farmStages` and the menu row sit behind
+  `import.meta.env.DEV` like `farmState`. The stage data is read through functions (`stageList()`), never a module level constant, so
+  the bundler drops it from `npm run build` (checked: no `stages` chunk or stage id in `dist/`). Keep
+  it that way: a top level `const X = data.stages` kept the JSON in the build once.
+- **Tested.** `tests/stages.test.ts` loads EVERY stage on a fresh game, expects no problems, and runs
+  one `sleep()`. It also checks every festival has a "day before" stage and spot checks key states.
+  A new stage needs no test code.
+
+### The list
+
+| Group | Stages |
+| --- | --- |
+| Start | `new-game`; `day-28-first-bundle` (spring 28, Spring Foraging filled); `season-summer`, `season-fall`, `season-winter` (day 1 of each); `year-2-spring` |
+| Hall | `hall-1` to `hall-6`: rooms done in order (shelf, larder, water room, hearth, guests' board, Last Seat). `hall-5` is "Last Seat open"; `hall-6` is the hall complete. Filled by hand-in with no rewards paid; room rewards from other sources are not given |
+| Mines | `mines-30`, `mines-60`, `mines-100`: that floor reached, summer 10, mining and combat levels 4, 7 and 9, money 3,000, 10,000 and 30,000 |
+| Marriage | `courting` (bouquet, 8 hearts), `engaged` (wedding in 3 days), `married` (60,000g for a divorce), `married-child`, `married-two-children`. The spouse is Linnet in all; the nursery tier is raised for children |
+| Festivals | `<festival>-eve`, the day before, sunny, 2,000g: `hat-parade`, `seedswap-fair`, `cake-day`, `lamplight-evening`, `harvest-showing`, `frostday`, `midwinter-feast`; `hollow-eve-eve-odd` (year 1, small maze) and `hollow-eve-eve-even` (year 2, large maze); `night-market-eve` and `night-market-evening-1`, `-2`, `-3` (5 pm on each of the three evenings). That is all nine festivals |
+| Fishing | `fishing-reed-pole` (level 1), `fishing-hazel-rod` (3), `fishing-heron-rod` (6), `fishing-hearthwell-rod` (9): the rod in the pack, on a sunny day of a season that suits it |
+| Late game | `late-game-100`: day 100, `hall-6` done, house tier 3, all five skills 8, mine floor 60, 100,000g, a full pack |
+
+Small points decided: day 100 is winter 16, the first Night Market day, so the market stage shares
+the date. Festival stages leave the farmer on the farm (no `map`): the walk to the festival is part of
+the check. A stage may set `map` and `entry` (read by the hook, as `farmState`) when a check starts on
+another map.
+
+### How it is picked
+
+- **Debug menu:** a "Stages" row opens the groups, then the stages of a group (`Go` starts it), with
+  Esc stepping back, like the item picker.
+- **Console and scripts:** `window.farmStage(name)` returns `{ problems }` (an unknown name is a
+  problem) and restarts the scene; `window.farmStages()` lists the ids. `launch()` in
+  `scripts/playtest/lib.mjs` takes `--stage <name>` or `STAGE=<name>`, so every playtest script
+  starts from any stage. The README lists the names.
+
+### Not built: needs patch keys that do not exist
+
+Tool tiers, a chosen hat or outfit, the tailoring and tea bush setups, ponds and Secret Woods progress
+(a pond with fish, the statue), the heart-event stories as a unit (`eventsSeen` marks single events),
+the cart, herb stall and tapper being built, inside a festival (map, zone and time in the festival
+run), divorce and re-dating as states (`married` plus the ledger covers the check), the Special Items
+and journal. Each is one patch key when a check needs it, not before.
+
+### Save this as a stage
+
+Not now. A live save holds derived and random state (crops, weather, the mine floors), so replaying
+it as a patch would write derived fields. The way to reproduce a failing state is the save export
+(note 52) and the nearest stage. Revisit if exports prove too heavy.
+
+### Open
+
+1. **Slot 5 for stages.** (Stardew has no equivalent.) Recommended: yes, as built, so a stage never
+   touches saves 1 to 4. The alternative is a separate storage key that is not a slot, which costs a
+   resume path in the title screen. Is losing slot 5 to stages fine?
+2. **Spouse for the stages.** Linnet in every marriage stage. Add one stage per candidate (14) so each
+   spouse's lines can be reached, or keep one?

@@ -254,7 +254,7 @@ export function respawnAreaForage(
         (s) => map.forageTableAt(s.x, s.y),
         random,
       );
-    if (ARTIFACT_AREAS.includes(id)) {
+    if (ARTIFACT_AREAS.includes(id) && !(keepLoaded && w.spots.loaded)) {
       const free = (s: Spot) => emptyAt(w, s.x, s.y);
       const open = map.forageSpots.filter(free);
       rollAreaSpots(

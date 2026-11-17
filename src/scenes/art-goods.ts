@@ -759,6 +759,7 @@ export const GOOD_LOOKS: Record<string, GoodLook> = {
   wax: g("block", "#e8d078"),
   "old-boot": g("boot", "#6a4a30"),
   "old-tools": g("hammer", "#8a8e96", { a: WOOD }),
+  pearl: g("bead", "#f4efe6", { a: "#c8c0d8" }),
   "paper-lantern": g("lantern", "#e8d8b0", { a: "#d8402a" }),
   "ring-box": g("box", "#4a2a5a", { a: "#e8c040" }),
   shell: g("scallop", "#e8c8b8"),
@@ -775,6 +776,53 @@ export const FROSTFIN_LOOK = {
   l: "#f4faff",
   f: "#7ab4e8",
   m: "#e8f6ff",
+};
+
+/** The Night Market pier's fish, drawn on fish bodies (note 14). Placeholders. */
+export const MARKET_FISH_LOOKS: Record<
+  string,
+  { shape: string; look: typeof FROSTFIN_LOOK }
+> = {
+  "lamp-minnow": {
+    shape: "slim",
+    look: {
+      d: "#c88a30",
+      b: "#f0c860",
+      l: "#fff4c0",
+      f: "#e8a840",
+      m: "#fffbe0",
+    },
+  },
+  frostveil: {
+    shape: "slim",
+    look: {
+      d: "#5a7aa8",
+      b: "#b8d0e8",
+      l: "#f0f8ff",
+      f: "#98b8e0",
+      m: "#ffffff",
+    },
+  },
+  "midnight-gar": {
+    shape: "slim",
+    look: {
+      d: "#1a2038",
+      b: "#3a4870",
+      l: "#8a98c0",
+      f: "#2a3050",
+      m: "#c0c8e0",
+    },
+  },
+  "hush-lantern": {
+    shape: "slim",
+    look: {
+      d: "#2a6a60",
+      b: "#58b8a8",
+      l: "#c8f4e8",
+      f: "#e8c860",
+      m: "#f4fff8",
+    },
+  },
 };
 
 export const goodKey = (id: string) => `icon-good-${id}`;
@@ -821,4 +869,11 @@ export function paintGoods(scene: Phaser.Scene): void {
   paintRows(scene, goodKey("frostfin"), FISH_SHAPES.slim, (ch) =>
     colourOf(ch, FROSTFIN_LOOK),
   );
+  for (const [id, m] of Object.entries(MARKET_FISH_LOOKS))
+    paintRows(
+      scene,
+      goodKey(id),
+      FISH_SHAPES[m.shape as keyof typeof FISH_SHAPES],
+      (ch) => colourOf(ch, m.look),
+    );
 }

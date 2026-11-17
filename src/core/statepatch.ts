@@ -1,8 +1,13 @@
 import { DAYS_PER_SEASON, SEASONS, type Season } from "./calendar";
 import { DAY_START } from "./clock";
 import { giveItem } from "./debug";
+import { allItems } from "./items";
+import { BUILT_FLOORS, minesOpen } from "./mines";
+import { NURSERY_TIER } from "./children";
+import { MAX_HOUSE_TIER } from "./house";
+import { COURT_HEARTS, MAX_CHILDREN, PROPOSE_HEARTS } from "./marriage";
 import { eventById } from "./heartevents";
-import { HEART } from "./friendship";
+import { HEART, isCandidate } from "./friendship";
 import { Inventory } from "./inventory";
 import { LEVEL_XP, MAX_LEVEL, SKILLS, type Skill } from "./skills";
 import type { GameState } from "./save";
@@ -51,6 +56,22 @@ export interface StatePatch {
   flags?: string[];
   /** Raise a villager's friendship to at least this many hearts (capped by their heart limit). */
   hearts?: Record<string, number>;
+  /** Raise the house to at least this tier (0 to 3). Never lowers it. */
+  houseTier?: number;
+  /** Mark this mine floor as reached (it is dug for today), so the lift stops there. Needs the mines open (day 5). */
+  minesDeepest?: number;
+  /**
+   * Take a candidate through the courtship rules to this stage (default "married"), then add
+   * `children` (0 to 2, married only; the nursery tier is raised for them). The villager's hearts
+   * are raised through Friendship first. Only on a game that is not already courting.
+   */
+  marriage?: {
+    spouse: string;
+    stage?: "courting" | "engaged" | "married";
+    children?: number;
+  };
+  /** Fill the backpack with one of every item until it is full (after `items`). */
+  fillPack?: boolean;
 }
 
 export interface PatchResult {
@@ -171,10 +192,84 @@ export function applyStatePatch(g: GameState, p: StatePatch): PatchResult {
     if (need > 0) g.friendship.award(id, need);
   }
 
+  if (p.houseTier !== undefined) {
+    if (
+      !Number.isInteger(p.houseTier) ||
+      p.houseTier < 0 ||
+      p.houseTier > MAX_HOUSE_TIER
+    )
+      problems.push(`bad houseTier ${p.houseTier}`);
+    else g.houseTier = Math.max(g.houseTier, p.houseTier);
+  }
+
+  if (p.minesDeepest !== undefined) {
+    if (
+      !minesOpen(g.day.clock.day) ||
+      !Number.isInteger(p.minesDeepest) ||
+      p.minesDeepest < 1 ||
+      p.minesDeepest > BUILT_FLOORS
+    )
+      problems.push(`bad minesDeepest ${p.minesDeepest}`);
+    else g.mines.visit(p.minesDeepest, g.day.clock.day);
+  }
+
+  if (p.marriage) applyMarriage(g, p.marriage, problems);
+
   for (const [id, n] of Object.entries(p.items ?? {})) {
     const r = giveItem(g, id, n);
     if (r !== "ok") problems.push(`item ${id}: ${r}`);
   }
 
+  if (p.fillPack)
+    for (const item of allItems())
+      if (giveItem(g, item.id, 1) === "full") break;
+
   return { problems };
+}
+
+/** Courtship, engagement and wedding through the game's own rules (`marriage.ts`), then the children. */
+function applyMarriage(
+  g: GameState,
+  want: NonNullable<StatePatch["marriage"]>,
+  problems: string[],
+): void {
+  const { spouse } = want;
+  const stage = want.stage ?? "married";
+  const kids = want.children ?? 0;
+  const m = g.marriage;
+  if (!isCandidate(spouse) || m.stage !== "none") {
+    problems.push(`marriage: cannot court ${spouse}`);
+    return;
+  }
+  if (kids < 0 || kids > MAX_CHILDREN || (kids > 0 && stage !== "married")) {
+    problems.push(`marriage: bad children ${kids}`);
+    return;
+  }
+  const today = g.day.clock.day;
+  const raise = (hearts: number): number => {
+    g.friendship.meet(spouse);
+    const need = hearts * HEART - g.friendship.points(spouse);
+    if (need > 0) g.friendship.award(spouse, need);
+    return g.friendship.points(spouse);
+  };
+  if (
+    !m.court(spouse, raise(COURT_HEARTS)) ||
+    !g.friendship.giveBouquet(spouse)
+  ) {
+    problems.push(`marriage: ${spouse} will not be courted`);
+    return;
+  }
+  setFlag(g, `bouquet-${spouse}`);
+  if (stage === "courting") return;
+  if (!m.engage(spouse, raise(PROPOSE_HEARTS), today)) {
+    problems.push(`marriage: ${spouse} will not be engaged`);
+    return;
+  }
+  if (stage === "engaged") return;
+  m.marry(m.weddingDay);
+  g.friendship.setSpouse(spouse);
+  if (kids > 0) {
+    g.houseTier = Math.max(g.houseTier, NURSERY_TIER);
+    for (let i = 0; i < kids; i++) m.addChild(today);
+  }
 }

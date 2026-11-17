@@ -80,6 +80,7 @@ export function slotStores(kv: KeyValue, slot: number): SlotStores {
 export type SlotInfo =
   | { slot: number; status: "empty" }
   | { slot: number; status: "broken" }
+  | { slot: number; status: "newer" }
   | (Extract<LoadedSlot, { status: "used" }> & {
       slot: number;
       /** What Continue plays. Same as `play`. */

@@ -1,0 +1,73 @@
+{
+  "_note": "Winter Night Market stalls (note 14, 'Night Market attractions'). Every price and list is a placeholder for tuning. The pier, the permit and the lantern float are built separately.",
+  "festival": "night-market",
+  "hold": "festival-night-market",
+  "opens": "17:00",
+  "closes": "24:00",
+  "lantern": {
+    "name": "Lantern stall",
+    "stock": [
+      { "item": "snow-lamp", "price": 220 },
+      { "item": "winter-wreath", "price": 200 },
+      { "item": "warm-rug", "price": 200 },
+      { "item": "hanging-planter", "price": 210 },
+      { "item": "lantern-string", "price": 500 },
+      { "item": "frost-glass-candle", "price": 600 },
+      { "item": "pine-garland", "price": 700 },
+      { "item": "sleigh-bench", "price": 1000 }
+    ]
+  },
+  "curio": {
+    "name": "Curio stall",
+    "fireplace": { "item": "market-fireplace", "price": 15000 },
+    "seedSeason": "spring",
+    "evenings": {
+      "1": { "fireplace": true },
+      "2": { "fireplace": true, "seeds": true },
+      "3": {
+        "fireplace": true,
+        "extra": [
+          { "item": "fireside-chair", "price": 420 },
+          { "item": "frost-shelf", "price": 380 }
+        ]
+      }
+    }
+  },
+  "trader": {
+    "name": "Road trader",
+    "minItems": 4,
+    "maxItems": 6,
+    "markup": 1.5,
+    "goods": [
+      "crocus",
+      "snowdrop",
+      "winter-cress",
+      "pine-nut",
+      "holly-sprig",
+      "snowcap",
+      "wild-ginger",
+      "pumpkin-soup",
+      "mushroom-stew",
+      "herb-tea",
+      "farmhouse-stew",
+      "honey-cake",
+      "healing-broth",
+      "honeyed-milk"
+    ]
+  },
+  "hatmaker": {
+    "name": "Hat-maker",
+    "price": 1200,
+    "hats": [
+      "cove-dusk-cap",
+      "summit-lamp-hat",
+      "mine-mouth-hood",
+      "snowbound-hall-cap",
+      "lakeside-reed-hat",
+      "marsh-heron-hat",
+      "bridgewright-cap",
+      "square-festival-hat",
+      "far-road-hat"
+    ]
+  }
+}
