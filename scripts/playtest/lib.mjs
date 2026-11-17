@@ -165,6 +165,7 @@ export async function launch({
   profile = "desktop",
   bindings,
   scheme = "stick",
+  pre,
 }) {
   // DEVICE_CDP: drive Chrome on a real device (adb forward tcp:9222
   // localabstract:chrome_devtools_remote) instead of a headless browser.
@@ -205,6 +206,7 @@ export async function launch({
         return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
       };
     }, process.env.SEED);
+  if (pre) await p.addInitScript(pre);
   const errs = [];
   p.on("pageerror", (e) => errs.push(e.message));
   p.on("console", (m) => {

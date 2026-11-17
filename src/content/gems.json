@@ -47,7 +47,7 @@
     },
     {
       "id": "gem-high-b",
-      "name": "Diamond",
+      "name": "High gem B",
       "sellPrice": 750,
       "minFloor": 81,
       "xp": 16,
@@ -63,6 +63,19 @@
     "chance": 0.005,
     "xp": 25,
     "color": "#7af0e0",
+    "light": "#ffffff"
+  },
+  "diamond": {
+    "id": "diamond",
+    "name": "Diamond",
+    "sellPrice": 750,
+    "fromFloor": 50,
+    "nodeShare": 0.002,
+    "nodeSharePerFloor": 0.000016,
+    "monsterChance": 0.0005,
+    "monsterAfterFloor": 120,
+    "xp": 20,
+    "color": "#d8f4ff",
     "light": "#ffffff"
   },
   "shareByBand": [0.015, 0.025, 0.035],

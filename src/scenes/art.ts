@@ -1587,6 +1587,7 @@ export const ROCK_KEYS = {
   quartz: "rock-quartz",
   geode: "rock-geode",
   gem: "rock-gem",
+  diamond: "rock-diamond",
   iron: "rock-iron",
   gold: "rock-gold",
   hearthsilver: "rock-hearthsilver",
@@ -2274,6 +2275,13 @@ function paintMineArt(scene: Phaser.Scene): void {
     px(c, "#1e3a44", 5, 7, 6, 4);
     px(c, "#7ad8e8", 6, 7, 4, 3);
     px(c, "#3a98b0", 8, 9, 2, 1);
+    px(c, "#ffffff", 6, 7, 1, 1);
+  });
+  draw(ROCK_KEYS.diamond, (c) => {
+    lump(c, "#7a7a86", "#4a4a56", "#a8a8b4");
+    px(c, "#2a3a4a", 5, 7, 6, 4);
+    px(c, "#d8f4ff", 6, 7, 4, 3);
+    px(c, "#9ac8e0", 8, 9, 2, 1);
     px(c, "#ffffff", 6, 7, 1, 1);
   });
   // A marked artifact spot: a patch of turned earth with a pale cross.

@@ -16,6 +16,7 @@ export type RockKind =
   | "quartz"
   | "geode"
   | "gem"
+  | "diamond"
   | "iron"
   | "gold"
   | "hearthsilver";
@@ -37,6 +38,7 @@ const SWINGS_BY_TIER: Record<RockKind, readonly number[]> = {
   quartz: [1, 1, 1, 1, 1],
   geode: [3, 3, 2, 1, 1],
   gem: [3, 3, 2, 1, 1],
+  diamond: [4, 3, 2, 1, 1],
   iron: [4, 3, 2, 1, 1],
   gold: [5, 4, 3, 2, 1],
   hearthsilver: [6, 5, 4, 3, 2],
@@ -56,6 +58,7 @@ export const ROCK_KINDS: RockKind[] = [
   "quartz",
   "geode",
   "gem",
+  "diamond",
   "iron",
   "gold",
   "hearthsilver",

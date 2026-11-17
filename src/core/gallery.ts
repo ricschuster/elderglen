@@ -3,7 +3,7 @@ import geodeData from "../content/geodes.json";
 import { ARTIFACTS } from "./artifacts";
 import type { Count } from "./completion";
 import { absorbElderfruit, SOURCE_FLAGS } from "./elderfruit";
-import { GEM_ITEMS } from "./gems";
+import { DIAMOND, GEM_ITEMS } from "./gems";
 import { ELDERFRUIT, itemById } from "./items";
 import { splitQuality } from "./quality";
 import type { GameState } from "./save";
@@ -35,7 +35,8 @@ export const GALLERY_LIST: GalleryEntry[] = (() => {
   const ids = [
     ...POOLS.flatMap((p) => p.minerals),
     ...POOLS.map((p) => p.foraged.item),
-    ...GEM_ITEMS.map((g) => g.id),
+    // The Diamond is not on the list yet: the total of 95 is settled (note 104).
+    ...GEM_ITEMS.filter((g) => g.id !== DIAMOND.id).map((g) => g.id),
   ];
   return [
     ...[...new Set(ids)].map((id): GalleryEntry => ({ id, group: "mineral" })),

@@ -236,6 +236,7 @@ import {
 } from "./storage";
 import { ResumeGate } from "../core/records";
 import { serialize, type ResumeSpot } from "../core/save";
+import { DIAMOND, monsterDiamond } from "../core/gems";
 import { spawnTableOf } from "../core/spawns";
 import { SLOT_COUNT } from "../core/slots";
 import { buildStage, stageList } from "../core/stages";
@@ -4566,6 +4567,10 @@ export class FarmScene extends Phaser.Scene {
       ...rollDrops(def, Math.random),
       ...rollDrops(extra, Math.random),
       ...(bonus.extraDrop ? rollDrops(def, Math.random) : []),
+      // A rare Diamond from any monster, once the bottom of the mines is reached (note 83).
+      ...(monsterDiamond(this.state.mines.deepest, Math.random)
+        ? [{ id: DIAMOND.id, count: 1 }]
+        : []),
     ];
     for (const d of rolls) {
       if (this.state.inventory.add(d.id, d.count))

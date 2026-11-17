@@ -19,7 +19,7 @@ import {
 } from "./artisan";
 import { crackResult, GEODE_KINDS } from "./geodes";
 import { JUNK } from "./pots";
-import { GEMS, GLIMMERSTONE } from "./gems";
+import { DIAMOND, GEMS, GLIMMERSTONE } from "./gems";
 import geodeData from "../content/geodes.json";
 import { cropById } from "./crops";
 import { BARS, COAL, coalFor, orePerBatch, QUARTZ } from "./ore";
@@ -216,6 +216,7 @@ const GEM_STARDEW_MINUTES: Record<string, number> = {
   "gem-mid-b": 3000,
   "gem-high-a": 3000,
   "gem-high-b": 7200,
+  [DIAMOND.id]: 7200,
   [GLIMMERSTONE.id]: 7200,
   [QUARTZ]: 420,
 };
@@ -233,6 +234,7 @@ export function copyMinutes(item: string): number | undefined {
 /** Every item the Crystalarium takes. */
 export const COPYABLE: readonly string[] = [
   ...GEMS.map((g) => g.id),
+  DIAMOND.id,
   GLIMMERSTONE.id,
   QUARTZ,
   ...MINERAL_IDS,

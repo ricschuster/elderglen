@@ -346,7 +346,8 @@
     "draft": true
   },
   "gem-high-b": {
-    "text": "The finest gem. Sells for 750 coins."
+    "text": "A high tier gem that sells for 750 coins. Placeholder name.",
+    "draft": true
   },
   "gem-low-a": {
     "text": "A low tier gem that sells for 50 coins. Placeholder name.",
@@ -441,6 +442,10 @@
   },
   "blue-ribbon-melon": {
     "text": "The prize for first place at the Harvest Showing, given once a year. Every villager loves it as a gift.",
+    "draft": true
+  },
+  "diamond": {
+    "text": "A rare gem, just below the Glimmerstone. It comes from Diamond nodes in the mines from floor 50 and the Quarry, and very rarely from monsters once you have reached the bottom of the mines. It sells for 750 coins. Every villager loves it as a gift. Placeholder name.",
     "draft": true
   },
   "glimmerstone": {
