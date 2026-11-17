@@ -5,6 +5,8 @@ import {
   hasButtons,
   migrateScheme,
   partsFor,
+  tapIsAction,
+  TAP_USE_MAX_SECONDS,
 } from "../src/core/controlschemes";
 import { defaultSettings, deserializeSettings } from "../src/core/bindings";
 
@@ -44,7 +46,11 @@ describe("control schemes", () => {
       tap: false,
     });
     const one = partsFor("invisOne", false);
-    expect(one).toMatchObject({ useButton: true, actionButton: false });
+    expect(one).toMatchObject({
+      useButton: false,
+      actionButton: false,
+      tapDuration: true,
+    });
   });
   it("the weapon schemes show their parts only with a weapon", () => {
     const a = partsFor("tapStickButtonsWeapon", false);
@@ -79,5 +85,12 @@ describe("control schemes", () => {
     });
     expect(hasButtons("tapStick")).toBe(false);
     expect(hasButtons("stickButtons")).toBe(true);
+  });
+  it("tap duration: under 0.25 s is Use, over is Action", () => {
+    expect(TAP_USE_MAX_SECONDS).toBe(0.25);
+    expect(tapIsAction(100)).toBe(false);
+    expect(tapIsAction(250)).toBe(false);
+    expect(tapIsAction(251)).toBe(true);
+    expect(partsFor("invisTwo", false).tapDuration).toBe(false);
   });
 });

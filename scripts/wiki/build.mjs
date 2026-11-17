@@ -491,6 +491,11 @@ ${prose("rooms", r.id)}${shot(`rooms/${r.id}`, `The ${r.name} counter in the vil
     for (const g of d.gems.gems)
       rows.push([g.id, "Mineral", `Gem nodes, from mine floor ${g.minFloor}`]);
     rows.push([
+      d.gems.diamond.id,
+      "Mineral",
+      `Diamond nodes, from mine floor ${d.gems.diamond.fromFloor}, and a rare monster drop`,
+    ]);
+    rows.push([
       d.gems.glimmerstone.id,
       "Mineral",
       `Gem nodes, from mine floor ${d.gems.glimmerstone.fromFloor}`,

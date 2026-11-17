@@ -696,8 +696,7 @@ placeholders to check in play.
   is now a placeable farm decoration (see the next entry).
 - **Owner decisions built (2026-11-12):** Cake Day points are 60 / 90 / 120 per attendee (Luau scale, from the saved wiki page). The Seedswap hunt prize: the first win ever gives the Straw Boater (`g.wardrobe.add`, tracked as `seedhunt-hat` in `festivalsJoined`), every year's win gives a `rare-seed-packet` (`seedhunt-win:<year>`, `awardHuntPrize` in `seedhunt.ts`, called from the `FarmScene` hunt end before `finishHunt`; data in `src/content/hunt-prize.json`). The packet is a plain item for now (sell price 200 placeholder, the crop it grows is open). The keepsake lantern is now a `decor` placeable (`placeables.json`, no keeper price, farm only, lifted by hand) instead of a carried keepsake; the keeper's list uses `farmDecorForSale`. Its art is a placeholder block.
 - **Not built (open or blocked):** the rare packet's crop and sell price; multiplayer packet counts; the even-year maze and its niches; Hollow Eve niche
-  lines; who walks the villagers between standing tiles (scene); the hall-restored state
-  (the feast always uses the square until it is tracked); Frostday
+  lines; who walks the villagers between standing tiles (scene); Frostday
   activities; the cake table scene, the lantern drifting animation and costume stall behaviour; the shut zone
   for the Frostday south shore (the zone stays the lake, since the shore is the Forest road).
 

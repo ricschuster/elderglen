@@ -142,7 +142,7 @@ of each Stardew scheme is unchecked (SC-188), so these are our readings:
 | 1 | Tap-to-move and Auto-Attack | As before, plus a held weapon swings by itself at the nearest creature in reach. Stardew's exact auto-attack rule is unknown. |
 | 2 | Tap-to-move and Attack Joystick | Tap-to-move, plus an aim stick in the lower-right corner while a weapon is held: push to face and swing that way (a sling shoots along it). Guess. |
 | 3 | Invisible Joystick and 2 Buttons | The floating stick with nothing drawn, plus Use and Action. Guess. |
-| 4 | Invisible Joystick and 1 Button | Invisible stick and one "Do" button: it acts on a person, service, ripe crop or the horse ahead, else uses the held item. Guess. |
+| 4 | Invisible Joystick and 1 Button | Invisible stick, no button: a right half tap under 0.25 s is Use, longer is Action (Stardew's tap-duration rule). |
 | 5 | Tap-to-move and Joystick and Buttons | Tap-to-move, a visible stick, Use and Action. Guess. |
 | 6 | Tap-to-move and (Joystick and Buttons) (weapons) | Tap-to-move; the stick and both buttons appear only while a weapon is held. Guess. |
 | 7 | Tap-to-move and Joystick and (Buttons) (weapons) | Tap-to-move and the stick always; the buttons appear only with a weapon. Guess. |
@@ -168,12 +168,14 @@ agrees, the "guess" mark above is now a checked reading.
   5, 6, 7, 8 and 9 (the page says 6 and 7 are scheme 5 with the parts shown only with a weapon, and 9 is
   scheme 5 with no tap-to-move), 3 (floating stick on the left half, Use held to repeat), and auto-attack
   only in scheme 1.
-- **Differs, 4 (one button):** Stardew has no button. A tap on the right half, released under 0.25 s, is
-  Use; held over 0.25 s it is Action. Ours is a "Do" button that picks Use or Action from what is ahead.
+- **Scheme 4 (tap duration, built 2026-11-17):** copies Stardew: a tap on the right half, released within
+  0.25 s, is Use; held over 0.25 s it is Action. No button is drawn.
 - **Differs, 1 (auto-attack):** Stardew auto-equips a weapon from the pack (the last used, else the highest
   slot) when a tool or nothing is held, and swings at an enemy in range. It does not run with a slingshot or
   a non-tool item in hand, and an equipped scythe may attack. Tapping an enemy walks to it and uses the
-  weapon's secondary attack. Ours swings only a weapon already held, and has no tap-on-enemy secondary.
+  weapon's secondary attack. Ours (built 2026-11-17) equips the last weapon swung, else the highest slot, when a creature is in reach,
+  skips slingshots and never swaps away from a held non-tool item. Not built: the tap-on-enemy secondary,
+  a hotbar highlight on the auto-equip, and the equipped scythe attacking.
 - **Not on our side yet:** the "Show controls" toggle in the top left (off means scheme 1, on means the
   chosen scheme). Stardew's schemes 5 to 9 draw a fixed stick on the left; ours draws a floating ring.
 - **Tap-to-move extras:** a giftable held item is given by tapping an NPC, and tapping a stone, tree or stump
@@ -181,7 +183,7 @@ agrees, the "guess" mark above is now a checked reading.
 
 ### Decided 2026-11-17 (owner): copy Stardew for schemes 4 and 1
 
-Not built yet.
+Built 2026-11-17: `tapDuration` and `tapIsAction` in `src/core/controlschemes.ts`, the equip pick in `src/core/autoattack.ts`; "last used weapon" is the last one swung this session, no hotbar highlight yet. Tapping an enemy for the secondary attack is not built.
 
 - **Scheme 4 uses the tap-duration rule.** No drawn button. A tap on the right half released under 0.25 s is
   Use; held over 0.25 s it is Action. The invisible stick keeps the left half. The `oneButton` part in

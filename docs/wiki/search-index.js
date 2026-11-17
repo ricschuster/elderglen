@@ -948,6 +948,7 @@ window.WIKI_INDEX = [
     kw: "",
   },
   { name: "Dehydrator", cat: "Item", path: "items/dehydrator.html", kw: "" },
+  { name: "Diamond", cat: "Item", path: "items/diamond.html", kw: "" },
   { name: "Dilly's Pot", cat: "Item", path: "items/dilly-supper.html", kw: "" },
   {
     name: "Dorrie's Bowl",
@@ -1082,7 +1083,7 @@ window.WIKI_INDEX = [
   },
   { name: "Garlic seeds", cat: "Item", path: "items/garlic-seed.html", kw: "" },
   { name: "High gem A", cat: "Item", path: "items/gem-high-a.html", kw: "" },
-  { name: "Diamond", cat: "Item", path: "items/gem-high-b.html", kw: "" },
+  { name: "High gem B", cat: "Item", path: "items/gem-high-b.html", kw: "" },
   { name: "Low gem A", cat: "Item", path: "items/gem-low-a.html", kw: "" },
   { name: "Low gem B", cat: "Item", path: "items/gem-low-b.html", kw: "" },
   { name: "Mid gem A", cat: "Item", path: "items/gem-mid-a.html", kw: "" },
@@ -2079,7 +2080,7 @@ window.WIKI_INDEX = [
     name: "Geode crusher",
     cat: "Recipe",
     path: "recipes/geode-crusher.html",
-    kw: "Crafting Gold bar Stone Diamond",
+    kw: "Crafting Gold bar Stone High gem B",
   },
   {
     name: "Gourd lantern",

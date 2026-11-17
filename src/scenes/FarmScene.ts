@@ -217,9 +217,11 @@ import {
   DEFAULT_SCHEME,
   partsFor,
   schemeById,
+  tapIsAction,
   usesTap,
   type Parts,
 } from "../core/controlschemes";
+import { autoSwings, autoWeaponSlot, mayAutoEquip } from "../core/autoattack";
 import { planTap, planUse, type TapPlan } from "../core/pathing";
 import { tapPick, tapUse } from "../core/tapuse";
 import { isTapperItem, tapReady, tapStatus } from "../core/tapper";
@@ -234,6 +236,7 @@ import {
 } from "./storage";
 import { ResumeGate } from "../core/records";
 import { serialize, type ResumeSpot } from "../core/save";
+import { DIAMOND, monsterDiamond } from "../core/gems";
 import { spawnTableOf } from "../core/spawns";
 import { SLOT_COUNT } from "../core/slots";
 import { buildStage, stageList } from "../core/stages";
@@ -548,6 +551,8 @@ export class FarmScene extends Phaser.Scene {
   private swingFx!: Phaser.GameObjects.Graphics;
   /** The scene time before which the next weapon swing is refused. */
   private swingReady = 0;
+  /** The weapon last swung, for auto-attack's equip pick (note 27). */
+  private lastWeapon: string | undefined;
   /** Burn damage not yet a whole point of health. */
   private burnDebt = 0;
   /** True while the naming dialog is open for the first ride. */
@@ -790,7 +795,7 @@ export class FarmScene extends Phaser.Scene {
     this.hud = new Hud(
       this,
       (i) => this.select(i),
-      () => this.useButton(),
+      () => this.use(),
       () => this.action(),
       () => this.openMenu("pack"),
       () => this.openMenu("crafting"),
@@ -926,6 +931,12 @@ export class FarmScene extends Phaser.Scene {
 
     if (this.controls.profile === "touch" && usesTap(settings.touchScheme))
       this.initTapInput();
+
+    if (
+      this.controls.profile === "touch" &&
+      schemeById(settings.touchScheme).tapDuration
+    )
+      this.initTapDuration();
 
     this.initWorldTips();
 
@@ -2453,31 +2464,37 @@ export class FarmScene extends Phaser.Scene {
     const id = this.scheme;
     const parts = partsFor(id, this.weaponHeld());
     if (this.controls.profile === "touch") {
-      this.hud.setButtons(
-        parts.useButton,
-        parts.actionButton,
-        schemeById(id).oneButton,
-      );
+      this.hud.setButtons(parts.useButton, parts.actionButton, false);
       this.controls.setParts?.(parts);
     }
     return parts;
   }
 
   /**
-   * The one-button schemes: the button acts on what is ahead (a person, a
-   * service, a ripe crop or the horse) and otherwise uses the held item. The
-   * two-button schemes keep Use as Use.
+   * The tap-duration scheme (note 27): a touch on the right half, released under
+   * 0.25 s, is Use; held longer it is Action. No drawn button.
    */
-  private useButton(): void {
-    const id = this.scheme;
-    if (!schemeById(id).oneButton) return this.use();
-    const front = this.aimTile();
-    const hand =
-      !!this.map.serviceAt(front.x, front.y) ||
-      !!presentAt(this.villagers, front.x, front.y) ||
-      this.tapHand(front);
-    if (hand) return this.action();
-    this.use();
+  private initTapDuration(): void {
+    let down: { id: number; at: number } | undefined;
+    const onDown = (p: Phaser.Input.Pointer): void => {
+      const half = p.x > this.scale.gameSize.width / 2;
+      if (!half || this.hud.covers(p.x, p.y) || this.controls.claims?.(p))
+        return;
+      down = { id: p.id, at: this.time.now };
+    };
+    const onUp = (p: Phaser.Input.Pointer): void => {
+      if (!down || down.id !== p.id) return;
+      const ms = this.time.now - down.at;
+      down = undefined;
+      if (tapIsAction(ms)) this.action();
+      else this.use();
+    };
+    this.input.on("pointerdown", onDown);
+    this.input.on("pointerup", onUp);
+    this.events.once("shutdown", () => {
+      this.input.off("pointerdown", onDown);
+      this.input.off("pointerup", onUp);
+    });
   }
 
   /**
@@ -2491,13 +2508,37 @@ export class FarmScene extends Phaser.Scene {
     const floor = this.fightState();
     if (!floor || this.state.combat.noCreatures) return;
     const h = heldAt(this.state, this.selected);
-    const weapon =
+    let weapon =
       h.kind === "item" && isWeapon(h.id) ? weaponById(h.id) : undefined;
-    if (!weapon) return;
     const ts = this.map.tileSize;
     const push = parts.aimStick ? this.controls.aim?.() : undefined;
     let dir: Vec | undefined = push;
-    if (!dir && parts.autoAttack) {
+    // Auto-attack with a tool or nothing held equips a weapon from the pack
+    // when a creature is in reach (note 27, Stardew's rule).
+    if (
+      !weapon &&
+      !dir &&
+      schemeById(this.scheme).autoAttack &&
+      mayAutoEquip(this.state, this.selected)
+    ) {
+      const slot = autoWeaponSlot(this.state, this.lastWeapon);
+      const w =
+        slot === undefined ? undefined : this.state.inventory.slot(slot);
+      const cand = w ? weaponById(w.id) : undefined;
+      if (
+        slot !== undefined &&
+        cand &&
+        floor.creatures.some(
+          (c) =>
+            Math.hypot(c.x - this.pos.x, c.y - this.pos.y) <= cand.reach * ts,
+        )
+      ) {
+        this.select(slot);
+        weapon = cand;
+      }
+    }
+    if (!weapon) return;
+    if (!dir && schemeById(this.scheme).autoAttack && autoSwings(weapon.id)) {
       let best = Infinity;
       for (const c of floor.creatures) {
         const dx = c.x - this.pos.x;
@@ -4404,6 +4445,7 @@ export class FarmScene extends Phaser.Scene {
    */
   private swing(weapon: WeaponDef): void {
     if (this.time.now < this.swingReady) return;
+    this.lastWeapon = weapon.id;
     this.swingReady =
       this.time.now +
       weapon.cooldown * this.state.combat.effects.swingFactor() * 1000;
@@ -4525,6 +4567,10 @@ export class FarmScene extends Phaser.Scene {
       ...rollDrops(def, Math.random),
       ...rollDrops(extra, Math.random),
       ...(bonus.extraDrop ? rollDrops(def, Math.random) : []),
+      // A rare Diamond from any monster, once the bottom of the mines is reached (note 83).
+      ...(monsterDiamond(this.state.mines.deepest, Math.random)
+        ? [{ id: DIAMOND.id, count: 1 }]
+        : []),
     ];
     for (const d of rolls) {
       if (this.state.inventory.add(d.id, d.count))

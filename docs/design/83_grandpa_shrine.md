@@ -103,7 +103,7 @@ all four. Nothing else changes in the game.
     Ours: copy the three numbers above onto our floors (Diamond node 0.20 percent at floor
     50 rising by 0.0016 percent a floor, monster 0.05 percent after the Ember Deeps boss floor,
     no geode source). The Glimmerstone's 0.5 percent per gem node (note 22) is a different
-    item and stays. Build waits for the shrine Diamond (decision 21).
+    item and stays. **Built 2026-11-17** (decisions 16, 21 to 24, not the shrine): the Diamond item (`diamond`, sells 750, loved by every villager), the Diamond node rock (mine floor 50 on, Quarry spawn weight 0.5, about 0.55 percent), and the 0.05 percent monster drop once floor 120 is reached (there is no boss, note 22). Not on the gallery list (note 104's 95 stays). The old placeholder gem `gem-high-b`, which was named Diamond, is now "High gem B".
 24. **The Quarry gets a small gem node share, the deep dig a larger one (owner,
     2026-11-11).** Stardew lists both (saved Diamond page).
 

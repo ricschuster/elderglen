@@ -270,7 +270,7 @@ describe("hard rock and Mining level gates (note 78)", () => {
       let n = 1;
       const random = () => (n = (n * 16807) % 2147483647) / 2147483647;
       const found = new Set<string>();
-      for (let d = 0; d < 400; d++)
+      for (let d = 0; d < 2000; d++)
         for (const s of nightlySpawns(
           table,
           3,

@@ -1000,6 +1000,11 @@
     "keep": true
   },
   {
+    "id": "diamond",
+    "name": "Diamond",
+    "sellPrice": 750
+  },
+  {
     "id": "dilly-supper",
     "name": "Dilly's Pot",
     "sellPrice": 150,
@@ -1464,7 +1469,7 @@
   },
   {
     "id": "gem-high-b",
-    "name": "Diamond",
+    "name": "High gem B",
     "sellPrice": 750
   },
   {

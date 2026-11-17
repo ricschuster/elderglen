@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { drops, mine, ROCK_XP } from "../src/core/mining";
 import {
+  DIAMOND,
+  diamondShare,
+  monsterDiamond,
   GEMS,
   GEM_ITEMS,
   GLIMMERSTONE,
@@ -13,6 +16,9 @@ import { rockKindAt } from "../src/core/mines";
 import { itemById } from "../src/core/items";
 import { SPAWN_TABLES } from "../src/core/spawns";
 import { swingsToBreak } from "../src/core/rocks";
+import { tasteOf } from "../src/core/friendship";
+import { VILLAGERS } from "../src/core/villagers";
+import geodeData from "../src/content/geodes.json";
 import { newGame } from "../src/core/save";
 
 describe("gem data (note 69)", () => {
@@ -90,5 +96,57 @@ describe("breaking a gem node", () => {
     mine(g, 2, 2, 50, () => 0);
     mine(g, 2, 2, 50, () => 0);
     expect(g.inventory.count("gem-low-a")).toBe(1);
+  });
+});
+
+describe("the Diamond (note 83, decisions 16, 21 to 24)", () => {
+  it("is an item just below the Glimmerstone, selling for 750", () => {
+    expect(itemById(DIAMOND.id)?.sellPrice).toBe(750);
+    expect(DIAMOND.sellPrice).toBeLessThan(GLIMMERSTONE.sellPrice);
+    const ids = GEM_ITEMS.map((g) => g.id);
+    expect(ids.indexOf(DIAMOND.id)).toBe(ids.indexOf(GLIMMERSTONE.id) - 1);
+    expect(gemDrop(110, () => 0.99)).not.toBe(DIAMOND.id);
+  });
+  it("is loved by every villager", () => {
+    for (const v of VILLAGERS)
+      expect(["like", "love"]).toContain(tasteOf(v.id, DIAMOND.id));
+  });
+  it("makes Diamond nodes from floor 50 only, 0.20 percent rising 0.0016 a floor", () => {
+    expect(diamondShare(49)).toBe(0);
+    expect(diamondShare(50)).toBeCloseTo(0.002, 9);
+    expect(diamondShare(100)).toBeCloseTo(0.0028, 9);
+    expect(diamondShare(119)).toBeCloseTo(0.003104, 9);
+    const nodeAt = (floor: number) => {
+      let n = 0;
+      for (let r = 0; r < 1; r += 0.00001)
+        if (rockKindAt(floor, r) === "diamond") n++;
+      return n / 100000;
+    };
+    expect(nodeAt(49)).toBe(0);
+    expect(nodeAt(50)).toBeCloseTo(0.002, 3);
+    expect(nodeAt(100)).toBeCloseTo(0.0028, 3);
+  });
+  it("gives a Diamond from a Diamond node, a small share of Quarry spawns", () => {
+    expect(drops("diamond", 0, false, () => 0.5, 60)).toEqual({
+      id: DIAMOND.id,
+      count: 1,
+    });
+    expect(swingsToBreak("diamond", 0)).toBeGreaterThan(0);
+    const kinds = SPAWN_TABLES["quarry"]!.kinds;
+    const total = kinds
+      .filter((k) => (k.minLevel ?? 0) === 0)
+      .reduce((n, k) => n + k.weight, 0);
+    const share = kinds.find((k) => k.kind === "diamond")!.weight / total;
+    expect(share).toBeGreaterThan(0.004);
+    expect(share).toBeLessThan(0.007);
+  });
+  it("drops from monsters at 0.05 percent, only after the bottom floor", () => {
+    expect(monsterDiamond(119, () => 0)).toBe(false);
+    expect(monsterDiamond(120, () => 0)).toBe(true);
+    expect(monsterDiamond(120, () => 0.0005)).toBe(false);
+    expect(monsterDiamond(0, () => 0)).toBe(false);
+  });
+  it("has no geode source", () => {
+    expect(JSON.stringify(geodeData)).not.toContain(`"${DIAMOND.id}"`);
   });
 });

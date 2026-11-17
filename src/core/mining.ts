@@ -1,6 +1,6 @@
 import type { Outcome } from "./actions";
 import { noteGathered } from "./quests";
-import { gemDrop, gemShare, gemXp } from "./gems";
+import { DIAMOND, gemDrop, gemShare, gemXp } from "./gems";
 import { GEODE_SHARE, geodeDrop, geodeKindForFloor } from "./geodes";
 import {
   COAL,
@@ -28,6 +28,8 @@ export const ROCK_XP: Record<RockKind, number> = {
   geode: 4,
   /** Gem nodes give by the gem dropped (`gemXp`); this is the floor. */
   gem: 8,
+  /** The Diamond node gives the Diamond's own experience. */
+  diamond: DIAMOND.xp,
   iron: 7,
   gold: 10,
   hearthsilver: 14,
@@ -63,6 +65,7 @@ export function drops(
     return { id: STONE, count: random() < 0.5 ? 1 : 2 };
   }
   if (kind === "geode") return { id: geodeDrop(floor, random), count: 1 };
+  if (kind === "diamond") return { id: DIAMOND.id, count: 1 };
   if (kind === "gem") return { id: gemDrop(floor, random), count: 1 };
   if (kind === "quartz") return { id: QUARTZ, count: 1 };
   if (kind === "coal") return { id: COAL, count: 1 + (random() < 0.3 ? 1 : 0) };
