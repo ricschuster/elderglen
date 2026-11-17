@@ -22,14 +22,16 @@ Decisions and built detail for sessions 7 to 10 (2026-11-12) are in `PRIORITIES_
 
 Open, top to bottom:
 
-1. **Owner answers left:** none. Decided 2026-11-13: garden pot is clay 1, stone 10 and a refined crystal (smelted quartz, Stardew), taught by Alder (built: smelt recipe, letter and craft recipe); Frostfin 300g, no bundle slot; Frostday cap is Icewarden's Cap (built); the hunt prize is the emberseed (built); aged roe quality closed. Algae soup is the glassy-elver's reward (note 93).
-2. **#876 festivals** (note 82, 14): walk and joining built for the green, hedge and six in-place festivals; the **Night Market built 2026-11-16** (stalls, hats, crowd, pier, market fish, float, hot drink; all placeholder art and lines). Left: hall-restored Feast (waits for the hall layout), exit tiles, multiplayer counts (M4), the owner's play.
-3. **Heart events** (#873, closed) and the **Secret Woods and ponds** (#878, closed) are built; real text, pond art and tuning are #950 (M3d).
-4. **Save split** (note 52, built 2026-11-16, with the two-tab guard, newer-version text and stored artifact spots): left a browser check of resume, late-game size, tablet `persist()`, the debug tab and Import with the guard, paper doll.
-5. **Gallery** (note 104, 95 items): left the owner's look, display case, special order, librarian lines (M3d).
-6. **Built to shell level 2026-11-16, left the owner's look:** control schemes (note 27; only 1 and 9 are real, SC-188), marriage (note 12; SC-201 to 203), chests and tools (notes 34, 49, 101 to 103), sim (55 of 100 finished by day 112, no drift).
-7. **#951: play M3b end to end.** A checklist plus the stage jumper (note 42: 38 stages, `window.farmStage(name)`, `--stage` in playtests). **Directed play ran 2026-11-17** on desktop and on the tablet (agents; findings fixed in the session PR, handoff 2026-11-17). Left: the owner's own look, the Diamond rates are now read from the saved pages (SC-135 closed, note 83 decision 23, build with the shrine Diamond) and the touch checks the agents could not do (Big Chest and stick scheme by touch, health bar in the mines, a real gallery donation, the hot drink Take click).
-8. **Tablet debug app (2026-11-17).** `npm run android:apk -- --debug` and `android:install -- --debug` build "Elderglen DBG" (stage jumper, debug menu; own package id and saves), beside the normal app (docs/android.md, note 42).
+1. **#876 festivals** (note 82, 14): walk and joining built for the green, hedge and six in-place festivals; the **Night Market built 2026-11-16** (stalls, hats, crowd, pier, market fish, float, hot drink; all placeholder art and lines). Left: hall-restored Feast (waits for the hall layout), exit tiles, multiplayer counts (M4), the owner's play.
+2. **Save split** (note 52, built 2026-11-16, with the two-tab guard, newer-version text and stored artifact spots): left a browser check of resume, late-game size, tablet `persist()`, the debug tab and Import with the guard, paper doll.
+3. **Gallery** (note 104, 95 items): left the owner's look, display case, special order, librarian lines (M3d).
+4. **Built to shell level 2026-11-16, left the owner's look:** control schemes (note 27; only 1 and 9 are real, SC-188), marriage (note 12; SC-201 to 203), chests and tools (notes 34, 49, 101 to 103), sim (55 of 100 finished by day 112, no drift).
+5. **#951: play M3b end to end.** A checklist plus the stage jumper (note 42: 38 stages, `window.farmStage(name)`, `--stage` in playtests). **Directed play ran 2026-11-17** on desktop and on the tablet (agents; findings fixed in the session PR, handoff 2026-11-17). Left: the owner's own look, the Diamond rates are now read from the saved pages (SC-135 closed, note 83 decision 23, build with the shrine Diamond) and the touch checks the agents could not do (Big Chest and stick scheme by touch, health bar in the mines, a real gallery donation, the hot drink Take click). Tablet: `android:install -- --debug` gives the "Elderglen DBG" app (docs/android.md).
+
+Decided 2026-11-17: Hearthwell water stays all fishable (note 14); Import keeps the first empty slot, and the slot count should
+open past five later (note 52).
+
+Decided 2026-11-17: scheme 4 uses Stardew's tap-duration rule and scheme 1 auto-attack equips a weapon (note 27; not built). The sweep and sim still need a clean run (`WORKERS=3`, handoff 2026-11-17b).
 
 Alongside: the wiki (#910, note 100; built for every category, every item has a picture; text cleared for crops, fish, forage, items, places and rooms; draft text left for bundles, recipes, people and five gem names; left: owner reads the draft text and clears flags, gift lists (`giftsDraft`), people prose with the voice sheets, hosting after M3d), Stardew checks rows (open: SC-188 only; the rest answered or closed as ours, on purpose, 2026-11-17). M4 hosting spike filed as #948.
 

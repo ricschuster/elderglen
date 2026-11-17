@@ -443,9 +443,11 @@ Still open:
 
 - Whether `navigator.storage.persist()` helps on a tablet browser, found by
   trying it on the real device (#59, #63).
-- Whether a late-game record is small enough for five slots of three records
-  (a new game measures 61 KB; see Built status).
-- Import asks no slot question yet (first empty slot); add the pick and the
-  replace confirm if the owner wants them.
+- Late-game record size: measured 2026-11-17 on stages (`late-game-100` night record 66.5 KB, new game
+  62 KB), so five slots of three records stay near 1 MB of the 5 MB budget. The stages are set by patch, not
+  played; re-check with a played late-game save (the sim bot's day 112 state).
+- Import fills the first empty slot, with no pick and no replace confirm (owner, 2026-11-17: keep). Later
+  the slot count should open up past five, as Stardew lists every saved farm (not checked against the saved
+  pages). That needs the 5 MB budget and the title screen list (scroll) designed first.
 - The installed app's file path for Export (ADR 0008).
-- Two-tab guard and "newer version" text: built 2026-11-16 (heartbeat lock). Left: the debug menu may open a second tab, and Import does not use the guard.
+- Two-tab guard and "newer version" text: built 2026-11-16 (heartbeat lock). The debug-menu second tab and Import not using the guard are closed as ours, on purpose (owner, 2026-11-17).

@@ -158,3 +158,41 @@ zone sizes, the aim stick's corner, the one-button rule, whether Auto-Attack
 should also run in schemes 3 to 9 (it does not now), and the Options list
 layout (nine rows, one "Use this" button each). Schemes 1 and 9 are the only
 ones that match something we had before; the rest are guesses (SC-188).
+
+## Compared with the saved Mobile Controls page (2026-11-17, SC-188)
+
+Read from `docs/reference/stardew/Mobile_Controls.html` (reference only, ADR 0002). Where the built scheme
+agrees, the "guess" mark above is now a checked reading.
+
+- **Agrees:** 2 (aim stick bottom right while a weapon is held, push to face and swing; no auto-attack),
+  5, 6, 7, 8 and 9 (the page says 6 and 7 are scheme 5 with the parts shown only with a weapon, and 9 is
+  scheme 5 with no tap-to-move), 3 (floating stick on the left half, Use held to repeat), and auto-attack
+  only in scheme 1.
+- **Differs, 4 (one button):** Stardew has no button. A tap on the right half, released under 0.25 s, is
+  Use; held over 0.25 s it is Action. Ours is a "Do" button that picks Use or Action from what is ahead.
+- **Differs, 1 (auto-attack):** Stardew auto-equips a weapon from the pack (the last used, else the highest
+  slot) when a tool or nothing is held, and swings at an enemy in range. It does not run with a slingshot or
+  a non-tool item in hand, and an equipped scythe may attack. Tapping an enemy walks to it and uses the
+  weapon's secondary attack. Ours swings only a weapon already held, and has no tap-on-enemy secondary.
+- **Not on our side yet:** the "Show controls" toggle in the top left (off means scheme 1, on means the
+  chosen scheme). Stardew's schemes 5 to 9 draw a fixed stick on the left; ours draws a floating ring.
+- **Tap-to-move extras:** a giftable held item is given by tapping an NPC, and tapping a stone, tree or stump
+  auto-picks the tool. The second is built (above); the gift tap is not checked.
+
+### Decided 2026-11-17 (owner): copy Stardew for schemes 4 and 1
+
+Not built yet.
+
+- **Scheme 4 uses the tap-duration rule.** No drawn button. A tap on the right half released under 0.25 s is
+  Use; held over 0.25 s it is Action. The invisible stick keeps the left half. The `oneButton` part in
+  `src/core/controlschemes.ts` becomes a `tapDuration` part, with the 0.25 s threshold a named constant and a
+  unit test for both sides of it.
+- **Scheme 1 auto-attack equips a weapon.** With a tool or nothing held and a weapon in the pack, an enemy in
+  range makes the farmer equip the last used weapon (else the one in the highest slot), face the enemy and
+  swing its primary attack. No auto-attack with a slingshot or a non-tool item in hand (bombs, food); an
+  equipped scythe may attack. Tapping an enemy walks to it and uses the weapon's secondary attack, the only
+  way to do it in this scheme. No attack mid-walk to a tapped spot; it does attack while following a finger.
+  The rule lives in `src/core/` (free of Phaser) with unit tests. Open for the build: how "last used weapon"
+  is remembered, and whether the equip shows a hotbar highlight.
+- **Left as is, for now:** the Show controls toggle and the fixed stick in schemes 5 to 9 (a floating ring);
+  neither was asked about.

@@ -374,3 +374,6 @@ into the river arm. The road trader's free hot drink (40 energy, once an
 evening) is `claimHotDrink(g)` in `marketpier.ts`; the trader stall's scene must
 call it. Placeholders: all prices, odds, the luck and the drink amount; art is
 placeholder fish bodies.
+
+Decided 2026-11-17 (owner): all outdoor water in Hearthwell is fishable river water. Only the Night Market fish and the
+pearl are tied to the pier tiles.
