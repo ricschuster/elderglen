@@ -7,8 +7,8 @@ import {
   summitCast,
   type SummitBeat,
 } from "../core/summitscene";
-import { saveGame, type GameState } from "../core/save";
-import { browserStore } from "./storage";
+import type { GameState } from "../core/save";
+import { resumeSave } from "./storage";
 import { STATE_KEY } from "./state";
 import { WINDOW_FILL } from "./panel";
 
@@ -184,7 +184,7 @@ export class SummitScene extends Phaser.Scene {
   private close(): void {
     this.done = true;
     this.state.summit.finish();
-    saveGame(browserStore, this.state);
+    resumeSave(this.state);
     this.scene.stop();
     this.scene.resume("farm");
   }

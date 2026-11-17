@@ -56,7 +56,7 @@ describe("placeables table", () => {
     expect(mayPlaceOn("keg", "greenhouse")).toBe(false);
     expect(mayPlaceOn("sprinkler", "greenhouse")).toBe(true);
     expect(mayPlaceOn("chest", "house")).toBe(true);
-    expect(mayPlaceOn("chest", "greenhouse")).toBe(false);
+    expect(mayPlaceOn("chest", "greenhouse")).toBe(true);
     expect(mayPlaceOn("chest", undefined)).toBe(false);
     expect(mayPlaceOn("nothing", "farm")).toBe(false);
   });

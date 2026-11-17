@@ -13,7 +13,28 @@
     "rushie_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
     "rushie_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
     "rushie_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
-    "rushie_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+    "rushie_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "rushie_4_a": "PLACEHOLDER TEXT. Rushie, scene for 4 hearts. The story comes with the voice sheet.",
+    "rushie_4_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "rushie_4_ans1": "PLACEHOLDER TEXT. Of course.",
+    "rushie_4_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "rushie_4_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "rushie_4_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "rushie_4_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "rushie_8_a": "PLACEHOLDER TEXT. Rushie, scene for 8 hearts. The story comes with the voice sheet.",
+    "rushie_8_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "rushie_8_ans1": "PLACEHOLDER TEXT. Of course.",
+    "rushie_8_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "rushie_8_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "rushie_8_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "rushie_8_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "rushie_10_a": "PLACEHOLDER TEXT. Rushie, scene for 10 hearts. The story comes with the voice sheet.",
+    "rushie_10_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "rushie_10_ans1": "PLACEHOLDER TEXT. Of course.",
+    "rushie_10_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "rushie_10_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "rushie_10_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "rushie_10_c": "PLACEHOLDER TEXT. Here, I want you to have this."
   },
   "events": [
     {
@@ -130,6 +151,118 @@
       ]
     },
     {
+      "id": "rushie-dock-4",
+      "villager": "rushie",
+      "place": "delta:dock",
+      "hearts": 4,
+      "window": {
+        "from": "6:30",
+        "until": "9:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "rushie",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "rushie"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_4_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "rushie",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_4_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "rushie_4_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "rushie_4_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_4_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "rushie",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_4_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_4_c"
+        },
+        {
+          "cmd": "give",
+          "recipe": "rushie-supper"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "rushie-4-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
       "id": "rushie-dock-6",
       "villager": "rushie",
       "place": "delta:dock",
@@ -233,6 +366,230 @@
         {
           "cmd": "setFlag",
           "flag": "rushie-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "rushie-dock-8",
+      "villager": "rushie",
+      "place": "delta:dock",
+      "hearts": 8,
+      "window": {
+        "from": "17:00",
+        "until": "20:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "rushie",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "rushie"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_8_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "rushie",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_8_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "rushie_8_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "rushie_8_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_8_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "rushie",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_8_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_8_c"
+        },
+        {
+          "cmd": "give",
+          "furniture": "rushie-token"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "rushie-8-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "rushie-dock-10",
+      "villager": "rushie",
+      "place": "delta:dock",
+      "hearts": 10,
+      "window": {
+        "from": "17:00",
+        "until": "20:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "rushie",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "rushie"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_10_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "rushie",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_10_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "rushie_10_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "rushie_10_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_10_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "rushie",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_10_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "rushie",
+          "line": "rushie_10_c"
+        },
+        {
+          "cmd": "give",
+          "hat": "rushie-ribbon"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "rushie-10-seen"
         },
         {
           "cmd": "snap"

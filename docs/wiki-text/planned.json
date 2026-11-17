@@ -42,12 +42,6 @@
     "line": "A way to find a mahogany seed from a monster. Needs the Secret Woods creatures."
   },
   {
-    "name": "Elderfruit from the gallery set",
-    "kind": "Item",
-    "note": "39_completion_total.md",
-    "line": "One of the seven elderfruit sources is still to build. The spouse source is built (12.5 hearts, note 12)."
-  },
-  {
     "name": "Harvest Showing judging",
     "kind": "Festival",
     "note": "14_festival_calendar.md",
@@ -88,12 +82,6 @@
     "kind": "Place",
     "note": "83_grandpa_shrine.md",
     "line": "The Diamond's name, art and drops, the shrine tiles on the farm and the camp chest items are left."
-  },
-  {
-    "name": "The library gallery",
-    "kind": "Place",
-    "note": "38_achievements.md",
-    "line": "A gallery where finds are donated, with the 40 donation and gallery set achievements."
   },
   {
     "name": "Completion tracker lines and art",

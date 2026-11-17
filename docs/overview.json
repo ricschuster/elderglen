@@ -904,6 +904,12 @@
           "issue": 196
         },
         {
+          "s": "proposed",
+          "t": "The library gallery: Dunmar takes donations, 95 items derived from data (53 minerals, 42 artifacts), milestone rewards, elderfruit source 7 at the full list, built to shell level (core, donate screen, shelf arrangement, rewards, wiki page)",
+          "ref": "104_gallery.md",
+          "issue": 196
+        },
+        {
           "s": "decided",
           "t": "Completion tracker details: partial progress counts, the valley total is the mean of the rings that exist, the gallery takes minerals, artifacts and found things; the rare seed is the emberseed, given by the hermit at 4 hearts, growing spring to fall",
           "ref": "39_completion_total.md#Settled with the owner (2026-11-08)",

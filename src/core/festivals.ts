@@ -203,6 +203,13 @@ export function festivalStepShut(
   return !inside;
 }
 
+/** A clock time as "12 pm". */
+function clockTextOf(minutes: number): string {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return `${h % 12 === 0 ? 12 : h % 12}${m ? `:${String(m).padStart(2, "0")}` : ""} ${h < 12 ? "am" : "pm"}`;
+}
+
 /** The placeholder line shown at a shut festival place (opening time of the day's festival). */
 export function festivalShutLine(day: number): string {
   const f = festivalDayToday(day);
@@ -322,6 +329,85 @@ export function buyAtCounter(
 
 /** The entry on every farm map where the player stands again after a festival map. */
 export const FESTIVAL_RETURN = "from_festival";
+
+/**
+ * The plain walk (note 82 decision 11). A festival with its own map is reached
+ * by walking: its door in Hearthwell opens only while the festival is today's.
+ * The hold name is `festival-gate-<map>`, for the green and the hedge map.
+ */
+export const festivalGate = (mapId: string): string =>
+  `festival-gate-${mapId.replace(/-even$/, "")}`;
+
+/** The gate holds on a game day: one for today's festival map, none on other days. */
+export function festivalGateHolds(day: number): string[] {
+  const f = festivalDayToday(day);
+  const map = f && festivalMapFor(f, dateOf(day).year);
+  return map ? [festivalGate(map)] : [];
+}
+
+/**
+ * Walking into a festival held in place (note 82: the Forest clearing and lake,
+ * the Beach, the Hearthwell street and square, the hall). The festival has no
+ * map of its own, so it is joined the moment the player stands in its place
+ * while it is open. Returns the festival when this step newly joined it.
+ */
+export function walkIntoPlace(
+  g: GameState,
+  mapId: string,
+  x: number,
+  y: number,
+  hallRestored = false,
+): Festival | undefined {
+  const day = g.day.clock.day;
+  const f = festivalDayToday(day);
+  if (!f || festivalMapFor(f, dateOf(day).year)) return undefined;
+  const p = festivalPlace(f, hallRestored, dateOf(day).year);
+  if (p.map !== mapId || !inZone(p.zone, x, y)) return undefined;
+  if (g.festivalsJoined.includes(joinKey(f, day))) return undefined;
+  return enterFestival(g);
+}
+
+/** Where a festival is held, for the farm sign and the shut door. */
+const PLACE_WHERE: Readonly<Record<string, string>> = {
+  "hat-parade": "the Hearthwell street, from the square west to the bridge",
+  "seedswap-fair": "the forest clearing east of the lake path",
+  "cake-day": "the Hearthwell middle street, in front of the inn",
+  "lamplight-evening": "the Beach, past the footbridge",
+  frostday: "the frozen lake in the forest",
+  "midwinter-feast": "the Hearthwell square",
+};
+
+/** Where a festival map is, for the farm sign and the shut door. */
+const MAP_WHERE: Readonly<Record<string, string>> = {
+  green: "the green, east of the square in Hearthwell",
+  hedge: "the hedge maze, at the east end of the green in Hearthwell",
+  "hedge-even": "the hedge maze, at the east end of the green in Hearthwell",
+};
+
+/**
+ * What the farm sign says on a festival day: where to walk and when. The farm
+ * no longer sends the player there (decision 11).
+ */
+export function festivalSignLine(day: number, minutes: number): string {
+  const f = festivalDayToday(day);
+  if (!f) return "The notice board is quiet today.";
+  const map = festivalMapFor(f, dateOf(day).year);
+  const where = (map && MAP_WHERE[map]) || PLACE_WHERE[f.id] || "the village";
+  if (minutes >= f.closes) return `${f.name} is over for today.`;
+  return `${f.name} is today at ${where}. It runs from ${clockTextOf(f.opens)} to ${clockTextOf(f.closes)}. Walk there.`;
+}
+
+/** Arriving on a festival map on foot: joins the festival, or says why not (undefined means in). */
+export function walkIntoFestival(
+  g: GameState,
+  mapId: string,
+): string | undefined {
+  if (festivalOfMap(mapId) === undefined) return undefined;
+  const problem = enterProblem(g);
+  if (problem) return problem;
+  enterFestival(g);
+  return undefined;
+}
 
 /** The festival whose map this is, if it is a festival map. */
 export function festivalOfMap(mapId: string): Festival | undefined {

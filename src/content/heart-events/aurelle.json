@@ -20,7 +20,21 @@
     "aurelle_rain4_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
     "aurelle_rain4_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
     "aurelle_rain4_r2": "PLACEHOLDER TEXT. Then I will be quick.",
-    "aurelle_rain4_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+    "aurelle_rain4_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "aurelle_8_a": "PLACEHOLDER TEXT. Aurelle, scene for 8 hearts. The story comes with the voice sheet.",
+    "aurelle_8_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "aurelle_8_ans1": "PLACEHOLDER TEXT. Of course.",
+    "aurelle_8_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "aurelle_8_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "aurelle_8_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "aurelle_8_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "aurelle_10_a": "PLACEHOLDER TEXT. Aurelle, scene for 10 hearts. The story comes with the voice sheet.",
+    "aurelle_10_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "aurelle_10_ans1": "PLACEHOLDER TEXT. Of course.",
+    "aurelle_10_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "aurelle_10_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "aurelle_10_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "aurelle_10_c": "PLACEHOLDER TEXT. Here, I want you to have this."
   },
   "events": [
     {
@@ -130,6 +144,122 @@
         {
           "cmd": "setFlag",
           "flag": "aurelle-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "aurelle-healer-rain-4",
+      "villager": "aurelle",
+      "place": "hw:healer",
+      "hearts": 4,
+      "conditions": {
+        "weather": ["rainy", "stormy"]
+      },
+      "window": {
+        "from": "9:00",
+        "until": "16:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "aurelle",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "aurelle"
+        },
+        {
+          "cmd": "say",
+          "who": "aurelle",
+          "line": "aurelle_rain4_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "aurelle",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "aurelle",
+          "line": "aurelle_rain4_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "aurelle_rain4_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "aurelle_rain4_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "aurelle",
+          "line": "aurelle_rain4_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "aurelle",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "aurelle",
+          "line": "aurelle_rain4_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "aurelle",
+          "line": "aurelle_rain4_c"
+        },
+        {
+          "cmd": "give",
+          "item": "daffodil",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "aurelle-rain-4-seen"
         },
         {
           "cmd": "snap"
@@ -252,16 +382,13 @@
       ]
     },
     {
-      "id": "aurelle-healer-rain-4",
+      "id": "aurelle-healer-8",
       "villager": "aurelle",
       "place": "hw:healer",
-      "hearts": 4,
-      "conditions": {
-        "weather": ["rainy", "stormy"]
-      },
+      "hearts": 8,
       "window": {
-        "from": "9:00",
-        "until": "16:00"
+        "from": "8:50",
+        "until": "17:00"
       },
       "scene": [
         {
@@ -289,7 +416,7 @@
         {
           "cmd": "say",
           "who": "aurelle",
-          "line": "aurelle_rain4_a"
+          "line": "aurelle_8_a"
         },
         {
           "cmd": "emote",
@@ -299,17 +426,17 @@
         {
           "cmd": "say",
           "who": "aurelle",
-          "line": "aurelle_rain4_b"
+          "line": "aurelle_8_b"
         },
         {
           "cmd": "choose",
           "answers": [
             {
-              "line": "aurelle_rain4_ans1",
+              "line": "aurelle_8_ans1",
               "goto": "yes"
             },
             {
-              "line": "aurelle_rain4_ans2",
+              "line": "aurelle_8_ans2",
               "goto": "later"
             }
           ]
@@ -321,7 +448,7 @@
         {
           "cmd": "say",
           "who": "aurelle",
-          "line": "aurelle_rain4_r1"
+          "line": "aurelle_8_r1"
         },
         {
           "cmd": "rise",
@@ -339,7 +466,7 @@
         {
           "cmd": "say",
           "who": "aurelle",
-          "line": "aurelle_rain4_r2"
+          "line": "aurelle_8_r2"
         },
         {
           "cmd": "label",
@@ -348,16 +475,127 @@
         {
           "cmd": "say",
           "who": "aurelle",
-          "line": "aurelle_rain4_c"
+          "line": "aurelle_8_c"
         },
         {
           "cmd": "give",
-          "item": "daffodil",
-          "count": 1
+          "furniture": "aurelle-token"
         },
         {
           "cmd": "setFlag",
-          "flag": "aurelle-rain-4-seen"
+          "flag": "aurelle-8-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "aurelle-healer-10",
+      "villager": "aurelle",
+      "place": "hw:healer",
+      "hearts": 10,
+      "window": {
+        "from": "8:50",
+        "until": "17:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "aurelle",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "aurelle"
+        },
+        {
+          "cmd": "say",
+          "who": "aurelle",
+          "line": "aurelle_10_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "aurelle",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "aurelle",
+          "line": "aurelle_10_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "aurelle_10_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "aurelle_10_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "aurelle",
+          "line": "aurelle_10_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "aurelle",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "aurelle",
+          "line": "aurelle_10_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "aurelle",
+          "line": "aurelle_10_c"
+        },
+        {
+          "cmd": "give",
+          "hat": "aurelle-ribbon"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "aurelle-10-seen"
         },
         {
           "cmd": "snap"

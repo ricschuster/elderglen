@@ -20,7 +20,21 @@
     "dunmar_rain4_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
     "dunmar_rain4_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
     "dunmar_rain4_r2": "PLACEHOLDER TEXT. Then I will be quick.",
-    "dunmar_rain4_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+    "dunmar_rain4_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "dunmar_8_a": "PLACEHOLDER TEXT. Dunmar, scene for 8 hearts. The story comes with the voice sheet.",
+    "dunmar_8_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "dunmar_8_ans1": "PLACEHOLDER TEXT. Of course.",
+    "dunmar_8_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "dunmar_8_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "dunmar_8_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "dunmar_8_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "dunmar_10_a": "PLACEHOLDER TEXT. Dunmar, scene for 10 hearts. The story comes with the voice sheet.",
+    "dunmar_10_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "dunmar_10_ans1": "PLACEHOLDER TEXT. Of course.",
+    "dunmar_10_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "dunmar_10_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "dunmar_10_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "dunmar_10_c": "PLACEHOLDER TEXT. Here, I want you to have this."
   },
   "events": [
     {
@@ -127,6 +141,122 @@
         {
           "cmd": "setFlag",
           "flag": "dunmar-2-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "dunmar-library-rain-4",
+      "villager": "dunmar",
+      "place": "hw:library",
+      "hearts": 4,
+      "conditions": {
+        "weather": ["rainy", "stormy"]
+      },
+      "window": {
+        "from": "10:00",
+        "until": "17:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "dunmar",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "dunmar"
+        },
+        {
+          "cmd": "say",
+          "who": "dunmar",
+          "line": "dunmar_rain4_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "dunmar",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "dunmar",
+          "line": "dunmar_rain4_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "dunmar_rain4_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "dunmar_rain4_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "dunmar",
+          "line": "dunmar_rain4_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "dunmar",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "dunmar",
+          "line": "dunmar_rain4_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "dunmar",
+          "line": "dunmar_rain4_c"
+        },
+        {
+          "cmd": "give",
+          "item": "quartz-crystal",
+          "count": 1
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "dunmar-rain-4-seen"
         },
         {
           "cmd": "snap"
@@ -250,16 +380,13 @@
       ]
     },
     {
-      "id": "dunmar-library-rain-4",
+      "id": "dunmar-library-8",
       "villager": "dunmar",
       "place": "hw:library",
-      "hearts": 4,
-      "conditions": {
-        "weather": ["rainy", "stormy"]
-      },
+      "hearts": 8,
       "window": {
-        "from": "10:00",
-        "until": "17:00"
+        "from": "18:00",
+        "until": "19:30"
       },
       "scene": [
         {
@@ -287,7 +414,7 @@
         {
           "cmd": "say",
           "who": "dunmar",
-          "line": "dunmar_rain4_a"
+          "line": "dunmar_8_a"
         },
         {
           "cmd": "emote",
@@ -297,17 +424,17 @@
         {
           "cmd": "say",
           "who": "dunmar",
-          "line": "dunmar_rain4_b"
+          "line": "dunmar_8_b"
         },
         {
           "cmd": "choose",
           "answers": [
             {
-              "line": "dunmar_rain4_ans1",
+              "line": "dunmar_8_ans1",
               "goto": "yes"
             },
             {
-              "line": "dunmar_rain4_ans2",
+              "line": "dunmar_8_ans2",
               "goto": "later"
             }
           ]
@@ -319,7 +446,7 @@
         {
           "cmd": "say",
           "who": "dunmar",
-          "line": "dunmar_rain4_r1"
+          "line": "dunmar_8_r1"
         },
         {
           "cmd": "rise",
@@ -337,7 +464,7 @@
         {
           "cmd": "say",
           "who": "dunmar",
-          "line": "dunmar_rain4_r2"
+          "line": "dunmar_8_r2"
         },
         {
           "cmd": "label",
@@ -346,16 +473,127 @@
         {
           "cmd": "say",
           "who": "dunmar",
-          "line": "dunmar_rain4_c"
+          "line": "dunmar_8_c"
         },
         {
           "cmd": "give",
-          "item": "quartz-crystal",
-          "count": 1
+          "furniture": "dunmar-token"
         },
         {
           "cmd": "setFlag",
-          "flag": "dunmar-rain-4-seen"
+          "flag": "dunmar-8-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "dunmar-library-10",
+      "villager": "dunmar",
+      "place": "hw:library",
+      "hearts": 10,
+      "window": {
+        "from": "18:00",
+        "until": "19:30"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "dunmar",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "dunmar"
+        },
+        {
+          "cmd": "say",
+          "who": "dunmar",
+          "line": "dunmar_10_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "dunmar",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "dunmar",
+          "line": "dunmar_10_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "dunmar_10_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "dunmar_10_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "dunmar",
+          "line": "dunmar_10_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "dunmar",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "dunmar",
+          "line": "dunmar_10_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "dunmar",
+          "line": "dunmar_10_c"
+        },
+        {
+          "cmd": "give",
+          "hat": "dunmar-ribbon"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "dunmar-10-seen"
         },
         {
           "cmd": "snap"

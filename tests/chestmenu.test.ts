@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { fillStacks, quickMove, transfer } from "../src/core/chestmenu";
+import {
+  fillStacks,
+  quickMove,
+  swipeRowOffset,
+  transfer,
+} from "../src/core/chestmenu";
 import { Inventory } from "../src/core/inventory";
 import { maps } from "../src/content/maps";
 import { START } from "../src/core/maps";
@@ -130,5 +135,15 @@ describe("chest colour and upgrade", () => {
     expect(g.inventory.count("chest")).toBe(1);
     // A small chest does not replace a big one.
     expect(placeChest(g, farm, START.map, x, y, "chest").ok).toBe(false);
+  });
+});
+
+describe("swipeRowOffset", () => {
+  it("follows the finger and clamps", () => {
+    expect(swipeRowOffset(2, -100, 50, 10, 4)).toBe(4);
+    expect(swipeRowOffset(2, 100, 50, 10, 4)).toBe(0);
+    expect(swipeRowOffset(2, -20, 50, 10, 4)).toBe(2);
+    expect(swipeRowOffset(2, -900, 50, 10, 4)).toBe(6);
+    expect(swipeRowOffset(0, 900, 50, 10, 4)).toBe(0);
   });
 });

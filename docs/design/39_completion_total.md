@@ -351,3 +351,12 @@ Open after the build:
   for every crop. The "waits for spring" rule needs a farm change that is not built.
 - The spirit's stone has no art and its line is placeholder text. The hermit's 4 heart event
   text is placeholder, and the old field mushroom stand-in gift is replaced by the emberseed.
+
+## Decided 2026-11-16 (audit of #874)
+
+An audit found sources 1 to 6 and the energy effect built and tested (`tests/elderfruit.test.ts`).
+
+- **Source 7, the full gallery set:** the seventh elderfruit is paid when every item on the gallery's list
+  is donated (as Stardew's museum, 95 items, saved Stardrop page). Built with the gallery note, so the
+  count is the list length (95 on today's data). The gallery is designed in note 104 and not built yet.
+- **Energy on eating:** fills energy to full (Stardew, unchecked). Built 2026-11-16.

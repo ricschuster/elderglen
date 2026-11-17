@@ -30,6 +30,8 @@ import {
   placeMachine,
 } from "../../src/core/machines";
 import { chop, eat } from "../../src/core/actions";
+import { orderSilo, siloCapacity, SILO_COST } from "../../src/core/animals";
+import { cutGrass } from "../../src/core/grass";
 import { smelt, collect, ready as furnaceReady } from "../../src/core/furnace";
 import { mine } from "../../src/core/mining";
 import { minesOpen } from "../../src/core/mines";
@@ -72,8 +74,16 @@ const ARTISAN_MODE =
 /** Gold the bot keeps back for seeds before it buys ore. */
 const SEED_RESERVE = 1500;
 
+/** Gold the bot must hold before it gathers for a silo, so the bundles and seeds come first (note 103). */
+const SILO_MONEY = 8000;
+
+/** The silo is gathered for from this day on: the expert usually finishes the hall by day 100 (note 98). */
+const SILO_FROM_DAY = 100;
+
 /** Young trees a day the bot cuts back. */
 const TIDY_TREES = 8;
+/** Grass tiles the bot scythes a day once it has a silo: free, but each swing costs time (note 103). */
+const TIDY_GRASS = 6;
 
 /** `SIM_ORCHARD_RESERVE`: gold kept back after buying an orchard tree (default 300). A high value buys the tree only when flush. */
 const ORCHARD_RESERVE = Number(
@@ -265,6 +275,8 @@ class Bot {
     if (this.dueFor(this.p.hallEvery)) this.visitHall();
     if (this.p.keepsForHall) this.tendFurnace();
     this.tidyTrees();
+    this.buildSilo();
+    this.tidyGrass();
     this.shipSurplus();
   }
 
@@ -345,10 +357,32 @@ class Bot {
 
   /** Units of an item the hall still wants and the pack does not yet hold. */
   private shortOf(item: string): number {
-    const owed = [...this.wanted(), ...this.craftWants()].filter(
-      (w) => w.item === item,
-    ).length;
+    const owed =
+      [...this.wanted(), ...this.craftWants()].filter((w) => w.item === item)
+        .length + this.siloNeed(item);
     return Math.max(owed - this.g.inventory.count(item), 0);
+  }
+
+  /** Units of a material the silo still needs. Only asked once the bot is flush, so the hall is not slowed. */
+  private siloNeed(item: string): number {
+    const g = this.g;
+    if (g.animals.silo || g.animals.siloDays > 0 || g.money < SILO_MONEY)
+      return 0;
+    // The hall's own stone and bars come first, so the silo never delays a bundle.
+    if (!g.hall.complete("woodland") || !g.hall.complete("smiths")) return 0;
+    // And only past the day the bot usually finishes the hall, so its mine and furnace trips never delay a bundle.
+    if (this.day < SILO_FROM_DAY) return 0;
+    return item === "stone" || item === "copper-bar" ? SILO_COST[item] : 0;
+  }
+
+  /** Order the silo once the pack holds its materials: it lets the bot keep the hay from cut grass. */
+  private buildSilo(): void {
+    const g = this.g;
+    if (g.animals.silo || g.animals.siloDays > 0 || this.lateNight) return;
+    if (g.money < SILO_MONEY || this.day < SILO_FROM_DAY) return;
+    // Stone and bars owed to the hall stay in the pack first.
+    for (const id of ["stone", "copper-bar"]) if (this.shortOf(id) > 0) return;
+    orderSilo(g);
   }
 
   /** Chop trees, cut weeds and break rocks for the Woodland bundle. */
@@ -396,6 +430,25 @@ class Bot {
       if (this.shortOf("stone") > 0 && spare() && this.walker.descend(1))
         this.breakRocks(1);
     }
+  }
+
+  /** Scythe a few of the nearest grass tiles a day: no energy, hay to the silo when there is one. */
+  private tidyGrass(): void {
+    const g = this.g;
+    // Grass is only worth a walk for hay, so the bot cuts it once it has a silo
+    // (tilling clears the grass where it plants, so it never blocks a field).
+    if (this.lateNight || g.grass.count === 0 || siloCapacity(g) === 0) return;
+    this.walker.enter("farm");
+    const grass = [...g.grass.each()];
+    const costs = this.walker.costsNextTo(grass);
+    const order = grass
+      .map((t, i) => ({ t, c: costs[i] as number }))
+      .filter((o) => o.c < Infinity)
+      .sort((a, b) => a.c - b.c)
+      .slice(0, TIDY_GRASS);
+    for (const { t } of order)
+      if (g.grass.at(t.x, t.y))
+        this.act(t, () => cutGrass(g, t.x, t.y, this.random));
   }
 
   /** Cut a few of the nearest young trees each day, so the farm is not grown over and the doors stay open. */

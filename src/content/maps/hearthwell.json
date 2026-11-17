@@ -23,7 +23,7 @@
   "width": 120,
   "height": 110,
   "nextlayerid": 15,
-  "nextobjectid": 121,
+  "nextobjectid": 123,
   "properties": [
     {
       "name": "placeholder",
@@ -2257,6 +2257,64 @@
           "y": 1072,
           "width": 48,
           "height": 48,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 121,
+          "name": "to_green",
+          "class": "exit",
+          "type": "exit",
+          "x": 1120,
+          "y": 1408,
+          "width": 16,
+          "height": 48,
+          "properties": [
+            {
+              "name": "map",
+              "type": "string",
+              "value": "green"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "door"
+            },
+            {
+              "name": "requires",
+              "type": "string",
+              "value": "festival-gate-green"
+            }
+          ],
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 122,
+          "name": "to_hedge",
+          "class": "exit",
+          "type": "exit",
+          "x": 1664,
+          "y": 1408,
+          "width": 16,
+          "height": 48,
+          "properties": [
+            {
+              "name": "map",
+              "type": "string",
+              "value": "hedge"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "door"
+            },
+            {
+              "name": "requires",
+              "type": "string",
+              "value": "festival-gate-hedge"
+            }
+          ],
           "rotation": 0,
           "visible": true
         },

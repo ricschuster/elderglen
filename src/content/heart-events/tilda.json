@@ -13,7 +13,28 @@
     "tilda_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
     "tilda_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
     "tilda_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
-    "tilda_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+    "tilda_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "tilda_4_a": "PLACEHOLDER TEXT. Tilda, scene for 4 hearts. The story comes with the voice sheet.",
+    "tilda_4_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "tilda_4_ans1": "PLACEHOLDER TEXT. Of course.",
+    "tilda_4_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "tilda_4_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "tilda_4_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "tilda_4_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "tilda_8_a": "PLACEHOLDER TEXT. Tilda, scene for 8 hearts. The story comes with the voice sheet.",
+    "tilda_8_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "tilda_8_ans1": "PLACEHOLDER TEXT. Of course.",
+    "tilda_8_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "tilda_8_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "tilda_8_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "tilda_8_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "tilda_10_a": "PLACEHOLDER TEXT. Tilda, scene for 10 hearts. The story comes with the voice sheet.",
+    "tilda_10_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "tilda_10_ans1": "PLACEHOLDER TEXT. Of course.",
+    "tilda_10_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "tilda_10_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "tilda_10_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "tilda_10_c": "PLACEHOLDER TEXT. Here, I want you to have this."
   },
   "events": [
     {
@@ -130,6 +151,118 @@
       ]
     },
     {
+      "id": "tilda-sawmill-4",
+      "villager": "tilda",
+      "place": "hw:sawmill",
+      "hearts": 4,
+      "window": {
+        "from": "7:30",
+        "until": "9:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "tilda",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "tilda"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_4_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "tilda",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_4_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "tilda_4_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "tilda_4_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_4_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "tilda",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_4_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_4_c"
+        },
+        {
+          "cmd": "give",
+          "recipe": "tilda-supper"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "tilda-4-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
       "id": "tilda-sawmill-6",
       "villager": "tilda",
       "place": "hw:sawmill",
@@ -233,6 +366,230 @@
         {
           "cmd": "setFlag",
           "flag": "tilda-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "tilda-sawmill-8",
+      "villager": "tilda",
+      "place": "hw:sawmill",
+      "hearts": 8,
+      "window": {
+        "from": "9:00",
+        "until": "17:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "tilda",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "tilda"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_8_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "tilda",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_8_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "tilda_8_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "tilda_8_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_8_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "tilda",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_8_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_8_c"
+        },
+        {
+          "cmd": "give",
+          "furniture": "tilda-token"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "tilda-8-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "tilda-sawmill-10",
+      "villager": "tilda",
+      "place": "hw:sawmill",
+      "hearts": 10,
+      "window": {
+        "from": "9:00",
+        "until": "17:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "tilda",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "tilda"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_10_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "tilda",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_10_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "tilda_10_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "tilda_10_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_10_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "tilda",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_10_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "tilda",
+          "line": "tilda_10_c"
+        },
+        {
+          "cmd": "give",
+          "hat": "tilda-ribbon"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "tilda-10-seen"
         },
         {
           "cmd": "snap"

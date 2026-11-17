@@ -6,7 +6,10 @@ import {
   divorceProblem,
   fileDivorce,
   isEx,
+  weddingGuests,
 } from "../src/core/divorce";
+import { weddingEvent } from "../src/core/courtship";
+import { exVisitVillager, exVisitor } from "../src/core/exvisit";
 import { BOUQUET, courtGift } from "../src/core/courtship";
 import { HEART } from "../src/core/friendship";
 import {
@@ -122,16 +125,49 @@ describe("the morning it takes effect", () => {
 });
 
 describe("the ex-spouse afterwards", () => {
-  it("stays a friend only, and does not come to a later wedding", () => {
+  it("can be courted again, the ex mark lifted, hearts kept", () => {
     const g = married();
     fileDivorce(g);
     divorceMorning(g);
+    const pts = g.friendship.points("bramwell");
     g.inventory.add(BOUQUET, 1);
     const r = courtGift(g, "bramwell", BOUQUET);
-    expect(r?.consumed).toBe(false);
-    expect(g.marriage.stage).toBe("none");
-    expect(attendsWedding(g, "bramwell")).toBe(false);
-    expect(attendsWedding(g, "someone-else")).toBe(true);
+    expect(r?.consumed).toBe(true);
+    expect(g.marriage.stage).toBe("courting");
+    expect(isEx(g, "bramwell")).toBe(false);
+    expect(g.friendship.points("bramwell")).toBe(pts);
+  });
+
+  it("an ex comes to a later wedding as a guest, the one marrying does not", () => {
+    const g = married();
+    fileDivorce(g);
+    divorceMorning(g);
+    expect(attendsWedding(g, "bramwell")).toBe(true);
+    expect(attendsWedding(g, "someone-else")).toBe(false);
+    expect(weddingGuests(g, "other")).toEqual(["bramwell"]);
+    expect(weddingGuests(g, "bramwell")).toEqual([]);
+    const ev = weddingEvent("other", weddingGuests(g, "other"));
+    expect(
+      ev.scene.some((c) => c.cmd === "place" && c.who === "bramwell"),
+    ).toBe(true);
+  });
+
+  it("visits the children weekly, in the yard, only when there are children", () => {
+    const g = married();
+    g.marriage.addChild(1);
+    fileDivorce(g);
+    divorceMorning(g);
+    expect(exVisitor(g, 14, "sunny")).toBe("bramwell");
+    expect(exVisitor(g, 13, "sunny")).toBeUndefined();
+    expect(exVisitor(g, 14, "rainy")).toBeUndefined();
+    const row = VILLAGERS.find((v) => v.id === "bramwell")!;
+    const v = exVisitVillager(g, row, 14, "sunny");
+    expect(v.route.some((s) => s.place === "farm:yard" && s.time === 600)).toBe(
+      true,
+    );
+    expect(exVisitVillager(g, row, 13, "sunny")).toBe(row);
+    g.marriage.kids = [];
+    expect(exVisitor(g, 14, "sunny")).toBeUndefined();
   });
 
   it("lets the player court someone else", () => {

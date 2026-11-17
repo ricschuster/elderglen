@@ -513,5 +513,533 @@
         "event": "rosmarin-hermit-tower-6"
       }
     ]
+  },
+  {
+    "id": "alder-supper",
+    "name": "Alder's Plate",
+    "ingredients": [
+      {
+        "item": "kale",
+        "count": 1
+      },
+      {
+        "item": "honey",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "alder-burrow-garden-4"
+      }
+    ]
+  },
+  {
+    "id": "aldreth-supper",
+    "name": "Aldreth's Pot",
+    "ingredients": [
+      {
+        "item": "fried-egg",
+        "count": 1
+      },
+      {
+        "item": "potato",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "aldreth-outpost-yard-4"
+      }
+    ]
+  },
+  {
+    "id": "barnaby-supper",
+    "name": "Barnaby's Pie",
+    "ingredients": [
+      {
+        "item": "grape-wine",
+        "count": 1
+      },
+      {
+        "item": "corn",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "barnaby-green-4"
+      }
+    ]
+  },
+  {
+    "id": "bramwell-supper",
+    "name": "Bramwell's Hash",
+    "ingredients": [
+      {
+        "item": "iron-bar",
+        "count": 1
+      },
+      {
+        "item": "wheat",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "bramwell-smithy-4"
+      }
+    ]
+  },
+  {
+    "id": "cuthbert-supper",
+    "name": "Cuthbert's Plate",
+    "ingredients": [
+      {
+        "item": "honey",
+        "count": 1
+      },
+      {
+        "item": "leek",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "cuthbert-outpost-yard-4"
+      }
+    ]
+  },
+  {
+    "id": "dilly-supper",
+    "name": "Dilly's Pot",
+    "ingredients": [
+      {
+        "item": "egg",
+        "count": 1
+      },
+      {
+        "item": "honey",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "dilly-paddock-4"
+      }
+    ]
+  },
+  {
+    "id": "dorrie-supper",
+    "name": "Dorrie's Bowl",
+    "ingredients": [
+      {
+        "item": "peach",
+        "count": 1
+      },
+      {
+        "item": "honey",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "dorrie-green-4"
+      }
+    ]
+  },
+  {
+    "id": "fitch-supper",
+    "name": "Fitch's Hash",
+    "ingredients": [
+      {
+        "item": "apple",
+        "count": 1
+      },
+      {
+        "item": "kale",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "fitch-green-4"
+      }
+    ]
+  },
+  {
+    "id": "hattie-supper",
+    "name": "Hattie's Supper",
+    "ingredients": [
+      {
+        "item": "egg",
+        "count": 1
+      },
+      {
+        "item": "corn",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "hattie-inn-4"
+      }
+    ]
+  },
+  {
+    "id": "hester-supper",
+    "name": "Hester's Plate",
+    "ingredients": [
+      {
+        "item": "wool",
+        "count": 1
+      },
+      {
+        "item": "wheat",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "hester-square-4"
+      }
+    ]
+  },
+  {
+    "id": "korvi-supper",
+    "name": "Korvi's Pot",
+    "ingredients": [
+      {
+        "item": "copper-bar",
+        "count": 1
+      },
+      {
+        "item": "milk",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "korvi-forge-4"
+      }
+    ]
+  },
+  {
+    "id": "linnet-supper",
+    "name": "Linnet's Bowl",
+    "ingredients": [
+      {
+        "item": "peach",
+        "count": 1
+      },
+      {
+        "item": "leek",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "linnet-river-path-4"
+      }
+    ]
+  },
+  {
+    "id": "maren-supper",
+    "name": "Maren's Pie",
+    "ingredients": [
+      {
+        "item": "hearty-omelette",
+        "count": 1
+      },
+      {
+        "item": "egg",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "maren-hall-4"
+      }
+    ]
+  },
+  {
+    "id": "marl-supper",
+    "name": "Marl's Hash",
+    "ingredients": [
+      {
+        "item": "quartz-crystal",
+        "count": 1
+      },
+      {
+        "item": "honey",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "marl-yard-4"
+      }
+    ]
+  },
+  {
+    "id": "pim-supper",
+    "name": "Pim's Plate",
+    "ingredients": [
+      {
+        "item": "honey",
+        "count": 1
+      },
+      {
+        "item": "kale",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "pim-green-4"
+      }
+    ]
+  },
+  {
+    "id": "podge-supper",
+    "name": "Podge's Pot",
+    "ingredients": [
+      {
+        "item": "chanterelle",
+        "count": 1
+      },
+      {
+        "item": "corn",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "podge-square-4"
+      }
+    ]
+  },
+  {
+    "id": "rufus-supper",
+    "name": "Rufus's Pie",
+    "ingredients": [
+      {
+        "item": "corn",
+        "count": 1
+      },
+      {
+        "item": "milk",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "rufus-sawmill-4"
+      }
+    ]
+  },
+  {
+    "id": "rundahl-supper",
+    "name": "Rundahl's Hash",
+    "ingredients": [
+      {
+        "item": "wild-garlic",
+        "count": 1
+      },
+      {
+        "item": "leek",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "rundahl-camp-4"
+      }
+    ]
+  },
+  {
+    "id": "rushie-supper",
+    "name": "Rushie's Supper",
+    "ingredients": [
+      {
+        "item": "mackerel",
+        "count": 1
+      },
+      {
+        "item": "egg",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "rushie-dock-4"
+      }
+    ]
+  },
+  {
+    "id": "thalwen-supper",
+    "name": "Thalwen's Plate",
+    "ingredients": [
+      {
+        "item": "razor-clam",
+        "count": 1
+      },
+      {
+        "item": "honey",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "thalwen-dunes-4"
+      }
+    ]
+  },
+  {
+    "id": "tilda-supper",
+    "name": "Tilda's Bowl",
+    "ingredients": [
+      {
+        "item": "wood",
+        "count": 1
+      },
+      {
+        "item": "kale",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "tilda-sawmill-4"
+      }
+    ]
+  },
+  {
+    "id": "toby-supper",
+    "name": "Toby's Pie",
+    "ingredients": [
+      {
+        "item": "cockleshell",
+        "count": 1
+      },
+      {
+        "item": "corn",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "toby-green-4"
+      }
+    ]
+  },
+  {
+    "id": "walter-supper",
+    "name": "Walter's Hash",
+    "ingredients": [
+      {
+        "item": "perch",
+        "count": 1
+      },
+      {
+        "item": "wheat",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "walter-river-path-4"
+      }
+    ]
+  },
+  {
+    "id": "wren-supper",
+    "name": "Wren's Supper",
+    "ingredients": [
+      {
+        "item": "pine-nut",
+        "count": 1
+      },
+      {
+        "item": "milk",
+        "count": 1
+      }
+    ],
+    "energy": 140,
+    "sellPrice": 150,
+    "sources": [
+      {
+        "kind": "event",
+        "event": "wren-river-path-4"
+      }
+    ]
   }
 ]

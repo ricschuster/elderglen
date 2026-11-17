@@ -13,7 +13,28 @@
     "fitch_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
     "fitch_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
     "fitch_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
-    "fitch_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+    "fitch_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "fitch_4_a": "PLACEHOLDER TEXT. Fitch, scene for 4 hearts. The story comes with the voice sheet.",
+    "fitch_4_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "fitch_4_ans1": "PLACEHOLDER TEXT. Of course.",
+    "fitch_4_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "fitch_4_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "fitch_4_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "fitch_4_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "fitch_8_a": "PLACEHOLDER TEXT. Fitch, scene for 8 hearts. The story comes with the voice sheet.",
+    "fitch_8_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "fitch_8_ans1": "PLACEHOLDER TEXT. Of course.",
+    "fitch_8_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "fitch_8_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "fitch_8_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "fitch_8_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "fitch_10_a": "PLACEHOLDER TEXT. Fitch, scene for 10 hearts. The story comes with the voice sheet.",
+    "fitch_10_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "fitch_10_ans1": "PLACEHOLDER TEXT. Of course.",
+    "fitch_10_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "fitch_10_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "fitch_10_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "fitch_10_c": "PLACEHOLDER TEXT. Here, I want you to have this."
   },
   "events": [
     {
@@ -133,6 +154,121 @@
       ]
     },
     {
+      "id": "fitch-green-4",
+      "villager": "fitch",
+      "place": "hw:green",
+      "hearts": 4,
+      "window": {
+        "from": "9:30",
+        "until": "12:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "fitch",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "fitch"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_4_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "fitch",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_4_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "fitch_4_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "fitch_4_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_4_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "fitch",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_4_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_4_c"
+        },
+        {
+          "cmd": "give",
+          "recipe": "fitch-supper"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "fitch-4-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
       "id": "fitch-green-6",
       "villager": "fitch",
       "place": "hw:green",
@@ -239,6 +375,236 @@
         {
           "cmd": "setFlag",
           "flag": "fitch-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "fitch-green-8",
+      "villager": "fitch",
+      "place": "hw:green",
+      "hearts": 8,
+      "window": {
+        "from": "13:30",
+        "until": "17:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "fitch",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "fitch"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_8_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "fitch",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_8_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "fitch_8_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "fitch_8_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_8_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "fitch",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_8_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_8_c"
+        },
+        {
+          "cmd": "give",
+          "furniture": "fitch-token"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "fitch-8-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "fitch-green-10",
+      "villager": "fitch",
+      "place": "hw:green",
+      "hearts": 10,
+      "window": {
+        "from": "13:30",
+        "until": "17:00"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "fitch",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "fitch"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_10_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "fitch",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_10_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "fitch_10_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "fitch_10_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_10_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "fitch",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_10_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "fitch",
+          "line": "fitch_10_c"
+        },
+        {
+          "cmd": "give",
+          "hat": "fitch-ribbon"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "fitch-10-seen"
         },
         {
           "cmd": "snap"

@@ -1,3 +1,4 @@
+import { SCHEMES } from "../core/controlschemes";
 import Phaser from "phaser";
 import {
   ACTIONS,
@@ -9,7 +10,6 @@ import {
   swapBinding,
   type Profile,
   type Settings,
-  type TouchScheme,
 } from "../core/bindings";
 import {
   centreView,
@@ -23,16 +23,18 @@ import {
 } from "./panel";
 import { ASSIST_NAMES, type Assist } from "../core/fishing";
 import { stepPercent, UI_MAX, UI_MIN, ZOOM_MAX, ZOOM_MIN } from "../core/view";
-import { browserSettingsStore, loadDeviceSettings } from "./storage";
+import {
+  MAX_IMPORT_BYTES,
+  applyImport,
+  exportSlot,
+  parseImport,
+} from "../core/saveexport";
+import { activeSlot, allSlots, deleteSlot, slotStores } from "../core/slots";
+import { browserKv, browserSettingsStore, loadDeviceSettings } from "./storage";
 
 export const PROFILE_NAMES: Record<Profile, string> = {
   desktop: "Desktop",
   touch: "Touch",
-};
-
-const SCHEME_NAMES: Record<TouchScheme, string> = {
-  tap: "Tap to move",
-  stick: "Stick",
 };
 
 /**
@@ -251,16 +253,19 @@ export class OptionsScene extends Phaser.Scene {
       },
     ];
     if (s.profile === "touch") {
-      rows.push({
-        label: "How to move",
-        buttons: (Object.keys(SCHEME_NAMES) as TouchScheme[]).map((t) => ({
-          text: this.mark(s.touchScheme === t, SCHEME_NAMES[t]),
-          run: () => {
-            s.touchScheme = t;
-            this.refresh();
-          },
-        })),
-      });
+      for (const d of SCHEMES)
+        rows.push({
+          label: d.name,
+          buttons: [
+            {
+              text: this.mark(s.touchScheme === d.id, "Use this"),
+              run: () => {
+                s.touchScheme = d.id;
+                this.refresh();
+              },
+            },
+          ],
+        });
     } else {
       for (const a of ACTIONS) {
         rows.push({
@@ -292,7 +297,59 @@ export class OptionsScene extends Phaser.Scene {
         ],
       });
     }
+    rows.push({
+      label: "Save file",
+      detail: "export the current slot, or import a file into an empty slot",
+      buttons: [
+        { text: "Export", run: () => this.exportSave() },
+        { text: "Import", run: () => this.importSave() },
+      ],
+    });
     this.menu.setRows(rows);
+  }
+
+  /** Download the active slot, both records, as one file (note 52). */
+  private exportSave(): void {
+    const slot = activeSlot(browserKv);
+    const r = exportSlot(slotStores(browserKv, slot), slot, Date.now());
+    if (!r.ok) return this.say(r.message);
+    const url = URL.createObjectURL(
+      new Blob([r.text], { type: "application/json" }),
+    );
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = r.filename;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    this.say(`Exported slot ${slot} as ${r.filename}.`);
+  }
+
+  /** Read a chosen file into the first empty slot. A full set of slots refuses. */
+  private importSave(): void {
+    const free = allSlots(browserKv).find((s) => s.status === "empty");
+    if (!free) return this.say("All five slots are used. Delete one first.");
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json,application/json";
+    input.onchange = () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      if (file.size > MAX_IMPORT_BYTES)
+        return this.say("That file is too large to be a save.");
+      void file.text().then((text) => {
+        const parsed = parseImport(text, file.size);
+        if (!parsed.ok) return this.say(parsed.message);
+        const stores = slotStores(browserKv, free.slot);
+        if (!applyImport(stores, parsed)) {
+          deleteSlot(browserKv, free.slot);
+          return this.say("Could not store the save.");
+        }
+        this.say(
+          `Imported into slot ${free.slot}.${parsed.droppedResume ? " The day in progress could not be used." : ""}`,
+        );
+      });
+    };
+    input.click();
   }
 
   /** A setting in 5 percent steps: Left and Right press the two buttons. */

@@ -13,7 +13,28 @@
     "cuthbert_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
     "cuthbert_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
     "cuthbert_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
-    "cuthbert_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+    "cuthbert_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "cuthbert_4_a": "PLACEHOLDER TEXT. Cuthbert, scene for 4 hearts. The story comes with the voice sheet.",
+    "cuthbert_4_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "cuthbert_4_ans1": "PLACEHOLDER TEXT. Of course.",
+    "cuthbert_4_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "cuthbert_4_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "cuthbert_4_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "cuthbert_4_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "cuthbert_8_a": "PLACEHOLDER TEXT. Cuthbert, scene for 8 hearts. The story comes with the voice sheet.",
+    "cuthbert_8_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "cuthbert_8_ans1": "PLACEHOLDER TEXT. Of course.",
+    "cuthbert_8_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "cuthbert_8_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "cuthbert_8_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "cuthbert_8_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "cuthbert_10_a": "PLACEHOLDER TEXT. Cuthbert, scene for 10 hearts. The story comes with the voice sheet.",
+    "cuthbert_10_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "cuthbert_10_ans1": "PLACEHOLDER TEXT. Of course.",
+    "cuthbert_10_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "cuthbert_10_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "cuthbert_10_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "cuthbert_10_c": "PLACEHOLDER TEXT. Here, I want you to have this."
   },
   "events": [
     {
@@ -130,6 +151,118 @@
       ]
     },
     {
+      "id": "cuthbert-outpost-yard-4",
+      "villager": "cuthbert",
+      "place": "hw:outpost-yard",
+      "hearts": 4,
+      "window": {
+        "from": "12:00",
+        "until": "13:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "cuthbert",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "cuthbert"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_4_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "cuthbert",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_4_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "cuthbert_4_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "cuthbert_4_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_4_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "cuthbert",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_4_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_4_c"
+        },
+        {
+          "cmd": "give",
+          "recipe": "cuthbert-supper"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "cuthbert-4-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
       "id": "cuthbert-square-6",
       "villager": "cuthbert",
       "place": "hw:square",
@@ -228,6 +361,230 @@
         {
           "cmd": "setFlag",
           "flag": "cuthbert-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "cuthbert-square-8",
+      "villager": "cuthbert",
+      "place": "hw:square",
+      "hearts": 8,
+      "window": {
+        "from": "18:00",
+        "until": "19:30"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "cuthbert",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "cuthbert"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_8_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "cuthbert",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_8_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "cuthbert_8_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "cuthbert_8_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_8_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "cuthbert",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_8_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_8_c"
+        },
+        {
+          "cmd": "give",
+          "furniture": "cuthbert-token"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "cuthbert-8-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "cuthbert-square-10",
+      "villager": "cuthbert",
+      "place": "hw:square",
+      "hearts": 10,
+      "window": {
+        "from": "18:00",
+        "until": "19:30"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "cuthbert",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "cuthbert"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_10_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "cuthbert",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_10_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "cuthbert_10_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "cuthbert_10_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_10_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "cuthbert",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_10_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "cuthbert",
+          "line": "cuthbert_10_c"
+        },
+        {
+          "cmd": "give",
+          "hat": "cuthbert-ribbon"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "cuthbert-10-seen"
         },
         {
           "cmd": "snap"

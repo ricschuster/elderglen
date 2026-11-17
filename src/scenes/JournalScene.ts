@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import {
   JOURNAL_SECTIONS,
   defaultExpanded,
+  cancelQuest,
   journalLines,
   questEntries,
   questView,
@@ -21,7 +22,7 @@ const VISIBLE = 13;
  * The journal (note 49): its own window, not a menu tab, on J or the HUD
  * button. Three sections, switched with Left and Right or a tap: Quests,
  * Projects and Mail. A quest collapses to its title and expands on a tap or
- * click on it, or Enter on the marked one (Up and Down move the mark). It only reads. The farm and the clock stay paused.
+ * click on it, or Enter on the marked one (Up and Down move the mark). X, or a tap on Cancel under an open request, gives it up. Otherwise it only reads. The farm and the clock stay paused.
  */
 export class JournalScene extends Phaser.Scene {
   private section: JournalSection = "quests";
@@ -84,6 +85,7 @@ export class JournalScene extends Phaser.Scene {
     kb?.on("keydown-UP", () => this.move(-1));
     kb?.on("keydown-DOWN", () => this.move(1));
     kb?.on("keydown-ENTER", () => this.toggleSelected());
+    kb?.on("keydown-X", () => this.cancelSelected());
     this.input.on("pointerdown", (p: Phaser.Input.Pointer) => this.tap(p.y));
     this.input.on("wheel", (_p: unknown, _o: unknown, _x: number, dy: number) =>
       this.scroll(dy > 0 ? 1 : -1),
@@ -172,13 +174,31 @@ export class JournalScene extends Phaser.Scene {
     this.draw();
   }
 
-  /** A tap on a quest title selects it and flips it open or shut. */
+  /** Give up a request (costs nothing), then rebuild the list. */
+  private cancelSelected(id = this.entries[this.selected]?.id): void {
+    if (this.section !== "quests" || !id) return;
+    if (!cancelQuest(this.registry.get(STATE_KEY) as GameState, id)) return;
+    this.entries = questEntries(this.registry.get(STATE_KEY) as GameState);
+    this.selected = Math.max(
+      0,
+      Math.min(this.selected, this.entries.length - 1),
+    );
+    this.build();
+    this.followSelected();
+    this.draw();
+  }
+
+  /** A tap on a quest title selects it and flips it open or shut; on Cancel it gives the request up. */
   private tap(y: number): void {
     if (this.section !== "quests") return;
     const shown = this.lines.slice(this.top, this.top + VISIBLE).length;
     if (shown === 0 || y < this.body.y) return;
     const row = Math.floor((y - this.body.y) / (this.body.height / shown));
     const line = this.lines[this.top + row];
+    if (line?.cancel) {
+      this.cancelSelected(line.cancel);
+      return;
+    }
     const at = this.entries.findIndex((e) => e.id === line?.quest);
     if (at < 0) return;
     this.selected = at;
@@ -194,7 +214,7 @@ export class JournalScene extends Phaser.Scene {
   private draw(): void {
     const hint =
       this.section === "quests" && this.entries.length
-        ? "   Enter or tap: open a request"
+        ? "   Enter or tap: open a request   X: cancel it"
         : "";
     this.body.setText(
       this.lines

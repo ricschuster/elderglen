@@ -1,5 +1,6 @@
 import spouseData from "../content/spouse.json";
 import { SPOUSE_PERK_HEARTS } from "./marriage";
+import { exVisitVillager } from "./exvisit";
 import { feedAll } from "./animals";
 import { dateOf } from "./calendar";
 import { absorbElderfruit, SOURCE_FLAGS } from "./elderfruit";
@@ -51,7 +52,7 @@ export const WATER_RADIUS = spouseData.chores.radius;
 
 // ---- Who is on the spouse route --------------------------------------------
 
-type Married = Pick<GameState, "marriage">;
+type Married = Pick<GameState, "marriage"> & Partial<Pick<GameState, "flags">>;
 
 /** The married person, or null. The spouse route runs from the morning after the wedding. */
 export function spouseId(g: Partial<Married>): string | null {
@@ -210,7 +211,8 @@ export function villagerForDay(
   day: number,
   weather: Weather,
 ): Villager {
-  return onSpouseRoute(g, v.id, day) ? spouseVillager(v, day, weather) : v;
+  if (onSpouseRoute(g, v.id, day)) return spouseVillager(v, day, weather);
+  return exVisitVillager(g, v, day, weather);
 }
 
 // ---- The prop block --------------------------------------------------------

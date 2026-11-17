@@ -15,7 +15,16 @@ import {
   placeFurniture,
   stationStock,
 } from "../src/core/furniture";
-import { till } from "../src/core/actions";
+import { isClear, till } from "../src/core/actions";
+import { GREENHOUSE_MAP } from "../src/core/greenhouse";
+import {
+  TOUCH_CELL,
+  clampRowOffset,
+  inWindow,
+  pressActions,
+  visibleRows,
+} from "../src/core/chestmenu";
+import { chestTip } from "../src/core/itemtip";
 import { itemById } from "../src/core/items";
 import { START } from "../src/core/maps";
 import { deserialize, newGame, serialize } from "../src/core/save";
@@ -209,5 +218,70 @@ describe("pushing a chest (SC-56)", () => {
       ([dx, dy]) => pushChest(g, house, "house", floor.x, floor.y, dx!, dy!).ok,
     );
     expect(r).toBe(true);
+  });
+});
+
+describe("chest touch layout and tips", () => {
+  it("offers the right-click sends on a long press", () => {
+    expect(pressActions(1).map((a) => a.most)).toEqual([Infinity]);
+    expect(pressActions(2).map((a) => a.most)).toEqual([1, Infinity]);
+    expect(pressActions(10).map((a) => a.most)).toEqual([1, 5, Infinity]);
+    expect(pressActions(10)[1]!.label).toContain("5");
+  });
+
+  it("keeps cells touch sized and scrolls a big chest", () => {
+    const pitch = TOUCH_CELL + 4;
+    const rows = visibleRows(6, 3, 348, pitch);
+    expect(rows).toBeLessThan(6);
+    expect(rows).toBeGreaterThanOrEqual(1);
+    expect(visibleRows(3, 1, 348, pitch)).toBe(3);
+    expect(visibleRows(6, 9, 100, pitch)).toBe(1);
+  });
+
+  it("clamps the scroll and finds the window", () => {
+    expect(clampRowOffset(-2, 6, 4)).toBe(0);
+    expect(clampRowOffset(5, 6, 4)).toBe(2);
+    expect(inWindow(0, 12, 1, 4)).toBe(false);
+    expect(inWindow(12, 12, 1, 4)).toBe(true);
+    expect(inWindow(60, 12, 1, 4)).toBe(false);
+  });
+
+  it("tips a chest with its count and what the contents sell for", () => {
+    expect(chestTip("Chest", [null, null]).text).toContain("Empty");
+    const tip = chestTip("Chest", [{ id: "wood", count: 3 }, null]);
+    expect(tip.name).toBe("Chest");
+    expect(tip.text).toContain("3 items in 1 of 2 slots");
+    expect(tip.text).toContain("g.");
+  });
+});
+
+describe("chests in the greenhouse", () => {
+  const gh = maps.get(GREENHOUSE_MAP);
+  const free = (() => {
+    for (let y = 0; y < gh.height; y++)
+      for (let x = 0; x < gh.width; x++) {
+        const g = newGame();
+        g.inventory.add("chest");
+        if (placeChest(g, gh, GREENHOUSE_MAP, x, y, "chest").ok)
+          return { x, y };
+      }
+    throw new Error("no free greenhouse tile");
+  })();
+
+  it("stand on bare floor, hold the tile, and block tilling", () => {
+    const g = newGame();
+    g.inventory.add("chest", 2);
+    expect(placeChest(g, gh, GREENHOUSE_MAP, free.x, free.y, "chest").ok).toBe(
+      true,
+    );
+    expect(g.chests.get(GREENHOUSE_MAP, free.x, free.y)).toBeDefined();
+    expect(isClear(g, gh, free.x, free.y)).toBe(false);
+    expect(placeChest(g, gh, GREENHOUSE_MAP, free.x, free.y, "chest").ok).toBe(
+      false,
+    );
+    expect(till(g, free.x, free.y, Math.random, g.greenhouse)).toEqual({
+      ok: false,
+      reason: "a chest is in the way",
+    });
   });
 });

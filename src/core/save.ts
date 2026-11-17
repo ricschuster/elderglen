@@ -46,7 +46,7 @@ import { SummitCall, type SummitSave } from "./summit";
 import { ShippingBin, type BinLine, type BinSave } from "./shipping";
 import { maps } from "../content/maps";
 import { DEFAULT_FARM_TYPE, farmTypeById } from "./farmtypes";
-import { ForageField } from "./forage";
+import { ForageField, type ForageSave } from "./forage";
 import { ArtifactSpots } from "./artifacts";
 import { homeWorld, newAreas, type World } from "./areas";
 import { type Weather, WEATHERS } from "./weather";
@@ -61,6 +61,7 @@ import { Mailbox, type MailEntry } from "./mail";
 import { Friendship } from "./friendship";
 import { Marriage, exSpouses, type MarriageSave } from "./marriage";
 import { ELDERFRUIT_TOTAL, maxEnergyFor } from "./elderfruit";
+import { GALLERY_TOTAL, inGallery } from "./gallery";
 import { HeartEvents, type HeartEventsSave } from "./heartevents";
 import { Quests, type QuestsSave } from "./quests";
 import { FishLog, type FishingSave } from "./fishing";
@@ -125,6 +126,12 @@ export interface GameState {
   greenhouseSite?: { x: number; y: number };
   /** World flags that are up, such as `secret-log-cleared` (`core/worldflags.ts`). Absent until one is. */
   flags?: string[];
+  /** Items donated to the library gallery, shared by the farm (`core/gallery.ts`, note 104). Absent until one is. */
+  gallery?: string[];
+  /** Where donated items stand on the shelf: item id to slot. Absent until one is moved. */
+  galleryPlaced?: Record<string, number>;
+  /** Gallery reward keys this player has collected. Per player in multiplayer (M4). */
+  galleryClaimed?: string[];
   /**
    * The worlds of the area maps by map id (`areas.ts`): their trees, rocks,
    * weeds, twigs and goods on the ground. The fields above are the farm's, or
@@ -160,8 +167,10 @@ export interface GameState {
   houseTier: number;
   /** Owns the Furniture Catalogue (note 41). */
   catalogue: boolean;
-  /** The map the last save was made on, kept only for the cellar (`resumeAt`). */
+  /** The cellar marker of saves from before `at`. Read, never written (`resumeAt`). */
   resumeMap?: string;
+  /** Where the player stood when a resume record was written (note 52). */
+  at?: ResumeSpot;
   /** The upgrade the carpenter is building, if any. */
   houseBuild: HouseBuild | undefined;
   /** The renovations built, by id (`core/house.ts`, note 85). Each is the condition `reno-<id>`. */
@@ -220,6 +229,13 @@ export interface GameState {
   forage: ForageField;
   /** Artifact spots lying on the current map today. Not saved: they roll each morning. */
   spots: ArtifactSpots;
+}
+
+/** A map and a tile, where Continue puts the player after a mid-day resume. */
+export interface ResumeSpot {
+  map: string;
+  x: number;
+  y: number;
 }
 
 /** Starting cash for a new game. */
@@ -353,6 +369,10 @@ interface SaveData {
   greenhouseSite?: { x: number; y: number };
   /** Absent until a world flag is raised. */
   flags?: string[];
+  /** Absent until something is donated (note 104). */
+  gallery?: string[];
+  galleryPlaced?: Record<string, number>;
+  galleryClaimed?: string[];
   /** Absent in saves made before the Forest: each area's starting world. */
   areas?: Record<string, AreaSave>;
   /** Absent in saves made before machines. */
@@ -381,8 +401,16 @@ interface SaveData {
   houseTier?: number;
   /** Absent in saves made before the catalogue. */
   catalogue?: boolean;
-  /** Absent unless the save was made in the cellar. */
+  /** Saves from before `at` set this in the cellar. No longer written. */
   resumeMap?: string;
+  /** Which record this is. Absent on saves from before the split: read as night. */
+  kind?: "night" | "resume";
+  /** Wall clock ms when written. Display only, never game logic. */
+  savedAt?: number;
+  /** Resume only: where the player stands. Absent in the mines and combat areas. */
+  at?: ResumeSpot;
+  /** The farm field's wild goods, stored so a load does not roll them again. */
+  forage?: ForageSave;
   /** Absent when no upgrade is being built, and in older saves. */
   houseBuild?: HouseBuild;
   /** Absent when no renovation is built, and in older saves. */
@@ -451,12 +479,7 @@ interface AreaSave {
   rocks?: Rock[];
   creatures?: CreatureSave[];
   creaturesDay?: number;
-}
-
-/** Where saves live. The scene supplies one backed by the browser. */
-export interface SaveStore {
-  read(): string | null;
-  write(text: string): void;
+  forage?: ForageSave;
 }
 
 /** The sprinklers of a saved list that are well formed. */
@@ -561,7 +584,10 @@ function validTwigs(raw: unknown[]): Twig[] {
 }
 
 /** Save as text, including the time of day, so a reload mid day resumes it. */
-export function serialize(g: GameState): string {
+export function serialize(
+  g: GameState,
+  record?: { kind: "night" | "resume"; at?: ResumeSpot },
+): string {
   // The farm's world is saved as the top-level fields, even from inside an area.
   const home = homeWorld(g);
   const data: SaveData = {
@@ -595,6 +621,13 @@ export function serialize(g: GameState): string {
     placed: collectPlaced(g).save(),
     ...(g.greenhouseSite ? { greenhouseSite: { ...g.greenhouseSite } } : {}),
     ...(g.flags?.length ? { flags: [...g.flags] } : {}),
+    ...(g.gallery?.length ? { gallery: [...g.gallery] } : {}),
+    ...(g.galleryPlaced && Object.keys(g.galleryPlaced).length
+      ? { galleryPlaced: { ...g.galleryPlaced } }
+      : {}),
+    ...(g.galleryClaimed?.length
+      ? { galleryClaimed: [...g.galleryClaimed] }
+      : {}),
     areas: Object.fromEntries(
       Object.entries(g.areas).map(([id, w]) => [
         id,
@@ -604,6 +637,7 @@ export function serialize(g: GameState): string {
           weeds: w.weeds.save(),
           twigs: w.twigs.save(),
           rocks: w.rocks.save(),
+          forage: w.forage.save(),
           ...(w.creatures
             ? {
                 creatures: w.creatures.map(saveCreature),
@@ -625,7 +659,14 @@ export function serialize(g: GameState): string {
     toolOrder: g.toolOrder ? { ...g.toolOrder } : undefined,
     houseTier: g.houseTier,
     catalogue: g.catalogue,
-    resumeMap: g.resumeMap,
+    ...(record
+      ? {
+          kind: record.kind,
+          savedAt: Date.now(),
+          ...(record.at ? { at: { ...record.at } } : {}),
+        }
+      : {}),
+    forage: home.forage.save(),
     houseBuild: g.houseBuild ? { ...g.houseBuild } : undefined,
     houseRenos: [...g.houseRenos],
     animals: saveAnimals(g.animals),
@@ -825,6 +866,7 @@ export function deserialize(text: string): GameState | undefined {
       if (Array.isArray(a.weeds)) w.weeds.load(validWeeds(a.weeds));
       if (Array.isArray(a.twigs)) w.twigs.load(validTwigs(a.twigs));
       if (Array.isArray(a.rocks)) w.rocks.load(rocksFrom(a.rocks));
+      w.forage.load(a.forage);
       if (Array.isArray(a.creatures) && isCount(a.creaturesDay)) {
         w.creatures = a.creatures.flatMap((c) =>
           isObject(c) ? (loadCreature(c as unknown as CreatureSave) ?? []) : [],
@@ -882,6 +924,7 @@ export function deserialize(text: string): GameState | undefined {
     );
     if (flags.length > 0) g.flags = [...new Set(flags)];
   }
+  loadGallery(g, raw);
   const machineRows = placed ? placed.machines : raw.machines;
   if (Array.isArray(machineRows)) {
     const valid: PlacedMachine[] = [];
@@ -1080,6 +1123,20 @@ export function deserialize(text: string): GameState | undefined {
   );
   g.catalogue = raw.catalogue === true;
   if (raw.resumeMap === CELLAR_MAP) g.resumeMap = CELLAR_MAP;
+  const at = raw.at;
+  if (
+    isObject(at) &&
+    typeof at.map === "string" &&
+    maps.ids.includes(at.map) &&
+    isCount(at.x) &&
+    isCount(at.y) &&
+    Number.isInteger(at.x) &&
+    Number.isInteger(at.y) &&
+    at.x < maps.get(at.map).width &&
+    at.y < maps.get(at.map).height
+  )
+    g.at = { map: at.map, x: at.x, y: at.y };
+  g.forage.load(raw.forage);
   const build = raw.houseBuild;
   if (
     isObject(build) &&
@@ -1137,11 +1194,30 @@ export function deserialize(text: string): GameState | undefined {
   return g;
 }
 
-export function saveGame(store: SaveStore, g: GameState): void {
-  store.write(serialize(g));
-}
-
-export function loadGame(store: SaveStore): GameState | undefined {
-  const text = store.read();
-  return text === null ? undefined : deserialize(text);
+/** Read the gallery fields (note 104). Unknown ids and bad slots are dropped. */
+function loadGallery(g: GameState, raw: Record<string, unknown>): void {
+  const strings = (v: unknown): string[] =>
+    Array.isArray(v)
+      ? [
+          ...new Set(
+            v.filter((x): x is string => typeof x === "string" && x !== ""),
+          ),
+        ]
+      : [];
+  const donated = strings(raw.gallery).filter(inGallery);
+  if (donated.length > 0) g.gallery = donated;
+  if (isObject(raw.galleryPlaced)) {
+    const placed: Record<string, number> = {};
+    for (const [id, slot] of Object.entries(raw.galleryPlaced))
+      if (
+        donated.includes(id) &&
+        Number.isInteger(slot) &&
+        (slot as number) >= 0 &&
+        (slot as number) < GALLERY_TOTAL
+      )
+        placed[id] = slot as number;
+    if (Object.keys(placed).length > 0) g.galleryPlaced = placed;
+  }
+  const claimed = strings(raw.galleryClaimed);
+  if (claimed.length > 0) g.galleryClaimed = claimed;
 }

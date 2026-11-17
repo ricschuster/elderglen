@@ -13,7 +13,28 @@
     "podge_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
     "podge_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
     "podge_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
-    "podge_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+    "podge_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "podge_4_a": "PLACEHOLDER TEXT. Podge, scene for 4 hearts. The story comes with the voice sheet.",
+    "podge_4_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "podge_4_ans1": "PLACEHOLDER TEXT. Of course.",
+    "podge_4_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "podge_4_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "podge_4_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "podge_4_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "podge_8_a": "PLACEHOLDER TEXT. Podge, scene for 8 hearts. The story comes with the voice sheet.",
+    "podge_8_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "podge_8_ans1": "PLACEHOLDER TEXT. Of course.",
+    "podge_8_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "podge_8_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "podge_8_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "podge_8_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "podge_10_a": "PLACEHOLDER TEXT. Podge, scene for 10 hearts. The story comes with the voice sheet.",
+    "podge_10_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "podge_10_ans1": "PLACEHOLDER TEXT. Of course.",
+    "podge_10_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "podge_10_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "podge_10_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "podge_10_c": "PLACEHOLDER TEXT. Here, I want you to have this."
   },
   "events": [
     {
@@ -133,6 +154,121 @@
       ]
     },
     {
+      "id": "podge-square-4",
+      "villager": "podge",
+      "place": "hw:square",
+      "hearts": 4,
+      "window": {
+        "from": "11:00",
+        "until": "12:30"
+      },
+      "conditions": {
+        "weather": ["sunny", "snowy"]
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "podge",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "podge"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_4_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "podge",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_4_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "podge_4_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "podge_4_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_4_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "podge",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_4_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_4_c"
+        },
+        {
+          "cmd": "give",
+          "recipe": "podge-supper"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "podge-4-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
       "id": "podge-inn-6",
       "villager": "podge",
       "place": "hw:inn",
@@ -236,6 +372,230 @@
         {
           "cmd": "setFlag",
           "flag": "podge-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "podge-inn-8",
+      "villager": "podge",
+      "place": "hw:inn",
+      "hearts": 8,
+      "window": {
+        "from": "12:30",
+        "until": "17:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "podge",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "podge"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_8_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "podge",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_8_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "podge_8_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "podge_8_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_8_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "podge",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_8_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_8_c"
+        },
+        {
+          "cmd": "give",
+          "furniture": "podge-token"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "podge-8-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "podge-inn-10",
+      "villager": "podge",
+      "place": "hw:inn",
+      "hearts": 10,
+      "window": {
+        "from": "12:30",
+        "until": "17:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "podge",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "podge"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_10_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "podge",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_10_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "podge_10_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "podge_10_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_10_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "podge",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_10_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "podge",
+          "line": "podge_10_c"
+        },
+        {
+          "cmd": "give",
+          "hat": "podge-ribbon"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "podge-10-seen"
         },
         {
           "cmd": "snap"

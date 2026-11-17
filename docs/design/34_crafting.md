@@ -58,8 +58,11 @@ It is slice 1 work (`33_build_order.md`).
   existing stacks" and "Organize" are Stardew's button names. Tools never go in a
   chest. Rules in `src/core/chestmenu.ts`. Not built: villagers pushing a chest
   off their path (our villagers do not cross the farm), the colour palette's
-  real colours, Stardew's chest art (M3d), chests in the greenhouse (needs the
-  greenhouse plant check to see chests first).
+  real colours, Stardew's chest art (M3d). Chests now stand in the greenhouse
+  too (its plant check sees them). On touch, cells are at least 44 px and a
+  70-slot chest scrolls (buttons or wheel); a long press on a stack opens a menu
+  (send one, half, all) and a long press on the chest title shows its contents
+  count and what they sell for.
 - **Every craftable is data**, in `src/content/`, with its ingredients, its
   source and its slice. New recipes are data files, not code.
 

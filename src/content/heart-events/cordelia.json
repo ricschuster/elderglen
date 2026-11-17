@@ -17,7 +17,21 @@
     "cordelia_6_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
     "cordelia_6_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
     "cordelia_6_r2": "PLACEHOLDER TEXT. Then I will be quick.",
-    "cordelia_6_c": "PLACEHOLDER TEXT. Here, I want you to have this."
+    "cordelia_6_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "cordelia_8_a": "PLACEHOLDER TEXT. Cordelia, scene for 8 hearts. The story comes with the voice sheet.",
+    "cordelia_8_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "cordelia_8_ans1": "PLACEHOLDER TEXT. Of course.",
+    "cordelia_8_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "cordelia_8_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "cordelia_8_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "cordelia_8_c": "PLACEHOLDER TEXT. Here, I want you to have this.",
+    "cordelia_10_a": "PLACEHOLDER TEXT. Cordelia, scene for 10 hearts. The story comes with the voice sheet.",
+    "cordelia_10_b": "PLACEHOLDER TEXT. Do you have a moment?",
+    "cordelia_10_ans1": "PLACEHOLDER TEXT. Of course.",
+    "cordelia_10_ans2": "PLACEHOLDER TEXT. I should be going, but go on.",
+    "cordelia_10_r1": "PLACEHOLDER TEXT. Thank you. That means a lot.",
+    "cordelia_10_r2": "PLACEHOLDER TEXT. Then I will be quick.",
+    "cordelia_10_c": "PLACEHOLDER TEXT. Here, I want you to have this."
   },
   "events": [
     {
@@ -305,6 +319,230 @@
         {
           "cmd": "setFlag",
           "flag": "cordelia-6-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "cordelia-hatter-8",
+      "villager": "cordelia",
+      "place": "hw:hatter",
+      "hearts": 8,
+      "window": {
+        "from": "17:00",
+        "until": "19:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "cordelia",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "cordelia"
+        },
+        {
+          "cmd": "say",
+          "who": "cordelia",
+          "line": "cordelia_8_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "cordelia",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "cordelia",
+          "line": "cordelia_8_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "cordelia_8_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "cordelia_8_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "cordelia",
+          "line": "cordelia_8_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "cordelia",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "cordelia",
+          "line": "cordelia_8_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "cordelia",
+          "line": "cordelia_8_c"
+        },
+        {
+          "cmd": "give",
+          "furniture": "cordelia-token"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "cordelia-8-seen"
+        },
+        {
+          "cmd": "snap"
+        },
+        {
+          "cmd": "end"
+        }
+      ]
+    },
+    {
+      "id": "cordelia-hatter-10",
+      "villager": "cordelia",
+      "place": "hw:hatter",
+      "hearts": 10,
+      "window": {
+        "from": "17:00",
+        "until": "19:00"
+      },
+      "scene": [
+        {
+          "cmd": "fade",
+          "to": "black"
+        },
+        {
+          "cmd": "place",
+          "who": "player",
+          "mark": "door"
+        },
+        {
+          "cmd": "place",
+          "who": "cordelia",
+          "mark": "stage"
+        },
+        {
+          "cmd": "fade",
+          "to": "clear"
+        },
+        {
+          "cmd": "pan",
+          "to": "cordelia"
+        },
+        {
+          "cmd": "say",
+          "who": "cordelia",
+          "line": "cordelia_10_a"
+        },
+        {
+          "cmd": "emote",
+          "who": "cordelia",
+          "emote": "smile"
+        },
+        {
+          "cmd": "say",
+          "who": "cordelia",
+          "line": "cordelia_10_b"
+        },
+        {
+          "cmd": "choose",
+          "answers": [
+            {
+              "line": "cordelia_10_ans1",
+              "goto": "yes"
+            },
+            {
+              "line": "cordelia_10_ans2",
+              "goto": "later"
+            }
+          ]
+        },
+        {
+          "cmd": "label",
+          "name": "yes"
+        },
+        {
+          "cmd": "say",
+          "who": "cordelia",
+          "line": "cordelia_10_r1"
+        },
+        {
+          "cmd": "rise",
+          "who": "cordelia",
+          "speed": 1.5
+        },
+        {
+          "cmd": "jump",
+          "to": "after"
+        },
+        {
+          "cmd": "label",
+          "name": "later"
+        },
+        {
+          "cmd": "say",
+          "who": "cordelia",
+          "line": "cordelia_10_r2"
+        },
+        {
+          "cmd": "label",
+          "name": "after"
+        },
+        {
+          "cmd": "say",
+          "who": "cordelia",
+          "line": "cordelia_10_c"
+        },
+        {
+          "cmd": "give",
+          "hat": "cordelia-ribbon"
+        },
+        {
+          "cmd": "setFlag",
+          "flag": "cordelia-10-seen"
         },
         {
           "cmd": "snap"

@@ -147,6 +147,10 @@ export function load() {
     forage: content("forage"),
     forageAreas: content("forage-areas"),
     orders: content("orders"),
+    gallery: content("gallery"),
+    geodes: content("geodes"),
+    gems: content("gems"),
+    artifacts: content("artifacts"),
     letters: content("letters"),
     villagers: content("villagers"),
     friendship: content("friendship"),
@@ -468,6 +472,73 @@ ${prose("rooms", r.id)}${shot(`rooms/${r.id}`, `The ${r.name} counter in the vil
   });
 
   // ---- Item pages for everything linked above (not fish, crops or forage)
+  // The library gallery (note 104): the list is derived from the data, never typed.
+  {
+    const kindName = (k) =>
+      k === "geode"
+        ? "Geode"
+        : (d.geodes.kinds.find((x) => x.id === k)?.name ?? k);
+    const rows = [];
+    for (const p of d.geodes.pools) {
+      for (const m of p.minerals)
+        rows.push([m, "Mineral", `Cracked from a ${kindName(p.kind)}`]);
+      rows.push([
+        p.foraged.item,
+        "Mineral",
+        `Cracked from a ${kindName(p.kind)}, or found as a crystal`,
+      ]);
+    }
+    for (const g of d.gems.gems)
+      rows.push([g.id, "Mineral", `Gem nodes, from mine floor ${g.minFloor}`]);
+    rows.push([
+      d.gems.glimmerstone.id,
+      "Mineral",
+      `Gem nodes, from mine floor ${d.gems.glimmerstone.fromFloor}`,
+    ]);
+    const SRC = {
+      "old-digger": "Old Diggers' finds",
+      creature: "A creature's drop",
+      fishing: "Fishing",
+      geode: "A Geode",
+      "frozen-geode": "A Frozen Geode",
+      "magma-geode": "A Magma Geode",
+      "omni-geode": "An Omni Geode",
+    };
+    for (const a of d.artifacts.artifacts) {
+      const where = [
+        ...Object.keys(a.areas ?? {}).map(
+          (m) => `Digging in ${cap(m.replace(/-/g, " "))}`,
+        ),
+        ...((a.mineBands ?? []).length ? ["Mine dirt"] : []),
+        ...(a.sources ?? []).map((x) => SRC[x] ?? x),
+      ];
+      rows.push([a.id, "Artifact", where.join("; ") || "Found things"]);
+    }
+    const seen = new Set();
+    const list = rows.filter(([id]) => !seen.has(id) && seen.add(id));
+    const minerals = list.filter((r) => r[1] === "Mineral").length;
+    const body = list
+      .map(
+        ([id, group, where]) =>
+          `<tr><td>${link("gallery", id)}</td><td>${group}</td><td>${esc(where)}</td></tr>`,
+      )
+      .join("");
+    const tiers = (title, defs) =>
+      `<h3>${title}</h3><ul>${defs.map((t) => `<li>${t.at}: ${esc(t.label)}</li>`).join("")}</ul>`;
+    const sets = d.gallery.sets
+      .map(
+        (s) =>
+          `<li>${esc(s.name)}: ${s.items.map((i) => link("gallery", i)).join(", ")} (${esc(s.reward.label)})</li>`,
+      )
+      .join("");
+    add(
+      "gallery/index.html",
+      "Gallery",
+      `<h1>The library gallery</h1><p>Dunmar, the librarian, takes one copy of each find for the gallery in the library hall: ${minerals} minerals and ${list.length - minerals} artifacts, ${list.length} in all. Donate from your pack at the library desk; spares stay yours. Donated pieces can be arranged anywhere on the shelf, and the shelf can be read from the Collections page.</p><p>Donating every piece pays one of the seven elderfruit. Donating 40 and donating all earn a hat each. The rewards below are not final.</p><table class="sortable"><thead><tr><th>Item</th><th>Kind</th><th>Where it is found</th></tr></thead><tbody>${body}</tbody></table><h2>Rewards</h2>${tiers("By pieces donated", d.gallery.totalRewards)}${tiers("By minerals donated", d.gallery.mineralRewards)}${tiers("By artifacts donated", d.gallery.artifactRewards)}<h3>Sets</h3><ul>${sets}</ul>`,
+      "Place",
+    );
+  }
+
   const usedAsReward = new Map();
   for (const b of d.bundles)
     if (b.reward.item) {
@@ -617,7 +688,7 @@ ${internal ? '<a class="tile" href="@left.html"><strong>What is left</strong><sp
 <a class="tile" href="@places/index.html"><strong>Places</strong><span>The areas of the home valley</span></a>
 <a class="tile" href="@people/index.html">${["odette", "dorrie", "fitch", "alder"].map((i) => shot(`people/${i}`, "", "ico", 32, 32)).join("")}<strong>People</strong><span>The 30 named people, their days and gifts</span></a>
 ${internal ? `<a class="tile" href="@planned.html"><strong>Planned</strong><span>${d.planned.length} decided, not built (internal)</span></a>` : ""}
-<a class="tile" href="@items/index.html">${ico("amber-drop")}<strong>Items</strong><span>Goods the hall and the ponds ask for</span></a>
+<a class="tile" href="@gallery/index.html"><strong>Gallery</strong><span>The library gallery list and rewards</span></a>\n<a class="tile" href="@items/index.html">${ico("amber-drop")}<strong>Items</strong><span>Goods the hall and the ponds ask for</span></a>
 </div>`,
     null,
   );
@@ -676,7 +747,7 @@ function shell(path, title, body, internal) {
 <link rel="stylesheet" href="${base}wiki.css">
 </head>
 <body>
-<header><a class="home" href="${base}index.html">Elderglen wiki</a><a href="${base}fish/index.html">Fish</a><a href="${base}bundles/index.html">Bundles</a><a href="${base}crops/index.html">Crops</a><a href="${base}forage/index.html">Forage</a><a href="${base}recipes/index.html">Recipes</a><a href="${base}places/index.html">Places</a><a href="${base}people/index.html">People</a><a href="${base}items/index.html">Items</a>${internal ? `<a href="${base}planned.html">Planned</a><a href="${base}left.html">What is left</a>` : ""}<input id="q" type="search" placeholder="Search" aria-label="Search the wiki" autocomplete="off"><ul id="results" hidden></ul></header>
+<header><a class="home" href="${base}index.html">Elderglen wiki</a><a href="${base}fish/index.html">Fish</a><a href="${base}bundles/index.html">Bundles</a><a href="${base}crops/index.html">Crops</a><a href="${base}forage/index.html">Forage</a><a href="${base}recipes/index.html">Recipes</a><a href="${base}places/index.html">Places</a><a href="${base}people/index.html">People</a><a href="${base}items/index.html">Items</a><a href="${base}gallery/index.html">Gallery</a>${internal ? `<a href="${base}planned.html">Planned</a><a href="${base}left.html">What is left</a>` : ""}<input id="q" type="search" placeholder="Search" aria-label="Search the wiki" autocomplete="off"><ul id="results" hidden></ul></header>
 <main>
 ${html}
 </main>

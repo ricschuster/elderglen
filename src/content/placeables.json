@@ -146,7 +146,7 @@
   {
     "id": "chest",
     "kind": "chest",
-    "places": ["farm", "house"],
+    "places": ["farm", "house", "greenhouse"],
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"
@@ -154,7 +154,7 @@
   {
     "id": "stone-chest",
     "kind": "chest",
-    "places": ["farm", "house"],
+    "places": ["farm", "house", "greenhouse"],
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"
@@ -162,7 +162,7 @@
   {
     "id": "big-chest",
     "kind": "chest",
-    "places": ["farm", "house"],
+    "places": ["farm", "house", "greenhouse"],
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"
@@ -170,7 +170,7 @@
   {
     "id": "big-stone-chest",
     "kind": "chest",
-    "places": ["farm", "house"],
+    "places": ["farm", "house", "greenhouse"],
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"

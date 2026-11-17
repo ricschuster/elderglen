@@ -1,5 +1,29 @@
 [
   {
+    "id": "alder-supper",
+    "name": "Alder's Plate",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "alder-token",
+    "name": "Alder's Token",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "aldreth-supper",
+    "name": "Aldreth's Pot",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "aldreth-token",
+    "name": "Aldreth's Token",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "algae-soup",
     "name": "Algae soup",
     "sellPrice": 100,
@@ -115,10 +139,38 @@
     "buyPrice": 30
   },
   {
+    "id": "aurelle-token",
+    "name": "Aurelle's Token",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "aurora-fluorite",
+    "name": "Aurora fluorite",
+    "sellPrice": 135
+  },
+  {
     "id": "baked-potato",
     "name": "Baked potato",
     "sellPrice": 70,
     "energy": 90
+  },
+  {
+    "id": "barley-calcite",
+    "name": "Barley calcite",
+    "sellPrice": 35
+  },
+  {
+    "id": "barnaby-supper",
+    "name": "Barnaby's Pie",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "barnaby-token",
+    "name": "Barnaby's Token",
+    "sellPrice": 0,
+    "keep": true
   },
   {
     "id": "basalt-onyx",
@@ -178,6 +230,11 @@
     "name": "Beet seeds",
     "sellPrice": 10,
     "buyPrice": 20
+  },
+  {
+    "id": "bellows-sunstone",
+    "name": "Bellows sunstone",
+    "sellPrice": 200
   },
   {
     "id": "bent-key",
@@ -281,6 +338,18 @@
     "sellPrice": 60
   },
   {
+    "id": "bramwell-supper",
+    "name": "Bramwell's Hash",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "bramwell-token",
+    "name": "Bramwell's Token",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "brass-button",
     "name": "Brass Button",
     "sellPrice": 60
@@ -300,6 +369,11 @@
     "id": "brook-jelly",
     "name": "Brook jelly",
     "sellPrice": 120
+  },
+  {
+    "id": "brook-tourmaline",
+    "name": "Brook tourmaline",
+    "sellPrice": 85
   },
   {
     "id": "brookslip",
@@ -555,6 +629,11 @@
     "keep": true
   },
   {
+    "id": "clover-peridot",
+    "name": "Clover peridot",
+    "sellPrice": 90
+  },
+  {
     "id": "coal",
     "name": "Coal",
     "sellPrice": 15,
@@ -633,6 +712,12 @@
   {
     "id": "copper-switch",
     "name": "Copper Switch",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "cordelia-token",
+    "name": "Cordelia's Token",
     "sellPrice": 0,
     "keep": true
   },
@@ -786,6 +871,11 @@
     "sellPrice": 20
   },
   {
+    "id": "creek-carnelian",
+    "name": "Creek carnelian",
+    "sellPrice": 70
+  },
+  {
     "id": "crocus",
     "name": "Crocus",
     "sellPrice": 60
@@ -806,9 +896,26 @@
     "sellPrice": 175
   },
   {
+    "id": "crucible-alexandrite",
+    "name": "Crucible alexandrite",
+    "sellPrice": 260
+  },
+  {
     "id": "crystalarium",
     "name": "Crystalarium",
     "sellPrice": 500
+  },
+  {
+    "id": "cuthbert-supper",
+    "name": "Cuthbert's Plate",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "cuthbert-token",
+    "name": "Cuthbert's Token",
+    "sellPrice": 0,
+    "keep": true
   },
   {
     "id": "daffodil",
@@ -893,10 +1000,39 @@
     "keep": true
   },
   {
+    "id": "dilly-supper",
+    "name": "Dilly's Pot",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "dilly-token",
+    "name": "Dilly's Token",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "doghouse",
     "name": "Doghouse",
     "sellPrice": 0,
     "keep": true
+  },
+  {
+    "id": "dorrie-supper",
+    "name": "Dorrie's Bowl",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "dorrie-token",
+    "name": "Dorrie's Token",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "drift-kunzite",
+    "name": "Drift kunzite",
+    "sellPrice": 130
   },
   {
     "id": "driftwood",
@@ -923,6 +1059,12 @@
     "id": "dune-jade",
     "name": "Dune jade",
     "sellPrice": 100
+  },
+  {
+    "id": "dunmar-token",
+    "name": "Dunmar's Token",
+    "sellPrice": 0,
+    "keep": true
   },
   {
     "id": "dusk-opal",
@@ -1075,6 +1217,11 @@
     "keep": true
   },
   {
+    "id": "fern-fluorite",
+    "name": "Fern fluorite",
+    "sellPrice": 55
+  },
+  {
     "id": "fernfin",
     "name": "Fernfin",
     "sellPrice": 130
@@ -1167,6 +1314,18 @@
     "energy": 150
   },
   {
+    "id": "fitch-supper",
+    "name": "Fitch's Hash",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "fitch-token",
+    "name": "Fitch's Token",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "flint-arrowhead",
     "name": "Flint arrowhead",
     "sellPrice": 70
@@ -1241,6 +1400,11 @@
     "id": "furnace",
     "name": "Furnace",
     "sellPrice": 150
+  },
+  {
+    "id": "furnace-citrine",
+    "name": "Furnace citrine",
+    "sellPrice": 190
   },
   {
     "id": "furniture-catalogue",
@@ -1591,6 +1755,18 @@
     "energy": 170
   },
   {
+    "id": "hattie-supper",
+    "name": "Hattie's Supper",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "hattie-token",
+    "name": "Hattie's Token",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "hay",
     "name": "Hay",
     "sellPrice": 0,
@@ -1636,6 +1812,11 @@
     "id": "heartfire-diamond",
     "name": "Heartfire diamond",
     "sellPrice": 250
+  },
+  {
+    "id": "hearth-rhodonite",
+    "name": "Hearth rhodonite",
+    "sellPrice": 210
   },
   {
     "id": "hearthside-dace",
@@ -1709,6 +1890,11 @@
     "energy": 125
   },
   {
+    "id": "heather-amethyst",
+    "name": "Heather amethyst",
+    "sellPrice": 95
+  },
+  {
     "id": "heavy-tapper",
     "name": "Heavy tapper",
     "sellPrice": 100
@@ -1765,6 +1951,23 @@
     "id": "herring-roe",
     "name": "Herring roe",
     "sellPrice": 50
+  },
+  {
+    "id": "hester-supper",
+    "name": "Hester's Plate",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "hester-token",
+    "name": "Hester's Token",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "hoar-sapphire",
+    "name": "Hoar sapphire",
+    "sellPrice": 150
   },
   {
     "id": "hollow-acorn-charm",
@@ -1877,6 +2080,11 @@
     "sellPrice": 20
   },
   {
+    "id": "icicle-selenite",
+    "name": "Icicle selenite",
+    "sellPrice": 110
+  },
+  {
     "id": "indigo-dye",
     "name": "Indigo dye",
     "sellPrice": 120
@@ -1983,6 +2191,23 @@
     "sellPrice": 55
   },
   {
+    "id": "kiln-sardonyx",
+    "name": "Kiln sardonyx",
+    "sellPrice": 170
+  },
+  {
+    "id": "korvi-supper",
+    "name": "Korvi's Pot",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "korvi-token",
+    "name": "Korvi's Token",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "ladle-snail",
     "name": "Ladle Snail",
     "sellPrice": 70
@@ -2029,6 +2254,11 @@
     "energy": 40
   },
   {
+    "id": "lichen-serpentine",
+    "name": "Lichen serpentine",
+    "sellPrice": 45
+  },
+  {
     "id": "life-elixir",
     "name": "Life Elixir",
     "sellPrice": 0,
@@ -2038,6 +2268,18 @@
   {
     "id": "lightning-rod",
     "name": "Lightning rod",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "linnet-supper",
+    "name": "Linnet's Bowl",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "linnet-token",
+    "name": "Linnet's Token",
     "sellPrice": 0,
     "keep": true
   },
@@ -2100,10 +2342,34 @@
     "sellPrice": 200
   },
   {
+    "id": "maren-supper",
+    "name": "Maren's Pie",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "maren-token",
+    "name": "Maren's Token",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "market-pie",
     "name": "Market pie",
     "sellPrice": 160,
     "energy": 140
+  },
+  {
+    "id": "marl-supper",
+    "name": "Marl's Hash",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "marl-token",
+    "name": "Marl's Token",
+    "sellPrice": 0,
+    "keep": true
   },
   {
     "id": "marsh-clam",
@@ -2350,6 +2616,11 @@
     "sellPrice": 180
   },
   {
+    "id": "northlight-spinel",
+    "name": "Northlight spinel",
+    "sellPrice": 160
+  },
+  {
     "id": "oak-chair",
     "name": "Oak chair",
     "sellPrice": 0,
@@ -2359,6 +2630,12 @@
     "id": "oak-resin",
     "name": "Oak resin",
     "sellPrice": 150
+  },
+  {
+    "id": "odette-token",
+    "name": "Odette's Token",
+    "sellPrice": 0,
+    "keep": true
   },
   {
     "id": "oil",
@@ -2595,6 +2872,18 @@
     "sellPrice": 20
   },
   {
+    "id": "pim-supper",
+    "name": "Pim's Plate",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "pim-token",
+    "name": "Pim's Token",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "pin-urchin",
     "name": "Pin urchin",
     "sellPrice": 160
@@ -2651,6 +2940,18 @@
   {
     "id": "pocket-sling",
     "name": "Pocket Sling",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "podge-supper",
+    "name": "Podge's Pot",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "podge-token",
+    "name": "Podge's Token",
     "sellPrice": 0,
     "keep": true
   },
@@ -2785,6 +3086,11 @@
     "id": "purple-dye",
     "name": "Purple dye",
     "sellPrice": 120
+  },
+  {
+    "id": "pyre-opal",
+    "name": "Pyre opal",
+    "sellPrice": 230
   },
   {
     "id": "quality-fertilizer",
@@ -2947,6 +3253,11 @@
     "sellPrice": 75
   },
   {
+    "id": "rime-labradorite",
+    "name": "Rime labradorite",
+    "sellPrice": 125
+  },
+  {
     "id": "rimed-chisel",
     "name": "Rimed chisel",
     "sellPrice": 170
@@ -3005,8 +3316,38 @@
     "sellPrice": 135
   },
   {
+    "id": "rosmarin-token",
+    "name": "Rosmarin's Token",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "round-table",
     "name": "Round table",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "rufus-supper",
+    "name": "Rufus's Pie",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "rufus-token",
+    "name": "Rufus's Token",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "rundahl-supper",
+    "name": "Rundahl's Hash",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "rundahl-token",
+    "name": "Rundahl's Token",
     "sellPrice": 0,
     "keep": true
   },
@@ -3015,6 +3356,18 @@
     "name": "Runner's porridge",
     "sellPrice": 150,
     "energy": 160
+  },
+  {
+    "id": "rushie-supper",
+    "name": "Rushie's Supper",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "rushie-token",
+    "name": "Rushie's Token",
+    "sellPrice": 0,
+    "keep": true
   },
   {
     "id": "rust-jasper",
@@ -3089,6 +3442,11 @@
     "id": "sardine-roe",
     "name": "Sardine roe",
     "sellPrice": 20
+  },
+  {
+    "id": "scorch-agate",
+    "name": "Scorch agate",
+    "sellPrice": 165
   },
   {
     "id": "scrimshaw-tooth",
@@ -3204,9 +3562,19 @@
     "sellPrice": 300
   },
   {
+    "id": "slag-obsidian",
+    "name": "Slag obsidian",
+    "sellPrice": 155
+  },
+  {
     "id": "slate-tablet",
     "name": "Slate tablet",
     "sellPrice": 110
+  },
+  {
+    "id": "sleet-zircon",
+    "name": "Sleet zircon",
+    "sellPrice": 105
   },
   {
     "id": "slime-proof-ring",
@@ -3230,6 +3598,11 @@
     "id": "smelters-tongs",
     "name": "Smelter's tongs",
     "sellPrice": 360
+  },
+  {
+    "id": "smoulder-kyanite",
+    "name": "Smoulder kyanite",
+    "sellPrice": 175
   },
   {
     "id": "snow-beryl",
@@ -3464,6 +3837,11 @@
     "buyPrice": 60
   },
   {
+    "id": "tallow-chalcedony",
+    "name": "Tallow chalcedony",
+    "sellPrice": 65
+  },
+  {
     "id": "tallow-eel",
     "name": "Tallow Eel",
     "sellPrice": 170
@@ -3500,6 +3878,24 @@
     "sellPrice": 250
   },
   {
+    "id": "thalwen-supper",
+    "name": "Thalwen's Plate",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "thalwen-token",
+    "name": "Thalwen's Token",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "thistle-token",
+    "name": "Thistle's Token",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "tide-bowl",
     "name": "Tide bowl",
     "sellPrice": 0,
@@ -3516,9 +3912,33 @@
     "sellPrice": 80
   },
   {
+    "id": "tilda-supper",
+    "name": "Tilda's Bowl",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "tilda-token",
+    "name": "Tilda's Token",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "tin-spoon",
     "name": "Tin Spoon",
     "sellPrice": 30
+  },
+  {
+    "id": "toby-supper",
+    "name": "Toby's Pie",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "toby-token",
+    "name": "Toby's Token",
+    "sellPrice": 0,
+    "keep": true
   },
   {
     "id": "tomato",
@@ -3592,6 +4012,11 @@
     "buyPrice": 20
   },
   {
+    "id": "tundra-celestine",
+    "name": "Tundra celestine",
+    "sellPrice": 115
+  },
+  {
     "id": "valley-king",
     "name": "The Valley King",
     "sellPrice": 3500
@@ -3635,6 +4060,18 @@
   {
     "id": "wallpaper-moss",
     "name": "Mossy wallpaper",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "walter-supper",
+    "name": "Walter's Hash",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "walter-token",
+    "name": "Walter's Token",
     "sellPrice": 0,
     "keep": true
   },
@@ -3800,6 +4237,18 @@
   {
     "id": "worn-boots",
     "name": "Worn boots",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "wren-supper",
+    "name": "Wren's Supper",
+    "sellPrice": 150,
+    "energy": 140
+  },
+  {
+    "id": "wren-token",
+    "name": "Wren's Token",
     "sellPrice": 0,
     "keep": true
   },

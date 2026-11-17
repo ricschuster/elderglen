@@ -1,5 +1,6 @@
 import Phaser from "phaser";
-import { finishWedding, isWeddingId } from "../core/courtship";
+import { finishWedding, isWeddingId, weddingEvent } from "../core/courtship";
+import { weddingGuests } from "../core/divorce";
 import { actorName, SceneRun, warningText, worldOf } from "../core/eventrun";
 import {
   completeEvent,
@@ -8,10 +9,10 @@ import {
   type Cmd,
   type HeartEvent,
 } from "../core/heartevents";
-import { saveGame, type GameState } from "../core/save";
+import type { GameState } from "../core/save";
 import { WINDOW_FILL } from "./panel";
 import { STATE_KEY } from "./state";
-import { browserStore } from "./storage";
+import { resumeSave } from "./storage";
 
 export interface HeartEventData {
   id: string;
@@ -74,7 +75,13 @@ export class HeartEventScene extends Phaser.Scene {
 
   init(data: HeartEventData): void {
     this.state = this.registry.get(STATE_KEY) as GameState;
-    this.event = eventById(data.id)!;
+    // A wedding is built from the id; former spouses stand in as guests (note 12).
+    this.event = isWeddingId(data.id)
+      ? weddingEvent(
+          data.id.slice("wedding-".length),
+          weddingGuests(this.state, data.id.slice("wedding-".length)),
+        )
+      : eventById(data.id)!;
     this.replay = data.replay === true;
     this.warn = data.warn === true && !this.replay;
     this.run = SceneRun.of(this.event, this.replay, worldOf(this.state));
@@ -407,7 +414,7 @@ export class HeartEventScene extends Phaser.Scene {
       this.event,
       this.state.day.clock.day,
     );
-    saveGame(browserStore, this.state);
+    resumeSave(this.state);
     if (words.length === 0) return this.close();
     this.box.setVisible(true);
     this.speaker.setText("You were given");

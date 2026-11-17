@@ -47,7 +47,7 @@ export interface Present {
  */
 export function villagersOn(
   g: Pick<GameState, "weather"> &
-    Partial<Pick<GameState, "marriage" | "houseTier">>,
+    Partial<Pick<GameState, "marriage" | "houseTier" | "flags">>,
   mapId: string,
   day: number,
   minutes: number,

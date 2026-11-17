@@ -89,3 +89,81 @@ export function fillStacks(pack: Inventory, chest: Inventory): number {
   }
   return moved;
 }
+
+/** Smallest cell for a finger, in screen pixels (touch target guide). */
+export const TOUCH_CELL = 44;
+
+/** One entry of the touch long-press menu: the same sends as right-click, Shift and Space. */
+export interface PressAction {
+  label: string;
+  /** How many to send; Infinity is the whole stack. */
+  most: number;
+}
+
+/**
+ * The long-press menu for a stack of `count`: send one (right-click), send half
+ * (Shift with right-click), send the stack (Space). Entries that would repeat
+ * another are left out, so a single item offers one send.
+ */
+export function pressActions(count: number): PressAction[] {
+  if (count <= 1) return [{ label: "Send", most: Infinity }];
+  const half = Math.ceil(count / 2);
+  const out: PressAction[] = [{ label: "Send one", most: 1 }];
+  if (half > 1 && half < count)
+    out.push({ label: `Send half (${half})`, most: half });
+  out.push({ label: `Send all (${count})`, most: Infinity });
+  return out;
+}
+
+/**
+ * How many chest rows fit on screen beside the backpack, never fewer than one
+ * and never more than the chest has. `space` is the pixels left for both
+ * grids and `pitch` the row height (at least `TOUCH_CELL` plus a gap).
+ */
+export function visibleRows(
+  chestRows: number,
+  packRows: number,
+  space: number,
+  pitch: number,
+): number {
+  const free = Math.floor(space / pitch) - packRows;
+  return Math.max(1, Math.min(chestRows, free));
+}
+
+/** Clamp a row offset so the window of `shown` rows stays inside `total` rows. */
+export function clampRowOffset(
+  offset: number,
+  total: number,
+  shown: number,
+): number {
+  return Math.max(0, Math.min(offset, total - shown));
+}
+
+/** True when slot `i` lies in the window starting at row `offset`. */
+export function inWindow(
+  i: number,
+  cols: number,
+  offset: number,
+  shown: number,
+): boolean {
+  const row = Math.floor(i / cols);
+  return row >= offset && row < offset + shown;
+}
+
+/** Pixels a touch must travel before a press on the chest grid becomes a swipe. */
+export const SWIPE_START_PX = 10;
+
+/**
+ * The first row shown after a vertical swipe: the grid follows the finger, so
+ * dragging up by one row pitch shows the next row. `dy` is the drag distance
+ * from where the touch began (negative is up); the result is clamped.
+ */
+export function swipeRowOffset(
+  startOffset: number,
+  dy: number,
+  pitch: number,
+  total: number,
+  shown: number,
+): number {
+  return clampRowOffset(startOffset - Math.round(dy / pitch), total, shown);
+}

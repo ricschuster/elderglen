@@ -1,12 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  deserialize,
-  loadGame,
-  newGame,
-  saveGame,
-  serialize,
-  type SaveStore,
-} from "../src/core/save";
+import { deserialize, newGame, serialize } from "../src/core/save";
 import { startGame } from "../src/core/toolbar";
 import { DAY_START } from "../src/core/clock";
 
@@ -73,14 +66,6 @@ describe("save and load", () => {
       JSON.stringify({ ...good, farm: null }),
     ];
     for (const text of bad) expect(deserialize(text), text).toBeUndefined();
-  });
-
-  it("works through a store, and an empty store loads nothing", () => {
-    let held: string | null = null;
-    const store: SaveStore = { read: () => held, write: (t) => (held = t) };
-    expect(loadGame(store)).toBeUndefined();
-    saveGame(store, played());
-    expect(loadGame(store)?.money).toBe(1234);
   });
 
   it("remembers that the end screen was shown", () => {

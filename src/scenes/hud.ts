@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { hasButtons } from "../core/controlschemes";
 import { heldAt, rowOf, TOOLBAR_SIZE, type Held } from "../core/toolbar";
 import { SLOT_COUNT } from "../core/inventory";
 import { barWidth, SLOT_SMALL } from "../core/view";
@@ -10,7 +11,7 @@ import { weaponById } from "../core/combat";
 import type { Settings } from "../core/bindings";
 import { desktopHint } from "./controls";
 import { HudPanel, PANEL_BOTTOM, PANEL_LEFT_BASE } from "./hudpanel";
-import { itemTip } from "../core/itemtip";
+import { itemTip, type ItemTip } from "../core/itemtip";
 import { canFraction, canWaterLine } from "../core/canwater";
 import { Tooltip } from "./tooltip";
 import { toolAway, type Upgradable } from "../core/upgrades";
@@ -71,6 +72,10 @@ export class Hud {
   private readonly rowButton: Phaser.GameObjects.Rectangle;
   private readonly rowText: Phaser.GameObjects.Text;
   private usePressed = false;
+  private useParts: Phaser.GameObjects.GameObject[] = [];
+  private actionParts: Phaser.GameObjects.GameObject[] = [];
+  private useLabel?: Phaser.GameObjects.Text;
+  private buttonKey = "";
   /** Objects shifted with a window edge, and where they sit in the base layout. */
   private readonly pinned: {
     o: Phaser.GameObjects.Components.Transform;
@@ -141,7 +146,7 @@ export class Hud {
     this.panel = new HudPanel(
       scene,
       this.touch,
-      settings.touchScheme !== "tap",
+      hasButtons(settings.touchScheme),
       USE_R,
     );
     this.objects.push(...this.panel.objects);
@@ -352,15 +357,13 @@ export class Hud {
       journal,
       journalText,
     ]);
-    // Tap-to-move has no Use button: a tap on the tile beside the farmer uses
-    // the held tool (note 27).
-    if (this.touch && settings.touchScheme === "tap") {
-      use.setVisible(false).disableInteractive();
-      useText.setVisible(false);
-      // Every Action job has a tap target too (note 27).
-      eat.setVisible(false).disableInteractive();
-      eatText.setVisible(false);
-    }
+    // Which buttons show depends on the scheme and, for the weapon schemes, on
+    // the held item (note 27). Tap-to-move has none: a tap uses the held tool
+    // and every Action job has a tap target.
+    this.useParts = [use, useText];
+    this.actionParts = [eat, eatText];
+    this.useLabel = useText;
+    this.setButtons(false, false, false);
     if (!this.touch)
       for (const o of [
         use,
@@ -475,6 +478,25 @@ export class Hud {
     return this.touch ? COL_W * scale : 0;
   }
 
+  /** Show or hide the Use and Action buttons (touch only; desktop has none). */
+  setButtons(use: boolean, action: boolean, one: boolean): void {
+    const key = `${use}${action}${one}`;
+    if (!this.touch || key === this.buttonKey) return;
+    this.buttonKey = key;
+    const set = (parts: Phaser.GameObjects.GameObject[], on: boolean): void => {
+      for (const o of parts) {
+        const g = o as Phaser.GameObjects.GameObject & {
+          setVisible(v: boolean): unknown;
+        };
+        g.setVisible(on);
+        if (o.input) o.input.enabled = on;
+      }
+    };
+    set(this.useParts, use);
+    set(this.actionParts, action);
+    this.useLabel?.setText(one ? "Do" : "Use");
+  }
+
   /** True while a finger or the mouse holds the Use button. */
   get useHeld(): boolean {
     return this.usePressed;
@@ -483,6 +505,36 @@ export class Hud {
   /** The toolbar index that bar slot i stands for, given the row shown. */
   private indexOf(i: number): number {
     return i + this.row * SLOT_COUNT;
+  }
+
+  /** Show a tip near a screen point (the world's hover and long press, such as over a chest). */
+  showTipAt(tip: ItemTip, sx: number, sy: number): void {
+    this.tooltip.show(
+      tip,
+      { x: sx / this.scale, y: sy / this.scale - 8, w: 0, h: 24 },
+      { w: this.uw, h: this.uh },
+    );
+  }
+
+  /** Show a tip above a screen box (for example a tile), kept on screen. */
+  showTipOver(
+    tip: ItemTip,
+    box: { x: number; y: number; w: number; h: number },
+  ): void {
+    this.tooltip.show(
+      tip,
+      {
+        x: box.x / this.scale,
+        y: box.y / this.scale,
+        w: box.w / this.scale,
+        h: box.h / this.scale,
+      },
+      { w: this.uw, h: this.uh },
+    );
+  }
+
+  hideTip(): void {
+    this.tooltip.hide();
   }
 
   /** True if a screen point falls on the toolbar, which owns its touches. */

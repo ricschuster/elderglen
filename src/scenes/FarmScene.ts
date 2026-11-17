@@ -39,7 +39,7 @@ import {
 import { fertilizerById } from "../core/fertilizer";
 import Phaser from "phaser";
 import { animalKey } from "./art-animals";
-import { saveSettings } from "../core/bindings";
+import { saveSettings, type TouchScheme } from "../core/bindings";
 import { sleep } from "../core/sleep";
 import {
   areaOf,
@@ -96,12 +96,15 @@ import { cycle, findTool, heldAt, nextRow, toolbarSize } from "../core/toolbar";
 import { pendingChoice } from "../core/professions";
 import { eat, type Outcome } from "../core/actions";
 import { dateOf } from "../core/calendar";
-import { clockText, darkness } from "../core/clock";
+import { darkness } from "../core/clock";
 import {
   festivalOfMap,
-  festivalOpen,
   festivalDayToday,
+  festivalGateHolds,
   festivalShutLine,
+  festivalSignLine,
+  walkIntoFestival,
+  walkIntoPlace,
   festivalStepShut,
   festivalToday,
   isFestivalMap,
@@ -189,16 +192,29 @@ import {
   type Vec,
 } from "../core/movement";
 import { aimAt } from "../core/aim";
+import { isLongPress, tileScreenRect } from "../core/tipanchor";
 import { createControls, type Controls } from "./controls";
+import {
+  DEFAULT_SCHEME,
+  partsFor,
+  schemeById,
+  usesTap,
+  type Parts,
+} from "../core/controlschemes";
 import { planTap, planUse, type TapPlan } from "../core/pathing";
 import { tapPick, tapUse } from "../core/tapuse";
 import { isTapperItem, tapReady, tapStatus } from "../core/tapper";
 import {
   browserSettingsStore,
-  browserStore,
   loadDeviceSettings,
+  nightSave,
+  resumeSave,
+  setSpotProvider,
+  takeSaveNotice,
 } from "./storage";
-import { saveGame } from "../core/save";
+import { ResumeGate } from "../core/records";
+import { serialize, type ResumeSpot } from "../core/save";
+import { spawnTableOf } from "../core/spawns";
 import { hallRestored } from "../core/bundles";
 import {
   healthShown,
@@ -332,6 +348,7 @@ import {
   isHouseMap,
 } from "../core/house";
 import { SELECTED_KEY, STATE_KEY } from "./state";
+import { placedChestTip } from "../core/itemtip";
 import {
   cropKey,
   fertKey,
@@ -425,6 +442,9 @@ const NIGHT_ALPHA = 0.5;
 interface SceneData {
   map: string;
   entry: string;
+  /** A tile to stand on (a resumed day, note 52), if it is still open. */
+  x?: number;
+  y?: number;
 }
 
 /** The tile step a push takes for each way the farmer faces. */
@@ -445,6 +465,8 @@ export class FarmScene extends Phaser.Scene {
   private selected = 0;
   private mapId: string = START.map;
   private entryName: string = START.entry;
+  private restoreTile: { x: number; y: number } | undefined;
+  private gate = new ResumeGate();
   private leaving = false;
   /** The mine floor this map is, if it is one. */
   private floor: number | undefined;
@@ -513,6 +535,7 @@ export class FarmScene extends Phaser.Scene {
   /** Tap-to-move (note 27): the route still to walk, and what to do at the end. */
   private tapPath: Vec[] = [];
   /** A tapped spot in the world the sling shoots at, for a moment. */
+  private scheme: TouchScheme = DEFAULT_SCHEME;
   private tapShot?: { x: number; y: number; until: number };
   /** Villagers on this map right now and the placeholder blocks that show them (#599). */
   private villagers: Present[] = [];
@@ -555,6 +578,12 @@ export class FarmScene extends Phaser.Scene {
     this.state = this.registry.get(STATE_KEY) as GameState;
     this.mapId = resolveMapId(data.map ?? START.map, this.state.farmType);
     this.entryName = data.entry ?? START.entry;
+    this.restoreTile =
+      data.x !== undefined && data.y !== undefined
+        ? { x: data.x, y: data.y }
+        : undefined;
+    this.gate = new ResumeGate();
+    this.gate.seed(serialize(this.state));
     // An area map (the Forest) has its own trees, rocks and forage: set them in
     // the state while the player is here, and put the farm's back anywhere else.
     leaveArea(this.state);
@@ -656,7 +685,11 @@ export class FarmScene extends Phaser.Scene {
     world.push(this.ground, this.wash);
     world.push(...this.drawLabels());
     world.push(...this.drawSpouseProps(holds));
-    let spawn: { x: number; y: number } = this.map.entry(this.entryName)!;
+    let spawn: { x: number; y: number } =
+      this.map.entry(this.entryName) ?? this.map.entries[0]!;
+    // A resumed day puts the player back on the tile they left, if it is open.
+    const back = this.restoreTile;
+    if (back && !this.map.isBlocked(back.x, back.y)) spawn = back;
     // Coming up from below lands on the ladder that was taken down.
     const ladder = this.floorState?.ladder;
     if (this.entryName === "from_below" && ladder) {
@@ -719,10 +752,11 @@ export class FarmScene extends Phaser.Scene {
 
     // UI objects, drawn by a second camera that does not zoom.
     const settings = loadDeviceSettings();
+    this.scheme = settings.touchScheme;
     this.hud = new Hud(
       this,
       (i) => this.select(i),
-      () => this.use(),
+      () => this.useButton(),
       () => this.action(),
       () => this.openMenu("pack"),
       () => this.openMenu("crafting"),
@@ -777,6 +811,21 @@ export class FarmScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.scale.off(Phaser.Scale.Events.RESIZE, relayout);
       this.events.off(Phaser.Scenes.Events.RESUME, relayout);
+    });
+
+    // The resume record (note 52): written when the page is hidden or closed.
+    // Both writes are synchronous, which is why they work in `pagehide`.
+    setSpotProvider(() => this.resumeSpot());
+    const hidden = (): void => {
+      if (document.visibilityState === "hidden") this.saveResume(true);
+    };
+    const closing = (): void => this.saveResume(true);
+    document.addEventListener("visibilitychange", hidden);
+    window.addEventListener("pagehide", closing);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      document.removeEventListener("visibilitychange", hidden);
+      window.removeEventListener("pagehide", closing);
+      setSpotProvider(undefined);
     });
 
     this.initZoomControl();
@@ -841,8 +890,10 @@ export class FarmScene extends Phaser.Scene {
       });
     }
 
-    if (this.controls.profile === "touch" && settings.touchScheme === "tap")
+    if (this.controls.profile === "touch" && usesTap(settings.touchScheme))
       this.initTapInput();
+
+    this.initWorldTips();
 
     this.cameras.main.fadeIn(FADE_MS);
     // The villager at the door asks about the cave, once a morning.
@@ -884,7 +935,7 @@ export class FarmScene extends Phaser.Scene {
         this.namingHorse = false;
         return this.getOn();
       }
-      this.save();
+      this.saveResume();
       // A new day on a mine floor: the floor is gone, so wake at home.
       if (
         this.floor !== undefined &&
@@ -1036,12 +1087,13 @@ export class FarmScene extends Phaser.Scene {
     this.checkWedding();
     const marching = this.updateParade(dt);
     if (marching) this.cancelTap();
+    const parts = this.updateParts();
+    const stick = marching ? { x: 0, y: 0 } : this.controls.vector();
+    // A push on the stick overrides a tap route (tap and stick schemes).
+    if (stick.x !== 0 || stick.y !== 0) this.cancelTap();
     const walking = !marching && this.tapPath.length > 0;
-    const v = marching
-      ? { x: 0, y: 0 }
-      : walking
-        ? this.tapVector(dt)
-        : this.controls.vector();
+    const v = marching ? { x: 0, y: 0 } : walking ? this.tapVector(dt) : stick;
+    this.updateAttack(parts);
     if (!walking && (v.x !== 0 || v.y !== 0)) this.cancelTap();
     this.facing = facingFrom(v, this.facing);
     if (v.x !== 0 || v.y !== 0) this.keyAim();
@@ -1131,6 +1183,7 @@ export class FarmScene extends Phaser.Scene {
     // Walking onto an open-land exit, or out of a building, takes it. Doors into buildings need opening (click or Action).
     const found = this.map.exitAt(here.x, here.y);
     const onExit = found && this.isWalkThrough(found) ? found : undefined;
+    this.walkIntoPlaceHere(here);
     if (!onExit) this.exitArmed = true;
     else if (this.exitArmed && !this.leaving && !this.marching) {
       this.exitArmed = false;
@@ -1297,6 +1350,7 @@ export class FarmScene extends Phaser.Scene {
       over?: Phaser.GameObjects.GameObject[],
     ): boolean =>
       !over?.length &&
+      !this.controls.claims?.(p) &&
       !this.hud.covers(p.x, p.y) &&
       !this.leaving &&
       !this.marching;
@@ -1411,10 +1465,28 @@ export class FarmScene extends Phaser.Scene {
     ): void => {
       if (!mine(p, over)) return;
       this.tapDown = true;
+      const t = this.tileAtPointer(p);
+      if (p.wasTouch && this.state.chests.get(this.mapId, t.x, t.y)) {
+        // Wait: a held finger shows the chest tip, a quick tap opens it.
+        pending = { p, at: this.time.now, x: p.x, y: p.y };
+        return;
+      }
       aimAtTap(p, true);
     };
+    const settle = (act: boolean): void => {
+      const w = pending;
+      pending = undefined;
+      if (w && act) aimAtTap(w.p, true);
+    };
     let last = "";
+    let pending:
+      { p: Phaser.Input.Pointer; at: number; x: number; y: number } | undefined;
     const onMove = (p: Phaser.Input.Pointer): void => {
+      if (pending) {
+        // A drag off the chest is a move, not a press.
+        if (Math.hypot(p.x - pending.x, p.y - pending.y) > 12) settle(true);
+        else return;
+      }
       if (!this.tapDown || !p.isDown || this.hud.covers(p.x, p.y)) return;
       const t = this.tileAtPointer(p);
       const k = `${t.x},${t.y}`;
@@ -1423,6 +1495,7 @@ export class FarmScene extends Phaser.Scene {
       aimAtTap(p, false);
     };
     const onUp = (): void => {
+      if (pending) settle(!isLongPress(this.time.now - pending.at));
       this.tapDown = false;
       last = "";
     };
@@ -1433,6 +1506,51 @@ export class FarmScene extends Phaser.Scene {
       this.input.off("pointerdown", onDown);
       this.input.off("pointermove", onMove);
       this.input.off("pointerup", onUp);
+    });
+  }
+
+  /**
+   * The tip over a placed chest: a mouse hover on desktop, a held finger on
+   * touch (about half a second, no travel). Shown in the HUD's tooltip.
+   */
+  private initWorldTips(): void {
+    const tipAt = (p: Phaser.Input.Pointer): void => {
+      if (this.hud.covers(p.x, p.y) || this.leaving) return this.hud.hideTip();
+      const t = this.tileAtPointer(p);
+      const chest = this.state.chests.get(this.mapId, t.x, t.y);
+      if (chest) {
+        const cam = this.cameras.main;
+        this.hud.showTipOver(
+          placedChestTip(chest),
+          tileScreenRect(t.x, t.y, this.map.tileSize, cam.worldView, cam.zoom),
+        );
+      } else this.hud.hideTip();
+    };
+    let timer: Phaser.Time.TimerEvent | undefined;
+    let from = { x: 0, y: 0 };
+    const stop = (): void => {
+      timer?.remove();
+      timer = undefined;
+      this.hud.hideTip();
+    };
+    const onMove = (p: Phaser.Input.Pointer): void => {
+      if (!p.wasTouch) return tipAt(p);
+      if (Math.hypot(p.x - from.x, p.y - from.y) > 12) stop();
+    };
+    const onDown = (p: Phaser.Input.Pointer): void => {
+      if (!p.wasTouch) return;
+      from = { x: p.x, y: p.y };
+      timer?.remove();
+      timer = this.time.delayedCall(450, () => tipAt(p));
+    };
+    this.input.on("pointermove", onMove);
+    this.input.on("pointerdown", onDown);
+    this.input.on("pointerup", stop);
+    this.events.once("shutdown", () => {
+      timer?.remove();
+      this.input.off("pointermove", onMove);
+      this.input.off("pointerdown", onDown);
+      this.input.off("pointerup", stop);
     });
   }
 
@@ -1846,8 +1964,9 @@ export class FarmScene extends Phaser.Scene {
       this.render();
     } else if (exitOpen(exit, this.holds)) this.leave(exit);
     else {
-      this.message =
-        exit.id === "greenhouse"
+      this.message = exit.requires?.startsWith("festival-gate")
+        ? "Nothing is on there today."
+        : exit.id === "greenhouse"
           ? "The greenhouse is a ruin. Finish the Larder bundles at the village hall to repair it."
           : exit.id === "to_quarry"
             ? QUARRY_BRIDGE_LINE
@@ -1900,6 +2019,27 @@ export class FarmScene extends Phaser.Scene {
     );
   }
 
+  /** The last tile checked for walking into a festival held in place. */
+  private placeTile = "";
+
+  /** Standing in today's festival place while it is open joins it (note 82 decision 11). */
+  private walkIntoPlaceHere(here: { x: number; y: number }): void {
+    const key = `${this.mapId}:${here.x},${here.y}`;
+    if (key === this.placeTile) return;
+    this.placeTile = key;
+    const f = walkIntoPlace(
+      this.state,
+      this.mapId,
+      here.x,
+      here.y,
+      hallRestored(this.state.hall),
+    );
+    if (f) {
+      this.message = `You join the ${f.name}.`;
+      this.render();
+    }
+  }
+
   private tileShutForFestival(x: number, y: number): boolean {
     const clock = this.state.day.clock;
     return festivalStepShut(
@@ -1916,6 +2056,14 @@ export class FarmScene extends Phaser.Scene {
   }
 
   private leave(exit: Exit): void {
+    // Walking onto a festival map joins the festival (note 82 decision 11).
+    if (!isFestivalMap(this.mapId)) {
+      const problem = walkIntoFestival(this.state, exit.map);
+      if (problem) {
+        this.message = problem;
+        return this.render();
+      }
+    }
     this.travel(exit.map, exit.entry);
   }
 
@@ -2040,7 +2188,7 @@ export class FarmScene extends Phaser.Scene {
         here,
         facingTile(this.pos, PLAYER, this.facing, this.map.tileSize),
       );
-      this.save();
+      this.saveResume();
     }
     const data: SceneData = { map, entry };
     this.cameras.main.fadeOut(FADE_MS);
@@ -2060,8 +2208,7 @@ export class FarmScene extends Phaser.Scene {
 
   /** How the player gets off the horse: a tap on the farmer, or the Action key. */
   private getOffHint(): string {
-    return this.controls.profile === "touch" &&
-      loadDeviceSettings().touchScheme === "tap"
+    return this.controls.profile === "touch" && usesTap(this.scheme)
       ? "Tap yourself"
       : "Press Action";
   }
@@ -2080,7 +2227,7 @@ export class FarmScene extends Phaser.Scene {
     }
     mount(this.state, this.map);
     this.message = `You are riding ${horseName(this.state)}. ${this.getOffHint()} to get off.`;
-    this.save();
+    this.saveResume();
     this.render();
   }
 
@@ -2097,7 +2244,7 @@ export class FarmScene extends Phaser.Scene {
     this.message = spot
       ? `${horseName(this.state)} waits here.`
       : `${horseName(this.state)} trots back to the stable.`;
-    this.save();
+    this.saveResume();
     this.render();
   }
 
@@ -2146,7 +2293,7 @@ export class FarmScene extends Phaser.Scene {
   /** The short scene that opens the Special Orders board (note 65). Shown once. */
   private showOrdersIntro(): void {
     this.state.orders.opened = true;
-    this.save();
+    this.saveResume();
     this.open("orders", { intro: true });
   }
 
@@ -2218,6 +2365,86 @@ export class FarmScene extends Phaser.Scene {
   private open(kind: string, data?: object): void {
     this.scene.launch(kind, data);
     this.scene.pause();
+  }
+
+  /** True while the held item is a weapon. */
+  private weaponHeld(): boolean {
+    const h = heldAt(this.state, this.selected);
+    return h.kind === "item" && isWeapon(h.id);
+  }
+
+  /** The control parts showing now, given the scheme and the held item (note 27). */
+  private updateParts(): Parts {
+    const id = this.scheme;
+    const parts = partsFor(id, this.weaponHeld());
+    if (this.controls.profile === "touch") {
+      this.hud.setButtons(
+        parts.useButton,
+        parts.actionButton,
+        schemeById(id).oneButton,
+      );
+      this.controls.setParts?.(parts);
+    }
+    return parts;
+  }
+
+  /**
+   * The one-button schemes: the button acts on what is ahead (a person, a
+   * service, a ripe crop or the horse) and otherwise uses the held item. The
+   * two-button schemes keep Use as Use.
+   */
+  private useButton(): void {
+    const id = this.scheme;
+    if (!schemeById(id).oneButton) return this.use();
+    const front = this.aimTile();
+    const hand =
+      !!this.map.serviceAt(front.x, front.y) ||
+      !!presentAt(this.villagers, front.x, front.y) ||
+      this.tapHand(front);
+    if (hand) return this.action();
+    this.use();
+  }
+
+  /**
+   * The attack schemes (note 27). Auto-attack swings at the nearest creature
+   * in reach; the attack stick faces and swings the way it is pushed. The
+   * weapon's own cooldown paces both.
+   */
+  private updateAttack(parts: Parts): void {
+    if (this.controls.profile !== "touch") return;
+    if (this.leaving || this.marching || this.state.animals.mounted) return;
+    const floor = this.fightState();
+    if (!floor || this.state.combat.noCreatures) return;
+    const h = heldAt(this.state, this.selected);
+    const weapon =
+      h.kind === "item" && isWeapon(h.id) ? weaponById(h.id) : undefined;
+    if (!weapon) return;
+    const ts = this.map.tileSize;
+    const push = parts.aimStick ? this.controls.aim?.() : undefined;
+    let dir: Vec | undefined = push;
+    if (!dir && parts.autoAttack) {
+      let best = Infinity;
+      for (const c of floor.creatures) {
+        const dx = c.x - this.pos.x;
+        const dy = c.y - this.pos.y;
+        const d = Math.hypot(dx, dy);
+        if (d <= weapon.reach * ts && d < best) {
+          best = d;
+          dir = { x: dx, y: dy };
+        }
+      }
+    }
+    if (!dir || this.time.now < this.swingReady) return;
+    this.facing = facingFrom(dir, this.facing);
+    if (weapon.family === "sling") {
+      const len = Math.hypot(dir.x, dir.y) || 1;
+      this.tapShot = {
+        x: this.pos.x + (dir.x / len) * 64,
+        y: this.pos.y - 6 + (dir.y / len) * 64,
+        until: this.time.now + 300,
+      };
+    }
+    this.swing(weapon);
   }
 
   /** Use the held tool on the tile the player faces. Services are Action's. */
@@ -2548,6 +2775,7 @@ export class FarmScene extends Phaser.Scene {
       }
       return this.open("shop", { stock: "trader" });
     }
+    if (service?.kind === "counter-library") return this.open("gallery");
     if (service && standInLine(service.kind)) {
       this.message = standInLine(service.kind) as string;
       return this.render();
@@ -2574,7 +2802,13 @@ export class FarmScene extends Phaser.Scene {
     }
     if (service?.kind === "stairs")
       return this.travel(mineMapId(1), "from_above");
-    if (service && (isFestivalMap(this.mapId) || service.kind === "cake-table"))
+    if (
+      service &&
+      (isFestivalMap(this.mapId) ||
+        service.kind === "cake-table" ||
+        (service.kind === "festival-counter" &&
+          festivalDayToday(this.state.day.clock.day)))
+    )
       return this.festivalAction(service);
     if (this.mapId === CAVE_MAP) return this.caveAction(front, service?.kind);
     if (service?.kind === "furnace") {
@@ -2681,7 +2915,7 @@ export class FarmScene extends Phaser.Scene {
           : "The footbridge is already mended.";
       return this.render();
     }
-    this.save();
+    this.saveResume();
     this.travel(this.mapId, "at_bridge");
   }
 
@@ -2701,7 +2935,7 @@ export class FarmScene extends Phaser.Scene {
     if (r.ok) {
       const name = itemById(r.id)?.name ?? r.id;
       this.message = `A chest under the ledge. Inside: ${r.count} ${name}.`;
-      this.save();
+      this.saveResume();
     } else
       this.message =
         r.reason === "taken"
@@ -2773,7 +3007,8 @@ export class FarmScene extends Phaser.Scene {
   private festivalAction(service: { id: string; kind: string }): void {
     if (service.kind === "cake-table") return this.cakeTable();
     if (service.id === "lantern-stall") return this.lanternStall();
-    const f = festivalOfMap(this.mapId);
+    const f =
+      festivalOfMap(this.mapId) ?? festivalDayToday(this.state.day.clock.day);
     if (!f) return;
     switch (service.kind) {
       case "showing":
@@ -2934,16 +3169,10 @@ export class FarmScene extends Phaser.Scene {
     }
   }
 
-  /** The festival green: open only while today's festival is on. */
+  /** The farm sign: says where and when today's festival is. The player walks there (note 82 decision 11). */
   private openFestival(): void {
-    const f = festivalDayToday(this.state.day.clock.day);
-    if (f && festivalOpen(f, this.state.day.clock.minutes))
-      return this.open("festival");
-    if (!f) this.message = "The green is quiet today.";
-    else if (this.state.day.clock.minutes >= f.closes)
-      this.message = `${f.name} is over for today.`;
-    else
-      this.message = `${f.name} runs from ${clockText(f.opens)} to ${clockText(f.closes)}.`;
+    const clock = this.state.day.clock;
+    this.message = festivalSignLine(clock.day, clock.minutes);
     this.render();
   }
 
@@ -2970,11 +3199,39 @@ export class FarmScene extends Phaser.Scene {
     else this.render();
   }
 
-  /** Save to the browser, with the time of day, so Continue resumes the day. */
-  save(): void {
-    // A save made in the cellar loads there (`resumeAt`); anywhere else clears it.
-    this.state.resumeMap = this.mapId === CELLAR_MAP ? CELLAR_MAP : undefined;
-    saveGame(browserStore, this.state);
+  /**
+   * Where the player stands, for the resume record. Not in the mines or on a
+   * map with a creature table: a tile inside a fight is not safe to restore.
+   */
+  private resumeSpot(): ResumeSpot | undefined {
+    if (this.floor !== undefined || spawnTableOf(this.mapId)) return undefined;
+    const ts = this.map.tileSize;
+    return {
+      map: this.mapId,
+      x: Math.floor(this.pos.x / ts),
+      y: Math.floor((this.pos.y - 1) / ts),
+    };
+  }
+
+  /**
+   * Write the resume record, so Continue picks the day up (note 52). Skipped
+   * when nothing changed or one was written under two seconds ago, unless
+   * forced (Exit, the page hidden). Never while the night is being written.
+   */
+  saveResume(force = false): void {
+    if (this.state.day.over) return;
+    const text = serialize(this.state);
+    const now = performance.now();
+    if (!this.gate.shouldWrite(text, now, force)) return;
+    resumeSave(this.state, this.resumeSpot());
+    this.gate.wrote(text, now);
+    this.noteSaveFailure();
+  }
+
+  /** Say once that a write was refused, so the player can export the game. */
+  private noteSaveFailure(): void {
+    if (takeSaveNotice())
+      this.message = "Could not save. Export from Options to keep your game.";
   }
 
   /** The conditions that open doors. Rebuilt after sleeping, when a building may have landed overnight. */
@@ -2996,6 +3253,8 @@ export class FarmScene extends Phaser.Scene {
       hallRestored(this.state.hall),
     ))
       this.holds.add(h);
+    for (const h of festivalGateHolds(this.state.day.clock.day))
+      this.holds.add(h);
     for (const c of this.conditional)
       c.drawn.setVisible(layerShows(c.layer, this.holds));
   }
@@ -3007,7 +3266,8 @@ export class FarmScene extends Phaser.Scene {
     const report = sleep(g, farmMap.forageSpots, Math.random, farmMap);
     this.refreshHolds();
     this.message = "";
-    this.save();
+    nightSave(g);
+    this.noteSaveFailure();
     this.render();
     // The shipping summary comes first when the bin paid; it opens the report.
     const shipping = report.shipped.lines.length > 0;

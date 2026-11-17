@@ -45,6 +45,9 @@ shows a tooltip (name, kind, one line of text, as Stardew's Scythe tip: "Scythe"
    `hudpanel.ts`. Text per item comes from the item data (`description`); tools get
    theirs in `src/content/tool-text.json` (name, kind and a line per tool and tier).
    Quality, sell price and energy gained are added for items in a second pass.
+   Built since: chest slots, a placed chest on the farm (hover or long press: slots used and
+   fullest items) and Social roster rows (hearts, gifts this week, talk, loves and likes known).
+   The 70-slot chest grid shows a window of rows and scrolls by wheel, Up and Down, or a touch swipe.
 5. **Art.** Redraw the five tool icons and the tier looks at 16 px source art:
    readable at 64 px, a tier tint (copper, steel, gold, iridium), a water meter drawn
    beside the can. Art stays placeholder quality until M3d (note 99 rules).
@@ -65,4 +68,4 @@ shows a tooltip (name, kind, one line of text, as Stardew's Scythe tip: "Scythe"
 
 **Built 2026-11-16, build steps 1 (scythe part) and 3:** `scythe` is the fifth tool
 (`toolitems.ts`, `tools.ts`), grass is `src/core/grass.ts` with tests in `tests/grass.test.ts`.
-Left: scythe tooltip text, the sim bot cutting grass, final art for the scythe and grass.
+Sim bot rule built 2026-11-16 (`tidyGrass`: scythes the nearest 6 grass tiles a day). Left: scythe tooltip text, final art for the scythe and grass.

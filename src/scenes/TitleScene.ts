@@ -4,7 +4,16 @@ import { dateOf } from "../core/calendar";
 import { farmMapOf, farmTypeById } from "../core/farmtypes";
 import { resumeAt } from "../core/house";
 import type { GameState } from "../core/save";
-import { activeSlot, allSlots, deleteSlot, type SlotInfo } from "../core/slots";
+import { restartDay } from "../core/records";
+import {
+  activeSlot,
+  allSlots,
+  deleteSlot,
+  slotNote,
+  slotStores,
+  resumeLine,
+  type SlotInfo,
+} from "../core/slots";
 import { startGame } from "../core/toolbar";
 import { PROFILE_NAMES } from "./OptionsScene";
 import { browserKv, loadDeviceSettings, useSlot } from "./storage";
@@ -12,7 +21,8 @@ import { STATE_KEY } from "./state";
 
 /**
  * The first screen: five save slots (note 52). A used slot shows its farm and
- * has Continue and Delete; an empty one starts a new game. `?new` skips this screen and starts
+ * has Continue and Delete, and Restart this day while a day is in progress; an
+ * empty one starts a new game. `?new` skips this screen and starts
  * fresh, for development.
  */
 export class TitleScene extends Phaser.Scene {
@@ -35,19 +45,19 @@ export class TitleScene extends Phaser.Scene {
     const slots = allSlots(browserKv);
     const last = activeSlot(browserKv);
     this.add
-      .text(480, 56, "Elderglen", { fontSize: "44px", color: "#ffe9a0" })
+      .text(480, 46, "Elderglen", { fontSize: "44px", color: "#ffe9a0" })
       .setOrigin(0.5);
     this.add
-      .text(480, 100, "A quiet farm in a valley.", {
+      .text(480, 88, "A quiet farm in a valley.", {
         fontSize: "16px",
         color: "#ffffff",
       })
       .setOrigin(0.5);
     this.note = this.add
-      .text(480, 454, "", { fontSize: "16px", color: "#ffe9a0" })
+      .text(480, 456, "", { fontSize: "16px", color: "#ffe9a0" })
       .setOrigin(0.5);
 
-    slots.forEach((info, i) => this.card(info, 160 + i * 58));
+    slots.forEach((info, i) => this.card(info, 142 + i * 64));
 
     this.button(
       480,
@@ -73,36 +83,49 @@ export class TitleScene extends Phaser.Scene {
       .setOrigin(0.5);
   }
 
-  /** One slot: what it holds, with Continue and Delete, or New game when empty. */
+  /** One slot: what it holds, with Continue, Restart and Delete, or New game when empty. */
   private card(info: SlotInfo, y: number): void {
     this.add
-      .rectangle(480, y, 760, 50, 0x1f2a22, 0.9)
+      .rectangle(480, y, 920, 58, 0x1f2a22, 0.9)
       .setStrokeStyle(2, 0xffffff, 0.35);
     let label = `Slot ${info.slot}: empty`;
+    let second = "";
     if (info.status === "broken")
       label = `Slot ${info.slot}: could not be read`;
     if (info.status === "used") {
-      const g = info.game;
+      const g = info.night ?? info.game;
       const { season, dayOfSeason, year } = dateOf(g.day.clock.day);
       label = `Slot ${info.slot}: ${farmTypeById(g.farmType).name} farm, ${season} ${dayOfSeason}, year ${year}, ${g.money}g`;
+      second = (info.resume ? resumeLine(info.resume) : "") || "";
+      const note = slotNote(info.note);
+      if (note) second = note;
     }
     this.add
-      .text(120, y, label, { fontSize: "16px", color: "#d8e8c8" })
+      .text(40, second ? y - 10 : y, label, {
+        fontSize: "15px",
+        color: "#d8e8c8",
+      })
       .setOrigin(0, 0.5);
+    if (second)
+      this.add
+        .text(40, y + 12, second, { fontSize: "12px", color: "#ffe9a0" })
+        .setOrigin(0, 0.5);
     if (info.status === "used")
       this.button(
-        640,
+        600,
         y,
         "Continue",
         0x3f7d3a,
         () => this.play(info.slot, info.game),
-        130,
+        110,
         38,
         16,
       );
+    if (info.status === "used" && info.resume && info.night)
+      this.restartButton(info.slot, 745, y);
     if (info.status === "empty")
       this.button(
-        640,
+        745,
         y,
         "New game",
         0x3f7d3a,
@@ -114,14 +137,39 @@ export class TitleScene extends Phaser.Scene {
         38,
         16,
       );
-    if (info.status !== "empty") this.deleteButton(info.slot, 770, y);
+    if (info.status !== "empty") this.deleteButton(info.slot, 880, y);
+  }
+
+  /** Restart this day drops the day in progress for the morning. It asks twice. */
+  private restartButton(slot: number, x: number, y: number): void {
+    let asked = false;
+    this.add
+      .rectangle(x, y, 150, 38, 0x4a5a7a, 1)
+      .setStrokeStyle(2, 0xffffff, 0.8)
+      .setInteractive({ useHandCursor: true })
+      .on("pointerdown", () => {
+        if (!asked) {
+          asked = true;
+          label.setText("Sure?");
+          this.note.setText(
+            `Restart this day in slot ${slot}? Today's progress is lost. Press Sure? to confirm.`,
+          );
+          return;
+        }
+        const night = restartDay(slotStores(browserKv, slot));
+        if (night) this.play(slot, night);
+        else this.scene.restart();
+      });
+    const label = this.add
+      .text(x, y, "Restart this day", { fontSize: "14px", color: "#ffffff" })
+      .setOrigin(0.5);
   }
 
   /** Delete asks twice, so one stray tap cannot erase a save. */
   private deleteButton(slot: number, x: number, y: number): void {
     let asked = false;
     this.add
-      .rectangle(x, y, 100, 38, 0xa0482e, 1)
+      .rectangle(x, y, 90, 38, 0xa0482e, 1)
       .setStrokeStyle(2, 0xffffff, 0.8)
       .setInteractive({ useHandCursor: true })
       .on("pointerdown", () => {
@@ -145,12 +193,14 @@ export class TitleScene extends Phaser.Scene {
   }
 
   private begin(state: GameState): void {
-    state.forage.respawn(
-      dateOf(state.day.clock.day).season,
-      farmMapOf(state).forageSpots,
-      Math.random,
-    );
-    respawnAreaForage(state, Math.random);
+    // A save holds the day's forage; roll only when it is missing (older saves).
+    if (!state.forage.loaded)
+      state.forage.respawn(
+        dateOf(state.day.clock.day).season,
+        farmMapOf(state).forageSpots,
+        Math.random,
+      );
+    respawnAreaForage(state, Math.random, true);
     this.registry.set(STATE_KEY, state);
     this.scene.start("farm", resumeAt(state));
   }
