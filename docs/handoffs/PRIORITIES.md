@@ -31,7 +31,7 @@ Open, top to bottom:
 Decided 2026-11-17: Hearthwell water stays all fishable (note 14); Import keeps the first empty slot, and the slot count should
 open past five later (note 52).
 
-Decided 2026-11-17: scheme 4 uses Stardew's tap-duration rule and scheme 1 auto-attack equips a weapon (note 27; not built).
+Decided 2026-11-17: scheme 4 uses Stardew's tap-duration rule and scheme 1 auto-attack equips a weapon (note 27; not built). The sweep and sim still need a clean run (`WORKERS=3`, handoff 2026-11-17b).
 
 Alongside: the wiki (#910, note 100; built for every category, every item has a picture; text cleared for crops, fish, forage, items, places and rooms; draft text left for bundles, recipes, people and five gem names; left: owner reads the draft text and clears flags, gift lists (`giftsDraft`), people prose with the voice sheets, hosting after M3d), Stardew checks rows (open: SC-188 only; the rest answered or closed as ours, on purpose, 2026-11-17). M4 hosting spike filed as #948.
 
