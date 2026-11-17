@@ -179,3 +179,21 @@ agrees, the "guess" mark above is now a checked reading.
 - **Tap-to-move extras:** a giftable held item is given by tapping an NPC, and tapping a stone, tree or stump
   auto-picks the tool. The second is built (above); the gift tap is not checked.
 
+### Decided 2026-11-17 (owner): copy Stardew for schemes 4 and 1
+
+Not built yet.
+
+- **Scheme 4 uses the tap-duration rule.** No drawn button. A tap on the right half released under 0.25 s is
+  Use; held over 0.25 s it is Action. The invisible stick keeps the left half. The `oneButton` part in
+  `src/core/controlschemes.ts` becomes a `tapDuration` part, with the 0.25 s threshold a named constant and a
+  unit test for both sides of it.
+- **Scheme 1 auto-attack equips a weapon.** With a tool or nothing held and a weapon in the pack, an enemy in
+  range makes the farmer equip the last used weapon (else the one in the highest slot), face the enemy and
+  swing its primary attack. No auto-attack with a slingshot or a non-tool item in hand (bombs, food); an
+  equipped scythe may attack. Tapping an enemy walks to it and uses the weapon's secondary attack, the only
+  way to do it in this scheme. No attack mid-walk to a tapped spot; it does attack while following a finger.
+  The rule lives in `src/core/` (free of Phaser) with unit tests. Open for the build: how "last used weapon"
+  is remembered, and whether the equip shows a hotbar highlight.
+- **Left as is, for now:** the Show controls toggle and the fixed stick in schemes 5 to 9 (a floating ring);
+  neither was asked about.
+
