@@ -463,3 +463,20 @@ Item 6: **Batch 4 built 2026-11-14** (hall counter second tiles, renovation deco
 
 6f. **Social, tools in the pack, HUD pass** (note 102, built 2026-11-16): Social roster, tools as pack stacks, 64 px slots, clock panel, bars, pack drag and trash. Left: the owner's browser and tablet check, real art (M3d), quest cancel.
 6h. **Tool pass** (note 103, built 2026-11-16): scythe, grass and silo hay, water in the can with meter, hover tooltips, redrawn tool icons. Left: the owner's play, tooltip quality and price (chests, touch long press), a sim-bot rule for grass, SC-189 and SC-190.
+
+## Moved 2026-11-16d
+
+2. **#873 heart events** (note 62): 66 events (62 plus four rain events), rewards real. Left: the owner's play, seed and window edits, then 4, 8 and 10 with the voice sheets (M3d).
+3. **#878 Secret Woods:** fully built (statue, pond fish, creatures with the Burrmouse and the Mahogany seed drop, 2026-11-14). Left: tune in play.
+4. **Note 93 left:** species numbers to tune in play; pond art is placeholder only (built 2026-11-14).
+5. **#876 festivals:** built 2026-11-14: Showing judging (eight groups, Stardew price bands, dishes count), rotating token counter, even-year hedge map and chest, gap signpost, booth gravestone and gourd lantern recipe, player joins the march (auto-join, owner kept). Left: multiplayer counts (M4), the owner's play, the plain walk to festival maps is built for the green and hedge (2026-11-16, note 82); other festival maps wait for their layouts.
+6. **Batch 4 built 2026-11-14** (detail in the archive). Left: the owner's play; real garden pot art (M3d); the #874 gallery set; M4 hosting spike text in `docs/design/drafts/m4-hosting-spike-issue.md` awaits owner approval.
+6b. **Playtest scripts** (handoff 2026-11-14i): expert day 5 and boxed-in bot fixed (bot-script problems). Left: a full pass of all three personas at `SPEED=2`, one at a time.
+6c. **In-game menu built 2026-11-14** (note 49, 52): Pack equipment, Social, Animals, Special Items, Skills extras, journal (J), Exit saves the day. Left: the two-record save split (night record and resume record, Restart this day, title summary, export/import; note 52), paper doll. The owner checks it on a tablet.
+6d. **In-game Guide built** (note 101): all eight categories and shop hours on a keeper's card once visited. Left: hours for shops with no keeper, the owner checks it and the tab count on a tablet.
+6e. **Marriage (note 12) built to shell level 2026-11-14** (#934 to #939, placeholder text and art): bouquet, token, wedding, spouse room, kiss, divorce at the hall ledger, children. `npm run playtest:marriage` covers it. Left: the owner's play (nothing seen in a browser), the open owner questions in handoff 2026-11-14j, real lines and art (M3d), the ex at weddings, M4. #874 is unblocked.
+6f. **Social roster, tools in the pack, HUD, tool pass** (notes 102, 103, built 2026-11-16, merged): left: the owner's browser and tablet check, real art (M3d), quest cancel, tooltip quality and price (chests, touch long press), a sim-bot grass rule.
+6i. **Chests as Stardew** (note 34, built 2026-11-16): any open ground, any tool lifts or pushes, big chest swaps in, two-grid screen with colour bar, right-click one, Shift half, Add to existing stacks, Organize. Left: the owner's look (not seen in a browser), real colours and art (SC-193), greenhouse chests, a touch long-press menu.
+6g. **Question queued (note 27):** which of Stardew's nine mobile control schemes to offer (attack aim for the mines, invisible stick, a list on Options; SC-188).
+7. A browser look at everything built since the owner last played: hat picker, cart, herb stall, tapper, lights, rod, bombs, festival maps and activities, tailoring, pond screens and art, tea bush, woods creatures, even-year maze.
+
