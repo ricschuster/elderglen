@@ -155,3 +155,67 @@ export const COUNTER_LINES: Record<string, string> = {
 /** The line a stand-in counter or board says, if the kind has one. */
 export const standInLine = (kind: string): string | undefined =>
   COUNTER_LINES[kind];
+
+/** A name tag to place: its anchor (bottom centre, in pixels) and its text. */
+export interface LabelTag {
+  x: number;
+  y: number;
+  text: string;
+}
+
+/** Rough size of an 8px tag: pixels per character plus padding, and the height. */
+const CHAR_W = 5;
+const TAG_PAD = 4;
+export const TAG_H = 11;
+
+const widthOf = (text: string): number => text.length * CHAR_W + TAG_PAD;
+
+/**
+ * One tag per object: two tags with the same text whose anchors are within
+ * `near` pixels (the two tiles of a market stall or a desk) become one, placed
+ * midway. Order is kept.
+ */
+export function mergeTags(tags: LabelTag[], near: number): LabelTag[] {
+  const out: LabelTag[] = [];
+  const count: number[] = [];
+  for (const t of tags) {
+    const i = out.findIndex(
+      (o) =>
+        o.text === t.text &&
+        Math.abs(o.x - t.x) <= near &&
+        Math.abs(o.y - t.y) <= near,
+    );
+    if (i < 0) {
+      out.push({ ...t });
+      count.push(1);
+    } else {
+      const n = count[i]!;
+      out[i]!.x = (out[i]!.x * n + t.x) / (n + 1);
+      out[i]!.y = (out[i]!.y * n + t.y) / (n + 1);
+      count[i] = n + 1;
+    }
+  }
+  return out;
+}
+
+/**
+ * Stack overlapping tags so each stays readable: in order, a tag that would
+ * overlap one already placed moves up by a tag height until it is clear.
+ * Returns the y offsets to add (zero or negative), in the input order.
+ */
+export function stackOffsets(tags: LabelTag[]): number[] {
+  const placed: { x: number; y: number; w: number }[] = [];
+  return tags.map((t) => {
+    const w = widthOf(t.text);
+    let y = t.y;
+    for (let guard = 0; guard < 20; guard++) {
+      const hit = placed.find(
+        (p) => Math.abs(p.x - t.x) < (p.w + w) / 2 && Math.abs(p.y - y) < TAG_H,
+      );
+      if (!hit) break;
+      y = hit.y - TAG_H;
+    }
+    placed.push({ x: t.x, y, w });
+    return y - t.y;
+  });
+}

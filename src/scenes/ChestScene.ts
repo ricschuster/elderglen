@@ -151,7 +151,8 @@ export class ChestScene extends Phaser.Scene {
     this.button(bx, TOP + LABEL, "Add to existing stacks", () => this.fill());
     this.button(bx, TOP + LABEL + 52, "Organize", () => this.sort());
     this.splitLabel = this.button(bx, TOP + LABEL + 104, "Split", () => {
-      this.splitting = !this.splitting && this.selected !== undefined;
+      this.splitting = !this.splitting;
+      this.say("");
       this.refresh();
     });
 
@@ -165,11 +166,12 @@ export class ChestScene extends Phaser.Scene {
     this.layoutChest();
     this.input.on("pointerup", (p: Phaser.Input.Pointer) => this.up(p));
 
+    // Wrapped to stop short of the Close button at the right edge.
     this.add.text(
       LEFT,
-      506,
-      "Tap a stack, then a slot (or drag it).   Press and hold, or right-click: send one (Shift: half)   Space: send all   Tab: other grid   Esc: close",
-      { fontSize: "13px", color: "#ffffffaa" },
+      492,
+      "Tap a stack, then a slot (or drag it).  Press and hold, or right-click: send one (Shift: half).  Split: half moves.  Space: send all.  Tab: other grid.  Esc: close",
+      { fontSize: "13px", color: "#ffffffaa", wordWrap: { width: 790 } },
     );
     const kb = this.input.keyboard;
     kb?.on("keydown-LEFT", () => this.step(-1, 0));
@@ -636,6 +638,13 @@ export class ChestScene extends Phaser.Scene {
       });
     }
     this.splitLabel.setText(this.splitting ? "Split: on" : "Split");
+    if (this.splitting)
+      this.say(
+        this.selected
+          ? "Split is on: tap where half of that stack should go."
+          : "Split is on: tap a stack, then where half of it should go.",
+      );
+    else if (this.note.text.startsWith("Split is on")) this.say("");
   }
 
   private close(): void {

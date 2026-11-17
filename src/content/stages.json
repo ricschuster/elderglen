@@ -125,7 +125,9 @@
           "combat": 4,
           "farming": 3
         },
-        "minesDeepest": 30
+        "minesDeepest": 30,
+        "map": "mine-30",
+        "entry": "from_below"
       }
     },
     {
@@ -142,7 +144,9 @@
           "combat": 7,
           "farming": 6
         },
-        "minesDeepest": 60
+        "minesDeepest": 60,
+        "map": "mine-60",
+        "entry": "from_below"
       }
     },
     {
@@ -159,7 +163,9 @@
           "combat": 9,
           "farming": 8
         },
-        "minesDeepest": 100
+        "minesDeepest": 100,
+        "map": "mine-100",
+        "entry": "from_below"
       }
     },
     {
@@ -173,7 +179,8 @@
         "marriage": {
           "spouse": "linnet",
           "stage": "courting"
-        }
+        },
+        "meetAll": true
       }
     },
     {
@@ -187,7 +194,8 @@
         "marriage": {
           "spouse": "linnet",
           "stage": "engaged"
-        }
+        },
+        "meetAll": true
       }
     },
     {
@@ -202,7 +210,8 @@
         "houseTier": 2,
         "marriage": {
           "spouse": "linnet"
-        }
+        },
+        "meetAll": true
       }
     },
     {
@@ -217,7 +226,8 @@
         "marriage": {
           "spouse": "linnet",
           "children": 1
-        }
+        },
+        "meetAll": true
       }
     },
     {
@@ -232,7 +242,8 @@
         "marriage": {
           "spouse": "linnet",
           "children": 2
-        }
+        },
+        "meetAll": true
       }
     },
     {
@@ -353,7 +364,9 @@
         "year": 1,
         "weather": "sunny",
         "money": 2000,
-        "minutes": 1020
+        "minutes": 1020,
+        "map": "hearthwell",
+        "entry": "from_cart-square"
       }
     },
     {
@@ -366,7 +379,9 @@
         "year": 1,
         "weather": "sunny",
         "money": 2000,
-        "minutes": 1020
+        "minutes": 1020,
+        "map": "hearthwell",
+        "entry": "from_cart-square"
       }
     },
     {
@@ -379,7 +394,9 @@
         "year": 1,
         "weather": "sunny",
         "money": 2000,
-        "minutes": 1020
+        "minutes": 1020,
+        "map": "hearthwell",
+        "entry": "from_cart-square"
       }
     },
     {
@@ -476,7 +493,9 @@
           "combat": 8
         },
         "minesDeepest": 60,
-        "fillPack": true
+        "fillPack": true,
+        "autoProfessions": true,
+        "meetAll": true
       }
     }
   ]

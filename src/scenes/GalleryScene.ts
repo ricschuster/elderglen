@@ -232,7 +232,7 @@ export class GalleryScene extends Phaser.Scene {
       .setInteractive({ useHandCursor: true })
       .on("pointerdown", run);
     this.add
-      .text(x + 80, y + 22, label, { fontSize: "18px", color: "#ffffff" })
+      .text(x + 80, y + 22, label, { fontSize: "16px", color: "#ffffff" })
       .setOrigin(0.5);
   }
 

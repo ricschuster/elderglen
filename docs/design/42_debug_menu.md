@@ -21,8 +21,9 @@ developer tool, not a game feature, so there is no Stardew behaviour to match.
 
 ## Rules
 
-- **Dev builds only.** Gated on `import.meta.env.DEV`, like `farmGive` and
-  `farmDebug` today. Vite removes the branch in `npm run build`, so the menu
+- **Dev builds only.** Gated on `DEBUG_TOOLS` (`src/core/debugtools.ts`: `import.meta.env.DEV`, or
+  `VITE_DEBUG_TOOLS=1` for the "Elderglen DBG" tablet app, `docs/android.md`, 2026-11-17), like `farmGive` and
+  `farmDebug` today. Vite removes the branch in a normal `npm run build`, so the menu
   and its key cannot reach a shipped build. A test or a grep in the build check
   confirms the scene is absent from `dist/`.
 - **Never saves a flag.** Using it does not mark the save as cheated. It is not
@@ -162,7 +163,11 @@ through `Inventory`). There is no "run actions" extra: a state that needs action
 Small points decided: day 100 is winter 16, the first Night Market day, so the market stage shares
 the date. Festival stages leave the farmer on the farm (no `map`): the walk to the festival is part of
 the check. A stage may set `map` and `entry` (read by the hook, as `farmState`) when a check starts on
-another map.
+another map. Updated 2026-11-17 after tablet play: the `night-market-evening-*` stages start in
+Hearthwell (entry `from_cart-square`) and `mines-*` start on that floor (`from_below`); a stage
+always names its map, so `farmStage` from inside a building lands on the farm; every stage marks
+the Orders Board intro seen; marriage stages and `late-game-100` use `meetAll` (everyone met, so the
+Social tab shows names) and `late-game-100` uses `autoProfessions` (no prompts queue up).
 
 ### How it is picked
 

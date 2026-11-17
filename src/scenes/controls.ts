@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { DEBUG_TOOLS } from "../core/debugtools";
 import {
   actionFor,
   keyLabel,
@@ -110,7 +111,7 @@ class DesktopControls implements Controls {
     // forget the held keys when play resumes.
     scene.events.on("resume", onBlur);
     scene.events.on("wake", onBlur);
-    if (import.meta.env.DEV && intents.openDebug)
+    if (DEBUG_TOOLS && intents.openDebug)
       kb.on("keydown-BACKTICK", intents.openDebug);
     scene.events.once("shutdown", () => {
       kb.off("keydown", onDown);

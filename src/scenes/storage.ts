@@ -12,7 +12,7 @@ import {
   slotStores,
   type KeyValue,
 } from "../core/slots";
-import { TabGuard } from "../core/tabguard";
+import { stableTabId, TabGuard } from "../core/tabguard";
 import {
   loadSettings,
   type Settings,
@@ -85,10 +85,36 @@ export function setSpotProvider(
   spotProvider = p;
 }
 
+/** Session storage as plain key and value, for the tab id. Never throws. */
+const sessionKv: KeyValue = {
+  get(key) {
+    try {
+      return sessionStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  },
+  set(key, value) {
+    try {
+      sessionStorage.setItem(key, value);
+      return true;
+    } catch {
+      return false;
+    }
+  },
+  remove(key) {
+    try {
+      sessionStorage.removeItem(key);
+    } catch {
+      // Nothing to remove.
+    }
+  },
+};
+
 /** This tab's claim on the saves; a second tab is blocked (note 52, `installTabGuard`). */
 export const tabGuard = new TabGuard(
   browserKv,
-  Math.random().toString(36).slice(2),
+  stableTabId(sessionKv, () => Math.random().toString(36).slice(2)),
   Date.now,
 );
 

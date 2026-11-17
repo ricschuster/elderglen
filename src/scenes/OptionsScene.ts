@@ -207,7 +207,7 @@ export class OptionsScene extends Phaser.Scene {
       },
       {
         label: "Fishing assist",
-        detail: "a bigger bar and calmer fish, or skip the fight",
+        detail: "bigger bar, calmer fish",
         buttons: ([0, 1, 2] as Assist[]).map((a) => ({
           text: this.mark(s.fishingAssist === a, ASSIST_NAMES[a]),
           run: () => {
@@ -218,7 +218,7 @@ export class OptionsScene extends Phaser.Scene {
       },
       {
         label: "Combat assist",
-        detail: "half damage, wider warnings, no items lost when knocked out",
+        detail: "half damage, nothing lost",
         buttons: [false, true].map((on) => ({
           text: this.mark(s.combatAssist === on, on ? "On" : "Off"),
           run: () => {

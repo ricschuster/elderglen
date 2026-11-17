@@ -15,6 +15,39 @@ export const HEARTBEAT_MS = 3000;
 /** A lock older than this is from a tab that is gone. */
 export const STALE_MS = 10000;
 
+/** Where a page keeps its tab id for as long as the tab lives (session storage). */
+export const TAB_ID_KEY = "elderglen-tab-id";
+
+/**
+ * This tab's id. Kept in session storage, which survives a reload and a
+ * restored tab but not a new tab, so "Play here instead" (which reloads) and a
+ * reloaded tab find their own lock and reclaim it instead of seeing "another
+ * tab" for the next `STALE_MS`. A new id is made when the store is empty or
+ * refuses the write.
+ */
+export function stableTabId(session: KeyValue, make: () => string): string {
+  const kept = session.get(TAB_ID_KEY);
+  if (kept) return kept;
+  const id = make();
+  session.set(TAB_ID_KEY, id);
+  return id;
+}
+
+/**
+ * True in the installed app (Capacitor): one WebView, so there is no second
+ * tab to guard against, and a force-stop or crash leaves a lock that would
+ * block the next launch for `STALE_MS`.
+ */
+export function isNativeApp(w: unknown): boolean {
+  try {
+    const cap = (w as { Capacitor?: { isNativePlatform?: () => boolean } })
+      ?.Capacitor;
+    return cap?.isNativePlatform?.() === true;
+  } catch {
+    return false;
+  }
+}
+
 interface Lock {
   id: string;
   at: number;

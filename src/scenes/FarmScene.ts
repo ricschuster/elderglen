@@ -27,6 +27,7 @@ import {
   coopSite,
   coopVisibleTier,
 } from "../core/animals";
+import { DEBUG_TOOLS } from "../core/debugtools";
 import {
   FISH_POND,
   POND_FISH_SPOTS,
@@ -193,7 +194,13 @@ import {
   herbStallProblem,
   stopOfService,
 } from "../core/roomrewards";
-import { exitLabel, serviceLabel, standInLine } from "../core/labels";
+import {
+  exitLabel,
+  mergeTags,
+  serviceLabel,
+  stackOffsets,
+  standInLine,
+} from "../core/labels";
 import {
   facingFrom,
   facingTile,
@@ -262,7 +269,13 @@ import {
   loadCask,
   placeCask,
 } from "../core/cask";
-import { chestById, pickUpChest, placeChest, pushChest } from "../core/chests";
+import {
+  chestById,
+  pickUpChest,
+  placeChest,
+  pushChest,
+  swapsOnTap,
+} from "../core/chests";
 import { CHEST_COLOURS } from "../core/chestdefs";
 import {
   isLight,
@@ -397,6 +410,7 @@ import { giveItem, giveMoney } from "../core/debug";
 import { applyStatePatch, type StatePatch } from "../core/statepatch";
 import { pickupRadius } from "../core/ground";
 import { Hud } from "./hud";
+import { PANEL_BOTTOM, PANEL_LEFT_BASE } from "./hudpanel";
 import { UI_SIZE_KEY, WORLD_ZOOM_KEY } from "./panel";
 import {
   cameraBounds,
@@ -422,7 +436,7 @@ const TICK_MINUTES = 10;
  * in production. Walking takes N sub-steps a frame, so a step stays small
  * enough not to cross a tile.
  */
-const DEV_SPEED = import.meta.env.DEV
+const DEV_SPEED = DEBUG_TOOLS
   ? Math.min(
       8,
       Math.max(
@@ -501,6 +515,9 @@ export class FarmScene extends Phaser.Scene {
   private mendAsked = false;
   private hud!: Hud;
   private uiCamera!: Phaser.Cameras.Scene2D.Camera;
+  /** The placeholder map labels and the world x each is centred on. */
+  private labelTags: { o: Phaser.GameObjects.Text; x: number; y: number }[] =
+    [];
   /** The pictures of things on the map, redrawn by `drawGround`. */
   private sprites: Phaser.GameObjects.Image[] = [];
   private ground!: Phaser.GameObjects.Graphics;
@@ -990,7 +1007,7 @@ export class FarmScene extends Phaser.Scene {
     );
     this.render();
 
-    if (import.meta.env.DEV)
+    if (DEBUG_TOOLS)
       (window as unknown as { farmGive: unknown }).farmGive = (
         id: string,
         n: number,
@@ -999,14 +1016,14 @@ export class FarmScene extends Phaser.Scene {
         this.render();
         return result;
       };
-    if (import.meta.env.DEV)
+    if (DEBUG_TOOLS)
       (window as unknown as { farmMoney: unknown }).farmMoney = (n: number) => {
         giveMoney(this.state, n);
         this.render();
       };
     // Dev hook for the playtest bot (#333): walk to a tile by the tap route, so
     // the bot does not time key holds. Returns false when there is no route.
-    if (import.meta.env.DEV)
+    if (DEBUG_TOOLS)
       (window as unknown as { farmWalk: unknown }).farmWalk = (
         x: number,
         y: number,
@@ -1020,7 +1037,7 @@ export class FarmScene extends Phaser.Scene {
     // Dev hook for the playtest bot: jump to a chosen state in one call
     // (`core/statepatch.ts`), then restart the scene (at the entry it was
     // entered by) so the HUD and map match.
-    if (import.meta.env.DEV)
+    if (DEBUG_TOOLS)
       (window as unknown as { farmState: unknown }).farmState = (
         patch: StatePatch,
       ) => {
@@ -1034,7 +1051,7 @@ export class FarmScene extends Phaser.Scene {
       };
     // Dev hook (note 42, Stages): put a NEW game at a named stage, in the last
     // save slot so no real save is overwritten, and restart the scene.
-    if (import.meta.env.DEV) {
+    if (DEBUG_TOOLS) {
       const w = window as unknown as Record<string, unknown>;
       w.farmStages = () => stageList().map((s) => s.id);
       w.farmStage = (name: string) => {
@@ -1042,21 +1059,25 @@ export class FarmScene extends Phaser.Scene {
         if (!r) return { problems: [`unknown stage ${name}`] };
         useSlot(SLOT_COUNT);
         this.registry.set(STATE_KEY, r.state);
+        // Always name the map: restart(undefined) would keep the current one
+        // (a stage called inside the library would leave you there).
         this.scene.restart(
-          r.map ? { map: r.map, entry: r.entry ?? "door" } : undefined,
+          r.map
+            ? { map: r.map, entry: r.entry ?? "door" }
+            : { map: START.map, entry: START.entry },
         );
         return { problems: r.problems };
       };
     }
     // Dev hook for the playtest bot: an item's display name, to find its row
     // in a shop list by label.
-    if (import.meta.env.DEV)
+    if (DEBUG_TOOLS)
       (window as unknown as { farmItemName: unknown }).farmItemName = (
         id: string,
       ) => itemById(id)?.name;
     // Dev hook for the playtest bot (#333): every tile the farmer cannot stand
     // on now (walls, trees, rocks, machines, furniture), as "x,y" strings.
-    if (import.meta.env.DEV)
+    if (DEBUG_TOOLS)
       (window as unknown as { farmBlocked: unknown }).farmBlocked = () => {
         const out: string[] = [];
         for (let y = 0; y < this.map.height; y++)
@@ -1064,7 +1085,7 @@ export class FarmScene extends Phaser.Scene {
             if (this.tileBlocked(x, y)) out.push(`${x},${y}`);
         return out;
       };
-    if (import.meta.env.DEV)
+    if (DEBUG_TOOLS)
       (window as unknown as { farmDebug: () => unknown }).farmDebug = () => ({
         pos: this.pos,
         tile: tileOf(this.pos, PLAYER, ts),
@@ -1101,6 +1122,7 @@ export class FarmScene extends Phaser.Scene {
   }
 
   update(_time: number, delta: number): void {
+    this.clampLabels();
     // Cap the step so a stalled frame cannot throw the player across the map.
     const dt = Math.min(delta, 50) / 1000;
     this.night.setAlpha(
@@ -1716,6 +1738,19 @@ export class FarmScene extends Phaser.Scene {
         s.tag.setPosition(px, py - 13);
       }
     }
+    // Two villagers standing close would draw their names on top of each other.
+    const settled = [...this.villagerSprites.values()].filter(
+      (s) => !this.tweens.isTweening(s.box),
+    );
+    const base = settled.map((s) => ({
+      x: s.box.x,
+      y: s.box.y - 13,
+      text: s.tag.text,
+    }));
+    const off = stackOffsets(base);
+    settled.forEach((s, i) =>
+      s.tag.setPosition(base[i]!.x, base[i]!.y + off[i]!),
+    );
   }
 
   /** Talk to a villager, or give them the held item (#599, note 61). Returns false if nobody is on the tile. */
@@ -1780,6 +1815,13 @@ export class FarmScene extends Phaser.Scene {
 
   /** Act on a tile beside the farmer: the axe for a tree, the pickaxe for a rock. */
   private actOn(tile: Vec): void {
+    // A big chest held and a smaller placed chest tapped: swap it in, as X does.
+    const held = heldAt(this.state, this.selected);
+    if (
+      held.kind === "item" &&
+      swapsOnTap(this.state, this.mapId, tile.x, tile.y, held.id)
+    )
+      return this.use();
     if (this.tapHand(tile)) return this.action();
     const tree =
       (!this.map.indoors && this.state.trees.at(tile.x, tile.y)) ||
@@ -2690,10 +2732,13 @@ export class FarmScene extends Phaser.Scene {
     const rod = rodById(rodId)!;
     const here = tileOf(this.pos, PLAYER, this.map.tileSize);
     const step = PUSH[this.facing];
+    // Any outdoor map with water can be fished: Hearthwell's river arm (the
+    // Night Market pier, note 14) is one; its water kind drives the fish table.
     const water =
       isFarmMap(this.mapId) ||
       isAreaMap(this.mapId) ||
-      mineFloorOf(this.mapId) !== undefined
+      mineFloorOf(this.mapId) !== undefined ||
+      !this.map.indoors
         ? waterAhead(this.map, here.x, here.y, step.x, step.y, rod.range)
         : [];
     if (water.length === 0) {
@@ -3364,9 +3409,17 @@ export class FarmScene extends Phaser.Scene {
       const text = serviceLabel(s.kind, s.id);
       if (text) tags.push({ x: s.x + 0.5, y: s.y, text });
     }
-    return tags.map((t) => {
+    this.labelTags = [];
+    // One tag per object (a two tile stall or desk has two service tiles), and
+    // tags that would overlap are stacked upward so each stays readable.
+    const merged = mergeTags(
+      tags.map((t) => ({ x: t.x * ts, y: t.y * ts - 2, text: t.text })),
+      ts * 2,
+    );
+    const offsets = stackOffsets(merged);
+    return merged.map((t, i) => {
       const label = this.add
-        .text(t.x * ts, t.y * ts - 2, t.text, {
+        .text(t.x, t.y + offsets[i]!, t.text, {
           fontSize: "8px",
           color: "#ffffff",
           backgroundColor: "#000000aa",
@@ -3374,8 +3427,57 @@ export class FarmScene extends Phaser.Scene {
         })
         .setOrigin(0.5, 1)
         .setDepth(900);
+      this.labelTags.push({ o: label, x: t.x, y: label.y });
       return label;
     });
+  }
+
+  /**
+   * Keep each placeholder map label on screen and clear of the top right HUD
+   * (clock panel, Menu, Journal, Craft, Hats, DBG), which the UI camera draws
+   * over the world. The label stays centred on its door or stall unless that
+   * would clip, then it slides sideways. A frame behind a fast scroll is fine
+   * for a placeholder label.
+   */
+  private clampLabels(): void {
+    if (this.labelTags.length === 0) return;
+    const cam = this.cameras.main;
+    const view = cam.worldView;
+    const zoom = cam.zoom || 1;
+    const scale = this.uiCamera.zoom || 1;
+    const screenW = this.scale.gameSize.width;
+    const colX = screenW - (960 - PANEL_LEFT_BASE) * scale;
+    const colBottom = (PANEL_BOTTOM + 140) * scale;
+    const stripX = screenW - 400 * scale;
+    const stripBottom = 64 * scale;
+    for (const t of this.labelTags) {
+      const half = t.o.displayWidth / 2;
+      const top = (t.o.y - t.o.displayHeight - view.y) * zoom;
+      // The edge, in world pixels, that the label's right side may reach.
+      let limit = view.right - 1;
+      if (top < colBottom)
+        limit = Math.min(limit, view.x + (colX - cam.x) / zoom);
+      if (top < stripBottom)
+        limit = Math.min(limit, view.x + (stripX - cam.x) / zoom);
+      const lo = view.x + half + 1;
+      t.o.x = Math.max(lo, Math.min(t.x, limit - half));
+    }
+    // Clamping can pull two labels onto the same spot (Cart and Hearthwell at the
+    // right edge): stack any that now overlap, upward, so both stay readable.
+    const placed: Phaser.GameObjects.Text[] = [];
+    for (const t of this.labelTags) {
+      t.o.y = t.y;
+      for (let n = 0; n < placed.length; n++) {
+        const hit = placed.find(
+          (p) =>
+            Math.abs(p.x - t.o.x) < (p.displayWidth + t.o.displayWidth) / 2 &&
+            Math.abs(p.y - t.o.y) < t.o.displayHeight,
+        );
+        if (!hit) break;
+        t.o.y = hit.y - t.o.displayHeight - 1;
+      }
+      placed.push(t.o);
+    }
   }
 
   /**

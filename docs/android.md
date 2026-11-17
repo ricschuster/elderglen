@@ -36,8 +36,16 @@ but not an uninstall.
 ## Update after a code change
 
 `npm run android:apk` builds the web app, syncs it into `android/` and builds
-`android/app/build/outputs/apk/debug/app-debug.apk`. Then `npm run
+`android/app/build/outputs/apk/normal/debug/app-normal-debug.apk`. Then `npm run
 android:install`.
+
+## Debug build (dev tools on a tablet)
+
+`npm run android:apk -- --debug` then `npm run android:install -- --debug` build and
+install "Elderglen DBG": the same game with the dev tools on (stage jumper
+`window.farmStage`, the DBG button, `farmGive`, note 42). It has its own package id
+(`app.elderglen.game.dbg`) and its own saves, so it installs beside the normal app
+and never touches its saves. The normal build has no dev tools.
 
 ## Tools
 

@@ -16,6 +16,20 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    // "normal" is the game. "dbg" is the same app built with the dev tools (stage
+    // jumper, debug menu; scripts/android/build-apk.mjs --debug) under its own
+    // package id, so it keeps separate saves and never touches the real game's.
+    flavorDimensions = ["tools"]
+    productFlavors {
+        normal {
+            dimension = "tools"
+        }
+        dbg {
+            dimension = "tools"
+            applicationIdSuffix = ".dbg"
+            versionNameSuffix = "-dbg"
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false

@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { isDrag } from "../core/dragscroll";
 import { dateText } from "../core/calendar";
 import { farmTypeById } from "../core/farmtypes";
 import { itemById } from "../core/items";
@@ -58,6 +59,8 @@ export class PackScene extends Phaser.Scene {
   private tooltip!: Tooltip;
   private info!: Phaser.GameObjects.Text;
   private note!: Phaser.GameObjects.Text;
+  /** A message for the status line, shown once by the next refresh (then the line follows the stack again). */
+  private flash: string | undefined;
   private splitLabel!: Phaser.GameObjects.Text;
   private trashLabel!: Phaser.GameObjects.Text;
   private trashBox!: Phaser.GameObjects.Rectangle;
@@ -82,6 +85,7 @@ export class PackScene extends Phaser.Scene {
     this.cursor = 0;
     this.splitting = false;
     this.trashAsked = false;
+    this.flash = undefined;
     this.press = undefined;
     this.dragging = undefined;
     this.cells = [];
@@ -168,16 +172,27 @@ export class PackScene extends Phaser.Scene {
     this.input.on("pointerup", (p: Phaser.Input.Pointer) => this.up(p));
     this.splitLabel.setText("Split");
     this.button(812, panelY, "Wear", () => this.wear());
-    this.equipmentStrip(panelY + 58);
-    this.button(812, panelY + 52, "Projects", () => {
-      this.scene.stop("menu");
-      this.scene.launch("journal", { section: "projects" });
-    });
+    this.equipmentStrip(panelY + 88);
+    this.button(
+      812,
+      panelY + 52,
+      "Projects",
+      () => {
+        this.scene.stop("menu");
+        this.scene.launch("journal", { section: "projects" });
+      },
+      15,
+    );
+    // Wrapped inside the frame; a single line ran to the right edge.
     this.add.text(
       LEFT,
-      516,
-      "Tap a stack, then a slot to move or swap (or drag it), Trash, or Wear.   Esc or E: close   Page Up, Page Down: tabs",
-      { fontSize: "13px", color: "#ffffffaa" },
+      498,
+      "Tap a stack, then a slot to move or swap, or drag it to a slot or Trash. Wear, Split and Sort are the buttons.   Esc or E: close   Page Up, Page Down: tabs",
+      {
+        fontSize: "13px",
+        color: "#ffffffaa",
+        wordWrap: { width: 960 - 2 * LEFT },
+      },
     );
 
     const kb = this.input.keyboard;
@@ -221,7 +236,8 @@ export class PackScene extends Phaser.Scene {
         ? undefined
         : this.state.inventory.slot(this.selected);
     if (!stack) {
-      this.note.setText("Tap a ring or boots first, then Wear.");
+      this.flash = "Tap a ring or boots first, then Wear.";
+      this.refresh();
       return;
     }
     const r = wearFromPack(
@@ -229,15 +245,15 @@ export class PackScene extends Phaser.Scene {
       this.state.inventory,
       stack.id,
     );
-    if (r === "none") this.note.setText("That cannot be worn.");
-    else if (r === "full") this.note.setText("The pack is full.");
+    if (r === "none") this.flash = "That cannot be worn.";
+    else if (r === "full") this.flash = "The pack is full.";
     else this.selected = undefined;
     this.refresh();
   }
 
   private takeOffSlot(slot: number | "boots"): void {
     if (!takeOff(this.state.equipment, this.state.inventory, slot))
-      this.note.setText("Nothing to take off, or the pack is full.");
+      this.flash = "Nothing to take off, or the pack is full.";
     this.refresh();
   }
 
@@ -246,6 +262,7 @@ export class PackScene extends Phaser.Scene {
     y: number,
     label: string,
     run: () => void,
+    fontSize = 18,
   ): Phaser.GameObjects.Text {
     const box = this.add
       .rectangle(x, y, 94, 44, 0xa0482e, 1)
@@ -254,7 +271,10 @@ export class PackScene extends Phaser.Scene {
       .setInteractive({ useHandCursor: true })
       .on("pointerdown", run);
     return this.add
-      .text(x + 47, y + 22, label, { fontSize: "18px", color: "#ffffff" })
+      .text(x + 47, y + 22, label, {
+        fontSize: `${fontSize}px`,
+        color: "#ffffff",
+      })
       .setOrigin(0.5)
       .setData("box", box);
   }
@@ -267,11 +287,12 @@ export class PackScene extends Phaser.Scene {
   }
 
   /**
-   * Press on a slot. A mouse press on a stack may become a drag; a touch or an
-   * empty slot taps at once, so touch keeps tap then tap.
+   * Press on a slot. A press on a stack (mouse or touch) becomes a drag once it
+   * moves a few pixels, and a tap when it lifts without moving. An empty slot
+   * taps at once.
    */
   private down(i: number, p: Phaser.Input.Pointer): void {
-    if (p.wasTouch || !this.state.inventory.slot(i)) {
+    if (!this.state.inventory.slot(i)) {
       this.tap(i);
       return;
     }
@@ -281,8 +302,7 @@ export class PackScene extends Phaser.Scene {
   private move(p: Phaser.Input.Pointer): void {
     if (!this.press) return;
     if (this.dragging === undefined) {
-      if (Math.hypot(p.worldX - this.press.x, p.worldY - this.press.y) < 6)
-        return;
+      if (!isDrag(p.worldX - this.press.x, p.worldY - this.press.y)) return;
       this.dragging = this.press.slot;
       const key = iconKey(this.state.inventory.slot(this.dragging)!.id);
       if (key) this.dragIcon.setTexture(key).setDisplaySize(54, 54);
@@ -356,26 +376,29 @@ export class PackScene extends Phaser.Scene {
 
   private trash(): void {
     if (this.selected === undefined) {
-      this.note.setText("Tap a stack first, then Trash.");
+      this.flash = "Tap a stack first, then Trash.";
+      this.refresh();
       return;
     }
     this.trashSlotAt(this.selected);
   }
 
   private trashSlotAt(i: number): void {
-    const r = dropOnTrash(this.state.inventory, i, this.trashAsked);
+    const r = dropOnTrash(this.state.inventory, i, this.trashAsked, true);
     if (r.kind === "refused") {
-      this.note.setText("Tools cannot be thrown away.");
+      this.flash = "Tools cannot be thrown away.";
       this.refresh();
       return;
     }
     if (r.kind === "confirm") {
       this.selected = i;
       this.trashAsked = true;
+      const stack = this.state.inventory.slot(i);
+      const name = stack
+        ? (itemById(splitQuality(stack.id).base)?.name ?? stack.id)
+        : "this";
+      this.flash = `Destroy ${name}${stack && stack.count > 1 ? ` x${stack.count}` : ""}? Drop it on Trash again, or press Trash, to confirm. Tap another slot to keep it.`;
       this.refresh();
-      this.note.setText(
-        "That is worth something. Drop it on Trash again, or press Trash, to destroy it.",
-      );
       return;
     }
     this.selected = undefined;
@@ -430,7 +453,10 @@ export class PackScene extends Phaser.Scene {
     this.trashLabel.setText("Trash");
     const at = this.selected ?? this.cursor;
     const stack = inv.slot(at);
-    if (stack) {
+    if (this.flash !== undefined) {
+      this.note.setText(this.flash);
+      this.flash = undefined;
+    } else if (stack) {
       const { base, quality } = splitQuality(stack.id);
       const tool = toolOfId(base);
       const name = tool

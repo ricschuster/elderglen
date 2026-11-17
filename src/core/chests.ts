@@ -250,6 +250,25 @@ function upgradeChest(g: GameState, old: PlacedChest, id: string): Outcome {
   return { ok: true };
 }
 
+/**
+ * True when a tap on the placed chest at (x, y) with `heldId` selected should
+ * swap it (a bigger chest over a smaller one) instead of opening it: the touch
+ * schemes have no Use button, so the tap is the use (note 27).
+ */
+export function swapsOnTap(
+  g: GameState,
+  mapId: string,
+  x: number,
+  y: number,
+  heldId: string,
+): boolean {
+  const big = chestById(heldId);
+  const old = g.chests.get(mapId, x, y);
+  if (!big || !old || old.order) return false;
+  const was = chestById(old.id);
+  return !!was && big.slots > was.slots;
+}
+
 /** Take an empty chest up into the backpack. */
 export function pickUpChest(
   g: GameState,

@@ -130,7 +130,10 @@ written together, so they share a version.
     another tab blocks this one (stale after 10 s): the game sleeps behind a
     cover, saves are refused, and "Play here instead" takes the lock and
     reloads the page so it starts from the saved state. The other tab is blocked
-    at its next beat. A blocked tab stays blocked until the player chooses.
+    at its next beat. A blocked tab stays blocked until the player chooses. The tab
+    id is kept in session storage, so a reloaded or restored tab reclaims its own
+    lock, and the installed app (one WebView) skips the guard, so a force-stop
+    cannot lock the next launch out (2026-11-17, from the tablet run).
   - Esc closes only the top screen (`src/scenes/escape.ts`, menu and gallery).
 - Size, measured 2026-11-16: a new game with forage written is 61 KB of JSON
   (the area worlds dominate). Three records a slot (night, resume, previous
