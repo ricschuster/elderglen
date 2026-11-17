@@ -1,6 +1,6 @@
-# 30 Farm types (draft, reference check only)
+# 30 Farm types: reference check (draft)
 
-Status: draft. This note holds the check of our farm type decisions against the
+Status: draft. Companion to `32_farm_types.md`, which holds the design and build status. This note holds the check of our farm type decisions against the
 Stardew Valley Wiki Farm Maps page and the Guidebook supplement (printed pages
 12 and 13), done 2026-10-31. Both are reference only (ADR 0002); no text or
 tables are copied. The decisions themselves are in
