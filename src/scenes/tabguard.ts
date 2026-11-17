@@ -1,5 +1,5 @@
 import type Phaser from "phaser";
-import { HEARTBEAT_MS } from "../core/tabguard";
+import { HEARTBEAT_MS, isNativeApp } from "../core/tabguard";
 import { tabGuard } from "./storage";
 
 /**
@@ -9,6 +9,9 @@ import { tabGuard } from "./storage";
  * starts again from what the other tab saved and never from a stale state.
  */
 export function installTabGuard(game: Phaser.Game): void {
+  // The installed app has one WebView and no second window. A force-stop or
+  // crash fires no pagehide, so its lock would cover the next launch for 10 s.
+  if (isNativeApp(window)) return;
   let cover: HTMLDivElement | undefined;
 
   const show = (): void => {

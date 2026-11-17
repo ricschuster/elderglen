@@ -192,11 +192,13 @@ export class SocialScene extends Phaser.Scene {
       this.items.push(o);
       return o;
     };
-    // Only rows that touch the list window are made, so nothing spills over.
+    // Only rows that fit entirely inside the list window are made, so a row
+    // that starts inside but is taller than the room left never spills over
+    // the frame. At the end of the scroll the last row fits (see maxTop).
     const first = Math.floor(this.top / ROW_H);
     for (let i = first; i < this.rows.length; i++) {
       const y = LIST_TOP + i * ROW_H - this.top;
-      if (y >= LIST_TOP + LIST_H) break;
+      if (y + (ROW_H - 6) > LIST_TOP + LIST_H) break;
       if (y < LIST_TOP) continue;
       this.drawRow(this.rows[i]!, y, add);
     }

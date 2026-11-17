@@ -12,7 +12,7 @@ import type { GameState } from "./save";
  * game at a known point. Data is `content/stages.json`. A stage never writes
  * onto a live game, and it goes through `applyStatePatch`, so nothing derived
  * is written. Not a game feature, and the dev hooks that use it are behind
- * `import.meta.env.DEV`.
+ * `DEBUG_TOOLS` (src/core/debugtools.ts).
  */
 export interface StageDef {
   id: string;

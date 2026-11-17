@@ -27,6 +27,7 @@ import {
   coopSite,
   coopVisibleTier,
 } from "../core/animals";
+import { DEBUG_TOOLS } from "../core/debugtools";
 import {
   FISH_POND,
   POND_FISH_SPOTS,
@@ -397,6 +398,7 @@ import { giveItem, giveMoney } from "../core/debug";
 import { applyStatePatch, type StatePatch } from "../core/statepatch";
 import { pickupRadius } from "../core/ground";
 import { Hud } from "./hud";
+import { PANEL_BOTTOM, PANEL_LEFT_BASE } from "./hudpanel";
 import { UI_SIZE_KEY, WORLD_ZOOM_KEY } from "./panel";
 import {
   cameraBounds,
@@ -422,7 +424,7 @@ const TICK_MINUTES = 10;
  * in production. Walking takes N sub-steps a frame, so a step stays small
  * enough not to cross a tile.
  */
-const DEV_SPEED = import.meta.env.DEV
+const DEV_SPEED = DEBUG_TOOLS
   ? Math.min(
       8,
       Math.max(
@@ -501,6 +503,8 @@ export class FarmScene extends Phaser.Scene {
   private mendAsked = false;
   private hud!: Hud;
   private uiCamera!: Phaser.Cameras.Scene2D.Camera;
+  /** The placeholder map labels and the world x each is centred on. */
+  private labelTags: { o: Phaser.GameObjects.Text; x: number }[] = [];
   /** The pictures of things on the map, redrawn by `drawGround`. */
   private sprites: Phaser.GameObjects.Image[] = [];
   private ground!: Phaser.GameObjects.Graphics;
@@ -990,7 +994,7 @@ export class FarmScene extends Phaser.Scene {
     );
     this.render();
 
-    if (import.meta.env.DEV)
+    if (DEBUG_TOOLS)
       (window as unknown as { farmGive: unknown }).farmGive = (
         id: string,
         n: number,
@@ -999,14 +1003,14 @@ export class FarmScene extends Phaser.Scene {
         this.render();
         return result;
       };
-    if (import.meta.env.DEV)
+    if (DEBUG_TOOLS)
       (window as unknown as { farmMoney: unknown }).farmMoney = (n: number) => {
         giveMoney(this.state, n);
         this.render();
       };
     // Dev hook for the playtest bot (#333): walk to a tile by the tap route, so
     // the bot does not time key holds. Returns false when there is no route.
-    if (import.meta.env.DEV)
+    if (DEBUG_TOOLS)
       (window as unknown as { farmWalk: unknown }).farmWalk = (
         x: number,
         y: number,
@@ -1020,7 +1024,7 @@ export class FarmScene extends Phaser.Scene {
     // Dev hook for the playtest bot: jump to a chosen state in one call
     // (`core/statepatch.ts`), then restart the scene (at the entry it was
     // entered by) so the HUD and map match.
-    if (import.meta.env.DEV)
+    if (DEBUG_TOOLS)
       (window as unknown as { farmState: unknown }).farmState = (
         patch: StatePatch,
       ) => {
@@ -1034,7 +1038,7 @@ export class FarmScene extends Phaser.Scene {
       };
     // Dev hook (note 42, Stages): put a NEW game at a named stage, in the last
     // save slot so no real save is overwritten, and restart the scene.
-    if (import.meta.env.DEV) {
+    if (DEBUG_TOOLS) {
       const w = window as unknown as Record<string, unknown>;
       w.farmStages = () => stageList().map((s) => s.id);
       w.farmStage = (name: string) => {
@@ -1050,13 +1054,13 @@ export class FarmScene extends Phaser.Scene {
     }
     // Dev hook for the playtest bot: an item's display name, to find its row
     // in a shop list by label.
-    if (import.meta.env.DEV)
+    if (DEBUG_TOOLS)
       (window as unknown as { farmItemName: unknown }).farmItemName = (
         id: string,
       ) => itemById(id)?.name;
     // Dev hook for the playtest bot (#333): every tile the farmer cannot stand
     // on now (walls, trees, rocks, machines, furniture), as "x,y" strings.
-    if (import.meta.env.DEV)
+    if (DEBUG_TOOLS)
       (window as unknown as { farmBlocked: unknown }).farmBlocked = () => {
         const out: string[] = [];
         for (let y = 0; y < this.map.height; y++)
@@ -1064,7 +1068,7 @@ export class FarmScene extends Phaser.Scene {
             if (this.tileBlocked(x, y)) out.push(`${x},${y}`);
         return out;
       };
-    if (import.meta.env.DEV)
+    if (DEBUG_TOOLS)
       (window as unknown as { farmDebug: () => unknown }).farmDebug = () => ({
         pos: this.pos,
         tile: tileOf(this.pos, PLAYER, ts),
@@ -1101,6 +1105,7 @@ export class FarmScene extends Phaser.Scene {
   }
 
   update(_time: number, delta: number): void {
+    this.clampLabels();
     // Cap the step so a stalled frame cannot throw the player across the map.
     const dt = Math.min(delta, 50) / 1000;
     this.night.setAlpha(
@@ -3364,6 +3369,7 @@ export class FarmScene extends Phaser.Scene {
       const text = serviceLabel(s.kind, s.id);
       if (text) tags.push({ x: s.x + 0.5, y: s.y, text });
     }
+    this.labelTags = [];
     return tags.map((t) => {
       const label = this.add
         .text(t.x * ts, t.y * ts - 2, t.text, {
@@ -3374,8 +3380,41 @@ export class FarmScene extends Phaser.Scene {
         })
         .setOrigin(0.5, 1)
         .setDepth(900);
+      this.labelTags.push({ o: label, x: t.x * ts });
       return label;
     });
+  }
+
+  /**
+   * Keep each placeholder map label on screen and clear of the top right HUD
+   * (clock panel, Menu, Journal, Craft, Hats, DBG), which the UI camera draws
+   * over the world. The label stays centred on its door or stall unless that
+   * would clip, then it slides sideways. A frame behind a fast scroll is fine
+   * for a placeholder label.
+   */
+  private clampLabels(): void {
+    if (this.labelTags.length === 0) return;
+    const cam = this.cameras.main;
+    const view = cam.worldView;
+    const zoom = cam.zoom || 1;
+    const scale = this.uiCamera.zoom || 1;
+    const screenW = this.scale.gameSize.width;
+    const colX = screenW - (960 - PANEL_LEFT_BASE) * scale;
+    const colBottom = (PANEL_BOTTOM + 140) * scale;
+    const stripX = screenW - 400 * scale;
+    const stripBottom = 64 * scale;
+    for (const t of this.labelTags) {
+      const half = t.o.displayWidth / 2;
+      const top = (t.o.y - t.o.displayHeight - view.y) * zoom;
+      // The edge, in world pixels, that the label's right side may reach.
+      let limit = view.right - 1;
+      if (top < colBottom)
+        limit = Math.min(limit, view.x + (colX - cam.x) / zoom);
+      if (top < stripBottom)
+        limit = Math.min(limit, view.x + (stripX - cam.x) / zoom);
+      const lo = view.x + half + 1;
+      t.o.x = Math.max(lo, Math.min(t.x, limit - half));
+    }
   }
 
   /**

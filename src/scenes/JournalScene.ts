@@ -16,7 +16,10 @@ import type { GameState } from "../core/save";
 import { closeWindow, frame } from "./panel";
 import { STATE_KEY } from "./state";
 
-const VISIBLE = 13;
+/** Pixel room for the body text: from its top (76) to just above the footer hint (478). */
+const BODY_H = 396;
+/** A drag this far (screen pixels) moves the list one line. */
+const DRAG_STEP = 26;
 
 /**
  * The journal (note 49): its own window, not a menu tab, on J or the HUD
@@ -37,6 +40,8 @@ export class JournalScene extends Phaser.Scene {
   }[] = [];
   private body!: Phaser.GameObjects.Text;
   private more!: Phaser.GameObjects.Text;
+  private dragY = 0;
+  private dragged = false;
 
   constructor() {
     super("journal");
@@ -86,7 +91,24 @@ export class JournalScene extends Phaser.Scene {
     kb?.on("keydown-DOWN", () => this.move(1));
     kb?.on("keydown-ENTER", () => this.toggleSelected());
     kb?.on("keydown-X", () => this.cancelSelected());
-    this.input.on("pointerdown", (p: Phaser.Input.Pointer) => this.tap(p.y));
+    // A tap acts; a drag scrolls and does not tap (as the Social tab does).
+    this.input.on("pointerdown", (p: Phaser.Input.Pointer) => {
+      this.dragY = p.y;
+      this.dragged = false;
+    });
+    this.input.on("pointermove", (p: Phaser.Input.Pointer) => {
+      if (!p.isDown) return;
+      const zoom = this.cameras.main.zoom || 1;
+      const dy = (this.dragY - p.y) / zoom;
+      if (Math.abs(dy) > 8) this.dragged = true;
+      if (!this.dragged || Math.abs(dy) < DRAG_STEP) return;
+      const steps = Math.trunc(dy / DRAG_STEP);
+      this.dragY -= steps * DRAG_STEP * zoom;
+      this.scroll(steps);
+    });
+    this.input.on("pointerup", (p: Phaser.Input.Pointer) => {
+      if (!this.dragged) this.tap(this.cameras.main.getWorldPoint(p.x, p.y).y);
+    });
     this.input.on("wheel", (_p: unknown, _o: unknown, _x: number, dy: number) =>
       this.scroll(dy > 0 ? 1 : -1),
     );
@@ -150,7 +172,38 @@ export class JournalScene extends Phaser.Scene {
     );
     if (i < 0) return;
     if (i < this.top) this.top = i;
-    else if (i >= this.top + VISIBLE) this.top = i - VISIBLE + 1;
+    else
+      while (this.top < i && i >= this.top + this.pageLen(this.top)) this.top++;
+  }
+
+  /**
+   * How many lines, from `top`, fit in the body. A line that wraps takes more
+   * than one row of pixels, so this is measured on the text itself and never
+   * assumed. At least one line, so a very long line still shows.
+   */
+  private pageLen(top: number): number {
+    let text = "";
+    let n = 0;
+    for (let i = top; i < this.lines.length; i++) {
+      const next =
+        n === 0
+          ? this.lines[i]!.text
+          : `${text}
+${this.lines[i]!.text}`;
+      this.body.setText(next);
+      if (n > 0 && this.body.height > BODY_H) break;
+      text = next;
+      n++;
+    }
+    return n;
+  }
+
+  /** The first line of the last page: the lowest top that still reaches the end. */
+  private get maxTop(): number {
+    const n = this.lines.length;
+    let t = Math.max(0, n - 1);
+    while (t > 0 && t - 1 + this.pageLen(t - 1) >= n) t--;
+    return t;
   }
 
   private move(by: number): void {
@@ -191,7 +244,7 @@ export class JournalScene extends Phaser.Scene {
   /** A tap on a quest title selects it and flips it open or shut; on Cancel it gives the request up. */
   private tap(y: number): void {
     if (this.section !== "quests") return;
-    const shown = this.lines.slice(this.top, this.top + VISIBLE).length;
+    const shown = this.pageLen(this.top);
     if (shown === 0 || y < this.body.y) return;
     const row = Math.floor((y - this.body.y) / (this.body.height / shown));
     const line = this.lines[this.top + row];
@@ -206,8 +259,7 @@ export class JournalScene extends Phaser.Scene {
   }
 
   private scroll(by: number): void {
-    const max = Math.max(0, this.lines.length - VISIBLE);
-    this.top = Math.max(0, Math.min(max, this.top + by));
+    this.top = Math.max(0, Math.min(this.maxTop, this.top + by));
     this.draw();
   }
 
@@ -216,15 +268,16 @@ export class JournalScene extends Phaser.Scene {
       this.section === "quests" && this.entries.length
         ? "   Enter or tap: open a request   X: cancel it"
         : "";
+    const shown = this.pageLen(this.top);
     this.body.setText(
       this.lines
-        .slice(this.top, this.top + VISIBLE)
+        .slice(this.top, this.top + shown)
         .map((l) => l.text)
         .join("\n"),
     );
     this.more.setText(
-      this.lines.length > VISIBLE
-        ? `Up and Down, or the wheel: scroll (${this.top + 1} of ${this.lines.length})   Left and Right: section   J or Esc: close${hint}`
+      this.top > 0 || this.top + shown < this.lines.length
+        ? `Up and Down, drag, or the wheel: scroll (${this.top + 1} of ${this.lines.length})   Left and Right: section   J or Esc: close${hint}`
         : `Left and Right: section   J or Esc: close${hint}`,
     );
   }

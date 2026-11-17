@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { DEBUG_TOOLS } from "./core/debugtools";
 import { BedScene } from "./scenes/BedScene";
 import { BinScene } from "./scenes/BinScene";
 import { EndScene } from "./scenes/EndScene";
@@ -138,7 +139,7 @@ const game = new Phaser.Game({
     SpecialScene,
     ...PLACEHOLDER_TABS,
     // Dev builds only: Vite drops the debug menu from `npm run build`.
-    ...(import.meta.env.DEV ? [DebugScene] : []),
+    ...(DEBUG_TOOLS ? [DebugScene] : []),
     ProfessionScene,
     NameScene,
     ...Object.values(tests).filter((t) => !first.includes(t)),

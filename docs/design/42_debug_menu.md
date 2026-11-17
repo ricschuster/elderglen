@@ -21,8 +21,9 @@ developer tool, not a game feature, so there is no Stardew behaviour to match.
 
 ## Rules
 
-- **Dev builds only.** Gated on `import.meta.env.DEV`, like `farmGive` and
-  `farmDebug` today. Vite removes the branch in `npm run build`, so the menu
+- **Dev builds only.** Gated on `DEBUG_TOOLS` (`src/core/debugtools.ts`: `import.meta.env.DEV`, or
+  `VITE_DEBUG_TOOLS=1` for the "Elderglen DBG" tablet app, `docs/android.md`, 2026-11-17), like `farmGive` and
+  `farmDebug` today. Vite removes the branch in a normal `npm run build`, so the menu
   and its key cannot reach a shipped build. A test or a grep in the build check
   confirms the scene is absent from `dist/`.
 - **Never saves a flag.** Using it does not mark the save as cheated. It is not

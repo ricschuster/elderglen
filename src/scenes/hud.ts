@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { DEBUG_TOOLS } from "../core/debugtools";
 import { hasButtons } from "../core/controlschemes";
 import { heldAt, rowOf, TOOLBAR_SIZE, type Held } from "../core/toolbar";
 import { SLOT_COUNT } from "../core/inventory";
@@ -381,7 +382,7 @@ export class Hud {
       ])
         o.setVisible(false).disableInteractive();
     // Dev builds only: the debug menu's touch button (`42_debug_menu.md`).
-    if (onDebug && this.touch && import.meta.env.DEV) {
+    if (onDebug && this.touch && DEBUG_TOOLS) {
       const dbg = scene.add
         .rectangle(
           skills.x,
