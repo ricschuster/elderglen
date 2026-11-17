@@ -28,6 +28,9 @@ Open, top to bottom:
 4. **Built to shell level 2026-11-16, left the owner's look:** control schemes (note 27; only 1 and 9 are real, SC-188), marriage (note 12; SC-201 to 203), chests and tools (notes 34, 49, 101 to 103), sim (55 of 100 finished by day 112, no drift).
 5. **#951: play M3b end to end.** A checklist plus the stage jumper (note 42: 38 stages, `window.farmStage(name)`, `--stage` in playtests). **Directed play ran 2026-11-17** on desktop and on the tablet (agents; findings fixed in the session PR, handoff 2026-11-17). Left: the owner's own look, the Diamond rates are now read from the saved pages (SC-135 closed, note 83 decision 23, build with the shrine Diamond) and the touch checks the agents could not do (Big Chest and stick scheme by touch, health bar in the mines, a real gallery donation, the hot drink Take click). Tablet: `android:install -- --debug` gives the "Elderglen DBG" app (docs/android.md).
 
+Decided 2026-11-17: Hearthwell water stays all fishable (note 14); Import keeps the first empty slot, and the slot count should
+open past five later (note 52).
+
 Alongside: the wiki (#910, note 100; built for every category, every item has a picture; text cleared for crops, fish, forage, items, places and rooms; draft text left for bundles, recipes, people and five gem names; left: owner reads the draft text and clears flags, gift lists (`giftsDraft`), people prose with the voice sheets, hosting after M3d), Stardew checks rows (open: SC-188 only; the rest answered or closed as ours, on purpose, 2026-11-17). M4 hosting spike filed as #948.
 
 ## Milestone order (ADR 0012)
