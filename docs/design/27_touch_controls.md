@@ -181,7 +181,7 @@ agrees, the "guess" mark above is now a checked reading.
 
 ### Decided 2026-11-17 (owner): copy Stardew for schemes 4 and 1
 
-Not built yet.
+Built 2026-11-17: `tapDuration` and `tapIsAction` in `src/core/controlschemes.ts`, the equip pick in `src/core/autoattack.ts`; "last used weapon" is the last one swung this session, no hotbar highlight yet. Tapping an enemy for the secondary attack is not built.
 
 - **Scheme 4 uses the tap-duration rule.** No drawn button. A tap on the right half released under 0.25 s is
   Use; held over 0.25 s it is Action. The invisible stick keeps the left half. The `oneButton` part in
