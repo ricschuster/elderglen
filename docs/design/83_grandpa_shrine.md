@@ -89,11 +89,21 @@ all four. Nothing else changes in the game.
     A small share in the Cold Deeps (41 to 80, from floor 50) and a larger share in the Ember
     Deeps. "Rarer above 100" was the owner's wording for Stardew's pattern; the
     exact reading, and the rates, are open.
-23. **Rates follow Stardew's (owner, 2026-11-11), but they are not on the saved
-    pages.** The saved Mining page lists only experience per gem node, and the
-    saved Diamond page points to a lost book for the floor chances. Until
-    checked (SC-135), the placeholder is note 22's 0.5 percent per gem node and 0.2
-    percent per geode.
+23. **Rates follow Stardew's (owner, 2026-11-11), now read from the saved pages
+    (2026-11-17, SC-135).** The saved Mining, Quarry, Geodes and Diamond pages give:
+    - A separate **Diamond node** rock, from floor 50, at 0.20 percent of rocks (1 in 500) in
+      place of a stone, plus 0.0016 percent per floor after 50: 0.28 percent at floor 100,
+      0.3104 percent at floor 119. In the Quarry about 0.55 percent of what spawns is a Diamond node.
+    - A **monster drop** of 0.05 percent from any monster, only after the bottom of the mines
+      (plus 0.1 percent per difficulty level in the hard modes).
+    - **No geode source.** Geodes do not give Diamonds, so the 0.2 percent per geode
+      placeholder is dropped.
+    - Ordinary gem nodes give one of seven gems; the page gives no per gem odds (rate
+      "very small", raised a little by mining level and luck).
+    Ours: copy the three numbers above onto our floors (Diamond node 0.20 percent at floor
+    50 rising by 0.0016 percent a floor, monster 0.05 percent after the Ember Deeps boss floor,
+    no geode source). The Glimmerstone's 0.5 percent per gem node (note 22) is a different
+    item and stays. Build waits for the shrine Diamond (decision 21).
 24. **The Quarry gets a small gem node share, the deep dig a larger one (owner,
     2026-11-11).** Stardew lists both (saved Diamond page).
 
