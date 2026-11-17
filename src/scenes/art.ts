@@ -1959,6 +1959,20 @@ function paintChests(scene: Phaser.Scene): void {
     px(c, "#2a2a30", 7, 6, 2, 4);
     px(c, "#e8c050", 7, 7, 2, 2);
     px(c, "#fff0a0", 7, 7);
+    if (big) {
+      // Taller and studded, with a middle band and a gold crest, so the big
+      // chest reads differently from the plain one at icon size.
+      px(c, rim, x - 1, 1, w + 2, 3);
+      px(c, lid, x, 2, w, 2);
+      px(c, "#ffffff55", x, 2, w, 1);
+      px(c, band, 4, 2, 1, 12);
+      px(c, band, 11, 2, 1, 12);
+      px(c, "#e8c050", 2, 5);
+      px(c, "#e8c050", 13, 5);
+      px(c, "#e8c050", 2, 11);
+      px(c, "#e8c050", 13, 11);
+      px(c, "#e8c050", 6, 2, 4, 1);
+    }
     t.refresh();
   }
 }

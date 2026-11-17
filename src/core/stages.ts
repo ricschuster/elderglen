@@ -76,5 +76,7 @@ export function buildStage(
     random,
   );
   respawnAreaForage(state, random);
+  // The Orders Board intro would open over the first screen and swallow keys.
+  state.orders.opened = true;
   return { state, map, entry, problems };
 }

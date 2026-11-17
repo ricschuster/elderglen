@@ -12,7 +12,8 @@ import { Inventory } from "./inventory";
 import { LEVEL_XP, MAX_LEVEL, SKILLS, type Skill } from "./skills";
 import type { GameState } from "./save";
 import { setFlag } from "./worldflags";
-import { villagerById } from "./villagers";
+import { VILLAGERS, villagerById } from "./villagers";
+import { choose, optionsFor, pendingChoice } from "./professions";
 import type { Weather } from "./weather";
 import { WEATHERS } from "./weather";
 import type { Quality } from "./quality";
@@ -70,6 +71,10 @@ export interface StatePatch {
     stage?: "courting" | "engaged" | "married";
     children?: number;
   };
+  /** Meet everyone in the roster, so the Social tab shows names instead of "???". */
+  meetAll?: boolean;
+  /** Take the first option of every pending profession choice, so no prompt queues up on load. */
+  autoProfessions?: boolean;
   /** Fill the backpack with one of every item until it is full (after `items`). */
   fillPack?: boolean;
 }
@@ -156,6 +161,17 @@ export function applyStatePatch(g: GameState, p: StatePatch): PatchResult {
     }
   }
 
+  if (p.autoProfessions) {
+    for (
+      let s = pendingChoice(g.skills);
+      s !== undefined;
+      s = pendingChoice(g.skills)
+    ) {
+      const first = optionsFor(s, g.skills)[0];
+      if (!first || !choose(g.skills, s, first.id)) break;
+    }
+  }
+
   // A room only takes hand-ins once it is open, so go round until nothing more fits.
   const rooms = new Set(p.hallRooms ?? []);
   for (const r of rooms)
@@ -181,6 +197,8 @@ export function applyStatePatch(g: GameState, p: StatePatch): PatchResult {
   }
 
   for (const f of p.flags ?? []) setFlag(g, f);
+
+  if (p.meetAll) for (const v of VILLAGERS) g.friendship.meet(v.id);
 
   for (const [id, hearts] of Object.entries(p.hearts ?? {})) {
     if (!villagerById(id)) {

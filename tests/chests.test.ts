@@ -6,6 +6,7 @@ import {
   placeChest,
   pushChest,
   putIn,
+  swapsOnTap,
   takeOut,
 } from "../src/core/chests";
 import { canCraft, craft, haveCount } from "../src/core/crafting";
@@ -88,6 +89,16 @@ describe("chests", () => {
     expect(takeOut(g, c, "wood", 5)).toBe(5);
     expect(g.inventory.count("wood")).toBe(5);
     expect(g.inventory.count("parsnip@silver")).toBe(2);
+  });
+
+  it("swaps on tap only for a bigger chest over a smaller one", () => {
+    const g = newGame();
+    g.inventory.add("chest");
+    placeChest(g, farm, "farm", tile.x, tile.y, "chest");
+    expect(swapsOnTap(g, "farm", tile.x, tile.y, "big-chest")).toBe(true);
+    expect(swapsOnTap(g, "farm", tile.x, tile.y, "chest")).toBe(false);
+    expect(swapsOnTap(g, "farm", tile.x, tile.y, "parsnip")).toBe(false);
+    expect(swapsOnTap(g, "farm", tile.x + 5, tile.y, "big-chest")).toBe(false);
   });
 
   it("can only be picked up empty", () => {

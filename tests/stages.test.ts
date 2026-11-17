@@ -10,6 +10,28 @@ import { dateOf } from "../src/core/calendar";
 import { FESTIVALS } from "../src/core/festivals";
 import { applyStatePatch } from "../src/core/statepatch";
 import { newGame } from "../src/core/save";
+import { socialRows } from "../src/core/menupages";
+import { pendingChoice } from "../src/core/professions";
+
+describe("stage setup", () => {
+  it("marks the orders intro seen and meets the roster for marriage stages", () => {
+    const r = buildStage("married-child", () => 0)!;
+    expect(r.state.orders.opened).toBe(true);
+    expect(socialRows(r.state).every((x) => x.met)).toBe(true);
+  });
+
+  it("leaves no profession prompt pending at day 100", () => {
+    const r = buildStage("late-game-100", () => 0)!;
+    expect(pendingChoice(r.state.skills)).toBeUndefined();
+  });
+
+  it("starts the mines and market stages on their own maps", () => {
+    expect(buildStage("mines-30", () => 0)!.map).toBe("mine-30");
+    const m = buildStage("night-market-evening-1", () => 0)!;
+    expect(m.map).toBe("hearthwell");
+    expect(m.entry).toBe("from_cart-square");
+  });
+});
 
 const spots = Array.from({ length: 40 }, (_, i) => ({ x: i, y: 5 }));
 const never = () => 0;
