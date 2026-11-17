@@ -196,4 +196,3 @@ Not built yet.
   is remembered, and whether the equip shows a hotbar highlight.
 - **Left as is, for now:** the Show controls toggle and the fixed stick in schemes 5 to 9 (a floating ring);
   neither was asked about.
-

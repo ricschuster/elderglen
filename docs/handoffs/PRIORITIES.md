@@ -44,16 +44,16 @@ ending, M3d polish, then M5 and M6. Map areas (notes 71 to 78) are M3b.
 
 1. **Completion tracker (#196).** Built (PR #573). Left: real lines and art with the
    voice sheets, a browser look at the summit scene and layout.
-1. **Story spine.** Warden head (#177), sea elf (#176) and Rosmarin (#178) settled bar
+2. **Story spine.** Warden head (#177), sea elf (#176) and Rosmarin (#178) settled bar
    small items. The third community project (#5) waits for ring 2 (M5). Needed before
    slice 5 (note 33).
 2b. **Ancestors' shrine (note 83).** Left: the Diamond's name, art and drops (SC-135),
    the shrine tiles (farm layout; #776 is closed), scene shots, camp chest items (note 22).
 3. **Map areas (notes 71 to 78).** All built to shell level (#636 to #646, #649, #661).
    Left items are in each note's "Built status". Build detail is in the archive.
-2. **Art direction and audio plan.** Character art (note 15), hall rooms (#335),
+4. **Art direction and audio plan.** Character art (note 15), hall rooms (#335),
    placeholder swap, audio (#527).
-3. **Ring 2 shape and travel (#20, M5).** Parked until slice 3 is played.
+5. **Ring 2 shape and travel (#20, M5).** Parked until slice 3 is played.
 
 ## Layout and tiles track (note 81)
 
