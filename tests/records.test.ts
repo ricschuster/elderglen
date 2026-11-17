@@ -22,6 +22,7 @@ import {
   type KeyValue,
 } from "../src/core/slots";
 import { respawnAreaForage } from "../src/core/areas";
+import { ARTIFACT_AREAS } from "../src/core/artifacts";
 import { enterArea, leaveArea } from "../src/core/areas";
 import { DEFAULT_FARM_TYPE, farmTypeById } from "../src/core/farmtypes";
 import { maps } from "../src/content/maps";
@@ -133,12 +134,12 @@ describe("night and resume records", () => {
     expect(kv.data.has(resumeKey(1))).toBe(true);
   });
 
-  it("a record from a newer build is unreadable, not a crash", () => {
+  it("a record from a newer build is refused as newer, not a crash", () => {
     const kv = memory();
     const raw = JSON.parse(serialize(newGame()));
     raw.version = 99;
     kv.data.set(slotKey(1), JSON.stringify(raw));
-    expect(loadSlot(slotStores(kv, 1)).status).toBe("broken");
+    expect(loadSlot(slotStores(kv, 1)).status).toBe("newer");
   });
 });
 
@@ -484,3 +485,52 @@ const _store: RecordStore = {
 };
 const _stores: SlotStores = { night: _store, resume: _store, prev: _store };
 void _stores;
+
+describe("the day's artifact spots are stored", () => {
+  it("a load keeps them, a morning roll does not", () => {
+    const g = newGame();
+    respawnAreaForage(g, () => 0.99);
+    const spots = (s: typeof g) =>
+      Object.fromEntries(
+        ARTIFACT_AREAS.map((id) => [id, s.areas[id]!.spots.save()]),
+      );
+    const before = spots(g);
+    expect(Object.values(before).some((l) => l.length > 0)).toBe(true);
+    const back = deserialize(serialize(g))!;
+    expect(spots(back)).toEqual(before);
+    respawnAreaForage(back, () => 0.01, true);
+    expect(spots(back)).toEqual(before);
+    // The morning roll (no keepLoaded) draws again.
+    respawnAreaForage(back, () => 0.01);
+    expect(spots(back)).not.toEqual(before);
+  });
+});
+
+describe("a save from a newer version", () => {
+  const newer = (g = newGame()) =>
+    JSON.stringify({ ...JSON.parse(serialize(g)), version: 999 });
+
+  it("is refused with its own status, not 'broken'", () => {
+    const kv = memory({ [slotKey(1)]: newer() });
+    expect(loadSlot(slotStores(kv, 1))).toEqual({ status: "newer" });
+    expect(deserialize(newer())).toBeUndefined();
+  });
+
+  it("is never overwritten by this build", () => {
+    const text = newer();
+    const kv = memory({ [slotKey(1)]: text });
+    const stores = slotStores(kv, 1);
+    expect(saveNight(stores, newGame()).ok).toBe(false);
+    expect(saveResume(stores, newGame()).ok).toBe(false);
+    expect(kv.get(slotKey(1))).toBe(text);
+    expect(kv.get(resumeKey(1))).toBeNull();
+  });
+
+  it("a newer resume record alone also blocks play", () => {
+    const kv = memory({
+      [slotKey(1)]: serialize(newGame()),
+      [resumeKey(1)]: newer(),
+    });
+    expect(loadSlot(slotStores(kv, 1)).status).toBe("newer");
+  });
+});

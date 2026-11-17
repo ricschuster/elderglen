@@ -23,16 +23,12 @@ Decisions and built detail for sessions 7 to 10 (2026-11-12) are in `PRIORITIES_
 Open, top to bottom:
 
 1. **Owner answers left:** none. Decided 2026-11-13: garden pot is clay 1, stone 10 and a refined crystal (smelted quartz, Stardew), taught by Alder (built: smelt recipe, letter and craft recipe); Frostfin 300g, no bundle slot; Frostday cap is Icewarden's Cap (built); the hunt prize is the emberseed (built); aged roe quality closed. Algae soup is the glassy-elver's reward (note 93).
-2. **#873 heart events** (note 62): 150 events, all 30 villagers at 2, 4, 6, 8, 10 hearts; 4, 8 and 10 are placeholder text and rewards. Left: the owner's play, voice sheets and real text (M3d).
-3. **#878 Secret Woods** and **note 93** (ponds): built, left to tune in play; pond art placeholder.
-4. **#876 festivals:** the walk and joining are built for the green, hedge and the six in-place festivals (2026-11-16, note 82). Left: multiplayer counts (M4), the Night Market, hall-restored state in the Hearthwell square case, exit tiles, the owner's play.
-5. **Save split built 2026-11-16** (note 52): night and resume records, Restart this day, title line, export/import, stored forage. Left: browser check of resume, late-game size, tablet `persist()`, two-tab guard, artifact spots still rerolled, paper doll.
-6. **Gallery built to shell level 2026-11-16** (note 104, 95 items, free shelves, placeholder rewards, elderfruit 7). Left: the owner's look, touch scroll, display case, special order, librarian lines (M3d), Esc from Collections, `npm run wiki:images` for 25 new minerals.
-6b. **Control schemes built 2026-11-16** (note 27, nine on Options): only 1 and 9 are real, 2 to 8 are guesses (SC-188).
-6c. **Marriage** (note 12): re-dating an ex, ex visits and ex at weddings built 2026-11-16 (SC-201 to 203). Left: the owner's play, real lines and art (M3d), festival wedding scene, M4.
-6d. **Chests, tool pass, Social, quest cancel, Guide hours** built 2026-11-16 (notes 34, 49, 101, 102, 103). Left: the owner's browser and tablet look, real art and colours (M3d).
-6e. **Sim:** full expert run 2026-11-16: 55 of 100 finished by day 112 (median 96); `main` baseline was 56, so no drift. Left: the bot builds a silo only from day 100; playtest personas at `SPEED=2` one at a time.
-7. A browser look at everything built since the owner last played: hat picker, cart, herb stall, tapper, lights, rod, bombs, festival maps, tailoring, ponds, tea bush, woods creatures, even-year maze, and all of the above.
+2. **#876 festivals** (note 82, 14): walk and joining built for the green, hedge and six in-place festivals; the **Night Market built 2026-11-16** (stalls, hats, crowd, pier, market fish, float, hot drink; all placeholder art and lines). Left: hall-restored Feast (waits for the hall layout), exit tiles, multiplayer counts (M4), the owner's play.
+3. **Heart events** (#873, closed) and the **Secret Woods and ponds** (#878, closed) are built; real text, pond art and tuning are #950 (M3d).
+4. **Save split** (note 52, built 2026-11-16, with the two-tab guard, newer-version text and stored artifact spots): left a browser check of resume, late-game size, tablet `persist()`, the debug tab and Import with the guard, paper doll.
+5. **Gallery** (note 104, 95 items): left the owner's look, display case, special order, librarian lines (M3d).
+6. **Built to shell level 2026-11-16, left the owner's look:** control schemes (note 27; only 1 and 9 are real, SC-188), marriage (note 12; SC-201 to 203), chests and tools (notes 34, 49, 101 to 103), sim (55 of 100 finished by day 112, no drift).
+7. **#951: play M3b end to end.** A checklist plus the stage jumper (built, note 42: 38 stages, `window.farmStage(name)`, `--stage` in playtests). A browser look at everything built since the owner last played, including the Night Market, then SC-160 and SC-135 and the other open checks in play.
 
 Alongside: the wiki (#910, note 100; built for every category, every item has a picture; text cleared for crops, fish, forage, items, places and rooms; draft text left for bundles, recipes, people and five gem names; left: owner reads the draft text and clears flags, gift lists (`giftsDraft`), people prose with the voice sheets, hosting after M3d), Stardew checks rows (open: SC-122, 135, 160, 161, 170, 172, 184 to 203). M4 hosting spike filed as #948.
 

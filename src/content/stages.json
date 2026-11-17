@@ -1,0 +1,483 @@
+{
+  "note": "Named stages for the dev-only stage jumper (docs/design/42_debug_menu.md, Stages). Each is a StatePatch (src/core/statepatch.ts), optionally on top of a base stage. Not here yet because they need patch keys that do not exist: tool tiers, tailoring and hat pickers, pond and Secret Woods progress, the heart-event stories, an open festival state (inside the festival map).",
+  "stages": [
+    {
+      "id": "new-game",
+      "group": "Start",
+      "label": "New game (spring day 1)",
+      "patch": {}
+    },
+    {
+      "id": "day-28-first-bundle",
+      "group": "Start",
+      "label": "Spring day 28, first bundle filled",
+      "patch": {
+        "season": "spring",
+        "dayOfSeason": 28,
+        "weather": "sunny",
+        "hallBundles": ["spring-foraging"]
+      }
+    },
+    {
+      "id": "season-summer",
+      "group": "Start",
+      "label": "Summer day 1",
+      "patch": {
+        "season": "summer",
+        "weather": "sunny"
+      }
+    },
+    {
+      "id": "season-fall",
+      "group": "Start",
+      "label": "Fall day 1",
+      "patch": {
+        "season": "fall",
+        "weather": "sunny"
+      }
+    },
+    {
+      "id": "season-winter",
+      "group": "Start",
+      "label": "Winter day 1",
+      "patch": {
+        "season": "winter",
+        "weather": "sunny"
+      }
+    },
+    {
+      "id": "year-2-spring",
+      "group": "Start",
+      "label": "Spring day 1, year 2",
+      "patch": {
+        "season": "spring",
+        "year": 2,
+        "weather": "sunny"
+      }
+    },
+    {
+      "id": "hall-1",
+      "group": "Hall",
+      "label": "Hall rooms 1 to 1 done",
+      "patch": {
+        "season": "summer",
+        "dayOfSeason": 10,
+        "weather": "sunny",
+        "hallRooms": ["foragers-shelf"]
+      }
+    },
+    {
+      "id": "hall-2",
+      "group": "Hall",
+      "label": "Hall rooms 1 to 2 done",
+      "base": "hall-1",
+      "patch": {
+        "hallRooms": ["larder"]
+      }
+    },
+    {
+      "id": "hall-3",
+      "group": "Hall",
+      "label": "Hall rooms 1 to 3 done",
+      "base": "hall-2",
+      "patch": {
+        "hallRooms": ["water-room"]
+      }
+    },
+    {
+      "id": "hall-4",
+      "group": "Hall",
+      "label": "Hall rooms 1 to 4 done",
+      "base": "hall-3",
+      "patch": {
+        "hallRooms": ["hearth"]
+      }
+    },
+    {
+      "id": "hall-5",
+      "group": "Hall",
+      "label": "Hall rooms 1 to 5 done (the Last Seat is open)",
+      "base": "hall-4",
+      "patch": {
+        "hallRooms": ["guests-board"]
+      }
+    },
+    {
+      "id": "hall-6",
+      "group": "Hall",
+      "label": "Hall complete (all six rooms, Last Seat done)",
+      "base": "hall-5",
+      "patch": {
+        "hallRooms": ["last-seat"]
+      }
+    },
+    {
+      "id": "mines-30",
+      "group": "Mines",
+      "label": "Mines reached floor 30",
+      "patch": {
+        "season": "summer",
+        "dayOfSeason": 10,
+        "weather": "sunny",
+        "money": 3000,
+        "skills": {
+          "mining": 4,
+          "combat": 4,
+          "farming": 3
+        },
+        "minesDeepest": 30
+      }
+    },
+    {
+      "id": "mines-60",
+      "group": "Mines",
+      "label": "Mines reached floor 60",
+      "patch": {
+        "season": "summer",
+        "dayOfSeason": 10,
+        "weather": "sunny",
+        "money": 10000,
+        "skills": {
+          "mining": 7,
+          "combat": 7,
+          "farming": 6
+        },
+        "minesDeepest": 60
+      }
+    },
+    {
+      "id": "mines-100",
+      "group": "Mines",
+      "label": "Mines reached floor 100",
+      "patch": {
+        "season": "summer",
+        "dayOfSeason": 10,
+        "weather": "sunny",
+        "money": 30000,
+        "skills": {
+          "mining": 9,
+          "combat": 9,
+          "farming": 8
+        },
+        "minesDeepest": 100
+      }
+    },
+    {
+      "id": "courting",
+      "group": "Marriage",
+      "label": "Courting (bouquet given, 8 hearts)",
+      "patch": {
+        "season": "fall",
+        "dayOfSeason": 5,
+        "weather": "sunny",
+        "marriage": {
+          "spouse": "linnet",
+          "stage": "courting"
+        }
+      }
+    },
+    {
+      "id": "engaged",
+      "group": "Marriage",
+      "label": "Engaged (wedding in 3 days)",
+      "patch": {
+        "season": "fall",
+        "dayOfSeason": 5,
+        "weather": "sunny",
+        "marriage": {
+          "spouse": "linnet",
+          "stage": "engaged"
+        }
+      }
+    },
+    {
+      "id": "married",
+      "group": "Marriage",
+      "label": "Married, with the money for a divorce",
+      "patch": {
+        "season": "fall",
+        "dayOfSeason": 5,
+        "weather": "sunny",
+        "money": 60000,
+        "houseTier": 2,
+        "marriage": {
+          "spouse": "linnet"
+        }
+      }
+    },
+    {
+      "id": "married-child",
+      "group": "Marriage",
+      "label": "Married, one child",
+      "patch": {
+        "season": "fall",
+        "dayOfSeason": 5,
+        "weather": "sunny",
+        "money": 60000,
+        "marriage": {
+          "spouse": "linnet",
+          "children": 1
+        }
+      }
+    },
+    {
+      "id": "married-two-children",
+      "group": "Marriage",
+      "label": "Married, two children",
+      "patch": {
+        "season": "fall",
+        "dayOfSeason": 5,
+        "weather": "sunny",
+        "money": 60000,
+        "marriage": {
+          "spouse": "linnet",
+          "children": 2
+        }
+      }
+    },
+    {
+      "id": "hat-parade-eve",
+      "group": "Festivals",
+      "label": "Day before Hat Parade",
+      "patch": {
+        "season": "spring",
+        "dayOfSeason": 9,
+        "year": 1,
+        "weather": "sunny",
+        "money": 2000
+      }
+    },
+    {
+      "id": "seedswap-fair-eve",
+      "group": "Festivals",
+      "label": "Day before Seedswap Fair",
+      "patch": {
+        "season": "spring",
+        "dayOfSeason": 20,
+        "year": 1,
+        "weather": "sunny",
+        "money": 2000
+      }
+    },
+    {
+      "id": "cake-day-eve",
+      "group": "Festivals",
+      "label": "Day before Cake Day",
+      "patch": {
+        "season": "summer",
+        "dayOfSeason": 7,
+        "year": 1,
+        "weather": "sunny",
+        "money": 2000
+      }
+    },
+    {
+      "id": "lamplight-evening-eve",
+      "group": "Festivals",
+      "label": "Day before Lamplight Evening",
+      "patch": {
+        "season": "summer",
+        "dayOfSeason": 23,
+        "year": 1,
+        "weather": "sunny",
+        "money": 2000
+      }
+    },
+    {
+      "id": "harvest-showing-eve",
+      "group": "Festivals",
+      "label": "Day before Harvest Showing",
+      "patch": {
+        "season": "fall",
+        "dayOfSeason": 8,
+        "year": 1,
+        "weather": "sunny",
+        "money": 2000
+      }
+    },
+    {
+      "id": "hollow-eve-eve-odd",
+      "group": "Festivals",
+      "label": "Day before Hollow Eve, year 1 (small maze)",
+      "patch": {
+        "season": "fall",
+        "dayOfSeason": 20,
+        "year": 1,
+        "weather": "sunny",
+        "money": 2000
+      }
+    },
+    {
+      "id": "hollow-eve-eve-even",
+      "group": "Festivals",
+      "label": "Day before Hollow Eve, year 2 (large maze)",
+      "patch": {
+        "season": "fall",
+        "dayOfSeason": 20,
+        "year": 2,
+        "weather": "sunny",
+        "money": 2000
+      }
+    },
+    {
+      "id": "frostday-eve",
+      "group": "Festivals",
+      "label": "Day before Frostday",
+      "patch": {
+        "season": "winter",
+        "dayOfSeason": 7,
+        "year": 1,
+        "weather": "sunny",
+        "money": 2000
+      }
+    },
+    {
+      "id": "night-market-eve",
+      "group": "Festivals",
+      "label": "Day before the Winter Night Market",
+      "patch": {
+        "season": "winter",
+        "dayOfSeason": 15,
+        "year": 1,
+        "weather": "sunny",
+        "money": 2000
+      }
+    },
+    {
+      "id": "night-market-evening-1",
+      "group": "Festivals",
+      "label": "Winter Night Market, evening 1 (5 pm)",
+      "patch": {
+        "season": "winter",
+        "dayOfSeason": 16,
+        "year": 1,
+        "weather": "sunny",
+        "money": 2000,
+        "minutes": 1020
+      }
+    },
+    {
+      "id": "night-market-evening-2",
+      "group": "Festivals",
+      "label": "Winter Night Market, evening 2 (5 pm)",
+      "patch": {
+        "season": "winter",
+        "dayOfSeason": 17,
+        "year": 1,
+        "weather": "sunny",
+        "money": 2000,
+        "minutes": 1020
+      }
+    },
+    {
+      "id": "night-market-evening-3",
+      "group": "Festivals",
+      "label": "Winter Night Market, evening 3 (5 pm)",
+      "patch": {
+        "season": "winter",
+        "dayOfSeason": 18,
+        "year": 1,
+        "weather": "sunny",
+        "money": 2000,
+        "minutes": 1020
+      }
+    },
+    {
+      "id": "midwinter-feast-eve",
+      "group": "Festivals",
+      "label": "Day before Midwinter Feast",
+      "patch": {
+        "season": "winter",
+        "dayOfSeason": 24,
+        "year": 1,
+        "weather": "sunny",
+        "money": 2000
+      }
+    },
+    {
+      "id": "fishing-reed-pole",
+      "group": "Fishing",
+      "label": "Fishing with the Reed Pole (fishing level 1)",
+      "patch": {
+        "season": "spring",
+        "dayOfSeason": 3,
+        "weather": "sunny",
+        "skills": {
+          "fishing": 1
+        },
+        "items": {
+          "reed-pole": 1
+        }
+      }
+    },
+    {
+      "id": "fishing-hazel-rod",
+      "group": "Fishing",
+      "label": "Fishing with the Hazel Rod (fishing level 3)",
+      "patch": {
+        "season": "summer",
+        "dayOfSeason": 1,
+        "weather": "sunny",
+        "skills": {
+          "fishing": 3
+        },
+        "items": {
+          "hazel-rod": 1
+        }
+      }
+    },
+    {
+      "id": "fishing-heron-rod",
+      "group": "Fishing",
+      "label": "Fishing with the Heron Rod (fishing level 6)",
+      "patch": {
+        "season": "fall",
+        "dayOfSeason": 1,
+        "weather": "sunny",
+        "skills": {
+          "fishing": 6
+        },
+        "items": {
+          "heron-rod": 1
+        }
+      }
+    },
+    {
+      "id": "fishing-hearthwell-rod",
+      "group": "Fishing",
+      "label": "Fishing with the Hearthwell Rod (fishing level 9)",
+      "patch": {
+        "season": "winter",
+        "dayOfSeason": 1,
+        "weather": "sunny",
+        "skills": {
+          "fishing": 9
+        },
+        "items": {
+          "hearthwell-rod": 1
+        }
+      }
+    },
+    {
+      "id": "late-game-100",
+      "group": "Late game",
+      "label": "Day 100, full pack, hall done, all skills 8",
+      "base": "hall-6",
+      "patch": {
+        "day": 100,
+        "weather": "sunny",
+        "money": 100000,
+        "houseTier": 3,
+        "skills": {
+          "farming": 8,
+          "foraging": 8,
+          "mining": 8,
+          "fishing": 8,
+          "combat": 8
+        },
+        "minesDeepest": 60,
+        "fillPack": true
+      }
+    }
+  ]
+}

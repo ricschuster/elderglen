@@ -286,16 +286,15 @@ export function counterName(e: CounterEntry): string {
   return e.count && e.count > 1 ? `${e.count} ${name.toLowerCase()}` : name;
 }
 
-/** Why the player cannot buy this counter line now, or undefined if they can. */
-export function counterProblem(
+/**
+ * Why the player cannot take this counter line now, or undefined if they can:
+ * the checks that hold at any counter (festival or market stall), not whether
+ * the line is on sale or whether a festival was joined.
+ */
+export function entryProblem(
   g: GameState,
-  f: Festival,
   e: CounterEntry,
 ): string | undefined {
-  if (!counterOf(f, dateOf(g.day.clock.day).year).includes(e))
-    return "That is not on sale here.";
-  if (!g.festivalsJoined.includes(joinKey(f, g.day.clock.day)))
-    return "Go to the festival first.";
   if (e.hat && g.wardrobe.has(e.hat)) return "You already have that hat.";
   if (e.recipe && hasFlag(g, recipeFlag(e.recipe)))
     return "You already know that recipe.";
@@ -310,13 +309,8 @@ export function counterProblem(
   return undefined;
 }
 
-/** Buy a counter line. Returns false (nothing changed) if it cannot be bought. */
-export function buyAtCounter(
-  g: GameState,
-  f: Festival,
-  e: CounterEntry,
-): boolean {
-  if (counterProblem(g, f, e) !== undefined) return false;
+/** Hand over a counter line and take its price. Returns false (nothing changed) if the pack has no room. */
+export function takeEntry(g: GameState, e: CounterEntry): boolean {
   if (e.hat) g.wardrobe.add(e.hat);
   else if (e.recipe) setFlag(g, recipeFlag(e.recipe));
   else if (e.item && !g.inventory.add(e.item, e.count ?? 1)) return false;
@@ -325,6 +319,29 @@ export function buyAtCounter(
   if (e.once) setFlag(g, e.once);
   if (e.item === ELDERFRUIT) absorbElderfruit(g);
   return true;
+}
+
+/** Why the player cannot buy this counter line now, or undefined if they can. */
+export function counterProblem(
+  g: GameState,
+  f: Festival,
+  e: CounterEntry,
+): string | undefined {
+  if (!counterOf(f, dateOf(g.day.clock.day).year).includes(e))
+    return "That is not on sale here.";
+  if (!g.festivalsJoined.includes(joinKey(f, g.day.clock.day)))
+    return "Go to the festival first.";
+  return entryProblem(g, e);
+}
+
+/** Buy a counter line. Returns false (nothing changed) if it cannot be bought. */
+export function buyAtCounter(
+  g: GameState,
+  f: Festival,
+  e: CounterEntry,
+): boolean {
+  if (counterProblem(g, f, e) !== undefined) return false;
+  return takeEntry(g, e);
 }
 
 /** The entry on every farm map where the player stands again after a festival map. */

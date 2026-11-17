@@ -30,7 +30,12 @@ import { paintCropStage, paintSeedPacket } from "./art-crops";
 import { paintCreatures } from "./art-creatures";
 import { paintToolIcons as paintToolPictures } from "./art-tools";
 import { FISH_LOOKS, fishKey, paintFish } from "./art-fish";
-import { GOOD_LOOKS, goodKey, paintGoods } from "./art-goods";
+import {
+  GOOD_LOOKS,
+  MARKET_FISH_LOOKS,
+  goodKey,
+  paintGoods,
+} from "./art-goods";
 import {
   MELON_KEY,
   PRIZE_MELON,
@@ -2381,7 +2386,8 @@ export function iconKey(itemId: string): string | undefined {
   const sapling = treeOfSapling(base);
   if (sapling) return saplingIconKey(sapling.id);
   if (fruitTreeById(base)) return `icon-${base}`;
-  if (base === "frostfin" || GOOD_LOOKS[base]) return goodKey(base);
+  if (base === "frostfin" || MARKET_FISH_LOOKS[base] || GOOD_LOOKS[base])
+    return goodKey(base);
   const category = categoryOf(base);
   if (category) return `icon-artisan-${category}`;
   if (MINE_ICON_IDS.includes(base)) return `icon-${base}`;

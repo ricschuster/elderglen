@@ -75,6 +75,7 @@ const SERVICES: Record<string, string> = {
   festival: "Village Green",
   "festival-leave": "Way Home",
   "cake-table": "Cake Table",
+  "market-stall": "Market Stall",
   "hedge-chest": "Chest",
   "hedge-cart": "Cart Home",
   cart: "Cart",

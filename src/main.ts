@@ -6,6 +6,7 @@ import { HeartEventScene } from "./scenes/HeartEventScene";
 import { SummitScene } from "./scenes/SummitScene";
 import { FarmScene } from "./scenes/FarmScene";
 import { FestivalScene } from "./scenes/FestivalScene";
+import { MarketScene } from "./scenes/MarketScene";
 import { HallScene } from "./scenes/HallScene";
 import { ProfessionScene } from "./scenes/ProfessionScene";
 import { ReportScene } from "./scenes/ReportScene";
@@ -59,6 +60,7 @@ import { GuideScene } from "./scenes/GuideScene";
 import { MailScene } from "./scenes/MailScene";
 import { centreMenus, UI_SIZE_KEY, WORLD_ZOOM_KEY } from "./scenes/panel";
 import { loadDeviceSettings } from "./scenes/storage";
+import { installTabGuard } from "./scenes/tabguard";
 
 // Throwaway test scenes, opened first with ?scene=witch or ?scene=witchwalk.
 const tests = { witch: WitchTestScene, witchwalk: WitchWalkScene };
@@ -118,6 +120,7 @@ const game = new Phaser.Game({
     FishingScene,
     HallScene,
     FestivalScene,
+    MarketScene,
     EndScene,
     SummitScene,
     HeartEventScene,
@@ -148,3 +151,4 @@ const settings = loadDeviceSettings();
 game.registry.set(WORLD_ZOOM_KEY, settings.worldZoom);
 game.registry.set(UI_SIZE_KEY, settings.uiSize);
 centreMenus(game, ["farm"]);
+installTabGuard(game);

@@ -1,0 +1,69 @@
+{
+  "_note": "Winter Night Market pier (note 14, attractions 5 and 6; note 21). Every number is a placeholder to tune in play. Times are minutes since midnight.",
+  "festival": "night-market",
+  "permitPrice": 1000,
+  "closesAt": 1380,
+  "nightMinute": 1200,
+  "pier": {
+    "x": 63,
+    "y": [65, 69],
+    "keeper": { "x": 63, "y": 64 },
+    "tip": { "x": 63, "y": 70 }
+  },
+  "marketFishChance": 0.35,
+  "pearlChance": 0.005,
+  "pearl": { "id": "pearl", "name": "Pearl", "sellPrice": 500 },
+  "luckRare": 2,
+  "float": { "price": 50 },
+  "drink": { "energy": 40 },
+  "fish": [
+    {
+      "id": "lamp-minnow",
+      "name": "Lamp Minnow",
+      "rarity": "common",
+      "behaviour": "dart",
+      "difficulty": 30,
+      "sellPrice": 120,
+      "length": [6, 14]
+    },
+    {
+      "id": "frostveil",
+      "name": "Frostveil",
+      "rarity": "uncommon",
+      "behaviour": "floater",
+      "difficulty": 55,
+      "sellPrice": 400,
+      "length": [30, 70]
+    },
+    {
+      "id": "midnight-gar",
+      "name": "Midnight Gar",
+      "rarity": "rare",
+      "behaviour": "sinker",
+      "difficulty": 70,
+      "sellPrice": 650,
+      "length": [60, 140]
+    },
+    {
+      "id": "hush-lantern",
+      "name": "Hush Lantern",
+      "rarity": "rare",
+      "behaviour": "smooth",
+      "difficulty": 75,
+      "sellPrice": 800,
+      "length": [25, 55]
+    }
+  ],
+  "lines": {
+    "noPermit": "The pier keeper holds up a hand. Fishing from the lit pier needs a permit, 1000g for the evening.",
+    "closed": "The pier closes at 23:00. The lanterns are being taken in.",
+    "shut": "The pier is only open on the market evenings.",
+    "sold": "The keeper tears a ticket. The permit is good until the pier closes at 23:00.",
+    "have": "You already hold tonight's permit.",
+    "poor": "You cannot afford a permit.",
+    "floatDone": "You have already floated your lantern tonight.",
+    "floated": "The keeper lights a paper lantern and sets it on the water. May the river be kind to you tonight.",
+    "drink": "A hot drink, free for the evening. You feel warm again.",
+    "drinkDone": "You have had your hot drink tonight."
+  }
+}

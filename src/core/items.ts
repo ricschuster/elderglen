@@ -38,6 +38,7 @@ import {
 import decorData from "../content/decor.json";
 import creatureGoods from "../content/creature-goods.json";
 import iceFishing from "../content/ice-fishing.json";
+import marketPier from "../content/market-pier.json";
 import lanternFloat from "../content/lantern-float.json";
 import weaponData from "../content/weapons.json";
 import furnitureData from "../content/furniture.json";
@@ -321,6 +322,10 @@ items.set(iceFishing.frostfin.id, {
   name: iceFishing.frostfin.name,
   sellPrice: iceFishing.frostfin.sellPrice,
 });
+/** The Night Market pier's fish and pearl (note 14), kept out of `fish.json` like the Frostfin. */
+for (const f of marketPier.fish)
+  items.set(f.id, { id: f.id, name: f.name, sellPrice: f.sellPrice });
+items.set(marketPier.pearl.id, { ...marketPier.pearl });
 items.set(lanternFloat.keepsake.id, {
   id: lanternFloat.keepsake.id,
   name: lanternFloat.keepsake.name,
@@ -632,6 +637,8 @@ const GROUPS: [string, string[]][] = [
       ]),
       { id: POT_ITEM },
       { id: iceFishing.frostfin.id },
+      ...marketPier.fish,
+      { id: marketPier.pearl.id },
     ].map((f) => f.id),
   ],
   [

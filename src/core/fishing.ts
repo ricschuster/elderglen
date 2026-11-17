@@ -2,6 +2,7 @@ import fishData from "../content/fish.json";
 import potData from "../content/pots.json";
 import rodData from "../content/rods.json";
 import tableData from "../content/fish-tables.json";
+import marketPier from "../content/market-pier.json";
 import { dateOf, type Season } from "./calendar";
 import { NIGHTFALL } from "./clock";
 import { withQuality, type Quality } from "./quality";
@@ -690,7 +691,12 @@ export class FishLog {
     const caught = (raw as Partial<FishingSave>).caught;
     if (typeof caught !== "object" || caught === null) return;
     for (const [id, r] of Object.entries(caught)) {
-      if (!fishById(id) || typeof r !== "object" || r === null) continue;
+      if (
+        !(fishById(id) || marketPier.fish.some((f) => f.id === id)) ||
+        typeof r !== "object" ||
+        r === null
+      )
+        continue;
       const { count, longest } = r as Partial<FishRecord>;
       if (
         typeof count === "number" &&

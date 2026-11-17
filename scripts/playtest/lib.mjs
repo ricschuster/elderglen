@@ -143,6 +143,22 @@ export const TABLET = {
   isMobile: true,
 };
 
+/** The stage asked for with `--stage <name>` or the STAGE variable, if any. */
+export function stageArg() {
+  const i = process.argv.indexOf("--stage");
+  return (i > 0 ? process.argv[i + 1] : process.env.STAGE) || undefined;
+}
+
+/** Put the game at a named stage (`window.farmStage`, dev build) and wait for the scene to restart. */
+export async function toStage(p, name) {
+  const r = await p.evaluate((n) => window.farmStage?.(n), name);
+  if (!r) throw new Error(`no farmStage hook (dev build, farm scene up?)`);
+  if (r.problems.length)
+    throw new Error(`stage ${name}: ${r.problems.join("; ")}`);
+  await sleepMs(800);
+  return r;
+}
+
 export async function launch({
   fresh,
   context,
@@ -216,6 +232,9 @@ export async function launch({
     .join("&");
   await p.goto(GAME_URL + (q ? `?${q}` : ""));
   await sleepMs(1500);
+  // `--stage <name>` or STAGE=<name>: start at a named stage (docs/design/42_debug_menu.md).
+  const stage = stageArg();
+  if (stage) await toStage(p, stage);
   return { b, p, errs };
 }
 

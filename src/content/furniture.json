@@ -428,5 +428,40 @@
     "price": 120,
     "color": "#b89146",
     "keepsake": true
+  },
+  {
+    "id": "lantern-string",
+    "name": "Lantern string",
+    "price": 500,
+    "color": "#f0c050",
+    "festival": true
+  },
+  {
+    "id": "frost-glass-candle",
+    "name": "Frost-glass candle",
+    "price": 600,
+    "color": "#c8e4f0",
+    "festival": true
+  },
+  {
+    "id": "pine-garland",
+    "name": "Pine garland",
+    "price": 700,
+    "color": "#2a6a3a",
+    "festival": true
+  },
+  {
+    "id": "sleigh-bench",
+    "name": "Sleigh bench",
+    "price": 1000,
+    "color": "#8a3a2a",
+    "festival": true
+  },
+  {
+    "id": "market-fireplace",
+    "name": "Market fireplace",
+    "price": 15000,
+    "color": "#c8602a",
+    "festival": true
   }
 ]

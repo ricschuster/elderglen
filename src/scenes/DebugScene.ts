@@ -11,6 +11,7 @@ import {
   setWeather,
   stepHouseTier,
 } from "../core/debug";
+import { stageList } from "../core/stages";
 import { allItems, ITEM_GROUPS } from "../core/items";
 import { QUALITIES, withQuality, type Quality } from "../core/quality";
 import { frame, Menu, type Row } from "./panel";
@@ -27,6 +28,10 @@ export class DebugScene extends Phaser.Scene {
   private money!: Phaser.GameObjects.Text;
   private message!: Phaser.GameObjects.Text;
   private picker = false;
+  /** The stage list is open (`core/stages.ts`), a second picker. */
+  private stages = false;
+  /** The stage group open on the stage list, or undefined on the group list. */
+  private stageGroup: string | undefined;
   /** The item group open in the picker, or undefined on the group list. */
   private group: string | undefined;
   private quality: Quality = "normal";
@@ -38,6 +43,8 @@ export class DebugScene extends Phaser.Scene {
   init(): void {
     this.state = this.registry.get(STATE_KEY) as GameState;
     this.picker = false;
+    this.stages = false;
+    this.stageGroup = undefined;
     this.group = undefined;
     this.quality = "normal";
   }
@@ -65,6 +72,14 @@ export class DebugScene extends Phaser.Scene {
 
   /** Esc: leave the item picker, or close the menu from the top list. */
   private back(): void {
+    if (this.stages) {
+      if (this.stageGroup !== undefined) this.stageGroup = undefined;
+      else this.stages = false;
+      this.menu.cursor = 0;
+      this.message.setText("");
+      this.refresh();
+      return;
+    }
     if (this.picker && this.group !== undefined) {
       this.group = undefined;
       this.menu.cursor = 0;
@@ -90,7 +105,13 @@ export class DebugScene extends Phaser.Scene {
   private refresh(): void {
     const g = this.state;
     this.money.setText(`Money ${g.money}g`);
-    this.menu.setRows(this.picker ? this.pickerRows() : this.toolRows());
+    this.menu.setRows(
+      this.stages
+        ? this.stageRows()
+        : this.picker
+          ? this.pickerRows()
+          : this.toolRows(),
+    );
   }
 
   private toolRows(): Row[] {
@@ -137,6 +158,21 @@ export class DebugScene extends Phaser.Scene {
             text: "Open",
             run: () => {
               this.picker = true;
+              this.menu.cursor = 0;
+              this.message.setText("");
+              this.refresh();
+            },
+          },
+        ],
+      },
+      {
+        label: "Stages",
+        detail: "a new game at a named point (plays in slot 5)",
+        buttons: [
+          {
+            text: "Open",
+            run: () => {
+              this.stages = true;
               this.menu.cursor = 0;
               this.message.setText("");
               this.refresh();
@@ -255,6 +291,44 @@ export class DebugScene extends Phaser.Scene {
       detail: `held ${g.inventory.count(id)}`,
       buttons: [give(10), give(100), give(500)],
     };
+  }
+
+  /** Stage groups, then the stages of one group. Picking one starts a new game there (`window.farmStage`). */
+  private stageRows(): Row[] {
+    if (this.stageGroup === undefined) {
+      return [...new Set(stageList().map((s) => s.group))].map((name) => ({
+        label: name,
+        detail: `${stageList().filter((s) => s.group === name).length} stages`,
+        buttons: [
+          {
+            text: "Open",
+            run: () => {
+              this.stageGroup = name;
+              this.menu.cursor = 0;
+              this.say("");
+            },
+          },
+        ],
+      }));
+    }
+    return stageList()
+      .filter((s) => s.group === this.stageGroup)
+      .map((s) => ({
+        label: s.label,
+        detail: s.id,
+        buttons: [
+          {
+            text: "Go",
+            run: () => {
+              this.scene.stop();
+              this.scene.resume("farm");
+              (
+                window as unknown as { farmStage: (n: string) => unknown }
+              ).farmStage(s.id);
+            },
+          },
+        ],
+      }));
   }
 
   private pickerRows(): Row[] {

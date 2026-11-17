@@ -378,5 +378,50 @@
     "id": "wren-ribbon",
     "name": "Wren's Ribbon",
     "color": "#bf8358"
+  },
+  {
+    "id": "cove-dusk-cap",
+    "name": "Cove Dusk Cap",
+    "color": "#4a5f8a"
+  },
+  {
+    "id": "summit-lamp-hat",
+    "name": "Summit Lamp Hat",
+    "color": "#d8a050"
+  },
+  {
+    "id": "mine-mouth-hood",
+    "name": "Mine Mouth Hood",
+    "color": "#5a5048"
+  },
+  {
+    "id": "snowbound-hall-cap",
+    "name": "Snowbound Hall Cap",
+    "color": "#d8dde8"
+  },
+  {
+    "id": "lakeside-reed-hat",
+    "name": "Lakeside Reed Hat",
+    "color": "#a8a05a"
+  },
+  {
+    "id": "marsh-heron-hat",
+    "name": "Marsh Heron Hat",
+    "color": "#7a98a8"
+  },
+  {
+    "id": "bridgewright-cap",
+    "name": "Bridgewright Cap",
+    "color": "#8a6a4a"
+  },
+  {
+    "id": "square-festival-hat",
+    "name": "Square Festival Hat",
+    "color": "#c8503a"
+  },
+  {
+    "id": "far-road-hat",
+    "name": "Far Road Hat",
+    "color": "#6a3a7a"
   }
 ]

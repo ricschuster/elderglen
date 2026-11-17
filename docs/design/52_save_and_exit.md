@@ -111,10 +111,27 @@ written together, so they share a version.
   the record kind and the player's tile; the dirty flag is a comparison of the
   serialized state with the last write (`ResumeGate`), so no `render()` hook is
   needed; Import fills the first empty slot instead of asking which slot
-  (all five used: delete one first); the two-tab check on `savedAt` and the
-  "from a newer version" card text are not built; the card shows the second
-  line at 58 px spacing 64 (the heading stayed). Artifact spots are still
-  rolled again on Continue (they are not stored yet).
+  (all five used: delete one first); the card shows the second
+  line at 58 px spacing 64 (the heading stayed). The two-tab guard, the
+  "from a newer version" card text and stored artifact spots were built later
+  the same day (next entry).
+- Loose ends built 2026-11-16 (small points decided here):
+  - Artifact spots are stored per area (`spots` beside `forage` in `areas[id]`)
+    and `respawnAreaForage(g, random, true)` keeps a loaded list, so Continue
+    no longer rerolls them. Saves without the field roll once on load.
+  - Newer version: `isNewerSave` (version above `SAVE_VERSION`). `loadSlot`
+    returns `{ status: "newer" }` if either record is newer; the title card says
+    "saved by a newer version of the game", offers only Delete, and `saveNight`
+    and `saveResume` refuse to overwrite a newer night record.
+  - Two-tab guard: a lock in storage (`elderglen-tab-lock`, `{ id, at }`)
+    refreshed every 3 s (`src/core/tabguard.ts`, `src/scenes/tabguard.ts`). It
+    uses a heartbeat, not the `savedAt` comparison the table below proposed,
+    because it also catches a second tab that only reads. A fresh lock from
+    another tab blocks this one (stale after 10 s): the game sleeps behind a
+    cover, saves are refused, and "Play here instead" takes the lock and
+    reloads the page so it starts from the saved state. The other tab is blocked
+    at its next beat. A blocked tab stays blocked until the player chooses.
+  - Esc closes only the top screen (`src/scenes/escape.ts`, menu and gallery).
 - Size, measured 2026-11-16: a new game with forage written is 61 KB of JSON
   (the area worlds dominate). Three records a slot (night, resume, previous
   night) at five slots is under 1 MB of the 5 MB origin budget. A late-game
@@ -145,7 +162,7 @@ Design only. Written against the code as of 2026-11-16: one record per slot,
   `HallScene`, `HeartEventScene`, `SummitScene`, `ChildAskScene` and
   `EndScene` (new game). Under the split each must say which record it writes.
 - `TitleScene.begin()` calls `state.forage.respawn` and `respawnAreaForage` on
-  every Continue, so the forage field rerolls on each load. The forage fields
+  every Continue, so the forage field rerolls on each load (artifact spots no longer do, see "Loose ends built 2026-11-16"). The forage fields
   (`GameState.forage`, and `areas[id].forage`) are not in `SaveData`.
 - `KeyValue.set` swallows failures, so no caller can tell a write failed.
 - The player's tile is not saved. Only `resumeMap` is, and only for the cellar
@@ -362,9 +379,9 @@ by Exit or a menu mid-day, so their clock is not the morning.
 | Both unreadable | Card "could not be read" as today, with Delete |
 | Night write refused or over quota | Notice once; the game goes on; the resume is cleared only if the night write worked, so an old resume is never left paired with a failed night |
 | Resume write refused | Notice once; the day plays on unsaved |
-| Two tabs on one slot | Last write wins, as today. A tab whose loaded `savedAt` is older than the stored one, checked when it becomes visible again, shows "This game was changed in another window" and stops writing |
+| Two tabs on one slot | (Built 2026-11-16 as a heartbeat lock, not `savedAt`; see "Loose ends built".) Last write wins, as today. A tab whose loaded `savedAt` is older than the stored one, checked when it becomes visible again, shows "This game was changed in another window" and stops writing |
 | Private window, storage disabled | `set` returns false; the notice shows once |
-| Save from a newer build | `deserialize` refuses as now; the card should say "from a newer version" rather than "could not be read", which needs `deserialize` to return a reason |
+| Save from a newer build | (Built 2026-11-16.) `deserialize` refuses as now; the card should say "from a newer version" rather than "could not be read", which needs `deserialize` to return a reason |
 | Reload during the report | The report is skipped; the new day is already saved |
 | Page hidden while `day.over` | No write |
 
@@ -428,4 +445,4 @@ Still open:
 - Import asks no slot question yet (first empty slot); add the pick and the
   replace confirm if the owner wants them.
 - The installed app's file path for Export (ADR 0008).
-- Two-tab guard on `savedAt`, and the "from a newer version" card text.
+- Two-tab guard and "newer version" text: built 2026-11-16 (heartbeat lock). Left: the debug menu may open a second tab, and Import does not use the guard.

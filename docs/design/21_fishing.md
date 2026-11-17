@@ -812,3 +812,19 @@ Bundles 13 to 18 are in `src/content/bundles.json`, room `water-room`, and finis
 - The sim bot does not fish, so the six are in `UNPLAYED_BUNDLES`.
 - **Not built:** the warp totem's use. (Issue #596 is closed; the legends and the
   crown, water plants, trash and the recycler, and ring slots were built later.)
+
+### Market-only fish: built status (Night Market pier)
+
+The four pier fish (Lamp Minnow, Frostveil, Midnight Gar, Hush Lantern) and the
+pearl are built: `src/core/marketpier.ts`, `src/content/market-pier.json`,
+`tests/marketpier.test.ts`. Like the Frostfin they are kept out of `fish.json`,
+so no bundle, normal tracker list or other water offers them; each is an item,
+is recorded in the fishing log (so a catch counts for the collection and the
+catch total) and survives a save. `FishingScene` takes a `pier` flag from
+`FarmScene.cast`: on a pier tile with a permit the river table is drawn at the
+night odds (20:00, 17:00 to 23:00 in effect), then a market fish replaces a fish
+bite 35 in 100 times, weighted by rarity (common 6, uncommon 3, rare 1), and a
+pearl (500g, placeholder) turns up on 1 catch in 200. All numbers are
+placeholders. The float's luck buff doubles the rare-bite weight on any cast
+until morning: a placeholder, and the only reader (no wider luck system; the
+forage and geode rolls do not read it).

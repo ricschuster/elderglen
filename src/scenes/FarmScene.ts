@@ -112,7 +112,19 @@ import {
 } from "../core/festivals";
 import { nicheLine, openChest } from "../core/maze";
 import { rodById, waterAhead } from "../core/fishing";
+import {
+  PIER_FLOAT_KIND,
+  PIER_LINES,
+  PIER_KEEPER_KIND,
+  buyPermit,
+  floatLantern,
+  floatProblem,
+  isPierCast,
+  permitProblem,
+  pierCastProblem,
+} from "../core/marketpier";
 import { festivalHolds } from "../core/festivalroutes";
+import { marketHolds, stallOf } from "../core/nightmarket";
 import { holdsOf } from "../core/worldflags";
 import { gateOpen, gateShutLine, parseGate } from "../core/gates";
 import { mendTideBridge, TIDE_BRIDGE_WOOD } from "../core/tidebridge";
@@ -211,10 +223,13 @@ import {
   resumeSave,
   setSpotProvider,
   takeSaveNotice,
+  useSlot,
 } from "./storage";
 import { ResumeGate } from "../core/records";
 import { serialize, type ResumeSpot } from "../core/save";
 import { spawnTableOf } from "../core/spawns";
+import { SLOT_COUNT } from "../core/slots";
+import { buildStage, stageList } from "../core/stages";
 import { hallRestored } from "../core/bundles";
 import {
   healthShown,
@@ -642,6 +657,8 @@ export class FarmScene extends Phaser.Scene {
     // A festival day shows its layout on the map (note 82).
     for (const h of festivalHolds(day, hallRestored(this.state.hall)))
       holds.add(h);
+    // The Winter Night Market's stalls stand all three days (note 14).
+    for (const h of marketHolds(day)) holds.add(h);
     this.map = mineLayout
       ? FarmMap.fromTiled(json)
       : maps.getWith(id, holds, this.tier);
@@ -1015,6 +1032,22 @@ export class FarmScene extends Phaser.Scene {
         this.scene.restart(data);
         return result;
       };
+    // Dev hook (note 42, Stages): put a NEW game at a named stage, in the last
+    // save slot so no real save is overwritten, and restart the scene.
+    if (import.meta.env.DEV) {
+      const w = window as unknown as Record<string, unknown>;
+      w.farmStages = () => stageList().map((s) => s.id);
+      w.farmStage = (name: string) => {
+        const r = buildStage(name);
+        if (!r) return { problems: [`unknown stage ${name}`] };
+        useSlot(SLOT_COUNT);
+        this.registry.set(STATE_KEY, r.state);
+        this.scene.restart(
+          r.map ? { map: r.map, entry: r.entry ?? "door" } : undefined,
+        );
+        return { problems: r.problems };
+      };
+    }
     // Dev hook for the playtest bot: an item's display name, to find its row
     // in a shop list by label.
     if (import.meta.env.DEV)
@@ -2677,7 +2710,14 @@ export class FarmScene extends Phaser.Scene {
       this.message = "The lake opens at noon.";
       return this.render();
     }
-    this.open("fishing", { rod: rodId, water, at: here, kind, ice });
+    // The Night Market pier needs a permit and closes at 23:00 (note 14).
+    const pierProblem = pierCastProblem(this.state, here.x, here.y);
+    if (pierProblem) {
+      this.message = pierProblem;
+      return this.render();
+    }
+    const pier = isPierCast(this.state, here.x, here.y);
+    this.open("fishing", { rod: rodId, water, at: here, kind, ice, pier });
   }
 
   /**
@@ -2708,6 +2748,8 @@ export class FarmScene extends Phaser.Scene {
       if (sid) this.state.guide.visitShop(sid);
     }
     if (service?.kind === CART_KIND) return this.rideCart(service.id);
+    if (service?.kind === "market-stall" && stallOf(service.id))
+      return this.open("market", { stall: stallOf(service.id) });
     if (
       service?.kind === SEWING_SERVICE ||
       service?.kind === DYE_POTS_SERVICE
@@ -2733,6 +2775,8 @@ export class FarmScene extends Phaser.Scene {
       return this.open("shop", { stock: "fisher" });
     if (service?.kind === "pin-stall")
       return this.open("shop", { stock: "pin" });
+    if (service?.kind === PIER_KEEPER_KIND) return this.pierKeeper();
+    if (service?.kind === PIER_FLOAT_KIND) return this.pierFloat();
     if (service?.kind === "keeper") return this.open("keeper");
     if (service?.kind === "hermit") {
       if (hermitStock(this.state).length > 0)
@@ -3029,6 +3073,26 @@ export class FarmScene extends Phaser.Scene {
     }
   }
 
+  /** The Night Market pier keeper sells the evening's fishing permit (note 14, placeholder price). */
+  private pierKeeper(): void {
+    const problem = permitProblem(this.state);
+    this.message = problem ?? (buyPermit(this.state) ? PIER_LINES.sold : "");
+    this.render();
+  }
+
+  /** Float a lantern from the pier tip: a short cosmetic scene, a line and a small luck buff until morning. */
+  private pierFloat(): void {
+    const problem = floatProblem(this.state);
+    if (problem) {
+      this.message = problem;
+      return this.render();
+    }
+    const line = floatLantern(this.state);
+    if (line) this.driftLantern();
+    this.message = line ?? "";
+    this.render();
+  }
+
   /** Lamplight Evening stall: buys a paper lantern (placeholder price). */
   private lanternStall(): void {
     const problem = lanternBuyProblem(this.state);
@@ -3255,6 +3319,7 @@ export class FarmScene extends Phaser.Scene {
       this.holds.add(h);
     for (const h of festivalGateHolds(this.state.day.clock.day))
       this.holds.add(h);
+    for (const h of marketHolds(this.state.day.clock.day)) this.holds.add(h);
     for (const c of this.conditional)
       c.drawn.setVisible(layerShows(c.layer, this.holds));
   }

@@ -1047,3 +1047,17 @@ All in `src/content/children.json`.
 | Winter day 1 | clears all grass |
 | Hay from a cut grass tile, into the silo | 50 percent (Stardew, SC-190 to check) |
 | Scythe energy | 0, one hit, not upgradable |
+
+## Winter Night Market stalls (built 2026-11-16, note 14, placeholders)
+
+All in `src/content/night-market.json`. Open 17:00 to 24:00, Winter 16 to 18.
+
+- Lantern stall: snow lamp 220, winter wreath 200, warm rug 200, hanging planter
+  210, lantern string 500, frost-glass candle 600, pine garland 700, sleigh bench 1,000.
+- Curio stall: market fireplace 15,000 on all three evenings; evening 2 adds spring
+  seeds at shop price; evening 3 adds a fireside chair 420 and a frost shelf 380.
+- Road trader: 4 to 6 winter goods per evening, seeded by the day, 1.5 times sell value.
+- Hat-maker: one hat at 1,200, nine hats over three years (year 1 evenings 1 to 3 are the
+  first three, and so on).
+- Crowd: 18 people stand at their spots only inside their window (children 18:00 to
+  20:00, Hattie 18:00 to 24:00, the rest 18:00 to 22:00 with the exceptions in note 14).
