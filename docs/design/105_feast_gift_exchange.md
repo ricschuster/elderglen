@@ -33,7 +33,7 @@ page (read 2026-11-18) unless marked.
    Cuthbert does not hand it over (this replaces the line in note 82 where the host does). The draw is
    seeded by year and save so it is stable, and is stored as `feast-giver:<year>:<id>`.
 6. **The present.** Taste based (note 61): one item the giver loves or likes that exists as an item, is
-   not a quest or keepsake item, and has a sell price at most 300 (placeholder). A child gives one item
+   not a quest or keepsake item, and has a sell price at most 300 (placeholder, confirmed by the owner 2026-11-18). A child gives one item
    at most 100. The present goes to the pack; if the pack is full it is held in the mailbox letter of the
    next morning (the mail rule for items that do not fit). Quality normal. No friendship change from
    receiving it.

@@ -28,7 +28,8 @@ all four. Nothing else changes in the game.
    Statue of Perfection pays 2 to 8 iridium ore a day when you interact with it.
    Ours pays the metal above gold, Hearthsilver ore (note 22, note 44).
 
-5. **Points and cuts follow Stardew's (owner, 2026-11-11).** 20 points, candles at
+5. **Points and cuts follow Stardew's (owner, 2026-11-11).** 21 points (corrected
+   2026-11-18, the rows add to 21), candles at
    1 to 3, 4 to 7, 8 to 11 and 12 or more.
 6. **The statue pays 2 to 8 Hearthsilver ore, once a day, as Stardew (owner,
    2026-11-11).** Used by hand, not a machine. Hearthsilver nodes give 1 to 2 ore
@@ -52,7 +53,7 @@ all four. Nothing else changes in the game.
     stone at the centre.
 12. **Diamonds come from every Stardew source we already have (owner,
     2026-11-11):** gem nodes (mine from floor 50, Quarry, deep dig), plus rare
-    monster drops and fishing treasure chests where those systems exist. Sources
+    monster drops (fishing treasure chests dropped as a source, owner 2026-11-18). Sources
     we lack (panning, Trout Derby, fish pond products) are added when built. Stardew's
     sources are in SC-134.
 
@@ -103,7 +104,7 @@ all four. Nothing else changes in the game.
     Ours: copy the three numbers above onto our floors (Diamond node 0.20 percent at floor
     50 rising by 0.0016 percent a floor, monster 0.05 percent after the Ember Deeps boss floor,
     no geode source). The Glimmerstone's 0.5 percent per gem node (note 22) is a different
-    item and stays. **Built 2026-11-17** (decisions 16, 21 to 24, not the shrine): the Diamond item (`diamond`, sells 750, loved by every villager), the Diamond node rock (mine floor 50 on, Quarry spawn weight 0.5, about 0.55 percent), and the 0.05 percent monster drop once floor 120 is reached (there is no boss, note 22). Not on the gallery list (note 104's 95 stays). The old placeholder gem `gem-high-b`, which was named Diamond, is now "High gem B".
+    item and stays. **Built 2026-11-17** (decisions 16, 21 to 24, not the shrine): the Diamond item (`diamond`, sells 750, loved by every villager), the Diamond node rock (mine floor 50 on, Quarry spawn weight 0.5, about 0.55 percent), and the 0.05 percent monster drop once floor 120 is reached (there is no boss, note 22). Not on the gallery list (note 104's 95 stays). The old placeholder gem `gem-high-b` ("High gem B") was removed 2026-11-18.
 24. **The Quarry gets a small gem node share, the deep dig a larger one (owner,
     2026-11-11).** Stardew lists both (saved Diamond page).
 
@@ -204,6 +205,14 @@ Built: `src/core/shrine.ts` (score, candles, scene beats, redo, statue, Oriel's 
 and `drawShrine`), the morning check in `sleep.ts` (`shrineCall`), the `ReportScene` launch, and stage
 `shrine-year-three`. Tests: `tests/shrine.test.ts`. All art is plain shapes, all lines are the draft text above.
 The stone takes one Diamond for a redo (used up). At four candles the bare stone gives 2 to 8 Hearthsilver ore a day.
+
+Confirmed by the owner 2026-11-18: point total 21 (rows kept, the note's "20" is wrong), 1 candle at 0 to 3,
+trigger on the first free morning of year 3 after the report. Still to confirm: the rest below.
+
+Diamond choices confirmed by the owner 2026-11-18: the 0.05 percent monster drop starts at floor 120, the bottom of the
+Ember Deeps (no boss); a Crystalarium can copy the Diamond (Stardew); the old placeholder gem `gem-high-b` ("High gem B")
+is removed from the game; there is no fishing treasure Diamond source (ours, on purpose; decision 12's mention of it is
+dropped).
 
 Placeholders, owner to confirm:
 

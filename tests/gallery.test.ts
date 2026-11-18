@@ -36,9 +36,9 @@ const donateMany = (g: GameState, ids: string[]) =>
   ids.forEach((id) => expect(give(g, id).ok).toBe(true));
 
 describe("gallery list", () => {
-  it("is derived from data: 95 items, 53 minerals and 42 artifacts", () => {
-    expect(GALLERY_TOTAL).toBe(95);
-    expect(GALLERY_MINERALS).toBe(53);
+  it("is derived from data: 94 items, 52 minerals and 42 artifacts", () => {
+    expect(GALLERY_TOTAL).toBe(94);
+    expect(GALLERY_MINERALS).toBe(52);
     expect(GALLERY_ARTIFACTS).toBe(42);
   });
   it("has unique ids that are all real items", () => {
@@ -47,13 +47,13 @@ describe("gallery list", () => {
   });
   it("counts partial progress for the completion total, rounded down", () => {
     const g = newGame();
-    expect(galleryCount(g)).toMatchObject({ done: 0, total: 95 });
+    expect(galleryCount(g)).toMatchObject({ done: 0, total: 94 });
     donateMany(g, GALLERY_IDS.slice(0, 19));
     const cat = ringProgress(g)[0]!.categories.find((c) => c.id === "gallery")!;
     expect(cat.locked).toBe(false);
     expect(cat.done).toBe(19);
-    expect(cat.points).toBeCloseTo(1, 5);
-    expect(cat.missing).toHaveLength(76);
+    expect(cat.points).toBeCloseTo((19 * 5) / 94, 5);
+    expect(cat.missing).toHaveLength(75);
   });
 });
 
@@ -177,13 +177,13 @@ describe("wiring", () => {
   });
   it("pays elderfruit source 7 once, at the full list", () => {
     const g = newGame();
-    donateMany(g, GALLERY_IDS.slice(0, 94));
+    donateMany(g, GALLERY_IDS.slice(0, 93));
     expect(g.elderfruit).toBe(0);
     expect(hasFlag(g, SOURCE_FLAGS.gallery)).toBe(false);
-    expect(give(g, GALLERY_IDS[94]!)).toMatchObject({ ok: true, fruit: true });
+    expect(give(g, GALLERY_IDS[93]!)).toMatchObject({ ok: true, fruit: true });
     expect(g.elderfruit).toBe(1);
     expect(hasFlag(g, SOURCE_FLAGS.gallery)).toBe(true);
-    expect(give(g, GALLERY_IDS[94]!).ok).toBe(false);
+    expect(give(g, GALLERY_IDS[93]!).ok).toBe(false);
     expect(g.elderfruit).toBe(1);
   });
 });

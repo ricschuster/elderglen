@@ -16,6 +16,8 @@ import { FarmMap, type TiledMapJson } from "../src/core/map";
 import innMap from "../src/content/maps/inn.json";
 import fisherHut from "../src/content/maps/fisher-hut.json";
 import smithy from "../src/content/maps/smithy.json";
+import libraryMap from "../src/content/maps/library.json";
+import { GALLERY_LIST } from "../src/core/gallery";
 
 type Game = ReturnType<typeof newGame>;
 
@@ -149,6 +151,24 @@ describe("goods hand-in", () => {
     ]);
   });
 
+  it("The Scholar's Sample wants six different minerals, not artifacts or ore", () => {
+    const def = orderById("scholars-sample")!;
+    const { g, day, place } = taken("scholars-sample");
+    const minerals = GALLERY_LIST.filter((e) => e.group === "mineral");
+    const art = GALLERY_LIST.find((e) => e.group === "artifact")!;
+    fill(g, place, minerals[0]!.id, 3);
+    fill(g, place, art.id, 1);
+    fill(g, place, "iron-ore", 5);
+    for (const m of minerals.slice(1, 5)) fill(g, place, m.id, 1);
+    expect(handInTally(def, chestOf(g, place)).progress).toBe(5);
+    expect(endDayOrders(g, [], day + 1).done).toEqual([]);
+    fill(g, place, minerals[5]!.id, 1);
+    expect(endDayOrders(g, [], day + 2).done).toHaveLength(1);
+    const left = contents(chestOf(g, place));
+    expect(left).toContainEqual({ id: minerals[0]!.id, count: 2 });
+    expect(left).toContainEqual({ id: art.id, count: 1 });
+  });
+
   it("lapse keeps the goods to take back, and the chest goes once empty", () => {
     const { g, day, place } = taken("crystal-gift");
     fill(g, place, "gem-low-a", 2);
@@ -189,12 +209,14 @@ describe("goods hand-in", () => {
       inn: innMap,
       "fisher-hut": fisherHut,
       smithy,
+      library: libraryMap,
     };
     for (const id of [
       "spring-leeks",
       "barrel-batch",
       "pantry-stock",
       "crystal-gift",
+      "scholars-sample",
     ]) {
       const p = placeOf(id);
       const m = FarmMap.fromTiled(maps[p.map] as TiledMapJson);
