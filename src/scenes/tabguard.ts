@@ -13,6 +13,9 @@ export function installTabGuard(game: Phaser.Game): void {
   // crash fires no pagehide, so its lock would cover the next launch for 10 s.
   if (isNativeApp(window)) return;
   let cover: HTMLDivElement | undefined;
+  // Playing here reloads the page. The lock must stay ours through the reload,
+  // or the other tab's next beat can claim it in the gap and win it back.
+  let takingOver = false;
 
   const show = (): void => {
     if (cover) return;
@@ -31,6 +34,7 @@ export function installTabGuard(game: Phaser.Game): void {
       "font:20px sans-serif;padding:12px 24px;background:#3f7d3a;color:#fff;border:2px solid #fff;border-radius:6px;cursor:pointer";
     take.onclick = () => {
       tabGuard.takeOver();
+      takingOver = true;
       location.reload();
     };
     const note = document.createElement("p");
@@ -50,5 +54,7 @@ export function installTabGuard(game: Phaser.Game): void {
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) beat();
   });
-  window.addEventListener("pagehide", () => tabGuard.release());
+  window.addEventListener("pagehide", () => {
+    if (!takingOver) tabGuard.release();
+  });
 }

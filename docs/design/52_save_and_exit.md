@@ -135,6 +135,15 @@ written together, so they share a version.
     lock, and the installed app (one WebView) skips the guard, so a force-stop
     cannot lock the next launch out (2026-11-17, from the tablet run).
   - Esc closes only the top screen (`src/scenes/escape.ts`, menu and gallery).
+- Browser check 2026-11-18 (`scripts/playtest/save.mjs`, desktop Chromium): night and resume written on the first
+  sleep; reload then Continue keeps the day in progress (items, tile); Restart this day gives the morning;
+  Export gives a file with both records; Import fills the first empty slot with both and refuses junk, a wrong
+  format and a newer `exportVersion` with the right text. Found and fixed: "Play here instead" reloads the page and
+  `pagehide` released the lock, so the other tab's beat could claim it in the gap and the takeover failed some of
+  the time; the lock is now kept through that reload. A late-game stage (100 percent) is 137 KB for
+  in two records (night and resume), so five slots with a previous night each stay near 1 MB. Not covered: a real
+  tablet (`persist()` returns false in headless Chromium, so whether it helps on the tablet is still unknown), the
+  debug tab and the paper doll.
 - Size, measured 2026-11-16: a new game with forage written is 61 KB of JSON
   (the area worlds dominate). Three records a slot (night, resume, previous
   night) at five slots is under 1 MB of the 5 MB origin budget. A late-game
