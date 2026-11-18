@@ -38,9 +38,10 @@ the saved Forge page (read 2026-11-12). Names, prices and art are ours (ADR 0002
   | Mid (floor 41 and deeper) | `gem-mid-a` | Crit chance, +4.6 percent flat |
   | Mid | `gem-mid-b` | Crit power, +10 percent |
   | High (floor 81 and deeper) | `gem-high-a` | Weapon speed, +2, +3, +2 |
-  | High | `diamond` (was `gem-high-b`, removed 2026-11-18; owner to confirm) | Damage, +10 percent min and max |
+  | High | `diamond` (replaced `gem-high-b`, removed 2026-11-18; owner confirmed 2026-11-18) | Damage, +10 percent min and max |
 
-  Which of each pair is which is open, and the stat names follow note 37 and the rings.
+  Which of each pair is which is open, and the stat names follow note 37 and the rings. The Diamond is rare
+  (floor 120 drop, pond product, Crystalarium copies it, note 83), so a damage forging is a deliberate spend.
 - **The Glimmerstone** fills all remaining forgings with random upgrades for 20 ore (the
   Diamond rule, Stardew). Our Glimmerstone is the rarest find, so this is a once-a-year
   prize.
