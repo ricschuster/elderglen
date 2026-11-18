@@ -1,4 +1,4 @@
-import { feastGive, lanternOn } from "../core/feastexchange";
+import { feastGive, lanternOn, lanternTile } from "../core/feastexchange";
 import {
   BARN_BUILT,
   BARN_FOOTPRINT,
@@ -589,6 +589,7 @@ export class FarmScene extends Phaser.Scene {
   /** The running Seedswap hunt (placeholder markers and countdown). */
   private hunt?: HuntState;
   private huntGfx?: Phaser.GameObjects.Graphics;
+  private lanternGfx?: Phaser.GameObjects.Graphics;
   private huntText?: Phaser.GameObjects.Text;
   /** The Frostday ice fishing count (placeholder, note 82). */
   private ice?: IceFishing;
@@ -3306,6 +3307,33 @@ export class FarmScene extends Phaser.Scene {
     this.render();
   }
 
+  /** The Feast gift exchange lantern prop (note 105), on the Feast's map (the square or the hall). */
+  private drawFeastLantern(): void {
+    this.lanternGfx?.destroy();
+    this.lanternGfx = undefined;
+    const ts = this.map.tileSize;
+    const lit = lanternTile(
+      this.state,
+      this.mapId,
+      hallRestored(this.state.hall),
+    );
+    if (lit) {
+      const cx = lit[0] * ts + ts / 2;
+      const cy = lit[1] * ts + ts / 2;
+      const g = this.add.graphics().setDepth(DEPTH.above);
+      this.uiCamera.ignore(g);
+      g.fillStyle(0xffd860, 0.3)
+        .fillCircle(cx, cy, ts * 0.7)
+        .fillStyle(0x7a5230, 1)
+        .fillRect(cx - 1, lit[1] * ts, 2, ts / 2 - 4)
+        .fillStyle(0xf0a030, 1)
+        .fillRoundedRect(cx - 5, cy - 5, 10, 12, 3)
+        .fillStyle(0xfff2a0, 1)
+        .fillRect(cx - 2, cy - 2, 4, 6);
+      this.lanternGfx = g;
+    }
+  }
+
   /** Placeholder props on a festival map: tables, booths, villagers and the chest. */
   private drawFestivalProps(): void {
     const ts = this.map.tileSize;
@@ -3766,6 +3794,7 @@ export class FarmScene extends Phaser.Scene {
         if (caskDone(this.state, c)) put(c.x, c.y, MACHINE_READY_KEY);
       }
     if (this.mapId === CAVE_MAP) this.drawCave(put);
+    this.drawFeastLantern();
     if (isFestivalMap(this.mapId)) this.drawFestivalProps();
     if (this.map.hasSoil) this.drawSoil(put);
     this.drawWorld(put);

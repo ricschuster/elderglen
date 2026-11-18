@@ -6,6 +6,7 @@ import {
   feastGiven,
   feastRecipient,
   lanternOn,
+  lanternTile,
   presentChoices,
   queueFeastLetter,
 } from "../src/core/feastexchange";
@@ -120,5 +121,23 @@ describe("feast gift exchange", () => {
   it("keeps presents to cheap items a person loves or likes", () => {
     const choices = presentChoices("odette");
     expect(choices.length).toBeGreaterThan(0);
+  });
+});
+
+describe("feast lantern prop", () => {
+  it("hangs over the recipient's seat while lit, and goes out when given or closed", () => {
+    const g = feastGame();
+    const who = feastRecipient(g, false);
+    const map = "hearthwell";
+    const t = lanternTile(g, map, false);
+    expect(t).toBeDefined();
+    expect(lanternTile(g, "hall", false)).toBeUndefined();
+    expect(lanternTile(g, "farm", false)).toBeUndefined();
+    g.day.clock.minutes = 19 * 60;
+    expect(lanternTile(g, map, false)).toBeUndefined();
+    g.day.clock.minutes = 13 * 60;
+    g.festivalsJoined.push(`feast-given:1`);
+    expect(lanternTile(g, map, false)).toBeUndefined();
+    expect(who).toBeTruthy();
   });
 });
