@@ -129,6 +129,26 @@ export function lanternOn(
   );
 }
 
+/**
+ * The tile where the lit lantern hangs: just above the recipient's seat, while
+ * the lantern is lit (open, gift not given). Undefined when it is out or the
+ * recipient has no seat on this map. The prop is drawn there (note 105).
+ */
+export function lanternTile(
+  g: GameState,
+  mapId: string,
+  hallRestored: boolean,
+): readonly [number, number] | undefined {
+  if (!exchangeOpen(g, mapId, hallRestored) || feastGiven(g)) return undefined;
+  const f = FESTIVALS.find((x) => x.id === FEAST);
+  const seat =
+    f &&
+    festivalLayout(f, hallRestored, yearOf(g))?.spots[
+      feastRecipient(g, hallRestored)
+    ];
+  return seat ? [seat[0], Math.max(0, seat[1] - 1)] : undefined;
+}
+
 /** Items a person loves or likes, cheap enough to be a present, best match first. */
 export function presentChoices(giver: string): string[] {
   const cap = isChild(giver) ? data.childPresentCap : data.presentCap;

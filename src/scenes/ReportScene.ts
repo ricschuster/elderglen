@@ -73,6 +73,9 @@ export class ReportScene extends Phaser.Scene {
     this.scene.stop();
     // The steward's call is owed a scene (note 39, step 4): the stub takes it.
     if (this.state.summit.scenePending) this.scene.launch("summit");
+    // The ancestors' evaluation, owed from year 3 (note 83).
+    else if (this.state.shrine.pending)
+      this.scene.launch("shrine", { mode: "first" });
     else this.scene.resume("farm");
   }
 }

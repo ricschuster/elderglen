@@ -1,4 +1,4 @@
-import { feastGive, lanternOn } from "../core/feastexchange";
+import { feastGive, lanternOn, lanternTile } from "../core/feastexchange";
 import {
   BARN_BUILT,
   BARN_FOOTPRINT,
@@ -134,6 +134,13 @@ import { logCleared } from "../core/logs";
 import { CAMP_LINE, HERMIT_LINE } from "../core/forestfolk";
 import { SPIRIT_STATUE, giveToSpirit, hermitStock } from "../core/elderfruit";
 import { STONEKEEPER_LINE } from "../core/smith";
+import {
+  SHRINE_SERVICE,
+  hasDiamond,
+  placeDiamond,
+  shrineNote,
+  useStatue,
+} from "../core/shrine";
 import {
   campLine,
   QUARRY_BRIDGE_LINE,
@@ -589,6 +596,7 @@ export class FarmScene extends Phaser.Scene {
   /** The running Seedswap hunt (placeholder markers and countdown). */
   private hunt?: HuntState;
   private huntGfx?: Phaser.GameObjects.Graphics;
+  private lanternGfx?: Phaser.GameObjects.Graphics;
   private huntText?: Phaser.GameObjects.Text;
   /** The Frostday ice fishing count (placeholder, note 82). */
   private ice?: IceFishing;
@@ -2824,6 +2832,32 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /**
+   * The ancestors' shrine (note 83): a held Diamond is set in the stone and the
+   * candles are scored again; at four candles the bare stone gives ore once a
+   * day; otherwise the note at the stone is read.
+   */
+  private shrineAction(): void {
+    const held = heldAt(this.state, this.selected);
+    if (
+      held.kind === "item" &&
+      held.id === "diamond" &&
+      hasDiamond(this.state)
+    ) {
+      const r = placeDiamond(this.state);
+      if (r.ok)
+        return this.open("shrine", {
+          mode: "redo",
+          candles: r.candles,
+          line: r.line,
+        });
+    }
+    this.message = this.state.shrine.statueOpen
+      ? useStatue(this.state, Math.random)
+      : shrineNote(this.state);
+    this.render();
+  }
+
+  /**
    * The Action button on the faced tile (note 47): open a service, else shake,
    * pick or harvest, else eat the held food. A tile with nothing on it, and
    * nothing edible held, does nothing and says nothing.
@@ -2891,6 +2925,7 @@ export class FarmScene extends Phaser.Scene {
       this.message = giveToSpirit(this.state);
       return this.render();
     }
+    if (service?.kind === SHRINE_SERVICE) return this.shrineAction();
     if (service?.kind === "camp") {
       this.message = CAMP_LINE;
       return this.render();
@@ -3304,6 +3339,33 @@ export class FarmScene extends Phaser.Scene {
     this.huntText?.destroy();
     this.huntGfx = this.huntText = this.hunt = undefined;
     this.render();
+  }
+
+  /** The Feast gift exchange lantern prop (note 105), on the Feast's map (the square or the hall). */
+  private drawFeastLantern(): void {
+    this.lanternGfx?.destroy();
+    this.lanternGfx = undefined;
+    const ts = this.map.tileSize;
+    const lit = lanternTile(
+      this.state,
+      this.mapId,
+      hallRestored(this.state.hall),
+    );
+    if (lit) {
+      const cx = lit[0] * ts + ts / 2;
+      const cy = lit[1] * ts + ts / 2;
+      const g = this.add.graphics().setDepth(DEPTH.above);
+      this.uiCamera.ignore(g);
+      g.fillStyle(0xffd860, 0.3)
+        .fillCircle(cx, cy, ts * 0.7)
+        .fillStyle(0x7a5230, 1)
+        .fillRect(cx - 1, lit[1] * ts, 2, ts / 2 - 4)
+        .fillStyle(0xf0a030, 1)
+        .fillRoundedRect(cx - 5, cy - 5, 10, 12, 3)
+        .fillStyle(0xfff2a0, 1)
+        .fillRect(cx - 2, cy - 2, 4, 6);
+      this.lanternGfx = g;
+    }
   }
 
   /** Placeholder props on a festival map: tables, booths, villagers and the chest. */
@@ -3766,6 +3828,7 @@ export class FarmScene extends Phaser.Scene {
         if (caskDone(this.state, c)) put(c.x, c.y, MACHINE_READY_KEY);
       }
     if (this.mapId === CAVE_MAP) this.drawCave(put);
+    this.drawFeastLantern();
     if (isFestivalMap(this.mapId)) this.drawFestivalProps();
     if (this.map.hasSoil) this.drawSoil(put);
     this.drawWorld(put);
@@ -4020,6 +4083,35 @@ export class FarmScene extends Phaser.Scene {
       ts - 8,
       5,
     );
+  }
+
+  /** The ancestors' shrine: a standing stone and four candle stands, placeholder shapes (note 83). */
+  private drawShrine(): void {
+    const stone = this.map.services.find((s) => s.id === "shrine-stone");
+    if (!stone) return;
+    const ts = this.map.tileSize;
+    const lit = this.state.shrine.candles;
+    const g = this.wash;
+    g.fillStyle(0x1f3d24, 0.35).fillEllipse(
+      stone.x * ts + ts / 2,
+      stone.y * ts + ts / 2,
+      7 * ts,
+      5 * ts,
+    );
+    g.fillStyle(this.state.shrine.statueOpen ? 0xb9c8d8 : 0x8a8a92, 1)
+      .fillRect(stone.x * ts + 3, stone.y * ts - 4, ts - 6, ts + 2)
+      .fillStyle(0x55555c, 1)
+      .fillRect(stone.x * ts + 3, stone.y * ts - 4, ts - 6, 2);
+    const stands = this.map.services.filter((s) =>
+      s.id.startsWith("shrine-stand-"),
+    );
+    stands.forEach((s, i) => {
+      const x = s.x * ts;
+      const y = s.y * ts;
+      g.fillStyle(0x6b4a2e, 1).fillRect(x + 6, y + 6, 4, ts - 6);
+      g.fillStyle(0xf0e6c8, 1).fillRect(x + 5, y + 1, 6, 6);
+      if (i < lit) g.fillStyle(0xffc860, 1).fillRect(x + 6, y - 4, 4, 5);
+    });
   }
 
   /** The farm mailbox: a post and box, with the flag up while mail waits (note 51). */
@@ -4296,6 +4388,7 @@ export class FarmScene extends Phaser.Scene {
     this.drawCoopInside();
     this.drawFurnace();
     this.drawMailbox();
+    this.drawShrine();
     this.drawRequestMark();
     this.drawBuild();
     this.hud.update(

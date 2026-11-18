@@ -43,6 +43,7 @@ import {
   type AchievementsSave,
 } from "./achievements";
 import { SummitCall, type SummitSave } from "./summit";
+import { Shrine, type ShrineSave } from "./shrine";
 import { ShippingBin, type BinLine, type BinSave } from "./shipping";
 import { maps } from "../content/maps";
 import { DEFAULT_FARM_TYPE, farmTypeById } from "./farmtypes";
@@ -205,6 +206,8 @@ export interface GameState {
   achievements: Achievements;
   /** The steward's call to the hall after the summit, and the scene owed (note 39). */
   summit: SummitCall;
+  /** The ancestors' shrine: candles, the year 3 scene and the statue (note 83). */
+  shrine: Shrine;
   /** Letters sent, delivered and taken (note 51). */
   mail: Mailbox;
   /** Board requests taken and finished (note 50). */
@@ -293,6 +296,7 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     chests: new Chests(),
     achievements: new Achievements(),
     summit: new SummitCall(),
+    shrine: new Shrine(),
     mail: new Mailbox(),
     friendship: new Friendship(),
     marriage: new Marriage(),
@@ -446,6 +450,8 @@ interface SaveData {
   achievements?: AchievementsSave;
   /** Absent in saves made before the summit call. */
   summit?: SummitSave;
+  /** Absent in saves made before the shrine. */
+  shrine?: ShrineSave;
   /** Absent in saves made before mail. */
   mail?: MailEntry[];
   /** Absent in saves made before friendship: nobody met, no points. */
@@ -687,6 +693,7 @@ export function serialize(
     decor: g.decor.save(),
     achievements: g.achievements.save(),
     summit: g.summit.save(),
+    shrine: g.shrine.save(),
     mail: g.mail.save(),
     friendship: g.friendship.save(),
     marriage: g.marriage.save(),
@@ -1194,6 +1201,7 @@ export function deserialize(text: string): GameState | undefined {
   g.decor.load(raw.decor);
   g.achievements.load(raw.achievements);
   g.summit.load(raw.summit);
+  g.shrine.load(raw.shrine);
   g.mail.load(raw.mail);
   g.marriage.load(raw.marriage);
   // The married cap must be known before friendship loads, or points above the bouquet cap are clamped.

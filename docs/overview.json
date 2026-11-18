@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-14",
+  "updated": "2026-11-18",
   "about": "Hand-kept map of the design. Edit this file, then run npm run overview. Issue titles and states come from docs/overview-issues.json, refreshed with npm run overview:refresh (needs gh). npm run overview:check fails if a note, heading, area or issue reference is wrong, or if overview.html is stale.",
   "groups": {
     "core": "Core loop",
@@ -730,7 +730,7 @@
       "group": "systems",
       "pos": [260, 520],
       "built": "partial",
-      "builtNote": "Built 2026-11-08: 120 floors in bands, health, three weapon families in five tiers, the trainer, creatures, the Combat skill and defeat. Since then: camps and special floors, lightning rod and storm strikes, placeable lights, rings from the trainer and the slayer goals, the Crabshell ring, bombs, gem nodes and artifact spots (2026-11-12). Woods creatures arrived 2026-11-14.",
+      "builtNote": "Built 2026-11-08: 120 floors in bands, health, three weapon families in five tiers, the trainer, creatures, the Combat skill and defeat. Since then: camps and special floors, lightning rod and storm strikes, placeable lights, rings from the trainer and the slayer goals, the Crabshell ring, bombs, gem nodes and artifact spots (2026-11-12). Woods creatures arrived 2026-11-14. The Diamond gem was built 2026-11-17 (node, monster drop, Crystalarium copy); the shrine and evaluation scene are not built.",
       "summary": "Opens Spring day 5, 120 floors in three bands. Combat is real-time, gentle and optional, and mining works without it.",
       "items": [
         {
@@ -792,6 +792,11 @@
           "s": "decided",
           "t": "Smith ore at about 2.5 times a bar's value; Nabbler steals nothing; the furnace craft makes more furnaces",
           "ref": "22_mines.md#Ore, coal and bars"
+        },
+        {
+          "s": "decided",
+          "t": "Diamond: sells 750g and every villager likes or loves it; a node from floor 50 at 0.20 percent plus 0.0016 per floor, Quarry weight 0.5, a 0.05 percent monster drop once floor 120 is reached (no boss), no geode source, and the Crystalarium copies it; kept off the gallery list. The shrine and evaluation scene are built to shell level (2026-11-18): placeholder art, tiles and lines, owner to confirm",
+          "ref": "83_grandpa_shrine.md#Decided with the owner (2026-11-11)"
         },
         {
           "s": "decided",
@@ -869,6 +874,11 @@
           "s": "decided",
           "t": "Save and exit: two records, a night record written on sleep and a resume record written quietly during play and on page hide; Continue resumes the day, Restart this day loads the night record; Exit saves; daily rolls are stored so reload never rerolls (reload as undo accepted); export and import in Options; one slot",
           "ref": "52_save_and_exit.md#Decisions"
+        },
+        {
+          "s": "decided",
+          "t": "Save split built 2026-11-16; the desktop browser check passed 2026-11-18 and a tab lock race on takeover reload was fixed",
+          "ref": "52_save_and_exit.md#Built status"
         },
         {
           "s": "decided",
@@ -1201,6 +1211,16 @@
         },
         {
           "s": "decided",
+          "t": "Midwinter Feast gift exchange built 2026-11-18: a Winter 18 letter names the recipient, the x5 feast gift sits outside the daily and weekly gift limits (ours), no warning on a hated gift (Stardew), and the secret giver reveals and hands over a present (Stardew; Cuthbert does not). A placeholder lantern hangs over the recipient's seat until the gift is given. Real lines and multiplayer draws are not built",
+          "ref": "105_feast_gift_exchange.md#Decided (owner, 2026-11-18)"
+        },
+        {
+          "s": "decided",
+          "t": "The Midwinter Feast is held in place, so it has no exit tiles",
+          "ref": "82_festival_locations.md#Built status (2026-11-12, #876)"
+        },
+        {
+          "s": "decided",
           "t": "Hollow Eve even-year maze gives a Hollow Lantern then a sack worth 830g; a signpost marks the hidden gap; the booth sells a gravestone and the gourd lantern recipe"
         }
       ],
@@ -1278,6 +1298,11 @@
           "s": "open",
           "t": "Desktop defaults are Stardew's keys plus click to use and act; menu keys fixed; no run key. Eat stays on F, journal on J. Open: layout labels; gamepad parked",
           "ref": "45_controls_profiles.md#Open"
+        },
+        {
+          "s": "decided",
+          "t": "Touch control schemes 4 and 1 copy Stardew and are built 2026-11-17: scheme 4 is a right-half tap under 0.25 s for Use and longer for Action with no drawn button; scheme 1 auto-attack equips the last weapon swung, else the highest slot, never from a held non-tool item. Tap-on-enemy secondary attack and the hotbar highlight are not built; not yet played",
+          "ref": "27_touch_controls.md#Decided 2026-11-17 (owner): copy Stardew for schemes 4 and 1"
         },
         {
           "s": "decided",

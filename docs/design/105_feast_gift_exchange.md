@@ -65,7 +65,7 @@ page (read 2026-11-18) unless marked.
 ## Open
 
 - Return gift lines per giver (voice sheets) and the present price caps (placeholders).
-- Art: the lantern prop and the lit/unlit state.
+- Art: final lantern sprite (a placeholder lamp is drawn).
 
 ## Stardew checks
 
@@ -81,4 +81,13 @@ limits. In `FarmScene.meetVillager`, holding an item and talking to the recipien
 runs `feastGive` (gift, reveal, present, or post when the pack is full). Without a held item the
 recipient's talk adds a line about the lantern. Draws are kept in `festivalsJoined`
 (`feast-recipient`, `feast-given`, `feast-giver`). Not built: the lantern prop and its lit state
-(only the text hint), real lines, the multiplayer draws. Not looked at in a browser.
+(only the text hint), real lines, the multiplayer draws.
+
+Lantern built 2026-11-18: `lanternTile` in `feastexchange.ts` (pure, tested) gives the tile just above
+the recipient's seat while the exchange is open and no gift is given, so it is one rule for the square
+and the hall. `FarmScene.drawFeastLantern` draws a placeholder lamp (glow, hook, orange body) there over
+the figures and name labels (the note was silent; the smallest choice). It goes out when the gift is given
+(the scene redraws) and is not drawn outside 12:00 to 18:00; the redraw at 18:00 is the next scene render,
+so a player standing in the square may see it until they act. Looked at in the browser on the Feast
+(`midwinter-feast-eve`, then Winter 25 13:00): the lamp shows above the recipient. Art is still a
+placeholder; the lit/unlit pair is "drawn" or "not drawn", no separate unlit sprite.

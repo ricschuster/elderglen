@@ -22,8 +22,8 @@ Decisions and built detail for sessions 7 to 10 (2026-11-12) are in `PRIORITIES_
 
 Open, top to bottom:
 
-1. **#876 festivals** (note 82, 14): walk and joining built for the green, hedge and six in-place festivals; the **Night Market built 2026-11-16** (stalls, hats, crowd, pier, market fish, float, hot drink; all placeholder art and lines). The Feast is held in place, so it has no exit tiles (closed 2026-11-18). The Feast gift exchange is built (note 105, 2026-11-18; the lantern prop and a browser look are left), multiplayer counts (M4), the owner's play.
-2. **Save split** (note 52, built 2026-11-16, with the two-tab guard, newer-version text and stored artifact spots): left a browser check of resume, late-game size, tablet `persist()`, the debug tab and Import with the guard, paper doll.
+1. **#876 festivals** (note 82, 14): walk and joining built for the green, hedge and six in-place festivals; the **Night Market built 2026-11-16** (stalls, hats, crowd, pier, market fish, float, hot drink; all placeholder art and lines). The Feast is held in place, so it has no exit tiles (closed 2026-11-18). The Feast gift exchange and lantern are built (note 105); left multiplayer counts (M4) and the owner's play.
+2. **Save split** (note 52, built 2026-11-16; desktop browser check 2026-11-18 passed, `playtest/save.mjs`, takeover race fixed): left tablet `persist()`, the debug tab, paper doll.
 3. **Gallery** (note 104, 95 items): left the owner's look, display case, special order, librarian lines (M3d).
 4. **Built to shell level 2026-11-16, left the owner's look:** control schemes (note 27; 1, 4 and 9 are real, SC-188), marriage (note 12; SC-201 to 203), chests and tools (notes 34, 49, 101 to 103), sim (55 of 100 finished by day 112, no drift).
 5. **#951: play M3b end to end.** A checklist plus the stage jumper (note 42: 38 stages, `window.farmStage(name)`, `--stage` in playtests). **Directed play ran 2026-11-17** on desktop and on the tablet (agents; findings fixed in the session PR, handoff 2026-11-17). Left: the owner's own look, the Diamond rates are now read from the saved pages (SC-135 closed, note 83 decision 23, build with the shrine Diamond) and the touch checks the agents could not do (Big Chest and stick scheme by touch, health bar in the mines, a real gallery donation, the hot drink Take click). Tablet: `android:install -- --debug` gives the "Elderglen DBG" app (docs/android.md).
@@ -32,7 +32,7 @@ Decided 2026-11-17: Hearthwell water stays all fishable (note 14); Import keeps 
 open past five later (note 52).
 
 Built 2026-11-17 (handoff 2026-11-17c): scheme 4 tap duration, scheme 1 auto-equip, the Diamond item with its node, Quarry and
-monster sources (note 83; the shrine and evaluation scene are NOT built), stage menu checked (all 38 stages). The hall-restored
+monster sources (note 83; the shrine is built 2026-11-18), stage menu checked (all 38 stages). The hall-restored
 Feast is already wired; its exit tiles wait for the drawn Hearthwell variant. The sweep script and state patch were fixed after the invitation and 8-heart failures (not rerun). Next session: the sweep (`WORKERS=3`) and
 `npm run sim` alone, then the owner's play. Run `npx vitest run --maxWorkers=4` (the default worker count segfaults here).
 
@@ -50,8 +50,9 @@ ending, M3d polish, then M5 and M6. Map areas (notes 71 to 78) are M3b.
 2. **Story spine.** Warden head (#177), sea elf (#176) and Rosmarin (#178) settled bar
    small items. The third community project (#5) waits for ring 2 (M5). Needed before
    slice 5 (note 33).
-2b. **Ancestors' shrine (note 83).** Left: the Diamond's name, art and drops (SC-135),
-   the shrine tiles (farm layout; #776 is closed), scene shots, camp chest items (note 22).
+2b. **Ancestors' shrine (note 83).** Built to shell level 2026-11-18 (core, scene, farm hook, tests). Owner to confirm the
+   placeholders listed in note 83 "Built status" (tiles, candle minimum, point total, trigger, redo). Left: art,
+   real lines, the Diamond's name, fishing-chest source, camp chest items (note 22).
 3. **Map areas (notes 71 to 78).** All built to shell level (#636 to #646, #649, #661).
    Left items are in each note's "Built status". Build detail is in the archive.
 4. **Art direction and audio plan.** Character art (note 15), hall rooms (#335),

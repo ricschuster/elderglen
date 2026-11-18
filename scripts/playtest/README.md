@@ -40,6 +40,9 @@ errors. The game's weather and forage are random, so reruns differ.
 
 8. `node scripts/playtest/bin.mjs` ships, takes back, ships part through the
    prompt, sleeps, and checks the payout, summary and report. About 10 seconds.
+   `node scripts/playtest/save.mjs` checks the save split in the browser (note 52): the night and resume
+   records, Continue and Restart this day, Export and Import (and three bad files), the two-tab guard and a late
+   stage's size. About 50 seconds.
 
 9. `node scripts/playtest/wood.mjs` plays a chopper: it fells the starting trees
    with a held key, sleeps when the energy is low, and reports the days, energy

@@ -2,7 +2,7 @@
 
 Status: draft, 2026-11-11. The four forks below were decided with the owner.
 The point list is the assistant's proposal for the owner to reshape, and every
-number is a placeholder. Nothing here is built. Stardew's Grandpa page was read
+number is a placeholder. The shrine and evaluation scene are built to shell level (see "Built status"). Stardew's Grandpa page was read
 as reference only (ADR 0002, saved page, checked in note 54 as SC-132). No text
 is copied.
 
@@ -196,3 +196,29 @@ cannot be reached yet.
    events, #600), and the one-line redo.
 6. Several counters are locked at 0 (slayer, elderfruit, friends), so four candles
    cannot be reached yet.
+
+## Built status (2026-11-18)
+
+Built: `src/core/shrine.ts` (score, candles, scene beats, redo, statue, Oriel's letter, save), `src/content/shrine.json`
+(text, cuts, thresholds), `src/scenes/ShrineScene.ts` (first and redo modes), the farm hook (`FarmScene.shrineAction`
+and `drawShrine`), the morning check in `sleep.ts` (`shrineCall`), the `ReportScene` launch, and stage
+`shrine-year-three`. Tests: `tests/shrine.test.ts`. All art is plain shapes, all lines are the draft text above.
+The stone takes one Diamond for a redo (used up). At four candles the bare stone gives 2 to 8 Hearthsilver ore a day.
+
+Placeholders, owner to confirm:
+
+- **Tiles (Standard farm only):** stone at x 7, y 5, with stands at (5,4), (9,4),
+  (5,6) and (9,6), on the far north-west grass strip (rows 4 to 7), as `shrine` services in `farm.json`. No tree is drawn
+  yet, only a shadow. Woodland has no shrine (its map is a stub).
+- **Candle minimum:** the table says 1 candle at 0 to 3, decision 5 says 1 to 3. Built as 1 candle at 0 to 3.
+- **Point total:** the table's rows add to 21, its total says 20. Built as the rows (21 reachable).
+- **Friends:** counted from friendship hearts directly (8 hearts, non-children, 5 then 10), not the locked completion counter.
+- **Rare boost items** is the elderfruit counter; **Hall** 1 is every bundle, 2 is the end screen seen (`endSeen`).
+- **Trigger:** from the first morning of year 3 that is not a festival or wedding day, the scene is owed and plays after
+  the morning report. Not played from "drawn to the tree" on the map.
+- **Candle lighting:** one per spoken line (three lines, a fourth on the closing line at four candles), never more than earned.
+- **Redo:** a Diamond is used up, any time (also before year 3, which leaves the first scene owed). Candles never go down.
+- **Letter:** queued when the scene ends, arrives next morning. The player has no name, so `{name}` reads "farmer".
+- **Statue:** used with Action on the stone, no Diamond held. Not a machine.
+
+Not built: a drawn tree and real art, real voices, the fishing treasure Diamond source, co-op's shared score (M4), Woodland.

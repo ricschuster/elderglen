@@ -501,6 +501,21 @@
         "autoProfessions": true,
         "meetAll": true
       }
+    },
+    {
+      "id": "shrine-year-three",
+      "group": "Shrine",
+      "label": "Year 3 spring 2, two Diamonds, the shrine's evaluation owed (sleep to see it)",
+      "patch": {
+        "season": "spring",
+        "dayOfSeason": 2,
+        "year": 3,
+        "weather": "sunny",
+        "money": 2000,
+        "items": {
+          "diamond": 2
+        }
+      }
     }
   ]
 }
