@@ -388,6 +388,23 @@ export class Friendship {
     return { ok: true, taste, points, birthday };
   }
 
+  /**
+   * The Midwinter Feast gift (note 105): x`mult` the ordinary points, outside the
+   * daily and weekly limits, with no birthday bonus. Only people already met.
+   */
+  giftFeast(id: string, itemId: string, mult: number): GiftResult {
+    const r = this.row(id);
+    if (!r) return { ok: false, reason: "unknown" };
+    if (!r.met) return { ok: false, reason: "unmet" };
+    const { base, quality } = splitQuality(itemId);
+    const taste = tasteOf(id, base);
+    const full = giftPoints(taste, quality) * mult;
+    const raw = id === this.spouseId ? Math.trunc(full / 2) : full;
+    const points = this.add(r, id, raw);
+    if (!(base in r.log)) r.log[base] = taste;
+    return { ok: true, taste, points, birthday: false };
+  }
+
   /** The bouquet lifts a candidate's cap from 8 to 10 hearts. Needs 8 hearts. */
   giveBouquet(id: string): boolean {
     const r = this.row(id);

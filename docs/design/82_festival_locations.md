@@ -61,8 +61,8 @@ Hearthwell has two exits, `to_green` (tile 70,88) and `to_hedge` (tile 104,88), 
 the day of that festival (the even-year hedge uses the hedge gate too). Walking through one
 joins the festival (`walkIntoFestival`: `enterProblem` first, then `enterFestival`). The way
 home still asks first. Left: the Seedswap Fair, Lamplight, Frostday, Hat Parade, Cake Day
-and Feast have no festival map yet, so nothing to walk to; the exit tile positions are
-placeholders until the Hearthwell variant is drawn.
+and Feast are held in place (next paragraph), so they have no exit tiles to place (closed
+2026-11-18: the "Feast exit tiles" item was stale).
 
 Built 2026-11-16 (second pass): the other day festivals are held in place (their layouts are
 conditional layers on the Forest, the Beach, Hearthwell and the hall, so there is no map of
@@ -204,8 +204,7 @@ the entrance. Row y 13 stays open so players can walk round either side.
 
 **The exchange:** the steward's letter on Winter 18 names the recipient (note
 14, note 61). On the day a lit lantern hangs over their seat. Talk to them and
-give a gift with the usual gift rules; the host (Cuthbert, head of the table at
-(30,11)) then hands the player the return gift. Seats are fixed, so the lantern
+give a gift with the usual gift rules; the secret giver then steps forward and hands over the return gift (note 105; Cuthbert does not). Seats are fixed, so the lantern
 is the only hint needed.
 
 **Villager tiles (draft for the owner to check):** 25 people, the 22 town
@@ -247,7 +246,7 @@ well and benches stay. Bunting and lanterns do not block.
 the road.
 
 **The exchange:** as the hall version: a lit lantern over the recipient's seat,
-give a gift there, Cuthbert at the head hands over the return gift.
+give a gift there, the secret giver hands over the return gift (note 105).
 
 **Villager tiles (draft for the owner to check):** the same 25 people as the hall
 version, 24 seats, each person seated, so Aldreth sits too.

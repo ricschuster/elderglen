@@ -1,0 +1,9 @@
+{
+  "festival": "midwinter-feast",
+  "letterDay": 18,
+  "multiplier": 5,
+  "presentCap": 300,
+  "childPresentCap": 100,
+  "host": "cuthbert",
+  "minMet": 3
+}

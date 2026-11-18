@@ -22,7 +22,7 @@ Decisions and built detail for sessions 7 to 10 (2026-11-12) are in `PRIORITIES_
 
 Open, top to bottom:
 
-1. **#876 festivals** (note 82, 14): walk and joining built for the green, hedge and six in-place festivals; the **Night Market built 2026-11-16** (stalls, hats, crowd, pier, market fish, float, hot drink; all placeholder art and lines). Left: hall-restored Feast (waits for the hall layout), exit tiles, multiplayer counts (M4), the owner's play.
+1. **#876 festivals** (note 82, 14): walk and joining built for the green, hedge and six in-place festivals; the **Night Market built 2026-11-16** (stalls, hats, crowd, pier, market fish, float, hot drink; all placeholder art and lines). The Feast is held in place, so it has no exit tiles (closed 2026-11-18). The Feast gift exchange is built (note 105, 2026-11-18; the lantern prop and a browser look are left), multiplayer counts (M4), the owner's play.
 2. **Save split** (note 52, built 2026-11-16, with the two-tab guard, newer-version text and stored artifact spots): left a browser check of resume, late-game size, tablet `persist()`, the debug tab and Import with the guard, paper doll.
 3. **Gallery** (note 104, 95 items): left the owner's look, display case, special order, librarian lines (M3d).
 4. **Built to shell level 2026-11-16, left the owner's look:** control schemes (note 27; 1, 4 and 9 are real, SC-188), marriage (note 12; SC-201 to 203), chests and tools (notes 34, 49, 101 to 103), sim (55 of 100 finished by day 112, no drift).

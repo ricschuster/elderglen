@@ -25,6 +25,7 @@ import { checkAchievements } from "./achievements";
 import { SUMMIT_ACHIEVEMENT } from "./summit";
 import { ringProgress, valleyPercent } from "./completion";
 import { deliverAll } from "./mail";
+import { queueFeastLetter } from "./feastexchange";
 import { endDayQuests } from "./quests";
 import { deliverFurnace } from "./smith";
 import { orderReady, type Upgradable } from "./upgrades";
@@ -377,6 +378,7 @@ export function sleep(
   // The completion total is rechecked with the achievements (note 39).
   const completion = valleyPercent(ringProgress(g));
   // Tonight's triggers arrive on the morning of the next day, which has begun.
+  queueFeastLetter(g, g.day.clock.day);
   const newMail = deliverAll(g, g.day.clock.day);
 
   return {

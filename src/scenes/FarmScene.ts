@@ -1,3 +1,4 @@
+import { feastGive, lanternOn } from "../core/feastexchange";
 import {
   BARN_BUILT,
   BARN_FOOTPRINT,
@@ -1794,12 +1795,28 @@ export class FarmScene extends Phaser.Scene {
     }
     if (this.iceTalk(who.id)) return true;
     const held = heldAt(this.state, this.selected);
+    const hall = hallRestored(this.state.hall);
+    const feast = feastGive(
+      this.state,
+      this.mapId,
+      who.id,
+      held.kind === "item" ? held.id : undefined,
+      hall,
+    );
+    if (feast) {
+      this.message = feast.message;
+      this.render();
+      return true;
+    }
     const r = meet(
       this.state,
       who.id,
       held.kind === "item" ? held.id : undefined,
     );
     this.message = r.message;
+    if (lanternOn(this.state, this.mapId, hall, who.id))
+      this.message +=
+        " A lantern hangs over this seat: hold a gift and give it.";
     if (r.kiss)
       this.floatText(
         (tile.x + 0.5) * this.map.tileSize,
