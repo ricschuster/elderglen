@@ -35,6 +35,8 @@ Built 2026-11-17 and checks since (sweep, sim, stages): detail in `PRIORITIES_AR
 
 Decided 2026-11-18: shrine score 21, Diamond sources (floor 120 drop, Crystalarium copies, ponds, no fishing chest), Feast caps 300 and 100; multiplayer rulings for shrine, gallery, orders and player marriage are in note 53; note 12 now has the two-player wedding and divorce steps (drafted 2026-11-18, owner decided: the wedding plays after night 3 with no wait for the partner, the proposer's cabin is home, the filer pays the fee, divorce at the hall ledger (30,5)). Build with M4.
 
+M4 spike (#948) desktop part built 2026-11-18 (`spikes/m4/`, note 53 "M4 spike results"): left your router and SM-T500 runs, one size check on a played farm, M4 follow-up issues.
+
 Alongside: the wiki (#910, note 100; built for every category, every item has a picture; text cleared for crops, fish, forage, items, places and rooms; draft text left for bundles, recipes, people and five gem names; left: owner reads the draft text and clears flags, gift lists (`giftsDraft`), people prose with the voice sheets, hosting after M3d), Stardew checks rows (open: SC-188 only; the rest answered or closed as ours, on purpose, 2026-11-17). M4 hosting spike filed as #948.
 
 ## Milestone order (ADR 0012)
@@ -71,8 +73,7 @@ Done, owner checked (2026-11-11): step 1 farm (note 55, #776), step 2 festival s
 - Step 6 (owner): Hands-on play of the built areas to check placeholder metrics (paths
   2 wide, doors 1, 60 s on foot and 30 s on the horse to cross).
 - Step 7: Build the layout page, before the valley and festival layouts.
-- Step 8: Wait for the M4 spike (jam freeing, tablet map memory; may change the
-  120 by 120 cap).
+- Step 8: M4 spike desktop part done 2026-11-18 (note 53): the 120 by 120 cap stays (host holds all 38 maps in about 69 MB). Left: the router and tablet runs by hand (#948), the jam rule test.
 - Step 9: Valley maps, area by area (note 71 order), after step 6.
 - Step 10: Festival layouts, from step 2.
 - Step 12: Mines (the combat leftovers, #598, are closed).
