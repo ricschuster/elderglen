@@ -485,3 +485,9 @@ Item 6: **Batch 4 built 2026-11-14** (hall counter second tiles, renovation deco
 - **Owner answers left:** none. Decided 2026-11-13: garden pot is clay 1, stone 10 and a refined crystal (smelted quartz, Stardew), taught by Alder (built: smelt recipe, letter and craft recipe); Frostfin 300g, no bundle slot; Frostday cap is Icewarden's Cap (built); the hunt prize is the emberseed (built); aged roe quality closed. Algae soup is the glassy-elver's reward (note 93).
 - **Heart events** (#873, closed) and the **Secret Woods and ponds** (#878, closed) are built; real text, pond art and tuning are #950 (M3d).
 - **Tablet debug app (2026-11-17).** `npm run android:apk -- --debug` and `android:install -- --debug` build "Elderglen DBG" (stage jumper, debug menu; own package id and saves), beside the normal app (docs/android.md, note 42).
+
+## Moved from PRIORITIES.md 2026-11-18 (handoff 2026-11-18e)
+
+Built 2026-11-17 (handoff 2026-11-17c): scheme 4 tap duration, scheme 1 auto-equip, the Diamond item with its node, Quarry and
+monster sources (note 83; the shrine is built 2026-11-18), stage menu checked (all 38 stages). The hall-restored
+Feast is already wired; its exit tiles wait for the drawn Hearthwell variant. The sweep script and state patch were fixed after the invitation and 8-heart failures (not rerun). The sweep (`WORKERS=3`, 11 festivals and 150 events, no findings) and `npm run sim` (62 of 100 finished by day 110) ran clean 2026-11-18 (handoff 2026-11-18d). Next: the owner's play. Run `npx vitest run --maxWorkers=4` (the default worker count segfaults here).
