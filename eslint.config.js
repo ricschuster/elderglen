@@ -8,6 +8,7 @@ export default tseslint.config(
       "android",
       "node_modules",
       "scripts",
+      "spikes",
       "docs/reference",
       "docs/wiki",
       "docs/wiki-internal",

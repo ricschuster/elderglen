@@ -120,8 +120,9 @@ Owner answers, 2026-11-11, are marked. The rest are proposals to check.
 9. **Tablet budget (owner, 2026-11-11).** Largest map 120 by 120 tiles (the Forest and
    Hearthwell). One map in memory at a time on a client (ADR 0005). A multiplayer
    host (M4, note 53) may need several maps at once, because players can be on
-   different maps and the nightly area rules run for every area world. This is not
-   checked in the code and is raised for the M4 spike. It may change the cap. The SM-T500 load test
+   different maps and the nightly area rules run for every area world. Checked in the M4 spike
+   (2026-11-18, note 53): the core already holds all 38 maps (about 69 MB) and the area rules need no tile layers, so
+   the cap stays. The SM-T500 load test
    is by hand and tracked in #523. Any bigger map needs an ADR.
 10. **Naming (owner, 2026-11-11).** Map ids as now: lower case, hyphens, the area name.
     Entry names say where the player came from (`from_farm`). Exits say where
