@@ -32,7 +32,7 @@ Decided 2026-11-17: Hearthwell water stays all fishable (note 14); Import keeps 
 open past five later (note 52).
 
 Built 2026-11-17 (handoff 2026-11-17c): scheme 4 tap duration, scheme 1 auto-equip, the Diamond item with its node, Quarry and
-monster sources (note 83; the shrine and evaluation scene are NOT built), stage menu checked (all 38 stages). The hall-restored
+monster sources (note 83; the shrine is built 2026-11-18), stage menu checked (all 38 stages). The hall-restored
 Feast is already wired; its exit tiles wait for the drawn Hearthwell variant. The sweep script and state patch were fixed after the invitation and 8-heart failures (not rerun). Next session: the sweep (`WORKERS=3`) and
 `npm run sim` alone, then the owner's play. Run `npx vitest run --maxWorkers=4` (the default worker count segfaults here).
 
@@ -50,8 +50,9 @@ ending, M3d polish, then M5 and M6. Map areas (notes 71 to 78) are M3b.
 2. **Story spine.** Warden head (#177), sea elf (#176) and Rosmarin (#178) settled bar
    small items. The third community project (#5) waits for ring 2 (M5). Needed before
    slice 5 (note 33).
-2b. **Ancestors' shrine (note 83).** Left: the Diamond's name, art and drops (SC-135),
-   the shrine tiles (farm layout; #776 is closed), scene shots, camp chest items (note 22).
+2b. **Ancestors' shrine (note 83).** Built to shell level 2026-11-18 (core, scene, farm hook, tests). Owner to confirm the
+   placeholders listed in note 83 "Built status" (tiles, candle minimum, point total, trigger, redo). Left: art,
+   real lines, the Diamond's name, fishing-chest source, camp chest items (note 22).
 3. **Map areas (notes 71 to 78).** All built to shell level (#636 to #646, #649, #661).
    Left items are in each note's "Built status". Build detail is in the archive.
 4. **Art direction and audio plan.** Character art (note 15), hall rooms (#335),

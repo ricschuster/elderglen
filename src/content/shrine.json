@@ -1,0 +1,67 @@
+{
+  "note": "The ancestors' shrine (docs/design/83_grandpa_shrine.md). Lines and letter are the note's draft text, placeholders. Tiles are placeholders (owner to confirm).",
+  "map": "farm",
+  "firstYear": 3,
+  "candleCuts": [0, 4, 8, 12],
+  "statue": {
+    "min": 2,
+    "max": 8
+  },
+  "earningsSteps": [50000, 100000, 200000, 300000, 500000],
+  "earningsTop": 1000000,
+  "skillTotal": 30,
+  "friendHearts": 8,
+  "friendSteps": [5, 10],
+  "playerName": "farmer",
+  "ancestors": {
+    "hester": {
+      "name": "Hester Thimblemoss",
+      "role": "the founder"
+    },
+    "fenwick": {
+      "name": "Fenwick Thimblemoss",
+      "role": "the seedkeeper"
+    },
+    "bram": {
+      "name": "Bram Thimblemoss",
+      "role": "Oriel's parent"
+    }
+  },
+  "firstScene": [
+    {
+      "speaker": "hester",
+      "text": "I cleared this ground with a borrowed spade and a stubborn back. You have done more with it, {name}."
+    },
+    {
+      "speaker": "fenwick",
+      "text": "Seeds are a promise kept slowly. I see yours growing."
+    },
+    {
+      "speaker": "bram",
+      "text": "Oriel always said the farm would find the right hands. Look at them."
+    }
+  ],
+  "lastFull": {
+    "speaker": "hester",
+    "text": "Tend it, and let it tend you."
+  },
+  "lastShort": {
+    "speaker": "fenwick",
+    "text": "There is room on the stand yet. No hurry. The ground is patient."
+  },
+  "redoFull": "The light holds, {name}.",
+  "redoShort": "There is more light to come.",
+  "statueLine": "A gift, from the old ground.",
+  "statueUsed": "The stone is quiet. Come back tomorrow.",
+  "notes": {
+    "before": "A note pinned to the stone: \"The ancestors look in at the start of year three. Set a Diamond here to ask again, any time.\"",
+    "waiting": "The candles are dark and the ground is still. The ancestors will look in soon.",
+    "after": "The candles burn. Set a Diamond here to ask again."
+  },
+  "letter": {
+    "id": "oriel-evaluation",
+    "sender": "Oriel",
+    "title": "From Evenglade",
+    "body": "Dear {name},\n\nThe valley tells me you have been busy, which is the polite way of saying it talks about you. I hear the candles are lit. Good. Hester would have pretended not to be pleased, and then told everyone.\n\nI am well and as comfortable as a person can be among people who live forever and are terribly patient about it. The seeds here keep odd hours and the tea is better than you would believe. You would be welcome at Evenglade, when the road suits you. Not before.\n\nWith affection, and a little dust,\nOriel"
+  }
+}

@@ -142,6 +142,8 @@ export interface SleepReport {
   achievements: string[];
   /** True when the hall steward has walked over this morning to call the player in (note 39). */
   summitCall: boolean;
+  /** The year 3 evaluation scene is owed this morning (note 83). */
+  shrineCall: boolean;
   /** The valley completion total after tonight's recheck, in whole percent (note 39). */
   completion: number;
   /** Whole percent the total rose by tonight, zero when it did not. */
@@ -375,6 +377,8 @@ export function sleep(
   const summitCall = g.summit.callToday(
     festivalDayToday(g.day.clock.day) !== undefined,
   );
+  // The ancestors' evaluation is owed from the start of year 3 (note 83).
+  const shrineCall = g.shrine.callToday(g);
   // The completion total is rechecked with the achievements (note 39).
   const completion = valleyPercent(ringProgress(g));
   // Tonight's triggers arrive on the morning of the next day, which has begun.
@@ -404,6 +408,7 @@ export function sleep(
     furnaceGifted,
     achievements,
     summitCall,
+    shrineCall,
     completion,
     completionGain: Math.max(0, completion - completionBefore),
     newMail,
