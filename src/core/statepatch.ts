@@ -7,7 +7,7 @@ import { NURSERY_TIER } from "./children";
 import { MAX_HOUSE_TIER } from "./house";
 import { COURT_HEARTS, MAX_CHILDREN, PROPOSE_HEARTS } from "./marriage";
 import { eventById } from "./heartevents";
-import { HEART, isCandidate } from "./friendship";
+import { HEART, heartCap, isCandidate } from "./friendship";
 import { Inventory } from "./inventory";
 import { LEVEL_XP, MAX_LEVEL, SKILLS, type Skill } from "./skills";
 import type { GameState } from "./save";
@@ -208,6 +208,12 @@ export function applyStatePatch(g: GameState, p: StatePatch): PatchResult {
     g.friendship.meet(id);
     const need = hearts * HEART - g.friendship.points(id);
     if (need > 0) g.friendship.award(id, need);
+    // A candidate stops at 8 hearts until the bouquet (note 61): give it for the 9th and 10th.
+    if (isCandidate(id) && hearts > heartCap(id, false)) {
+      g.friendship.giveBouquet(id);
+      const more = hearts * HEART - g.friendship.points(id);
+      if (more > 0) g.friendship.award(id, more);
+    }
   }
 
   if (p.houseTier !== undefined) {
