@@ -24,7 +24,7 @@ Open, top to bottom:
 
 1. **#876 festivals** (note 82, 14): walk and joining built for the green, hedge and six in-place festivals; the **Night Market built 2026-11-16** (stalls, hats, crowd, pier, market fish, float, hot drink; all placeholder art and lines). The Feast is held in place, so it has no exit tiles (closed 2026-11-18). The Feast gift exchange and lantern are built (note 105); left multiplayer counts (M4) and the owner's play.
 2. **Save split** (note 52, built 2026-11-16; desktop browser check 2026-11-18 passed, `playtest/save.mjs`, takeover race fixed): left tablet `persist()`, the debug tab, paper doll.
-3. **Gallery** (note 104, 95 items): left the owner's look, display case, special order, librarian lines (M3d).
+3. **Gallery** (note 104, 94 items after High gem B was removed 2026-11-18; the museum order is built): left the owner's look, display case, librarian lines (M3d). The 60-donation key opens a new hidden area, its own note, M3d or later.
 4. **Built to shell level 2026-11-16, left the owner's look:** control schemes (note 27; 1, 4 and 9 are real, SC-188), marriage (note 12; SC-201 to 203), chests and tools (notes 34, 49, 101 to 103), sim (55 of 100 finished by day 112, no drift).
 5. **#951: play M3b end to end.** A checklist plus the stage jumper (note 42: 38 stages, `window.farmStage(name)`, `--stage` in playtests). **Directed play ran 2026-11-17** on desktop and on the tablet (agents; findings fixed in the session PR, handoff 2026-11-17). Left: the owner's own look, the Diamond rates are now read from the saved pages (SC-135 closed, note 83 decision 23, build with the shrine Diamond) and the touch checks the agents could not do (Big Chest and stick scheme by touch, health bar in the mines, a real gallery donation, the hot drink Take click). Tablet: `android:install -- --debug` gives the "Elderglen DBG" app (docs/android.md).
 
@@ -35,6 +35,8 @@ Built 2026-11-17 (handoff 2026-11-17c): scheme 4 tap duration, scheme 1 auto-equ
 monster sources (note 83; the shrine is built 2026-11-18), stage menu checked (all 38 stages). The hall-restored
 Feast is already wired; its exit tiles wait for the drawn Hearthwell variant. The sweep script and state patch were fixed after the invitation and 8-heart failures (not rerun). Next session: the sweep (`WORKERS=3`) and
 `npm run sim` alone, then the owner's play. Run `npx vitest run --maxWorkers=4` (the default worker count segfaults here).
+
+Decided 2026-11-18: shrine score 21, Diamond sources (floor 120 drop, Crystalarium copies, ponds, no fishing chest), Feast caps 300 and 100; multiplayer rulings for shrine, gallery, orders and player marriage are in note 53 (write the two-player wedding and divorce into note 12 before M4).
 
 Alongside: the wiki (#910, note 100; built for every category, every item has a picture; text cleared for crops, fish, forage, items, places and rooms; draft text left for bundles, recipes, people and five gem names; left: owner reads the draft text and clears flags, gift lists (`giftsDraft`), people prose with the voice sheets, hosting after M3d), Stardew checks rows (open: SC-188 only; the rest answered or closed as ours, on purpose, 2026-11-17). M4 hosting spike filed as #948.
 
