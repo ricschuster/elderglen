@@ -223,8 +223,9 @@ level only. Nothing is built, and the build waits for M4.
   - **Divorce:** either player starts it at the ledger in the hall (30,5) for the note 12 fee. The other is told next morning. The
     mover returns to the empty cabin.
   - **Spouse help:** none for a player couple. Only villager spouses do the morning chore.
-  - Still open: the exact wedding notice with two players' day ends, and which of note 12's wedding and divorce
-    steps need two-player screens. Write these into note 12 before the build.
+  - **Settled 2026-11-18 (owner), see note 12 "Two-player wedding and divorce steps":** the wedding plays after night 3
+    with no wait for the partner (Stardew from memory, SC-207), the proposer's cabin is home, the player who files pays
+    the fee, and the ledger is in the hall. Do not ask these again.
 - **Special orders and the request board (notes 65 and 50): one shared board, and every player gets the reward
   (owner, 2026-11-18, extends the request board decision above, SC-206).** A hand-in order takes goods from the
   player handing in and still pays every player. This is not checked against Stardew.
