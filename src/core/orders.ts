@@ -5,6 +5,7 @@ export { weekOf };
 import { categoryOf } from "./artisan";
 import { contents, isEmpty, type PlacedChest } from "./chests";
 import { cropById } from "./crops";
+import { GALLERY_LIST } from "./gallery";
 import { GEM_ITEMS } from "./gems";
 import { fishById } from "./fishing";
 import { itemById } from "./items";
@@ -48,7 +49,7 @@ export type OrderAsk =
 export interface HandInGoods {
   mode: "total" | "one-kind" | "distinct";
   items?: string[];
-  group?: "keg-drinks" | "gems";
+  group?: "keg-drinks" | "gems" | "minerals";
 }
 
 /** The named place whose chest takes the goods. A placeholder tile until the places are designed. */
@@ -360,11 +361,13 @@ export function askText(def: OrderDef): string {
       const what =
         g.group === "gems"
           ? "gems"
-          : g.group === "keg-drinks"
-            ? "keg drinks"
-            : (g.items ?? [])
-                .map((i) => itemById(i)?.name.toLowerCase() ?? i)
-                .join(" or ");
+          : g.group === "minerals"
+            ? "minerals"
+            : g.group === "keg-drinks"
+              ? "keg drinks"
+              : (g.items ?? [])
+                  .map((i) => itemById(i)?.name.toLowerCase() ?? i)
+                  .join(" or ");
       return g.mode === "distinct"
         ? `Leave ${a.count} kinds of ${what}, one of each, in the chest at ${a.place.name}`
         : g.mode === "one-kind"
@@ -383,6 +386,8 @@ const isKegDrink = (base: string): boolean => {
 const takesGood = (goods: HandInGoods, base: string): boolean =>
   (goods.items?.includes(base) ?? false) ||
   (goods.group === "gems" && GEM_ITEMS.some((g) => g.id === base)) ||
+  (goods.group === "minerals" &&
+    GALLERY_LIST.some((e) => e.group === "mineral" && e.id === base)) ||
   (goods.group === "keg-drinks" && isKegDrink(base));
 
 /**

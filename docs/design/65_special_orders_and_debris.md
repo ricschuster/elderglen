@@ -65,8 +65,8 @@ possible (`33_build_order.md`). Gold is a placeholder, set when tuning.
 | Pantry Stock | Put 24 eggs in the inn pantry | 14 days | Slice 4 | A machine | Yes |
 
 - Stardew's board also has bone, island and later orders. Ours leave out the
-  island (ring 2 has its own board, note 39) and the museum order until the
-  gallery exists. More orders are a data change.
+  island (ring 2 has its own board, note 39). The museum order waited for the
+  gallery and is built as "The Scholar's Sample" (note 104, Built status). More orders are a data change.
 - Orders that need a system not yet built are simply not drawn. The draw is
   seeded from the week, so a reload gives the same board (as note 50).
 - Quest record: add `special` to the `source` values, and fields for the

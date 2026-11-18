@@ -44,15 +44,6 @@
       "xp": 16,
       "color": "#e0802a",
       "light": "#ffd090"
-    },
-    {
-      "id": "gem-high-b",
-      "name": "High gem B",
-      "sellPrice": 750,
-      "minFloor": 81,
-      "xp": 16,
-      "color": "#e8e0f0",
-      "light": "#ffffff"
     }
   ],
   "glimmerstone": {

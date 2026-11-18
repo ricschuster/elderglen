@@ -1468,11 +1468,6 @@
     "sellPrice": 400
   },
   {
-    "id": "gem-high-b",
-    "name": "High gem B",
-    "sellPrice": 750
-  },
-  {
     "id": "gem-low-a",
     "name": "Low gem A",
     "sellPrice": 50

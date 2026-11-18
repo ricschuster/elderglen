@@ -1083,7 +1083,6 @@ window.WIKI_INDEX = [
   },
   { name: "Garlic seeds", cat: "Item", path: "items/garlic-seed.html", kw: "" },
   { name: "High gem A", cat: "Item", path: "items/gem-high-a.html", kw: "" },
-  { name: "High gem B", cat: "Item", path: "items/gem-high-b.html", kw: "" },
   { name: "Low gem A", cat: "Item", path: "items/gem-low-a.html", kw: "" },
   { name: "Low gem B", cat: "Item", path: "items/gem-low-b.html", kw: "" },
   { name: "Mid gem A", cat: "Item", path: "items/gem-mid-a.html", kw: "" },
@@ -2080,7 +2079,7 @@ window.WIKI_INDEX = [
     name: "Geode crusher",
     cat: "Recipe",
     path: "recipes/geode-crusher.html",
-    kw: "Crafting Gold bar Stone High gem B",
+    kw: "Crafting Gold bar Stone Diamond",
   },
   {
     name: "Gourd lantern",

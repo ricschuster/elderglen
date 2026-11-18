@@ -1,6 +1,6 @@
 # 104 The library gallery
 
-Status: settled by the owner 2026-11-16. Built to shell level 2026-11-16 (steps 1 to 6 and the free arrangement; set rewards are data, the museum special order and the shortcut-door key are not built). The minerals are
+Status: settled by the owner 2026-11-16. Built to shell level 2026-11-16 (steps 1 to 6 and the free arrangement; set rewards are data, the museum special order built 2026-11-18, the shortcut-door key not built). The minerals are
 added as data; the gallery itself is not built. Extends note 39 (the
 completion total and elderfruit source 7), note 38 (achievements), note 69
 (geodes, minerals, artifacts), note 86 (the library interior) and note 20
@@ -36,16 +36,18 @@ completion total and elderfruit source 7), note 38 (achievements), note 69
   description says Dunmar can tell more if it is donated (Stardew's shape, saved
   page).
 
-## The donation list (derived from data, 95 items)
+## The donation list (derived from data, 94 items since 2026-11-18)
+
+Note: removing the placeholder gem `gem-high-b` (owner, 2026-11-18) cut the gems from 6 to 5, so the built list is 94, not 95. The other "95" figures below are the original settled count; owner to confirm 94 or add the Diamond to restore 95.
 
 | Group | Count | Source in data |
 | --- | --- | --- |
 | Geode minerals | 43 | `pools[].minerals` in `geodes.json`: 14 each for the Geode and Frozen pools, 15 for the Magma pool |
 | Foraged crystals | 3 | `pools[].foraged`: loam, rime and cinder crystal |
-| Gems | 6 | `gems.json` `gems` |
+| Gems | 5 | `gems.json` `gems` |
 | Glimmerstone | 1 | `gems.json` `glimmerstone` |
 | Artifacts | 42 | `artifacts.json` (includes the geode artifacts dwarf cup, ice bell, ember lantern, and bundle 26's four old things) |
-| **Total** | **95** | 53 minerals and 42 artifacts |
+| **Total** | **94** | 52 minerals and 42 artifacts |
 
 - **Minerals 53, artifacts 42**, the same split as Stardew (saved Museum page).
   Owner decision 2026-11-16: the list is near Stardew's 95, and gems and the
@@ -161,4 +163,23 @@ is a placeholder and uses items and decor the game has or will have.
 5. **Library screen.** The counter or display case interaction, the two-grid
    donate screen, the shelf grid, the collections row.
 6. **Text and wiki.** Librarian lines, the Gallery wiki page, overview JSON.
-7. **Later:** free arrangement UI, set rewards, the museum special order.
+7. **Later:** free arrangement UI, set rewards, the museum special order (all built, see below; the shortcut-door key waits for its own design).
+
+## Built status
+
+- Steps 1 to 6, free arrangement and set rewards: built (2026-11-16).
+- **Museum special order, built 2026-11-18.** "The Scholar's Sample"
+  (`scholars-sample` in `src/content/orders.json`): a hand-in order (note 65) asking for six
+  different minerals, one each, left in a marked chest at the library. It uses a
+  new hand-in group `minerals`, derived from the gallery list, so it grows with the data.
+  Repeatable for gold.
+- **Shortcut-door key (reward at 60): not built.** The note only says "named with that
+  design" and does not say which door or where, so the reward stays a mark only. **Decided by the owner
+  2026-11-18:** the key opens a new hidden area behind a locked door (Stardew's Rusty Key opens a new area, from memory).
+  The area needs its own design note (place, door, contents, what the key is called) before it is built, and it is not
+  M3b: it goes to M3d or later. The mark stays until then.
+- **Placeholders for the owner to confirm:** the order's name, poster ("a scholar passing
+  through", not a villager), ask (six distinct minerals), 14 day window, 900g, repeat for
+  gold, first reward (a bookshelf), and the chest tile (22, 21) beside the library counter.
+  Note 65 named no ask for the museum order. The goods are taken, they are not
+  loaned, so a player keeps a spare for the gallery.

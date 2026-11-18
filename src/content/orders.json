@@ -205,5 +205,25 @@
       },
       "text": "a loom"
     }
+  },
+  {
+    "id": "scholars-sample",
+    "title": "The Scholar's Sample",
+    "poster": "A scholar passing through",
+    "text": "A scholar on the way to the library wants six different minerals to study before the gallery gets them. Leave them in the marked chest by the counter. The scholar takes them away, so keep a copy back for the gallery.",
+    "ask": {
+      "kind": "hand-in",
+      "count": 6,
+      "goods": { "mode": "distinct", "group": "minerals" },
+      "place": { "map": "library", "x": 22, "y": 21, "name": "the library" }
+    },
+    "windowDays": 14,
+    "repeat": true,
+    "notSeasons": [],
+    "gold": 900,
+    "firstReward": {
+      "item": { "id": "bookshelf", "count": 1 },
+      "text": "A bookshelf from the scholar's own study."
+    }
   }
 ]

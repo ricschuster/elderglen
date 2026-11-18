@@ -38,7 +38,7 @@ the saved Forge page (read 2026-11-12). Names, prices and art are ours (ADR 0002
   | Mid (floor 41 and deeper) | `gem-mid-a` | Crit chance, +4.6 percent flat |
   | Mid | `gem-mid-b` | Crit power, +10 percent |
   | High (floor 81 and deeper) | `gem-high-a` | Weapon speed, +2, +3, +2 |
-  | High | `gem-high-b` | Damage, +10 percent min and max |
+  | High | `diamond` (was `gem-high-b`, removed 2026-11-18; owner to confirm) | Damage, +10 percent min and max |
 
   Which of each pair is which is open, and the stat names follow note 37 and the rings.
 - **The Glimmerstone** fills all remaining forgings with random upgrades for 20 ore (the

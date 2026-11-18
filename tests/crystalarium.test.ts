@@ -51,7 +51,7 @@ describe("the crystalarium times", () => {
     expect(copyMinutes("quartz-crystal")).toBe(Math.round(420 * scale));
     expect(copyMinutes("gem-low-a")).toBe(Math.round(1120 * scale));
     expect(copyMinutes("gem-low-b")).toBe(Math.round(1360 * scale));
-    expect(copyMinutes("gem-high-b")).toBe(Math.round(7200 * scale));
+    expect(copyMinutes("diamond")).toBe(Math.round(7200 * scale));
     expect(MINERAL_COPY_MINUTES).toBe(Math.round(5000 * scale));
     expect(copyMinutes("river-garnet")).toBe(MINERAL_COPY_MINUTES);
   });
@@ -68,7 +68,7 @@ describe("the crystalarium times", () => {
   it("makes one machine copy about 100 to 150g a day", () => {
     const perDay = (id: string) =>
       (itemById(id)!.sellPrice * MINUTES_PER_DAY) / copyMinutes(id)!;
-    for (const id of ["gem-mid-a", "gem-mid-b", "gem-high-b"]) {
+    for (const id of ["gem-mid-a", "gem-mid-b", "gem-high-a", "diamond"]) {
       expect(perDay(id), id).toBeGreaterThan(60);
       expect(perDay(id), id).toBeLessThan(250);
     }

@@ -83,8 +83,8 @@ Details: the tapper state is `tap` on the tree (saves with the trees); Action ta
 good, the pickaxe lifts the tapper (a ready good comes too), felling the tree returns it.
 The worm bin keeps a job with a count, fills 4 to 5 each morning from sleep, cap 50. The
 crusher uses `crackResult` with the deepest floor reached. Corrected 2026-11-12: the crusher
-recipe's diamond is the Diamond of note 83 decision 21 (a 750g gem, id `gem-high-b` as the
-placeholder, named Diamond in `gems.json`), not the Heartfire diamond.
+recipe's diamond is the Diamond of note 83 decision 21 (a 750g gem, id `diamond`; the placeholder
+`gem-high-b` it first used was removed 2026-11-18), not the Heartfire diamond.
 
 Built (2026-11-12, second pass): item 4. `hops` is in `crops.json` (summer, 11 days, regrow
 1, seed 60g, sells 25g); crops now take `produce: "none"` (wheat and hops), so neither makes

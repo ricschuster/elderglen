@@ -196,6 +196,41 @@ not built in M4. The pros and cons, so the idea is not lost:
   Open for the spike: how a jam is freed, and whether a tablet host needs
   several maps in memory (note 81 decision 9).
 
+## Systems added since the first design (owner, 2026-11-18)
+
+The systems below were designed after 2026-11-02. How each behaves with several players is settled here at design
+level only. Nothing is built, and the build waits for M4.
+
+- **Ancestors' shrine (note 83): one shared score, one scene on the host's farm (Stardew from memory, SC-204).** The
+  world rows (hall, bundles) count once. Rows that are about one player (skills, hearts, earnings) use the best player
+  for each row, so one strong player can carry the farm. The statue is shared. A Diamond for a redo can come from
+  any player. A guest sees the scene when they are present, and is not held up by it.
+- **Gallery (note 104): one shared gallery for the farm (Stardew from memory, SC-200).** Any player's donation counts
+  for everyone. Rewards are collected by each player from the librarian, so each player gets their own.
+- **Marriage (note 12): villagers and other players, both from M4 (Stardew from memory, SC-205).** Player marriage
+  needs its own design before it is built: the proposal, a shared home, the both-in-bed rule and spouse routes for
+  two players. That design is the first task after the spike. Until it is written, only villager marriage is built.
+- **Player marriage, first rulings (owner, 2026-11-18, all from memory of Stardew, SC-205).**
+  - **Proposal:** one player offers the pendant (note 12) and the other accepts or declines. A decline costs nothing.
+  - **Home:** one moves into the other's cabin. The vacated cabin stays so a divorce has a place to return to. The
+    couple share one bed and count as both in bed.
+  - **Children:** the same shared question as villager marriage (note 12), one child shown in the home, both
+    partners are the parents.
+  - **One spouse per villager:** a villager married or engaged to a player is off limits to the others, who keep
+    their hearts but cannot propose.
+  - **Wedding (owner, 2026-11-18):** the villager wedding scene with both players as the couple. The other players
+    and the villagers are guests. Same notice as a villager wedding.
+  - **Divorce:** either player starts it at the carpenter for the note 12 fee. The other is told next morning. The
+    mover returns to the empty cabin.
+  - **Spouse help:** none for a player couple. Only villager spouses do the morning chore.
+  - Still open: the exact wedding notice with two players' day ends, and which of note 12's wedding and divorce
+    steps need two-player screens. Write these into note 12 before the build.
+- **Special orders and the request board (notes 65 and 50): one shared board, and every player gets the reward
+  (owner, 2026-11-18, extends the request board decision above, SC-206).** A hand-in order takes goods from the
+  player handing in and still pays every player. This is not checked against Stardew.
+- **Festivals (notes 82 and 14):** counts and joining for the Feast, the gift exchange (note 105) and the in-place
+  festivals are still open for the spike, not settled here.
+
 ## Checked against Stardew (2026-11-02)
 
 From the saved Multiplayer page. Not copied, only compared.

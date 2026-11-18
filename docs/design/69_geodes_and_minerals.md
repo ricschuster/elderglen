@@ -140,7 +140,7 @@ unless it says Stardew's.
 
 - **Gems.** Placeholder ids until the mineral names are final: low gems
   `gem-low-a`, `gem-low-b` from any floor; mid gems `gem-mid-a`, `gem-mid-b` from floor
-  41; high gems `gem-high-a`, `gem-high-b` from floor 81. Sell prices 50 to 750g.
+  41; the high gem `gem-high-a` from floor 81 (`gem-high-b` was removed 2026-11-18; the Diamond of note 83 is the 750g gem). Sell prices 50 to 400g, Diamond 750g.
 - **Node.** A rock node that takes the same swings as a geode node and drops its gem.
   Share of rocks: 1.5 percent in the Upper Galleries, 2.5 in the Cold Deeps, 3.5 in the
   Ember Deeps (placeholders). One gem a node.

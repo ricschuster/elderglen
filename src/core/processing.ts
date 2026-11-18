@@ -215,7 +215,6 @@ const GEM_STARDEW_MINUTES: Record<string, number> = {
   "gem-mid-a": 2400,
   "gem-mid-b": 3000,
   "gem-high-a": 3000,
-  "gem-high-b": 7200,
   [DIAMOND.id]: 7200,
   [GLIMMERSTONE.id]: 7200,
   [QUARTZ]: 420,

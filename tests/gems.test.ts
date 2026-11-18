@@ -22,11 +22,11 @@ import geodeData from "../src/content/geodes.json";
 import { newGame } from "../src/core/save";
 
 describe("gem data (note 69)", () => {
-  it("has six gems in three bands priced 50 to 750, all items", () => {
-    expect(GEMS).toHaveLength(6);
-    expect(GEMS.map((g) => g.minFloor)).toEqual([1, 1, 41, 41, 81, 81]);
+  it("has five gems in three bands priced 50 to 400, all items", () => {
+    expect(GEMS).toHaveLength(5);
+    expect(GEMS.map((g) => g.minFloor)).toEqual([1, 1, 41, 41, 81]);
     expect(Math.min(...GEMS.map((g) => g.sellPrice))).toBe(50);
-    expect(Math.max(...GEMS.map((g) => g.sellPrice))).toBe(750);
+    expect(Math.max(...GEMS.map((g) => g.sellPrice))).toBe(400);
     for (const g of GEM_ITEMS)
       expect(itemById(g.id)?.sellPrice).toBe(g.sellPrice);
   });
@@ -54,7 +54,7 @@ describe("gem drops", () => {
   });
   it("opens the mid and high gems by depth", () => {
     expect(gemDrop(50, () => 0.99)).toBe("gem-mid-b");
-    expect(gemDrop(85, () => 0.99)).toBe("gem-high-b");
+    expect(gemDrop(85, () => 0.99)).toBe("gem-high-a");
   });
   it("gives the Glimmerstone only from floor 100, by its chance", () => {
     expect(gemDrop(99, () => 0)).not.toBe(GLIMMERSTONE.id);
@@ -72,7 +72,7 @@ describe("gem drops", () => {
     expect(ROCK_XP.gem).toBeGreaterThan(ROCK_XP.stone);
     expect(gemXp("gem-low-a")).toBeLessThan(gemXp("gem-mid-a"));
     expect(gemXp("gem-mid-a")).toBeLessThan(gemXp("gem-high-a"));
-    expect(gemXp(GLIMMERSTONE.id)).toBeGreaterThan(gemXp("gem-high-b"));
+    expect(gemXp(GLIMMERSTONE.id)).toBeGreaterThan(gemXp("gem-high-a"));
   });
 });
 

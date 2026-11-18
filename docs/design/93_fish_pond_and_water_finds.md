@@ -268,9 +268,9 @@ like, and use items that already exist. All numbers are placeholders to edit.
 | crowned-tunny | sea | seaweed | gem-mid-a | 5 plain-bait |
 | glacier-ghost | mountain lake | iron-ore | gem-high-a | 1 gem-low-a |
 | velvet-koi | cove | pearly-shell | gem-high-a | 1 gem-low-b |
-| hush | cove | spiral-shell | gem-high-b | 1 gem-low-a |
+| hush | cove | spiral-shell | diamond | 1 gem-low-a |
 | dusk-opal | cove | pearly-shell | gem-high-a | 1 gem-low-b |
-| deepglow | cove | spiral-shell | gem-high-b | 1 gem-low-a |
+| deepglow | cove | spiral-shell | diamond | 1 gem-low-a |
 | shell-ghost | cove | whelk | gem-high-a | 1 gem-low-b |
 
 ### Legends (one good at 1)

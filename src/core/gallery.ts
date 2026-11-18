@@ -35,7 +35,7 @@ export const GALLERY_LIST: GalleryEntry[] = (() => {
   const ids = [
     ...POOLS.flatMap((p) => p.minerals),
     ...POOLS.map((p) => p.foraged.item),
-    // The Diamond is not on the list yet: the total of 95 is settled (note 104).
+    // The Diamond is not on the list yet: note 104 had 95 before High gem B was removed, now 94.
     ...GEM_ITEMS.filter((g) => g.id !== DIAMOND.id).map((g) => g.id),
   ];
   return [
