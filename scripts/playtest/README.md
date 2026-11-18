@@ -66,14 +66,14 @@ hat box Collections row, buying and placing the Furniture Catalogue, taking a co
 morning report, and fails on any console error.
 
 `npm run playtest:sweep` opens every festival and every heart event in the real game, in parallel browser
-pages (`WORKERS`, default 12), through `farmState`. A festival: the green on the farm, the invitation, the
-screen or the festival map (panels, the way out), and the state after leaving (clock, visit recorded, hat, the
+pages (`WORKERS`, default 6), through `farmState`. A festival: walking in (through the gate to the green or hedge,
+or into the place; no invitation), its counters and the festival map (panels, the way out), and the state after leaving (clock, visit recorded, hat, the
 farm running and the farmer moving). A heart event: sets hearts, flags, weather, season and a time inside its
 window, goes to the map and walks to the event's place so it starts by itself, steps through it with Enter
-(once per choice answer, `BRANCHES=0` for one run), then checks the reward, the seen record and that it does not
+(one run; `BRANCHES=1` adds a run per choice answer), then checks the reward, the seen record and that it does not
 start again the next day. Every problem is a FINDING in the table printed at the end and in
 `playtest-out/sweep.json`; console and page errors count. Env: `ONLY=<id part>`, `KIND=festival|event`, `TRACE=1`.
-Screenshots: `playtest-out/shots/sweep-*.png` (every festival, a sample of events). About 8 minutes with the branches.
+Screenshots: `playtest-out/shots/sweep-*.png` (every festival, a sample of events). A full run of 308 took 62 minutes at 3 workers with the branches (2026-11-17); the default is now 6 workers and no branches.
 
 Dev hooks the scripts can call: `window.farmGive(id, n)` adds items (returns
 `"ok"`, `"unknown"` or `"full"`), `window.farmMoney(n)` adds money,

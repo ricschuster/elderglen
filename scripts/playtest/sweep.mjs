@@ -5,9 +5,9 @@
 // FINDINGS (a table and playtest-out/sweep.json), not script errors.
 //
 // Run: npm run dev (any port), then `BASE_URL=http://localhost:5173/ npm run playtest:sweep`.
-// Env: WORKERS (default 12), ONLY (a substring filter on item ids), KIND
-// (festival or event), BRANCHES=0 to run each heart event once instead of once
-// per choice answer.
+// Env: WORKERS (default 6), ONLY (a substring filter on item ids), KIND
+// (festival or event), BRANCHES=1 to also run each heart event once per choice
+// answer (default: one run per event, which halves the time).
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import { launch, Bot, log, sleepMs, OUT, GAME_URL } from "./lib.mjs";
@@ -18,10 +18,10 @@ process.on("unhandledRejection", (e) => {
     console.error("unhandled", e);
 });
 
-const WORKERS = Math.max(1, Number(process.env.WORKERS) || 12);
+const WORKERS = Math.max(1, Number(process.env.WORKERS) || 6);
 const ONLY = process.env.ONLY ?? "";
 const KIND = process.env.KIND ?? "";
-const BRANCHES = process.env.BRANCHES !== "0";
+const BRANCHES = process.env.BRANCHES === "1";
 const SHOT_EVERY = 4; // one heart event in this many gets a screenshot (plus all with a branch label of "first")
 const T0 = Date.now();
 fs.mkdirSync(`${OUT}/shots`, { recursive: true });
@@ -347,27 +347,9 @@ async function runFestival(w, run) {
     return;
   }
 
-  await patch(w, run, base);
-  const farm = (await w.bot.dbg()).map;
-  if (farm !== "farm") run.fail(`started on ${farm}`);
-  const green = (await serviceList(w)).find((s) => s.kind === "festival");
-  if (!green) return run.fail("no festival service on the farm");
-  if (!(await actOn(w, green.x, green.y)))
-    return run.fail("cannot reach the festival green");
-  if (
-    !(await waitFor(
-      w,
-      async () => (await scenes(w)).includes("festival"),
-      3000,
-    ))
-  )
-    return run.fail(
-      `the festival invitation did not open (scenes ${await scenes(w)})`,
-    );
-  await w.p.keyboard.press("Enter");
-  await sleepMs(500);
-
-  const built = await w.p.evaluate(
+  // Walking in joins a festival (note 82 decision 11): there is no invitation.
+  // The even-year maze is the same map with another layout, so its id is only a label.
+  const builtRaw = await w.p.evaluate(
     async (a) => {
       const m = await import("/src/core/festivals.ts");
       const f = m.FESTIVALS.find((x) => x.id === a.id);
@@ -375,6 +357,46 @@ async function runFestival(w, run) {
     },
     { id: f.id, year },
   );
+  const built = builtRaw ? builtRaw.replace(/-even$/, "") : null;
+  const place = await w.p.evaluate(
+    async (a) => {
+      const m = await import("/src/core/festivals.ts");
+      const f = m.FESTIVALS.find((x) => x.id === a.id);
+      return m.festivalPlace(f, a.hall, a.year);
+    },
+    { id: f.id, year, hall: !!hall },
+  );
+
+  if (built) {
+    // Start in the square and walk out through the gate to the festival map.
+    await patch(w, run, { ...base, map: "hearthwell", entry: "from_farm" });
+    const exits = await w.p.evaluate(() =>
+      window.__game.scene
+        .getScene("farm")
+        .map.exits.map((e) => ({ id: e.id, x: e.x, y: e.y, map: e.map })),
+    );
+    const gate = exits.find((e) => e.map === built);
+    if (!gate) return run.fail(`no exit to ${built} on the square`);
+    const got = await walkNear(w, gate.x, gate.y, 0);
+    if (!got) return run.fail(`cannot walk to the ${built} gate`);
+    await sleepMs(300);
+    await w.bot.key("KeyX", 200);
+  } else {
+    // In place: stand in the festival's zone on its map and take a step.
+    const z = place.zone;
+    await patch(w, run, {
+      ...base,
+      map: place.map,
+      entry: entryOf(place.map),
+    });
+    const cx = z.x + Math.floor(z.w / 2);
+    const cy = z.y + Math.floor(z.h / 2);
+    const r = await walkNear(w, cx, cy, Math.floor(Math.min(z.w, z.h) / 2));
+    if (r === "noroute" || r === false) {
+      run.fail(`cannot walk into the ${f.id} place on ${place.map}`);
+    }
+    await sleepMs(500);
+  }
 
   const state = () =>
     w.p.evaluate((hat) => {
@@ -494,40 +516,48 @@ async function runFestival(w, run) {
       run.fail("the visit was not recorded");
     await farmAlive(w, run, "back on the farm");
   } else {
-    // A screen festival.
-    const inside = await waitFor(
-      w,
-      () =>
-        w.p.evaluate(
-          () => window.__game.scene.getScene("festival").inside === true,
-        ),
-      3000,
-    );
-    if (!inside)
-      return run.fail(
-        `the festival screen did not open (scenes ${await scenes(w)})`,
-      );
-    await sleepMs(400);
+    // In place: it must be joined, and its counters must open.
+    await dismiss(w);
     await shot(w, `festival-${id}`);
-    checkErrors(w, run, "festival screen");
-    // Counter: try one buy, then leave.
-    await w.p.keyboard.press("Escape");
-    if (
-      !(await waitFor(
-        w,
-        async () => !(await scenes(w)).includes("festival"),
-        3000,
-      ))
-    )
-      return run.fail("the festival screen did not close on Escape");
-    await sleepMs(600);
     const st = await state();
-    if (st.minutes < f.ends)
-      run.fail(`clock ${st.minutes} is before the festival end ${f.ends}`);
     if (!st.joined.some((k) => k.startsWith(f.id)))
-      run.fail("the visit was not recorded");
+      run.fail("walking into the place did not join the festival");
     if (f.gift && !st.hats)
       run.fail(`the gift hat ${f.gift.hat} was not given`);
+    for (const s of (await serviceList(w)).filter(
+      (x) => x.kind === "festival-counter",
+    )) {
+      if (s.id === "lantern-stall") {
+        // Buys a lantern straight away: no panel.
+        await actOn(w, s.x, s.y);
+        continue;
+      }
+      if (!(await actOn(w, s.x, s.y))) {
+        run.note(`could not reach the counter ${s.id} (${s.x},${s.y})`);
+        continue;
+      }
+      if (
+        !(await waitFor(
+          w,
+          async () => (await scenes(w)).includes("festival"),
+          3000,
+        ))
+      ) {
+        run.fail(`the counter ${s.id} did not open`);
+        continue;
+      }
+      await sleepMs(300);
+      await w.p.keyboard.press("Escape");
+      if (
+        !(await waitFor(
+          w,
+          async () => !(await scenes(w)).includes("festival"),
+          3000,
+        ))
+      )
+        run.fail(`the counter ${s.id} did not close on Escape`);
+      checkErrors(w, run, `counter ${s.id}`);
+    }
     await farmAlive(w, run, "after the festival");
   }
   checkErrors(w, run, "festival");
