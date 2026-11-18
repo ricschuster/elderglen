@@ -261,3 +261,81 @@ Settled with the owner after the shell build. Slice 4 and 5 text above is update
   scene does not exist yet; when one is built, it reads the same guest list (SC-203).
 - **The ledger stays in the hall at (30,5), and the bouquet stays sold at the general store.** The text
   "made from our own flowers" is dropped.
+
+## Two-player wedding and divorce steps (draft, owner answered Q1 to Q4 2026-11-18)
+
+Draft for M4. Nothing here is built. It turns the player marriage rulings of note 53 ("Player marriage, first
+rulings") into steps. Stardew facts are from the saved Multiplayer page (read 2026-11-18) or from memory, as marked.
+The page says: players marry each other with a craftable Wedding Ring, a married pair get the Stardrop in a purple
+giftbox by their home bed, children go in a home both players sleep in, and an NPC can be married by one player only.
+
+### Steps already decided (note 53)
+
+1. **Proposal.** One player offers the token (this note) to the other. The other accepts or declines. A decline costs
+   nothing. Needs one new screen: a yes or no card on the receiving player's client.
+2. **Engaged.** Both journals carry the wedding mark (`weddingMark`), three days on. Per player data: each record
+   gains `partner: playerKey`, kept on the host.
+3. **Wedding.** The villager wedding scene with both players as the couple. Other players and villagers are guests.
+   Same postponement as a villager wedding (`weddingBlock`: a festival day or rain). The scene runs on every client,
+   driven by the host. A guest is not held up: they may walk away and the scene still plays.
+4. **Home.** One moves into the other's cabin. The vacated cabin stays. One bed, counted as both in bed for the day
+   end (note 53).
+5. **After.** No spouse chores and no daily kiss from a partner (only villager spouses do chores). The 12.5 heart
+   one-off does not apply; a couple get the one-off item once, by the shared bed, after the wedding (as the page
+   describes for Stardew).
+6. **Divorce.** Either player files at the ledger and pays the 50,000g fee from their own purse. The other is told next
+   morning in the report. Cancel before the day ends refunds. The mover returns to the empty cabin. Friendship is
+   unaffected (no loss, as for villagers).
+7. **One spouse per villager.** A villager engaged or married to a player cannot be courted by another player. The
+   others keep their hearts.
+
+### Decided 2026-11-18 (owner)
+
+- **Q1: the wedding plays after night 3, with no wait for the partner (Stardew, from memory, SC-207).** The absent
+  partner sees the scene when they next join. This replaces the recommended "wait for both".
+- **Q2: the proposer's cabin is home** (recommended).
+- **Q3: the player who files pays the fee** (recommended).
+- **Q4: the ledger is in the hall at (30,5)** (recommended). Note 53's "at the carpenter" line is to be fixed.
+
+### The questions as asked
+
+**Q1. The wedding notice and the two players' day ends.** When a pair are engaged, the three days run on the host's
+calendar. The wedding is on the wake-up of day 3, so it only needs both players connected that morning.
+
+- **(Recommended) Wait for both, up to a morning.** Each player's day end report shows "Wedding tomorrow with X". If
+  both are in the game at wake-up the scene plays. If one is missing, it is put off a day, like a festival, and the
+  notice repeats. No wedding ever happens without both. Matches the villager rule that a blocked wedding moves on a
+  day.
+- **Play whenever both are present, any day after day 3.** The wedding scene is a pending event and fires the first
+  morning both are connected. A longer wait, but never a lost day.
+- **(Stardew) From memory: the wedding plays after the third night, with no wait for the partner.** Not checked
+  against a saved page (SC-207). If the partner is away, the scene plays when they next join. Unchecked.
+
+**Q2. Which cabin is home.** Note 53 says one moves into the other's. Who chooses?
+
+- **(Recommended) The proposer's cabin, unless the pair agree on the other at the proposal card.** Quick, no extra
+  screen after the wedding.
+- **The accepter's cabin.** No reason found for this.
+- **(Stardew) Not stated on the saved page** (SC-208). The page says children go in the home both sleep in.
+
+**Q3. Who pays the divorce fee.**
+
+- **(Recommended) The player who files.** Simple, and the other pays nothing.
+- **Split evenly.** Fairer, needs both purses to hold half.
+- **(Stardew) Not on a saved page** (SC-209).
+
+**Q4. The ledger's place.** Note 53 says "at the carpenter" for a player divorce. This note builds the ledger in the
+hall at (30,5). Recommend the hall, as built, so that the same screen serves both; fix the line in note 53.
+
+### Two-player screens needed
+
+Proposal card (accept or decline); engaged notice in the day end report; wedding scene as a driven cutscene on all
+clients (the guest view is the same scene, with their controls free); ledger screen showing "your partner is told
+tomorrow"; one-line morning report for the divorced partner. Everything else (token, bouquet, hearts, nursery) reuses
+the villager screens.
+
+### Build notes
+
+- Reuse `weddingEvent`, `weddingBlock`, `weddingGuests` and `divorce.ts`; the partner is a second `playerKey`, not a
+  villager id, so `weddingEvent` needs an optional second couple member for the scene lines.
+- Children (note 53): a home both sleep in and fewer than two children; the host offers the ask to one player.
