@@ -196,6 +196,49 @@ not built in M4. The pros and cons, so the idea is not lost:
   Open for the spike: how a jam is freed, and whether a tablet host needs
   several maps in memory (note 81 decision 9).
 
+## M4 spike results (2026-11-18, issue 948)
+
+Harness: `spikes/m4/` (README there). Desktop only, loopback only. The questions that need your router and
+tablet are listed last. Numbers are from one machine (Node 22), so read them as relative sizes, not tablet speeds.
+
+**Q4, farm state size (measured).** The expert sim bot's full save, by day: 63 KB (day 1), 131 KB (28), 298 KB (56),
+442 KB (84); gzipped 6.7, 15.7, 41.7 and 63.9 KB. About 70% is `areas` (the other map areas' worlds), then `trees`
+(25%). Everything else together is under 25 KB. The bot builds little, so a heavily built farm will be larger; the
+ADR 0014 follow-up (placed items, buildings and soil in the save) has no sign of trouble, but needs one re-measure on a
+late-game farm played by a person. Per-player records (inventory, skills, friendship) are small, hundreds of bytes
+each, so 8 players do not move the total.
+
+**Snapshot format (measured, transport only).** Position snapshots at 10 Hz for 8 guests cost 0.18 ms of host time
+a tick and 235 KB/s in all. Sending the day 84 farm blob in every tick instead cost 17.8 ms a tick and 42 MB/s in all.
+Recommendation: the full farm snapshot is sent once on join (and on a day change if a guest was away); between
+those, small deltas (positions every tick, world changes as intents applied). Never a full state per tick.
+
+**Q1 and Q2, link and load (partly measured).** On loopback a host plus 2, 4 and 8 synthetic guests all gave a
+median round trip of 88 to 95 ms with a maximum under 120 ms. That figure is the 10 Hz tick wait (up to 100 ms),
+not the network, so the real LAN cost on top of it is a few ms (the earlier beaver_cycle prototype measured about
+30 ms with a host and two guests). Host memory for 8 guests: 68 MB resident for the transport alone. Not measured:
+the real core rules stepping for 8 players (the harness has no `Room` yet, build order step 2), a tablet host, battery
+and heat.
+
+**Q3, maps on a host (measured).** `src/core/` already loads all 38 maps (3.3 MB of JSON) into one registry, about 69
+MB of heap, and the nightly area rules run on that data without Phaser tile layers. So a host needs no extra map
+loading: the "one map in memory" rule (ADR 0005) is about the Phaser scene, and each client still shows one map.
+Recommendation: keep the 120 by 120 cap; no ADR. A tablet host also draws its own player's map, so its memory is
+this 69 MB plus one scene; check that on the SM-T500 (#523).
+
+**Q5, jam freeing (reasoned, not measured).** Recommendation: a local soft pass. Players are solid to each other, but
+if two bodies overlap a blocked move for more than 0.5 s, the moving player's client passes through the other for
+1 s. It runs on each client with no host authority, because each client already predicts its own player's movement and
+the host only receives positions. The host stays the judge of where a player is, so it accepts the passing positions.
+Needs a latency test once the real room exists (step 3).
+
+**Needs hands.** (1) Run `host.mjs` on the desktop and join from the tablet and a second machine on your router, and
+note client isolation and the typed address fallback. (2) The tablet host load on the SM-T500 with the Capacitor plugin
+(step 8; this spike did not build the plugin). (3) A person-played late-game farm save for one more size check.
+
+**Recommended follow-ups (not filed).** Build order steps 1 to 8 above stand unchanged. Add to step 2 a delta format
+(positions every tick, world changes as intents) and to step 3 the jam rule test.
+
 ## Systems added since the first design (owner, 2026-11-18)
 
 The systems below were designed after 2026-11-02. How each behaves with several players is settled here at design
