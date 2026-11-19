@@ -161,6 +161,3 @@ export function paintToolIcons(
     }
   }
 }
-
-/** ASCII preview for design checks. */
-export const TOOL_MAPS = MAPS;

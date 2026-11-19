@@ -20,7 +20,6 @@ import type { GameState } from "./save";
  */
 export const SHRINE = data;
 export const SHRINE_SERVICE = "shrine";
-export const SHRINE_STAND_SERVICE = "shrine-stand";
 export const MAX_CANDLES = 4;
 
 export interface ScoreRow {

@@ -221,12 +221,6 @@ export function meet(
   };
 }
 
-/** The date of a person's next birthday text, e.g. "fall 4", for the dialogue panel. */
-export function birthdayText(id: string): string {
-  const b = villagerById(id)?.birthday;
-  return b ? `${b.season} ${b.day}` : "";
-}
-
 /** True for a day number that is somebody's birthday (for a morning notice). */
 export function birthdaysOn(day: number): string[] {
   const { season, dayOfSeason } = dateOf(day);

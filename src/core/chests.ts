@@ -17,7 +17,7 @@ import { mayPlaceOn, placeTag } from "./placeables";
  * It can be taken up only when empty, so nothing is lost. Slot counts are
  * Stardew's, from memory (note 54). Pure rules.
  */
-export { CHESTS, chestById, type ChestDef } from "./chestdefs";
+export { chestById } from "./chestdefs";
 
 /** Every farm map shares one key, since the farm is one place whichever map shows it. */
 const place = (map: string) => (isFarmMap(map) ? "farm" : map);

@@ -10,7 +10,6 @@ import { hasFlag, setFlag } from "./worldflags";
  * hall and has no saved flag of its own. Nobody keeps the ferry: it is a door.
  * Free of Phaser and the DOM.
  */
-export const COVE_MAP = "cove";
 
 /** The room whose bundles mend the ferry. */
 export const COVE_ROOM = "water-room";
