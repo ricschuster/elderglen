@@ -5,6 +5,7 @@ export default tseslint.config(
   {
     ignores: [
       "dist",
+      "dist-electron",
       "android",
       "node_modules",
       "scripts",

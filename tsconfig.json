@@ -11,6 +11,7 @@
   },
   "include": [
     "src",
+    "electron",
     "tests",
     "scripts/sim",
     "vite.config.ts",
