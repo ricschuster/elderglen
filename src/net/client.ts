@@ -28,6 +28,8 @@ export class GuestClient {
   id: PlayerId = "";
   day = 0;
   farm = "";
+  /** Top-left tile of this guest's cabin, from the host's hello. */
+  home: { x: number; y: number } | undefined;
   players = new Map<PlayerId, PlayerInfo>();
   /** Latest position row of every connected player. */
   positions: Record<PlayerId, PosRow> = {};
@@ -96,6 +98,7 @@ export class GuestClient {
       case "hello":
         this.id = m.id;
         this.day = m.day;
+        this.home = m.home;
         this.players = new Map(m.players.map((p) => [p.id, p]));
         break;
       case "farm":

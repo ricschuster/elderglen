@@ -114,6 +114,11 @@ export class GameRoomWorld implements RoomWorld {
     this.tracker.add(id);
   }
 
+  homeOf(id: PlayerId): { x: number; y: number } | undefined {
+    const c = this.cabinOf(id);
+    return c ? { x: c.x, y: c.y } : undefined;
+  }
+
   playerDropped(id: PlayerId): void {
     this.tracker.drop(id);
   }

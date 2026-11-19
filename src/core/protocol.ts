@@ -41,7 +41,14 @@ export type PosRow = [number, number, number, string, number, PlayerId[]];
 export const PROTOCOL_VERSION = 1;
 
 export type ServerMsg =
-  | { t: "hello"; id: PlayerId; day: number; players: PlayerInfo[] }
+  | {
+      t: "hello";
+      id: PlayerId;
+      day: number;
+      players: PlayerInfo[];
+      /** Top-left tile of this player's cabin, when the world has one (they spawn beside it). */
+      home?: { x: number; y: number };
+    }
   /** The whole farm. Sent on join and on a day change to a guest who was away, never per tick. */
   | { t: "farm"; day: number; farm: string }
   /** Every tick: positions only. */

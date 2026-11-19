@@ -15,6 +15,8 @@ import {
   type SlotInfo,
 } from "../core/slots";
 import { startGame } from "../core/toolbar";
+import { makeNativePipe } from "../net/nativepipe";
+import { setSession, startHostSession } from "../net/session";
 import { PROFILE_NAMES } from "./OptionsScene";
 import { browserKv, loadDeviceSettings, useSlot } from "./storage";
 import { STATE_KEY } from "./state";
@@ -38,6 +40,8 @@ export class TitleScene extends Phaser.Scene {
   }
 
   create(): void {
+    // Back at the title: leave any game being hosted or joined.
+    setSession(undefined);
     if (location.search.includes("new")) {
       // Drop `?new` so a later reload continues instead of starting over.
       // `?new&farm=woodland` picks the farm type; Standard otherwise.
@@ -179,6 +183,17 @@ export class TitleScene extends Phaser.Scene {
         38,
         16,
       );
+    if (info.status === "used" && makeNativePipe)
+      this.button(
+        490,
+        y,
+        "Host",
+        0x4a5a7a,
+        () => void this.host(info.slot, info.game),
+        90,
+        38,
+        16,
+      );
     if (info.status === "used" && info.resume && info.night)
       this.restartButton(info.slot, 745, y);
     if (info.status === "empty")
@@ -248,6 +263,22 @@ export class TitleScene extends Phaser.Scene {
   private play(slot: number, state: GameState): void {
     useSlot(slot);
     this.begin(state);
+  }
+
+  /** Start the farm and the host together: the room judges the very state this player walks in. */
+  private async host(slot: number, state: GameState): Promise<void> {
+    if (!makeNativePipe) return;
+    this.note.setText("Starting the host...");
+    try {
+      const session = await startHostSession(state, {
+        makePipe: makeNativePipe,
+        announceName: `Slot ${slot} farm`,
+      });
+      setSession(session);
+      this.play(slot, state);
+    } catch {
+      this.note.setText("Could not start hosting. Is another host running?");
+    }
   }
 
   private begin(state: GameState): void {

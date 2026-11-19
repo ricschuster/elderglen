@@ -436,6 +436,13 @@ import {
   ZOOM_MIN,
 } from "../core/view";
 import { makePlaceholderTextures, PLAYER_KEY } from "./placeholder-textures";
+import {
+  currentSession,
+  GuestSession,
+  isGuest,
+  type NetSession,
+} from "../net/session";
+import { RemotePlayerLayer } from "./remoteplayers";
 
 /** Real milliseconds per 10 game minutes (Stardew pace). */
 const TICK_MS = 7000;
@@ -550,6 +557,9 @@ export class FarmScene extends Phaser.Scene {
   }[] = [];
   private controls!: Controls;
   private player!: Phaser.GameObjects.Image;
+  /** The multiplayer session, if any, and the other players it shows (note 53). */
+  private net: NetSession | undefined;
+  private remote: RemotePlayerLayer | undefined;
   private target!: Phaser.GameObjects.Rectangle;
   /** Placeholder hat drawn on the player. */
   private hat!: Phaser.GameObjects.Image;
@@ -622,6 +632,7 @@ export class FarmScene extends Phaser.Scene {
 
   init(data: Partial<SceneData>): void {
     this.state = this.registry.get(STATE_KEY) as GameState;
+    this.net = currentSession();
     this.mapId = resolveMapId(data.map ?? START.map, this.state.farmType);
     this.entryName = data.entry ?? START.entry;
     this.restoreTile =
@@ -760,6 +771,11 @@ export class FarmScene extends Phaser.Scene {
       .setStrokeStyle(1, 0xffffff, 0.6)
       .setDepth(DEPTH.decal + 2);
     world.push(this.player, this.hat, this.target);
+    this.remote = this.net
+      ? new RemotePlayerLayer(this, this.net, this.mapId, (o) =>
+          this.uiCamera.ignore(o),
+        )
+      : undefined;
     this.swingFx = this.add.graphics().setDepth(900);
     world.push(this.swingFx);
     this.litBombs = [];
@@ -966,6 +982,8 @@ export class FarmScene extends Phaser.Scene {
       callback: () => {
         // Time stands still on a festival map, as in Stardew.
         if (isFestivalMap(this.mapId)) return;
+        // A guest's clock follows the host's day message, so it does not tick (note 53).
+        if (this.net instanceof GuestSession) return;
         this.tickAt = this.time.now;
         this.state.day.act(0, TICK_MINUTES);
         this.strikeFlash(rollStrikes(this.state, TICK_MINUTES, Math.random));
@@ -1229,10 +1247,14 @@ export class FarmScene extends Phaser.Scene {
       .setDepth(depth);
     this.hat.setDepth(depth);
     this.drawHat();
-    this.repeatUse(delta * DEV_SPEED);
-    this.dragSoilWork();
-    this.pickUp();
-    this.updateCombat(dt);
+    this.syncNet();
+    // Until intents exist a guest can only walk and look (note 53).
+    if (!isGuest()) {
+      this.repeatUse(delta * DEV_SPEED);
+      this.dragSoilWork();
+      this.pickUp();
+      this.updateCombat(dt);
+    }
 
     const mark = this.tapMark;
     if (mark && this.time.now > mark.until) this.tapMark = undefined;
@@ -2592,6 +2614,7 @@ export class FarmScene extends Phaser.Scene {
   private use(): void {
     if (this.leaving || this.marching) return;
     if (this.useDoor()) return;
+    if (isGuest()) return;
     if (this.state.animals.mounted) {
       this.message = `${this.getOffHint()} to get off ${horseName(this.state)} first.`;
       return this.render();
@@ -2865,6 +2888,7 @@ export class FarmScene extends Phaser.Scene {
   private action(): void {
     if (this.leaving || this.marching) return;
     if (this.useDoor()) return;
+    if (isGuest()) return;
     if (this.state.animals.mounted) return this.getOff();
     const front = this.aimTile();
     const spot = this.horseSpot();
@@ -3448,13 +3472,32 @@ export class FarmScene extends Phaser.Scene {
    * forced (Exit, the page hidden). Never while the night is being written.
    */
   saveResume(force = false): void {
-    if (this.state.day.over) return;
+    // A guest's copy of the farm is never written to a save slot.
+    if (this.state.day.over || isGuest()) return;
     const text = serialize(this.state);
     const now = performance.now();
     if (!this.gate.shouldWrite(text, now, force)) return;
     resumeSave(this.state, this.resumeSpot());
     this.gate.wrote(text, now);
     this.noteSaveFailure();
+  }
+
+  /** Tell the session where we are and draw the others; a guest's clock follows the host. */
+  private syncNet(): void {
+    const net = this.net;
+    if (!net) return;
+    net.reportPosition(
+      {
+        x: this.pos.x,
+        y: this.pos.y,
+        map: this.mapId,
+        dir: ["up", "down", "left", "right"].indexOf(this.facing),
+      },
+      performance.now(),
+    );
+    if (net instanceof GuestSession && net.followDay(this.state.day.clock))
+      this.render();
+    this.remote?.sync();
   }
 
   /** Say once that a write was refused, so the player can export the game. */
@@ -3490,6 +3533,7 @@ export class FarmScene extends Phaser.Scene {
   }
 
   private endDay(): void {
+    if (isGuest()) return;
     this.detonateAll(true);
     const g = this.state;
     const farmMap = farmMapOf(g);

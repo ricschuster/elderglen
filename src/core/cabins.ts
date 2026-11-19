@@ -8,6 +8,11 @@ export const MAX_CABINS = 7; // beside the host's house, so 8 players at most
 const CABIN_WIDTH = 4;
 const CABIN_HEIGHT = 3;
 
+/** The tile a guest stands on at their cabin: just below the footprint's left side. */
+export function cabinSpawnTile(site: CabinSite): { x: number; y: number } {
+  return { x: site.x + 1, y: site.y + CABIN_HEIGHT };
+}
+
 export type CabinOrigin = "multiplayer-start" | "converted";
 
 export interface CabinSite {
