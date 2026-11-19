@@ -85,6 +85,10 @@ export class GameRoomWorld implements RoomWorld {
     return this.g.day.clock.day;
   }
 
+  minutes(): number {
+    return this.g.day.clock.minutes;
+  }
+
   snapshot(): string {
     return serialize(this.g);
   }

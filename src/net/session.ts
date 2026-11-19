@@ -148,10 +148,29 @@ export class GuestSession implements NetSession {
    * guest does not run its own clock: the minutes wait at the morning until the host sends them.
    */
   followDay(clock: { day: number; minutes: number }): boolean {
-    if (this.client.day === clock.day) return false;
-    clock.day = this.client.day;
-    clock.minutes = DAY_START;
-    return true;
+    const min = this.client.minutes;
+    if (this.client.day !== clock.day) {
+      clock.day = this.client.day;
+      clock.minutes = min ?? DAY_START;
+      return true;
+    }
+    if (min !== undefined && min !== clock.minutes) {
+      clock.minutes = min;
+      return true;
+    }
+    return false;
+  }
+
+  /** Run `fn` once when the host is gone; at once if it already is. */
+  onHostLost(fn: () => void): void {
+    let done = false;
+    const once = () => {
+      if (done) return;
+      done = true;
+      fn();
+    };
+    this.client.onClose = once;
+    if (this.client.closed) once();
   }
 
   close(): void {
@@ -192,6 +211,22 @@ export async function startHostSession(
     announceName: deps.announceName,
   });
   return new HostSession(host, world);
+}
+
+export const HOST_LOST_NOTICE = "The host left, so the game ended.";
+
+let lostNotice: string | undefined;
+
+/** Leave a short note for the Title: read once by `takeLostNotice`. */
+export function noteHostLost(): void {
+  lostNotice = HOST_LOST_NOTICE;
+}
+
+/** The note left by `noteHostLost`, once; undefined if none. */
+export function takeLostNotice(): string | undefined {
+  const n = lostNotice;
+  lostNotice = undefined;
+  return n;
 }
 
 let current: NetSession | undefined;

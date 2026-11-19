@@ -27,6 +27,8 @@ export interface ConnectOptions {
 export class GuestClient {
   id: PlayerId = "";
   day = 0;
+  /** The host's minutes of the day, from snapshots; undefined until one carries them. */
+  minutes: number | undefined;
   farm = "";
   /** Top-left tile of this guest's cabin, from the host's hello. */
   home: { x: number; y: number } | undefined;
@@ -104,13 +106,16 @@ export class GuestClient {
       case "farm":
         this.farm = m.farm;
         this.day = m.day;
+        this.minutes = undefined;
         break;
       case "day":
         this.day = m.day;
+        this.minutes = undefined;
         break;
       case "snap":
         this.snapN = m.n;
         this.positions = m.p;
+        if (typeof m.min === "number") this.minutes = m.min;
         break;
       case "joined":
         this.players.set(m.player.id, m.player);

@@ -52,7 +52,7 @@ export type ServerMsg =
   /** The whole farm. Sent on join and on a day change to a guest who was away, never per tick. */
   | { t: "farm"; day: number; farm: string }
   /** Every tick: positions only. */
-  | { t: "snap"; n: number; p: Record<PlayerId, PosRow> }
+  | { t: "snap"; n: number; p: Record<PlayerId, PosRow>; min?: number }
   /** A world change the host applied. Sent to everyone, so all copies stay equal. */
   | { t: "applied"; seq: number; by: PlayerId; intent: Intent }
   | { t: "rejected"; seq: number; reason: string }

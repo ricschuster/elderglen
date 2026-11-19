@@ -5,6 +5,7 @@ import {
   birthdayText,
   childRows,
   giftLogRows,
+  guestMayOpen,
   hiddenTabs,
   skillExtras,
   socialRows,
@@ -198,5 +199,18 @@ describe("socialTip", () => {
     if (taste === "love" || taste === "like")
       expect(tip.text).toContain("Likes known: Turnip");
     else expect(tip.text).toContain("No loves or likes learned yet.");
+  });
+});
+
+describe("guest read-only menus", () => {
+  it("hides tabs that change state and allows only read-only screens", () => {
+    const g = newGame();
+    const hidden = hiddenTabs(g, true);
+    for (const t of ["pack", "crafting", "animals", "special"])
+      expect(hidden).toContain(t);
+    expect(hiddenTabs(g)).not.toContain("pack");
+    expect(guestMayOpen("menu")).toBe(true);
+    expect(guestMayOpen("shop")).toBe(false);
+    expect(guestMayOpen("bin")).toBe(false);
   });
 });

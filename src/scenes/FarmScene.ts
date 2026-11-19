@@ -288,10 +288,12 @@ import {
   ZOOM_MIN,
 } from "../core/view";
 import { makePlaceholderTextures, PLAYER_KEY } from "./placeholder-textures";
+import { guestMayOpen } from "../core/menupages";
 import {
   currentSession,
   GuestSession,
   isGuest,
+  noteHostLost,
   type NetSession,
 } from "../net/session";
 import {
@@ -661,6 +663,8 @@ export class FarmScene extends Phaser.Scene {
           this.uiCamera.ignore(o),
         )
       : undefined;
+    if (this.net instanceof GuestSession)
+      this.net.onHostLost(() => this.hostLost());
     this.swingFx = this.add.graphics().setDepth(900);
     world.push(this.swingFx);
     this.litBombs = [];
@@ -1917,7 +1921,20 @@ export class FarmScene extends Phaser.Scene {
     this.open("journal");
   }
 
+  /** The host's socket closed: close any screen over the farm and go to the Title with a note. */
+  private hostLost(): void {
+    noteHostLost();
+    for (const s of this.scene.manager.getScenes(true))
+      if (s.scene.key !== "farm") s.scene.stop();
+    this.scene.start("title");
+  }
+
   open(kind: string, data?: object): void {
+    // A guest sees read-only screens only; the rest would edit a local copy (note 53).
+    if (isGuest() && !guestMayOpen(kind)) {
+      this.message = "Only the host can do that for now.";
+      return this.render();
+    }
     this.scene.launch(kind, data);
     this.scene.pause();
   }

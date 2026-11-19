@@ -454,3 +454,9 @@ From the saved Multiplayer page. Not copied, only compared.
   page does not say whether a phone or tablet can host.
 - **Not in the page:** how a dropped player counts for bedtime, and snapshot
   size. Those stay ours.
+
+## Built status: guest gaps (2026-11-19, issue 968)
+
+- **Clock.** Every `snap` carries the host's `min` (minutes of the day, optional, so an older host still works). `GuestClient.minutes` keeps the latest; `GuestSession.followDay` copies it, and takes it on a day change too (the morning if none yet).
+- **Menus are read-only for a guest until intents exist.** Rule: a guest may open only `menu`, `journal` and `catalogue` (`guestMayOpen`); every other screen (shop, bin, chest, cart, crafting, furnace and the rest) is refused with "Only the host can do that for now." In the menu, the tabs that change state are hidden (`GUEST_HIDDEN_TABS`: Pack, Craft, Animals, Special); Skills, Social, Map, Collect, Guide, Options and Exit stay as views.
+- **Host loss.** `GuestSession.onHostLost` fires once when the socket closes; the farm scene stops its overlays and goes to Title, which shows "The host left, so the game ended." (`noteHostLost`, `takeLostNotice`).

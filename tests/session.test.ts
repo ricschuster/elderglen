@@ -6,6 +6,9 @@ import { GuestClient } from "../src/net/client";
 import { NodePipe } from "../src/net/pipe-node";
 import {
   GuestSession,
+  HOST_LOST_NOTICE,
+  noteHostLost,
+  takeLostNotice,
   POS_INTERVAL_MS,
   currentSession,
   isGuest,
@@ -148,5 +151,41 @@ describe("host and guest session", () => {
     state.day.clock.nextDay();
     await until(() => guest.followDay(copy.day.clock));
     expect(copy.day.clock.day).toBe(before + 1);
+  });
+
+  it("follows the host's minutes between day changes", async () => {
+    const { guest, state } = await pair();
+    const copy = guest.loadFarm()!;
+    state.day.clock.minutes = DAY_START + 130;
+    await until(() => guest.followDay(copy.day.clock));
+    expect(copy.day.clock.minutes).toBe(DAY_START + 130);
+  });
+
+  it("takes the host's minutes when the day moves, else the morning", () => {
+    const client = { day: 6, minutes: 500 } as GuestClient;
+    const s = new GuestSession(client);
+    const clock = { day: 5, minutes: 900 };
+    expect(s.followDay(clock)).toBe(true);
+    expect(clock).toEqual({ day: 6, minutes: 500 });
+    expect(s.followDay(clock)).toBe(false);
+  });
+
+  it("tells the guest when the host is gone, once", async () => {
+    const { host, guest } = await pair();
+    let n = 0;
+    guest.onHostLost(() => n++);
+    host.close();
+    await until(() => n > 0);
+    expect(guest.closed).toBe(true);
+    expect(n).toBe(1);
+    let late = 0;
+    guest.onHostLost(() => late++);
+    expect(late).toBe(1);
+  });
+
+  it("leaves a note for the Title, once", () => {
+    noteHostLost();
+    expect(takeLostNotice()).toBe(HOST_LOST_NOTICE);
+    expect(takeLostNotice()).toBeUndefined();
   });
 });

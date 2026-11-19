@@ -225,8 +225,21 @@ export function specialItems(g: GameState): SpecialItem[] {
 // ---- Tabs ----------------------------------------------------------------
 
 /** Tab keys the menu hides until they have something to show (note 49). */
-export function hiddenTabs(g: GameState): string[] {
+/** Menu tabs that change the player's or the world's state, hidden for a guest. */
+export const GUEST_HIDDEN_TABS = ["pack", "crafting", "animals", "special"];
+
+/** Screens a guest may open over the farm: read-only views only (note 53). */
+export const GUEST_SCREENS = ["menu", "journal", "catalogue"];
+
+/** True when a guest may open this screen kind. */
+export function guestMayOpen(kind: string): boolean {
+  return GUEST_SCREENS.includes(kind);
+}
+
+export function hiddenTabs(g: GameState, guest = false): string[] {
   const hidden: string[] = [];
+  // A guest's menu is read-only until intents exist (note 53): no tab that moves or crafts.
+  if (guest) hidden.push(...GUEST_HIDDEN_TABS);
   if (animalRows(g).length === 0) hidden.push("animals");
   if (specialItems(g).length === 0) hidden.push("special");
   return hidden;
