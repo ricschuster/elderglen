@@ -491,3 +491,12 @@ Item 6: **Batch 4 built 2026-11-14** (hall counter second tiles, renovation deco
 Built 2026-11-17 (handoff 2026-11-17c): scheme 4 tap duration, scheme 1 auto-equip, the Diamond item with its node, Quarry and
 monster sources (note 83; the shrine is built 2026-11-18), stage menu checked (all 38 stages). The hall-restored
 Feast is already wired; its exit tiles wait for the drawn Hearthwell variant. The sweep script and state patch were fixed after the invitation and 8-heart failures (not rerun). The sweep (`WORKERS=3`, 11 festivals and 150 events, no findings) and `npm run sim` (62 of 100 finished by day 110) ran clean 2026-11-18 (handoff 2026-11-18d). Next: the owner's play. Run `npx vitest run --maxWorkers=4` (the default worker count segfaults here).
+
+
+## Moved from PRIORITIES.md 2026-11-19b
+
+Decided 2026-11-17: Hearthwell water stays all fishable (note 14); Import keeps the first empty slot, and the slot count should
+open past five later (note 52).
+
+Built 2026-11-17 and checks since (sweep, sim, stages): detail in `PRIORITIES_ARCHIVE.md`. Run `npx vitest run --maxWorkers=4` (the default worker count segfaults here). Next: the owner's play.
+
