@@ -57,6 +57,8 @@ Node 22 and npm. Gates run in CI and a non-zero exit blocks a merge.
   and `docs/valley-map.json`. Update the JSON when the design changes; open the HTML from
   disk. `npm run overview:refresh` re-fetches issue states with `gh`.
 - `npm run check`: all of the gates in order. Run before pushing.
+- `npm run size` / `size:bundle`: largest files, files over 1,500 lines (a warning), and what the bundle is made of.
+  Not a gate.
 - `npm run knip`: unused files and exports (config `knip.json`). Not a gate yet; keep it at zero findings,
   and remove `export` or the code when it reports something.
 - `npm run wiki` / `wiki:check`: rebuild `docs/wiki/` (the public wiki, note 100) from the data in
