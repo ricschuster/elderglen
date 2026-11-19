@@ -1,13 +1,7 @@
 import dyeData from "../content/dyes.json";
 import tailorData from "../content/tailoring.json";
 import { CLOTH, DYE_INPUTS, artisanById } from "./artisan";
-import {
-  pieceById,
-  clampTint,
-  type PieceKind,
-  type TailorKind,
-  type Tint,
-} from "./clothes";
+import { pieceById, clampTint, type TailorKind, type Tint } from "./clothes";
 import { TAILORED_SEP, bootsById, tailoredParts } from "./equipment";
 import { hatById } from "./hats";
 import { roeSpeciesOf } from "./pondspecies";
@@ -221,8 +215,6 @@ export function undye(g: GameState, kind: TailorKind, id: string): boolean {
   g.wardrobe.setTint(kind, id, undefined);
   return true;
 }
-
-export type { PieceKind };
 
 // ---- the Hatter's house
 

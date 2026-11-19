@@ -47,12 +47,6 @@ export const TIER_2_WIDEN = 2;
 /** Rows the tier 2 band added above the tier 1 rooms in layout 3. */
 export const TIER_2_BAND = 10;
 
-/** Where the start room's corner sits in the merged house map, in tiles. */
-export const START_ROOM_AT = {
-  x: 9 + TIER_2_WIDEN + HOUSE_SHIFT.x,
-  y: 2 + TIER_2_BAND + HOUSE_SHIFT.y,
-} as const;
-
 /**
  * Bring a tile saved under an older frame into the current one. `layout` is the
  * save's `houseLayout` (1 when absent). From layout 1, a piece on the old start

@@ -50,10 +50,6 @@ export const GALLERY_MINERALS = GALLERY_LIST.filter(
   (e) => e.group === "mineral",
 ).length;
 export const GALLERY_ARTIFACTS = GALLERY_TOTAL - GALLERY_MINERALS;
-/** The librarian's shop id, for hours (`shops.json`). */
-export const LIBRARY_SHOP = "library";
-/** The achievements that fire from the donated count (note 38). */
-export const DONATE_40 = 40;
 
 export const galleryEntry = (id: string): GalleryEntry | undefined =>
   GALLERY_LIST.find((e) => e.id === id);

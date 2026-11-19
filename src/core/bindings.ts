@@ -12,18 +12,12 @@ import {
   ZOOM_MAX,
   ZOOM_MIN,
 } from "./view";
-import {
-  DEFAULT_SCHEME,
-  SCHEME_IDS,
-  migrateScheme,
-  type SchemeId,
-} from "./controlschemes";
+import { DEFAULT_SCHEME, migrateScheme, type SchemeId } from "./controlschemes";
 
 export type Profile = "desktop" | "touch";
 export type TouchScheme = SchemeId;
 
 export const PROFILES: readonly Profile[] = ["desktop", "touch"];
-export const TOUCH_SCHEMES: readonly TouchScheme[] = SCHEME_IDS;
 
 export interface ActionInfo {
   id: string;

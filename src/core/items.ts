@@ -391,7 +391,6 @@ items.set(HOMEWARD_PIN, {
  * (note 37). The Beach warp totem waits for a use that returns the player to
  * the Beach. It is kept and does nothing yet, like the Homeward pin. Prices are placeholders (note 07).
  */
-export const GLOW_RING = "glow-ring";
 export const WARP_TOTEM_BEACH = "warp-totem-beach";
 /** Camp chest items (note 22): the floor 100 elderfruit (note 39) and the floor 120 key to the ring 2 deep dig. Kept, they do nothing yet. */
 export const ELDERFRUIT = "elderfruit";
@@ -498,7 +497,6 @@ items.set(WARP_TOTEM_BEACH, {
  * Greencoat's letter to the elves, a story item that does nothing yet.
  */
 export const COOP_HEATER = "coop-heater";
-export const CRYSTALARIUM = "crystalarium";
 export const ELF_LETTER = "elf-letter";
 /** The heater is sold at the Forest farmstead for Stardew's 2,000g (note 89, SC-149). Bundle 25 still gives the first. */
 export const HEATER_PRICE = 2000;

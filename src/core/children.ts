@@ -1,7 +1,7 @@
 import data from "../content/children.json";
 import { dateOf } from "./calendar";
 import { HEART, TALK_POINTS } from "./friendship";
-import { isChildId, MAX_CHILDREN, type Child } from "./marriage";
+import { MAX_CHILDREN, type Child } from "./marriage";
 import type { GameState } from "./save";
 import {
   dayContext,
@@ -22,7 +22,7 @@ import {
  * `children.json` (note 07). Child sprites are M3d.
  */
 
-export { isChildId, MAX_CHILDREN };
+export { MAX_CHILDREN };
 
 /** The house tier that adds the nursery (note 85). */
 export const NURSERY_TIER = 2;

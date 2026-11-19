@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { makeArt, SIZE } from "./art";
+import { makeArt } from "./art";
 
 /**
  * Names shared with the map. The pictures themselves are drawn in `art.ts`.
@@ -9,7 +9,6 @@ export const TILES_KEY = "placeholder-tiles";
 /** Must match the tileset name inside the map file. */
 export const TILESET_NAME = "placeholder";
 export const PLAYER_KEY = "player";
-export const TILE = SIZE;
 
 export function makePlaceholderTextures(scene: Phaser.Scene): void {
   makeArt(scene, TILES_KEY, PLAYER_KEY);
