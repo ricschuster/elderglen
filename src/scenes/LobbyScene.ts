@@ -16,6 +16,9 @@ import {
   type HostOptions,
 } from "../net/hostoptions";
 import { SocketTransport } from "../net/sockettransport";
+import { makeHostStarter } from "../net/hoststarter";
+import { GameRoomWorld } from "../core/roomworld";
+import { newGame } from "../core/save";
 import { CapacitorPipe } from "../net/pipe-capacitor";
 import type { LobbyTransport } from "../net/transport";
 
@@ -34,7 +37,14 @@ const native = (
   globalThis as { Capacitor?: { isNativePlatform?: () => boolean } }
 ).Capacitor?.isNativePlatform?.();
 export const lobbyTransport: LobbyTransport = new SocketTransport(
-  undefined,
+  native
+    ? makeHostStarter({
+        makePipe: () => new CapacitorPipe(),
+        // Until the Title Host button hosts a saved farm (next item), a new farm.
+        makeWorld: (_name, o) =>
+          new GameRoomWorld(newGame(undefined, o.walletMode)),
+      })
+    : undefined,
   "Guest",
   native ? new CapacitorPipe() : undefined,
 );
