@@ -333,9 +333,58 @@ const treeHere = (x, y) =>
     ([x, y]) => window.__game.registry.get("state").trees.at(x, y)?.stage ?? 0,
     [x, y],
   );
-await walkTo(14, 13);
-await faceTo("down");
+/**
+ * Find a mature, standing, choppable tree on the current map from the game
+ * state, with a free tile beside it to stand on. `skip` lists "x,y" keys of
+ * trees to ignore. Returns { tree, stand, face } (face is the way to look).
+ */
+async function findTree(skip = []) {
+  await bot.refreshMap();
+  const from = (await bot.dbg()).tile;
+  const found = await p.evaluate(
+    ([skip, from]) => {
+      const st = window.__game.registry.get("state");
+      const blocked = new Set(window.farmBlocked());
+      const sides = [
+        ["down", 0, -1],
+        ["up", 0, 1],
+        ["right", -1, 0],
+        ["left", 1, 0],
+      ];
+      const out = [];
+      for (const t of st.trees.each()) {
+        if (t.stump || t.cosmetic || t.large || t.tap || t.stage < 5) continue;
+        if (skip.includes(`${t.x},${t.y}`)) continue;
+        for (const [face, dx, dy] of sides) {
+          const sx = t.x + dx;
+          const sy = t.y + dy;
+          if (blocked.has(`${sx},${sy}`)) continue;
+          out.push({
+            tree: { x: t.x, y: t.y },
+            stand: { x: sx, y: sy },
+            face,
+            d: Math.abs(sx - from.x) + Math.abs(sy - from.y),
+          });
+        }
+      }
+      return out.sort((a, b) => a.d - b.d);
+    },
+    [skip, from],
+  );
+  for (const c of found) {
+    if (bot.bfs(from, c.stand)) return c;
+  }
+  return null;
+}
+const c1 = await findTree();
+if (!c1) throw new Error("no choppable tree reachable on the farm");
+await walkTo(c1.stand.x, c1.stand.y);
+await faceTo(c1.face);
 const tr = (await bot.dbg()).target;
+if (tr.x !== c1.tree.x || tr.y !== c1.tree.y)
+  finding(
+    `facing ${tr.x},${tr.y}, wanted the tree at ${c1.tree.x},${c1.tree.y}`,
+  );
 const stage = await treeHere(tr.x, tr.y);
 log(`tree at ${tr.x},${tr.y}, stage ${stage}`);
 await selectSlot(2); // axe
@@ -360,10 +409,13 @@ await p.evaluate(() => {
   while (inv.add("sap", 1));
   while (inv.add("wood", 1));
 });
-await walkTo(15, 16);
-await faceTo("down");
-const tr2 = (await bot.dbg()).target;
-if (await treeHere(tr2.x, tr2.y)) {
+const c2 = await findTree([`${tr.x},${tr.y}`]);
+const tr2 = c2 ? c2.tree : { x: -1, y: -1 };
+if (c2) {
+  await walkTo(c2.stand.x, c2.stand.y);
+  await faceTo(c2.face);
+}
+if (c2 && (await treeHere(tr2.x, tr2.y))) {
   await holdUse(async () => (await treeHere(tr2.x, tr2.y)) === 0);
   const dropped = await p.evaluate(
     () => window.__game.registry.get("state").ground.each().length,
@@ -377,9 +429,10 @@ if (await treeHere(tr2.x, tr2.y)) {
       st.inventory.remove("sap", st.inventory.count("sap"));
       st.inventory.remove("wood", st.inventory.count("wood"));
     });
-    await walkTo(15, 14);
+    const away = (await bot.dbg()).tile;
+    await walkTo(away.x, away.y + 2);
     await sleepMs(500);
-    await walkTo(15, 16);
+    await walkTo(away.x, away.y);
     await sleepMs(500);
     const left = await p.evaluate(
       () => window.__game.registry.get("state").ground.each().length,
@@ -463,7 +516,7 @@ async function shopByTouch() {
 // 5. Hall by touch: in by the door, to a scroll, and back out. The shop test
 // above runs on the way, since the store is in Hearthwell too.
 // Doors open on Action, not on a walk through.
-await walkTo(38, 17);
+await walkTo(78, 14);
 await faceTo("right");
 await actTool();
 await sleepMs(900);

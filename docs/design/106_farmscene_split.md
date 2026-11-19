@@ -1,6 +1,6 @@
 # 106: FarmScene split and scene rules into core (issue #904)
 
-Status: proposal, 2026-11-18. No code moves with this note. Issue #904 came from
+Status: steps 2 to 7 built 2026-11-19 (see "Built status" at the end); steps 1 and 8 remain. Issue #904 came from
 a code audit on 2026-11-12; this note re-measures it and settles the order.
 
 ## Current state (measured 2026-11-18)
@@ -114,3 +114,16 @@ the cost is a larger #964 diff, not a correctness risk.
 
 Related: #904, #964, #948, `docs/design/53_multiplayer.md`,
 `docs/design/52_save_and_exit.md`.
+
+## Built status (2026-11-19)
+
+`FarmScene.ts` went from 4,704 to 2,852 lines. Built: `src/scenes/farm-debug.ts`
+(step 2), `src/core/blocking.ts` with tests (3), `src/core/creature-defeat.ts`
+with tests (4), `src/scenes/farm-draw.ts` (5), `farm-tap.ts` (6), and
+`farm-combat.ts` (combat, bombs, creature sprites) and `farm-festival.ts` (7).
+Scene-side modules take the scene as their first argument; members they read
+lost `private`. Shared constants live in `farm-consts.ts`. Not built: step 1
+(shared `FACING` table, `itemLabel()`), step 8 (`resolveUse` and
+`resolveAction` into `core/interact.ts`, after M4 step 1), the damage rolls
+inside `updateCombat` and `swing`, `useSilo` rules, and the `art.ts` and
+`animals.ts` splits (not covered by this note).

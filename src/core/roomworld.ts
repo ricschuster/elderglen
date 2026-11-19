@@ -15,6 +15,9 @@ import {
   type CabinSite,
   type JoinResult,
 } from "./cabins";
+import { weddingBlock } from "./courtship";
+import { DIVORCE_FEE } from "./marriage";
+import * as pm from "./playermarriage";
 import { PASS_OUT_MONEY_CAP, PASS_OUT_MONEY_SHARE } from "./day";
 import { LOCAL_PLAYER, type PlayerId } from "./players";
 import type { Intent } from "./protocol";
@@ -43,6 +46,11 @@ function passOutLoss(money: number): number {
 
 export class GameRoomWorld implements RoomWorld {
   cabins: CabinBook;
+  /** Player marriages (note 12, two-player steps), kept on the host. */
+  marriages = pm.newPlayerMarriageBook();
+  /** The last morning's wedding and divorce news, for the reports. */
+  lastWeddings: pm.WeddingNews[] = [];
+  lastDivorces: pm.DivorceNews[] = [];
   readonly tracker: DayEndTracker;
   /** Names by id, for the host's screens. */
   readonly names = new Map<PlayerId, string>([[LOCAL_PLAYER, "Host"]]);
@@ -114,6 +122,11 @@ export class GameRoomWorld implements RoomWorld {
     this.tracker.add(id);
   }
 
+  homeOf(id: PlayerId): { x: number; y: number } | undefined {
+    const c = this.cabinOf(id);
+    return c ? { x: c.x, y: c.y } : undefined;
+  }
+
   playerDropped(id: PlayerId): void {
     this.tracker.drop(id);
   }
@@ -169,6 +182,33 @@ export class GameRoomWorld implements RoomWorld {
         if (typeof x !== "number" || typeof y !== "number") return "bad site";
         return this.buyCabin({ x, y });
       }
+      case "propose": {
+        const to = intent.to;
+        if (typeof to !== "string" || !players.has(to)) return "unknown player";
+        return reason(pm.propose(this.marriages, by, to));
+      }
+      case "accept-proposal":
+      case "decline-proposal":
+        return reason(
+          pm.respond(
+            this.marriages,
+            by,
+            intent.kind === "accept-proposal",
+            this.day(),
+          ),
+        );
+      case "withdraw-proposal":
+        return reason(pm.withdraw(this.marriages, by));
+      case "file-divorce": {
+        const r = pm.fileDivorce(this.marriages, by, players.balance(by));
+        if (r.ok) players.pay(by, -DIVORCE_FEE);
+        return reason(r);
+      }
+      case "cancel-divorce": {
+        const r = pm.cancelDivorce(this.marriages, by);
+        if (r.ok) players.pay(by, DIVORCE_FEE);
+        return reason(r);
+      }
       default:
         return `unknown intent ${intent.kind}`;
     }
@@ -196,5 +236,16 @@ export class GameRoomWorld implements RoomWorld {
       p.energy.current = out ? Math.round(p.energy.max * 0.75) : p.energy.max;
     }
     this.lastReport = sleep(this.g, this.o.spots, this.o.random);
+    // The new morning: filed divorces take effect, then due weddings play (no wait for the partner).
+    this.lastDivorces = pm.divorceMorning(this.marriages);
+    this.lastWeddings = pm.weddingMorning(
+      this.marriages,
+      this.day(),
+      weddingBlock(this.g),
+    );
   }
 }
+
+const reason = (
+  r: { ok: true } | { ok: false; reason: string },
+): string | undefined => (r.ok ? undefined : r.reason);

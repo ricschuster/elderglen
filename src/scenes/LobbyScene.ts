@@ -16,8 +16,13 @@ import {
   type HostOptions,
 } from "../net/hostoptions";
 import { SocketTransport } from "../net/sockettransport";
-import { CapacitorPipe } from "../net/pipe-capacitor";
-import type { LobbyTransport } from "../net/transport";
+import { makeHostStarter } from "../net/hoststarter";
+import { GameRoomWorld } from "../core/roomworld";
+import { newGame } from "../core/save";
+import { makeNativePipe } from "../net/nativepipe";
+import { GuestSession, setSession } from "../net/session";
+import { START } from "../core/maps";
+import { STATE_KEY } from "./state";
 
 const OUR_VERSION = PROTOCOL_VERSION;
 const LAST_HOST_KEY = "elderglen.lastHost";
@@ -30,13 +35,17 @@ const KEYS = ["1234567890", "abcdef:.-/"];
  * The installed Android app lists games announced on the network (UDP, ADR 0015); a
  * browser tab cannot listen, so it types the address.
  */
-const native = (
-  globalThis as { Capacitor?: { isNativePlatform?: () => boolean } }
-).Capacitor?.isNativePlatform?.();
-export const lobbyTransport: LobbyTransport = new SocketTransport(
-  undefined,
+export const lobbyTransport = new SocketTransport(
+  makeNativePipe
+    ? makeHostStarter({
+        makePipe: makeNativePipe,
+        // A new farm for a game hosted from here; the Title Host button hosts a saved farm.
+        makeWorld: (_name, o) =>
+          new GameRoomWorld(newGame(undefined, o.walletMode)),
+      })
+    : undefined,
   "Guest",
-  native ? new CapacitorPipe() : undefined,
+  makeNativePipe?.(),
 );
 
 /**
@@ -255,7 +264,7 @@ export class LobbyScene extends Phaser.Scene {
         : j.phase === "failed"
           ? j.message
           : j.phase === "joined"
-            ? "Joined. (The game itself comes with the next build step.)"
+            ? "Joined. Loading the farm..."
             : "",
     );
   }
@@ -283,6 +292,24 @@ export class LobbyScene extends Phaser.Scene {
       r.ok ? { type: "connected" } : { type: "fail", kind: r.kind },
     );
     this.refresh();
+    if (r.ok) this.enterGuestFarm();
+  }
+
+  /** Take the farm the host sent, make the guest session, and start the farm scene. */
+  private enterGuestFarm(): void {
+    const client = lobbyTransport.client;
+    const session = client ? new GuestSession(client) : undefined;
+    const g = session?.loadFarm();
+    if (!session || !g) {
+      client?.leave();
+      this.join = { phase: "idle" };
+      this.status.setText("The host's farm could not be read.");
+      return;
+    }
+    this.registry.set(STATE_KEY, g);
+    setSession(session);
+    const at = session.spawnTile();
+    this.scene.start("farm", { map: START.map, entry: START.entry, ...at });
   }
 
   private back(): void {

@@ -1,46 +1,22 @@
-import { feastGive, lanternOn, lanternTile } from "../core/feastexchange";
+import { feastGive, lanternOn } from "../core/feastexchange";
 import {
   BARN_BUILT,
-  BARN_FOOTPRINT,
   BARN_MAP,
-  BARN_MAX_TIER,
-  barnBlocks,
-  stableBlocks,
   stableHome,
   siloBlocks,
-  siloSite,
-  SILO_FOOTPRINT,
-  STABLE_FOOTPRINT,
-  siteOf,
   depositHay,
   siloCapacity,
   HAY,
-  barnSite,
   barnVisibleTier,
-  animalSlots,
   COOP_BUILT,
-  COOP_MAX_TIER,
-  COOP_FOOTPRINT,
-  INCUBATOR_TIER,
   COOP_MAP,
-  GROW_DAYS,
-  coopBlocks,
-  coopSite,
   coopVisibleTier,
 } from "../core/animals";
 import { DEBUG_TOOLS } from "../core/debugtools";
-import {
-  FISH_POND,
-  POND_FISH_SPOTS,
-  pondBlocks,
-  pondCovering,
-  pondLook,
-  pondUse,
-  takeFish,
-} from "../core/pond";
-import { fertilizerById } from "../core/fertilizer";
+import { pondCovering, pondUse, takeFish } from "../core/pond";
+
 import Phaser from "phaser";
-import { animalKey } from "./art-animals";
+
 import { saveSettings, type TouchScheme } from "../core/bindings";
 import { sleep } from "../core/sleep";
 import {
@@ -50,19 +26,10 @@ import {
   isAreaMap,
   leaveArea,
 } from "../core/areas";
-import { creatureSpawnsOf, mapDrops } from "../core/mapcreatures";
+
 import { eventAtTile } from "../core/eventrun";
 import { declinedToday } from "./HeartEventScene";
-import {
-  awardHuntPrize,
-  finishHunt,
-  huntEndLine,
-  huntLine,
-  huntOffer,
-  pickUp as pickUpPacket,
-  tickHunt,
-  type HuntState,
-} from "../core/seedhunt";
+import { huntOffer, type HuntState } from "../core/seedhunt";
 import {
   awardIcePrize,
   finishIceFishing,
@@ -73,28 +40,12 @@ import {
   startIceFishing,
   type IceFishing,
 } from "../core/icefishing";
-import { cakeProblem } from "../core/cakeday";
-import {
-  buyLantern,
-  lanternBuyProblem,
-  launchLantern,
-  launchProblem,
-} from "../core/lanterns";
+
 import { meet, presentAt, villagersOn, type Present } from "../core/townfolk";
-import {
-  PARADE_FESTIVAL,
-  PARADE_MAP,
-  finishParade,
-  joinParade,
-  paradeJoin,
-  paradeJoinedAt,
-  playerMarchAt,
-} from "../core/parade";
-import { stageOf as fruitStageOf } from "../core/fruittrees";
-import { teaStageOf } from "../core/teabush";
-import { potAt, potLook, potsOf } from "../core/gardenpot";
+import { paradeJoinedAt } from "../core/parade";
+
 import type { GameState } from "../core/save";
-import { cycle, findTool, heldAt, nextRow, toolbarSize } from "../core/toolbar";
+import { cycle, heldAt, nextRow, toolbarSize } from "../core/toolbar";
 import { pendingChoice } from "../core/professions";
 import { eat, type Outcome } from "../core/actions";
 import { dateOf } from "../core/calendar";
@@ -104,33 +55,19 @@ import {
   festivalDayToday,
   festivalGateHolds,
   festivalShutLine,
-  festivalSignLine,
   walkIntoFestival,
   walkIntoPlace,
   festivalStepShut,
-  festivalToday,
   isFestivalMap,
-  sightLine,
 } from "../core/festivals";
-import { nicheLine, openChest } from "../core/maze";
-import { rodById, waterAhead } from "../core/fishing";
-import {
-  PIER_FLOAT_KIND,
-  PIER_LINES,
-  PIER_KEEPER_KIND,
-  buyPermit,
-  floatLantern,
-  floatProblem,
-  isPierCast,
-  permitProblem,
-  pierCastProblem,
-} from "../core/marketpier";
+import { nicheLine } from "../core/maze";
+import { rodById } from "../core/fishing";
+import { PIER_FLOAT_KIND, PIER_KEEPER_KIND } from "../core/marketpier";
 import { festivalHolds } from "../core/festivalroutes";
 import { marketHolds, stallOf } from "../core/nightmarket";
 import { holdsOf } from "../core/worldflags";
-import { gateOpen, gateShutLine, parseGate } from "../core/gates";
+import { gateShutLine, parseGate } from "../core/gates";
 import { mendTideBridge, TIDE_BRIDGE_WOOD } from "../core/tidebridge";
-import { logCleared } from "../core/logs";
 import { CAMP_LINE, HERMIT_LINE } from "../core/forestfolk";
 import { SPIRIT_STATUE, giveToSpirit, hermitStock } from "../core/elderfruit";
 import { STONEKEEPER_LINE } from "../core/smith";
@@ -152,20 +89,19 @@ import { COVE_TREASURE, FERRY_LINE, takeTreasure } from "../core/cove";
 import { cropOfSeed, itemById } from "../core/items";
 import { MIXED_SEED } from "../core/weeds";
 import { NOTHING_TO_ACT_ON, act, reasonText, useHeld } from "../core/tools";
-import { cropById } from "../core/crops";
+
 import { mapFiles, maps } from "../content/maps";
 import { START } from "../core/maps";
 import { HAT_KEY, villagerKey } from "./art-people";
-import { DEPTH, sortDepth, tileDepth } from "./depth";
+import { DEPTH, sortDepth } from "./depth";
 import { drawMapArt } from "./mapart";
 import { MAP_PASSES } from "./map-passes";
-import { creatureTexture } from "./art-creatures";
-import { FARM_STORE, storeOf } from "../core/mapstore";
+
+import { storeOf } from "../core/mapstore";
 import { mapWithDoors } from "../core/placement";
 import { farmMapOf, isFarmMap, resolveMapId } from "../core/farmtypes";
 import {
   dismountSafely,
-  horseBlocks,
   horseName,
   horseTile,
   mount,
@@ -214,25 +150,15 @@ import {
   facingTile,
   move,
   tileOf,
-  type Body,
   type Facing,
   type Vec,
 } from "../core/movement";
 import { aimAt } from "../core/aim";
-import { isLongPress, tileScreenRect } from "../core/tipanchor";
+import { tileScreenRect } from "../core/tipanchor";
 import { createControls, type Controls } from "./controls";
-import {
-  DEFAULT_SCHEME,
-  partsFor,
-  schemeById,
-  tapIsAction,
-  usesTap,
-  type Parts,
-} from "../core/controlschemes";
-import { autoSwings, autoWeaponSlot, mayAutoEquip } from "../core/autoattack";
-import { planTap, planUse, type TapPlan } from "../core/pathing";
-import { tapPick, tapUse } from "../core/tapuse";
-import { isTapperItem, tapReady, tapStatus } from "../core/tapper";
+import { DEFAULT_SCHEME, schemeById, usesTap } from "../core/controlschemes";
+
+import { tapStatus } from "../core/tapper";
 import {
   browserSettingsStore,
   loadDeviceSettings,
@@ -240,37 +166,15 @@ import {
   resumeSave,
   setSpotProvider,
   takeSaveNotice,
-  useSlot,
 } from "./storage";
 import { ResumeGate } from "../core/records";
 import { serialize, type ResumeSpot } from "../core/save";
-import { DIAMOND, monsterDiamond } from "../core/gems";
 import { spawnTableOf } from "../core/spawns";
-import { MAX_SAVE_SLOTS } from "../core/slots";
-import { buildStage, stageList } from "../core/stages";
 import { hallRestored } from "../core/bundles";
-import {
-  healthShown,
-  isWeapon,
-  swingTargets,
-  weaponById,
-  type WeaponDef,
-} from "../core/combat";
-import {
-  creatureById,
-  creatureTile,
-  creatureXp,
-  floorHasCreatures,
-  hurtCreature,
-  rollDrops,
-  splitOff,
-  stepCreature,
-  swingDamage,
-  type Creature,
-  type CreatureDef,
-} from "../core/creatures";
-import { absoluteMinutes } from "../core/furnace";
-import { jobDone, statusText } from "../core/machines";
+import { isWeapon, weaponById } from "../core/combat";
+import {} from "../core/creatures";
+
+import { statusText } from "../core/machines";
 import {
   CASK,
   caskDone,
@@ -280,34 +184,19 @@ import {
   loadCask,
   placeCask,
 } from "../core/cask";
+import { chestById, pickUpChest, placeChest, pushChest } from "../core/chests";
+
 import {
-  chestById,
-  pickUpChest,
-  placeChest,
-  pushChest,
-  swapsOnTap,
-} from "../core/chests";
-import { CHEST_COLOURS } from "../core/chestdefs";
-import {
+  type Glow,
   isLight,
   lightAt,
   lightLayer,
-  lightMapKey,
   pickUpLight,
   placeLight,
 } from "../core/lights";
-import { drink, isDrink, oilCalms } from "../core/elixirs";
-import { effectById } from "../core/effects";
-import {
-  type LitBomb,
-  blastCreatures,
-  blastPlayer,
-  blastRocks,
-  bombById,
-  isBomb,
-  placeBomb,
-  tickBombs,
-} from "../core/bombs";
+import { drink, isDrink } from "../core/elixirs";
+
+import { type LitBomb, isBomb, placeBomb } from "../core/bombs";
 import {
   LIGHTNING_ROD,
   packWaiting,
@@ -327,7 +216,6 @@ import {
 import { baitById } from "../core/tackle";
 import { greencoatDue, takeCampGift } from "../core/camp";
 import {
-  decorTiles,
   farmDecorAt,
   isFarmDecor,
   pickUpFarmDecor,
@@ -372,15 +260,9 @@ import {
   placeFurniture,
 } from "../core/furniture";
 import { hatById } from "../core/hats";
-import {
-  GREENHOUSE_FOOTPRINT,
-  greenhouseHolds,
-  greenhouseRepaired,
-  greenhouseSite,
-} from "../core/greenhouse";
+import { greenhouseHolds } from "../core/greenhouse";
 import {
   CELLAR_MAP,
-  HOUSE_MAP,
   houseHolds,
   houseSpouse,
   houseVisibleTier,
@@ -388,37 +270,7 @@ import {
 } from "../core/house";
 import { SELECTED_KEY, STATE_KEY } from "./state";
 import { placedChestTip } from "../core/itemtip";
-import {
-  cropKey,
-  fertKey,
-  fruitOnTreeKey,
-  fruitTreeKey,
-  sprinklerKey,
-  furnitureKey,
-  chestKey,
-  farmDecorKey,
-  lightKey,
-  GARDEN_POT_KEY,
-  POND_KEY,
-  POND_PIT_KEY,
-  POT_KEY,
-  POT_READY_KEY,
-  machineKey,
-  MACHINE_READY_KEY,
-  forageKey,
-  iconKey,
-  LADDER_KEY,
-  ROCK_KEYS,
-  SPOT_KEY,
-  soilKey,
-  stageOf,
-  treeKey,
-  TWIG_KEY,
-  GRASS_KEY,
-  WEED_KEY,
-} from "./art";
-import { giveItem, giveMoney } from "../core/debug";
-import { applyStatePatch, type StatePatch } from "../core/statepatch";
+import {} from "./art";
 import { pickupRadius } from "../core/ground";
 import { Hud } from "./hud";
 import { PANEL_BOTTOM, PANEL_LEFT_BASE } from "./hudpanel";
@@ -436,36 +288,80 @@ import {
   ZOOM_MIN,
 } from "../core/view";
 import { makePlaceholderTextures, PLAYER_KEY } from "./placeholder-textures";
+import {
+  currentSession,
+  GuestSession,
+  isGuest,
+  type NetSession,
+} from "../net/session";
+import {
+  gateShut,
+  outdoorSoil,
+  outdoorWorld,
+  tileBlocked,
+  tileBlockedNoHorse,
+  type BlockWorld,
+} from "../core/blocking";
 
-/** Real milliseconds per 10 game minutes (Stardew pace). */
-const TICK_MS = 7000;
-const TICK_MINUTES = 10;
+import {
+  drawGround,
+  drawRooms,
+  drawBuild,
+  drawFurnace,
+  drawShrine,
+  drawMailbox,
+  drawRequestMark,
+  drawGreenhouse,
+  drawCoop,
+  drawCoopInside,
+} from "./farm-draw";
+import {
+  tileAtPointer,
+  planAt,
+  cancelTap,
+  initTapInput,
+  tapVector,
+  initTapDuration,
+} from "./farm-tap";
+import {
+  DEV_SPEED,
+  PLAYER,
+  PUSH,
+  SPEED,
+  TICK_MINUTES,
+  TICK_MS,
+} from "./farm-consts";
+import {
+  festivalMinutes,
+  updateParade,
+  festivalAction,
+  pierKeeper,
+  pierFloat,
+  onLaunchLine,
+  launchLanternAt,
+  updateHunt,
+  openFestival,
+} from "./farm-festival";
+import {
+  updateParts,
+  updateAttack,
+  cast,
+  updateBombs,
+  detonateAll,
+  strikeFlash,
+  fightState,
+  showHealth,
+  syncCombatSettings,
+  updateCombat,
+  addCreatureSprite,
+  floatText,
+  swing,
+} from "./farm-combat";
+import { RemotePlayerLayer } from "./remoteplayers";
+import { installDebugHooks, type DebugContext } from "./farm-debug";
 
-/**
- * Dev builds only: `?speed=N` runs the world N times faster (walking, the
- * clock tick and the axe repeat) so scripted playtests finish sooner. It is 1
- * in production. Walking takes N sub-steps a frame, so a step stays small
- * enough not to cross a tile.
- */
-const DEV_SPEED = DEBUG_TOOLS
-  ? Math.min(
-      8,
-      Math.max(
-        1,
-        Math.round(Number(new URLSearchParams(location.search).get("speed"))) ||
-          1,
-      ),
-    )
-  : 1;
-
-/** World pixels per second. */
-const SPEED = 80;
 /** How far the rider is drawn above the ground, so the horse shows under them. */
 const RIDER_LIFT = 6;
-/** A creature's feet box, in world pixels. */
-const CREATURE_BODY: Body = { hw: 5, h: 5 };
-/** The player's feet box, in world pixels. */
-const PLAYER: Body = { hw: 5, h: 6 };
 
 /** While Use is held with the axe or pickaxe, swing again this often, in milliseconds. */
 const REPEAT_MS = 400;
@@ -487,30 +383,22 @@ interface SceneData {
   y?: number;
 }
 
-/** The tile step a push takes for each way the farmer faces. */
-const PUSH: Record<Facing, { x: number; y: number }> = {
-  up: { x: 0, y: -1 },
-  down: { x: 0, y: 1 },
-  left: { x: -1, y: 0 },
-  right: { x: 1, y: 0 },
-};
-
 /**
  * A walkable map, a player and one `GameState`. The use key uses the held
  * tool, the end-day key sleeps (both rebindable, see `core/bindings.ts`). Walking through an exit restarts the scene on the next map; the
  * state and the selected toolbar slot survive in the game registry.
  */
 export class FarmScene extends Phaser.Scene {
-  private state!: GameState;
-  private selected = 0;
-  private mapId: string = START.map;
+  state!: GameState;
+  selected = 0;
+  mapId: string = START.map;
   private entryName: string = START.entry;
   private restoreTile: { x: number; y: number } | undefined;
   private gate = new ResumeGate();
-  private leaving = false;
+  leaving = false;
   /** The mine floor this map is, if it is one. */
-  private floor: number | undefined;
-  private floorState: Floor | undefined;
+  floor: number | undefined;
+  floorState: Floor | undefined;
   /** False right after arriving on a ladder, until the player steps off it. */
   private ladderArmed = true;
   /** True once the player has stood off every exit tile, so a walk onto one counts. */
@@ -519,28 +407,32 @@ export class FarmScene extends Phaser.Scene {
   private dragTile: { x: number; y: number } | undefined;
   /** Conditions that currently hold, for gated exits: "mines-open" from spring 5. */
   private holds = new Set<string>();
-  private message = "";
+  message = "";
   /** True while the Hat Parade script holds the farmer in the line (input off, note 82). */
-  private marching = false;
+  marching = false;
   /** True after the first Action press on the ruined footbridge, which asks first. */
   private mendAsked = false;
-  private hud!: Hud;
-  private uiCamera!: Phaser.Cameras.Scene2D.Camera;
+  hud!: Hud;
+  uiCamera!: Phaser.Cameras.Scene2D.Camera;
   /** The placeholder map labels and the world x each is centred on. */
+  private glowDark = -1;
+  private glowLights: Glow[] = [];
+  private labelView = "";
+  private hatTint = { id: "", color: 0 };
   private labelTags: { o: Phaser.GameObjects.Text; x: number; y: number }[] =
     [];
   /** The pictures of things on the map, redrawn by `drawGround`. */
-  private sprites: Phaser.GameObjects.Image[] = [];
-  private ground!: Phaser.GameObjects.Graphics;
+  sprites: Phaser.GameObjects.Image[] = [];
+  ground!: Phaser.GameObjects.Graphics;
   /** The light layer: glow rings of placed lights and the worn ring (note 89). */
   private glow!: Phaser.GameObjects.Graphics;
   /** Bombs lit and counting down on this map. Never saved: they go off at once on leaving (note 89). */
-  private litBombs: LitBomb[] = [];
-  private bombFx!: Phaser.GameObjects.Graphics;
-  private wash!: Phaser.GameObjects.Graphics;
+  litBombs: LitBomb[] = [];
+  bombFx!: Phaser.GameObjects.Graphics;
+  wash!: Phaser.GameObjects.Graphics;
   /** Dusk over the farm: fades in toward nightfall, which moves by season. */
   private night!: Phaser.GameObjects.Rectangle;
-  private map!: FarmMap;
+  map!: FarmMap;
   /** The building tier the map was loaded at: the house rooms built so far. */
   private tier = 0;
   /** Drawn layers that show only while a condition holds (`when` or `unless`), such as the log. */
@@ -548,63 +440,66 @@ export class FarmScene extends Phaser.Scene {
     drawn: { setVisible(v: boolean): unknown };
     layer: TiledLayer;
   }[] = [];
-  private controls!: Controls;
-  private player!: Phaser.GameObjects.Image;
+  controls!: Controls;
+  player!: Phaser.GameObjects.Image;
+  /** The multiplayer session, if any, and the other players it shows (note 53). */
+  private net: NetSession | undefined;
+  private remote: RemotePlayerLayer | undefined;
   private target!: Phaser.GameObjects.Rectangle;
   /** Placeholder hat drawn on the player. */
   private hat!: Phaser.GameObjects.Image;
   /** One placeholder block per creature on this floor, by creature id. */
-  private creatureSprites = new Map<number, Phaser.GameObjects.Image>();
+  creatureSprites = new Map<number, Phaser.GameObjects.Image>();
   /** The swing flash, drawn in the world. */
-  private swingFx!: Phaser.GameObjects.Graphics;
+  swingFx!: Phaser.GameObjects.Graphics;
   /** The scene time before which the next weapon swing is refused. */
-  private swingReady = 0;
+  swingReady = 0;
   /** The weapon last swung, for auto-attack's equip pick (note 27). */
-  private lastWeapon: string | undefined;
+  lastWeapon: string | undefined;
   /** Burn damage not yet a whole point of health. */
-  private burnDebt = 0;
+  burnDebt = 0;
   /** True while the naming dialog is open for the first ride. */
   private namingHorse = false;
   /** The horse under the rider while mounted (a placeholder block). */
   private steed!: Phaser.GameObjects.Image;
-  private animalImages: Phaser.GameObjects.Image[] = [];
-  private pos: Vec = { x: 0, y: 0 };
-  private facing: Facing = "down";
-  private heldMs = 0;
+  animalImages: Phaser.GameObjects.Image[] = [];
+  pos: Vec = { x: 0, y: 0 };
+  facing: Facing = "down";
+  heldMs = 0;
   /** Who aimed last: the cursor or the keys (note 46). Desktop only. */
-  private mouseAim = false;
+  mouseAim = false;
   /** True while the left button is held in the world, for the axe repeat. */
   private mouseHeld = false;
   /** Wheel movement not yet turned into a slot step, so a trackpad is not too fast. */
   private wheelDelta = 0;
   /** Tap-to-move (note 27): the route still to walk, and what to do at the end. */
-  private tapPath: Vec[] = [];
+  tapPath: Vec[] = [];
   /** A tapped spot in the world the sling shoots at, for a moment. */
-  private scheme: TouchScheme = DEFAULT_SCHEME;
-  private tapShot?: { x: number; y: number; until: number };
+  scheme: TouchScheme = DEFAULT_SCHEME;
+  tapShot?: { x: number; y: number; until: number };
   /** Villagers on this map right now and the placeholder blocks that show them (#599). */
-  private villagers: Present[] = [];
+  villagers: Present[] = [];
   private villagerSprites = new Map<
     string,
     { box: Phaser.GameObjects.Image; tag: Phaser.GameObjects.Text }
   >();
   /** The tile last checked for a heart event. */
   private eventTile = "";
-  private villagerStamp = -1;
+  villagerStamp = -1;
   /** When the game clock last ticked (scene time), to walk the parade between ticks. */
-  private tickAt = 0;
+  tickAt = 0;
   /** The running Seedswap hunt (placeholder markers and countdown). */
-  private hunt?: HuntState;
-  private huntGfx?: Phaser.GameObjects.Graphics;
-  private lanternGfx?: Phaser.GameObjects.Graphics;
-  private huntText?: Phaser.GameObjects.Text;
+  hunt?: HuntState;
+  huntGfx?: Phaser.GameObjects.Graphics;
+  lanternGfx?: Phaser.GameObjects.Graphics;
+  huntText?: Phaser.GameObjects.Text;
   /** The Frostday ice fishing count (placeholder, note 82). */
   private ice?: IceFishing;
-  private tapAct?: Vec;
+  tapAct?: Vec;
   /** True when the route ends in using the held item on `tapAct` (note 27). */
-  private tapActUses = false;
+  tapActUses = false;
   /** The tile the last tap asked for, drawn as the target; red if no route. */
-  private tapMark?: {
+  tapMark?: {
     x: number;
     y: number;
     bad: boolean;
@@ -612,9 +507,9 @@ export class FarmScene extends Phaser.Scene {
     walk?: boolean;
     until: number;
   };
-  private tapDown = false;
-  private tapSwinging = false;
-  private tapStuckMs = 0;
+  tapDown = false;
+  tapSwinging = false;
+  tapStuckMs = 0;
 
   constructor() {
     super("farm");
@@ -622,6 +517,7 @@ export class FarmScene extends Phaser.Scene {
 
   init(data: Partial<SceneData>): void {
     this.state = this.registry.get(STATE_KEY) as GameState;
+    this.net = currentSession();
     this.mapId = resolveMapId(data.map ?? START.map, this.state.farmType);
     this.entryName = data.entry ?? START.entry;
     this.restoreTile =
@@ -760,22 +656,27 @@ export class FarmScene extends Phaser.Scene {
       .setStrokeStyle(1, 0xffffff, 0.6)
       .setDepth(DEPTH.decal + 2);
     world.push(this.player, this.hat, this.target);
+    this.remote = this.net
+      ? new RemotePlayerLayer(this, this.net, this.mapId, (o) =>
+          this.uiCamera.ignore(o),
+        )
+      : undefined;
     this.swingFx = this.add.graphics().setDepth(900);
     world.push(this.swingFx);
     this.litBombs = [];
     this.bombFx = this.add.graphics().setDepth(901);
     world.push(this.bombFx);
-    this.events.once("shutdown", () => this.detonateAll(true));
+    this.events.once("shutdown", () => detonateAll(this, true));
     this.creatureSprites = new Map();
-    this.syncCombatSettings();
+    syncCombatSettings(this);
     // A map with a creature spawn table (the Secret Woods) places its morning's creatures.
     if (isAreaMap(this.mapId))
       ensureMapCreatures(this.state, this.mapId, Math.random, {
         x: Math.floor(this.pos.x / this.map.tileSize),
         y: Math.floor(this.pos.y / this.map.tileSize),
       });
-    for (const c of this.fightState()?.creatures ?? [])
-      world.push(this.addCreatureSprite(c));
+    for (const c of fightState(this)?.creatures ?? [])
+      world.push(addCreatureSprite(this, c));
     this.hunt = this.huntGfx = this.huntText = undefined;
     this.ice = undefined;
     this.villagers = [];
@@ -796,6 +697,8 @@ export class FarmScene extends Phaser.Scene {
       .setDepth(1000);
     world.push(this.night);
     this.glow = this.add.graphics().setDepth(1001);
+    this.glowDark = -1;
+    this.glowLights = [];
     world.push(this.glow);
 
     // UI objects, drawn by a second camera that does not zoom.
@@ -939,13 +842,13 @@ export class FarmScene extends Phaser.Scene {
     }
 
     if (this.controls.profile === "touch" && usesTap(settings.touchScheme))
-      this.initTapInput();
+      initTapInput(this);
 
     if (
       this.controls.profile === "touch" &&
       schemeById(settings.touchScheme).tapDuration
     )
-      this.initTapDuration();
+      initTapDuration(this);
 
     this.initWorldTips();
 
@@ -966,9 +869,11 @@ export class FarmScene extends Phaser.Scene {
       callback: () => {
         // Time stands still on a festival map, as in Stardew.
         if (isFestivalMap(this.mapId)) return;
+        // A guest's clock follows the host's day message, so it does not tick (note 53).
+        if (this.net instanceof GuestSession) return;
         this.tickAt = this.time.now;
         this.state.day.act(0, TICK_MINUTES);
-        this.strikeFlash(rollStrikes(this.state, TICK_MINUTES, Math.random));
+        strikeFlash(this, rollStrikes(this.state, TICK_MINUTES, Math.random));
         this.afterAction();
       },
     });
@@ -978,7 +883,7 @@ export class FarmScene extends Phaser.Scene {
       _sys: unknown,
       data?: { sleep?: boolean; goto?: { map: string; entry: string } },
     ) => {
-      this.syncCombatSettings();
+      syncCombatSettings(this);
       if (data?.sleep) return this.endDay();
       if (data?.goto) return this.travel(data.goto.map, data.goto.entry);
       // Slept or passed out away from the farm: the night put the farm's world
@@ -1027,118 +932,43 @@ export class FarmScene extends Phaser.Scene {
     );
     this.render();
 
-    if (DEBUG_TOOLS)
-      (window as unknown as { farmGive: unknown }).farmGive = (
-        id: string,
-        n: number,
-      ) => {
-        const result = giveItem(this.state, id, n);
-        this.render();
-        return result;
-      };
-    if (DEBUG_TOOLS)
-      (window as unknown as { farmMoney: unknown }).farmMoney = (n: number) => {
-        giveMoney(this.state, n);
-        this.render();
-      };
-    // Dev hook for the playtest bot (#333): walk to a tile by the tap route, so
-    // the bot does not time key holds. Returns false when there is no route.
-    if (DEBUG_TOOLS)
-      (window as unknown as { farmWalk: unknown }).farmWalk = (
-        x: number,
-        y: number,
-      ) => {
-        this.cancelTap();
-        const plan = this.planAt({ x, y });
+    if (DEBUG_TOOLS) installDebugHooks(this.debugContext());
+  }
+
+  /** What the dev hooks need from this scene (`farm-debug.ts`). */
+  private debugContext(): DebugContext {
+    return {
+      state: () => this.state,
+      restart: (data) => this.scene.restart(data),
+      setState: (state) => this.registry.set(STATE_KEY, state),
+      render: () => this.render(),
+      mapId: () => this.mapId,
+      entryName: () => this.entryName,
+      startMap: START.map,
+      startEntry: START.entry,
+      mapSize: () => ({ width: this.map.width, height: this.map.height }),
+      tileBlocked: (x, y) => this.tileBlocked(x, y),
+      cancelTap: () => cancelTap(this),
+      walkTo: (x, y) => {
+        cancelTap(this);
+        const plan = planAt(this, { x, y });
         if (!plan) return false;
         this.tapPath = plan.path;
         return true;
-      };
-    // Dev hook for the playtest bot: jump to a chosen state in one call
-    // (`core/statepatch.ts`), then restart the scene (at the entry it was
-    // entered by) so the HUD and map match.
-    if (DEBUG_TOOLS)
-      (window as unknown as { farmState: unknown }).farmState = (
-        patch: StatePatch,
-      ) => {
-        const result = applyStatePatch(this.state, patch);
-        const data: SceneData = {
-          map: patch.map ?? this.mapId,
-          entry: patch.map ? (patch.entry ?? "door") : this.entryName,
-        };
-        this.scene.restart(data);
-        return result;
-      };
-    // Dev hook (note 42, Stages): put a NEW game at a named stage, in the last
-    // save slot so no real save is overwritten, and restart the scene.
-    if (DEBUG_TOOLS) {
-      const w = window as unknown as Record<string, unknown>;
-      w.farmStages = () => stageList().map((s) => s.id);
-      w.farmStage = (name: string) => {
-        const r = buildStage(name);
-        if (!r) return { problems: [`unknown stage ${name}`] };
-        useSlot(MAX_SAVE_SLOTS);
-        this.registry.set(STATE_KEY, r.state);
-        // Always name the map: restart(undefined) would keep the current one
-        // (a stage called inside the library would leave you there).
-        this.scene.restart(
-          r.map
-            ? { map: r.map, entry: r.entry ?? "door" }
-            : { map: START.map, entry: START.entry },
-        );
-        return { problems: r.problems };
-      };
-    }
-    // Dev hook for the playtest bot: an item's display name, to find its row
-    // in a shop list by label.
-    if (DEBUG_TOOLS)
-      (window as unknown as { farmItemName: unknown }).farmItemName = (
-        id: string,
-      ) => itemById(id)?.name;
-    // Dev hook for the playtest bot (#333): every tile the farmer cannot stand
-    // on now (walls, trees, rocks, machines, furniture), as "x,y" strings.
-    if (DEBUG_TOOLS)
-      (window as unknown as { farmBlocked: unknown }).farmBlocked = () => {
-        const out: string[] = [];
-        for (let y = 0; y < this.map.height; y++)
-          for (let x = 0; x < this.map.width; x++)
-            if (this.tileBlocked(x, y)) out.push(`${x},${y}`);
-        return out;
-      };
-    if (DEBUG_TOOLS)
-      (window as unknown as { farmDebug: () => unknown }).farmDebug = () => ({
+      },
+      snapshot: () => ({
         pos: this.pos,
-        tile: tileOf(this.pos, PLAYER, ts),
+        tile: tileOf(this.pos, PLAYER, this.map.tileSize),
         facing: this.facing,
         walking: this.tapPath.length > 0,
         selected: this.selected,
         target: this.aimTile(),
-        map: this.mapId,
-        exit: this.exitAtAim()?.id ?? null,
+        exit: this.exitAtAim(),
         zoom: this.cameras.main.zoom,
-        energy: this.state.day.energy.current,
-        plots: [...this.state.farm.each()].length,
-        trees: this.state.trees.count,
-        wood: this.state.inventory.count("wood"),
-        seeds: this.state.inventory.count("parsnip-seed"),
-        harvested: this.state.inventory.count("parsnip"),
         message: this.message,
-        day: this.state.day.clock.day,
-        money: this.state.money,
-        houseTier: this.state.houseTier,
-        houseBuild: this.state.houseBuild ?? null,
-        mounted: this.state.animals.mounted,
-        horse: this.state.animals.horse,
-        health: this.state.combat.health.current,
-        creatures: (this.fightState()?.creatures ?? []).map((c) => ({
-          uid: c.uid,
-          kind: c.kind,
-          x: c.x,
-          y: c.y,
-          hp: c.hp,
-          state: c.state,
-        })),
-      });
+        creatures: fightState(this)?.creatures ?? [],
+      }),
+    };
   }
 
   update(_time: number, delta: number): void {
@@ -1155,21 +985,21 @@ export class FarmScene extends Phaser.Scene {
         : 0,
     );
     this.drawGlow();
-    this.updateBombs(dt);
+    updateBombs(this, dt);
     this.syncVillagers();
-    this.updateHunt(dt);
+    updateHunt(this, dt);
     this.checkHeartEvent();
     this.checkWedding();
-    const marching = this.updateParade(dt);
-    if (marching) this.cancelTap();
-    const parts = this.updateParts();
+    const marching = updateParade(this, dt);
+    if (marching) cancelTap(this);
+    const parts = updateParts(this);
     const stick = marching ? { x: 0, y: 0 } : this.controls.vector();
     // A push on the stick overrides a tap route (tap and stick schemes).
-    if (stick.x !== 0 || stick.y !== 0) this.cancelTap();
+    if (stick.x !== 0 || stick.y !== 0) cancelTap(this);
     const walking = !marching && this.tapPath.length > 0;
-    const v = marching ? { x: 0, y: 0 } : walking ? this.tapVector(dt) : stick;
-    this.updateAttack(parts);
-    if (!walking && (v.x !== 0 || v.y !== 0)) this.cancelTap();
+    const v = marching ? { x: 0, y: 0 } : walking ? tapVector(this, dt) : stick;
+    updateAttack(this, parts);
+    if (!walking && (v.x !== 0 || v.y !== 0)) cancelTap(this);
     this.facing = facingFrom(v, this.facing);
     if (v.x !== 0 || v.y !== 0) this.keyAim();
     const ts = this.map.tileSize;
@@ -1214,7 +1044,7 @@ export class FarmScene extends Phaser.Scene {
         moved < SPEED * dt * 0.2 ? this.tapStuckMs + dt * 1000 : 0;
       // A body in the way: give up after a short wait, as note 27 says.
       if (this.tapStuckMs > 600) {
-        this.cancelTap();
+        cancelTap(this);
         this.tapMark = undefined;
       }
     }
@@ -1229,10 +1059,14 @@ export class FarmScene extends Phaser.Scene {
       .setDepth(depth);
     this.hat.setDepth(depth);
     this.drawHat();
-    this.repeatUse(delta * DEV_SPEED);
-    this.dragSoilWork();
-    this.pickUp();
-    this.updateCombat(dt);
+    this.syncNet();
+    // Until intents exist a guest can only walk and look (note 53).
+    if (!isGuest()) {
+      this.repeatUse(delta * DEV_SPEED);
+      this.dragSoilWork();
+      this.pickUp();
+      updateCombat(this, dt);
+    }
 
     const mark = this.tapMark;
     if (mark && this.time.now > mark.until) this.tapMark = undefined;
@@ -1294,10 +1128,23 @@ export class FarmScene extends Phaser.Scene {
    * True if the farmer cannot stand on the tile: a wall, tree, rock, machine or
    * a horse left standing there (never one that is ridden or at the stable).
    */
-  private tileBlocked(x: number, y: number): boolean {
-    return (
-      this.tileBlockedNoHorse(x, y) || horseBlocks(this.state, this.mapId, x, y)
-    );
+  tileBlocked(x: number, y: number): boolean {
+    return tileBlocked(this.blockWorld(), x, y);
+  }
+
+  tileBlockedNoHorse(x: number, y: number): boolean {
+    return tileBlockedNoHorse(this.blockWorld(), x, y);
+  }
+
+  /** What `core/blocking.ts` reads of this scene. */
+  private blockWorld(): BlockWorld {
+    return {
+      state: this.state,
+      map: this.map,
+      mapId: this.mapId,
+      rocks: this.rocks(),
+      festivalShut: (x, y) => this.tileShutForFestival(x, y),
+    };
   }
 
   /** What the horse may and may not stand on here (note 59, "Blocking"). */
@@ -1325,263 +1172,19 @@ export class FarmScene extends Phaser.Scene {
     };
   }
 
-  private tileBlockedNoHorse(x: number, y: number): boolean {
-    const log = this.map.logAt(x, y);
-    return (
-      this.map.isBlocked(x, y) ||
-      this.gateShut(x, y) ||
-      this.tileShutForFestival(x, y) ||
-      (log !== undefined && !logCleared(this.state, log)) ||
-      (this.outdoorWorld && this.state.trees.blocks(x, y)) ||
-      !!this.store.fruitTrees.at(x, y) ||
-      !!this.store.teaBushes.at(x, y) ||
-      !!this.rocks()?.at(x, y) ||
-      this.furnaceAt(x, y) ||
-      coopBlocks(this.state, this.mapId, x, y) ||
-      barnBlocks(this.state, this.mapId, x, y) ||
-      siloBlocks(this.state, this.mapId, x, y) ||
-      stableBlocks(this.state, this.mapId, x, y) ||
-      pondBlocks(this.state, this.mapId, x, y) ||
-      ((this.mapId === COOP_MAP || this.mapId === BARN_MAP) &&
-        animalSlots(this.state, this.mapId === COOP_MAP ? "coop" : "barn").some(
-          (s) => s.x === x && s.y === y,
-        )) ||
-      this.state.furniture.blocks(this.mapId, x, y) ||
-      (this.mapId === CELLAR_MAP && this.state.casks.at(x, y)) ||
-      !!this.state.chests.at(this.mapId, x, y) ||
-      !!this.state.placed.covering(lightMapKey(this.mapId), x, y) ||
-      (isFarmMap(this.mapId) && !!rodAt(this.state, x, y)) ||
-      this.map.serviceAt(x, y)?.kind === "camp-chest" ||
-      !!this.store.sprinklers.at(x, y) ||
-      !!potAt(this.state, this.map, x, y) ||
-      (this.outdoorSoil && !!this.state.machines.at(x, y))
-    );
-  }
-
   /** The sprinklers, trees and soil of the map the player is on (`mapstore.ts`). */
-  private get store() {
+  get store() {
     return storeOf(this.state, this.map.indoors);
   }
 
   /** True on a map with the farm's soil: its trees, weeds, forage and machines live here. The greenhouse has its own soil. */
-  private get outdoorSoil(): boolean {
-    return this.map.hasSoil && !this.map.indoors;
+  get outdoorSoil(): boolean {
+    return outdoorSoil(this.map);
   }
 
   /** True outdoors on the farm or an area map: the map whose trees, rocks and forage are the state's. */
-  private get outdoorWorld(): boolean {
-    return !this.map.indoors && (this.map.hasSoil || isAreaMap(this.mapId));
-  }
-
-  /** The tile under a screen point, in the world. */
-  private tileAtPointer(p: Phaser.Input.Pointer): Vec {
-    const ts = this.map.tileSize;
-    const w = this.cameras.main.getWorldPoint(p.x, p.y);
-    return { x: Math.floor(w.x / ts), y: Math.floor(w.y / ts) };
-  }
-
-  /** Something a tap can act on: a thing that blocks the way, or a door. */
-  private tapObject(x: number, y: number): boolean {
-    if (this.map.isBlocked(x, y) && !this.map.serviceAt(x, y)) return false;
-    return true;
-  }
-
-  /** Plan a tap on a tile, or undefined when there is no route (red target). */
-  private planAt(tap: Vec): TapPlan | undefined {
-    const ts = this.map.tileSize;
-    const plan = planTap(
-      {
-        width: this.map.width,
-        height: this.map.height,
-        blocked: (x, y) => this.tileBlocked(x, y),
-      },
-      tileOf(this.pos, PLAYER, ts),
-      tap,
-      (x, y) => this.tapObject(x, y),
-    );
-    if (plan && !plan.act && this.map.exitAt(tap.x, tap.y)) plan.act = tap;
-    return plan;
-  }
-
-  /** Stop walking by route and forget what the last tap wanted. */
-  private cancelTap(): void {
-    this.tapPath = [];
-    this.tapAct = undefined;
-    this.tapActUses = false;
-    this.tapSwinging = false;
-    this.tapStuckMs = 0;
-  }
-
-  /**
-   * Tap-to-move (note 27): tap a spot and the farmer walks there by the
-   * shortest route; tap an object and the farmer walks beside it and acts,
-   * with the right tool for a tree or rock. A tap on the tile beside the
-   * farmer faces it and uses the held tool, for careful tilling and placing.
-   * Holding a finger down makes the farmer follow it.
-   */
-  private initTapInput(): void {
-    const mine = (
-      p: Phaser.Input.Pointer,
-      over?: Phaser.GameObjects.GameObject[],
-    ): boolean =>
-      !over?.length &&
-      !this.controls.claims?.(p) &&
-      !this.hud.covers(p.x, p.y) &&
-      !this.leaving &&
-      !this.marching;
-    const aimAtTap = (p: Phaser.Input.Pointer, fresh: boolean): void => {
-      // With a sling held on a mine floor a tap shoots at the spot, no walking.
-      if (fresh && this.floorState && this.slingHeld()) {
-        const w = this.cameras.main.getWorldPoint(p.x, p.y);
-        this.cancelTap();
-        this.keyAim();
-        this.tapShot = { x: w.x, y: w.y, until: this.time.now + 300 };
-        this.use();
-        return;
-      }
-      const tap = this.tileAtPointer(p);
-      const here = tileOf(this.pos, PLAYER, this.map.tileSize);
-      const dx = tap.x - here.x;
-      const dy = tap.y - here.y;
-      const beside = Math.abs(dx) + Math.abs(dy) === 1;
-      const held = heldAt(this.state, this.selected);
-      // A tap on the farmer's own tile gets off the horse, else eats the held
-      // food (note 27, "Tap makes the Action button obsolete").
-      if (fresh && dx === 0 && dy === 0) {
-        if (this.state.animals.mounted) {
-          this.cancelTap();
-          return this.getOff();
-        }
-        if (held.kind === "item" && itemById(held.id)?.energy !== undefined) {
-          this.cancelTap();
-          return this.eatHeld();
-        }
-      }
-      // A ripe crop, forage or fruit, or the horse, is picked by hand first.
-      const hand = this.tapHand(tap);
-      // One rule (note 27): a soil-work item is used where it fits and the tap
-      // only walks where it does not. Other items keep the old rule.
-      const fit = hand
-        ? "other"
-        : tapUse(this.state, this.map, held, tap.x, tap.y);
-      const thing =
-        hand ||
-        (this.tapObject(tap.x, tap.y) && this.tileBlocked(tap.x, tap.y));
-      const exit = !!this.map.exitAt(tap.x, tap.y);
-      // A tapper goes on a tree, whose tile is blocked (note 92).
-      const tapper = held.kind === "item" && isTapperItem(held.id);
-      if (
-        fit === "use" &&
-        (tapper ||
-          !this.tileBlocked(tap.x, tap.y) ||
-          this.map.isWater(tap.x, tap.y))
-      ) {
-        // A drag uses each new tile beside the farmer at once.
-        if (beside) {
-          this.cancelTap();
-          this.keyAim();
-          this.facing = facingFrom({ x: dx, y: dy }, this.facing);
-          this.tapMark = { ...tap, bad: false, until: this.time.now + 300 };
-          this.use();
-          return;
-        }
-        const plan = planUse(
-          {
-            width: this.map.width,
-            height: this.map.height,
-            blocked: (x, y) => this.tileBlocked(x, y),
-          },
-          here,
-          tap,
-        );
-        if (!plan) {
-          this.cancelTap();
-          this.tapMark = { ...tap, bad: true, until: this.time.now + 700 };
-          return;
-        }
-        this.startRoute(plan, tap, false);
-        return;
-      }
-      if (fresh && beside && (fit === "other" || thing || exit)) {
-        // A tap beside the farmer: face it and use the held tool.
-        this.cancelTap();
-        this.keyAim();
-        this.facing = facingFrom({ x: dx, y: dy }, this.facing);
-        this.tapMark = { ...tap, bad: false, until: this.time.now + 300 };
-        if (thing) this.actOn(tap);
-        else if (exit) this.action();
-        else this.use();
-        return;
-      }
-      let plan = this.planAt(tap);
-      if (hand && !this.tileBlocked(tap.x, tap.y)) {
-        // Walk beside an open tile, then pick by hand (not use the held item).
-        const beside = planUse(
-          {
-            width: this.map.width,
-            height: this.map.height,
-            blocked: (x, y) => this.tileBlocked(x, y),
-          },
-          here,
-          tap,
-        );
-        plan = beside && { ...beside, use: false };
-      }
-      if (!plan) {
-        this.cancelTap();
-        this.tapMark = { ...tap, bad: true, until: this.time.now + 700 };
-        return;
-      }
-      this.startRoute(plan, tap, fit === "walk");
-    };
-    const onDown = (
-      p: Phaser.Input.Pointer,
-      over: Phaser.GameObjects.GameObject[],
-    ): void => {
-      if (!mine(p, over)) return;
-      this.tapDown = true;
-      const t = this.tileAtPointer(p);
-      if (p.wasTouch && this.state.chests.get(this.mapId, t.x, t.y)) {
-        // Wait: a held finger shows the chest tip, a quick tap opens it.
-        pending = { p, at: this.time.now, x: p.x, y: p.y };
-        return;
-      }
-      aimAtTap(p, true);
-    };
-    const settle = (act: boolean): void => {
-      const w = pending;
-      pending = undefined;
-      if (w && act) aimAtTap(w.p, true);
-    };
-    let last = "";
-    let pending:
-      { p: Phaser.Input.Pointer; at: number; x: number; y: number } | undefined;
-    const onMove = (p: Phaser.Input.Pointer): void => {
-      if (pending) {
-        // A drag off the chest is a move, not a press.
-        if (Math.hypot(p.x - pending.x, p.y - pending.y) > 12) settle(true);
-        else return;
-      }
-      if (!this.tapDown || !p.isDown || this.hud.covers(p.x, p.y)) return;
-      const t = this.tileAtPointer(p);
-      const k = `${t.x},${t.y}`;
-      if (k === last) return;
-      last = k;
-      aimAtTap(p, false);
-    };
-    const onUp = (): void => {
-      if (pending) settle(!isLongPress(this.time.now - pending.at));
-      this.tapDown = false;
-      last = "";
-    };
-    this.input.on("pointerdown", onDown);
-    this.input.on("pointermove", onMove);
-    this.input.on("pointerup", onUp);
-    this.events.once("shutdown", () => {
-      this.input.off("pointerdown", onDown);
-      this.input.off("pointermove", onMove);
-      this.input.off("pointerup", onUp);
-    });
+  get outdoorWorld(): boolean {
+    return outdoorWorld(this.map, this.mapId);
   }
 
   /**
@@ -1591,7 +1194,7 @@ export class FarmScene extends Phaser.Scene {
   private initWorldTips(): void {
     const tipAt = (p: Phaser.Input.Pointer): void => {
       if (this.hud.covers(p.x, p.y) || this.leaving) return this.hud.hideTip();
-      const t = this.tileAtPointer(p);
+      const t = tileAtPointer(this, p);
       const chest = this.state.chests.get(this.mapId, t.x, t.y);
       if (chest) {
         const cam = this.cameras.main;
@@ -1629,69 +1232,13 @@ export class FarmScene extends Phaser.Scene {
     });
   }
 
-  private slingHeld(): boolean {
+  slingHeld(): boolean {
     const h = heldAt(this.state, this.selected);
     return (
       h.kind === "item" &&
       isWeapon(h.id) &&
       weaponById(h.id)?.family === "sling"
     );
-  }
-
-  /** The game minute, run on between clock ticks on a festival day so the march moves a tile a minute. */
-  private festivalMinutes(): number {
-    const clock = this.state.day.clock;
-    const smooth = !!festivalToday(clock.day) && !isFestivalMap(this.mapId);
-    return smooth
-      ? clock.minutes +
-          Math.min(1, (this.time.now - this.tickAt) / (TICK_MS / DEV_SPEED)) *
-            TICK_MINUTES
-      : clock.minutes;
-  }
-
-  /**
-   * The Hat Parade, the player's part (note 82): a hatted player on the square
-   * between 14:00 and 14:30 falls in at the tail and the script walks them out
-   * to the turn and back with input off. Returns true while the script holds them.
-   */
-  private updateParade(dt: number): boolean {
-    const clock = this.state.day.clock;
-    if (
-      this.mapId !== PARADE_MAP ||
-      festivalDayToday(clock.day)?.id !== PARADE_FESTIVAL
-    ) {
-      this.marching = false;
-      return false;
-    }
-    const ts = this.map.tileSize;
-    let join = paradeJoin(this.state);
-    if (!join && !this.leaving) {
-      const at = tileOf(this.pos, PLAYER, ts);
-      if (!joinParade(this.state, this.mapId, at.x, at.y)) {
-        join = paradeJoin(this.state);
-        this.villagerStamp = -1;
-        this.message = "The march forms. You fall in at the tail of the line.";
-        this.render();
-      }
-    }
-    if (!join) return false;
-    const at = playerMarchAt(join, this.festivalMinutes());
-    if (at.state === "done") {
-      if (this.marching) {
-        this.marching = false;
-        this.message = finishParade(this.state);
-        this.render();
-      }
-      return false;
-    }
-    this.marching = true;
-    const k = Math.min(1, dt * 8);
-    const goal = { x: (at.tile[0] + 0.5) * ts, y: (at.tile[1] + 1) * ts - 2 };
-    this.pos = {
-      x: this.pos.x + (goal.x - this.pos.x) * k,
-      y: this.pos.y + (goal.y - this.pos.y) * k,
-    };
-    return true;
   }
 
   /**
@@ -1703,7 +1250,7 @@ export class FarmScene extends Phaser.Scene {
     const clock = this.state.day.clock;
     // The clock ticks 10 minutes at a time, but the Hat Parade walks a tile a
     // minute, so on a festival day the minute runs on between ticks (note 82).
-    const minutes = this.festivalMinutes();
+    const minutes = festivalMinutes(this);
     const stamp = clock.day * 2000 + Math.floor(minutes);
     if (stamp === this.villagerStamp) return;
     this.villagerStamp = stamp;
@@ -1826,7 +1373,8 @@ export class FarmScene extends Phaser.Scene {
       this.message +=
         " A lantern hangs over this seat: hold a gift and give it.";
     if (r.kiss)
-      this.floatText(
+      floatText(
+        this,
         (tile.x + 0.5) * this.map.tileSize,
         tile.y * this.map.tileSize - 4,
         "\u2665",
@@ -1834,99 +1382,6 @@ export class FarmScene extends Phaser.Scene {
       );
     this.render();
     return true;
-  }
-
-  /** True when a tap on the tile picks by hand: ripe crop, forage, fruit, or the horse. */
-  private tapHand(tile: Vec): boolean {
-    if (presentAt(this.villagers, tile.x, tile.y)) return true;
-    if (tapPick(this.state, this.map, tile.x, tile.y)) return true;
-    const spot = this.horseSpot();
-    return (
-      !this.state.animals.mounted &&
-      !!spot &&
-      spot.x === tile.x &&
-      spot.y === tile.y
-    );
-  }
-
-  /** Act on a tile beside the farmer: the axe for a tree, the pickaxe for a rock. */
-  private actOn(tile: Vec): void {
-    // A big chest held and a smaller placed chest tapped: swap it in, as X does.
-    const held = heldAt(this.state, this.selected);
-    if (
-      held.kind === "item" &&
-      swapsOnTap(this.state, this.mapId, tile.x, tile.y, held.id)
-    )
-      return this.use();
-    if (this.tapHand(tile)) return this.action();
-    const tree =
-      (!this.map.indoors && this.state.trees.at(tile.x, tile.y)) ||
-      this.store.fruitTrees.at(tile.x, tile.y) ||
-      this.store.teaBushes.at(tile.x, tile.y);
-    const rock = this.rocks()?.at(tile.x, tile.y);
-    if (tree || rock) {
-      // Find the tool by what it is: the first one in the pack, wherever it sits.
-      const at = findTool(this.state.inventory, tree ? "axe" : "pickaxe");
-      if (at < 0) return this.action();
-      this.select(at);
-      this.tapSwinging = true;
-      this.heldMs = 0;
-      this.use();
-    } else this.action();
-  }
-
-  /** Follow a planned route and draw its target: white to use, grey to only walk. */
-  private startRoute(plan: TapPlan, tap: Vec, walkOnly: boolean): void {
-    this.tapPath = plan.path;
-    this.tapAct = plan.act;
-    this.tapActUses = !!plan.use;
-    this.tapSwinging = false;
-    this.tapStuckMs = 0;
-    this.tapMark = {
-      ...tap,
-      bad: false,
-      walk: walkOnly && !plan.act,
-      until: Infinity,
-    };
-    if (plan.path.length === 0 && plan.act) this.arrive();
-  }
-
-  /** The farmer is where the route ended: face the target and act on it. */
-  private arrive(): void {
-    const act = this.tapAct;
-    const uses = this.tapActUses;
-    this.tapAct = undefined;
-    this.tapActUses = false;
-    this.tapMark = undefined;
-    if (!act) return;
-    const here = tileOf(this.pos, PLAYER, this.map.tileSize);
-    const dx = act.x - here.x;
-    const dy = act.y - here.y;
-    this.keyAim();
-    if (dx !== 0 || dy !== 0)
-      this.facing = facingFrom({ x: dx, y: dy }, this.facing);
-    if (dx === 0 && dy === 0) return void this.action();
-    if (uses) return this.use();
-    this.actOn(act);
-  }
-
-  /** The push for this frame along the route, and the end of it on arrival. */
-  private tapVector(dt: number): Vec {
-    const next = this.tapPath[0];
-    if (!next) return { x: 0, y: 0 };
-    const ts = this.map.tileSize;
-    const tx = (next.x + 0.5) * ts;
-    const ty = (next.y + 0.5) * ts + PLAYER.h / 2;
-    const dx = tx - this.pos.x;
-    const dy = ty - this.pos.y;
-    const dist = Math.hypot(dx, dy);
-    if (dist <= Math.max(2, SPEED * dt * DEV_SPEED)) {
-      this.tapPath.shift();
-      this.tapStuckMs = 0;
-      if (this.tapPath.length === 0) this.arrive();
-      return { x: 0, y: 0 };
-    }
-    return { x: dx / dist, y: dy / dist };
   }
 
   /** A click turns the farmer toward the aim, on click only (note 46). */
@@ -1944,7 +1399,7 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** A key press or a step hands the aim back to the faced tile. */
-  private keyAim(): void {
+  keyAim(): void {
     this.mouseAim = false;
   }
 
@@ -2118,16 +1573,9 @@ export class FarmScene extends Phaser.Scene {
     );
   }
 
-  /** True when walking onto this tile of the current map is shut by a festival setting up. */
   /** True on a gated bedroom door the player has not earned the hearts for yet. */
   private gateShut(x: number, y: number): boolean {
-    const g = this.map.gateAt(x, y);
-    if (!g) return false;
-    const rule = parseGate(g.rule);
-    if (!rule) return false;
-    return !gateOpen(this.mapId, rule, (id) =>
-      this.state.friendship.hearts(id),
-    );
+    return gateShut(this.state, this.map, this.mapId, x, y);
   }
 
   /** The last tile checked for walking into a festival held in place. */
@@ -2283,7 +1731,7 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** Fade out and restart the scene on another map. */
-  private travel(map: string, entry: string): void {
+  travel(map: string, entry: string): void {
     if (this.leaving) return;
     this.leaving = true;
     // Doors and the Mines dismount: the horse waits outside (note 59).
@@ -2309,7 +1757,7 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** The tile the horse stands on here, when it is not being ridden. */
-  private horseSpot(): { x: number; y: number } | undefined {
+  horseSpot(): { x: number; y: number } | undefined {
     return horseTile(
       this.state,
       this.mapId,
@@ -2343,7 +1791,7 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** Get off where the rider stands. The horse waits there until morning. */
-  private getOff(): void {
+  getOff(): void {
     const here = tileOf(this.pos, PLAYER, this.map.tileSize);
     const spot = dismountSafely(
       this.state,
@@ -2366,21 +1814,14 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** The rocks on this map: the farm's, or this mine floor's. */
-  private rocks(): Rocks | undefined {
+  rocks(): Rocks | undefined {
     if (this.floorState) return this.floorState.rocks;
     return isFarmMap(this.mapId) || isAreaMap(this.mapId)
       ? this.state.rocks
       : undefined;
   }
 
-  /** True on the furnace tile once the smith has given it. */
-  private furnaceAt(x: number, y: number): boolean {
-    return (
-      this.state.furnace.gifted && this.map.serviceAt(x, y)?.kind === "furnace"
-    );
-  }
-
-  private select(index: number): void {
+  select(index: number): void {
     if (index < 0 || index >= toolbarSize(this.state)) return;
     this.selected = index;
     this.registry.set(SELECTED_KEY, index);
@@ -2396,9 +1837,12 @@ export class FarmScene extends Phaser.Scene {
     if (!def) return;
     const lift = this.state.animals.mounted ? RIDER_LIFT : 0;
     const head = this.pos.y - lift - this.player.displayHeight * 0.875;
-    this.hat
-      .setTint(Phaser.Display.Color.HexStringToColor(def.color).color)
-      .setPosition(this.pos.x, head + 1);
+    if (this.hatTint.id !== def.id)
+      this.hatTint = {
+        id: def.id,
+        color: Phaser.Display.Color.HexStringToColor(def.color).color,
+      };
+    this.hat.setTint(this.hatTint.color).setPosition(this.pos.x, head + 1);
   }
 
   /** The short scene that opens the Special Orders board (note 65). Shown once. */
@@ -2473,125 +1917,16 @@ export class FarmScene extends Phaser.Scene {
     this.open("journal");
   }
 
-  private open(kind: string, data?: object): void {
+  open(kind: string, data?: object): void {
     this.scene.launch(kind, data);
     this.scene.pause();
   }
 
-  /** True while the held item is a weapon. */
-  private weaponHeld(): boolean {
-    const h = heldAt(this.state, this.selected);
-    return h.kind === "item" && isWeapon(h.id);
-  }
-
-  /** The control parts showing now, given the scheme and the held item (note 27). */
-  private updateParts(): Parts {
-    const id = this.scheme;
-    const parts = partsFor(id, this.weaponHeld());
-    if (this.controls.profile === "touch") {
-      this.hud.setButtons(parts.useButton, parts.actionButton, false);
-      this.controls.setParts?.(parts);
-    }
-    return parts;
-  }
-
-  /**
-   * The tap-duration scheme (note 27): a touch on the right half, released under
-   * 0.25 s, is Use; held longer it is Action. No drawn button.
-   */
-  private initTapDuration(): void {
-    let down: { id: number; at: number } | undefined;
-    const onDown = (p: Phaser.Input.Pointer): void => {
-      const half = p.x > this.scale.gameSize.width / 2;
-      if (!half || this.hud.covers(p.x, p.y) || this.controls.claims?.(p))
-        return;
-      down = { id: p.id, at: this.time.now };
-    };
-    const onUp = (p: Phaser.Input.Pointer): void => {
-      if (!down || down.id !== p.id) return;
-      const ms = this.time.now - down.at;
-      down = undefined;
-      if (tapIsAction(ms)) this.action();
-      else this.use();
-    };
-    this.input.on("pointerdown", onDown);
-    this.input.on("pointerup", onUp);
-    this.events.once("shutdown", () => {
-      this.input.off("pointerdown", onDown);
-      this.input.off("pointerup", onUp);
-    });
-  }
-
-  /**
-   * The attack schemes (note 27). Auto-attack swings at the nearest creature
-   * in reach; the attack stick faces and swings the way it is pushed. The
-   * weapon's own cooldown paces both.
-   */
-  private updateAttack(parts: Parts): void {
-    if (this.controls.profile !== "touch") return;
-    if (this.leaving || this.marching || this.state.animals.mounted) return;
-    const floor = this.fightState();
-    if (!floor || this.state.combat.noCreatures) return;
-    const h = heldAt(this.state, this.selected);
-    let weapon =
-      h.kind === "item" && isWeapon(h.id) ? weaponById(h.id) : undefined;
-    const ts = this.map.tileSize;
-    const push = parts.aimStick ? this.controls.aim?.() : undefined;
-    let dir: Vec | undefined = push;
-    // Auto-attack with a tool or nothing held equips a weapon from the pack
-    // when a creature is in reach (note 27, Stardew's rule).
-    if (
-      !weapon &&
-      !dir &&
-      schemeById(this.scheme).autoAttack &&
-      mayAutoEquip(this.state, this.selected)
-    ) {
-      const slot = autoWeaponSlot(this.state, this.lastWeapon);
-      const w =
-        slot === undefined ? undefined : this.state.inventory.slot(slot);
-      const cand = w ? weaponById(w.id) : undefined;
-      if (
-        slot !== undefined &&
-        cand &&
-        floor.creatures.some(
-          (c) =>
-            Math.hypot(c.x - this.pos.x, c.y - this.pos.y) <= cand.reach * ts,
-        )
-      ) {
-        this.select(slot);
-        weapon = cand;
-      }
-    }
-    if (!weapon) return;
-    if (!dir && schemeById(this.scheme).autoAttack && autoSwings(weapon.id)) {
-      let best = Infinity;
-      for (const c of floor.creatures) {
-        const dx = c.x - this.pos.x;
-        const dy = c.y - this.pos.y;
-        const d = Math.hypot(dx, dy);
-        if (d <= weapon.reach * ts && d < best) {
-          best = d;
-          dir = { x: dx, y: dy };
-        }
-      }
-    }
-    if (!dir || this.time.now < this.swingReady) return;
-    this.facing = facingFrom(dir, this.facing);
-    if (weapon.family === "sling") {
-      const len = Math.hypot(dir.x, dir.y) || 1;
-      this.tapShot = {
-        x: this.pos.x + (dir.x / len) * 64,
-        y: this.pos.y - 6 + (dir.y / len) * 64,
-        until: this.time.now + 300,
-      };
-    }
-    this.swing(weapon);
-  }
-
   /** Use the held tool on the tile the player faces. Services are Action's. */
-  private use(): void {
+  use(): void {
     if (this.leaving || this.marching) return;
     if (this.useDoor()) return;
+    if (isGuest()) return;
     if (this.state.animals.mounted) {
       this.message = `${this.getOffHint()} to get off ${horseName(this.state)} first.`;
       return this.render();
@@ -2602,7 +1937,7 @@ export class FarmScene extends Phaser.Scene {
       carried.kind === "item" && isWeapon(carried.id)
         ? weaponById(carried.id)
         : undefined;
-    if (weapon) return this.swing(weapon);
+    if (weapon) return swing(this, weapon);
     if (this.map.serviceAt(front.x, front.y)) return;
     // A person is talked to, never worked on (the Action button or a tap does that).
     if (presentAt(this.villagers, front.x, front.y)) return;
@@ -2614,7 +1949,7 @@ export class FarmScene extends Phaser.Scene {
       : undefined;
     if (pond && held.kind === "item" && rodById(held.id))
       return this.report(takeFish(this.state, pond.x, pond.y));
-    if (held.kind === "item" && rodById(held.id)) return this.cast(held.id);
+    if (held.kind === "item" && rodById(held.id)) return cast(this, held.id);
     // A pot goes on the water, bait goes in a pot, and the axe or pickaxe takes an empty one up.
     if (held.kind === "item" && held.id === POT_ITEM)
       return this.report(
@@ -2763,7 +2098,7 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** The Frostday contest for a cast landing on this tile: the state at a hole, "shut" before opening. */
-  private iceFor(x: number, y: number): IceFishing | "shut" | undefined {
+  iceFor(x: number, y: number): IceFishing | "shut" | undefined {
     const f = festivalDayToday(this.state.day.clock.day);
     if (f?.id !== "frostday" || this.mapId !== "forest") return undefined;
     if (lakeShut(f, this.state.day.clock.minutes)) return "shut";
@@ -2791,44 +2126,6 @@ export class FarmScene extends Phaser.Scene {
     }
     this.render();
     return true;
-  }
-
-  /** Use a rod: it needs water in front of the player within the rod's range (note 21). */
-  private cast(rodId: string): void {
-    const rod = rodById(rodId)!;
-    const here = tileOf(this.pos, PLAYER, this.map.tileSize);
-    const step = PUSH[this.facing];
-    // Any outdoor map with water can be fished: Hearthwell's river arm (the
-    // Night Market pier, note 14) is one; its water kind drives the fish table.
-    const water =
-      isFarmMap(this.mapId) ||
-      isAreaMap(this.mapId) ||
-      mineFloorOf(this.mapId) !== undefined ||
-      !this.map.indoors
-        ? waterAhead(this.map, here.x, here.y, step.x, step.y, rod.range)
-        : [];
-    if (water.length === 0) {
-      this.message = "Face the water to fish.";
-      return this.render();
-    }
-    const first = water[0]!;
-    const kind = this.map.waterKindAt(
-      here.x + step.x * first,
-      here.y + step.y * first,
-    );
-    const ice = this.iceFor(here.x + step.x * first, here.y + step.y * first);
-    if (ice === "shut") {
-      this.message = "The lake opens at noon.";
-      return this.render();
-    }
-    // The Night Market pier needs a permit and closes at 23:00 (note 14).
-    const pierProblem = pierCastProblem(this.state, here.x, here.y);
-    if (pierProblem) {
-      this.message = pierProblem;
-      return this.render();
-    }
-    const pier = isPierCast(this.state, here.x, here.y);
-    this.open("fishing", { rod: rodId, water, at: here, kind, ice, pier });
   }
 
   /**
@@ -2862,15 +2159,16 @@ export class FarmScene extends Phaser.Scene {
    * pick or harvest, else eat the held food. A tile with nothing on it, and
    * nothing edible held, does nothing and says nothing.
    */
-  private action(): void {
+  action(): void {
     if (this.leaving || this.marching) return;
     if (this.useDoor()) return;
+    if (isGuest()) return;
     if (this.state.animals.mounted) return this.getOff();
     const front = this.aimTile();
     const spot = this.horseSpot();
     if (spot && spot.x === front.x && spot.y === front.y) return this.getOn();
     if (this.meetVillager(front)) return;
-    if (this.onLaunchLine(front)) return this.launchLantern();
+    if (onLaunchLine(this, front)) return launchLanternAt(this);
     const service = this.map.serviceAt(front.x, front.y);
     if (service?.kind !== "tide-bridge") this.mendAsked = false;
     const shut = service
@@ -2912,8 +2210,8 @@ export class FarmScene extends Phaser.Scene {
       return this.open("shop", { stock: "fisher" });
     if (service?.kind === "pin-stall")
       return this.open("shop", { stock: "pin" });
-    if (service?.kind === PIER_KEEPER_KIND) return this.pierKeeper();
-    if (service?.kind === PIER_FLOAT_KIND) return this.pierFloat();
+    if (service?.kind === PIER_KEEPER_KIND) return pierKeeper(this);
+    if (service?.kind === PIER_FLOAT_KIND) return pierFloat(this);
     if (service?.kind === "keeper") return this.open("keeper");
     if (service?.kind === "hermit") {
       if (hermitStock(this.state).length > 0)
@@ -2973,7 +2271,7 @@ export class FarmScene extends Phaser.Scene {
             : STONEKEEPER_LINE;
       return this.render();
     }
-    if (service?.kind === "festival") return this.openFestival();
+    if (service?.kind === "festival") return openFestival(this);
     if (service?.kind === "camp-chest")
       return this.report(takeCampGift(this.state, this.floor));
     if (service?.kind === "ore-bin") return this.open("bin", { oreOnly: true });
@@ -2991,7 +2289,7 @@ export class FarmScene extends Phaser.Scene {
         (service.kind === "festival-counter" &&
           festivalDayToday(this.state.day.clock.day)))
     )
-      return this.festivalAction(service);
+      return festivalAction(this, service);
     if (this.mapId === CAVE_MAP) return this.caveAction(front, service?.kind);
     if (service?.kind === "furnace") {
       if (!this.state.furnace.gifted) {
@@ -3181,232 +2479,8 @@ export class FarmScene extends Phaser.Scene {
     this.afterAction();
   }
 
-  /**
-   * A service on a festival map: the display table and counters open their
-   * panel, the way home asks first, villagers and decorations speak, and the
-   * hedge chest and cart finish the maze.
-   */
-  private festivalAction(service: { id: string; kind: string }): void {
-    if (service.kind === "cake-table") return this.cakeTable();
-    if (service.id === "lantern-stall") return this.lanternStall();
-    const f =
-      festivalOfMap(this.mapId) ?? festivalDayToday(this.state.day.clock.day);
-    if (!f) return;
-    switch (service.kind) {
-      case "showing":
-        return this.open("festival", { mode: "panel", panel: "showing" });
-      case "festival-counter":
-        return this.open("festival", { mode: "panel", panel: "counter" });
-      case "festival-leave":
-        return this.open("festival", { mode: "leave" });
-      case "hedge-chest":
-        this.message = openChest(this.state);
-        return this.render();
-      case "hedge-cart":
-        return this.travel(this.mapId, "door");
-      case "sight":
-        this.message =
-          sightLine(f, service.id, dateOf(this.state.day.clock.day).year) ?? "";
-        return this.render();
-    }
-  }
-
-  /** The Night Market pier keeper sells the evening's fishing permit (note 14, placeholder price). */
-  private pierKeeper(): void {
-    const problem = permitProblem(this.state);
-    this.message = problem ?? (buyPermit(this.state) ? PIER_LINES.sold : "");
-    this.render();
-  }
-
-  /** Float a lantern from the pier tip: a short cosmetic scene, a line and a small luck buff until morning. */
-  private pierFloat(): void {
-    const problem = floatProblem(this.state);
-    if (problem) {
-      this.message = problem;
-      return this.render();
-    }
-    const line = floatLantern(this.state);
-    if (line) this.driftLantern();
-    this.message = line ?? "";
-    this.render();
-  }
-
-  /** Lamplight Evening stall: buys a paper lantern (placeholder price). */
-  private lanternStall(): void {
-    const problem = lanternBuyProblem(this.state);
-    this.message =
-      problem ??
-      (buyLantern(this.state)
-        ? "You buy a paper lantern. Set it afloat from the shore."
-        : "");
-    this.render();
-  }
-
-  /** True when the player stands on, or faces, a tile of the launch line (Beach, Lamplight Evening). */
-  private onLaunchLine(front: { x: number; y: number }): boolean {
-    const line = this.map.regions.find((r) => r.id === "launch-line");
-    if (!line) return false;
-    const here = tileOf(this.pos, PLAYER, this.map.tileSize);
-    const inside = (t: { x: number; y: number }) =>
-      t.x >= line.x &&
-      t.x < line.x + line.w &&
-      t.y >= line.y &&
-      t.y < line.y + line.h;
-    return inside(here) || inside(front);
-  }
-
-  /** A glowing dot that drifts away from the player over the water and fades, for the lantern launch. */
-  private driftLantern(): void {
-    const ts = this.map.tileSize;
-    const dot = this.add
-      .circle(this.pos.x + ts / 2, this.pos.y, 5, 0xffc860, 1)
-      .setDepth(850);
-    this.uiCamera.ignore(dot);
-    this.tweens.add({
-      targets: dot,
-      x: dot.x + Phaser.Math.Between(-3, 3) * ts,
-      y: dot.y - 5 * ts,
-      alpha: 0,
-      duration: 5000,
-      ease: "Sine.easeIn",
-      onComplete: () => dot.destroy(),
-    });
-  }
-
-  /** Sets the held lantern afloat and lets it drift off. */
-  private launchLantern(): void {
-    const problem = launchProblem(this.state);
-    if (problem) {
-      this.message = problem;
-      return this.render();
-    }
-    const r = launchLantern(this.state);
-    if (r) this.driftLantern();
-    this.message = r
-      ? `Your lantern drifts out with the rest. They like you a little more.${r.keepsake ? " You keep a small lantern." : ""}`
-      : "";
-    this.render();
-  }
-
-  /** Cake Day table: opens the dish picker, or says why there is nothing to do. */
-  private cakeTable(): void {
-    const problem = cakeProblem(this.state, "");
-    if (
-      problem === "There is no cake table today." ||
-      problem === "Your dish is already on the table."
-    ) {
-      this.message = problem;
-      return this.render();
-    }
-    this.open("cake");
-  }
-
-  /** The Seedswap hunt: clock, pick-up by walking, packet markers and the end (placeholder). */
-  private updateHunt(dt: number): void {
-    const s = this.hunt;
-    if (!s) return;
-    const ts = this.map.tileSize;
-    const f = festivalDayToday(this.state.day.clock.day);
-    if (!this.huntGfx) {
-      this.huntGfx = this.add.graphics().setDepth(850);
-      this.uiCamera.ignore(this.huntGfx);
-      const { width } = this.scale.gameSize;
-      this.huntText = this.add
-        .text(width / 2, 48, "", { fontSize: "18px", color: "#ffffff" })
-        .setOrigin(0.5, 0)
-        .setScrollFactor(0)
-        .setDepth(2000);
-      this.cameras.main.ignore(this.huntText);
-    }
-    const here = tileOf(this.pos, PLAYER, ts);
-    pickUpPacket(s, here.x, here.y);
-    tickHunt(s, dt);
-    this.huntGfx.clear().fillStyle(0xf0d040, 1);
-    for (const t of s.packets)
-      this.huntGfx.fillRect(t[0] * ts + 4, t[1] * ts + 4, ts - 8, ts - 8);
-    this.huntText?.setText(huntLine(s));
-    if (s.status === "running" || !f) return;
-    this.message = huntEndLine(f, s) ?? "";
-    const won = awardHuntPrize(this.state, s);
-    if (won)
-      this.message +=
-        ` ${won.hat ? `You get the ${hatById(won.hat)?.name ?? "hat"}.` : ""}${won.packet ? " You get a rare seed packet." : ""}`.replace(
-          / +/g,
-          " ",
-        );
-    finishHunt(this.state, f, s);
-    this.huntGfx.destroy();
-    this.huntText?.destroy();
-    this.huntGfx = this.huntText = this.hunt = undefined;
-    this.render();
-  }
-
-  /** The Feast gift exchange lantern prop (note 105), on the Feast's map (the square or the hall). */
-  private drawFeastLantern(): void {
-    this.lanternGfx?.destroy();
-    this.lanternGfx = undefined;
-    const ts = this.map.tileSize;
-    const lit = lanternTile(
-      this.state,
-      this.mapId,
-      hallRestored(this.state.hall),
-    );
-    if (lit) {
-      const cx = lit[0] * ts + ts / 2;
-      const cy = lit[1] * ts + ts / 2;
-      const g = this.add.graphics().setDepth(DEPTH.above);
-      this.uiCamera.ignore(g);
-      g.fillStyle(0xffd860, 0.3)
-        .fillCircle(cx, cy, ts * 0.7)
-        .fillStyle(0x7a5230, 1)
-        .fillRect(cx - 1, lit[1] * ts, 2, ts / 2 - 4)
-        .fillStyle(0xf0a030, 1)
-        .fillRoundedRect(cx - 5, cy - 5, 10, 12, 3)
-        .fillStyle(0xfff2a0, 1)
-        .fillRect(cx - 2, cy - 2, 4, 6);
-      this.lanternGfx = g;
-    }
-  }
-
-  /** Placeholder props on a festival map: tables, booths, villagers and the chest. */
-  private drawFestivalProps(): void {
-    const ts = this.map.tileSize;
-    const colour: Record<string, number> = {
-      showing: 0x8b5a2b,
-      "festival-counter": 0xc0463a,
-      "festival-leave": 0xf0e8d0,
-      "hedge-chest": 0xe8c050,
-      "hedge-cart": 0x7a5230,
-    };
-    for (const s of this.map.services) {
-      const c =
-        s.kind === "sight"
-          ? s.id.startsWith("scare")
-            ? 0xe8802a
-            : s.id.startsWith("sign")
-              ? 0xf0c860
-              : 0x4a9fd8
-          : colour[s.kind];
-      if (c === undefined) continue;
-      this.ground
-        .fillStyle(c, 1)
-        .fillRect(s.x * ts + 1, s.y * ts + 2, ts - 2, ts - 4);
-      if (s.kind === "showing" && s.id === "judge")
-        this.ground
-          .fillStyle(0x203a8a, 1)
-          .fillRect(s.x * ts + 4, s.y * ts + 4, ts - 8, ts - 8);
-    }
-  }
-
-  /** The farm sign: says where and when today's festival is. The player walks there (note 82 decision 11). */
-  private openFestival(): void {
-    const clock = this.state.day.clock;
-    this.message = festivalSignLine(clock.day, clock.minutes);
-    this.render();
-  }
-
   /** Eat the held item, if it is food. */
-  private eatHeld(): void {
+  eatHeld(): void {
     if (this.leaving || this.marching) return;
     const held = heldAt(this.state, this.selected);
     const drinking = held.kind === "item" && isDrink(held.id);
@@ -3448,13 +2522,32 @@ export class FarmScene extends Phaser.Scene {
    * forced (Exit, the page hidden). Never while the night is being written.
    */
   saveResume(force = false): void {
-    if (this.state.day.over) return;
+    // A guest's copy of the farm is never written to a save slot.
+    if (this.state.day.over || isGuest()) return;
     const text = serialize(this.state);
     const now = performance.now();
     if (!this.gate.shouldWrite(text, now, force)) return;
     resumeSave(this.state, this.resumeSpot());
     this.gate.wrote(text, now);
     this.noteSaveFailure();
+  }
+
+  /** Tell the session where we are and draw the others; a guest's clock follows the host. */
+  private syncNet(): void {
+    const net = this.net;
+    if (!net) return;
+    net.reportPosition(
+      {
+        x: this.pos.x,
+        y: this.pos.y,
+        map: this.mapId,
+        dir: ["up", "down", "left", "right"].indexOf(this.facing),
+      },
+      performance.now(),
+    );
+    if (net instanceof GuestSession && net.followDay(this.state.day.clock))
+      this.render();
+    this.remote?.sync();
   }
 
   /** Say once that a write was refused, so the player can export the game. */
@@ -3489,8 +2582,9 @@ export class FarmScene extends Phaser.Scene {
       c.drawn.setVisible(layerShows(c.layer, this.holds));
   }
 
-  private endDay(): void {
-    this.detonateAll(true);
+  endDay(): void {
+    if (isGuest()) return;
+    detonateAll(this, true);
     const g = this.state;
     const farmMap = farmMapOf(g);
     const report = sleep(g, farmMap.forageSpots, Math.random, farmMap);
@@ -3530,6 +2624,7 @@ export class FarmScene extends Phaser.Scene {
       if (text) tags.push({ x: s.x + 0.5, y: s.y, text });
     }
     this.labelTags = [];
+    this.labelView = "";
     // One tag per object (a two tile stall or desk has two service tiles), and
     // tags that would overlap are stacked upward so each stays readable.
     const merged = mergeTags(
@@ -3565,6 +2660,10 @@ export class FarmScene extends Phaser.Scene {
     const view = cam.worldView;
     const zoom = cam.zoom || 1;
     const scale = this.uiCamera.zoom || 1;
+    // Labels are static, so only a moved or resized view can change their clamp.
+    const viewKey = `${view.x},${view.y},${view.right},${cam.x},${zoom},${scale},${this.scale.gameSize.width}`;
+    if (viewKey === this.labelView) return;
+    this.labelView = viewKey;
     const screenW = this.scale.gameSize.width;
     const colX = screenW - (960 - PANEL_LEFT_BASE) * scale;
     const colBottom = (PANEL_BOTTOM + 140) * scale;
@@ -3640,7 +2739,7 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** Tint each built room's floor and walls with its wallpaper and flooring (note 10). */
-  private drawDecor(): void {
+  drawDecor(): void {
     const json = mapFiles[this.mapId];
     if (!json) return;
     const ts = this.map.tileSize;
@@ -3671,7 +2770,6 @@ export class FarmScene extends Phaser.Scene {
    * mines, where it is dark all day.
    */
   private drawGlow(): void {
-    this.glow.clear();
     const dusk = this.outdoorSoil
       ? darkness(
           dateOf(this.state.day.clock.day).season,
@@ -3679,10 +2777,32 @@ export class FarmScene extends Phaser.Scene {
         )
       : 0;
     const dark = this.floor !== undefined ? 1 : dusk;
-    if (dark <= 0) return;
     const ts = this.map.tileSize;
     const at = { x: this.pos.x / ts, y: (this.pos.y - ts / 2) / ts };
-    for (const l of lightLayer(this.state, this.mapId, at)) {
+    const lights = dark > 0 ? lightLayer(this.state, this.mapId, at) : [];
+    // Redrawing the circles is the cost, so skip it while nothing about them changed.
+    const same =
+      this.glowDark === dark &&
+      this.glowLights.length === lights.length &&
+      lights.every((l, i) => {
+        const o = this.glowLights[i]!;
+        return (
+          o.x === l.x &&
+          o.y === l.y &&
+          o.radius === l.radius &&
+          o.worn === l.worn
+        );
+      });
+    if (same) return;
+    this.glowDark = dark;
+    this.glowLights = lights;
+    this.glow.clear();
+    if (dark <= 0) return;
+    this.paintGlow(lights, dark, ts);
+  }
+
+  private paintGlow(lights: Glow[], dark: number, ts: number): void {
+    for (const l of lights) {
       const cx = (l.worn ? l.x : l.x + 0.5) * ts;
       const cy = (l.worn ? l.y : l.y + 0.5) * ts;
       for (let i = 4; i >= 1; i--) {
@@ -3690,605 +2810,6 @@ export class FarmScene extends Phaser.Scene {
         this.glow.fillCircle(cx, cy, (l.radius * ts * i) / 4);
       }
     }
-  }
-
-  /** Tick the fuses, blink the lit bombs and set off the ones that are due. */
-  private updateBombs(dt: number): void {
-    this.bombFx.clear();
-    if (this.litBombs.length === 0) return;
-    const ts = this.map.tileSize;
-    for (const b of this.litBombs) {
-      const on = Math.floor(this.time.now / 120) % 2 === 0;
-      this.bombFx.fillStyle(on ? 0xffffff : 0xff6a3a, on ? 0.7 : 0.45);
-      this.bombFx.fillRect(b.x * ts + 2, b.y * ts + 2, ts - 4, ts - 4);
-    }
-    for (const b of tickBombs(this.litBombs, dt)) this.detonate(b, false);
-  }
-
-  /** Every lit bomb goes off at once (leaving the map or the day ending). */
-  private detonateAll(quiet: boolean): void {
-    const lit = this.litBombs;
-    this.litBombs = [];
-    for (const b of lit) this.detonate(b, quiet);
-  }
-
-  /**
-   * A bomb goes off (note 89): rocks the Mining level allows break with their
-   * usual drops, monsters and the player inside the circle are hurt, and
-   * nothing else is touched. `quiet` skips the screen and the kill rewards,
-   * for a bomb that goes off as the map is left.
-   */
-  private detonate(b: LitBomb, quiet: boolean): void {
-    const def = bombById(b.id);
-    if (!def) return;
-    const g = this.state;
-    const ts = this.map.tileSize;
-    const rocks = this.rocks();
-    const broken = rocks ? blastRocks(g, rocks, this.floor, b) : undefined;
-    const floor = this.fightState();
-    const dead = floor ? blastCreatures(floor.creatures, b, ts) : [];
-    const lost = blastPlayer(g.combat.health, b, {
-      x: Math.floor(this.pos.x / ts),
-      y: Math.floor((this.pos.y - 1) / ts),
-    });
-    if (quiet) {
-      if (floor)
-        floor.creatures = floor.creatures.filter(
-          (c) => !dead.some((d) => d.uid === c.uid),
-        );
-      return;
-    }
-    for (const c of dead) this.beaten(c);
-    this.cameras.main.shake(200, 0.01);
-    this.swingFx.clear().fillStyle(0xffb040, 0.5);
-    this.swingFx.fillCircle(
-      (b.x + 0.5) * ts,
-      (b.y + 0.5) * ts,
-      (def.radius + 0.5) * ts,
-    );
-    this.time.delayedCall(220, () => this.swingFx.clear());
-    const got = Object.entries(broken?.items ?? {})
-      .map(([id, n]) => `${n} ${itemById(id)?.name.toLowerCase() ?? id}`)
-      .join(", ");
-    this.message =
-      `${def.name} goes off.` +
-      (got ? ` Got ${got}.` : "") +
-      (broken?.ladder ? " A ladder is revealed!" : "") +
-      (lost > 0 ? ` It hurts you for ${lost}.` : "");
-    if (lost > 0)
-      this.floatText(this.pos.x, this.pos.y - 14, `-${lost}`, "#ff8080");
-    this.render();
-  }
-
-  /** A strike falls: a white flash of the screen, and a bright block on each rod it hit (note 89). */
-  private strikeFlash(r: {
-    strikes: number;
-    hits: { x: number; y: number }[];
-  }) {
-    if (r.strikes === 0 || this.floor !== undefined) return;
-    this.cameras.main.flash(180, 255, 255, 255);
-    if (!isFarmMap(this.mapId)) return;
-    const ts = this.map.tileSize;
-    this.swingFx.clear().fillStyle(0xffffaa, 0.8);
-    for (const h of r.hits) this.swingFx.fillRect(h.x * ts, h.y * ts, ts, ts);
-    this.time.delayedCall(220, () => this.swingFx.clear());
-  }
-
-  /** Draw plots, crops and forage on the tiles. */
-  private drawGround(): void {
-    this.ground.clear();
-    for (const image of this.sprites) image.destroy();
-    this.sprites = [];
-    const ts = this.map.tileSize;
-    // A picture stands on its tile: a taller or wider one rises and spreads from the
-    // tile's bottom centre, and sorts with the figures by that row (note 99).
-    const put = (x: number, y: number, key: string) => {
-      const image = this.add
-        .image((x + 0.5) * ts, (y + 1) * ts, key)
-        .setOrigin(0.5, 1)
-        .setDepth(tileDepth(y, ts));
-      this.uiCamera.ignore(image); // the UI camera does not draw the world
-      this.sprites.push(image);
-      return image;
-    };
-    for (const r of this.rocks()?.each() ?? [])
-      put(r.x, r.y, ROCK_KEYS[r.kind]);
-    if (this.floor !== undefined) {
-      const up = this.map.exits.find((e) => e.id === "up");
-      if (up) put(up.x, up.y, LADDER_KEY).setAlpha(0.6).setDepth(DEPTH.decal);
-      const down = this.floorState?.ladder;
-      if (down) put(down.x, down.y, LADDER_KEY).setDepth(DEPTH.decal);
-    }
-    if (isHouseMap(this.mapId)) this.drawDecor();
-    for (const p of this.state.furniture.each(this.mapId))
-      put(p.x, p.y, furnitureKey(p.id));
-    for (const s of this.map.services)
-      if (s.kind === "camp-chest") put(s.x, s.y, chestKey("big-chest"));
-    for (const c of this.state.chests.each(this.mapId)) {
-      const img = put(c.x, c.y, chestKey(c.id));
-      if (c.colour) img.setTint(CHEST_COLOURS[c.colour - 1]!);
-    }
-    for (const l of this.state.placed.each(lightMapKey(this.mapId))) {
-      if (isFarmDecor(l.id))
-        for (const t of decorTiles(l.id, l.x, l.y))
-          put(t.x, t.y, farmDecorKey(l.id));
-      else put(l.x, l.y, lightKey(l.id));
-    }
-    if (isFarmMap(this.mapId))
-      for (const p of this.state.placed.each(lightMapKey(this.mapId)))
-        if (p.id === LIGHTNING_ROD && p.state?.pack === true)
-          put(p.x, p.y, MACHINE_READY_KEY);
-    for (const p of this.state.pots.each(this.mapId)) {
-      put(p.x, p.y, POT_KEY);
-      if (p.catch) put(p.x, p.y, POT_READY_KEY);
-    }
-    if (this.mapId === CELLAR_MAP)
-      for (const c of this.state.casks.each()) {
-        put(c.x, c.y, machineKey(CASK));
-        if (caskDone(this.state, c)) put(c.x, c.y, MACHINE_READY_KEY);
-      }
-    if (this.mapId === CAVE_MAP) this.drawCave(put);
-    this.drawFeastLantern();
-    if (isFestivalMap(this.mapId)) this.drawFestivalProps();
-    if (this.map.hasSoil) this.drawSoil(put);
-    this.drawWorld(put);
-    this.drawPonds(put);
-  }
-
-  /** Fish ponds (note 93): the pit while dug, then the water with its fish swimming in it. Placeholder art. */
-  private drawPonds(
-    put: (x: number, y: number, key: string) => Phaser.GameObjects.Image,
-  ): void {
-    if (!isFarmMap(this.mapId)) return;
-    const ts = this.map.tileSize;
-    for (const p of this.state.placed.each(FARM_STORE)) {
-      if (p.id !== FISH_POND) continue;
-      const look = pondLook(p);
-      const body = put(
-        p.x + 2,
-        p.y + 4,
-        look.building ? POND_PIT_KEY : POND_KEY,
-      );
-      body.setDepth(DEPTH.decal);
-      if (look.sea) body.setTint(0x9fb8ff);
-      const icon = look.species && iconKey(look.species);
-      if (icon)
-        for (const [fx, fy] of POND_FISH_SPOTS.slice(0, look.fish)) {
-          const fish = this.add
-            .image(p.x * ts + fx, p.y * ts + fy, icon)
-            .setScale(0.6)
-            .setDepth(DEPTH.decal + 1);
-          this.uiCamera.ignore(fish);
-          this.sprites.push(fish);
-        }
-      if (look.ready) put(p.x + 4, p.y + 1, MACHINE_READY_KEY);
-    }
-  }
-
-  /** The dug soil, crops, fertilizer, sprinklers and fruit trees of the map. */
-  private drawSoil(
-    put: (x: number, y: number, key: string) => Phaser.GameObjects.Image,
-  ): void {
-    const soil = this.map.indoors ? this.state.greenhouse : this.state.farm;
-    for (const { x, y, plot } of soil.each()) {
-      put(x, y, soilKey(plot.wateredToday)).setDepth(DEPTH.decal);
-      const fert = fertilizerById(plot.fertilizer);
-      if (fert) put(x, y, fertKey(fert.line)).setDepth(DEPTH.decal);
-      const crop = plot.crop;
-      const def = crop && cropById(crop.id);
-      if (!crop || !def) continue;
-      const stage = stageOf(crop.daysGrown / def.growDays, soil.isRipe(x, y));
-      put(x, y, cropKey(crop.id, stage));
-    }
-    // Each map shows its own sprinklers and fruit trees.
-    const here = this.store;
-    for (const s of here.sprinklers.each()) put(s.x, s.y, sprinklerKey(s.id));
-    for (const t of here.fruitTrees.each()) {
-      put(t.x, t.y, fruitTreeKey(fruitStageOf(t.age)));
-      if (t.fruit > 0) put(t.x, t.y, fruitOnTreeKey(t.id));
-    }
-    // Placeholder art: the fruit tree sprites, tinted green (note 97).
-    for (const b of here.teaBushes.each())
-      put(b.x, b.y, fruitTreeKey(teaStageOf(b.age) * 2)).setTint(0x7fd66a);
-    this.drawGardenPots(put);
-  }
-
-  /** Garden pots (note 97): the pot, and the crop or tea bush growing in it. */
-  private drawGardenPots(
-    put: (x: number, y: number, key: string) => Phaser.GameObjects.Image,
-  ): void {
-    for (const p of potsOf(this.state, this.map)) {
-      put(p.x, p.y, GARDEN_POT_KEY);
-      const look = potLook(p);
-      if (look?.kind === "tea")
-        put(p.x, p.y, fruitTreeKey(teaStageOf(look.age) * 2)).setTint(0x7fd66a);
-      else if (look?.kind === "crop") {
-        const def = cropById(look.id);
-        if (def)
-          put(
-            p.x,
-            p.y,
-            cropKey(look.id, stageOf(look.daysGrown / def.growDays, look.ripe)),
-          );
-      }
-    }
-  }
-
-  /** What stands and lies outdoors: forage, weeds, twigs, machines, trees and goods on the ground. */
-  private drawWorld(
-    put: (x: number, y: number, key: string) => Phaser.GameObjects.Image,
-  ): void {
-    if (!this.outdoorWorld) return;
-    for (const { x, y, id } of this.state.forage.each())
-      put(x, y, forageKey(id));
-    for (const s of this.state.spots.each())
-      put(s.x, s.y, SPOT_KEY).setDepth(DEPTH.decal);
-    if (this.outdoorSoil && areaOf(this.state) === undefined)
-      for (const t of this.state.grass.each())
-        put(t.x, t.y, GRASS_KEY).setDepth(DEPTH.decal);
-    for (const w of this.state.weeds.each())
-      put(w.x, w.y, WEED_KEY).setDepth(DEPTH.decal);
-    for (const t of this.state.twigs.each())
-      put(t.x, t.y, TWIG_KEY).setDepth(DEPTH.decal);
-    for (const m of this.state.machines.each()) {
-      put(m.x, m.y, machineKey(m.id));
-      if (jobDone(this.state, m)) put(m.x, m.y, MACHINE_READY_KEY);
-    }
-    for (const t of this.state.trees.each()) {
-      put(t.x, t.y, treeKey(t.stage, t.stump, t.large, t.regrow !== undefined));
-      if (t.tap)
-        put(t.x, t.y, t.tap.heavy ? "tapper-on-tree-heavy" : "tapper-on-tree");
-      if (tapReady(this.state, t)) put(t.x, t.y, MACHINE_READY_KEY);
-    }
-    for (const p of this.state.ground.each()) {
-      const key = iconKey(p.id);
-      if (key) put(p.x, p.y, key);
-    }
-    this.drawBunting();
-  }
-
-  /** The cave: bat fruit on the floor, or mushroom boxes and the free dehydrator. */
-  private drawCave(
-    put: (x: number, y: number, key: string) => Phaser.GameObjects.Image,
-  ): void {
-    const cave = this.state.cave;
-    const ts = this.map.tileSize;
-    for (const f of cave.eachFruit()) {
-      const key = iconKey(f.id);
-      if (key) put(f.x, f.y, key);
-    }
-    if (cave.choice !== "mushrooms") return;
-    for (const s of this.map.services) {
-      if (s.kind === "mushroom-box") {
-        const box = cave.boxes[Number(s.id.split("-")[1]) - 1];
-        this.ground
-          .fillStyle(0x6b4a2a, 1)
-          .fillRect(s.x * ts + 1, s.y * ts + 3, ts - 2, ts - 5);
-        this.ground
-          .fillStyle(box?.ready ? 0xe8d8b0 : 0x3a2a1a, 1)
-          .fillRect(s.x * ts + 4, s.y * ts + 5, ts - 8, ts - 9);
-      } else if (s.kind === "cave-dehydrator") {
-        put(s.x, s.y, machineKey("dehydrator"));
-        if (caveDehydratorDone(this.state)) put(s.x, s.y, MACHINE_READY_KEY);
-      }
-    }
-  }
-
-  /** On a festival day, hang flags over the green so the village looks changed. */
-  private drawBunting(): void {
-    if (!festivalDayToday(this.state.day.clock.day)) return;
-    const green = this.map.services.find((s) => s.kind === "festival");
-    if (!green) return;
-    const ts = this.map.tileSize;
-    const colors = [0xd8503c, 0xf2d16b, 0x4a9fd8, 0x7ac05a];
-    const g = this.ground;
-    for (let i = -3; i <= 3; i++) {
-      const x = (green.x + i) * ts;
-      const y = (green.y - 1) * ts;
-      g.fillStyle(0x6b4a2a).fillRect(x, y, ts, 2);
-      g.fillStyle(colors[(i + 3) % colors.length]!).fillTriangle(
-        x + 2,
-        y + 2,
-        x + ts - 2,
-        y + 2,
-        x + ts / 2,
-        y + 10,
-      );
-    }
-  }
-
-  /**
-   * The hall's progress display (docs/design/40_hall_layout.md): a room is
-   * dim until it is done and warm after, a room that is not ready (locked or
-   * with no bundles yet) is also greyed, and the plaque lights one mark per
-   * finished room. Placeholder for the real ruined and restored tiles (#58).
-   */
-  private drawRooms(): void {
-    const { regions, tileSize: ts } = this.map;
-    this.wash.clear();
-    const hall = this.state.hall;
-    for (const r of regions) {
-      // A region that names a forage table is a patch of ground, not a hall room.
-      if (r.forage !== undefined) continue;
-      if (r.id === "plaque") {
-        hall.rooms.forEach((room, i) => {
-          const lit = hall.roomComplete(room.id);
-          this.wash
-            .fillStyle(lit ? 0xf0c75e : 0x3a3028, 1)
-            .fillRect((r.x + i) * ts + 3, r.y * ts + 5, ts - 6, ts - 10);
-        });
-        continue;
-      }
-      const status = hall.roomStatus(r.id);
-      const [colour, alpha] =
-        status === "done"
-          ? [0xffd890, 0.12]
-          : status === "ready"
-            ? [0x1a1410, 0.4]
-            : [0x606870, 0.6];
-      this.wash
-        .fillStyle(colour, alpha)
-        .fillRect(r.x * ts, r.y * ts, r.w * ts, r.h * ts);
-    }
-  }
-
-  /**
-   * While the carpenter builds the next house tier, scaffold stands on the
-   * outside wall, inside the house's footprint (docs/design/41_house.md), with
-   * the carpenter at work in front. Placeholder shapes until the art pass (#58).
-   */
-  private drawBuild(): void {
-    const house = this.map.exits.find((e) => e.map === HOUSE_MAP);
-    if (!this.state.houseBuild || !house) return;
-    const ts = this.map.tileSize;
-    // The house block is 6 by 4 tiles, with its door on the bottom row.
-    const left = (house.x - 2) * ts;
-    const top = (house.y - 3) * ts;
-    const g = this.wash;
-    g.lineStyle(3, 0x8a6a45, 1);
-    for (const dx of [0, 2 * ts])
-      g.lineBetween(left + dx, top, left + dx, top + 4 * ts);
-    for (let row = 0; row <= 4; row += 2)
-      g.lineBetween(left, top + row * ts, left + 2 * ts, top + row * ts);
-    g.fillStyle(0xd9a441, 1).fillRect(
-      (house.x + 2) * ts + 4,
-      (house.y + 1) * ts + 2,
-      ts - 8,
-      ts - 4,
-    );
-    g.fillStyle(0x6b4f35, 1).fillRect(
-      (house.x + 2) * ts + ts - 6,
-      (house.y + 1) * ts,
-      4,
-      ts / 2,
-    );
-  }
-
-  /** The smith's furnace by the house, once given: dark iron, glowing while it smelts. */
-  private drawFurnace(): void {
-    const f = this.state.furnace;
-    const spot = this.map.services.find((s) => s.kind === "furnace");
-    if (!f.gifted || !spot) return;
-    const ts = this.map.tileSize;
-    const x = spot.x * ts;
-    const y = spot.y * ts;
-    const busy = f.job !== undefined;
-    const done = busy && absoluteMinutes(this.state) >= f.job!.doneAt;
-    const g = this.wash;
-    g.fillStyle(0x3a3a42, 1).fillRect(x + 1, y + 2, ts - 2, ts - 2);
-    g.fillStyle(0x23232a, 1).fillRect(x + 1, y + 2, ts - 2, 3);
-    g.fillStyle(done ? 0x8fd18a : busy ? 0xf08a30 : 0x15151a, 1).fillRect(
-      x + 4,
-      y + 8,
-      ts - 8,
-      5,
-    );
-  }
-
-  /** The ancestors' shrine: a standing stone and four candle stands, placeholder shapes (note 83). */
-  private drawShrine(): void {
-    const stone = this.map.services.find((s) => s.id === "shrine-stone");
-    if (!stone) return;
-    const ts = this.map.tileSize;
-    const lit = this.state.shrine.candles;
-    const g = this.wash;
-    g.fillStyle(0x1f3d24, 0.35).fillEllipse(
-      stone.x * ts + ts / 2,
-      stone.y * ts + ts / 2,
-      7 * ts,
-      5 * ts,
-    );
-    g.fillStyle(this.state.shrine.statueOpen ? 0xb9c8d8 : 0x8a8a92, 1)
-      .fillRect(stone.x * ts + 3, stone.y * ts - 4, ts - 6, ts + 2)
-      .fillStyle(0x55555c, 1)
-      .fillRect(stone.x * ts + 3, stone.y * ts - 4, ts - 6, 2);
-    const stands = this.map.services.filter((s) =>
-      s.id.startsWith("shrine-stand-"),
-    );
-    stands.forEach((s, i) => {
-      const x = s.x * ts;
-      const y = s.y * ts;
-      g.fillStyle(0x6b4a2e, 1).fillRect(x + 6, y + 6, 4, ts - 6);
-      g.fillStyle(0xf0e6c8, 1).fillRect(x + 5, y + 1, 6, 6);
-      if (i < lit) g.fillStyle(0xffc860, 1).fillRect(x + 6, y - 4, 4, 5);
-    });
-  }
-
-  /** The farm mailbox: a post and box, with the flag up while mail waits (note 51). */
-  private drawMailbox(): void {
-    const spot = this.map.services.find((s) => s.kind === "mailbox");
-    if (!spot) return;
-    const ts = this.map.tileSize;
-    const x = spot.x * ts;
-    const y = spot.y * ts;
-    const g = this.wash;
-    g.fillStyle(0x6f4a22, 1).fillRect(x + 7, y + 8, 2, ts - 8);
-    g.fillStyle(0x3f6f9a, 1).fillRect(x + 3, y + 3, 10, 6);
-    g.fillStyle(0x2a4a6a, 1).fillRect(x + 3, y + 3, 10, 1);
-    if (this.state.mail.flagUp)
-      g.fillStyle(0xd8483a, 1)
-        .fillRect(x + 12, y - 1, 2, 6)
-        .fillRect(x + 12, y - 1, 4, 2);
-    else g.fillStyle(0xd8483a, 1).fillRect(x + 12, y + 5, 3, 2);
-  }
-
-  /** A yellow mark over the request board while a request waits to be taken (note 50). */
-  private drawRequestMark(): void {
-    const spot = this.map.services.find((s) => s.kind === "requests");
-    if (
-      !spot ||
-      this.state.quests.posted(this.state.day.clock.day).length === 0
-    )
-      return;
-    const ts = this.map.tileSize;
-    const x = spot.x * ts;
-    const y = spot.y * ts - 12;
-    this.wash
-      .fillStyle(0xf2c94c, 1)
-      .fillRect(x + 7, y, 3, 7)
-      .fillRect(x + 7, y + 9, 3, 3);
-  }
-
-  /** A coop or barn on the farm: a plain block, scaffolding while it is built (note 23). */
-  private drawFarmBuilding(
-    site: { x: number; y: number } | undefined,
-    size: { w: number; h: number },
-    doorX: number,
-    built: boolean,
-    building: boolean,
-    roof: number,
-  ): void {
-    if (!site || (!built && !building)) return;
-    const ts = this.map.tileSize;
-    const x = site.x * ts;
-    const y = site.y * ts;
-    const g = this.wash;
-    if (!built) {
-      g.lineStyle(3, 0x8a6a45, 1);
-      for (let dx = 0; dx <= size.w; dx += 2)
-        g.lineBetween(x + dx * ts, y, x + dx * ts, y + size.h * ts);
-      return;
-    }
-    g.fillStyle(roof, 1).fillRect(x, y, size.w * ts, ts);
-    g.fillStyle(0xc9a26b, 1).fillRect(
-      x,
-      y + ts,
-      size.w * ts,
-      (size.h - 1) * ts,
-    );
-    if (doorX >= 0)
-      g.fillStyle(0x4a3220, 1).fillRect(
-        x + doorX * ts + 3,
-        y + (size.h - 1) * ts + 2,
-        ts - 6,
-        ts - 2,
-      );
-  }
-
-  /**
-   * The greenhouse on the farm, where it stands (note 60): a vine-grown ruin
-   * with scaffold poles until the Larder is done, then a glass house. It is
-   * drawn here, not in the map, so it can be moved. Placeholder art.
-   */
-  private drawGreenhouse(): void {
-    if (!isFarmMap(this.mapId)) return;
-    const ts = this.map.tileSize;
-    const at = greenhouseSite(this.state);
-    const { w, h, doorX } = GREENHOUSE_FOOTPRINT;
-    const [x, y] = [at.x * ts, at.y * ts];
-    const g = this.wash;
-    if (greenhouseRepaired(this.state)) {
-      g.fillStyle(0x4f8f6a, 1).fillRect(x, y, w * ts, ts);
-      g.fillStyle(0xa9d8c6, 1).fillRect(x, y + ts, w * ts, (h - 1) * ts);
-      g.lineStyle(2, 0x3f6f55, 1);
-      for (let dx = 0; dx <= w; dx += 2)
-        g.lineBetween(x + dx * ts, y + ts, x + dx * ts, y + h * ts);
-    } else {
-      g.fillStyle(0x6e7a5c, 1).fillRect(x, y, w * ts, h * ts);
-      g.fillStyle(0x3a5a3a, 0.55).fillRect(x, y, w * ts, h * ts);
-      g.lineStyle(3, 0x8a6a45, 1);
-      for (let dx = 0; dx <= w; dx += 2)
-        g.lineBetween(x + dx * ts, y, x + dx * ts, y + h * ts);
-    }
-    g.fillStyle(0x4a3220, 1).fillRect(
-      x + doorX * ts + 3,
-      y + (h - 1) * ts + 2,
-      ts - 6,
-      ts - 2,
-    );
-  }
-
-  private drawCoop(): void {
-    const a = this.state.animals;
-    this.drawFarmBuilding(
-      coopSite(this.state, this.mapId),
-      COOP_FOOTPRINT,
-      1,
-      a.coopBuilt,
-      a.build?.building === "coop" && !a.coopBuilt,
-      0xb5563c,
-    );
-    this.drawFarmBuilding(
-      barnSite(this.state, this.mapId),
-      BARN_FOOTPRINT,
-      3,
-      a.barnBuilt,
-      a.build?.building === "barn" && !a.barnBuilt,
-      0x8f3b2e,
-    );
-    this.drawSilo();
-    this.drawStable();
-  }
-
-  /** The stable and the horse beside it, or where it was left. Placeholder blocks. */
-  private drawStable(): void {
-    const a = this.state.animals;
-    this.drawFarmBuilding(
-      siteOf(this.state, "stable", this.mapId),
-      STABLE_FOOTPRINT,
-      -1,
-      a.stableBuilt,
-      a.build?.building === "stable" && !a.stableBuilt,
-      0x7a5a3a,
-    );
-    const spot = this.horseSpot();
-    if (!spot) return;
-    const ts = this.map.tileSize;
-    this.wash
-      .fillStyle(0x8a5a33, 1)
-      .fillRect(spot.x * ts + 3, spot.y * ts + ts - 14, ts - 6, 14);
-    this.wash
-      .fillStyle(0x5b3a1e, 1)
-      .fillRect(spot.x * ts + ts - 8, spot.y * ts + ts - 18, 5, 6);
-  }
-
-  /** The silo: a round grey tower, scaffolding while it is built. */
-  private drawSilo(): void {
-    const site = siloSite(this.mapId);
-    const a = this.state.animals;
-    if (!site || (!a.silo && a.siloDays <= 0)) return;
-    const ts = this.map.tileSize;
-    const x = site.x * ts;
-    const y = site.y * ts;
-    const g = this.wash;
-    if (!a.silo) {
-      g.lineStyle(3, 0x8a6a45, 1);
-      for (let dx = 0; dx <= SILO_FOOTPRINT.w; dx += 1)
-        g.lineBetween(x + dx * ts, y, x + dx * ts, y + SILO_FOOTPRINT.h * ts);
-      return;
-    }
-    g.fillStyle(0x9aa0a6, 1).fillRect(
-      x + 4,
-      y + ts,
-      SILO_FOOTPRINT.w * ts - 8,
-      (SILO_FOOTPRINT.h - 1) * ts,
-    );
-    g.fillStyle(0x6e747a, 1).fillRect(
-      x + 2,
-      y + 4,
-      SILO_FOOTPRINT.w * ts - 4,
-      ts,
-    );
   }
 
   /** Facing the silo: tip the held hay in, or read how full it is. True if the tile is the silo. */
@@ -4308,397 +2829,24 @@ export class FarmScene extends Phaser.Scene {
     return true;
   }
 
-  /** Inside the coop or barn: the feeding bench along the back wall and the animals as blocks. */
-  private drawCoopInside(): void {
-    for (const im of this.animalImages) im.destroy();
-    this.animalImages = [];
-    const coop = this.mapId === COOP_MAP;
-    if (!coop && this.mapId !== BARN_MAP) return;
-    const ts = this.map.tileSize;
-    const g = this.wash;
-    const a = this.state.animals;
-    if (coop) {
-      g.fillStyle(0x8a6a45, 1).fillRect(3 * ts, 2 * ts + 4, 4 * ts, ts - 4);
-      g.fillStyle(0xe0c068, 1).fillRect(2 * ts + 2, 2 * ts + 3, ts - 4, ts - 3);
-      g.fillStyle(0x6fa8d0, 1).fillRect(7 * ts + 2, 2 * ts + 5, ts - 4, ts - 5);
-      // The deluxe coop's auto-feeder: a metal chute on the back wall.
-      if (a.tier >= COOP_MAX_TIER)
-        g.fillStyle(0x9aa3ad, 1).fillRect(
-          9 * ts + 2,
-          2 * ts + 3,
-          ts - 4,
-          ts - 3,
-        );
-      // The big coop's incubator: a warm box, with a glow while an egg is in.
-      if (a.tier >= INCUBATOR_TIER) {
-        g.fillStyle(0xd9944a, 1).fillRect(
-          12 * ts + 2,
-          2 * ts + 3,
-          ts - 4,
-          ts - 3,
-        );
-        if (a.incubator)
-          g.fillStyle(0xfff2b0, 1).fillRect(
-            12 * ts + 5,
-            2 * ts + 6,
-            ts - 10,
-            ts - 9,
-          );
-      }
-    } else {
-      g.fillStyle(0x8a6a45, 1).fillRect(4 * ts, 2 * ts + 4, 5 * ts, ts - 4);
-      g.fillStyle(0xe0c068, 1).fillRect(3 * ts + 2, 2 * ts + 3, ts - 4, ts - 3);
-      g.fillStyle(0x6fa8d0, 1).fillRect(9 * ts + 2, 2 * ts + 5, ts - 4, ts - 5);
-      if (a.barnTier >= BARN_MAX_TIER)
-        g.fillStyle(0x9aa3ad, 1).fillRect(
-          10 * ts + 2,
-          2 * ts + 3,
-          ts - 4,
-          ts - 3,
-        );
-      // The stall wing, bottom left: cosmetic only (note 23): straw on the floor.
-      g.fillStyle(0xd8c070, 1).fillRect(
-        ts + 3,
-        10 * ts + 4,
-        3 * ts - 6,
-        2 * ts - 8,
-      );
-    }
-    for (const { animal: an, x, y } of animalSlots(
-      this.state,
-      coop ? "coop" : "barn",
-    )) {
-      const grown = an.age >= GROW_DAYS;
-      const image = this.add
-        .image(x * ts + ts / 2, y * ts + ts - 1, animalKey(an.species, grown))
-        .setOrigin(0.5, 1);
-      this.uiCamera.ignore(image);
-      this.animalImages.push(image);
-      if (an.product)
-        g.fillStyle(0xffffff, 1).fillRect(x * ts + 6, y * ts + ts, 4, 3);
-    }
-  }
-
-  private render(): void {
-    this.drawGround();
+  render(): void {
+    drawGround(this);
     // drawRooms clears the wash layer, so everything else draws after it.
-    this.drawRooms();
-    this.drawCoop();
-    this.drawGreenhouse();
-    this.drawCoopInside();
-    this.drawFurnace();
-    this.drawMailbox();
-    this.drawShrine();
-    this.drawRequestMark();
-    this.drawBuild();
+    drawRooms(this);
+    drawCoop(this);
+    drawGreenhouse(this);
+    drawCoopInside(this);
+    drawFurnace(this);
+    drawMailbox(this);
+    drawShrine(this);
+    drawRequestMark(this);
+    drawBuild(this);
     this.hud.update(
       this.state,
       this.selected,
       this.message,
-      this.showHealth(),
+      showHealth(this),
       this.ice ? iceCounter(this.ice) : "",
     );
-  }
-
-  /** What holds the creatures here: a mine floor, or the day's creatures of a map with a spawn table. */
-  private fightState(): { creatures: Creature[] } | undefined {
-    if (this.floorState) return this.floorState;
-    if (!creatureSpawnsOf(this.mapId)) return undefined;
-    const w = this.state.areas[this.mapId];
-    if (!w) return undefined;
-    w.creatures ??= [];
-    return w as { creatures: Creature[] };
-  }
-
-  /** True where health can be lost, so the bar shows (note 22, decision 17). */
-  private showHealth(): boolean {
-    return healthShown(
-      (this.floor !== undefined && floorHasCreatures(this.floor)) ||
-        creatureSpawnsOf(this.mapId) !== undefined,
-      this.state.combat.noCreatures,
-    );
-  }
-
-  /** Read the combat settings from the device: assist and "no creatures". */
-  private syncCombatSettings(): void {
-    const s = loadDeviceSettings();
-    this.state.combat.assist = s.combatAssist;
-    this.state.combat.noCreatures = s.noCreatures;
-    for (const block of this.creatureSprites.values())
-      block.setVisible(!s.noCreatures);
-  }
-
-  /** Step every creature on the floor, take hits and handle a knock out. */
-  private updateCombat(dt: number): void {
-    const combat = this.state.combat;
-    const floor = this.fightState();
-    this.player.setAlpha(
-      combat.health.grace > 0 && Math.floor(this.time.now / 90) % 2 ? 0.4 : 1,
-    );
-    if (!floor || combat.noCreatures) return;
-    combat.sync(this.state.skills);
-    combat.health.tick(dt);
-    const burn = combat.effects.tick(dt);
-    if (burn > 0) {
-      this.burnDebt += burn;
-      if (this.burnDebt >= 1) {
-        const whole = Math.floor(this.burnDebt);
-        this.burnDebt -= whole;
-        const lost = combat.health.drain(whole);
-        if (lost > 0)
-          this.floatText(this.pos.x, this.pos.y - 14, `-${lost}`, "#ff9a40");
-      }
-    } else this.burnDebt = 0;
-    const ts = this.map.tileSize;
-    for (const c of floor.creatures) {
-      const result = stepCreature(c, dt, {
-        player: this.pos,
-        walk: (cr, dx, dy) =>
-          move(
-            { x: cr.x, y: cr.y },
-            { x: dx, y: dy },
-            CREATURE_BODY,
-            ts,
-            (x, y) => this.tileBlockedNoHorse(x, y),
-          ),
-        random: Math.random,
-        assist: combat.assist,
-        tileSize: ts,
-        calm: oilCalms(this.state, c.kind),
-      });
-      if (result.hit) {
-        const lost = combat.health.hurt(
-          result.hit,
-          combat.assist,
-          this.state.equipment.defense(),
-        );
-        if (lost > 0) {
-          this.message = `${creatureById(c.kind)?.name ?? "It"} hits you for ${lost}.`;
-          const inflicts = creatureById(c.kind)?.inflicts;
-          if (inflicts && Math.random() < inflicts.chance) {
-            const eq = this.state.equipment;
-            const r = combat.effects.inflict(inflicts.effect, Math.random, {
-              immunity: eq.immunity(),
-              slimeProof: eq.slimeProof(),
-              halfLength: eq.halvesEffects(),
-            });
-            const name = effectById(inflicts.effect)?.name.toLowerCase();
-            if (r === "afflicted") this.message += ` You are ${name}.`;
-            else if (r === "resisted")
-              this.message += ` You shrug off ${name}.`;
-          }
-          this.floatText(this.pos.x, this.pos.y - 14, `-${lost}`, "#ff8080");
-          this.render();
-        }
-      }
-      this.drawCreature(c);
-    }
-    if (combat.health.down && !combat.defeatPending) this.knockedOut();
-  }
-
-  /** One painted sprite for a creature, kept in `creatureSprites`. */
-  private addCreatureSprite(c: Creature): Phaser.GameObjects.Image {
-    const block = this.add
-      .image(c.x, c.y, creatureTexture(this, c.kind))
-      .setOrigin(0.5, 1)
-      .setScale(c.small ? 0.65 : 1)
-      .setVisible(!this.state.combat.noCreatures);
-    this.creatureSprites.set(c.uid, block);
-    return block;
-  }
-
-  private drawCreature(c: Creature): void {
-    const block = this.creatureSprites.get(c.uid);
-    if (!block) return;
-    block.setPosition(c.x, c.y).setDepth(sortDepth(c.y));
-    // The wind up is the warning: a swelling, blinking sprite (note 22).
-    const winding = c.state === "windup";
-    const base = c.small ? 0.65 : 1;
-    block.setScale(winding ? base * 1.35 : base);
-    if (winding && Math.floor(this.time.now / 100) % 2) {
-      block.setTint(0xff9a40).setTintMode(Phaser.TintModes.MULTIPLY);
-    } else if (c.state === "stagger") {
-      block.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
-    } else block.clearTint();
-    // A sleeping rock crab looks like a dull rock until the player comes near.
-    const asleep = creatureById(c.kind)?.sleeper && c.state === "wander";
-    block.setAlpha(c.state === "recover" ? 0.6 : asleep ? 0.55 : 1);
-  }
-
-  /** Health ran out: the day ends and the defeat rule runs overnight (note 22). */
-  private knockedOut(): void {
-    this.state.combat.defeatPending = true;
-    this.message = "";
-    this.endDay();
-  }
-
-  /** A short number that rises and fades in the world. */
-  private floatText(x: number, y: number, text: string, color: string): void {
-    const t = this.add
-      .text(x, y, text, { fontSize: "10px", color })
-      .setOrigin(0.5)
-      .setDepth(950);
-    this.uiCamera.ignore(t);
-    this.tweens.add({
-      targets: t,
-      y: y - 14,
-      alpha: 0,
-      duration: 700,
-      onComplete: () => t.destroy(),
-    });
-  }
-
-  /**
-   * Swing the held weapon (note 22). The training dummy takes the hit and shows
-   * the number. Otherwise every creature in reach is hit, and a beaten one drops
-   * its goods and may reveal a ladder.
-   */
-  private swing(weapon: WeaponDef): void {
-    if (this.time.now < this.swingReady) return;
-    this.lastWeapon = weapon.id;
-    this.swingReady =
-      this.time.now +
-      weapon.cooldown * this.state.combat.effects.swingFactor() * 1000;
-    const ts = this.map.tileSize;
-    // The sling shoots toward the mouse pointer, or the tapped spot on touch
-    // (note 22, SC-94). Everything else, and a sling with no aim, goes the faced way.
-    const aim = weapon.family === "sling" ? this.shotAim() : undefined;
-    if (aim) this.facing = facingFrom(aim, this.facing);
-    const aimLen = aim ? Math.hypot(aim.x, aim.y) : 0;
-    const unit = aim ? { x: aim.x / aimLen, y: aim.y / aimLen } : undefined;
-    const f = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] }[
-      this.facing
-    ];
-    // A flash of the swing: a short line for a shot, a block for a swing.
-    this.swingFx.clear().fillStyle(0xffffff, 0.35);
-    const mid = { x: this.pos.x, y: this.pos.y - 6 };
-    const len =
-      weapon.family === "sling" ? weapon.reach * ts : weapon.reach * ts * 0.8;
-    if (unit) {
-      this.swingFx.lineStyle(3, 0xffffff, 0.35);
-      this.swingFx.lineBetween(
-        mid.x,
-        mid.y,
-        mid.x + unit.x * len,
-        mid.y + unit.y * len,
-      );
-    } else
-      this.swingFx.fillRect(
-        mid.x + (f[0]! > 0 ? 0 : f[0]! < 0 ? -len : -len / 2),
-        mid.y + (f[1]! > 0 ? 0 : f[1]! < 0 ? -len : -len / 2),
-        f[0] !== 0 ? len : weapon.family === "sling" ? 3 : len,
-        f[1] !== 0 ? len : weapon.family === "sling" ? 3 : len,
-      );
-    this.time.delayedCall(90, () => this.swingFx.clear());
-
-    // The dummy: in front, as far as the weapon reaches.
-    const here = tileOf(this.pos, PLAYER, ts);
-    for (let i = 1; i <= Math.max(1, Math.floor(weapon.reach)); i++) {
-      const tx = here.x + f[0]! * i;
-      const ty = here.y + f[1]! * i;
-      const kind = this.map.serviceAt(tx, ty)?.kind;
-      if (kind === "dummy") {
-        this.floatText((tx + 0.5) * ts, ty * ts, `${weapon.damage}`, "#ffffff");
-        this.message = `The dummy takes ${weapon.damage}. Swing again in ${weapon.cooldown} seconds.`;
-        return this.render();
-      }
-      if (this.tileBlocked(tx, ty)) break;
-    }
-
-    const floor = this.fightState();
-    if (!floor || this.state.combat.noCreatures) return;
-    const hits = swingTargets(
-      weapon,
-      this.facing,
-      this.pos,
-      floor.creatures,
-      ts,
-      aim,
-    );
-    for (const c of hits) {
-      const damage = swingDamage(c, weapon.damage, weapon.family, this.pos);
-      this.floatText(
-        c.x,
-        c.y - 12,
-        damage < weapon.damage ? `${damage} (armour)` : `${damage}`,
-        "#ffffff",
-      );
-      if (hurtCreature(c, damage)) this.beaten(c);
-      else {
-        const next =
-          1 + floor.creatures.reduce((m, o) => Math.max(m, o.uid), 0);
-        const small = splitOff(c, next);
-        if (small) {
-          floor.creatures.push(small);
-          this.addCreatureSprite(small);
-          this.uiCamera.ignore(this.creatureSprites.get(small.uid)!);
-        }
-      }
-    }
-  }
-
-  /**
-   * The direction from the farmer to where a sling shot is aimed, or undefined
-   * for the faced way: a fresh tap on touch, else the mouse pointer in mouse mode.
-   */
-  private shotAim(): Vec | undefined {
-    let w: Vec | undefined;
-    if (this.tapShot && this.time.now < this.tapShot.until) w = this.tapShot;
-    else if (this.mouseAim) {
-      const p = this.input.activePointer;
-      w = this.cameras.main.getWorldPoint(p.x, p.y);
-    }
-    this.tapShot = undefined;
-    if (!w) return undefined;
-    const aim = { x: w.x - this.pos.x, y: w.y - (this.pos.y - 6) };
-    return Math.hypot(aim.x, aim.y) < 1 ? undefined : aim;
-  }
-
-  /** A creature is beaten: its goods, the kill tally and a ladder roll. */
-  private beaten(c: Creature): void {
-    const floor = this.fightState()!;
-    const def = creatureById(c.kind);
-    floor.creatures = floor.creatures.filter((o) => o.uid !== c.uid);
-    this.creatureSprites.get(c.uid)?.destroy();
-    this.creatureSprites.delete(c.uid);
-    if (!def) return;
-    this.state.combat.noteKill(c.kind);
-    const levelUp = this.state.skills.gain("combat", creatureXp(c));
-    const got: string[] = [];
-    let left = false;
-    const onFloor = this.floor !== undefined;
-    const bonus = onFloor
-      ? this.state.mines.killBonus(this.floor!, this.state.day.clock.day)
-      : { extraKill: false, extraDrop: false };
-    if (bonus.extraKill) this.state.combat.noteKill(c.kind);
-    // A map's spawn table adds drops to every creature beaten there (note 73: Mahogany Seed).
-    const extra: CreatureDef = { ...def, drops: mapDrops(this.mapId) };
-    const rolls = [
-      ...rollDrops(def, Math.random),
-      ...rollDrops(extra, Math.random),
-      ...(bonus.extraDrop ? rollDrops(def, Math.random) : []),
-      // A rare Diamond from any monster, once the bottom of the mines is reached (note 83).
-      ...(monsterDiamond(this.state.mines.deepest, Math.random)
-        ? [{ id: DIAMOND.id, count: 1 }]
-        : []),
-    ];
-    for (const d of rolls) {
-      if (this.state.inventory.add(d.id, d.count))
-        got.push(`${d.count} ${itemById(d.id)?.name.toLowerCase() ?? d.id}`);
-      else left = true;
-    }
-    const tile = creatureTile(c, this.map.tileSize);
-    const ladder = onFloor
-      ? this.state.mines.creatureBeaten(
-          this.floor!,
-          this.state.day.clock.day,
-          tile.x,
-          tile.y,
-          Math.random,
-        )
-      : false;
-    this.message = `${def.name} beaten.${levelUp ? ` Combat is now level ${levelUp}.` : ""}${got.length ? ` Got ${got.join(", ")}.` : ""}${left ? " Your pack is full, so something was left behind." : ""}${ladder ? " A ladder is revealed!" : ""}`;
-    this.render();
-    if (levelUp && pendingChoice(this.state.skills)) this.open("profession");
   }
 }

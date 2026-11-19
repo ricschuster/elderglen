@@ -31,6 +31,8 @@ export interface RoomWorld {
   playerDropped?(id: PlayerId): void;
   /** A dropped guest came back: their record is restored by id. Optional. */
   playerRejoined?(id: PlayerId): void;
+  /** Top-left tile of a player's cabin, sent in `hello` so the guest spawns there. Optional. */
+  homeOf?(id: PlayerId): { x: number; y: number } | undefined;
 }
 
 interface Member {
@@ -136,6 +138,7 @@ export class Room {
       id: m.id,
       day: this.world.day(),
       players: this.info(),
+      home: this.world.homeOf?.(m.id),
     });
     m.out.push({
       t: "farm",
@@ -224,10 +227,11 @@ export class Room {
         m.seenDay = day;
       }
     }
-    const p: Record<PlayerId, PosRow> = {};
-    for (const m of this.members.values())
-      if (m.connected) p[m.id] = [m.x, m.y, m.ts, m.map, m.dir, m.pass];
-    const snap: ServerMsg = { t: "snap", n: this.tickNo++, p };
+    const snap: ServerMsg = {
+      t: "snap",
+      n: this.tickNo++,
+      p: this.positions(),
+    };
     this.broadcast(snap);
   }
 
@@ -240,7 +244,16 @@ export class Room {
     return out;
   }
 
-  private info(): PlayerInfo[] {
+  /** The latest position row of every connected player (the host's own included). */
+  positions(): Record<PlayerId, PosRow> {
+    const p: Record<PlayerId, PosRow> = {};
+    for (const m of this.members.values())
+      if (m.connected) p[m.id] = [m.x, m.y, m.ts, m.map, m.dir, m.pass];
+    return p;
+  }
+
+  /** Connected players, for name labels. */
+  info(): PlayerInfo[] {
     return [...this.members.values()]
       .filter((m) => m.connected)
       .map((m) => ({ id: m.id, name: m.name }));
