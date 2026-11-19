@@ -3,6 +3,7 @@
 Throwaway harness. Nothing here ships. Results and recommendations are in
 `docs/design/53_multiplayer.md`, "M4 spike results (2026-11-18)".
 
+- `latefarm.ts`: the same save inflated to a built-up late farm, sizes by area.
 - `statesize.ts`: plays the expert sim bot and prints save sizes by section at days 1, 28, 56 and 84.
   `OUT=farm.json npm run sim`-style run: `OUT=/tmp/farm84.json node scripts/sim/run.mjs spikes/m4/statesize.ts`.
 - `wsmini.mjs`, `host.mjs`: a minimal WebSocket host on node:http with a 10 Hz room tick.
