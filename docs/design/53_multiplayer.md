@@ -178,6 +178,15 @@ not built in M4. The pros and cons, so the idea is not lost:
    fields. Note 52's version bump needs a `players` list (id, name, record), a wallet mode, and
    a read path that loads the old flat fields as player "p1".
 2. The `Room` and the protocol in `src/core/` and `src/net/`, no socket.
+   **Built (2026-11-18, issue 965).** `src/core/room.ts`: `Room` (`join(name, rejoinId?)`, `disconnect`,
+   `receive`, `hostIntent`, `tick`, `drain`, `position`, `ids`, `connectedIds`) over a `RoomWorld` adapter
+   (`day`, `snapshot`, `apply`, optional `step`, `addPlayer`). `src/core/protocol.ts` (re-exported by
+   `src/net/protocol.ts`): `ClientMsg`, `ServerMsg`, `Intent`, `encode`, `decodeClient`. Delta format: a `snap`
+   of positions every tick (with the jam `pass` ids), world changes as `applied` intents sent to everyone,
+   `rejected` to the sender only, the full `farm` text only on join or rejoin and on a day change for a guest
+   marked `away`; other guests get a small `day` message. Tests: `tests/room.test.ts`. Left: a `RoomWorld`
+   adapter over `GameState`, with the real intent kinds (step 3 and later); a position send rate and
+   interpolation on the guest; the socket (step 3).
 3. The socket, the Node test host, and a guest that joins and walks.
 4. Host and Join screens, the game list, and the typed address.
 5. Shared day end and a dropped guest.
