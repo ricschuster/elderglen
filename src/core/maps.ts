@@ -95,6 +95,36 @@ export class MapRegistry {
     return tiers.length - 1;
   }
 
+  /**
+   * The entry and exit pair check (note 87). For every exit, the entry it leads
+   * to lies within `PAIR_LIMIT` tiles of the target map's exit back to this
+   * map, so leaving and returning do not teleport the player across the map.
+   * A target with no exit back (a one-way door) is not checked.
+   */
+  pairProblems(limit = PAIR_LIMIT): string[] {
+    const out: string[] = [];
+    for (const [id, tiers] of this.maps)
+      for (const exit of tiers[0]!.exits) {
+        const target = this.maps.get(exit.map);
+        if (!target || exit.map === id) continue;
+        const entry = target.map((t) => t.entry(exit.entry)).find((e) => e);
+        if (!entry) continue;
+        const back = target[0]!.exits.filter((x) => x.map === id);
+        if (back.length === 0) continue;
+        const dist = (x: (typeof back)[number]) =>
+          Math.max(
+            Math.max(x.x - entry.x, 0, entry.x - (x.x + x.w - 1)),
+            Math.max(x.y - entry.y, 0, entry.y - (x.y + x.h - 1)),
+          );
+        const near = Math.min(...back.map(dist));
+        if (near > limit && !KNOWN_PAIR_GAPS.has(`${id}:${exit.id}`))
+          out.push(
+            `${id}: exit "${exit.id}" leads to entry "${exit.entry}" on "${exit.map}", ${near} tiles from its exit back (limit ${limit})`,
+          );
+      }
+    return out;
+  }
+
   /** Everything wrong across all maps, in words. Empty when all is well. */
   problems(): string[] {
     const out: string[] = [];
@@ -180,6 +210,20 @@ export class MapRegistry {
             );
         }
       });
+    out.push(...this.pairProblems());
     return out;
   }
 }
+
+/** The most tiles the entry an exit leads to may lie from the matching exit back (note 87). */
+export const PAIR_LIMIT = 4;
+
+/**
+ * Pairs the check finds that are still to be laid out again, as `map:exit`.
+ * Found when the check was added: the Secret Woods exit back to the Forest
+ * lands its entry 11 tiles from the Forest's own exit to the Secret Woods.
+ * The Forest layout (note 72) is the fix; remove the line then.
+ */
+export const KNOWN_PAIR_GAPS: ReadonlySet<string> = new Set([
+  "secret-woods:to_forest",
+]);
