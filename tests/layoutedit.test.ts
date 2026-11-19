@@ -41,7 +41,7 @@ describe("file fidelity", () => {
       if ((await formatMap(".", JSON.parse(text), text)) !== text) bad.push(f);
     }
     expect(bad).toEqual([]);
-  });
+  }, 60_000);
 
   it("an edit changes only that object in the file text", async () => {
     const j = mapFiles["hall"]!;

@@ -1,6 +1,6 @@
 # 84 Heart event and spouse routes
 
-Status: **drafted 2026-11-11, owner answers recorded.** **Built 2026-11-12:** decision 1, the event presence window (see note 62). Not built: the spouse route, the marriage flags, the spouse room, the wedding and spouse events. It
+Status: **drafted 2026-11-11, owner answers recorded.** **Built 2026-11-12:** decision 1, the event presence window (see note 62). The spouse route (`src/core/spouse.ts`, `tests/spouse.test.ts`) and the marriage flags are built, checked 2026-11-18; see note 12 for the rest. Not checked as built: the wedding and spouse events. It
 closes note 80 open item 4 and note 79 rule 7. It builds on `62_heart_events.md`
 (the scene runner), `12_marriage.md` (the marriage steps), `79_villager_schedules.md`
 (the route rules) and `41_house.md` (the farmhouse). Times and tiles are
