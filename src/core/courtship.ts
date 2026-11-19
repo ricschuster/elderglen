@@ -24,7 +24,6 @@ import { hasFlag, setFlag } from "./worldflags";
  */
 
 export const BOUQUET = courtshipData.bouquet.id;
-export const BOUQUET_PRICE = courtshipData.bouquet.price;
 export const TOKEN = courtshipData.token.id;
 export const SELLER_NAME = courtshipData.seller.name;
 export const SELLER_OPEN = parseTime(courtshipData.seller.opens);

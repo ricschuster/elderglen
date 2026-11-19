@@ -7,7 +7,7 @@ import { allItems, itemById } from "./items";
 import type { LetterDef } from "./mail";
 import type { GameState } from "./save";
 import { splitQuality } from "./quality";
-import { villagerById, VILLAGERS } from "./villagers";
+import { villagerById } from "./villagers";
 import { seeded } from "./rng";
 
 /**
@@ -230,6 +230,3 @@ export function feastGive(
   }
   return { message, consumed: held, giver: draw.giver, present: draw.present };
 }
-
-/** All people who could be named, for tests. */
-export const FEAST_VILLAGERS: readonly string[] = VILLAGERS.map((v) => v.id);

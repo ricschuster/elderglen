@@ -99,7 +99,6 @@ export function finishHunt(g: GameState, f: Festival, s: HuntState): boolean {
   return true;
 }
 
-export const HUNT_PRIZE = prize;
 const winKey = (day: number) => `seedhunt-win:${dateOf(day).year}`;
 const HAT_KEY = "seedhunt-hat";
 

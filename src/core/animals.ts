@@ -337,8 +337,6 @@ export const WINTER_COLD_MOOD = -10;
 /** Below this mood a fed animal may make nothing: the chance is mood / this. */
 export const PRODUCT_MOOD = 70;
 
-/** The egg item id. Quality rides as a suffix like other goods. */
-export const EGG = "egg";
 /** Placeholder names offered when the player gives none. */
 export const DEFAULT_NAMES = [
   "Clementine",

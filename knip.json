@@ -1,0 +1,16 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "tests/**/*.test.ts",
+    "scripts/**/*.{ts,mjs}",
+    "src/layout/main.ts"
+  ],
+  "project": ["src/**/*.ts", "scripts/**/*.{ts,mjs}", "tests/**/*.ts"],
+  "ignoreExportsUsedInFile": true,
+  "ignoreUnresolved": ["^/src/"],
+  "ignore": ["src/scenes/interior-plans.ts"],
+  "ignoreIssues": {
+    "src/layout/devserver.ts": ["exports"],
+    "src/core/processing.ts": ["duplicates"]
+  }
+}
