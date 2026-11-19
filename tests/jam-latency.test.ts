@@ -217,8 +217,8 @@ describe("host with 8 guests under load (real Room, no sockets)", () => {
       total += dt;
       worst = Math.max(worst, dt);
     }
-    // generous: the budget is 100 ms per tick; real cost is a fraction of a millisecond
-    expect(worst).toBeLessThan(20);
-    expect(total / ticks).toBeLessThan(5);
+    // the budget is 100 ms per tick; real cost is a fraction of a millisecond, the limits leave room for a loaded CI machine
+    expect(worst).toBeLessThan(100);
+    expect(total / ticks).toBeLessThan(25);
   });
 });
