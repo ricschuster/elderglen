@@ -72,7 +72,13 @@ export class GuestClient {
       ws.onmessage = (e) => {
         const m = JSON.parse(String(e.data)) as ServerMsg;
         if (m.t === "refused")
-          return fail(m.reason === "full" ? "full" : "in-use");
+          return fail(
+            m.reason === "full"
+              ? "full"
+              : m.reason === "no-free-cabin"
+                ? "refused"
+                : "in-use",
+          );
         g.apply(m);
         if (m.t === "hello") gotHello = true;
         if (m.t === "farm" && gotHello && !settled) {

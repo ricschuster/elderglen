@@ -20,6 +20,11 @@ export interface RoomWorld {
   apply(by: PlayerId, intent: Intent): string | undefined;
   /** Step the world by one tick. Optional. */
   step?(dtMs: number): void;
+  /**
+   * Called before a new guest gets an id: return a reason to refuse them (for example
+   * "no-free-cabin"), nothing to admit. Optional.
+   */
+  admit?(id: PlayerId, name: string): string | undefined;
   /** A guest joined: make their player record. Optional. */
   addPlayer?(id: PlayerId, name: string): void;
   /** A guest dropped: count them as in bed and put their character in their cabin (note 53). Optional. */
@@ -50,6 +55,8 @@ export class Room {
   private nextNum = 2;
   private tickNo = 0;
   private lastDay: number;
+  /** Why the last `join` returned undefined: "full", "in-use" or the world's `admit` reason. */
+  refusal = "full";
 
   /** The host is player p1 and always present. */
   constructor(
@@ -99,14 +106,24 @@ export class Room {
    */
   join(name: string, rejoinId?: PlayerId): PlayerId | undefined {
     let m = rejoinId ? this.members.get(rejoinId) : undefined;
-    if (rejoinId && (rejoinId === LOCAL_PLAYER || m?.connected))
+    if (rejoinId && (rejoinId === LOCAL_PLAYER || m?.connected)) {
+      this.refusal = "in-use";
       return undefined;
+    }
     if (m) {
       m.connected = true;
       m.name = name || m.name;
       this.world.playerRejoined?.(m.id);
     } else {
-      if (this.members.size >= this.maxPlayers) return undefined;
+      if (this.members.size >= this.maxPlayers) {
+        this.refusal = "full";
+        return undefined;
+      }
+      const why = this.world.admit?.(`p${this.nextNum}`, name);
+      if (why !== undefined) {
+        this.refusal = why;
+        return undefined;
+      }
       const id = `p${this.nextNum++}`;
       m = this.newMember(id, name);
       this.members.set(id, m);

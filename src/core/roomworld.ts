@@ -1,0 +1,201 @@
+// The RoomWorld adapter over a real GameState (note 53, steps 2, 5, 6 and 7 together). The Room
+// asks it to admit guests, apply intents, step the day end and make snapshots. Free of Phaser and
+// the DOM. Only a small first set of intent kinds is wired (see `apply`).
+import { DAY_END as CLOCK_END } from "./clock";
+import { DayEndTracker, type DayEndDecision, type Presence } from "./dayend";
+import {
+  CABIN_PRICE,
+  buyCabin,
+  joinNeedsCabin,
+  newCabinBook,
+  type BlockedFn,
+  type Cabin,
+  type CabinBook,
+  type CabinOrigin,
+  type CabinSite,
+  type JoinResult,
+} from "./cabins";
+import { PASS_OUT_MONEY_CAP, PASS_OUT_MONEY_SHARE } from "./day";
+import { LOCAL_PLAYER, type PlayerId } from "./players";
+import type { Intent } from "./protocol";
+import type { RoomWorld } from "./room";
+import { serialize, START_MONEY, type GameState } from "./save";
+import { sleep, type SleepReport } from "./sleep";
+
+export interface RoomWorldOptions {
+  /** How cabins come: free at a multiplayer start, or bought by the host in a converted game. */
+  origin?: CabinOrigin;
+  /** Open area where a free cabin may be built. */
+  cabinArea?: { x: number; y: number; w: number; h: number };
+  blocked?: BlockedFn;
+  random?: () => number;
+  /** The night's artifact spots, passed to sleep(). */
+  spots?: Parameters<typeof sleep>[1];
+}
+
+/** The guest's pass-out cost: the single player rule (note 53), taken from their wallet. */
+function passOutLoss(money: number): number {
+  return Math.min(
+    Math.floor(Math.max(money, 0) * PASS_OUT_MONEY_SHARE),
+    PASS_OUT_MONEY_CAP,
+  );
+}
+
+export class GameRoomWorld implements RoomWorld {
+  cabins: CabinBook;
+  readonly tracker: DayEndTracker;
+  /** Names by id, for the host's screens. */
+  readonly names = new Map<PlayerId, string>([[LOCAL_PLAYER, "Host"]]);
+  /** Set when a join was refused for lack of a cabin: the host is offered the purchase. */
+  cabinOffer: { name: string; price: number } | undefined;
+  /** Called when a join is refused for lack of a cabin (the host's screen offers `buyCabin`). */
+  onCabinRefused?: (name: string) => void;
+  /** The report of the last night, for the host's morning screen. */
+  lastReport: SleepReport | undefined;
+  /** Guests' pass-outs on the last night: id to gold lost. */
+  lastPassOuts: Record<PlayerId, number> = {};
+  private pending: JoinResult | undefined;
+  private readonly o: Required<
+    Pick<RoomWorldOptions, "cabinArea" | "blocked" | "random" | "spots">
+  >;
+
+  constructor(
+    readonly g: GameState,
+    opts: RoomWorldOptions = {},
+  ) {
+    this.cabins = newCabinBook(opts.origin ?? "multiplayer-start");
+    this.o = {
+      cabinArea: opts.cabinArea ?? { x: 0, y: 0, w: 60, h: 40 },
+      blocked: opts.blocked ?? (() => false),
+      random: opts.random ?? Math.random,
+      spots: opts.spots ?? [],
+    };
+    this.tracker = new DayEndTracker(g.players.ids, (d) => this.endDay(d));
+  }
+
+  day(): number {
+    return this.g.day.clock.day;
+  }
+
+  snapshot(): string {
+    return serialize(this.g);
+  }
+
+  presence(id: PlayerId): Presence | undefined {
+    return this.tracker.presence(id);
+  }
+
+  cabinOf(id: PlayerId): Cabin | undefined {
+    return this.cabins.cabins.find((c) => c.ownerKey === id);
+  }
+
+  /** Join-needs-a-cabin (step 6): refuse with the cabin reason, else hold the assignment. */
+  admit(id: PlayerId, name: string): string | undefined {
+    const r = joinNeedsCabin(this.cabins, id, this.o.cabinArea, this.o.blocked);
+    if (r.kind === "refused") {
+      this.pending = undefined;
+      if (r.reason === "no-free-cabin") {
+        this.cabinOffer = { name, price: CABIN_PRICE };
+        this.onCabinRefused?.(name);
+      }
+      return r.reason;
+    }
+    this.pending = r;
+    return undefined;
+  }
+
+  addPlayer(id: PlayerId, name: string): void {
+    if (this.pending && this.pending.kind !== "refused")
+      this.cabins = this.pending.book;
+    this.pending = undefined;
+    const start = this.g.players.walletMode === "separate" ? START_MONEY : 0;
+    // Each guest has their own energy object, apart from the day's (the host's).
+    this.g.players.add(id, start);
+    this.names.set(id, name);
+    this.tracker.add(id);
+  }
+
+  playerDropped(id: PlayerId): void {
+    this.tracker.drop(id);
+  }
+
+  playerRejoined(id: PlayerId): void {
+    this.tracker.rejoin(id);
+  }
+
+  /** The host buys a cabin (100 gold from the host's wallet), left free for the next guest. */
+  buyCabin(site: CabinSite): string | undefined {
+    const host = this.g.players.wallet(LOCAL_PLAYER);
+    const r = buyCabin(this.cabins, host.money, site, this.o.blocked);
+    if (!r.ok) return r.reason;
+    this.cabins = r.book;
+    host.money = r.gold;
+    this.cabinOffer = undefined;
+    return undefined;
+  }
+
+  apply(by: PlayerId, intent: Intent): string | undefined {
+    const players = this.g.players;
+    if (!players.has(by)) return "unknown player";
+    switch (intent.kind) {
+      case "ship": {
+        const id = intent.id;
+        const n = intent.n;
+        if (typeof id !== "string" || typeof n !== "number") return "bad ship";
+        const put = this.g.bin.ship(players.get(by).inventory, id, n, 1, by);
+        return put > 0 ? undefined : "nothing shipped";
+      }
+      case "spend": {
+        const amount = intent.amount;
+        if (
+          typeof amount !== "number" ||
+          !Number.isInteger(amount) ||
+          amount <= 0
+        )
+          return "bad amount";
+        if (players.balance(by) < amount) return "not enough gold";
+        players.pay(by, -amount);
+        return undefined;
+      }
+      case "sleep":
+        this.tracker.setAsleep(by);
+        return undefined;
+      case "wake":
+        this.tracker.wake(by);
+        return undefined;
+      case "buy-cabin": {
+        if (by !== LOCAL_PLAYER) return "host only";
+        const x = intent.x;
+        const y = intent.y;
+        if (typeof x !== "number" || typeof y !== "number") return "bad site";
+        return this.buyCabin({ x, y });
+      }
+      default:
+        return `unknown intent ${intent.kind}`;
+    }
+  }
+
+  step(dtMs: number): void {
+    const limit = this.g.day.clock.minutes >= CLOCK_END;
+    this.tracker.check(dtMs, limit);
+  }
+
+  /** Day end: guests who pass out pay the single player cost, then the world sleeps. */
+  private endDay(d: DayEndDecision): void {
+    const players = this.g.players;
+    this.lastPassOuts = {};
+    for (const id of d.passOut) {
+      if (id === LOCAL_PLAYER || !players.has(id)) continue;
+      const w = players.wallet(id);
+      const lost = passOutLoss(w.money);
+      w.money -= lost;
+      this.lastPassOuts[id] = lost;
+    }
+    for (const p of players.each()) {
+      if (p.id === LOCAL_PLAYER) continue; // the host's energy is the day's, handled by sleep()
+      const out = d.passOut.includes(p.id);
+      p.energy.current = out ? Math.round(p.energy.max * 0.75) : p.energy.max;
+    }
+    this.lastReport = sleep(this.g, this.o.spots, this.o.random);
+  }
+}

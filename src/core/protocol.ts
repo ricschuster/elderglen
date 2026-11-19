@@ -54,7 +54,7 @@ export type ServerMsg =
   | { t: "joined"; player: PlayerInfo }
   | { t: "left"; id: PlayerId }
   /** The join was turned down; the host then closes the socket. */
-  | { t: "refused"; reason: "full" | "in-use" };
+  | { t: "refused"; reason: "full" | "in-use" | "no-free-cabin" };
 
 export interface PlayerInfo {
   id: PlayerId;

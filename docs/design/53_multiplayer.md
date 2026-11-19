@@ -211,7 +211,21 @@ not built in M4. The pros and cons, so the idea is not lost:
 4. Host and Join screens, the game list, and the typed address.
 5. Shared day end and a dropped guest.
 6. Cabins (free at start, bought otherwise) and the join-needs-a-cabin rule.
-7. The money mode and per-player shipping proceeds. **Built (2026-11-18, issue 972).** `WalletMode` ("shared" default | "separate"), chosen by `newGame(farmType, walletMode)`; `Players.wallet/balance/pay`; the local `money` accessor follows the wallet. Bin lines carry `by`; `bin.settle(g.players)` pays per shipper. Save version 4 (note 52). Left: the Host screen choice, the bin summary split in the scene, guest purchases using `balance`.
+   **Adapter built (2026-11-18, #965, #968, #969).** `src/core/roomworld.ts`: `GameRoomWorld(g, opts)` is a
+   `RoomWorld` over a real `GameState`. `admit` runs `joinNeedsCabin` and refuses with its reason (the new
+   optional `RoomWorld.admit`; `Room.refusal` carries the reason to the `refused` message, now also
+   "no-free-cabin", shown to the guest as "refused"); `onCabinRefused` and `cabinOffer` tell the host, who
+   calls `buyCabin(site)` (100 gold from the host's wallet). `addPlayer` makes a `PlayerRecord` with its own
+   `Energy`, `snapshot` is `serialize`, `playerDropped` and `playerRejoined` drive `DayEndTracker`. Intents:
+   `ship` (to the sender's bin lines, paid per wallet mode at night), `spend` (from `players.balance`), `sleep`,
+   `wake`, `buy-cabin` (host only); anything else is rejected. `step` calls `tracker.check`; at the day end guests
+   who pass out pay the single player cost from their wallet, guests wake with full or 75% energy, then `sleep()`
+   runs for the world (`lastReport`, `lastPassOuts`). Tests: `tests/roomworld.test.ts` (NodeHost over a real
+   socket, two guests). Left: the cabin book is not in the save; moving a dropped guest's character to their
+   cabin; guest energy is not yet spent by real actions or saved back as the day's; more intent kinds (till,
+   plant, water, harvest, buy, sell); ship multipliers (professions) for guests; the host's own wake/sleep
+   from the scene; cabin `blocked` and area from the real farm map.
+7. The money mode and per-player shipping proceeds. **Built (2026-11-18, issue 972).** `WalletMode` ("shared" default | "separate"), chosen by `newGame(farmType, walletMode)`; `Players.wallet/balance/pay`; the local `money` accessor follows the wallet. Bin lines carry `by`; `bin.settle(g.players)` pays per shipper. Save version 4 (note 52). Host screen wallet choice (button cycles shared/separate, passed as `HostOptions` through `startHosting`; `src/net/hostoptions.ts`) and the bin and shipping summary split (`src/core/settlementsplit.ts`) built 2026-11-18. Left: a wallet choice on the new-game screen (no obvious place yet), wiring the option into the real host starter, guest purchases using `balance`.
 8. Native hosting in the wrapper, then the tablet plugin.
 
 ## For later

@@ -54,7 +54,8 @@ export class NodeHost {
                 c,
                 {
                   t: "refused",
-                  reason: msg.id ? "in-use" : "full",
+                  reason: host.room.refusal as
+                    "full" | "in-use" | "no-free-cabin",
                 },
                 lat,
               );
