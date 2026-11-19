@@ -9,6 +9,7 @@ import {
   RemoteInterpolator,
   PlayerBlocking,
   playersAt,
+  resolveBlocking,
 } from "../src/net/interp";
 import { JAM_BLOCK_MS } from "../src/core/jam";
 import type { RemotePlayer } from "../src/net/session";
@@ -148,5 +149,48 @@ describe("interpolation and blocking", () => {
     expect(b.tick(JAM_BLOCK_MS - 10, at, others)).toEqual([]);
     expect(b.tick(20, at, others)).toEqual(["p2"]);
     expect(b.tick(16, undefined, others)).toEqual(["p2"]);
+  });
+});
+
+describe("resolveBlocking", () => {
+  const other = (x: number): RemotePlayer => ({
+    id: "p2",
+    name: "Ann",
+    x,
+    y: 100,
+    map: "farm",
+    dir: 0,
+  });
+  it("undoes a step into another player, then lets the walker through and reports pass", () => {
+    const b = new PlayerBlocking();
+    const remotes = [other(110)];
+    const from = { x: 100, y: 100 };
+    const to = { x: 101, y: 100 };
+    // 100 and 110 are 10 apart, under the 12 pixel body width: already overlapping, so free.
+    expect(resolveBlocking(b, 16, from, to, "farm", remotes).x).toBe(101);
+    const far = [other(113)];
+    const r = resolveBlocking(b, 16, from, { x: 102, y: 100 }, "farm", far);
+    expect(r).toEqual({ x: 100, y: 100, pass: [] });
+    let last = r;
+    for (let t = 0; t < JAM_BLOCK_MS; t += 16)
+      last = resolveBlocking(b, 16, from, { x: 102, y: 100 }, "farm", far);
+    expect(last.pass).toEqual(["p2"]);
+    const through = resolveBlocking(
+      b,
+      16,
+      from,
+      { x: 102, y: 100 },
+      "farm",
+      far,
+    );
+    expect(through.x).toBe(102);
+  });
+  it("blocks nothing on another map or when standing still", () => {
+    const b = new PlayerBlocking();
+    const p = { x: 100, y: 100 };
+    expect(
+      resolveBlocking(b, 16, p, { x: 101, y: 100 }, "house", [other(105)]).x,
+    ).toBe(101);
+    expect(resolveBlocking(b, 16, p, p, "farm", [other(105)]).pass).toEqual([]);
   });
 });

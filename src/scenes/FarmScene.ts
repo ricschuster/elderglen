@@ -286,6 +286,7 @@ import {
 } from "../core/view";
 import { makePlaceholderTextures, PLAYER_KEY } from "./placeholder-textures";
 import { guestMayOpen } from "../core/menupages";
+import { PlayerBlocking, resolveBlocking } from "../net/interp";
 import {
   currentSession,
   GuestSession,
@@ -441,6 +442,9 @@ export class FarmScene extends Phaser.Scene {
   }[] = [];
   controls!: Controls;
   player!: Phaser.GameObjects.Image;
+  /** The jam rule for walking into other players, and who we may walk through now (note 53). */
+  private readonly blocking = new PlayerBlocking();
+  private passList: string[] = [];
   /** The multiplayer session, if any, and the other players it shows (note 53). */
   private net: NetSession | undefined;
   private remote: RemotePlayerLayer | undefined;
@@ -660,8 +664,15 @@ export class FarmScene extends Phaser.Scene {
           this.uiCamera.ignore(o),
         )
       : undefined;
-    if (this.net instanceof GuestSession)
+    if (this.net instanceof GuestSession) {
       this.net.onHostLost(() => this.hostLost());
+      // The guest's farm copy changes only when the host's `applied` comes back (no prediction).
+      this.net.onChange = () => this.render();
+      this.net.onRejected = (reason) => {
+        this.message = `The host said no: ${reason}.`;
+        this.render();
+      };
+    }
     this.swingFx = this.add.graphics().setDepth(900);
     world.push(this.swingFx);
     this.litBombs = [];
@@ -1006,6 +1017,7 @@ export class FarmScene extends Phaser.Scene {
     const ts = this.map.tileSize;
     const before = { ...this.pos };
     const slowed = this.state.combat.effects.speedFactor();
+    const remotes = this.net?.remotes() ?? [];
     for (let i = 0; i < DEV_SPEED; i++)
       this.pos = move(
         this.pos,
@@ -1017,6 +1029,19 @@ export class FarmScene extends Phaser.Scene {
         ts,
         (x, y) => this.tileBlocked(x, y),
       );
+    if (this.net) {
+      // Other players block, until the jam rule lets us through (note 53, Q5). Untested in a browser.
+      const r = resolveBlocking(
+        this.blocking,
+        dt * 1000,
+        before,
+        this.pos,
+        this.mapId,
+        remotes,
+      );
+      this.pos = { x: r.x, y: r.y };
+      this.passList = r.pass;
+    }
     const ahead = facingTile(this.pos, PLAYER, this.facing, ts);
     if (
       (v.x !== 0 || v.y !== 0) &&
@@ -1936,11 +1961,38 @@ export class FarmScene extends Phaser.Scene {
     this.scene.pause();
   }
 
+  /**
+   * A guest's Use: the hoe, can and crop seeds on farm soil become intents for the host, which
+   * answers with `applied` (note 53). Anything else stays host-only for now.
+   * Untested in a browser.
+   */
+  private guestUse(): void {
+    const net = this.net;
+    if (!(net instanceof GuestSession)) return;
+    const held = heldAt(this.state, this.selected);
+    const front = this.aimTile();
+    if (!isFarmMap(this.mapId)) return;
+    if (held.kind === "tool" && held.tool === "hoe")
+      net.sendIntent({ kind: "till", x: front.x, y: front.y });
+    else if (
+      held.kind === "tool" &&
+      held.tool === "can" &&
+      !this.map.isWater(front.x, front.y)
+    )
+      net.sendIntent({ kind: "water", x: front.x, y: front.y });
+    else if (held.kind === "item" && cropOfSeed(held.id))
+      net.sendIntent({ kind: "plant", x: front.x, y: front.y, seed: held.id });
+    else {
+      this.message = "Only the host can do that for now.";
+      this.render();
+    }
+  }
+
   /** Use the held tool on the tile the player faces. Services are Action's. */
   use(): void {
     if (this.leaving || this.marching) return;
     if (this.useDoor()) return;
-    if (isGuest()) return;
+    if (isGuest()) return this.guestUse();
     if (this.state.animals.mounted) {
       this.message = `${this.getOffHint()} to get off ${horseName(this.state)} first.`;
       return this.render();
@@ -2556,6 +2608,7 @@ export class FarmScene extends Phaser.Scene {
         y: this.pos.y,
         map: this.mapId,
         dir: ["up", "down", "left", "right"].indexOf(this.facing),
+        pass: this.passList,
       },
       performance.now(),
     );

@@ -118,3 +118,34 @@ export class PlayerBlocking {
     return remotes.filter((r) => this.jam.isPassing(r.id)).map((r) => r.id);
   }
 }
+
+export interface Spot {
+  x: number;
+  y: number;
+}
+
+/**
+ * One frame of player blocking for the local walker. `to` is where the walk ended after tile
+ * collision. If another player's body (not being passed through) overlaps `to` and did not already
+ * overlap `from`, the step is undone and counted as blocked; the jam rule then lets the walker
+ * through after a short wait. Returns where to stand and the ids to send as `pass`.
+ */
+export function resolveBlocking(
+  blocking: PlayerBlocking,
+  dtMs: number,
+  from: Spot,
+  to: Spot,
+  map: string,
+  remotes: readonly RemotePlayer[],
+): { x: number; y: number; pass: PlayerId[] } {
+  const moved = from.x !== to.x || from.y !== to.y;
+  const already = new Set(playersAt(from.x, from.y, map, remotes));
+  const stopped = moved
+    ? playersAt(to.x, to.y, map, remotes).filter(
+        (id) => !already.has(id) && !blocking.jam.isPassing(id),
+      )
+    : [];
+  if (stopped.length === 0)
+    return { ...to, pass: blocking.tick(dtMs, undefined, remotes) };
+  return { ...from, pass: blocking.tick(dtMs, { ...to, map }, remotes) };
+}

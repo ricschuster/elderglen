@@ -189,3 +189,36 @@ describe("host and guest session", () => {
     expect(takeLostNotice()).toBeUndefined();
   });
 });
+
+describe("guest applies the host's intents", () => {
+  it("a guest's till and plant reach the host and come back once to the guest copy", async () => {
+    const { host, guest, state } = await pair();
+    const copy = guest.loadFarm()!;
+    const rec = state.players.get(guest.localId);
+    rec.inventory.add("parsnip-seed", 3);
+    copy.players.get(guest.localId).inventory.add("parsnip-seed", 3);
+    let changes = 0;
+    guest.onChange = () => (changes += 1);
+    guest.sendIntent({ kind: "till", x: 6, y: 6 });
+    await until(() => changes >= 1);
+    guest.sendIntent({ kind: "plant", x: 6, y: 6, seed: "parsnip-seed" });
+    await until(() => changes >= 2);
+    expect(state.farm.plotAt(6, 6)?.tilled).toBe(true);
+    expect(copy.farm.plotAt(6, 6)?.tilled).toBe(true);
+    expect(
+      copy.players.get(guest.localId).inventory.count("parsnip-seed"),
+    ).toBe(2);
+    expect(rec.inventory.count("parsnip-seed")).toBe(2);
+    expect(host.world.g).toBe(state);
+  });
+
+  it("a refused intent changes nothing and reports the reason", async () => {
+    const { guest } = await pair();
+    const copy = guest.loadFarm()!;
+    let why = "";
+    guest.onRejected = (r) => (why = r);
+    guest.sendIntent({ kind: "plant", x: 7, y: 7, seed: "parsnip-seed" });
+    await until(() => why !== "");
+    expect(copy.farm.plotAt(7, 7)).toBeUndefined();
+  });
+});
