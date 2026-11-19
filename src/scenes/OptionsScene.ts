@@ -327,7 +327,7 @@ export class OptionsScene extends Phaser.Scene {
   /** Read a chosen file into the first empty slot. A full set of slots refuses. */
   private importSave(): void {
     const free = allSlots(browserKv).find((s) => s.status === "empty");
-    if (!free) return this.say("All five slots are used. Delete one first.");
+    if (!free) return this.say("Every slot is used. Delete one first.");
     const input = document.createElement("input");
     input.type = "file";
     input.accept = ".json,application/json";

@@ -8,8 +8,10 @@ import {
 import { clockText } from "./clock";
 import type { GameState } from "./save";
 
-/** Five fixed save slots (note 52). */
-export const SLOT_COUNT = 5;
+/** Slots always listed, even when empty (note 52). */
+export const MIN_SLOTS = 5;
+/** The most slots there can be (note 52). One place to change the cap. */
+export const MAX_SAVE_SLOTS = 20;
 
 /** The key the one save used before slots, and the working-title key before it. */
 export const LEGACY_SAVE_KEY = "elderglen-save";
@@ -34,7 +36,7 @@ export const resumeKey = (slot: number): string =>
 export const prevKey = (slot: number): string => `elderglen-prev-slot-${slot}`;
 
 export const isSlot = (n: unknown): n is number =>
-  Number.isInteger(n) && (n as number) >= 1 && (n as number) <= SLOT_COUNT;
+  Number.isInteger(n) && (n as number) >= 1 && (n as number) <= MAX_SAVE_SLOTS;
 
 /**
  * Move the old single save into slot 1 the first time the slots load. The old
@@ -94,9 +96,21 @@ export function slotInfo(kv: KeyValue, slot: number): SlotInfo {
   return { ...loaded, slot, game: loaded.play };
 }
 
-/** Every slot, in order. */
+/**
+ * How many slots are listed: at least `MIN_SLOTS`, and one empty slot past the
+ * highest used one, up to `MAX_SAVE_SLOTS`. So slots grow on demand when all
+ * are full, and a gap left by Delete stays usable.
+ */
+export function slotCount(kv: KeyValue): number {
+  let top = 0;
+  for (let n = MAX_SAVE_SLOTS; n >= 1 && top === 0; n--)
+    if (slotInfo(kv, n).status !== "empty") top = n;
+  return Math.min(MAX_SAVE_SLOTS, Math.max(MIN_SLOTS, top + 1));
+}
+
+/** Every listed slot, in order. */
 export function allSlots(kv: KeyValue): SlotInfo[] {
-  return Array.from({ length: SLOT_COUNT }, (_, i) => slotInfo(kv, i + 1));
+  return Array.from({ length: slotCount(kv) }, (_, i) => slotInfo(kv, i + 1));
 }
 
 /** Empty one slot, all its records. The others are untouched. */
