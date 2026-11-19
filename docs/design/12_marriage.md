@@ -297,6 +297,15 @@ giftbox by their home bed, children go in a home both players sleep in, and an N
 - **Q3: the player who files pays the fee** (recommended).
 - **Q4: the ledger is in the hall at (30,5)** (recommended). Note 53's "at the carpenter" line is to be fixed.
 
+### Decided 2026-11-19 (owner)
+
+- **Token is used up on accept.** It is refunded on a decline and on expiry, so "a decline costs nothing" (note 53) stands.
+  The owner first picked "used up when offered (Stardew)", then chose the refund rule when the clash with note 53 was
+  shown. Stardew has no decline case; its Marriage page says the pendant is presented to the villager.
+- **An unanswered proposal expires at the end of that day** (recommended). The card goes away and the token returns.
+- **Engaged couples can call it off free at the hall ledger** (recommended). The 50,000g divorce fee is for married
+  couples only. The token is not refunded when an accepted engagement is called off.
+
 ### The questions as asked
 
 **Q1. The wedding notice and the two players' day ends.** When a pair are engaged, the three days run on the host's
