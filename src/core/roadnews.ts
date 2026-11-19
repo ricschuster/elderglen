@@ -1,6 +1,7 @@
 import newsData from "../content/road-news.json";
 import { festivalToday } from "./festivals";
-import { seeded, daysToTrader, traderHere } from "./trader";
+import { daysToTrader, traderHere } from "./trader";
+import { seeded } from "./rng";
 import type { Weather } from "./weather";
 
 /**
@@ -26,7 +27,7 @@ export function newsLines(day: number): string[] {
 }
 
 /** The trader notice: here today, or the days to his next visit. */
-export function traderNotice(day: number): string {
+function traderNotice(day: number): string {
   if (traderHere(day))
     return "The road trader has his stall in the yard today.";
   const n = daysToTrader(day);

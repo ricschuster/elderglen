@@ -69,7 +69,7 @@ export function treasureFlag(day: number): string {
 }
 
 /** This season's chest for a day. */
-export function treasureOf(day: number): { id: string; count: number } {
+function treasureOf(day: number): { id: string; count: number } {
   return TREASURE[dateOf(day).season]!;
 }
 

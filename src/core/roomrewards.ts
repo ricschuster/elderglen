@@ -8,7 +8,7 @@ import { resolveMapId } from "./farmtypes";
 import { itemById } from "./items";
 import { minesOpen } from "./mines";
 import type { GameState } from "./save";
-import { seeded } from "./trader";
+import { seeded } from "./rng";
 import { hasFlag, setFlag } from "./worldflags";
 
 /**

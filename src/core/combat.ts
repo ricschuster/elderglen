@@ -194,9 +194,6 @@ export function swingTargets(
   return hits.slice(0, w.targets).map((h) => h.c);
 }
 
-/** Health the player's weapon takes off the training dummy: its damage, for the numbers on screen. */
-export const dummyHit = (w: WeaponDef): number => w.damage;
-
 /** Smith forging: bars and gold, no wait (note 22). Returns an error line, or undefined when it worked. */
 export function forgeWeapon(g: GameState, id: string): string | undefined {
   const w = weaponById(id);

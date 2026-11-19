@@ -46,7 +46,7 @@ export class GameRoomWorld implements RoomWorld {
   readonly tracker: DayEndTracker;
   /** Names by id, for the host's screens. */
   readonly names = new Map<PlayerId, string>([[LOCAL_PLAYER, "Host"]]);
-  /** Set when a join was refused for lack of a cabin: the host is offered the purchase. */
+  /** Standing state: set while a refused join waits for the host to buy a cabin; `onCabinRefused` is the one-shot notice. */
   cabinOffer: { name: string; price: number } | undefined;
   /** Called when a join is refused for lack of a cabin (the host's screen offers `buyCabin`). */
   onCabinRefused?: (name: string) => void;
@@ -89,7 +89,7 @@ export class GameRoomWorld implements RoomWorld {
     return this.cabins.cabins.find((c) => c.ownerKey === id);
   }
 
-  /** Join-needs-a-cabin (step 6): refuse with the cabin reason, else hold the assignment. */
+  /** Join-needs-a-cabin: refuse with the cabin reason, else hold the assignment. */
   admit(id: PlayerId, name: string): string | undefined {
     const r = joinNeedsCabin(this.cabins, id, this.o.cabinArea, this.o.blocked);
     if (r.kind === "refused") {
@@ -109,7 +109,6 @@ export class GameRoomWorld implements RoomWorld {
       this.cabins = this.pending.book;
     this.pending = undefined;
     const start = this.g.players.walletMode === "separate" ? START_MONEY : 0;
-    // Each guest has their own energy object, apart from the day's (the host's).
     this.g.players.add(id, start);
     this.names.set(id, name);
     this.tracker.add(id);

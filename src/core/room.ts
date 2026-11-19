@@ -1,5 +1,5 @@
 // The host's room: takes intents from players, steps the world, makes snapshots. No socket
-// (note 53, step 2). The socket in src/net/ feeds `receive` and sends what `drain` returns.
+// (note 53). The socket in src/net/ feeds `receive` and sends what `drain` returns.
 // Free of Phaser and the DOM.
 import { LOCAL_PLAYER, type PlayerId } from "./players";
 import type {
@@ -10,7 +10,7 @@ import type {
   ServerMsg,
 } from "./protocol";
 
-/** What the room needs from the shared world. GameState gets an adapter in step 3 or later. */
+/** What the room needs from the shared world. `GameRoomWorld` (roomworld.ts) is the adapter over `GameState`. */
 export interface RoomWorld {
   /** The current day number. */
   day(): number;

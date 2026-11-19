@@ -1,12 +1,12 @@
-// Cabins for multiplayer (note 53 step 6, note 55 "Cabins for multiplayer", SC-120).
+// Cabins for multiplayer (note 53, note 55 "Cabins for multiplayer", SC-120).
 // Pure rules, free of Phaser and the DOM, with their own small types so they do not
 // depend on GameState. The caller keeps a CabinBook in the host's world save.
 
 export const CABIN_PRICE = 100; // gold, built instantly (note 53, Stardew checked)
 export const MAX_CABINS = 7; // beside the host's house, so 8 players at most
 // Placeholder footprint in tiles (labelled in note 53); the real size comes with note 85 art.
-export const CABIN_WIDTH = 4;
-export const CABIN_HEIGHT = 3;
+const CABIN_WIDTH = 4;
+const CABIN_HEIGHT = 3;
 
 export type CabinOrigin = "multiplayer-start" | "converted";
 
@@ -32,9 +32,9 @@ export interface CabinBook {
 /** Tells the rules whether a tile cannot hold a building (water, cliff, house, other buildings). */
 export type BlockedFn = (x: number, y: number) => boolean;
 
-export type PlaceFailure = "cap" | "overlap" | "blocked" | "unaffordable";
+type PlaceFailure = "cap" | "overlap" | "blocked" | "unaffordable";
 
-export type BuyResult =
+type BuyResult =
   | { ok: true; book: CabinBook; gold: number; cabin: Cabin }
   | { ok: false; reason: PlaceFailure };
 

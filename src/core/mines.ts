@@ -12,6 +12,7 @@ import {
   type Creature,
   type CreatureSave,
 } from "./creatures";
+import { seeded } from "./rng";
 
 /**
  * The mine (`docs/design/22_mines.md`, build slice 1). Pure rules: a floor is
@@ -137,18 +138,6 @@ export function mineFloorOf(mapId: string): number | undefined {
 /** The chance the next rock hides the ladder, after `misses` rocks that did not. */
 export function ladderChance(misses: number): number {
   return Math.min(LADDER_BASE + LADDER_STEP * misses, LADDER_CAP);
-}
-
-/** A small seeded generator, so a floor is the same all day. */
-function seeded(seed: number): () => number {
-  let a = seed >>> 0;
-  return () => {
-    a = (a + 0x6d2b79f5) >>> 0;
-    let t = a;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
 }
 
 export interface FloorLayout {

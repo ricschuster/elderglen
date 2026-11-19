@@ -5,6 +5,7 @@ import {
   MAHOGANY_STAGE_CHANCE,
   MAHOGANY_YOUNG_CHANCE,
 } from "./mahogany";
+import { tileKey } from "./tilekey";
 
 /**
  * Common trees on the farm (`docs/design/36_gathering_trees_sap_fiber.md` and
@@ -77,8 +78,6 @@ function growChance(t: Tree): number {
   return young ? YOUNG_CHANCE : STAGE_CHANCE;
 }
 
-const key = (x: number, y: number) => `${x},${y}`;
-
 /** The farm's trees and stumps. */
 export class Trees {
   private trees = new Map<string, Tree>();
@@ -118,11 +117,11 @@ export class Trees {
   }
 
   load(saved: Tree[]): void {
-    this.trees = new Map(saved.map((t) => [key(t.x, t.y), { ...t }]));
+    this.trees = new Map(saved.map((t) => [tileKey(t.x, t.y), { ...t }]));
   }
 
   at(x: number, y: number): Tree | undefined {
-    return this.trees.get(key(x, y));
+    return this.trees.get(tileKey(x, y));
   }
 
   *each(): Generator<Tree> {
@@ -146,7 +145,7 @@ export class Trees {
   /** Plant a tree at a stage. Returns false if the tile already holds one. */
   add(x: number, y: number, stage = SEED_STAGE): boolean {
     if (this.at(x, y)) return false;
-    this.trees.set(key(x, y), {
+    this.trees.set(tileKey(x, y), {
       x,
       y,
       stage,
@@ -158,7 +157,7 @@ export class Trees {
   }
 
   remove(x: number, y: number): void {
-    this.trees.delete(key(x, y));
+    this.trees.delete(tileKey(x, y));
   }
 
   private matureNeighbour(t: Tree): boolean {

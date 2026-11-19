@@ -1007,7 +1007,6 @@ export function orderBuildingUpgrade(g: GameState, b: Building): boolean {
 /** The coop forms of the above, from slice 1 and 2. */
 export const coopProblem = (g: GameState) => buildingProblem(g, "coop");
 export const orderCoop = (g: GameState) => orderBuilding(g, "coop");
-export const nextCoopUpgrade = (g: GameState) => nextBuildingUpgrade(g, "coop");
 export const coopUpgradeProblem = (g: GameState) => upgradeProblem(g, "coop");
 export const orderCoopUpgrade = (g: GameState) =>
   orderBuildingUpgrade(g, "coop");
@@ -1017,7 +1016,6 @@ export const advanceCoop = (g: GameState) => advanceBuilding(g) === "coop";
 /** The barn forms. */
 export const barnProblem = (g: GameState) => buildingProblem(g, "barn");
 export const orderBarn = (g: GameState) => orderBuilding(g, "barn");
-export const nextBarnUpgrade = (g: GameState) => nextBuildingUpgrade(g, "barn");
 export const barnUpgradeProblem = (g: GameState) => upgradeProblem(g, "barn");
 export const orderBarnUpgrade = (g: GameState) =>
   orderBuildingUpgrade(g, "barn");

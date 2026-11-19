@@ -17,7 +17,7 @@ export function handOverCopper(g: GameState): boolean {
 }
 
 /** True when the smith has been given copper and the furnace is still owed. */
-export function furnaceOwed(g: GameState): boolean {
+function furnaceOwed(g: GameState): boolean {
   return g.mines.copperHandedIn && !g.furnace.gifted;
 }
 

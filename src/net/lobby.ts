@@ -15,7 +15,7 @@ export interface GameEntry {
 }
 
 /** A game that has not announced for this long drops off the list. */
-export const GAME_STALE_MS = 6000;
+const GAME_STALE_MS = 6000;
 
 /** Add or refresh a game by id. Returns a new list. */
 export function mergeAnnouncement(
@@ -32,7 +32,7 @@ export function visibleGames(list: GameEntry[], now: number): GameEntry[] {
     .sort((a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id));
 }
 
-export type GameStatus = "open" | "full" | "wrong-version";
+type GameStatus = "open" | "full" | "wrong-version";
 
 export function gameStatus(g: GameEntry, ourVersion: number): GameStatus {
   if (g.version !== ourVersion) return "wrong-version";
@@ -85,7 +85,7 @@ export type JoinState =
   | { phase: "joined"; target: string }
   | { phase: "failed"; kind: FailKind; message: string };
 
-export type JoinEvent =
+type JoinEvent =
   | { type: "start"; address: ParsedAddress }
   | { type: "connected" }
   | { type: "fail"; kind: FailKind }

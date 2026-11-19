@@ -326,3 +326,5 @@ shots take about a minute each.
 `npm run playtest:marriage` (about 15 seconds): courts, proposes, sleeps to the wedding and plays it, checks the
 daily kiss, then files, cancels and refiles a divorce and sleeps to the end of the marriage. State is set with
 `farmState` and the core rules, so it checks the wiring and the scenes, not the walking.
+
+`npm run playtest:shrine` (`npm run dev` running) plays the ancestors' shrine scene (note 83).

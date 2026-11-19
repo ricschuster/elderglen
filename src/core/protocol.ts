@@ -9,7 +9,7 @@ export interface Intent {
 }
 
 /** Where a player stands: sent every tick, the only per-tick traffic. */
-export interface PosMsg {
+interface PosMsg {
   t: "pos";
   x: number;
   y: number;

@@ -308,17 +308,6 @@ export function nextEvent(
   return dueEvents(g, ctx, defs)[0];
 }
 
-/** Events waiting to be seen at their heart level and conditions, for the journal. */
-export function waitingEvents(
-  g: GameState,
-  ctx: Pick<TriggerContext, "day" | "weather">,
-  defs: HeartEvent[] = HEART_EVENTS,
-): HeartEvent[] {
-  return defs.filter(
-    (e) => !g.heartEvents.seen(e.id) && conditionsMet(g, e, ctx),
-  );
-}
-
 // ---- Results ---------------------------------------------------------------
 
 /** The scene as played: on replay the Result group is switched off. */

@@ -246,7 +246,7 @@ export const catalogueStock = (): FurnitureDef[] =>
   );
 
 /** True when the player's catalogue item is somewhere we can find it. */
-export function hasCatalogueItem(g: GameState): boolean {
+function hasCatalogueItem(g: GameState): boolean {
   return (
     g.inventory.count(CATALOGUE_ITEM) > 0 ||
     g.furniture.stash.includes(CATALOGUE_ITEM) ||

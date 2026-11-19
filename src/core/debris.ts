@@ -1,4 +1,5 @@
 import { MATURE_STAGE, type Trees } from "./trees";
+import { tileKey } from "./tilekey";
 
 /**
  * Seasonal debris (`docs/design/65_special_orders_and_debris.md`, SC-29): a
@@ -22,8 +23,6 @@ export interface Twig {
   y: number;
 }
 
-const key = (x: number, y: number) => `${x},${y}`;
-
 /** The farm's twigs: flat bits of branch that any tool clears for wood. */
 export class Twigs {
   private twigs = new Map<string, Twig>();
@@ -33,7 +32,7 @@ export class Twigs {
   }
 
   load(saved: Twig[]): void {
-    this.twigs = new Map(saved.map((t) => [key(t.x, t.y), { ...t }]));
+    this.twigs = new Map(saved.map((t) => [tileKey(t.x, t.y), { ...t }]));
   }
 
   *each(): Generator<Twig> {
@@ -41,7 +40,7 @@ export class Twigs {
   }
 
   at(x: number, y: number): boolean {
-    return this.twigs.has(key(x, y));
+    return this.twigs.has(tileKey(x, y));
   }
 
   get count(): number {
@@ -51,12 +50,12 @@ export class Twigs {
   /** Put a twig on a tile. Returns false if one is already there. */
   add(x: number, y: number): boolean {
     if (this.at(x, y)) return false;
-    this.twigs.set(key(x, y), { x, y });
+    this.twigs.set(tileKey(x, y), { x, y });
     return true;
   }
 
   remove(x: number, y: number): boolean {
-    return this.twigs.delete(key(x, y));
+    return this.twigs.delete(tileKey(x, y));
   }
 }
 

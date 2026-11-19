@@ -11,7 +11,7 @@ export type PlayerId = string;
 export const LOCAL_PLAYER: PlayerId = "p1";
 
 /** Water in a full can at the start (note 103). */
-export const START_CAN_WATER = 40;
+const START_CAN_WATER = 40;
 
 /**
  * One player's own things: what the shared world does not hold (note 53, "What

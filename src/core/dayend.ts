@@ -1,4 +1,4 @@
-// Shared day end for 2 to 8 players (note 53, "Shared day end", step 5). Pure rules and a small
+// Shared day end for 2 to 8 players (note 53, "Shared day end"). Pure rules and a small
 // tracker the host's RoomWorld adapter calls. Free of Phaser and the DOM. The pass-out cost itself
 // is the single player cost in sleep.ts; this file only says who passes out and when the day ends.
 import { LOCAL_PLAYER, type PlayerId } from "./players";
@@ -13,12 +13,12 @@ export const DAY_END = {
 
 export type Presence = "awake" | "asleep" | "dropped";
 
-export interface DayEndPlayer {
+interface DayEndPlayer {
   id: PlayerId;
   presence: Presence;
 }
 
-export type DayEndReason = "all-asleep" | "limit";
+type DayEndReason = "all-asleep" | "limit";
 
 export interface DayEndDecision {
   end: boolean;

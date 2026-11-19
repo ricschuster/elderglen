@@ -10,7 +10,8 @@ import {
 import { itemById } from "./items";
 import type { GameState } from "./save";
 import { seedStock } from "./shop";
-import { seeded, traderPrice } from "./trader";
+import { traderPrice } from "./trader";
+import { seeded } from "./rng";
 import { parseTime } from "./villagers";
 
 /**

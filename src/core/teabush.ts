@@ -1,5 +1,6 @@
 import { DAYS_PER_SEASON } from "./calendar";
 import data from "../content/tea-bush.json";
+import { tileKey } from "./tilekey";
 
 /**
  * The tea bush (`docs/design/97_tea_bush.md`). A crafted sapling grows 20 days,
@@ -55,8 +56,6 @@ export function bearsOn(
   );
 }
 
-const key = (x: number, y: number) => `${x},${y}`;
-
 /** The tea bushes of one map. */
 export class TeaBushes {
   private bushes = new Map<string, PlacedTeaBush>();
@@ -66,11 +65,11 @@ export class TeaBushes {
   }
 
   load(saved: PlacedTeaBush[]): void {
-    this.bushes = new Map(saved.map((b) => [key(b.x, b.y), { ...b }]));
+    this.bushes = new Map(saved.map((b) => [tileKey(b.x, b.y), { ...b }]));
   }
 
   at(x: number, y: number): PlacedTeaBush | undefined {
-    return this.bushes.get(key(x, y));
+    return this.bushes.get(tileKey(x, y));
   }
 
   *each(): Generator<PlacedTeaBush> {
@@ -84,12 +83,12 @@ export class TeaBushes {
   /** Plant a bush. False if the tile is taken. */
   add(x: number, y: number, age = 0): boolean {
     if (this.at(x, y)) return false;
-    this.bushes.set(key(x, y), { x, y, age, leaves: 0, hits: 0 });
+    this.bushes.set(tileKey(x, y), { x, y, age, leaves: 0, hits: 0 });
     return true;
   }
 
   remove(x: number, y: number): void {
-    this.bushes.delete(key(x, y));
+    this.bushes.delete(tileKey(x, y));
   }
 
   /** Overnight, on the new day's date. Every bush ages; a mature one bears in its window. */

@@ -1,4 +1,5 @@
 import type { Spot } from "./forage";
+import { tileKey } from "./tilekey";
 
 /**
  * Rocks you break with the pickaxe (`docs/design/22_mines.md`). Pure rules:
@@ -64,8 +65,6 @@ export const ROCK_KINDS: RockKind[] = [
   "hearthsilver",
 ];
 
-const key = (x: number, y: number) => `${x},${y}`;
-
 /** A field of rocks. */
 export class Rocks {
   private rocks = new Map<string, Rock>();
@@ -80,7 +79,7 @@ export class Rocks {
   }
 
   load(saved: Rock[]): void {
-    this.rocks = new Map(saved.map((r) => [key(r.x, r.y), { ...r }]));
+    this.rocks = new Map(saved.map((r) => [tileKey(r.x, r.y), { ...r }]));
   }
 
   *each(): Generator<Rock> {
@@ -88,7 +87,7 @@ export class Rocks {
   }
 
   at(x: number, y: number): Rock | undefined {
-    return this.rocks.get(key(x, y));
+    return this.rocks.get(tileKey(x, y));
   }
 
   get count(): number {
@@ -98,11 +97,11 @@ export class Rocks {
   /** Put a rock on a tile. Returns false if one is already there. */
   add(x: number, y: number, kind: RockKind, hits = 0): boolean {
     if (this.at(x, y)) return false;
-    this.rocks.set(key(x, y), { x, y, kind, hits });
+    this.rocks.set(tileKey(x, y), { x, y, kind, hits });
     return true;
   }
 
   remove(x: number, y: number): boolean {
-    return this.rocks.delete(key(x, y));
+    return this.rocks.delete(tileKey(x, y));
   }
 }

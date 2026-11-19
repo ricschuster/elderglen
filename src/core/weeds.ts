@@ -1,4 +1,5 @@
 import { isRaining, type Weather } from "./weather";
+import { tileKey } from "./tilekey";
 
 /**
  * Weeds on the player's farm (`docs/design/29_weeds.md` and
@@ -27,8 +28,6 @@ export interface Weed {
   y: number;
 }
 
-const key = (x: number, y: number) => `${x},${y}`;
-
 /** The farm's weeds. */
 export class Weeds {
   private weeds = new Map<string, Weed>();
@@ -38,7 +37,7 @@ export class Weeds {
   }
 
   load(saved: Weed[]): void {
-    this.weeds = new Map(saved.map((w) => [key(w.x, w.y), { ...w }]));
+    this.weeds = new Map(saved.map((w) => [tileKey(w.x, w.y), { ...w }]));
   }
 
   *each(): Generator<Weed> {
@@ -46,7 +45,7 @@ export class Weeds {
   }
 
   at(x: number, y: number): boolean {
-    return this.weeds.has(key(x, y));
+    return this.weeds.has(tileKey(x, y));
   }
 
   get count(): number {
@@ -56,13 +55,13 @@ export class Weeds {
   /** Put a weed on a tile. Returns false if one is already there. */
   add(x: number, y: number): boolean {
     if (this.at(x, y)) return false;
-    this.weeds.set(key(x, y), { x, y });
+    this.weeds.set(tileKey(x, y), { x, y });
     return true;
   }
 
   /** Remove the weed on a tile. Returns false if there was none. */
   remove(x: number, y: number): boolean {
-    return this.weeds.delete(key(x, y));
+    return this.weeds.delete(tileKey(x, y));
   }
 
   /** Winter day 1 clears every weed, as it clears crops. */

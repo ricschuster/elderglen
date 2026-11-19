@@ -4,6 +4,7 @@
 
 Accepted. Reverses the single-player decision of 2026-10-15 (issue #18) in the
 project brief. That decision was recorded there, not in an earlier ADR.
+Amended by ADR 0012, which moves multiplayer to M4, after M3b.
 
 ## Context
 

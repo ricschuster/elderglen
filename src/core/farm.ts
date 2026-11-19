@@ -1,6 +1,7 @@
 import { cropById } from "./crops";
 import { fertilizerById } from "./fertilizer";
 import type { Season } from "./calendar";
+import { tileKey } from "./tilekey";
 
 export interface Plot {
   tilled: boolean;
@@ -9,8 +10,6 @@ export interface Plot {
   /** The fertilizer mixed into this soil, until the season ends. */
   fertilizer?: string;
 }
-
-const key = (x: number, y: number) => `${x},${y}`;
 
 /** Slack for fractional growth, such as 9 days at 10 percent faster. */
 const EPSILON = 1e-9;
@@ -44,13 +43,13 @@ export class Farm {
   }
 
   plotAt(x: number, y: number): Plot | undefined {
-    return this.plots.get(key(x, y));
+    return this.plots.get(tileKey(x, y));
   }
 
   /** Dig the ground. Returns false if it is already tilled. */
   till(x: number, y: number): boolean {
     if (this.plotAt(x, y)) return false;
-    this.plots.set(key(x, y), { tilled: true, wateredToday: false });
+    this.plots.set(tileKey(x, y), { tilled: true, wateredToday: false });
     return true;
   }
 
@@ -58,7 +57,7 @@ export class Farm {
   clearEmpty(x: number, y: number): boolean {
     const plot = this.plotAt(x, y);
     if (!plot || plot.crop) return false;
-    return this.plots.delete(key(x, y));
+    return this.plots.delete(tileKey(x, y));
   }
 
   /** Plant a seed in tilled, empty soil. Fails out of season, except indoors. */

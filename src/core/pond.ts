@@ -318,11 +318,6 @@ export function advancePonds(g: GameState): number {
   return opened;
 }
 
-/** Whether a pond is built and ready for fish. */
-export function pondOpen(p: PlacedItem): boolean {
-  return stateOf(p).building === 0;
-}
-
 /** The first quality of a base item the pack holds, lowest first (the pond takes any quality). */
 function heldId(g: GameState, base: string): string | undefined {
   return QUALITIES.map((q) => withQuality(base, q)).find(
@@ -520,11 +515,6 @@ export function pondNews(g: GameState): { ready: number; quests: number } {
     if (s.quest) quests += 1;
   }
   return { ready, quests };
-}
-
-/** True when a pond has a quest waiting. */
-export function questWaiting(p: PlacedItem): boolean {
-  return stateOf(p).quest !== undefined;
 }
 
 /**

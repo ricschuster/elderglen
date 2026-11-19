@@ -8,7 +8,7 @@ import {
   type PlayerInfo,
   type PosRow,
   type ServerMsg,
-} from "./protocol";
+} from "../core/protocol";
 import type { FailKind } from "./lobby";
 
 export class JoinFailed extends Error {
