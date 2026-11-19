@@ -35,7 +35,7 @@ Built 2026-11-17 and checks since (sweep, sim, stages): detail in `PRIORITIES_AR
 
 Decided 2026-11-18: shrine score 21, Diamond sources (floor 120 drop, Crystalarium copies, ponds, no fishing chest), Feast caps 300 and 100; multiplayer rulings for shrine, gallery, orders and player marriage are in note 53; note 12 now has the two-player wedding and divorce steps (drafted 2026-11-18, owner decided: the wedding plays after night 3 with no wait for the partner, the proposer's cabin is home, the filer pays the fee, divorce at the hall ledger (30,5)). Build with M4.
 
-M4 spike (#948) desktop part built 2026-11-18 (`spikes/m4/`, note 53 "M4 spike results"): left your router and SM-T500 runs, one size check on a played farm, M4 follow-up issues.
+M4 spike (#948) desktop part built 2026-11-18 (`spikes/m4/`, note 53 "M4 spike results"; late farm size and the jam rule `src/core/jam.ts` done 2026-11-18g): left your router and SM-T500 runs and a size check on a real played save. M4 steps filed as #964 to #969, #972, #973. Layout page slices 1 and 2 built (#970, #971, dev only, not yet looked at in a browser). Save slots open past five (cap 20, note 52). FarmScene split plan is note 106 (#904).
 
 Alongside: the wiki (#910, note 100; built for every category, every item has a picture; text cleared for crops, fish, forage, items, places and rooms; draft text left for bundles, recipes, people and five gem names; left: owner reads the draft text and clears flags, gift lists (`giftsDraft`), people prose with the voice sheets, hosting after M3d), Stardew checks rows (open: SC-188 only; the rest answered or closed as ours, on purpose, 2026-11-17). M4 hosting spike filed as #948.
 
@@ -68,11 +68,10 @@ Done, owner checked (2026-11-11): step 1 farm (note 55, #776), step 2 festival s
 (note 82), step 3 heart events and spouses (note 84, #600), step 4 interior plans
 (note 86), step 11 farmhouse and cabin drafts (note 85, build issues next).
 
-- Step 5: Layout page design note. Drafted (note 87), small points decided. Next: file
-  the slice 1 and 2 issues.
+- Step 5: Layout page design note (note 87), issues #970 and #971 filed and built 2026-11-18g. Next: your look at `/layout.html` (`npm run dev`).
 - Step 6 (owner): Hands-on play of the built areas to check placeholder metrics (paths
   2 wide, doors 1, 60 s on foot and 30 s on the horse to cross).
-- Step 7: Build the layout page, before the valley and festival layouts.
+- Step 7: Layout page built (see step 5); one pair gap listed in `KNOWN_PAIR_GAPS` (`secret-woods` exit `to_forest`).
 - Step 8: M4 spike desktop part done 2026-11-18 (note 53): the 120 by 120 cap stays (host holds all 38 maps in about 69 MB). Left: the router and tablet runs by hand (#948), the jam rule test.
 - Step 9: Valley maps, area by area (note 71 order), after step 6.
 - Step 10: Festival layouts, from step 2.

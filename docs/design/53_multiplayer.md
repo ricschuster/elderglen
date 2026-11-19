@@ -208,6 +208,16 @@ ADR 0014 follow-up (placed items, buildings and soil in the save) has no sign of
 late-game farm played by a person. Per-player records (inventory, skills, friendship) are small, hundreds of bytes
 each, so 8 players do not move the total.
 
+**Q4 again, a built-up late farm (measured on a synthetic fill, `spikes/m4/latefarm.ts`).** Not a person's save: the day 84
+bot save with 900 tilled tiles (600 planted), 80 sprinklers, 60 working machines, 30 full chests (10 of them big), 160
+lamps and torches, 60 fruit trees, 24 animals in a tier 3 coop and barn, a full pack and bin, and 94 gallery donations.
+Total 573 KB raw, 78 KB gzipped. By area, raw and gzipped KB: other map areas 300 and 50; trees, rocks, weeds, grass
+123 and 9.6; soil and crops 72 and 4.1; placed items (machines, chests, lamps) 63 and 8.8; fruit trees 3.7 and 0.4;
+animals 4.4 and 0.5; pack and bin 3.5 and 0.9; gallery 1.5 and 0.8; everything else 2.9 and 1.4. The built-up farm
+adds only about 130 KB raw, 15 KB gzipped, over the bot's day 84 save, and the other map areas stay the biggest part.
+The recommendation holds: one full snapshot on join (under 80 KB gzipped, well under a second on a LAN), deltas after.
+A real played save is still worth one check, since chest contents and the area worlds vary.
+
 **Snapshot format (measured, transport only).** Position snapshots at 10 Hz for 8 guests cost 0.18 ms of host time
 a tick and 235 KB/s in all. Sending the day 84 farm blob in every tick instead cost 17.8 ms a tick and 42 MB/s in all.
 Recommendation: the full farm snapshot is sent once on join (and on a day change if a guest was away); between
@@ -231,6 +241,15 @@ if two bodies overlap a blocked move for more than 0.5 s, the moving player's cl
 1 s. It runs on each client with no host authority, because each client already predicts its own player's movement and
 the host only receives positions. The host stays the judge of where a player is, so it accepts the passing positions.
 Needs a latency test once the real room exists (step 3).
+
+**Jam rule tested (2026-11-18).** `src/core/jam.ts` (`JamTracker`, constants `JAM_BLOCK_MS` 500 and `JAM_PASS_MS`
+1000) with `tests/jam.test.ts`: 10 tests pass. They cover no jam while moving or standing still, the 0.5 s timer, the
+1 s pass window, reset on separating, two clients passing together, three players tracked per pair, and 16 ms against
+100 ms frames. The tests exposed three rule details, now fixed in the module. (1) The timer counts only a real move
+attempt that was stopped by a player, so standing next to someone never jams. (2) The overshoot past 0.5 s is taken off
+the pass window, so total length is the same at any frame rate (within one frame). (3) Once started, the pass runs its
+full second even if the block stops being reported, and a pair still stuck afterwards needs a fresh 0.5 s. Still
+untested: real latency, and how the scene detects "blocked by player X" (no multiplayer scene yet).
 
 **Needs hands.** (1) Run `host.mjs` on the desktop and join from the tablet and a second machine on your router, and
 note client isolation and the typed address fallback. (2) The tablet host load on the SM-T500 with the Capacitor plugin
