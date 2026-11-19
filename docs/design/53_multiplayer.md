@@ -294,6 +294,21 @@ level only. Nothing is built, and the build waits for M4.
 - **Festivals (notes 82 and 14):** counts and joining for the Feast, the gift exchange (note 105) and the in-place
   festivals are still open for the spike, not settled here.
 
+## Cabin rules (step 6, 2026-11-18, `src/core/cabins.ts`)
+
+Pure rules and tests; no scene yet. Labelled placeholders, set where the note was open:
+
+- **Cap:** 7 cabins beside the host's house (8 players). A joiner past the cap is refused as "full".
+- **Footprint:** 4 by 3 tiles, placeholder until the note 85 art. Placement is free (SC-120): any clear
+  tiles, no overlap with another cabin; the caller says which tiles are blocked.
+- **Default spot (multiplayer start):** the first fitting site in row-major order inside the farm's open
+  cabin area (note 55). If none fits the joiner is refused as "no free cabin".
+- **Join in a converted game:** takes a cabin the host already bought; with none the guest is refused
+  "no free cabin" and told so, and the host is offered the 100 gold purchase.
+- **A returning key** gets the same cabin. A banned player's cabin stays.
+- **Demolish** returns the evicted occupant's key so things go to a chest (Stardew). The vacated cabin of a
+  player marriage stays, owned by the mover, so a divorce has a place to return to.
+
 ## Checked against Stardew (2026-11-02)
 
 From the saved Multiplayer page. Not copied, only compared.
