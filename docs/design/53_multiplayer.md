@@ -474,3 +474,8 @@ From the saved Multiplayer page. Not copied, only compared.
 - **Interpolation.** `src/net/interp.ts` `RemoteInterpolator`: samples are kept when a remote moves, drawn 200 ms behind, never extrapolated, no blend across a map change. `RemotePlayerLayer.sync` uses it (scene edit, untested in a browser).
 - **Blocking.** `playersAt` and `PlayerBlocking` (wraps `JamTracker`) return the ids to pass through. Not yet called from the movement code, and the `pass` list is not yet put in the `pos` message by the scene.
 - **Left.** Guest side applying `applied` intents to its farm copy (and a guest-side `sendIntent` from the scene: tools, shop and bin screens are still read-only for a guest); harvest and the other tool intents; reach and map checks; greenhouse soil; hooking `PlayerBlocking` into movement.
+
+## Built status: hosting the real farm (2026-11-19)
+
+- `src/net/hostworld.ts`: `planHost(kv, choice, options)` decides the world to host. A slot hosts that slot's played state (day in progress if any) with its own wallet mode; a corrupt, newer-version or empty slot is refused in words and never touched. "A new farm" is a multiplayer start saved to the first empty slot (all used: refused), with the wallet choice. The Lobby has a "Farm:" button cycling new farm and each used slot, then runs `startHostSession` and enters the farm scene, as the Title Host button does. The host stays the owner of the save: only the slot it plays in is written. Guests never save (`nightSave` and `resumeSave` refuse while `isGuest()`).
+- Left: the placeholder `makeWorld` in the Lobby transport is unused for hosting (kept for the transport tests); a new farm skips the farm-type screen (standard farm); nothing run on a device.
