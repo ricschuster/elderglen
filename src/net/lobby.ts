@@ -51,7 +51,13 @@ export function gameLabel(g: GameEntry, ourVersion: number): string {
 }
 
 export type FailKind =
-  "unreachable" | "timeout" | "wrong-version" | "full" | "refused" | "isolated";
+  | "unreachable"
+  | "timeout"
+  | "wrong-version"
+  | "full"
+  | "in-use"
+  | "refused"
+  | "isolated";
 
 /** Plain wording for a failed join. Placeholder text. */
 export function failMessage(kind: FailKind): string {
@@ -66,6 +72,8 @@ export function failMessage(kind: FailKind): string {
       return "The host runs a different version of the game. Update both to the same version.";
     case "full":
       return "That game is full.";
+    case "in-use":
+      return "That player is already in the game. If you dropped out, wait a moment and try again.";
     case "refused":
       return "The host did not let you in.";
   }

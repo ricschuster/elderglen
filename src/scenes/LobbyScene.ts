@@ -8,18 +8,21 @@ import {
   type GameEntry,
   type JoinState,
 } from "../net/lobby";
-import { FakeTransport, type LobbyTransport } from "../net/transport";
+import { PROTOCOL_VERSION } from "../core/protocol";
+import { SocketTransport } from "../net/sockettransport";
+import type { LobbyTransport } from "../net/transport";
 
-/** Protocol version shown in the list. Placeholder until the protocol exists (step 2). */
-const OUR_VERSION = 1;
+const OUR_VERSION = PROTOCOL_VERSION;
 const LAST_HOST_KEY = "elderglen.lastHost";
 const KEYS = ["1234567890", "abcdef:.-/"];
 
 /**
- * The transport the screen uses. Placeholder: a fake until the Room and socket
- * exist (note 53 steps 2 and 3). Replace this one line with the real one.
+ * The transport the screen uses: the real socket. Joining by typed address works
+ * wherever WebSocket does. Hosting needs a Node or native host, which the shell
+ * injects (the host starter is undefined in a plain browser, so canHost is false).
+ * Discovery stays off until the router run (issue 948 needs-hands).
  */
-export const lobbyTransport: LobbyTransport = new FakeTransport();
+export const lobbyTransport: LobbyTransport = new SocketTransport();
 
 /**
  * Play together (note 53 step 4): host a game, or join from the list or by a

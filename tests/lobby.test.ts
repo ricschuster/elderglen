@@ -114,3 +114,15 @@ describe("FakeTransport", () => {
     expect(await t.connect(a)).toEqual({ ok: true });
   });
 });
+
+describe("failMessage", () => {
+  it("has distinct plain texts for full, in-use and unreachable", () => {
+    const m = new Set(
+      (["full", "in-use", "unreachable"] as const).map(failMessage),
+    );
+    expect(m.size).toBe(3);
+    expect(failMessage("in-use")).toContain("already in the game");
+    for (const k of ["full", "in-use", "unreachable"] as const)
+      expect(failMessage(k)).not.toContain("\u2014");
+  });
+});

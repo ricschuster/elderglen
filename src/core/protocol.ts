@@ -37,6 +37,9 @@ export type ClientMsg =
 /** One player in a snapshot tick: x, y, ts, map, dir, pass. */
 export type PosRow = [number, number, number, string, number, PlayerId[]];
 
+/** Protocol version shown in the game list; bump when the messages change shape. */
+export const PROTOCOL_VERSION = 1;
+
 export type ServerMsg =
   | { t: "hello"; id: PlayerId; day: number; players: PlayerInfo[] }
   /** The whole farm. Sent on join and on a day change to a guest who was away, never per tick. */

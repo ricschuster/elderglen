@@ -100,7 +100,7 @@ describe("socket host and guests", () => {
     const { url } = await start({ maxPlayers: 2 });
     const a = await join(url, "Ann");
     await expect(join(url, "Imposter", a.id)).rejects.toMatchObject({
-      kind: "refused",
+      kind: "in-use",
     });
     await expect(join(url, "Bo")).rejects.toBeInstanceOf(JoinFailed);
     await expect(join(url, "Bo")).rejects.toMatchObject({ kind: "full" });
