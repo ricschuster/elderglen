@@ -22,3 +22,7 @@ export const DEV_SPEED = DEBUG_TOOLS
 export const SPEED = 80;
 /** The player's feet box, in world pixels. */
 export const PLAYER: Body = { hw: 5, h: 6 };
+
+/** Real milliseconds per 10 game minutes (Stardew pace). */
+export const TICK_MS = 7000;
+export const TICK_MINUTES = 10;

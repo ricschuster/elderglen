@@ -72,6 +72,7 @@ import {
   GRASS_KEY,
   WEED_KEY,
 } from "./art";
+import { drawFeastLantern, drawFestivalProps } from "./farm-festival";
 import type { FarmScene } from "./FarmScene";
 
 // Drawing methods of the farm scene, moved out of FarmScene.ts (note 106, step 5).
@@ -130,8 +131,8 @@ export function drawGround(farm: FarmScene): void {
       if (caskDone(farm.state, c)) put(c.x, c.y, MACHINE_READY_KEY);
     }
   if (farm.mapId === CAVE_MAP) drawCave(farm, put);
-  farm.drawFeastLantern();
-  if (isFestivalMap(farm.mapId)) farm.drawFestivalProps();
+  drawFeastLantern(farm);
+  if (isFestivalMap(farm.mapId)) drawFestivalProps(farm);
   if (farm.map.hasSoil) drawSoil(farm, put);
   drawWorld(farm, put);
   drawPonds(farm, put);

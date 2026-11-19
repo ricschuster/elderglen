@@ -1,4 +1,4 @@
-import { feastGive, lanternOn, lanternTile } from "../core/feastexchange";
+import { feastGive, lanternOn } from "../core/feastexchange";
 import {
   BARN_BUILT,
   BARN_MAP,
@@ -29,16 +29,7 @@ import {
 import { creatureSpawnsOf } from "../core/mapcreatures";
 import { eventAtTile } from "../core/eventrun";
 import { declinedToday } from "./HeartEventScene";
-import {
-  awardHuntPrize,
-  finishHunt,
-  huntEndLine,
-  huntLine,
-  huntOffer,
-  pickUp as pickUpPacket,
-  tickHunt,
-  type HuntState,
-} from "../core/seedhunt";
+import { huntOffer, type HuntState } from "../core/seedhunt";
 import {
   awardIcePrize,
   finishIceFishing,
@@ -49,23 +40,9 @@ import {
   startIceFishing,
   type IceFishing,
 } from "../core/icefishing";
-import { cakeProblem } from "../core/cakeday";
-import {
-  buyLantern,
-  lanternBuyProblem,
-  launchLantern,
-  launchProblem,
-} from "../core/lanterns";
+
 import { meet, presentAt, villagersOn, type Present } from "../core/townfolk";
-import {
-  PARADE_FESTIVAL,
-  PARADE_MAP,
-  finishParade,
-  joinParade,
-  paradeJoin,
-  paradeJoinedAt,
-  playerMarchAt,
-} from "../core/parade";
+import { paradeJoinedAt } from "../core/parade";
 
 import type { GameState } from "../core/save";
 import { cycle, heldAt, nextRow, toolbarSize } from "../core/toolbar";
@@ -78,25 +55,17 @@ import {
   festivalDayToday,
   festivalGateHolds,
   festivalShutLine,
-  festivalSignLine,
   walkIntoFestival,
   walkIntoPlace,
   festivalStepShut,
-  festivalToday,
   isFestivalMap,
-  sightLine,
 } from "../core/festivals";
-import { nicheLine, openChest } from "../core/maze";
+import { nicheLine } from "../core/maze";
 import { rodById, waterAhead } from "../core/fishing";
 import {
   PIER_FLOAT_KIND,
-  PIER_LINES,
   PIER_KEEPER_KIND,
-  buyPermit,
-  floatLantern,
-  floatProblem,
   isPierCast,
-  permitProblem,
   pierCastProblem,
 } from "../core/marketpier";
 import { festivalHolds } from "../core/festivalroutes";
@@ -390,13 +359,20 @@ import {
   tapVector,
   initTapDuration,
 } from "./farm-tap";
-import { DEV_SPEED, PLAYER, SPEED } from "./farm-consts";
+import { DEV_SPEED, PLAYER, SPEED, TICK_MINUTES, TICK_MS } from "./farm-consts";
+import {
+  festivalMinutes,
+  updateParade,
+  festivalAction,
+  pierKeeper,
+  pierFloat,
+  onLaunchLine,
+  launchLanternAt,
+  updateHunt,
+  openFestival,
+} from "./farm-festival";
 import { RemotePlayerLayer } from "./remoteplayers";
 import { installDebugHooks, type DebugContext } from "./farm-debug";
-
-/** Real milliseconds per 10 game minutes (Stardew pace). */
-const TICK_MS = 7000;
-const TICK_MINUTES = 10;
 
 /** How far the rider is drawn above the ground, so the horse shows under them. */
 const RIDER_LIFT = 6;
@@ -455,7 +431,7 @@ export class FarmScene extends Phaser.Scene {
   private dragTile: { x: number; y: number } | undefined;
   /** Conditions that currently hold, for gated exits: "mines-open" from spring 5. */
   private holds = new Set<string>();
-  private message = "";
+  message = "";
   /** True while the Hat Parade script holds the farmer in the line (input off, note 82). */
   marching = false;
   /** True after the first Action press on the ruined footbridge, which asks first. */
@@ -533,14 +509,14 @@ export class FarmScene extends Phaser.Scene {
   >();
   /** The tile last checked for a heart event. */
   private eventTile = "";
-  private villagerStamp = -1;
+  villagerStamp = -1;
   /** When the game clock last ticked (scene time), to walk the parade between ticks. */
-  private tickAt = 0;
+  tickAt = 0;
   /** The running Seedswap hunt (placeholder markers and countdown). */
-  private hunt?: HuntState;
-  private huntGfx?: Phaser.GameObjects.Graphics;
-  private lanternGfx?: Phaser.GameObjects.Graphics;
-  private huntText?: Phaser.GameObjects.Text;
+  hunt?: HuntState;
+  huntGfx?: Phaser.GameObjects.Graphics;
+  lanternGfx?: Phaser.GameObjects.Graphics;
+  huntText?: Phaser.GameObjects.Text;
   /** The Frostday ice fishing count (placeholder, note 82). */
   private ice?: IceFishing;
   tapAct?: Vec;
@@ -1035,10 +1011,10 @@ export class FarmScene extends Phaser.Scene {
     this.drawGlow();
     this.updateBombs(dt);
     this.syncVillagers();
-    this.updateHunt(dt);
+    updateHunt(this, dt);
     this.checkHeartEvent();
     this.checkWedding();
-    const marching = this.updateParade(dt);
+    const marching = updateParade(this, dt);
     if (marching) cancelTap(this);
     const parts = this.updateParts();
     const stick = marching ? { x: 0, y: 0 } : this.controls.vector();
@@ -1289,62 +1265,6 @@ export class FarmScene extends Phaser.Scene {
     );
   }
 
-  /** The game minute, run on between clock ticks on a festival day so the march moves a tile a minute. */
-  private festivalMinutes(): number {
-    const clock = this.state.day.clock;
-    const smooth = !!festivalToday(clock.day) && !isFestivalMap(this.mapId);
-    return smooth
-      ? clock.minutes +
-          Math.min(1, (this.time.now - this.tickAt) / (TICK_MS / DEV_SPEED)) *
-            TICK_MINUTES
-      : clock.minutes;
-  }
-
-  /**
-   * The Hat Parade, the player's part (note 82): a hatted player on the square
-   * between 14:00 and 14:30 falls in at the tail and the script walks them out
-   * to the turn and back with input off. Returns true while the script holds them.
-   */
-  private updateParade(dt: number): boolean {
-    const clock = this.state.day.clock;
-    if (
-      this.mapId !== PARADE_MAP ||
-      festivalDayToday(clock.day)?.id !== PARADE_FESTIVAL
-    ) {
-      this.marching = false;
-      return false;
-    }
-    const ts = this.map.tileSize;
-    let join = paradeJoin(this.state);
-    if (!join && !this.leaving) {
-      const at = tileOf(this.pos, PLAYER, ts);
-      if (!joinParade(this.state, this.mapId, at.x, at.y)) {
-        join = paradeJoin(this.state);
-        this.villagerStamp = -1;
-        this.message = "The march forms. You fall in at the tail of the line.";
-        this.render();
-      }
-    }
-    if (!join) return false;
-    const at = playerMarchAt(join, this.festivalMinutes());
-    if (at.state === "done") {
-      if (this.marching) {
-        this.marching = false;
-        this.message = finishParade(this.state);
-        this.render();
-      }
-      return false;
-    }
-    this.marching = true;
-    const k = Math.min(1, dt * 8);
-    const goal = { x: (at.tile[0] + 0.5) * ts, y: (at.tile[1] + 1) * ts - 2 };
-    this.pos = {
-      x: this.pos.x + (goal.x - this.pos.x) * k,
-      y: this.pos.y + (goal.y - this.pos.y) * k,
-    };
-    return true;
-  }
-
   /**
    * Show the villagers the schedule puts on this map (#599). Runs each frame
    * but only does work when the game minute or day changes. Placeholder blocks
@@ -1354,7 +1274,7 @@ export class FarmScene extends Phaser.Scene {
     const clock = this.state.day.clock;
     // The clock ticks 10 minutes at a time, but the Hat Parade walks a tile a
     // minute, so on a festival day the minute runs on between ticks (note 82).
-    const minutes = this.festivalMinutes();
+    const minutes = festivalMinutes(this);
     const stamp = clock.day * 2000 + Math.floor(minutes);
     if (stamp === this.villagerStamp) return;
     this.villagerStamp = stamp;
@@ -1834,7 +1754,7 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** Fade out and restart the scene on another map. */
-  private travel(map: string, entry: string): void {
+  travel(map: string, entry: string): void {
     if (this.leaving) return;
     this.leaving = true;
     // Doors and the Mines dismount: the horse waits outside (note 59).
@@ -2020,7 +1940,7 @@ export class FarmScene extends Phaser.Scene {
     this.open("journal");
   }
 
-  private open(kind: string, data?: object): void {
+  open(kind: string, data?: object): void {
     this.scene.launch(kind, data);
     this.scene.pause();
   }
@@ -2392,7 +2312,7 @@ export class FarmScene extends Phaser.Scene {
     const spot = this.horseSpot();
     if (spot && spot.x === front.x && spot.y === front.y) return this.getOn();
     if (this.meetVillager(front)) return;
-    if (this.onLaunchLine(front)) return this.launchLantern();
+    if (onLaunchLine(this, front)) return launchLanternAt(this);
     const service = this.map.serviceAt(front.x, front.y);
     if (service?.kind !== "tide-bridge") this.mendAsked = false;
     const shut = service
@@ -2434,8 +2354,8 @@ export class FarmScene extends Phaser.Scene {
       return this.open("shop", { stock: "fisher" });
     if (service?.kind === "pin-stall")
       return this.open("shop", { stock: "pin" });
-    if (service?.kind === PIER_KEEPER_KIND) return this.pierKeeper();
-    if (service?.kind === PIER_FLOAT_KIND) return this.pierFloat();
+    if (service?.kind === PIER_KEEPER_KIND) return pierKeeper(this);
+    if (service?.kind === PIER_FLOAT_KIND) return pierFloat(this);
     if (service?.kind === "keeper") return this.open("keeper");
     if (service?.kind === "hermit") {
       if (hermitStock(this.state).length > 0)
@@ -2495,7 +2415,7 @@ export class FarmScene extends Phaser.Scene {
             : STONEKEEPER_LINE;
       return this.render();
     }
-    if (service?.kind === "festival") return this.openFestival();
+    if (service?.kind === "festival") return openFestival(this);
     if (service?.kind === "camp-chest")
       return this.report(takeCampGift(this.state, this.floor));
     if (service?.kind === "ore-bin") return this.open("bin", { oreOnly: true });
@@ -2513,7 +2433,7 @@ export class FarmScene extends Phaser.Scene {
         (service.kind === "festival-counter" &&
           festivalDayToday(this.state.day.clock.day)))
     )
-      return this.festivalAction(service);
+      return festivalAction(this, service);
     if (this.mapId === CAVE_MAP) return this.caveAction(front, service?.kind);
     if (service?.kind === "furnace") {
       if (!this.state.furnace.gifted) {
@@ -2701,230 +2621,6 @@ export class FarmScene extends Phaser.Scene {
       this.message = "";
     }
     this.afterAction();
-  }
-
-  /**
-   * A service on a festival map: the display table and counters open their
-   * panel, the way home asks first, villagers and decorations speak, and the
-   * hedge chest and cart finish the maze.
-   */
-  private festivalAction(service: { id: string; kind: string }): void {
-    if (service.kind === "cake-table") return this.cakeTable();
-    if (service.id === "lantern-stall") return this.lanternStall();
-    const f =
-      festivalOfMap(this.mapId) ?? festivalDayToday(this.state.day.clock.day);
-    if (!f) return;
-    switch (service.kind) {
-      case "showing":
-        return this.open("festival", { mode: "panel", panel: "showing" });
-      case "festival-counter":
-        return this.open("festival", { mode: "panel", panel: "counter" });
-      case "festival-leave":
-        return this.open("festival", { mode: "leave" });
-      case "hedge-chest":
-        this.message = openChest(this.state);
-        return this.render();
-      case "hedge-cart":
-        return this.travel(this.mapId, "door");
-      case "sight":
-        this.message =
-          sightLine(f, service.id, dateOf(this.state.day.clock.day).year) ?? "";
-        return this.render();
-    }
-  }
-
-  /** The Night Market pier keeper sells the evening's fishing permit (note 14, placeholder price). */
-  private pierKeeper(): void {
-    const problem = permitProblem(this.state);
-    this.message = problem ?? (buyPermit(this.state) ? PIER_LINES.sold : "");
-    this.render();
-  }
-
-  /** Float a lantern from the pier tip: a short cosmetic scene, a line and a small luck buff until morning. */
-  private pierFloat(): void {
-    const problem = floatProblem(this.state);
-    if (problem) {
-      this.message = problem;
-      return this.render();
-    }
-    const line = floatLantern(this.state);
-    if (line) this.driftLantern();
-    this.message = line ?? "";
-    this.render();
-  }
-
-  /** Lamplight Evening stall: buys a paper lantern (placeholder price). */
-  private lanternStall(): void {
-    const problem = lanternBuyProblem(this.state);
-    this.message =
-      problem ??
-      (buyLantern(this.state)
-        ? "You buy a paper lantern. Set it afloat from the shore."
-        : "");
-    this.render();
-  }
-
-  /** True when the player stands on, or faces, a tile of the launch line (Beach, Lamplight Evening). */
-  private onLaunchLine(front: { x: number; y: number }): boolean {
-    const line = this.map.regions.find((r) => r.id === "launch-line");
-    if (!line) return false;
-    const here = tileOf(this.pos, PLAYER, this.map.tileSize);
-    const inside = (t: { x: number; y: number }) =>
-      t.x >= line.x &&
-      t.x < line.x + line.w &&
-      t.y >= line.y &&
-      t.y < line.y + line.h;
-    return inside(here) || inside(front);
-  }
-
-  /** A glowing dot that drifts away from the player over the water and fades, for the lantern launch. */
-  private driftLantern(): void {
-    const ts = this.map.tileSize;
-    const dot = this.add
-      .circle(this.pos.x + ts / 2, this.pos.y, 5, 0xffc860, 1)
-      .setDepth(850);
-    this.uiCamera.ignore(dot);
-    this.tweens.add({
-      targets: dot,
-      x: dot.x + Phaser.Math.Between(-3, 3) * ts,
-      y: dot.y - 5 * ts,
-      alpha: 0,
-      duration: 5000,
-      ease: "Sine.easeIn",
-      onComplete: () => dot.destroy(),
-    });
-  }
-
-  /** Sets the held lantern afloat and lets it drift off. */
-  private launchLantern(): void {
-    const problem = launchProblem(this.state);
-    if (problem) {
-      this.message = problem;
-      return this.render();
-    }
-    const r = launchLantern(this.state);
-    if (r) this.driftLantern();
-    this.message = r
-      ? `Your lantern drifts out with the rest. They like you a little more.${r.keepsake ? " You keep a small lantern." : ""}`
-      : "";
-    this.render();
-  }
-
-  /** Cake Day table: opens the dish picker, or says why there is nothing to do. */
-  private cakeTable(): void {
-    const problem = cakeProblem(this.state, "");
-    if (
-      problem === "There is no cake table today." ||
-      problem === "Your dish is already on the table."
-    ) {
-      this.message = problem;
-      return this.render();
-    }
-    this.open("cake");
-  }
-
-  /** The Seedswap hunt: clock, pick-up by walking, packet markers and the end (placeholder). */
-  private updateHunt(dt: number): void {
-    const s = this.hunt;
-    if (!s) return;
-    const ts = this.map.tileSize;
-    const f = festivalDayToday(this.state.day.clock.day);
-    if (!this.huntGfx) {
-      this.huntGfx = this.add.graphics().setDepth(850);
-      this.uiCamera.ignore(this.huntGfx);
-      const { width } = this.scale.gameSize;
-      this.huntText = this.add
-        .text(width / 2, 48, "", { fontSize: "18px", color: "#ffffff" })
-        .setOrigin(0.5, 0)
-        .setScrollFactor(0)
-        .setDepth(2000);
-      this.cameras.main.ignore(this.huntText);
-    }
-    const here = tileOf(this.pos, PLAYER, ts);
-    pickUpPacket(s, here.x, here.y);
-    tickHunt(s, dt);
-    this.huntGfx.clear().fillStyle(0xf0d040, 1);
-    for (const t of s.packets)
-      this.huntGfx.fillRect(t[0] * ts + 4, t[1] * ts + 4, ts - 8, ts - 8);
-    this.huntText?.setText(huntLine(s));
-    if (s.status === "running" || !f) return;
-    this.message = huntEndLine(f, s) ?? "";
-    const won = awardHuntPrize(this.state, s);
-    if (won)
-      this.message +=
-        ` ${won.hat ? `You get the ${hatById(won.hat)?.name ?? "hat"}.` : ""}${won.packet ? " You get a rare seed packet." : ""}`.replace(
-          / +/g,
-          " ",
-        );
-    finishHunt(this.state, f, s);
-    this.huntGfx.destroy();
-    this.huntText?.destroy();
-    this.huntGfx = this.huntText = this.hunt = undefined;
-    this.render();
-  }
-
-  /** The Feast gift exchange lantern prop (note 105), on the Feast's map (the square or the hall). */
-  drawFeastLantern(): void {
-    this.lanternGfx?.destroy();
-    this.lanternGfx = undefined;
-    const ts = this.map.tileSize;
-    const lit = lanternTile(
-      this.state,
-      this.mapId,
-      hallRestored(this.state.hall),
-    );
-    if (lit) {
-      const cx = lit[0] * ts + ts / 2;
-      const cy = lit[1] * ts + ts / 2;
-      const g = this.add.graphics().setDepth(DEPTH.above);
-      this.uiCamera.ignore(g);
-      g.fillStyle(0xffd860, 0.3)
-        .fillCircle(cx, cy, ts * 0.7)
-        .fillStyle(0x7a5230, 1)
-        .fillRect(cx - 1, lit[1] * ts, 2, ts / 2 - 4)
-        .fillStyle(0xf0a030, 1)
-        .fillRoundedRect(cx - 5, cy - 5, 10, 12, 3)
-        .fillStyle(0xfff2a0, 1)
-        .fillRect(cx - 2, cy - 2, 4, 6);
-      this.lanternGfx = g;
-    }
-  }
-
-  /** Placeholder props on a festival map: tables, booths, villagers and the chest. */
-  drawFestivalProps(): void {
-    const ts = this.map.tileSize;
-    const colour: Record<string, number> = {
-      showing: 0x8b5a2b,
-      "festival-counter": 0xc0463a,
-      "festival-leave": 0xf0e8d0,
-      "hedge-chest": 0xe8c050,
-      "hedge-cart": 0x7a5230,
-    };
-    for (const s of this.map.services) {
-      const c =
-        s.kind === "sight"
-          ? s.id.startsWith("scare")
-            ? 0xe8802a
-            : s.id.startsWith("sign")
-              ? 0xf0c860
-              : 0x4a9fd8
-          : colour[s.kind];
-      if (c === undefined) continue;
-      this.ground
-        .fillStyle(c, 1)
-        .fillRect(s.x * ts + 1, s.y * ts + 2, ts - 2, ts - 4);
-      if (s.kind === "showing" && s.id === "judge")
-        this.ground
-          .fillStyle(0x203a8a, 1)
-          .fillRect(s.x * ts + 4, s.y * ts + 4, ts - 8, ts - 8);
-    }
-  }
-
-  /** The farm sign: says where and when today's festival is. The player walks there (note 82 decision 11). */
-  private openFestival(): void {
-    const clock = this.state.day.clock;
-    this.message = festivalSignLine(clock.day, clock.minutes);
-    this.render();
   }
 
   /** Eat the held item, if it is food. */
@@ -3359,7 +3055,7 @@ export class FarmScene extends Phaser.Scene {
     return true;
   }
 
-  private render(): void {
+  render(): void {
     drawGround(this);
     // drawRooms clears the wash layer, so everything else draws after it.
     drawRooms(this);
