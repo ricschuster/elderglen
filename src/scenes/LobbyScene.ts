@@ -23,6 +23,7 @@ import { makeNativePipe } from "../net/nativepipe";
 import { GuestSession, setSession } from "../net/session";
 import { START } from "../core/maps";
 import { STATE_KEY } from "./state";
+import type { LobbyTransport } from "../net/transport";
 
 const OUR_VERSION = PROTOCOL_VERSION;
 const LAST_HOST_KEY = "elderglen.lastHost";
@@ -35,7 +36,7 @@ const KEYS = ["1234567890", "abcdef:.-/"];
  * The installed Android app lists games announced on the network (UDP, ADR 0015); a
  * browser tab cannot listen, so it types the address.
  */
-export const lobbyTransport = new SocketTransport(
+export const lobbyTransport: LobbyTransport = new SocketTransport(
   makeNativePipe
     ? makeHostStarter({
         makePipe: makeNativePipe,
