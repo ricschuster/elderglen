@@ -4,8 +4,6 @@ import {
   BARN_FOOTPRINT,
   BARN_MAP,
   BARN_MAX_TIER,
-  barnBlocks,
-  stableBlocks,
   stableHome,
   siloBlocks,
   siloSite,
@@ -24,7 +22,6 @@ import {
   INCUBATOR_TIER,
   COOP_MAP,
   GROW_DAYS,
-  coopBlocks,
   coopSite,
   coopVisibleTier,
 } from "../core/animals";
@@ -32,7 +29,6 @@ import { DEBUG_TOOLS } from "../core/debugtools";
 import {
   FISH_POND,
   POND_FISH_SPOTS,
-  pondBlocks,
   pondCovering,
   pondLook,
   pondUse,
@@ -92,7 +88,7 @@ import {
 } from "../core/parade";
 import { stageOf as fruitStageOf } from "../core/fruittrees";
 import { teaStageOf } from "../core/teabush";
-import { potAt, potLook, potsOf } from "../core/gardenpot";
+import { potLook, potsOf } from "../core/gardenpot";
 import type { GameState } from "../core/save";
 import { cycle, findTool, heldAt, nextRow, toolbarSize } from "../core/toolbar";
 import { pendingChoice } from "../core/professions";
@@ -128,9 +124,8 @@ import {
 import { festivalHolds } from "../core/festivalroutes";
 import { marketHolds, stallOf } from "../core/nightmarket";
 import { holdsOf } from "../core/worldflags";
-import { gateOpen, gateShutLine, parseGate } from "../core/gates";
+import { gateShutLine, parseGate } from "../core/gates";
 import { mendTideBridge, TIDE_BRIDGE_WOOD } from "../core/tidebridge";
-import { logCleared } from "../core/logs";
 import { CAMP_LINE, HERMIT_LINE } from "../core/forestfolk";
 import { SPIRIT_STATUE, giveToSpirit, hermitStock } from "../core/elderfruit";
 import { STONEKEEPER_LINE } from "../core/smith";
@@ -165,7 +160,6 @@ import { mapWithDoors } from "../core/placement";
 import { farmMapOf, isFarmMap, resolveMapId } from "../core/farmtypes";
 import {
   dismountSafely,
-  horseBlocks,
   horseName,
   horseTile,
   mount,
@@ -438,6 +432,14 @@ import {
   isGuest,
   type NetSession,
 } from "../net/session";
+import {
+  gateShut,
+  outdoorSoil,
+  outdoorWorld,
+  tileBlocked,
+  tileBlockedNoHorse,
+  type BlockWorld,
+} from "../core/blocking";
 import { RemotePlayerLayer } from "./remoteplayers";
 import { installDebugHooks, type DebugContext } from "./farm-debug";
 
@@ -1245,9 +1247,22 @@ export class FarmScene extends Phaser.Scene {
    * a horse left standing there (never one that is ridden or at the stable).
    */
   private tileBlocked(x: number, y: number): boolean {
-    return (
-      this.tileBlockedNoHorse(x, y) || horseBlocks(this.state, this.mapId, x, y)
-    );
+    return tileBlocked(this.blockWorld(), x, y);
+  }
+
+  private tileBlockedNoHorse(x: number, y: number): boolean {
+    return tileBlockedNoHorse(this.blockWorld(), x, y);
+  }
+
+  /** What `core/blocking.ts` reads of this scene. */
+  private blockWorld(): BlockWorld {
+    return {
+      state: this.state,
+      map: this.map,
+      mapId: this.mapId,
+      rocks: this.rocks(),
+      festivalShut: (x, y) => this.tileShutForFestival(x, y),
+    };
   }
 
   /** What the horse may and may not stand on here (note 59, "Blocking"). */
@@ -1275,39 +1290,6 @@ export class FarmScene extends Phaser.Scene {
     };
   }
 
-  private tileBlockedNoHorse(x: number, y: number): boolean {
-    const log = this.map.logAt(x, y);
-    return (
-      this.map.isBlocked(x, y) ||
-      this.gateShut(x, y) ||
-      this.tileShutForFestival(x, y) ||
-      (log !== undefined && !logCleared(this.state, log)) ||
-      (this.outdoorWorld && this.state.trees.blocks(x, y)) ||
-      !!this.store.fruitTrees.at(x, y) ||
-      !!this.store.teaBushes.at(x, y) ||
-      !!this.rocks()?.at(x, y) ||
-      this.furnaceAt(x, y) ||
-      coopBlocks(this.state, this.mapId, x, y) ||
-      barnBlocks(this.state, this.mapId, x, y) ||
-      siloBlocks(this.state, this.mapId, x, y) ||
-      stableBlocks(this.state, this.mapId, x, y) ||
-      pondBlocks(this.state, this.mapId, x, y) ||
-      ((this.mapId === COOP_MAP || this.mapId === BARN_MAP) &&
-        animalSlots(this.state, this.mapId === COOP_MAP ? "coop" : "barn").some(
-          (s) => s.x === x && s.y === y,
-        )) ||
-      this.state.furniture.blocks(this.mapId, x, y) ||
-      (this.mapId === CELLAR_MAP && this.state.casks.at(x, y)) ||
-      !!this.state.chests.at(this.mapId, x, y) ||
-      !!this.state.placed.covering(lightMapKey(this.mapId), x, y) ||
-      (isFarmMap(this.mapId) && !!rodAt(this.state, x, y)) ||
-      this.map.serviceAt(x, y)?.kind === "camp-chest" ||
-      !!this.store.sprinklers.at(x, y) ||
-      !!potAt(this.state, this.map, x, y) ||
-      (this.outdoorSoil && !!this.state.machines.at(x, y))
-    );
-  }
-
   /** The sprinklers, trees and soil of the map the player is on (`mapstore.ts`). */
   private get store() {
     return storeOf(this.state, this.map.indoors);
@@ -1315,12 +1297,12 @@ export class FarmScene extends Phaser.Scene {
 
   /** True on a map with the farm's soil: its trees, weeds, forage and machines live here. The greenhouse has its own soil. */
   private get outdoorSoil(): boolean {
-    return this.map.hasSoil && !this.map.indoors;
+    return outdoorSoil(this.map);
   }
 
   /** True outdoors on the farm or an area map: the map whose trees, rocks and forage are the state's. */
   private get outdoorWorld(): boolean {
-    return !this.map.indoors && (this.map.hasSoil || isAreaMap(this.mapId));
+    return outdoorWorld(this.map, this.mapId);
   }
 
   /** The tile under a screen point, in the world. */
@@ -2068,16 +2050,9 @@ export class FarmScene extends Phaser.Scene {
     );
   }
 
-  /** True when walking onto this tile of the current map is shut by a festival setting up. */
   /** True on a gated bedroom door the player has not earned the hearts for yet. */
   private gateShut(x: number, y: number): boolean {
-    const g = this.map.gateAt(x, y);
-    if (!g) return false;
-    const rule = parseGate(g.rule);
-    if (!rule) return false;
-    return !gateOpen(this.mapId, rule, (id) =>
-      this.state.friendship.hearts(id),
-    );
+    return gateShut(this.state, this.map, this.mapId, x, y);
   }
 
   /** The last tile checked for walking into a festival held in place. */
@@ -2321,13 +2296,6 @@ export class FarmScene extends Phaser.Scene {
     return isFarmMap(this.mapId) || isAreaMap(this.mapId)
       ? this.state.rocks
       : undefined;
-  }
-
-  /** True on the furnace tile once the smith has given it. */
-  private furnaceAt(x: number, y: number): boolean {
-    return (
-      this.state.furnace.gifted && this.map.serviceAt(x, y)?.kind === "furnace"
-    );
   }
 
   private select(index: number): void {
