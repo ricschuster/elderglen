@@ -240,14 +240,11 @@ import {
   resumeSave,
   setSpotProvider,
   takeSaveNotice,
-  useSlot,
 } from "./storage";
 import { ResumeGate } from "../core/records";
 import { serialize, type ResumeSpot } from "../core/save";
 import { DIAMOND, monsterDiamond } from "../core/gems";
 import { spawnTableOf } from "../core/spawns";
-import { MAX_SAVE_SLOTS } from "../core/slots";
-import { buildStage, stageList } from "../core/stages";
 import { hallRestored } from "../core/bundles";
 import {
   healthShown,
@@ -418,8 +415,6 @@ import {
   GRASS_KEY,
   WEED_KEY,
 } from "./art";
-import { giveItem, giveMoney } from "../core/debug";
-import { applyStatePatch, type StatePatch } from "../core/statepatch";
 import { pickupRadius } from "../core/ground";
 import { Hud } from "./hud";
 import { PANEL_BOTTOM, PANEL_LEFT_BASE } from "./hudpanel";
@@ -444,6 +439,7 @@ import {
   type NetSession,
 } from "../net/session";
 import { RemotePlayerLayer } from "./remoteplayers";
+import { installDebugHooks, type DebugContext } from "./farm-debug";
 
 /** Real milliseconds per 10 game minutes (Stardew pace). */
 const TICK_MS = 7000;
@@ -1052,118 +1048,43 @@ export class FarmScene extends Phaser.Scene {
     );
     this.render();
 
-    if (DEBUG_TOOLS)
-      (window as unknown as { farmGive: unknown }).farmGive = (
-        id: string,
-        n: number,
-      ) => {
-        const result = giveItem(this.state, id, n);
-        this.render();
-        return result;
-      };
-    if (DEBUG_TOOLS)
-      (window as unknown as { farmMoney: unknown }).farmMoney = (n: number) => {
-        giveMoney(this.state, n);
-        this.render();
-      };
-    // Dev hook for the playtest bot (#333): walk to a tile by the tap route, so
-    // the bot does not time key holds. Returns false when there is no route.
-    if (DEBUG_TOOLS)
-      (window as unknown as { farmWalk: unknown }).farmWalk = (
-        x: number,
-        y: number,
-      ) => {
+    if (DEBUG_TOOLS) installDebugHooks(this.debugContext());
+  }
+
+  /** What the dev hooks need from this scene (`farm-debug.ts`). */
+  private debugContext(): DebugContext {
+    return {
+      state: () => this.state,
+      restart: (data) => this.scene.restart(data),
+      setState: (state) => this.registry.set(STATE_KEY, state),
+      render: () => this.render(),
+      mapId: () => this.mapId,
+      entryName: () => this.entryName,
+      startMap: START.map,
+      startEntry: START.entry,
+      mapSize: () => ({ width: this.map.width, height: this.map.height }),
+      tileBlocked: (x, y) => this.tileBlocked(x, y),
+      cancelTap: () => this.cancelTap(),
+      walkTo: (x, y) => {
         this.cancelTap();
         const plan = this.planAt({ x, y });
         if (!plan) return false;
         this.tapPath = plan.path;
         return true;
-      };
-    // Dev hook for the playtest bot: jump to a chosen state in one call
-    // (`core/statepatch.ts`), then restart the scene (at the entry it was
-    // entered by) so the HUD and map match.
-    if (DEBUG_TOOLS)
-      (window as unknown as { farmState: unknown }).farmState = (
-        patch: StatePatch,
-      ) => {
-        const result = applyStatePatch(this.state, patch);
-        const data: SceneData = {
-          map: patch.map ?? this.mapId,
-          entry: patch.map ? (patch.entry ?? "door") : this.entryName,
-        };
-        this.scene.restart(data);
-        return result;
-      };
-    // Dev hook (note 42, Stages): put a NEW game at a named stage, in the last
-    // save slot so no real save is overwritten, and restart the scene.
-    if (DEBUG_TOOLS) {
-      const w = window as unknown as Record<string, unknown>;
-      w.farmStages = () => stageList().map((s) => s.id);
-      w.farmStage = (name: string) => {
-        const r = buildStage(name);
-        if (!r) return { problems: [`unknown stage ${name}`] };
-        useSlot(MAX_SAVE_SLOTS);
-        this.registry.set(STATE_KEY, r.state);
-        // Always name the map: restart(undefined) would keep the current one
-        // (a stage called inside the library would leave you there).
-        this.scene.restart(
-          r.map
-            ? { map: r.map, entry: r.entry ?? "door" }
-            : { map: START.map, entry: START.entry },
-        );
-        return { problems: r.problems };
-      };
-    }
-    // Dev hook for the playtest bot: an item's display name, to find its row
-    // in a shop list by label.
-    if (DEBUG_TOOLS)
-      (window as unknown as { farmItemName: unknown }).farmItemName = (
-        id: string,
-      ) => itemById(id)?.name;
-    // Dev hook for the playtest bot (#333): every tile the farmer cannot stand
-    // on now (walls, trees, rocks, machines, furniture), as "x,y" strings.
-    if (DEBUG_TOOLS)
-      (window as unknown as { farmBlocked: unknown }).farmBlocked = () => {
-        const out: string[] = [];
-        for (let y = 0; y < this.map.height; y++)
-          for (let x = 0; x < this.map.width; x++)
-            if (this.tileBlocked(x, y)) out.push(`${x},${y}`);
-        return out;
-      };
-    if (DEBUG_TOOLS)
-      (window as unknown as { farmDebug: () => unknown }).farmDebug = () => ({
+      },
+      snapshot: () => ({
         pos: this.pos,
-        tile: tileOf(this.pos, PLAYER, ts),
+        tile: tileOf(this.pos, PLAYER, this.map.tileSize),
         facing: this.facing,
         walking: this.tapPath.length > 0,
         selected: this.selected,
         target: this.aimTile(),
-        map: this.mapId,
-        exit: this.exitAtAim()?.id ?? null,
+        exit: this.exitAtAim(),
         zoom: this.cameras.main.zoom,
-        energy: this.state.day.energy.current,
-        plots: [...this.state.farm.each()].length,
-        trees: this.state.trees.count,
-        wood: this.state.inventory.count("wood"),
-        seeds: this.state.inventory.count("parsnip-seed"),
-        harvested: this.state.inventory.count("parsnip"),
         message: this.message,
-        day: this.state.day.clock.day,
-        money: this.state.money,
-        houseTier: this.state.houseTier,
-        houseBuild: this.state.houseBuild ?? null,
-        mounted: this.state.animals.mounted,
-        horse: this.state.animals.horse,
-        health: this.state.combat.health.current,
-        creatures: (this.fightState()?.creatures ?? []).map((c) => ({
-          uid: c.uid,
-          kind: c.kind,
-          x: c.x,
-          y: c.y,
-          hp: c.hp,
-          state: c.state,
-        })),
-      });
+        creatures: this.fightState()?.creatures ?? [],
+      }),
+    };
   }
 
   update(_time: number, delta: number): void {
