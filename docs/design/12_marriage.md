@@ -264,7 +264,7 @@ Settled with the owner after the shell build. Slice 4 and 5 text above is update
 
 ## Two-player wedding and divorce steps (draft, owner answered Q1 to Q4 2026-11-18)
 
-Draft for M4. Nothing here is built. It turns the player marriage rulings of note 53 ("Player marriage, first
+Draft for M4. Core built 2026-11-19 (`src/core/playermarriage.ts`, intents in `roomworld.ts`, `tests/playermarriage.test.ts`): proposal, accept, wedding after night 3, home cabin, fee, ledger divorce. No scenes yet. It turns the player marriage rulings of note 53 ("Player marriage, first
 rulings") into steps. Stardew facts are from the saved Multiplayer page (read 2026-11-18) or from memory, as marked.
 The page says: players marry each other with a craftable Wedding Ring, a married pair get the Stardrop in a purple
 giftbox by their home bed, children go in a home both players sleep in, and an NPC can be married by one player only.
