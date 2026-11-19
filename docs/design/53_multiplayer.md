@@ -63,6 +63,15 @@ code.
 - **A dropped guest does not stall the day (decided 2026-11-02, ours).** A
   guest who disconnects counts as in bed for the day end, and their character is
   put in their cabin. They rejoin as the same character by their key.
+- **Day end rules for 2 to 8 players (placeholder, 2026-11-18, ours; `src/core/dayend.ts`).** Only connected
+  players count. The day ends when every connected player is in bed (after a `settleMs` of 1500 ms of steady
+  all-asleep, so the last player's bed is seen), or at the day limit, when everyone still up passes out with the
+  single player cost. Dropped guests are skipped, so a host alone ends the day by sleeping. Getting out of bed
+  before the end is allowed and restarts the settle. A lone player holding everyone up for `nagAfterMs` (30 s)
+  only shows a hint; nobody is forced. A guest who rejoins is awake in their cabin with their record restored by
+  id, counts again at once, and gets the full farm (as on any join); `needsFullSnapshot(seenDay, day)` is the
+  rule for the day-change case. The Room calls `RoomWorld.playerDropped` and `playerRejoined`, which the adapter
+  wires to `DayEndTracker.drop` and `rejoin` and to moving the character to the cabin.
 - **Menus do not pause the clock in a multiplayer game (decided 2026-11-02,
   Stardew, checked).** Note 49's pause is a single-player rule, since one
   player cannot stop the others.
@@ -166,12 +175,57 @@ not built in M4. The pros and cons, so the idea is not lost:
    host and a guest talk on a real router, with a Node test host. Include a
    load check of 8 players against a tablet host.
 1. Split `GameState` into world and players, still single player, with tests.
+   **Built (2026-11-18, issue 964).** `src/core/players.ts`: `PlayerId`, `LOCAL_PLAYER` ("p1"),
+   `PlayerRecord` (money, inventory, skills, toolTiers, canWater, energy), `Players`
+   (`add`, `get`, `remove`, `local`, `ids`, `each`) and `localView`. `save.ts`: `WorldState` is the
+   shared part; `GameState` is `WorldState` plus `players`, with `money`, `inventory`, `skills`,
+   `toolTiers` and `canWater` kept as accessors onto `players.local`, so existing code is unchanged.
+   Left for later steps: the local record's `energy` is the same object as `day.energy` (give each
+   player their own when the day end is shared, step 5); still per player but still in `WorldState`:
+   journal (quests, mail, friendship, marriage), equipment, wardrobe, cabin and bed, `toolOrder`,
+   `elderfruit`, `combat`, `galleryClaimed`. Save format: the save still writes the flat single-player
+   fields. Note 52's version bump needs a `players` list (id, name, record), a wallet mode, and
+   a read path that loads the old flat fields as player "p1".
 2. The `Room` and the protocol in `src/core/` and `src/net/`, no socket.
+   **Built (2026-11-18, issue 965).** `src/core/room.ts`: `Room` (`join(name, rejoinId?)`, `disconnect`,
+   `receive`, `hostIntent`, `tick`, `drain`, `position`, `ids`, `connectedIds`) over a `RoomWorld` adapter
+   (`day`, `snapshot`, `apply`, optional `step`, `addPlayer`). `src/core/protocol.ts` (re-exported by
+   `src/net/protocol.ts`): `ClientMsg`, `ServerMsg`, `Intent`, `encode`, `decodeClient`. Delta format: a `snap`
+   of positions every tick (with the jam `pass` ids), world changes as `applied` intents sent to everyone,
+   `rejected` to the sender only, the full `farm` text only on join or rejoin and on a day change for a guest
+   marked `away`; other guests get a small `day` message. Tests: `tests/room.test.ts`. Left: a `RoomWorld`
+   adapter over `GameState`, with the real intent kinds (step 3 and later); a position send rate and
+   interpolation on the guest; the socket (step 3).
 3. The socket, the Node test host, and a guest that joins and walks.
+   **Built (2026-11-18, issue 966).** `src/net/wsserver.ts` (minimal Node WebSocket server), `src/net/host-node.ts`
+   (`NodeHost.start({world, port?, tickHz?, maxPlayers?, latencyMs?})` runs a `Room` over real sockets; `room`,
+   `port`, `close()`), `src/net/client.ts` (`GuestClient.connect(url, {name, rejoinId?})`, `sendPos`, `sendIntent`,
+   `leave`, `close`; standard WebSocket, so it runs in Node 22 and browsers), `src/net/sockettransport.ts` (real
+   `LobbyTransport`; hosting is injected, `canHost` false in a browser). Added a `refused` server message (full, id in
+   use). `tests/socket.test.ts` (localhost, random port): join with farm, walk seen by a second guest, intents,
+   drop and rejoin as the same id, refusals, junk input, lobby seam, host plus 8 guests (tick work under 5 ms), and the
+   jam rule against the real Room with 40 ms each way: two blockers freed in under 1.5 s and the host holds the passing
+   positions. Left: `LobbyScene` still uses `FakeTransport` (swap to `SocketTransport` with a hosting factory in step 4);
+   the `GameState` `RoomWorld` adapter; the scene's "blocked by player X" detection; guest interpolation; a run on a
+   real LAN (needs hands). `maxPlayers` counts the host, so host plus 8 guests needs 9.
 4. Host and Join screens, the game list, and the typed address.
 5. Shared day end and a dropped guest.
 6. Cabins (free at start, bought otherwise) and the join-needs-a-cabin rule.
-7. The money mode and per-player shipping proceeds.
+   **Adapter built (2026-11-18, #965, #968, #969).** `src/core/roomworld.ts`: `GameRoomWorld(g, opts)` is a
+   `RoomWorld` over a real `GameState`. `admit` runs `joinNeedsCabin` and refuses with its reason (the new
+   optional `RoomWorld.admit`; `Room.refusal` carries the reason to the `refused` message, now also
+   "no-free-cabin", shown to the guest as "refused"); `onCabinRefused` and `cabinOffer` tell the host, who
+   calls `buyCabin(site)` (100 gold from the host's wallet). `addPlayer` makes a `PlayerRecord` with its own
+   `Energy`, `snapshot` is `serialize`, `playerDropped` and `playerRejoined` drive `DayEndTracker`. Intents:
+   `ship` (to the sender's bin lines, paid per wallet mode at night), `spend` (from `players.balance`), `sleep`,
+   `wake`, `buy-cabin` (host only); anything else is rejected. `step` calls `tracker.check`; at the day end guests
+   who pass out pay the single player cost from their wallet, guests wake with full or 75% energy, then `sleep()`
+   runs for the world (`lastReport`, `lastPassOuts`). Tests: `tests/roomworld.test.ts` (NodeHost over a real
+   socket, two guests). Left: the cabin book is not in the save; moving a dropped guest's character to their
+   cabin; guest energy is not yet spent by real actions or saved back as the day's; more intent kinds (till,
+   plant, water, harvest, buy, sell); ship multipliers (professions) for guests; the host's own wake/sleep
+   from the scene; cabin `blocked` and area from the real farm map.
+7. The money mode and per-player shipping proceeds. **Built (2026-11-18, issue 972).** `WalletMode` ("shared" default | "separate"), chosen by `newGame(farmType, walletMode)`; `Players.wallet/balance/pay`; the local `money` accessor follows the wallet. Bin lines carry `by`; `bin.settle(g.players)` pays per shipper. Save version 4 (note 52). Host screen wallet choice (button cycles shared/separate, passed as `HostOptions` through `startHosting`; `src/net/hostoptions.ts`) and the bin and shipping summary split (`src/core/settlementsplit.ts`) built 2026-11-18. Left: a wallet choice on the new-game screen (no obvious place yet), wiring the option into the real host starter, guest purchases using `balance`.
 8. Native hosting in the wrapper, then the tablet plugin.
 
 ## For later
@@ -293,6 +347,21 @@ level only. Nothing is built, and the build waits for M4.
   player handing in and still pays every player. This is not checked against Stardew.
 - **Festivals (notes 82 and 14):** counts and joining for the Feast, the gift exchange (note 105) and the in-place
   festivals are still open for the spike, not settled here.
+
+## Cabin rules (step 6, 2026-11-18, `src/core/cabins.ts`)
+
+Pure rules and tests; no scene yet. Labelled placeholders, set where the note was open:
+
+- **Cap:** 7 cabins beside the host's house (8 players). A joiner past the cap is refused as "full".
+- **Footprint:** 4 by 3 tiles, placeholder until the note 85 art. Placement is free (SC-120): any clear
+  tiles, no overlap with another cabin; the caller says which tiles are blocked.
+- **Default spot (multiplayer start):** the first fitting site in row-major order inside the farm's open
+  cabin area (note 55). If none fits the joiner is refused as "no free cabin".
+- **Join in a converted game:** takes a cabin the host already bought; with none the guest is refused
+  "no free cabin" and told so, and the host is offered the 100 gold purchase.
+- **A returning key** gets the same cabin. A banned player's cabin stays.
+- **Demolish** returns the evicted occupant's key so things go to a chest (Stardew). The vacated cabin of a
+  player marriage stays, owned by the mover, so a divorce has a place to return to.
 
 ## Checked against Stardew (2026-11-02)
 

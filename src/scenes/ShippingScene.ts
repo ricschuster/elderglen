@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { itemById } from "../core/items";
 import type { SleepReport } from "../core/sleep";
+import { settlementSplitText } from "../core/settlementsplit";
 import { WINDOW_FILL } from "./panel";
 
 /** Item lines shown before "and N more". */
@@ -59,6 +60,11 @@ export class ShippingScene extends Phaser.Scene {
         color: "#f2d16b",
       })
       .setOrigin(0.5);
+    const split = settlementSplitText(this.report.shipped.byPlayer);
+    if (split)
+      this.add
+        .text(480, 450, split, { fontSize: "16px", color: "#d8e8c8" })
+        .setOrigin(0.5);
     this.add
       .rectangle(480, 478, 240, 48, 0x3f7d3a, 1)
       .setStrokeStyle(2, 0xffffff, 0.8)

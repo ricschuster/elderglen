@@ -104,13 +104,13 @@ describe("save", () => {
     expect(g.marriage.stage).toBe("none");
     expect(g.marriage.spouse).toBeNull();
     expect(g.marriage.children).toBe(0);
-    expect(SAVE_VERSION).toBe(3);
+    expect(SAVE_VERSION).toBe(4);
   });
 
   it("rejects versions outside the supported range and bad marriage data", () => {
     const raw = JSON.parse(serialize(newGame()));
     expect(deserialize(JSON.stringify({ ...raw, version: 1 }))).toBeUndefined();
-    expect(deserialize(JSON.stringify({ ...raw, version: 4 }))).toBeUndefined();
+    expect(deserialize(JSON.stringify({ ...raw, version: 5 }))).toBeUndefined();
     const bad = deserialize(
       JSON.stringify({
         ...raw,

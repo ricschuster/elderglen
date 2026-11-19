@@ -62,6 +62,16 @@ export class TitleScene extends Phaser.Scene {
       .text(480, 456, "", { fontSize: "16px", color: "#ffe9a0" })
       .setOrigin(0.5);
 
+    this.button(
+      840,
+      46,
+      "Play together",
+      0x4a5a7a,
+      () => this.scene.start("lobby"),
+      200,
+      44,
+      18,
+    );
     const pages = Math.ceil(slots.length / PAGE_SIZE);
     const lastPage = Math.floor((last - 1) / PAGE_SIZE);
     const page = Math.min(pages - 1, Math.max(0, titlePage ?? lastPage));

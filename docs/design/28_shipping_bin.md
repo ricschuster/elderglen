@@ -86,3 +86,10 @@ for the player who needs money now to buy seeds before planting.
 - The Shipped today list takes back a whole line (Take all) or one (Take 1).
 
 No open items.
+
+## Several players (built 2026-11-18, issue 972)
+
+Each bin line records who shipped it (`by`; lines of different players do not merge). `settle(players)` pays each
+shipper their own lines, into the host's pooled wallet when the wallet mode is shared. `Settlement.byPlayer` gives
+the split for the summary. Single player is unchanged. The bin panel and the Shipped summary print the split
+(`settlementSplitText`, placeholder labels Host and Player N) only when two or more players have proceeds.
