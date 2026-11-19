@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed (2026-11-19, for the owner's review; steps 1 and 3 built the same day). Builds on ADR 0008, which picked
+Accepted (2026-11-19, owner review; steps 1 and 3 built and measured the same day). Builds on ADR 0008, which picked
 Electron on desktop and Capacitor on tablets, and on the M4 spike results (note 53,
 "M4 spike results, tablet runs"). Unblocks #973 and #976.
 
