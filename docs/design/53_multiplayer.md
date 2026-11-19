@@ -63,6 +63,15 @@ code.
 - **A dropped guest does not stall the day (decided 2026-11-02, ours).** A
   guest who disconnects counts as in bed for the day end, and their character is
   put in their cabin. They rejoin as the same character by their key.
+- **Day end rules for 2 to 8 players (placeholder, 2026-11-18, ours; `src/core/dayend.ts`).** Only connected
+  players count. The day ends when every connected player is in bed (after a `settleMs` of 1500 ms of steady
+  all-asleep, so the last player's bed is seen), or at the day limit, when everyone still up passes out with the
+  single player cost. Dropped guests are skipped, so a host alone ends the day by sleeping. Getting out of bed
+  before the end is allowed and restarts the settle. A lone player holding everyone up for `nagAfterMs` (30 s)
+  only shows a hint; nobody is forced. A guest who rejoins is awake in their cabin with their record restored by
+  id, counts again at once, and gets the full farm (as on any join); `needsFullSnapshot(seenDay, day)` is the
+  rule for the day-change case. The Room calls `RoomWorld.playerDropped` and `playerRejoined`, which the adapter
+  wires to `DayEndTracker.drop` and `rejoin` and to moving the character to the cabin.
 - **Menus do not pause the clock in a multiplayer game (decided 2026-11-02,
   Stardew, checked).** Note 49's pause is a single-player rule, since one
   player cannot stop the others.

@@ -22,6 +22,10 @@ export interface RoomWorld {
   step?(dtMs: number): void;
   /** A guest joined: make their player record. Optional. */
   addPlayer?(id: PlayerId, name: string): void;
+  /** A guest dropped: count them as in bed and put their character in their cabin (note 53). Optional. */
+  playerDropped?(id: PlayerId): void;
+  /** A dropped guest came back: their record is restored by id. Optional. */
+  playerRejoined?(id: PlayerId): void;
 }
 
 interface Member {
@@ -100,6 +104,7 @@ export class Room {
     if (m) {
       m.connected = true;
       m.name = name || m.name;
+      this.world.playerRejoined?.(m.id);
     } else {
       if (this.members.size >= this.maxPlayers) return undefined;
       const id = `p${this.nextNum++}`;
@@ -130,6 +135,7 @@ export class Room {
     if (!m || id === LOCAL_PLAYER || !m.connected) return;
     m.connected = false;
     m.pass = [];
+    this.world.playerDropped?.(id);
     this.broadcast({ t: "left", id }, id);
   }
 
