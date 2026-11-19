@@ -37,12 +37,18 @@ import {
   isPlaceholder,
   mapKind,
   placedObjects,
+  problemMapId,
   problemPlace,
   registryProblems,
   tileColour,
   viewBoxAt,
   type PlacedObject,
 } from "../core/layoutview";
+import {
+  layoutWarnings,
+  walkTime,
+  type WalkTime,
+} from "../core/layoutwarnings";
 import { mapFiles } from "../content/maps";
 
 /**
@@ -75,6 +81,8 @@ const state = {
   interior: false,
   waterKind: "river",
   eraseLayer: "collision",
+  timing: false,
+  timePoints: [] as { x: number; y: number }[],
   paint: undefined as { x: number; y: number } | undefined,
 };
 
@@ -94,6 +102,7 @@ const ctx = canvas.getContext("2d")!;
 
 let problems: string[] = [];
 let byMap = groupProblems(problems);
+let warnings: string[] = [];
 let reg: MapRegistry | undefined;
 const json = (): TiledMapJson => work[state.id]!;
 
@@ -103,12 +112,14 @@ function recompute(now = false): void {
   clearTimeout(timer);
   const run = () => {
     problems = registryProblems(work);
+    warnings = [];
     byMap = groupProblems(problems);
     try {
       reg = MapRegistry.fromTiled(work);
     } catch {
       reg = undefined;
     }
+    if (reg) warnings = layoutWarnings(reg, work);
     renderList();
     renderProblems();
     draw();
@@ -485,6 +496,16 @@ function renderSide(): void {
         (v) => void (v ? state.holds.add(c) : state.holds.delete(c)),
       );
   }
+  check("walk time (click two tiles)", state.timing, (v) => {
+    state.timing = v;
+    state.timePoints = [];
+    renderSide();
+  });
+  if (state.timing) {
+    const t = document.createElement("div");
+    t.textContent = timeText();
+    side.append(t);
+  }
   title("reach from entry");
   const r = document.createElement("select");
   r.add(new Option("(off)", "", false, state.reachFrom === ""));
@@ -509,6 +530,17 @@ function renderSide(): void {
   side.append(info);
 }
 
+function timeText(): string {
+  const [a, b] = state.timePoints;
+  if (!a) return "click the first tile";
+  if (!b) return `from ${a.x},${a.y}: click the second tile`;
+  const map = reg?.getWith(state.id, state.holds, state.tier);
+  const w: WalkTime | undefined = map ? walkTime(map, a, b) : undefined;
+  return w
+    ? `${a.x},${a.y} to ${b.x},${b.y}: ${w.tiles} tiles, ${w.foot.toFixed(1)} s on foot, ${w.horse.toFixed(1)} s on the horse`
+    : `${a.x},${a.y} to ${b.x},${b.y}: no walk between them`;
+}
+
 function renderProblems(): void {
   const box = el("problems");
   box.innerHTML = "";
@@ -525,6 +557,21 @@ function renderProblems(): void {
       );
       if (id !== undefined && id !== state.id) select(id);
       state.mark = problemPlace(json(), p);
+      draw();
+    };
+    box.append(row);
+  }
+  const wh = document.createElement("b");
+  wh.textContent = `${warnings.length} layout warnings (never block a save)`;
+  box.append(wh);
+  for (const w of warnings) {
+    const row = document.createElement("div");
+    row.style.color = "#ffd27a";
+    row.textContent = w;
+    row.onclick = () => {
+      const id = problemMapId(w);
+      if (id !== state.id && work[id]) select(id);
+      state.mark = problemPlace(json(), w);
       draw();
     };
     box.append(row);
@@ -596,6 +643,20 @@ function draw(): void {
     }
     ctx.lineWidth = 1;
   }
+  if (state.timing) {
+    ctx.strokeStyle = "#00e5ff";
+    ctx.fillStyle = "#00e5ff";
+    ctx.lineWidth = 2;
+    for (const p of state.timePoints) ctx.strokeRect(p.x * s, p.y * s, s, s);
+    const [a, b] = state.timePoints;
+    if (a && b) {
+      ctx.beginPath();
+      ctx.moveTo((a.x + 0.5) * s, (a.y + 0.5) * s);
+      ctx.lineTo((b.x + 0.5) * s, (b.y + 0.5) * s);
+      ctx.stroke();
+    }
+    ctx.lineWidth = 1;
+  }
   if (state.mark) {
     ctx.strokeStyle = "#fff";
     ctx.lineWidth = 3;
@@ -662,6 +723,13 @@ function addAtMouse(): void {
 
 canvas.addEventListener("mousedown", (e) => {
   const t = tileAt(e);
+  if (state.timing) {
+    state.timePoints =
+      state.timePoints.length === 1 ? [state.timePoints[0]!, t] : [t];
+    renderSide();
+    draw();
+    return;
+  }
   if (state.brush !== "") {
     state.paint = t;
     state.sel = undefined;

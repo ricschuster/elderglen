@@ -209,7 +209,7 @@ The owner took the recommendations on the three small points:
 
 ## Built status
 
-Slices 1 to 3 are built (issues #970, #971 and #984). Slices 4 and 5 are not.
+Slices 1 to 4 are built (issues #970, #971, #984 and #985). Slice 5 is not.
 
 Run `npm run dev` and open `/layout.html`. Files: `layout.html`, `src/layout/main.ts` (the page),
 `src/core/layoutview.ts` and `src/core/layoutedit.ts` (pure helpers, tested),
@@ -254,3 +254,13 @@ Simplest readings taken where the note was open:
   `water-N` object of the chosen kind; pad adds a `pad-N` region with `pad` true; soil fills
   `soil`; erase clears the chosen base layer. A missing `soil` or `paths` layer is created. New
   objects go on the first object layer with no tier suffix. Not yet used by the owner in a browser.
+- **Warnings and walk time (slice 4).** `src/core/layoutwarnings.ts` (pure, tested) and a warnings list under the
+  Problems in the page (amber, click to select the place). Built: exit width 3 to 7 (exits into an interior are doors and
+  exempt), path dead ends with no forage spot, service, entry or exit within 3 tiles, entry not directly below its door,
+  interior door not 1 by 1, service or door with fewer than 2 open tiles to use it from, crossing time between the two
+  farthest entries over 60 s on foot or 30 s on the horse. Not built, because the maps carry no data for them yet: main
+  path width, landmark in a view box, crowd doors, festival start spots, interior aisle width. Walk time is the shortest
+  four way walk (trees solid, logs open, as `reachable`) at `RUN_SPEED` and `HORSE_SPEED` from `core/horse.ts` (5 and 6.6
+  tiles a second); the "walk time" box on the page takes two clicks and shows tiles and seconds. At those speeds no map
+  comes near the crossing limits (300 tiles on foot), so the limit may want a lower walking speed or a tile limit when
+  tuned. 66 warnings on the committed maps today, mostly benches and doors with one open side.
