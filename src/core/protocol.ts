@@ -49,7 +49,9 @@ export type ServerMsg =
   /** The day rolled over; guests who were present get this instead of the farm. */
   | { t: "day"; day: number }
   | { t: "joined"; player: PlayerInfo }
-  | { t: "left"; id: PlayerId };
+  | { t: "left"; id: PlayerId }
+  /** The join was turned down; the host then closes the socket. */
+  | { t: "refused"; reason: "full" | "in-use" };
 
 export interface PlayerInfo {
   id: PlayerId;

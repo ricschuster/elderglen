@@ -197,6 +197,17 @@ not built in M4. The pros and cons, so the idea is not lost:
    adapter over `GameState`, with the real intent kinds (step 3 and later); a position send rate and
    interpolation on the guest; the socket (step 3).
 3. The socket, the Node test host, and a guest that joins and walks.
+   **Built (2026-11-18, issue 966).** `src/net/wsserver.ts` (minimal Node WebSocket server), `src/net/host-node.ts`
+   (`NodeHost.start({world, port?, tickHz?, maxPlayers?, latencyMs?})` runs a `Room` over real sockets; `room`,
+   `port`, `close()`), `src/net/client.ts` (`GuestClient.connect(url, {name, rejoinId?})`, `sendPos`, `sendIntent`,
+   `leave`, `close`; standard WebSocket, so it runs in Node 22 and browsers), `src/net/sockettransport.ts` (real
+   `LobbyTransport`; hosting is injected, `canHost` false in a browser). Added a `refused` server message (full, id in
+   use). `tests/socket.test.ts` (localhost, random port): join with farm, walk seen by a second guest, intents,
+   drop and rejoin as the same id, refusals, junk input, lobby seam, host plus 8 guests (tick work under 5 ms), and the
+   jam rule against the real Room with 40 ms each way: two blockers freed in under 1.5 s and the host holds the passing
+   positions. Left: `LobbyScene` still uses `FakeTransport` (swap to `SocketTransport` with a hosting factory in step 4);
+   the `GameState` `RoomWorld` adapter; the scene's "blocked by player X" detection; guest interpolation; a run on a
+   real LAN (needs hands). `maxPlayers` counts the host, so host plus 8 guests needs 9.
 4. Host and Join screens, the game list, and the typed address.
 5. Shared day end and a dropped guest.
 6. Cabins (free at start, bought otherwise) and the join-needs-a-cabin rule.
