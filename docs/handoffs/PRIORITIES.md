@@ -28,14 +28,9 @@ Open, top to bottom:
 4. **Built to shell level 2026-11-16, left the owner's look:** control schemes (note 27; 1, 4 and 9 are real, SC-188), marriage (note 12; SC-201 to 203), chests and tools (notes 34, 49, 101 to 103), sim (55 of 100 finished by day 112, no drift).
 5. **#951: play M3b end to end.** A checklist plus the stage jumper (note 42: 38 stages, `window.farmStage(name)`, `--stage` in playtests). **Directed play ran 2026-11-17** on desktop and on the tablet (agents; findings fixed in the session PR, handoff 2026-11-17). Left: the owner's own look, the Diamond rates are now read from the saved pages (SC-135 closed, note 83 decision 23, build with the shrine Diamond) and the touch checks (done on the emulator). Tablet: `android:install -- --debug` gives the "Elderglen DBG" app (docs/android.md). Emulator touch checks passed 2026-11-18 (health bar, hot drink Take, gallery donation, Big Chest, stick scheme); left: finger feel (the owner's tablet). `touch.mjs` repair half done 2026-11-19 (stops at a hard-coded tree tile).
 
-Decided 2026-11-17: Hearthwell water stays all fishable (note 14); Import keeps the first empty slot, and the slot count should
-open past five later (note 52).
-
-Built 2026-11-17 and checks since (sweep, sim, stages): detail in `PRIORITIES_ARCHIVE.md`. Run `npx vitest run --maxWorkers=4` (the default worker count segfaults here). Next: the owner's play.
-
 Decided 2026-11-18: shrine score 21, Diamond sources (floor 120 drop, Crystalarium copies, ponds, no fishing chest), Feast caps 300 and 100; multiplayer rulings for shrine, gallery, orders and player marriage are in note 53; note 12 now has the two-player wedding and divorce steps (drafted 2026-11-18, owner decided: the wedding plays after night 3 with no wait for the partner, the proposer's cabin is home, the filer pays the fee, divorce at the hall ledger (30,5)). Build with M4.
 
-Cleanup 2026-11-18i: `npm run knip`, `npm run size`; #976, #977; `art.ts` and `animals.ts` splits after `FarmScene` (note 106). M4 built headless 2026-11-18h (note 53 built status): steps 1 to 3, 5 to 7, the Host and Join screen, and a RoomWorld adapter (#964 to #969, #972; wiring halves partial). Spike run on two real tablets 2026-11-19 (note 53): link, host load and soak fine, cap 8 stands. Left: #973 (wrapper ADR, SM-T500), game list discovery, real host starter, more intents, guest interpolation. Layout page built (#970, #971), not yet looked at in a browser. Save slots past five (cap 20, note 52). FarmScene split plan is note 106 (#904).
+Cleanup 2026-11-18i: `npm run knip`, `npm run size`; #976, #977; `art.ts` and `animals.ts` splits after `FarmScene` (note 106). M4 built headless 2026-11-18h (note 53 built status). **2026-11-19b:** ADR 0015 (Proposed) sets the host route; `SocketPipe`, `RoomHost`, the Java `ElderHost` plugin and UDP game list discovery are built and ran on the two real tablets (a tablet hosted 8; the Lobby lists and joins a tablet's game). **Next: connect the two in play** (handoff 2026-11-19b: session module, remote player layer in FarmScene, Title Host per slot), then #976 real host starter, the Electron pipe, `late-game-100` profile (36 fps on the SM-T500), finish `touch.mjs`. Needs hands: plugin soak, battery, a router that blocks broadcasts. Layout page built (#970, #971), not yet looked at. Save slots past five (note 52). FarmScene split plan is note 106 (#904).
 
 Alongside: the wiki (#910, note 100; built for every category, every item has a picture; text cleared for crops, fish, forage, items, places and rooms; draft text left for bundles, recipes, people and five gem names; left: owner reads the draft text and clears flags, gift lists (`giftsDraft`), people prose with the voice sheets, hosting after M3d), Stardew checks rows (open: SC-188 only; the rest answered or closed as ours, on purpose, 2026-11-17). M4 hosting spike filed as #948.
 
@@ -72,7 +67,7 @@ Done, owner checked (2026-11-11): step 1 farm (note 55, #776), step 2 festival s
 - Step 6 (owner): Hands-on play of the built areas to check placeholder metrics (paths
   2 wide, doors 1, 60 s on foot and 30 s on the horse to cross).
 - Step 7: Layout page built (see step 5); one pair gap listed in `KNOWN_PAIR_GAPS` (`secret-woods` exit `to_forest`).
-- Step 8: M4 spike desktop part done 2026-11-18 (note 53): the 120 by 120 cap stays (host holds all 38 maps in about 69 MB). Router and tablet runs done 2026-11-19; left: the jam rule with people walking, battery drain. `late-game-100` runs 36 fps on the SM-T500: profile it.
+- Step 8: M4 spike desktop part done 2026-11-18 (note 53): the 120 by 120 cap stays (host holds all 38 maps in about 69 MB). Tablet runs done 2026-11-19; left: the jam rule with people walking, battery drain.
 - Step 9: Valley maps, area by area (note 71 order), after step 6.
 - Step 10: Festival layouts, from step 2.
 - Step 12: Mines (the combat leftovers, #598, are closed).

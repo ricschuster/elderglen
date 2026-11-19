@@ -14,7 +14,7 @@ const pct = (a: number[], p: number) =>
   let r: Record<string, unknown>;
   try {
     const g = await GuestClient.connect(
-      `ws://${location.hostname}:${q.get("port") ?? 8790}`,
+      `ws://${q.get("host") ?? location.hostname}:${q.get("port") ?? 8790}`,
       { name: tag, timeoutMs: 15000 },
     );
     const joinMs = Math.round(performance.now() - t0);

@@ -16,6 +16,7 @@ import {
   type HostOptions,
 } from "../net/hostoptions";
 import { SocketTransport } from "../net/sockettransport";
+import { CapacitorPipe } from "../net/pipe-capacitor";
 import type { LobbyTransport } from "../net/transport";
 
 const OUR_VERSION = PROTOCOL_VERSION;
@@ -26,15 +27,23 @@ const KEYS = ["1234567890", "abcdef:.-/"];
  * The transport the screen uses: the real socket. Joining by typed address works
  * wherever WebSocket does. Hosting needs a Node or native host, which the shell
  * injects (the host starter is undefined in a plain browser, so canHost is false).
- * Discovery stays off until the router run (issue 948 needs-hands).
+ * The installed Android app lists games announced on the network (UDP, ADR 0015); a
+ * browser tab cannot listen, so it types the address.
  */
-export const lobbyTransport: LobbyTransport = new SocketTransport();
+const native = (
+  globalThis as { Capacitor?: { isNativePlatform?: () => boolean } }
+).Capacitor?.isNativePlatform?.();
+export const lobbyTransport: LobbyTransport = new SocketTransport(
+  undefined,
+  "Guest",
+  native ? new CapacitorPipe() : undefined,
+);
 
 /**
  * Play together (note 53 step 4): host a game, or join from the list or by a
  * typed address. Touch-sized keys, so it works on a tablet with no keyboard.
- * Discovery is pending the router run (issue 948 needs-hands); until then the
- * list is empty and typing is the way in.
+ * The list fills from announcements
+ * on the installed Android app; elsewhere typing is the way in.
  */
 export class LobbyScene extends Phaser.Scene {
   private typed = "";

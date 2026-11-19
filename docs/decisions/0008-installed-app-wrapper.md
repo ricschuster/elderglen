@@ -2,7 +2,8 @@
 
 ## Status
 
-Accepted. Closes issue #62 and the wrapper choice left open in ADR 0004.
+Accepted. Closes issue #62 and the wrapper choice left open in ADR 0004. ADR 0015 refines
+the host route (the Room stays in the renderer; native code is a socket pipe).
 
 ## Context
 
