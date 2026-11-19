@@ -267,3 +267,27 @@ export function setSession(s: NetSession | undefined): void {
 export function isGuest(): boolean {
   return current !== undefined && !current.canAct;
 }
+
+/** A player's name for the screens, from whichever side of the session this is. */
+export function playerNameOf(
+  net: NetSession | undefined,
+  id: PlayerId,
+): string {
+  if (net instanceof HostSession) return net.world.names.get(id) ?? id;
+  if (net instanceof GuestSession)
+    return net.client.players.get(id)?.name ?? id;
+  return id;
+}
+
+/**
+ * Send a world intent from this player. The host applies it at once and gets the refusal back;
+ * a guest gets undefined and the answer arrives later as `applied` or `rejected`.
+ */
+export function sendWorldIntent(
+  net: NetSession,
+  intent: Intent,
+): string | undefined {
+  if (net instanceof HostSession) return net.host.room.hostIntent(intent);
+  if (net instanceof GuestSession) net.sendIntent(intent);
+  return undefined;
+}

@@ -3,6 +3,8 @@ import { reportLines, seasonNotice } from "../core/report";
 import type { SleepReport } from "../core/sleep";
 import { dateOf } from "../core/calendar";
 import type { GameState } from "../core/save";
+import { marriageReportLines } from "../core/playermarriage";
+import { currentSession, HostSession, playerNameOf } from "../net/session";
 import { STATE_KEY } from "./state";
 import { WINDOW_FILL } from "./panel";
 
@@ -18,6 +20,19 @@ export class ReportScene extends Phaser.Scene {
   init(data: { report: SleepReport }): void {
     this.report = data.report;
     this.state = this.registry.get(STATE_KEY) as GameState;
+  }
+
+  /** The engaged notice and a told divorce, in a multiplayer game (note 12). */
+  private marriageLines(): string[] {
+    const net = currentSession();
+    if (!net) return [];
+    return marriageReportLines(
+      this.state.playerMarriage,
+      net.localId,
+      this.state.day.clock.day,
+      (id) => playerNameOf(net, id),
+      net instanceof HostSession ? net.world.lastDivorces : [],
+    );
   }
 
   create(): void {
@@ -44,13 +59,18 @@ export class ReportScene extends Phaser.Scene {
         .setOrigin(0.5);
     }
     this.add
-      .text(480, 290, reportLines(this.report).join("\n"), {
-        fontSize: "20px",
-        color: "#d8e8c8",
-        align: "center",
-        lineSpacing: 10,
-        wordWrap: { width: 760 },
-      })
+      .text(
+        480,
+        290,
+        [...reportLines(this.report), ...this.marriageLines()].join("\n"),
+        {
+          fontSize: "20px",
+          color: "#d8e8c8",
+          align: "center",
+          lineSpacing: 10,
+          wordWrap: { width: 760 },
+        },
+      )
       .setOrigin(0.5);
     this.add
       .rectangle(480, 440, 240, 52, 0x3f7d3a, 1)

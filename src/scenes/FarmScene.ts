@@ -286,6 +286,8 @@ import {
 } from "../core/view";
 import { makePlaceholderTextures, PLAYER_KEY } from "./placeholder-textures";
 import { guestMayOpen } from "../core/menupages";
+import { weddingWaiting } from "../core/marriagecard";
+import { proposalFor } from "../core/playermarriage";
 import { PlayerBlocking, resolveBlocking } from "../net/interp";
 import {
   currentSession,
@@ -447,6 +449,8 @@ export class FarmScene extends Phaser.Scene {
   private passList: string[] = [];
   /** The multiplayer session, if any, and the other players it shows (note 53). */
   private net: NetSession | undefined;
+  /** Until this time (ms) no marriage card opens. */
+  private cardQuiet = 0;
   private remote: RemotePlayerLayer | undefined;
   private target!: Phaser.GameObjects.Rectangle;
   /** Placeholder hat drawn on the player. */
@@ -2615,6 +2619,28 @@ export class FarmScene extends Phaser.Scene {
     if (net instanceof GuestSession && net.followDay(this.state.day.clock))
       this.render();
     this.remote?.sync();
+    this.checkMarriageCards(net.localId);
+  }
+
+  /**
+   * Open the proposal card when someone asks this player, and the wedding scene when theirs is
+   * waiting (note 12, two-player steps). Both close at once on a stale answer. Untested in a browser.
+   */
+  private checkMarriageCards(me: string): void {
+    if (this.leaving || this.scene.isPaused()) return;
+    // A guest's answer comes back a moment later: do not ask again until it has.
+    if (performance.now() < this.cardQuiet) return;
+    const b = this.state.playerMarriage;
+    const kind = proposalFor(b, me)
+      ? "proposal"
+      : weddingWaiting(b, me)
+        ? "wedding"
+        : "";
+    if (!kind) return;
+    this.events.once("resume", () => {
+      this.cardQuiet = performance.now() + 2500;
+    });
+    this.open(kind);
   }
 
   /** Say once that a write was refused, so the player can export the game. */

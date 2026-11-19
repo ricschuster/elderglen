@@ -229,7 +229,15 @@ export function specialItems(g: GameState): SpecialItem[] {
 export const GUEST_HIDDEN_TABS = ["pack", "crafting", "animals", "special"];
 
 /** Screens a guest may open over the farm: read-only views only (note 53). */
-export const GUEST_SCREENS = ["menu", "journal", "catalogue"];
+export const GUEST_SCREENS = [
+  "menu",
+  "journal",
+  "catalogue",
+  // The two-player marriage screens send intents and change nothing locally.
+  "ledger",
+  "proposal",
+  "wedding",
+];
 
 /** True when a guest may open this screen kind. */
 export function guestMayOpen(kind: string): boolean {

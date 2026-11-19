@@ -16,7 +16,10 @@ import {
   type JoinResult,
 } from "./cabins";
 import { weddingBlock } from "./courtship";
-import { DIVORCE_FEE } from "./marriage";
+import {
+  applyMarriageIntent,
+  expireProposalsAndRefund,
+} from "./marriageintents";
 import * as pm from "./playermarriage";
 import { PASS_OUT_MONEY_CAP, PASS_OUT_MONEY_SHARE } from "./day";
 import { LOCAL_PLAYER, type PlayerId } from "./players";
@@ -48,8 +51,10 @@ function passOutLoss(money: number): number {
 
 export class GameRoomWorld implements RoomWorld {
   cabins: CabinBook;
-  /** Player marriages (note 12, two-player steps), kept on the host. */
-  marriages = pm.newPlayerMarriageBook();
+  /** Player marriages (note 12, two-player steps), kept on the host in the game state. */
+  get marriages(): pm.PlayerMarriageBook {
+    return this.g.playerMarriage;
+  }
   /** The last morning's wedding and divorce news, for the reports. */
   lastWeddings: pm.WeddingNews[] = [];
   lastDivorces: pm.DivorceNews[] = [];
@@ -179,9 +184,12 @@ export class GameRoomWorld implements RoomWorld {
       }
       case "sleep":
         this.tracker.setAsleep(by);
+        // A wed pair share one bed: in bed counts for both (note 12 and 53).
+        for (const k of this.bedmates(by)) this.tracker.setAsleep(k);
         return undefined;
       case "wake":
         this.tracker.wake(by);
+        for (const k of this.bedmates(by)) this.tracker.wake(k);
         return undefined;
       case "buy-cabin": {
         if (by !== LOCAL_PLAYER) return "host only";
@@ -190,38 +198,21 @@ export class GameRoomWorld implements RoomWorld {
         if (typeof x !== "number" || typeof y !== "number") return "bad site";
         return this.buyCabin({ x, y });
       }
-      case "propose": {
-        const to = intent.to;
-        if (typeof to !== "string" || !players.has(to)) return "unknown player";
-        return reason(pm.propose(this.marriages, by, to));
-      }
-      case "accept-proposal":
-      case "decline-proposal":
-        return reason(
-          pm.respond(
-            this.marriages,
-            by,
-            intent.kind === "accept-proposal",
-            this.day(),
-          ),
-        );
-      case "withdraw-proposal":
-        return reason(pm.withdraw(this.marriages, by));
-      case "file-divorce": {
-        const r = pm.fileDivorce(this.marriages, by, players.balance(by));
-        if (r.ok) players.pay(by, -DIVORCE_FEE);
-        return reason(r);
-      }
-      case "cancel-divorce": {
-        const r = pm.cancelDivorce(this.marriages, by);
-        if (r.ok) players.pay(by, DIVORCE_FEE);
-        return reason(r);
-      }
       default: {
+        const m = applyMarriageIntent(this.g, by, intent);
+        if (m !== null) return m;
         const r = applyFarmIntent(this.g, by, intent, this.o.random);
         return r === null ? `unknown intent ${intent.kind}` : r;
       }
     }
+  }
+
+  /** The wed partner who shares this player's bed, if they are in this world. */
+  private bedmates(id: PlayerId): PlayerId[] {
+    const k = pm.isMarried(this.marriages, id)
+      ? pm.partnerOf(this.marriages, id)
+      : undefined;
+    return k && this.g.players.has(k) ? [k] : [];
   }
 
   step(dtMs: number): void {
@@ -245,6 +236,8 @@ export class GameRoomWorld implements RoomWorld {
       const out = d.passOut.includes(p.id);
       p.energy.current = out ? Math.round(p.energy.max * 0.75) : p.energy.max;
     }
+    // An unanswered proposal ends with the day, the token goes back (owner, 2026-11-19).
+    expireProposalsAndRefund(this.g);
     this.lastReport = sleep(this.g, this.o.spots, this.o.random);
     // The new morning: filed divorces take effect, then due weddings play (no wait for the partner).
     this.lastDivorces = pm.divorceMorning(this.marriages);
@@ -255,7 +248,3 @@ export class GameRoomWorld implements RoomWorld {
     );
   }
 }
-
-const reason = (
-  r: { ok: true } | { ok: false; reason: string },
-): string | undefined => (r.ok ? undefined : r.reason);

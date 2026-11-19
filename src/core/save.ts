@@ -80,6 +80,13 @@ import { Guide } from "./guide";
 import { Tackle, type TackleSave } from "./tackle";
 import { Pots, type PotsSave } from "./pots";
 import { Equipment } from "./equipment";
+import {
+  loadPlayerMarriage,
+  newPlayerMarriageBook,
+  savePlayerMarriage,
+  type PlayerMarriageBook,
+  type PlayerMarriageSave,
+} from "./playermarriage";
 import { canCapacity } from "./canwater";
 import { Wardrobe, type WardrobeSave } from "./hats";
 import {
@@ -250,6 +257,8 @@ export interface WorldState {
 export interface GameState extends WorldState {
   /** Per-player records keyed by player id (`core/players.ts`, note 53). */
   players: Players;
+  /** Player to player bonds (note 12, two-player steps), kept on the host and carried in the snapshot. */
+  playerMarriage: PlayerMarriageBook;
   money: number;
   inventory: Inventory;
   skills: Skills;
@@ -332,6 +341,7 @@ export function newGame(
     mail: new Mailbox(),
     friendship: new Friendship(),
     marriage: new Marriage(),
+    playerMarriage: newPlayerMarriageBook(),
     heartEvents: new HeartEvents(),
     quests: new Quests(),
     fishing: new FishLog(),
@@ -342,7 +352,10 @@ export function newGame(
     forage: new ForageField(),
     spots: new ArtifactSpots(),
     areas: newAreas(),
-  } satisfies WorldState & { players: Players };
+  } satisfies WorldState & {
+    players: Players;
+    playerMarriage: PlayerMarriageBook;
+  };
   // Accessors, not a spread: a spread would copy the values and cut the link.
   Object.defineProperties(
     world,
@@ -504,6 +517,8 @@ interface SaveData {
   friendship?: ReturnType<Friendship["save"]>;
   /** Absent in saves made before marriage (version 2): unmarried. */
   marriage?: MarriageSave;
+  /** Absent before two-player marriage (added within version 4): no bonds. */
+  playerMarriage?: PlayerMarriageSave;
   /** Absent in saves made before heart events: none seen. */
   heartEvents?: HeartEventsSave;
   /** Absent in saves made before the request board. */
@@ -746,6 +761,9 @@ export function serialize(
     mail: g.mail.save(),
     friendship: g.friendship.save(),
     marriage: g.marriage.save(),
+    ...(g.playerMarriage.bonds.length || g.playerMarriage.unseenWedding.length
+      ? { playerMarriage: savePlayerMarriage(g.playerMarriage) }
+      : {}),
     heartEvents: g.heartEvents.save(),
     quests: g.quests.save(),
     fishing: g.fishing.save(),
@@ -1257,6 +1275,9 @@ export function deserialize(text: string): GameState | undefined {
   g.shrine.load(raw.shrine);
   g.mail.load(raw.mail);
   g.marriage.load(raw.marriage);
+  g.playerMarriage = loadPlayerMarriage(raw.playerMarriage, (id) =>
+    g.players.has(id),
+  );
   // The married cap must be known before friendship loads, or points above the bouquet cap are clamped.
   g.friendship.setSpouse(g.marriage.married ? g.marriage.spouse : null);
   g.friendship.setExes(exSpouses(g));

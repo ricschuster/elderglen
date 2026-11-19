@@ -3,6 +3,13 @@ import { cancelDivorce, divorceProblem, fileDivorce } from "../core/divorce";
 import { DIVORCE_FEE } from "../core/marriage";
 import type { GameState } from "../core/save";
 import { villagerById } from "../core/villagers";
+import { ledgerRows } from "../core/marriagecard";
+import {
+  currentSession,
+  isGuest,
+  playerNameOf,
+  sendWorldIntent,
+} from "../net/session";
 import { resumeSave } from "./storage";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
@@ -48,14 +55,44 @@ export class LedgerScene extends Phaser.Scene {
     kb?.on("keydown-ENTER", () => this.menu.press(0));
     kb?.on("keydown-ESC", () => this.close());
     this.refresh();
+    // A guest's copy changes when the host's answer arrives, so look again now and then.
+    if (currentSession())
+      this.time.addEvent({
+        delay: 400,
+        loop: true,
+        callback: () => this.refresh(),
+      });
   }
 
   private refresh(): void {
     const g = this.state;
     const m = g.marriage;
-    this.money.setText(`Money ${g.money}g`);
+    const me = currentSession()?.localId;
+    this.money.setText(`Money ${me ? g.players.balance(me) : g.money}g`);
     const rows: Row[] = [];
-    if (!m.married || !m.spouse) {
+    const net = currentSession();
+    if (net) {
+      // Bonds with another player (note 12, two-player steps). Untested in a browser.
+      for (const r of ledgerRows(
+        g.playerMarriage,
+        net.localId,
+        g.players.balance(net.localId),
+        (id) => playerNameOf(net, id),
+      ))
+        rows.push({
+          label: r.label,
+          detail: r.detail,
+          dim: r.dim,
+          buttons: r.intent
+            ? [{ text: "Do it", run: () => this.send(r.intent) }]
+            : [],
+        });
+    }
+    if (isGuest() || !m.married || !m.spouse) {
+      if (rows.length) {
+        this.menu.setRows(rows);
+        return;
+      }
       this.message.setText("PLACEHOLDER TEXT: your page is a single one.");
       rows.push({
         label: "Nothing joined",
@@ -82,6 +119,14 @@ export class LedgerScene extends Phaser.Scene {
     this.menu.setRows(rows);
   }
 
+  private send(kind: string): void {
+    const net = currentSession();
+    if (!net || !kind) return;
+    const why = sendWorldIntent(net, { kind });
+    this.message.setText(why ?? "PLACEHOLDER TEXT: the clerk writes it in.");
+    this.refresh();
+  }
+
   private file(): void {
     const problem = divorceProblem(this.state);
     this.message.setText(
@@ -105,6 +150,6 @@ export class LedgerScene extends Phaser.Scene {
   private close(): void {
     this.scene.stop();
     this.scene.resume("farm");
-    resumeSave(this.state);
+    if (!isGuest()) resumeSave(this.state);
   }
 }

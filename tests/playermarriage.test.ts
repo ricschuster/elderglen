@@ -17,6 +17,24 @@ import {
   weddingMorning,
   withdraw,
 } from "../src/core/playermarriage";
+import { TOKEN } from "../src/core/courtship";
+import {
+  callOff,
+  engagedWith,
+  expireProposals,
+  loadPlayerMarriage,
+  marriageReportLines,
+  proposalFor,
+  savePlayerMarriage,
+} from "../src/core/playermarriage";
+import {
+  ledgerRows,
+  proposalCard,
+  weddingLines,
+  weddingWaiting,
+} from "../src/core/marriagecard";
+import { deserialize, serialize } from "../src/core/save";
+import { applyServerMsg } from "../src/net/guestapply";
 import { GameRoomWorld } from "../src/core/roomworld";
 
 const wed = () => {
@@ -120,6 +138,8 @@ describe("player marriage through the room world", () => {
       expect(w.admit(id, n)).toBeUndefined();
       w.addPlayer(id, n);
     }
+    expect(w.apply("p2", { kind: "propose", to: "p3" })).toMatch(/token/);
+    w.g.players.get("p2").inventory.add(TOKEN, 1);
     expect(w.apply("p2", { kind: "propose", to: "p3" })).toBeUndefined();
     expect(w.apply("p3", { kind: "accept-proposal" })).toBeUndefined();
     const b = bondOf(w.marriages, "p2")!;
@@ -130,5 +150,191 @@ describe("player marriage through the room world", () => {
     expect(w.apply("p3", { kind: "cancel-divorce" })).toBeUndefined();
     expect(w.g.players.wallet("p3").money).toBe(DIVORCE_FEE + 5);
     expect(w.apply("p2", { kind: "file-divorce" })).toMatch(/fee/);
+  });
+});
+
+const room = () => {
+  const w = new GameRoomWorld(newGame("standard", "separate"), {
+    random: () => 0.5,
+  });
+  for (const [id, n] of [
+    ["p2", "Ann"],
+    ["p3", "Bo"],
+  ] as const) {
+    w.admit(id, n);
+    w.addPlayer(id, n);
+  }
+  w.g.players.get("p2").inventory.add(TOKEN, 1);
+  return w;
+};
+const tokens = (w: GameRoomWorld, id: string) =>
+  w.g.players.get(id).inventory.count(TOKEN);
+
+describe("token, expiry and calling off (owner, 2026-11-19)", () => {
+  it("the token is held while open, used up on accept, back on decline", () => {
+    const w = room();
+    w.apply("p2", { kind: "propose", to: "p3" });
+    expect(tokens(w, "p2")).toBe(0);
+    expect(proposalFor(w.marriages, "p3")).toBeDefined();
+    expect(proposalFor(w.marriages, "p2")).toBeUndefined();
+    w.apply("p3", { kind: "decline-proposal" });
+    expect(tokens(w, "p2")).toBe(1);
+    w.apply("p2", { kind: "propose", to: "p3" });
+    w.apply("p3", { kind: "accept-proposal" });
+    expect(tokens(w, "p2")).toBe(0);
+    expect(bondOf(w.marriages, "p2")?.stage).toBe("engaged");
+  });
+
+  it("withdrawing returns the token", () => {
+    const w = room();
+    w.apply("p2", { kind: "propose", to: "p3" });
+    expect(w.apply("p2", { kind: "withdraw-proposal" })).toBeUndefined();
+    expect(tokens(w, "p2")).toBe(1);
+  });
+
+  it("an unanswered proposal expires at the day end and refunds", () => {
+    const w = room();
+    w.apply("p2", { kind: "propose", to: "p3" });
+    w.tracker.setAsleep("p1");
+    w.tracker.setAsleep("p2");
+    w.tracker.setAsleep("p3");
+    w.step(60_000);
+    expect(bondOf(w.marriages, "p2")).toBeUndefined();
+    expect(tokens(w, "p2")).toBe(1);
+  });
+
+  it("expireProposals leaves engaged and married bonds", () => {
+    const b = wed();
+    propose(b, "p4", "p5");
+    expect(expireProposals(b)).toEqual(["p4"]);
+    expect(isMarried(b, "p2")).toBe(true);
+  });
+
+  it("an engaged couple call it off free; the token stays spent; wed cannot", () => {
+    const w = room();
+    w.apply("p2", { kind: "propose", to: "p3" });
+    w.apply("p3", { kind: "accept-proposal" });
+    w.g.players.wallet("p3").money = 7;
+    expect(w.apply("p3", { kind: "file-divorce" })).toMatch(/not wed/);
+    expect(w.apply("p3", { kind: "call-off" })).toBeUndefined();
+    expect(w.g.players.wallet("p3").money).toBe(7);
+    expect(tokens(w, "p2")).toBe(0);
+    expect(bondOf(w.marriages, "p2")).toBeUndefined();
+    expect(callOff(wed(), "p2").ok).toBe(false);
+  });
+
+  it("a wed pair share a bed: one in bed counts both", () => {
+    const w = room();
+    bondOf(w.marriages, "p2");
+    propose(w.marriages, "p2", "p3");
+    respond(w.marriages, "p3", true, 1);
+    weddingMorning(w.marriages, 4, "");
+    w.apply("p2", { kind: "sleep" });
+    expect(w.presence("p3")).toBe("asleep");
+    w.apply("p3", { kind: "wake" });
+    expect(w.presence("p2")).toBe("awake");
+  });
+});
+
+describe("report lines and saving", () => {
+  it("shows the engaged notice and a told divorce", () => {
+    const b = newPlayerMarriageBook();
+    propose(b, "p2", "p3");
+    respond(b, "p3", true, 10);
+    const nm = (k: string) => (k === "p2" ? "Ann" : "Bo");
+    expect(engagedWith(b, "p3")).toEqual({ partner: "p2", weddingDay: 13 });
+    expect(marriageReportLines(b, "p3", 11, nm)).toEqual([
+      "Engaged to Ann. The wedding is in 2 days.",
+    ]);
+    expect(marriageReportLines(b, "p3", 12, nm)).toEqual([
+      "Wedding tomorrow with Ann.",
+    ]);
+    expect(
+      marriageReportLines(b, "p2", 12, nm, [{ filer: "p3", told: "p2" }]),
+    ).toContain("Bo filed for divorce.");
+  });
+
+  it("the book survives a save, and bad data loads as no bonds", () => {
+    const w = room();
+    w.apply("p2", { kind: "propose", to: "p3" });
+    w.apply("p3", { kind: "accept-proposal" });
+    const back = deserialize(serialize(w.g));
+    expect(back && bondOf(back.playerMarriage, "p2")).toMatchObject({
+      stage: "engaged",
+      proposer: "p2",
+    });
+    const raw = savePlayerMarriage(w.marriages);
+    expect(loadPlayerMarriage(raw).bonds).toHaveLength(1);
+    expect(loadPlayerMarriage(raw, () => false).bonds).toHaveLength(0);
+    expect(loadPlayerMarriage("x").bonds).toEqual([]);
+    expect(
+      loadPlayerMarriage({
+        bonds: [
+          { proposer: "a", other: "a", stage: "married", weddingDay: 1 },
+          { proposer: "a", other: "b", stage: "nope", weddingDay: 1 },
+        ],
+      }).bonds,
+    ).toEqual([]);
+  });
+
+  it("a guest copy follows marriage intents the host applied", () => {
+    const w = room();
+    const guest = deserialize(serialize(w.g))!;
+    const intent = { kind: "propose", to: "p3" };
+    expect(w.apply("p2", intent)).toBeUndefined();
+    expect(
+      applyServerMsg(guest, { t: "applied", seq: 1, by: "p2", intent }),
+    ).toBe(true);
+    expect(proposalFor(guest.playerMarriage, "p3")).toBeDefined();
+    expect(guest.players.get("p2").inventory.count(TOKEN)).toBe(0);
+  });
+});
+
+describe("marriage screens", () => {
+  const nm = (k: string) => (k === "p2" ? "Ann" : "Bo");
+  it("the proposal card is for the asked player only", () => {
+    const b = newPlayerMarriageBook();
+    propose(b, "p2", "p3");
+    expect(proposalCard(b, "p2", nm)).toBeUndefined();
+    expect(proposalCard(b, "p3", nm)?.text).toMatch(/Ann/);
+    respond(b, "p3", true, 1);
+    expect(proposalCard(b, "p3", nm)).toBeUndefined();
+  });
+
+  it("ledger rows follow the stage: call off free, divorce for the wed", () => {
+    const b = newPlayerMarriageBook();
+    expect(ledgerRows(b, "p2", 0, nm)).toEqual([]);
+    propose(b, "p2", "p3");
+    expect(ledgerRows(b, "p2", 0, nm)).toEqual([]);
+    respond(b, "p3", true, 10);
+    expect(ledgerRows(b, "p3", 0, nm)[0]).toMatchObject({
+      intent: "call-off",
+      dim: false,
+    });
+    weddingMorning(b, 13, "");
+    expect(ledgerRows(b, "p3", 5, nm)[0]).toMatchObject({
+      intent: "file-divorce",
+      dim: true,
+    });
+    expect(ledgerRows(b, "p3", DIVORCE_FEE, nm)[0]?.dim).toBe(false);
+    fileDivorce(b, "p3", DIVORCE_FEE);
+    expect(ledgerRows(b, "p3", 0, nm)[0]?.intent).toBe("cancel-divorce");
+    expect(ledgerRows(b, "p2", 0, nm)[0]).toMatchObject({
+      intent: "",
+      dim: true,
+    });
+  });
+
+  it("the wedding scene lines and the seen intent", () => {
+    const w = room();
+    propose(w.marriages, "p2", "p3");
+    respond(w.marriages, "p3", true, 1);
+    expect(weddingLines(w.marriages, "p3", nm)).toEqual([]);
+    weddingMorning(w.marriages, 4, "");
+    expect(weddingWaiting(w.marriages, "p3")).toBe(true);
+    expect(weddingLines(w.marriages, "p3", nm).join(" ")).toMatch(/Ann.*Bo/);
+    expect(w.apply("p3", { kind: "wedding-seen" })).toBeUndefined();
+    expect(weddingWaiting(w.marriages, "p3")).toBe(false);
+    expect(weddingWaiting(w.marriages, "p2")).toBe(true);
   });
 });

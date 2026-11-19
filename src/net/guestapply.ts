@@ -3,6 +3,7 @@
 // so every intent (own or another player's) is applied exactly once. A `rejected` changes nothing
 // locally (the scene shows the reason). Pure: no Phaser, no DOM.
 import type { ServerMsg } from "../core/protocol";
+import { applyMarriageIntent } from "../core/marriageintents";
 import { applyFarmIntent } from "../core/roomintents";
 import type { GameState } from "../core/save";
 
@@ -18,6 +19,8 @@ export function applyServerMsg(
 ): boolean {
   if (m.t !== "applied") return false;
   if (!g.players.has(m.by)) return false;
+  const mr = applyMarriageIntent(g, m.by, m.intent);
+  if (mr !== null) return mr === undefined;
   const r = applyFarmIntent(g, m.by, m.intent, random);
   return r === undefined;
 }

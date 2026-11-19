@@ -387,7 +387,7 @@ level only. Nothing is built, and the build waits for M4.
   needs its own design before it is built: the proposal, a shared home, the both-in-bed rule and spouse routes for
   two players. That design is the first task after the spike. Until it is written, only villager marriage is built.
 - **Player marriage, first rulings (owner, 2026-11-18, all from memory of Stardew, SC-205).**
-  - **Proposal:** one player offers the pendant (note 12) and the other accepts or declines. A decline costs nothing.
+  - **Proposal:** one player offers the pendant (note 12) and the other accepts or declines. A decline costs nothing. Built 2026-11-19 (note 12 "Steps already decided"): core, intents, cards and ledger, placeholder, scenes untested in a browser.
   - **Home:** one moves into the other's cabin. The vacated cabin stays so a divorce has a place to return to. The
     couple share one bed and count as both in bed.
   - **Children:** the same shared question as villager marriage (note 12), one child shown in the home, both
