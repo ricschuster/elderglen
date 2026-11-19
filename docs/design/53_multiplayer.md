@@ -229,7 +229,8 @@ not built in M4. The pros and cons, so the idea is not lost:
 8. Native hosting in the wrapper, then the tablet plugin. **Host route set by ADR 0015 (2026-11-19):** `SocketPipe`
    (`src/net/pipe.ts`), `RoomHost` over it (`roomhost.ts`), `NodePipe`, `CapacitorPipe` and the Java `ElderHostPlugin` are
    built; a real SM-T500 hosted 8 through the plugin (ADR 0015 "Result"). Left: the Electron pipe, the real host
-   starter (the host's own scene sharing the `Room`'s world), UDP announce and discover in the plugin.
+   starter (the host's own scene sharing the `Room`'s world), (UDP announce and discover are built and checked on the two tablets, port 24650; the Lobby join list shows them
+   once the Lobby is given a `CapacitorPipe`.)
 
 ## For later
 

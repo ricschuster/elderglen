@@ -63,8 +63,8 @@ implementations, as in ADR 0008, now with the same narrow job:
 size limit (1 MiB) apply in the renderer before the `Room` sees anything. The native
 side also drops a frame over the limit, so a bad guest cannot make the page parse it.
 
-**Discovery is a UDP broadcast, with the typed address as the fallback** (note 53,
-default port 24642). mDNS is not used. A tablet that cannot receive broadcasts
+**Discovery is a UDP broadcast, with the typed address as the fallback** (note 53). The port is 24650,
+not 24642: that is Stardew's game port and a Stardew host on the same network must not clash. mDNS is not used. A tablet that cannot receive broadcasts
 shows an empty list and the typed address still works.
 
 **The tablet cap of 8 stands**, from the spike. It is revisited only if the plugin
@@ -90,7 +90,15 @@ Run on real hardware (`spikes/m4/pipehost.mjs`): the SM-T500 (the weakest tablet
 farm through the plugin with 8 connected (the host, 6 desktop guests and the SM-X210 on Wi-Fi). Tick cost
 0.45 to 0.54 ms (the Node pipe's page-side figure was 0.1 ms, so the plugin boundary costs about 0.4 ms a tick),
 JS heap 54 MB, joins 390 to 710 ms with 6 at once (68 KB farm), round trip p50 157 to 205 ms, p95 215 to 292 ms,
-max 341 ms. The cap of 8 stands. Not yet measured: a long soak with the plugin, heat, battery, discovery.
+max 341 ms. The cap of 8 stands. Discovery is built too (`announce.ts`, `announce`/`discover` on the pipe, `discoverStart` in the plugin with a multicast
+lock): a host sends one datagram every 2 s, and at once when the player count changes, to 255.255.255.255 and each
+interface's broadcast address. On the real pair, the SM-X210 listed the SM-T500's game (name, address, port, 1 of 9
+players) in under 2 s, and a desktop on the same Wi-Fi heard it too. Both broadcast targets reach the listener, so a
+listener sees each datagram twice and merges by game id. In the real Lobby on the SM-X210 the game was listed, its count went from 1 to 2 of 9 on a join, and a tap on the
+entry joined the SM-T500 host. A first version only re-emitted the list when its contents changed, so the screen dropped a
+live game after 6 s; the transport now hands over fresh `seen` times every datagram (test in `tests/announce.test.ts`).
+Not yet measured: a long soak with the plugin, heat, battery,
+a router that blocks broadcasts (the typed address stays the fallback).
 
 ## Consequences
 
@@ -106,6 +114,11 @@ max 341 ms. The cap of 8 stands. Not yet measured: a long soak with the plugin, 
 - The host's world is only as live as its page. If the renderer stalls (a long
   `sleep()`, a GC pause), the sockets stay open but nothing is served. The spike shows
   27 ms at night on the weakest tablet, so this is accepted.
+- **A guest in the Android app needs two settings** (`capacitor.config.ts`): `android.allowMixedContent` (the page is
+  `https://localhost`, a LAN game is `ws://`, and Chromium blocks that) and `server.cleartext` (Android refuses cleartext
+  to anything but localhost). Both were found on the real pair: without them the join said "Could not reach the host"
+  while the host was up. Changing the page to `http://localhost` instead would change the origin and lose saves. The app
+  loads no remote content (ADR 0008), so only the game's own page can use the allowance. Revisit when anything remote loads.
 - The Electron security pass of ADR 0008 narrows to the bridge: the preload exposes the
   `SocketPipe` methods only, with argument checks, and no Node in the renderer.
 - Game list discovery on real routers, battery drain unplugged, and a wired host are

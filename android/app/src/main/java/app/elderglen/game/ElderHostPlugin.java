@@ -5,11 +5,17 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import android.content.Context;
+import android.net.wifi.WifiManager;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.Inet4Address;
+import java.net.InetSocketAddress;
+import java.net.InterfaceAddress;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
@@ -17,7 +23,9 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Base64;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -36,6 +44,14 @@ public class ElderHostPlugin extends Plugin {
   private ServerSocket server;
   private final Map<Integer, Conn> conns = new ConcurrentHashMap<>();
   private int nextId = 1;
+
+  // Game list discovery (UDP broadcast, ADR 0015). One announcer thread and one listener thread.
+  private static final int ANNOUNCE_MS = 2000;
+  private Thread announcer;
+  private volatile String announceText;
+  private volatile int announcePort;
+  private DatagramSocket listener;
+  private WifiManager.MulticastLock multicast;
 
   private final class Conn {
     final int id;
@@ -128,12 +144,140 @@ public class ElderHostPlugin extends Plugin {
   @PluginMethod
   public synchronized void stop(PluginCall call) {
     stopServer();
+    stopAnnouncer();
+    stopListener();
     call.resolve();
+  }
+
+  /** Broadcast `text` to `port` every 2 seconds; an empty text stops. Replacing the text sends at once. */
+  @PluginMethod
+  public synchronized void announce(PluginCall call) {
+    String text = call.getString("text");
+    if (text == null || text.isEmpty()) {
+      stopAnnouncer();
+      call.resolve();
+      return;
+    }
+    announceText = text;
+    announcePort = call.getInt("port", 24650);
+    if (announcer == null) {
+      announcer =
+          new Thread(
+              () -> {
+                try (DatagramSocket sock = new DatagramSocket()) {
+                  sock.setBroadcast(true);
+                  while (!Thread.currentThread().isInterrupted()) {
+                    broadcast(sock, announceText, announcePort);
+                    Thread.sleep(ANNOUNCE_MS);
+                  }
+                } catch (InterruptedException | IOException ignored) {
+                }
+              },
+              "elderhost-announce");
+      announcer.setDaemon(true);
+      announcer.start();
+    } else {
+      announcer.interrupt(); // wakes the sleep: the thread ends, so start a fresh one
+      announcer = null;
+      announce(call);
+      return;
+    }
+    call.resolve();
+  }
+
+  /** Listen for announcements on `port`; each arrives as a "game" event (text, from). */
+  @PluginMethod
+  public synchronized void discoverStart(PluginCall call) {
+    if (listener != null) {
+      call.resolve();
+      return;
+    }
+    int port = call.getInt("port", 24650);
+    try {
+      WifiManager wm =
+          (WifiManager) getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+      if (wm != null) {
+        // Some devices drop broadcast datagrams unless a multicast lock is held.
+        multicast = wm.createMulticastLock("elderglen-discovery");
+        multicast.setReferenceCounted(false);
+        multicast.acquire();
+      }
+      DatagramSocket sock = new DatagramSocket(null);
+      sock.setReuseAddress(true);
+      sock.bind(new InetSocketAddress(port));
+      listener = sock;
+    } catch (IOException e) {
+      call.reject("cannot listen for games: " + e.getMessage());
+      return;
+    }
+    final DatagramSocket sock = listener;
+    Thread t =
+        new Thread(
+            () -> {
+              byte[] buf = new byte[1024];
+              while (!sock.isClosed()) {
+                try {
+                  DatagramPacket p = new DatagramPacket(buf, buf.length);
+                  sock.receive(p);
+                  JSObject o = new JSObject();
+                  o.put("text", new String(p.getData(), 0, p.getLength(), StandardCharsets.UTF_8));
+                  o.put("from", p.getAddress().getHostAddress());
+                  notifyListeners("game", o);
+                } catch (IOException e) {
+                  return;
+                }
+              }
+            },
+            "elderhost-discover");
+    t.setDaemon(true);
+    t.start();
+    call.resolve();
+  }
+
+  @PluginMethod
+  public synchronized void discoverStop(PluginCall call) {
+    stopListener();
+    call.resolve();
+  }
+
+  private synchronized void stopAnnouncer() {
+    if (announcer != null) announcer.interrupt();
+    announcer = null;
+  }
+
+  private synchronized void stopListener() {
+    if (listener != null) listener.close();
+    listener = null;
+    if (multicast != null && multicast.isHeld()) multicast.release();
+    multicast = null;
+  }
+
+  /** To 255.255.255.255 and to each interface's own broadcast address (some routers need the latter). */
+  private static void broadcast(DatagramSocket sock, String text, int port) {
+    byte[] data = text.getBytes(StandardCharsets.UTF_8);
+    List<InetAddress> targets = new ArrayList<>();
+    try {
+      targets.add(InetAddress.getByName("255.255.255.255"));
+      for (NetworkInterface ni : Collections.list(NetworkInterface.getNetworkInterfaces())) {
+        if (!ni.isUp() || ni.isLoopback()) continue;
+        for (InterfaceAddress ia : ni.getInterfaceAddresses())
+          if (ia.getBroadcast() != null) targets.add(ia.getBroadcast());
+      }
+    } catch (IOException ignored) {
+    }
+    for (InetAddress a : targets) {
+      try {
+        sock.send(new DatagramPacket(data, data.length, a, port));
+      } catch (IOException ignored) {
+      }
+    }
   }
 
   @Override
   protected void handleOnDestroy() {
     stopServer();
+    stopAnnouncer();
+    stopListener();
   }
 
   private synchronized void stopServer() {

@@ -16,6 +16,7 @@ export async function start(stage: string, port: number) {
     pipe: new CapacitorPipe(),
     port,
     maxPlayers: 9,
+    announceName: `Spike farm on ${port}`,
   });
   t0 = performance.now();
   return { port: host.port, address: host.address };

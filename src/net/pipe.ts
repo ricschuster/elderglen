@@ -20,6 +20,10 @@ export interface SocketPipe {
   listen(port: number, events: PipeEvents): Promise<PipeListening>;
   send(c: ConnId, text: string): void;
   close(c: ConnId): void;
+  /** Broadcast this text every ANNOUNCE_MS until called with undefined (or `stop`). Optional. */
+  announce?(text: string | undefined): void;
+  /** Listen for announcements: `cb(text, sender ip)`. Returns a stop function. Optional. */
+  discover?(cb: (text: string, from: string) => void): () => void;
   /** Close every connection and the listener. Safe to call twice. */
   stop(): Promise<void>;
 }

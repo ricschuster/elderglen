@@ -4,6 +4,7 @@
 import { Room, type RoomWorld } from "../core/room";
 import { LOCAL_PLAYER, type PlayerId } from "../core/players";
 import { decodeClient, encode, type ServerMsg } from "../core/protocol";
+import { encodeAnnounce } from "./announce";
 import type { ConnId, PipeListening, SocketPipe } from "./pipe";
 
 export interface RoomHostOptions {
@@ -15,6 +16,8 @@ export interface RoomHostOptions {
   /** Ticks a second (default 10, the spike's rate). */
   tickHz?: number;
   maxPlayers?: number;
+  /** Announce this game on the local network under this name (needs a pipe that can). */
+  announceName?: string;
   /** Test only: delay every message in each direction by this many ms. */
   latencyMs?: number;
   /** Messages the Room queued for the host's own player (p1) each tick. */
@@ -25,6 +28,9 @@ export class RoomHost {
   readonly room: Room;
   private readonly conns = new Map<PlayerId, ConnId>();
   private listening: PipeListening = { port: 0 };
+  private readonly gameId = Math.random().toString(36).slice(2, 10);
+  private lastAnnounce = "";
+  private closed = false;
   private timer: ReturnType<typeof setInterval> | undefined;
   private lastTick = performance.now();
   /** Sum and count of tick work in ms, for load checks. */
@@ -69,6 +75,7 @@ export class RoomHost {
             host.conns.set(joined, c);
           } else if (id) host.room.receive(id, msg);
           host.flush();
+          host.refreshAnnounce();
         });
       },
       onClose(c) {
@@ -78,15 +85,33 @@ export class RoomHost {
           host.conns.delete(id);
           host.room.disconnect(id);
           host.flush();
+          host.refreshAnnounce();
         }
       },
     });
+    host.refreshAnnounce();
     host.timer = setInterval(() => host.tick(), 1000 / (opts.tickHz ?? 10));
     return host;
   }
 
   get port(): number {
     return this.listening.port;
+  }
+
+  /** Tell the network about this game; sends again at once when the player count changed. */
+  private refreshAnnounce(): void {
+    const name = this.opts.announceName;
+    if (this.closed || name === undefined || !this.pipe.announce) return;
+    const text = encodeAnnounce({
+      id: this.gameId,
+      name,
+      port: this.port,
+      players: this.room.connectedIds.length,
+      maxPlayers: this.room.maxPlayers,
+    });
+    if (text === this.lastAnnounce) return;
+    this.lastAnnounce = text;
+    this.pipe.announce(text);
   }
 
   /** The device's LAN address, when the pipe knows it. */
@@ -122,6 +147,7 @@ export class RoomHost {
   async close(): Promise<void> {
     if (this.timer) clearInterval(this.timer);
     this.timer = undefined;
+    this.closed = true;
     await this.pipe.stop();
   }
 }
