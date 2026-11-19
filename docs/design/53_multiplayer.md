@@ -242,6 +242,15 @@ if two bodies overlap a blocked move for more than 0.5 s, the moving player's cl
 the host only receives positions. The host stays the judge of where a player is, so it accepts the passing positions.
 Needs a latency test once the real room exists (step 3).
 
+**Jam rule tested (2026-11-18).** `src/core/jam.ts` (`JamTracker`, constants `JAM_BLOCK_MS` 500 and `JAM_PASS_MS`
+1000) with `tests/jam.test.ts`: 10 tests pass. They cover no jam while moving or standing still, the 0.5 s timer, the
+1 s pass window, reset on separating, two clients passing together, three players tracked per pair, and 16 ms against
+100 ms frames. The tests exposed three rule details, now fixed in the module. (1) The timer counts only a real move
+attempt that was stopped by a player, so standing next to someone never jams. (2) The overshoot past 0.5 s is taken off
+the pass window, so total length is the same at any frame rate (within one frame). (3) Once started, the pass runs its
+full second even if the block stops being reported, and a pair still stuck afterwards needs a fresh 0.5 s. Still
+untested: real latency, and how the scene detects "blocked by player X" (no multiplayer scene yet).
+
 **Needs hands.** (1) Run `host.mjs` on the desktop and join from the tablet and a second machine on your router, and
 note client isolation and the typed address fallback. (2) The tablet host load on the SM-T500 with the Capacitor plugin
 (step 8; this spike did not build the plugin). (3) A person-played late-game farm save for one more size check.
