@@ -1,42 +1,22 @@
 import { feastGive, lanternOn, lanternTile } from "../core/feastexchange";
 import {
   BARN_BUILT,
-  BARN_FOOTPRINT,
   BARN_MAP,
-  BARN_MAX_TIER,
   stableHome,
   siloBlocks,
-  siloSite,
-  SILO_FOOTPRINT,
-  STABLE_FOOTPRINT,
-  siteOf,
   depositHay,
   siloCapacity,
   HAY,
-  barnSite,
   barnVisibleTier,
-  animalSlots,
   COOP_BUILT,
-  COOP_MAX_TIER,
-  COOP_FOOTPRINT,
-  INCUBATOR_TIER,
   COOP_MAP,
-  GROW_DAYS,
-  coopSite,
   coopVisibleTier,
 } from "../core/animals";
 import { DEBUG_TOOLS } from "../core/debugtools";
-import {
-  FISH_POND,
-  POND_FISH_SPOTS,
-  pondCovering,
-  pondLook,
-  pondUse,
-  takeFish,
-} from "../core/pond";
-import { fertilizerById } from "../core/fertilizer";
+import { pondCovering, pondUse, takeFish } from "../core/pond";
+
 import Phaser from "phaser";
-import { animalKey } from "./art-animals";
+
 import { saveSettings, type TouchScheme } from "../core/bindings";
 import { sleep } from "../core/sleep";
 import {
@@ -86,9 +66,7 @@ import {
   paradeJoinedAt,
   playerMarchAt,
 } from "../core/parade";
-import { stageOf as fruitStageOf } from "../core/fruittrees";
-import { teaStageOf } from "../core/teabush";
-import { potLook, potsOf } from "../core/gardenpot";
+
 import type { GameState } from "../core/save";
 import { cycle, findTool, heldAt, nextRow, toolbarSize } from "../core/toolbar";
 import { pendingChoice } from "../core/professions";
@@ -147,15 +125,15 @@ import { COVE_TREASURE, FERRY_LINE, takeTreasure } from "../core/cove";
 import { cropOfSeed, itemById } from "../core/items";
 import { MIXED_SEED } from "../core/weeds";
 import { NOTHING_TO_ACT_ON, act, reasonText, useHeld } from "../core/tools";
-import { cropById } from "../core/crops";
+
 import { mapFiles, maps } from "../content/maps";
 import { START } from "../core/maps";
 import { HAT_KEY, villagerKey } from "./art-people";
-import { DEPTH, sortDepth, tileDepth } from "./depth";
+import { DEPTH, sortDepth } from "./depth";
 import { drawMapArt } from "./mapart";
 import { MAP_PASSES } from "./map-passes";
 import { creatureTexture } from "./art-creatures";
-import { FARM_STORE, storeOf } from "../core/mapstore";
+import { storeOf } from "../core/mapstore";
 import { mapWithDoors } from "../core/placement";
 import { farmMapOf, isFarmMap, resolveMapId } from "../core/farmtypes";
 import {
@@ -226,7 +204,7 @@ import {
 import { autoSwings, autoWeaponSlot, mayAutoEquip } from "../core/autoattack";
 import { planTap, planUse, type TapPlan } from "../core/pathing";
 import { tapPick, tapUse } from "../core/tapuse";
-import { isTapperItem, tapReady, tapStatus } from "../core/tapper";
+import { isTapperItem, tapStatus } from "../core/tapper";
 import {
   browserSettingsStore,
   loadDeviceSettings,
@@ -255,8 +233,8 @@ import {
   swingDamage,
   type Creature,
 } from "../core/creatures";
-import { absoluteMinutes } from "../core/furnace";
-import { jobDone, statusText } from "../core/machines";
+
+import { statusText } from "../core/machines";
 import {
   CASK,
   caskDone,
@@ -273,13 +251,12 @@ import {
   pushChest,
   swapsOnTap,
 } from "../core/chests";
-import { CHEST_COLOURS } from "../core/chestdefs";
+
 import {
   type Glow,
   isLight,
   lightAt,
   lightLayer,
-  lightMapKey,
   pickUpLight,
   placeLight,
 } from "../core/lights";
@@ -314,7 +291,6 @@ import {
 import { baitById } from "../core/tackle";
 import { greencoatDue, takeCampGift } from "../core/camp";
 import {
-  decorTiles,
   farmDecorAt,
   isFarmDecor,
   pickUpFarmDecor,
@@ -359,15 +335,9 @@ import {
   placeFurniture,
 } from "../core/furniture";
 import { hatById } from "../core/hats";
-import {
-  GREENHOUSE_FOOTPRINT,
-  greenhouseHolds,
-  greenhouseRepaired,
-  greenhouseSite,
-} from "../core/greenhouse";
+import { greenhouseHolds } from "../core/greenhouse";
 import {
   CELLAR_MAP,
-  HOUSE_MAP,
   houseHolds,
   houseSpouse,
   houseVisibleTier,
@@ -375,35 +345,7 @@ import {
 } from "../core/house";
 import { SELECTED_KEY, STATE_KEY } from "./state";
 import { placedChestTip } from "../core/itemtip";
-import {
-  cropKey,
-  fertKey,
-  fruitOnTreeKey,
-  fruitTreeKey,
-  sprinklerKey,
-  furnitureKey,
-  chestKey,
-  farmDecorKey,
-  lightKey,
-  GARDEN_POT_KEY,
-  POND_KEY,
-  POND_PIT_KEY,
-  POT_KEY,
-  POT_READY_KEY,
-  machineKey,
-  MACHINE_READY_KEY,
-  forageKey,
-  iconKey,
-  LADDER_KEY,
-  ROCK_KEYS,
-  SPOT_KEY,
-  soilKey,
-  stageOf,
-  treeKey,
-  TWIG_KEY,
-  GRASS_KEY,
-  WEED_KEY,
-} from "./art";
+import {} from "./art";
 import { pickupRadius } from "../core/ground";
 import { Hud } from "./hud";
 import { PANEL_BOTTOM, PANEL_LEFT_BASE } from "./hudpanel";
@@ -436,6 +378,18 @@ import {
   type BlockWorld,
 } from "../core/blocking";
 import { defeatCreature, defeatMessage } from "../core/creature-defeat";
+import {
+  drawGround,
+  drawRooms,
+  drawBuild,
+  drawFurnace,
+  drawShrine,
+  drawMailbox,
+  drawRequestMark,
+  drawGreenhouse,
+  drawCoop,
+  drawCoopInside,
+} from "./farm-draw";
 import { RemotePlayerLayer } from "./remoteplayers";
 import { installDebugHooks, type DebugContext } from "./farm-debug";
 
@@ -503,16 +457,16 @@ const PUSH: Record<Facing, { x: number; y: number }> = {
  * state and the selected toolbar slot survive in the game registry.
  */
 export class FarmScene extends Phaser.Scene {
-  private state!: GameState;
+  state!: GameState;
   private selected = 0;
-  private mapId: string = START.map;
+  mapId: string = START.map;
   private entryName: string = START.entry;
   private restoreTile: { x: number; y: number } | undefined;
   private gate = new ResumeGate();
   private leaving = false;
   /** The mine floor this map is, if it is one. */
-  private floor: number | undefined;
-  private floorState: Floor | undefined;
+  floor: number | undefined;
+  floorState: Floor | undefined;
   /** False right after arriving on a ladder, until the player steps off it. */
   private ladderArmed = true;
   /** True once the player has stood off every exit tile, so a walk onto one counts. */
@@ -527,7 +481,7 @@ export class FarmScene extends Phaser.Scene {
   /** True after the first Action press on the ruined footbridge, which asks first. */
   private mendAsked = false;
   private hud!: Hud;
-  private uiCamera!: Phaser.Cameras.Scene2D.Camera;
+  uiCamera!: Phaser.Cameras.Scene2D.Camera;
   /** The placeholder map labels and the world x each is centred on. */
   private glowDark = -1;
   private glowLights: Glow[] = [];
@@ -536,17 +490,17 @@ export class FarmScene extends Phaser.Scene {
   private labelTags: { o: Phaser.GameObjects.Text; x: number; y: number }[] =
     [];
   /** The pictures of things on the map, redrawn by `drawGround`. */
-  private sprites: Phaser.GameObjects.Image[] = [];
-  private ground!: Phaser.GameObjects.Graphics;
+  sprites: Phaser.GameObjects.Image[] = [];
+  ground!: Phaser.GameObjects.Graphics;
   /** The light layer: glow rings of placed lights and the worn ring (note 89). */
   private glow!: Phaser.GameObjects.Graphics;
   /** Bombs lit and counting down on this map. Never saved: they go off at once on leaving (note 89). */
   private litBombs: LitBomb[] = [];
   private bombFx!: Phaser.GameObjects.Graphics;
-  private wash!: Phaser.GameObjects.Graphics;
+  wash!: Phaser.GameObjects.Graphics;
   /** Dusk over the farm: fades in toward nightfall, which moves by season. */
   private night!: Phaser.GameObjects.Rectangle;
-  private map!: FarmMap;
+  map!: FarmMap;
   /** The building tier the map was loaded at: the house rooms built so far. */
   private tier = 0;
   /** Drawn layers that show only while a condition holds (`when` or `unless`), such as the log. */
@@ -576,7 +530,7 @@ export class FarmScene extends Phaser.Scene {
   private namingHorse = false;
   /** The horse under the rider while mounted (a placeholder block). */
   private steed!: Phaser.GameObjects.Image;
-  private animalImages: Phaser.GameObjects.Image[] = [];
+  animalImages: Phaser.GameObjects.Image[] = [];
   private pos: Vec = { x: 0, y: 0 };
   private facing: Facing = "down";
   private heldMs = 0;
@@ -1287,17 +1241,17 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** The sprinklers, trees and soil of the map the player is on (`mapstore.ts`). */
-  private get store() {
+  get store() {
     return storeOf(this.state, this.map.indoors);
   }
 
   /** True on a map with the farm's soil: its trees, weeds, forage and machines live here. The greenhouse has its own soil. */
-  private get outdoorSoil(): boolean {
+  get outdoorSoil(): boolean {
     return outdoorSoil(this.map);
   }
 
   /** True outdoors on the farm or an area map: the map whose trees, rocks and forage are the state's. */
-  private get outdoorWorld(): boolean {
+  get outdoorWorld(): boolean {
     return outdoorWorld(this.map, this.mapId);
   }
 
@@ -2230,7 +2184,7 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** The tile the horse stands on here, when it is not being ridden. */
-  private horseSpot(): { x: number; y: number } | undefined {
+  horseSpot(): { x: number; y: number } | undefined {
     return horseTile(
       this.state,
       this.mapId,
@@ -2287,7 +2241,7 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** The rocks on this map: the farm's, or this mine floor's. */
-  private rocks(): Rocks | undefined {
+  rocks(): Rocks | undefined {
     if (this.floorState) return this.floorState.rocks;
     return isFarmMap(this.mapId) || isAreaMap(this.mapId)
       ? this.state.rocks
@@ -3261,7 +3215,7 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** The Feast gift exchange lantern prop (note 105), on the Feast's map (the square or the hall). */
-  private drawFeastLantern(): void {
+  drawFeastLantern(): void {
     this.lanternGfx?.destroy();
     this.lanternGfx = undefined;
     const ts = this.map.tileSize;
@@ -3288,7 +3242,7 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** Placeholder props on a festival map: tables, booths, villagers and the chest. */
-  private drawFestivalProps(): void {
+  drawFestivalProps(): void {
     const ts = this.map.tileSize;
     const colour: Record<string, number> = {
       showing: 0x8b5a2b,
@@ -3584,7 +3538,7 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** Tint each built room's floor and walls with its wallpaper and flooring (note 10). */
-  private drawDecor(): void {
+  drawDecor(): void {
     const json = mapFiles[this.mapId];
     if (!json) return;
     const ts = this.map.tileSize;
@@ -3739,523 +3693,6 @@ export class FarmScene extends Phaser.Scene {
     this.time.delayedCall(220, () => this.swingFx.clear());
   }
 
-  /** Draw plots, crops and forage on the tiles. */
-  private drawGround(): void {
-    this.ground.clear();
-    for (const image of this.sprites) image.destroy();
-    this.sprites = [];
-    const ts = this.map.tileSize;
-    // A picture stands on its tile: a taller or wider one rises and spreads from the
-    // tile's bottom centre, and sorts with the figures by that row (note 99).
-    const put = (x: number, y: number, key: string) => {
-      const image = this.add
-        .image((x + 0.5) * ts, (y + 1) * ts, key)
-        .setOrigin(0.5, 1)
-        .setDepth(tileDepth(y, ts));
-      this.uiCamera.ignore(image); // the UI camera does not draw the world
-      this.sprites.push(image);
-      return image;
-    };
-    for (const r of this.rocks()?.each() ?? [])
-      put(r.x, r.y, ROCK_KEYS[r.kind]);
-    if (this.floor !== undefined) {
-      const up = this.map.exits.find((e) => e.id === "up");
-      if (up) put(up.x, up.y, LADDER_KEY).setAlpha(0.6).setDepth(DEPTH.decal);
-      const down = this.floorState?.ladder;
-      if (down) put(down.x, down.y, LADDER_KEY).setDepth(DEPTH.decal);
-    }
-    if (isHouseMap(this.mapId)) this.drawDecor();
-    for (const p of this.state.furniture.each(this.mapId))
-      put(p.x, p.y, furnitureKey(p.id));
-    for (const s of this.map.services)
-      if (s.kind === "camp-chest") put(s.x, s.y, chestKey("big-chest"));
-    for (const c of this.state.chests.each(this.mapId)) {
-      const img = put(c.x, c.y, chestKey(c.id));
-      if (c.colour) img.setTint(CHEST_COLOURS[c.colour - 1]!);
-    }
-    for (const l of this.state.placed.each(lightMapKey(this.mapId))) {
-      if (isFarmDecor(l.id))
-        for (const t of decorTiles(l.id, l.x, l.y))
-          put(t.x, t.y, farmDecorKey(l.id));
-      else put(l.x, l.y, lightKey(l.id));
-    }
-    if (isFarmMap(this.mapId))
-      for (const p of this.state.placed.each(lightMapKey(this.mapId)))
-        if (p.id === LIGHTNING_ROD && p.state?.pack === true)
-          put(p.x, p.y, MACHINE_READY_KEY);
-    for (const p of this.state.pots.each(this.mapId)) {
-      put(p.x, p.y, POT_KEY);
-      if (p.catch) put(p.x, p.y, POT_READY_KEY);
-    }
-    if (this.mapId === CELLAR_MAP)
-      for (const c of this.state.casks.each()) {
-        put(c.x, c.y, machineKey(CASK));
-        if (caskDone(this.state, c)) put(c.x, c.y, MACHINE_READY_KEY);
-      }
-    if (this.mapId === CAVE_MAP) this.drawCave(put);
-    this.drawFeastLantern();
-    if (isFestivalMap(this.mapId)) this.drawFestivalProps();
-    if (this.map.hasSoil) this.drawSoil(put);
-    this.drawWorld(put);
-    this.drawPonds(put);
-  }
-
-  /** Fish ponds (note 93): the pit while dug, then the water with its fish swimming in it. Placeholder art. */
-  private drawPonds(
-    put: (x: number, y: number, key: string) => Phaser.GameObjects.Image,
-  ): void {
-    if (!isFarmMap(this.mapId)) return;
-    const ts = this.map.tileSize;
-    for (const p of this.state.placed.each(FARM_STORE)) {
-      if (p.id !== FISH_POND) continue;
-      const look = pondLook(p);
-      const body = put(
-        p.x + 2,
-        p.y + 4,
-        look.building ? POND_PIT_KEY : POND_KEY,
-      );
-      body.setDepth(DEPTH.decal);
-      if (look.sea) body.setTint(0x9fb8ff);
-      const icon = look.species && iconKey(look.species);
-      if (icon)
-        for (const [fx, fy] of POND_FISH_SPOTS.slice(0, look.fish)) {
-          const fish = this.add
-            .image(p.x * ts + fx, p.y * ts + fy, icon)
-            .setScale(0.6)
-            .setDepth(DEPTH.decal + 1);
-          this.uiCamera.ignore(fish);
-          this.sprites.push(fish);
-        }
-      if (look.ready) put(p.x + 4, p.y + 1, MACHINE_READY_KEY);
-    }
-  }
-
-  /** The dug soil, crops, fertilizer, sprinklers and fruit trees of the map. */
-  private drawSoil(
-    put: (x: number, y: number, key: string) => Phaser.GameObjects.Image,
-  ): void {
-    const soil = this.map.indoors ? this.state.greenhouse : this.state.farm;
-    for (const { x, y, plot } of soil.each()) {
-      put(x, y, soilKey(plot.wateredToday)).setDepth(DEPTH.decal);
-      const fert = fertilizerById(plot.fertilizer);
-      if (fert) put(x, y, fertKey(fert.line)).setDepth(DEPTH.decal);
-      const crop = plot.crop;
-      const def = crop && cropById(crop.id);
-      if (!crop || !def) continue;
-      const stage = stageOf(crop.daysGrown / def.growDays, soil.isRipe(x, y));
-      put(x, y, cropKey(crop.id, stage));
-    }
-    // Each map shows its own sprinklers and fruit trees.
-    const here = this.store;
-    for (const s of here.sprinklers.each()) put(s.x, s.y, sprinklerKey(s.id));
-    for (const t of here.fruitTrees.each()) {
-      put(t.x, t.y, fruitTreeKey(fruitStageOf(t.age)));
-      if (t.fruit > 0) put(t.x, t.y, fruitOnTreeKey(t.id));
-    }
-    // Placeholder art: the fruit tree sprites, tinted green (note 97).
-    for (const b of here.teaBushes.each())
-      put(b.x, b.y, fruitTreeKey(teaStageOf(b.age) * 2)).setTint(0x7fd66a);
-    this.drawGardenPots(put);
-  }
-
-  /** Garden pots (note 97): the pot, and the crop or tea bush growing in it. */
-  private drawGardenPots(
-    put: (x: number, y: number, key: string) => Phaser.GameObjects.Image,
-  ): void {
-    for (const p of potsOf(this.state, this.map)) {
-      put(p.x, p.y, GARDEN_POT_KEY);
-      const look = potLook(p);
-      if (look?.kind === "tea")
-        put(p.x, p.y, fruitTreeKey(teaStageOf(look.age) * 2)).setTint(0x7fd66a);
-      else if (look?.kind === "crop") {
-        const def = cropById(look.id);
-        if (def)
-          put(
-            p.x,
-            p.y,
-            cropKey(look.id, stageOf(look.daysGrown / def.growDays, look.ripe)),
-          );
-      }
-    }
-  }
-
-  /** What stands and lies outdoors: forage, weeds, twigs, machines, trees and goods on the ground. */
-  private drawWorld(
-    put: (x: number, y: number, key: string) => Phaser.GameObjects.Image,
-  ): void {
-    if (!this.outdoorWorld) return;
-    for (const { x, y, id } of this.state.forage.each())
-      put(x, y, forageKey(id));
-    for (const s of this.state.spots.each())
-      put(s.x, s.y, SPOT_KEY).setDepth(DEPTH.decal);
-    if (this.outdoorSoil && areaOf(this.state) === undefined)
-      for (const t of this.state.grass.each())
-        put(t.x, t.y, GRASS_KEY).setDepth(DEPTH.decal);
-    for (const w of this.state.weeds.each())
-      put(w.x, w.y, WEED_KEY).setDepth(DEPTH.decal);
-    for (const t of this.state.twigs.each())
-      put(t.x, t.y, TWIG_KEY).setDepth(DEPTH.decal);
-    for (const m of this.state.machines.each()) {
-      put(m.x, m.y, machineKey(m.id));
-      if (jobDone(this.state, m)) put(m.x, m.y, MACHINE_READY_KEY);
-    }
-    for (const t of this.state.trees.each()) {
-      put(t.x, t.y, treeKey(t.stage, t.stump, t.large, t.regrow !== undefined));
-      if (t.tap)
-        put(t.x, t.y, t.tap.heavy ? "tapper-on-tree-heavy" : "tapper-on-tree");
-      if (tapReady(this.state, t)) put(t.x, t.y, MACHINE_READY_KEY);
-    }
-    for (const p of this.state.ground.each()) {
-      const key = iconKey(p.id);
-      if (key) put(p.x, p.y, key);
-    }
-    this.drawBunting();
-  }
-
-  /** The cave: bat fruit on the floor, or mushroom boxes and the free dehydrator. */
-  private drawCave(
-    put: (x: number, y: number, key: string) => Phaser.GameObjects.Image,
-  ): void {
-    const cave = this.state.cave;
-    const ts = this.map.tileSize;
-    for (const f of cave.eachFruit()) {
-      const key = iconKey(f.id);
-      if (key) put(f.x, f.y, key);
-    }
-    if (cave.choice !== "mushrooms") return;
-    for (const s of this.map.services) {
-      if (s.kind === "mushroom-box") {
-        const box = cave.boxes[Number(s.id.split("-")[1]) - 1];
-        this.ground
-          .fillStyle(0x6b4a2a, 1)
-          .fillRect(s.x * ts + 1, s.y * ts + 3, ts - 2, ts - 5);
-        this.ground
-          .fillStyle(box?.ready ? 0xe8d8b0 : 0x3a2a1a, 1)
-          .fillRect(s.x * ts + 4, s.y * ts + 5, ts - 8, ts - 9);
-      } else if (s.kind === "cave-dehydrator") {
-        put(s.x, s.y, machineKey("dehydrator"));
-        if (caveDehydratorDone(this.state)) put(s.x, s.y, MACHINE_READY_KEY);
-      }
-    }
-  }
-
-  /** On a festival day, hang flags over the green so the village looks changed. */
-  private drawBunting(): void {
-    if (!festivalDayToday(this.state.day.clock.day)) return;
-    const green = this.map.services.find((s) => s.kind === "festival");
-    if (!green) return;
-    const ts = this.map.tileSize;
-    const colors = [0xd8503c, 0xf2d16b, 0x4a9fd8, 0x7ac05a];
-    const g = this.ground;
-    for (let i = -3; i <= 3; i++) {
-      const x = (green.x + i) * ts;
-      const y = (green.y - 1) * ts;
-      g.fillStyle(0x6b4a2a).fillRect(x, y, ts, 2);
-      g.fillStyle(colors[(i + 3) % colors.length]!).fillTriangle(
-        x + 2,
-        y + 2,
-        x + ts - 2,
-        y + 2,
-        x + ts / 2,
-        y + 10,
-      );
-    }
-  }
-
-  /**
-   * The hall's progress display (docs/design/40_hall_layout.md): a room is
-   * dim until it is done and warm after, a room that is not ready (locked or
-   * with no bundles yet) is also greyed, and the plaque lights one mark per
-   * finished room. Placeholder for the real ruined and restored tiles (#58).
-   */
-  private drawRooms(): void {
-    const { regions, tileSize: ts } = this.map;
-    this.wash.clear();
-    const hall = this.state.hall;
-    for (const r of regions) {
-      // A region that names a forage table is a patch of ground, not a hall room.
-      if (r.forage !== undefined) continue;
-      if (r.id === "plaque") {
-        hall.rooms.forEach((room, i) => {
-          const lit = hall.roomComplete(room.id);
-          this.wash
-            .fillStyle(lit ? 0xf0c75e : 0x3a3028, 1)
-            .fillRect((r.x + i) * ts + 3, r.y * ts + 5, ts - 6, ts - 10);
-        });
-        continue;
-      }
-      const status = hall.roomStatus(r.id);
-      const [colour, alpha] =
-        status === "done"
-          ? [0xffd890, 0.12]
-          : status === "ready"
-            ? [0x1a1410, 0.4]
-            : [0x606870, 0.6];
-      this.wash
-        .fillStyle(colour, alpha)
-        .fillRect(r.x * ts, r.y * ts, r.w * ts, r.h * ts);
-    }
-  }
-
-  /**
-   * While the carpenter builds the next house tier, scaffold stands on the
-   * outside wall, inside the house's footprint (docs/design/41_house.md), with
-   * the carpenter at work in front. Placeholder shapes until the art pass (#58).
-   */
-  private drawBuild(): void {
-    const house = this.map.exits.find((e) => e.map === HOUSE_MAP);
-    if (!this.state.houseBuild || !house) return;
-    const ts = this.map.tileSize;
-    // The house block is 6 by 4 tiles, with its door on the bottom row.
-    const left = (house.x - 2) * ts;
-    const top = (house.y - 3) * ts;
-    const g = this.wash;
-    g.lineStyle(3, 0x8a6a45, 1);
-    for (const dx of [0, 2 * ts])
-      g.lineBetween(left + dx, top, left + dx, top + 4 * ts);
-    for (let row = 0; row <= 4; row += 2)
-      g.lineBetween(left, top + row * ts, left + 2 * ts, top + row * ts);
-    g.fillStyle(0xd9a441, 1).fillRect(
-      (house.x + 2) * ts + 4,
-      (house.y + 1) * ts + 2,
-      ts - 8,
-      ts - 4,
-    );
-    g.fillStyle(0x6b4f35, 1).fillRect(
-      (house.x + 2) * ts + ts - 6,
-      (house.y + 1) * ts,
-      4,
-      ts / 2,
-    );
-  }
-
-  /** The smith's furnace by the house, once given: dark iron, glowing while it smelts. */
-  private drawFurnace(): void {
-    const f = this.state.furnace;
-    const spot = this.map.services.find((s) => s.kind === "furnace");
-    if (!f.gifted || !spot) return;
-    const ts = this.map.tileSize;
-    const x = spot.x * ts;
-    const y = spot.y * ts;
-    const busy = f.job !== undefined;
-    const done = busy && absoluteMinutes(this.state) >= f.job!.doneAt;
-    const g = this.wash;
-    g.fillStyle(0x3a3a42, 1).fillRect(x + 1, y + 2, ts - 2, ts - 2);
-    g.fillStyle(0x23232a, 1).fillRect(x + 1, y + 2, ts - 2, 3);
-    g.fillStyle(done ? 0x8fd18a : busy ? 0xf08a30 : 0x15151a, 1).fillRect(
-      x + 4,
-      y + 8,
-      ts - 8,
-      5,
-    );
-  }
-
-  /** The ancestors' shrine: a standing stone and four candle stands, placeholder shapes (note 83). */
-  private drawShrine(): void {
-    const stone = this.map.services.find((s) => s.id === "shrine-stone");
-    if (!stone) return;
-    const ts = this.map.tileSize;
-    const lit = this.state.shrine.candles;
-    const g = this.wash;
-    g.fillStyle(0x1f3d24, 0.35).fillEllipse(
-      stone.x * ts + ts / 2,
-      stone.y * ts + ts / 2,
-      7 * ts,
-      5 * ts,
-    );
-    g.fillStyle(this.state.shrine.statueOpen ? 0xb9c8d8 : 0x8a8a92, 1)
-      .fillRect(stone.x * ts + 3, stone.y * ts - 4, ts - 6, ts + 2)
-      .fillStyle(0x55555c, 1)
-      .fillRect(stone.x * ts + 3, stone.y * ts - 4, ts - 6, 2);
-    const stands = this.map.services.filter((s) =>
-      s.id.startsWith("shrine-stand-"),
-    );
-    stands.forEach((s, i) => {
-      const x = s.x * ts;
-      const y = s.y * ts;
-      g.fillStyle(0x6b4a2e, 1).fillRect(x + 6, y + 6, 4, ts - 6);
-      g.fillStyle(0xf0e6c8, 1).fillRect(x + 5, y + 1, 6, 6);
-      if (i < lit) g.fillStyle(0xffc860, 1).fillRect(x + 6, y - 4, 4, 5);
-    });
-  }
-
-  /** The farm mailbox: a post and box, with the flag up while mail waits (note 51). */
-  private drawMailbox(): void {
-    const spot = this.map.services.find((s) => s.kind === "mailbox");
-    if (!spot) return;
-    const ts = this.map.tileSize;
-    const x = spot.x * ts;
-    const y = spot.y * ts;
-    const g = this.wash;
-    g.fillStyle(0x6f4a22, 1).fillRect(x + 7, y + 8, 2, ts - 8);
-    g.fillStyle(0x3f6f9a, 1).fillRect(x + 3, y + 3, 10, 6);
-    g.fillStyle(0x2a4a6a, 1).fillRect(x + 3, y + 3, 10, 1);
-    if (this.state.mail.flagUp)
-      g.fillStyle(0xd8483a, 1)
-        .fillRect(x + 12, y - 1, 2, 6)
-        .fillRect(x + 12, y - 1, 4, 2);
-    else g.fillStyle(0xd8483a, 1).fillRect(x + 12, y + 5, 3, 2);
-  }
-
-  /** A yellow mark over the request board while a request waits to be taken (note 50). */
-  private drawRequestMark(): void {
-    const spot = this.map.services.find((s) => s.kind === "requests");
-    if (
-      !spot ||
-      this.state.quests.posted(this.state.day.clock.day).length === 0
-    )
-      return;
-    const ts = this.map.tileSize;
-    const x = spot.x * ts;
-    const y = spot.y * ts - 12;
-    this.wash
-      .fillStyle(0xf2c94c, 1)
-      .fillRect(x + 7, y, 3, 7)
-      .fillRect(x + 7, y + 9, 3, 3);
-  }
-
-  /** A coop or barn on the farm: a plain block, scaffolding while it is built (note 23). */
-  private drawFarmBuilding(
-    site: { x: number; y: number } | undefined,
-    size: { w: number; h: number },
-    doorX: number,
-    built: boolean,
-    building: boolean,
-    roof: number,
-  ): void {
-    if (!site || (!built && !building)) return;
-    const ts = this.map.tileSize;
-    const x = site.x * ts;
-    const y = site.y * ts;
-    const g = this.wash;
-    if (!built) {
-      g.lineStyle(3, 0x8a6a45, 1);
-      for (let dx = 0; dx <= size.w; dx += 2)
-        g.lineBetween(x + dx * ts, y, x + dx * ts, y + size.h * ts);
-      return;
-    }
-    g.fillStyle(roof, 1).fillRect(x, y, size.w * ts, ts);
-    g.fillStyle(0xc9a26b, 1).fillRect(
-      x,
-      y + ts,
-      size.w * ts,
-      (size.h - 1) * ts,
-    );
-    if (doorX >= 0)
-      g.fillStyle(0x4a3220, 1).fillRect(
-        x + doorX * ts + 3,
-        y + (size.h - 1) * ts + 2,
-        ts - 6,
-        ts - 2,
-      );
-  }
-
-  /**
-   * The greenhouse on the farm, where it stands (note 60): a vine-grown ruin
-   * with scaffold poles until the Larder is done, then a glass house. It is
-   * drawn here, not in the map, so it can be moved. Placeholder art.
-   */
-  private drawGreenhouse(): void {
-    if (!isFarmMap(this.mapId)) return;
-    const ts = this.map.tileSize;
-    const at = greenhouseSite(this.state);
-    const { w, h, doorX } = GREENHOUSE_FOOTPRINT;
-    const [x, y] = [at.x * ts, at.y * ts];
-    const g = this.wash;
-    if (greenhouseRepaired(this.state)) {
-      g.fillStyle(0x4f8f6a, 1).fillRect(x, y, w * ts, ts);
-      g.fillStyle(0xa9d8c6, 1).fillRect(x, y + ts, w * ts, (h - 1) * ts);
-      g.lineStyle(2, 0x3f6f55, 1);
-      for (let dx = 0; dx <= w; dx += 2)
-        g.lineBetween(x + dx * ts, y + ts, x + dx * ts, y + h * ts);
-    } else {
-      g.fillStyle(0x6e7a5c, 1).fillRect(x, y, w * ts, h * ts);
-      g.fillStyle(0x3a5a3a, 0.55).fillRect(x, y, w * ts, h * ts);
-      g.lineStyle(3, 0x8a6a45, 1);
-      for (let dx = 0; dx <= w; dx += 2)
-        g.lineBetween(x + dx * ts, y, x + dx * ts, y + h * ts);
-    }
-    g.fillStyle(0x4a3220, 1).fillRect(
-      x + doorX * ts + 3,
-      y + (h - 1) * ts + 2,
-      ts - 6,
-      ts - 2,
-    );
-  }
-
-  private drawCoop(): void {
-    const a = this.state.animals;
-    this.drawFarmBuilding(
-      coopSite(this.state, this.mapId),
-      COOP_FOOTPRINT,
-      1,
-      a.coopBuilt,
-      a.build?.building === "coop" && !a.coopBuilt,
-      0xb5563c,
-    );
-    this.drawFarmBuilding(
-      barnSite(this.state, this.mapId),
-      BARN_FOOTPRINT,
-      3,
-      a.barnBuilt,
-      a.build?.building === "barn" && !a.barnBuilt,
-      0x8f3b2e,
-    );
-    this.drawSilo();
-    this.drawStable();
-  }
-
-  /** The stable and the horse beside it, or where it was left. Placeholder blocks. */
-  private drawStable(): void {
-    const a = this.state.animals;
-    this.drawFarmBuilding(
-      siteOf(this.state, "stable", this.mapId),
-      STABLE_FOOTPRINT,
-      -1,
-      a.stableBuilt,
-      a.build?.building === "stable" && !a.stableBuilt,
-      0x7a5a3a,
-    );
-    const spot = this.horseSpot();
-    if (!spot) return;
-    const ts = this.map.tileSize;
-    this.wash
-      .fillStyle(0x8a5a33, 1)
-      .fillRect(spot.x * ts + 3, spot.y * ts + ts - 14, ts - 6, 14);
-    this.wash
-      .fillStyle(0x5b3a1e, 1)
-      .fillRect(spot.x * ts + ts - 8, spot.y * ts + ts - 18, 5, 6);
-  }
-
-  /** The silo: a round grey tower, scaffolding while it is built. */
-  private drawSilo(): void {
-    const site = siloSite(this.mapId);
-    const a = this.state.animals;
-    if (!site || (!a.silo && a.siloDays <= 0)) return;
-    const ts = this.map.tileSize;
-    const x = site.x * ts;
-    const y = site.y * ts;
-    const g = this.wash;
-    if (!a.silo) {
-      g.lineStyle(3, 0x8a6a45, 1);
-      for (let dx = 0; dx <= SILO_FOOTPRINT.w; dx += 1)
-        g.lineBetween(x + dx * ts, y, x + dx * ts, y + SILO_FOOTPRINT.h * ts);
-      return;
-    }
-    g.fillStyle(0x9aa0a6, 1).fillRect(
-      x + 4,
-      y + ts,
-      SILO_FOOTPRINT.w * ts - 8,
-      (SILO_FOOTPRINT.h - 1) * ts,
-    );
-    g.fillStyle(0x6e747a, 1).fillRect(
-      x + 2,
-      y + 4,
-      SILO_FOOTPRINT.w * ts - 4,
-      ts,
-    );
-  }
-
   /** Facing the silo: tip the held hay in, or read how full it is. True if the tile is the silo. */
   private useSilo(tx: number, ty: number): boolean {
     if (!siloBlocks(this.state, this.mapId, tx, ty)) return false;
@@ -4273,89 +3710,18 @@ export class FarmScene extends Phaser.Scene {
     return true;
   }
 
-  /** Inside the coop or barn: the feeding bench along the back wall and the animals as blocks. */
-  private drawCoopInside(): void {
-    for (const im of this.animalImages) im.destroy();
-    this.animalImages = [];
-    const coop = this.mapId === COOP_MAP;
-    if (!coop && this.mapId !== BARN_MAP) return;
-    const ts = this.map.tileSize;
-    const g = this.wash;
-    const a = this.state.animals;
-    if (coop) {
-      g.fillStyle(0x8a6a45, 1).fillRect(3 * ts, 2 * ts + 4, 4 * ts, ts - 4);
-      g.fillStyle(0xe0c068, 1).fillRect(2 * ts + 2, 2 * ts + 3, ts - 4, ts - 3);
-      g.fillStyle(0x6fa8d0, 1).fillRect(7 * ts + 2, 2 * ts + 5, ts - 4, ts - 5);
-      // The deluxe coop's auto-feeder: a metal chute on the back wall.
-      if (a.tier >= COOP_MAX_TIER)
-        g.fillStyle(0x9aa3ad, 1).fillRect(
-          9 * ts + 2,
-          2 * ts + 3,
-          ts - 4,
-          ts - 3,
-        );
-      // The big coop's incubator: a warm box, with a glow while an egg is in.
-      if (a.tier >= INCUBATOR_TIER) {
-        g.fillStyle(0xd9944a, 1).fillRect(
-          12 * ts + 2,
-          2 * ts + 3,
-          ts - 4,
-          ts - 3,
-        );
-        if (a.incubator)
-          g.fillStyle(0xfff2b0, 1).fillRect(
-            12 * ts + 5,
-            2 * ts + 6,
-            ts - 10,
-            ts - 9,
-          );
-      }
-    } else {
-      g.fillStyle(0x8a6a45, 1).fillRect(4 * ts, 2 * ts + 4, 5 * ts, ts - 4);
-      g.fillStyle(0xe0c068, 1).fillRect(3 * ts + 2, 2 * ts + 3, ts - 4, ts - 3);
-      g.fillStyle(0x6fa8d0, 1).fillRect(9 * ts + 2, 2 * ts + 5, ts - 4, ts - 5);
-      if (a.barnTier >= BARN_MAX_TIER)
-        g.fillStyle(0x9aa3ad, 1).fillRect(
-          10 * ts + 2,
-          2 * ts + 3,
-          ts - 4,
-          ts - 3,
-        );
-      // The stall wing, bottom left: cosmetic only (note 23): straw on the floor.
-      g.fillStyle(0xd8c070, 1).fillRect(
-        ts + 3,
-        10 * ts + 4,
-        3 * ts - 6,
-        2 * ts - 8,
-      );
-    }
-    for (const { animal: an, x, y } of animalSlots(
-      this.state,
-      coop ? "coop" : "barn",
-    )) {
-      const grown = an.age >= GROW_DAYS;
-      const image = this.add
-        .image(x * ts + ts / 2, y * ts + ts - 1, animalKey(an.species, grown))
-        .setOrigin(0.5, 1);
-      this.uiCamera.ignore(image);
-      this.animalImages.push(image);
-      if (an.product)
-        g.fillStyle(0xffffff, 1).fillRect(x * ts + 6, y * ts + ts, 4, 3);
-    }
-  }
-
   private render(): void {
-    this.drawGround();
+    drawGround(this);
     // drawRooms clears the wash layer, so everything else draws after it.
-    this.drawRooms();
-    this.drawCoop();
-    this.drawGreenhouse();
-    this.drawCoopInside();
-    this.drawFurnace();
-    this.drawMailbox();
-    this.drawShrine();
-    this.drawRequestMark();
-    this.drawBuild();
+    drawRooms(this);
+    drawCoop(this);
+    drawGreenhouse(this);
+    drawCoopInside(this);
+    drawFurnace(this);
+    drawMailbox(this);
+    drawShrine(this);
+    drawRequestMark(this);
+    drawBuild(this);
     this.hud.update(
       this.state,
       this.selected,
