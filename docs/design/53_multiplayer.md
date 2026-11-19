@@ -166,6 +166,17 @@ not built in M4. The pros and cons, so the idea is not lost:
    host and a guest talk on a real router, with a Node test host. Include a
    load check of 8 players against a tablet host.
 1. Split `GameState` into world and players, still single player, with tests.
+   **Built (2026-11-18, issue 964).** `src/core/players.ts`: `PlayerId`, `LOCAL_PLAYER` ("p1"),
+   `PlayerRecord` (money, inventory, skills, toolTiers, canWater, energy), `Players`
+   (`add`, `get`, `remove`, `local`, `ids`, `each`) and `localView`. `save.ts`: `WorldState` is the
+   shared part; `GameState` is `WorldState` plus `players`, with `money`, `inventory`, `skills`,
+   `toolTiers` and `canWater` kept as accessors onto `players.local`, so existing code is unchanged.
+   Left for later steps: the local record's `energy` is the same object as `day.energy` (give each
+   player their own when the day end is shared, step 5); still per player but still in `WorldState`:
+   journal (quests, mail, friendship, marriage), equipment, wardrobe, cabin and bed, `toolOrder`,
+   `elderfruit`, `combat`, `galleryClaimed`. Save format: the save still writes the flat single-player
+   fields. Note 52's version bump needs a `players` list (id, name, record), a wallet mode, and
+   a read path that loads the old flat fields as player "p1".
 2. The `Room` and the protocol in `src/core/` and `src/net/`, no socket.
 3. The socket, the Node test host, and a guest that joins and walks.
 4. Host and Join screens, the game list, and the typed address.

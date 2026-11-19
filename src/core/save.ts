@@ -57,6 +57,7 @@ import { ensureTools } from "./toolitems";
 import { Skills, SKILLS, type Skill } from "./skills";
 import { professionById } from "./professions";
 import { Decor, type DecorSave } from "./decor";
+import { Players, localView } from "./players";
 import { Furniture, migrateCatalogue, type FurnitureSave } from "./furniture";
 import { Mailbox, type MailEntry } from "./mail";
 import { Friendship } from "./friendship";
@@ -88,13 +89,15 @@ import {
   type Upgradable,
 } from "./upgrades";
 
-/** Everything the player owns and has done. The scene holds one of these. */
-export interface GameState {
+/**
+ * The world: everything that is shared in multiplayer (note 53). The per-player
+ * records live in `players` (`core/players.ts`). `GameState` is this plus the
+ * local player's view of their own record.
+ */
+export interface WorldState {
   /** The farm type id, chosen at a new game and never changed (`core/farmtypes.ts`). */
   farmType: string;
   day: Day;
-  money: number;
-  inventory: Inventory;
   farm: Farm;
   /** Trees and stumps on the farm. */
   trees: Trees;
@@ -156,11 +159,6 @@ export interface GameState {
   furnace: Furnace;
   /** Goods shipped today, paid when the day ends. */
   bin: ShippingBin;
-  skills: Skills;
-  /** Tier of the hoe and can, 0 for basic. */
-  toolTiers: ToolTiers;
-  /** Water left in the can (note 103). */
-  canWater: number;
   /** The tool the smith is upgrading, if any. */
   toolOrder: ToolOrder | undefined;
   hall: Hall;
@@ -234,6 +232,24 @@ export interface GameState {
   spots: ArtifactSpots;
 }
 
+/**
+ * Everything the player owns and has done. The scene holds one of these: the
+ * world plus a `players` list, with the local player's record also readable and
+ * writable as `money`, `inventory`, `skills`, `toolTiers` and `canWater`
+ * (accessors onto `players.local`, so single-player code is unchanged).
+ */
+export interface GameState extends WorldState {
+  /** Per-player records keyed by player id (`core/players.ts`, note 53). */
+  players: Players;
+  money: number;
+  inventory: Inventory;
+  skills: Skills;
+  /** Tier of the hoe and can, 0 for basic. */
+  toolTiers: ToolTiers;
+  /** Water left in the can (note 103). */
+  canWater: number;
+}
+
 /** A map and a tile, where Continue puts the player after a mid-day resume. */
 export interface ResumeSpot {
   map: string;
@@ -246,11 +262,12 @@ export const START_MONEY = 500;
 
 export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
   const farmMap = maps.get(farmTypeById(farmType).map);
-  return {
+  const day = new Day();
+  const players = new Players(START_MONEY, day.energy);
+  const world = {
+    players,
     farmType: farmTypeById(farmType).id,
-    day: new Day(),
-    money: START_MONEY,
-    inventory: new Inventory(),
+    day,
     farm: new Farm(),
     greenhouse: new Farm(true),
     trees: new Trees(farmMap.trees),
@@ -272,9 +289,6 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     casks: new Casks(),
     furnace: new Furnace(),
     bin: new ShippingBin(),
-    skills: new Skills(),
-    toolTiers: { hoe: 0, can: 0, pickaxe: 0, axe: 0 },
-    canWater: 40,
     toolOrder: undefined,
     hall: new Hall(),
     houseTier: 0,
@@ -310,7 +324,13 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
     forage: new ForageField(),
     spots: new ArtifactSpots(),
     areas: newAreas(),
-  };
+  } satisfies WorldState & { players: Players };
+  // Accessors, not a spread: a spread would copy the values and cut the link.
+  Object.defineProperties(
+    world,
+    Object.getOwnPropertyDescriptors(localView(players)),
+  );
+  return world as unknown as GameState;
 }
 
 /** 3 added marriage (note 12). Version 2 saves load with the defaults. */
