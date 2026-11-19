@@ -131,8 +131,8 @@ export class BinScene extends Phaser.Scene {
     const g = this.state;
     const mult = sellMultiplier(g.skills, id);
     const sent = this.oreOnly
-      ? g.bin.shipOre(g.inventory, id, n, mult)
-      : g.bin.ship(g.inventory, id, n, mult);
+      ? g.bin.shipOre(g.inventory, id, n, mult, g.players.localId)
+      : g.bin.ship(g.inventory, id, n, mult, g.players.localId);
     this.say(
       sent > 0
         ? `Shipped ${sent} ${this.name(id)}.`

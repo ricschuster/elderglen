@@ -141,6 +141,11 @@ Three sections, switched with Left and Right or a tap.
 
 ## Built status
 
+- 2026-11-18: in multiplayer (note 53) the menu does not pause the world. The
+  pause in single player stays; a guest or host in a shared game opens the menu
+  while the clock runs on the host. The Host and Join screens (`LobbyScene`) are
+  outside the tab strip and use the real socket transport.
+
 - 2026-11-14: a Guide tab after Collect (note 101).
 
 - 2026-11-14: `MenuScene` (tab strip, Esc or E, Page Up and Page Down), Pack tab

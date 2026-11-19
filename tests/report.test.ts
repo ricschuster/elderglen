@@ -31,7 +31,7 @@ const base: SleepReport = {
   completionGain: 0,
   newMail: 0,
   caveOffer: false,
-  shipped: { lines: [], total: 0 },
+  shipped: { lines: [], total: 0, byPlayer: {} },
   orders: { done: [], lapsed: [] },
   requestsLapsed: [],
   stuckTrees: [],

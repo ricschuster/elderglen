@@ -57,7 +57,16 @@ import { ensureTools } from "./toolitems";
 import { Skills, SKILLS, type Skill } from "./skills";
 import { professionById } from "./professions";
 import { Decor, type DecorSave } from "./decor";
-import { Players, localView } from "./players";
+import {
+  LOCAL_PLAYER,
+  Players,
+  WALLET_MODES,
+  localView,
+  loadPlayerInto,
+  savePlayer,
+  type PlayerSave,
+  type WalletMode,
+} from "./players";
 import { Furniture, migrateCatalogue, type FurnitureSave } from "./furniture";
 import { Mailbox, type MailEntry } from "./mail";
 import { Friendship } from "./friendship";
@@ -260,10 +269,14 @@ export interface ResumeSpot {
 /** Starting cash for a new game. */
 export const START_MONEY = 500;
 
-export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
+export function newGame(
+  farmType: string = DEFAULT_FARM_TYPE,
+  walletMode: WalletMode = "shared",
+): GameState {
   const farmMap = maps.get(farmTypeById(farmType).map);
   const day = new Day();
   const players = new Players(START_MONEY, day.energy);
+  players.walletMode = walletMode;
   const world = {
     players,
     farmType: farmTypeById(farmType).id,
@@ -333,8 +346,12 @@ export function newGame(farmType: string = DEFAULT_FARM_TYPE): GameState {
   return world as unknown as GameState;
 }
 
-/** 3 added marriage (note 12). Version 2 saves load with the defaults. */
-export const SAVE_VERSION = 3;
+/**
+ * 3 added marriage (note 12). 4 added the player list and wallet mode (notes 52
+ * and 53). Version 2 and 3 saves load with the defaults: the flat fields are
+ * player "p1", shared wallet.
+ */
+export const SAVE_VERSION = 4;
 const OLDEST_SAVE_VERSION = 2;
 
 interface SaveData {
@@ -346,6 +363,10 @@ interface SaveData {
   /** Minutes since midnight. Absent in saves made before the clock was saved. */
   minutes?: number;
   money: number;
+  /** Money mode, chosen at creation. Absent before version 4: shared. */
+  walletMode?: WalletMode;
+  /** Every player's record. The host's flat fields below stay authoritative for "p1". Absent before version 4. */
+  players?: PlayerSave[];
   inventory: ReturnType<Inventory["save"]>;
   farm: ReturnType<Farm["save"]>;
   /** Absent in saves made before trees existed: the map's starting trees. */
@@ -624,8 +645,11 @@ export function serialize(
     day: g.day.clock.day,
     energy: g.day.energy.current,
     minutes: g.day.clock.minutes,
-    money: g.money,
-    inventory: g.inventory.save(),
+    // The host's own gold, even when the pool is shared (it is the pool).
+    money: g.players.get(LOCAL_PLAYER).money,
+    walletMode: g.players.walletMode,
+    players: g.players.each().map(savePlayer),
+    inventory: g.players.get(LOCAL_PLAYER).inventory.save(),
     farm: home.farm.save(),
     greenhouse: g.greenhouse.save(),
     trees: home.trees.save(),
@@ -873,7 +897,11 @@ export function deserialize(text: string): GameState | undefined {
     g.day.energy.max = maxEnergyFor(g.elderfruit);
   }
   g.day.restore(day, energy, isCount(raw.minutes) ? raw.minutes : undefined);
-  g.money = money;
+  g.players.get(LOCAL_PLAYER).money = money;
+  if (WALLET_MODES.includes(raw.walletMode as WalletMode))
+    g.players.walletMode = raw.walletMode as WalletMode;
+  if (Array.isArray(raw.players))
+    for (const rec of raw.players) loadPlayerInto(g.players, rec);
   g.weather = weather as Weather;
   g.inventory.load(inventory as ReturnType<Inventory["save"]>);
   // Saves from before note 102 kept the tools apart: put them in the pack.

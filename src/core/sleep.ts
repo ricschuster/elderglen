@@ -212,7 +212,7 @@ export function sleep(
   g.combat.effects.clear();
   fillCan(g);
   // The bin pays after the pass-out cost, which takes cash carried only.
-  const shipped = g.bin.settle(g);
+  const shipped = g.bin.settle(g.players);
   const orders = endDayOrders(g, shipped.lines, g.day.clock.day);
   const requestsLapsed = endDayQuests(g, g.day.clock.day);
   const caveOffer = g.cave.addEarnings(shipped.total, g.day.clock.day);

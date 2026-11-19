@@ -211,7 +211,7 @@ not built in M4. The pros and cons, so the idea is not lost:
 4. Host and Join screens, the game list, and the typed address.
 5. Shared day end and a dropped guest.
 6. Cabins (free at start, bought otherwise) and the join-needs-a-cabin rule.
-7. The money mode and per-player shipping proceeds.
+7. The money mode and per-player shipping proceeds. **Built (2026-11-18, issue 972).** `WalletMode` ("shared" default | "separate"), chosen by `newGame(farmType, walletMode)`; `Players.wallet/balance/pay`; the local `money` accessor follows the wallet. Bin lines carry `by`; `bin.settle(g.players)` pays per shipper. Save version 4 (note 52). Left: the Host screen choice, the bin summary split in the scene, guest purchases using `balance`.
 8. Native hosting in the wrapper, then the tablet plugin.
 
 ## For later

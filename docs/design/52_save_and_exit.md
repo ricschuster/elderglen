@@ -85,12 +85,16 @@ the **player** fields (pack, money, skills, tool tiers) and the **world** fields
 the record is not welded to one person's whole life. Multiplayer is milestone M4
 (ADR 0007) and designed in note 53. In Stardew co-op the host owns the world and saves on
 sleep; a future mode might keep both records host-only, and Restart this day
-would affect every player. No multiplayer work is added here.
+would affect every player. No multiplayer work is added here. Host and Join (note 53 step 4)
+change nothing in the record: a guest saves nothing of the world, and joining by typed
+address uses the real socket (a refusal for a full game or a player id in use shows its own
+plain message). Hosting from a browser tab is not offered, so a browser game never owns a
+shared world.
 
 ## Versions
 
 A record from another `SAVE_VERSION` is refused, as `deserialize` does. In practice
-(`SAVE_VERSION` is 2) a new slice adds an optional field that old saves lack and
+(`SAVE_VERSION` was 2; now 4) a new slice adds an optional field that old saves lack and
 the loader defaults, so the version bumps only when a field changes meaning or
 becomes required. A migration is written then if players exist who need one. The two records are
 written together, so they share a version.
@@ -467,3 +471,11 @@ Still open:
   The debug stage hook plays in the last slot (`MAX_SAVE_SLOTS`).
 - The installed app's file path for Export (ADR 0008).
 - Two-tab guard and "newer version" text: built 2026-11-16 (heartbeat lock). The debug-menu second tab and Import not using the guard are closed as ours, on purpose (owner, 2026-11-17).
+
+## Version 4: players and wallet mode (built 2026-11-18, issue 972)
+
+`SAVE_VERSION` is 4. The save adds `walletMode` ("shared" or "separate") and `players`, one `PlayerSave` per
+player (id, money, pack, skills, professions, tool tiers, can water, energy). The flat fields stay and are
+authoritative for "p1" (the host), so a v2 or v3 save loads with no migration step: the flat fields are p1, the
+wallet is shared, and an absent `players` list adds nobody. A malformed guest record is skipped. Bin lines gain an
+optional `by` (absent means p1).
