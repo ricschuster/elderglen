@@ -226,7 +226,10 @@ not built in M4. The pros and cons, so the idea is not lost:
    plant, water, harvest, buy, sell); ship multipliers (professions) for guests; the host's own wake/sleep
    from the scene; cabin `blocked` and area from the real farm map.
 7. The money mode and per-player shipping proceeds. **Built (2026-11-18, issue 972).** `WalletMode` ("shared" default | "separate"), chosen by `newGame(farmType, walletMode)`; `Players.wallet/balance/pay`; the local `money` accessor follows the wallet. Bin lines carry `by`; `bin.settle(g.players)` pays per shipper. Save version 4 (note 52). Host screen wallet choice (button cycles shared/separate, passed as `HostOptions` through `startHosting`; `src/net/hostoptions.ts`) and the bin and shipping summary split (`src/core/settlementsplit.ts`) built 2026-11-18. Left: a wallet choice on the new-game screen (no obvious place yet), wiring the option into the real host starter, guest purchases using `balance`.
-8. Native hosting in the wrapper, then the tablet plugin.
+8. Native hosting in the wrapper, then the tablet plugin. **Host route set by ADR 0015 (2026-11-19):** `SocketPipe`
+   (`src/net/pipe.ts`), `RoomHost` over it (`roomhost.ts`), `NodePipe`, `CapacitorPipe` and the Java `ElderHostPlugin` are
+   built; a real SM-T500 hosted 8 through the plugin (ADR 0015 "Result"). Left: the Electron pipe, the real host
+   starter (the host's own scene sharing the `Room`'s world), UDP announce and discover in the plugin.
 
 ## For later
 

@@ -11,6 +11,8 @@ import com.getcapacitor.BridgeActivity;
 public class MainActivity extends BridgeActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    // Plugins register before the bridge starts.
+    registerPlugin(ElderHostPlugin.class);
     super.onCreate(savedInstanceState);
     // Keep the screen on and undimmed while the game is in front.
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

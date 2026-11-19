@@ -32,3 +32,8 @@ Results are in note 53, "M4 spike results, tablet runs". Needs the "Elderglen DB
   the app. Tick, `sleep()` and `serialize` cost, then a soak with temperature and memory samples.
 - Keep the app in front and the screen awake (`adb shell svc power stayon usb`): a background WebView does not draw.
   Phaser caps the step for its first 100 or so frames after a load, so wait before timing movement.
+- `pipehost.ts` and `pipehost.mjs <serial> [stage] [port] [seconds]`: the real `RoomHost` in the app on a tablet,
+  through the `ElderHost` plugin (ADR 0015). Needs the DBG app rebuilt with the plugin. Prints tick cost, players, heap.
+- `deskguests.ts`: `node scripts/sim/run.mjs spikes/m4/deskguests.ts <ip> [port] [guests] [seconds]`, N desktop guests
+  with round trips. A tablet guest: `tabletguest.mjs`, then open `/real?host=<ip>&port=<port>` in the tablet's browser
+  (quote the URL for `adb shell am start`, the `&` otherwise cuts it).
