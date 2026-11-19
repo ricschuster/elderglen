@@ -1,0 +1,84 @@
+import {
+  creatureById,
+  creatureTile,
+  creatureXp,
+  rollDrops,
+  type Creature,
+  type CreatureDef,
+} from "./creatures";
+import { DIAMOND, monsterDiamond } from "./gems";
+import { itemById } from "./items";
+import { mapDrops } from "./mapcreatures";
+import type { GameState } from "./save";
+
+/** What came of beating a creature (note 106, step 4). */
+export interface Defeat {
+  name: string;
+  /** The new combat level, or undefined when none was gained. */
+  levelUp: number | undefined;
+  /** Goods that went into the pack, as "2 slime". */
+  got: string[];
+  /** True when the pack was full and a drop was left behind. */
+  left: boolean;
+  /** True when the kill revealed a mine ladder. */
+  ladder: boolean;
+}
+
+/**
+ * A creature is beaten: its goods, the kill tally, combat XP and a ladder
+ * roll. `floor` is the mine floor it fell on, if any. Returns undefined for a
+ * kind with no definition (nothing is paid out).
+ */
+export function defeatCreature(
+  state: GameState,
+  c: Creature,
+  mapId: string,
+  floor: number | undefined,
+  tileSize: number,
+  rng: () => number,
+): Defeat | undefined {
+  const def = creatureById(c.kind);
+  if (!def) return undefined;
+  state.combat.noteKill(c.kind);
+  const levelUp = state.skills.gain("combat", creatureXp(c));
+  const got: string[] = [];
+  let left = false;
+  const bonus =
+    floor !== undefined
+      ? state.mines.killBonus(floor, state.day.clock.day)
+      : { extraKill: false, extraDrop: false };
+  if (bonus.extraKill) state.combat.noteKill(c.kind);
+  // A map's spawn table adds drops to every creature beaten there (note 73: Mahogany Seed).
+  const extra: CreatureDef = { ...def, drops: mapDrops(mapId) };
+  const rolls = [
+    ...rollDrops(def, rng),
+    ...rollDrops(extra, rng),
+    ...(bonus.extraDrop ? rollDrops(def, rng) : []),
+    // A rare Diamond from any monster, once the bottom of the mines is reached (note 83).
+    ...(monsterDiamond(state.mines.deepest, rng)
+      ? [{ id: DIAMOND.id, count: 1 }]
+      : []),
+  ];
+  for (const d of rolls) {
+    if (state.inventory.add(d.id, d.count))
+      got.push(`${d.count} ${itemById(d.id)?.name.toLowerCase() ?? d.id}`);
+    else left = true;
+  }
+  const tile = creatureTile(c, tileSize);
+  const ladder =
+    floor !== undefined
+      ? state.mines.creatureBeaten(
+          floor,
+          state.day.clock.day,
+          tile.x,
+          tile.y,
+          rng,
+        )
+      : false;
+  return { name: def.name, levelUp, got, left, ladder };
+}
+
+/** The line shown after a creature is beaten. */
+export function defeatMessage(r: Defeat): string {
+  return `${r.name} beaten.${r.levelUp ? ` Combat is now level ${r.levelUp}.` : ""}${r.got.length ? ` Got ${r.got.join(", ")}.` : ""}${r.left ? " Your pack is full, so something was left behind." : ""}${r.ladder ? " A ladder is revealed!" : ""}`;
+}

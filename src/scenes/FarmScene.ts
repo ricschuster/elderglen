@@ -46,7 +46,7 @@ import {
   isAreaMap,
   leaveArea,
 } from "../core/areas";
-import { creatureSpawnsOf, mapDrops } from "../core/mapcreatures";
+import { creatureSpawnsOf } from "../core/mapcreatures";
 import { eventAtTile } from "../core/eventrun";
 import { declinedToday } from "./HeartEventScene";
 import {
@@ -237,7 +237,6 @@ import {
 } from "./storage";
 import { ResumeGate } from "../core/records";
 import { serialize, type ResumeSpot } from "../core/save";
-import { DIAMOND, monsterDiamond } from "../core/gems";
 import { spawnTableOf } from "../core/spawns";
 import { hallRestored } from "../core/bundles";
 import {
@@ -249,16 +248,12 @@ import {
 } from "../core/combat";
 import {
   creatureById,
-  creatureTile,
-  creatureXp,
   floorHasCreatures,
   hurtCreature,
-  rollDrops,
   splitOff,
   stepCreature,
   swingDamage,
   type Creature,
-  type CreatureDef,
 } from "../core/creatures";
 import { absoluteMinutes } from "../core/furnace";
 import { jobDone, statusText } from "../core/machines";
@@ -440,6 +435,7 @@ import {
   tileBlockedNoHorse,
   type BlockWorld,
 } from "../core/blocking";
+import { defeatCreature, defeatMessage } from "../core/creature-defeat";
 import { RemotePlayerLayer } from "./remoteplayers";
 import { installDebugHooks, type DebugContext } from "./farm-debug";
 
@@ -4626,48 +4622,20 @@ export class FarmScene extends Phaser.Scene {
   /** A creature is beaten: its goods, the kill tally and a ladder roll. */
   private beaten(c: Creature): void {
     const floor = this.fightState()!;
-    const def = creatureById(c.kind);
     floor.creatures = floor.creatures.filter((o) => o.uid !== c.uid);
     this.creatureSprites.get(c.uid)?.destroy();
     this.creatureSprites.delete(c.uid);
-    if (!def) return;
-    this.state.combat.noteKill(c.kind);
-    const levelUp = this.state.skills.gain("combat", creatureXp(c));
-    const got: string[] = [];
-    let left = false;
-    const onFloor = this.floor !== undefined;
-    const bonus = onFloor
-      ? this.state.mines.killBonus(this.floor!, this.state.day.clock.day)
-      : { extraKill: false, extraDrop: false };
-    if (bonus.extraKill) this.state.combat.noteKill(c.kind);
-    // A map's spawn table adds drops to every creature beaten there (note 73: Mahogany Seed).
-    const extra: CreatureDef = { ...def, drops: mapDrops(this.mapId) };
-    const rolls = [
-      ...rollDrops(def, Math.random),
-      ...rollDrops(extra, Math.random),
-      ...(bonus.extraDrop ? rollDrops(def, Math.random) : []),
-      // A rare Diamond from any monster, once the bottom of the mines is reached (note 83).
-      ...(monsterDiamond(this.state.mines.deepest, Math.random)
-        ? [{ id: DIAMOND.id, count: 1 }]
-        : []),
-    ];
-    for (const d of rolls) {
-      if (this.state.inventory.add(d.id, d.count))
-        got.push(`${d.count} ${itemById(d.id)?.name.toLowerCase() ?? d.id}`);
-      else left = true;
-    }
-    const tile = creatureTile(c, this.map.tileSize);
-    const ladder = onFloor
-      ? this.state.mines.creatureBeaten(
-          this.floor!,
-          this.state.day.clock.day,
-          tile.x,
-          tile.y,
-          Math.random,
-        )
-      : false;
-    this.message = `${def.name} beaten.${levelUp ? ` Combat is now level ${levelUp}.` : ""}${got.length ? ` Got ${got.join(", ")}.` : ""}${left ? " Your pack is full, so something was left behind." : ""}${ladder ? " A ladder is revealed!" : ""}`;
+    const r = defeatCreature(
+      this.state,
+      c,
+      this.mapId,
+      this.floor,
+      this.map.tileSize,
+      Math.random,
+    );
+    if (!r) return;
+    this.message = defeatMessage(r);
     this.render();
-    if (levelUp && pendingChoice(this.state.skills)) this.open("profession");
+    if (r.levelUp && pendingChoice(this.state.skills)) this.open("profession");
   }
 }
