@@ -89,6 +89,7 @@ describe("the page stays out of the production build", () => {
         const text = readFileSync(f, "utf8");
         expect(text).not.toContain("layout page (dev only)");
         expect(text).not.toContain("__layout");
+        expect(text).not.toContain("elderglen-layout");
       }
     } finally {
       rmSync(out, { recursive: true, force: true });

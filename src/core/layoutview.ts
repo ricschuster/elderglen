@@ -70,6 +70,9 @@ export function registryProblems(
 }
 
 export interface PlacedObject {
+  /** Where the object lives in the file: its layer's index and its index in that layer. */
+  layerIndex: number;
+  index: number;
   cls: string;
   name: string;
   /** Tile position and size. */
@@ -95,8 +98,11 @@ export function placedObjects(
   const out: PlacedObject[] = [];
   for (const layer of layersAtTier(json, tier, holds)) {
     if (layer.type !== "objectgroup") continue;
-    for (const o of layer.objects ?? []) {
+    const layerIndex = json.layers.indexOf(layer);
+    (layer.objects ?? []).forEach((o, index) => {
       out.push({
+        layerIndex,
+        index,
         cls: clsOf(o),
         name: o.name,
         x: Math.floor(o.x / size),
@@ -109,7 +115,7 @@ export function placedObjects(
         ),
         raw: o,
       });
-    }
+    });
   }
   return out;
 }

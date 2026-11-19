@@ -348,8 +348,8 @@
           "name": "from_rooms",
           "class": "entry",
           "type": "entry",
-          "x": 136.0,
-          "y": 56.0,
+          "x": 136,
+          "y": 56,
           "width": 0,
           "height": 0,
           "point": true

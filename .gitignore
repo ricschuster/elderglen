@@ -31,3 +31,6 @@ playtest-out/
 # Reference pages saved by hand from other sites (not ours to redistribute)
 docs/reference/
 docs/wiki-internal/
+
+# Layout page drafts (note 87)
+.layout-drafts/

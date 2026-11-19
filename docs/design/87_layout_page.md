@@ -206,3 +206,42 @@ The owner took the recommendations on the three small points:
   check in use.
 - Stardew has no equivalent to check against; its own tooling is not public and this is a
   developer tool, so no Stardew checks row is added.
+
+## Built status
+
+Slices 1 and 2 are built (issues #970 and #971). Slices 3 to 5 are not.
+
+Run `npm run dev` and open `/layout.html`. Files: `layout.html`, `src/layout/main.ts` (the page),
+`src/core/layoutview.ts` and `src/core/layoutedit.ts` (pure helpers, tested),
+`src/layout/devserver.ts` and `src/layout/mapformat.ts` (dev-only save route and writer, node only).
+
+Simplest readings taken where the note was open:
+
+- **Flags.** Layout done lives in the notes, not in the map file, so the list shows only the art
+  flag (`placeholder` property cleared means art done). The page sets nothing.
+- **Filters.** Outdoor is a map with `rideable` or `wild`; festival is an id naming a fair, feast
+  or market; every other map is an interior.
+- **Conditions.** Check boxes per condition with all true and all false buttons. The Problems
+  panel is `MapRegistry.problems()` over the working copies, which already reads every condition
+  both ways.
+- **Writer.** The committed maps are Prettier formatted and mix compact and expanded objects, and
+  Prettier keeps what the source had. The writer gives each object the style of the matching
+  object in the file on disk, then runs the repo's Prettier, so a save changes only the edited
+  lines. A test round trips all 38 maps. One map had `136.0` and `56.0` (outpost), written as
+  `136` and `56` so the round trip is exact.
+- **Route.** Three routes under `/__layout/` (read, save, draft) in a Vite plugin with
+  `apply: "serve"`. The plugin loads the code through `ssrLoadModule`, so `vite.config.ts` imports
+  nothing from `src/`. A test runs `vite build` and fails if `layout.html` or the page code is in
+  the output.
+- **Edit.** Click selects, drag or arrow keys move by whole tiles, Delete removes, Ctrl+C and
+  Ctrl+V copy, Ctrl+Z and Ctrl+Y undo and redo, Ctrl+S saves. New objects go on the first object
+  layer that shows. Enumerated values (`map`, `entry`, `requires`, water, tree and rock `kind`)
+  are lists; other properties are free text.
+- **Pair check.** `MapRegistry.pairProblems()` is part of `problems()`. Distance is the larger of
+  the x and y gaps from the entry tile to the nearest exit back, limit 4. A one-way exit and an
+  exit to its own map are not checked. It found one real gap, `secret-woods` exit `to_forest`
+  (its entry on the Forest is 11 tiles from the Forest's exit to the Secret Woods). It is listed
+  in `KNOWN_PAIR_GAPS` in `src/core/maps.ts` until the Forest layout moves one of them.
+- **Still to do.** The hash guard and drafts are built but only exercised by tests, not yet by
+  the owner in a browser. Problems are recomputed 250 ms after an edit because reading every map
+  takes most of a second.
