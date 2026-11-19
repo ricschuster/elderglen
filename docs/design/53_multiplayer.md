@@ -308,6 +308,12 @@ attempt that was stopped by a player, so standing next to someone never jams. (2
 the pass window, so total length is the same at any frame rate (within one frame). (3) Once started, the pass runs its
 full second even if the block stops being reported, and a pair still stuck afterwards needs a fresh 0.5 s. Still
 untested: real latency, and how the scene detects "blocked by player X" (no multiplayer scene yet).
+**Jam rule under latency (2026-11-19, #966).** `tests/jam-latency.test.ts`: the real Room on a manual clock with a delayed
+message queue (60 ms, 100 ms plus 40 ms jitter, 150 ms plus 60 ms jitter one way; 10 Hz snapshots, 20 Hz guest
+positions, five seeds each). Two slow walkers (1 tile a second) blocked by each other are free in under 1.5 s and the
+host holds and rebroadcasts the passing positions with the pass ids. At a full walk (3 tiles a second) stale positions let
+two players overlap before they see each other, so no jam forms (not a bug). The same file loads host plus 8 guests for
+60 s of ticks: well under the 100 ms budget. Still needs hands: a run on a real LAN.
 
 **Needs hands.** (1) Run `host.mjs` on the desktop and join from the tablet and a second machine on your router, and
 note client isolation and the typed address fallback. (2) The tablet host load on the SM-T500 with the Capacitor plugin
@@ -460,3 +466,11 @@ From the saved Multiplayer page. Not copied, only compared.
 - **Clock.** Every `snap` carries the host's `min` (minutes of the day, optional, so an older host still works). `GuestClient.minutes` keeps the latest; `GuestSession.followDay` copies it, and takes it on a day change too (the morning if none yet).
 - **Menus are read-only for a guest until intents exist.** Rule: a guest may open only `menu`, `journal` and `catalogue` (`guestMayOpen`); every other screen (shop, bin, chest, cart, crafting, furnace and the rest) is refused with "Only the host can do that for now." In the menu, the tabs that change state are hidden (`GUEST_HIDDEN_TABS`: Pack, Craft, Animals, Special); Skills, Social, Map, Collect, Guide, Options and Exit stay as views.
 - **Host loss.** `GuestSession.onHostLost` fires once when the socket closes; the farm scene stops its overlays and goes to Title, which shows "The host left, so the game ended." (`noteHostLost`, `takeLostNotice`).
+
+## Built status: farm intents, interpolation, blocking (2026-11-19, issue 976)
+
+- **Intents.** `src/core/roomintents.ts`: `till`, `plant`, `water` (`{x, y}`, plant also `seed`), `buy` and `sell` (`{id, n}`, n 1 to 999). Each runs the single player function (`actions.till/plant/water`, `shop.buy/sell`) as the sender through `asPlayer`: the local-player accessors point at their record and the day's energy object holds their energy for the call, so tool swings spend the guest's energy (and the can, skills, tool tiers and wallet are theirs); the host's energy is restored after. A refusal goes back to the sender only (`rejected`). Farm soil only (no greenhouse yet). Not checked: how near the player is to the tile, and the map they stand on.
+- **Ship and sell multipliers.** `ship` and `sell` use `sellMultiplier` of the sender's skills (Tiller, Rancher, Artisan, Fisher, Angler). Pot price uses the sender's Trapper.
+- **Interpolation.** `src/net/interp.ts` `RemoteInterpolator`: samples are kept when a remote moves, drawn 200 ms behind, never extrapolated, no blend across a map change. `RemotePlayerLayer.sync` uses it (scene edit, untested in a browser).
+- **Blocking.** `playersAt` and `PlayerBlocking` (wraps `JamTracker`) return the ids to pass through. Not yet called from the movement code, and the `pass` list is not yet put in the `pos` message by the scene.
+- **Left.** Guest side applying `applied` intents to its farm copy (and a guest-side `sendIntent` from the scene: tools, shop and bin screens are still read-only for a guest); harvest and the other tool intents; reach and map checks; greenhouse soil; hooking `PlayerBlocking` into movement.

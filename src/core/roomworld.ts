@@ -21,6 +21,8 @@ import * as pm from "./playermarriage";
 import { PASS_OUT_MONEY_CAP, PASS_OUT_MONEY_SHARE } from "./day";
 import { LOCAL_PLAYER, type PlayerId } from "./players";
 import type { Intent } from "./protocol";
+import { applyFarmIntent } from "./roomintents";
+import { sellMultiplier } from "./professions";
 import type { RoomWorld } from "./room";
 import { serialize, START_MONEY, type GameState } from "./save";
 import { sleep, type SleepReport } from "./sleep";
@@ -158,7 +160,9 @@ export class GameRoomWorld implements RoomWorld {
         const id = intent.id;
         const n = intent.n;
         if (typeof id !== "string" || typeof n !== "number") return "bad ship";
-        const put = this.g.bin.ship(players.get(by).inventory, id, n, 1, by);
+        const rec = players.get(by);
+        const mult = sellMultiplier(rec.skills, id);
+        const put = this.g.bin.ship(rec.inventory, id, n, mult, by);
         return put > 0 ? undefined : "nothing shipped";
       }
       case "spend": {
@@ -213,8 +217,10 @@ export class GameRoomWorld implements RoomWorld {
         if (r.ok) players.pay(by, DIVORCE_FEE);
         return reason(r);
       }
-      default:
-        return `unknown intent ${intent.kind}`;
+      default: {
+        const r = applyFarmIntent(this.g, by, intent, this.o.random);
+        return r === null ? `unknown intent ${intent.kind}` : r;
+      }
     }
   }
 
