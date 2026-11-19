@@ -19,8 +19,13 @@ import { PROFILE_NAMES } from "./OptionsScene";
 import { browserKv, loadDeviceSettings, useSlot } from "./storage";
 import { STATE_KEY } from "./state";
 
+/** The page of slot cards last shown, kept across scene restarts. */
+let titlePage: number | undefined;
+/** Slot cards on one page. */
+const PAGE_SIZE = 5;
+
 /**
- * The first screen: five save slots (note 52). A used slot shows its farm and
+ * The first screen: save slots, five to a page (note 52). A used slot shows its farm and
  * has Continue and Delete, and Restart this day while a day is in progress; an
  * empty one starts a new game. `?new` skips this screen and starts
  * fresh, for development.
@@ -57,7 +62,46 @@ export class TitleScene extends Phaser.Scene {
       .text(480, 456, "", { fontSize: "16px", color: "#ffe9a0" })
       .setOrigin(0.5);
 
-    slots.forEach((info, i) => this.card(info, 142 + i * 64));
+    const pages = Math.ceil(slots.length / PAGE_SIZE);
+    const lastPage = Math.floor((last - 1) / PAGE_SIZE);
+    const page = Math.min(pages - 1, Math.max(0, titlePage ?? lastPage));
+    slots
+      .slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
+      .forEach((info, i) => this.card(info, 142 + i * 64));
+    if (pages > 1) {
+      const go = (p: number) => {
+        titlePage = p;
+        this.scene.restart();
+      };
+      if (page > 0)
+        this.button(
+          250,
+          496,
+          "Previous",
+          0x4a5a7a,
+          () => go(page - 1),
+          110,
+          40,
+          16,
+        );
+      if (page < pages - 1)
+        this.button(
+          710,
+          496,
+          "Next",
+          0x4a5a7a,
+          () => go(page + 1),
+          110,
+          40,
+          16,
+        );
+      this.add
+        .text(480, 470, `Page ${page + 1} of ${pages}`, {
+          fontSize: "12px",
+          color: "#ffffffaa",
+        })
+        .setOrigin(0.5);
+    }
 
     this.button(
       480,

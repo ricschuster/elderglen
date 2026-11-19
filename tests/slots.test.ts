@@ -4,13 +4,15 @@ import {
   ACTIVE_SLOT_KEY,
   LEGACY_SAVE_KEY,
   LEGACY_WORKING_TITLE_KEY,
-  SLOT_COUNT,
+  MAX_SAVE_SLOTS,
+  MIN_SLOTS,
   activeSlot,
   allSlots,
   deleteSlot,
   migrateLegacySave,
   setActiveSlot,
   slotInfo,
+  slotCount,
   slotKey,
   slotStores,
   type KeyValue,
@@ -32,7 +34,7 @@ describe("save slots", () => {
   it("starts with five empty slots", () => {
     const kv = memory();
     const all = allSlots(kv);
-    expect(all).toHaveLength(SLOT_COUNT);
+    expect(all).toHaveLength(MIN_SLOTS);
     expect(all.every((s) => s.status === "empty")).toBe(true);
   });
 
@@ -70,7 +72,7 @@ describe("save slots", () => {
     expect(activeSlot(kv)).toBe(1);
     setActiveSlot(kv, 4);
     expect(activeSlot(kv)).toBe(4);
-    kv.set(ACTIVE_SLOT_KEY, "9");
+    kv.set(ACTIVE_SLOT_KEY, "99");
     expect(activeSlot(kv)).toBe(1);
   });
 });
@@ -115,5 +117,36 @@ describe("moving the old single save", () => {
     deleteSlot(kv, 1);
     migrateLegacySave(kv);
     expect(slotInfo(kv, 1).status).toBe("empty");
+  });
+
+  it("grows past five when all are used, up to the cap", () => {
+    const kv = memory();
+    for (let n = 1; n <= MIN_SLOTS; n++)
+      slotStores(kv, n).night.write(serialize(newGame()));
+    expect(slotCount(kv)).toBe(MIN_SLOTS + 1);
+    expect(allSlots(kv)[MIN_SLOTS]!.status).toBe("empty");
+    slotStores(kv, MIN_SLOTS + 1).night.write(serialize(newGame()));
+    expect(allSlots(kv)).toHaveLength(MIN_SLOTS + 2);
+    slotStores(kv, MAX_SAVE_SLOTS).night.write(serialize(newGame()));
+    expect(slotCount(kv)).toBe(MAX_SAVE_SLOTS);
+    expect(allSlots(kv)).toHaveLength(MAX_SAVE_SLOTS);
+  });
+
+  it("shrinks back when the top slot is deleted", () => {
+    const kv = memory();
+    slotStores(kv, 8).night.write(serialize(newGame()));
+    expect(slotCount(kv)).toBe(9);
+    deleteSlot(kv, 8);
+    expect(slotCount(kv)).toBe(MIN_SLOTS);
+  });
+
+  it("accepts slots above five and still loads a slot 1 save", () => {
+    const kv = memory();
+    slotStores(kv, 1).night.write(serialize(newGame()));
+    setActiveSlot(kv, 7);
+    expect(activeSlot(kv)).toBe(7);
+    setActiveSlot(kv, MAX_SAVE_SLOTS + 1);
+    expect(activeSlot(kv)).toBe(7);
+    expect(slotInfo(kv, 1).status).toBe("used");
   });
 });

@@ -455,8 +455,15 @@ Still open:
 - Late-game record size: measured 2026-11-17 on stages (`late-game-100` night record 66.5 KB, new game
   62 KB), so five slots of three records stay near 1 MB of the 5 MB budget. The stages are set by patch, not
   played; re-check with a played late-game save (the sim bot's day 112 state).
-- Import fills the first empty slot, with no pick and no replace confirm (owner, 2026-11-17: keep). Later
-  the slot count should open up past five, as Stardew lists every saved farm (not checked against the saved
-  pages). That needs the 5 MB budget and the title screen list (scroll) designed first.
+- Import fills the first empty slot, with no pick and no replace confirm (owner, 2026-11-17: keep). The
+  slot count opens up past five, as Stardew lists every saved farm (not checked against the saved pages).
+  **Built 2026-11-18, growth rule picked here (the note left it open):** the list is always at least five
+  (`MIN_SLOTS`) and shows one empty slot past the highest used one, up to `MAX_SAVE_SLOTS` = 20 in
+  `src/core/slots.ts` (`slotCount`, `allSlots`). So it grows when all are full and shrinks when the top
+  slot is deleted; keys and records are unchanged, so every old save loads. The title screen pages five
+  cards at a time (Previous, Next, "Page N of M"), opening on the page of the last played slot. Import's
+  "all used" message now says "Every slot is used" (only at the cap). Budget: 20 slots of three records at
+  about 66 KB is 4 MB worst case, inside the 5 MB origin budget but tight; the cap is one constant to lower.
+  The debug stage hook plays in the last slot (`MAX_SAVE_SLOTS`).
 - The installed app's file path for Export (ADR 0008).
 - Two-tab guard and "newer version" text: built 2026-11-16 (heartbeat lock). The debug-menu second tab and Import not using the guard are closed as ours, on purpose (owner, 2026-11-17).

@@ -246,7 +246,7 @@ import { ResumeGate } from "../core/records";
 import { serialize, type ResumeSpot } from "../core/save";
 import { DIAMOND, monsterDiamond } from "../core/gems";
 import { spawnTableOf } from "../core/spawns";
-import { SLOT_COUNT } from "../core/slots";
+import { MAX_SAVE_SLOTS } from "../core/slots";
 import { buildStage, stageList } from "../core/stages";
 import { hallRestored } from "../core/bundles";
 import {
@@ -1077,7 +1077,7 @@ export class FarmScene extends Phaser.Scene {
       w.farmStage = (name: string) => {
         const r = buildStage(name);
         if (!r) return { problems: [`unknown stage ${name}`] };
-        useSlot(SLOT_COUNT);
+        useSlot(MAX_SAVE_SLOTS);
         this.registry.set(STATE_KEY, r.state);
         // Always name the map: restart(undefined) would keep the current one
         // (a stage called inside the library would leave you there).
