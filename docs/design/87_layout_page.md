@@ -209,7 +209,7 @@ The owner took the recommendations on the three small points:
 
 ## Built status
 
-Slices 1 and 2 are built (issues #970 and #971). Slices 3 to 5 are not.
+Slices 1 to 3 are built (issues #970, #971 and #984). Slices 4 and 5 are not.
 
 Run `npm run dev` and open `/layout.html`. Files: `layout.html`, `src/layout/main.ts` (the page),
 `src/core/layoutview.ts` and `src/core/layoutedit.ts` (pure helpers, tested),
@@ -245,3 +245,12 @@ Simplest readings taken where the note was open:
 - **Still to do.** The hash guard and drafts are built but only exercised by tests, not yet by
   the owner in a browser. Problems are recomputed 250 ms after an edit because reading every map
   takes most of a second.
+- **Brushes (slice 3).** `src/core/layoutbrush.ts` (pure, tested) and a brush select in the side
+  panel; drag a rectangle on the canvas, undo and redo as for edits. Taken readings: path writes
+  `ground` tile 3 and `paths` 1 and clears `collision`, as the farm's paths are drawn (not a tile on
+  `objects`); building writes `collision` 1 and the wall tile on `objects`, opens the door cell in
+  the middle of the chosen face, and with "interior" also opens the tile in front (the entry notch
+  is only that open tile, no entry object is added); water writes ground 4, `collision` 1 and a
+  `water-N` object of the chosen kind; pad adds a `pad-N` region with `pad` true; soil fills
+  `soil`; erase clears the chosen base layer. A missing `soil` or `paths` layer is created. New
+  objects go on the first object layer with no tier suffix. Not yet used by the owner in a browser.

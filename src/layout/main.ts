@@ -5,6 +5,13 @@ import {
   WATER_KINDS,
   type TiledMapJson,
 } from "../core/map";
+import {
+  BRUSHES,
+  applyBrush,
+  rectOf,
+  type Brush,
+  type Face,
+} from "../core/layoutbrush";
 import { ROCK_KINDS } from "../core/rocks";
 import { MapRegistry } from "../core/maps";
 import {
@@ -63,6 +70,12 @@ const state = {
   drag: undefined as { x: number; y: number } | undefined,
   status: "",
   addClass: "forage",
+  brush: "" as Brush | "",
+  face: "s" as Face,
+  interior: false,
+  waterKind: "river",
+  eraseLayer: "collision",
+  paint: undefined as { x: number; y: number } | undefined,
 };
 
 /** Working copies: the page edits these, never the imported files. */
@@ -371,6 +384,46 @@ function renderSide(): void {
   addButton.onclick = () => addAtMouse();
   add.append(cls, addButton);
   side.append(add);
+  const pal = document.createElement("div");
+  pal.append("brush ");
+  const brushSel = document.createElement("select");
+  brushSel.add(new Option("none (select)", "", false, state.brush === ""));
+  for (const b of BRUSHES)
+    brushSel.add(new Option(b, b, false, b === state.brush));
+  brushSel.onchange = () => {
+    state.brush = brushSel.value as Brush | "";
+    renderSide();
+  };
+  pal.append(brushSel);
+  const choose = (opts: string[], now: string, set: (v: string) => void) => {
+    const s = document.createElement("select");
+    for (const o of opts) s.add(new Option(o, o, false, o === now));
+    s.onchange = () => set(s.value);
+    pal.append(s);
+  };
+  if (state.brush === "water")
+    choose(
+      ["river", "lake", "sea", "farm-pond", "mine-pool"],
+      state.waterKind,
+      (v) => (state.waterKind = v),
+    );
+  if (state.brush === "building") {
+    choose(["n", "s", "e", "w"], state.face, (v) => (state.face = v as Face));
+    const l = document.createElement("label");
+    const c = document.createElement("input");
+    c.type = "checkbox";
+    c.checked = state.interior;
+    c.onchange = () => (state.interior = c.checked);
+    l.append(c, " interior");
+    pal.append(l);
+  }
+  if (state.brush === "erase")
+    choose(
+      ["collision", "ground", "objects", "above", "paths", "soil"],
+      state.eraseLayer,
+      (v) => (state.eraseLayer = v),
+    );
+  side.append(pal);
   const zoom = document.createElement("label");
   zoom.append("zoom ");
   const z = document.createElement("input");
@@ -549,6 +602,13 @@ function draw(): void {
     ctx.strokeRect(state.mark.x * s - 2, state.mark.y * s - 2, s + 4, s + 4);
     ctx.lineWidth = 1;
   }
+  if (state.paint) {
+    const r = rectOf(j, state.paint, state.mouse);
+    ctx.strokeStyle = "#fff";
+    ctx.setLineDash([4, 3]);
+    ctx.strokeRect(r.x * s, r.y * s, r.w * s, r.h * s);
+    ctx.setLineDash([]);
+  }
   if (state.viewBox) {
     const b = viewBoxAt(j, state.mouse.x, state.mouse.y);
     ctx.strokeStyle = "#ffe066";
@@ -602,6 +662,12 @@ function addAtMouse(): void {
 
 canvas.addEventListener("mousedown", (e) => {
   const t = tileAt(e);
+  if (state.brush !== "") {
+    state.paint = t;
+    state.sel = undefined;
+    draw();
+    return;
+  }
   const hit = placedObjects(json(), state.tier, state.holds)
     .filter(
       (o) => t.x >= o.x && t.x < o.x + o.w && t.y >= o.y && t.y < o.y + o.h,
@@ -617,10 +683,30 @@ canvas.addEventListener("mousemove", (e) => {
   state.mouse = tileAt(e);
   const info = document.getElementById("info");
   if (info) info.textContent = `tile ${state.mouse.x},${state.mouse.y}`;
-  if (state.viewBox || state.drag) draw();
+  if (state.viewBox || state.drag || state.paint) draw();
 });
 
 window.addEventListener("mouseup", () => {
+  const paint = state.paint;
+  state.paint = undefined;
+  if (paint && state.brush !== "") {
+    try {
+      const r = rectOf(json(), paint, state.mouse);
+      commit(
+        applyBrush(json(), state.brush, r, {
+          waterKind: state.waterKind,
+          face: state.face,
+          interior: state.interior,
+          eraseLayer: state.eraseLayer,
+        }),
+      );
+      state.status = "";
+    } catch (e) {
+      state.status = (e as Error).message;
+      renderSide();
+    }
+    return;
+  }
   const drag = state.drag;
   state.drag = undefined;
   if (!drag || !state.sel) return;
