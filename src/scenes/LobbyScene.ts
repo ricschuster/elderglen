@@ -9,6 +9,12 @@ import {
   type JoinState,
 } from "../net/lobby";
 import { PROTOCOL_VERSION } from "../core/protocol";
+import {
+  DEFAULT_HOST_OPTIONS,
+  nextWalletMode,
+  walletModeLabel,
+  type HostOptions,
+} from "../net/hostoptions";
 import { SocketTransport } from "../net/sockettransport";
 import type { LobbyTransport } from "../net/transport";
 
@@ -38,6 +44,8 @@ export class LobbyScene extends Phaser.Scene {
   private hostText!: Phaser.GameObjects.Text;
   private listText: Phaser.GameObjects.Text[] = [];
   private games: GameEntry[] = [];
+  private hostOptions: HostOptions = { ...DEFAULT_HOST_OPTIONS };
+  private walletText!: Phaser.GameObjects.Text;
   private stopDiscover: (() => void) | undefined;
 
   constructor() {
@@ -83,6 +91,21 @@ export class LobbyScene extends Phaser.Scene {
         },
       )
       .setOrigin(0.5);
+    if (t.canHost) {
+      this.hostOptions = { ...DEFAULT_HOST_OPTIONS };
+      this.button(240, 232, 330, 40, "", 0x3a4a5a, () => {
+        this.hostOptions.walletMode = nextWalletMode(
+          this.hostOptions.walletMode,
+        );
+        this.walletText.setText(walletModeLabel(this.hostOptions.walletMode));
+      });
+      this.walletText = this.add
+        .text(240, 232, walletModeLabel(this.hostOptions.walletMode), {
+          fontSize: "16px",
+          color: "#ffffff",
+        })
+        .setOrigin(0.5);
+    }
     if (t.canHost)
       this.button(
         240,
@@ -229,7 +252,7 @@ export class LobbyScene extends Phaser.Scene {
   }
 
   private async host(): Promise<void> {
-    const info = await lobbyTransport.startHosting("My farm");
+    const info = await lobbyTransport.startHosting("My farm", this.hostOptions);
     this.hostText.setText(
       `Hosting "${info.name}".\nGuests type this address:\n${info.address}`,
     );

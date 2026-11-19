@@ -4,6 +4,7 @@ import { isOre } from "../core/ore";
 import { sellMultiplier } from "../core/professions";
 import type { GameState } from "../core/save";
 import { frame, Menu, TOUCH_ROW_H, type Row } from "./panel";
+import { pendingByPlayer, settlementSplitText } from "../core/settlementsplit";
 import { STATE_KEY } from "./state";
 import { WINDOW_FILL } from "./panel";
 
@@ -143,7 +144,10 @@ export class BinScene extends Phaser.Scene {
   private refresh(): void {
     const g = this.state;
     this.money.setText(`Money ${g.money}g`);
-    this.pays.setText(`The bin pays ${g.bin.total()}g tonight.`);
+    const split = settlementSplitText(pendingByPlayer(g.bin.each()));
+    this.pays.setText(
+      `The bin pays ${g.bin.total()}g tonight.${split ? ` (${split})` : ""}`,
+    );
 
     const ids: string[] = [];
     for (let i = 0; i < g.inventory.size; i++) {

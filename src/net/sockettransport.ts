@@ -3,6 +3,7 @@
 import { GuestClient, JoinFailed } from "./client";
 import type { ParsedAddress } from "./address";
 import type { GameEntry } from "./lobby";
+import { normalizeHostOptions, type HostOptions } from "./hostoptions";
 import type { ConnectResult, HostInfo, LobbyTransport } from "./transport";
 
 export interface HostHandle {
@@ -17,7 +18,10 @@ export class SocketTransport implements LobbyTransport {
   private hosting: HostHandle | undefined;
 
   constructor(
-    private readonly startHost?: (name: string) => Promise<HostHandle>,
+    private readonly startHost?: (
+      name: string,
+      options: HostOptions,
+    ) => Promise<HostHandle>,
     private readonly guestName = "Guest",
   ) {}
 
@@ -25,9 +29,9 @@ export class SocketTransport implements LobbyTransport {
     return this.startHost !== undefined;
   }
 
-  async startHosting(name: string): Promise<HostInfo> {
+  async startHosting(name: string, options?: HostOptions): Promise<HostInfo> {
     if (!this.startHost) throw new Error("hosting is not available here");
-    this.hosting = await this.startHost(name);
+    this.hosting = await this.startHost(name, normalizeHostOptions(options));
     return { name, address: this.hosting.address };
   }
 

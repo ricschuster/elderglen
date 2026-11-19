@@ -91,4 +91,5 @@ No open items.
 
 Each bin line records who shipped it (`by`; lines of different players do not merge). `settle(players)` pays each
 shipper their own lines, into the host's pooled wallet when the wallet mode is shared. `Settlement.byPlayer` gives
-the split for the summary. Single player is unchanged.
+the split for the summary. Single player is unchanged. The bin panel and the Shipped summary print the split
+(`settlementSplitText`, placeholder labels Host and Player N) only when two or more players have proceeds.
