@@ -3,16 +3,13 @@ import {
   BARN_BUILT,
   BARN_MAP,
   stableHome,
-  siloBlocks,
-  depositHay,
-  siloCapacity,
-  HAY,
   barnVisibleTier,
   COOP_BUILT,
   COOP_MAP,
   coopVisibleTier,
 } from "../core/animals";
 import { DEBUG_TOOLS } from "../core/debugtools";
+import { useSiloIntent } from "../core/interact";
 import { pondCovering, pondUse, takeFish } from "../core/pond";
 
 import Phaser from "phaser";
@@ -2831,17 +2828,9 @@ export class FarmScene extends Phaser.Scene {
 
   /** Facing the silo: tip the held hay in, or read how full it is. True if the tile is the silo. */
   private useSilo(tx: number, ty: number): boolean {
-    if (!siloBlocks(this.state, this.mapId, tx, ty)) return false;
-    const held = heldAt(this.state, this.selected);
-    const cap = siloCapacity(this.state);
-    if (held.kind === "item" && held.id === HAY) {
-      const n = depositHay(this.state);
-      this.message =
-        n > 0
-          ? `${n} hay into the silo (${this.state.animals.hay}/${cap}).`
-          : "The silo is full.";
-    } else
-      this.message = `The silo holds ${this.state.animals.hay} of ${cap} hay. Hold hay to fill it.`;
+    const msg = useSiloIntent(this.state, this.mapId, tx, ty, this.selected);
+    if (msg === undefined) return false;
+    this.message = msg;
     this.render();
     return true;
   }
