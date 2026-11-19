@@ -48,10 +48,8 @@ export class RemotePlayerLayer {
       }
       const depth = sortDepth(r.y);
       f.body.setPosition(r.x, r.y).setDepth(depth);
-      f.label
-        .setText(r.name)
-        .setPosition(r.x, r.y - 22)
-        .setDepth(depth + 0.1);
+      if (f.label.text !== r.name) f.label.setText(r.name);
+      f.label.setPosition(r.x, r.y - 22).setDepth(depth + 0.1);
     }
     for (const [id, f] of this.figures)
       if (!seen.has(id)) {

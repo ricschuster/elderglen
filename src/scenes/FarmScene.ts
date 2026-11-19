@@ -289,6 +289,7 @@ import {
 } from "../core/chests";
 import { CHEST_COLOURS } from "../core/chestdefs";
 import {
+  type Glow,
   isLight,
   lightAt,
   lightLayer,
@@ -534,6 +535,10 @@ export class FarmScene extends Phaser.Scene {
   private hud!: Hud;
   private uiCamera!: Phaser.Cameras.Scene2D.Camera;
   /** The placeholder map labels and the world x each is centred on. */
+  private glowDark = -1;
+  private glowLights: Glow[] = [];
+  private labelView = "";
+  private hatTint = { id: "", color: 0 };
   private labelTags: { o: Phaser.GameObjects.Text; x: number; y: number }[] =
     [];
   /** The pictures of things on the map, redrawn by `drawGround`. */
@@ -812,6 +817,8 @@ export class FarmScene extends Phaser.Scene {
       .setDepth(1000);
     world.push(this.night);
     this.glow = this.add.graphics().setDepth(1001);
+    this.glowDark = -1;
+    this.glowLights = [];
     world.push(this.glow);
 
     // UI objects, drawn by a second camera that does not zoom.
@@ -2418,9 +2425,12 @@ export class FarmScene extends Phaser.Scene {
     if (!def) return;
     const lift = this.state.animals.mounted ? RIDER_LIFT : 0;
     const head = this.pos.y - lift - this.player.displayHeight * 0.875;
-    this.hat
-      .setTint(Phaser.Display.Color.HexStringToColor(def.color).color)
-      .setPosition(this.pos.x, head + 1);
+    if (this.hatTint.id !== def.id)
+      this.hatTint = {
+        id: def.id,
+        color: Phaser.Display.Color.HexStringToColor(def.color).color,
+      };
+    this.hat.setTint(this.hatTint.color).setPosition(this.pos.x, head + 1);
   }
 
   /** The short scene that opens the Special Orders board (note 65). Shown once. */
@@ -3574,6 +3584,7 @@ export class FarmScene extends Phaser.Scene {
       if (text) tags.push({ x: s.x + 0.5, y: s.y, text });
     }
     this.labelTags = [];
+    this.labelView = "";
     // One tag per object (a two tile stall or desk has two service tiles), and
     // tags that would overlap are stacked upward so each stays readable.
     const merged = mergeTags(
@@ -3609,6 +3620,10 @@ export class FarmScene extends Phaser.Scene {
     const view = cam.worldView;
     const zoom = cam.zoom || 1;
     const scale = this.uiCamera.zoom || 1;
+    // Labels are static, so only a moved or resized view can change their clamp.
+    const viewKey = `${view.x},${view.y},${view.right},${cam.x},${zoom},${scale},${this.scale.gameSize.width}`;
+    if (viewKey === this.labelView) return;
+    this.labelView = viewKey;
     const screenW = this.scale.gameSize.width;
     const colX = screenW - (960 - PANEL_LEFT_BASE) * scale;
     const colBottom = (PANEL_BOTTOM + 140) * scale;
@@ -3715,7 +3730,6 @@ export class FarmScene extends Phaser.Scene {
    * mines, where it is dark all day.
    */
   private drawGlow(): void {
-    this.glow.clear();
     const dusk = this.outdoorSoil
       ? darkness(
           dateOf(this.state.day.clock.day).season,
@@ -3723,10 +3737,32 @@ export class FarmScene extends Phaser.Scene {
         )
       : 0;
     const dark = this.floor !== undefined ? 1 : dusk;
-    if (dark <= 0) return;
     const ts = this.map.tileSize;
     const at = { x: this.pos.x / ts, y: (this.pos.y - ts / 2) / ts };
-    for (const l of lightLayer(this.state, this.mapId, at)) {
+    const lights = dark > 0 ? lightLayer(this.state, this.mapId, at) : [];
+    // Redrawing the circles is the cost, so skip it while nothing about them changed.
+    const same =
+      this.glowDark === dark &&
+      this.glowLights.length === lights.length &&
+      lights.every((l, i) => {
+        const o = this.glowLights[i]!;
+        return (
+          o.x === l.x &&
+          o.y === l.y &&
+          o.radius === l.radius &&
+          o.worn === l.worn
+        );
+      });
+    if (same) return;
+    this.glowDark = dark;
+    this.glowLights = lights;
+    this.glow.clear();
+    if (dark <= 0) return;
+    this.paintGlow(lights, dark, ts);
+  }
+
+  private paintGlow(lights: Glow[], dark: number, ts: number): void {
+    for (const l of lights) {
       const cx = (l.worn ? l.x : l.x + 0.5) * ts;
       const cy = (l.worn ? l.y : l.y + 0.5) * ts;
       for (let i = 4; i >= 1; i--) {
