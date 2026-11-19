@@ -19,6 +19,7 @@ import { OptionsScene } from "./scenes/OptionsScene";
 import { TitleScene } from "./scenes/TitleScene";
 import { FarmChoiceScene } from "./scenes/FarmChoiceScene";
 import { NameScene } from "./scenes/NameScene";
+import { LobbyScene } from "./scenes/LobbyScene";
 import { ShopScene } from "./scenes/ShopScene";
 import { CatalogueScene } from "./scenes/CatalogueScene";
 import { CarpenterScene } from "./scenes/CarpenterScene";
@@ -144,6 +145,7 @@ const game = new Phaser.Game({
     ...(DEBUG_TOOLS ? [DebugScene] : []),
     ProfessionScene,
     NameScene,
+    LobbyScene,
     ...Object.values(tests).filter((t) => !first.includes(t)),
   ],
 });
