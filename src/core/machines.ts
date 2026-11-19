@@ -15,6 +15,7 @@ import {
 import type { GameState } from "./save";
 import { isClear } from "./actions";
 import { mayPlaceOn, placeTag } from "./placeables";
+import { tileKey } from "./tilekey";
 
 /** A batch in a machine: what it makes and when it is done, in machine minutes. */
 export interface MachineJob {
@@ -31,8 +32,6 @@ export interface PlacedMachine {
   id: string;
   job?: MachineJob;
 }
-
-const key = (x: number, y: number) => `${x},${y}`;
 
 /**
  * Machine time: 1,600 minutes a day, the 1,200 awake plus 400 overnight
@@ -59,7 +58,7 @@ export class Machines {
   load(saved: PlacedMachine[]): void {
     this.placed = new Map(
       saved.map((m) => [
-        key(m.x, m.y),
+        tileKey(m.x, m.y),
         { ...m, job: m.job ? { ...m.job } : undefined },
       ]),
     );
@@ -71,7 +70,7 @@ export class Machines {
 
   /** The machine on a tile, if any. */
   get(x: number, y: number): PlacedMachine | undefined {
-    return this.placed.get(key(x, y));
+    return this.placed.get(tileKey(x, y));
   }
 
   /** The machine id on a tile, if any. */
@@ -84,14 +83,14 @@ export class Machines {
   }
 
   add(m: PlacedMachine): boolean {
-    if (!machineById(m.id) || this.placed.has(key(m.x, m.y))) return false;
-    this.placed.set(key(m.x, m.y), m);
+    if (!machineById(m.id) || this.placed.has(tileKey(m.x, m.y))) return false;
+    this.placed.set(tileKey(m.x, m.y), m);
     return true;
   }
 
   remove(x: number, y: number): PlacedMachine | undefined {
     const m = this.get(x, y);
-    this.placed.delete(key(x, y));
+    this.placed.delete(tileKey(x, y));
     return m;
   }
 }

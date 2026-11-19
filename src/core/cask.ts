@@ -4,6 +4,7 @@ import { itemById } from "./items";
 import type { FarmMap } from "./map";
 import { QUALITIES, splitQuality, withQuality, type Quality } from "./quality";
 import type { GameState } from "./save";
+import { tileKey } from "./tilekey";
 
 /**
  * Casks (`docs/design/24_processing_and_cooking.md`, "The cask"): they stand
@@ -58,8 +59,6 @@ export interface PlacedCask {
   job?: CaskJob;
 }
 
-const key = (x: number, y: number) => `${x},${y}`;
-
 /** The casks standing in the cellar. */
 export class Casks {
   private placed = new Map<string, PlacedCask>();
@@ -74,7 +73,7 @@ export class Casks {
   load(saved: PlacedCask[]): void {
     this.placed = new Map(
       saved.map((c) => [
-        key(c.x, c.y),
+        tileKey(c.x, c.y),
         { ...c, job: c.job ? { ...c.job } : undefined },
       ]),
     );
@@ -85,11 +84,11 @@ export class Casks {
   }
 
   get(x: number, y: number): PlacedCask | undefined {
-    return this.placed.get(key(x, y));
+    return this.placed.get(tileKey(x, y));
   }
 
   at(x: number, y: number): boolean {
-    return this.placed.has(key(x, y));
+    return this.placed.has(tileKey(x, y));
   }
 
   get count(): number {
@@ -97,14 +96,14 @@ export class Casks {
   }
 
   add(c: PlacedCask): boolean {
-    if (this.placed.has(key(c.x, c.y))) return false;
-    this.placed.set(key(c.x, c.y), c);
+    if (this.placed.has(tileKey(c.x, c.y))) return false;
+    this.placed.set(tileKey(c.x, c.y), c);
     return true;
   }
 
   remove(x: number, y: number): PlacedCask | undefined {
     const c = this.get(x, y);
-    this.placed.delete(key(x, y));
+    this.placed.delete(tileKey(x, y));
     return c;
   }
 }

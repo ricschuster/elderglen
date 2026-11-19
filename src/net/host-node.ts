@@ -1,8 +1,8 @@
-// The host's socket side: runs a Room over real WebSockets (note 53, step 3). Node only.
+// The host's socket side: runs a Room over real WebSockets (note 53). Node only.
 // The Room stays the judge; this file only moves messages between sockets and the Room.
 import { Room, type RoomWorld } from "../core/room";
 import { LOCAL_PLAYER, type PlayerId } from "../core/players";
-import { decodeClient, encode, type ServerMsg } from "./protocol";
+import { decodeClient, encode, type ServerMsg } from "../core/protocol";
 import { listen, type WsClient, type WsServer } from "./wsserver";
 
 export interface NodeHostOptions {

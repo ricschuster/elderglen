@@ -1,4 +1,5 @@
 import type { Farm } from "./farm";
+import { tileKey } from "./tilekey";
 
 /**
  * Sprinklers (`docs/design/31_farm_growth.md`). A placed sprinkler waters the
@@ -49,8 +50,6 @@ export interface PlacedSprinkler {
   id: string;
 }
 
-const key = (x: number, y: number) => `${x},${y}`;
-
 /** The sprinklers standing on the farm. */
 export class Sprinklers {
   private placed = new Map<string, PlacedSprinkler>();
@@ -60,7 +59,7 @@ export class Sprinklers {
   }
 
   load(saved: PlacedSprinkler[]): void {
-    this.placed = new Map(saved.map((s) => [key(s.x, s.y), { ...s }]));
+    this.placed = new Map(saved.map((s) => [tileKey(s.x, s.y), { ...s }]));
   }
 
   *each(): Generator<PlacedSprinkler> {
@@ -69,7 +68,7 @@ export class Sprinklers {
 
   /** The sprinkler id on a tile, if any. */
   at(x: number, y: number): string | undefined {
-    return this.placed.get(key(x, y))?.id;
+    return this.placed.get(tileKey(x, y))?.id;
   }
 
   get count(): number {
@@ -78,15 +77,15 @@ export class Sprinklers {
 
   /** Stand a sprinkler on a tile. False if the tile has one or the id is unknown. */
   add(x: number, y: number, id: string): boolean {
-    if (!sprinklerById(id) || this.placed.has(key(x, y))) return false;
-    this.placed.set(key(x, y), { x, y, id });
+    if (!sprinklerById(id) || this.placed.has(tileKey(x, y))) return false;
+    this.placed.set(tileKey(x, y), { x, y, id });
     return true;
   }
 
   /** Take up the sprinkler on a tile and return its id. */
   remove(x: number, y: number): string | undefined {
     const id = this.at(x, y);
-    this.placed.delete(key(x, y));
+    this.placed.delete(tileKey(x, y));
     return id;
   }
 

@@ -6,7 +6,7 @@ import type { Socket } from "node:net";
 
 const GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 /** Largest message accepted from a guest, bytes. Guests send small messages. */
-export const MAX_MESSAGE = 1 << 20;
+const MAX_MESSAGE = 1 << 20;
 
 export interface WsClient {
   send(text: string): void;
@@ -14,7 +14,7 @@ export interface WsClient {
   readonly open: boolean;
 }
 
-export interface WsHandlers {
+interface WsHandlers {
   onOpen?(c: WsClient): void;
   onMessage(c: WsClient, text: string): void;
   onClose?(c: WsClient): void;

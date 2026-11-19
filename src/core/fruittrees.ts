@@ -1,6 +1,7 @@
 import { DAYS_PER_SEASON, SEASONS } from "./calendar";
 import { withQuality, type Quality } from "./quality";
 import treeData from "../content/fruit-trees.json";
+import { tileKey } from "./tilekey";
 
 /**
  * Fruit trees (`docs/design/31_farm_growth.md`). A sapling grows for 28 days,
@@ -69,10 +70,8 @@ export function fruitQuality(age: number): Quality {
 }
 
 /** The item id of a tree's fruit at a given tree age. */
-export const fruitItem = (treeId: string, age: number) =>
+const fruitItem = (treeId: string, age: number) =>
   withQuality(treeId, fruitQuality(age));
-
-const key = (x: number, y: number) => `${x},${y}`;
 
 /** The fruit trees on the farm. */
 export class FruitTrees {
@@ -83,11 +82,11 @@ export class FruitTrees {
   }
 
   load(saved: PlacedFruitTree[]): void {
-    this.trees = new Map(saved.map((t) => [key(t.x, t.y), { ...t }]));
+    this.trees = new Map(saved.map((t) => [tileKey(t.x, t.y), { ...t }]));
   }
 
   at(x: number, y: number): PlacedFruitTree | undefined {
-    return this.trees.get(key(x, y));
+    return this.trees.get(tileKey(x, y));
   }
 
   *each(): Generator<PlacedFruitTree> {
@@ -108,12 +107,12 @@ export class FruitTrees {
   /** Plant a sapling. False if the tile is taken or the id is unknown. */
   add(x: number, y: number, id: string, age = 0): boolean {
     if (!fruitTreeById(id) || this.at(x, y)) return false;
-    this.trees.set(key(x, y), { x, y, id, age, fruit: 0, hits: 0 });
+    this.trees.set(tileKey(x, y), { x, y, id, age, fruit: 0, hits: 0 });
     return true;
   }
 
   remove(x: number, y: number): void {
-    this.trees.delete(key(x, y));
+    this.trees.delete(tileKey(x, y));
   }
 
   /**

@@ -5,6 +5,7 @@ import type { GameState } from "./save";
 import { isFarmMap } from "./farmtypes";
 import { placeableById } from "./placeables";
 import { mineFloorOf } from "./mines";
+import { tileKey } from "./tilekey";
 
 /**
  * The generic placed list (`docs/design/89_placement_system.md`, "Saving"):
@@ -25,22 +26,20 @@ export interface PlacedItem {
 /** Every map's placeables, by map id (`FARM_STORE`, `GREENHOUSE_STORE`, a house map id). */
 export type PlacedSave = Record<string, PlacedItem[]>;
 
-const key = (x: number, y: number) => `${x},${y}`;
-
 export class PlacedStore {
   private maps = new Map<string, Map<string, PlacedItem>>();
 
   /** One tile holds one placeable. False if the tile is taken. */
   add(map: string, item: PlacedItem): boolean {
     const m = this.maps.get(map) ?? new Map<string, PlacedItem>();
-    if (m.has(key(item.x, item.y))) return false;
-    m.set(key(item.x, item.y), copy(item));
+    if (m.has(tileKey(item.x, item.y))) return false;
+    m.set(tileKey(item.x, item.y), copy(item));
     this.maps.set(map, m);
     return true;
   }
 
   get(map: string, x: number, y: number): PlacedItem | undefined {
-    return this.maps.get(map)?.get(key(x, y));
+    return this.maps.get(map)?.get(tileKey(x, y));
   }
 
   /**
@@ -50,7 +49,7 @@ export class PlacedStore {
   covering(map: string, x: number, y: number): PlacedItem | undefined {
     const m = this.maps.get(map);
     if (!m) return undefined;
-    const exact = m.get(key(x, y));
+    const exact = m.get(tileKey(x, y));
     if (exact) return exact;
     for (const p of m.values()) {
       const [w, h] = placeableById(p.id)?.footprint ?? [1, 1];
@@ -61,7 +60,7 @@ export class PlacedStore {
 
   remove(map: string, x: number, y: number): PlacedItem | undefined {
     const item = this.get(map, x, y);
-    this.maps.get(map)?.delete(key(x, y));
+    this.maps.get(map)?.delete(tileKey(x, y));
     return item;
   }
 

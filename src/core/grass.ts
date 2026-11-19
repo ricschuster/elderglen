@@ -1,6 +1,7 @@
 import type { Outcome } from "./actions";
 import { addHay, siloCapacity } from "./animals";
 import type { GameState } from "./save";
+import { tileKey } from "./tilekey";
 
 /**
  * Grass on the player's farm (`docs/design/103_tool_pass.md`, notes 23, 29 and
@@ -26,8 +27,6 @@ export interface GrassTile {
   y: number;
 }
 
-const key = (x: number, y: number) => `${x},${y}`;
-
 /** The farm's grass. */
 export class Grass {
   private tiles = new Map<string, GrassTile>();
@@ -39,7 +38,7 @@ export class Grass {
   }
 
   load(saved: GrassTile[]): void {
-    this.tiles = new Map(saved.map((t) => [key(t.x, t.y), { ...t }]));
+    this.tiles = new Map(saved.map((t) => [tileKey(t.x, t.y), { ...t }]));
   }
 
   *each(): Generator<GrassTile> {
@@ -47,7 +46,7 @@ export class Grass {
   }
 
   at(x: number, y: number): boolean {
-    return this.tiles.has(key(x, y));
+    return this.tiles.has(tileKey(x, y));
   }
 
   get count(): number {
@@ -57,13 +56,13 @@ export class Grass {
   /** Put grass on a tile. Returns false if it is already there. */
   add(x: number, y: number): boolean {
     if (this.at(x, y)) return false;
-    this.tiles.set(key(x, y), { x, y });
+    this.tiles.set(tileKey(x, y), { x, y });
     return true;
   }
 
   /** Remove the grass on a tile. Returns false if there was none. */
   remove(x: number, y: number): boolean {
-    return this.tiles.delete(key(x, y));
+    return this.tiles.delete(tileKey(x, y));
   }
 
   clear(): void {

@@ -172,7 +172,3 @@ export function iceEndLine(s: IceFishing): string | undefined {
     ? `${s.caught} fish at the holes. You win the contest!`
     : `Only ${s.caught} fish. ${winner[0]!.toUpperCase()}${winner.slice(1)} wins the contest.`;
 }
-
-/** The counter shown while fishing at the holes. */
-export const iceLine = (s: IceFishing): string =>
-  `Ice fishing: ${s.caught}/${s.win}`;

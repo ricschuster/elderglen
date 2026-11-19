@@ -1,6 +1,6 @@
 import { WALLET_MODES, type WalletMode } from "../core/players";
 
-/** What the host chooses before starting (note 53 step 7). */
+/** What the host chooses before starting (note 53). */
 export interface HostOptions {
   walletMode: WalletMode;
 }

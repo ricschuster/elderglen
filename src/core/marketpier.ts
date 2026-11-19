@@ -37,9 +37,6 @@ export const MARKET_FISH: FishDef[] = data.fish.map((f) => ({
 
 export const PEARL = data.pearl;
 
-export const isMarketFish = (id: string): boolean =>
-  MARKET_FISH.some((f) => f.id === id);
-
 const marketFestival = () => FESTIVALS.find((f) => f.id === MARKET_FESTIVAL)!;
 
 /** True on the three market days (Winter 16 to 18). */

@@ -1,5 +1,5 @@
 /** Default port of a host (matches spikes/m4/host.mjs). */
-export const DEFAULT_PORT = 8787;
+const DEFAULT_PORT = 8787;
 
 export type ParsedAddress =
   | { ok: true; host: string; port: number; url: string }

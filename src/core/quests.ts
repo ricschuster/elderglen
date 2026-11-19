@@ -84,11 +84,7 @@ function candidates(
 }
 
 /** The pay for a request: a delivery by the item's price, a gathering by ours. */
-export function rewardFor(
-  type: QuestType,
-  item: string,
-  count: number,
-): number {
+function rewardFor(type: QuestType, item: string, count: number): number {
   const price = itemById(item)?.sellPrice ?? 0;
   const mult = type === "delivery" ? DELIVERY_MULTIPLIER : GATHERING_MULTIPLIER;
   return Math.max(1, Math.round(price * count * mult));

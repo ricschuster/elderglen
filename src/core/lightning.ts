@@ -120,7 +120,7 @@ export function takePack(g: GameState, x: number, y: number): Outcome {
  * One strike falls. Returns the rod that caught it, if any. The chance of a
  * catch is `1 - (charged / all)^2`, so a spent rod does not take a second strike.
  */
-export function strikeRods(
+function strikeRods(
   g: GameState,
   random: () => number,
 ): PlacedItem | undefined {

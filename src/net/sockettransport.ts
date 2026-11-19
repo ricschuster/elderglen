@@ -1,4 +1,4 @@
-// The real LobbyTransport (note 53, step 3): connects over a WebSocket. Hosting needs Node or
+// The real LobbyTransport (note 53): connects over a WebSocket. Hosting needs Node or
 // the Capacitor plugin, so it is injected; in a plain browser canHost is false.
 import { GuestClient, JoinFailed } from "./client";
 import type { ParsedAddress } from "./address";

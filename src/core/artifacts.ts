@@ -3,6 +3,7 @@ import { swingCost } from "./upgrades";
 import { dateOf, type Season } from "./calendar";
 import artifactData from "../content/artifacts.json";
 import type { GameState } from "./save";
+import { tileKey } from "./tilekey";
 
 /**
  * Artifact spots (`docs/design/69_geodes_and_minerals.md`, "Artifact spots and
@@ -37,9 +38,6 @@ export const ARTIFACT_AREAS = [
   "cove",
 ];
 
-export const artifactById = (id: string): ArtifactDef | undefined =>
-  ARTIFACTS.find((a) => a.id === id);
-
 /** Spots rolled a day in an area: 0 to 2, and 1 to 3 in winter (near Stardew's averages, SC-154; owner chose it 2026-11-12). */
 export const SPOTS_NORMAL: [number, number] = [0, 2];
 export const SPOTS_WINTER: [number, number] = [1, 3];
@@ -53,8 +51,6 @@ export interface SpotTile {
   x: number;
   y: number;
 }
-
-const key = (x: number, y: number) => `${x},${y}`;
 
 /**
  * The marked spots lying on one map today. They roll each morning and are
@@ -83,7 +79,7 @@ export class ArtifactSpots {
   }
 
   at(x: number, y: number): boolean {
-    return this.spots.has(key(x, y));
+    return this.spots.has(tileKey(x, y));
   }
 
   get count(): number {
@@ -98,11 +94,11 @@ export class ArtifactSpots {
   }
 
   add(x: number, y: number): void {
-    this.spots.add(key(x, y));
+    this.spots.add(tileKey(x, y));
   }
 
   remove(x: number, y: number): boolean {
-    return this.spots.delete(key(x, y));
+    return this.spots.delete(tileKey(x, y));
   }
 
   /** Clear yesterday's spots and mark today's on the given diggable tiles. */

@@ -11,7 +11,7 @@ export interface HostInfo {
 export type ConnectResult = { ok: true } | { ok: false; kind: FailKind };
 
 /**
- * The seam between the Host and Join screens and the socket (note 53 step 3).
+ * The seam between the Host and Join screens and the socket (note 53).
  * No real implementation yet: the Room and socket are not built.
  */
 export interface LobbyTransport {

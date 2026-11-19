@@ -7,6 +7,7 @@ import { processFor } from "./processing";
 import { doubleForageChance } from "./professions";
 import { forageQuality, withQuality, type Quality } from "./quality";
 import type { GameState } from "./save";
+import { tileKey } from "./tilekey";
 
 /**
  * The farm cave (`docs/design/66_fall_winter_festivals_and_farm_cave.md`).
@@ -61,8 +62,6 @@ export interface CaveSave {
   boxes: MushroomBox[];
   dehydrator?: CaveJob;
 }
-
-const key = (x: number, y: number) => `${x},${y}`;
 
 /** How many fruit a night brings, from one roll in 0 to 1. */
 export function batFruitCount(roll: number): number {
@@ -145,7 +144,7 @@ export class FarmCave {
   }
 
   fruitAt(x: number, y: number): string | undefined {
-    return this.fruit.get(key(x, y));
+    return this.fruit.get(tileKey(x, y));
   }
 
   *eachFruit(): Generator<{ x: number; y: number; id: string }> {
@@ -160,8 +159,8 @@ export class FarmCave {
   }
 
   takeFruit(x: number, y: number): string | undefined {
-    const id = this.fruit.get(key(x, y));
-    this.fruit.delete(key(x, y));
+    const id = this.fruit.get(tileKey(x, y));
+    this.fruit.delete(tileKey(x, y));
     return id;
   }
 
@@ -172,12 +171,12 @@ export class FarmCave {
   endDay(spots: Spot[], random: () => number): void {
     if (this.choice === "bats") {
       const options = BAT_FRUIT;
-      const free = spots.filter((s) => !this.fruit.has(key(s.x, s.y)));
+      const free = spots.filter((s) => !this.fruit.has(tileKey(s.x, s.y)));
       let n = batFruitCount(random());
       while (n-- > 0 && free.length > 0 && options.length > 0) {
         const spot = free.splice(Math.floor(random() * free.length), 1)[0]!;
         const id = options[Math.floor(random() * options.length)]!;
-        this.fruit.set(key(spot.x, spot.y), id);
+        this.fruit.set(tileKey(spot.x, spot.y), id);
       }
     }
     if (this.choice === "mushrooms") {
@@ -220,7 +219,7 @@ export class FarmCave {
     this.fruit.clear();
     for (const f of data.fruit ?? [])
       if (typeof f?.id === "string")
-        this.fruit.set(key(Number(f.x), Number(f.y)), f.id);
+        this.fruit.set(tileKey(Number(f.x), Number(f.y)), f.id);
     if (Array.isArray(data.boxes) && data.boxes.length === MUSHROOM_BOXES)
       this.boxes = data.boxes.map((b) => ({
         days: Number(b.days) || 0,
