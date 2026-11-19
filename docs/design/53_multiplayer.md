@@ -312,6 +312,56 @@ note client isolation and the typed address fallback. (2) The tablet host load o
 **Recommended follow-ups (not filed).** Build order steps 1 to 8 above stand unchanged. Add to step 2 a delta format
 (positions every tick, world changes as intents) and to step 3 the jam rule test.
 
+## M4 spike results, tablet runs (2026-11-19, issue 948)
+
+Run by the agent with two real tablets on USB and the owner's router (TELUS5390, 5 GHz, signal -54 to -62 dBm): a
+Galaxy Tab A (SM-T500, 2.7 GB RAM, 60 Hz) and a Galaxy Tab A9+ (SM-X210, 3.5 GB RAM, 90 Hz), both on the "Elderglen DBG"
+app. The desktop host was itself on Wi-Fi (not wired), so every path crossed two wireless hops. Harness, all in
+`spikes/m4/`: `tabletguest.mjs` (guest pages for a tablet browser), `realhost.ts` and `realguest.ts` (the real `NodeHost`,
+`Room`, `GameRoomWorld` and `GuestClient`), `devperf.mjs`, `devhost.mjs` and `devsoak.mjs` (frame rate, host load and a
+soak inside the app over the WebView DevTools socket).
+
+**Q1, link (measured).** There is no client isolation: both tablets and the desktop reach each other. A typed address
+(`ws://192.168.1.71:port`) joined every time. Not tested: a game list by mDNS or broadcast (step 4 builds it). Idle ping
+to the desktop averaged about 100 ms (min 29, max 280) and tablet to tablet 180 to 225 ms, which is Wi-Fi power saving.
+With steady traffic (a ping every 0.2 s) it is 38 to 48 ms average (min 22 to 29). Through the game's WebSocket the round
+trip, measured from our own timestamp echoed in a snapshot, was: one tablet alone, median 135 ms, p95 233, max 242; both
+tablets plus 6 synthetic guests (8 players, 60 s), SM-T500 median 168, p95 228, max 268, SM-X210 median 135, p95 229,
+max 324. Snapshot gaps stayed at 100 ms (p95 105 to 153, worst 234). The real stack (real `GuestClient`, a 66 KB late
+farm on join): joined in 279 to 284 ms, round trip median 125 to 133, p95 226 to 230, max 243 (host plus 2 guests,
+45 s). The median is about 45 ms of network, up to 100 ms waiting for the 10 Hz tick, and the guest's send time.
+Expect 130 to 170 ms median and a tail to about 320 ms. Consequences for the guest: client prediction for the guest's
+own player (already the plan), and other players drawn by interpolating over at least two snapshots (200 ms). A wired
+desktop host should trim some of the tail; not measured.
+
+**Q2, tablet host load, compute side (measured; the Capacitor host plugin does not exist yet).** The real `Room` plus
+`GameRoomWorld` ran inside the app's page with 8 players (the host plus 7 guests, the cap the cabins allow) on the
+`late-game-100` stage, with all 38 maps loaded, doing the decode, tick and encode work `NodeHost` does around the room.
+Tick cost: SM-T500 median 0.1 ms, p99 0.2, worst 8 ms; SM-X210 median under 0.1 ms, worst 5 ms. The nightly `sleep()` for
+the whole world: SM-T500 27 ms median (worst 49), SM-X210 10 ms (worst 27). `serialize` (the save and the join
+snapshot): 3.3 ms and 1.2 ms. Building the stage state took 225 ms and 98 ms. Memory: the app uses 180 to 230 MB (PSS) with
+a late-game farm on screen and the host loop running; the SM-T500 starts with about 580 MB free, so it is the tight one.
+Five minute soak with the game on `late-game-100` and a 10 Hz host loop carrying 7 guests: 3,366 and 3,337 ticks, none
+late, median 0.4 ms (SM-T500) and 0.1 ms (SM-X210), worst 16 ms and 9 ms. Frame rate did not move (SM-T500 36 to 38 fps
+with the host against 36 without, SM-X210 44 against 43). Battery temperature rose from 27 to 28.5 C and from 23.5 to
+24.1 C. Not measured: battery drain (both were on USB power), and the cost of the socket server in the native plugin.
+The compute side gives no reason to lower the cap of 8 players on a tablet host. The recommendation stands as "8, check
+again once the plugin exists" (step 8, #973).
+
+**Frame rate on the tablets (measured, one finding).** Frames a second in the app over 12 s: SM-T500 48 to 52 on a new
+farm, the hall, the mines (floors 30 and 100), the Night Market and a home with two children; SM-X210 62 to 65. The
+exception is `late-game-100` (day 100, full pack, all skills 8): SM-T500 36 fps (p95 frame 50 ms, worst 83 ms), SM-X210 43
+fps. That is a single-player cost of a built-up farm, not a hosting cost, and it is worth a profile before M3d.
+
+**Saves.** `navigator.storage.persist()` returns false on both real tablets, the same as the emulator, so saves live in
+WebView storage without the persistent flag (the reported quota is 10 GB). The save split and export (note 52) are the
+protection.
+
+**Still needs hands or building.** (1) The Capacitor host plugin and a tablet-hosted session with the second tablet as
+guest (#973, #976). (2) Battery drain unplugged over a real session. (3) The game list by mDNS or broadcast on this
+router. (4) A person-played late-game farm for one more size check. (5) The jam rule with a person walking on each
+tablet, after the scene detects "blocked by player X".
+
 ## Systems added since the first design (owner, 2026-11-18)
 
 The systems below were designed after 2026-11-02. How each behaves with several players is settled here at design

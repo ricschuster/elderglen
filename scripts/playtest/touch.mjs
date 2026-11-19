@@ -178,7 +178,8 @@ async function holdAxis(axis, target) {
 async function walkTo(tx, ty) {
   for (let attempt = 0; attempt < 4; attempt++) {
     const d = await bot.dbg();
-    setMap(d.map);
+    // The live blocked tiles (trees, rocks, machines) change per game: plan around them.
+    await bot.refreshMap();
     const path = bot.bfs(d.tile, { x: tx, y: ty });
     if (!path) throw new Error(`no path to ${tx},${ty}`);
     let i = 0;
@@ -229,10 +230,10 @@ async function actTool() {
 }
 
 async function selectSlot(i) {
-  const H = (await rect()).height;
+  // The toolbar is a column of square slots down the left edge (it was a bottom row).
   const slots = (await targets("farm"))
-    .filter((t) => t.cy > H * 0.85 && t.w < 90)
-    .sort((a, c) => a.cx - c.cx);
+    .filter((t) => t.cx < 80 && t.w < 60 && t.h < 60)
+    .sort((a, c) => a.cy - c.cy);
   await tap(slots[i].cx, slots[i].cy, 100);
   const s = await bot.snap();
   if (s.selected !== i)
@@ -285,7 +286,8 @@ await useTool();
 let s = await bot.snap();
 if (!s.plots.some((q) => q.x === front.x && q.y === front.y && q.tilled))
   finding("Use with the hoe did not till the tile in front");
-const seedSlot = s.inv.findIndex((x) => x && x.id === "parsnip-seed") + 4;
+// The toolbar is the first twelve backpack slots, tools included (note 102).
+const seedSlot = s.inv.findIndex((x) => x && x.id === "parsnip-seed");
 await selectSlot(seedSlot);
 await useTool();
 s = await bot.snap();
