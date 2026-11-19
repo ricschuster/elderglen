@@ -209,7 +209,7 @@ The owner took the recommendations on the three small points:
 
 ## Built status
 
-Slices 1 to 4 are built (issues #970, #971, #984 and #985). Slice 5 is not.
+Slices 1 to 5 are built (issues #970, #971, #984, #985 and #986).
 
 Run `npm run dev` and open `/layout.html`. Files: `layout.html`, `src/layout/main.ts` (the page),
 `src/core/layoutview.ts` and `src/core/layoutedit.ts` (pure helpers, tested),
@@ -264,3 +264,16 @@ Simplest readings taken where the note was open:
   tiles a second); the "walk time" box on the page takes two clicks and shows tiles and seconds. At those speeds no map
   comes near the crossing limits (300 tiles on foot), so the limit may want a lower walking speed or a tile limit when
   tuned. 66 warnings on the committed maps today, mostly benches and doors with one open side.
+- **Pair view and draft viewer (slice 5).** `src/core/layoutpair.ts` and `src/core/layoutdraft.ts` (pure, tested),
+  two buttons beside "map" at the top of the side panel ("pair view", "drafts"). Pair view: the exit's map on the left
+  with the exit in red, the target map on the right with the entry in green and every exit back in red (the nearest in
+  orange), a dashed line and the tile gap, and a list of every pair, worst gap first (over the limit red, known gap
+  amber). Clicking a pair problem in the Problems panel, or "open pair view" on a selected exit, opens it. The gap comes
+  from `pairGap` in `src/core/maps.ts`, the same function the check uses. What it shows about the limit of 4: only
+  `secret-woods:to_forest` is over it (11 tiles, a known gap); the rest of the pairs are within it, and the limit is
+  unchanged and still to tune when the owner uses the view. Draft viewer: lists every `.tmj` under `docs/design/drafts/`
+  through two GET routes in the dev plugin (`/__layout/drafts`, `/__layout/draftfile`, refusing any path that is not a
+  `.tmj` in that folder), shows the draft alone, beside a real map, or laid over it at a tile offset, with its size,
+  its own note and its object counts. Read only: no checks run on a draft and nothing is saved. The draft tiles are the
+  generator's own swatches, so colours are by tile id, not the real look. Not yet used by the owner in a browser
+  beyond a headless smoke check.

@@ -111,11 +111,7 @@ export class MapRegistry {
         if (!entry) continue;
         const back = target[0]!.exits.filter((x) => x.map === id);
         if (back.length === 0) continue;
-        const dist = (x: (typeof back)[number]) =>
-          Math.max(
-            Math.max(x.x - entry.x, 0, entry.x - (x.x + x.w - 1)),
-            Math.max(x.y - entry.y, 0, entry.y - (x.y + x.h - 1)),
-          );
+        const dist = (x: (typeof back)[number]) => pairGap(entry, x);
         const near = Math.min(...back.map(dist));
         if (near > limit && !KNOWN_PAIR_GAPS.has(`${id}:${exit.id}`))
           out.push(
@@ -213,6 +209,20 @@ export class MapRegistry {
     out.push(...this.pairProblems());
     return out;
   }
+}
+
+/**
+ * The tile gap the pair check measures: the larger of the x and y gaps from a
+ * tile to the nearest tile of an exit rectangle (zero when inside it).
+ */
+export function pairGap(
+  entry: { x: number; y: number },
+  exit: { x: number; y: number; w: number; h: number },
+): number {
+  return Math.max(
+    Math.max(exit.x - entry.x, 0, entry.x - (exit.x + exit.w - 1)),
+    Math.max(exit.y - entry.y, 0, entry.y - (exit.y + exit.h - 1)),
+  );
 }
 
 /** The most tiles the entry an exit leads to may lie from the matching exit back (note 87). */

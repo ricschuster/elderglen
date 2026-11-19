@@ -49,6 +49,23 @@ import {
   walkTime,
   type WalkTime,
 } from "../core/layoutwarnings";
+import {
+  allPairs,
+  besideBy,
+  overlayBy,
+  pairText,
+  pairView,
+  parsePairProblem,
+  type PairView,
+  type Placement,
+} from "../core/layoutpair";
+import {
+  DRAFT_FILE_ROUTE,
+  DRAFT_LIST_ROUTE,
+  draftInfo,
+  draftLabel,
+  parseDraft,
+} from "../core/layoutdraft";
 import { mapFiles } from "../content/maps";
 
 /**
@@ -84,6 +101,19 @@ const state = {
   timing: false,
   timePoints: [] as { x: number; y: number }[],
   paint: undefined as { x: number; y: number } | undefined,
+  /** Slice 5: the map editor, the pair view, or the read-only draft viewer. */
+  view: "map" as "map" | "pair" | "draft",
+  pair: undefined as { from: string; exit: string } | undefined,
+  draft: {
+    paths: [] as string[],
+    path: "",
+    json: undefined as TiledMapJson | undefined,
+    error: "",
+    compare: "",
+    mode: "alone" as "alone" | "beside" | "overlay",
+    ox: 0,
+    oy: 0,
+  },
 };
 
 /** Working copies: the page edits these, never the imported files. */
@@ -308,6 +338,12 @@ function renderInspector(side: HTMLElement): void {
   side.append(document.createElement("hr"), h);
   if (!o) return;
   const ref = { layer: o.layerIndex, index: o.index };
+  if (o.cls === "exit") {
+    const b = document.createElement("button");
+    b.textContent = "open pair view";
+    b.onclick = () => openPair(state.id, o.name);
+    side.append(b);
+  }
   const row = (label: string, input: HTMLElement) => {
     const l = document.createElement("label");
     l.append(`${label} `, input);
@@ -366,6 +402,17 @@ function renderSide(): void {
     h.textContent = t;
     side.append(h);
   };
+  const modes = document.createElement("div");
+  for (const m of ["map", "pair", "draft"] as const) {
+    const b = document.createElement("button");
+    b.textContent = m === "map" ? "map" : m === "pair" ? "pair view" : "drafts";
+    b.disabled = state.view === m;
+    b.onclick = () => setView(m);
+    modes.append(b);
+  }
+  side.append(modes);
+  if (state.view === "pair") return renderPairSide(side);
+  if (state.view === "draft") return renderDraftSide(side);
   title(
     `${state.id} ${j.width}x${j.height}${dirty.has(state.id) ? " (unsaved)" : ""}`,
   );
@@ -552,6 +599,12 @@ function renderProblems(): void {
     const row = document.createElement("div");
     row.textContent = p;
     row.onclick = () => {
+      const pair = parsePairProblem(p);
+      if (pair) {
+        openPair(pair.map, pair.exit);
+        return;
+      }
+      state.view = "map";
       const id = Object.keys(work).find(
         (k) => p === k || p.startsWith(`${k}:`) || p.startsWith(`${k} `),
       );
@@ -579,6 +632,8 @@ function renderProblems(): void {
 }
 
 function draw(): void {
+  if (state.view === "pair") return drawPair();
+  if (state.view === "draft") return drawDraft();
   const j = json();
   const s = state.zoom * TILE;
   canvas.width = j.width * s;
@@ -679,6 +734,303 @@ function draw(): void {
   }
 }
 
+function setView(v: "map" | "pair" | "draft"): void {
+  state.view = v;
+  if (v === "pair" && !state.pair) {
+    const first = reg ? allPairs(reg)[0] : undefined;
+    if (first) state.pair = { from: first.from, exit: first.exit.id };
+  }
+  if (v === "draft" && state.draft.paths.length === 0)
+    void fetch(DRAFT_LIST_ROUTE)
+      .then((r) => r.json() as Promise<string[]>)
+      .then((list) => {
+        state.draft.paths = list;
+        renderSide();
+      });
+  renderSide();
+  draw();
+}
+
+function openPair(from: string, exit: string): void {
+  state.pair = { from, exit };
+  setView("pair");
+}
+
+/** Draw a map's layers and objects at a tile offset, for the pair and draft views. */
+function drawPlain(
+  j: TiledMapJson,
+  at: { x: number; y: number },
+  alpha: number,
+  holds: ReadonlySet<string> = new Set(),
+): void {
+  const s = state.zoom * TILE;
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = "#101410";
+  ctx.fillRect(at.x * s, at.y * s, j.width * s, j.height * s);
+  for (const layer of drawableTileLayers(j, 0, holds))
+    layer.data.forEach((id, i) => {
+      if (id === 0) return;
+      ctx.fillStyle = tileColour(layer.base, id);
+      ctx.fillRect(
+        (at.x + (i % j.width)) * s,
+        (at.y + Math.floor(i / j.width)) * s,
+        s,
+        s,
+      );
+    });
+  ctx.font = "10px sans-serif";
+  for (const o of placedObjects(j, 0, holds)) {
+    ctx.strokeStyle = classColour(o.cls);
+    ctx.fillStyle = classColour(o.cls);
+    ctx.strokeRect(
+      (at.x + o.x) * s + 1,
+      (at.y + o.y) * s + 1,
+      o.w * s - 2,
+      o.h * s - 2,
+    );
+    if (o.cls === "entry" || o.cls === "exit" || s >= 32)
+      ctx.fillText(o.name, (at.x + o.x) * s + 2, (at.y + o.y) * s + 10);
+  }
+  ctx.globalAlpha = 1;
+}
+
+function sizeCanvas(p: Placement): void {
+  const s = state.zoom * TILE;
+  canvas.width = p.width * s;
+  canvas.height = p.height * s;
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+const frame = (
+  r: { x: number; y: number; w: number; h: number },
+  at: { x: number; y: number },
+  colour: string,
+  width = 3,
+): void => {
+  const s = state.zoom * TILE;
+  ctx.strokeStyle = colour;
+  ctx.lineWidth = width;
+  ctx.strokeRect(
+    (at.x + r.x) * s - 1,
+    (at.y + r.y) * s - 1,
+    r.w * s + 2,
+    r.h * s + 2,
+  );
+  ctx.lineWidth = 1;
+};
+
+function currentPair(): PairView | undefined {
+  return reg && state.pair
+    ? pairView(reg, state.pair.from, state.pair.exit)
+    : undefined;
+}
+
+/** Two maps side by side: the exit, the entry it leads to, the exits back and the gap. */
+function drawPair(): void {
+  const v = currentPair();
+  const a = v ? work[v.from] : undefined;
+  const b = v ? work[v.to] : undefined;
+  if (!v || !a) {
+    sizeCanvas({ width: 4, height: 4, a: { x: 0, y: 0 }, b: { x: 0, y: 0 } });
+    return;
+  }
+  const place = besideBy(a, b ?? { width: 0, height: 0 }, 3);
+  sizeCanvas(place);
+  drawPlain(a, place.a, 1);
+  if (b) drawPlain(b, place.b, 1);
+  const s = state.zoom * TILE;
+  frame(v.exit, place.a, "#ff5c5c", 4);
+  ctx.fillStyle = "#fff";
+  ctx.font = "12px sans-serif";
+  ctx.fillText(v.from, place.a.x * s + 4, 12);
+  if (b) ctx.fillText(v.to, place.b.x * s + 4, 12);
+  for (const x of v.back)
+    frame(
+      x,
+      place.b,
+      x === v.nearest ? "#ffb347" : "#ff5c5c",
+      x === v.nearest ? 4 : 2,
+    );
+  if (v.entry) {
+    frame({ ...v.entry, w: 1, h: 1 }, place.b, "#3ddc84", 4);
+    if (v.nearest) {
+      const n = v.nearest;
+      ctx.strokeStyle = "#fff";
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      ctx.moveTo((place.b.x + v.entry.x + 0.5) * s, (v.entry.y + 0.5) * s);
+      ctx.lineTo((place.b.x + n.x + n.w / 2) * s, (n.y + n.h / 2) * s);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillText(
+        `${v.gap} tiles (limit ${v.limit})`,
+        (place.b.x + v.entry.x + 1) * s,
+        (v.entry.y - 0.3) * s,
+      );
+    }
+  }
+}
+
+function renderPairSide(side: HTMLElement): void {
+  const head = document.createElement("b");
+  head.textContent =
+    "pair view: exit (red, left), its entry (green, right), exits back (red, nearest orange)";
+  side.append(head);
+  const v = currentPair();
+  const t = document.createElement("div");
+  t.textContent = v ? pairText(v) : "no pair chosen";
+  side.append(t);
+  const note = document.createElement("div");
+  note.textContent =
+    "The gap is the larger of the x and y tile gaps from the entry to the nearest exit back. The limit is a placeholder (note 87).";
+  side.append(note);
+  const zoom = document.createElement("input");
+  zoom.type = "range";
+  zoom.min = "1";
+  zoom.max = "8";
+  zoom.value = String(state.zoom);
+  zoom.oninput = () => {
+    state.zoom = Number(zoom.value);
+    draw();
+  };
+  side.append("zoom ", zoom);
+  for (const p of reg ? allPairs(reg) : []) {
+    const row = document.createElement("div");
+    row.style.cursor = "pointer";
+    row.style.color =
+      p.status === "over"
+        ? "#ff9a9a"
+        : p.status === "known-gap"
+          ? "#ffd27a"
+          : p.status === "ok"
+            ? "#9fd69f"
+            : "#999";
+    if (state.pair?.from === p.from && state.pair.exit === p.exit.id)
+      row.style.background = "#355";
+    row.textContent = pairText(p);
+    row.onclick = () => openPair(p.from, p.exit.id);
+    side.append(row);
+  }
+}
+
+/** The draft, alone, beside a real map, or laid over it at an offset. */
+function drawDraft(): void {
+  const d = state.draft;
+  const dj = d.json;
+  const real = d.compare !== "" ? work[d.compare] : undefined;
+  if (!dj) {
+    sizeCanvas({ width: 4, height: 4, a: { x: 0, y: 0 }, b: { x: 0, y: 0 } });
+    return;
+  }
+  if (!real || d.mode === "alone") {
+    sizeCanvas({
+      width: dj.width,
+      height: dj.height,
+      a: { x: 0, y: 0 },
+      b: { x: 0, y: 0 },
+    });
+    drawPlain(dj, { x: 0, y: 0 }, 1);
+    return;
+  }
+  const place =
+    d.mode === "beside"
+      ? besideBy(real, dj, 3)
+      : overlayBy(real, dj, { x: d.ox, y: d.oy });
+  sizeCanvas(place);
+  drawPlain(real, place.a, 1);
+  drawPlain(dj, place.b, d.mode === "overlay" ? 0.6 : 1);
+  frame({ x: 0, y: 0, w: dj.width, h: dj.height }, place.b, "#ffe066", 2);
+}
+
+function renderDraftSide(side: HTMLElement): void {
+  const d = state.draft;
+  const head = document.createElement("b");
+  head.textContent = "draft viewer (read only, docs/design/drafts)";
+  side.append(head);
+  const choose = (
+    label: string,
+    opts: [string, string][],
+    now: string,
+    set: (v: string) => void,
+  ) => {
+    const l = document.createElement("label");
+    const sel = document.createElement("select");
+    for (const [v, text] of opts)
+      sel.add(new Option(text, v, false, v === now));
+    sel.onchange = () => set(sel.value);
+    l.append(`${label} `, sel);
+    side.append(l);
+  };
+  choose(
+    "draft",
+    [
+      ["", "(choose)"],
+      ...d.paths.map((p): [string, string] => [p, draftLabel(p)]),
+    ],
+    d.path,
+    (p) => {
+      d.path = p;
+      d.json = undefined;
+      d.error = "";
+      if (p === "") return (renderSide(), draw());
+      void fetch(`${DRAFT_FILE_ROUTE}?path=${encodeURIComponent(p)}`)
+        .then((r) => r.json() as Promise<{ text?: string; error?: string }>)
+        .then((f) => {
+          try {
+            d.json = parseDraft(f.text ?? "");
+          } catch (e) {
+            d.error = (e as Error).message;
+          }
+          renderSide();
+          draw();
+        });
+    },
+  );
+  choose(
+    "with map",
+    [
+      ["", "(none)"],
+      ...Object.keys(work)
+        .sort()
+        .map((m): [string, string] => [m, m]),
+    ],
+    d.compare,
+    (v) => {
+      d.compare = v;
+      draw();
+    },
+  );
+  choose(
+    "show",
+    [
+      ["alone", "draft alone"],
+      ["beside", "beside the map"],
+      ["overlay", "over the map"],
+    ],
+    d.mode,
+    (v) => {
+      d.mode = v as typeof d.mode;
+      draw();
+    },
+  );
+  for (const axis of ["ox", "oy"] as const) {
+    const l = document.createElement("label");
+    const n = document.createElement("input");
+    n.type = "number";
+    n.value = String(d[axis]);
+    n.onchange = () => {
+      d[axis] = Math.trunc(Number(n.value)) || 0;
+      draw();
+    };
+    l.append(`overlay offset ${axis === "ox" ? "x" : "y"} `, n);
+    side.append(l);
+  }
+  const info = document.createElement("div");
+  info.textContent = d.error || (d.json ? draftInfo(d.json) : "");
+  side.append(info);
+}
+
 const tileAt = (e: MouseEvent) => {
   const s = state.zoom * TILE;
   const r = canvas.getBoundingClientRect();
@@ -722,6 +1074,7 @@ function addAtMouse(): void {
 }
 
 canvas.addEventListener("mousedown", (e) => {
+  if (state.view !== "map") return;
   const t = tileAt(e);
   if (state.timing) {
     state.timePoints =
@@ -751,10 +1104,12 @@ canvas.addEventListener("mousemove", (e) => {
   state.mouse = tileAt(e);
   const info = document.getElementById("info");
   if (info) info.textContent = `tile ${state.mouse.x},${state.mouse.y}`;
-  if (state.viewBox || state.drag || state.paint) draw();
+  if (state.view === "map" && (state.viewBox || state.drag || state.paint))
+    draw();
 });
 
 window.addEventListener("mouseup", () => {
+  if (state.view !== "map") return;
   const paint = state.paint;
   state.paint = undefined;
   if (paint && state.brush !== "") {
@@ -786,7 +1141,7 @@ window.addEventListener("mouseup", () => {
 
 window.addEventListener("keydown", (e) => {
   const tag = (e.target as HTMLElement).tagName;
-  if (tag === "INPUT" || tag === "SELECT") return;
+  if (tag === "INPUT" || tag === "SELECT" || state.view !== "map") return;
   const sel = state.sel;
   const ctrl = e.ctrlKey || e.metaKey;
   const arrow: Record<string, [number, number]> = {
