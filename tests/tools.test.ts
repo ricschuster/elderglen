@@ -151,3 +151,34 @@ describe("act", () => {
     });
   });
 });
+
+describe("injected RNG (issue 977)", () => {
+  const dropOf = (g: ReturnType<typeof startGame>, r: number) => {
+    g.rng = () => r;
+    g.weeds.add(1, 0);
+    const out = useHeld(
+      g,
+      mapWith(true),
+      { kind: "tool", tool: "scythe" },
+      1,
+      0,
+    );
+    expect(out.ok).toBe(true);
+    return g.inventory.count("fiber");
+  };
+
+  it("a fixed RNG makes the weed drop deterministic", () => {
+    expect(dropOf(startGame(), 0)).toBe(1);
+    expect(dropOf(startGame(), 0.99)).toBe(0);
+  });
+
+  it("defaults to Math.random when unset", () => {
+    const g = startGame();
+    expect(g.rng).toBeUndefined();
+    const spy = vi.spyOn(Math, "random").mockReturnValue(0);
+    g.weeds.add(1, 0);
+    useHeld(g, mapWith(true), { kind: "tool", tool: "scythe" }, 1, 0);
+    expect(spy).toHaveBeenCalled();
+    spy.mockRestore();
+  });
+});

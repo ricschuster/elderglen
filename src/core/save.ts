@@ -257,6 +257,11 @@ export interface GameState extends WorldState {
   toolTiers: ToolTiers;
   /** Water left in the can (note 103). */
   canWater: number;
+  /**
+   * Random source for tool outcomes (issue 977). Unset means Math.random. Never
+   * saved; tests and replays set it to a fixed or seeded function.
+   */
+  rng?: () => number;
 }
 
 /** A map and a tile, where Continue puts the player after a mid-day resume. */

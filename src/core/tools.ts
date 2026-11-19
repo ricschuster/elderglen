@@ -60,6 +60,9 @@ import {
   waterPot,
 } from "./gardenpot";
 
+/** The state's injected RNG, or Math.random (issue 977). */
+const rngOf = (g: GameState): (() => number) => g.rng ?? Math.random;
+
 const fail = (reason: string): Outcome => ({ ok: false, reason });
 
 /**
@@ -68,7 +71,7 @@ const fail = (reason: string): Outcome => ({ ok: false, reason });
  */
 function useScythe(g: GameState, map: FarmMap, x: number, y: number): Outcome {
   if (map.indoors || (!map.hasSoil && !map.wild)) return fail("nothing to cut");
-  if (g.weeds.at(x, y)) return clearWeed(g, x, y, "scythe", Math.random, map);
+  if (g.weeds.at(x, y)) return clearWeed(g, x, y, "scythe", rngOf(g), map);
   if (map.hasSoil && areaOf(g) === undefined && g.grass.at(x, y))
     return cutGrass(g, x, y);
   return fail("nothing to cut");
@@ -163,10 +166,10 @@ export function useHeld(
       ? held.tool
       : undefined;
   if (weedTool && g.weeds.at(x, y))
-    return clearWeed(g, x, y, weedTool, Math.random, map);
+    return clearWeed(g, x, y, weedTool, rngOf(g), map);
   if (weedTool && g.twigs.at(x, y)) return clearTwig(g, x, y, weedTool, map);
   if (held.kind === "tool" && held.tool === "axe")
-    return chop(g, x, y, Math.random, map);
+    return chop(g, x, y, rngOf(g), map);
   if (held.kind === "tool" && held.tool === "hoe") {
     const area = areaOf(g);
     if (area !== undefined && g.spots.at(x, y)) return digSpot(g, area, x, y);
@@ -264,18 +267,18 @@ function useInGreenhouse(
     held.tool === "axe" &&
     (fruitTrees.at(x, y) || teaBushes.at(x, y))
   )
-    return chop(g, x, y, Math.random, map);
+    return chop(g, x, y, rngOf(g), map);
   if (held.kind === "tool" && held.tool === "hoe" && fruitTrees.at(x, y))
     return fail("a tree is in the way");
   if (held.kind === "tool" && held.tool === "hoe" && teaBushes.at(x, y))
     return fail("a tea bush is in the way");
   if (held.kind === "tool" && held.tool === "hoe")
     return map.isTillable(x, y)
-      ? till(g, x, y, Math.random, soil)
+      ? till(g, x, y, rngOf(g), soil)
       : fail("cannot dig here");
   if (held.kind === "tool" && held.tool === "can") return water(g, x, y, soil);
   if (held.kind === "item" && (cropOfSeed(held.id) || held.id === MIXED_SEED))
-    return plant(g, x, y, held.id, Math.random, soil);
+    return plant(g, x, y, held.id, rngOf(g), soil);
   if (held.kind === "item" && fertilizerById(held.id))
     return fertilize(g, x, y, held.id, soil);
   if (held.kind === "item" && sprinklerById(held.id))
@@ -316,7 +319,7 @@ function pickIndoors(g: GameState, x: number, y: number): Outcome {
   if (here.teaBushes.at(x, y)) return pickTeaLeaves(g, x, y, here.teaBushes);
   if (here.sprinklers.at(x, y))
     return pickUpSprinkler(g, x, y, here.sprinklers);
-  return harvest(g, x, y, Math.random, here.soil);
+  return harvest(g, x, y, rngOf(g), here.soil);
 }
 
 /**
