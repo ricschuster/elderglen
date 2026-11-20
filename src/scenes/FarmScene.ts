@@ -678,7 +678,7 @@ export class FarmScene extends Phaser.Scene {
       this.net.onChange = () => this.render();
       this.net.onNight = (n) => {
         this.inBed = false;
-        this.open("report", { lines: n.lines });
+        this.open("report", { lines: n.lines, day: n.day });
       };
       const guest = this.net;
       guest.onBeds = () => this.showBeds(guest.beds);
@@ -686,6 +686,10 @@ export class FarmScene extends Phaser.Scene {
         this.message = `The host said no: ${reason}.`;
         this.render();
       };
+    } else if (this.net instanceof HostSession) {
+      // The typed-address fallback (a router that blocks broadcasts) needs the real port.
+      const { address, port } = this.net.host;
+      if (address) this.message = `Others can join at ${address}:${port}`;
     }
     this.swingFx = this.add.graphics().setDepth(900);
     world.push(this.swingFx);

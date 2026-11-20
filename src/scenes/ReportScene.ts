@@ -13,14 +13,16 @@ export class ReportScene extends Phaser.Scene {
   private report: SleepReport | undefined;
   /** A guest's report arrives as words from the host (the `night` message). */
   private guestLines: string[] | undefined;
+  private day: number | undefined;
   private state!: GameState;
 
   constructor() {
     super("report");
   }
 
-  init(data: { report?: SleepReport; lines?: string[] }): void {
+  init(data: { report?: SleepReport; lines?: string[]; day?: number }): void {
     this.report = data.report;
+    this.day = data.day;
     this.guestLines = data.lines;
     this.state = this.registry.get(STATE_KEY) as GameState;
   }
@@ -43,9 +45,11 @@ export class ReportScene extends Phaser.Scene {
     this.add
       .rectangle(480, 270, WINDOW_FILL, WINDOW_FILL, 0x10201a, 0.94)
       .setInteractive();
-    const { season, dayOfSeason, year } = dateOf(this.state.day.clock.day);
+    // A guest's copy of the farm may not hold the new day yet: the night news carries it.
+    const day = this.day ?? this.state.day.clock.day;
+    const { season, dayOfSeason, year } = dateOf(day);
     this.add
-      .text(480, 80, `Day ${this.state.day.clock.day}`, {
+      .text(480, 80, `Day ${day}`, {
         fontSize: "36px",
         color: "#ffffff",
       })

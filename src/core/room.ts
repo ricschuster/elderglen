@@ -125,7 +125,8 @@ export class Room {
    * A guest joins, or rejoins with the id it was given. Returns the id, or undefined when the
    * room is full or the id is the host's or is in use by a connected guest.
    */
-  join(name: string, rejoinId?: PlayerId): PlayerId | undefined {
+  join(rawName: string, rejoinId?: PlayerId): PlayerId | undefined {
+    const name = this.uniqueName(rawName, rejoinId);
     let m = rejoinId ? this.members.get(rejoinId) : undefined;
     if (rejoinId && (rejoinId === LOCAL_PLAYER || m?.connected)) {
       this.refusal = "in-use";
@@ -285,6 +286,17 @@ export class Room {
     for (const m of this.members.values())
       if (m.connected) p[m.id] = [m.x, m.y, m.ts, m.map, m.dir, m.pass];
     return p;
+  }
+
+  /** A name no one else in the room has: a second "Guest" becomes "Guest 2" (the host counts too). */
+  private uniqueName(raw: string, selfId?: PlayerId): string {
+    const base = raw.trim() || "Guest";
+    const taken = new Set<string>();
+    for (const m of this.members.values())
+      if (m.id !== selfId) taken.add(m.name);
+    let name = base;
+    for (let n = 2; taken.has(name); n++) name = `${base} ${n}`;
+    return name;
   }
 
   /** Connected players, for name labels. */
