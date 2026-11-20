@@ -172,6 +172,14 @@ export function applyStatePatch(g: GameState, p: StatePatch): PatchResult {
     }
   }
 
+  // Raising combat or mining levels (or taking Steady) lifts the health ceiling, and
+  // `sync` never heals, so a staged farmer would start part-full. A new game starts
+  // full, so top the bar up to the new ceiling.
+  if (p.skills || p.autoProfessions) {
+    g.combat.sync(g.skills);
+    g.combat.health.current = g.combat.health.max;
+  }
+
   // A room only takes hand-ins once it is open, so go round until nothing more fits.
   const rooms = new Set(p.hallRooms ?? []);
   for (const r of rooms)
