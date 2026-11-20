@@ -277,6 +277,7 @@ import {
   cornerScroll,
   hudScale,
   hudSlot,
+  SLOT_SMALL,
   hudContentW,
   pinchPercent,
   stepPercent,
@@ -1742,8 +1743,14 @@ export class FarmScene extends Phaser.Scene {
       (this.registry.get(UI_SIZE_KEY) as number | undefined) ?? 100;
     const ts = this.map.tileSize;
     const touchProfile = this.controls.profile === "touch";
-    const slot = hudSlot(uiPercent, touchProfile, width);
-    const scale = hudScale(uiPercent, touchProfile, width, hudContentW(slot));
+    const slot = hudSlot(uiPercent, touchProfile, width, height);
+    const scale = hudScale(
+      uiPercent,
+      touchProfile,
+      width,
+      // The touch column is not a bar: keep the small bar width as the limit.
+      hudContentW(touchProfile ? SLOT_SMALL : slot),
+    );
     // On touch the toolbar is a column down the left, and the map is drawn
     // beside it, so no tile is ever under a button.
     const inset = Math.round(this.hud.insetLeft(scale));

@@ -158,8 +158,14 @@ describe("hudSlot (note 102)", () => {
     expect(hudSlot(150, false, 1250)).toBe(64);
     expect(hudSlot(75, false, 700)).toBe(64);
   });
-  it("keeps touch at 44", () => {
-    expect(hudSlot(100, true, 3000)).toBe(44);
+  it("is 64 on touch, and 44 only in a window too short for six slots", () => {
+    expect(hudSlot(100, true, 3000)).toBe(64);
+    expect(hudSlot(100, true, 1280, 800)).toBe(64);
+    expect(hudSlot(100, true, 800, 420)).toBe(64);
+    expect(hudSlot(100, true, 800, 419)).toBe(44);
+    // The touch scale floor makes the HUD bigger, so fewer units fit.
+    expect(hudSlot(150, true, 1280, 800)).toBe(64);
+    expect(hudSlot(150, true, 1280, 600)).toBe(44);
   });
   it("the chosen bar always fits at the scale used", () => {
     for (const w of [500, 700, 900, 1280, 1920]) {

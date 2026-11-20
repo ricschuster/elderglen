@@ -3,7 +3,7 @@ import { DEBUG_TOOLS } from "../core/debugtools";
 import { hasButtons } from "../core/controlschemes";
 import { heldAt, rowOf, TOOLBAR_SIZE, type Held } from "../core/toolbar";
 import { SLOT_COUNT } from "../core/inventory";
-import { barWidth, SLOT_SMALL } from "../core/view";
+import { barWidth, COL_PAD, SLOT_BIG } from "../core/view";
 import { iconKey as itemIcon, TOOL_ICONS, toolTierKey } from "./art";
 import { splitQuality } from "../core/quality";
 import { itemById } from "../core/items";
@@ -17,11 +17,11 @@ import { canFraction, canWaterLine } from "../core/canwater";
 import { Tooltip } from "./tooltip";
 import { toolAway, type Upgradable } from "../core/upgrades";
 
-/** The touch slot, and the desktop slot on a window too small for the big one. */
 /** Opaque, so rocks and crops behind an empty slot do not show through. */
 const SLOT_FILL = 0x16231b;
 const SLOT_FILL_ON = 0x6b5a2a;
-const SLOT = SLOT_SMALL;
+/** The slot the HUD is first drawn for; `layout` resizes it (note 102). */
+const SLOT = SLOT_BIG;
 const GAP = 4;
 // Layout is drawn for a 960 by 540 window, then each object is shifted by its
 // anchor when the real window size is known (`layout`).
@@ -29,10 +29,10 @@ const BASE_W = 960;
 const BASE_H = 540;
 const BAR_MARGIN = 8;
 /** Touch: the toolbar is a column down the left edge, with the map drawn beside it. */
-const STEP = SLOT + GAP;
-const COL_X = 8;
-const COL_TOP = 8;
-const COL_W = SLOT + 2 * COL_X;
+const COL_X = COL_PAD;
+const COL_TOP = COL_PAD;
+/** The column width the side readouts are first placed for (the big slot). */
+const COL_W_BIG = SLOT_BIG + 2 * COL_X;
 /** A drag moves the column when the finger travels this far, in HUD units. */
 const DRAG_MIN = 6;
 const USE_R = 52;
@@ -103,6 +103,9 @@ export class Hud {
   private lastAt = -1;
   /** Desktop bar slot size in HUD units (note 102): 64, or 44 in a small window. */
   private slot = SLOT;
+  /** Touch: how far the column width has moved from COL_W_BIG so far. */
+  private colShifted = COL_W_BIG;
+  private sideObjects: Phaser.GameObjects.Components.Transform[] = [];
   private readonly tooltip: Tooltip;
   private lastState: GameState | undefined;
   private drag: { y: number; top: number; moved: boolean } | undefined;
@@ -121,7 +124,7 @@ export class Hud {
     settings: Settings,
   ) {
     this.touch = settings.profile === "touch";
-    const ox = this.touch ? COL_W : 0;
+    const ox = this.touch ? COL_W_BIG : 0;
     this.status = scene.add.text(16 + ox, 16, "", {
       fontSize: "24px",
       color: "#ffffff",
@@ -155,6 +158,7 @@ export class Hud {
     );
     this.objects.push(...this.panel.objects);
     this.objects.push(this.status, this.hintBox, this.hint, this.message);
+    this.sideObjects = [this.status, this.hintBox, this.hint, this.message];
 
     const BAR_W = barWidth(SLOT);
     const BAR_Y = BASE_H - SLOT - BAR_MARGIN;
@@ -234,10 +238,10 @@ export class Hud {
         const dy = (p.y - d.y) / this.scale;
         if (Math.abs(dy) < DRAG_MIN && !d.moved) return;
         d.moved = true;
-        this.scrollTop = d.top - Math.round(dy / STEP);
+        this.scrollTop = d.top - Math.round(dy / this.step());
       });
     // On touch the Row button sits at the foot of the column, beside it.
-    const rowX = this.touch ? COL_W + 8 : left;
+    const rowX = this.touch ? COL_W_BIG + 8 : left;
     const rowY = this.touch ? BASE_H - 48 : BAR_Y - 46;
     this.rowButton = scene.add
       .rectangle(rowX, rowY, 90, 40, 0x000000, 0.5)
@@ -347,7 +351,7 @@ export class Hud {
     );
     if (this.touch) {
       // The column is placed from the top in `update`; only these ride the foot.
-      this.heldName.setOrigin(0, 1).setPosition(COL_W + 8, BASE_H - 56);
+      this.heldName.setOrigin(0, 1).setPosition(COL_W_BIG + 8, BASE_H - 56);
       this.pin("l", "b", [this.heldName, this.rowButton, this.rowText]);
     }
     this.pin("r", "b", [use, useText, eat, eatText]);
@@ -425,7 +429,10 @@ export class Hud {
    * buttons bottom right and top right.
    */
   layout(uw: number, uh: number, scale: number, slot = SLOT): void {
-    this.slot = this.touch ? SLOT : slot;
+    this.slot = slot;
+    const shift = this.touch ? this.colW() - this.colShifted : 0;
+    this.colShifted += shift;
+    if (shift !== 0) for (const o of this.sideObjects) o.x += shift;
     this.uw = uw;
     this.uh = uh;
     this.scale = scale;
@@ -434,10 +441,18 @@ export class Hud {
     this.panel.layout(uw, uh);
     this.visibleCount = Math.max(
       1,
-      Math.floor((uh - 2 * COL_TOP + GAP) / STEP),
+      Math.floor((uh - 2 * COL_TOP + GAP) / this.step()),
     );
     for (const p of this.pinned) {
-      p.o.x = p.x + (p.h === "l" ? 0 : p.h === "c" ? dx / 2 : dx);
+      const edge =
+        p.h === "l"
+          ? this.touch
+            ? this.colShifted - COL_W_BIG
+            : 0
+          : p.h === "c"
+            ? dx / 2
+            : dx;
+      p.o.x = p.x + edge;
       p.o.y = p.y + (p.v === "b" ? dy : 0);
     }
     if (!this.touch) this.placeBar();
@@ -464,6 +479,15 @@ export class Hud {
     });
   }
 
+  /** Touch column: the slot step and the column width for the slot size. */
+  private step(): number {
+    return this.slot + GAP;
+  }
+
+  private colW(): number {
+    return this.slot + 2 * COL_X;
+  }
+
   /** Show or hide the control hint box. Touch has no keyboard hint. */
   setHintsShown(on: boolean): void {
     this.hintsOn = on && !this.touch;
@@ -479,7 +503,7 @@ export class Hud {
 
   /** Screen pixels the toolbar column takes from the left edge: touch only. */
   insetLeft(scale: number): number {
-    return this.touch ? COL_W * scale : 0;
+    return this.touch ? this.colW() * scale : 0;
   }
 
   /** Show or hide the Use and Action buttons (touch only; desktop has none). */
@@ -546,7 +570,7 @@ export class Hud {
     const ux = x / this.scale;
     const uy = y / this.scale;
     // On touch the whole left strip is the toolbar's; the map starts beside it.
-    if (this.touch) return ux <= COL_W;
+    if (this.touch) return ux <= this.colW();
     const bar = barWidth(this.slot);
     const left = (this.uw - bar) / 2;
     return (
@@ -596,10 +620,14 @@ export class Hud {
       if (this.touch) {
         const k = order.indexOf(i) - this.scrollTop;
         shown = shown && k >= 0 && k < this.visibleCount;
-        const y = COL_TOP + k * STEP;
-        box.setPosition(COL_X, y);
-        this.icons[i]!.setPosition(COL_X + SLOT / 2, y + 15);
-        this.captions[i]!.setPosition(COL_X + SLOT / 2, y + SLOT - 2);
+        const y = COL_TOP + k * this.step();
+        const sl = this.slot;
+        box.setPosition(COL_X, y).setSize(sl, sl);
+        this.icons[i]!.setPosition(COL_X + sl / 2, y + Math.round(sl * 0.4));
+        this.captions[i]!.setPosition(
+          COL_X + sl / 2,
+          y + sl - 2,
+        ).setWordWrapWidth(sl - 4);
       }
       box.setVisible(shown);
       this.icons[i]!.setVisible(shown);
@@ -621,10 +649,8 @@ export class Hud {
       icon.setVisible(shown && iconKey !== undefined);
       if (iconKey) {
         icon.setTexture(iconKey);
-        if (!this.touch) {
-          const d = Math.round(this.slot * 0.76);
-          icon.setDisplaySize(d, d);
-        }
+        const d = Math.round(this.slot * 0.76);
+        icon.setDisplaySize(d, d);
       }
       const quality =
         held.kind === "item" ? splitQuality(held.id).quality : "normal";

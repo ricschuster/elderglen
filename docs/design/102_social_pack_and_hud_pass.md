@@ -53,6 +53,11 @@ Status: draft, owner feedback 2026-11-16. Design before build. Extends notes 49
 - **Slot size: settled 2026-11-16.** A larger base slot (64 px, up from 44) on
   desktop windows wide enough for it, still scaled by the UI size setting. Touch
   keeps its current size. The pack grid and toolbar re-flow to fit.
+- **Touch slot size: settled 2026-11-20.** Tablet play found the 44 unit backpack
+  column too small. Touch now uses the big slot (64) too, with the column width,
+  step, visible count, icons and captions all derived from the slot size. The
+  column already scrolls, so fewer slots show at once. If the window is so short
+  that fewer than six big slots fit, touch falls back to 44. Desktop is unchanged.
 - **Clock panel: settled 2026-11-16.** Top right: weekday and date, time, a
   weather icon and a festival or birthday icon, and gold in its own box
   (Stardew). The sun and moon dial is art, so a placeholder until M3d.
@@ -100,7 +105,7 @@ The pack stays at 12 slots including the four tools (Stardew).
   bot gets 4 extra). Not checked in a browser.
 - **Batch D, slot size: built (2026-11-16).** `hudSlot` in `src/core/view.ts`
   picks 64 on a desktop window wide enough for the whole bar at the UI size set,
-  else 44; touch stays 44. `Hud.layout` takes the slot and re-places the bottom
+  else 44; touch uses 64 as well from 2026-11-20 (44 only in a very short window). `Hud.layout` takes the slot and re-places the bottom
   bar each resize. The Pack tab already used 64 px cells inside the menu box,
   which `menuZoom` shrinks to fit, and no other grid shares the HUD constant.
   Not checked in a browser.
