@@ -1,4 +1,5 @@
 import type { Outcome } from "./actions";
+import { dropGoods } from "./ground";
 import { swingCost } from "./upgrades";
 import { dateOf, type Season } from "./calendar";
 import artifactData from "../content/artifacts.json";
@@ -172,8 +173,14 @@ function swing(g: GameState): void {
 
 const fail = (reason: string): Outcome => ({ ok: false, reason });
 
-function give(g: GameState, x: number, y: number, item: string): Outcome {
-  if (!g.inventory.add(item)) g.ground.drop(x, y, item, 1);
+function give(
+  g: GameState,
+  x: number,
+  y: number,
+  item: string,
+  floor?: number,
+): Outcome {
+  dropGoods(g, floor, x, y, item, 1);
   return { ok: true, item };
 }
 
@@ -203,5 +210,5 @@ export function digMineDirt(
   if (g.day.over) return fail("exhausted");
   swing(g);
   const found = mineDirtFind(floor, random);
-  return found ? give(g, x, y, found) : { ok: true };
+  return found ? give(g, x, y, found, floor) : { ok: true };
 }

@@ -14,6 +14,7 @@ import { deserialize, serialize } from "../src/core/save";
 import { startGame } from "../src/core/toolbar";
 import { useHeld } from "../src/core/tools";
 import { Trees, SPREAD_CHANCE } from "../src/core/trees";
+import { sweep } from "./helpers/sweep";
 
 const always = () => 0;
 
@@ -143,6 +144,7 @@ describe("Mahogany yield", () => {
     g.toolTiers.axe = 4;
     const wood = g.inventory.count("wood");
     for (let i = 0; i < 2; i++) chop(g, 3, 3, always);
+    sweep(g);
     expect(g.inventory.count("hardwood")).toBe(10);
     expect(g.inventory.count("wood")).toBe(wood);
     expect(g.inventory.count(MAHOGANY_SEED)).toBe(1);
@@ -157,6 +159,7 @@ describe("Mahogany yield", () => {
     expect(g.inventory.count(MAHOGANY_SEED)).toBe(0);
     expect(g.inventory.count("wood")).toBe(wood);
     for (let i = 0; i < 2; i++) chop(g, 3, 3, () => 0.5);
+    sweep(g);
     expect(g.inventory.count("wood")).toBeGreaterThanOrEqual(wood + 4);
     expect(g.trees.at(3, 3)).toBeUndefined();
   });
@@ -165,6 +168,7 @@ describe("Mahogany yield", () => {
     const g = mahoganyGame(1);
     g.skills.gain("foraging", 100);
     chop(g, 3, 3, always);
+    sweep(g);
     expect(g.inventory.count(MAHOGANY_SEED)).toBe(1);
     const h = mahoganyGame(5);
     h.trees.at(3, 3)!.seed = true;
@@ -198,6 +202,7 @@ describe("Secret Woods stump seed", () => {
     enterArea(hit, "secret-woods");
     hit.toolTiers.axe = 4;
     fell(hit, () => STUMP_SEED_CHANCE - 0.01);
+    sweep(hit);
     expect(hit.inventory.count("hardwood")).toBe(2);
     expect(hit.inventory.count(MAHOGANY_SEED)).toBe(1);
     const miss = startGame();

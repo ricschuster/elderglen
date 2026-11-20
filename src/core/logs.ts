@@ -27,8 +27,8 @@ export type LogResult =
   | { ok: false; reason: "cleared" | "exhausted" | "needs a better axe" };
 
 /**
- * Chop the log. Goods that do not fit the backpack land on the log's tile and
- * are pulled in by walking over them, so none are lost.
+ * Chop the log. The hardwood lands on the log's tile and is pulled in by
+ * walking over it (note 43).
  */
 export function chopLog(g: GameState, log: LogSpot): LogResult {
   if (logCleared(g, log)) return { ok: false, reason: "cleared" };
@@ -39,11 +39,8 @@ export function chopLog(g: GameState, log: LogSpot): LogResult {
     swingCost(LOG_ENERGY, g.toolTiers.axe, g.skills.level("foraging")),
     0,
   );
-  const fits = Math.min(LOG_HARDWOOD, g.inventory.room(HARDWOOD));
-  if (fits > 0 && g.inventory.add(HARDWOOD, fits))
-    noteGathered(g, HARDWOOD, fits);
-  if (fits < LOG_HARDWOOD)
-    g.ground.drop(log.x, log.y, HARDWOOD, LOG_HARDWOOD - fits);
+  g.ground.drop(log.x, log.y, HARDWOOD, LOG_HARDWOOD);
+  noteGathered(g, HARDWOOD, LOG_HARDWOOD);
   const level = g.skills.gain("foraging", LOG_XP);
   setFlag(g, log.flag);
   return { ok: true, ...(level ? { levelUp: { level } } : {}) };

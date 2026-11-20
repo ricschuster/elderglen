@@ -12,6 +12,7 @@ import { farmMapOf } from "../src/core/farmtypes";
 import { swingsToFell } from "../src/core/trees";
 import { useHeld } from "../src/core/tools";
 import { holdsOf } from "../src/core/worldflags";
+import { sweep } from "./helpers/sweep";
 
 const woods = maps.get("secret-woods");
 const forest = maps.get("forest");
@@ -109,6 +110,7 @@ describe("daily large stumps (note 73)", () => {
     expect(g.inventory.count("hardwood")).toBe(0);
     g.toolTiers.axe = 1;
     fellStump(g, s1!.x, s1!.y);
+    sweep(g);
     expect(g.inventory.count("hardwood")).toBe(2);
     expect(g.trees.at(s1!.x, s1!.y)?.regrow).toBe(1);
     g.day.clock.day += 1;
@@ -118,6 +120,7 @@ describe("daily large stumps (note 73)", () => {
     expect(back.stage).toBe(5);
     // And it can be chopped again for another 2.
     fellStump(g, s1!.x, s1!.y);
+    sweep(g);
     expect(g.inventory.count("hardwood")).toBe(4);
   });
 
@@ -126,6 +129,7 @@ describe("daily large stumps (note 73)", () => {
     enterArea(g, "secret-woods");
     g.toolTiers.axe = 4;
     for (const t of woods.trees) fellStump(g, t.x, t.y);
+    sweep(g);
     expect(g.inventory.count("hardwood")).toBe(12);
     expect(swingsToFell(4)).toBeGreaterThan(0);
     sleep(g, farmMapOf(g).forageSpots, Math.random, farmMapOf(g));
@@ -177,6 +181,7 @@ describe("the massive log in the Forest", () => {
     expect(exitOpen(exit, holdsOf(g))).toBe(false);
     g.toolTiers.axe = 2;
     expect(useHeld(g, forest, axe, log.x, log.y).ok).toBe(true);
+    sweep(g);
     expect(g.inventory.count("hardwood")).toBe(8);
     expect(exitOpen(exit, holdsOf(g))).toBe(true);
     // Either log tile counts as gone once the flag is up.

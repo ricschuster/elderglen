@@ -1442,10 +1442,16 @@ export class FarmScene extends Phaser.Scene {
 
   /** Pull in goods lying on the ground near the player, as far as the bag has room. */
   private pickUp(): void {
-    if (!this.outdoorSoil || this.state.ground.count === 0) return;
+    // A mine floor has its own ground; elsewhere the farm or an area map outdoors.
+    const ground = this.floorState
+      ? this.floorState.ground
+      : this.outdoorWorld
+        ? this.state.ground
+        : undefined;
+    if (!ground || ground.count === 0) return;
     const here = tileOf(this.pos, PLAYER, this.map.tileSize);
     if (
-      this.state.ground.collect(
+      ground.collect(
         this.state.inventory,
         here,
         pickupRadius(this.state.equipment.magnetBonus()),

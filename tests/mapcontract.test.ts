@@ -32,6 +32,7 @@ import {
   type SpawnTable,
 } from "../src/core/spawns";
 import { BOARD_KINDS, CART_KIND } from "../src/core/map";
+import { sweep } from "./helpers/sweep";
 
 const W = 10;
 const H = 8;
@@ -188,6 +189,7 @@ describe("2 the massive log", () => {
     const before = g.inventory.count("hardwood");
     const xp = g.skills.xpOf("foraging");
     expect(chopLog(g, log).ok).toBe(true);
+    sweep(g);
     expect(g.inventory.count("hardwood")).toBe(before + LOG_HARDWOOD);
     expect(g.skills.xpOf("foraging")).toBe(xp + LOG_XP);
     expect(logCleared(g, log)).toBe(true);

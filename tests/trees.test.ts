@@ -11,6 +11,7 @@ import {
   swingsToFell,
   swingsToUproot,
 } from "../src/core/trees";
+import { sweep } from "./helpers/sweep";
 
 const never = () => 0.99;
 const always = () => 0;
@@ -71,6 +72,7 @@ describe("chop", () => {
       expect(g.inventory.count("wood")).toBe(0);
     }
     expect(chop(g, 1, 0, never).ok).toBe(true);
+    sweep(g);
     expect(g.inventory.count("wood")).toBe(12);
     expect(g.inventory.count("sap")).toBe(5);
     expect(g.trees.at(1, 0)?.stump).toBe(true);
@@ -81,11 +83,13 @@ describe("chop", () => {
     const g = game([{ x: 1, y: 0, stage: 5 }]);
     g.skills.gain("foraging", 100000);
     for (let i = 0; i < swingsToFell(0); i++) chop(g, 1, 0, always);
+    sweep(g);
     expect(g.inventory.count("wood")).toBe(16);
     expect(g.inventory.count("tree-seed")).toBe(0);
     const h = game([{ x: 1, y: 0, stage: 5 }]);
     h.skills.gain("foraging", 100);
     for (let i = 0; i < swingsToFell(0); i++) chop(h, 1, 0, never);
+    sweep(h);
     expect(h.inventory.count("wood")).toBe(13);
     expect(h.inventory.count("tree-seed")).toBe(2);
   });
@@ -93,8 +97,10 @@ describe("chop", () => {
   it("uproots a stump for wood and sap, and frees the tile", () => {
     const g = game([{ x: 1, y: 0, stage: 5 }]);
     for (let i = 0; i < swingsToFell(0); i++) chop(g, 1, 0, never);
+    sweep(g);
     const wood = g.inventory.count("wood");
     for (let i = 0; i < swingsToUproot(0); i++) chop(g, 1, 0, always);
+    sweep(g);
     expect(g.inventory.count("wood")).toBe(wood + 4);
     expect(g.inventory.count("sap")).toBe(6);
     expect(g.trees.at(1, 0)).toBeUndefined();
@@ -107,6 +113,7 @@ describe("chop", () => {
       { x: 5, y: 0, stage: 1 },
     ]);
     expect(chop(g, 1, 0).ok).toBe(true);
+    sweep(g);
     expect(g.inventory.count("wood")).toBe(4);
     expect(chop(g, 3, 0, never).ok).toBe(true);
     expect(g.inventory.count("wood")).toBe(4);

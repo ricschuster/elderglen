@@ -43,17 +43,16 @@ describe("defeating a creature", () => {
     expect(defeatMessage(r!)).toContain("beaten.");
   });
 
-  it("builds the message from level, goods, a full pack and a ladder", () => {
+  it("builds the message from level, goods and a ladder", () => {
     expect(
       defeatMessage({
         name: "Gloop",
         levelUp: 2,
         got: ["1 slime", "2 gem"],
-        left: true,
         ladder: true,
       }),
     ).toBe(
-      "Gloop beaten. Combat is now level 2. Got 1 slime, 2 gem. Your pack is full, so something was left behind. A ladder is revealed!",
+      "Gloop beaten. Combat is now level 2. Dropped 1 slime, 2 gem. A ladder is revealed!",
     );
   });
 });

@@ -11,6 +11,7 @@ import {
   QUARTZ,
   STONE,
 } from "./ore";
+import { dropGoods } from "./ground";
 import { swingCost } from "./upgrades";
 import type { GameState } from "./save";
 import { swingsToBreak, type RockKind, type Rocks } from "./rocks";
@@ -91,8 +92,9 @@ const fail = (reason: string): Outcome => ({ ok: false, reason });
  * Swing the pickaxe at a rock. `floor` is the mine floor the player is on, or
  * undefined on the farm, where the rocks are `g.rocks`. A rock breaks after
  * its swings (`swingsToBreak`), gives its drop, and on a mine floor may
- * reveal the ladder. A full backpack refuses the breaking swing, so nothing is
- * ever lost.
+ * reveal the ladder. The drop lies on the ground
+ * where the rock stood and walking over it pulls it in (note 22, settled
+ * 2026-11-20): a full pack never stops a swing and nothing is lost.
  */
 export function mine(
   g: GameState,
@@ -117,8 +119,6 @@ export function mine(
         floor,
       )
     : undefined;
-  if (drop && g.inventory.room(drop.id) < drop.count)
-    return fail("backpack full");
   g.day.act(
     swingCost(PICKAXE_ENERGY, g.toolTiers.pickaxe, g.skills.level("mining")),
     0,
@@ -128,7 +128,7 @@ export function mine(
     return { ok: true };
   }
   rocks.remove(x, y);
-  g.inventory.add(drop.id, drop.count);
+  dropGoods(g, floor, x, y, drop.id, drop.count);
   noteGathered(g, drop.id, drop.count);
   // Rockhounds also turn up a geode in plain rock, as often as the nodes do (note 22).
   if (
@@ -137,7 +137,7 @@ export function mine(
     g.skills.has("rockhound") &&
     random() < GEODE_SHARE
   )
-    g.inventory.add(geodeKindForFloor(floor));
+    dropGoods(g, floor, x, y, geodeKindForFloor(floor), 1);
   // And a gem as often as gem nodes turn up on that floor.
   if (
     floor !== undefined &&
@@ -145,7 +145,7 @@ export function mine(
     g.skills.has("rockhound") &&
     random() < gemShare(floor)
   )
-    g.inventory.add(gemDrop(floor, random));
+    dropGoods(g, floor, x, y, gemDrop(floor, random), 1);
   const ladder =
     floor !== undefined &&
     g.mines.rockBroken(floor, day, x, y, random, g.combat.noCreatures);

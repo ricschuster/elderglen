@@ -178,6 +178,40 @@ Settled briefly where the notes left gaps. Numbers are placeholders (note 07).
 5. Still to do: a playtest persona run that reaches house tier 1 from the
    starting trees. Check the 450 target and the hold repeat on the real tablet.
 
+## Drops lie on the ground (owner, 2026-11-20)
+
+Owner, after tablet play: breaking a rock with a full pack must still break it,
+and drops should lie on the ground "just like in Stardew", not only when the
+pack is full. Believed to be Stardew's behaviour, not checked (SC-211, SC-212).
+
+**Always drop as ground piles** at the source tile (or the nearest open tile if
+the source tile is blocked, `dropSpot`), picked up by walking within
+`pickupRadius` (1 tile, magnet rings widen it): rocks, ore, coal, quartz, gem
+and geode nodes (and a Rockhound's extra geode or gem), bomb-broken rocks, mine
+monster drops, the hoe's dirt and artifact finds, tree wood, sap and seeds,
+fruit tree wood and sapling, stump wood, hardwood logs and twigs. A full pack
+never refuses one of these; the pile waits until there is room. Experience,
+quest "gathered" counts, node removal and quality are unchanged (a gathered
+count is noted when the pile is made).
+
+**Stay direct to the pack**, as in Stardew: crop harvest, hand-picked forage,
+fishing catches, animal products, machine, cask and furnace outputs, shop and
+service results and quest rewards. They still refuse with "backpack full".
+
+Indoors (the greenhouse and houses) a pile would land on the farm's ground, so
+fruit and tea trees chopped indoors keep going straight to the pack and refuse
+when it is full, as before.
+
+**Mine floors** keep their own piles (`Floor.ground`, saved with the floor), so a
+pile never turns up on the farm at the same coordinates. Floors regenerate each
+day, so piles left on a floor are gone the next day (chosen: it matches the
+floor's rocks and creatures, and a pile never outlives its place). Area maps use
+their own world's ground (already swapped in by `areas.ts`).
+
+Open and placeholder: piles never despawn on the farm or in an area (as built);
+a small item sprite per pile (the item icon) is the placeholder art; no pickup
+sound or toast yet.
+
 ## Open
 
 - **Planting rules.** Stardew's allowed ground for a tree seed is not checked.

@@ -17,6 +17,7 @@ import { saplingStock } from "../src/core/shop";
 import { sleep } from "../src/core/sleep";
 import { sellMultiplier } from "../src/core/professions";
 import { useHeld } from "../src/core/tools";
+import { sweep } from "./helpers/sweep";
 
 function soilMap(): FarmMap {
   const layer = (name: string, data: number[]) => ({
@@ -151,6 +152,7 @@ describe("fruit trees on the farm", () => {
     g.fruitTrees.add(4, 4, "apricot");
     expect(chop(g, 4, 4).ok).toBe(true);
     expect(g.fruitTrees.at(4, 4)).toBeUndefined();
+    sweep(g);
     expect(g.inventory.count(saplingId("apricot"))).toBe(1);
     expect(g.inventory.count("wood")).toBeGreaterThan(0);
   });

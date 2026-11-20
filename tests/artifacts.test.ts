@@ -15,6 +15,7 @@ import { itemById } from "../src/core/items";
 import { newGame } from "../src/core/save";
 import { useHeld } from "../src/core/tools";
 import { maps } from "../src/content/maps";
+import { sweep } from "./helpers/sweep";
 
 const tiles = Array.from({ length: 40 }, (_, i) => ({ x: i, y: 0 }));
 const seq = (...v: number[]) => {
@@ -100,6 +101,7 @@ describe("digging with the hoe", () => {
     const r = digSpot(g, "forest", 5, 5, () => 0);
     expect(r.ok).toBe(true);
     expect(g.spots.at(5, 5)).toBe(false);
+    sweep(g);
     expect(g.inventory.count(areaTable("forest")[0]!.id)).toBe(1);
     expect(digSpot(g, "forest", 5, 5).ok).toBe(false);
   });

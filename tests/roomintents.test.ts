@@ -141,7 +141,10 @@ describe("farm intents", () => {
       r = w.apply("p2", { kind: "axe", x: 5, y: 5 });
     expect(r).toBeUndefined();
     expect(g.trees.at(5, 5)?.stump).toBe(true);
-    expect(guest.inventory.count("wood")).toBeGreaterThan(0);
+    // The wood lies on the ground (note 43); a guest pickup path is a gap (note 53).
+    expect(
+      g.ground.each().filter((p) => p.id === "wood").length,
+    ).toBeGreaterThan(0);
     expect(guest.skills.xpOf("foraging")).toBeGreaterThan(0);
     expect(host.skills.xpOf("foraging")).toBe(hostXp);
     expect(host.inventory.count("wood")).toBe(0);
@@ -175,7 +178,7 @@ describe("farm intents", () => {
       r = w.apply("p2", { kind: "pickaxe", x: 7, y: 7 });
     expect(r).toBeUndefined();
     expect(g.rocks.at(7, 7)).toBeUndefined();
-    expect(guest.inventory.count("stone")).toBeGreaterThan(0);
+    expect(g.ground.at(7, 7).some((p) => p.id === "stone")).toBe(true);
     expect(guest.skills.xpOf("mining")).toBeGreaterThan(0);
     expect(host.skills.xpOf("mining")).toBe(hostXp);
     expect(host.inventory.count("stone")).toBe(0);

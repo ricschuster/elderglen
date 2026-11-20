@@ -23,6 +23,7 @@ import { sleep } from "../src/core/sleep";
 import { farmMapOf } from "../src/core/farmtypes";
 import { MATURE_STAGE, swingsToFell, Trees } from "../src/core/trees";
 import { dateOf } from "../src/core/calendar";
+import { sweep } from "./helpers/sweep";
 
 const forest = maps.get("forest");
 const never = () => 0.99;
@@ -260,6 +261,7 @@ describe("area worlds", () => {
     for (let i = 0; i < swingsToFell(4); i++)
       useHeld(g, forest, { kind: "tool", tool: "axe" }, t.x, t.y);
     expect(g.trees.at(t.x, t.y)?.stump).toBe(true);
+    sweep(g);
     expect(g.inventory.count("wood")).toBeGreaterThan(0);
     leaveArea(g);
     expect(areaOf(g)).toBeUndefined();
@@ -388,6 +390,7 @@ describe("the night and the Forest", () => {
     const t = forest.trees.find((s) => s.stage === 5)!;
     for (let i = 0; i < swingsToFell(4); i++)
       chop(g, t.x, t.y, Math.random, forest);
+    sweep(g);
     expect(g.inventory.count("wood")).toBeGreaterThanOrEqual(12);
     expect(g.trees.at(t.x, t.y)?.stump).toBe(true);
   });

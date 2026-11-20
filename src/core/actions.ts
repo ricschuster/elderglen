@@ -404,6 +404,33 @@ function dropSpot(
 }
 
 /**
+ * Goods from a tree, stump, log or twig. Outdoors they lie on the ground on the
+ * nearest open tile and are pulled in by walking over them (note 43, "Drops
+ * lie on the ground"), so a full pack never refuses them. Indoors a pile would
+ * land on the farm, so they go straight to the pack, and what does not fit
+ * lies on the farm ground as before.
+ */
+function giveGoods(
+  g: GameState,
+  map: FarmMap | undefined,
+  x: number,
+  y: number,
+  id: string,
+  n: number,
+): void {
+  const fits = map?.indoors ? Math.min(n, g.inventory.room(id)) : 0;
+  if (fits > 0) {
+    g.inventory.add(id, fits);
+    noteGathered(g, id, fits);
+  }
+  if (fits < n) {
+    const spot = dropSpot(g, map, x, y);
+    g.ground.drop(spot.x, spot.y, id, n - fits);
+    if (!map?.indoors) noteGathered(g, id, n);
+  }
+}
+
+/**
  * One swing of the axe at a tree, stump, young tree, seedling or seed. A tree
  * takes several swings, each costing energy, and falls on the last. Goods go
  * to the backpack; any that do not fit land on the ground nearby and are
@@ -435,14 +462,7 @@ export function chop(
     t.hits += 1;
     return { ok: true };
   }
-  for (const [id, n] of plan.goods) {
-    const fits = Math.min(n, g.inventory.room(id));
-    if (fits > 0 && g.inventory.add(id, fits)) noteGathered(g, id, fits);
-    if (fits < n) {
-      const spot = dropSpot(g, map, x, y);
-      g.ground.drop(spot.x, spot.y, id, n - fits);
-    }
-  }
+  for (const [id, n] of plan.goods) giveGoods(g, map, x, y, id, n);
   if (t.large) {
     // A farm with no regrow days (Standard) loses the stump for good.
     // A map may set its own days (the Secret Woods); else the farm type decides.
@@ -459,11 +479,7 @@ export function chop(
         t.tap.heavy ? HEAVY_TAPPER : TAPPER,
         ...(tapReady(g, t) ? [goodOfTree(t).item] : []),
       ];
-      for (const id of back)
-        if (!g.inventory.add(id, 1)) {
-          const spot = dropSpot(g, map, x, y);
-          g.ground.drop(spot.x, spot.y, id, 1);
-        }
+      for (const id of back) giveGoods(g, map, x, y, id, 1);
       delete t.tap;
     }
     t.stump = true;
@@ -516,12 +532,7 @@ function chopFruitTree(
     ["wood", wood],
     [sapling, 1],
   ] as const) {
-    const fits = Math.min(n, g.inventory.room(id));
-    if (fits > 0 && g.inventory.add(id, fits)) noteGathered(g, id, fits);
-    if (fits < n) {
-      const spot = dropSpot(g, map, x, y);
-      g.ground.drop(spot.x, spot.y, id, n - fits);
-    }
+    giveGoods(g, map, x, y, id, n);
   }
   trees.remove(x, y);
   return mature
@@ -817,13 +828,8 @@ export function clearTwig(
     );
   else swing(g, tool);
   g.twigs.remove(x, y);
-  if (g.inventory.add("wood", TWIG_WOOD)) {
-    noteGathered(g, "wood", TWIG_WOOD);
-    return { ok: true, item: "wood" };
-  }
-  const spot = dropSpot(g, map, x, y);
-  g.ground.drop(spot.x, spot.y, "wood", TWIG_WOOD);
-  return { ok: true };
+  giveGoods(g, map, x, y, "wood", TWIG_WOOD);
+  return { ok: true, item: "wood" };
 }
 
 /**

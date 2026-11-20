@@ -232,6 +232,12 @@ export function drawWorld(
   farm: FarmScene,
   put: (x: number, y: number, key: string) => Phaser.GameObjects.Image,
 ): void {
+  // Goods left on a mine floor lie in that floor's own ground.
+  if (farm.floorState)
+    for (const p of farm.floorState.ground.each()) {
+      const key = iconKey(p.id);
+      if (key) put(p.x, p.y, key);
+    }
   if (!farm.outdoorWorld) return;
   for (const { x, y, id } of farm.state.forage.each()) put(x, y, forageKey(id));
   for (const s of farm.state.spots.each())

@@ -744,3 +744,14 @@ settled 2026-10-31). Slices 3 onward wait for build slice 3.
   real item. Not built.
 
 - **Settled 2026-11-20: creature speeds cut about 30 percent after tablet play; placeholder.** Every `speed` and dash `speed` in `src/content/creatures.json` is 0.7 times the old value, rounded. Melee swings now show a short arc (blade 0.18 s, club 0.24 s, `src/core/swingfx.ts`).
+
+**Settled 2026-11-20:** a full backpack no longer refuses a mining swing, and drops from rocks, nodes,
+monsters and digs now always lie on the ground and are picked up by walking near
+(`docs/design/43_wood_source.md`, "Drops lie on the ground"). Owner decision after tablet play;
+Stardew believed the same, not checked (SC-211, SC-212). The smith cracking a geode stays a service
+and still refuses when the pack is full. Piles on a mine floor are saved with the floor and gone when
+it regenerates the next day.
+
+Daily reset only, ours on purpose (owner, 2026-11-20). The saved Stardew Mines page says infested
+floors stay infested the whole day and its 1.4 changelog says floors also reset on returning to
+floor 0; we do not copy the floor-0 reset, so piles survive a trip to the surface.

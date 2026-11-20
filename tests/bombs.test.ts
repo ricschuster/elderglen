@@ -119,7 +119,8 @@ describe("the blast", () => {
     const r = blastRocks(g, rocks, undefined, lit("bomb"), () => 0);
     expect(r.broken).toBe(2);
     expect(rocks.at(9, 9)).toBeDefined();
-    expect(g.inventory.count("stone")).toBeGreaterThan(0);
+    expect(g.inventory.count("stone")).toBe(0);
+    expect(g.ground.each().some((p) => p.id === "stone")).toBe(true);
     expect(g.skills.xpOf("mining")).toBe(xp);
   });
 

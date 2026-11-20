@@ -19,6 +19,7 @@ import { sleep } from "../src/core/sleep";
 import { useHeld } from "../src/core/tools";
 import { maps } from "../src/content/maps";
 import { START } from "../src/core/maps";
+import { sweep } from "./helpers/sweep";
 
 describe("tool upgrades", () => {
   it("costs rise by tier and stop at the top", () => {
@@ -189,6 +190,7 @@ describe("the smith's tool upgrades", () => {
     for (let i = 0; i < 7; i++) chop(g, 1, 0, () => 0.99);
     expect(g.inventory.count("wood")).toBe(0);
     chop(g, 1, 0, () => 0.99);
+    sweep(g);
     expect(g.inventory.count("wood")).toBe(12);
   });
 

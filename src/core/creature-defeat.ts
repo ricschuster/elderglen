@@ -8,6 +8,7 @@ import {
 } from "./creatures";
 import { DIAMOND, monsterDiamond } from "./gems";
 import { itemById } from "./items";
+import { dropGoods } from "./ground";
 import { mapDrops } from "./mapcreatures";
 import type { GameState } from "./save";
 
@@ -18,8 +19,6 @@ export interface Defeat {
   levelUp: number | undefined;
   /** Goods that went into the pack, as "2 slime". */
   got: string[];
-  /** True when the pack was full and a drop was left behind. */
-  left: boolean;
   /** True when the kill revealed a mine ladder. */
   ladder: boolean;
 }
@@ -42,7 +41,6 @@ export function defeatCreature(
   state.combat.noteKill(c.kind);
   const levelUp = state.skills.gain("combat", creatureXp(c));
   const got: string[] = [];
-  let left = false;
   const bonus =
     floor !== undefined
       ? state.mines.killBonus(floor, state.day.clock.day)
@@ -59,12 +57,12 @@ export function defeatCreature(
       ? [{ id: DIAMOND.id, count: 1 }]
       : []),
   ];
-  for (const d of rolls) {
-    if (state.inventory.add(d.id, d.count))
-      got.push(`${d.count} ${itemById(d.id)?.name.toLowerCase() ?? d.id}`);
-    else left = true;
-  }
   const tile = creatureTile(c, tileSize);
+  // Drops lie on the ground where the creature fell.
+  for (const d of rolls) {
+    dropGoods(state, floor, tile.x, tile.y, d.id, d.count);
+    got.push(`${d.count} ${itemById(d.id)?.name.toLowerCase() ?? d.id}`);
+  }
   const ladder =
     floor !== undefined
       ? state.mines.creatureBeaten(
@@ -75,10 +73,10 @@ export function defeatCreature(
           rng,
         )
       : false;
-  return { name: def.name, levelUp, got, left, ladder };
+  return { name: def.name, levelUp, got, ladder };
 }
 
 /** The line shown after a creature is beaten. */
 export function defeatMessage(r: Defeat): string {
-  return `${r.name} beaten.${r.levelUp ? ` Combat is now level ${r.levelUp}.` : ""}${r.got.length ? ` Got ${r.got.join(", ")}.` : ""}${r.left ? " Your pack is full, so something was left behind." : ""}${r.ladder ? " A ladder is revealed!" : ""}`;
+  return `${r.name} beaten.${r.levelUp ? ` Combat is now level ${r.levelUp}.` : ""}${r.got.length ? ` Dropped ${r.got.join(", ")}.` : ""}${r.ladder ? " A ladder is revealed!" : ""}`;
 }

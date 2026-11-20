@@ -15,6 +15,7 @@ import { startGame } from "../src/core/toolbar";
 import { MIXED_SEED } from "../src/core/weeds";
 import { seedId } from "../src/core/items";
 import { sleep } from "../src/core/sleep";
+import { sweep } from "./helpers/sweep";
 
 const dropOf = (o: Outcome) => (o.ok ? o.item : undefined);
 
@@ -131,6 +132,7 @@ describe("large stumps", () => {
     expect(chop(g, s.x, s.y, () => 0.5).ok).toBe(true);
     expect(g.trees.at(s.x, s.y)?.regrow).toBeUndefined(); // more swings needed
     for (let i = 0; i < 12; i++) chop(g, s.x, s.y, () => 0.5);
+    sweep(g);
     expect(g.inventory.count("hardwood")).toBe(2);
     expect(g.inventory.count("wood")).toBe(0);
     expect(g.trees.blocks(s.x, s.y)).toBe(false);
@@ -150,6 +152,7 @@ describe("large stumps", () => {
     const s = map.trees.find((t) => t.large)!;
     expect(g.trees.blocks(s.x, s.y)).toBe(true);
     for (let i = 0; i < 8; i++) chop(g, s.x, s.y, () => 0.5);
+    sweep(g);
     expect(g.inventory.count("hardwood")).toBe(2);
     expect(g.trees.at(s.x, s.y)).toBeUndefined();
     for (let day = 0; day < 6; day++)

@@ -4,6 +4,7 @@ import bandData from "../content/mine-bands.json";
 import { GEODE_SHARE } from "./geodes";
 import { diamondShare, gemShare } from "./gems";
 import { WATER_TILE, type TiledMapJson } from "./map";
+import { GroundItems, type Pile } from "./ground";
 import { Rocks, type Rock, type RockKind } from "./rocks";
 import {
   loadCreature,
@@ -413,6 +414,9 @@ export class Floor {
 
   /** Kills made on the floor today, for the infested slayer bonus. Not saved. */
   kills = 0;
+
+  /** Goods lying on the floor today that did not fit the pack. Saved with the floor. */
+  ground = new GroundItems();
 }
 
 export interface FloorSave {
@@ -421,6 +425,8 @@ export interface FloorSave {
   ladder?: Spot;
   /** Absent in saves from before creatures: the floor is given its day's creatures on load. */
   creatures?: CreatureSave[];
+  /** Goods on the floor's ground. Absent in saves from before. */
+  ground?: Pile[];
 }
 
 export interface MinesSave {
@@ -587,6 +593,7 @@ export class Mines {
         day: f.day,
         rocks: f.rocks.save(),
         creatures: f.creatures.map(saveCreature),
+        ...(f.ground.count > 0 ? { ground: f.ground.save() } : {}),
         ...(f.ladder ? { ladder: { ...f.ladder } } : {}),
       };
     return {
@@ -619,7 +626,9 @@ export class Mines {
       const creatures = f.creatures
         ? f.creatures.flatMap((c) => loadCreature(c) ?? [])
         : floorCreatures(Number(n), f.day);
-      this.floors.set(Number(n), new Floor(f.day, rocks, f.ladder, creatures));
+      const floorMade = new Floor(f.day, rocks, f.ladder, creatures);
+      if (f.ground) floorMade.ground.load(f.ground);
+      this.floors.set(Number(n), floorMade);
     }
   }
 }
