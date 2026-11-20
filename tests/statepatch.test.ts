@@ -103,4 +103,14 @@ describe("applyStatePatch", () => {
     expect(g.combat.health.max).toBeGreaterThan(before);
     expect(g.combat.health.current).toBe(g.combat.health.max);
   });
+
+  it("only takes clock times in 10 minute steps", () => {
+    const g = newGame();
+    expect(applyStatePatch(g, { minutes: 660 }).problems).toEqual([]);
+    expect(g.day.clock.minutes).toBe(660);
+    expect(applyStatePatch(g, { minutes: 665 }).problems).toEqual([
+      "bad minutes 665",
+    ]);
+    expect(g.day.clock.minutes).toBe(660);
+  });
 });

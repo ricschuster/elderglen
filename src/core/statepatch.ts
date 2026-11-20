@@ -33,7 +33,7 @@ export interface StatePatch {
   season?: Season;
   dayOfSeason?: number;
   year?: number;
-  /** Set the clock to this many minutes since midnight (after `day`/`season`, so it wins over the morning time). */
+  /** Set the clock to this many minutes since midnight, a multiple of 10 (after `day`/`season`, so it wins over the morning time). */
   minutes?: number;
   /** Set today's weather. */
   weather?: Weather;
@@ -134,7 +134,13 @@ export function applyStatePatch(g: GameState, p: StatePatch): PatchResult {
   }
 
   if (p.minutes !== undefined) {
-    if (!Number.isInteger(p.minutes) || p.minutes < 0 || p.minutes > 1559)
+    // The game clock ticks in 10 minute steps, so only those times are valid.
+    if (
+      !Number.isInteger(p.minutes) ||
+      p.minutes < 0 ||
+      p.minutes > 1559 ||
+      p.minutes % 10 !== 0
+    )
       problems.push(`bad minutes ${p.minutes}`);
     else g.day.restore(g.day.clock.day, g.day.energy.max, p.minutes);
   }
