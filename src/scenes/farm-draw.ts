@@ -33,6 +33,7 @@ import { absoluteMinutes } from "../core/furnace";
 import { jobDone } from "../core/machines";
 import { CASK, caskDone } from "../core/cask";
 import { CHEST_COLOURS } from "../core/chestdefs";
+import { campChestContents } from "../core/camp";
 import { lightMapKey } from "../core/lights";
 import { LIGHTNING_ROD } from "../core/lightning";
 import { decorTiles, isFarmDecor } from "../core/farmdecor";
@@ -51,6 +52,7 @@ import {
   sprinklerKey,
   furnitureKey,
   chestKey,
+  chestOpenKey,
   farmDecorKey,
   lightKey,
   GARDEN_POT_KEY,
@@ -106,7 +108,16 @@ export function drawGround(farm: FarmScene): void {
   for (const p of farm.state.furniture.each(farm.mapId))
     put(p.x, p.y, furnitureKey(p.id));
   for (const s of farm.map.services)
-    if (s.kind === "camp-chest") put(s.x, s.y, chestKey("big-chest"));
+    if (s.kind === "camp-chest")
+      put(
+        s.x,
+        s.y,
+        farm.campScreenOpen ||
+          (farm.floor !== undefined &&
+            campChestContents(farm.state, farm.floor) === undefined)
+          ? chestOpenKey("big-chest")
+          : chestKey("big-chest"),
+      );
   for (const c of farm.state.chests.each(farm.mapId)) {
     const img = put(c.x, c.y, chestKey(c.id));
     if (c.colour) img.setTint(CHEST_COLOURS[c.colour - 1]!);

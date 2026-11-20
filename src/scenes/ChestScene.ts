@@ -1,6 +1,11 @@
 import Phaser from "phaser";
 import { CHEST_COLOURS } from "../core/chestdefs";
 import { chestById, colourChest, type PlacedChest } from "../core/chests";
+import { campChestContents, campChestMove } from "../core/camp";
+import { Inventory } from "../core/inventory";
+import { itemById } from "../core/items";
+import { reasonText } from "../core/tools";
+import type { FarmScene } from "./FarmScene";
 import {
   TOUCH_CELL,
   clampRowOffset,
@@ -13,7 +18,6 @@ import {
   transfer,
   visibleRows,
 } from "../core/chestmenu";
-import type { Inventory } from "../core/inventory";
 import { chestTip, itemTip } from "../core/itemtip";
 import { sortPack } from "../core/packmenu";
 import { orderById } from "../core/orders";
@@ -73,16 +77,32 @@ export class ChestScene extends Phaser.Scene {
   private swipe: { y: number; offset: number; active: boolean } | undefined;
   private pressTimer: Phaser.Time.TimerEvent | undefined;
   private chestName = "Chest";
+  /** Set for the mine camp chest: a take-only screen over a stand-in chest (note 22). */
+  private camp: number | undefined;
+  private found: string | undefined;
 
   constructor() {
     super("chest");
   }
 
-  init(data: { mapId: string; x: number; y: number }): void {
+  init(data: { mapId?: string; x?: number; y?: number; camp?: number }): void {
     this.state = this.registry.get(STATE_KEY) as GameState;
-    const c = this.state.chests.get(data.mapId, data.x, data.y);
-    if (!c) throw new Error("no chest there");
-    this.chest = c;
+    this.camp = data.camp;
+    this.found = undefined;
+    if (data.camp !== undefined) {
+      const items = new Inventory(1, 1);
+      const gift = campChestContents(this.state, data.camp);
+      if (gift) items.add(gift, 1);
+      this.chest = { map: "", x: 0, y: 0, id: "big-chest", items };
+    } else {
+      const c = this.state.chests.get(
+        data.mapId ?? "",
+        data.x ?? 0,
+        data.y ?? 0,
+      );
+      if (!c) throw new Error("no chest there");
+      this.chest = c;
+    }
     this.cells = { chest: [], pack: [] };
     this.selected = undefined;
     this.cursor = { side: "chest", slot: 0 };
@@ -100,9 +120,12 @@ export class ChestScene extends Phaser.Scene {
 
   create(): void {
     const bound = this.chest.order ? orderById(this.chest.order) : undefined;
-    const name = bound
-      ? `${bound.title} chest${this.chest.closed ? " (ended)" : ""}`
-      : (chestById(this.chest.id)?.name ?? "Chest");
+    const name =
+      this.camp !== undefined
+        ? "Camp Chest"
+        : bound
+          ? `${bound.title} chest${this.chest.closed ? " (ended)" : ""}`
+          : (chestById(this.chest.id)?.name ?? "Chest");
     const { message } = frame(this, name, () => this.close());
     this.note = message;
     this.tooltip = new Tooltip(this);
@@ -135,7 +158,7 @@ export class ChestScene extends Phaser.Scene {
       y += rowsHere * pitch + 8;
     }
 
-    this.colourBar(TOP);
+    if (this.camp === undefined) this.colourBar(TOP);
     this.input.mouse?.disableContextMenu();
 
     const bx = LEFT + COLS * pitch + 16;
@@ -148,13 +171,24 @@ export class ChestScene extends Phaser.Scene {
           this.scroll(dy > 0 ? 1 : -1),
       );
     }
-    this.button(bx, TOP + LABEL, "Add to existing stacks", () => this.fill());
-    this.button(bx, TOP + LABEL + 52, "Organize", () => this.sort());
+    if (this.camp === undefined) {
+      this.button(bx, TOP + LABEL, "Add to existing stacks", () => this.fill());
+      this.button(bx, TOP + LABEL + 52, "Organize", () => this.sort());
+    }
     this.splitLabel = this.button(bx, TOP + LABEL + 104, "Split", () => {
+      if (this.camp !== undefined) return;
       this.splitting = !this.splitting;
       this.say("");
       this.refresh();
     });
+    if (this.camp !== undefined) {
+      this.splitLabel.setVisible(false);
+      this.say(
+        this.chest.items.slot(0)
+          ? "Tap the gift to take it."
+          : "The chest is empty.",
+      );
+    }
 
     this.dragIcon = this.add
       .image(0, 0, "__DEFAULT")
@@ -547,6 +581,10 @@ export class ChestScene extends Phaser.Scene {
     to: { side: Side; slot: number },
     half: boolean,
   ): boolean {
+    if (this.camp !== undefined) {
+      this.campTake(from.side);
+      return false;
+    }
     const ok = transfer(
       this.inv(from.side),
       from.slot,
@@ -561,6 +599,10 @@ export class ChestScene extends Phaser.Scene {
 
   private tap(side: Side, slot: number): void {
     this.cursor = { side, slot };
+    if (this.camp !== undefined) {
+      if (side === "chest" && this.inv(side).slot(slot)) this.campTake("chest");
+      return;
+    }
     const sel = this.selected;
     if (!sel) {
       if (this.inv(side).slot(slot)) this.selected = { side, slot };
@@ -584,7 +626,25 @@ export class ChestScene extends Phaser.Scene {
     this.sendSome(side, slot, Infinity);
   }
 
+  /** A take-only move: the gift comes out through the camp rules, nothing goes in. */
+  private campTake(from: Side): void {
+    const floor = this.camp!;
+    const r = campChestMove(this.state, floor, from);
+    this.selected = undefined;
+    if (r.ok && r.item) {
+      this.chest.items.remove(r.item, 1);
+      const name = itemById(r.item)?.name ?? r.item;
+      this.found = `You found ${name}.`;
+      this.say(this.found);
+    } else if (!r.ok) this.say(reasonText(r.reason));
+    this.refresh();
+  }
+
   private sendSome(side: Side, slot: number, most: number): void {
+    if (this.camp !== undefined) {
+      this.campTake(side);
+      return;
+    }
     const other: Side = side === "chest" ? "pack" : "chest";
     const n = quickMove(
       this.inv(side),
@@ -650,5 +710,7 @@ export class ChestScene extends Phaser.Scene {
   private close(): void {
     this.scene.stop();
     this.scene.resume("farm");
+    if (this.camp !== undefined)
+      (this.scene.get("farm") as FarmScene).campClosed(this.found);
   }
 }

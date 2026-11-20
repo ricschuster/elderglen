@@ -396,6 +396,7 @@ const REASONS: Record<string, string> = {
   "pot waiting":
     "Nothing yet. It is baited and will have a catch in the morning.",
   "pot empty": "The pot is empty. Put a bait in it for tonight.",
+  "camp chest take only": "The camp chest only gives; nothing goes in.",
   "camp chest empty": "The lamp-keepers have left nothing more today.",
   "not a machine": "That is not a machine.",
   "no machine": "Out of machines.",

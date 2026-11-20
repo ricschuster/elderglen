@@ -211,7 +211,7 @@ import {
   placePot,
 } from "../core/pots";
 import { baitById } from "../core/tackle";
-import { greencoatDue, takeCampGift } from "../core/camp";
+import { greencoatDue } from "../core/camp";
 import {
   farmDecorAt,
   isFarmDecor,
@@ -1969,6 +1969,16 @@ export class FarmScene extends Phaser.Scene {
     this.scene.start("title");
   }
 
+  /** True while the camp chest screen is up, so the chest is drawn open. */
+  campScreenOpen = false;
+
+  /** The camp chest screen closed: redraw the chest and toast what was found, if anything. */
+  campClosed(found?: string): void {
+    this.campScreenOpen = false;
+    if (found) this.message = found;
+    this.render();
+  }
+
   open(kind: string, data?: object): void {
     // A guest sees read-only screens only; the rest would edit a local copy (note 53).
     if (isGuest() && !guestMayOpen(kind)) {
@@ -2376,8 +2386,12 @@ export class FarmScene extends Phaser.Scene {
       return this.render();
     }
     if (service?.kind === "festival") return openFestival(this);
-    if (service?.kind === "camp-chest")
-      return this.report(takeCampGift(this.state, this.floor));
+    if (service?.kind === "camp-chest" && this.floor !== undefined) {
+      // Opens as a take-only chest screen (note 22, 2026-11-20).
+      this.campScreenOpen = true;
+      this.render();
+      return this.open("chest", { camp: this.floor });
+    }
     if (service?.kind === "ore-bin") return this.open("bin", { oreOnly: true });
     if (service?.kind === "trainer") return this.open("trainer");
     if (service?.kind === "dummy") {
