@@ -2251,7 +2251,15 @@ export class FarmScene extends Phaser.Scene {
       // A guest's Action opens only the screens a guest may use: the bed, the shop, the bin, the ledger.
       const at = this.aimTile();
       const kind = this.map.serviceAt(at.x, at.y)?.kind;
-      if (kind && guestMayOpen(kind)) this.open(kind);
+      if (kind && guestMayOpen(kind)) return this.open(kind);
+      // A ripe crop on farm soil is picked by the host for them (an intent).
+      if (
+        !kind &&
+        this.net instanceof GuestSession &&
+        isFarmMap(this.mapId) &&
+        this.state.farm.isRipe(at.x, at.y)
+      )
+        this.net.sendIntent({ kind: "harvest", x: at.x, y: at.y });
       return;
     }
     if (this.state.animals.mounted) return this.getOff();

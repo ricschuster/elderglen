@@ -95,6 +95,38 @@ describe("farm intents", () => {
     expect(g.players.localId).toBe(LOCAL_PLAYER);
   });
 
+  it("harvest puts the crop in the guest's pack and gives them the experience", () => {
+    const w = mk();
+    const g = w.g;
+    const guest = g.players.get("p2");
+    g.farm.till(5, 5);
+    g.farm.plant(5, 5, "parsnip", "spring");
+    for (let i = 0; i < 8; i++) {
+      g.farm.water(5, 5);
+      g.farm.endDay("spring");
+    }
+    expect(g.farm.isRipe(5, 5)).toBe(true);
+    const hostXp = g.players.get(LOCAL_PLAYER).skills.xpOf("farming");
+    const hostPack = g.players.get(LOCAL_PLAYER).inventory.count("parsnip");
+    expect(w.apply("p2", { kind: "harvest", x: 5, y: 5 })).toBeUndefined();
+    expect(guest.inventory.count("parsnip")).toBeGreaterThan(0);
+    expect(guest.skills.xpOf("farming")).toBeGreaterThan(0);
+    expect(g.players.get(LOCAL_PLAYER).skills.xpOf("farming")).toBe(hostXp);
+    expect(g.players.get(LOCAL_PLAYER).inventory.count("parsnip")).toBe(
+      hostPack,
+    );
+    expect(g.farm.plotAt(5, 5)?.crop).toBeUndefined();
+    expect(g.players.localId).toBe(LOCAL_PLAYER);
+  });
+
+  it("harvest refuses to the sender: bad tile, nothing ripe, full pack", () => {
+    const w = mk();
+    expect(w.apply("p2", { kind: "harvest", x: 1.5, y: 2 })).toBe(
+      "bad harvest",
+    );
+    expect(w.apply("p2", { kind: "harvest", x: 2, y: 2 })).toBe("nothing ripe");
+  });
+
   it("rejects bad input and an empty guest, to the sender", () => {
     const w = mk();
     expect(w.apply("p2", { kind: "till", x: 1.5, y: 2 })).toBe("bad till");

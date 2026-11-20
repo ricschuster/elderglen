@@ -1,4 +1,4 @@
-// Farm intents of the RoomWorld (note 53, issue 976): till, plant, water, buy, sell. Each runs the
+// Farm intents of the RoomWorld (note 53, issue 976): till, plant, water, harvest, buy, sell. Each runs the
 // same core function single player uses, as the sending player: their inventory, can, skills,
 // tool tiers, wallet and energy. Free of Phaser and the DOM.
 import * as actions from "./actions";
@@ -66,6 +66,12 @@ export function applyFarmIntent(
             : actions.water(g, x, y),
         ),
       );
+    }
+    case "harvest": {
+      const { x, y } = intent;
+      if (!isTile(x) || !isTile(y)) return "bad harvest";
+      // Experience and the crop go to the sender: the single player function, as them.
+      return asPlayer(g, by, () => outcome(actions.harvest(g, x, y, random)));
     }
     case "plant": {
       const { x, y, seed } = intent;
