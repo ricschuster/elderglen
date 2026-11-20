@@ -178,6 +178,8 @@ Social tab shows names) and `late-game-100` uses `autoProfessions` (no prompts q
   `scripts/playtest/lib.mjs` takes `--stage <name>` or `STAGE=<name>`, so every playtest script
   starts from any stage. The README lists the names.
 
+Updated 2026-11-20 after tablet play: every festival stage sets `meetAll`, so the Midwinter Feast gift exchange has a secret giver to draw (note 105 needs people the player has met; with only the steward met no giver can be drawn and the gift gets no reveal).
+
 Checked 2026-11-17 through the real debug menu (backtick, Stages, group, Go): all 38 stages load the stage picked and land on the farm scene with no console errors. Four stages with a skill at level 5 or higher (`mines-60`, `mines-100`, `fishing-heron-rod`, `fishing-hearthwell-rod`) left a profession prompt open after Go; they now set `autoProfessions`.
 
 ### Not built: needs patch keys that do not exist

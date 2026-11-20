@@ -257,7 +257,8 @@
         "dayOfSeason": 9,
         "year": 1,
         "weather": "sunny",
-        "money": 2000
+        "money": 2000,
+        "meetAll": true
       }
     },
     {
@@ -269,7 +270,8 @@
         "dayOfSeason": 20,
         "year": 1,
         "weather": "sunny",
-        "money": 2000
+        "money": 2000,
+        "meetAll": true
       }
     },
     {
@@ -281,7 +283,8 @@
         "dayOfSeason": 7,
         "year": 1,
         "weather": "sunny",
-        "money": 2000
+        "money": 2000,
+        "meetAll": true
       }
     },
     {
@@ -293,7 +296,8 @@
         "dayOfSeason": 23,
         "year": 1,
         "weather": "sunny",
-        "money": 2000
+        "money": 2000,
+        "meetAll": true
       }
     },
     {
@@ -305,7 +309,8 @@
         "dayOfSeason": 8,
         "year": 1,
         "weather": "sunny",
-        "money": 2000
+        "money": 2000,
+        "meetAll": true
       }
     },
     {
@@ -317,7 +322,8 @@
         "dayOfSeason": 20,
         "year": 1,
         "weather": "sunny",
-        "money": 2000
+        "money": 2000,
+        "meetAll": true
       }
     },
     {
@@ -329,7 +335,8 @@
         "dayOfSeason": 20,
         "year": 2,
         "weather": "sunny",
-        "money": 2000
+        "money": 2000,
+        "meetAll": true
       }
     },
     {
@@ -341,7 +348,8 @@
         "dayOfSeason": 7,
         "year": 1,
         "weather": "sunny",
-        "money": 2000
+        "money": 2000,
+        "meetAll": true
       }
     },
     {
@@ -353,7 +361,8 @@
         "dayOfSeason": 15,
         "year": 1,
         "weather": "sunny",
-        "money": 2000
+        "money": 2000,
+        "meetAll": true
       }
     },
     {
@@ -368,7 +377,8 @@
         "money": 2000,
         "minutes": 1020,
         "map": "hearthwell",
-        "entry": "from_cart-square"
+        "entry": "from_cart-square",
+        "meetAll": true
       }
     },
     {
@@ -383,7 +393,8 @@
         "money": 2000,
         "minutes": 1020,
         "map": "hearthwell",
-        "entry": "from_cart-square"
+        "entry": "from_cart-square",
+        "meetAll": true
       }
     },
     {
@@ -398,7 +409,8 @@
         "money": 2000,
         "minutes": 1020,
         "map": "hearthwell",
-        "entry": "from_cart-square"
+        "entry": "from_cart-square",
+        "meetAll": true
       }
     },
     {
@@ -410,7 +422,8 @@
         "dayOfSeason": 24,
         "year": 1,
         "weather": "sunny",
-        "money": 2000
+        "money": 2000,
+        "meetAll": true
       }
     },
     {
