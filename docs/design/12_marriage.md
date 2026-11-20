@@ -352,3 +352,5 @@ the villager screens.
 - Children (note 53): a home both sleep in and fewer than two children; the host offers the ask to one player.
 
 **Settled 2026-11-20 (owner, tablet play):** the journal keeps a line after the wedding, at the top of the Quests tab: "Married to <name> since <season> <day>, year <n>." While engaged it still shows the countdown line. The Social tab lists the spouse first, then the roster in order, with children after (owner checked Stardew in play 2026-11-20: spouse on top, children at the bottom; in multiplayer the other players sit above the spouse, to build with M4). SC-186 to be updated with this check.
+
+Settled 2026-11-20: scenes draw the in-world sprites; the stage room is still a placeholder.

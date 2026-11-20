@@ -9,7 +9,10 @@ import {
   type Cmd,
   type HeartEvent,
 } from "../core/heartevents";
+import { hatById } from "../core/hats";
 import type { GameState } from "../core/save";
+import { HAT_KEY, villagerKey } from "./art-people";
+import { PLAYER_KEY } from "./placeholder-textures";
 import { WINDOW_FILL } from "./panel";
 import { STATE_KEY } from "./state";
 import { resumeSave } from "./storage";
@@ -38,16 +41,23 @@ const SLOTS = [
   { x: 555, y: 200 },
 ];
 
+/** The in-world 16x16 people are drawn at this scale on the stage. */
+const ACTOR_SCALE = 3;
+/** Feet sit on row 14 of 16, as in the farm scene. */
+const FEET = 0.875;
+
 interface Actor {
-  box: Phaser.GameObjects.Rectangle;
+  box: Phaser.GameObjects.Image;
   tag: Phaser.GameObjects.Text;
+  /** The worn hat, on the player only. */
+  hat?: Phaser.GameObjects.Image;
 }
 
 /**
  * The heart event runner (note 62, #600 slice 2). An overlay over the paused
  * farm, like the summit scene: the stage is a placeholder room (stage marks per
  * map are not built, so each new mark name takes the next free slot), people
- * are blocks with a name tag. Control is taken for the whole scene. Enter,
+ * are the in-world sprites (the farm scene's textures) with a name tag. Control is taken for the whole scene. Enter,
  * Space or a tap goes on; Escape or the Skip button ends it early (a first run
  * still counts as seen and gives its rewards, a PLACEHOLDER rule). A first run
  * records the event only when it ends.
@@ -248,12 +258,20 @@ export class HeartEventScene extends Phaser.Scene {
         const a = this.actor(c.who);
         a.box.setVisible(c.cmd === "show");
         a.tag.setVisible(c.cmd === "show");
+        a.hat?.setVisible(c.cmd === "show");
         return next();
       }
       case "pan":
         // PLACEHOLDER: no camera on the stage, so a pan outlines the person.
         this.outline(c.to);
         return next();
+      case "face": {
+        // The people have one frame, so facing flips it toward the other.
+        const a = this.actor(c.who);
+        const b = this.actor(c.toward);
+        if (b.box.x !== a.box.x) a.box.setFlipX(b.box.x < a.box.x);
+        return next();
+      }
       case "snap":
         this.outline(undefined);
         return next();
@@ -270,7 +288,7 @@ export class HeartEventScene extends Phaser.Scene {
       case "emote": {
         const a = this.actor(c.who);
         const e = this.add
-          .text(a.box.x, a.box.y - 50, `(${c.emote})`, {
+          .text(a.box.x, a.box.y - 18 * ACTOR_SCALE, `(${c.emote})`, {
             fontSize: "16px",
             color: "#ffe9a0",
           })
@@ -293,7 +311,7 @@ export class HeartEventScene extends Phaser.Scene {
         this.cameras.main.shake(c.ms, 0.004);
         return after(c.ms);
       default:
-        // face, pose, zoom, music, sfx, tint, weather: not drawn yet (no art,
+        // pose, zoom, music, sfx, tint, weather: not drawn yet (no art,
         // audio or weather on the stage). The Result group is applied at the end.
         return next();
     }
@@ -352,17 +370,11 @@ export class HeartEventScene extends Phaser.Scene {
   private actor(who: string): Actor {
     let a = this.actors.get(who);
     if (a) return a;
-    let hash = 0;
-    for (const ch of who) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
-    const colour = Phaser.Display.Color.HSLToColor(
-      (hash % 360) / 360,
-      0.5,
-      0.55,
-    ).color;
+    const key = who === "player" ? PLAYER_KEY : villagerKey(who);
     const box = this.add
-      .rectangle(-100, -100, 30, 40, colour)
-      .setOrigin(0.5, 1)
-      .setStrokeStyle(1, 0x000000, 0.6);
+      .image(-100, -100, key)
+      .setOrigin(0.5, FEET)
+      .setScale(ACTOR_SCALE);
     const tag = this.add
       .text(-100, -100, actorName(who), {
         fontSize: "12px",
@@ -372,6 +384,13 @@ export class HeartEventScene extends Phaser.Scene {
       })
       .setOrigin(0.5, 1);
     a = { box, tag };
+    const worn = who === "player" ? this.state.wardrobe.worn : undefined;
+    const def = worn ? hatById(worn) : undefined;
+    if (def)
+      a.hat = this.add
+        .image(-100, -100, HAT_KEY)
+        .setScale(ACTOR_SCALE)
+        .setTint(Phaser.Display.Color.HexStringToColor(def.color).color);
     this.actors.set(who, a);
     return a;
   }
@@ -384,12 +403,17 @@ export class HeartEventScene extends Phaser.Scene {
   }
   private tagFollow(who: string): void {
     const a = this.actor(who);
-    a.tag.setPosition(a.box.x, a.box.y - 44);
+    a.tag.setPosition(a.box.x, a.box.y - 16 * ACTOR_SCALE);
+    // The hat sits on the head, like the farm scene's (row 0 is 14 rows above the feet).
+    a.hat?.setPosition(
+      a.box.x,
+      a.box.y - a.box.displayHeight * FEET + ACTOR_SCALE,
+    );
   }
 
   private outline(who: string | undefined): void {
     for (const [id, a] of this.actors)
-      a.box.setStrokeStyle(who === id ? 3 : 1, who === id ? 0xffffff : 0, 1);
+      a.box.setAlpha(who === undefined || who === id ? 1 : 0.75);
   }
 
   // ---- Ending --------------------------------------------------------------
