@@ -498,3 +498,13 @@ Decided 2026-11-17: Hearthwell water stays all fishable (note 14); Import keeps 
 open past five later (note 52).
 
 Built 2026-11-17 and checks since (sweep, sim, stages): detail in `PRIORITIES_ARCHIVE.md`. Run `npx vitest run --maxWorkers=4` (the default worker count segfaults here). Next: the owner's play.
+
+## Moved out 2026-11-20
+
+Item 5 before the 2026-11-20 tablet play:
+
+5. **#951: play M3b end to end.** A checklist plus the stage jumper (note 42: 38 stages, `window.farmStage(name)`, `--stage` in playtests). **Directed play ran 2026-11-17** on desktop and on the tablet (agents; findings fixed in the session PR, handoff 2026-11-17). Left: the owner's own look, the Diamond rates are now read from the saved pages (SC-135 closed, note 83 decision 23, build with the shrine Diamond) and the touch checks (done on the emulator). Emulator touch checks passed 2026-11-18 (health bar, hot drink Take, gallery donation, Big Chest, stick scheme); left: finger feel (the owner's tablet). `touch.mjs` finds its tree from game state now (2026-11-19e); re-run on a device.
+
+M4 paragraph before 2026-11-20:
+
+M4 built headless 2026-11-18h (note 53). Two-tablet plus desktop check ran **2026-11-19f** (handoff 2026-11-19f): join by discovery and typed address, clock, read-only menus, till/plant/water, blocking with the jam pass, guest bin, host drop and the night report with beds all work by hand. Fixed on the way: lobby crash, empty packs, guest report day, duplicate names. **Next:** guest harvest and other tools, guest shop by hand, marriage flow by hand, villager lock (needs guest courtship first), file saves before release, `late-game-100` on the SM-T500. Layout page (slices 1 to 5) waits for the owner's look.
