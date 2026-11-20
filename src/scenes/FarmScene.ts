@@ -3,16 +3,13 @@ import {
   BARN_BUILT,
   BARN_MAP,
   stableHome,
-  siloBlocks,
-  depositHay,
-  siloCapacity,
-  HAY,
   barnVisibleTier,
   COOP_BUILT,
   COOP_MAP,
   coopVisibleTier,
 } from "../core/animals";
 import { DEBUG_TOOLS } from "../core/debugtools";
+import { useSiloIntent } from "../core/interact";
 import { pondCovering, pondUse, takeFish } from "../core/pond";
 
 import Phaser from "phaser";
@@ -288,10 +285,15 @@ import {
   ZOOM_MIN,
 } from "../core/view";
 import { makePlaceholderTextures, PLAYER_KEY } from "./placeholder-textures";
+import { guestMayOpen } from "../core/menupages";
+import { weddingWaiting } from "../core/marriagecard";
+import { proposalFor } from "../core/playermarriage";
+import { PlayerBlocking, resolveBlocking } from "../net/interp";
 import {
   currentSession,
   GuestSession,
   isGuest,
+  noteHostLost,
   type NetSession,
 } from "../net/session";
 import {
@@ -442,8 +444,13 @@ export class FarmScene extends Phaser.Scene {
   }[] = [];
   controls!: Controls;
   player!: Phaser.GameObjects.Image;
+  /** The jam rule for walking into other players, and who we may walk through now (note 53). */
+  private readonly blocking = new PlayerBlocking();
+  private passList: string[] = [];
   /** The multiplayer session, if any, and the other players it shows (note 53). */
   private net: NetSession | undefined;
+  /** Until this time (ms) no marriage card opens. */
+  private cardQuiet = 0;
   private remote: RemotePlayerLayer | undefined;
   private target!: Phaser.GameObjects.Rectangle;
   /** Placeholder hat drawn on the player. */
@@ -661,6 +668,15 @@ export class FarmScene extends Phaser.Scene {
           this.uiCamera.ignore(o),
         )
       : undefined;
+    if (this.net instanceof GuestSession) {
+      this.net.onHostLost(() => this.hostLost());
+      // The guest's farm copy changes only when the host's `applied` comes back (no prediction).
+      this.net.onChange = () => this.render();
+      this.net.onRejected = (reason) => {
+        this.message = `The host said no: ${reason}.`;
+        this.render();
+      };
+    }
     this.swingFx = this.add.graphics().setDepth(900);
     world.push(this.swingFx);
     this.litBombs = [];
@@ -1005,6 +1021,7 @@ export class FarmScene extends Phaser.Scene {
     const ts = this.map.tileSize;
     const before = { ...this.pos };
     const slowed = this.state.combat.effects.speedFactor();
+    const remotes = this.net?.remotes() ?? [];
     for (let i = 0; i < DEV_SPEED; i++)
       this.pos = move(
         this.pos,
@@ -1016,6 +1033,19 @@ export class FarmScene extends Phaser.Scene {
         ts,
         (x, y) => this.tileBlocked(x, y),
       );
+    if (this.net) {
+      // Other players block, until the jam rule lets us through (note 53, Q5). Untested in a browser.
+      const r = resolveBlocking(
+        this.blocking,
+        dt * 1000,
+        before,
+        this.pos,
+        this.mapId,
+        remotes,
+      );
+      this.pos = { x: r.x, y: r.y };
+      this.passList = r.pass;
+    }
     const ahead = facingTile(this.pos, PLAYER, this.facing, ts);
     if (
       (v.x !== 0 || v.y !== 0) &&
@@ -1917,16 +1947,56 @@ export class FarmScene extends Phaser.Scene {
     this.open("journal");
   }
 
+  /** The host's socket closed: close any screen over the farm and go to the Title with a note. */
+  private hostLost(): void {
+    noteHostLost();
+    for (const s of this.scene.manager.getScenes(true))
+      if (s.scene.key !== "farm") s.scene.stop();
+    this.scene.start("title");
+  }
+
   open(kind: string, data?: object): void {
+    // A guest sees read-only screens only; the rest would edit a local copy (note 53).
+    if (isGuest() && !guestMayOpen(kind)) {
+      this.message = "Only the host can do that for now.";
+      return this.render();
+    }
     this.scene.launch(kind, data);
     this.scene.pause();
+  }
+
+  /**
+   * A guest's Use: the hoe, can and crop seeds on farm soil become intents for the host, which
+   * answers with `applied` (note 53). Anything else stays host-only for now.
+   * Untested in a browser.
+   */
+  private guestUse(): void {
+    const net = this.net;
+    if (!(net instanceof GuestSession)) return;
+    const held = heldAt(this.state, this.selected);
+    const front = this.aimTile();
+    if (!isFarmMap(this.mapId)) return;
+    if (held.kind === "tool" && held.tool === "hoe")
+      net.sendIntent({ kind: "till", x: front.x, y: front.y });
+    else if (
+      held.kind === "tool" &&
+      held.tool === "can" &&
+      !this.map.isWater(front.x, front.y)
+    )
+      net.sendIntent({ kind: "water", x: front.x, y: front.y });
+    else if (held.kind === "item" && cropOfSeed(held.id))
+      net.sendIntent({ kind: "plant", x: front.x, y: front.y, seed: held.id });
+    else {
+      this.message = "Only the host can do that for now.";
+      this.render();
+    }
   }
 
   /** Use the held tool on the tile the player faces. Services are Action's. */
   use(): void {
     if (this.leaving || this.marching) return;
     if (this.useDoor()) return;
-    if (isGuest()) return;
+    if (isGuest()) return this.guestUse();
     if (this.state.animals.mounted) {
       this.message = `${this.getOffHint()} to get off ${horseName(this.state)} first.`;
       return this.render();
@@ -2542,12 +2612,35 @@ export class FarmScene extends Phaser.Scene {
         y: this.pos.y,
         map: this.mapId,
         dir: ["up", "down", "left", "right"].indexOf(this.facing),
+        pass: this.passList,
       },
       performance.now(),
     );
     if (net instanceof GuestSession && net.followDay(this.state.day.clock))
       this.render();
     this.remote?.sync();
+    this.checkMarriageCards(net.localId);
+  }
+
+  /**
+   * Open the proposal card when someone asks this player, and the wedding scene when theirs is
+   * waiting (note 12, two-player steps). Both close at once on a stale answer. Untested in a browser.
+   */
+  private checkMarriageCards(me: string): void {
+    if (this.leaving || this.scene.isPaused()) return;
+    // A guest's answer comes back a moment later: do not ask again until it has.
+    if (performance.now() < this.cardQuiet) return;
+    const b = this.state.playerMarriage;
+    const kind = proposalFor(b, me)
+      ? "proposal"
+      : weddingWaiting(b, me)
+        ? "wedding"
+        : "";
+    if (!kind) return;
+    this.events.once("resume", () => {
+      this.cardQuiet = performance.now() + 2500;
+    });
+    this.open(kind);
   }
 
   /** Say once that a write was refused, so the player can export the game. */
@@ -2814,17 +2907,9 @@ export class FarmScene extends Phaser.Scene {
 
   /** Facing the silo: tip the held hay in, or read how full it is. True if the tile is the silo. */
   private useSilo(tx: number, ty: number): boolean {
-    if (!siloBlocks(this.state, this.mapId, tx, ty)) return false;
-    const held = heldAt(this.state, this.selected);
-    const cap = siloCapacity(this.state);
-    if (held.kind === "item" && held.id === HAY) {
-      const n = depositHay(this.state);
-      this.message =
-        n > 0
-          ? `${n} hay into the silo (${this.state.animals.hay}/${cap}).`
-          : "The silo is full.";
-    } else
-      this.message = `The silo holds ${this.state.animals.hay} of ${cap} hay. Hold hay to fill it.`;
+    const msg = useSiloIntent(this.state, this.mapId, tx, ty, this.selected);
+    if (msg === undefined) return false;
+    this.message = msg;
     this.render();
     return true;
   }

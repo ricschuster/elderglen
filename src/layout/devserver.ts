@@ -3,11 +3,18 @@ import {
   mkdirSync,
   readFileSync,
   readdirSync,
+  statSync,
   rmSync,
   writeFileSync,
 } from "node:fs";
 import { join } from "node:path";
 import type { IncomingMessage, ServerResponse } from "node:http";
+import {
+  DRAFTS_DIR,
+  DRAFT_FILE_ROUTE,
+  DRAFT_LIST_ROUTE,
+  isDraftPath,
+} from "../core/layoutdraft";
 import { formatMap } from "./mapformat";
 import type { TiledMapJson } from "../core/map";
 import {
@@ -96,6 +103,27 @@ export class LayoutStore {
     return { ok: true, hash: textHash(text) };
   }
 
+  /** Every `.tmj` draft under the drafts folder, as repo relative paths. */
+  listDrafts(): string[] {
+    const out: string[] = [];
+    const walk = (rel: string): void => {
+      for (const f of readdirSync(join(this.root, rel)).sort()) {
+        const p = `${rel}/${f}`;
+        if (statSync(join(this.root, p)).isDirectory()) walk(p);
+        else if (isDraftPath(p)) out.push(p);
+      }
+    };
+    if (existsSync(join(this.root, DRAFTS_DIR))) walk(DRAFTS_DIR);
+    return out;
+  }
+
+  /** The text of one draft. Refuses any path that is not a draft file. */
+  readDraftFile(path: string): string {
+    if (!isDraftPath(path) || !existsSync(join(this.root, path)))
+      throw new Error(`no draft "${path}"`);
+    return readFileSync(join(this.root, path), "utf8");
+  }
+
   /** Keep unsaved edits (or drop them, with null) in `.layout-drafts/`. */
   draft(id: string, json: TiledMapJson | null): void {
     if (!/^[a-z0-9][a-z0-9-]*$/.test(id)) throw new Error(`bad map id "${id}"`);
@@ -134,6 +162,12 @@ export function layoutHandler(root: string) {
     try {
       if (url.pathname === READ_ROUTE && req.method === "GET")
         return send(res, 200, store.read(url.searchParams.get("id") ?? ""));
+      if (url.pathname === DRAFT_LIST_ROUTE && req.method === "GET")
+        return send(res, 200, store.listDrafts());
+      if (url.pathname === DRAFT_FILE_ROUTE && req.method === "GET")
+        return send(res, 200, {
+          text: store.readDraftFile(url.searchParams.get("path") ?? ""),
+        });
       if (url.pathname === SAVE_ROUTE && req.method === "POST") {
         const b = JSON.parse(await body(req)) as {
           id: string;

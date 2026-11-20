@@ -264,7 +264,7 @@ Settled with the owner after the shell build. Slice 4 and 5 text above is update
 
 ## Two-player wedding and divorce steps (draft, owner answered Q1 to Q4 2026-11-18)
 
-Draft for M4. Core built 2026-11-19 (`src/core/playermarriage.ts`, intents in `roomworld.ts`, `tests/playermarriage.test.ts`): proposal, accept, wedding after night 3, home cabin, fee, ledger divorce. No scenes yet. It turns the player marriage rulings of note 53 ("Player marriage, first
+Draft for M4. Built 2026-11-19, placeholder text, scenes untested in a browser: core (`src/core/playermarriage.ts`, `marriageintents.ts`, `marriagecard.ts`, `tests/playermarriage.test.ts`) with the token held while a proposal is open (used up on accept, handed back on decline, withdrawal and expiry), proposals expiring at the day end, calling off an engagement free, the bond book saved in the game state (`playerMarriage`, additive in save version 4, no bump) and carried in the guest snapshot, guests applying the same intents, a shared bed counting both in bed. Screens: `ProposalScene` (yes or no card), `LedgerScene` (player rows: call off, divorce, cancel), `WeddingScene` (text cutscene), engaged notice in `ReportScene`, all opened from `FarmScene.checkMarriageCards`. Not built: one spouse per villager (needs a per player courtship record), the told divorce line for a guest (the bond is gone from their copy), the vacated cabin visuals. It turns the player marriage rulings of note 53 ("Player marriage, first
 rulings") into steps. Stardew facts are from the saved Multiplayer page (read 2026-11-18) or from memory, as marked.
 The page says: players marry each other with a craftable Wedding Ring, a married pair get the Stardrop in a purple
 giftbox by their home bed, children go in a home both players sleep in, and an NPC can be married by one player only.
@@ -296,6 +296,15 @@ giftbox by their home bed, children go in a home both players sleep in, and an N
 - **Q2: the proposer's cabin is home** (recommended).
 - **Q3: the player who files pays the fee** (recommended).
 - **Q4: the ledger is in the hall at (30,5)** (recommended). Note 53's "at the carpenter" line is to be fixed.
+
+### Decided 2026-11-19 (owner)
+
+- **Token is used up on accept.** It is refunded on a decline and on expiry, so "a decline costs nothing" (note 53) stands.
+  The owner first picked "used up when offered (Stardew)", then chose the refund rule when the clash with note 53 was
+  shown. Stardew has no decline case; its Marriage page says the pendant is presented to the villager.
+- **An unanswered proposal expires at the end of that day** (recommended). The card goes away and the token returns.
+- **Engaged couples can call it off free at the hall ledger** (recommended). The 50,000g divorce fee is for married
+  couples only. The token is not refunded when an accepted engagement is called off.
 
 ### The questions as asked
 

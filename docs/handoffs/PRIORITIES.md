@@ -30,7 +30,7 @@ Open, top to bottom:
 
 Decided 2026-11-18: shrine score 21, Diamond sources (floor 120 drop, Crystalarium copies, ponds, no fishing chest), Feast caps 300 and 100; multiplayer rulings for shrine, gallery, orders and player marriage are in note 53; note 12 now has the two-player wedding and divorce steps (drafted 2026-11-18, owner decided: the wedding plays after night 3 with no wait for the partner, the proposer's cabin is home, the filer pays the fee, divorce at the hall ledger (30,5)). Build with M4.
 
-Cleanup 2026-11-18i: `npm run knip`, `npm run size`; M4 built headless 2026-11-18h (note 53). **2026-11-19c:** host starter (#976), session module, remote players, Title Host per slot, Electron pipe adapter, player marriage core, FarmScene split (note 106, 2,852 lines) and `touch.mjs` repair are built (handoff 2026-11-19c). **Next:** the open points in that handoff (guest minutes, Electron wrapper, marriage scenes, note 106 leftovers), measure `late-game-100` on the SM-T500, three marriage gaps for the owner (note 12). Needs hands: plugin soak, battery, a router that blocks broadcasts. Layout page built (#970, #971), not yet looked at.
+Cleanup 2026-11-18i: `npm run knip`, `npm run size`; M4 built headless 2026-11-18h (note 53). **2026-11-19d** (handoff 2026-11-19d): guest clock, read-only menus, host drop, guest till/plant/water and blocking, Lobby hosts the real slot, ADRs 0015 and 0016 accepted, player marriage scenes (note 12), layout slices 3 to 5 (#984 to #986). **Next:** a two-client hands-on check, the multiplayer `endDay` report, guest shop and bin, villager lock, file saves before release, measure `late-game-100` on the SM-T500. Needs hands: plugin soak, battery, a router that blocks broadcasts. Layout page (slices 1 to 5) waits for the owner's look.
 
 Alongside: the wiki (#910, note 100; built for every category, every item has a picture; text cleared for crops, fish, forage, items, places and rooms; draft text left for bundles, recipes, people and five gem names; left: owner reads the draft text and clears flags, gift lists (`giftsDraft`), people prose with the voice sheets, hosting after M3d), Stardew checks rows (open: SC-188 only; the rest answered or closed as ours, on purpose, 2026-11-17). M4 hosting spike filed as #948.
 
@@ -63,7 +63,7 @@ Done, owner checked (2026-11-11): step 1 farm (note 55, #776), step 2 festival s
 (note 82), step 3 heart events and spouses (note 84, #600), step 4 interior plans
 (note 86), step 11 farmhouse and cabin drafts (note 85, build issues next).
 
-- Step 5: Layout page design note (note 87), issues #970 and #971 filed and built 2026-11-18g. Next: your look at `/layout.html` (`npm run dev`).
+- Step 5: Layout page design note (note 87), slices 1 to 5 built (#970, #971, #984 to #986). Next: your look at `/layout.html` (`npm run dev`).
 - Step 6 (owner): Hands-on play of the built areas to check placeholder metrics (paths
   2 wide, doors 1, 60 s on foot and 30 s on the horse to cross).
 - Step 7: Layout page built (see step 5); one pair gap listed in `KNOWN_PAIR_GAPS` (`secret-woods` exit `to_forest`).

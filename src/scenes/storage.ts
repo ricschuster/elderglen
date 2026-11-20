@@ -12,6 +12,7 @@ import {
   slotStores,
   type KeyValue,
 } from "../core/slots";
+import { isGuest } from "../net/session";
 import { stableTabId, TabGuard } from "../core/tabguard";
 import {
   loadSettings,
@@ -122,13 +123,13 @@ const BLOCKED: WriteResult = { ok: false, reason: "refused" };
 
 /** Write the night record (after sleeping, a new game, start over). */
 export function nightSave(g: GameState): WriteResult {
-  if (tabGuard.blocked) return BLOCKED;
+  if (tabGuard.blocked || isGuest()) return BLOCKED;
   return noted(saveNight(browserStores(), g));
 }
 
 /** Write the resume record, with the player's tile where the farm gives one. */
 export function resumeSave(g: GameState, at?: ResumeSpot): WriteResult {
-  if (tabGuard.blocked) return BLOCKED;
+  if (tabGuard.blocked || isGuest()) return BLOCKED;
   return noted(saveResume(browserStores(), g, at ?? spotProvider?.()));
 }
 

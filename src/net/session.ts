@@ -7,10 +7,11 @@ import { DAY_START } from "../core/clock";
 import { cabinSpawnTile } from "../core/cabins";
 import { farmMapOf } from "../core/farmtypes";
 import { LOCAL_PLAYER, type PlayerId } from "../core/players";
-import type { PlayerInfo, PosRow } from "../core/protocol";
+import type { Intent, PlayerInfo, PosRow, ServerMsg } from "../core/protocol";
 import { GameRoomWorld } from "../core/roomworld";
 import { deserialize, type GameState } from "../core/save";
 import type { GuestClient } from "./client";
+import { applyServerMsg } from "./guestapply";
 import type { SocketPipe } from "./pipe";
 import { RoomHost } from "./roomhost";
 
@@ -33,6 +34,8 @@ export interface LocalPos {
   y: number;
   map: string;
   dir: number;
+  /** Ids of players being walked through (the jam rule); sent with the position. */
+  pass?: PlayerId[];
 }
 
 export interface NetSession {
@@ -92,6 +95,7 @@ export class HostSession implements NetSession {
       y: p.y,
       map: p.map,
       dir: p.dir,
+      pass: p.pass,
       ts: nowMs,
     });
   }
@@ -105,8 +109,25 @@ export class GuestSession implements NetSession {
   readonly role = "guest";
   readonly canAct = false;
   private lastSent = -Infinity;
+  private farm: GameState | undefined;
+  /** Called after a host `applied` changed the guest's farm copy (the scene redraws). */
+  onChange?: () => void;
+  /** Called with the reason when the host refuses an intent of this guest. */
+  onRejected?: (reason: string) => void;
 
-  constructor(readonly client: GuestClient) {}
+  constructor(readonly client: GuestClient) {
+    client.onMessage = (m) => this.follow(m);
+  }
+
+  private follow(m: ServerMsg): void {
+    if (m.t === "rejected") this.onRejected?.(m.reason);
+    else if (this.farm && applyServerMsg(this.farm, m)) this.onChange?.();
+  }
+
+  /** Ask the host for a world change; the farm copy changes when its `applied` comes back. */
+  sendIntent(intent: Intent): number {
+    return this.client.sendIntent(intent);
+  }
 
   get localId(): PlayerId {
     return this.client.id;
@@ -128,13 +149,14 @@ export class GuestSession implements NetSession {
   reportPosition(p: LocalPos, nowMs: number): void {
     if (nowMs - this.lastSent < POS_INTERVAL_MS) return;
     this.lastSent = nowMs;
-    this.client.sendPos(p.x, p.y, p.map, p.dir);
+    this.client.sendPos(p.x, p.y, p.map, p.dir, p.pass);
   }
 
   /** The guest's copy of the farm from the host's `farm` message, or undefined if unreadable. */
   loadFarm(): GameState | undefined {
     const g = deserialize(this.client.farm);
     if (g && g.players.has(this.client.id)) g.players.localId = this.client.id;
+    this.farm = g;
     return g;
   }
 
@@ -148,10 +170,29 @@ export class GuestSession implements NetSession {
    * guest does not run its own clock: the minutes wait at the morning until the host sends them.
    */
   followDay(clock: { day: number; minutes: number }): boolean {
-    if (this.client.day === clock.day) return false;
-    clock.day = this.client.day;
-    clock.minutes = DAY_START;
-    return true;
+    const min = this.client.minutes;
+    if (this.client.day !== clock.day) {
+      clock.day = this.client.day;
+      clock.minutes = min ?? DAY_START;
+      return true;
+    }
+    if (min !== undefined && min !== clock.minutes) {
+      clock.minutes = min;
+      return true;
+    }
+    return false;
+  }
+
+  /** Run `fn` once when the host is gone; at once if it already is. */
+  onHostLost(fn: () => void): void {
+    let done = false;
+    const once = () => {
+      if (done) return;
+      done = true;
+      fn();
+    };
+    this.client.onClose = once;
+    if (this.client.closed) once();
   }
 
   close(): void {
@@ -194,6 +235,22 @@ export async function startHostSession(
   return new HostSession(host, world);
 }
 
+export const HOST_LOST_NOTICE = "The host left, so the game ended.";
+
+let lostNotice: string | undefined;
+
+/** Leave a short note for the Title: read once by `takeLostNotice`. */
+export function noteHostLost(): void {
+  lostNotice = HOST_LOST_NOTICE;
+}
+
+/** The note left by `noteHostLost`, once; undefined if none. */
+export function takeLostNotice(): string | undefined {
+  const n = lostNotice;
+  lostNotice = undefined;
+  return n;
+}
+
 let current: NetSession | undefined;
 
 export function currentSession(): NetSession | undefined {
@@ -209,4 +266,28 @@ export function setSession(s: NetSession | undefined): void {
 /** True when this player is a guest and must not change the world (no intents yet). */
 export function isGuest(): boolean {
   return current !== undefined && !current.canAct;
+}
+
+/** A player's name for the screens, from whichever side of the session this is. */
+export function playerNameOf(
+  net: NetSession | undefined,
+  id: PlayerId,
+): string {
+  if (net instanceof HostSession) return net.world.names.get(id) ?? id;
+  if (net instanceof GuestSession)
+    return net.client.players.get(id)?.name ?? id;
+  return id;
+}
+
+/**
+ * Send a world intent from this player. The host applies it at once and gets the refusal back;
+ * a guest gets undefined and the answer arrives later as `applied` or `rejected`.
+ */
+export function sendWorldIntent(
+  net: NetSession,
+  intent: Intent,
+): string | undefined {
+  if (net instanceof HostSession) return net.host.room.hostIntent(intent);
+  if (net instanceof GuestSession) net.sendIntent(intent);
+  return undefined;
 }

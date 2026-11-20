@@ -69,7 +69,13 @@ describe("GameRoomWorld over a real socket", () => {
       g.players.get(b.id).inventory.add("parsnip", 2);
       const sa = a.sendIntent({ kind: "ship", id: "parsnip", n: 5 });
       const sb = b.sendIntent({ kind: "ship", id: "parsnip", n: 3 });
-      await until(() => g.bin.total(a.id) > 0 && g.bin.total(b.id) > 0);
+      await until(
+        () =>
+          g.bin.total(a.id) > 0 &&
+          g.bin.total(b.id) > 0 &&
+          a.log.some((m) => m.t === "applied" && m.seq === sa) &&
+          b.log.some((m) => m.t === "applied" && m.seq === sb),
+      );
       expect(b.log.some((m) => m.t === "applied" && m.seq === sb)).toBe(true);
       expect(a.log.some((m) => m.t === "applied" && m.seq === sa)).toBe(true);
       expect(g.bin.total(a.id)).toBe(5 * PRICE);

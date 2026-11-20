@@ -122,8 +122,12 @@ Related: #904, #964, #948, `docs/design/53_multiplayer.md`,
 with tests (4), `src/scenes/farm-draw.ts` (5), `farm-tap.ts` (6), and
 `farm-combat.ts` (combat, bombs, creature sprites) and `farm-festival.ts` (7).
 Scene-side modules take the scene as their first argument; members they read
-lost `private`. Shared constants live in `farm-consts.ts`. Not built: step 1
-(shared `FACING` table, `itemLabel()`), step 8 (`resolveUse` and
-`resolveAction` into `core/interact.ts`, after M4 step 1), the damage rolls
-inside `updateCombat` and `swing`, `useSilo` rules, and the `art.ts` and
+lost `private`. Shared constants live in `farm-consts.ts`. Later the same day:
+`src/core/interact.ts` began with `useSiloIntent` (the silo rule, returning a
+message; tests in `tests/interact.test.ts`), the first piece of step 8 (#904).
+`FACING` and `itemLabel()` no longer exist in the scene (nothing to move), and
+the damage rolls already live in core (`swingDamage`, `creature-defeat.ts`).
+Not built: the rest of step 8 (`resolveUse` and `resolveAction` are the long
+`use()` and `action()` chains in the scene, entangled with `open`, `report` and
+`render`; they wait for M4 step 1 and `(world, player)`), and the `art.ts` and
 `animals.ts` splits (not covered by this note).

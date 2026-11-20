@@ -2,6 +2,7 @@
 // the session's snapshots. Only players on the map this scene shows are drawn. Kept out of
 // FarmScene (note 106); the scene makes one layer in create and calls `sync` each frame.
 import Phaser from "phaser";
+import { RemoteInterpolator } from "../net/interp";
 import type { NetSession } from "../net/session";
 import { sortDepth } from "./depth";
 import { PLAYER_KEY } from "./placeholder-textures";
@@ -16,6 +17,7 @@ interface Figure {
 
 export class RemotePlayerLayer {
   private readonly figures = new Map<string, Figure>();
+  private readonly interp = new RemoteInterpolator();
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -28,7 +30,10 @@ export class RemotePlayerLayer {
   /** Move, add and remove figures to match the session. */
   sync(): void {
     const seen = new Set<string>();
-    for (const r of this.session.remotes()) {
+    const now = performance.now();
+    const raw = this.session.remotes();
+    this.interp.observe(raw, now);
+    for (const r of this.interp.sample(raw, now)) {
       if (r.map !== this.mapId) continue;
       seen.add(r.id);
       let f = this.figures.get(r.id);

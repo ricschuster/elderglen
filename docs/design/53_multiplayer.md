@@ -308,6 +308,12 @@ attempt that was stopped by a player, so standing next to someone never jams. (2
 the pass window, so total length is the same at any frame rate (within one frame). (3) Once started, the pass runs its
 full second even if the block stops being reported, and a pair still stuck afterwards needs a fresh 0.5 s. Still
 untested: real latency, and how the scene detects "blocked by player X" (no multiplayer scene yet).
+**Jam rule under latency (2026-11-19, #966).** `tests/jam-latency.test.ts`: the real Room on a manual clock with a delayed
+message queue (60 ms, 100 ms plus 40 ms jitter, 150 ms plus 60 ms jitter one way; 10 Hz snapshots, 20 Hz guest
+positions, five seeds each). Two slow walkers (1 tile a second) blocked by each other are free in under 1.5 s and the
+host holds and rebroadcasts the passing positions with the pass ids. At a full walk (3 tiles a second) stale positions let
+two players overlap before they see each other, so no jam forms (not a bug). The same file loads host plus 8 guests for
+60 s of ticks: well under the 100 ms budget. Still needs hands: a run on a real LAN.
 
 **Needs hands.** (1) Run `host.mjs` on the desktop and join from the tablet and a second machine on your router, and
 note client isolation and the typed address fallback. (2) The tablet host load on the SM-T500 with the Capacitor plugin
@@ -381,7 +387,7 @@ level only. Nothing is built, and the build waits for M4.
   needs its own design before it is built: the proposal, a shared home, the both-in-bed rule and spouse routes for
   two players. That design is the first task after the spike. Until it is written, only villager marriage is built.
 - **Player marriage, first rulings (owner, 2026-11-18, all from memory of Stardew, SC-205).**
-  - **Proposal:** one player offers the pendant (note 12) and the other accepts or declines. A decline costs nothing.
+  - **Proposal:** one player offers the pendant (note 12) and the other accepts or declines. A decline costs nothing. Built 2026-11-19 (note 12 "Steps already decided"): core, intents, cards and ledger, placeholder, scenes untested in a browser.
   - **Home:** one moves into the other's cabin. The vacated cabin stays so a divorce has a place to return to. The
     couple share one bed and count as both in bed.
   - **Children:** the same shared question as villager marriage (note 12), one child shown in the home, both
@@ -454,3 +460,23 @@ From the saved Multiplayer page. Not copied, only compared.
   page does not say whether a phone or tablet can host.
 - **Not in the page:** how a dropped player counts for bedtime, and snapshot
   size. Those stay ours.
+
+## Built status: guest gaps (2026-11-19, issue 968)
+
+- **Clock.** Every `snap` carries the host's `min` (minutes of the day, optional, so an older host still works). `GuestClient.minutes` keeps the latest; `GuestSession.followDay` copies it, and takes it on a day change too (the morning if none yet).
+- **Menus are read-only for a guest until intents exist.** Rule: a guest may open only `menu`, `journal` and `catalogue` (`guestMayOpen`); every other screen (shop, bin, chest, cart, crafting, furnace and the rest) is refused with "Only the host can do that for now." In the menu, the tabs that change state are hidden (`GUEST_HIDDEN_TABS`: Pack, Craft, Animals, Special); Skills, Social, Map, Collect, Guide, Options and Exit stay as views.
+- **Host loss.** `GuestSession.onHostLost` fires once when the socket closes; the farm scene stops its overlays and goes to Title, which shows "The host left, so the game ended." (`noteHostLost`, `takeLostNotice`).
+
+## Built status: farm intents, interpolation, blocking (2026-11-19, issue 976)
+
+- **Intents.** `src/core/roomintents.ts`: `till`, `plant`, `water` (`{x, y}`, plant also `seed`), `buy` and `sell` (`{id, n}`, n 1 to 999). Each runs the single player function (`actions.till/plant/water`, `shop.buy/sell`) as the sender through `asPlayer`: the local-player accessors point at their record and the day's energy object holds their energy for the call, so tool swings spend the guest's energy (and the can, skills, tool tiers and wallet are theirs); the host's energy is restored after. A refusal goes back to the sender only (`rejected`). Farm soil only (no greenhouse yet). Not checked: how near the player is to the tile, and the map they stand on.
+- **Ship and sell multipliers.** `ship` and `sell` use `sellMultiplier` of the sender's skills (Tiller, Rancher, Artisan, Fisher, Angler). Pot price uses the sender's Trapper.
+- **Interpolation.** `src/net/interp.ts` `RemoteInterpolator`: samples are kept when a remote moves, drawn 200 ms behind, never extrapolated, no blend across a map change. `RemotePlayerLayer.sync` uses it (scene edit, untested in a browser).
+- **Blocking.** `playersAt`, `PlayerBlocking` and `resolveBlocking` (`src/net/interp.ts`, tested). The farm scene's walk calls `resolveBlocking` each frame when in a session: a step into another player is undone until the jam rule lets the walker through, and the `pass` list goes in the `pos` message (host and guest). Untested in a browser.
+- **Guest applies the host's intents (no prediction).** `src/net/guestapply.ts` `applyServerMsg` runs `applyFarmIntent` on the guest's farm copy for each `applied` (own and other players' alike, once each, as the host sends it to everyone). The guest never changes its copy before the answer, so nothing double-applies and nothing needs a rollback; a `rejected` reaches `GuestSession.onRejected` and the scene shows the reason. `GuestSession.sendIntent`/`onChange`. In the scene a guest's Use with the hoe, can (not on water) or a crop seed on the farm map sends till, water or plant (`guestUse`, untested in a browser). A random roll (mixed seed, till drops) may differ between the copies; the next `farm` message corrects it.
+- **Left.** Shop buy and sell for guests (the shop screen edits the local state directly, so shops stay host-only via `guestMayOpen`); bin and other screens; harvest and the other tool intents; mixed seed for guests; reach and map checks; greenhouse soil; replacing the copy when a `farm` message arrives mid-session.
+
+## Built status: hosting the real farm (2026-11-19)
+
+- `src/net/hostworld.ts`: `planHost(kv, choice, options)` decides the world to host. A slot hosts that slot's played state (day in progress if any) with its own wallet mode; a corrupt, newer-version or empty slot is refused in words and never touched. "A new farm" is a multiplayer start saved to the first empty slot (all used: refused), with the wallet choice. The Lobby has a "Farm:" button cycling new farm and each used slot, then runs `startHostSession` and enters the farm scene, as the Title Host button does. The host stays the owner of the save: only the slot it plays in is written. Guests never save (`nightSave` and `resumeSave` refuse while `isGuest()`).
+- Left: the placeholder `makeWorld` in the Lobby transport is unused for hosting (kept for the transport tests); a new farm skips the farm-type screen (standard farm); nothing run on a device.

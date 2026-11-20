@@ -16,7 +16,7 @@ import {
 } from "../core/slots";
 import { startGame } from "../core/toolbar";
 import { makeNativePipe } from "../net/nativepipe";
-import { setSession, startHostSession } from "../net/session";
+import { setSession, startHostSession, takeLostNotice } from "../net/session";
 import { PROFILE_NAMES } from "./OptionsScene";
 import { browserKv, loadDeviceSettings, useSlot } from "./storage";
 import { STATE_KEY } from "./state";
@@ -63,7 +63,10 @@ export class TitleScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
     this.note = this.add
-      .text(480, 456, "", { fontSize: "16px", color: "#ffe9a0" })
+      .text(480, 456, takeLostNotice() ?? "", {
+        fontSize: "16px",
+        color: "#ffe9a0",
+      })
       .setOrigin(0.5);
 
     this.button(

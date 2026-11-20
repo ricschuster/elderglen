@@ -4,12 +4,21 @@
     "tests/**/*.test.ts",
     "scripts/**/*.{ts,mjs}",
     "src/layout/main.ts",
+    "electron/main.ts",
+    "electron/preload.ts",
     "spikes/m4/pipehost.ts",
     "spikes/m4/pipelisten.ts"
   ],
-  "project": ["src/**/*.ts", "scripts/**/*.{ts,mjs}", "tests/**/*.ts"],
+  "project": [
+    "src/**/*.ts",
+    "electron/**/*.ts",
+    "scripts/**/*.{ts,mjs}",
+    "tests/**/*.ts"
+  ],
   "ignoreExportsUsedInFile": true,
   "ignoreUnresolved": ["^/src/"],
+  "ignoreDependencies": ["electron"],
+  "ignoreBinaries": ["electron"],
   "ignore": ["src/scenes/interior-plans.ts"],
   "ignoreIssues": {
     "src/layout/devserver.ts": ["exports"],

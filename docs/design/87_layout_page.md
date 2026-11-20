@@ -209,7 +209,7 @@ The owner took the recommendations on the three small points:
 
 ## Built status
 
-Slices 1 and 2 are built (issues #970 and #971). Slices 3 to 5 are not.
+Slices 1 to 5 are built (issues #970, #971, #984, #985 and #986).
 
 Run `npm run dev` and open `/layout.html`. Files: `layout.html`, `src/layout/main.ts` (the page),
 `src/core/layoutview.ts` and `src/core/layoutedit.ts` (pure helpers, tested),
@@ -245,3 +245,35 @@ Simplest readings taken where the note was open:
 - **Still to do.** The hash guard and drafts are built but only exercised by tests, not yet by
   the owner in a browser. Problems are recomputed 250 ms after an edit because reading every map
   takes most of a second.
+- **Brushes (slice 3).** `src/core/layoutbrush.ts` (pure, tested) and a brush select in the side
+  panel; drag a rectangle on the canvas, undo and redo as for edits. Taken readings: path writes
+  `ground` tile 3 and `paths` 1 and clears `collision`, as the farm's paths are drawn (not a tile on
+  `objects`); building writes `collision` 1 and the wall tile on `objects`, opens the door cell in
+  the middle of the chosen face, and with "interior" also opens the tile in front (the entry notch
+  is only that open tile, no entry object is added); water writes ground 4, `collision` 1 and a
+  `water-N` object of the chosen kind; pad adds a `pad-N` region with `pad` true; soil fills
+  `soil`; erase clears the chosen base layer. A missing `soil` or `paths` layer is created. New
+  objects go on the first object layer with no tier suffix. Not yet used by the owner in a browser.
+- **Warnings and walk time (slice 4).** `src/core/layoutwarnings.ts` (pure, tested) and a warnings list under the
+  Problems in the page (amber, click to select the place). Built: exit width 3 to 7 (exits into an interior are doors and
+  exempt), path dead ends with no forage spot, service, entry or exit within 3 tiles, entry not directly below its door,
+  interior door not 1 by 1, service or door with fewer than 2 open tiles to use it from, crossing time between the two
+  farthest entries over 60 s on foot or 30 s on the horse. Not built, because the maps carry no data for them yet: main
+  path width, landmark in a view box, crowd doors, festival start spots, interior aisle width. Walk time is the shortest
+  four way walk (trees solid, logs open, as `reachable`) at `RUN_SPEED` and `HORSE_SPEED` from `core/horse.ts` (5 and 6.6
+  tiles a second); the "walk time" box on the page takes two clicks and shows tiles and seconds. At those speeds no map
+  comes near the crossing limits (300 tiles on foot), so the limit may want a lower walking speed or a tile limit when
+  tuned. 66 warnings on the committed maps today, mostly benches and doors with one open side.
+- **Pair view and draft viewer (slice 5).** `src/core/layoutpair.ts` and `src/core/layoutdraft.ts` (pure, tested),
+  two buttons beside "map" at the top of the side panel ("pair view", "drafts"). Pair view: the exit's map on the left
+  with the exit in red, the target map on the right with the entry in green and every exit back in red (the nearest in
+  orange), a dashed line and the tile gap, and a list of every pair, worst gap first (over the limit red, known gap
+  amber). Clicking a pair problem in the Problems panel, or "open pair view" on a selected exit, opens it. The gap comes
+  from `pairGap` in `src/core/maps.ts`, the same function the check uses. What it shows about the limit of 4: only
+  `secret-woods:to_forest` is over it (11 tiles, a known gap); the rest of the pairs are within it, and the limit is
+  unchanged and still to tune when the owner uses the view. Draft viewer: lists every `.tmj` under `docs/design/drafts/`
+  through two GET routes in the dev plugin (`/__layout/drafts`, `/__layout/draftfile`, refusing any path that is not a
+  `.tmj` in that folder), shows the draft alone, beside a real map, or laid over it at a tile offset, with its size,
+  its own note and its object counts. Read only: no checks run on a draft and nothing is saved. The draft tiles are the
+  generator's own swatches, so colours are by tile id, not the real look. Not yet used by the owner in a browser
+  beyond a headless smoke check.

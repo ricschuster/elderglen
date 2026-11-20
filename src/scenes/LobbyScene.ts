@@ -19,9 +19,20 @@ import { SocketTransport } from "../net/sockettransport";
 import { makeHostStarter } from "../net/hoststarter";
 import { GameRoomWorld } from "../core/roomworld";
 import { newGame } from "../core/save";
+import { respawnAreaForage } from "../core/areas";
+import { dateOf } from "../core/calendar";
+import { farmMapOf } from "../core/farmtypes";
+import { resumeAt } from "../core/house";
 import { makeNativePipe } from "../net/nativepipe";
-import { GuestSession, setSession } from "../net/session";
+import {
+  hostChoiceLabel,
+  hostChoices,
+  planHost,
+  type HostChoice,
+} from "../net/hostworld";
+import { GuestSession, setSession, startHostSession } from "../net/session";
 import { START } from "../core/maps";
+import { browserKv, useSlot } from "./storage";
 import { STATE_KEY } from "./state";
 
 const OUR_VERSION = PROTOCOL_VERSION;
@@ -39,7 +50,8 @@ export const lobbyTransport = new SocketTransport(
   makeNativePipe
     ? makeHostStarter({
         makePipe: makeNativePipe,
-        // A new farm for a game hosted from here; the Title Host button hosts a saved farm.
+        // Only a fallback: the Lobby hosts through `planHost` and `startHostSession` (a slot's
+        // played state or a new farm saved to a slot), not through this world.
         makeWorld: (_name, o) =>
           new GameRoomWorld(newGame(undefined, o.walletMode)),
       })
@@ -64,6 +76,8 @@ export class LobbyScene extends Phaser.Scene {
   private games: GameEntry[] = [];
   private hostOptions: HostOptions = { ...DEFAULT_HOST_OPTIONS };
   private walletText!: Phaser.GameObjects.Text;
+  private choiceText!: Phaser.GameObjects.Text;
+  private choiceAt = 0;
   private stopDiscover: (() => void) | undefined;
 
   constructor() {
@@ -111,6 +125,15 @@ export class LobbyScene extends Phaser.Scene {
       .setOrigin(0.5);
     if (t.canHost) {
       this.hostOptions = { ...DEFAULT_HOST_OPTIONS };
+      this.choiceAt = 0;
+      this.button(240, 150, 330, 40, "", 0x3a4a5a, () => {
+        this.choiceAt = (this.choiceAt + 1) % hostChoices(browserKv).length;
+        this.refreshChoice();
+      });
+      this.choiceText = this.add
+        .text(240, 150, "", { fontSize: "16px", color: "#ffffff" })
+        .setOrigin(0.5);
+      this.refreshChoice();
       this.button(240, 232, 330, 40, "", 0x3a4a5a, () => {
         this.hostOptions.walletMode = nextWalletMode(
           this.hostOptions.walletMode,
@@ -269,11 +292,46 @@ export class LobbyScene extends Phaser.Scene {
     );
   }
 
+  private choice(): HostChoice {
+    const all = hostChoices(browserKv);
+    return all[this.choiceAt % all.length] ?? { kind: "new" };
+  }
+
+  private refreshChoice(): void {
+    const c = this.choice();
+    this.choiceText.setText(hostChoiceLabel(c));
+    // The wallet mode only shapes a new farm; a saved farm keeps its own.
+    this.walletText.setAlpha(c.kind === "new" ? 1 : 0.4);
+  }
+
+  /** Host the chosen farm: the host plays the same state the room judges, in the same slot. */
   private async host(): Promise<void> {
-    const info = await lobbyTransport.startHosting("My farm", this.hostOptions);
-    this.hostText.setText(
-      `Hosting "${info.name}".\nGuests type this address:\n${info.address}`,
-    );
+    if (!makeNativePipe) return;
+    const plan = planHost(browserKv, this.choice(), this.hostOptions);
+    if (!plan.ok) return void this.hostText.setText(plan.message);
+    this.hostText.setText("Starting the host...");
+    try {
+      const session = await startHostSession(plan.state, {
+        makePipe: makeNativePipe,
+        announceName: plan.announceName,
+      });
+      setSession(session);
+      useSlot(plan.slot);
+      const g = plan.state;
+      if (!g.forage.loaded)
+        g.forage.respawn(
+          dateOf(g.day.clock.day).season,
+          farmMapOf(g).forageSpots,
+          Math.random,
+        );
+      respawnAreaForage(g, Math.random, true);
+      this.registry.set(STATE_KEY, g);
+      this.scene.start("farm", resumeAt(g));
+    } catch {
+      this.hostText.setText(
+        "Could not start hosting. Is another host running?",
+      );
+    }
   }
 
   private async connect(): Promise<void> {

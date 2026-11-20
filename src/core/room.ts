@@ -14,6 +14,8 @@ import type {
 export interface RoomWorld {
   /** The current day number. */
   day(): number;
+  /** Minutes since midnight on the host's clock, sent in every snapshot so guests follow it. Optional. */
+  minutes?(): number;
   /** The whole farm as text (serialize). Only on join and after a day change for an away guest. */
   snapshot(): string;
   /** Apply one intent by a player. Return an error string to reject it. */
@@ -232,6 +234,8 @@ export class Room {
       n: this.tickNo++,
       p: this.positions(),
     };
+    const min = this.world.minutes?.();
+    if (min !== undefined) snap.min = min;
     this.broadcast(snap);
   }
 

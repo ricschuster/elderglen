@@ -89,6 +89,74 @@ export function respond(
   return yes;
 }
 
+/** The open proposal waiting on `key`'s answer, if any (the card on their client). */
+export function proposalFor(
+  b: PlayerMarriageBook,
+  key: PlayerId,
+): Bond | undefined {
+  const x = bondOf(b, key);
+  return x?.stage === "proposed" && x.other === key ? x : undefined;
+}
+
+/**
+ * The end of the day: every unanswered proposal expires (owner, 2026-11-19). Returns the
+ * proposers, whose token the caller hands back.
+ */
+export function expireProposals(b: PlayerMarriageBook): PlayerId[] {
+  const gone = b.bonds.filter((x) => x.stage === "proposed");
+  b.bonds = b.bonds.filter((x) => x.stage !== "proposed");
+  return gone.map((x) => x.proposer);
+}
+
+/**
+ * Either engaged player calls it off at the hall ledger, free (owner, 2026-11-19). The token
+ * is not refunded. The 50,000g fee is for married couples only.
+ */
+export function callOff(b: PlayerMarriageBook, by: PlayerId): Result {
+  const x = bondOf(b, by);
+  if (x?.stage !== "engaged") return no("You are not engaged.");
+  b.bonds = b.bonds.filter((y) => y !== x);
+  return yes;
+}
+
+/** The engaged partner and wedding day if `key` is engaged, for the day end report. */
+export function engagedWith(
+  b: PlayerMarriageBook,
+  key: PlayerId,
+): { partner: PlayerId; weddingDay: number } | undefined {
+  const x = bondOf(b, key);
+  return x?.stage === "engaged"
+    ? { partner: partnerOf(b, key)!, weddingDay: x.weddingDay }
+    : undefined;
+}
+
+/**
+ * Morning report lines for one player, `today` being the day just begun: "Wedding tomorrow
+ * with X" when it plays on the next morning, "Engaged to X" otherwise, plus a told divorce.
+ */
+export function marriageReportLines(
+  b: PlayerMarriageBook,
+  key: PlayerId,
+  today: number,
+  nameOf: (id: PlayerId) => string,
+  divorces: readonly DivorceNews[] = [],
+): string[] {
+  const out: string[] = [];
+  const e = engagedWith(b, key);
+  if (e) {
+    const name = nameOf(e.partner);
+    const left = e.weddingDay - today;
+    out.push(
+      left <= 1
+        ? `Wedding tomorrow with ${name}.`
+        : `Engaged to ${name}. The wedding is in ${left} days.`,
+    );
+  }
+  for (const d of divorces)
+    if (d.told === key) out.push(`${nameOf(d.filer)} filed for divorce.`);
+  return out;
+}
+
 /** The proposer takes the offer back before it is answered. */
 export function withdraw(b: PlayerMarriageBook, by: PlayerId): Result {
   const x = bondOf(b, by);
@@ -211,4 +279,61 @@ export function divorceMorning(b: PlayerMarriageBook): DivorceNews[] {
     );
   }
   return out;
+}
+
+/** The book as saved: bonds and the wedding scenes not yet seen. */
+export interface PlayerMarriageSave {
+  bonds: Bond[];
+  unseenWedding: PlayerId[];
+}
+
+export const savePlayerMarriage = (
+  b: PlayerMarriageBook,
+): PlayerMarriageSave => ({
+  bonds: b.bonds.map((x) => ({ ...x })),
+  unseenWedding: [...b.unseenWedding],
+});
+
+const STAGES: readonly string[] = ["proposed", "engaged", "married"];
+
+/**
+ * Read a saved book. Anything malformed is dropped, so an old or damaged save loads as no
+ * bonds. A player can be in one bond only: later bonds that repeat a player are skipped.
+ */
+export function loadPlayerMarriage(
+  raw: unknown,
+  known: (id: PlayerId) => boolean = () => true,
+): PlayerMarriageBook {
+  const b = newPlayerMarriageBook();
+  if (typeof raw !== "object" || raw === null) return b;
+  const r = raw as Record<string, unknown>;
+  const isId = (v: unknown): v is string =>
+    typeof v === "string" && v !== "" && known(v);
+  if (Array.isArray(r.bonds))
+    for (const x of r.bonds as Record<string, unknown>[]) {
+      if (typeof x !== "object" || x === null) continue;
+      if (!isId(x.proposer) || !isId(x.other) || x.proposer === x.other)
+        continue;
+      if (typeof x.stage !== "string" || !STAGES.includes(x.stage)) continue;
+      if (bondOf(b, x.proposer) || bondOf(b, x.other)) continue;
+      const day =
+        typeof x.weddingDay === "number" && Number.isInteger(x.weddingDay)
+          ? Math.max(0, x.weddingDay)
+          : 0;
+      b.bonds.push({
+        proposer: x.proposer,
+        other: x.other,
+        stage: x.stage as BondStage,
+        weddingDay: day,
+        ...(isId(x.filedBy) &&
+        x.stage === "married" &&
+        (x.filedBy === x.proposer || x.filedBy === x.other)
+          ? { filedBy: x.filedBy }
+          : {}),
+      });
+    }
+  if (Array.isArray(r.unseenWedding))
+    for (const k of r.unseenWedding)
+      if (isId(k) && !b.unseenWedding.includes(k)) b.unseenWedding.push(k);
+  return b;
 }

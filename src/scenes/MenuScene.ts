@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { hiddenTabs } from "../core/menupages";
+import { isGuest } from "../net/session";
 import type { GameState } from "../core/save";
 import { escTaken } from "./escape";
 import { STATE_KEY } from "./state";
@@ -55,9 +56,10 @@ export class MenuScene extends Phaser.Scene {
       : "pack";
     this.boxes = [];
     const g = this.registry.get(STATE_KEY) as GameState | undefined;
-    const hide = g ? hiddenTabs(g) : [];
+    const hide = g ? hiddenTabs(g, isGuest()) : [];
     this.tabs = MENU_TABS.filter((t) => !hide.includes(t.key));
-    if (!this.tabs.some((t) => t.key === this.tab)) this.tab = "pack";
+    if (!this.tabs.some((t) => t.key === this.tab))
+      this.tab = this.tabs[0]!.key;
   }
 
   create(): void {
