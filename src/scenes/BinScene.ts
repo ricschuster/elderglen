@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { itemTip } from "../core/itemtip";
 import { itemById } from "../core/items";
 import { isOre } from "../core/ore";
 import { sellMultiplier } from "../core/professions";
@@ -132,7 +133,7 @@ export class BinScene extends Phaser.Scene {
   }
 
   private name(id: string): string {
-    return itemById(id)?.name ?? id;
+    return itemTip(id).name;
   }
 
   private ship(id: string, n: number): void {
@@ -172,7 +173,7 @@ export class BinScene extends Phaser.Scene {
         (def?.sellPrice ?? 0) * sellMultiplier(g.skills, id),
       );
       return {
-        label: `${def?.name ?? id}  x${count}`,
+        label: `${itemTip(id).name}  x${count}`,
         detail: `${unit}g`,
         dim: !def,
         buttons: [

@@ -2248,8 +2248,10 @@ export class FarmScene extends Phaser.Scene {
     if (this.useDoor()) return;
     if (this.getOutOfBed()) return;
     if (isGuest()) {
+      // A guest's Action opens only the screens a guest may use: the bed, the shop, the bin, the ledger.
       const at = this.aimTile();
-      if (this.map.serviceAt(at.x, at.y)?.kind === "bed") this.open("bed");
+      const kind = this.map.serviceAt(at.x, at.y)?.kind;
+      if (kind && guestMayOpen(kind)) this.open(kind);
       return;
     }
     if (this.state.animals.mounted) return this.getOff();
