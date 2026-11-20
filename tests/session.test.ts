@@ -1,3 +1,4 @@
+import { Inventory } from "../src/core/inventory";
 import { afterEach, describe, expect, it } from "vitest";
 import { DAY_START } from "../src/core/clock";
 import { cabinSpawnTile } from "../src/core/cabins";
@@ -195,7 +196,9 @@ describe("guest applies the host's intents", () => {
     const { host, guest, state } = await pair();
     const copy = guest.loadFarm()!;
     const rec = state.players.get(guest.localId);
+    rec.inventory.load(new Inventory().save()); // drop the joiner's starting kit
     rec.inventory.add("parsnip-seed", 3);
+    copy.players.get(guest.localId).inventory.load(new Inventory().save());
     copy.players.get(guest.localId).inventory.add("parsnip-seed", 3);
     let changes = 0;
     guest.onChange = () => (changes += 1);
@@ -290,7 +293,9 @@ describe("guest applies the host's intents", () => {
     const { host, guest, state } = await pair();
     const copy = guest.loadFarm()!;
     const rec = state.players.get(guest.localId);
+    rec.inventory.load(new Inventory().save()); // drop the joiner's starting kit
     rec.inventory.add("parsnip-seed", 3);
+    copy.players.get(guest.localId).inventory.load(new Inventory().save());
     copy.players.get(guest.localId).inventory.add("parsnip-seed", 3);
     let changes = 0;
     guest.onChange = () => (changes += 1);
