@@ -1,4 +1,5 @@
 import { lanternTile } from "../core/feastexchange";
+import { festivalPropsOn } from "../core/festivalprops";
 import Phaser from "phaser";
 import {
   awardHuntPrize,
@@ -40,7 +41,7 @@ import {
   floatProblem,
   permitProblem,
 } from "../core/marketpier";
-import { DEPTH } from "./depth";
+import { DEPTH, sortDepth } from "./depth";
 import { tileOf } from "../core/movement";
 import { hallRestored } from "../core/bundles";
 import { hatById } from "../core/hats";
@@ -298,6 +299,65 @@ export function drawFeastLantern(farm: FarmScene): void {
       .fillRect(cx - 2, cy - 2, 4, 6);
     farm.lanternGfx = g;
   }
+}
+
+/**
+ * The Midwinter Feast props, drawn as placeholders while the festival is on
+ * (note 82): the long table (blocks), a lantern on each table end and the
+ * bonfire with its glow (neither blocks).
+ */
+export function drawFeastProps(farm: FarmScene): void {
+  for (const o of farm.propsGfx) o.destroy();
+  farm.propsGfx = [];
+  const ts = farm.map.tileSize;
+  const set = festivalPropsOn(
+    farm.state.day.clock.day,
+    farm.mapId,
+    hallRestored(farm.state.hall),
+  );
+  if (!set) return;
+  const t = farm.add.graphics();
+  const g = farm.add.graphics().setDepth(DEPTH.above);
+  farm.uiCamera.ignore([t, g]);
+  const [x0, x1, y] = set.table ?? [0, -1, 0];
+  // Sorted like a person standing on the table's row: the far side stands behind it.
+  t.setDepth(sortDepth(y * ts + ts - 1));
+  for (let x = x0; x <= x1; x++) {
+    t.fillStyle(0x6b4423, 1)
+      .fillRect(x * ts, y * ts + 3, ts, ts - 6)
+      .fillStyle(0x9a6a3a, 1)
+      .fillRect(x * ts, y * ts + 3, ts, 4)
+      .fillStyle(0x3d2812, 1)
+      .fillRect(x * ts, y * ts + ts - 5, ts, 2);
+  }
+  for (const [lx, ly] of set.lanterns) {
+    const cx = lx * ts + ts / 2;
+    const cy = ly * ts + ts / 2;
+    g.fillStyle(0xffd860, 0.25)
+      .fillCircle(cx, cy - 2, ts * 0.6)
+      .fillStyle(0x3d2812, 1)
+      .fillRect(cx - 1, cy - 2, 2, ts / 2)
+      .fillStyle(0xf0a030, 1)
+      .fillRoundedRect(cx - 3, cy - 7, 6, 8, 2)
+      .fillStyle(0xfff2a0, 1)
+      .fillRect(cx - 1, cy - 5, 2, 4);
+  }
+  if (set.bonfire) {
+    const cx = set.bonfire[0] * ts + ts / 2;
+    const cy = set.bonfire[1] * ts + ts / 2;
+    g.fillStyle(0xff9a30, 0.18)
+      .fillCircle(cx, cy, ts * 1.6)
+      .fillStyle(0xffc050, 0.25)
+      .fillCircle(cx, cy, ts)
+      .fillStyle(0x5a3a1c, 1)
+      .fillRect(cx - 6, cy + 3, 12, 3)
+      .fillRect(cx - 4, cy + 1, 8, 3)
+      .fillStyle(0xe8501a, 1)
+      .fillTriangle(cx - 5, cy + 2, cx + 5, cy + 2, cx, cy - 8)
+      .fillStyle(0xffd040, 1)
+      .fillTriangle(cx - 2, cy + 2, cx + 2, cy + 2, cx, cy - 4);
+  }
+  farm.propsGfx = [t, g];
 }
 
 /** Placeholder props on a festival map: tables, booths, villagers and the chest. */

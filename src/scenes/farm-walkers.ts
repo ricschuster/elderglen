@@ -2,7 +2,8 @@ import type Phaser from "phaser";
 import walkerData from "../content/walkers.json";
 import { hallRestored } from "../core/bundles";
 import { isFestivalMap, festivalToday } from "../core/festivals";
-import { stackOffsets } from "../core/labels";
+import { lanternOn } from "../core/feastexchange";
+import { stackOffsets, taggedIds } from "../core/labels";
 import { tileOf } from "../core/movement";
 import { paradeJoinedAt } from "../core/parade";
 import { villagersOn, type Present } from "../core/townfolk";
@@ -182,17 +183,43 @@ export function syncVillagers(
       s.tag.setPosition(px, py - 13);
     }
   }
-  // Two villagers standing close would draw their names on top of each other.
-  const settled = [...farm.villagerSprites.values()].filter(
-    (s) => !farm.tweens.isTweening(s.box),
+  placeVillagerTags(farm);
+}
+
+/**
+ * Place the villager name tags (note 82, "Name tags"): a crowd names only the
+ * nearest few people, the gift recipient and the last person talked to;
+ * tags that still overlap, or sit on a door or counter label, stack upward.
+ * Runs each frame, so tags follow walking sprites and the nearest are re-picked
+ * as the player changes tile.
+ */
+export function placeVillagerTags(farm: FarmScene): void {
+  const hall = hallRestored(farm.state.hall);
+  const me = farm.hereTile();
+  const always = new Set<string>(
+    farm.villagers
+      .filter((v) => lanternOn(farm.state, farm.mapId, hall, v.id))
+      .map((v) => v.id),
   );
-  const base = settled.map((s) => ({
+  if (farm.lastTalkedId) always.add(farm.lastTalkedId);
+  const shown = taggedIds(farm.villagers, me, always);
+  for (const [id, s] of farm.villagerSprites) s.tag.setVisible(shown.has(id));
+  // Two villagers standing close would draw their names on top of each other.
+  const settled = [...farm.villagerSprites.entries()].filter(
+    ([id, s]) => shown.has(id) && !farm.tweens.isTweening(s.box),
+  );
+  const fixed = farm.labelTags.map((t) => ({
+    x: t.x,
+    y: t.y,
+    text: t.o.text,
+  }));
+  const base = settled.map(([, s]) => ({
     x: s.box.x,
     y: s.box.y - 13,
     text: s.tag.text,
   }));
-  const off = stackOffsets(base);
-  settled.forEach((s, i) =>
+  const off = stackOffsets([...fixed, ...base]).slice(fixed.length);
+  settled.forEach(([, s], i) =>
     s.tag.setPosition(base[i]!.x, base[i]!.y + off[i]!),
   );
 }

@@ -146,6 +146,7 @@ import {
   stackOffsets,
   standInLine,
 } from "../core/labels";
+import { festivalPropBlocks } from "../core/festivalprops";
 import {
   facingFrom,
   facingTile,
@@ -429,7 +430,7 @@ export class FarmScene extends Phaser.Scene {
   private glowLights: Glow[] = [];
   private labelView = "";
   private hatTint = { id: "", color: 0 };
-  private labelTags: { o: Phaser.GameObjects.Text; x: number; y: number }[] =
+  labelTags: { o: Phaser.GameObjects.Text; x: number; y: number }[] =
     [];
   /** The pictures of things on the map, redrawn by `drawGround`. */
   sprites: Phaser.GameObjects.Image[] = [];
@@ -506,6 +507,7 @@ export class FarmScene extends Phaser.Scene {
   hunt?: HuntState;
   huntGfx?: Phaser.GameObjects.Graphics;
   lanternGfx?: Phaser.GameObjects.Graphics;
+  propsGfx: Phaser.GameObjects.Graphics[] = [];
   huntText?: Phaser.GameObjects.Text;
   /** The Frostday ice fishing count (placeholder, note 82). */
   private ice?: IceFishing;
@@ -1302,7 +1304,7 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** The villager Action last talked to, to settle a tie between two people beside the faced tile. */
-  private lastTalkedId: string | undefined;
+  lastTalkedId: string | undefined;
 
   /** Talk to a villager, or give them the held item (#599, note 61). Returns false if nobody is on or beside the faced tile. */
   private meetVillager(tile: Vec): boolean {
@@ -1536,7 +1538,7 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** Where the player stands now, as a map and a tile. */
-  private hereTile(): { map: string; x: number; y: number } {
+  hereTile(): { map: string; x: number; y: number } {
     const t = tileOf(this.pos, PLAYER, this.map.tileSize);
     return { map: this.mapId, x: t.x, y: t.y };
   }
@@ -1592,6 +1594,16 @@ export class FarmScene extends Phaser.Scene {
 
   private tileShutForFestival(x: number, y: number): boolean {
     const clock = this.state.day.clock;
+    if (
+      festivalPropBlocks(
+        clock.day,
+        this.mapId,
+        hallRestored(this.state.hall),
+        x,
+        y,
+      )
+    )
+      return true;
     return festivalStepShut(
       clock.day,
       clock.minutes,

@@ -242,6 +242,16 @@ other day festivals.
 at both ends; a bonfire at (72,53) on the north edge; the cart stop (66,58), the
 well and benches stay. Bunting and lanterns do not block.
 
+**Settled 2026-11-20:** the props are drawn as placeholders while the Feast is on
+(data: `props` in `festival-spots.json`, `src/core/festivalprops.ts`): the table
+blocks, with a lantern on each table end and the bonfire with a glow; lanterns and
+the bonfire do not block (the bonfire is on the north edge, clear of the rows).
+The hall layout gets the same table and lanterns, no bonfire. Name tags: a crowd
+of more than 8 people names only the 4 nearest the player, the gift recipient and
+the person last talked to (walk closer to read the rest); tags that still overlap
+each other or a door or counter label stack upward (`taggedIds`, `stackOffsets`
+in `src/core/labels.ts`).
+
 **Player starts (8):** (68,59) to (75,59), in a row south of the table, clear of
 the road.
 

@@ -220,3 +220,40 @@ export function stackOffsets(tags: LabelTag[]): number[] {
     return y - t.y;
   });
 }
+
+/** A person for the name tag rule: id and tile. */
+export interface TagPerson {
+  id: string;
+  x: number;
+  y: number;
+}
+
+/** Crowds above this many people show only the nearest few name tags. */
+export const CROWD = 8;
+/** How many tags a crowd shows, besides the people always named. */
+export const CROWD_TAGS = 4;
+
+/**
+ * Which people get a name tag. A small group (up to CROWD) is all named. In a
+ * crowd, such as the Midwinter Feast rows, only the CROWD_TAGS people nearest
+ * the player (ties by id, so it is deterministic) and anyone in `always` (the
+ * gift recipient, the person last talked to) are named; walking closer names
+ * the rest. Names of people who stand a tile apart would otherwise overlap.
+ */
+export function taggedIds(
+  people: TagPerson[],
+  player: { x: number; y: number },
+  always: ReadonlySet<string> = new Set(),
+): Set<string> {
+  if (people.length <= CROWD) return new Set(people.map((p) => p.id));
+  const d = (p: TagPerson): number =>
+    (p.x - player.x) ** 2 + (p.y - player.y) ** 2;
+  const near = [...people]
+    .sort((a, b) => d(a) - d(b) || a.id.localeCompare(b.id))
+    .slice(0, CROWD_TAGS)
+    .map((p) => p.id);
+  return new Set([
+    ...near,
+    ...people.filter((p) => always.has(p.id)).map((p) => p.id),
+  ]);
+}
