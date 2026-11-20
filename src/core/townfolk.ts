@@ -1,3 +1,4 @@
+import { mapFiles, maps } from "../content/maps";
 import { childById, childrenOn, talkToChild } from "./children";
 import { dateOf } from "./calendar";
 import { clockText } from "./clock";
@@ -91,7 +92,62 @@ export function villagersOn(
       minutes,
     ))
       out.push({ ...c, placeholder: false });
-  return out;
+  return spreadOut(out, mapId);
+}
+
+/**
+ * Nobody shares a tile (tablet play: two people on one tile and only one could
+ * be talked to). The first on a tile, in list order, keeps it; the rest step to
+ * the nearest free open tile, the same way every time.
+ */
+function spreadOut(list: Present[], mapId: string): Present[] {
+  const m = mapId in mapFiles ? maps.get(mapId) : undefined;
+  const taken = new Set(list.map((p) => `${p.x},${p.y}`));
+  const seen = new Set<string>();
+  return list.map((p) => {
+    const k = `${p.x},${p.y}`;
+    if (!seen.has(k) || !m) {
+      seen.add(k);
+      return p;
+    }
+    for (let r = 1; r < m.width + m.height; r++)
+      for (let dy = -r; dy <= r; dy++) {
+        const dx = r - Math.abs(dy);
+        for (const x of dx === 0 ? [p.x] : [p.x - dx, p.x + dx]) {
+          const y = p.y + dy;
+          const nk = `${x},${y}`;
+          if (taken.has(nk) || m.isBlocked(x, y)) continue;
+          taken.add(nk);
+          seen.add(nk);
+          return { ...p, x, y };
+        }
+      }
+    return p;
+  });
+}
+
+/**
+ * Who Action talks to: the person on the faced tile, else the one beside it
+ * nearest the player, ties to the one talked to last, then the lowest id.
+ */
+export function talkTarget(
+  list: readonly Present[],
+  face: { x: number; y: number },
+  player: { x: number; y: number },
+  lastId?: string,
+): Present | undefined {
+  const exact = presentAt(list, face.x, face.y);
+  if (exact) return exact;
+  const dist = (p: Present, a: { x: number; y: number }) =>
+    Math.abs(p.x - a.x) + Math.abs(p.y - a.y);
+  return list
+    .filter((p) => dist(p, face) === 1)
+    .sort(
+      (a, b) =>
+        dist(a, player) - dist(b, player) ||
+        Number(b.id === lastId) - Number(a.id === lastId) ||
+        (a.id < b.id ? -1 : 1),
+    )[0];
 }
 
 /** The villager on a tile, if any. */

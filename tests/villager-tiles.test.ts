@@ -1,0 +1,167 @@
+import { describe, expect, it } from "vitest";
+import { mapFiles, maps } from "../src/content/maps";
+import { places, spotMarks } from "../src/content/villagers.json";
+import { HOUSE_MAP, houseHolds } from "../src/core/house";
+import { SPOUSE_BED, SPOUSE_KITCHEN, SPOUSE_ROOM } from "../src/core/spouse";
+import { VILLAGERS, resolvePlace } from "../src/core/villagers";
+import { talkTarget, villagersOn, type Present } from "../src/core/townfolk";
+import { interiorIds } from "./helpers/interior";
+
+// Nobody is ever placed on a wall (tablet play, 2026-11-20: Linnet drawn inside
+// the young burrow wall). Every place id any villager route uses, home, rain
+// and override stops included, must resolve to a tile that is open on its map,
+// and indoors reachable from the door. Spouse routes reuse these place ids.
+
+const placeIds = new Set<string>();
+for (const v of VILLAGERS) {
+  placeIds.add(v.home);
+  for (const s of [
+    ...v.route,
+    ...v.rain,
+    ...v.weekday.flatMap((o) => o.stops),
+    ...v.season.flatMap((o) => o.stops),
+  ])
+    placeIds.add(s.place);
+}
+
+describe("every route stop lands on an open tile", () => {
+  it("resolves every place id to a walkable tile on its map", () => {
+    const problems: string[] = [];
+    for (const id of placeIds) {
+      const p = resolvePlace(id);
+      if (!p) {
+        problems.push(`${id}: unknown place`);
+        continue;
+      }
+      if (p.transit || p.map === null || !(p.map in mapFiles)) continue;
+      const m = maps.get(p.map);
+      if (m.isBlocked(p.x, p.y))
+        problems.push(`${id}: ${p.map} ${p.x},${p.y} is solid`);
+      else if (p.indoors) {
+        const from = m.entry("door");
+        if (from && !m.reachable(from).has(`${p.x},${p.y}`))
+          problems.push(
+            `${id}: ${p.map} ${p.x},${p.y} is cut off from the door`,
+          );
+      }
+    }
+    expect(problems).toEqual([]);
+  });
+});
+
+const MARKS = spotMarks as unknown as Record<string, string[]>;
+/** How far a stop may stand from its mark: a solid mark moves one step or two. */
+const NEAR = 3;
+
+describe("every interior stop resolves to its own mark, not a fallback tile", () => {
+  it("finds a mark for each spot and stands within a few tiles of it", () => {
+    const problems: string[] = [];
+    for (const id of placeIds) {
+      const [base, spot] = id.split("/") as [string, string | undefined];
+      const interior = (places as Record<string, { interior?: string }>)[base]
+        ?.interior;
+      if (!interior || !(interior in mapFiles) || base === "farm:house")
+        continue;
+      const want = spot ?? "common";
+      const names = MARKS[want];
+      if (!names) {
+        problems.push(`${id}: spot "${want}" has no marks in spotMarks`);
+        continue;
+      }
+      const marks = maps.marksWith(interior, new Set()).marks;
+      const mark = names
+        .map((n) => marks.find((m) => m.name === n))
+        .find((m) => m);
+      if (!mark) {
+        problems.push(`${id}: ${interior} has none of ${names.join(", ")}`);
+        continue;
+      }
+      const p = resolvePlace(id)!;
+      const d = Math.abs(p.x - mark.x) + Math.abs(p.y - mark.y);
+      if (d > NEAR)
+        problems.push(`${id}: ${d} tiles from ${mark.name} in ${interior}`);
+    }
+    expect(problems).toEqual([]);
+  });
+});
+
+describe("the spouse spots in the house are open", () => {
+  it("has the bed, kitchen and room tiles open with the spouse held", () => {
+    for (const spot of [SPOUSE_BED, SPOUSE_KITCHEN, SPOUSE_ROOM]) {
+      const p = resolvePlace(spot)!;
+      for (let tier = 1; tier <= maps.maxTier(HOUSE_MAP); tier++) {
+        const holds = new Set(houseHolds(tier, true));
+        const m = maps.getWith(HOUSE_MAP, holds, tier);
+        expect(m.isBlocked(p.x, p.y), `${spot} tier ${tier}`).toBe(false);
+      }
+    }
+  });
+});
+
+describe("every interior bed and spot mark is open or beside an open tile", () => {
+  it("has each mark on, or next to, a tile reachable from the door", () => {
+    const problems: string[] = [];
+    for (const id of interiorIds()) {
+      const m = maps.get(id);
+      const open = m.reachable(m.entry("door")!);
+      for (const mk of maps.marksWith(id, new Set()).marks) {
+        if (!/^(bed|spot)-/.test(mk.name)) continue;
+        const near = [
+          [0, 0],
+          [1, 0],
+          [-1, 0],
+          [0, 1],
+          [0, -1],
+        ].some(([dx, dy]) => open.has(`${mk.x + dx!},${mk.y + dy!}`));
+        if (!near) problems.push(`${id} ${mk.name} ${mk.x},${mk.y}`);
+      }
+    }
+    expect(problems).toEqual([]);
+  });
+});
+
+describe("nobody shares a tile", () => {
+  const g = { weather: "sunny" } as Parameters<typeof villagersOn>[0];
+  it("spreads people over open tiles all day, on every map they stand on", () => {
+    const problems: string[] = [];
+    const mapIds = new Set<string>();
+    for (const id of placeIds) {
+      const p = resolvePlace(id);
+      if (p?.map && p.map in mapFiles) mapIds.add(p.map);
+    }
+    for (const day of [1, 3, 5, 7, 40, 66, 92])
+      for (const mapId of mapIds)
+        for (let t = 6 * 60; t <= 26 * 60; t += 30) {
+          const seen = new Set<string>();
+          for (const p of villagersOn(g, mapId, day, t)) {
+            const k = `${p.x},${p.y}`;
+            if (seen.has(k))
+              problems.push(`${mapId} day ${day} min ${t}: ${k} shared`);
+            seen.add(k);
+          }
+        }
+    expect(problems).toEqual([]);
+  });
+});
+
+describe("talkTarget", () => {
+  const p = (id: string, x: number, y: number): Present => ({
+    id,
+    name: id,
+    x,
+    y,
+    placeholder: false,
+  });
+  it("prefers the person on the faced tile", () => {
+    const list = [p("hattie", 5, 5), p("linnet", 4, 5)];
+    expect(talkTarget(list, { x: 4, y: 5 }, { x: 4, y: 7 })?.id).toBe("linnet");
+  });
+  it("else takes the nearest beside it, then the last talked to, then the id", () => {
+    const face = { x: 5, y: 6 };
+    const two = [p("b", 4, 6), p("a", 6, 6)];
+    expect(talkTarget(two, face, { x: 4, y: 8 })?.id).toBe("b");
+    expect(talkTarget(two, face, { x: 5, y: 8 })?.id).toBe("a");
+    expect(talkTarget(two, face, { x: 5, y: 8 }, "b")?.id).toBe("b");
+    expect(talkTarget(two, { x: 20, y: 20 }, { x: 5, y: 8 })).toBeUndefined();
+  });
+});

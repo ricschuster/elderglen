@@ -38,7 +38,13 @@ import {
   type IceFishing,
 } from "../core/icefishing";
 
-import { meet, presentAt, villagersOn, type Present } from "../core/townfolk";
+import {
+  meet,
+  presentAt,
+  talkTarget,
+  villagersOn,
+  type Present,
+} from "../core/townfolk";
 import { paradeJoinedAt } from "../core/parade";
 
 import type { GameState } from "../core/save";
@@ -1368,10 +1374,19 @@ export class FarmScene extends Phaser.Scene {
     );
   }
 
-  /** Talk to a villager, or give them the held item (#599, note 61). Returns false if nobody is on the tile. */
+  /** The villager Action last talked to, to settle a tie between two people beside the faced tile. */
+  private lastTalkedId: string | undefined;
+
+  /** Talk to a villager, or give them the held item (#599, note 61). Returns false if nobody is on or beside the faced tile. */
   private meetVillager(tile: Vec): boolean {
-    const who = presentAt(this.villagers, tile.x, tile.y);
+    const who = talkTarget(
+      this.villagers,
+      tile,
+      tileOf(this.pos, PLAYER, this.map.tileSize),
+      this.lastTalkedId,
+    );
     if (!who) return false;
+    this.lastTalkedId = who.id;
     // In a hedge niche a villager says their one Hollow Eve line (note 82).
     if (festivalOfMap(this.mapId)?.activity === "maze") {
       const line = nicheLine(who.id);
