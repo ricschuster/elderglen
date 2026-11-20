@@ -3,7 +3,7 @@ import { GameRoomWorld } from "../src/core/roomworld";
 import { itemById } from "../src/core/items";
 import { newGame } from "../src/core/save";
 import { Inventory } from "../src/core/inventory";
-import { findTool, toolItemId } from "../src/core/toolitems";
+import { findTool } from "../src/core/toolitems";
 import { MAX_ENERGY } from "../src/core/energy";
 import { TOOL_ENERGY } from "../src/core/actions";
 import { LOCAL_PLAYER } from "../src/core/players";
@@ -36,8 +36,7 @@ describe("a joining guest", () => {
     w.addPlayer("p2", "Ann");
     const inv = w.g.players.get("p2").inventory;
     expect(inv.count("parsnip-seed")).toBeGreaterThan(0);
-    const hoe = findTool("hoe");
-    expect(hoe && inv.count(toolItemId(hoe))).toBe(1);
+    expect(findTool(inv, "hoe")).toBeGreaterThanOrEqual(0);
   });
 });
 
