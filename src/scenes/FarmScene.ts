@@ -1,4 +1,5 @@
 import { feastGive, lanternOn } from "../core/feastexchange";
+import { playFeastReveal } from "./farm-feast-reveal";
 import {
   BARN_BUILT,
   BARN_MAP,
@@ -430,8 +431,7 @@ export class FarmScene extends Phaser.Scene {
   private glowLights: Glow[] = [];
   private labelView = "";
   private hatTint = { id: "", color: 0 };
-  labelTags: { o: Phaser.GameObjects.Text; x: number; y: number }[] =
-    [];
+  labelTags: { o: Phaser.GameObjects.Text; x: number; y: number }[] = [];
   /** The pictures of things on the map, redrawn by `drawGround`. */
   sprites: Phaser.GameObjects.Image[] = [];
   ground!: Phaser.GameObjects.Graphics;
@@ -1353,6 +1353,8 @@ export class FarmScene extends Phaser.Scene {
     );
     if (feast) {
       this.message = feast.message;
+      if (feast.giver && feast.present)
+        playFeastReveal(this, who.id, feast.giver, feast.present);
       this.render();
       return true;
     }

@@ -753,3 +753,5 @@ year. At the end `finishParade` gives +20 friendship with each of the 22 marcher
 year) and shows Cuthbert's closing line as a message (placeholder text, he does not walk to (66,65)). The lock
 lasts from the join to the end of the march: about 45 game minutes for the 14:00 join, up to about 80 for a
 14:30 join, 30 to 60 seconds of play. A hat is any hat. Tests: `tests/parade.test.ts`. Not looked at in a browser.
+
+Settled 2026-11-20: the reveal shows the giver walking over and a present float (placeholder). After a successful gift the giver walks from their seat to the nearest free tile next to the recipient, pauses 1.5 s and walks back, while the present icon floats up over the recipient; the message and rewards are unchanged. Scene code: `src/scenes/farm-feast-reveal.ts`; pure plan: `src/core/feastreveal.ts`.
