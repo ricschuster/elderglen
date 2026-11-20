@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { GameRoomWorld } from "../src/core/roomworld";
 import { itemById } from "../src/core/items";
 import { newGame } from "../src/core/save";
+import { Inventory } from "../src/core/inventory";
+import { findTool, toolItemId } from "../src/core/toolitems";
 import { MAX_ENERGY } from "../src/core/energy";
 import { TOOL_ENERGY } from "../src/core/actions";
 import { LOCAL_PLAYER } from "../src/core/players";
@@ -20,8 +22,24 @@ function mk() {
   });
   w.admit("p2", "Ann");
   w.addPlayer("p2", "Ann");
+  // These tests count items from nothing: clear the starting kit a joiner gets.
+  w.g.players.get("p2").inventory.load(new Inventory().save());
   return w;
 }
+
+describe("a joining guest", () => {
+  it("starts with the tools and the farm's starting seeds, like a new game", () => {
+    const w = new GameRoomWorld(newGame("standard", "separate"), {
+      random: () => 0.9,
+    });
+    w.admit("p2", "Ann");
+    w.addPlayer("p2", "Ann");
+    const inv = w.g.players.get("p2").inventory;
+    expect(inv.count("parsnip-seed")).toBeGreaterThan(0);
+    const hoe = findTool("hoe");
+    expect(hoe && inv.count(toolItemId(hoe))).toBe(1);
+  });
+});
 
 describe("bin intents", () => {
   it("ship and take-back use the guest's pack and only their own lines", () => {
