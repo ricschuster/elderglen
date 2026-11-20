@@ -891,6 +891,11 @@
           "ref": "53_multiplayer.md#Decisions"
         },
         {
+          "s": "decided",
+          "t": "Multiplayer built to shell level 2026-11-19, untested by hand: guest clock and read-only menus, till, plant, water, buy, sell, ship and take-back intents, shared day end with the night report, shared bed, player marriage scenes; Electron wrapper skeleton (ADR 0015, 0016). Left: a two-client hands-on check, guest tools beyond the hoe and can, villager lock",
+          "ref": "53_multiplayer.md#Built status"
+        },
+        {
           "s": "open",
           "t": "Multiplayer: can a tablet host carry 8 players (the wrapper is settled, ADR 0008)",
           "ref": "53_multiplayer.md#Open"

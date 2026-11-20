@@ -110,6 +110,20 @@ describe("GameRoomWorld day end report", () => {
   });
 });
 
+describe("GameRoomWorld divorce news", () => {
+  it("the told partner reads who filed, the filer reads it is final", () => {
+    const w = mk();
+    w.admit("p2", "Ann");
+    w.addPlayer("p2", "Ann");
+    w.lastWeddings = [];
+    w.lastDivorces = [{ filer: "p1", told: "p2" }];
+    expect(w.guestLines("p2").lines).toContain("Host filed for divorce.");
+    expect(w.guestLines("p1").lines).toContain(
+      "Your divorce from Ann is final.",
+    );
+  });
+});
+
 describe("GameRoomWorld beds", () => {
   it("each player must be in bed, and getting out holds the day", () => {
     const w = mk();

@@ -23,6 +23,39 @@ function mk() {
   return w;
 }
 
+describe("bin intents", () => {
+  it("ship and take-back use the guest's pack and only their own lines", () => {
+    const w = mk();
+    const guest = w.g.players.get("p2");
+    guest.inventory.add("parsnip", 4);
+    expect(
+      w.apply("p2", { kind: "ship", id: "parsnip", n: 3 }),
+    ).toBeUndefined();
+    expect(guest.inventory.count("parsnip")).toBe(1);
+    expect(w.g.bin.each()[0]?.by).toBe("p2");
+    expect(w.apply("p2", { kind: "ship", id: "nope", n: 1 })).toBe(
+      "nothing shipped",
+    );
+    expect(w.apply("p1", { kind: "take-back", index: 0, n: 1 })).toBe(
+      "not your goods",
+    );
+    expect(
+      w.apply("p2", { kind: "take-back", index: 0, n: 2 }),
+    ).toBeUndefined();
+    expect(guest.inventory.count("parsnip")).toBe(3);
+    expect(w.apply("p2", { kind: "take-back", index: 5, n: 1 })).toBe(
+      "not your goods",
+    );
+  });
+  it("ore only goes into the ore bin", () => {
+    const w = mk();
+    w.g.players.get("p2").inventory.add("parsnip", 1);
+    expect(
+      w.apply("p2", { kind: "ship", id: "parsnip", n: 1, ore: true }),
+    ).toBe("nothing shipped");
+  });
+});
+
 describe("farm intents", () => {
   it("till, plant, water use the guest's record and energy, not the host's", () => {
     const w = mk();

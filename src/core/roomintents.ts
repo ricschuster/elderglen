@@ -4,7 +4,7 @@
 import * as actions from "./actions";
 import { itemById } from "./items";
 import type { Intent } from "./protocol";
-import type { PlayerId } from "./players";
+import { LOCAL_PLAYER, type PlayerId } from "./players";
 import { potPrice, sellMultiplier } from "./professions";
 import { POT_ITEM } from "./pots";
 import type { GameState } from "./save";
@@ -96,6 +96,28 @@ export function applyFarmIntent(
       return sell(rec.inventory, g.players.wallet(by), id, n, mult) > 0
         ? undefined
         : "cannot sell";
+    }
+    case "ship": {
+      const { id, n, ore } = intent;
+      if (typeof id !== "string" || !isCount(n)) return "bad ship";
+      const rec = g.players.get(by);
+      const mult = sellMultiplier(rec.skills, id);
+      const sent =
+        ore === true
+          ? g.bin.shipOre(rec.inventory, id, n, mult, by)
+          : g.bin.ship(rec.inventory, id, n, mult, by);
+      return sent > 0 ? undefined : "nothing shipped";
+    }
+    case "take-back": {
+      const { index, n } = intent;
+      if (typeof index !== "number" || !Number.isInteger(index) || index < 0)
+        return "bad take-back";
+      if (!isCount(n)) return "bad take-back";
+      const line = g.bin.each()[index];
+      if (!line || (line.by ?? LOCAL_PLAYER) !== by) return "not your goods";
+      return g.bin.takeBack(g.players.get(by).inventory, index, n) > 0
+        ? undefined
+        : "pack full";
     }
     default:
       return null;

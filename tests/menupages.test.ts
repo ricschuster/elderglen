@@ -203,14 +203,14 @@ describe("socialTip", () => {
 });
 
 describe("guest read-only menus", () => {
-  it("hides tabs that change state and allows only read-only screens", () => {
+  it("hides tabs that change state and allows only read-only and intent screens", () => {
     const g = newGame();
     const hidden = hiddenTabs(g, true);
     for (const t of ["pack", "crafting", "animals", "special"])
       expect(hidden).toContain(t);
     expect(hiddenTabs(g)).not.toContain("pack");
     expect(guestMayOpen("menu")).toBe(true);
-    expect(guestMayOpen("shop")).toBe(false);
-    expect(guestMayOpen("bin")).toBe(false);
+    expect(guestMayOpen("shop")).toBe(true);
+    expect(guestMayOpen("bin")).toBe(true);
   });
 });

@@ -25,7 +25,6 @@ import { PASS_OUT_MONEY_CAP, PASS_OUT_MONEY_SHARE } from "./day";
 import { LOCAL_PLAYER, type PlayerId } from "./players";
 import type { Intent } from "./protocol";
 import { applyFarmIntent } from "./roomintents";
-import { sellMultiplier } from "./professions";
 import type { BedStatus, NightNews, RoomWorld } from "./room";
 import { serialize, START_MONEY, type GameState } from "./save";
 import { sleep, type SleepReport } from "./sleep";
@@ -164,15 +163,6 @@ export class GameRoomWorld implements RoomWorld {
     const players = this.g.players;
     if (!players.has(by)) return "unknown player";
     switch (intent.kind) {
-      case "ship": {
-        const id = intent.id;
-        const n = intent.n;
-        if (typeof id !== "string" || typeof n !== "number") return "bad ship";
-        const rec = players.get(by);
-        const mult = sellMultiplier(rec.skills, id);
-        const put = this.g.bin.ship(rec.inventory, id, n, mult, by);
-        return put > 0 ? undefined : "nothing shipped";
-      }
       case "spend": {
         const amount = intent.amount;
         if (
