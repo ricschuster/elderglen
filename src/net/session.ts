@@ -114,6 +114,8 @@ export class GuestSession implements NetSession {
   onChange?: () => void;
   /** Called with the reason when the host refuses an intent of this guest. */
   onRejected?: (reason: string) => void;
+  /** Called with the night's report lines when the host ends the day (note 53, shared day end). */
+  onNight?: (n: { day: number; lines: string[]; lost: number }) => void;
 
   constructor(readonly client: GuestClient) {
     client.onMessage = (m) => this.follow(m);
@@ -121,6 +123,7 @@ export class GuestSession implements NetSession {
 
   private follow(m: ServerMsg): void {
     if (m.t === "rejected") this.onRejected?.(m.reason);
+    else if (m.t === "night") this.onNight?.(m);
     else if (this.farm && applyServerMsg(this.farm, m)) this.onChange?.();
   }
 

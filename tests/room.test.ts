@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Room, type RoomWorld } from "../src/core/room";
+import { Room, type NightNews, type RoomWorld } from "../src/core/room";
 import { decodeClient, encode } from "../src/core/protocol";
 import { JamTracker } from "../src/core/jam";
 import type { Intent } from "../src/core/protocol";
@@ -156,5 +156,30 @@ describe("Room", () => {
     expect(decodeClient("nope")).toBeUndefined();
     expect(decodeClient('{"t":"pos","x":"a"}')).toBeUndefined();
     expect(decodeClient('{"t":"intent","seq":1,"intent":{}}')).toBeUndefined();
+  });
+});
+
+describe("Room night report", () => {
+  it("sends each guest their own night message before the day change, not the host", () => {
+    const w = new FakeWorld();
+    let news: NightNews | undefined;
+    (w as RoomWorld).takeNight = () => {
+      const n = news;
+      news = undefined;
+      return n;
+    };
+    const r = new Room(w);
+    const a = r.join("Ann")!;
+    r.drain(a);
+    news = {
+      day: 2,
+      forGuest: (id) => ({ lines: [`hi ${id}`], lost: 7 }),
+    };
+    w.dayNo = 2;
+    r.tick(100);
+    expect(r.drain(a).map((m) => m.t)).toEqual(["night", "day", "snap"]);
+    expect(r.drain("p1").some((m) => m.t === "night")).toBe(false);
+    r.tick(100);
+    expect(r.drain(a).some((m) => m.t === "night")).toBe(false);
   });
 });

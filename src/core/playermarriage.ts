@@ -140,8 +140,14 @@ export function marriageReportLines(
   today: number,
   nameOf: (id: PlayerId) => string,
   divorces: readonly DivorceNews[] = [],
+  weddings: readonly WeddingNews[] = [],
 ): string[] {
   const out: string[] = [];
+  for (const w of weddings)
+    if (w.proposer === key || w.other === key)
+      out.push(
+        `You married ${nameOf(w.proposer === key ? w.other : w.proposer)} this morning.`,
+      );
   const e = engagedWith(b, key);
   if (e) {
     const name = nameOf(e.partner);
@@ -154,6 +160,8 @@ export function marriageReportLines(
   }
   for (const d of divorces)
     if (d.told === key) out.push(`${nameOf(d.filer)} filed for divorce.`);
+    else if (d.filer === key)
+      out.push(`Your divorce from ${nameOf(d.told)} is final.`);
   return out;
 }
 

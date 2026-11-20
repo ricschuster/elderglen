@@ -280,6 +280,8 @@ giftbox by their home bed, children go in a home both players sleep in, and an N
    driven by the host. A guest is not held up: they may walk away and the scene still plays.
 4. **Home.** One moves into the other's cabin. The vacated cabin stays. One bed, but each partner must get in it
    themselves for the day end, as in normal multiplayer (note 53, decided 2026-11-19).
+   **Children (owner, 2026-11-19, Stardew per the saved Multiplayer page):** the home needs the nursery upgrade and under two
+   children, and both partners must be asleep in its bed; one is then randomly asked to propose to the other. Not built.
 5. **After.** No spouse chores and no daily kiss from a partner (only villager spouses do chores). The 12.5 heart
    one-off does not apply; a couple get the one-off item once, by the shared bed, after the wedding (as the page
    describes for Stardew).

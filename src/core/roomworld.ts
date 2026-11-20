@@ -26,7 +26,7 @@ import { LOCAL_PLAYER, type PlayerId } from "./players";
 import type { Intent } from "./protocol";
 import { applyFarmIntent } from "./roomintents";
 import { sellMultiplier } from "./professions";
-import type { RoomWorld } from "./room";
+import type { NightNews, RoomWorld } from "./room";
 import { serialize, START_MONEY, type GameState } from "./save";
 import { sleep, type SleepReport } from "./sleep";
 
@@ -70,6 +70,9 @@ export class GameRoomWorld implements RoomWorld {
   /** Guests' pass-outs on the last night: id to gold lost. */
   lastPassOuts: Record<PlayerId, number> = {};
   private pending: JoinResult | undefined;
+  /** The night just ended, held until the Room (guests) and the host's scene each take it. */
+  private guestNight: NightNews | undefined;
+  private hostNight: SleepReport | undefined;
   private readonly o: Required<
     Pick<RoomWorldOptions, "cabinArea" | "blocked" | "random" | "spots">
   >;
@@ -211,6 +214,42 @@ export class GameRoomWorld implements RoomWorld {
     this.tracker.check(dtMs, limit);
   }
 
+  /** The night's news for the guests' reports, once (the Room sends it). */
+  takeNight(): NightNews | undefined {
+    const n = this.guestNight;
+    this.guestNight = undefined;
+    return n;
+  }
+
+  /** The night's report for the host's own morning screen, once (the farm scene takes it). */
+  takeHostNight(): SleepReport | undefined {
+    const r = this.hostNight;
+    this.hostNight = undefined;
+    return r;
+  }
+
+  /** Report lines for one guest: the pass-out outcome and the marriage news (note 12, 53). */
+  guestLines(id: PlayerId): { lines: string[]; lost: number } {
+    const lost = this.lastPassOuts[id] ?? 0;
+    const out = id in this.lastPassOuts;
+    const lines = [
+      !out
+        ? "You slept well."
+        : lost > 0
+          ? `You stayed up too late and passed out. Someone helped you home and kept ${lost}g for the trouble.`
+          : "You stayed up too late and passed out. Someone helped you home. It cost you nothing.",
+      ...pm.marriageReportLines(
+        this.marriages,
+        id,
+        this.day(),
+        (k) => this.names.get(k) ?? k,
+        this.lastDivorces,
+        this.lastWeddings,
+      ),
+    ];
+    return { lines, lost };
+  }
+
   /** Day end: guests who pass out pay the single player cost, then the world sleeps. */
   private endDay(d: DayEndDecision): void {
     const players = this.g.players;
@@ -229,7 +268,9 @@ export class GameRoomWorld implements RoomWorld {
     }
     // An unanswered proposal ends with the day, the token goes back (owner, 2026-11-19).
     expireProposalsAndRefund(this.g);
-    this.lastReport = sleep(this.g, this.o.spots, this.o.random);
+    const report = sleep(this.g, this.o.spots, this.o.random);
+    this.lastReport = report;
+    this.hostNight = report;
     // The new morning: filed divorces take effect, then due weddings play (no wait for the partner).
     this.lastDivorces = pm.divorceMorning(this.marriages);
     this.lastWeddings = pm.weddingMorning(
@@ -237,5 +278,9 @@ export class GameRoomWorld implements RoomWorld {
       this.day(),
       weddingBlock(this.g),
     );
+    this.guestNight = {
+      day: this.day(),
+      forGuest: (id) => this.guestLines(id),
+    };
   }
 }

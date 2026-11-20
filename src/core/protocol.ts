@@ -58,6 +58,8 @@ export type ServerMsg =
   | { t: "rejected"; seq: number; reason: string }
   /** The day rolled over; guests who were present get this instead of the farm. */
   | { t: "day"; day: number }
+  /** The night's report for this guest alone: report lines (marriage news included) and gold lost. */
+  | { t: "night"; day: number; lines: string[]; lost: number }
   | { t: "joined"; player: PlayerInfo }
   | { t: "left"; id: PlayerId }
   /** The join was turned down; the host then closes the socket. */

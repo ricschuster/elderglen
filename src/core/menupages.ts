@@ -237,6 +237,8 @@ export const GUEST_SCREENS = [
   "ledger",
   "proposal",
   "wedding",
+  // The night's report (guest copy from the host's `night` message) changes nothing.
+  "report",
 ];
 
 /** True when a guest may open this screen kind. */

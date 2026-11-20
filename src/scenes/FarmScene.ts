@@ -15,7 +15,7 @@ import { pondCovering, pondUse, takeFish } from "../core/pond";
 import Phaser from "phaser";
 
 import { saveSettings, type TouchScheme } from "../core/bindings";
-import { sleep } from "../core/sleep";
+import { sleep, type SleepReport } from "../core/sleep";
 import {
   areaOf,
   ensureMapCreatures,
@@ -292,8 +292,10 @@ import { PlayerBlocking, resolveBlocking } from "../net/interp";
 import {
   currentSession,
   GuestSession,
+  HostSession,
   isGuest,
   noteHostLost,
+  sendWorldIntent,
   type NetSession,
 } from "../net/session";
 import {
@@ -672,6 +674,7 @@ export class FarmScene extends Phaser.Scene {
       this.net.onHostLost(() => this.hostLost());
       // The guest's farm copy changes only when the host's `applied` comes back (no prediction).
       this.net.onChange = () => this.render();
+      this.net.onNight = (n) => this.open("report", { lines: n.lines });
       this.net.onRejected = (reason) => {
         this.message = `The host said no: ${reason}.`;
         this.render();
@@ -2619,6 +2622,10 @@ export class FarmScene extends Phaser.Scene {
     if (net instanceof GuestSession && net.followDay(this.state.day.clock))
       this.render();
     this.remote?.sync();
+    if (net instanceof HostSession) {
+      const night = net.world.takeHostNight();
+      if (night) this.finishNight(night);
+    }
     this.checkMarriageCards(net.localId);
   }
 
@@ -2678,9 +2685,20 @@ export class FarmScene extends Phaser.Scene {
   endDay(): void {
     if (isGuest()) return;
     detonateAll(this, true);
+    // Hosting: the player gets in bed and the room ends the day once everyone is (note 53).
+    if (this.net instanceof HostSession) {
+      sendWorldIntent(this.net, { kind: "sleep" });
+      this.message = "You are in bed. The day ends when everyone is.";
+      return this.render();
+    }
     const g = this.state;
     const farmMap = farmMapOf(g);
-    const report = sleep(g, farmMap.forageSpots, Math.random, farmMap);
+    this.finishNight(sleep(g, farmMap.forageSpots, Math.random, farmMap));
+  }
+
+  /** The morning after: redraw, save, and open the report (the steps after sleep()). */
+  private finishNight(report: SleepReport): void {
+    const g = this.state;
     this.refreshHolds();
     this.message = "";
     nightSave(g);

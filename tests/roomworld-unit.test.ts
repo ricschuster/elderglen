@@ -61,3 +61,51 @@ describe("GameRoomWorld units", () => {
     expect(w.apply("p1", { kind: "dance" } as never)).toMatch(/unknown intent/);
   });
 });
+
+describe("GameRoomWorld day end report", () => {
+  it("everyone in bed ends the day once, with guest lines and a host report", () => {
+    const w = mk();
+    w.admit("p2", "Ann");
+    w.addPlayer("p2", "Ann");
+    w.apply("p1", { kind: "sleep" });
+    w.step(2000);
+    expect(w.takeNight()).toBeUndefined(); // Ann is still up
+    w.apply("p2", { kind: "sleep" });
+    const day = w.day();
+    w.step(100);
+    expect(w.takeNight()).toBeUndefined(); // settling
+    w.step(2000);
+    expect(w.day()).toBe(day + 1);
+    const night = w.takeNight();
+    expect(night?.forGuest("p2").lines[0]).toBe("You slept well.");
+    expect(w.takeNight()).toBeUndefined();
+    expect(w.takeHostNight()?.passedOut).toBe(false);
+    expect(w.takeHostNight()).toBeUndefined();
+    w.step(5000); // not again
+    expect(w.day()).toBe(day + 1);
+  });
+
+  it("a guest awake at the limit passes out and pays once", () => {
+    const w = mk();
+    w.admit("p2", "Ann");
+    w.addPlayer("p2", "Ann");
+    w.g.players.wallet("p2").money = 1000;
+    w.g.day.clock.minutes = 26 * 60;
+    w.step(100);
+    const g = w.takeNight()?.forGuest("p2");
+    expect(g?.lost).toBe(100);
+    expect(g?.lines[0]).toContain("passed out");
+    expect(w.g.players.wallet("p2").money).toBe(900);
+  });
+
+  it("marriage news reaches the guest lines", () => {
+    const w = mk();
+    w.admit("p2", "Ann");
+    w.addPlayer("p2", "Ann");
+    w.lastWeddings = [{ proposer: "p1", other: "p2" }];
+    w.lastDivorces = [];
+    expect(w.guestLines("p2").lines).toContain(
+      "You married Host this morning.",
+    );
+  });
+});

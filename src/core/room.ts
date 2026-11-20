@@ -33,8 +33,16 @@ export interface RoomWorld {
   playerDropped?(id: PlayerId): void;
   /** A dropped guest came back: their record is restored by id. Optional. */
   playerRejoined?(id: PlayerId): void;
+  /** The night just ended, once, for the guests' reports. Optional. */
+  takeNight?(): NightNews | undefined;
   /** Top-left tile of a player's cabin, sent in `hello` so the guest spawns there. Optional. */
   homeOf?(id: PlayerId): { x: number; y: number } | undefined;
+}
+
+/** What a day end tells each guest: report lines and the gold a pass-out cost them. */
+export interface NightNews {
+  day: number;
+  forGuest(id: PlayerId): { lines: string[]; lost: number };
 }
 
 interface Member {
@@ -216,6 +224,11 @@ export class Room {
    */
   tick(dtMs: number): void {
     this.world.step?.(dtMs);
+    const night = this.world.takeNight?.();
+    if (night)
+      for (const m of this.members.values())
+        if (m.connected && m.id !== LOCAL_PLAYER)
+          m.out.push({ t: "night", day: night.day, ...night.forGuest(m.id) });
     const day = this.world.day();
     if (day !== this.lastDay) {
       this.lastDay = day;

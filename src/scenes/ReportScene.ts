@@ -10,15 +10,18 @@ import { WINDOW_FILL } from "./panel";
 
 /** The morning report, drawn over the paused farm after every night. */
 export class ReportScene extends Phaser.Scene {
-  private report!: SleepReport;
+  private report: SleepReport | undefined;
+  /** A guest's report arrives as words from the host (the `night` message). */
+  private guestLines: string[] | undefined;
   private state!: GameState;
 
   constructor() {
     super("report");
   }
 
-  init(data: { report: SleepReport }): void {
+  init(data: { report?: SleepReport; lines?: string[] }): void {
     this.report = data.report;
+    this.guestLines = data.lines;
     this.state = this.registry.get(STATE_KEY) as GameState;
   }
 
@@ -32,6 +35,7 @@ export class ReportScene extends Phaser.Scene {
       this.state.day.clock.day,
       (id) => playerNameOf(net, id),
       net instanceof HostSession ? net.world.lastDivorces : [],
+      net instanceof HostSession ? net.world.lastWeddings : [],
     );
   }
 
@@ -52,7 +56,7 @@ export class ReportScene extends Phaser.Scene {
         color: "#ffe9a0",
       })
       .setOrigin(0.5);
-    const notice = seasonNotice(this.report);
+    const notice = this.report ? seasonNotice(this.report) : undefined;
     if (notice) {
       this.add
         .text(480, 180, notice, { fontSize: "26px", color: "#f2d16b" })
@@ -62,7 +66,10 @@ export class ReportScene extends Phaser.Scene {
       .text(
         480,
         290,
-        [...reportLines(this.report), ...this.marriageLines()].join("\n"),
+        (this.report
+          ? [...reportLines(this.report), ...this.marriageLines()]
+          : (this.guestLines ?? [])
+        ).join("\n"),
         {
           fontSize: "20px",
           color: "#d8e8c8",
