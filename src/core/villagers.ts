@@ -1,5 +1,7 @@
 import data from "../content/villagers.json";
 import shopData from "../content/shops.json";
+import { mapFiles, maps } from "../content/maps";
+import { NO_CONDITIONS } from "./map";
 import { WEEKDAYS, dateOf, type Season } from "./calendar";
 import type { Weather } from "./weather";
 
@@ -245,6 +247,64 @@ const PLACES = data.places as Record<string, PlaceDef>;
 const AREAS = data.areas as Record<string, { map: string | null }>;
 const SPOTS = data.interiorSpots as Record<string, { x: number; y: number }>;
 
+const SPOT_MARKS = data.spotMarks as unknown as Record<string, string[]>;
+
+/** Open tiles of an interior, reached from its door, read once per map. */
+const openTiles = new Map<string, Set<string>>();
+const openOf = (mapId: string): Set<string> => {
+  let open = openTiles.get(mapId);
+  if (!open) {
+    const m = maps.get(mapId);
+    const from = m.entry("door") ?? m.entries[0];
+    open = from ? m.reachable(from) : new Set();
+    openTiles.set(mapId, open);
+  }
+  return open;
+};
+
+/**
+ * The tile a spot stands on in a map: the first of the spot's marks the map has,
+ * or the shared fallback tile, moved to the nearest open tile when it is solid
+ * (a wall or a fixture). So nobody is ever drawn inside a wall (note 86).
+ */
+function interiorTile(
+  mapId: string,
+  spot: string,
+): { x: number; y: number } | undefined {
+  const marks = maps.marksWith(mapId, NO_CONDITIONS).marks;
+  let want: { x: number; y: number } | undefined;
+  for (const name of SPOT_MARKS[spot] ?? []) {
+    want = marks.find((m) => m.name === name);
+    if (want) break;
+  }
+  want ??= SPOTS[spot];
+  return want && nearestOpen(mapId, want, true);
+}
+
+/**
+ * `want` if a person can stand there, else the nearest tile they can (ties go to
+ * the top row, then the left). Indoors the tile must also be reachable from the
+ * door; outdoors, not solid is enough (an area map has pockets).
+ */
+function nearestOpen(
+  mapId: string,
+  want: { x: number; y: number },
+  indoors: boolean,
+): { x: number; y: number } {
+  const m = maps.get(mapId);
+  const open = indoors ? openOf(mapId) : undefined;
+  const ok = (x: number, y: number) =>
+    open ? open.has(`${x},${y}`) : !m.isBlocked(x, y);
+  if (open?.size === 0 || ok(want.x, want.y)) return want;
+  for (let r = 1; r < m.width + m.height; r++)
+    for (let dy = -r; dy <= r; dy++) {
+      const dx = r - Math.abs(dy);
+      for (const x of dx === 0 ? [want.x] : [want.x - dx, want.x + dx])
+        if (ok(x, want.y + dy)) return { x, y: want.y + dy };
+    }
+  return want;
+}
+
 /** `hw:inn` with no spot is the inn's common room. */
 export const splitPlace = (id: string): { base: string; spot?: string } => {
   const [base, spot] = id.split("/") as [string, string | undefined];
@@ -268,22 +328,33 @@ export function resolvePlace(id: string): Place | undefined {
   const area = AREAS[base.split(":")[0]!];
   if (!area) return undefined;
   if (spot !== undefined || base === "hw:inn") {
-    const s = SPOTS[spot ?? "common"];
+    const s =
+      def.interior && mapFiles[def.interior] && SPOT_MARKS[spot ?? "common"]
+        ? interiorTile(def.interior, spot ?? "common")
+        : SPOTS[spot ?? "common"];
     if (!s) return undefined;
     // An interior map when the building has one, else the area map.
+    const mapId = def.interior ?? area.map;
+    const t =
+      mapId && mapFiles[mapId] && !def.interior
+        ? nearestOpen(mapId, s, false)
+        : s;
     return {
-      map: def.interior ?? area.map,
-      x: s.x,
-      y: s.y,
+      map: mapId,
+      x: t.x,
+      y: t.y,
       placeholder: true,
       indoors: true,
       transit: false,
     };
   }
+  const at = { x: def.x ?? 0, y: def.y ?? 0 };
+  const t =
+    area.map && mapFiles[area.map] ? nearestOpen(area.map, at, false) : at;
   return {
     map: area.map,
-    x: def.x ?? 0,
-    y: def.y ?? 0,
+    x: t.x,
+    y: t.y,
     placeholder: def.placeholder === true,
     indoors: false,
     transit: false,

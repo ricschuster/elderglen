@@ -91,3 +91,5 @@ the figures and name labels (the note was silent; the smallest choice). It goes 
 so a player standing in the square may see it until they act. Looked at in the browser on the Feast
 (`midwinter-feast-eve`, then Winter 25 13:00): the lamp shows above the recipient. Art is still a
 placeholder; the lit/unlit pair is "drawn" or "not drawn", no separate unlit sprite.
+
+Settled 2026-11-20: the reveal shows the giver walking over and a present float (placeholder). After a successful gift the giver walks from their seat to the nearest free tile next to the recipient, pauses 1.5 s and walks back, while the present icon floats up over the recipient; the message and rewards are unchanged. Scene code: `src/scenes/farm-feast-reveal.ts`; pure plan: `src/core/feastreveal.ts`.

@@ -51,6 +51,7 @@ import {
   sprinklerKey,
   furnitureKey,
   chestKey,
+  chestOpenKey,
   farmDecorKey,
   lightKey,
   GARDEN_POT_KEY,
@@ -72,7 +73,11 @@ import {
   GRASS_KEY,
   WEED_KEY,
 } from "./art";
-import { drawFeastLantern, drawFestivalProps } from "./farm-festival";
+import {
+  drawFeastLantern,
+  drawFeastProps,
+  drawFestivalProps,
+} from "./farm-festival";
 import type { FarmScene } from "./FarmScene";
 
 // Drawing methods of the farm scene, moved out of FarmScene.ts (note 106, step 5).
@@ -106,7 +111,12 @@ export function drawGround(farm: FarmScene): void {
   for (const p of farm.state.furniture.each(farm.mapId))
     put(p.x, p.y, furnitureKey(p.id));
   for (const s of farm.map.services)
-    if (s.kind === "camp-chest") put(s.x, s.y, chestKey("big-chest"));
+    if (s.kind === "camp-chest")
+      put(
+        s.x,
+        s.y,
+        farm.campScreenOpen ? chestOpenKey("big-chest") : chestKey("big-chest"),
+      );
   for (const c of farm.state.chests.each(farm.mapId)) {
     const img = put(c.x, c.y, chestKey(c.id));
     if (c.colour) img.setTint(CHEST_COLOURS[c.colour - 1]!);
@@ -131,6 +141,7 @@ export function drawGround(farm: FarmScene): void {
       if (caskDone(farm.state, c)) put(c.x, c.y, MACHINE_READY_KEY);
     }
   if (farm.mapId === CAVE_MAP) drawCave(farm, put);
+  drawFeastProps(farm);
   drawFeastLantern(farm);
   if (isFestivalMap(farm.mapId)) drawFestivalProps(farm);
   if (farm.map.hasSoil) drawSoil(farm, put);
@@ -221,6 +232,12 @@ export function drawWorld(
   farm: FarmScene,
   put: (x: number, y: number, key: string) => Phaser.GameObjects.Image,
 ): void {
+  // Goods left on a mine floor lie in that floor's own ground.
+  if (farm.floorState)
+    for (const p of farm.floorState.ground.each()) {
+      const key = iconKey(p.id);
+      if (key) put(p.x, p.y, key);
+    }
   if (!farm.outdoorWorld) return;
   for (const { x, y, id } of farm.state.forage.each()) put(x, y, forageKey(id));
   for (const s of farm.state.spots.each())

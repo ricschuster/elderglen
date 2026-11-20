@@ -1001,3 +1001,14 @@ Final art waits for M3d (ADR 0012).
   room's size is "about"; the owner can confirm in play.
 - The looks (cut corners, walls, windows) wait for the art pass (note 15).
 - SC-147 (does the museum or the blacksmith have a home in Stardew) and SC-148 (does the Fish Shop ladder lead to a bedroom) are still open in note 54.
+
+- Settled 2026-11-20: a route stop on a building with its own interior map resolves to
+  that map's marks, not to one shared tile for every building. `spotMarks` in
+  `src/content/villagers.json` names, per spot (`counter`, `home`, `room`, `common`,
+  `yard`), the marks to try in order (`spot-counter-serve`, `spot-home-sit`, the work
+  marks); `resolvePlace` (`src/core/villagers.ts`) then moves any tile that is solid
+  or cut off from the door to the nearest open one, indoors and out. The old shared
+  tile (3,7) was a wall in the young burrow (tablet play: Linnet drawn in the wall).
+  `tests/villager-tiles.test.ts` walks every villager's stops and the spouse spots.
+  Spouse routes (note 84) use the same place ids, so they get the fix too.
+- Settled 2026-11-20: two villagers never share a tile (`villagersOn` spreads the later one to the nearest free open tile, in list order), and Action talks to the person on the faced tile, else the nearest beside it, ties to the last talked to, then id (`talkTarget`).

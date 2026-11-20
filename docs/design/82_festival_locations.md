@@ -242,6 +242,16 @@ other day festivals.
 at both ends; a bonfire at (72,53) on the north edge; the cart stop (66,58), the
 well and benches stay. Bunting and lanterns do not block.
 
+**Settled 2026-11-20:** the props are drawn as placeholders while the Feast is on
+(data: `props` in `festival-spots.json`, `src/core/festivalprops.ts`): the table
+blocks, with a lantern on each table end and the bonfire with a glow; lanterns and
+the bonfire do not block (the bonfire is on the north edge, clear of the rows).
+The hall layout gets the same table and lanterns, no bonfire. Name tags: a crowd
+of more than 8 people names only the 4 nearest the player, the gift recipient and
+the person last talked to (walk closer to read the rest); tags that still overlap
+each other or a door or counter label stack upward (`taggedIds`, `stackOffsets`
+in `src/core/labels.ts`).
+
 **Player starts (8):** (68,59) to (75,59), in a row south of the table, clear of
 the road.
 
@@ -743,3 +753,5 @@ year. At the end `finishParade` gives +20 friendship with each of the 22 marcher
 year) and shows Cuthbert's closing line as a message (placeholder text, he does not walk to (66,65)). The lock
 lasts from the join to the end of the march: about 45 game minutes for the 14:00 join, up to about 80 for a
 14:30 join, 30 to 60 seconds of play. A hat is any hat. Tests: `tests/parade.test.ts`. Not looked at in a browser.
+
+Settled 2026-11-20: the reveal shows the giver walking over and a present float (placeholder). After a successful gift the giver walks from their seat to the nearest free tile next to the recipient, pauses 1.5 s and walks back, while the present icon floats up over the recipient; the message and rewards are unchanged. Scene code: `src/scenes/farm-feast-reveal.ts`; pure plan: `src/core/feastreveal.ts`.

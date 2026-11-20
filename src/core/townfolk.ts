@@ -1,3 +1,4 @@
+import { mapFiles, maps } from "../content/maps";
 import { childById, childrenOn, talkToChild } from "./children";
 import { dateOf } from "./calendar";
 import { clockText } from "./clock";
@@ -11,6 +12,7 @@ import {
   villagerForDay,
 } from "./spouse";
 import { villagerNow, type FestivalOpts } from "./festivalroutes";
+import { walkingAt } from "./walkers";
 import { HEART, Friendship, isBirthday, type Taste } from "./friendship";
 import type { GameState } from "./save";
 import {
@@ -19,6 +21,7 @@ import {
   shopState,
   villagerById,
   VILLAGERS,
+  whereAt,
 } from "./villagers";
 
 /**
@@ -38,6 +41,18 @@ export interface Present {
   placeholder: boolean;
   /** True while a festival marcher is walking the parade (the scene walks the sprite, note 82). */
   marching?: boolean;
+  /** Set while the person walks a leg between stops (note 79): the place between tiles, in tile units. */
+  fx?: number;
+  fy?: number;
+  /** -1 left, 1 right, 0 unknown, while walking. */
+  facing?: number;
+  /** The next tile on the way, while walking. */
+  ahead?: { x: number; y: number };
+}
+
+export interface TownOpts extends FestivalOpts {
+  /** Game minutes a person is behind their schedule (held by a talk or a jam, note 79 decisions 10 and 11). */
+  lag?: Readonly<Record<string, number>>;
 }
 
 /**
@@ -51,7 +66,7 @@ export function villagersOn(
   mapId: string,
   day: number,
   minutes: number,
-  opts: FestivalOpts = {},
+  opts: TownOpts = {},
 ): Present[] {
   const ctx = dayContext(day, g.weather);
   const out: Present[] = [];
@@ -72,7 +87,25 @@ export function villagersOn(
       });
       continue;
     }
-    const w = n.route;
+    const walking = walkingAt(v, ctx, minutes - (opts.lag?.[v.id] ?? 0));
+    if (walking) {
+      if (walking.map !== mapId) continue;
+      out.push({
+        id: v.id,
+        name: v.name,
+        x: walking.x,
+        y: walking.y,
+        placeholder: false,
+        fx: walking.fx,
+        fy: walking.fy,
+        facing: walking.facing,
+        ...(walking.ahead ? { ahead: walking.ahead } : {}),
+      });
+      continue;
+    }
+    const w = opts.lag?.[v.id]
+      ? whereAt(v, ctx, minutes - opts.lag[v.id]!)
+      : n.route;
     if (w.asleep || w.where.transit || w.where.map !== mapId) continue;
     out.push({
       id: v.id,
@@ -91,7 +124,67 @@ export function villagersOn(
       minutes,
     ))
       out.push({ ...c, placeholder: false });
-  return out;
+  return spreadOut(out, mapId);
+}
+
+/**
+ * Nobody shares a tile (tablet play: two people on one tile and only one could
+ * be talked to). The first on a tile, in list order, keeps it; the rest step to
+ * the nearest free open tile, the same way every time.
+ */
+function spreadOut(list: Present[], mapId: string): Present[] {
+  const m = mapId in mapFiles ? maps.get(mapId) : undefined;
+  const taken = new Set(list.map((p) => `${p.x},${p.y}`));
+  const seen = new Set<string>();
+  return list.map((p) => {
+    const k = `${p.x},${p.y}`;
+    if (!seen.has(k) || !m) {
+      seen.add(k);
+      return p;
+    }
+    for (let r = 1; r < m.width + m.height; r++)
+      for (let dy = -r; dy <= r; dy++) {
+        const dx = r - Math.abs(dy);
+        for (const x of dx === 0 ? [p.x] : [p.x - dx, p.x + dx]) {
+          const y = p.y + dy;
+          const nk = `${x},${y}`;
+          if (taken.has(nk) || m.isBlocked(x, y)) continue;
+          taken.add(nk);
+          seen.add(nk);
+          return {
+            ...p,
+            x,
+            y,
+            ...(p.fx !== undefined ? { fx: x, fy: y } : {}),
+          };
+        }
+      }
+    return p;
+  });
+}
+
+/**
+ * Who Action talks to: the person on the faced tile, else the one beside it
+ * nearest the player, ties to the one talked to last, then the lowest id.
+ */
+export function talkTarget(
+  list: readonly Present[],
+  face: { x: number; y: number },
+  player: { x: number; y: number },
+  lastId?: string,
+): Present | undefined {
+  const exact = presentAt(list, face.x, face.y);
+  if (exact) return exact;
+  const dist = (p: Present, a: { x: number; y: number }) =>
+    Math.abs(p.x - a.x) + Math.abs(p.y - a.y);
+  return list
+    .filter((p) => dist(p, face) === 1)
+    .sort(
+      (a, b) =>
+        dist(a, player) - dist(b, player) ||
+        Number(b.id === lastId) - Number(a.id === lastId) ||
+        (a.id < b.id ? -1 : 1),
+    )[0];
 }
 
 /** The villager on a tile, if any. */
@@ -99,7 +192,15 @@ export const presentAt = (
   list: readonly Present[],
   x: number,
   y: number,
-): Present | undefined => list.find((p) => p.x === x && p.y === y);
+): Present | undefined =>
+  list.find((p) => p.x === x && p.y === y) ??
+  // A moving person is easy to miss by a tile: a tap near their drawn place counts (note 79 decision 11).
+  list.find(
+    (p) =>
+      p.fx !== undefined &&
+      Math.abs((p.fx ?? p.x) - x) <= 0.75 &&
+      Math.abs((p.fy ?? p.y) - y) <= 0.75,
+  );
 
 /** "3 hearts" for a person, singular for one. */
 export function heartText(points: number): string {

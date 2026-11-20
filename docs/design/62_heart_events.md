@@ -260,3 +260,5 @@ Decided 2026-11-13 (owner, Stardew): no unlock rewards in M3b, those seven are p
 - Data is one file per person in `src/content/heart-events/`, with `_shared.json` for the
   flags and emotes. Events now run in person order, not the old table order.
 - Left: the story seeds and windows were taken as drafted; the owner can still change them.
+
+Settled 2026-11-20: scenes draw the in-world sprites; the stage room is still a placeholder.

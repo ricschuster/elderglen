@@ -95,4 +95,22 @@ describe("applyStatePatch", () => {
       applyStatePatch(g, { weather: "hail" as "rainy" }).problems,
     ).toHaveLength(1);
   });
+
+  it("fills health to the raised ceiling when skills are set", () => {
+    const g = newGame();
+    const before = g.combat.health.max;
+    expect(applyStatePatch(g, { skills: { combat: 9 } }).problems).toEqual([]);
+    expect(g.combat.health.max).toBeGreaterThan(before);
+    expect(g.combat.health.current).toBe(g.combat.health.max);
+  });
+
+  it("only takes clock times in 10 minute steps", () => {
+    const g = newGame();
+    expect(applyStatePatch(g, { minutes: 660 }).problems).toEqual([]);
+    expect(g.day.clock.minutes).toBe(660);
+    expect(applyStatePatch(g, { minutes: 665 }).problems).toEqual([
+      "bad minutes 665",
+    ]);
+    expect(g.day.clock.minutes).toBe(660);
+  });
 });

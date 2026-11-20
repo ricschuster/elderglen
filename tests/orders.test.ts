@@ -15,6 +15,7 @@ import { dateOf } from "../src/core/calendar";
 import { CROPS } from "../src/core/crops";
 import { FISH } from "../src/core/fishing";
 import { FarmMap, type TiledMapJson } from "../src/core/map";
+import { sweep } from "./helpers/sweep";
 
 function open(day = ORDERS_OPEN_DAY) {
   const g = newGame();
@@ -189,6 +190,7 @@ describe("twigs", () => {
     g.twigs.add(1, 1);
     expect(till(g, 1, 1).ok).toBe(false);
     expect(clearTwig(g, 1, 1, "axe", map).ok).toBe(true);
+    sweep(g);
     expect(g.inventory.count("wood")).toBe(1);
     expect(g.twigs.at(1, 1)).toBe(false);
     expect(clearTwig(g, 1, 1, "axe", map).ok).toBe(false);

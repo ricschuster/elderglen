@@ -52,8 +52,13 @@ describe("tree seeds by kind (#396, note 36)", () => {
       g.trees.at(spot.x, spot.y)!.kind = kind;
       for (let i = 0; i < swingsToFell(0); i++)
         chop(g, spot.x, spot.y, () => 0.99);
-      expect(g.inventory.count("tree-seed"), kind).toBe(0);
-      expect(g.inventory.count(seed), kind).toBeGreaterThan(0);
+      const lying = (id: string) =>
+        g.ground
+          .each()
+          .filter((p) => p.id === id)
+          .reduce((n, p) => n + p.count, 0);
+      expect(lying("tree-seed"), kind).toBe(0);
+      expect(lying(seed), kind).toBeGreaterThan(0);
     }
   });
 });

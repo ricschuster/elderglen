@@ -1,4 +1,5 @@
 import type { Inventory } from "./inventory";
+import type { GameState } from "./save";
 
 /** One stack of goods lying on a tile. */
 export interface Pile {
@@ -76,4 +77,32 @@ export class GroundItems {
     this.piles = this.piles.filter((p) => p.count > 0);
     return moved;
   }
+}
+
+/**
+ * The ground goods lie on where the player is: the state's (the farm's, or the
+ * area's while in one), or the mine floor's own, so a pile left in the mines
+ * never turns up on the farm at the same coordinates.
+ */
+export function groundOf(g: GameState, floor: number | undefined): GroundItems {
+  return floor === undefined
+    ? g.ground
+    : g.mines.visit(floor, g.day.clock.day).ground;
+}
+
+/**
+ * Leave goods lying on the ground at a tile, for the player to walk over and
+ * pull in (`docs/design/43_wood_source.md`, "Drops lie on the ground"). Goods
+ * from rocks, trees, creatures and digs never go straight to the pack, so a
+ * full pack never refuses them.
+ */
+export function dropGoods(
+  g: GameState,
+  floor: number | undefined,
+  x: number,
+  y: number,
+  id: string,
+  count: number,
+): void {
+  groundOf(g, floor).drop(x, y, id, count);
 }

@@ -20,6 +20,7 @@ import { tasteOf } from "../src/core/friendship";
 import { VILLAGERS } from "../src/core/villagers";
 import geodeData from "../src/content/geodes.json";
 import { newGame } from "../src/core/save";
+import { sweep } from "./helpers/sweep";
 
 describe("gem data (note 69)", () => {
   it("has five gems in three bands priced 50 to 400, all items", () => {
@@ -85,6 +86,7 @@ describe("breaking a gem node", () => {
     for (let i = 0; i < 5 && rocks.at(2, 2); i++)
       r = mine(g, 2, 2, 50, () => 0.99);
     expect(r.ok && r.item).toBe("gem-mid-b");
+    sweep(g);
     expect(g.inventory.count("gem-mid-b")).toBe(1);
   });
   it("Rockhound turns up a gem from plain rock as often as nodes show", () => {
@@ -95,6 +97,7 @@ describe("breaking a gem node", () => {
     g.mines.visit(50, 5).rocks.add(2, 2, "stone");
     mine(g, 2, 2, 50, () => 0);
     mine(g, 2, 2, 50, () => 0);
+    sweep(g);
     expect(g.inventory.count("gem-low-a")).toBe(1);
   });
 });

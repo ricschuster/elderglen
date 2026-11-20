@@ -298,8 +298,20 @@ class Bot {
   private act(target: Spot, run: () => { ok: boolean }): boolean {
     if (this.lateNight || !this.walker.goNextTo(target)) return false;
     const ok = run().ok;
+    this.pickUp(target);
     this.walker.spend(TIME.action);
     return ok;
+  }
+
+  /** Drops lie on the ground (note 43): the player stands next to the spot and pulls them in. */
+  private pickUp(near: Spot): void {
+    const g = this.g;
+    const grounds = [g.ground];
+    for (let n = 1; n <= g.mines.deepest; n++) {
+      const f = g.mines.today(n, this.day);
+      if (f) grounds.push(f.ground);
+    }
+    for (const ground of grounds) ground.collect(g.inventory, near, 1);
   }
 
   /** Visit targets nearest first, as a player sweeping a field does. */

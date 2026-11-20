@@ -21,7 +21,7 @@ describe("villagersOn", () => {
     const g = newGame();
     const list = villagersOn(g, "general-store", MON, at(10));
     const odette = list.find((p) => p.id === "odette");
-    expect(odette).toMatchObject({ x: 5, y: 4 });
+    expect(odette).toMatchObject({ x: 6, y: 17 });
     expect(
       villagersOn(g, "healer", MON, at(10)).some((p) => p.id === "odette"),
     ).toBe(false);
@@ -50,7 +50,7 @@ describe("villagersOn", () => {
   it("finds a person by tile", () => {
     const g = newGame();
     const list = villagersOn(g, "general-store", MON, at(10));
-    expect(presentAt(list, 5, 4)?.id).toBe("odette");
+    expect(presentAt(list, 6, 17)?.id).toBe("odette");
     expect(presentAt(list, 0, 0)).toBeUndefined();
   });
 });

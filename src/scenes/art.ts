@@ -1739,6 +1739,8 @@ function paintFruitTrees(scene: Phaser.Scene): void {
 
 export const furnitureKey = (id: string) => `furniture-${id}`;
 export const chestKey = (id: string) => `chest-${id}`;
+/** A chest with its lid up (the mine camp chest while open or emptied). Placeholder. */
+export const chestOpenKey = (id: string) => `chest-open-${id}`;
 export const lightKey = (id: string) => `light-${id}`;
 /** A farm decoration, drawn per covered tile (note 89). */
 export const farmDecorKey = (id: string) => `farmdecor-${id}`;
@@ -1975,7 +1977,35 @@ function paintChests(scene: Phaser.Scene): void {
       px(c, "#e8c050", 6, 2, 4, 1);
     }
     t.refresh();
+    paintOpenChest(scene, ch.id, stone, big);
   }
+}
+
+/** The same chest with the lid tipped back and a dark hollow showing. Placeholder. */
+function paintOpenChest(
+  scene: Phaser.Scene,
+  id: string,
+  stone: boolean,
+  big: boolean,
+): void {
+  const t = scene.textures.createCanvas(chestOpenKey(id), SIZE, SIZE)!;
+  const c = t.getContext();
+  const body = stone ? "#8a8a90" : "#8a5a2a";
+  const lid = stone ? "#b4b4ba" : "#b4803c";
+  const rim = stone ? "#3a3a42" : "#3a220e";
+  const x = big ? 1 : 2;
+  const w = big ? 14 : 12;
+  groundShadow(c, 8, 15, w + 2);
+  // lid tipped back behind
+  px(c, rim, x - 1, 1, w + 2, 4);
+  px(c, lid, x, 2, w, 2);
+  // the box with a dark open mouth
+  px(c, rim, x - 1, 6, w + 2, 9);
+  px(c, "#1a1008", x, 7, w, 3);
+  px(c, body, x, 10, w, 4);
+  px(c, "#00000033", x, 13, w, 1);
+  px(c, "#ffffff22", x, 10, w, 1);
+  t.refresh();
 }
 
 /** Farm decorations: one plain block per piece, in its colour. Placeholders (art waits for M3d). */

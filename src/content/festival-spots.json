@@ -379,6 +379,14 @@
     "midwinter-feast": {
       "map": "hearthwell",
       "hold": "festival-midwinter-feast",
+      "props": {
+        "table": [66, 77, 56],
+        "lanterns": [
+          [66, 56],
+          [77, 56]
+        ],
+        "bonfire": [72, 53]
+      },
       "starts": [
         [68, 59],
         [69, 59],
@@ -420,6 +428,13 @@
     "midwinter-feast@hall": {
       "map": "hall",
       "hold": "festival-midwinter-feast-hall",
+      "props": {
+        "table": [18, 29, 11],
+        "lanterns": [
+          [18, 11],
+          [29, 11]
+        ]
+      },
       "starts": [
         [20, 15],
         [21, 15],

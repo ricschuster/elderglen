@@ -41,3 +41,24 @@ export function takeCampGift(g: GameState, floor = 10): Outcome {
   if (item === ELDERFRUIT) absorbElderfruit(g);
   return { ok: true, item };
 }
+
+/** What a camp chest holds now: its one item, until it is taken (none on floor 30). */
+export function campChestContents(
+  g: GameState,
+  floor = 10,
+): string | undefined {
+  return g.mines.campOpenedOn(floor) ? undefined : campItem(floor);
+}
+
+/**
+ * A move on the camp chest screen (owner, 2026-11-20, note 22). The chest is take only:
+ * the one item goes to the pack by `takeCampGift`; nothing goes from the pack in.
+ */
+export function campChestMove(
+  g: GameState,
+  floor: number,
+  from: "chest" | "pack",
+): Outcome {
+  if (from === "pack") return fail("camp chest take only");
+  return takeCampGift(g, floor);
+}

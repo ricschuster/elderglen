@@ -33,7 +33,7 @@ export interface StatePatch {
   season?: Season;
   dayOfSeason?: number;
   year?: number;
-  /** Set the clock to this many minutes since midnight (after `day`/`season`, so it wins over the morning time). */
+  /** Set the clock to this many minutes since midnight, a multiple of 10 (after `day`/`season`, so it wins over the morning time). */
   minutes?: number;
   /** Set today's weather. */
   weather?: Weather;
@@ -134,7 +134,13 @@ export function applyStatePatch(g: GameState, p: StatePatch): PatchResult {
   }
 
   if (p.minutes !== undefined) {
-    if (!Number.isInteger(p.minutes) || p.minutes < 0 || p.minutes > 1559)
+    // The game clock ticks in 10 minute steps, so only those times are valid.
+    if (
+      !Number.isInteger(p.minutes) ||
+      p.minutes < 0 ||
+      p.minutes > 1559 ||
+      p.minutes % 10 !== 0
+    )
       problems.push(`bad minutes ${p.minutes}`);
     else g.day.restore(g.day.clock.day, g.day.energy.max, p.minutes);
   }
@@ -170,6 +176,14 @@ export function applyStatePatch(g: GameState, p: StatePatch): PatchResult {
       const first = optionsFor(s, g.skills)[0];
       if (!first || !choose(g.skills, s, first.id)) break;
     }
+  }
+
+  // Raising combat or mining levels (or taking Steady) lifts the health ceiling, and
+  // `sync` never heals, so a staged farmer would start part-full. A new game starts
+  // full, so top the bar up to the new ceiling.
+  if (p.skills || p.autoProfessions) {
+    g.combat.sync(g.skills);
+    g.combat.health.current = g.combat.health.max;
   }
 
   // A room only takes hand-ins once it is open, so go round until nothing more fits.

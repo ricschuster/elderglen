@@ -3,6 +3,7 @@ import { isClear } from "./actions";
 import type { Creature } from "./creatures";
 import { creatureTile, hurtCreature } from "./creatures";
 import { canStand } from "./furniture";
+import { dropGoods } from "./ground";
 import type { Health } from "./combat";
 import type { FarmMap } from "./map";
 import { drops } from "./mining";
@@ -153,9 +154,8 @@ export function blastRocks(
       random,
       floor,
     );
-    if (g.inventory.room(drop.id) < drop.count) continue;
     rocks.remove(rock.x, rock.y);
-    g.inventory.add(drop.id, drop.count);
+    dropGoods(g, floor, rock.x, rock.y, drop.id, drop.count);
     noteGathered(g, drop.id, drop.count);
     out.broken += 1;
     out.items[drop.id] = (out.items[drop.id] ?? 0) + drop.count;

@@ -43,6 +43,17 @@ export interface FestivalLayout {
   keepClear: readonly Tile[];
   holes: readonly Tile[];
   hunt?: SeedHunt;
+  /** Placeholder props drawn while the festival is on (note 82). */
+  props?: FestivalPropSet;
+}
+
+/** The long table, lantern posts and bonfire of a feast layout. Only the table blocks. */
+export interface FestivalPropSet {
+  /** Table: first x, last x and the row, all inclusive. */
+  table?: readonly [number, number, number];
+  /** Lantern posts, drawn on the table ends; they never block. */
+  lanterns: readonly Tile[];
+  bonfire?: Tile;
 }
 
 /** The Seedswap hunt (Stardew's egg hunt): packet tiles by year parity. */
@@ -66,6 +77,7 @@ interface RawLayout {
   niches?: number[][];
   keepClear?: number[][];
   holes?: number[][];
+  props?: { table?: number[]; lanterns?: number[][]; bonfire?: number[] };
   hunt?: {
     seconds: number;
     win: number;
@@ -98,6 +110,25 @@ export const LAYOUTS: readonly FestivalLayout[] = Object.entries(
   niches: tiles(r.niches),
   keepClear: tiles(r.keepClear),
   holes: tiles(r.holes),
+  ...(r.props
+    ? {
+        props: {
+          ...(r.props.table
+            ? {
+                table: [
+                  r.props.table[0]!,
+                  r.props.table[1]!,
+                  r.props.table[2]!,
+                ] as const,
+              }
+            : {}),
+          lanterns: tiles(r.props.lanterns),
+          ...(r.props.bonfire
+            ? { bonfire: [r.props.bonfire[0]!, r.props.bonfire[1]!] as const }
+            : {}),
+        },
+      }
+    : {}),
   ...(r.hunt
     ? {
         hunt: {

@@ -135,6 +135,10 @@ Mountain (`19_valley_layout.md`).
   The chest holds a few items to take (a gift from the old dwarf lamp-keepers,
   refilled each day), and cannot be used to stash things. No healing. The camp
   is a cozy beat and a small goal, not a safe zone.
+  **Settled 2026-11-20:** the camp chest opens as a take-only chest screen (the same screen as
+  the normal chests, the gift in its one slot, nothing can be put in, no bench), the chest
+  is drawn open only while its screen is up (closed otherwise, emptied too), and taking shows "You found ...". Owner request after tablet
+  play. Stardew behaviour believed similar, not checked (SC-210).
 - **Special floors.** About 1 floor in 15 has a theme, such as a floor of
   geodes, a floor of Gloop that never attacks, or a quiet ruin with a puzzle
   (hook for the puzzles note, `17_call_feedback_2026-10-28.md`).
@@ -738,3 +742,16 @@ settled 2026-10-31). Slices 3 onward wait for build slice 3.
 - **Lamps are placeable, plus the glow ring** (Stardew, from memory, unchecked). No
   carried lamp slot. A lamp is a craftable placeable item, which gives bundle 29 its
   real item. Not built.
+
+- **Settled 2026-11-20: creature speeds cut about 30 percent after tablet play; placeholder.** Every `speed` and dash `speed` in `src/content/creatures.json` is 0.7 times the old value, rounded. Melee swings now show a short arc (blade 0.18 s, club 0.24 s, `src/core/swingfx.ts`).
+
+**Settled 2026-11-20:** a full backpack no longer refuses a mining swing, and drops from rocks, nodes,
+monsters and digs now always lie on the ground and are picked up by walking near
+(`docs/design/43_wood_source.md`, "Drops lie on the ground"). Owner decision after tablet play;
+Stardew believed the same, not checked (SC-211, SC-212). The smith cracking a geode stays a service
+and still refuses when the pack is full. Piles on a mine floor are saved with the floor and gone when
+it regenerates the next day.
+
+Daily reset only, ours on purpose (owner, 2026-11-20). The saved Stardew Mines page says infested
+floors stay infested the whole day and its 1.4 changelog says floors also reset on returning to
+floor 0; we do not copy the floor-0 reset, so piles survive a trip to the surface.

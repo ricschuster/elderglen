@@ -38,6 +38,7 @@ import { heldAt, startGame, TOOLS } from "../src/core/toolbar";
 import { useHeld } from "../src/core/tools";
 import { itemById } from "../src/core/items";
 import { craft } from "../src/core/crafting";
+import { sweep } from "./helpers/sweep";
 
 const noSpots = [] as { x: number; y: number }[];
 
@@ -123,6 +124,7 @@ describe("mining", () => {
     const r = useHeld(g, map, pickaxe, spot.x, spot.y);
     expect(r.ok).toBe(true);
     expect(g.rocks.at(spot.x, spot.y)).toBeUndefined();
+    sweep(g);
     expect(g.inventory.count("stone")).toBeGreaterThan(0);
     expect(g.skills.xpOf("mining")).toBe(2);
     expect(g.day.energy.current).toBeLessThan(e);
@@ -139,16 +141,71 @@ describe("mining", () => {
     });
   });
 
-  it("does not break a rock when the drop would not fit", () => {
+  it("breaks a rock with a full pack and leaves the drop on the ground", () => {
     const g = startGame();
     const spot = maps.get(START.map).rocks[0]!;
     for (let i = 0; i < g.inventory.size; i++) g.inventory.add(`junk-${i}`, 1);
-    mine(g, spot.x, spot.y, undefined);
-    expect(mine(g, spot.x, spot.y, undefined)).toEqual({
-      ok: false,
-      reason: "backpack full",
-    });
-    expect(g.rocks.at(spot.x, spot.y)).toBeDefined();
+    mine(g, spot.x, spot.y, undefined, () => 0);
+    expect(mine(g, spot.x, spot.y, undefined, () => 0).ok).toBe(true);
+    expect(g.rocks.at(spot.x, spot.y)).toBeUndefined();
+    expect(g.inventory.count("stone")).toBe(0);
+    const pile = g.ground.at(spot.x, spot.y)[0]!;
+    expect(pile.id).toBe("stone");
+    expect(g.skills.xpOf("mining")).toBe(2);
+    // Room appears, and walking near pulls it in.
+    g.inventory.remove("junk-0", 1);
+    expect(g.ground.collect(g.inventory, spot, 1)).toBe(true);
+    expect(g.inventory.count("stone")).toBe(1);
+    expect(g.ground.count).toBe(0);
+  });
+
+  it("drops even with room, and stacks piles of one item on a tile", () => {
+    const g = startGame();
+    g.ground.drop(3, 3, "stone", 1);
+    const spot = maps.get(START.map).rocks[0]!;
+    mine(g, spot.x, spot.y, undefined, () => 0);
+    mine(g, spot.x, spot.y, undefined, () => 0);
+    expect(g.inventory.count("stone")).toBe(0);
+    expect(g.ground.at(spot.x, spot.y)[0]!.count).toBe(1);
+    g.ground.drop(spot.x, spot.y, "stone", 2);
+    expect(g.ground.at(spot.x, spot.y)).toHaveLength(1);
+    expect(g.ground.at(spot.x, spot.y)[0]!.count).toBe(3);
+  });
+
+  it("only pulls in piles within the pickup radius, as far as there is room", () => {
+    const g = startGame();
+    g.ground.drop(5, 5, "stone", 5);
+    expect(g.ground.collect(g.inventory, { x: 8, y: 5 }, 1)).toBe(false);
+    expect(g.ground.collect(g.inventory, { x: 7, y: 5 }, 2)).toBe(true);
+    expect(g.inventory.count("stone")).toBe(5);
+  });
+
+  it("drops ore from a node on a mine floor, in that floor's own ground", () => {
+    const g = startGame();
+    g.day.clock.day = 5;
+    const floor = g.mines.visit(1, 5);
+    floor.rocks.add(10, 10, "copper");
+    for (let i = 0; i < 6; i++) {
+      if (!floor.rocks.at(10, 10)) break;
+      mine(g, 10, 10, 1, () => 0.99);
+    }
+    expect(floor.rocks.at(10, 10)).toBeUndefined();
+    expect(g.inventory.count("copper-ore")).toBe(0);
+    expect(floor.ground.at(10, 10)[0]?.id).toBe("copper-ore");
+    expect(g.ground.count).toBe(0);
+  });
+
+  it("keeps a floor's piles through a save, a return the same day, and loses them next day", () => {
+    const g = startGame();
+    g.day.clock.day = 5;
+    const floor = g.mines.visit(1, 5);
+    floor.ground.drop(4, 4, "stone", 2);
+    const back = deserialize(serialize(g))!;
+    expect(back.mines.visit(1, 5).ground.at(4, 4)[0]!.count).toBe(2);
+    // Leaving and coming back the same day keeps the same floor and its piles.
+    g.mines.visit(2, 5);
+    expect(g.mines.visit(1, 5).ground.at(4, 4)[0]!.count).toBe(2);
+    expect(g.mines.visit(1, 6).ground.count).toBe(0);
   });
 
   it("gives copper from a node, with more at higher odds and for prospectors", () => {
@@ -337,6 +394,7 @@ describe("quartz and the quality sprinkler", () => {
     g.mines.visit(1, 5).rocks.add(2, 2, "quartz");
     const r = mine(g, 2, 2, 1, () => 0.9);
     expect(r.ok).toBe(true);
+    sweep(g);
     expect(g.inventory.count("quartz-crystal")).toBe(1);
     expect(g.mines.visit(1, 5).rocks.at(2, 2)).toBeUndefined();
     expect(itemById("quartz-crystal")?.sellPrice).toBe(25);
@@ -449,6 +507,7 @@ describe("geodes", () => {
     expect(mine(g, 2, 2, 1, () => 0.9).ok).toBe(true);
     expect(g.inventory.count("geode")).toBe(0);
     expect(mine(g, 2, 2, 1, () => 0.9).ok).toBe(true);
+    sweep(g);
     expect(g.inventory.count("geode")).toBe(1);
     expect(itemById("geode")?.sellPrice).toBe(50);
   });
@@ -516,6 +575,7 @@ describe("geodes", () => {
     g.mines.visit(50, 5).rocks.add(2, 2, "stone");
     mine(g, 2, 2, 50, () => 0);
     mine(g, 2, 2, 50, () => 0);
+    sweep(g);
     expect(g.inventory.count("frozen-geode")).toBe(1);
   });
 
@@ -634,6 +694,7 @@ describe("geodes", () => {
     f.rocks.add(2, 2, "stone");
     mine(g, 2, 2, 1, () => 0);
     mine(g, 2, 2, 1, () => 0);
+    sweep(g);
     expect(g.inventory.count("geode")).toBe(1);
   });
 });

@@ -107,16 +107,29 @@ export function hudContentW(slot: number): number {
   return barWidth(slot) + BAR_MARGINS;
 }
 
+/** Touch column: padding beside the slots and above the first (HUD units). */
+export const COL_PAD = 8;
+
+/** Fewest big slots the touch column must show to be worth using. */
+const MIN_BIG_COLUMN = 6;
+
 /**
- * The base slot size: 64 on a desktop window wide enough to show the whole bar
- * at the UI size set, otherwise 44. Touch always keeps 44.
+ * The base slot size. Desktop: 64 on a window wide enough to show the whole
+ * bar at the UI size set, otherwise 44. Touch: 64 as well (settled 2026-11-20,
+ * the 44 slots were too small on tablets), unless the window is so short that
+ * fewer than six big slots fit in the column, then 44.
  */
 export function hudSlot(
   percent: number,
   touch: boolean,
   windowW: number,
+  windowH = Infinity,
 ): number {
-  if (touch) return SLOT_SMALL;
+  if (touch) {
+    const uh = windowH / hudScale(percent, true);
+    const need = 2 * COL_PAD + MIN_BIG_COLUMN * (SLOT_BIG + BAR_GAP) - BAR_GAP;
+    return uh >= need ? SLOT_BIG : SLOT_SMALL;
+  }
   const scale = hudScale(percent, false);
   return windowW >= hudContentW(SLOT_BIG) * scale ? SLOT_BIG : SLOT_SMALL;
 }

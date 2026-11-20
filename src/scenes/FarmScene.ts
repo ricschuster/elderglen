@@ -1,4 +1,5 @@
 import { feastGive, lanternOn } from "../core/feastexchange";
+import { playFeastReveal } from "./farm-feast-reveal";
 import {
   BARN_BUILT,
   BARN_MAP,
@@ -38,8 +39,7 @@ import {
   type IceFishing,
 } from "../core/icefishing";
 
-import { meet, presentAt, villagersOn, type Present } from "../core/townfolk";
-import { paradeJoinedAt } from "../core/parade";
+import { meet, presentAt, talkTarget, type Present } from "../core/townfolk";
 
 import type { GameState } from "../core/save";
 import { cycle, heldAt, nextRow, toolbarSize } from "../core/toolbar";
@@ -89,8 +89,13 @@ import { NOTHING_TO_ACT_ON, act, reasonText, useHeld } from "../core/tools";
 
 import { mapFiles, maps } from "../content/maps";
 import { START } from "../core/maps";
-import { HAT_KEY, villagerKey } from "./art-people";
+import { HAT_KEY } from "./art-people";
 import { DEPTH, sortDepth } from "./depth";
+import {
+  WalkState,
+  syncVillagers as syncVillagerSprites,
+  type VillagerSprite,
+} from "./farm-walkers";
 import { drawMapArt } from "./mapart";
 import { MAP_PASSES } from "./map-passes";
 
@@ -142,6 +147,7 @@ import {
   stackOffsets,
   standInLine,
 } from "../core/labels";
+import { festivalPropBlocks } from "../core/festivalprops";
 import {
   facingFrom,
   facingTile,
@@ -211,7 +217,7 @@ import {
   placePot,
 } from "../core/pots";
 import { baitById } from "../core/tackle";
-import { greencoatDue, takeCampGift } from "../core/camp";
+import { greencoatDue } from "../core/camp";
 import {
   farmDecorAt,
   isFarmDecor,
@@ -277,6 +283,7 @@ import {
   cornerScroll,
   hudScale,
   hudSlot,
+  SLOT_SMALL,
   hudContentW,
   pinchPercent,
   stepPercent,
@@ -338,7 +345,6 @@ import {
   TICK_MS,
 } from "./farm-consts";
 import {
-  festivalMinutes,
   updateParade,
   festivalAction,
   pierKeeper,
@@ -425,8 +431,7 @@ export class FarmScene extends Phaser.Scene {
   private glowLights: Glow[] = [];
   private labelView = "";
   private hatTint = { id: "", color: 0 };
-  private labelTags: { o: Phaser.GameObjects.Text; x: number; y: number }[] =
-    [];
+  labelTags: { o: Phaser.GameObjects.Text; x: number; y: number }[] = [];
   /** The pictures of things on the map, redrawn by `drawGround`. */
   sprites: Phaser.GameObjects.Image[] = [];
   ground!: Phaser.GameObjects.Graphics;
@@ -490,10 +495,9 @@ export class FarmScene extends Phaser.Scene {
   tapShot?: { x: number; y: number; until: number };
   /** Villagers on this map right now and the placeholder blocks that show them (#599). */
   villagers: Present[] = [];
-  private villagerSprites = new Map<
-    string,
-    { box: Phaser.GameObjects.Image; tag: Phaser.GameObjects.Text }
-  >();
+  villagerSprites = new Map<string, VillagerSprite>();
+  /** Where each walker is behind their schedule, and the sprites a script has taken over (note 79). */
+  walkers = new WalkState();
   /** The tile last checked for a heart event. */
   private eventTile = "";
   villagerStamp = -1;
@@ -503,6 +507,7 @@ export class FarmScene extends Phaser.Scene {
   hunt?: HuntState;
   huntGfx?: Phaser.GameObjects.Graphics;
   lanternGfx?: Phaser.GameObjects.Graphics;
+  propsGfx: Phaser.GameObjects.Graphics[] = [];
   huntText?: Phaser.GameObjects.Text;
   /** The Frostday ice fishing count (placeholder, note 82). */
   private ice?: IceFishing;
@@ -711,6 +716,7 @@ export class FarmScene extends Phaser.Scene {
     this.ice = undefined;
     this.villagers = [];
     this.villagerSprites = new Map();
+    this.walkers = new WalkState();
     this.villagerStamp = -1;
     this.syncVillagers(world);
     const built = this.map.bounds;
@@ -748,7 +754,10 @@ export class FarmScene extends Phaser.Scene {
       settings,
     );
     // Esc opens the menu (fixed key, note 45).
-    this.events.on("resume", () => (this.resumedAt = performance.now()));
+    this.events.on("resume", () => {
+      this.resumedAt = performance.now();
+      this.campScreenOpen = false; // never stale: closed unless its screen is up
+    });
     this.input.keyboard?.on("keydown-ESC", () => this.openMenu("pack"));
     this.controls = createControls(
       this,
@@ -893,6 +902,7 @@ export class FarmScene extends Phaser.Scene {
     } else if (isFarmMap(this.mapId) && this.state.orders.introDue(today)) {
       this.time.delayedCall(400, () => this.showOrdersIntro());
     }
+    this.tickAt = this.time.now;
     this.time.addEvent({
       delay: TICK_MS / DEV_SPEED,
       loop: true,
@@ -1016,7 +1026,7 @@ export class FarmScene extends Phaser.Scene {
     );
     this.drawGlow();
     updateBombs(this, dt);
-    this.syncVillagers();
+    this.syncVillagers(undefined, dt);
     updateHunt(this, dt);
     this.checkHeartEvent();
     this.checkWedding();
@@ -1286,88 +1296,27 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /**
-   * Show the villagers the schedule puts on this map (#599). Runs each frame
-   * but only does work when the game minute or day changes. Placeholder blocks
-   * with a name tag; people jump between schedule stops (no walking yet).
+   * Show the villagers the schedule puts on this map (#599). Runs each frame;
+   * people walk between their stops (note 79, `farm-walkers.ts`).
    */
-  private syncVillagers(world?: Phaser.GameObjects.GameObject[]): void {
-    const clock = this.state.day.clock;
-    // The clock ticks 10 minutes at a time, but the Hat Parade walks a tile a
-    // minute, so on a festival day the minute runs on between ticks (note 82).
-    const minutes = festivalMinutes(this);
-    const stamp = clock.day * 2000 + Math.floor(minutes);
-    if (stamp === this.villagerStamp) return;
-    this.villagerStamp = stamp;
-    // Time stands still on a festival map; the festival layer places people on it too.
-    this.villagers = villagersOn(this.state, this.mapId, clock.day, minutes, {
-      hallRestored: hallRestored(this.state.hall),
-      paradeJoinedAt: paradeJoinedAt(this.state),
-    });
-    const ts = this.map.tileSize;
-    const here = new Set(this.villagers.map((v) => v.id));
-    for (const [id, s] of this.villagerSprites)
-      if (!here.has(id)) {
-        s.box.destroy();
-        s.tag.destroy();
-        this.villagerSprites.delete(id);
-      }
-    for (const v of this.villagers) {
-      let s = this.villagerSprites.get(v.id);
-      if (!s) {
-        const box = this.add.image(0, 0, villagerKey(v.id)).setOrigin(0.5, 1);
-        const tag = this.add
-          .text(0, 0, v.name, {
-            fontSize: "8px",
-            color: "#ffffff",
-            backgroundColor: "#000000aa",
-            padding: { x: 2, y: 1 },
-          })
-          .setOrigin(0.5, 1)
-          .setDepth(900);
-        if (world) world.push(box, tag);
-        else this.uiCamera.ignore([box, tag]);
-        s = { box, tag };
-        this.villagerSprites.set(v.id, s);
-      }
-      const px = (v.x + 0.5) * ts;
-      const py = (v.y + 1) * ts - 1;
-      if (v.marching && s.box.x !== 0 && s.box.x !== px) {
-        // A marcher glides to the next tile instead of jumping.
-        const to = { x: px, y: py };
-        this.tweens.killTweensOf([s.box, s.tag]);
-        this.tweens.add({
-          targets: s.box,
-          ...to,
-          duration: 600,
-          onUpdate: () => {
-            s.box.setDepth(sortDepth(s.box.y));
-            s.tag.setPosition(s.box.x, s.box.y - 13);
-          },
-        });
-      } else {
-        s.box.setPosition(px, py).setDepth(sortDepth(py));
-        s.tag.setPosition(px, py - 13);
-      }
-    }
-    // Two villagers standing close would draw their names on top of each other.
-    const settled = [...this.villagerSprites.values()].filter(
-      (s) => !this.tweens.isTweening(s.box),
-    );
-    const base = settled.map((s) => ({
-      x: s.box.x,
-      y: s.box.y - 13,
-      text: s.tag.text,
-    }));
-    const off = stackOffsets(base);
-    settled.forEach((s, i) =>
-      s.tag.setPosition(base[i]!.x, base[i]!.y + off[i]!),
-    );
+  private syncVillagers(world?: Phaser.GameObjects.GameObject[], dt = 0): void {
+    syncVillagerSprites(this, dt, !(this.net instanceof GuestSession), world);
   }
 
-  /** Talk to a villager, or give them the held item (#599, note 61). Returns false if nobody is on the tile. */
+  /** The villager Action last talked to, to settle a tie between two people beside the faced tile. */
+  lastTalkedId: string | undefined;
+
+  /** Talk to a villager, or give them the held item (#599, note 61). Returns false if nobody is on or beside the faced tile. */
   private meetVillager(tile: Vec): boolean {
-    const who = presentAt(this.villagers, tile.x, tile.y);
+    const who = talkTarget(
+      this.villagers,
+      tile,
+      tileOf(this.pos, PLAYER, this.map.tileSize),
+      this.lastTalkedId,
+    );
     if (!who) return false;
+    this.lastTalkedId = who.id;
+    this.walkers.hold(who.id, this.time.now);
     // In a hedge niche a villager says their one Hollow Eve line (note 82).
     if (festivalOfMap(this.mapId)?.activity === "maze") {
       const line = nicheLine(who.id);
@@ -1404,6 +1353,8 @@ export class FarmScene extends Phaser.Scene {
     );
     if (feast) {
       this.message = feast.message;
+      if (feast.giver && feast.present)
+        playFeastReveal(this, who.id, feast.giver, feast.present);
       this.render();
       return true;
     }
@@ -1491,10 +1442,16 @@ export class FarmScene extends Phaser.Scene {
 
   /** Pull in goods lying on the ground near the player, as far as the bag has room. */
   private pickUp(): void {
-    if (!this.outdoorSoil || this.state.ground.count === 0) return;
+    // A mine floor has its own ground; elsewhere the farm or an area map outdoors.
+    const ground = this.floorState
+      ? this.floorState.ground
+      : this.outdoorWorld
+        ? this.state.ground
+        : undefined;
+    if (!ground || ground.count === 0) return;
     const here = tileOf(this.pos, PLAYER, this.map.tileSize);
     if (
-      this.state.ground.collect(
+      ground.collect(
         this.state.inventory,
         here,
         pickupRadius(this.state.equipment.magnetBonus()),
@@ -1589,7 +1546,7 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** Where the player stands now, as a map and a tile. */
-  private hereTile(): { map: string; x: number; y: number } {
+  hereTile(): { map: string; x: number; y: number } {
     const t = tileOf(this.pos, PLAYER, this.map.tileSize);
     return { map: this.mapId, x: t.x, y: t.y };
   }
@@ -1645,6 +1602,16 @@ export class FarmScene extends Phaser.Scene {
 
   private tileShutForFestival(x: number, y: number): boolean {
     const clock = this.state.day.clock;
+    if (
+      festivalPropBlocks(
+        clock.day,
+        this.mapId,
+        hallRestored(this.state.hall),
+        x,
+        y,
+      )
+    )
+      return true;
     return festivalStepShut(
       clock.day,
       clock.minutes,
@@ -1742,8 +1709,14 @@ export class FarmScene extends Phaser.Scene {
       (this.registry.get(UI_SIZE_KEY) as number | undefined) ?? 100;
     const ts = this.map.tileSize;
     const touchProfile = this.controls.profile === "touch";
-    const slot = hudSlot(uiPercent, touchProfile, width);
-    const scale = hudScale(uiPercent, touchProfile, width, hudContentW(slot));
+    const slot = hudSlot(uiPercent, touchProfile, width, height);
+    const scale = hudScale(
+      uiPercent,
+      touchProfile,
+      width,
+      // The touch column is not a bar: keep the small bar width as the limit.
+      hudContentW(touchProfile ? SLOT_SMALL : slot),
+    );
     // On touch the toolbar is a column down the left, and the map is drawn
     // beside it, so no tile is ever under a button.
     const inset = Math.round(this.hud.insetLeft(scale));
@@ -1969,6 +1942,16 @@ export class FarmScene extends Phaser.Scene {
     this.scene.start("title");
   }
 
+  /** True only while the camp chest screen is up; the chest is drawn closed otherwise, emptied or not. */
+  campScreenOpen = false;
+
+  /** The camp chest screen closed: redraw the chest and toast what was found, if anything. */
+  campClosed(found?: string): void {
+    this.campScreenOpen = false;
+    if (found) this.message = found;
+    this.render();
+  }
+
   open(kind: string, data?: object): void {
     // A guest sees read-only screens only; the rest would edit a local copy (note 53).
     if (isGuest() && !guestMayOpen(kind)) {
@@ -1998,6 +1981,11 @@ export class FarmScene extends Phaser.Scene {
       !this.map.isWater(front.x, front.y)
     )
       net.sendIntent({ kind: "water", x: front.x, y: front.y });
+    else if (
+      held.kind === "tool" &&
+      (held.tool === "axe" || held.tool === "pickaxe")
+    )
+      net.sendIntent({ kind: held.tool, x: front.x, y: front.y });
     else if (held.kind === "item" && cropOfSeed(held.id))
       net.sendIntent({ kind: "plant", x: front.x, y: front.y, seed: held.id });
     else {
@@ -2251,7 +2239,15 @@ export class FarmScene extends Phaser.Scene {
       // A guest's Action opens only the screens a guest may use: the bed, the shop, the bin, the ledger.
       const at = this.aimTile();
       const kind = this.map.serviceAt(at.x, at.y)?.kind;
-      if (kind && guestMayOpen(kind)) this.open(kind);
+      if (kind && guestMayOpen(kind)) return this.open(kind);
+      // A ripe crop on farm soil is picked by the host for them (an intent).
+      if (
+        !kind &&
+        this.net instanceof GuestSession &&
+        isFarmMap(this.mapId) &&
+        this.state.farm.isRipe(at.x, at.y)
+      )
+        this.net.sendIntent({ kind: "harvest", x: at.x, y: at.y });
       return;
     }
     if (this.state.animals.mounted) return this.getOff();
@@ -2363,8 +2359,12 @@ export class FarmScene extends Phaser.Scene {
       return this.render();
     }
     if (service?.kind === "festival") return openFestival(this);
-    if (service?.kind === "camp-chest")
-      return this.report(takeCampGift(this.state, this.floor));
+    if (service?.kind === "camp-chest" && this.floor !== undefined) {
+      // Opens as a take-only chest screen (note 22, 2026-11-20).
+      this.campScreenOpen = true;
+      this.render();
+      return this.open("chest", { camp: this.floor });
+    }
     if (service?.kind === "ore-bin") return this.open("bin", { oreOnly: true });
     if (service?.kind === "trainer") return this.open("trainer");
     if (service?.kind === "dummy") {

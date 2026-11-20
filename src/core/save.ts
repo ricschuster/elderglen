@@ -1097,6 +1097,7 @@ export function deserialize(text: string): GameState | undefined {
           ...(isSpot(f.ladder)
             ? { ladder: { x: f.ladder.x, y: f.ladder.y } }
             : {}),
+          ...(Array.isArray(f.ground) ? { ground: validPiles(f.ground) } : {}),
           // A save from before creatures has none, and the floor is given its own on load.
           ...(Array.isArray(f.creatures)
             ? {

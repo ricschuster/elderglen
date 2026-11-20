@@ -242,6 +242,34 @@
       "transit": true
     }
   },
+  "spotMarks": {
+    "_note": "A spot on a building with its own interior map is the first of these marks that map has (note 86 marks), moved to the nearest open tile if the mark is on a solid one. interiorSpots below are the fallback tile for a map with none of them, and the tile for spots on the farm house.",
+    "counter": ["spot-counter-serve"],
+    "home": [
+      "spot-home-sit",
+      "spot-home-cook",
+      "bed-hermit",
+      "bed-elf",
+      "spot-lobby-sit",
+      "spot-counter-stock"
+    ],
+    "common": ["spot-hearth", "spot-table-1"],
+    "room": [
+      "spot-forge",
+      "spot-sewing",
+      "spot-ward-round",
+      "spot-reading",
+      "spot-study",
+      "spot-pen",
+      "spot-potting",
+      "spot-sunroom",
+      "spot-window",
+      "spot-lobby-sit",
+      "spot-home-cook",
+      "spot-home-sit"
+    ],
+    "yard": ["spot-workshop-saw", "spot-home-sit"]
+  },
   "interiorSpots": {
     "counter": {
       "x": 5,
