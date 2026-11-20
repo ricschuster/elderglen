@@ -286,6 +286,8 @@ import {
 } from "../core/view";
 import { makePlaceholderTextures, PLAYER_KEY } from "./placeholder-textures";
 import { guestMayOpen } from "../core/menupages";
+import { bedNotice } from "../core/bednotice";
+import type { BedStatus } from "../core/room";
 import { weddingWaiting } from "../core/marriagecard";
 import { proposalFor } from "../core/playermarriage";
 import { PlayerBlocking, resolveBlocking } from "../net/interp";
@@ -674,7 +676,12 @@ export class FarmScene extends Phaser.Scene {
       this.net.onHostLost(() => this.hostLost());
       // The guest's farm copy changes only when the host's `applied` comes back (no prediction).
       this.net.onChange = () => this.render();
-      this.net.onNight = (n) => this.open("report", { lines: n.lines });
+      this.net.onNight = (n) => {
+        this.inBed = false;
+        this.open("report", { lines: n.lines });
+      };
+      const guest = this.net;
+      guest.onBeds = () => this.showBeds(guest.beds);
       this.net.onRejected = (reason) => {
         this.message = `The host said no: ${reason}.`;
         this.render();
@@ -2235,7 +2242,12 @@ export class FarmScene extends Phaser.Scene {
   action(): void {
     if (this.leaving || this.marching) return;
     if (this.useDoor()) return;
-    if (isGuest()) return;
+    if (this.getOutOfBed()) return;
+    if (isGuest()) {
+      const at = this.aimTile();
+      if (this.map.serviceAt(at.x, at.y)?.kind === "bed") this.open("bed");
+      return;
+    }
     if (this.state.animals.mounted) return this.getOff();
     const front = this.aimTile();
     const spot = this.horseSpot();
@@ -2624,7 +2636,10 @@ export class FarmScene extends Phaser.Scene {
     this.remote?.sync();
     if (net instanceof HostSession) {
       const night = net.world.takeHostNight();
-      if (night) this.finishNight(night);
+      if (night) {
+        this.inBed = false;
+        this.finishNight(night);
+      } else this.showBeds(net.world.bedStatus());
     }
     this.checkMarriageCards(net.localId);
   }
@@ -2682,15 +2697,44 @@ export class FarmScene extends Phaser.Scene {
       c.drawn.setVisible(layerShows(c.layer, this.holds));
   }
 
+  /** True once this player is in bed in a session, until they get up or the night passes. */
+  private inBed = false;
+  private bedLine = "";
+
+  /** The "who is left" notice, shown when it changes (a guest's from `beds`, the host's polled). */
+  private showBeds(s: BedStatus): void {
+    const line = bedNotice(s, this.inBed);
+    if (line === this.bedLine) return;
+    this.bedLine = line;
+    this.message = line;
+    this.render();
+  }
+
+  /** In a session, Action gets the player out of bed again (the `wake` intent). */
+  private getOutOfBed(): boolean {
+    if (!this.inBed || !this.net) return false;
+    this.inBed = false;
+    sendWorldIntent(this.net, { kind: "wake" });
+    this.bedLine = "";
+    this.message = "You get out of bed.";
+    this.render();
+    return true;
+  }
+
+  /** In a session the player gets in bed and the room ends the day once everyone is (note 53). */
+  private getInBed(net: NetSession): void {
+    if (this.inBed) return;
+    this.inBed = true;
+    this.bedLine = "";
+    sendWorldIntent(net, { kind: "sleep" });
+    this.message = "You are in bed. The day ends when everyone is.";
+    this.render();
+  }
+
   endDay(): void {
-    if (isGuest()) return;
+    if (this.net instanceof GuestSession) return this.getInBed(this.net);
     detonateAll(this, true);
-    // Hosting: the player gets in bed and the room ends the day once everyone is (note 53).
-    if (this.net instanceof HostSession) {
-      sendWorldIntent(this.net, { kind: "sleep" });
-      this.message = "You are in bed. The day ends when everyone is.";
-      return this.render();
-    }
+    if (this.net instanceof HostSession) return this.getInBed(this.net);
     const g = this.state;
     const farmMap = farmMapOf(g);
     this.finishNight(sleep(g, farmMap.forageSpots, Math.random, farmMap));

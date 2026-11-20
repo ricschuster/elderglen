@@ -26,7 +26,7 @@ import { LOCAL_PLAYER, type PlayerId } from "./players";
 import type { Intent } from "./protocol";
 import { applyFarmIntent } from "./roomintents";
 import { sellMultiplier } from "./professions";
-import type { NightNews, RoomWorld } from "./room";
+import type { BedStatus, NightNews, RoomWorld } from "./room";
 import { serialize, START_MONEY, type GameState } from "./save";
 import { sleep, type SleepReport } from "./sleep";
 
@@ -212,6 +212,13 @@ export class GameRoomWorld implements RoomWorld {
   step(dtMs: number): void {
     const limit = this.g.day.clock.minutes >= CLOCK_END;
     this.tracker.check(dtMs, limit);
+  }
+
+  /** Who is in bed and who is up, by name (the "who is left" notice). */
+  bedStatus(): BedStatus {
+    const d = this.tracker.decision(false);
+    const name = (id: string): string => this.names.get(id) ?? id;
+    return { asleep: d.asleep.map(name), waiting: d.waiting.map(name) };
   }
 
   /** The night's news for the guests' reports, once (the Room sends it). */

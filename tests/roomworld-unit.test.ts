@@ -109,3 +109,23 @@ describe("GameRoomWorld day end report", () => {
     );
   });
 });
+
+describe("GameRoomWorld beds", () => {
+  it("each player must be in bed, and getting out holds the day", () => {
+    const w = mk();
+    w.admit("p2", "Ann");
+    w.addPlayer("p2", "Ann");
+    const day = w.day();
+    w.apply("p1", { kind: "sleep" });
+    expect(w.bedStatus()).toEqual({ asleep: ["Host"], waiting: ["Ann"] });
+    w.apply("p2", { kind: "sleep" });
+    w.apply("p1", { kind: "wake" });
+    expect(w.bedStatus()).toEqual({ asleep: ["Ann"], waiting: ["Host"] });
+    w.step(5000);
+    expect(w.day()).toBe(day);
+    w.apply("p1", { kind: "sleep" });
+    w.step(2000);
+    expect(w.day()).toBe(day + 1);
+    expect(w.bedStatus()).toEqual({ asleep: [], waiting: ["Host", "Ann"] });
+  });
+});

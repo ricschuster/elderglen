@@ -239,6 +239,8 @@ export const GUEST_SCREENS = [
   "wedding",
   // The night's report (guest copy from the host's `night` message) changes nothing.
   "report",
+  // The bed prompt sends a `sleep` intent and changes nothing locally.
+  "bed",
 ];
 
 /** True when a guest may open this screen kind. */

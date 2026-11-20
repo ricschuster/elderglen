@@ -149,8 +149,8 @@ describe("host and guest session", () => {
     const copy = guest.loadFarm()!;
     const before = copy.day.clock.day;
     state.day.clock.nextDay();
-    await until(() => guest.followDay(copy.day.clock));
-    expect(copy.day.clock.day).toBe(before + 1);
+    // The night's `farm` message replaces the copy in place, so the clock follows with it.
+    await until(() => copy.day.clock.day === before + 1);
   });
 
   it("follows the host's minutes between day changes", async () => {
@@ -220,5 +220,31 @@ describe("guest applies the host's intents", () => {
     guest.sendIntent({ kind: "plant", x: 7, y: 7, seed: "parsnip-seed" });
     await until(() => why !== "");
     expect(copy.farm.plotAt(7, 7)).toBeUndefined();
+  });
+});
+
+describe("shared day end over the wire", () => {
+  it("the guest sees who is left, wakes, sleeps, and gets a fresh farm copy", async () => {
+    const { host, guest, state } = await pair();
+    const copy = guest.loadFarm()!;
+    const seen: string[][] = [];
+    guest.onBeds = () => seen.push([...guest.beds.asleep]);
+    let night = 0;
+    guest.onNight = () => (night += 1);
+    host.host.room.hostIntent({ kind: "sleep" });
+    await until(() => guest.beds.asleep.includes("Host"));
+    guest.sendIntent({ kind: "sleep" });
+    await until(() => guest.beds.asleep.includes("Ada"));
+    guest.sendIntent({ kind: "wake" });
+    await until(() => !guest.beds.asleep.includes("Ada"));
+    expect(seen.length).toBeGreaterThanOrEqual(3);
+    expect(guest.beds.asleep).toEqual(["Host"]);
+    state.farm.till(9, 9);
+    guest.sendIntent({ kind: "sleep" });
+    await until(() => night === 1);
+    await until(() => copy.day.clock.day === state.day.clock.day);
+    expect(state.day.clock.day).toBeGreaterThan(1);
+    expect(host.world.g).toBe(state);
+    expect(copy.farm.plotAt(9, 9)?.tilled).toBe(true);
   });
 });
