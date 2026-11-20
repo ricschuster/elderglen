@@ -1,7 +1,8 @@
-// Farm intents of the RoomWorld (note 53, issue 976): till, plant, water, harvest, buy, sell. Each runs the
+// Farm intents of the RoomWorld (note 53, issue 976): till, plant, water, harvest, axe, pickaxe, buy, sell. Each runs the
 // same core function single player uses, as the sending player: their inventory, can, skills,
 // tool tiers, wallet and energy. Free of Phaser and the DOM.
 import * as actions from "./actions";
+import { farmMapOf } from "./farmtypes";
 import { itemById } from "./items";
 import type { Intent } from "./protocol";
 import { LOCAL_PLAYER, type PlayerId } from "./players";
@@ -9,6 +10,8 @@ import { potPrice, sellMultiplier } from "./professions";
 import { POT_ITEM } from "./pots";
 import type { GameState } from "./save";
 import { buy, sell } from "./shop";
+import { findTool } from "./toolitems";
+import { useHeld } from "./tools";
 
 /** Most items one buy or sell intent may move. */
 const MAX_COUNT = 999;
@@ -72,6 +75,20 @@ export function applyFarmIntent(
       if (!isTile(x) || !isTile(y)) return "bad harvest";
       // Experience and the crop go to the sender: the single player function, as them.
       return asPlayer(g, by, () => outcome(actions.harvest(g, x, y, random)));
+    }
+    case "axe":
+    case "pickaxe": {
+      const { x, y } = intent;
+      if (!isTile(x) || !isTile(y)) return `bad ${intent.kind}`;
+      const tool = intent.kind;
+      return asPlayer(g, by, () => {
+        if (findTool(g.inventory, tool) < 0) return `no ${tool}`;
+        // The farm map's stumps, logs, trees, boulders and rocks, as the host's tool: experience
+        // (foraging for the axe, mining for the pickaxe), drops, tier and energy are the sender's.
+        return outcome(
+          useHeld(g, farmMapOf(g), { kind: "tool", tool }, x, y, undefined),
+        );
+      });
     }
     case "plant": {
       const { x, y, seed } = intent;

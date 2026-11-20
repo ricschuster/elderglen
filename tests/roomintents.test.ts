@@ -2,8 +2,9 @@ import { describe, expect, it } from "vitest";
 import { GameRoomWorld } from "../src/core/roomworld";
 import { itemById } from "../src/core/items";
 import { newGame } from "../src/core/save";
+import { Trees } from "../src/core/trees";
 import { Inventory } from "../src/core/inventory";
-import { findTool } from "../src/core/toolitems";
+import { ensureTools, findTool } from "../src/core/toolitems";
 import { MAX_ENERGY } from "../src/core/energy";
 import { TOOL_ENERGY } from "../src/core/actions";
 import { LOCAL_PLAYER } from "../src/core/players";
@@ -125,6 +126,80 @@ describe("farm intents", () => {
       "bad harvest",
     );
     expect(w.apply("p2", { kind: "harvest", x: 2, y: 2 })).toBe("nothing ripe");
+  });
+
+  it("axe fells a tree for the guest: wood and foraging go to them, with their tier and energy", () => {
+    const w = mk();
+    ensureTools(w.g.players.get("p2").inventory);
+    const g = w.g;
+    const guest = g.players.get("p2");
+    const host = g.players.get(LOCAL_PLAYER);
+    g.trees = new Trees([{ x: 5, y: 5, stage: 5 }]);
+    const hostXp = host.skills.xpOf("foraging");
+    let r: string | undefined;
+    for (let i = 0; i < 12 && g.trees.at(5, 5); i++)
+      r = w.apply("p2", { kind: "axe", x: 5, y: 5 });
+    expect(r).toBeUndefined();
+    expect(g.trees.at(5, 5)?.stump).toBe(true);
+    expect(guest.inventory.count("wood")).toBeGreaterThan(0);
+    expect(guest.skills.xpOf("foraging")).toBeGreaterThan(0);
+    expect(host.skills.xpOf("foraging")).toBe(hostXp);
+    expect(host.inventory.count("wood")).toBe(0);
+    expect(guest.energy.current).toBeLessThan(MAX_ENERGY);
+    expect(g.players.localId).toBe(LOCAL_PLAYER);
+  });
+
+  it("axe refuses a large stump on the guest's own tool tier, to the sender", () => {
+    const w = mk();
+    ensureTools(w.g.players.get("p2").inventory);
+    const g = w.g;
+    g.trees = new Trees([{ x: 5, y: 5, stage: 5, large: true }]);
+    // The host's axe is better; the guest's is still basic.
+    g.players.get(LOCAL_PLAYER).toolTiers.axe = 3;
+    expect(w.apply("p2", { kind: "axe", x: 5, y: 5 })).toBe(
+      "needs a better axe",
+    );
+    expect(w.apply("p2", { kind: "axe", x: 6, y: 6 })).toBe("nothing to chop");
+  });
+
+  it("pickaxe breaks a rock for the guest: the drop and mining experience are theirs", () => {
+    const w = mk();
+    ensureTools(w.g.players.get("p2").inventory);
+    const g = w.g;
+    const guest = g.players.get("p2");
+    const host = g.players.get(LOCAL_PLAYER);
+    g.rocks.add(7, 7, "stone");
+    const hostXp = host.skills.xpOf("mining");
+    let r: string | undefined;
+    for (let i = 0; i < 8 && g.rocks.at(7, 7); i++)
+      r = w.apply("p2", { kind: "pickaxe", x: 7, y: 7 });
+    expect(r).toBeUndefined();
+    expect(g.rocks.at(7, 7)).toBeUndefined();
+    expect(guest.inventory.count("stone")).toBeGreaterThan(0);
+    expect(guest.skills.xpOf("mining")).toBeGreaterThan(0);
+    expect(host.skills.xpOf("mining")).toBe(hostXp);
+    expect(host.inventory.count("stone")).toBe(0);
+    expect(g.players.localId).toBe(LOCAL_PLAYER);
+  });
+
+  it("axe and pickaxe refuse bad tiles, nothing there, no energy and a missing tool", () => {
+    const w = mk();
+    ensureTools(w.g.players.get("p2").inventory);
+    const g = w.g;
+    const guest = g.players.get("p2");
+    expect(w.apply("p2", { kind: "axe", x: -1, y: 2 })).toBe("bad axe");
+    expect(w.apply("p2", { kind: "pickaxe", x: 2, y: 1.5 })).toBe(
+      "bad pickaxe",
+    );
+    expect(w.apply("p2", { kind: "pickaxe", x: 2, y: 2 })).toBe(
+      "nothing to mine",
+    );
+    g.rocks.add(7, 7, "stone");
+    guest.energy.current = 0;
+    expect(w.apply("p2", { kind: "pickaxe", x: 7, y: 7 })).toBeDefined();
+    guest.energy.current = MAX_ENERGY;
+    guest.inventory.load(new Inventory().save());
+    expect(w.apply("p2", { kind: "axe", x: 5, y: 5 })).toBe("no axe");
   });
 
   it("rejects bad input and an empty guest, to the sender", () => {
