@@ -38,14 +38,7 @@ import {
   type IceFishing,
 } from "../core/icefishing";
 
-import {
-  meet,
-  presentAt,
-  talkTarget,
-  villagersOn,
-  type Present,
-} from "../core/townfolk";
-import { paradeJoinedAt } from "../core/parade";
+import { meet, presentAt, talkTarget, type Present } from "../core/townfolk";
 
 import type { GameState } from "../core/save";
 import { cycle, heldAt, nextRow, toolbarSize } from "../core/toolbar";
@@ -95,8 +88,13 @@ import { NOTHING_TO_ACT_ON, act, reasonText, useHeld } from "../core/tools";
 
 import { mapFiles, maps } from "../content/maps";
 import { START } from "../core/maps";
-import { HAT_KEY, villagerKey } from "./art-people";
+import { HAT_KEY } from "./art-people";
 import { DEPTH, sortDepth } from "./depth";
+import {
+  WalkState,
+  syncVillagers as syncVillagerSprites,
+  type VillagerSprite,
+} from "./farm-walkers";
 import { drawMapArt } from "./mapart";
 import { MAP_PASSES } from "./map-passes";
 
@@ -345,7 +343,6 @@ import {
   TICK_MS,
 } from "./farm-consts";
 import {
-  festivalMinutes,
   updateParade,
   festivalAction,
   pierKeeper,
@@ -497,10 +494,9 @@ export class FarmScene extends Phaser.Scene {
   tapShot?: { x: number; y: number; until: number };
   /** Villagers on this map right now and the placeholder blocks that show them (#599). */
   villagers: Present[] = [];
-  private villagerSprites = new Map<
-    string,
-    { box: Phaser.GameObjects.Image; tag: Phaser.GameObjects.Text }
-  >();
+  villagerSprites = new Map<string, VillagerSprite>();
+  /** Where each walker is behind their schedule, and the sprites a script has taken over (note 79). */
+  walkers = new WalkState();
   /** The tile last checked for a heart event. */
   private eventTile = "";
   villagerStamp = -1;
@@ -718,6 +714,7 @@ export class FarmScene extends Phaser.Scene {
     this.ice = undefined;
     this.villagers = [];
     this.villagerSprites = new Map();
+    this.walkers = new WalkState();
     this.villagerStamp = -1;
     this.syncVillagers(world);
     const built = this.map.bounds;
@@ -903,6 +900,7 @@ export class FarmScene extends Phaser.Scene {
     } else if (isFarmMap(this.mapId) && this.state.orders.introDue(today)) {
       this.time.delayedCall(400, () => this.showOrdersIntro());
     }
+    this.tickAt = this.time.now;
     this.time.addEvent({
       delay: TICK_MS / DEV_SPEED,
       loop: true,
@@ -1026,7 +1024,7 @@ export class FarmScene extends Phaser.Scene {
     );
     this.drawGlow();
     updateBombs(this, dt);
-    this.syncVillagers();
+    this.syncVillagers(undefined, dt);
     updateHunt(this, dt);
     this.checkHeartEvent();
     this.checkWedding();
@@ -1296,82 +1294,11 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /**
-   * Show the villagers the schedule puts on this map (#599). Runs each frame
-   * but only does work when the game minute or day changes. Placeholder blocks
-   * with a name tag; people jump between schedule stops (no walking yet).
+   * Show the villagers the schedule puts on this map (#599). Runs each frame;
+   * people walk between their stops (note 79, `farm-walkers.ts`).
    */
-  private syncVillagers(world?: Phaser.GameObjects.GameObject[]): void {
-    const clock = this.state.day.clock;
-    // The clock ticks 10 minutes at a time, but the Hat Parade walks a tile a
-    // minute, so on a festival day the minute runs on between ticks (note 82).
-    const minutes = festivalMinutes(this);
-    const stamp = clock.day * 2000 + Math.floor(minutes);
-    if (stamp === this.villagerStamp) return;
-    this.villagerStamp = stamp;
-    // Time stands still on a festival map; the festival layer places people on it too.
-    this.villagers = villagersOn(this.state, this.mapId, clock.day, minutes, {
-      hallRestored: hallRestored(this.state.hall),
-      paradeJoinedAt: paradeJoinedAt(this.state),
-    });
-    const ts = this.map.tileSize;
-    const here = new Set(this.villagers.map((v) => v.id));
-    for (const [id, s] of this.villagerSprites)
-      if (!here.has(id)) {
-        s.box.destroy();
-        s.tag.destroy();
-        this.villagerSprites.delete(id);
-      }
-    for (const v of this.villagers) {
-      let s = this.villagerSprites.get(v.id);
-      if (!s) {
-        const box = this.add.image(0, 0, villagerKey(v.id)).setOrigin(0.5, 1);
-        const tag = this.add
-          .text(0, 0, v.name, {
-            fontSize: "8px",
-            color: "#ffffff",
-            backgroundColor: "#000000aa",
-            padding: { x: 2, y: 1 },
-          })
-          .setOrigin(0.5, 1)
-          .setDepth(900);
-        if (world) world.push(box, tag);
-        else this.uiCamera.ignore([box, tag]);
-        s = { box, tag };
-        this.villagerSprites.set(v.id, s);
-      }
-      const px = (v.x + 0.5) * ts;
-      const py = (v.y + 1) * ts - 1;
-      if (v.marching && s.box.x !== 0 && s.box.x !== px) {
-        // A marcher glides to the next tile instead of jumping.
-        const to = { x: px, y: py };
-        this.tweens.killTweensOf([s.box, s.tag]);
-        this.tweens.add({
-          targets: s.box,
-          ...to,
-          duration: 600,
-          onUpdate: () => {
-            s.box.setDepth(sortDepth(s.box.y));
-            s.tag.setPosition(s.box.x, s.box.y - 13);
-          },
-        });
-      } else {
-        s.box.setPosition(px, py).setDepth(sortDepth(py));
-        s.tag.setPosition(px, py - 13);
-      }
-    }
-    // Two villagers standing close would draw their names on top of each other.
-    const settled = [...this.villagerSprites.values()].filter(
-      (s) => !this.tweens.isTweening(s.box),
-    );
-    const base = settled.map((s) => ({
-      x: s.box.x,
-      y: s.box.y - 13,
-      text: s.tag.text,
-    }));
-    const off = stackOffsets(base);
-    settled.forEach((s, i) =>
-      s.tag.setPosition(base[i]!.x, base[i]!.y + off[i]!),
-    );
+  private syncVillagers(world?: Phaser.GameObjects.GameObject[], dt = 0): void {
+    syncVillagerSprites(this, dt, !(this.net instanceof GuestSession), world);
   }
 
   /** The villager Action last talked to, to settle a tie between two people beside the faced tile. */
@@ -1387,6 +1314,7 @@ export class FarmScene extends Phaser.Scene {
     );
     if (!who) return false;
     this.lastTalkedId = who.id;
+    this.walkers.hold(who.id, this.time.now);
     // In a hedge niche a villager says their one Hollow Eve line (note 82).
     if (festivalOfMap(this.mapId)?.activity === "maze") {
       const line = nicheLine(who.id);

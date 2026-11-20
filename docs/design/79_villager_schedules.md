@@ -173,6 +173,34 @@ draft must keep these, and must not reuse them or sit close to them:
 Also off limits: Tolkien's dwarf and elf names and the Norse dwarf-name list
 (note 09), and Stardew's villager names (ADR 0002).
 
+## Built 2026-11-20 (the walker)
+
+Decisions 1, 9, 10 and 11 are built for Hearthwell and its interiors. Core:
+`src/core/walkers.ts` (pure, tested in `tests/walkers.test.ts`), numbers in
+`src/content/walkers.json`. A day is the stops plus the home place at minute 0; the
+leg to a stop runs from the last stop's tile to the interior door, onto the outer
+map at the building's entry tile, across the outer map (A*, `pathing.ts`), through
+the next door and on to the stop tile. It ends at the stop's time and starts
+`tiles / 2.5` minutes earlier, never before the stop it leaves (2.5 tiles per game
+minute, the player is 3.5). A gap that needs more than 2 times the speed snaps (no
+leg), today three route entries: Fitch green to store (30 min), Bramwell smithy to
+river path (10 min), Cordelia hatter to green (10 min); tune them in note 80.
+`road:<area>` stops stay off every map: a leaver walks to the map's edge entry
+(`edges` in the JSON) and ends there, an arriver starts on the edge entry.
+`villagersOn` returns walkers with `fx`, `fy` (between tiles), `facing`, `ahead`.
+The scene is `src/scenes/farm-walkers.ts`: sprites follow `fx, fy` every frame, flip
+by facing, and a talk holds the person (`WalkState.hold`, 4 s). Each person has a
+`lag` in game minutes: grown while held or while the tile ahead holds the player or
+another person, paid back by walking 30 percent faster; after 2.5 s blocked they
+hop two tiles on, and a lag over 20 minutes snaps to the schedule. A tap within
+three quarters of a tile of a moving person counts as on them. `WalkState.busy`
+lets a scripted animation take over a sprite. Festival days keep the parade as it
+was (lag does not apply). Left: legs between two area maps without a road stop
+(spouse and heart-event routes outside the home valley snap), the placeholder
+`edges` entries for the Forest, Quarry, Mines and Beach need checking with the real
+exits, people do not open doors or react to the player in the way, and the jam
+rules are only seen by hand.
+
 ## Next
 
 1. **Names, in batches by place** (owner). Batch 1 (the Forest and the Mountain) is done, see "Settled names". Batch 2 (the Mines, delta and Beach) is done too. Batch 3 (all 21 Hearthwell people) is done too, so all 30 are named. The plan was: the Forest and the Mountain first,

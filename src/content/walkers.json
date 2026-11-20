@@ -1,0 +1,25 @@
+{
+  "_note": "Villager walker (note 79 decisions 1, 9, 10, 11). Every number is a placeholder. The player walks 5 tiles a real second, which is 3.5 tiles per game minute at 7 s per 10 minutes, so people walk a little slower. edges: for an area, the entry on its map where the road to another area leaves and arrives (a person leaving a map walks to it and vanishes there).",
+  "tilesPerMinute": 2.5,
+  "maxRush": 2,
+  "waitSeconds": 2.5,
+  "talkHoldSeconds": 4,
+  "maxLagMinutes": 20,
+  "catchUp": 0.3,
+  "edges": {
+    "hw": {
+      "forest": "from_farm",
+      "quarry": "from_mountain",
+      "mtn": "from_mountain",
+      "mines": "from_mountain",
+      "delta": "from_delta",
+      "beach": "from_delta"
+    },
+    "forest": { "hw": "from_farm" },
+    "mtn": { "hw": "from_hearthwell" },
+    "quarry": { "hw": "from_mountain" },
+    "mines": { "hw": "door" },
+    "delta": { "hw": "from_hearthwell" },
+    "beach": { "hw": "from_ferry" }
+  }
+}
