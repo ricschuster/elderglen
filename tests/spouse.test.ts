@@ -509,4 +509,16 @@ describe("the spouse room and the wedding mark", () => {
     expect(weddingMark(g)).toMatch(/Bramwell.*in 3 days/);
     expect(questLines(g)[0]).toMatch(/Wedding/);
   });
+
+  it("keeps a married-since line in the journal after the wedding", () => {
+    const g = newGame();
+    g.friendship.meet("bramwell");
+    g.friendship.award("bramwell", 10 * HEART);
+    g.marriage.court("bramwell", 99999);
+    g.marriage.engage("bramwell", 99999, g.day.clock.day);
+    g.day.clock.day += 3;
+    expect(g.marriage.marry(g.day.clock.day)).toBe(true);
+    expect(weddingMark(g)).toMatch(/Married to Bramwell since .* year 1\./);
+    expect(questLines(g)[0]).toMatch(/Married to/);
+  });
 });

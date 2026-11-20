@@ -163,10 +163,15 @@ export function weddingMorning(g: GameState): "go" | "postponed" | "none" {
 
 /**
  * The calendar mark for the wedding day (note 84): a journal line while engaged,
- * or "" otherwise. A festival or a rain day moves the day, and this follows it.
+ * a "married since" line afterwards, or "" otherwise. A festival or a rain day moves the day, and this follows it.
  */
 export function weddingMark(g: Pick<GameState, "marriage" | "day">): string {
   const m = g.marriage;
+  // Once married the journal keeps a line, so the day is not forgotten (owner, 2026-11-20).
+  if (m.married && m.spouse) {
+    const { season, dayOfSeason, year } = dateOf(m.weddingDay);
+    return `Married to ${nameOf(m.spouse)} since ${season} ${dayOfSeason}, year ${year}.`;
+  }
   if (m.stage !== "engaged" || !m.spouse) return "";
   const { season, dayOfSeason } = dateOf(m.weddingDay);
   const left = m.weddingDay - g.day.clock.day;
