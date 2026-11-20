@@ -43,6 +43,19 @@ describe("Room", () => {
     expect(w.snaps).toBe(2);
   });
 
+  it("gives each joiner a name no one else has", () => {
+    const r = new Room(new FakeWorld());
+    const a = r.join("Guest");
+    const b = r.join("Guest");
+    const c = r.join("Host");
+    const names = r.info().map((p) => p.name);
+    expect(new Set(names).size).toBe(names.length);
+    expect(names).toEqual(
+      expect.arrayContaining(["Guest", "Guest 2", "Host 2"]),
+    );
+    expect([a, b, c].every((id) => id !== undefined)).toBe(true);
+  });
+
   it("refuses a ninth player", () => {
     const r = new Room(new FakeWorld());
     for (let i = 0; i < 7; i++) expect(r.join("g")).toBeDefined();

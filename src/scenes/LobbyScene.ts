@@ -111,7 +111,7 @@ export class LobbyScene extends Phaser.Scene {
     this.hostText = this.add
       .text(
         240,
-        200,
+        t.canHost ? 350 : 200,
         t.canHost
           ? "Start a game others can join."
           : "A browser tab cannot host. Use the desktop or tablet app.",
@@ -182,10 +182,10 @@ export class LobbyScene extends Phaser.Scene {
     KEYS.forEach((row, r) =>
       [...row].forEach((ch, i) =>
         this.button(
-          538 + i * 46,
-          316 + r * 46,
-          42,
-          42,
+          535 + i * 41,
+          310 + r * 42,
+          38,
+          38,
           ch,
           0x3a4a5a,
           () => this.press(ch),
@@ -195,9 +195,9 @@ export class LobbyScene extends Phaser.Scene {
     );
     this.button(
       578,
-      408,
+      394,
       120,
-      42,
+      38,
       "Delete",
       0xa0482e,
       () => this.press("Backspace"),
@@ -205,9 +205,9 @@ export class LobbyScene extends Phaser.Scene {
     );
     this.button(
       718,
-      408,
+      394,
       120,
-      42,
+      38,
       "Clear",
       0x4a5a7a,
       () => {
