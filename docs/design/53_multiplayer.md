@@ -389,7 +389,8 @@ level only. Nothing is built, and the build waits for M4.
 - **Player marriage, first rulings (owner, 2026-11-18, all from memory of Stardew, SC-205).**
   - **Proposal:** one player offers the pendant (note 12) and the other accepts or declines. A decline costs nothing. Built 2026-11-19 (note 12 "Steps already decided"): core, intents, cards and ledger, placeholder, scenes untested in a browser.
   - **Home:** one moves into the other's cabin. The vacated cabin stays so a divorce has a place to return to. The
-    couple share one bed and count as both in bed.
+    couple share one bed, and each must get in it
+    themselves: the normal every-player-in-bed day end applies (owner, 2026-11-19: "same as normal Stardew multiplayer").
   - **Children:** the same shared question as villager marriage (note 12), one child shown in the home, both
     partners are the parents.
   - **One spouse per villager:** a villager married or engaged to a player is off limits to the others, who keep
@@ -480,3 +481,10 @@ From the saved Multiplayer page. Not copied, only compared.
 
 - `src/net/hostworld.ts`: `planHost(kv, choice, options)` decides the world to host. A slot hosts that slot's played state (day in progress if any) with its own wallet mode; a corrupt, newer-version or empty slot is refused in words and never touched. "A new farm" is a multiplayer start saved to the first empty slot (all used: refused), with the wallet choice. The Lobby has a "Farm:" button cycling new farm and each used slot, then runs `startHostSession` and enters the farm scene, as the Title Host button does. The host stays the owner of the save: only the slot it plays in is written. Guests never save (`nightSave` and `resumeSave` refuse while `isGuest()`).
 - Left: the placeholder `makeWorld` in the Lobby transport is unused for hosting (kept for the transport tests); a new farm skips the farm-type screen (standard farm); nothing run on a device.
+
+## Built status: shared day end wired (2026-11-19)
+
+- The host's bed (and exhaustion) no longer calls `sleep()` in a session: `FarmScene.endDay` sends the `sleep` intent and shows "You are in bed". `Room.tick` steps `GameRoomWorld.step`, so the `DayEndTracker` ends the day once (everyone in bed after the 1.5 s settle, or the 2 am limit), runs `sleep()` for the world and charges each passed-out guest the single player cost.
+- Reports. The host's scene takes the `SleepReport` once (`takeHostNight`, polled in `syncNet`) and runs the usual morning steps (`finishNight`); its report adds wedding and divorce lines (`marriageReportLines` now takes the weddings, and tells the filer "Your divorce from X is final"). Each guest gets a `night` message (`{day, lines, lost}`, `Room.tick` via `RoomWorld.takeNight`) and `GuestSession.onNight` opens the report screen with those lines.
+- Beds for everyone (2026-11-19): each player must be in bed themselves, no shared-bed shortcut. A guest's `endDay` key, or Action on a bed service (the `bed` prompt is now a guest screen), sends `sleep`; Action again gets any player up (`wake`, host included). A `beds` message ({asleep, waiting}, names, sent when it changes; the host polls `bedStatus`) feeds the "who is left" line (`src/core/bednotice.ts`). After each night every connected guest gets the `farm` message (it replaces the `day` marker) and `GuestSession` swaps the copy in place, so random rolls cannot drift.
+- Left: the guest's bed is any bed service on the scene's map (no cabin interior map yet, so "own cabin bed" is not enforced); a guest cannot tell they were put to bed by the limit except through the report; the bed, wake and notice flow is untested in a browser.

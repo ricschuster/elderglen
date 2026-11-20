@@ -25,10 +25,10 @@ import { PASS_OUT_MONEY_CAP, PASS_OUT_MONEY_SHARE } from "./day";
 import { LOCAL_PLAYER, type PlayerId } from "./players";
 import type { Intent } from "./protocol";
 import { applyFarmIntent } from "./roomintents";
-import { sellMultiplier } from "./professions";
-import type { RoomWorld } from "./room";
+import type { BedStatus, NightNews, RoomWorld } from "./room";
 import { serialize, START_MONEY, type GameState } from "./save";
 import { sleep, type SleepReport } from "./sleep";
+import { giveStartKit } from "./toolbar";
 
 export interface RoomWorldOptions {
   /** How cabins come: free at a multiplayer start, or bought by the host in a converted game. */
@@ -70,6 +70,9 @@ export class GameRoomWorld implements RoomWorld {
   /** Guests' pass-outs on the last night: id to gold lost. */
   lastPassOuts: Record<PlayerId, number> = {};
   private pending: JoinResult | undefined;
+  /** The night just ended, held until the Room (guests) and the host's scene each take it. */
+  private guestNight: NightNews | undefined;
+  private hostNight: SleepReport | undefined;
   private readonly o: Required<
     Pick<RoomWorldOptions, "cabinArea" | "blocked" | "random" | "spots">
   >;
@@ -128,7 +131,8 @@ export class GameRoomWorld implements RoomWorld {
       this.cabins = this.pending.book;
     this.pending = undefined;
     const start = this.g.players.walletMode === "separate" ? START_MONEY : 0;
-    this.g.players.add(id, start);
+    const rec = this.g.players.add(id, start);
+    giveStartKit(rec.inventory, this.g.farmType);
     this.names.set(id, name);
     this.tracker.add(id);
   }
@@ -161,15 +165,6 @@ export class GameRoomWorld implements RoomWorld {
     const players = this.g.players;
     if (!players.has(by)) return "unknown player";
     switch (intent.kind) {
-      case "ship": {
-        const id = intent.id;
-        const n = intent.n;
-        if (typeof id !== "string" || typeof n !== "number") return "bad ship";
-        const rec = players.get(by);
-        const mult = sellMultiplier(rec.skills, id);
-        const put = this.g.bin.ship(rec.inventory, id, n, mult, by);
-        return put > 0 ? undefined : "nothing shipped";
-      }
       case "spend": {
         const amount = intent.amount;
         if (
@@ -183,13 +178,12 @@ export class GameRoomWorld implements RoomWorld {
         return undefined;
       }
       case "sleep":
+        // A wed pair share a bed but each must get in it: the day ends when every player is
+        // in bed, as in normal multiplayer (note 12 and 53, decided 2026-11-19).
         this.tracker.setAsleep(by);
-        // A wed pair share one bed: in bed counts for both (note 12 and 53).
-        for (const k of this.bedmates(by)) this.tracker.setAsleep(k);
         return undefined;
       case "wake":
         this.tracker.wake(by);
-        for (const k of this.bedmates(by)) this.tracker.wake(k);
         return undefined;
       case "buy-cabin": {
         if (by !== LOCAL_PLAYER) return "host only";
@@ -207,17 +201,52 @@ export class GameRoomWorld implements RoomWorld {
     }
   }
 
-  /** The wed partner who shares this player's bed, if they are in this world. */
-  private bedmates(id: PlayerId): PlayerId[] {
-    const k = pm.isMarried(this.marriages, id)
-      ? pm.partnerOf(this.marriages, id)
-      : undefined;
-    return k && this.g.players.has(k) ? [k] : [];
-  }
-
   step(dtMs: number): void {
     const limit = this.g.day.clock.minutes >= CLOCK_END;
     this.tracker.check(dtMs, limit);
+  }
+
+  /** Who is in bed and who is up, by name (the "who is left" notice). */
+  bedStatus(): BedStatus {
+    const d = this.tracker.decision(false);
+    const name = (id: string): string => this.names.get(id) ?? id;
+    return { asleep: d.asleep.map(name), waiting: d.waiting.map(name) };
+  }
+
+  /** The night's news for the guests' reports, once (the Room sends it). */
+  takeNight(): NightNews | undefined {
+    const n = this.guestNight;
+    this.guestNight = undefined;
+    return n;
+  }
+
+  /** The night's report for the host's own morning screen, once (the farm scene takes it). */
+  takeHostNight(): SleepReport | undefined {
+    const r = this.hostNight;
+    this.hostNight = undefined;
+    return r;
+  }
+
+  /** Report lines for one guest: the pass-out outcome and the marriage news (note 12, 53). */
+  guestLines(id: PlayerId): { lines: string[]; lost: number } {
+    const lost = this.lastPassOuts[id] ?? 0;
+    const out = id in this.lastPassOuts;
+    const lines = [
+      !out
+        ? "You slept well."
+        : lost > 0
+          ? `You stayed up too late and passed out. Someone helped you home and kept ${lost}g for the trouble.`
+          : "You stayed up too late and passed out. Someone helped you home. It cost you nothing.",
+      ...pm.marriageReportLines(
+        this.marriages,
+        id,
+        this.day(),
+        (k) => this.names.get(k) ?? k,
+        this.lastDivorces,
+        this.lastWeddings,
+      ),
+    ];
+    return { lines, lost };
   }
 
   /** Day end: guests who pass out pay the single player cost, then the world sleeps. */
@@ -238,7 +267,9 @@ export class GameRoomWorld implements RoomWorld {
     }
     // An unanswered proposal ends with the day, the token goes back (owner, 2026-11-19).
     expireProposalsAndRefund(this.g);
-    this.lastReport = sleep(this.g, this.o.spots, this.o.random);
+    const report = sleep(this.g, this.o.spots, this.o.random);
+    this.lastReport = report;
+    this.hostNight = report;
     // The new morning: filed divorces take effect, then due weddings play (no wait for the partner).
     this.lastDivorces = pm.divorceMorning(this.marriages);
     this.lastWeddings = pm.weddingMorning(
@@ -246,5 +277,9 @@ export class GameRoomWorld implements RoomWorld {
       this.day(),
       weddingBlock(this.g),
     );
+    this.guestNight = {
+      day: this.day(),
+      forGuest: (id) => this.guestLines(id),
+    };
   }
 }

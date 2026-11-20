@@ -8,6 +8,7 @@ import { cabinSpawnTile } from "../core/cabins";
 import { farmMapOf } from "../core/farmtypes";
 import { LOCAL_PLAYER, type PlayerId } from "../core/players";
 import type { Intent, PlayerInfo, PosRow, ServerMsg } from "../core/protocol";
+import type { BedStatus } from "../core/room";
 import { GameRoomWorld } from "../core/roomworld";
 import { deserialize, type GameState } from "../core/save";
 import type { GuestClient } from "./client";
@@ -114,6 +115,11 @@ export class GuestSession implements NetSession {
   onChange?: () => void;
   /** Called with the reason when the host refuses an intent of this guest. */
   onRejected?: (reason: string) => void;
+  /** Called with the night's report lines when the host ends the day (note 53, shared day end). */
+  onNight?: (n: { day: number; lines: string[]; lost: number }) => void;
+  /** The latest bed state from the host, and a callback when it changes. */
+  beds: BedStatus = { asleep: [], waiting: [] };
+  onBeds?: () => void;
 
   constructor(readonly client: GuestClient) {
     client.onMessage = (m) => this.follow(m);
@@ -121,6 +127,11 @@ export class GuestSession implements NetSession {
 
   private follow(m: ServerMsg): void {
     if (m.t === "rejected") this.onRejected?.(m.reason);
+    else if (m.t === "night") this.onNight?.(m);
+    else if (m.t === "beds") {
+      this.beds = { asleep: m.asleep, waiting: m.waiting };
+      this.onBeds?.();
+    } else if (m.t === "farm" && this.farm) this.refreshFarm(m.farm);
     else if (this.farm && applyServerMsg(this.farm, m)) this.onChange?.();
   }
 
@@ -158,6 +169,16 @@ export class GuestSession implements NetSession {
     if (g && g.players.has(this.client.id)) g.players.localId = this.client.id;
     this.farm = g;
     return g;
+  }
+
+  /** A night passed: replace the farm copy in place (the scene keeps its reference). */
+  private refreshFarm(text: string): void {
+    const g = deserialize(text);
+    const cur = this.farm;
+    if (!g || !cur) return;
+    g.players.localId = this.client.id;
+    Object.assign(cur, g);
+    this.onChange?.();
   }
 
   /** The tile to start on: beside the guest's cabin, else the map's entry (undefined). */

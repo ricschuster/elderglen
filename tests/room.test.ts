@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Room, type RoomWorld } from "../src/core/room";
+import { Room, type NightNews, type RoomWorld } from "../src/core/room";
 import { decodeClient, encode } from "../src/core/protocol";
 import { JamTracker } from "../src/core/jam";
 import type { Intent } from "../src/core/protocol";
@@ -98,7 +98,7 @@ describe("Room", () => {
     expect(r.drain(a)).toHaveLength(1);
   });
 
-  it("sends a day marker to present guests and the farm to an away one", () => {
+  it("sends the farm to every guest after a night, present or away", () => {
     const w = new FakeWorld();
     const r = new Room(w);
     const a = r.join("Ann")!;
@@ -108,7 +108,9 @@ describe("Room", () => {
     r.drain(b);
     w.dayNo = 2;
     r.tick(100);
-    expect(r.drain(a).map((m) => m.t)).toEqual(["day", "snap"]);
+    const ann = r.drain(a);
+    expect(ann.map((m) => m.t)).toEqual(["farm", "snap"]);
+    expect(ann[0]).toMatchObject({ farm: "farm-day-2", day: 2 });
     const bo = r.drain(b);
     expect(bo.map((m) => m.t)).toEqual(["farm", "snap"]);
     expect(bo[0]).toMatchObject({ farm: "farm-day-2", day: 2 });
@@ -156,5 +158,48 @@ describe("Room", () => {
     expect(decodeClient("nope")).toBeUndefined();
     expect(decodeClient('{"t":"pos","x":"a"}')).toBeUndefined();
     expect(decodeClient('{"t":"intent","seq":1,"intent":{}}')).toBeUndefined();
+  });
+});
+
+describe("Room night report", () => {
+  it("sends each guest their own night message before the day change, not the host", () => {
+    const w = new FakeWorld();
+    let news: NightNews | undefined;
+    (w as RoomWorld).takeNight = () => {
+      const n = news;
+      news = undefined;
+      return n;
+    };
+    const r = new Room(w);
+    const a = r.join("Ann")!;
+    r.drain(a);
+    news = {
+      day: 2,
+      forGuest: (id) => ({ lines: [`hi ${id}`], lost: 7 }),
+    };
+    w.dayNo = 2;
+    r.tick(100);
+    expect(r.drain(a).map((m) => m.t)).toEqual(["night", "farm", "snap"]);
+    expect(r.drain("p1").some((m) => m.t === "night")).toBe(false);
+    r.tick(100);
+    expect(r.drain(a).some((m) => m.t === "night")).toBe(false);
+  });
+
+  it("sends the bed state to guests only when it changes", () => {
+    const w = new FakeWorld();
+    let beds = { asleep: [] as string[], waiting: ["Host", "Ann"] };
+    (w as RoomWorld).bedStatus = () => beds;
+    const r = new Room(w);
+    const a = r.join("Ann")!;
+    r.drain(a);
+    r.tick(100);
+    expect(r.drain(a).some((m) => m.t === "beds")).toBe(true);
+    r.tick(100);
+    expect(r.drain(a).some((m) => m.t === "beds")).toBe(false);
+    beds = { asleep: ["Host"], waiting: ["Ann"] };
+    r.tick(100);
+    const out = r.drain(a).find((m) => m.t === "beds");
+    expect(out).toMatchObject({ asleep: ["Host"], waiting: ["Ann"] });
+    expect(r.drain("p1").some((m) => m.t === "beds")).toBe(false);
   });
 });

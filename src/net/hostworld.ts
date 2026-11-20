@@ -2,7 +2,8 @@
 // world to host, from a save slot or a new farm, and gets a refusal in words when it cannot.
 // The host stays the owner of the save: the slot is the one the farm scene writes to.
 import { DEFAULT_FARM_TYPE } from "../core/farmtypes";
-import { newGame, type GameState } from "../core/save";
+import type { GameState } from "../core/save";
+import { startGame } from "../core/toolbar";
 import {
   MAX_SAVE_SLOTS,
   slotInfo,
@@ -78,7 +79,11 @@ export function planHost(
     };
   return {
     ok: true,
-    state: newGame(choice.farmType ?? DEFAULT_FARM_TYPE, options.walletMode),
+    state: startGame(
+      choice.farmType ?? DEFAULT_FARM_TYPE,
+      Math.random,
+      options.walletMode,
+    ),
     slot,
     announceName: `Slot ${slot} farm`,
     isNew: true,

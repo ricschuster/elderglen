@@ -237,6 +237,13 @@ export const GUEST_SCREENS = [
   "ledger",
   "proposal",
   "wedding",
+  // The night's report (guest copy from the host's `night` message) changes nothing.
+  "report",
+  // The shop and the shipping bin send buy, sell, ship and take-back intents (note 53).
+  "shop",
+  "bin",
+  // The bed prompt sends a `sleep` intent and changes nothing locally.
+  "bed",
 ];
 
 /** True when a guest may open this screen kind. */

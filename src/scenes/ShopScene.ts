@@ -1,4 +1,7 @@
 import Phaser from "phaser";
+import type { Intent } from "../core/protocol";
+import { currentSession, GuestSession } from "../net/session";
+import { followGuest } from "./guestlive";
 import { dateOf } from "../core/calendar";
 import { itemById } from "../core/items";
 import type { GameState } from "../core/save";
@@ -94,6 +97,11 @@ export class ShopScene extends Phaser.Scene {
   }
 
   create(): void {
+    followGuest(
+      this,
+      () => this.refresh(),
+      (t) => this.say(t),
+    );
     const { money, message } = frame(
       this,
       this.fisher
@@ -158,6 +166,22 @@ export class ShopScene extends Phaser.Scene {
     this.refresh();
   }
 
+  /**
+   * A guest's buy or sell becomes an intent for the host; the shop redraws when the `applied`
+   * comes back. True when this was a guest's click (handled), so the caller stops. Stalls with
+   * their own rules and the backpack stay with the host for now.
+   */
+  private guestAsks(intent: Intent | undefined, stallRules: boolean): boolean {
+    const net = currentSession();
+    if (!(net instanceof GuestSession)) return false;
+    const special =
+      this.hermit || this.trader || this.rain || this.herb || this.pin;
+    if (!intent || (stallRules && special))
+      this.say("Only the host can do that for now.");
+    else net.sendIntent(intent);
+    return true;
+  }
+
   private say(text: string): void {
     this.message.setText(text);
     this.refresh();
@@ -197,6 +221,7 @@ export class ShopScene extends Phaser.Scene {
               ? HERMIT_ELDERFRUIT_PRICE
               : unitPrice(g, id);
       const tryBuy = (n: number) => () => {
+        if (this.guestAsks({ kind: "buy", id, n }, true)) return;
         if (this.hermit) {
           const refused = buyElderfruit(g, SOURCE_FLAGS.hermit, price);
           this.say(refused ?? `Bought an elderfruit for ${price}g and ate it.`);
@@ -232,6 +257,7 @@ export class ShopScene extends Phaser.Scene {
             {
               text: "Upgrade",
               run: () =>
+                this.guestAsks(undefined, true) ||
                 this.say(
                   upgradeBackpack(g.inventory, g)
                     ? `Your backpack now holds ${pack.size} things.`
@@ -274,6 +300,7 @@ export class ShopScene extends Phaser.Scene {
           {
             text: "Sell 1",
             run: () => {
+              if (this.guestAsks({ kind: "sell", id, n: 1 }, false)) return;
               const earned = sell(g.inventory, g, id, 1, mult);
               g.cave.addEarnings(earned, g.day.clock.day + 1);
               this.say(`Sold 1 ${def?.name} for ${earned}g.`);
@@ -282,6 +309,7 @@ export class ShopScene extends Phaser.Scene {
           {
             text: "Sell all",
             run: () => {
+              if (this.guestAsks({ kind: "sell", id, n: count }, false)) return;
               const earned = sellAll(g.inventory, g, id, mult);
               g.cave.addEarnings(earned, g.day.clock.day + 1);
               this.say(`Sold ${count} ${def?.name} for ${earned}g.`);

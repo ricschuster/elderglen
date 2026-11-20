@@ -1,4 +1,5 @@
-import { SLOT_COUNT } from "./inventory";
+import { SLOT_COUNT, type Inventory } from "./inventory";
+import type { WalletMode } from "./players";
 import { seedId } from "./items";
 import { farmTypeById } from "./farmtypes";
 import { maps } from "../content/maps";
@@ -51,15 +52,21 @@ export function cycle(
   return (index + step + size) % size;
 }
 
+/** The tools and starting seeds every new player begins with (the host, and each guest on joining). */
+export function giveStartKit(inv: Inventory, farmType: string): void {
+  ensureTools(inv);
+  const seeds = farmTypeById(farmType).startSeeds;
+  inv.add(seedId(seeds.crop), seeds.count);
+}
+
 /** A new game on a farm type, with its starting seeds in the backpack. */
 export function startGame(
   farmType?: string,
   random: () => number = Math.random,
+  walletMode?: WalletMode,
 ): GameState {
-  const g = newGame(farmType);
-  ensureTools(g.inventory);
-  const seeds = farmTypeById(g.farmType).startSeeds;
-  g.inventory.add(seedId(seeds.crop), seeds.count);
+  const g = newGame(farmType, walletMode);
+  giveStartKit(g.inventory, g.farmType);
   const map = maps.get(farmTypeById(g.farmType).map);
   g.grass.scatter(
     START_GRASS,

@@ -133,7 +133,6 @@ export class LobbyScene extends Phaser.Scene {
       this.choiceText = this.add
         .text(240, 150, "", { fontSize: "16px", color: "#ffffff" })
         .setOrigin(0.5);
-      this.refreshChoice();
       this.button(240, 232, 330, 40, "", 0x3a4a5a, () => {
         this.hostOptions.walletMode = nextWalletMode(
           this.hostOptions.walletMode,
@@ -146,6 +145,8 @@ export class LobbyScene extends Phaser.Scene {
           color: "#ffffff",
         })
         .setOrigin(0.5);
+      // After both texts exist: it reads the wallet text too.
+      this.refreshChoice();
     }
     if (t.canHost)
       this.button(

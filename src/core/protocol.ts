@@ -56,8 +56,12 @@ export type ServerMsg =
   /** A world change the host applied. Sent to everyone, so all copies stay equal. */
   | { t: "applied"; seq: number; by: PlayerId; intent: Intent }
   | { t: "rejected"; seq: number; reason: string }
-  /** The day rolled over; guests who were present get this instead of the farm. */
+  /** The day rolled over for a guest who is present and not stale (the farm itself is re-sent each night). */
   | { t: "day"; day: number }
+  /** The night's report for this guest alone: report lines (marriage news included) and gold lost. */
+  | { t: "night"; day: number; lines: string[]; lost: number }
+  /** Who is in bed and who is still up, by name, when that changes (the "who is left" notice). */
+  | { t: "beds"; asleep: string[]; waiting: string[] }
   | { t: "joined"; player: PlayerInfo }
   | { t: "left"; id: PlayerId }
   /** The join was turned down; the host then closes the socket. */

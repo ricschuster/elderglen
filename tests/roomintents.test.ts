@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { GameRoomWorld } from "../src/core/roomworld";
 import { itemById } from "../src/core/items";
 import { newGame } from "../src/core/save";
+import { Inventory } from "../src/core/inventory";
+import { findTool } from "../src/core/toolitems";
 import { MAX_ENERGY } from "../src/core/energy";
 import { TOOL_ENERGY } from "../src/core/actions";
 import { LOCAL_PLAYER } from "../src/core/players";
@@ -20,8 +22,56 @@ function mk() {
   });
   w.admit("p2", "Ann");
   w.addPlayer("p2", "Ann");
+  // These tests count items from nothing: clear the starting kit a joiner gets.
+  w.g.players.get("p2").inventory.load(new Inventory().save());
   return w;
 }
+
+describe("a joining guest", () => {
+  it("starts with the tools and the farm's starting seeds, like a new game", () => {
+    const w = new GameRoomWorld(newGame("standard", "separate"), {
+      random: () => 0.9,
+    });
+    w.admit("p2", "Ann");
+    w.addPlayer("p2", "Ann");
+    const inv = w.g.players.get("p2").inventory;
+    expect(inv.count("parsnip-seed")).toBeGreaterThan(0);
+    expect(findTool(inv, "hoe")).toBeGreaterThanOrEqual(0);
+  });
+});
+
+describe("bin intents", () => {
+  it("ship and take-back use the guest's pack and only their own lines", () => {
+    const w = mk();
+    const guest = w.g.players.get("p2");
+    guest.inventory.add("parsnip", 4);
+    expect(
+      w.apply("p2", { kind: "ship", id: "parsnip", n: 3 }),
+    ).toBeUndefined();
+    expect(guest.inventory.count("parsnip")).toBe(1);
+    expect(w.g.bin.each()[0]?.by).toBe("p2");
+    expect(w.apply("p2", { kind: "ship", id: "nope", n: 1 })).toBe(
+      "nothing shipped",
+    );
+    expect(w.apply("p1", { kind: "take-back", index: 0, n: 1 })).toBe(
+      "not your goods",
+    );
+    expect(
+      w.apply("p2", { kind: "take-back", index: 0, n: 2 }),
+    ).toBeUndefined();
+    expect(guest.inventory.count("parsnip")).toBe(3);
+    expect(w.apply("p2", { kind: "take-back", index: 5, n: 1 })).toBe(
+      "not your goods",
+    );
+  });
+  it("ore only goes into the ore bin", () => {
+    const w = mk();
+    w.g.players.get("p2").inventory.add("parsnip", 1);
+    expect(
+      w.apply("p2", { kind: "ship", id: "parsnip", n: 1, ore: true }),
+    ).toBe("nothing shipped");
+  });
+});
 
 describe("farm intents", () => {
   it("till, plant, water use the guest's record and energy, not the host's", () => {

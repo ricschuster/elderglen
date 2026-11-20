@@ -33,8 +33,24 @@ export interface RoomWorld {
   playerDropped?(id: PlayerId): void;
   /** A dropped guest came back: their record is restored by id. Optional. */
   playerRejoined?(id: PlayerId): void;
+  /** Who is in bed and who is up, by name, for the "who is left" notice. Optional. */
+  bedStatus?(): BedStatus;
+  /** The night just ended, once, for the guests' reports. Optional. */
+  takeNight?(): NightNews | undefined;
   /** Top-left tile of a player's cabin, sent in `hello` so the guest spawns there. Optional. */
   homeOf?(id: PlayerId): { x: number; y: number } | undefined;
+}
+
+/** The bed state of a session, by player name. */
+export interface BedStatus {
+  asleep: string[];
+  waiting: string[];
+}
+
+/** What a day end tells each guest: report lines and the gold a pass-out cost them. */
+export interface NightNews {
+  day: number;
+  forGuest(id: PlayerId): { lines: string[]; lost: number };
 }
 
 interface Member {
@@ -59,6 +75,7 @@ export class Room {
   private nextNum = 2;
   private tickNo = 0;
   private lastDay: number;
+  private lastBeds = JSON.stringify({ asleep: [], waiting: [] });
   /** Why the last `join` returned undefined: "full", "in-use" or the world's `admit` reason. */
   refusal = "full";
 
@@ -216,17 +233,31 @@ export class Room {
    */
   tick(dtMs: number): void {
     this.world.step?.(dtMs);
+    const night = this.world.takeNight?.();
+    if (night)
+      for (const m of this.members.values())
+        if (m.connected && m.id !== LOCAL_PLAYER)
+          m.out.push({ t: "night", day: night.day, ...night.forGuest(m.id) });
     const day = this.world.day();
     if (day !== this.lastDay) {
       this.lastDay = day;
       let farm: string | undefined;
+      // Every guest gets the farm after a night, so random rolls cannot leave the copies apart.
       for (const m of this.members.values()) {
         if (!m.connected || m.id === LOCAL_PLAYER) continue;
-        if (m.away) {
-          farm ??= this.world.snapshot();
-          m.out.push({ t: "farm", day, farm });
-        } else m.out.push({ t: "day", day });
+        farm ??= this.world.snapshot();
+        m.out.push({ t: "farm", day, farm });
         m.seenDay = day;
+      }
+    }
+    const beds = this.world.bedStatus?.();
+    if (beds) {
+      const key = JSON.stringify(beds);
+      if (key !== this.lastBeds) {
+        this.lastBeds = key;
+        for (const m of this.members.values())
+          if (m.connected && m.id !== LOCAL_PLAYER)
+            m.out.push({ t: "beds", ...beds });
       }
     }
     const snap: ServerMsg = {

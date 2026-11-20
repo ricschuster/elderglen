@@ -1,3 +1,4 @@
+import { Inventory } from "../src/core/inventory";
 import { afterEach, describe, expect, it } from "vitest";
 import { DAY_START } from "../src/core/clock";
 import { cabinSpawnTile } from "../src/core/cabins";
@@ -149,8 +150,8 @@ describe("host and guest session", () => {
     const copy = guest.loadFarm()!;
     const before = copy.day.clock.day;
     state.day.clock.nextDay();
-    await until(() => guest.followDay(copy.day.clock));
-    expect(copy.day.clock.day).toBe(before + 1);
+    // The night's `farm` message replaces the copy in place, so the clock follows with it.
+    await until(() => copy.day.clock.day === before + 1);
   });
 
   it("follows the host's minutes between day changes", async () => {
@@ -195,7 +196,106 @@ describe("guest applies the host's intents", () => {
     const { host, guest, state } = await pair();
     const copy = guest.loadFarm()!;
     const rec = state.players.get(guest.localId);
+    rec.inventory.load(new Inventory().save()); // drop the joiner's starting kit
     rec.inventory.add("parsnip-seed", 3);
+    copy.players.get(guest.localId).inventory.load(new Inventory().save());
+    copy.players.get(guest.localId).inventory.add("parsnip-seed", 3);
+    let changes = 0;
+    guest.onChange = () => (changes += 1);
+    guest.sendIntent({ kind: "till", x: 6, y: 6 });
+    await until(() => changes >= 1);
+    guest.sendIntent({ kind: "plant", x: 6, y: 6, seed: "parsnip-seed" });
+    await until(() => changes >= 2);
+    expect(state.farm.plotAt(6, 6)?.tilled).toBe(true);
+    expect(copy.farm.plotAt(6, 6)?.tilled).toBe(true);
+    expect(
+      copy.players.get(guest.localId).inventory.count("parsnip-seed"),
+    ).toBe(2);
+    expect(rec.inventory.count("parsnip-seed")).toBe(2);
+    expect(host.world.g).toBe(state);
+  });
+
+  it("a refused intent changes nothing and reports the reason", async () => {
+    const { guest } = await pair();
+    const copy = guest.loadFarm()!;
+    let why = "";
+    guest.onRejected = (r) => (why = r);
+    guest.sendIntent({ kind: "plant", x: 7, y: 7, seed: "parsnip-seed" });
+    await until(() => why !== "");
+    expect(copy.farm.plotAt(7, 7)).toBeUndefined();
+  });
+});
+
+describe("shared day end over the wire", () => {
+  it("the guest sees who is left, wakes, sleeps, and gets a fresh farm copy", async () => {
+    const { host, guest, state } = await pair();
+    const copy = guest.loadFarm()!;
+    const seen: string[][] = [];
+    guest.onBeds = () => seen.push([...guest.beds.asleep]);
+    let night = 0;
+    guest.onNight = () => (night += 1);
+    host.host.room.hostIntent({ kind: "sleep" });
+    await until(() => guest.beds.asleep.includes("Host"));
+    guest.sendIntent({ kind: "sleep" });
+    await until(() => guest.beds.asleep.includes("Ada"));
+    guest.sendIntent({ kind: "wake" });
+    await until(() => !guest.beds.asleep.includes("Ada"));
+    expect(seen.length).toBeGreaterThanOrEqual(3);
+    expect(guest.beds.asleep).toEqual(["Host"]);
+    state.farm.till(9, 9);
+    guest.sendIntent({ kind: "sleep" });
+    await until(() => night === 1);
+    await until(() => copy.day.clock.day === state.day.clock.day);
+    expect(state.day.clock.day).toBeGreaterThan(1);
+    expect(host.world.g).toBe(state);
+    expect(copy.farm.plotAt(9, 9)?.tilled).toBe(true);
+  });
+
+  it("follows the host's minutes between day changes", async () => {
+    const { guest, state } = await pair();
+    const copy = guest.loadFarm()!;
+    state.day.clock.minutes = DAY_START + 130;
+    await until(() => guest.followDay(copy.day.clock));
+    expect(copy.day.clock.minutes).toBe(DAY_START + 130);
+  });
+
+  it("takes the host's minutes when the day moves, else the morning", () => {
+    const client = { day: 6, minutes: 500 } as GuestClient;
+    const s = new GuestSession(client);
+    const clock = { day: 5, minutes: 900 };
+    expect(s.followDay(clock)).toBe(true);
+    expect(clock).toEqual({ day: 6, minutes: 500 });
+    expect(s.followDay(clock)).toBe(false);
+  });
+
+  it("tells the guest when the host is gone, once", async () => {
+    const { host, guest } = await pair();
+    let n = 0;
+    guest.onHostLost(() => n++);
+    host.close();
+    await until(() => n > 0);
+    expect(guest.closed).toBe(true);
+    expect(n).toBe(1);
+    let late = 0;
+    guest.onHostLost(() => late++);
+    expect(late).toBe(1);
+  });
+
+  it("leaves a note for the Title, once", () => {
+    noteHostLost();
+    expect(takeLostNotice()).toBe(HOST_LOST_NOTICE);
+    expect(takeLostNotice()).toBeUndefined();
+  });
+});
+
+describe("guest applies the host's intents", () => {
+  it("a guest's till and plant reach the host and come back once to the guest copy", async () => {
+    const { host, guest, state } = await pair();
+    const copy = guest.loadFarm()!;
+    const rec = state.players.get(guest.localId);
+    rec.inventory.load(new Inventory().save()); // drop the joiner's starting kit
+    rec.inventory.add("parsnip-seed", 3);
+    copy.players.get(guest.localId).inventory.load(new Inventory().save());
     copy.players.get(guest.localId).inventory.add("parsnip-seed", 3);
     let changes = 0;
     guest.onChange = () => (changes += 1);
