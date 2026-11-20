@@ -11,6 +11,7 @@ import { creatureTexture } from "./art-creatures";
 import { isFarmMap } from "../core/farmtypes";
 import { facingFrom, move, tileOf, type Vec } from "../core/movement";
 import { partsFor, schemeById, type Parts } from "../core/controlschemes";
+import { swingArc, type SwingArc } from "../core/swingfx";
 import { autoSwings, autoWeaponSlot, mayAutoEquip } from "../core/autoattack";
 import { loadDeviceSettings } from "./storage";
 import {
@@ -411,6 +412,31 @@ export function floatText(
   });
 }
 
+/** Draw a sweeping arc for a melee swing; it removes itself. Input is never blocked. */
+function playSwingArc(
+  farm: FarmScene,
+  arc: SwingArc,
+  mid: Vec,
+  radius: number,
+): void {
+  const fx = farm.swingFx;
+  farm.tweens.addCounter({
+    from: 0,
+    to: 1,
+    duration: arc.ms,
+    onUpdate: (tw) => {
+      const t = tw.getValue() ?? 1;
+      const lead = arc.from + (arc.to - arc.from) * t;
+      const tail = arc.from + (arc.to - arc.from) * Math.max(0, t - 0.5) * 2;
+      fx.clear().lineStyle(arc.width, arc.color, 0.8 * (1 - t * 0.6));
+      fx.beginPath();
+      fx.arc(mid.x, mid.y, radius, tail, lead, false);
+      fx.strokePath();
+    },
+    onComplete: () => fx.clear(),
+  });
+}
+
 /**
  * Swing the held weapon (note 22). The training dummy takes the hit and shows
  * the number. Otherwise every creature in reach is hit, and a beaten one drops
@@ -432,7 +458,8 @@ export function swing(farm: FarmScene, weapon: WeaponDef): void {
   const f = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] }[
     farm.facing
   ];
-  // A flash of the swing: a short line for a shot, a block for a swing.
+  // A flash of the swing: a short line for a shot, an arc for a melee swing.
+  const arc = swingArc(weapon.family, farm.facing);
   farm.swingFx.clear().fillStyle(0xffffff, 0.35);
   const mid = { x: farm.pos.x, y: farm.pos.y - 6 };
   const len =
@@ -445,6 +472,10 @@ export function swing(farm: FarmScene, weapon: WeaponDef): void {
       mid.x + unit.x * len,
       mid.y + unit.y * len,
     );
+  } else if (arc) {
+    // Melee: sweep an arc in front of the player (placeholder art).
+    farm.swingFx.clear();
+    playSwingArc(farm, arc, mid, len);
   } else
     farm.swingFx.fillRect(
       mid.x + (f[0]! > 0 ? 0 : f[0]! < 0 ? -len : -len / 2),
@@ -452,7 +483,7 @@ export function swing(farm: FarmScene, weapon: WeaponDef): void {
       f[0] !== 0 ? len : weapon.family === "sling" ? 3 : len,
       f[1] !== 0 ? len : weapon.family === "sling" ? 3 : len,
     );
-  farm.time.delayedCall(90, () => farm.swingFx.clear());
+  if (!arc) farm.time.delayedCall(90, () => farm.swingFx.clear());
 
   // The dummy: in front, as far as the weapon reaches.
   const here = tileOf(farm.pos, PLAYER, ts);

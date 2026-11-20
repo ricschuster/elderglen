@@ -742,3 +742,5 @@ settled 2026-10-31). Slices 3 onward wait for build slice 3.
 - **Lamps are placeable, plus the glow ring** (Stardew, from memory, unchecked). No
   carried lamp slot. A lamp is a craftable placeable item, which gives bundle 29 its
   real item. Not built.
+
+- **Settled 2026-11-20: creature speeds cut about 30 percent after tablet play; placeholder.** Every `speed` and dash `speed` in `src/content/creatures.json` is 0.7 times the old value, rounded. Melee swings now show a short arc (blade 0.18 s, club 0.24 s, `src/core/swingfx.ts`).

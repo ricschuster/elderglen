@@ -6,7 +6,7 @@
     "bands": [1],
     "hp": 3,
     "touch": 4,
-    "speed": 24,
+    "speed": 17,
     "sight": 5,
     "reach": 1.1,
     "windup": 0.6,
@@ -35,7 +35,7 @@
     "bands": [1],
     "hp": 2,
     "touch": 4,
-    "speed": 20,
+    "speed": 14,
     "sight": 4,
     "reach": 0.9,
     "windup": 0.6,
@@ -70,7 +70,7 @@
     "bands": [1],
     "hp": 6,
     "touch": 5,
-    "speed": 28,
+    "speed": 20,
     "sight": 2,
     "reach": 1.1,
     "windup": 0.7,
@@ -101,7 +101,7 @@
     "bands": [1],
     "hp": 5,
     "touch": 5,
-    "speed": 20,
+    "speed": 14,
     "sight": 4,
     "reach": 3,
     "windup": 0.7,
@@ -109,7 +109,7 @@
     "xp": 5,
     "goal": 80,
     "dash": {
-      "speed": 120,
+      "speed": 84,
       "time": 0.6
     },
     "armour": "rolled",
@@ -141,7 +141,7 @@
     "bands": [1],
     "hp": 3,
     "touch": 4,
-    "speed": 50,
+    "speed": 35,
     "sight": 4,
     "reach": 0.8,
     "windup": 0.6,
@@ -176,7 +176,7 @@
     "bands": [2],
     "hp": 5,
     "touch": 6,
-    "speed": 30,
+    "speed": 21,
     "sight": 5,
     "reach": 3.5,
     "windup": 0.6,
@@ -184,7 +184,7 @@
     "xp": 8,
     "goal": 100,
     "dash": {
-      "speed": 110,
+      "speed": 77,
       "time": 0.7
     },
     "drops": [
@@ -213,7 +213,7 @@
     "bands": [2],
     "hp": 6,
     "touch": 7,
-    "speed": 55,
+    "speed": 38,
     "sight": 5,
     "reach": 1,
     "windup": 0.6,
@@ -252,7 +252,7 @@
     "xp": 10,
     "goal": 200,
     "dash": {
-      "speed": 120,
+      "speed": 84,
       "time": 0.9
     },
     "drops": [
@@ -277,7 +277,7 @@
     "bands": [2],
     "hp": 5,
     "touch": 6,
-    "speed": 35,
+    "speed": 24,
     "sight": 5,
     "reach": 3,
     "windup": 0.6,
@@ -285,7 +285,7 @@
     "xp": 8,
     "goal": 60,
     "dash": {
-      "speed": 120,
+      "speed": 84,
       "time": 0.5
     },
     "drops": [
@@ -304,7 +304,7 @@
     "bands": [2],
     "hp": 5,
     "touch": 7,
-    "speed": 50,
+    "speed": 35,
     "sight": 4,
     "reach": 0.8,
     "windup": 0.6,
@@ -335,7 +335,7 @@
     "bands": [3],
     "hp": 8,
     "touch": 10,
-    "speed": 30,
+    "speed": 21,
     "sight": 5,
     "reach": 4,
     "windup": 0.8,
@@ -343,7 +343,7 @@
     "xp": 14,
     "goal": 150,
     "dash": {
-      "speed": 125,
+      "speed": 88,
       "time": 0.8
     },
     "drops": [
@@ -372,7 +372,7 @@
     "bands": [3],
     "hp": 6,
     "touch": 9,
-    "speed": 25,
+    "speed": 18,
     "sight": 5,
     "reach": 3.5,
     "windup": 0.8,
@@ -407,7 +407,7 @@
     "bands": [3],
     "hp": 10,
     "touch": 12,
-    "speed": 22,
+    "speed": 15,
     "sight": 5,
     "reach": 1.2,
     "windup": 0.9,
@@ -436,7 +436,7 @@
     "bands": [3],
     "hp": 8,
     "touch": 10,
-    "speed": 50,
+    "speed": 35,
     "sight": 4,
     "reach": 0.8,
     "windup": 0.6,
@@ -467,7 +467,7 @@
     "bands": [],
     "hp": 3,
     "touch": 5,
-    "speed": 24,
+    "speed": 17,
     "sight": 5,
     "reach": 4,
     "windup": 0.7,
@@ -488,7 +488,7 @@
     ],
     "xp": 3,
     "dash": {
-      "speed": 100,
+      "speed": 70,
       "time": 0.5
     }
   }
