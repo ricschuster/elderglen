@@ -179,9 +179,12 @@ export class GameRoomWorld implements RoomWorld {
         // A wed pair share a bed but each must get in it: the day ends when every player is
         // in bed, as in normal multiplayer (note 12 and 53, decided 2026-11-19).
         this.tracker.setAsleep(by);
+        // A wed pair share one bed: in bed counts for both (note 12 and 53).
+        for (const k of this.bedmates(by)) this.tracker.setAsleep(k);
         return undefined;
       case "wake":
         this.tracker.wake(by);
+        for (const k of this.bedmates(by)) this.tracker.wake(k);
         return undefined;
       case "buy-cabin": {
         if (by !== LOCAL_PLAYER) return "host only";
@@ -197,6 +200,14 @@ export class GameRoomWorld implements RoomWorld {
         return r === null ? `unknown intent ${intent.kind}` : r;
       }
     }
+  }
+
+  /** The wed partner who shares this player's bed, if they are in this world. */
+  private bedmates(id: PlayerId): PlayerId[] {
+    const k = pm.isMarried(this.marriages, id)
+      ? pm.partnerOf(this.marriages, id)
+      : undefined;
+    return k && this.g.players.has(k) ? [k] : [];
   }
 
   step(dtMs: number): void {
