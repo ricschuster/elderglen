@@ -749,7 +749,10 @@ export class FarmScene extends Phaser.Scene {
       settings,
     );
     // Esc opens the menu (fixed key, note 45).
-    this.events.on("resume", () => (this.resumedAt = performance.now()));
+    this.events.on("resume", () => {
+      this.resumedAt = performance.now();
+      this.campScreenOpen = false; // never stale: closed unless its screen is up
+    });
     this.input.keyboard?.on("keydown-ESC", () => this.openMenu("pack"));
     this.controls = createControls(
       this,
@@ -1976,7 +1979,7 @@ export class FarmScene extends Phaser.Scene {
     this.scene.start("title");
   }
 
-  /** True while the camp chest screen is up, so the chest is drawn open. */
+  /** True only while the camp chest screen is up; the chest is drawn closed otherwise, emptied or not. */
   campScreenOpen = false;
 
   /** The camp chest screen closed: redraw the chest and toast what was found, if anything. */

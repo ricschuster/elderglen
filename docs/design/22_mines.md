@@ -137,7 +137,7 @@ Mountain (`19_valley_layout.md`).
   is a cozy beat and a small goal, not a safe zone.
   **Settled 2026-11-20:** the camp chest opens as a take-only chest screen (the same screen as
   the normal chests, the gift in its one slot, nothing can be put in, no bench), the chest
-  is drawn open once emptied, and taking shows "You found ...". Owner request after tablet
+  is drawn open only while its screen is up (closed otherwise, emptied too), and taking shows "You found ...". Owner request after tablet
   play. Stardew behaviour believed similar, not checked (SC-210).
 - **Special floors.** About 1 floor in 15 has a theme, such as a floor of
   geodes, a floor of Gloop that never attacks, or a quiet ruin with a puzzle
