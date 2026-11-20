@@ -20,6 +20,21 @@ import { VILLAGERS } from "../src/core/villagers";
 const first = VILLAGERS[0]!.id;
 
 describe("socialRows", () => {
+  it("puts the spouse first and keeps the rest in roster order", () => {
+    const g = newGame();
+    const cands = VILLAGERS.filter((v) => v.candidate);
+    const last = cands[cands.length - 1]!.id;
+    g.friendship.meet(last);
+    g.marriage.stage = "married";
+    g.marriage.spouse = last;
+    const rows = socialRows(g);
+    expect(VILLAGERS[0]!.id).not.toBe(last);
+    expect(rows[0]!.id).toBe(last);
+    expect(rows[0]!.spouse).toBe(true);
+    expect(rows.slice(1).map((r) => r.id)).toEqual(
+      VILLAGERS.filter((v) => v.id !== last).map((v) => v.id),
+    );
+  });
   it("lists the whole roster in order, unmet as ???", () => {
     const g = newGame();
     const rows = socialRows(g);

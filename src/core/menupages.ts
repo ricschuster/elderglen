@@ -47,11 +47,11 @@ export interface ChildRow {
 /** Hearts in a child's row, out of ten. */
 export const CHILD_MAX_HEARTS = 10;
 
-/** Everyone in the roster, in roster order; people not yet met are "???" rows. */
+/** Everyone in the roster, the spouse first and then roster order; people not yet met are "???" rows. */
 export function socialRows(g: GameState): SocialRow[] {
   const day = g.day.clock.day;
   const m = g.marriage;
-  return VILLAGERS.map((v) => {
+  const rows = VILLAGERS.map((v) => {
     const met = g.friendship.met(v.id);
     const spouse = m.married && m.spouse === v.id;
     const relationship: Relationship = spouse
@@ -75,6 +75,8 @@ export function socialRows(g: GameState): SocialRow[] {
       spouse,
     };
   });
+  // Stardew lists the spouse first (owner, 2026-11-20, SC-186); the rest keep roster order.
+  return [...rows.filter((r) => r.spouse), ...rows.filter((r) => !r.spouse)];
 }
 
 /** The farm's children, for the short section after the roster. */
