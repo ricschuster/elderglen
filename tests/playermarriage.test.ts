@@ -223,16 +223,19 @@ describe("token, expiry and calling off (owner, 2026-11-19)", () => {
     expect(callOff(wed(), "p2").ok).toBe(false);
   });
 
-  it("a wed pair share a bed: one in bed counts both", () => {
+  it("a wed pair share a bed: each must get in it themselves", () => {
     const w = room();
     bondOf(w.marriages, "p2");
     propose(w.marriages, "p2", "p3");
     respond(w.marriages, "p3", true, 1);
     weddingMorning(w.marriages, 4, "");
     w.apply("p2", { kind: "sleep" });
+    expect(w.presence("p2")).toBe("asleep");
+    expect(w.presence("p3")).toBe("awake");
+    w.apply("p3", { kind: "sleep" });
     expect(w.presence("p3")).toBe("asleep");
     w.apply("p3", { kind: "wake" });
-    expect(w.presence("p2")).toBe("awake");
+    expect(w.presence("p2")).toBe("asleep");
   });
 });
 

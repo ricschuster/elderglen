@@ -389,7 +389,8 @@ level only. Nothing is built, and the build waits for M4.
 - **Player marriage, first rulings (owner, 2026-11-18, all from memory of Stardew, SC-205).**
   - **Proposal:** one player offers the pendant (note 12) and the other accepts or declines. A decline costs nothing. Built 2026-11-19 (note 12 "Steps already decided"): core, intents, cards and ledger, placeholder, scenes untested in a browser.
   - **Home:** one moves into the other's cabin. The vacated cabin stays so a divorce has a place to return to. The
-    couple share one bed and count as both in bed.
+    couple share one bed, and each must get in it
+    themselves: the normal every-player-in-bed day end applies (owner, 2026-11-19: "same as normal Stardew multiplayer").
   - **Children:** the same shared question as villager marriage (note 12), one child shown in the home, both
     partners are the parents.
   - **One spouse per villager:** a villager married or engaged to a player is off limits to the others, who keep

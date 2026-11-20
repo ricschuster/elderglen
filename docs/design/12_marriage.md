@@ -264,7 +264,7 @@ Settled with the owner after the shell build. Slice 4 and 5 text above is update
 
 ## Two-player wedding and divorce steps (draft, owner answered Q1 to Q4 2026-11-18)
 
-Draft for M4. Built 2026-11-19, placeholder text, scenes untested in a browser: core (`src/core/playermarriage.ts`, `marriageintents.ts`, `marriagecard.ts`, `tests/playermarriage.test.ts`) with the token held while a proposal is open (used up on accept, handed back on decline, withdrawal and expiry), proposals expiring at the day end, calling off an engagement free, the bond book saved in the game state (`playerMarriage`, additive in save version 4, no bump) and carried in the guest snapshot, guests applying the same intents, a shared bed counting both in bed. Screens: `ProposalScene` (yes or no card), `LedgerScene` (player rows: call off, divorce, cancel), `WeddingScene` (text cutscene), engaged notice in `ReportScene`, all opened from `FarmScene.checkMarriageCards`. Not built: one spouse per villager (needs a per player courtship record), the told divorce line for a guest (the bond is gone from their copy), the vacated cabin visuals. It turns the player marriage rulings of note 53 ("Player marriage, first
+Draft for M4. Built 2026-11-19, placeholder text, scenes untested in a browser: core (`src/core/playermarriage.ts`, `marriageintents.ts`, `marriagecard.ts`, `tests/playermarriage.test.ts`) with the token held while a proposal is open (used up on accept, handed back on decline, withdrawal and expiry), proposals expiring at the day end, calling off an engagement free, the bond book saved in the game state (`playerMarriage`, additive in save version 4, no bump) and carried in the guest snapshot, guests applying the same intents, a shared bed (each partner counts only when they sleep themselves, decided 2026-11-19). Screens: `ProposalScene` (yes or no card), `LedgerScene` (player rows: call off, divorce, cancel), `WeddingScene` (text cutscene), engaged notice in `ReportScene`, all opened from `FarmScene.checkMarriageCards`. Not built: one spouse per villager (needs a per player courtship record), the told divorce line for a guest (the bond is gone from their copy), the vacated cabin visuals. It turns the player marriage rulings of note 53 ("Player marriage, first
 rulings") into steps. Stardew facts are from the saved Multiplayer page (read 2026-11-18) or from memory, as marked.
 The page says: players marry each other with a craftable Wedding Ring, a married pair get the Stardrop in a purple
 giftbox by their home bed, children go in a home both players sleep in, and an NPC can be married by one player only.
@@ -278,8 +278,8 @@ giftbox by their home bed, children go in a home both players sleep in, and an N
 3. **Wedding.** The villager wedding scene with both players as the couple. Other players and villagers are guests.
    Same postponement as a villager wedding (`weddingBlock`: a festival day or rain). The scene runs on every client,
    driven by the host. A guest is not held up: they may walk away and the scene still plays.
-4. **Home.** One moves into the other's cabin. The vacated cabin stays. One bed, counted as both in bed for the day
-   end (note 53).
+4. **Home.** One moves into the other's cabin. The vacated cabin stays. One bed, but each partner must get in it
+   themselves for the day end, as in normal multiplayer (note 53, decided 2026-11-19).
 5. **After.** No spouse chores and no daily kiss from a partner (only villager spouses do chores). The 12.5 heart
    one-off does not apply; a couple get the one-off item once, by the shared bed, after the wedding (as the page
    describes for Stardew).
