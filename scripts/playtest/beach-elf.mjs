@@ -40,7 +40,11 @@ if (d.map !== "beach-elf-house")
   finding(`expected Thalwen's cottage, on ${d.map}`);
 else {
   // The pin stall, with too little money first.
-  await bot.walkTo(5, 2);
+  // Counters keep hours (shops.json) and a new game starts at 6:00.
+  await state((s) => {
+    s.day.clock.minutes = 11 * 60;
+  });
+  await bot.walkTo(6, 6);
   await bot.face("up");
   await state((s) => {
     s.money = 100;
@@ -82,7 +86,7 @@ else {
     await p.keyboard.press("Escape");
     await sleepMs(500);
   }
-  await bot.walkTo(5, 7);
+  await bot.walkTo(6, 12);
   await bot.face("down");
   await bot.key("KeyX", 200);
   await sleepMs(1000);

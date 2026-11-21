@@ -73,7 +73,7 @@ await bot.key("KeyC", 300);
 log("plots after slot 1:", JSON.stringify(await plots()));
 if ((await plots()).length < 1) finding("hoe did not dig a greenhouse plot");
 await shot("dug");
-await bot.select(4);
+await bot.select(5);
 await bot.key("KeyC", 300);
 await bot.select(1);
 await bot.key("KeyC", 300);
@@ -109,10 +109,10 @@ const stand = (x, y, facing) =>
     },
     [x, y, facing],
   );
-// The toolbar is the four tools, then the backpack slots.
+// The toolbar slot is the pack slot (tools sit in the pack, note 102).
 const slotOf = (id) =>
   farm(
-    (g, f, s, id) => 4 + s.inventory.save().findIndex((x) => x && x.id === id),
+    (g, f, s, id) => s.inventory.save().findIndex((x) => x && x.id === id),
     id,
   );
 await farm((g, f, s) => {

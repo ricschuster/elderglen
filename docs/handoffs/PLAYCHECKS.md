@@ -51,7 +51,13 @@ Headless run 2026-11-21, build 6358d834 (`rods.mjs` new, `delta.mjs`, `cove.mjs`
 
 ## Places and other systems
 
-- todo: Secret Woods, even-year maze, cart, herb stall, tapper, lamps, bombs, tailoring, tea bush, woods creatures, hat picker.
+Headless run 2026-11-21, build 145d83a6 plus script fixes (`forest.mjs`, `secret-woods.mjs`, `forge.mjs`, `farmstead.mjs`, `beach-elf.mjs`, `hearthwell.mjs`, `greenhouse-smoke.mjs`, `boxed.mjs`, `wood.mjs`, new `systems.mjs`; 152 unit tests).
+
+- pass: Places by walking in and out: Forest (oak felled, forage, the night), Secret Woods (log gives 8 hardwood, large stump 2, back after the night), forge counter and stonekeeper, farmstead keeper counter (animal bought), hermit tower, Wanderer's camp, beach elf cottage and pin stall, Hearthwell (hall, sawmill and carpenter, store, smithy, healer, inn, library gallery, hatter, Outpost and rooms, three burrows, Orders and news boards, Mountain and delta exits), greenhouse (dig, plant, water, sprinkler, tree, fruit, move).
+- pass: Cart (three stops, a ride lands in Hearthwell), herb stall (five rows), hat picker and tailor screens open and close (`systems.mjs`, stage `hall-6`).
+- pass: Unit rules for tapper, tea bush, bombs, tailoring, woods creatures, Secret Woods, lights, lanterns and room rewards (152 tests). The even-year maze ran in the Festivals sweep (both Hollow Eve years).
+- owner: Lamps and lamp posts by sight, cart and herb stall looks, tea bush and tapper by hand, bombs by feel, Secret Woods creatures chasing.
+- Found and fixed: seven scripts were stale, not game bugs. Interiors grew, so counters and exits moved (now read from the map files); doors and counters keep hours and a new game starts at 6:00 on a Monday (farmstead shut Mon, library shut Mon, inn opens 12:00, sawmill shut Tue); felled wood and hardwood drop on the ground; the hermit opens a shop when he has stock; the library counter opens the gallery; the road news board speaks real news; toolbar slot is the pack slot in `greenhouse-smoke.mjs`.
 
 ## Saves, controls, device
 

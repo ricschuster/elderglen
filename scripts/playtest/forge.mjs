@@ -46,7 +46,11 @@ log(`through the forge door: ${d.map}`);
 if (d.map !== "forge") finding(`expected the forge, on ${d.map}`);
 else {
   await bot.shot("forge-inside");
-  await bot.walkTo(5, 2);
+  // Counters keep hours (shops.json) and a new game starts at 6:00.
+  await state((s) => {
+    s.day.clock.minutes = 11 * 60;
+  });
+  await bot.walkTo(4, 8);
   await bot.face("up");
   const money0 = await state((s) => s.money);
   await p.keyboard.press("KeyX");
@@ -76,7 +80,7 @@ else {
     await p.keyboard.press("Escape");
     await sleepMs(500);
   }
-  await bot.walkTo(5, 5);
+  await bot.walkTo(5, 13);
   await bot.face("down");
   await bot.key("KeyX", 200);
   await sleepMs(900);
