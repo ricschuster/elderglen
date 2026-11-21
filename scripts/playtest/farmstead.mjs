@@ -28,7 +28,10 @@ const travel = (map, entry) =>
     [map, entry],
   );
 const message = () =>
-  p.evaluate(() => window.__game.scene.getScenes(true)[0].message ?? "");
+  p.evaluate(() => {
+    const m = window.__game.scene.getScenes(true)[0].message;
+    return typeof m === "string" ? m : (m?.text ?? JSON.stringify(m ?? ""));
+  });
 
 await state((s) => {
   s.money += 3000;
@@ -49,7 +52,12 @@ if (d.map !== "forest-farmstead")
   finding(`expected the farmstead, on ${d.map}`);
 else {
   await bot.shot("farmstead-inside");
-  await bot.walkTo(6, 2);
+  // Counters keep hours (shops.json) and a new game starts at 6:00.
+  await state((s) => {
+    s.day.clock.day = 2; // the farmstead is shut on Mondays, and day 1 is a Monday
+    s.day.clock.minutes = 11 * 60;
+  });
+  await bot.walkTo(9, 14);
   await bot.face("up");
   const money0 = await state((s) => s.money);
   await p.keyboard.press("KeyX");
@@ -76,7 +84,7 @@ else {
     await p.keyboard.press("Escape");
     await sleepMs(500);
   }
-  await bot.walkTo(6, 6);
+  await bot.walkTo(12, 19);
   await bot.face("down");
   await bot.key("KeyX", 200);
   await sleepMs(900);
@@ -95,15 +103,23 @@ d = await bot.dbg();
 log(`through the tower door: ${d.map}`);
 if (d.map !== "hermit-tower") finding(`expected the tower, on ${d.map}`);
 else {
-  await bot.walkTo(4, 2);
+  await bot.walkTo(11, 21);
   await bot.face("up");
   await p.keyboard.press("KeyX");
   await sleepMs(500);
-  const line = await message();
-  log(`hermit: ${line}`);
-  if (!/witch/.test(line)) finding("the hermit said nothing");
+  // With stock to sell the hermit opens a shop (hermitStock); with none he speaks.
+  const shopOpen = await p.evaluate(() => window.__game.scene.isActive("shop"));
+  if (shopOpen) {
+    log("hermit: the shop opened");
+    await p.keyboard.press("Escape");
+    await sleepMs(500);
+  } else {
+    const line = await message();
+    log(`hermit: ${line}`);
+    if (!/witch/.test(line)) finding("the hermit said nothing");
+  }
   await bot.shot("hermit-tower");
-  await bot.walkTo(4, 7);
+  await bot.walkTo(13, 25);
   await bot.face("down");
   await bot.key("KeyX", 200);
   await sleepMs(900);

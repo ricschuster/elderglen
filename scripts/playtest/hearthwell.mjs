@@ -5,7 +5,24 @@
 // exit and back, and by the delta exit and back, and home to the farm.
 // Run with `npm run dev` going: node scripts/playtest/hearthwell.mjs
 // (BASE_URL=http://localhost:5174/ if the dev server picked another port.)
+import { readFileSync } from "node:fs";
 import { launch, Bot, log, sleepMs, finding, findings } from "./lib.mjs";
+
+// Interior sizes change, so read each interior's standing tile at its door (the
+// "entry" marker) and the tile below its counter from the map file.
+function interior(id) {
+  const map = JSON.parse(readFileSync(`src/content/maps/${id}.json`, "utf8"));
+  const objs = map.layers.find((l) => l.name === "markers").objects;
+  const at = (o) => [Math.floor(o.x / 16), Math.floor(o.y / 16)];
+  const entry = objs.find((o) => o.name === "door" && o.class === "entry");
+  const counter = objs.find(
+    (o) => o.class === "service" || o.name.startsWith("counter"),
+  );
+  return {
+    exit: at(entry),
+    counter: counter ? [at(counter)[0], at(counter)[1] + 1] : null,
+  };
+}
 
 const { b, p, errs } = await launch({ fresh: true });
 const bot = new Bot(p, errs);
@@ -56,6 +73,11 @@ const farmExits = await p.evaluate(
 );
 if (farmExits !== "farm") finding("not on the farm");
 
+// The doors and counters keep hours (shops.json); a new game starts at 6:00 on a
+// Monday, when the store, smithy and sawmill are all open from 9:00.
+await p.evaluate(() => {
+  window.__game.registry.get("state").day.clock.minutes = 11 * 60;
+});
 await door(78, 14, "right", "hearthwell", "the farm's east exit");
 await bot.shot("hearthwell-arrive");
 
@@ -65,21 +87,40 @@ await door(23, 18, "down", "hearthwell", "the hall's own door");
 
 // The sawmill and the carpenter's counter, and back.
 await door(48, 76, "up", "sawmill", "the sawmill door");
-await counter(5, 2, "carpenter", "the carpenter");
-await door(5, 5, "down", "hearthwell", "the sawmill's own door");
+await counter(...interior("sawmill").counter, "carpenter", "the carpenter");
+await door(
+  ...interior("sawmill").exit,
+  "down",
+  "hearthwell",
+  "the sawmill's own door",
+);
 
 // The Help Wanted board stays outside the general store, by its door.
 await counter(20, 29, "requests", "the Help Wanted board");
 
 // The store: in by its door, the counter inside, out again.
 await door(22, 29, "up", "general-store", "the general store door");
-await counter(5, 2, "shop", "the store counter");
-await door(7, 8, "down", "hearthwell", "the store's own door");
+await counter(
+  ...interior("general-store").counter,
+  "shop",
+  "the store counter",
+);
+await door(
+  ...interior("general-store").exit,
+  "down",
+  "hearthwell",
+  "the store's own door",
+);
 
 // The smithy: in by its door, the smith counter inside, out again.
 await door(22, 90, "up", "smithy", "the smithy door");
-await counter(6, 2, "smithy", "the smithy counter");
-await door(7, 8, "down", "hearthwell", "the smithy's own door");
+await counter(...interior("smithy").counter, "smithy", "the smithy counter");
+await door(
+  ...interior("smithy").exit,
+  "down",
+  "hearthwell",
+  "the smithy's own door",
+);
 
 // The healer, inn, library and hatter: in, a counter that talks, out.
 for (const [id, x, doorX, doorY, cx] of [
@@ -88,22 +129,53 @@ for (const [id, x, doorX, doorY, cx] of [
   ["library", 41, 41, 60, 6],
   ["hatter", 41, 41, 90, 6],
 ]) {
+  // The library is shut on Mondays and the inn opens at 12:00 (shops.json).
+  await p.evaluate(() => {
+    const c = window.__game.registry.get("state").day.clock;
+    c.day = Math.max(c.day, 2);
+    c.minutes = 13 * 60;
+  });
   await door(doorX, doorY, "up", id, `the ${id} door`);
-  await bot.walkTo(cx, 2);
+  await bot.walkTo(...interior(id).counter);
   await bot.face("up");
   await bot.key("KeyX", 300);
   const said = (await bot.dbg()).message;
-  if (!said.includes("Nobody is here yet"))
+  if (id === "library") {
+    // The library counter opens the gallery (note 104), not a line.
+    const open = await p.evaluate(() =>
+      window.__game.scene.isActive("gallery"),
+    );
+    if (!open) finding("the library counter did not open the gallery");
+    else {
+      log("the library counter: the gallery opened");
+      await bot.key("Escape", 350);
+    }
+  } else if (!said.includes("Nobody is here yet"))
     finding(`the ${id} counter said "${said}"`);
   else log(`the ${id} counter: "${said}"`);
-  await door(7, 8, "down", "hearthwell", `the ${id}'s own door`);
+  await door(
+    ...interior(id).exit,
+    "down",
+    "hearthwell",
+    `the ${id}'s own door`,
+  );
 }
 
 // The Outpost: the post room, the steward's rooms behind it, and back.
 await door(88, 13, "up", "outpost", "the Outpost door");
-await door(12, 1, "up", "outpost-rooms", "the steward's rooms door");
-await door(4, 6, "down", "outpost", "the steward's rooms' own door");
-await door(7, 8, "down", "hearthwell", "the Outpost's own door");
+await door(8, 3, "up", "outpost-rooms", "the steward's rooms door");
+await door(
+  ...interior("outpost-rooms").exit,
+  "down",
+  "outpost",
+  "the steward's rooms' own door",
+);
+await door(
+  ...interior("outpost").exit,
+  "down",
+  "hearthwell",
+  "the Outpost's own door",
+);
 
 // The three burrows.
 for (const [id, x, y] of [
@@ -112,14 +184,20 @@ for (const [id, x, y] of [
   ["burrow-retired", 66, 85],
 ]) {
   await door(x, y, "up", id, `the ${id} door`);
-  await door(3, 5, "down", "hearthwell", `the ${id}'s own door`);
+  await door(
+    ...interior(id).exit,
+    "down",
+    "hearthwell",
+    `the ${id}'s own door`,
+  );
 }
 
 // The Special Orders board is on the Outpost wall, right of the door (notes 57 and 65).
 await counter(90, 13, "orders", "the Orders board");
 
 // The road news board says something and opens nothing.
-for (const [x, what, line] of [[86, "road news board", "road news board"]]) {
+// It speaks the road news (src/content/road-news.json), so any line will do.
+for (const [x, what, line] of [[86, "road news board", ""]]) {
   for (let tries = 0; tries < 3; tries++) {
     await bot.walkTo(x, 13);
     const at = (await bot.dbg()).tile;
@@ -131,7 +209,7 @@ for (const [x, what, line] of [[86, "road news board", "road news board"]]) {
   const said = (await bot.dbg()).message;
   if (s.scenes.length !== 1 || s.scenes[0] !== "farm")
     finding(`the ${what} opened ${s.scenes}`);
-  if (!said.includes(line)) finding(`the ${what} said "${said}"`);
+  if (!said || !said.includes(line)) finding(`the ${what} said "${said}"`);
   else log(`the ${what}: "${said}"`);
 }
 

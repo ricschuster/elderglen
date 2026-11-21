@@ -73,7 +73,13 @@ for (const [dx, dy, dir] of [
   }
 }
 if (!stood) finding("could not walk beside the grove tree");
-const wood0 = (await bot.dbg()).wood;
+// A felled tree drops its wood on the ground to be walked over, so count both.
+const woodAll = async () =>
+  (await bot.dbg()).wood +
+  (await state((s) =>
+    s.ground.each().reduce((n, g) => (g.id === "wood" ? n + g.count : n), 0),
+  ));
+const wood0 = await woodAll();
 await p.keyboard.down("KeyC");
 const t0 = Date.now();
 while (Date.now() - t0 < 20000) {
@@ -83,7 +89,7 @@ while (Date.now() - t0 < 20000) {
 }
 await p.keyboard.up("KeyC");
 await sleepMs(300);
-const wood1 = (await bot.dbg()).wood;
+const wood1 = await woodAll();
 log(`wood ${wood0} -> ${wood1}`);
 if (wood1 - wood0 < 12) finding(`a mature oak gave ${wood1 - wood0} wood`);
 const farmCheck = await state((s) => s.away.home.trees.count);

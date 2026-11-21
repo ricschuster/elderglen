@@ -105,7 +105,16 @@ for (const [dx, dy, dir] of [
   }
 }
 if (!stood) finding("could not walk beside the stump");
-const h0 = await state((s) => s.inventory.count("hardwood"));
+// Felled wood drops on the ground, so count the pack and the ground.
+const hardwoodAll = () =>
+  state(
+    (s) =>
+      s.inventory.count("hardwood") +
+      s.ground
+        .each()
+        .reduce((n, g) => (g.id === "hardwood" ? n + g.count : n), 0),
+  );
+const h0 = await hardwoodAll();
 await p.keyboard.down("KeyC");
 const t0 = Date.now();
 while (Date.now() - t0 < 20000) {
@@ -115,7 +124,7 @@ while (Date.now() - t0 < 20000) {
 }
 await p.keyboard.up("KeyC");
 await sleepMs(300);
-const h1 = await state((s) => s.inventory.count("hardwood"));
+const h1 = await hardwoodAll();
 log(`hardwood ${h0} -> ${h1}`);
 if (h1 - h0 !== 2) finding(`a large stump gave ${h1 - h0} hardwood, not 2`);
 
