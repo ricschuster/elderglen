@@ -8,6 +8,7 @@ import {
   guestMayOpen,
   hiddenTabs,
   skillExtras,
+  playerRows,
   socialRows,
   socialTip,
   specialItems,
@@ -227,5 +228,25 @@ describe("guest read-only menus", () => {
     expect(guestMayOpen("menu")).toBe(true);
     expect(guestMayOpen("shop")).toBe(true);
     expect(guestMayOpen("bin")).toBe(true);
+  });
+});
+
+describe("playerRows", () => {
+  it("lists the other players in order and skips the local one", () => {
+    const rows = playerRows(
+      [
+        { id: "p1", name: "Host" },
+        { id: "p2", name: "Ana" },
+        { id: "p3", name: "Bo" },
+      ],
+      "p1",
+    );
+    expect(rows).toEqual([
+      { id: "p2", name: "Ana" },
+      { id: "p3", name: "Bo" },
+    ]);
+  });
+  it("is empty alone", () => {
+    expect(playerRows([], "p1")).toEqual([]);
   });
 });

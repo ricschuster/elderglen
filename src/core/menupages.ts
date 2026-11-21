@@ -79,6 +79,26 @@ export function socialRows(g: GameState): SocialRow[] {
   return [...rows.filter((r) => r.spouse), ...rows.filter((r) => !r.spouse)];
 }
 
+/** Another player in the session, for the top of the Social tab (note 53, 2026-11-20). */
+export interface PlayerRow {
+  id: string;
+  name: string;
+}
+
+/**
+ * The other players, in the order given, listed above the spouse and the roster
+ * (owner, 2026-11-20, checked in Stardew). Empty in single player. The local
+ * player is not listed.
+ */
+export function playerRows(
+  remotes: readonly { id: string; name: string }[],
+  localId: string,
+): PlayerRow[] {
+  return remotes
+    .filter((r) => r.id !== localId)
+    .map((r) => ({ id: r.id, name: r.name }));
+}
+
 /** The farm's children, for the short section after the roster. */
 export function childRows(g: GameState): ChildRow[] {
   return g.marriage.kids.map((k) => ({
