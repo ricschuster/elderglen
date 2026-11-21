@@ -30,6 +30,7 @@ import {
 import {
   ledgerRows,
   proposalCard,
+  weddingBeat,
   weddingLines,
   weddingWaiting,
 } from "../src/core/marriagecard";
@@ -339,5 +340,17 @@ describe("marriage screens", () => {
     expect(w.apply("p3", { kind: "wedding-seen" })).toBeUndefined();
     expect(weddingWaiting(w.marriages, "p3")).toBe(false);
     expect(weddingWaiting(w.marriages, "p2")).toBe(true);
+  });
+});
+
+describe("wedding staging", () => {
+  it("walks the couple in, joins them, then walks them off", () => {
+    const [b0, b1, b2, b3] = [0, 1, 2, 3].map(weddingBeat);
+    expect(b0!.a).toBeLessThan(b1!.a);
+    expect(b1!.a).toBeLessThan(b1!.o);
+    expect(b2!.hop).toBe(true);
+    expect(b3!.a).toBeGreaterThan(960);
+    expect(weddingBeat(99)).toEqual(b3);
+    expect(weddingBeat(-1)).toEqual(b0);
   });
 });
