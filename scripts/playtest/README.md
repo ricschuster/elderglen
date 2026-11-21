@@ -329,6 +329,10 @@ daily kiss, then files, cancels and refiles a divorce and sleeps to the end of t
 
 `npm run playtest:shrine` (`npm run dev` running) plays the ancestors' shrine scene (note 83).
 
+`node scripts/playtest/family.mjs` (about 10 seconds, headless): from the "married" stage, asks for a child and lets it
+arrive, divorces, sleeps to the end of the marriage and courts the ex again. `node scripts/playtest/spouse-day.mjs [stage]`
+prints where the spouse is through the day as text, one line per change (`FROM`, `TO`, `STEP` in game minutes, `ALL=1` for every line).
+
 ## Tablet checks: text first
 
 For hands-on checks on the debug app over adb (`tablet-lib.mjs`), read state as text and

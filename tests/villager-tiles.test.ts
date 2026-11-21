@@ -164,4 +164,13 @@ describe("talkTarget", () => {
     expect(talkTarget(two, face, { x: 5, y: 8 }, "b")?.id).toBe("b");
     expect(talkTarget(two, { x: 20, y: 20 }, { x: 5, y: 8 })).toBeUndefined();
   });
+  it("exactOnly leaves a counter beside a stallkeeper to the counter", () => {
+    const list = [p("cordelia", 33, 60)];
+    const face = { x: 33, y: 61 };
+    expect(talkTarget(list, face, { x: 33, y: 62 })?.id).toBe("cordelia");
+    expect(talkTarget(list, face, { x: 33, y: 62 }, "", true)).toBeUndefined();
+    expect(
+      talkTarget(list, { x: 33, y: 60 }, { x: 33, y: 62 }, "", true)?.id,
+    ).toBe("cordelia");
+  });
 });

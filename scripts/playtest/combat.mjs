@@ -41,7 +41,7 @@ if ((await farm((g, f, s) => s.inventory.count("hazel-switch"))) !== 1)
 // The dummy takes a swing and shows the number.
 const slot = await farm((g, f, s) => {
   for (let i = 0; i < s.inventory.size; i++)
-    if (s.inventory.slot(i)?.id === "hazel-switch") return 4 + i;
+    if (s.inventory.slot(i)?.id === "hazel-switch") return i; // tools sit in the pack now (note 102): the toolbar index is the slot
   return -1;
 });
 await farm((g, f, s, a) => f.select(a), slot);
@@ -109,7 +109,7 @@ for (const [floor, band] of [
   });
   const pin = await farm((g, f, s) => {
     for (let i = 0; i < s.inventory.size; i++)
-      if (s.inventory.slot(i)?.id === "hearthsilver-rolling-pin") return 4 + i;
+      if (s.inventory.slot(i)?.id === "hearthsilver-rolling-pin") return i; // tools sit in the pack now (note 102): the toolbar index is the slot
     return -1;
   });
   await farm((g, f, s, a) => f.select(a), pin);

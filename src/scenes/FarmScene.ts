@@ -1313,6 +1313,8 @@ export class FarmScene extends Phaser.Scene {
       tile,
       tileOf(this.pos, PLAYER, this.map.tileSize),
       this.lastTalkedId,
+      // A service on the faced tile wins over someone standing beside it.
+      !!this.map.serviceAt(tile.x, tile.y),
     );
     if (!who) return false;
     this.lastTalkedId = who.id;
