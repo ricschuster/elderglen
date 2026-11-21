@@ -16,7 +16,7 @@ Headless run 2026-11-21, build 18e829da plus the stage fix (`marriage.mjs`, `fam
 - pass: Divorce by the rules: file, fee 50000 paid, cancel, refile, end next morning, `ex-` flag up (`marriage.mjs`). owner: the hall ledger (30,5) interaction by hand.
 - pass: Re-dating: bouquet then token to the ex works, stage back to engaged (`family.mjs`).
 - pass: Children: ask due a week after the wedding at tier 2, yes brings one in 3 days, no second ask at once; the child stays after a divorce (note 12, our choice) (`family.mjs`).
-- owner: Spouse after 22:00 and 10:30 to 18:00 is on none of house, farm, Hearthwell (indoors elsewhere?). Not checked.
+- pass: Where the spouse is after 22:00 and 10:30 to 18:00, over all 38 maps (`spouse-day.mjs` with `MAPS`, build ad1201de, 2026-11-21): house 6:00, farm 6:30, house 7:30, off the maps 8:30 to 8:40 (walking), Hearthwell 8:40, the inn 10:30 to 17:00 (her own work), off the maps 17:00 to 18:00 (the walk home), farm 18:00, house 21:20, her room 21:40, then on no map 22:00 to 6:00. That last stretch is asleep, and `villagersOn` lists nobody asleep (every villager vanishes at bedtime). owner: whether a spouse should show in the bed at night; today the bed looks empty.
 - Found and fixed: the married stages had the wedding day 3 days ahead, so the spouse kept her villager schedule (`src/core/statepatch.ts`, test in `tests/stages.test.ts`). `marriage.mjs` never raised the house tier for the token gate; fixed.
 
 ## Festivals
@@ -75,7 +75,8 @@ Headless run 2026-11-21, build 89e72819 plus script fixes (`playtest:sweep` with
 
 ## Saves, controls, device
 
-- todo: Save split on a real tablet (`persist()`), `late-game-100` on the SM-T500.
+- pass: SM-T500 (Android WebView), 2026-11-21, build ad1201de (fresh debug APK): `persist()` returns false (`persisted()` false too), as on both SM-X210s. By design the game keeps working; the owner decides whether that matters.
+- pass: `late-game-100` on the SM-T500: stage loads (day 100, tier 3, 100000g), a night passes by the clock (`farmState minutes 1550`), the night record is 69,707 chars and the previous-night record 69,427, no console error. Three records are about 210K chars, so five late-game slots use about 1M of the 5M chars the WebView allows (filled to 5,000,000 chars in a test, then cleaned up).
 - owner: Finger feel for control schemes 1 and 4.
 
 ## Bundles
