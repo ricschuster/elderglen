@@ -165,18 +165,22 @@ export function weddingMorning(g: GameState): "go" | "postponed" | "none" {
 /**
  * The morning report line while engaged to a villager, in single player and multiplayer
  * (owner, 2026-11-21). `today` is the day just begun. None on the wedding day itself, where
- * the wedding scene follows the report. `playerEngaged` is set when the player's two-player
+ * the wedding scene follows the report, unless `delayed` (a festival or rain puts it off,
+ * `weddingBlock`): then it says the wedding is put off a day. `playerEngaged` is set when the player's two-player
  * engaged notice already shows, so the line is not doubled. PLACEHOLDER TEXT.
  */
 export function engagedReportLine(
   m: Pick<Marriage, "stage" | "spouse" | "weddingDay">,
   today: number,
   playerEngaged = false,
+  delayed = false,
 ): string | undefined {
   if (playerEngaged || m.stage !== "engaged" || !m.spouse) return undefined;
   const left = m.weddingDay - today;
-  if (left < 1) return undefined;
   const name = nameOf(m.spouse);
+  if (left === 0 && delayed)
+    return `The wedding with ${name} is put off a day.`;
+  if (left < 1) return undefined;
   return left === 1
     ? `You are engaged to ${name}. The wedding is tomorrow.`
     : `You are engaged to ${name}. The wedding is in ${left} days.`;

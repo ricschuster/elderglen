@@ -269,6 +269,8 @@ rulings") into steps. Stardew facts are from the saved Multiplayer page (read 20
 The page says: players marry each other with a craftable Wedding Ring, a married pair get the Stardrop in a purple
 giftbox by their home bed, children go in a home both players sleep in, and an NPC can be married by one player only.
 
+**Wedding day (owner, 2026-11-21):** the spouse is on the spouse route from the wedding day once the ceremony has made them married (`onSpouseRoute` uses `>=`); the chores and the heart gift still start the morning after (`spouseMorning`). A delayed wedding (`weddingBlock`) shows "The wedding with X is put off a day." in the morning report.
+
 **Morning report (owner, 2026-11-21):** the report shows an engaged notice in single player too (`engagedReportLine`, "You are engaged to X. The wedding is in N days." or "...is tomorrow.", placeholder text), not on the wedding day itself, where the scene follows, and not doubled where the two-player notice shows.
 
 ### Steps already decided (note 53)

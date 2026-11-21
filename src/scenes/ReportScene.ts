@@ -4,7 +4,7 @@ import type { SleepReport } from "../core/sleep";
 import { dateOf } from "../core/calendar";
 import type { GameState } from "../core/save";
 import { engagedWith, marriageReportLines } from "../core/playermarriage";
-import { engagedReportLine } from "../core/courtship";
+import { engagedReportLine, weddingBlock } from "../core/courtship";
 import { currentSession, HostSession, playerNameOf } from "../net/session";
 import { STATE_KEY } from "./state";
 import { WINDOW_FILL } from "./panel";
@@ -37,6 +37,7 @@ export class ReportScene extends Phaser.Scene {
       this.state.marriage,
       today,
       !!net && !!engagedWith(this.state.playerMarriage, net.localId),
+      !!weddingBlock(this.state),
     );
     if (!net) return villager ? [villager] : [];
     const lines = marriageReportLines(

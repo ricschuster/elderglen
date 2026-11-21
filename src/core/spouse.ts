@@ -54,19 +54,19 @@ export const WATER_RADIUS = spouseData.chores.radius;
 
 type Married = Pick<GameState, "marriage"> & Partial<Pick<GameState, "flags">>;
 
-/** The married person, or null. The spouse route runs from the morning after the wedding. */
+/** The married person, or null. The spouse route runs from the wedding day, once the ceremony has made them married. */
 export function spouseId(g: Partial<Married>): string | null {
   const m = g.marriage;
   return m?.married && m.spouse ? m.spouse : null;
 }
 
-/** True when `id` keeps the spouse route on `day` (married, and the wedding day is behind). */
+/** True when `id` keeps the spouse route on `day` (married, and the wedding day is today or behind). */
 export function onSpouseRoute(
   g: Partial<Married>,
   id: string,
   day: number,
 ): boolean {
-  return spouseId(g) === id && day > (g.marriage?.weddingDay ?? Infinity);
+  return spouseId(g) === id && day >= (g.marriage?.weddingDay ?? Infinity);
 }
 
 // ---- The spouse route ------------------------------------------------------
@@ -298,7 +298,7 @@ export function leaveGift(g: GameState): boolean {
 
 /**
  * The spouse's part of the new morning, after the night has run. Only from the
- * morning after the wedding. Feeds hay only (the silo's, never the pack's) and
+ * morning after the wedding (the wedding day itself is a day off from chores). Feeds hay only (the silo's, never the pack's) and
  * waters a few crops. Returns what was done, or undefined when not married.
  */
 export function spouseMorning(
