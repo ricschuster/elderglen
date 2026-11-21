@@ -4,6 +4,7 @@ import { clockText } from "./clock";
 import { festivalDayToday } from "./festivals";
 import {
   COURT_HEARTS,
+  MARRIAGE_HOUSE_TIER,
   PROPOSE_HEARTS,
   TOKEN_PRICE,
   exFlag,
@@ -121,6 +122,10 @@ export function courtGift(
   if (m.stage === "courting" && m.spouse === id) {
     if (points < PROPOSE_HEARTS * HEART)
       return no(`${name} holds your hands, but asks for a little more time.`);
+    if (g.houseTier < MARRIAGE_HOUSE_TIER)
+      return no(
+        `${name} glances at your small cottage. PLACEHOLDER TEXT: a proper kitchen and bed first, please.`,
+      );
     if (!m.engage(id, points, g.day.clock.day))
       return no(`${name} cannot take it.`);
     g.inventory.remove(held, 1);

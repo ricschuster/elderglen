@@ -5,7 +5,12 @@ import { allItems } from "./items";
 import { BUILT_FLOORS, minesOpen } from "./mines";
 import { NURSERY_TIER } from "./children";
 import { MAX_HOUSE_TIER } from "./house";
-import { COURT_HEARTS, MAX_CHILDREN, PROPOSE_HEARTS } from "./marriage";
+import {
+  COURT_HEARTS,
+  MARRIAGE_HOUSE_TIER,
+  MAX_CHILDREN,
+  PROPOSE_HEARTS,
+} from "./marriage";
 import { eventById } from "./heartevents";
 import { HEART, heartCap, isCandidate } from "./friendship";
 import { Inventory } from "./inventory";
@@ -275,6 +280,8 @@ function applyMarriage(
   const stage = want.stage ?? "married";
   const kids = want.children ?? 0;
   const m = g.marriage;
+  // The token needs the first house upgrade (courtship.ts), so a patched marriage has it too.
+  g.houseTier = Math.max(g.houseTier, MARRIAGE_HOUSE_TIER);
   if (!isCandidate(spouse) || m.stage !== "none") {
     problems.push(`marriage: cannot court ${spouse}`);
     return;
