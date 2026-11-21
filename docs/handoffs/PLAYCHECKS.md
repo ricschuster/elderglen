@@ -60,4 +60,7 @@ Headless run 2026-11-21, build 6358d834 (`rods.mjs` new, `delta.mjs`, `cove.mjs`
 
 ## Bundles
 
-- todo: Bundles 1 to 26 fill; the Last Seat opens after all others.
+Headless run 2026-11-21, build 5a72ea16 (`playtest:bundles`, 76 s; bundle, hall and last-seat unit tests, 48).
+
+- pass: Every hall bundle fills through the real hall screen (30 of 30, rooms in order, the Last Seat last): each hands in, completes, pays its reward, completes its room, and the end screen opens after the last room.
+- owner: Hall look and feel with the real art; the scroll text and reward moments by hand.
