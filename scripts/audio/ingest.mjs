@@ -4,7 +4,7 @@
 // Steps: decode to stereo 44.1 kHz, trim silence at both ends, cap the length, cross fade the tail into
 // the head (unless --loopready) so the loop point is seamless, wrap with loop pre-roll, normalise to the
 // target loudness, encode Ogg Vorbis to public/audio/music/<slot-id>.ogg, record the slot in external.json
-// and add a ledger row to docs/reference/audio/LICENCES.md when --author and --url are given.
+// and add a ledger row to docs/audio/LICENCES.md when --author and --url are given.
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join, basename } from "node:path";
@@ -101,7 +101,7 @@ ext.music[id] = oneshot
     };
 writeFileSync(extPath, JSON.stringify(ext, null, 2) + "\n");
 
-const ledger = join(root, "docs", "reference", "audio", "LICENCES.md");
+const ledger = join(root, "docs", "audio", "LICENCES.md");
 if (val("--author") && val("--url") && existsSync(ledger)) {
   const row = `| music/${id}.ogg | ${val("--title", id)} | ${val("--author")} | ${val("--licence", "CC0")} | ${val("--url")} |\n`;
   const text = readFileSync(ledger, "utf8");

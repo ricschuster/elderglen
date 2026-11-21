@@ -5,7 +5,7 @@ import { dirname, join } from "node:path";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const rows = readFileSync(
-  join(root, "docs", "reference", "audio", "LICENCES.md"),
+  join(root, "docs", "audio", "LICENCES.md"),
   "utf8",
 )
   .split("\n")
@@ -31,7 +31,7 @@ const rows = readFileSync(
   }));
 const out = {
   _note:
-    "Shown by Options > Sound credits. Generated from docs/reference/audio/LICENCES.md by scripts/audio/credits.mjs. CC-BY files must be listed; CC0 ones are listed as thanks.",
+    "Shown by Options > Sound credits. Generated from docs/audio/LICENCES.md by scripts/audio/credits.mjs. CC-BY files must be listed; CC0 ones are listed as thanks.",
   credits: rows,
 };
 writeFileSync(

@@ -110,10 +110,7 @@ describe("manifest and files", () => {
   });
 
   it("downloaded music has a ledger row", () => {
-    const ledger = readFileSync(
-      join(root, "docs/reference/audio/LICENCES.md"),
-      "utf8",
-    );
+    const ledger = readFileSync(join(root, "docs/audio/LICENCES.md"), "utf8");
     for (const m of Object.values(MUSIC))
       if (m.source === "downloaded")
         expect(ledger.includes(`| ${m.file} |`), m.file).toBe(true);

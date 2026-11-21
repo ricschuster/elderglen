@@ -32,8 +32,8 @@ cross fades, ducking and ambient layers are ours and testable. Rules (what plays
 `src/core/audio.ts`. A director reads the running scenes, so most sounds need no per-scene calls.
 
 **Licence rule.** CC0 and CC-BY only. Every third party file has a row in
-`docs/reference/audio/LICENCES.md` (file, title, author, licence, source URL). Sites that block
-automated clients are listed in `docs/reference/audio/urls_music.txt` for the owner to save by hand.
+`docs/audio/LICENCES.md` (file, title, author, licence, source URL). Sites that block
+automated clients are listed in `docs/audio/urls_music.txt` for the owner to save by hand.
 
 ## Consequences
 

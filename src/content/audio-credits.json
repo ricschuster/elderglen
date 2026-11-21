@@ -1,5 +1,5 @@
 {
-  "_note": "Shown by Options > Sound credits. Generated from docs/reference/audio/LICENCES.md by scripts/audio/credits.mjs. CC-BY files must be listed; CC0 ones are listed as thanks.",
+  "_note": "Shown by Options > Sound credits. Generated from docs/audio/LICENCES.md by scripts/audio/credits.mjs. CC-BY files must be listed; CC0 ones are listed as thanks.",
   "credits": [
     {
       "file": "music/summer.ogg",

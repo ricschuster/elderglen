@@ -8,7 +8,7 @@ Goal: about 60 percent of how a cozy farming game sounds and feels: feedback on 
 bed that follows season, place, time and weather, and a quiet ambience under it. The game was silent
 before this note. Stardew is a black box (ADR 0002): no audio is copied or imitated note for note.
 Every effect and every synthesised track is original, and every downloaded track is CC0 or CC-BY with a
-row in `docs/reference/audio/LICENCES.md`.
+row in `docs/audio/LICENCES.md`.
 
 ## Where sound comes from
 
@@ -106,7 +106,7 @@ Slots (ids): `title`, `spring`, `summer`, `fall`, `winter` (farm by day), `night
 (a stinger, no loop), `fishing`. Twelve slots use downloaded CC0 tracks (title, spring, summer, fall, winter, night, rain, village, woods,
 beach, interior, and the bundle stinger); six are synthesised placeholders (mines, festival, night-market,
 heart-event, wedding, fishing). Which is which is in
-`docs/reference/audio/LICENCES.md` and `scripts/audio/external.json`.
+`docs/audio/LICENCES.md` and `scripts/audio/external.json`.
 
 Priority, first match wins (`chooseMusic`):
 

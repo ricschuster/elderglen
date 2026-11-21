@@ -21,7 +21,7 @@ content licence in `LICENSE-CONTENT.md` (CC BY-NC 4.0). The one exception is the
 | Witch test drawing (not used in game yet)  | `art-source/`, `public/art/`  | CC BY-NC 4.0 |
 | Fonts                                      | The browser's monospace       | Not shipped  |
 | Audio: effects, ambient, placeholder music | `scripts/audio/` (synth)      | CC BY-NC 4.0 |
-| Audio: downloaded music                    | `audio/LICENCES.md`           | CC0 per row  |
+| Audio: downloaded music                    | `docs/audio/LICENCES.md`      | CC0 per row  |
 
 Nothing is copied or traced from Stardew Valley or any other game (see
 `docs/decisions/0002-stardew-valley-inspired.md`). When a third party asset is
