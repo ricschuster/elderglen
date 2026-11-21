@@ -39,7 +39,7 @@ interface Playing {
 const MAX_VOICES = 24;
 const LOG_LIMIT = 400;
 
-function loadBytes(url: string): Promise<ArrayBuffer> {
+function xhrBytes(url: string): Promise<ArrayBuffer> {
   return new Promise((resolve, reject) => {
     const x = new XMLHttpRequest();
     x.open("GET", url);
@@ -50,6 +50,19 @@ function loadBytes(url: string): Promise<ArrayBuffer> {
         : reject(new Error(`HTTP ${x.status} for ${url}`));
     x.onerror = () => reject(new Error(`could not load ${url}`));
     x.send();
+  });
+}
+
+/** XHR first (it reads `file:` pages in a wrapper), then fetch as a second try. */
+function loadBytes(url: string): Promise<ArrayBuffer> {
+  return xhrBytes(url).catch(async (first) => {
+    try {
+      const r = await fetch(url);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return await r.arrayBuffer();
+    } catch {
+      throw first;
+    }
   });
 }
 
@@ -67,6 +80,7 @@ export class AudioEngine {
   private cooldowns = new Cooldowns();
   private lastVariant = new Map<string, number>();
   private voices = 0;
+  private decoded = 0;
   private music: Playing | undefined;
   private ambient = new Map<string, Playing>();
   private wantMusic: string | undefined;
@@ -86,6 +100,14 @@ export class AudioEngine {
   }
   get isUnlocked(): boolean {
     return this.unlocked;
+  }
+  /** The AudioContext state, or `none` before the first gesture or without WebAudio. */
+  get state(): string {
+    return this.ctx?.state ?? "none";
+  }
+  /** How many audio files have been decoded so far (for the playtest). */
+  get loaded(): number {
+    return this.decoded;
   }
 
   private log(kind: AudioEvent["kind"], id: string): void {
@@ -176,6 +198,10 @@ export class AudioEngine {
       const url = new URL(`audio/${file}`, document.baseURI).href;
       p = loadBytes(url)
         .then((b) => ctx.decodeAudioData(b))
+        .then((buf) => {
+          this.decoded++;
+          return buf;
+        })
         .catch((e) => {
           this.errors.push(`${file}: ${String(e)}`);
           return undefined;
@@ -325,11 +351,12 @@ export class AudioEngine {
       const def = AMBIENT[id];
       if (!def) continue;
       const have = this.ambient.get(id);
-      if (have) {
+      if (have?.gain) {
         const now = this.ctx.currentTime;
         have.gain.gain.setTargetAtTime(def.gain * level, now, fadeS / 3);
         continue;
       }
+      if (have) continue; // still loading: it will start at the level asked for last
       // Reserve the slot at once so a second call does not start a second copy.
       const reserved: Playing = {
         id,
@@ -350,7 +377,7 @@ export class AudioEngine {
         const now = ctx.currentTime;
         g.gain.setValueAtTime(0, now);
         g.gain.linearRampToValueAtTime(
-          def.gain * (want.get(id) ?? 1),
+          def.gain * (this.wantAmbient.find((l) => l.id === id)?.level ?? 0),
           now + fadeS,
         );
         src.connect(g).connect(this.buses.ambient);

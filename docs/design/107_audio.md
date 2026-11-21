@@ -1,6 +1,6 @@
 # 107: Audio (sound effects, ambience, music)
 
-Status: designed and built 2026-11-21 (branch `feat/audio`). Closes the design question in #527 (the
+Status: designed and built 2026-11-21 (branch `feat/audio`); built to first-pass level, not yet auditioned by ear. Closes the design question in #527 (the
 issue has no other content: music approach, effects list, mix and settings, licensing). Decision record:
 `docs/decisions/0017-audio.md`. Placeholder numbers throughout; every level is a tuning knob.
 
@@ -90,11 +90,19 @@ events (the event data's `music` and `sfx` commands), the wedding, the end of th
 The mapping from a use outcome to a sound, the footstep surface and all selection rules are pure code
 in `src/core/audio.ts` with unit tests.
 
+Ids defined but not yet hooked (ready for the scenes that own them): `ui.notify` `ui.tab` `ui.toggle`
+`item.drop` `chest.close` `tree.fall` `sprinkler.run` `mine.ore` `mine.geode` `animal.baa` `animal.chirp`
+`animal.oink` `craft.tap` `machine.start` `machine.done` `clock.chime` `festival.cheer` `mail` `achievement`.
+Animals other than the coop and barn cues, and sounds for other players in a shared valley, are not
+hooked either.
+
 ## Music slots and selection
 
 Slots (ids): `title`, `spring`, `summer`, `fall`, `winter` (farm by day), `night`, `rain`, `village`,
 `mines`, `beach`, `woods`, `interior`, `festival`, `night-market`, `heart-event`, `wedding`, `bundle`
-(a stinger, no loop), `fishing`. Which are downloaded and which are placeholders is in
+(a stinger, no loop), `fishing`. Twelve slots use downloaded CC0 tracks (title, spring, summer, fall, winter, night, rain, village, woods,
+beach, interior, and the bundle stinger); six are synthesised placeholders (mines, festival, night-market,
+heart-event, wedding, fishing). Which is which is in
 `docs/reference/audio/LICENCES.md` and `scripts/audio/external.json`.
 
 Priority, first match wins (`chooseMusic`):

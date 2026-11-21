@@ -1,3 +1,4 @@
+import { audio } from "../audio/engine";
 import Phaser from "phaser";
 import { festivalToday } from "../core/festivals";
 import type { GameState } from "../core/save";
@@ -66,6 +67,7 @@ export class BedScene extends Phaser.Scene {
   }
 
   private close(sleep: boolean): void {
+    if (sleep) audio.sfx("bed.sleep");
     this.scene.stop();
     this.scene.resume("farm", { sleep });
   }

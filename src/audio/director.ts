@@ -60,11 +60,6 @@ const TITLE_FLOW = new Set([
 /** Scenes whose music overrides the farm's even while the farm is alive. */
 const STORY_SCENES = new Set(["heart-event", "wedding", "fishing", "end"]);
 
-export interface Tick {
-  info: AudioInfo | undefined;
-  overlays: string[];
-}
-
 /** Work out the audio situation from the running scene keys and the farm probe. Pure given its inputs. */
 export function situation(
   active: string[],

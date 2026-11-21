@@ -7,7 +7,8 @@
     "electron/main.ts",
     "electron/preload.ts",
     "spikes/m4/pipehost.ts",
-    "spikes/m4/pipelisten.ts"
+    "spikes/m4/pipelisten.ts",
+    "src/audio/audition.ts"
   ],
   "project": [
     "src/**/*.ts",
@@ -18,7 +19,7 @@
   "ignoreExportsUsedInFile": true,
   "ignoreUnresolved": ["^/src/"],
   "ignoreDependencies": ["electron"],
-  "ignoreBinaries": ["electron"],
+  "ignoreBinaries": ["electron", "ffmpeg"],
   "ignore": ["src/scenes/interior-plans.ts"],
   "ignoreIssues": {
     "src/layout/devserver.ts": ["exports"],

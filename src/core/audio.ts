@@ -316,9 +316,6 @@ export function sfxForAct(
   return undefined;
 }
 
-/** The effect for a skill level up or other plain notice. */
-export const LEVEL_UP = "ui.levelup";
-
 /** The sound of walking through an exit: a door when a house, shop or cellar is on either side. */
 export function doorSoundFor(from: string, to: string): string | undefined {
   const inside = (m: string) => {

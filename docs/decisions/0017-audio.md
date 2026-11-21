@@ -43,3 +43,7 @@ automated clients are listed in `docs/reference/audio/urls_music.txt` for the ow
   owner should audition (`audio.html`) and swap weak slots.
 - The build needs `ffmpeg` on the machine that runs `npm run audio:build`; the output is committed so
   nobody else needs it.
+- Risk, not yet tested: the Electron wrapper loads `dist/` with `loadFile` (a `file:` page). Files are read
+  with XHR, then fetch, which a `file:` page may refuse. If it does, serve `dist/` through a custom
+  protocol in `electron/main.ts` (a small follow-up). The browser (dev and built) and the Capacitor WebView
+  (`https://localhost`) read files normally.
