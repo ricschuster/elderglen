@@ -178,10 +178,20 @@ describe("the spouse route", () => {
     expect(w.where.map).toBe("house");
   });
 
-  it("applies only from the morning after the wedding", () => {
+  it("applies from the wedding day, once married", () => {
     const g = married("bramwell", 10, 5);
-    expect(onSpouseRoute(g, "bramwell", 5)).toBe(false);
+    expect(onSpouseRoute(g, "bramwell", 4)).toBe(false);
+    expect(onSpouseRoute(g, "bramwell", 5)).toBe(true);
     expect(onSpouseRoute(g, "bramwell", 6)).toBe(true);
+    const engaged = newGame();
+    engaged.marriage.stage = "engaged";
+    engaged.marriage.spouse = "bramwell";
+    engaged.marriage.weddingDay = 5;
+    expect(onSpouseRoute(engaged, "bramwell", 5)).toBe(false);
+    // The wedding day is a day off from chores.
+    const w = married("bramwell", 10, 5);
+    w.day.clock.day = 5;
+    expect(spouseMorning(w, () => 0)).toBeUndefined();
     expect(onSpouseRoute(g, "aurelle", 6)).toBe(false);
     expect(onSpouseRoute(newGame(), "bramwell", 6)).toBe(false);
   });
@@ -198,9 +208,13 @@ describe("the spouse route", () => {
     expect(names("hearthwell", at(12))).not.toContain("bramwell");
     expect(names("smithy", at(12))).toContain("bramwell");
     expect(names("farm", at(19))).toContain("bramwell");
-    // The wedding day itself still follows the village route.
+    // The wedding day itself already follows the spouse route (after the ceremony).
+    expect(villagersOn(g, "house", 1, at(6, 10)).map((p) => p.id)).toContain(
+      "bramwell",
+    );
+    // The day before the wedding does not.
     expect(
-      villagersOn(g, "house", 1, at(6, 10)).map((p) => p.id),
+      villagersOn(g, "house", 0, at(6, 10)).map((p) => p.id),
     ).not.toContain("bramwell");
   });
 });

@@ -595,6 +595,34 @@ export const GOOD_SHAPES: Record<string, string[]> = {
     "....oddddddo....",
     "...oooooooooo...",
   ],
+  bouquet: [
+    ".......oo.......",
+    "..oo..oaao..oo..",
+    ".oaao.oalo.oaao.",
+    ".olao.oaao.oalo.",
+    "..oo.ooooo.oo...",
+    "....osossos.....",
+    ".....oosso......",
+    "...oobbbbbboo...",
+    "..obblbbbbbdbo..",
+    "..obbbbbbbbddo..",
+    "...obbbbbbddo...",
+    "....obbbbddo....",
+    ".....obbddo.....",
+    "......oooo......",
+  ],
+  ring: [
+    "......oaao......",
+    ".....oalado.....",
+    "....oobbbboo....",
+    "...obboooobbo...",
+    "..obbo....obbo..",
+    "..obo......obo..",
+    "..obbo....obbo..",
+    "...obboooobbo...",
+    "....oddddddo....",
+    ".....oooooo.....",
+  ],
 };
 
 export interface GoodLook {
@@ -767,6 +795,12 @@ export const GOOD_LOOKS: Record<string, GoodLook> = {
   "tangled-line": g("coil", "#c8ccc8"),
   truffle: g("truffle", "#4a3a30"),
   "warp-totem-beach": g("totem", "#8a6a4a", { a: "#3a9ab8" }),
+  bouquet: g("bouquet", "#e8d8b0", {
+    a: "#e86a8a",
+    l: "#f4e070",
+    s: "#4a8a3a",
+  }),
+  "promise-token": g("ring", "#e8c040", { a: "#6a8ae8" }),
 };
 
 /** The ice fishing prize, drawn on the slim fish body (note 82). */

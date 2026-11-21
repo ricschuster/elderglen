@@ -6,7 +6,7 @@ import { lanternOn } from "../core/feastexchange";
 import { stackOffsets, taggedIds } from "../core/labels";
 import { tileOf } from "../core/movement";
 import { paradeJoinedAt } from "../core/parade";
-import { villagersOn, type Present } from "../core/townfolk";
+import { spreadPresent, villagersOn, type Present } from "../core/townfolk";
 import { TILES_PER_MINUTE } from "../core/walkers";
 import { villagerKey } from "./art-people";
 import { sortDepth } from "./depth";
@@ -117,16 +117,14 @@ export function syncVillagers(
   const ws = farm.walkers;
   updateLags(farm, dt);
   const minutes = frameMinutes(farm, smooth);
-  const list: Present[] = villagersOn(
-    farm.state,
-    farm.mapId,
-    clock.day,
-    minutes,
-    {
+  // People who stand on one schedule tile each get their own (stationary people only).
+  const list: Present[] = spreadPresent(
+    villagersOn(farm.state, farm.mapId, clock.day, minutes, {
       hallRestored: hallRestored(farm.state.hall),
       paradeJoinedAt: paradeJoinedAt(farm.state),
       lag: festivalToday(clock.day) ? {} : ws.lag,
-    },
+    }),
+    (x, y) => !farm.map.isBlocked(x, y),
   );
   farm.villagers = list;
   const ts = farm.map.tileSize;
