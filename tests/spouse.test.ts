@@ -536,3 +536,22 @@ describe("the spouse room and the wedding mark", () => {
     expect(questLines(g)[0]).toMatch(/Married to/);
   });
 });
+
+describe("a wedding put off by a festival or rain", () => {
+  it("records the day and the reason, and clears them on an end", () => {
+    const g = newGame();
+    g.marriage.court("bramwell", 99999);
+    g.marriage.engage("bramwell", 99999, 5);
+    expect(g.marriage.postpone(8, "rain")).toBe(true);
+    expect(g.marriage.weddingDay).toBe(9);
+    expect(g.marriage.putOffWhy).toBe("rain");
+    const copy = newGame();
+    copy.marriage.load(JSON.parse(JSON.stringify(g.marriage.save())));
+    expect([copy.marriage.putOffDay, copy.marriage.putOffWhy]).toEqual([
+      8,
+      "rain",
+    ]);
+    g.marriage.end();
+    expect(g.marriage.putOffDay).toBe(0);
+  });
+});

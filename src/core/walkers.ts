@@ -1,6 +1,7 @@
 import data from "../content/walkers.json";
 import villagerData from "../content/villagers.json";
 import { maps } from "../content/maps";
+import { HOUSE_MAP, SPOUSE_HOLD } from "./house";
 import { findPath } from "./pathing";
 import {
   isRainy,
@@ -53,7 +54,15 @@ export interface Leg {
  * rooms stay open at every later tier, so the route is valid in all of them.
  */
 const WALK_TIER = 1;
-const walkMap = (id: string) => maps.get(id, WALK_TIER);
+const SPOUSE_HOLDS: ReadonlySet<string> = new Set([SPOUSE_HOLD]);
+/**
+ * Only a spouse walks the player's house, so it is read with the spouse's rooms
+ * open: her room (the evening spot) is in the wing that hold adds (note 85).
+ */
+const walkMap = (id: string) =>
+  id === HOUSE_MAP
+    ? maps.getWith(id, SPOUSE_HOLDS, WALK_TIER)
+    : maps.get(id, WALK_TIER);
 
 const AREAS = villagerData.areas as Record<string, { map: string | null }>;
 const AREA_MAPS = new Set(

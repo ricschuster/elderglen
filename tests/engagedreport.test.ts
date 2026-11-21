@@ -29,12 +29,25 @@ describe("engagedReportLine", () => {
     for (const stage of ["none", "courting", "married"] as const)
       expect(engagedReportLine({ ...engaged, stage }, 8)).toBeUndefined();
   });
-  it("says the wedding is put off a day when it is delayed", () => {
-    expect(engagedReportLine(engaged, 10, false, true)).toBe(
-      "The wedding with Bramwell is put off a day.",
+  it("names the reason when the wedding was put off today", () => {
+    const off = { ...engaged, weddingDay: 11, putOffDay: 10 };
+    expect(engagedReportLine({ ...off, putOffWhy: "rain" }, 10)).toBe(
+      "The wedding with Bramwell is put off a day: it is raining.",
     );
-    expect(engagedReportLine(engaged, 9, false, true)).toMatch(/tomorrow/);
-    expect(engagedReportLine(engaged, 10, true, true)).toBeUndefined();
+    expect(engagedReportLine({ ...off, putOffWhy: "festival" }, 10)).toBe(
+      "The wedding with Bramwell is put off a day: a festival is on.",
+    );
+    expect(engagedReportLine(off, 10, true)).toBeUndefined();
+  });
+  it("goes back to the countdown the day after", () => {
+    const off = {
+      ...engaged,
+      weddingDay: 11,
+      putOffDay: 10,
+      putOffWhy: "rain",
+    };
+    expect(engagedReportLine(off, 11)).toBeUndefined();
+    expect(engagedReportLine(off, 9)).toMatch(/tomorrow|days/);
   });
   it("is not doubled when the two-player notice shows", () => {
     expect(engagedReportLine(engaged, 8, true)).toBeUndefined();

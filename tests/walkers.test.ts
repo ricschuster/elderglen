@@ -8,6 +8,8 @@ import {
   type Weekday,
 } from "../src/core/villagers";
 import { villagersOn } from "../src/core/townfolk";
+import { dayContext, villagerById } from "../src/core/villagers";
+import { SPOUSE_ROOM, spouseVillager } from "../src/core/spouse";
 import {
   dayWalk,
   legTo,
@@ -243,3 +245,20 @@ describe("poses", () => {
 });
 
 void HOUSE_MAP;
+
+describe("the spouse's evening walk", () => {
+  it("has a leg into her room, so she does not snap there (owner, 2026-11-21)", () => {
+    const v = villagerById("bramwell")!;
+    const day = 3;
+    for (const weather of ["rainy", "snowy"] as const) {
+      const ctx = dayContext(day, weather);
+      const dw = dayWalk(spouseVillager(v, day, weather), ctx);
+      const i = dw.stops.findIndex((s) => s.place === SPOUSE_ROOM);
+      expect(i, weather).toBeGreaterThan(0);
+      const leg = legTo(dw, i);
+      expect(leg, `${weather}: leg to the room`).not.toBeNull();
+      const last = leg!.steps[leg!.steps.length - 1]!;
+      expect([last.map, last.x, last.y]).toEqual([HOUSE_MAP, 63, 27]);
+    }
+  });
+});

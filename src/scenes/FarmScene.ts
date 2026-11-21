@@ -1883,11 +1883,8 @@ export class FarmScene extends Phaser.Scene {
     if (this.weddingDay === day || g.marriage.stage !== "engaged") return;
     this.weddingDay = day;
     const r = weddingMorning(g);
-    if (r === "postponed") {
-      this.message =
-        "The wedding is put off a day. PLACEHOLDER TEXT: not in a festival or the rain.";
-      this.render();
-    } else if (r === "go" && g.marriage.spouse)
+    // A put-off wedding is told in the morning report, with the reason (marriage.putOffWhy).
+    if (r === "go" && g.marriage.spouse)
       this.open("heart-event", { id: weddingId(g.marriage.spouse) });
   }
 
