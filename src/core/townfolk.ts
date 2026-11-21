@@ -187,6 +187,45 @@ export function talkTarget(
     )[0];
 }
 
+/**
+ * Give people who share a tile their own. A schedule stop is one tile, so a market or an
+ * evening in the inn would draw many people as one sprite. The first keeps the tile; each
+ * other moves to the nearest free tile (rings outward, up to 4 tiles away). Stable for the
+ * same list, so nobody shuffles between minutes. Marchers and walkers between stops keep their place.
+ */
+export function spreadPresent(
+  list: readonly Present[],
+  isFree: (x: number, y: number) => boolean,
+): Present[] {
+  // People on the move (a marcher, or a walker between stops) keep their place and never claim a tile.
+  const moving = (p: Present) => p.marching === true || p.fx !== undefined;
+  const taken = new Set(
+    list.filter((p) => !moving(p)).map((p) => `${p.x},${p.y}`),
+  );
+  const seen = new Set<string>();
+  return list.map((p) => {
+    const key = `${p.x},${p.y}`;
+    if (moving(p) || !seen.has(key)) {
+      if (moving(p)) return p;
+      seen.add(key);
+      return p;
+    }
+    for (let r = 1; r <= 4; r++)
+      for (let dy = -r; dy <= r; dy++)
+        for (let dx = -r; dx <= r; dx++) {
+          if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
+          const x = p.x + dx;
+          const y = p.y + dy;
+          const k = `${x},${y}`;
+          if (taken.has(k) || !isFree(x, y)) continue;
+          taken.add(k);
+          seen.add(k);
+          return { ...p, x, y };
+        }
+    return p;
+  });
+}
+
 /** The villager on a tile, if any. */
 export const presentAt = (
   list: readonly Present[],

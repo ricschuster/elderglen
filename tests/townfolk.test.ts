@@ -7,6 +7,7 @@ import {
   meet,
   presentAt,
   shopNote,
+  spreadPresent,
   villagersOn,
 } from "../src/core/townfolk";
 import { HEART, POINTS } from "../src/core/friendship";
@@ -172,5 +173,40 @@ describe("villagersOn on a festival day (note 82)", () => {
     expect(villagersOn(g, hmap, 3, 14 * 60 + 5).some((p) => p.marching)).toBe(
       false,
     );
+  });
+});
+
+describe("spreadPresent", () => {
+  const at = (id: string, x: number, y: number, marching = false) => ({
+    id,
+    name: id,
+    x,
+    y,
+    placeholder: true,
+    ...(marching ? { marching: true } : {}),
+  });
+
+  it("leaves a lone villager and gives a crowd one tile each", () => {
+    const crowd = ["a", "b", "c", "d", "e", "f"].map((id) => at(id, 5, 5));
+    const out = spreadPresent(crowd, () => true);
+    expect(out[0]).toMatchObject({ x: 5, y: 5 });
+    expect(new Set(out.map((p) => `${p.x},${p.y}`)).size).toBe(6);
+    for (const p of out.slice(1))
+      expect(Math.max(Math.abs(p.x - 5), Math.abs(p.y - 5))).toBe(1);
+  });
+
+  it("never lands on a blocked tile or another person's tile", () => {
+    const list = [at("a", 5, 5), at("b", 5, 5), at("c", 6, 5)];
+    const out = spreadPresent(list, (x, y) => !(x === 4 && y === 5));
+    expect(out[1]).not.toMatchObject({ x: 4, y: 5 });
+    expect(new Set(out.map((p) => `${p.x},${p.y}`)).size).toBe(3);
+  });
+
+  it("is stable and keeps marchers where they are", () => {
+    const list = [at("a", 2, 2), at("b", 2, 2), at("m", 2, 2, true)];
+    expect(spreadPresent(list, () => true)).toEqual(
+      spreadPresent(list, () => true),
+    );
+    expect(spreadPresent(list, () => true)[2]).toMatchObject({ x: 2, y: 2 });
   });
 });
