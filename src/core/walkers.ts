@@ -46,6 +46,15 @@ export interface Leg {
   steps: Node[];
 }
 
+/**
+ * The map a leg is walked on. A growing house starts as one room, and the
+ * spouse's kitchen and bed are in the rooms tier 1 adds (note 68), so a leg
+ * reads each map at tier 1 (a map that does not grow ignores it). The tier 1
+ * rooms stay open at every later tier, so the route is valid in all of them.
+ */
+const WALK_TIER = 1;
+const walkMap = (id: string) => maps.get(id, WALK_TIER);
+
 const AREAS = villagerData.areas as Record<string, { map: string | null }>;
 const AREA_MAPS = new Set(
   Object.values(AREAS)
@@ -59,7 +68,7 @@ const roadArea = (id: string): string => id.slice("road:".length);
 
 /** The two ends of a building door: the open tile inside and the tile outside. */
 function doorInfo(interior: string): { inner: Node; outer: Node } | undefined {
-  const m = maps.get(interior);
+  const m = walkMap(interior);
   const exit = m.exits.find((e) => e.id === "door") ?? m.exits[0];
   const inner = m.entry("door") ?? m.entries[0];
   if (!exit || !inner || !AREA_MAPS.has(exit.map)) return undefined;
@@ -82,7 +91,10 @@ function edgeNode(area: string, other: string): Node | undefined {
 /** The edge of the map a person at area `here` uses to take the road `road:<x>`. */
 function roadEdge(here: string, roadId: string): Node | undefined {
   const road = roadArea(roadId);
-  if (here === "hw") return edgeNode("hw", road);
+  // The farm's two roads: the forest path, and Hearthwell (which the rest of the roads run through).
+  if (here === "farm") return edgeNode("farm", road === "forest" ? road : "hw");
+  // `road:hw` is the road between the farm and the village (a spouse's walk to work, note 84).
+  if (here === "hw") return edgeNode("hw", road === "hw" ? "farm" : road);
   return here === road ? edgeNode(road, "hw") : undefined;
 }
 
@@ -93,7 +105,7 @@ function walk(a: Node, b: Node): readonly Node[] | null {
   const key = `${a.map}|${a.x},${a.y}|${b.x},${b.y}`;
   const hit = pathCache.get(key);
   if (hit !== undefined) return hit;
-  const m = maps.get(a.map);
+  const m = walkMap(a.map);
   const p = findPath(
     {
       width: m.width,
