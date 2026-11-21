@@ -5,15 +5,18 @@ import {
   birthdayText,
   CHILD_MAX_HEARTS,
   childRows,
+  playerRows,
   socialRows,
   socialTip,
   specialItems,
   type ChildRow,
+  type PlayerRow,
   type Relationship,
   type SocialRow,
 } from "../core/menupages";
 import type { Taste } from "../core/friendship";
 import type { GameState } from "../core/save";
+import { currentSession } from "../net/session";
 import { takeEsc } from "./escape";
 import { frame } from "./panel";
 import { addPortrait } from "./portrait";
@@ -60,6 +63,8 @@ export class SocialScene extends Phaser.Scene {
   private detail: Phaser.GameObjects.GameObject[] = [];
   private bar!: Phaser.GameObjects.Rectangle;
   private rows: SocialRow[] = [];
+  /** Other players in a session, listed above the roster. */
+  private players: PlayerRow[] = [];
   private kids: ChildRow[] = [];
   private dragY = 0;
   private dragTop = 0;
@@ -90,7 +95,7 @@ export class SocialScene extends Phaser.Scene {
 
   private get total(): number {
     return (
-      this.rows.length * ROW_H +
+      (this.players.length + this.rows.length) * ROW_H +
       (this.kids.length > 0 ? 40 + this.kids.length * 36 : 0)
     );
   }
@@ -104,6 +109,8 @@ export class SocialScene extends Phaser.Scene {
     frame(this, "Social", () => undefined);
     this.add.text(24, 56, "Social", TITLE);
     this.rows = socialRows(g);
+    const net = currentSession();
+    this.players = net ? playerRows(net.remotes(), net.localId) : [];
     this.kids = childRows(g);
     this.bar = this.add
       .rectangle(BAR_X, LIST_TOP, 6, 40, 0xffe9a0, 0.6)
@@ -167,7 +174,7 @@ export class SocialScene extends Phaser.Scene {
   /** Show the hover or long-press tip for the person under the pointer; true if one showed. */
   private showTip(g: GameState, p: Phaser.Input.Pointer): boolean {
     const row = this.rowAt(p);
-    const i = row ? this.rows.indexOf(row) : -1;
+    const i = row ? this.rows.indexOf(row) + this.players.length : -1;
     if (!row || i < 0) {
       this.tooltip.hide();
       return false;
@@ -190,7 +197,7 @@ export class SocialScene extends Phaser.Scene {
   private rowAt(p: Phaser.Input.Pointer): SocialRow | undefined {
     const local = this.cameras.main.getWorldPoint(p.x, p.y);
     const i = Math.floor((local.y - LIST_TOP + this.top) / ROW_H);
-    return this.rows[i];
+    return this.rows[i - this.players.length];
   }
 
   private scrollTo(v: number): void {
@@ -211,14 +218,16 @@ export class SocialScene extends Phaser.Scene {
     // Only rows that fit entirely inside the list window are made, so a row
     // that starts inside but is taller than the room left never spills over
     // the frame. At the end of the scroll the last row fits (see maxTop).
+    const np = this.players.length;
     const first = Math.floor(this.top / ROW_H);
-    for (let i = first; i < this.rows.length; i++) {
+    for (let i = first; i < np + this.rows.length; i++) {
       const y = LIST_TOP + i * ROW_H - this.top;
       if (y + (ROW_H - 6) > LIST_TOP + LIST_H) break;
       if (y < LIST_TOP) continue;
-      this.drawRow(this.rows[i]!, y, add);
+      if (i < np) this.drawPlayerRow(this.players[i]!, y, add);
+      else this.drawRow(this.rows[i - np]!, y, add);
     }
-    let y = LIST_TOP + this.rows.length * ROW_H - this.top;
+    let y = LIST_TOP + (np + this.rows.length) * ROW_H - this.top;
     if (this.kids.length > 0) {
       if (y >= LIST_TOP && y + 20 <= LIST_TOP + LIST_H)
         add(
@@ -280,6 +289,30 @@ export class SocialScene extends Phaser.Scene {
         .rectangle(x, y, 20, 20, filled ? 0x8fd18a : 0x000000, filled ? 1 : 0.4)
         .setOrigin(0)
         .setStrokeStyle(2, 0xffffff, 0.6),
+    );
+  }
+
+  private drawPlayerRow(
+    r: PlayerRow,
+    y: number,
+    add: <T extends Phaser.GameObjects.GameObject>(o: T) => T,
+  ): void {
+    add(
+      this.add
+        .rectangle(LIST_X, y + 2, LIST_W - 10, ROW_H - 6, 0x000000, 0.45)
+        .setOrigin(0),
+    );
+    add(
+      this.add.text(LIST_X + 16, y + 6, r.name, {
+        fontSize: "20px",
+        color: "#ffffff",
+      }),
+    );
+    add(
+      this.add.text(LIST_X + 16, y + 30, "Player", {
+        fontSize: "14px",
+        color: "#ffe9a0",
+      }),
     );
   }
 
