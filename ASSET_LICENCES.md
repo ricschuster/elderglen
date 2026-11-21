@@ -20,8 +20,8 @@ content licence in `LICENSE-CONTENT.md` (CC BY-NC 4.0). The one exception is the
 | UI buttons and toolbar slots               | Plain shapes in scenes        | CC BY-NC 4.0 |
 | Witch test drawing (not used in game yet)  | `art-source/`, `public/art/`  | CC BY-NC 4.0 |
 | Fonts                                      | The browser's monospace       | Not shipped  |
-| Audio: effects, ambient, placeholder music | `scripts/audio/` (synthesised) | CC BY-NC 4.0 |
-| Audio: downloaded music                    | `docs/reference/audio/LICENCES.md` | CC0 (per row) |
+| Audio: effects, ambient, placeholder music | `scripts/audio/` (synth)      | CC BY-NC 4.0 |
+| Audio: downloaded music                    | `audio/LICENCES.md`           | CC0 per row  |
 
 Nothing is copied or traced from Stardew Valley or any other game (see
 `docs/decisions/0002-stardew-valley-inspired.md`). When a third party asset is
