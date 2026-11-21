@@ -90,9 +90,12 @@ events (the event data's `music` and `sfx` commands), the wedding, the end of th
 The mapping from a use outcome to a sound, the footstep surface and all selection rules are pure code
 in `src/core/audio.ts` with unit tests.
 
-Ids defined but not yet hooked (ready for the scenes that own them): `ui.notify` `ui.tab` `ui.toggle`
-`item.drop` `chest.close` `tree.fall` `sprinkler.run` `mine.ore` `mine.geode` `animal.baa` `animal.chirp`
-`animal.oink` `craft.tap` `machine.start` `machine.done` `clock.chime` `festival.cheer` `mail` `achievement`.
+Every defined id is now hooked. Menu tabs play `ui.tab`, switches in Options `ui.toggle`, a new HUD line
+`ui.notify` (skipped when an action already sounded). The director adds `clock.chime` (noon, dusk, midnight),
+`machine.done` and `item.drop` from changes in the world. The morning report plays `sprinkler.run`, the
+animals' calls, `mail` and `achievement`. Felling a tree, ore and geodes, loading a machine, crafting, closing
+a chest, and the festival parade or hunt ending have their own cues. Animals call by species when fed or petted.
+Limits: an id never retriggers faster than 30 ms, has at most 4 voices at once, and all effects at most 24.
 Animals other than the coop and barn cues, and sounds for other players in a shared valley, are not
 hooked either.
 

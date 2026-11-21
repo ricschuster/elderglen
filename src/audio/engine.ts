@@ -136,7 +136,11 @@ export class AudioEngine {
     return this.decoded;
   }
 
+  /** Every request ever logged, counting the ones trimmed from `events` (so a reader can find what is new). */
+  logged = 0;
+
   private log(kind: AudioEvent["kind"], id: string): void {
+    this.logged++;
     this.events.push({ t: Date.now(), kind, id });
     if (this.events.length > LOG_LIMIT) this.events.splice(0, 100);
   }

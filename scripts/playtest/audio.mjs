@@ -14,10 +14,15 @@ const music = () => A(() => window.farmAudio.currentMusic);
 const ambient = () => A(() => window.farmAudio.currentAmbient);
 
 let mark = 0;
+// The engine trims its log, so count by the running total, not by position.
 const fresh = async () => {
-  const all = await events();
-  const out = all.slice(mark);
-  mark = all.length;
+  const [all, total] = await A(() => [
+    window.farmAudio.events.map((e) => `${e.kind}:${e.id}`),
+    window.farmAudio.logged,
+  ]);
+  const out =
+    total > mark ? all.slice(Math.max(0, all.length - (total - mark))) : [];
+  mark = total;
   return out;
 };
 const expectEvent = async (what, pattern) => {
@@ -156,11 +161,12 @@ if (!(await ambient()).includes("wind"))
 await state({ season: "spring", dayOfSeason: 3, minutes: 12 * 60 });
 
 // 6b. The clock chimes as noon passes, and a menu tab switch ticks.
+await sleepMs(900);
 await state({ minutes: 11 * 60 + 50 });
-await sleepMs(600);
+await sleepMs(700);
 await fresh();
 await state({ minutes: 12 * 60 + 10 });
-await sleepMs(700);
+await sleepMs(1000);
 await expectEvent("noon chime", /sfx:clock\.chime/);
 await key("KeyE", 500);
 await fresh();
