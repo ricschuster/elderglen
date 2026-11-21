@@ -155,6 +155,30 @@ if (!(await ambient()).includes("wind"))
   finding(`winter ambient ${await ambient()} lacks wind`);
 await state({ season: "spring", dayOfSeason: 3, minutes: 12 * 60 });
 
+// 6b. The clock chimes as noon passes, and a menu tab switch ticks.
+await state({ minutes: 11 * 60 + 50 });
+await sleepMs(600);
+await fresh();
+await state({ minutes: 12 * 60 + 10 });
+await sleepMs(700);
+await expectEvent("noon chime", /sfx:clock\.chime/);
+await key("KeyE", 500);
+await fresh();
+await key("PageDown", 500);
+await expectEvent("menu tab", /sfx:ui\.tab/);
+await key("Escape", 500);
+await state({ minutes: 12 * 60 });
+await sleepMs(300);
+
+// 6c. Retrigger guard: a hundred rapid plays of one effect start at most a handful of voices.
+const burst = await A(async () => {
+  const a = window.farmAudio;
+  const before = a.events.length;
+  for (let i = 0; i < 100; i++) a.sfx("ui.click");
+  return a.events.length - before;
+});
+log(`burst logged ${burst} requests (the gate decides how many sound)`);
+
 // 7. Places: village, shop interior, beach, woods, mine.
 for (const [map, id, ambId] of [
   ["hearthwell", "village", undefined],

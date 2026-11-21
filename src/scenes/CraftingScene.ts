@@ -81,7 +81,11 @@ export class CraftingScene extends Phaser.Scene {
             text: "Craft",
             run: () => {
               const why = craft(g, r.id, chests);
-              audio.sfx(why ? "ui.error" : "craft.done");
+              if (why) audio.sfx("ui.error");
+              else {
+                audio.sfx("craft.tap");
+                this.time.delayedCall(260, () => audio.sfx("craft.done"));
+              }
               this.say(
                 why ? reasonText(why) : `You make a ${name.toLowerCase()}.`,
               );

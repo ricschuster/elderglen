@@ -6,6 +6,8 @@
 import rules from "../content/audio-rules.json";
 import manifest from "../content/audio-manifest.json";
 import { cropOfSeed } from "./items";
+import { GEODE_KINDS } from "./geodes";
+import { isOre } from "./ore";
 import type { Season } from "./calendar";
 import type { Weather } from "./weather";
 import { darkness } from "./clock";
@@ -141,6 +143,43 @@ export class Cooldowns {
   }
 }
 
+/** No effect may retrigger faster than this, whatever its def says. */
+export const MIN_RETRIGGER_MS = 30;
+/** Most effect voices sounding at once, and most of one id (a crowd cannot pile into a roar). */
+export const MAX_VOICES = 24;
+export const MAX_VOICES_PER_ID = 4;
+
+/**
+ * Decides whether an effect may start: the per-id gap (never below `MIN_RETRIGGER_MS`), the cap on
+ * voices of that id and the cap on all voices. `start` takes a voice, `end` gives it back.
+ */
+export class VoiceGate {
+  private last = new Map<string, number>();
+  private live = new Map<string, number>();
+  private total = 0;
+  get voices(): number {
+    return this.total;
+  }
+  start(id: string, nowMs: number, gapMs: number): boolean {
+    const prev = this.last.get(id);
+    if (prev !== undefined && nowMs - prev < Math.max(gapMs, MIN_RETRIGGER_MS))
+      return false;
+    if (this.total >= MAX_VOICES) return false;
+    if ((this.live.get(id) ?? 0) >= MAX_VOICES_PER_ID) return false;
+    this.last.set(id, nowMs);
+    this.live.set(id, (this.live.get(id) ?? 0) + 1);
+    this.total++;
+    return true;
+  }
+  end(id: string): void {
+    const n = this.live.get(id) ?? 0;
+    if (n > 0) {
+      this.live.set(id, n - 1);
+      this.total--;
+    }
+  }
+}
+
 /** True for a sound that ducks the music under it. */
 export const ducks = (id: string): boolean =>
   (rules.duck.on as string[]).includes(id);
@@ -262,6 +301,14 @@ export interface UseOutcome {
   levelUp?: unknown;
 }
 
+/** What stood at the target tile before the use, for sounds the outcome alone cannot tell apart. */
+export interface UseContext {
+  /** A tree (not a stump) was in front. */
+  treeHere?: boolean;
+  /** A placed machine was in front. */
+  machineHere?: boolean;
+}
+
 export interface HeldLike {
   kind: "tool" | "item" | "empty";
   tool?: string;
@@ -273,6 +320,7 @@ export function sfxForUse(
   held: HeldLike,
   out: UseOutcome,
   inMine: boolean,
+  ctx: UseContext = {},
 ): string | undefined {
   if (held.kind === "empty") return undefined;
   if (!out.ok) {
@@ -288,13 +336,17 @@ export function sfxForUse(
       case "can":
         return out.note?.startsWith("You fill") ? "tool.fill" : "tool.water";
       case "axe":
-        return "tool.axe";
+        // The felling blow is the one that yields wood; earlier swings only bite.
+        return ctx.treeHere && out.item ? "tree.fall" : "tool.axe";
       case "pickaxe":
-        return inMine && (out.item || out.ladder)
-          ? out.ladder
-            ? "mine.ladder"
-            : "mine.rock"
-          : "tool.pickaxe";
+        if (inMine && out.ladder) return "mine.ladder";
+        if (inMine && out.item)
+          return GEODE_KINDS.includes(out.item)
+            ? "mine.geode"
+            : isOre(out.item)
+              ? "mine.ore"
+              : "mine.rock";
+        return "tool.pickaxe";
       case "scythe":
         return "tool.scythe";
       default:
@@ -303,7 +355,69 @@ export function sfxForUse(
   }
   if (held.id && (cropOfSeed(held.id) || held.id === MIXED_SEED))
     return "crop.plant";
+  if (ctx.machineHere && out.note) return "machine.start";
   return "world.place";
+}
+
+/** The call an animal makes, for feeding, petting and the morning. */
+export const ANIMAL_CUES: Record<string, string> = {
+  chicken: "animal.cluck",
+  duck: "animal.chirp",
+  rabbit: "animal.chirp",
+  cow: "animal.moo",
+  goat: "animal.baa",
+  sheep: "animal.baa",
+  pig: "animal.oink",
+};
+export const animalCue = (species: string): string =>
+  ANIMAL_CUES[species] ?? "animal.cluck";
+
+/** The in-game hours that ring the clock chime: noon, dusk and midnight. */
+export const CHIME_MINUTES: readonly number[] = rules.chimeMinutes;
+
+/** A snapshot of the world the director compares from one tick to the next. */
+export interface WorldPulse {
+  day: number;
+  mapId: string;
+  minutes: number;
+  /** Items lying on the ground. */
+  ground: number;
+  /** Machines with a finished batch. */
+  machinesDone: number;
+}
+
+/** The effects a change in the world earns: a chime as the clock passes the hour, a machine finishing, an item dropped. */
+export function pulseCues(
+  prev: WorldPulse | undefined,
+  now: WorldPulse,
+): string[] {
+  if (!prev || prev.day !== now.day || prev.mapId !== now.mapId) return [];
+  const out: string[] = [];
+  if (
+    now.minutes > prev.minutes &&
+    CHIME_MINUTES.some((m) => prev.minutes < m && now.minutes >= m)
+  )
+    out.push("clock.chime");
+  if (now.machinesDone > prev.machinesDone) out.push("machine.done");
+  if (now.ground > prev.ground) out.push("item.drop");
+  return out;
+}
+
+/** The sounds of the morning report: letters, achievements, sprinklers and the animals' calls. */
+export function morningCues(r: {
+  newMail: number;
+  achievements: string[];
+  sprinklers: number;
+  eggs: number;
+  barn: number;
+}): string[] {
+  const out: string[] = [];
+  if (r.sprinklers > 0) out.push("sprinkler.run");
+  if (r.eggs > 0) out.push("animal.cluck");
+  if (r.barn > 0) out.push("animal.moo");
+  if (r.newMail > 0) out.push("mail");
+  if (r.achievements.length > 0) out.push("achievement");
+  return out;
 }
 
 /** The effect for the Action button's result: a harvest, a forage pick, or a plain pickup. */

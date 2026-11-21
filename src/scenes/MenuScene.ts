@@ -1,3 +1,4 @@
+import { audio } from "../audio/engine";
 import Phaser from "phaser";
 import { hiddenTabs } from "../core/menupages";
 import { isGuest } from "../net/session";
@@ -118,6 +119,7 @@ export class MenuScene extends Phaser.Scene {
   private show(tab: MenuTab): void {
     if (tab === this.tab || this.busy()) return;
     this.hooks().beforeMenuClose?.();
+    audio.sfx("ui.tab");
     this.scene.stop(this.tab);
     this.tab = tab;
     this.launchTab();

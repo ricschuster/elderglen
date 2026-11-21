@@ -1,4 +1,5 @@
 import { audio } from "../audio/engine";
+import { animalCue } from "../core/audio";
 import Phaser from "phaser";
 import {
   type Building,
@@ -167,8 +168,19 @@ export class CoopScene extends Phaser.Scene {
 
   private feed(): void {
     const { fed, short } = feedAll(this.state, this.building);
-    if (fed > 0)
-      audio.sfx(this.building === "barn" ? "animal.moo" : "animal.cluck");
+    if (fed > 0) {
+      const here = this.state.animals.animals.filter(
+        (a) => SPECIES[a.species].building === this.building,
+      );
+      const one = here[Math.floor(Math.random() * here.length)];
+      audio.sfx(
+        one
+          ? animalCue(one.species)
+          : this.building === "barn"
+            ? "animal.moo"
+            : "animal.cluck",
+      );
+    }
     this.message.setText(
       fed === 0 && short === 0
         ? "Everyone has eaten."
@@ -191,6 +203,8 @@ export class CoopScene extends Phaser.Scene {
 
   private pet(id: number): void {
     audio.sfx("animal.pet");
+    const kind = this.state.animals.animals.find((a) => a.id === id)?.species;
+    if (kind) this.time.delayedCall(180, () => audio.sfx(animalCue(kind)));
     this.message.setText(
       pet(this.state, id)
         ? "You pet it. It looks pleased."

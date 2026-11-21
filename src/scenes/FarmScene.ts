@@ -177,7 +177,7 @@ import { hallRestored } from "../core/bundles";
 import { isWeapon, weaponById } from "../core/combat";
 import {} from "../core/creatures";
 
-import { statusText } from "../core/machines";
+import { jobDone, statusText } from "../core/machines";
 import {
   CASK,
   caskDone,
@@ -589,6 +589,10 @@ export class FarmScene extends Phaser.Scene {
       weather: this.state.weather,
       mapId: this.mapId,
       floor: this.floor,
+      ground: this.state.ground.count,
+      machinesDone: [...this.state.machines.each()].filter((m) =>
+        jobDone(this.state, m),
+      ).length,
     }));
     if (isFestivalMap(id)) audio.sfx("festival.start");
     const day = this.state.day.clock.day;
@@ -2207,6 +2211,8 @@ export class FarmScene extends Phaser.Scene {
           pickUpFurniture(this.state, this.mapId, front.x, front.y),
         );
     }
+    const treeBefore = this.state.trees.at(front.x, front.y)?.stump === false;
+    const machineBefore = !!this.state.machines.at(front.x, front.y);
     const used = useHeld(
       this.state,
       this.map,
@@ -2215,7 +2221,10 @@ export class FarmScene extends Phaser.Scene {
       front.y,
       this.floor,
     );
-    const cue = sfxForUse(held, used, this.floor !== undefined);
+    const cue = sfxForUse(held, used, this.floor !== undefined, {
+      treeHere: treeBefore,
+      machineHere: machineBefore,
+    });
     if (cue) audio.sfx(cue);
     this.report(used, true);
     // Chopping the massive log raises a world flag: open its exit, drop its art.

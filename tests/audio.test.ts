@@ -6,6 +6,13 @@ import {
   AMBIENT,
   AUDIO_TIMING,
   Cooldowns,
+  MAX_VOICES,
+  MAX_VOICES_PER_ID,
+  MIN_RETRIGGER_MS,
+  VoiceGate,
+  animalCue,
+  morningCues,
+  pulseCues,
   DEFAULT_AUDIO,
   MUSIC,
   SFX,
@@ -254,6 +261,106 @@ describe("variation", () => {
   });
 });
 
+describe("voice limits", () => {
+  it("never retriggers faster than the floor, even with a zero cooldown", () => {
+    const g = new VoiceGate();
+    expect(g.start("a", 0, 0)).toBe(true);
+    expect(g.start("a", MIN_RETRIGGER_MS - 1, 0)).toBe(false);
+    expect(g.start("a", MIN_RETRIGGER_MS, 0)).toBe(true);
+  });
+  it("a tight loop of one id starts only a few voices", () => {
+    const g = new VoiceGate();
+    let started = 0;
+    for (let t = 0; t < 1000; t++) if (g.start("a", t, 30)) started++;
+    expect(started).toBe(MAX_VOICES_PER_ID);
+    g.end("a");
+    expect(g.start("a", 5000, 30)).toBe(true);
+  });
+  it("all ids together stay under the voice cap", () => {
+    const g = new VoiceGate();
+    let started = 0;
+    for (let i = 0; i < 200; i++)
+      for (let k = 0; k < 4; k++) if (g.start(`id${i}`, i * 100, 30)) started++;
+    expect(started).toBeLessThanOrEqual(MAX_VOICES * 4);
+    expect(g.voices).toBeLessThanOrEqual(MAX_VOICES);
+  });
+  it("every manifest gap is at least the floor", () => {
+    for (const [id, d] of Object.entries(SFX))
+      expect(d.cooldownMs, id).toBeGreaterThanOrEqual(MIN_RETRIGGER_MS);
+  });
+});
+
+describe("world and morning cues", () => {
+  const w = (o = {}) => ({
+    day: 3,
+    mapId: "farm",
+    minutes: 700,
+    ground: 0,
+    machinesDone: 0,
+    ...o,
+  });
+  it("chimes as the clock passes noon, once", () => {
+    expect(pulseCues(w(), w({ minutes: 730 }))).toEqual(["clock.chime"]);
+    expect(pulseCues(w({ minutes: 730 }), w({ minutes: 740 }))).toEqual([]);
+  });
+  it("hears a machine finish and an item hit the ground", () => {
+    expect(pulseCues(w(), w({ machinesDone: 1 }))).toEqual(["machine.done"]);
+    expect(pulseCues(w(), w({ ground: 2 }))).toEqual(["item.drop"]);
+    expect(pulseCues(w({ ground: 2 }), w({ ground: 1 }))).toEqual([]);
+  });
+  it("is silent across a day or map change and on the first look", () => {
+    expect(pulseCues(undefined, w({ ground: 9 }))).toEqual([]);
+    expect(pulseCues(w(), w({ day: 4, minutes: 900, ground: 5 }))).toEqual([]);
+    expect(pulseCues(w(), w({ mapId: "mine", machinesDone: 3 }))).toEqual([]);
+  });
+  it("the morning plays what happened overnight", () => {
+    const base = {
+      newMail: 0,
+      achievements: [],
+      sprinklers: 0,
+      eggs: 0,
+      barn: 0,
+    };
+    expect(morningCues(base)).toEqual([]);
+    expect(
+      morningCues({
+        newMail: 2,
+        achievements: ["x"],
+        sprinklers: 1,
+        eggs: 1,
+        barn: 1,
+      }),
+    ).toEqual([
+      "sprinkler.run",
+      "animal.cluck",
+      "animal.moo",
+      "mail",
+      "achievement",
+    ]);
+  });
+  it("each species has its call", () => {
+    expect(animalCue("goat")).toBe("animal.baa");
+    expect(animalCue("sheep")).toBe("animal.baa");
+    expect(animalCue("pig")).toBe("animal.oink");
+    expect(animalCue("duck")).toBe("animal.chirp");
+    expect(animalCue("cow")).toBe("animal.moo");
+    expect(animalCue("chicken")).toBe("animal.cluck");
+    for (const s of [
+      "chicken",
+      "duck",
+      "rabbit",
+      "cow",
+      "goat",
+      "sheep",
+      "pig",
+    ])
+      expect(isSfx(animalCue(s)), s).toBe(true);
+  });
+  it("chime hours are real minutes in the day", () => {
+    for (const m of rules.chimeMinutes) expect(m).toBeLessThanOrEqual(26 * 60);
+  });
+});
+
 describe("music selection", () => {
   it("plays the season on the farm by day", () => {
     expect(chooseMusic(info({ season: "spring" }))).toBe("spring");
@@ -417,6 +524,35 @@ describe("outcomes to effects", () => {
     expect(sfxForUse(tool("pickaxe"), { ok: true, ladder: true }, true)).toBe(
       "mine.ladder",
     );
+  });
+  it("tells ore, geodes and rock apart in the mine", () => {
+    const pick = (item: string) =>
+      sfxForUse(tool("pickaxe"), { ok: true, item }, true);
+    expect(pick("copper-ore")).toBe("mine.ore");
+    expect(pick("geode")).toBe("mine.geode");
+    expect(pick("stone")).toBe("mine.rock");
+  });
+  it("a felled tree falls, a first swing only bites", () => {
+    expect(
+      sfxForUse(tool("axe"), { ok: true, item: "wood" }, false, {
+        treeHere: true,
+      }),
+    ).toBe("tree.fall");
+    expect(
+      sfxForUse(tool("axe"), { ok: true }, false, { treeHere: true }),
+    ).toBe("tool.axe");
+    expect(sfxForUse(tool("axe"), { ok: true, item: "fiber" }, false, {})).toBe(
+      "tool.axe",
+    );
+  });
+  it("loading a machine starts it, placing one is a place", () => {
+    const held = { kind: "item" as const, id: "keg" };
+    expect(
+      sfxForUse(held, { ok: true, note: "Wine: 7 days." }, false, {
+        machineHere: true,
+      }),
+    ).toBe("machine.start");
+    expect(sfxForUse(held, { ok: true }, false)).toBe("world.place");
   });
   it("whiffs with a tool, errors with an item, is silent empty-handed", () => {
     expect(

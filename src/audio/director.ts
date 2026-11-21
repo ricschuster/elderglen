@@ -8,7 +8,9 @@ import {
   chooseAmbient,
   chooseMusic,
   festivalForAudio,
+  pulseCues,
   type AudioInfo,
+  type WorldPulse,
 } from "../core/audio";
 import { dateOf } from "../core/calendar";
 import type { Weather } from "../core/weather";
@@ -21,6 +23,9 @@ export interface FarmProbe {
   weather: Weather;
   mapId: string;
   floor?: number;
+  /** Items lying on the ground here, and machines with a finished batch. */
+  ground?: number;
+  machinesDone?: number;
 }
 
 let probe: (() => FarmProbe) | undefined;
@@ -91,6 +96,7 @@ export function situation(
 }
 
 let prevOverlays = new Set<string>();
+let prevPulse: WorldPulse | undefined;
 
 function tick(game: Phaser.Game): void {
   const manager = game.scene;
@@ -113,6 +119,17 @@ function tick(game: Phaser.Game): void {
     audio.setMusic(id, id === "bundle" || info.scene !== "farm");
     audio.setAmbient(chooseAmbient(info));
   }
+  const pulse: WorldPulse | undefined = read && {
+    day: read.day,
+    mapId: read.mapId,
+    minutes: read.minutes,
+    ground: read.ground ?? 0,
+    machinesDone: read.machinesDone ?? 0,
+  };
+  // Only while the farm is in front: a chime behind a menu would be heard without its cause.
+  if (pulse && active.includes("farm"))
+    for (const id of pulseCues(prevPulse, pulse)) audio.sfx(id);
+  prevPulse = pulse;
   const overlays = new Set(active.filter((k) => !QUIET_SCENES.has(k)));
   for (const k of overlays) if (!prevOverlays.has(k)) audio.sfx("ui.open");
   for (const k of prevOverlays) if (!overlays.has(k)) audio.sfx("ui.close");

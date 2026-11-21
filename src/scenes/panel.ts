@@ -58,6 +58,8 @@ export interface RowButton {
   text: string;
   run: () => void;
   enabled?: boolean;
+  /** An on/off or choice switch: it ticks (`ui.toggle`) instead of clicking. */
+  toggle?: boolean;
 }
 
 export interface Row {
@@ -254,7 +256,7 @@ export class Menu {
   press(n: number): void {
     const button = this.row?.buttons[n];
     if (button && button.enabled !== false && !this.row?.dim) {
-      audio.sfx("ui.click");
+      audio.sfx(button.toggle ? "ui.toggle" : "ui.click");
       button.run();
     }
   }

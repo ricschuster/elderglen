@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { audio } from "../audio/engine";
 import { DEBUG_TOOLS } from "../core/debugtools";
 import { hasButtons } from "../core/controlschemes";
 import { heldAt, rowOf, TOOLBAR_SIZE, type Held } from "../core/toolbar";
@@ -108,6 +109,7 @@ export class Hud {
   private sideObjects: Phaser.GameObjects.Components.Transform[] = [];
   private readonly tooltip: Tooltip;
   private lastState: GameState | undefined;
+  private lastMessage = "";
   private drag: { y: number; top: number; moved: boolean } | undefined;
 
   constructor(
@@ -589,6 +591,10 @@ export class Hud {
     this.panel.update(g, showHealth);
     this.status.setText(note);
     this.message.setText(message);
+    // A new line of news chimes, unless the action that made it already made a sound.
+    if (message !== this.lastMessage && message !== "" && audio.quietFor(300))
+      audio.sfx("ui.notify");
+    this.lastMessage = message;
     const now = heldAt(g, selected);
     this.heldName.setText(
       now.kind === "item" ? (itemById(now.id)?.name ?? now.id) : "",

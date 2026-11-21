@@ -1,3 +1,4 @@
+import { audio } from "../audio/engine";
 import { lanternTile } from "../core/feastexchange";
 import { festivalPropsOn } from "../core/festivalprops";
 import Phaser from "phaser";
@@ -94,6 +95,7 @@ export function updateParade(farm: FarmScene, dt: number): boolean {
     if (farm.marching) {
       farm.marching = false;
       farm.message = finishParade(farm.state);
+      audio.sfx("festival.cheer");
       farm.render();
     }
     return false;
@@ -260,6 +262,7 @@ export function updateHunt(farm: FarmScene, dt: number): void {
   farm.huntText?.setText(huntLine(s));
   if (s.status === "running" || !f) return;
   farm.message = huntEndLine(f, s) ?? "";
+  audio.sfx("festival.cheer");
   const won = awardHuntPrize(farm.state, s);
   if (won)
     farm.message +=

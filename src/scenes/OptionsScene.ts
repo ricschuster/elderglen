@@ -201,6 +201,7 @@ export class OptionsScene extends Phaser.Scene {
         label: "Control hints box",
         detail: "keyboard hints at the top left of the farm",
         buttons: [true, false].map((on) => ({
+          toggle: true,
           text: this.mark(s.showHints === on, on ? "On" : "Off"),
           run: () => {
             s.showHints = on;
@@ -212,6 +213,7 @@ export class OptionsScene extends Phaser.Scene {
         label: "Fishing assist",
         detail: "bigger bar, calmer fish",
         buttons: ([0, 1, 2] as Assist[]).map((a) => ({
+          toggle: true,
           text: this.mark(s.fishingAssist === a, ASSIST_NAMES[a]),
           run: () => {
             s.fishingAssist = a;
@@ -223,6 +225,7 @@ export class OptionsScene extends Phaser.Scene {
         label: "Combat assist",
         detail: "half damage, nothing lost",
         buttons: [false, true].map((on) => ({
+          toggle: true,
           text: this.mark(s.combatAssist === on, on ? "On" : "Off"),
           run: () => {
             s.combatAssist = on;
@@ -234,6 +237,7 @@ export class OptionsScene extends Phaser.Scene {
         label: "Creatures in the mine",
         detail: "turn them off to dig in peace",
         buttons: [false, true].map((off) => ({
+          toggle: true,
           text: this.mark(s.noCreatures === off, off ? "None" : "Some"),
           run: () => {
             s.noCreatures = off;
@@ -416,6 +420,7 @@ export class OptionsScene extends Phaser.Scene {
         label: "Sound",
         detail: "mute everything",
         buttons: [false, true].map((m) => ({
+          toggle: true,
           text: this.mark(a.muted === m, m ? "Muted" : "On"),
           run: () => {
             a.muted = m;

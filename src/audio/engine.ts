@@ -11,7 +11,7 @@
 import {
   AMBIENT,
   AUDIO_TIMING,
-  Cooldowns,
+  VoiceGate,
   DEFAULT_AUDIO,
   MUSIC,
   SFX,
@@ -36,7 +36,6 @@ interface Playing {
   gain: GainNode;
 }
 
-const MAX_VOICES = 24;
 const LOG_LIMIT = 400;
 
 function xhrBytes(url: string): Promise<ArrayBuffer> {
@@ -77,9 +76,9 @@ export class AudioEngine {
   private buses: Record<"music" | "sfx" | "ambient", GainNode> | undefined;
   private duckNode: GainNode | undefined;
   private buffers = new Map<string, Promise<AudioBuffer | undefined>>();
-  private cooldowns = new Cooldowns();
+  private gate = new VoiceGate();
+  private lastSfxAt = -1e9;
   private lastVariant = new Map<string, number>();
-  private voices = 0;
   private decoded = 0;
   private music: Playing | undefined;
   private ambient = new Map<string, Playing>();
@@ -235,15 +234,17 @@ export class AudioEngine {
     }
     if (!this.ctx || !this.unlocked || this.hidden || this.settings.muted)
       return;
-    if (!this.cooldowns.allow(id, performance.now(), def.cooldownMs)) return;
-    if (this.voices >= MAX_VOICES) return;
+    if (!this.gate.start(id, performance.now(), def.cooldownMs)) return;
+    this.lastSfxAt = performance.now();
     const v = pickVariant(def.files.length, this.lastVariant.get(id), this.rng);
     this.lastVariant.set(id, v);
     const asked = performance.now();
     void this.buffer(def.files[v]!).then((buf) => {
       const ctx = this.ctx;
-      if (!buf || !ctx || !this.buses || performance.now() - asked > 400)
+      if (!buf || !ctx || !this.buses || performance.now() - asked > 400) {
+        this.gate.end(id);
         return;
+      }
       const j = jitterOf(def, this.rng);
       const src = ctx.createBufferSource();
       src.buffer = buf;
@@ -251,14 +252,18 @@ export class AudioEngine {
       const g = ctx.createGain();
       g.gain.value = def.gain * j.gain;
       src.connect(g).connect(this.buses.sfx);
-      this.voices++;
       src.onended = () => {
-        this.voices--;
+        this.gate.end(id);
         g.disconnect();
       };
       src.start();
     });
     if (ducks(id)) this.duck();
+  }
+
+  /** True when no effect has started in the last `ms` (the HUD uses it to skip a duplicate cue). */
+  quietFor(ms: number): boolean {
+    return performance.now() - this.lastSfxAt >= ms;
   }
 
   /** Lower the music for a moment under a stinger. */
