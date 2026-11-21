@@ -18,8 +18,11 @@ Headless run 2026-11-21, build 18e829da plus the stage fix (`marriage.mjs`, `fam
 - Found and fixed: the married stages had the wedding day 3 days ahead, so the spouse kept her villager schedule (`src/core/statepatch.ts`, test in `tests/stages.test.ts`). `marriage.mjs` never raised the house tier for the token gate; fixed.
 
 ## Festivals
-- todo: Walk in and join: green, hedge, six in-place festivals, Frostday, Hollow Eve.
-- todo: Night Market, three evenings.
+Headless run 2026-11-21, `playtest:sweep` with `KIND=festival` (11 runs, 70 s) plus the festival unit tests (152).
+- pass: Walk in and join: green and hedge festivals through the gate, the six in-place festivals, both Hollow Eve years (small and large maze), Frostday, the Feast (in place and at the hall). Counters and panels open and close, the visit is recorded, the farm runs after leaving.
+- pass: Night Market: the sweep opens it; stalls, panel and leaving work. The three evenings are stages (`night-market-evening-1` to `3`); the crowd, hats, pier and float are left to the owner's look.
+- Found and fixed: five festivals failed first (hat parade, seedswap fair, cake day, Frostday, Hollow Eve). The Use key talked to the stallkeeper standing beside the counter, so the counter never opened. A service on the faced tile now wins (`talkTarget` `exactOnly`, `FarmScene.meetVillager`, test in `tests/villager-tiles.test.ts`). After the fix 11 of 11 pass.
+- owner: festival looks and feel with the crowd walking (art is placeholder), and the Stardew festival rows still open.
 
 ## Mines and combat
 - todo: Floors 30, 60, 100; swing arc, monster speed.

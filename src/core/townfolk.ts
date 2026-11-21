@@ -166,15 +166,18 @@ function spreadOut(list: Present[], mapId: string): Present[] {
 /**
  * Who Action talks to: the person on the faced tile, else the one beside it
  * nearest the player, ties to the one talked to last, then the lowest id.
+ * `exactOnly` drops the second rule: a counter or other service on the faced tile
+ * is opened even when a stallkeeper stands beside it (festival counters, #951).
  */
 export function talkTarget(
   list: readonly Present[],
   face: { x: number; y: number },
   player: { x: number; y: number },
   lastId?: string,
+  exactOnly = false,
 ): Present | undefined {
   const exact = presentAt(list, face.x, face.y);
-  if (exact) return exact;
+  if (exact || exactOnly) return exact;
   const dist = (p: Present, a: { x: number; y: number }) =>
     Math.abs(p.x - a.x) + Math.abs(p.y - a.y);
   return list
