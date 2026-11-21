@@ -36,7 +36,7 @@ Headless run 2026-11-21 (`combat.mjs`, `mine-floors.mjs`, `quarry.mjs`, mine and
 - pass: Combat by the rules: the dummy takes a hit, a creature hurts and is beaten, kills on floors 45 and 100 give combat XP, a knock out ends in the report. Fixed `combat.mjs`, which still picked the weapon at `4 + i` (tools sit in the pack now, note 102), so every swing used no weapon.
 - pass: Quarry (`quarry.mjs`): bridge, stonekeeper, rocks, stone.
 - owner: Swing arc and monster speed by feel. Headless only shows speeds of 0 to 1 tiles/s while creatures wander; none chased in 12 s, so chase speed is unchecked.
-- fail: `smoke.mjs` reports 6 findings (cooking "backpack is full", catalogue buy and place, coop and barn not ordered, a "Cannot pause non-running Scene farm" warning). Not caused by this area; filed as <https://github.com/ricschuster/elderglen/issues/996>.
+- pass: `smoke.mjs` ends with no findings (2026-11-21, issue 996: the findings were stale script assumptions about the pack and the carpenter rows).
 
 ## Fishing
 
