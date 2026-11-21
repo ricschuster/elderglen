@@ -576,7 +576,10 @@ async function runEvent(w, run) {
         x.id !== e.id && (x.villager === e.villager || x.place === e.place),
     )
     .map((x) => x.id);
-  const inWin = e.window ? toMin(e.window.from) + 2 : 9 * 60;
+  // The clock only takes multiples of 10 minutes: the first such time after the window opens.
+  const inWin = e.window
+    ? Math.ceil((toMin(e.window.from) + 1) / 10) * 10
+    : 9 * 60;
   const day = 3;
   const base = {
     season: c.season ?? "spring",
