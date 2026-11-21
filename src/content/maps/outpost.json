@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 5,
-  "nextobjectid": 17,
+  "nextobjectid": 16,
   "properties": [
     {
       "name": "placeholder",
@@ -376,6 +376,19 @@
               "value": "door"
             }
           ]
+        },
+        {
+          "id": 15,
+          "rotation": 0,
+          "visible": true,
+          "name": "bed-steward-cot",
+          "class": "mark",
+          "type": "mark",
+          "x": 48,
+          "y": 272,
+          "width": 0,
+          "height": 0,
+          "point": true
         }
       ]
     }

@@ -46,6 +46,8 @@ export interface Villager {
   /** Hearts a married candidate can reach (note 12). Equals the friend cap for everyone else. */
   heartCap: number;
   home: string;
+  /** The bed mark this person sleeps at in their home interior (#992). None without an interior map. */
+  bedMark?: string;
   shop?: string;
   area?: string;
   /** Minutes. Asleep from here until the first stop. */
@@ -106,6 +108,8 @@ const toOverride = (o: RawOverride): Override => ({
   ...(o.bed ? { bed: parseTime(o.bed) } : {}),
 });
 
+const BEDS = data.beds as Record<string, string>;
+
 export const VILLAGERS: readonly Villager[] = data.villagers.map((v) => {
   const raw = v as typeof v & { shop?: string; area?: string };
   return {
@@ -118,6 +122,7 @@ export const VILLAGERS: readonly Villager[] = data.villagers.map((v) => {
     candidate: "candidate" in v && v.candidate === true,
     heartCap: "heartCap" in v ? (v.heartCap as number) : 10,
     home: v.home,
+    ...(BEDS[v.id] ? { bedMark: BEDS[v.id]! } : {}),
     ...(raw.shop ? { shop: raw.shop } : {}),
     ...(raw.area ? { area: raw.area } : {}),
     bed: parseTime(v.bed),
@@ -368,6 +373,31 @@ export interface Whereabouts {
   asleep: boolean;
   /** The next stop today, if any (for the walker to head to). */
   next?: Stop;
+}
+
+/**
+ * The tile of a villager's own bed in their home interior, moved to the nearest open tile when
+ * the bed fixture is solid. Undefined when they have no bed mark or the map lacks it. Sleeping
+ * villagers are still hidden (owner question open); this is where a bed view would draw them.
+ */
+export function bedPlace(v: Villager): Place | undefined {
+  if (!v.bedMark) return undefined;
+  const { base } = splitPlace(v.home);
+  const interior = PLACES[base]?.interior;
+  if (!interior || !mapFiles[interior]) return undefined;
+  const mark = maps
+    .marksWith(interior, NO_CONDITIONS)
+    .marks.find((m) => m.name === v.bedMark);
+  if (!mark) return undefined;
+  const t = nearestOpen(interior, mark, true);
+  return {
+    map: interior,
+    x: t.x,
+    y: t.y,
+    placeholder: true,
+    indoors: true,
+    transit: false,
+  };
 }
 
 /** Where a villager is at a game-clock minute. Before the first stop and after bedtime they are home. */

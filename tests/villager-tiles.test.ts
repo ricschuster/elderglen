@@ -3,7 +3,7 @@ import { mapFiles, maps } from "../src/content/maps";
 import { places, spotMarks } from "../src/content/villagers.json";
 import { HOUSE_MAP, houseHolds } from "../src/core/house";
 import { SPOUSE_BED, SPOUSE_KITCHEN, SPOUSE_ROOM } from "../src/core/spouse";
-import { VILLAGERS, resolvePlace } from "../src/core/villagers";
+import { VILLAGERS, bedPlace, resolvePlace } from "../src/core/villagers";
 import { talkTarget, villagersOn, type Present } from "../src/core/townfolk";
 import { interiorIds } from "./helpers/interior";
 
@@ -172,5 +172,55 @@ describe("talkTarget", () => {
     expect(
       talkTarget(list, { x: 33, y: 60 }, { x: 33, y: 62 }, "", true)?.id,
     ).toBe("cordelia");
+  });
+});
+
+describe("per-person beds (#992)", () => {
+  it("gives every villager with a home interior a bed mark that exists there", () => {
+    const problems: string[] = [];
+    for (const v of VILLAGERS) {
+      const base = v.home.split("/")[0]!;
+      const interior = (places as Record<string, { interior?: string }>)[base]
+        ?.interior;
+      if (!interior || !(interior in mapFiles)) {
+        if (v.bedMark) problems.push(`${v.id}: bed mark but no interior`);
+        continue;
+      }
+      if (!v.bedMark) {
+        problems.push(`${v.id}: no bed mark in ${interior}`);
+        continue;
+      }
+      const has = maps
+        .marksWith(interior, new Set())
+        .marks.some((m) => m.name === v.bedMark);
+      if (!has) problems.push(`${v.id}: ${interior} has no ${v.bedMark}`);
+      const p = bedPlace(v);
+      if (!p || p.map !== interior || maps.get(interior).isBlocked(p.x, p.y))
+        problems.push(`${v.id}: bad bed tile`);
+    }
+    expect(problems).toEqual([]);
+  });
+
+  it("shares a bed mark only between the couples sharing a double bed", () => {
+    const couples = [
+      ["odette", "dorrie"],
+      ["hattie", "podge"],
+      ["tilda", "rufus"],
+      ["hester", "walter"],
+    ];
+    const byBed = new Map<string, string[]>();
+    for (const v of VILLAGERS) {
+      if (!v.bedMark) continue;
+      const k = `${v.home.split("/")[0]}|${v.bedMark}`;
+      byBed.set(k, [...(byBed.get(k) ?? []), v.id]);
+    }
+    for (const ids of byBed.values())
+      if (ids.length > 1)
+        expect(couples.some((c) => c.join() === ids.join())).toBe(true);
+  });
+
+  it("leaves a person with no interior map without a bed", () => {
+    for (const id of ["rundahl", "marl", "maren"])
+      expect(bedPlace(VILLAGERS.find((v) => v.id === id)!)).toBeUndefined();
   });
 });
