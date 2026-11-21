@@ -94,13 +94,17 @@ async function orderBuilding(id) {
   await sleepMs(500);
   if (!(await active()).includes("placement"))
     throw new Error(`placement did not open for the ${id}`);
-  await farm((g) => {
+  const free = await farm((g) => {
     const pl = g.scene.getScene("placement");
     pl.free = false;
-    for (let y = 8; y < 24 && !pl.free; y++)
-      for (let x = 18; x < 34 && !pl.free; x++) pl.moveTo(x, y);
+    // Wide window: the coop is already placed and the barn is bigger.
+    for (let y = 4; y < 40 && !pl.free; y++)
+      for (let x = 4; x < 70 && !pl.free; x++) pl.moveTo(x, y);
+    const ok = pl.free;
     pl.confirm();
+    return ok;
   });
+  if (!free) log(`no free spot found for the ${id} in the search window`);
   await sleepMs(500);
   const m = await farm(
     (g) => g.scene.getScene("carpenter").message?.text ?? "",
@@ -110,6 +114,9 @@ async function orderBuilding(id) {
 }
 
 await bot.dbg();
+// Tools sit in the pack (note 102) and the geodes below add four stacks, so a fresh
+// 12-slot pack is full. Take the biggest pack, so the steps have room to add things.
+await farm((g, f, s) => s.inventory.grow(36));
 await p.evaluate(() => {
   window.farmMoney(1000000);
   for (const id of ["geode", "frozen-geode", "magma-geode", "omni-geode"])
@@ -275,7 +282,10 @@ await step("catalogue-buy", async () => {
     s.money = Math.max(s.money, 300000);
   });
   await overlay("carpenter");
-  await pickRow("carpenter", /Bought\. Place it/);
+  // The carpenter's rows (ponds, silo, buildings) come first and some open the placement
+  // screen, so press this row's Buy by name rather than walking the list.
+  await farm((g) => g.scene.getScene("carpenter").buyCat());
+  await sleepMs(200);
   const owned = await farm(
     (g, f, s) => s.catalogue && s.inventory.count("furniture-catalogue"),
   );
@@ -289,7 +299,7 @@ await step("catalogue-place-and-copy", async () => {
     s.inventory.save().findIndex((x) => x && x.id === "furniture-catalogue"),
   );
   if (slot < 0) throw new Error("no catalogue in the backpack");
-  await bot.select(slot + 4); // four tools come first on the toolbar
+  await bot.select(slot); // tools sit in the pack now (note 102), so the toolbar slot is the pack slot
   await bot.refreshMap();
   let d = await bot.dbg();
   // Step into the room first: facing down at the door would walk out of it.
