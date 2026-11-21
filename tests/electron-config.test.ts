@@ -3,6 +3,7 @@ import {
   BRIDGE_KEY,
   DEV_URL,
   allowNavigation,
+  audioPath,
   pageTarget,
   webPreferences,
 } from "../electron/config";
@@ -22,6 +23,26 @@ describe("electron wrapper config", () => {
       kind: "url",
       url: "http://x:1/",
     });
+  });
+  it("reads only shipped audio files through the audio bridge", () => {
+    expect(audioPath("/d", "sfx/ui.click_1.ogg")).toBe(
+      "/d/audio/sfx/ui.click_1.ogg",
+    );
+    expect(audioPath("/d", "music/spring.ogg")).toBe(
+      "/d/audio/music/spring.ogg",
+    );
+    for (const bad of [
+      "../index.html",
+      "sfx/../../x.ogg",
+      "sfx/a/b.ogg",
+      "/etc/passwd",
+      "sfx/x.mp3",
+      "other/x.ogg",
+      "",
+      42,
+      undefined,
+    ])
+      expect(audioPath("/d", bad), String(bad)).toBeUndefined();
   });
   it("allows only the game's own origin", () => {
     expect(allowNavigation(`${DEV_URL}/a`, DEV_URL)).toBe(true);

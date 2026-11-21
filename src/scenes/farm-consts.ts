@@ -20,6 +20,8 @@ export const DEV_SPEED = DEBUG_TOOLS
 
 /** World pixels per second. */
 export const SPEED = 80;
+/** Pixels walked between footstep sounds (note 107). */
+export const STEP_PX = 26;
 /** The player's feet box, in world pixels. */
 export const PLAYER: Body = { hw: 5, h: 6 };
 

@@ -5,7 +5,14 @@ import { pathToFileURL } from "node:url";
 import { join } from "node:path";
 import { registerPipeBridge, CH } from "../src/net/pipe-electron-main";
 import type { BridgeEvent } from "../src/net/pipe-electron";
-import { allowNavigation, pageTarget, webPreferences } from "./config";
+import { readFile } from "node:fs/promises";
+import {
+  AUDIO_CHANNEL,
+  allowNavigation,
+  audioPath,
+  pageTarget,
+  webPreferences,
+} from "./config";
 
 let win: BrowserWindow | undefined;
 let bridge: { dispose(): Promise<void> } | undefined;
@@ -37,6 +44,12 @@ async function open() {
 
 void app.whenReady().then(() => {
   bridge = registerPipeBridge(ipcMain, emit);
+  // The page reads its audio files through here (a `file:` page may not fetch its own files).
+  ipcMain.handle(AUDIO_CHANNEL, async (_e, rel) => {
+    const path = audioPath(join(__dirname, "..", "dist"), rel);
+    if (!path) throw new Error("not an audio file");
+    return readFile(path);
+  });
   return open();
 });
 

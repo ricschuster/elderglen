@@ -25,5 +25,13 @@ Node 22 and npm. Gates run in CI and a non-zero exit blocks a merge.
   Python 3 and Pillow). Design material, not a gate.
 - `npm run playtest -- <expert|intermediate|casual>`, other `playtest:*` scripts: manual
   browser playthroughs, need `npm run dev`. See `scripts/playtest/README.md`.
+- `npm run audio:build`: render every synthesised effect, ambient loop and music placeholder to
+  `public/audio/` and rewrite `src/content/audio-manifest.json` (about 10 s; needs `ffmpeg` with libvorbis;
+  deterministic). `npm run audio:verify`: clipping, true peak, loudness, silence, loop seams and total size for
+  every file (exit 1 on a problem). `npm run audio:ingest -- <file> <slot> [options]`: turn a downloaded
+  track into a looping music slot (`scripts/audio/ingest.mjs`, options in its header; the commands used so
+  far are in `scripts/audio/ingest-downloads.sh`). `node scripts/audio/credits.mjs` rebuilds the Options
+  credits from the ledger. Details: `docs/audio/README.md`. `npm run playtest:audio`: the audio
+  playtest (needs `npm run dev`). Audition page: `npm run dev`, then open `/audio.html`.
 - `npm run sim`: headless sim bot. `android:sync`, `android:apk`, `android:install`: the
   Capacitor app (ADR 0008).

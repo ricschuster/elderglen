@@ -177,7 +177,7 @@ import { hallRestored } from "../core/bundles";
 import { isWeapon, weaponById } from "../core/combat";
 import {} from "../core/creatures";
 
-import { statusText } from "../core/machines";
+import { jobDone, statusText } from "../core/machines";
 import {
   CASK,
   caskDone,
@@ -294,6 +294,9 @@ import {
 import { makePlaceholderTextures, PLAYER_KEY } from "./placeholder-textures";
 import { guestMayOpen } from "../core/menupages";
 import { bedNotice } from "../core/bednotice";
+import { audio } from "../audio/engine";
+import { setFarmProbe } from "../audio/director";
+import { doorSoundFor, footstepFor, sfxForAct, sfxForUse } from "../core/audio";
 import type { BedStatus } from "../core/room";
 import { weddingWaiting } from "../core/marriagecard";
 import { proposalFor } from "../core/playermarriage";
@@ -341,6 +344,7 @@ import {
   PLAYER,
   PUSH,
   SPEED,
+  STEP_PX,
   TICK_MINUTES,
   TICK_MS,
 } from "./farm-consts";
@@ -578,6 +582,19 @@ export class FarmScene extends Phaser.Scene {
     const problems = maps.problems();
     if (problems.length > 0) console.warn("Map problems:", problems.join("; "));
     const id = this.mapId;
+    // The audio director reads the world through this (note 107).
+    setFarmProbe(() => ({
+      day: this.state.day.clock.day,
+      minutes: this.state.day.clock.minutes,
+      weather: this.state.weather,
+      mapId: this.mapId,
+      floor: this.floor,
+      ground: this.state.ground.count,
+      machinesDone: [...this.state.machines.each()].filter((m) =>
+        jobDone(this.state, m),
+      ).length,
+    }));
+    if (isFestivalMap(id)) audio.sfx("festival.start");
     const day = this.state.day.clock.day;
     // A mine floor is made from the day and the floor, so it is built here and
     // cached under a key that holds the day.
@@ -1070,6 +1087,7 @@ export class FarmScene extends Phaser.Scene {
       this.pos = { x: r.x, y: r.y };
       this.passList = r.pass;
     }
+    this.stepSound(Math.hypot(this.pos.x - before.x, this.pos.y - before.y));
     const ahead = facingTile(this.pos, PLAYER, this.facing, ts);
     if (
       (v.x !== 0 || v.y !== 0) &&
@@ -1152,6 +1170,24 @@ export class FarmScene extends Phaser.Scene {
       this.exitArmed = false;
       this.useDoor(onExit);
     }
+  }
+
+  /** The distance walked since the last footstep sound, in pixels. */
+  private stride = 0;
+
+  /** A footstep every few tiles of walking, by the surface under the feet (note 107). */
+  private stepSound(moved: number): void {
+    if (moved <= 0 || this.state.animals.mounted) return;
+    this.stride += moved;
+    if (this.stride < STEP_PX) return;
+    this.stride = 0;
+    const t = tileOf(this.pos, PLAYER, this.map.tileSize);
+    audio.sfx(
+      footstepFor(this.mapId, this.floor, {
+        water: this.map.isWater(t.x, t.y),
+        tilled: isFarmMap(this.mapId) && !!this.state.farm.plotAt(t.x, t.y),
+      }),
+    );
   }
 
   /**
@@ -1366,6 +1402,8 @@ export class FarmScene extends Phaser.Scene {
       held.kind === "item" ? held.id : undefined,
     );
     this.message = r.message;
+    if (r.consumed) audio.sfx(r.taste === "love" ? "gift.loved" : "gift.give");
+    if (r.kiss) audio.sfx("heart.up");
     if (lanternOn(this.state, this.mapId, hall, who.id))
       this.message +=
         " A lantern hangs over this seat: hold a gift and give it.";
@@ -1458,8 +1496,10 @@ export class FarmScene extends Phaser.Scene {
         here,
         pickupRadius(this.state.equipment.magnetBonus()),
       )
-    )
+    ) {
+      audio.sfx("item.pickup");
       this.render();
+    }
   }
 
   /**
@@ -1526,13 +1566,16 @@ export class FarmScene extends Phaser.Scene {
       if (sid) this.state.guide.visitShop(sid);
     }
     if (doorShut) {
+      audio.sfx("door.locked");
       this.message = doorShut;
       this.render();
     } else if (this.exitShutForFestival(exit)) {
+      audio.sfx("door.locked");
       this.message = festivalShutLine(this.state.day.clock.day);
       this.render();
     } else if (exitOpen(exit, this.holds)) this.leave(exit);
     else {
+      audio.sfx("door.locked");
       this.message = exit.requires?.startsWith("festival-gate")
         ? "Nothing is on there today."
         : exit.id === "greenhouse"
@@ -1636,6 +1679,8 @@ export class FarmScene extends Phaser.Scene {
         return this.render();
       }
     }
+    const door = doorSoundFor(this.mapId, exit.map);
+    if (door) audio.sfx(door);
     this.travel(exit.map, exit.entry);
   }
 
@@ -1804,6 +1849,7 @@ export class FarmScene extends Phaser.Scene {
       return this.open("name-horse");
     }
     mount(this.state, this.map);
+    audio.sfx("animal.horse");
     this.message = `You are riding ${horseName(this.state)}. ${this.getOffHint()} to get off.`;
     this.saveResume();
     this.render();
@@ -1829,6 +1875,7 @@ export class FarmScene extends Phaser.Scene {
   /** Take the ladder down. The last built floor has none. */
   private descend(): void {
     if (this.floor === undefined || this.floor >= BUILT_FLOORS) return;
+    audio.sfx("mine.stairs");
     this.travel(mineMapId(this.floor + 1), "from_above");
   }
 
@@ -2053,7 +2100,10 @@ export class FarmScene extends Phaser.Scene {
           !!this.rocks()?.at(x, y) ||
           this.litBombs.some((b) => b.x === x && b.y === y),
       );
-      if (lit.ok) this.litBombs.push(lit.bomb);
+      if (lit.ok) {
+        this.litBombs.push(lit.bomb);
+        audio.sfx("bomb.fuse");
+      }
       return this.report(lit.ok ? { ok: true } : lit);
     }
     // A farm decoration is stood down from the pack and lifted by hand, like a light (note 89).
@@ -2161,9 +2211,22 @@ export class FarmScene extends Phaser.Scene {
           pickUpFurniture(this.state, this.mapId, front.x, front.y),
         );
     }
-    this.report(
-      useHeld(this.state, this.map, held, front.x, front.y, this.floor),
+    const treeBefore = this.state.trees.at(front.x, front.y)?.stump === false;
+    const machineBefore = !!this.state.machines.at(front.x, front.y);
+    const used = useHeld(
+      this.state,
+      this.map,
+      held,
+      front.x,
+      front.y,
+      this.floor,
     );
+    const cue = sfxForUse(held, used, this.floor !== undefined, {
+      treeHere: treeBefore,
+      machineHere: machineBefore,
+    });
+    if (cue) audio.sfx(cue);
+    this.report(used, true);
     // Chopping the massive log raises a world flag: open its exit, drop its art.
     this.refreshHolds();
   }
@@ -2370,8 +2433,10 @@ export class FarmScene extends Phaser.Scene {
       this.message = "The training dummy. Hold a weapon and swing at it.";
       return this.render();
     }
-    if (service?.kind === "stairs")
+    if (service?.kind === "stairs") {
+      audio.sfx("mine.stairs");
       return this.travel(mineMapId(1), "from_above");
+    }
     if (
       service &&
       (isFestivalMap(this.mapId) ||
@@ -2414,12 +2479,14 @@ export class FarmScene extends Phaser.Scene {
       return this.report(
         collectPot(this.state, this.mapId, front.x, front.y, Math.random),
       );
-    if (this.state.chests.at(this.mapId, front.x, front.y))
+    if (this.state.chests.at(this.mapId, front.x, front.y)) {
+      audio.sfx("chest.open");
       return this.open("chest", {
         mapId: this.mapId,
         x: front.x,
         y: front.y,
       });
+    }
     if (
       isHouseMap(this.mapId) &&
       furnitureById(this.state.furniture.at(this.mapId, front.x, front.y))
@@ -2455,6 +2522,7 @@ export class FarmScene extends Phaser.Scene {
         return this.open("pond", { x: pondHere.x, y: pondHere.y });
       return this.report(r);
     }
+    const cropHere = !!this.state.farm.plotAt(front.x, front.y)?.crop;
     const result = act(this.state, this.map, front.x, front.y);
     if (!result.ok && result.reason === NOTHING_TO_ACT_ON) {
       const held = heldAt(this.state, this.selected);
@@ -2462,7 +2530,9 @@ export class FarmScene extends Phaser.Scene {
         this.eatHeld();
       return;
     }
-    this.report(result);
+    const cue = sfxForAct(result, cropHere);
+    if (cue) audio.sfx(cue);
+    this.report(result, true);
   }
 
   /**
@@ -2545,7 +2615,12 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /** Show what an action did, then settle the day, a level choice and the screen. */
-  private report(result: Outcome): void {
+  private report(result: Outcome, silent = false): void {
+    if (!silent)
+      audio.sfx(
+        result.ok ? (result.item ? "item.pickup" : "world.place") : "ui.error",
+      );
+    if (result.ok && result.levelUp) audio.sfx("ui.levelup");
     if (!result.ok) {
       const front = this.aimTile();
       this.message =
@@ -2580,6 +2655,7 @@ export class FarmScene extends Phaser.Scene {
           ? drink(this.state, held.id)
           : eat(this.state, held.id)
         : { ok: false as const, reason: "not food" };
+    audio.sfx(result.ok ? (drinking ? "drink" : "eat") : "ui.error");
     this.message = result.ok
       ? `${drinking ? "Drank" : "Ate"} ${itemById(held.kind === "item" ? held.id : "")?.name.toLowerCase()}.`
       : reasonText(result.reason);
@@ -2747,6 +2823,7 @@ export class FarmScene extends Phaser.Scene {
 
   /** The morning after: redraw, save, and open the report (the steps after sleep()). */
   private finishNight(report: SleepReport): void {
+    audio.sfx("day.end");
     const g = this.state;
     this.refreshHolds();
     this.message = "";

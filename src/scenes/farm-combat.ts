@@ -1,3 +1,4 @@
+import { audio } from "../audio/engine";
 import Phaser from "phaser";
 import { isAreaMap } from "../core/areas";
 import { creatureSpawnsOf } from "../core/mapcreatures";
@@ -215,6 +216,7 @@ export function detonate(farm: FarmScene, b: LitBomb, quiet: boolean): void {
       );
     return;
   }
+  audio.sfx("bomb.boom");
   for (const c of dead) beaten(farm, c);
   farm.cameras.main.shake(200, 0.01);
   farm.swingFx.clear().fillStyle(0xffb040, 0.5);
@@ -247,6 +249,7 @@ export function strikeFlash(
 ) {
   if (r.strikes === 0 || farm.floor !== undefined) return;
   farm.cameras.main.flash(180, 255, 255, 255);
+  audio.sfx("weather.thunder");
   if (!isFarmMap(farm.mapId)) return;
   const ts = farm.map.tileSize;
   farm.swingFx.clear().fillStyle(0xffffaa, 0.8);
@@ -329,6 +332,7 @@ export function updateCombat(farm: FarmScene, dt: number): void {
         farm.state.equipment.defense(),
       );
       if (lost > 0) {
+        audio.sfx("player.hurt");
         farm.message = `${creatureById(c.kind)?.name ?? "It"} hits you for ${lost}.`;
         const inflicts = creatureById(c.kind)?.inflicts;
         if (inflicts && Math.random() < inflicts.chance) {
@@ -385,6 +389,7 @@ export function drawCreature(farm: FarmScene, c: Creature): void {
 
 /** Health ran out: the day ends and the defeat rule runs overnight (note 22). */
 export function knockedOut(farm: FarmScene): void {
+  audio.sfx("player.die");
   farm.state.combat.defeatPending = true;
   farm.message = "";
   farm.endDay();
@@ -445,6 +450,7 @@ function playSwingArc(
 export function swing(farm: FarmScene, weapon: WeaponDef): void {
   if (farm.time.now < farm.swingReady) return;
   farm.lastWeapon = weapon.id;
+  audio.sfx("combat.swing");
   farm.swingReady =
     farm.time.now +
     weapon.cooldown * farm.state.combat.effects.swingFactor() * 1000;
@@ -493,6 +499,7 @@ export function swing(farm: FarmScene, weapon: WeaponDef): void {
     const kind = farm.map.serviceAt(tx, ty)?.kind;
     if (kind === "dummy") {
       floatText(farm, (tx + 0.5) * ts, ty * ts, `${weapon.damage}`, "#ffffff");
+      audio.sfx("combat.hit");
       farm.message = `The dummy takes ${weapon.damage}. Swing again in ${weapon.cooldown} seconds.`;
       return farm.render();
     }
@@ -518,8 +525,10 @@ export function swing(farm: FarmScene, weapon: WeaponDef): void {
       damage < weapon.damage ? `${damage} (armour)` : `${damage}`,
       "#ffffff",
     );
+    audio.sfx("combat.hit");
     if (hurtCreature(c, damage)) beaten(farm, c);
     else {
+      audio.sfx("enemy.hurt");
       const next = 1 + floor.creatures.reduce((m, o) => Math.max(m, o.uid), 0);
       const small = splitOff(c, next);
       if (small) {
@@ -550,6 +559,7 @@ export function shotAim(farm: FarmScene): Vec | undefined {
 
 /** A creature is beaten: its goods, the kill tally and a ladder roll. */
 export function beaten(farm: FarmScene, c: Creature): void {
+  audio.sfx("enemy.die");
   const floor = fightState(farm)!;
   floor.creatures = floor.creatures.filter((o) => o.uid !== c.uid);
   farm.creatureSprites.get(c.uid)?.destroy();

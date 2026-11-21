@@ -7,6 +7,25 @@ export const DEV_URL = "http://localhost:5173";
 /** The name the preload exposes on `window` (what src/net/pipe-electron.ts looks for). */
 export const BRIDGE_KEY = "elderHost";
 
+/** The second name the preload exposes: reads a shipped audio file for the page (note 107, ADR 0017). */
+export const AUDIO_KEY = "elderAudio";
+export const AUDIO_CHANNEL = "elder:audio";
+
+/**
+ * The file a page may read through the audio bridge, or undefined for anything else. A `file:` page
+ * cannot be sure to read its own files with XHR or fetch, so the main process reads them instead;
+ * only `sfx/`, `ambient/` and `music/` Ogg files directly inside those folders are allowed.
+ */
+export function audioPath(distDir: string, rel: unknown): string | undefined {
+  if (typeof rel !== "string") return undefined;
+  if (
+    !/^(sfx|ambient|music)\/[A-Za-z0-9._-]+\.ogg$/.test(rel) ||
+    rel.includes("..")
+  )
+    return undefined;
+  return `${distDir}/audio/${rel}`;
+}
+
 /** The page the window loads: a dev server URL, or the built game. */
 export function pageTarget(
   env: Record<string, string | undefined>,

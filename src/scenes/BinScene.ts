@@ -1,3 +1,4 @@
+import { audio } from "../audio/engine";
 import Phaser from "phaser";
 import { itemTip } from "../core/itemtip";
 import { itemById } from "../core/items";
@@ -145,6 +146,7 @@ export class BinScene extends Phaser.Scene {
     const sent = this.oreOnly
       ? g.bin.shipOre(g.inventory, id, n, mult, g.players.localId)
       : g.bin.ship(g.inventory, id, n, mult, g.players.localId);
+    audio.sfx(sent > 0 ? "money.bin" : "ui.error");
     this.say(
       sent > 0
         ? `Shipped ${sent} ${this.name(id)}.`

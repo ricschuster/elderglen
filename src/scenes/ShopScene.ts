@@ -1,3 +1,4 @@
+import { audio } from "../audio/engine";
 import Phaser from "phaser";
 import type { Intent } from "../core/protocol";
 import { currentSession, GuestSession } from "../net/session";
@@ -235,9 +236,13 @@ export class ShopScene extends Phaser.Scene {
               : this.trader
                 ? buyFromTrader(g, id, n)
                 : buy(g.inventory, g, id, n, price)
-        )
+        ) {
+          audio.sfx("money.buy");
           this.say(`Bought ${n} ${def.name} for ${price * n}g.`);
-        else this.say(buyRefusal(g, id, n));
+        } else {
+          audio.sfx("ui.error");
+          this.say(buyRefusal(g, id, n));
+        }
       };
       return {
         label: def.name,
@@ -303,6 +308,7 @@ export class ShopScene extends Phaser.Scene {
               if (this.guestAsks({ kind: "sell", id, n: 1 }, false)) return;
               const earned = sell(g.inventory, g, id, 1, mult);
               g.cave.addEarnings(earned, g.day.clock.day + 1);
+              audio.sfx("money.sell");
               this.say(`Sold 1 ${def?.name} for ${earned}g.`);
             },
           },
@@ -312,6 +318,7 @@ export class ShopScene extends Phaser.Scene {
               if (this.guestAsks({ kind: "sell", id, n: count }, false)) return;
               const earned = sellAll(g.inventory, g, id, mult);
               g.cave.addEarnings(earned, g.day.clock.day + 1);
+              audio.sfx("money.sell");
               this.say(`Sold ${count} ${def?.name} for ${earned}g.`);
             },
           },

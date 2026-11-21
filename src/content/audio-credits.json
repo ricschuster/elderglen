@@ -1,0 +1,89 @@
+{
+  "_note": "Shown by Options > Sound credits. Generated from docs/audio/LICENCES.md by scripts/audio/credits.mjs. CC-BY files must be listed; CC0 ones are listed as thanks.",
+  "credits": [
+    {
+      "file": "music/summer.ogg",
+      "title": "RPG Overworld (2 Whimsical RPG Themes)",
+      "author": "KarateStudios",
+      "licence": "CC0",
+      "url": "https://opengameart.org/content/2-whimsical-rpg-themes"
+    },
+    {
+      "file": "music/interior.ogg",
+      "title": "A Small Fire Will Do (calming loop)",
+      "author": "Trex0n",
+      "licence": "CC0",
+      "url": "https://opengameart.org/content/a-small-fire-will-do-calming-loop"
+    },
+    {
+      "file": "music/village.ogg",
+      "title": "RPG Town (2 Whimsical RPG Themes)",
+      "author": "KarateStudios",
+      "licence": "CC0",
+      "url": "https://opengameart.org/content/2-whimsical-rpg-themes"
+    },
+    {
+      "file": "music/woods.ogg",
+      "title": "Beautiful Forest (Orchestra)",
+      "author": "nene",
+      "licence": "CC0",
+      "url": "https://opengameart.org/content/beautiful-forest-orchestra"
+    },
+    {
+      "file": "music/fall.ogg",
+      "title": "Apple Cider (loop)",
+      "author": "Zane Little Music",
+      "licence": "CC0",
+      "url": "https://opengameart.org/content/apple-cider-juiced"
+    },
+    {
+      "file": "music/beach.ogg",
+      "title": "Bossa Town",
+      "author": "KarateStudios",
+      "licence": "CC0",
+      "url": "https://opengameart.org/content/bossa-town"
+    },
+    {
+      "file": "music/winter.ogg",
+      "title": "Bluebonnet in B Major (looped)",
+      "author": "Kistol",
+      "licence": "CC0",
+      "url": "https://opengameart.org/content/bluebonnet"
+    },
+    {
+      "file": "music/spring.ogg",
+      "title": "Daisy",
+      "author": "Kistol",
+      "licence": "CC0",
+      "url": "https://opengameart.org/content/daisy"
+    },
+    {
+      "file": "music/title.ogg",
+      "title": "Catmint in C Major (looped)",
+      "author": "Kistol",
+      "licence": "CC0",
+      "url": "https://opengameart.org/content/catmint"
+    },
+    {
+      "file": "music/rain.ogg",
+      "title": "Vaporware (Calm Piano 1)",
+      "author": "cynicmusic",
+      "licence": "CC0",
+      "url": "https://opengameart.org/content/calm-piano-1-vaporware"
+    },
+    {
+      "file": "music/night.ogg",
+      "title": "Another August",
+      "author": "cynicmusic",
+      "licence": "CC0",
+      "url": "https://opengameart.org/content/another-august"
+    },
+    {
+      "file": "music/bundle.ogg",
+      "title": "Victory (Apple Cider Juiced)",
+      "author": "Zane Little Music",
+      "licence": "CC0",
+      "url": "https://opengameart.org/content/apple-cider-juiced"
+    }
+  ]
+}

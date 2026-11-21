@@ -1,3 +1,4 @@
+import { audio } from "../audio/engine";
 import Phaser from "phaser";
 import {
   canCook,
@@ -64,6 +65,11 @@ export class CookingScene extends Phaser.Scene {
           text: "Cook",
           run: () => {
             const why = cook(g, d.id);
+            if (why) audio.sfx("ui.error");
+            else {
+              audio.sfx("cook.sizzle");
+              this.time.delayedCall(700, () => audio.sfx("cook.done"));
+            }
             this.say(
               why ? reasonText(why) : `You cook ${d.name.toLowerCase()}.`,
             );

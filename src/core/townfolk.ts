@@ -291,6 +291,8 @@ export interface MeetResult {
   message: string;
   /** The gift item taken from the pack, if one was given. */
   consumed?: string;
+  /** How the villager took the gift (for the sound of it). */
+  taste?: Taste;
   /** True when the first kiss of the day was given: the scene shows hearts. */
   kiss?: boolean;
 }
@@ -343,6 +345,7 @@ export function meet(
           (jealous ? ` ${jealous}` : "") +
           tail(),
         consumed: held,
+        taste: r.taste,
       };
     }
   }

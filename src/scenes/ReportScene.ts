@@ -1,4 +1,6 @@
+import { audio } from "../audio/engine";
 import Phaser from "phaser";
+import { morningCues } from "../core/audio";
 import { reportLines, seasonNotice } from "../core/report";
 import type { SleepReport } from "../core/sleep";
 import { dateOf } from "../core/calendar";
@@ -50,7 +52,25 @@ export class ReportScene extends Phaser.Scene {
     return villager ? [villager, ...lines] : lines;
   }
 
+  /** The morning's sounds, a beat apart so each can be heard: sprinklers, animals, letters, achievements. */
+  private morningSounds(): void {
+    const r = this.report;
+    if (!r) return;
+    const cues = morningCues({
+      newMail: r.newMail,
+      achievements: r.achievements,
+      sprinklers:
+        this.state.sprinklers.count + this.state.greenhouseSprinklers.count,
+      eggs: r.animals.eggs,
+      barn: r.animals.barn,
+    });
+    cues.forEach((id, i) =>
+      this.time.delayedCall(350 + i * 650, () => audio.sfx(id)),
+    );
+  }
+
   create(): void {
+    this.morningSounds();
     this.add
       .rectangle(480, 270, WINDOW_FILL, WINDOW_FILL, 0x10201a, 0.94)
       .setInteractive();
@@ -110,6 +130,7 @@ export class ReportScene extends Phaser.Scene {
   }
 
   private close(): void {
+    audio.sfx("day.start");
     this.scene.stop();
     // The steward's call is owed a scene (note 39, step 4): the stub takes it.
     if (this.state.summit.scenePending) this.scene.launch("summit");

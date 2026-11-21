@@ -1,3 +1,4 @@
+import { audio } from "../audio/engine";
 import Phaser from "phaser";
 import { CHEST_COLOURS } from "../core/chestdefs";
 import { chestById, colourChest, type PlacedChest } from "../core/chests";
@@ -708,6 +709,7 @@ export class ChestScene extends Phaser.Scene {
   }
 
   private close(): void {
+    audio.sfx("chest.close");
     this.scene.stop();
     this.scene.resume("farm");
     if (this.camp !== undefined)

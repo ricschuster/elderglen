@@ -1,3 +1,4 @@
+import { audio } from "../audio/engine";
 import Phaser from "phaser";
 import { paintUiFrame, UI_FRAME_EDGE, UI_FRAME_KEY } from "./art";
 import { MENU_H, MENU_W, menuZoom } from "../core/view";
@@ -57,6 +58,8 @@ export interface RowButton {
   text: string;
   run: () => void;
   enabled?: boolean;
+  /** An on/off or choice switch: it ticks (`ui.toggle`) instead of clicking. */
+  toggle?: boolean;
 }
 
 export interface Row {
@@ -226,11 +229,13 @@ export class Menu {
 
   move(step: number): void {
     if (this.rows.length === 0) return;
+    const was = this.cursor;
     this.cursor = Phaser.Math.Clamp(
       this.cursor + step,
       0,
       this.rows.length - 1,
     );
+    if (this.cursor !== was) audio.sfx("ui.move");
     this.opts.onCursor?.(this.cursor);
     this.follow();
     this.draw();
@@ -250,7 +255,10 @@ export class Menu {
   /** Press button `n` (from 0) of the row under the cursor. */
   press(n: number): void {
     const button = this.row?.buttons[n];
-    if (button && button.enabled !== false && !this.row?.dim) button.run();
+    if (button && button.enabled !== false && !this.row?.dim) {
+      audio.sfx(button.toggle ? "ui.toggle" : "ui.click");
+      button.run();
+    }
   }
 
   private draw(): void {

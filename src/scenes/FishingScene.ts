@@ -1,3 +1,4 @@
+import { audio } from "../audio/engine";
 import { itemById } from "../core/items";
 import Phaser from "phaser";
 import { dateOf } from "../core/calendar";
@@ -374,6 +375,8 @@ export class FishingScene extends Phaser.Scene {
     g.day.act(cost, CAST_MINUTES);
     const gone = g.tackle.spend(this.rod.id);
     this.phase = "wait";
+    audio.sfx("fish.cast");
+    this.time.delayedCall(380, () => audio.sfx("fish.splash"));
     const [lo, hi] = WAIT;
     this.timer = (lo + Math.random() * (hi - lo)) * fx.wait;
     this.text.setText("Waiting for a bite...");
@@ -388,6 +391,7 @@ export class FishingScene extends Phaser.Scene {
       return this.rest();
     }
     this.phase = "hook";
+    audio.sfx("fish.bite");
     this.timer = HOOK_WINDOW[this.assist > 0 ? 1 : 0];
     this.bang.setVisible(true);
     const b = this.pending;
@@ -445,7 +449,10 @@ export class FishingScene extends Phaser.Scene {
   }
 
   /** Trash is hauled in with no bar (note 21). */
+  private reel = 0;
+
   private landTrashCatch(item: string): void {
+    audio.sfx("item.pickup");
     const r = landTrash(this.state, this.cfg.at, item);
     this.text.setText(
       `You haul in ${itemById(item)?.name ?? item}. Trash.${r.dropped ? " Your pack is full, so it lies at your feet." : ""}${r.levelUp ? ` Fishing is now level ${r.levelUp}.` : ""}`,
@@ -458,6 +465,7 @@ export class FishingScene extends Phaser.Scene {
 
   /** A water plant or jelly is lifted with no bar (note 93). */
   private landFindCatch(item: string): void {
+    audio.sfx("item.pickup");
     const r = landFind(this.state, this.cfg.at, item);
     this.text.setText(
       `You lift ${itemById(item)?.name ?? item} from the water.${r.dropped ? " Your pack is full, so it lies at your feet." : ""}${r.levelUp ? ` Fishing is now level ${r.levelUp}.` : ""}`,
@@ -468,6 +476,7 @@ export class FishingScene extends Phaser.Scene {
 
   /** The Pearl Lobster takes the line without a fight (note 21). */
   private landPearlLobster(): void {
+    audio.sfx("fish.catch");
     const r = landLobster(this.state, this.cfg.at, this.distance, Math.random);
     this.text.setText(
       `A Pearl Lobster! A rare catch.${r.quality === "normal" ? "" : ` ${QUALITY_LABEL[r.quality]} quality.`}${r.dropped ? " Your pack is full, so it lies at your feet." : ""}${r.levelUp ? ` Fishing is now level ${r.levelUp}.` : ""}`,
@@ -480,6 +489,7 @@ export class FishingScene extends Phaser.Scene {
     const b = this.pending;
     if (b.kind !== "fish" || b.fish.id !== id) return;
     const g = this.state;
+    audio.sfx("fish.catch");
     const r = landFish(g, b.fish, {
       perfect,
       distance: this.distance,
@@ -534,11 +544,17 @@ export class FishingScene extends Phaser.Scene {
       this.timer -= dt;
       if (this.timer <= 0) {
         this.bang.setVisible(false);
+        audio.sfx("fish.lost");
         this.text.setText("It got away. Cast again.");
         this.rest();
       }
     } else if (this.phase === "fight" && this.fight) {
       this.fight.step(dt, this.held, Math.random);
+      this.reel += dt;
+      if (this.held && this.reel >= 0.2) {
+        this.reel = 0;
+        audio.sfx("fish.reel");
+      }
       if (this.fight.state === "caught" && this.pending.kind === "fish")
         this.land(
           this.pending.fish.id,
@@ -546,6 +562,7 @@ export class FishingScene extends Phaser.Scene {
           this.fight.chestGot,
         );
       else if (this.fight.state === "lost") {
+        audio.sfx("fish.lost");
         this.text.setText("It got away. Cast again.");
         this.rest();
       }

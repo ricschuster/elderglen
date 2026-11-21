@@ -1,3 +1,4 @@
+import { audio } from "../audio/engine";
 import Phaser from "phaser";
 import { weddingLines } from "../core/marriagecard";
 import type { GameState } from "../core/save";
@@ -27,6 +28,7 @@ export class WeddingScene extends Phaser.Scene {
       playerNameOf(net, id),
     );
     this.at = 0;
+    audio.sfx("wedding.bells");
     this.add
       .rectangle(480, 270, WINDOW_FILL, WINDOW_FILL, 0x10201a, 0.96)
       .setInteractive()
@@ -54,7 +56,10 @@ export class WeddingScene extends Phaser.Scene {
 
   private next(): void {
     const line = this.lines[this.at++];
-    if (line === undefined) return this.finish();
+    if (line === undefined) {
+      audio.sfx("marriage.accept");
+      return this.finish();
+    }
     this.text.setText(line);
   }
 

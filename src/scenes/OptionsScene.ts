@@ -31,6 +31,8 @@ import {
 } from "../core/saveexport";
 import { activeSlot, allSlots, deleteSlot, slotStores } from "../core/slots";
 import { browserKv, browserSettingsStore, loadDeviceSettings } from "./storage";
+import { audio } from "../audio/engine";
+import credits from "../content/audio-credits.json";
 
 export const PROFILE_NAMES: Record<Profile, string> = {
   desktop: "Desktop",
@@ -194,10 +196,12 @@ export class OptionsScene extends Phaser.Scene {
       this.percentRow("World zoom", "worldZoom", ZOOM_MIN, ZOOM_MAX),
       this.percentRow("UI size", "uiSize", UI_MIN, UI_MAX),
       ...this.windowRows(),
+      ...this.soundRows(),
       {
         label: "Control hints box",
         detail: "keyboard hints at the top left of the farm",
         buttons: [true, false].map((on) => ({
+          toggle: true,
           text: this.mark(s.showHints === on, on ? "On" : "Off"),
           run: () => {
             s.showHints = on;
@@ -209,6 +213,7 @@ export class OptionsScene extends Phaser.Scene {
         label: "Fishing assist",
         detail: "bigger bar, calmer fish",
         buttons: ([0, 1, 2] as Assist[]).map((a) => ({
+          toggle: true,
           text: this.mark(s.fishingAssist === a, ASSIST_NAMES[a]),
           run: () => {
             s.fishingAssist = a;
@@ -220,6 +225,7 @@ export class OptionsScene extends Phaser.Scene {
         label: "Combat assist",
         detail: "half damage, nothing lost",
         buttons: [false, true].map((on) => ({
+          toggle: true,
           text: this.mark(s.combatAssist === on, on ? "On" : "Off"),
           run: () => {
             s.combatAssist = on;
@@ -231,6 +237,7 @@ export class OptionsScene extends Phaser.Scene {
         label: "Creatures in the mine",
         detail: "turn them off to dig in peace",
         buttons: [false, true].map((off) => ({
+          toggle: true,
           text: this.mark(s.noCreatures === off, off ? "None" : "Some"),
           run: () => {
             s.noCreatures = off;
@@ -378,6 +385,67 @@ export class OptionsScene extends Phaser.Scene {
         { text: "Larger", run: change(1), enabled: this.settings[key] < max },
       ],
     };
+  }
+
+  /** Which sound credit the "Sound credits" row shows next. */
+  private creditAt = 0;
+
+  /** Music, effects and ambient volume in steps of 10, mute, and the credits (note 107). */
+  private soundRows(): Row[] {
+    const a = this.settings.audio;
+    const volume = (
+      label: string,
+      key: "musicVolume" | "sfxVolume" | "ambientVolume",
+    ): Row => {
+      const change = (dir: 1 | -1) => () => {
+        a[key] = Math.min(100, Math.max(0, a[key] + dir * 10));
+        audio.applySettings(a);
+        saveSettings(browserSettingsStore, this.settings);
+        audio.sfx("ui.confirm");
+        this.refresh();
+      };
+      return {
+        label,
+        detail: `${a[key]}%`,
+        buttons: [
+          { text: "Quieter", run: change(-1), enabled: a[key] > 0 },
+          { text: "Louder", run: change(1), enabled: a[key] < 100 },
+        ],
+      };
+    };
+    return [
+      volume("Music volume", "musicVolume"),
+      volume("Effects volume", "sfxVolume"),
+      volume("Ambient volume", "ambientVolume"),
+      {
+        label: "Sound",
+        detail: "mute everything",
+        buttons: [false, true].map((m) => ({
+          toggle: true,
+          text: this.mark(a.muted === m, m ? "Muted" : "On"),
+          run: () => {
+            a.muted = m;
+            audio.applySettings(a);
+            saveSettings(browserSettingsStore, this.settings);
+            this.refresh();
+          },
+        })),
+      },
+      {
+        label: "Sound credits",
+        detail: `${credits.credits.length} tracks`,
+        buttons: [
+          {
+            text: "Next",
+            run: () => {
+              const c =
+                credits.credits[this.creditAt++ % credits.credits.length];
+              if (c) this.say(`${c.title} by ${c.author} (${c.licence}).`);
+            },
+          },
+        ],
+      },
+    ];
   }
 
   /**

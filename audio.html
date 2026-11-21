@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Elderglen audition page (dev only)</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 12px 16px;
+        background: #1b1f1b;
+        color: #ddd;
+        font: 13px sans-serif;
+      }
+      h1 {
+        font-size: 16px;
+      }
+      h2 {
+        font-size: 14px;
+        margin: 16px 0 4px;
+        color: #ffe9a0;
+      }
+      button {
+        margin: 2px;
+        padding: 3px 8px;
+        background: #3f7d3a;
+        color: #fff;
+        border: 1px solid #fff4;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      button.on {
+        background: #b5651d;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .note {
+        color: #999;
+        margin: 4px 0;
+      }
+      label {
+        margin-right: 16px;
+      }
+      #now {
+        position: sticky;
+        top: 0;
+        background: #1b1f1b;
+        padding: 4px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Audition</h1>
+    <div class="note">
+      Dev page: run <code>npm run dev</code> and open <code>/audio.html</code>.
+      Click anywhere first (the browser needs a gesture). Music buttons
+      cross-fade; ambient buttons toggle layers; effect buttons play one file at
+      a time with the jitter the game uses.
+    </div>
+    <div id="now"></div>
+    <div id="app"></div>
+    <script type="module" src="/src/audio/audition.ts"></script>
+  </body>
+</html>
