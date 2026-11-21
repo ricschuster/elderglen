@@ -47,31 +47,10 @@ is data files, not code. See `docs/decisions/0004-engine-and-language.md`.
 
 ## Commands
 
-Node 22 and npm. Gates run in CI and a non-zero exit blocks a merge.
-
-- `npm run dev`: run locally with hot reload.
-- Gates: `format:check`, `lint`, `typecheck`, `test` (Vitest, `tests/`), `build`
-  (typecheck and production build to `dist/`). `npm run format` fixes Prettier.
-- `npm run overview` / `valley-map` (gates `overview:check`, `valley-map:check`): rebuild
-  `docs/overview.html` and `docs/valley-map.html` from the hand-kept `docs/overview.json`
-  and `docs/valley-map.json`. Update the JSON when the design changes; open the HTML from
-  disk. `npm run overview:refresh` re-fetches issue states with `gh`.
-- `npm run check`: all of the gates in order. Run before pushing.
-- `npm run size` / `size:bundle`: largest files, files over 1,500 lines (a warning), and what the bundle is made of.
-  Not a gate.
-- `npm run knip`: unused files and exports (config `knip.json`). Not a gate yet; keep it at zero findings,
-  and remove `export` or the code when it reports something.
-- `npm run wiki` / `wiki:check`: rebuild `docs/wiki/` (the public wiki, note 100) from the data in
-  `src/content/` and prose in `docs/wiki-text/`. `npm run wiki:internal` writes `docs/wiki-internal/`
-  (git-ignored, adds build status and draft text; open `index.html` from disk). `npm run items:export`
-  refreshes `src/content/item-table.json` after an item changes. `npm run wiki:images` re-renders item
-  pictures (needs `npm run dev`).
-- Interior drafts: `python3 docs/design/drafts/interiors-draft/gen.py` (from that folder;
-  Python 3 and Pillow). Design material, not a gate.
-- `npm run playtest -- <expert|intermediate|casual>`, other `playtest:*` scripts: manual
-  browser playthroughs, need `npm run dev`. See `scripts/playtest/README.md`.
-- `npm run sim`: headless sim bot. `android:sync`, `android:apk`, `android:install`: the
-  Capacitor app (ADR 0008).
+Node 22 and npm. Gates run in CI and a non-zero exit blocks a merge. Run `npm run check`
+(all gates: `format:check`, `lint`, `typecheck`, `test`, `build`) before pushing; `npm run format`
+fixes Prettier. Vitest needs `--maxWorkers=4`. Full list (dev, overview, wiki, playtest, sim,
+android, knip, size): `docs/commands.md`.
 
 ## Repo structure
 
@@ -110,21 +89,7 @@ Node 22 and npm. Gates run in CI and a non-zero exit blocks a merge.
   If the Stardew behaviour is not known or not checked, say so in that option
   instead of guessing. Put the recommendation first, and mark it
   "(Recommended)" as well when the Stardew option is not the recommended one.
-- Stardew checks register: `docs/design/54_stardew_checks.md` lists every
-  Stardew claim that is from memory or unchecked, with how to check it (owner
-  plays, saved wiki page, Guidebook). Add a row when a note makes such a claim.
-  What matters is what we want for Elderglen, not what Stardew does. Ask the
-  owner a Stardew fact question only when a decision hinges on it: a behaviour
-  players of the genre will assume, or a number or rule we chose to copy. Close
-  every other row as "ours, on purpose", and do not offer a question batch just
-  because rows are open. Black box only: never reverse engineer Stardew (ADR 0002).
-- Stardew wiki pages: the wiki blocks Claude's crawler, so never fetch it (no WebFetch,
-  curl, Playwright). Write page URLs, one per line, to
-  `docs/reference/stardew/urls_<topic>.txt`; the owner saves each page there by hand.
-  Read the saved files, then delete the list. Reference only, never copied into the repo
-  (ADR 0002).
-- Stardew Valley Guidebook: the owner's PDF in `docs/reference/stardew/` is the free
-  supplement only; the wiki stays the main source. Read on demand with
-  `pdftotext -layout -f <page> -l <page>`, check table numbers against the page image,
-  flag conflicts with the wiki, cite by printed page, never quote. Do not build an
-  extraction pipeline.
+- Stardew reference: before asking a Stardew fact question, adding a checks row, or reading the
+  saved wiki pages or Guidebook, read `docs/stardew-rules.md`. Key rules: never fetch
+  the Stardew wiki (it blocks the crawler; list URLs for the owner to save by hand); ask a Stardew
+  fact question only when a decision hinges on it; black box only, never reverse engineer (ADR 0002).
