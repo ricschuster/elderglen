@@ -400,6 +400,7 @@ export class OptionsScene extends Phaser.Scene {
       const change = (dir: 1 | -1) => () => {
         a[key] = Math.min(100, Math.max(0, a[key] + dir * 10));
         audio.applySettings(a);
+        saveSettings(browserSettingsStore, this.settings);
         audio.sfx("ui.confirm");
         this.refresh();
       };
@@ -425,6 +426,7 @@ export class OptionsScene extends Phaser.Scene {
           run: () => {
             a.muted = m;
             audio.applySettings(a);
+            saveSettings(browserSettingsStore, this.settings);
             this.refresh();
           },
         })),

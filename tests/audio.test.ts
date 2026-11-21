@@ -612,3 +612,60 @@ describe("director situation", () => {
     expect(situation([], false, undefined)).toBeUndefined();
   });
 });
+
+describe("engine applies settings live", () => {
+  it("mute and sliders change the bus gains at once, without a restart", async () => {
+    const gains: { value: number; set: number[] }[] = [];
+    const node = () => ({
+      connect: (n: unknown) => n,
+      disconnect: () => {},
+    });
+    class FakeCtx {
+      state = "running";
+      currentTime = 0;
+      destination = node();
+      createGain() {
+        const g = {
+          ...node(),
+          gain: {
+            value: 1,
+            set: [] as number[],
+            setValueAtTime(v: number) {
+              this.set.push(v);
+            },
+            setTargetAtTime(v: number) {
+              this.set.push(v);
+            },
+            cancelScheduledValues() {},
+            linearRampToValueAtTime() {},
+          },
+        };
+        gains.push(g.gain);
+        return g;
+      }
+      resume() {
+        return Promise.resolve();
+      }
+    }
+    const g = globalThis as Record<string, unknown>;
+    const had = g.window;
+    g.window = { AudioContext: FakeCtx };
+    try {
+      const { AudioEngine } = await import("../src/audio/engine");
+      const e = new AudioEngine();
+      e.unlock();
+      // gains: master, duck, music, sfx, ambient.
+      const [, , music, sfx, ambient] = gains;
+      expect(music!.set.at(-1)).toBeCloseTo(volumeGain(60));
+      e.applySettings({ ...e.settings, sfxVolume: 20 });
+      expect(sfx!.set.at(-1)).toBeCloseTo(volumeGain(20));
+      expect(ambient!.set.at(-1)).toBeCloseTo(volumeGain(60));
+      e.applySettings({ ...e.settings, muted: true });
+      for (const b of [music, sfx, ambient]) expect(b!.set.at(-1)).toBe(0);
+      e.applySettings({ ...e.settings, muted: false });
+      expect(sfx!.set.at(-1)).toBeCloseTo(volumeGain(20));
+    } finally {
+      g.window = had;
+    }
+  });
+});
