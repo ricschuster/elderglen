@@ -23,6 +23,7 @@ import {
 import { TREE_SEED_IDS } from "./mahogany";
 import { cutGrass } from "./grass";
 import { mine } from "./mining";
+import { rngOf } from "./rng";
 import { digMineDirt, digSpot } from "./artifacts";
 import { areaOf } from "./areas";
 import { chopLog, logCleared } from "./logs";
@@ -59,9 +60,6 @@ import {
   potInUse,
   waterPot,
 } from "./gardenpot";
-
-/** The state's injected RNG, or Math.random (issue 977). */
-const rngOf = (g: GameState): (() => number) => g.rng ?? Math.random;
 
 const fail = (reason: string): Outcome => ({ ok: false, reason });
 

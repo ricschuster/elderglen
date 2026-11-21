@@ -1,4 +1,5 @@
 import bombData from "../content/bombs.json";
+import { rngOf } from "./rng";
 import { isClear } from "./actions";
 import type { Creature } from "./creatures";
 import { creatureTile, hurtCreature } from "./creatures";
@@ -138,7 +139,7 @@ export function blastRocks(
   rocks: Rocks,
   floor: number | undefined,
   bomb: LitBomb,
-  random: () => number = Math.random,
+  random: () => number = rngOf(g),
 ): BlastRocks {
   const def = bombById(bomb.id);
   const out: BlastRocks = { broken: 0, items: {}, ladder: false };

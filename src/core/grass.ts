@@ -1,4 +1,5 @@
 import type { Outcome } from "./actions";
+import { rngOf } from "./rng";
 import { addHay, siloCapacity } from "./animals";
 import type { GameState } from "./save";
 import { tileKey } from "./tilekey";
@@ -136,7 +137,7 @@ export function cutGrass(
   g: GameState,
   x: number,
   y: number,
-  random: () => number = Math.random,
+  random: () => number = rngOf(g),
 ): Outcome {
   if (!g.grass.at(x, y)) return { ok: false, reason: "no grass" };
   g.grass.remove(x, y);

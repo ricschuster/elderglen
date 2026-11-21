@@ -9,3 +9,10 @@ export function seeded(seed: number): () => number {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
+
+/**
+ * The state's injected RNG, or Math.random (issue 977). Rules take a `random`
+ * parameter that defaults to this, so setting `g.rng` makes every roll fixed.
+ */
+export const rngOf = (g: { rng?: () => number }): (() => number) =>
+  g.rng ?? Math.random;

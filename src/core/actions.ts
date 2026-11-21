@@ -1,4 +1,5 @@
 import { dateOf } from "./calendar";
+import { rngOf } from "./rng";
 import { CROPS, FLOWER_CROPS, cropById } from "./crops";
 import { farmTypeById } from "./farmtypes";
 import { ELDERFRUIT, HARDWOOD, cropOfSeed, itemById, seedId } from "./items";
@@ -100,7 +101,7 @@ export function till(
   g: GameState,
   x: number,
   y: number,
-  random: () => number = Math.random,
+  random: () => number = rngOf(g),
   /** The soil dug: the farm's, or the greenhouse's. */
   soil: Farm = g.farm,
 ): Outcome {
@@ -166,7 +167,7 @@ export function plant(
   x: number,
   y: number,
   seed: string,
-  random: () => number = Math.random,
+  random: () => number = rngOf(g),
   soil: Farm = g.farm,
 ): Outcome {
   if (g.day.over) return fail("exhausted");
@@ -206,7 +207,7 @@ export function harvest(
   g: GameState,
   x: number,
   y: number,
-  random: () => number = Math.random,
+  random: () => number = rngOf(g),
   soil: Farm = g.farm,
 ): Outcome {
   if (g.day.over) return fail("exhausted");
@@ -233,7 +234,7 @@ export function forage(
   g: GameState,
   x: number,
   y: number,
-  random: () => number = Math.random,
+  random: () => number = rngOf(g),
 ): Outcome {
   if (g.day.over) return fail("exhausted");
   const id = g.forage.itemAt(x, y);
@@ -440,7 +441,7 @@ export function chop(
   g: GameState,
   x: number,
   y: number,
-  random: () => number = Math.random,
+  random: () => number = rngOf(g),
   map?: FarmMap,
 ): Outcome {
   if (g.day.over) return fail("exhausted");
@@ -699,7 +700,7 @@ export function gatherMoss(
   g: GameState,
   x: number,
   y: number,
-  random: () => number = Math.random,
+  random: () => number = rngOf(g),
 ): Outcome {
   const t = g.trees.at(x, y);
   if (!t || t.stump || t.stage !== MATURE_STAGE || !t.moss)
@@ -775,7 +776,7 @@ export function clearWeed(
   x: number,
   y: number,
   tool: "hoe" | "can" | "axe" | "scythe",
-  random: () => number = Math.random,
+  random: () => number = rngOf(g),
   map?: FarmMap,
 ): Outcome {
   if (g.day.over) return fail("exhausted");

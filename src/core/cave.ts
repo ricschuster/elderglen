@@ -1,4 +1,5 @@
 import type { Outcome } from "./actions";
+import { rngOf } from "./rng";
 import { noteGathered } from "./quests";
 import { FORAGE, type Spot } from "./forage";
 import { FRUIT_TREES } from "./fruittrees";
@@ -245,7 +246,7 @@ export function pickBatFruit(
   g: GameState,
   x: number,
   y: number,
-  random: () => number = Math.random,
+  random: () => number = rngOf(g),
 ): Outcome {
   if (g.day.over) return fail("exhausted");
   const id = g.cave.fruitAt(x, y);

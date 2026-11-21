@@ -1,4 +1,5 @@
 import type { Outcome } from "./actions";
+import { rngOf } from "./rng";
 import { dropGoods } from "./ground";
 import { swingCost } from "./upgrades";
 import { dateOf, type Season } from "./calendar";
@@ -190,7 +191,7 @@ export function digSpot(
   areaId: string,
   x: number,
   y: number,
-  random: () => number = Math.random,
+  random: () => number = rngOf(g),
 ): Outcome {
   if (g.day.over) return fail("exhausted");
   if (!g.spots.at(x, y)) return fail("nothing to dig");
@@ -205,7 +206,7 @@ export function digMineDirt(
   floor: number,
   x: number,
   y: number,
-  random: () => number = Math.random,
+  random: () => number = rngOf(g),
 ): Outcome {
   if (g.day.over) return fail("exhausted");
   swing(g);
