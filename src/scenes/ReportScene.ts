@@ -3,7 +3,8 @@ import { reportLines, seasonNotice } from "../core/report";
 import type { SleepReport } from "../core/sleep";
 import { dateOf } from "../core/calendar";
 import type { GameState } from "../core/save";
-import { marriageReportLines } from "../core/playermarriage";
+import { engagedWith, marriageReportLines } from "../core/playermarriage";
+import { engagedReportLine } from "../core/courtship";
 import { currentSession, HostSession, playerNameOf } from "../net/session";
 import { STATE_KEY } from "./state";
 import { WINDOW_FILL } from "./panel";
@@ -30,8 +31,15 @@ export class ReportScene extends Phaser.Scene {
   /** The engaged notice and a told divorce, in a multiplayer game (note 12). */
   private marriageLines(): string[] {
     const net = currentSession();
-    if (!net) return [];
-    return marriageReportLines(
+    const today = this.state.day.clock.day;
+    // Engaged to a villager: the notice shows in single player too (owner, 2026-11-21).
+    const villager = engagedReportLine(
+      this.state.marriage,
+      today,
+      !!net && !!engagedWith(this.state.playerMarriage, net.localId),
+    );
+    if (!net) return villager ? [villager] : [];
+    const lines = marriageReportLines(
       this.state.playerMarriage,
       net.localId,
       this.state.day.clock.day,
@@ -39,6 +47,7 @@ export class ReportScene extends Phaser.Scene {
       net instanceof HostSession ? net.world.lastDivorces : [],
       net instanceof HostSession ? net.world.lastWeddings : [],
     );
+    return villager ? [villager, ...lines] : lines;
   }
 
   create(): void {
