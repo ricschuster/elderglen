@@ -494,6 +494,47 @@
       }
     },
     {
+      "id": "farm-pond-stocked",
+      "group": "Ponds",
+      "label": "Farm pond built with 2 carp, more carp and a perch in the pack",
+      "patch": {
+        "season": "spring",
+        "dayOfSeason": 3,
+        "weather": "sunny",
+        "money": 10000,
+        "pond": {
+          "x": 50,
+          "y": 18,
+          "species": "carp",
+          "count": 2
+        },
+        "items": {
+          "carp": 3,
+          "perch": 1,
+          "stone": 200,
+          "seaweed": 5,
+          "pondweed": 5
+        }
+      }
+    },
+    {
+      "id": "farm-pond-to-order",
+      "group": "Ponds",
+      "label": "No pond yet, with the price in the pack (5000g, 200 stone, 5 seaweed, 5 pondweed)",
+      "patch": {
+        "season": "spring",
+        "dayOfSeason": 3,
+        "weather": "sunny",
+        "money": 10000,
+        "items": {
+          "carp": 3,
+          "stone": 200,
+          "seaweed": 5,
+          "pondweed": 5
+        }
+      }
+    },
+    {
       "id": "late-game-100",
       "group": "Late game",
       "label": "Day 100, full pack, hall done, all skills 8",

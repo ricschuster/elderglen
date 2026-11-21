@@ -15,6 +15,9 @@ import {
 import { eventById } from "./heartevents";
 import { HEART, heartCap, isCandidate } from "./friendship";
 import { Inventory } from "./inventory";
+import { FARM_STORE } from "./mapstore";
+import { pondAt, pondable, putFish } from "./pond";
+import { FISH_POND } from "./pondsite";
 import { LEVEL_XP, MAX_LEVEL, SKILLS, type Skill } from "./skills";
 import type { GameState } from "./save";
 import { setFlag } from "./worldflags";
@@ -77,6 +80,12 @@ export interface StatePatch {
     stage?: "courting" | "engaged" | "married";
     children?: number;
   };
+  /**
+   * A finished fish pond with its top left at `x`, `y` (the farm map; the spot must be clear), stocked with
+   * `count` of `species` (default none). The fish go in through `putFish`, so the breeding clock and cap
+   * are the game's own. Not a carpenter job: the pond stands built.
+   */
+  pond?: { x: number; y: number; species?: string; count?: number };
   /** Meet everyone in the roster, so the Social tab shows names instead of "???". */
   meetAll?: boolean;
   /** Take the first option of every pending profession choice, so no prompt queues up on load. */
@@ -259,6 +268,8 @@ export function applyStatePatch(g: GameState, p: StatePatch): PatchResult {
 
   if (p.marriage) applyMarriage(g, p.marriage, problems);
 
+  if (p.pond) applyPond(g, p.pond, problems);
+
   for (const [id, n] of Object.entries(p.items ?? {})) {
     const r = giveItem(g, id, n);
     if (r !== "ok") problems.push(`item ${id}: ${r}`);
@@ -269,6 +280,48 @@ export function applyStatePatch(g: GameState, p: StatePatch): PatchResult {
       if (giveItem(g, item.id, 1) === "full") break;
 
   return { problems };
+}
+
+/** A built pond, then its fish through the pond's own `putFish` (a throwaway fish each, so the pack is untouched). */
+function applyPond(
+  g: GameState,
+  want: NonNullable<StatePatch["pond"]>,
+  problems: string[],
+): void {
+  const { x, y, species, count = 0 } = want;
+  if (!Number.isInteger(x) || !Number.isInteger(y) || x < 0 || y < 0) {
+    problems.push(`bad pond spot ${x},${y}`);
+    return;
+  }
+  if (species !== undefined && !pondable(species)) {
+    problems.push(`pond: ${species} cannot live in a pond`);
+    return;
+  }
+  if (
+    !g.placed.add(FARM_STORE, {
+      x,
+      y,
+      id: FISH_POND,
+      state: { building: 0, count: 0, capLevel: 0 },
+    })
+  ) {
+    problems.push(`pond: cannot place at ${x},${y}`);
+    return;
+  }
+  if (species === undefined) return;
+  for (let i = 0; i < count; i++) {
+    const given = giveItem(g, species, 1);
+    if (given !== "ok") {
+      problems.push(`pond: ${species}: ${given}`);
+      return;
+    }
+    const r = putFish(g, x, y, species);
+    if (!r.ok) {
+      problems.push(`pond: ${r.reason}`);
+      return;
+    }
+  }
+  if (!pondAt(g, x, y)) problems.push("pond: lost");
 }
 
 /** Courtship, engagement and wedding through the game's own rules (`marriage.ts`), then the children. */
