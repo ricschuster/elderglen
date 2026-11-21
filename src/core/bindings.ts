@@ -13,6 +13,7 @@ import {
   ZOOM_MIN,
 } from "./view";
 import { DEFAULT_SCHEME, migrateScheme, type SchemeId } from "./controlschemes";
+import { clampVolume, DEFAULT_AUDIO, type AudioSettings } from "./audio";
 
 export type Profile = "desktop" | "touch";
 export type TouchScheme = SchemeId;
@@ -183,6 +184,8 @@ export interface Settings {
   combatAssist: boolean;
   /** Mine floors with no creatures at all, for a player who only wants to dig (note 22). */
   noCreatures: boolean;
+  /** Music, effects and ambient volumes 0 to 100, and mute (note 107). */
+  audio: AudioSettings;
 }
 
 export const SETTINGS_VERSION = 1;
@@ -203,6 +206,7 @@ export function defaultSettings(coarsePointer = false): Settings {
     fishingAssist: 0,
     combatAssist: false,
     noCreatures: false,
+    audio: { ...DEFAULT_AUDIO },
   };
 }
 
@@ -226,6 +230,18 @@ function cleanBindings(raw: unknown): Bindings {
   const bad =
     keys.some((k) => isReserved(k)) || new Set(keys).size < keys.length;
   return bad ? defaultBindings() : out;
+}
+
+/** Saved volumes and mute, field by field, falling back to the defaults. */
+function cleanAudio(raw: unknown): AudioSettings {
+  const base = DEFAULT_AUDIO;
+  if (!isObject(raw)) return { ...base };
+  return {
+    muted: typeof raw.muted === "boolean" ? raw.muted : base.muted,
+    musicVolume: clampVolume(raw.musicVolume, base.musicVolume),
+    sfxVolume: clampVolume(raw.sfxVolume, base.sfxVolume),
+    ambientVolume: clampVolume(raw.ambientVolume, base.ambientVolume),
+  };
 }
 
 /**
@@ -267,6 +283,7 @@ export function deserializeSettings(
         : base.combatAssist,
     noCreatures:
       typeof raw.noCreatures === "boolean" ? raw.noCreatures : base.noCreatures,
+    audio: cleanAudio(raw.audio),
   };
 }
 

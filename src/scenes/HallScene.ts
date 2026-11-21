@@ -1,3 +1,4 @@
+import { audio } from "../audio/engine";
 import Phaser from "phaser";
 import { rewardText, ROOMS, type BundleDef } from "../core/bundles";
 import { hatById } from "../core/hats";
@@ -182,10 +183,14 @@ export class HallScene extends Phaser.Scene {
   private give(bundleId: string, itemId: string): void {
     const g = this.state;
     const why = g.hall.problem(g.inventory, bundleId, itemId);
-    if (why) return this.say(why);
+    if (why) {
+      audio.sfx("ui.error");
+      return this.say(why);
+    }
     const result = g.hall.handIn(g.inventory, g, bundleId, itemId, (gold) =>
       g.cave.addEarnings(gold, g.day.clock.day + 1),
     );
+    audio.sfx(result === "completed" ? "bundle.complete" : "bundle.item");
     const bundle = g.hall.bundles.find((b) => b.id === bundleId)!;
     const paid = result === "completed" ? payGuestsBoard(g) : [];
     this.say(

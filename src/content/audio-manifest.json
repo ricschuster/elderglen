@@ -2,90 +2,70 @@
   "version": 1,
   "sfx": {
     "ui.click": {
-      "files": [
-        "sfx/ui.click.ogg"
-      ],
+      "files": ["sfx/ui.click.ogg"],
       "gain": 0.6,
       "pitch": 0.03,
       "gainJitter": 0,
       "cooldownMs": 30
     },
     "ui.move": {
-      "files": [
-        "sfx/ui.move.ogg"
-      ],
+      "files": ["sfx/ui.move.ogg"],
       "gain": 0.45,
       "pitch": 0.04,
       "gainJitter": 0,
       "cooldownMs": 40
     },
     "ui.open": {
-      "files": [
-        "sfx/ui.open.ogg"
-      ],
+      "files": ["sfx/ui.open.ogg"],
       "gain": 0.6,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 100
     },
     "ui.close": {
-      "files": [
-        "sfx/ui.close.ogg"
-      ],
+      "files": ["sfx/ui.close.ogg"],
       "gain": 0.55,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 100
     },
     "ui.confirm": {
-      "files": [
-        "sfx/ui.confirm.ogg"
-      ],
+      "files": ["sfx/ui.confirm.ogg"],
       "gain": 0.65,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 60
     },
     "ui.error": {
-      "files": [
-        "sfx/ui.error.ogg"
-      ],
+      "files": ["sfx/ui.error.ogg"],
       "gain": 0.6,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 120
     },
     "ui.notify": {
-      "files": [
-        "sfx/ui.notify.ogg"
-      ],
+      "files": ["sfx/ui.notify.ogg"],
       "gain": 0.6,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 200
     },
     "ui.levelup": {
-      "files": [
-        "sfx/ui.levelup.ogg"
-      ],
+      "files": ["sfx/ui.levelup.ogg"],
       "gain": 0.9,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 500
     },
     "ui.tab": {
-      "files": [
-        "sfx/ui.tab.ogg"
-      ],
+      "files": ["sfx/ui.tab.ogg"],
       "gain": 0.5,
       "pitch": 0.03,
       "gainJitter": 0,
       "cooldownMs": 50
     },
     "ui.toggle": {
-      "files": [
-        "sfx/ui.toggle.ogg"
-      ],
+      "files": ["sfx/ui.toggle.ogg"],
       "gain": 0.5,
       "pitch": 0,
       "gainJitter": 0,
@@ -114,9 +94,7 @@
       "cooldownMs": 120
     },
     "tool.fill": {
-      "files": [
-        "sfx/tool.fill.ogg"
-      ],
+      "files": ["sfx/tool.fill.ogg"],
       "gain": 0.8,
       "pitch": 0,
       "gainJitter": 0,
@@ -156,66 +134,49 @@
       "cooldownMs": 80
     },
     "tool.swing": {
-      "files": [
-        "sfx/tool.swing_1.ogg",
-        "sfx/tool.swing_2.ogg"
-      ],
+      "files": ["sfx/tool.swing_1.ogg", "sfx/tool.swing_2.ogg"],
       "gain": 0.5,
       "pitch": 0.06,
       "gainJitter": 0,
       "cooldownMs": 80
     },
     "fish.cast": {
-      "files": [
-        "sfx/fish.cast.ogg"
-      ],
+      "files": ["sfx/fish.cast.ogg"],
       "gain": 0.85,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 200
     },
     "fish.reel": {
-      "files": [
-        "sfx/fish.reel_1.ogg",
-        "sfx/fish.reel_2.ogg"
-      ],
+      "files": ["sfx/fish.reel_1.ogg", "sfx/fish.reel_2.ogg"],
       "gain": 0.45,
       "pitch": 0.05,
       "gainJitter": 0,
       "cooldownMs": 90
     },
     "fish.bite": {
-      "files": [
-        "sfx/fish.bite.ogg"
-      ],
+      "files": ["sfx/fish.bite.ogg"],
       "gain": 0.95,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 300
     },
     "fish.catch": {
-      "files": [
-        "sfx/fish.catch.ogg"
-      ],
+      "files": ["sfx/fish.catch.ogg"],
       "gain": 1,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 400
     },
     "fish.splash": {
-      "files": [
-        "sfx/fish.splash_1.ogg",
-        "sfx/fish.splash_2.ogg"
-      ],
+      "files": ["sfx/fish.splash_1.ogg", "sfx/fish.splash_2.ogg"],
       "gain": 0.8,
       "pitch": 0.06,
       "gainJitter": 0,
       "cooldownMs": 120
     },
     "fish.lost": {
-      "files": [
-        "sfx/fish.lost.ogg"
-      ],
+      "files": ["sfx/fish.lost.ogg"],
       "gain": 0.7,
       "pitch": 0,
       "gainJitter": 0,
@@ -244,103 +205,77 @@
       "cooldownMs": 60
     },
     "forage.pick": {
-      "files": [
-        "sfx/forage.pick_1.ogg",
-        "sfx/forage.pick_2.ogg"
-      ],
+      "files": ["sfx/forage.pick_1.ogg", "sfx/forage.pick_2.ogg"],
       "gain": 0.7,
       "pitch": 0.06,
       "gainJitter": 0,
       "cooldownMs": 60
     },
     "item.pickup": {
-      "files": [
-        "sfx/item.pickup_1.ogg",
-        "sfx/item.pickup_2.ogg"
-      ],
+      "files": ["sfx/item.pickup_1.ogg", "sfx/item.pickup_2.ogg"],
       "gain": 0.7,
       "pitch": 0.05,
       "gainJitter": 0,
       "cooldownMs": 40
     },
     "item.drop": {
-      "files": [
-        "sfx/item.drop.ogg"
-      ],
+      "files": ["sfx/item.drop.ogg"],
       "gain": 0.5,
       "pitch": 0.05,
       "gainJitter": 0,
       "cooldownMs": 60
     },
     "world.place": {
-      "files": [
-        "sfx/world.place_1.ogg",
-        "sfx/world.place_2.ogg"
-      ],
+      "files": ["sfx/world.place_1.ogg", "sfx/world.place_2.ogg"],
       "gain": 0.75,
       "pitch": 0.05,
       "gainJitter": 0,
       "cooldownMs": 60
     },
     "chest.open": {
-      "files": [
-        "sfx/chest.open.ogg"
-      ],
+      "files": ["sfx/chest.open.ogg"],
       "gain": 0.7,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 100
     },
     "chest.close": {
-      "files": [
-        "sfx/chest.close.ogg"
-      ],
+      "files": ["sfx/chest.close.ogg"],
       "gain": 0.7,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 100
     },
     "tree.fall": {
-      "files": [
-        "sfx/tree.fall.ogg"
-      ],
+      "files": ["sfx/tree.fall.ogg"],
       "gain": 1,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 500
     },
     "sprinkler.run": {
-      "files": [
-        "sfx/sprinkler.run.ogg"
-      ],
+      "files": ["sfx/sprinkler.run.ogg"],
       "gain": 0.5,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 500
     },
     "money.sell": {
-      "files": [
-        "sfx/money.sell_1.ogg",
-        "sfx/money.sell_2.ogg"
-      ],
+      "files": ["sfx/money.sell_1.ogg", "sfx/money.sell_2.ogg"],
       "gain": 0.85,
       "pitch": 0.03,
       "gainJitter": 0,
       "cooldownMs": 60
     },
     "money.bin": {
-      "files": [
-        "sfx/money.bin.ogg"
-      ],
+      "files": ["sfx/money.bin.ogg"],
       "gain": 0.8,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 80
     },
     "money.buy": {
-      "files": [
-        "sfx/money.buy.ogg"
-      ],
+      "files": ["sfx/money.buy.ogg"],
       "gain": 0.85,
       "pitch": 0,
       "gainJitter": 0,
@@ -413,38 +348,28 @@
       "cooldownMs": 120
     },
     "door.open": {
-      "files": [
-        "sfx/door.open_1.ogg",
-        "sfx/door.open_2.ogg"
-      ],
+      "files": ["sfx/door.open_1.ogg", "sfx/door.open_2.ogg"],
       "gain": 0.75,
       "pitch": 0.04,
       "gainJitter": 0,
       "cooldownMs": 150
     },
     "door.close": {
-      "files": [
-        "sfx/door.close_1.ogg",
-        "sfx/door.close_2.ogg"
-      ],
+      "files": ["sfx/door.close_1.ogg", "sfx/door.close_2.ogg"],
       "gain": 0.8,
       "pitch": 0.04,
       "gainJitter": 0,
       "cooldownMs": 150
     },
     "door.locked": {
-      "files": [
-        "sfx/door.locked.ogg"
-      ],
+      "files": ["sfx/door.locked.ogg"],
       "gain": 0.7,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 300
     },
     "door.shop": {
-      "files": [
-        "sfx/door.shop.ogg"
-      ],
+      "files": ["sfx/door.shop.ogg"],
       "gain": 0.8,
       "pitch": 0,
       "gainJitter": 0,
@@ -484,56 +409,42 @@
       "cooldownMs": 60
     },
     "enemy.die": {
-      "files": [
-        "sfx/enemy.die_1.ogg",
-        "sfx/enemy.die_2.ogg"
-      ],
+      "files": ["sfx/enemy.die_1.ogg", "sfx/enemy.die_2.ogg"],
       "gain": 0.95,
       "pitch": 0.06,
       "gainJitter": 0,
       "cooldownMs": 100
     },
     "player.hurt": {
-      "files": [
-        "sfx/player.hurt_1.ogg",
-        "sfx/player.hurt_2.ogg"
-      ],
+      "files": ["sfx/player.hurt_1.ogg", "sfx/player.hurt_2.ogg"],
       "gain": 0.9,
       "pitch": 0.05,
       "gainJitter": 0,
       "cooldownMs": 150
     },
     "player.die": {
-      "files": [
-        "sfx/player.die.ogg"
-      ],
+      "files": ["sfx/player.die.ogg"],
       "gain": 0.9,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 600
     },
     "bomb.fuse": {
-      "files": [
-        "sfx/bomb.fuse.ogg"
-      ],
+      "files": ["sfx/bomb.fuse.ogg"],
       "gain": 0.6,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 300
     },
     "bomb.boom": {
-      "files": [
-        "sfx/bomb.boom.ogg"
-      ],
+      "files": ["sfx/bomb.boom.ogg"],
       "gain": 1,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 300
     },
     "mine.stairs": {
-      "files": [
-        "sfx/mine.stairs.ogg"
-      ],
+      "files": ["sfx/mine.stairs.ogg"],
       "gain": 0.9,
       "pitch": 0,
       "gainJitter": 0,
@@ -551,9 +462,7 @@
       "cooldownMs": 100
     },
     "mine.ladder": {
-      "files": [
-        "sfx/mine.ladder.ogg"
-      ],
+      "files": ["sfx/mine.ladder.ogg"],
       "gain": 0.9,
       "pitch": 0,
       "gainJitter": 0,
@@ -571,39 +480,28 @@
       "cooldownMs": 60
     },
     "mine.geode": {
-      "files": [
-        "sfx/mine.geode.ogg"
-      ],
+      "files": ["sfx/mine.geode.ogg"],
       "gain": 0.9,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 200
     },
     "animal.cluck": {
-      "files": [
-        "sfx/animal.cluck_1.ogg",
-        "sfx/animal.cluck_2.ogg"
-      ],
+      "files": ["sfx/animal.cluck_1.ogg", "sfx/animal.cluck_2.ogg"],
       "gain": 0.7,
       "pitch": 0.12,
       "gainJitter": 0,
       "cooldownMs": 250
     },
     "animal.moo": {
-      "files": [
-        "sfx/animal.moo_1.ogg",
-        "sfx/animal.moo_2.ogg"
-      ],
+      "files": ["sfx/animal.moo_1.ogg", "sfx/animal.moo_2.ogg"],
       "gain": 0.8,
       "pitch": 0.08,
       "gainJitter": 0,
       "cooldownMs": 600
     },
     "animal.baa": {
-      "files": [
-        "sfx/animal.baa_1.ogg",
-        "sfx/animal.baa_2.ogg"
-      ],
+      "files": ["sfx/animal.baa_1.ogg", "sfx/animal.baa_2.ogg"],
       "gain": 0.7,
       "pitch": 0.1,
       "gainJitter": 0,
@@ -621,47 +519,35 @@
       "cooldownMs": 200
     },
     "animal.oink": {
-      "files": [
-        "sfx/animal.oink_1.ogg",
-        "sfx/animal.oink_2.ogg"
-      ],
+      "files": ["sfx/animal.oink_1.ogg", "sfx/animal.oink_2.ogg"],
       "gain": 0.7,
       "pitch": 0.1,
       "gainJitter": 0,
       "cooldownMs": 400
     },
     "animal.horse": {
-      "files": [
-        "sfx/animal.horse.ogg"
-      ],
+      "files": ["sfx/animal.horse.ogg"],
       "gain": 0.7,
       "pitch": 0.05,
       "gainJitter": 0,
       "cooldownMs": 800
     },
     "animal.pet": {
-      "files": [
-        "sfx/animal.pet_1.ogg",
-        "sfx/animal.pet_2.ogg"
-      ],
+      "files": ["sfx/animal.pet_1.ogg", "sfx/animal.pet_2.ogg"],
       "gain": 0.55,
       "pitch": 0.05,
       "gainJitter": 0,
       "cooldownMs": 300
     },
     "cook.sizzle": {
-      "files": [
-        "sfx/cook.sizzle.ogg"
-      ],
+      "files": ["sfx/cook.sizzle.ogg"],
       "gain": 0.55,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 400
     },
     "cook.done": {
-      "files": [
-        "sfx/cook.done.ogg"
-      ],
+      "files": ["sfx/cook.done.ogg"],
       "gain": 0.9,
       "pitch": 0,
       "gainJitter": 0,
@@ -679,203 +565,154 @@
       "cooldownMs": 80
     },
     "craft.done": {
-      "files": [
-        "sfx/craft.done.ogg"
-      ],
+      "files": ["sfx/craft.done.ogg"],
       "gain": 0.9,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 300
     },
     "machine.start": {
-      "files": [
-        "sfx/machine.start.ogg"
-      ],
+      "files": ["sfx/machine.start.ogg"],
       "gain": 0.7,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 200
     },
     "machine.done": {
-      "files": [
-        "sfx/machine.done.ogg"
-      ],
+      "files": ["sfx/machine.done.ogg"],
       "gain": 0.8,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 200
     },
     "eat": {
-      "files": [
-        "sfx/eat_1.ogg",
-        "sfx/eat_2.ogg",
-        "sfx/eat_3.ogg"
-      ],
+      "files": ["sfx/eat_1.ogg", "sfx/eat_2.ogg", "sfx/eat_3.ogg"],
       "gain": 0.6,
       "pitch": 0.07,
       "gainJitter": 0,
       "cooldownMs": 200
     },
     "drink": {
-      "files": [
-        "sfx/drink_1.ogg",
-        "sfx/drink_2.ogg"
-      ],
+      "files": ["sfx/drink_1.ogg", "sfx/drink_2.ogg"],
       "gain": 0.6,
       "pitch": 0.05,
       "gainJitter": 0,
       "cooldownMs": 300
     },
     "bundle.item": {
-      "files": [
-        "sfx/bundle.item.ogg"
-      ],
+      "files": ["sfx/bundle.item.ogg"],
       "gain": 0.85,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 100
     },
     "bundle.complete": {
-      "files": [
-        "sfx/bundle.complete.ogg"
-      ],
+      "files": ["sfx/bundle.complete.ogg"],
       "gain": 1,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 800
     },
     "gift.give": {
-      "files": [
-        "sfx/gift.give.ogg"
-      ],
+      "files": ["sfx/gift.give.ogg"],
       "gain": 0.8,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 300
     },
     "gift.loved": {
-      "files": [
-        "sfx/gift.loved.ogg"
-      ],
+      "files": ["sfx/gift.loved.ogg"],
       "gain": 0.95,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 500
     },
     "heart.up": {
-      "files": [
-        "sfx/heart.up.ogg"
-      ],
+      "files": ["sfx/heart.up.ogg"],
       "gain": 0.9,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 400
     },
     "event.start": {
-      "files": [
-        "sfx/event.start.ogg"
-      ],
+      "files": ["sfx/event.start.ogg"],
       "gain": 0.8,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 800
     },
     "marriage.accept": {
-      "files": [
-        "sfx/marriage.accept.ogg"
-      ],
+      "files": ["sfx/marriage.accept.ogg"],
       "gain": 1,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 1000
     },
     "wedding.bells": {
-      "files": [
-        "sfx/wedding.bells.ogg"
-      ],
+      "files": ["sfx/wedding.bells.ogg"],
       "gain": 0.9,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 1000
     },
     "mail": {
-      "files": [
-        "sfx/mail.ogg"
-      ],
+      "files": ["sfx/mail.ogg"],
       "gain": 0.7,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 300
     },
     "day.start": {
-      "files": [
-        "sfx/day.start.ogg"
-      ],
+      "files": ["sfx/day.start.ogg"],
       "gain": 0.85,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 1000
     },
     "day.end": {
-      "files": [
-        "sfx/day.end.ogg"
-      ],
+      "files": ["sfx/day.end.ogg"],
       "gain": 0.85,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 1000
     },
     "bed.sleep": {
-      "files": [
-        "sfx/bed.sleep.ogg"
-      ],
+      "files": ["sfx/bed.sleep.ogg"],
       "gain": 0.6,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 800
     },
     "clock.chime": {
-      "files": [
-        "sfx/clock.chime.ogg"
-      ],
+      "files": ["sfx/clock.chime.ogg"],
       "gain": 0.5,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 1000
     },
     "festival.start": {
-      "files": [
-        "sfx/festival.start.ogg"
-      ],
+      "files": ["sfx/festival.start.ogg"],
       "gain": 0.9,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 1000
     },
     "festival.cheer": {
-      "files": [
-        "sfx/festival.cheer_1.ogg",
-        "sfx/festival.cheer_2.ogg"
-      ],
+      "files": ["sfx/festival.cheer_1.ogg", "sfx/festival.cheer_2.ogg"],
       "gain": 0.6,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 800
     },
     "weather.thunder": {
-      "files": [
-        "sfx/weather.thunder_1.ogg",
-        "sfx/weather.thunder_2.ogg"
-      ],
+      "files": ["sfx/weather.thunder_1.ogg", "sfx/weather.thunder_2.ogg"],
       "gain": 0.9,
       "pitch": 0,
       "gainJitter": 0,
       "cooldownMs": 3000
     },
     "achievement": {
-      "files": [
-        "sfx/achievement.ogg"
-      ],
+      "files": ["sfx/achievement.ogg"],
       "gain": 0.95,
       "pitch": 0,
       "gainJitter": 0,
@@ -932,64 +769,64 @@
       "gain": 1,
       "loop": true,
       "loopStart": 0.5,
-      "loopEnd": 76.2895,
-      "source": "synth"
+      "loopEnd": 150.5,
+      "source": "downloaded"
     },
     "spring": {
       "file": "music/spring.ogg",
       "gain": 1,
       "loop": true,
       "loopStart": 0.5,
-      "loopEnd": 73.5435,
-      "source": "synth"
+      "loopEnd": 117.5,
+      "source": "downloaded"
     },
     "summer": {
       "file": "music/summer.ogg",
       "gain": 1,
       "loop": true,
       "loopStart": 0.5,
-      "loopEnd": 67.7,
-      "source": "synth"
+      "loopEnd": 53.8577,
+      "source": "downloaded"
     },
     "fall": {
       "file": "music/fall.ogg",
       "gain": 1,
       "loop": true,
       "loopStart": 0.5,
-      "loopEnd": 72.5,
-      "source": "synth"
+      "loopEnd": 86.9,
+      "source": "downloaded"
     },
     "winter": {
       "file": "music/winter.ogg",
       "gain": 1,
       "loop": true,
       "loopStart": 0.5,
-      "loopEnd": 75.5,
-      "source": "synth"
+      "loopEnd": 109.067,
+      "source": "downloaded"
     },
     "night": {
       "file": "music/night.ogg",
       "gain": 1,
       "loop": true,
       "loopStart": 0.5,
-      "loopEnd": 69.0714,
-      "source": "synth"
+      "loopEnd": 147.5,
+      "source": "downloaded"
     },
     "rain": {
       "file": "music/rain.ogg",
       "gain": 1,
       "loop": true,
       "loopStart": 0.5,
-      "loopEnd": 73.2273,
-      "source": "synth"
+      "loopEnd": 147.5,
+      "source": "downloaded"
     },
     "village": {
       "file": "music/village.ogg",
       "gain": 1,
       "loop": true,
       "loopStart": 0.5,
-      "loopEnd": 70.5,
-      "source": "synth"
+      "loopEnd": 61.3319,
+      "source": "downloaded"
     },
     "mines": {
       "file": "music/mines.ogg",
@@ -1004,24 +841,24 @@
       "gain": 1,
       "loop": true,
       "loopStart": 0.5,
-      "loopEnd": 75.1667,
-      "source": "synth"
+      "loopEnd": 92.7919,
+      "source": "downloaded"
     },
     "woods": {
       "file": "music/woods.ogg",
       "gain": 1,
       "loop": true,
       "loopStart": 0.5,
-      "loopEnd": 67.1667,
-      "source": "synth"
+      "loopEnd": 65.8303,
+      "source": "downloaded"
     },
     "interior": {
       "file": "music/interior.ogg",
       "gain": 1,
       "loop": true,
       "loopStart": 0.5,
-      "loopEnd": 69.0714,
-      "source": "synth"
+      "loopEnd": 61.5,
+      "source": "downloaded"
     },
     "festival": {
       "file": "music/festival.ogg",
@@ -1059,7 +896,7 @@
       "file": "music/bundle.ogg",
       "gain": 1,
       "loop": false,
-      "source": "synth"
+      "source": "downloaded"
     },
     "fishing": {
       "file": "music/fishing.ogg",

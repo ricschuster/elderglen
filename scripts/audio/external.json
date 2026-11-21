@@ -1,4 +1,99 @@
 {
   "_note": "Music slots filled by a downloaded file instead of a synthesised loop. Keys are music ids; file is relative to public/audio/. Written by ingest.mjs. Remove an entry and run npm run audio:build to fall back to the synth placeholder.",
-  "music": {}
+  "music": {
+    "summer": {
+      "file": "music/summer.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 53.8577,
+      "from": "2-whimsical-rpg-themes__RPG Overworld.flac"
+    },
+    "interior": {
+      "file": "music/interior.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 61.5,
+      "from": "a-small-fire-will-do-calming-loop__a_small_fire_will_do.wav"
+    },
+    "village": {
+      "file": "music/village.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 61.3319,
+      "from": "2-whimsical-rpg-themes__RPG town.flac"
+    },
+    "woods": {
+      "file": "music/woods.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 65.8303,
+      "from": "beautiful-forest-orchestra__beautiful_forest_16bit_44.1khz_1.ogg"
+    },
+    "fall": {
+      "file": "music/fall.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 86.9,
+      "from": "apple-cider-juiced__apple_cider_loop.wav"
+    },
+    "beach": {
+      "file": "music/beach.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 92.7919,
+      "from": "bossa-town__Bossa Town.wav_2.flac"
+    },
+    "winter": {
+      "file": "music/winter.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 109.067,
+      "from": "bluebonnet__bluebonnet_in_b_major_looped_0.ogg"
+    },
+    "spring": {
+      "file": "music/spring.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 117.5,
+      "from": "daisy__daisy_0.ogg"
+    },
+    "title": {
+      "file": "music/title.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 150.5,
+      "from": "catmint__catmint_in_c_major_looped.ogg"
+    },
+    "rain": {
+      "file": "music/rain.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 147.5,
+      "from": "calm-piano-1-vaporware__003_Vaporware_2.mp3"
+    },
+    "night": {
+      "file": "music/night.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 147.5,
+      "from": "another-august__013_Another_August_0.mp3"
+    },
+    "bundle": {
+      "file": "music/bundle.ogg",
+      "gain": 1,
+      "loop": false,
+      "from": "apple-cider-juiced__victory_3.wav"
+    }
+  }
 }

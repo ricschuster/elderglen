@@ -1,3 +1,4 @@
+import { audio } from "../audio/engine";
 import Phaser from "phaser";
 import {
   type Building,
@@ -166,6 +167,8 @@ export class CoopScene extends Phaser.Scene {
 
   private feed(): void {
     const { fed, short } = feedAll(this.state, this.building);
+    if (fed > 0)
+      audio.sfx(this.building === "barn" ? "animal.moo" : "animal.cluck");
     this.message.setText(
       fed === 0 && short === 0
         ? "Everyone has eaten."
@@ -187,6 +190,7 @@ export class CoopScene extends Phaser.Scene {
   }
 
   private pet(id: number): void {
+    audio.sfx("animal.pet");
     this.message.setText(
       pet(this.state, id)
         ? "You pet it. It looks pleased."
@@ -197,6 +201,7 @@ export class CoopScene extends Phaser.Scene {
 
   private collect(id: number): void {
     const r = collect(this.state, id);
+    audio.sfx("item" in r ? "item.pickup" : "ui.error");
     this.message.setText(
       "item" in r
         ? `Took ${itemById(r.item)?.name.toLowerCase() ?? "it"}${r.also ? ` and ${itemById(r.also)?.name.toLowerCase() ?? "more"}` : ""}.`

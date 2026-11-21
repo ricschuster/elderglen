@@ -1,3 +1,4 @@
+import { audio } from "../audio/engine";
 import Phaser from "phaser";
 import { proposalCard } from "../core/marriagecard";
 import type { GameState } from "../core/save";
@@ -59,6 +60,7 @@ export class ProposalScene extends Phaser.Scene {
   }
 
   private answer(yes: boolean): void {
+    if (yes) audio.sfx("marriage.accept");
     const net = currentSession();
     if (net)
       sendWorldIntent(net, {

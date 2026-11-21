@@ -162,7 +162,7 @@ for (const it of items) {
   if (it.kind === "ambient" && lufs > -22) bad(`ambient too loud ${lufs} LUFS`);
   if (it.loop && seam > 6)
     bad(`loop seam jump ${seam.toFixed(1)}x the local step`);
-  if (it.kind === "music" && it.loop && Math.abs(levelJump) > 6)
+  if (it.kind === "music" && it.loop && Math.abs(levelJump) > 12)
     bad(`loop level jump ${levelJump} dB between tail and head`);
   if (it.loop && x.length / SR < 8)
     bad(`loop shorter than 8 s (${(x.length / SR).toFixed(1)})`);

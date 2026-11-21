@@ -66,6 +66,8 @@ import { MailScene } from "./scenes/MailScene";
 import { centreMenus, UI_SIZE_KEY, WORLD_ZOOM_KEY } from "./scenes/panel";
 import { loadDeviceSettings } from "./scenes/storage";
 import { installTabGuard } from "./scenes/tabguard";
+import { audio } from "./audio/engine";
+import { startDirector } from "./audio/director";
 
 // Throwaway test scenes, opened first with ?scene=witch or ?scene=witchwalk.
 const tests = { witch: WitchTestScene, witchwalk: WitchWalkScene };
@@ -160,4 +162,10 @@ const settings = loadDeviceSettings();
 game.registry.set(WORLD_ZOOM_KEY, settings.worldZoom);
 game.registry.set(UI_SIZE_KEY, settings.uiSize);
 centreMenus(game, ["farm"]);
+// Sound (note 107): the volumes are device settings; the context starts on the first gesture.
+audio.applySettings(settings.audio);
+audio.attach();
+startDirector(game);
+if (DEBUG_TOOLS)
+  (window as unknown as Record<string, unknown>).farmAudio = audio;
 installTabGuard(game);

@@ -1,4 +1,6 @@
 import Phaser from "phaser";
+import { audio } from "../audio/engine";
+import { isSfx } from "../core/audio";
 import { finishWedding, isWeddingId, weddingEvent } from "../core/courtship";
 import { weddingGuests } from "../core/divorce";
 import { actorName, SceneRun, warningText, worldOf } from "../core/eventrun";
@@ -104,6 +106,7 @@ export class HeartEventScene extends Phaser.Scene {
   }
 
   create(): void {
+    audio.sfx("event.start");
     this.add
       .rectangle(480, 270, WINDOW_FILL, WINDOW_FILL, 0x10201a, 0.97)
       .setInteractive();
@@ -310,9 +313,15 @@ export class HeartEventScene extends Phaser.Scene {
       case "shake":
         this.cameras.main.shake(c.ms, 0.004);
         return after(c.ms);
+      case "sfx":
+        // Event data may name any effect id; an unknown one is ignored.
+        if (isSfx(c.id)) audio.sfx(c.id);
+        return next();
       default:
-        // pose, zoom, music, sfx, tint, weather: not drawn yet (no art,
-        // audio or weather on the stage). The Result group is applied at the end.
+        // pose, zoom, music, tint, weather: not drawn yet (no art or weather on the stage).
+        // Music is the director's: the scene always plays the `heart-event` slot, so the
+        // event's own music ids (aliases in audio-rules.json) need no handling here.
+        // The Result group is applied at the end.
         return next();
     }
   }

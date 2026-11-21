@@ -55,7 +55,7 @@ export function encodeOgg(
   { ch = 1, q = 4, gainDb = 0, sr = SR } = {},
 ) {
   mkdirSync(dirname(out), { recursive: true });
-  const af = `volume=${gainDb.toFixed(3)}dB,alimiter=limit=0.84:attack=3:release=40:level=disabled`;
+  const af = `volume=${gainDb.toFixed(3)}dB,alimiter=limit=0.66:attack=3:release=40:level=disabled`;
   const r = ff(
     [
       "-y",

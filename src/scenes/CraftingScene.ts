@@ -1,3 +1,4 @@
+import { audio } from "../audio/engine";
 import Phaser from "phaser";
 import {
   canCraft,
@@ -80,6 +81,7 @@ export class CraftingScene extends Phaser.Scene {
             text: "Craft",
             run: () => {
               const why = craft(g, r.id, chests);
+              audio.sfx(why ? "ui.error" : "craft.done");
               this.say(
                 why ? reasonText(why) : `You make a ${name.toLowerCase()}.`,
               );
