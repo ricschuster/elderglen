@@ -45,7 +45,7 @@ Headless run 2026-11-21, build 6358d834 (`rods.mjs` new, `delta.mjs`, `cove.mjs`
 - pass: Each rod: the four `fishing-*` stages put the rod in the pack at its level, and a charged cast on the delta river opens the screen with that rod and lands (`rods.mjs`). A full charge with a rod of range above 4 lands on dry ground on a 4-tile river ("The line falls on dry ground"): by design, the player charges less.
 - pass: Waters by kind: marsh lake, river, sea (`delta.mjs`), cove (`cove.mjs`), mountain river (`mountain.mjs`); each bite matches its water. The fisher's counter sells rods and bait and a rod buys (open 9:00 to 17:00, shut Sat, `shops.json`).
 - pass: Pond, ice, pier and market fish rules by unit tests (`pond*`, `farmpond`, `icefishing`, `marketpier`, `woodspondfish`, `nightmarket`, 13 files).
-- todo: Farm ponds by hand: place a pond, stock it, wait for fish. No stage has a pond with fish yet (note 42 lists it as not built).
+- todo: Farm ponds by hand: place a pond, stock it, wait for fish. Stage `farm-pond-stocked` has a built pond with 2 carp and fish in the pack (`farm-pond-to-order` is for ordering one); not yet played by hand.
 - owner: Bar fight feel with each rod's bar width, and the Night Market pier cast by hand.
 - Found and fixed: `delta.mjs`, `cove.mjs` and `mountain.mjs` were stale scripts, not game bugs: toolbar slot is the pack slot (note 102); the fisher's counter is at (3,5) and (4,5) facing up and the shop is shut before 9:00 (the script now sets 10:00); the hut door is at (5,10).
 

@@ -1,4 +1,5 @@
 import type { Outcome } from "./actions";
+import { rngOf } from "./rng";
 import { DAY_START } from "./clock";
 import { dateOf } from "./calendar";
 import { FLOWER_HONEY_PRICE, flowerHoneyId, HONEY } from "./artisan";
@@ -216,7 +217,7 @@ export function loadMachine(
   x: number,
   y: number,
   item: string,
-  random: () => number = Math.random,
+  random: () => number = rngOf(g),
 ): Outcome {
   if (g.day.over) return fail("exhausted");
   const m = g.machines.get(x, y);
@@ -263,7 +264,7 @@ export function collectMachine(
   g: GameState,
   x: number,
   y: number,
-  random: () => number = Math.random,
+  random: () => number = rngOf(g),
 ): Outcome {
   if (g.day.over) return fail("exhausted");
   const m = g.machines.get(x, y);

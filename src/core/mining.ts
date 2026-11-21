@@ -1,4 +1,5 @@
 import type { Outcome } from "./actions";
+import { rngOf } from "./rng";
 import { noteGathered } from "./quests";
 import { DIAMOND, gemDrop, gemShare, gemXp } from "./gems";
 import { GEODE_SHARE, geodeDrop, geodeKindForFloor } from "./geodes";
@@ -101,7 +102,7 @@ export function mine(
   x: number,
   y: number,
   floor: number | undefined,
-  random: () => number = Math.random,
+  random: () => number = rngOf(g),
 ): Outcome {
   if (g.day.over) return fail("exhausted");
   const day = g.day.clock.day;

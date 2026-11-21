@@ -12,6 +12,9 @@ import { applyStatePatch } from "../src/core/statepatch";
 import { newGame } from "../src/core/save";
 import { socialRows } from "../src/core/menupages";
 import { pendingChoice } from "../src/core/professions";
+import { maps } from "../src/content/maps";
+import { START } from "../src/core/maps";
+import { pondAt, pondBlockers, pondUse, stateOf } from "../src/core/pond";
 
 describe("stage setup", () => {
   it("marks the orders intro seen and meets the roster for marriage stages", () => {
@@ -121,5 +124,34 @@ describe("patch keys for stages", () => {
     applyStatePatch(g, { fillPack: true });
     for (let i = 0; i < g.inventory.size; i++)
       expect(g.inventory.slot(i)).toBeTruthy();
+  });
+});
+
+describe("the pond stage", () => {
+  it("builds a stocked pond on a clear spot that can be played", () => {
+    const r = buildStage("farm-pond-stocked", never)!;
+    expect(r.problems).toEqual([]);
+    expect(r.map).toBeUndefined();
+    const fresh = buildStage("new-game", never)!.state;
+    const farm = maps.get(START.map);
+    const p = pondAt(r.state, 50, 18)!;
+    expect(p).toBeTruthy();
+    // The spot is free on the farm without the pond.
+    expect(pondBlockers(fresh, farm, "farm", p.x, p.y)).toEqual([]);
+    const s = stateOf(pondAt(r.state, p.x, p.y)!);
+    expect(s.building).toBe(0);
+    expect(s.species).toBe("carp");
+    expect(s.count).toBe(2);
+    expect(r.state.inventory.count("carp")).toBe(3);
+    expect(pondUse(r.state, p, "carp").ok).toBe(true);
+    expect(stateOf(pondAt(r.state, p.x, p.y)!).count).toBe(3);
+  });
+
+  it("rejects a species that cannot live in a pond", () => {
+    const g = newGame();
+    expect(
+      applyStatePatch(g, { pond: { x: 50, y: 18, species: "stone", count: 1 } })
+        .problems,
+    ).toHaveLength(1);
   });
 });

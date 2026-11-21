@@ -102,3 +102,35 @@ export function weddingLines(
     `They will share ${a}'s cabin from tonight.`,
   ];
 }
+
+/** Where the couple stand on the stage (screen x, y is fixed) for each wedding line, in order. */
+export interface WeddingBeat {
+  /** The proposer's x, then the other's x. */
+  a: number;
+  o: number;
+  /** The couple and guests hop for joy (the ledgers are joined). */
+  hop: boolean;
+}
+
+/** Where they start: offstage left and right of the green. */
+export const WEDDING_START = { a: -40, o: 1000 } as const;
+
+/**
+ * The couple's staging per `weddingLines` line (placeholder): the title walks them in, the
+ * gathering brings them down the aisle, the joining makes them hop, the last line walks them
+ * off toward the farm. Out-of-range steps hold the nearest mark.
+ */
+export function weddingBeat(step: number): WeddingBeat {
+  const beats: WeddingBeat[] = [
+    { a: 300, o: 660, hop: false },
+    { a: 440, o: 520, hop: false },
+    { a: 440, o: 520, hop: true },
+    { a: 1000, o: 1040, hop: false },
+  ];
+  return beats[Math.max(0, Math.min(step, beats.length - 1))]!;
+}
+
+/** Guest x marks on the green, left and right of the aisle. */
+export const WEDDING_GUEST_SLOTS: readonly number[] = [
+  120, 200, 280, 680, 760, 840,
+];

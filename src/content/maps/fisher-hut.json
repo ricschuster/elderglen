@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 5,
-  "nextobjectid": 18,
+  "nextobjectid": 19,
   "properties": [{ "name": "placeholder", "type": "bool", "value": true }],
   "tilesets": [
     {
@@ -331,6 +331,19 @@
           "type": "entry",
           "x": 16,
           "y": 48,
+          "width": 0,
+          "height": 0,
+          "point": true
+        },
+        {
+          "id": 18,
+          "rotation": 0,
+          "visible": true,
+          "name": "bed-fisher-hut",
+          "class": "mark",
+          "type": "mark",
+          "x": 32,
+          "y": 80,
           "width": 0,
           "height": 0,
           "point": true

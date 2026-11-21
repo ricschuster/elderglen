@@ -8,6 +8,7 @@ import {
   water,
   type Outcome,
 } from "./actions";
+import { rngOf } from "./rng";
 import { cropById } from "./crops";
 import { Farm, type Plot } from "./farm";
 import type { FarmMap } from "./map";
@@ -145,7 +146,7 @@ export function plantInPot(
   x: number,
   y: number,
   item: string,
-  random: () => number = Math.random,
+  random: () => number = rngOf(g),
 ): Outcome {
   const p = potAt(g, map, x, y);
   if (!p) return fail("nothing to do here");
@@ -230,7 +231,7 @@ export function actOnPot(
   map: FarmMap,
   x: number,
   y: number,
-  random: () => number = Math.random,
+  random: () => number = rngOf(g),
 ): Outcome | undefined {
   const p = potAt(g, map, x, y);
   if (!p) return undefined;

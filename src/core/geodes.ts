@@ -1,4 +1,5 @@
 import type { Outcome } from "./actions";
+import { rngOf } from "./rng";
 import geodeData from "../content/geodes.json";
 import type { GameState } from "./save";
 
@@ -137,7 +138,7 @@ const fail = (reason: string): Outcome => ({ ok: false, reason });
 /** The smith cracks one geode of a kind from the backpack for the fee. */
 export function crackGeode(
   g: GameState,
-  random: () => number = Math.random,
+  random: () => number = rngOf(g),
   kind: string = GEODE,
 ): Outcome & { count?: number } {
   if (g.inventory.count(kind) < 1) return fail("no geode");
