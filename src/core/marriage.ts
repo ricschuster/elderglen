@@ -72,6 +72,9 @@ export interface MarriageSave {
   kissDay?: number;
   /** A divorce is filed and takes effect next morning unless cancelled (note 12). */
   divorcing?: boolean;
+  /** The day the wedding was last put off, and why ("festival" or "rain"). Absent for never. */
+  putOffDay?: number;
+  putOffWhy?: string;
 }
 
 const STAGES: readonly Stage[] = ["none", "courting", "engaged", "married"];
@@ -129,6 +132,9 @@ export class Marriage {
   stage: Stage = "none";
   spouse: string | null = null;
   weddingDay = 0;
+  /** The day the wedding was last put off, 0 for never, and the reason. */
+  putOffDay = 0;
+  putOffWhy = "";
   kids: Child[] = [];
   /** The day a child arrives after a yes, 0 for none. */
   childDue = 0;
@@ -180,10 +186,12 @@ export class Marriage {
     return true;
   }
 
-  /** The wedding is put off a day (a festival or a rain day). */
-  postpone(): boolean {
+  /** The wedding is put off a day (a festival or a rain day), and the report says why. */
+  postpone(today = 0, why = ""): boolean {
     if (this.stage !== "engaged") return false;
     this.weddingDay += 1;
+    this.putOffDay = today;
+    this.putOffWhy = why;
     return true;
   }
 
@@ -198,6 +206,8 @@ export class Marriage {
     this.stage = "none";
     this.spouse = null;
     this.weddingDay = 0;
+    this.putOffDay = 0;
+    this.putOffWhy = "";
     this.kissDay = 0;
     this.divorcing = false;
     // The children stay with the player (note 12, slice 5). A child still on the way does not come, and the ask restarts.
@@ -242,6 +252,9 @@ export class Marriage {
       ...(this.askDay > 0 ? { askDay: this.askDay } : {}),
       kissDay: this.kissDay,
       ...(this.divorcing ? { divorcing: true } : {}),
+      ...(this.putOffDay > 0
+        ? { putOffDay: this.putOffDay, putOffWhy: this.putOffWhy }
+        : {}),
     };
   }
 
@@ -250,6 +263,8 @@ export class Marriage {
     this.stage = "none";
     this.spouse = null;
     this.weddingDay = 0;
+    this.putOffDay = 0;
+    this.putOffWhy = "";
     this.kids = [];
     this.childDue = 0;
     this.askDay = 0;
@@ -271,6 +286,10 @@ export class Marriage {
     this.stage = o.stage as Stage;
     this.spouse = o.spouse;
     this.weddingDay = isCount(o.weddingDay) ? o.weddingDay : 0;
+    if (this.stage === "engaged" && isCount(o.putOffDay)) {
+      this.putOffDay = o.putOffDay;
+      this.putOffWhy = typeof o.putOffWhy === "string" ? o.putOffWhy : "";
+    }
     if (this.stage === "married") {
       this.childDue = isCount(o.childDue) ? o.childDue : 0;
       this.askDay = isCount(o.askDay) ? o.askDay : 0;

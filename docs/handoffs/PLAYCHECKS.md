@@ -11,8 +11,8 @@ Headless run 2026-11-21, build 18e829da plus the stage fix (`marriage.mjs`, `fam
 - pass: Wake on the wedding morning at house tier 1; the wedding plays and the spouse appears (`marriage.mjs`, after raising the tier in its setup).
 - pass: Spouse walks out: house 8:22, farm 8:23 to 8:29, off every map 8:30 to 8:32, Hearthwell edge 8:33 (`spouse-day.mjs`). Tablet look: owner saw it 2026-11-21.
 - pass: Spouse in the bed 6:00 (48,24), kitchen 7:30 (25,23) (`spouse-day.mjs married`).
-- fail: Evening walk: farm (70,9) until 21:29, then in the house at (63,27) at 21:30 with no leg between, so she snaps. Spot (63,27) is the known unreachable `spouse-room` (build fix or map fix, owner).
-- fail: Rain or festival day puts the wedding off; the report says only "tomorrow", the reason is a faint toast. Owner: should it be a report line and name the reason?
+- pass: Evening walk: the walker read the house without the spouse wing, so her room (63,27) was off its map and she snapped; it now reads the house with the spouse hold (2026-11-21, `tests/walkers.test.ts`).
+- pass: Rain or festival day puts the wedding off: the morning report says "put off a day: it is raining" or "a festival is on" (owner chose a report line, 2026-11-21; `tests/engagedreport.test.ts`); the toast is gone.
 - pass: Divorce by the rules: file, fee 50000 paid, cancel, refile, end next morning, `ex-` flag up (`marriage.mjs`). owner: the hall ledger (30,5) interaction by hand.
 - pass: Re-dating: bouquet then token to the ex works, stage back to engaged (`family.mjs`).
 - pass: Children: ask due a week after the wedding at tier 2, yes brings one in 3 days, no second ask at once; the child stays after a divorce (note 12, our choice) (`family.mjs`).

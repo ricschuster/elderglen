@@ -160,8 +160,9 @@ export function weddingBlock(g: Pick<GameState, "weather" | "day">): string {
 export function weddingMorning(g: GameState): "go" | "postponed" | "none" {
   const day = g.day.clock.day;
   if (!g.marriage.weddingToday(day)) return "none";
-  if (weddingBlock(g)) {
-    g.marriage.postpone();
+  const why = weddingBlock(g);
+  if (why) {
+    g.marriage.postpone(day, why);
     return "postponed";
   }
   return "go";
@@ -170,21 +171,28 @@ export function weddingMorning(g: GameState): "go" | "postponed" | "none" {
 /**
  * The morning report line while engaged to a villager, in single player and multiplayer
  * (owner, 2026-11-21). `today` is the day just begun. None on the wedding day itself, where
- * the wedding scene follows the report, unless `delayed` (a festival or rain puts it off,
- * `weddingBlock`): then it says the wedding is put off a day. `playerEngaged` is set when the player's two-player
- * engaged notice already shows, so the line is not doubled. PLACEHOLDER TEXT.
+ * the wedding scene follows the report. When a festival or rain put the wedding off today
+ * (`putOffDay`), it says so and names the reason (owner, 2026-11-21). `playerEngaged` is set when
+ * the player's two-player engaged notice already shows, so the line is not doubled. PLACEHOLDER TEXT.
  */
 export function engagedReportLine(
-  m: Pick<Marriage, "stage" | "spouse" | "weddingDay">,
+  m: Pick<Marriage, "stage" | "spouse" | "weddingDay"> &
+    Partial<Pick<Marriage, "putOffDay" | "putOffWhy">>,
   today: number,
   playerEngaged = false,
-  delayed = false,
 ): string | undefined {
   if (playerEngaged || m.stage !== "engaged" || !m.spouse) return undefined;
   const left = m.weddingDay - today;
   const name = nameOf(m.spouse);
-  if (left === 0 && delayed)
-    return `The wedding with ${name} is put off a day.`;
+  if (m.putOffDay === today && left >= 1) {
+    const why =
+      m.putOffWhy === "festival"
+        ? "a festival is on"
+        : m.putOffWhy === "rain"
+          ? "it is raining"
+          : "";
+    return `The wedding with ${name} is put off a day${why ? `: ${why}` : ""}.`;
+  }
   if (left < 1) return undefined;
   return left === 1
     ? `You are engaged to ${name}. The wedding is tomorrow.`
