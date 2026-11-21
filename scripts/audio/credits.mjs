@@ -4,10 +4,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const rows = readFileSync(
-  join(root, "docs", "audio", "LICENCES.md"),
-  "utf8",
-)
+const rows = readFileSync(join(root, "docs", "audio", "LICENCES.md"), "utf8")
   .split("\n")
   .filter(
     (l) =>
