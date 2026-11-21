@@ -3,6 +3,9 @@ import { itemById } from "../core/items";
 import { MAX_SAVE_SLOTS } from "../core/slots";
 import { applyStatePatch, type StatePatch } from "../core/statepatch";
 import { useSlot } from "./storage";
+import { villagersOn } from "../core/townfolk";
+import { hallRestored } from "../core/bundles";
+import { paradeJoinedAt } from "../core/parade";
 import { buildStage, stageList } from "../core/stages";
 import type { GameState } from "../core/save";
 import type { Creature } from "../core/creatures";
@@ -94,6 +97,37 @@ export function installDebugHooks(c: DebugContext): void {
     for (let y = 0; y < height; y++)
       for (let x = 0; x < width; x++)
         if (c.tileBlocked(x, y)) out.push(`${x},${y}`);
+    return out;
+  };
+  // Dev hook: where villagers are by the schedule, as short text lines, so a check reads
+  // text and not screenshots. `farmWhere(from, to, step, ids, maps)`: game minutes since
+  // midnight (from and to a multiple of 10), one line per step, "H:MM id=map x,y" for each
+  // person found on one of the maps, "id=none" for a person on no map (asleep, in transit).
+  w.farmWhere = (
+    from: number,
+    to: number,
+    step = 10,
+    ids: string[] = [],
+    maps: string[] = ["house", "farm", "hearthwell"],
+  ) => {
+    const s = c.state();
+    const day = s.day.clock.day;
+    const out: string[] = [];
+    for (let m = from; m <= to; m += Math.max(1, step)) {
+      const found = new Map<string, string>();
+      for (const map of maps)
+        for (const v of villagersOn(s, map, day, m, {
+          hallRestored: hallRestored(s.hall),
+          paradeJoinedAt: paradeJoinedAt(s),
+        }))
+          if (!ids.length || ids.includes(v.id))
+            found.set(v.id, `${map} ${v.x},${v.y}`);
+      const names = ids.length ? ids : [...found.keys()];
+      const t = `${Math.floor(m / 60)}:${String(m % 60).padStart(2, "0")}`;
+      out.push(
+        `${t} ${names.map((id) => `${id}=${found.get(id) ?? "none"}`).join(" ")}`,
+      );
+    }
     return out;
   };
   w.farmDebug = () => {

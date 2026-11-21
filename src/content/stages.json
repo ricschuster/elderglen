@@ -193,6 +193,7 @@
         "season": "fall",
         "dayOfSeason": 5,
         "weather": "sunny",
+        "houseTier": 1,
         "marriage": {
           "spouse": "linnet",
           "stage": "engaged"
