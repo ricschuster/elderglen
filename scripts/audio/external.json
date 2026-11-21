@@ -1,0 +1,4 @@
+{
+  "_note": "Music slots filled by a downloaded file instead of a synthesised loop. Keys are music ids; file is relative to public/audio/. Written by ingest.mjs. Remove an entry and run npm run audio:build to fall back to the synth placeholder.",
+  "music": {}
+}

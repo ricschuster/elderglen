@@ -1,0 +1,1073 @@
+{
+  "version": 1,
+  "sfx": {
+    "ui.click": {
+      "files": [
+        "sfx/ui.click.ogg"
+      ],
+      "gain": 0.6,
+      "pitch": 0.03,
+      "gainJitter": 0,
+      "cooldownMs": 30
+    },
+    "ui.move": {
+      "files": [
+        "sfx/ui.move.ogg"
+      ],
+      "gain": 0.45,
+      "pitch": 0.04,
+      "gainJitter": 0,
+      "cooldownMs": 40
+    },
+    "ui.open": {
+      "files": [
+        "sfx/ui.open.ogg"
+      ],
+      "gain": 0.6,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 100
+    },
+    "ui.close": {
+      "files": [
+        "sfx/ui.close.ogg"
+      ],
+      "gain": 0.55,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 100
+    },
+    "ui.confirm": {
+      "files": [
+        "sfx/ui.confirm.ogg"
+      ],
+      "gain": 0.65,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 60
+    },
+    "ui.error": {
+      "files": [
+        "sfx/ui.error.ogg"
+      ],
+      "gain": 0.6,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 120
+    },
+    "ui.notify": {
+      "files": [
+        "sfx/ui.notify.ogg"
+      ],
+      "gain": 0.6,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 200
+    },
+    "ui.levelup": {
+      "files": [
+        "sfx/ui.levelup.ogg"
+      ],
+      "gain": 0.9,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 500
+    },
+    "ui.tab": {
+      "files": [
+        "sfx/ui.tab.ogg"
+      ],
+      "gain": 0.5,
+      "pitch": 0.03,
+      "gainJitter": 0,
+      "cooldownMs": 50
+    },
+    "ui.toggle": {
+      "files": [
+        "sfx/ui.toggle.ogg"
+      ],
+      "gain": 0.5,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 50
+    },
+    "tool.hoe": {
+      "files": [
+        "sfx/tool.hoe_1.ogg",
+        "sfx/tool.hoe_2.ogg",
+        "sfx/tool.hoe_3.ogg"
+      ],
+      "gain": 0.9,
+      "pitch": 0.05,
+      "gainJitter": 0.1,
+      "cooldownMs": 80
+    },
+    "tool.water": {
+      "files": [
+        "sfx/tool.water_1.ogg",
+        "sfx/tool.water_2.ogg",
+        "sfx/tool.water_3.ogg"
+      ],
+      "gain": 0.85,
+      "pitch": 0.05,
+      "gainJitter": 0,
+      "cooldownMs": 120
+    },
+    "tool.fill": {
+      "files": [
+        "sfx/tool.fill.ogg"
+      ],
+      "gain": 0.8,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 300
+    },
+    "tool.axe": {
+      "files": [
+        "sfx/tool.axe_1.ogg",
+        "sfx/tool.axe_2.ogg",
+        "sfx/tool.axe_3.ogg"
+      ],
+      "gain": 1,
+      "pitch": 0.05,
+      "gainJitter": 0.08,
+      "cooldownMs": 100
+    },
+    "tool.pickaxe": {
+      "files": [
+        "sfx/tool.pickaxe_1.ogg",
+        "sfx/tool.pickaxe_2.ogg",
+        "sfx/tool.pickaxe_3.ogg"
+      ],
+      "gain": 1,
+      "pitch": 0.05,
+      "gainJitter": 0.08,
+      "cooldownMs": 100
+    },
+    "tool.scythe": {
+      "files": [
+        "sfx/tool.scythe_1.ogg",
+        "sfx/tool.scythe_2.ogg",
+        "sfx/tool.scythe_3.ogg"
+      ],
+      "gain": 0.8,
+      "pitch": 0.06,
+      "gainJitter": 0,
+      "cooldownMs": 80
+    },
+    "tool.swing": {
+      "files": [
+        "sfx/tool.swing_1.ogg",
+        "sfx/tool.swing_2.ogg"
+      ],
+      "gain": 0.5,
+      "pitch": 0.06,
+      "gainJitter": 0,
+      "cooldownMs": 80
+    },
+    "fish.cast": {
+      "files": [
+        "sfx/fish.cast.ogg"
+      ],
+      "gain": 0.85,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 200
+    },
+    "fish.reel": {
+      "files": [
+        "sfx/fish.reel_1.ogg",
+        "sfx/fish.reel_2.ogg"
+      ],
+      "gain": 0.45,
+      "pitch": 0.05,
+      "gainJitter": 0,
+      "cooldownMs": 90
+    },
+    "fish.bite": {
+      "files": [
+        "sfx/fish.bite.ogg"
+      ],
+      "gain": 0.95,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 300
+    },
+    "fish.catch": {
+      "files": [
+        "sfx/fish.catch.ogg"
+      ],
+      "gain": 1,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 400
+    },
+    "fish.splash": {
+      "files": [
+        "sfx/fish.splash_1.ogg",
+        "sfx/fish.splash_2.ogg"
+      ],
+      "gain": 0.8,
+      "pitch": 0.06,
+      "gainJitter": 0,
+      "cooldownMs": 120
+    },
+    "fish.lost": {
+      "files": [
+        "sfx/fish.lost.ogg"
+      ],
+      "gain": 0.7,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 300
+    },
+    "crop.plant": {
+      "files": [
+        "sfx/crop.plant_1.ogg",
+        "sfx/crop.plant_2.ogg",
+        "sfx/crop.plant_3.ogg"
+      ],
+      "gain": 0.7,
+      "pitch": 0.06,
+      "gainJitter": 0,
+      "cooldownMs": 60
+    },
+    "crop.harvest": {
+      "files": [
+        "sfx/crop.harvest_1.ogg",
+        "sfx/crop.harvest_2.ogg",
+        "sfx/crop.harvest_3.ogg"
+      ],
+      "gain": 0.8,
+      "pitch": 0.05,
+      "gainJitter": 0,
+      "cooldownMs": 60
+    },
+    "forage.pick": {
+      "files": [
+        "sfx/forage.pick_1.ogg",
+        "sfx/forage.pick_2.ogg"
+      ],
+      "gain": 0.7,
+      "pitch": 0.06,
+      "gainJitter": 0,
+      "cooldownMs": 60
+    },
+    "item.pickup": {
+      "files": [
+        "sfx/item.pickup_1.ogg",
+        "sfx/item.pickup_2.ogg"
+      ],
+      "gain": 0.7,
+      "pitch": 0.05,
+      "gainJitter": 0,
+      "cooldownMs": 40
+    },
+    "item.drop": {
+      "files": [
+        "sfx/item.drop.ogg"
+      ],
+      "gain": 0.5,
+      "pitch": 0.05,
+      "gainJitter": 0,
+      "cooldownMs": 60
+    },
+    "world.place": {
+      "files": [
+        "sfx/world.place_1.ogg",
+        "sfx/world.place_2.ogg"
+      ],
+      "gain": 0.75,
+      "pitch": 0.05,
+      "gainJitter": 0,
+      "cooldownMs": 60
+    },
+    "chest.open": {
+      "files": [
+        "sfx/chest.open.ogg"
+      ],
+      "gain": 0.7,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 100
+    },
+    "chest.close": {
+      "files": [
+        "sfx/chest.close.ogg"
+      ],
+      "gain": 0.7,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 100
+    },
+    "tree.fall": {
+      "files": [
+        "sfx/tree.fall.ogg"
+      ],
+      "gain": 1,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 500
+    },
+    "sprinkler.run": {
+      "files": [
+        "sfx/sprinkler.run.ogg"
+      ],
+      "gain": 0.5,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 500
+    },
+    "money.sell": {
+      "files": [
+        "sfx/money.sell_1.ogg",
+        "sfx/money.sell_2.ogg"
+      ],
+      "gain": 0.85,
+      "pitch": 0.03,
+      "gainJitter": 0,
+      "cooldownMs": 60
+    },
+    "money.bin": {
+      "files": [
+        "sfx/money.bin.ogg"
+      ],
+      "gain": 0.8,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 80
+    },
+    "money.buy": {
+      "files": [
+        "sfx/money.buy.ogg"
+      ],
+      "gain": 0.85,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 100
+    },
+    "step.grass": {
+      "files": [
+        "sfx/step.grass_1.ogg",
+        "sfx/step.grass_2.ogg",
+        "sfx/step.grass_3.ogg"
+      ],
+      "gain": 0.28,
+      "pitch": 0.08,
+      "gainJitter": 0.15,
+      "cooldownMs": 110
+    },
+    "step.dirt": {
+      "files": [
+        "sfx/step.dirt_1.ogg",
+        "sfx/step.dirt_2.ogg",
+        "sfx/step.dirt_3.ogg"
+      ],
+      "gain": 0.3,
+      "pitch": 0.08,
+      "gainJitter": 0.15,
+      "cooldownMs": 110
+    },
+    "step.wood": {
+      "files": [
+        "sfx/step.wood_1.ogg",
+        "sfx/step.wood_2.ogg",
+        "sfx/step.wood_3.ogg"
+      ],
+      "gain": 0.34,
+      "pitch": 0.06,
+      "gainJitter": 0.15,
+      "cooldownMs": 110
+    },
+    "step.stone": {
+      "files": [
+        "sfx/step.stone_1.ogg",
+        "sfx/step.stone_2.ogg",
+        "sfx/step.stone_3.ogg"
+      ],
+      "gain": 0.32,
+      "pitch": 0.06,
+      "gainJitter": 0.15,
+      "cooldownMs": 110
+    },
+    "step.sand": {
+      "files": [
+        "sfx/step.sand_1.ogg",
+        "sfx/step.sand_2.ogg",
+        "sfx/step.sand_3.ogg"
+      ],
+      "gain": 0.26,
+      "pitch": 0.08,
+      "gainJitter": 0.15,
+      "cooldownMs": 110
+    },
+    "step.water": {
+      "files": [
+        "sfx/step.water_1.ogg",
+        "sfx/step.water_2.ogg",
+        "sfx/step.water_3.ogg"
+      ],
+      "gain": 0.36,
+      "pitch": 0.08,
+      "gainJitter": 0.15,
+      "cooldownMs": 120
+    },
+    "door.open": {
+      "files": [
+        "sfx/door.open_1.ogg",
+        "sfx/door.open_2.ogg"
+      ],
+      "gain": 0.75,
+      "pitch": 0.04,
+      "gainJitter": 0,
+      "cooldownMs": 150
+    },
+    "door.close": {
+      "files": [
+        "sfx/door.close_1.ogg",
+        "sfx/door.close_2.ogg"
+      ],
+      "gain": 0.8,
+      "pitch": 0.04,
+      "gainJitter": 0,
+      "cooldownMs": 150
+    },
+    "door.locked": {
+      "files": [
+        "sfx/door.locked.ogg"
+      ],
+      "gain": 0.7,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 300
+    },
+    "door.shop": {
+      "files": [
+        "sfx/door.shop.ogg"
+      ],
+      "gain": 0.8,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 300
+    },
+    "combat.swing": {
+      "files": [
+        "sfx/combat.swing_1.ogg",
+        "sfx/combat.swing_2.ogg",
+        "sfx/combat.swing_3.ogg"
+      ],
+      "gain": 0.7,
+      "pitch": 0.07,
+      "gainJitter": 0,
+      "cooldownMs": 60
+    },
+    "combat.hit": {
+      "files": [
+        "sfx/combat.hit_1.ogg",
+        "sfx/combat.hit_2.ogg",
+        "sfx/combat.hit_3.ogg"
+      ],
+      "gain": 0.95,
+      "pitch": 0.06,
+      "gainJitter": 0.1,
+      "cooldownMs": 40
+    },
+    "enemy.hurt": {
+      "files": [
+        "sfx/enemy.hurt_1.ogg",
+        "sfx/enemy.hurt_2.ogg",
+        "sfx/enemy.hurt_3.ogg"
+      ],
+      "gain": 0.8,
+      "pitch": 0.1,
+      "gainJitter": 0,
+      "cooldownMs": 60
+    },
+    "enemy.die": {
+      "files": [
+        "sfx/enemy.die_1.ogg",
+        "sfx/enemy.die_2.ogg"
+      ],
+      "gain": 0.95,
+      "pitch": 0.06,
+      "gainJitter": 0,
+      "cooldownMs": 100
+    },
+    "player.hurt": {
+      "files": [
+        "sfx/player.hurt_1.ogg",
+        "sfx/player.hurt_2.ogg"
+      ],
+      "gain": 0.9,
+      "pitch": 0.05,
+      "gainJitter": 0,
+      "cooldownMs": 150
+    },
+    "player.die": {
+      "files": [
+        "sfx/player.die.ogg"
+      ],
+      "gain": 0.9,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 600
+    },
+    "bomb.fuse": {
+      "files": [
+        "sfx/bomb.fuse.ogg"
+      ],
+      "gain": 0.6,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 300
+    },
+    "bomb.boom": {
+      "files": [
+        "sfx/bomb.boom.ogg"
+      ],
+      "gain": 1,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 300
+    },
+    "mine.stairs": {
+      "files": [
+        "sfx/mine.stairs.ogg"
+      ],
+      "gain": 0.9,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 400
+    },
+    "mine.rock": {
+      "files": [
+        "sfx/mine.rock_1.ogg",
+        "sfx/mine.rock_2.ogg",
+        "sfx/mine.rock_3.ogg"
+      ],
+      "gain": 1,
+      "pitch": 0.06,
+      "gainJitter": 0,
+      "cooldownMs": 100
+    },
+    "mine.ladder": {
+      "files": [
+        "sfx/mine.ladder.ogg"
+      ],
+      "gain": 0.9,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 500
+    },
+    "mine.ore": {
+      "files": [
+        "sfx/mine.ore_1.ogg",
+        "sfx/mine.ore_2.ogg",
+        "sfx/mine.ore_3.ogg"
+      ],
+      "gain": 0.9,
+      "pitch": 0.05,
+      "gainJitter": 0,
+      "cooldownMs": 60
+    },
+    "mine.geode": {
+      "files": [
+        "sfx/mine.geode.ogg"
+      ],
+      "gain": 0.9,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 200
+    },
+    "animal.cluck": {
+      "files": [
+        "sfx/animal.cluck_1.ogg",
+        "sfx/animal.cluck_2.ogg"
+      ],
+      "gain": 0.7,
+      "pitch": 0.12,
+      "gainJitter": 0,
+      "cooldownMs": 250
+    },
+    "animal.moo": {
+      "files": [
+        "sfx/animal.moo_1.ogg",
+        "sfx/animal.moo_2.ogg"
+      ],
+      "gain": 0.8,
+      "pitch": 0.08,
+      "gainJitter": 0,
+      "cooldownMs": 600
+    },
+    "animal.baa": {
+      "files": [
+        "sfx/animal.baa_1.ogg",
+        "sfx/animal.baa_2.ogg"
+      ],
+      "gain": 0.7,
+      "pitch": 0.1,
+      "gainJitter": 0,
+      "cooldownMs": 500
+    },
+    "animal.chirp": {
+      "files": [
+        "sfx/animal.chirp_1.ogg",
+        "sfx/animal.chirp_2.ogg",
+        "sfx/animal.chirp_3.ogg"
+      ],
+      "gain": 0.55,
+      "pitch": 0.15,
+      "gainJitter": 0,
+      "cooldownMs": 200
+    },
+    "animal.oink": {
+      "files": [
+        "sfx/animal.oink_1.ogg",
+        "sfx/animal.oink_2.ogg"
+      ],
+      "gain": 0.7,
+      "pitch": 0.1,
+      "gainJitter": 0,
+      "cooldownMs": 400
+    },
+    "animal.horse": {
+      "files": [
+        "sfx/animal.horse.ogg"
+      ],
+      "gain": 0.7,
+      "pitch": 0.05,
+      "gainJitter": 0,
+      "cooldownMs": 800
+    },
+    "animal.pet": {
+      "files": [
+        "sfx/animal.pet_1.ogg",
+        "sfx/animal.pet_2.ogg"
+      ],
+      "gain": 0.55,
+      "pitch": 0.05,
+      "gainJitter": 0,
+      "cooldownMs": 300
+    },
+    "cook.sizzle": {
+      "files": [
+        "sfx/cook.sizzle.ogg"
+      ],
+      "gain": 0.55,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 400
+    },
+    "cook.done": {
+      "files": [
+        "sfx/cook.done.ogg"
+      ],
+      "gain": 0.9,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 300
+    },
+    "craft.tap": {
+      "files": [
+        "sfx/craft.tap_1.ogg",
+        "sfx/craft.tap_2.ogg",
+        "sfx/craft.tap_3.ogg"
+      ],
+      "gain": 0.75,
+      "pitch": 0.06,
+      "gainJitter": 0,
+      "cooldownMs": 80
+    },
+    "craft.done": {
+      "files": [
+        "sfx/craft.done.ogg"
+      ],
+      "gain": 0.9,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 300
+    },
+    "machine.start": {
+      "files": [
+        "sfx/machine.start.ogg"
+      ],
+      "gain": 0.7,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 200
+    },
+    "machine.done": {
+      "files": [
+        "sfx/machine.done.ogg"
+      ],
+      "gain": 0.8,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 200
+    },
+    "eat": {
+      "files": [
+        "sfx/eat_1.ogg",
+        "sfx/eat_2.ogg",
+        "sfx/eat_3.ogg"
+      ],
+      "gain": 0.6,
+      "pitch": 0.07,
+      "gainJitter": 0,
+      "cooldownMs": 200
+    },
+    "drink": {
+      "files": [
+        "sfx/drink_1.ogg",
+        "sfx/drink_2.ogg"
+      ],
+      "gain": 0.6,
+      "pitch": 0.05,
+      "gainJitter": 0,
+      "cooldownMs": 300
+    },
+    "bundle.item": {
+      "files": [
+        "sfx/bundle.item.ogg"
+      ],
+      "gain": 0.85,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 100
+    },
+    "bundle.complete": {
+      "files": [
+        "sfx/bundle.complete.ogg"
+      ],
+      "gain": 1,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 800
+    },
+    "gift.give": {
+      "files": [
+        "sfx/gift.give.ogg"
+      ],
+      "gain": 0.8,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 300
+    },
+    "gift.loved": {
+      "files": [
+        "sfx/gift.loved.ogg"
+      ],
+      "gain": 0.95,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 500
+    },
+    "heart.up": {
+      "files": [
+        "sfx/heart.up.ogg"
+      ],
+      "gain": 0.9,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 400
+    },
+    "event.start": {
+      "files": [
+        "sfx/event.start.ogg"
+      ],
+      "gain": 0.8,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 800
+    },
+    "marriage.accept": {
+      "files": [
+        "sfx/marriage.accept.ogg"
+      ],
+      "gain": 1,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 1000
+    },
+    "wedding.bells": {
+      "files": [
+        "sfx/wedding.bells.ogg"
+      ],
+      "gain": 0.9,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 1000
+    },
+    "mail": {
+      "files": [
+        "sfx/mail.ogg"
+      ],
+      "gain": 0.7,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 300
+    },
+    "day.start": {
+      "files": [
+        "sfx/day.start.ogg"
+      ],
+      "gain": 0.85,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 1000
+    },
+    "day.end": {
+      "files": [
+        "sfx/day.end.ogg"
+      ],
+      "gain": 0.85,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 1000
+    },
+    "bed.sleep": {
+      "files": [
+        "sfx/bed.sleep.ogg"
+      ],
+      "gain": 0.6,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 800
+    },
+    "clock.chime": {
+      "files": [
+        "sfx/clock.chime.ogg"
+      ],
+      "gain": 0.5,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 1000
+    },
+    "festival.start": {
+      "files": [
+        "sfx/festival.start.ogg"
+      ],
+      "gain": 0.9,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 1000
+    },
+    "festival.cheer": {
+      "files": [
+        "sfx/festival.cheer_1.ogg",
+        "sfx/festival.cheer_2.ogg"
+      ],
+      "gain": 0.6,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 800
+    },
+    "weather.thunder": {
+      "files": [
+        "sfx/weather.thunder_1.ogg",
+        "sfx/weather.thunder_2.ogg"
+      ],
+      "gain": 0.9,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 3000
+    },
+    "achievement": {
+      "files": [
+        "sfx/achievement.ogg"
+      ],
+      "gain": 0.95,
+      "pitch": 0,
+      "gainJitter": 0,
+      "cooldownMs": 800
+    }
+  },
+  "ambient": {
+    "birds": {
+      "file": "ambient/birds.ogg",
+      "gain": 0.55,
+      "loopStart": 0.5,
+      "loopEnd": 23.5
+    },
+    "crickets": {
+      "file": "ambient/crickets.ogg",
+      "gain": 0.5,
+      "loopStart": 0.5,
+      "loopEnd": 19.5
+    },
+    "rain": {
+      "file": "ambient/rain.ogg",
+      "gain": 0.6,
+      "loopStart": 0.5,
+      "loopEnd": 15.5
+    },
+    "wind": {
+      "file": "ambient/wind.ogg",
+      "gain": 0.5,
+      "loopStart": 0.5,
+      "loopEnd": 20.5
+    },
+    "waves": {
+      "file": "ambient/waves.ogg",
+      "gain": 0.6,
+      "loopStart": 0.5,
+      "loopEnd": 20.5
+    },
+    "drip": {
+      "file": "ambient/drip.ogg",
+      "gain": 0.55,
+      "loopStart": 0.5,
+      "loopEnd": 22.5
+    },
+    "hearth": {
+      "file": "ambient/hearth.ogg",
+      "gain": 0.5,
+      "loopStart": 0.5,
+      "loopEnd": 15.5
+    }
+  },
+  "music": {
+    "title": {
+      "file": "music/title.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 76.2895,
+      "source": "synth"
+    },
+    "spring": {
+      "file": "music/spring.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 73.5435,
+      "source": "synth"
+    },
+    "summer": {
+      "file": "music/summer.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 67.7,
+      "source": "synth"
+    },
+    "fall": {
+      "file": "music/fall.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 72.5,
+      "source": "synth"
+    },
+    "winter": {
+      "file": "music/winter.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 75.5,
+      "source": "synth"
+    },
+    "night": {
+      "file": "music/night.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 69.0714,
+      "source": "synth"
+    },
+    "rain": {
+      "file": "music/rain.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 73.2273,
+      "source": "synth"
+    },
+    "village": {
+      "file": "music/village.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 70.5,
+      "source": "synth"
+    },
+    "mines": {
+      "file": "music/mines.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 66.7069,
+      "source": "synth"
+    },
+    "beach": {
+      "file": "music/beach.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 75.1667,
+      "source": "synth"
+    },
+    "woods": {
+      "file": "music/woods.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 67.1667,
+      "source": "synth"
+    },
+    "interior": {
+      "file": "music/interior.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 69.0714,
+      "source": "synth"
+    },
+    "festival": {
+      "file": "music/festival.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 69.0714,
+      "source": "synth"
+    },
+    "night-market": {
+      "file": "music/night-market.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 67.7,
+      "source": "synth"
+    },
+    "heart-event": {
+      "file": "music/heart-event.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 64.5,
+      "source": "synth"
+    },
+    "wedding": {
+      "file": "music/wedding.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 69.0714,
+      "source": "synth"
+    },
+    "bundle": {
+      "file": "music/bundle.ogg",
+      "gain": 1,
+      "loop": false,
+      "source": "synth"
+    },
+    "fishing": {
+      "file": "music/fishing.ogg",
+      "gain": 1,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 74.3461,
+      "source": "synth"
+    }
+  }
+}
