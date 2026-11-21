@@ -10,6 +10,7 @@ import {
   MARRIAGE_HOUSE_TIER,
   MAX_CHILDREN,
   PROPOSE_HEARTS,
+  WEDDING_DELAY_DAYS,
 } from "./marriage";
 import { eventById } from "./heartevents";
 import { HEART, heartCap, isCandidate } from "./friendship";
@@ -306,7 +307,10 @@ function applyMarriage(
   }
   setFlag(g, `bouquet-${spouse}`);
   if (stage === "courting") return;
-  if (!m.engage(spouse, raise(PROPOSE_HEARTS), today)) {
+  // A married stage is the day after the wedding, so the spouse already keeps their married
+  // route (spouse.ts needs day > weddingDay); an engaged one proposed today.
+  const proposed = stage === "engaged" ? today : today - WEDDING_DELAY_DAYS - 1;
+  if (!m.engage(spouse, raise(PROPOSE_HEARTS), proposed)) {
     problems.push(`marriage: ${spouse} will not be engaged`);
     return;
   }

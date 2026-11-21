@@ -5,13 +5,17 @@ expect Y". Status: `todo`, `pass`, `fail #n`, or `owner` (needs the owner's eyes
 Record the date and commit with each result. Add lines as we think of them.
 
 ## Marriage
-- todo: Wake on the wedding morning at house tier 1; the wedding plays and the spouse appears.
-- todo: Spouse walks out at about 8:30 across the farm and off the east edge (checked on the tablet 2026-11-21, no line recorded).
-- todo: Spouse in the kitchen by day; evening walk into the spouse room (spot (63,27) known unreachable).
-- todo: Rain or festival day puts the wedding off; the report says why (placeholder only a toast now).
-- todo: Divorce at the hall ledger (30,5): fee, state after.
-- todo: Re-dating after divorce.
-- todo: Children.
+Headless run 2026-11-21, build 18e829da plus the stage fix (`marriage.mjs`, `family.mjs`, `spouse-day.mjs`).
+- pass: Wake on the wedding morning at house tier 1; the wedding plays and the spouse appears (`marriage.mjs`, after raising the tier in its setup).
+- pass: Spouse walks out: house 8:22, farm 8:23 to 8:29, off every map 8:30 to 8:32, Hearthwell edge 8:33 (`spouse-day.mjs`). Tablet look: owner saw it 2026-11-21.
+- pass: Spouse in the bed 6:00 (48,24), kitchen 7:30 (25,23) (`spouse-day.mjs married`).
+- fail: Evening walk: farm (70,9) until 21:29, then in the house at (63,27) at 21:30 with no leg between, so she snaps. Spot (63,27) is the known unreachable `spouse-room` (build fix or map fix, owner).
+- fail: Rain or festival day puts the wedding off; the report says only "tomorrow", the reason is a faint toast. Owner: should it be a report line and name the reason?
+- pass: Divorce by the rules: file, fee 50000 paid, cancel, refile, end next morning, `ex-` flag up (`marriage.mjs`). owner: the hall ledger (30,5) interaction by hand.
+- pass: Re-dating: bouquet then token to the ex works, stage back to engaged (`family.mjs`).
+- pass: Children: ask due a week after the wedding at tier 2, yes brings one in 3 days, no second ask at once; the child stays after a divorce (note 12, our choice) (`family.mjs`).
+- owner: Spouse after 22:00 and 10:30 to 18:00 is on none of house, farm, Hearthwell (indoors elsewhere?). Not checked.
+- Found and fixed: the married stages had the wedding day 3 days ahead, so the spouse kept her villager schedule (`src/core/statepatch.ts`, test in `tests/stages.test.ts`). `marriage.mjs` never raised the house tier for the token gate; fixed.
 
 ## Festivals
 - todo: Walk in and join: green, hedge, six in-place festivals, Frostday, Hollow Eve.

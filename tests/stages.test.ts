@@ -84,6 +84,11 @@ describe("stages", () => {
     expect(g("married").marriage.married).toBe(true);
     expect(g("married-two-children").marriage.children).toBe(2);
     expect(g("engaged").marriage.stage).toBe("engaged");
+    // A married stage is past its wedding day, so the spouse keeps the married route today.
+    for (const id of ["married", "married-child", "married-two-children"]) {
+      const s = g(id);
+      expect(s.marriage.weddingDay).toBeLessThan(s.day.clock.day);
+    }
     expect(g("night-market-evening-2").day.clock.format()).toBe("5:00 pm");
     expect(g("fishing-heron-rod").inventory.count("heron-rod")).toBe(1);
     const pack = g("late-game-100").inventory;

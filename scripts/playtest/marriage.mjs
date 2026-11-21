@@ -53,6 +53,7 @@ const r = await p.evaluate(
       dayOfSeason: 3,
       weather: "sunny",
       money: 60000,
+      houseTier: 1, // the promise token needs it (MARRIAGE_HOUSE_TIER)
       items: { bouquet: 1, "promise-token": 1 },
       hearts: { [id]: 10 },
     }),
