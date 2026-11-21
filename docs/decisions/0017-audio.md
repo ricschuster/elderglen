@@ -43,7 +43,9 @@ automated clients are listed in `docs/reference/audio/urls_music.txt` for the ow
   owner should audition (`audio.html`) and swap weak slots.
 - The build needs `ffmpeg` on the machine that runs `npm run audio:build`; the output is committed so
   nobody else needs it.
-- Risk, not yet tested: the Electron wrapper loads `dist/` with `loadFile` (a `file:` page). Files are read
-  with XHR, then fetch, which a `file:` page may refuse. If it does, serve `dist/` through a custom
-  protocol in `electron/main.ts` (a small follow-up). The browser (dev and built) and the Capacitor WebView
-  (`https://localhost`) read files normally.
+- Electron: the wrapper loads `dist/` with `loadFile` (a `file:` page), where XHR and fetch of sibling files
+  may be refused. So the preload exposes a second, narrow bridge, `window.elderAudio.read(rel)`, and the
+  main process reads `dist/audio/{sfx,ambient,music}/*.ogg` for the page (the path is checked in
+  `electron/config.ts`, `audioPath`). The engine tries the bridge first and falls back to XHR then fetch, so
+  the browser (dev and built) and the Capacitor WebView (`https://localhost`) are unchanged. Not yet run
+  in Electron (it is not installed in the repo); the path check is unit tested.

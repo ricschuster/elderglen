@@ -5,8 +5,8 @@
  * still check the events. Rules (what plays when) are in `src/core/audio.ts`.
  *
  * Buses: sfx, ambient and music each feed `master`; music also passes a duck gain so a stinger can
- * lower it for a moment. Files are fetched with XMLHttpRequest, which works from the Vite server, the
- * Capacitor WebView and the Electron `file:` page (fetch does not support `file:`).
+ * lower it for a moment. Files come through the Electron preload bridge when there is one, else
+ * XMLHttpRequest, which works from the Vite server and the Capacitor WebView, else fetch.
  */
 import {
   AMBIENT,
@@ -52,8 +52,35 @@ function xhrBytes(url: string): Promise<ArrayBuffer> {
   });
 }
 
-/** XHR first (it reads `file:` pages in a wrapper), then fetch as a second try. */
-function loadBytes(url: string): Promise<ArrayBuffer> {
+/** The Electron preload's audio reader (`electron/preload.ts`), when running in the desktop wrapper. */
+interface AudioBridge {
+  read(rel: string): Promise<ArrayBuffer | Uint8Array>;
+}
+
+/**
+ * The Electron bridge first (the wrapper's `file:` page cannot be trusted to read its own files), then
+ * XHR (the dev server, a built page, the Capacitor WebView), then fetch as a last try.
+ */
+function loadBytes(url: string, rel: string): Promise<ArrayBuffer> {
+  const bridge = (globalThis as { elderAudio?: AudioBridge }).elderAudio;
+  const viaXhr = (): Promise<ArrayBuffer> => xhrFallback(url);
+  if (!bridge) return viaXhr();
+  return bridge
+    .read(rel)
+    .then(
+      (b) =>
+        b instanceof ArrayBuffer
+          ? b
+          : (b.buffer.slice(
+              b.byteOffset,
+              b.byteOffset + b.byteLength,
+            ) as ArrayBuffer),
+      viaXhr,
+    );
+}
+
+/** XHR first, then fetch as a second try. */
+function xhrFallback(url: string): Promise<ArrayBuffer> {
   return xhrBytes(url).catch(async (first) => {
     try {
       const r = await fetch(url);
@@ -195,7 +222,7 @@ export class AudioEngine {
       const ctx = this.ctx;
       if (!ctx) return Promise.resolve(undefined);
       const url = new URL(`audio/${file}`, document.baseURI).href;
-      p = loadBytes(url)
+      p = loadBytes(url, file)
         .then((b) => ctx.decodeAudioData(b))
         .then((buf) => {
           this.decoded++;
