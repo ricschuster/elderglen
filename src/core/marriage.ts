@@ -14,6 +14,8 @@ export type Stage = "none" | "courting" | "engaged" | "married";
 export const COURT_HEARTS = 8;
 /** Hearts needed for the promise token, which proposes. */
 export const PROPOSE_HEARTS = 10;
+/** The house tier the promise token needs: the spouse's bed and kitchen only exist from tier 1 (notes 41 and 85; owner, 2026-11-21). */
+export const MARRIAGE_HOUSE_TIER = 1;
 /** The wedding is this many days after the proposal. */
 export const WEDDING_DELAY_DAYS = 3;
 /** The promise token, bought from the rainy day seller. */

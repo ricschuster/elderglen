@@ -7,7 +7,9 @@
   "maxLagMinutes": 20,
   "catchUp": 0.3,
   "edges": {
+    "farm": { "hw": "from_hearthwell", "forest": "from_forest" },
     "hw": {
+      "farm": "from_farm",
       "forest": "from_farm",
       "quarry": "from_mountain",
       "mtn": "from_mountain",

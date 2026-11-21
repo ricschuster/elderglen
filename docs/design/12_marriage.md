@@ -112,7 +112,7 @@ M3d. Numbers go in `07_tuning_numbers.md`.
    player energy, gentle jealousy line, 12.5 heart one-off item. Unblocks #874.
 4. **Divorce.** 50,000g, a ledger scene, cancel before day end, ex-spouse keeps hearts,
    room and chores removed next morning, wedding state cleared.
-5. **Children.** Nursery at house tier 2 (note 85), the ask after bed, child as a villager
+5. **Children.** (The promise token needs house tier 1, owner 2026-11-21, `MARRIAGE_HOUSE_TIER`: the spouse bed and kitchen only exist from tier 1.) Nursery at house tier 2 (note 85), the ask after bed, child as a villager
    with hearts, lines and small actions, no needs.
 6. **Docs and checks (built, #939: wiki draft text for the bouquet and token, planned-list entry, overview and valley-map rows, `npm run playtest:marriage`, handoff).** Wiki and Guide rows, overview and valley-map JSON, playtest bot
    covers a wedding, handoff.

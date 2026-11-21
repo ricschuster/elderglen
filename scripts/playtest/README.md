@@ -328,3 +328,19 @@ daily kiss, then files, cancels and refiles a divorce and sleeps to the end of t
 `farmState` and the core rules, so it checks the wiring and the scenes, not the walking.
 
 `npm run playtest:shrine` (`npm run dev` running) plays the ancestors' shrine scene (note 83).
+
+## Tablet checks: text first
+
+For hands-on checks on the debug app over adb (`tablet-lib.mjs`), read state as text and
+take a picture only when the look is the question. Full-size screenshots flood the
+context window.
+
+- `node scripts/playtest/probe.mjs 7:30 9:30 10 linnet` prints where a villager is by the
+  schedule, one line per 10 game minutes (`window.farmWhere`). Probe first, and look
+  only where the lines change.
+- `node scripts/playtest/shot.mjs out.png --at 490,510,530 --crop 120,290,980,620` jumps
+  the clock, crops, shrinks and tiles the frames into one small file. Read only that file.
+- `node scripts/playtest/wedding-morning.mjs` runs the "engaged" stage (house tier 1)
+  through the nights to the wedding and prints one line.
+- Clock jumps use `farmState({minutes})` in multiples of 10. A jump restarts the scene,
+  so it cannot show a walk between two frames; watch in real time for movement.

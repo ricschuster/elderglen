@@ -20,7 +20,7 @@ import {
   serialize,
   type GameState,
 } from "../src/core/save";
-import { TOKEN_PRICE } from "../src/core/marriage";
+import { MARRIAGE_HOUSE_TIER, TOKEN_PRICE } from "../src/core/marriage";
 import { VILLAGERS } from "../src/core/villagers";
 import { holdsOf } from "../src/core/worldflags";
 
@@ -29,6 +29,7 @@ const CANDIDATES = VILLAGERS.filter((v) => v.candidate).map((v) => v.id);
 /** A game with `id` met and at `hearts`, on a day that is not a festival. */
 function setup(id: string, hearts: number, bouquetFirst = false): GameState {
   const g = newGame();
+  g.houseTier = MARRIAGE_HOUSE_TIER; // the token needs the first house upgrade
   g.friendship.meet(id);
   g.friendship.award(id, hearts * HEART);
   if (bouquetFirst) g.inventory.add(BOUQUET, 1);
@@ -94,6 +95,23 @@ describe("the rain peddler and the token", () => {
     expect(buyToken(g)).toBe(false);
     g.weather = "stormy";
     expect(sellerProblem(g)).toBe("");
+  });
+
+  it("refuses the token while the house is still the cottage (tier 0)", () => {
+    const g = setup("bramwell", 8, true);
+    courtGift(g, "bramwell", BOUQUET);
+    g.friendship.award("bramwell", 6 * HEART); // the cap lifts with the bouquet
+    expect(g.friendship.hearts("bramwell")).toBe(10);
+    g.houseTier = 0;
+    g.inventory.add(TOKEN, 1);
+    const r = courtGift(g, "bramwell", TOKEN)!;
+    expect(r.consumed).toBe(false);
+    expect(r.message).toContain("cottage");
+    expect(g.marriage.stage).toBe("courting");
+    expect(g.inventory.count(TOKEN)).toBe(1);
+    g.houseTier = MARRIAGE_HOUSE_TIER;
+    expect(courtGift(g, "bramwell", TOKEN)!.consumed).toBe(true);
+    expect(g.marriage.stage).toBe("engaged");
   });
 
   it("proposes only to the courted at 10 hearts", () => {
