@@ -32,6 +32,8 @@ Decided 2026-11-18: shrine score 21, Diamond sources (floor 120 drop, Crystalari
 
 M4 built headless 2026-11-18h (note 53). Two-tablet plus desktop check ran 2026-11-19f. Guest intents built: till, plant, water, bin, harvest, axe, pickaxe (2026-11-20). Marriage ran 2026-11-21: the spouse walks out, the token needs house tier 1; #991 wedding scene has no movement, #992 beds. **Next:** guest animals, guest shop by hand, spouse life, divorce and children by hand, villager lock (needs guest courtship), guest pile pickup and camp chest, player rows on top of Social, file saves before release. Layout page (slices 1 to 5) waits for the owner's look.
 
+Audio built 2026-11-21 (note 107, ADR 0017; handoff 2026-11-21g): effects, ambience, 18 music slots (6 synth placeholders), Options sliders. **Left: the owner listens** (`/audio.html` or the tablet), swaps tracks, tunes sounds.
+
 Alongside: the wiki (#910, note 100; built for every category, every item has a picture; text cleared for crops, fish, forage, items, places and rooms; draft text left for bundles, recipes, people and five gem names; left: owner reads the draft text and clears flags, gift lists (`giftsDraft`), people prose with the voice sheets, hosting after M3d), Stardew checks rows (open: SC-188 only; the rest answered or closed as ours, on purpose, 2026-11-17). M4 hosting spike filed as #948.
 
 ## Milestone order (ADR 0012)
