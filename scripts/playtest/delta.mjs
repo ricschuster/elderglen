@@ -80,7 +80,7 @@ await bot.shot("delta-arrive");
 const slot = await state((s) =>
   s.inventory.save().findIndex((x) => x?.id === "reed-pole"),
 );
-await bot.select(4 + slot);
+await bot.select(slot);
 
 // Stand, face the water, use the rod, charge and release, and read the cast.
 async function castOn(name, kind, tx, ty, dir) {
@@ -120,7 +120,11 @@ d = await bot.dbg();
 log(`through the hut door: ${d.map}`);
 if (d.map !== "fisher-hut") finding(`expected the fisher's hut, on ${d.map}`);
 else {
-  await bot.walkTo(5, 2);
+  // The counter keeps hours (open 9:00, shops.json); a new game starts at 6:00.
+  await state((s) => {
+    s.day.clock.minutes = 10 * 60;
+  });
+  await bot.walkTo(3, 5);
   await bot.face("up");
   const money0 = await state((s) => s.money);
   await p.keyboard.press("KeyX");
@@ -147,7 +151,7 @@ else {
     await p.keyboard.press("Escape");
     await sleepMs(500);
   }
-  await bot.walkTo(5, 5);
+  await bot.walkTo(5, 10);
   await bot.face("down");
   await bot.key("KeyX", 200);
   await sleepMs(900);

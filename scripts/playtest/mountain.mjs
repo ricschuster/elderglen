@@ -85,7 +85,7 @@ await bot.shot("rockfall-shut");
 const slot = await state((s) =>
   s.inventory.save().findIndex((x) => x?.id === "reed-pole"),
 );
-await bot.select(4 + slot);
+await bot.select(slot);
 async function castOn(name, kind, tx, ty, dir) {
   await bot.walkTo(tx, ty);
   await bot.face(dir);

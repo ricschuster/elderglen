@@ -93,7 +93,7 @@ log(`cove world: ${JSON.stringify(world)}`);
 const slot = await state((s) =>
   s.inventory.save().findIndex((x) => x?.id === "reed-pole"),
 );
-await bot.select(4 + slot);
+await bot.select(slot);
 await bot.walkTo(30, 9);
 await bot.face("down");
 await p.keyboard.press("KeyC");
