@@ -45,7 +45,7 @@ Headless run 2026-11-21, build 6358d834 (`rods.mjs` new, `delta.mjs`, `cove.mjs`
 - pass: Each rod: the four `fishing-*` stages put the rod in the pack at its level, and a charged cast on the delta river opens the screen with that rod and lands (`rods.mjs`). A full charge with a rod of range above 4 lands on dry ground on a 4-tile river ("The line falls on dry ground"): by design, the player charges less.
 - pass: Waters by kind: marsh lake, river, sea (`delta.mjs`), cove (`cove.mjs`), mountain river (`mountain.mjs`); each bite matches its water. The fisher's counter sells rods and bait and a rod buys (open 9:00 to 17:00, shut Sat, `shops.json`).
 - pass: Pond, ice, pier and market fish rules by unit tests (`pond*`, `farmpond`, `icefishing`, `marketpier`, `woodspondfish`, `nightmarket`, 13 files).
-- todo: Farm ponds by hand: place a pond, stock it, wait for fish. Stage `farm-pond-stocked` has a built pond with 2 carp and fish in the pack (`farm-pond-to-order` is for ordering one); not yet played by hand.
+- pass: Farm ponds by hand (2026-11-21, build b982c44f, `pond.mjs`): from `farm-pond-stocked` walk to the pond and press Action. A perch is refused (pond keeps its carp), a carp goes in (2 to 3), an empty hand opens the pond menu and Escape closes it. Eight nights: roe arrives (1 to 5 waiting), a full pond (3 of 3) starts a capacity quest on night 5 (3 copper ore), an empty hand takes the roe into the pack. Order from `farm-pond-to-order`: 5000g paid, 2 days of work, built after two nights, stocked by hand with one carp, a second fish arrives after one night and it fills to 3 of 3. No console errors. Left: no patch key for a waiting product or a quest, so those were reached by nights; giving the quest item by hand and the carpenter menu by hand (the script orders through `orderPond`).
 - owner: Bar fight feel with each rod's bar width, and the Night Market pier cast by hand.
 - Found and fixed: `delta.mjs`, `cove.mjs` and `mountain.mjs` were stale scripts, not game bugs: toolbar slot is the pack slot (note 102); the fisher's counter is at (3,5) and (4,5) facing up and the shop is shut before 9:00 (the script now sets 10:00); the hut door is at (5,10).
 
@@ -63,13 +63,13 @@ Headless run 2026-11-21, build 145d83a6 plus script fixes (`forest.mjs`, `secret
 
 Headless run 2026-11-21, build 89e72819 plus script fixes (`playtest:sweep` with `KIND=event`, 6 workers, 17 min; the same with `BRANCHES=1`, 16 min; new `heart-extras.mjs`, 1 page, 60 s; unit tests 90).
 
-- pass: Every event opens by walking to its place inside its window, shows the warning, plays to its end, gives its reward, raises its flag, is recorded as seen and does not repeat the next day: 150 of 150 (`sweep.mjs`).
+- pass: Every event opens by walking to its place inside its window, starts at once, plays to its end, gives its reward, raises its flag, is recorded as seen and does not repeat the next day: 150 of 150 (`sweep.mjs`).
 - pass: Every answer of every choice: 147 branch runs, 147 pass.
-- pass: Warning and "not now": the scene opens with Go on and Not now; Not now closes it, records nothing, does not offer it again the same day, and offers it again the next day (`heart-extras.mjs`).
+- Warning and "not now": removed by owner decision 2026-11-21 (note 62, point 7). Entering the area starts the scene at once, with no panel; a seen event does not start again (`heart-extras.mjs`).
 - pass: One event a day: a second event the same day does not start. Festival days and weather and season conditions are covered by unit tests (`heartevents.test.ts`), not run in a browser.
 - pass: A replay (opened by code) gives no reward and is not recorded (`heart-extras.mjs`).
 - fail #1002: No sprite moves in any of the 150 scenes. Events only `place` people and `pan`; `walk`, `face` and `pose` are never used. Needs design (stage marks and paths per map, note 62).
-- fail #1003: The journal has no replay list (`seenIds()` is never called), and the warning is a Go on / Not now panel, not the mark over the person with a chime that the owner chose on 2026-11-12.
+- fail #1003: Part 2 (the warning) is closed by the owner decision of 2026-11-21 (no warning). Part 1 is open until build step 5: the journal has no replay list (`seenIds()` is never called).
 - owner: How the scenes look and read (placeholder room, placeholder text, #950), and the reward feel.
 - Found and fixed: `sweep.mjs` set the clock to the window start plus 2 minutes, which the game refuses (multiples of 10 only), so every event failed to start; it now rounds up to the next 10.
 

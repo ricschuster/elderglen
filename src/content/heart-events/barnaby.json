@@ -54,12 +54,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "green_entry"
         },
         {
           "cmd": "place",
           "who": "barnaby",
-          "mark": "stage"
+          "mark": "green_centre"
         },
         {
           "cmd": "fade",
@@ -167,12 +167,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "green_entry"
         },
         {
           "cmd": "place",
           "who": "barnaby",
-          "mark": "stage"
+          "mark": "green_centre"
         },
         {
           "cmd": "fade",
@@ -284,7 +284,7 @@
         {
           "cmd": "place",
           "who": "barnaby",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",
@@ -396,7 +396,7 @@
         {
           "cmd": "place",
           "who": "barnaby",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",
@@ -508,7 +508,7 @@
         {
           "cmd": "place",
           "who": "barnaby",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",

@@ -14,6 +14,8 @@ export interface TiledObject {
   y: number;
   width?: number;
   height?: number;
+  /** A Tiled polyline: points in pixels relative to `x`, `y` (a stage `path`). */
+  polyline?: { x: number; y: number }[];
   /** Tiled custom properties. A `tier` property puts the object on that tier. */
   properties?: { name: string; value: unknown }[];
 }
@@ -1117,4 +1119,88 @@ export function marksAndFixtures(
     }
   }
   return { marks, fixtures };
+}
+
+/**
+ * Stage marks and walk paths for heart event scenes (note 62, "Stage, motion, trigger and
+ * replay"). A `mark` object names a stage spot; a `path` object is a polyline of tile waypoints
+ * (Tiled's own polyline, points relative to the object). Both sit in the `stage` object layer,
+ * are read here and not at map load, and a scene names them, never a tile.
+ */
+const STAGE_LAYER = "stage";
+
+function stageObject(
+  json: TiledMapJson,
+  cls: "mark" | "path" | "event-area",
+  name: string,
+): TiledObject | undefined {
+  for (const layer of json.layers) {
+    if (layer.type !== "objectgroup" || layer.name !== STAGE_LAYER) continue;
+    const found = (layer.objects ?? []).find(
+      (o) => objectClass(o) === cls && o.name === name,
+    );
+    if (found) return found;
+  }
+  return undefined;
+}
+
+/** The tile of a stage mark, or undefined when the map has no such mark. */
+export function markTile(json: TiledMapJson, name: string): Spot | undefined {
+  const o = stageObject(json, "mark", name);
+  if (!o) return undefined;
+  const size = json.tilewidth;
+  return { x: Math.floor(o.x / size), y: Math.floor(o.y / size) };
+}
+
+/** The ordered waypoint tiles of a named path, or undefined when the map has no such path. */
+export function pathTiles(
+  json: TiledMapJson,
+  name: string,
+): Spot[] | undefined {
+  const o = stageObject(json, "path", name);
+  if (!o) return undefined;
+  const size = json.tilewidth;
+  return (o.polyline ?? [{ x: 0, y: 0 }]).map((p) => ({
+    x: Math.floor((o.x + p.x) / size),
+    y: Math.floor((o.y + p.y) / size),
+  }));
+}
+
+/** Every stage mark and path name a map has. */
+export function stageNames(json: TiledMapJson): {
+  marks: string[];
+  paths: string[];
+} {
+  const out = { marks: [] as string[], paths: [] as string[] };
+  for (const layer of json.layers) {
+    if (layer.type !== "objectgroup" || layer.name !== STAGE_LAYER) continue;
+    for (const o of layer.objects ?? []) {
+      const c = objectClass(o);
+      if (c === "mark") out.marks.push(o.name);
+      else if (c === "path") out.paths.push(o.name);
+    }
+  }
+  return out;
+}
+
+/**
+ * The trigger zone of an event place (note 62, point 6): a rectangle `event-area` object named
+ * for the place id, in the stage layer. Returned as inclusive tile bounds, or undefined when the
+ * map has none.
+ */
+export function areaRect(
+  json: TiledMapJson,
+  name: string,
+): { x0: number; y0: number; x1: number; y1: number } | undefined {
+  const o = stageObject(json, "event-area", name);
+  if (!o) return undefined;
+  const size = json.tilewidth;
+  const x0 = Math.floor(o.x / size);
+  const y0 = Math.floor(o.y / size);
+  return {
+    x0,
+    y0,
+    x1: x0 + Math.max(1, Math.round((o.width ?? size) / size)) - 1,
+    y1: y0 + Math.max(1, Math.round((o.height ?? size) / size)) - 1,
+  };
 }

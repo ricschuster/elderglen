@@ -22,13 +22,29 @@
   ],
   "width": 50,
   "height": 40,
-  "nextlayerid": 5,
-  "nextobjectid": 16,
+  "nextlayerid": 6,
+  "nextobjectid": 38,
   "properties": [
-    { "name": "placeholder", "type": "bool", "value": true },
-    { "name": "rideable", "type": "bool", "value": false },
-    { "name": "wild", "type": "bool", "value": true },
-    { "name": "waterKind", "type": "string", "value": "cove" }
+    {
+      "name": "placeholder",
+      "type": "bool",
+      "value": true
+    },
+    {
+      "name": "rideable",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "wild",
+      "type": "bool",
+      "value": true
+    },
+    {
+      "name": "waterKind",
+      "type": "string",
+      "value": "cove"
+    }
   ],
   "layers": [
     {
@@ -357,8 +373,16 @@
           "rotation": 0,
           "visible": true,
           "properties": [
-            { "name": "map", "type": "string", "value": "delta" },
-            { "name": "entry", "type": "string", "value": "from_ferry" }
+            {
+              "name": "map",
+              "type": "string",
+              "value": "delta"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "from_ferry"
+            }
           ]
         },
         {
@@ -374,7 +398,11 @@
           "visible": true,
           "point": true,
           "properties": [
-            { "name": "kind", "type": "string", "value": "cove-treasure" }
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "cove-treasure"
+            }
           ]
         },
         {
@@ -532,6 +560,414 @@
           "rotation": 0,
           "visible": true,
           "point": true
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "stage",
+      "type": "objectgroup",
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "visible": true,
+      "draworder": "topdown",
+      "objects": [
+        {
+          "id": 16,
+          "name": "dunes_centre",
+          "class": "mark",
+          "type": "mark",
+          "x": 152,
+          "y": 216,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 17,
+          "name": "dunes_left",
+          "class": "mark",
+          "type": "mark",
+          "x": 88,
+          "y": 200,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 18,
+          "name": "dunes_right",
+          "class": "mark",
+          "type": "mark",
+          "x": 216,
+          "y": 184,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 19,
+          "name": "dunes_front",
+          "class": "mark",
+          "type": "mark",
+          "x": 120,
+          "y": 280,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 20,
+          "name": "dunes_back",
+          "class": "mark",
+          "type": "mark",
+          "x": 152,
+          "y": 152,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 21,
+          "name": "dunes_entry",
+          "class": "mark",
+          "type": "mark",
+          "x": 88,
+          "y": 312,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 22,
+          "name": "dunes_entry_to_centre",
+          "class": "path",
+          "type": "path",
+          "x": 88,
+          "y": 312,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 48,
+              "y": 0
+            },
+            {
+              "x": 48,
+              "y": -64
+            },
+            {
+              "x": 64,
+              "y": -64
+            },
+            {
+              "x": 64,
+              "y": -96
+            }
+          ]
+        },
+        {
+          "id": 23,
+          "name": "dunes_centre_to_entry",
+          "class": "path",
+          "type": "path",
+          "x": 152,
+          "y": 216,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": -64,
+              "y": 0
+            },
+            {
+              "x": -64,
+              "y": 96
+            }
+          ]
+        },
+        {
+          "id": 24,
+          "name": "dunes_left_to_right",
+          "class": "path",
+          "type": "path",
+          "x": 88,
+          "y": 200,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 80,
+              "y": 0
+            },
+            {
+              "x": 80,
+              "y": -16
+            },
+            {
+              "x": 128,
+              "y": -16
+            }
+          ]
+        },
+        {
+          "id": 25,
+          "name": "dunes_centre_to_back",
+          "class": "path",
+          "type": "path",
+          "x": 152,
+          "y": 216,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 0,
+              "y": -64
+            }
+          ]
+        },
+        {
+          "id": 26,
+          "name": "shore_centre",
+          "class": "mark",
+          "type": "mark",
+          "x": 200,
+          "y": 488,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 27,
+          "name": "shore_left",
+          "class": "mark",
+          "type": "mark",
+          "x": 136,
+          "y": 472,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 28,
+          "name": "shore_right",
+          "class": "mark",
+          "type": "mark",
+          "x": 200,
+          "y": 472,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 29,
+          "name": "shore_front",
+          "class": "mark",
+          "type": "mark",
+          "x": 200,
+          "y": 552,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 30,
+          "name": "shore_back",
+          "class": "mark",
+          "type": "mark",
+          "x": 200,
+          "y": 424,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 31,
+          "name": "shore_entry",
+          "class": "mark",
+          "type": "mark",
+          "x": 88,
+          "y": 584,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 32,
+          "name": "shore_entry_to_centre",
+          "class": "path",
+          "type": "path",
+          "x": 88,
+          "y": 584,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 112,
+              "y": 0
+            },
+            {
+              "x": 112,
+              "y": -96
+            }
+          ]
+        },
+        {
+          "id": 33,
+          "name": "shore_centre_to_entry",
+          "class": "path",
+          "type": "path",
+          "x": 200,
+          "y": 488,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": -96,
+              "y": 0
+            },
+            {
+              "x": -96,
+              "y": 16
+            },
+            {
+              "x": -112,
+              "y": 16
+            },
+            {
+              "x": -112,
+              "y": 96
+            }
+          ]
+        },
+        {
+          "id": 34,
+          "name": "shore_left_to_right",
+          "class": "path",
+          "type": "path",
+          "x": 136,
+          "y": 472,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 64,
+              "y": 0
+            }
+          ]
+        },
+        {
+          "id": 35,
+          "name": "shore_centre_to_back",
+          "class": "path",
+          "type": "path",
+          "x": 200,
+          "y": 488,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 0,
+              "y": -64
+            }
+          ]
+        },
+        {
+          "id": 36,
+          "name": "beach:dunes",
+          "class": "event-area",
+          "type": "event-area",
+          "x": 32,
+          "y": 96,
+          "width": 240,
+          "height": 272,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 37,
+          "name": "beach:shore",
+          "class": "event-area",
+          "type": "event-area",
+          "x": 32,
+          "y": 368,
+          "width": 224,
+          "height": 272,
+          "rotation": 0,
+          "visible": true
         }
       ]
     }

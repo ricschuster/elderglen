@@ -1,6 +1,6 @@
 # 62 Heart events
 
-Status: **core rules decided with the owner on 2026-11-06.** The form, the
+Status: **core rules decided with the owner on 2026-11-06; stage, trigger, replay and no warning decided 2026-11-21 (section below).** The form, the
 triggers, the rewards and replay are set. The event list, the scene commands and
 the first scripts are not. **Built (#600, 2026-11):** the core rules (`src/core/heartevents.ts`), the runner (`eventrun.ts`, `HeartEventScene`) and four placeholder events (`src/content/heart-events.json`): three proofs and Cordelia's 4 heart event, which unlocks tailoring (note 96). Built 2026-11-12: the presence window of note 84 (a `window` field, a start-inside-window check and a validator test that the person keeps the place in that window). Not built: the real event list and the spouse events. It builds on
 `61_friendship_and_gifts.md` and is layer 4 in `18_dialogue.md`.
@@ -20,10 +20,9 @@ rest is Stardew's shape from the owner's play and memory, unchecked
 2. **It starts when the player walks into the place.** Each event names a
    place, a heart level and optional conditions (season, weather, an earlier
    event, a hall milestone, a flag). It starts when the player steps into the
-   spot, not by menu. **A short warning comes first**, so no afternoon is lost
-   without notice, as festivals already do (`14_festival_calendar.md`). The
-   player may say "not now" and the event waits. One event a day, and none on a
-   festival day. The owner says Stardew also warns (checked in play 2026-11-07, SC-45; how it warns is not recorded), so ours matches.
+   spot, not by menu. **There is no warning (owner, 2026-11-21, see the section below)**: the scene starts at once, time
+   is frozen for it, and every seen event can be replayed, so nothing is lost. One event a day, and none on a
+   festival day.
 3. **Events may reward. Talks may not (`18_dialogue.md`).** An event can set a
    story flag, give an item, a recipe or a house keepsake. Choices in an event
    only change how fast hearts rise or which lines follow. They never take
@@ -138,7 +137,7 @@ Checked at build time and in a unit test, as for conversations
 - **Count.** A standard tier person gets up to five events, at 2, 4, 6, 8 and 10 hearts.
   The 10 heart event is kept because friends run to 10 hearts (note 61, rule 1). Stardew's
   own count is from memory and unchecked (SC-45).
-- **Warning.** A visible mark over the person plus a short soft chime, with a text line the
+- **Warning (dropped 2026-11-21, see the section below).** A visible mark over the person plus a short soft chime, with a text line the
   first time only. Walking away is "not now" and the event waits. It works on a tablet with
   no text to read.
 - Still open: the event list per person, the story of each scene and the item names.
@@ -157,6 +156,72 @@ Checked at build time and in a unit test, as for conversations
 - **Build order.** Gift tastes (#872), then the event list per person as a table in this
   note, then the scenes as data in `heart-events.json`, one person per file as note 62
   says. Scenes reuse the proof engine, so they are a data job a subagent can do.
+
+## Stage, motion, trigger and replay (owner answers 2026-11-21, #1002, #1003)
+
+Asked after the headless run of 2026-11-21 found that no event moves a sprite (#1002) and
+that the journal has no replay and the warning is not the chosen mark (#1003). Stardew
+points are from the owner's play and memory, unchecked (SC-45).
+
+1. **Events play on the real map (Stardew).** The scene no longer uses the brown placeholder
+   room. It runs on the event's own map (store, green, river path, forge and the rest), with
+   the real tiles, the real camera and the people drawn as on the farm. Marks and paths are
+   named objects in each map's Tiled file (a `mark` object per stage spot, a `path` object
+   per named route), shared by every scene on that map, as the draft above says. A scene
+   names `counter` or `door_to_green`, never a tile. Every map that holds an event place
+   (note 80, about 25 places) needs its marks before its scenes can be moved.
+2. **Everyone not in the scene is hidden (Stardew).** On start the map clears of all other
+   people, animals and wandering effects, and they come back on `end`. The cast is placed
+   by `place` and walks by `walk`. Time of day is frozen for the scene and restored at `end`.
+3. **Moves are hand written per scene (Stardew), with the real text.** A scene's blocking
+   (who stands where, who walks, who faces, when a pose or emote lands) is written by hand
+   for that story. This is done per person when the real scenes are written with the voice
+   sheets (M3d, #950), so the moves match the text. Placeholder scenes are not blocked now.
+   **#1002 stays open until M3d.** What is built now is everything a scene needs to move:
+   marks and paths on the maps, the runner on the real map, `walk`, `face`, `pose`, the
+   camera and the sandbox below, proved with a few moves in each kind of place.
+4. **Poses are placeholders now.** The people have one frame, so a pose is a small effect on
+   it: tilt, drop, hop, flip. The shared pose names are fixed now so a scene can refer to
+   them: `sit`, `bow`, `surprise`, `laugh`, `slump`. Real pose sprites per person slot in
+   under the same names in M3d.
+5. **Camera: pan, hold and zoom on the real map camera (Stardew).** The camera glides to a
+   mark or a person, holds, may zoom for a beat, and `snap` returns it to the player. `end`
+   always restores it. Zoom must stay cheap on the tablets (check on the SM-T500).
+6. **Trigger: entering an area or a building (owner, 2026-11-21).** Each event names an
+   area on its map (a Tiled zone, or the inside of a building) rather than a tile. The
+   player walking into that area, in the event's window and with its conditions met, is
+   the trigger. This replaces the note 62 wording "steps into the spot". The place column
+   of the event list is the area.
+7. **No warning (owner, 2026-11-21).** Entering the area starts the scene at once. There is
+   no mark over the person, no chime, no first-time text line, no pause, no Go on / Not now
+   panel and no "not now". This replaces decision 2's warning and the 2026-11-12 mark and
+   chime decision. Why it is safe: time of day is frozen for the scene and restored at the
+   end (point 2), so no game time is lost, and every seen event can be replayed (point 8).
+   Stardew's warning behaviour is unchecked and not needed. Walking into a building or area
+   is already the player's choice, and a player who wants to skip an event can use Skip.
+8. **Replay is a sandbox on the real map.** From a person's Social row the game loads the
+   event's map in a frozen copy: the cast on their marks, nobody else, no time passing, the
+   Result group off, nothing recorded (already true of `replay: true`). At the end the
+   player is back where they were, with the world as left.
+9. **Replay list sits on each person's Social row.** Opening a person in the Social tab
+   lists their events by heart level. A seen event has a Replay button. An unseen one is a
+   locked line with its heart level only, so nothing is spoiled. `seenIds()` feeds it.
+10. **Skip finishes the scene.** Escape or Skip on a first run jumps to the end state: the
+    cast, flags and rewards are right, and it is recorded as seen and can be replayed.
+
+### What this costs, in order
+
+1. Marks and paths in the Tiled files of every event map, and a validator test that every
+   mark and path a scene names exists on its map (rule 4 above).
+2. The runner on the real map: hide bystanders, freeze time, real camera (pan, hold, zoom,
+   snap), `walk` on the tile grid, `pose` effects. The brown room stays only as a fallback.
+3. Area triggers in the event data (replacing the place tile), with the validator checking
+   that each area is on the person's route in the window (note 84).
+4. Remove the warning: the Go on / Not now panel, the declined-today list and its offer-again rule (`declinedToday`), and the `warn` flag. An area entry starts the scene.
+5. The replay sandbox and the Social row list.
+6. Headless checks: `heart-extras.mjs` drops its warning and "not now" lines and checks that entering the area starts the scene; a new check that a
+   scene moves a sprite; `playtest:sweep` re-run for events.
+7. M3d: block each person's scenes by hand with the real text.
 
 ## Event list, first draft (2026-11-13, for owner edit)
 

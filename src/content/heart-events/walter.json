@@ -57,12 +57,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "river_path_entry"
         },
         {
           "cmd": "place",
           "who": "walter",
-          "mark": "stage"
+          "mark": "river_path_centre"
         },
         {
           "cmd": "fade",
@@ -173,12 +173,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "river_path_entry"
         },
         {
           "cmd": "place",
           "who": "walter",
-          "mark": "stage"
+          "mark": "river_path_centre"
         },
         {
           "cmd": "fade",
@@ -290,7 +290,7 @@
         {
           "cmd": "place",
           "who": "walter",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",
@@ -403,7 +403,7 @@
         {
           "cmd": "place",
           "who": "walter",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",
@@ -515,7 +515,7 @@
         {
           "cmd": "place",
           "who": "walter",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",

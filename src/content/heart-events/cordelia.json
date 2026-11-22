@@ -125,7 +125,7 @@
         {
           "cmd": "place",
           "who": "cordelia",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",
@@ -238,7 +238,7 @@
         {
           "cmd": "place",
           "who": "cordelia",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",
@@ -350,7 +350,7 @@
         {
           "cmd": "place",
           "who": "cordelia",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",
@@ -462,7 +462,7 @@
         {
           "cmd": "place",
           "who": "cordelia",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",

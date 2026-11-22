@@ -9,9 +9,15 @@
   "height": 23,
   "tilewidth": 16,
   "tileheight": 16,
-  "nextlayerid": 5,
-  "nextobjectid": 20,
-  "properties": [{ "name": "placeholder", "type": "bool", "value": true }],
+  "nextlayerid": 6,
+  "nextobjectid": 31,
+  "properties": [
+    {
+      "name": "placeholder",
+      "type": "bool",
+      "value": true
+    }
+  ],
   "tilesets": [
     {
       "firstgid": 1,
@@ -167,8 +173,16 @@
           "width": 16,
           "height": 16,
           "properties": [
-            { "name": "map", "type": "string", "value": "hearthwell" },
-            { "name": "entry", "type": "string", "value": "from_healer" }
+            {
+              "name": "map",
+              "type": "string",
+              "value": "hearthwell"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "from_healer"
+            }
           ]
         },
         {
@@ -184,7 +198,11 @@
           "height": 0,
           "point": true,
           "properties": [
-            { "name": "kind", "type": "string", "value": "counter-healer" }
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "counter-healer"
+            }
           ]
         },
         {
@@ -200,7 +218,11 @@
           "height": 0,
           "point": true,
           "properties": [
-            { "name": "kind", "type": "string", "value": "counter-healer" }
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "counter-healer"
+            }
           ]
         },
         {
@@ -215,7 +237,11 @@
           "width": 16,
           "height": 32,
           "properties": [
-            { "name": "gate", "type": "string", "value": "friendship:healer:2" }
+            {
+              "name": "gate",
+              "type": "string",
+              "value": "friendship:healer:2"
+            }
           ]
         },
         {
@@ -399,6 +425,265 @@
           "width": 0,
           "height": 0,
           "point": true
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "stage",
+      "type": "objectgroup",
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "visible": true,
+      "draworder": "topdown",
+      "objects": [
+        {
+          "id": 20,
+          "name": "door",
+          "class": "mark",
+          "type": "mark",
+          "x": 88,
+          "y": 328,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 21,
+          "name": "centre",
+          "class": "mark",
+          "type": "mark",
+          "x": 152,
+          "y": 168,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 22,
+          "name": "left",
+          "class": "mark",
+          "type": "mark",
+          "x": 136,
+          "y": 168,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 23,
+          "name": "right",
+          "class": "mark",
+          "type": "mark",
+          "x": 216,
+          "y": 120,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 24,
+          "name": "front",
+          "class": "mark",
+          "type": "mark",
+          "x": 88,
+          "y": 280,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 25,
+          "name": "back",
+          "class": "mark",
+          "type": "mark",
+          "x": 152,
+          "y": 72,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 26,
+          "name": "counter",
+          "class": "mark",
+          "type": "mark",
+          "x": 72,
+          "y": 232,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 27,
+          "name": "door_to_centre",
+          "class": "path",
+          "type": "path",
+          "x": 88,
+          "y": 328,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 16,
+              "y": 0
+            },
+            {
+              "x": 16,
+              "y": -32
+            },
+            {
+              "x": 32,
+              "y": -32
+            },
+            {
+              "x": 32,
+              "y": -48
+            },
+            {
+              "x": 48,
+              "y": -48
+            },
+            {
+              "x": 48,
+              "y": -96
+            },
+            {
+              "x": 64,
+              "y": -96
+            },
+            {
+              "x": 64,
+              "y": -160
+            }
+          ]
+        },
+        {
+          "id": 28,
+          "name": "centre_to_door",
+          "class": "path",
+          "type": "path",
+          "x": 152,
+          "y": 168,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": -16,
+              "y": 0
+            },
+            {
+              "x": -16,
+              "y": 64
+            },
+            {
+              "x": -32,
+              "y": 64
+            },
+            {
+              "x": -32,
+              "y": 96
+            },
+            {
+              "x": -64,
+              "y": 96
+            },
+            {
+              "x": -64,
+              "y": 160
+            }
+          ]
+        },
+        {
+          "id": 29,
+          "name": "left_to_right",
+          "class": "path",
+          "type": "path",
+          "x": 136,
+          "y": 168,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 32,
+              "y": 0
+            },
+            {
+              "x": 32,
+              "y": -32
+            },
+            {
+              "x": 80,
+              "y": -32
+            },
+            {
+              "x": 80,
+              "y": -48
+            }
+          ]
+        },
+        {
+          "id": 30,
+          "name": "centre_to_counter",
+          "class": "path",
+          "type": "path",
+          "x": 152,
+          "y": 168,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": -16,
+              "y": 0
+            },
+            {
+              "x": -16,
+              "y": 64
+            },
+            {
+              "x": -80,
+              "y": 64
+            }
+          ]
         }
       ]
     }

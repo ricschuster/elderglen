@@ -25,8 +25,7 @@ import {
   leaveArea,
 } from "../core/areas";
 
-import { eventAtTile } from "../core/eventrun";
-import { declinedToday } from "./HeartEventScene";
+import { eventAtTile, placesAt } from "../core/eventrun";
 import { huntOffer, type HuntState } from "../core/seedhunt";
 import {
   awardIcePrize,
@@ -538,6 +537,8 @@ export class FarmScene extends Phaser.Scene {
   init(data: Partial<SceneData>): void {
     this.state = this.registry.get(STATE_KEY) as GameState;
     this.net = currentSession();
+    // A new map load is a new entry: the next area test offers its event (note 62, point 6).
+    this.eventTile = "";
     this.mapId = resolveMapId(data.map ?? START.map, this.state.farmType);
     this.entryName = data.entry ?? START.entry;
     this.restoreTile =
@@ -1936,29 +1937,31 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /**
-   * Stepping near an event's place starts its scene (note 62). The scene asks
-   * first, and "not now" lets it wait. Checked when the tile changes.
+   * Walking into an event's area, or into its building, starts its scene (note 62, point 6). The
+   * scene starts at once, with no warning (owner decision 2026-11-21). The area is tested when the
+   * tile changes, so an event starts once on entry; the clock moving on inside an area checks
+   * again, for a window that opens while the player stands there. A seen event is never due.
    */
   private checkHeartEvent(): void {
     if (isFestivalMap(this.mapId) || this.state.animals.mounted) return;
     const t = tileOf(this.pos, PLAYER, this.map.tileSize);
-    const key = `${t.x},${t.y}`;
+    const places = placesAt(this.mapId, t.x, t.y);
+    // Nothing to offer outside every area; forget it so the next entry counts as one.
+    if (places.length === 0) {
+      this.eventTile = "";
+      return;
+    }
+    const minute = this.state.day.clock.minutes;
+    const key = `${this.mapId}|${places.join(",")}|${minute}`;
     if (key === this.eventTile) return;
     this.eventTile = key;
     const day = this.state.day.clock.day;
-    const event = eventAtTile(
-      this.state,
-      this.mapId,
-      t.x,
-      t.y,
-      {
-        day,
-        weather: this.state.weather,
-        minute: this.state.day.clock.minutes,
-      },
-      declinedToday(day),
-    );
-    if (event) this.open("heart-event", { id: event.id, warn: true });
+    const event = eventAtTile(this.state, this.mapId, t.x, t.y, {
+      day,
+      weather: this.state.weather,
+      minute,
+    });
+    if (event) this.open("heart-event", { id: event.id });
   }
 
   /** Open a screen over the farm. The farm is paused until it closes. */
