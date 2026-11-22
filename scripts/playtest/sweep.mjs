@@ -5,7 +5,7 @@
 // FINDINGS (a table and playtest-out/sweep.json), not script errors.
 //
 // Run: npm run dev (any port), then `BASE_URL=http://localhost:5173/ npm run playtest:sweep`.
-// Env: WORKERS (default 6), ONLY (a substring filter on item ids), KIND
+// Env: WORKERS (default 4; 12 froze the machine with kernel oopses, keep it low), ONLY (a substring filter on item ids), KIND
 // (festival or event), BRANCHES=1 to also run each heart event once per choice
 // answer (default: one run per event, which halves the time).
 import fs from "node:fs";
@@ -18,7 +18,7 @@ process.on("unhandledRejection", (e) => {
     console.error("unhandled", e);
 });
 
-const WORKERS = Math.max(1, Number(process.env.WORKERS) || 6);
+const WORKERS = Math.max(1, Number(process.env.WORKERS) || 4);
 const ONLY = process.env.ONLY ?? "";
 const KIND = process.env.KIND ?? "";
 const BRANCHES = process.env.BRANCHES === "1";
