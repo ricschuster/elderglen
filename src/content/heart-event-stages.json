@@ -1,0 +1,183 @@
+{
+  "_note": "Per event place: the real map and the stage mark names a placeholder scene uses, mapped to marks in that map's stage layer (note 62, build step 1). Real scenes name the map marks directly.",
+  "places": {
+    "beach:dunes": {
+      "map": "cove",
+      "marks": {
+        "door": "dunes_entry",
+        "stage": "dunes_centre"
+      }
+    },
+    "beach:shore": {
+      "map": "cove",
+      "marks": {
+        "door": "shore_entry",
+        "stage": "shore_centre"
+      }
+    },
+    "delta:dock": {
+      "map": "delta",
+      "marks": {
+        "door": "dock_entry",
+        "stage": "dock_centre"
+      }
+    },
+    "forest:camp": {
+      "map": "forest",
+      "marks": {
+        "door": "camp_entry",
+        "stage": "camp_centre"
+      }
+    },
+    "forest:fairy-ring": {
+      "map": "forest",
+      "marks": {
+        "ring_centre": "fairy_ring_centre",
+        "ring_edge": "fairy_ring_right"
+      }
+    },
+    "forest:hermit-garden": {
+      "map": "forest",
+      "marks": {
+        "door": "hermit_garden_entry",
+        "stage": "hermit_garden_centre"
+      }
+    },
+    "forest:paddock": {
+      "map": "forest",
+      "marks": {
+        "door": "paddock_entry",
+        "stage": "paddock_centre"
+      }
+    },
+    "forest:hermit-tower": {
+      "map": "hermit-tower",
+      "marks": {
+        "door": "door",
+        "stage": "centre",
+        "counter": "counter"
+      }
+    },
+    "hw:burrow-garden": {
+      "map": "hearthwell",
+      "marks": {
+        "door": "burrow_garden_entry",
+        "stage": "burrow_garden_centre"
+      }
+    },
+    "hw:green": {
+      "map": "hearthwell",
+      "marks": {
+        "door": "green_entry",
+        "stage": "green_centre"
+      }
+    },
+    "hw:outpost-yard": {
+      "map": "hearthwell",
+      "marks": {
+        "door": "outpost_yard_entry",
+        "stage": "outpost_yard_centre"
+      }
+    },
+    "hw:river-path": {
+      "map": "hearthwell",
+      "marks": {
+        "door": "river_path_entry",
+        "stage": "river_path_centre"
+      }
+    },
+    "hw:square": {
+      "map": "hearthwell",
+      "marks": {
+        "door": "square_entry",
+        "stage": "square_centre"
+      }
+    },
+    "hw:hatter": {
+      "map": "hatter",
+      "marks": {
+        "door": "door",
+        "stage": "centre",
+        "counter": "counter",
+        "machine": "machine"
+      }
+    },
+    "hw:healer": {
+      "map": "healer",
+      "marks": {
+        "door": "door",
+        "stage": "centre",
+        "counter": "counter"
+      }
+    },
+    "hw:inn": {
+      "map": "inn",
+      "marks": {
+        "door": "door",
+        "stage": "centre",
+        "counter": "counter"
+      }
+    },
+    "hw:library": {
+      "map": "library",
+      "marks": {
+        "door": "door",
+        "stage": "centre",
+        "counter": "counter"
+      }
+    },
+    "hw:sawmill": {
+      "map": "sawmill",
+      "marks": {
+        "door": "door",
+        "stage": "centre",
+        "counter": "counter"
+      }
+    },
+    "hw:smithy": {
+      "map": "smithy",
+      "marks": {
+        "door": "door",
+        "stage": "centre",
+        "counter": "counter"
+      }
+    },
+    "hw:store": {
+      "map": "general-store",
+      "marks": {
+        "door": "door",
+        "stage": "centre",
+        "counter": "counter"
+      }
+    },
+    "mines:hall": {
+      "map": "mine",
+      "marks": {
+        "door": "hall_entry",
+        "stage": "hall_centre"
+      }
+    },
+    "mtn:forge": {
+      "map": "forge",
+      "marks": {
+        "door": "door",
+        "stage": "centre",
+        "counter": "counter"
+      }
+    },
+    "quarry:bridge": {
+      "map": "quarry",
+      "marks": {
+        "door": "bridge_entry",
+        "stage": "bridge_centre"
+      }
+    },
+    "quarry:yard": {
+      "map": "quarry",
+      "marks": {
+        "door": "yard_entry",
+        "stage": "yard_centre"
+      }
+    }
+  }
+}

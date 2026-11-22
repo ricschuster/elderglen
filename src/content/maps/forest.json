@@ -9,8 +9,8 @@
   "height": 120,
   "tilewidth": 16,
   "tileheight": 16,
-  "nextlayerid": 16,
-  "nextobjectid": 452,
+  "nextlayerid": 17,
+  "nextobjectid": 492,
   "properties": [
     {
       "name": "placeholder",
@@ -14687,6 +14687,718 @@
           "name": "when",
           "type": "string",
           "value": "festival-frostday"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "name": "stage",
+      "type": "objectgroup",
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "visible": true,
+      "draworder": "topdown",
+      "objects": [
+        {
+          "id": 452,
+          "name": "camp_centre",
+          "class": "mark",
+          "type": "mark",
+          "x": 1288,
+          "y": 648,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 453,
+          "name": "camp_left",
+          "class": "mark",
+          "type": "mark",
+          "x": 1224,
+          "y": 648,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 454,
+          "name": "camp_right",
+          "class": "mark",
+          "type": "mark",
+          "x": 1352,
+          "y": 664,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 455,
+          "name": "camp_front",
+          "class": "mark",
+          "type": "mark",
+          "x": 1288,
+          "y": 712,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 456,
+          "name": "camp_back",
+          "class": "mark",
+          "type": "mark",
+          "x": 1288,
+          "y": 584,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 457,
+          "name": "camp_entry",
+          "class": "mark",
+          "type": "mark",
+          "x": 1160,
+          "y": 744,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 458,
+          "name": "camp_entry_to_centre",
+          "class": "path",
+          "type": "path",
+          "x": 1160,
+          "y": 744,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 128,
+              "y": 0
+            },
+            {
+              "x": 128,
+              "y": -96
+            }
+          ]
+        },
+        {
+          "id": 459,
+          "name": "camp_centre_to_entry",
+          "class": "path",
+          "type": "path",
+          "x": 1288,
+          "y": 648,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": -128,
+              "y": 0
+            },
+            {
+              "x": -128,
+              "y": 96
+            }
+          ]
+        },
+        {
+          "id": 460,
+          "name": "camp_left_to_right",
+          "class": "path",
+          "type": "path",
+          "x": 1224,
+          "y": 648,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 128,
+              "y": 0
+            },
+            {
+              "x": 128,
+              "y": 16
+            }
+          ]
+        },
+        {
+          "id": 461,
+          "name": "camp_centre_to_back",
+          "class": "path",
+          "type": "path",
+          "x": 1288,
+          "y": 648,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 0,
+              "y": -64
+            }
+          ]
+        },
+        {
+          "id": 462,
+          "name": "fairy_ring_centre",
+          "class": "mark",
+          "type": "mark",
+          "x": 488,
+          "y": 488,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 463,
+          "name": "fairy_ring_left",
+          "class": "mark",
+          "type": "mark",
+          "x": 424,
+          "y": 488,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 464,
+          "name": "fairy_ring_right",
+          "class": "mark",
+          "type": "mark",
+          "x": 536,
+          "y": 488,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 465,
+          "name": "fairy_ring_front",
+          "class": "mark",
+          "type": "mark",
+          "x": 488,
+          "y": 552,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 466,
+          "name": "fairy_ring_back",
+          "class": "mark",
+          "type": "mark",
+          "x": 488,
+          "y": 424,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 467,
+          "name": "fairy_ring_entry",
+          "class": "mark",
+          "type": "mark",
+          "x": 360,
+          "y": 584,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 468,
+          "name": "fairy_ring_entry_to_centre",
+          "class": "path",
+          "type": "path",
+          "x": 360,
+          "y": 584,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 128,
+              "y": 0
+            },
+            {
+              "x": 128,
+              "y": -96
+            }
+          ]
+        },
+        {
+          "id": 469,
+          "name": "fairy_ring_centre_to_entry",
+          "class": "path",
+          "type": "path",
+          "x": 488,
+          "y": 488,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": -128,
+              "y": 0
+            },
+            {
+              "x": -128,
+              "y": 96
+            }
+          ]
+        },
+        {
+          "id": 470,
+          "name": "fairy_ring_left_to_right",
+          "class": "path",
+          "type": "path",
+          "x": 424,
+          "y": 488,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 112,
+              "y": 0
+            }
+          ]
+        },
+        {
+          "id": 471,
+          "name": "fairy_ring_centre_to_back",
+          "class": "path",
+          "type": "path",
+          "x": 488,
+          "y": 488,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 0,
+              "y": -64
+            }
+          ]
+        },
+        {
+          "id": 472,
+          "name": "hermit_garden_centre",
+          "class": "mark",
+          "type": "mark",
+          "x": 360,
+          "y": 392,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 473,
+          "name": "hermit_garden_left",
+          "class": "mark",
+          "type": "mark",
+          "x": 296,
+          "y": 392,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 474,
+          "name": "hermit_garden_right",
+          "class": "mark",
+          "type": "mark",
+          "x": 424,
+          "y": 392,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 475,
+          "name": "hermit_garden_front",
+          "class": "mark",
+          "type": "mark",
+          "x": 360,
+          "y": 440,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 476,
+          "name": "hermit_garden_back",
+          "class": "mark",
+          "type": "mark",
+          "x": 360,
+          "y": 328,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 477,
+          "name": "hermit_garden_entry",
+          "class": "mark",
+          "type": "mark",
+          "x": 232,
+          "y": 488,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 478,
+          "name": "hermit_garden_entry_to_centre",
+          "class": "path",
+          "type": "path",
+          "x": 232,
+          "y": 488,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 128,
+              "y": 0
+            },
+            {
+              "x": 128,
+              "y": -96
+            }
+          ]
+        },
+        {
+          "id": 479,
+          "name": "hermit_garden_centre_to_entry",
+          "class": "path",
+          "type": "path",
+          "x": 360,
+          "y": 392,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": -128,
+              "y": 0
+            },
+            {
+              "x": -128,
+              "y": 96
+            }
+          ]
+        },
+        {
+          "id": 480,
+          "name": "hermit_garden_left_to_right",
+          "class": "path",
+          "type": "path",
+          "x": 296,
+          "y": 392,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 128,
+              "y": 0
+            }
+          ]
+        },
+        {
+          "id": 481,
+          "name": "hermit_garden_centre_to_back",
+          "class": "path",
+          "type": "path",
+          "x": 360,
+          "y": 392,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 0,
+              "y": -64
+            }
+          ]
+        },
+        {
+          "id": 482,
+          "name": "paddock_centre",
+          "class": "mark",
+          "type": "mark",
+          "x": 888,
+          "y": 1048,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 483,
+          "name": "paddock_left",
+          "class": "mark",
+          "type": "mark",
+          "x": 824,
+          "y": 1048,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 484,
+          "name": "paddock_right",
+          "class": "mark",
+          "type": "mark",
+          "x": 952,
+          "y": 1048,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 485,
+          "name": "paddock_front",
+          "class": "mark",
+          "type": "mark",
+          "x": 888,
+          "y": 1112,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 486,
+          "name": "paddock_back",
+          "class": "mark",
+          "type": "mark",
+          "x": 888,
+          "y": 984,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 487,
+          "name": "paddock_entry",
+          "class": "mark",
+          "type": "mark",
+          "x": 760,
+          "y": 1144,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 488,
+          "name": "paddock_entry_to_centre",
+          "class": "path",
+          "type": "path",
+          "x": 760,
+          "y": 1144,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 128,
+              "y": 0
+            },
+            {
+              "x": 128,
+              "y": -96
+            }
+          ]
+        },
+        {
+          "id": 489,
+          "name": "paddock_centre_to_entry",
+          "class": "path",
+          "type": "path",
+          "x": 888,
+          "y": 1048,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": -128,
+              "y": 0
+            },
+            {
+              "x": -128,
+              "y": 96
+            }
+          ]
+        },
+        {
+          "id": 490,
+          "name": "paddock_left_to_right",
+          "class": "path",
+          "type": "path",
+          "x": 824,
+          "y": 1048,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 128,
+              "y": 0
+            }
+          ]
+        },
+        {
+          "id": 491,
+          "name": "paddock_centre_to_back",
+          "class": "path",
+          "type": "path",
+          "x": 888,
+          "y": 1048,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 0,
+              "y": -64
+            }
+          ]
         }
       ]
     }

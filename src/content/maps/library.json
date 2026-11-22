@@ -9,9 +9,15 @@
   "height": 30,
   "tilewidth": 16,
   "tileheight": 16,
-  "nextlayerid": 5,
-  "nextobjectid": 19,
-  "properties": [{ "name": "placeholder", "type": "bool", "value": true }],
+  "nextlayerid": 6,
+  "nextobjectid": 30,
+  "properties": [
+    {
+      "name": "placeholder",
+      "type": "bool",
+      "value": true
+    }
+  ],
   "tilesets": [
     {
       "firstgid": 1,
@@ -234,8 +240,16 @@
           "width": 16,
           "height": 16,
           "properties": [
-            { "name": "map", "type": "string", "value": "hearthwell" },
-            { "name": "entry", "type": "string", "value": "from_library" }
+            {
+              "name": "map",
+              "type": "string",
+              "value": "hearthwell"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "from_library"
+            }
           ]
         },
         {
@@ -251,7 +265,11 @@
           "height": 0,
           "point": true,
           "properties": [
-            { "name": "kind", "type": "string", "value": "counter-library" }
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "counter-library"
+            }
           ]
         },
         {
@@ -267,7 +285,11 @@
           "height": 0,
           "point": true,
           "properties": [
-            { "name": "kind", "type": "string", "value": "counter-library" }
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "counter-library"
+            }
           ]
         },
         {
@@ -457,6 +479,229 @@
           "width": 0,
           "height": 0,
           "point": true
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "stage",
+      "type": "objectgroup",
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "visible": true,
+      "draworder": "topdown",
+      "objects": [
+        {
+          "id": 19,
+          "name": "door",
+          "class": "mark",
+          "type": "mark",
+          "x": 232,
+          "y": 440,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 20,
+          "name": "centre",
+          "class": "mark",
+          "type": "mark",
+          "x": 264,
+          "y": 264,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 21,
+          "name": "left",
+          "class": "mark",
+          "type": "mark",
+          "x": 248,
+          "y": 264,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 22,
+          "name": "right",
+          "class": "mark",
+          "type": "mark",
+          "x": 328,
+          "y": 248,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 23,
+          "name": "front",
+          "class": "mark",
+          "type": "mark",
+          "x": 232,
+          "y": 392,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 24,
+          "name": "back",
+          "class": "mark",
+          "type": "mark",
+          "x": 264,
+          "y": 136,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 25,
+          "name": "counter",
+          "class": "mark",
+          "type": "mark",
+          "x": 312,
+          "y": 344,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 26,
+          "name": "door_to_centre",
+          "class": "path",
+          "type": "path",
+          "x": 232,
+          "y": 440,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 16,
+              "y": 0
+            },
+            {
+              "x": 16,
+              "y": -32
+            },
+            {
+              "x": 32,
+              "y": -32
+            },
+            {
+              "x": 32,
+              "y": -176
+            }
+          ]
+        },
+        {
+          "id": 27,
+          "name": "centre_to_door",
+          "class": "path",
+          "type": "path",
+          "x": 264,
+          "y": 264,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": -32,
+              "y": 0
+            },
+            {
+              "x": -32,
+              "y": 176
+            }
+          ]
+        },
+        {
+          "id": 28,
+          "name": "left_to_right",
+          "class": "path",
+          "type": "path",
+          "x": 248,
+          "y": 264,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 80,
+              "y": 0
+            },
+            {
+              "x": 80,
+              "y": -16
+            }
+          ]
+        },
+        {
+          "id": 29,
+          "name": "centre_to_counter",
+          "class": "path",
+          "type": "path",
+          "x": 264,
+          "y": 264,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 16,
+              "y": 0
+            },
+            {
+              "x": 16,
+              "y": 48
+            },
+            {
+              "x": 48,
+              "y": 48
+            },
+            {
+              "x": 48,
+              "y": 80
+            }
+          ]
         }
       ]
     }

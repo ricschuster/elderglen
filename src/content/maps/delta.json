@@ -22,8 +22,8 @@
   ],
   "width": 100,
   "height": 70,
-  "nextlayerid": 14,
-  "nextobjectid": 159,
+  "nextlayerid": 15,
+  "nextobjectid": 169,
   "properties": [
     {
       "name": "placeholder",
@@ -5102,6 +5102,212 @@
           "name": "unless",
           "type": "string",
           "value": "festival-lamplight-evening"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "name": "stage",
+      "type": "objectgroup",
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "visible": true,
+      "draworder": "topdown",
+      "objects": [
+        {
+          "id": 159,
+          "name": "dock_centre",
+          "class": "mark",
+          "type": "mark",
+          "x": 648,
+          "y": 680,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 160,
+          "name": "dock_left",
+          "class": "mark",
+          "type": "mark",
+          "x": 648,
+          "y": 696,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 161,
+          "name": "dock_right",
+          "class": "mark",
+          "type": "mark",
+          "x": 712,
+          "y": 680,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 162,
+          "name": "dock_front",
+          "class": "mark",
+          "type": "mark",
+          "x": 648,
+          "y": 744,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 163,
+          "name": "dock_back",
+          "class": "mark",
+          "type": "mark",
+          "x": 680,
+          "y": 680,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 164,
+          "name": "dock_entry",
+          "class": "mark",
+          "type": "mark",
+          "x": 600,
+          "y": 776,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 165,
+          "name": "dock_entry_to_centre",
+          "class": "path",
+          "type": "path",
+          "x": 600,
+          "y": 776,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 48,
+              "y": 0
+            },
+            {
+              "x": 48,
+              "y": -96
+            }
+          ]
+        },
+        {
+          "id": 166,
+          "name": "dock_centre_to_entry",
+          "class": "path",
+          "type": "path",
+          "x": 648,
+          "y": 680,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": -16,
+              "y": 0
+            },
+            {
+              "x": -16,
+              "y": 32
+            },
+            {
+              "x": -32,
+              "y": 32
+            },
+            {
+              "x": -32,
+              "y": 64
+            },
+            {
+              "x": -48,
+              "y": 64
+            },
+            {
+              "x": -48,
+              "y": 96
+            }
+          ]
+        },
+        {
+          "id": 167,
+          "name": "dock_left_to_right",
+          "class": "path",
+          "type": "path",
+          "x": 648,
+          "y": 696,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 64,
+              "y": 0
+            },
+            {
+              "x": 64,
+              "y": -16
+            }
+          ]
+        },
+        {
+          "id": 168,
+          "name": "dock_centre_to_back",
+          "class": "path",
+          "type": "path",
+          "x": 648,
+          "y": 680,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 32,
+              "y": 0
+            }
+          ]
         }
       ]
     }

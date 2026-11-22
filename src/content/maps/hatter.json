@@ -9,8 +9,8 @@
   "height": 27,
   "tilewidth": 16,
   "tileheight": 16,
-  "nextlayerid": 5,
-  "nextobjectid": 24,
+  "nextlayerid": 6,
+  "nextobjectid": 36,
   "properties": [
     {
       "name": "placeholder",
@@ -522,6 +522,246 @@
               "name": "kind",
               "type": "string",
               "value": "dye-pots"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "stage",
+      "type": "objectgroup",
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "visible": true,
+      "draworder": "topdown",
+      "objects": [
+        {
+          "id": 24,
+          "name": "door",
+          "class": "mark",
+          "type": "mark",
+          "x": 200,
+          "y": 392,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 25,
+          "name": "centre",
+          "class": "mark",
+          "type": "mark",
+          "x": 232,
+          "y": 184,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 26,
+          "name": "left",
+          "class": "mark",
+          "type": "mark",
+          "x": 232,
+          "y": 168,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 27,
+          "name": "right",
+          "class": "mark",
+          "type": "mark",
+          "x": 280,
+          "y": 184,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 28,
+          "name": "front",
+          "class": "mark",
+          "type": "mark",
+          "x": 200,
+          "y": 344,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 29,
+          "name": "back",
+          "class": "mark",
+          "type": "mark",
+          "x": 200,
+          "y": 72,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 30,
+          "name": "counter",
+          "class": "mark",
+          "type": "mark",
+          "x": 168,
+          "y": 264,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 31,
+          "name": "machine",
+          "class": "mark",
+          "type": "mark",
+          "x": 72,
+          "y": 328,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 32,
+          "name": "door_to_centre",
+          "class": "path",
+          "type": "path",
+          "x": 200,
+          "y": 392,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 16,
+              "y": 0
+            },
+            {
+              "x": 16,
+              "y": -192
+            },
+            {
+              "x": 32,
+              "y": -192
+            },
+            {
+              "x": 32,
+              "y": -208
+            }
+          ]
+        },
+        {
+          "id": 33,
+          "name": "centre_to_door",
+          "class": "path",
+          "type": "path",
+          "x": 232,
+          "y": 184,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": -16,
+              "y": 0
+            },
+            {
+              "x": -16,
+              "y": 112
+            },
+            {
+              "x": -32,
+              "y": 112
+            },
+            {
+              "x": -32,
+              "y": 208
+            }
+          ]
+        },
+        {
+          "id": 34,
+          "name": "left_to_right",
+          "class": "path",
+          "type": "path",
+          "x": 232,
+          "y": 168,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 48,
+              "y": 0
+            },
+            {
+              "x": 48,
+              "y": 16
+            }
+          ]
+        },
+        {
+          "id": 35,
+          "name": "centre_to_counter",
+          "class": "path",
+          "type": "path",
+          "x": 232,
+          "y": 184,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "polyline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": -32,
+              "y": 0
+            },
+            {
+              "x": -32,
+              "y": 80
+            },
+            {
+              "x": -64,
+              "y": 80
             }
           ]
         }
