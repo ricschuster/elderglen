@@ -3,7 +3,7 @@ import { audio } from "../audio/engine";
 import { isSfx } from "../core/audio";
 import { finishWedding, isWeddingId, weddingEvent } from "../core/courtship";
 import { weddingGuests } from "../core/divorce";
-import { actorName, SceneRun, warningText, worldOf } from "../core/eventrun";
+import { actorName, SceneRun, worldOf } from "../core/eventrun";
 import {
   completeEvent,
   eventById,
@@ -38,14 +38,6 @@ export interface HeartEventData {
   id: string;
   /** A replay from the journal: no Result group, nothing recorded. */
   replay?: boolean;
-  /** Ask first (the warning and "not now"). Off for a replay. */
-  warn?: boolean;
-}
-
-/** Event ids the player said "not now" to, by day. Kept for the session only. */
-const declined = { day: -1, ids: [] as string[] };
-export function declinedToday(day: number): string[] {
-  return declined.day === day ? declined.ids : [];
 }
 
 const SLOTS = [
@@ -94,7 +86,6 @@ export class HeartEventScene extends Phaser.Scene {
   private state!: GameState;
   private event!: HeartEvent;
   private replay = false;
-  private warn = false;
   private run!: SceneRun;
   private token = 0;
   private actors = new Map<string, Actor>();
@@ -127,7 +118,6 @@ export class HeartEventScene extends Phaser.Scene {
         )
       : eventById(data.id)!;
     this.replay = data.replay === true;
-    this.warn = data.warn === true && !this.replay;
     this.run = SceneRun.of(this.event, this.replay, worldOf(this.state));
     this.token = 0;
     this.actors = new Map();
@@ -201,80 +191,7 @@ export class HeartEventScene extends Phaser.Scene {
     this.input.keyboard?.on("keydown-SPACE", go);
     this.input.keyboard?.on("keydown-ESC", () => this.skipAll());
     this.input.on("pointerdown", go);
-    if (this.warn) this.askFirst();
-    else this.step();
-  }
-
-  // ---- The warning and "not now" -------------------------------------------
-
-  private askFirst(): void {
-    const panel = this.ui(this.add.rectangle(480, 270, 620, 220, 0x1d3a2a, 1));
-    panel.setStrokeStyle(2, 0xffffff, 0.8);
-    const text = this.ui(
-      this.add
-        .text(480, 220, warningText(this.event), {
-          fontSize: "22px",
-          color: "#ffffff",
-          align: "center",
-          wordWrap: { width: 560 },
-        })
-        .setOrigin(0.5),
-    );
-    const button = (
-      x: number,
-      label: string,
-      key: string,
-      fn: () => void,
-    ): Phaser.GameObjects.GameObject[] => {
-      const b = this.add
-        .rectangle(x, 320, 220, 44, 0x3f7d3a, 1)
-        .setStrokeStyle(2, 0xffffff, 0.8)
-        .setInteractive({ useHandCursor: true })
-        .on("pointerdown", (...a: unknown[]) => {
-          (a[3] as Phaser.Types.Input.EventData).stopPropagation();
-          fn();
-        });
-      const t = this.add
-        .text(x, 320, `${key}. ${label}`, { fontSize: "20px", color: "#fff" })
-        .setOrigin(0.5);
-      return [this.ui(b), this.ui(t)];
-    };
-    const parts = [
-      panel,
-      text,
-      ...button(390, "Go on", "1", () => accept()),
-      ...button(570, "Not now", "2", () => refuse()),
-    ];
-    // The warning's key listeners must go with the warning, or a later choice
-    // answered with 1 or 2 would also "go on" or "not now" it.
-    const onOne = (): void => {
-      if (!this.over) accept();
-    };
-    const onTwo = (): void => {
-      if (!this.over) refuse();
-    };
-    const dropKeys = (): void => {
-      this.input.keyboard?.off("keydown-ONE", onOne);
-      this.input.keyboard?.off("keydown-TWO", onTwo);
-    };
-    const accept = (): void => {
-      dropKeys();
-      for (const p of parts) p.destroy();
-      this.step();
-    };
-    const refuse = (): void => {
-      dropKeys();
-      // The event waits: nothing is recorded, and it is not offered again today.
-      const day = this.state.day.clock.day;
-      if (declined.day !== day) {
-        declined.day = day;
-        declined.ids = [];
-      }
-      declined.ids.push(this.event.id);
-      this.close();
-    };
-    this.input.keyboard?.on("keydown-ONE", onOne);
-    this.input.keyboard?.on("keydown-TWO", onTwo);
+    this.step();
   }
 
   // ---- Running the commands -------------------------------------------------

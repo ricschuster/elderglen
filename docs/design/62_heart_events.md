@@ -20,10 +20,9 @@ rest is Stardew's shape from the owner's play and memory, unchecked
 2. **It starts when the player walks into the place.** Each event names a
    place, a heart level and optional conditions (season, weather, an earlier
    event, a hall milestone, a flag). It starts when the player steps into the
-   spot, not by menu. **A short warning comes first (dropped 2026-11-21, see the section below)**, so no afternoon is lost
-   without notice, as festivals already do (`14_festival_calendar.md`). The
-   player may say "not now" and the event waits. One event a day, and none on a
-   festival day. The owner says Stardew also warns (checked in play 2026-11-07, SC-45; how it warns is not recorded), so ours matches.
+   spot, not by menu. **There is no warning (owner, 2026-11-21, see the section below)**: the scene starts at once, time
+   is frozen for it, and every seen event can be replayed, so nothing is lost. One event a day, and none on a
+   festival day.
 3. **Events may reward. Talks may not (`18_dialogue.md`).** An event can set a
    story flag, give an item, a recipe or a house keepsake. Choices in an event
    only change how fast hearts rise or which lines follow. They never take

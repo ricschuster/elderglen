@@ -632,17 +632,11 @@ async function runEvent(w, run) {
       );
     // Open it directly, so the scene and its rewards are still checked.
     await w.p.evaluate(
-      (id) =>
-        window.__game.scene
-          .getScene("farm")
-          .open("heart-event", { id, warn: true }),
+      (id) => window.__game.scene.getScene("farm").open("heart-event", { id }),
       e.id,
     );
     await sleepMs(500);
   }
-  await sleepMs(300);
-  // The warning, then go on.
-  await w.p.keyboard.press("Digit1");
   await sleepMs(300);
   if (run.it.shot) await shot(w, `event-${e.id}`);
 

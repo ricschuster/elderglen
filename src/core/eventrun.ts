@@ -8,7 +8,7 @@ import { mapFiles } from "../content/maps";
 
 /**
  * The heart event runner's pure half (`docs/design/62_heart_events.md`, #600
- * slice 2): which event starts on a map, the warning words, and the command
+ * slice 2): which event starts on a map, and the command
  * sequencer. The scene (`HeartEventScene`) draws what the sequencer hands it.
  */
 
@@ -42,8 +42,7 @@ export function placesAt(mapId: string, x: number, y: number): string[] {
 /**
  * The event that starts when the player is in an area, if any: the tile is inside the event's
  * area, and `dueEvents` agrees (window, hearts, conditions, one a day). The scene calls this on
- * entering an area (and when the clock moves on inside one), not every frame. `declined` are ids
- * the player said "not now" to today.
+ * entering an area (and when the clock moves on inside one), not every frame.
  */
 export function eventAtTile(
   g: GameState,
@@ -51,21 +50,12 @@ export function eventAtTile(
   x: number,
   y: number,
   ctx: { day: number; weather: Weather; minute?: number },
-  declined: readonly string[] = [],
 ): HeartEvent | undefined {
   for (const place of placesAt(mapId, x, y)) {
-    const e = dueEvents(g, { ...ctx, place }).find(
-      (d) => !declined.includes(d.id),
-    );
+    const e = dueEvents(g, { ...ctx, place })[0];
     if (e) return e;
   }
   return undefined;
-}
-
-/** The warning shown before an event (a text line, note 62 open point). PLACEHOLDER TEXT. */
-export function warningText(e: HeartEvent): string {
-  const name = villagerById(e.villager)?.name ?? e.villager;
-  return `${name} has something to show you. It will take a few minutes.`;
 }
 
 /** Display name of a scene actor. */

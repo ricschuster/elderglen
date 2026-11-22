@@ -1,5 +1,5 @@
 // Heart events, the parts the sweep does not cover (#951, PLAYCHECKS "Heart events"):
-// the warning and "not now", an event waiting a day, sprite movement in a scene, a
+// an area entry starting the scene at once (no warning), a seen event not starting again, sprite movement in a scene, a
 // replay giving nothing, and how many events move anyone at all.
 // Run: npm run dev, then `BASE_URL=http://localhost:5173/ node scripts/playtest/heart-extras.mjs`.
 // One browser page. Exit code 1 when a check fails.
@@ -133,53 +133,27 @@ const seen = (id) =>
 const day = () =>
   w.p.evaluate(() => window.__game.registry.get("state").day.clock.day);
 
-// ---- the warning, "not now", and waiting
+// ---- entering the area starts the scene at once, no warning (note 62, point 7)
 const e = data.find((x) => x.id === "odette-store-2");
 const mins = await stage(e, 3);
 await walkTo(e.place_.x, e.place_.y);
 ok(await wait(inEvent, 3000), "stepping to the place opens the event scene");
-const hasWarn = await w.p.evaluate(() => {
+const hasPanel = await w.p.evaluate(() => {
   const sc = window.__game.scene.getScene("heart-event");
   return sc.children.list.some(
-    (c) => c.type === "Text" && /Go on|Not now/.test(c.text),
+    (c) =>
+      c.type === "Text" && /Go on|Not now|has something to show/.test(c.text),
   );
 });
-ok(hasWarn, "a warning with Go on and Not now comes first");
-await w.p.keyboard.press("Digit2");
+ok(!hasPanel, "no Go on / Not now panel: the scene runs at once");
 await sleepMs(600);
-ok(!(await inEvent()), "Not now closes the scene");
-ok(!(await seen(e.id)), "Not now does not record the event as seen");
-const d0 = await w.bot.dbg();
-// Step away and back the same day: it must not come again (declinedToday).
-await walkTo(Math.max(1, e.place_.x - 6), e.place_.y);
-await sleepMs(500);
-await walkTo(e.place_.x, e.place_.y);
-await sleepMs(1500);
-ok(!(await inEvent()), "after Not now it is not offered again the same day");
-// Next day it waits for the player.
-const d1 = await day();
-await w.p.evaluate((x) => window.farmState(x), {
-  day: d1 + 1,
-  minutes: mins,
-  weather: "sunny",
-  map: e.stage_.map,
-  entry: entryOf(e.stage_.map),
-});
-await sleepMs(1000);
-for (let i = 0; i < 3; i++) {
-  if (!(await scenes()).includes("greencoat")) break;
-  await w.p.keyboard.press("Escape");
-  await sleepMs(400);
-}
-await walkTo(e.place_.x, e.place_.y);
 ok(
-  await wait(inEvent, 3000),
-  "the declined event is offered again the next day",
+  await w.p.evaluate(
+    () => !!window.__game.scene.getScene("heart-event").run?.current(),
+  ),
+  "the scene is already running its first command",
 );
-
 // ---- movement in a scene that has a walk
-await w.p.keyboard.press("Digit1");
-await sleepMs(400);
 const sampleActors = () =>
   w.p.evaluate(() => {
     const sc = window.__game.scene.getScene("heart-event");
@@ -204,6 +178,22 @@ log(
   `${e.id}: actors seen ${[...track.keys()].join(", ")}; moved: ${moved.join(", ") || "none"}`,
 );
 ok(await seen(e.id), `${e.id} is recorded as seen after the run`);
+
+// ---- a seen event does not start again: next day, same place and hearts
+{
+  const d = await day();
+  await w.p.evaluate((x) => window.farmState(x), {
+    day: d + 1,
+    minutes: mins,
+    weather: "sunny",
+    map: e.stage_.map,
+    entry: entryOf(e.stage_.map),
+  });
+  await sleepMs(1000);
+  await walkTo(e.place_.x, e.place_.y);
+  await sleepMs(1500);
+  ok(!(await inEvent()), "a seen event does not start again on a later entry");
+}
 
 // ---- one a day: a second event the same day does not start
 const e2 = data.find(
@@ -264,7 +254,6 @@ if (e2) {
           return {
             id: sc.event?.id,
             replay: sc.replay,
-            warn: sc.warn,
             pos: sc.run?.position,
             cmd: sc.run?.current()?.cmd,
             day: g.day.clock.day,

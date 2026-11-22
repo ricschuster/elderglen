@@ -3,7 +3,6 @@ import {
   SceneRun,
   eventAtTile,
   placesAt,
-  warningText,
   type RunWorld,
 } from "../src/core/eventrun";
 import {
@@ -168,15 +167,6 @@ describe("eventAtTile", () => {
     expect(eventAtTile(g, "general-store", 5, 5, ctx)?.id).toBe(e.id);
     expect(eventAtTile(g, "hearthwell", 5, 5, ctx)).toBeUndefined();
   });
-  it("not now: a declined event is not offered again, and is not recorded", () => {
-    const g = newGame();
-    setHearts(g, "odette", 2);
-    expect(
-      eventAtTile(g, "general-store", 5, 5, ctx, ["odette-store-2"]),
-    ).toBeUndefined();
-    expect(g.heartEvents.seen("odette-store-2")).toBe(false);
-    expect(eventAtTile(g, "general-store", 5, 5, ctx)).toBeDefined();
-  });
   it("is seen only on completion, then never again", () => {
     const g = newGame();
     setHearts(g, "odette", 2);
@@ -195,8 +185,5 @@ describe("eventAtTile", () => {
     const e = eventAtTile(g, "general-store", 5, 5, ctx)!;
     completeEvent(g, e, 3);
     expect(eventAtTile(g, "general-store", 5, 5, ctx)).toBeUndefined();
-  });
-  it("the warning names the person", () => {
-    expect(warningText(eventById("odette-store-2")!)).toContain("Odette");
   });
 });

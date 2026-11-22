@@ -26,7 +26,6 @@ import {
 } from "../core/areas";
 
 import { eventAtTile, placesAt } from "../core/eventrun";
-import { declinedToday } from "./HeartEventScene";
 import { huntOffer, type HuntState } from "../core/seedhunt";
 import {
   awardIcePrize,
@@ -1939,9 +1938,9 @@ export class FarmScene extends Phaser.Scene {
 
   /**
    * Walking into an event's area, or into its building, starts its scene (note 62, point 6). The
-   * scene asks first, and "not now" lets it wait. The area is tested when the tile changes, so an
-   * event is offered once on entry; the clock moving on inside an area asks again, for a window
-   * that opens while the player stands there. Declined events are skipped for the day.
+   * scene starts at once, with no warning (owner decision 2026-11-21). The area is tested when the
+   * tile changes, so an event starts once on entry; the clock moving on inside an area checks
+   * again, for a window that opens while the player stands there. A seen event is never due.
    */
   private checkHeartEvent(): void {
     if (isFestivalMap(this.mapId) || this.state.animals.mounted) return;
@@ -1957,15 +1956,12 @@ export class FarmScene extends Phaser.Scene {
     if (key === this.eventTile) return;
     this.eventTile = key;
     const day = this.state.day.clock.day;
-    const event = eventAtTile(
-      this.state,
-      this.mapId,
-      t.x,
-      t.y,
-      { day, weather: this.state.weather, minute },
-      declinedToday(day),
-    );
-    if (event) this.open("heart-event", { id: event.id, warn: true });
+    const event = eventAtTile(this.state, this.mapId, t.x, t.y, {
+      day,
+      weather: this.state.weather,
+      minute,
+    });
+    if (event) this.open("heart-event", { id: event.id });
   }
 
   /** Open a screen over the farm. The farm is paused until it closes. */

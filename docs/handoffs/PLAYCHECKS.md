@@ -63,13 +63,13 @@ Headless run 2026-11-21, build 145d83a6 plus script fixes (`forest.mjs`, `secret
 
 Headless run 2026-11-21, build 89e72819 plus script fixes (`playtest:sweep` with `KIND=event`, 6 workers, 17 min; the same with `BRANCHES=1`, 16 min; new `heart-extras.mjs`, 1 page, 60 s; unit tests 90).
 
-- pass: Every event opens by walking to its place inside its window, shows the warning, plays to its end, gives its reward, raises its flag, is recorded as seen and does not repeat the next day: 150 of 150 (`sweep.mjs`).
+- pass: Every event opens by walking to its place inside its window, starts at once, plays to its end, gives its reward, raises its flag, is recorded as seen and does not repeat the next day: 150 of 150 (`sweep.mjs`).
 - pass: Every answer of every choice: 147 branch runs, 147 pass.
-- pass: Warning and "not now": the scene opens with Go on and Not now; Not now closes it, records nothing, does not offer it again the same day, and offers it again the next day (`heart-extras.mjs`).
+- Warning and "not now": removed by owner decision 2026-11-21 (note 62, point 7). Entering the area starts the scene at once, with no panel; a seen event does not start again (`heart-extras.mjs`).
 - pass: One event a day: a second event the same day does not start. Festival days and weather and season conditions are covered by unit tests (`heartevents.test.ts`), not run in a browser.
 - pass: A replay (opened by code) gives no reward and is not recorded (`heart-extras.mjs`).
 - fail #1002: No sprite moves in any of the 150 scenes. Events only `place` people and `pan`; `walk`, `face` and `pose` are never used. Needs design (stage marks and paths per map, note 62).
-- fail #1003: The journal has no replay list (`seenIds()` is never called), and the warning is a Go on / Not now panel, not the mark over the person with a chime that the owner chose on 2026-11-12.
+- fail #1003: Part 2 (the warning) is closed by the owner decision of 2026-11-21 (no warning). Part 1 is open until build step 5: the journal has no replay list (`seenIds()` is never called).
 - owner: How the scenes look and read (placeholder room, placeholder text, #950), and the reward feel.
 - Found and fixed: `sweep.mjs` set the clock to the window start plus 2 minutes, which the game refuses (multiples of 10 only), so every event failed to start; it now rounds up to the next 10.
 
