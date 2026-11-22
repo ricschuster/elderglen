@@ -68,6 +68,7 @@ Headless run 2026-11-21, build 89e72819 plus script fixes (`playtest:sweep` with
 - Warning and "not now": removed by owner decision 2026-11-21 (note 62, point 7). Entering the area starts the scene at once, with no panel; a seen event does not start again (`heart-extras.mjs`).
 - pass: One event a day: a second event the same day does not start. Festival days and weather and season conditions are covered by unit tests (`heartevents.test.ts`), not run in a browser.
 - pass: A replay (opened by code) gives no reward and is not recorded (`heart-extras.mjs`).
+- owner: Re-run needed. Steps 1 to 4 of note 62 (real map, enter-to-start, no warning) came after the 150-of-150 run above; the re-run froze the machine (2026-11-21) and gave no result. Cap the sweep first (handoff 2026-11-21l).
 - fail #1002: No sprite moves in any of the 150 scenes. Events only `place` people and `pan`; `walk`, `face` and `pose` are never used. Needs design (stage marks and paths per map, note 62).
 - fail #1003: Part 2 (the warning) is closed by the owner decision of 2026-11-21 (no warning). Part 1 is open until build step 5: the journal has no replay list (`seenIds()` is never called).
 - owner: How the scenes look and read (placeholder room, placeholder text, #950), and the reward feel.
