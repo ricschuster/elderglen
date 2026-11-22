@@ -32,12 +32,14 @@ const data = await probe.p.evaluate(async () => {
   const fest = await import("/src/core/festivals.ts");
   const ev = await import("/src/core/heartevents.ts");
   const vil = await import("/src/core/villagers.ts");
+  const stg = (await import("/src/content/heart-event-stages.json")).default;
   const bun = await import("/src/core/bundles.ts");
   return {
     festivals: fest.FESTIVALS,
     events: ev.HEART_EVENTS.map((e) => ({
       ...e,
       place_: vil.resolvePlace(e.place),
+      stage_: stg.places[e.place],
     })),
     rooms: bun.ROOMS.map((r) => r.id),
   };
@@ -570,6 +572,7 @@ async function runEvent(w, run) {
   const place = e.place_;
   if (!place || !place.map) return run.fail(`place ${e.place} has no map`);
   const c = e.conditions ?? {};
+  const stageMap = e.stage_?.map ?? place.map;
   const others = data.events
     .filter(
       (x) =>
@@ -590,8 +593,10 @@ async function runEvent(w, run) {
     flags: c.flags ?? [],
     eventsSeen: [...new Set([...others, ...(c.after ?? [])])],
     hallBundles: c.bundle ? [c.bundle] : [],
-    map: place.map,
-    entry: entryOf(place.map),
+    // The event starts on entering its area (note 62, point 6): an interior is entered at its door,
+    // an outdoor area is walked into below.
+    map: stageMap,
+    entry: entryOf(stageMap),
   };
   await patch(w, run, base);
   const got = await w.p.evaluate(
@@ -600,7 +605,7 @@ async function runEvent(w, run) {
   );
   if (got < e.hearts) run.fail(`hearts capped at ${got} (needs ${e.hearts})`);
   const dbg = await w.bot.dbg();
-  if (dbg.map !== place.map) run.fail(`on ${dbg.map}, wanted ${place.map}`);
+  if (dbg.map !== stageMap) run.fail(`on ${dbg.map}, wanted ${stageMap}`);
 
   const before = await w.bot.snap();
 

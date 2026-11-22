@@ -1131,7 +1131,7 @@ const STAGE_LAYER = "stage";
 
 function stageObject(
   json: TiledMapJson,
-  cls: "mark" | "path",
+  cls: "mark" | "path" | "event-area",
   name: string,
 ): TiledObject | undefined {
   for (const layer of json.layers) {
@@ -1181,4 +1181,26 @@ export function stageNames(json: TiledMapJson): {
     }
   }
   return out;
+}
+
+/**
+ * The trigger zone of an event place (note 62, point 6): a rectangle `event-area` object named
+ * for the place id, in the stage layer. Returned as inclusive tile bounds, or undefined when the
+ * map has none.
+ */
+export function areaRect(
+  json: TiledMapJson,
+  name: string,
+): { x0: number; y0: number; x1: number; y1: number } | undefined {
+  const o = stageObject(json, "event-area", name);
+  if (!o) return undefined;
+  const size = json.tilewidth;
+  const x0 = Math.floor(o.x / size);
+  const y0 = Math.floor(o.y / size);
+  return {
+    x0,
+    y0,
+    x1: x0 + Math.max(1, Math.round((o.width ?? size) / size)) - 1,
+    y1: y0 + Math.max(1, Math.round((o.height ?? size) / size)) - 1,
+  };
 }

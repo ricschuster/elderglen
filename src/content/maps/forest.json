@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 17,
-  "nextobjectid": 492,
+  "nextobjectid": 496,
   "properties": [
     {
       "name": "placeholder",
@@ -15399,6 +15399,54 @@
               "y": -64
             }
           ]
+        },
+        {
+          "id": 492,
+          "name": "forest:camp",
+          "class": "event-area",
+          "type": "event-area",
+          "x": 1104,
+          "y": 528,
+          "width": 304,
+          "height": 272,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 493,
+          "name": "forest:fairy-ring",
+          "class": "event-area",
+          "type": "event-area",
+          "x": 304,
+          "y": 368,
+          "width": 288,
+          "height": 272,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 494,
+          "name": "forest:hermit-garden",
+          "class": "event-area",
+          "type": "event-area",
+          "x": 176,
+          "y": 272,
+          "width": 304,
+          "height": 272,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 495,
+          "name": "forest:paddock",
+          "class": "event-area",
+          "type": "event-area",
+          "x": 704,
+          "y": 928,
+          "width": 304,
+          "height": 272,
+          "rotation": 0,
+          "visible": true
         }
       ]
     }

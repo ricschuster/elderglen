@@ -23,7 +23,7 @@
   "width": 50,
   "height": 40,
   "nextlayerid": 6,
-  "nextobjectid": 36,
+  "nextobjectid": 38,
   "properties": [
     {
       "name": "placeholder",
@@ -944,6 +944,30 @@
               "y": -64
             }
           ]
+        },
+        {
+          "id": 36,
+          "name": "beach:dunes",
+          "class": "event-area",
+          "type": "event-area",
+          "x": 32,
+          "y": 96,
+          "width": 240,
+          "height": 272,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 37,
+          "name": "beach:shore",
+          "class": "event-area",
+          "type": "event-area",
+          "x": 32,
+          "y": 368,
+          "width": 224,
+          "height": 272,
+          "rotation": 0,
+          "visible": true
         }
       ]
     }

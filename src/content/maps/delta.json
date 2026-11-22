@@ -23,7 +23,7 @@
   "width": 100,
   "height": 70,
   "nextlayerid": 15,
-  "nextobjectid": 169,
+  "nextobjectid": 170,
   "properties": [
     {
       "name": "placeholder",
@@ -5308,6 +5308,18 @@
               "y": 0
             }
           ]
+        },
+        {
+          "id": 169,
+          "name": "delta:dock",
+          "class": "event-area",
+          "type": "event-area",
+          "x": 544,
+          "y": 592,
+          "width": 224,
+          "height": 240,
+          "rotation": 0,
+          "visible": true
         }
       ]
     }

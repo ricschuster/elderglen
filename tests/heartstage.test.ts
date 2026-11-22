@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { HEART_EVENTS, PLAYER, type Cmd } from "../src/core/heartevents";
 import { weddingEvent } from "../src/core/courtship";
-import { markTile, pathTiles, stageNames } from "../src/core/map";
+import { areaRect, markTile, pathTiles, stageNames } from "../src/core/map";
+import { inArea, placesAt } from "../src/core/eventrun";
+import { presenceOverlaps } from "../src/core/heartevents";
+import { resolvePlace } from "../src/core/villagers";
 import { mapFiles, maps } from "../src/content/maps";
 import stages from "../src/content/heart-event-stages.json";
 import villagers from "../src/content/villagers.json";
@@ -13,7 +16,7 @@ import villagers from "../src/content/villagers.json";
  * only says which map each place plays on. The wedding scene is built from the id, so it is
  * checked here too.
  */
-const table = stages.places as Record<string, { map: string }>;
+const table = stages.places as Record<string, { map: string; area: string }>;
 const PLACES = villagers.places as Record<string, { interior?: string }>;
 const AREAS = villagers.areas as Record<string, { map: string | null }>;
 
@@ -106,5 +109,73 @@ describe("heart event stage marks and paths", () => {
       }
     }
     expect(bad).toEqual([]);
+  });
+});
+
+/** Build step 3 of note 62 (point 6): the trigger is entering an area or a building. */
+describe("heart event areas", () => {
+  const areaOf = (place: string) => {
+    const row = table[place]!;
+    return row.area === "interior"
+      ? undefined
+      : areaRect(mapFiles[row.map]!, row.area);
+  };
+
+  it("every event place has an area: a zone on its map, or the whole interior", () => {
+    for (const e of HEART_EVENTS) {
+      const row = table[e.place]!;
+      expect(row.area, e.place).toBeTruthy();
+      if (row.area !== "interior") {
+        expect(row.area, e.place).toBe(e.place);
+        expect(areaOf(e.place), `${e.place} zone`).toBeDefined();
+      }
+    }
+  });
+
+  it("an interior area is only used for an interior map", () => {
+    for (const [place, row] of Object.entries(table)) {
+      const sharing = Object.entries(table).filter(
+        ([, r]) => r.map === row.map,
+      );
+      if (row.area === "interior") {
+        expect(sharing.length, `${place} shares ${row.map}`).toBe(1);
+        expect(PLACES[place]?.interior ?? "mine", place).toBeTruthy();
+      } else expect(areaOf(place), place).toBeDefined();
+    }
+  });
+
+  it("the area contains the place's marks and paths", () => {
+    const bad: string[] = [];
+    for (const [place, row] of Object.entries(table)) {
+      if (row.area === "interior") continue;
+      const json = mapFiles[row.map]!;
+      const pre = place.split(":")[1]!.replace(/-/g, "_") + "_";
+      const { marks, paths } = stageNames(json);
+      const tiles = [
+        ...marks
+          .filter((n) => n.startsWith(pre))
+          .map((n) => markTile(json, n)!),
+        ...paths
+          .filter((n) => n.startsWith(pre))
+          .flatMap((n) => pathTiles(json, n)!),
+      ];
+      for (const t of tiles)
+        if (!inArea(place, row.map, t.x, t.y))
+          bad.push(`${place}: ${t.x},${t.y} is outside its area`);
+    }
+    expect(bad).toEqual([]);
+  });
+
+  it("the person's usual spot is inside the area, and the route holds them there in the window", () => {
+    for (const e of HEART_EVENTS) {
+      const row = table[e.place]!;
+      // An interior's whole map is the area; its place tile is the door outside.
+      if (row.area === "interior") continue;
+      const spot = resolvePlace(e.place)!;
+      expect(spot.map, e.id).toBe(row.map);
+      expect(inArea(e.place, row.map, spot.x, spot.y), e.id).toBe(true);
+      expect(placesAt(row.map, spot.x, spot.y), e.id).toContain(e.place);
+      expect(presenceOverlaps(e), e.id).toBe(true);
+    }
   });
 });

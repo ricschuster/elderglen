@@ -23,7 +23,7 @@
   "width": 120,
   "height": 110,
   "nextlayerid": 23,
-  "nextobjectid": 191,
+  "nextobjectid": 196,
   "properties": [
     {
       "name": "placeholder",
@@ -12069,6 +12069,66 @@
               "y": -64
             }
           ]
+        },
+        {
+          "id": 191,
+          "name": "hw:burrow-garden",
+          "class": "event-area",
+          "type": "event-area",
+          "x": 976,
+          "y": 368,
+          "width": 272,
+          "height": 272,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 192,
+          "name": "hw:green",
+          "class": "event-area",
+          "type": "event-area",
+          "x": 1232,
+          "y": 1328,
+          "width": 304,
+          "height": 272,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 193,
+          "name": "hw:outpost-yard",
+          "class": "event-area",
+          "type": "event-area",
+          "x": 1232,
+          "y": 176,
+          "width": 304,
+          "height": 240,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 194,
+          "name": "hw:river-path",
+          "class": "event-area",
+          "type": "event-area",
+          "x": 688,
+          "y": 608,
+          "width": 272,
+          "height": 256,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 195,
+          "name": "hw:square",
+          "class": "event-area",
+          "type": "event-area",
+          "x": 976,
+          "y": 880,
+          "width": 304,
+          "height": 272,
+          "rotation": 0,
+          "visible": true
         }
       ]
     }

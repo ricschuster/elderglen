@@ -23,7 +23,7 @@
   "width": 60,
   "height": 44,
   "nextlayerid": 7,
-  "nextobjectid": 101,
+  "nextobjectid": 103,
   "properties": [
     {
       "name": "placeholder",
@@ -2117,6 +2117,30 @@
               "y": -64
             }
           ]
+        },
+        {
+          "id": 101,
+          "name": "quarry:bridge",
+          "class": "event-area",
+          "type": "event-area",
+          "x": 544,
+          "y": 288,
+          "width": 304,
+          "height": 240,
+          "rotation": 0,
+          "visible": true
+        },
+        {
+          "id": 102,
+          "name": "quarry:yard",
+          "class": "event-area",
+          "type": "event-area",
+          "x": 304,
+          "y": 208,
+          "width": 304,
+          "height": 272,
+          "rotation": 0,
+          "visible": true
         }
       ]
     }

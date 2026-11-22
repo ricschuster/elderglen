@@ -1,8 +1,10 @@
 import { dueEvents, playable, type Cmd, type HeartEvent } from "./heartevents";
 import type { GameState } from "./save";
-import { resolvePlace, villagerById } from "./villagers";
+import { areaRect } from "./map";
+import { villagerById } from "./villagers";
 import type { Weather } from "./weather";
-import data from "../content/villagers.json";
+import stageData from "../content/heart-event-stages.json";
+import { mapFiles } from "../content/maps";
 
 /**
  * The heart event runner's pure half (`docs/design/62_heart_events.md`, #600
@@ -10,32 +12,38 @@ import data from "../content/villagers.json";
  * sequencer. The scene (`HeartEventScene`) draws what the sequencer hands it.
  */
 
-/** How near (in tiles) the player must be to a place's tile to step into it. PLACEHOLDER: the place tiles are partly stand-ins. */
-export const PLACE_RADIUS = 2;
+/** One stage-table row: the map a place plays on and its trigger area (note 62, point 6). */
+interface StageRow {
+  map: string;
+  area: string;
+}
+const STAGE_ROWS = stageData.places as Record<string, StageRow>;
 
-/** Place ids (`hw:store`) the tile is within reach of, on this map. */
-export function placesAt(
+/** Whether a tile is inside a place's area on this map: the whole map for an interior, else the zone. */
+export function inArea(
+  place: string,
   mapId: string,
   x: number,
   y: number,
-  radius = PLACE_RADIUS,
-): string[] {
-  return Object.keys(data.places).filter((p) => {
-    const w = resolvePlace(p);
-    return (
-      w !== undefined &&
-      !w.transit &&
-      w.map === mapId &&
-      Math.abs(w.x - x) <= radius &&
-      Math.abs(w.y - y) <= radius
-    );
-  });
+): boolean {
+  const row = STAGE_ROWS[place];
+  if (!row || row.map !== mapId) return false;
+  if (row.area === "interior") return true;
+  const json = mapFiles[mapId];
+  const r = json ? areaRect(json, row.area) : undefined;
+  return !!r && x >= r.x0 && x <= r.x1 && y >= r.y0 && y <= r.y1;
+}
+
+/** Place ids (`hw:store`) whose area holds the tile, on this map. */
+export function placesAt(mapId: string, x: number, y: number): string[] {
+  return Object.keys(STAGE_ROWS).filter((p) => inArea(p, mapId, x, y));
 }
 
 /**
- * The event that starts when the player steps to a tile, if any: the tile is
- * near the event's place, and `dueEvents` agrees. `declined` are ids the player
- * said "not now" to today.
+ * The event that starts when the player is in an area, if any: the tile is inside the event's
+ * area, and `dueEvents` agrees (window, hearts, conditions, one a day). The scene calls this on
+ * entering an area (and when the clock moves on inside one), not every frame. `declined` are ids
+ * the player said "not now" to today.
  */
 export function eventAtTile(
   g: GameState,

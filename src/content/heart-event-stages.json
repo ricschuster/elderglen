@@ -1,77 +1,101 @@
 {
-  "_note": "Per event place: the real map its scene plays on (note 62). Scenes name that map's stage marks and paths directly.",
+  "_note": "Per event place: the real map its scene plays on, and its trigger area (note 62). `area` is a place id naming an `event-area` zone in the map's stage layer, or \"interior\" when the whole map is the area (entering the building starts the event). Scenes name that map's stage marks and paths directly.",
   "places": {
     "beach:dunes": {
-      "map": "cove"
+      "map": "cove",
+      "area": "beach:dunes"
     },
     "beach:shore": {
-      "map": "cove"
+      "map": "cove",
+      "area": "beach:shore"
     },
     "delta:dock": {
-      "map": "delta"
+      "map": "delta",
+      "area": "delta:dock"
     },
     "forest:camp": {
-      "map": "forest"
+      "map": "forest",
+      "area": "forest:camp"
     },
     "forest:fairy-ring": {
-      "map": "forest"
+      "map": "forest",
+      "area": "forest:fairy-ring"
     },
     "forest:hermit-garden": {
-      "map": "forest"
+      "map": "forest",
+      "area": "forest:hermit-garden"
     },
     "forest:paddock": {
-      "map": "forest"
+      "map": "forest",
+      "area": "forest:paddock"
     },
     "forest:hermit-tower": {
-      "map": "hermit-tower"
+      "map": "hermit-tower",
+      "area": "interior"
     },
     "hw:burrow-garden": {
-      "map": "hearthwell"
+      "map": "hearthwell",
+      "area": "hw:burrow-garden"
     },
     "hw:green": {
-      "map": "hearthwell"
+      "map": "hearthwell",
+      "area": "hw:green"
     },
     "hw:outpost-yard": {
-      "map": "hearthwell"
+      "map": "hearthwell",
+      "area": "hw:outpost-yard"
     },
     "hw:river-path": {
-      "map": "hearthwell"
+      "map": "hearthwell",
+      "area": "hw:river-path"
     },
     "hw:square": {
-      "map": "hearthwell"
+      "map": "hearthwell",
+      "area": "hw:square"
     },
     "hw:hatter": {
-      "map": "hatter"
+      "map": "hatter",
+      "area": "interior"
     },
     "hw:healer": {
-      "map": "healer"
+      "map": "healer",
+      "area": "interior"
     },
     "hw:inn": {
-      "map": "inn"
+      "map": "inn",
+      "area": "interior"
     },
     "hw:library": {
-      "map": "library"
+      "map": "library",
+      "area": "interior"
     },
     "hw:sawmill": {
-      "map": "sawmill"
+      "map": "sawmill",
+      "area": "interior"
     },
     "hw:smithy": {
-      "map": "smithy"
+      "map": "smithy",
+      "area": "interior"
     },
     "hw:store": {
-      "map": "general-store"
+      "map": "general-store",
+      "area": "interior"
     },
     "mines:hall": {
-      "map": "mine"
+      "map": "mine",
+      "area": "interior"
     },
     "mtn:forge": {
-      "map": "forge"
+      "map": "forge",
+      "area": "interior"
     },
     "quarry:bridge": {
-      "map": "quarry"
+      "map": "quarry",
+      "area": "quarry:bridge"
     },
     "quarry:yard": {
-      "map": "quarry"
+      "map": "quarry",
+      "area": "quarry:yard"
     }
   }
 }
