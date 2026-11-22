@@ -54,12 +54,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "camp_entry"
         },
         {
           "cmd": "place",
           "who": "rundahl",
-          "mark": "stage"
+          "mark": "camp_centre"
         },
         {
           "cmd": "fade",
@@ -167,12 +167,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "camp_entry"
         },
         {
           "cmd": "place",
           "who": "rundahl",
-          "mark": "stage"
+          "mark": "camp_centre"
         },
         {
           "cmd": "fade",
@@ -279,12 +279,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "camp_entry"
         },
         {
           "cmd": "place",
           "who": "rundahl",
-          "mark": "stage"
+          "mark": "camp_centre"
         },
         {
           "cmd": "fade",
@@ -392,12 +392,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "camp_entry"
         },
         {
           "cmd": "place",
           "who": "rundahl",
-          "mark": "stage"
+          "mark": "camp_centre"
         },
         {
           "cmd": "fade",
@@ -504,12 +504,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "camp_entry"
         },
         {
           "cmd": "place",
           "who": "rundahl",
-          "mark": "stage"
+          "mark": "camp_centre"
         },
         {
           "cmd": "fade",

@@ -59,7 +59,7 @@
         {
           "cmd": "place",
           "who": "dunmar",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",
@@ -175,7 +175,7 @@
         {
           "cmd": "place",
           "who": "dunmar",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",
@@ -288,7 +288,7 @@
         {
           "cmd": "place",
           "who": "dunmar",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",
@@ -401,7 +401,7 @@
         {
           "cmd": "place",
           "who": "dunmar",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",
@@ -513,7 +513,7 @@
         {
           "cmd": "place",
           "who": "dunmar",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",

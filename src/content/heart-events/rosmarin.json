@@ -45,12 +45,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "ring_edge"
+          "mark": "fairy_ring_right"
         },
         {
           "cmd": "place",
           "who": "rosmarin",
-          "mark": "ring_centre"
+          "mark": "fairy_ring_centre"
         },
         {
           "cmd": "say",
@@ -101,12 +101,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "hermit_garden_entry"
         },
         {
           "cmd": "place",
           "who": "rosmarin",
-          "mark": "stage"
+          "mark": "hermit_garden_centre"
         },
         {
           "cmd": "fade",
@@ -219,7 +219,7 @@
         {
           "cmd": "place",
           "who": "rosmarin",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",
@@ -331,7 +331,7 @@
         {
           "cmd": "place",
           "who": "rosmarin",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",
@@ -443,7 +443,7 @@
         {
           "cmd": "place",
           "who": "rosmarin",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",

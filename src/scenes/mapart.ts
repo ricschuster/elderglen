@@ -192,6 +192,29 @@ export function drawMapArt(
 }
 
 /**
+ * Paint a map beside one already on screen (the heart event stage draws its own map over the
+ * paused farm). The farm's canvas textures stay, and `release` removes the ones made here.
+ */
+export function drawMapArtBeside(
+  scene: Phaser.Scene,
+  options: MapArtOptions,
+  passes: readonly MapArtPass[],
+): { art: MapLayerArt[]; release: () => void } {
+  const farm = stale;
+  stale = [];
+  const art = drawMapArt(scene, options, passes);
+  const mine = stale;
+  stale = farm;
+  return {
+    art,
+    release: () => {
+      for (const key of mine)
+        if (scene.textures.exists(key)) scene.textures.remove(key);
+    },
+  };
+}
+
+/**
  * Stamp the old one picture tile, for a pass that has not painted an id yet. `tiles` is
  * the placeholder tileset texture key.
  */

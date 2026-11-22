@@ -221,6 +221,9 @@ export function weddingMark(g: Pick<GameState, "marriage" | "day">): string {
 export const weddingId = (spouse: string): string => `wedding-${spouse}`;
 export const isWeddingId = (id: string): boolean => id.startsWith("wedding-");
 
+/** The real marks on the green the guests stand on, in turn (the stage layer of `hearthwell`). */
+const GUEST_MARKS = ["green_front", "green_back", "green_centre"];
+
 /**
  * The wedding as a scene for the heart event runner (note 62, note 84): the
  * hat-maker's ledger reading is placeholder text on the festival green, every
@@ -233,12 +236,12 @@ export function weddingEvent(
   const name = nameOf(spouse);
   const scene: Cmd[] = [
     { cmd: "fade", to: "black" },
-    { cmd: "place", who: "player", mark: "green-left" },
-    { cmd: "place", who: spouse, mark: "green-right" },
+    { cmd: "place", who: "player", mark: "green_left" },
+    { cmd: "place", who: spouse, mark: "green_right" },
     ...guests.map((who, i): Cmd => ({
       cmd: "place",
       who,
-      mark: `green-guest-${i + 1}`,
+      mark: GUEST_MARKS[i % GUEST_MARKS.length]!,
     })),
     { cmd: "fade", to: "clear" },
     {

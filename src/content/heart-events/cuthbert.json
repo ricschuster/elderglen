@@ -54,12 +54,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "outpost_yard_entry"
         },
         {
           "cmd": "place",
           "who": "cuthbert",
-          "mark": "stage"
+          "mark": "outpost_yard_centre"
         },
         {
           "cmd": "fade",
@@ -167,12 +167,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "outpost_yard_entry"
         },
         {
           "cmd": "place",
           "who": "cuthbert",
-          "mark": "stage"
+          "mark": "outpost_yard_centre"
         },
         {
           "cmd": "fade",
@@ -279,12 +279,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "square_entry"
         },
         {
           "cmd": "place",
           "who": "cuthbert",
-          "mark": "stage"
+          "mark": "square_centre"
         },
         {
           "cmd": "fade",
@@ -387,12 +387,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "square_entry"
         },
         {
           "cmd": "place",
           "who": "cuthbert",
-          "mark": "stage"
+          "mark": "square_centre"
         },
         {
           "cmd": "fade",
@@ -499,12 +499,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "square_entry"
         },
         {
           "cmd": "place",
           "who": "cuthbert",
-          "mark": "stage"
+          "mark": "square_centre"
         },
         {
           "cmd": "fade",

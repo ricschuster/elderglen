@@ -57,12 +57,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "green_entry"
         },
         {
           "cmd": "place",
           "who": "fitch",
-          "mark": "stage"
+          "mark": "green_centre"
         },
         {
           "cmd": "fade",
@@ -173,12 +173,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "green_entry"
         },
         {
           "cmd": "place",
           "who": "fitch",
-          "mark": "stage"
+          "mark": "green_centre"
         },
         {
           "cmd": "fade",
@@ -288,12 +288,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "green_entry"
         },
         {
           "cmd": "place",
           "who": "fitch",
-          "mark": "stage"
+          "mark": "green_centre"
         },
         {
           "cmd": "fade",
@@ -404,12 +404,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "green_entry"
         },
         {
           "cmd": "place",
           "who": "fitch",
-          "mark": "stage"
+          "mark": "green_centre"
         },
         {
           "cmd": "fade",
@@ -519,12 +519,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "green_entry"
         },
         {
           "cmd": "place",
           "who": "fitch",
-          "mark": "stage"
+          "mark": "green_centre"
         },
         {
           "cmd": "fade",

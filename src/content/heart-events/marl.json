@@ -54,12 +54,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "yard_entry"
         },
         {
           "cmd": "place",
           "who": "marl",
-          "mark": "stage"
+          "mark": "yard_centre"
         },
         {
           "cmd": "fade",
@@ -167,12 +167,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "yard_entry"
         },
         {
           "cmd": "place",
           "who": "marl",
-          "mark": "stage"
+          "mark": "yard_centre"
         },
         {
           "cmd": "fade",
@@ -279,12 +279,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "bridge_entry"
         },
         {
           "cmd": "place",
           "who": "marl",
-          "mark": "stage"
+          "mark": "bridge_centre"
         },
         {
           "cmd": "fade",
@@ -392,12 +392,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "bridge_entry"
         },
         {
           "cmd": "place",
           "who": "marl",
-          "mark": "stage"
+          "mark": "bridge_centre"
         },
         {
           "cmd": "fade",
@@ -504,12 +504,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "bridge_entry"
         },
         {
           "cmd": "place",
           "who": "marl",
-          "mark": "stage"
+          "mark": "bridge_centre"
         },
         {
           "cmd": "fade",

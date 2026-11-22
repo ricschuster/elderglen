@@ -54,12 +54,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "dock_entry"
         },
         {
           "cmd": "place",
           "who": "rushie",
-          "mark": "stage"
+          "mark": "dock_centre"
         },
         {
           "cmd": "fade",
@@ -167,12 +167,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "dock_entry"
         },
         {
           "cmd": "place",
           "who": "rushie",
-          "mark": "stage"
+          "mark": "dock_centre"
         },
         {
           "cmd": "fade",
@@ -279,12 +279,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "dock_entry"
         },
         {
           "cmd": "place",
           "who": "rushie",
-          "mark": "stage"
+          "mark": "dock_centre"
         },
         {
           "cmd": "fade",
@@ -392,12 +392,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "dock_entry"
         },
         {
           "cmd": "place",
           "who": "rushie",
-          "mark": "stage"
+          "mark": "dock_centre"
         },
         {
           "cmd": "fade",
@@ -504,12 +504,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "dock_entry"
         },
         {
           "cmd": "place",
           "who": "rushie",
-          "mark": "stage"
+          "mark": "dock_centre"
         },
         {
           "cmd": "fade",

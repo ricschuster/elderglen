@@ -54,12 +54,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "paddock_entry"
         },
         {
           "cmd": "place",
           "who": "dilly",
-          "mark": "stage"
+          "mark": "paddock_centre"
         },
         {
           "cmd": "fade",
@@ -167,12 +167,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "paddock_entry"
         },
         {
           "cmd": "place",
           "who": "dilly",
-          "mark": "stage"
+          "mark": "paddock_centre"
         },
         {
           "cmd": "fade",
@@ -279,12 +279,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "paddock_entry"
         },
         {
           "cmd": "place",
           "who": "dilly",
-          "mark": "stage"
+          "mark": "paddock_centre"
         },
         {
           "cmd": "fade",
@@ -391,12 +391,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "paddock_entry"
         },
         {
           "cmd": "place",
           "who": "dilly",
-          "mark": "stage"
+          "mark": "paddock_centre"
         },
         {
           "cmd": "fade",
@@ -503,12 +503,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "paddock_entry"
         },
         {
           "cmd": "place",
           "who": "dilly",
-          "mark": "stage"
+          "mark": "paddock_centre"
         },
         {
           "cmd": "fade",

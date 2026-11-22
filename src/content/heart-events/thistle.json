@@ -59,7 +59,7 @@
         {
           "cmd": "place",
           "who": "thistle",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",
@@ -175,7 +175,7 @@
         {
           "cmd": "place",
           "who": "thistle",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",
@@ -286,12 +286,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "river_path_entry"
         },
         {
           "cmd": "place",
           "who": "thistle",
-          "mark": "stage"
+          "mark": "river_path_centre"
         },
         {
           "cmd": "fade",
@@ -401,12 +401,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "river_path_entry"
         },
         {
           "cmd": "place",
           "who": "thistle",
-          "mark": "stage"
+          "mark": "river_path_centre"
         },
         {
           "cmd": "fade",
@@ -516,12 +516,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "river_path_entry"
         },
         {
           "cmd": "place",
           "who": "thistle",
-          "mark": "stage"
+          "mark": "river_path_centre"
         },
         {
           "cmd": "fade",

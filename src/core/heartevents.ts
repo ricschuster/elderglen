@@ -88,6 +88,15 @@ export const RESULT_CMDS: readonly CmdName[] = [
   "unlockMail",
 ];
 
+/** The pose names a scene may use (note 62): small effects on the one-frame sprite. */
+export const POSES: readonly string[] = [
+  "sit",
+  "bow",
+  "surprise",
+  "laugh",
+  "slump",
+];
+
 /** The person ids a scene may name besides villagers. */
 export const PLAYER = "player";
 
@@ -435,9 +444,13 @@ export function validateScene(
   };
   scene.forEach((c, i) => {
     switch (c.cmd) {
+      case "pose":
+        person(c.who, i);
+        if (!POSES.includes(c.pose))
+          out.push(`#${i}: unknown pose "${c.pose}"`);
+        break;
       case "place":
       case "walk":
-      case "pose":
       case "hide":
       case "show":
         person(c.who, i);

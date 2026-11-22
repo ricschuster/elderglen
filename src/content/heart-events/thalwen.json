@@ -57,12 +57,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "dunes_entry"
         },
         {
           "cmd": "place",
           "who": "thalwen",
-          "mark": "stage"
+          "mark": "dunes_centre"
         },
         {
           "cmd": "fade",
@@ -173,12 +173,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "dunes_entry"
         },
         {
           "cmd": "place",
           "who": "thalwen",
-          "mark": "stage"
+          "mark": "dunes_centre"
         },
         {
           "cmd": "fade",
@@ -288,12 +288,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "shore_entry"
         },
         {
           "cmd": "place",
           "who": "thalwen",
-          "mark": "stage"
+          "mark": "shore_centre"
         },
         {
           "cmd": "fade",
@@ -403,12 +403,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "shore_entry"
         },
         {
           "cmd": "place",
           "who": "thalwen",
-          "mark": "stage"
+          "mark": "shore_centre"
         },
         {
           "cmd": "fade",
@@ -518,12 +518,12 @@
         {
           "cmd": "place",
           "who": "player",
-          "mark": "door"
+          "mark": "shore_entry"
         },
         {
           "cmd": "place",
           "who": "thalwen",
-          "mark": "stage"
+          "mark": "shore_centre"
         },
         {
           "cmd": "fade",

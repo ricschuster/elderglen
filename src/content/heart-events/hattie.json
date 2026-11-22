@@ -113,7 +113,7 @@
         {
           "cmd": "place",
           "who": "hattie",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",
@@ -225,7 +225,7 @@
         {
           "cmd": "place",
           "who": "hattie",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",
@@ -337,7 +337,7 @@
         {
           "cmd": "place",
           "who": "hattie",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",
@@ -449,7 +449,7 @@
         {
           "cmd": "place",
           "who": "hattie",
-          "mark": "stage"
+          "mark": "centre"
         },
         {
           "cmd": "fade",
