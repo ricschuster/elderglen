@@ -48,6 +48,11 @@ interface Pool {
 }
 
 const POOLS = geodeData.pools as Pool[];
+
+/** Every mineral and crystal a geode can hold, for the Gemcutter's price bonus. */
+export const GEODE_POOL_MINERALS: string[] = [
+  ...new Set(POOLS.flatMap((p) => [...p.minerals, p.foraged.item])),
+];
 const HEARTHSILVER = "hearthsilver-ore";
 
 /** The geode kind that drops on a mine floor: plain to 40, Frozen to 80, Magma beyond (note 69). */

@@ -12,7 +12,9 @@ import {
   QUARTZ,
   STONE,
 } from "./ore";
+import { bonusGeodeChance, coalFactor } from "./professions";
 import { dropGoods } from "./ground";
+import { COAL_SHARE } from "./mines";
 import { swingCost } from "./upgrades";
 import type { GameState } from "./save";
 import { swingsToBreak, type RockKind, type Rocks } from "./rocks";
@@ -58,11 +60,13 @@ export function drops(
   prospector: boolean,
   random: () => number,
   floor?: number,
+  /** Coal's odds are multiplied by this (Coalseeker), capped at 1. */
+  coalTimes = 1,
 ): Drop {
   if (kind === "stone") return { id: STONE, count: random() < 0.5 ? 1 : 2 };
   if (kind === "hard") {
     // Hard rock (note 78): stone, and now and then coal.
-    if (random() < HARD_COAL_CHANCE)
+    if (random() < Math.min(1, HARD_COAL_CHANCE * coalTimes))
       return { id: COAL, count: 1 + (random() < 0.3 ? 1 : 0) };
     return { id: STONE, count: random() < 0.5 ? 1 : 2 };
   }
@@ -118,6 +122,7 @@ export function mine(
         g.skills.has("prospector"),
         random,
         floor,
+        coalFactor(g.skills),
       )
     : undefined;
   g.day.act(
@@ -131,12 +136,12 @@ export function mine(
   rocks.remove(x, y);
   dropGoods(g, floor, x, y, drop.id, drop.count);
   noteGathered(g, drop.id, drop.count);
-  // Rockhounds also turn up a geode in plain rock, as often as the nodes do (note 22).
+  // Rockhounds also turn up a geode in plain rock, as often as the nodes do (note 22);
+  // a Geode Hunter turns up three times as many again (four times the base in all).
   if (
     floor !== undefined &&
     rock.kind === "stone" &&
-    g.skills.has("rockhound") &&
-    random() < GEODE_SHARE
+    random() < bonusGeodeChance(g.skills, GEODE_SHARE)
   )
     dropGoods(g, floor, x, y, geodeKindForFloor(floor), 1);
   // And a gem as often as gem nodes turn up on that floor.
@@ -147,6 +152,14 @@ export function mine(
     random() < gemShare(floor)
   )
     dropGoods(g, floor, x, y, gemDrop(floor, random), 1);
+  // A Coalseeker also finds coal in plain rock, as often as the coal rocks turn up.
+  if (
+    floor !== undefined &&
+    rock.kind === "stone" &&
+    g.skills.has("coalseeker") &&
+    random() < COAL_SHARE * (coalFactor(g.skills) - 1)
+  )
+    dropGoods(g, floor, x, y, COAL, 1);
   const ladder =
     floor !== undefined &&
     g.mines.rockBroken(floor, day, x, y, random, g.combat.noCreatures);

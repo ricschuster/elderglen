@@ -4,6 +4,9 @@ import { FEATHER, MOONWOOL, SPECIES } from "./animals";
 import { cropById } from "./crops";
 import { fishById } from "./fishing";
 import { fruitTreeById } from "./fruittrees";
+import { BARS } from "./ore";
+import { GEM_ITEMS } from "./gems";
+import { GEODE_POOL_MINERALS } from "./geodes";
 import { splitQuality, type Quality } from "./quality";
 import tapperData from "../content/tapper.json";
 
@@ -117,7 +120,35 @@ export const PROFESSIONS: ProfessionDef[] = [
     id: "rockhound",
     skill: "mining",
     name: "Rockhound",
-    text: "Geodes drop twice as often.",
+    text: "Geodes and gems drop twice as often.",
+  },
+  {
+    id: "barwright",
+    skill: "mining",
+    name: "Barwright",
+    text: "Metal bars sell for 50% more.",
+    under: "prospector",
+  },
+  {
+    id: "coalseeker",
+    skill: "mining",
+    name: "Coalseeker",
+    text: "Coal turns up twice as often in rocks.",
+    under: "prospector",
+  },
+  {
+    id: "geodehunter",
+    skill: "mining",
+    name: "Geode Hunter",
+    text: "Geodes drop twice as often again, four times the usual with Rockhound.",
+    under: "rockhound",
+  },
+  {
+    id: "gemcutter",
+    skill: "mining",
+    name: "Gemcutter",
+    text: "Gems and minerals sell for 30% more.",
+    under: "rockhound",
   },
   {
     id: "steady",
@@ -192,6 +223,24 @@ export const LUMBERJACK_HARDWOOD_CHANCE = 0.15;
 /** Tapper: tapped goods sell for this much more (placeholder, note 07). */
 export const TAPPER_BONUS = 0.25;
 
+/** Barwright: metal bars sell for this much more (placeholder, note 22). */
+export const BARWRIGHT_BONUS = 0.5;
+/** Gemcutter: gems and minerals sell for this much more (placeholder, note 22). */
+export const GEMCUTTER_BONUS = 0.3;
+/** Coalseeker: coal turns up this many times as often (placeholder, note 22). */
+export const COALSEEKER_FACTOR = 2;
+/** Geode Hunter: geodes drop this many times as often again (placeholder, note 22). */
+export const GEODE_HUNTER_FACTOR = 2;
+
+/** Metal bars only: the refined crystal is not a bar. */
+const METAL_BARS = BARS.filter((b) => b.id.endsWith("-bar")).map((b) => b.id);
+
+/** Gems, the Diamond and Glimmerstone, and the minerals and crystals geodes give. */
+const GEMS_AND_MINERALS = new Set<string>([
+  ...GEM_ITEMS.map((g) => g.id),
+  ...GEODE_POOL_MINERALS,
+]);
+
 /** True for anything an animal makes: Rancher raises what these sell for. */
 function isAnimalGood(base: string): boolean {
   return (
@@ -249,6 +298,10 @@ export function choose(skills: Skills, skill: Skill, id: string): boolean {
 /** Sell price multiplier for an item: Tillers get more for crops. */
 export function sellMultiplier(skills: Skills, itemId: string): number {
   const { base } = splitQuality(itemId);
+  if (skills.has("barwright") && METAL_BARS.includes(base))
+    return 1 + BARWRIGHT_BONUS;
+  if (skills.has("gemcutter") && GEMS_AND_MINERALS.has(base))
+    return 1 + GEMCUTTER_BONUS;
   if (skills.has("tapmaster") && tapperData.goods.some((t) => t.item === base))
     return 1 + TAPPER_BONUS;
   if (skills.has("tiller") && (cropById(base) || fruitTreeById(base)))
@@ -291,4 +344,20 @@ export function woodYield(skills: Skills, wood: number): number {
 /** Botanists always find the top grade of forage. */
 export function forageFloor(skills: Skills, quality: Quality): Quality {
   return skills.has("botanist") ? "hearthsilver" : quality;
+}
+
+/**
+ * Chance a rock breaks with a geode as well: the geode share of nodes, once more
+ * for Rockhound and again by the Geode Hunter factor on top, so four times the
+ * base in all. Capped at 1.
+ */
+export function bonusGeodeChance(skills: Skills, share: number): number {
+  if (!skills.has("rockhound")) return 0;
+  const times = skills.has("geodehunter") ? 1 + GEODE_HUNTER_FACTOR : 1;
+  return Math.min(1, share * times);
+}
+
+/** Coal is this many times as likely from a rock: twice for a Coalseeker. */
+export function coalFactor(skills: Skills): number {
+  return skills.has("coalseeker") ? COALSEEKER_FACTOR : 1;
 }

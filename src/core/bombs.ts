@@ -9,6 +9,7 @@ import type { Health } from "./combat";
 import type { FarmMap } from "./map";
 import { drops } from "./mining";
 import { noteGathered } from "./quests";
+import { coalFactor } from "./professions";
 import type { RockKind, Rocks } from "./rocks";
 import { mayPlaceOn, placeTag } from "./placeables";
 import type { GameState } from "./save";
@@ -154,6 +155,7 @@ export function blastRocks(
       g.skills.has("prospector"),
       random,
       floor,
+      coalFactor(g.skills),
     );
     rocks.remove(rock.x, rock.y);
     dropGoods(g, floor, rock.x, rock.y, drop.id, drop.count);

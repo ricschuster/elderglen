@@ -162,7 +162,7 @@ Source: `src/core/skills.ts`.
   From memory.
 - Levels raise the chance of better quality goods, and farming levels trim
   swing energy (see below). At level 5 each skill asks for a profession (see
-  Professions). The farming, fishing and foraging level 10 choices are built.
+  Professions). The farming, fishing, foraging and mining level 10 choices are built.
 
 ## Professions
 
@@ -420,7 +420,9 @@ are from memory and unchecked.
   random stacks lost (1 in 3 each), one stack posted back. No loss of tools,
   weapons, seeds or bundle items. Assist mode loses no items.
 - Professions at level 5: Prospector or Rockhound (mining), Steady or Nimble
-  (combat).
+  (combat). Mining level 10 (placeholders, note 22): Barwright (bars +50%) or
+  Coalseeker (coal x2) under Prospector; Geode Hunter (geodes x2 again) or
+  Gemcutter (gems and minerals +30%) under Rockhound.
 - Fifth tool tier: 5 Hearthsilver bars per tool, no gold. Any pickaxe digs it.
   Built 2026-11-08 with placeholders: smelt time 8 hours (480 minutes, unsettled in note 22), bar sells 1000g, top pickaxe swings 1 (stone to iron), 1 (gold), 2 (Hearthsilver rock), top axe 2 per tree and 1 per stump (note 44).
 - Weapons: three families, four tiers each. The first build has the starter and

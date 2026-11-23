@@ -198,14 +198,19 @@ time, and the lift can bring them up afterwards.
   tiring. Placeholder: 2 energy per swing at tier 0.
 - **Mining professions at level 5** (ours): **Prospector** (one extra ore from a
   node, 25 percent of the time) or **Rockhound** (geodes and gems drop
-  twice as often). Farming and fishing have their level 10 choices
-  (`professions.ts`).
+  twice as often). Rockhound's gem part is built in `mining.ts`.
 - **Mining professions at level 10** (owner, 2026-11-23): Stardew's effects, checked on the
   saved Mining page, with our names (placeholders). Under Prospector: **Barwright** (metal
   bars, Hearthsilver included, sell for 50 percent more) or **Coalseeker** (coal turns up
   twice as often). Under Rockhound: **Geode Hunter** (geodes twice as often again, so four
   times with Rockhound, as the owner chose) or **Gemcutter** (gems and minerals sell for
-  30 percent more).
+  30 percent more). **Built 2026-11-23** (`src/core/professions.ts`, `mining.ts`,
+  `bombs.ts`, `geodes.ts`): Barwright is the four metal bars (not the refined crystal);
+  Coalseeker doubles hard rock's coal chance and adds coal from plain rock at the coal
+  rock share; Geode Hunter adds three times the geode share from plain rock on top of
+  Rockhound's one (capped at 1); Gemcutter covers every gem, the Diamond, the
+  Glimmerstone, and the minerals and crystals geodes hold (not quartz, not geodes).
+  Prices apply wherever `sellMultiplier` does (bin, shop, room intents).
 
 ### Ore, coal and bars
 

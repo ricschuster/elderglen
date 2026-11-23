@@ -48,8 +48,8 @@ describe("fishing professions", () => {
 
   it("asks nothing at level 10 for skills with no level 10 options", () => {
     const g = startGame();
-    g.skills.gain("mining", lvl10);
-    choose(g.skills, "mining", "prospector");
+    g.skills.gain("combat", lvl10);
+    choose(g.skills, "combat", "steady");
     expect(pendingChoice(g.skills)).toBeUndefined();
   });
 
