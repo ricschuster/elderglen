@@ -1504,6 +1504,11 @@
     "sellPrice": 300
   },
   {
+    "id": "gilded-jelly",
+    "name": "Gilded jelly",
+    "sellPrice": 300
+  },
+  {
     "id": "glacier-ghost",
     "name": "Glacier Ghost",
     "sellPrice": 320

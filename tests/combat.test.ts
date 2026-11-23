@@ -225,8 +225,8 @@ describe("weapons", () => {
 });
 
 describe("creatures", () => {
-  it("has twelve kinds across the three bands, each with a drop list", () => {
-    expect(CREATURES).toHaveLength(15);
+  it("has fifteen kinds and three rares across the three bands, each with a drop list", () => {
+    expect(CREATURES).toHaveLength(18);
     for (const band of [1, 2, 3])
       expect(creaturesOfBand(band).length).toBeGreaterThanOrEqual(4);
     for (const c of CREATURES) {

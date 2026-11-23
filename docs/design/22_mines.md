@@ -175,7 +175,16 @@ time, and the lift can bring them up afterwards.
 - **Numbers (owner, 2026-11-23, steep as Stardew; placeholders):** creature health 3x, hits
   2.5x, 1.5x creatures a floor, +1 ore per node, drop chance 1.5x. The floors take a
   different tint (Stardew's dangerous mines change the floor theme and the monsters, checked
-  on the saved Mines page; its numbers are not on that page, so ours are a guess). Not built.
+  on the saved Mines page; its numbers are not on that page, so ours are a guess).
+  **Built (2026-11-23, part 8b):** `src/core/danger.ts` holds the numbers and the lever gate (floor 120
+  reached, until the warden head's errand #177 exists). The lever is a `danger-lever` service tile in the
+  floor 120 layout (`floorLayout`, picked last so no other tile moves), pulled from `FarmScene`. Pulling it
+  flips `Mines.dangerous` (saved, optional). The mode is baked into a floor when it is made: floors made
+  while it is on take creatures x1.5 (rounded, base and infested extras together, so the per floor cap
+  scales), health x3, one more ore a node, drop chance x1.5 (capped at 1) and a red tint over the ground
+  (placeholder); creature hits x2.5 (rounded, then Assist halves). A floor dug earlier today keeps the mode
+  it was made in (`Floor.dangerous`, saved), so flipping the lever never resets a dug floor. Special and
+  infested floors work as before, and "no creatures" still means none. Tests: `tests/rare-danger.test.ts`.
 - The Assist settings still apply, so the dangerous mine is reachable for
   everyone who wants it.
 - Nothing needs it. It is a chosen challenge, with a reward for liking it.
@@ -427,9 +436,9 @@ placeholder). Every reward is built: the six new rings are in `rings.json` and t
 trainer's own counter no longer hands rewards out. With "no creatures" on the screen opens and the goals
 stay in progress. Kills stay per game, not per player (note 53 has `combat` as a still-shared piece of
 `WorldState`), and the wall list is host and local only for now (guests cannot open it). Not built:
-the rare creatures and dangerous mode (part 8b).
+nothing of part 8a is left. Part 8b (the rare creatures and dangerous mode) is built, below.
 
-**Decided 2026-11-23 (owner), built as above (rare creatures not built):**
+**Decided 2026-11-23 (owner), built as above (rare creatures built in part 8b):**
 
 - **Maren keeps the list, for good.** The wall list hangs in the mine hall, where Maren
   the trainer lives and works; she hands out each reward when its count is met. This
@@ -451,6 +460,18 @@ the rare creatures and dangerous mode (part 8b).
   - Band 3, **Ember Lantern:** a bright Lanternmoth; drops a Hearthsilver ore.
   - A rare kill counts toward its base creature's slayer goal, and the first of each is a
     quiet completion tracker entry (#196).
+  - **Built (2026-11-23, part 8b).** The three are entries in `creatures.json` with a `rare`
+    field (`of`, `band`) and no `bands`, so they never enter the normal spawn pool; `flees` makes the
+    Golden Gloop run away and never attack. Each new floor rolls the band's dry streak once per creature
+    spawned (`applyRares` and `rareChance` in `creatures.ts`, a seeded roll in `Mines.visit`): a hit turns
+    that creature into the band's rare, a miss adds one. The three counters are saved in `MinesSave.rareMisses`
+    (optional). Drops: Golden Gloop gold ore (1 to 2) and gilded jelly (new sell good, `creature-goods.json`,
+    placeholder price 300g, no art of its own: the jelly picture is generic); Glimmer Nibbler one of the two
+    band 2 gems (`oneOf` in the drop data); Ember Lantern one Hearthsilver ore. A rare kill is tallied under
+    its base kind (`baseKind`), so the wall list reads it with no change. Each is drawn as its base
+    creature's picture with a gold tint (placeholder). The first kill of each is saved in
+    `combat.rareFound` (optional). That is a quiet entry and is not added to any completion category, so
+    no total or weight changed (#196 can show the list later). Tests: `tests/rare-danger.test.ts`.
 
 Stardew's rare variants are from memory, unchecked; not needed for the decision.
 

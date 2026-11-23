@@ -775,6 +775,11 @@ Source: `22_mines.md`. Code: `mines.ts`, `mining.ts`, `rocks.ts`, `ore.ts`.
   of 2 or 3; coal 1, 30 percent chance of 2. Prospector adds 1 at 25 percent.
 - Ladder odds: 1 percent, +0.5 percent per miss, cap 25 percent. The last rock
   on a floor always hides it. Floor 120 has none.
+- Rare creatures (Golden Gloop, Glimmer Nibbler, Ember Lantern): a dry streak per band,
+  checked once per creature spawned on a new floor, 0.2 percent, +0.05 percent per miss,
+  cap 3 percent, reset on a spawn. Gilded jelly sells for 300g.
+- Dangerous mode (floor 120 lever): creature health x3, creature hits x2.5 (rounded),
+  creatures a floor x1.5 (rounded), +1 ore a node, drop chance x1.5 (cap 1).
 - Pickaxe swing: 2 energy, less 0.1 per mining level, never under 0.5. XP per
   rock: stone 2, copper 5, coal 4.
 - The farm has 16 stone rocks. Some return on day 1 of spring, summer and fall (`debris.ts`, see "Special Orders and seasonal debris").

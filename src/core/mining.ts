@@ -1,6 +1,7 @@
 import type { Outcome } from "./actions";
 import { rngOf } from "./rng";
 import { noteGathered } from "./quests";
+import { dangerOre } from "./danger";
 import { DIAMOND, gemDrop, gemShare, gemXp } from "./gems";
 import { GEODE_SHARE, geodeDrop, geodeKindForFloor } from "./geodes";
 import {
@@ -47,6 +48,9 @@ export const PROSPECTOR_CHANCE = 0.25;
 
 /** Chance a broken hard rock gives coal instead of stone. Ours, a placeholder (note 07). */
 export const HARD_COAL_CHANCE = 0.3;
+
+/** The nodes that give ore, for dangerous mode's extra one. */
+const ORE_NODES: RockKind[] = ["copper", "iron", "gold", "hearthsilver"];
 
 export interface Drop {
   id: string;
@@ -115,7 +119,7 @@ export function mine(
   const rock = rocks.at(x, y);
   if (!rock) return fail("nothing to mine");
   const breaks = rock.hits + 1 >= swingsToBreak(rock.kind, g.toolTiers.pickaxe);
-  const drop = breaks
+  const dug = breaks
     ? drops(
         rock.kind,
         g.skills.level("mining"),
@@ -125,6 +129,13 @@ export function mine(
         coalFactor(g.skills),
       )
     : undefined;
+  // A node on a dangerous floor gives one more ore (note 22).
+  const dangerous =
+    floor !== undefined && g.mines.today(floor, day)?.dangerous === true;
+  const drop =
+    dug && ORE_NODES.includes(rock.kind)
+      ? { ...dug, count: dangerOre(dug.count, dangerous) }
+      : dug;
   g.day.act(
     swingCost(PICKAXE_ENERGY, g.toolTiers.pickaxe, g.skills.level("mining")),
     0,

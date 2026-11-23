@@ -1,5 +1,6 @@
 import creatureData from "../content/creatures.json";
 import type { Inflicts } from "./effects";
+import { dangerCount, dangerDropChance, dangerHealth } from "./danger";
 import type { Vec } from "./movement";
 
 /**
@@ -12,6 +13,8 @@ import type { Vec } from "./movement";
 
 export interface DropDef {
   id: string;
+  /** When present, the drop is one item picked from this list instead of `id` (a gem of the band, note 22). */
+  oneOf?: string[];
   chance: number;
   min: number;
   max: number;
@@ -64,12 +67,56 @@ export interface CreatureDef {
   armour?: "front" | "rolled";
   /** The bad effect a landed hit may carry, and the chance (note 94). */
   inflicts?: Inflicts;
+  /** A gilded variant of the `of` creature, found in `band` on its own dry streak (note 22). Never in the normal spawn pool. */
+  rare?: { of: string; band: number };
+  /** Runs from the player and never attacks (the Golden Gloop). */
+  flees?: boolean;
 }
 
 export const CREATURES = creatureData as CreatureDef[];
 
 export const creatureById = (id: string): CreatureDef | undefined =>
   CREATURES.find((c) => c.id === id);
+
+/** The kind a kill is tallied under: a rare creature counts as its base creature (slayer goals, note 22). */
+export const baseKind = (kind: string): string =>
+  creatureById(kind)?.rare?.of ?? kind;
+
+/** The rare creature of a band (1 to 3), if it has one. */
+export const rareOfBand = (band: number): CreatureDef | undefined =>
+  CREATURES.find((c) => c.rare?.band === band);
+
+/** Rare spawn dry streak (placeholders, note 22): a chance per creature spawned, rising per miss, capped. */
+export const RARE_BASE = 0.002;
+export const RARE_STEP = 0.0005;
+export const RARE_CAP = 0.03;
+
+/** The chance the next creature spawned is its band's rare, after `misses` that were not. */
+export const rareChance = (misses: number): number =>
+  Math.min(RARE_BASE + RARE_STEP * misses, RARE_CAP);
+
+/**
+ * Roll the rare dry streak for every creature of a new floor: a hit turns that
+ * creature into the band's rare (and resets the streak), a miss adds one.
+ * Returns the new miss count. Mutates `list`.
+ */
+export function applyRares(
+  list: Creature[],
+  band: number,
+  misses: number,
+  random: () => number,
+): number {
+  const rare = rareOfBand(band);
+  if (!rare) return misses;
+  for (const c of list) {
+    if (random() < rareChance(misses)) {
+      c.kind = rare.id;
+      c.hp = rare.hp;
+      misses = 0;
+    } else misses += 1;
+  }
+  return misses;
+}
 
 /** Seconds a creature stays dazed after a hit from a weapon (placeholder). */
 export const STAGGER = 0.4;
@@ -171,7 +218,8 @@ export function loadCreature(s: CreatureSave): Creature | undefined {
   const def = creatureById(s.kind);
   if (!def || !Number.isFinite(s.x) || !Number.isFinite(s.y)) return undefined;
   const c = newCreature(s.uid, s.kind, s.x, s.y);
-  c.hp = Math.min(Math.max(Math.round(s.hp), 1), def.hp);
+  // A dangerous floor gives three times the health, so the cap is the largest of these.
+  c.hp = Math.min(Math.max(Math.round(s.hp), 1), dangerHealth(def.hp, true));
   if (s.small === true) c.small = true;
   return c;
 }
@@ -197,12 +245,17 @@ export function spawnCreatures(
   tileSize = 16,
   keepAway = 6,
   more = 0,
+  /** Dangerous mode: creatures a floor times 1.5, the base and the extra together (note 22). */
+  dangerous = false,
 ): Creature[] {
   const kinds = creaturesOfBand(bandNumber(floor));
   if (kinds.length === 0) return [];
   const out: Creature[] = [];
   const used = new Set<string>();
-  const want = creatureCount(bandNumber(floor), random) + more;
+  const want = dangerCount(
+    creatureCount(bandNumber(floor), random) + more,
+    dangerous,
+  );
   for (let tries = 0; out.length < want && tries < 600; tries++) {
     const x = 1 + Math.floor(random() * (width - 2));
     const y = 1 + Math.floor(random() * (height - 2));
@@ -211,14 +264,14 @@ export function spawnCreatures(
       continue;
     used.add(`${x},${y}`);
     const kind = kinds[Math.floor(random() * kinds.length)]!;
-    out.push(
-      newCreature(
-        out.length + 1,
-        kind.id,
-        (x + 0.5) * tileSize,
-        (y + 1) * tileSize - 2,
-      ),
+    const made = newCreature(
+      out.length + 1,
+      kind.id,
+      (x + 0.5) * tileSize,
+      (y + 1) * tileSize - 2,
     );
+    made.hp = dangerHealth(made.hp, dangerous);
+    out.push(made);
   }
   return out;
 }
@@ -329,7 +382,7 @@ export function stepCreature(
     } else c.away = 0;
   }
 
-  if (c.state === "chase" && d <= def.reach * w.tileSize) {
+  if (c.state === "chase" && !def.flees && d <= def.reach * w.tileSize) {
     c.state = "windup";
     c.t = def.windup * (w.assist ? ASSIST_WINDUP : 1);
     return {};
@@ -342,8 +395,10 @@ export function stepCreature(
     // Still until it notices the player, then three hops toward them and a rest.
     if (c.state === "chase") {
       c.angle = (c.angle + dt) % HOP_CYCLE;
+      // A fleeing hopper runs the other way, never to attack.
+      const sign = def.flees ? -1 : 1;
       if (HOPS.some(([a, b]) => c.angle >= a! && c.angle < b!))
-        go(dir.x * def.speed, dir.y * def.speed);
+        go(sign * dir.x * def.speed, sign * dir.y * def.speed);
     }
   } else if (def.behaviour === "shuffler") {
     if (c.state === "chase") go(dir.x * def.speed, dir.y * def.speed);
@@ -385,12 +440,13 @@ export function hurtCreature(c: Creature, damage: number): boolean {
 export function rollDrops(
   def: CreatureDef,
   random: () => number,
+  dangerous = false,
 ): { id: string; count: number }[] {
   const out: { id: string; count: number }[] = [];
   for (const d of def.drops) {
-    if (random() >= d.chance) continue;
+    if (random() >= dangerDropChance(d.chance, dangerous)) continue;
     out.push({
-      id: d.id,
+      id: d.oneOf ? d.oneOf[Math.floor(random() * d.oneOf.length)]! : d.id,
       count: d.min + Math.floor(random() * (d.max - d.min + 1)),
     });
   }

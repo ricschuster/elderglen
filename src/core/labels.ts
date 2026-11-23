@@ -70,6 +70,7 @@ const SERVICES: Record<string, string> = {
   "cave-dehydrator": "Dehydrator",
   "mushroom-box": "Mushroom Box",
   "camp-chest": "Camp Chest",
+  "danger-lever": "Lever",
   orders: "Orders Board",
   requests: "Request Board",
   "board-news": "Road News Board",

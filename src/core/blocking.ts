@@ -7,6 +7,7 @@ import {
   siloBlocks,
   stableBlocks,
 } from "./animals";
+import { LEVER_KIND } from "./danger";
 import { potAt } from "./gardenpot";
 import { gateOpen, parseGate } from "./gates";
 import { horseBlocks } from "./horse";
@@ -104,6 +105,7 @@ export function tileBlockedNoHorse(
     !!state.placed.covering(lightMapKey(mapId), x, y) ||
     (isFarmMap(mapId) && !!rodAt(state, x, y)) ||
     map.serviceAt(x, y)?.kind === "camp-chest" ||
+    map.serviceAt(x, y)?.kind === LEVER_KIND ||
     !!store.sprinklers.at(x, y) ||
     !!potAt(state, map, x, y) ||
     (outdoorSoil(map) && !!state.machines.at(x, y))

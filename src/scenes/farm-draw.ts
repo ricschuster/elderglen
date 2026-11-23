@@ -78,6 +78,7 @@ import {
   drawFeastProps,
   drawFestivalProps,
 } from "./farm-festival";
+import { LEVER_KIND } from "../core/danger";
 import type { FarmScene } from "./FarmScene";
 
 // Drawing methods of the farm scene, moved out of FarmScene.ts (note 106, step 5).
@@ -110,6 +111,12 @@ export function drawGround(farm: FarmScene): void {
   if (isHouseMap(farm.mapId)) farm.drawDecor();
   for (const p of farm.state.furniture.each(farm.mapId))
     put(p.x, p.y, furnitureKey(p.id));
+  // The lever of dangerous mode: a ladder-like post, red while the mode is on (placeholder art).
+  for (const s of farm.map.services)
+    if (s.kind === LEVER_KIND)
+      put(s.x, s.y, LADDER_KEY).setTint(
+        farm.state.mines.dangerous ? 0xff5a4a : 0x9aa0a8,
+      );
   for (const s of farm.map.services)
     if (s.kind === "camp-chest")
       put(

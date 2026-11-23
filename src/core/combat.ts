@@ -6,6 +6,7 @@ import { itemById } from "./items";
 import { splitQuality } from "./quality";
 import {
   SLAYER_GOALS,
+  creatureById,
   slayerKills,
   type Creature,
   type SlayerGoal,
@@ -447,6 +448,8 @@ export interface CombatSave {
   oilDay?: number;
   /** Slayer rings already handed over, so a lost one costs coin to get again. */
   slayerClaimed?: string[];
+  /** Rare creature kinds found at least once (a quiet tracker entry, note 22). */
+  rareFound?: string[];
 }
 
 /** What the player carries into a fight: health, the trainer's progress and the kill tally. */
@@ -464,6 +467,8 @@ export class Combat {
   oilDay = 0;
   /** Slayer ring ids handed over once (note 22). */
   slayerClaimed: string[] = [];
+  /** Rare creature kinds beaten at least once: a quiet tracker entry that adds to no completion total (note 22). */
+  rareFound: string[] = [];
   /** Beaten creatures by kind, for the slayer list later (note 22). */
   kills: Record<string, number> = {};
   /** The Assist toggle, synced from the device settings by the scene. Never saved here. */
@@ -523,6 +528,7 @@ export class Combat {
       ...(this.slayerClaimed.length
         ? { slayerClaimed: [...this.slayerClaimed] }
         : {}),
+      ...(this.rareFound.length ? { rareFound: [...this.rareFound] } : {}),
     };
   }
 
@@ -546,6 +552,9 @@ export class Combat {
     this.slayerClaimed = (
       Array.isArray(raw?.slayerClaimed) ? raw.slayerClaimed : []
     ).filter((x) => SLAYER_RINGS.some((r) => r.id === x));
+    this.rareFound = (
+      Array.isArray(raw?.rareFound) ? raw.rareFound : []
+    ).filter((x) => creatureById(x)?.rare !== undefined);
     this.kills = {};
     for (const [k, v] of Object.entries(raw?.kills ?? {}))
       if (Number.isInteger(v) && v > 0) this.kills[k] = v;

@@ -43,6 +43,7 @@ import {
   bombById,
   tickBombs,
 } from "../core/bombs";
+import { dangerHit } from "../core/danger";
 import { mineFloorOf } from "../core/mines";
 import { defeatCreature, defeatMessage } from "../core/creature-defeat";
 import { PLAYER } from "./farm-consts";
@@ -329,8 +330,9 @@ export function updateCombat(farm: FarmScene, dt: number): void {
       calm: oilCalms(farm.state, c.kind),
     });
     if (result.hit) {
+      // Dangerous mode: hits take two and a half times the health, before Assist (note 22).
       const lost = combat.health.hurt(
-        result.hit,
+        dangerHit(result.hit, !!farm.floorState?.dangerous),
         combat.assist,
         farm.state.equipment.defense(),
       );
@@ -390,6 +392,9 @@ export function drawCreature(farm: FarmScene, c: Creature): void {
     block.setTint(0xff9a40).setTintMode(Phaser.TintModes.MULTIPLY);
   } else if (c.state === "stagger") {
     block.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
+  } else if (creatureById(c.kind)?.rare) {
+    // A rare creature wears a gold sheen (placeholder tint).
+    block.setTint(0xffd84a).setTintMode(Phaser.TintModes.MULTIPLY);
   } else block.clearTint();
   // A sleeping rock crab looks like a dull rock until the player comes near.
   const asleep = creatureById(c.kind)?.sleeper && c.state === "wander";

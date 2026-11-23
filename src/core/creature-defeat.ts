@@ -1,4 +1,5 @@
 import {
+  baseKind,
   creatureById,
   creatureTile,
   creatureXp,
@@ -38,14 +39,20 @@ export function defeatCreature(
 ): Defeat | undefined {
   const def = creatureById(c.kind);
   if (!def) return undefined;
-  state.combat.noteKill(c.kind);
+  // A rare creature counts toward its base creature's slayer goal (note 22).
+  state.combat.noteKill(baseKind(c.kind));
+  if (def.rare && !state.combat.rareFound.includes(c.kind))
+    state.combat.rareFound.push(c.kind);
+  const dangerous =
+    floor !== undefined &&
+    state.mines.today(floor, state.day.clock.day)?.dangerous === true;
   const levelUp = state.skills.gain("combat", creatureXp(c));
   const got: string[] = [];
   const bonus =
     floor !== undefined
       ? state.mines.killBonus(floor, state.day.clock.day)
       : { extraKill: false, extraDrop: false };
-  if (bonus.extraKill) state.combat.noteKill(c.kind);
+  if (bonus.extraKill) state.combat.noteKill(baseKind(c.kind));
   // Rings that answer a kill (note 37): vampire heals, savage and warrior start a buff.
   const eq = state.equipment;
   const heal = eq.healOnKill();
@@ -54,11 +61,11 @@ export function defeatCreature(
   // A map's spawn table adds drops to every creature beaten there (note 73: Mahogany Seed).
   const extra: CreatureDef = { ...def, drops: mapDrops(mapId) };
   const rolls = [
-    ...rollDrops(def, rng),
-    ...rollDrops(extra, rng),
-    ...(bonus.extraDrop ? rollDrops(def, rng) : []),
+    ...rollDrops(def, rng, dangerous),
+    ...rollDrops(extra, rng, dangerous),
+    ...(bonus.extraDrop ? rollDrops(def, rng, dangerous) : []),
     // The burglar ring rolls the creature's own drops a second time (note 37).
-    ...(eq.dropsTwice() ? rollDrops(def, rng) : []),
+    ...(eq.dropsTwice() ? rollDrops(def, rng, dangerous) : []),
     // A rare Diamond from any monster, once the bottom of the mines is reached (note 83).
     ...(monsterDiamond(state.mines.deepest, rng)
       ? [{ id: DIAMOND.id, count: 1 }]
