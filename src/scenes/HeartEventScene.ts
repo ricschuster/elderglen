@@ -5,8 +5,8 @@ import { finishWedding, isWeddingId, weddingEvent } from "../core/courtship";
 import { weddingGuests } from "../core/divorce";
 import { actorName, SceneRun, worldOf } from "../core/eventrun";
 import {
-  completeEvent,
   eventById,
+  finishRun,
   LINES,
   type Cmd,
   type HeartEvent,
@@ -31,6 +31,7 @@ import { drawMapArtBeside } from "./mapart";
 import { MAP_PASSES } from "./map-passes";
 import { PLAYER_KEY } from "./placeholder-textures";
 import { WINDOW_FILL, WORLD_ZOOM_KEY } from "./panel";
+import { takeEsc } from "./escape";
 import { STATE_KEY } from "./state";
 import { resumeSave } from "./storage";
 
@@ -38,6 +39,8 @@ export interface HeartEventData {
   id: string;
   /** A replay from the journal: no Result group, nothing recorded. */
   replay?: boolean;
+  /** A scene to resume at the end instead of the farm (the Social tab, on a replay). */
+  returnTo?: string;
 }
 
 const SLOTS = [
@@ -86,6 +89,7 @@ export class HeartEventScene extends Phaser.Scene {
   private state!: GameState;
   private event!: HeartEvent;
   private replay = false;
+  private returnTo: string | undefined;
   private run!: SceneRun;
   private token = 0;
   private actors = new Map<string, Actor>();
@@ -118,6 +122,7 @@ export class HeartEventScene extends Phaser.Scene {
         )
       : eventById(data.id)!;
     this.replay = data.replay === true;
+    this.returnTo = data.returnTo;
     this.run = SceneRun.of(this.event, this.replay, worldOf(this.state));
     this.token = 0;
     this.actors = new Map();
@@ -189,7 +194,10 @@ export class HeartEventScene extends Phaser.Scene {
     };
     this.input.keyboard?.on("keydown-ENTER", go);
     this.input.keyboard?.on("keydown-SPACE", go);
-    this.input.keyboard?.on("keydown-ESC", () => this.skipAll());
+    this.input.keyboard?.on("keydown-ESC", () => {
+      takeEsc(this);
+      this.skipAll();
+    });
     this.input.on("pointerdown", go);
     this.step();
   }
@@ -678,10 +686,11 @@ export class HeartEventScene extends Phaser.Scene {
     this.fadeRect.setFillStyle(0x000000, 0);
     if (this.replay) return this.close();
     if (isWeddingId(this.event.id)) finishWedding(this.state);
-    const words = completeEvent(
+    const words = finishRun(
       this.state,
       this.event,
       this.state.day.clock.day,
+      false,
     );
     resumeSave(this.state);
     if (words.length === 0) return this.close();
@@ -706,6 +715,8 @@ export class HeartEventScene extends Phaser.Scene {
     for (const o of this.extra) o.destroy();
     this.endStage();
     this.scene.stop();
-    this.scene.resume("farm");
+    // A replay from the Social tab goes back to it; the farm was never touched, so the
+    // player, map, facing and clock are as they were (note 62, decision 8).
+    this.scene.resume(this.returnTo ?? "farm");
   }
 }

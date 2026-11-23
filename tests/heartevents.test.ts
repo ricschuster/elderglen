@@ -3,6 +3,8 @@ import {
   HEART_EVENTS,
   LINES,
   completeEvent,
+  finishRun,
+  replayList,
   dueEvents,
   eventById,
   inWindow,
@@ -386,5 +388,43 @@ describe("heart steps 2, 4, 6, 8 and 10 (#873, placeholder text until M3d)", () 
         expect(presenceOverlaps(e), e.id).toBe(true);
         expect(validateScene(e.scene, e.villager), e.id).toEqual([]);
       }
+  });
+});
+
+describe("replay list", () => {
+  it("lists one person's events by heart level, seen or locked, spoiler-free", () => {
+    const g = newGame();
+    const mine = HEART_EVENTS.filter((e) => e.villager === "odette");
+    expect(mine.length).toBeGreaterThan(1);
+    expect(replayList(g, "odette").every((l) => !l.seen)).toBe(true);
+    const pick = mine[mine.length - 1]!;
+    g.heartEvents.mark(pick.id, 4);
+    const list = replayList(g, "odette");
+    expect(list.map((l) => l.id).sort()).toEqual(mine.map((e) => e.id).sort());
+    const hs = list.map((l) => l.hearts);
+    expect(hs).toEqual([...hs].sort((a, b) => a - b));
+    for (const l of list) {
+      if (l.seen) expect(l.id).toBe(pick.id);
+      else expect(Object.keys(l).sort()).toEqual(["hearts", "id", "seen"]);
+    }
+    expect(replayList(g, "nobody")).toEqual([]);
+  });
+});
+
+describe("a replay changes nothing", () => {
+  it("records nothing and gives nothing; a first run still does", () => {
+    const g = newGame();
+    const e = eventById("odette-store-2")!;
+    expect(finishRun(g, e, 5, true)).toEqual([]);
+    expect(g.heartEvents.seen(e.id)).toBe(false);
+    expect(g.heartEvents.lastDay).toBe(0);
+    expect(g.heartEvents.hasFlag("odette-store-seen")).toBe(false);
+    expect(g.inventory.count("potato")).toBe(0);
+    expect(finishRun(g, e, 5, false)).toEqual(["2 x Potato"]);
+    expect(g.heartEvents.seen(e.id)).toBe(true);
+    const before = JSON.stringify(g.heartEvents.save());
+    expect(finishRun(g, e, 9, true)).toEqual([]);
+    expect(JSON.stringify(g.heartEvents.save())).toBe(before);
+    expect(g.inventory.count("potato")).toBe(2);
   });
 });

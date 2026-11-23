@@ -14,10 +14,11 @@ import {
   type Relationship,
   type SocialRow,
 } from "../core/menupages";
+import { replayList, type ReplayLine } from "../core/heartevents";
 import type { Taste } from "../core/friendship";
 import type { GameState } from "../core/save";
 import { currentSession } from "../net/session";
-import { takeEsc } from "./escape";
+import { escTaken, takeEsc } from "./escape";
 import { frame } from "./panel";
 import { addPortrait } from "./portrait";
 import { STATE_KEY } from "./state";
@@ -44,6 +45,18 @@ const TASTE_WORD: Record<Taste, string> = {
   hate: "hates",
 };
 
+const DIGITS = [
+  "ONE",
+  "TWO",
+  "THREE",
+  "FOUR",
+  "FIVE",
+  "SIX",
+  "SEVEN",
+  "EIGHT",
+  "NINE",
+];
+
 const LIST_TOP = 92;
 const LIST_H = 420;
 const ROW_H = 56;
@@ -61,6 +74,8 @@ export class SocialScene extends Phaser.Scene {
   private top = 0;
   private items: Phaser.GameObjects.GameObject[] = [];
   private detail: Phaser.GameObjects.GameObject[] = [];
+  /** The open person's event lines, for the number keys. */
+  private detailEvents: ReplayLine[] = [];
   private bar!: Phaser.GameObjects.Rectangle;
   private rows: SocialRow[] = [];
   /** Other players in a session, listed above the roster. */
@@ -83,6 +98,7 @@ export class SocialScene extends Phaser.Scene {
     this.top = 0;
     this.items = [];
     this.detail = [];
+    this.detailEvents = [];
     this.tipShown = false;
     this.pressTimer = undefined;
     this.pressed = false;
@@ -164,11 +180,28 @@ export class SocialScene extends Phaser.Scene {
     kb?.on("keydown-UP", () => this.scrollTo(this.top - ROW_H));
     kb?.on("keydown-DOWN", () => this.scrollTo(this.top + ROW_H));
     kb?.on("keydown-ESC", () => {
-      if (this.detail.length === 0) return;
+      if (this.detail.length === 0 || escTaken(this)) return;
       takeEsc(this);
       this.closeDetail();
     });
+    // Number keys replay the numbered seen events of the open person (the Replay buttons' keys).
+    for (let n = 1; n <= 9; n++)
+      kb?.on(`keydown-${DIGITS[n - 1]}`, () => {
+        const line = this.detailEvents[n - 1];
+        if (this.detail.length > 0 && line?.seen) this.replay(line.id);
+      });
     this.draw();
+  }
+
+  /**
+   * Replay a seen event in the sandbox (note 62, decision 8). The farm stays paused beneath, so the
+   * player, map, facing and clock are untouched; this tab pauses (the menu reads that as busy, so
+   * Esc, E and the tab keys wait) and resumes when the scene ends, still on the person's page.
+   */
+  private replay(id: string): void {
+    this.hideTip();
+    this.scene.launch("heart-event", { id, replay: true, returnTo: "social" });
+    this.scene.pause();
   }
 
   /** Show the hover or long-press tip for the person under the pointer; true if one showed. */
@@ -417,9 +450,10 @@ export class SocialScene extends Phaser.Scene {
           ? "No gift tastes learned yet."
           : "Gift log\n" +
               entries.map((e) => `${TASTE_WORD[e.taste]} ${e.item}`).join("\n"),
-        { ...BODY, fontSize: "18px", wordWrap: { width: 840 } },
+        { ...BODY, fontSize: "18px", wordWrap: { width: 440 } },
       ),
     );
+    this.drawEvents(r, add);
     const back = add(
       this.add
         .text(LIST_X + 16, LIST_TOP + 4, "< Back", {
@@ -431,6 +465,57 @@ export class SocialScene extends Phaser.Scene {
         .setInteractive({ useHandCursor: true }),
     );
     back.on("pointerdown", () => this.closeDetail());
+  }
+
+  /**
+   * The person's events by heart level (note 62, decision 9). A seen one has a Replay button (tap,
+   * or its number key); an unseen one is a dim line with its heart level only.
+   */
+  private drawEvents(
+    r: SocialRow,
+    add: <T extends Phaser.GameObjects.GameObject>(o: T) => T,
+  ): void {
+    const lines = replayList(this.registry.get(STATE_KEY) as GameState, r.id);
+    this.detailEvents = lines;
+    if (lines.length === 0) return;
+    const x = LIST_X + 500;
+    add(
+      this.add.text(x, LIST_TOP + 150, "Events", {
+        ...BODY,
+        fontSize: "20px",
+        color: "#ffe9a0",
+      }),
+    );
+    lines.slice(0, 9).forEach((l, i) => {
+      const y = LIST_TOP + 184 + i * 34;
+      const heartsText = `${l.hearts} ${l.hearts === 1 ? "heart" : "hearts"}`;
+      if (!l.seen) {
+        add(
+          this.add.text(x, y + 4, `${heartsText}: not seen yet`, {
+            fontSize: "18px",
+            color: "#ffffff66",
+          }),
+        );
+        return;
+      }
+      add(
+        this.add.text(x, y + 4, `${heartsText}: ${l.place}`, {
+          fontSize: "18px",
+          color: "#ffffff",
+        }),
+      );
+      add(
+        this.add
+          .text(x + 330, y, `Replay (${i + 1})`, {
+            fontSize: "16px",
+            color: "#ffffff",
+            backgroundColor: "#3f7d3a",
+            padding: { x: 8, y: 4 },
+          })
+          .setInteractive({ useHandCursor: true })
+          .on("pointerdown", () => this.replay(l.id)),
+      );
+    });
   }
 
   /** The roster rows and bar stay out of sight while a detail page is open. */
@@ -446,6 +531,7 @@ export class SocialScene extends Phaser.Scene {
   private closeDetail(): void {
     for (const o of this.detail) o.destroy();
     this.detail = [];
+    this.detailEvents = [];
     this.setListVisible(true);
   }
 }

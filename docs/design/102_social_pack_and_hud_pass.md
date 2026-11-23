@@ -131,3 +131,7 @@ The pack stays at 12 slots including the four tools (Stardew).
 ## Checks added
 
 SC-184 to SC-187 in note 54.
+
+## Event list on the person page (2026-11-22)
+
+The Social person page now has an Events column beside the gift log: the person's heart events by heart level, a seen one with a Replay button (tap, or its number key) and an unseen one as a dim line with its heart level only (note 62, decisions 8 and 9). A replay returns to the same page.

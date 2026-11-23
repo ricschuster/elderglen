@@ -293,6 +293,104 @@ for (const g of gives) {
 ok(gained === 0, `a replay of ${rich.id} gives no reward (gained ${gained})`);
 ok(!(await seen(rich.id)), `a replay of ${rich.id} is not recorded as seen`);
 
+// ---- replay from the Social tab (note 62, decisions 8 and 9): the player is back exactly where they were
+{
+  const target = data.find(
+    (x) => x.id === rich.id && x.stage_?.map !== undefined,
+  );
+  await w.p.evaluate(() => window.farmState({ hearts: {} }));
+  await w.p.evaluate(
+    (id) => window.__game.registry.get("state").heartEvents.mark(id, 1),
+    target.id,
+  );
+  const here = () =>
+    w.p.evaluate(() => {
+      const f = window.__game.scene.getScene("farm");
+      const s = window.__game.registry.get("state");
+      return {
+        dbg: JSON.stringify(window.farmDebug()),
+        minutes: s.day.clock.minutes,
+        day: s.day.clock.day,
+        money: s.money,
+        flags: JSON.stringify(s.heartEvents.save()),
+        paused: window.__game.scene.isPaused("farm"),
+        facing: f.facing ?? null,
+      };
+    });
+  const was = await here();
+  const invBefore = await w.bot.snap();
+  await w.p.evaluate(() =>
+    window.__game.scene.getScene("farm").open("menu", { tab: "social" }),
+  );
+  ok(
+    await wait(async () => (await scenes()).includes("social"), 3000),
+    "the Social tab opens",
+  );
+  const opened = await w.p.evaluate(
+    ({ v }) => {
+      const sc = window.__game.scene.getScene("social");
+      const g = window.__game.registry.get("state");
+      g.friendship.meet?.(v);
+      const row = sc.rows.find((r) => r.id === v);
+      if (!row || !row.met) return false;
+      sc.openDetail(g, row);
+      return sc.detailEvents.map((l) => `${l.hearts}:${l.seen}`);
+    },
+    { v: target.villager },
+  );
+  ok(
+    Array.isArray(opened) &&
+      opened.some((l) => l.endsWith(":true")) &&
+      opened.some((l) => l.endsWith(":false")),
+    `the person's page lists seen and locked events (${JSON.stringify(opened)})`,
+  );
+  const idx = Array.isArray(opened)
+    ? opened.findIndex((l) => l.endsWith(":true")) + 1
+    : 1;
+  await w.p.keyboard.press(`Digit${idx}`);
+  ok(await wait(inEvent, 4000), "Replay opens the event scene");
+  const mid = await here();
+  ok(
+    mid.minutes === was.minutes && mid.day === was.day,
+    "the clock does not move during a replay",
+  );
+  await sleepMs(500);
+  // Escape ends a replay at once (Skip).
+  await w.p.keyboard.press("Escape");
+  ok(await wait(async () => !(await inEvent()), 4000), "Skip ends the replay");
+  const back = await scenes();
+  ok(
+    back.includes("social") &&
+      back.includes("menu") &&
+      !back.includes("heart-event"),
+    `back on the Social tab (${back.join(",")})`,
+  );
+  const now = await here();
+  ok(
+    now.dbg === was.dbg &&
+      now.minutes === was.minutes &&
+      now.day === was.day &&
+      now.facing === was.facing &&
+      now.paused === true,
+    `same map, tile, facing and time as before the replay, farm still paused under the menu`,
+  );
+  ok(now.money === was.money, "the replay gave no gold");
+  ok(now.flags === was.flags, "the replay recorded nothing and set no flags");
+  const invAfter = await w.bot.snap();
+  ok(
+    JSON.stringify(invAfter.inv) === JSON.stringify(invBefore.inv),
+    "the replay gave no items",
+  );
+  // The menu closes as usual afterwards.
+  await w.p.keyboard.press("Escape");
+  await w.p.keyboard.press("Escape");
+  await sleepMs(300);
+  ok(
+    !(await scenes()).includes("menu"),
+    "the menu closes normally after a replay",
+  );
+}
+
 const errs = w.errs.filter((x) => !/favicon|ERR_ABORTED/.test(String(x)));
 ok(
   errs.length === 0,
