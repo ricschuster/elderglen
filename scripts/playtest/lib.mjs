@@ -165,6 +165,7 @@ export async function launch({
   profile = "desktop",
   bindings,
   scheme = "stick",
+  lean = false,
 }) {
   // DEVICE_CDP: drive Chrome on a real device (adb forward tcp:9222
   // localabstract:chrome_devtools_remote) instead of a headless browser.
@@ -173,6 +174,16 @@ export async function launch({
     ? await chromium.connectOverCDP(device)
     : await chromium.launch({
         executablePath: process.env.CHROMIUM_PATH || undefined,
+        // lean: fewer threads and no GPU work, for the many-worker sweep.
+        args: lean
+          ? [
+              "--renderer-process-limit=1",
+              "--disable-gpu",
+              "--num-raster-threads=1",
+              "--disable-dev-shm-usage",
+              "--disable-gpu-compositing",
+            ]
+          : [],
       });
   const p = device
     ? b
