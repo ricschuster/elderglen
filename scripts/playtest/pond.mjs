@@ -1,6 +1,7 @@
 // Farm ponds by hand (#951): from the `farm-pond-stocked` stage walk to the pond, press Action
 // with a fish held (stock it), with a second kind (refused), with nothing (menu opens), then sleep
-// nights and read roe, breeding and the pond status. Also orders a pond from `farm-pond-to-order`.
+// nights and read roe, breeding and the pond status. Also orders a pond from `farm-pond-to-order` through the carpenter menu, and
+// takes a waiting product (`farm-pond-product`) and fills a capacity quest (`farm-pond-quest`) by hand.
 // Run with `npm run dev` going: node scripts/playtest/pond.mjs
 import {
   launch,
@@ -157,16 +158,29 @@ if (s.out) {
 // Order a pond (stage farm-pond-to-order): cost, the build days, then it opens.
 await toStage(p, "farm-pond-to-order");
 await bot.dismissModals();
+// Through the carpenter's menu: the Fish pond row's Place button, then the placement screen.
 const ord = await p.evaluate(async () => {
   const m = await import("/src/core/pond.ts");
-  const s = window.__game.registry.get("state");
-  const sc = window.__game.scene.getScenes(true)[0];
+  const g = window.__game;
+  const s = g.registry.get("state");
   const prob = m.pondOrderProblem(s);
   const before = s.money;
-  const r = m.orderPond(s, sc.map, sc.mapId, 50, 18);
+  g.scene.getScenes(true)[0].scene.launch("carpenter");
+  await new Promise((r) => setTimeout(r, 600));
+  const c = g.scene.getScene("carpenter");
+  c.placePond();
+  await new Promise((r) => setTimeout(r, 600));
+  const placing = g.scene.isActive("placement");
+  const pl = g.scene.getScene("placement");
+  pl.moveTo(50, 18);
+  const free = pl.free;
+  pl.confirm();
+  await new Promise((r) => setTimeout(r, 600));
   return {
     prob: prob ?? null,
-    r,
+    r: { ok: placing && free && m.pondsOf(s).length === 1 },
+    placing,
+    free,
     paid: before - s.money,
     days: m.POND_BUILD_DAYS,
   };
@@ -195,6 +209,46 @@ for (let n = 1; n <= 8; n++) {
   );
 }
 if (s.count < 2) finding(`no breeding in 8 nights: ${JSON.stringify(s)}`);
+
+// A waiting product from the stage: an empty hand takes it.
+await toStage(p, "farm-pond-product");
+await bot.dismissModals();
+s = await pond();
+expect("product waiting", s.out, { item: "carp-roe", count: 2 });
+await bot.walkTo(49, 20);
+await bot.face("right");
+await bot.select(11);
+await p.evaluate(() => {
+  const inv = window.__game.registry.get("state").inventory;
+  inv.remove("wood", inv.count("wood"));
+});
+const roe0 = await p.evaluate(() =>
+  window.__game.registry.get("state").inventory.count("carp-roe"),
+);
+await bot.key("KeyX", 300);
+const roe1 = await p.evaluate(() =>
+  window.__game.registry.get("state").inventory.count("carp-roe"),
+);
+expect("stage product taken", roe1 - roe0, 2);
+expect("stage product cleared", (await pond()).out, null);
+
+// A capacity quest from the stage: hand the ore in with Action, one at a time.
+await toStage(p, "farm-pond-quest");
+await bot.dismissModals();
+s = await pond();
+expect("quest open", s.quest, { item: "copper-ore", need: 3, given: 0 });
+const cap0 = s.cap;
+await bot.walkTo(49, 20);
+await bot.face("right");
+for (let i = 0; i < 3; i++) {
+  await bot.select(await slotOf("copper-ore"));
+  await bot.key("KeyX", 300);
+  await bot.dismissModals();
+}
+s = await pond();
+expect("quest closed", s.quest, null);
+expect("capacity rose", s.cap > cap0, true);
+log(`capacity ${cap0} to ${s.cap}`);
 
 log("errors", JSON.stringify(errs));
 if (errs.length) finding(`console errors: ${errs.length}`);

@@ -518,6 +518,43 @@
       }
     },
     {
+      "id": "farm-pond-product",
+      "group": "Ponds",
+      "label": "Farm pond with 3 carp and carp roe waiting to be taken",
+      "patch": {
+        "season": "spring",
+        "dayOfSeason": 3,
+        "weather": "sunny",
+        "money": 10000,
+        "pond": {
+          "x": 50,
+          "y": 18,
+          "species": "carp",
+          "count": 3,
+          "out": { "item": "carp-roe", "count": 2 }
+        }
+      }
+    },
+    {
+      "id": "farm-pond-quest",
+      "group": "Ponds",
+      "label": "Full farm pond (3 carp) asking for 3 copper ore, with the ore in the pack",
+      "patch": {
+        "season": "spring",
+        "dayOfSeason": 3,
+        "weather": "sunny",
+        "money": 10000,
+        "pond": {
+          "x": 50,
+          "y": 18,
+          "species": "carp",
+          "count": 3,
+          "quest": { "item": "copper-ore", "need": 3 }
+        },
+        "items": { "copper-ore": 3 }
+      }
+    },
+    {
       "id": "farm-pond-to-order",
       "group": "Ponds",
       "label": "No pond yet, with the price in the pack (5000g, 200 stone, 5 seaweed, 5 pondweed)",

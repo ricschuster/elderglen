@@ -218,7 +218,7 @@ points are from the owner's play and memory, unchecked (SC-45).
 3. Area triggers in the event data (replacing the place tile), with the validator checking
    that each area is on the person's route in the window (note 84).
 4. Remove the warning: the Go on / Not now panel, the declined-today list and its offer-again rule (`declinedToday`), and the `warn` flag. An area entry starts the scene.
-5. The replay sandbox and the Social row list.
+5. The replay sandbox and the Social row list. **Built (2026-11-22).** Built status: `replayList` and `finishRun` in `src/core/heartevents.ts` (tests in `tests/heartevents.test.ts`); the person's page in the Social tab (`src/scenes/InfoTabs.ts`) lists events by heart level, a seen one with a Replay button (tap, or its number key) and a locked one as a dim "not seen yet" line; `HeartEventScene` takes `returnTo`. The farm stays paused under the menu, so the player, map, tile, facing and time are untouched, and the replay runs on the event's own map whichever map the player is on. Skip on a first run already ended the scene through `completeEvent` (cast, flags, rewards, recorded), so decision 10 needed no change. Headless check in `heart-extras.mjs`.
 6. Headless checks: `heart-extras.mjs` drops its warning and "not now" lines and checks that entering the area starts the scene; a new check that a
    scene moves a sprite; `playtest:sweep` re-run for events.
 7. M3d: block each person's scenes by hand with the real text.

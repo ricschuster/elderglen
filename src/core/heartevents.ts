@@ -317,11 +317,57 @@ export function nextEvent(
   return dueEvents(g, ctx, defs)[0];
 }
 
+// ---- Replay list -----------------------------------------------------------
+
+/** One line of a person's event list on the Social tab (note 62, decision 9). */
+export type ReplayLine =
+  | { id: string; hearts: number; seen: true; place: string }
+  | { id: string; hearts: number; seen: false };
+
+/** A place id as words: `hw:burrow-garden` is "burrow garden". */
+export const placeWords = (place: string): string =>
+  (place.split(":")[1] ?? place).split("/")[0]!.replace(/-/g, " ");
+
+/**
+ * One person's events by heart level, lowest first (data order within a level), each seen or
+ * locked. A locked line carries its heart level only: no place, no id-derived words, so the
+ * list spoils nothing. `seenIds()` feeds it.
+ */
+export function replayList(
+  g: GameState,
+  villager: string,
+  defs: HeartEvent[] = HEART_EVENTS,
+): ReplayLine[] {
+  const seen = new Set(g.heartEvents.seenIds());
+  return defs
+    .filter((e) => e.villager === villager)
+    .map((e, i) => ({ e, i }))
+    .sort((a, b) => a.e.hearts - b.e.hearts || a.i - b.i)
+    .map(({ e }): ReplayLine =>
+      seen.has(e.id)
+        ? { id: e.id, hearts: e.hearts, seen: true, place: placeWords(e.place) }
+        : { id: e.id, hearts: e.hearts, seen: false },
+    );
+}
+
 // ---- Results ---------------------------------------------------------------
 
 /** The scene as played: on replay the Result group is switched off. */
 export function playable(e: HeartEvent, replay: boolean): Cmd[] {
   return replay ? e.scene.filter((c) => !RESULT_CMDS.includes(c.cmd)) : e.scene;
+}
+
+/**
+ * The end of a scene, run or skipped. A replay changes nothing (no record, no Result group, no
+ * clock for the one a day rule) and returns no words; a first run is `completeEvent`.
+ */
+export function finishRun(
+  g: GameState,
+  e: HeartEvent,
+  day: number,
+  replay: boolean,
+): string[] {
+  return replay ? [] : completeEvent(g, e, day);
 }
 
 /**

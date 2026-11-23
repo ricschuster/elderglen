@@ -8,7 +8,17 @@
 // Env: WORKERS (default 4; 12 froze the machine with kernel oopses, keep it low), ONLY (a substring filter on item ids), KIND
 // (festival or event), BRANCHES=1 to also run each heart event once per choice
 // answer (default: one run per event, which halves the time).
+// Resource cap (always on): the script re-runs itself under
+// `systemd-run --user --scope -p MemoryMax=$SWEEP_MEM -p CPUQuota=$SWEEP_CPU`
+// (defaults 6G and 800, i.e. 8 cores; SWEEP_CPU is a percent number), so a
+// runaway Chrome cannot freeze the machine. Without systemd-run it exits with
+// a message unless SWEEP_UNCAPPED=1. Chrome runs with fewer threads (launch
+// option `lean`).
+// Results: each finished run is appended to OUT/sweep.jsonl as it completes
+// (a fresh run truncates it). RESUME=1 keeps the file, skips the ids already in
+// it, and merges old and new records into OUT/sweep.json.
 import fs from "node:fs";
+import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { launch, Bot, log, sleepMs, OUT, GAME_URL } from "./lib.mjs";
 
@@ -18,16 +28,61 @@ process.on("unhandledRejection", (e) => {
     console.error("unhandled", e);
 });
 
+if (!process.env.SWEEP_CAPPED) {
+  const mem = process.env.SWEEP_MEM || "6G";
+  const cpu = String(process.env.SWEEP_CPU || "800").replace(/%$/, "");
+  const pre = spawnSync(
+    "systemd-run",
+    ["--user", "--scope", "--quiet", "true"],
+    { stdio: "ignore" },
+  );
+  const r =
+    pre.error || pre.status !== 0
+      ? pre
+      : spawnSync(
+          "systemd-run",
+          [
+            "--user",
+            "--scope",
+            "--quiet",
+            "-p",
+            `MemoryMax=${mem}`,
+            "-p",
+            `CPUQuota=${cpu}%`,
+            process.execPath,
+            ...process.argv.slice(1),
+          ],
+          { stdio: "inherit", env: { ...process.env, SWEEP_CAPPED: "1" } },
+        );
+  if (r.error || r === pre) {
+    const msg = `sweep: cannot start the resource cap (systemd-run ${r.error ? r.error.message : "scope failed, status " + r.status}).`;
+    if (process.env.SWEEP_UNCAPPED === "1")
+      console.warn(`${msg} Running UNCAPPED because SWEEP_UNCAPPED=1.`);
+    else {
+      console.error(
+        `${msg} Install systemd or set SWEEP_UNCAPPED=1 to run without a cap.`,
+      );
+      process.exit(2);
+    }
+  } else process.exit(r.status ?? 1);
+}
+
+if (process.env.SWEEP_CAPPED)
+  log(
+    `cap: ${fs.readFileSync("/proc/self/cgroup", "utf8").trim().split("\n").pop()}`,
+  );
 const WORKERS = Math.max(1, Number(process.env.WORKERS) || 4);
 const ONLY = process.env.ONLY ?? "";
 const KIND = process.env.KIND ?? "";
 const BRANCHES = process.env.BRANCHES === "1";
+const RESUME = process.env.RESUME === "1";
+const JSONL = `${OUT}/sweep.jsonl`;
 const SHOT_EVERY = 4; // one heart event in this many gets a screenshot (plus all with a branch label of "first")
 const T0 = Date.now();
 fs.mkdirSync(`${OUT}/shots`, { recursive: true });
 
 // ---------------------------------------------------------------- data
-const probe = await launch({ fresh: true });
+const probe = await launch({ fresh: true, lean: true });
 const data = await probe.p.evaluate(async () => {
   const fest = await import("/src/core/festivals.ts");
   const ev = await import("/src/core/heartevents.ts");
@@ -118,10 +173,30 @@ for (const e of data.events) {
         });
 }
 
+const prior = [];
+if (RESUME && fs.existsSync(JSONL)) {
+  for (const l of fs.readFileSync(JSONL, "utf8").split("\n")) {
+    if (!l.trim()) continue;
+    try {
+      prior.push(JSON.parse(l));
+    } catch {
+      // a half-written last line from a killed run: that item runs again
+    }
+  }
+} else {
+  fs.writeFileSync(JSONL, "");
+}
+const doneIds = new Set(prior.map((r) => r.id));
 const todo = items.filter(
-  (it) => it.id.includes(ONLY) && (!KIND || it.kind === KIND),
+  (it) =>
+    it.id.includes(ONLY) && (!KIND || it.kind === KIND) && !doneIds.has(it.id),
 );
-log(`${todo.length} runs on ${WORKERS} workers`);
+log(
+  `${todo.length} runs on ${WORKERS} workers` +
+    (RESUME
+      ? ` (resume: skipping ${doneIds.size} done: ${[...doneIds].join(", ") || "none"})`
+      : ""),
+);
 
 // ---------------------------------------------------------------- helpers
 class Run {
@@ -619,6 +694,25 @@ async function runEvent(w, run) {
       async () => (await scenes(w)).includes("heart-event"),
       2500,
     );
+    // A long walk under load can run the clock past a short window (Cuthbert's 12:00 to 13:00
+    // yard events failed this way in a full sweep). Put the clock back in the window, in place
+    // (no scene restart), and look again: the farm checks the area again when the minute changes.
+    if (!started && walked !== "noroute" && e.window) {
+      const now = await w.p.evaluate(
+        () => window.__game.registry.get("state").day.clock.minutes,
+      );
+      if (now >= toMin(e.window.until)) {
+        await w.p.evaluate((m) => {
+          window.__game.registry.get("state").day.clock.minutes = m;
+        }, inWin);
+        run.note(`clock reset to the window after a slow walk (was ${now})`);
+        started = await waitFor(
+          w,
+          async () => (await scenes(w)).includes("heart-event"),
+          2500,
+        );
+      }
+    }
     unreachable = !started && walked === "noroute";
     if (unreachable)
       run.fail(
@@ -741,13 +835,13 @@ async function runEvent(w, run) {
 }
 
 // ---------------------------------------------------------------- run
-const results = [];
+const results = [...prior];
 const queue = [...todo];
 let finished = 0;
 
 async function worker(i) {
   await sleepMs(i * 400);
-  const w = await launch({ fresh: true });
+  const w = await launch({ fresh: true, lean: true });
   w.bot = new Bot(w.p, w.errs);
   while (queue.length) {
     const it = queue.shift();
@@ -787,6 +881,7 @@ async function worker(i) {
       seconds: Math.round((Date.now() - t) / 100) / 10,
     };
     results.push(rec);
+    fs.appendFileSync(JSONL, JSON.stringify(rec) + "\n");
     finished++;
     log(
       `[${finished}/${todo.length}] ${rec.status.toUpperCase()} ${it.id}${rec.reasons.length ? ": " + rec.reasons.join(" | ") : ""}`,
