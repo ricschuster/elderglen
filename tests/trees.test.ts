@@ -128,7 +128,7 @@ describe("chop", () => {
     const before = g.day.energy.current;
     chop(g, 1, 0);
     expect(g.day.energy.current).toBe(before - 2);
-    g.day.energy.current = 0;
+    g.day.energy.current = -15;
     expect(chop(g, 1, 0)).toEqual({ ok: false, reason: "exhausted" });
     expect(chop(g, 5, 0).ok).toBe(false);
   });

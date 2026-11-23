@@ -62,11 +62,31 @@
         {
           "cmd": "place",
           "who": "aurelle",
-          "mark": "river_path_centre"
+          "mark": "river_path_left"
         },
         {
           "cmd": "fade",
           "to": "clear"
+        },
+        {
+          "cmd": "walk",
+          "who": "aurelle",
+          "path": "river_path_left_to_right"
+        },
+        {
+          "cmd": "walk",
+          "who": "player",
+          "path": "river_path_entry_to_centre"
+        },
+        {
+          "cmd": "face",
+          "who": "aurelle",
+          "toward": "player"
+        },
+        {
+          "cmd": "face",
+          "who": "player",
+          "toward": "aurelle"
         },
         {
           "cmd": "pan",
@@ -81,6 +101,11 @@
           "cmd": "emote",
           "who": "aurelle",
           "emote": "smile"
+        },
+        {
+          "cmd": "pose",
+          "who": "aurelle",
+          "pose": "surprise"
         },
         {
           "cmd": "say",

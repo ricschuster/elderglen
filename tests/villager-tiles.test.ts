@@ -201,26 +201,99 @@ describe("per-person beds (#992)", () => {
     expect(problems).toEqual([]);
   });
 
-  it("shares a bed mark only between the couples sharing a double bed", () => {
-    const couples = [
-      ["odette", "dorrie"],
-      ["hattie", "podge"],
-      ["tilda", "rufus"],
-      ["hester", "walter"],
-    ];
+  it("gives every villager a bed of their own, even the couples (partners lie on the two sides of the double bed)", () => {
     const byBed = new Map<string, string[]>();
     for (const v of VILLAGERS) {
       if (!v.bedMark) continue;
       const k = `${v.home.split("/")[0]}|${v.bedMark}`;
       byBed.set(k, [...(byBed.get(k) ?? []), v.id]);
     }
-    for (const ids of byBed.values())
-      if (ids.length > 1)
-        expect(couples.some((c) => c.join() === ids.join())).toBe(true);
+    for (const ids of byBed.values()) expect(ids).toHaveLength(1);
+    const tiles = new Map<string, string[]>();
+    for (const v of VILLAGERS) {
+      const b = bedPlace(v);
+      if (!b) continue;
+      const k = `${b.map}|${b.x},${b.y}`;
+      tiles.set(k, [...(tiles.get(k) ?? []), v.id]);
+    }
+    for (const [k, ids] of tiles) expect(ids, k).toHaveLength(1);
   });
 
-  it("leaves a person with no interior map without a bed", () => {
-    for (const id of ["rundahl", "marl", "maren"])
-      expect(bedPlace(VILLAGERS.find((v) => v.id === id)!)).toBeUndefined();
+  it("leaves only the camp wanderer without a bed", () => {
+    const without = VILLAGERS.filter((v) => !bedPlace(v)).map((v) => v.id);
+    expect(without).toEqual(["rundahl"]);
+  });
+
+  it("names every bed mark bed-<id> for the two new homes, and walks Marl and Maren to their own", () => {
+    for (const id of ["marl", "maren"]) {
+      const v = VILLAGERS.find((x) => x.id === id)!;
+      expect(v.bedMark).toBe(`bed-${id}`);
+      expect(bedPlace(v)?.map).toBe(
+        id === "marl" ? "quarry-tent" : "mine-room",
+      );
+    }
+  });
+
+  it("lies each person on their bed at bedtime and in the morning before the first stop, only on their home map", () => {
+    const g = { weather: "sunny" } as Parameters<typeof villagersOn>[0];
+    const problems: string[] = [];
+    for (const v of VILLAGERS) {
+      const b = bedPlace(v);
+      if (!b) continue;
+      const first = v.route[0];
+      for (const t of [v.bed + 30, 6 * 60]) {
+        if (t === 6 * 60 && first && first.time <= t) continue;
+        const here = villagersOn(g, b.map!, 1, t).find((p) => p.id === v.id);
+        if (!here?.lying || here.x !== b.x || here.y !== b.y)
+          problems.push(`${v.id} at ${t}`);
+      }
+      const elsewhere = villagersOn(g, "hearthwell", 1, v.bed + 30).some(
+        (p) => p.id === v.id,
+      );
+      if (elsewhere) problems.push(`${v.id} shown outside`);
+    }
+    expect(problems).toEqual([]);
+  });
+});
+
+describe("Maren's back room and Marl's tent (#992)", () => {
+  const link = [
+    ["mine", "mine-room", "room", "from_room"],
+    ["quarry", "quarry-tent", "tent", "from_tent"],
+  ] as const;
+  it("load, and connect to the outer map both ways", () => {
+    for (const [outer, inner, exitId, entry] of link) {
+      const o = maps.get(outer);
+      const i = maps.get(inner);
+      expect(o.exits.find((e) => e.id === exitId)).toMatchObject({
+        map: inner,
+        entry: "door",
+      });
+      expect(i.exits.find((e) => e.id === "door")).toMatchObject({
+        map: outer,
+        entry,
+      });
+      const back = o.entry(entry)!;
+      expect(back).toBeDefined();
+      expect(o.isBlocked(back.x, back.y)).toBe(false);
+      expect(i.entry("door")).toBeDefined();
+    }
+    expect(maps.problems()).toEqual([]);
+  });
+
+  it("have a walkable bed mark and a home spot, and are reachable from the door", () => {
+    for (const [id, bed] of [
+      ["mine-room", "bed-maren"],
+      ["quarry-tent", "bed-marl"],
+    ] as const) {
+      const m = maps.get(id);
+      const open = m.reachable(m.entry("door")!);
+      const names = maps.marksWith(id, new Set()).marks;
+      for (const n of [bed, "spot-home-sit"]) {
+        const mk = names.find((x) => x.name === n)!;
+        expect(mk, `${id} ${n}`).toBeDefined();
+        expect(open.has(`${mk.x},${mk.y}`), `${id} ${n} walkable`).toBe(true);
+      }
+    }
   });
 });

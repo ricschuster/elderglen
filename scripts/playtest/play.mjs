@@ -740,7 +740,7 @@ async function overdo() {
   const reportText = await uiText("report");
   log("pass-out report:", reportText);
   await bot.shot("passout-energy");
-  // The clock can beat the energy bar: a 2 am pass-out wakes at 75 percent
+  // The clock can beat the energy bar: a 2 am pass-out wakes at 50 percent
   // (`late.mjs` checks that one), so the energy checks below do not apply.
   if (/stayed up too late/.test(reportText)) {
     finding("overdo ended at 2 am, not by running out of energy");

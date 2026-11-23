@@ -94,3 +94,39 @@ describe("quality in play", () => {
     expect(hall.problem(inv, bundle.id, "daffodil")).toBe("Already handed in.");
   });
 });
+
+describe("Hearthsilver, the top grade", () => {
+  it("sells for twice the base and feeds more than gold", () => {
+    const base = itemById("parsnip")!;
+    const top = itemById("parsnip@hearthsilver")!;
+    expect(top.sellPrice).toBe(base.sellPrice * 2);
+    expect(top.name).toBe("Hearthsilver parsnip");
+    expect(top.sellPrice).toBeGreaterThan(itemById("parsnip@gold")!.sellPrice);
+    const food = itemById("salmonberry")?.energy;
+    if (food !== undefined)
+      expect(itemById("salmonberry@hearthsilver")!.energy).toBeGreaterThan(
+        itemById("salmonberry@gold")!.energy!,
+      );
+    expect(splitQuality("parsnip@hearthsilver")).toEqual({
+      base: "parsnip",
+      quality: "hearthsilver",
+    });
+  });
+
+  it("rolls for crops only at high farming level on fertilised soil", () => {
+    expect(cropQuality(10, 0.01, 1)).toBe("hearthsilver");
+    expect(cropQuality(10, 0.01, 0)).toBe("gold");
+    expect(cropQuality(7, 0.01, 1)).not.toBe("hearthsilver");
+  });
+
+  it("rolls for forage from level 10", () => {
+    expect(forageQuality(10, 0.01)).toBe("hearthsilver");
+    expect(forageQuality(9, 0.01)).toBe("gold");
+  });
+
+  it("counts above gold for a bundle's minimum", () => {
+    const inv = new Inventory();
+    inv.add("parsnip@hearthsilver");
+    expect(inv.count("parsnip@hearthsilver")).toBe(1);
+  });
+});

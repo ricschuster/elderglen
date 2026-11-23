@@ -18,6 +18,7 @@ import type { GameState } from "./save";
 import {
   SHOPS,
   dayContext,
+  lyingBed,
   shopState,
   villagerById,
   VILLAGERS,
@@ -44,6 +45,8 @@ export interface Present {
   /** Set while the person walks a leg between stops (note 79): the place between tiles, in tile units. */
   fx?: number;
   fy?: number;
+  /** True while the person lies on their own bed (placeholder lying pose, note 80 "Bedtime"). */
+  lying?: boolean;
   /** -1 left, 1 right, 0 unknown, while walking. */
   facing?: number;
   /** The next tile on the way, while walking. */
@@ -106,6 +109,19 @@ export function villagersOn(
     const w = opts.lag?.[v.id]
       ? whereAt(v, ctx, minutes - opts.lag[v.id]!)
       : n.route;
+    const bed = lyingBed(v, ctx, minutes - (opts.lag?.[v.id] ?? 0));
+    if (bed) {
+      if (bed.map !== mapId) continue;
+      out.push({
+        id: v.id,
+        name: v.name,
+        x: bed.x,
+        y: bed.y,
+        placeholder: false,
+        lying: true,
+      });
+      continue;
+    }
     if (w.asleep || w.where.transit || w.where.map !== mapId) continue;
     out.push({
       id: v.id,

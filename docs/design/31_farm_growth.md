@@ -90,7 +90,7 @@ read only (ADR 0002). Costs and recipes are placeholders until the tuning note.
   and the player chooses fruit bats or mushrooms. The choice is permanent.
 - Fruit bats leave fruit in the cave overnight, on a chance, including foraged
   berries out of season. Mushrooms grow there and are picked by hand.
-- Items stay until picked up. The botanist profession makes fruit top grade, and
+- Items stay until picked up. The botanist profession makes fruit Hearthsilver, the top grade,, and
   the gatherer profession gives a chance of a double (`07_tuning_numbers.md`).
   Picking gives foraging experience.
 - The cave is a gentle, foraging-flavoured payoff and needs no creatures, which

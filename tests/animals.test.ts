@@ -381,8 +381,13 @@ describe("the night", () => {
   });
 
   it("quality follows friendship and mood, normal below 150 mood", () => {
-    expect(animalQuality(1000, 255)).toBe("gold");
-    expect(animalQuality(700, 200)).toBe("silver");
+    expect(animalQuality(1000, 255)).toBe("hearthsilver");
+    expect(animalQuality(1000, 225)).toBe("hearthsilver");
+    expect(animalQuality(700, 225)).toBe("silver");
+    expect(animalQuality(800, 225)).toBe("gold");
+    expect(animalQuality(960, 225)).toBe("hearthsilver");
+    expect(animalQuality(940, 225)).toBe("gold");
+
     expect(animalQuality(1000, 140)).toBe("normal");
     expect(animalQuality(0, 255)).toBe("normal");
   });

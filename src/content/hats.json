@@ -423,5 +423,26 @@
     "id": "far-road-hat",
     "name": "Far Road Hat",
     "color": "#6a3a7a"
+  },
+  {
+    "id": "beetle-head-hat",
+    "name": "Beetle-head Hat",
+    "color": "#3a6a3a",
+    "slayer": "mossbeetle",
+    "rebuy": 10000
+  },
+  {
+    "id": "skull-mask-hat",
+    "name": "Skull Mask Hat",
+    "color": "#e8e4d0",
+    "slayer": "old-digger",
+    "rebuy": 20000
+  },
+  {
+    "id": "hard-hat",
+    "name": "Hard Hat",
+    "color": "#e8b020",
+    "slayer": "pebbleback",
+    "rebuy": 20000
   }
 ]

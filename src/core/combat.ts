@@ -1,11 +1,12 @@
 import weaponData from "../content/weapons.json";
 import { BUNDLES } from "./bundles";
 import { Effects } from "./effects";
-import { RINGS, bootsById, type RingDef } from "./equipment";
+import { RINGS, bootsById, type KillBuff, type RingDef } from "./equipment";
 import { itemById } from "./items";
 import { splitQuality } from "./quality";
 import {
   SLAYER_GOALS,
+  creatureById,
   slayerKills,
   type Creature,
   type SlayerGoal,
@@ -35,13 +36,45 @@ export const HEALTH_PER_ENERGY = 0.5;
 export const STEADY_HEALTH = 25;
 export const NIMBLE_GRACE = 2.5;
 
+/** Level 10 combat professions (placeholders, note 22). */
+export const BULWARK_HEALTH = 25;
+export const HEAVY_HAND_BONUS = 0.15;
+export const QUICKSTEP_FACTOR = 2 / 3;
+export const LUCKY_STRIKE_CHANCE = 0.1;
+
 export const maxHealth = (combatLevel = 0): number =>
   BASE_HEALTH + HEALTH_PER_LEVEL * combatLevel;
 
 /** The most health the player can have: the combat level and the Steady profession. */
 export const healthFor = (skills: Skills): number =>
   maxHealth(skills.level("combat")) +
-  (skills.has("steady") ? STEADY_HEALTH : 0);
+  (skills.has("steady") ? STEADY_HEALTH : 0) +
+  (skills.has("bulwark") ? BULWARK_HEALTH : 0);
+
+/** Weapon damage with Heavy Hand's 15 percent (rounded, never below the base). */
+export const weaponDamageFor = (skills: Skills, base: number): number =>
+  skills.has("heavyhand")
+    ? Math.max(base, Math.round(base * (1 + HEAVY_HAND_BONUS)))
+    : base;
+
+/** Seconds between swings: a third shorter with Quickstep. */
+export const cooldownFor = (skills: Skills, base: number): number =>
+  skills.has("quickstep") ? base * QUICKSTEP_FACTOR : base;
+
+/**
+ * Damage of one hit: Heavy Hand first, then Lucky Strike doubles it one time in
+ * ten. `random` is injectable, as every combat roll is. Only rolls with the
+ * profession, so other farmers never spend a roll.
+ */
+export function hitDamageFor(
+  skills: Skills,
+  base: number,
+  random: () => number,
+): { damage: number; lucky: boolean } {
+  const damage = weaponDamageFor(skills, base);
+  const lucky = skills.has("luckystrike") && random() < LUCKY_STRIKE_CHANCE;
+  return { damage: lucky ? damage * 2 : damage, lucky };
+}
 
 /** Seconds of grace after a hit: longer with the Nimble profession. */
 export const graceFor = (skills: Skills): number =>
@@ -415,6 +448,8 @@ export interface CombatSave {
   oilDay?: number;
   /** Slayer rings already handed over, so a lost one costs coin to get again. */
   slayerClaimed?: string[];
+  /** Rare creature kinds found at least once (a quiet tracker entry, note 22). */
+  rareFound?: string[];
 }
 
 /** What the player carries into a fight: health, the trainer's progress and the kill tally. */
@@ -432,6 +467,8 @@ export class Combat {
   oilDay = 0;
   /** Slayer ring ids handed over once (note 22). */
   slayerClaimed: string[] = [];
+  /** Rare creature kinds beaten at least once: a quiet tracker entry that adds to no completion total (note 22). */
+  rareFound: string[] = [];
   /** Beaten creatures by kind, for the slayer list later (note 22). */
   kills: Record<string, number> = {};
   /** The Assist toggle, synced from the device settings by the scene. Never saved here. */
@@ -439,11 +476,42 @@ export class Combat {
   /** The "no creatures" setting, synced from the device settings. Never saved here. */
   noCreatures = false;
 
-  /** Take the health ceiling and grace from the skills. Never heals. */
-  sync(skills: Skills): void {
+  /** Seconds left of the speed and damage buffs a kill starts (savage and warrior rings). In memory only. */
+  buffs = { speed: 0, damage: 0, speedFactor: 1, damageFactor: 1 };
+
+  /** Take the health ceiling and grace from the skills and rings. Never heals. */
+  sync(skills: Skills, graceBonus = 0): void {
     this.health.max = healthFor(skills);
     this.health.current = Math.min(this.health.current, this.health.max);
-    this.health.graceLength = graceFor(skills);
+    this.health.graceLength = graceFor(skills) + graceBonus;
+  }
+
+  /** Start the ring buffs a kill gives. */
+  startKillBuffs(speed?: KillBuff, damage?: KillBuff): void {
+    if (speed) {
+      this.buffs.speed = speed.seconds;
+      this.buffs.speedFactor = speed.factor;
+    }
+    if (damage) {
+      this.buffs.damage = damage.seconds;
+      this.buffs.damageFactor = damage.factor;
+    }
+  }
+
+  /** Run the kill buffs down. */
+  tickBuffs(dt: number): void {
+    this.buffs.speed = Math.max(0, this.buffs.speed - dt);
+    this.buffs.damage = Math.max(0, this.buffs.damage - dt);
+  }
+
+  /** Multiplier on walk speed from a kill buff. */
+  killSpeedFactor(): number {
+    return this.buffs.speed > 0 ? this.buffs.speedFactor : 1;
+  }
+
+  /** Multiplier on weapon damage from a kill buff. */
+  killDamageFactor(): number {
+    return this.buffs.damage > 0 ? this.buffs.damageFactor : 1;
   }
 
   noteKill(kind: string): void {
@@ -460,6 +528,7 @@ export class Combat {
       ...(this.slayerClaimed.length
         ? { slayerClaimed: [...this.slayerClaimed] }
         : {}),
+      ...(this.rareFound.length ? { rareFound: [...this.rareFound] } : {}),
     };
   }
 
@@ -483,6 +552,9 @@ export class Combat {
     this.slayerClaimed = (
       Array.isArray(raw?.slayerClaimed) ? raw.slayerClaimed : []
     ).filter((x) => SLAYER_RINGS.some((r) => r.id === x));
+    this.rareFound = (
+      Array.isArray(raw?.rareFound) ? raw.rareFound : []
+    ).filter((x) => creatureById(x)?.rare !== undefined);
     this.kills = {};
     for (const [k, v] of Object.entries(raw?.kills ?? {}))
       if (Number.isInteger(v) && v > 0) this.kills[k] = v;

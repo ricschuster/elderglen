@@ -46,7 +46,7 @@ import { itemById } from "../src/core/items";
 import { reportLines } from "../src/core/report";
 import { sleep } from "../src/core/sleep";
 import { MAX_ENERGY } from "../src/core/energy";
-import { PASS_OUT_WAKE_ENERGY } from "../src/core/day";
+import { HALF_MORNING } from "../src/core/energyrules";
 import { BUNDLES } from "../src/core/bundles";
 import {
   deserializeSettings,
@@ -225,8 +225,8 @@ describe("weapons", () => {
 });
 
 describe("creatures", () => {
-  it("has twelve kinds across the three bands, each with a drop list", () => {
-    expect(CREATURES).toHaveLength(15);
+  it("has fifteen kinds and three rares across the three bands, each with a drop list", () => {
+    expect(CREATURES).toHaveLength(18);
     for (const band of [1, 2, 3])
       expect(creaturesOfBand(band).length).toBeGreaterThanOrEqual(4);
     for (const c of CREATURES) {
@@ -546,9 +546,7 @@ describe("defeat", () => {
     expect(g.money).toBe(360);
     expect(g.combat.defeatPending).toBe(false);
     expect(g.combat.health.current).toBe(g.combat.health.max);
-    expect(g.day.energy.current).toBe(
-      Math.round(MAX_ENERGY * PASS_OUT_WAKE_ENERGY.energy),
-    );
+    expect(g.day.energy.current).toBe(Math.round(MAX_ENERGY * HALF_MORNING));
     const lines = reportLines(report).join(" ");
     expect(lines).toMatch(/knocked out/);
     expect(lines).toMatch(/buy one back/);

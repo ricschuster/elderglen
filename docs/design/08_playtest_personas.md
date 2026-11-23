@@ -55,7 +55,7 @@ double key event seen on the farm did not show up in menus.
 
 Pass-out rules matched the tuning note. Running out of energy cost 10 percent
 of money (50g of 500g) and gave 135 energy next morning (50 percent). Staying up
-until 2 am cost the same and gave 203 energy (75 percent).
+until 2 am cost the same and gave 203 energy (75 percent; that was the old rule, a 2 am pass-out is now half, 2026-11-23).
 
 ## What the runs say
 

@@ -6,6 +6,7 @@
 import { DAY_START } from "../core/clock";
 import { cabinSpawnTile } from "../core/cabins";
 import { farmMapOf } from "../core/farmtypes";
+import { isHouseMap } from "../core/house";
 import { LOCAL_PLAYER, type PlayerId } from "../core/players";
 import type { Intent, PlayerInfo, PosRow, ServerMsg } from "../core/protocol";
 import type { BedStatus } from "../core/room";
@@ -240,7 +241,9 @@ export async function startHostSession(
   deps: HostSessionDeps,
 ): Promise<HostSession> {
   const map = farmMapOf(state);
+  const hosted: { host?: RoomHost } = {};
   const world = new GameRoomWorld(state, {
+    inside: (id) => isHouseMap(hosted.host?.room.position(id)?.map ?? ""),
     origin: "multiplayer-start",
     cabinArea: { x: 0, y: 0, w: map.width, h: map.height },
     blocked: (x, y) => map.isBlocked(x, y),
@@ -253,6 +256,7 @@ export async function startHostSession(
     hostName: deps.hostName,
     announceName: deps.announceName,
   });
+  hosted.host = host;
   return new HostSession(host, world);
 }
 

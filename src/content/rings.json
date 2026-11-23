@@ -40,7 +40,7 @@
     "magnet": 0,
     "defense": 5,
     "slayer": "rock-crab",
-    "rebuy": 5000
+    "rebuy": 15000
   },
   {
     "id": "slime-proof-ring",
@@ -50,6 +50,66 @@
     "slimeProof": true,
     "slayer": "gloop",
     "rebuy": 25000
+  },
+  {
+    "id": "burglar-ring",
+    "name": "Burglar ring",
+    "light": 0,
+    "magnet": 0,
+    "dropTwice": true,
+    "slayer": "dustmoth",
+    "rebuy": 20000
+  },
+  {
+    "id": "vampire-ring",
+    "name": "Vampire ring",
+    "light": 0,
+    "magnet": 0,
+    "healOnKill": 2,
+    "slayer": "cave-bat",
+    "rebuy": 15000
+  },
+  {
+    "id": "savage-ring",
+    "name": "Savage ring",
+    "light": 0,
+    "magnet": 0,
+    "killSpeed": {
+      "factor": 1.3,
+      "seconds": 3
+    },
+    "slayer": "cinder-pup",
+    "rebuy": 25000
+  },
+  {
+    "id": "warrior-ring",
+    "name": "Warrior ring",
+    "light": 0,
+    "magnet": 0,
+    "killDamage": {
+      "factor": 1.25,
+      "seconds": 5
+    },
+    "slayer": "lanternmoth",
+    "rebuy": 20000
+  },
+  {
+    "id": "protection-ring",
+    "name": "Protection ring",
+    "light": 0,
+    "magnet": 0,
+    "grace": 0.4,
+    "slayer": "frostnibbler",
+    "rebuy": 15000
+  },
+  {
+    "id": "thorns-ring",
+    "name": "Thorns ring",
+    "light": 0,
+    "magnet": 0,
+    "thorns": true,
+    "slayer": "nabbler",
+    "rebuy": 15000
   },
   {
     "id": "sturdy-band",

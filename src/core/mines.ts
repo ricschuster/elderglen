@@ -6,7 +6,10 @@ import { diamondShare, gemShare } from "./gems";
 import { WATER_TILE, type TiledMapJson } from "./map";
 import { GroundItems, type Pile } from "./ground";
 import { Rocks, type Rock, type RockKind } from "./rocks";
+import { LEVER_FLOOR, LEVER_KIND, leverWorks } from "./danger";
 import {
+  applyRares,
+  bandNumber,
   loadCreature,
   saveCreature,
   spawnCreatures,
@@ -157,6 +160,8 @@ export interface FloorLayout {
   pool: Spot[];
   /** An infested or geode floor, if it is one today. */
   special: SpecialFloor | undefined;
+  /** The dangerous mode lever, on the last floor only (note 22). */
+  lever: Spot | undefined;
 }
 
 /** About one floor in four has a cave pool, 3 tiles wide and 2 high, with open ground all round it. */
@@ -255,6 +260,9 @@ export function floorLayout(floor: number, day: number): FloorLayout {
     special !== "infested"
       ? pick((s) => !near(s, UP, 5))
       : undefined;
+  // The lever stands in the last hall, picked after everything else so no other tile moves.
+  const lever =
+    floor === LEVER_FLOOR ? pick((s) => !near(s, UP, 4)) : undefined;
   return {
     floor,
     walls,
@@ -265,6 +273,7 @@ export function floorLayout(floor: number, day: number): FloorLayout {
     camp,
     special,
     pool,
+    lever,
   };
 }
 
@@ -326,6 +335,16 @@ export function floorMapJson(layout: FloorLayout): TiledMapJson & {
         objects: [
           point("entry", "from_above", layout.arrive),
           point("entry", "from_below", layout.arrive),
+          ...(layout.lever
+            ? [
+                {
+                  ...point("service", "danger-lever", layout.lever),
+                  properties: <{ name: string; value: unknown }[]>[
+                    { name: "kind", value: LEVER_KIND },
+                  ],
+                },
+              ]
+            : []),
           ...(layout.camp
             ? [
                 {
@@ -378,13 +397,18 @@ export function floorMapJson(layout: FloorLayout): TiledMapJson & {
  * a rock, the way up or a ladder, and well away from where the player arrives.
  * Seeded by the day and the floor, so a reload does not change them.
  */
-export function floorCreatures(floor: number, day: number): Creature[] {
+export function floorCreatures(
+  floor: number,
+  day: number,
+  dangerous = false,
+): Creature[] {
   const layout = floorLayout(floor, day);
   if (layout.special === "geode") return [];
   const random = seeded(day * 2003 + floor * 6173 + 29);
   const taken = new Set(layout.rocks.map((r) => `${r.x},${r.y}`));
   if (layout.ladder) taken.add(`${layout.ladder.x},${layout.ladder.y}`);
   if (layout.camp) taken.add(`${layout.camp.x},${layout.camp.y}`);
+  if (layout.lever) taken.add(`${layout.lever.x},${layout.lever.y}`);
   for (const p of layout.pool) taken.add(`${p.x},${p.y}`);
   return spawnCreatures(
     floor,
@@ -399,6 +423,7 @@ export function floorCreatures(floor: number, day: number): Creature[] {
     16,
     6,
     layout.special === "infested" ? INFESTED_EXTRA_CREATURES : 0,
+    dangerous,
   );
 }
 
@@ -410,6 +435,8 @@ export class Floor {
     public ladder: Spot | undefined,
     /** The creatures still on the floor today. A beaten one is gone until tomorrow. */
     public creatures: Creature[] = [],
+    /** Made while dangerous mode was on: harder creatures, one more ore a node, a different tint (note 22). */
+    readonly dangerous = false,
   ) {}
 
   /** Kills made on the floor today, for the infested slayer bonus. Not saved. */
@@ -427,6 +454,8 @@ export interface FloorSave {
   creatures?: CreatureSave[];
   /** Goods on the floor's ground. Absent in saves from before. */
   ground?: Pile[];
+  /** True for a floor made in dangerous mode. Absent otherwise. */
+  dangerous?: boolean;
 }
 
 export interface MinesSave {
@@ -442,6 +471,10 @@ export interface MinesSave {
   misses: number;
   copperHandedIn: boolean;
   floors: Record<number, FloorSave>;
+  /** True while dangerous mode is on. Absent in older saves and when off. */
+  dangerous?: boolean;
+  /** Rare creature dry streaks, one per band (note 22). Absent in older saves. */
+  rareMisses?: number[];
 }
 
 /** The mine's progress: the deepest floor, the dry streak and the floors dug today. */
@@ -454,6 +487,10 @@ export class Mines {
   copperHandedIn = false;
   /** True once Old Greencoat has brought the news at the farm door. */
   greeted = false;
+  /** Dangerous mode, flipped by the lever on floor 120. Floors made while it is on are harder. */
+  dangerous = false;
+  /** Creatures spawned without being the band's rare, by band 1 to 3 (index 0 is band 1). Resets on a rare. */
+  rareMisses = [0, 0, 0];
   /** The day each camp chest was last emptied, by floor. */
   private campDays = new Map<number, number>();
   private floors = new Map<number, Floor>();
@@ -489,11 +526,21 @@ export class Mines {
     const layout = floorLayout(floor, day);
     const rocks = new Rocks();
     for (const r of layout.rocks) rocks.add(r.x, r.y, r.kind);
+    const creatures = floorCreatures(floor, day, this.dangerous);
+    // The rare dry streak: each creature spawned may be the band's gilded one.
+    const band = bandNumber(floor);
+    this.rareMisses[band - 1] = applyRares(
+      creatures,
+      band,
+      this.rareMisses[band - 1] ?? 0,
+      seeded(day * 8191 + floor * 4421 + 53),
+    );
     const made = new Floor(
       day,
       rocks,
       layout.ladder,
-      floorCreatures(floor, day),
+      creatures,
+      this.dangerous,
     );
     this.floors.set(floor, made);
     return made;
@@ -516,6 +563,18 @@ export class Mines {
       extraDrop: true,
       extraKill: f.kills % Math.round(1 / INFESTED_SLAYER_BONUS) === 0,
     };
+  }
+
+  /** True once the lever may be pulled: floor 120 reached (the warden head's errand, #177, is not built). */
+  get leverUnlocked(): boolean {
+    return leverWorks(this.deepest);
+  }
+
+  /** Flip dangerous mode. Returns the new state, or undefined while the lever is locked. */
+  flipDangerous(): boolean | undefined {
+    if (!this.leverUnlocked) return undefined;
+    this.dangerous = !this.dangerous;
+    return this.dangerous;
   }
 
   /** True on an infested floor today (note 22, special floors). */
@@ -594,6 +653,7 @@ export class Mines {
         rocks: f.rocks.save(),
         creatures: f.creatures.map(saveCreature),
         ...(f.ground.count > 0 ? { ground: f.ground.save() } : {}),
+        ...(f.dangerous ? { dangerous: true } : {}),
         ...(f.ladder ? { ladder: { ...f.ladder } } : {}),
       };
     return {
@@ -604,6 +664,10 @@ export class Mines {
       misses: this.misses,
       copperHandedIn: this.copperHandedIn,
       floors,
+      ...(this.dangerous ? { dangerous: true } : {}),
+      ...(this.rareMisses.some((n) => n > 0)
+        ? { rareMisses: [...this.rareMisses] }
+        : {}),
     };
   }
 
@@ -611,6 +675,11 @@ export class Mines {
     this.deepest = saved.deepest;
     this.misses = saved.misses;
     this.copperHandedIn = saved.copperHandedIn;
+    this.dangerous = saved.dangerous === true;
+    this.rareMisses = [0, 1, 2].map((i) => {
+      const n = saved.rareMisses?.[i];
+      return Number.isInteger(n) && (n as number) > 0 ? (n as number) : 0;
+    });
     // A save from before the door scene that already dug has no need of the news.
     this.greeted = saved.greeted ?? this.deepest > 0;
     this.campDays = new Map(
@@ -625,8 +694,14 @@ export class Mines {
       rocks.load(f.rocks);
       const creatures = f.creatures
         ? f.creatures.flatMap((c) => loadCreature(c) ?? [])
-        : floorCreatures(Number(n), f.day);
-      const floorMade = new Floor(f.day, rocks, f.ladder, creatures);
+        : floorCreatures(Number(n), f.day, f.dangerous === true);
+      const floorMade = new Floor(
+        f.day,
+        rocks,
+        f.ladder,
+        creatures,
+        f.dangerous === true,
+      );
       if (f.ground) floorMade.ground.load(f.ground);
       this.floors.set(Number(n), floorMade);
     }

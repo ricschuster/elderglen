@@ -246,6 +246,7 @@ import {
   minesOpen,
   type Floor,
 } from "../core/mines";
+import { LEVER_KIND } from "../core/danger";
 import type { Rocks } from "../core/rocks";
 import {
   ROOMS,
@@ -293,6 +294,7 @@ import {
 import { makePlaceholderTextures, PLAYER_KEY } from "./placeholder-textures";
 import { guestMayOpen } from "../core/menupages";
 import { bedNotice } from "../core/bednotice";
+import { exhaustedSpeed, tiredWarning } from "../core/energyrules";
 import { audio } from "../audio/engine";
 import { setFarmProbe } from "../audio/director";
 import { doorSoundFor, footstepFor, sfxForAct, sfxForUse } from "../core/audio";
@@ -330,6 +332,7 @@ import {
   drawCoop,
   drawCoopInside,
 } from "./farm-draw";
+import { drawTracker } from "./farm-tracker";
 import {
   tileAtPointer,
   planAt,
@@ -444,6 +447,8 @@ export class FarmScene extends Phaser.Scene {
   litBombs: LitBomb[] = [];
   bombFx!: Phaser.GameObjects.Graphics;
   wash!: Phaser.GameObjects.Graphics;
+  /** Tracker arrows at the screen edge, on the UI camera (note 07). */
+  trackerGfx!: Phaser.GameObjects.Graphics;
   /** Dusk over the farm: fades in toward nightfall, which moves by season. */
   private night!: Phaser.GameObjects.Rectangle;
   map!: FarmMap;
@@ -661,6 +666,21 @@ export class FarmScene extends Phaser.Scene {
     this.sprites = [];
     this.wash = this.add.graphics().setDepth(DEPTH.decal + 1);
     world.push(this.ground, this.wash);
+    // A floor made in dangerous mode takes a red tint over the ground (placeholder).
+    if (this.floorState?.dangerous)
+      world.push(
+        this.add
+          .rectangle(
+            0,
+            0,
+            this.map.width * ts,
+            this.map.height * ts,
+            0x8a1a1a,
+            0.18,
+          )
+          .setOrigin(0)
+          .setDepth(DEPTH.decal + 3),
+      );
     world.push(...this.drawLabels());
     world.push(...this.drawSpouseProps(holds));
     let spawn: { x: number; y: number } =
@@ -803,7 +823,8 @@ export class FarmScene extends Phaser.Scene {
       },
       (p) => this.hud.covers(p.x, p.y),
     );
-    const ui = [...this.controls.objects, ...this.hud.objects];
+    this.trackerGfx = this.add.graphics().setDepth(9000);
+    const ui = [...this.controls.objects, ...this.hud.objects, this.trackerGfx];
 
     const { width, height } = this.scale.gameSize;
     const uiCamera = this.cameras.add(0, 0, width, height);
@@ -1031,6 +1052,7 @@ export class FarmScene extends Phaser.Scene {
 
   update(_time: number, delta: number): void {
     this.clampLabels();
+    drawTracker(this);
     // Cap the step so a stalled frame cannot throw the player across the map.
     const dt = Math.min(delta, 50) / 1000;
     this.night.setAlpha(
@@ -1062,7 +1084,10 @@ export class FarmScene extends Phaser.Scene {
     if (v.x !== 0 || v.y !== 0) this.keyAim();
     const ts = this.map.tileSize;
     const before = { ...this.pos };
-    const slowed = this.state.combat.effects.speedFactor();
+    const slowed =
+      this.state.combat.effects.speedFactor() *
+      this.state.combat.killSpeedFactor() *
+      exhaustedSpeed(this.state.day.energy.current);
     const remotes = this.net?.remotes() ?? [];
     for (let i = 0; i < DEV_SPEED; i++)
       this.pos = move(
@@ -2430,8 +2455,20 @@ export class FarmScene extends Phaser.Scene {
       this.render();
       return this.open("chest", { camp: this.floor });
     }
+    if (service?.kind === LEVER_KIND && this.floor !== undefined) {
+      const on = this.state.mines.flipDangerous();
+      audio.sfx("mine.stairs");
+      this.message =
+        on === undefined
+          ? "The lever will not move yet."
+          : on
+            ? "Dangerous mode is on. Floors you dig from now on are harder, with richer rewards."
+            : "Dangerous mode is off. Floors you dig from now on are as before.";
+      return this.render();
+    }
     if (service?.kind === "ore-bin") return this.open("bin", { oreOnly: true });
     if (service?.kind === "trainer") return this.open("trainer");
+    if (service?.kind === "wall-list") return this.open("walllist");
     if (service?.kind === "dummy") {
       this.message = "The training dummy. Hold a weapon and swing at it.";
       return this.render();
@@ -2666,6 +2703,10 @@ export class FarmScene extends Phaser.Scene {
   }
 
   private afterAction(): void {
+    const energy = this.state.day.energy.current;
+    const warning = tiredWarning(this.lastEnergy, energy);
+    this.lastEnergy = energy;
+    if (warning && !this.state.day.over) this.message = warning;
     if (this.state.day.over) this.endDay();
     else if (pendingChoice(this.state.skills)) this.open("profession");
     else this.render();
@@ -2815,13 +2856,24 @@ export class FarmScene extends Phaser.Scene {
     this.render();
   }
 
+  /** Energy at the last check, for the tired warnings. */
+  private lastEnergy = Infinity;
+
   endDay(): void {
     if (this.net instanceof GuestSession) return this.getInBed(this.net);
     detonateAll(this, true);
     if (this.net instanceof HostSession) return this.getInBed(this.net);
     const g = this.state;
     const farmMap = farmMapOf(g);
-    this.finishNight(sleep(g, farmMap.forageSpots, Math.random, farmMap));
+    this.finishNight(
+      sleep(
+        g,
+        farmMap.forageSpots,
+        Math.random,
+        farmMap,
+        isHouseMap(this.mapId),
+      ),
+    );
   }
 
   /** The morning after: redraw, save, and open the report (the steps after sleep()). */

@@ -674,7 +674,12 @@ export function loadAnimals(raw: unknown): AnimalsState {
 }
 
 function quality(v: unknown): Quality | undefined {
-  return v === "normal" || v === "silver" || v === "gold" ? v : undefined;
+  return v === "normal" ||
+    v === "silver" ||
+    v === "gold" ||
+    v === "hearthsilver"
+    ? v
+    : undefined;
 }
 
 /** True if the building stands. */

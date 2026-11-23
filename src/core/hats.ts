@@ -11,6 +11,10 @@ export interface HatDef {
   name: string;
   /** Placeholder colour for the world sprite, as `#rrggbb`. */
   color: string;
+  /** The slayer goal whose completion hands this hat over (note 22): worn gear, no stat (placeholder). */
+  slayer?: string;
+  /** What Maren charges for it in her reward shop (note 22). */
+  rebuy?: number;
 }
 
 export const HATS = hatData as HatDef[];

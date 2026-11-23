@@ -172,6 +172,19 @@ time, and the lift can bring them up afterwards.
   (#177) exists. Until then the lever works once the bottom is reached.
 - More creatures per floor, with harder hits.
 - Better drops and more ore per node.
+- **Numbers (owner, 2026-11-23, steep as Stardew; placeholders):** creature health 3x, hits
+  2.5x, 1.5x creatures a floor, +1 ore per node, drop chance 1.5x. The floors take a
+  different tint (Stardew's dangerous mines change the floor theme and the monsters, checked
+  on the saved Mines page; its numbers are not on that page, so ours are a guess).
+  **Built (2026-11-23, part 8b):** `src/core/danger.ts` holds the numbers and the lever gate (floor 120
+  reached, until the warden head's errand #177 exists). The lever is a `danger-lever` service tile in the
+  floor 120 layout (`floorLayout`, picked last so no other tile moves), pulled from `FarmScene`. Pulling it
+  flips `Mines.dangerous` (saved, optional). The mode is baked into a floor when it is made: floors made
+  while it is on take creatures x1.5 (rounded, base and infested extras together, so the per floor cap
+  scales), health x3, one more ore a node, drop chance x1.5 (capped at 1) and a red tint over the ground
+  (placeholder); creature hits x2.5 (rounded, then Assist halves). A floor dug earlier today keeps the mode
+  it was made in (`Floor.dangerous`, saved), so flipping the lever never resets a dug floor. Special and
+  infested floors work as before, and "no creatures" still means none. Tests: `tests/rare-danger.test.ts`.
 - The Assist settings still apply, so the dangerous mine is reachable for
   everyone who wants it.
 - Nothing needs it. It is a chosen challenge, with a reward for liking it.
@@ -198,8 +211,19 @@ time, and the lift can bring them up afterwards.
   tiring. Placeholder: 2 energy per swing at tier 0.
 - **Mining professions at level 5** (ours): **Prospector** (one extra ore from a
   node, 25 percent of the time) or **Rockhound** (geodes and gems drop
-  twice as often). Mining's level 10 choices are not built. Farming and fishing
-  have theirs (`professions.ts`).
+  twice as often). Rockhound's gem part is built in `mining.ts`.
+- **Mining professions at level 10** (owner, 2026-11-23): Stardew's effects, checked on the
+  saved Mining page, with our names (placeholders). Under Prospector: **Barwright** (metal
+  bars, Hearthsilver included, sell for 50 percent more) or **Coalseeker** (coal turns up
+  twice as often). Under Rockhound: **Geode Hunter** (geodes twice as often again, so four
+  times with Rockhound, as the owner chose) or **Gemcutter** (gems and minerals sell for
+  30 percent more). **Built 2026-11-23** (`src/core/professions.ts`, `mining.ts`,
+  `bombs.ts`, `geodes.ts`): Barwright is the four metal bars (not the refined crystal);
+  Coalseeker doubles hard rock's coal chance and adds coal from plain rock at the coal
+  rock share; Geode Hunter adds three times the geode share from plain rock on top of
+  Rockhound's one (capped at 1); Gemcutter covers every gem, the Diamond, the
+  Glimmerstone, and the minerals and crystals geodes hold (not quartz, not geodes).
+  Prices apply wherever `sellMultiplier` does (bin, shop, room intents).
 
 ### Ore, coal and bars
 
@@ -401,6 +425,56 @@ the Adventurer's Guild sells lost rewards again (checked on the saved page).
 - **Feeds** the completion total's slayer goals (10) and the Valley's Guard
   achievement.
 
+**Built (2026-11-23, slayer build part 8a):** the wall list and the reward shop. A `wall-list` service
+tile in the mine hall (`mine.json`) opens `WallListScene` (`src/scenes/WallListScene.ts`): the twelve goals
+with kills so far, the reward and a state (in progress, ready to claim, claimed), a Claim button, and a
+second page, Maren's reward shop. Rules in `src/core/slayerlist.ts` (`wallList`, `claimGoal`,
+`rewardShop`, `buyReward`); claims are saved in the existing optional `combat.slayerClaimed` (old saves
+load). A claim goes to the pack, or by post the next morning if the pack is full (the letter text is
+placeholder). Every reward is built: the six new rings are in `rings.json` and the three hats in
+`hats.json` (cosmetic worn gear, no stat, placeholder colours), shop prices from the list below. The
+trainer's own counter no longer hands rewards out. With "no creatures" on the screen opens and the goals
+stay in progress. Kills stay per game, not per player (note 53 has `combat` as a still-shared piece of
+`WorldState`), and the wall list is host and local only for now (guests cannot open it). Not built:
+nothing of part 8a is left. Part 8b (the rare creatures and dangerous mode) is built, below.
+
+**Decided 2026-11-23 (owner), built as above (rare creatures built in part 8b):**
+
+- **Maren keeps the list, for good.** The wall list hangs in the mine hall, where Maren
+  the trainer lives and works; she hands out each reward when its count is met. This
+  replaces "the warden head's hall": the mine hall is where it makes the most sense, and it
+  does not move to the warden head in M3c.
+- **Rewards for sale after the goal (Stardew, checked on the saved Adventurer's Guild page:
+  rings 15,000g to 25,000g, hats 20,000g, the insect hat 10,000g).** Once a goal is met its
+  reward is in Maren's shop, so a lost or sold one can be bought again. Ours by the matching
+  goal: slime proof ring 25,000g, burglar ring 20,000g, vampire ring 15,000g, savage ring
+  25,000g, crabshell ring 15,000g, beetle-head hat 10,000g, skull mask hat 20,000g, hard hat
+  20,000g. Ours with no Stardew match (placeholders): warrior ring 20,000g, protection ring
+  15,000g, thorns ring 15,000g. The Bug Meat reward is not sold.
+- **Rare creatures: gilded variants, one per band.** Each is a creature the player already
+  knows, with a gold sheen (placeholder tint), on its own dry-streak counter (placeholder:
+  base 0.2 percent a creature spawn, plus 0.05 percent per miss, capped at 3 percent):
+  - Band 1, **Golden Gloop:** flees instead of bouncing at the player; drops gold ore and a
+    gilded jelly (a new sell good).
+  - Band 2, **Glimmer Nibbler:** a crystal Frostnibbler; drops a gem of the band.
+  - Band 3, **Ember Lantern:** a bright Lanternmoth; drops a Hearthsilver ore.
+  - A rare kill counts toward its base creature's slayer goal, and the first of each is a
+    quiet completion tracker entry (#196).
+  - **Built (2026-11-23, part 8b).** The three are entries in `creatures.json` with a `rare`
+    field (`of`, `band`) and no `bands`, so they never enter the normal spawn pool; `flees` makes the
+    Golden Gloop run away and never attack. Each new floor rolls the band's dry streak once per creature
+    spawned (`applyRares` and `rareChance` in `creatures.ts`, a seeded roll in `Mines.visit`): a hit turns
+    that creature into the band's rare, a miss adds one. The three counters are saved in `MinesSave.rareMisses`
+    (optional). Drops: Golden Gloop gold ore (1 to 2) and gilded jelly (new sell good, `creature-goods.json`,
+    placeholder price 300g, no art of its own: the jelly picture is generic); Glimmer Nibbler one of the two
+    band 2 gems (`oneOf` in the drop data); Ember Lantern one Hearthsilver ore. A rare kill is tallied under
+    its base kind (`baseKind`), so the wall list reads it with no change. Each is drawn as its base
+    creature's picture with a gold tint (placeholder). The first kill of each is saved in
+    `combat.rareFound` (optional). That is a quiet entry and is not added to any completion category, so
+    no total or weight changed (#196 can show the list later). Tests: `tests/rare-danger.test.ts`.
+
+Stardew's rare variants are from memory, unchecked; not needed for the decision.
+
 ## Defeat (decided with the owner, Stardew's way)
 
 When health reaches zero:
@@ -425,7 +499,7 @@ When health reaches zero:
    good, the choice open until the next defeat, so ours matches. Stardew's gold loss is 5
    to 25 percent up to 15,000g (checked, SC-23j). Our version has the trainer be
    the helper. This is the soft part.
-5. **Energy** on waking is the pass-out value (`PASS_OUT_WAKE_ENERGY`).
+5. **Energy** on waking is the pass-out value (half, `HALF_MORNING` in `energyrules.ts`).
 
 The loss is real and small, as the owner asked. A player who flees by ladder
 loses nothing. In assist mode, no items are lost (money still is, so there is
@@ -533,6 +607,15 @@ Gaps settled with our own placeholders (numbers in `07_tuning_numbers.md`):
   18 in band 3). The skill uses the mining table. Health is 100 plus 5 a level.
   **Steady** adds 25. **Nimble** makes the grace after a hit 2.5 seconds. A
   profession choice opens when the level 5 kill lands.
+- **Combat professions at level 10** (owner, 2026-11-23, ours, placeholder numbers; Stardew's
+  tree needs critical hits and special moves we do not have). Under Steady: **Bulwark** (+25
+  more health) or **Heavy Hand** (+15 percent damage). Under Nimble: **Quickstep** (weapon
+  cooldown cut by a third) or **Lucky Strike** (10 percent of hits deal double damage). **Built 2026-11-23** (`src/core/professions.ts`, `combat.ts`,
+  `src/scenes/farm-combat.ts`): Bulwark stacks with Steady in `healthFor`, so the ceiling, the
+  HUD and loads follow it; Heavy Hand rounds the damage and never lowers it; Quickstep scales the
+  weapon cooldown by 2/3; Lucky Strike doubles after Heavy Hand on a roll from the injected
+  random (the scene passes `Math.random`, as other combat rolls do) and shows a gold "x2" pop.
+  Multiplayer guests have no fights yet, so there is nothing to wire there.
 - **Weapons:** iron, gold and Hearthsilver tiers of all three families (15
   weapons), sold by the smith dwarf for coin since 2026-11-09 (iron 880g, gold 1,800g,
   Hearthsilver 6,500g; they were forged for 4 bars and 400g, 4 bars and 800g, 5 bars and 1500g). Every weapon is a kept good.

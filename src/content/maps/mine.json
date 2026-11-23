@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 9,
-  "nextobjectid": 112,
+  "nextobjectid": 115,
   "properties": [
     {
       "name": "placeholder",
@@ -32,7 +32,7 @@
       "data": [
         7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 3, 11, 3, 11, 11, 3, 12, 3, 11,
         12, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-        3, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+        3, 9, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3,
         3, 7, 7, 7, 7, 7, 7, 7, 9, 7, 7, 7, 7, 7
       ]
     },
@@ -48,7 +48,7 @@
       "visible": false,
       "data": [
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1,
-        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
         1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1
       ]
@@ -210,6 +210,63 @@
               "name": "kind",
               "type": "string",
               "value": "dummy"
+            }
+          ]
+        },
+        {
+          "id": 112,
+          "name": "room",
+          "class": "exit",
+          "type": "exit",
+          "x": 176,
+          "y": 48,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "map",
+              "type": "string",
+              "value": "mine-room"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "door"
+            }
+          ]
+        },
+        {
+          "id": 113,
+          "name": "from_room",
+          "class": "entry",
+          "type": "entry",
+          "x": 168,
+          "y": 56,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 114,
+          "name": "wall-list",
+          "class": "service",
+          "type": "service",
+          "x": 96,
+          "y": 24,
+          "width": 0,
+          "height": 0,
+          "point": true,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall-list"
             }
           ]
         }

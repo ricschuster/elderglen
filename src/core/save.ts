@@ -377,7 +377,12 @@ interface SaveData {
   /** Absent in saves made before farm types: Standard. */
   farmType?: string;
   day: number;
+  /** Can be negative while exhausted (note 07). */
   energy: number;
+  /** Energy hit 0 today: the morning after is half energy. Absent in older saves: false. */
+  exhausted?: boolean;
+  /** A skill leveled up today: the morning after is full energy. Absent in older saves: false. */
+  levelled?: boolean;
   /** Minutes since midnight. Absent in saves made before the clock was saved. */
   minutes?: number;
   money: number;
@@ -664,6 +669,8 @@ export function serialize(
     farmType: g.farmType,
     day: g.day.clock.day,
     energy: g.day.energy.current,
+    ...(g.day.energy.wasExhausted ? { exhausted: true } : {}),
+    ...(g.skills.levelledToday ? { levelled: true } : {}),
     minutes: g.day.clock.minutes,
     // The host's own gold, even when the pool is shared (it is the pool).
     money: g.players.get(LOCAL_PLAYER).money,
@@ -782,6 +789,9 @@ const isObject = (v: unknown): v is Record<string, unknown> =>
 const isCount = (v: unknown): v is number =>
   typeof v === "number" && Number.isFinite(v) && v >= 0;
 
+const isEnergy = (v: unknown): v is number =>
+  typeof v === "number" && Number.isFinite(v);
+
 const isSpot = (v: unknown): v is { x: number; y: number } =>
   isObject(v) && Number.isInteger(v.x) && Number.isInteger(v.y);
 
@@ -875,7 +885,7 @@ export function deserialize(text: string): GameState | undefined {
   )
     return undefined;
   const { day, energy, money, inventory, farm, skills, hall, weather } = raw;
-  if (!isCount(day) || day < 1 || !isCount(energy) || !isCount(money))
+  if (!isCount(day) || day < 1 || !isEnergy(energy) || !isCount(money))
     return undefined;
   if (!WEATHERS.includes(weather as Weather)) return undefined;
   if (
@@ -920,6 +930,8 @@ export function deserialize(text: string): GameState | undefined {
     g.day.energy.max = maxEnergyFor(g.elderfruit);
   }
   g.day.restore(day, energy, isCount(raw.minutes) ? raw.minutes : undefined);
+  g.day.energy.wasExhausted = raw.exhausted === true;
+  g.skills.levelledToday = raw.levelled === true;
   g.players.get(LOCAL_PLAYER).money = money;
   if (WALLET_MODES.includes(raw.walletMode as WalletMode))
     g.players.walletMode = raw.walletMode as WalletMode;
@@ -1165,7 +1177,7 @@ export function deserialize(text: string): GameState | undefined {
   g.hall = new Hall(undefined, hall as HallProgress);
   if (isObject(raw.professions)) {
     const picked: Partial<Record<Skill, string>> = {};
-    let legacyTop: string | undefined;
+    const legacyTop: Partial<Record<Skill, string>> = {};
     for (const k of SKILLS) {
       const id = raw.professions[k];
       const def = typeof id === "string" ? professionById(id) : undefined;
@@ -1173,13 +1185,18 @@ export function deserialize(text: string): GameState | undefined {
       // Agriculturist was a level 5 pick before the farming tree grew a level 10 tier.
       else if (id === "agriculturist" && k === "farming") {
         picked[k] = "tiller";
-        legacyTop = "agriculturist";
+        legacyTop[k] = "agriculturist";
+      }
+      // Botanist was a level 5 pick before the foraging tree grew a level 10 tier.
+      else if (id === "botanist" && k === "foraging") {
+        picked[k] = "gatherer";
+        legacyTop[k] = "botanist";
       }
     }
     g.skills.loadProfessions(picked);
     // A level 10 pick only stands under the level 5 pick it grows from.
     const top: Partial<Record<Skill, string>> = {};
-    if (legacyTop) top.farming = legacyTop;
+    Object.assign(top, legacyTop);
     if (isObject(raw.topProfessions))
       for (const k of SKILLS) {
         const id = raw.topProfessions[k];

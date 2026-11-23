@@ -133,7 +133,7 @@ The booth sells winter furniture from the build 8 list.
   fruit in the cave leaves less room. Bats leave any fruit in any season (SC-55,
   owner 2026-11-07): every wild fruit and every orchard fruit, with no season
   pool.
-  Picking gives 7 foraging experience, Botanist makes the fruit top grade and
+  Picking gives 7 foraging experience, Botanist makes the fruit Hearthsilver (the top grade) and
   Gatherer can double it.
 - **Mushrooms.** Six growing boxes. Each box makes one mushroom every second
   day, picked by hand. Mix of five kinds, our weights: field mushroom 50 percent,

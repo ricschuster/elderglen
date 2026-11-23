@@ -18,10 +18,11 @@ Source: `src/core/clock.ts`, `src/core/energy.ts`, `src/core/day.ts`,
 - Maximum energy is 270. From memory.
 - Each tool use costs 2 energy and no game time. Ours: time per action is not
   modelled yet, so energy is the real limit and the clock is only pressure.
-- Sleeping before the day is over restores all energy for free.
-- Passing out costs 10 percent of money, capped at 1000. The next morning has
-  50 percent energy after running out of energy and 75 percent after staying up
-  too late. From memory.
+- Sleeping before the day is over restores all energy for free, up to 12:10 am;
+  later bedtimes lose some (see "Energy rules, built 2026-11-23" below).
+- Passing out costs 10 percent of money, capped at 1000, only outside the
+  farmhouse. The next morning has 50 percent energy after exhaustion or a
+  pass-out at 2 am. Checked against the wiki 2026-10-31.
 
 ## Money and shop
 
@@ -161,32 +162,45 @@ Source: `src/core/skills.ts`.
   From memory.
 - Levels raise the chance of better quality goods, and farming levels trim
   swing energy (see below). At level 5 each skill asks for a profession (see
-  Professions). The farming and fishing level 10 choices are built.
+  Professions). Every skill's level 10 choices are built.
 
 ## Professions
 
 Source: `src/core/professions.ts`. One choice per skill at level 5, permanent.
 After Stardew's level 5 choices, but with the animal and wood options replaced
-by ones that fit our game. Ours, unchecked.
+by ones that fit our game. Ours, unchecked. Mining and combat have no level 10
+tier yet.
 
 - Farming: Tiller (crops sell for 10 percent more) or Agriculturist (crops grow
   10 percent faster, which saves a day on a 12 day crop and nothing on a 4 day
   one).
-- Foraging: Gatherer (20 percent chance of a second good) or Botanist (forage is
-  never plain, at least silver).
+- Foraging: see the foraging tree below (Botanist moved to level 10).
 
 Built 2026-11-11 (`23_animals.md`, decided 2026-10-30): Stardew's tree for
 farming. Level 5 is Rancher (animal goods sell for 20 percent more) or Tiller.
 Level 10 is Coopmaster or Shepherd under Rancher, Artisan (artisan goods 40
 percent more) or Agriculturist under Tiller. Agriculturist moves to level 10.
 
-Foraging professions, decided 2026-10-31 (planned, not built). After Stardew's
-foraging tree, with our names. Level 5 is Forester or Gatherer. Level 10 is
-Lumberjack or Tapper under Forester, Botanist or Tracker under Gatherer.
-Gatherer stays as built. Botanist moves from level 5 to level 10, as
-Agriculturist did. Botanist makes forage always the top grade (see Quality).
-Tracker points arrows at off-screen forage, which also helps on a tablet.
-Lumberjack and Tapper wait until trees and wood are a real system.
+Foraging professions, decided 2026-10-31, built 2026-11-23
+(`src/core/professions.ts`, `src/core/tracker.ts`, `src/scenes/farm-tracker.ts`).
+After Stardew's foraging tree, with our names. Level 5 is Forester or Gatherer.
+Level 10 is Lumberjack or Tapper under Forester, Botanist or Tracker under
+Gatherer. Gatherer stays as built (20 percent chance of a second good).
+Botanist moved from level 5 to level 10, as Agriculturist did: an old save with
+a level 5 Botanist loads as Gatherer with Botanist as its level 10 pick
+(`save.ts`, as for Agriculturist). Botanist makes forage, and the bat cave
+fruit, always the top grade (Hearthsilver, see Quality). Tracker draws small
+arrows at the screen edge toward forage out of sight on the current map, up to
+6, nearest first (`trackerArrows`). Placeholders, ours, none of them decided:
+
+- Forester: trees, stumps and fruit trees give 25 percent more wood, rounded
+  down (`FORESTER_WOOD`). Placeholder: nothing was decided for it.
+- Lumberjack: a felled common tree has a 15 percent chance to hold 1 hardwood
+  (`LUMBERJACK_HARDWOOD_CHANCE`). Placeholder.
+- Tapper (profession id `tapmaster`, since `tapper` is the item): tapped goods
+  (resin, syrup, tar) sell for 25 percent more (`TAPPER_BONUS`). Placeholder.
+  Trees, wood and the tapper are built (notes 36, 43, 92), so these are real
+  but unbalanced.
 
 ## Tool upgrades and energy
 
@@ -244,19 +258,36 @@ Row button moves to the next row, as in Stardew.
 Source: `src/core/quality.ts`. Quality is part of the item id (`parsnip@gold`),
 so each tier stacks and sells separately. Bundles take any tier.
 
-- Tiers: normal, silver (x1.25 price), gold (x1.5 price). Iridium is left out
-  until there is a source for it. From memory.
+- Tiers: normal, silver (x1.25 price), gold (x1.5 price), Hearthsilver (x2
+  price, see below). From memory.
 - Crops: gold chance is `0.2 * farmingLevel / 10 + 0.01`; silver chance is twice
   that, so a level 10 farmer gets about 21 percent gold and 21 percent silver.
   The soil term is in: `0.2 * soil * (level + 2) / 12` is added to the gold chance (`src/core/quality.ts`). From memory.
 - Forage: gold chance is `foragingLevel / 30`, silver up to `foragingLevel / 15`.
   From memory.
   Checked against the wiki on 2026-10-31: both formulas match.
-- Top grade (decided 2026-10-31, not built): a fourth tier above gold, named
-  after the rare metal, Hearthsilver (`22_mines.md`). Using the metal's name
-  for the grade is an assumption, since the mines note only names the metal.
-  Crops and forage get it, with Botanist guaranteeing it for forage. Its price
-  and energy multipliers are open.
+- Top grade, Hearthsilver (decided 2026-10-31, name confirmed by the owner
+  2026-11-23, built 2026-11-23): a fourth tier above gold, named after the rare
+  metal (`22_mines.md`). Its id suffix is `@hearthsilver`, so it stacks and
+  sells apart. Placeholders, ours: price x2 (Stardew's top grade from memory,
+  unchecked, SC-215), energy when eaten x2.2 (gold is x1.8), friendship gift
+  bonus x1.4 on love and like (gold x1.25), cake points 150, Grange value points
+  one higher than gold up to the item cap of 6, cloth doubling 75 percent, icon
+  tint rose (`0xf09ab8`, silver is blue and gold yellow). Crops roll it only
+  with farming level 8 and fertilised soil: the first 3 percent of the roll
+  (`HEARTHSILVER_CROP_LEVEL`, `HEARTHSILVER_CHANCE`). Forage rolls it from
+  foraging level 10 on the first 3 percent (`HEARTHSILVER_FORAGE_LEVEL`).
+  Botanist forage is always Hearthsilver. Fruit tree fruit stays at gold.
+  **Decided 2026-11-23 (owner, Stardew, checked on the saved Fishing, Animals and Cask
+  pages), built 2026-11-23:** a perfect catch lifts a fish one grade (normal to silver,
+  silver to gold, gold to Hearthsilver; `catchQuality`, `fishing.ts`). Animal goods reach
+  Hearthsilver at an animal score over 0.95 (friendship / 1000 minus (1 - mood / 225), so
+  near full friendship and full mood; `HEARTHSILVER_ANIMAL_SCORE`, placeholder). Casks
+  age a good from gold to Hearthsilver after a further time equal to the silver to gold
+  step (`cask.ts`, placeholder): wine 14 more days (42 in all), mead 7 (21), cheese 4
+  (11), beer 7 (21), pale ale 8 (25). Bundles and orders treat it as above gold. Old
+  saves load: an unknown quality suffix was always normal, and none of the
+  saved numbers change.
 - Wild seeds (decided 2026-10-31): forage is crafted into seasonal seeds that
   grow into forage goods and give foraging XP. Built in M3 with crafting.
 
@@ -396,7 +427,11 @@ are from memory and unchecked.
   random stacks lost (1 in 3 each), one stack posted back. No loss of tools,
   weapons, seeds or bundle items. Assist mode loses no items.
 - Professions at level 5: Prospector or Rockhound (mining), Steady or Nimble
-  (combat).
+  (combat). Mining level 10 (placeholders, note 22): Barwright (bars +50%) or
+  Coalseeker (coal x2) under Prospector; Geode Hunter (geodes x2 again) or
+  Gemcutter (gems and minerals +30%) under Rockhound.
+  Combat level 10: Bulwark (+25 health more) or Heavy Hand (+15% damage) under
+  Steady; Quickstep (cooldown x 2/3) or Lucky Strike (10% of hits x2) under Nimble.
 - Fifth tool tier: 5 Hearthsilver bars per tool, no gold. Any pickaxe digs it.
   Built 2026-11-08 with placeholders: smelt time 8 hours (480 minutes, unsettled in note 22), bar sells 1000g, top pickaxe swings 1 (stone to iron), 1 (gold), 2 (Hearthsilver rock), top axe 2 per tree and 1 per stump (note 44).
 - Weapons: three families, four tiers each. The first build has the starter and
@@ -477,16 +512,32 @@ minutes for a full day (10 game minutes per 7 seconds), 270 maximum energy, the
 summer crop rows for parsnip, potato, cauliflower, garlic, kale, melon, radish
 and red cabbage (days, seed price, sell price).
 
-Decided with the owner on 2026-10-31 (not built yet):
+Energy rules, decided with the owner on 2026-10-31 and built 2026-11-23
+(`src/core/energyrules.ts`, `energy.ts`, `day.ts`, `sleep.ts`, `roomworld.ts`):
 
-- Late sleep gets a graded penalty: full energy up to midnight, then a growing
-  loss per 10 minutes after it, and half at 2 am. A pass-out at 2 am is the
-  half case, so the flat 75 percent goes.
-- Exhaustion works like Stardew. Warnings near 20 and 15 energy. At 0 the player
-  is exhausted: slow, tools still work and drain below zero. The day ends at
-  -15. The next morning has half energy, even if the player ate in between.
-- Pass-out loses money only outside the farmhouse.
+- Late sleep gets a graded penalty. Placeholder steps (`LATE_SLEEP_LOSS`), in
+  percent of maximum energy lost by bedtime, per 10 minutes after midnight:
+  12:00 and 12:10 am 0, then 12:20 2, 12:30 4, 12:40 6, 12:50 8, 1:00 am 20
+  (the bigger drop), 1:10 25, 1:20 30, 1:30 35, 1:40 40, 1:50 45, 2:00 am 50. A
+  pass-out at 2 am is the half case (`HALF_MORNING`), so the flat 75 percent is
+  gone.
+- Exhaustion works like Stardew. Warnings as energy falls past 20 and 15 (a
+  toast each), and "exhausted" at 0 (`tiredWarning`). At 0 or below the player
+  is exhausted: walking speed is 0.6 times normal (`EXHAUSTED_SPEED`,
+  placeholder), tools still work and drain energy below zero, and the day ends
+  with a pass-out at -15 (`ENERGY_FLOOR`). The next morning has half energy,
+  even if the player ate in between: `Energy.wasExhausted` stays set until
+  the night, and is saved (optional field `exhausted`).
+- Pass-out loses money only outside the farmhouse. `sleep()` takes a `safe`
+  flag, which the scene sets for any house interior map (`isHouseMap`).
+  Sleeping in bed was never a pass-out. Multiplayer: `RoomWorldOptions.inside`
+  says who is in a home (the host session reads each player's reported map).
+  Cabins have no interior map yet, so a guest passing out in the open still pays.
 - The morning after a skill level gives full energy, whatever the night was.
+  `Skills.levelledToday` is set by any level rise, cleared by the night, and saved
+  (optional field `levelled`, per player too).
+- A defeat in the mines runs the same code (energy to the floor, half morning,
+  money lost since it is never at home) unless a level-up gave full energy.
 
 - Nightfall moves by season, as in Stardew: 8 pm in spring and summer, 7 pm in
   fall, 6 pm in winter, with a gradual darkening outdoors. Built (`NIGHTFALL`
@@ -497,28 +548,16 @@ Decided with the owner on 2026-10-31 (not built yet):
   farm scene (`FarmScene.ts`).
 - Seasons three and four have their own design note and are built.
 
-Differences found (the four above are now decided):
+Differences found (the four energy rows are built, see above):
 
-- Late sleep: Stardew restores less the later you go to bed after midnight
-  (nothing lost until 12:10 am, a small step per 10 minutes, a bigger drop at
-  1 am, half at 2 am). We restore fully for any sleep before the day is over and
-  75 percent after a time pass-out. Passing out at 2 am is the 50 percent case
-  there, so our 75 percent is too kind.
-- Exhaustion: in Stardew, 0 energy is a state (slow, tools still work) and the
-  day only ends at -15. We end the day at 0.
-- Pass-out location: Stardew charges nothing for falling asleep inside the
-  farmhouse. We charge always. Matters once the farm has more than one place.
-- Level-up morning: Stardew gives full energy the morning after a skill level,
-  whatever the night was. We do not.
+- Late sleep, exhaustion, pass-out location and level-up morning: were
+  differences, now built (2026-11-23), see the energy rules above.
 - Nightfall: 8 pm in spring and summer, 7 pm in fall, 6 pm in winter, with a
   gradual darkening. Built since this was written (audit, 2026-11-10).
 - Pauses: the clock stops in menus and dialogs there. Ours does too (built).
 - Seasons: new forage, logs, rocks and grass appear on the farm at the start of
   each spring. Winter clears crops and weeds and stops outdoor growth. Fall and
   winter are built, see their notes.
-- The late sleep, exhaustion, pass-out location and level-up morning rows are
-  still not built (audit, 2026-11-10): `day.ts` keeps the flat 50 and 75
-  percent wake energy and ends the day at 0 energy.
 - Not on these pages: the rain chance per season. Our 20 and 15 percent stay
   ours, and fall and snow chances are ours too (above).
 
@@ -736,6 +775,11 @@ Source: `22_mines.md`. Code: `mines.ts`, `mining.ts`, `rocks.ts`, `ore.ts`.
   of 2 or 3; coal 1, 30 percent chance of 2. Prospector adds 1 at 25 percent.
 - Ladder odds: 1 percent, +0.5 percent per miss, cap 25 percent. The last rock
   on a floor always hides it. Floor 120 has none.
+- Rare creatures (Golden Gloop, Glimmer Nibbler, Ember Lantern): a dry streak per band,
+  checked once per creature spawned on a new floor, 0.2 percent, +0.05 percent per miss,
+  cap 3 percent, reset on a spawn. Gilded jelly sells for 300g.
+- Dangerous mode (floor 120 lever): creature health x3, creature hits x2.5 (rounded),
+  creatures a floor x1.5 (rounded), +1 ore a node, drop chance x1.5 (cap 1).
 - Pickaxe swing: 2 energy, less 0.1 per mining level, never under 0.5. XP per
   rock: stone 2, copper 5, coal 4.
 - The farm has 16 stone rocks. Some return on day 1 of spring, summer and fall (`debris.ts`, see "Special Orders and seasonal debris").

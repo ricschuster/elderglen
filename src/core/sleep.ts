@@ -35,6 +35,7 @@ import { CAVE_MAP } from "./cave";
 import { returnDebris } from "./debris";
 import { fillBins } from "./machines";
 import { endDayOrders, type OrdersNews } from "./orders";
+import { ENERGY_FLOOR } from "./energy";
 import { loseItems, type Lost } from "./combat";
 import { maps } from "../content/maps";
 import { storeOf } from "./mapstore";
@@ -191,6 +192,8 @@ export function sleep(
   spots: Spot[],
   random: () => number,
   map?: FarmMap,
+  /** True when the player falls asleep inside the farmhouse: a pass-out costs no money (note 07). */
+  safe = false,
 ): SleepReport {
   // Passing out away from the farm: the night works on the farm's world first.
   leaveArea(g);
@@ -200,8 +203,9 @@ export function sleep(
   // A defeat is the pass-out rule with the item loss on top (note 22): money
   // goes by the same code, and the player wakes with the pass-out energy.
   const defeated = g.combat.defeatPending;
-  if (defeated) g.day.energy.current = 0;
-  const end = g.day.end(g.money);
+  if (defeated) g.day.energy.spend(g.day.energy.current - ENERGY_FLOOR);
+  const end = g.day.end(g.money, safe && !defeated, g.skills.levelledToday);
+  g.skills.levelledToday = false;
   const moneyLost = end.passedOut ? end.moneyLost : 0;
   g.money -= moneyLost;
   const lost = defeated ? loseItems(g, random, g.combat.assist) : [];

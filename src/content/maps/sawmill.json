@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 6,
-  "nextobjectid": 33,
+  "nextobjectid": 34,
   "properties": [
     {
       "name": "placeholder",
@@ -476,11 +476,11 @@
           "id": 20,
           "rotation": 0,
           "visible": true,
-          "name": "bed-parents",
+          "name": "bed-tilda",
           "class": "mark",
           "type": "mark",
-          "x": 64,
-          "y": 128,
+          "x": 40,
+          "y": 136,
           "width": 0,
           "height": 0,
           "point": true
@@ -494,6 +494,19 @@
           "type": "mark",
           "x": 192,
           "y": 64,
+          "width": 0,
+          "height": 0,
+          "point": true
+        },
+        {
+          "id": 33,
+          "rotation": 0,
+          "visible": true,
+          "name": "bed-rufus",
+          "class": "mark",
+          "type": "mark",
+          "x": 56,
+          "y": 136,
           "width": 0,
           "height": 0,
           "point": true

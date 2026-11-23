@@ -1,0 +1,175 @@
+{
+  "type": "map",
+  "version": "1.10",
+  "tiledversion": "1.10.2",
+  "orientation": "orthogonal",
+  "renderorder": "right-down",
+  "infinite": false,
+  "width": 10,
+  "height": 8,
+  "tilewidth": 16,
+  "tileheight": 16,
+  "nextlayerid": 5,
+  "nextobjectid": 6,
+  "properties": [
+    {
+      "name": "placeholder",
+      "type": "bool",
+      "value": true
+    }
+  ],
+  "tilesets": [
+    {
+      "firstgid": 1,
+      "name": "placeholder",
+      "tilewidth": 16,
+      "tileheight": 16,
+      "tilecount": 12,
+      "columns": 10,
+      "image": "placeholder-tiles.png",
+      "imagewidth": 192,
+      "imageheight": 16
+    }
+  ],
+  "layers": [
+    {
+      "id": 1,
+      "name": "ground",
+      "type": "tilelayer",
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "visible": true,
+      "width": 10,
+      "height": 8,
+      "data": [
+        7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 7, 7, 3, 3, 3,
+        3, 3, 3, 3, 3, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 7, 7, 3, 3, 3, 3, 3, 3, 3,
+        3, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 7, 7, 7,
+        7, 7, 7, 9, 7, 7, 7, 7
+      ]
+    },
+    {
+      "id": 2,
+      "name": "fixtures",
+      "type": "tilelayer",
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "visible": true,
+      "width": 10,
+      "height": 8,
+      "data": [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 10, 0, 0, 0, 0, 0, 12, 0, 0, 10,
+        10, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+      ]
+    },
+    {
+      "id": 3,
+      "name": "collision",
+      "type": "tilelayer",
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "visible": false,
+      "width": 10,
+      "height": 8,
+      "data": [
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0,
+        0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0,
+        0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
+        1, 1, 1, 0, 1, 1, 1, 1
+      ]
+    },
+    {
+      "id": 4,
+      "name": "markers",
+      "type": "objectgroup",
+      "opacity": 1,
+      "x": 0,
+      "y": 0,
+      "visible": true,
+      "draworder": "topdown",
+      "objects": [
+        {
+          "id": 1,
+          "name": "door",
+          "class": "entry",
+          "type": "entry",
+          "x": 88,
+          "y": 104,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 2,
+          "name": "door",
+          "class": "exit",
+          "type": "exit",
+          "x": 80,
+          "y": 112,
+          "width": 16,
+          "height": 16,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "map",
+              "type": "string",
+              "value": "quarry"
+            },
+            {
+              "name": "entry",
+              "type": "string",
+              "value": "from_tent"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "name": "spot-home-sit",
+          "class": "mark",
+          "type": "mark",
+          "x": 88,
+          "y": 56,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 4,
+          "name": "spot-home-cook",
+          "class": "mark",
+          "type": "mark",
+          "x": 72,
+          "y": 40,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        },
+        {
+          "id": 5,
+          "name": "bed-marl",
+          "class": "mark",
+          "type": "mark",
+          "x": 56,
+          "y": 40,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true
+        }
+      ]
+    }
+  ]
+}

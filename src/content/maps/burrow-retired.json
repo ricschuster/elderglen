@@ -10,8 +10,14 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 5,
-  "nextobjectid": 18,
-  "properties": [{ "name": "placeholder", "type": "bool", "value": true }],
+  "nextobjectid": 19,
+  "properties": [
+    {
+      "name": "placeholder",
+      "type": "bool",
+      "value": true
+    }
+  ],
   "tilesets": [
     {
       "firstgid": 1,
@@ -186,7 +192,11 @@
           "width": 16,
           "height": 16,
           "properties": [
-            { "name": "map", "type": "string", "value": "hearthwell" },
+            {
+              "name": "map",
+              "type": "string",
+              "value": "hearthwell"
+            },
             {
               "name": "entry",
               "type": "string",
@@ -206,7 +216,11 @@
           "width": 16,
           "height": 32,
           "properties": [
-            { "name": "gate", "type": "string", "value": "friendship:couple:2" }
+            {
+              "name": "gate",
+              "type": "string",
+              "value": "friendship:couple:2"
+            }
           ]
         },
         {
@@ -375,11 +389,11 @@
           "id": 16,
           "rotation": 0,
           "visible": true,
-          "name": "bed-couple",
+          "name": "bed-hester",
           "class": "mark",
           "type": "mark",
-          "x": 32,
-          "y": 192,
+          "x": 24,
+          "y": 184,
           "width": 0,
           "height": 0,
           "point": true
@@ -393,6 +407,19 @@
           "type": "mark",
           "x": 416,
           "y": 80,
+          "width": 0,
+          "height": 0,
+          "point": true
+        },
+        {
+          "id": 18,
+          "rotation": 0,
+          "visible": true,
+          "name": "bed-walter",
+          "class": "mark",
+          "type": "mark",
+          "x": 56,
+          "y": 184,
           "width": 0,
           "height": 0,
           "point": true

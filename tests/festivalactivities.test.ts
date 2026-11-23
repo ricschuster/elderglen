@@ -142,7 +142,12 @@ describe("cake table", () => {
     expect(r.quality).toBe("gold");
     const who = attendees(festivalLayout(fest("cake-day"))!);
     expect(Object.keys(r.gains).sort()).toEqual([...who].sort());
-    expect(CAKE_POINTS).toEqual({ normal: 60, silver: 90, gold: 120 });
+    expect(CAKE_POINTS).toEqual({
+      normal: 60,
+      silver: 90,
+      gold: 120,
+      hearthsilver: 150,
+    });
     expect(g.friendship.points("hattie")).toBe(CAKE_POINTS.gold);
     expect(g.inventory.count(`${dish}@gold`)).toBe(0);
     expect(handInCake(g, dish)).toBeUndefined();

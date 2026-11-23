@@ -34,9 +34,9 @@ log(
 );
 if (n.money !== s0.money - 50)
   finding(`time pass-out cost ${s0.money - n.money}g, expected 50g`);
-if (Math.abs(n.energy - 202) > 1)
+if (Math.abs(n.energy - 135) > 1)
   finding(
-    `morning energy after staying up late is ${n.energy}, expected about 202 (75%)`,
+    `morning energy after staying up late is ${n.energy}, expected about 135 (50%, a 2 am pass-out)`,
   );
 log("errors", JSON.stringify(errs));
 log("FINDINGS:\n" + findings.join("\n"));

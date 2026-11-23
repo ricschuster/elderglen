@@ -176,10 +176,17 @@ points are from the owner's play and memory, unchecked (SC-45).
 3. **Moves are hand written per scene (Stardew), with the real text.** A scene's blocking
    (who stands where, who walks, who faces, when a pose or emote lands) is written by hand
    for that story. This is done per person when the real scenes are written with the voice
-   sheets (M3d, #950), so the moves match the text. Placeholder scenes are not blocked now.
-   **#1002 stays open until M3d.** What is built now is everything a scene needs to move:
-   marks and paths on the maps, the runner on the real map, `walk`, `face`, `pose`, the
-   camera and the sandbox below, proved with a few moves in each kind of place.
+   sheets (M3d, #950), so the moves match the text. Placeholder scenes are not blocked now,
+   except three. **Built (2026-11-23, owner decision, #1002):** one placeholder scene in each
+   kind of place is blocked with `walk`, `face` and `pose`: `odette-store-2` (an interior, the
+   store: the player walks `door_to_centre`, both face each other, Odette's `surprise` pose),
+   `pim-green-2` (the green: Pim walks `green_left_to_right`, the player walks
+   `green_entry_to_centre`, a `laugh` pose) and `aurelle-river-path-2` (a path: Aurelle walks
+   `river_path_left_to_right`, the player `river_path_entry_to_centre`, a `surprise` pose).
+   The marks, paths, runner, `walk`, `face`, `pose`, the camera and the sandbox were already
+   built; the check is in `scripts/playtest/heart-extras.mjs` (it samples actor positions and
+   counts pose calls) and `tests/heartstage.test.ts`. #1002 closes with this; the full
+   blocking with real text is #950 (M3d).
 4. **Poses are placeholders now.** The people have one frame, so a pose is a small effect on
    it: tilt, drop, hop, flip. The shared pose names are fixed now so a scene can refer to
    them: `sit`, `bow`, `surprise`, `laugh`, `slump`. Real pose sprites per person slot in
@@ -219,8 +226,7 @@ points are from the owner's play and memory, unchecked (SC-45).
    that each area is on the person's route in the window (note 84).
 4. Remove the warning: the Go on / Not now panel, the declined-today list and its offer-again rule (`declinedToday`), and the `warn` flag. An area entry starts the scene.
 5. The replay sandbox and the Social row list. **Built (2026-11-22).** Built status: `replayList` and `finishRun` in `src/core/heartevents.ts` (tests in `tests/heartevents.test.ts`); the person's page in the Social tab (`src/scenes/InfoTabs.ts`) lists events by heart level, a seen one with a Replay button (tap, or its number key) and a locked one as a dim "not seen yet" line; `HeartEventScene` takes `returnTo`. The farm stays paused under the menu, so the player, map, tile, facing and time are untouched, and the replay runs on the event's own map whichever map the player is on. Skip on a first run already ended the scene through `completeEvent` (cast, flags, rewards, recorded), so decision 10 needed no change. Headless check in `heart-extras.mjs`.
-6. Headless checks: `heart-extras.mjs` drops its warning and "not now" lines and checks that entering the area starts the scene; a new check that a
-   scene moves a sprite; `playtest:sweep` re-run for events.
+6. Headless checks. **Built (2026-11-23).** `heart-extras.mjs` drops its warning and "not now" lines and checks that entering the area starts the scene; a new check plays the three blocked scenes (store, green, river path) and proves the actors' positions change during the scene and a pose runs; `playtest:sweep` re-run for events is not repeated for this.
 7. M3d: block each person's scenes by hand with the real text.
 
 ## Event list, first draft (2026-11-13, for owner edit)

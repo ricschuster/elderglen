@@ -6,7 +6,7 @@ import { heldAt, rowOf, TOOLBAR_SIZE, type Held } from "../core/toolbar";
 import { SLOT_COUNT } from "../core/inventory";
 import { barWidth, COL_PAD, SLOT_BIG } from "../core/view";
 import { iconKey as itemIcon, TOOL_ICONS, toolTierKey } from "./art";
-import { splitQuality } from "../core/quality";
+import { QUALITY_TINT, splitQuality } from "../core/quality";
 import { itemById } from "../core/items";
 import type { GameState } from "../core/save";
 import { weaponById } from "../core/combat";
@@ -38,8 +38,6 @@ const COL_W_BIG = SLOT_BIG + 2 * COL_X;
 const DRAG_MIN = 6;
 const USE_R = 52;
 const EAT_R = 36;
-
-const QUALITY_TINT = { normal: 0xffffff, silver: 0xc8d8ff, gold: 0xffd860 };
 
 /** Short text for a slot, until the art pass gives items icons. */
 function caption(held: Held, g: GameState): string {

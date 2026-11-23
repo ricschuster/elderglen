@@ -15,7 +15,8 @@
     "weeklyBonus": 10,
     "quality": {
       "silver": 1.1,
-      "gold": 1.25
+      "gold": 1.25,
+      "hearthsilver": 1.4
     },
     "request": 150,
     "bundleBonus": 500

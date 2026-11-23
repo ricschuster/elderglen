@@ -5,7 +5,7 @@ import { FORAGE, type Spot } from "./forage";
 import { FRUIT_TREES } from "./fruittrees";
 import { machineMinutes } from "./machines";
 import { processFor } from "./processing";
-import { doubleForageChance } from "./professions";
+import { doubleForageChance, forageFloor } from "./professions";
 import { forageQuality, withQuality, type Quality } from "./quality";
 import type { GameState } from "./save";
 import { tileKey } from "./tilekey";
@@ -241,7 +241,7 @@ function award(g: GameState, xp: number, item: string): Outcome {
   };
 }
 
-/** Pick the bat fruit on a tile. Botanists get gold, Gatherers sometimes a second. */
+/** Pick the bat fruit on a tile. Botanists get the top grade, Gatherers sometimes a second. */
 export function pickBatFruit(
   g: GameState,
   x: number,
@@ -251,9 +251,10 @@ export function pickBatFruit(
   if (g.day.over) return fail("exhausted");
   const id = g.cave.fruitAt(x, y);
   if (!id) return fail("nothing here");
-  const quality: Quality = g.skills.has("botanist")
-    ? "gold"
-    : forageQuality(g.skills.level("foraging"), random());
+  const quality: Quality = forageFloor(
+    g.skills,
+    forageQuality(g.skills.level("foraging"), random()),
+  );
   const item = withQuality(id, quality);
   if (g.inventory.room(item) < 1) return fail("backpack full");
   g.cave.takeFruit(x, y);

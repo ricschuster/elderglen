@@ -163,8 +163,9 @@ played.
 - **Numbers match the original for now.** Day length, clock speed, energy and
   the pass-out rules are tunable constants. Until playtesting says otherwise
   the day runs 6:00 am to 2:00 am, energy is 270, and passing out costs 10
-  percent of money (up to 1000) and gives a 6:00 am wake with half energy
-  (exhaustion) or 75 percent (2:00 am). These are numbers only; no name, art,
+  percent of money (up to 1000, none inside the farmhouse) and gives a 6:00 am
+  wake with half energy (exhaustion or 2:00 am); late bedtimes lose a growing
+  share (`07_tuning_numbers.md`, energy rules). These are numbers only; no name, art,
   text or code is copied (see `docs/decisions/0002-stardew-valley-inspired.md`).
   The original's day runs about 14 real minutes.
 - **First playable.** The clock only passes time and ends the day late at

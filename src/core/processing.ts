@@ -144,6 +144,7 @@ export const CLOTH_DOUBLE_CHANCE: Record<Quality, number> = {
   normal: 0,
   silver: 0.25,
   gold: 0.5,
+  hearthsilver: 0.75,
 };
 const CHEESE_OF: Record<string, string> = {
   milk: CHEESE,

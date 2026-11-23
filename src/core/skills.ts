@@ -32,6 +32,8 @@ export class Skills {
     combat: 0,
   };
   private chosen: Partial<Record<Skill, string>> = {};
+  /** A level rose today: the morning after gives full energy (`energyrules.ts`). Cleared at night. */
+  levelledToday = false;
   /** The level 10 choice, under the level 5 one. */
   private chosenTop: Partial<Record<Skill, string>> = {};
 
@@ -102,6 +104,7 @@ export class Skills {
     const before = this.level(skill);
     this.xp[skill] += Math.max(amount, 0);
     const after = this.level(skill);
+    if (after > before) this.levelledToday = true;
     return after > before ? after : undefined;
   }
 }

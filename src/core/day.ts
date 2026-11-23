@@ -1,13 +1,13 @@
 import { Clock, DAY_END, DAY_START } from "./clock";
-import { Energy } from "./energy";
+import { ENERGY_FLOOR, Energy } from "./energy";
+import { morningEnergy } from "./energyrules";
 
 /**
  * Passing out is a mild, recoverable loss: a share of money, capped, and a
- * reduced morning. Numbers match Stardew for now and are tunable.
+ * half-energy morning (`energyrules.ts`). Numbers match Stardew for now and are tunable.
  */
 export const PASS_OUT_MONEY_SHARE = 0.1;
 export const PASS_OUT_MONEY_CAP = 1000;
-export const PASS_OUT_WAKE_ENERGY = { energy: 0.5, time: 0.75 };
 
 export type DayEnd =
   | { passedOut: false }
@@ -22,10 +22,13 @@ export class Day {
   restore(day: number, energy: number, minutes = DAY_START): void {
     this.clock.day = day;
     this.clock.minutes = Math.min(Math.max(minutes, DAY_START), DAY_END);
-    this.energy.current = Math.min(Math.max(energy, 0), this.energy.max);
+    this.energy.current = Math.min(
+      Math.max(energy, ENERGY_FLOOR),
+      this.energy.max,
+    );
   }
 
-  /** True once energy or time has run out, so the day must end. */
+  /** True once energy is at the floor (-15) or time has run out, so the day must end. */
   get over(): boolean {
     return this.energy.empty || this.clock.minutes >= DAY_END;
   }
@@ -38,27 +41,34 @@ export class Day {
   }
 
   /**
-   * End the day and start the next. Sleeping early (before the day is over)
-   * is free and gives a full morning. Otherwise the player passes out.
+   * End the day and start the next. Sleeping early (before the day is over) is free; the morning
+   * energy follows `morningEnergy` (late bedtime, exhaustion, a level-up today). Otherwise the
+   * player passes out, and loses money unless `safe` (asleep inside the farmhouse).
+   * `levelled` is the player's level-up flag, which the caller clears.
    */
-  end(money: number): DayEnd {
+  end(money: number, safe = false, levelled = false): DayEnd {
     const passedOut = this.over;
     const reason = this.energy.empty ? "energy" : "time";
+    const minutes = this.clock.minutes;
+    this.energy.current = morningEnergy({
+      max: this.energy.max,
+      minutes,
+      exhausted: this.energy.wasExhausted,
+      levelled,
+      atFloor: this.energy.empty,
+    });
+    this.energy.wasExhausted = false;
     this.clock.nextDay();
-    if (!passedOut) {
-      this.energy.restore(this.energy.max);
-      return { passedOut: false };
-    }
-    this.energy.current = Math.round(
-      this.energy.max * PASS_OUT_WAKE_ENERGY[reason],
-    );
+    if (!passedOut) return { passedOut: false };
     return {
       passedOut: true,
       reason,
-      moneyLost: Math.min(
-        Math.floor(Math.max(money, 0) * PASS_OUT_MONEY_SHARE),
-        PASS_OUT_MONEY_CAP,
-      ),
+      moneyLost: safe
+        ? 0
+        : Math.min(
+            Math.floor(Math.max(money, 0) * PASS_OUT_MONEY_SHARE),
+            PASS_OUT_MONEY_CAP,
+          ),
     };
   }
 }

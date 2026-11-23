@@ -5,7 +5,7 @@ import tableData from "../content/fish-tables.json";
 import marketPier from "../content/market-pier.json";
 import { dateOf, type Season } from "./calendar";
 import { NIGHTFALL } from "./clock";
-import { withQuality, type Quality } from "./quality";
+import { QUALITIES, withQuality, type Quality } from "./quality";
 import { harvestXp } from "./skills";
 import type { WaterKind } from "./map";
 import type { GameState } from "./save";
@@ -593,11 +593,14 @@ export function sizeRollMax(level: number): number {
   return 0.6 + 0.05 * level;
 }
 
-/** Quality from the size roll. A perfect catch lifts silver or gold one grade; no iridium tier. */
+/** Quality from the size roll. A perfect catch lifts any fish one grade, so gold becomes Hearthsilver (note 07). */
 export function catchQuality(roll: number, perfect: boolean): Quality {
   const base: Quality =
     roll >= GOLD_AT ? "gold" : roll >= SILVER_AT ? "silver" : "normal";
-  return perfect && base === "silver" ? "gold" : base;
+  if (!perfect) return base;
+  return QUALITIES[
+    Math.min(QUALITIES.indexOf(base) + 1, QUALITIES.length - 1)
+  ] as Quality;
 }
 
 /** A fish's length in cm from the size roll. */

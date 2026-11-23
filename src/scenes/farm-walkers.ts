@@ -158,6 +158,16 @@ export function syncVillagers(
     if (ws.busy.has(v.id)) continue;
     const px = ((v.fx ?? v.x) + 0.5) * ts;
     const py = ((v.fy ?? v.y) + 1) * ts - 1;
+    // Placeholder lying pose (note 80 "Bedtime"): the one-frame sprite turned on its side, its
+    // lower edge on the bed tile's floor. Standing again undoes it.
+    const lying = v.lying === true;
+    if (lying !== (s.box.angle !== 0))
+      s.box.setOrigin(0.5, lying ? 0.5 : 1).setAngle(lying ? 90 : 0);
+    if (lying) {
+      s.box.setPosition(px, py - s.box.width / 2).setDepth(sortDepth(py));
+      s.tag.setPosition(px, py - 13);
+      continue;
+    }
     if (v.facing) s.box.setFlipX(v.facing < 0);
     if (v.marching && s.box.x !== 0 && s.box.x !== px) {
       // A marcher glides to the next tile instead of jumping.

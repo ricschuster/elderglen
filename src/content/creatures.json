@@ -491,5 +491,103 @@
       "speed": 70,
       "time": 0.5
     }
+  },
+  {
+    "id": "golden-gloop",
+    "name": "Golden Gloop",
+    "behaviour": "hopper",
+    "bands": [],
+    "hp": 3,
+    "touch": 4,
+    "speed": 35,
+    "sight": 4,
+    "reach": 0.8,
+    "windup": 0.6,
+    "recover": 1,
+    "xp": 6,
+    "drops": [
+      {
+        "id": "gold-ore",
+        "chance": 1,
+        "min": 1,
+        "max": 2
+      },
+      {
+        "id": "gilded-jelly",
+        "chance": 1,
+        "min": 1,
+        "max": 1
+      }
+    ],
+    "inflicts": {
+      "effect": "slimed",
+      "chance": 1
+    },
+    "rare": {
+      "of": "gloop",
+      "band": 1
+    },
+    "flees": true
+  },
+  {
+    "id": "glimmer-nibbler",
+    "name": "Glimmer Nibbler",
+    "behaviour": "dasher",
+    "bands": [],
+    "hp": 5,
+    "touch": 6,
+    "speed": 21,
+    "sight": 5,
+    "reach": 3.5,
+    "windup": 0.6,
+    "recover": 1.2,
+    "xp": 16,
+    "dash": {
+      "speed": 77,
+      "time": 0.7
+    },
+    "drops": [
+      {
+        "id": "gem-mid-a",
+        "oneOf": ["gem-mid-a", "gem-mid-b"],
+        "chance": 1,
+        "min": 1,
+        "max": 1
+      }
+    ],
+    "inflicts": {
+      "effect": "chilled",
+      "chance": 1
+    },
+    "rare": {
+      "of": "frostnibbler",
+      "band": 2
+    }
+  },
+  {
+    "id": "ember-lantern",
+    "name": "Ember Lantern",
+    "behaviour": "drifter",
+    "bands": [],
+    "hp": 6,
+    "touch": 9,
+    "speed": 18,
+    "sight": 5,
+    "reach": 3.5,
+    "windup": 0.8,
+    "recover": 1.5,
+    "xp": 28,
+    "drops": [
+      {
+        "id": "hearthsilver-ore",
+        "chance": 1,
+        "min": 1,
+        "max": 1
+      }
+    ],
+    "rare": {
+      "of": "lanternmoth",
+      "band": 3
+    }
   }
 ]

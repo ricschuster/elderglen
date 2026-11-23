@@ -13,7 +13,7 @@ import {
 import { landLobster, Pots, rollCatch } from "../src/core/pots";
 import { deserialize, serialize } from "../src/core/save";
 import { buy } from "../src/core/shop";
-import { LEVEL_XP } from "../src/core/skills";
+import { LEVEL_XP, SKILLS } from "../src/core/skills";
 import { TREASURE_CHANCE } from "../src/core/tackle";
 
 const lvl5 = LEVEL_XP[4]!;
@@ -46,10 +46,17 @@ describe("fishing professions", () => {
     expect(g.skills.has("trapper")).toBe(true);
   });
 
-  it("asks nothing at level 10 for skills with no level 10 options", () => {
+  it("every skill now offers level 10 options", () => {
     const g = startGame();
-    g.skills.gain("mining", lvl10);
-    choose(g.skills, "mining", "prospector");
+    for (const sk of SKILLS) {
+      g.skills.gain(sk, lvl10);
+      const first = optionsFor(sk, g.skills)[0]!;
+      choose(g.skills, sk, first.id);
+      expect(optionsFor(sk, g.skills).length).toBe(2);
+      expect(pendingChoice(g.skills)).toBeDefined();
+      const second = optionsFor(sk, g.skills)[0]!;
+      choose(g.skills, sk, second.id);
+    }
     expect(pendingChoice(g.skills)).toBeUndefined();
   });
 

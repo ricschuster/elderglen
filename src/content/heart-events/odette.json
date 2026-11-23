@@ -66,6 +66,21 @@
           "to": "clear"
         },
         {
+          "cmd": "walk",
+          "who": "player",
+          "path": "door_to_centre"
+        },
+        {
+          "cmd": "face",
+          "who": "player",
+          "toward": "odette"
+        },
+        {
+          "cmd": "face",
+          "who": "odette",
+          "toward": "player"
+        },
+        {
           "cmd": "pan",
           "to": "odette"
         },
@@ -78,6 +93,11 @@
           "cmd": "emote",
           "who": "odette",
           "emote": "smile"
+        },
+        {
+          "cmd": "pose",
+          "who": "odette",
+          "pose": "surprise"
         },
         {
           "cmd": "say",

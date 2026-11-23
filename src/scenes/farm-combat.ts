@@ -16,7 +16,9 @@ import { swingArc, type SwingArc } from "../core/swingfx";
 import { autoSwings, autoWeaponSlot, mayAutoEquip } from "../core/autoattack";
 import { loadDeviceSettings } from "./storage";
 import {
+  cooldownFor,
   healthShown,
+  hitDamageFor,
   isWeapon,
   swingTargets,
   weaponById,
@@ -41,6 +43,7 @@ import {
   bombById,
   tickBombs,
 } from "../core/bombs";
+import { dangerHit } from "../core/danger";
 import { mineFloorOf } from "../core/mines";
 import { defeatCreature, defeatMessage } from "../core/creature-defeat";
 import { PLAYER } from "./farm-consts";
@@ -294,8 +297,9 @@ export function updateCombat(farm: FarmScene, dt: number): void {
   farm.player.setAlpha(
     combat.health.grace > 0 && Math.floor(farm.time.now / 90) % 2 ? 0.4 : 1,
   );
+  combat.tickBuffs(dt);
   if (!floor || combat.noCreatures) return;
-  combat.sync(farm.state.skills);
+  combat.sync(farm.state.skills, farm.state.equipment.graceBonus());
   combat.health.tick(dt);
   const burn = combat.effects.tick(dt);
   if (burn > 0) {
@@ -326,8 +330,9 @@ export function updateCombat(farm: FarmScene, dt: number): void {
       calm: oilCalms(farm.state, c.kind),
     });
     if (result.hit) {
+      // Dangerous mode: hits take two and a half times the health, before Assist (note 22).
       const lost = combat.health.hurt(
-        result.hit,
+        dangerHit(result.hit, !!farm.floorState?.dangerous),
         combat.assist,
         farm.state.equipment.defense(),
       );
@@ -347,6 +352,12 @@ export function updateCombat(farm: FarmScene, dt: number): void {
           else if (r === "resisted") farm.message += ` You shrug off ${name}.`;
         }
         floatText(farm, farm.pos.x, farm.pos.y - 14, `-${lost}`, "#ff8080");
+        // The thorns ring sends the damage back (note 37).
+        if (farm.state.equipment.thorns() && hurtCreature(c, lost)) {
+          beaten(farm, c);
+          farm.render();
+          continue;
+        }
         farm.render();
       }
     }
@@ -381,6 +392,9 @@ export function drawCreature(farm: FarmScene, c: Creature): void {
     block.setTint(0xff9a40).setTintMode(Phaser.TintModes.MULTIPLY);
   } else if (c.state === "stagger") {
     block.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
+  } else if (creatureById(c.kind)?.rare) {
+    // A rare creature wears a gold sheen (placeholder tint).
+    block.setTint(0xffd84a).setTintMode(Phaser.TintModes.MULTIPLY);
   } else block.clearTint();
   // A sleeping rock crab looks like a dull rock until the player comes near.
   const asleep = creatureById(c.kind)?.sleeper && c.state === "wander";
@@ -453,7 +467,9 @@ export function swing(farm: FarmScene, weapon: WeaponDef): void {
   audio.sfx("combat.swing");
   farm.swingReady =
     farm.time.now +
-    weapon.cooldown * farm.state.combat.effects.swingFactor() * 1000;
+    cooldownFor(farm.state.skills, weapon.cooldown) *
+      farm.state.combat.effects.swingFactor() *
+      1000;
   const ts = farm.map.tileSize;
   // The sling shoots toward the mouse pointer, or the tapped spot on touch
   // (note 22, SC-94). Everything else, and a sling with no aim, goes the faced way.
@@ -517,13 +533,20 @@ export function swing(farm: FarmScene, weapon: WeaponDef): void {
     aim,
   );
   for (const c of hits) {
-    const damage = swingDamage(c, weapon.damage, weapon.family, farm.pos);
+    const hit = hitDamageFor(farm.state.skills, weapon.damage, Math.random);
+    // The warrior ring's buff after a kill (note 37).
+    const boosted = Math.round(
+      hit.damage * farm.state.combat.killDamageFactor(),
+    );
+    const damage = swingDamage(c, boosted, weapon.family, farm.pos);
+    // Placeholder pop: Lucky Strike shows "x2" beside the number.
     floatText(
       farm,
       c.x,
       c.y - 12,
-      damage < weapon.damage ? `${damage} (armour)` : `${damage}`,
-      "#ffffff",
+      (damage < boosted ? `${damage} (armour)` : `${damage}`) +
+        (hit.lucky ? " x2" : ""),
+      hit.lucky ? "#ffd84a" : "#ffffff",
     );
     audio.sfx("combat.hit");
     if (hurtCreature(c, damage)) beaten(farm, c);

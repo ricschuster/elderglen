@@ -134,7 +134,7 @@ describe("mining", () => {
     const g = startGame();
     expect(mine(g, 0, 0, undefined).ok).toBe(false);
     const spot = maps.get(START.map).rocks[0]!;
-    g.day.energy.current = 0;
+    g.day.energy.current = -15;
     expect(mine(g, spot.x, spot.y, undefined)).toEqual({
       ok: false,
       reason: "exhausted",

@@ -35,6 +35,14 @@ export const CASK_DAYS: Partial<
   beer: { silver: 7, gold: 14 },
 };
 
+/**
+ * Further days past gold before a good reaches Hearthsilver (placeholder, note 07):
+ * the same length as the silver to gold step, so wine 14 more days, mead 7, cheese 4.
+ */
+function hearthsilverAt(d: { silver: number; gold: number }): number {
+  return d.gold + (d.gold - d.silver);
+}
+
 /** Goods whose days differ from their category's: pale ale 9 and 17 (SC-82). */
 const CASK_ITEM_DAYS: Record<string, { silver: number; gold: number }> = {
   "pale-ale": { silver: 9, gold: 17 },
@@ -130,11 +138,17 @@ export function caskQuality(g: GameState, job: CaskJob): Quality {
   if (!days) return job.quality;
   const age = caskAge(g, job);
   const earned: Quality =
-    age >= days.gold ? "gold" : age >= days.silver ? "silver" : "normal";
+    age >= hearthsilverAt(days)
+      ? "hearthsilver"
+      : age >= days.gold
+        ? "gold"
+        : age >= days.silver
+          ? "silver"
+          : "normal";
   return rank(earned) > rank(job.quality) ? earned : job.quality;
 }
 
-/** Days until the next grade, or undefined at gold. */
+/** Days until the next grade, or undefined at Hearthsilver. */
 export function daysToNextGrade(
   g: GameState,
   job: CaskJob,
@@ -143,14 +157,19 @@ export function daysToNextGrade(
   if (!days) return undefined;
   const age = caskAge(g, job);
   const q = caskQuality(g, job);
-  if (q === "gold") return undefined;
-  const target = q === "normal" ? days.silver : days.gold;
+  if (q === "hearthsilver") return undefined;
+  const target =
+    q === "normal"
+      ? days.silver
+      : q === "silver"
+        ? days.gold
+        : hearthsilverAt(days);
   return Math.max(target - age, 0);
 }
 
-/** True at gold: nothing more to wait for. */
+/** True at Hearthsilver: nothing more to wait for. */
 export function caskDone(g: GameState, c: PlacedCask): boolean {
-  return c.job !== undefined && caskQuality(g, c.job) === "gold";
+  return c.job !== undefined && caskQuality(g, c.job) === "hearthsilver";
 }
 
 /** What a cask is doing, for the message when the player uses it. */
@@ -161,8 +180,9 @@ export function caskStatus(g: GameState, x: number, y: number): string {
   const q = caskQuality(g, c.job);
   const name = nameOf(c.job.item);
   const left = daysToNextGrade(g, c.job);
-  if (left === undefined) return `${name}: gold quality, ready.`;
-  const next = q === "normal" ? "silver" : "gold";
+  if (left === undefined) return `${name}: Hearthsilver quality, ready.`;
+  const next =
+    q === "normal" ? "silver" : q === "silver" ? "gold" : "Hearthsilver";
   return `${name}: ${q}, ${next} in ${left} day${left === 1 ? "" : "s"}.`;
 }
 

@@ -148,3 +148,15 @@ the glow rings the Night Fishing bundle gives is the 10 radius one.
 
 - The wedding ring and the jukebox ring.
 - Item names, art and descriptions. Ours are written fresh.
+
+## Built (2026-11-23, slayer build part 8a): the slayer rings
+
+`src/core/equipment.ts`, `src/content/rings.json`, hooked into `creature-defeat.ts` (kills and drops) and
+`src/scenes/farm-combat.ts` (hits, swings). Burglar ring: the creature's drops roll twice. Vampire ring:
+2 health a kill. Savage ring: walk speed x1.3 for 3 seconds after a kill (the 1.3 is a placeholder).
+Warrior ring: note 37 only says "buff", so the placeholder is weapon damage x1.25 for 5 seconds after a
+kill. Protection ring: +0.4 seconds of grace after a hit. Thorns ring: a creature that hits you takes the
+damage it dealt (it can be beaten by it). Buffs are in memory (`Combat.buffs`), the strongest of two worn
+rings applies, and a combined ring (note 95) carries the effects. Ring pictures are placeholder stones in
+`art.ts`. Sell price 0 like the crabshell ring (they are kept goods; the shop prices are in note 22).
+The three hats (beetle-head, skull mask, hard hat) are cosmetic wardrobe hats (`hats.json`) with no stat.
