@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 6,
-  "nextobjectid": 44,
+  "nextobjectid": 45,
   "properties": [
     {
       "name": "placeholder",
@@ -633,11 +633,11 @@
           "id": 26,
           "rotation": 0,
           "visible": true,
-          "name": "bed-parents",
+          "name": "bed-hattie",
           "class": "mark",
           "type": "mark",
-          "x": 608,
-          "y": 400,
+          "x": 600,
+          "y": 392,
           "width": 0,
           "height": 0,
           "point": true
@@ -716,6 +716,19 @@
           "type": "mark",
           "x": 96,
           "y": 112,
+          "width": 0,
+          "height": 0,
+          "point": true
+        },
+        {
+          "id": 44,
+          "rotation": 0,
+          "visible": true,
+          "name": "bed-podge",
+          "class": "mark",
+          "type": "mark",
+          "x": 632,
+          "y": 392,
           "width": 0,
           "height": 0,
           "point": true

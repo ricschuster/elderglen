@@ -11,6 +11,7 @@ import {
   villagersOn,
 } from "../src/core/townfolk";
 import { HEART, POINTS } from "../src/core/friendship";
+import { bedPlace, villagerById } from "../src/core/villagers";
 
 const at = (h: number, m = 0) => h * 60 + m;
 // Day 1 is Mon spring 1.
@@ -40,12 +41,17 @@ describe("villagersOn", () => {
     ).toBe(false);
   });
 
-  it("lists nobody asleep", () => {
+  it("lists nobody asleep on the streets, and the sleeper lying on her own bed at home", () => {
     const g = newGame();
-    for (const m of ["general-store", "hearthwell"])
-      expect(
-        villagersOn(g, m, MON, at(25)).some((p) => p.id === "odette"),
-      ).toBe(false);
+    expect(
+      villagersOn(g, "hearthwell", MON, at(25)).some((p) => p.id === "odette"),
+    ).toBe(false);
+    const odette = villagersOn(g, "general-store", MON, at(25)).find(
+      (p) => p.id === "odette",
+    );
+    expect(odette?.lying).toBe(true);
+    const bed = bedPlace(villagerById("odette")!);
+    expect(odette).toMatchObject({ x: bed!.x, y: bed!.y });
   });
 
   it("finds a person by tile", () => {

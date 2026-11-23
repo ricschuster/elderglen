@@ -4,6 +4,7 @@ import { maps } from "../content/maps";
 import { HOUSE_MAP, SPOUSE_HOLD } from "./house";
 import { findPath } from "./pathing";
 import {
+  bedPlace,
   isRainy,
   planDay,
   resolvePlace,
@@ -211,10 +212,22 @@ export function dayWalk(v: Villager, ctx: DayContext): DayWalk {
   if (!dw) {
     const plan = planDay(v, ctx);
     const stops: Stop[] = [{ time: 0, place: v.home }, ...plan.stops];
+    const places = stops.map((s) => resolvePlace(s.place));
+    // At bedtime the person walks to their own bed mark (note 80 "Bedtime", #992), and the morning
+    // walk starts from it. No bed mark (no interior map, the spouse's route) leaves the home tile.
+    const bed = bedPlace(v);
+    if (bed) {
+      places[0] = bed;
+      const last = stops[stops.length - 1]!;
+      if (plan.bed > last.time) {
+        stops.push({ time: plan.bed, place: v.home });
+        places.push(bed);
+      }
+    }
     dw = {
       plan,
       stops,
-      places: stops.map((s) => resolvePlace(s.place)),
+      places,
       legs: stops.map(() => undefined),
     };
     per.set(key, dw);

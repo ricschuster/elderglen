@@ -33,6 +33,8 @@ const EXITS: Record<string, string> = {
   farmstead: "Farmstead",
   hermit: "Hermit's tower",
   elf: "Thalwen's cottage",
+  room: "Maren's room",
+  tent: "Marl's tent",
   "general-store": "General Store",
   healer: "Healer",
   inn: "Inn",

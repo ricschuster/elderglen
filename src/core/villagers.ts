@@ -400,6 +400,21 @@ export function bedPlace(v: Villager): Place | undefined {
   };
 }
 
+/**
+ * The bed a villager is lying on at minute `t`, if any: from bedtime on, and in the morning until
+ * their first stop. Undefined without a bed mark (no interior map, the spouse's route) or when up.
+ */
+export function lyingBed(
+  v: Villager,
+  ctx: DayContext,
+  t: number,
+): Place | undefined {
+  const plan = planDay(v, ctx);
+  const first = plan.stops[0];
+  if (t < plan.bed && !(first && t < first.time)) return undefined;
+  return bedPlace(v);
+}
+
 /** Where a villager is at a game-clock minute. Before the first stop and after bedtime they are home. */
 export function whereAt(v: Villager, ctx: DayContext, t: number): Whereabouts {
   const plan = planDay(v, ctx);

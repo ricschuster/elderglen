@@ -200,7 +200,7 @@ is void. Fixtures block movement. Marks are points on `markers`.
   doors at y 29, entry marks at y 28, so the entry is 2 wide. The built door is one
   tile at x 9 (owner call 2026-11-12, after play); x 10 at y 29 is wall.
 - **Marks.** `entry` and `door` (2 each), `service-shop` (2), `spot-counter-serve`,
-  `spot-counter-stock`, `spot-home-cook`, `spot-home-sit`, `bed-parents`, `bed-child`,
+  `spot-counter-stock`, `spot-home-cook`, `spot-home-sit`, `bed-parents` (since split into one mark per partner, see Open), `bed-child`,
   `door-gated-parents`, `door-gated-child` and `door-kitchen`. A check on the draft
   confirms every floor tile and every mark is reachable from the entry. The test that
   does this is a build task (below).
@@ -956,6 +956,7 @@ Final art waits for M3d (ADR 0012).
 | `sawmill`, `healer`, `smithy` | Done, owner checked 2026-11-11 (batch 1) | No | |
 | `library`, `hatter`, `forest-farmstead` | Done, owner checked 2026-11-11 (batch 2) | No | |
 | `burrow-*` | Done, owner checked 2026-11-11 (batch 3) | No | |
+| `mine-room`, `quarry-tent` | Placeholder built 2026-11-23 (#992), not owner checked | No | Maren and Marl homes, no draft |
 | `hall` | Done, note 40 | No | Crowd rules only |
 
 ## Build work (issues #853 to #860, house is #832 to #838)
@@ -986,6 +987,13 @@ Final art waits for M3d (ADR 0012).
 
 ## Open
 
+- Built 2026-11-23 (#992, note 80 item 6): two small placeholder interiors with no
+  drafts, `mine-room` (10 by 8, Maren's back room off the mine hall, east door) and
+  `quarry-tent` (10 by 8, Marl's tent on the quarry camp). Each has a door, a bed,
+  a crate and a table, the marks `spot-home-sit`, `spot-home-cook` and `bed-maren` or
+  `bed-marl`. The double-bed marks `bed-parents` and `bed-couple` became one mark per
+  partner (`bed-odette`, `bed-dorrie`, `bed-hattie`, `bed-podge`, `bed-tilda`,
+  `bed-rufus`, `bed-hester`, `bed-walter`), on the open tiles beside the bed.
 - Built (batch 4): the hall's six counters each have a second player tile. Each counter
   keeps its one tile footprint in the wall; two wall tiles beside it are opened (the
   approach is 2 wide) and the corridors and rooms are unchanged. `PENDING` in

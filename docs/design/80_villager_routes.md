@@ -35,7 +35,9 @@ Times and spots are placeholders, tuned in data, not code.
   override, written in the next layer. The default route is for an open day.
 - **Rain route** (any rain or storm): the same people, indoors where the default
   was outdoors. Keepers keep their counters. Rain-open shops (note 79) open as normal.
-- **Bedtime** after the last stop: the person is at `home`, asleep, door locked.
+- **Bedtime** after the last stop: the person is at `home`, asleep, door locked. Built
+  (2026-11-23, #992, open item 6): at bedtime the person walks to their own bed mark
+  and lies on it until the morning walk starts (see open item 6).
 
 ## Hearthwell
 
@@ -73,8 +75,8 @@ Aldreth, the courier, lodges at the inn and is in the area table below.
 | Rosmarin | Forest, hermit witch | 8:00 forest:hermit-tower/home, 9:00 forest:hermit-garden (tend), 12:00 forest:hermit-tower/room (brew), 15:00 forest:fairy-ring (stand), 18:00 hermit-tower/home. Bed 23:30 | 9:00 hermit-tower/room all day, then home |
 | Rundahl (Old Greencoat) | Forest, the Wanderer | 8:00 forest:camp (fire), 10:00 forest:farm-road (walk), 13:00 forest:camp (sit), 16:00 forest:wood-path (walk), 19:00 forest:camp (fire). Sleeps at the camp tent, no door | 8:00 forest:camp (under the tent) all day |
 | Korvi | Mountain, smith dwarf | 6:30 mtn:forge/home, 8:00 mtn:forge/counter, 17:00 mtn:forge/room (hammer), 20:00 mtn:forge/home. Bed 23:00 | Same |
-| Marl | Quarry, stonekeeper | 7:00 quarry:camp/home, 8:00 quarry:yard (work), 12:00 quarry:camp (eat), 13:00 quarry:bridge (check), 17:00 quarry:yard, 19:00 quarry:camp/home. Bed 22:00 | 8:00 quarry:camp (mend) until 17:00, then home |
-| Maren | Mines, trainer | 7:00 mines:hall/home, 8:00 mines:hall/dummy (spar), 12:00 mines:hall/home (eat), 13:00 mines:hall/dummy, 19:00 mines:hall/home. Bed 22:00 | Same (underground) |
+| Marl | Quarry, stonekeeper | 7:00 quarry:tent/home, 8:00 quarry:yard (work), 12:00 quarry:camp (eat), 13:00 quarry:bridge (check), 17:00 quarry:yard, 19:00 quarry:tent/home. Bed 22:00 | 8:00 quarry:camp (mend) until 17:00, then home |
+| Maren | Mines, trainer | 7:00 mines:room/home, 8:00 mines:hall/dummy (spar), 12:00 mines:room/home (eat), 13:00 mines:hall/dummy, 19:00 mines:room/home. Bed 22:00 | Same (underground) |
 | Rushie | Delta, fisher | 5:30 delta:hut/home, 6:30 delta:dock (fish), 9:00 delta:hut/counter, 17:00 delta:dock (fish), 20:00 delta:hut/home. Bed 21:30 | 9:00 delta:hut/counter all day, 17:00 delta:hut/home |
 | Thalwen | Beach, sea elf | 7:00 beach:cottage/home, 9:00 beach:dunes (gaze), 12:00 beach:cottage/room, 14:00 beach:shore (walk), 18:00 beach:cottage/counter (stall), 20:00 cottage/home. Bed 23:00 | 9:00 beach:cottage/room all day, 18:00 stall |
 | Aldreth | Courier, lodges at the inn | 7:00 inn/home, 8:30 hw:outpost-yard (carriers), 12:00 inn/counter (eat), 13:00 hw:outpost-yard, 18:00 inn (sit), 22:30 inn/home. Bed 23:30 | 8:30 outpost/room (sort) until 12:00, then inn |
@@ -251,3 +253,21 @@ returns an hour earlier. A snow day does not stop the trip (snow is not rain, ow
 5. **Register**: SC-106, SC-109 and SC-112 are answered (2026-11-11), the
    per-person details from the saved Abigail page only. Other villagers are not
    checked.
+6. **Beds** (owner, 2026-11-23, #992): built 2026-11-23. Every villager with a home
+   interior has a named bed mark (`beds` in `src/content/villagers.json`, `bed-<id>`
+   where the building holds more than one sleeper of that kind). Married couples in
+   one building (Odette and Dorrie, Hattie and Podge, Tilda and Rufus, Hester and
+   Walter) share the double bed, each on their own side, so nobody shares a tile
+   (neither note 80 nor note 86 says couples share a bed tile, so each has their own
+   mark). At bedtime the walker adds a last leg from the final stop to the bed mark
+   (`dayWalk`, `src/core/walkers.ts`); from bedtime and, in the morning, until the
+   first stop, `lyingBed` (`src/core/villagers.ts`) puts the person on `bedPlace`'s
+   tile with `lying: true` (`villagersOn`, `src/core/townfolk.ts`). The scene draws
+   the one-frame sprite turned on its side (placeholder pose,
+   `src/scenes/farm-walkers.ts`). The bed mark sits on the open tile beside the bed
+   fixture; a solid mark moves to the nearest open tile. Rundahl sleeps at the
+   forest camp, which has no interior, so he has no bed and stays hidden. Maren and
+   Marl now have small placeholder interiors: `mine-room` (a back room through an
+   east door in the mine hall, place `mines:room`) and `quarry-tent` (a tent on the
+   quarry camp, place `quarry:tent`), each with a door, `spot-home-sit`,
+   `spot-home-cook` and their bed mark. Tests: `tests/villager-tiles.test.ts`.

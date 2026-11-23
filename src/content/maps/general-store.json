@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 6,
-  "nextobjectid": 34,
+  "nextobjectid": 35,
   "properties": [
     {
       "name": "placeholder",
@@ -506,11 +506,11 @@
           "id": 21,
           "rotation": 0,
           "visible": true,
-          "name": "bed-parents",
+          "name": "bed-odette",
           "class": "mark",
           "type": "mark",
-          "x": 112,
-          "y": 112,
+          "x": 104,
+          "y": 136,
           "width": 0,
           "height": 0,
           "point": true
@@ -524,6 +524,19 @@
           "type": "mark",
           "x": 208,
           "y": 48,
+          "width": 0,
+          "height": 0,
+          "point": true
+        },
+        {
+          "id": 34,
+          "rotation": 0,
+          "visible": true,
+          "name": "bed-dorrie",
+          "class": "mark",
+          "type": "mark",
+          "x": 120,
+          "y": 136,
           "width": 0,
           "height": 0,
           "point": true

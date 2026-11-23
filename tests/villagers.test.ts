@@ -259,7 +259,7 @@ describe("schedule engine", () => {
       "mines:hall/dummy",
     );
     expect(whereAt(v("maren"), ctx("Fri"), at(19, 30)).place).toBe(
-      "mines:hall/home",
+      "mines:room/home",
     );
   });
 

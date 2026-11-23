@@ -160,6 +160,12 @@
       "y": 30,
       "placeholder": true
     },
+    "quarry:tent": {
+      "interior": "quarry-tent",
+      "x": 11,
+      "y": 10,
+      "placeholder": true
+    },
     "quarry:camp": {
       "x": 10,
       "y": 10,
@@ -173,6 +179,12 @@
     "quarry:bridge": {
       "x": 45,
       "y": 25,
+      "placeholder": true
+    },
+    "mines:room": {
+      "interior": "mine-room",
+      "x": 10,
+      "y": 3,
       "placeholder": true
     },
     "mines:hall": {
@@ -243,34 +255,36 @@
     }
   },
   "beds": {
-    "_note": "The bed mark each villager sleeps at, in their home interior (#992). Partners share a double bed mark. Rundahl, Marl and Maren have no interior map yet, so no bed. Sleeping villagers stay hidden; this is the tile for when that is decided.",
-    "odette": "bed-parents",
-    "dorrie": "bed-parents",
+    "_note": "The bed mark each villager sleeps at, in their home interior (#992). Partners each have their own mark on the two sides of the double bed (note 80 open item 6, 2026-11-23). Rundahl sleeps at the camp, which has no interior, so no bed. A person walks to this mark at bedtime and lies on it.",
+    "odette": "bed-odette",
+    "dorrie": "bed-dorrie",
     "fitch": "bed-child",
     "alder": "bed-gardener",
     "bramwell": "bed-smith",
-    "hattie": "bed-parents",
-    "podge": "bed-parents",
+    "hattie": "bed-hattie",
+    "podge": "bed-podge",
     "pim": "bed-child",
     "aldreth": "bed-courier",
     "aurelle": "bed-healer",
     "dunmar": "bed-librarian",
-    "tilda": "bed-parents",
-    "rufus": "bed-parents",
+    "tilda": "bed-tilda",
+    "rufus": "bed-rufus",
     "wren": "bed-child",
     "cuthbert": "bed-steward-cot",
     "cordelia": "bed-cordelia",
     "barnaby": "bed-barnaby",
     "linnet": "bed-young-a",
     "thistle": "bed-young-b",
-    "hester": "bed-couple",
-    "walter": "bed-couple",
+    "hester": "bed-hester",
+    "walter": "bed-walter",
     "toby": "bed-grandchild",
     "dilly": "bed-keeper",
     "rosmarin": "bed-hermit",
     "korvi": "bed-forge",
     "rushie": "bed-fisher-hut",
-    "thalwen": "bed-elf"
+    "thalwen": "bed-elf",
+    "marl": "bed-marl",
+    "maren": "bed-maren"
   },
   "spotMarks": {
     "_note": "A spot on a building with its own interior map is the first of these marks that map has (note 86 marks), moved to the nearest open tile if the mark is on a solid one. interiorSpots below are the fallback tile for a map with none of them, and the tile for spots on the farm house.",
@@ -1723,22 +1737,22 @@
       },
       "candidate": true,
       "heartCap": 14,
-      "home": "quarry:camp/home",
+      "home": "quarry:tent/home",
       "shop": "quarry-dwarf",
       "bed": "22:00",
       "area": "quarry",
       "route": [
-        "7:00 quarry:camp/home",
+        "7:00 quarry:tent/home",
         "8:00 quarry:yard (work)",
         "12:00 quarry:camp (eat)",
         "13:00 quarry:bridge (check)",
         "17:00 quarry:yard (work)",
-        "19:00 quarry:camp/home"
+        "19:00 quarry:tent/home"
       ],
       "rain": [
-        "7:00 quarry:camp/home",
+        "7:00 quarry:tent/home",
         "8:00 quarry:camp (mend)",
-        "17:00 quarry:camp/home"
+        "17:00 quarry:tent/home"
       ],
       "weekday": [
         {
@@ -1780,22 +1794,22 @@
       },
       "candidate": true,
       "heartCap": 14,
-      "home": "mines:hall/home",
+      "home": "mines:room/home",
       "bed": "22:00",
       "area": "mines",
       "route": [
-        "7:00 mines:hall/home",
+        "7:00 mines:room/home",
         "8:00 mines:hall/dummy (spar)",
-        "12:00 mines:hall/home (eat)",
+        "12:00 mines:room/home (eat)",
         "13:00 mines:hall/dummy (spar)",
-        "19:00 mines:hall/home"
+        "19:00 mines:room/home"
       ],
       "rain": [
-        "7:00 mines:hall/home",
+        "7:00 mines:room/home",
         "8:00 mines:hall/dummy (spar)",
-        "12:00 mines:hall/home (eat)",
+        "12:00 mines:room/home (eat)",
         "13:00 mines:hall/dummy (spar)",
-        "19:00 mines:hall/home"
+        "19:00 mines:room/home"
       ],
       "weekday": [
         {

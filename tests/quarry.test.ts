@@ -56,8 +56,8 @@ describe("the Quarry map (note 78)", () => {
     expect(exitLabel("to_quarry")).toBe("Quarry");
   });
 
-  it("has one way in, from the Mountain", () => {
-    expect(quarry.exits).toHaveLength(1);
+  it("has one way in, from the Mountain, and Marl's tent door", () => {
+    expect(quarry.exits.map((e) => e.id)).toEqual(["to_mountain", "tent"]);
     expect(quarry.exits[0]).toMatchObject({
       id: "to_mountain",
       map: "mountain",
