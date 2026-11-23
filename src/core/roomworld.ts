@@ -21,6 +21,7 @@ import {
   expireProposalsAndRefund,
 } from "./marriageintents";
 import * as pm from "./playermarriage";
+import { morningEnergy } from "./energyrules";
 import { PASS_OUT_MONEY_CAP, PASS_OUT_MONEY_SHARE } from "./day";
 import { LOCAL_PLAYER, type PlayerId } from "./players";
 import type { Intent } from "./protocol";
@@ -36,6 +37,11 @@ export interface RoomWorldOptions {
   /** Open area where a free cabin may be built. */
   cabinArea?: { x: number; y: number; w: number; h: number };
   blocked?: BlockedFn;
+  /**
+   * True when the player is inside a home (the farmhouse; cabins have no interior map yet): falling
+   * asleep there costs no money (note 07, 2026-10-31). Absent: nobody is inside.
+   */
+  inside?: (id: PlayerId) => boolean;
   random?: () => number;
   /** The night's artifact spots, passed to sleep(). */
   spots?: Parameters<typeof sleep>[1];
@@ -74,7 +80,10 @@ export class GameRoomWorld implements RoomWorld {
   private guestNight: NightNews | undefined;
   private hostNight: SleepReport | undefined;
   private readonly o: Required<
-    Pick<RoomWorldOptions, "cabinArea" | "blocked" | "random" | "spots">
+    Pick<
+      RoomWorldOptions,
+      "cabinArea" | "blocked" | "random" | "spots" | "inside"
+    >
   >;
 
   constructor(
@@ -87,6 +96,7 @@ export class GameRoomWorld implements RoomWorld {
       blocked: opts.blocked ?? (() => false),
       random: opts.random ?? Math.random,
       spots: opts.spots ?? [],
+      inside: opts.inside ?? (() => false),
     };
     this.tracker = new DayEndTracker(g.players.ids, (d) => this.endDay(d));
   }
@@ -256,18 +266,33 @@ export class GameRoomWorld implements RoomWorld {
     for (const id of d.passOut) {
       if (id === LOCAL_PLAYER || !players.has(id)) continue;
       const w = players.wallet(id);
-      const lost = passOutLoss(w.money);
+      const lost = this.o.inside(id) ? 0 : passOutLoss(w.money);
       w.money -= lost;
       this.lastPassOuts[id] = lost;
     }
     for (const p of players.each()) {
       if (p.id === LOCAL_PLAYER) continue; // the host's energy is the day's, handled by sleep()
+      // Awake at the limit is the 2 am case; in bed, the shared clock says how late it is.
       const out = d.passOut.includes(p.id);
-      p.energy.current = out ? Math.round(p.energy.max * 0.75) : p.energy.max;
+      p.energy.current = morningEnergy({
+        max: p.energy.max,
+        minutes: out ? CLOCK_END : this.g.day.clock.minutes,
+        exhausted: p.energy.wasExhausted,
+        levelled: p.skills.levelledToday,
+        atFloor: p.energy.empty,
+      });
+      p.energy.wasExhausted = false;
+      p.skills.levelledToday = false;
     }
     // An unanswered proposal ends with the day, the token goes back (owner, 2026-11-19).
     expireProposalsAndRefund(this.g);
-    const report = sleep(this.g, this.o.spots, this.o.random);
+    const report = sleep(
+      this.g,
+      this.o.spots,
+      this.o.random,
+      undefined,
+      this.o.inside(LOCAL_PLAYER),
+    );
     this.lastReport = report;
     this.hostNight = report;
     // The new morning: filed divorces take effect, then due weddings play (no wait for the partner).

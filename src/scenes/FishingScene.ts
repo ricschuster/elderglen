@@ -1,3 +1,4 @@
+import { ENERGY_FLOOR } from "../core/energy";
 import { audio } from "../audio/engine";
 import { itemById } from "../core/items";
 import Phaser from "phaser";
@@ -325,7 +326,7 @@ export class FishingScene extends Phaser.Scene {
 
   private cast(): void {
     const cost = castEnergy(this.state.skills.level("fishing"));
-    if (this.state.day.energy.current < cost) {
+    if (this.state.day.energy.current - cost <= ENERGY_FLOOR) {
       this.text.setText(TOO_TIRED_TO_CAST);
       this.charge = 0;
       return;

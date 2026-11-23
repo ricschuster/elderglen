@@ -219,7 +219,7 @@ not built in M4. The pros and cons, so the idea is not lost:
    `Energy`, `snapshot` is `serialize`, `playerDropped` and `playerRejoined` drive `DayEndTracker`. Intents:
    `ship` (to the sender's bin lines, paid per wallet mode at night), `spend` (from `players.balance`), `sleep`,
    `wake`, `buy-cabin` (host only); anything else is rejected. `step` calls `tracker.check`; at the day end guests
-   who pass out pay the single player cost from their wallet, guests wake with full or 75% energy, then `sleep()`
+   who pass out pay the single player cost from their wallet, guests wake by the energy rules (`energyrules.ts`: late sleep, exhaustion, level-up; half at the limit; no money lost if the guest is inside a home, via `RoomWorldOptions.inside`), then `sleep()`
    runs for the world (`lastReport`, `lastPassOuts`). Tests: `tests/roomworld.test.ts` (NodeHost over a real
    socket, two guests). Left: the cabin book is not in the save; moving a dropped guest's character to their
    cabin; guest energy is not yet spent by real actions or saved back as the day's; more intent kinds (till,

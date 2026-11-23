@@ -110,7 +110,7 @@ describe("the bin and the night", () => {
 
   it("does not take the pass-out cost from bin money", () => {
     const g = newGame();
-    g.day.energy.spend(g.day.energy.current);
+    g.day.energy.spend(g.day.energy.current + 15);
     g.inventory.add(PARSNIP, 3);
     g.bin.ship(g.inventory, PARSNIP, 3);
     const paid = g.bin.total();

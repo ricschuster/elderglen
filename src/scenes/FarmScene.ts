@@ -293,6 +293,7 @@ import {
 import { makePlaceholderTextures, PLAYER_KEY } from "./placeholder-textures";
 import { guestMayOpen } from "../core/menupages";
 import { bedNotice } from "../core/bednotice";
+import { exhaustedSpeed, tiredWarning } from "../core/energyrules";
 import { audio } from "../audio/engine";
 import { setFarmProbe } from "../audio/director";
 import { doorSoundFor, footstepFor, sfxForAct, sfxForUse } from "../core/audio";
@@ -1062,7 +1063,9 @@ export class FarmScene extends Phaser.Scene {
     if (v.x !== 0 || v.y !== 0) this.keyAim();
     const ts = this.map.tileSize;
     const before = { ...this.pos };
-    const slowed = this.state.combat.effects.speedFactor();
+    const slowed =
+      this.state.combat.effects.speedFactor() *
+      exhaustedSpeed(this.state.day.energy.current);
     const remotes = this.net?.remotes() ?? [];
     for (let i = 0; i < DEV_SPEED; i++)
       this.pos = move(
@@ -2666,6 +2669,10 @@ export class FarmScene extends Phaser.Scene {
   }
 
   private afterAction(): void {
+    const energy = this.state.day.energy.current;
+    const warning = tiredWarning(this.lastEnergy, energy);
+    this.lastEnergy = energy;
+    if (warning && !this.state.day.over) this.message = warning;
     if (this.state.day.over) this.endDay();
     else if (pendingChoice(this.state.skills)) this.open("profession");
     else this.render();
@@ -2815,13 +2822,24 @@ export class FarmScene extends Phaser.Scene {
     this.render();
   }
 
+  /** Energy at the last check, for the tired warnings. */
+  private lastEnergy = Infinity;
+
   endDay(): void {
     if (this.net instanceof GuestSession) return this.getInBed(this.net);
     detonateAll(this, true);
     if (this.net instanceof HostSession) return this.getInBed(this.net);
     const g = this.state;
     const farmMap = farmMapOf(g);
-    this.finishNight(sleep(g, farmMap.forageSpots, Math.random, farmMap));
+    this.finishNight(
+      sleep(
+        g,
+        farmMap.forageSpots,
+        Math.random,
+        farmMap,
+        isHouseMap(this.mapId),
+      ),
+    );
   }
 
   /** The morning after: redraw, save, and open the report (the steps after sleep()). */

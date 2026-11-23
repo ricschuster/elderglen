@@ -177,6 +177,9 @@ export interface PlayerSave {
   toolTiers: ToolTiers;
   canWater: number;
   energy: number;
+  /** Energy hit 0 today, and a skill leveled up today (optional: older saves lack them). */
+  exhausted?: boolean;
+  levelled?: boolean;
 }
 
 export function savePlayer(p: PlayerRecord): PlayerSave {
@@ -190,6 +193,8 @@ export function savePlayer(p: PlayerRecord): PlayerSave {
     toolTiers: { ...p.toolTiers },
     canWater: p.canWater,
     energy: p.energy.current,
+    ...(p.energy.wasExhausted ? { exhausted: true } : {}),
+    ...(p.skills.levelledToday ? { levelled: true } : {}),
   };
 }
 
@@ -227,7 +232,9 @@ export function loadPlayerInto(players: Players, raw: unknown): boolean {
       if (isCount(v)) p.toolTiers[t] = Math.min(v, MAX_TIER);
     }
   if (isCount(raw.canWater)) p.canWater = raw.canWater;
-  if (isCount(raw.energy))
+  if (typeof raw.energy === "number" && Number.isFinite(raw.energy))
     p.energy.current = Math.min(raw.energy, p.energy.max);
+  p.energy.wasExhausted = raw.exhausted === true;
+  p.skills.levelledToday = raw.levelled === true;
   return true;
 }

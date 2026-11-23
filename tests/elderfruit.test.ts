@@ -3,7 +3,7 @@ import { ACHIEVEMENTS, checkAchievements } from "../src/core/achievements";
 import { eat, plant, till } from "../src/core/actions";
 import { DAYS_PER_SEASON } from "../src/core/calendar";
 import { ringProgress } from "../src/core/completion";
-import { PASS_OUT_WAKE_ENERGY } from "../src/core/day";
+import { HALF_MORNING } from "../src/core/energyrules";
 import {
   ELDERFRUIT_ENERGY,
   absorbElderfruit,
@@ -89,11 +89,9 @@ describe("elderfruit", () => {
     g.day.energy.current = 10;
     g.day.end(0);
     expect(g.day.energy.current).toBe(304);
-    g.day.energy.current = 0;
+    g.day.energy.current = -15;
     g.day.end(0);
-    expect(g.day.energy.current).toBe(
-      Math.round(304 * PASS_OUT_WAKE_ENERGY.energy),
-    );
+    expect(g.day.energy.current).toBe(Math.round(304 * HALF_MORNING));
   });
 
   it("saves the count and the raised maximum, and loads old saves without it", () => {

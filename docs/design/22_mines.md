@@ -198,8 +198,14 @@ time, and the lift can bring them up afterwards.
   tiring. Placeholder: 2 energy per swing at tier 0.
 - **Mining professions at level 5** (ours): **Prospector** (one extra ore from a
   node, 25 percent of the time) or **Rockhound** (geodes and gems drop
-  twice as often). Mining's level 10 choices are not built. Farming and fishing
-  have theirs (`professions.ts`).
+  twice as often). Farming and fishing have their level 10 choices
+  (`professions.ts`).
+- **Mining professions at level 10** (owner, 2026-11-23): Stardew's effects, checked on the
+  saved Mining page, with our names (placeholders). Under Prospector: **Barwright** (metal
+  bars, Hearthsilver included, sell for 50 percent more) or **Coalseeker** (coal turns up
+  twice as often). Under Rockhound: **Geode Hunter** (geodes twice as often again, so four
+  times with Rockhound, as the owner chose) or **Gemcutter** (gems and minerals sell for
+  30 percent more).
 
 ### Ore, coal and bars
 
@@ -425,7 +431,7 @@ When health reaches zero:
    good, the choice open until the next defeat, so ours matches. Stardew's gold loss is 5
    to 25 percent up to 15,000g (checked, SC-23j). Our version has the trainer be
    the helper. This is the soft part.
-5. **Energy** on waking is the pass-out value (`PASS_OUT_WAKE_ENERGY`).
+5. **Energy** on waking is the pass-out value (half, `HALF_MORNING` in `energyrules.ts`).
 
 The loss is real and small, as the owner asked. A player who flees by ladder
 loses nothing. In assist mode, no items are lost (money still is, so there is

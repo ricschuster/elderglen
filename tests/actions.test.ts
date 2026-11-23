@@ -8,7 +8,7 @@ import {
   water,
 } from "../src/core/actions";
 import { MAX_ENERGY } from "../src/core/energy";
-import { newGame } from "../src/core/save";
+import { deserialize, newGame, serialize } from "../src/core/save";
 import { seedId } from "../src/core/items";
 import { sleep, finished, endDue } from "../src/core/sleep";
 import { fillHall } from "./hall-helpers";
@@ -118,7 +118,7 @@ describe("actions", () => {
 
   it("refuses every action once the day is over", () => {
     const g = newGame();
-    g.day.energy.spend(MAX_ENERGY);
+    g.day.energy.spend(MAX_ENERGY + 15);
     expect(till(g, 0, 0)).toEqual({ ok: false, reason: "exhausted" });
     expect(harvest(g, 0, 0, plain)).toEqual({ ok: false, reason: "exhausted" });
   });
@@ -136,7 +136,7 @@ describe("sleep", () => {
 
   it("charges for passing out", () => {
     const g = newGame();
-    g.day.energy.spend(MAX_ENERGY);
+    g.day.energy.spend(MAX_ENERGY + 15);
     const r = sleep(g, spots, never);
     expect(r).toMatchObject({
       passedOut: true,
@@ -144,6 +144,36 @@ describe("sleep", () => {
       moneyLost: 50,
     });
     expect(g.money).toBe(450);
+  });
+
+  it("costs nothing to pass out inside the farmhouse", () => {
+    const g = newGame();
+    g.day.energy.spend(MAX_ENERGY + 15);
+    const r = sleep(g, spots, never, undefined, true);
+    expect(r).toMatchObject({ passedOut: true, moneyLost: 0 });
+    expect(g.money).toBe(500);
+  });
+
+  it("gives a full morning the day after a skill level-up, even exhausted", () => {
+    const g = newGame();
+    g.skills.gain("farming", 1000);
+    g.day.energy.spend(MAX_ENERGY + 15);
+    sleep(g, spots, never);
+    expect(g.day.energy.current).toBe(MAX_ENERGY);
+    expect(g.skills.levelledToday).toBe(false);
+    g.day.energy.spend(MAX_ENERGY);
+    sleep(g, spots, never);
+    expect(g.day.energy.current).toBe(MAX_ENERGY / 2);
+  });
+
+  it("keeps the exhausted and level-up flags through a save", () => {
+    const g = newGame();
+    g.skills.gain("farming", 1000);
+    g.day.energy.spend(MAX_ENERGY + 5);
+    const back = deserialize(serialize(g))!;
+    expect(back.day.energy.current).toBe(-5);
+    expect(back.day.energy.wasExhausted).toBe(true);
+    expect(back.skills.levelledToday).toBe(true);
   });
 
   it("changes season, withers spring crops and offers summer seeds", () => {

@@ -198,7 +198,7 @@ describe("farm intents", () => {
       "nothing to mine",
     );
     g.rocks.add(7, 7, "stone");
-    guest.energy.current = 0;
+    guest.energy.current = -15;
     expect(w.apply("p2", { kind: "pickaxe", x: 7, y: 7 })).toBeDefined();
     guest.energy.current = MAX_ENERGY;
     guest.inventory.load(new Inventory().save());
@@ -214,7 +214,7 @@ describe("farm intents", () => {
     expect(w.apply("p2", { kind: "water", x: 9, y: 9 })).toBe(
       "nothing to water",
     );
-    w.g.players.get("p2").energy.current = 0;
+    w.g.players.get("p2").energy.current = -15;
     expect(w.apply("p2", { kind: "till", x: 3, y: 3 })).toBe("exhausted");
     // The host is not exhausted by the guest.
     expect(w.apply(LOCAL_PLAYER, { kind: "till", x: 3, y: 3 })).toBeUndefined();

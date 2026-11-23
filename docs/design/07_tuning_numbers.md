@@ -18,10 +18,11 @@ Source: `src/core/clock.ts`, `src/core/energy.ts`, `src/core/day.ts`,
 - Maximum energy is 270. From memory.
 - Each tool use costs 2 energy and no game time. Ours: time per action is not
   modelled yet, so energy is the real limit and the clock is only pressure.
-- Sleeping before the day is over restores all energy for free.
-- Passing out costs 10 percent of money, capped at 1000. The next morning has
-  50 percent energy after running out of energy and 75 percent after staying up
-  too late. From memory.
+- Sleeping before the day is over restores all energy for free, up to 12:10 am;
+  later bedtimes lose some (see "Energy rules, built 2026-11-23" below).
+- Passing out costs 10 percent of money, capped at 1000, only outside the
+  farmhouse. The next morning has 50 percent energy after exhaustion or a
+  pass-out at 2 am. Checked against the wiki 2026-10-31.
 
 ## Money and shop
 
@@ -477,16 +478,32 @@ minutes for a full day (10 game minutes per 7 seconds), 270 maximum energy, the
 summer crop rows for parsnip, potato, cauliflower, garlic, kale, melon, radish
 and red cabbage (days, seed price, sell price).
 
-Decided with the owner on 2026-10-31 (not built yet):
+Energy rules, decided with the owner on 2026-10-31 and built 2026-11-23
+(`src/core/energyrules.ts`, `energy.ts`, `day.ts`, `sleep.ts`, `roomworld.ts`):
 
-- Late sleep gets a graded penalty: full energy up to midnight, then a growing
-  loss per 10 minutes after it, and half at 2 am. A pass-out at 2 am is the
-  half case, so the flat 75 percent goes.
-- Exhaustion works like Stardew. Warnings near 20 and 15 energy. At 0 the player
-  is exhausted: slow, tools still work and drain below zero. The day ends at
-  -15. The next morning has half energy, even if the player ate in between.
-- Pass-out loses money only outside the farmhouse.
+- Late sleep gets a graded penalty. Placeholder steps (`LATE_SLEEP_LOSS`), in
+  percent of maximum energy lost by bedtime, per 10 minutes after midnight:
+  12:00 and 12:10 am 0, then 12:20 2, 12:30 4, 12:40 6, 12:50 8, 1:00 am 20
+  (the bigger drop), 1:10 25, 1:20 30, 1:30 35, 1:40 40, 1:50 45, 2:00 am 50. A
+  pass-out at 2 am is the half case (`HALF_MORNING`), so the flat 75 percent is
+  gone.
+- Exhaustion works like Stardew. Warnings as energy falls past 20 and 15 (a
+  toast each), and "exhausted" at 0 (`tiredWarning`). At 0 or below the player
+  is exhausted: walking speed is 0.6 times normal (`EXHAUSTED_SPEED`,
+  placeholder), tools still work and drain energy below zero, and the day ends
+  with a pass-out at -15 (`ENERGY_FLOOR`). The next morning has half energy,
+  even if the player ate in between: `Energy.wasExhausted` stays set until
+  the night, and is saved (optional field `exhausted`).
+- Pass-out loses money only outside the farmhouse. `sleep()` takes a `safe`
+  flag, which the scene sets for any house interior map (`isHouseMap`).
+  Sleeping in bed was never a pass-out. Multiplayer: `RoomWorldOptions.inside`
+  says who is in a home (the host session reads each player's reported map).
+  Cabins have no interior map yet, so a guest passing out in the open still pays.
 - The morning after a skill level gives full energy, whatever the night was.
+  `Skills.levelledToday` is set by any level rise, cleared by the night, and saved
+  (optional field `levelled`, per player too).
+- A defeat in the mines runs the same code (energy to the floor, half morning,
+  money lost since it is never at home) unless a level-up gave full energy.
 
 - Nightfall moves by season, as in Stardew: 8 pm in spring and summer, 7 pm in
   fall, 6 pm in winter, with a gradual darkening outdoors. Built (`NIGHTFALL`
@@ -497,28 +514,16 @@ Decided with the owner on 2026-10-31 (not built yet):
   farm scene (`FarmScene.ts`).
 - Seasons three and four have their own design note and are built.
 
-Differences found (the four above are now decided):
+Differences found (the four energy rows are built, see above):
 
-- Late sleep: Stardew restores less the later you go to bed after midnight
-  (nothing lost until 12:10 am, a small step per 10 minutes, a bigger drop at
-  1 am, half at 2 am). We restore fully for any sleep before the day is over and
-  75 percent after a time pass-out. Passing out at 2 am is the 50 percent case
-  there, so our 75 percent is too kind.
-- Exhaustion: in Stardew, 0 energy is a state (slow, tools still work) and the
-  day only ends at -15. We end the day at 0.
-- Pass-out location: Stardew charges nothing for falling asleep inside the
-  farmhouse. We charge always. Matters once the farm has more than one place.
-- Level-up morning: Stardew gives full energy the morning after a skill level,
-  whatever the night was. We do not.
+- Late sleep, exhaustion, pass-out location and level-up morning: were
+  differences, now built (2026-11-23), see the energy rules above.
 - Nightfall: 8 pm in spring and summer, 7 pm in fall, 6 pm in winter, with a
   gradual darkening. Built since this was written (audit, 2026-11-10).
 - Pauses: the clock stops in menus and dialogs there. Ours does too (built).
 - Seasons: new forage, logs, rocks and grass appear on the farm at the start of
   each spring. Winter clears crops and weeds and stops outdoor growth. Fall and
   winter are built, see their notes.
-- The late sleep, exhaustion, pass-out location and level-up morning rows are
-  still not built (audit, 2026-11-10): `day.ts` keeps the flat 50 and 75
-  percent wake energy and ends the day at 0 energy.
 - Not on these pages: the rain chance per season. Our 20 and 15 percent stay
   ours, and fall and snow chances are ours too (above).
 

@@ -6,12 +6,16 @@ describe("Energy", () => {
     expect(new Energy().current).toBe(MAX_ENERGY);
   });
 
-  it("spends and reports when empty", () => {
+  it("spends and reports when exhausted or empty", () => {
     const e = new Energy();
     expect(e.spend(30)).toBe(false);
     expect(e.current).toBe(MAX_ENERGY - 30);
-    expect(e.spend(MAX_ENERGY)).toBe(true);
+    expect(e.spend(MAX_ENERGY - 30)).toBe(true);
     expect(e.current).toBe(0);
+    expect(e.exhausted).toBe(true);
+    expect(e.empty).toBe(false);
+    e.spend(100);
+    expect(e.current).toBe(-15);
     expect(e.empty).toBe(true);
   });
 
