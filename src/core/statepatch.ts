@@ -1,7 +1,7 @@
 import { DAYS_PER_SEASON, SEASONS, type Season } from "./calendar";
 import { DAY_START } from "./clock";
 import { giveItem } from "./debug";
-import { allItems } from "./items";
+import { allItems, itemById } from "./items";
 import { BUILT_FLOORS, minesOpen } from "./mines";
 import { NURSERY_TIER } from "./children";
 import { MAX_HOUSE_TIER } from "./house";
@@ -83,9 +83,17 @@ export interface StatePatch {
   /**
    * A finished fish pond with its top left at `x`, `y` (the farm map; the spot must be clear), stocked with
    * `count` of `species` (default none). The fish go in through `putFish`, so the breeding clock and cap
-   * are the game's own. Not a carpenter job: the pond stands built.
+   * are the game's own. Not a carpenter job: the pond stands built. `out` is a product waiting to be taken
+   * (item and count) and `quest` an open capacity quest (the item wanted and how many); both need fish in the pond.
    */
-  pond?: { x: number; y: number; species?: string; count?: number };
+  pond?: {
+    x: number;
+    y: number;
+    species?: string;
+    count?: number;
+    out?: { item: string; count: number };
+    quest?: { item: string; need: number };
+  };
   /** Meet everyone in the roster, so the Social tab shows names instead of "???". */
   meetAll?: boolean;
   /** Take the first option of every pending profession choice, so no prompt queues up on load. */
@@ -288,13 +296,31 @@ function applyPond(
   want: NonNullable<StatePatch["pond"]>,
   problems: string[],
 ): void {
-  const { x, y, species, count = 0 } = want;
+  const { x, y, species, count = 0, out, quest } = want;
   if (!Number.isInteger(x) || !Number.isInteger(y) || x < 0 || y < 0) {
     problems.push(`bad pond spot ${x},${y}`);
     return;
   }
   if (species !== undefined && !pondable(species)) {
     problems.push(`pond: ${species} cannot live in a pond`);
+    return;
+  }
+  if ((out || quest) && (species === undefined || count < 1)) {
+    problems.push("pond: a waiting product or a quest needs fish in the pond");
+    return;
+  }
+  if (
+    out &&
+    (!itemById(out.item) || !Number.isInteger(out.count) || out.count < 1)
+  ) {
+    problems.push(`pond: bad waiting product ${out.item} x${out.count}`);
+    return;
+  }
+  if (
+    quest &&
+    (!itemById(quest.item) || !Number.isInteger(quest.need) || quest.need < 1)
+  ) {
+    problems.push(`pond: bad quest ${quest.item} x${quest.need}`);
     return;
   }
   if (
@@ -321,7 +347,18 @@ function applyPond(
       return;
     }
   }
-  if (!pondAt(g, x, y)) problems.push("pond: lost");
+  const placed = pondAt(g, x, y);
+  if (!placed) {
+    problems.push("pond: lost");
+    return;
+  }
+  // Set straight on the state the pond keeps (`PondState`: `out`, `quest`).
+  if (out) placed.state = { ...placed.state, out: { ...out } };
+  if (quest)
+    placed.state = {
+      ...placed.state,
+      quest: { item: quest.item, need: quest.need, given: 0 },
+    };
 }
 
 /** Courtship, engagement and wedding through the game's own rules (`marriage.ts`), then the children. */

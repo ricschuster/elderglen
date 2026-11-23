@@ -155,3 +155,52 @@ describe("the pond stage", () => {
     ).toHaveLength(1);
   });
 });
+
+describe("the pond product and quest stages", () => {
+  it("farm-pond-product leaves roe waiting that an empty hand takes", () => {
+    const r = buildStage("farm-pond-product", never)!;
+    expect(r.problems).toEqual([]);
+    const p = pondAt(r.state, 50, 18)!;
+    expect(stateOf(p).out).toEqual({ item: "carp-roe", count: 2 });
+    expect(pondUse(r.state, p, undefined).ok).toBe(true);
+    expect(r.state.inventory.count("carp-roe")).toBe(2);
+    expect(stateOf(pondAt(r.state, 50, 18)!).out).toBeUndefined();
+  });
+
+  it("farm-pond-quest has an open quest the pack can fill by hand", () => {
+    const r = buildStage("farm-pond-quest", never)!;
+    expect(r.problems).toEqual([]);
+    const p = pondAt(r.state, 50, 18)!;
+    const before = stateOf(p);
+    expect(before.quest).toEqual({ item: "copper-ore", need: 3, given: 0 });
+    expect(r.state.inventory.count("copper-ore")).toBe(3);
+    for (let i = 0; i < 3; i++) pondUse(r.state, p, "copper-ore");
+    const after = stateOf(pondAt(r.state, 50, 18)!);
+    expect(after.quest).toBeUndefined();
+    expect(after.capLevel).toBe(before.capLevel + 1);
+    expect(r.state.inventory.count("copper-ore")).toBe(0);
+  });
+
+  it("rejects a product or quest with no fish, or a bad item or count", () => {
+    const bad = (pond: Record<string, unknown>) =>
+      applyStatePatch(newGame(), {
+        pond: { x: 50, y: 18, ...pond },
+      } as never).problems;
+    const out = { item: "carp-roe", count: 1 };
+    expect(bad({ out })).toHaveLength(1);
+    expect(bad({ quest: { item: "copper-ore", need: 3 } })).toHaveLength(1);
+    expect(
+      bad({ species: "carp", count: 1, out: { item: "nope", count: 1 } }),
+    ).toHaveLength(1);
+    expect(
+      bad({ species: "carp", count: 1, out: { item: "carp-roe", count: 0 } }),
+    ).toHaveLength(1);
+    expect(
+      bad({
+        species: "carp",
+        count: 1,
+        quest: { item: "copper-ore", need: 0 },
+      }),
+    ).toHaveLength(1);
+  });
+});

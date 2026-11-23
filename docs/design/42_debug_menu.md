@@ -158,7 +158,7 @@ through `Inventory`). There is no "run actions" extra: a state that needs action
 | Marriage | `courting` (bouquet, 8 hearts), `engaged` (wedding in 3 days), `married` (60,000g for a divorce), `married-child`, `married-two-children`. The spouse is Linnet in all; the nursery tier is raised for children |
 | Festivals | `<festival>-eve`, the day before, sunny, 2,000g: `hat-parade`, `seedswap-fair`, `cake-day`, `lamplight-evening`, `harvest-showing`, `frostday`, `midwinter-feast`; `hollow-eve-eve-odd` (year 1, small maze) and `hollow-eve-eve-even` (year 2, large maze); `night-market-eve` and `night-market-evening-1`, `-2`, `-3` (5 pm on each of the three evenings). That is all nine festivals |
 | Fishing | `fishing-reed-pole` (level 1), `fishing-hazel-rod` (3), `fishing-heron-rod` (6), `fishing-hearthwell-rod` (9): the rod in the pack, on a sunny day of a season that suits it |
-| Ponds | `farm-pond-stocked` (spring 3, 10,000g; a built pond at 50,18 holding 2 carp, with 3 more carp, a perch, 200 stone, 5 seaweed and 5 pondweed in the pack, to stock, wait for roe and try a second kind); `farm-pond-to-order` (the same pack, no pond, to order one at the carpenter). Patch key `pond` (`{x, y, species, count}`) builds it through `putFish` |
+| Ponds | `farm-pond-stocked` (spring 3, 10,000g; a built pond at 50,18 holding 2 carp, with 3 more carp, a perch, 200 stone, 5 seaweed and 5 pondweed in the pack, to stock, wait for roe and try a second kind); `farm-pond-to-order` (the same pack, no pond, to order one at the carpenter). `farm-pond-product` (a full pond of 3 carp with 2 carp roe waiting); `farm-pond-quest` (a full pond asking for 3 copper ore, the ore in the pack, to hand in by hand). Patch key `pond` (`{x, y, species, count, out, quest}`) builds it through `putFish`; `out` is a waiting product (`{item, count}`) and `quest` an open capacity quest (`{item, need}`) |
 | Late game | `late-game-100`: day 100, `hall-6` done, house tier 3, all five skills 8, mine floor 60, 100,000g, a full pack |
 
 Small points decided: day 100 is winter 16, the first Night Market day, so the market stage shares
@@ -186,7 +186,7 @@ Checked 2026-11-17 through the real debug menu (backtick, Stages, group, Go): al
 ### Not built: needs patch keys that do not exist
 
 Tool tiers, a chosen hat or outfit, the tailoring and tea bush setups, Secret Woods progress
-(the statue; a pond with a waiting product or a quest, as `pond` stocks fish only), the heart-event stories as a unit (`eventsSeen` marks single events),
+(the statue), the heart-event stories as a unit (`eventsSeen` marks single events),
 the cart, herb stall and tapper being built, inside a festival (map, zone and time in the festival
 run), divorce and re-dating as states (`married` plus the ledger covers the check), the Special Items
 and journal. Each is one patch key when a check needs it, not before.
