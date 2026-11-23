@@ -278,7 +278,10 @@ so each tier stacks and sells separately. Bundles take any tier.
   (`HEARTHSILVER_CROP_LEVEL`, `HEARTHSILVER_CHANCE`). Forage rolls it from
   foraging level 10 on the first 3 percent (`HEARTHSILVER_FORAGE_LEVEL`).
   Botanist forage is always Hearthsilver. Animal goods, fish, fruit tree fruit
-  and cask goods stop at gold. Bundles and orders treat it as above gold. Old
+  and cask goods stop at gold for now. **Decided 2026-11-23 (owner, Stardew, checked on the
+  saved Fishing, Animals and Cask pages), not built:** a perfect catch lifts a fish one grade
+  (gold to Hearthsilver), animal goods roll up to Hearthsilver with high friendship and mood,
+  and casks age goods up to Hearthsilver. Fruit tree fruit stays at gold. Bundles and orders treat it as above gold. Old
   saves load: an unknown quality suffix was always normal, and none of the
   saved numbers change.
 - Wild seeds (decided 2026-10-31): forage is crafted into seasonal seeds that

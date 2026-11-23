@@ -544,6 +544,10 @@ Gaps settled with our own placeholders (numbers in `07_tuning_numbers.md`):
   18 in band 3). The skill uses the mining table. Health is 100 plus 5 a level.
   **Steady** adds 25. **Nimble** makes the grace after a hit 2.5 seconds. A
   profession choice opens when the level 5 kill lands.
+- **Combat professions at level 10** (owner, 2026-11-23, ours, placeholder numbers; Stardew's
+  tree needs critical hits and special moves we do not have). Under Steady: **Bulwark** (+25
+  more health) or **Heavy Hand** (+15 percent damage). Under Nimble: **Quickstep** (weapon
+  cooldown cut by a third) or **Lucky Strike** (10 percent of hits deal double damage). Not built.
 - **Weapons:** iron, gold and Hearthsilver tiers of all three families (15
   weapons), sold by the smith dwarf for coin since 2026-11-09 (iron 880g, gold 1,800g,
   Hearthsilver 6,500g; they were forged for 4 bars and 400g, 4 bars and 800g, 5 bars and 1500g). Every weapon is a kept good.
