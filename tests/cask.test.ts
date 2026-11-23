@@ -6,6 +6,7 @@ import {
   caskQuality,
   caskStatus,
   caskTakes,
+  daysToNextGrade,
   collectCask,
   handOnCask,
   loadCask,
@@ -71,6 +72,25 @@ describe("the cask", () => {
     for (const no of ["melon-jam", "honey", "parsnip", "cloth", "oil"])
       expect(caskTakes(no), no).toBe(false);
     expect(categoryOf("melon-wine")).toBe("wine");
+  });
+
+  it("ages wine on to Hearthsilver 14 days after gold, and then it is done", () => {
+    const g = game();
+    g.casks.add({ x: 8, y: 8 });
+    g.inventory.add("melon-wine");
+    g.day.clock.day = 3;
+    loadCask(g, 8, 8, "melon-wine");
+    const job = g.casks.get(8, 8)!.job!;
+    g.day.clock.day = 3 + 41;
+    expect(caskQuality(g, job)).toBe("gold");
+    expect(daysToNextGrade(g, job)).toBe(1);
+    g.day.clock.day = 3 + 42;
+    expect(caskQuality(g, job)).toBe("hearthsilver");
+    expect(daysToNextGrade(g, job)).toBeUndefined();
+    expect(collectCask(g, 8, 8)).toMatchObject({
+      ok: true,
+      item: "melon-wine@hearthsilver",
+    });
   });
 
   it("ages wine to silver at 14 days and gold at 28", () => {

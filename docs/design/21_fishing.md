@@ -55,8 +55,8 @@ Anecdotal, from forums and press, not a survey.
    from fishing level, fish type and cast distance sets normal, silver or gold
    (Stardew's cut-offs are a third and two thirds of the roll; ours are
    tuning numbers). A **perfect catch** (the fish never
-   leaves the zone) lifts silver or gold by one grade. There is no iridium
-   tier. This is an extension of the crop and forage roll in
+   leaves the zone) lifts any fish by one grade, so gold becomes Hearthsilver
+   (built 2026-11-23, note 07). This is an extension of the crop and forage roll in
    `src/core/quality.ts`.
 8. **Roster: 47 fish** in ring 1 (the 46 sketched below plus the Secret Woods pond's unique fish, owner 2026-11-08, note 73). Each needs an icon and
    a bar motion. The motion and difficulty are in the roster tables.

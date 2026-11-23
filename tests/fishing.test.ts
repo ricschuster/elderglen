@@ -357,13 +357,13 @@ describe("quality, length and XP", () => {
     expect(sizeRoll(0, 0, fixed(1))).toBeLessThan(0.67);
   });
 
-  it("cuts the grades at a third and two thirds, and lifts silver on a perfect catch", () => {
+  it("cuts the grades at a third and two thirds, and lifts one grade on a perfect catch", () => {
     expect(catchQuality(0.2, false)).toBe("normal");
     expect(catchQuality(0.4, false)).toBe("silver");
     expect(catchQuality(0.7, false)).toBe("gold");
     expect(catchQuality(0.4, true)).toBe("gold");
-    expect(catchQuality(0.2, true)).toBe("normal");
-    expect(catchQuality(0.9, true)).toBe("gold");
+    expect(catchQuality(0.2, true)).toBe("silver");
+    expect(catchQuality(0.9, true)).toBe("hearthsilver");
   });
 
   it("never gives gold at level 0 without a perfect catch", () => {

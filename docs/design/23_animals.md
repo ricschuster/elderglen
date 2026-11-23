@@ -25,7 +25,8 @@ the base coop, chickens only. Everything else here is still unbuilt.
   128. Petting +15 and +32 mood, grass +8 and full mood, unfed -20 and -100 mood
   at night, unpetted -10 and -30, slept outside halves mood and loses the egg
   only. A grown, fed hen in the coop lays one egg a night, chance mood / 70
-  under 70 mood. Quality: silver over a score of 0.5, gold over 0.75, normal
+  under 70 mood. Quality: silver over a score of 0.5, gold over 0.75, Hearthsilver
+  over 0.95 (placeholder, note 07), normal
   below 150 mood (`animalQuality`). An uncollected egg waits.
 - **Hay.** Silo of 240, filled by cutting weeds (2 hay each, once a coop
   stands), since there is no scythe or grass tile yet. The carpenter sells 10

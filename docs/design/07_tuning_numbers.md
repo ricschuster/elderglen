@@ -277,11 +277,15 @@ so each tier stacks and sells separately. Bundles take any tier.
   with farming level 8 and fertilised soil: the first 3 percent of the roll
   (`HEARTHSILVER_CROP_LEVEL`, `HEARTHSILVER_CHANCE`). Forage rolls it from
   foraging level 10 on the first 3 percent (`HEARTHSILVER_FORAGE_LEVEL`).
-  Botanist forage is always Hearthsilver. Animal goods, fish, fruit tree fruit
-  and cask goods stop at gold for now. **Decided 2026-11-23 (owner, Stardew, checked on the
-  saved Fishing, Animals and Cask pages), not built:** a perfect catch lifts a fish one grade
-  (gold to Hearthsilver), animal goods roll up to Hearthsilver with high friendship and mood,
-  and casks age goods up to Hearthsilver. Fruit tree fruit stays at gold. Bundles and orders treat it as above gold. Old
+  Botanist forage is always Hearthsilver. Fruit tree fruit stays at gold.
+  **Decided 2026-11-23 (owner, Stardew, checked on the saved Fishing, Animals and Cask
+  pages), built 2026-11-23:** a perfect catch lifts a fish one grade (normal to silver,
+  silver to gold, gold to Hearthsilver; `catchQuality`, `fishing.ts`). Animal goods reach
+  Hearthsilver at an animal score over 0.95 (friendship / 1000 minus (1 - mood / 225), so
+  near full friendship and full mood; `HEARTHSILVER_ANIMAL_SCORE`, placeholder). Casks
+  age a good from gold to Hearthsilver after a further time equal to the silver to gold
+  step (`cask.ts`, placeholder): wine 14 more days (42 in all), mead 7 (21), cheese 4
+  (11), beer 7 (21), pale ale 8 (25). Bundles and orders treat it as above gold. Old
   saves load: an unknown quality suffix was always normal, and none of the
   saved numbers change.
 - Wild seeds (decided 2026-10-31): forage is crafted into seasonal seeds that

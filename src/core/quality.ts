@@ -35,6 +35,9 @@ export const HEARTHSILVER_FORAGE_LEVEL = 10;
 /** Placeholder (note 07): chance of the top grade once its gate is met, taken from the roll before gold. */
 export const HEARTHSILVER_CHANCE = 0.03;
 
+/** Placeholder (note 07): the animal score above which a product is Hearthsilver. */
+export const HEARTHSILVER_ANIMAL_SCORE = 0.95;
+
 const SEP = "@";
 
 /** The item id of a good at a quality: `parsnip`, `parsnip@silver`. */
@@ -84,11 +87,13 @@ export function forageQuality(level: number, roll: number): Quality {
 /**
  * Animal product quality (note 23, after Stardew): a score of friendship / 1000
  * minus (1 - mood / 225). Below 150 mood a product is always normal. Above it,
- * a score over 0.5 is silver and over 0.75 is gold. No iridium tier exists here.
+ * a score over 0.5 is silver, over 0.75 gold and over HEARTHSILVER_ANIMAL_SCORE
+ * Hearthsilver (note 07), which only high friendship and full mood reach.
  */
 export function animalQuality(friendship: number, mood: number): Quality {
   if (mood < 150) return "normal";
   const score = friendship / 1000 - (1 - mood / 225);
+  if (score > HEARTHSILVER_ANIMAL_SCORE) return "hearthsilver";
   if (score > 0.75) return "gold";
   if (score > 0.5) return "silver";
   return "normal";

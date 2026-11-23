@@ -216,12 +216,12 @@ Settled where the notes left gaps. All numbers are placeholders (note 07).
 - **Aging.** One good per cask, no queue. It takes wine, mead and cheese
   (goat cheese too). The good keeps its starting quality as a floor and gains
   silver and gold by days in the cask: wine 14 and 28 days, mead 7 and 14,
-  cheese 3 and 7 (Stardew's figures, checked on the saved Cask page, SC-82). We have no iridium grade.
+  cheese 3 and 7 (Stardew's figures, checked on the saved Cask page, SC-82). A further step to Hearthsilver follows gold after the same number of days again as silver to gold (wine 42 in all, mead 21, cheese 11; placeholder, note 07).
   Taking it out early is allowed and gives the grade reached. Time is counted
   in whole game days, so a cask works while the player is away.
 - **Use.** Hold a good and face the cask to load it. Action reads the cask
-  and takes a gold good out. The axe or pickaxe takes the good out at any time,
-  or an empty cask up, so a stray press never resets the ageing. A gold good
+  and takes a Hearthsilver good out (the top grade). The axe or pickaxe takes the good out at any time,
+  or an empty cask up, so a stray press never resets the ageing. A Hearthsilver good
   shows the ready mark. Beer and pale ale are built (keg in `processing.ts`,
   cask days in `cask.ts`). Not built: cask count upgrades, a cask in the farm cave.
 - **The dye vat** is the Dyer's bundle (23) reward, a machine on the farm like
