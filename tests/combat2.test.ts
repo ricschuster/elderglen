@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
+  BULWARK_HEALTH,
   Combat,
+  cooldownFor,
+  hitDamageFor,
+  weaponDamageFor,
   NIMBLE_GRACE,
   STEADY_HEALTH,
   WEAPONS,
@@ -28,7 +32,7 @@ import { choose, optionsFor, pendingChoice } from "../src/core/professions";
 import { ringProgress } from "../src/core/completion";
 import { deserialize, newGame, serialize } from "../src/core/save";
 import { itemById } from "../src/core/items";
-import { SKILLS, Skills } from "../src/core/skills";
+import { LEVEL_XP, SKILLS, Skills } from "../src/core/skills";
 
 const world = (px: number, py: number): StepWorld => ({
   player: { x: px, y: py },
@@ -192,6 +196,72 @@ describe("the combat skill", () => {
     n.gain("combat", 2150);
     choose(n, "combat", "nimble");
     expect(graceFor(n)).toBe(NIMBLE_GRACE);
+  });
+
+  describe("level 10 professions", () => {
+    const at10 = (...ids: string[]): Skills => {
+      const s = new Skills();
+      s.gain("combat", LEVEL_XP[9]!);
+      for (const id of ids) choose(s, "combat", id);
+      return s;
+    };
+
+    it("offers the pair under the level 5 pick", () => {
+      const s = at10("steady");
+      expect(optionsFor("combat", s).map((p) => p.id)).toEqual([
+        "bulwark",
+        "heavyhand",
+      ]);
+      const n = at10("nimble");
+      expect(optionsFor("combat", n).map((p) => p.id)).toEqual([
+        "quickstep",
+        "luckystrike",
+      ]);
+      expect(choose(n, "combat", "bulwark")).toBe(false);
+    });
+
+    it("Bulwark stacks with Steady, and a load keeps health", () => {
+      const s = at10("steady", "bulwark");
+      expect(healthFor(s)).toBe(150 + STEADY_HEALTH + BULWARK_HEALTH);
+      const g = newGame();
+      g.skills = s;
+      g.combat.sync(g.skills);
+      expect(g.combat.health.max).toBe(200);
+      const raw = { health: 999 };
+      g.combat.load(raw, s);
+      expect(g.combat.health.current).toBe(200);
+      const old = new Combat();
+      old.load({ health: 120 }, s);
+      expect(old.health.current).toBe(120);
+      expect(old.health.max).toBe(200);
+    });
+
+    it("Heavy Hand adds 15 percent", () => {
+      const s = at10("steady", "heavyhand");
+      expect(weaponDamageFor(s, 20)).toBe(23);
+      expect(weaponDamageFor(s, 1)).toBe(1);
+      expect(weaponDamageFor(at10("steady"), 20)).toBe(20);
+    });
+
+    it("Quickstep cuts the cooldown by a third", () => {
+      expect(cooldownFor(at10("nimble", "quickstep"), 0.9)).toBeCloseTo(0.6);
+      expect(cooldownFor(at10("nimble"), 0.9)).toBe(0.9);
+    });
+
+    it("Lucky Strike doubles one hit in ten, using the injected roll", () => {
+      const s = at10("nimble", "luckystrike");
+      expect(hitDamageFor(s, 10, () => 0.05)).toEqual({
+        damage: 20,
+        lucky: true,
+      });
+      expect(hitDamageFor(s, 10, () => 0.1)).toEqual({
+        damage: 10,
+        lucky: false,
+      });
+      let calls = 0;
+      hitDamageFor(at10("nimble"), 10, () => (calls++, 0));
+      expect(calls).toBe(0);
+    });
   });
 
   it("sync raises the ceiling without healing, and nimble lengthens grace", () => {

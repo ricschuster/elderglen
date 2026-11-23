@@ -35,13 +35,45 @@ export const HEALTH_PER_ENERGY = 0.5;
 export const STEADY_HEALTH = 25;
 export const NIMBLE_GRACE = 2.5;
 
+/** Level 10 combat professions (placeholders, note 22). */
+export const BULWARK_HEALTH = 25;
+export const HEAVY_HAND_BONUS = 0.15;
+export const QUICKSTEP_FACTOR = 2 / 3;
+export const LUCKY_STRIKE_CHANCE = 0.1;
+
 export const maxHealth = (combatLevel = 0): number =>
   BASE_HEALTH + HEALTH_PER_LEVEL * combatLevel;
 
 /** The most health the player can have: the combat level and the Steady profession. */
 export const healthFor = (skills: Skills): number =>
   maxHealth(skills.level("combat")) +
-  (skills.has("steady") ? STEADY_HEALTH : 0);
+  (skills.has("steady") ? STEADY_HEALTH : 0) +
+  (skills.has("bulwark") ? BULWARK_HEALTH : 0);
+
+/** Weapon damage with Heavy Hand's 15 percent (rounded, never below the base). */
+export const weaponDamageFor = (skills: Skills, base: number): number =>
+  skills.has("heavyhand")
+    ? Math.max(base, Math.round(base * (1 + HEAVY_HAND_BONUS)))
+    : base;
+
+/** Seconds between swings: a third shorter with Quickstep. */
+export const cooldownFor = (skills: Skills, base: number): number =>
+  skills.has("quickstep") ? base * QUICKSTEP_FACTOR : base;
+
+/**
+ * Damage of one hit: Heavy Hand first, then Lucky Strike doubles it one time in
+ * ten. `random` is injectable, as every combat roll is. Only rolls with the
+ * profession, so other farmers never spend a roll.
+ */
+export function hitDamageFor(
+  skills: Skills,
+  base: number,
+  random: () => number,
+): { damage: number; lucky: boolean } {
+  const damage = weaponDamageFor(skills, base);
+  const lucky = skills.has("luckystrike") && random() < LUCKY_STRIKE_CHANCE;
+  return { damage: lucky ? damage * 2 : damage, lucky };
+}
 
 /** Seconds of grace after a hit: longer with the Nimble profession. */
 export const graceFor = (skills: Skills): number =>

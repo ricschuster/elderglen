@@ -16,7 +16,9 @@ import { swingArc, type SwingArc } from "../core/swingfx";
 import { autoSwings, autoWeaponSlot, mayAutoEquip } from "../core/autoattack";
 import { loadDeviceSettings } from "./storage";
 import {
+  cooldownFor,
   healthShown,
+  hitDamageFor,
   isWeapon,
   swingTargets,
   weaponById,
@@ -453,7 +455,9 @@ export function swing(farm: FarmScene, weapon: WeaponDef): void {
   audio.sfx("combat.swing");
   farm.swingReady =
     farm.time.now +
-    weapon.cooldown * farm.state.combat.effects.swingFactor() * 1000;
+    cooldownFor(farm.state.skills, weapon.cooldown) *
+      farm.state.combat.effects.swingFactor() *
+      1000;
   const ts = farm.map.tileSize;
   // The sling shoots toward the mouse pointer, or the tapped spot on touch
   // (note 22, SC-94). Everything else, and a sling with no aim, goes the faced way.
@@ -517,13 +521,16 @@ export function swing(farm: FarmScene, weapon: WeaponDef): void {
     aim,
   );
   for (const c of hits) {
-    const damage = swingDamage(c, weapon.damage, weapon.family, farm.pos);
+    const hit = hitDamageFor(farm.state.skills, weapon.damage, Math.random);
+    const damage = swingDamage(c, hit.damage, weapon.family, farm.pos);
+    // Placeholder pop: Lucky Strike shows "x2" beside the number.
     floatText(
       farm,
       c.x,
       c.y - 12,
-      damage < weapon.damage ? `${damage} (armour)` : `${damage}`,
-      "#ffffff",
+      (damage < hit.damage ? `${damage} (armour)` : `${damage}`) +
+        (hit.lucky ? " x2" : ""),
+      hit.lucky ? "#ffd84a" : "#ffffff",
     );
     audio.sfx("combat.hit");
     if (hurtCreature(c, damage)) beaten(farm, c);
