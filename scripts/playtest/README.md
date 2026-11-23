@@ -76,7 +76,7 @@ window, goes to the map and walks to the event's place so it starts by itself, s
 (one run; `BRANCHES=1` adds a run per choice answer), then checks the reward, the seen record and that it does not
 start again the next day. Every problem is a FINDING in the table printed at the end and in
 `playtest-out/sweep.json`; console and page errors count. Env: `ONLY=<id part>`, `KIND=festival|event`, `TRACE=1`. The sweep always re-runs itself under
-`systemd-run --user --scope` with a hard cap (`SWEEP_MEM`, default `12G`; `SWEEP_CPU`, percent, default `800` = 8 cores), because
+`systemd-run --user --scope` with a hard cap (`SWEEP_MEM`, default `6G`; this machine has 15 GB; `SWEEP_CPU`, percent, default `800` = 8 cores), because
 uncapped sweeps froze the machine; without systemd-run it refuses to start unless `SWEEP_UNCAPPED=1`. Chrome runs lean
 (fewer threads, no GPU). Each finished run is appended to `playtest-out/sweep.jsonl`; `RESUME=1` skips the ids already there
 and merges them into the final `sweep.json` (a fresh run starts a new file).

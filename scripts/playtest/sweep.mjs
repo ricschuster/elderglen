@@ -10,7 +10,7 @@
 // answer (default: one run per event, which halves the time).
 // Resource cap (always on): the script re-runs itself under
 // `systemd-run --user --scope -p MemoryMax=$SWEEP_MEM -p CPUQuota=$SWEEP_CPU`
-// (defaults 12G and 800, i.e. 8 cores; SWEEP_CPU is a percent number), so a
+// (defaults 6G and 800, i.e. 8 cores; SWEEP_CPU is a percent number), so a
 // runaway Chrome cannot freeze the machine. Without systemd-run it exits with
 // a message unless SWEEP_UNCAPPED=1. Chrome runs with fewer threads (launch
 // option `lean`).
@@ -29,7 +29,7 @@ process.on("unhandledRejection", (e) => {
 });
 
 if (!process.env.SWEEP_CAPPED) {
-  const mem = process.env.SWEEP_MEM || "12G";
+  const mem = process.env.SWEEP_MEM || "6G";
   const cpu = String(process.env.SWEEP_CPU || "800").replace(/%$/, "");
   const pre = spawnSync(
     "systemd-run",
@@ -694,6 +694,25 @@ async function runEvent(w, run) {
       async () => (await scenes(w)).includes("heart-event"),
       2500,
     );
+    // A long walk under load can run the clock past a short window (Cuthbert's 12:00 to 13:00
+    // yard events failed this way in a full sweep). Put the clock back in the window, in place
+    // (no scene restart), and look again: the farm checks the area again when the minute changes.
+    if (!started && walked !== "noroute" && e.window) {
+      const now = await w.p.evaluate(
+        () => window.__game.registry.get("state").day.clock.minutes,
+      );
+      if (now >= toMin(e.window.until)) {
+        await w.p.evaluate((m) => {
+          window.__game.registry.get("state").day.clock.minutes = m;
+        }, inWin);
+        run.note(`clock reset to the window after a slow walk (was ${now})`);
+        started = await waitFor(
+          w,
+          async () => (await scenes(w)).includes("heart-event"),
+          2500,
+        );
+      }
+    }
     unreachable = !started && walked === "noroute";
     if (unreachable)
       run.fail(

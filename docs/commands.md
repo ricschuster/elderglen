@@ -25,7 +25,7 @@ Node 22 and npm. Gates run in CI and a non-zero exit blocks a merge.
   Python 3 and Pillow). Design material, not a gate.
 - `npm run playtest -- <expert|intermediate|casual>`, other `playtest:*` scripts: manual
   browser playthroughs, need `npm run dev`. See `scripts/playtest/README.md`.
-  `playtest:sweep` always runs under a `systemd-run --user --scope` cap (`SWEEP_MEM` default 12G,
+  `playtest:sweep` always runs under a `systemd-run --user --scope` cap (`SWEEP_MEM` default 6G,
   `SWEEP_CPU` default 800 percent, `SWEEP_UNCAPPED=1` to run without), `WORKERS` default 4, writes
   `playtest-out/sweep.jsonl` per run, and `RESUME=1` continues a killed run.
 - `npm run audio:build`: render every synthesised effect, ambient loop and music placeholder to
