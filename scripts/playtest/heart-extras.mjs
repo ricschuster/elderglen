@@ -391,6 +391,86 @@ ok(!(await seen(rich.id)), `a replay of ${rich.id} is not recorded as seen`);
   );
 }
 
+// ---- three blocked scenes move sprites (#1002, note 62 point 3): an interior, the green and a path
+{
+  const SCENES = [
+    ["pim-green-2", "the green", ["pim", "player"]],
+    ["aurelle-river-path-2", "a path (river path)", ["aurelle", "player"]],
+    ["odette-store-2", "interior (store)", ["odette", "player"]],
+  ];
+  let dayNo = 4; // days 4 to 6, plain days (not a festival)
+  for (const [id, kind, movers] of SCENES) {
+    const ev = data.find((x) => x.id === id);
+    const cmds = new Set(ev.scene.map((c) => c.cmd));
+    ok(
+      ["walk", "face", "pose"].every((c) => cmds.has(c)),
+      `${id} (${kind}) scripts walk, face and pose`,
+    );
+    // the store scene was already played above: forget it so it can start again
+    await w.p.evaluate(() =>
+      window.__game.registry.get("state").heartEvents.load({ seen: {} }),
+    );
+    // leave the previous scene's map so entering this one is a real entry
+    await w.p.evaluate(() => window.farmState({ map: "farm" }));
+    await sleepMs(700);
+    await stage(ev, dayNo++);
+    await walkTo(ev.place_.x, ev.place_.y, ev);
+    ok(await wait(inEvent, 4000), `${id} starts on entry`);
+    await w.p.evaluate(() => {
+      // count the pose calls (the face command is inline, so its effect is the flip below)
+      const sc = window.__game.scene.getScene("heart-event");
+      window.__poses = [];
+      const o = sc.pose.bind(sc);
+      sc.pose = (who, pose, next) => {
+        window.__poses.push(`${who}:${pose}`);
+        return o(who, pose, next);
+      };
+    });
+    const first = new Map();
+    const seenAt = new Map();
+    const flips = new Map();
+    const tick = async () => {
+      const s = await w.p.evaluate(() => {
+        const sc = window.__game.scene.getScene("heart-event");
+        if (!sc?.actors) return null;
+        return [...sc.actors].map(([a, x]) => [
+          a,
+          Math.round(x.box.x),
+          Math.round(x.box.y),
+          x.box.flipX,
+          Math.round(x.box.angle),
+        ]);
+      });
+      for (const [a, x, y, f, ang] of s ?? []) {
+        if (!first.has(a)) first.set(a, `${x},${y}`);
+        const k = seenAt.get(a) ?? new Set();
+        k.add(`${x},${y}`);
+        seenAt.set(a, k);
+        const t = flips.get(a) ?? new Set();
+        t.add(`${f}|${ang !== 0}`);
+        flips.set(a, t);
+      }
+    };
+    // sample fast while the scene runs, without pressing keys (walks and poses run by themselves)
+    const done = await stepThrough(90000, tick);
+    ok(done, `${id} plays to its end`);
+    for (const a of movers) {
+      const n = seenAt.get(a)?.size ?? 0;
+      ok(
+        n > 1,
+        `${id}: ${a} changes position during the scene (${n} positions, from ${first.get(a)})`,
+      );
+    }
+    const poses = await w.p.evaluate(() => window.__poses);
+    ok(poses.length > 0, `${id}: pose effect ran (${poses.join(", ")})`);
+    const facing = [...(flips.get(movers[0]) ?? [])].some((k) =>
+      k.startsWith("true"),
+    );
+    log(`${id}: ${movers[0]} faced left at some point: ${facing}`);
+    ok(await seen(id), `${id} is recorded as seen`);
+  }
+}
+
 const errs = w.errs.filter((x) => !/favicon|ERR_ABORTED/.test(String(x)));
 ok(
   errs.length === 0,

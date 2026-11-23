@@ -62,11 +62,31 @@
         {
           "cmd": "place",
           "who": "pim",
-          "mark": "green_centre"
+          "mark": "green_left"
         },
         {
           "cmd": "fade",
           "to": "clear"
+        },
+        {
+          "cmd": "walk",
+          "who": "pim",
+          "path": "green_left_to_right"
+        },
+        {
+          "cmd": "walk",
+          "who": "player",
+          "path": "green_entry_to_centre"
+        },
+        {
+          "cmd": "face",
+          "who": "pim",
+          "toward": "player"
+        },
+        {
+          "cmd": "face",
+          "who": "player",
+          "toward": "pim"
         },
         {
           "cmd": "pan",
@@ -81,6 +101,11 @@
           "cmd": "emote",
           "who": "pim",
           "emote": "smile"
+        },
+        {
+          "cmd": "pose",
+          "who": "pim",
+          "pose": "laugh"
         },
         {
           "cmd": "say",

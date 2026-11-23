@@ -178,4 +178,23 @@ describe("heart event areas", () => {
       expect(presenceOverlaps(e), e.id).toBe(true);
     }
   });
+
+  it("one scene in each kind of place is blocked with walk, face and pose (#1002)", () => {
+    // An interior (store), the green and a path; the rest is blocked in M3d (#950).
+    const blocked = ["odette-store-2", "pim-green-2", "aurelle-river-path-2"];
+    for (const id of blocked) {
+      const e = HEART_EVENTS.find((x) => x.id === id)!;
+      expect(e, id).toBeDefined();
+      const cmds = new Set<string>((e.scene as Cmd[]).map((c) => c.cmd));
+      for (const c of ["walk", "face", "pose"])
+        expect(cmds.has(c), `${id} ${c}`).toBe(true);
+      // The walker starts from a placed mark, and the path is on the map (the test above).
+      for (const c of e.scene as Cmd[]) {
+        if (c.cmd === "walk")
+          expect(
+            pathTiles(mapFiles[table[e.place]!.map]!, c.path),
+          ).toBeDefined();
+      }
+    }
+  });
 });
