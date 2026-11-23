@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 9,
-  "nextobjectid": 114,
+  "nextobjectid": 115,
   "properties": [
     {
       "name": "placeholder",
@@ -249,6 +249,26 @@
           "rotation": 0,
           "visible": true,
           "point": true
+        },
+        {
+          "id": 114,
+          "name": "wall-list",
+          "class": "service",
+          "type": "service",
+          "x": 96,
+          "y": 24,
+          "width": 0,
+          "height": 0,
+          "point": true,
+          "rotation": 0,
+          "visible": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "wall-list"
+            }
+          ]
         }
       ]
     },

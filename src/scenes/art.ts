@@ -2060,6 +2060,13 @@ function paintForgeGoods(scene: Phaser.Scene): void {
     if (r.magnet) return "#d8503c";
     if (r.slimeProof) return "#5ac86a";
     if (r.immunity) return "#8a6ad8";
+    // Slayer rings (note 22, placeholders): one stone colour per effect.
+    if (r.dropTwice) return "#8a8a94";
+    if (r.healOnKill) return "#c02040";
+    if (r.killSpeed) return "#f08a20";
+    if (r.killDamage) return "#e04a2a";
+    if (r.grace) return "#40b8a8";
+    if (r.thorns) return "#6a8a2a";
     return "#7ab0e8";
   };
   const band = (c: Ctx) => {

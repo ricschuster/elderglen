@@ -411,6 +411,12 @@
     "sellPrice": 60
   },
   {
+    "id": "burglar-ring",
+    "name": "Burglar ring",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "camp-scramble",
     "name": "Camp scramble",
     "sellPrice": 170,
@@ -3105,6 +3111,12 @@
     "keep": true
   },
   {
+    "id": "protection-ring",
+    "name": "Protection ring",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "pumpkin",
     "name": "Pumpkin",
     "sellPrice": 320
@@ -3491,6 +3503,12 @@
     "id": "sardine-roe",
     "name": "Sardine roe",
     "sellPrice": 20
+  },
+  {
+    "id": "savage-ring",
+    "name": "Savage ring",
+    "sellPrice": 0,
+    "keep": true
   },
   {
     "id": "scorch-agate",
@@ -3951,6 +3969,12 @@
     "keep": true
   },
   {
+    "id": "thorns-ring",
+    "name": "Thorns ring",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "tide-bowl",
     "name": "Tide bowl",
     "sellPrice": 0,
@@ -4087,6 +4111,12 @@
     "sellPrice": 1750
   },
   {
+    "id": "vampire-ring",
+    "name": "Vampire ring",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "velvet-koi",
     "name": "Velvet Koi",
     "sellPrice": 600
@@ -4150,6 +4180,12 @@
   {
     "id": "warp-totem-beach",
     "name": "Beach warp totem",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
+    "id": "warrior-ring",
+    "name": "Warrior ring",
     "sellPrice": 0,
     "keep": true
   },

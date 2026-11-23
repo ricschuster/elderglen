@@ -1070,6 +1070,7 @@ export class FarmScene extends Phaser.Scene {
     const before = { ...this.pos };
     const slowed =
       this.state.combat.effects.speedFactor() *
+      this.state.combat.killSpeedFactor() *
       exhaustedSpeed(this.state.day.energy.current);
     const remotes = this.net?.remotes() ?? [];
     for (let i = 0; i < DEV_SPEED; i++)
@@ -2440,6 +2441,7 @@ export class FarmScene extends Phaser.Scene {
     }
     if (service?.kind === "ore-bin") return this.open("bin", { oreOnly: true });
     if (service?.kind === "trainer") return this.open("trainer");
+    if (service?.kind === "wall-list") return this.open("walllist");
     if (service?.kind === "dummy") {
       this.message = "The training dummy. Hold a weapon and swing at it.";
       return this.render();

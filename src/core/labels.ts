@@ -63,6 +63,7 @@ const SERVICES: Record<string, string> = {
   smith: "Smith",
   smithy: "Smithy",
   trainer: "Trainer",
+  "wall-list": "Wall List",
   dummy: "Dummy",
   lift: "Lift",
   stairs: "Stairs",

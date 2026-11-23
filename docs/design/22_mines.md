@@ -416,7 +416,20 @@ the Adventurer's Guild sells lost rewards again (checked on the saved page).
 - **Feeds** the completion total's slayer goals (10) and the Valley's Guard
   achievement.
 
-**Decided 2026-11-23 (owner), not built:**
+**Built (2026-11-23, slayer build part 8a):** the wall list and the reward shop. A `wall-list` service
+tile in the mine hall (`mine.json`) opens `WallListScene` (`src/scenes/WallListScene.ts`): the twelve goals
+with kills so far, the reward and a state (in progress, ready to claim, claimed), a Claim button, and a
+second page, Maren's reward shop. Rules in `src/core/slayerlist.ts` (`wallList`, `claimGoal`,
+`rewardShop`, `buyReward`); claims are saved in the existing optional `combat.slayerClaimed` (old saves
+load). A claim goes to the pack, or by post the next morning if the pack is full (the letter text is
+placeholder). Every reward is built: the six new rings are in `rings.json` and the three hats in
+`hats.json` (cosmetic worn gear, no stat, placeholder colours), shop prices from the list below. The
+trainer's own counter no longer hands rewards out. With "no creatures" on the screen opens and the goals
+stay in progress. Kills stay per game, not per player (note 53 has `combat` as a still-shared piece of
+`WorldState`), and the wall list is host and local only for now (guests cannot open it). Not built:
+the rare creatures and dangerous mode (part 8b).
+
+**Decided 2026-11-23 (owner), built as above (rare creatures not built):**
 
 - **Maren keeps the list, for good.** The wall list hangs in the mine hall, where Maren
   the trainer lives and works; she hands out each reward when its count is met. This

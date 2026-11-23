@@ -9,6 +9,12 @@ import type { Inventory } from "./inventory";
  * Defense, Immunity and the combat rings come later in the same note.
  * Content lives in `src/content/rings.json`.
  */
+/** A timed buff a kill starts: the multiplier and its length in seconds. */
+export interface KillBuff {
+  factor: number;
+  seconds: number;
+}
+
 export interface RingDef {
   id: string;
   name: string;
@@ -24,6 +30,18 @@ export interface RingDef {
   slimeProof?: boolean;
   /** Bad effects that land last half as long (note 37, the Sturdy ring). */
   halfEffects?: boolean;
+  /** Drops roll twice (burglar ring, note 37). */
+  dropTwice?: boolean;
+  /** Health healed on each kill (vampire ring, note 37). */
+  healOnKill?: number;
+  /** A walk speed boost for a few seconds after each kill (savage ring). */
+  killSpeed?: KillBuff;
+  /** A damage boost for a few seconds after each kill (warrior ring, placeholder: note 37 only says "buff"). */
+  killDamage?: KillBuff;
+  /** Seconds of grace added after a hit (protection ring, note 37). */
+  grace?: number;
+  /** A creature that hits you takes the damage it dealt (thorns ring, note 37). */
+  thorns?: boolean;
   /** Sold at the trainer's counter (note 94). `minFloor` is the deepest mine floor reached that unlocks it. */
   shop?: { price: number; minFloor?: number };
   /** The slayer goal whose completion hands this ring over (note 22). */
@@ -128,6 +146,16 @@ export function ringById(id: string): RingDef | undefined {
   const immunity = (a.immunity ?? 0) + (b.immunity ?? 0);
   if (defense) def.defense = defense;
   if (immunity) def.immunity = immunity;
+  const healOnKill = (a.healOnKill ?? 0) + (b.healOnKill ?? 0);
+  const grace = (a.grace ?? 0) + (b.grace ?? 0);
+  if (healOnKill) def.healOnKill = healOnKill;
+  if (grace) def.grace = grace;
+  if (a.dropTwice || b.dropTwice) def.dropTwice = true;
+  if (a.thorns || b.thorns) def.thorns = true;
+  const killSpeed = a.killSpeed ?? b.killSpeed;
+  const killDamage = a.killDamage ?? b.killDamage;
+  if (killSpeed) def.killSpeed = killSpeed;
+  if (killDamage) def.killDamage = killDamage;
   if (a.slimeProof || b.slimeProof) def.slimeProof = true;
   if (a.halfEffects || b.halfEffects) def.halfEffects = true;
   return def;
@@ -237,6 +265,52 @@ export class Equipment {
     return this.rings.some(
       (id) => id !== undefined && ringById(id)?.halfEffects,
     );
+  }
+
+  /** True with a ring on that makes drops roll twice (burglar). */
+  dropsTwice(): boolean {
+    return this.anyRing((r) => !!r.dropTwice);
+  }
+
+  /** Health healed on each kill (vampire). */
+  healOnKill(): number {
+    return this.sum((r) => r.healOnKill ?? 0);
+  }
+
+  /** The speed buff a kill starts (savage), the strongest worn, or undefined. */
+  killSpeed(): KillBuff | undefined {
+    return this.strongest((r) => r.killSpeed);
+  }
+
+  /** The damage buff a kill starts (warrior), the strongest worn, or undefined. */
+  killDamage(): KillBuff | undefined {
+    return this.strongest((r) => r.killDamage);
+  }
+
+  /** Extra seconds of grace after a hit (protection). */
+  graceBonus(): number {
+    return this.sum((r) => r.grace ?? 0);
+  }
+
+  /** True with a ring on that sends damage back (thorns). */
+  thorns(): boolean {
+    return this.anyRing((r) => !!r.thorns);
+  }
+
+  private anyRing(test: (r: RingDef) => boolean): boolean {
+    return this.rings.some((id) => {
+      const def = id === undefined ? undefined : ringById(id);
+      return !!def && test(def);
+    });
+  }
+
+  private strongest(pick: (r: RingDef) => KillBuff | undefined) {
+    let best: KillBuff | undefined;
+    for (const id of this.rings) {
+      const b = id === undefined ? undefined : pick(ringById(id)!);
+      if (b && (!best || b.factor > best.factor)) best = b;
+    }
+    return best;
   }
 
   /** Immunity as a percent chance to resist, rounded, for the equipment screen. */

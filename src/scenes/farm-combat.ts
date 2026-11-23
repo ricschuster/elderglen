@@ -296,8 +296,9 @@ export function updateCombat(farm: FarmScene, dt: number): void {
   farm.player.setAlpha(
     combat.health.grace > 0 && Math.floor(farm.time.now / 90) % 2 ? 0.4 : 1,
   );
+  combat.tickBuffs(dt);
   if (!floor || combat.noCreatures) return;
-  combat.sync(farm.state.skills);
+  combat.sync(farm.state.skills, farm.state.equipment.graceBonus());
   combat.health.tick(dt);
   const burn = combat.effects.tick(dt);
   if (burn > 0) {
@@ -349,6 +350,12 @@ export function updateCombat(farm: FarmScene, dt: number): void {
           else if (r === "resisted") farm.message += ` You shrug off ${name}.`;
         }
         floatText(farm, farm.pos.x, farm.pos.y - 14, `-${lost}`, "#ff8080");
+        // The thorns ring sends the damage back (note 37).
+        if (farm.state.equipment.thorns() && hurtCreature(c, lost)) {
+          beaten(farm, c);
+          farm.render();
+          continue;
+        }
         farm.render();
       }
     }
@@ -522,13 +529,17 @@ export function swing(farm: FarmScene, weapon: WeaponDef): void {
   );
   for (const c of hits) {
     const hit = hitDamageFor(farm.state.skills, weapon.damage, Math.random);
-    const damage = swingDamage(c, hit.damage, weapon.family, farm.pos);
+    // The warrior ring's buff after a kill (note 37).
+    const boosted = Math.round(
+      hit.damage * farm.state.combat.killDamageFactor(),
+    );
+    const damage = swingDamage(c, boosted, weapon.family, farm.pos);
     // Placeholder pop: Lucky Strike shows "x2" beside the number.
     floatText(
       farm,
       c.x,
       c.y - 12,
-      (damage < hit.damage ? `${damage} (armour)` : `${damage}`) +
+      (damage < boosted ? `${damage} (armour)` : `${damage}`) +
         (hit.lucky ? " x2" : ""),
       hit.lucky ? "#ffd84a" : "#ffffff",
     );

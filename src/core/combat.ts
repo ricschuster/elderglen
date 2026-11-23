@@ -1,7 +1,7 @@
 import weaponData from "../content/weapons.json";
 import { BUNDLES } from "./bundles";
 import { Effects } from "./effects";
-import { RINGS, bootsById, type RingDef } from "./equipment";
+import { RINGS, bootsById, type KillBuff, type RingDef } from "./equipment";
 import { itemById } from "./items";
 import { splitQuality } from "./quality";
 import {
@@ -471,11 +471,42 @@ export class Combat {
   /** The "no creatures" setting, synced from the device settings. Never saved here. */
   noCreatures = false;
 
-  /** Take the health ceiling and grace from the skills. Never heals. */
-  sync(skills: Skills): void {
+  /** Seconds left of the speed and damage buffs a kill starts (savage and warrior rings). In memory only. */
+  buffs = { speed: 0, damage: 0, speedFactor: 1, damageFactor: 1 };
+
+  /** Take the health ceiling and grace from the skills and rings. Never heals. */
+  sync(skills: Skills, graceBonus = 0): void {
     this.health.max = healthFor(skills);
     this.health.current = Math.min(this.health.current, this.health.max);
-    this.health.graceLength = graceFor(skills);
+    this.health.graceLength = graceFor(skills) + graceBonus;
+  }
+
+  /** Start the ring buffs a kill gives. */
+  startKillBuffs(speed?: KillBuff, damage?: KillBuff): void {
+    if (speed) {
+      this.buffs.speed = speed.seconds;
+      this.buffs.speedFactor = speed.factor;
+    }
+    if (damage) {
+      this.buffs.damage = damage.seconds;
+      this.buffs.damageFactor = damage.factor;
+    }
+  }
+
+  /** Run the kill buffs down. */
+  tickBuffs(dt: number): void {
+    this.buffs.speed = Math.max(0, this.buffs.speed - dt);
+    this.buffs.damage = Math.max(0, this.buffs.damage - dt);
+  }
+
+  /** Multiplier on walk speed from a kill buff. */
+  killSpeedFactor(): number {
+    return this.buffs.speed > 0 ? this.buffs.speedFactor : 1;
+  }
+
+  /** Multiplier on weapon damage from a kill buff. */
+  killDamageFactor(): number {
+    return this.buffs.damage > 0 ? this.buffs.damageFactor : 1;
   }
 
   noteKill(kind: string): void {

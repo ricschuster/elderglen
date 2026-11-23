@@ -46,12 +46,19 @@ export function defeatCreature(
       ? state.mines.killBonus(floor, state.day.clock.day)
       : { extraKill: false, extraDrop: false };
   if (bonus.extraKill) state.combat.noteKill(c.kind);
+  // Rings that answer a kill (note 37): vampire heals, savage and warrior start a buff.
+  const eq = state.equipment;
+  const heal = eq.healOnKill();
+  if (heal > 0) state.combat.health.heal(heal);
+  state.combat.startKillBuffs(eq.killSpeed(), eq.killDamage());
   // A map's spawn table adds drops to every creature beaten there (note 73: Mahogany Seed).
   const extra: CreatureDef = { ...def, drops: mapDrops(mapId) };
   const rolls = [
     ...rollDrops(def, rng),
     ...rollDrops(extra, rng),
     ...(bonus.extraDrop ? rollDrops(def, rng) : []),
+    // The burglar ring rolls the creature's own drops a second time (note 37).
+    ...(eq.dropsTwice() ? rollDrops(def, rng) : []),
     // A rare Diamond from any monster, once the bottom of the mines is reached (note 83).
     ...(monsterDiamond(state.mines.deepest, rng)
       ? [{ id: DIAMOND.id, count: 1 }]
