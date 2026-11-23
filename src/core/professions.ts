@@ -5,6 +5,7 @@ import { cropById } from "./crops";
 import { fishById } from "./fishing";
 import { fruitTreeById } from "./fruittrees";
 import { splitQuality, type Quality } from "./quality";
+import tapperData from "../content/tapper.json";
 
 /** The level at which a skill offers a choice of profession, as in Stardew. */
 export const PROFESSION_LEVEL = 5;
@@ -22,8 +23,8 @@ export interface ProfessionDef {
 }
 
 /**
- * Two professions per skill, one per skill picked at level 5. Stardew's level
- * 10 choices and its animal and wood options are left out. Ours, after Stardew.
+ * Two professions per skill at level 5, and two under each at level 10 (farming,
+ * fishing and foraging so far). Ours, after Stardew.
  */
 export const PROFESSIONS: ProfessionDef[] = [
   {
@@ -67,16 +68,44 @@ export const PROFESSIONS: ProfessionDef[] = [
     under: "rancher",
   },
   {
+    id: "forester",
+    skill: "foraging",
+    name: "Forester",
+    text: "Trees and stumps give 25% more wood.",
+  },
+  {
     id: "gatherer",
     skill: "foraging",
     name: "Gatherer",
     text: "Foraging sometimes gives a second one (20% chance).",
   },
   {
+    id: "lumberjack",
+    skill: "foraging",
+    name: "Lumberjack",
+    text: "A felled tree sometimes holds a hardwood (15% chance).",
+    under: "forester",
+  },
+  {
+    id: "tapmaster",
+    skill: "foraging",
+    name: "Tapper",
+    text: "Tapped goods (resin, syrup, tar) sell for 25% more.",
+    under: "forester",
+  },
+  {
     id: "botanist",
     skill: "foraging",
     name: "Botanist",
-    text: "Foraged goods are always at least silver quality.",
+    text: "Foraged goods are always the top grade, Hearthsilver.",
+    under: "gatherer",
+  },
+  {
+    id: "tracker",
+    skill: "foraging",
+    name: "Tracker",
+    text: "Arrows at the screen edge point to forage out of sight.",
+    under: "gatherer",
   },
   {
     id: "prospector",
@@ -156,6 +185,12 @@ export const RANCHER_BONUS = 0.2;
 export const ARTISAN_BONUS = 0.4;
 export const AGRICULTURIST_SPEED = 1 / 0.9;
 export const GATHERER_CHANCE = 0.2;
+/** Forester: wood from trees and stumps (placeholder, note 07). */
+export const FORESTER_WOOD = 1.25;
+/** Lumberjack: chance a felled tree holds a hardwood (placeholder, note 07). */
+export const LUMBERJACK_HARDWOOD_CHANCE = 0.15;
+/** Tapper: tapped goods sell for this much more (placeholder, note 07). */
+export const TAPPER_BONUS = 0.25;
 
 /** True for anything an animal makes: Rancher raises what these sell for. */
 function isAnimalGood(base: string): boolean {
@@ -214,6 +249,8 @@ export function choose(skills: Skills, skill: Skill, id: string): boolean {
 /** Sell price multiplier for an item: Tillers get more for crops. */
 export function sellMultiplier(skills: Skills, itemId: string): number {
   const { base } = splitQuality(itemId);
+  if (skills.has("tapmaster") && tapperData.goods.some((t) => t.item === base))
+    return 1 + TAPPER_BONUS;
   if (skills.has("tiller") && (cropById(base) || fruitTreeById(base)))
     return 1 + TILLER_BONUS;
   if (skills.has("rancher") && isAnimalGood(base)) return 1 + RANCHER_BONUS;
@@ -246,7 +283,12 @@ export function doubleForageChance(skills: Skills): number {
   return skills.has("gatherer") ? GATHERER_CHANCE : 0;
 }
 
-/** Botanists never find plain forage. */
+/** Wood from a tree or stump: Foresters get a quarter more, rounded down. */
+export function woodYield(skills: Skills, wood: number): number {
+  return skills.has("forester") ? Math.floor(wood * FORESTER_WOOD) : wood;
+}
+
+/** Botanists always find the top grade of forage. */
 export function forageFloor(skills: Skills, quality: Quality): Quality {
-  return skills.has("botanist") && quality === "normal" ? "silver" : quality;
+  return skills.has("botanist") ? "hearthsilver" : quality;
 }

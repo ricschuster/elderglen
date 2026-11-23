@@ -107,7 +107,7 @@ export interface PatchResult {
   problems: string[];
 }
 
-const QUALITY_BY_RANK: Quality[] = ["gold", "silver", "normal"];
+const QUALITY_BY_RANK: Quality[] = ["hearthsilver", "gold", "silver", "normal"];
 
 /** Fill a bundle through the hall's own hand-in, with a throwaway pack and wallet (no reward is paid). */
 function fillBundle(g: GameState, bundleId: string, problems: string[]): void {

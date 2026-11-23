@@ -687,7 +687,11 @@ export function allItems(): ItemDef[] {
   return [...items.values()];
 }
 
-const QUALITY_NAME = { silver: "Silver", gold: "Gold" } as const;
+const QUALITY_NAME = {
+  silver: "Silver",
+  gold: "Gold",
+  hearthsilver: "Hearthsilver",
+} as const;
 
 /** An item by id. A good with a quality suffix sells for more, per tier. */
 export function itemById(id: string): ItemDef | undefined {

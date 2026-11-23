@@ -83,6 +83,7 @@ const QUALITY_LABEL: Record<Quality, string> = {
   normal: "Normal",
   silver: "Silver",
   gold: "Gold",
+  hearthsilver: "Hearthsilver",
 };
 
 const TRACK = { x: 560, y: 90, w: 44, h: 340 };

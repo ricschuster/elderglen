@@ -6,7 +6,12 @@ import { ELDERFRUIT, HARDWOOD, cropOfSeed, itemById, seedId } from "./items";
 import { eatElderfruit } from "./elderfruit";
 import { fertilizerById, qualityLevelOf } from "./fertilizer";
 import { HEALTH_PER_ENERGY } from "./combat";
-import { doubleForageChance, forageFloor } from "./professions";
+import {
+  LUMBERJACK_HARDWOOD_CHANCE,
+  doubleForageChance,
+  forageFloor,
+  woodYield,
+} from "./professions";
 import { cropQuality, forageQuality, withQuality } from "./quality";
 import { FORAGE_XP, harvestXp, type Skill } from "./skills";
 import type { GameState } from "./save";
@@ -340,7 +345,10 @@ function planChop(
   if (t.stump)
     return {
       swings: swingsToUproot(g.toolTiers.axe),
-      goods: goods(["wood", 4 + Math.floor(random() * 6)], ["sap", STUMP_SAP]),
+      goods: goods(
+        ["wood", woodYield(g.skills, 4 + Math.floor(random() * 6))],
+        ["sap", STUMP_SAP],
+      ),
       xp: STUMP_XP,
     };
   if (t.stage === SEED_STAGE)
@@ -371,8 +379,18 @@ function planChop(
   return {
     swings: swingsToFell(g.toolTiers.axe),
     goods: goods(
-      ["wood", TREE_WOOD + Math.min(level, TREE_WOOD_BONUS_MAX)],
+      [
+        "wood",
+        woodYield(g.skills, TREE_WOOD + Math.min(level, TREE_WOOD_BONUS_MAX)),
+      ],
       ["sap", TREE_SAP],
+      // Lumberjack (placeholder, note 07): a felled tree sometimes holds a hardwood.
+      [
+        HARDWOOD,
+        g.skills.has("lumberjack") && random() < LUMBERJACK_HARDWOOD_CHANCE
+          ? 1
+          : 0,
+      ],
       [
         seedOfKind(t.kind) ?? TREE_SEED,
         level >= 1 ? Math.floor(random() * 3) : 0,
@@ -509,7 +527,10 @@ function chopFruitTree(
   const mature = isMature(t);
   const falls = !mature || t.hits + 1 >= swingsToFell(g.toolTiers.axe);
   const woodNow = mature
-    ? TREE_WOOD + Math.min(g.skills.level("foraging"), TREE_WOOD_BONUS_MAX)
+    ? woodYield(
+        g.skills,
+        TREE_WOOD + Math.min(g.skills.level("foraging"), TREE_WOOD_BONUS_MAX),
+      )
     : YOUNG_WOOD;
   // Nothing may be left on the ground indoors: the pile would land on the farm.
   if (

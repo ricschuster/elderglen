@@ -331,6 +331,7 @@ import {
   drawCoop,
   drawCoopInside,
 } from "./farm-draw";
+import { drawTracker } from "./farm-tracker";
 import {
   tileAtPointer,
   planAt,
@@ -445,6 +446,8 @@ export class FarmScene extends Phaser.Scene {
   litBombs: LitBomb[] = [];
   bombFx!: Phaser.GameObjects.Graphics;
   wash!: Phaser.GameObjects.Graphics;
+  /** Tracker arrows at the screen edge, on the UI camera (note 07). */
+  trackerGfx!: Phaser.GameObjects.Graphics;
   /** Dusk over the farm: fades in toward nightfall, which moves by season. */
   private night!: Phaser.GameObjects.Rectangle;
   map!: FarmMap;
@@ -804,7 +807,8 @@ export class FarmScene extends Phaser.Scene {
       },
       (p) => this.hud.covers(p.x, p.y),
     );
-    const ui = [...this.controls.objects, ...this.hud.objects];
+    this.trackerGfx = this.add.graphics().setDepth(9000);
+    const ui = [...this.controls.objects, ...this.hud.objects, this.trackerGfx];
 
     const { width, height } = this.scale.gameSize;
     const uiCamera = this.cameras.add(0, 0, width, height);
@@ -1032,6 +1036,7 @@ export class FarmScene extends Phaser.Scene {
 
   update(_time: number, delta: number): void {
     this.clampLabels();
+    drawTracker(this);
     // Cap the step so a stalled frame cannot throw the player across the map.
     const dt = Math.min(delta, 50) / 1000;
     this.night.setAlpha(

@@ -3,14 +3,18 @@ import { forage, harvest, plant, till, water } from "../src/core/actions";
 import {
   choose,
   growthRate,
+  LUMBERJACK_HARDWOOD_CHANCE,
+  optionsFor,
   pendingChoice,
+  pendingLevel,
   sellMultiplier,
+  woodYield,
 } from "../src/core/professions";
 import { seedId } from "../src/core/items";
 import { deserialize, newGame, serialize } from "../src/core/save";
 import { sell } from "../src/core/shop";
 import { sleep } from "../src/core/sleep";
-import { LEVEL_XP } from "../src/core/skills";
+import { LEVEL_XP, Skills } from "../src/core/skills";
 
 const level5 = LEVEL_XP[4]!;
 
@@ -52,12 +56,13 @@ describe("professions", () => {
     expect(harvest(g, 0, 0, () => 0.99).ok).toBe(true);
   });
 
-  it("gatherers sometimes find two; botanists never find plain forage", () => {
+  it("gatherers sometimes find two; botanists always find the top grade", () => {
     const spots = Array.from({ length: 8 }, (_, i) => ({ x: i, y: 3 }));
     const withForage = (skill: "gatherer" | "botanist") => {
       const g = newGame();
-      g.skills.gain("foraging", level5);
-      choose(g.skills, "foraging", skill);
+      g.skills.gain("foraging", LEVEL_XP[9]!);
+      choose(g.skills, "foraging", "gatherer");
+      if (skill === "botanist") choose(g.skills, "foraging", "botanist");
       g.forage.respawn("spring", spots, () => 0.99);
       const at = [...g.forage.each()][0]!;
       return { g, at };
@@ -68,15 +73,73 @@ describe("professions", () => {
 
     const b = withForage("botanist");
     forage(b.g, b.at.x, b.at.y, () => 0.99);
-    expect(b.g.inventory.slot(0)!.id).toMatch(/@silver$/);
+    expect(b.g.inventory.slot(0)!.id).toMatch(/@hearthsilver$/);
+  });
+
+  it("offers the foraging level 10 pair under the level 5 pick", () => {
+    const ids = (skills: Skills) =>
+      optionsFor("foraging", skills).map((p) => p.id);
+    const fresh = new Skills();
+    expect(ids(fresh)).toEqual(["forester", "gatherer"]);
+    const f = newGame();
+    f.skills.gain("foraging", LEVEL_XP[9]!);
+    choose(f.skills, "foraging", "forester");
+    expect(pendingLevel(f.skills, "foraging")).toBe(10);
+    expect(ids(f.skills)).toEqual(["lumberjack", "tapmaster"]);
+    expect(choose(f.skills, "foraging", "botanist")).toBe(false);
+    expect(choose(f.skills, "foraging", "tapmaster")).toBe(true);
+    const g = newGame();
+    g.skills.gain("foraging", LEVEL_XP[9]!);
+    choose(g.skills, "foraging", "gatherer");
+    expect(ids(g.skills)).toEqual(["botanist", "tracker"]);
+    // Botanist is no longer open at level 5.
+    const h = newGame();
+    h.skills.gain("foraging", level5);
+    choose(h.skills, "foraging", "gatherer");
+    expect(pendingChoice(h.skills)).toBeUndefined();
+  });
+
+  it("foresters get a quarter more wood, tappers sell tapped goods for more", () => {
+    const g = newGame();
+    g.skills.gain("foraging", LEVEL_XP[9]!);
+    choose(g.skills, "foraging", "forester");
+    expect(woodYield(g.skills, 16)).toBe(20);
+    expect(woodYield(newGame().skills, 16)).toBe(16);
+    expect(sellMultiplier(g.skills, "maple-syrup")).toBe(1);
+    choose(g.skills, "foraging", "tapmaster");
+    expect(sellMultiplier(g.skills, "maple-syrup")).toBe(1.25);
+    expect(sellMultiplier(g.skills, "maple-syrup@gold")).toBe(1.25);
+    expect(sellMultiplier(g.skills, "parsnip")).toBe(1);
+  });
+
+  it("a Lumberjack's felled tree can hold a hardwood", () => {
+    const g = newGame();
+    g.skills.gain("foraging", LEVEL_XP[9]!);
+    choose(g.skills, "foraging", "forester");
+    choose(g.skills, "foraging", "lumberjack");
+    expect(g.skills.has("lumberjack")).toBe(true);
+    expect(LUMBERJACK_HARDWOOD_CHANCE).toBeGreaterThan(0);
+  });
+
+  it("an old save with a level 5 Botanist keeps it as a level 10 pick under Gatherer", () => {
+    const g = newGame();
+    const raw = JSON.parse(serialize(g));
+    raw.professions = { foraging: "botanist" };
+    raw.topProfessions = {};
+    const back = deserialize(JSON.stringify(raw))!;
+    expect(back.skills.professionOf("foraging")).toBe("gatherer");
+    expect(back.skills.topProfessionOf("foraging")).toBe("botanist");
+    expect(back.skills.has("botanist")).toBe(true);
   });
 
   it("is saved", () => {
     const g = newGame();
-    g.skills.gain("foraging", level5);
+    g.skills.gain("foraging", LEVEL_XP[9]!);
+    choose(g.skills, "foraging", "gatherer");
     choose(g.skills, "foraging", "botanist");
     const back = deserialize(serialize(g))!;
-    expect(back.skills.professionOf("foraging")).toBe("botanist");
+    expect(back.skills.professionOf("foraging")).toBe("gatherer");
+    expect(back.skills.topProfessionOf("foraging")).toBe("botanist");
     const raw = JSON.parse(serialize(g));
     raw.professions = { foraging: "tiller", farming: 7 };
     expect(

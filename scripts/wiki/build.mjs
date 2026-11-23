@@ -333,7 +333,7 @@ ${infobox([
   ["Sells for", `${f.sellPrice} coins`],
   [
     "By quality",
-    `Silver ${Math.floor(f.sellPrice * d.quality.silver)}, gold ${Math.floor(f.sellPrice * d.quality.gold)} coins`,
+    `Silver ${Math.floor(f.sellPrice * d.quality.silver)}, gold ${Math.floor(f.sellPrice * d.quality.gold)}, Hearthsilver ${Math.floor(f.sellPrice * d.quality.hearthsilver)} coins`,
   ],
 ])}
 ${prose("fish", f.id)}${sections}`;

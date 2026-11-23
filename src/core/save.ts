@@ -1177,7 +1177,7 @@ export function deserialize(text: string): GameState | undefined {
   g.hall = new Hall(undefined, hall as HallProgress);
   if (isObject(raw.professions)) {
     const picked: Partial<Record<Skill, string>> = {};
-    let legacyTop: string | undefined;
+    const legacyTop: Partial<Record<Skill, string>> = {};
     for (const k of SKILLS) {
       const id = raw.professions[k];
       const def = typeof id === "string" ? professionById(id) : undefined;
@@ -1185,13 +1185,18 @@ export function deserialize(text: string): GameState | undefined {
       // Agriculturist was a level 5 pick before the farming tree grew a level 10 tier.
       else if (id === "agriculturist" && k === "farming") {
         picked[k] = "tiller";
-        legacyTop = "agriculturist";
+        legacyTop[k] = "agriculturist";
+      }
+      // Botanist was a level 5 pick before the foraging tree grew a level 10 tier.
+      else if (id === "botanist" && k === "foraging") {
+        picked[k] = "gatherer";
+        legacyTop[k] = "botanist";
       }
     }
     g.skills.loadProfessions(picked);
     // A level 10 pick only stands under the level 5 pick it grows from.
     const top: Partial<Record<Skill, string>> = {};
-    if (legacyTop) top.farming = legacyTop;
+    Object.assign(top, legacyTop);
     if (isObject(raw.topProfessions))
       for (const k of SKILLS) {
         const id = raw.topProfessions[k];

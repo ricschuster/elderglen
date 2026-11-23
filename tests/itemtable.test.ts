@@ -39,6 +39,7 @@ describe("item table snapshot", () => {
     expect(q).toEqual({
       silver: QUALITY_MULTIPLIER.silver,
       gold: QUALITY_MULTIPLIER.gold,
+      hearthsilver: QUALITY_MULTIPLIER.hearthsilver,
     });
   });
   it("has no duplicate ids", () => {

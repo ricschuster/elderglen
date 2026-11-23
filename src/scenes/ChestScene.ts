@@ -22,7 +22,7 @@ import {
 import { chestTip, itemTip } from "../core/itemtip";
 import { sortPack } from "../core/packmenu";
 import { orderById } from "../core/orders";
-import { splitQuality } from "../core/quality";
+import { QUALITY_TINT, splitQuality } from "../core/quality";
 import { toolOfId } from "../core/toolitems";
 import type { GameState } from "../core/save";
 import { canWaterLine } from "../core/canwater";
@@ -41,7 +41,6 @@ const GAP = 4;
 const PITCH = TOUCH_CELL + GAP;
 const LONG_PRESS_MS = 450;
 const LABEL = 22;
-const TINT = { normal: 0xffffff, silver: 0xc8d8ff, gold: 0xffd860 };
 
 interface Cell {
   box: Phaser.GameObjects.Rectangle;
@@ -693,7 +692,7 @@ export class ChestScene extends Phaser.Scene {
         c.icon.setVisible(key !== undefined);
         if (key) {
           c.icon.setTexture(key);
-          c.icon.setTint(TINT[splitQuality(stack!.id).quality]);
+          c.icon.setTint(QUALITY_TINT[splitQuality(stack!.id).quality]);
         }
         c.count.setText(stack && stack.count > 1 ? String(stack.count) : "");
       });

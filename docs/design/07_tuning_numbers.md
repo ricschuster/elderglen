@@ -162,32 +162,45 @@ Source: `src/core/skills.ts`.
   From memory.
 - Levels raise the chance of better quality goods, and farming levels trim
   swing energy (see below). At level 5 each skill asks for a profession (see
-  Professions). The farming and fishing level 10 choices are built.
+  Professions). The farming, fishing and foraging level 10 choices are built.
 
 ## Professions
 
 Source: `src/core/professions.ts`. One choice per skill at level 5, permanent.
 After Stardew's level 5 choices, but with the animal and wood options replaced
-by ones that fit our game. Ours, unchecked.
+by ones that fit our game. Ours, unchecked. Mining and combat have no level 10
+tier yet.
 
 - Farming: Tiller (crops sell for 10 percent more) or Agriculturist (crops grow
   10 percent faster, which saves a day on a 12 day crop and nothing on a 4 day
   one).
-- Foraging: Gatherer (20 percent chance of a second good) or Botanist (forage is
-  never plain, at least silver).
+- Foraging: see the foraging tree below (Botanist moved to level 10).
 
 Built 2026-11-11 (`23_animals.md`, decided 2026-10-30): Stardew's tree for
 farming. Level 5 is Rancher (animal goods sell for 20 percent more) or Tiller.
 Level 10 is Coopmaster or Shepherd under Rancher, Artisan (artisan goods 40
 percent more) or Agriculturist under Tiller. Agriculturist moves to level 10.
 
-Foraging professions, decided 2026-10-31 (planned, not built). After Stardew's
-foraging tree, with our names. Level 5 is Forester or Gatherer. Level 10 is
-Lumberjack or Tapper under Forester, Botanist or Tracker under Gatherer.
-Gatherer stays as built. Botanist moves from level 5 to level 10, as
-Agriculturist did. Botanist makes forage always the top grade (see Quality).
-Tracker points arrows at off-screen forage, which also helps on a tablet.
-Lumberjack and Tapper wait until trees and wood are a real system.
+Foraging professions, decided 2026-10-31, built 2026-11-23
+(`src/core/professions.ts`, `src/core/tracker.ts`, `src/scenes/farm-tracker.ts`).
+After Stardew's foraging tree, with our names. Level 5 is Forester or Gatherer.
+Level 10 is Lumberjack or Tapper under Forester, Botanist or Tracker under
+Gatherer. Gatherer stays as built (20 percent chance of a second good).
+Botanist moved from level 5 to level 10, as Agriculturist did: an old save with
+a level 5 Botanist loads as Gatherer with Botanist as its level 10 pick
+(`save.ts`, as for Agriculturist). Botanist makes forage, and the bat cave
+fruit, always the top grade (Hearthsilver, see Quality). Tracker draws small
+arrows at the screen edge toward forage out of sight on the current map, up to
+6, nearest first (`trackerArrows`). Placeholders, ours, none of them decided:
+
+- Forester: trees, stumps and fruit trees give 25 percent more wood, rounded
+  down (`FORESTER_WOOD`). Placeholder: nothing was decided for it.
+- Lumberjack: a felled common tree has a 15 percent chance to hold 1 hardwood
+  (`LUMBERJACK_HARDWOOD_CHANCE`). Placeholder.
+- Tapper (profession id `tapmaster`, since `tapper` is the item): tapped goods
+  (resin, syrup, tar) sell for 25 percent more (`TAPPER_BONUS`). Placeholder.
+  Trees, wood and the tapper are built (notes 36, 43, 92), so these are real
+  but unbalanced.
 
 ## Tool upgrades and energy
 
@@ -245,19 +258,29 @@ Row button moves to the next row, as in Stardew.
 Source: `src/core/quality.ts`. Quality is part of the item id (`parsnip@gold`),
 so each tier stacks and sells separately. Bundles take any tier.
 
-- Tiers: normal, silver (x1.25 price), gold (x1.5 price). Iridium is left out
-  until there is a source for it. From memory.
+- Tiers: normal, silver (x1.25 price), gold (x1.5 price), Hearthsilver (x2
+  price, see below). From memory.
 - Crops: gold chance is `0.2 * farmingLevel / 10 + 0.01`; silver chance is twice
   that, so a level 10 farmer gets about 21 percent gold and 21 percent silver.
   The soil term is in: `0.2 * soil * (level + 2) / 12` is added to the gold chance (`src/core/quality.ts`). From memory.
 - Forage: gold chance is `foragingLevel / 30`, silver up to `foragingLevel / 15`.
   From memory.
   Checked against the wiki on 2026-10-31: both formulas match.
-- Top grade (decided 2026-10-31, not built): a fourth tier above gold, named
-  after the rare metal, Hearthsilver (`22_mines.md`). Using the metal's name
-  for the grade is an assumption, since the mines note only names the metal.
-  Crops and forage get it, with Botanist guaranteeing it for forage. Its price
-  and energy multipliers are open.
+- Top grade, Hearthsilver (decided 2026-10-31, name confirmed by the owner
+  2026-11-23, built 2026-11-23): a fourth tier above gold, named after the rare
+  metal (`22_mines.md`). Its id suffix is `@hearthsilver`, so it stacks and
+  sells apart. Placeholders, ours: price x2 (Stardew's top grade from memory,
+  unchecked, SC-215), energy when eaten x2.2 (gold is x1.8), friendship gift
+  bonus x1.4 on love and like (gold x1.25), cake points 150, Grange value points
+  one higher than gold up to the item cap of 6, cloth doubling 75 percent, icon
+  tint rose (`0xf09ab8`, silver is blue and gold yellow). Crops roll it only
+  with farming level 8 and fertilised soil: the first 3 percent of the roll
+  (`HEARTHSILVER_CROP_LEVEL`, `HEARTHSILVER_CHANCE`). Forage rolls it from
+  foraging level 10 on the first 3 percent (`HEARTHSILVER_FORAGE_LEVEL`).
+  Botanist forage is always Hearthsilver. Animal goods, fish, fruit tree fruit
+  and cask goods stop at gold. Bundles and orders treat it as above gold. Old
+  saves load: an unknown quality suffix was always normal, and none of the
+  saved numbers change.
 - Wild seeds (decided 2026-10-31): forage is crafted into seasonal seeds that
   grow into forage goods and give foraging XP. Built in M3 with crafting.
 

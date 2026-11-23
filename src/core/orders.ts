@@ -328,7 +328,12 @@ const copyBase = (b: OrderBase): OrderBase => ({
   kills: { ...b.kills },
 });
 
-const RANK: Record<Quality, number> = { normal: 0, silver: 1, gold: 2 };
+const RANK: Record<Quality, number> = {
+  normal: 0,
+  silver: 1,
+  gold: 2,
+  hearthsilver: 3,
+};
 const qualityRank = (q: Quality): number => RANK[q];
 
 /** Progress toward an order's goal as a count, for display. */

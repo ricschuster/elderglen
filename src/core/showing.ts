@@ -28,19 +28,20 @@ export const MAX_GROUP_POINTS = 30;
 /**
  * Value points by sell price band and quality (Stardew's Grange table, saved
  * Stardew Valley Fair page, SC-53). Each row is a band that starts at `from`
- * gold of actual sell price; the points are for normal, silver and gold. We
- * have no iridium quality, so that column is dropped and the most an item can
- * earn is 6 (Stardew's is 8).
+ * gold of actual sell price; the points are for normal, silver, gold and Hearthsilver (our top grade,
+ * placeholder points, capped at 6 as the item maximum; Stardew's is 8).
  */
-export const VALUE_BANDS: { from: number; points: [number, number, number] }[] =
-  [
-    { from: 0, points: [1, 2, 3] },
-    { from: 20, points: [2, 3, 4] },
-    { from: 90, points: [3, 4, 5] },
-    { from: 200, points: [4, 5, 6] },
-    { from: 300, points: [5, 6, 6] },
-    { from: 400, points: [6, 6, 6] },
-  ];
+export const VALUE_BANDS: {
+  from: number;
+  points: [number, number, number, number];
+}[] = [
+  { from: 0, points: [1, 2, 3, 4] },
+  { from: 20, points: [2, 3, 4, 5] },
+  { from: 90, points: [3, 4, 5, 6] },
+  { from: 200, points: [4, 5, 6, 6] },
+  { from: 300, points: [5, 6, 6, 6] },
+  { from: 400, points: [6, 6, 6, 6] },
+];
 /** Most value points one item can earn. */
 export const MAX_ITEM_VALUE = 6;
 

@@ -13,7 +13,7 @@ import {
   takeOff,
   wearFromPack,
 } from "../core/packmenu";
-import { splitQuality } from "../core/quality";
+import { QUALITY_TINT, splitQuality } from "../core/quality";
 import { itemTip } from "../core/itemtip";
 import { canFraction, canWaterLine } from "../core/canwater";
 import { Tooltip } from "./tooltip";
@@ -35,7 +35,6 @@ const TOOL_NAMES: Record<string, string> = {
   pickaxe: "Pickaxe",
   scythe: "Scythe",
 };
-const TINT = { normal: 0xffffff, silver: 0xc8d8ff, gold: 0xffd860 };
 
 /**
  * The Pack tab (note 49): the whole backpack. The tools are stacks in it (note 102).
@@ -424,7 +423,7 @@ export class PackScene extends Phaser.Scene {
       c.icon.setVisible(key !== undefined);
       if (key) {
         c.icon.setTexture(key).setDisplaySize(54, 54);
-        c.icon.setTint(TINT[splitQuality(stack!.id).quality]);
+        c.icon.setTint(QUALITY_TINT[splitQuality(stack!.id).quality]);
       }
       c.count.setText(stack && stack.count > 1 ? String(stack.count) : "");
       const isCan = stack?.id === "tool:can";
