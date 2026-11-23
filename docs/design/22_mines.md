@@ -172,6 +172,10 @@ time, and the lift can bring them up afterwards.
   (#177) exists. Until then the lever works once the bottom is reached.
 - More creatures per floor, with harder hits.
 - Better drops and more ore per node.
+- **Numbers (owner, 2026-11-23, steep as Stardew; placeholders):** creature health 3x, hits
+  2.5x, 1.5x creatures a floor, +1 ore per node, drop chance 1.5x. The floors take a
+  different tint (Stardew's dangerous mines change the floor theme and the monsters, checked
+  on the saved Mines page; its numbers are not on that page, so ours are a guess). Not built.
 - The Assist settings still apply, so the dangerous mine is reachable for
   everyone who wants it.
 - Nothing needs it. It is a chosen challenge, with a reward for liking it.
@@ -411,6 +415,31 @@ the Adventurer's Guild sells lost rewards again (checked on the saved page).
   home. Ring 2's own list is part of the ring 2 design.
 - **Feeds** the completion total's slayer goals (10) and the Valley's Guard
   achievement.
+
+**Decided 2026-11-23 (owner), not built:**
+
+- **Maren keeps the list, for good.** The wall list hangs in the mine hall, where Maren
+  the trainer lives and works; she hands out each reward when its count is met. This
+  replaces "the warden head's hall": the mine hall is where it makes the most sense, and it
+  does not move to the warden head in M3c.
+- **Rewards for sale after the goal (Stardew, checked on the saved Adventurer's Guild page:
+  rings 15,000g to 25,000g, hats 20,000g, the insect hat 10,000g).** Once a goal is met its
+  reward is in Maren's shop, so a lost or sold one can be bought again. Ours by the matching
+  goal: slime proof ring 25,000g, burglar ring 20,000g, vampire ring 15,000g, savage ring
+  25,000g, crabshell ring 15,000g, beetle-head hat 10,000g, skull mask hat 20,000g, hard hat
+  20,000g. Ours with no Stardew match (placeholders): warrior ring 20,000g, protection ring
+  15,000g, thorns ring 15,000g. The Bug Meat reward is not sold.
+- **Rare creatures: gilded variants, one per band.** Each is a creature the player already
+  knows, with a gold sheen (placeholder tint), on its own dry-streak counter (placeholder:
+  base 0.2 percent a creature spawn, plus 0.05 percent per miss, capped at 3 percent):
+  - Band 1, **Golden Gloop:** flees instead of bouncing at the player; drops gold ore and a
+    gilded jelly (a new sell good).
+  - Band 2, **Glimmer Nibbler:** a crystal Frostnibbler; drops a gem of the band.
+  - Band 3, **Ember Lantern:** a bright Lanternmoth; drops a Hearthsilver ore.
+  - A rare kill counts toward its base creature's slayer goal, and the first of each is a
+    quiet completion tracker entry (#196).
+
+Stardew's rare variants are from memory, unchecked; not needed for the decision.
 
 ## Defeat (decided with the owner, Stardew's way)
 
