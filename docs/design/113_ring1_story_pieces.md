@@ -45,4 +45,4 @@ unfinished business, the haven elf, token and keepsake wait for ring 2 (M5).
 ## Open (paused 2026-11-24)
 
 - The odd-request system that feeds the ring prices.
-- Whether these go into the M3c build queue now or after the M4 groups.
+- Build order (owner, 2026-11-24): after the M4 groups (#1014 to #1017).
