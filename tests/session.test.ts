@@ -209,17 +209,19 @@ describe("guest applies the host's intents", () => {
     rec.inventory.add("parsnip-seed", 3);
     copy.players.get(guest.localId).inventory.load(new Inventory().save());
     copy.players.get(guest.localId).inventory.add("parsnip-seed", 3);
-    let changes = 0;
-    guest.onChange = () => (changes += 1);
+    // The host sends the result (a world change and the sender's record), not the intent to run again.
     guest.sendIntent({ kind: "till", x: soil.x, y: soil.y });
-    await until(() => changes >= 1);
+    await until(() => !!copy.farm.plotAt(soil.x, soil.y));
     guest.sendIntent({
       kind: "plant",
       x: soil.x,
       y: soil.y,
       seed: "parsnip-seed",
     });
-    await until(() => changes >= 2);
+    await until(
+      () =>
+        copy.players.get(guest.localId).inventory.count("parsnip-seed") === 2,
+    );
     expect(state.farm.plotAt(soil.x, soil.y)?.tilled).toBe(true);
     expect(copy.farm.plotAt(soil.x, soil.y)?.tilled).toBe(true);
     expect(
@@ -316,17 +318,19 @@ describe("guest applies the host's intents", () => {
     rec.inventory.add("parsnip-seed", 3);
     copy.players.get(guest.localId).inventory.load(new Inventory().save());
     copy.players.get(guest.localId).inventory.add("parsnip-seed", 3);
-    let changes = 0;
-    guest.onChange = () => (changes += 1);
+    // The host sends the result (a world change and the sender's record), not the intent to run again.
     guest.sendIntent({ kind: "till", x: soil.x, y: soil.y });
-    await until(() => changes >= 1);
+    await until(() => !!copy.farm.plotAt(soil.x, soil.y));
     guest.sendIntent({
       kind: "plant",
       x: soil.x,
       y: soil.y,
       seed: "parsnip-seed",
     });
-    await until(() => changes >= 2);
+    await until(
+      () =>
+        copy.players.get(guest.localId).inventory.count("parsnip-seed") === 2,
+    );
     expect(state.farm.plotAt(soil.x, soil.y)?.tilled).toBe(true);
     expect(copy.farm.plotAt(soil.x, soil.y)?.tilled).toBe(true);
     expect(

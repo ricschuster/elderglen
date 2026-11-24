@@ -149,8 +149,12 @@ describe("guests off the farm, over real sockets", () => {
     const svc = maps.get("mine").services.find((v) => v.kind === "wall-list")!;
     const screen = { kind: "walllist", map: "mine", x: svc.x, y: svc.y };
     g.players.get(ann.id).combat.kills["dustmoth"] = 500;
-    // The copy has the kills as the host's `player` messages would have brought them.
-    copies.get(ann.id)!.players.get(ann.id).combat.kills["dustmoth"] = 500;
+    // The host sends the changed record on its own: the copy has the kills without being told by hand.
+    await until(
+      () =>
+        copies.get(ann.id)!.players.get(ann.id).combat.kills["dustmoth"] ===
+        500,
+    );
     await stand(ann, "mine", svc.x, svc.y + 1);
     await stand(bo, "mine", svc.x, svc.y + 1);
     const claim = { kind: "slayer-claim", goal: "dustmoth" };

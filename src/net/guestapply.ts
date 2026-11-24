@@ -4,7 +4,8 @@
 // locally (the scene shows the reason). Pure: no Phaser, no DOM.
 import type { ServerMsg } from "../core/protocol";
 import { applyMarriageIntent } from "../core/marriageintents";
-import { applyFarmIntent } from "../core/roomintents";
+import { applyFarmIntent, MAPPED_KINDS } from "../core/roomintents";
+import { applyWorldFx } from "../core/worldfx";
 import { applyScreenIntent } from "../core/screenintents";
 import type { GameState } from "../core/save";
 import { loadCreature } from "../core/creatures";
@@ -12,11 +13,6 @@ import { applyBedMove } from "../core/homes";
 import { syncPlayer } from "../core/players";
 import { floorOf, groundOfMap, viewOf } from "../core/roommaps";
 
-/**
- * Apply one server message to the guest's farm copy. True when the farm changed.
- * The host already accepted the intent, so a refusal here means the copies drifted (for example a
- * random roll); the copy is left as it is and the next `farm` message replaces it.
- */
 /** A map's ground, and a mine floor's rocks and ladder, as the host sent them (note 109). */
 function applyMapState(
   g: GameState,
@@ -53,6 +49,12 @@ function applyCreatures(
   return true;
 }
 
+/**
+ * Apply one server message to the guest's farm copy. True when the farm changed.
+ * Intents that roll dice (tools, seeds, machines, forage, ponds) are not run here: the host sends what they
+ * changed (`worldfx`, `player`, `mapstate`). The rest (buying, selling, beds, screens) are run again as the
+ * host ran them; the sender's own record is overwritten by the host's `player` afterwards.
+ */
 export function applyServerMsg(
   g: GameState,
   m: ServerMsg,
@@ -60,9 +62,12 @@ export function applyServerMsg(
 ): boolean {
   if (m.t === "mapstate") return applyMapState(g, m);
   if (m.t === "creatures") return applyCreatures(g, m);
+  if (m.t === "worldfx") return applyWorldFx(g, m.map, m.fx);
   if (m.t === "player") return syncPlayer(g.players, m.rec);
   if (m.t !== "applied") return false;
   if (!g.players.has(m.by)) return false;
+  // The tools, seeds and machines roll on the host: the result came in a `worldfx` and a `player` before this.
+  if (MAPPED_KINDS.has(m.intent.kind)) return false;
   if (m.intent.kind === "bed-move")
     return applyBedMove(g, m.by, m.intent) === undefined;
   const mr = applyMarriageIntent(g, m.by, m.intent);

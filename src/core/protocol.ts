@@ -1,6 +1,7 @@
 // Message shapes between a guest and the host Room (note 53, step 2). Plain JSON, no socket,
 // no Phaser, no DOM. src/net/protocol.ts re-exports these for the socket code.
 import type { CreatureSave } from "./creatures";
+import type { WorldFx } from "./worldfx";
 import type { Pile } from "./ground";
 import type { Rock } from "./rocks";
 import type { PlayerId, PlayerSave } from "./players";
@@ -81,6 +82,12 @@ export type ServerMsg =
       ground: Pile[];
       floor?: { rocks: Rock[]; ladder?: Spot };
     }
+  /**
+   * What changed in the world of a map (trees, rocks, soil and crops, machines, pots) as the host has it now,
+   * sent to every guest before the `applied` of the intent that caused it and every few ticks for the host's
+   * own changes. The guest copy takes the entries instead of rolling the rules itself (note 53).
+   */
+  | { t: "worldfx"; map: string; fx: WorldFx }
   /** The creatures of a mine floor or map, every tick, to the players on it (note 109 rule 7). */
   | { t: "creatures"; map: string; rows: CreatureSave[] }
   /** A bomb a guest lit, to the players on its map: it blinks for its fuse (note 109). */

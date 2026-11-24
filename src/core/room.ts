@@ -39,6 +39,11 @@ export interface RoomWorld {
   takeNight?(): NightNews | undefined;
   /** Messages the world wants sent since the last tick (map state, creatures, a player's record). Optional. */
   takeNotices?(): Notice[];
+  /**
+   * Messages the world made while applying the last intent (the changes it caused, the sender's record), taken by
+   * the Room right after `apply` and sent before the `applied` or `rejected`. Optional.
+   */
+  takeEffects?(): Notice[];
   /** Top-left tile of a player's cabin, sent in `hello` so the guest can see where it stands. Optional. */
   homeOf?(id: PlayerId): { x: number; y: number } | undefined;
   /** Moves the world made since the last tick: the Room takes them as the players' last known positions. Optional. */
@@ -221,6 +226,7 @@ export class Room {
         break;
       case "intent": {
         const err = this.world.apply(id, msg.intent);
+        for (const n of this.world.takeEffects?.() ?? []) this.deliver(n);
         if (err !== undefined)
           m.out.push({ t: "rejected", seq: msg.seq, reason: err });
         else
@@ -270,10 +276,7 @@ export class Room {
       at.x = p.x;
       at.y = p.y;
     }
-    for (const n of this.world.takeNotices?.() ?? [])
-      for (const m of this.members.values())
-        if (m.connected && (n.to ? n.to.includes(m.id) : m.id !== LOCAL_PLAYER))
-          m.out.push(n.msg);
+    for (const n of this.world.takeNotices?.() ?? []) this.deliver(n);
     const day = this.world.day();
     if (day !== this.lastDay) {
       this.lastDay = day;
@@ -304,6 +307,13 @@ export class Room {
     const min = this.world.minutes?.();
     if (min !== undefined) snap.min = min;
     this.broadcast(snap);
+  }
+
+  /** Queue a world message for the guests it names, or every connected guest. */
+  private deliver(n: Notice): void {
+    for (const m of this.members.values())
+      if (m.connected && (n.to ? n.to.includes(m.id) : m.id !== LOCAL_PLAYER))
+        m.out.push(n.msg);
   }
 
   /** Messages queued for a player since the last drain, in order. */

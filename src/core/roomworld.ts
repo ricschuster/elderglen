@@ -39,6 +39,8 @@ import { LOCAL_PLAYER, type PlayerId } from "./players";
 import type { Intent } from "./protocol";
 import { applyFarmIntent, mapOfIntent, MAPPED_KINDS } from "./roomintents";
 import { RoomPlay } from "./roomplay";
+import { WorldFxTracker } from "./worldfx";
+import { savePlayer } from "./players";
 import { FESTIVAL_KINDS, RoomFestival } from "./roomfestival";
 import { reachProblem, TOO_FAR } from "./roommaps";
 import { applyScreenIntent, screenNeed, targetsScreen } from "./screenintents";
@@ -62,6 +64,9 @@ import type {
 import { serialize, START_MONEY, type GameState } from "./save";
 import { sleep, type SleepReport } from "./sleep";
 import { giveStartKit } from "./toolbar";
+
+/** How often the host checks its maps and the guests' records for changes nobody sent (the host's own play). */
+const FX_EVERY_MS = 200;
 
 export interface RoomWorldOptions {
   /** How cabins come: free at a multiplayer start, or bought by the host in a converted game. */
@@ -189,7 +194,47 @@ export class GameRoomWorld implements RoomWorld {
   }
 
   snapshot(): string {
+    // Every guest gets this text, so from here on the changes are measured against it.
+    this.fxTracker.rebase(this.g);
+    this.playerSigs.clear();
+    for (const id of this.g.players.ids)
+      this.playerSigs.set(
+        id,
+        JSON.stringify(savePlayer(this.g.players.get(id))),
+      );
     return serialize(this.g);
+  }
+
+  // ---- results for the guests' copies (note 53, "Guest copies follow the host's result")
+
+  private readonly fxTracker = new WorldFxTracker();
+  private readonly fxQueue: Notice[] = [];
+  private readonly playerSigs = new Map<PlayerId, string>();
+  private fxClock = 0;
+  private recordsDue = false;
+
+  /** Send each guest's own record when it differs from what they last had (kills, experience, purse, pack). */
+  private syncPlayers(): void {
+    for (const id of this.g.players.ids) {
+      if (id === LOCAL_PLAYER) continue;
+      const rec = savePlayer(this.g.players.get(id));
+      const sig = JSON.stringify(rec);
+      if (this.playerSigs.get(id) === sig) continue;
+      this.playerSigs.set(id, sig);
+      this.fxQueue.push({ to: [id], msg: { t: "player", id, rec } });
+    }
+  }
+
+  /** Send what changed in the worlds of these maps. Only when guests are in the game: nobody else would read it. */
+  private syncWorlds(names: string[]): void {
+    if (this.g.players.ids.length < 2) return;
+    for (const m of this.fxTracker.flush(this.g, names))
+      this.fxQueue.push({ msg: { t: "worldfx", map: m.map, fx: m.fx } });
+  }
+
+  /** The changes the last intent caused, to go out before its `applied` (the Room takes them). */
+  takeEffects(): Notice[] {
+    return this.fxQueue.splice(0);
   }
 
   presence(id: PlayerId): Presence | undefined {
@@ -268,6 +313,18 @@ export class GameRoomWorld implements RoomWorld {
   }
 
   apply(by: PlayerId, intent: Intent): string | undefined {
+    const err = this.applyIntent(by, intent);
+    // Whatever the intent changed goes out as the host has it, even for a refusal that changed something.
+    if (MAPPED_KINDS.has(intent.kind))
+      this.syncWorlds([typeof intent.map === "string" ? intent.map : "farm"]);
+    // A tool's result is not run again on the guests' copies, so the record goes out before the `applied`. The
+    // other intents are run again there, so their record follows on the next tick, after it.
+    if (MAPPED_KINDS.has(intent.kind)) this.syncPlayers();
+    else this.recordsDue = true;
+    return err;
+  }
+
+  private applyIntent(by: PlayerId, intent: Intent): string | undefined {
     const players = this.g.players;
     if (!players.has(by)) return "unknown player";
     switch (intent.kind) {
@@ -437,6 +494,7 @@ export class GameRoomWorld implements RoomWorld {
 
   takeNotices(): Notice[] {
     return [
+      ...this.fxQueue.splice(0),
       ...this.play.takeNotices(),
       ...this.festival.takeNotices(),
       ...this.wakeNotices.splice(0),
@@ -445,6 +503,22 @@ export class GameRoomWorld implements RoomWorld {
 
   step(dtMs: number): void {
     this.play.step(dtMs);
+    // The host's own work on its maps, and anything else that changed a guest's record, reaches the guests too.
+    this.fxClock += dtMs;
+    if (this.recordsDue) {
+      this.recordsDue = false;
+      this.syncPlayers();
+    }
+    if (this.fxClock >= FX_EVERY_MS) {
+      this.fxClock = 0;
+      const maps = new Set(["farm"]);
+      for (const id of this.g.players.ids) {
+        const at = this.o.where?.(id);
+        if (at) maps.add(at.map);
+      }
+      this.syncWorlds([...maps]);
+      this.syncPlayers();
+    }
     this.festival.step(dtMs);
     const limit = this.g.day.clock.minutes >= CLOCK_END;
     this.tracker.check(dtMs, limit);
