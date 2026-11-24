@@ -390,6 +390,71 @@ the Last Seat is too big, only that the herd money is the wall):**
    Recommended with option 1: the next run should measure the Last Seat, which
    this one could not.
 
+### Rerun with sprinklers (2026-11-24, #181, option 3)
+
+The bot now builds and uses sprinklers with the real rules (`scripts/sim/bot.ts`,
+`tendSprinklers`, `placeSprinklers`). The recipe is Farming level 2 and one copper
+bar plus one iron bar; the quality one is level 6 and needs a gold bar and a
+quartz crystal. The bot queues a sprinkler when crops stand out of reach (one per
+four crops), buys the ore and coal for its bars first (the furnace takes one bar
+at a time, so this is slow), crafts it, stands it where it waters the most dry
+soil, and plants on watered tiles first. It swaps a basic for a quality one when
+it holds one, but quartz only comes from mine rocks and the bot does not hunt it,
+so it built no quality sprinklers in practice. The casual persona has no furnace
+and so builds none. Same settings as the last run: `npm run sim -- <persona> 40 168`.
+
+**Result: still no run of any persona finishes the hall, so the Last Seat never
+opens, and the sprinklers did not move the pacing.**
+
+| | Expert | Intermediate | Casual |
+| --- | --- | --- | --- |
+| Sprinklers at day 168 (median) | 14, first on day 39 | 6, first on day 49 | 0 |
+| Withered crops a run (median), before and after | 584 to 505 | not recorded to 216 | not recorded to 102 |
+| Money at season ends 1 to 6 (median) | 2,690; 5,267; 9,142; 4,513; 9,431; 23,125 | 3,134; 4,158; 4,881; 3,637; 5,572; 7,609 | 2,906; 7,030; 6,239; 6,252; 7,750; 9,498 |
+| Runs finishing Smith's / Cook's / Host's (of 40) | 3 / 3 / 5 | 0 / 0 / 0 | 0 / 0 / 0 |
+| Hall finished, Last Seat open, Last Seat finished | 0, 0, 0 | 0, 0, 0 | 0, 0, 0 |
+
+- **Money did not rise.** The expert's season 4 end was 4,513 against 4,430 before:
+  14 sprinklers cost about 6,000g in ore and coal and many furnace hours, and that
+  paid back about what it cost. Only season 6 shows a jump (23,125), too late for
+  the herd ladder (about 60,000g) to finish. No persona got past the big coop.
+- **The "crops lost to missed watering" figure was a misreading.** The report
+  counts crops that wither when a season ends (`report.withered`), not crops dried
+  out by a skipped watering. Sprinklers cut it only from 584 to 505 for the expert,
+  so most are crops still short of ripe at the season turn (planted too late, or
+  grown slowly by a dry day), not a watering failure. Not yet traced.
+- **The sprinklers cost the Smith's bundle.** One furnace smelts one bar at a time.
+  Sprinkler bars (2 each, about 28 for 14 sprinklers) now compete with the Smith's
+  bars (5 copper, 5 iron, 3 gold) and the silo's copper. Even with the bot giving
+  the hall every other day, the expert finished Smith's in 3 of 40 runs (8 before)
+  and the intermediate in 0 (19 before). This is a bot tradeoff, but it shows the
+  furnace, not only money, is a pole: bars for the hall, the silo and sprinklers
+  all share one furnace and one 120 minute iron bar.
+- **The new long pole is the same one, plus the furnace.** Herd money (about
+  60,000g) is still the wall for wool, Weaver's, Animal Goods and the cloth of the
+  Last Seat. Bars (one furnace) hold Smith's, Hearth Fire and Long Road. The bot
+  still never reaches the Last Seat, so its stock and The Catch stay unmeasured.
+- An unhelpful side effect of the bot's rules: the bot holds 600g back from seeds
+  and the herd while a sprinkler's ore is unbought, and hands no queued bars to the
+  hall. A human would also spend this way, so it is kept.
+
+**Number changes to choose from (none applied):**
+
+1. **Cheaper wool path (still recommended first).** Wool from the big barn's sheep
+   (tier 2) or fewer wool in the Weaver's, Hearth Fire and Long Road. The sim now
+   says sprinklers do not pay for the herd, so the herd money is the design
+   question, not the bot. Removes the 30,000g deluxe step.
+2. **Let a second furnace or a faster smelt in.** Iron bars take 120 minutes and
+   gold 300 with one furnace. A second furnace, or halving smelt time, would free
+   the Smith's bars and the sprinkler bars together. This touches the tuning
+   numbers in note 07; needs the owner's call.
+3. **Lower the Last Seat bulk** (Long Road 60 wood, 60 stone, 12 bars, Hearth Fire
+   6 bars). Still a hedge: the room has never opened.
+4. **Do not tune the bot further for pacing.** Two reruns now say the bot floor is
+   near its limit, and the bot is not a good player at planning a day. Hand play
+   decides. The remaining bot work, if wanted, is to trace the 505 withered crops
+   (a season end planting cutoff), and to mine for quartz.
+
 ## Room rewards that did nothing (owner, 2026-11-12, #871)
 
 - **Guests' Board:** +500 friendship with everyone met (Stardew, recalled, the saved

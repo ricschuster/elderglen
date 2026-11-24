@@ -744,7 +744,11 @@ class Bot {
         ),
       }))
       .filter((o) => o.n > 0);
-    const owed = forSprinklers.length > 0 ? forSprinklers : this.barsOwed();
+    // Every other day, so the Smith's bars are not starved by a sprinkler a day for weeks.
+    const owed =
+      forSprinklers.length > 0 && this.day % 2 === 0
+        ? forSprinklers
+        : this.barsOwed();
     if (g.furnace.job || owed.length > 0) {
       if (!this.walker.goToService("farm", "furnace")) return;
       collect(g);
