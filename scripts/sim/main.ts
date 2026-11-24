@@ -105,6 +105,43 @@ export async function main(args: string[]): Promise<void> {
       runs,
     )}`,
   );
+  // When the room opens (the last of the other bundles done) and when it is finished.
+  const lastRoom = BUNDLES.filter((b) => b.room === LAST_ROOM);
+  const lastOf = (r: RunResult, ids: { id: string }[]) =>
+    ids.every((b) => b.id in r.bundleDays)
+      ? [Math.max(...ids.map((b) => r.bundleDays[b.id] as number))]
+      : [];
+  console.log(
+    `  Last Seat opens (all ${others.length} others done): ${spread(
+      results.flatMap((r) => lastOf(r, others)),
+      runs,
+    )}`,
+  );
+  console.log(
+    `  Last Seat finished (room done): ${spread(
+      results.flatMap((r) => lastOf(r, lastRoom)),
+      runs,
+    )}`,
+  );
+  // The long pole: the bundle that finished last in the runs that finished, and the bundles runs were still short of.
+  const lastIn = new Map<string, number>();
+  const short = new Map<string, number>();
+  for (const r of results) {
+    if (r.allDay)
+      for (const b of BUNDLES)
+        if (r.bundleDays[b.id] === r.allDay)
+          lastIn.set(b.id, (lastIn.get(b.id) ?? 0) + 1);
+    for (const b of BUNDLES)
+      if (!(b.id in r.bundleDays)) short.set(b.id, (short.get(b.id) ?? 0) + 1);
+  }
+  const top = (m: Map<string, number>) =>
+    [...m]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6)
+      .map(([id, n]) => `${id} ${n}`)
+      .join(", ") || "none";
+  console.log(`  last bundle done, by runs: ${top(lastIn)}`);
+  console.log(`  bundles runs were still short of at the end: ${top(short)}`);
   const ends = results.flatMap((r) => r.dayEnds);
   console.log(
     `  day ends before bed: median ${clockText(Math.round(median(ends)))}, latest ${clockText(Math.max(...ends))}`,
