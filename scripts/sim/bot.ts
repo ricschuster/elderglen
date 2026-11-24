@@ -138,8 +138,8 @@ import { ARTIFACTS, digSpot } from "../../src/core/artifacts";
 import { FORAGE } from "../../src/core/forage";
 import {
   HOUSE_UPGRADES,
-  orderProblem,
-  orderUpgrade,
+  houseOrderProblem,
+  houseOrderUpgrade,
 } from "../../src/core/house";
 import { buyFurniture, dailyStock } from "../../src/core/furniture";
 import { openLetter } from "../../src/core/mail";
@@ -1315,9 +1315,9 @@ class Bot {
         done = orderBuildingUpgrade(g, step.building);
       }
     } else if (step.kind === "kitchen") {
-      if (orderProblem(g) === undefined) {
+      if (houseOrderProblem(g) === undefined) {
         if (!this.walker.goToService("sawmill", "carpenter")) return;
-        done = orderUpgrade(g);
+        done = houseOrderUpgrade(g);
       }
     } else if (animalProblem(g, step.species) === undefined) {
       const home = SPECIES[step.species].building;
