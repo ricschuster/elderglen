@@ -242,6 +242,13 @@ not built in M4. The pros and cons, so the idea is not lost:
 
 ## Open
 
+- **The guest's cabin: settled 2026-11-24 in note 110** (wake where slept, three outside styles, own mailbox,
+  the cabin book in the save, one `house` instance per owner).
+- **Guests off the farm: settled 2026-11-24 in note 109** (one shared world, shared mine floors and progress,
+  per-player mine chests, anyone picks up drops, per-player fainting, nearest-player creatures, lever next day).
+- **Guests using screens: settled 2026-11-24 in note 108** (every screen, chest lock, bundle items to the finisher,
+  shared machines and stock, carpenter owner and move setting, screen actions through one dispatcher, build order).
+
 - **Eight players on a tablet host.** beaver_cycle measured a host and two
   guests, not eight. Decided 2026-11-02: 8 stays the target and the real-tablet
   load check sets the tablet cap (it may be lower, such as 4).
@@ -406,8 +413,8 @@ level only. Nothing is built, and the build waits for M4.
 - **Special orders and the request board (notes 65 and 50): one shared board, and every player gets the reward
   (owner, 2026-11-18, extends the request board decision above, SC-206).** A hand-in order takes goods from the
   player handing in and still pays every player. This is not checked against Stardew.
-- **Festivals (notes 82 and 14):** counts and joining for the Feast, the gift exchange (note 105) and the in-place
-  festivals are still open for the spike, not settled here.
+- **Festivals (notes 82 and 14): settled 2026-11-24 in note 111** (all in first, leave together, contest counts,
+  shared showing display, per-player rewards).
 
 ## Cabin rules (step 6, 2026-11-18, `src/core/cabins.ts`)
 
@@ -490,4 +497,4 @@ From the saved Multiplayer page. Not copied, only compared.
 - Left: the guest's bed is any bed service on the scene's map (no cabin interior map yet, so "own cabin bed" is not enforced); a guest cannot tell they were put to bed by the limit except through the report; the bed, wake and notice flow is untested in a browser.
 - Left (2026-11-20, ground drops): axe and pickaxe intents now leave drops as ground piles on the host's ground (note 43), and only the host's own player walks over them to pick them up, so a guest's drops need a guest pickup path (a `pickup` intent or collecting by sender position) and the piles are not in the `farm` sync message yet.
 
-**Added 2026-11-20 (owner, checked in Stardew):** the Social tab lists the other players above the spouse, then the roster, then the children. **Built (2026-11-21, #976):** `playerRows` (`src/core/menupages.ts`) and the Social scene draw one name row per other player (no hearts or boxes) above the spouse and roster; scene untested in a browser. Row content beyond the name is not designed.
+**Added 2026-11-20 (owner, checked in Stardew):** the Social tab lists the other players above the spouse, then the roster, then the children. **Built (2026-11-21, #976):** `playerRows` (`src/core/menupages.ts`) and the Social scene draw one name row per other player (no hearts or boxes) above the spouse and roster; scene untested in a browser. Row content beyond the name: **owner, 2026-11-24:** copy Stardew's row once checked (SC-225, open); until then the name only. The row is view only, with no actions (owner).

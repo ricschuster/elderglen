@@ -503,5 +503,17 @@
   "promise-token": {
     "text": "A small promise token, sold by the rain peddler on rainy days for 5,000 coins. Give it to the person you are courting (10 hearts) to ask them to marry you. Placeholder text.",
     "draft": true
+  },
+  "gilded-jelly": {
+    "text": "A gleaming gold jelly, left behind by a Golden Gloop, a rare gilded cousin of the slimes of the mines. Sells for 300 coins, far more than plain gloop jelly. Golden Gloops are shy and run when you come near, so strike fast.",
+    "draft": true
+  },
+  "gold-ore": {
+    "text": "Dug from rock in the deeper mines. Golden Gloops drop a little too.",
+    "draft": true
+  },
+  "hearthsilver-ore": {
+    "text": "A pale ore that glows faintly warm. Ember Lanterns, rare fiery cousins of the Lanternmoth, carry a lump each.",
+    "draft": true
   }
 }

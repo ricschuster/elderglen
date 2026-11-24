@@ -183,7 +183,7 @@ time, and the lift can bring them up afterwards.
   while it is on take creatures x1.5 (rounded, base and infested extras together, so the per floor cap
   scales), health x3, one more ore a node, drop chance x1.5 (capped at 1) and a red tint over the ground
   (placeholder); creature hits x2.5 (rounded, then Assist halves). A floor dug earlier today keeps the mode
-  it was made in (`Floor.dangerous`, saved), so flipping the lever never resets a dug floor. Special and
+  it was made in (`Floor.dangerous`, saved), so flipping the lever never resets a dug floor. **Changed 2026-11-24 (owner, note 109 rule 9):** a flip takes effect the next day on every floor; today's floors, dug or not yet made, keep today's mode. Special and
   infested floors work as before, and "no creatures" still means none. Tests: `tests/rare-danger.test.ts`.
 - The Assist settings still apply, so the dangerous mine is reachable for
   everyone who wants it.

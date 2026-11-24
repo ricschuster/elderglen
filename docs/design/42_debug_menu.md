@@ -154,7 +154,7 @@ through `Inventory`). There is no "run actions" extra: a state that needs action
 | --- | --- |
 | Start | `new-game`; `day-28-first-bundle` (spring 28, Spring Foraging filled); `season-summer`, `season-fall`, `season-winter` (day 1 of each); `year-2-spring` |
 | Hall | `hall-1` to `hall-6`: rooms done in order (shelf, larder, water room, hearth, guests' board, Last Seat). `hall-5` is "Last Seat open"; `hall-6` is the hall complete. Filled by hand-in with no rewards paid; room rewards from other sources are not given |
-| Mines | `mines-30`, `mines-60`, `mines-100`: that floor reached, summer 10, mining and combat levels 4, 7 and 9, money 3,000, 10,000 and 30,000 |
+| Mines | `mines-30`, `mines-60`, `mines-100`, `mines-120` (the lever floor): that floor reached, summer 10, mining and combat levels 4, 7, 9 and 10, money 3,000, 10,000, 30,000 and 30,000 |
 | Marriage | `courting` (bouquet, 8 hearts), `engaged` (wedding in 3 days), `married` (60,000g for a divorce), `married-child`, `married-two-children`. The spouse is Linnet in all; the nursery tier is raised for children |
 | Festivals | `<festival>-eve`, the day before, sunny, 2,000g: `hat-parade`, `seedswap-fair`, `cake-day`, `lamplight-evening`, `harvest-showing`, `frostday`, `midwinter-feast`; `hollow-eve-eve-odd` (year 1, small maze) and `hollow-eve-eve-even` (year 2, large maze); `night-market-eve` and `night-market-evening-1`, `-2`, `-3` (5 pm on each of the three evenings). That is all nine festivals |
 | Fishing | `fishing-reed-pole` (level 1), `fishing-hazel-rod` (3), `fishing-heron-rod` (6), `fishing-hearthwell-rod` (9): the rod in the pack, on a sunny day of a season that suits it |

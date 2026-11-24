@@ -34,11 +34,13 @@ M4 built headless 2026-11-18h (note 53). Two-tablet plus desktop check ran 2026-
 
 Audio built 2026-11-21 (note 107, ADR 0017; handoff 2026-11-21g): effects, ambience, 18 music slots (6 synth placeholders), Options sliders. **Left: the owner listens** (`/audio.html` or the tablet), swaps tracks, tunes sounds.
 
-Built 2026-11-23 (handoff 2026-11-23, one PR): energy rules (note 07), level 10 professions for foraging, mining and combat, the Hearthsilver grade (crops, forage, fish, animal goods, casks), per-person beds with Maren's room and Marl's tent (#992), #1002 proof moves, the slayer wall list and reward shop at Maren's, rare gilded creatures and dangerous mode. All left for the owner's play; the dangerous lever timing needs a ruling (handoff).
+Built 2026-11-23 (handoff 2026-11-23, one PR): energy rules (note 07), level 10 professions for foraging, mining and combat, the Hearthsilver grade (crops, forage, fish, animal goods, casks), per-person beds with Maren's room and Marl's tent (#992), #1002 proof moves, the slayer wall list and reward shop at Maren's, rare gilded creatures and dangerous mode. All left for the owner's play; the lever timing was ruled 2026-11-24 (next day, note 109).
 
 Built 2026-11-21 (handoff 2026-11-21j): #991 wedding movement (player wedding only), #992 bed marks (nothing draws them yet), #977 injectable RNG in core. Left for the owner's look and play.
 
 Alongside: the wiki (#910, note 100; built for every category, every item has a picture; text cleared for crops, fish, forage, items, places and rooms; draft text left for bundles, recipes, people and five gem names; left: owner reads the draft text and clears flags, gift lists (`giftsDraft`), people prose with the voice sheets, hosting after M3d), Stardew checks rows (open: SC-188 only; the rest answered or closed as ours, on purpose, 2026-11-17). M4 hosting spike filed as #948.
+
+Designed 2026-11-24 (handoff 2026-11-24, which holds the paused build list): notes 108 guest screens (#1014), 109 guests off the farm (#1015, the lever now takes effect the next day), 110 guest cabin (#1016), 111 festivals with several players (#1017), 112 year two (#1018), 113 ring 1 story pieces. Open for the owner: SC-222, SC-225. #181 waits on a fresh sim run.
 
 ## Milestone order (ADR 0012)
 

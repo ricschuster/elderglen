@@ -24,9 +24,14 @@ function table() {
     .sort((a, b) => a.id.localeCompare(b.id));
 }
 
+function qualityTable() {
+  const { silver, gold, hearthsilver } = QUALITY_MULTIPLIER;
+  return { silver, gold, hearthsilver };
+}
+
 describe("item table snapshot", () => {
   const fresh = `${JSON.stringify(table(), null, 2)}\n`;
-  const q = `${JSON.stringify({ silver: QUALITY_MULTIPLIER.silver, gold: QUALITY_MULTIPLIER.gold }, null, 2)}\n`;
+  const q = `${JSON.stringify(qualityTable(), null, 2)}\n`;
   if (process.env.UPDATE_ITEM_TABLE === "1") {
     writeFileSync(FILE, fresh);
     writeFileSync(QFILE, q);
@@ -36,11 +41,7 @@ describe("item table snapshot", () => {
   });
   it("matches the quality multipliers", () => {
     const q = JSON.parse(readFileSync(QFILE, "utf8"));
-    expect(q).toEqual({
-      silver: QUALITY_MULTIPLIER.silver,
-      gold: QUALITY_MULTIPLIER.gold,
-      hearthsilver: QUALITY_MULTIPLIER.hearthsilver,
-    });
+    expect(q).toEqual(qualityTable());
   });
   it("has no duplicate ids", () => {
     const ids = table().map((i) => i.id);

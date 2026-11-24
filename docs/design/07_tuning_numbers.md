@@ -813,7 +813,8 @@ Checked, so "from memory" can become "checked":
 
 Differences, none of them a bug:
 
-- Stardew holds garlic, red cabbage and artichoke back to year two. Ours are
+- Stardew holds garlic, red cabbage and artichoke back to year two. **Changed 2026-11-24 (owner, note 112):
+  ours are held back too.** Before that, ours were
   open in year one. Already decided for red cabbage and artichoke above, and
   garlic follows the same rule. Garlic is the cheapest of the three and
   changes little.
