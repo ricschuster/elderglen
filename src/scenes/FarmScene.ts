@@ -95,7 +95,8 @@ import {
   YARD_EMPTY_LINE,
 } from "../core/quarry";
 import { FERRY_LINE, takeTreasure } from "../core/cove";
-import { cropOfSeed, itemById } from "../core/items";
+import { cropOfSeed, itemById, itemLabel } from "../core/items";
+import { distanceShare, rodById, waterAhead } from "../core/fishing";
 import { MIXED_SEED } from "../core/weeds";
 import { reasonText } from "../core/tools";
 
@@ -159,6 +160,7 @@ import {
   facingTile,
   move,
   tileOf,
+  FACING_STEP,
   type Facing,
   type Vec,
 } from "../core/movement";
@@ -325,6 +327,8 @@ import {
   showHealth,
   syncCombatSettings,
   updateCombat,
+  guestCombatView,
+  guestSwing,
   addCreatureSprite,
   floatText,
   swing,
@@ -419,7 +423,7 @@ export class FarmScene extends Phaser.Scene {
   private readonly blocking = new PlayerBlocking();
   private passList: string[] = [];
   /** The multiplayer session, if any, and the other players it shows (note 53). */
-  private net: NetSession | undefined;
+  net: NetSession | undefined;
   /** Until this time (ms) no marriage card opens. */
   private cardQuiet = 0;
   private remote: RemotePlayerLayer | undefined;
@@ -695,6 +699,12 @@ export class FarmScene extends Phaser.Scene {
       this.net.onRejected = (reason) => {
         this.message = `The host said no: ${reason}.`;
         this.render();
+      };
+      // Fainted in a fight: the host charged the cost, and they wake at home (note 109 rule 6).
+      this.net.onFaint = (f) => {
+        audio.sfx("player.die");
+        this.message = `You fainted and were carried home.${f.gold > 0 ? ` It cost ${f.gold}g.` : ""}`;
+        this.travel("farm", "from_house");
       };
     } else if (this.net instanceof HostSession) {
       // The typed-address fallback (a router that blocks broadcasts) needs the real port.
@@ -1131,7 +1141,7 @@ export class FarmScene extends Phaser.Scene {
       this.dragSoilWork();
       this.pickUp();
       updateCombat(this, dt);
-    }
+    } else guestCombatView(this);
 
     const mark = this.tapMark;
     if (mark && this.time.now > mark.until) this.tapMark = undefined;
@@ -2204,26 +2214,78 @@ export class FarmScene extends Phaser.Scene {
     if (!(net instanceof GuestSession)) return;
     const held = heldAt(this.state, this.selected);
     const front = this.aimTile();
-    if (!isFarmMap(this.mapId)) return;
+    // Every map the host runs for a guest (note 109): the farm, an area map or a mine floor.
+    const map = this.mapId;
+    if (!(isFarmMap(map) || isAreaMap(map) || this.floor !== undefined)) return;
+    const at = { map, x: front.x, y: front.y };
+    const weapon =
+      held.kind === "item" && isWeapon(held.id)
+        ? weaponById(held.id)
+        : undefined;
+    if (weapon) return guestSwing(this, net, weapon);
+    if (held.kind === "item" && rodById(held.id))
+      return this.guestCast(held.id);
     if (held.kind === "tool" && held.tool === "hoe")
-      net.sendIntent({ kind: "till", x: front.x, y: front.y });
+      net.sendIntent({ kind: "till", ...at });
     else if (held.kind === "tool" && held.tool === "can")
-      net.sendIntent({ kind: "water", x: front.x, y: front.y });
-    else if (isLiftTool(held))
-      net.sendIntent({ kind: held.tool, x: front.x, y: front.y });
-    else if (held.kind === "item" && this.state.machines.at(front.x, front.y))
-      net.sendIntent({
-        kind: "machine-load",
-        x: front.x,
-        y: front.y,
-        item: held.id,
-      });
+      net.sendIntent({ kind: "water", ...at });
+    else if (isLiftTool(held)) net.sendIntent({ kind: held.tool, ...at });
+    else if (
+      isFarmMap(map) &&
+      held.kind === "item" &&
+      this.state.machines.at(front.x, front.y)
+    )
+      net.sendIntent({ kind: "machine-load", ...at, item: held.id });
     else if (held.kind === "item" && cropOfSeed(held.id))
-      net.sendIntent({ kind: "plant", x: front.x, y: front.y, seed: held.id });
+      net.sendIntent({ kind: "plant", ...at, seed: held.id });
     else {
       this.message = "Only the host can do that for now.";
       this.render();
     }
+  }
+
+  /**
+   * A guest casts: the host rolls the bite and answers with `bite`; with no bar here yet the catch is landed as a
+   * plain one after a beat (note 109, "Fishing": the catch screen on the guest's device is still to come).
+   */
+  private guestCast(rodId: string): void {
+    const net = this.net;
+    if (!(net instanceof GuestSession)) return;
+    const rod = rodById(rodId)!;
+    const here = tileOf(this.pos, PLAYER, this.map.tileSize);
+    const step = FACING_STEP[this.facing];
+    const water = waterAhead(
+      this.map,
+      here.x,
+      here.y,
+      step.x,
+      step.y,
+      rod.range,
+    );
+    const first = water[0];
+    if (first === undefined) {
+      this.message = "Face the water to fish.";
+      return this.render();
+    }
+    net.onBite = (b) => {
+      this.message =
+        b.kind === "none"
+          ? "Nothing is biting."
+          : `Something bites: ${b.item ? itemLabel(b.item) : "a Pearl Lobster"}.`;
+      this.render();
+      if (b.kind !== "none")
+        this.time.delayedCall(1200, () =>
+          net.sendIntent({ kind: "catch", perfect: false }),
+        );
+    };
+    net.sendIntent({
+      kind: "cast",
+      map: this.mapId,
+      x: here.x + step.x * first,
+      y: here.y + step.y * first,
+      rod: rodId,
+      distance: distanceShare(first, rod.range),
+    });
   }
 
   /** Use the held tool on the tile the player faces. Services are Action's. */
@@ -2361,6 +2423,20 @@ export class FarmScene extends Phaser.Scene {
           this.message = statusText(this.state, at.x, at.y);
           this.render();
         }
+        return;
+      }
+      // Wild goods on any map are picked by the host for them (note 109), whoever gets there first.
+      if (
+        !kind &&
+        this.net instanceof GuestSession &&
+        this.state.forage.itemAt(at.x, at.y)
+      ) {
+        this.net.sendIntent({
+          kind: "forage",
+          map: this.mapId,
+          x: at.x,
+          y: at.y,
+        });
         return;
       }
       // A ripe crop on farm soil is picked by the host for them (an intent).

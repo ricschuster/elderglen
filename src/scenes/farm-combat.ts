@@ -51,6 +51,10 @@ import {
 } from "../core/bombs";
 import { dangerHit } from "../core/danger";
 import { mineFloorOf } from "../core/mines";
+import { LOCAL_PLAYER } from "../core/players";
+import { nearestPlayer } from "../core/roomplay";
+import { viewOf } from "../core/roommaps";
+import { HostSession } from "../net/session";
 import {
   defeatCreature,
   defeatMessage,
@@ -323,9 +327,17 @@ export function updateCombat(farm: FarmScene, dt: number): void {
     }
   } else farm.burnDebt = 0;
   const ts = farm.map.tileSize;
-  for (const c of floor.creatures) {
+  syncCreatureSprites(farm, floor.creatures);
+  // Guests on this map are chased too: each creature goes for its nearest player (note 109 rule 7).
+  const net = farm.net instanceof HostSession ? farm.net : undefined;
+  const guests = (net?.remotes() ?? []).filter((r) => r.map === farm.mapId);
+  const view = net ? viewOf(farm.state, farm.mapId) : undefined;
+  for (const c of [...floor.creatures]) {
+    const mine = { id: LOCAL_PLAYER, x: farm.pos.x, y: farm.pos.y };
+    const chased =
+      nearestPlayer(c, [mine, ...guests.map((r) => ({ ...r }))]) ?? mine;
     const result = stepCreature(c, dt, {
-      player: farm.pos,
+      player: chased,
       walk: (cr, dx, dy) =>
         move(
           { x: cr.x, y: cr.y },
@@ -339,7 +351,14 @@ export function updateCombat(farm: FarmScene, dt: number): void {
       tileSize: ts,
       calm: oilCalms(farm.state, c.kind),
     });
-    if (result.hit) {
+    if (result.hit && chased.id !== LOCAL_PLAYER && net && view) {
+      // A guest took the hit: their own record pays for it, on the host (note 109 rule 6).
+      net.world.play.hurtPlayer(chased.id, c, result.hit, {
+        dangerous: !!farm.floorState?.dangerous,
+        view,
+        list: floor,
+      });
+    } else if (result.hit) {
       // Dangerous mode: hits take two and a half times the health, before Assist (note 22).
       const lost = combat.health.hurt(
         dangerHit(result.hit, !!farm.floorState?.dangerous),
@@ -374,6 +393,67 @@ export function updateCombat(farm: FarmScene, dt: number): void {
     drawCreature(farm, c);
   }
   if (combat.health.down && !combat.defeatPending) knockedOut(farm);
+}
+
+/**
+ * Make the sprites match the creatures on the floor: a guest's kill or a split removes or adds one the host's own
+ * loop did not (note 109).
+ */
+export function syncCreatureSprites(farm: FarmScene, list: Creature[]): void {
+  for (const [uid, sprite] of farm.creatureSprites)
+    if (!list.some((c) => c.uid === uid)) {
+      sprite.destroy();
+      farm.creatureSprites.delete(uid);
+    }
+  for (const c of list)
+    if (!farm.creatureSprites.has(c.uid)) {
+      const sprite = addCreatureSprite(farm, c);
+      farm.uiCamera.ignore(sprite);
+    }
+}
+
+/**
+ * A guest's creatures are the host's (the `creatures` messages put them in the copy): draw them, step nothing
+ * and take no hits here.
+ */
+export function guestCombatView(farm: FarmScene): void {
+  const floor = fightState(farm);
+  if (!floor) return;
+  syncCreatureSprites(farm, floor.creatures);
+  for (const c of floor.creatures) drawCreature(farm, c);
+}
+
+/** A guest's swing: the cooldown and the arc are drawn here, the hit is the host's (note 109). */
+export function guestSwing(
+  farm: FarmScene,
+  net: { sendIntent(i: { kind: string; [k: string]: unknown }): number },
+  weapon: WeaponDef,
+): void {
+  if (farm.time.now < farm.swingReady) return;
+  farm.lastWeapon = weapon.id;
+  audio.sfx("combat.swing");
+  farm.swingReady =
+    farm.time.now +
+    cooldownFor(farm.state.skills, weapon.cooldown) *
+      farm.state.combat.effects.swingFactor() *
+      1000;
+  const ts = farm.map.tileSize;
+  const arc = swingArc(weapon.family, farm.facing);
+  if (arc)
+    playSwingArc(
+      farm,
+      arc,
+      { x: farm.pos.x, y: farm.pos.y - 6 },
+      weapon.reach * ts * 0.8,
+    );
+  net.sendIntent({
+    kind: "swing",
+    map: farm.mapId,
+    weapon: weapon.id,
+    facing: farm.facing,
+    x: farm.pos.x,
+    y: farm.pos.y,
+  });
 }
 
 /** One painted sprite for a creature, kept in `creatureSprites`. */
