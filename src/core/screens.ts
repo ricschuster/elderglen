@@ -1,6 +1,7 @@
 // The host's book of open screens (note 108, group 1): which screen each player has open, the
 // one-at-a-time locks, and the "where the player stands" check. Held on the host, never saved.
 // Free of Phaser and the DOM.
+import { counterShutLine } from "./shophours";
 import { maps } from "../content/maps";
 import { resolveMapId, farmMapOf, isFarmMap } from "./farmtypes";
 import { furnitureById } from "./furniture";
@@ -188,6 +189,9 @@ export function refProblem(g: GameState, ref: ScreenRef): string | undefined {
       if (ref.kind === "shop" && ref.stock !== undefined) {
         if (!isShopStock(ref.stock)) return "no service there";
       }
+      // The host keeps the shop's hours too, by the rule its own scene uses (note 79).
+      if (ref.kind === "shop")
+        return counterShutLine(g, ref.map, kind) || undefined;
       return undefined;
     }
     default:

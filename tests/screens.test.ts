@@ -61,6 +61,8 @@ function find(map: string, kind: string) {
 
 function mk(wallet: "shared" | "separate" = "separate") {
   const g = newGame("standard", wallet);
+  // Midday, so the shops keep their doors open.
+  g.day.clock.minutes = 12 * 60;
   // eslint-disable-next-line prefer-const
   let room!: Room;
   const world = new GameRoomWorld(g, {
@@ -184,6 +186,21 @@ describe("shops", () => {
       t.send(t.ann, { kind: "sell", id: "parsnip", n: 2 }),
     ).toBeUndefined();
     expect(t.g.players.get(t.ann).money).toBeGreaterThan(gold);
+  });
+
+  it("keeps the shop's hours on the host: no open before opening, no buy after closing", () => {
+    const t = mk();
+    const r = shopRef();
+    t.g.players.get(t.ann).money = 500;
+    t.stand(t.ann, "general-store", r.x, r.y + 1);
+    t.g.day.clock.minutes = 6 * 60;
+    expect(t.send(t.ann, { kind: "open", screen: r })).toMatch(/opens at/);
+    t.g.day.clock.minutes = 12 * 60;
+    expect(t.send(t.ann, { kind: "open", screen: r })).toBeUndefined();
+    t.g.day.clock.minutes = 23 * 60;
+    expect(t.send(t.ann, { kind: "buy", id: "parsnip-seed", n: 1 })).toMatch(
+      /shut/,
+    );
   });
 
   it("refuses an action from a player who walked away", () => {

@@ -28,7 +28,13 @@ import type { Intent } from "./protocol";
 import { applyFarmIntent } from "./roomintents";
 import { applyScreenIntent, screenNeed, targetsScreen } from "./screenintents";
 import { farmTypeById } from "./farmtypes";
-import { inReach, parseRef, Screens, type Standing } from "./screens";
+import {
+  inReach,
+  parseRef,
+  refProblem,
+  Screens,
+  type Standing,
+} from "./screens";
 import { offerIds, isShopStock } from "./shopoffers";
 import type { BedStatus, NightNews, RoomWorld } from "./room";
 import { serialize, START_MONEY, type GameState } from "./save";
@@ -259,6 +265,14 @@ export class GameRoomWorld implements RoomWorld {
     const at = this.o.where?.(by);
     if (!at || !inReach(this.g, at, open)) return "too far away";
     if (!targetsScreen(intent, open)) return "not the screen you opened";
+    // A shop that shuts while its screen is open stops buying and selling (note 79).
+    if (
+      open.kind === "shop" &&
+      (intent.kind === "buy" || intent.kind === "sell")
+    ) {
+      const shut = refProblem(this.g, open);
+      if (shut !== undefined) return shut;
+    }
     if (intent.kind === "buy") {
       const stock = intent.stock;
       const id = intent.id;

@@ -62,6 +62,7 @@ async function stand(c: GuestClient, map: string, tx: number, ty: number) {
 describe("guest screens, group 1, over real sockets", () => {
   it("a guest buys, ships and uses a chest; a second guest is locked out", async () => {
     const g = newGame("standard", "separate");
+    g.day.clock.minutes = 12 * 60; // the shop keeps its hours
     const hosted: { host?: NodeHost } = {};
     const world = new GameRoomWorld(g, {
       random: () => 0.5,
