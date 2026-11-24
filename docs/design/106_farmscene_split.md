@@ -1,6 +1,6 @@
 # 106: FarmScene split and scene rules into core (issue #904)
 
-Status: steps 2 to 7 built 2026-11-19 (see "Built status" at the end); steps 1 and 8 remain. Issue #904 came from
+Status: steps 2 to 7 built 2026-11-19 (see "Built status" at the end); step 8 and the rest of #904 decided 2026-11-24 (last section). Issue #904 came from
 a code audit on 2026-11-12; this note re-measures it and settles the order.
 
 ## Current state (measured 2026-11-18)
@@ -131,3 +131,28 @@ Not built: the rest of step 8 (`resolveUse` and `resolveAction` are the long
 `use()` and `action()` chains in the scene, entangled with `open`, `report` and
 `render`; they wait for M4 step 1 and `(world, player)`), and the `art.ts` and
 `animals.ts` splits (not covered by this note).
+
+## Decided 2026-11-24 (owner): step 8 and the rest of #904
+
+M4 step 1 (#964) is closed, so step 8 is unblocked.
+
+1. **Step 8 goes right after the guest screens trade group** (#1014 group 1), before #1014 groups 2 to 5
+   and #1015. `resolveUse(world, player, held, aim)` and `resolveAction(world, player, aim)` in
+   `src/core/interact.ts` return an intent; the scene applies it (sounds, tweens, toasts). The guest path
+   (`guestUse()` in the scene, `applyFarmIntent` in `src/core/roomintents.ts`) goes through the same
+   resolvers on the host, so host and guest rules are one copy. Later guest groups add their actions here
+   rather than a second chain. Tests first against the extracted functions; `play.mjs casual` and the guest
+   playtests run before and after to compare.
+2. **Save and crash safety** (one build item): farm plots checked on load like greenhouse plots, `cave.load`
+   checks its arrays, no crash when an old save names a renamed map (`mapFiles[id]!`, `entry()!`) or on a
+   missing floor in `beaten()`, one test that validates every content JSON file against its type, one test
+   that every map service kind opens a registered scene. Re-measure each against the code first; drop what
+   is already fixed. The save version chain stays with note 52.
+3. **Duplicated helpers and names** (one build item): one tile key helper, one set of `isObject` and `isNum`
+   guards, one `cleanName`, one building and silo rect helper (the pond check gains the silo), the
+   axe-or-pickaxe test and `itemLabel()` if still repeated, and the colliding export names renamed. No
+   behaviour change except the pond and silo fix.
+4. **Not now:** content tables to JSON (M3d), bundle splitting and linting `scripts/` (later; desktop is
+   the final form, so size matters less), the 16 unused exports (knip will show what is still unused).
+
+When items 1 to 3 are built, #904 closes; item 4 moves to `PRIORITIES_LATER.md`.
