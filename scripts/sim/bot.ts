@@ -19,6 +19,7 @@ import {
 import { sprinklerById } from "../../src/core/sprinklers";
 import { categoryOf, produceOf } from "../../src/core/artisan";
 import { canCraft, craft, known, recipeById } from "../../src/core/crafting";
+import { fillCan } from "../../src/core/canwater";
 import { cropById, CROPS } from "../../src/core/crops";
 import {
   FRUIT_TREES,
@@ -493,6 +494,8 @@ class Bot {
     }
   }
 
+  private farmWater: Spot[] = [];
+
   private plots() {
     return [...this.g.farm.each()];
   }
@@ -510,7 +513,29 @@ class Bot {
     const dry = this.plots().filter(
       ({ plot }) => plot.crop && !plot.wateredToday,
     );
-    this.nearestFirst(dry, (s) => this.act(s, () => water(this.g, s.x, s.y)));
+    this.nearestFirst(dry, (s) => {
+      // The can holds 40 to 100 tiles (note 103): refill at the pond when it runs dry.
+      if (this.g.canWater < 1) this.refillCan();
+      this.act(s, () => water(this.g, s.x, s.y));
+    });
+  }
+
+  /** Walk to the nearest water on the farm and fill the can, as a player does. */
+  private refillCan(): void {
+    if (this.lateNight) return;
+    const map = maps.get(START.map);
+    if (this.farmWater.length === 0)
+      for (let y = 0; y < map.height; y++)
+        for (let x = 0; x < map.width; x++)
+          if (map.isWater(x, y)) this.farmWater.push({ x, y });
+    const costs = this.walker.costsNextTo(this.farmWater);
+    const best = Math.min(...costs);
+    const shore = this.farmWater[costs.indexOf(best)];
+    if (!shore || best === Infinity) return;
+    this.act(shore, () => {
+      fillCan(this.g);
+      return { ok: true };
+    });
   }
 
   private sweepForage(): void {
