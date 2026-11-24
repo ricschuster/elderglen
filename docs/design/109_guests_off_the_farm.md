@@ -137,10 +137,11 @@ fishing), `roomworld.ts` (the gates), `src/net/guestapply.ts` (the guest's copy)
   fishing assist is a device setting and shapes their own bar. The scene lands nothing locally; the pack changes
   when the host's `player` message arrives. The cast itself is still instant on Use (no charge on the guest).
 - **Ice fishing and the pier.** The host's cast applies the Frostday rules: the lake is shut until it opens
-  ("The lake opens at noon."), and a cast into a hole can bring the Frostfin. The contest count is the host's alone
-  and a guest's catch does not add to it (loose end, a design question for the owner). The pier checks (permit and
-  hours from the plank the sender stands on, the night odds, market fish, the pearl) are in the host's cast, but the
-  pier is on Hearthwell, a town map the host does not run for guests, so a guest cannot cast there yet.
+  ("The lake opens at noon."), and a cast into a hole can bring the Frostfin. A guest's
+  hole catch now counts for the contest (note 111 decision 5, replacing the earlier "host only"). The pier checks
+  (permit and hours from the plank the sender stands on, the night odds, market fish, the pearl) are in the host's
+  cast, and since note 111's build Hearthwell is hosted for casting (`townView`), so a guest can fish from the pier
+  with their own permit.
 - **Bombs.** `bomb {map, x, y, item}`: the host places it as the sender (the single player rule, the sender's
   pack), keeps the fuse, and on the blast breaks the rocks the thrower's Mining level allows and hurts creatures,
   every kill paying the thrower. Guests in the circle lose health (a share of maximum, never lethal). `bomb` (lit)
