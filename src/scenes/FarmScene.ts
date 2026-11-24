@@ -41,7 +41,13 @@ import {
 import { meet, presentAt, talkTarget, type Present } from "../core/townfolk";
 
 import type { GameState } from "../core/save";
-import { cycle, heldAt, nextRow, toolbarSize } from "../core/toolbar";
+import {
+  cycle,
+  heldAt,
+  isLiftTool,
+  nextRow,
+  toolbarSize,
+} from "../core/toolbar";
 import { pendingChoice } from "../core/professions";
 import { eat, type Outcome } from "../core/actions";
 import { dateOf } from "../core/calendar";
@@ -2135,10 +2141,7 @@ export class FarmScene extends Phaser.Scene {
       !this.map.isWater(front.x, front.y)
     )
       net.sendIntent({ kind: "water", x: front.x, y: front.y });
-    else if (
-      held.kind === "tool" &&
-      (held.tool === "axe" || held.tool === "pickaxe")
-    )
+    else if (isLiftTool(held))
       net.sendIntent({ kind: held.tool, x: front.x, y: front.y });
     else if (held.kind === "item" && cropOfSeed(held.id))
       net.sendIntent({ kind: "plant", x: front.x, y: front.y, seed: held.id });
@@ -2189,11 +2192,7 @@ export class FarmScene extends Phaser.Scene {
       return this.report(
         baitPot(this.state, this.mapId, front.x, front.y, held.id),
       );
-    if (
-      held.kind === "tool" &&
-      (held.tool === "axe" || held.tool === "pickaxe") &&
-      this.state.pots.get(this.mapId, front.x, front.y)
-    )
+    if (isLiftTool(held) && this.state.pots.get(this.mapId, front.x, front.y))
       return this.report(pickUpPot(this.state, this.mapId, front.x, front.y));
     // A bomb is lit from the backpack and cannot be lifted (note 89).
     if (held.kind === "item" && isBomb(held.id)) {
@@ -2286,11 +2285,7 @@ export class FarmScene extends Phaser.Scene {
         return this.report(placeCask(this.state, this.map, front.x, front.y));
       if (cask && held.kind === "item")
         return this.report(loadCask(this.state, front.x, front.y, held.id));
-      if (
-        cask &&
-        held.kind === "tool" &&
-        (held.tool === "axe" || held.tool === "pickaxe")
-      )
+      if (cask && isLiftTool(held))
         return this.report(handOnCask(this.state, front.x, front.y));
     }
     if (isHouseMap(this.mapId)) {
@@ -2311,8 +2306,7 @@ export class FarmScene extends Phaser.Scene {
           ),
         );
       if (
-        held.kind === "tool" &&
-        (held.tool === "axe" || held.tool === "pickaxe") &&
+        isLiftTool(held) &&
         this.state.furniture.at(this.mapId, front.x, front.y)
       )
         return this.report(

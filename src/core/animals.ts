@@ -1,7 +1,7 @@
 import { dateOf } from "./calendar";
 import { festivalDayToday } from "./festivals";
 import { loadHorse, newHorse, saveHorse, type Horse } from "./horse";
-import { COOP_HEATER, HARDWOOD, HEATER_PRICE, itemById } from "./items";
+import { COOP_HEATER, HARDWOOD, HEATER_PRICE, itemLabel } from "./items";
 import {
   animalQuality,
   splitQuality,
@@ -1136,10 +1136,7 @@ export function siloProblem(g: GameState): string | undefined {
   for (const id of ["stone", "clay", "copper-bar"] as const) {
     const need = SILO_COST[id];
     const have = g.inventory.count(id);
-    if (have < need)
-      missing.push(
-        `${need - have} more ${itemById(id)?.name.toLowerCase() ?? id}`,
-      );
+    if (have < need) missing.push(`${need - have} more ${itemLabel(id)}`);
   }
   return missing.length > 0 ? `You need ${missing.join(" and ")}.` : undefined;
 }

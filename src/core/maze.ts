@@ -3,7 +3,7 @@ import mazeEvenData from "../content/maze-even.json";
 import lineData from "../content/hollow-eve-lines.json";
 import { dateOf } from "./calendar";
 import { hatById } from "./hats";
-import { itemById } from "./items";
+import { itemById, itemLabel } from "./items";
 import type { GameState } from "./save";
 
 /**
@@ -119,7 +119,7 @@ export function openChest(g: GameState): string {
       return "Your pack is too full for the chest's prize. Make room and come back.";
     g.festivalsJoined.push(chestKey(g.day.clock.day), keepKey);
     g.inventory.add(maze.chestItem);
-    return `The chest holds a ${itemById(maze.chestItem)?.name.toLowerCase() ?? "keepsake"}.`;
+    return `The chest holds a ${itemLabel(maze.chestItem, "keepsake")}.`;
   }
   const hatDue = maze.chestHat !== undefined && !g.wardrobe.has(maze.chestHat);
   if (!hatDue && maze.sack.some((s) => g.inventory.room(s.id) < s.count))
@@ -130,7 +130,7 @@ export function openChest(g: GameState): string {
   const parts: string[] = [];
   for (const { id, count } of maze.sack) {
     g.inventory.add(id, count);
-    parts.push(`${count} ${itemById(id)?.name.toLowerCase() ?? id}`);
+    parts.push(`${count} ${itemLabel(id)}`);
   }
   return `The chest holds a sack: ${parts.join(", ")}.`;
 }

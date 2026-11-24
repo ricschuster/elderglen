@@ -2,7 +2,7 @@ import { animalReportLines } from "./animals";
 import { WAITING_ROOMS_LINE } from "./house";
 import { ordersReportLines } from "./orders";
 import type { SleepReport } from "./sleep";
-import { itemById } from "./items";
+import { itemLabel } from "./items";
 import { divorceReportLines } from "./divorce";
 import { childReportLines } from "./children";
 import { spouseReportLines } from "./spouse";
@@ -19,9 +19,7 @@ export function reportLines(r: SleepReport): string[] {
         : "The bearers asked for nothing.",
     );
     for (const l of r.defeat.lost)
-      lines.push(
-        `Lost for good: ${l.count} ${itemById(l.id)?.name.toLowerCase() ?? l.id}.`,
-      );
+      lines.push(`Lost for good: ${l.count} ${itemLabel(l.id)}.`);
     if (r.defeat.posted)
       lines.push(
         "The trainer keeps them at her counter. You can buy one back.",

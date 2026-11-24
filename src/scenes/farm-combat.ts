@@ -6,7 +6,7 @@ import { heldAt } from "../core/toolbar";
 import { pendingChoice } from "../core/professions";
 import { rodById, waterAhead } from "../core/fishing";
 import { isPierCast, pierCastProblem } from "../core/marketpier";
-import { itemById } from "../core/items";
+import { itemLabel } from "../core/items";
 import { sortDepth } from "./depth";
 import { creatureTexture } from "./art-creatures";
 import { isFarmMap } from "../core/farmtypes";
@@ -230,7 +230,7 @@ export function detonate(farm: FarmScene, b: LitBomb, quiet: boolean): void {
   );
   farm.time.delayedCall(220, () => farm.swingFx.clear());
   const got = Object.entries(broken?.items ?? {})
-    .map(([id, n]) => `${n} ${itemById(id)?.name.toLowerCase() ?? id}`)
+    .map(([id, n]) => `${n} ${itemLabel(id)}`)
     .join(", ");
   farm.message =
     `${def.name} goes off.` +

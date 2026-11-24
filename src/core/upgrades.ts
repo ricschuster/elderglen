@@ -1,6 +1,6 @@
 import { fillCan } from "./canwater";
 import { BACKPACK_SIZES, type Inventory } from "./inventory";
-import { itemById } from "./items";
+import { itemLabel } from "./items";
 import type { GameState } from "./save";
 import type { Wallet } from "./shop";
 
@@ -82,7 +82,7 @@ export function orderProblem(
   if (g.toolOrder) return "She is still working on another tool.";
   if (g.money < gold) return "Not enough money.";
   if (g.inventory.count(bar) < UPGRADE_BARS)
-    return `You need ${UPGRADE_BARS} ${itemById(bar)?.name.toLowerCase() ?? bar}s.`;
+    return `You need ${UPGRADE_BARS} ${itemLabel(bar)}s.`;
   return undefined;
 }
 

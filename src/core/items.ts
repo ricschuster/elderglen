@@ -693,6 +693,11 @@ const QUALITY_NAME = {
   hearthsilver: "Hearthsilver",
 } as const;
 
+/** An item's name in lower case for a sentence, or the fallback (default the id) when it is unknown. */
+export function itemLabel(id: string, fallback: string = id): string {
+  return itemById(id)?.name.toLowerCase() ?? fallback;
+}
+
 /** An item by id. A good with a quality suffix sells for more, per tier. */
 export function itemById(id: string): ItemDef | undefined {
   const { base, quality } = splitQuality(id);

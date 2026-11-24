@@ -26,6 +26,7 @@ import { HARDWOOD } from "./items";
 import type { FarmMap } from "./map";
 import { pondRects } from "./pondsite";
 import type { GameState } from "./save";
+import { tileKey } from "./tilekey";
 
 /**
  * Placing, moving and removing farm buildings
@@ -136,7 +137,7 @@ function reservedTiles(map: FarmMap): Map<string, string> {
   const ring = (r: Rect, why: string, margin = 1) => {
     for (let y = r.y - margin; y < r.y + r.h + margin; y++)
       for (let x = r.x - margin; x < r.x + r.w + margin; x++)
-        out.set(`${x},${y}`, why);
+        out.set(tileKey(x, y), why);
   };
   for (const e of map.exits)
     if (!(e.id in BUILDING_EXITS)) ring(e, "the way out of the farm");
@@ -217,7 +218,7 @@ export function placementBlockers(
   /** What stands on a tile, or undefined if a building may cover it. */
   const reason = (tx: number, ty: number): string | undefined => {
     if (map.isBlocked(tx, ty)) return "water, a cliff or a wall";
-    const near = reserved.get(`${tx},${ty}`);
+    const near = reserved.get(tileKey(tx, ty));
     if (near) return `too close to ${near}`;
     for (const { o, r } of others) {
       if (!r) continue;
@@ -278,8 +279,8 @@ function reach(
   const seen = new Set<string>();
   const queue: { x: number; y: number }[] = [];
   for (const e of map.entries)
-    if (open(e.x, e.y) && !seen.has(`${e.x},${e.y}`)) {
-      seen.add(`${e.x},${e.y}`);
+    if (open(e.x, e.y) && !seen.has(tileKey(e.x, e.y))) {
+      seen.add(tileKey(e.x, e.y));
       queue.push({ x: e.x, y: e.y });
     }
   for (let i = 0; i < queue.length; i++) {
@@ -292,7 +293,7 @@ function reach(
     ] as const) {
       const nx = x + dx;
       const ny = y + dy;
-      const k = `${nx},${ny}`;
+      const k = tileKey(nx, ny);
       if (seen.has(k) || !open(nx, ny)) continue;
       seen.add(k);
       queue.push({ x: nx, y: ny });

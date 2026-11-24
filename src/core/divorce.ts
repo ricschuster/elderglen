@@ -4,6 +4,7 @@ import { DIVORCE_FEE, exFlag, exSpouses } from "./marriage";
 import type { GameState } from "./save";
 import { villagerById } from "./villagers";
 import { hasFlag, setFlag } from "./worldflags";
+import { tileKey } from "./tilekey";
 
 /**
  * Divorce (note 12, slice 4, #937; notes 84 and 85). Pure rules. Only the
@@ -89,13 +90,13 @@ export function clearSpouseRoom(g: GameState): number {
   };
   let moved = 0;
   for (const f of [...g.furniture.each(HOUSE_MAP)]) {
-    if (!area.has(`${f.x},${f.y}`)) continue;
+    if (!area.has(tileKey(f.x, f.y))) continue;
     g.furniture.remove(HOUSE_MAP, f.x, f.y);
     if (store(f.id, 1) > 0) g.furniture.stash.push(f.id);
     moved += 1;
   }
   for (const c of [...g.chests.each(HOUSE_MAP)]) {
-    if (!area.has(`${c.x},${c.y}`) || (c.x === cx && c.y === cy)) continue;
+    if (!area.has(tileKey(c.x, c.y)) || (c.x === cx && c.y === cy)) continue;
     for (let i = 0; i < c.items.size; i++) {
       const slot = c.items.slot(i);
       if (!slot) continue;

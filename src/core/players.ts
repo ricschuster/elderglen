@@ -3,6 +3,7 @@ import { Inventory } from "./inventory";
 import { Skills } from "./skills";
 import { SKILLS } from "./skills";
 import { MAX_TIER, UPGRADABLE, type ToolTiers } from "./upgrades";
+import { isObject } from "./guards";
 
 /** A player's id within one world. Stable for the life of the save (note 53). */
 export type PlayerId = string;
@@ -200,8 +201,6 @@ export function savePlayer(p: PlayerRecord): PlayerSave {
 
 const isCount = (v: unknown): v is number =>
   typeof v === "number" && Number.isInteger(v) && v >= 0;
-const isObj = (v: unknown): v is Record<string, unknown> =>
-  typeof v === "object" && v !== null && !Array.isArray(v);
 
 /**
  * Read a saved guest record into `players` (not the host: its fields load from
@@ -209,24 +208,25 @@ const isObj = (v: unknown): v is Record<string, unknown> =>
  * take the new-player defaults. Returns true when a record was added.
  */
 export function loadPlayerInto(players: Players, raw: unknown): boolean {
-  if (!isObj(raw) || typeof raw.id !== "string" || raw.id === "") return false;
+  if (!isObject(raw) || typeof raw.id !== "string" || raw.id === "")
+    return false;
   if (raw.id === LOCAL_PLAYER || players.has(raw.id)) return false;
   const p = players.add(raw.id, isCount(raw.money) ? raw.money : 0);
   if (Array.isArray(raw.inventory)) {
     const ok = raw.inventory.every(
       (s) =>
         s === null ||
-        (isObj(s) && typeof s.id === "string" && isCount(s.count)),
+        (isObject(s) && typeof s.id === "string" && isCount(s.count)),
     );
     if (ok) p.inventory.load(raw.inventory as ReturnType<Inventory["save"]>);
   }
-  if (isObj(raw.skills)) {
+  if (isObject(raw.skills)) {
     const sk = raw.skills;
     const levels = {} as Record<(typeof SKILLS)[number], number>;
     for (const k of SKILLS) levels[k] = isCount(sk[k]) ? sk[k] : 0;
     p.skills.load(levels);
   }
-  if (isObj(raw.toolTiers))
+  if (isObject(raw.toolTiers))
     for (const t of UPGRADABLE) {
       const v = raw.toolTiers[t];
       if (isCount(v)) p.toolTiers[t] = Math.min(v, MAX_TIER);

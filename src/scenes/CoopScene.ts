@@ -27,7 +27,7 @@ import {
   depositHay,
   SPECIES,
 } from "../core/animals";
-import { COOP_HEATER, itemById } from "../core/items";
+import { COOP_HEATER, itemById, itemLabel } from "../core/items";
 import type { GameState } from "../core/save";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
@@ -218,7 +218,7 @@ export class CoopScene extends Phaser.Scene {
     audio.sfx("item" in r ? "item.pickup" : "ui.error");
     this.message.setText(
       "item" in r
-        ? `Took ${itemById(r.item)?.name.toLowerCase() ?? "it"}${r.also ? ` and ${itemById(r.also)?.name.toLowerCase() ?? "more"}` : ""}.`
+        ? `Took ${itemLabel(r.item, "it")}${r.also ? ` and ${itemLabel(r.also, "more")}` : ""}.`
         : r.problem,
     );
     this.refresh();
@@ -245,9 +245,7 @@ export class CoopScene extends Phaser.Scene {
       (e) => incubatorProblem(this.state, e) === undefined,
     );
     if (egg && putEgg(this.state, egg))
-      this.message.setText(
-        `The ${itemById(egg)?.name.toLowerCase() ?? "egg"} is in the incubator.`,
-      );
+      this.message.setText(`The ${itemLabel(egg, "egg")} is in the incubator.`);
     else
       this.message.setText(
         incubatorProblem(this.state, "egg") ?? "You have no egg to put in.",

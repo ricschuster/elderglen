@@ -8,6 +8,7 @@ import {
   tableCapOf,
   type ForageArea,
 } from "./forageareas";
+import { tileKey } from "./tilekey";
 
 export interface ForageDef {
   id: string;
@@ -70,7 +71,7 @@ export class ForageField {
   }
 
   itemAt(x: number, y: number): string | undefined {
-    return this.found.get(`${x},${y}`);
+    return this.found.get(tileKey(x, y));
   }
 
   /** Every good on the ground with its tile, for drawing. */
@@ -102,7 +103,7 @@ export class ForageField {
       const pickFrom =
         rares.length > 0 && random() < RARE_CHANCE ? rares : options;
       const def = pickFrom[Math.floor(random() * pickFrom.length)] as ForageDef;
-      this.found.set(`${spot.x},${spot.y}`, def.id);
+      this.found.set(tileKey(spot.x, spot.y), def.id);
     }
   }
 
@@ -129,7 +130,7 @@ export class ForageField {
       if (patch === undefined) pool.push(spot);
       else {
         const id = patch[season];
-        if (id !== undefined) this.found.set(`${spot.x},${spot.y}`, id);
+        if (id !== undefined) this.found.set(tileKey(spot.x, spot.y), id);
       }
     }
     // A table with its own cap is filled to it, apart from the rest (the delta's
@@ -152,7 +153,7 @@ export class ForageField {
           forageWeights(area, tableOf(spot), season),
           random,
         );
-        if (id !== undefined) this.found.set(`${spot.x},${spot.y}`, id);
+        if (id !== undefined) this.found.set(tileKey(spot.x, spot.y), id);
       }
     };
     for (const [table, spots] of own) {
@@ -166,7 +167,7 @@ export class ForageField {
   /** Pick up whatever lies at a spot. Returns the item id, if any. */
   collect(x: number, y: number): string | undefined {
     const id = this.itemAt(x, y);
-    this.found.delete(`${x},${y}`);
+    this.found.delete(tileKey(x, y));
     return id;
   }
 }

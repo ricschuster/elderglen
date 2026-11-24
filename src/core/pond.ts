@@ -12,7 +12,7 @@ export { FISH_POND, POND_FOOTPRINT };
 import type { PlacedItem } from "./placedstore";
 import { QUALITIES, splitQuality, withQuality } from "./quality";
 import type { GameState } from "./save";
-import { itemById } from "./items";
+import { itemById, itemLabel } from "./items";
 import { roeOf, speciesById, type PondSpecies } from "./pondspecies";
 import { isWaterFind } from "./waterfinds";
 
@@ -195,9 +195,7 @@ function pondCostProblem(g: GameState): string | undefined {
   for (const id of ["stone", "seaweed", "pondweed"] as const) {
     const have = g.inventory.count(id);
     if (have < POND_COST[id])
-      missing.push(
-        `${POND_COST[id] - have} more ${itemById(id)?.name.toLowerCase() ?? id}`,
-      );
+      missing.push(`${POND_COST[id] - have} more ${itemLabel(id)}`);
   }
   return missing.length > 0 ? `You need ${missing.join(" and ")}.` : undefined;
 }
@@ -209,7 +207,7 @@ export function pondOrderProblem(g: GameState): string | undefined {
 
 /** The price in words, for the carpenter's menu line. */
 export function pondCostLine(): string {
-  const name = (id: string) => itemById(id)?.name.toLowerCase() ?? id;
+  const name = (id: string) => itemLabel(id);
   return `${POND_COST.coin}g, ${POND_COST.stone} ${name("stone")}, ${POND_COST.seaweed} ${name("seaweed")} and ${POND_COST.pondweed} ${name("pondweed")}, ${POND_BUILD_DAYS} days`;
 }
 

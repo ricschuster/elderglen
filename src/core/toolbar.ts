@@ -35,6 +35,15 @@ export type Held =
   | { kind: "item"; id: string; count: number }
   | { kind: "empty" };
 
+/** True when the hand holds the axe or the pickaxe (they lift machines, casks and pots). */
+export function isLiftTool(
+  held: Held,
+): held is { kind: "tool"; tool: "axe" | "pickaxe" } {
+  return (
+    held.kind === "tool" && (held.tool === "axe" || held.tool === "pickaxe")
+  );
+}
+
 /** What sits at a toolbar index. Out of range reads as empty. */
 export function heldAt(g: GameState, index: number): Held {
   const stack = g.inventory.slot(index);

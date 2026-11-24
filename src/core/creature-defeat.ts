@@ -8,7 +8,7 @@ import {
   type CreatureDef,
 } from "./creatures";
 import { DIAMOND, monsterDiamond } from "./gems";
-import { itemById } from "./items";
+import { itemLabel } from "./items";
 import { dropGoods } from "./ground";
 import { mapDrops } from "./mapcreatures";
 import type { GameState } from "./save";
@@ -75,7 +75,7 @@ export function defeatCreature(
   // Drops lie on the ground where the creature fell.
   for (const d of rolls) {
     dropGoods(state, floor, tile.x, tile.y, d.id, d.count);
-    got.push(`${d.count} ${itemById(d.id)?.name.toLowerCase() ?? d.id}`);
+    got.push(`${d.count} ${itemLabel(d.id)}`);
   }
   const ladder =
     floor !== undefined

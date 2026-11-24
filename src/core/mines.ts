@@ -17,6 +17,7 @@ import {
   type CreatureSave,
 } from "./creatures";
 import { seeded } from "./rng";
+import { tileKey } from "./tilekey";
 
 /**
  * The mine (`docs/design/22_mines.md`, build slice 1). Pure rules: a floor is
@@ -220,7 +221,7 @@ export function floorLayout(floor: number, day: number): FloorLayout {
       for (let y = y0; y < y0 + POOL_HEIGHT; y++)
         for (let x = x0; x < x0 + POOL_WIDTH; x++) {
           pool.push({ x, y });
-          taken.add(`${x},${y}`);
+          taken.add(tileKey(x, y));
         }
     }
   }
@@ -230,8 +231,8 @@ export function floorLayout(floor: number, day: number): FloorLayout {
         x: 1 + Math.floor(random() * (FLOOR_WIDTH - 2)),
         y: 1 + Math.floor(random() * (FLOOR_HEIGHT - 2)),
       };
-      if (!free(s.x, s.y) || taken.has(`${s.x},${s.y}`) || !ok(s)) continue;
-      taken.add(`${s.x},${s.y}`);
+      if (!free(s.x, s.y) || taken.has(tileKey(s.x, s.y)) || !ok(s)) continue;
+      taken.add(tileKey(s.x, s.y));
       return s;
     }
     return undefined;
@@ -405,17 +406,17 @@ export function floorCreatures(
   const layout = floorLayout(floor, day);
   if (layout.special === "geode") return [];
   const random = seeded(day * 2003 + floor * 6173 + 29);
-  const taken = new Set(layout.rocks.map((r) => `${r.x},${r.y}`));
-  if (layout.ladder) taken.add(`${layout.ladder.x},${layout.ladder.y}`);
-  if (layout.camp) taken.add(`${layout.camp.x},${layout.camp.y}`);
-  if (layout.lever) taken.add(`${layout.lever.x},${layout.lever.y}`);
-  for (const p of layout.pool) taken.add(`${p.x},${p.y}`);
+  const taken = new Set(layout.rocks.map((r) => tileKey(r.x, r.y)));
+  if (layout.ladder) taken.add(tileKey(layout.ladder.x, layout.ladder.y));
+  if (layout.camp) taken.add(tileKey(layout.camp.x, layout.camp.y));
+  if (layout.lever) taken.add(tileKey(layout.lever.x, layout.lever.y));
+  for (const p of layout.pool) taken.add(tileKey(p.x, p.y));
   return spawnCreatures(
     floor,
     random,
     (x, y) =>
       !layout.walls[y * FLOOR_WIDTH + x] &&
-      !taken.has(`${x},${y}`) &&
+      !taken.has(tileKey(x, y)) &&
       !near({ x, y }, UP, 1),
     FLOOR_WIDTH,
     FLOOR_HEIGHT,

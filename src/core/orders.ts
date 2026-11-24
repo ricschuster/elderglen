@@ -8,7 +8,7 @@ import { cropById } from "./crops";
 import { GALLERY_LIST } from "./gallery";
 import { GEM_ITEMS } from "./gems";
 import { fishById } from "./fishing";
-import { itemById } from "./items";
+import { itemLabel } from "./items";
 import type { BinLine } from "./shipping";
 import { splitQuality, type Quality } from "./quality";
 import type { GameState } from "./save";
@@ -370,9 +370,7 @@ export function askText(def: OrderDef): string {
             ? "minerals"
             : g.group === "keg-drinks"
               ? "keg drinks"
-              : (g.items ?? [])
-                  .map((i) => itemById(i)?.name.toLowerCase() ?? i)
-                  .join(" or ");
+              : (g.items ?? []).map((i) => itemLabel(i)).join(" or ");
       return g.mode === "distinct"
         ? `Leave ${a.count} kinds of ${what}, one of each, in the chest at ${a.place.name}`
         : g.mode === "one-kind"

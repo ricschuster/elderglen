@@ -5,6 +5,7 @@ import { HARDWOOD } from "./items";
 import { visibleTier } from "./map";
 import { pondDigging } from "./pondsite";
 import type { GameState } from "./save";
+import { tileKey } from "./tilekey";
 
 /**
  * The house grows in tiers: 0 is the start room, 1 adds a kitchen and a
@@ -234,8 +235,8 @@ export function renoRefundProblem(
     return `Take back the ${on.name.toLowerCase()} first, it is built on this.`;
   const area = renoArea(id);
   const full =
-    [...g.furniture.each(HOUSE_MAP)].some((f) => area.has(`${f.x},${f.y}`)) ||
-    [...g.chests.each(HOUSE_MAP)].some((c) => area.has(`${c.x},${c.y}`));
+    [...g.furniture.each(HOUSE_MAP)].some((f) => area.has(tileKey(f.x, f.y))) ||
+    [...g.chests.each(HOUSE_MAP)].some((c) => area.has(tileKey(c.x, c.y)));
   return full
     ? "Clear your furniture and chests out of the new area first."
     : undefined;
