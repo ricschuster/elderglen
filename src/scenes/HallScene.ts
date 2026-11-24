@@ -1,4 +1,5 @@
 import { audio } from "../audio/engine";
+import { isToolId } from "../core/toolitems";
 import Phaser from "phaser";
 import { rewardText, HALL_ROOMS, type BundleDef } from "../core/bundles";
 import { hatById } from "../core/hats";
@@ -174,7 +175,8 @@ export class HallScene extends Phaser.Scene {
     const ids: string[] = [];
     for (let i = 0; i < g.inventory.size; i++) {
       const slot = g.inventory.slot(i);
-      if (slot && !ids.includes(slot.id)) ids.push(slot.id);
+      if (slot && !isToolId(slot.id) && !ids.includes(slot.id))
+        ids.push(slot.id);
     }
     const rows: Row[] = ids.map((id) => ({
       label: `${name(id)}  x${g.inventory.count(id)}`,
