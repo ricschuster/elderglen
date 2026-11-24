@@ -1,4 +1,5 @@
 import type { GameState } from "./save";
+import { NAME_MAX, cleanName, isNum } from "./guards";
 
 /**
  * The horse (`docs/design/59_horse.md`). Rules only, free of Phaser and the
@@ -32,7 +33,6 @@ export const RUN_SPEED = 5;
 export const HORSE_SPEED_FACTOR = HORSE_SPEED / RUN_SPEED;
 
 /** The longest name the player may give. */
-export const NAME_MAX = 16;
 /** The name used when the player gives none. */
 export const DEFAULT_HORSE_NAME = "Clover";
 
@@ -62,9 +62,6 @@ export function saveHorse(h: Horse): Horse {
   return { name: h.name, parked: h.parked ? { ...h.parked } : undefined };
 }
 
-const isNum = (v: unknown): v is number =>
-  typeof v === "number" && Number.isFinite(v);
-
 /** Read a saved horse. An old save has none. Anything broken is dropped. */
 export function loadHorse(raw: unknown): Horse {
   const out = newHorse();
@@ -83,11 +80,6 @@ export function loadHorse(raw: unknown): Horse {
   )
     out.parked = { map: p.map, x: Math.floor(p.x), y: Math.floor(p.y) };
   return out;
-}
-
-/** A name with the extra space trimmed and cut to the limit. */
-export function cleanName(raw: string): string {
-  return raw.trim().replace(/\s+/g, " ").slice(0, NAME_MAX);
 }
 
 /** True when the player has a stable and so a horse. */

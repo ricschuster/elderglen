@@ -104,6 +104,7 @@ import {
   type ToolTiers,
   type Upgradable,
 } from "./upgrades";
+import { isObject } from "./guards";
 
 /**
  * The world: everything that is shared in multiplayer (note 53). The per-player
@@ -784,8 +785,6 @@ export function serialize(
   return JSON.stringify(data);
 }
 
-const isObject = (v: unknown): v is Record<string, unknown> =>
-  typeof v === "object" && v !== null && !Array.isArray(v);
 const isCount = (v: unknown): v is number =>
   typeof v === "number" && Number.isFinite(v) && v >= 0;
 

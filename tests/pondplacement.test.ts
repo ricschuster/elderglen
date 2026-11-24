@@ -2,7 +2,12 @@ import { describe, expect, it } from "vitest";
 import { maps } from "../src/content/maps";
 import { SILO_SITES, buildingProblem, siloProblem } from "../src/core/animals";
 import { orderProblem } from "../src/core/house";
-import { POND_COST, orderPond, pondBlockers, pondProblem } from "../src/core/pond";
+import {
+  POND_COST,
+  orderPond,
+  pondBlockers,
+  pondProblem,
+} from "../src/core/pond";
 import { POND_FOOTPRINT } from "../src/core/pondsite";
 import { placementBlockers } from "../src/core/placement";
 import { Trees } from "../src/core/trees";
