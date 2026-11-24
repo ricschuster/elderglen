@@ -413,8 +413,8 @@ level only. Nothing is built, and the build waits for M4.
 - **Special orders and the request board (notes 65 and 50): one shared board, and every player gets the reward
   (owner, 2026-11-18, extends the request board decision above, SC-206).** A hand-in order takes goods from the
   player handing in and still pays every player. This is not checked against Stardew.
-- **Festivals (notes 82 and 14):** counts and joining for the Feast, the gift exchange (note 105) and the in-place
-  festivals are still open for the spike, not settled here.
+- **Festivals (notes 82 and 14): settled 2026-11-24 in note 111** (all in first, leave together, contest counts,
+  shared showing display, per-player rewards).
 
 ## Cabin rules (step 6, 2026-11-18, `src/core/cabins.ts`)
 
