@@ -107,6 +107,22 @@ export class Players {
     return w.money;
   }
 
+  /**
+   * Pay every player the same gold: once into the shared pool when shared, else into each purse
+   * (note 53: the request board and special orders pay everyone). `except` is left out, for a
+   * player already paid by the action itself.
+   */
+  payEveryone(amount: number, except?: PlayerId): void {
+    const skip = except === undefined ? undefined : this.wallet(except);
+    const seen = new Set<PlayerRecord>();
+    for (const p of this.byId.values()) {
+      const w = this.wallet(p.id);
+      if (w === skip || seen.has(w)) continue;
+      seen.add(w);
+      w.money += amount;
+    }
+  }
+
   /** The record of the player on this device. */
   get local(): PlayerRecord {
     return this.get(this.localId);

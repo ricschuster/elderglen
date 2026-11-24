@@ -2068,6 +2068,14 @@ export class FarmScene extends Phaser.Scene {
         if (shut) return closed(shut);
         ref = { kind: service.kind, ...base };
         scene = service.kind;
+      } else if (service.kind === "hall") {
+        // A hall room's scroll: the room is the service's id (note 108 group 4).
+        ref = { kind: "hall", ...base, room: service.id };
+        scene = "hall";
+        data = { room: service.id };
+      } else if (service.kind === "orders" || service.kind === "requests") {
+        ref = { kind: service.kind, ...base };
+        scene = service.kind;
       } else if (service.kind === "camp-chest" && this.floor !== undefined) {
         ref = { kind: "camp-chest", ...base, floor: this.floor };
         scene = "chest";

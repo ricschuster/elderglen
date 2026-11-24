@@ -233,6 +233,8 @@ describe("guest read-only menus", () => {
       expect(guestMayOpen(k)).toBe(true);
     for (const k of ["keeper", "coop-bench", "barn-bench", "pond"])
       expect(guestMayOpen(k)).toBe(true);
+    for (const k of ["hall", "orders", "requests"])
+      expect(guestMayOpen(k)).toBe(true);
     expect(guestMayOpen("carpenter")).toBe(false);
   });
 });

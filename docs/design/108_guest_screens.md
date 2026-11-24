@@ -85,7 +85,7 @@ One group at a time, each with its own tests; each screen is removed from the gu
    shared stock), the shipping bin, chests (and the camp chest). See "Group 1 as built" below.
 2. **Making (built 2026-11-24, #1014):** crafting, cooking (farmhouse kitchen), furnace and the other machines. See "Group 2 as built" below. The fridge is not in the game yet, so it is not built.
 3. **Animals and ponds (built 2026-11-24, #1014):** animal buy at the farmstead keeper, petting, feeding, collecting, pond menus. Animals cannot be sold in the game yet, so there is no sell. See "Group 3 as built" below.
-4. **Hall:** bundles (rule 3), orders and the request board.
+4. **Hall (built 2026-11-24, #1014):** bundles (rule 3), orders and the request board. See "Group 4 as built" below.
 5. **The rest:** carpenter (rules 7 to 9, with the host setting on the players list), tailor, smith, gallery,
    shrine, and any screen still on the refusal list.
 
@@ -205,6 +205,44 @@ group 3 test in `tests/screens-socket.test.ts`.
   (note 23 left it out), so there is nothing to build. It comes with whichever note adds it.
 - **Left for later.** The guest's pause menu "Animals" tab is still hidden (read only rows in the menu are not part of this
   group). A guest's own cabin has no animals. The stable bench and the horse are not screens yet.
+
+## Group 4 as built (build, 2026-11-24)
+
+Code: the new intents are in `src/core/screenintents.ts` (`bundle-give`, `bundle-hat`, `order-take`, `order-drop`,
+`order-collect`, `request-accept`, `request-turnin`, `request-cancel`, all through `applyHallIntent`); screen kinds
+`hall`, `orders` and `requests` in `src/core/screens.ts` (a hall ref carries `room`, the scroll's service id);
+`Players.payEveryone` in `src/core/players.ts`; `acceptLine` and the per-player `owed` in `src/core/orders.ts`.
+`HallScene`, `OrdersScene` and `RequestsScene` use `dispatch`, `followGuest` and `closeWhenDone`, and a guest's Action
+on a scroll or a board asks the host to open it. Tests: the "hall" block of `tests/screens.test.ts` and the group 4
+test in `tests/screens-socket.test.ts`.
+
+- **Screens.** `hall` opens from a room's scroll on the hall map, `orders` and `requests` from the boards in
+  Hearthwell. None locks (they hold nothing between uses). Every intent above needs its screen open (same gate as the
+  earlier groups: open, in reach, the screen you opened). A `bundle-*` intent names its `room` and the bundle must be
+  written for that room.
+- **Bundles (rule 3).** `bundle-give {room, bundle, item}` runs the hall's own `handIn` as the sender: the good leaves the
+  sender's pack, and when it fills the bundle the item reward goes to the sender's pack and the gold to the sender's
+  wallet (their purse, or the shared one). Anyone may hand in any good; the bundle's slots are one shared state in the
+  host's hall, so a second player cannot hand in a slot already filled. A room that is not open refuses ("That room is not
+  open yet."). What a finished room opens (areas, the bridge, the carts, the herb stall, the Guests' Board friendship
+  bonus) is read from the shared hall, so it is everyone's, and the bonus is paid once on the host's state.
+- **Hats (build, 2026-11-24).** `bundle-hat {room, bundle, hat}` takes one hat of a finished bundle's set. The wardrobe is
+  not per player yet (note 53, "Look and name"), so the hat goes into the one wardrobe and any player may take a pick,
+  not only the finisher. Rule 3 gives hats to the finisher, so this follows when the wardrobe is per player.
+- **Orders.** One shared board (note 53, 2026-11-18): any player takes (`order-take`, still one a week for the whole
+  board), drops (`order-drop`) or collects (`order-collect`). A hand-in order's chest is a world chest and follows the
+  chest lock. At night a filled order pays every player: its gold goes into each wallet (once into the pool when shared),
+  and its first-time reward item is owed to each player by name (`owed[].to`, left off in single player), collected by
+  that player at the board. The Fall 2 intro scene (`orders.opened`) is the host's; a guest's copy learns it at the next
+  full snapshot.
+- **Request board.** One shared board. Any player accepts (`request-accept`), hands in (`request-turnin`) or cancels
+  (`request-cancel`). A delivery's goods come from the handing-in player's pack, and the gold pays that player's wallet
+  and every other player's (`Players.payEveryone`), so with a shared wallet it is paid once. A gathering's counter is the
+  world's. The "Open requests" list opened from the hat box stays host only.
+- **Host through the Room.** The host's own bundle, order and request actions go through `dispatch`, so a hosted game's
+  changes reach every guest's copy as `applied`.
+- **Left for later.** The achievements counted by `quests.completed` are one world count, not per player. The hat box is
+  not a guest screen. Order progress for hand-in orders still counts what the chest holds, whoever put it there.
 
 ## Open (later items, not this note)
 

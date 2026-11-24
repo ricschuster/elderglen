@@ -124,3 +124,13 @@ Headless run 2026-11-24 (`tests/screens-socket.test.ts`, real sockets; `tests/sc
 - pass: Anyone pets an animal once a day (the second player is told "Already petted today."); whoever takes the product gets it, a full pack keeps it; let out, bring in and rename work.
 - pass: A pond menu is used by one player at a time ("Someone is using the pond."); reach counts from any edge of the pond; Empty puts the fish in the opener's pack; a held fish goes in and a waiting product comes out through `pond-use`, as the sender.
 - owner: The keeper, the coop and barn benches and the pond menu by hand with two real players, and a guest's Action on a pond with a fish in hand. Nothing here was run in a browser. Animals cannot be sold in the game yet, so no sell was checked.
+
+## Guest screens, the hall (note 108, group 4)
+
+Headless run 2026-11-24 (`tests/screens-socket.test.ts`, real sockets; `tests/screens.test.ts`, the "hall" tests).
+
+- pass: A guest hands goods into a bundle from their own pack; a second player cannot fill a slot already filled; a bundle of another room, a closed room and a good the guest lacks are refused. The last good finishes it and the item reward goes to that player only; a gold reward goes to their own purse.
+- pass: A finished bundle's hat can be taken once (any player, until the wardrobe is per player).
+- pass: A guest takes an order from the shared board (one a week for everyone) and drops it; a filled order pays every purse (once for a shared wallet) and its first reward is owed to each player.
+- pass: A guest accepts, hands in and cancels board requests; a hand-in takes the goods from the guest and pays every player; a walk-away is refused. The guest copy follows through `applied`.
+- owner: The hall panel, the orders board and the request board by hand with two real players, including the completion line and the first-reward collect. Nothing here was run in a browser.

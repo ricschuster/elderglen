@@ -310,6 +310,10 @@ export const GUEST_SCREENS = [
   "coop-bench",
   "barn-bench",
   "pond",
+  // The hall's scrolls and the two boards send bundle, order and request intents (note 108 group 4).
+  "hall",
+  "orders",
+  "requests",
   // The bed prompt sends a `sleep` intent and changes nothing locally.
   "bed",
 ];

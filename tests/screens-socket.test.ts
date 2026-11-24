@@ -16,6 +16,7 @@ import { CHICKEN_PRICE } from "../src/core/animals";
 import { FARM_STORE } from "../src/core/mapstore";
 import { putFish } from "../src/core/pond";
 import { FISH_POND } from "../src/core/pondsite";
+import { requestFor } from "../src/core/quests";
 
 const FARM = farmTypeById("standard").map;
 const hosts: NodeHost[] = [];
@@ -369,5 +370,123 @@ describe("guest screens, group 3, over real sockets", () => {
     expect(g.players.get(ann.id).inventory.count("carp")).toBe(1);
     await ask(ann, { kind: "close" });
     expect(await ask(bo, { kind: "open", screen: pond })).toBeUndefined();
+  });
+});
+
+describe("guest screens, group 4, over real sockets", () => {
+  it("a guest hands items into a bundle to finish it, takes an order and uses the request board", async () => {
+    const g = newGame("standard", "separate");
+    const hosted: { host?: NodeHost } = {};
+    const world = new GameRoomWorld(g, {
+      random: () => 0.5,
+      where: (id) => hosted.host?.room.position(id),
+    });
+    const host = await NodeHost.start({ world, tickHz: 50 });
+    hosted.host = host;
+    hosts.push(host);
+    const url = `ws://127.0.0.1:${host.port}`;
+    const ann = await GuestClient.connect(url, { name: "Ann" });
+    const bo = await GuestClient.connect(url, { name: "Bo" });
+    guests.push(ann, bo);
+    const copy = deserialize(ann.farm)!;
+    copy.players.localId = ann.id;
+    ann.onMessage = (m) => applyServerMsg(copy, m);
+    const goods = ["daffodil", "leek", "dandelion", "horseradish"];
+    for (const w of [g, copy])
+      for (const id of goods) w.players.get(ann.id).inventory.add(id);
+
+    // The Foragers' Shelf scroll: Ann hands four goods in, the fourth finishes the bundle.
+    const scroll = maps
+      .get("hall")
+      .services.find((s) => s.id === "foragers-shelf")!;
+    const hall = {
+      kind: "hall",
+      map: "hall",
+      x: scroll.x,
+      y: scroll.y,
+      room: "foragers-shelf",
+    };
+    const give = (item: string) => ({
+      kind: "bundle-give",
+      room: "foragers-shelf",
+      bundle: "spring-foraging",
+      item,
+    });
+    expect(await ask(ann, give("daffodil"))).toBe("open the screen first");
+    const seeds = (w: typeof g, id: string) =>
+      w.players.get(id).inventory.count("parsnip-seed");
+    const seedsBefore = [seeds(g, ann.id), seeds(g, bo.id)];
+    await stand(ann, "hall", scroll.x, scroll.y + 1);
+    expect(await ask(ann, { kind: "open", screen: hall })).toBeUndefined();
+    for (const id of goods.slice(0, 3))
+      expect(await ask(ann, give(id))).toBeUndefined();
+    expect(g.hall.complete("spring-foraging")).toBe(false);
+    expect(await ask(ann, give("horseradish"))).toBeUndefined();
+    expect(g.hall.complete("spring-foraging")).toBe(true);
+    expect(seeds(g, ann.id)).toBe(seedsBefore[0]! + 15);
+    expect(seeds(g, bo.id)).toBe(seedsBefore[1]);
+    await until(() => copy.hall.complete("spring-foraging"));
+    expect(seeds(copy, ann.id)).toBe(seedsBefore[0]! + 15);
+    await ask(ann, { kind: "close" });
+
+    // The request board: Ann takes a request, Bo cannot take it again; a hand-in pays both purses.
+    let q: ReturnType<typeof requestFor>;
+    for (let d = 2; !(q = requestFor(d)) || q.type !== "delivery"; d++)
+      for (const w of [g, copy]) w.day.clock.day = d + 1;
+    const day = g.day.clock.day;
+    q = requestFor(day)!;
+    expect(q.type).toBe("delivery");
+    const board = service("hearthwell", "requests");
+    const boardRef = {
+      kind: "requests",
+      map: "hearthwell",
+      x: board.x,
+      y: board.y,
+    };
+    await stand(ann, "hearthwell", board.x, board.y + 1);
+    await stand(bo, "hearthwell", board.x + 1, board.y + 1);
+    expect(await ask(ann, { kind: "open", screen: boardRef })).toBeUndefined();
+    expect(await ask(bo, { kind: "open", screen: boardRef })).toBeUndefined();
+    expect(
+      await ask(ann, { kind: "request-accept", id: q.id }),
+    ).toBeUndefined();
+    expect(await ask(bo, { kind: "request-accept", id: q.id })).toBe(
+      "That request is gone.",
+    );
+    for (const w of [g, copy])
+      w.players.get(ann.id).inventory.add(q.want.item, q.want.count);
+    const was = g.players.get(bo.id).money;
+    expect(
+      await ask(ann, { kind: "request-turnin", id: q.id }),
+    ).toBeUndefined();
+    expect(g.players.get(bo.id).money).toBe(was + q.reward.gold);
+    await until(() => copy.quests.get(q.id)?.state === "done");
+    await ask(ann, { kind: "close" });
+    await ask(bo, { kind: "close" });
+
+    // The orders board: Ann takes the shared order, and walking off refuses further actions.
+    g.orders.opened = true;
+    copy.orders.opened = true;
+    let def: ReturnType<typeof g.orders.board>[number] | undefined;
+    for (let d = 70; !def && d < 300; d++) {
+      def = g.orders.board(d).find((o) => o.ask.kind !== "hand-in");
+      if (def) for (const w of [g, copy]) w.day.clock.day = d;
+    }
+    const orders = service("hearthwell", "orders");
+    const ordersRef = {
+      kind: "orders",
+      map: "hearthwell",
+      x: orders.x,
+      y: orders.y,
+    };
+    await stand(ann, "hearthwell", orders.x, orders.y + 1);
+    expect(await ask(ann, { kind: "open", screen: ordersRef })).toBeUndefined();
+    expect(await ask(ann, { kind: "order-take", id: def!.id })).toBeUndefined();
+    expect(g.orders.isActive(def!.id)).toBe(true);
+    await until(() => copy.orders.isActive(def!.id));
+    await stand(ann, "hearthwell", orders.x + 10, orders.y + 10);
+    expect(await ask(ann, { kind: "order-drop", id: def!.id })).toBe(
+      "too far away",
+    );
   });
 });

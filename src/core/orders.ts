@@ -115,7 +115,7 @@ export interface OrdersSave {
   active: ActiveOrder[];
   done: Record<string, number>;
   lastAcceptedWeek: number;
-  owed: { id: string; count: number }[];
+  owed: { id: string; count: number; to?: string }[];
 }
 
 /** What a night did to the orders, for the morning report. */
@@ -147,7 +147,7 @@ export class Orders {
   private done: Record<string, number> = {};
   private lastAcceptedWeek = -1;
   /** First rewards waiting to be collected at the board. */
-  owed: { id: string; count: number }[] = [];
+  owed: { id: string; count: number; to?: string }[] = [];
 
   timesDone(id: string): number {
     return this.done[id] ?? 0;
@@ -516,6 +516,15 @@ export function acceptOrder(
   return r;
 }
 
+/** The words for a refused `acceptOrder`. */
+export function acceptLine(r: ReturnType<typeof acceptOrder>): string {
+  return r === "one a week"
+    ? "You have taken an order this week. Another is open next week."
+    : r === "place taken"
+      ? "Something stands where the chest would go. Clear it first."
+      : "That order is gone.";
+}
+
 /** Drop an accepted order. A hand-in's chest closes, and the goods can be taken back. */
 export function dropOrder(g: GameState, id: string): boolean {
   const ok = g.orders.cancel(id);
@@ -547,8 +556,14 @@ export function endDayOrders(
     o.cancel(a.id);
     closeOrderChest(g, a.id);
     const first = o.markDone(a.id);
-    g.money += def.gold;
-    if (first && def.firstReward.item) o.owed.push({ ...def.firstReward.item });
+    // Every player gets the reward (note 53, 2026-11-18): gold into each purse, a first reward for each.
+    g.players.payEveryone(def.gold);
+    if (first && def.firstReward.item) {
+      if (g.players.count > 1)
+        for (const id of g.players.ids)
+          o.owed.push({ ...def.firstReward.item, to: id });
+      else o.owed.push({ ...def.firstReward.item });
+    }
     news.done.push({
       title: def.title,
       gold: def.gold,
@@ -583,13 +598,20 @@ export function ordersReportLines(news: OrdersNews): string[] {
   ];
 }
 
-/** Hand the owed rewards over, as far as the backpack has room. Returns what moved. */
+/**
+ * Hand the owed rewards over, as far as the backpack has room. Returns what moved. A reward made out to
+ * another player stays for them.
+ */
 export function collectOwed(g: GameState): { id: string; count: number }[] {
   const given: { id: string; count: number }[] = [];
-  const left: { id: string; count: number }[] = [];
+  const left: { id: string; count: number; to?: string }[] = [];
   for (const r of g.orders.owed) {
-    if (g.inventory.room(r.id) >= r.count && g.inventory.add(r.id, r.count))
-      given.push(r);
+    if (r.to !== undefined && r.to !== g.players.localId) left.push(r);
+    else if (
+      g.inventory.room(r.id) >= r.count &&
+      g.inventory.add(r.id, r.count)
+    )
+      given.push({ id: r.id, count: r.count });
     else left.push(r);
   }
   g.orders.owed = left;

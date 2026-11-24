@@ -44,6 +44,9 @@ import { parseRef, type ScreenRef } from "./screens";
 import type { GameState } from "./save";
 import type { PlayerId } from "./players";
 import { asPlayer } from "./asplayer";
+import { acceptLine, acceptOrder, collectOwed, dropOrder } from "./orders";
+import { turnIn } from "./quests";
+import { payGuestsBoard } from "./roomrewards";
 
 const isIndex = (v: unknown): v is number =>
   typeof v === "number" && Number.isInteger(v) && v >= 0 && v < 4096;
@@ -79,6 +82,14 @@ export const SCREEN_INTENTS: Record<string, string[]> = {
   "animal-in": BENCHES,
   "animal-name": BENCHES,
   "pond-empty": ["pond"],
+  "bundle-give": ["hall"],
+  "bundle-hat": ["hall"],
+  "order-take": ["orders"],
+  "order-drop": ["orders"],
+  "order-collect": ["orders"],
+  "request-accept": ["requests"],
+  "request-turnin": ["requests"],
+  "request-cancel": ["requests"],
 };
 
 /**
@@ -118,6 +129,8 @@ export function targetsScreen(intent: Intent, open: ScreenRef): boolean {
       const p = intent.pond as { x?: unknown; y?: unknown } | undefined;
       return !!p && p.x === open.x && p.y === open.y;
     }
+    case "hall":
+      return intent.room === open.room;
     case "market":
       return intent.stall === open.stock;
     case "shop":
@@ -214,9 +227,85 @@ export function applyScreenIntent(
     case "chest-sort":
     case "chest-colour":
       return applyChestIntent(g, by, intent);
+    case "bundle-give":
+    case "bundle-hat":
+    case "order-take":
+    case "order-drop":
+    case "order-collect":
+    case "request-accept":
+    case "request-turnin":
+    case "request-cancel":
+      return applyHallIntent(g, by, intent);
     default:
       return null;
   }
+}
+
+/**
+ * The hall's three counters (note 108 group 4). A bundle hand-in comes out of the sender's pack, and a
+ * finished bundle pays its gold and item to the sender alone (rule 3), while what the room opens is derived
+ * from the shared hall and so is everyone's. The orders and the request board are one shared board each:
+ * taking, dropping and cancelling are anyone's, and a finished request or order pays every player (note 53,
+ * 2026-11-18). A request hand-in takes the goods from the sender's pack and pays the sender's wallet first.
+ */
+function applyHallIntent(
+  g: GameState,
+  by: PlayerId,
+  intent: Intent,
+): string | undefined {
+  const raw: unknown = intent.kind.startsWith("bundle")
+    ? intent.bundle
+    : intent.id;
+  const id = typeof raw === "string" ? raw : "";
+  if (id === "" && intent.kind !== "order-collect") return `bad ${intent.kind}`;
+  return asPlayer(g, by, () => {
+    const day = g.day.clock.day;
+    switch (intent.kind) {
+      case "bundle-give": {
+        const item = intent.item;
+        if (typeof item !== "string") return "bad bundle-give";
+        const def = g.hall.bundles.find((b) => b.id === id);
+        if (def && def.room !== intent.room) return "not in this room";
+        const why = g.hall.problem(g.inventory, id, item);
+        if (why) return why;
+        const r = g.hall.handIn(g.inventory, g, id, item, (gold) =>
+          g.cave.addEarnings(gold, day + 1),
+        );
+        if (r === "completed") payGuestsBoard(g);
+        return undefined;
+      }
+      case "bundle-hat": {
+        const hat = intent.hat;
+        const def = g.hall.bundles.find((b) => b.id === id);
+        if (typeof hat !== "string") return "bad bundle-hat";
+        if (def && def.room !== intent.room) return "not in this room";
+        return g.hall.claimHat(id, hat, g.wardrobe)
+          ? undefined
+          : "You cannot take that hat.";
+      }
+      case "order-take": {
+        const r = acceptOrder(g, id, day);
+        return r === "ok" ? undefined : acceptLine(r);
+      }
+      case "order-drop":
+        return dropOrder(g, id) ? undefined : "That order is not taken.";
+      case "order-collect":
+        return collectOwed(g).length > 0
+          ? undefined
+          : "Nothing to collect, or your backpack is full.";
+      case "request-accept":
+        return g.quests.accept(id, day) ? undefined : "That request is gone.";
+      case "request-cancel":
+        return g.quests.cancel(id) ? undefined : "No such request.";
+      default: {
+        // request-turnin
+        const r = turnIn(g, id, day);
+        if (!r.ok) return r.reason;
+        g.players.payEveryone(r.gold, g.players.localId);
+        return undefined;
+      }
+    }
+  });
 }
 
 function applyChestIntent(

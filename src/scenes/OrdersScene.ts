@@ -1,19 +1,18 @@
 import Phaser from "phaser";
 import {
   askText,
-  collectOwed,
   ORDERS_INTRO,
-  acceptOrder,
-  dropOrder,
   handInTally,
   orderChest,
   orderById,
   progressOf,
 } from "../core/orders";
 import type { GameState } from "../core/save";
+import type { Intent } from "../core/protocol";
 import { frame, Menu, type Row } from "./panel";
 import { itemById } from "../core/items";
 import { STATE_KEY } from "./state";
+import { closeWhenDone, dispatch, followGuest } from "./guestlive";
 
 /**
  * The Special Orders board (note 65). The first time, a short scene opens it on
@@ -88,7 +87,21 @@ export class OrdersScene extends Phaser.Scene {
     kb?.on("keydown-DOWN", () => this.menu?.move(1));
     kb?.on("keydown-ENTER", () => this.menu?.press(0));
     this.menu.setFocus(true);
+    // A guest's actions go to the host; the board redraws when its answer arrives (note 108 group 4).
+    followGuest(
+      this,
+      () => this.refresh(),
+      (text) => this.message.setText(text),
+    );
+    closeWhenDone(this);
     this.refresh();
+  }
+
+  /** Send an action through the dispatcher. `done` is the line when it worked; a guest's answer comes later. */
+  private act(intent: Intent, done: string): void {
+    const why = dispatch(this.state, intent);
+    if (why === "sent") return;
+    this.say(why ?? done);
   }
 
   private say(text: string): void {
@@ -108,18 +121,11 @@ export class OrdersScene extends Phaser.Scene {
         buttons: [
           {
             text: "Take",
-            run: () => {
-              const r = acceptOrder(g, def.id, day);
-              this.say(
-                r === "ok"
-                  ? `You took ${def.title}.`
-                  : r === "one a week"
-                    ? "You have taken an order this week. Another is open next week."
-                    : r === "place taken"
-                      ? "Something stands where the chest would go. Clear it first."
-                      : "That order is gone.",
-              );
-            },
+            run: () =>
+              this.act(
+                { kind: "order-take", id: def.id },
+                `You took ${def.title}.`,
+              ),
           },
         ],
       });
@@ -142,28 +148,25 @@ export class OrdersScene extends Phaser.Scene {
         buttons: [
           {
             text: "Drop",
-            run: () => {
-              dropOrder(g, a.id);
-              this.say(`You dropped ${def.title}. It costs nothing.`);
-            },
+            run: () =>
+              this.act(
+                { kind: "order-drop", id: a.id },
+                `You dropped ${def.title}. It costs nothing.`,
+              ),
           },
         ],
       });
     }
-    for (const r of o.owed)
+    for (const r of o.owed.filter(
+      (w) => w.to === undefined || w.to === g.players.localId,
+    ))
       rows.push({
         label: `Reward waiting: ${r.count} ${itemById(r.id)?.name ?? r.id}`,
         buttons: [
           {
             text: "Collect",
-            run: () => {
-              const got = collectOwed(g);
-              this.say(
-                got.length > 0
-                  ? "You collected your reward."
-                  : "Your backpack is full.",
-              );
-            },
+            run: () =>
+              this.act({ kind: "order-collect" }, "You collected your reward."),
           },
         ],
       });

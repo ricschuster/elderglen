@@ -13,7 +13,9 @@ import { GameRoomWorld } from "../src/core/roomworld";
 import { Room } from "../src/core/room";
 import { ensureTools, isToolId } from "../src/core/toolitems";
 import { LOCAL_PLAYER } from "../src/core/players";
-import { newGame } from "../src/core/save";
+import { deserialize, newGame, serialize } from "../src/core/save";
+import { endDayOrders } from "../src/core/orders";
+import { requestFor } from "../src/core/quests";
 import { Inventory } from "../src/core/inventory";
 import { applyServerMsg } from "../src/net/guestapply";
 import { LOCKED_LINE, type ScreenRef } from "../src/core/screens";
@@ -927,5 +929,316 @@ describe("animals and ponds (note 108, group 3)", () => {
         animal: 1,
       }),
     ).toBeUndefined();
+  });
+});
+
+describe("the hall: bundles, orders and the request board (note 108, group 4)", () => {
+  const hallRef = (room: string): ScreenRef => {
+    const s = maps.get("hall").services.find((v) => v.id === room)!;
+    return { kind: "hall", map: "hall", x: s.x, y: s.y, room };
+  };
+  const boardRef = (kind: "orders" | "requests"): ScreenRef => {
+    const s = maps.get("hearthwell").services.find((v) => v.kind === kind)!;
+    return { kind, map: "hearthwell", x: s.x, y: s.y };
+  };
+  const openAt = (t: ReturnType<typeof mk>, id: string, ref: ScreenRef) => {
+    t.stand(id, ref.map, ref.x, ref.y + 1);
+    return t.send(id, { kind: "open", screen: ref });
+  };
+  const ROOM = "foragers-shelf";
+  /** Mark a bundle finished without a reward (test setup). */
+  const finish = (g: ReturnType<typeof mk>["g"], id: string) => {
+    const def = g.hall.bundles.find((b) => b.id === id)!;
+    const given = (
+      g.hall as unknown as { given: Map<string, Map<string, number>> }
+    ).given;
+    given.set(id, new Map(def.items.map((i) => [i.id, i.count] as const)));
+  };
+  const give = (bundle: string, item: string, room = ROOM) =>
+    ({ kind: "bundle-give", room, bundle, item }) as const;
+
+  it("hands in from the sender's pack, and the finisher alone gets the reward", () => {
+    const t = mk();
+    const { g } = t;
+    const ann = g.players.get(t.ann);
+    const bo = g.players.get(t.bo);
+    for (const id of ["daffodil", "leek", "dandelion", "horseradish"]) {
+      ann.inventory.add(id);
+      bo.inventory.add(id);
+    }
+    // Not at the scroll, or not the screen you opened.
+    expect(t.send(t.ann, give("spring-foraging", "daffodil"))).toBe(
+      "open the screen first",
+    );
+    expect(openAt(t, t.ann, hallRef("larder"))).toBeUndefined();
+    expect(t.send(t.ann, give("spring-foraging", "daffodil"))).toBe(
+      "not the screen you opened",
+    );
+    expect(openAt(t, t.ann, hallRef(ROOM))).toBeUndefined();
+    expect(openAt(t, t.bo, hallRef(ROOM))).toBeUndefined();
+    // A bundle of another room is refused through this room's scroll.
+    expect(t.send(t.ann, give("spring-crops", "parsnip"))).toBe(
+      "not in this room",
+    );
+    // Ann gives two, Bo gives one, Ann a good she does not have.
+    expect(t.send(t.ann, give("spring-foraging", "daffodil"))).toBeUndefined();
+    expect(t.send(t.ann, give("spring-foraging", "leek"))).toBeUndefined();
+    expect(t.send(t.bo, give("spring-foraging", "dandelion"))).toBeUndefined();
+    expect(t.send(t.ann, give("spring-foraging", "salmonberry"))).toBe(
+      "You do not have one.",
+    );
+    expect(t.send(t.bo, give("spring-foraging", "daffodil"))).toBe(
+      "Already handed in.",
+    );
+    expect(ann.inventory.count("daffodil")).toBe(0);
+    expect(bo.inventory.count("dandelion")).toBe(0);
+    expect(g.hall.complete("spring-foraging")).toBe(false);
+    // Bo hands in the last good: the seeds go to Bo only.
+    expect(
+      t.send(t.bo, give("spring-foraging", "horseradish")),
+    ).toBeUndefined();
+    expect(g.hall.complete("spring-foraging")).toBe(true);
+    expect(bo.inventory.count("parsnip-seed")).toBe(15);
+    expect(ann.inventory.count("parsnip-seed")).toBe(0);
+    expect(t.send(t.ann, give("spring-foraging", "horseradish"))).toBe(
+      "That bundle is already done.",
+    );
+  });
+
+  it("pays a bundle's gold to the finisher's own purse", () => {
+    const t = mk("separate");
+    const { g } = t;
+    finish(g, "spring-foraging"); // opens the Larder
+    const def = g.hall.bundles.find((b) => b.id === "spring-crops")!;
+    expect(g.hall.roomOpen(def.room)).toBe(true);
+    const ann = g.players.get(t.ann);
+    const bo = g.players.get(t.bo);
+    for (const s of def.items) bo.inventory.add(s.id, s.count);
+    expect(openAt(t, t.bo, hallRef(def.room))).toBeUndefined();
+    const was = [g.players.get(LOCAL_PLAYER).money, ann.money, bo.money];
+    for (const s of def.items)
+      for (let i = 0; i < s.count; i++)
+        expect(t.send(t.bo, give(def.id, s.id, def.room))).toBeUndefined();
+    expect(g.hall.complete(def.id)).toBe(true);
+    expect(bo.money).toBe(was[2]! + def.reward.money!);
+    expect(ann.money).toBe(was[1]);
+    expect(g.players.get(LOCAL_PLAYER).money).toBe(was[0]);
+  });
+
+  it("refuses a room that is not open yet", () => {
+    const t = mk();
+    t.g.players.get(t.ann).inventory.add("parsnip");
+    expect(openAt(t, t.ann, hallRef("hearth"))).toBeUndefined();
+    expect(t.send(t.ann, give("hearth-bundle", "parsnip", "hearth"))).toBe(
+      "There is no such bundle.",
+    );
+    const def = t.g.hall.bundlesIn("hearth")[0]!;
+    t.g.players.get(t.ann).inventory.add(def.items[0]!.id);
+    expect(t.send(t.ann, give(def.id, def.items[0]!.id, "hearth"))).toBe(
+      "That room is not open yet.",
+    );
+  });
+
+  it("takes a hat from a finished bundle's set", () => {
+    const t = mk();
+    const def = t.g.hall.bundles.find((b) => b.reward.hats)!;
+    const hats = def.reward.hats!;
+    expect(openAt(t, t.ann, hallRef(def.room))).toBeUndefined();
+    const hat = { kind: "bundle-hat", room: def.room, bundle: def.id } as const;
+    expect(t.send(t.ann, { ...hat, hat: hats.from[0]! })).toBe(
+      "You cannot take that hat.",
+    );
+    finish(t.g, def.id);
+    expect(t.send(t.ann, { ...hat, hat: hats.from[0]! })).toBeUndefined();
+    expect(t.g.wardrobe.has(hats.from[0]!)).toBe(true);
+    expect(t.send(t.ann, { ...hat, hat: "no-such-hat" })).toBe(
+      "You cannot take that hat.",
+    );
+  });
+
+  const BOARD_DAY = 70;
+  /** A day on which the orders board posts an order that needs no chest. */
+  function orderDay(t: ReturnType<typeof mk>) {
+    t.g.orders.opened = true;
+    for (let d = BOARD_DAY; d < BOARD_DAY + 200; d++) {
+      const def = t.g.orders.board(d).find((o) => o.ask.kind !== "hand-in");
+      if (def) {
+        t.g.day.clock.day = d;
+        return { day: d, def };
+      }
+    }
+    throw new Error("no order");
+  }
+
+  it("takes and drops a shared order, one a week, and pays every player at night", () => {
+    const t = mk("separate");
+    const { g } = t;
+    const { day, def } = orderDay(t);
+    expect(t.send(t.ann, { kind: "order-take", id: def.id })).toBe(
+      "open the screen first",
+    );
+    expect(openAt(t, t.ann, boardRef("orders"))).toBeUndefined();
+    expect(openAt(t, t.bo, boardRef("orders"))).toBeUndefined();
+    expect(t.send(t.ann, { kind: "order-take", id: "nope" })).toBe(
+      "That order is gone.",
+    );
+    expect(t.send(t.ann, { kind: "order-take", id: def.id })).toBeUndefined();
+    expect(g.orders.isActive(def.id)).toBe(true);
+    // The board is one board: Bo sees it taken, and cannot take another this week.
+    const other = g.orders.board(day)[0];
+    if (other) {
+      expect(t.send(t.bo, { kind: "order-take", id: other.id })).toBe(
+        "You have taken an order this week. Another is open next week.",
+      );
+    }
+    // Anyone may drop it.
+    expect(t.send(t.bo, { kind: "order-drop", id: def.id })).toBeUndefined();
+    expect(t.send(t.bo, { kind: "order-drop", id: def.id })).toBe(
+      "That order is not taken.",
+    );
+    // A filled order pays every purse, and a first reward is owed to each player.
+    g.orders.active.push({
+      id: def.id,
+      accepted: day,
+      due: day + def.windowDays,
+      progress: { all: 9999, parsnip: 9999 },
+    });
+    const purse = (id: string) => g.players.get(id).money;
+    const was = [LOCAL_PLAYER, t.ann, t.bo].map(purse);
+    const news = endDayOrders(g, [], day + 1);
+    expect(news.done.length).toBe(1);
+    [LOCAL_PLAYER, t.ann, t.bo].forEach((id, i) =>
+      expect(purse(id)).toBe(was[i]! + def.gold),
+    );
+    if (def.firstReward.item) {
+      const item = def.firstReward.item;
+      expect(g.orders.owed.map((o) => o.to).sort()).toEqual(
+        [LOCAL_PLAYER, t.ann, t.bo].sort(),
+      );
+      // Each collects their own, once.
+      expect(t.send(t.ann, { kind: "order-collect" })).toBeUndefined();
+      expect(g.players.get(t.ann).inventory.count(item.id)).toBe(item.count);
+      expect(t.send(t.ann, { kind: "order-collect" })).toBe(
+        "Nothing to collect, or your backpack is full.",
+      );
+      expect(t.send(t.bo, { kind: "order-collect" })).toBeUndefined();
+      expect(g.players.get(t.bo).inventory.count(item.id)).toBe(item.count);
+      expect(g.orders.owed.length).toBe(1);
+    }
+  });
+
+  it("pays a shared wallet once for a filled order", () => {
+    const t = mk("shared");
+    const { g } = t;
+    const { day, def } = orderDay(t);
+    g.orders.active.push({
+      id: def.id,
+      accepted: day,
+      due: day + def.windowDays,
+      progress: { all: 9999, parsnip: 9999 },
+    });
+    const was = g.players.get(LOCAL_PLAYER).money;
+    endDayOrders(g, [], day + 1);
+    expect(g.players.get(LOCAL_PLAYER).money).toBe(was + def.gold);
+  });
+
+  /** A day on which the board posts a delivery request. */
+  function requestDay(t: ReturnType<typeof mk>) {
+    for (let d = 2; d < 200; d++) {
+      const q = requestFor(d);
+      if (q?.type === "delivery") {
+        t.g.day.clock.day = d;
+        return { day: d, q };
+      }
+    }
+    throw new Error("no request");
+  }
+
+  it("accepts, hands in and cancels board requests; a hand-in pays every player", () => {
+    const t = mk("separate");
+    const { g } = t;
+    const { q } = requestDay(t);
+    expect(t.send(t.ann, { kind: "request-accept", id: q.id })).toBe(
+      "open the screen first",
+    );
+    expect(openAt(t, t.ann, boardRef("requests"))).toBeUndefined();
+    expect(openAt(t, t.bo, boardRef("requests"))).toBeUndefined();
+    expect(t.send(t.ann, { kind: "request-accept", id: "board-1" })).toBe(
+      "That request is gone.",
+    );
+    expect(t.send(t.bo, { kind: "request-accept", id: q.id })).toBeUndefined();
+    // Taken once: the same offer is gone for the other player.
+    expect(t.send(t.ann, { kind: "request-accept", id: q.id })).toBe(
+      "That request is gone.",
+    );
+    // Ann holds the goods; Bo does not.
+    expect(t.send(t.bo, { kind: "request-turnin", id: q.id })).toBe(
+      "You do not have enough to hand in.",
+    );
+    g.players.get(t.ann).inventory.add(q.want.item, q.want.count);
+    const purse = (id: string) => g.players.get(id).money;
+    const was = [LOCAL_PLAYER, t.ann, t.bo].map(purse);
+    expect(t.send(t.ann, { kind: "request-turnin", id: q.id })).toBeUndefined();
+    expect(g.players.get(t.ann).inventory.count(q.want.item)).toBe(0);
+    [LOCAL_PLAYER, t.ann, t.bo].forEach((id, i) =>
+      expect(purse(id)).toBe(was[i]! + q.reward.gold),
+    );
+    expect(t.send(t.ann, { kind: "request-turnin", id: q.id })).toBe(
+      "No such request.",
+    );
+    // A finished request cannot be cancelled; a fresh one can.
+    expect(t.send(t.bo, { kind: "request-cancel", id: q.id })).toBe(
+      "No such request.",
+    );
+  });
+
+  it("cancels an open request, and walking away from the board refuses it", () => {
+    const t = mk();
+    const { q } = requestDay(t);
+    expect(openAt(t, t.ann, boardRef("requests"))).toBeUndefined();
+    expect(t.send(t.ann, { kind: "request-accept", id: q.id })).toBeUndefined();
+    t.stand(t.ann, "hearthwell", 1, 1);
+    expect(t.send(t.ann, { kind: "request-cancel", id: q.id })).toBe(
+      "too far away",
+    );
+    const r = boardRef("requests");
+    t.stand(t.ann, "hearthwell", r.x, r.y + 1);
+    expect(t.send(t.ann, { kind: "request-cancel", id: q.id })).toBeUndefined();
+    expect(t.g.quests.open().length).toBe(0);
+  });
+
+  it("shows a guest copy the same board through applied", () => {
+    const t = mk();
+    const { q } = requestDay(t);
+    const copy = deserialize(serialize(t.g))!;
+    t.room.drain(t.ann);
+    expect(openAt(t, t.ann, boardRef("requests"))).toBeUndefined();
+    t.room.drain(t.bo);
+    expect(t.send(t.ann, { kind: "request-accept", id: q.id })).toBeUndefined();
+    for (const m of t.room.drain(t.bo)) applyServerMsg(copy, m);
+    expect(copy.quests.open().map((o) => o.id)).toEqual([q.id]);
+  });
+
+  it("works in single player: the same intents run on the host's own state", () => {
+    const g = newGame("standard");
+    const { q } = (() => {
+      for (let d = 2; d < 200; d++) {
+        const r = requestFor(d);
+        if (r?.type === "delivery") {
+          g.day.clock.day = d;
+          return { q: r };
+        }
+      }
+      throw new Error("none");
+    })();
+    expect(
+      applyScreenIntent(g, LOCAL_PLAYER, { kind: "request-accept", id: q.id }),
+    ).toBeUndefined();
+    g.inventory.add(q.want.item, q.want.count);
+    const was = g.money;
+    expect(
+      applyScreenIntent(g, LOCAL_PLAYER, { kind: "request-turnin", id: q.id }),
+    ).toBeUndefined();
+    expect(g.money).toBe(was + q.reward.gold);
   });
 });
