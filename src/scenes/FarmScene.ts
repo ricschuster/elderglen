@@ -10,8 +10,9 @@ import {
   coopVisibleTier,
 } from "../core/animals";
 import { DEBUG_TOOLS } from "../core/debugtools";
-import { useSiloIntent } from "../core/interact";
-import { pondCovering, pondUse, takeFish } from "../core/pond";
+import { resolveUse, type UseContext } from "../core/interact";
+import { LOCAL_PLAYER } from "../core/players";
+import { pondCovering, pondUse } from "../core/pond";
 
 import Phaser from "phaser";
 
@@ -63,7 +64,7 @@ import {
   isFestivalMap,
 } from "../core/festivals";
 import { nicheLine } from "../core/maze";
-import { rodById } from "../core/fishing";
+
 import { PIER_FLOAT_KIND, PIER_KEEPER_KIND } from "../core/marketpier";
 import { festivalHolds } from "../core/festivalroutes";
 import { marketHolds, stallOf } from "../core/nightmarket";
@@ -90,7 +91,7 @@ import {
 import { COVE_TREASURE, FERRY_LINE, takeTreasure } from "../core/cove";
 import { cropOfSeed, itemById } from "../core/items";
 import { MIXED_SEED } from "../core/weeds";
-import { NOTHING_TO_ACT_ON, act, reasonText, useHeld } from "../core/tools";
+import { NOTHING_TO_ACT_ON, act, reasonText } from "../core/tools";
 
 import { mapFiles, maps } from "../content/maps";
 import { START, safeSpawn } from "../core/maps";
@@ -154,7 +155,6 @@ import {
 } from "../core/labels";
 import { festivalPropBlocks } from "../core/festivalprops";
 import {
-  FACING_STEP,
   facingFrom,
   facingTile,
   move,
@@ -184,52 +184,17 @@ import { isWeapon, weaponById } from "../core/combat";
 import {} from "../core/creatures";
 
 import { jobDone, statusText } from "../core/machines";
-import {
-  CASK,
-  caskDone,
-  caskStatus,
-  collectCask,
-  handOnCask,
-  loadCask,
-  placeCask,
-} from "../core/cask";
-import { chestById, pickUpChest, placeChest, pushChest } from "../core/chests";
+import { caskDone, caskStatus, collectCask } from "../core/cask";
 
-import {
-  type Glow,
-  isLight,
-  lightAt,
-  lightLayer,
-  pickUpLight,
-  placeLight,
-} from "../core/lights";
+import { type Glow, lightLayer } from "../core/lights";
 import { drink, isDrink } from "../core/elixirs";
 
-import { type LitBomb, isBomb, placeBomb } from "../core/bombs";
-import {
-  LIGHTNING_ROD,
-  packWaiting,
-  pickUpRod,
-  placeRod,
-  rodAt,
-  rollStrikes,
-  takePack,
-} from "../core/lightning";
-import {
-  POT_ITEM,
-  baitPot,
-  collectPot,
-  pickUpPot,
-  placePot,
-} from "../core/pots";
-import { baitById } from "../core/tackle";
+import { type LitBomb } from "../core/bombs";
+import { packWaiting, rollStrikes, takePack } from "../core/lightning";
+import { collectPot } from "../core/pots";
+
 import { greencoatDue } from "../core/camp";
-import {
-  farmDecorAt,
-  isFarmDecor,
-  pickUpFarmDecor,
-  placeFarmDecor,
-} from "../core/farmdecor";
+
 import {
   DYE_POTS_SERVICE,
   SEWING_SERVICE,
@@ -255,19 +220,12 @@ import {
 } from "../core/mines";
 import { LEVER_KIND } from "../core/danger";
 import type { Rocks } from "../core/rocks";
-import {
-  DECOR_ROOMS,
-  applyDecor,
-  decorById,
-  roomTiles,
-  zoneHolds,
-} from "../core/decor";
+import { DECOR_ROOMS, decorById, roomTiles, zoneHolds } from "../core/decor";
 import {
   CATALOGUE_ITEM,
   carryFurniture,
   furnitureById,
   pickUpFurniture,
-  placeFurniture,
 } from "../core/furniture";
 import { hatById } from "../core/hats";
 import { greenhouseHolds } from "../core/greenhouse";
@@ -307,7 +265,7 @@ import { bedNotice } from "../core/bednotice";
 import { exhaustedSpeed, tiredWarning } from "../core/energyrules";
 import { audio } from "../audio/engine";
 import { setFarmProbe } from "../audio/director";
-import { doorSoundFor, footstepFor, sfxForAct, sfxForUse } from "../core/audio";
+import { doorSoundFor, footstepFor, sfxForAct } from "../core/audio";
 import type { BedStatus } from "../core/room";
 import { weddingWaiting } from "../core/marriagecard";
 import { proposalFor } from "../core/playermarriage";
@@ -2173,177 +2131,48 @@ export class FarmScene extends Phaser.Scene {
       this.message = `${this.getOffHint()} to get off ${horseName(this.state)} first.`;
       return this.render();
     }
-    const front = this.aimTile();
-    const carried = heldAt(this.state, this.selected);
-    const weapon =
-      carried.kind === "item" && isWeapon(carried.id)
-        ? weaponById(carried.id)
-        : undefined;
-    if (weapon) return swing(this, weapon);
-    if (this.map.serviceAt(front.x, front.y)) return;
-    // A person is talked to, never worked on (the Action button or a tap does that).
-    if (presentAt(this.villagers, front.x, front.y)) return;
-    if (this.useSilo(front.x, front.y)) return;
-    const held = heldAt(this.state, this.selected);
-    // The rod lifts a fish out of a pond: no bar, no bait (note 93).
-    const pond = isFarmMap(this.mapId)
-      ? pondCovering(this.state, front.x, front.y)
-      : undefined;
-    if (pond && held.kind === "item" && rodById(held.id))
-      return this.report(takeFish(this.state, pond.x, pond.y));
-    if (held.kind === "item" && rodById(held.id)) return cast(this, held.id);
-    // A pot goes on the water, bait goes in a pot, and the axe or pickaxe takes an empty one up.
-    if (held.kind === "item" && held.id === POT_ITEM)
-      return this.report(
-        placePot(this.state, this.map, this.mapId, front.x, front.y),
-      );
-    if (
-      held.kind === "item" &&
-      baitById(held.id) &&
-      this.state.pots.get(this.mapId, front.x, front.y)
-    )
-      return this.report(
-        baitPot(this.state, this.mapId, front.x, front.y, held.id),
-      );
-    if (isLiftTool(held) && this.state.pots.get(this.mapId, front.x, front.y))
-      return this.report(pickUpPot(this.state, this.mapId, front.x, front.y));
-    // A bomb is lit from the backpack and cannot be lifted (note 89).
-    if (held.kind === "item" && isBomb(held.id)) {
-      const lit = placeBomb(
-        this.state,
-        this.map,
-        this.mapId,
-        front.x,
-        front.y,
-        held.id,
-        (x, y) =>
-          !!this.rocks()?.at(x, y) ||
-          this.litBombs.some((b) => b.x === x && b.y === y),
-      );
-      if (lit.ok) {
-        this.litBombs.push(lit.bomb);
-        audio.sfx("bomb.fuse");
-      }
-      return this.report(lit.ok ? { ok: true } : lit);
-    }
-    // A farm decoration is stood down from the pack and lifted by hand, like a light (note 89).
-    if (held.kind === "item" && isFarmDecor(held.id))
-      return this.report(
-        placeFarmDecor(
-          this.state,
-          this.map,
-          this.mapId,
-          front.x,
-          front.y,
-          held.id,
-          (x, y) => !!this.rocks()?.at(x, y),
-        ),
-      );
-    if (isFarmMap(this.mapId) && farmDecorAt(this.state, front.x, front.y))
-      return this.report(pickUpFarmDecor(this.state, front.x, front.y));
-    // A light is stood down from the backpack, and any tool or the empty hand lifts one.
-    if (held.kind === "item" && isLight(held.id))
-      return this.report(
-        placeLight(
-          this.state,
-          this.map,
-          this.mapId,
-          front.x,
-          front.y,
-          held.id,
-          (x, y) => !!this.rocks()?.at(x, y),
-        ),
-      );
-    if (lightAt(this.state, this.mapId, front.x, front.y))
-      return this.report(pickUpLight(this.state, this.mapId, front.x, front.y));
-    // A lightning rod is stood down from the backpack, and any tool or the empty hand lifts one.
-    if (held.kind === "item" && held.id === LIGHTNING_ROD)
-      return this.report(
-        placeRod(this.state, this.map, this.mapId, front.x, front.y),
-      );
-    if (isFarmMap(this.mapId) && rodAt(this.state, front.x, front.y))
-      return this.report(pickUpRod(this.state, front.x, front.y));
-    // A chest is stood down from the backpack (a big one on a small one swaps it in).
-    if (held.kind === "item" && chestById(held.id))
-      return this.report(
-        placeChest(this.state, this.map, this.mapId, front.x, front.y, held.id),
-      );
-    // Any tool takes an empty chest up, and pushes one with items in it one
-    // tile along (SC-56; the Chest wiki page says any tool).
-    if (
-      held.kind === "tool" &&
-      this.state.chests.at(this.mapId, front.x, front.y)
-    ) {
-      const taken = pickUpChest(this.state, this.mapId, front.x, front.y);
-      if (taken.ok || taken.reason !== "chest not empty")
-        return this.report(taken);
-      const step = FACING_STEP[this.facing];
-      return this.report(
-        pushChest(
-          this.state,
-          this.map,
-          this.mapId,
-          front.x,
-          front.y,
-          step.x,
-          step.y,
-        ),
-      );
-    }
-    if (this.mapId === CELLAR_MAP) {
-      // Casks stand in the cellar: a held cask is stood down, a held good goes in,
-      // and the axe or pickaxe takes a good out, or an empty cask up.
-      const cask = this.state.casks.at(front.x, front.y);
-      if (held.kind === "item" && held.id === CASK && !cask)
-        return this.report(placeCask(this.state, this.map, front.x, front.y));
-      if (cask && held.kind === "item")
-        return this.report(loadCask(this.state, front.x, front.y, held.id));
-      if (cask && isLiftTool(held))
-        return this.report(handOnCask(this.state, front.x, front.y));
-    }
-    if (isHouseMap(this.mapId)) {
-      // In the house the held piece is stood down, and the axe or pickaxe takes one up.
-      if (held.kind === "item" && decorById(held.id))
-        return this.report(
-          applyDecor(this.state, this.mapId, front.x, front.y, held.id),
-        );
-      if (held.kind === "item" && furnitureById(held.id))
-        return this.report(
-          placeFurniture(
-            this.state,
-            this.map,
-            this.mapId,
-            front.x,
-            front.y,
-            held.id,
-          ),
-        );
-      if (
-        isLiftTool(held) &&
-        this.state.furniture.at(this.mapId, front.x, front.y)
-      )
-        return this.report(
-          pickUpFurniture(this.state, this.mapId, front.x, front.y),
-        );
-    }
-    const treeBefore = this.state.trees.at(front.x, front.y)?.stump === false;
-    const machineBefore = !!this.state.machines.at(front.x, front.y);
-    const used = useHeld(
+    const intent = resolveUse(
       this.state,
-      this.map,
-      held,
-      front.x,
-      front.y,
-      this.floor,
+      LOCAL_PLAYER,
+      this.useContext(),
+      heldAt(this.state, this.selected),
+      this.aimTile(),
     );
-    const cue = sfxForUse(held, used, this.floor !== undefined, {
-      treeHere: treeBefore,
-      machineHere: machineBefore,
-    });
-    if (cue) audio.sfx(cue);
-    this.report(used, true);
-    // Chopping the massive log raises a world flag: open its exit, drop its art.
-    this.refreshHolds();
+    switch (intent.kind) {
+      case "none":
+        return;
+      case "message":
+        this.message = intent.text;
+        return this.render();
+      case "swing":
+        return swing(this, intent.weapon);
+      case "cast":
+        return cast(this, intent.rod);
+      case "report":
+        if (intent.bomb) {
+          this.litBombs.push(intent.bomb);
+          audio.sfx("bomb.fuse");
+        }
+        return this.report(intent.result);
+      case "tool":
+        if (intent.cue) audio.sfx(intent.cue);
+        this.report(intent.result, true);
+        // Chopping the massive log raises a world flag: open its exit, drop its art.
+        this.refreshHolds();
+    }
+  }
+
+  /** What the Use and Action rules need to know about this place (`core/interact.ts`). */
+  private useContext(): UseContext {
+    return {
+      mapId: this.mapId,
+      map: this.map,
+      ...(this.floor !== undefined ? { floor: this.floor } : {}),
+      facing: this.facing,
+      rockAt: (x, y) => !!this.rocks()?.at(x, y),
+      litBombAt: (x, y) => this.litBombs.some((b) => b.x === x && b.y === y),
+      personAt: (x, y) => !!presentAt(this.villagers, x, y),
+    };
   }
 
   /** The Frostday contest for a cast landing on this tile: the state at a hole, "shut" before opening. */
@@ -3190,15 +3019,6 @@ export class FarmScene extends Phaser.Scene {
         this.glow.fillCircle(cx, cy, (l.radius * ts * i) / 4);
       }
     }
-  }
-
-  /** Facing the silo: tip the held hay in, or read how full it is. True if the tile is the silo. */
-  private useSilo(tx: number, ty: number): boolean {
-    const msg = useSiloIntent(this.state, this.mapId, tx, ty, this.selected);
-    if (msg === undefined) return false;
-    this.message = msg;
-    this.render();
-    return true;
   }
 
   render(): void {

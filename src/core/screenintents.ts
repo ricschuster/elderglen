@@ -14,7 +14,7 @@ import type { Intent } from "./protocol";
 import { parseRef, type ScreenRef } from "./screens";
 import type { GameState } from "./save";
 import type { PlayerId } from "./players";
-import { asPlayer } from "./roomintents";
+import { asPlayer } from "./asplayer";
 
 const isIndex = (v: unknown): v is number =>
   typeof v === "number" && Number.isInteger(v) && v >= 0 && v < 4096;

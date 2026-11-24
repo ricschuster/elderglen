@@ -5,6 +5,7 @@ import * as actions from "./actions";
 import { farmMapOf } from "./farmtypes";
 import { itemById } from "./items";
 import type { Intent } from "./protocol";
+import { asPlayer } from "./asplayer";
 import { LOCAL_PLAYER, type PlayerId } from "./players";
 import { potPrice, sellMultiplier } from "./professions";
 import { POT_ITEM } from "./pots";
@@ -21,32 +22,6 @@ const isTile = (v: unknown): v is number =>
   typeof v === "number" && Number.isInteger(v) && v >= 0 && v < 4096;
 const isCount = (v: unknown): v is number =>
   typeof v === "number" && Number.isInteger(v) && v >= 1 && v <= MAX_COUNT;
-
-/**
- * Run `fn` with the game state acting as player `by`: the local-player accessors (inventory, can,
- * skills, tool tiers, money) point at their record, and the day's energy object holds their energy
- * for the call, so `day.act` and `day.over` spend and test theirs. Everything is put back after.
- */
-export function asPlayer<T>(g: GameState, by: PlayerId, fn: () => T): T {
-  const players = g.players;
-  if (by === players.localId) return fn();
-  const rec = players.get(by);
-  const day = g.day.energy;
-  const kept = { current: day.current, max: day.max };
-  const prev = players.localId;
-  day.max = rec.energy.max;
-  day.current = rec.energy.current;
-  players.localId = by;
-  try {
-    return fn();
-  } finally {
-    rec.energy.current = day.current;
-    rec.energy.max = day.max;
-    day.current = kept.current;
-    day.max = kept.max;
-    players.localId = prev;
-  }
-}
 
 const outcome = (o: actions.Outcome): string | undefined =>
   o.ok ? undefined : o.reason;
