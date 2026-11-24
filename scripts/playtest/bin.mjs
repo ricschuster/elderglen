@@ -27,7 +27,9 @@ if (!(await scenes()).includes("bin")) finding("using the bin did not open it");
 await bot.shot("bin-open");
 
 // Enter ships the whole first stack (the backpack list keeps its order).
-const first = (await bot.snap()).inv.find((s) => s)?.id;
+const first = (await bot.snap()).inv.find(
+  (s) => s && !s.id.startsWith("tool:"),
+)?.id;
 const firstCount = await have(first);
 await bot.key("Enter", 200);
 if ((await have(first)) !== 0)
