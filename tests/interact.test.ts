@@ -1,10 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { HAY, SILO_SITES } from "../src/core/animals";
 import {
+  resolveAction,
   resolveUse,
+  type ActionContext,
   useSiloIntent,
   type UseContext,
 } from "../src/core/interact";
+import { CAVE_MAP } from "../src/core/cave";
+import { LEVER_KIND } from "../src/core/danger";
 import { maps } from "../src/content/maps";
 import { START } from "../src/core/maps";
 import { LOCAL_PLAYER } from "../src/core/players";
@@ -289,5 +293,209 @@ describe("resolveUse: as another player", () => {
     expect(w.g.players.get("p2").energy.current).toBeLessThan(ann);
     expect(w.g.players.get(LOCAL_PLAYER).energy.current).toBe(hostEnergy);
     expect(w.g.players.localId).toBe(LOCAL_PLAYER);
+  });
+});
+
+/** Any slot holds this crop, at any quality. */
+const packHas = (inv: ReturnType<typeof newGame>["inventory"], id: string) =>
+  Array.from({ length: inv.size }, (_, i) => inv.slot(i)?.id ?? "").some((x) =>
+    x.includes(id),
+  );
+const actCtx = (over: Partial<ActionContext> = {}): ActionContext => ({
+  ...ctx(),
+  ladderAt: () => false,
+  ...over,
+});
+/** A farm map that has one service at every tile. */
+const withService = (kind: string, id = "x") => {
+  const m = Object.create(farm) as typeof farm;
+  m.serviceAt = () => ({ kind, id }) as never;
+  return m;
+};
+const act = (
+  g: ReturnType<typeof newGame>,
+  held: Held = empty,
+  c: ActionContext = actCtx(),
+  at: { x: number; y: number } = tile,
+) => resolveAction(g, LOCAL_PLAYER, c, held, at);
+
+describe("resolveAction: services", () => {
+  it("opens the shop screens with the stock they sell", () => {
+    const g = newGame();
+    for (const [kind, stock] of [
+      ["fisher-shop", "fisher"],
+      ["pin-stall", "pin"],
+    ] as const)
+      expect(act(g, empty, actCtx({ map: withService(kind) }))).toEqual({
+        kind: "open",
+        scene: "shop",
+        data: { stock },
+      });
+  });
+
+  it("opens plain screens by service kind, with the hall room as data", () => {
+    const g = newGame();
+    expect(act(g, empty, actCtx({ map: withService("keeper") }))).toEqual({
+      kind: "open",
+      scene: "keeper",
+    });
+    expect(act(g, empty, actCtx({ map: withService("trainer") }))).toEqual({
+      kind: "open",
+      scene: "trainer",
+    });
+    expect(act(g, empty, actCtx({ map: withService("ore-bin") }))).toEqual({
+      kind: "open",
+      scene: "bin",
+      data: { oreOnly: true },
+    });
+    expect(
+      act(g, empty, actCtx({ map: withService("hall", "pantry") })),
+    ).toEqual({ kind: "open", scene: "hall", data: { room: "pantry" } });
+  });
+
+  it("answers a message service with its line", () => {
+    const g = newGame();
+    const r = act(g, empty, actCtx({ map: withService("dummy") }));
+    expect(r).toMatchObject({ kind: "message" });
+    const camp = act(g, empty, actCtx({ map: withService("camp") }));
+    expect(camp).toMatchObject({ kind: "message" });
+  });
+
+  it("hands scene-owned services back by tag", () => {
+    const g = newGame();
+    expect(act(g, empty, actCtx({ map: withService("tide-bridge") }))).toEqual({
+      kind: "mend-bridge",
+    });
+    expect(act(g, empty, actCtx({ map: withService("stairs") }))).toEqual({
+      kind: "stairs",
+    });
+    expect(act(g, empty, actCtx({ map: withService("stonekeeper") }))).toEqual({
+      kind: "stonekeeper",
+    });
+  });
+
+  it("the lever flips the mine's danger and needs a floor", () => {
+    const g = newGame();
+    const m = withService(LEVER_KIND);
+    expect(act(g, empty, actCtx({ map: m }))).toMatchObject({
+      kind: "open",
+      scene: LEVER_KIND,
+    });
+    const r = act(g, empty, actCtx({ map: m, floor: 1 }));
+    expect(r).toMatchObject({ kind: "message", cue: "mine.stairs" });
+  });
+
+  it("the furnace says nothing is here until it is gifted", () => {
+    const g = newGame();
+    const c = actCtx({ map: withService("furnace") });
+    expect(act(g, empty, c)).toEqual({
+      kind: "message",
+      text: "Nothing is here yet.",
+    });
+    g.furnace.gifted = true;
+    expect(act(g, empty, c)).toEqual({ kind: "open", scene: "furnace" });
+  });
+
+  it("in the cave a bare tile goes to the cave, and a ladder tile descends", () => {
+    const g = newGame();
+    expect(act(g, empty, actCtx({ mapId: CAVE_MAP }))).toEqual({
+      kind: "cave",
+    });
+    expect(act(g, empty, actCtx({ ladderAt: () => true }))).toEqual({
+      kind: "descend",
+    });
+  });
+});
+
+describe("resolveAction: things on the ground", () => {
+  it("opens a placed chest with its sound", () => {
+    const g = newGame();
+    g.inventory.add("chest");
+    use(g, item("chest"));
+    expect(act(g)).toEqual({
+      kind: "open",
+      scene: "chest",
+      data: { mapId: "farm", x: tile.x, y: tile.y },
+      cue: "chest.open",
+    });
+  });
+
+  it("collects from a pot on the water", () => {
+    const g = newGame();
+    g.inventory.add(POT_ITEM);
+    const c = actCtx({ mapId: "delta", map: delta });
+    const at = { x: 63, y: 10 };
+    use(g, item(POT_ITEM), c, at);
+    expect(act(g, empty, c, at)).toMatchObject({ kind: "report" });
+  });
+
+  it("harvests a ripe crop with the harvest sound", () => {
+    const g = newGame();
+    g.farm.till(tile.x, tile.y);
+    g.farm.plant(tile.x, tile.y, "parsnip", "spring");
+    for (let i = 0; i < 8; i++) {
+      g.farm.water(tile.x, tile.y);
+      g.farm.endDay("spring");
+    }
+    const r = act(g);
+    expect(r).toMatchObject({ kind: "act", cue: "crop.harvest" });
+    expect(packHas(g.inventory, "parsnip")).toBe(true);
+  });
+
+  it("does nothing on a bare tile, and eats held food instead", () => {
+    const g = newGame();
+    expect(act(g)).toEqual({ kind: "none" });
+    expect(act(g, item("parsnip"))).toEqual({ kind: "eat" });
+    expect(act(g, item("parsnip-seed"))).toEqual({ kind: "none" });
+  });
+
+  it("opens the house workbench, and a bare piece is picked up", () => {
+    const g = newGame();
+    const house = maps.get("house");
+    const spot = (() => {
+      for (let y = 0; y < house.height; y++)
+        for (let x = 0; x < house.width; x++) {
+          const t = newGame();
+          t.inventory.add("oak-chair");
+          if (
+            use(t, item("oak-chair"), ctx({ mapId: "house", map: house }), {
+              x,
+              y,
+            }).kind === "report" &&
+            t.furniture.at("house", x, y)
+          )
+            return { x, y };
+        }
+      throw new Error("no spot");
+    })();
+    g.inventory.add("oak-chair");
+    const c = actCtx({ mapId: "house", map: house });
+    use(g, item("oak-chair"), c, spot);
+    expect(act(g, empty, c, spot)).toMatchObject({ kind: "report" });
+    expect(g.furniture.at("house", spot.x, spot.y)).toBeUndefined();
+  });
+});
+
+describe("resolveAction: as another player", () => {
+  it("harvests into the sender's pack", () => {
+    const w = new GameRoomWorld(newGame("standard", "separate"), {
+      random: () => 0.9,
+    });
+    w.admit("p2", "Ann");
+    w.addPlayer("p2", "Ann");
+    const g = w.g;
+    g.farm.till(tile.x, tile.y);
+    g.farm.plant(tile.x, tile.y, "parsnip", "spring");
+    for (let i = 0; i < 8; i++) {
+      g.farm.water(tile.x, tile.y);
+      g.farm.endDay("spring");
+    }
+    const before = packHas(g.players.get(LOCAL_PLAYER).inventory, "parsnip");
+    const r = resolveAction(g, "p2", actCtx(), empty, tile);
+    expect(r).toMatchObject({ kind: "act" });
+    expect(packHas(g.players.get("p2").inventory, "parsnip")).toBe(true);
+    expect(packHas(g.players.get(LOCAL_PLAYER).inventory, "parsnip")).toBe(
+      before,
+    );
   });
 });

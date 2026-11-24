@@ -10,9 +10,13 @@ import {
   coopVisibleTier,
 } from "../core/animals";
 import { DEBUG_TOOLS } from "../core/debugtools";
-import { resolveUse, type UseContext } from "../core/interact";
+import {
+  resolveAction,
+  resolveUse,
+  type ActionIntent,
+  type UseContext,
+} from "../core/interact";
 import { LOCAL_PLAYER } from "../core/players";
-import { pondCovering, pondUse } from "../core/pond";
 
 import Phaser from "phaser";
 
@@ -65,17 +69,15 @@ import {
 } from "../core/festivals";
 import { nicheLine } from "../core/maze";
 
-import { PIER_FLOAT_KIND, PIER_KEEPER_KIND } from "../core/marketpier";
 import { festivalHolds } from "../core/festivalroutes";
 import { marketHolds, stallOf } from "../core/nightmarket";
 import { holdsOf } from "../core/worldflags";
 import { gateShutLine, parseGate } from "../core/gates";
 import { mendTideBridge, TIDE_BRIDGE_WOOD } from "../core/tidebridge";
-import { CAMP_LINE, HERMIT_LINE } from "../core/forestfolk";
-import { SPIRIT_STATUE, giveToSpirit, hermitStock } from "../core/elderfruit";
+import { HERMIT_LINE } from "../core/forestfolk";
+import { hermitStock } from "../core/elderfruit";
 import { STONEKEEPER_LINE } from "../core/smith";
 import {
-  SHRINE_SERVICE,
   hasDiamond,
   placeDiamond,
   shrineNote,
@@ -88,10 +90,10 @@ import {
   QUARRY_OPEN,
   YARD_EMPTY_LINE,
 } from "../core/quarry";
-import { COVE_TREASURE, FERRY_LINE, takeTreasure } from "../core/cove";
+import { FERRY_LINE, takeTreasure } from "../core/cove";
 import { cropOfSeed, itemById } from "../core/items";
 import { MIXED_SEED } from "../core/weeds";
-import { NOTHING_TO_ACT_ON, act, reasonText } from "../core/tools";
+import { reasonText } from "../core/tools";
 
 import { mapFiles, maps } from "../content/maps";
 import { START, safeSpawn } from "../core/maps";
@@ -121,7 +123,6 @@ import {
   speedFactor,
 } from "../core/horse";
 import {
-  CART_KIND,
   exitOpen,
   FarmMap,
   layersAtTier,
@@ -129,13 +130,8 @@ import {
   type Exit,
   type TiledLayer,
 } from "../core/map";
-import {
-  counterShopId,
-  counterShutLine,
-  doorShopId,
-  doorShutLine,
-} from "../core/shophours";
-import { roadNews } from "../core/roadnews";
+import { counterShutLine, doorShopId, doorShutLine } from "../core/shophours";
+
 import { traderProblem } from "../core/trader";
 import { sellerProblem } from "../core/courtship";
 import { PROPS_MARK, propsOf, spouseId } from "../core/spouse";
@@ -151,7 +147,6 @@ import {
   mergeTags,
   serviceLabel,
   stackOffsets,
-  standInLine,
 } from "../core/labels";
 import { festivalPropBlocks } from "../core/festivalprops";
 import {
@@ -184,24 +179,17 @@ import { isWeapon, weaponById } from "../core/combat";
 import {} from "../core/creatures";
 
 import { jobDone, statusText } from "../core/machines";
-import { caskDone, caskStatus, collectCask } from "../core/cask";
+import { caskStatus } from "../core/cask";
 
 import { type Glow, lightLayer } from "../core/lights";
 import { drink, isDrink } from "../core/elixirs";
 
 import { type LitBomb } from "../core/bombs";
-import { packWaiting, rollStrikes, takePack } from "../core/lightning";
-import { collectPot } from "../core/pots";
+import { rollStrikes } from "../core/lightning";
 
 import { greencoatDue } from "../core/camp";
 
 import {
-  DYE_POTS_SERVICE,
-  SEWING_SERVICE,
-  tailoringLine,
-} from "../core/tailoring";
-import {
-  CAVE_MAP,
   caveDehydratorDone,
   collectCaveDehydrator,
   hasCaveDehydrator,
@@ -218,19 +206,13 @@ import {
   minesOpen,
   type Floor,
 } from "../core/mines";
-import { LEVER_KIND } from "../core/danger";
+
 import type { Rocks } from "../core/rocks";
 import { DECOR_ROOMS, decorById, roomTiles, zoneHolds } from "../core/decor";
-import {
-  CATALOGUE_ITEM,
-  carryFurniture,
-  furnitureById,
-  pickUpFurniture,
-} from "../core/furniture";
+import { carryFurniture } from "../core/furniture";
 import { hatById } from "../core/hats";
 import { greenhouseHolds } from "../core/greenhouse";
 import {
-  CELLAR_MAP,
   houseHolds,
   houseSpouse,
   houseVisibleTier,
@@ -265,7 +247,7 @@ import { bedNotice } from "../core/bednotice";
 import { exhaustedSpeed, tiredWarning } from "../core/energyrules";
 import { audio } from "../audio/engine";
 import { setFarmProbe } from "../audio/director";
-import { doorSoundFor, footstepFor, sfxForAct } from "../core/audio";
+import { doorSoundFor, footstepFor } from "../core/audio";
 import type { BedStatus } from "../core/room";
 import { weddingWaiting } from "../core/marriagecard";
 import { proposalFor } from "../core/playermarriage";
@@ -2263,233 +2245,81 @@ export class FarmScene extends Phaser.Scene {
     if (spot && spot.x === front.x && spot.y === front.y) return this.getOn();
     if (this.meetVillager(front)) return;
     if (onLaunchLine(this, front)) return launchLanternAt(this);
-    const service = this.map.serviceAt(front.x, front.y);
-    if (service?.kind !== "tide-bridge") this.mendAsked = false;
-    const shut = service
-      ? counterShutLine(this.state, this.mapId, service.kind)
-      : "";
-    if (shut) {
-      this.message = shut;
-      return this.render();
-    }
-    if (service) {
-      const sid = counterShopId(this.mapId, service.kind);
-      if (sid) this.state.guide.visitShop(sid);
-    }
-    if (service?.kind === CART_KIND) return this.rideCart(service.id);
-    if (service?.kind === "market-stall" && stallOf(service.id))
-      return this.open("market", { stall: stallOf(service.id) });
-    if (
-      service?.kind === SEWING_SERVICE ||
-      service?.kind === DYE_POTS_SERVICE
-    ) {
-      const line = tailoringLine(this.state);
-      if (line) {
-        this.message = line;
-        return this.render();
-      }
-      return this.open("tailor", {
-        mode: service.kind === SEWING_SERVICE ? "sew" : "dye",
-      });
-    }
-    if (service?.kind === "herb-stall") {
-      const closed = herbStallProblem(this.state);
-      if (closed) {
-        this.message = closed;
-        return this.render();
-      }
-      return this.open("shop", { stock: "herb" });
-    }
-    if (service?.kind === "fisher-shop")
-      return this.open("shop", { stock: "fisher" });
-    if (service?.kind === "pin-stall")
-      return this.open("shop", { stock: "pin" });
-    if (service?.kind === PIER_KEEPER_KIND) return pierKeeper(this);
-    if (service?.kind === PIER_FLOAT_KIND) return pierFloat(this);
-    if (service?.kind === "keeper") return this.open("keeper");
-    if (service?.kind === "hermit") {
-      if (hermitStock(this.state).length > 0)
-        return this.open("shop", { stock: "hermit" });
-      this.message = HERMIT_LINE;
-      return this.render();
-    }
-    if (service?.kind === SPIRIT_STATUE) {
-      this.message = giveToSpirit(this.state);
-      return this.render();
-    }
-    if (service?.kind === SHRINE_SERVICE) return this.shrineAction();
-    if (service?.kind === "camp") {
-      this.message = CAMP_LINE;
-      return this.render();
-    }
-    if (service?.kind === "tide-bridge") return this.mendBridge();
-    if (service?.kind === "quarry-bridge") {
-      this.message = QUARRY_BRIDGE_LINE;
-      return this.render();
-    }
-    if (service?.kind === "board-news") {
-      const g = this.state;
-      this.message = roadNews(g.day.clock.day, g.tomorrow);
-      return this.render();
-    }
-    if (service?.kind === "rain-seller") {
-      const closed = sellerProblem(this.state);
-      if (closed) {
-        this.message = closed;
-        return this.render();
-      }
-      return this.open("shop", { stock: "rain" });
-    }
-    if (service?.kind === "trader") {
-      const g = this.state;
-      const closed = traderProblem(g.day.clock.day, g.day.clock.minutes);
-      if (closed) {
-        this.message = closed;
-        return this.render();
-      }
-      return this.open("shop", { stock: "trader" });
-    }
-    if (service?.kind === "counter-library") return this.open("gallery");
-    if (service && standInLine(service.kind)) {
-      this.message = standInLine(service.kind) as string;
-      return this.render();
-    }
-    if (service?.kind === COVE_TREASURE) return this.openTreasure();
-    if (service?.kind === "stonekeeper") {
-      this.refreshHolds();
-      this.message =
-        this.mapId === QUARRY_MAP
-          ? campLine(this.state.day.clock.day)
-          : this.holds.has(QUARRY_OPEN)
-            ? YARD_EMPTY_LINE
-            : STONEKEEPER_LINE;
-      return this.render();
-    }
-    if (service?.kind === "festival") return openFestival(this);
-    if (service?.kind === "camp-chest" && this.floor !== undefined) {
-      // Opens as a take-only chest screen (note 22, 2026-11-20).
-      this.campScreenOpen = true;
-      this.render();
-      return this.open("chest", { camp: this.floor });
-    }
-    if (service?.kind === LEVER_KIND && this.floor !== undefined) {
-      const on = this.state.mines.flipDangerous();
-      audio.sfx("mine.stairs");
-      this.message =
-        on === undefined
-          ? "The lever will not move yet."
-          : on
-            ? "From tomorrow, the mine is dangerous: harder, with richer rewards."
-            : "From tomorrow, the mine is calm.";
-      return this.render();
-    }
-    if (service?.kind === "ore-bin") return this.open("bin", { oreOnly: true });
-    if (service?.kind === "trainer") return this.open("trainer");
-    if (service?.kind === "wall-list") return this.open("walllist");
-    if (service?.kind === "dummy") {
-      this.message = "The training dummy. Hold a weapon and swing at it.";
-      return this.render();
-    }
-    if (service?.kind === "stairs") {
-      audio.sfx("mine.stairs");
-      return this.travel(mineMapId(1), "from_above");
-    }
-    if (
-      service &&
-      (isFestivalMap(this.mapId) ||
-        service.kind === "cake-table" ||
-        (service.kind === "festival-counter" &&
-          festivalDayToday(this.state.day.clock.day)))
-    )
-      return festivalAction(this, service);
-    if (this.mapId === CAVE_MAP) return this.caveAction(front, service?.kind);
-    if (service?.kind === "furnace") {
-      if (!this.state.furnace.gifted) {
-        this.message = "Nothing is here yet.";
-        this.render();
+    if (this.map.serviceAt(front.x, front.y)?.kind !== "tide-bridge")
+      this.mendAsked = false;
+    const intent = resolveAction(
+      this.state,
+      LOCAL_PLAYER,
+      {
+        ...this.useContext(),
+        ladderAt: (x, y) => {
+          const ladder = this.floorState?.ladder;
+          return !!ladder && ladder.x === x && ladder.y === y;
+        },
+      },
+      heldAt(this.state, this.selected),
+      front,
+    );
+    this.applyAction(intent, front);
+  }
+
+  /** Show what the Action rule decided: sounds, lines, screens and the scene-owned follow-ups. */
+  private applyAction(intent: ActionIntent, front: Vec): void {
+    switch (intent.kind) {
+      case "none":
         return;
-      }
-      return this.open("furnace");
-    }
-    const ladder = this.floorState?.ladder;
-    if (ladder && ladder.x === front.x && ladder.y === front.y)
-      return this.descend();
-    if (service)
-      return this.open(
-        service.kind,
-        service.kind === "hall" ? { room: service.id } : undefined,
-      );
-    if (this.mapId === CELLAR_MAP && this.state.casks.at(front.x, front.y)) {
-      // Action reads a cask and takes a gold good out. Taking one out early is
-      // the axe or pickaxe's job, so a stray press never resets the ageing.
-      const cask = this.state.casks.get(front.x, front.y)!;
-      if (!cask.job) return this.report({ ok: false, reason: "cask empty" });
-      if (!caskDone(this.state, cask)) {
-        this.message = caskStatus(this.state, front.x, front.y);
+      case "message":
+        if (intent.cue) audio.sfx(intent.cue);
+        this.message = intent.text;
         return this.render();
-      }
-      return this.report(collectCask(this.state, front.x, front.y));
+      case "open":
+        if (intent.cue) audio.sfx(intent.cue);
+        return this.open(intent.scene, intent.data);
+      case "report":
+        return this.report(intent.result);
+      case "act":
+        if (intent.cue) audio.sfx(intent.cue);
+        return this.report(intent.result, true);
+      case "eat":
+        return this.eatHeld();
+      case "ride-cart":
+        return this.rideCart(intent.id);
+      case "pier-keeper":
+        return pierKeeper(this);
+      case "pier-float":
+        return pierFloat(this);
+      case "shrine":
+        return this.shrineAction();
+      case "mend-bridge":
+        return this.mendBridge();
+      case "treasure":
+        return this.openTreasure();
+      case "stonekeeper":
+        this.refreshHolds();
+        this.message =
+          this.mapId === QUARRY_MAP
+            ? campLine(this.state.day.clock.day)
+            : this.holds.has(QUARRY_OPEN)
+              ? YARD_EMPTY_LINE
+              : STONEKEEPER_LINE;
+        return this.render();
+      case "festival":
+        return openFestival(this);
+      case "festival-action":
+        return festivalAction(this, intent.service);
+      case "camp-chest":
+        // Opens as a take-only chest screen (note 22, 2026-11-20).
+        this.campScreenOpen = true;
+        this.render();
+        return this.open("chest", { camp: intent.floor });
+      case "cave":
+        return this.caveAction(front, intent.service);
+      case "descend":
+        return this.descend();
+      case "stairs":
+        audio.sfx("mine.stairs");
+        return this.travel(mineMapId(1), "from_above");
     }
-    if (isFarmMap(this.mapId) && packWaiting(this.state, front.x, front.y))
-      return this.report(takePack(this.state, front.x, front.y));
-    if (this.state.pots.get(this.mapId, front.x, front.y))
-      return this.report(
-        collectPot(this.state, this.mapId, front.x, front.y, Math.random),
-      );
-    if (this.state.chests.at(this.mapId, front.x, front.y)) {
-      audio.sfx("chest.open");
-      return this.open("chest", {
-        mapId: this.mapId,
-        x: front.x,
-        y: front.y,
-      });
-    }
-    if (
-      isHouseMap(this.mapId) &&
-      furnitureById(this.state.furniture.at(this.mapId, front.x, front.y))
-        ?.station === "workbench"
-    )
-      return this.open("crafting", {
-        bench: { mapId: this.mapId, x: front.x, y: front.y },
-      });
-    if (
-      isHouseMap(this.mapId) &&
-      this.state.furniture.at(this.mapId, front.x, front.y) === CATALOGUE_ITEM
-    )
-      return this.open("catalogue");
-    if (
-      isHouseMap(this.mapId) &&
-      this.state.furniture.at(this.mapId, front.x, front.y)
-    )
-      return this.report(
-        pickUpFurniture(this.state, this.mapId, front.x, front.y),
-      );
-    const pondHere = isFarmMap(this.mapId)
-      ? pondCovering(this.state, front.x, front.y)
-      : undefined;
-    if (pondHere) {
-      const h = heldAt(this.state, this.selected);
-      const r = pondUse(
-        this.state,
-        pondHere,
-        h.kind === "item" ? h.id : undefined,
-      );
-      // Nothing to put in, take or give: the pond menu shows how it stands.
-      if (r.ok && r.item === undefined)
-        return this.open("pond", { x: pondHere.x, y: pondHere.y });
-      return this.report(r);
-    }
-    const cropHere = !!this.state.farm.plotAt(front.x, front.y)?.crop;
-    const result = act(this.state, this.map, front.x, front.y);
-    if (!result.ok && result.reason === NOTHING_TO_ACT_ON) {
-      const held = heldAt(this.state, this.selected);
-      if (held.kind === "item" && itemById(held.id)?.energy !== undefined)
-        this.eatHeld();
-      return;
-    }
-    const cue = sfxForAct(result, cropHere);
-    if (cue) audio.sfx(cue);
-    this.report(result, true);
   }
 
   /**

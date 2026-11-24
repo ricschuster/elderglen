@@ -15,19 +15,47 @@ import {
 } from "./farmdecor";
 import { isFarmMap } from "./farmtypes";
 import { rodById } from "./fishing";
-import { furnitureById, pickUpFurniture, placeFurniture } from "./furniture";
+import {
+  CATALOGUE_ITEM,
+  furnitureById,
+  pickUpFurniture,
+  placeFurniture,
+} from "./furniture";
 import { CELLAR_MAP, isHouseMap } from "./house";
 import { isLight, lightAt, pickUpLight, placeLight } from "./lights";
 import { LIGHTNING_ROD, pickUpRod, placeRod, rodAt } from "./lightning";
 import type { FarmMap } from "./map";
 import { FACING_STEP, type Facing } from "./movement";
-import { pondCovering, takeFish } from "./pond";
-import { POT_ITEM, baitPot, pickUpPot, placePot } from "./pots";
+import { pondCovering, pondUse, takeFish } from "./pond";
+import { POT_ITEM, baitPot, collectPot, pickUpPot, placePot } from "./pots";
 import type { PlayerId } from "./players";
 import type { GameState } from "./save";
 import { baitById } from "./tackle";
 import { heldAt, isLiftTool, type Held } from "./toolbar";
 import { useHeld } from "./tools";
+import { sfxForAct } from "./audio";
+import { caskDone, caskStatus, collectCask } from "./cask";
+import { SPIRIT_STATUE, giveToSpirit, hermitStock } from "./elderfruit";
+import { festivalDayToday, isFestivalMap } from "./festivals";
+import { CAMP_LINE, HERMIT_LINE } from "./forestfolk";
+import { CAVE_MAP } from "./cave";
+import { LEVER_KIND } from "./danger";
+import { COVE_TREASURE } from "./cove";
+import { CART_KIND, type Service } from "./map";
+import { PIER_FLOAT_KIND, PIER_KEEPER_KIND } from "./marketpier";
+import { stallOf } from "./nightmarket";
+import { QUARRY_BRIDGE_LINE } from "./quarry";
+import { roadNews } from "./roadnews";
+import { sellerProblem } from "./courtship";
+import { herbStallProblem } from "./roomrewards";
+import { SHRINE_SERVICE } from "./shrine";
+import { counterShopId, counterShutLine } from "./shophours";
+import { DYE_POTS_SERVICE, SEWING_SERVICE, tailoringLine } from "./tailoring";
+import { traderProblem } from "./trader";
+import { standInLine } from "./labels";
+import { itemById } from "./items";
+import { packWaiting, takePack } from "./lightning";
+import { NOTHING_TO_ACT_ON, act } from "./tools";
 
 /**
  * Rules for what the Use button does, free of Phaser (note 106). Each function
@@ -217,4 +245,219 @@ function useSiloAt(
       : "The silo is full.";
   }
   return `The silo holds ${g.animals.hay} of ${cap} hay. Hold hay to fill it.`;
+}
+
+/** What the Action button did, for the scene to show. State rules have already run. */
+export type ActionIntent =
+  /** Nothing here, and nothing said. */
+  | { kind: "none" }
+  /** Show this line (and play `cue` first, if given). */
+  | { kind: "message"; text: string; cue?: string }
+  /** Open the screen `scene` with its data (`cue` plays first). */
+  | {
+      kind: "open";
+      scene: string;
+      data?: Record<string, unknown>;
+      cue?: string;
+    }
+  /** A rule that placed or took something: the outcome's sound and line. */
+  | { kind: "report"; result: Outcome }
+  /** A harvest, pick or shake: `cue` is the sound; the outcome's line shows, silently otherwise. */
+  | { kind: "act"; result: Outcome; cue?: string }
+  /** Nothing to act on, and the held food is eaten. */
+  | { kind: "eat" }
+  /** Scene-owned follow-ups: they move the player, run a minigame or read the scene's own state. */
+  | { kind: "ride-cart"; id: string }
+  | { kind: "pier-keeper" }
+  | { kind: "pier-float" }
+  | { kind: "shrine" }
+  | { kind: "mend-bridge" }
+  | { kind: "treasure" }
+  | { kind: "stonekeeper" }
+  | { kind: "festival" }
+  | { kind: "festival-action"; service: Service }
+  | { kind: "camp-chest"; floor: number }
+  | { kind: "cave"; service?: string }
+  | { kind: "descend" }
+  | { kind: "stairs" };
+
+/** What Action also needs: the mine's ladder, which is scene state. */
+export interface ActionContext extends UseContext {
+  /** The mine ladder stands here. */
+  ladderAt: (x: number, y: number) => boolean;
+}
+
+const reported = (result: Outcome): ActionIntent => ({
+  kind: "report",
+  result,
+});
+const say = (text: string): ActionIntent => ({ kind: "message", text });
+const open = (
+  scene: string,
+  data?: Record<string, unknown>,
+  cue?: string,
+): ActionIntent => ({
+  kind: "open",
+  scene,
+  ...(data ? { data } : {}),
+  ...(cue ? { cue } : {}),
+});
+/** A line when there is a problem, else the screen. */
+const gated = (
+  problem: string | undefined,
+  scene: string,
+  data: Record<string, unknown>,
+): ActionIntent => (problem ? say(problem) : open(scene, data));
+
+/**
+ * The Action button on the faced tile (note 47, 106): open a service, else shake, pick or harvest,
+ * else eat the held food. Runs the rule as player `by` and returns the intent. The scene has
+ * already dealt with the horse, a villager to talk to and the lantern line.
+ */
+export function resolveAction(
+  g: GameState,
+  by: PlayerId,
+  ctx: ActionContext,
+  held: Held,
+  aim: { x: number; y: number },
+): ActionIntent {
+  return asPlayer(g, by, () => actOn(g, ctx, held, aim.x, aim.y));
+}
+
+function serviceAction(
+  g: GameState,
+  ctx: ActionContext,
+  service: Service,
+): ActionIntent | undefined {
+  const { kind } = service;
+  if (kind === CART_KIND) return { kind: "ride-cart", id: service.id };
+  if (kind === "market-stall" && stallOf(service.id))
+    return open("market", { stall: stallOf(service.id) });
+  if (kind === SEWING_SERVICE || kind === DYE_POTS_SERVICE) {
+    const line = tailoringLine(g);
+    if (line) return say(line);
+    return open("tailor", { mode: kind === SEWING_SERVICE ? "sew" : "dye" });
+  }
+  if (kind === "herb-stall")
+    return gated(herbStallProblem(g), "shop", { stock: "herb" });
+  if (kind === "fisher-shop") return open("shop", { stock: "fisher" });
+  if (kind === "pin-stall") return open("shop", { stock: "pin" });
+  if (kind === PIER_KEEPER_KIND) return { kind: "pier-keeper" };
+  if (kind === PIER_FLOAT_KIND) return { kind: "pier-float" };
+  if (kind === "keeper") return open("keeper");
+  if (kind === "hermit")
+    return hermitStock(g).length > 0
+      ? open("shop", { stock: "hermit" })
+      : say(HERMIT_LINE);
+  if (kind === SPIRIT_STATUE) return say(giveToSpirit(g));
+  if (kind === SHRINE_SERVICE) return { kind: "shrine" };
+  if (kind === "camp") return say(CAMP_LINE);
+  if (kind === "tide-bridge") return { kind: "mend-bridge" };
+  if (kind === "quarry-bridge") return say(QUARRY_BRIDGE_LINE);
+  if (kind === "board-news") return say(roadNews(g.day.clock.day, g.tomorrow));
+  if (kind === "rain-seller")
+    return gated(sellerProblem(g), "shop", { stock: "rain" });
+  if (kind === "trader")
+    return gated(traderProblem(g.day.clock.day, g.day.clock.minutes), "shop", {
+      stock: "trader",
+    });
+  if (kind === "counter-library") return open("gallery");
+  const line = standInLine(kind);
+  if (line) return say(line);
+  if (kind === COVE_TREASURE) return { kind: "treasure" };
+  if (kind === "stonekeeper") return { kind: "stonekeeper" };
+  if (kind === "festival") return { kind: "festival" };
+  if (kind === "camp-chest" && ctx.floor !== undefined)
+    return { kind: "camp-chest", floor: ctx.floor };
+  if (kind === LEVER_KIND && ctx.floor !== undefined) {
+    const on = g.mines.flipDangerous();
+    return {
+      kind: "message",
+      cue: "mine.stairs",
+      text:
+        on === undefined
+          ? "The lever will not move yet."
+          : on
+            ? "From tomorrow, the mine is dangerous: harder, with richer rewards."
+            : "From tomorrow, the mine is calm.",
+    };
+  }
+  if (kind === "ore-bin") return open("bin", { oreOnly: true });
+  if (kind === "trainer") return open("trainer");
+  if (kind === "wall-list") return open("walllist");
+  if (kind === "dummy")
+    return say("The training dummy. Hold a weapon and swing at it.");
+  if (kind === "stairs") return { kind: "stairs" };
+  if (
+    isFestivalMap(ctx.mapId) ||
+    kind === "cake-table" ||
+    (kind === "festival-counter" && festivalDayToday(g.day.clock.day))
+  )
+    return { kind: "festival-action", service };
+  if (ctx.mapId === CAVE_MAP) return { kind: "cave", service: kind };
+  if (kind === "furnace")
+    return g.furnace.gifted ? open("furnace") : say("Nothing is here yet.");
+  return undefined;
+}
+
+function actOn(
+  g: GameState,
+  ctx: ActionContext,
+  held: Held,
+  x: number,
+  y: number,
+): ActionIntent {
+  const { map, mapId } = ctx;
+  const service = map.serviceAt(x, y);
+  const shut = service ? counterShutLine(g, mapId, service.kind) : "";
+  if (shut) return say(shut);
+  if (service) {
+    const sid = counterShopId(mapId, service.kind);
+    if (sid) g.guide.visitShop(sid);
+    const done = serviceAction(g, ctx, service);
+    if (done) return done;
+  } else if (mapId === CAVE_MAP) return { kind: "cave" };
+  if (ctx.ladderAt(x, y)) return { kind: "descend" };
+  if (service)
+    return open(
+      service.kind,
+      service.kind === "hall" ? { room: service.id } : undefined,
+    );
+  if (mapId === CELLAR_MAP && g.casks.at(x, y)) {
+    // Action reads a cask and takes a gold good out. Taking one out early is
+    // the axe or pickaxe's job, so a stray press never resets the ageing.
+    const cask = g.casks.get(x, y)!;
+    if (!cask.job) return reported({ ok: false, reason: "cask empty" });
+    if (!caskDone(g, cask)) return say(caskStatus(g, x, y));
+    return reported(collectCask(g, x, y));
+  }
+  if (isFarmMap(mapId) && packWaiting(g, x, y))
+    return reported(takePack(g, x, y));
+  if (g.pots.get(mapId, x, y))
+    return reported(collectPot(g, mapId, x, y, Math.random));
+  if (g.chests.at(mapId, x, y))
+    return open("chest", { mapId, x, y }, "chest.open");
+  if (isHouseMap(mapId)) {
+    const piece = g.furniture.at(mapId, x, y);
+    if (furnitureById(piece)?.station === "workbench")
+      return open("crafting", { bench: { mapId, x, y } });
+    if (piece === CATALOGUE_ITEM) return open("catalogue");
+    if (piece) return reported(pickUpFurniture(g, mapId, x, y));
+  }
+  const pond = isFarmMap(mapId) ? pondCovering(g, x, y) : undefined;
+  if (pond) {
+    const r = pondUse(g, pond, held.kind === "item" ? held.id : undefined);
+    // Nothing to put in, take or give: the pond menu shows how it stands.
+    if (r.ok && r.item === undefined)
+      return open("pond", { x: pond.x, y: pond.y });
+    return reported(r);
+  }
+  const cropHere = !!g.farm.plotAt(x, y)?.crop;
+  const result = act(g, map, x, y);
+  if (!result.ok && result.reason === NOTHING_TO_ACT_ON)
+    return held.kind === "item" && itemById(held.id)?.energy !== undefined
+      ? { kind: "eat" }
+      : { kind: "none" };
+  const cue = sfxForAct(result, cropHere);
+  return cue ? { kind: "act", result, cue } : { kind: "act", result };
 }
