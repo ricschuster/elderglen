@@ -152,7 +152,15 @@ export async function main(args: string[]): Promise<void> {
   console.log(
     `  withered crops per run: median ${median(results.map((r) => r.withered))}`,
   );
-  for (const season of [0, 1, 2, 3]) {
+  console.log(
+    `  sprinklers at the end: median ${median(results.map((r) => r.sprinklers))}, first placed on day ${spread(
+      results.flatMap((r) =>
+        r.firstSprinklerDay ? [r.firstSprinklerDay] : [],
+      ),
+      runs,
+    )}`,
+  );
+  for (const season of [0, 1, 2, 3, 4, 5]) {
     const money = results.flatMap((r) =>
       r.moneyAtSeasonEnd.slice(season, season + 1),
     );
