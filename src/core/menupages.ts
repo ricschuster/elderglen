@@ -7,6 +7,7 @@ import { HEART, POINTS, type Taste } from "./friendship";
 import type { ItemTip } from "./itemtip";
 import { VILLAGERS } from "./villagers";
 import type { GameState } from "./save";
+import { bondOf, partnerOf, type PlayerMarriageBook } from "./playermarriage";
 
 /**
  * What the in-game menu's Social, Animals, Special Items and Skills pages show
@@ -83,20 +84,53 @@ export function socialRows(g: GameState): SocialRow[] {
 export interface PlayerRow {
   id: string;
   name: string;
+  /** Slot number from the id ("p2" is 2): picks the figure's tint, as on the farm. */
+  slot: number;
+  /** "Married to X" or "Engaged to X", or undefined when free (owner, 2026-11-24). */
+  tag?: string;
+}
+
+/** What the player rows need to know about marriage; both parts optional (single player). */
+export interface PlayerRowContext {
+  /** The bond book (note 12), to find a player partner. */
+  book?: PlayerMarriageBook;
+  /** A villager the player is engaged or married to, as `{ stage, name }`; none is tracked per player yet. */
+  villagerOf?: (
+    id: string,
+  ) => { stage: "engaged" | "married"; name: string } | undefined;
 }
 
 /**
  * The other players, in the order given, listed above the spouse and the roster
  * (owner, 2026-11-20, checked in Stardew). Empty in single player. The local
- * player is not listed.
+ * player is not listed. Each row carries the name, a figure slot and a marriage tag.
  */
 export function playerRows(
   remotes: readonly { id: string; name: string }[],
   localId: string,
+  ctx: PlayerRowContext = {},
 ): PlayerRow[] {
+  const nameOf = (id: string): string =>
+    id === localId ? "you" : (remotes.find((r) => r.id === id)?.name ?? id);
   return remotes
     .filter((r) => r.id !== localId)
-    .map((r) => ({ id: r.id, name: r.name }));
+    .map((r) => {
+      const row: PlayerRow = {
+        id: r.id,
+        name: r.name,
+        slot: Number(r.id.slice(1)) || 0,
+      };
+      const bond = ctx.book && bondOf(ctx.book, r.id);
+      if (bond && (bond.stage === "engaged" || bond.stage === "married")) {
+        const who = nameOf(partnerOf(ctx.book!, r.id)!);
+        row.tag = `${bond.stage === "married" ? "Married" : "Engaged"} to ${who}`;
+      } else {
+        const v = ctx.villagerOf?.(r.id);
+        if (v)
+          row.tag = `${v.stage === "married" ? "Married" : "Engaged"} to ${v.name}`;
+      }
+      return row;
+    });
 }
 
 /** The farm's children, for the short section after the roster. */

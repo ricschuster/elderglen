@@ -231,6 +231,8 @@ describe("guest read-only menus", () => {
   });
 });
 
+import { newPlayerMarriageBook } from "../src/core/playermarriage";
+
 describe("playerRows", () => {
   it("lists the other players in order and skips the local one", () => {
     const rows = playerRows(
@@ -242,9 +244,55 @@ describe("playerRows", () => {
       "p1",
     );
     expect(rows).toEqual([
-      { id: "p2", name: "Ana" },
-      { id: "p3", name: "Bo" },
+      { id: "p2", name: "Ana", slot: 2 },
+      { id: "p3", name: "Bo", slot: 3 },
     ]);
+  });
+  const who = [
+    { id: "p1", name: "Host" },
+    { id: "p2", name: "Ana" },
+    { id: "p3", name: "Bo" },
+  ];
+  it("tags a player married to a villager", () => {
+    const rows = playerRows(who, "p1", {
+      villagerOf: (id) =>
+        id === "p2" ? { stage: "married", name: "Mara" } : undefined,
+    });
+    expect(rows[0]!.tag).toBe("Married to Mara");
+    expect(rows[1]!.tag).toBeUndefined();
+  });
+  it("tags an engaged and a married player pair", () => {
+    const book = newPlayerMarriageBook();
+    book.bonds.push({
+      proposer: "p2",
+      other: "p3",
+      stage: "engaged",
+      weddingDay: 9,
+    });
+    let rows = playerRows(who, "p1", { book });
+    expect(rows.map((r) => r.tag)).toEqual(["Engaged to Bo", "Engaged to Ana"]);
+    book.bonds[0]!.stage = "married";
+    rows = playerRows(who, "p1", { book });
+    expect(rows.map((r) => r.tag)).toEqual(["Married to Bo", "Married to Ana"]);
+  });
+  it("names the viewer as you, and ignores a bare proposal", () => {
+    const book = newPlayerMarriageBook();
+    book.bonds.push({
+      proposer: "p1",
+      other: "p2",
+      stage: "married",
+      weddingDay: 3,
+    });
+    book.bonds.push({
+      proposer: "p3",
+      other: "p4",
+      stage: "proposed",
+      weddingDay: 0,
+    });
+    const rows = playerRows([...who, { id: "p4", name: "Cy" }], "p1", { book });
+    expect(rows.map((r) => r.id)).toEqual(["p2", "p3", "p4"]);
+    expect(rows[0]!.tag).toBe("Married to you");
+    expect(rows[1]!.tag).toBeUndefined();
   });
   it("is empty alone", () => {
     expect(playerRows([], "p1")).toEqual([]);
