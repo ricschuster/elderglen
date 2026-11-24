@@ -2308,11 +2308,12 @@ export class FarmScene extends Phaser.Scene {
         return this.render();
       case "open":
         if (intent.cue) audio.sfx(intent.cue);
-        // The furnace is used by one player at a time (note 108 rule 2): the host takes the lock too.
-        if (intent.scene === "furnace") {
+        // Chests and the furnace are used by one player at a time (note 108 rule 2): the host
+        // takes the lock too.
+        if (intent.scene === "furnace" || intent.scene === "chest") {
           const scene = intent.scene;
           const ref: ScreenRef = {
-            kind: "furnace",
+            kind: scene,
             map: this.mapId,
             x: front.x,
             y: front.y,
