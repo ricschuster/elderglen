@@ -36,7 +36,7 @@ Headless run 2026-11-21 (`combat.mjs`, `mine-floors.mjs`, `quarry.mjs`, mine and
 - pass: Combat by the rules: the dummy takes a hit, a creature hurts and is beaten, kills on floors 45 and 100 give combat XP, a knock out ends in the report. Fixed `combat.mjs`, which still picked the weapon at `4 + i` (tools sit in the pack now, note 102), so every swing used no weapon.
 - pass: Quarry (`quarry.mjs`): bridge, stonekeeper, rocks, stone.
 - pass: Slayer wall list at Maren's (`wall-lever.mjs`, 2026-11-24): Action on the `wall-list` tile opens the list; 13 rows (switch row and 12 goals) with kills and reward; a met goal reads "Ready to claim", Claim hands it over and it reads Claimed; the shop page lists the reward at its price and buying a second met goal's reward costs exactly the price; Escape closes it. owner: how the screen looks and reads.
-- pass: Dangerous lever on floor 120 (stage `mines-120`, added for this): the floor has a lever; the first pull says "Dangerous mode is on" and a floor made after is dangerous; the second pull turns it off and a floor made after is not; a floor dug while on keeps its mode until tomorrow (the timing the handoff of 2026-11-23 asks the owner to confirm). owner: the red tint and the lever's look.
+- pass: Dangerous lever on floor 120 (stage `mines-120`, `wall-lever.mjs`, 2026-11-24, next-day rule of note 109 rule 9): the floor has a lever; a pull says "From tomorrow, the mine is dangerous" and nothing changes today (a floor made after is calm); pulling again says "calm" and cancels; after the day ends (the game's own sleep) the mine is dangerous and a floor made the next day is too. owner: the red tint and the lever's look.
 - pass: Energy rules (note 07), headless 2026-11-24: `play.mjs casual` (days 1 to 6) works in the field until energy hits -15, the pass-out report reads "ran out of energy and passed out", costs 10 percent of money (500 to 450) and wakes at 135 of 270; `late.mjs` (SPEED=4) stays out until 2 am, passes out, same 450 money and 135 energy. Found and fixed (script only): `play.mjs` still offset slots by 4 and tried to sell the tools in the pack, so the shop crashed and the day loop never advanced; the overdo plot was too small to spend 285 energy. The farmhouse pass-out being free is covered by unit tests, not these runs.
 - owner: Swing arc and monster speed by feel. Headless only shows speeds of 0 to 1 tiles/s while creatures wander; none chased in 12 s, so chase speed is unchecked.
 - pass: `smoke.mjs` ends with no findings (2026-11-21, issue 996: the findings were stale script assumptions about the pack and the carpenter rows).
@@ -91,3 +91,59 @@ Headless run 2026-11-21, build 5a72ea16 (`playtest:bundles`, 76 s; bundle, hall 
 
 - pass: Every hall bundle fills through the real hall screen (30 of 30, rooms in order, the Last Seat last): each hands in, completes, pays its reward, completes its room, and the end screen opens after the last room.
 - owner: Hall look and feel with the real art; the scroll text and reward moments by hand.
+
+## Guest screens, trade (note 108, group 1)
+
+Headless run 2026-11-24 (`tests/screens-socket.test.ts`, real sockets; `tests/screens.test.ts`, 14 rules tests).
+
+- pass: A guest opens the shop only within reach of the counter (too far away is refused), then buys from their own purse; the other player's purse is unchanged.
+- pass: A guest ships through the bin; the line records the guest and shows on the guest's copy.
+- pass: A chest is used by one player at a time: the second is told "Someone is using this chest."; the lock frees on close, leave and drop; the host is locked out the same way.
+- pass: Chest moves, send, fill, sort and colour are judged by the host: a tool, a bad side, another chest, a player who never opened it, and a player who walked off are all refused; the guest copy follows through `applied`.
+- pass: The hermit's one elderfruit bought by one guest is gone for the other (shared stock).
+- pass: Camp chest: one gift, taken once, one holder at a time.
+- owner: The screens by hand with two real players: the wait before a screen shows (about 30 ms on a router), the "Someone is using this chest." line, and the chest redraw when the other player moves things. Nothing here was run in a browser.
+
+## Guest screens, making (note 108, group 2)
+
+Headless run 2026-11-24 (`tests/screens-socket.test.ts`, real sockets; `tests/screens.test.ts`, the "making" tests).
+
+- pass: A guest crafts at a workbench from their own pack and the chests beside it; the host's pack is untouched; a wrong bench, an unopened bench and a walk-away are refused.
+- pass: A guest crafts from the pack alone with no bench, as themselves.
+- pass: A guest cooks at the stove from their own pack and gets the dish; two guests may cook at once; cooking before the kitchen exists is refused.
+- pass: The furnace is used by one player at a time ("Someone is using the furnace."); the lock frees on close and drop; the bar goes to whoever takes it, not to whoever loaded it.
+- pass: A guest loads a machine on the farm and another guest collects the goods; a working machine is never lifted; a machine out of reach, missing, or given the wrong good is refused. The guest copy follows through `applied`.
+- owner: The three screens and the Use and Action presses on a keg or jar by hand with two real players. Nothing here was run in a browser. The fridge is not in the game yet, so nothing was checked for it.
+
+## Guest screens, animals and ponds (note 108, group 3)
+
+Headless run 2026-11-24 (`tests/screens-socket.test.ts`, real sockets; `tests/screens.test.ts`, the "animals and ponds" tests).
+
+- pass: A guest buys a young animal at the keeper from their own purse; it joins the shared coop on every copy; a missing coop, too little gold, a bad species and a walk-away are refused. Hay and a heater go to the buyer's pack.
+- pass: A guest feeds the bench from the silo and then their own pack, and tips their hay into the silo; the wrong building's bench is refused.
+- pass: Anyone pets an animal once a day (the second player is told "Already petted today."); whoever takes the product gets it, a full pack keeps it; let out, bring in and rename work.
+- pass: A pond menu is used by one player at a time ("Someone is using the pond."); reach counts from any edge of the pond; Empty puts the fish in the opener's pack; a held fish goes in and a waiting product comes out through `pond-use`, as the sender.
+- owner: The keeper, the coop and barn benches and the pond menu by hand with two real players, and a guest's Action on a pond with a fish in hand. Nothing here was run in a browser. Animals cannot be sold in the game yet, so no sell was checked.
+
+## Guest screens, the hall (note 108, group 4)
+
+Headless run 2026-11-24 (`tests/screens-socket.test.ts`, real sockets; `tests/screens.test.ts`, the "hall" tests).
+
+- pass: A guest hands goods into a bundle from their own pack; a second player cannot fill a slot already filled; a bundle of another room, a closed room and a good the guest lacks are refused. The last good finishes it and the item reward goes to that player only; a gold reward goes to their own purse.
+- pass: A finished bundle's hat can be taken once (any player, until the wardrobe is per player).
+- pass: A guest takes an order from the shared board (one a week for everyone) and drops it; a filled order pays every purse (once for a shared wallet) and its first reward is owed to each player.
+- pass: A guest accepts, hands in and cancels board requests; a hand-in takes the goods from the guest and pays every player; a walk-away is refused. The guest copy follows through `applied`.
+- owner: The hall panel, the orders board and the request board by hand with two real players, including the completion line and the first-reward collect. Nothing here was run in a browser.
+
+## Guest screens, the rest (note 108, group 5)
+
+Headless run 2026-11-24 (`tests/screens-socket.test.ts`, real sockets; `tests/screens.test.ts`, the "the rest" tests).
+
+- pass: A guest orders a coop, a silo or a pond from their own purse and pack; the building records its orderer, a second guest's copy follows through `applied`, and a blocked spot or a short purse is refused.
+- pass: A guest buys furniture and a covering at the carpenter with their own gold. A guest asking for a house upgrade or a renovation is told a home is upgraded only by its occupant; the host may.
+- pass: Moving and taking down follow the host's setting: own only by default (another guest is refused), off (every guest refused), all (any guest, refund to them). The host always may, a guest cannot change the setting, and a building made before owners counts as the host's.
+- pass: The sewing machine and the dye pots work from the sender's pack, only at the machine they opened; the wardrobe is the one the farm has.
+- pass: Ore is bought and sold at the smith and the smithy with the sender's gold; bombs, boots, weapons, rings and the first copper are the dwarf's only; a tool left at the smithy is the sender's own, one tool each, and a geode cracks the same on every copy.
+- pass: The gallery takes a donation from the sender's pack onto the one shelf; each player collects their own rewards once.
+- pass: The shrine takes a Diamond from the sender and gives the open statue's ore to the sender once a day for the farm.
+- owner: The carpenter and its placement screen, the tailor, the smiths, the gallery and the shrine by hand with two real players, and the players list button for the building setting (Social tab on the host). Nothing here was run in a browser.

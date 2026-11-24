@@ -10,6 +10,9 @@ import { PLAYER_KEY } from "./placeholder-textures";
 /** A tint per player slot, so the placeholder figures can be told apart. */
 const TINTS = [0xffffff, 0x9ec9ff, 0xffb3b3, 0xb8f0a8, 0xffe08a, 0xd9b3ff];
 
+/** The tint for a player slot (the number in "p2"), shared with the Social tab. */
+export const tintForSlot = (n: number): number => TINTS[n % TINTS.length]!;
+
 interface Figure {
   body: Phaser.GameObjects.Image;
   label: Phaser.GameObjects.Text;
@@ -42,7 +45,7 @@ export class RemotePlayerLayer {
         const body = this.scene.add
           .image(r.x, r.y, PLAYER_KEY)
           .setOrigin(0.5, 0.875)
-          .setTint(TINTS[n % TINTS.length]!);
+          .setTint(tintForSlot(n));
         const label = this.scene.add
           .text(r.x, r.y, r.name, { fontSize: "8px", color: "#ffffff" })
           .setOrigin(0.5, 1);

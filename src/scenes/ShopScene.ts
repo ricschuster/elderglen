@@ -2,60 +2,21 @@ import { audio } from "../audio/engine";
 import Phaser from "phaser";
 import type { Intent } from "../core/protocol";
 import { currentSession, GuestSession } from "../net/session";
-import { followGuest } from "./guestlive";
-import { dateOf } from "../core/calendar";
+import { closeWhenDone, followGuest } from "./guestlive";
 import { itemById } from "../core/items";
 import type { GameState } from "../core/save";
-import { potPrice, sellMultiplier } from "../core/professions";
-import { POT_ITEM } from "../core/pots";
+import { sellMultiplier } from "../core/professions";
+import { byName, sell, sellAll } from "../core/shop";
+import { SELLER_NAME } from "../core/courtship";
 import {
-  buy,
-  byName,
-  sell,
-  sellAll,
-  seedStock,
-  fertilizerStock,
-  saplingStock,
-  fisherStock,
-  isOneOnly,
-  pinStock,
-} from "../core/shop";
-import { buyFromHerbStall, herbPrice, herbStock } from "../core/roomrewards";
-import {
-  BOUQUET,
-  SELLER_NAME,
-  TOKEN,
-  buyToken,
-  sellerStock,
-  tokenPrice,
-} from "../core/courtship";
-import { buyFromTrader, traderPrice, traderStock } from "../core/trader";
-import {
-  HERMIT_ELDERFRUIT_PRICE,
-  SOURCE_FLAGS,
-  buyElderfruit,
-  hermitStock,
-} from "../core/elderfruit";
+  offerIds,
+  offerPrice,
+  shopBuy,
+  type ShopStock,
+} from "../core/shopoffers";
 import { nextBackpack, upgradeBackpack } from "../core/upgrades";
 import { frame, Menu, TOUCH_ROW_H, type Row } from "./panel";
 import { STATE_KEY } from "./state";
-
-/** The price of one: the listed price, less the Trapper's pot discount. */
-function unitPrice(g: GameState, id: string): number {
-  const base = itemById(id)?.buyPrice ?? 0;
-  return id === POT_ITEM ? potPrice(g.skills, base) : base;
-}
-
-/** Why a purchase was refused, in words for the player. */
-function buyRefusal(g: GameState, id: string, n: number): string {
-  const price = unitPrice(g, id);
-  if (isOneOnly(id) && (n > 1 || g.inventory.count(id) > 0))
-    return "She only has the one, and you carry it already.";
-  if (id === TOKEN && g.inventory.count(id) > 0)
-    return "You carry one already. Give it to someone first.";
-  if (g.money < price * n) return "Not enough money.";
-  return "Your backpack is full.";
-}
 
 /**
  * The shop screen, drawn over the farm. Buy seeds on the left, sell what the
@@ -84,9 +45,11 @@ export class ShopScene extends Phaser.Scene {
     super("shop");
   }
 
-  init(data?: {
-    stock?: "fisher" | "pin" | "trader" | "hermit" | "herb" | "rain";
-  }): void {
+  /** The special counter this screen shows, if any. */
+  private stockName: ShopStock | undefined;
+
+  init(data?: { stock?: ShopStock }): void {
+    this.stockName = data?.stock;
     this.hermit = data?.stock === "hermit";
     this.trader = data?.stock === "trader";
     this.rain = data?.stock === "rain";
@@ -103,6 +66,7 @@ export class ShopScene extends Phaser.Scene {
       () => this.refresh(),
       (t) => this.say(t),
     );
+    closeWhenDone(this);
     const { money, message } = frame(
       this,
       this.fisher
@@ -169,16 +133,13 @@ export class ShopScene extends Phaser.Scene {
 
   /**
    * A guest's buy or sell becomes an intent for the host; the shop redraws when the `applied`
-   * comes back. True when this was a guest's click (handled), so the caller stops. Stalls with
-   * their own rules and the backpack stay with the host for now.
+   * comes back. True when this was a guest's click (handled), so the caller stops. The backpack
+   * stays with the host for now.
    */
-  private guestAsks(intent: Intent | undefined, stallRules: boolean): boolean {
+  private guestAsks(intent: Intent | undefined): boolean {
     const net = currentSession();
     if (!(net instanceof GuestSession)) return false;
-    const special =
-      this.hermit || this.trader || this.rain || this.herb || this.pin;
-    if (!intent || (stallRules && special))
-      this.say("Only the host can do that for now.");
+    if (!intent) this.say("Only the host can do that for now.");
     else net.sendIntent(intent);
     return true;
   }
@@ -191,57 +152,24 @@ export class ShopScene extends Phaser.Scene {
   private refresh(): void {
     const g = this.state;
     this.money.setText(`Money ${g.money}g`);
-    const season = dateOf(g.day.clock.day).season;
-    const stock = this.herb
-      ? herbStock(g.day.clock.day)
-      : this.rain
-        ? sellerStock()
-        : this.trader
-          ? traderStock(g.day.clock.day)
-          : this.hermit
-            ? hermitStock(g)
-            : this.pin
-              ? pinStock()
-              : this.fisher
-                ? fisherStock()
-                : [
-                    ...seedStock(season),
-                    ...saplingStock(),
-                    ...fertilizerStock(g.day.clock.day),
-                    BOUQUET,
-                  ];
+    const stock = offerIds(g, this.stockName);
     const buyRows: Row[] = stock.map((id) => {
       const def = itemById(id)!;
-      const price = this.herb
-        ? herbPrice(id)
-        : this.rain
-          ? tokenPrice()
-          : this.trader
-            ? traderPrice(id)
-            : this.hermit
-              ? HERMIT_ELDERFRUIT_PRICE
-              : unitPrice(g, id);
+      const price = offerPrice(g, this.stockName, id);
       const tryBuy = (n: number) => () => {
-        if (this.guestAsks({ kind: "buy", id, n }, true)) return;
-        if (this.hermit) {
-          const refused = buyElderfruit(g, SOURCE_FLAGS.hermit, price);
-          this.say(refused ?? `Bought an elderfruit for ${price}g and ate it.`);
+        if (this.guestAsks({ kind: "buy", id, n, stock: this.stockName }))
           return;
-        }
-        if (
-          this.herb
-            ? buyFromHerbStall(g, id, n)
-            : this.rain
-              ? n === 1 && buyToken(g)
-              : this.trader
-                ? buyFromTrader(g, id, n)
-                : buy(g.inventory, g, id, n, price)
-        ) {
+        const refused = shopBuy(g, this.stockName, id, n);
+        if (refused === undefined) {
           audio.sfx("money.buy");
-          this.say(`Bought ${n} ${def.name} for ${price * n}g.`);
+          this.say(
+            this.hermit
+              ? `Bought an elderfruit for ${price}g and ate it.`
+              : `Bought ${n} ${def.name} for ${price * n}g.`,
+          );
         } else {
           audio.sfx("ui.error");
-          this.say(buyRefusal(g, id, n));
+          this.say(refused);
         }
       };
       return {
@@ -262,7 +190,7 @@ export class ShopScene extends Phaser.Scene {
             {
               text: "Upgrade",
               run: () =>
-                this.guestAsks(undefined, true) ||
+                this.guestAsks(undefined) ||
                 this.say(
                   upgradeBackpack(g.inventory, g)
                     ? `Your backpack now holds ${pack.size} things.`
@@ -305,7 +233,7 @@ export class ShopScene extends Phaser.Scene {
           {
             text: "Sell 1",
             run: () => {
-              if (this.guestAsks({ kind: "sell", id, n: 1 }, false)) return;
+              if (this.guestAsks({ kind: "sell", id, n: 1 })) return;
               const earned = sell(g.inventory, g, id, 1, mult);
               g.cave.addEarnings(earned, g.day.clock.day + 1);
               audio.sfx("money.sell");
@@ -315,7 +243,7 @@ export class ShopScene extends Phaser.Scene {
           {
             text: "Sell all",
             run: () => {
-              if (this.guestAsks({ kind: "sell", id, n: count }, false)) return;
+              if (this.guestAsks({ kind: "sell", id, n: count })) return;
               const earned = sellAll(g.inventory, g, id, mult);
               g.cave.addEarnings(earned, g.day.clock.day + 1);
               audio.sfx("money.sell");

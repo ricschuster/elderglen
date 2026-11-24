@@ -45,7 +45,7 @@ export interface BundleDef {
   reward: BundleReward;
 }
 
-export interface RoomDef {
+export interface HallRoomDef {
   id: string;
   name: string;
   /** Bundles finished in the other rooms before this room appears, or "all" of them (the Last Seat). */
@@ -91,7 +91,7 @@ export function normalizeBundle(raw: RawBundle): BundleDef {
 }
 
 export const BUNDLES = (bundleData as RawBundle[]).map(normalizeBundle);
-export const ROOMS = roomData as RoomDef[];
+export const HALL_ROOMS = roomData as HallRoomDef[];
 
 /** The room whose completion mends the bridge to ring 2. */
 export const LAST_ROOM = "last-seat";
@@ -147,7 +147,7 @@ export class Hall {
   constructor(
     readonly bundles: BundleDef[] = BUNDLES,
     progress: HallProgress = {},
-    readonly rooms: RoomDef[] = ROOMS,
+    readonly rooms: HallRoomDef[] = HALL_ROOMS,
   ) {
     for (const [id, saved] of Object.entries(progress)) {
       const def = bundles.find((b) => b.id === id);
@@ -186,7 +186,7 @@ export class Hall {
   }
 
   /** How many bundles in the other rooms must be done before a room opens. */
-  private gateCount(room: RoomDef): number {
+  private gateCount(room: HallRoomDef): number {
     return room.opensAfter === "all"
       ? this.bundles.filter((b) => b.room !== room.id).length
       : room.opensAfter;
@@ -211,7 +211,7 @@ export class Hall {
   }
 
   /** Rooms with every bundle done, in room order. */
-  get completedRooms(): RoomDef[] {
+  get completedRooms(): HallRoomDef[] {
     return this.rooms.filter((r) => this.roomComplete(r.id));
   }
 

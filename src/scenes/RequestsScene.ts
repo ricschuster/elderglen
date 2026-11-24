@@ -1,8 +1,10 @@
 import Phaser from "phaser";
-import { daysLeft, ready, turnIn, wantText, type Quest } from "../core/quests";
+import { daysLeft, ready, wantText, type Quest } from "../core/quests";
+import type { Intent } from "../core/protocol";
 import type { GameState } from "../core/save";
 import { frame, Menu, TOUCH_ROW_H, type Row } from "./panel";
 import { STATE_KEY } from "./state";
+import { closeWhenDone, dispatch, followGuest } from "./guestlive";
 
 /**
  * The request board at the general store (note 50), and the list of open
@@ -54,7 +56,24 @@ export class RequestsScene extends Phaser.Scene {
     kb?.on("keydown-DOWN", () => this.menu.move(1));
     kb?.on("keydown-ENTER", () => this.menu.press(0));
     this.menu.setFocus(true);
+    // A guest's actions go to the host; the board redraws when its answer arrives (note 108 group 4).
+    // The open-requests list from the hat box has no board to open, so it stays host only.
+    if (!this.listOnly) {
+      followGuest(
+        this,
+        () => this.refresh(),
+        (text) => this.message.setText(text),
+      );
+      closeWhenDone(this);
+    }
     this.refresh();
+  }
+
+  /** Send an action through the dispatcher. `done` is the line when it worked; a guest's answer comes later. */
+  private act(intent: Intent, done: string): void {
+    const why = dispatch(this.state, intent);
+    if (why === "sent") return;
+    this.say(why ?? done);
   }
 
   private say(text: string): void {
@@ -74,10 +93,11 @@ export class RequestsScene extends Phaser.Scene {
           buttons: [
             {
               text: "Accept",
-              run: () => {
-                g.quests.accept(q.id, day);
-                this.say("You took the request.");
-              },
+              run: () =>
+                this.act(
+                  { kind: "request-accept", id: q.id },
+                  "You took the request.",
+                ),
             },
           ],
         });
@@ -106,17 +126,19 @@ export class RequestsScene extends Phaser.Scene {
     if (!this.listOnly)
       row.buttons.push({
         text: q.type === "gathering" ? "Done" : "Hand in",
-        run: () => {
-          const r = turnIn(g, q.id, day);
-          this.say(r.ok ? `The request is done. ${r.gold}g paid.` : r.reason);
-        },
+        run: () =>
+          this.act(
+            { kind: "request-turnin", id: q.id },
+            `The request is done. ${q.reward.gold}g paid.`,
+          ),
       });
     row.buttons.push({
       text: "Cancel",
-      run: () => {
-        g.quests.cancel(q.id);
-        this.say("You gave the request up. It costs nothing.");
-      },
+      run: () =>
+        this.act(
+          { kind: "request-cancel", id: q.id },
+          "You gave the request up. It costs nothing.",
+        ),
     });
     return row;
   }

@@ -237,3 +237,26 @@ export const PAIR_LIMIT = 4;
 export const KNOWN_PAIR_GAPS: ReadonlySet<string> = new Set([
   "secret-woods:to_forest",
 ]);
+
+/** Where a scene starts: a map, an entry on it and, for a resumed day, the tile. */
+export interface Spawn {
+  map: string;
+  entry: string;
+  x?: number;
+  y?: number;
+}
+
+/**
+ * The spawn to use when an old or corrupt save names a map that no longer
+ * exists: the farm's start entry, with no resume tile. `exists` says whether a
+ * map id can be built (a file, or a generated mine floor). The second value is
+ * true when the spawn was replaced, so the caller can log a warning.
+ */
+export function safeSpawn(
+  spawn: Spawn,
+  exists: (id: string) => boolean,
+  farmMap: string,
+): { spawn: Spawn; replaced: boolean } {
+  if (exists(spawn.map)) return { spawn, replaced: false };
+  return { spawn: { map: farmMap, entry: START.entry }, replaced: true };
+}

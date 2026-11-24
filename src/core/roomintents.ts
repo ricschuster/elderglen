@@ -2,16 +2,22 @@
 // same core function single player uses, as the sending player: their inventory, can, skills,
 // tool tiers, wallet and energy. Free of Phaser and the DOM.
 import * as actions from "./actions";
-import { farmMapOf } from "./farmtypes";
-import { itemById } from "./items";
+import { farmMapOf, farmTypeById } from "./farmtypes";
+import { resolveAction, resolveUse } from "./interact";
+import { jobDone } from "./machines";
+import { pondCovering } from "./pond";
+import { cropOfSeed, itemById } from "./items";
+import { MIXED_SEED } from "./weeds";
 import type { Intent } from "./protocol";
+import { asPlayer } from "./asplayer";
 import { LOCAL_PLAYER, type PlayerId } from "./players";
 import { potPrice, sellMultiplier } from "./professions";
 import { POT_ITEM } from "./pots";
 import type { GameState } from "./save";
 import { buy, sell } from "./shop";
+import { isShopStock, shopBuy } from "./shopoffers";
 import { findTool } from "./toolitems";
-import { useHeld } from "./tools";
+import type { Held } from "./toolbar";
 
 /** Most items one buy or sell intent may move. */
 const MAX_COUNT = 999;
@@ -22,29 +28,32 @@ const isCount = (v: unknown): v is number =>
   typeof v === "number" && Number.isInteger(v) && v >= 1 && v <= MAX_COUNT;
 
 /**
- * Run `fn` with the game state acting as player `by`: the local-player accessors (inventory, can,
- * skills, tool tiers, money) point at their record, and the day's energy object holds their energy
- * for the call, so `day.act` and `day.over` spend and test theirs. Everything is put back after.
+ * A guest's tool or seed on a farm tile: the host's own Use rule (`resolveUse`), as the sender,
+ * so the farm has one copy of each tool's behaviour. Its intent is the outcome; the sounds and
+ * messages are the sender's scene's to make.
  */
-export function asPlayer<T>(g: GameState, by: PlayerId, fn: () => T): T {
-  const players = g.players;
-  if (by === players.localId) return fn();
-  const rec = players.get(by);
-  const day = g.day.energy;
-  const kept = { current: day.current, max: day.max };
-  const prev = players.localId;
-  day.max = rec.energy.max;
-  day.current = rec.energy.current;
-  players.localId = by;
-  try {
-    return fn();
-  } finally {
-    rec.energy.current = day.current;
-    rec.energy.max = day.max;
-    day.current = kept.current;
-    day.max = kept.max;
-    players.localId = prev;
-  }
+function farmContext(g: GameState) {
+  return {
+    mapId: farmTypeById(g.farmType).map,
+    map: farmMapOf(g),
+    facing: "down" as const,
+    rockAt: () => false,
+    litBombAt: () => false,
+    personAt: () => false,
+  };
+}
+
+function useAs(
+  g: GameState,
+  by: PlayerId,
+  held: Held,
+  x: number,
+  y: number,
+): string | undefined {
+  const r = resolveUse(g, by, farmContext(g), held, { x, y });
+  return r.kind === "tool" || r.kind === "report"
+    ? outcome(r.result)
+    : "cannot do that here";
 }
 
 const outcome = (o: actions.Outcome): string | undefined =>
@@ -62,12 +71,12 @@ export function applyFarmIntent(
     case "water": {
       const { x, y } = intent;
       if (!isTile(x) || !isTile(y)) return `bad ${intent.kind}`;
-      return asPlayer(g, by, () =>
-        outcome(
-          intent.kind === "till"
-            ? actions.till(g, x, y, random)
-            : actions.water(g, x, y),
-        ),
+      return useAs(
+        g,
+        by,
+        { kind: "tool", tool: intent.kind === "till" ? "hoe" : "can" },
+        x,
+        y,
       );
     }
     case "harvest": {
@@ -81,26 +90,78 @@ export function applyFarmIntent(
       const { x, y } = intent;
       if (!isTile(x) || !isTile(y)) return `bad ${intent.kind}`;
       const tool = intent.kind;
-      return asPlayer(g, by, () => {
-        if (findTool(g.inventory, tool) < 0) return `no ${tool}`;
-        // The farm map's stumps, logs, trees, boulders and rocks, as the host's tool: experience
-        // (foraging for the axe, mining for the pickaxe), drops, tier and energy are the sender's.
-        return outcome(
-          useHeld(g, farmMapOf(g), { kind: "tool", tool }, x, y, undefined),
-        );
-      });
+      if (asPlayer(g, by, () => findTool(g.inventory, tool)) < 0)
+        return `no ${tool}`;
+      // The farm map's stumps, logs, trees, boulders and rocks, as the host's tool: experience
+      // (foraging for the axe, mining for the pickaxe), drops, tier and energy are the sender's.
+      return useAs(g, by, { kind: "tool", tool }, x, y);
     }
     case "plant": {
       const { x, y, seed } = intent;
       if (!isTile(x) || !isTile(y) || typeof seed !== "string")
         return "bad plant";
-      return asPlayer(g, by, () =>
-        outcome(actions.plant(g, x, y, seed, random)),
+      if (!cropOfSeed(seed) && seed !== MIXED_SEED) return "bad plant";
+      return useAs(g, by, { kind: "item", id: seed, count: 1 }, x, y);
+    }
+    case "machine-load": {
+      // A held good put in the machine on a farm tile: the host's own Use rule, as the sender.
+      const { x, y, item } = intent;
+      if (!isTile(x) || !isTile(y) || typeof item !== "string")
+        return "bad machine-load";
+      if (!g.machines.at(x, y)) return "no machine here";
+      return useAs(g, by, { kind: "item", id: item, count: 1 }, x, y);
+    }
+    case "machine-collect": {
+      // A finished batch taken out: whoever collects gets the goods (note 108 rule 4). Only a
+      // finished one, so a press never lifts a working machine.
+      const { x, y } = intent;
+      if (!isTile(x) || !isTile(y)) return "bad machine-collect";
+      const m = g.machines.get(x, y);
+      if (!m) return "no machine here";
+      if (!m.job) return "machine empty";
+      if (!jobDone(g, m)) return "machine busy";
+      const r = resolveAction(
+        g,
+        by,
+        {
+          ...farmContext(g),
+          ladderAt: () => false,
+        },
+        { kind: "empty" },
+        { x, y },
       );
+      return r.kind === "report" || r.kind === "act"
+        ? outcome(r.result)
+        : "cannot do that here";
+    }
+    case "pond-use": {
+      // The Action press on a pond with a held item (the quest item, a fish, or nothing to take a waiting
+      // product): the host's own Action rule, as the sender (note 108 group 3). The menu is a screen, not this.
+      const { x, y, item } = intent;
+      if (!isTile(x) || !isTile(y)) return "bad pond-use";
+      if (item !== undefined && typeof item !== "string") return "bad pond-use";
+      if (!pondCovering(g, x, y)) return "no pond here";
+      const r = resolveAction(
+        g,
+        by,
+        { ...farmContext(g), ladderAt: () => false },
+        item === undefined
+          ? { kind: "empty" }
+          : { kind: "item", id: item, count: 1 },
+        { x, y },
+      );
+      return r.kind === "report" || r.kind === "act"
+        ? outcome(r.result)
+        : "The pond has nothing to take or give.";
     }
     case "buy": {
-      const { id, n } = intent;
+      const { id, n, stock } = intent;
       if (typeof id !== "string" || !isCount(n)) return "bad buy";
+      // A special counter (the hermit, the herb stall, the road trader) runs its own rules.
+      if (stock !== undefined) {
+        if (!isShopStock(stock)) return "bad buy";
+        return asPlayer(g, by, () => shopBuy(g, stock, id, n));
+      }
       const rec = g.players.get(by);
       const base = itemById(id)?.buyPrice;
       const price =

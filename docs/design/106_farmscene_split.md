@@ -1,6 +1,6 @@
 # 106: FarmScene split and scene rules into core (issue #904)
 
-Status: steps 2 to 7 built 2026-11-19 (see "Built status" at the end); steps 1 and 8 remain. Issue #904 came from
+Status: steps 2 to 7 built 2026-11-19 (see "Built status" at the end); step 8 built 2026-11-24; the rest of #904 decided 2026-11-24 (last section). Issue #904 came from
 a code audit on 2026-11-12; this note re-measures it and settles the order.
 
 ## Current state (measured 2026-11-18)
@@ -131,3 +131,71 @@ Not built: the rest of step 8 (`resolveUse` and `resolveAction` are the long
 `use()` and `action()` chains in the scene, entangled with `open`, `report` and
 `render`; they wait for M4 step 1 and `(world, player)`), and the `art.ts` and
 `animals.ts` splits (not covered by this note).
+
+## Decided 2026-11-24 (owner): step 8 and the rest of #904
+
+M4 step 1 (#964) is closed, so step 8 is unblocked.
+
+1. **Step 8 goes right after the guest screens trade group** (#1014 group 1), before #1014 groups 2 to 5
+   and #1015. `resolveUse(world, player, held, aim)` and `resolveAction(world, player, aim)` in
+   `src/core/interact.ts` return an intent; the scene applies it (sounds, tweens, toasts). The guest path
+   (`guestUse()` in the scene, `applyFarmIntent` in `src/core/roomintents.ts`) goes through the same
+   resolvers on the host, so host and guest rules are one copy. Later guest groups add their actions here
+   rather than a second chain. Tests first against the extracted functions; `play.mjs casual` and the guest
+   playtests run before and after to compare.
+2. **Save and crash safety** (one build item): farm plots checked on load like greenhouse plots, `cave.load`
+   checks its arrays, no crash when an old save names a renamed map (`mapFiles[id]!`, `entry()!`) or on a
+   missing floor in `beaten()`, one test that validates every content JSON file against its type, one test
+   that every map service kind opens a registered scene. Re-measure each against the code first; drop what
+   is already fixed. The save version chain stays with note 52.
+3. **Duplicated helpers and names** (one build item): one tile key helper, one set of `isObject` and `isNum`
+   guards, one `cleanName`, one building and silo rect helper (the pond check gains the silo), the
+   axe-or-pickaxe test and `itemLabel()` if still repeated, and the colliding export names renamed. No
+   behaviour change except the pond and silo fix.
+4. **Not now:** content tables to JSON (M3d), bundle splitting and linting `scripts/` (later; desktop is
+   the final form, so size matters less), the 16 unused exports (knip will show what is still unused).
+
+When items 1 to 3 are built, #904 closes; item 4 moves to `PRIORITIES_LATER.md`.
+
+Item 3 built 2026-11-24: `src/core/guards.ts` (`isObject`, `isNum`, `cleanName`, `NAME_MAX`; save, bindings,
+players, animals, horse use it), `tileKey` replaces the inline `${x},${y}` keys in core, `buildingRects` and
+`siloSiteRect` in `placement.ts` shared with `pond.ts`, `isLiftTool` (toolbar.ts) for the axe-or-pickaxe test,
+`itemLabel` (items.ts) for the lower-cased item name, one `FACING_STEP` table (movement.ts) for aim, combat
+and the scene's old `PUSH`. Renamed: `HALL_ROOMS`/`HallRoomDef` (bundles) and `DECOR_ROOMS`/`DecorRoomDef`
+(decor), `COMPLETION_RINGS`/`CompletionRingDef`, `houseOrderProblem`/`houseOrderUpgrade`,
+`fertilizersOnSale` (fertilizer.ts). Already fixed: `tileKey` existed and most stores used it, and the pond check
+already respected the silo (a test now pins it), so there was no behaviour change.
+
+Item 2 built 2026-11-24: farm plots are now checked on load by the same filter as greenhouse plots (one
+`validPlots` in `save.ts`; bad keys, flags, crops and fertilizer are dropped, not thrown). `FarmCave.load` checks
+every array and field with `isObject` and `isNum` (fruit rows, boxes, the dehydrator job). `safeSpawn`
+(`core/maps.ts`) replaces a map that no longer exists with the farm's start entry, and `FarmScene.init` logs a
+warning when it does; a map with no entries falls back to tile 1,1 instead of `entries[0]!`. `beaten()` no longer
+needs a floor state (`removeCreature` in `creature-defeat.ts`). Two new tests: `tests/contentshape.test.ts`
+(every content JSON parses; every list file is checked against a required-field table, and no id repeats) and the
+service check in the same file (every service kind in the map files has a label and a handler named in
+`src/scenes` or `src/core`; `market-pier` and `market-float` come through constants). Fixture tests for the save
+fixes are in `tests/crashsafety.test.ts`. Already fixed: greenhouse plot filtering, and `fightState` already
+returned undefined for a missing floor (only the `!` in `beaten()` was left). No bad content data was found.
+Object-shaped content files are checked only for parsing and being non-empty. The save version chain is
+untouched (note 52).
+
+Step 8 built 2026-11-24: `FarmScene.ts` went from 3,224 to 2,874 lines. `src/core/interact.ts` now holds
+`resolveUse(g, by, ctx, held, aim)` and `resolveAction(g, by, ctx, held, aim)`. They run the rule as player `by`
+(`asPlayer`, now in `src/core/asplayer.ts` so `interact.ts` and `roomintents.ts` can both use it) and return a tagged
+intent: `UseIntent` (none, message, swing, cast, report with an optional lit bomb, tool with its sound) and
+`ActionIntent` (none, message, open a screen with its data, report, act with its sound, eat, and the scene-owned tags
+below). `UseContext` and `ActionContext` carry what the scene alone knows: the map, floor and facing, and callbacks for
+rocks, lit bombs, villagers and the mine ladder. `use()` and `action()` in the scene keep the guards (leaving, doors,
+guest, mounted, horse, villager talk, lantern line) and then `switch` on the intent; `applyAction` is the scene's side.
+Tests are in `tests/interact.test.ts` (one per tool and target, plus acting as a guest).
+`applyFarmIntent` now sends a guest's till, water, plant, axe and pickaxe through `resolveUse` as the sender, so the
+host's Use and a guest's intents share one copy of each tool rule. One visible change: a guest's hoe now respects
+tillable ground like the host's (before, it dug any tile). Not changed: the `harvest` intent still calls
+`actions.harvest` (it has its own "nothing ripe" refusal; a guest Action through `resolveAction` comes with the later
+guest groups), and `guestUse()` and the guest half of `action()` stay in the scene because they only choose which intent
+to send. Left in the scene as intent tags, because they move the player, run a minigame or read scene state: swing and
+cast (the attack and the fishing bar), `ride-cart`, `pier-keeper`, `pier-float`, `shrine`, `mend-bridge`, `treasure`,
+`stonekeeper` (reads the world holds), `festival`, `festival-action`, `camp-chest`, `cave`, `descend` and `stairs`,
+plus talk to a villager, mount and dismount, and the lantern launch, which run before the resolver. Pond rod take-out and
+pond menu are in the resolvers but have no unit test yet (a placed pond needs a longer setup).

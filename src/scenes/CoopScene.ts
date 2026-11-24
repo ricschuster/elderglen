@@ -3,32 +3,20 @@ import { animalCue } from "../core/audio";
 import Phaser from "phaser";
 import {
   type Building,
-  HATCHES,
   incubateDays,
   INCUBATOR_TIER,
   hasHeater,
-  heaterProblem,
-  pickUpHeater,
-  placeHeater,
   animalsIn,
-  bringIn,
-  collect,
-  feedAll,
   hearts,
-  incubatorProblem,
   isAdult,
-  letOut,
-  letOutProblem,
   moodWord,
-  pet,
-  putEgg,
-  rename,
   siloCapacity,
-  depositHay,
   SPECIES,
 } from "../core/animals";
-import { COOP_HEATER, itemById } from "../core/items";
+import { COOP_HEATER, itemById, itemLabel } from "../core/items";
+import type { Intent } from "../core/protocol";
 import type { GameState } from "../core/save";
+import { closeWhenDone, dispatch, followGuest } from "./guestlive";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
@@ -86,6 +74,25 @@ export class CoopScene extends Phaser.Scene {
     kb?.on("keydown-THREE", () => this.menu.press(2));
     kb?.on("keydown-FOUR", () => this.menu.press(3));
     kb?.on("keydown-ESC", () => this.close());
+    // A guest's bench rows are sent to the host; the screen redraws when its answer arrives (note 108 group 3).
+    followGuest(
+      this,
+      () => this.refresh(),
+      (text) => this.message.setText(text),
+    );
+    closeWhenDone(this);
+    this.refresh();
+  }
+
+  /**
+   * Run a bench action through the dispatcher. `done` is the line for success (made after the state changed, so
+   * it can read it); a guest's answer comes later and redraws the screen.
+   */
+  private run(intent: Intent, done: () => string, cue?: () => void): void {
+    const why = dispatch(this.state, { ...intent, building: this.building });
+    if (why === "sent") return;
+    if (why === undefined) cue?.();
+    this.message.setText(why ?? done());
     this.refresh();
   }
 
@@ -166,118 +173,98 @@ export class CoopScene extends Phaser.Scene {
     this.menu.setRows(rows);
   }
 
+  private unfed(): number {
+    return animalsIn(this.state, this.building).filter(
+      (a) => !a.fed && !a.outside,
+    ).length;
+  }
+
   private feed(): void {
-    const { fed, short } = feedAll(this.state, this.building);
-    if (fed > 0) {
-      const here = this.state.animals.animals.filter(
-        (a) => SPECIES[a.species].building === this.building,
-      );
-      const one = here[Math.floor(Math.random() * here.length)];
-      audio.sfx(
-        one
-          ? animalCue(one.species)
-          : this.building === "barn"
-            ? "animal.moo"
-            : "animal.cluck",
-      );
-    }
-    this.message.setText(
-      fed === 0 && short === 0
-        ? "Everyone has eaten."
-        : short > 0
-          ? `Fed ${fed}. Out of hay, ${short} still hungry. The carpenter sells hay.`
-          : `Fed ${fed}.`,
+    const before = this.unfed();
+    this.run(
+      { kind: "bench-feed" },
+      () => {
+        const fed = before - this.unfed();
+        return this.unfed() > 0
+          ? `Fed ${fed}. Out of hay, ${this.unfed()} still hungry. The keeper sells hay.`
+          : `Fed ${fed}.`;
+      },
+      () => {
+        const here = animalsIn(this.state, this.building);
+        const one = here[Math.floor(Math.random() * here.length)];
+        audio.sfx(
+          one
+            ? animalCue(one.species)
+            : this.building === "barn"
+              ? "animal.moo"
+              : "animal.cluck",
+        );
+      },
     );
-    this.refresh();
   }
 
   private fill(): void {
-    const n = depositHay(this.state);
-    this.message.setText(
-      n > 0
-        ? `${n} hay into the silo.`
-        : "No hay to tip in, or the silo is full.",
+    const before = this.state.animals.hay;
+    this.run(
+      { kind: "bench-fill" },
+      () => `${this.state.animals.hay - before} hay into the silo.`,
     );
-    this.refresh();
   }
 
   private pet(id: number): void {
-    audio.sfx("animal.pet");
     const kind = this.state.animals.animals.find((a) => a.id === id)?.species;
-    if (kind) this.time.delayedCall(180, () => audio.sfx(animalCue(kind)));
-    this.message.setText(
-      pet(this.state, id)
-        ? "You pet it. It looks pleased."
-        : "Already petted today.",
+    this.run(
+      { kind: "animal-pet", animal: id },
+      () => "You pet it. It looks pleased.",
+      () => {
+        audio.sfx("animal.pet");
+        if (kind) this.time.delayedCall(180, () => audio.sfx(animalCue(kind)));
+      },
     );
-    this.refresh();
   }
 
   private collect(id: number): void {
-    const r = collect(this.state, id);
-    audio.sfx("item" in r ? "item.pickup" : "ui.error");
-    this.message.setText(
-      "item" in r
-        ? `Took ${itemById(r.item)?.name.toLowerCase() ?? "it"}${r.also ? ` and ${itemById(r.also)?.name.toLowerCase() ?? "more"}` : ""}.`
-        : r.problem,
+    const an = this.state.animals.animals.find((a) => a.id === id);
+    const item = an?.item ?? (an ? SPECIES[an.species].item : "it");
+    this.run(
+      { kind: "animal-take", animal: id },
+      () => `Took ${itemLabel(item, "it")}.`,
+      () => audio.sfx("item.pickup"),
     );
-    this.refresh();
   }
 
   private heater(): void {
-    const b = this.building;
-    if (hasHeater(this.state.animals, b))
-      this.message.setText(
-        pickUpHeater(this.state, b)
-          ? "You take the heater up."
-          : "Your pack is full.",
-      );
-    else if (placeHeater(this.state, b))
-      this.message.setText(
-        "The heater is in. It will keep them warm in winter.",
-      );
-    else this.message.setText(heaterProblem(this.state, b) ?? "No heater.");
-    this.refresh();
+    const placed = hasHeater(this.state.animals, this.building);
+    this.run({ kind: "bench-heater" }, () =>
+      placed
+        ? "You take the heater up."
+        : "The heater is in. It will keep them warm in winter.",
+    );
   }
 
   private putEgg(): void {
-    const egg = Object.keys(HATCHES).find(
-      (e) => incubatorProblem(this.state, e) === undefined,
-    );
-    if (egg && putEgg(this.state, egg))
-      this.message.setText(
-        `The ${itemById(egg)?.name.toLowerCase() ?? "egg"} is in the incubator.`,
-      );
-    else
-      this.message.setText(
-        incubatorProblem(this.state, "egg") ?? "You have no egg to put in.",
-      );
-    this.refresh();
+    this.run({ kind: "bench-egg" }, () => "The egg is in the incubator.");
   }
 
   private toggle(id: number): void {
     const an = this.state.animals.animals.find((x) => x.id === id);
-    if (an?.outside) {
-      bringIn(this.state, id);
-      this.message.setText(`${an.name} is back inside.`);
-    } else {
-      const problem = letOutProblem(this.state, id);
-      if (problem !== undefined) this.message.setText(problem);
-      else {
-        letOut(this.state, id);
-        this.message.setText("Out on the grass. Bring it in before night.");
-      }
-    }
-    this.refresh();
+    const out = an?.outside;
+    this.run({ kind: out ? "animal-in" : "animal-out", animal: id }, () =>
+      out
+        ? `${an?.name} is back inside.`
+        : "Out on the grass. Bring it in before night.",
+    );
   }
 
   private name(id: number): void {
     const an = this.state.animals.animals.find((x) => x.id === id);
     if (!an) return;
     const next = window.prompt?.(`Name this animal`, an.name);
-    if (next && rename(this.state, id, next))
-      this.message.setText(`Now called ${an.name}.`);
-    this.refresh();
+    if (!next) return;
+    this.run(
+      { kind: "animal-name", animal: id, name: next },
+      () => `Now called ${an.name}.`,
+    );
   }
 
   private close(): void {

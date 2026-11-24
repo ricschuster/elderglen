@@ -6,11 +6,17 @@ import { heldAt } from "../core/toolbar";
 import { pendingChoice } from "../core/professions";
 import { rodById, waterAhead } from "../core/fishing";
 import { isPierCast, pierCastProblem } from "../core/marketpier";
-import { itemById } from "../core/items";
+import { itemLabel } from "../core/items";
 import { sortDepth } from "./depth";
 import { creatureTexture } from "./art-creatures";
 import { isFarmMap } from "../core/farmtypes";
-import { facingFrom, move, tileOf, type Vec } from "../core/movement";
+import {
+  FACING_STEP,
+  facingFrom,
+  move,
+  tileOf,
+  type Vec,
+} from "../core/movement";
 import { partsFor, schemeById, type Parts } from "../core/controlschemes";
 import { swingArc, type SwingArc } from "../core/swingfx";
 import { autoSwings, autoWeaponSlot, mayAutoEquip } from "../core/autoattack";
@@ -45,9 +51,13 @@ import {
 } from "../core/bombs";
 import { dangerHit } from "../core/danger";
 import { mineFloorOf } from "../core/mines";
-import { defeatCreature, defeatMessage } from "../core/creature-defeat";
+import {
+  defeatCreature,
+  defeatMessage,
+  removeCreature,
+} from "../core/creature-defeat";
 import { PLAYER } from "./farm-consts";
-import { CREATURE_BODY, PUSH } from "./farm-consts";
+import { CREATURE_BODY } from "./farm-consts";
 import type { FarmScene } from "./FarmScene";
 
 // Combat, bombs and creature drawing of the farm scene, moved out of
@@ -139,7 +149,7 @@ export function updateAttack(farm: FarmScene, parts: Parts): void {
 export function cast(farm: FarmScene, rodId: string): void {
   const rod = rodById(rodId)!;
   const here = tileOf(farm.pos, PLAYER, farm.map.tileSize);
-  const step = PUSH[farm.facing];
+  const step = FACING_STEP[farm.facing];
   // Any outdoor map with water can be fished: Hearthwell's river arm (the
   // Night Market pier, note 14) is one; its water kind drives the fish table.
   const water =
@@ -230,7 +240,7 @@ export function detonate(farm: FarmScene, b: LitBomb, quiet: boolean): void {
   );
   farm.time.delayedCall(220, () => farm.swingFx.clear());
   const got = Object.entries(broken?.items ?? {})
-    .map(([id, n]) => `${n} ${itemById(id)?.name.toLowerCase() ?? id}`)
+    .map(([id, n]) => `${n} ${itemLabel(id)}`)
     .join(", ");
   farm.message =
     `${def.name} goes off.` +
@@ -583,8 +593,8 @@ export function shotAim(farm: FarmScene): Vec | undefined {
 /** A creature is beaten: its goods, the kill tally and a ladder roll. */
 export function beaten(farm: FarmScene, c: Creature): void {
   audio.sfx("enemy.die");
-  const floor = fightState(farm)!;
-  floor.creatures = floor.creatures.filter((o) => o.uid !== c.uid);
+  // No floor state (a stale or corrupt save): there is nothing to remove it from.
+  removeCreature(fightState(farm), c.uid);
   farm.creatureSprites.get(c.uid)?.destroy();
   farm.creatureSprites.delete(c.uid);
   const r = defeatCreature(

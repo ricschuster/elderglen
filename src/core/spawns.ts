@@ -1,4 +1,5 @@
 import spawnData from "../content/spawns.json";
+import { tileKey } from "./tilekey";
 
 /**
  * Nightly spawns (note 71, addition 10; the Quarry, note 78). A map with an
@@ -68,7 +69,7 @@ export function nightlySpawns(
   const used = new Set<string>();
   for (let i = 0; i < spawnAttempts(table, year); i++) {
     const tile = tiles[Math.floor(random() * tiles.length)]!;
-    const key = `${tile.x},${tile.y}`;
+    const key = tileKey(tile.x, tile.y);
     if (used.has(key) || !free(tile.x, tile.y)) continue;
     let pick = random() * total;
     let kind = kinds[kinds.length - 1]!.kind;

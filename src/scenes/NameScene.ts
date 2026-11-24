@@ -1,10 +1,6 @@
 import Phaser from "phaser";
-import {
-  DEFAULT_HORSE_NAME,
-  NAME_MAX,
-  nameHorse,
-  typeName,
-} from "../core/horse";
+import { DEFAULT_HORSE_NAME, nameHorse, typeName } from "../core/horse";
+import { NAME_MAX } from "../core/guards";
 import type { GameState } from "../core/save";
 import { STATE_KEY } from "./state";
 import { WINDOW_FILL } from "./panel";

@@ -7,18 +7,16 @@ import {
   POT_COLOURS,
   bootsTailorProblem,
   packBoots,
-  tailorBoots,
-  dyePiece,
   pieceName,
   potColourOf,
-  sew,
   sewProblem,
   sewableSpool,
   spoolRowOf,
-  undye,
 } from "../core/tailoring";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
+import type { Intent } from "../core/protocol";
+import { closeWhenDone, dispatch, followGuest } from "./guestlive";
 
 /**
  * The Hatter's sewing machine and dye pots (note 96). Mode `sew` lists what the pack
@@ -60,6 +58,20 @@ export class TailorScene extends Phaser.Scene {
     kb?.on("keydown-DOWN", () => this.menu.move(1));
     kb?.on("keydown-ENTER", () => this.menu.press(0));
     kb?.on("keydown-ESC", () => this.close());
+    // A guest's actions go to the host; the screen redraws when its answer arrives (note 108 group 5).
+    followGuest(
+      this,
+      () => this.refresh(),
+      (text) => this.message.setText(text),
+    );
+    closeWhenDone(this);
+    this.refresh();
+  }
+
+  /** Send an action through the dispatcher. `done` is the line when it worked; a guest's answer comes later. */
+  private act(intent: Intent, done: string): void {
+    const why = dispatch(this.state, intent);
+    if (why !== "sent") this.message.setText(why ?? done);
     this.refresh();
   }
 
@@ -80,13 +92,11 @@ export class TailorScene extends Phaser.Scene {
         buttons: [
           {
             text: "Sew",
-            run: () => {
-              const r = sew(g, item);
-              this.message.setText(
-                r.ok ? `You sew a ${r.name.toLowerCase()}.` : r.reason,
-              );
-              this.refresh();
-            },
+            run: () =>
+              this.act(
+                { kind: "tailor-sew", item },
+                `You sew a ${pieceName(row.kind, row.id).toLowerCase()}.`,
+              ),
           },
         ],
       };
@@ -140,12 +150,11 @@ export class TailorScene extends Phaser.Scene {
           {
             text: "Tailor",
             run: () => {
-              const r = tailorBoots(g, feed, spool);
-              this.message.setText(
-                r.ok ? `You make ${r.name.toLowerCase()}.` : r.reason,
-              );
               this.bootsFeed = undefined;
-              this.refresh();
+              this.act(
+                { kind: "tailor-boots", feed, spool },
+                "You make a new pair.",
+              );
             },
           },
         ],
@@ -202,19 +211,25 @@ export class TailorScene extends Phaser.Scene {
             text: "Dye",
             run: () => {
               const pots = this.pickPots();
-              const refused = pots
-                ? dyePiece(g, kind, id, pots, t)
-                : `You need one item for each of the ${POT_COLOURS.join(", ")} pots.`;
-              this.message.setText(refused ?? "The colour takes.");
-              this.refresh();
+              if (!pots) {
+                this.message.setText(
+                  `You need one item for each of the ${POT_COLOURS.join(", ")} pots.`,
+                );
+                return this.refresh();
+              }
+              this.act(
+                { kind: "tailor-dye", piece: kind, id, pots, tint: { ...t } },
+                "The colour takes.",
+              );
             },
           },
           {
             text: "Undo",
-            run: () => {
-              undye(g, kind, id);
-              this.refresh();
-            },
+            run: () =>
+              this.act(
+                { kind: "tailor-undye", piece: kind, id },
+                "The dye is gone.",
+              ),
           },
         ],
       });

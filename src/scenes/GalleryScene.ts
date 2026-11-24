@@ -10,21 +10,21 @@ import {
 import {
   GALLERY_TOTAL,
   canDonate,
-  claimRewards,
   claimable,
-  donate,
   donateLine,
   donatedCount,
   galleryEntry,
-  placeOnShelf,
   shelf,
 } from "../core/gallery";
+import { splitQuality } from "../core/quality";
 import { itemTip, type ItemTip } from "../core/itemtip";
 import type { GameState } from "../core/save";
 import { iconKey } from "./art";
 import { takeEsc } from "./escape";
 import { closeWindow, frame } from "./panel";
 import { STATE_KEY } from "./state";
+import type { Intent } from "../core/protocol";
+import { closeWhenDone, dispatch, followGuest } from "./guestlive";
 import { Tooltip } from "./tooltip";
 
 const CELL = TOUCH_CELL;
@@ -115,6 +115,23 @@ export class GalleryScene extends Phaser.Scene {
     );
     this.input.on("pointerup", () => this.up());
     this.input.on("pointerupoutside", () => this.up());
+    // A guest's donations go to the host; the shelf redraws when its answer arrives (note 108 group 5). The
+    // read only shelf from the collections page has no counter to open.
+    if (!this.readOnly) {
+      followGuest(
+        this,
+        () => this.refresh(),
+        (text) => this.note.setText(text),
+      );
+      closeWhenDone(this);
+    }
+    this.refresh();
+  }
+
+  /** Send an action through the dispatcher. `done` is the line when it worked; a guest's answer comes later. */
+  private act(intent: Intent, done: string): void {
+    const why = dispatch(this.state, intent);
+    if (why !== "sent") this.note.setText(why ?? done);
     this.refresh();
   }
 
@@ -262,8 +279,12 @@ export class GalleryScene extends Phaser.Scene {
       if (slot.id) this.picked = i;
     } else {
       const from = shelf(this.state)[this.picked]!;
-      if (from.id && i !== this.picked) placeOnShelf(this.state, from.id, i);
+      const picked = this.picked;
       this.picked = undefined;
+      if (from.id && i !== picked) {
+        this.act({ kind: "gallery-place", item: from.id, slot: i }, "");
+        return;
+      }
     }
     this.refresh();
   }
@@ -271,27 +292,17 @@ export class GalleryScene extends Phaser.Scene {
   private pressPack(i: number): void {
     const id = this.state.inventory.slot(i)?.id;
     if (!id) return;
-    const r = donate(this.state, id);
-    if (!r.ok) {
-      this.note.setText(r.reason);
-    } else {
-      const fruit = r.fruit ? " You feel a warm gift settle in you." : "";
-      const owed = claimable(this.state).length > 0 ? " Rewards wait." : "";
-      this.note.setText(donateLine(r.id) + fruit + owed);
-    }
-    this.refresh();
+    this.act(
+      { kind: "gallery-donate", item: id },
+      donateLine(splitQuality(id).base),
+    );
   }
 
   private collect(): void {
-    const { paid, held } = claimRewards(this.state);
-    const parts: string[] = [];
-    if (paid.length > 0) parts.push(`Dunmar hands over: ${paid.join(", ")}.`);
-    if (held.length > 0)
-      parts.push(`Held until your pack has room: ${held.join(", ")}.`);
-    this.note.setText(
-      parts.length > 0 ? parts.join(" ") : "No reward waits for you yet.",
+    this.act(
+      { kind: "gallery-claim" },
+      "Dunmar hands over what you have earned.",
     );
-    this.refresh();
   }
 
   private refresh(): void {

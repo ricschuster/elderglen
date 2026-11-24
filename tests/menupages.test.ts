@@ -222,14 +222,29 @@ describe("guest read-only menus", () => {
   it("hides tabs that change state and allows only read-only and intent screens", () => {
     const g = newGame();
     const hidden = hiddenTabs(g, true);
-    for (const t of ["pack", "crafting", "animals", "special"])
-      expect(hidden).toContain(t);
+    for (const t of ["pack", "animals", "special"]) expect(hidden).toContain(t);
+    // Crafting sends craft intents (note 108 group 2), so its tab is open to a guest.
+    expect(hidden).not.toContain("crafting");
     expect(hiddenTabs(g)).not.toContain("pack");
     expect(guestMayOpen("menu")).toBe(true);
     expect(guestMayOpen("shop")).toBe(true);
     expect(guestMayOpen("bin")).toBe(true);
+    for (const k of ["crafting", "cooking", "furnace"])
+      expect(guestMayOpen(k)).toBe(true);
+    for (const k of ["keeper", "coop-bench", "barn-bench", "pond"])
+      expect(guestMayOpen(k)).toBe(true);
+    for (const k of ["hall", "orders", "requests"])
+      expect(guestMayOpen(k)).toBe(true);
+    for (const k of ["carpenter", "tailor", "smith", "smithy", "gallery"])
+      expect(guestMayOpen(k)).toBe(true);
+    expect(guestMayOpen("shrine")).toBe(true);
+    // Still host only: combat, the mine hall, travel, mail and the hat box.
+    for (const k of ["trainer", "walllist", "cart", "mailbox", "hats"])
+      expect(guestMayOpen(k)).toBe(false);
   });
 });
+
+import { newPlayerMarriageBook } from "../src/core/playermarriage";
 
 describe("playerRows", () => {
   it("lists the other players in order and skips the local one", () => {
@@ -242,9 +257,55 @@ describe("playerRows", () => {
       "p1",
     );
     expect(rows).toEqual([
-      { id: "p2", name: "Ana" },
-      { id: "p3", name: "Bo" },
+      { id: "p2", name: "Ana", slot: 2 },
+      { id: "p3", name: "Bo", slot: 3 },
     ]);
+  });
+  const who = [
+    { id: "p1", name: "Host" },
+    { id: "p2", name: "Ana" },
+    { id: "p3", name: "Bo" },
+  ];
+  it("tags a player married to a villager", () => {
+    const rows = playerRows(who, "p1", {
+      villagerOf: (id) =>
+        id === "p2" ? { stage: "married", name: "Mara" } : undefined,
+    });
+    expect(rows[0]!.tag).toBe("Married to Mara");
+    expect(rows[1]!.tag).toBeUndefined();
+  });
+  it("tags an engaged and a married player pair", () => {
+    const book = newPlayerMarriageBook();
+    book.bonds.push({
+      proposer: "p2",
+      other: "p3",
+      stage: "engaged",
+      weddingDay: 9,
+    });
+    let rows = playerRows(who, "p1", { book });
+    expect(rows.map((r) => r.tag)).toEqual(["Engaged to Bo", "Engaged to Ana"]);
+    book.bonds[0]!.stage = "married";
+    rows = playerRows(who, "p1", { book });
+    expect(rows.map((r) => r.tag)).toEqual(["Married to Bo", "Married to Ana"]);
+  });
+  it("names the viewer as you, and ignores a bare proposal", () => {
+    const book = newPlayerMarriageBook();
+    book.bonds.push({
+      proposer: "p1",
+      other: "p2",
+      stage: "married",
+      weddingDay: 3,
+    });
+    book.bonds.push({
+      proposer: "p3",
+      other: "p4",
+      stage: "proposed",
+      weddingDay: 0,
+    });
+    const rows = playerRows([...who, { id: "p4", name: "Cy" }], "p1", { book });
+    expect(rows.map((r) => r.id)).toEqual(["p2", "p3", "p4"]);
+    expect(rows[0]!.tag).toBe("Married to you");
+    expect(rows[1]!.tag).toBeUndefined();
   });
   it("is empty alone", () => {
     expect(playerRows([], "p1")).toEqual([]);

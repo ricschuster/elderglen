@@ -1,6 +1,6 @@
 import guideText from "../content/guide-text.json";
 import guidePlaces from "../content/guide-places.json";
-import { BUNDLES, ROOMS, rewardText } from "./bundles";
+import { BUNDLES, HALL_ROOMS, rewardText } from "./bundles";
 import {
   dishKnown,
   cookable,
@@ -18,7 +18,7 @@ import { ALL_CROPS, type CropDef } from "./crops";
 import { FISH, type FishDef } from "./fishing";
 import { FORAGE } from "./forage";
 import { shippedOf } from "./achievements";
-import { seedId, itemById } from "./items";
+import { seedId, itemById, itemLabel } from "./items";
 import { splitQuality } from "./quality";
 import { clockText } from "./clock";
 import { SHOPS, VILLAGERS, type ShopHours, type Villager } from "./villagers";
@@ -307,9 +307,7 @@ function recipeEntries(g: GameState): GuideEntry[] {
   for (const r of RECIPES) {
     if (!buildable(r) || !recipeKnown(g, r)) continue;
     const ing = r.ingredients
-      .map(
-        (i) => `${i.count} ${itemById(i.item)?.name.toLowerCase() ?? i.item}`,
-      )
+      .map((i) => `${i.count} ${itemLabel(i.item)}`)
       .join(", ");
     add(
       `craft-${r.id}`,
@@ -338,7 +336,7 @@ function bundleEntries(g: GameState): GuideEntry[] {
   const hall = g.hall;
   for (const b of BUNDLES) {
     if (!hall.roomOpen(b.room)) continue;
-    const room = ROOMS.find((r) => r.id === b.room);
+    const room = HALL_ROOMS.find((r) => r.id === b.room);
     const done = hall.complete(b.id);
     const lines = [`Room: ${room?.name ?? b.room}`, b.hint];
     for (const it of b.items) {

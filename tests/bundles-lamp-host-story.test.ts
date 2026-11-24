@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { BUNDLES, Hall, LAST_ROOM, ROOMS } from "../src/core/bundles";
+import { BUNDLES, Hall, LAST_ROOM, HALL_ROOMS } from "../src/core/bundles";
 import { known, recipeById } from "../src/core/crafting";
 import { cook } from "../src/core/cooking";
 import { dishById } from "../src/core/dishes";
@@ -17,7 +17,7 @@ import { fillBundle } from "./hall-helpers";
 
 const by = (id: string) => BUNDLES.find((b) => b.id === id)!;
 const wallet = () => ({ money: 0 });
-const openRooms = ROOMS.map((r) => ({ ...r, opensAfter: 0 }));
+const openRooms = HALL_ROOMS.map((r) => ({ ...r, opensAfter: 0 }));
 
 function soilMap(): FarmMap {
   const layer = (name: string, data: number[]) => ({
@@ -184,7 +184,7 @@ describe("bundle 26, Storyteller's", () => {
 
 describe("the gate", () => {
   it("opens the Last Seat only after every other bundle", () => {
-    const seat = ROOMS.find((r) => r.id === LAST_ROOM)!;
+    const seat = HALL_ROOMS.find((r) => r.id === LAST_ROOM)!;
     expect(seat.opensAfter).toBe("all");
     const hall = new Hall();
     const inv = new Inventory(40);

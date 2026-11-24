@@ -2,7 +2,6 @@ import { audio } from "../audio/engine";
 import Phaser from "phaser";
 import {
   canCraft,
-  craft,
   haveCount,
   ingredientText,
   knownRecipes,
@@ -12,6 +11,7 @@ import {
 import { itemById } from "../core/items";
 import { reasonText } from "../core/tools";
 import type { GameState } from "../core/save";
+import { closeWhenDone, dispatch, followGuest } from "./guestlive";
 import { closeWindow, frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
@@ -57,6 +57,12 @@ export class CraftingScene extends Phaser.Scene {
     kb?.on("keydown-DOWN", () => this.menu.move(1));
     kb?.on("keydown-ENTER", () => this.menu.press(0));
     this.menu.setFocus(true);
+    followGuest(
+      this,
+      () => this.refresh(),
+      (text) => this.say(text),
+    );
+    closeWhenDone(this);
     this.refresh();
   }
 
@@ -80,7 +86,21 @@ export class CraftingScene extends Phaser.Scene {
           {
             text: "Craft",
             run: () => {
-              const why = craft(g, r.id, chests);
+              const why = dispatch(g, {
+                kind: "craft",
+                recipe: r.id,
+                ...(this.bench
+                  ? {
+                      bench: {
+                        map: this.bench.mapId,
+                        x: this.bench.x,
+                        y: this.bench.y,
+                      },
+                    }
+                  : {}),
+              });
+              // A guest's craft is on its way: the screen redraws when the host answers.
+              if (why === "sent") return;
               if (why) audio.sfx("ui.error");
               else {
                 audio.sfx("craft.tap");

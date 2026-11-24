@@ -2,6 +2,7 @@ import { Inventory } from "../src/core/inventory";
 import { afterEach, describe, expect, it } from "vitest";
 import { DAY_START } from "../src/core/clock";
 import { cabinSpawnTile } from "../src/core/cabins";
+import { farmMapOf } from "../src/core/farmtypes";
 import { newGame } from "../src/core/save";
 import { GuestClient } from "../src/net/client";
 import { NodePipe } from "../src/net/pipe-node";
@@ -195,6 +196,7 @@ describe("guest applies the host's intents", () => {
   it("a guest's till and plant reach the host and come back once to the guest copy", async () => {
     const { host, guest, state } = await pair();
     const copy = guest.loadFarm()!;
+    const soil = farmMapOf(state).tillableTiles()[0]!;
     const rec = state.players.get(guest.localId);
     rec.inventory.load(new Inventory().save()); // drop the joiner's starting kit
     rec.inventory.add("parsnip-seed", 3);
@@ -202,12 +204,17 @@ describe("guest applies the host's intents", () => {
     copy.players.get(guest.localId).inventory.add("parsnip-seed", 3);
     let changes = 0;
     guest.onChange = () => (changes += 1);
-    guest.sendIntent({ kind: "till", x: 6, y: 6 });
+    guest.sendIntent({ kind: "till", x: soil.x, y: soil.y });
     await until(() => changes >= 1);
-    guest.sendIntent({ kind: "plant", x: 6, y: 6, seed: "parsnip-seed" });
+    guest.sendIntent({
+      kind: "plant",
+      x: soil.x,
+      y: soil.y,
+      seed: "parsnip-seed",
+    });
     await until(() => changes >= 2);
-    expect(state.farm.plotAt(6, 6)?.tilled).toBe(true);
-    expect(copy.farm.plotAt(6, 6)?.tilled).toBe(true);
+    expect(state.farm.plotAt(soil.x, soil.y)?.tilled).toBe(true);
+    expect(copy.farm.plotAt(soil.x, soil.y)?.tilled).toBe(true);
     expect(
       copy.players.get(guest.localId).inventory.count("parsnip-seed"),
     ).toBe(2);
@@ -292,6 +299,7 @@ describe("guest applies the host's intents", () => {
   it("a guest's till and plant reach the host and come back once to the guest copy", async () => {
     const { host, guest, state } = await pair();
     const copy = guest.loadFarm()!;
+    const soil = farmMapOf(state).tillableTiles()[0]!;
     const rec = state.players.get(guest.localId);
     rec.inventory.load(new Inventory().save()); // drop the joiner's starting kit
     rec.inventory.add("parsnip-seed", 3);
@@ -299,12 +307,17 @@ describe("guest applies the host's intents", () => {
     copy.players.get(guest.localId).inventory.add("parsnip-seed", 3);
     let changes = 0;
     guest.onChange = () => (changes += 1);
-    guest.sendIntent({ kind: "till", x: 6, y: 6 });
+    guest.sendIntent({ kind: "till", x: soil.x, y: soil.y });
     await until(() => changes >= 1);
-    guest.sendIntent({ kind: "plant", x: 6, y: 6, seed: "parsnip-seed" });
+    guest.sendIntent({
+      kind: "plant",
+      x: soil.x,
+      y: soil.y,
+      seed: "parsnip-seed",
+    });
     await until(() => changes >= 2);
-    expect(state.farm.plotAt(6, 6)?.tilled).toBe(true);
-    expect(copy.farm.plotAt(6, 6)?.tilled).toBe(true);
+    expect(state.farm.plotAt(soil.x, soil.y)?.tilled).toBe(true);
+    expect(copy.farm.plotAt(soil.x, soil.y)?.tilled).toBe(true);
     expect(
       copy.players.get(guest.localId).inventory.count("parsnip-seed"),
     ).toBe(2);

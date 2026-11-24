@@ -5,6 +5,7 @@
 import type { ServerMsg } from "../core/protocol";
 import { applyMarriageIntent } from "../core/marriageintents";
 import { applyFarmIntent } from "../core/roomintents";
+import { applyScreenIntent } from "../core/screenintents";
 import type { GameState } from "../core/save";
 
 /**
@@ -21,6 +22,8 @@ export function applyServerMsg(
   if (!g.players.has(m.by)) return false;
   const mr = applyMarriageIntent(g, m.by, m.intent);
   if (mr !== null) return mr === undefined;
+  const sr = applyScreenIntent(g, m.by, m.intent);
+  if (sr !== null) return sr === undefined;
   const r = applyFarmIntent(g, m.by, m.intent, random);
   return r === undefined;
 }

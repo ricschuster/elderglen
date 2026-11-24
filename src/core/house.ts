@@ -5,6 +5,7 @@ import { HARDWOOD } from "./items";
 import { visibleTier } from "./map";
 import { pondDigging } from "./pondsite";
 import type { GameState } from "./save";
+import { tileKey } from "./tilekey";
 
 /**
  * The house grows in tiers: 0 is the start room, 1 adds a kitchen and a
@@ -234,8 +235,8 @@ export function renoRefundProblem(
     return `Take back the ${on.name.toLowerCase()} first, it is built on this.`;
   const area = renoArea(id);
   const full =
-    [...g.furniture.each(HOUSE_MAP)].some((f) => area.has(`${f.x},${f.y}`)) ||
-    [...g.chests.each(HOUSE_MAP)].some((c) => area.has(`${c.x},${c.y}`));
+    [...g.furniture.each(HOUSE_MAP)].some((f) => area.has(tileKey(f.x, f.y))) ||
+    [...g.chests.each(HOUSE_MAP)].some((c) => area.has(tileKey(c.x, c.y)));
   return full
     ? "Clear your furniture and chests out of the new area first."
     : undefined;
@@ -331,7 +332,7 @@ export function nextUpgrade(tier: number): HouseUpgrade | undefined {
 }
 
 /** Why the upgrade cannot be ordered now, in words, or undefined if it can. */
-export function orderProblem(g: GameState): string | undefined {
+export function houseOrderProblem(g: GameState): string | undefined {
   if (g.houseBuild) return "The carpenter is already at work on the house.";
   if (g.animals.build)
     return `The carpenter is busy building your ${g.animals.build.building}.`;
@@ -352,8 +353,8 @@ export function orderProblem(g: GameState): string | undefined {
 }
 
 /** Pay for the next upgrade and start the build. Returns false if it cannot. */
-export function orderUpgrade(g: GameState): boolean {
-  if (orderProblem(g) !== undefined) return false;
+export function houseOrderUpgrade(g: GameState): boolean {
+  if (houseOrderProblem(g) !== undefined) return false;
   const cost = nextUpgrade(g.houseTier)!;
   g.money -= cost.coin;
   if (cost.wood > 0) g.inventory.remove(WOOD, cost.wood);

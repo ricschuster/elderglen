@@ -1,7 +1,7 @@
 import forgeData from "../content/forge.json";
 import { comboId, comboParts, isCombo, ringById, RINGS } from "./equipment";
 import type { Inventory } from "./inventory";
-import { itemById } from "./items";
+import { itemLabel } from "./items";
 
 /**
  * The forge (`docs/design/95_forge_enchanting.md`). Ring 1 builds only ring
@@ -30,7 +30,7 @@ export function combineProblem(
     return "You need both rings in your pack.";
   const cost = inv.count(FORGE_CURRENCY);
   if (cost < COMBINE_COST)
-    return `You need ${COMBINE_COST} ${itemById(FORGE_CURRENCY)?.name.toLowerCase() ?? "ore"}.`;
+    return `You need ${COMBINE_COST} ${itemLabel(FORGE_CURRENCY, "ore")}.`;
   return undefined;
 }
 

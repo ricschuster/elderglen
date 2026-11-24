@@ -1,5 +1,6 @@
 import type { Spot } from "./forage";
 import { ROCK_KINDS, type RockKind } from "./rocks";
+import { tileKey } from "./tilekey";
 
 /**
  * The part of a Tiled JSON map the game reads. The contract is documented in
@@ -867,7 +868,7 @@ export class FarmMap {
   /** Tiles that the starting trees block, so the layout is checked with them. */
   private treeTiles(): Set<string> {
     return new Set(
-      this.trees.filter((t) => t.stage > 1).map((t) => `${t.x},${t.y}`),
+      this.trees.filter((t) => t.stage > 1).map((t) => tileKey(t.x, t.y)),
     );
   }
 
@@ -894,7 +895,7 @@ export class FarmMap {
     const solid = this.treeTiles();
     if (this.isBlocked(from.x, from.y)) return seen;
     const queue = [from];
-    seen.add(`${from.x},${from.y}`);
+    seen.add(tileKey(from.x, from.y));
     for (let i = 0; i < queue.length; i++) {
       const { x, y } = queue[i] as Spot;
       for (const [dx, dy] of [
@@ -904,7 +905,7 @@ export class FarmMap {
         [0, -1],
       ] as const) {
         const next = { x: x + dx, y: y + dy };
-        const k = `${next.x},${next.y}`;
+        const k = tileKey(next.x, next.y);
         // A log is solid only until it is chopped, so it counts as open here.
         if (
           seen.has(k) ||
@@ -945,8 +946,8 @@ export class FarmMap {
     const treeIds = new Set<string>();
     for (const t of this.trees) {
       const at = `tree at ${t.x},${t.y}`;
-      if (treeIds.has(`${t.x},${t.y}`)) out.push(`${at} is placed twice`);
-      treeIds.add(`${t.x},${t.y}`);
+      if (treeIds.has(tileKey(t.x, t.y))) out.push(`${at} is placed twice`);
+      treeIds.add(tileKey(t.x, t.y));
       if (t.stage < 1 || t.stage > 5)
         out.push(`${at} has a stage outside 1 to 5`);
       if (!this.canPlantTree(t.x, t.y))
@@ -1015,7 +1016,7 @@ export class FarmMap {
         let ok = false;
         for (let y = exit.y; y < exit.y + exit.h; y++)
           for (let x = exit.x; x < exit.x + exit.w; x++)
-            if (walkable.has(`${x},${y}`)) ok = true;
+            if (walkable.has(tileKey(x, y))) ok = true;
         if (!ok)
           out.push(
             `exit "${exit.id}" cannot be reached from entry "${entry.name}"`,
@@ -1042,9 +1043,9 @@ export class FarmMap {
           );
       }
       for (const s of this.forageSpots)
-        if (this.treeTiles().has(`${s.x},${s.y}`))
+        if (this.treeTiles().has(tileKey(s.x, s.y)))
           out.push(`forage spot ${s.x},${s.y} is under a tree`);
-        else if (!walkable.has(`${s.x},${s.y}`))
+        else if (!walkable.has(tileKey(s.x, s.y)))
           out.push(
             `forage spot ${s.x},${s.y} cannot be reached from entry "${entry.name}"`,
           );

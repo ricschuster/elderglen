@@ -104,6 +104,8 @@ import {
   type ToolTiers,
   type Upgradable,
 } from "./upgrades";
+import { isObject } from "./guards";
+import { loadGuestFields, type BuildRule } from "./buildrule";
 
 /**
  * The world: everything that is shared in multiplayer (note 53). The per-player
@@ -150,8 +152,16 @@ export interface WorldState {
   gallery?: string[];
   /** Where donated items stand on the shelf: item id to slot. Absent until one is moved. */
   galleryPlaced?: Record<string, number>;
-  /** Gallery reward keys this player has collected. Per player in multiplayer (M4). */
+  /** Gallery reward keys the host has collected. Per player in multiplayer (M4); guests' lists are `galleryClaimedBy`. */
   galleryClaimed?: string[];
+  /** Gallery reward keys each guest has collected, by player id (note 108 group 5). Absent until a guest collects one. */
+  galleryClaimedBy?: Record<string, string[]>;
+  /** The tool each guest has at the smithy, by player id (note 108 group 5); the host's is `toolOrder`. */
+  toolOrdersBy?: Record<string, ToolOrder>;
+  /** Who ordered each farm building, by key (`coop`, `barn`, `stable`, `silo`, `pond:x,y`); absent means the host (note 108 rule 7). */
+  buildOwners?: Record<string, string>;
+  /** Who may move or take down a building besides its owner (note 108 rule 9). Absent means own only. */
+  buildRule?: BuildRule;
   /**
    * The worlds of the area maps by map id (`areas.ts`): their trees, rocks,
    * weeds, twigs and goods on the ground. The fields above are the farm's, or
@@ -441,6 +451,10 @@ interface SaveData {
   gallery?: string[];
   galleryPlaced?: Record<string, number>;
   galleryClaimed?: string[];
+  galleryClaimedBy?: Record<string, string[]>;
+  toolOrdersBy?: Record<string, ToolOrder>;
+  buildOwners?: Record<string, string>;
+  buildRule?: BuildRule;
   /** Absent in saves made before the Forest: each area's starting world. */
   areas?: Record<string, AreaSave>;
   /** Absent in saves made before machines. */
@@ -707,6 +721,24 @@ export function serialize(
     ...(g.galleryClaimed?.length
       ? { galleryClaimed: [...g.galleryClaimed] }
       : {}),
+    ...(g.galleryClaimedBy && Object.keys(g.galleryClaimedBy).length
+      ? {
+          galleryClaimedBy: Object.fromEntries(
+            Object.entries(g.galleryClaimedBy).map(([k, v]) => [k, [...v]]),
+          ),
+        }
+      : {}),
+    ...(g.toolOrdersBy && Object.keys(g.toolOrdersBy).length
+      ? {
+          toolOrdersBy: Object.fromEntries(
+            Object.entries(g.toolOrdersBy).map(([k, v]) => [k, { ...v }]),
+          ),
+        }
+      : {}),
+    ...(g.buildOwners && Object.keys(g.buildOwners).length
+      ? { buildOwners: { ...g.buildOwners } }
+      : {}),
+    ...(g.buildRule !== undefined ? { buildRule: g.buildRule } : {}),
     areas: Object.fromEntries(
       Object.entries(g.areas).map(([id, w]) => [
         id,
@@ -784,8 +816,6 @@ export function serialize(
   return JSON.stringify(data);
 }
 
-const isObject = (v: unknown): v is Record<string, unknown> =>
-  typeof v === "object" && v !== null && !Array.isArray(v);
 const isCount = (v: unknown): v is number =>
   typeof v === "number" && Number.isFinite(v) && v >= 0;
 
@@ -853,6 +883,25 @@ function savedOrders(raw: unknown): OrdersSave | undefined {
     lastAcceptedWeek: raw.lastAcceptedWeek as number,
     owed,
   };
+}
+
+/** The plots of a saved soil that are well formed: bad entries are dropped, not thrown. */
+function validPlots(raw: Record<string, unknown>): ReturnType<Farm["save"]> {
+  const plots = Object.entries(raw).filter(
+    ([k, p]) =>
+      /^\d+,\d+$/.test(k) &&
+      isObject(p) &&
+      p.tilled === true &&
+      typeof p.wateredToday === "boolean" &&
+      (p.fertilizer === undefined || typeof p.fertilizer === "string") &&
+      (p.crop === undefined ||
+        (isObject(p.crop) &&
+          typeof p.crop.id === "string" &&
+          cropById(p.crop.id) !== undefined &&
+          isCount(p.crop.daysGrown) &&
+          isCount(p.crop.harvests))),
+  );
+  return Object.fromEntries(plots) as ReturnType<Farm["save"]>;
 }
 
 /**
@@ -941,23 +990,8 @@ export function deserialize(text: string): GameState | undefined {
   g.inventory.load(inventory as ReturnType<Inventory["save"]>);
   // Saves from before note 102 kept the tools apart: put them in the pack.
   ensureTools(g.inventory);
-  g.farm.load(farm as ReturnType<Farm["save"]>);
-  if (isObject(raw.greenhouse)) {
-    const plots = Object.entries(raw.greenhouse).filter(
-      ([k, p]) =>
-        /^\d+,\d+$/.test(k) &&
-        isObject(p) &&
-        p.tilled === true &&
-        typeof p.wateredToday === "boolean" &&
-        (p.crop === undefined ||
-          (isObject(p.crop) &&
-            typeof p.crop.id === "string" &&
-            cropById(p.crop.id) !== undefined &&
-            isCount(p.crop.daysGrown) &&
-            isCount(p.crop.harvests))),
-    );
-    g.greenhouse.load(Object.fromEntries(plots) as ReturnType<Farm["save"]>);
-  }
+  g.farm.load(validPlots(farm));
+  if (isObject(raw.greenhouse)) g.greenhouse.load(validPlots(raw.greenhouse));
   g.skills.load(skills as ReturnType<Skills["save"]>);
   if (Array.isArray(raw.trees)) g.trees.load(validTrees(raw.trees));
   if (Array.isArray(raw.ground)) g.ground.load(validPiles(raw.ground));
@@ -1110,6 +1144,7 @@ export function deserialize(text: string): GameState | undefined {
             ? { ladder: { x: f.ladder.x, y: f.ladder.y } }
             : {}),
           ...(Array.isArray(f.ground) ? { ground: validPiles(f.ground) } : {}),
+          ...(f.dangerous === true ? { dangerous: true } : {}),
           // A save from before creatures has none, and the floor is given its own on load.
           ...(Array.isArray(f.creatures)
             ? {
@@ -1143,6 +1178,14 @@ export function deserialize(text: string): GameState | undefined {
         : undefined,
       campOpened: Array.isArray(mines.campOpened)
         ? mines.campOpened.filter(isCount).map(Math.floor)
+        : undefined,
+      dangerous: mines.dangerous === true ? true : undefined,
+      dangerousTomorrow:
+        typeof mines.dangerousTomorrow === "boolean"
+          ? mines.dangerousTomorrow
+          : undefined,
+      rareMisses: Array.isArray(mines.rareMisses)
+        ? mines.rareMisses.filter(isCount).map(Math.floor)
         : undefined,
       floors,
     });
@@ -1339,4 +1382,5 @@ function loadGallery(g: GameState, raw: Record<string, unknown>): void {
   }
   const claimed = strings(raw.galleryClaimed);
   if (claimed.length > 0) g.galleryClaimed = claimed;
+  loadGuestFields(g, raw);
 }

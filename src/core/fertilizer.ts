@@ -88,7 +88,7 @@ export function qualityLevelOf(id: string | undefined): number {
 }
 
 /** Fertilizer on sale on a day, as item ids. */
-export function fertilizerStock(day: number): string[] {
+export function fertilizersOnSale(day: number): string[] {
   const { year } = dateOf(day);
   return FERTILIZERS.filter(
     (f) => day >= (f.shopFromDay ?? 0) && year >= (f.shopFromYear ?? 1),

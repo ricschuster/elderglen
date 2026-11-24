@@ -4,6 +4,7 @@ import { mapFiles, maps } from "../content/maps";
 import { NO_CONDITIONS } from "./map";
 import { WEEKDAYS, dateOf, type Season } from "./calendar";
 import type { Weather } from "./weather";
+import { tileKey } from "./tilekey";
 
 /**
  * Villager data and the schedule engine (notes 79 and 80, #599 slice 1).
@@ -299,7 +300,7 @@ function nearestOpen(
   const m = maps.get(mapId);
   const open = indoors ? openOf(mapId) : undefined;
   const ok = (x: number, y: number) =>
-    open ? open.has(`${x},${y}`) : !m.isBlocked(x, y);
+    open ? open.has(tileKey(x, y)) : !m.isBlocked(x, y);
   if (open?.size === 0 || ok(want.x, want.y)) return want;
   for (let r = 1; r < m.width + m.height; r++)
     for (let dy = -r; dy <= r; dy++) {

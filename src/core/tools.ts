@@ -45,7 +45,7 @@ import {
 } from "./tapper";
 import { handOnMachine, loadMachine, placeMachine } from "./machines";
 import { machineById } from "./processing";
-import type { Held } from "./toolbar";
+import { isLiftTool, type Held } from "./toolbar";
 import { fillCan } from "./canwater";
 import { toolAway } from "./upgrades";
 import {
@@ -113,12 +113,7 @@ export function useHeld(
   if (held.kind === "tool" && g.sprinklers.at(x, y))
     return pickUpSprinkler(g, x, y);
   // The axe or pickaxe takes a placed machine up, or collects from it (Stardew).
-  if (
-    held.kind === "tool" &&
-    (held.tool === "axe" || held.tool === "pickaxe") &&
-    g.machines.at(x, y)
-  )
-    return handOnMachine(g, x, y);
+  if (isLiftTool(held) && g.machines.at(x, y)) return handOnMachine(g, x, y);
   // The pickaxe lifts a tapper off its tree (note 92).
   if (held.kind === "tool" && held.tool === "pickaxe" && g.trees.at(x, y)?.tap)
     return liftTapper(g, x, y);

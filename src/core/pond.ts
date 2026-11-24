@@ -5,15 +5,14 @@ import { isFarmMap } from "./farmtypes";
 import type { FarmMap } from "./map";
 import { FARM_STORE } from "./mapstore";
 import { mayPlaceOn, placeTag } from "./placeables";
-import { placedFootprint } from "./placement";
+import { buildingRects } from "./placement";
 import { FISH_POND, POND_FOOTPRINT } from "./pondsite";
 
 export { FISH_POND, POND_FOOTPRINT };
 import type { PlacedItem } from "./placedstore";
 import { QUALITIES, splitQuality, withQuality } from "./quality";
 import type { GameState } from "./save";
-import { SILO_FOOTPRINT, SILO_SITES } from "./animals";
-import { itemById } from "./items";
+import { itemById, itemLabel } from "./items";
 import { roeOf, speciesById, type PondSpecies } from "./pondspecies";
 import { isWaterFind } from "./waterfinds";
 
@@ -196,9 +195,7 @@ function pondCostProblem(g: GameState): string | undefined {
   for (const id of ["stone", "seaweed", "pondweed"] as const) {
     const have = g.inventory.count(id);
     if (have < POND_COST[id])
-      missing.push(
-        `${POND_COST[id] - have} more ${itemById(id)?.name.toLowerCase() ?? id}`,
-      );
+      missing.push(`${POND_COST[id] - have} more ${itemLabel(id)}`);
   }
   return missing.length > 0 ? `You need ${missing.join(" and ")}.` : undefined;
 }
@@ -210,7 +207,7 @@ export function pondOrderProblem(g: GameState): string | undefined {
 
 /** The price in words, for the carpenter's menu line. */
 export function pondCostLine(): string {
-  const name = (id: string) => itemById(id)?.name.toLowerCase() ?? id;
+  const name = (id: string) => itemLabel(id);
   return `${POND_COST.coin}g, ${POND_COST.stone} ${name("stone")}, ${POND_COST.seaweed} ${name("seaweed")} and ${POND_COST.pondweed} ${name("pondweed")}, ${POND_BUILD_DAYS} days`;
 }
 
@@ -223,15 +220,7 @@ export function pondBlockers(
   y: number,
 ): { x: number; y: number; why: string }[] {
   const out: { x: number; y: number; why: string }[] = [];
-  const fixed = [
-    ...(["coop", "barn", "stable", "greenhouse"] as const).flatMap((b) => {
-      const r = placedFootprint(g, b, mapId);
-      return r ? [r] : [];
-    }),
-    ...(SILO_SITES[mapId]
-      ? [{ ...SILO_SITES[mapId]!, w: SILO_FOOTPRINT.w, h: SILO_FOOTPRINT.h }]
-      : []),
-  ];
+  const fixed = buildingRects(g, mapId);
   for (let ty = y; ty < y + POND_FOOTPRINT.h; ty++)
     for (let tx = x; tx < x + POND_FOOTPRINT.w; tx++) {
       const cell = { x: tx, y: ty, w: 1, h: 1 };
@@ -264,15 +253,7 @@ export function pondProblem(
   const busy = pondBusy(g);
   if (busy !== undefined) return busy;
   const here = { x, y, w: POND_FOOTPRINT.w, h: POND_FOOTPRINT.h };
-  const fixed = [
-    ...(["coop", "barn", "stable", "greenhouse"] as const).flatMap((b) => {
-      const r = placedFootprint(g, b, mapId);
-      return r ? [r] : [];
-    }),
-    ...(SILO_SITES[mapId]
-      ? [{ ...SILO_SITES[mapId]!, w: SILO_FOOTPRINT.w, h: SILO_FOOTPRINT.h }]
-      : []),
-  ];
+  const fixed = buildingRects(g, mapId);
   if (fixed.some((r) => rectsOverlap(r, here)))
     return "That spot is taken by a building.";
   for (const p of pondsOf(g))
@@ -601,22 +582,41 @@ export function pondUse(
   held: string | undefined,
 ): Outcome {
   const s = stateOf(p);
+  switch (pondStep(p, held)) {
+    case "quest":
+      return giveQuestItem(g, p.x, p.y);
+    case "product": {
+      const item = s.out!.item;
+      const r = collectProduct(g, p.x, p.y);
+      return r.ok
+        ? { ok: true, item, note: `You take ${itemById(item)?.name ?? item}.` }
+        : r;
+    }
+    case "fish": {
+      const r = putFish(g, p.x, p.y, held!);
+      if (r.ok) return { ...r, note: "The fish slips into the pond." };
+      return r;
+    }
+    default:
+      return { ok: true, note: pondStatus(p) };
+  }
+}
+
+/**
+ * What an Action press on a pond would do with this held item: "quest" (give the item the fish ask for),
+ * "product" (take what waits), "fish" (put the held fish in) or "status" (only open the menu). Changes nothing,
+ * so a guest's screen can decide between a pond-use intent and the pond menu (note 108 group 3).
+ */
+export function pondStep(
+  p: PlacedItem,
+  held: string | undefined,
+): "quest" | "product" | "fish" | "status" {
+  const s = stateOf(p);
   const base = held ? splitQuality(held).base : undefined;
-  if (s.building === 0 && s.quest && base === s.quest.item)
-    return giveQuestItem(g, p.x, p.y);
-  if (s.building === 0 && s.out) {
-    const item = s.out.item;
-    const r = collectProduct(g, p.x, p.y);
-    return r.ok
-      ? { ok: true, item, note: `You take ${itemById(item)?.name ?? item}.` }
-      : r;
-  }
-  if (base && s.building === 0 && pondable(base)) {
-    const r = putFish(g, p.x, p.y, held!);
-    if (r.ok) return { ...r, note: "The fish slips into the pond." };
-    return r;
-  }
-  return { ok: true, note: pondStatus(p) };
+  if (s.building === 0 && s.quest && base === s.quest.item) return "quest";
+  if (s.building === 0 && s.out) return "product";
+  if (base && s.building === 0 && pondable(base)) return "fish";
+  return "status";
 }
 
 /** What the pond menu shows (note 93, "Interface"): the fish, count against the cap, the ask, and whether Empty works. */

@@ -2,7 +2,6 @@ import { audio } from "../audio/engine";
 import Phaser from "phaser";
 import {
   canCook,
-  cook,
   dishIngredientText,
   dishSourceText,
   knownDishes,
@@ -10,6 +9,7 @@ import {
 } from "../core/cooking";
 import { reasonText } from "../core/tools";
 import type { GameState } from "../core/save";
+import { closeWhenDone, dispatch, followGuest } from "./guestlive";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
@@ -44,6 +44,12 @@ export class CookingScene extends Phaser.Scene {
     kb?.on("keydown-DOWN", () => this.menu.move(1));
     kb?.on("keydown-ENTER", () => this.menu.press(0));
     this.menu.setFocus(true);
+    followGuest(
+      this,
+      () => this.refresh(),
+      (text) => this.say(text),
+    );
+    closeWhenDone(this);
     this.refresh();
   }
 
@@ -64,7 +70,9 @@ export class CookingScene extends Phaser.Scene {
         {
           text: "Cook",
           run: () => {
-            const why = cook(g, d.id);
+            const why = dispatch(g, { kind: "cook", dish: d.id });
+            // A guest's cooking is on its way: the screen redraws when the host answers.
+            if (why === "sent") return;
             if (why) audio.sfx("ui.error");
             else {
               audio.sfx("cook.sizzle");

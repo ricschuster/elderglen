@@ -1,17 +1,17 @@
 import { describe, expect, it } from "vitest";
 import {
-  RINGS,
+  COMPLETION_RINGS,
   ringProgress,
   shownPercent,
   sumRing,
   valleyPercent,
-  type RingDef,
+  type CompletionRingDef,
 } from "../src/core/completion";
 import { MAX_LEVEL, SKILLS } from "../src/core/skills";
 import { CROPS } from "../src/core/crops";
 import { deserialize, newGame, serialize } from "../src/core/save";
 
-const ring: RingDef = {
+const ring: CompletionRingDef = {
   id: "t",
   name: "t",
   categories: [
@@ -22,7 +22,7 @@ const ring: RingDef = {
 
 describe("completion total", () => {
   it("has weights that add to 100 in every ring", () => {
-    for (const r of RINGS)
+    for (const r of COMPLETION_RINGS)
       expect(r.categories.reduce((n, c) => n + c.weight, 0)).toBe(100);
   });
 

@@ -10,8 +10,13 @@ import {
   coopVisibleTier,
 } from "../core/animals";
 import { DEBUG_TOOLS } from "../core/debugtools";
-import { useSiloIntent } from "../core/interact";
-import { pondCovering, pondUse, takeFish } from "../core/pond";
+import {
+  resolveAction,
+  resolveUse,
+  type ActionIntent,
+  type UseContext,
+} from "../core/interact";
+import { LOCAL_PLAYER } from "../core/players";
 
 import Phaser from "phaser";
 
@@ -41,7 +46,13 @@ import {
 import { meet, presentAt, talkTarget, type Present } from "../core/townfolk";
 
 import type { GameState } from "../core/save";
-import { cycle, heldAt, nextRow, toolbarSize } from "../core/toolbar";
+import {
+  cycle,
+  heldAt,
+  isLiftTool,
+  nextRow,
+  toolbarSize,
+} from "../core/toolbar";
 import { pendingChoice } from "../core/professions";
 import { eat, type Outcome } from "../core/actions";
 import { dateOf } from "../core/calendar";
@@ -57,23 +68,25 @@ import {
   isFestivalMap,
 } from "../core/festivals";
 import { nicheLine } from "../core/maze";
-import { rodById } from "../core/fishing";
-import { PIER_FLOAT_KIND, PIER_KEEPER_KIND } from "../core/marketpier";
+
 import { festivalHolds } from "../core/festivalroutes";
 import { marketHolds, stallOf } from "../core/nightmarket";
 import { holdsOf } from "../core/worldflags";
 import { gateShutLine, parseGate } from "../core/gates";
 import { mendTideBridge, TIDE_BRIDGE_WOOD } from "../core/tidebridge";
-import { CAMP_LINE, HERMIT_LINE } from "../core/forestfolk";
-import { SPIRIT_STATUE, giveToSpirit, hermitStock } from "../core/elderfruit";
+import { HERMIT_LINE } from "../core/forestfolk";
+import { hermitStock } from "../core/elderfruit";
 import { STONEKEEPER_LINE } from "../core/smith";
 import {
-  SHRINE_SERVICE,
   hasDiamond,
   placeDiamond,
+  redoLine,
+  SHRINE,
   shrineNote,
+  shrineStep,
   useStatue,
 } from "../core/shrine";
+import { tailoringLine } from "../core/tailoring";
 import {
   campLine,
   QUARRY_BRIDGE_LINE,
@@ -81,13 +94,13 @@ import {
   QUARRY_OPEN,
   YARD_EMPTY_LINE,
 } from "../core/quarry";
-import { COVE_TREASURE, FERRY_LINE, takeTreasure } from "../core/cove";
+import { FERRY_LINE, takeTreasure } from "../core/cove";
 import { cropOfSeed, itemById } from "../core/items";
 import { MIXED_SEED } from "../core/weeds";
-import { NOTHING_TO_ACT_ON, act, reasonText, useHeld } from "../core/tools";
+import { reasonText } from "../core/tools";
 
 import { mapFiles, maps } from "../content/maps";
-import { START } from "../core/maps";
+import { START, safeSpawn } from "../core/maps";
 import { HAT_KEY } from "./art-people";
 import { DEPTH, sortDepth } from "./depth";
 import {
@@ -101,6 +114,7 @@ import { MAP_PASSES } from "./map-passes";
 import { storeOf } from "../core/mapstore";
 import { mapWithDoors } from "../core/placement";
 import { farmMapOf, isFarmMap, resolveMapId } from "../core/farmtypes";
+import { pondCovering, pondStep } from "../core/pond";
 import {
   dismountSafely,
   horseName,
@@ -114,7 +128,6 @@ import {
   speedFactor,
 } from "../core/horse";
 import {
-  CART_KIND,
   exitOpen,
   FarmMap,
   layersAtTier,
@@ -122,13 +135,8 @@ import {
   type Exit,
   type TiledLayer,
 } from "../core/map";
-import {
-  counterShopId,
-  counterShutLine,
-  doorShopId,
-  doorShutLine,
-} from "../core/shophours";
-import { roadNews } from "../core/roadnews";
+import { counterShutLine, doorShopId, doorShutLine } from "../core/shophours";
+
 import { traderProblem } from "../core/trader";
 import { sellerProblem } from "../core/courtship";
 import { PROPS_MARK, propsOf, spouseId } from "../core/spouse";
@@ -144,7 +152,6 @@ import {
   mergeTags,
   serviceLabel,
   stackOffsets,
-  standInLine,
 } from "../core/labels";
 import { festivalPropBlocks } from "../core/festivalprops";
 import {
@@ -177,59 +184,17 @@ import { isWeapon, weaponById } from "../core/combat";
 import {} from "../core/creatures";
 
 import { jobDone, statusText } from "../core/machines";
-import {
-  CASK,
-  caskDone,
-  caskStatus,
-  collectCask,
-  handOnCask,
-  loadCask,
-  placeCask,
-} from "../core/cask";
-import { chestById, pickUpChest, placeChest, pushChest } from "../core/chests";
+import { caskStatus } from "../core/cask";
 
-import {
-  type Glow,
-  isLight,
-  lightAt,
-  lightLayer,
-  pickUpLight,
-  placeLight,
-} from "../core/lights";
+import { type Glow, lightLayer } from "../core/lights";
 import { drink, isDrink } from "../core/elixirs";
 
-import { type LitBomb, isBomb, placeBomb } from "../core/bombs";
-import {
-  LIGHTNING_ROD,
-  packWaiting,
-  pickUpRod,
-  placeRod,
-  rodAt,
-  rollStrikes,
-  takePack,
-} from "../core/lightning";
-import {
-  POT_ITEM,
-  baitPot,
-  collectPot,
-  pickUpPot,
-  placePot,
-} from "../core/pots";
-import { baitById } from "../core/tackle";
+import { type LitBomb } from "../core/bombs";
+import { rollStrikes } from "../core/lightning";
+
 import { greencoatDue } from "../core/camp";
+
 import {
-  farmDecorAt,
-  isFarmDecor,
-  pickUpFarmDecor,
-  placeFarmDecor,
-} from "../core/farmdecor";
-import {
-  DYE_POTS_SERVICE,
-  SEWING_SERVICE,
-  tailoringLine,
-} from "../core/tailoring";
-import {
-  CAVE_MAP,
   caveDehydratorDone,
   collectCaveDehydrator,
   hasCaveDehydrator,
@@ -246,26 +211,13 @@ import {
   minesOpen,
   type Floor,
 } from "../core/mines";
-import { LEVER_KIND } from "../core/danger";
+
 import type { Rocks } from "../core/rocks";
-import {
-  ROOMS,
-  applyDecor,
-  decorById,
-  roomTiles,
-  zoneHolds,
-} from "../core/decor";
-import {
-  CATALOGUE_ITEM,
-  carryFurniture,
-  furnitureById,
-  pickUpFurniture,
-  placeFurniture,
-} from "../core/furniture";
+import { DECOR_ROOMS, decorById, roomTiles, zoneHolds } from "../core/decor";
+import { carryFurniture, furnitureById } from "../core/furniture";
 import { hatById } from "../core/hats";
 import { greenhouseHolds } from "../core/greenhouse";
 import {
-  CELLAR_MAP,
   houseHolds,
   houseSpouse,
   houseVisibleTier,
@@ -293,11 +245,14 @@ import {
 } from "../core/view";
 import { makePlaceholderTextures, PLAYER_KEY } from "./placeholder-textures";
 import { guestMayOpen } from "../core/menupages";
+import type { ScreenRef } from "../core/screens";
+import type { ShopStock } from "../core/shopoffers";
+import { openShared } from "./guestlive";
 import { bedNotice } from "../core/bednotice";
 import { exhaustedSpeed, tiredWarning } from "../core/energyrules";
 import { audio } from "../audio/engine";
 import { setFarmProbe } from "../audio/director";
-import { doorSoundFor, footstepFor, sfxForAct, sfxForUse } from "../core/audio";
+import { doorSoundFor, footstepFor } from "../core/audio";
 import type { BedStatus } from "../core/room";
 import { weddingWaiting } from "../core/marriagecard";
 import { proposalFor } from "../core/playermarriage";
@@ -344,7 +299,6 @@ import {
 import {
   DEV_SPEED,
   PLAYER,
-  PUSH,
   SPEED,
   STEP_PX,
   TICK_MINUTES,
@@ -544,11 +498,24 @@ export class FarmScene extends Phaser.Scene {
     this.net = currentSession();
     // A new map load is a new entry: the next area test offers its event (note 62, point 6).
     this.eventTile = "";
-    this.mapId = resolveMapId(data.map ?? START.map, this.state.farmType);
-    this.entryName = data.entry ?? START.entry;
+    const wanted = safeSpawn(
+      {
+        map: resolveMapId(data.map ?? START.map, this.state.farmType),
+        entry: data.entry ?? START.entry,
+        x: data.x,
+        y: data.y,
+      },
+      (id) => mapFiles[id] !== undefined || mineFloorOf(id) !== undefined,
+      resolveMapId(START.map, this.state.farmType),
+    );
+    // An old save may name a map that is gone: start at the farm instead.
+    if (wanted.replaced)
+      console.warn(`Unknown map "${data.map}": starting at the farm instead.`);
+    this.mapId = wanted.spawn.map;
+    this.entryName = wanted.spawn.entry;
     this.restoreTile =
-      data.x !== undefined && data.y !== undefined
-        ? { x: data.x, y: data.y }
+      wanted.spawn.x !== undefined && wanted.spawn.y !== undefined
+        ? { x: wanted.spawn.x, y: wanted.spawn.y }
         : undefined;
     this.gate = new ResumeGate();
     this.gate.seed(serialize(this.state));
@@ -683,8 +650,8 @@ export class FarmScene extends Phaser.Scene {
       );
     world.push(...this.drawLabels());
     world.push(...this.drawSpouseProps(holds));
-    let spawn: { x: number; y: number } =
-      this.map.entry(this.entryName) ?? this.map.entries[0]!;
+    let spawn: { x: number; y: number } = this.map.entry(this.entryName) ??
+      this.map.entries[0] ?? { x: 1, y: 1 };
     // A resumed day puts the player back on the tile they left, if it is open.
     const back = this.restoreTile;
     if (back && !this.map.isBlocked(back.x, back.y)) spawn = back;
@@ -2037,6 +2004,197 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /**
+   * A guest's Action on a shop, stall, bin or chest (note 108, group 1): ask the host to open it
+   * (it takes the chest lock and checks where they stand), and show the screen once it says yes.
+   * True when the faced tile held one of these, so the caller stops.
+   */
+  private guestSharedScreen(at: { x: number; y: number }): boolean {
+    const service = this.map.serviceAt(at.x, at.y);
+    const base = { map: this.mapId, x: at.x, y: at.y };
+    let ref: ScreenRef | undefined;
+    let scene = "";
+    let data: object | undefined;
+    const closed = (line: string): true => {
+      this.message = line;
+      this.render();
+      return true;
+    };
+    if (service) {
+      const shut = counterShutLine(this.state, this.mapId, service.kind);
+      const stock: Record<string, ShopStock | undefined> = {
+        shop: undefined,
+        "fisher-shop": "fisher",
+        "pin-stall": "pin",
+        "herb-stall": "herb",
+        hermit: "hermit",
+        trader: "trader",
+        "rain-seller": "rain",
+      };
+      if (service.kind in stock) {
+        if (shut) return closed(shut);
+        const g = this.state;
+        const why =
+          service.kind === "herb-stall"
+            ? herbStallProblem(g)
+            : service.kind === "trader"
+              ? traderProblem(g.day.clock.day, g.day.clock.minutes)
+              : service.kind === "rain-seller"
+                ? sellerProblem(g)
+                : service.kind === "hermit" && hermitStock(g).length === 0
+                  ? HERMIT_LINE
+                  : "";
+        if (why) return closed(why);
+        const s = stock[service.kind];
+        ref = { kind: "shop", ...base, ...(s ? { stock: s } : {}) };
+        scene = "shop";
+        data = s ? { stock: s } : undefined;
+      } else if (service.kind === "market-stall" && stallOf(service.id)) {
+        ref = { kind: "market", ...base, stock: stallOf(service.id)! };
+        scene = "market";
+        data = { stall: stallOf(service.id) };
+      } else if (service.kind === "bin" || service.kind === "ore-bin") {
+        const ore = service.kind === "ore-bin";
+        ref = { kind: "bin", ...base, ore };
+        scene = "bin";
+        data = ore ? { oreOnly: true } : undefined;
+      } else if (service.kind === "furnace") {
+        if (!this.state.furnace.gifted) return closed("Nothing is here yet.");
+        ref = { kind: "furnace", ...base };
+        scene = "furnace";
+      } else if (service.kind === "cooking") {
+        ref = { kind: "cooking", ...base };
+        scene = "cooking";
+      } else if (
+        service.kind === "keeper" ||
+        service.kind === "coop-bench" ||
+        service.kind === "barn-bench"
+      ) {
+        if (shut) return closed(shut);
+        ref = { kind: service.kind, ...base };
+        scene = service.kind;
+      } else if (service.kind === "hall") {
+        // A hall room's scroll: the room is the service's id (note 108 group 4).
+        ref = { kind: "hall", ...base, room: service.id };
+        scene = "hall";
+        data = { room: service.id };
+      } else if (service.kind === "orders" || service.kind === "requests") {
+        ref = { kind: service.kind, ...base };
+        scene = service.kind;
+      } else if (service.kind === "carpenter" || service.kind === "smith") {
+        // The carpenter and the smith dwarf (note 108 group 5): they take everyone's custom, with each one's own purse.
+        if (shut) return closed(shut);
+        ref = { kind: service.kind, ...base };
+        scene = service.kind;
+      } else if (service.kind === "smithy") {
+        if (shut) return closed(shut);
+        ref = { kind: "smithy", ...base };
+        scene = "smithy";
+      } else if (service.kind === "counter-library") {
+        if (shut) return closed(shut);
+        ref = { kind: "gallery", ...base };
+        scene = "gallery";
+      } else if (
+        service.kind === "sewing-machine" ||
+        service.kind === "dye-pots"
+      ) {
+        const line = tailoringLine(this.state);
+        if (line) return closed(line);
+        const mode = service.kind === "sewing-machine" ? "sew" : "dye";
+        ref = { kind: "tailor", ...base, stock: mode };
+        scene = "tailor";
+        data = { mode };
+      } else if (service.kind === "shrine") {
+        return this.guestShrine(base);
+      } else if (service.kind === "camp-chest" && this.floor !== undefined) {
+        ref = { kind: "camp-chest", ...base, floor: this.floor };
+        scene = "chest";
+        data = { camp: this.floor };
+      }
+    } else if (
+      isHouseMap(this.mapId) &&
+      furnitureById(this.state.furniture.at(this.mapId, at.x, at.y))
+        ?.station === "workbench"
+    ) {
+      ref = { kind: "crafting", ...base };
+      scene = "crafting";
+      data = { bench: { mapId: this.mapId, x: at.x, y: at.y } };
+    } else if (this.state.chests.get(this.mapId, at.x, at.y)) {
+      ref = { kind: "chest", ...base };
+      scene = "chest";
+      data = { mapId: this.mapId, x: at.x, y: at.y };
+    } else if (isFarmMap(this.mapId) && pondCovering(this.state, at.x, at.y)) {
+      // A pond: a held fish, the quest item or a waiting product is the host's Action rule (a `pond-use`
+      // intent); otherwise the menu opens, and it locks like a chest (note 108 group 3).
+      const p = pondCovering(this.state, at.x, at.y)!;
+      const held = heldAt(this.state, this.selected);
+      const item = held.kind === "item" ? held.id : undefined;
+      if (this.net instanceof GuestSession && pondStep(p, item) !== "status") {
+        this.net.sendIntent({
+          kind: "pond-use",
+          x: at.x,
+          y: at.y,
+          ...(item !== undefined ? { item } : {}),
+        });
+        return true;
+      }
+      ref = { kind: "pond", map: this.mapId, x: p.x, y: p.y };
+      scene = "pond";
+      data = { x: p.x, y: p.y };
+    }
+    if (!ref) return false;
+    openShared(
+      ref,
+      () => {
+        if (ref.kind === "camp-chest") this.campScreenOpen = true;
+        if (ref.kind === "chest") audio.sfx("chest.open");
+        this.open(scene, data);
+      },
+      (why) => closed(why),
+    );
+    return true;
+  }
+
+  /**
+   * A guest's Action at the ancestors' shrine (note 108 group 5). A note is read from the guest's copy; a Diamond or
+   * the open statue is a `shrine-act` the host judges, from within reach of the stone. After a Diamond the candles
+   * relight in the same screen the host sees.
+   */
+  private guestShrine(base: { map: string; x: number; y: number }): true {
+    const net = this.net;
+    const g = this.state;
+    const held = heldAt(g, this.selected);
+    const step = shrineStep(g, held.kind === "item" ? held.id : undefined);
+    const say = (text: string): true => {
+      this.message = text;
+      this.render();
+      return true;
+    };
+    if (step === "note" || !(net instanceof GuestSession))
+      return say(g.shrine.statueOpen ? SHRINE.statueUsed : shrineNote(g));
+    const diamond = step === "diamond";
+    openShared(
+      { kind: "shrine", ...base },
+      () =>
+        net.ask({ kind: "shrine-act", diamond }, (why) => {
+          net.sendIntent({ kind: "close" });
+          if (why !== undefined) return void say(why);
+          // The host's `applied` reaches this copy just after this answer.
+          this.time.delayedCall(80, () => {
+            if (!diamond) return void say(SHRINE.statueLine);
+            const candles = this.state.shrine.candles;
+            this.open("shrine", {
+              mode: "redo",
+              candles,
+              line: redoLine(candles),
+            });
+          });
+        }),
+      (why) => void say(why),
+    );
+    return true;
+  }
+
+  /**
    * A guest's Use: the hoe, can and crop seeds on farm soil become intents for the host, which
    * answers with `applied` (note 53). Anything else stays host-only for now.
    * Untested in a browser.
@@ -2055,11 +2213,15 @@ export class FarmScene extends Phaser.Scene {
       !this.map.isWater(front.x, front.y)
     )
       net.sendIntent({ kind: "water", x: front.x, y: front.y });
-    else if (
-      held.kind === "tool" &&
-      (held.tool === "axe" || held.tool === "pickaxe")
-    )
+    else if (isLiftTool(held))
       net.sendIntent({ kind: held.tool, x: front.x, y: front.y });
+    else if (held.kind === "item" && this.state.machines.at(front.x, front.y))
+      net.sendIntent({
+        kind: "machine-load",
+        x: front.x,
+        y: front.y,
+        item: held.id,
+      });
     else if (held.kind === "item" && cropOfSeed(held.id))
       net.sendIntent({ kind: "plant", x: front.x, y: front.y, seed: held.id });
     else {
@@ -2077,186 +2239,48 @@ export class FarmScene extends Phaser.Scene {
       this.message = `${this.getOffHint()} to get off ${horseName(this.state)} first.`;
       return this.render();
     }
-    const front = this.aimTile();
-    const carried = heldAt(this.state, this.selected);
-    const weapon =
-      carried.kind === "item" && isWeapon(carried.id)
-        ? weaponById(carried.id)
-        : undefined;
-    if (weapon) return swing(this, weapon);
-    if (this.map.serviceAt(front.x, front.y)) return;
-    // A person is talked to, never worked on (the Action button or a tap does that).
-    if (presentAt(this.villagers, front.x, front.y)) return;
-    if (this.useSilo(front.x, front.y)) return;
-    const held = heldAt(this.state, this.selected);
-    // The rod lifts a fish out of a pond: no bar, no bait (note 93).
-    const pond = isFarmMap(this.mapId)
-      ? pondCovering(this.state, front.x, front.y)
-      : undefined;
-    if (pond && held.kind === "item" && rodById(held.id))
-      return this.report(takeFish(this.state, pond.x, pond.y));
-    if (held.kind === "item" && rodById(held.id)) return cast(this, held.id);
-    // A pot goes on the water, bait goes in a pot, and the axe or pickaxe takes an empty one up.
-    if (held.kind === "item" && held.id === POT_ITEM)
-      return this.report(
-        placePot(this.state, this.map, this.mapId, front.x, front.y),
-      );
-    if (
-      held.kind === "item" &&
-      baitById(held.id) &&
-      this.state.pots.get(this.mapId, front.x, front.y)
-    )
-      return this.report(
-        baitPot(this.state, this.mapId, front.x, front.y, held.id),
-      );
-    if (
-      held.kind === "tool" &&
-      (held.tool === "axe" || held.tool === "pickaxe") &&
-      this.state.pots.get(this.mapId, front.x, front.y)
-    )
-      return this.report(pickUpPot(this.state, this.mapId, front.x, front.y));
-    // A bomb is lit from the backpack and cannot be lifted (note 89).
-    if (held.kind === "item" && isBomb(held.id)) {
-      const lit = placeBomb(
-        this.state,
-        this.map,
-        this.mapId,
-        front.x,
-        front.y,
-        held.id,
-        (x, y) =>
-          !!this.rocks()?.at(x, y) ||
-          this.litBombs.some((b) => b.x === x && b.y === y),
-      );
-      if (lit.ok) {
-        this.litBombs.push(lit.bomb);
-        audio.sfx("bomb.fuse");
-      }
-      return this.report(lit.ok ? { ok: true } : lit);
-    }
-    // A farm decoration is stood down from the pack and lifted by hand, like a light (note 89).
-    if (held.kind === "item" && isFarmDecor(held.id))
-      return this.report(
-        placeFarmDecor(
-          this.state,
-          this.map,
-          this.mapId,
-          front.x,
-          front.y,
-          held.id,
-          (x, y) => !!this.rocks()?.at(x, y),
-        ),
-      );
-    if (isFarmMap(this.mapId) && farmDecorAt(this.state, front.x, front.y))
-      return this.report(pickUpFarmDecor(this.state, front.x, front.y));
-    // A light is stood down from the backpack, and any tool or the empty hand lifts one.
-    if (held.kind === "item" && isLight(held.id))
-      return this.report(
-        placeLight(
-          this.state,
-          this.map,
-          this.mapId,
-          front.x,
-          front.y,
-          held.id,
-          (x, y) => !!this.rocks()?.at(x, y),
-        ),
-      );
-    if (lightAt(this.state, this.mapId, front.x, front.y))
-      return this.report(pickUpLight(this.state, this.mapId, front.x, front.y));
-    // A lightning rod is stood down from the backpack, and any tool or the empty hand lifts one.
-    if (held.kind === "item" && held.id === LIGHTNING_ROD)
-      return this.report(
-        placeRod(this.state, this.map, this.mapId, front.x, front.y),
-      );
-    if (isFarmMap(this.mapId) && rodAt(this.state, front.x, front.y))
-      return this.report(pickUpRod(this.state, front.x, front.y));
-    // A chest is stood down from the backpack (a big one on a small one swaps it in).
-    if (held.kind === "item" && chestById(held.id))
-      return this.report(
-        placeChest(this.state, this.map, this.mapId, front.x, front.y, held.id),
-      );
-    // Any tool takes an empty chest up, and pushes one with items in it one
-    // tile along (SC-56; the Chest wiki page says any tool).
-    if (
-      held.kind === "tool" &&
-      this.state.chests.at(this.mapId, front.x, front.y)
-    ) {
-      const taken = pickUpChest(this.state, this.mapId, front.x, front.y);
-      if (taken.ok || taken.reason !== "chest not empty")
-        return this.report(taken);
-      const step = PUSH[this.facing];
-      return this.report(
-        pushChest(
-          this.state,
-          this.map,
-          this.mapId,
-          front.x,
-          front.y,
-          step.x,
-          step.y,
-        ),
-      );
-    }
-    if (this.mapId === CELLAR_MAP) {
-      // Casks stand in the cellar: a held cask is stood down, a held good goes in,
-      // and the axe or pickaxe takes a good out, or an empty cask up.
-      const cask = this.state.casks.at(front.x, front.y);
-      if (held.kind === "item" && held.id === CASK && !cask)
-        return this.report(placeCask(this.state, this.map, front.x, front.y));
-      if (cask && held.kind === "item")
-        return this.report(loadCask(this.state, front.x, front.y, held.id));
-      if (
-        cask &&
-        held.kind === "tool" &&
-        (held.tool === "axe" || held.tool === "pickaxe")
-      )
-        return this.report(handOnCask(this.state, front.x, front.y));
-    }
-    if (isHouseMap(this.mapId)) {
-      // In the house the held piece is stood down, and the axe or pickaxe takes one up.
-      if (held.kind === "item" && decorById(held.id))
-        return this.report(
-          applyDecor(this.state, this.mapId, front.x, front.y, held.id),
-        );
-      if (held.kind === "item" && furnitureById(held.id))
-        return this.report(
-          placeFurniture(
-            this.state,
-            this.map,
-            this.mapId,
-            front.x,
-            front.y,
-            held.id,
-          ),
-        );
-      if (
-        held.kind === "tool" &&
-        (held.tool === "axe" || held.tool === "pickaxe") &&
-        this.state.furniture.at(this.mapId, front.x, front.y)
-      )
-        return this.report(
-          pickUpFurniture(this.state, this.mapId, front.x, front.y),
-        );
-    }
-    const treeBefore = this.state.trees.at(front.x, front.y)?.stump === false;
-    const machineBefore = !!this.state.machines.at(front.x, front.y);
-    const used = useHeld(
+    const intent = resolveUse(
       this.state,
-      this.map,
-      held,
-      front.x,
-      front.y,
-      this.floor,
+      LOCAL_PLAYER,
+      this.useContext(),
+      heldAt(this.state, this.selected),
+      this.aimTile(),
     );
-    const cue = sfxForUse(held, used, this.floor !== undefined, {
-      treeHere: treeBefore,
-      machineHere: machineBefore,
-    });
-    if (cue) audio.sfx(cue);
-    this.report(used, true);
-    // Chopping the massive log raises a world flag: open its exit, drop its art.
-    this.refreshHolds();
+    switch (intent.kind) {
+      case "none":
+        return;
+      case "message":
+        this.message = intent.text;
+        return this.render();
+      case "swing":
+        return swing(this, intent.weapon);
+      case "cast":
+        return cast(this, intent.rod);
+      case "report":
+        if (intent.bomb) {
+          this.litBombs.push(intent.bomb);
+          audio.sfx("bomb.fuse");
+        }
+        return this.report(intent.result);
+      case "tool":
+        if (intent.cue) audio.sfx(intent.cue);
+        this.report(intent.result, true);
+        // Chopping the massive log raises a world flag: open its exit, drop its art.
+        this.refreshHolds();
+    }
+  }
+
+  /** What the Use and Action rules need to know about this place (`core/interact.ts`). */
+  private useContext(): UseContext {
+    return {
+      mapId: this.mapId,
+      map: this.map,
+      ...(this.floor !== undefined ? { floor: this.floor } : {}),
+      facing: this.facing,
+      rockAt: (x, y) => !!this.rocks()?.at(x, y),
+      litBombAt: (x, y) => this.litBombs.some((b) => b.x === x && b.y === y),
+      personAt: (x, y) => !!presentAt(this.villagers, x, y),
+    };
   }
 
   /** The Frostday contest for a cast landing on this tile: the state at a hole, "shut" before opening. */
@@ -2329,7 +2353,20 @@ export class FarmScene extends Phaser.Scene {
       // A guest's Action opens only the screens a guest may use: the bed, the shop, the bin, the ledger.
       const at = this.aimTile();
       const kind = this.map.serviceAt(at.x, at.y)?.kind;
+      if (this.guestSharedScreen(at)) return;
       if (kind && guestMayOpen(kind)) return this.open(kind);
+      // A finished batch in a machine is taken by the host for them (an intent, note 108 group 2).
+      const machine =
+        isFarmMap(this.mapId) && this.state.machines.get(at.x, at.y);
+      if (machine && this.net instanceof GuestSession) {
+        if (machine.job && jobDone(this.state, machine))
+          this.net.sendIntent({ kind: "machine-collect", x: at.x, y: at.y });
+        else {
+          this.message = statusText(this.state, at.x, at.y);
+          this.render();
+        }
+        return;
+      }
       // A ripe crop on farm soil is picked by the host for them (an intent).
       if (
         !kind &&
@@ -2346,233 +2383,109 @@ export class FarmScene extends Phaser.Scene {
     if (spot && spot.x === front.x && spot.y === front.y) return this.getOn();
     if (this.meetVillager(front)) return;
     if (onLaunchLine(this, front)) return launchLanternAt(this);
-    const service = this.map.serviceAt(front.x, front.y);
-    if (service?.kind !== "tide-bridge") this.mendAsked = false;
-    const shut = service
-      ? counterShutLine(this.state, this.mapId, service.kind)
-      : "";
-    if (shut) {
-      this.message = shut;
-      return this.render();
-    }
-    if (service) {
-      const sid = counterShopId(this.mapId, service.kind);
-      if (sid) this.state.guide.visitShop(sid);
-    }
-    if (service?.kind === CART_KIND) return this.rideCart(service.id);
-    if (service?.kind === "market-stall" && stallOf(service.id))
-      return this.open("market", { stall: stallOf(service.id) });
-    if (
-      service?.kind === SEWING_SERVICE ||
-      service?.kind === DYE_POTS_SERVICE
-    ) {
-      const line = tailoringLine(this.state);
-      if (line) {
-        this.message = line;
-        return this.render();
-      }
-      return this.open("tailor", {
-        mode: service.kind === SEWING_SERVICE ? "sew" : "dye",
-      });
-    }
-    if (service?.kind === "herb-stall") {
-      const closed = herbStallProblem(this.state);
-      if (closed) {
-        this.message = closed;
-        return this.render();
-      }
-      return this.open("shop", { stock: "herb" });
-    }
-    if (service?.kind === "fisher-shop")
-      return this.open("shop", { stock: "fisher" });
-    if (service?.kind === "pin-stall")
-      return this.open("shop", { stock: "pin" });
-    if (service?.kind === PIER_KEEPER_KIND) return pierKeeper(this);
-    if (service?.kind === PIER_FLOAT_KIND) return pierFloat(this);
-    if (service?.kind === "keeper") return this.open("keeper");
-    if (service?.kind === "hermit") {
-      if (hermitStock(this.state).length > 0)
-        return this.open("shop", { stock: "hermit" });
-      this.message = HERMIT_LINE;
-      return this.render();
-    }
-    if (service?.kind === SPIRIT_STATUE) {
-      this.message = giveToSpirit(this.state);
-      return this.render();
-    }
-    if (service?.kind === SHRINE_SERVICE) return this.shrineAction();
-    if (service?.kind === "camp") {
-      this.message = CAMP_LINE;
-      return this.render();
-    }
-    if (service?.kind === "tide-bridge") return this.mendBridge();
-    if (service?.kind === "quarry-bridge") {
-      this.message = QUARRY_BRIDGE_LINE;
-      return this.render();
-    }
-    if (service?.kind === "board-news") {
-      const g = this.state;
-      this.message = roadNews(g.day.clock.day, g.tomorrow);
-      return this.render();
-    }
-    if (service?.kind === "rain-seller") {
-      const closed = sellerProblem(this.state);
-      if (closed) {
-        this.message = closed;
-        return this.render();
-      }
-      return this.open("shop", { stock: "rain" });
-    }
-    if (service?.kind === "trader") {
-      const g = this.state;
-      const closed = traderProblem(g.day.clock.day, g.day.clock.minutes);
-      if (closed) {
-        this.message = closed;
-        return this.render();
-      }
-      return this.open("shop", { stock: "trader" });
-    }
-    if (service?.kind === "counter-library") return this.open("gallery");
-    if (service && standInLine(service.kind)) {
-      this.message = standInLine(service.kind) as string;
-      return this.render();
-    }
-    if (service?.kind === COVE_TREASURE) return this.openTreasure();
-    if (service?.kind === "stonekeeper") {
-      this.refreshHolds();
-      this.message =
-        this.mapId === QUARRY_MAP
-          ? campLine(this.state.day.clock.day)
-          : this.holds.has(QUARRY_OPEN)
-            ? YARD_EMPTY_LINE
-            : STONEKEEPER_LINE;
-      return this.render();
-    }
-    if (service?.kind === "festival") return openFestival(this);
-    if (service?.kind === "camp-chest" && this.floor !== undefined) {
-      // Opens as a take-only chest screen (note 22, 2026-11-20).
-      this.campScreenOpen = true;
-      this.render();
-      return this.open("chest", { camp: this.floor });
-    }
-    if (service?.kind === LEVER_KIND && this.floor !== undefined) {
-      const on = this.state.mines.flipDangerous();
-      audio.sfx("mine.stairs");
-      this.message =
-        on === undefined
-          ? "The lever will not move yet."
-          : on
-            ? "Dangerous mode is on. Floors you dig from now on are harder, with richer rewards."
-            : "Dangerous mode is off. Floors you dig from now on are as before.";
-      return this.render();
-    }
-    if (service?.kind === "ore-bin") return this.open("bin", { oreOnly: true });
-    if (service?.kind === "trainer") return this.open("trainer");
-    if (service?.kind === "wall-list") return this.open("walllist");
-    if (service?.kind === "dummy") {
-      this.message = "The training dummy. Hold a weapon and swing at it.";
-      return this.render();
-    }
-    if (service?.kind === "stairs") {
-      audio.sfx("mine.stairs");
-      return this.travel(mineMapId(1), "from_above");
-    }
-    if (
-      service &&
-      (isFestivalMap(this.mapId) ||
-        service.kind === "cake-table" ||
-        (service.kind === "festival-counter" &&
-          festivalDayToday(this.state.day.clock.day)))
-    )
-      return festivalAction(this, service);
-    if (this.mapId === CAVE_MAP) return this.caveAction(front, service?.kind);
-    if (service?.kind === "furnace") {
-      if (!this.state.furnace.gifted) {
-        this.message = "Nothing is here yet.";
-        this.render();
+    if (this.map.serviceAt(front.x, front.y)?.kind !== "tide-bridge")
+      this.mendAsked = false;
+    const intent = resolveAction(
+      this.state,
+      LOCAL_PLAYER,
+      {
+        ...this.useContext(),
+        ladderAt: (x, y) => {
+          const ladder = this.floorState?.ladder;
+          return !!ladder && ladder.x === x && ladder.y === y;
+        },
+      },
+      heldAt(this.state, this.selected),
+      front,
+    );
+    this.applyAction(intent, front);
+  }
+
+  /** Show what the Action rule decided: sounds, lines, screens and the scene-owned follow-ups. */
+  private applyAction(intent: ActionIntent, front: Vec): void {
+    switch (intent.kind) {
+      case "none":
         return;
-      }
-      return this.open("furnace");
-    }
-    const ladder = this.floorState?.ladder;
-    if (ladder && ladder.x === front.x && ladder.y === front.y)
-      return this.descend();
-    if (service)
-      return this.open(
-        service.kind,
-        service.kind === "hall" ? { room: service.id } : undefined,
-      );
-    if (this.mapId === CELLAR_MAP && this.state.casks.at(front.x, front.y)) {
-      // Action reads a cask and takes a gold good out. Taking one out early is
-      // the axe or pickaxe's job, so a stray press never resets the ageing.
-      const cask = this.state.casks.get(front.x, front.y)!;
-      if (!cask.job) return this.report({ ok: false, reason: "cask empty" });
-      if (!caskDone(this.state, cask)) {
-        this.message = caskStatus(this.state, front.x, front.y);
+      case "message":
+        if (intent.cue) audio.sfx(intent.cue);
+        this.message = intent.text;
         return this.render();
-      }
-      return this.report(collectCask(this.state, front.x, front.y));
+      case "open":
+        if (intent.cue) audio.sfx(intent.cue);
+        // Chests, ponds and the furnace are used by one player at a time (note 108 rule 2): the host
+        // takes the lock too.
+        if (
+          intent.scene === "furnace" ||
+          intent.scene === "chest" ||
+          intent.scene === "pond"
+        ) {
+          const scene = intent.scene;
+          // A pond's ref is its top left tile, which its menu data carries.
+          const at =
+            scene === "pond"
+              ? (intent.data as { x: number; y: number })
+              : front;
+          const ref: ScreenRef = {
+            kind: scene,
+            map: this.mapId,
+            x: at.x,
+            y: at.y,
+          };
+          return openShared(
+            ref,
+            () => this.open(scene, intent.data),
+            (why) => {
+              this.message = why;
+              this.render();
+            },
+          );
+        }
+        return this.open(intent.scene, intent.data);
+      case "report":
+        return this.report(intent.result);
+      case "act":
+        if (intent.cue) audio.sfx(intent.cue);
+        return this.report(intent.result, true);
+      case "eat":
+        return this.eatHeld();
+      case "ride-cart":
+        return this.rideCart(intent.id);
+      case "pier-keeper":
+        return pierKeeper(this);
+      case "pier-float":
+        return pierFloat(this);
+      case "shrine":
+        return this.shrineAction();
+      case "mend-bridge":
+        return this.mendBridge();
+      case "treasure":
+        return this.openTreasure();
+      case "stonekeeper":
+        this.refreshHolds();
+        this.message =
+          this.mapId === QUARRY_MAP
+            ? campLine(this.state.day.clock.day)
+            : this.holds.has(QUARRY_OPEN)
+              ? YARD_EMPTY_LINE
+              : STONEKEEPER_LINE;
+        return this.render();
+      case "festival":
+        return openFestival(this);
+      case "festival-action":
+        return festivalAction(this, intent.service);
+      case "camp-chest":
+        // Opens as a take-only chest screen (note 22, 2026-11-20).
+        this.campScreenOpen = true;
+        this.render();
+        return this.open("chest", { camp: intent.floor });
+      case "cave":
+        return this.caveAction(front, intent.service);
+      case "descend":
+        return this.descend();
+      case "stairs":
+        audio.sfx("mine.stairs");
+        return this.travel(mineMapId(1), "from_above");
     }
-    if (isFarmMap(this.mapId) && packWaiting(this.state, front.x, front.y))
-      return this.report(takePack(this.state, front.x, front.y));
-    if (this.state.pots.get(this.mapId, front.x, front.y))
-      return this.report(
-        collectPot(this.state, this.mapId, front.x, front.y, Math.random),
-      );
-    if (this.state.chests.at(this.mapId, front.x, front.y)) {
-      audio.sfx("chest.open");
-      return this.open("chest", {
-        mapId: this.mapId,
-        x: front.x,
-        y: front.y,
-      });
-    }
-    if (
-      isHouseMap(this.mapId) &&
-      furnitureById(this.state.furniture.at(this.mapId, front.x, front.y))
-        ?.station === "workbench"
-    )
-      return this.open("crafting", {
-        bench: { mapId: this.mapId, x: front.x, y: front.y },
-      });
-    if (
-      isHouseMap(this.mapId) &&
-      this.state.furniture.at(this.mapId, front.x, front.y) === CATALOGUE_ITEM
-    )
-      return this.open("catalogue");
-    if (
-      isHouseMap(this.mapId) &&
-      this.state.furniture.at(this.mapId, front.x, front.y)
-    )
-      return this.report(
-        pickUpFurniture(this.state, this.mapId, front.x, front.y),
-      );
-    const pondHere = isFarmMap(this.mapId)
-      ? pondCovering(this.state, front.x, front.y)
-      : undefined;
-    if (pondHere) {
-      const h = heldAt(this.state, this.selected);
-      const r = pondUse(
-        this.state,
-        pondHere,
-        h.kind === "item" ? h.id : undefined,
-      );
-      // Nothing to put in, take or give: the pond menu shows how it stands.
-      if (r.ok && r.item === undefined)
-        return this.open("pond", { x: pondHere.x, y: pondHere.y });
-      return this.report(r);
-    }
-    const cropHere = !!this.state.farm.plotAt(front.x, front.y)?.crop;
-    const result = act(this.state, this.map, front.x, front.y);
-    if (!result.ok && result.reason === NOTHING_TO_ACT_ON) {
-      const held = heldAt(this.state, this.selected);
-      if (held.kind === "item" && itemById(held.id)?.energy !== undefined)
-        this.eatHeld();
-      return;
-    }
-    const cue = sfxForAct(result, cropHere);
-    if (cue) audio.sfx(cue);
-    this.report(result, true);
   }
 
   /**
@@ -3036,7 +2949,7 @@ export class FarmScene extends Phaser.Scene {
     if (!json) return;
     const ts = this.map.tileSize;
     const holds = zoneHolds(this.state);
-    for (const room of ROOMS) {
+    for (const room of DECOR_ROOMS) {
       const cover = this.state.decor.get(room.id);
       const floor = decorById(cover.floor);
       const wall = decorById(cover.wallpaper);
@@ -3102,15 +3015,6 @@ export class FarmScene extends Phaser.Scene {
         this.glow.fillCircle(cx, cy, (l.radius * ts * i) / 4);
       }
     }
-  }
-
-  /** Facing the silo: tip the held hay in, or read how full it is. True if the tile is the silo. */
-  private useSilo(tx: number, ty: number): boolean {
-    const msg = useSiloIntent(this.state, this.mapId, tx, ty, this.selected);
-    if (msg === undefined) return false;
-    this.message = msg;
-    this.render();
-    return true;
   }
 
   render(): void {

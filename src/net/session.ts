@@ -126,8 +126,20 @@ export class GuestSession implements NetSession {
     client.onMessage = (m) => this.follow(m);
   }
 
+  /** Callbacks waiting for the host's answer to an intent, by seq (see `ask`). */
+  private readonly answers = new Map<number, (reason?: string) => void>();
+
   private follow(m: ServerMsg): void {
-    if (m.t === "rejected") this.onRejected?.(m.reason);
+    if (m.t === "applied" && m.by === this.client.id) {
+      const cb = this.answers.get(m.seq);
+      this.answers.delete(m.seq);
+      cb?.();
+    }
+    if (m.t === "rejected" && this.answers.has(m.seq)) {
+      const cb = this.answers.get(m.seq);
+      this.answers.delete(m.seq);
+      cb?.(m.reason);
+    } else if (m.t === "rejected") this.onRejected?.(m.reason);
     else if (m.t === "night") this.onNight?.(m);
     else if (m.t === "beds") {
       this.beds = { asleep: m.asleep, waiting: m.waiting };
@@ -139,6 +151,15 @@ export class GuestSession implements NetSession {
   /** Ask the host for a world change; the farm copy changes when its `applied` comes back. */
   sendIntent(intent: Intent): number {
     return this.client.sendIntent(intent);
+  }
+
+  /**
+   * Send an intent and run `answer` with the host's verdict: undefined when it was applied, the
+   * reason when it was refused. The refusal goes to `answer` and not to `onRejected`. Used to
+   * open a screen: it shows only once the host has taken the lock (note 108).
+   */
+  ask(intent: Intent, answer: (reason?: string) => void): void {
+    this.answers.set(this.client.sendIntent(intent), answer);
   }
 
   get localId(): PlayerId {
@@ -244,6 +265,7 @@ export async function startHostSession(
   const hosted: { host?: RoomHost } = {};
   const world = new GameRoomWorld(state, {
     inside: (id) => isHouseMap(hosted.host?.room.position(id)?.map ?? ""),
+    where: (id) => hosted.host?.room.position(id),
     origin: "multiplayer-start",
     cabinArea: { x: 0, y: 0, w: map.width, h: map.height },
     blocked: (x, y) => map.isBlocked(x, y),

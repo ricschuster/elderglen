@@ -1,8 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { maps } from "../src/content/maps";
-import { buildingProblem, siloProblem } from "../src/core/animals";
-import { orderProblem } from "../src/core/house";
-import { POND_COST, orderPond, pondBlockers } from "../src/core/pond";
+import { SILO_SITES, buildingProblem, siloProblem } from "../src/core/animals";
+import { houseOrderProblem } from "../src/core/house";
+import {
+  POND_COST,
+  orderPond,
+  pondBlockers,
+  pondProblem,
+} from "../src/core/pond";
 import { POND_FOOTPRINT } from "../src/core/pondsite";
 import { placementBlockers } from "../src/core/placement";
 import { Trees } from "../src/core/trees";
@@ -81,6 +86,18 @@ describe("ponds and the other carpenter buildings", () => {
     expect(hit.length).toBeGreaterThan(0);
   });
 
+  it("refuses a pond over the silo's spot, built or not", () => {
+    const g = clearedGame();
+    const s = SILO_SITES[ID]!;
+    for (const built of [false, true]) {
+      g.animals.silo = built;
+      expect(pondBlockers(g, map, ID, s.x, s.y).length).toBeGreaterThan(0);
+      expect(pondProblem(g, map, ID, s.x, s.y)).toBe(
+        "That spot is taken by a building.",
+      );
+    }
+  });
+
   it("makes older carpenter jobs wait for a pond under construction", () => {
     const g = clearedGame();
     const at = freeCoopSpot(g);
@@ -90,6 +107,6 @@ describe("ponds and the other carpenter buildings", () => {
     expect(buildingProblem(g, "coop")).toBe(busy);
     expect(buildingProblem(g, "barn")).toBe(busy);
     expect(siloProblem(g)).toBe(busy);
-    expect(orderProblem(g)).toBe(busy);
+    expect(houseOrderProblem(g)).toBe(busy);
   });
 });

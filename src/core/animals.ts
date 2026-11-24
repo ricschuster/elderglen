@@ -1,7 +1,7 @@
 import { dateOf } from "./calendar";
 import { festivalDayToday } from "./festivals";
 import { loadHorse, newHorse, saveHorse, type Horse } from "./horse";
-import { COOP_HEATER, HARDWOOD, HEATER_PRICE, itemById } from "./items";
+import { COOP_HEATER, HARDWOOD, HEATER_PRICE, itemLabel } from "./items";
 import {
   animalQuality,
   splitQuality,
@@ -12,6 +12,7 @@ import { pondDigging } from "./pondsite";
 import type { GameState } from "./save";
 import { visibleTier } from "./map";
 import { isRaining } from "./weather";
+import { cleanName, isNum } from "./guards";
 
 /**
  * Animals (`docs/design/23_animals.md`): the coop and the barn, their tiers and
@@ -550,9 +551,6 @@ export function saveAnimals(a: AnimalsState): AnimalsState {
   };
 }
 
-const isNum = (v: unknown): v is number =>
-  typeof v === "number" && Number.isFinite(v);
-
 /** Read saved animals. Anything missing or broken falls back to nothing built. */
 export function loadAnimals(raw: unknown): AnimalsState {
   const out = newAnimals();
@@ -1082,11 +1080,6 @@ export function buyChick(g: GameState, name: string): Animal | undefined {
   return buyAnimal(g, "chicken", name);
 }
 
-/** A trimmed name of at most 16 characters. */
-export function cleanName(name: string): string {
-  return name.replace(/\s+/g, " ").trim().slice(0, 16);
-}
-
 export function rename(g: GameState, id: number, name: string): boolean {
   const a = g.animals.animals.find((x) => x.id === id);
   const n = cleanName(name);
@@ -1143,10 +1136,7 @@ export function siloProblem(g: GameState): string | undefined {
   for (const id of ["stone", "clay", "copper-bar"] as const) {
     const need = SILO_COST[id];
     const have = g.inventory.count(id);
-    if (have < need)
-      missing.push(
-        `${need - have} more ${itemById(id)?.name.toLowerCase() ?? id}`,
-      );
+    if (have < need) missing.push(`${need - have} more ${itemLabel(id)}`);
   }
   return missing.length > 0 ? `You need ${missing.join(" and ")}.` : undefined;
 }

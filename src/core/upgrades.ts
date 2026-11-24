@@ -1,6 +1,7 @@
 import { fillCan } from "./canwater";
 import { BACKPACK_SIZES, type Inventory } from "./inventory";
-import { itemById } from "./items";
+import { itemLabel } from "./items";
+import { LOCAL_PLAYER } from "./players";
 import type { GameState } from "./save";
 import type { Wallet } from "./shop";
 
@@ -64,9 +65,30 @@ export function upgradeBar(tier: number): string | undefined {
   return UPGRADE_BAR[tier];
 }
 
+/**
+ * The tool the acting player has at the smithy: the host's is `toolOrder`, each guest's is kept by id
+ * (note 108 group 5), so every player may have one tool there at a time.
+ */
+export function orderOf(g: GameState): ToolOrder | undefined {
+  const id = g.players.localId;
+  return id === LOCAL_PLAYER ? g.toolOrder : g.toolOrdersBy?.[id];
+}
+
+function setOrder(g: GameState, order: ToolOrder | undefined): void {
+  const id = g.players.localId;
+  if (id === LOCAL_PLAYER) {
+    g.toolOrder = order;
+    return;
+  }
+  const rest = { ...g.toolOrdersBy };
+  if (order) rest[id] = order;
+  else delete rest[id];
+  g.toolOrdersBy = rest;
+}
+
 /** True while a tool is at the smith, so it cannot be used. */
 export function toolAway(g: GameState, tool: string): boolean {
-  return g.toolOrder?.tool === tool;
+  return orderOf(g)?.tool === tool;
 }
 
 /** Why a tool cannot be handed over now, or undefined if it can. */
@@ -79,10 +101,10 @@ export function orderProblem(
   const bar = upgradeBar(tier);
   if (gold === undefined || bar === undefined) return "Already the best.";
   // One tool at a time is a placeholder: the Stardew pages do not say (note 44).
-  if (g.toolOrder) return "She is still working on another tool.";
+  if (orderOf(g)) return "She is still working on another tool.";
   if (g.money < gold) return "Not enough money.";
   if (g.inventory.count(bar) < UPGRADE_BARS)
-    return `You need ${UPGRADE_BARS} ${itemById(bar)?.name.toLowerCase() ?? bar}s.`;
+    return `You need ${UPGRADE_BARS} ${itemLabel(bar)}s.`;
   return undefined;
 }
 
@@ -99,26 +121,27 @@ export function orderUpgrade(
   const tier = g.toolTiers[tool];
   g.money -= upgradeCost(tier) as number;
   g.inventory.remove(upgradeBar(tier) as string, UPGRADE_BARS);
-  g.toolOrder = {
+  setOrder(g, {
     tool,
     tier: tier + 1,
     readyDay: g.day.clock.day + UPGRADE_DAYS,
-  };
+  });
   return undefined;
 }
 
 /** True when the tool at the smith is done. */
 export function orderReady(g: GameState): boolean {
-  return !!g.toolOrder && g.day.clock.day >= g.toolOrder.readyDay;
+  const order = orderOf(g);
+  return !!order && g.day.clock.day >= order.readyDay;
 }
 
 /** Take the finished tool back. Returns it, or undefined if none is ready. */
 export function collectUpgrade(g: GameState): Upgradable | undefined {
-  const order = g.toolOrder;
+  const order = orderOf(g);
   if (!order || !orderReady(g)) return undefined;
   g.toolTiers[order.tool] = order.tier;
   if (order.tool === "can") fillCan(g);
-  g.toolOrder = undefined;
+  setOrder(g, undefined);
   return order.tool;
 }
 

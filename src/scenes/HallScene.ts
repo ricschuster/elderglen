@@ -1,11 +1,13 @@
 import { audio } from "../audio/engine";
 import Phaser from "phaser";
-import { rewardText, ROOMS, type BundleDef } from "../core/bundles";
+import { rewardText, HALL_ROOMS, type BundleDef } from "../core/bundles";
 import { hatById } from "../core/hats";
 import { itemById } from "../core/items";
 import { CATEGORY_NAMES, type ArtisanCategory } from "../core/artisan";
 import type { GameState } from "../core/save";
-import { payGuestsBoard } from "../core/roomrewards";
+import { GUESTS_PAID } from "../core/roomrewards";
+import { hasFlag } from "../core/worldflags";
+import { closeWhenDone, dispatch, followGuest } from "./guestlive";
 import { endDue } from "../core/sleep";
 import { resumeSave } from "./storage";
 import { frame, Menu, TOUCH_ROW_H, type Row } from "./panel";
@@ -28,14 +30,16 @@ export class HallScene extends Phaser.Scene {
   private money!: Phaser.GameObjects.Text;
   private message!: Phaser.GameObjects.Text;
   private column: 0 | 1 = 0;
-  private room: string = ROOMS[0]!.id;
+  private room: string = HALL_ROOMS[0]!.id;
+  /** A guest's hand-in on its way to the host: the bundle, to say when it finishes. */
+  private watch?: { bundle: string; paid: boolean };
 
   constructor() {
     super("hall");
   }
 
   init(data: { room?: string }): void {
-    this.room = data.room ?? ROOMS[0]!.id;
+    this.room = data.room ?? HALL_ROOMS[0]!.id;
     this.state = this.registry.get(STATE_KEY) as GameState;
     this.column = 0;
   }
@@ -43,7 +47,7 @@ export class HallScene extends Phaser.Scene {
   create(): void {
     const { money, message } = frame(
       this,
-      ROOMS.find((r) => r.id === this.room)?.name ?? "Village hall",
+      HALL_ROOMS.find((r) => r.id === this.room)?.name ?? "Village hall",
       () => this.close(),
     );
     this.money = money;
@@ -83,6 +87,16 @@ export class HallScene extends Phaser.Scene {
     kb?.on("keydown-LEFT", () => this.focus(0));
     kb?.on("keydown-RIGHT", () => this.focus(1));
     kb?.on("keydown-ENTER", () => this.active.press(0));
+    // A guest's hand-ins go to the host; the panel redraws when its answer arrives (note 108 group 4).
+    followGuest(
+      this,
+      () => this.refresh(),
+      (text) => {
+        this.watch = undefined;
+        this.message.setText(text);
+      },
+    );
+    closeWhenDone(this);
     this.focus(0);
   }
 
@@ -105,6 +119,11 @@ export class HallScene extends Phaser.Scene {
   private refresh(): void {
     const g = this.state;
     const { hall } = g;
+    const w = this.watch;
+    if (w && hall.complete(w.bundle)) {
+      this.watch = undefined;
+      return this.finished(w.bundle, w.paid);
+    }
     this.money.setText(`Money ${g.money}g`);
 
     const status = hall.roomStatus(this.room);
@@ -187,23 +206,51 @@ export class HallScene extends Phaser.Scene {
       audio.sfx("ui.error");
       return this.say(why);
     }
-    const result = g.hall.handIn(g.inventory, g, bundleId, itemId, (gold) =>
-      g.cave.addEarnings(gold, g.day.clock.day + 1),
-    );
-    audio.sfx(result === "completed" ? "bundle.complete" : "bundle.item");
+    const was = g.hall.complete(bundleId);
+    const paid = hasFlag(g, GUESTS_PAID);
+    const refused = dispatch(g, {
+      kind: "bundle-give",
+      room: this.room,
+      bundle: bundleId,
+      item: itemId,
+    });
+    if (refused === "sent") {
+      this.watch = { bundle: bundleId, paid };
+      return;
+    }
+    if (refused) {
+      audio.sfx("ui.error");
+      return this.say(refused);
+    }
+    if (g.hall.complete(bundleId) && !was) this.finished(bundleId, paid);
+    else {
+      audio.sfx("bundle.item");
+      this.say(`Handed in ${name(itemId)}.`);
+    }
+  }
+
+  /** A finished bundle: its reward went to the one who handed in the last good (note 108 rule 3). */
+  private finished(bundleId: string, paidBefore: boolean): void {
+    const g = this.state;
+    audio.sfx("bundle.complete");
     const bundle = g.hall.bundles.find((b) => b.id === bundleId)!;
-    const paid = result === "completed" ? payGuestsBoard(g) : [];
+    const paid = !paidBefore && hasFlag(g, GUESTS_PAID);
     this.say(
-      result === "completed"
-        ? `${bundle.name} is complete! You receive ${rewardText(bundle)}.${paid.length > 0 ? " The people you have met think the better of you." : ""}`
-        : `Handed in ${name(itemId)}.`,
+      `${bundle.name} is complete! You receive ${rewardText(bundle)}.${paid ? " The people you have met think the better of you." : ""}`,
     );
   }
 
   private takeHat(bundleId: string, hatId: string): void {
     const g = this.state;
-    if (g.hall.claimHat(bundleId, hatId, g.wardrobe))
-      this.say(`You take the ${hatById(hatId)?.name ?? hatId}.`);
+    const r = dispatch(g, {
+      kind: "bundle-hat",
+      room: this.room,
+      bundle: bundleId,
+      hat: hatId,
+    });
+    if (r === "sent") return;
+    if (r) return this.say(r);
+    this.say(`You take the ${hatById(hatId)?.name ?? hatId}.`);
   }
 
   private close(): void {

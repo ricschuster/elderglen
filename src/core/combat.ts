@@ -12,7 +12,7 @@ import {
   type SlayerGoal,
 } from "./creatures";
 import type { Skills } from "./skills";
-import type { Facing, Vec } from "./movement";
+import { FACING_STEP, type Facing, type Vec } from "./movement";
 import type { GameState } from "./save";
 import { isToolId } from "./toolitems";
 
@@ -171,13 +171,6 @@ export const isWeapon = (id: string): boolean => weaponById(id) !== undefined;
 export const STARTERS = WEAPONS.filter((w) => w.tier === 0);
 export const FORGED = WEAPONS.filter((w) => w.forge);
 
-const FACE: Record<Facing, Vec> = {
-  up: { x: 0, y: -1 },
-  down: { x: 0, y: 1 },
-  left: { x: -1, y: 0 },
-  right: { x: 1, y: 0 },
-};
-
 /** Half the body of a creature in pixels, so a swing that grazes its edge lands. */
 const BODY = 6;
 /** How far either side of a sling shot's line still hits, in pixels. */
@@ -201,7 +194,7 @@ export function swingTargets(
   const f =
     w.family === "sling" && aim && len > 0
       ? { x: aim.x / len, y: aim.y / len }
-      : FACE[facing];
+      : FACING_STEP[facing];
   // The swing is centred on the body, a little above the feet.
   const from = { x: at.x, y: at.y - 6 };
   const hits: { c: Creature; d: number }[] = [];

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { mapFiles } from "../src/content/maps";
 import {
   DECOR,
-  ROOMS,
+  DECOR_ROOMS,
   applyDecor,
   buyDecor,
   decorProblem,
@@ -32,7 +32,7 @@ describe("decor data", () => {
         RENOVATIONS.map((r) => r.id),
       ),
     );
-    for (const r of ROOMS) {
+    for (const r of DECOR_ROOMS) {
       const t = roomTiles(mapFiles.house!, 3, r, holds);
       expect(t.floor.length, r.id).toBeGreaterThan(10);
       expect(t.wall.length, r.id).toBeGreaterThan(5);
@@ -40,10 +40,10 @@ describe("decor data", () => {
   });
 
   it("names a zone for every renovation room and the spouse room", () => {
-    const ids = ROOMS.map((r) => r.id);
+    const ids = DECOR_ROOMS.map((r) => r.id);
     for (const id of ["spouse", "south", "corner", "attic", "cubby", "dining"])
       expect(ids, id).toContain(id);
-    for (const r of ROOMS)
+    for (const r of DECOR_ROOMS)
       for (const h of [
         ...(r.when ?? []),
         ...(r.wings ?? []).flatMap((w) => w.when ?? []),
@@ -62,7 +62,7 @@ describe("decor data", () => {
         RENOVATIONS.map((r) => r.id),
       ),
     );
-    const rects = ROOMS.flatMap((r) =>
+    const rects = DECOR_ROOMS.flatMap((r) =>
       zoneRects(r, 3, holds).map((rc) => ({ id: r.id, ...rc })),
     );
     for (const a of rects)

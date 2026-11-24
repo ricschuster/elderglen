@@ -26,6 +26,7 @@ import { HARDWOOD } from "./items";
 import type { FarmMap } from "./map";
 import { pondRects } from "./pondsite";
 import type { GameState } from "./save";
+import { tileKey } from "./tilekey";
 
 /**
  * Placing, moving and removing farm buildings
@@ -136,7 +137,7 @@ function reservedTiles(map: FarmMap): Map<string, string> {
   const ring = (r: Rect, why: string, margin = 1) => {
     for (let y = r.y - margin; y < r.y + r.h + margin; y++)
       for (let x = r.x - margin; x < r.x + r.w + margin; x++)
-        out.set(`${x},${y}`, why);
+        out.set(tileKey(x, y), why);
   };
   for (const e of map.exits)
     if (!(e.id in BUILDING_EXITS)) ring(e, "the way out of the farm");
@@ -170,6 +171,26 @@ function clutterAt(g: GameState, x: number, y: number): string | undefined {
   return undefined;
 }
 
+/** The silo's fixed spot on a map, built or not, or undefined when the map has none. */
+export function siloSiteRect(mapId: string): Rect | undefined {
+  const silo = SILO_SITES[mapId];
+  return silo
+    ? { x: silo.x, y: silo.y, w: SILO_FOOTPRINT.w, h: SILO_FOOTPRINT.h }
+    : undefined;
+}
+
+/** The footprints that stand fixed on a map: placed buildings plus the silo's spot. */
+export function buildingRects(g: GameState, mapId: string): Rect[] {
+  const out: Rect[] = [];
+  for (const b of PLACEABLES) {
+    const r = placedFootprint(g, b, mapId);
+    if (r) out.push(r);
+  }
+  const silo = siloSiteRect(mapId);
+  if (silo) out.push(silo);
+  return out;
+}
+
 /**
  * Every tile that stops `b` with its top left on (x, y), each with a reason.
  * Empty means the spot is free. The tile in front of the door counts too, so a
@@ -193,14 +214,11 @@ export function placementBlockers(
     r: placedFootprint(g, o, mapId),
   }));
   const ponds = pondRects(g, mapId);
-  const silo = SILO_SITES[mapId];
-  const siloRect = silo
-    ? { x: silo.x, y: silo.y, w: SILO_FOOTPRINT.w, h: SILO_FOOTPRINT.h }
-    : undefined;
+  const siloRect = siloSiteRect(mapId);
   /** What stands on a tile, or undefined if a building may cover it. */
   const reason = (tx: number, ty: number): string | undefined => {
     if (map.isBlocked(tx, ty)) return "water, a cliff or a wall";
-    const near = reserved.get(`${tx},${ty}`);
+    const near = reserved.get(tileKey(tx, ty));
     if (near) return `too close to ${near}`;
     for (const { o, r } of others) {
       if (!r) continue;
@@ -241,11 +259,7 @@ function walkable(
       ? [{ r, d: footprintOf(o).door ? doorAt(o, r.x, r.y) : undefined }]
       : [];
   });
-  const silo = SILO_SITES[mapId];
-  const siloRect =
-    silo && g.animals.silo
-      ? { x: silo.x, y: silo.y, w: SILO_FOOTPRINT.w, h: SILO_FOOTPRINT.h }
-      : undefined;
+  const siloRect = g.animals.silo ? siloSiteRect(mapId) : undefined;
   const ponds = pondRects(g, mapId);
   return (x: number, y: number): boolean => {
     if (map.isBlocked(x, y)) return false;
@@ -265,8 +279,8 @@ function reach(
   const seen = new Set<string>();
   const queue: { x: number; y: number }[] = [];
   for (const e of map.entries)
-    if (open(e.x, e.y) && !seen.has(`${e.x},${e.y}`)) {
-      seen.add(`${e.x},${e.y}`);
+    if (open(e.x, e.y) && !seen.has(tileKey(e.x, e.y))) {
+      seen.add(tileKey(e.x, e.y));
       queue.push({ x: e.x, y: e.y });
     }
   for (let i = 0; i < queue.length; i++) {
@@ -279,7 +293,7 @@ function reach(
     ] as const) {
       const nx = x + dx;
       const ny = y + dy;
-      const k = `${nx},${ny}`;
+      const k = tileKey(nx, ny);
       if (seen.has(k) || !open(nx, ny)) continue;
       seen.add(k);
       queue.push({ x: nx, y: ny });

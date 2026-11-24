@@ -24,6 +24,7 @@ import {
   VILLAGERS,
   whereAt,
 } from "./villagers";
+import { tileKey } from "./tilekey";
 
 /**
  * Villagers in the scenes (#599 slice 3, notes 79 and 80). Pure: who stands on
@@ -150,10 +151,10 @@ export function villagersOn(
  */
 function spreadOut(list: Present[], mapId: string): Present[] {
   const m = mapId in mapFiles ? maps.get(mapId) : undefined;
-  const taken = new Set(list.map((p) => `${p.x},${p.y}`));
+  const taken = new Set(list.map((p) => tileKey(p.x, p.y)));
   const seen = new Set<string>();
   return list.map((p) => {
-    const k = `${p.x},${p.y}`;
+    const k = tileKey(p.x, p.y);
     if (!seen.has(k) || !m) {
       seen.add(k);
       return p;
@@ -163,7 +164,7 @@ function spreadOut(list: Present[], mapId: string): Present[] {
         const dx = r - Math.abs(dy);
         for (const x of dx === 0 ? [p.x] : [p.x - dx, p.x + dx]) {
           const y = p.y + dy;
-          const nk = `${x},${y}`;
+          const nk = tileKey(x, y);
           if (taken.has(nk) || m.isBlocked(x, y)) continue;
           taken.add(nk);
           seen.add(nk);
@@ -219,11 +220,11 @@ export function spreadPresent(
   // People on the move (a marcher, or a walker between stops) keep their place and never claim a tile.
   const moving = (p: Present) => p.marching === true || p.fx !== undefined;
   const taken = new Set(
-    list.filter((p) => !moving(p)).map((p) => `${p.x},${p.y}`),
+    list.filter((p) => !moving(p)).map((p) => tileKey(p.x, p.y)),
   );
   const seen = new Set<string>();
   return list.map((p) => {
-    const key = `${p.x},${p.y}`;
+    const key = tileKey(p.x, p.y);
     if (moving(p) || !seen.has(key)) {
       if (moving(p)) return p;
       seen.add(key);
@@ -235,7 +236,7 @@ export function spreadPresent(
           if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
           const x = p.x + dx;
           const y = p.y + dy;
-          const k = `${x},${y}`;
+          const k = tileKey(x, y);
           if (taken.has(k) || !isFree(x, y)) continue;
           taken.add(k);
           seen.add(k);

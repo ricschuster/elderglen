@@ -360,6 +360,8 @@ export function sleep(
   const animalJob = advanceBuilding(g);
   const siloFinished = advanceSilo(g);
   const pondsFinished = advancePonds(g);
+  // The lever's flip takes effect with the new day (note 109, rule 9).
+  g.mines.endDay();
   // Built ponds breed, make roe and tick their quests (note 93).
   pondNight(g, random);
   const pondReport = pondNews(g);

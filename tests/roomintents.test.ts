@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { farmMapOf } from "../src/core/farmtypes";
 import { GameRoomWorld } from "../src/core/roomworld";
 import { itemById } from "../src/core/items";
 import { newGame } from "../src/core/save";
@@ -78,16 +79,26 @@ describe("farm intents", () => {
   it("till, plant, water use the guest's record and energy, not the host's", () => {
     const w = mk();
     const g = w.g;
+    const soil = farmMapOf(g).tillableTiles()[0]!;
     const guest = g.players.get("p2");
     guest.inventory.add("parsnip-seed", 2);
     const hostEnergy = g.day.energy.current;
-    expect(w.apply("p2", { kind: "till", x: 5, y: 5 })).toBeUndefined();
-    expect(g.farm.plotAt(5, 5)?.tilled).toBe(true);
     expect(
-      w.apply("p2", { kind: "plant", x: 5, y: 5, seed: "parsnip-seed" }),
+      w.apply("p2", { kind: "till", x: soil.x, y: soil.y }),
+    ).toBeUndefined();
+    expect(g.farm.plotAt(soil.x, soil.y)?.tilled).toBe(true);
+    expect(
+      w.apply("p2", {
+        kind: "plant",
+        x: soil.x,
+        y: soil.y,
+        seed: "parsnip-seed",
+      }),
     ).toBeUndefined();
     expect(guest.inventory.count("parsnip-seed")).toBe(1);
-    expect(w.apply("p2", { kind: "water", x: 5, y: 5 })).toBeUndefined();
+    expect(
+      w.apply("p2", { kind: "water", x: soil.x, y: soil.y }),
+    ).toBeUndefined();
     expect(guest.canWater).toBe(39);
     expect(g.players.get(LOCAL_PLAYER).canWater).toBe(40);
     expect(guest.energy.current).toBeLessThan(MAX_ENERGY);
@@ -214,10 +225,19 @@ describe("farm intents", () => {
     expect(w.apply("p2", { kind: "water", x: 9, y: 9 })).toBe(
       "nothing to water",
     );
+    const soil = farmMapOf(w.g).tillableTiles()[0]!;
     w.g.players.get("p2").energy.current = -15;
-    expect(w.apply("p2", { kind: "till", x: 3, y: 3 })).toBe("exhausted");
+    expect(w.apply("p2", { kind: "till", x: soil.x, y: soil.y })).toBe(
+      "exhausted",
+    );
     // The host is not exhausted by the guest.
-    expect(w.apply(LOCAL_PLAYER, { kind: "till", x: 3, y: 3 })).toBeUndefined();
+    expect(
+      w.apply(LOCAL_PLAYER, { kind: "till", x: soil.x, y: soil.y }),
+    ).toBeUndefined();
+    // The hoe works only soil that can be dug: the same rule as the host's own Use.
+    expect(w.apply(LOCAL_PLAYER, { kind: "till", x: 0, y: 0 })).toBe(
+      "cannot dig here",
+    );
     expect(w.g.day.energy.current).toBeLessThan(MAX_ENERGY);
   });
 

@@ -2,6 +2,7 @@ import creatureData from "../content/creatures.json";
 import type { Inflicts } from "./effects";
 import { dangerCount, dangerDropChance, dangerHealth } from "./danger";
 import type { Vec } from "./movement";
+import { tileKey } from "./tilekey";
 
 /**
  * The first creatures of the mines (`docs/design/22_mines.md`, "Creatures" and
@@ -259,10 +260,10 @@ export function spawnCreatures(
   for (let tries = 0; out.length < want && tries < 600; tries++) {
     const x = 1 + Math.floor(random() * (width - 2));
     const y = 1 + Math.floor(random() * (height - 2));
-    if (!open(x, y) || used.has(`${x},${y}`)) continue;
+    if (!open(x, y) || used.has(tileKey(x, y))) continue;
     if (Math.max(Math.abs(x - arrive.x), Math.abs(y - arrive.y)) < keepAway)
       continue;
-    used.add(`${x},${y}`);
+    used.add(tileKey(x, y));
     const kind = kinds[Math.floor(random() * kinds.length)]!;
     const made = newCreature(
       out.length + 1,

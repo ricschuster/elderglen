@@ -7,6 +7,7 @@ import { HEART, POINTS, type Taste } from "./friendship";
 import type { ItemTip } from "./itemtip";
 import { VILLAGERS } from "./villagers";
 import type { GameState } from "./save";
+import { bondOf, partnerOf, type PlayerMarriageBook } from "./playermarriage";
 
 /**
  * What the in-game menu's Social, Animals, Special Items and Skills pages show
@@ -83,20 +84,53 @@ export function socialRows(g: GameState): SocialRow[] {
 export interface PlayerRow {
   id: string;
   name: string;
+  /** Slot number from the id ("p2" is 2): picks the figure's tint, as on the farm. */
+  slot: number;
+  /** "Married to X" or "Engaged to X", or undefined when free (owner, 2026-11-24). */
+  tag?: string;
+}
+
+/** What the player rows need to know about marriage; both parts optional (single player). */
+export interface PlayerRowContext {
+  /** The bond book (note 12), to find a player partner. */
+  book?: PlayerMarriageBook;
+  /** A villager the player is engaged or married to, as `{ stage, name }`; none is tracked per player yet. */
+  villagerOf?: (
+    id: string,
+  ) => { stage: "engaged" | "married"; name: string } | undefined;
 }
 
 /**
  * The other players, in the order given, listed above the spouse and the roster
  * (owner, 2026-11-20, checked in Stardew). Empty in single player. The local
- * player is not listed.
+ * player is not listed. Each row carries the name, a figure slot and a marriage tag.
  */
 export function playerRows(
   remotes: readonly { id: string; name: string }[],
   localId: string,
+  ctx: PlayerRowContext = {},
 ): PlayerRow[] {
+  const nameOf = (id: string): string =>
+    id === localId ? "you" : (remotes.find((r) => r.id === id)?.name ?? id);
   return remotes
     .filter((r) => r.id !== localId)
-    .map((r) => ({ id: r.id, name: r.name }));
+    .map((r) => {
+      const row: PlayerRow = {
+        id: r.id,
+        name: r.name,
+        slot: Number(r.id.slice(1)) || 0,
+      };
+      const bond = ctx.book && bondOf(ctx.book, r.id);
+      if (bond && (bond.stage === "engaged" || bond.stage === "married")) {
+        const who = nameOf(partnerOf(ctx.book!, r.id)!);
+        row.tag = `${bond.stage === "married" ? "Married" : "Engaged"} to ${who}`;
+      } else {
+        const v = ctx.villagerOf?.(r.id);
+        if (v)
+          row.tag = `${v.stage === "married" ? "Married" : "Engaged"} to ${v.name}`;
+      }
+      return row;
+    });
 }
 
 /** The farm's children, for the short section after the roster. */
@@ -248,7 +282,7 @@ export function specialItems(g: GameState): SpecialItem[] {
 
 /** Tab keys the menu hides until they have something to show (note 49). */
 /** Menu tabs that change the player's or the world's state, hidden for a guest. */
-export const GUEST_HIDDEN_TABS = ["pack", "crafting", "animals", "special"];
+export const GUEST_HIDDEN_TABS = ["pack", "animals", "special"];
 
 /** Screens a guest may open over the farm: read-only views only (note 53). */
 export const GUEST_SCREENS = [
@@ -261,9 +295,32 @@ export const GUEST_SCREENS = [
   "wedding",
   // The night's report (guest copy from the host's `night` message) changes nothing.
   "report",
-  // The shop and the shipping bin send buy, sell, ship and take-back intents (note 53).
+  // The shop and the shipping bin send buy, sell, ship and take-back intents (note 53); each is opened with an `open` action (note 108).
   "shop",
   "bin",
+  // Night Market stalls and chests (note 108 group 1): the host takes the lock and judges each action.
+  "market",
+  "chest",
+  // Crafting, the stove and the furnace send craft, cook, smelt and take intents (note 108 group 2); the workbench and the furnace are opened with an `open` action.
+  "crafting",
+  "cooking",
+  "furnace",
+  // The keeper's counter, the coop and barn benches and the fish pond send animal and pond intents (note 108 group 3); the pond takes a lock.
+  "keeper",
+  "coop-bench",
+  "barn-bench",
+  "pond",
+  // The hall's scrolls and the two boards send bundle, order and request intents (note 108 group 4).
+  "hall",
+  "orders",
+  "requests",
+  // The carpenter, the tailor, the two smiths, the gallery counter and the shrine send intents (note 108 group 5).
+  "carpenter",
+  "tailor",
+  "smith",
+  "smithy",
+  "gallery",
+  "shrine",
   // The bed prompt sends a `sleep` intent and changes nothing locally.
   "bed",
 ];

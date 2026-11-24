@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import { cakeDishes, cakeProblem, handInCake } from "../core/cakeday";
-import { itemById } from "../core/items";
+import { itemById, itemLabel } from "../core/items";
 import { splitQuality } from "../core/quality";
 import type { GameState } from "../core/save";
 import { frame, Menu, type Row } from "./panel";
@@ -66,7 +66,7 @@ export class CakeScene extends Phaser.Scene {
     const r = handInCake(this.state, id);
     if (!r) return this.refresh();
     this.message.setText(
-      `Everyone tastes your ${itemById(id)?.name.toLowerCase() ?? "dish"} (${r.quality}). They like you a little more.`,
+      `Everyone tastes your ${itemLabel(id, "dish")} (${r.quality}). They like you a little more.`,
     );
     this.refresh();
     this.time.delayedCall(1600, () => this.close());

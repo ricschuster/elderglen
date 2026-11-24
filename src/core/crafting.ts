@@ -1,7 +1,7 @@
 import recipeData from "../content/recipes.json";
 import { BUNDLES } from "./bundles";
 import { houseHasCellar } from "./house";
-import { itemById } from "./items";
+import { itemById, itemLabel } from "./items";
 import { orderById } from "./orders";
 import type { Skill } from "./skills";
 import type { PlacedChest } from "./chests";
@@ -168,7 +168,5 @@ export function craft(
 
 /** Words for an ingredient list, such as "1 copper bar, 1 iron bar". */
 export function ingredientText(r: Recipe): string {
-  return r.ingredients
-    .map((i) => `${i.count} ${itemById(i.item)?.name.toLowerCase() ?? i.item}`)
-    .join(", ");
+  return r.ingredients.map((i) => `${i.count} ${itemLabel(i.item)}`).join(", ");
 }

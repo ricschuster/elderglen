@@ -4,6 +4,7 @@ import type { Spot } from "./forage";
 import type { MapRegistry } from "./maps";
 import { mapKind } from "./layoutview";
 import type { TiledMapJson } from "./map";
+import { tileKey } from "./tilekey";
 
 /**
  * Layout warnings and walk time for the layout page
@@ -48,14 +49,14 @@ function open(map: FarmMap, x: number, y: number): boolean {
 export function walkDistances(map: FarmMap, from: Spot): Map<string, number> {
   const dist = new Map<string, number>();
   if (!open(map, from.x, from.y)) return dist;
-  dist.set(`${from.x},${from.y}`, 0);
+  dist.set(tileKey(from.x, from.y), 0);
   const queue: Spot[] = [from];
   for (let i = 0; i < queue.length; i++) {
     const c = queue[i]!;
-    const d = dist.get(`${c.x},${c.y}`)!;
+    const d = dist.get(tileKey(c.x, c.y))!;
     for (const [dx, dy] of DIRS) {
       const n = { x: c.x + dx, y: c.y + dy };
-      const k = `${n.x},${n.y}`;
+      const k = tileKey(n.x, n.y);
       if (dist.has(k) || !open(map, n.x, n.y)) continue;
       dist.set(k, d + 1);
       queue.push(n);
@@ -79,7 +80,7 @@ export function timeOf(tiles: number): WalkTime {
 
 /** The click-to-click timer: the shortest walk between two tiles, or undefined when there is none. */
 export function walkTime(map: FarmMap, a: Spot, b: Spot): WalkTime | undefined {
-  const d = walkDistances(map, a).get(`${b.x},${b.y}`);
+  const d = walkDistances(map, a).get(tileKey(b.x, b.y));
   return d === undefined ? undefined : timeOf(d);
 }
 
@@ -96,7 +97,7 @@ function approachTiles(
       const inY = y >= r.y && y < r.y + r.h;
       // Edge tiles only: one step along an axis, not diagonal and not inside.
       if (inX === inY) continue;
-      const k = `${x},${y}`;
+      const k = tileKey(x, y);
       if (seen.has(k) || !open(map, x, y)) continue;
       seen.add(k);
       n++;
@@ -221,7 +222,7 @@ export function longestCrossing(map: FarmMap):
   for (const a of map.entries) {
     const dist = walkDistances(map, a);
     for (const b of map.entries) {
-      const d = dist.get(`${b.x},${b.y}`);
+      const d = dist.get(tileKey(b.x, b.y));
       if (d !== undefined && (!best || d > best.tiles))
         best = { tiles: d, from: a, fromName: a.name, toName: b.name };
     }

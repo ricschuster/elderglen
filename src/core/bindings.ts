@@ -14,6 +14,7 @@ import {
 } from "./view";
 import { DEFAULT_SCHEME, migrateScheme, type SchemeId } from "./controlschemes";
 import { clampVolume, DEFAULT_AUDIO, type AudioSettings } from "./audio";
+import { isObject } from "./guards";
 
 export type Profile = "desktop" | "touch";
 export type TouchScheme = SchemeId;
@@ -212,10 +213,6 @@ export function defaultSettings(coarsePointer = false): Settings {
 
 export function serializeSettings(s: Settings): string {
   return JSON.stringify({ version: SETTINGS_VERSION, ...s });
-}
-
-function isObject(v: unknown): v is Record<string, unknown> {
-  return typeof v === "object" && v !== null && !Array.isArray(v);
 }
 
 /** Keep valid entries. Any duplicate or reserved key sends all keys to default. */

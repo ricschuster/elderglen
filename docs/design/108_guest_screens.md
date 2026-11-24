@@ -81,13 +81,213 @@ Build each screen's actions as that screen is opened to guests; do not move ever
 One group at a time, each with its own tests; each screen is removed from the guest refusal list
 (`guestMayOpen`) when its actions are built.
 
-1. **Trade:** the dispatcher and `open` action with the lock, shops (buy, sell, shared stock), the shipping
-   bin, chests (and the camp chest).
-2. **Making:** crafting, cooking (farmhouse kitchen and fridge), furnace and the other machines.
-3. **Animals and ponds:** animal buy and sell at the farmstead, petting, feeding, collecting, pond menus.
-4. **Hall:** bundles (rule 3), orders and the request board.
-5. **The rest:** carpenter (rules 7 to 9, with the host setting on the players list), tailor, smith, gallery,
-   shrine, and any screen still on the refusal list.
+1. **Trade (built 2026-11-24, #1014):** the dispatcher and `open` action with the lock, shops (buy, sell,
+   shared stock), the shipping bin, chests (and the camp chest). See "Group 1 as built" below.
+2. **Making (built 2026-11-24, #1014):** crafting, cooking (farmhouse kitchen), furnace and the other machines. See "Group 2 as built" below. The fridge is not in the game yet, so it is not built.
+3. **Animals and ponds (built 2026-11-24, #1014):** animal buy at the farmstead keeper, petting, feeding, collecting, pond menus. Animals cannot be sold in the game yet, so there is no sell. See "Group 3 as built" below.
+4. **Hall (built 2026-11-24, #1014):** bundles (rule 3), orders and the request board. See "Group 4 as built" below.
+5. **The rest (built 2026-11-24, #1014):** carpenter (rules 7 to 9, with the host setting on the players list), tailor,
+   smith, smithy, gallery and shrine. The screens that stay host only are listed in "Group 5 as built".
+
+## Group 1 as built (build, 2026-11-24)
+
+Code: `src/core/screens.ts` (the host's book of open screens, the locks, the reach check),
+`src/core/screenintents.ts` (chest, camp chest and Night Market actions), `src/core/shopoffers.ts` (what each
+counter sells and one `shopBuy`), the gate in `GameRoomWorld.apply` (`src/core/roomworld.ts`), and
+`openShared`, `closeWhenDone` and `dispatch` in `src/scenes/guestlive.ts`. Tests: `tests/screens.test.ts`
+(through a `Room`) and `tests/screens-socket.test.ts` (a host and two guests over real sockets).
+
+- **`open {screen}` and `close`.** A screen ref is `{kind, map, x, y}` plus `stock` (a shop's special counter,
+  or a market stall), `ore` (the ore bin) or `floor` (a camp chest). The host checks the ref (the chest exists, or
+  the service of that kind stands on that tile), checks the reach, then takes the lock when the screen has one.
+  Screens shown from `open`: `shop` (the general store and the fisher, pin, herb, trader, rain and hermit
+  counters), `market` (Night Market stalls), `bin` (and the ore bin), `chest`, `camp-chest`. Only `chest` and
+  `camp-chest` lock. The lock key is the tile, or the floor for a camp chest.
+- **Every other action must name the screen the sender has open.** `buy`, `sell`, `ship`, `take-back`,
+  `market-buy`, `chest-move`, `chest-send`, `chest-fill`, `chest-sort`, `chest-colour` and `camp-take` are
+  refused with "open the screen first", "too far away" (the sender walked off) or "not the screen you opened"
+  (a different chest, stall, floor or counter than the open one). A `buy` must also name something the open
+  counter sells today, and a `ship` must match the bin (ore or not). The host's own player is exempt from this
+  gate (it is at its own screen) but takes the same chest locks.
+- **Reach (build, 2026-11-24).** The note says "the same reach rule as the host's own Use". The host's Use is
+  the faced tile, and the host does not know a guest's facing in time, so the reading is: the guest's last
+  reported tile is within 2 tiles (`REACH_TILES`) of the service tile on the same map, which allows a step of
+  lag. A camp chest checks the floor's map only, because the floor's layout is made in the scene, not in core.
+  The gate is on only when the world is given a `where` function (a real host session passes the Room's
+  positions; the unit tests that call `apply` without one are unchanged).
+- **Locks free** when the holder closes the screen, opens another, leaves, or drops (`Room.disconnect` calls
+  `playerDropped`, which releases). The refusal reads "Someone is using this chest." The host's own chest screen
+  takes the same lock, so a guest in a chest locks the host out and the other way round.
+- **Shared stock (rule 5).** The counters' one-off stock is a world flag in the host's state (the hermit's
+  elderfruit, a market line's `once`, the Homeward pin), and every buy runs on the host, so once one player has
+  it, it is gone for all. Nothing in the market stock is limited at the moment (no line has `once`), so the
+  hermit's elderfruit is the live case, and it is tested with two guests.
+- **Sell and bin credit.** A guest's `sell` pays the sender's wallet (their own purse, or the shared one when
+  money is shared). `ship` and `take-back` are the existing note 53 behaviour: the bin line records its shipper
+  and the night pays the shipper's wallet.
+- **Host through the Room (build, 2026-11-24).** In a hosted game, the host's own chest moves and its bin ship
+  and take-back go through `Room.hostIntent`, so they reach every guest's copy as `applied`. Before this the host's
+  bin lines never reached a guest's copy, which also threw off a guest's `take-back` index. The host's shop and
+  market buys still change the host's state directly (a guest's copy of the host's purse is only refreshed at
+  night, harmless because the host judges everything).
+- **Guest's screen.** A guest's Action on one of these tiles sends `open` and waits for the host's answer
+  (`GuestSession.ask`); the screen appears on yes and the farm shows the reason on no. A refusal while the screen
+  is up shows in the screen. The chest screen redraws when another player's `applied` arrives.
+- **Left for later.** The shop hours (`counterShutLine`) are checked in the guest's scene, not by the host. The
+  backpack upgrade row stays host only ("Only the host can do that for now."). The chest colour bar on a guest's
+  screen does not repaint its highlight until the screen is reopened. Mine floors for guests (note 53, design
+  item 2) are still open, so the camp chest action exists but a guest cannot yet reach a floor.
+
+## Group 2 as built (build, 2026-11-24)
+
+Code: the new intents are in `src/core/screenintents.ts` (`craft`, `cook`, `smelt`, `furnace-take`, and
+`screenNeed`, which says which screen an intent needs) and `src/core/roomintents.ts` (`machine-load`,
+`machine-collect`); screen kinds `crafting`, `cooking` and `furnace` in `src/core/screens.ts`; the machine reach
+check in `GameRoomWorld` (`machineGate`). The three scenes use `dispatch`, `followGuest` and `closeWhenDone`.
+Tests: the "making" block of `tests/screens.test.ts` and the group 2 test in `tests/screens-socket.test.ts`.
+
+- **Screens.** `crafting` opens from a workbench (a furniture piece on a house tile), `cooking` from the stove,
+  `furnace` from the furnace. `cook`, `smelt` and `furnace-take` need their screen open (same gate as group 1:
+  open, in reach, the screen you opened). A `craft` with a `bench` needs the workbench open and then draws on the
+  chests beside it (the chests are read from the opened tile, not from the intent). A `craft` with no `bench` is
+  the pause menu's crafting, from the sender's pack alone, and needs no screen. The Craft tab is no longer
+  hidden from a guest's menu.
+- **Who gets what.** Every action runs as the sender (`asPlayer`): ingredients leave the sender's pack, dishes
+  and bars go to the sender's pack, recipes known are the sender's. The furnace is one shared machine, so anyone
+  may load it and whoever takes the bar gets it (rule 4).
+- **Locks.** Only the furnace locks (rule 2, "a machine's menu"): "Someone is using the furnace." The host takes
+  the same lock when it opens the furnace. The stove and the workbench do not lock: they hold nothing between
+  uses. A workbench draws on the chests beside it without asking whether another player has one of them open.
+- **Machines on the farm (kegs, jars, bee houses, bins and the rest).** They have no menu, so no screen and no
+  lock. A guest's Use with a held good on a machine sends `machine-load {x, y, item}`, which runs the host's
+  `resolveUse` as the sender. A guest's Action sends `machine-collect {x, y}`, which runs `resolveAction` as the
+  sender, and only for a finished batch (a working machine answers "machine busy", it is never lifted by this
+  action). Both must come from within 2 tiles of the machine (the same reach as screens). Whoever collects gets
+  the goods and any experience.
+- **Fridge (build, 2026-11-24).** Rule 10 and the build order name the kitchen's fridge, but the game has no
+  fridge yet (no item, furniture or save field), so cooking draws on the sender's pack only, as the host's does.
+  The fridge, its lock and cooking from it come with whichever note adds a fridge. A guest's own cabin kitchen
+  also waits for cabins to have one (design item 3).
+- **Casks and the cave dehydrator** (cellar and cave maps) are not reached: guests are on the farm map for
+  world intents (design item 2). They are the same kind of change when that opens.
+
+## Group 3 as built (build, 2026-11-24)
+
+Code: the new intents are in `src/core/screenintents.ts` (`keeper-buy`, the bench intents `bench-feed`, `bench-fill`,
+`bench-heater`, `bench-egg`, `animal-pet`, `animal-take`, `animal-out`, `animal-in`, `animal-name`, and `pond-empty`)
+and `src/core/roomintents.ts` (`pond-use`); screen kinds `keeper`, `coop-bench`, `barn-bench` and `pond` in
+`src/core/screens.ts`; `pondStep` in `src/core/pond.ts`. `KeeperScene`, `CoopScene` (and `BarnScene`) and `PondScene` use
+`dispatch`, `followGuest` and `closeWhenDone`. Tests: the "animals and ponds" block of `tests/screens.test.ts` and the
+group 3 test in `tests/screens-socket.test.ts`.
+
+- **Screens.** `keeper` opens from the keeper's counter on the Forest farmstead, `coop-bench` and `barn-bench` from the
+  feeding benches, `pond` from a pond. Every intent above needs its screen open (same gate as groups 1 and 2: open, in
+  reach, the screen you opened). A bench intent names its `building` and must match the bench opened; an `animal-*` intent
+  must name an animal that lives in that building.
+- **Who pays, where it goes.** All run as the sender (`asPlayer`). The keeper's `keeper-buy {what}` takes `animal`
+  (species and a name), `hay`, `heater` or `decor`: the sender's purse pays, hay, heaters and decor go to the sender's pack,
+  and a bought animal goes to the shared coop or barn (it has no owner). Feeding takes the silo's hay first, then the
+  feeder's own pack (the host's rule); the hopper takes the sender's hay. Products and eggs go to the sender's pack, and a
+  full pack keeps them in the animal. Petting is once a day per animal for the whole world (rule 6); there is no experience
+  to give for it in the game today.
+- **Locks.** Only the pond locks (rule 2, "a pond's menu"): "Someone is using the pond." The host takes the same lock when it
+  opens a pond menu. The keeper and the benches hold nothing between uses and do not lock.
+- **Pond reach (build, 2026-11-24).** A pond's ref is its top left tile, and the reach is measured to the nearest tile of its
+  footprint (5 by 5), so standing at any edge works.
+- **Use and Action on a pond.** A guest's Action on a pond asks the host's Action rule (`resolveAction`, as the sender) when
+  it would do something: the quest item goes in, a waiting product comes out, a held fish goes in (`pond-use {x, y, item?}`,
+  within 2 tiles). The guest's scene decides with `pondStep`, which changes nothing; when it would only show the menu, the
+  guest asks to open the pond menu. Empty is `pond-empty {pond}`. The rod taking a fish out and the Use press stay host only.
+- **Host through the Room.** The host's keeper, bench and pond screens go through `dispatch`, so a hosted game's changes
+  reach every guest's copy as `applied` (as for chests in group 1). The host's own Action on a pond with a held item (put a fish in, take
+  a product) is still a direct change, as before.
+- **No animal selling (build, 2026-11-24).** Rule 6 says anyone may sell animals, but selling animals is not in the game
+  (note 23 left it out), so there is nothing to build. It comes with whichever note adds it.
+- **Left for later.** The guest's pause menu "Animals" tab is still hidden (read only rows in the menu are not part of this
+  group). A guest's own cabin has no animals. The stable bench and the horse are not screens yet.
+
+## Group 4 as built (build, 2026-11-24)
+
+Code: the new intents are in `src/core/screenintents.ts` (`bundle-give`, `bundle-hat`, `order-take`, `order-drop`,
+`order-collect`, `request-accept`, `request-turnin`, `request-cancel`, all through `applyHallIntent`); screen kinds
+`hall`, `orders` and `requests` in `src/core/screens.ts` (a hall ref carries `room`, the scroll's service id);
+`Players.payEveryone` in `src/core/players.ts`; `acceptLine` and the per-player `owed` in `src/core/orders.ts`.
+`HallScene`, `OrdersScene` and `RequestsScene` use `dispatch`, `followGuest` and `closeWhenDone`, and a guest's Action
+on a scroll or a board asks the host to open it. Tests: the "hall" block of `tests/screens.test.ts` and the group 4
+test in `tests/screens-socket.test.ts`.
+
+- **Screens.** `hall` opens from a room's scroll on the hall map, `orders` and `requests` from the boards in
+  Hearthwell. None locks (they hold nothing between uses). Every intent above needs its screen open (same gate as the
+  earlier groups: open, in reach, the screen you opened). A `bundle-*` intent names its `room` and the bundle must be
+  written for that room.
+- **Bundles (rule 3).** `bundle-give {room, bundle, item}` runs the hall's own `handIn` as the sender: the good leaves the
+  sender's pack, and when it fills the bundle the item reward goes to the sender's pack and the gold to the sender's
+  wallet (their purse, or the shared one). Anyone may hand in any good; the bundle's slots are one shared state in the
+  host's hall, so a second player cannot hand in a slot already filled. A room that is not open refuses ("That room is not
+  open yet."). What a finished room opens (areas, the bridge, the carts, the herb stall, the Guests' Board friendship
+  bonus) is read from the shared hall, so it is everyone's, and the bonus is paid once on the host's state.
+- **Hats (build, 2026-11-24).** `bundle-hat {room, bundle, hat}` takes one hat of a finished bundle's set. The wardrobe is
+  not per player yet (note 53, "Look and name"), so the hat goes into the one wardrobe and any player may take a pick,
+  not only the finisher. Rule 3 gives hats to the finisher, so this follows when the wardrobe is per player.
+- **Orders.** One shared board (note 53, 2026-11-18): any player takes (`order-take`, still one a week for the whole
+  board), drops (`order-drop`) or collects (`order-collect`). A hand-in order's chest is a world chest and follows the
+  chest lock. At night a filled order pays every player: its gold goes into each wallet (once into the pool when shared),
+  and its first-time reward item is owed to each player by name (`owed[].to`, left off in single player), collected by
+  that player at the board. The Fall 2 intro scene (`orders.opened`) is the host's; a guest's copy learns it at the next
+  full snapshot.
+- **Request board.** One shared board. Any player accepts (`request-accept`), hands in (`request-turnin`) or cancels
+  (`request-cancel`). A delivery's goods come from the handing-in player's pack, and the gold pays that player's wallet
+  and every other player's (`Players.payEveryone`), so with a shared wallet it is paid once. A gathering's counter is the
+  world's. The "Open requests" list opened from the hat box stays host only.
+- **Host through the Room.** The host's own bundle, order and request actions go through `dispatch`, so a hosted game's
+  changes reach every guest's copy as `applied`.
+- **Left for later.** The achievements counted by `quests.completed` are one world count, not per player. The hat box is
+  not a guest screen. Order progress for hand-in orders still counts what the chest holds, whoever put it there.
+
+## Group 5 as built (build, 2026-11-24)
+
+Code: `src/core/restintents.ts` (all the intents below, applied from `applyScreenIntent`), `src/core/buildrule.ts` (owners,
+the setting, the loader for the per-guest save fields), `shrineAct` and `shrineStep` in `src/core/shrine.ts`; screen kinds
+`carpenter`, `tailor`, `smith`, `smithy`, `gallery` and `shrine` in `src/core/screens.ts`. The scenes use `dispatch`,
+`followGuest` and `closeWhenDone`; the placement screen sends the order or move. Tests: the "the rest" block of
+`tests/screens.test.ts` and the group 5 test in `tests/screens-socket.test.ts`.
+
+- **Carpenter (rules 7 to 9).** `carp-build`, `carp-upgrade`, `carp-silo`, `carp-pond`, `carp-furniture`, `carp-decor` and
+  `carp-catalogue` are anyone's, paid from the sender's purse and pack. A new building records `buildOwners[key]` (`coop`,
+  `barn`, `stable`, `silo`, `pond:x,y`); none recorded means the host. The carpenter has one job at a time for the whole
+  farm, as before. Upgrading a building's tier (`carp-upgrade`) is anyone's too (build, 2026-11-24: rule 7 says anyone
+  orders buildings and rule 9 names only moving and removing).
+- **Homes (rule 8).** `carp-house` and `carp-reno` are the occupant's: only the host, since guests' cabins have no tiers,
+  interior or build yet. A guest is told "A home is upgraded only by the one who lives in it. A cabin cannot be upgraded
+  yet." The build-night rule (a night counts when the occupant sleeps on the farm) needs a guest's home to build, so it
+  waits for design item 3; the host's farmhouse always counts.
+- **Moving and removing (rule 9).** `carp-move` and `carp-remove` follow the host's `buildRule`: `off`, `own` (default) or
+  `all`. The host always may. The setting is a button on the host's Social tab above the players
+  ("Guests moving buildings: own only"), sent as `build-rule`, which a guest cannot send ("host only"). It is saved with the
+  farm. The greenhouse can be moved and belongs to the host.
+- **Tailor.** `tailor-sew`, `tailor-boots` (the sewing machine) and `tailor-dye`, `tailor-undye` (the pots; the piece is
+  named in `piece`) need the matching screen (`stock` is `sew` or `dye`). Goods come from the sender's pack. The wardrobe is not
+  per player yet (note 53), so a sewn piece and a dye go to the one wardrobe, as the hat box does.
+- **Smith and smithy.** `smith-buy` (ore at both smiths; weapons, boots and bombs at the dwarf), `smith-sell` (ore),
+  `smith-copper`, `smith-ring` (combine, split) are the dwarf's; `smithy-crack`, `smithy-tool` and `smithy-collect` are the
+  smithy's. Everything uses the sender's pack and purse. A tool left at the smithy is the sender's: the host's is
+  `toolOrder`, each guest's is `toolOrdersBy[id]`, so every player may have one tool there (the one-at-a-time line is per
+  player). What a geode holds is drawn from the day, the pack and the purse, so every copy agrees.
+- **Gallery.** `gallery-donate`, `gallery-place`, `gallery-claim`. The shelf is the farm's; a donation leaves the sender's
+  pack. Collected rewards are per player (`galleryClaimed` for the host, `galleryClaimedBy[id]` for guests). The read only
+  shelf from the Collect tab is not a counter and opens nothing.
+- **Shrine.** One shared score. A guest's Action reads the note from their own copy; a Diamond or the open statue is
+  `shrine-act {diamond?}`, taken from the sender's pack and judged at the stone. The statue's ore is drawn from the day.
+  After a Diamond the guest sees the same relit candles screen.
+- **No locks.** None of these screens holds anything between uses.
+- **Still host only (build, 2026-11-24).** The note keeps the hat box and the open-requests list host only, and the backpack
+  upgrade row. Also refused, because their state is one world record with no per player design yet: the trainer and the wall
+  list (combat, kills and lost goods are one record; mines for guests are design item 2), the Hearth cart (travel is design
+  item 2), the mailbox, the hat box and equipment screen (the wardrobe and worn gear are not per player), and the events and
+  host moments (heart events, festivals, the profession choice, the cave choice, the Greencoat, the lift, the first shrine
+  scene, the ending, the debug screen).
+- **Left for later.** The host's own shrine Action and statue use are still direct changes, so a guest's copy learns the
+  statue was used on a refused try. A sewn piece or dye changes the one wardrobe the host also wears.
 
 ## Open (later items, not this note)
 

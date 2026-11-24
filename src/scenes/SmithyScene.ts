@@ -1,12 +1,11 @@
 import Phaser from "phaser";
 import { itemById } from "../core/items";
 import type { GameState } from "../core/save";
-import { crackGeode, CRACK_FEE, GEODE_KINDS } from "../core/geodes";
+import { CRACK_FEE, GEODE_KINDS } from "../core/geodes";
 import {
-  collectUpgrade,
   orderProblem,
+  orderOf,
   orderReady,
-  orderUpgrade,
   TIER_NAMES,
   UPGRADABLE,
   UPGRADE_BARS,
@@ -16,6 +15,8 @@ import {
 import { oreRows } from "./ore-rows";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
+import type { Intent } from "../core/protocol";
+import { closeWhenDone, dispatch, followGuest } from "./guestlive";
 
 /**
  * The Hearthwell smithy counter (notes 44, 69 and 77): tool upgrades, geode
@@ -64,12 +65,25 @@ export class SmithyScene extends Phaser.Scene {
     kb?.on("keydown-ENTER", () => this.menu.press(0));
     kb?.on("keydown-SPACE", () => this.menu.press(1));
     this.menu.setFocus(true);
+    followGuest(
+      this,
+      () => this.refresh(),
+      (text) => this.message.setText(text),
+    );
+    closeWhenDone(this);
     this.refresh();
   }
 
   private say(text: string): void {
     this.message.setText(text);
     this.refresh();
+  }
+
+  /** Send an action through the dispatcher (note 108 group 5). `done` is the line when it worked; a guest's answer comes later. */
+  private act(intent: Intent, done: string): void {
+    const why = dispatch(this.state, intent);
+    if (why === "sent") return;
+    this.say(why ?? done);
   }
 
   private refresh(): void {
@@ -86,16 +100,11 @@ export class SmithyScene extends Phaser.Scene {
         buttons: [
           {
             text: "Crack",
-            run: () => {
-              const r = crackGeode(g, Math.random, kind);
-              this.say(
-                r.ok
-                  ? `It splits open: ${r.count} ${itemById(r.item ?? "")?.name.toLowerCase()}.`
-                  : r.reason === "backpack full"
-                    ? "Your backpack is full."
-                    : "Not enough money.",
-              );
-            },
+            run: () =>
+              this.act(
+                { kind: "smithy-crack", geode: kind },
+                `It splits open: ${def.name.toLowerCase()} cracked.`,
+              ),
           },
         ],
       });
@@ -108,7 +117,7 @@ export class SmithyScene extends Phaser.Scene {
         buttons: [],
       });
     rows.push(...this.toolRows());
-    rows.push(...oreRows(g, (text) => this.say(text)));
+    rows.push(...oreRows(g, (i, done) => this.act(i, done)));
     this.menu.setRows(rows);
   }
 
@@ -121,7 +130,7 @@ export class SmithyScene extends Phaser.Scene {
       pickaxe: "Pickaxe",
       axe: "Axe",
     };
-    const order = g.toolOrder;
+    const order = orderOf(g);
     const rows: Row[] = [];
     if (order && orderReady(g))
       rows.push({
@@ -130,14 +139,11 @@ export class SmithyScene extends Phaser.Scene {
         buttons: [
           {
             text: "Collect",
-            run: () => {
-              const tool = collectUpgrade(g);
-              this.say(
-                tool
-                  ? `Your ${names[tool].toLowerCase()} is now ${TIER_NAMES[g.toolTiers[tool]]?.toLowerCase()}.`
-                  : "Nothing to collect.",
-              );
-            },
+            run: () =>
+              this.act(
+                { kind: "smithy-collect" },
+                `Your ${names[order.tool].toLowerCase()} is now ${TIER_NAMES[order.tier]?.toLowerCase()}.`,
+              ),
           },
         ],
       });
@@ -165,9 +171,9 @@ export class SmithyScene extends Phaser.Scene {
           {
             text: "Hand over",
             run: () =>
-              this.say(
-                orderUpgrade(g, tool) ??
-                  `It will be ready in two days (day ${g.toolOrder?.readyDay}).`,
+              this.act(
+                { kind: "smithy-tool", tool },
+                "It will be ready in two days.",
               ),
           },
         ],

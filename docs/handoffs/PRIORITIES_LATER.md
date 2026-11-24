@@ -46,8 +46,8 @@ Done, owner checked (2026-11-11): step 1 farm (note 55, #776), step 2 festival s
 ## Leftovers and housekeeping
 
 - Slice 1 leftovers: #522 closed 2026-11-12 (art item moved to #335). Bundles: #181 (note 63; #201 closed).
-- Refactor proposal #904 (FarmScene split, rules into core, shared helpers): settle in a
-  short note before moving code. Repo hygiene pass done 2026-11-13 (handoff 2026-11-13).
+- #904 item 4 (note 106, decided 2026-11-24): content tables to JSON (M3d), bundle code splitting,
+  linting `scripts/`, unused exports. Items 1 to 3 built 2026-11-24. Repo hygiene pass done 2026-11-13.
 - Art polish pass done 2026-11-12 ahead of M3d (handoff 2026-11-12q); look with
   `node scripts/playtest/artsheet.mjs`.
 - Tablet follow-ups (#523; #336 closed), notes 45 and 60 open items, barn stall wing, note 54 answer

@@ -8,23 +8,17 @@ import {
   type Species,
   animalProblem,
   animalsIn,
-  buyAnimal,
-  buyHay,
-  buyHeater,
   capacityOf,
   defaultName,
   isBuilt,
   speciesOf,
   tierOf,
 } from "../core/animals";
-import {
-  buyFarmDecor,
-  farmDecorForSale,
-  farmDecorProblem,
-} from "../core/farmdecor";
+import { farmDecorForSale, farmDecorProblem } from "../core/farmdecor";
 import { COOP_HEATER, HEATER_PRICE, itemById } from "../core/items";
 import { placeableById } from "../core/placeables";
 import { keeperAdvice } from "../core/forestfolk";
+import { closeWhenDone, dispatch, followGuest } from "./guestlive";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
@@ -69,6 +63,13 @@ export class KeeperScene extends Phaser.Scene {
     kb?.on("keydown-DOWN", () => this.menu.move(1));
     kb?.on("keydown-ENTER", () => this.menu.press(0));
     kb?.on("keydown-ESC", () => this.close());
+    // A guest's buys are sent to the host; the counter redraws when its answer arrives (note 108 group 3).
+    followGuest(
+      this,
+      () => this.refresh(),
+      (text) => this.message.setText(text),
+    );
+    closeWhenDone(this);
     this.refresh();
   }
 
@@ -119,45 +120,43 @@ export class KeeperScene extends Phaser.Scene {
     this.menu.setRows(rows);
   }
 
-  private buyDecor(id: string): void {
-    this.message.setText(
-      buyFarmDecor(this.state, id) ?? "He wraps it up. It is in your pack.",
-    );
+  /** Send a buy through the dispatcher. `done` is the line for a bought item; a guest's answer comes later. */
+  private buy(intent: Record<string, unknown>, done: string): void {
+    const why = dispatch(this.state, { kind: "keeper-buy", ...intent });
+    if (why === "sent") return;
+    this.message.setText(why ?? done);
     this.refresh();
   }
 
+  private buyDecor(id: string): void {
+    this.buy({ what: "decor", id }, "He wraps it up. It is in your pack.");
+  }
+
   private buyHeater(): void {
-    this.message.setText(
-      buyHeater(this.state) ?? "He wraps a heater for you. It is in your pack.",
+    this.buy(
+      { what: "heater" },
+      "He wraps a heater for you. It is in your pack.",
     );
-    this.refresh();
   }
 
   private buyAnimal(species: Species): void {
     const problem = animalProblem(this.state, species);
-    if (problem !== undefined) this.message.setText(problem);
-    else {
-      const asked = window.prompt?.(
-        `Name your new ${SPECIES[species].name.toLowerCase()}`,
-        defaultName(this.state),
-      );
-      const a = buyAnimal(this.state, species, asked ?? "");
-      if (a)
-        this.message.setText(
-          `${a.name} is in the ${BUILDINGS[SPECIES[species].building].noun}. It needs no hay on the first day.`,
-        );
+    if (problem !== undefined) {
+      this.message.setText(problem);
+      return this.refresh();
     }
-    this.refresh();
+    const asked = window.prompt?.(
+      `Name your new ${SPECIES[species].name.toLowerCase()}`,
+      defaultName(this.state),
+    );
+    this.buy(
+      { what: "animal", species, name: asked ?? "" },
+      `${asked || defaultName(this.state)} is in the ${BUILDINGS[SPECIES[species].building].noun}. It needs no hay on the first day.`,
+    );
   }
 
   private buyHay(): void {
-    const n = buyHay(this.state, 10);
-    this.message.setText(
-      n > 0
-        ? `Bought ${n} hay. It is in your pack.`
-        : "Your pack is full, or you do not have the money.",
-    );
-    this.refresh();
+    this.buy({ what: "hay", n: 10 }, "Bought 10 hay. It is in your pack.");
   }
 
   private close(): void {

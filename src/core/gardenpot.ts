@@ -17,6 +17,7 @@ import { mayPlaceOn, placeTag } from "./placeables";
 import type { PlacedItem } from "./placedstore";
 import type { GameState } from "./save";
 import { TEA_SAPLING, TeaBushes, type PlacedTeaBush } from "./teabush";
+import { tileKey } from "./tilekey";
 
 /**
  * The garden pot (`docs/design/97_tea_bush.md`, "Garden pots"). A crafted pot
@@ -129,7 +130,7 @@ function withSoil<T>(
   const plot =
     stateOf(p).plot ??
     (dig ? { tilled: true, wateredToday: false } : undefined);
-  if (plot) soil.load({ [`${p.x},${p.y}`]: structuredClone(plot) });
+  if (plot) soil.load({ [tileKey(p.x, p.y)]: structuredClone(plot) });
   const out = run(soil);
   const next = soil.plotAt(p.x, p.y);
   const state = { ...stateOf(p) };
@@ -266,7 +267,7 @@ export function growPots(
       const st = stateOf(p);
       if (st.plot) {
         const soil = new Farm(indoors);
-        soil.load({ [`${p.x},${p.y}`]: st.plot });
+        soil.load({ [tileKey(p.x, p.y)]: st.plot });
         soil.endDay(season, growth, random, seasonChanged);
         st.plot = structuredClone(soil.plotAt(p.x, p.y)!);
       }

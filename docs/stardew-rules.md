@@ -16,6 +16,10 @@ checks row, or using the saved wiki pages or the Guidebook.
   `docs/reference/stardew/urls_<topic>.txt`; the owner saves each page there by hand.
   Read the saved files, then delete the list. Reference only, never copied into the repo
   (ADR 0002).
+- Other sources (owner, 2026-11-24): only the official wiki (stardewvalleywiki.com) is off limits.
+  Fan guides, forums, Steam threads and the fandom wiki (stardewvalley.fandom.com, old and thin) may be
+  searched or opened in Chrome, as long as the site does not block it. Say in the checks row that the
+  answer is from a fan source, and name it.
 - Stardew Valley Guidebook: the owner's PDF in `docs/reference/stardew/` is the free
   supplement only; the wiki stays the main source. Read on demand with
   `pdftotext -layout -f <page> -l <page>`, check table numbers against the page image,

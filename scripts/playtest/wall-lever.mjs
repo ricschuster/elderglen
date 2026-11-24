@@ -1,7 +1,8 @@
 // The slayer wall list (note 22, Maren's `wall-list` tile in the mine hall) and the floor 120 dangerous
 // mode lever, headless, as text. Part 1 opens the list in the mine hall, reads the rows, claims a ready
 // goal and buys a reward again in the shop, then closes it. Part 2 stands on floor 120 (stage `mines-120`),
-// flips the lever on, checks floors made afterwards are dangerous, flips it off and checks the next floor is not.
+// flips the lever (it takes effect the next day, note 109 rule 9): pending only today, flipping back cancels,
+// and after the day ends the mine is dangerous.
 // Run: npm run dev, then `BASE_URL=http://localhost:5173/ node scripts/playtest/wall-lever.mjs`. About 30 seconds.
 // Exit code 1 when a check fails.
 import { launch, Bot, log, sleepMs } from "./lib.mjs";
@@ -174,40 +175,66 @@ const flip = async () => {
 };
 const m1 = await flip();
 log("message:", m1);
-ok(/Dangerous mode is on/.test(m1), "first pull turns dangerous mode on");
-const onNow = await w.p.evaluate(
-  () => window.__game.registry.get("state").mines.dangerous,
+ok(
+  /From tomorrow, the mine is dangerous/.test(m1),
+  "first pull says the mine changes tomorrow",
 );
-ok(onNow === true, "mines.dangerous is true");
-// Floors made now are dangerous: a deeper visit on a fresh state (floor 119 not dug today yet).
+const st = () =>
+  w.p.evaluate(() => {
+    const s = window.__game.registry.get("state");
+    return {
+      today: s.mines.dangerous,
+      tomorrow: s.mines.dangerousTomorrow,
+      day: s.day.clock.day,
+    };
+  });
+const s1 = await st();
+ok(
+  s1.today === false && s1.tomorrow === true,
+  `flip is pending only ${JSON.stringify(s1)}`,
+);
+// A floor made today, after the flip, is still calm.
 const made = await w.p.evaluate(() => {
   const s = window.__game.registry.get("state");
-  const day = s.day.clock.day;
-  const f = s.mines.visit(110, day);
-  return { dangerous: f.dangerous === true };
+  return s.mines.visit(110, s.day.clock.day).dangerous === true;
 });
-ok(made.dangerous, "a floor made while the mode is on is dangerous");
+ok(made === false, "a floor made after the flip is not dangerous today");
+// Flipping back before the day ends cancels the flip.
 const m2 = await flip();
 log("message:", m2);
-ok(/Dangerous mode is off/.test(m2), "second pull turns it off");
-const made2 = await w.p.evaluate(() => {
+ok(
+  /From tomorrow, the mine is calm/.test(m2),
+  "second pull says calm tomorrow",
+);
+const s2 = await st();
+ok(
+  s2.today === false && s2.tomorrow === false,
+  `second pull cancels ${JSON.stringify(s2)}`,
+);
+// Flip again and let the day end through the game's own sleep rules.
+await flip();
+const s3 = await st();
+ok(s3.tomorrow === true, "flipped on again");
+const slept = await w.p.evaluate(async () => {
+  const sl = await import("/src/core/sleep.ts");
   const s = window.__game.registry.get("state");
-  const day = s.day.clock.day;
-  const f = s.mines.visit(111, day);
+  sl.sleep(s, [], Math.random, undefined, true);
   return {
-    dangerous: f.dangerous === true,
-    mode: s.mines.dangerous,
-    old: s.mines.visit(110, day).dangerous === true,
+    today: s.mines.dangerous,
+    tomorrow: s.mines.dangerousTomorrow,
+    day: s.day.clock.day,
   };
 });
+log("after sleep", JSON.stringify(slept));
 ok(
-  made2.mode === false && !made2.dangerous,
-  "a floor made after flipping back is not dangerous",
+  slept.today === true && slept.tomorrow === true,
+  "after the day ends the mine is dangerous",
 );
-ok(
-  made2.old,
-  "a floor dug while on keeps its mode until tomorrow (the decided timing)",
-);
+const next = await w.p.evaluate(() => {
+  const s = window.__game.registry.get("state");
+  return s.mines.visit(111, s.day.clock.day).dangerous === true;
+});
+ok(next, "a floor made the next day is dangerous");
 ok(
   w.errs.length === 0,
   `no console errors ${JSON.stringify(w.errs).slice(0, 300)}`,

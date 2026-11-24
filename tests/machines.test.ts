@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ARTISAN_GOODS, categoryOf } from "../src/core/artisan";
-import { Hall, normalizeBundle, ROOMS } from "../src/core/bundles";
+import { Hall, normalizeBundle, HALL_ROOMS } from "../src/core/bundles";
 import { craft, knownRecipes } from "../src/core/crafting";
 import { COAL, COAL_PER_BAR, ORE_PER_BAR, ORES } from "../src/core/ore";
 import { itemById } from "../src/core/items";
@@ -315,7 +315,7 @@ describe("machine recipes and bundles", () => {
 
   it("a finished bundle gives its machine and the recipe", () => {
     const g = newGame();
-    g.hall = new Hall(bundles, {}, ROOMS);
+    g.hall = new Hall(bundles, {}, HALL_ROOMS);
     g.inventory.add("wood", 2);
     expect(g.hall.handIn(g.inventory, g, "woodland", "wood")).toBe("accepted");
     expect(knownRecipes(g).map((r) => r.id)).not.toContain("charcoal-kiln");
@@ -326,7 +326,7 @@ describe("machine recipes and bundles", () => {
 
   it("any jam, wine or pickles fills the artisan bundle", () => {
     const g = newGame();
-    g.hall = new Hall(bundles, {}, ROOMS);
+    g.hall = new Hall(bundles, {}, HALL_ROOMS);
     g.inventory.add("melon-jam");
     g.inventory.add("parsnip-pickles");
     g.inventory.add("grape-wine@gold");

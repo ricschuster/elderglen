@@ -1,8 +1,7 @@
 import Phaser from "phaser";
 import type { GameState } from "../core/save";
 import { COPPER_ORE } from "../core/ore";
-import { handOverCopper } from "../core/smith";
-import { buyBoots, buyWeapon, FORGED, weaponPrice } from "../core/combat";
+import { FORGED, weaponPrice } from "../core/combat";
 import {
   LIFE_ELIXIR,
   MINERS_TREAT,
@@ -13,17 +12,13 @@ import {
 import { BOMBS } from "../core/bombs";
 import { buy } from "../core/shop";
 import { BOOTS } from "../core/equipment";
-import {
-  COMBINE_COST,
-  combineRings,
-  packRings,
-  unforgeRing,
-  UNFORGE_RETURN,
-} from "../core/forge";
+import { COMBINE_COST, packRings, UNFORGE_RETURN } from "../core/forge";
 import { ringById } from "../core/equipment";
 import { oreRows } from "./ore-rows";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
+import type { Intent } from "../core/protocol";
+import { closeWhenDone, dispatch, followGuest } from "./guestlive";
 
 /**
  * The smith dwarf's counter in the forge hut (notes 22 and 74): she sells and
@@ -72,6 +67,12 @@ export class SmithScene extends Phaser.Scene {
     kb?.on("keydown-ENTER", () => this.menu.press(0));
     kb?.on("keydown-SPACE", () => this.menu.press(1));
     this.menu.setFocus(true);
+    followGuest(
+      this,
+      () => this.refresh(),
+      (text) => this.message.setText(text),
+    );
+    closeWhenDone(this);
     this.refresh();
   }
 
@@ -80,11 +81,18 @@ export class SmithScene extends Phaser.Scene {
     this.refresh();
   }
 
+  /** Send an action through the dispatcher (note 108 group 5). `done` is the line when it worked; a guest's answer comes later. */
+  private act(intent: Intent, done: string): void {
+    const why = dispatch(this.state, intent);
+    if (why === "sent") return;
+    this.say(why ?? done);
+  }
+
   private refresh(): void {
     const g = this.state;
     this.money.setText(`Money ${g.money}g`);
     // She sells ore and coal and buys raw ore for coin (note 74).
-    const rows: Row[] = oreRows(g, (text) => this.say(text));
+    const rows: Row[] = oreRows(g, (i, done) => this.act(i, done));
     if (!g.mines.copperHandedIn)
       rows.push({
         label: "Show her a copper ore",
@@ -94,10 +102,9 @@ export class SmithScene extends Phaser.Scene {
           {
             text: "Hand over",
             run: () =>
-              this.say(
-                handOverCopper(g)
-                  ? "She turns it over and grins. Look by your house tomorrow."
-                  : "You have no copper ore.",
+              this.act(
+                { kind: "smith-copper" },
+                "She turns it over and grins. Look by your house tomorrow.",
               ),
           },
         ],
@@ -124,9 +131,9 @@ export class SmithScene extends Phaser.Scene {
           {
             text: "Buy",
             run: () =>
-              this.say(
-                buyWeapon(g, w.id) ??
-                  `She hands you a ${w.name.toLowerCase()}.`,
+              this.act(
+                { kind: "smith-buy", what: "weapon", id: w.id },
+                `She hands you a ${w.name.toLowerCase()}.`,
               ),
           },
         ],
@@ -150,14 +157,11 @@ export class SmithScene extends Phaser.Scene {
           buttons: [
             {
               text: "Forge",
-              run: () => {
-                const r = combineRings(g.inventory, a, b);
-                this.say(
-                  r.ok
-                    ? `She hammers them into ${ringById(r.id)!.name.toLowerCase()}.`
-                    : r.reason,
-                );
-              },
+              run: () =>
+                this.act(
+                  { kind: "smith-ring", op: "combine", a, b },
+                  "She hammers them into one ring.",
+                ),
             },
           ],
         });
@@ -169,10 +173,11 @@ export class SmithScene extends Phaser.Scene {
         buttons: [
           {
             text: "Split",
-            run: () => {
-              const r = unforgeRing(g.inventory, id);
-              this.say(r.ok ? "She splits it in two." : r.reason);
-            },
+            run: () =>
+              this.act(
+                { kind: "smith-ring", op: "split", id },
+                "She splits it in two.",
+              ),
           },
         ],
       });
@@ -193,8 +198,9 @@ export class SmithScene extends Phaser.Scene {
         {
           text: "Buy",
           run: () =>
-            this.say(
-              buyBoots(g, b.id) ?? `She hands you ${b.name.toLowerCase()}.`,
+            this.act(
+              { kind: "smith-buy", what: "boots", id: b.id },
+              `She hands you ${b.name.toLowerCase()}.`,
             ),
         },
       ],
@@ -212,10 +218,9 @@ export class SmithScene extends Phaser.Scene {
         {
           text: "Buy",
           run: () =>
-            this.say(
-              buy(g.inventory, g, b.id)
-                ? `She hands you a ${b.name.toLowerCase()}.`
-                : "You cannot afford it, or your pack is full.",
+            this.act(
+              { kind: "smith-buy", what: "bomb", id: b.id },
+              `She hands you a ${b.name.toLowerCase()}.`,
             ),
         },
       ],

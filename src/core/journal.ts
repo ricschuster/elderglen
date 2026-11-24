@@ -1,5 +1,5 @@
 import { CATEGORY_NAMES, type ArtisanCategory } from "./artisan";
-import { rewardText, ROOMS } from "./bundles";
+import { rewardText, HALL_ROOMS } from "./bundles";
 import { dateOf } from "./calendar";
 import { weddingMark } from "./courtship";
 import { itemById } from "./items";
@@ -123,7 +123,7 @@ const goodName = (id: string): string =>
 export function projectLines(g: GameState): string[] {
   const { hall } = g;
   const lines: string[] = [];
-  for (const room of ROOMS) {
+  for (const room of HALL_ROOMS) {
     const status = hall.roomStatus(room.id);
     if (status !== "ready" && status !== "done") continue;
     lines.push(`${room.name}${status === "done" ? " (done)" : ""}`);

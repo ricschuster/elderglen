@@ -10,7 +10,7 @@ import {
   type QuestEntry,
 } from "../src/core/journal";
 import { newGame } from "../src/core/save";
-import { ROOMS } from "../src/core/bundles";
+import { HALL_ROOMS } from "../src/core/bundles";
 
 describe("journal", () => {
   it("says so when there are no requests or letters", () => {
@@ -34,7 +34,7 @@ describe("journal", () => {
   it("lists the open room's bundles and what they still need", () => {
     const g = newGame();
     const lines = projectLines(g);
-    const first = ROOMS[0]!;
+    const first = HALL_ROOMS[0]!;
     expect(lines[0]).toBe(first.name);
     expect(lines.some((l) => l.includes("Still needs:"))).toBe(true);
   });

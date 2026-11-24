@@ -4,7 +4,7 @@ import {
   type RecipeSource,
 } from "./crafting";
 import { DISHES, dishById, type Dish } from "./dishes";
-import { itemById } from "./items";
+import { itemById, itemLabel } from "./items";
 import type { GameState } from "./save";
 
 /**
@@ -69,7 +69,5 @@ export function cook(g: GameState, id: string): string | undefined {
 
 /** Words for an ingredient list, such as "2 egg, 1 milk". */
 export function dishIngredientText(d: Dish): string {
-  return d.ingredients
-    .map((i) => `${i.count} ${itemById(i.item)?.name.toLowerCase() ?? i.item}`)
-    .join(", ");
+  return d.ingredients.map((i) => `${i.count} ${itemLabel(i.item)}`).join(", ");
 }

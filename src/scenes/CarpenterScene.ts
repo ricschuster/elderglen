@@ -1,11 +1,9 @@
 import Phaser from "phaser";
 import type { GameState } from "../core/save";
 import { HARDWOOD } from "../core/items";
-import { DECOR, buyDecor, decorProblem } from "../core/decor";
+import { DECOR, decorProblem } from "../core/decor";
 import {
   CATALOGUE_PRICE,
-  buyCatalogue,
-  buyFurniture,
   catalogueProblem,
   dailyStock,
   furnitureProblem,
@@ -16,10 +14,6 @@ import {
   RENOVATIONS,
   WAITING_ROOMS_LINE,
   nextUpgrade,
-  orderProblem,
-  orderRenovation,
-  orderUpgrade,
-  refundRenovation,
   renoOrderProblem,
   renoRefundProblem,
   WOOD,
@@ -30,25 +24,24 @@ import {
   IRON_BAR,
   type Building,
   buildingProblem,
-  orderSilo,
   siloProblem,
   SILO_BUILD_DAYS,
   SILO_COST,
   isBuilt,
   nextBuildingUpgrade,
-  orderBuildingUpgrade,
   upgradeProblem,
 } from "../core/animals";
 import {
   moveProblem,
   refundOf,
-  removeBuilding,
   removeProblem,
   type Placeable,
 } from "../core/placement";
 import { pondCostLine, pondOrderProblem } from "../core/pond";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
+import type { Intent } from "../core/protocol";
+import { closeWhenDone, dispatch, followGuest } from "./guestlive";
 
 /**
  * The carpenter's counter, drawn over the sawmill. Orders the next house
@@ -99,6 +92,20 @@ export class CarpenterScene extends Phaser.Scene {
       if (text) this.message.setText(text);
       this.refresh();
     });
+    // A guest's orders go to the host; the counter redraws when its answer arrives (note 108 group 5).
+    followGuest(
+      this,
+      () => this.refresh(),
+      (text) => this.message.setText(text),
+    );
+    closeWhenDone(this);
+    this.refresh();
+  }
+
+  /** Send an action through the dispatcher. `done` is the line when it worked; a guest's answer comes later. */
+  private act(intent: Intent, done: string): void {
+    const why = dispatch(this.state, intent);
+    if (why !== "sent") this.message.setText(why ?? done);
     this.refresh();
   }
 
@@ -300,19 +307,17 @@ export class CarpenterScene extends Phaser.Scene {
   }
 
   private orderReno(id: string): void {
-    const problem = renoOrderProblem(this.state, id);
-    if (problem !== undefined) this.message.setText(problem);
-    else if (orderRenovation(this.state, id))
-      this.message.setText("Done. The carpenter has finished already.");
-    this.refresh();
+    this.act(
+      { kind: "carp-reno", id },
+      "Done. The carpenter has finished already.",
+    );
   }
 
   private refundReno(id: string): void {
-    const problem = renoRefundProblem(this.state, id);
-    if (problem !== undefined) this.message.setText(problem);
-    else if (refundRenovation(this.state, id))
-      this.message.setText("The carpenter took it back and paid you in full.");
-    this.refresh();
+    this.act(
+      { kind: "carp-reno", id, refund: true },
+      "The carpenter took it back and paid you in full.",
+    );
   }
 
   /** Open the placement screen to put a new building down, or move the one that stands. */
@@ -358,9 +363,10 @@ export class CarpenterScene extends Phaser.Scene {
       this.message.setText(
         `Press Remove again to take down your ${BUILDINGS[id].noun}.`,
       );
-    } else if (removeBuilding(this.state, id)) {
+    } else {
       this.removing = undefined;
-      this.message.setText(
+      return this.act(
+        { kind: "carp-remove", building: id },
         `The ${BUILDINGS[id].noun} is down. The carpenter paid you back.`,
       );
     }
@@ -368,67 +374,45 @@ export class CarpenterScene extends Phaser.Scene {
   }
 
   private orderUpgrade(id: Building): void {
-    const problem = upgradeProblem(this.state, id);
-    if (problem !== undefined) this.message.setText(problem);
-    else if (orderBuildingUpgrade(this.state, id))
-      this.message.setText(
-        `Ordered. The carpenter starts tomorrow and takes three days. The ${BUILDINGS[id].noun} stays as it is until then.`,
-      );
-    this.refresh();
+    this.act(
+      { kind: "carp-upgrade", building: id },
+      `Ordered. The carpenter starts tomorrow and takes three days. The ${BUILDINGS[id].noun} stays as it is until then.`,
+    );
   }
 
   private orderSilo(): void {
-    const problem = siloProblem(this.state);
-    if (problem !== undefined) this.message.setText(problem);
-    else if (orderSilo(this.state))
-      this.message.setText(
-        `Ordered. The carpenter starts tomorrow and takes ${SILO_BUILD_DAYS} days.`,
-      );
-    this.refresh();
+    this.act(
+      { kind: "carp-silo" },
+      `Ordered. The carpenter starts tomorrow and takes ${SILO_BUILD_DAYS} days.`,
+    );
   }
 
   private buyCovering(id: string): void {
-    const problem = decorProblem(this.state, id);
-    if (problem !== undefined) this.message.setText(problem);
-    else if (buyDecor(this.state, id))
-      this.message.setText(
-        "Bought. Hold it in the house and press Use facing a room.",
-      );
-    this.refresh();
+    this.act(
+      { kind: "carp-decor", id },
+      "Bought. Hold it in the house and press Use facing a room.",
+    );
   }
 
   private buyCat(): void {
-    const problem = catalogueProblem(this.state);
-    if (problem !== undefined) this.message.setText(problem);
-    else if (buyCatalogue(this.state))
-      this.message.setText(
-        "Bought. Place it in the house, then press Action on it for copies.",
-      );
-    this.refresh();
+    this.act(
+      { kind: "carp-catalogue" },
+      "Bought. Place it in the house, then press Action on it for copies.",
+    );
   }
 
   private buy(id: string): void {
-    const problem = furnitureProblem(this.state, id);
-    if (problem !== undefined) this.message.setText(problem);
-    else if (buyFurniture(this.state, id))
-      this.message.setText(
-        "Bought. Hold it in the house and press Use to place it.",
-      );
-    this.refresh();
+    this.act(
+      { kind: "carp-furniture", id },
+      "Bought. Hold it in the house and press Use to place it.",
+    );
   }
 
   private order(): void {
-    const problem = orderProblem(this.state);
-    if (problem !== undefined) {
-      this.message.setText(problem);
-    } else {
-      orderUpgrade(this.state);
-      const tier2 = this.state.houseBuild?.tier === 2;
-      this.message.setText(
-        `Ordered. The carpenter starts tomorrow and takes three days.${tier2 ? ` ${WAITING_ROOMS_LINE}` : ""}`,
-      );
-    }
-    this.refresh();
+    this.act(
+      { kind: "carp-house" },
+      `Ordered. The carpenter starts tomorrow and takes three days.${this.state.houseTier === 1 ? ` ${WAITING_ROOMS_LINE}` : ""}`,
+    );
   }
 
   private close(): void {

@@ -17,10 +17,13 @@ import {
 import { replayList, type ReplayLine } from "../core/heartevents";
 import type { Taste } from "../core/friendship";
 import type { GameState } from "../core/save";
-import { currentSession } from "../net/session";
+import { currentSession, HostSession, sendWorldIntent } from "../net/session";
+import { buildRuleLabel, buildRuleOf, nextBuildRule } from "../core/buildrule";
 import { escTaken, takeEsc } from "./escape";
 import { frame } from "./panel";
 import { addPortrait } from "./portrait";
+import { PLAYER_KEY } from "./placeholder-textures";
+import { tintForSlot } from "./remoteplayers";
 import { STATE_KEY } from "./state";
 import { Tooltip } from "./tooltip";
 
@@ -126,8 +129,29 @@ export class SocialScene extends Phaser.Scene {
     this.add.text(24, 56, "Social", TITLE);
     this.rows = socialRows(g);
     const net = currentSession();
-    this.players = net ? playerRows(net.remotes(), net.localId) : [];
+    this.players = net
+      ? playerRows(net.remotes(), net.localId, {
+          book: g.playerMarriage,
+        })
+      : [];
     this.kids = childRows(g);
+    // The host's setting for guests moving and taking down buildings (note 108 rule 9), on the players list.
+    if (net instanceof HostSession) {
+      const label = this.add
+        .text(BAR_X - 24, 62, buildRuleLabel(buildRuleOf(g)), {
+          fontSize: "16px",
+          color: "#ffe9a0",
+          backgroundColor: "#00000066",
+          padding: { x: 8, y: 4 },
+        })
+        .setOrigin(1, 0)
+        .setInteractive({ useHandCursor: true });
+      label.on("pointerdown", () => {
+        const rule = nextBuildRule(buildRuleOf(g));
+        if (sendWorldIntent(net, { kind: "build-rule", rule }) === undefined)
+          label.setText(buildRuleLabel(rule));
+      });
+    }
     this.bar = this.add
       .rectangle(BAR_X, LIST_TOP, 6, 40, 0xffe9a0, 0.6)
       .setOrigin(0);
@@ -335,14 +359,20 @@ export class SocialScene extends Phaser.Scene {
         .rectangle(LIST_X, y + 2, LIST_W - 10, ROW_H - 6, 0x000000, 0.45)
         .setOrigin(0),
     );
+    const fig = this.add
+      .image(LIST_X + 28, y + ROW_H - 8, PLAYER_KEY)
+      .setOrigin(0.5, 1)
+      .setTint(tintForSlot(r.slot));
+    fig.setScale(Math.min(1, 44 / fig.height));
+    add(fig);
     add(
-      this.add.text(LIST_X + 16, y + 6, r.name, {
+      this.add.text(LIST_X + 64, y + 6, r.name, {
         fontSize: "20px",
         color: "#ffffff",
       }),
     );
     add(
-      this.add.text(LIST_X + 16, y + 30, "Player", {
+      this.add.text(LIST_X + 64, y + 30, r.tag ?? "Player", {
         fontSize: "14px",
         color: "#ffe9a0",
       }),
