@@ -2207,11 +2207,7 @@ export class FarmScene extends Phaser.Scene {
     if (!isFarmMap(this.mapId)) return;
     if (held.kind === "tool" && held.tool === "hoe")
       net.sendIntent({ kind: "till", x: front.x, y: front.y });
-    else if (
-      held.kind === "tool" &&
-      held.tool === "can" &&
-      !this.map.isWater(front.x, front.y)
-    )
+    else if (held.kind === "tool" && held.tool === "can")
       net.sendIntent({ kind: "water", x: front.x, y: front.y });
     else if (isLiftTool(held))
       net.sendIntent({ kind: held.tool, x: front.x, y: front.y });

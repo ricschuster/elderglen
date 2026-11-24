@@ -107,6 +107,22 @@ describe("farm intents", () => {
     expect(g.players.localId).toBe(LOCAL_PLAYER);
   });
 
+  it("a guest's can fills from a water tile", () => {
+    const w = mk();
+    const map = farmMapOf(w.g);
+    let at: { x: number; y: number } | undefined;
+    for (let y = 0; y < map.height && !at; y++)
+      for (let x = 0; x < map.width && !at; x++)
+        if (map.isWater(x, y)) at = { x, y };
+    expect(at).toBeDefined();
+    const guest = w.g.players.get("p2");
+    guest.canWater = 3;
+    expect(
+      w.apply("p2", { kind: "water", x: at!.x, y: at!.y }),
+    ).toBeUndefined();
+    expect(guest.canWater).toBeGreaterThan(3);
+  });
+
   it("harvest puts the crop in the guest's pack and gives them the experience", () => {
     const w = mk();
     const g = w.g;
