@@ -1,6 +1,6 @@
 # 112. Year two (M3c, #604)
 
-Drafted and settled with the owner on 2026-11-24. Closes the "year two rules" part of #604. Stardew claims
+Drafted and settled with the owner on 2026-11-24. Closes the "year two rules" part of #604. Rule 6 was revised the same day after reading the saved Special Orders page. Stardew claims
 are from the saved Carpenter's Shop, Blacksmith, Stone, Coal, ore, Crops and Crab Pot pages (read
 2026-11-24) unless marked "from memory".
 
@@ -44,36 +44,37 @@ are from the saved Carpenter's Shop, Blacksmith, Stone, Coal, ore, Crops and Cra
 5. **Year-two lines (ours).** Each villager gets a few lines (placeholder: 2) that join their talk only from
    year two, so the village remembers. Villagers have no per-person lines yet (`townfolk.ts` has one
    placeholder line per kind of meeting), so this rule lands with the voice sheets (M3d).
-6. **New special orders from year two (Stardew, from memory, SC-226).** A second set of 6 orders joins the
-   board from Spring 1 of year 2; the first ten stay. They ask more or rarer goods and pay more. Draft list
-   below (placeholders, for the owner's check). The request board's counts are x1.5 from year two (ours,
-   rounded up).
+6. **Harder special orders after the Last Seat (Stardew, saved Special Orders page).** The saved page shows
+   Stardew's town orders are not held back by year (prerequisites are none, a season or the island); its
+   harder set (Mr. Qi's) opens at a late milestone. Ours: a second set of 6 orders joins the board the
+   morning after the Last Seat is finished (the bridge mended), so play-on (rule 1) has new goals; the first
+   ten stay. From the same morning the request board's counts are x1.5 (ours, rounded up). Year two adds no
+   orders. Gold raised toward the top of Stardew's town range (owner; the page runs 500g to 6,000g).
 
-## Year-two special orders (draft, placeholders)
+## Harder special orders (placeholders, owner accepted 2026-11-24)
 
 Built from the order kinds that exist (`orders.json`): `ship-one-crop`, `ship-quality-vegetables`,
 `catch-one-fish`, `catch-water`, `slay-one`, `hand-in` (`total`, `one-kind`, `distinct`).
 
 | id | Title | Ask | Days | Gold |
 | --- | --- | --- | --- | --- |
-| `deep-haul` | Deep Haul | hand in 10 gold bars at the smithy | 14 | 3,000 |
-| `fine-harvest-2` | The Finest Table | ship 50 gold quality vegetables | 28 | 2,500 |
-| `long-lines` | Long Lines | catch 40 fish in the sea | 7 | 2,500 |
-| `deep-patrol` | Deep Patrol | beat 100 of one creature from floor 81 down | 7 | 3,000 |
-| `jewel-case` | The Jewel Case | hand in 10 different gems at the library | 14 | 2,500 |
-| `timber-yard` | Timber Yard | hand in 100 hardwood at the carpenter's | 14 | 2,000 |
+| `deep-haul` | Deep Haul | hand in 10 gold bars at the smithy | 14 | 3,500 |
+| `fine-harvest-2` | The Finest Table | ship 50 gold quality vegetables | 28 | 3,000 |
+| `long-lines` | Long Lines | catch 40 fish in the sea | 7 | 3,000 |
+| `deep-patrol` | Deep Patrol | beat 100 of one creature from floor 81 down | 7 | 6,000 |
+| `jewel-case` | The Jewel Case | hand in 10 different gems at the library | 14 | 3,000 |
+| `timber-yard` | Timber Yard | hand in 100 hardwood at the carpenter's | 14 | 3,000 |
 
 ## Build order
 
-1. Year gates in core: a `fromYear` field on shop rows and orders, read by the shop and the board.
+1. Gates in core: a `fromYear` field on shop rows, and an `afterLastSeat` flag on orders, read by the shop and the board.
 2. The price rise (rule 2) as a year-two price per row, and the Spring 1 letter.
 3. The seed gate (rule 3), the catalogue and deluxe speed-gro (rule 4).
-4. The six year-two orders and the x1.5 request board counts (rule 6).
+4. The six harder orders and the x1.5 request board counts after the Last Seat (rule 6).
 5. Play on after the ending (rule 1): check the end screen returns to the next morning, with a test.
 
 Rule 5 waits for the voice sheets (M3d).
 
 ## Open
 
-- The owner's check of the six draft orders.
-- SC-226: Stardew's play-on after the Community Center and its later special orders (ours chosen either way).
+- SC-226: Stardew's play-on after the Community Center (ours chosen either way).
