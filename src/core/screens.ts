@@ -2,17 +2,22 @@
 // one-at-a-time locks, and the "where the player stands" check. Held on the host, never saved.
 // Free of Phaser and the DOM.
 import { maps } from "../content/maps";
-import { resolveMapId, farmMapOf } from "./farmtypes";
+import { resolveMapId, farmMapOf, isFarmMap } from "./farmtypes";
 import { furnitureById } from "./furniture";
 import { isCampFloor, mineMapId } from "./mines";
 import type { PlayerId } from "./players";
 import type { GameState } from "./save";
+import { pondAt } from "./pond";
+import { POND_FOOTPRINT } from "./pondsite";
 import { isShopStock } from "./shopoffers";
 import { marketHolds, stallOf } from "./nightmarket";
 
 /** A screen a player opened: the kind of screen and the service tile it opened from. */
 export interface ScreenRef {
-  /** "shop", "market", "bin", "chest", "camp-chest", "crafting" (a workbench), "cooking" or "furnace". */
+  /**
+   * "shop", "market", "bin", "chest", "camp-chest", "crafting" (a workbench), "cooking", "furnace", "keeper",
+   * "coop-bench", "barn-bench" or "pond" (x and y are then the pond's top left tile).
+   */
   kind: string;
   map: string;
   x: number;
@@ -30,6 +35,7 @@ export const LOCKED_KINDS: readonly string[] = [
   "chest",
   "camp-chest",
   "furnace",
+  "pond",
 ];
 
 /** The service kinds a screen kind may open from, on a registered map. */
@@ -47,6 +53,9 @@ const SERVICES: Record<string, string[]> = {
   bin: ["bin", "ore-bin"],
   cooking: ["cooking"],
   furnace: ["furnace"],
+  keeper: ["keeper"],
+  "coop-bench": ["coop-bench"],
+  "barn-bench": ["barn-bench"],
 };
 
 /** How near, in tiles, a player must be to a service tile to open or use it (the host's Use reach, with a step of slack for lag). */
@@ -56,7 +65,11 @@ export const LOCKED_LINE = "Someone is using this chest.";
 
 /** What a refused open says for a locked screen of this kind. */
 export const lockedLine = (kind: string): string =>
-  kind === "furnace" ? "Someone is using the furnace." : LOCKED_LINE;
+  kind === "furnace"
+    ? "Someone is using the furnace."
+    : kind === "pond"
+      ? "Someone is using the pond."
+      : LOCKED_LINE;
 
 export interface Standing {
   x: number;
@@ -100,6 +113,11 @@ export function refProblem(g: GameState, ref: ScreenRef): string | undefined {
         ref.map === mineMapId(ref.floor)
         ? undefined
         : "no camp chest there";
+    case "pond":
+      // The ref names the pond's top left tile on the farm map.
+      return isFarmMap(ref.map) && pondAt(g, ref.x, ref.y)
+        ? undefined
+        : "no pond there";
     case "crafting": {
       // A workbench: the furniture piece on a house tile (the pause menu's crafting has no screen to open).
       const piece = g.furniture.at(ref.map, ref.x, ref.y);
@@ -111,6 +129,9 @@ export function refProblem(g: GameState, ref: ScreenRef): string | undefined {
     case "market":
     case "cooking":
     case "furnace":
+    case "keeper":
+    case "coop-bench":
+    case "barn-bench":
     case "bin": {
       let svc: { kind: string; id: string } | undefined;
       try {
@@ -177,7 +198,12 @@ export function inReach(g: GameState, at: Standing, ref: ScreenRef): boolean {
   }
   const tx = Math.floor(at.x / ts);
   const ty = Math.floor(at.y / ts);
-  return Math.max(Math.abs(tx - ref.x), Math.abs(ty - ref.y)) <= REACH_TILES;
+  // A pond is the whole of its footprint: the nearest of its tiles counts.
+  const w = ref.kind === "pond" ? POND_FOOTPRINT.w : 1;
+  const h = ref.kind === "pond" ? POND_FOOTPRINT.h : 1;
+  const dx = Math.max(ref.x - tx, 0, tx - (ref.x + w - 1));
+  const dy = Math.max(ref.y - ty, 0, ty - (ref.y + h - 1));
+  return Math.max(dx, dy) <= REACH_TILES;
 }
 
 const lockKey = (g: GameState, ref: ScreenRef): string =>

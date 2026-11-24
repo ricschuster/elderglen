@@ -114,3 +114,13 @@ Headless run 2026-11-24 (`tests/screens-socket.test.ts`, real sockets; `tests/sc
 - pass: The furnace is used by one player at a time ("Someone is using the furnace."); the lock frees on close and drop; the bar goes to whoever takes it, not to whoever loaded it.
 - pass: A guest loads a machine on the farm and another guest collects the goods; a working machine is never lifted; a machine out of reach, missing, or given the wrong good is refused. The guest copy follows through `applied`.
 - owner: The three screens and the Use and Action presses on a keg or jar by hand with two real players. Nothing here was run in a browser. The fridge is not in the game yet, so nothing was checked for it.
+
+## Guest screens, animals and ponds (note 108, group 3)
+
+Headless run 2026-11-24 (`tests/screens-socket.test.ts`, real sockets; `tests/screens.test.ts`, the "animals and ponds" tests).
+
+- pass: A guest buys a young animal at the keeper from their own purse; it joins the shared coop on every copy; a missing coop, too little gold, a bad species and a walk-away are refused. Hay and a heater go to the buyer's pack.
+- pass: A guest feeds the bench from the silo and then their own pack, and tips their hay into the silo; the wrong building's bench is refused.
+- pass: Anyone pets an animal once a day (the second player is told "Already petted today."); whoever takes the product gets it, a full pack keeps it; let out, bring in and rename work.
+- pass: A pond menu is used by one player at a time ("Someone is using the pond."); reach counts from any edge of the pond; Empty puts the fish in the opener's pack; a held fish goes in and a waiting product comes out through `pond-use`, as the sender.
+- owner: The keeper, the coop and barn benches and the pond menu by hand with two real players, and a guest's Action on a pond with a fish in hand. Nothing here was run in a browser. Animals cannot be sold in the game yet, so no sell was checked.

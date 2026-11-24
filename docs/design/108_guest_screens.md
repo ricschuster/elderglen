@@ -84,7 +84,7 @@ One group at a time, each with its own tests; each screen is removed from the gu
 1. **Trade (built 2026-11-24, #1014):** the dispatcher and `open` action with the lock, shops (buy, sell,
    shared stock), the shipping bin, chests (and the camp chest). See "Group 1 as built" below.
 2. **Making (built 2026-11-24, #1014):** crafting, cooking (farmhouse kitchen), furnace and the other machines. See "Group 2 as built" below. The fridge is not in the game yet, so it is not built.
-3. **Animals and ponds:** animal buy and sell at the farmstead, petting, feeding, collecting, pond menus.
+3. **Animals and ponds (built 2026-11-24, #1014):** animal buy at the farmstead keeper, petting, feeding, collecting, pond menus. Animals cannot be sold in the game yet, so there is no sell. See "Group 3 as built" below.
 4. **Hall:** bundles (rule 3), orders and the request board.
 5. **The rest:** carpenter (rules 7 to 9, with the host setting on the players list), tailor, smith, gallery,
    shrine, and any screen still on the refusal list.
@@ -170,6 +170,41 @@ Tests: the "making" block of `tests/screens.test.ts` and the group 2 test in `te
   also waits for cabins to have one (design item 3).
 - **Casks and the cave dehydrator** (cellar and cave maps) are not reached: guests are on the farm map for
   world intents (design item 2). They are the same kind of change when that opens.
+
+## Group 3 as built (build, 2026-11-24)
+
+Code: the new intents are in `src/core/screenintents.ts` (`keeper-buy`, the bench intents `bench-feed`, `bench-fill`,
+`bench-heater`, `bench-egg`, `animal-pet`, `animal-take`, `animal-out`, `animal-in`, `animal-name`, and `pond-empty`)
+and `src/core/roomintents.ts` (`pond-use`); screen kinds `keeper`, `coop-bench`, `barn-bench` and `pond` in
+`src/core/screens.ts`; `pondStep` in `src/core/pond.ts`. `KeeperScene`, `CoopScene` (and `BarnScene`) and `PondScene` use
+`dispatch`, `followGuest` and `closeWhenDone`. Tests: the "animals and ponds" block of `tests/screens.test.ts` and the
+group 3 test in `tests/screens-socket.test.ts`.
+
+- **Screens.** `keeper` opens from the keeper's counter on the Forest farmstead, `coop-bench` and `barn-bench` from the
+  feeding benches, `pond` from a pond. Every intent above needs its screen open (same gate as groups 1 and 2: open, in
+  reach, the screen you opened). A bench intent names its `building` and must match the bench opened; an `animal-*` intent
+  must name an animal that lives in that building.
+- **Who pays, where it goes.** All run as the sender (`asPlayer`). The keeper's `keeper-buy {what}` takes `animal`
+  (species and a name), `hay`, `heater` or `decor`: the sender's purse pays, hay, heaters and decor go to the sender's pack,
+  and a bought animal goes to the shared coop or barn (it has no owner). Feeding takes the silo's hay first, then the
+  feeder's own pack (the host's rule); the hopper takes the sender's hay. Products and eggs go to the sender's pack, and a
+  full pack keeps them in the animal. Petting is once a day per animal for the whole world (rule 6); there is no experience
+  to give for it in the game today.
+- **Locks.** Only the pond locks (rule 2, "a pond's menu"): "Someone is using the pond." The host takes the same lock when it
+  opens a pond menu. The keeper and the benches hold nothing between uses and do not lock.
+- **Pond reach (build, 2026-11-24).** A pond's ref is its top left tile, and the reach is measured to the nearest tile of its
+  footprint (5 by 5), so standing at any edge works.
+- **Use and Action on a pond.** A guest's Action on a pond asks the host's Action rule (`resolveAction`, as the sender) when
+  it would do something: the quest item goes in, a waiting product comes out, a held fish goes in (`pond-use {x, y, item?}`,
+  within 2 tiles). The guest's scene decides with `pondStep`, which changes nothing; when it would only show the menu, the
+  guest asks to open the pond menu. Empty is `pond-empty {pond}`. The rod taking a fish out and the Use press stay host only.
+- **Host through the Room.** The host's keeper, bench and pond screens go through `dispatch`, so a hosted game's changes
+  reach every guest's copy as `applied` (as for chests in group 1). The host's own Action on a pond with a held item (put a fish in, take
+  a product) is still a direct change, as before.
+- **No animal selling (build, 2026-11-24).** Rule 6 says anyone may sell animals, but selling animals is not in the game
+  (note 23 left it out), so there is nothing to build. It comes with whichever note adds it.
+- **Left for later.** The guest's pause menu "Animals" tab is still hidden (read only rows in the menu are not part of this
+  group). A guest's own cabin has no animals. The stable bench and the horse are not screens yet.
 
 ## Open (later items, not this note)
 

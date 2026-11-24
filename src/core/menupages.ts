@@ -305,6 +305,11 @@ export const GUEST_SCREENS = [
   "crafting",
   "cooking",
   "furnace",
+  // The keeper's counter, the coop and barn benches and the fish pond send animal and pond intents (note 108 group 3); the pond takes a lock.
+  "keeper",
+  "coop-bench",
+  "barn-bench",
+  "pond",
   // The bed prompt sends a `sleep` intent and changes nothing locally.
   "bed",
 ];

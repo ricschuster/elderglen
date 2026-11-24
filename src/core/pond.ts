@@ -582,22 +582,41 @@ export function pondUse(
   held: string | undefined,
 ): Outcome {
   const s = stateOf(p);
+  switch (pondStep(p, held)) {
+    case "quest":
+      return giveQuestItem(g, p.x, p.y);
+    case "product": {
+      const item = s.out!.item;
+      const r = collectProduct(g, p.x, p.y);
+      return r.ok
+        ? { ok: true, item, note: `You take ${itemById(item)?.name ?? item}.` }
+        : r;
+    }
+    case "fish": {
+      const r = putFish(g, p.x, p.y, held!);
+      if (r.ok) return { ...r, note: "The fish slips into the pond." };
+      return r;
+    }
+    default:
+      return { ok: true, note: pondStatus(p) };
+  }
+}
+
+/**
+ * What an Action press on a pond would do with this held item: "quest" (give the item the fish ask for),
+ * "product" (take what waits), "fish" (put the held fish in) or "status" (only open the menu). Changes nothing,
+ * so a guest's screen can decide between a pond-use intent and the pond menu (note 108 group 3).
+ */
+export function pondStep(
+  p: PlacedItem,
+  held: string | undefined,
+): "quest" | "product" | "fish" | "status" {
+  const s = stateOf(p);
   const base = held ? splitQuality(held).base : undefined;
-  if (s.building === 0 && s.quest && base === s.quest.item)
-    return giveQuestItem(g, p.x, p.y);
-  if (s.building === 0 && s.out) {
-    const item = s.out.item;
-    const r = collectProduct(g, p.x, p.y);
-    return r.ok
-      ? { ok: true, item, note: `You take ${itemById(item)?.name ?? item}.` }
-      : r;
-  }
-  if (base && s.building === 0 && pondable(base)) {
-    const r = putFish(g, p.x, p.y, held!);
-    if (r.ok) return { ...r, note: "The fish slips into the pond." };
-    return r;
-  }
-  return { ok: true, note: pondStatus(p) };
+  if (s.building === 0 && s.quest && base === s.quest.item) return "quest";
+  if (s.building === 0 && s.out) return "product";
+  if (base && s.building === 0 && pondable(base)) return "fish";
+  return "status";
 }
 
 /** What the pond menu shows (note 93, "Interface"): the fish, count against the cap, the ask, and whether Empty works. */

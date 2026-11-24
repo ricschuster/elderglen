@@ -1,6 +1,7 @@
 import Phaser from "phaser";
-import { emptyPond, pondAt, pondMenu } from "../core/pond";
+import { pondAt, pondMenu } from "../core/pond";
 import type { GameState } from "../core/save";
+import { closeWhenDone, dispatch, followGuest } from "./guestlive";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
@@ -45,6 +46,13 @@ export class PondScene extends Phaser.Scene {
     kb?.on("keydown-UP", () => this.menu.move(-1));
     kb?.on("keydown-DOWN", () => this.menu.move(1));
     kb?.on("keydown-ENTER", () => this.menu.press(0));
+    // A guest's Empty is sent to the host; the menu redraws when its answer arrives (note 108 group 3).
+    followGuest(
+      this,
+      () => this.refresh(),
+      (text) => this.message.setText(text),
+    );
+    closeWhenDone(this);
     this.refresh();
   }
 
@@ -63,10 +71,12 @@ export class PondScene extends Phaser.Scene {
   }
 
   private empty(): void {
-    const r = emptyPond(this.state, this.at.x, this.at.y);
-    this.message.setText(
-      r.ok ? "The fish are in your pack." : (r.reason ?? "Nothing to take."),
-    );
+    const why = dispatch(this.state, {
+      kind: "pond-empty",
+      pond: { x: this.at.x, y: this.at.y },
+    });
+    if (why === "sent") return;
+    this.message.setText(why ?? "The fish are in your pack.");
     this.refresh();
   }
 

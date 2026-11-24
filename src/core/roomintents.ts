@@ -5,6 +5,7 @@ import * as actions from "./actions";
 import { farmMapOf, farmTypeById } from "./farmtypes";
 import { resolveAction, resolveUse } from "./interact";
 import { jobDone } from "./machines";
+import { pondCovering } from "./pond";
 import { cropOfSeed, itemById } from "./items";
 import { MIXED_SEED } from "./weeds";
 import type { Intent } from "./protocol";
@@ -132,6 +133,26 @@ export function applyFarmIntent(
       return r.kind === "report" || r.kind === "act"
         ? outcome(r.result)
         : "cannot do that here";
+    }
+    case "pond-use": {
+      // The Action press on a pond with a held item (the quest item, a fish, or nothing to take a waiting
+      // product): the host's own Action rule, as the sender (note 108 group 3). The menu is a screen, not this.
+      const { x, y, item } = intent;
+      if (!isTile(x) || !isTile(y)) return "bad pond-use";
+      if (item !== undefined && typeof item !== "string") return "bad pond-use";
+      if (!pondCovering(g, x, y)) return "no pond here";
+      const r = resolveAction(
+        g,
+        by,
+        { ...farmContext(g), ladderAt: () => false },
+        item === undefined
+          ? { kind: "empty" }
+          : { kind: "item", id: item, count: 1 },
+        { x, y },
+      );
+      return r.kind === "report" || r.kind === "act"
+        ? outcome(r.result)
+        : "The pond has nothing to take or give.";
     }
     case "buy": {
       const { id, n, stock } = intent;

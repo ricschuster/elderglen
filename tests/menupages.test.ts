@@ -231,7 +231,9 @@ describe("guest read-only menus", () => {
     expect(guestMayOpen("bin")).toBe(true);
     for (const k of ["crafting", "cooking", "furnace"])
       expect(guestMayOpen(k)).toBe(true);
-    expect(guestMayOpen("pond")).toBe(false);
+    for (const k of ["keeper", "coop-bench", "barn-bench", "pond"])
+      expect(guestMayOpen(k)).toBe(true);
+    expect(guestMayOpen("carpenter")).toBe(false);
   });
 });
 

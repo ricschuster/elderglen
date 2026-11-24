@@ -276,7 +276,11 @@ export class GameRoomWorld implements RoomWorld {
 
   /** A machine on a farm tile is loaded or emptied only from within reach of it (note 108, group 2). */
   private machineGate(by: PlayerId, intent: Intent): string | undefined {
-    if (intent.kind !== "machine-load" && intent.kind !== "machine-collect")
+    if (
+      intent.kind !== "machine-load" &&
+      intent.kind !== "machine-collect" &&
+      intent.kind !== "pond-use"
+    )
       return undefined;
     const { x, y } = intent;
     if (typeof x !== "number" || typeof y !== "number") return undefined;

@@ -17,6 +17,27 @@ import { newGame } from "../src/core/save";
 import { Inventory } from "../src/core/inventory";
 import { applyServerMsg } from "../src/net/guestapply";
 import { LOCKED_LINE, type ScreenRef } from "../src/core/screens";
+import { CHICKEN_PRICE, HAY_PRICE, type Animal } from "../src/core/animals";
+import { applyScreenIntent } from "../src/core/screenintents";
+import { FARM_STORE } from "../src/core/mapstore";
+import { pondAt, putFish } from "../src/core/pond";
+import { FISH_POND } from "../src/core/pondsite";
+
+/** A grown chicken that is hungry and not petted. */
+const mkAnimal = (id: number): Animal => ({
+  id,
+  species: "chicken",
+  name: `Hen${id}`,
+  age: 10,
+  friendship: 0,
+  mood: 128,
+  fed: false,
+  petted: false,
+  outside: false,
+  fresh: false,
+  grazed: false,
+  lay: 0,
+});
 
 const FARM = farmTypeById("standard").map;
 
@@ -647,5 +668,264 @@ describe("making: crafting, cooking, the furnace and machines (note 108, group 2
     expect(t.send(t.ann, { kind: "machine-collect", ...at })).toBe(
       "too far away",
     );
+  });
+});
+
+describe("animals and ponds (note 108, group 3)", () => {
+  /** A service of this kind on a map, at any building tier. */
+  const serviceRef = (map: string, kind: string): ScreenRef => {
+    for (let tier = maps.maxTier(map); tier >= 0; tier--) {
+      const s = maps
+        .getWith(map, new Set(), tier)
+        .services.find((v) => v.kind === kind);
+      if (s) return { kind, map, x: s.x, y: s.y };
+    }
+    throw new Error(`no ${kind} on ${map}`);
+  };
+  const farm = (t: ReturnType<typeof mk>) => {
+    t.g.animals.coopBuilt = true;
+    t.g.animals.barnBuilt = true;
+    t.g.animals.silo = true;
+  };
+  const openAt = (t: ReturnType<typeof mk>, id: string, ref: ScreenRef) => {
+    t.stand(id, ref.map, ref.x, ref.y + 1);
+    return t.send(id, { kind: "open", screen: ref });
+  };
+  const bought = (t: ReturnType<typeof mk>, who: string) => {
+    const keeper = serviceRef("forest-farmstead", "keeper");
+    expect(openAt(t, who, keeper)).toBeUndefined();
+  };
+
+  it("buys a young animal at the keeper from the sender's purse; it goes to the shared coop", () => {
+    const t = mk();
+    farm(t);
+    t.g.players.get(t.ann).money = 1000;
+    const buy = { kind: "keeper-buy", what: "animal", species: "chicken" };
+    expect(t.send(t.ann, { ...buy, name: "Pip" })).toBe(
+      "open the screen first",
+    );
+    bought(t, t.ann);
+    expect(t.send(t.ann, { ...buy, name: "Pip" })).toBeUndefined();
+    expect(t.g.players.get(t.ann).money).toBe(1000 - CHICKEN_PRICE);
+    expect(t.g.players.get(t.bo).money).toBe(t.g.players.get(t.bo).money);
+    const a = t.g.animals.animals.at(-1)!;
+    expect(a.name).toBe("Pip");
+    // Not enough gold left, a bad species, and a walk away.
+    expect(t.send(t.ann, { ...buy, name: "Two" })).toMatch(/more/);
+    expect(t.send(t.ann, { ...buy, species: "dragon" })).toBe("bad keeper-buy");
+    t.stand(t.ann, "forest-farmstead", 0, 0);
+    expect(t.send(t.ann, { ...buy, name: "Far" })).toBe("too far away");
+  });
+
+  it("refuses an animal when the building is missing, and sells hay, a heater and decor to the sender's pack", () => {
+    const t = mk();
+    t.g.players.get(t.bo).money = 5000;
+    bought(t, t.bo);
+    expect(
+      t.send(t.bo, { kind: "keeper-buy", what: "animal", species: "chicken" }),
+    ).toBe("You need a coop first.");
+    farm(t);
+    expect(
+      t.send(t.bo, { kind: "keeper-buy", what: "hay", n: 10 }),
+    ).toBeUndefined();
+    expect(t.g.players.get(t.bo).inventory.count("hay")).toBe(10);
+    expect(t.g.players.get(t.bo).money).toBe(5000 - 10 * HAY_PRICE);
+    expect(t.g.inventory.count("hay")).toBe(0);
+    expect(
+      t.send(t.bo, { kind: "keeper-buy", what: "heater" }),
+    ).toBeUndefined();
+    expect(t.g.players.get(t.bo).inventory.count("coop-heater")).toBe(1);
+    expect(t.send(t.bo, { kind: "keeper-buy", what: "nope" })).toBe(
+      "bad keeper-buy",
+    );
+  });
+
+  it("feeds from the silo, then the feeder's pack; the hopper takes the feeder's hay", () => {
+    const t = mk();
+    farm(t);
+    for (let i = 0; i < 3; i++) t.g.animals.animals.push(mkAnimal(i + 1));
+    t.g.animals.hay = 1;
+    t.g.players.get(t.ann).inventory.add("hay", 5);
+    const ref = serviceRef("coop", "coop-bench");
+    const feed = { kind: "bench-feed", building: "coop" };
+    expect(t.send(t.ann, feed)).toBe("open the screen first");
+    expect(openAt(t, t.ann, ref)).toBeUndefined();
+    // The wrong building for this bench.
+    expect(t.send(t.ann, { ...feed, building: "barn" })).toBe(
+      "not the screen you opened",
+    );
+    expect(t.send(t.ann, feed)).toBeUndefined();
+    expect(t.g.animals.animals.every((a) => a.fed)).toBe(true);
+    expect(t.g.animals.hay).toBe(0);
+    expect(t.g.players.get(t.ann).inventory.count("hay")).toBe(3);
+    expect(t.send(t.ann, feed)).toBe("Everyone has eaten.");
+    expect(
+      t.send(t.ann, { kind: "bench-fill", building: "coop" }),
+    ).toBeUndefined();
+    expect(t.g.animals.hay).toBe(3);
+    expect(t.g.players.get(t.ann).inventory.count("hay")).toBe(0);
+    expect(t.send(t.ann, { kind: "bench-fill", building: "coop" })).toBe(
+      "No hay to tip in, or the silo is full.",
+    );
+  });
+
+  it("lets anyone pet once a day, and the product goes to whoever collects", () => {
+    const t = mk();
+    farm(t);
+    const an = mkAnimal(1);
+    an.product = "normal";
+    t.g.animals.animals.push(an);
+    const ref = serviceRef("coop", "coop-bench");
+    expect(openAt(t, t.ann, ref)).toBeUndefined();
+    expect(openAt(t, t.bo, ref)).toBeUndefined();
+    const at = { building: "coop", animal: 1 };
+    expect(t.send(t.ann, { kind: "animal-pet", ...at })).toBeUndefined();
+    expect(t.send(t.bo, { kind: "animal-pet", ...at })).toBe(
+      "Already petted today.",
+    );
+    expect(t.send(t.bo, { kind: "animal-take", ...at })).toBeUndefined();
+    expect(t.g.players.get(t.bo).inventory.count("egg")).toBe(1);
+    expect(t.g.players.get(t.ann).inventory.count("egg")).toBe(0);
+    expect(t.send(t.ann, { kind: "animal-take", ...at })).toBe(
+      "Nothing to take there.",
+    );
+    // A full pack keeps the product.
+    an.product = "normal";
+    const full = t.g.players.get(t.ann).inventory;
+    while (full.add("stone"));
+    expect(t.send(t.ann, { kind: "animal-take", ...at })).toBe(
+      "Your pack is full.",
+    );
+    expect(an.product).toBe("normal");
+    // No such animal, one from the other building, and the name.
+    expect(
+      t.send(t.ann, { kind: "animal-pet", building: "coop", animal: 99 }),
+    ).toBe("No such animal.");
+    expect(
+      t.send(t.ann, { kind: "animal-pet", building: "barn", animal: 1 }),
+    ).toBe("not the screen you opened");
+    expect(
+      t.send(t.bo, { kind: "animal-name", ...at, name: "Dot" }),
+    ).toBeUndefined();
+    expect(an.name).toBe("Dot");
+  });
+
+  it("lets an animal out and in", () => {
+    const t = mk();
+    farm(t);
+    t.g.animals.animals.push(mkAnimal(1));
+    t.g.weather = "sunny";
+    expect(openAt(t, t.ann, serviceRef("coop", "coop-bench"))).toBeUndefined();
+    const at = { building: "coop", animal: 1 };
+    expect(t.send(t.ann, { kind: "animal-in", ...at })).toBe(
+      "It is not outside.",
+    );
+    expect(t.send(t.ann, { kind: "animal-out", ...at })).toBeUndefined();
+    expect(t.g.animals.animals[0]!.outside).toBe(true);
+    expect(t.send(t.ann, { kind: "animal-out", ...at })).toBe(
+      "Hen1 is already out.",
+    );
+    expect(t.send(t.ann, { kind: "animal-in", ...at })).toBeUndefined();
+    expect(t.g.animals.animals[0]!.outside).toBe(false);
+  });
+
+  it("opens a pond for one player at a time and empties it into the sender's pack", () => {
+    const t = mk();
+    expect(
+      t.g.placed.add(FARM_STORE, {
+        x: 20,
+        y: 20,
+        id: FISH_POND,
+        state: { building: 0, count: 0, capLevel: 0 },
+      }),
+    ).toBe(true);
+    const pond = pondAt(t.g, 20, 20)!;
+    t.g.inventory.add("carp");
+    expect(putFish(t.g, 20, 20, "carp").ok).toBe(true);
+    const ref: ScreenRef = { kind: "pond", map: FARM, x: 20, y: 20 };
+    // Reach is the pond's whole edge: the far side counts.
+    t.stand(t.ann, FARM, 24, 22);
+    expect(t.send(t.ann, { kind: "open", screen: ref })).toBeUndefined();
+    t.stand(t.bo, FARM, 19, 22);
+    expect(t.send(t.bo, { kind: "open", screen: ref })).toBe(
+      "Someone is using the pond.",
+    );
+    const empty = { kind: "pond-empty", pond: { x: 20, y: 20 } };
+    expect(t.send(t.bo, empty)).toBe("open the screen first");
+    expect(t.send(t.ann, { ...empty, pond: { x: 21, y: 20 } })).toBe(
+      "not the screen you opened",
+    );
+    expect(pond).toBeDefined();
+    expect(t.send(t.ann, empty)).toBeUndefined();
+    expect(t.g.players.get(t.ann).inventory.count("carp")).toBe(1);
+    expect(t.send(t.ann, empty)).toBe("There is no fish to take.");
+    t.stand(t.ann, FARM, 30, 30);
+    expect(t.send(t.ann, empty)).toBe("too far away");
+    t.send(t.ann, { kind: "close" });
+    expect(t.send(t.bo, { kind: "open", screen: ref })).toBeUndefined();
+    expect(
+      t.send(t.bo, {
+        kind: "open",
+        screen: { kind: "pond", map: FARM, x: 21, y: 20 },
+      }),
+    ).toBe("no pond there");
+  });
+
+  it("puts a held fish in and takes a waiting product through pond-use, as the sender", () => {
+    const t = mk();
+    t.g.placed.add(FARM_STORE, {
+      x: 20,
+      y: 20,
+      id: FISH_POND,
+      state: { building: 0, count: 0, capLevel: 0 },
+    });
+    t.g.players.get(t.bo).inventory.add("carp", 2);
+    // Too far, then close.
+    t.stand(t.bo, FARM, 30, 30);
+    expect(t.send(t.bo, { kind: "pond-use", x: 21, y: 21, item: "carp" })).toBe(
+      "too far away",
+    );
+    t.stand(t.bo, FARM, 19, 21);
+    expect(
+      t.send(t.bo, { kind: "pond-use", x: 20, y: 21, item: "carp" }),
+    ).toBeUndefined();
+    expect(pondAt(t.g, 20, 20)!.state).toMatchObject({ count: 1 });
+    expect(t.g.players.get(t.bo).inventory.count("carp")).toBe(1);
+    expect(t.g.inventory.count("carp")).toBe(0);
+    // Nothing to do with no fish held and nothing waiting; no pond on a bare tile.
+    expect(t.send(t.bo, { kind: "pond-use", x: 20, y: 21 })).toBe(
+      "The pond has nothing to take or give.",
+    );
+    expect(t.send(t.bo, { kind: "pond-use", x: 5, y: 5 })).toBe("too far away");
+    t.stand(t.bo, FARM, 5, 6);
+    expect(t.send(t.bo, { kind: "pond-use", x: 5, y: 5 })).toBe("no pond here");
+    // A waiting product goes to the taker.
+    const p = pondAt(t.g, 20, 20)!;
+    p.state = { ...p.state, out: { item: "carp", count: 1 } };
+    t.stand(t.ann, FARM, 19, 21);
+    expect(t.send(t.ann, { kind: "pond-use", x: 20, y: 21 })).toBeUndefined();
+    expect(t.g.players.get(t.ann).inventory.count("carp")).toBe(1);
+  });
+
+  it("works in single player: the same intents run on the host's own state", () => {
+    const g = newGame("standard");
+    g.animals.coopBuilt = true;
+    g.money = 5000;
+    expect(
+      applyScreenIntent(g, LOCAL_PLAYER, {
+        kind: "keeper-buy",
+        what: "animal",
+        species: "chicken",
+        name: "Solo",
+      }),
+    ).toBeUndefined();
+    expect(g.animals.animals[0]!.name).toBe("Solo");
+    expect(
+      applyScreenIntent(g, LOCAL_PLAYER, {
+        kind: "animal-pet",
+        building: "coop",
+        animal: 1,
+      }),
+    ).toBeUndefined();
   });
 });

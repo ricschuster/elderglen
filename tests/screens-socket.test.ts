@@ -12,6 +12,10 @@ import { NodeHost } from "../src/net/host-node";
 import { deserialize } from "../src/core/save";
 import type { ServerMsg } from "../src/core/protocol";
 import { LOCKED_LINE } from "../src/core/screens";
+import { CHICKEN_PRICE } from "../src/core/animals";
+import { FARM_STORE } from "../src/core/mapstore";
+import { putFish } from "../src/core/pond";
+import { FISH_POND } from "../src/core/pondsite";
 
 const FARM = farmTypeById("standard").map;
 const hosts: NodeHost[] = [];
@@ -257,5 +261,113 @@ describe("guest screens, group 2 (making), over real sockets", () => {
     expect(g.players.get(ann.id).inventory.count(made)).toBe(1);
     expect(g.players.get(bo.id).inventory.count(made)).toBe(0);
     await until(() => copy.players.get(ann.id).inventory.count(made) === 1);
+  });
+});
+
+describe("guest screens, group 3, over real sockets", () => {
+  it("a guest buys an animal, pets, feeds, collects and uses a pond menu", async () => {
+    const g = newGame("standard", "separate");
+    g.animals.coopBuilt = true;
+    g.animals.silo = true;
+    const hosted: { host?: NodeHost } = {};
+    const world = new GameRoomWorld(g, {
+      random: () => 0.5,
+      where: (id) => hosted.host?.room.position(id),
+    });
+    const host = await NodeHost.start({ world, tickHz: 50 });
+    hosted.host = host;
+    hosts.push(host);
+    const url = `ws://127.0.0.1:${host.port}`;
+    const ann = await GuestClient.connect(url, { name: "Ann" });
+    const bo = await GuestClient.connect(url, { name: "Bo" });
+    guests.push(ann, bo);
+    const copy = deserialize(ann.farm)!;
+    copy.players.localId = ann.id;
+    ann.onMessage = (m) => applyServerMsg(copy, m);
+    for (const w of [g, copy]) w.players.get(ann.id).money = 2000;
+
+    // Buy a young chicken at the keeper: Ann's purse pays, it joins the shared coop on every copy.
+    const keeper = service("forest-farmstead", "keeper");
+    const keeperRef = {
+      kind: "keeper",
+      map: "forest-farmstead",
+      x: keeper.x,
+      y: keeper.y,
+    };
+    const buy = { kind: "keeper-buy", what: "animal", species: "chicken" };
+    expect(await ask(ann, { ...buy, name: "Pip" })).toBe(
+      "open the screen first",
+    );
+    await stand(ann, "forest-farmstead", keeper.x, keeper.y + 1);
+    expect(await ask(ann, { kind: "open", screen: keeperRef })).toBeUndefined();
+    expect(await ask(ann, { ...buy, name: "Pip" })).toBeUndefined();
+    expect(g.players.get(ann.id).money).toBe(2000 - CHICKEN_PRICE);
+    expect(g.animals.animals[0]!.name).toBe("Pip");
+    await until(() => copy.animals.animals.length === 1);
+    await ask(ann, { kind: "close" });
+
+    // The coop bench: pet, feed from the silo, then the product goes to whoever takes it.
+    const benchSvc = (() => {
+      for (let t = maps.maxTier("coop"); t >= 0; t--) {
+        const s = maps
+          .getWith("coop", new Set(), t)
+          .services.find((v) => v.kind === "coop-bench");
+        if (s) return s;
+      }
+      throw new Error("no bench");
+    })();
+    const bench = {
+      kind: "coop-bench",
+      map: "coop",
+      x: benchSvc.x,
+      y: benchSvc.y,
+    };
+    await stand(ann, "coop", benchSvc.x, benchSvc.y + 1);
+    await stand(bo, "coop", benchSvc.x + 1, benchSvc.y + 1);
+    expect(await ask(ann, { kind: "open", screen: bench })).toBeUndefined();
+    expect(await ask(bo, { kind: "open", screen: bench })).toBeUndefined();
+    const at = { building: "coop", animal: 1 };
+    expect(await ask(ann, { kind: "animal-pet", ...at })).toBeUndefined();
+    expect(await ask(bo, { kind: "animal-pet", ...at })).toBe(
+      "Already petted today.",
+    );
+    g.animals.hay = 5;
+    for (const w of [g, copy]) w.animals.hay = 5;
+    expect(
+      await ask(ann, { kind: "bench-feed", building: "coop" }),
+    ).toBeUndefined();
+    expect(g.animals.animals[0]!.fed).toBe(true);
+    expect(g.animals.hay).toBe(4);
+    await until(() => copy.animals.animals[0]!.fed);
+    g.animals.animals[0]!.product = "normal";
+    copy.animals.animals[0]!.product = "normal";
+    expect(await ask(bo, { kind: "animal-take", ...at })).toBeUndefined();
+    expect(g.players.get(bo.id).inventory.count("egg")).toBe(1);
+    expect(g.players.get(ann.id).inventory.count("egg")).toBe(0);
+    await ask(ann, { kind: "close" });
+    await ask(bo, { kind: "close" });
+
+    // A pond menu: one at a time, Empty puts the fish in the opener's pack.
+    g.placed.add(FARM_STORE, {
+      x: 20,
+      y: 20,
+      id: FISH_POND,
+      state: { building: 0, count: 0, capLevel: 0 },
+    });
+    g.inventory.add("carp");
+    expect(putFish(g, 20, 20, "carp").ok).toBe(true);
+    const pond = { kind: "pond", map: FARM, x: 20, y: 20 };
+    await stand(ann, FARM, 19, 22);
+    await stand(bo, FARM, 25, 22);
+    expect(await ask(ann, { kind: "open", screen: pond })).toBeUndefined();
+    expect(await ask(bo, { kind: "open", screen: pond })).toBe(
+      "Someone is using the pond.",
+    );
+    expect(
+      await ask(ann, { kind: "pond-empty", pond: { x: 20, y: 20 } }),
+    ).toBeUndefined();
+    expect(g.players.get(ann.id).inventory.count("carp")).toBe(1);
+    await ask(ann, { kind: "close" });
+    expect(await ask(bo, { kind: "open", screen: pond })).toBeUndefined();
   });
 });

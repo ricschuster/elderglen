@@ -110,6 +110,7 @@ import { MAP_PASSES } from "./map-passes";
 import { storeOf } from "../core/mapstore";
 import { mapWithDoors } from "../core/placement";
 import { farmMapOf, isFarmMap, resolveMapId } from "../core/farmtypes";
+import { pondCovering, pondStep } from "../core/pond";
 import {
   dismountSafely,
   horseName,
@@ -2059,6 +2060,14 @@ export class FarmScene extends Phaser.Scene {
       } else if (service.kind === "cooking") {
         ref = { kind: "cooking", ...base };
         scene = "cooking";
+      } else if (
+        service.kind === "keeper" ||
+        service.kind === "coop-bench" ||
+        service.kind === "barn-bench"
+      ) {
+        if (shut) return closed(shut);
+        ref = { kind: service.kind, ...base };
+        scene = service.kind;
       } else if (service.kind === "camp-chest" && this.floor !== undefined) {
         ref = { kind: "camp-chest", ...base, floor: this.floor };
         scene = "chest";
@@ -2076,6 +2085,24 @@ export class FarmScene extends Phaser.Scene {
       ref = { kind: "chest", ...base };
       scene = "chest";
       data = { mapId: this.mapId, x: at.x, y: at.y };
+    } else if (isFarmMap(this.mapId) && pondCovering(this.state, at.x, at.y)) {
+      // A pond: a held fish, the quest item or a waiting product is the host's Action rule (a `pond-use`
+      // intent); otherwise the menu opens, and it locks like a chest (note 108 group 3).
+      const p = pondCovering(this.state, at.x, at.y)!;
+      const held = heldAt(this.state, this.selected);
+      const item = held.kind === "item" ? held.id : undefined;
+      if (this.net instanceof GuestSession && pondStep(p, item) !== "status") {
+        this.net.sendIntent({
+          kind: "pond-use",
+          x: at.x,
+          y: at.y,
+          ...(item !== undefined ? { item } : {}),
+        });
+        return true;
+      }
+      ref = { kind: "pond", map: this.mapId, x: p.x, y: p.y };
+      scene = "pond";
+      data = { x: p.x, y: p.y };
     }
     if (!ref) return false;
     openShared(
@@ -2308,15 +2335,24 @@ export class FarmScene extends Phaser.Scene {
         return this.render();
       case "open":
         if (intent.cue) audio.sfx(intent.cue);
-        // Chests and the furnace are used by one player at a time (note 108 rule 2): the host
+        // Chests, ponds and the furnace are used by one player at a time (note 108 rule 2): the host
         // takes the lock too.
-        if (intent.scene === "furnace" || intent.scene === "chest") {
+        if (
+          intent.scene === "furnace" ||
+          intent.scene === "chest" ||
+          intent.scene === "pond"
+        ) {
           const scene = intent.scene;
+          // A pond's ref is its top left tile, which its menu data carries.
+          const at =
+            scene === "pond"
+              ? (intent.data as { x: number; y: number })
+              : front;
           const ref: ScreenRef = {
             kind: scene,
             map: this.mapId,
-            x: front.x,
-            y: front.y,
+            x: at.x,
+            y: at.y,
           };
           return openShared(
             ref,
