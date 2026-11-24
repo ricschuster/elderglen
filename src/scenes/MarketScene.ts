@@ -14,6 +14,7 @@ import { frame, Menu, TOUCH_ROW_H } from "./panel";
 import { STATE_KEY } from "./state";
 import { currentSession, GuestSession } from "../net/session";
 import { closeWhenDone, followGuest } from "./guestlive";
+import { festivalAsk } from "./farm-festival-net";
 
 /**
  * One Winter Night Market stall (note 14), opened from a `market-stall` service
@@ -107,6 +108,15 @@ export class MarketScene extends Phaser.Scene {
 
   /** The road trader's free hot drink, once an evening (note 14, attraction 1). */
   private drink(): void {
+    // In a session the host gives the drink to this player (their own energy and their own "once", note 111).
+    const net = currentSession();
+    if (net) {
+      festivalAsk(net, { kind: "pier-drink" }, (why) => {
+        this.message.setText(why ?? "You take the hot drink.");
+        this.refresh();
+      });
+      return;
+    }
     this.message.setText(claimHotDrink(this.state).line);
     this.refresh();
   }

@@ -308,6 +308,12 @@ import {
   TICK_MS,
 } from "./farm-consts";
 import {
+  enterFestivalNet,
+  festivalAsk,
+  pollFestivalNet,
+  updateHuntView,
+} from "./farm-festival-net";
+import {
   updateParade,
   festivalAction,
   pierKeeper,
@@ -942,8 +948,14 @@ export class FarmScene extends Phaser.Scene {
       delay: TICK_MS / DEV_SPEED,
       loop: true,
       callback: () => {
-        // Time stands still on a festival map, as in Stardew.
-        if (isFestivalMap(this.mapId)) return;
+        // Time stands still on a festival map, as in Stardew. In a session the host's gate holds it, once every
+        // player is in (note 111), whatever map the host stands on.
+        if (
+          this.net instanceof HostSession
+            ? this.net.world.festival.clockHeld()
+            : isFestivalMap(this.mapId)
+        )
+          return;
         // A guest's clock follows the host's day message, so it does not tick (note 53).
         if (this.net instanceof GuestSession) return;
         this.tickAt = this.time.now;
@@ -1068,7 +1080,10 @@ export class FarmScene extends Phaser.Scene {
     this.drawGlow();
     updateBombs(this, dt);
     this.syncVillagers(undefined, dt);
-    updateHunt(this, dt);
+    if (this.net) {
+      pollFestivalNet(this);
+      updateHuntView(this);
+    } else updateHunt(this, dt);
     this.checkHeartEvent();
     this.checkWedding();
     const marching = updateParade(this, dt);
@@ -1391,31 +1406,35 @@ export class FarmScene extends Phaser.Scene {
         return true;
       }
     }
-    const offer = this.hunt
-      ? undefined
-      : huntOffer(
-          festivalDayToday(this.state.day.clock.day),
-          this.mapId,
-          who.id,
-          this.state.day.clock.day,
-          this.state.day.clock.minutes,
-        );
+    if (this.net && this.festivalTalkNet(who.id)) return true;
+    const offer =
+      this.hunt || this.net
+        ? undefined
+        : huntOffer(
+            festivalDayToday(this.state.day.clock.day),
+            this.mapId,
+            who.id,
+            this.state.day.clock.day,
+            this.state.day.clock.minutes,
+          );
     if (offer) {
       this.hunt = offer.state;
       this.message = offer.message ?? "";
       this.render();
       return true;
     }
-    if (this.iceTalk(who.id)) return true;
+    if (!this.net && this.iceTalk(who.id)) return true;
     const held = heldAt(this.state, this.selected);
     const hall = hallRestored(this.state.hall);
-    const feast = feastGive(
-      this.state,
-      this.mapId,
-      who.id,
-      held.kind === "item" ? held.id : undefined,
-      hall,
-    );
+    const feast = this.net
+      ? undefined
+      : feastGive(
+          this.state,
+          this.mapId,
+          who.id,
+          held.kind === "item" ? held.id : undefined,
+          hall,
+        );
     if (feast) {
       this.message = feast.message;
       if (feast.giver && feast.present)
@@ -1669,6 +1688,8 @@ export class FarmScene extends Phaser.Scene {
     if (f) {
       this.message = `You join the ${f.name}.`;
       this.render();
+      // The host's gate counts this player in; it shows "Waiting for ..." until every player is (note 111).
+      if (this.net) enterFestivalNet(this, () => undefined);
     }
   }
 
@@ -1698,6 +1719,13 @@ export class FarmScene extends Phaser.Scene {
   }
 
   private leave(exit: Exit): void {
+    // In a session the host's gate takes the player in first, and says "Waiting for ..." until all are in (note 111).
+    if (this.net && !isFestivalMap(this.mapId) && isFestivalMap(exit.map))
+      return enterFestivalNet(this, () => this.leaveInto(exit));
+    this.leaveInto(exit);
+  }
+
+  private leaveInto(exit: Exit): void {
     // Walking onto a festival map joins the festival (note 82 decision 11).
     if (!isFestivalMap(this.mapId)) {
       const problem = walkIntoFestival(this.state, exit.map);
@@ -2436,6 +2464,43 @@ export class FarmScene extends Phaser.Scene {
     if (!isHole(f, x, y)) return undefined;
     this.ice ??= startIceFishing(f);
     return this.ice;
+  }
+
+  /**
+   * Talk to someone at a festival with other players (note 111): Cuthbert starts the hunt and judges the ice
+   * contest, and the lantern's recipient takes the gift. The host judges each; its words come back as festival lines.
+   */
+  private festivalTalkNet(who: string): boolean {
+    const f = festivalDayToday(this.state.day.clock.day);
+    if (!f) return false;
+    const say = (why?: string) => {
+      if (why === undefined) return;
+      this.message = why;
+      this.render();
+    };
+    if (
+      who === "cuthbert" &&
+      f.id === "seedswap-fair" &&
+      this.mapId === "forest"
+    ) {
+      festivalAsk(this.net, { kind: "hunt-start" }, say);
+      return true;
+    }
+    if (who === "cuthbert" && f.id === "frostday" && this.mapId === "forest") {
+      festivalAsk(this.net, { kind: "ice-judge" }, say);
+      return true;
+    }
+    const held = heldAt(this.state, this.selected);
+    const hall = hallRestored(this.state.hall);
+    if (held.kind === "item" && lanternOn(this.state, this.mapId, hall, who)) {
+      festivalAsk(
+        this.net,
+        { kind: "feast-give", map: this.mapId, id: who, held: held.id },
+        say,
+      );
+      return true;
+    }
+    return false;
   }
 
   /** Talk to Cuthbert at the contest: the count, or the judging, the prize and the end of the festival. */

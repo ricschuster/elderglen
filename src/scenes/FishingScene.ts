@@ -2,7 +2,7 @@ import { ENERGY_FLOOR } from "../core/energy";
 import { audio } from "../audio/engine";
 import { itemById } from "../core/items";
 import { castFishById } from "../core/roomplay";
-import { currentSession, GuestSession } from "../net/session";
+import { currentSession, GuestSession, HostSession } from "../net/session";
 import Phaser from "phaser";
 import { dateOf } from "../core/calendar";
 import {
@@ -589,7 +589,13 @@ export class FishingScene extends Phaser.Scene {
       random: Math.random,
       at: this.cfg.at,
     });
-    if (this.cfg.ice) noteHoleCatch(this.cfg.ice, this.cfg.kind, true);
+    if (this.cfg.ice) {
+      noteHoleCatch(this.cfg.ice, this.cfg.kind, true);
+      // The host's own hole catch counts in the shared contest (a guest's is counted by the host's cast, note 111).
+      const net = currentSession();
+      if (net instanceof HostSession && this.cfg.kind === "forest-lake")
+        net.world.festival.iceCatch(net.localId);
+    }
     const pearl = this.cfg.pier && rollPearl(g, this.cfg.at, Math.random);
     // The chest pays only when it was fetched as well as the fish.
     const prize = chest ? this.chestPrize : undefined;

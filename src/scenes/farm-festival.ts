@@ -42,6 +42,8 @@ import {
   floatProblem,
   permitProblem,
 } from "../core/marketpier";
+import { GuestSession } from "../net/session";
+import { festivalAsk } from "./farm-festival-net";
 import { DEPTH, sortDepth } from "./depth";
 import { tileOf } from "../core/movement";
 import { hallRestored } from "../core/bundles";
@@ -83,6 +85,14 @@ export function updateParade(farm: FarmScene, dt: number): boolean {
   if (!join && !farm.leaving) {
     const at = tileOf(farm.pos, PLAYER, ts);
     if (!joinParade(farm.state, farm.mapId, at.x, at.y)) {
+      // A guest's own record is on the host: it files the march for them (note 111 rule 9). The host's is the state.
+      if (farm.net instanceof GuestSession)
+        farm.net.sendIntent({
+          kind: "parade-join",
+          map: farm.mapId,
+          x: at.x,
+          y: at.y,
+        });
       join = paradeJoin(farm.state);
       farm.villagerStamp = -1;
       farm.message = "The march forms. You fall in at the tail of the line.";
@@ -95,6 +105,8 @@ export function updateParade(farm: FarmScene, dt: number): boolean {
     if (farm.marching) {
       farm.marching = false;
       farm.message = finishParade(farm.state);
+      if (farm.net instanceof GuestSession)
+        farm.net.sendIntent({ kind: "parade-done" });
       audio.sfx("festival.cheer");
       farm.render();
     }
@@ -117,7 +129,7 @@ export function updateParade(farm: FarmScene, dt: number): boolean {
  */
 export function festivalAction(
   farm: FarmScene,
-  service: { id: string; kind: string },
+  service: { id: string; kind: string; x: number; y: number },
 ): void {
   if (service.kind === "cake-table") return cakeTable(farm);
   if (service.id === "lantern-stall") return lanternStall(farm);
@@ -126,12 +138,22 @@ export function festivalAction(
   if (!f) return;
   switch (service.kind) {
     case "showing":
-      return farm.open("festival", { mode: "panel", panel: "showing" });
+      return farm.open("festival", {
+        mode: "panel",
+        panel: "showing",
+        ref: { kind: "showing", map: farm.mapId, x: service.x, y: service.y },
+      });
     case "festival-counter":
       return farm.open("festival", { mode: "panel", panel: "counter" });
     case "festival-leave":
       return farm.open("festival", { mode: "leave" });
     case "hedge-chest":
+      if (farm.net)
+        return festivalAsk(farm.net, { kind: "maze-chest" }, (why) => {
+          if (why === undefined) return;
+          farm.message = why;
+          farm.render();
+        });
       farm.message = openChest(farm.state);
       return farm.render();
     case "hedge-cart":
@@ -143,8 +165,25 @@ export function festivalAction(
   }
 }
 
+/**
+ * Ask the host to do a festival action as this player (note 111 rule 9): it answers with a refusal, or its line
+ * for the player arrives as a festival line. `ok` runs when it was accepted (the drifting lantern).
+ */
+function askSay(
+  farm: FarmScene,
+  intent: { kind: string },
+  ok?: () => void,
+): void {
+  festivalAsk(farm.net, intent, (why) => {
+    if (why === undefined) return ok?.();
+    farm.message = why;
+    farm.render();
+  });
+}
+
 /** The Night Market pier keeper sells the evening's fishing permit (note 14, placeholder price). */
 export function pierKeeper(farm: FarmScene): void {
+  if (farm.net) return askSay(farm, { kind: "pier-permit" });
   const problem = permitProblem(farm.state);
   farm.message = problem ?? (buyPermit(farm.state) ? PIER_LINES.sold : "");
   farm.render();
@@ -152,6 +191,8 @@ export function pierKeeper(farm: FarmScene): void {
 
 /** Float a lantern from the pier tip: a short cosmetic scene, a line and a small luck buff until morning. */
 export function pierFloat(farm: FarmScene): void {
+  if (farm.net)
+    return askSay(farm, { kind: "pier-float" }, () => driftLantern(farm));
   const problem = floatProblem(farm.state);
   if (problem) {
     farm.message = problem;
@@ -165,6 +206,7 @@ export function pierFloat(farm: FarmScene): void {
 
 /** Lamplight Evening stall: buys a paper lantern (placeholder price). */
 export function lanternStall(farm: FarmScene): void {
+  if (farm.net) return askSay(farm, { kind: "lantern-buy" });
   const problem = lanternBuyProblem(farm.state);
   farm.message =
     problem ??
@@ -210,6 +252,8 @@ export function driftLantern(farm: FarmScene): void {
 
 /** Sets the held lantern afloat and lets it drift off. */
 export function launchLanternAt(farm: FarmScene): void {
+  if (farm.net)
+    return askSay(farm, { kind: "lantern-launch" }, () => driftLantern(farm));
   const problem = launchProblem(farm.state);
   if (problem) {
     farm.message = problem;

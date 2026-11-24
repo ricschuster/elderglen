@@ -319,8 +319,7 @@ export async function startHostSession(
   deps: HostSessionDeps,
 ): Promise<HostSession> {
   const map = farmMapOf(state);
-  const hosted: { host?: RoomHost } = {};
-  let session: HostSession | undefined;
+  const hosted: { host?: RoomHost; session?: HostSession } = {};
   const world = new GameRoomWorld(state, {
     inside: (id) => isHouseMap(hosted.host?.room.position(id)?.map ?? ""),
     where: (id) => hosted.host?.room.position(id),
@@ -330,7 +329,7 @@ export async function startHostSession(
   });
   const host = await RoomHost.start({
     world,
-    onHostMessages: (msgs) => session?.takeMessages(msgs),
+    onHostMessages: (msgs) => hosted.session?.takeMessages(msgs),
     pipe: deps.makePipe(),
     port: deps.port,
     tickHz: deps.tickHz,
@@ -338,8 +337,8 @@ export async function startHostSession(
     announceName: deps.announceName,
   });
   hosted.host = host;
-  session = new HostSession(host, world);
-  return session;
+  hosted.session = new HostSession(host, world);
+  return hosted.session;
 }
 
 export const HOST_LOST_NOTICE = "The host left, so the game ended.";
