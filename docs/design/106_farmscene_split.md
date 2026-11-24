@@ -165,3 +165,17 @@ and the scene's old `PUSH`. Renamed: `HALL_ROOMS`/`HallRoomDef` (bundles) and `D
 (decor), `COMPLETION_RINGS`/`CompletionRingDef`, `houseOrderProblem`/`houseOrderUpgrade`,
 `fertilizersOnSale` (fertilizer.ts). Already fixed: `tileKey` existed and most stores used it, and the pond check
 already respected the silo (a test now pins it), so there was no behaviour change.
+
+Item 2 built 2026-11-24: farm plots are now checked on load by the same filter as greenhouse plots (one
+`validPlots` in `save.ts`; bad keys, flags, crops and fertilizer are dropped, not thrown). `FarmCave.load` checks
+every array and field with `isObject` and `isNum` (fruit rows, boxes, the dehydrator job). `safeSpawn`
+(`core/maps.ts`) replaces a map that no longer exists with the farm's start entry, and `FarmScene.init` logs a
+warning when it does; a map with no entries falls back to tile 1,1 instead of `entries[0]!`. `beaten()` no longer
+needs a floor state (`removeCreature` in `creature-defeat.ts`). Two new tests: `tests/contentshape.test.ts`
+(every content JSON parses; every list file is checked against a required-field table, and no id repeats) and the
+service check in the same file (every service kind in the map files has a label and a handler named in
+`src/scenes` or `src/core`; `market-pier` and `market-float` come through constants). Fixture tests for the save
+fixes are in `tests/crashsafety.test.ts`. Already fixed: greenhouse plot filtering, and `fightState` already
+returned undefined for a missing floor (only the `!` in `beaten()` was left). No bad content data was found.
+Object-shaped content files are checked only for parsing and being non-empty. The save version chain is
+untouched (note 52).

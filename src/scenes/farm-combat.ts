@@ -51,7 +51,11 @@ import {
 } from "../core/bombs";
 import { dangerHit } from "../core/danger";
 import { mineFloorOf } from "../core/mines";
-import { defeatCreature, defeatMessage } from "../core/creature-defeat";
+import {
+  defeatCreature,
+  defeatMessage,
+  removeCreature,
+} from "../core/creature-defeat";
 import { PLAYER } from "./farm-consts";
 import { CREATURE_BODY } from "./farm-consts";
 import type { FarmScene } from "./FarmScene";
@@ -589,8 +593,8 @@ export function shotAim(farm: FarmScene): Vec | undefined {
 /** A creature is beaten: its goods, the kill tally and a ladder roll. */
 export function beaten(farm: FarmScene, c: Creature): void {
   audio.sfx("enemy.die");
-  const floor = fightState(farm)!;
-  floor.creatures = floor.creatures.filter((o) => o.uid !== c.uid);
+  // No floor state (a stale or corrupt save): there is nothing to remove it from.
+  removeCreature(fightState(farm), c.uid);
   farm.creatureSprites.get(c.uid)?.destroy();
   farm.creatureSprites.delete(c.uid);
   const r = defeatCreature(

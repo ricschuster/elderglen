@@ -854,6 +854,25 @@ function savedOrders(raw: unknown): OrdersSave | undefined {
   };
 }
 
+/** The plots of a saved soil that are well formed: bad entries are dropped, not thrown. */
+function validPlots(raw: Record<string, unknown>): ReturnType<Farm["save"]> {
+  const plots = Object.entries(raw).filter(
+    ([k, p]) =>
+      /^\d+,\d+$/.test(k) &&
+      isObject(p) &&
+      p.tilled === true &&
+      typeof p.wateredToday === "boolean" &&
+      (p.fertilizer === undefined || typeof p.fertilizer === "string") &&
+      (p.crop === undefined ||
+        (isObject(p.crop) &&
+          typeof p.crop.id === "string" &&
+          cropById(p.crop.id) !== undefined &&
+          isCount(p.crop.daysGrown) &&
+          isCount(p.crop.harvests))),
+  );
+  return Object.fromEntries(plots) as ReturnType<Farm["save"]>;
+}
+
 /**
  * True when the record was written by a newer game than this build
  * (its `version` is above `SAVE_VERSION`). `deserialize` refuses such a
@@ -940,23 +959,8 @@ export function deserialize(text: string): GameState | undefined {
   g.inventory.load(inventory as ReturnType<Inventory["save"]>);
   // Saves from before note 102 kept the tools apart: put them in the pack.
   ensureTools(g.inventory);
-  g.farm.load(farm as ReturnType<Farm["save"]>);
-  if (isObject(raw.greenhouse)) {
-    const plots = Object.entries(raw.greenhouse).filter(
-      ([k, p]) =>
-        /^\d+,\d+$/.test(k) &&
-        isObject(p) &&
-        p.tilled === true &&
-        typeof p.wateredToday === "boolean" &&
-        (p.crop === undefined ||
-          (isObject(p.crop) &&
-            typeof p.crop.id === "string" &&
-            cropById(p.crop.id) !== undefined &&
-            isCount(p.crop.daysGrown) &&
-            isCount(p.crop.harvests))),
-    );
-    g.greenhouse.load(Object.fromEntries(plots) as ReturnType<Farm["save"]>);
-  }
+  g.farm.load(validPlots(farm));
+  if (isObject(raw.greenhouse)) g.greenhouse.load(validPlots(raw.greenhouse));
   g.skills.load(skills as ReturnType<Skills["save"]>);
   if (Array.isArray(raw.trees)) g.trees.load(validTrees(raw.trees));
   if (Array.isArray(raw.ground)) g.ground.load(validPiles(raw.ground));

@@ -94,3 +94,11 @@ export function defeatCreature(
 export function defeatMessage(r: Defeat): string {
   return `${r.name} beaten.${r.levelUp ? ` Combat is now level ${r.levelUp}.` : ""}${r.got.length ? ` Dropped ${r.got.join(", ")}.` : ""}${r.ladder ? " A ladder is revealed!" : ""}`;
 }
+
+/** Take a beaten creature off its floor. A missing floor (a stale or corrupt save) is a no-op. */
+export function removeCreature(
+  floor: { creatures: Creature[] } | undefined,
+  uid: number,
+): void {
+  if (floor) floor.creatures = floor.creatures.filter((o) => o.uid !== uid);
+}

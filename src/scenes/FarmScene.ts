@@ -93,7 +93,7 @@ import { MIXED_SEED } from "../core/weeds";
 import { NOTHING_TO_ACT_ON, act, reasonText, useHeld } from "../core/tools";
 
 import { mapFiles, maps } from "../content/maps";
-import { START } from "../core/maps";
+import { START, safeSpawn } from "../core/maps";
 import { HAT_KEY } from "./art-people";
 import { DEPTH, sortDepth } from "./depth";
 import {
@@ -553,11 +553,24 @@ export class FarmScene extends Phaser.Scene {
     this.net = currentSession();
     // A new map load is a new entry: the next area test offers its event (note 62, point 6).
     this.eventTile = "";
-    this.mapId = resolveMapId(data.map ?? START.map, this.state.farmType);
-    this.entryName = data.entry ?? START.entry;
+    const wanted = safeSpawn(
+      {
+        map: resolveMapId(data.map ?? START.map, this.state.farmType),
+        entry: data.entry ?? START.entry,
+        x: data.x,
+        y: data.y,
+      },
+      (id) => mapFiles[id] !== undefined || mineFloorOf(id) !== undefined,
+      resolveMapId(START.map, this.state.farmType),
+    );
+    // An old save may name a map that is gone: start at the farm instead.
+    if (wanted.replaced)
+      console.warn(`Unknown map "${data.map}": starting at the farm instead.`);
+    this.mapId = wanted.spawn.map;
+    this.entryName = wanted.spawn.entry;
     this.restoreTile =
-      data.x !== undefined && data.y !== undefined
-        ? { x: data.x, y: data.y }
+      wanted.spawn.x !== undefined && wanted.spawn.y !== undefined
+        ? { x: wanted.spawn.x, y: wanted.spawn.y }
         : undefined;
     this.gate = new ResumeGate();
     this.gate.seed(serialize(this.state));
@@ -692,8 +705,8 @@ export class FarmScene extends Phaser.Scene {
       );
     world.push(...this.drawLabels());
     world.push(...this.drawSpouseProps(holds));
-    let spawn: { x: number; y: number } =
-      this.map.entry(this.entryName) ?? this.map.entries[0]!;
+    let spawn: { x: number; y: number } = this.map.entry(this.entryName) ??
+      this.map.entries[0] ?? { x: 1, y: 1 };
     // A resumed day puts the player back on the tile they left, if it is open.
     const back = this.restoreTile;
     if (back && !this.map.isBlocked(back.x, back.y)) spawn = back;

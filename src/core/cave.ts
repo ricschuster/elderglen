@@ -8,6 +8,7 @@ import { processFor } from "./processing";
 import { doubleForageChance, forageFloor } from "./professions";
 import { forageQuality, withQuality, type Quality } from "./quality";
 import type { GameState } from "./save";
+import { isNum, isObject } from "./guards";
 import { tileKey } from "./tilekey";
 
 /**
@@ -206,27 +207,36 @@ export class FarmCave {
   }
 
   load(data: Partial<CaveSave> | undefined): void {
-    if (!data) return;
-    this.earnings = Number.isFinite(data.earnings) ? data.earnings! : 0;
+    if (!isObject(data)) return;
+    this.earnings = isNum(data.earnings) ? data.earnings : 0;
     this.asked = data.asked === true;
     this.choice =
       data.choice === "bats" || data.choice === "mushrooms"
         ? data.choice
         : undefined;
-    this.shownDay =
-      typeof data.shownDay === "number" ? data.shownDay : undefined;
-    this.arrivalDay =
-      typeof data.arrivalDay === "number" ? data.arrivalDay : undefined;
+    this.shownDay = isNum(data.shownDay) ? data.shownDay : undefined;
+    this.arrivalDay = isNum(data.arrivalDay) ? data.arrivalDay : undefined;
     this.fruit.clear();
-    for (const f of data.fruit ?? [])
-      if (typeof f?.id === "string")
-        this.fruit.set(tileKey(Number(f.x), Number(f.y)), f.id);
+    if (Array.isArray(data.fruit))
+      for (const f of data.fruit as unknown[])
+        if (isObject(f) && typeof f.id === "string" && isNum(f.x) && isNum(f.y))
+          this.fruit.set(tileKey(f.x, f.y), f.id);
     if (Array.isArray(data.boxes) && data.boxes.length === MUSHROOM_BOXES)
-      this.boxes = data.boxes.map((b) => ({
-        days: Number(b.days) || 0,
-        ready: typeof b.ready === "string" ? b.ready : undefined,
-      }));
-    this.dehydrator = data.dehydrator ? { ...data.dehydrator } : undefined;
+      this.boxes = (data.boxes as unknown[]).map((b) => {
+        const box = isObject(b) ? b : {};
+        return {
+          days: Number(box.days) || 0,
+          ready: typeof box.ready === "string" ? box.ready : undefined,
+        };
+      });
+    const job = data.dehydrator as unknown;
+    this.dehydrator =
+      isObject(job) &&
+      typeof job.output === "string" &&
+      isNum(job.count) &&
+      isNum(job.doneAt)
+        ? { output: job.output, count: job.count, doneAt: job.doneAt }
+        : undefined;
   }
 }
 
