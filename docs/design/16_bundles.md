@@ -247,6 +247,77 @@ its room is finished, but the Stardew wiki was not checked for this note.
 - Stardew's room thresholds and reward lists come from guide sites and a forum
   reply, not the wiki, which blocked fetches.
 
+## Sim run for the Last Seat pacing (2026-11-24, #181)
+
+`npm run sim -- <persona> 40 112`, the three personas of note 98, 40 seeds each,
+112 days (the sim's year). The target is about 1.5 years for centre 1: 6
+seasons of 28 days, day 168 (note 00; a season is 28 days, note 07). The sim
+reports each room and a Last Seat line since this run.
+
+**Limit: the bot plays 11 of the 30 bundles.** It does not fish, keep animals,
+cook, keep bees, or weave, so it skips the whole Water room, the animal, cooking
+and weaving bundles, Fodder, and all four Last Seat bundles. The Last Seat opens
+only after all 26 others, so the sim cannot measure when it opens or finishes,
+and no day for "all 30" exists. What it gives is the day the played 11 are done,
+which is a floor for the Last Seat opening.
+
+| Persona | Foragers' Shelf (5 of 6 played) | Larder (4 of 6) | Hearth (1 of 3) | Guests' Board (1 of 5) | Water room, Last Seat | Played 11 all done |
+| --- | --- | --- | --- | --- | --- | --- |
+| Expert | day 94 (30 of 40 runs) | day 67 (32 of 40) | day 61 (40 of 40) | day 32 (40 of 40) | not played | day 94, range 86 to 111 (24 of 40) |
+| Intermediate | day 99 (14 of 40) | day 66 (36 of 40) | day 60 (40 of 40) | day 36 (40 of 40) | not played | day 99, range 90 to 111 (13 of 40) |
+| Casual | none finished | none | none | none | not played | none by day 112 |
+
+Medians over the runs that finished the room. Casual finished only the first
+two foraging bundles (3 and 6 of 40 runs): it forages 3 spots on a third of its
+days and sells what the hall wants. The earlier "55 of 100 by day 112" was a
+different mix and an older bot; this run does not reproduce it (24, 13 and 0 of
+40). Last Seat open and finish days: not measurable by the bot.
+
+**What gates the played 11.** Winter Foraging opens on day 85 and is the last
+one done (day 94 to 99), so the played set cannot finish before about day 86 in
+year 1. Autumn Foraging (median 68 to 75) and the Woodland bundle (65) follow the
+calendar too. The 15 unplayed others are on the same calendar: Water room fish
+and the Fodder, animal and cooking bundles all want gear, animals or a season
+the bot lacks, so a human player almost surely opens the Last Seat after day 99.
+
+**The Last Seat's long pole, from the data (not the sim).** Quantities are in
+`bundles.json`. Ore for a bar is 5 ore and 1 coal (`ore.ts`).
+
+- 30 bars across The Hearth Fire (10) and The Long Road (20): 150 ore and 30
+  coal, plus smelting time. With the Mountain mine and one furnace this is the
+  largest single stock.
+- 100 wood and 100 stone (Long Road): bulk gathering; the Woodland bundle asks
+  for 50 of each, so this is twice that again.
+- 15 cloth (5 Hearth Fire, 10 Long Road): wool from sheep, a loom, so it waits
+  on animals as well.
+- The Catch: four fish, each gold quality, one per water (stream, lake, sea,
+  night). Rod level and fishing skill gate gold, not the calendar.
+- Harvest Feast: 3 meals, 3 preserves, 3 cheese, 3 honey: cheese and honey wait
+  on a coop or barn and a bee house.
+
+The Long Road has no 5,000g now (the stand-in note at the top of this file).
+
+**Reading against the target.** If the played 11 finish near day 94 to 99 and the
+other 15 take until about day 120 to 140, the Last Seat opens in year 2 spring
+or summer, leaving about 30 to 50 days to the 168 day target for 30 bars,
+100 wood, 100 stone, 15 cloth and four gold fish. That is tight but not
+impossible for an expert. Casual play misses the target by a wide margin, as the
+casual does for the first 11 alone. This is a guess, not a measurement.
+
+**Number changes to choose from (none applied):**
+
+1. **Cut the Last Seat stock.** Long Road to 60 wood, 60 stone, 12 bars, 6 cloth,
+   and Hearth Fire to 6 bars. Total bars fall from 30 to 18, cutting the ore and
+   smelting pole by 40 percent. Recommended if the hand-play shows bars are the
+   wall.
+2. **Soften The Catch.** Require gold for two of the four fish and silver for
+   the other two. Keeps it the hardest bundle without tying the finish to
+   luck on night and sea fish.
+3. **Measure first.** Teach the bot to fish, keep two animals and run a bee
+   house, then rerun for a real "all 26 others" day before changing any number.
+   The sim cannot honestly answer the pacing question until it plays the Water
+   room and the animal bundles.
+
 ## Room rewards that did nothing (owner, 2026-11-12, #871)
 
 - **Guests' Board:** +500 friendship with everyone met (Stardew, recalled, the saved

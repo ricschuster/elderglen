@@ -1,7 +1,7 @@
 // `npm run sim -- <expert|intermediate|casual> [runs] [maxDay]`
 // Plays the core rules headless over many seeds and prints how fast the hall
 // bundles get done (note 98). Not a gate, like the browser playtests.
-import { BUNDLES } from "../../src/core/bundles";
+import { BUNDLES, LAST_ROOM } from "../../src/core/bundles";
 import { clockText } from "../../src/core/clock";
 import { playGame, UNPLAYED_BUNDLES, type RunResult } from "./bot";
 import { PERSONAS } from "./personas";
@@ -75,6 +75,33 @@ export async function main(args: string[]): Promise<void> {
   console.log(
     `  all played bundles: ${spread(
       results.flatMap((r) => (r.allDay ? [r.allDay] : [])),
+      runs,
+    )}`,
+  );
+  // Room by room: the day the last played bundle of the room was done.
+  for (const room of [...new Set(BUNDLES.map((b) => b.room))]) {
+    const inRoom = BUNDLES.filter((b) => b.room === room);
+    const played = inRoom.filter((b) => !UNPLAYED_BUNDLES.includes(b.id));
+    const days = results.flatMap((r) =>
+      played.length > 0 && played.every((b) => b.id in r.bundleDays)
+        ? [Math.max(...played.map((b) => r.bundleDays[b.id] as number))]
+        : [],
+    );
+    console.log(
+      `  room ${room}: ${played.length} of ${inRoom.length} played, ${spread(days, runs)}`,
+    );
+  }
+  // The Last Seat opens only after every other bundle (note 16), so the day the
+  // bot finishes what it plays is the earliest the room could open.
+  const others = BUNDLES.filter((b) => b.room !== LAST_ROOM);
+  const playedOthers = others.filter((b) => !UNPLAYED_BUNDLES.includes(b.id));
+  console.log(
+    `  Last Seat: opens after all ${others.length} other bundles, the bot plays ${playedOthers.length} of them and ${BUNDLES.filter((b) => b.room === LAST_ROOM && !UNPLAYED_BUNDLES.includes(b.id)).length} of its own ${BUNDLES.length - others.length}; played others done: ${spread(
+      results.flatMap((r) =>
+        playedOthers.every((b) => b.id in r.bundleDays)
+          ? [Math.max(...playedOthers.map((b) => r.bundleDays[b.id] as number))]
+          : [],
+      ),
       runs,
     )}`,
   );
