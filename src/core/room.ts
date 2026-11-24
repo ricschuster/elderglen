@@ -160,12 +160,15 @@ export class Room {
       players: this.info(),
       home: this.world.homeOf?.(m.id),
     });
-    m.out.push({
-      t: "farm",
-      day: this.world.day(),
-      farm: this.world.snapshot(),
-    });
+    const farm = this.world.snapshot();
+    m.out.push({ t: "farm", day: this.world.day(), farm });
     this.broadcast({ t: "joined", player: { id: m.id, name: m.name } }, m.id);
+    // Guests already here get the farm again, so their copy holds the newcomer's record and
+    // applies the newcomer's intents (a copy drops intents from players it does not know).
+    for (const o of this.members.values()) {
+      if (o.id === m.id || o.id === LOCAL_PLAYER || !o.connected) continue;
+      o.out.push({ t: "farm", day: this.world.day(), farm });
+    }
     return m.id;
   }
 

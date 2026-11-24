@@ -38,7 +38,8 @@ describe("Room", () => {
     expect(out.map((m) => m.t)).toEqual(["hello", "farm"]);
     const b = r.join("Bo")!;
     expect(b).toBe("p3");
-    expect(r.drain(a).map((m) => m.t)).toEqual(["joined"]);
+    // Ann gets the farm again, so her copy knows Bo and applies his intents.
+    expect(r.drain(a).map((m) => m.t)).toEqual(["joined", "farm"]);
     expect(w.log).toEqual(["add p2", "add p3"]);
     expect(w.snaps).toBe(2);
   });
