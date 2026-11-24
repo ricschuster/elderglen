@@ -2,8 +2,10 @@
 // same core function single player uses, as the sending player: their inventory, can, skills,
 // tool tiers, wallet and energy. Free of Phaser and the DOM.
 import * as actions from "./actions";
-import { farmMapOf } from "./farmtypes";
-import { itemById } from "./items";
+import { farmMapOf, farmTypeById } from "./farmtypes";
+import { resolveUse } from "./interact";
+import { cropOfSeed, itemById } from "./items";
+import { MIXED_SEED } from "./weeds";
 import type { Intent } from "./protocol";
 import { asPlayer } from "./asplayer";
 import { LOCAL_PLAYER, type PlayerId } from "./players";
@@ -13,7 +15,7 @@ import type { GameState } from "./save";
 import { buy, sell } from "./shop";
 import { isShopStock, shopBuy } from "./shopoffers";
 import { findTool } from "./toolitems";
-import { useHeld } from "./tools";
+import type { Held } from "./toolbar";
 
 /** Most items one buy or sell intent may move. */
 const MAX_COUNT = 999;
@@ -22,6 +24,38 @@ const isTile = (v: unknown): v is number =>
   typeof v === "number" && Number.isInteger(v) && v >= 0 && v < 4096;
 const isCount = (v: unknown): v is number =>
   typeof v === "number" && Number.isInteger(v) && v >= 1 && v <= MAX_COUNT;
+
+/**
+ * A guest's tool or seed on a farm tile: the host's own Use rule (`resolveUse`), as the sender,
+ * so the farm has one copy of each tool's behaviour. Its intent is the outcome; the sounds and
+ * messages are the sender's scene's to make.
+ */
+function useAs(
+  g: GameState,
+  by: PlayerId,
+  held: Held,
+  x: number,
+  y: number,
+): string | undefined {
+  const map = farmMapOf(g);
+  const r = resolveUse(
+    g,
+    by,
+    {
+      mapId: farmTypeById(g.farmType).map,
+      map,
+      facing: "down",
+      rockAt: () => false,
+      litBombAt: () => false,
+      personAt: () => false,
+    },
+    held,
+    { x, y },
+  );
+  return r.kind === "tool" || r.kind === "report"
+    ? outcome(r.result)
+    : "cannot do that here";
+}
 
 const outcome = (o: actions.Outcome): string | undefined =>
   o.ok ? undefined : o.reason;
@@ -38,12 +72,12 @@ export function applyFarmIntent(
     case "water": {
       const { x, y } = intent;
       if (!isTile(x) || !isTile(y)) return `bad ${intent.kind}`;
-      return asPlayer(g, by, () =>
-        outcome(
-          intent.kind === "till"
-            ? actions.till(g, x, y, random)
-            : actions.water(g, x, y),
-        ),
+      return useAs(
+        g,
+        by,
+        { kind: "tool", tool: intent.kind === "till" ? "hoe" : "can" },
+        x,
+        y,
       );
     }
     case "harvest": {
@@ -57,22 +91,18 @@ export function applyFarmIntent(
       const { x, y } = intent;
       if (!isTile(x) || !isTile(y)) return `bad ${intent.kind}`;
       const tool = intent.kind;
-      return asPlayer(g, by, () => {
-        if (findTool(g.inventory, tool) < 0) return `no ${tool}`;
-        // The farm map's stumps, logs, trees, boulders and rocks, as the host's tool: experience
-        // (foraging for the axe, mining for the pickaxe), drops, tier and energy are the sender's.
-        return outcome(
-          useHeld(g, farmMapOf(g), { kind: "tool", tool }, x, y, undefined),
-        );
-      });
+      if (asPlayer(g, by, () => findTool(g.inventory, tool)) < 0)
+        return `no ${tool}`;
+      // The farm map's stumps, logs, trees, boulders and rocks, as the host's tool: experience
+      // (foraging for the axe, mining for the pickaxe), drops, tier and energy are the sender's.
+      return useAs(g, by, { kind: "tool", tool }, x, y);
     }
     case "plant": {
       const { x, y, seed } = intent;
       if (!isTile(x) || !isTile(y) || typeof seed !== "string")
         return "bad plant";
-      return asPlayer(g, by, () =>
-        outcome(actions.plant(g, x, y, seed, random)),
-      );
+      if (!cropOfSeed(seed) && seed !== MIXED_SEED) return "bad plant";
+      return useAs(g, by, { kind: "item", id: seed, count: 1 }, x, y);
     }
     case "buy": {
       const { id, n, stock } = intent;
