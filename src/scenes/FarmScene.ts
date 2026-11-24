@@ -95,6 +95,7 @@ import {
   YARD_EMPTY_LINE,
 } from "../core/quarry";
 import { FERRY_LINE, takeTreasure } from "../core/cove";
+import { isBomb } from "../core/bombs";
 import { cropOfSeed, itemById } from "../core/items";
 import { distanceShare, rodById, waterAhead } from "../core/fishing";
 import { MIXED_SEED } from "../core/weeds";
@@ -327,6 +328,7 @@ import {
   showHealth,
   syncCombatSettings,
   updateCombat,
+  guestBlast,
   guestCombatView,
   guestSwing,
   addCreatureSprite,
@@ -404,6 +406,10 @@ export class FarmScene extends Phaser.Scene {
   /** Bombs lit and counting down on this map. Never saved: they go off at once on leaving (note 89). */
   litBombs: LitBomb[] = [];
   bombFx!: Phaser.GameObjects.Graphics;
+  /** Health bars over hurt creatures, redrawn every frame (host and guests). */
+  creatureBars!: Phaser.GameObjects.Graphics;
+  /** Bombs the host is counting down for this guest, drawn blinking until the blast message (note 109). */
+  guestLit: { x: number; y: number; until: number }[] = [];
   wash!: Phaser.GameObjects.Graphics;
   /** Tracker arrows at the screen edge, on the UI camera (note 07). */
   trackerGfx!: Phaser.GameObjects.Graphics;
@@ -725,6 +731,10 @@ export class FarmScene extends Phaser.Scene {
     this.litBombs = [];
     this.bombFx = this.add.graphics().setDepth(901);
     world.push(this.bombFx);
+    this.creatureBars = this.add.graphics().setDepth(902);
+    world.push(this.creatureBars);
+    this.guestLit = [];
+    this.watchBombs();
     this.events.once("shutdown", () => detonateAll(this, true));
     this.creatureSprites = new Map();
     syncCombatSettings(this);
@@ -2275,6 +2285,9 @@ export class FarmScene extends Phaser.Scene {
     if (weapon) return guestSwing(this, net, weapon);
     if (held.kind === "item" && rodById(held.id))
       return this.guestCast(held.id);
+    // A bomb: the host places it, counts the fuse and blasts as this player (note 109).
+    if (held.kind === "item" && isBomb(held.id))
+      return void net.sendIntent({ kind: "bomb", ...at, item: held.id });
     if (held.kind === "tool" && held.tool === "hoe")
       net.sendIntent({ kind: "till", ...at });
     else if (held.kind === "tool" && held.tool === "can")
@@ -2336,6 +2349,29 @@ export class FarmScene extends Phaser.Scene {
       y: here.y + step.y * first,
       rod: rodId,
       distance: distanceShare(first, rod.range),
+    });
+  }
+
+  /** A guest sees the host's bombs on their map: blink for the fuse, then the blast (note 109). */
+  private watchBombs(): void {
+    const net = this.net;
+    if (!(net instanceof GuestSession)) return;
+    net.onBomb = (m) => {
+      if (m.map !== this.mapId) return;
+      if (m.t === "bomb") {
+        this.guestLit.push({
+          x: m.x,
+          y: m.y,
+          until: this.time.now + m.fuse * 1000,
+        });
+        audio.sfx("bomb.fuse");
+        return;
+      }
+      this.guestLit = this.guestLit.filter((b) => b.x !== m.x || b.y !== m.y);
+      guestBlast(this, m);
+    };
+    this.events.once("shutdown", () => {
+      if (net.onBomb) net.onBomb = undefined;
     });
   }
 

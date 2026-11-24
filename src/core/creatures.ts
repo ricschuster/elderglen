@@ -161,6 +161,8 @@ export interface Creature {
   struck: boolean;
   /** A small Gloop split from a bigger one. */
   small?: boolean;
+  /** Full health as the host told a guest (for the health bar); never saved. */
+  maxHp?: number;
 }
 
 export interface CreatureSave {
@@ -170,7 +172,17 @@ export interface CreatureSave {
   y: number;
   hp: number;
   small?: boolean;
+  /** Full health, sent to guests in the `creatures` message for the health bar (note 109). */
+  max?: number;
 }
+
+/** Full health of a creature, for its health bar: three times the base on a dangerous floor. */
+export const creatureMax = (c: Creature, dangerous: boolean): number =>
+  Math.max(
+    c.hp,
+    c.maxHp ?? 0,
+    dangerHealth(creatureById(c.kind)?.hp ?? 0, dangerous),
+  );
 
 /** The creatures of a band, in the order they are listed in the data. */
 export const creaturesOfBand = (band: number): CreatureDef[] =>
@@ -222,6 +234,8 @@ export function loadCreature(s: CreatureSave): Creature | undefined {
   // A dangerous floor gives three times the health, so the cap is the largest of these.
   c.hp = Math.min(Math.max(Math.round(s.hp), 1), dangerHealth(def.hp, true));
   if (s.small === true) c.small = true;
+  if (typeof s.max === "number" && Number.isFinite(s.max) && s.max > 0)
+    c.maxHp = Math.min(Math.round(s.max), dangerHealth(def.hp, true));
   return c;
 }
 

@@ -63,9 +63,9 @@ After note 108 group 1 (the dispatcher and locks), as one group per pull request
 
 1. The lever rule 9 (single player too; small, can go first). **Built 2026-11-24:** `Mines.dangerousTomorrow`, applied by `Mines.endDay` from `sleep`; saved as `dangerousTomorrow` only while it differs from today's mode.
 2. Map and reach on the existing intents, and ground pickup for guests. **Built 2026-11-24** (see "As built").
-3. Off-farm world intents: forage, axe and pickaxe on every map, fishing cast and catch. **Built 2026-11-24**, guest catch screen left.
+3. Off-farm world intents: forage, axe and pickaxe on every map, fishing cast and catch. **Built 2026-11-24**, with the guest catch bar and ice casts (finishing pass).
 4. Mine floors with several players: shared floors kept loaded, creatures chasing the nearest player, swing
-   intents, fainting per player, mine chests per player. **Built 2026-11-24**, slayer wall list screen left.
+   intents, fainting per player, mine chests per player. **Built 2026-11-24**, with the slayer wall list screen, bombs and health bars (finishing pass).
 
 ## Open
 
@@ -124,8 +124,37 @@ fishing), `roomworld.ts` (the gates), `src/net/guestapply.ts` (the guest's copy)
 - **Shared floors.** A floor is made once a day by `Mines.visit`, which every player on it shares, and it stays in
   memory with the state; dropped or sleeping guests are not targets or pickers.
 
-Not done (needs the owner or a later pass): the slayer wall list as a guest screen with its own claim and buy
-intents (the counts are per player already; the scene's wall list still edits the local copy directly); a guest
-catch screen (the bar fight) on their device; guest ice fishing and pier casts; Assist for guests; bombs and
-the training dummy for guests; the guests' creature health bars; a browser run of any of it (all scene edits are
-untested in a browser).
+### Finishing pass (build, 2026-11-24, later)
+
+- **Slayer wall list as a guest screen.** Screen kind `walllist` (service `wall-list` at Maren's counter in the
+  mine hall), opened with `open` like the other screens. `slayer-claim {goal}` and `slayer-buy {item}` run on the
+  host as the sender (`asPlayer`), so the kills, the claims and the purse are the sender's own. The scene sends
+  them through the dispatcher and no longer edits the copy for guests. The wardrobe is still one for the farm, so a
+  hat reward goes to the shared wardrobe (loose end, as for the hall's hat bundle).
+- **Guest fishing bar.** After `bite`, the guest's `FishingScene` opens in guest mode (`FishingData.guest`): the
+  hook window and the bar play locally for the fish the host named, then the scene sends `catch {perfect}` or
+  `catch {miss}`. Trash, finds and the Pearl Lobster have no bar: the scene sends a plain catch at once. The guest's
+  fishing assist is a device setting and shapes their own bar. The scene lands nothing locally; the pack changes
+  when the host's `player` message arrives. The cast itself is still instant on Use (no charge on the guest).
+- **Ice fishing and the pier.** The host's cast applies the Frostday rules: the lake is shut until it opens
+  ("The lake opens at noon."), and a cast into a hole can bring the Frostfin. The contest count is the host's alone
+  and a guest's catch does not add to it (loose end, a design question for the owner). The pier checks (permit and
+  hours from the plank the sender stands on, the night odds, market fish, the pearl) are in the host's cast, but the
+  pier is on Hearthwell, a town map the host does not run for guests, so a guest cannot cast there yet.
+- **Bombs.** `bomb {map, x, y, item}`: the host places it as the sender (the single player rule, the sender's
+  pack), keeps the fuse, and on the blast breaks the rocks the thrower's Mining level allows and hurts creatures,
+  every kill paying the thrower. Guests in the circle lose health (a share of maximum, never lethal). `bomb` (lit)
+  and `blast` messages go to the guests on the map, whose scene blinks the tile and plays the boom. Not done: the
+  host's own player is not hurt by a guest's bomb, and the host's scene does not draw the guest's fuse or boom
+  (it sees the rocks and creatures change).
+- **Training dummy.** A guest hits the dummy on their own screen (the number and the line); nothing is sent, as the
+  dummy has no state.
+- **Creature health bars.** The `creatures` message rows carry `max` (full health, three times on a dangerous
+  floor). Every player's scene (the host's too, which had none) draws a thin bar over a creature that has lost
+  health.
+- **Sling aim.** A guest's sling shot sends `ax` and `ay` (the direction to the pointer or tapped spot); the host
+  fires along it.
+
+Not done (needs the owner or a later pass): Assist and "no creatures" for guests (they stay a device setting the
+host does not know, so a guest is always hit at full strength); casks and the cellar; a browser run of any of it
+(all scene edits are untested in a browser); the contest count per player; the host feeling a guest's bomb.

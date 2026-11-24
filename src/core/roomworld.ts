@@ -315,6 +315,8 @@ export class GameRoomWorld implements RoomWorld {
           if (why !== undefined) return why;
         }
         if (intent.kind === "swing") return this.play.swing(by, intent);
+        if (intent.kind === "bomb")
+          return this.play.bomb(by, intent, this.o.where?.(by));
         if (intent.kind === "cast")
           return this.play.cast(by, intent, this.o.where?.(by));
         if (intent.kind === "catch") return this.play.land(by, intent);

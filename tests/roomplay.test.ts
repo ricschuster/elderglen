@@ -4,7 +4,7 @@
 import { describe, expect, it } from "vitest";
 import { maps } from "../src/content/maps";
 import { FORAGE } from "../src/core/forage";
-import { newCreature } from "../src/core/creatures";
+import { loadCreature, newCreature } from "../src/core/creatures";
 import { claimGoal, goalState } from "../src/core/slayerlist";
 import { SLAYER_GOALS } from "../src/core/creatures";
 import { farmTypeById } from "../src/core/farmtypes";
@@ -431,5 +431,87 @@ describe("fishing on the host", () => {
         rod: "reed-pole",
       }),
     ).toBe("Nothing to fish here.");
+  });
+});
+
+describe("bombs, slings and health bars on guests' floors", () => {
+  function floorSetup() {
+    const t = mk();
+    const floor = floorOf(t.g, 5);
+    floor.creatures = [];
+    t.stand("p2", "mine-5", 10, 8);
+    t.stand("p3", "mine-5", 20, 8);
+    return { ...t, floor };
+  }
+
+  it("a guest's bomb is placed from their pack, blinks for the fuse, then breaks rocks and kills as the thrower", () => {
+    const { g, w, floor } = floorSetup();
+    const ann = g.players.get("p2");
+    ann.inventory.add("bomb", 2);
+    floor.rocks.add(12, 8, "stone");
+    const far = floor.rocks.add(30, 30, "stone");
+    expect(far).toBe(true);
+    const c = newCreature(901, "pebbleback", 12.5 * 16, 9 * 16 - 2);
+    c.hp = 1;
+    floor.creatures = [c];
+    const bomb = { kind: "bomb", map: "mine-5", x: 11, y: 8, item: "bomb" };
+    expect(w.apply("p2", { ...bomb, item: "nope" })).toBe("bad bomb");
+    expect(w.apply("p2", { ...bomb, x: 30 })).toBe(TOO_FAR);
+    expect(w.apply("p2", bomb)).toBeUndefined();
+    expect(ann.inventory.count("bomb")).toBe(1);
+    // The same tile cannot take a second one while it burns.
+    expect(w.apply("p2", bomb)).toBe("You cannot put that there.");
+    const notes = w.takeNotices();
+    const lit = notes.filter((n) => n.msg.t === "bomb");
+    expect(lit).toHaveLength(1);
+    expect(lit[0]!.to).toEqual(expect.arrayContaining(["p2", "p3"]));
+    w.step(500);
+    expect(floor.rocks.at(12, 8)).toBeDefined();
+    for (let i = 0; i < 12; i++) w.step(100);
+    expect(floor.rocks.at(12, 8)).toBeUndefined();
+    expect(floor.rocks.at(30, 30)).toBeDefined();
+    expect(floor.creatures.find((o) => o.uid === 901)).toBeUndefined();
+    expect(ann.combat.kills.pebbleback).toBe(1);
+    expect(g.players.get("p3").combat.kills.pebbleback).toBeUndefined();
+    const blasts = w.takeNotices().filter((n) => n.msg.t === "blast");
+    expect(blasts).toHaveLength(1);
+    expect(blasts[0]!.to).toEqual(expect.arrayContaining(["p2", "p3"]));
+    // Ann stood inside the circle (radius 2, one tile off): hurt but never lethal. Bo was far away.
+    expect(ann.combat.health.current).toBeLessThan(ann.combat.health.max);
+    expect(ann.combat.health.current).toBeGreaterThanOrEqual(1);
+    const bo = g.players.get("p3").combat.health;
+    expect(bo.current).toBe(bo.max);
+  });
+
+  it("the creatures message carries each creature's full health, for the health bars", () => {
+    const { w, floor, sent } = floorSetup();
+    const c = newCreature(902, "pebbleback", 8 * 16, 8 * 16);
+    floor.creatures = [c];
+    w.step(100);
+    const msg = [...sent("p2")].find(
+      (m): m is Extract<ServerMsg, { t: "creatures" }> => m.t === "creatures",
+    )!;
+    expect(msg.rows[0]!.max).toBeGreaterThanOrEqual(c.hp);
+    expect(msg.rows[0]!.hp).toBe(c.hp);
+    // The guest's copy keeps it.
+    const copy = loadCreature(msg.rows[0]!)!;
+    expect(copy.maxHp).toBe(msg.rows[0]!.max);
+  });
+
+  it("a sling shot goes along the aim, not the facing", () => {
+    const { g, w, floor } = floorSetup();
+    g.players.get("p2").inventory.add("pocket-sling", 1);
+    // The creature is to the right; the guest faces up but aims right.
+    const c = newCreature(903, "pebbleback", 12 * 16, 9 * 16 - 2);
+    const hp = c.hp;
+    floor.creatures = [c];
+    const shot = {
+      kind: "swing",
+      map: "mine-5",
+      weapon: "pocket-sling",
+      facing: "up",
+    };
+    expect(w.apply("p2", { ...shot, ax: 100, ay: 0 })).toBeUndefined();
+    expect(c.hp).toBeLessThan(hp);
   });
 });

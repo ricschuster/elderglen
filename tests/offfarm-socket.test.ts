@@ -144,4 +144,64 @@ describe("guests off the farm, over real sockets", () => {
       expect(g.players.get(bo.id).inventory.count(p.id)).toBeGreaterThan(0);
     }
   });
+  it("Maren's wall list runs on the host for each guest's own kills and purse", async () => {
+    const { g, ann, bo, copies } = await room();
+    const svc = maps.get("mine").services.find((v) => v.kind === "wall-list")!;
+    const screen = { kind: "walllist", map: "mine", x: svc.x, y: svc.y };
+    g.players.get(ann.id).combat.kills["dustmoth"] = 500;
+    // The copy has the kills as the host's `player` messages would have brought them.
+    copies.get(ann.id)!.players.get(ann.id).combat.kills["dustmoth"] = 500;
+    await stand(ann, "mine", svc.x, svc.y + 1);
+    await stand(bo, "mine", svc.x, svc.y + 1);
+    const claim = { kind: "slayer-claim", goal: "dustmoth" };
+    expect(await ask(ann, claim)).toBe("open the screen first");
+    expect(await ask(ann, { kind: "open", screen })).toBeUndefined();
+    expect(await ask(bo, { kind: "open", screen })).toBeUndefined();
+    expect(await ask(bo, claim)).toMatch(/not met/);
+    expect(await ask(ann, claim)).toBeUndefined();
+    expect(g.players.get(ann.id).combat.slayerClaimed).toContain(
+      "goal:dustmoth",
+    );
+    expect(g.players.get(bo.id).combat.slayerClaimed).toHaveLength(0);
+    // Ann's copy shows her claim through the host's player message; Bo's does not.
+    await until(() =>
+      copies
+        .get(ann.id)!
+        .players.get(ann.id)
+        .combat.slayerClaimed.includes("goal:dustmoth"),
+    );
+    expect(
+      copies.get(bo.id)!.players.get(bo.id).combat.slayerClaimed,
+    ).toHaveLength(0);
+    // The reward shop sells from her own purse only.
+    g.players.get(ann.id).money = 100;
+    expect(
+      await ask(ann, { kind: "slayer-buy", item: "burglar-ring" }),
+    ).toBeDefined();
+    expect(g.players.get(ann.id).money).toBe(100);
+  });
+
+  it("a guest's bomb blinks on both screens, then breaks the rock and kills as the thrower", async () => {
+    const { g, ann, bo } = await room();
+    const floor = floorOf(g, 5);
+    floor.creatures = [];
+    floor.rocks.add(12, 8, "stone");
+    g.players.get(ann.id).inventory.add("bomb", 1);
+    await stand(ann, "mine-5", 10, 8);
+    await stand(bo, "mine-5", 20, 8);
+    const seen = (c: GuestClient, t: string) => c.log.some((m) => m.t === t);
+    expect(
+      await ask(ann, {
+        kind: "bomb",
+        map: "mine-5",
+        x: 11,
+        y: 8,
+        item: "bomb",
+      }),
+    ).toBeUndefined();
+    await until(() => seen(ann, "bomb") && seen(bo, "bomb"));
+    await until(() => seen(ann, "blast") && seen(bo, "blast"), 6000);
+    expect(floor.rocks.at(12, 8)).toBeUndefined();
+    expect(g.players.get(ann.id).inventory.count("bomb")).toBe(0);
+  });
 });

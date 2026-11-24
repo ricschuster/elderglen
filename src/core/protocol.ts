@@ -82,6 +82,10 @@ export type ServerMsg =
     }
   /** The creatures of a mine floor or map, every tick, to the players on it (note 109 rule 7). */
   | { t: "creatures"; map: string; rows: CreatureSave[] }
+  /** A bomb a guest lit, to the players on its map: it blinks for its fuse (note 109). */
+  | { t: "bomb"; map: string; x: number; y: number; id: string; fuse: number }
+  /** A bomb went off: the blast circle, and what it hurt is in the other messages (note 109). */
+  | { t: "blast"; map: string; x: number; y: number; id: string }
   /** One player's own record after the host changed it (a hit, a kill, a catch, a faint): sent to that player. */
   | { t: "player"; id: PlayerId; rec: PlayerSave }
   /** What bit on a cast: the guest's catch screen runs it (note 109, "Fishing"). */

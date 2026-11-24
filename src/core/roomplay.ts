@@ -20,6 +20,7 @@ import { oilCalms } from "./elixirs";
 import { ensureMapCreatures } from "./areas";
 import {
   creatureById,
+  creatureMax,
   hurtCreature,
   saveCreature,
   splitOff,
@@ -38,7 +39,17 @@ import {
   type Bite,
   type FishDef,
 } from "./fishing";
+import { REACH_TILES } from "./screens";
 import { landFind } from "./waterfinds";
+import {
+  blastCreatures,
+  blastPlayer,
+  blastRocks,
+  bombById,
+  placeBomb,
+  tickBombs,
+  type LitBomb,
+} from "./bombs";
 import { festivalDayToday } from "./festivals";
 import { FROSTFIN, iceBite, isHole, lakeShut } from "./icefishing";
 import {
@@ -126,6 +137,8 @@ export class RoomPlay {
   private readonly swingReady = new Map<PlayerId, number>();
   private readonly burn = new Map<PlayerId, number>();
   private readonly pending = new Map<PlayerId, Pending>();
+  /** Bombs a guest lit, counting down on the host (note 109). */
+  private lit: { by: PlayerId; map: string; bomb: LitBomb }[] = [];
   private clockMs = 0;
 
   constructor(private readonly env: PlayEnv) {}
@@ -165,6 +178,7 @@ export class RoomPlay {
       if (p.id !== LOCAL_PLAYER) this.pickUp(p.id, p.at, p.v);
     }
     const dt = dtMs / 1000;
+    this.stepBombs(dt, here);
     const maps = new Set(here.map((p) => p.v.id));
     for (const p of here) if (p.id !== LOCAL_PLAYER) this.tickVitals(p.id, dt);
     for (const id of maps) this.stepCreatures(id, here, dt);
@@ -326,20 +340,139 @@ export class RoomPlay {
         if (result.hit) this.hurtPlayer(near.id, c, result.hit, fight);
       }
     });
-    this.sendCreatures(mapId, fight.list.creatures, on);
+    this.sendCreatures(mapId, fight.list.creatures, on, fight.dangerous);
   }
 
+  /** The creatures go to the guests on the map with their full health, for the health bars (note 109). */
   private sendCreatures(
     map: string,
     list: Creature[],
     on: { id: PlayerId }[],
+    dangerous: boolean,
   ): void {
     const to = on.map((p) => p.id).filter((id) => id !== LOCAL_PLAYER);
     if (to.length > 0)
       this.notices.push({
         to,
-        msg: { t: "creatures", map, rows: list.map(saveCreature) },
+        msg: {
+          t: "creatures",
+          map,
+          rows: list.map((c) => ({
+            ...saveCreature(c),
+            max: creatureMax(c, dangerous),
+          })),
+        },
       });
+  }
+
+  // ---- bombs
+
+  /**
+   * A guest lights a bomb from their pack on the tile they face (note 109, step 4). The host places it as the
+   * sender (the single player rule), counts the fuse and, when it goes off, breaks rocks and hurts creatures as
+   * the thrower. Guests on the map see it blink and boom (`bomb` and `blast`).
+   */
+  bomb(
+    by: PlayerId,
+    intent: Intent,
+    at: Standing | undefined,
+  ): string | undefined {
+    const { x, y } = intent;
+    const id = typeof intent.item === "string" ? intent.item : undefined;
+    if (!isNum(x) || !isNum(y) || !bombById(id)) return "bad bomb";
+    const v = viewOf(this.g, String(intent.map ?? "farm"));
+    if (!v) return "Nothing to do here.";
+    if (at) {
+      const far = reachProblem(this.g, at, v, x, y, REACH_TILES);
+      if (far) return far;
+    }
+    const g = this.g;
+    return onMap(g, v, () =>
+      asPlayer(g, by, () => {
+        const rocks = v.kind === "mine" ? floorOf(g, v.floor!).rocks : g.rocks;
+        const taken = (px: number, py: number) =>
+          !!rocks?.at(px, py) ||
+          this.lit.some(
+            (l) => l.map === v.id && l.bomb.x === px && l.bomb.y === py,
+          );
+        const r = placeBomb(g, v.map, v.id, x, y, id!, taken);
+        if (!r.ok)
+          return r.reason === "cannot place here"
+            ? "You cannot put that there."
+            : r.reason;
+        this.lit.push({ by, map: v.id, bomb: r.bomb });
+        this.toMap(v.id, {
+          t: "bomb",
+          map: v.id,
+          x,
+          y,
+          id: r.bomb.id,
+          fuse: r.bomb.fuse,
+        });
+        this.sendPlayer(by);
+        return undefined;
+      }),
+    );
+  }
+
+  /** Tell the guests standing on a map (the host's scene reads the state itself). */
+  private toMap(map: string, msg: Notice["msg"]): void {
+    const to = this.standing()
+      .filter((p) => p.id !== LOCAL_PLAYER && p.v.id === map)
+      .map((p) => p.id);
+    if (to.length > 0) this.notices.push({ to, msg });
+  }
+
+  private stepBombs(
+    dt: number,
+    here: { id: PlayerId; at: Standing; v: MapView }[],
+  ): void {
+    if (this.lit.length === 0) return;
+    const due = new Set(
+      tickBombs(
+        this.lit.map((l) => l.bomb),
+        dt,
+      ),
+    );
+    const gone = this.lit.filter((l) => due.has(l.bomb));
+    this.lit = this.lit.filter((l) => !due.has(l.bomb));
+    for (const l of gone) this.explode(l, here);
+  }
+
+  /** A bomb goes off: rocks the thrower's Mining allows break, creatures in the circle are hurt, and guests in it too (never lethal). */
+  private explode(
+    l: { by: PlayerId; map: string; bomb: LitBomb },
+    here: { id: PlayerId; at: Standing; v: MapView }[],
+  ): void {
+    const v = viewOf(this.g, l.map);
+    if (!v) return;
+    const g = this.g;
+    const ts = v.map.tileSize;
+    const floor = v.kind === "mine" ? v.floor : undefined;
+    onMap(g, v, () =>
+      asPlayer(g, l.by, () => {
+        const rocks = v.kind === "mine" ? floorOf(g, v.floor!).rocks : g.rocks;
+        if (rocks) blastRocks(g, rocks, floor, l.bomb, this.env.random);
+      }),
+    );
+    const fight = this.fightOf(v);
+    if (fight)
+      for (const c of blastCreatures(fight.list.creatures, l.bomb, ts))
+        this.defeat(l.by, c, fight);
+    for (const p of here) {
+      if (p.id === LOCAL_PLAYER || p.v.id !== l.map) continue;
+      const rec = g.players.get(p.id);
+      const lost = blastPlayer(rec.combat.health, l.bomb, tileUnder(p.at, ts));
+      if (lost > 0) this.sendPlayer(p.id);
+    }
+    this.sendPlayer(l.by);
+    this.toMap(l.map, {
+      t: "blast",
+      map: l.map,
+      x: l.bomb.x,
+      y: l.bomb.y,
+      id: l.bomb.id,
+    });
   }
 
   /**

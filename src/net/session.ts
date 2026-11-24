@@ -120,6 +120,8 @@ export class GuestSession implements NetSession {
   onNight?: (n: { day: number; lines: string[]; lost: number }) => void;
   /** Called with what bit after this guest's cast (the catch screen runs it, note 109). */
   onBite?: (b: Extract<ServerMsg, { t: "bite" }>) => void;
+  /** Called when a bomb is lit or goes off on the map this guest stands on (note 109). */
+  onBomb?: (m: Extract<ServerMsg, { t: "bomb" | "blast" }>) => void;
   /** Called when this guest fainted in a fight: they wake at home, this is the cost (note 109 rule 6). */
   onFaint?: (f: Extract<ServerMsg, { t: "faint" }>) => void;
   /** Called at the new morning with the tile this guest wakes on (note 110 rule 1). */
@@ -148,6 +150,7 @@ export class GuestSession implements NetSession {
     } else if (m.t === "rejected") this.onRejected?.(m.reason);
     else if (m.t === "night") this.onNight?.(m);
     else if (m.t === "bite") this.onBite?.(m);
+    else if (m.t === "bomb" || m.t === "blast") this.onBomb?.(m);
     else if (m.t === "faint") this.onFaint?.(m);
     else if (m.t === "wake") this.onWake?.(m);
     else if (m.t === "beds") {
