@@ -105,6 +105,7 @@ import {
   type Upgradable,
 } from "./upgrades";
 import { isObject } from "./guards";
+import { loadGuestFields, type BuildRule } from "./buildrule";
 
 /**
  * The world: everything that is shared in multiplayer (note 53). The per-player
@@ -151,8 +152,16 @@ export interface WorldState {
   gallery?: string[];
   /** Where donated items stand on the shelf: item id to slot. Absent until one is moved. */
   galleryPlaced?: Record<string, number>;
-  /** Gallery reward keys this player has collected. Per player in multiplayer (M4). */
+  /** Gallery reward keys the host has collected. Per player in multiplayer (M4); guests' lists are `galleryClaimedBy`. */
   galleryClaimed?: string[];
+  /** Gallery reward keys each guest has collected, by player id (note 108 group 5). Absent until a guest collects one. */
+  galleryClaimedBy?: Record<string, string[]>;
+  /** The tool each guest has at the smithy, by player id (note 108 group 5); the host's is `toolOrder`. */
+  toolOrdersBy?: Record<string, ToolOrder>;
+  /** Who ordered each farm building, by key (`coop`, `barn`, `stable`, `silo`, `pond:x,y`); absent means the host (note 108 rule 7). */
+  buildOwners?: Record<string, string>;
+  /** Who may move or take down a building besides its owner (note 108 rule 9). Absent means own only. */
+  buildRule?: BuildRule;
   /**
    * The worlds of the area maps by map id (`areas.ts`): their trees, rocks,
    * weeds, twigs and goods on the ground. The fields above are the farm's, or
@@ -442,6 +451,10 @@ interface SaveData {
   gallery?: string[];
   galleryPlaced?: Record<string, number>;
   galleryClaimed?: string[];
+  galleryClaimedBy?: Record<string, string[]>;
+  toolOrdersBy?: Record<string, ToolOrder>;
+  buildOwners?: Record<string, string>;
+  buildRule?: BuildRule;
   /** Absent in saves made before the Forest: each area's starting world. */
   areas?: Record<string, AreaSave>;
   /** Absent in saves made before machines. */
@@ -708,6 +721,24 @@ export function serialize(
     ...(g.galleryClaimed?.length
       ? { galleryClaimed: [...g.galleryClaimed] }
       : {}),
+    ...(g.galleryClaimedBy && Object.keys(g.galleryClaimedBy).length
+      ? {
+          galleryClaimedBy: Object.fromEntries(
+            Object.entries(g.galleryClaimedBy).map(([k, v]) => [k, [...v]]),
+          ),
+        }
+      : {}),
+    ...(g.toolOrdersBy && Object.keys(g.toolOrdersBy).length
+      ? {
+          toolOrdersBy: Object.fromEntries(
+            Object.entries(g.toolOrdersBy).map(([k, v]) => [k, { ...v }]),
+          ),
+        }
+      : {}),
+    ...(g.buildOwners && Object.keys(g.buildOwners).length
+      ? { buildOwners: { ...g.buildOwners } }
+      : {}),
+    ...(g.buildRule !== undefined ? { buildRule: g.buildRule } : {}),
     areas: Object.fromEntries(
       Object.entries(g.areas).map(([id, w]) => [
         id,
@@ -1351,4 +1382,5 @@ function loadGallery(g: GameState, raw: Record<string, unknown>): void {
   }
   const claimed = strings(raw.galleryClaimed);
   if (claimed.length > 0) g.galleryClaimed = claimed;
+  loadGuestFields(g, raw);
 }

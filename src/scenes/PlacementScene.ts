@@ -11,8 +11,6 @@ import { layersAtTier } from "../core/map";
 import {
   doorAt,
   footprintAt,
-  moveBuilding,
-  orderBuildingAt,
   placedFootprint,
   placementBlockers,
   type Placeable,
@@ -20,13 +18,14 @@ import {
 import {
   POND_BUILD_DAYS,
   POND_FOOTPRINT,
-  orderPond,
   pondBlockers,
   pondsOf,
   pondOrderProblem,
 } from "../core/pond";
 import type { GameState } from "../core/save";
 import { STATE_KEY } from "./state";
+import type { Intent } from "../core/protocol";
+import { dispatch } from "./guestlive";
 import { TILES_KEY, TILESET_NAME } from "./placeholder-textures";
 
 /** What the screen places: a building, or the fish pond (note 93). */
@@ -221,24 +220,29 @@ export class PlacementScene extends Phaser.Scene {
 
   private confirm(): void {
     if (!this.free) return;
-    const map = maps.get(this.mapId);
-    const noun = wordsOf(this.building).noun;
     const b = this.building;
-    if (b === "pond") {
-      if (orderPond(this.state, map, this.mapId, this.gx, this.gy).ok)
-        this.finish(
-          `Ordered. The carpenter starts digging now and takes ${POND_BUILD_DAYS} days.`,
-        );
-      return;
-    }
+    const noun = wordsOf(b).noun;
+    const at = { x: this.gx, y: this.gy };
+    // The host judges every order and move (note 108 group 5); a guest's answer comes later.
+    const send = (intent: Intent, done: string): void => {
+      const why = dispatch(this.state, intent);
+      this.finish(why === "sent" ? "Sent to the host." : (why ?? done));
+    };
+    if (b === "pond")
+      return send(
+        { kind: "carp-pond", ...at },
+        `Ordered. The carpenter starts digging now and takes ${POND_BUILD_DAYS} days.`,
+      );
     // The greenhouse is only ever moved: it is repaired, not ordered.
-    if (this.mode === "order" && b !== "greenhouse") {
-      if (orderBuildingAt(this.state, map, this.mapId, b, this.gx, this.gy))
-        this.finish(
-          `Ordered. The carpenter starts tomorrow and takes ${BUILDINGS[b].days} days.`,
-        );
-    } else if (moveBuilding(this.state, map, this.mapId, b, this.gx, this.gy))
-      this.finish(`Your ${noun} now stands in its new place.`);
+    if (this.mode === "order" && b !== "greenhouse")
+      return send(
+        { kind: "carp-build", building: b, ...at },
+        `Ordered. The carpenter starts tomorrow and takes ${BUILDINGS[b].days} days.`,
+      );
+    send(
+      { kind: "carp-move", building: b, ...at },
+      `Your ${noun} now stands in its new place.`,
+    );
   }
 
   private finish(message: string): void {

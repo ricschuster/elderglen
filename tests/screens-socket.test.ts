@@ -16,6 +16,7 @@ import { CHICKEN_PRICE } from "../src/core/animals";
 import { FARM_STORE } from "../src/core/mapstore";
 import { putFish } from "../src/core/pond";
 import { FISH_POND } from "../src/core/pondsite";
+import { setFlag } from "../src/core/worldflags";
 import { requestFor } from "../src/core/quests";
 
 const FARM = farmTypeById("standard").map;
@@ -488,5 +489,83 @@ describe("guest screens, group 4, over real sockets", () => {
     expect(await ask(ann, { kind: "order-drop", id: def!.id })).toBe(
       "too far away",
     );
+  });
+});
+
+describe("guest screens, group 5, over real sockets", () => {
+  it("a guest uses the carpenter, the tailor and the smith, and a second guest sees the building", async () => {
+    const g = newGame("standard", "separate");
+    const hosted: { host?: NodeHost } = {};
+    const world = new GameRoomWorld(g, {
+      random: () => 0.5,
+      where: (id) => hosted.host?.room.position(id),
+    });
+    const host = await NodeHost.start({ world, tickHz: 50 });
+    hosted.host = host;
+    hosts.push(host);
+    const url = `ws://127.0.0.1:${host.port}`;
+    const ann = await GuestClient.connect(url, { name: "Ann" });
+    const bo = await GuestClient.connect(url, { name: "Bo" });
+    guests.push(ann, bo);
+    const copy = deserialize(bo.farm)!;
+    copy.players.localId = bo.id;
+    bo.onMessage = (m) => applyServerMsg(copy, m);
+    const rec = g.players.get(ann.id);
+    rec.money = 5000;
+    rec.inventory.add("wood", 300);
+    rec.inventory.add("stone", 100);
+    const mine = copy.players.get(ann.id);
+    mine.money = 5000;
+    mine.inventory.add("wood", 300);
+    mine.inventory.add("stone", 100);
+
+    // The carpenter: a coop, ordered from Ann's purse, owned by Ann, seen on Bo's copy.
+    const saw = service("sawmill", "carpenter");
+    const counter = { kind: "carpenter", map: "sawmill", x: saw.x, y: saw.y };
+    const coop = { kind: "carp-build", building: "coop", x: 52, y: 20 };
+    expect(await ask(ann, coop)).toBe("open the screen first");
+    await stand(ann, "sawmill", saw.x, saw.y + 1);
+    expect(await ask(ann, { kind: "open", screen: counter })).toBeUndefined();
+    expect(await ask(ann, { kind: "carp-house" })).toMatch(/lives in it/);
+    expect(await ask(ann, coop)).toBeUndefined();
+    expect(rec.money).toBe(1000);
+    expect(g.buildOwners?.coop).toBe(ann.id);
+    await until(() => copy.animals.build?.building === "coop");
+    expect(copy.buildOwners?.coop).toBe(ann.id);
+    await ask(ann, { kind: "close" });
+
+    // The tailor: the sewing machine, from Ann's own pack.
+    setFlag(g, "tailoring-open");
+    rec.inventory.add("cloth");
+    rec.inventory.add("wool");
+    const sewing = service("hatter", "sewing-machine");
+    const sew = {
+      kind: "tailor",
+      map: "hatter",
+      x: sewing.x,
+      y: sewing.y,
+      stock: "sew",
+    };
+    await stand(ann, "hatter", sewing.x, sewing.y + 1);
+    expect(await ask(ann, { kind: "open", screen: sew })).toBeUndefined();
+    expect(
+      await ask(ann, { kind: "tailor-sew", item: "wool" }),
+    ).toBeUndefined();
+    expect(g.wardrobe.hasPiece("shirt", "plain-shirt")).toBe(true);
+    expect(rec.inventory.count("wool")).toBe(0);
+    await ask(ann, { kind: "close" });
+
+    // The smith: ore bought with Ann's gold, then walking off refuses.
+    const forge = service("forge", "smith");
+    const smith = { kind: "smith", map: "forge", x: forge.x, y: forge.y };
+    await stand(ann, "forge", forge.x, forge.y + 1);
+    expect(await ask(ann, { kind: "open", screen: smith })).toBeUndefined();
+    expect(
+      await ask(ann, { kind: "smith-buy", what: "ore", id: "iron-ore", n: 5 }),
+    ).toBeUndefined();
+    expect(rec.inventory.count("iron-ore")).toBe(5);
+    expect(rec.money).toBe(750);
+    await stand(ann, "forge", forge.x + 12, forge.y + 12);
+    expect(await ask(ann, { kind: "smith-copper" })).toBe("too far away");
   });
 });

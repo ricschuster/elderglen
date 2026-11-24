@@ -134,3 +134,16 @@ Headless run 2026-11-24 (`tests/screens-socket.test.ts`, real sockets; `tests/sc
 - pass: A guest takes an order from the shared board (one a week for everyone) and drops it; a filled order pays every purse (once for a shared wallet) and its first reward is owed to each player.
 - pass: A guest accepts, hands in and cancels board requests; a hand-in takes the goods from the guest and pays every player; a walk-away is refused. The guest copy follows through `applied`.
 - owner: The hall panel, the orders board and the request board by hand with two real players, including the completion line and the first-reward collect. Nothing here was run in a browser.
+
+## Guest screens, the rest (note 108, group 5)
+
+Headless run 2026-11-24 (`tests/screens-socket.test.ts`, real sockets; `tests/screens.test.ts`, the "the rest" tests).
+
+- pass: A guest orders a coop, a silo or a pond from their own purse and pack; the building records its orderer, a second guest's copy follows through `applied`, and a blocked spot or a short purse is refused.
+- pass: A guest buys furniture and a covering at the carpenter with their own gold. A guest asking for a house upgrade or a renovation is told a home is upgraded only by its occupant; the host may.
+- pass: Moving and taking down follow the host's setting: own only by default (another guest is refused), off (every guest refused), all (any guest, refund to them). The host always may, a guest cannot change the setting, and a building made before owners counts as the host's.
+- pass: The sewing machine and the dye pots work from the sender's pack, only at the machine they opened; the wardrobe is the one the farm has.
+- pass: Ore is bought and sold at the smith and the smithy with the sender's gold; bombs, boots, weapons, rings and the first copper are the dwarf's only; a tool left at the smithy is the sender's own, one tool each, and a geode cracks the same on every copy.
+- pass: The gallery takes a donation from the sender's pack onto the one shelf; each player collects their own rewards once.
+- pass: The shrine takes a Diamond from the sender and gives the open statue's ore to the sender once a day for the farm.
+- owner: The carpenter and its placement screen, the tailor, the smiths, the gallery and the shrine by hand with two real players, and the players list button for the building setting (Social tab on the host). Nothing here was run in a browser.

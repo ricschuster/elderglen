@@ -24,6 +24,16 @@ import { applyScreenIntent } from "../src/core/screenintents";
 import { FARM_STORE } from "../src/core/mapstore";
 import { pondAt, putFish } from "../src/core/pond";
 import { FISH_POND } from "../src/core/pondsite";
+import { HOME_LINE } from "../src/core/restintents";
+import { stationStock } from "../src/core/furniture";
+import { DECOR } from "../src/core/decor";
+import { setFlag } from "../src/core/worldflags";
+import { TAILORING_OPEN, POT_COLOURS } from "../src/core/tailoring";
+import { FORGED } from "../src/core/combat";
+import { BOMBS } from "../src/core/bombs";
+import { GEODE, CRACK_FEE } from "../src/core/geodes";
+import { GALLERY_IDS } from "../src/core/gallery";
+import { DIAMOND } from "../src/core/gems";
 
 /** A grown chicken that is hungry and not petted. */
 const mkAnimal = (id: number): Animal => ({
@@ -1240,5 +1250,406 @@ describe("the hall: bundles, orders and the request board (note 108, group 4)", 
       applyScreenIntent(g, LOCAL_PLAYER, { kind: "request-turnin", id: q.id }),
     ).toBeUndefined();
     expect(g.money).toBe(was + q.reward.gold);
+  });
+});
+
+describe("the rest: carpenter, tailor, smiths, gallery, shrine (note 108, group 5)", () => {
+  const refAt = (map: string, kind: string, svcKind = kind): ScreenRef => {
+    const { s } = find(map, svcKind);
+    return { kind, map, x: s.x, y: s.y };
+  };
+  const openAt = (t: ReturnType<typeof mk>, id: string, ref: ScreenRef) => {
+    t.stand(id, ref.map, ref.x, ref.y + 1);
+    return t.send(id, { kind: "open", screen: ref });
+  };
+  const carpenter = () => refAt("sawmill", "carpenter");
+  const coop = { kind: "carp-build", building: "coop", x: 52, y: 20 } as const;
+
+  /** Give a player what a coop costs. */
+  const fundCoop = (t: ReturnType<typeof mk>, id: string) => {
+    const p = t.g.players.get(id);
+    p.money = 5000;
+    p.inventory.add("wood", 300);
+    p.inventory.add("stone", 100);
+  };
+  /** Finish the carpenter's coop job at once (test setup). */
+  const finishCoop = (g: ReturnType<typeof mk>["g"]) => {
+    g.animals.build = undefined;
+    g.animals.coopBuilt = true;
+  };
+
+  it("lets a guest order a building with their own money and records the owner", () => {
+    const t = mk("separate");
+    const { g } = t;
+    fundCoop(t, t.ann);
+    expect(t.send(t.ann, coop)).toBe("open the screen first");
+    expect(openAt(t, t.ann, carpenter())).toBeUndefined();
+    expect(t.send(t.ann, coop)).toBeUndefined();
+    expect(g.players.get(t.ann).money).toBe(1000);
+    expect(g.players.get(t.ann).inventory.count("wood")).toBe(0);
+    expect(g.animals.build?.building).toBe("coop");
+    expect(g.buildOwners?.coop).toBe(t.ann);
+    // Too far away after walking off.
+    t.stand(t.ann, "sawmill", 0, 0);
+    expect(t.send(t.ann, { kind: "carp-silo" })).toBe("too far away");
+  });
+
+  it("refuses an order the guest cannot afford, and a spot that is blocked", () => {
+    const t = mk("separate");
+    openAt(t, t.ann, carpenter());
+    expect(t.send(t.ann, coop)).toMatch(/need/i);
+    fundCoop(t, t.ann);
+    expect(t.send(t.ann, { ...coop, x: 0, y: 0 })).toMatch(
+      /way|blocked|in the way|water|no good|off/i,
+    );
+    expect(t.g.players.get(t.ann).money).toBe(5000);
+  });
+
+  it("buys furniture and a covering from the sender's own purse", () => {
+    const t = mk("separate");
+    const g = t.g;
+    openAt(t, t.ann, carpenter());
+    const f = stationStock()[0]!;
+    expect(t.send(t.ann, { kind: "carp-furniture", id: f.id })).toMatch(
+      /need/i,
+    );
+    g.players.get(t.ann).money = f.price + 10;
+    expect(t.send(t.ann, { kind: "carp-furniture", id: f.id })).toBeUndefined();
+    expect(g.players.get(t.ann).money).toBe(10);
+    expect(g.players.get(t.ann).inventory.count(f.id)).toBe(1);
+    expect(g.players.get(t.bo).inventory.count(f.id)).toBe(0);
+    const d = DECOR[0]!;
+    g.players.get(t.ann).money = d.price;
+    expect(t.send(t.ann, { kind: "carp-decor", id: d.id })).toBeUndefined();
+    expect(t.send(t.ann, { kind: "carp-decor", id: "nope" })).toMatch(
+      /not sell/,
+    );
+  });
+
+  it("upgrades a home only for its occupant: a guest is refused, the host may", () => {
+    const t = mk("separate");
+    openAt(t, t.ann, carpenter());
+    expect(t.send(t.ann, { kind: "carp-house" })).toBe(HOME_LINE);
+    expect(t.send(t.ann, { kind: "carp-reno", id: "x" })).toBe(HOME_LINE);
+    const host = t.g.players.get(LOCAL_PLAYER);
+    host.money = 100000;
+    host.inventory.add("wood", 1000);
+    expect(t.room.hostIntent({ kind: "carp-house" })).toBeUndefined();
+    expect(t.g.houseBuild?.tier).toBe(1);
+  });
+
+  it("moves and removes by the host's setting: own only by default, off, all", () => {
+    const t = mk("separate");
+    const { g } = t;
+    fundCoop(t, t.ann);
+    openAt(t, t.ann, carpenter());
+    openAt(t, t.bo, carpenter());
+    expect(t.send(t.ann, coop)).toBeUndefined();
+    finishCoop(g);
+    const move = { kind: "carp-move", building: "coop", x: 52, y: 20 };
+    const remove = { kind: "carp-remove", building: "coop" };
+    // Default: own only.
+    expect(t.send(t.bo, remove)).toBe(
+      "You can only change a building you ordered.",
+    );
+    expect(t.send(t.bo, move)).toBe(
+      "You can only change a building you ordered.",
+    );
+    expect(t.send(t.ann, move)).toBeUndefined();
+    // Off: nobody but the host; a guest cannot set it.
+    expect(t.send(t.ann, { kind: "build-rule", rule: "off" })).toBe(
+      "host only",
+    );
+    expect(
+      t.room.hostIntent({ kind: "build-rule", rule: "off" }),
+    ).toBeUndefined();
+    expect(t.send(t.ann, remove)).toMatch(
+      /turned moving and removing buildings off/,
+    );
+    // All: another guest may take it down; the refund goes to them.
+    expect(
+      t.room.hostIntent({ kind: "build-rule", rule: "all" }),
+    ).toBeUndefined();
+    const before = g.players.get(t.bo).money;
+    expect(t.send(t.bo, remove)).toBeUndefined();
+    expect(g.players.get(t.bo).money).toBeGreaterThan(before);
+    expect(g.animals.coopBuilt).toBe(false);
+    expect(g.buildOwners?.coop).toBeUndefined();
+    // A bad rule is refused.
+    expect(t.room.hostIntent({ kind: "build-rule", rule: "x" })).toBe(
+      "bad build-rule",
+    );
+  });
+
+  it("treats a building made before owners as the host's, and the host always may", () => {
+    const t = mk("separate");
+    const { g } = t;
+    finishCoop(g);
+    openAt(t, t.ann, carpenter());
+    expect(t.send(t.ann, { kind: "carp-remove", building: "coop" })).toBe(
+      "You can only change a building you ordered.",
+    );
+    expect(
+      t.room.hostIntent({ kind: "build-rule", rule: "off" }),
+    ).toBeUndefined();
+    expect(
+      t.room.hostIntent({ kind: "carp-remove", building: "coop" }),
+    ).toBeUndefined();
+  });
+
+  it("round-trips owners, the rule and per-guest orders through a save", () => {
+    const t = mk("separate");
+    t.g.buildOwners = { coop: t.ann };
+    t.g.buildRule = "all";
+    t.g.galleryClaimedBy = { [t.ann]: ["a"] };
+    t.g.toolOrdersBy = { [t.bo]: { tool: "hoe", tier: 1, readyDay: 4 } };
+    const back = deserialize(serialize(t.g))!;
+    expect(back.buildOwners).toEqual({ coop: t.ann });
+    expect(back.buildRule).toBe("all");
+    expect(back.galleryClaimedBy).toEqual({ [t.ann]: ["a"] });
+    expect(back.toolOrdersBy?.[t.bo]?.readyDay).toBe(4);
+  });
+
+  it("sews at the machine from the sender's pack, and refuses at the wrong pots", () => {
+    const t = mk();
+    const { g } = t;
+    setFlag(g, TAILORING_OPEN);
+    const sew = refAt("hatter", "tailor", "sewing-machine");
+    const ref = { ...sew, stock: "sew" };
+    const ann = g.players.get(t.ann);
+    ann.inventory.add("cloth");
+    ann.inventory.add("wool");
+    expect(t.send(t.ann, { kind: "tailor-sew", item: "wool" })).toBe(
+      "open the screen first",
+    );
+    expect(openAt(t, t.ann, { ...sew, stock: "dye" })).toBe("no service there");
+    expect(openAt(t, t.ann, ref)).toBeUndefined();
+    expect(t.send(t.ann, { kind: "tailor-dye", kind2: 1 })).toBe(
+      "not the screen you opened",
+    );
+    expect(t.send(t.ann, { kind: "tailor-sew", item: "wool" })).toBeUndefined();
+    expect(ann.inventory.count("wool")).toBe(0);
+    expect(g.wardrobe.hasPiece("shirt", "plain-shirt")).toBe(true);
+    expect(t.send(t.ann, { kind: "tailor-sew", item: "wool" })).toMatch(
+      /cloth|none/,
+    );
+  });
+
+  it("dyes a worn piece at the pots, from the sender's pack", () => {
+    const t = mk();
+    const { g } = t;
+    setFlag(g, TAILORING_OPEN);
+    g.wardrobe.addPiece("shirt", "plain-shirt");
+    g.wardrobe.wearPiece("shirt", "plain-shirt");
+    const pots = refAt("hatter", "tailor", "dye-pots");
+    expect(openAt(t, t.ann, { ...pots, stock: "dye" })).toBeUndefined();
+    const dye = {
+      kind: "tailor-dye",
+      piece: "shirt",
+      id: "plain-shirt",
+      pots: POT_COLOURS.map(() => "nothing"),
+      tint: { h: 200, s: 0.5, v: 0.9 },
+    };
+    expect(t.send(t.ann, { ...dye, piece: "cape" })).toBe("bad tailor-dye");
+    expect(t.send(t.ann, dye)).toMatch(/item|pot|have/i);
+    expect(
+      t.send(t.ann, {
+        kind: "tailor-undye",
+        piece: "shirt",
+        id: "plain-shirt",
+      }),
+    ).toBe("It is not dyed.");
+    // The sewing screen is not the pots.
+    expect(
+      openAt(t, t.ann, {
+        ...refAt("hatter", "tailor", "sewing-machine"),
+        stock: "sew",
+      }),
+    ).toBeUndefined();
+    expect(t.send(t.ann, dye)).toBe("not the screen you opened");
+  });
+
+  it("buys and sells ore at the smith and the smithy, from the sender's purse", () => {
+    const t = mk("separate");
+    const { g } = t;
+    const ann = g.players.get(t.ann);
+    ann.money = 1000;
+    const forge = refAt("forge", "smith");
+    const smithy = refAt("smithy", "smithy");
+    const buy = { kind: "smith-buy", what: "ore", id: "iron-ore", n: 5 };
+    expect(t.send(t.ann, buy)).toBe("open the screen first");
+    expect(openAt(t, t.ann, forge)).toBeUndefined();
+    expect(t.send(t.ann, buy)).toBeUndefined();
+    expect(ann.money).toBe(750);
+    expect(ann.inventory.count("iron-ore")).toBe(5);
+    expect(
+      t.send(t.ann, { kind: "smith-buy", what: "ore", id: "iron-ore", n: 3 }),
+    ).toBe("She does not sell that.");
+    expect(
+      t.send(t.ann, { kind: "smith-sell", id: "iron-ore", all: true }),
+    ).toBeUndefined();
+    expect(ann.inventory.count("iron-ore")).toBe(0);
+    expect(t.send(t.ann, { kind: "smith-sell", id: "iron-ore" })).toMatch(
+      /none/,
+    );
+    // The smithy takes ore too, but not the dwarf's weapons.
+    expect(openAt(t, t.ann, smithy)).toBeUndefined();
+    expect(t.send(t.ann, buy)).toBeUndefined();
+    expect(
+      t.send(t.ann, { kind: "smith-buy", what: "weapon", id: FORGED[0]!.id }),
+    ).toBe("open the screen first");
+    // Bo's purse and pack are untouched.
+    expect(g.players.get(t.bo).inventory.count("iron-ore")).toBe(0);
+  });
+
+  it("buys a bomb and hands over the first copper at the smith", () => {
+    const t = mk("separate");
+    const { g } = t;
+    const ann = g.players.get(t.ann);
+    ann.money = 5000;
+    openAt(t, t.ann, refAt("forge", "smith"));
+    expect(
+      t.send(t.ann, { kind: "smith-buy", what: "bomb", id: BOMBS[0]!.id }),
+    ).toBeUndefined();
+    expect(ann.inventory.count(BOMBS[0]!.id)).toBe(1);
+    expect(t.send(t.ann, { kind: "smith-copper" })).toBe(
+      "You have no copper ore.",
+    );
+    ann.inventory.add("copper-ore");
+    expect(t.send(t.ann, { kind: "smith-copper" })).toBeUndefined();
+    expect(g.mines.copperHandedIn).toBe(true);
+  });
+
+  it("keeps each player's tool at the smithy apart, and cracks a geode the same on every copy", () => {
+    const t = mk("separate");
+    const { g } = t;
+    const smithy = refAt("smithy", "smithy");
+    for (const id of [t.ann, t.bo]) {
+      const p = g.players.get(id);
+      p.money = 5000;
+      p.inventory.add("copper-bar", 5);
+      openAt(t, id, smithy);
+    }
+    expect(t.send(t.ann, { kind: "smithy-tool", tool: "hoe" })).toBeUndefined();
+    expect(t.send(t.ann, { kind: "smithy-tool", tool: "axe" })).toBe(
+      "She is still working on another tool.",
+    );
+    expect(t.send(t.bo, { kind: "smithy-tool", tool: "axe" })).toBeUndefined();
+    expect(g.toolOrder).toBeUndefined();
+    expect(g.toolOrdersBy?.[t.ann]?.tool).toBe("hoe");
+    expect(g.toolOrdersBy?.[t.bo]?.tool).toBe("axe");
+    expect(t.send(t.ann, { kind: "smithy-collect" })).toBe(
+      "Nothing to collect.",
+    );
+    g.day.clock.day += 2;
+    expect(t.send(t.ann, { kind: "smithy-collect" })).toBeUndefined();
+    expect(g.players.get(t.ann).toolTiers.hoe).toBe(1);
+    expect(g.players.get(t.bo).toolTiers.axe).toBe(0);
+    expect(g.toolOrdersBy?.[t.ann]).toBeUndefined();
+    expect(g.toolOrdersBy?.[t.bo]?.tool).toBe("axe");
+    // A geode.
+    const ann = g.players.get(t.ann);
+    ann.money = 1000;
+    ann.inventory.add(GEODE, 2);
+    expect(
+      t.send(t.ann, { kind: "smithy-crack", geode: GEODE }),
+    ).toBeUndefined();
+    expect(ann.inventory.count(GEODE)).toBe(1);
+    expect(ann.money).toBe(1000 - CRACK_FEE);
+    expect(t.send(t.ann, { kind: "smithy-crack", geode: "wood" })).toBe(
+      "bad smithy-crack",
+    );
+  });
+
+  it("donates from the sender's pack to the shared shelf, and each player collects their own reward", () => {
+    const t = mk("separate");
+    const { g } = t;
+    const ref = refAt("library", "gallery", "counter-library");
+    const ids = GALLERY_IDS.slice(0, 6);
+    for (const id of ids) g.players.get(t.ann).inventory.add(id);
+    expect(t.send(t.ann, { kind: "gallery-donate", item: ids[0] })).toBe(
+      "open the screen first",
+    );
+    expect(openAt(t, t.ann, ref)).toBeUndefined();
+    expect(openAt(t, t.bo, ref)).toBeUndefined();
+    expect(t.send(t.bo, { kind: "gallery-donate", item: ids[0] })).toBe(
+      "You do not have one.",
+    );
+    for (const id of ids.slice(0, 5))
+      expect(
+        t.send(t.ann, { kind: "gallery-donate", item: id }),
+      ).toBeUndefined();
+    expect(t.send(t.ann, { kind: "gallery-donate", item: ids[0] })).toBe(
+      "The gallery has one of those already.",
+    );
+    expect(g.gallery?.length).toBe(5);
+    expect(g.players.get(t.ann).inventory.count(ids[0]!)).toBe(0);
+    // Move a piece on the shelf.
+    expect(
+      t.send(t.bo, { kind: "gallery-place", item: ids[0], slot: 9 }),
+    ).toBeUndefined();
+    // Both may collect the seeds, each once.
+    expect(t.send(t.ann, { kind: "gallery-claim" })).toBeUndefined();
+    expect(g.players.get(t.ann).inventory.count("parsnip-seed")).toBe(5);
+    expect(t.send(t.ann, { kind: "gallery-claim" })).toMatch(/No reward/);
+    expect(t.send(t.bo, { kind: "gallery-claim" })).toBeUndefined();
+    expect(g.players.get(t.bo).inventory.count("parsnip-seed")).toBe(5);
+    expect(g.galleryClaimedBy?.[t.ann]?.length).toBe(1);
+    expect(g.galleryClaimedBy?.[t.bo]?.length).toBe(1);
+  });
+
+  it("sets a Diamond and uses the open statue at the shrine, one shared score", () => {
+    const t = mk("separate");
+    const { g } = t;
+    const ref = refAt(FARM, "shrine");
+    const ann = g.players.get(t.ann);
+    expect(t.send(t.ann, { kind: "shrine-act" })).toBe("open the screen first");
+    expect(openAt(t, t.ann, ref)).toBeUndefined();
+    expect(t.send(t.ann, { kind: "shrine-act", diamond: true })).toBe(
+      "You have no Diamond.",
+    );
+    ann.inventory.add(DIAMOND.id);
+    expect(
+      t.send(t.ann, { kind: "shrine-act", diamond: true }),
+    ).toBeUndefined();
+    expect(ann.inventory.count(DIAMOND.id)).toBe(0);
+    expect(g.shrine.candles).toBeGreaterThanOrEqual(1);
+    // The statue.
+    expect(t.send(t.ann, { kind: "shrine-act" })).toBeDefined();
+    g.shrine.candles = 4;
+    expect(t.send(t.ann, { kind: "shrine-act" })).toBeUndefined();
+    expect(ann.inventory.count("hearthsilver-ore")).toBeGreaterThan(0);
+    expect(g.shrine.statueDay).toBe(g.day.clock.day);
+    expect(openAt(t, t.bo, ref)).toBeUndefined();
+    expect(t.send(t.bo, { kind: "shrine-act" })).toMatch(/quiet/);
+  });
+
+  it("shows a guest copy the same carpenter order through applied", () => {
+    const t = mk("separate");
+    fundCoop(t, t.ann);
+    const copy = deserialize(serialize(t.g))!;
+    copy.players.localId = t.bo;
+    openAt(t, t.ann, carpenter());
+    t.room.drain(t.bo);
+    expect(t.send(t.ann, coop)).toBeUndefined();
+    for (const m of t.room.drain(t.bo)) applyServerMsg(copy, m);
+    expect(copy.animals.build?.building).toBe("coop");
+    expect(copy.buildOwners?.coop).toBe(t.ann);
+    expect(copy.players.get(t.ann).money).toBe(1000);
+  });
+
+  it("works in single player: the same intents run on the host's own state", () => {
+    const g = newGame("standard");
+    g.money = 5000;
+    g.inventory.add("wood", 300);
+    g.inventory.add("stone", 100);
+    expect(applyScreenIntent(g, LOCAL_PLAYER, coop)).toBeUndefined();
+    expect(g.animals.build?.building).toBe("coop");
+    expect(g.buildOwners).toBeUndefined();
+    g.mines.copperHandedIn = false;
+    g.inventory.add("copper-ore");
+    expect(
+      applyScreenIntent(g, LOCAL_PLAYER, { kind: "smith-copper" }),
+    ).toBeUndefined();
   });
 });

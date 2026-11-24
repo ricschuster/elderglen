@@ -80,9 +80,13 @@ import { STONEKEEPER_LINE } from "../core/smith";
 import {
   hasDiamond,
   placeDiamond,
+  redoLine,
+  SHRINE,
   shrineNote,
+  shrineStep,
   useStatue,
 } from "../core/shrine";
+import { tailoringLine } from "../core/tailoring";
 import {
   campLine,
   QUARRY_BRIDGE_LINE,
@@ -2076,6 +2080,31 @@ export class FarmScene extends Phaser.Scene {
       } else if (service.kind === "orders" || service.kind === "requests") {
         ref = { kind: service.kind, ...base };
         scene = service.kind;
+      } else if (service.kind === "carpenter" || service.kind === "smith") {
+        // The carpenter and the smith dwarf (note 108 group 5): they take everyone's custom, with each one's own purse.
+        if (shut) return closed(shut);
+        ref = { kind: service.kind, ...base };
+        scene = service.kind;
+      } else if (service.kind === "smithy") {
+        if (shut) return closed(shut);
+        ref = { kind: "smithy", ...base };
+        scene = "smithy";
+      } else if (service.kind === "counter-library") {
+        if (shut) return closed(shut);
+        ref = { kind: "gallery", ...base };
+        scene = "gallery";
+      } else if (
+        service.kind === "sewing-machine" ||
+        service.kind === "dye-pots"
+      ) {
+        const line = tailoringLine(this.state);
+        if (line) return closed(line);
+        const mode = service.kind === "sewing-machine" ? "sew" : "dye";
+        ref = { kind: "tailor", ...base, stock: mode };
+        scene = "tailor";
+        data = { mode };
+      } else if (service.kind === "shrine") {
+        return this.guestShrine(base);
       } else if (service.kind === "camp-chest" && this.floor !== undefined) {
         ref = { kind: "camp-chest", ...base, floor: this.floor };
         scene = "chest";
@@ -2121,6 +2150,46 @@ export class FarmScene extends Phaser.Scene {
         this.open(scene, data);
       },
       (why) => closed(why),
+    );
+    return true;
+  }
+
+  /**
+   * A guest's Action at the ancestors' shrine (note 108 group 5). A note is read from the guest's copy; a Diamond or
+   * the open statue is a `shrine-act` the host judges, from within reach of the stone. After a Diamond the candles
+   * relight in the same screen the host sees.
+   */
+  private guestShrine(base: { map: string; x: number; y: number }): true {
+    const net = this.net;
+    const g = this.state;
+    const held = heldAt(g, this.selected);
+    const step = shrineStep(g, held.kind === "item" ? held.id : undefined);
+    const say = (text: string): true => {
+      this.message = text;
+      this.render();
+      return true;
+    };
+    if (step === "note" || !(net instanceof GuestSession))
+      return say(g.shrine.statueOpen ? SHRINE.statueUsed : shrineNote(g));
+    const diamond = step === "diamond";
+    openShared(
+      { kind: "shrine", ...base },
+      () =>
+        net.ask({ kind: "shrine-act", diamond }, (why) => {
+          net.sendIntent({ kind: "close" });
+          if (why !== undefined) return void say(why);
+          // The host's `applied` reaches this copy just after this answer.
+          this.time.delayedCall(80, () => {
+            if (!diamond) return void say(SHRINE.statueLine);
+            const candles = this.state.shrine.candles;
+            this.open("shrine", {
+              mode: "redo",
+              candles,
+              line: redoLine(candles),
+            });
+          });
+        }),
+      (why) => void say(why),
     );
     return true;
   }

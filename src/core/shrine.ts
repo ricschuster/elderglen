@@ -312,3 +312,30 @@ export function useStatue(g: GameState, random: () => number): string {
   g.shrine.statueDay = day;
   return `${data.statueLine} (${n} Hearthsilver ore)`;
 }
+
+/** What an Action at the shrine would do with this held item (note 83): set the Diamond, use the open statue, or read the note. Changes nothing. */
+export type ShrineStep = "diamond" | "statue" | "note";
+
+export function shrineStep(g: GameState, held: string | undefined): ShrineStep {
+  if (held === DIAMOND.id && hasDiamond(g)) return "diamond";
+  return g.shrine.statueOpen && g.shrine.statueDay !== g.day.clock.day
+    ? "statue"
+    : "note";
+}
+
+/**
+ * The shrine's two changes as one action for a player (note 108 group 5): `diamond` sets a Diamond from their pack,
+ * otherwise the open statue gives its ore to their pack. The ore count is drawn from the day, not from chance, so
+ * the host's copy and every guest's copy agree. Returns the refusal, or undefined when it worked.
+ */
+export function shrineAct(g: GameState, diamond: boolean): string | undefined {
+  if (diamond) {
+    const r = placeDiamond(g);
+    return r.ok ? undefined : r.reason;
+  }
+  if (!g.shrine.statueOpen) return shrineNote(g);
+  const day = g.day.clock.day;
+  if (g.shrine.statueDay === day) return useStatue(g, () => 0);
+  const text = useStatue(g, () => ((day * 7919) % 100) / 100);
+  return g.shrine.statueDay === day ? undefined : text;
+}

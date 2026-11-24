@@ -86,8 +86,8 @@ One group at a time, each with its own tests; each screen is removed from the gu
 2. **Making (built 2026-11-24, #1014):** crafting, cooking (farmhouse kitchen), furnace and the other machines. See "Group 2 as built" below. The fridge is not in the game yet, so it is not built.
 3. **Animals and ponds (built 2026-11-24, #1014):** animal buy at the farmstead keeper, petting, feeding, collecting, pond menus. Animals cannot be sold in the game yet, so there is no sell. See "Group 3 as built" below.
 4. **Hall (built 2026-11-24, #1014):** bundles (rule 3), orders and the request board. See "Group 4 as built" below.
-5. **The rest:** carpenter (rules 7 to 9, with the host setting on the players list), tailor, smith, gallery,
-   shrine, and any screen still on the refusal list.
+5. **The rest (built 2026-11-24, #1014):** carpenter (rules 7 to 9, with the host setting on the players list), tailor,
+   smith, smithy, gallery and shrine. The screens that stay host only are listed in "Group 5 as built".
 
 ## Group 1 as built (build, 2026-11-24)
 
@@ -243,6 +243,51 @@ test in `tests/screens-socket.test.ts`.
   changes reach every guest's copy as `applied`.
 - **Left for later.** The achievements counted by `quests.completed` are one world count, not per player. The hat box is
   not a guest screen. Order progress for hand-in orders still counts what the chest holds, whoever put it there.
+
+## Group 5 as built (build, 2026-11-24)
+
+Code: `src/core/restintents.ts` (all the intents below, applied from `applyScreenIntent`), `src/core/buildrule.ts` (owners,
+the setting, the loader for the per-guest save fields), `shrineAct` and `shrineStep` in `src/core/shrine.ts`; screen kinds
+`carpenter`, `tailor`, `smith`, `smithy`, `gallery` and `shrine` in `src/core/screens.ts`. The scenes use `dispatch`,
+`followGuest` and `closeWhenDone`; the placement screen sends the order or move. Tests: the "the rest" block of
+`tests/screens.test.ts` and the group 5 test in `tests/screens-socket.test.ts`.
+
+- **Carpenter (rules 7 to 9).** `carp-build`, `carp-upgrade`, `carp-silo`, `carp-pond`, `carp-furniture`, `carp-decor` and
+  `carp-catalogue` are anyone's, paid from the sender's purse and pack. A new building records `buildOwners[key]` (`coop`,
+  `barn`, `stable`, `silo`, `pond:x,y`); none recorded means the host. The carpenter has one job at a time for the whole
+  farm, as before. Upgrading a building's tier (`carp-upgrade`) is anyone's too (build, 2026-11-24: rule 7 says anyone
+  orders buildings and rule 9 names only moving and removing).
+- **Homes (rule 8).** `carp-house` and `carp-reno` are the occupant's: only the host, since guests' cabins have no tiers,
+  interior or build yet. A guest is told "A home is upgraded only by the one who lives in it. A cabin cannot be upgraded
+  yet." The build-night rule (a night counts when the occupant sleeps on the farm) needs a guest's home to build, so it
+  waits for design item 3; the host's farmhouse always counts.
+- **Moving and removing (rule 9).** `carp-move` and `carp-remove` follow the host's `buildRule`: `off`, `own` (default) or
+  `all`. The host always may. The setting is a button on the host's Social tab above the players
+  ("Guests moving buildings: own only"), sent as `build-rule`, which a guest cannot send ("host only"). It is saved with the
+  farm. The greenhouse can be moved and belongs to the host.
+- **Tailor.** `tailor-sew`, `tailor-boots` (the sewing machine) and `tailor-dye`, `tailor-undye` (the pots; the piece is
+  named in `piece`) need the matching screen (`stock` is `sew` or `dye`). Goods come from the sender's pack. The wardrobe is not
+  per player yet (note 53), so a sewn piece and a dye go to the one wardrobe, as the hat box does.
+- **Smith and smithy.** `smith-buy` (ore at both smiths; weapons, boots and bombs at the dwarf), `smith-sell` (ore),
+  `smith-copper`, `smith-ring` (combine, split) are the dwarf's; `smithy-crack`, `smithy-tool` and `smithy-collect` are the
+  smithy's. Everything uses the sender's pack and purse. A tool left at the smithy is the sender's: the host's is
+  `toolOrder`, each guest's is `toolOrdersBy[id]`, so every player may have one tool there (the one-at-a-time line is per
+  player). What a geode holds is drawn from the day, the pack and the purse, so every copy agrees.
+- **Gallery.** `gallery-donate`, `gallery-place`, `gallery-claim`. The shelf is the farm's; a donation leaves the sender's
+  pack. Collected rewards are per player (`galleryClaimed` for the host, `galleryClaimedBy[id]` for guests). The read only
+  shelf from the Collect tab is not a counter and opens nothing.
+- **Shrine.** One shared score. A guest's Action reads the note from their own copy; a Diamond or the open statue is
+  `shrine-act {diamond?}`, taken from the sender's pack and judged at the stone. The statue's ore is drawn from the day.
+  After a Diamond the guest sees the same relit candles screen.
+- **No locks.** None of these screens holds anything between uses.
+- **Still host only (build, 2026-11-24).** The note keeps the hat box and the open-requests list host only, and the backpack
+  upgrade row. Also refused, because their state is one world record with no per player design yet: the trainer and the wall
+  list (combat, kills and lost goods are one record; mines for guests are design item 2), the Hearth cart (travel is design
+  item 2), the mailbox, the hat box and equipment screen (the wardrobe and worn gear are not per player), and the events and
+  host moments (heart events, festivals, the profession choice, the cave choice, the Greencoat, the lift, the first shrine
+  scene, the ending, the debug screen).
+- **Left for later.** The host's own shrine Action and statue use are still direct changes, so a guest's copy learns the
+  statue was used on a refused try. A sewn piece or dye changes the one wardrobe the host also wears.
 
 ## Open (later items, not this note)
 

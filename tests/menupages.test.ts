@@ -235,7 +235,12 @@ describe("guest read-only menus", () => {
       expect(guestMayOpen(k)).toBe(true);
     for (const k of ["hall", "orders", "requests"])
       expect(guestMayOpen(k)).toBe(true);
-    expect(guestMayOpen("carpenter")).toBe(false);
+    for (const k of ["carpenter", "tailor", "smith", "smithy", "gallery"])
+      expect(guestMayOpen(k)).toBe(true);
+    expect(guestMayOpen("shrine")).toBe(true);
+    // Still host only: combat, the mine hall, travel, mail and the hat box.
+    for (const k of ["trainer", "walllist", "cart", "mailbox", "hats"])
+      expect(guestMayOpen(k)).toBe(false);
   });
 });
 

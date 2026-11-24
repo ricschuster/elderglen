@@ -314,6 +314,13 @@ export const GUEST_SCREENS = [
   "hall",
   "orders",
   "requests",
+  // The carpenter, the tailor, the two smiths, the gallery counter and the shrine send intents (note 108 group 5).
+  "carpenter",
+  "tailor",
+  "smith",
+  "smithy",
+  "gallery",
+  "shrine",
   // The bed prompt sends a `sleep` intent and changes nothing locally.
   "bed",
 ];

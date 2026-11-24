@@ -17,13 +17,14 @@ export interface ScreenRef {
   /**
    * "shop", "market", "bin", "chest", "camp-chest", "crafting" (a workbench), "cooking", "furnace", "keeper",
    * "coop-bench", "barn-bench", "pond" (x and y are then the pond's top left tile), "hall" (a hall room's scroll,
-   * with `room`), "orders" or "requests".
+   * with `room`), "orders" or "requests", "carpenter", "tailor" (`stock` is "sew" or "dye"), "smith", "smithy",
+   * "gallery" or "shrine".
    */
   kind: string;
   map: string;
   x: number;
   y: number;
-  /** A shop's special counter (`ShopStock`), or a market stall's id. */
+  /** A shop's special counter (`ShopStock`), a market stall's id, or a tailor's mode ("sew" or "dye"). */
   stock?: string;
   /** The ore bin (kind "bin" only). */
   ore?: boolean;
@@ -62,6 +63,12 @@ const SERVICES: Record<string, string[]> = {
   hall: ["hall"],
   orders: ["orders"],
   requests: ["requests"],
+  carpenter: ["carpenter"],
+  tailor: ["sewing-machine", "dye-pots"],
+  smith: ["smith"],
+  smithy: ["smithy"],
+  gallery: ["counter-library"],
+  shrine: ["shrine"],
 };
 
 /** How near, in tiles, a player must be to a service tile to open or use it (the host's Use reach, with a step of slack for lag). */
@@ -145,6 +152,12 @@ export function refProblem(g: GameState, ref: ScreenRef): string | undefined {
     case "hall":
     case "orders":
     case "requests":
+    case "carpenter":
+    case "tailor":
+    case "smith":
+    case "smithy":
+    case "gallery":
+    case "shrine":
     case "bin": {
       let svc: { kind: string; id: string } | undefined;
       try {
@@ -166,6 +179,11 @@ export function refProblem(g: GameState, ref: ScreenRef): string | undefined {
       if (ref.kind === "bin" && (kind === "ore-bin") !== (ref.ore === true))
         return "no service there";
       if (ref.kind === "hall" && svc?.id !== ref.room)
+        return "no service there";
+      if (
+        ref.kind === "tailor" &&
+        ref.stock !== (kind === "sewing-machine" ? "sew" : "dye")
+      )
         return "no service there";
       if (ref.kind === "shop" && ref.stock !== undefined) {
         if (!isShopStock(ref.stock)) return "no service there";

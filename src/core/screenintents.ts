@@ -47,6 +47,12 @@ import { asPlayer } from "./asplayer";
 import { acceptLine, acceptOrder, collectOwed, dropOrder } from "./orders";
 import { turnIn } from "./quests";
 import { payGuestsBoard } from "./roomrewards";
+import {
+  applyRestIntent,
+  REST_SCREEN_INTENTS,
+  restScreenNeed,
+  restTargetsScreen,
+} from "./restintents";
 
 const isIndex = (v: unknown): v is number =>
   typeof v === "number" && Number.isInteger(v) && v >= 0 && v < 4096;
@@ -98,6 +104,7 @@ export const SCREEN_INTENTS: Record<string, string[]> = {
  * menu's crafting, from the pack alone, which has no screen.
  */
 export function screenNeed(intent: Intent): string[] | undefined {
+  if (intent.kind in REST_SCREEN_INTENTS) return restScreenNeed(intent);
   if (intent.kind === "craft")
     return intent.bench === undefined ? undefined : ["crafting"];
   return SCREEN_INTENTS[intent.kind];
@@ -111,6 +118,7 @@ export function chestOf(g: GameState, intent: Intent): PlacedChest | undefined {
 
 /** True when an intent's own target matches the screen the sender opened. */
 export function targetsScreen(intent: Intent, open: ScreenRef): boolean {
+  if (!restTargetsScreen(intent, open)) return false;
   switch (open.kind) {
     case "chest": {
       const r = parseRef({ ...(intent.chest as object), kind: "chest" });
@@ -237,7 +245,7 @@ export function applyScreenIntent(
     case "request-cancel":
       return applyHallIntent(g, by, intent);
     default:
-      return null;
+      return applyRestIntent(g, by, intent);
   }
 }
 

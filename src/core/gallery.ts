@@ -6,6 +6,7 @@ import { absorbElderfruit, SOURCE_FLAGS } from "./elderfruit";
 import { DIAMOND, GEM_ITEMS } from "./gems";
 import { ELDERFRUIT, itemById } from "./items";
 import { splitQuality } from "./quality";
+import { LOCAL_PLAYER } from "./players";
 import type { GameState } from "./save";
 import { hasFlag, setFlag } from "./worldflags";
 
@@ -232,9 +233,28 @@ export const GALLERY_SETS = galleryData.sets as SetDef[];
 
 export type RewardRow = GalleryReward & { earned: boolean; claimed: boolean };
 
+/** The reward keys the acting player has collected: the host's list, or the guest's own (note 108 group 5). */
+function claimedOf(g: GameState): string[] {
+  const id = g.players.localId;
+  return (
+    (id === LOCAL_PLAYER ? g.galleryClaimed : g.galleryClaimedBy?.[id]) ?? []
+  );
+}
+
+function addClaimed(g: GameState, key: string): void {
+  const id = g.players.localId;
+  if (id === LOCAL_PLAYER)
+    g.galleryClaimed = [...(g.galleryClaimed ?? []), key];
+  else
+    g.galleryClaimedBy = {
+      ...g.galleryClaimedBy,
+      [id]: [...(g.galleryClaimedBy?.[id] ?? []), key],
+    };
+}
+
 /** Every reward as one list with whether it is earned and whether it is claimed. */
 export function rewardList(g: GameState): RewardRow[] {
-  const claimed = new Set(g.galleryClaimed ?? []);
+  const claimed = new Set(claimedOf(g));
   const out: RewardRow[] = [];
   for (const t of [...TOTAL_REWARDS, ...MINERAL_REWARDS, ...ARTIFACT_REWARDS])
     out.push({
@@ -272,7 +292,7 @@ export function claimRewards(g: GameState): { paid: string[]; held: string[] } {
       continue;
     }
     if (r.item) g.inventory.add(r.item, r.count ?? 1);
-    g.galleryClaimed = [...(g.galleryClaimed ?? []), r.key];
+    addClaimed(g, r.key);
     paid.push(r.label);
   }
   return { paid, held };

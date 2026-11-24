@@ -1,7 +1,7 @@
 import { itemById } from "../core/items";
 import { ORES } from "../core/ore";
 import type { GameState } from "../core/save";
-import { buy, sell, sellAll } from "../core/shop";
+import type { Intent } from "../core/protocol";
 import { SMITH_STOCK } from "../core/smith";
 import type { Row } from "./panel";
 
@@ -10,17 +10,17 @@ import type { Row } from "./panel";
  * forge and the Hearthwell smithy (note 77, owner 2026-11-10) sell ore and
  * coal, never bars, and buy raw ore for coin. Same stock and prices at both.
  */
-export function oreRows(g: GameState, say: (text: string) => void): Row[] {
+export function oreRows(
+  g: GameState,
+  act: (intent: Intent, done: string) => void,
+): Row[] {
   const rows: Row[] = SMITH_STOCK.map((id) => {
     const def = itemById(id)!;
     const price = def.buyPrice ?? 0;
     const tryBuy = (n: number) => () =>
-      say(
-        buy(g.inventory, g, id, n)
-          ? `Bought ${n} ${def.name.toLowerCase()} for ${price * n}g.`
-          : g.money < price * n
-            ? "Not enough money."
-            : "Your backpack is full.",
+      act(
+        { kind: "smith-buy", what: "ore", id, n },
+        `Bought ${n} ${def.name.toLowerCase()} for ${price * n}g.`,
       );
     return {
       label: def.name,
@@ -40,11 +40,16 @@ export function oreRows(g: GameState, say: (text: string) => void): Row[] {
       buttons: [
         {
           text: "Sell 1",
-          run: () => say(`Sold for ${sell(g.inventory, g, o.id, 1)}g.`),
+          run: () =>
+            act({ kind: "smith-sell", id: o.id }, `Sold for ${o.sellPrice}g.`),
         },
         {
           text: "Sell all",
-          run: () => say(`Sold for ${sellAll(g.inventory, g, o.id)}g.`),
+          run: () =>
+            act(
+              { kind: "smith-sell", id: o.id, all: true },
+              `Sold for ${o.sellPrice * have}g.`,
+            ),
         },
       ],
     });

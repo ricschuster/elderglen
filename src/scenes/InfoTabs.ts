@@ -17,7 +17,8 @@ import {
 import { replayList, type ReplayLine } from "../core/heartevents";
 import type { Taste } from "../core/friendship";
 import type { GameState } from "../core/save";
-import { currentSession } from "../net/session";
+import { currentSession, HostSession, sendWorldIntent } from "../net/session";
+import { buildRuleLabel, buildRuleOf, nextBuildRule } from "../core/buildrule";
 import { escTaken, takeEsc } from "./escape";
 import { frame } from "./panel";
 import { addPortrait } from "./portrait";
@@ -134,6 +135,23 @@ export class SocialScene extends Phaser.Scene {
         })
       : [];
     this.kids = childRows(g);
+    // The host's setting for guests moving and taking down buildings (note 108 rule 9), on the players list.
+    if (net instanceof HostSession) {
+      const label = this.add
+        .text(BAR_X - 24, 62, buildRuleLabel(buildRuleOf(g)), {
+          fontSize: "16px",
+          color: "#ffe9a0",
+          backgroundColor: "#00000066",
+          padding: { x: 8, y: 4 },
+        })
+        .setOrigin(1, 0)
+        .setInteractive({ useHandCursor: true });
+      label.on("pointerdown", () => {
+        const rule = nextBuildRule(buildRuleOf(g));
+        if (sendWorldIntent(net, { kind: "build-rule", rule }) === undefined)
+          label.setText(buildRuleLabel(rule));
+      });
+    }
     this.bar = this.add
       .rectangle(BAR_X, LIST_TOP, 6, 40, 0xffe9a0, 0.6)
       .setOrigin(0);
