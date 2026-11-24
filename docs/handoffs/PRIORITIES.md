@@ -40,7 +40,7 @@ Built 2026-11-21 (handoff 2026-11-21j): #991 wedding movement (player wedding on
 
 Alongside: the wiki (#910, note 100; built for every category, every item has a picture; text cleared for crops, fish, forage, items, places and rooms; draft text left for bundles, recipes, people and five gem names; left: owner reads the draft text and clears flags, gift lists (`giftsDraft`), people prose with the voice sheets, hosting after M3d), Stardew checks rows (open: SC-188 only; the rest answered or closed as ours, on purpose, 2026-11-17). M4 hosting spike filed as #948.
 
-Designed 2026-11-24 (handoff 2026-11-24, which holds the paused build list): notes 108 guest screens (#1014), 109 guests off the farm (#1015, the lever now takes effect the next day), 110 guest cabin (#1016), 111 festivals with several players (#1017), 112 year two (#1018), 113 ring 1 story pieces. Open for the owner: SC-222, SC-225. #181 waits on a fresh sim run.
+Designed 2026-11-24: notes 108 to 113 (#1014 to #1018). **Built 2026-11-24 (handoff 2026-11-24b):** all of #1014 guest screens (groups 1 to 5, headless), the next-day lever (#1015 step 1), note 106 step 8 (`resolveUse`, `resolveAction`) and #904 items 2 and 3 (#904 item 4 waits in `PRIORITIES_LATER.md`), Social player rows, the sim bot playing all 30 bundles. Left for the owner: play the guest screens with two players. **Build list next, one sub-agent at a time:** sim bot sprinklers and rerun (#181; no Last Seat opened in 168 days), #1015 steps 2 to 4 (slayer counts per player, SC-222), #1016, #1017, then #1018 and note 113 (after the M4 groups).
 
 ## Milestone order (ADR 0012)
 
