@@ -197,6 +197,10 @@ describe("guest applies the host's intents", () => {
     const { host, guest, state } = await pair();
     const copy = guest.loadFarm()!;
     const soil = farmMapOf(state).tillableTiles()[0]!;
+    // The host takes a guest's tool use only from within reach of the tile (note 109).
+    const ts = farmMapOf(state).tileSize;
+    guest.client.sendPos((soil.x + 0.5) * ts, (soil.y + 1) * ts - 2, "farm", 1);
+    await new Promise((r) => setTimeout(r, 100));
     const rec = state.players.get(guest.localId);
     rec.inventory.load(new Inventory().save()); // drop the joiner's starting kit
     rec.inventory.add("parsnip-seed", 3);
@@ -300,6 +304,10 @@ describe("guest applies the host's intents", () => {
     const { host, guest, state } = await pair();
     const copy = guest.loadFarm()!;
     const soil = farmMapOf(state).tillableTiles()[0]!;
+    // The host takes a guest's tool use only from within reach of the tile (note 109).
+    const ts = farmMapOf(state).tileSize;
+    guest.client.sendPos((soil.x + 0.5) * ts, (soil.y + 1) * ts - 2, "farm", 1);
+    await new Promise((r) => setTimeout(r, 100));
     const rec = state.players.get(guest.localId);
     rec.inventory.load(new Inventory().save()); // drop the joiner's starting kit
     rec.inventory.add("parsnip-seed", 3);
