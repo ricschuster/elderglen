@@ -102,6 +102,8 @@ export interface PlayEnv {
   /** The tile a player wakes on in their own home, and the move to put their position there (note 110). */
   home?: (id: PlayerId) => { map: string; x: number; y: number } | undefined;
   place?: (p: Placement) => void;
+  /** A fish landed from a cast into an ice hole of the Forest lake: counts for the contest (note 111 decision 5). */
+  onHoleCatch?: (id: PlayerId) => void;
 }
 
 interface Pending {
@@ -111,6 +113,8 @@ interface Pending {
   map: string;
   /** A cast from the Night Market pier: a pearl may come with the fish. */
   pier?: boolean;
+  /** A cast into an ice hole of the Forest lake on the Frostday contest. */
+  hole?: boolean;
 }
 
 /** The creatures of a map and what holds them: a mine floor, or a map with a spawn table. */
@@ -733,6 +737,7 @@ export class RoomPlay {
         at: { x, y },
         map: v.id,
         ...(pier ? { pier } : {}),
+        ...(hole && kind === "forest-lake" ? { hole: true } : {}),
       });
       const msg =
         found.kind === "fish"
@@ -769,6 +774,7 @@ export class RoomPlay {
               at,
             });
           if (def && p.pier) rollPearl(g, at, this.env.random);
+          if (def && p.hole) this.env.onHoleCatch?.(by);
         } else if (b.kind === "lobster")
           landLobster(g, at, p.distance, this.env.random);
         else if (b.kind === "trash") landTrash(g, at, b.item);

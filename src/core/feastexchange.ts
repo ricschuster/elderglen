@@ -5,6 +5,7 @@ import { FESTIVALS, festivalDayToday } from "./festivals";
 import { tasteOf } from "./friendship";
 import { allItems, itemById } from "./items";
 import type { LetterDef } from "./mail";
+import { LOCAL_PLAYER } from "./players";
 import type { GameState } from "./save";
 import { splitQuality } from "./quality";
 import { villagerById } from "./villagers";
@@ -27,6 +28,13 @@ const hashOf = (s: string): number => {
     h = Math.imul(h ^ s.charCodeAt(i), 16777619);
   return h >>> 0;
 };
+
+/**
+ * A guest draws their own recipient and giver (note 111 decision 8): their id is in the seed. The host's draw is
+ * unchanged, so a one-player game keeps the same draws.
+ */
+const playerSalt = (g: GameState): string =>
+  g.players.localId === LOCAL_PLAYER ? "" : `:${g.players.localId}`;
 
 const yearOf = (g: GameState): number => dateOf(g.day.clock.day).year;
 const keyFor = (kind: string, year: number): string => `${kind}:${year}`;
@@ -61,7 +69,8 @@ export function feastRecipient(g: GameState, hallRestored: boolean): string {
       ? data.host
       : pool[
           Math.floor(
-            seeded(hashOf(`${year}:${pool.join(",")}`))() * pool.length,
+            seeded(hashOf(`${year}:${pool.join(",")}${playerSalt(g)}`))() *
+              pool.length,
           )
         ]!;
   g.festivalsJoined.push(`${keyFor("feast-recipient", year)}:${id}`);
@@ -171,7 +180,9 @@ function drawGiver(
       id !== recipient && g.friendship.met(id) && presentChoices(id).length > 0,
   );
   if (pool.length === 0) return undefined;
-  const random = seeded(hashOf(`giver:${year}:${recipient}:${pool.join(",")}`));
+  const random = seeded(
+    hashOf(`giver:${year}:${recipient}:${pool.join(",")}${playerSalt(g)}`),
+  );
   const giver = pool[Math.floor(random() * pool.length)]!;
   const choices = presentChoices(giver);
   return { giver, present: choices[Math.floor(random() * choices.length)]! };

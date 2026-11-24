@@ -39,6 +39,7 @@ import { LOCAL_PLAYER, type PlayerId } from "./players";
 import type { Intent } from "./protocol";
 import { applyFarmIntent, mapOfIntent, MAPPED_KINDS } from "./roomintents";
 import { RoomPlay } from "./roomplay";
+import { FESTIVAL_KINDS, RoomFestival } from "./roomfestival";
 import { reachProblem, TOO_FAR } from "./roommaps";
 import { applyScreenIntent, screenNeed, targetsScreen } from "./screenintents";
 import { farmTypeById } from "./farmtypes";
@@ -139,6 +140,8 @@ export class GameRoomWorld implements RoomWorld {
   readonly screens = new Screens();
   /** Players off the farm: ground piles, map state, creatures, swings and fishing (note 109). Never saved. */
   readonly play: RoomPlay;
+  /** The festival gate, main events, shared display and per-player rewards (note 111). Never saved. */
+  readonly festival: RoomFestival;
 
   constructor(
     readonly g: GameState,
@@ -165,6 +168,15 @@ export class GameRoomWorld implements RoomWorld {
       random: this.o.random,
       home: (id) => ownWakeSpot(g, id),
       place: (p) => this.placements.push(p),
+      onHoleCatch: (id) => this.festival.iceCatch(id),
+    });
+    this.festival = new RoomFestival({
+      g,
+      present: () =>
+        g.players.ids.filter((id) => this.tracker.presence(id) !== "dropped"),
+      name: (id) => this.names.get(id) ?? id,
+      where: opts.where,
+      screens: this.screens,
     });
   }
 
@@ -304,6 +316,10 @@ export class GameRoomWorld implements RoomWorld {
         return this.buyCabin({ x, y }, intent.style as CabinStyle | undefined);
       }
       default: {
+        if (FESTIVAL_KINDS.has(intent.kind))
+          return (
+            this.festival.apply(by, intent, this.o.where?.(by)) ?? undefined
+          );
         const need = screenNeed(intent);
         if (need && this.o.where && by !== LOCAL_PLAYER) {
           const why = this.screenGate(by, intent, need);
@@ -420,11 +436,16 @@ export class GameRoomWorld implements RoomWorld {
   }
 
   takeNotices(): Notice[] {
-    return [...this.play.takeNotices(), ...this.wakeNotices.splice(0)];
+    return [
+      ...this.play.takeNotices(),
+      ...this.festival.takeNotices(),
+      ...this.wakeNotices.splice(0),
+    ];
   }
 
   step(dtMs: number): void {
     this.play.step(dtMs);
+    this.festival.step(dtMs);
     const limit = this.g.day.clock.minutes >= CLOCK_END;
     this.tracker.check(dtMs, limit);
   }

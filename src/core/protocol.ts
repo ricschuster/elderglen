@@ -5,6 +5,7 @@ import type { Pile } from "./ground";
 import type { Rock } from "./rocks";
 import type { PlayerId, PlayerSave } from "./players";
 import type { Spot } from "./forage";
+import type { GateView } from "./festivalgate";
 
 /** A change to the shared world, as the guest asks for it. The world adapter gives `kind` meaning. */
 export interface Intent {
@@ -105,8 +106,40 @@ export type ServerMsg =
     }
   /** The new morning: the tile the player wakes on, in the home they slept in or their own after a pass-out (note 110). */
   | { t: "wake"; map: string; x: number; y: number }
+  /** Today's festival: the gate and the running event or display (note 111). To every player. */
+  | { t: "festival"; view: FestivalView }
+  /** A line the host has for one player about a festival result (a prize, a winner). */
+  | { t: "fline"; text: string }
   /** The join was turned down; the host then closes the socket. */
   | { t: "refused"; reason: "full" | "in-use" | "no-free-cabin" };
+
+/**
+ * What every player is told about today's festival (note 111): the gate, and the main event or display that is
+ * running. Sent to everyone whenever it changes; a guest keeps the latest.
+ */
+export interface FestivalView extends GateView {
+  /** The Seedswap hunt in progress or done: packets still lying, counts by player, the target and seconds left. */
+  hunt?: {
+    packets: [number, number][];
+    counts: Record<PlayerId, number>;
+    target: number;
+    left: number;
+    done: boolean;
+  };
+  /** The ice contest: each entrant's count and result. */
+  ice?: {
+    win: number;
+    entries: Record<PlayerId, { caught: number; status: string }>;
+  };
+  /** The Cake Day table: who has put a dish on, and the tasted quality. */
+  cake?: { given: PlayerId[]; tasted?: string };
+  /** The shared Harvest Showing display: the goods on it, who holds it, and the placing once judged. */
+  showing?: {
+    table: string[];
+    holder?: PlayerId;
+    result?: { place: number; points: number };
+  };
+}
 
 export interface PlayerInfo {
   id: PlayerId;

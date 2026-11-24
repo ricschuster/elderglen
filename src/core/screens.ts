@@ -20,7 +20,7 @@ export interface ScreenRef {
    * "shop", "market", "bin", "chest", "camp-chest", "crafting" (a workbench), "cooking", "furnace", "keeper",
    * "coop-bench", "barn-bench", "pond" (x and y are then the pond's top left tile), "hall" (a hall room's scroll,
    * with `room`), "orders" or "requests", "carpenter", "tailor" (`stock` is "sew" or "dye"), "smith", "smithy",
-   * "gallery", "shrine", "walllist" (Maren's slayer list) or "mailbox" (a cabin's own, note 110).
+   * "gallery", "shrine", "walllist" (Maren's slayer list), "showing" (the Harvest Showing table, one lock for the farm) or "mailbox" (a cabin's own, note 110).
    */
   kind: string;
   map: string;
@@ -42,6 +42,7 @@ export const LOCKED_KINDS: readonly string[] = [
   "camp-chest",
   "furnace",
   "pond",
+  "showing",
 ];
 
 /** The service kinds a screen kind may open from, on a registered map. */
@@ -72,6 +73,7 @@ const SERVICES: Record<string, string[]> = {
   gallery: ["counter-library"],
   shrine: ["shrine"],
   walllist: ["wall-list"],
+  showing: ["showing"],
 };
 
 /** How near, in tiles, a player must be to a service tile to open or use it (the host's Use reach, with a step of slack for lag). */
@@ -83,9 +85,11 @@ export const LOCKED_LINE = "Someone is using this chest.";
 export const lockedLine = (kind: string): string =>
   kind === "furnace"
     ? "Someone is using the furnace."
-    : kind === "pond"
-      ? "Someone is using the pond."
-      : LOCKED_LINE;
+    : kind === "showing"
+      ? "Someone is using the table."
+      : kind === "pond"
+        ? "Someone is using the pond."
+        : LOCKED_LINE;
 
 export interface Standing {
   x: number;
@@ -168,6 +172,7 @@ export function refProblem(g: GameState, ref: ScreenRef): string | undefined {
     case "gallery":
     case "shrine":
     case "walllist":
+    case "showing":
     case "bin": {
       let svc: { kind: string; id: string } | undefined;
       try {
@@ -269,7 +274,9 @@ export function inReach(g: GameState, at: Standing, ref: ScreenRef): boolean {
 const lockKey = (g: GameState, ref: ScreenRef): string =>
   ref.kind === "camp-chest"
     ? `camp:${ref.floor}`
-    : `${resolveMapId(ref.map, g.farmType)}:${ref.x},${ref.y}`;
+    : ref.kind === "showing"
+      ? "showing" // one table for the farm (note 111 decision 6)
+      : `${resolveMapId(ref.map, g.farmType)}:${ref.x},${ref.y}`;
 
 /** Open screens and their locks. */
 export class Screens {

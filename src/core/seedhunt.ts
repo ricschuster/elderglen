@@ -9,6 +9,7 @@ import {
   type Tile,
 } from "./festivalroutes";
 import { leaveFestival } from "./festivals";
+import type { PlayerId } from "./players";
 import type { GameState } from "./save";
 
 /**
@@ -17,7 +18,7 @@ import type { GameState } from "./save";
  * set in odd years and another in even years. Cuthbert starts it, up to
  * `lastStart`. If the player fails, the rival (Linnet) wins, and either way
  * the festival ends after the hunt. Pure rules, the scene supplies the clock.
- * Multiplayer counts are open (note 82), so this is the one-player count.
+ * The one-player count is `startHunt`; with several players see `HuntContest` below (note 111 decision 4).
  */
 
 const huntOf = (f: Festival): SeedHunt | undefined => festivalLayout(f)?.hunt;
@@ -119,6 +120,11 @@ export function awardHuntPrize(
   s: HuntState,
 ): HuntPrize | undefined {
   if (s.status !== "won") return undefined;
+  return payHuntPrize(g);
+}
+
+/** The prize of a won hunt for the acting player (the first win ever the hat, each year's first a rare packet). */
+export function payHuntPrize(g: GameState): HuntPrize | undefined {
   const out: HuntPrize = { packet: false };
   if (!g.festivalsJoined.includes(HAT_KEY)) {
     g.festivalsJoined.push(HAT_KEY);
@@ -165,4 +171,99 @@ export function huntEndLine(f: Festival, s: HuntState): string | undefined {
   return winner === "player"
     ? `You found ${s.found} packets. You win the hunt!`
     : `Time is up with ${s.found} found. ${winner[0]!.toUpperCase()}${winner.slice(1)} wins the hunt.`;
+}
+
+// ---- several players (note 111 decision 4): a lower target, the top player wins
+
+/**
+ * The packets that win by players present (placeholder, decision 4): the one-player target for one, then 7, 6
+ * and 5 for four or more. Never above the hunt's own `win`.
+ */
+export const HUNT_TARGETS: readonly number[] = [9, 7, 6, 5];
+
+export const huntTarget = (hunt: SeedHunt, players: number): number =>
+  Math.min(
+    hunt.win,
+    HUNT_TARGETS[Math.min(Math.max(players, 1), HUNT_TARGETS.length) - 1]!,
+  );
+
+/** One run of the hunt for everyone who is in: the packets lie on the map and the first player on a tile takes it. */
+export interface HuntContest {
+  hunt: SeedHunt;
+  packets: Tile[];
+  /** Packets found, by player; every contestant has a row. */
+  counts: Record<PlayerId, number>;
+  target: number;
+  left: number;
+  status: "running" | "done";
+}
+
+/** Start a hunt for these players. Undefined if it cannot start (note `huntStartProblem`). */
+export function startHuntContest(
+  f: Festival,
+  day: number,
+  minutes: number,
+  players: PlayerId[],
+): HuntContest | undefined {
+  const hunt = huntOf(f);
+  if (
+    !hunt ||
+    players.length === 0 ||
+    huntStartProblem(f, minutes) !== undefined
+  )
+    return undefined;
+  return {
+    hunt,
+    packets: packetTiles(hunt, day).map((t) => [...t] as unknown as Tile),
+    counts: Object.fromEntries(players.map((p) => [p, 0])),
+    target: huntTarget(hunt, players.length),
+    left: hunt.seconds,
+    status: "running",
+  };
+}
+
+/** The players who reached the target with the most packets; a tie for the most gives each tied player the win. */
+export function huntWinners(c: HuntContest): PlayerId[] {
+  const reached = Object.entries(c.counts).filter(([, n]) => n >= c.target);
+  const top = Math.max(0, ...reached.map(([, n]) => n));
+  return reached.filter(([, n]) => n === top).map(([id]) => id);
+}
+
+/** True when no one else can still reach the target, so a leader who has is the winner now. */
+function decided(c: HuntContest): boolean {
+  const left = c.packets.length;
+  const entries = Object.entries(c.counts);
+  const leader = Math.max(0, ...entries.map(([, n]) => n));
+  if (leader < c.target) return left === 0;
+  return entries.every(([, n]) => n >= c.target || n + left < c.target);
+}
+
+/** A player steps on a tile: takes the packet there, if one lies. Returns true if found. */
+export function pickPacket(
+  c: HuntContest,
+  id: PlayerId,
+  x: number,
+  y: number,
+): boolean {
+  if (c.status !== "running" || c.counts[id] === undefined) return false;
+  const i = c.packets.findIndex((t) => t[0] === x && t[1] === y);
+  if (i < 0) return false;
+  c.packets.splice(i, 1);
+  c.counts[id]! += 1;
+  if (decided(c)) c.status = "done";
+  return true;
+}
+
+/** Run the clock down; the hunt is done at zero. */
+export function tickContest(c: HuntContest, seconds: number): void {
+  if (c.status !== "running") return;
+  c.left = Math.max(0, c.left - seconds);
+  if (c.left === 0) c.status = "done";
+}
+
+/** The rival when no one reached the target, once the hunt is done. */
+export function contestRival(f: Festival, c: HuntContest): string | undefined {
+  return c.status === "done" && huntWinners(c).length === 0
+    ? RIVALS[f.id]
+    : undefined;
 }
