@@ -28,6 +28,7 @@ import type { FarmMap } from "./map";
 import { FACING_STEP, type Facing } from "./movement";
 import { pondCovering, pondUse, takeFish } from "./pond";
 import { POT_ITEM, baitPot, collectPot, pickUpPot, placePot } from "./pots";
+import { rngOf } from "./rng";
 import type { PlayerId } from "./players";
 import type { GameState } from "./save";
 import { baitById } from "./tackle";
@@ -435,7 +436,7 @@ function actOn(
   if (isFarmMap(mapId) && packWaiting(g, x, y))
     return reported(takePack(g, x, y));
   if (g.pots.get(mapId, x, y))
-    return reported(collectPot(g, mapId, x, y, Math.random));
+    return reported(collectPot(g, mapId, x, y, rngOf(g)));
   if (g.chests.at(mapId, x, y))
     return open("chest", { mapId, x, y }, "chest.open");
   if (isHouseMap(mapId)) {

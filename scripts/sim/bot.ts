@@ -248,6 +248,8 @@ export function playGame(
   const grassRandom = () =>
     (seed = (seed * 1664525 + 1013904223) >>> 0) / 2 ** 32;
   const g = startGame(undefined, grassRandom);
+  // Every rule that defaults to the state's RNG draws from the bot's stream (issue 977).
+  g.rng = random;
   // The five tools now fill pack slots (note 102): give the bot the room it had.
   g.inventory.grow(g.inventory.size + TOOLS.length);
   g.forage.respawn(dateOf(1).season, maps.get(START.map).forageSpots, random);
