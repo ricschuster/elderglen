@@ -1,5 +1,6 @@
 // The touch persona: a tablet player who only uses the screen. Everything is
 // done with touch events in a tablet-sized, touch-enabled browser: no keys.
+import { readFileSync } from "node:fs";
 import {
   launch,
   Bot,
@@ -138,6 +139,8 @@ async function tapRowButton(scene, rowLabel, button) {
 /** Check target sizes of a screen against the comfortable minimum. */
 async function checkSizes(scene) {
   const small = (await targets(scene))
+    // The E and H bars are readouts: their narrow hit zones only pin a tooltip.
+    .filter((t) => !(scene === "farm" && (t.label === "E" || t.label === "H")))
     .filter((t) => Math.min(t.w, t.h) < MIN_TARGET)
     .map((t) => `${t.label || "?"} ${t.w.toFixed(0)}x${t.h.toFixed(0)}`);
   if (small.length)
@@ -230,9 +233,10 @@ async function actTool() {
 }
 
 async function selectSlot(i) {
+  const vpH = (await rect()).height; // slots scrolled out of the column keep their input
   // The toolbar is a column of square slots down the left edge (it was a bottom row).
   const slots = (await targets("farm"))
-    .filter((t) => t.cx < 80 && t.w < 60 && t.h < 60)
+    .filter((t) => t.cx < 80 && t.w < 70 && t.h < 70 && t.cy < vpH)
     .sort((a, c) => a.cy - c.cy);
   await tap(slots[i].cx, slots[i].cy, 100);
   const s = await bot.snap();
@@ -400,9 +404,17 @@ if ((await treeHere(tr.x, tr.y)) !== 0)
   finding("holding Use on the button did not clear the tree and its stump");
 else
   log(
-    `hold to chop by touch: tree and stump gone in ${(ms / 1000).toFixed(1)}s, wood +${d2.wood - wood0}, energy -${(e0 - d2.energy).toFixed(0)}`,
+    `hold to chop by touch: tree and stump gone in ${(ms / 1000).toFixed(1)}s, wood +${d2.wood - wood0} in the pack, energy -${(e0 - d2.energy).toFixed(0)}`,
   );
-if (d2.wood <= wood0) finding("chopping by touch gave no wood");
+// Outdoors the goods land on the ground and are picked up by walking over them.
+const woodOnGround = await p.evaluate(() =>
+  window.__game.registry
+    .get("state")
+    .ground.each()
+    .filter((q) => q.id === "wood")
+    .reduce((n, q) => n + q.count, 0),
+);
+if (d2.wood + woodOnGround <= wood0) finding("chopping by touch gave no wood");
 // Ground pickup: fill the bag, chop another tree, then walk onto the drops.
 await p.evaluate(() => {
   const inv = window.__game.registry.get("state").inventory;
@@ -465,14 +477,28 @@ if (m1 <= m0)
 else log("stick plus Use at once: the stick kept moving");
 
 // 4. Shop by touch, in Hearthwell's general store (the farm has no counters).
+// Interior sizes change: read the standing tiles at the door and below the counter from the map file.
+function interior(id) {
+  const url = new URL(`../../src/content/maps/${id}.json`, import.meta.url);
+  const map = JSON.parse(readFileSync(url, "utf8"));
+  const objs = map.layers.find((l) => l.name === "markers").objects;
+  const at = (o) => [Math.floor(o.x / 16), Math.floor(o.y / 16)];
+  const entry = objs.find((o) => o.name === "door" && o.class === "entry");
+  const counter = objs.find(
+    (o) => o.class === "service" || o.name.startsWith("counter"),
+  );
+  return { exit: at(entry), counter: [at(counter)[0], at(counter)[1] + 1] };
+}
+
 async function shopByTouch() {
+  const store = interior("general-store");
   await walkTo(22, 29);
   await faceTo("up");
   await actTool();
   await sleepMs(900);
   if ((await bot.dbg()).map !== "general-store")
     finding("Action on the general store door did not enter the store");
-  await walkTo(5, 2);
+  await walkTo(...store.counter);
   await faceTo("up");
   await actTool();
   await sleepMs(300);
@@ -505,7 +531,7 @@ async function shopByTouch() {
       finding("tapping Close did not return to the farm");
     else log("shop by touch: buy, sell, close done");
   }
-  await walkTo(7, 8);
+  await walkTo(...store.exit);
   await faceTo("down");
   await actTool();
   await sleepMs(900);
@@ -534,7 +560,8 @@ await walkTo(4, 2);
 await faceTo("up");
 const bundle = await p.evaluate(() => {
   const st = window.__game.registry.get("state");
-  const b = st.hall.bundles[0];
+  // The scroll at 4,2 is the foragers' shelf: its first bundle is the one shown.
+  const b = st.hall.bundlesIn("foragers-shelf")[0];
   window.farmGive(b.items[0].id, 1);
   return { id: b.id, item: b.items[0].id };
 });
@@ -549,10 +576,22 @@ else {
   let done = false;
   for (let i = 0; i < rows.length && !done; i++) {
     await tap(rows[i].cx, rows[i].cy, 200);
-    done = ((await bot.snap()).hall[bundle.id]?.[bundle.item] ?? 0) >= 1;
+    done = await p.evaluate(
+      ([b, i]) => window.__game.registry.get("state").hall.have(b, i) >= 1,
+      [bundle.id, bundle.item],
+    );
   }
-  if (!done) finding("tapping Hand in did not hand the item in");
-  else log("hall by touch: hand-in done");
+  if (!done) {
+    const why = await p.evaluate(
+      ([b, i]) => {
+        const st = window.__game.registry.get("state");
+        const sc = window.__game.scene.getScene("hall");
+        return `${st.hall.problem(st.inventory, b, i)} | have ${st.inventory.count(i)} | room ${sc.room} `;
+      },
+      [bundle.id, bundle.item],
+    );
+    finding(`tapping Hand in did not hand the item in (${why})`);
+  } else log("hall by touch: hand-in done");
   await tapLabel("hall", "Close");
   await sleepMs(300);
 }
@@ -570,7 +609,7 @@ if ((await bot.dbg()).map !== "farm")
   finding("Action on the Hearthwell farm exit did not return to the farm");
 
 // 5b. Shipping bin by touch: tap a row to ship the stack, the prompt for part.
-await walkTo(8, 7);
+await walkTo(66, 14);
 await faceTo("up");
 await p.evaluate(() => {
   window.farmGive("parsnip", 6);
@@ -612,7 +651,7 @@ else {
 }
 
 // 6. Sleep by touch: walk into the house, use the bed, answer Yes.
-await walkTo(6, 6);
+await walkTo(62, 12);
 await faceTo("up");
 await actTool();
 await sleepMs(900);
@@ -622,8 +661,8 @@ if (atDoor.map !== "house")
     `Action on the house door did not enter the house (map ${atDoor.map}, tile ${atDoor.tile.x},${atDoor.tile.y}, pos ${atDoor.pos.x.toFixed(1)},${atDoor.pos.y.toFixed(1)}, exit ${atDoor.exit})`,
   );
 else {
-  // The bed is at 20,19 on the house map; stand below it.
-  await walkTo(20, 20);
+  // The bed is at 40,30 on the house map; stand below it.
+  await walkTo(40, 31);
   await faceTo("up");
   const day = (await bot.snap()).day;
   await actTool();

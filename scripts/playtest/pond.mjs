@@ -111,8 +111,15 @@ if (s.out) {
   await bot.select(11);
   // The walks cleared trees and filled the pack with wood: make room, as a player would.
   await p.evaluate(() => {
-    const inv = window.__game.registry.get("state").inventory;
+    const st = window.__game.registry.get("state");
+    const inv = st.inventory;
+    // Piles the walks left on the ground (a full pack drops them) are picked
+    // up the moment a slot frees, so clear them and then the pack's clutter:
+    // an empty hand needs an empty slot.
+    st.ground.load([]);
     inv.remove("wood", inv.count("wood"));
+    const held = inv.save()[11];
+    if (held) inv.remove(held.id, inv.count(held.id));
   });
   const fd = await bot.dbg();
   log("take: at", JSON.stringify(fd.tile), "target", JSON.stringify(fd.target));
