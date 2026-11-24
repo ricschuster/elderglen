@@ -1094,6 +1094,12 @@ window.WIKI_INDEX = [
     kw: "",
   },
   {
+    name: "Gilded jelly",
+    cat: "Item",
+    path: "items/gilded-jelly.html",
+    kw: "",
+  },
+  {
     name: "Glacier topaz",
     cat: "Item",
     path: "items/glacier-topaz.html",
@@ -1110,6 +1116,7 @@ window.WIKI_INDEX = [
   { name: "Glow ring", cat: "Item", path: "items/glow-ring.html", kw: "" },
   { name: "Goat milk", cat: "Item", path: "items/goat-milk.html", kw: "" },
   { name: "Gold bar", cat: "Item", path: "items/gold-bar.html", kw: "" },
+  { name: "Gold ore", cat: "Item", path: "items/gold-ore.html", kw: "" },
   {
     name: "Gourd lantern",
     cat: "Item",
@@ -1172,6 +1179,12 @@ window.WIKI_INDEX = [
     name: "Hearthsilver bar",
     cat: "Item",
     path: "items/hearthsilver-bar.html",
+    kw: "",
+  },
+  {
+    name: "Hearthsilver ore",
+    cat: "Item",
+    path: "items/hearthsilver-ore.html",
     kw: "",
   },
   {

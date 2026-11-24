@@ -156,6 +156,7 @@ export function load() {
     friendship: content("friendship"),
     heartEvents: heartEvents(),
     spawns: content("spawns"),
+    creatures: content("creatures"),
     maps,
     planned,
     text,
@@ -551,6 +552,15 @@ ${prose("rooms", r.id)}${shot(`rooms/${r.id}`, `The ${r.name} counter in the vil
       if (!usedAsReward.has(id)) usedAsReward.set(id, []);
       usedAsReward.get(id).push(b.id);
     }
+  // Rare gilded creatures and what they drop: the drops get item pages that name the creature.
+  const rareDrops = new Map();
+  for (const c of d.creatures.filter((x) => x.rare))
+    for (const dr of c.drops ?? [])
+      for (const id of dr.oneOf ?? [dr.id]) {
+        if (!rareDrops.has(id)) rareDrops.set(id, []);
+        if (!rareDrops.get(id).includes(c.name)) rareDrops.get(id).push(c.name);
+        if (d.items.has(id)) referenced.add(id);
+      }
   for (const id of [...referenced].sort()) {
     if (fishById.has(id) || cropIds.has(id) || forageIds.has(id)) continue;
     const it = d.items.get(id);
@@ -572,7 +582,7 @@ ${infobox([
   it.buyPrice === undefined ? null : ["Buy price", `${it.buyPrice} coins`],
   it.energy === undefined ? null : ["Energy", `${it.energy}`],
 ])}
-${prose("items", id)}${ub || rw ? `<h2>Used in</h2><ul>${ub ? `<li>Hall bundles that accept it: ${ub}</li>` : ""}${rw ? `<li>Reward for: ${rw}</li>` : ""}</ul>` : ""}`;
+${prose("items", id)}${rareDrops.has(id) ? `<h2>Dropped by</h2><ul>${rareDrops.get(id).map((n) => `<li>${esc(n)} (a rare creature of the mines)</li>`).join("")}</ul>` : ""}${ub || rw ? `<h2>Used in</h2><ul>${ub ? `<li>Hall bundles that accept it: ${ub}</li>` : ""}${rw ? `<li>Reward for: ${rw}</li>` : ""}</ul>` : ""}`;
     add(`items/${id}.html`, it.name, body, "Item");
   }
   const itemRows = [...referenced]

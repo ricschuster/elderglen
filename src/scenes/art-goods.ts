@@ -762,6 +762,7 @@ export const GOOD_LOOKS: Record<string, GoodLook> = {
   "brook-jelly": g("jelly", "#6ab8b0"),
   "gloop-jelly": g("jelly", "#6a8a3a"),
   "glow-jelly": g("jelly", "#c8e060", { l: "#fffbd0" }),
+  "gilded-jelly": g("jelly", "#e8b830", { l: "#fff0a0", d: "#a87818" }),
   "tide-jelly": g("jelly", "#5a8ad0"),
   "oak-resin": g("jelly", "#c8801e", { l: "#f6d078" }),
   "pine-tar": g("jelly", "#3a2e24", { l: "#6a5a48" }),
