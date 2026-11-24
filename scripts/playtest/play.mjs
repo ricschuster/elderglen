@@ -18,9 +18,9 @@ const crops = JSON.parse(
   ),
 );
 const cropDef = Object.fromEntries(crops.map((c) => [c.id, c]));
-// Toolbar slots: hoe, can, axe, pickaxe, then the backpack.
-const HAND = 4;
-const FIRST_SLOT = 4;
+// Tools sit in the pack (note 102): slots 0 to 4 are hoe, can, axe, pickaxe, scythe. HAND is a later toolbar slot, empty early on.
+const HAND = 8;
+const FIRST_SLOT = 0;
 const MAX_DAY = Number(process.env.MAX_DAY ?? 84);
 
 const seasonOf = (d) =>
@@ -444,7 +444,8 @@ async function visitShop(day) {
   for (const sl of s0.inv)
     if (sl && !sellIds.includes(sl.id)) sellIds.push(sl.id);
   const sells = sellIds
-    .filter((id) => !id.endsWith("-seed"))
+    // Tools sit in the pack now (note 102) and are not for sale in the bot's plan.
+    .filter((id) => !id.endsWith("-seed") && !id.startsWith("tool:"))
     .map((id) => [
       id,
       bot.count(s0, id) -
@@ -707,9 +708,11 @@ async function overdo() {
   log("OVERDO: working until the energy runs out");
   const before = await bot.snap();
   await bot.select(0);
+  // Energy now runs down to -15 (note 07), about 285 from a full 270, so the plot must be big
+  // enough: 2 energy a tile for the hoe, so over 143 tiles of hoe work, then the can on top.
   const tiles = [];
-  for (let y = 10; y <= 17; y++)
-    for (let x = 14; x <= 25; x++) tiles.push({ x, y });
+  for (let y = 10; y <= 21; y++)
+    for (let x = 14; x <= 28; x++) tiles.push({ x, y });
   let done = false;
   for (const tl of tiles) {
     const s = await bot.snap();
@@ -734,7 +737,9 @@ async function overdo() {
   }
   const s = await bot.snap();
   if (!s.scenes.includes("report")) {
-    finding("energy never ran out during overdo");
+    finding(`energy never ran out during overdo (energy ${s.energy})`);
+    // Sleep anyway, so the day loop moves on instead of repeating this day.
+    await sleepNight(s.day).catch(() => {});
     return;
   }
   const reportText = await uiText("report");
