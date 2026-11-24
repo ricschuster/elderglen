@@ -35,9 +35,10 @@ from the saved Multiplayer page (read 2026-11-24) unless marked "from memory".
    dug progress and nothing rerolls. This replaces the 2026-11-23 build rule ("floors made after the flip
    change today") in single player too. The lever's prompt says "From tomorrow, the mine is dangerous."
    (or "is calm."). Flipping twice in a day cancels it out.
-10. **Slayer counts: open (owner chose Stardew; not checked, SC-222).** Whether the wall list at Maren's
-    counts kills per player or for the world waits for the owner's check. Until then the build keeps counts
-    as they are and the guest group in this note does not touch them.
+10. **Slayer counts: per player (owner chose Stardew; SC-222 answered 2026-11-24).** Each player has their own
+    kill counts on the wall list at Maren's and claims each reward once for themselves. One player's kills
+    never fill another player's goal. A co-op perfection guide says Stardew's goals cannot be shared between
+    players (a fan source, not the wiki). Build with the guest groups: counts move from the farm to each player.
 
 ## How it works (technical, ours)
 
@@ -68,6 +69,5 @@ After note 108 group 1 (the dispatcher and locks), as one group per pull request
 
 ## Open
 
-- SC-222: slayer kill counts in multiplayer (rule 10).
 - A guest's own cabin, kitchen and bed (design item 3).
 - Festivals with several players (design item 4).
