@@ -582,7 +582,14 @@ ${infobox([
   it.buyPrice === undefined ? null : ["Buy price", `${it.buyPrice} coins`],
   it.energy === undefined ? null : ["Energy", `${it.energy}`],
 ])}
-${prose("items", id)}${rareDrops.has(id) ? `<h2>Dropped by</h2><ul>${rareDrops.get(id).map((n) => `<li>${esc(n)} (a rare creature of the mines)</li>`).join("")}</ul>` : ""}${ub || rw ? `<h2>Used in</h2><ul>${ub ? `<li>Hall bundles that accept it: ${ub}</li>` : ""}${rw ? `<li>Reward for: ${rw}</li>` : ""}</ul>` : ""}`;
+${prose("items", id)}${
+      rareDrops.has(id)
+        ? `<h2>Dropped by</h2><ul>${rareDrops
+            .get(id)
+            .map((n) => `<li>${esc(n)} (a rare creature of the mines)</li>`)
+            .join("")}</ul>`
+        : ""
+    }${ub || rw ? `<h2>Used in</h2><ul>${ub ? `<li>Hall bundles that accept it: ${ub}</li>` : ""}${rw ? `<li>Reward for: ${rw}</li>` : ""}</ul>` : ""}`;
     add(`items/${id}.html`, it.name, body, "Item");
   }
   const itemRows = [...referenced]
