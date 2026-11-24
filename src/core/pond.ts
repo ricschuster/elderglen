@@ -5,14 +5,13 @@ import { isFarmMap } from "./farmtypes";
 import type { FarmMap } from "./map";
 import { FARM_STORE } from "./mapstore";
 import { mayPlaceOn, placeTag } from "./placeables";
-import { placedFootprint } from "./placement";
+import { buildingRects } from "./placement";
 import { FISH_POND, POND_FOOTPRINT } from "./pondsite";
 
 export { FISH_POND, POND_FOOTPRINT };
 import type { PlacedItem } from "./placedstore";
 import { QUALITIES, splitQuality, withQuality } from "./quality";
 import type { GameState } from "./save";
-import { SILO_FOOTPRINT, SILO_SITES } from "./animals";
 import { itemById } from "./items";
 import { roeOf, speciesById, type PondSpecies } from "./pondspecies";
 import { isWaterFind } from "./waterfinds";
@@ -223,15 +222,7 @@ export function pondBlockers(
   y: number,
 ): { x: number; y: number; why: string }[] {
   const out: { x: number; y: number; why: string }[] = [];
-  const fixed = [
-    ...(["coop", "barn", "stable", "greenhouse"] as const).flatMap((b) => {
-      const r = placedFootprint(g, b, mapId);
-      return r ? [r] : [];
-    }),
-    ...(SILO_SITES[mapId]
-      ? [{ ...SILO_SITES[mapId]!, w: SILO_FOOTPRINT.w, h: SILO_FOOTPRINT.h }]
-      : []),
-  ];
+  const fixed = buildingRects(g, mapId);
   for (let ty = y; ty < y + POND_FOOTPRINT.h; ty++)
     for (let tx = x; tx < x + POND_FOOTPRINT.w; tx++) {
       const cell = { x: tx, y: ty, w: 1, h: 1 };
@@ -264,15 +255,7 @@ export function pondProblem(
   const busy = pondBusy(g);
   if (busy !== undefined) return busy;
   const here = { x, y, w: POND_FOOTPRINT.w, h: POND_FOOTPRINT.h };
-  const fixed = [
-    ...(["coop", "barn", "stable", "greenhouse"] as const).flatMap((b) => {
-      const r = placedFootprint(g, b, mapId);
-      return r ? [r] : [];
-    }),
-    ...(SILO_SITES[mapId]
-      ? [{ ...SILO_SITES[mapId]!, w: SILO_FOOTPRINT.w, h: SILO_FOOTPRINT.h }]
-      : []),
-  ];
+  const fixed = buildingRects(g, mapId);
   if (fixed.some((r) => rectsOverlap(r, here)))
     return "That spot is taken by a building.";
   for (const p of pondsOf(g))

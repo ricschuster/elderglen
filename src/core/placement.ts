@@ -170,6 +170,26 @@ function clutterAt(g: GameState, x: number, y: number): string | undefined {
   return undefined;
 }
 
+/** The silo's fixed spot on a map, built or not, or undefined when the map has none. */
+export function siloSiteRect(mapId: string): Rect | undefined {
+  const silo = SILO_SITES[mapId];
+  return silo
+    ? { x: silo.x, y: silo.y, w: SILO_FOOTPRINT.w, h: SILO_FOOTPRINT.h }
+    : undefined;
+}
+
+/** The footprints that stand fixed on a map: placed buildings plus the silo's spot. */
+export function buildingRects(g: GameState, mapId: string): Rect[] {
+  const out: Rect[] = [];
+  for (const b of PLACEABLES) {
+    const r = placedFootprint(g, b, mapId);
+    if (r) out.push(r);
+  }
+  const silo = siloSiteRect(mapId);
+  if (silo) out.push(silo);
+  return out;
+}
+
 /**
  * Every tile that stops `b` with its top left on (x, y), each with a reason.
  * Empty means the spot is free. The tile in front of the door counts too, so a
@@ -193,10 +213,7 @@ export function placementBlockers(
     r: placedFootprint(g, o, mapId),
   }));
   const ponds = pondRects(g, mapId);
-  const silo = SILO_SITES[mapId];
-  const siloRect = silo
-    ? { x: silo.x, y: silo.y, w: SILO_FOOTPRINT.w, h: SILO_FOOTPRINT.h }
-    : undefined;
+  const siloRect = siloSiteRect(mapId);
   /** What stands on a tile, or undefined if a building may cover it. */
   const reason = (tx: number, ty: number): string | undefined => {
     if (map.isBlocked(tx, ty)) return "water, a cliff or a wall";
@@ -241,11 +258,7 @@ function walkable(
       ? [{ r, d: footprintOf(o).door ? doorAt(o, r.x, r.y) : undefined }]
       : [];
   });
-  const silo = SILO_SITES[mapId];
-  const siloRect =
-    silo && g.animals.silo
-      ? { x: silo.x, y: silo.y, w: SILO_FOOTPRINT.w, h: SILO_FOOTPRINT.h }
-      : undefined;
+  const siloRect = g.animals.silo ? siloSiteRect(mapId) : undefined;
   const ponds = pondRects(g, mapId);
   return (x: number, y: number): boolean => {
     if (map.isBlocked(x, y)) return false;
