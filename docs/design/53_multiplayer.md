@@ -242,6 +242,9 @@ not built in M4. The pros and cons, so the idea is not lost:
 
 ## Open
 
+- **Guests using screens: settled 2026-11-24 in note 108** (every screen, chest lock, bundle items to the finisher,
+  shared machines and stock, carpenter owner and move setting, screen actions through one dispatcher, build order).
+
 - **Eight players on a tablet host.** beaver_cycle measured a host and two
   guests, not eight. Decided 2026-11-02: 8 stays the target and the real-tablet
   load check sets the tablet cap (it may be lower, such as 4).
