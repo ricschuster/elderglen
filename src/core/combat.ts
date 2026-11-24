@@ -443,6 +443,8 @@ export interface CombatSave {
   slayerClaimed?: string[];
   /** Rare creature kinds found at least once (a quiet tracker entry, note 22). */
   rareFound?: string[];
+  /** Camp floors whose chest this player has opened (guests only; the host's are `Mines.campOpened`). */
+  campOpened?: number[];
 }
 
 /** What the player carries into a fight: health, the trainer's progress and the kill tally. */
@@ -462,6 +464,8 @@ export class Combat {
   slayerClaimed: string[] = [];
   /** Rare creature kinds beaten at least once: a quiet tracker entry that adds to no completion total (note 22). */
   rareFound: string[] = [];
+  /** Camp floors whose one item this player took, kept here for a guest (note 109 rule 4). The host's list is `Mines`. */
+  campOpened: number[] = [];
   /** Beaten creatures by kind, for the slayer list later (note 22). */
   kills: Record<string, number> = {};
   /** The Assist toggle, synced from the device settings by the scene. Never saved here. */
@@ -522,6 +526,7 @@ export class Combat {
         ? { slayerClaimed: [...this.slayerClaimed] }
         : {}),
       ...(this.rareFound.length ? { rareFound: [...this.rareFound] } : {}),
+      ...(this.campOpened.length ? { campOpened: [...this.campOpened] } : {}),
     };
   }
 
@@ -544,10 +549,17 @@ export class Combat {
         : 0;
     this.slayerClaimed = (
       Array.isArray(raw?.slayerClaimed) ? raw.slayerClaimed : []
-    ).filter((x) => SLAYER_RINGS.some((r) => r.id === x));
+    ).filter(
+      (x) =>
+        SLAYER_RINGS.some((r) => r.id === x) ||
+        SLAYER_GOALS.some((s) => `goal:${s.id}` === x),
+    );
     this.rareFound = (
       Array.isArray(raw?.rareFound) ? raw.rareFound : []
     ).filter((x) => creatureById(x)?.rare !== undefined);
+    this.campOpened = (
+      Array.isArray(raw?.campOpened) ? raw.campOpened : []
+    ).filter((n) => Number.isInteger(n) && n > 0);
     this.kills = {};
     for (const [k, v] of Object.entries(raw?.kills ?? {}))
       if (Number.isInteger(v) && v > 0) this.kills[k] = v;

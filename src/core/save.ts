@@ -341,7 +341,7 @@ export function newGame(
     showTokens: { year: 0, count: 0 },
     cave: new FarmCave(),
     wardrobe: new Wardrobe(),
-    equipment: new Equipment(),
+    equipment: players.get(LOCAL_PLAYER).equipment,
     furniture: new Furniture(),
     decor: new Decor(),
     chests: new Chests(),
@@ -358,7 +358,7 @@ export function newGame(
     guide: new Guide(),
     tackle: new Tackle(),
     pots: new Pots(),
-    combat: new Combat(),
+    combat: players.get(LOCAL_PLAYER).combat,
     forage: new ForageField(),
     spots: new ArtifactSpots(),
     areas: newAreas(),
@@ -790,7 +790,7 @@ export function serialize(
     showTokens: { ...g.showTokens },
     cave: g.cave.save(),
     wardrobe: g.wardrobe.save(),
-    equipment: g.equipment.save(),
+    equipment: g.players.get(LOCAL_PLAYER).equipment.save(),
     houseLayout: HOUSE_LAYOUT,
     furniture: g.furniture.save(),
     decor: g.decor.save(),
@@ -811,7 +811,7 @@ export function serialize(
     guideShops: g.guide.saveShops(),
     tackle: g.tackle.save(),
     pots: g.pots.save(),
-    combat: g.combat.save(),
+    combat: g.players.get(LOCAL_PLAYER).combat.save(),
   };
   return JSON.stringify(data);
 }
@@ -1324,7 +1324,7 @@ export function deserialize(text: string): GameState | undefined {
     g.showTokens = { year: tokens.year, count: tokens.count };
   g.cave.load(raw.cave as Partial<CaveSave> | undefined);
   g.wardrobe.load(raw.wardrobe);
-  g.equipment.load(raw.equipment);
+  g.players.get(LOCAL_PLAYER).equipment.load(raw.equipment);
   // Saves from an older house frame keep furniture and chests by that frame.
   const layout = isCount(raw.houseLayout) ? raw.houseLayout : 1;
   g.furniture.load(raw.furniture, layout);
@@ -1350,7 +1350,9 @@ export function deserialize(text: string): GameState | undefined {
   g.guide.sweep(g);
   g.tackle.load(raw.tackle);
   g.pots.load(raw.pots);
-  g.combat.load(raw.combat, g.skills);
+  g.players
+    .get(LOCAL_PLAYER)
+    .combat.load(raw.combat, g.players.get(LOCAL_PLAYER).skills);
   // Loading rechecks, so a goal met under an older save is granted (note 38).
   checkAchievements(g);
   return g;

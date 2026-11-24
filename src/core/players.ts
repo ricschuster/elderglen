@@ -1,4 +1,6 @@
+import { Combat, type CombatSave } from "./combat";
 import { Energy } from "./energy";
+import { Equipment } from "./equipment";
 import { Inventory } from "./inventory";
 import { Skills } from "./skills";
 import { SKILLS } from "./skills";
@@ -31,6 +33,10 @@ export interface PlayerRecord {
   canWater: number;
   /** Energy and its ceiling. Single player shares this object with `Day.energy`. */
   energy: Energy;
+  /** Health, the trainer, kills and slayer claims of this player (note 109 rules 6, 7 and 10). */
+  combat: Combat;
+  /** The rings this player wears (note 109 rule 7: rings stay per player). */
+  equipment: Equipment;
 }
 
 export function newPlayer(
@@ -46,6 +52,8 @@ export function newPlayer(
     toolTiers: { hoe: 0, can: 0, pickaxe: 0, axe: 0 },
     canWater: START_CAN_WATER,
     energy,
+    combat: new Combat(),
+    equipment: new Equipment(),
   };
 }
 
@@ -148,6 +156,8 @@ export function localView(players: Players): {
   skills: Skills;
   toolTiers: ToolTiers;
   canWater: number;
+  combat: Combat;
+  equipment: Equipment;
 } {
   return {
     get money() {
@@ -180,6 +190,18 @@ export function localView(players: Players): {
     set canWater(v: number) {
       players.local.canWater = v;
     },
+    get combat() {
+      return players.local.combat;
+    },
+    set combat(v: Combat) {
+      players.local.combat = v;
+    },
+    get equipment() {
+      return players.local.equipment;
+    },
+    set equipment(v: Equipment) {
+      players.local.equipment = v;
+    },
   };
 }
 
@@ -197,6 +219,9 @@ export interface PlayerSave {
   /** Energy hit 0 today, and a skill leveled up today (optional: older saves lack them). */
   exhausted?: boolean;
   levelled?: boolean;
+  /** Combat record and rings (optional: older saves lack them). */
+  combat?: CombatSave;
+  equipment?: unknown;
 }
 
 export function savePlayer(p: PlayerRecord): PlayerSave {
@@ -212,6 +237,8 @@ export function savePlayer(p: PlayerRecord): PlayerSave {
     energy: p.energy.current,
     ...(p.energy.wasExhausted ? { exhausted: true } : {}),
     ...(p.skills.levelledToday ? { levelled: true } : {}),
+    combat: p.combat.save(),
+    equipment: p.equipment.save(),
   };
 }
 
@@ -252,5 +279,7 @@ export function loadPlayerInto(players: Players, raw: unknown): boolean {
     p.energy.current = Math.min(raw.energy, p.energy.max);
   p.energy.wasExhausted = raw.exhausted === true;
   p.skills.levelledToday = raw.levelled === true;
+  p.combat.load(raw.combat, p.skills);
+  p.equipment.load(raw.equipment);
   return true;
 }
