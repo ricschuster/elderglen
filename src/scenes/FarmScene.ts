@@ -2151,6 +2151,10 @@ export class FarmScene extends Phaser.Scene {
           return closed(this.mailboxLine(service.id));
         ref = { kind: "mailbox", ...base };
         scene = "mailbox";
+      } else if (service.kind === "wall-list") {
+        // Maren's slayer list: claims and buys run on the host against this player's own kills (note 109).
+        ref = { kind: "walllist", ...base };
+        scene = "walllist";
       } else if (service.kind === "shrine") {
         return this.guestShrine(base);
       } else if (service.kind === "camp-chest" && this.floor !== undefined) {

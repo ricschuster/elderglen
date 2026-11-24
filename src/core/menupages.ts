@@ -321,6 +321,8 @@ export const GUEST_SCREENS = [
   "smithy",
   "gallery",
   "shrine",
+  // Maren's slayer wall list: claim and buy intents against the sender's own kills (note 109).
+  "walllist",
   // The bed prompt sends a `sleep` intent and changes nothing locally.
   "bed",
   // A guest's own mailbox beside their cabin door: letters are read through the host (note 110 rule 3).

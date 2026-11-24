@@ -2,6 +2,7 @@
 // shrine. Each runs the same core function single player uses, as the sending player. Whether the sender may use
 // the screen at all (open, reach, the screen they opened) is judged by the host first (`GameRoomWorld`,
 // `Screens`). Free of Phaser and the DOM.
+import { buyReward, claimGoal } from "./slayerlist";
 import { asPlayer } from "./asplayer";
 import {
   BUILDINGS,
@@ -117,6 +118,8 @@ export const REST_SCREEN_INTENTS: Record<string, string[]> = {
   "gallery-place": ["gallery"],
   "gallery-claim": ["gallery"],
   "shrine-act": ["shrine"],
+  "slayer-claim": ["walllist"],
+  "slayer-buy": ["walllist"],
 };
 
 /** The screens a group 5 intent needs open. Ore is sold at both smiths, everything else at one. */
@@ -192,6 +195,15 @@ export function applyRestIntent(
       return applyGallery(g, by, intent);
     case "shrine-act":
       return asPlayer(g, by, () => shrineAct(g, intent.diamond === true));
+    case "slayer-claim":
+      // Maren's wall list judges the sender's own kills and claims (note 109 rule 10).
+      return isId(intent.goal)
+        ? asPlayer(g, by, () => claimGoal(g, intent.goal as string))
+        : "bad slayer-claim";
+    case "slayer-buy":
+      return isId(intent.item)
+        ? asPlayer(g, by, () => buyReward(g, intent.item as string))
+        : "bad slayer-buy";
     default:
       return null;
   }

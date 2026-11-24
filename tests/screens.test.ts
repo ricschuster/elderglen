@@ -1648,6 +1648,42 @@ describe("the rest: carpenter, tailor, smiths, gallery, shrine (note 108, group 
     expect(t.send(t.bo, { kind: "shrine-act" })).toMatch(/quiet/);
   });
 
+  it("runs Maren's wall list for the sender against their own kills and purse (note 109)", () => {
+    const t = mk("separate");
+    const { g } = t;
+    const ref = refAt("mine", "walllist", "wall-list");
+    const dust = { kind: "slayer-claim", goal: "dustmoth" };
+    expect(t.send(t.ann, dust)).toBe("open the screen first");
+    expect(openAt(t, t.ann, ref)).toBeUndefined();
+    expect(openAt(t, t.bo, ref)).toBeUndefined();
+    expect(t.send(t.ann, dust)).toMatch(/not met/);
+    // Only Ann's kills count: Bo's copy of the list stays in progress.
+    g.players.get(t.ann).combat.kills["dustmoth"] = 500;
+    expect(t.send(t.bo, dust)).toMatch(/not met/);
+    expect(t.send(t.ann, dust)).toBeUndefined();
+    expect(g.players.get(t.ann).combat.slayerClaimed).toContain(
+      "goal:dustmoth",
+    );
+    expect(g.players.get(t.bo).combat.slayerClaimed).toHaveLength(0);
+    expect(t.send(t.ann, dust)).toMatch(/already/);
+    // The reward shop sells the ring again from Ann's purse alone.
+    const ann = g.players.get(t.ann);
+    ann.money = 100;
+    expect(t.send(t.ann, { kind: "slayer-buy", item: "burglar-ring" })).toMatch(
+      /already|enough/,
+    );
+    expect(t.send(t.bo, { kind: "slayer-buy", item: "burglar-ring" })).toBe(
+      "She does not sell that.",
+    );
+    expect(t.send(t.ann, { kind: "slayer-buy", item: 5 })).toBe(
+      "bad slayer-buy",
+    );
+    t.stand(t.ann, "mine", 0, 0);
+    expect(t.send(t.ann, { kind: "slayer-buy", item: "burglar-ring" })).toBe(
+      "too far away",
+    );
+  });
+
   it("shows a guest copy the same carpenter order through applied", () => {
     const t = mk("separate");
     fundCoop(t, t.ann);

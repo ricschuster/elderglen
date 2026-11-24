@@ -20,7 +20,7 @@ export interface ScreenRef {
    * "shop", "market", "bin", "chest", "camp-chest", "crafting" (a workbench), "cooking", "furnace", "keeper",
    * "coop-bench", "barn-bench", "pond" (x and y are then the pond's top left tile), "hall" (a hall room's scroll,
    * with `room`), "orders" or "requests", "carpenter", "tailor" (`stock` is "sew" or "dye"), "smith", "smithy",
-   * "gallery", "shrine" or "mailbox" (a cabin's own, note 110).
+   * "gallery", "shrine", "walllist" (Maren's slayer list) or "mailbox" (a cabin's own, note 110).
    */
   kind: string;
   map: string;
@@ -71,6 +71,7 @@ const SERVICES: Record<string, string[]> = {
   smithy: ["smithy"],
   gallery: ["counter-library"],
   shrine: ["shrine"],
+  walllist: ["wall-list"],
 };
 
 /** How near, in tiles, a player must be to a service tile to open or use it (the host's Use reach, with a step of slack for lag). */
@@ -166,6 +167,7 @@ export function refProblem(g: GameState, ref: ScreenRef): string | undefined {
     case "smithy":
     case "gallery":
     case "shrine":
+    case "walllist":
     case "bin": {
       let svc: { kind: string; id: string } | undefined;
       try {
