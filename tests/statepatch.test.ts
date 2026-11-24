@@ -4,7 +4,7 @@ import { dateOf } from "../src/core/calendar";
 import { HEART } from "../src/core/friendship";
 import { applyStatePatch } from "../src/core/statepatch";
 import { hasFlag } from "../src/core/worldflags";
-import { ROOMS } from "../src/core/bundles";
+import { HALL_ROOMS } from "../src/core/bundles";
 import { LEVEL_XP } from "../src/core/skills";
 import { HEART_EVENTS } from "../src/core/heartevents";
 import { VILLAGERS } from "../src/core/villagers";
@@ -46,13 +46,15 @@ describe("applyStatePatch", () => {
 
   it("finishes hall rooms through hand-ins, opening later rooms in order", () => {
     const g = newGame();
-    const first = ROOMS[0]!.id;
+    const first = HALL_ROOMS[0]!.id;
     const r = applyStatePatch(g, { hallRooms: [first] });
     expect(r.problems).toEqual([]);
     expect(g.hall.roomComplete(first)).toBe(true);
     expect(g.money).toBe(500);
     // A room that is still locked stays a problem, not a forced fill.
-    const locked = ROOMS.find((x) => x.id !== first && !g.hall.roomOpen(x.id));
+    const locked = HALL_ROOMS.find(
+      (x) => x.id !== first && !g.hall.roomOpen(x.id),
+    );
     if (locked && g.hall.bundlesIn(locked.id).length > 0) {
       const r2 = applyStatePatch(g, { hallRooms: [locked.id] });
       expect(r2.problems.length).toBeGreaterThan(0);

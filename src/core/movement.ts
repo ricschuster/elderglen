@@ -50,7 +50,8 @@ export function facingFrom(move: Vec, current: Facing): Facing {
   return move.y > 0 ? "down" : "up";
 }
 
-const STEP: Record<Facing, Vec> = {
+/** The tile step for each way the farmer faces. */
+export const FACING_STEP: Record<Facing, Vec> = {
   up: { x: 0, y: -1 },
   down: { x: 0, y: 1 },
   left: { x: -1, y: 0 },
@@ -73,7 +74,10 @@ export function facingTile(
   tileSize: number,
 ): Vec {
   const here = tileOf(pos, body, tileSize);
-  return { x: here.x + STEP[facing].x, y: here.y + STEP[facing].y };
+  return {
+    x: here.x + FACING_STEP[facing].x,
+    y: here.y + FACING_STEP[facing].y,
+  };
 }
 
 /** True if the feet box at `pos` overlaps a blocked tile. */

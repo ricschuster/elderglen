@@ -3,7 +3,7 @@ import {
   BUNDLES,
   Hall,
   LAST_ROOM,
-  ROOMS,
+  HALL_ROOMS,
   rewardText,
 } from "../src/core/bundles";
 import { Inventory } from "../src/core/inventory";
@@ -70,7 +70,7 @@ describe("the Last Seat, bundles 27 to 30", () => {
     const hall = new Hall(
       BUNDLES,
       {},
-      ROOMS.map((r) => ({ ...r, opensAfter: 0 })),
+      HALL_ROOMS.map((r) => ({ ...r, opensAfter: 0 })),
     );
     const inv = new Inventory(10);
     inv.add("salmon");

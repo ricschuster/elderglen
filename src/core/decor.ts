@@ -40,7 +40,7 @@ export interface Rect {
  * wallpaper and one flooring. Renovation rooms are zones too, shown only under
  * their house conditions.
  */
-export interface RoomDef extends Rect {
+export interface DecorRoomDef extends Rect {
   id: string;
   name: string;
   /** The house tier that builds the room. */
@@ -54,7 +54,7 @@ export interface RoomDef extends Rect {
 }
 
 export const DECOR = decorData as DecorDef[];
-export const ROOMS = roomData as RoomDef[];
+export const DECOR_ROOMS = roomData as DecorRoomDef[];
 
 /** Ground tile ids of the placeholder tileset that mean a wall and a floor. */
 export const FLOOR_TILE = 3;
@@ -63,15 +63,15 @@ export const WALL_TILE = 7;
 export const decorById = (id: string | undefined): DecorDef | undefined =>
   DECOR.find((d) => d.id === id);
 
-export const roomById = (id: string | undefined): RoomDef | undefined =>
-  ROOMS.find((r) => r.id === id);
+export const roomById = (id: string | undefined): DecorRoomDef | undefined =>
+  DECOR_ROOMS.find((r) => r.id === id);
 
 const holdsAll = (need: string[] | undefined, holds: ReadonlySet<string>) =>
   (need ?? []).every((h) => holds.has(h));
 
 /** The rectangles of a zone that exist at a house tier under the house's conditions. */
 export function zoneRects(
-  room: RoomDef,
+  room: DecorRoomDef,
   houseTier: number,
   holds: ReadonlySet<string> = NO_CONDITIONS,
 ): Rect[] {
@@ -97,8 +97,8 @@ export function roomAt(
   x: number,
   y: number,
   holds: ReadonlySet<string> = NO_CONDITIONS,
-): RoomDef | undefined {
-  return ROOMS.find((r) =>
+): DecorRoomDef | undefined {
+  return DECOR_ROOMS.find((r) =>
     zoneRects(r, houseTier, holds).some((rc) => inRect(rc, x, y)),
   );
 }
@@ -114,7 +114,7 @@ export function zoneGroup(
 ): string[] {
   const out = [id];
   for (let i = 0; i < out.length; i++)
-    for (const r of ROOMS)
+    for (const r of DECOR_ROOMS)
       for (const j of r.joins ?? []) {
         if (!holds.has(j.when)) continue;
         const other =
@@ -169,7 +169,7 @@ export class Decor {
 export function roomTiles(
   json: TiledMapJson,
   tier: number,
-  room: RoomDef,
+  room: DecorRoomDef,
   holds: ReadonlySet<string> = NO_CONDITIONS,
 ): { floor: { x: number; y: number }[]; wall: { x: number; y: number }[] } {
   const ids = new Array<number>(json.width * json.height).fill(0);

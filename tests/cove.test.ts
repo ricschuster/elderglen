@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { fillBundle } from "./hall-helpers";
 import { mapFiles, maps } from "../src/content/maps";
 import { areasEndDay, isAreaMap, respawnAreaForage } from "../src/core/areas";
-import { BUNDLES, Hall, ROOMS } from "../src/core/bundles";
+import { BUNDLES, Hall, HALL_ROOMS } from "../src/core/bundles";
 import { exitOpen, layersAtTier } from "../src/core/map";
 import { exitLabel, serviceLabel } from "../src/core/labels";
 import {
@@ -39,7 +39,7 @@ function gameWithWaterRoom() {
   g.hall = new Hall(
     BUNDLES,
     {},
-    ROOMS.map((r) => (r.id === COVE_ROOM ? { ...r, opensAfter: 0 } : r)),
+    HALL_ROOMS.map((r) => (r.id === COVE_ROOM ? { ...r, opensAfter: 0 } : r)),
   );
   return g;
 }

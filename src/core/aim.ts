@@ -1,4 +1,4 @@
-import { facingFrom, type Facing, type Vec } from "./movement";
+import { FACING_STEP, facingFrom, type Facing, type Vec } from "./movement";
 
 /** How far from the farmer's tile a click still acts on the tile under the cursor. */
 export const AIM_REACH = 1;
@@ -9,13 +9,6 @@ export interface Aim {
   /** Which way the farmer turns to face it. */
   facing: Facing;
 }
-
-const STEP: Record<Facing, Vec> = {
-  up: { x: 0, y: -1 },
-  down: { x: 0, y: 1 },
-  left: { x: -1, y: 0 },
-  right: { x: 1, y: 0 },
-};
 
 /**
  * Where a mouse click aims (note 46). Within `reach` tiles of the farmer
@@ -42,5 +35,8 @@ export function aimAt(
 
 /** The neighbour tile on one side of a tile. */
 function neighbour(tile: Vec, facing: Facing): Vec {
-  return { x: tile.x + STEP[facing].x, y: tile.y + STEP[facing].y };
+  return {
+    x: tile.x + FACING_STEP[facing].x,
+    y: tile.y + FACING_STEP[facing].y,
+  };
 }

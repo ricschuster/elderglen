@@ -32,13 +32,13 @@ export interface CategoryDef {
   counter: string | null;
 }
 
-export interface RingDef {
+export interface CompletionRingDef {
   id: string;
   name: string;
   categories: CategoryDef[];
 }
 
-export const RINGS = completionData.rings as RingDef[];
+export const COMPLETION_RINGS = completionData.rings as CompletionRingDef[];
 
 /** What a counter reads: how many of how many, and what is still missing. */
 export interface Count {
@@ -172,7 +172,7 @@ export function shownPercent(exact: number): number {
 
 /** Sum categories into a ring total. */
 export function sumRing(
-  ring: RingDef,
+  ring: CompletionRingDef,
   read: (c: CategoryDef) => Count | undefined,
 ): RingProgress {
   const categories = ring.categories.map((c): CategoryProgress => {
@@ -203,7 +203,7 @@ export function sumRing(
 
 /** Read every ring from the game. */
 export function ringProgress(g: GameState): RingProgress[] {
-  return RINGS.map((r) =>
+  return COMPLETION_RINGS.map((r) =>
     sumRing(r, (c) => (c.counter ? COUNTERS[c.counter]?.(g) : undefined)),
   );
 }

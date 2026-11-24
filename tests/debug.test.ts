@@ -8,7 +8,7 @@ import {
   setWeather,
   stepHouseTier,
 } from "../src/core/debug";
-import { MAX_HOUSE_TIER, orderUpgrade, WOOD } from "../src/core/house";
+import { MAX_HOUSE_TIER, houseOrderUpgrade, WOOD } from "../src/core/house";
 import { allItems } from "../src/core/items";
 import { newGame } from "../src/core/save";
 
@@ -69,7 +69,7 @@ describe("debug edits", () => {
     expect(finishBuild(g)).toBe(false);
     giveMoney(g, 10000);
     giveItem(g, WOOD, 450);
-    expect(orderUpgrade(g)).toBe(true);
+    expect(houseOrderUpgrade(g)).toBe(true);
     expect(finishBuild(g)).toBe(true);
     expect(g.houseTier).toBe(1);
     expect(g.houseBuild).toBeUndefined();

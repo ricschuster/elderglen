@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { fertilize, harvest, plant, till, water } from "../src/core/actions";
 import { DAYS_PER_SEASON } from "../src/core/calendar";
-import { FERTILIZERS, fertilizerStock } from "../src/core/fertilizer";
+import { FERTILIZERS, fertilizersOnSale } from "../src/core/fertilizer";
 import { Farm } from "../src/core/farm";
 import { seedId } from "../src/core/items";
 import { cropQuality } from "../src/core/quality";
@@ -194,11 +194,11 @@ describe("what fertilizer does overnight", () => {
 
 describe("the shop", () => {
   it("sells the basic three from spring 15 and the quality two from year 2", () => {
-    expect(fertilizerStock(14)).toEqual([]);
-    expect(fertilizerStock(15).sort()).toEqual(
+    expect(fertilizersOnSale(14)).toEqual([]);
+    expect(fertilizersOnSale(15).sort()).toEqual(
       ["basic-fertilizer", "basic-retaining-soil", "speed-fertilizer"].sort(),
     );
-    expect(fertilizerStock(DAYS_PER_SEASON * 4 + 1)).toHaveLength(
+    expect(fertilizersOnSale(DAYS_PER_SEASON * 4 + 1)).toHaveLength(
       FERTILIZERS.length,
     );
   });

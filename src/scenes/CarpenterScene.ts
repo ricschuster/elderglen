@@ -16,9 +16,9 @@ import {
   RENOVATIONS,
   WAITING_ROOMS_LINE,
   nextUpgrade,
-  orderProblem,
+  houseOrderProblem,
   orderRenovation,
-  orderUpgrade,
+  houseOrderUpgrade,
   refundRenovation,
   renoOrderProblem,
   renoRefundProblem,
@@ -418,11 +418,11 @@ export class CarpenterScene extends Phaser.Scene {
   }
 
   private order(): void {
-    const problem = orderProblem(this.state);
+    const problem = houseOrderProblem(this.state);
     if (problem !== undefined) {
       this.message.setText(problem);
     } else {
-      orderUpgrade(this.state);
+      houseOrderUpgrade(this.state);
       const tier2 = this.state.houseBuild?.tier === 2;
       this.message.setText(
         `Ordered. The carpenter starts tomorrow and takes three days.${tier2 ? ` ${WAITING_ROOMS_LINE}` : ""}`,

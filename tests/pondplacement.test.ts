@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { maps } from "../src/content/maps";
 import { SILO_SITES, buildingProblem, siloProblem } from "../src/core/animals";
-import { orderProblem } from "../src/core/house";
+import { houseOrderProblem } from "../src/core/house";
 import {
   POND_COST,
   orderPond,
@@ -107,6 +107,6 @@ describe("ponds and the other carpenter buildings", () => {
     expect(buildingProblem(g, "coop")).toBe(busy);
     expect(buildingProblem(g, "barn")).toBe(busy);
     expect(siloProblem(g)).toBe(busy);
-    expect(orderProblem(g)).toBe(busy);
+    expect(houseOrderProblem(g)).toBe(busy);
   });
 });

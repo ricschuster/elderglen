@@ -332,7 +332,7 @@ export function nextUpgrade(tier: number): HouseUpgrade | undefined {
 }
 
 /** Why the upgrade cannot be ordered now, in words, or undefined if it can. */
-export function orderProblem(g: GameState): string | undefined {
+export function houseOrderProblem(g: GameState): string | undefined {
   if (g.houseBuild) return "The carpenter is already at work on the house.";
   if (g.animals.build)
     return `The carpenter is busy building your ${g.animals.build.building}.`;
@@ -353,8 +353,8 @@ export function orderProblem(g: GameState): string | undefined {
 }
 
 /** Pay for the next upgrade and start the build. Returns false if it cannot. */
-export function orderUpgrade(g: GameState): boolean {
-  if (orderProblem(g) !== undefined) return false;
+export function houseOrderUpgrade(g: GameState): boolean {
+  if (houseOrderProblem(g) !== undefined) return false;
   const cost = nextUpgrade(g.houseTier)!;
   g.money -= cost.coin;
   if (cost.wood > 0) g.inventory.remove(WOOD, cost.wood);

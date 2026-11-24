@@ -154,6 +154,7 @@ import {
 } from "../core/labels";
 import { festivalPropBlocks } from "../core/festivalprops";
 import {
+  FACING_STEP,
   facingFrom,
   facingTile,
   move,
@@ -255,7 +256,7 @@ import {
 import { LEVER_KIND } from "../core/danger";
 import type { Rocks } from "../core/rocks";
 import {
-  ROOMS,
+  DECOR_ROOMS,
   applyDecor,
   decorById,
   roomTiles,
@@ -353,7 +354,6 @@ import {
 import {
   DEV_SPEED,
   PLAYER,
-  PUSH,
   SPEED,
   STEP_PX,
   TICK_MINUTES,
@@ -2264,7 +2264,7 @@ export class FarmScene extends Phaser.Scene {
       const taken = pickUpChest(this.state, this.mapId, front.x, front.y);
       if (taken.ok || taken.reason !== "chest not empty")
         return this.report(taken);
-      const step = PUSH[this.facing];
+      const step = FACING_STEP[this.facing];
       return this.report(
         pushChest(
           this.state,
@@ -3111,7 +3111,7 @@ export class FarmScene extends Phaser.Scene {
     if (!json) return;
     const ts = this.map.tileSize;
     const holds = zoneHolds(this.state);
-    for (const room of ROOMS) {
+    for (const room of DECOR_ROOMS) {
       const cover = this.state.decor.get(room.id);
       const floor = decorById(cover.floor);
       const wall = decorById(cover.wallpaper);

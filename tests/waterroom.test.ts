@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { BUNDLES, Hall, ROOMS } from "../src/core/bundles";
+import { BUNDLES, Hall, HALL_ROOMS } from "../src/core/bundles";
 import { COVE_OPEN, COVE_ROOM, coveHolds } from "../src/core/cove";
 import { FISH } from "../src/core/fishing";
 import { Inventory } from "../src/core/inventory";
@@ -93,7 +93,7 @@ describe("the Water room bundles 13 to 18 (note 16, note 21)", () => {
   });
 
   it("opens the cove only when all six are done", () => {
-    const rooms = ROOMS.map((r) =>
+    const rooms = HALL_ROOMS.map((r) =>
       r.id === COVE_ROOM ? { ...r, opensAfter: 0 } : r,
     );
     const hall = new Hall(BUNDLES, {}, rooms);

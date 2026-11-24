@@ -3,7 +3,7 @@ import {
   BUNDLES,
   Hall,
   LAST_ROOM,
-  ROOMS,
+  HALL_ROOMS,
   hallRestored,
   normalizeBundle,
   rewardText,
@@ -63,7 +63,7 @@ describe("bundle data", () => {
       expect(b.required).toBeLessThanOrEqual(b.items.length);
       expect(b.hint, b.id).not.toBe("");
       expect(
-        ROOMS.some((r) => r.id === b.room),
+        HALL_ROOMS.some((r) => r.id === b.room),
         b.id,
       ).toBe(true);
       for (const slot of b.items) {
@@ -84,7 +84,7 @@ describe("bundle data", () => {
   });
 });
 
-const openRooms = ROOMS.map((r) => ({ ...r, opensAfter: 0 }));
+const openRooms = HALL_ROOMS.map((r) => ({ ...r, opensAfter: 0 }));
 /** A hall with every room open, for tests that are not about the gate. */
 const openHall = () => new Hall(BUNDLES, {}, openRooms);
 
@@ -390,7 +390,7 @@ describe("saves", () => {
 
 describe("rooms and the bridge", () => {
   it("lists all six rooms, with the Last Seat last and opening after all the others", () => {
-    expect(ROOMS.map((r) => r.id)).toEqual([
+    expect(HALL_ROOMS.map((r) => r.id)).toEqual([
       "foragers-shelf",
       "larder",
       "water-room",
@@ -398,8 +398,8 @@ describe("rooms and the bridge", () => {
       "guests-board",
       "last-seat",
     ]);
-    expect(ROOMS.map((r) => r.opensAfter)).toEqual([0, 1, 1, 2, 3, "all"]);
-    expect(ROOMS.every((r) => r.unlock)).toBe(true);
+    expect(HALL_ROOMS.map((r) => r.opensAfter)).toEqual([0, 1, 1, 2, 3, "all"]);
+    expect(HALL_ROOMS.every((r) => r.unlock)).toBe(true);
   });
 
   it("reports finished rooms and mends the bridge with the Last Seat", () => {
@@ -413,7 +413,7 @@ describe("rooms and the bridge", () => {
         reward: {},
       });
     const bundles = [mk("f1", "foragers-shelf"), mk("l1", LAST_ROOM)];
-    const rooms = ROOMS.map((r) => ({ ...r, opensAfter: 0 }));
+    const rooms = HALL_ROOMS.map((r) => ({ ...r, opensAfter: 0 }));
     const hall = new Hall(bundles, { f1: ["leek"] }, rooms);
     expect(hall.completedRooms.map((r) => r.id)).toEqual(["foragers-shelf"]);
     expect(hall.bridgeMended).toBe(false);
@@ -433,7 +433,7 @@ describe("hallRestored", () => {
       reward: {},
     });
   const bundles = [mk("f1", "foragers-shelf"), mk("l1", LAST_ROOM)];
-  const rooms = ROOMS.map((r) => ({ ...r, opensAfter: 0 }));
+  const rooms = HALL_ROOMS.map((r) => ({ ...r, opensAfter: 0 }));
 
   it("is false for a fresh hall and a hall with only the other rooms done", () => {
     expect(hallRestored(new Hall())).toBe(false);

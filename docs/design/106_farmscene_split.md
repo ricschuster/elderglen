@@ -156,3 +156,12 @@ M4 step 1 (#964) is closed, so step 8 is unblocked.
    the final form, so size matters less), the 16 unused exports (knip will show what is still unused).
 
 When items 1 to 3 are built, #904 closes; item 4 moves to `PRIORITIES_LATER.md`.
+
+Item 3 built 2026-11-24: `src/core/guards.ts` (`isObject`, `isNum`, `cleanName`, `NAME_MAX`; save, bindings,
+players, animals, horse use it), `tileKey` replaces the inline `${x},${y}` keys in core, `buildingRects` and
+`siloSiteRect` in `placement.ts` shared with `pond.ts`, `isLiftTool` (toolbar.ts) for the axe-or-pickaxe test,
+`itemLabel` (items.ts) for the lower-cased item name, one `FACING_STEP` table (movement.ts) for aim, combat
+and the scene's old `PUSH`. Renamed: `HALL_ROOMS`/`HallRoomDef` (bundles) and `DECOR_ROOMS`/`DecorRoomDef`
+(decor), `COMPLETION_RINGS`/`CompletionRingDef`, `houseOrderProblem`/`houseOrderUpgrade`,
+`fertilizersOnSale` (fertilizer.ts). Already fixed: `tileKey` existed and most stores used it, and the pond check
+already respected the silo (a test now pins it), so there was no behaviour change.

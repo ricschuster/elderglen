@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { fillBundle } from "./hall-helpers";
 import { maps } from "../src/content/maps";
-import { BUNDLES, Hall, ROOMS } from "../src/core/bundles";
+import { BUNDLES, Hall, HALL_ROOMS } from "../src/core/bundles";
 import { farmMapOf } from "../src/core/farmtypes";
 import { CART_KIND } from "../src/core/map";
 import { MINES_OPEN_DAY } from "../src/core/mines";
@@ -39,7 +39,7 @@ function game() {
   g.hall = new Hall(
     BUNDLES,
     {},
-    ROOMS.map((r) => ({ ...r, opensAfter: 0 })),
+    HALL_ROOMS.map((r) => ({ ...r, opensAfter: 0 })),
   );
   return g;
 }
@@ -53,7 +53,7 @@ const night = (g: ReturnType<typeof newGame>) =>
 
 describe("the Guests' Board reward", () => {
   it("is the friendship boost in the data, not the old hat boost", () => {
-    expect(ROOMS.find((r) => r.id === GUESTS_ROOM)!.unlock).toBe(
+    expect(HALL_ROOMS.find((r) => r.id === GUESTS_ROOM)!.unlock).toBe(
       "friendship-boost",
     );
   });

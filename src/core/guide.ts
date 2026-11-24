@@ -1,6 +1,6 @@
 import guideText from "../content/guide-text.json";
 import guidePlaces from "../content/guide-places.json";
-import { BUNDLES, ROOMS, rewardText } from "./bundles";
+import { BUNDLES, HALL_ROOMS, rewardText } from "./bundles";
 import {
   dishKnown,
   cookable,
@@ -336,7 +336,7 @@ function bundleEntries(g: GameState): GuideEntry[] {
   const hall = g.hall;
   for (const b of BUNDLES) {
     if (!hall.roomOpen(b.room)) continue;
-    const room = ROOMS.find((r) => r.id === b.room);
+    const room = HALL_ROOMS.find((r) => r.id === b.room);
     const done = hall.complete(b.id);
     const lines = [`Room: ${room?.name ?? b.room}`, b.hint];
     for (const it of b.items) {

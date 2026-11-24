@@ -52,7 +52,7 @@ import { mapFiles } from "../src/content/maps";
 import { animalQuality } from "../src/core/quality";
 import { deserialize, newGame, serialize } from "../src/core/save";
 import { maps } from "../src/content/maps";
-import { orderProblem as houseProblem } from "../src/core/house";
+import { houseOrderProblem as houseProblem } from "../src/core/house";
 import { sleep } from "../src/core/sleep";
 import { reportLines } from "../src/core/report";
 

@@ -1,6 +1,6 @@
 import { audio } from "../audio/engine";
 import Phaser from "phaser";
-import { rewardText, ROOMS, type BundleDef } from "../core/bundles";
+import { rewardText, HALL_ROOMS, type BundleDef } from "../core/bundles";
 import { hatById } from "../core/hats";
 import { itemById } from "../core/items";
 import { CATEGORY_NAMES, type ArtisanCategory } from "../core/artisan";
@@ -28,14 +28,14 @@ export class HallScene extends Phaser.Scene {
   private money!: Phaser.GameObjects.Text;
   private message!: Phaser.GameObjects.Text;
   private column: 0 | 1 = 0;
-  private room: string = ROOMS[0]!.id;
+  private room: string = HALL_ROOMS[0]!.id;
 
   constructor() {
     super("hall");
   }
 
   init(data: { room?: string }): void {
-    this.room = data.room ?? ROOMS[0]!.id;
+    this.room = data.room ?? HALL_ROOMS[0]!.id;
     this.state = this.registry.get(STATE_KEY) as GameState;
     this.column = 0;
   }
@@ -43,7 +43,7 @@ export class HallScene extends Phaser.Scene {
   create(): void {
     const { money, message } = frame(
       this,
-      ROOMS.find((r) => r.id === this.room)?.name ?? "Village hall",
+      HALL_ROOMS.find((r) => r.id === this.room)?.name ?? "Village hall",
       () => this.close(),
     );
     this.money = money;

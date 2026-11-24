@@ -10,7 +10,13 @@ import { itemLabel } from "../core/items";
 import { sortDepth } from "./depth";
 import { creatureTexture } from "./art-creatures";
 import { isFarmMap } from "../core/farmtypes";
-import { facingFrom, move, tileOf, type Vec } from "../core/movement";
+import {
+  FACING_STEP,
+  facingFrom,
+  move,
+  tileOf,
+  type Vec,
+} from "../core/movement";
 import { partsFor, schemeById, type Parts } from "../core/controlschemes";
 import { swingArc, type SwingArc } from "../core/swingfx";
 import { autoSwings, autoWeaponSlot, mayAutoEquip } from "../core/autoattack";
@@ -47,7 +53,7 @@ import { dangerHit } from "../core/danger";
 import { mineFloorOf } from "../core/mines";
 import { defeatCreature, defeatMessage } from "../core/creature-defeat";
 import { PLAYER } from "./farm-consts";
-import { CREATURE_BODY, PUSH } from "./farm-consts";
+import { CREATURE_BODY } from "./farm-consts";
 import type { FarmScene } from "./FarmScene";
 
 // Combat, bombs and creature drawing of the farm scene, moved out of
@@ -139,7 +145,7 @@ export function updateAttack(farm: FarmScene, parts: Parts): void {
 export function cast(farm: FarmScene, rodId: string): void {
   const rod = rodById(rodId)!;
   const here = tileOf(farm.pos, PLAYER, farm.map.tileSize);
-  const step = PUSH[farm.facing];
+  const step = FACING_STEP[farm.facing];
   // Any outdoor map with water can be fished: Hearthwell's river arm (the
   // Night Market pier, note 14) is one; its water kind drives the fish table.
   const water =

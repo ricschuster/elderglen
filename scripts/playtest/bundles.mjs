@@ -68,8 +68,8 @@ async function closeHall() {
 
 // ---------- data from the game itself
 const data = await p.evaluate(async () => {
-  const { BUNDLES, ROOMS } = await import("/src/core/bundles.ts");
-  return { bundles: BUNDLES, rooms: ROOMS };
+  const { BUNDLES, HALL_ROOMS } = await import("/src/core/bundles.ts");
+  return { bundles: BUNDLES, rooms: HALL_ROOMS };
 });
 const roomOrder = data.rooms.map((r) => r.id);
 const ordered = roomOrder.flatMap((r) =>

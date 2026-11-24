@@ -106,8 +106,8 @@ export const fisherStock = (): string[] => [...rodStock(), ...tackleStock()];
 /** Thalwen's pin stall sells the Homeward pin only (note 09, #641). */
 export const pinStock = (): string[] => [HOMEWARD_PIN];
 
-import { fertilizerStock as allFertilizer } from "./fertilizer";
+import { fertilizersOnSale } from "./fertilizer";
 
 /** Fertilizer on sale, cheapest first. */
 export const fertilizerStock = (day: number): string[] =>
-  byPrice(allFertilizer(day));
+  byPrice(fertilizersOnSale(day));

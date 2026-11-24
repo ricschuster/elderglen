@@ -96,7 +96,7 @@ const data = await probe.p.evaluate(async () => {
       place_: vil.resolvePlace(e.place),
       stage_: stg.places[e.place],
     })),
-    rooms: bun.ROOMS.map((r) => r.id),
+    rooms: bun.HALL_ROOMS.map((r) => r.id),
   };
 });
 await probe.b.close();
