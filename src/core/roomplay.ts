@@ -77,6 +77,7 @@ import {
   onMap,
   reachProblem,
   tileUnder,
+  townView,
   viewOf,
   type MapView,
   type Standing,
@@ -682,7 +683,8 @@ export class RoomPlay {
     );
     if (!rod) return "bad cast";
     if (!isNum(x) || !isNum(y)) return "bad cast";
-    const v = viewOf(this.g, String(intent.map ?? "farm"));
+    const name = String(intent.map ?? "farm");
+    const v = viewOf(this.g, name) ?? townView(this.g, name);
     if (!v || v.map.indoors) return "Nothing to fish here.";
     if (!v.map.isWater(x, y)) return "Face the water to fish.";
     if (at) {
@@ -691,21 +693,28 @@ export class RoomPlay {
     }
     const rec = this.g.players.get(by);
     if (rec.inventory.count(rod.id) <= 0) return "no rod";
+    // A town has no ground to drop an overflowing catch on, so a cast there needs a free slot.
+    if (v.kind === "town" && !hasFreeSlot(rec.inventory))
+      return "Your pack is full.";
     const g = this.g;
-    // The Frostday lake is shut until the festival opens; a cast into a hole may bring a Frostfin (the
-    // contest count is the host's alone, a guest's catch does not add to it).
+    // The Frostday lake is shut until the festival opens; a cast into a hole may bring a Frostfin (a guest's hole catch counts for the contest, note 111).
     const fest = festivalDayToday(g.day.clock.day);
     const iceDay = fest?.id === "frostday" && v.id === "forest";
     if (iceDay && lakeShut(fest, g.day.clock.minutes))
       return "The lake opens at noon.";
     const hole = iceDay && isHole(fest, x, y);
     // The pier is judged from the plank the sender stands on (the host's own rule).
-    const feet = at ? tileUnder(at, v.map.tileSize) : undefined;
+    // The pier is on Hearthwell's bank, so a plank tile on any other map is only a tile.
+    const feet =
+      at && v.id === "hearthwell" ? tileUnder(at, v.map.tileSize) : undefined;
     if (feet) {
-      const gated = pierCastProblem(g, feet.x, feet.y);
+      const gated = asPlayer(g, by, () => pierCastProblem(g, feet.x, feet.y));
       if (gated) return gated;
     }
-    const pier = feet ? isPierCast(g, feet.x, feet.y) : false;
+    // The permit is the sender's own (note 111 rule 9).
+    const pier = feet
+      ? asPlayer(g, by, () => isPierCast(g, feet.x, feet.y))
+      : false;
     return asPlayer(g, by, () => {
       const cost = castEnergy(g.skills.level("fishing"));
       if (g.day.energy.current - cost <= ENERGY_FLOOR) return TOO_TIRED_TO_CAST;
@@ -756,7 +765,7 @@ export class RoomPlay {
     if (!p) return "Nothing is on the line.";
     this.pending.delete(by);
     if (intent.miss === true) return undefined;
-    const v = viewOf(this.g, p.map);
+    const v = viewOf(this.g, p.map) ?? townView(this.g, p.map);
     if (!v) return "Nothing to fish here.";
     const g = this.g;
     const perfect = intent.perfect === true;
@@ -784,6 +793,12 @@ export class RoomPlay {
     this.sendPlayer(by);
     return undefined;
   }
+}
+
+/** True when a pack has an empty slot. */
+function hasFreeSlot(inv: { size: number; slot(i: number): unknown }): boolean {
+  for (let i = 0; i < inv.size; i++) if (!inv.slot(i)) return true;
+  return false;
 }
 
 /** The nearest of the players on a map to a creature, by pixels. */

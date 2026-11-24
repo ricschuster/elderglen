@@ -397,3 +397,54 @@ describe("per-player rewards, over real sockets", () => {
     expect(g.festivalsJoined).not.toContain("harvest-showing:1");
   });
 });
+
+describe("town maps are hosted for fishing (note 111)", () => {
+  it("a guest casts from the Night Market pier on Hearthwell: a permit first, then a bite", async () => {
+    const { g, ann } = await room("night-market", 19 * 60);
+    g.players.get(ann.id).inventory.add("reed-pole", 1);
+    g.players.get(ann.id).money = 2000;
+    await stand(ann, "hearthwell", 63, 66);
+    const cast = {
+      kind: "cast",
+      map: "hearthwell",
+      x: 62,
+      y: 66,
+      rod: "reed-pole",
+      distance: 0.5,
+    };
+    expect(await ask(ann, cast)).toMatch(/permit/i);
+    expect(await ask(ann, { kind: "pier-permit" })).toBeUndefined();
+    expect(await ask(ann, { kind: "pier-permit" })).toBeDefined();
+    expect(await ask(ann, cast)).toBeUndefined();
+    await until(() => ann.log.some((m) => m.t === "bite"));
+    // The permit is Ann's own: the host has none.
+    expect(g.festivalsJoined.some((k) => k.startsWith("market-permit"))).toBe(
+      false,
+    );
+    expect(
+      g.players
+        .get(ann.id)
+        .festivalsJoined.some((k) => k.startsWith("market-permit")),
+    ).toBe(true);
+  });
+
+  it("a plank tile on another map is not the pier", async () => {
+    const { g, ann } = await room("night-market", 19 * 60);
+    g.players.get(ann.id).inventory.add("reed-pole", 1);
+    await stand(ann, "forest", 63, 66);
+    const m = maps.get("forest");
+    let water: { x: number; y: number } | undefined;
+    for (let y = 60; y < 70 && !water; y++)
+      for (let x = 55; x < 70; x++) if (m.isWater(x, y)) water = { x, y };
+    if (!water) return; // no lake near that tile on this map
+    expect(
+      await ask(ann, {
+        kind: "cast",
+        map: "forest",
+        ...water,
+        rod: "reed-pole",
+        distance: 0.5,
+      }),
+    ).not.toMatch(/permit/i);
+  });
+});

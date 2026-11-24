@@ -22,7 +22,7 @@ import {
 import type { UseContext } from "./interact";
 import type { GameState } from "./save";
 
-export type MapKind = "farm" | "area" | "mine";
+export type MapKind = "farm" | "area" | "mine" | "town";
 
 /** One map a player stands on, as the host works it. */
 export interface MapView {
@@ -59,6 +59,17 @@ export function viewOf(g: GameState, name: string): MapView | undefined {
   return undefined;
 }
 
+/**
+ * A town or festival map (Hearthwell, the green, the hedge maze): it has water and festival rules but no world of
+ * its own, so only a cast works there (the Night Market pier, the ice, note 111). Undefined for a map the registry
+ * lacks, the farm, an area or a mine floor.
+ */
+export function townView(g: GameState, name: string): MapView | undefined {
+  const id = resolveMapId(name, g.farmType);
+  if (viewOf(g, id) || !maps.ids.includes(id)) return undefined;
+  return { id, kind: "town", map: maps.get(id) };
+}
+
 /** The mine floor as it stands today, made if no one has been there yet. */
 export function floorOf(g: GameState, floor: number): Floor {
   return g.mines.visit(floor, g.day.clock.day);
@@ -85,6 +96,8 @@ export function onMap<T>(g: GameState, v: MapView, fn: () => T): T {
     w.ground = floorOf(g, v.floor!).ground;
     return withWorld(g, w, undefined, fn);
   }
+  // A town has no world: an empty one, so nothing of the farm or the host's own map can be touched from it.
+  if (v.kind === "town") return withWorld(g, newWorld(v.map), undefined, fn);
   const have = worldOfMap(g, v.id);
   return have ? withWorld(g, have.w, have.away, fn) : fn();
 }

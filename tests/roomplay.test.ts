@@ -416,7 +416,7 @@ describe("fishing on the host", () => {
     expect(w.apply("p2", cast)).toBeUndefined();
   });
 
-  it("the pier is on Hearthwell, a town map the host does not run for guests, so a guest cannot cast there yet", () => {
+  it("the pier is on Hearthwell, hosted for casting only: a guest needs their own permit", () => {
     const { g, w, stand } = mk();
     g.players.get("p2").inventory.add("reed-pole", 1);
     g.day.clock.day = 3 * DAYS_PER_SEASON + 16;
@@ -426,11 +426,15 @@ describe("fishing on the host", () => {
       w.apply("p2", {
         kind: "cast",
         map: "hearthwell",
-        x: 64,
+        x: 62,
         y: 66,
         rod: "reed-pole",
       }),
-    ).toBe("Nothing to fish here.");
+    ).toMatch(/permit/);
+    // Hearthwell has no ground or rocks for the tools.
+    expect(
+      w.apply("p2", { kind: "axe", map: "hearthwell", x: 64, y: 66 }),
+    ).toBe("Nothing to do here.");
   });
 });
 
