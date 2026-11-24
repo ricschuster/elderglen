@@ -35,6 +35,8 @@ Headless run 2026-11-21 (`combat.mjs`, `mine-floors.mjs`, `quarry.mjs`, mine and
 - pass: Stages `mines-30`, `mines-60`, `mines-100` load their floors with creatures (4 each) and no console error; the player swings for 12 s on each (`mine-floors.mjs`).
 - pass: Combat by the rules: the dummy takes a hit, a creature hurts and is beaten, kills on floors 45 and 100 give combat XP, a knock out ends in the report. Fixed `combat.mjs`, which still picked the weapon at `4 + i` (tools sit in the pack now, note 102), so every swing used no weapon.
 - pass: Quarry (`quarry.mjs`): bridge, stonekeeper, rocks, stone.
+- pass: Slayer wall list at Maren's (`wall-lever.mjs`, 2026-11-24): Action on the `wall-list` tile opens the list; 13 rows (switch row and 12 goals) with kills and reward; a met goal reads "Ready to claim", Claim hands it over and it reads Claimed; the shop page lists the reward at its price and buying a second met goal's reward costs exactly the price; Escape closes it. owner: how the screen looks and reads.
+- pass: Dangerous lever on floor 120 (stage `mines-120`, added for this): the floor has a lever; the first pull says "Dangerous mode is on" and a floor made after is dangerous; the second pull turns it off and a floor made after is not; a floor dug while on keeps its mode until tomorrow (the timing the handoff of 2026-11-23 asks the owner to confirm). owner: the red tint and the lever's look.
 - owner: Swing arc and monster speed by feel. Headless only shows speeds of 0 to 1 tiles/s while creatures wander; none chased in 12 s, so chase speed is unchecked.
 - pass: `smoke.mjs` ends with no findings (2026-11-21, issue 996: the findings were stale script assumptions about the pack and the carpenter rows).
 

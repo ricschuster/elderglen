@@ -171,6 +171,26 @@
       }
     },
     {
+      "id": "mines-120",
+      "group": "Mines",
+      "label": "Mines reached floor 120 (the lever)",
+      "patch": {
+        "season": "summer",
+        "dayOfSeason": 10,
+        "weather": "sunny",
+        "money": 30000,
+        "skills": {
+          "mining": 10,
+          "combat": 10,
+          "farming": 8
+        },
+        "minesDeepest": 120,
+        "map": "mine-120",
+        "entry": "from_below",
+        "autoProfessions": true
+      }
+    },
+    {
       "id": "courting",
       "group": "Marriage",
       "label": "Courting (bouquet given, 8 hearts)",

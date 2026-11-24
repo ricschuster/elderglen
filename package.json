@@ -56,6 +56,7 @@
     "playtest:marriage": "node scripts/playtest/marriage.mjs",
     "playtest:hearthwell": "node scripts/playtest/hearthwell.mjs",
     "playtest:audio": "node scripts/playtest/audio.mjs",
+    "playtest:wall-lever": "node scripts/playtest/wall-lever.mjs",
     "playtest:sweep": "node scripts/playtest/sweep.mjs",
     "sim": "node scripts/sim/run.mjs scripts/sim/main.ts",
     "android:sync": "npm run build && cap sync android",

@@ -352,3 +352,6 @@ context window.
   through the nights to the wedding and prints one line.
 - Clock jumps use `farmState({minutes})` in multiples of 10. A jump restarts the scene,
   so it cannot show a walk between two frames; watch in real time for movement.
+
+`npm run playtest:wall-lever` opens Maren's slayer wall list, claims and buys a reward, then flips the floor 120
+dangerous mode lever on and off (stage `mines-120`). About 15 seconds.
