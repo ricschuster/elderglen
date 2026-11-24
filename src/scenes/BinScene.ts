@@ -7,8 +7,13 @@ import { sellMultiplier } from "../core/professions";
 import type { GameState } from "../core/save";
 import { frame, Menu, TOUCH_ROW_H, type Row } from "./panel";
 import { pendingByPlayer, settlementSplitText } from "../core/settlementsplit";
-import { currentSession, GuestSession } from "../net/session";
-import { followGuest } from "./guestlive";
+import {
+  currentSession,
+  GuestSession,
+  HostSession,
+  sendWorldIntent,
+} from "../net/session";
+import { closeWhenDone, followGuest } from "./guestlive";
 import { STATE_KEY } from "./state";
 import { WINDOW_FILL } from "./panel";
 
@@ -56,6 +61,7 @@ export class BinScene extends Phaser.Scene {
       () => this.refresh(),
       (t) => this.say(t),
     );
+    closeWhenDone(this);
     const { money, message } = frame(
       this,
       this.oreOnly ? "Ore bin" : "Shipping bin",
@@ -142,6 +148,21 @@ export class BinScene extends Phaser.Scene {
     const net = currentSession();
     if (net instanceof GuestSession)
       return void net.sendIntent({ kind: "ship", id, n, ore: this.oreOnly });
+    if (net instanceof HostSession) {
+      // Through the Room, so the guests' copies of the bin follow (note 108).
+      const why = sendWorldIntent(net, {
+        kind: "ship",
+        id,
+        n,
+        ore: this.oreOnly,
+      });
+      audio.sfx(why === undefined ? "money.bin" : "ui.error");
+      return this.say(
+        why === undefined
+          ? `Shipped ${n} ${this.name(id)}.`
+          : `${this.name(id)} cannot be shipped.`,
+      );
+    }
     const mult = sellMultiplier(g.skills, id);
     const sent = this.oreOnly
       ? g.bin.shipOre(g.inventory, id, n, mult, g.players.localId)
@@ -225,6 +246,14 @@ export class BinScene extends Phaser.Scene {
     const net = currentSession();
     if (net instanceof GuestSession)
       return void net.sendIntent({ kind: "take-back", index, n });
+    if (net instanceof HostSession) {
+      const why = sendWorldIntent(net, { kind: "take-back", index, n });
+      return this.say(
+        why === undefined
+          ? `Took back ${n} ${this.name(id)}.`
+          : "Your backpack is full.",
+      );
+    }
     const back = g.bin.takeBack(g.inventory, index, n);
     this.say(
       back > 0

@@ -12,6 +12,8 @@ import { claimHotDrink, drinkProblem } from "../core/marketpier";
 import type { GameState } from "../core/save";
 import { frame, Menu, TOUCH_ROW_H } from "./panel";
 import { STATE_KEY } from "./state";
+import { currentSession, GuestSession } from "../net/session";
+import { closeWhenDone, followGuest } from "./guestlive";
 
 /**
  * One Winter Night Market stall (note 14), opened from a `market-stall` service
@@ -40,6 +42,15 @@ export class MarketScene extends Phaser.Scene {
   }
 
   create(): void {
+    followGuest(
+      this,
+      () => this.refresh(),
+      (t) => {
+        this.message.setText(t);
+        this.refresh();
+      },
+    );
+    closeWhenDone(this);
     const { money, message } = frame(this, stallName(this.stall), () =>
       this.close(),
     );
@@ -77,6 +88,16 @@ export class MarketScene extends Phaser.Scene {
   }
 
   private buy(e: CounterEntry): void {
+    const net = currentSession();
+    if (net instanceof GuestSession) {
+      // The host judges it and the stock is one for the world (note 108).
+      const line = marketStock(this.stall, this.state.day.clock.day).findIndex(
+        (s) => JSON.stringify(s) === JSON.stringify(e),
+      );
+      if (line >= 0)
+        net.sendIntent({ kind: "market-buy", stall: this.stall, line });
+      return;
+    }
     const why = marketProblem(this.state, this.stall, e);
     if (why === undefined && buyAtStall(this.state, this.stall, e))
       this.message.setText(`You buy the ${counterName(e)}.`);

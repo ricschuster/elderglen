@@ -261,9 +261,12 @@ export const GUEST_SCREENS = [
   "wedding",
   // The night's report (guest copy from the host's `night` message) changes nothing.
   "report",
-  // The shop and the shipping bin send buy, sell, ship and take-back intents (note 53).
+  // The shop and the shipping bin send buy, sell, ship and take-back intents (note 53); each is opened with an `open` action (note 108).
   "shop",
   "bin",
+  // Night Market stalls and chests (note 108 group 1): the host takes the lock and judges each action.
+  "market",
+  "chest",
   // The bed prompt sends a `sleep` intent and changes nothing locally.
   "bed",
 ];

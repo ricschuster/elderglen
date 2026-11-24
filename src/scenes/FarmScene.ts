@@ -293,6 +293,9 @@ import {
 } from "../core/view";
 import { makePlaceholderTextures, PLAYER_KEY } from "./placeholder-textures";
 import { guestMayOpen } from "../core/menupages";
+import type { ScreenRef } from "../core/screens";
+import type { ShopStock } from "../core/shopoffers";
+import { openShared } from "./guestlive";
 import { bedNotice } from "../core/bednotice";
 import { exhaustedSpeed, tiredWarning } from "../core/energyrules";
 import { audio } from "../audio/engine";
@@ -2037,6 +2040,83 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /**
+   * A guest's Action on a shop, stall, bin or chest (note 108, group 1): ask the host to open it
+   * (it takes the chest lock and checks where they stand), and show the screen once it says yes.
+   * True when the faced tile held one of these, so the caller stops.
+   */
+  private guestSharedScreen(at: { x: number; y: number }): boolean {
+    const service = this.map.serviceAt(at.x, at.y);
+    const base = { map: this.mapId, x: at.x, y: at.y };
+    let ref: ScreenRef | undefined;
+    let scene = "";
+    let data: object | undefined;
+    const closed = (line: string): true => {
+      this.message = line;
+      this.render();
+      return true;
+    };
+    if (service) {
+      const shut = counterShutLine(this.state, this.mapId, service.kind);
+      const stock: Record<string, ShopStock | undefined> = {
+        shop: undefined,
+        "fisher-shop": "fisher",
+        "pin-stall": "pin",
+        "herb-stall": "herb",
+        hermit: "hermit",
+        trader: "trader",
+        "rain-seller": "rain",
+      };
+      if (service.kind in stock) {
+        if (shut) return closed(shut);
+        const g = this.state;
+        const why =
+          service.kind === "herb-stall"
+            ? herbStallProblem(g)
+            : service.kind === "trader"
+              ? traderProblem(g.day.clock.day, g.day.clock.minutes)
+              : service.kind === "rain-seller"
+                ? sellerProblem(g)
+                : service.kind === "hermit" && hermitStock(g).length === 0
+                  ? HERMIT_LINE
+                  : "";
+        if (why) return closed(why);
+        const s = stock[service.kind];
+        ref = { kind: "shop", ...base, ...(s ? { stock: s } : {}) };
+        scene = "shop";
+        data = s ? { stock: s } : undefined;
+      } else if (service.kind === "market-stall" && stallOf(service.id)) {
+        ref = { kind: "market", ...base, stock: stallOf(service.id)! };
+        scene = "market";
+        data = { stall: stallOf(service.id) };
+      } else if (service.kind === "bin" || service.kind === "ore-bin") {
+        const ore = service.kind === "ore-bin";
+        ref = { kind: "bin", ...base, ore };
+        scene = "bin";
+        data = ore ? { oreOnly: true } : undefined;
+      } else if (service.kind === "camp-chest" && this.floor !== undefined) {
+        ref = { kind: "camp-chest", ...base, floor: this.floor };
+        scene = "chest";
+        data = { camp: this.floor };
+      }
+    } else if (this.state.chests.get(this.mapId, at.x, at.y)) {
+      ref = { kind: "chest", ...base };
+      scene = "chest";
+      data = { mapId: this.mapId, x: at.x, y: at.y };
+    }
+    if (!ref) return false;
+    openShared(
+      ref,
+      () => {
+        if (ref.kind === "camp-chest") this.campScreenOpen = true;
+        if (ref.kind === "chest") audio.sfx("chest.open");
+        this.open(scene, data);
+      },
+      (why) => closed(why),
+    );
+    return true;
+  }
+
+  /**
    * A guest's Use: the hoe, can and crop seeds on farm soil become intents for the host, which
    * answers with `applied` (note 53). Anything else stays host-only for now.
    * Untested in a browser.
@@ -2329,6 +2409,7 @@ export class FarmScene extends Phaser.Scene {
       // A guest's Action opens only the screens a guest may use: the bed, the shop, the bin, the ledger.
       const at = this.aimTile();
       const kind = this.map.serviceAt(at.x, at.y)?.kind;
+      if (this.guestSharedScreen(at)) return;
       if (kind && guestMayOpen(kind)) return this.open(kind);
       // A ripe crop on farm soil is picked by the host for them (an intent).
       if (

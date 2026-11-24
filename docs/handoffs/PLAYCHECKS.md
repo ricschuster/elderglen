@@ -91,3 +91,15 @@ Headless run 2026-11-21, build 5a72ea16 (`playtest:bundles`, 76 s; bundle, hall 
 
 - pass: Every hall bundle fills through the real hall screen (30 of 30, rooms in order, the Last Seat last): each hands in, completes, pays its reward, completes its room, and the end screen opens after the last room.
 - owner: Hall look and feel with the real art; the scroll text and reward moments by hand.
+
+## Guest screens, trade (note 108, group 1)
+
+Headless run 2026-11-24 (`tests/screens-socket.test.ts`, real sockets; `tests/screens.test.ts`, 14 rules tests).
+
+- pass: A guest opens the shop only within reach of the counter (too far away is refused), then buys from their own purse; the other player's purse is unchanged.
+- pass: A guest ships through the bin; the line records the guest and shows on the guest's copy.
+- pass: A chest is used by one player at a time: the second is told "Someone is using this chest."; the lock frees on close, leave and drop; the host is locked out the same way.
+- pass: Chest moves, send, fill, sort and colour are judged by the host: a tool, a bad side, another chest, a player who never opened it, and a player who walked off are all refused; the guest copy follows through `applied`.
+- pass: The hermit's one elderfruit bought by one guest is gone for the other (shared stock).
+- pass: Camp chest: one gift, taken once, one holder at a time.
+- owner: The screens by hand with two real players: the wait before a screen shows (about 30 ms on a router), the "Someone is using this chest." line, and the chest redraw when the other player moves things. Nothing here was run in a browser.

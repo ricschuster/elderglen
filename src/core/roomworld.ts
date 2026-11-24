@@ -26,6 +26,13 @@ import { PASS_OUT_MONEY_CAP, PASS_OUT_MONEY_SHARE } from "./day";
 import { LOCAL_PLAYER, type PlayerId } from "./players";
 import type { Intent } from "./protocol";
 import { applyFarmIntent } from "./roomintents";
+import {
+  applyScreenIntent,
+  SCREEN_INTENTS,
+  targetsScreen,
+} from "./screenintents";
+import { inReach, parseRef, Screens, type Standing } from "./screens";
+import { offerIds, isShopStock } from "./shopoffers";
 import type { BedStatus, NightNews, RoomWorld } from "./room";
 import { serialize, START_MONEY, type GameState } from "./save";
 import { sleep, type SleepReport } from "./sleep";
@@ -43,6 +50,12 @@ export interface RoomWorldOptions {
    */
   inside?: (id: PlayerId) => boolean;
   random?: () => number;
+  /**
+   * Where a player stands now (the Room's last position). When given, a screen action is accepted
+   * only from a player who opened that screen within reach of it (note 108). Absent: no position
+   * checks, the screens are open to every intent (unit tests without a Room).
+   */
+  where?: (id: PlayerId) => Standing | undefined;
   /** The night's artifact spots, passed to sleep(). */
   spots?: Parameters<typeof sleep>[1];
 }
@@ -84,7 +97,10 @@ export class GameRoomWorld implements RoomWorld {
       RoomWorldOptions,
       "cabinArea" | "blocked" | "random" | "spots" | "inside"
     >
-  >;
+  > &
+    Pick<RoomWorldOptions, "where">;
+  /** Open screens and their locks (note 108): the host's book, never saved. */
+  readonly screens = new Screens();
 
   constructor(
     readonly g: GameState,
@@ -97,6 +113,7 @@ export class GameRoomWorld implements RoomWorld {
       random: opts.random ?? Math.random,
       spots: opts.spots ?? [],
       inside: opts.inside ?? (() => false),
+      where: opts.where,
     };
     this.tracker = new DayEndTracker(g.players.ids, (d) => this.endDay(d));
   }
@@ -153,6 +170,7 @@ export class GameRoomWorld implements RoomWorld {
   }
 
   playerDropped(id: PlayerId): void {
+    this.screens.release(id);
     this.tracker.drop(id);
   }
 
@@ -195,6 +213,14 @@ export class GameRoomWorld implements RoomWorld {
       case "wake":
         this.tracker.wake(by);
         return undefined;
+      case "open": {
+        const ref = parseRef(intent.screen);
+        if (!ref) return "bad open";
+        return this.screens.open(this.g, by, ref, this.o.where?.(by));
+      }
+      case "close":
+        this.screens.close(by);
+        return undefined;
       case "buy-cabin": {
         if (by !== LOCAL_PLAYER) return "host only";
         const x = intent.x;
@@ -203,12 +229,48 @@ export class GameRoomWorld implements RoomWorld {
         return this.buyCabin({ x, y });
       }
       default: {
+        const need = SCREEN_INTENTS[intent.kind];
+        if (need && this.o.where && by !== LOCAL_PLAYER) {
+          const why = this.screenGate(by, intent, need);
+          if (why !== undefined) return why;
+        }
         const m = applyMarriageIntent(this.g, by, intent);
         if (m !== null) return m;
+        const sc = applyScreenIntent(this.g, by, intent);
+        if (sc !== null) return sc;
         const r = applyFarmIntent(this.g, by, intent, this.o.random);
         return r === null ? `unknown intent ${intent.kind}` : r;
       }
     }
+  }
+
+  /**
+   * A guest's screen action is taken only from a player who opened that screen, still stands within reach
+   * of it, and names the same chest, stall or counter (note 108, "Where the player stands").
+   */
+  private screenGate(
+    by: PlayerId,
+    intent: Intent,
+    need: string[],
+  ): string | undefined {
+    const open = this.screens.current(by);
+    if (!open || !need.includes(open.kind)) return "open the screen first";
+    const at = this.o.where?.(by);
+    if (!at || !inReach(this.g, at, open)) return "too far away";
+    if (!targetsScreen(intent, open)) return "not the screen you opened";
+    if (intent.kind === "buy") {
+      const stock = intent.stock;
+      const id = intent.id;
+      if (stock !== undefined && !isShopStock(stock)) return "bad buy";
+      if (
+        typeof id === "string" &&
+        !offerIds(this.g, open.stock as never).includes(id)
+      )
+        return "That is not on sale here.";
+    }
+    if (intent.kind === "ship" && (intent.ore === true) !== (open.ore === true))
+      return "not this bin";
+    return undefined;
   }
 
   step(dtMs: number): void {

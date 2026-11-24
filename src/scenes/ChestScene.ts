@@ -1,8 +1,8 @@
 import { audio } from "../audio/engine";
 import Phaser from "phaser";
 import { CHEST_COLOURS } from "../core/chestdefs";
-import { chestById, colourChest, type PlacedChest } from "../core/chests";
-import { campChestContents, campChestMove } from "../core/camp";
+import { chestById, type PlacedChest } from "../core/chests";
+import { campChestContents } from "../core/camp";
 import { Inventory } from "../core/inventory";
 import { itemById } from "../core/items";
 import { reasonText } from "../core/tools";
@@ -12,15 +12,11 @@ import {
   clampRowOffset,
   SWIPE_START_PX,
   swipeRowOffset,
-  fillStacks,
   inWindow,
   pressActions,
-  quickMove,
-  transfer,
   visibleRows,
 } from "../core/chestmenu";
 import { chestTip, itemTip } from "../core/itemtip";
-import { sortPack } from "../core/packmenu";
 import { orderById } from "../core/orders";
 import { QUALITY_TINT, splitQuality } from "../core/quality";
 import { toolOfId } from "../core/toolitems";
@@ -28,6 +24,8 @@ import type { GameState } from "../core/save";
 import { canWaterLine } from "../core/canwater";
 import { iconKey, toolTierKey } from "./art";
 import { frame } from "./panel";
+import { closeWhenDone, dispatch, followGuest } from "./guestlive";
+import type { Intent } from "../core/protocol";
 import { STATE_KEY } from "./state";
 import { Tooltip } from "./tooltip";
 
@@ -119,6 +117,12 @@ export class ChestScene extends Phaser.Scene {
   }
 
   create(): void {
+    followGuest(
+      this,
+      () => this.refresh(),
+      (t) => this.say(t),
+    );
+    closeWhenDone(this);
     const bound = this.chest.order ? orderById(this.chest.order) : undefined;
     const name =
       this.camp !== undefined
@@ -252,7 +256,7 @@ export class ChestScene extends Phaser.Scene {
         .setOrigin(0)
         .setInteractive({ useHandCursor: true })
         .on("pointerdown", () => {
-          colourChest(this.chest, n);
+          this.act({ kind: "chest-colour", colour: n });
           mark();
         });
       swatches.push(r);
@@ -585,16 +589,18 @@ export class ChestScene extends Phaser.Scene {
       this.campTake(from.side);
       return false;
     }
-    const ok = transfer(
-      this.inv(from.side),
-      from.slot,
-      this.inv(to.side),
-      to.slot,
-      { half, chestSide: this.chest.items },
-    );
-    this.say(ok ? "" : "That will not go there.");
+    const r = this.act({
+      kind: "chest-move",
+      from: from.side,
+      slot: from.slot,
+      to: to.side,
+      toSlot: to.slot,
+      half,
+    });
+    if (r === "sent") return false;
+    this.say(r === undefined ? "" : "That will not go there.");
     this.refresh();
-    return ok;
+    return r === undefined;
   }
 
   private tap(side: Side, slot: number): void {
@@ -626,17 +632,27 @@ export class ChestScene extends Phaser.Scene {
     this.sendSome(side, slot, Infinity);
   }
 
+  /** The chest this screen is open on, as an intent names it. */
+  private target(): Record<string, unknown> {
+    return this.camp !== undefined
+      ? { floor: this.camp }
+      : { chest: { map: this.chest.map, x: this.chest.x, y: this.chest.y } };
+  }
+
+  /** Run a screen action through the dispatcher (note 108): local, via the host's Room, or sent by a guest. */
+  private act(intent: Intent): string | undefined | "sent" {
+    return dispatch(this.state, { ...this.target(), ...intent });
+  }
+
   /** A take-only move: the gift comes out through the camp rules, nothing goes in. */
   private campTake(from: Side): void {
-    const floor = this.camp!;
-    const r = campChestMove(this.state, floor, from);
     this.selected = undefined;
-    if (r.ok && r.item) {
-      this.chest.items.remove(r.item, 1);
-      const name = itemById(r.item)?.name ?? r.item;
-      this.found = `You found ${name}.`;
-      this.say(this.found);
-    } else if (!r.ok) this.say(reasonText(r.reason));
+    if (from === "pack") {
+      this.say(reasonText("camp chest take only"));
+      return;
+    }
+    const r = this.act({ kind: "camp-take" });
+    if (r !== undefined && r !== "sent") this.say(reasonText(r));
     this.refresh();
   }
 
@@ -645,33 +661,32 @@ export class ChestScene extends Phaser.Scene {
       this.campTake(side);
       return;
     }
-    const other: Side = side === "chest" ? "pack" : "chest";
-    const n = quickMove(
-      this.inv(side),
+    const r = this.act({
+      kind: "chest-send",
+      side,
       slot,
-      this.inv(other),
-      this.chest.items,
-      most,
-    );
+      most: Number.isFinite(most) ? most : undefined,
+    });
     this.selected = undefined;
     this.splitting = false;
-    this.say(n > 0 ? "" : "Nothing moved: no room, or a tool.");
+    if (r !== "sent") this.say(r === undefined ? "" : r);
     this.refresh();
   }
 
   private fill(): void {
-    const n = fillStacks(this.state.inventory, this.chest.items);
-    this.say(n > 0 ? `Filled ${n} into the chest.` : "Nothing to fill.");
+    const r = this.act({ kind: "chest-fill" });
+    if (r !== "sent") this.say(r === undefined ? "Filled into the chest." : r);
     this.refresh();
   }
 
   private sort(): void {
     this.selected = undefined;
-    sortPack(this.chest.items);
+    this.act({ kind: "chest-sort" });
     this.refresh();
   }
 
   private refresh(): void {
+    this.syncCamp();
     for (const side of ["chest", "pack"] as const) {
       const inv = this.inv(side);
       this.cells[side].forEach((c, i) => {
@@ -705,6 +720,15 @@ export class ChestScene extends Phaser.Scene {
           : "Split is on: tap a stack, then where half of it should go.",
       );
     else if (this.note.text.startsWith("Split is on")) this.say("");
+  }
+
+  /** The camp chest's one gift is gone once the rules say so (taken here, or by a guest's `applied`). */
+  private syncCamp(): void {
+    const slot = this.camp !== undefined ? this.chest.items.slot(0) : null;
+    if (!slot || campChestContents(this.state, this.camp!)) return;
+    this.chest.items.remove(slot.id, 1);
+    this.found = `You found ${itemById(slot.id)?.name ?? slot.id}.`;
+    this.say(this.found);
   }
 
   private close(): void {

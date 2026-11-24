@@ -10,6 +10,7 @@ import { potPrice, sellMultiplier } from "./professions";
 import { POT_ITEM } from "./pots";
 import type { GameState } from "./save";
 import { buy, sell } from "./shop";
+import { isShopStock, shopBuy } from "./shopoffers";
 import { findTool } from "./toolitems";
 import { useHeld } from "./tools";
 
@@ -99,8 +100,13 @@ export function applyFarmIntent(
       );
     }
     case "buy": {
-      const { id, n } = intent;
+      const { id, n, stock } = intent;
       if (typeof id !== "string" || !isCount(n)) return "bad buy";
+      // A special counter (the hermit, the herb stall, the road trader) runs its own rules.
+      if (stock !== undefined) {
+        if (!isShopStock(stock)) return "bad buy";
+        return asPlayer(g, by, () => shopBuy(g, stock, id, n));
+      }
       const rec = g.players.get(by);
       const base = itemById(id)?.buyPrice;
       const price =

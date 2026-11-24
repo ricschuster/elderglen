@@ -81,13 +81,62 @@ Build each screen's actions as that screen is opened to guests; do not move ever
 One group at a time, each with its own tests; each screen is removed from the guest refusal list
 (`guestMayOpen`) when its actions are built.
 
-1. **Trade:** the dispatcher and `open` action with the lock, shops (buy, sell, shared stock), the shipping
-   bin, chests (and the camp chest).
+1. **Trade (built 2026-11-24, #1014):** the dispatcher and `open` action with the lock, shops (buy, sell,
+   shared stock), the shipping bin, chests (and the camp chest). See "Group 1 as built" below.
 2. **Making:** crafting, cooking (farmhouse kitchen and fridge), furnace and the other machines.
 3. **Animals and ponds:** animal buy and sell at the farmstead, petting, feeding, collecting, pond menus.
 4. **Hall:** bundles (rule 3), orders and the request board.
 5. **The rest:** carpenter (rules 7 to 9, with the host setting on the players list), tailor, smith, gallery,
    shrine, and any screen still on the refusal list.
+
+## Group 1 as built (build, 2026-11-24)
+
+Code: `src/core/screens.ts` (the host's book of open screens, the locks, the reach check),
+`src/core/screenintents.ts` (chest, camp chest and Night Market actions), `src/core/shopoffers.ts` (what each
+counter sells and one `shopBuy`), the gate in `GameRoomWorld.apply` (`src/core/roomworld.ts`), and
+`openShared`, `closeWhenDone` and `dispatch` in `src/scenes/guestlive.ts`. Tests: `tests/screens.test.ts`
+(through a `Room`) and `tests/screens-socket.test.ts` (a host and two guests over real sockets).
+
+- **`open {screen}` and `close`.** A screen ref is `{kind, map, x, y}` plus `stock` (a shop's special counter,
+  or a market stall), `ore` (the ore bin) or `floor` (a camp chest). The host checks the ref (the chest exists, or
+  the service of that kind stands on that tile), checks the reach, then takes the lock when the screen has one.
+  Screens shown from `open`: `shop` (the general store and the fisher, pin, herb, trader, rain and hermit
+  counters), `market` (Night Market stalls), `bin` (and the ore bin), `chest`, `camp-chest`. Only `chest` and
+  `camp-chest` lock. The lock key is the tile, or the floor for a camp chest.
+- **Every other action must name the screen the sender has open.** `buy`, `sell`, `ship`, `take-back`,
+  `market-buy`, `chest-move`, `chest-send`, `chest-fill`, `chest-sort`, `chest-colour` and `camp-take` are
+  refused with "open the screen first", "too far away" (the sender walked off) or "not the screen you opened"
+  (a different chest, stall, floor or counter than the open one). A `buy` must also name something the open
+  counter sells today, and a `ship` must match the bin (ore or not). The host's own player is exempt from this
+  gate (it is at its own screen) but takes the same chest locks.
+- **Reach (build, 2026-11-24).** The note says "the same reach rule as the host's own Use". The host's Use is
+  the faced tile, and the host does not know a guest's facing in time, so the reading is: the guest's last
+  reported tile is within 2 tiles (`REACH_TILES`) of the service tile on the same map, which allows a step of
+  lag. A camp chest checks the floor's map only, because the floor's layout is made in the scene, not in core.
+  The gate is on only when the world is given a `where` function (a real host session passes the Room's
+  positions; the unit tests that call `apply` without one are unchanged).
+- **Locks free** when the holder closes the screen, opens another, leaves, or drops (`Room.disconnect` calls
+  `playerDropped`, which releases). The refusal reads "Someone is using this chest." The host's own chest screen
+  takes the same lock, so a guest in a chest locks the host out and the other way round.
+- **Shared stock (rule 5).** The counters' one-off stock is a world flag in the host's state (the hermit's
+  elderfruit, a market line's `once`, the Homeward pin), and every buy runs on the host, so once one player has
+  it, it is gone for all. Nothing in the market stock is limited at the moment (no line has `once`), so the
+  hermit's elderfruit is the live case, and it is tested with two guests.
+- **Sell and bin credit.** A guest's `sell` pays the sender's wallet (their own purse, or the shared one when
+  money is shared). `ship` and `take-back` are the existing note 53 behaviour: the bin line records its shipper
+  and the night pays the shipper's wallet.
+- **Host through the Room (build, 2026-11-24).** In a hosted game, the host's own chest moves and its bin ship
+  and take-back go through `Room.hostIntent`, so they reach every guest's copy as `applied`. Before this the host's
+  bin lines never reached a guest's copy, which also threw off a guest's `take-back` index. The host's shop and
+  market buys still change the host's state directly (a guest's copy of the host's purse is only refreshed at
+  night, harmless because the host judges everything).
+- **Guest's screen.** A guest's Action on one of these tiles sends `open` and waits for the host's answer
+  (`GuestSession.ask`); the screen appears on yes and the farm shows the reason on no. A refusal while the screen
+  is up shows in the screen. The chest screen redraws when another player's `applied` arrives.
+- **Left for later.** The shop hours (`counterShutLine`) are checked in the guest's scene, not by the host. The
+  backpack upgrade row stays host only ("Only the host can do that for now."). The chest colour bar on a guest's
+  screen does not repaint its highlight until the screen is reopened. Mine floors for guests (note 53, design
+  item 2) are still open, so the camp chest action exists but a guest cannot yet reach a floor.
 
 ## Open (later items, not this note)
 

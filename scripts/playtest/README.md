@@ -355,3 +355,9 @@ context window.
 
 `npm run playtest:wall-lever` opens Maren's slayer wall list, claims and buys a reward, then flips the floor 120
 dangerous mode lever (stage `mines-120`): a flip is pending until the day ends, flipping back cancels it. About 15 seconds.
+
+Guest screens (note 108, group 1) have no browser run: a browser cannot host. Their headless playtest is a
+Vitest file over real sockets, `npx vitest run tests/screens-socket.test.ts --maxWorkers=4` (about 2 seconds): a
+host and two guests; a guest opens the shop (refused too far away, then accepted at the counter) and buys, ships
+through the bin, and moves items in a chest while a second guest is told the chest is in use. The rules are
+covered by `tests/screens.test.ts`.
