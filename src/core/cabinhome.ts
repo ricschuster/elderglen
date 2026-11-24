@@ -7,6 +7,7 @@ import { festivalDayToday } from "./festivals";
 import { HARDWOOD } from "./items";
 import {
   BUILD_DAYS,
+  houseOrderProblem,
   nextUpgrade,
   renoOrderProblem,
   renoRefundProblem,
@@ -196,4 +197,41 @@ export function applyMailIntent(
     const r = openLetter(g, id);
     return r.ok ? undefined : r.reason;
   });
+}
+
+/** The home a player orders from at the carpenter, as the screen reads it. */
+export interface HomeView {
+  tier: number;
+  renos: string[];
+  build: { tier: number; daysLeft: number } | undefined;
+  /** Why the next tier cannot be ordered now, or undefined if it can. */
+  upgradeProblem(): string | undefined;
+  /** Why a renovation cannot be ordered (or taken back), or undefined if it can. */
+  renoProblem(id: string, refund: boolean): string | undefined;
+  /** The player's own cabin, when they have one (the host's farmhouse has none). */
+  cabin: Cabin | undefined;
+}
+
+/** The home the local player's carpenter screen shows: their cabin for a guest who has one, else the farmhouse. */
+export function homeViewOf(g: GameState): HomeView {
+  const by = g.players.localId;
+  const c = cabinFor(g, by);
+  if (!c)
+    return {
+      tier: g.houseTier,
+      renos: g.houseRenos,
+      build: g.houseBuild,
+      upgradeProblem: () => houseOrderProblem(g),
+      renoProblem: (id, refund) =>
+        refund ? renoRefundProblem(g, id) : renoOrderProblem(g, id),
+      cabin: undefined,
+    };
+  return {
+    tier: c.tier,
+    renos: c.renos,
+    build: c.build,
+    upgradeProblem: () => cabinUpgradeProblem(g, c, by),
+    renoProblem: (id, refund) => cabinRenoProblem(g, c, by, id, refund),
+    cabin: c,
+  };
 }

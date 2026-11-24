@@ -527,7 +527,7 @@ describe("guest screens, group 5, over real sockets", () => {
     expect(await ask(ann, coop)).toBe("open the screen first");
     await stand(ann, "sawmill", saw.x, saw.y + 1);
     expect(await ask(ann, { kind: "open", screen: counter })).toBeUndefined();
-    expect(await ask(ann, { kind: "carp-house" })).toMatch(/lives in it/);
+    expect(await ask(ann, { kind: "carp-house" })).toMatch(/You need/);
     expect(await ask(ann, coop)).toBeUndefined();
     expect(rec.money).toBe(1000);
     expect(g.buildOwners?.coop).toBe(ann.id);

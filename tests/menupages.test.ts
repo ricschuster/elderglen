@@ -238,8 +238,10 @@ describe("guest read-only menus", () => {
     for (const k of ["carpenter", "tailor", "smith", "smithy", "gallery"])
       expect(guestMayOpen(k)).toBe(true);
     expect(guestMayOpen("shrine")).toBe(true);
-    // Still host only: combat, the mine hall, travel, mail and the hat box.
-    for (const k of ["trainer", "walllist", "cart", "mailbox", "hats"])
+    // The mailbox is a guest's own beside their cabin (note 110).
+    expect(guestMayOpen("mailbox")).toBe(true);
+    // Still host only: combat, the mine hall, travel and the hat box.
+    for (const k of ["trainer", "walllist", "cart", "hats"])
       expect(guestMayOpen(k)).toBe(false);
   });
 });

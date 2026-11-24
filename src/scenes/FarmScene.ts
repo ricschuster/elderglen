@@ -114,6 +114,9 @@ import { MAP_PASSES } from "./map-passes";
 
 import { storeOf } from "../core/mapstore";
 import { mapWithDoors } from "../core/placement";
+import { cabinOwnerOfId, mapWithCabins } from "../core/cabinmap";
+import { cabinSpawnTile } from "../core/cabins";
+import { cabinOfHome, homeHoldsOf, homeVisibleTier } from "../core/homes";
 import { farmMapOf, isFarmMap, resolveMapId } from "../core/farmtypes";
 import { pondCovering, pondStep } from "../core/pond";
 import {
@@ -219,12 +222,7 @@ import { DECOR_ROOMS, decorById, roomTiles, zoneHolds } from "../core/decor";
 import { carryFurniture, furnitureById } from "../core/furniture";
 import { hatById } from "../core/hats";
 import { greenhouseHolds } from "../core/greenhouse";
-import {
-  houseHolds,
-  houseSpouse,
-  houseVisibleTier,
-  isHouseMap,
-} from "../core/house";
+import { houseHolds, houseSpouse, isHouseMap } from "../core/house";
 import { SELECTED_KEY, STATE_KEY } from "./state";
 import { placedChestTip } from "../core/itemtip";
 import {} from "./art";
@@ -265,6 +263,7 @@ import {
   HostSession,
   isGuest,
   noteHostLost,
+  playerNameOf,
   sendWorldIntent,
   type NetSession,
 } from "../net/session";
@@ -283,6 +282,7 @@ import {
   drawBuild,
   drawFurnace,
   drawShrine,
+  drawCabins,
   drawMailbox,
   drawRequestMark,
   drawGreenhouse,
@@ -586,12 +586,7 @@ export class FarmScene extends Phaser.Scene {
     // The house's spouse, renovation and corner stair layers bake into the map
     // (collision too), so its holds must be here and not only in `refreshHolds`.
     // A renovation is ordered at the carpenter's, so the house is rebuilt on entry.
-    for (const h of houseHolds(
-      this.state.houseTier,
-      houseSpouse(this.state),
-      this.state.houseRenos,
-    ))
-      holds.add(h);
+    for (const h of this.houseHoldsHere(id)) holds.add(h);
     // A festival day shows its layout on the map (note 82).
     for (const h of festivalHolds(day, hallRestored(this.state.hall)))
       holds.add(h);
@@ -601,7 +596,11 @@ export class FarmScene extends Phaser.Scene {
       ? FarmMap.fromTiled(json)
       : maps.getWith(id, holds, this.tier);
     // The coop and barn doors stand where the buildings were placed.
-    if (isFarmMap(id)) this.map = mapWithDoors(this.state, this.map, id);
+    if (isFarmMap(id)) {
+      this.map = mapWithDoors(this.state, this.map, id);
+      // Guests' cabins stand on the farm, each with a door to its owner's home (note 110).
+      this.map = mapWithCabins(this.state, this.map);
+    }
     if (isHouseMap(id)) carryFurniture(this.state, this.map, id);
     if (this.floor !== undefined)
       this.floorState = this.state.mines.visit(this.floor, day);
@@ -705,7 +704,16 @@ export class FarmScene extends Phaser.Scene {
       this.net.onFaint = (f) => {
         audio.sfx("player.die");
         this.message = `You fainted and were carried home.${f.gold > 0 ? ` It cost ${f.gold}g.` : ""}`;
-        this.travel("farm", "from_house");
+        // Home is the guest's own cabin, by their bed (note 110 rule 1).
+        if (f.at) this.travel(f.at.map, "door", { x: f.at.x, y: f.at.y });
+        else this.travel("farm", "from_house");
+      };
+      // The new morning: wake where slept, or in their own home after a pass-out (note 110 rule 1).
+      this.net.onWake = (w) => {
+        this.inBed = false;
+        // The report screen is up: wait until it closes, then stand where they woke.
+        if (this.scene.isPaused()) this.pendingWake = w;
+        else this.applyWake(w);
       };
     } else if (this.net instanceof HostSession) {
       // The typed-address fallback (a router that blocks broadcasts) needs the real port.
@@ -941,6 +949,11 @@ export class FarmScene extends Phaser.Scene {
       data?: { sleep?: boolean; goto?: { map: string; entry: string } },
     ) => {
       syncCombatSettings(this);
+      if (this.pendingWake) {
+        const w = this.pendingWake;
+        this.pendingWake = undefined;
+        return this.applyWake(w);
+      }
       if (data?.sleep) return this.endDay();
       if (data?.goto) return this.travel(data.goto.map, data.goto.entry);
       // Slept or passed out away from the farm: the night put the farm's world
@@ -1212,7 +1225,7 @@ export class FarmScene extends Phaser.Scene {
 
   /** The tier layers a growing building map shows: the house rooms or the coop size built so far. */
   private buildingTier(id: string): number {
-    if (isHouseMap(id)) return houseVisibleTier(this.state.houseTier);
+    if (isHouseMap(id)) return homeVisibleTier(this.state, id);
     if (id === COOP_MAP) return coopVisibleTier(this.state.animals.tier);
     if (id === BARN_MAP) return barnVisibleTier(this.state.animals.barnTier);
     return 0;
@@ -1685,6 +1698,10 @@ export class FarmScene extends Phaser.Scene {
     }
     const door = doorSoundFor(this.mapId, exit.map);
     if (door) audio.sfx(door);
+    // The way out of a guest's cabin is its own door on the farm, not the farmhouse's (note 110).
+    const cabin = cabinOfHome(this.state, this.mapId);
+    if (cabin && exit.id === "door" && isFarmMap(exit.map))
+      return this.travel(exit.map, exit.entry, cabinSpawnTile(cabin));
     this.travel(exit.map, exit.entry);
   }
 
@@ -1798,8 +1815,22 @@ export class FarmScene extends Phaser.Scene {
     this.controls.setUiScale(scale);
   }
 
+  private pendingWake: { map: string; x: number; y: number } | undefined;
+
+  private applyWake(w: { map: string; x: number; y: number }): void {
+    if (w.map === this.mapId) this.placeAt(w.x, w.y);
+    else this.travel(w.map, "door", { x: w.x, y: w.y });
+  }
+
+  /** Stand the player on a tile of this map (the host moved them: a morning in bed). */
+  private placeAt(x: number, y: number): void {
+    const ts = this.map.tileSize;
+    this.pos = { x: (x + 0.5) * ts, y: (y + 1) * ts - 2 };
+    this.render();
+  }
+
   /** Fade out and restart the scene on another map. */
-  travel(map: string, entry: string): void {
+  travel(map: string, entry: string, at?: { x: number; y: number }): void {
     if (this.leaving) return;
     this.leaving = true;
     // Doors and the Mines dismount: the horse waits outside (note 59).
@@ -1817,7 +1848,7 @@ export class FarmScene extends Phaser.Scene {
       );
       this.saveResume();
     }
-    const data: SceneData = { map, entry };
+    const data: SceneData = { map, entry, ...at };
     this.cameras.main.fadeOut(FADE_MS);
     this.cameras.main.once("camerafadeoutcomplete", () =>
       this.scene.restart(data),
@@ -2114,6 +2145,12 @@ export class FarmScene extends Phaser.Scene {
         ref = { kind: "tailor", ...base, stock: mode };
         scene = "tailor";
         data = { mode };
+      } else if (service.kind === "mailbox") {
+        // Each player has a mailbox of their own beside their cabin door (note 110 rule 3).
+        if (cabinOwnerOfId(service.id) !== this.net?.localId)
+          return closed(this.mailboxLine(service.id));
+        ref = { kind: "mailbox", ...base };
+        scene = "mailbox";
       } else if (service.kind === "shrine") {
         return this.guestShrine(base);
       } else if (service.kind === "camp-chest" && this.floor !== undefined) {
@@ -2163,6 +2200,14 @@ export class FarmScene extends Phaser.Scene {
       (why) => closed(why),
     );
     return true;
+  }
+
+  /** What a player is told at a mailbox that is not theirs. */
+  private mailboxLine(id: string): string {
+    const owner = cabinOwnerOfId(id);
+    return owner === undefined
+      ? "That is the host's mailbox."
+      : `That is ${playerNameOf(this.net, owner)}'s mailbox.`;
   }
 
   /**
@@ -2455,6 +2500,12 @@ export class FarmScene extends Phaser.Scene {
     const spot = this.horseSpot();
     if (spot && spot.x === front.x && spot.y === front.y) return this.getOn();
     if (this.meetVillager(front)) return;
+    // A guest's mailbox is theirs: the host reads only the farm's own (note 110).
+    const post = this.map.serviceAt(front.x, front.y);
+    if (post?.kind === "mailbox" && cabinOwnerOfId(post.id) !== undefined) {
+      this.message = this.mailboxLine(post.id);
+      return this.render();
+    }
     if (onLaunchLine(this, front)) return launchLanternAt(this);
     if (this.map.serviceAt(front.x, front.y)?.kind !== "tide-bridge")
       this.mendAsked = false;
@@ -2782,6 +2833,20 @@ export class FarmScene extends Phaser.Scene {
       this.message = "Could not save. Export from Options to keep your game.";
   }
 
+  /**
+   * The house conditions on a map: the farmhouse's own, or for a guest's cabin its owner's tier and renovations
+   * (note 110). On any other map the farmhouse's, as before (they only matter on a house map).
+   */
+  private houseHoldsHere(id: string): string[] {
+    if (id.startsWith("house@"))
+      return homeHoldsOf(this.state, id, houseSpouse(this.state));
+    return houseHolds(
+      this.state.houseTier,
+      houseSpouse(this.state),
+      this.state.houseRenos,
+    );
+  }
+
   /** The conditions that open doors. Rebuilt after sleeping, when a building may have landed overnight. */
   private refreshHolds(): void {
     this.holds = new Set(holdsOf(this.state));
@@ -2789,12 +2854,7 @@ export class FarmScene extends Phaser.Scene {
     if (this.state.cave.open) this.holds.add("cave-open");
     if (this.state.animals.coopBuilt) this.holds.add(COOP_BUILT);
     if (this.state.animals.barnBuilt) this.holds.add(BARN_BUILT);
-    for (const h of houseHolds(
-      this.state.houseTier,
-      houseSpouse(this.state),
-      this.state.houseRenos,
-    ))
-      this.holds.add(h);
+    for (const h of this.houseHoldsHere(this.mapId)) this.holds.add(h);
     for (const h of greenhouseHolds(this.state)) this.holds.add(h);
     for (const h of festivalHolds(
       this.state.day.clock.day,
@@ -2878,6 +2938,14 @@ export class FarmScene extends Phaser.Scene {
     else this.open(shipping ? "shipping" : "report", { report });
   }
 
+  /** The tag over a guest's cabin door or mailbox, with the occupant's name (note 110), or undefined for any other id. */
+  private cabinLabel(id: string): string | undefined {
+    const owner = cabinOwnerOfId(id);
+    if (owner === undefined) return undefined;
+    const name = playerNameOf(this.net, owner);
+    return id.startsWith("cabin-") ? `${name}'s cabin` : `${name}'s mailbox`;
+  }
+
   /**
    * Placeholder name tags over the doors and counters, so the owner can tell
    * what is what until the art pass (#58). Names come from `core/labels.ts`.
@@ -2892,13 +2960,13 @@ export class FarmScene extends Phaser.Scene {
         !exitOpen(e, this.holds)
       )
         continue;
-      const text = exitLabel(e.id);
+      const text = this.cabinLabel(e.id) ?? exitLabel(e.id);
       if (text) tags.push({ x: e.x + e.w / 2, y: e.y, text });
     }
     for (const s of this.map.services) {
       // The furnace is only there once the smith has given it.
       if (s.kind === "furnace" && !this.state.furnace.gifted) continue;
-      const text = serviceLabel(s.kind, s.id);
+      const text = this.cabinLabel(s.id) ?? serviceLabel(s.kind, s.id);
       if (text) tags.push({ x: s.x + 0.5, y: s.y, text });
     }
     this.labelTags = [];
@@ -3099,6 +3167,7 @@ export class FarmScene extends Phaser.Scene {
     drawCoopInside(this);
     drawFurnace(this);
     drawMailbox(this);
+    drawCabins(this);
     drawShrine(this);
     drawRequestMark(this);
     drawBuild(this);

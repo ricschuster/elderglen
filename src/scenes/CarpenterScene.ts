@@ -1,5 +1,11 @@
 import Phaser from "phaser";
 import type { GameState } from "../core/save";
+import { homeViewOf } from "../core/cabinhome";
+import {
+  CABIN_STYLES,
+  CABIN_STYLE_NAMES,
+  type CabinStyle,
+} from "../core/cabins";
 import { HARDWOOD } from "../core/items";
 import { DECOR, decorProblem } from "../core/decor";
 import {
@@ -14,8 +20,6 @@ import {
   RENOVATIONS,
   WAITING_ROOMS_LINE,
   nextUpgrade,
-  renoOrderProblem,
-  renoRefundProblem,
   WOOD,
 } from "../core/house";
 import {
@@ -112,7 +116,8 @@ export class CarpenterScene extends Phaser.Scene {
   private refresh(): void {
     const g = this.state;
     this.money.setText(`Money ${g.money}g`);
-    const cost = nextUpgrade(g.houseTier);
+    const h = homeViewOf(g);
+    const cost = nextUpgrade(h.tier);
     const rows: Row[] = [];
     // The tab switch is the first row. Renovations have a tab of their own.
     rows.push({
@@ -136,11 +141,11 @@ export class CarpenterScene extends Phaser.Scene {
       this.menu.setRows(rows);
       return;
     }
-    if (g.houseBuild) {
+    if (h.build) {
       this.message.setText("The carpenter is out at your farm, working.");
       rows.push({
         label: "Work on your house is under way",
-        detail: `${g.houseBuild.daysLeft} days left`,
+        detail: `${h.build.daysLeft} days left`,
         dim: true,
         buttons: [],
       });
@@ -152,7 +157,7 @@ export class CarpenterScene extends Phaser.Scene {
       });
     } else {
       rows.push({
-        label: HOUSE_UPGRADE_NAMES[g.houseTier] ?? "House upgrade",
+        label: HOUSE_UPGRADE_NAMES[h.tier] ?? "House upgrade",
         detail:
           cost.hardwood > 0
             ? `${cost.coin}g and ${cost.hardwood} hardwood (have ${g.inventory.count(HARDWOOD)})`
@@ -162,6 +167,15 @@ export class CarpenterScene extends Phaser.Scene {
         buttons: [{ text: "Order", run: () => this.order() }],
       });
     }
+    // A guest's cabin has an outside look of its own, changed here (note 110 rule 2).
+    if (h.cabin)
+      for (const style of CABIN_STYLES)
+        rows.push({
+          label: `Cabin outside: ${CABIN_STYLE_NAMES[style]}`,
+          detail: h.cabin.style === style ? "how it looks now" : "free",
+          dim: h.cabin.style === style,
+          buttons: [{ text: "Choose", run: () => this.restyle(style) }],
+        });
     // The coop and barn stand at the carpenter's. Young animals and hay are
     // the Forest farmstead keeper's (note 72).
     const have = `have ${g.inventory.count("wood")} wood and ${g.inventory.count("stone")} stone`;
@@ -253,7 +267,7 @@ export class CarpenterScene extends Phaser.Scene {
       dim: pondOrderProblem(g) !== undefined,
       buttons: [{ text: "Place", run: () => this.placePond() }],
     });
-    if (!g.houseBuild && !g.catalogue && g.houseTier >= 1) {
+    if (!h.build && !g.catalogue && h.tier >= 1) {
       rows.push({
         label: "Furniture Catalogue",
         detail: `${CATALOGUE_PRICE}g, a book of every piece, free to copy once placed`,
@@ -261,7 +275,7 @@ export class CarpenterScene extends Phaser.Scene {
         buttons: [{ text: "Buy", run: () => this.buyCat() }],
       });
     }
-    if (!g.houseBuild) {
+    if (!h.build) {
       const owned = dailyStock(g.day.clock.day);
       // Today's furniture: a random pick that changes each day.
       for (const f of [...stationStock(), ...owned]) {
@@ -273,7 +287,7 @@ export class CarpenterScene extends Phaser.Scene {
         });
       }
     }
-    if (!g.houseBuild)
+    if (!h.build)
       for (const d of DECOR)
         rows.push({
           label: d.name,
@@ -286,24 +300,31 @@ export class CarpenterScene extends Phaser.Scene {
 
   /** The renovations tab: the eight renovations, each ordered or taken back (note 85, "Renovations"). */
   private renovationRows(rows: Row[]): void {
-    const g = this.state;
+    const h = homeViewOf(this.state);
     for (const r of RENOVATIONS) {
-      if (g.houseRenos.includes(r.id)) {
+      if (h.renos.includes(r.id)) {
         rows.push({
           label: `${r.name}, built`,
           detail: `take it back for ${r.price}g, the area must be empty`,
-          dim: renoRefundProblem(g, r.id) !== undefined,
+          dim: h.renoProblem(r.id, true) !== undefined,
           buttons: [{ text: "Take back", run: () => this.refundReno(r.id) }],
         });
         continue;
       }
       rows.push({
         label: r.name,
-        detail: renoOrderProblem(g, r.id) ?? `${r.price}g, done at once`,
-        dim: renoOrderProblem(g, r.id) !== undefined,
+        detail: h.renoProblem(r.id, false) ?? `${r.price}g, done at once`,
+        dim: h.renoProblem(r.id, false) !== undefined,
         buttons: [{ text: "Order", run: () => this.orderReno(r.id) }],
       });
     }
+  }
+
+  private restyle(style: CabinStyle): void {
+    this.act(
+      { kind: "carp-style", style },
+      `Done. Your cabin is ${CABIN_STYLE_NAMES[style].toLowerCase()} now.`,
+    );
   }
 
   private orderReno(id: string): void {
@@ -411,7 +432,7 @@ export class CarpenterScene extends Phaser.Scene {
   private order(): void {
     this.act(
       { kind: "carp-house" },
-      `Ordered. The carpenter starts tomorrow and takes three days.${this.state.houseTier === 1 ? ` ${WAITING_ROOMS_LINE}` : ""}`,
+      `Ordered. The carpenter starts tomorrow and takes three days.${homeViewOf(this.state).tier === 1 ? ` ${WAITING_ROOMS_LINE}` : ""}`,
     );
   }
 

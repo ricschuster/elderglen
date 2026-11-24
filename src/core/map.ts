@@ -826,6 +826,58 @@ export class FarmMap {
     );
   }
 
+  /**
+   * A copy of this map with guests' cabins standing on it (note 110): each footprint is blocked and untillable
+   * except its door tile, which gets the exit to the cabin's home instance, and a mailbox service beside it.
+   */
+  withCabins(
+    cabins: {
+      rect: { x: number; y: number; w: number; h: number };
+      door: Spot;
+      exit: Exit;
+      mailbox: Service;
+    }[],
+  ): FarmMap {
+    if (cabins.length === 0) return this;
+    const blocked = [...this.blocked];
+    const soil = [...this.soil];
+    for (const c of cabins)
+      for (let y = c.rect.y; y < c.rect.y + c.rect.h; y++)
+        for (let x = c.rect.x; x < c.rect.x + c.rect.w; x++) {
+          if (!this.inside(x, y)) continue;
+          soil[y * this.width + x] = false;
+          blocked[y * this.width + x] = !(x === c.door.x && y === c.door.y);
+        }
+    // The mailbox is a post to face, not a tile to stand on.
+    for (const c of cabins)
+      if (this.inside(c.mailbox.x, c.mailbox.y))
+        blocked[c.mailbox.y * this.width + c.mailbox.x] = true;
+    return new FarmMap(
+      this.width,
+      this.height,
+      this.tileSize,
+      blocked,
+      soil,
+      this.entries,
+      [...this.exits, ...cabins.map((c) => c.exit)],
+      this.forageSpots,
+      [...this.services, ...cabins.map((c) => c.mailbox)],
+      this.regions,
+      this.trees,
+      this.paths,
+      this.rocks,
+      this.tier,
+      this.bounds,
+      this.water,
+      this.indoors,
+      this.waterZones,
+      this.logs,
+      this.traits,
+      this.litter,
+      this.gates,
+    );
+  }
+
   /** Outside the map counts as blocked. */
   isBlocked(x: number, y: number): boolean {
     return !this.inside(x, y) || this.blocked[y * this.width + x] === true;

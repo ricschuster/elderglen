@@ -28,6 +28,13 @@ import { cropById } from "../core/crops";
 import { DEPTH, tileDepth } from "./depth";
 import { FARM_STORE } from "../core/mapstore";
 import { isFarmMap } from "../core/farmtypes";
+import { LOCAL_PLAYER } from "../core/players";
+import {
+  cabinDoorTile,
+  cabinMailboxTile,
+  cabinRect,
+  type CabinStyle,
+} from "../core/cabins";
 import { tapReady } from "../core/tapper";
 import { absoluteMinutes } from "../core/furnace";
 import { jobDone } from "../core/machines";
@@ -452,11 +459,54 @@ export function drawMailbox(farm: FarmScene): void {
   g.fillStyle(0x6f4a22, 1).fillRect(x + 7, y + 8, 2, ts - 8);
   g.fillStyle(0x3f6f9a, 1).fillRect(x + 3, y + 3, 10, 6);
   g.fillStyle(0x2a4a6a, 1).fillRect(x + 3, y + 3, 10, 1);
-  if (farm.state.mail.flagUp)
+  // The farm's own mailbox is the host's, whoever is looking.
+  if (farm.state.players.get(LOCAL_PLAYER).mail.flagUp)
     g.fillStyle(0xd8483a, 1)
       .fillRect(x + 12, y - 1, 2, 6)
       .fillRect(x + 12, y - 1, 4, 2);
   else g.fillStyle(0xd8483a, 1).fillRect(x + 12, y + 5, 3, 2);
+}
+
+/** Placeholder colours of the three cabin looks: wall and roof (note 110 rule 2; the art pass names them). */
+const CABIN_COLOURS: Record<CabinStyle, { wall: number; roof: number }> = {
+  log: { wall: 0x8a5a2b, roof: 0x5a3a1c },
+  stone: { wall: 0x9a9aa2, roof: 0x5f6068 },
+  plank: { wall: 0xc9a869, roof: 0x8a6a3a },
+};
+
+/**
+ * Guests' cabins on the farm: a coloured footprint with a door, and a mailbox post beside it with its flag up
+ * while that guest has mail waiting (note 110). Placeholder shapes until the art pass.
+ */
+export function drawCabins(farm: FarmScene): void {
+  if (!isFarmMap(farm.mapId)) return;
+  const ts = farm.map.tileSize;
+  const g = farm.wash;
+  for (const c of farm.state.cabins?.cabins ?? []) {
+    const col = CABIN_COLOURS[c.style];
+    const r = cabinRect(c);
+    g.fillStyle(col.wall, 1).fillRect(r.x * ts, r.y * ts, r.w * ts, r.h * ts);
+    g.fillStyle(col.roof, 1).fillRect(r.x * ts, r.y * ts, r.w * ts, ts);
+    const d = cabinDoorTile(c);
+    g.fillStyle(0x3a2412, 1).fillRect(
+      d.x * ts + 3,
+      d.y * ts + 2,
+      ts - 6,
+      ts - 2,
+    );
+    const m = cabinMailboxTile(c);
+    const x = m.x * ts;
+    const y = m.y * ts;
+    g.fillStyle(0x6f4a22, 1).fillRect(x + 7, y + 8, 2, ts - 8);
+    g.fillStyle(0x3f6f9a, 1).fillRect(x + 3, y + 3, 10, 6);
+    const mail =
+      c.ownerKey !== null && farm.state.players.has(c.ownerKey)
+        ? farm.state.players.get(c.ownerKey).mail.flagUp
+        : false;
+    g.fillStyle(0xd8483a, 1);
+    if (mail) g.fillRect(x + 12, y - 1, 2, 6).fillRect(x + 12, y - 1, 4, 2);
+    else g.fillRect(x + 12, y + 5, 3, 2);
+  }
 }
 
 /** A yellow mark over the request board while a request waits to be taken (note 50). */
