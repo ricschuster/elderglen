@@ -209,7 +209,7 @@ import {
 
 import type { Rocks } from "../core/rocks";
 import { DECOR_ROOMS, decorById, roomTiles, zoneHolds } from "../core/decor";
-import { carryFurniture } from "../core/furniture";
+import { carryFurniture, furnitureById } from "../core/furniture";
 import { hatById } from "../core/hats";
 import { greenhouseHolds } from "../core/greenhouse";
 import {
@@ -2052,11 +2052,26 @@ export class FarmScene extends Phaser.Scene {
         ref = { kind: "bin", ...base, ore };
         scene = "bin";
         data = ore ? { oreOnly: true } : undefined;
+      } else if (service.kind === "furnace") {
+        if (!this.state.furnace.gifted) return closed("Nothing is here yet.");
+        ref = { kind: "furnace", ...base };
+        scene = "furnace";
+      } else if (service.kind === "cooking") {
+        ref = { kind: "cooking", ...base };
+        scene = "cooking";
       } else if (service.kind === "camp-chest" && this.floor !== undefined) {
         ref = { kind: "camp-chest", ...base, floor: this.floor };
         scene = "chest";
         data = { camp: this.floor };
       }
+    } else if (
+      isHouseMap(this.mapId) &&
+      furnitureById(this.state.furniture.at(this.mapId, at.x, at.y))
+        ?.station === "workbench"
+    ) {
+      ref = { kind: "crafting", ...base };
+      scene = "crafting";
+      data = { bench: { mapId: this.mapId, x: at.x, y: at.y } };
     } else if (this.state.chests.get(this.mapId, at.x, at.y)) {
       ref = { kind: "chest", ...base };
       scene = "chest";
@@ -2096,6 +2111,13 @@ export class FarmScene extends Phaser.Scene {
       net.sendIntent({ kind: "water", x: front.x, y: front.y });
     else if (isLiftTool(held))
       net.sendIntent({ kind: held.tool, x: front.x, y: front.y });
+    else if (held.kind === "item" && this.state.machines.at(front.x, front.y))
+      net.sendIntent({
+        kind: "machine-load",
+        x: front.x,
+        y: front.y,
+        item: held.id,
+      });
     else if (held.kind === "item" && cropOfSeed(held.id))
       net.sendIntent({ kind: "plant", x: front.x, y: front.y, seed: held.id });
     else {
@@ -2229,6 +2251,18 @@ export class FarmScene extends Phaser.Scene {
       const kind = this.map.serviceAt(at.x, at.y)?.kind;
       if (this.guestSharedScreen(at)) return;
       if (kind && guestMayOpen(kind)) return this.open(kind);
+      // A finished batch in a machine is taken by the host for them (an intent, note 108 group 2).
+      const machine =
+        isFarmMap(this.mapId) && this.state.machines.get(at.x, at.y);
+      if (machine && this.net instanceof GuestSession) {
+        if (machine.job && jobDone(this.state, machine))
+          this.net.sendIntent({ kind: "machine-collect", x: at.x, y: at.y });
+        else {
+          this.message = statusText(this.state, at.x, at.y);
+          this.render();
+        }
+        return;
+      }
       // A ripe crop on farm soil is picked by the host for them (an intent).
       if (
         !kind &&
@@ -2274,6 +2308,24 @@ export class FarmScene extends Phaser.Scene {
         return this.render();
       case "open":
         if (intent.cue) audio.sfx(intent.cue);
+        // The furnace is used by one player at a time (note 108 rule 2): the host takes the lock too.
+        if (intent.scene === "furnace") {
+          const scene = intent.scene;
+          const ref: ScreenRef = {
+            kind: "furnace",
+            map: this.mapId,
+            x: front.x,
+            y: front.y,
+          };
+          return openShared(
+            ref,
+            () => this.open(scene, intent.data),
+            (why) => {
+              this.message = why;
+              this.render();
+            },
+          );
+        }
         return this.open(intent.scene, intent.data);
       case "report":
         return this.report(intent.result);

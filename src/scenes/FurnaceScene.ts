@@ -1,10 +1,11 @@
 import Phaser from "phaser";
 import { clockText } from "../core/clock";
-import { collect, minutesLeft, ready, smelt } from "../core/furnace";
+import { minutesLeft, ready } from "../core/furnace";
 import { itemById } from "../core/items";
 import { BARS, coalFor, orePerBatch, QUARTZ } from "../core/ore";
 import { reasonText } from "../core/tools";
 import type { GameState } from "../core/save";
+import { closeWhenDone, dispatch, followGuest } from "./guestlive";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 
@@ -50,6 +51,12 @@ export class FurnaceScene extends Phaser.Scene {
     kb?.on("keydown-DOWN", () => this.menu.move(1));
     kb?.on("keydown-ENTER", () => this.menu.press(0));
     this.menu.setFocus(true);
+    followGuest(
+      this,
+      () => this.refresh(),
+      (text) => this.say(text),
+    );
+    closeWhenDone(this);
     this.refresh();
   }
 
@@ -78,11 +85,14 @@ export class FurnaceScene extends Phaser.Scene {
           {
             text: "Take",
             run: () => {
-              const r = collect(g);
+              const bar = g.furnace.job?.bar;
+              const why = dispatch(g, { kind: "furnace-take" });
+              // A guest's request is on its way: the screen redraws when the host answers.
+              if (why === "sent") return;
               this.say(
-                r.ok
-                  ? `You take a ${itemById(r.bar)?.name.toLowerCase()}.`
-                  : reasonText(r.reason),
+                why
+                  ? reasonText(why)
+                  : `You take a ${itemById(bar ?? "")?.name.toLowerCase()}.`,
               );
             },
           },
@@ -97,7 +107,8 @@ export class FurnaceScene extends Phaser.Scene {
           {
             text: "Smelt",
             run: () => {
-              const why = smelt(g, bar.id);
+              const why = dispatch(g, { kind: "smelt", bar: bar.id });
+              if (why === "sent") return;
               this.say(
                 why
                   ? reasonText(why)

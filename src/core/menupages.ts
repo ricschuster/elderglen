@@ -282,7 +282,7 @@ export function specialItems(g: GameState): SpecialItem[] {
 
 /** Tab keys the menu hides until they have something to show (note 49). */
 /** Menu tabs that change the player's or the world's state, hidden for a guest. */
-export const GUEST_HIDDEN_TABS = ["pack", "crafting", "animals", "special"];
+export const GUEST_HIDDEN_TABS = ["pack", "animals", "special"];
 
 /** Screens a guest may open over the farm: read-only views only (note 53). */
 export const GUEST_SCREENS = [
@@ -301,6 +301,10 @@ export const GUEST_SCREENS = [
   // Night Market stalls and chests (note 108 group 1): the host takes the lock and judges each action.
   "market",
   "chest",
+  // Crafting, the stove and the furnace send craft, cook, smelt and take intents (note 108 group 2); the workbench and the furnace are opened with an `open` action.
+  "crafting",
+  "cooking",
+  "furnace",
   // The bed prompt sends a `sleep` intent and changes nothing locally.
   "bed",
 ];

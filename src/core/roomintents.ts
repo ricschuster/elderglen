@@ -3,7 +3,8 @@
 // tool tiers, wallet and energy. Free of Phaser and the DOM.
 import * as actions from "./actions";
 import { farmMapOf, farmTypeById } from "./farmtypes";
-import { resolveUse } from "./interact";
+import { resolveAction, resolveUse } from "./interact";
+import { jobDone } from "./machines";
 import { cropOfSeed, itemById } from "./items";
 import { MIXED_SEED } from "./weeds";
 import type { Intent } from "./protocol";
@@ -30,6 +31,17 @@ const isCount = (v: unknown): v is number =>
  * so the farm has one copy of each tool's behaviour. Its intent is the outcome; the sounds and
  * messages are the sender's scene's to make.
  */
+function farmContext(g: GameState) {
+  return {
+    mapId: farmTypeById(g.farmType).map,
+    map: farmMapOf(g),
+    facing: "down" as const,
+    rockAt: () => false,
+    litBombAt: () => false,
+    personAt: () => false,
+  };
+}
+
 function useAs(
   g: GameState,
   by: PlayerId,
@@ -37,21 +49,7 @@ function useAs(
   x: number,
   y: number,
 ): string | undefined {
-  const map = farmMapOf(g);
-  const r = resolveUse(
-    g,
-    by,
-    {
-      mapId: farmTypeById(g.farmType).map,
-      map,
-      facing: "down",
-      rockAt: () => false,
-      litBombAt: () => false,
-      personAt: () => false,
-    },
-    held,
-    { x, y },
-  );
+  const r = resolveUse(g, by, farmContext(g), held, { x, y });
   return r.kind === "tool" || r.kind === "report"
     ? outcome(r.result)
     : "cannot do that here";
@@ -103,6 +101,37 @@ export function applyFarmIntent(
         return "bad plant";
       if (!cropOfSeed(seed) && seed !== MIXED_SEED) return "bad plant";
       return useAs(g, by, { kind: "item", id: seed, count: 1 }, x, y);
+    }
+    case "machine-load": {
+      // A held good put in the machine on a farm tile: the host's own Use rule, as the sender.
+      const { x, y, item } = intent;
+      if (!isTile(x) || !isTile(y) || typeof item !== "string")
+        return "bad machine-load";
+      if (!g.machines.at(x, y)) return "no machine here";
+      return useAs(g, by, { kind: "item", id: item, count: 1 }, x, y);
+    }
+    case "machine-collect": {
+      // A finished batch taken out: whoever collects gets the goods (note 108 rule 4). Only a
+      // finished one, so a press never lifts a working machine.
+      const { x, y } = intent;
+      if (!isTile(x) || !isTile(y)) return "bad machine-collect";
+      const m = g.machines.get(x, y);
+      if (!m) return "no machine here";
+      if (!m.job) return "machine empty";
+      if (!jobDone(g, m)) return "machine busy";
+      const r = resolveAction(
+        g,
+        by,
+        {
+          ...farmContext(g),
+          ladderAt: () => false,
+        },
+        { kind: "empty" },
+        { x, y },
+      );
+      return r.kind === "report" || r.kind === "act"
+        ? outcome(r.result)
+        : "cannot do that here";
     }
     case "buy": {
       const { id, n, stock } = intent;

@@ -222,12 +222,16 @@ describe("guest read-only menus", () => {
   it("hides tabs that change state and allows only read-only and intent screens", () => {
     const g = newGame();
     const hidden = hiddenTabs(g, true);
-    for (const t of ["pack", "crafting", "animals", "special"])
-      expect(hidden).toContain(t);
+    for (const t of ["pack", "animals", "special"]) expect(hidden).toContain(t);
+    // Crafting sends craft intents (note 108 group 2), so its tab is open to a guest.
+    expect(hidden).not.toContain("crafting");
     expect(hiddenTabs(g)).not.toContain("pack");
     expect(guestMayOpen("menu")).toBe(true);
     expect(guestMayOpen("shop")).toBe(true);
     expect(guestMayOpen("bin")).toBe(true);
+    for (const k of ["crafting", "cooking", "furnace"])
+      expect(guestMayOpen(k)).toBe(true);
+    expect(guestMayOpen("pond")).toBe(false);
   });
 });
 

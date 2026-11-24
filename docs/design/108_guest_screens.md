@@ -83,7 +83,7 @@ One group at a time, each with its own tests; each screen is removed from the gu
 
 1. **Trade (built 2026-11-24, #1014):** the dispatcher and `open` action with the lock, shops (buy, sell,
    shared stock), the shipping bin, chests (and the camp chest). See "Group 1 as built" below.
-2. **Making:** crafting, cooking (farmhouse kitchen and fridge), furnace and the other machines.
+2. **Making (built 2026-11-24, #1014):** crafting, cooking (farmhouse kitchen), furnace and the other machines. See "Group 2 as built" below. The fridge is not in the game yet, so it is not built.
 3. **Animals and ponds:** animal buy and sell at the farmstead, petting, feeding, collecting, pond menus.
 4. **Hall:** bundles (rule 3), orders and the request board.
 5. **The rest:** carpenter (rules 7 to 9, with the host setting on the players list), tailor, smith, gallery,
@@ -137,6 +137,39 @@ counter sells and one `shopBuy`), the gate in `GameRoomWorld.apply` (`src/core/r
   backpack upgrade row stays host only ("Only the host can do that for now."). The chest colour bar on a guest's
   screen does not repaint its highlight until the screen is reopened. Mine floors for guests (note 53, design
   item 2) are still open, so the camp chest action exists but a guest cannot yet reach a floor.
+
+## Group 2 as built (build, 2026-11-24)
+
+Code: the new intents are in `src/core/screenintents.ts` (`craft`, `cook`, `smelt`, `furnace-take`, and
+`screenNeed`, which says which screen an intent needs) and `src/core/roomintents.ts` (`machine-load`,
+`machine-collect`); screen kinds `crafting`, `cooking` and `furnace` in `src/core/screens.ts`; the machine reach
+check in `GameRoomWorld` (`machineGate`). The three scenes use `dispatch`, `followGuest` and `closeWhenDone`.
+Tests: the "making" block of `tests/screens.test.ts` and the group 2 test in `tests/screens-socket.test.ts`.
+
+- **Screens.** `crafting` opens from a workbench (a furniture piece on a house tile), `cooking` from the stove,
+  `furnace` from the furnace. `cook`, `smelt` and `furnace-take` need their screen open (same gate as group 1:
+  open, in reach, the screen you opened). A `craft` with a `bench` needs the workbench open and then draws on the
+  chests beside it (the chests are read from the opened tile, not from the intent). A `craft` with no `bench` is
+  the pause menu's crafting, from the sender's pack alone, and needs no screen. The Craft tab is no longer
+  hidden from a guest's menu.
+- **Who gets what.** Every action runs as the sender (`asPlayer`): ingredients leave the sender's pack, dishes
+  and bars go to the sender's pack, recipes known are the sender's. The furnace is one shared machine, so anyone
+  may load it and whoever takes the bar gets it (rule 4).
+- **Locks.** Only the furnace locks (rule 2, "a machine's menu"): "Someone is using the furnace." The host takes
+  the same lock when it opens the furnace. The stove and the workbench do not lock: they hold nothing between
+  uses. A workbench draws on the chests beside it without asking whether another player has one of them open.
+- **Machines on the farm (kegs, jars, bee houses, bins and the rest).** They have no menu, so no screen and no
+  lock. A guest's Use with a held good on a machine sends `machine-load {x, y, item}`, which runs the host's
+  `resolveUse` as the sender. A guest's Action sends `machine-collect {x, y}`, which runs `resolveAction` as the
+  sender, and only for a finished batch (a working machine answers "machine busy", it is never lifted by this
+  action). Both must come from within 2 tiles of the machine (the same reach as screens). Whoever collects gets
+  the goods and any experience.
+- **Fridge (build, 2026-11-24).** Rule 10 and the build order name the kitchen's fridge, but the game has no
+  fridge yet (no item, furniture or save field), so cooking draws on the sender's pack only, as the host's does.
+  The fridge, its lock and cooking from it come with whichever note adds a fridge. A guest's own cabin kitchen
+  also waits for cabins to have one (design item 3).
+- **Casks and the cave dehydrator** (cellar and cave maps) are not reached: guests are on the farm map for
+  world intents (design item 2). They are the same kind of change when that opens.
 
 ## Open (later items, not this note)
 

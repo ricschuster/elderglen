@@ -158,3 +158,104 @@ describe("guest screens, group 1, over real sockets", () => {
     expect(g.chests.get(FARM, 5, 5)!.items.slot(0)).toBeFalsy();
   });
 });
+
+describe("guest screens, group 2 (making), over real sockets", () => {
+  it("a guest crafts, cooks and smelts; another loads a machine and the first collects", async () => {
+    const g = newGame("standard", "separate");
+    g.houseTier = 1;
+    g.furnace.gifted = true;
+    const hosted: { host?: NodeHost } = {};
+    const world = new GameRoomWorld(g, {
+      random: () => 0.5,
+      where: (id) => hosted.host?.room.position(id),
+    });
+    const host = await NodeHost.start({ world, tickHz: 50 });
+    hosted.host = host;
+    hosts.push(host);
+    const url = `ws://127.0.0.1:${host.port}`;
+    const ann = await GuestClient.connect(url, { name: "Ann" });
+    const bo = await GuestClient.connect(url, { name: "Bo" });
+    guests.push(ann, bo);
+    const copy = deserialize(ann.farm)!;
+    copy.players.localId = ann.id;
+    ann.onMessage = (m) => applyServerMsg(copy, m);
+    for (const w of [g, copy]) {
+      const inv = w.players.get(ann.id).inventory;
+      inv.add("wood", 50);
+      inv.add("egg", 1);
+      inv.add("copper-ore", 5);
+      inv.add("coal", 1);
+    }
+    g.players.get(bo.id).inventory.add("parsnip", 5);
+
+    // Crafting with no bench: the pack alone, no screen.
+    expect(await ask(ann, { kind: "craft", recipe: "chest" })).toBeUndefined();
+    expect(g.players.get(ann.id).inventory.count("chest")).toBe(1);
+    await until(() => copy.players.get(ann.id).inventory.count("chest") === 1);
+
+    // Cooking at the stove, opened first.
+    let stove: { x: number; y: number } | undefined;
+    for (let t = maps.maxTier("house"); t >= 0 && !stove; t--)
+      stove = maps
+        .getWith("house", new Set(), t)
+        .services.find((s) => s.kind === "cooking");
+    expect(await ask(ann, { kind: "cook", dish: "fried-egg" })).toBe(
+      "open the screen first",
+    );
+    await stand(ann, "house", stove!.x, stove!.y + 1);
+    expect(
+      await ask(ann, {
+        kind: "open",
+        screen: { kind: "cooking", map: "house", x: stove!.x, y: stove!.y },
+      }),
+    ).toBeUndefined();
+    expect(await ask(ann, { kind: "cook", dish: "fried-egg" })).toBeUndefined();
+    expect(g.players.get(ann.id).inventory.count("fried-egg")).toBe(1);
+    await until(
+      () => copy.players.get(ann.id).inventory.count("fried-egg") === 1,
+    );
+    await ask(ann, { kind: "close" });
+
+    // The furnace: Ann loads it, Bo is told it is in use, then takes the bar.
+    const f = service(FARM, "furnace");
+    const furnace = { kind: "furnace", map: FARM, x: f.x, y: f.y };
+    await stand(ann, FARM, f.x, f.y + 1);
+    await stand(bo, FARM, f.x + 1, f.y + 1);
+    expect(await ask(ann, { kind: "open", screen: furnace })).toBeUndefined();
+    expect(await ask(bo, { kind: "open", screen: furnace })).toBe(
+      "Someone is using the furnace.",
+    );
+    expect(
+      await ask(ann, { kind: "smelt", bar: "copper-bar" }),
+    ).toBeUndefined();
+    await until(() => copy.furnace.job?.bar === "copper-bar");
+    await ask(ann, { kind: "close" });
+    g.furnace.job!.doneAt = 0;
+    expect(await ask(bo, { kind: "open", screen: furnace })).toBeUndefined();
+    expect(await ask(bo, { kind: "furnace-take" })).toBeUndefined();
+    expect(g.players.get(bo.id).inventory.count("copper-bar")).toBe(1);
+    expect(g.players.get(ann.id).inventory.count("copper-bar")).toBe(0);
+    await ask(bo, { kind: "close" });
+
+    // A machine on the farm: Bo loads it, Ann collects the goods.
+    g.machines.add({ id: "preserves-jar", x: 6, y: 6 });
+    copy.machines.add({ id: "preserves-jar", x: 6, y: 6 });
+    await stand(ann, FARM, 6, 7);
+    await stand(bo, FARM, 7, 7);
+    expect(
+      await ask(bo, { kind: "machine-load", x: 6, y: 6, item: "parsnip" }),
+    ).toBeUndefined();
+    const made = g.machines.get(6, 6)!.job!.output;
+    expect(await ask(ann, { kind: "machine-collect", x: 6, y: 6 })).toBe(
+      "machine busy",
+    );
+    g.machines.get(6, 6)!.job!.doneAt = 0;
+    copy.machines.get(6, 6)!.job = { ...g.machines.get(6, 6)!.job! };
+    expect(
+      await ask(ann, { kind: "machine-collect", x: 6, y: 6 }),
+    ).toBeUndefined();
+    expect(g.players.get(ann.id).inventory.count(made)).toBe(1);
+    expect(g.players.get(bo.id).inventory.count(made)).toBe(0);
+    await until(() => copy.players.get(ann.id).inventory.count(made) === 1);
+  });
+});

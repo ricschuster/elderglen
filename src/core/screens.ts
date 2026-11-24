@@ -3,6 +3,7 @@
 // Free of Phaser and the DOM.
 import { maps } from "../content/maps";
 import { resolveMapId, farmMapOf } from "./farmtypes";
+import { furnitureById } from "./furniture";
 import { isCampFloor, mineMapId } from "./mines";
 import type { PlayerId } from "./players";
 import type { GameState } from "./save";
@@ -11,7 +12,7 @@ import { marketHolds, stallOf } from "./nightmarket";
 
 /** A screen a player opened: the kind of screen and the service tile it opened from. */
 export interface ScreenRef {
-  /** "shop", "market", "bin", "chest" or "camp-chest". */
+  /** "shop", "market", "bin", "chest", "camp-chest", "crafting" (a workbench), "cooking" or "furnace". */
   kind: string;
   map: string;
   x: number;
@@ -25,7 +26,11 @@ export interface ScreenRef {
 }
 
 /** Screens only one player may use at a time (note 108 rule 2). */
-export const LOCKED_KINDS: readonly string[] = ["chest", "camp-chest"];
+export const LOCKED_KINDS: readonly string[] = [
+  "chest",
+  "camp-chest",
+  "furnace",
+];
 
 /** The service kinds a screen kind may open from, on a registered map. */
 const SERVICES: Record<string, string[]> = {
@@ -40,12 +45,18 @@ const SERVICES: Record<string, string[]> = {
   ],
   market: ["market-stall"],
   bin: ["bin", "ore-bin"],
+  cooking: ["cooking"],
+  furnace: ["furnace"],
 };
 
 /** How near, in tiles, a player must be to a service tile to open or use it (the host's Use reach, with a step of slack for lag). */
 export const REACH_TILES = 2;
 
 export const LOCKED_LINE = "Someone is using this chest.";
+
+/** What a refused open says for a locked screen of this kind. */
+export const lockedLine = (kind: string): string =>
+  kind === "furnace" ? "Someone is using the furnace." : LOCKED_LINE;
 
 export interface Standing {
   x: number;
@@ -89,8 +100,17 @@ export function refProblem(g: GameState, ref: ScreenRef): string | undefined {
         ref.map === mineMapId(ref.floor)
         ? undefined
         : "no camp chest there";
+    case "crafting": {
+      // A workbench: the furniture piece on a house tile (the pause menu's crafting has no screen to open).
+      const piece = g.furniture.at(ref.map, ref.x, ref.y);
+      return furnitureById(piece)?.station === "workbench"
+        ? undefined
+        : "no workbench there";
+    }
     case "shop":
     case "market":
+    case "cooking":
+    case "furnace":
     case "bin": {
       let svc: { kind: string; id: string } | undefined;
       try {
@@ -196,7 +216,7 @@ export class Screens {
     if (LOCKED_KINDS.includes(ref.kind)) {
       const key = lockKey(g, ref);
       const held = this.locks.get(key);
-      if (held !== undefined && held !== by) return LOCKED_LINE;
+      if (held !== undefined && held !== by) return lockedLine(ref.kind);
       this.close(by);
       this.locks.set(key, by);
     } else this.close(by);

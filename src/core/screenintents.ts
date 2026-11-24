@@ -7,6 +7,9 @@ import { campChestMove } from "./camp";
 import { CHEST_COLOURS } from "./chestdefs";
 import { colourChest, type PlacedChest } from "./chests";
 import { fillStacks, quickMove, transfer } from "./chestmenu";
+import { cook } from "./cooking";
+import { craft } from "./crafting";
+import { collect as collectBar, smelt } from "./furnace";
 import { counterName } from "./festivals";
 import { buyAtStall, marketProblem, marketStock, stallOf } from "./nightmarket";
 import { sortPack } from "./packmenu";
@@ -34,7 +37,21 @@ export const SCREEN_INTENTS: Record<string, string[]> = {
   "chest-sort": ["chest"],
   "chest-colour": ["chest"],
   "camp-take": ["camp-chest"],
+  cook: ["cooking"],
+  smelt: ["furnace"],
+  "furnace-take": ["furnace"],
 };
+
+/**
+ * The screens an intent needs open, or undefined when it needs none. A `craft` names a `bench` when it
+ * is made at a workbench (it then also draws on the chests beside it); without one it is the pause
+ * menu's crafting, from the pack alone, which has no screen.
+ */
+export function screenNeed(intent: Intent): string[] | undefined {
+  if (intent.kind === "craft")
+    return intent.bench === undefined ? undefined : ["crafting"];
+  return SCREEN_INTENTS[intent.kind];
+}
 
 /** The chest an intent names, from its `chest` field (the same tile the screen was opened on). */
 export function chestOf(g: GameState, intent: Intent): PlacedChest | undefined {
@@ -51,6 +68,10 @@ export function targetsScreen(intent: Intent, open: ScreenRef): boolean {
     }
     case "camp-chest":
       return intent.floor === open.floor;
+    case "crafting": {
+      const r = parseRef({ ...(intent.bench as object), kind: "crafting" });
+      return !!r && r.map === open.map && r.x === open.x && r.y === open.y;
+    }
     case "market":
       return intent.stall === open.stock;
     case "shop":
@@ -84,6 +105,33 @@ export function applyScreenIntent(
           : `You cannot buy the ${counterName(entry)}.`;
       });
     }
+    case "craft": {
+      const id = intent.recipe;
+      if (typeof id !== "string") return "bad craft";
+      // At a workbench the chests beside it are drawn on, as for the host's own bench.
+      const b =
+        intent.bench === undefined
+          ? undefined
+          : parseRef({ ...(intent.bench as object), kind: "crafting" });
+      if (intent.bench !== undefined && !b) return "bad craft";
+      const chests = b ? g.chests.near(b.map, b.x, b.y) : [];
+      return asPlayer(g, by, () => craft(g, id, chests));
+    }
+    case "cook": {
+      const id = intent.dish;
+      if (typeof id !== "string") return "bad cook";
+      return asPlayer(g, by, () => cook(g, id));
+    }
+    case "smelt": {
+      const bar = intent.bar;
+      if (typeof bar !== "string") return "bad smelt";
+      return asPlayer(g, by, () => smelt(g, bar));
+    }
+    case "furnace-take":
+      return asPlayer(g, by, () => {
+        const r = collectBar(g);
+        return r.ok ? undefined : r.reason;
+      });
     case "camp-take": {
       const floor = intent.floor;
       if (!isIndex(floor)) return "bad camp-take";

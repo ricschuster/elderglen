@@ -103,3 +103,14 @@ Headless run 2026-11-24 (`tests/screens-socket.test.ts`, real sockets; `tests/sc
 - pass: The hermit's one elderfruit bought by one guest is gone for the other (shared stock).
 - pass: Camp chest: one gift, taken once, one holder at a time.
 - owner: The screens by hand with two real players: the wait before a screen shows (about 30 ms on a router), the "Someone is using this chest." line, and the chest redraw when the other player moves things. Nothing here was run in a browser.
+
+## Guest screens, making (note 108, group 2)
+
+Headless run 2026-11-24 (`tests/screens-socket.test.ts`, real sockets; `tests/screens.test.ts`, the "making" tests).
+
+- pass: A guest crafts at a workbench from their own pack and the chests beside it; the host's pack is untouched; a wrong bench, an unopened bench and a walk-away are refused.
+- pass: A guest crafts from the pack alone with no bench, as themselves.
+- pass: A guest cooks at the stove from their own pack and gets the dish; two guests may cook at once; cooking before the kitchen exists is refused.
+- pass: The furnace is used by one player at a time ("Someone is using the furnace."); the lock frees on close and drop; the bar goes to whoever takes it, not to whoever loaded it.
+- pass: A guest loads a machine on the farm and another guest collects the goods; a working machine is never lifted; a machine out of reach, missing, or given the wrong good is refused. The guest copy follows through `applied`.
+- owner: The three screens and the Use and Action presses on a keg or jar by hand with two real players. Nothing here was run in a browser. The fridge is not in the game yet, so nothing was checked for it.

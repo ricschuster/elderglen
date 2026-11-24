@@ -434,3 +434,218 @@ describe("Night Market stalls", () => {
     ).toBe("not the screen you opened");
   });
 });
+
+describe("making: crafting, cooking, the furnace and machines (note 108, group 2)", () => {
+  const stoveRef = (): ScreenRef => {
+    for (let tier = maps.maxTier("house"); tier >= 0; tier--) {
+      const s = maps
+        .getWith("house", new Set(), tier)
+        .services.find((v) => v.kind === "cooking");
+      if (s) return { kind: "cooking", map: "house", x: s.x, y: s.y };
+    }
+    throw new Error("no stove");
+  };
+  const furnaceRef = (): ScreenRef => {
+    const { s } = find(FARM, "furnace");
+    return { kind: "furnace", map: FARM, x: s.x, y: s.y };
+  };
+  const benchRef = (t: ReturnType<typeof mk>): ScreenRef => {
+    t.g.furniture.add("house", 8, 6, "workbench");
+    return { kind: "crafting", map: "house", x: 8, y: 6 };
+  };
+
+  it("crafts at a workbench from the sender's pack and the chests beside it", () => {
+    const t = mk();
+    const ref = benchRef(t);
+    const bench = { map: "house", x: ref.x, y: ref.y };
+    t.g.chests.add("house", ref.x + 1, ref.y, "chest");
+    t.g.chests.get("house", ref.x + 1, ref.y)!.items.add("wood", 40);
+    t.g.players.get(t.ann).inventory.add("wood", 10);
+    // Not opened yet, and the wrong bench.
+    expect(t.send(t.ann, { kind: "craft", recipe: "chest", bench })).toBe(
+      "open the screen first",
+    );
+    t.stand(t.ann, "house", ref.x, ref.y + 1);
+    expect(t.send(t.ann, { kind: "open", screen: ref })).toBeUndefined();
+    expect(
+      t.send(t.ann, {
+        kind: "craft",
+        recipe: "chest",
+        bench: { ...bench, x: bench.x + 3 },
+      }),
+    ).toBe("not the screen you opened");
+    expect(t.send(t.ann, { kind: "craft", recipe: "chest", bench })).toBe(
+      undefined,
+    );
+    expect(t.g.players.get(t.ann).inventory.count("chest")).toBe(1);
+    expect(t.g.players.get(t.ann).inventory.count("wood")).toBe(0);
+    expect(t.g.chests.get("house", ref.x + 1, ref.y)!.items.count("wood")).toBe(
+      0,
+    );
+    // The host's pack is untouched, and a second craft lacks the wood.
+    expect(t.g.inventory.count("chest")).toBe(0);
+    expect(t.send(t.ann, { kind: "craft", recipe: "chest", bench })).toBe(
+      "missing ingredients",
+    );
+    // A bench is not a place to craft from far away.
+    t.stand(t.ann, "house", ref.x + 9, ref.y);
+    expect(t.send(t.ann, { kind: "craft", recipe: "chest", bench })).toBe(
+      "too far away",
+    );
+  });
+
+  it("crafts from the pack alone with no bench and no screen, as the sender", () => {
+    const t = mk();
+    t.g.players.get(t.bo).inventory.add("wood", 50);
+    expect(t.send(t.bo, { kind: "craft", recipe: "chest" })).toBeUndefined();
+    expect(t.g.players.get(t.bo).inventory.count("chest")).toBe(1);
+    expect(t.send(t.bo, { kind: "craft", recipe: "nope" })).toBe(
+      "no such recipe",
+    );
+    expect(t.send(t.bo, { kind: "craft", recipe: 5 as never })).toBe(
+      "bad craft",
+    );
+  });
+
+  it("refuses a workbench that is not one", () => {
+    const t = mk();
+    t.stand(t.ann, "house", 8, 7);
+    expect(
+      t.send(t.ann, {
+        kind: "open",
+        screen: { kind: "crafting", map: "house", x: 8, y: 6 },
+      }),
+    ).toBe("no workbench there");
+  });
+
+  it("cooks at the stove from the sender's pack, and needs the stove open", () => {
+    const t = mk();
+    t.g.houseTier = 1;
+    const ref = stoveRef();
+    t.g.players.get(t.ann).inventory.add("egg", 2);
+    expect(t.send(t.ann, { kind: "cook", dish: "fried-egg" })).toBe(
+      "open the screen first",
+    );
+    t.stand(t.ann, "house", ref.x, ref.y + 1);
+    expect(t.send(t.ann, { kind: "open", screen: ref })).toBeUndefined();
+    expect(t.send(t.ann, { kind: "cook", dish: "fried-egg" })).toBeUndefined();
+    expect(t.g.players.get(t.ann).inventory.count("fried-egg")).toBe(1);
+    expect(t.g.players.get(t.ann).inventory.count("egg")).toBe(1);
+    expect(t.g.inventory.count("fried-egg")).toBe(0);
+    // Both guests may cook at once: the stove has no lock.
+    t.stand(t.bo, "house", ref.x, ref.y + 1);
+    expect(t.send(t.bo, { kind: "open", screen: ref })).toBeUndefined();
+    expect(t.send(t.bo, { kind: "cook", dish: "fried-egg" })).toBe(
+      "missing ingredients",
+    );
+    expect(t.send(t.ann, { kind: "cook", dish: "nope" })).toBe(
+      "no such recipe",
+    );
+  });
+
+  it("refuses cooking before the house has its kitchen", () => {
+    const t = mk();
+    t.g.houseTier = 0;
+    const ref = stoveRef();
+    t.g.players.get(t.ann).inventory.add("egg", 1);
+    t.stand(t.ann, "house", ref.x, ref.y + 1);
+    t.send(t.ann, { kind: "open", screen: ref });
+    expect(t.send(t.ann, { kind: "cook", dish: "fried-egg" })).toBe(
+      "no kitchen",
+    );
+  });
+
+  it("shares the furnace: one player at a time, the bar goes to whoever takes it", () => {
+    const t = mk();
+    t.g.furnace.gifted = true;
+    const ref = furnaceRef();
+    const inv = t.g.players.get(t.ann).inventory;
+    inv.add("copper-ore", 5);
+    inv.add("coal", 1);
+    t.stand(t.ann, FARM, ref.x, ref.y + 1);
+    t.stand(t.bo, FARM, ref.x + 1, ref.y + 1);
+    expect(t.send(t.ann, { kind: "smelt", bar: "copper-bar" })).toBe(
+      "open the screen first",
+    );
+    expect(t.send(t.ann, { kind: "open", screen: ref })).toBeUndefined();
+    expect(t.send(t.bo, { kind: "open", screen: ref })).toBe(
+      "Someone is using the furnace.",
+    );
+    expect(t.send(t.ann, { kind: "smelt", bar: "copper-bar" })).toBeUndefined();
+    expect(t.g.furnace.job?.bar).toBe("copper-bar");
+    expect(inv.count("copper-ore")).toBe(0);
+    expect(t.send(t.ann, { kind: "furnace-take" })).toBe("not done");
+    t.send(t.ann, { kind: "close" });
+    // Bo opens it now, and takes Ann's finished bar: the goods go to the collector.
+    t.g.furnace.job!.doneAt = 0;
+    expect(t.send(t.bo, { kind: "open", screen: ref })).toBeUndefined();
+    expect(t.send(t.bo, { kind: "furnace-take" })).toBeUndefined();
+    expect(t.g.players.get(t.bo).inventory.count("copper-bar")).toBe(1);
+    expect(inv.count("copper-bar")).toBe(0);
+    expect(t.g.furnace.job).toBeUndefined();
+    expect(t.send(t.bo, { kind: "furnace-take" })).toBe("nothing smelting");
+  });
+
+  it("frees the furnace when its holder drops", () => {
+    const t = mk();
+    t.g.furnace.gifted = true;
+    const ref = furnaceRef();
+    t.stand(t.ann, FARM, ref.x, ref.y + 1);
+    t.stand(t.bo, FARM, ref.x + 1, ref.y + 1);
+    expect(t.send(t.ann, { kind: "open", screen: ref })).toBeUndefined();
+    t.room.disconnect(t.ann);
+    expect(t.send(t.bo, { kind: "open", screen: ref })).toBeUndefined();
+  });
+
+  it("anyone loads a machine and whoever collects gets the goods", () => {
+    const t = mk();
+    const at = { x: 6, y: 6 };
+    t.g.machines.add({ id: "preserves-jar", ...at });
+    t.stand(t.ann, FARM, 6, 7);
+    t.stand(t.bo, FARM, 7, 7);
+    t.g.players.get(t.ann).inventory.add("parsnip", 5);
+    expect(
+      t.send(t.ann, { kind: "machine-load", ...at, item: "parsnip" }),
+    ).toBeUndefined();
+    expect(t.g.machines.get(6, 6)!.job).toBeDefined();
+    expect(t.g.players.get(t.ann).inventory.count("parsnip")).toBeLessThan(5);
+    // Busy: neither a second load nor a collect before it is done.
+    expect(t.send(t.bo, { kind: "machine-load", ...at, item: "parsnip" })).toBe(
+      "machine busy",
+    );
+    expect(t.send(t.bo, { kind: "machine-collect", ...at })).toBe(
+      "machine busy",
+    );
+    expect(t.g.machines.get(6, 6)).toBeDefined();
+    const made = t.g.machines.get(6, 6)!.job!.output;
+    t.g.machines.get(6, 6)!.job!.doneAt = 0;
+    expect(t.send(t.bo, { kind: "machine-collect", ...at })).toBeUndefined();
+    expect(t.g.players.get(t.bo).inventory.count(made)).toBe(1);
+    expect(t.g.players.get(t.ann).inventory.count(made)).toBe(0);
+    expect(t.g.inventory.count(made)).toBe(0);
+    expect(t.send(t.bo, { kind: "machine-collect", ...at })).toBe(
+      "machine empty",
+    );
+  });
+
+  it("refuses machine actions from afar, with no machine, or for a good it will not take", () => {
+    const t = mk();
+    const at = { x: 6, y: 6 };
+    t.stand(t.ann, FARM, 6, 7);
+    t.g.players.get(t.ann).inventory.add("parsnip", 5);
+    expect(
+      t.send(t.ann, { kind: "machine-load", ...at, item: "parsnip" }),
+    ).toBe("no machine here");
+    t.g.machines.add({ id: "preserves-jar", ...at });
+    expect(t.send(t.ann, { kind: "machine-load", ...at, item: "wood" })).toBe(
+      "machine will not take that",
+    );
+    t.stand(t.ann, FARM, 20, 20);
+    expect(
+      t.send(t.ann, { kind: "machine-load", ...at, item: "parsnip" }),
+    ).toBe("too far away");
+    expect(t.send(t.ann, { kind: "machine-collect", ...at })).toBe(
+      "too far away",
+    );
+  });
+});

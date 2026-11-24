@@ -26,11 +26,8 @@ import { PASS_OUT_MONEY_CAP, PASS_OUT_MONEY_SHARE } from "./day";
 import { LOCAL_PLAYER, type PlayerId } from "./players";
 import type { Intent } from "./protocol";
 import { applyFarmIntent } from "./roomintents";
-import {
-  applyScreenIntent,
-  SCREEN_INTENTS,
-  targetsScreen,
-} from "./screenintents";
+import { applyScreenIntent, screenNeed, targetsScreen } from "./screenintents";
+import { farmTypeById } from "./farmtypes";
 import { inReach, parseRef, Screens, type Standing } from "./screens";
 import { offerIds, isShopStock } from "./shopoffers";
 import type { BedStatus, NightNews, RoomWorld } from "./room";
@@ -229,9 +226,13 @@ export class GameRoomWorld implements RoomWorld {
         return this.buyCabin({ x, y });
       }
       default: {
-        const need = SCREEN_INTENTS[intent.kind];
+        const need = screenNeed(intent);
         if (need && this.o.where && by !== LOCAL_PLAYER) {
           const why = this.screenGate(by, intent, need);
+          if (why !== undefined) return why;
+        }
+        if (this.o.where && by !== LOCAL_PLAYER) {
+          const why = this.machineGate(by, intent);
           if (why !== undefined) return why;
         }
         const m = applyMarriageIntent(this.g, by, intent);
@@ -271,6 +272,22 @@ export class GameRoomWorld implements RoomWorld {
     if (intent.kind === "ship" && (intent.ore === true) !== (open.ore === true))
       return "not this bin";
     return undefined;
+  }
+
+  /** A machine on a farm tile is loaded or emptied only from within reach of it (note 108, group 2). */
+  private machineGate(by: PlayerId, intent: Intent): string | undefined {
+    if (intent.kind !== "machine-load" && intent.kind !== "machine-collect")
+      return undefined;
+    const { x, y } = intent;
+    if (typeof x !== "number" || typeof y !== "number") return undefined;
+    const at = this.o.where?.(by);
+    const ref = {
+      kind: "machine",
+      map: farmTypeById(this.g.farmType).map,
+      x,
+      y,
+    };
+    return at && inReach(this.g, at, ref) ? undefined : "too far away";
   }
 
   step(dtMs: number): void {
