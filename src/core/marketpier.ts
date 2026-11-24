@@ -1,8 +1,8 @@
 import data from "../content/market-pier.json";
+import { dateOf } from "./calendar";
 import { FESTIVALS, festivalToday } from "./festivals";
 import { RARITY_WEIGHT, type Bite, type FishDef } from "./fishing";
 import type { GameState } from "./save";
-import { hasFlag, setFlag } from "./worldflags";
 
 /**
  * The Winter Night Market pier (note 14, attractions 5 and 6, and note 21): a
@@ -58,12 +58,19 @@ export function isPierTile(x: number, y: number): boolean {
   return x === data.pier.x && y >= lo! && y <= hi!;
 }
 
-// ---- day-keyed flags
+// ---- day-keyed keys (per player: each player's own permit, float, luck and drink, note 111 rule 9)
+
+const hasFlag = (g: Pick<GameState, "festivalsJoined">, k: string): boolean =>
+  g.festivalsJoined.includes(k);
+const setFlag = (g: Pick<GameState, "festivalsJoined">, k: string): void => {
+  if (!hasFlag(g, k)) g.festivalsJoined.push(k);
+};
 
 const permitKey = (day: number) => `market-permit:${day}`;
 const floatKey = (day: number) => `market-float:${day}`;
 const luckKey = (day: number) => `market-luck:${day}`;
 const drinkKey = (day: number) => `market-drink:${day}`;
+const pearlKey = (day: number) => `market-pearl:${dateOf(day).year}`;
 
 export const hasPermit = (g: GameState): boolean =>
   hasFlag(g, permitKey(g.day.clock.day));
@@ -203,7 +210,10 @@ export function rollPearl(
   at: { x: number; y: number },
   random: () => number,
 ): boolean {
-  if (random() >= data.pearlChance) return false;
+  // One pearl for each player (note 111 rule 9), whatever the roll.
+  const key = pearlKey(g.day.clock.day);
+  if (hasFlag(g, key) || random() >= data.pearlChance) return false;
+  setFlag(g, key);
   if (!g.inventory.add(PEARL.id)) g.ground.drop(at.x, at.y, PEARL.id, 1);
   return true;
 }

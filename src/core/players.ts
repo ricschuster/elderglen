@@ -40,6 +40,10 @@ export interface PlayerRecord {
   equipment: Equipment;
   /** Letters sent to this player, delivered to the mailbox by their home (note 110 rule 3, note 53: mail is per player). */
   mail: Mailbox;
+  /** Festival keys this player has: went, claimed, drew, once a year (note 111 rule 9: rewards are per player). */
+  festivalsJoined: string[];
+  /** Harvest Showing tokens of this player for a year (note 111 rule 6: each collects their own prize). */
+  showTokens: { year: number; count: number };
 }
 
 export function newPlayer(
@@ -58,6 +62,8 @@ export function newPlayer(
     combat: new Combat(),
     equipment: new Equipment(),
     mail: new Mailbox(),
+    festivalsJoined: [],
+    showTokens: { year: 0, count: 0 },
   };
 }
 
@@ -163,6 +169,8 @@ export function localView(players: Players): {
   combat: Combat;
   equipment: Equipment;
   mail: Mailbox;
+  festivalsJoined: string[];
+  showTokens: { year: number; count: number };
 } {
   return {
     get money() {
@@ -213,6 +221,18 @@ export function localView(players: Players): {
     set mail(v: Mailbox) {
       players.local.mail = v;
     },
+    get festivalsJoined() {
+      return players.local.festivalsJoined;
+    },
+    set festivalsJoined(v: string[]) {
+      players.local.festivalsJoined = v;
+    },
+    get showTokens() {
+      return players.local.showTokens;
+    },
+    set showTokens(v: { year: number; count: number }) {
+      players.local.showTokens = v;
+    },
   };
 }
 
@@ -235,6 +255,9 @@ export interface PlayerSave {
   equipment?: unknown;
   /** A guest's letters (the host's are the save's flat `mail`). Optional: older saves lack it. */
   mail?: MailEntry[];
+  /** A guest's festival keys and show tokens (the host's are the save's flat fields). Optional: older saves lack them. */
+  festivals?: string[];
+  tokens?: { year: number; count: number };
 }
 
 export function savePlayer(p: PlayerRecord): PlayerSave {
@@ -252,7 +275,13 @@ export function savePlayer(p: PlayerRecord): PlayerSave {
     ...(p.skills.levelledToday ? { levelled: true } : {}),
     combat: p.combat.save(),
     equipment: p.equipment.save(),
-    ...(p.id !== LOCAL_PLAYER ? { mail: p.mail.save() } : {}),
+    ...(p.id !== LOCAL_PLAYER
+      ? {
+          mail: p.mail.save(),
+          festivals: [...p.festivalsJoined],
+          tokens: { ...p.showTokens },
+        }
+      : {}),
   };
 }
 
@@ -301,7 +330,16 @@ function fillPlayer(p: PlayerRecord, raw: Record<string, unknown>): void {
   p.skills.levelledToday = raw.levelled === true;
   p.combat.load(raw.combat, p.skills);
   p.equipment.load(raw.equipment);
-  if (raw.id !== LOCAL_PLAYER) p.mail.load(raw.mail);
+  if (raw.id !== LOCAL_PLAYER) {
+    p.mail.load(raw.mail);
+    if (Array.isArray(raw.festivals))
+      p.festivalsJoined = raw.festivals.filter(
+        (k): k is string => typeof k === "string",
+      );
+    const t = raw.tokens;
+    if (isObject(t) && isCount(t.year) && isCount(t.count))
+      p.showTokens = { year: t.year, count: t.count };
+  }
 }
 
 /**
