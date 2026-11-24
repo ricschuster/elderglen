@@ -52,6 +52,8 @@ export type ServerMsg =
       players: PlayerInfo[];
       /** Top-left tile of this player's cabin, when the world has one (they spawn beside it). */
       home?: { x: number; y: number };
+      /** The tile to start on: the guest's own home, by their bed (note 110). A rejoin starts there too. */
+      start?: { map: string; x: number; y: number };
     }
   /** The whole farm. Sent on join and on a day change to a guest who was away, never per tick. */
   | { t: "farm"; day: number; farm: string }
@@ -90,7 +92,15 @@ export type ServerMsg =
       item?: string;
     }
   /** The player fainted in a fight: they wake at home, and this is what it cost (note 109 rule 6). */
-  | { t: "faint"; gold: number; lost: { id: string; count: number }[] }
+  | {
+      t: "faint";
+      gold: number;
+      lost: { id: string; count: number }[];
+      /** The tile they wake on, in their own home (note 110 rule 1). */
+      at?: { map: string; x: number; y: number };
+    }
+  /** The new morning: the tile the player wakes on, in the home they slept in or their own after a pass-out (note 110). */
+  | { t: "wake"; map: string; x: number; y: number }
   /** The join was turned down; the host then closes the socket. */
   | { t: "refused"; reason: "full" | "in-use" | "no-free-cabin" };
 

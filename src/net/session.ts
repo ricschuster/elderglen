@@ -122,6 +122,8 @@ export class GuestSession implements NetSession {
   onBite?: (b: Extract<ServerMsg, { t: "bite" }>) => void;
   /** Called when this guest fainted in a fight: they wake at home, this is the cost (note 109 rule 6). */
   onFaint?: (f: Extract<ServerMsg, { t: "faint" }>) => void;
+  /** Called at the new morning with the tile this guest wakes on (note 110 rule 1). */
+  onWake?: (w: Extract<ServerMsg, { t: "wake" }>) => void;
   /** The latest bed state from the host, and a callback when it changes. */
   beds: BedStatus = { asleep: [], waiting: [] };
   onBeds?: () => void;
@@ -147,6 +149,7 @@ export class GuestSession implements NetSession {
     else if (m.t === "night") this.onNight?.(m);
     else if (m.t === "bite") this.onBite?.(m);
     else if (m.t === "faint") this.onFaint?.(m);
+    else if (m.t === "wake") this.onWake?.(m);
     else if (m.t === "beds") {
       this.beds = { asleep: m.asleep, waiting: m.waiting };
       this.onBeds?.();
@@ -209,8 +212,13 @@ export class GuestSession implements NetSession {
     this.onChange?.();
   }
 
-  /** The tile to start on: beside the guest's cabin, else the map's entry (undefined). */
-  spawnTile(): { x: number; y: number } | undefined {
+  /**
+   * Where to start: in the guest's own home by their bed (note 110), else beside their cabin on the farm,
+   * else the map's entry (undefined).
+   */
+  spawnTile(): { map?: string; x: number; y: number } | undefined {
+    const at = this.client.start;
+    if (at) return { ...at };
     return this.client.home ? cabinSpawnTile(this.client.home) : undefined;
   }
 

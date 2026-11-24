@@ -6,11 +6,12 @@ import { maps } from "../content/maps";
 import { resolveMapId, farmMapOf, isFarmMap } from "./farmtypes";
 import { furnitureById } from "./furniture";
 import { isCampFloor, mineMapId } from "./mines";
-import type { PlayerId } from "./players";
+import { LOCAL_PLAYER, type PlayerId } from "./players";
 import type { GameState } from "./save";
 import { pondAt } from "./pond";
 import { POND_FOOTPRINT } from "./pondsite";
 import { isShopStock } from "./shopoffers";
+import { mailboxOwnerAt } from "./cabinhome";
 import { marketHolds, stallOf } from "./nightmarket";
 
 /** A screen a player opened: the kind of screen and the service tile it opened from. */
@@ -19,7 +20,7 @@ export interface ScreenRef {
    * "shop", "market", "bin", "chest", "camp-chest", "crafting" (a workbench), "cooking", "furnace", "keeper",
    * "coop-bench", "barn-bench", "pond" (x and y are then the pond's top left tile), "hall" (a hall room's scroll,
    * with `room`), "orders" or "requests", "carpenter", "tailor" (`stock` is "sew" or "dye"), "smith", "smithy",
-   * "gallery" or "shrine".
+   * "gallery", "shrine" or "mailbox" (a cabin's own, note 110).
    */
   kind: string;
   map: string;
@@ -131,6 +132,12 @@ export function refProblem(g: GameState, ref: ScreenRef): string | undefined {
         ref.map === mineMapId(ref.floor)
         ? undefined
         : "no camp chest there";
+    case "mailbox":
+      // A cabin's mailbox beside its door, or the farm's own (the host's): note 110 rule 3.
+      return mailboxOwnerAt(g, ref.map, ref.x, ref.y) !== undefined ||
+        farmMailbox(g, ref)
+        ? undefined
+        : "no mailbox there";
     case "pond":
       // The ref names the pond's top left tile on the farm map.
       return isFarmMap(ref.map) && pondAt(g, ref.x, ref.y)
@@ -218,6 +225,20 @@ function serviceOn(
   return undefined;
 }
 
+/** The farm's own mailbox service (the host's). */
+function farmMailbox(g: GameState, ref: ScreenRef): boolean {
+  try {
+    return serviceOn(g, ref.map, ref.x, ref.y)?.kind === "mailbox";
+  } catch {
+    return false;
+  }
+}
+
+/** Whose mailbox a ref names: a cabin's occupant, else the host (the farm's mailbox). */
+export function mailboxOwner(g: GameState, ref: ScreenRef): PlayerId {
+  return mailboxOwnerAt(g, ref.map, ref.x, ref.y) ?? LOCAL_PLAYER;
+}
+
 const mineFloorMap = (map: string): boolean => /^mine-\d+$/.test(map);
 
 /** True when the player stands within reach of the ref's tile, on its map. */
@@ -275,6 +296,8 @@ export class Screens {
   ): string | undefined {
     const bad = refProblem(g, ref);
     if (bad) return bad;
+    if (ref.kind === "mailbox" && mailboxOwner(g, ref) !== by)
+      return "That is not your mailbox.";
     if (at && !inReach(g, at, ref)) return "too far away";
     if (LOCKED_KINDS.includes(ref.kind)) {
       const key = lockKey(g, ref);

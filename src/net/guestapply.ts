@@ -8,6 +8,7 @@ import { applyFarmIntent } from "../core/roomintents";
 import { applyScreenIntent } from "../core/screenintents";
 import type { GameState } from "../core/save";
 import { loadCreature } from "../core/creatures";
+import { applyBedMove } from "../core/homes";
 import { syncPlayer } from "../core/players";
 import { floorOf, groundOfMap, viewOf } from "../core/roommaps";
 
@@ -62,6 +63,8 @@ export function applyServerMsg(
   if (m.t === "player") return syncPlayer(g.players, m.rec);
   if (m.t !== "applied") return false;
   if (!g.players.has(m.by)) return false;
+  if (m.intent.kind === "bed-move")
+    return applyBedMove(g, m.by, m.intent) === undefined;
   const mr = applyMarriageIntent(g, m.by, m.intent);
   if (mr !== null) return mr === undefined;
   const sr = applyScreenIntent(g, m.by, m.intent);

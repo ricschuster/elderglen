@@ -112,13 +112,16 @@ describe("GuestSession", () => {
 });
 
 describe("host and guest session", () => {
-  it("shares positions both ways and spawns the guest at their cabin", async () => {
+  it("shares positions both ways and starts the guest in their own cabin by the bed (note 110)", async () => {
     const { host, guest, state } = await pair();
     expect(host.role).toBe("host");
     expect(guest.localId).toBe("p2");
-    expect(guest.spawnTile()).toEqual(
-      cabinSpawnTile(host.world.cabinOf("p2")!),
+    expect(guest.spawnTile()).toEqual({ map: "house@p2", x: 40, y: 31 });
+    // The cabin itself still stands on the farm, and its door tile is beside the old spawn tile.
+    expect(guest.client.home).toEqual(
+      expect.objectContaining({ x: host.world.cabinOf("p2")!.x }),
     );
+    expect(cabinSpawnTile(host.world.cabinOf("p2")!).y).toBeGreaterThan(0);
     const copy = guest.loadFarm()!;
     expect(copy.day.clock.day).toBe(state.day.clock.day);
     expect(copy.players.localId).toBe("p2");

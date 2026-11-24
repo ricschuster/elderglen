@@ -7,6 +7,15 @@ import {
   type TiledMapJson,
 } from "./map";
 
+/**
+ * The registry map an instance id stands for: `house@p2` is the `house` map held for player p2's home
+ * (note 110, one map and one instance per owner). Any other id is its own map.
+ */
+export function baseMapId(id: string): string {
+  const at = id.indexOf("@");
+  return at < 0 ? id : id.slice(0, at);
+}
+
 /** Where a new game starts: a map id and the name of an entry on it. */
 export const START = { map: "farm", entry: "start" } as const;
 
@@ -52,7 +61,7 @@ export class MapRegistry {
    * the map has gives the last. Throws if there is no such map.
    */
   get(id: string, tier = 0): FarmMap {
-    const tiers = this.maps.get(id);
+    const tiers = this.maps.get(baseMapId(id));
     if (!tiers) throw new Error(`no map "${id}"`);
     return tiers[visibleTier(tier, tiers.length - 1)]!;
   }
@@ -62,7 +71,8 @@ export class MapRegistry {
    * `unless` swap (`cove-open`, `bridge-mended`). Only the conditions the map
    * uses count, so a map with no conditional layers is the plain map.
    */
-  getWith(id: string, holds: ReadonlySet<string>, tier = 0): FarmMap {
+  getWith(rawId: string, holds: ReadonlySet<string>, tier = 0): FarmMap {
+    const id = baseMapId(rawId);
     const json = this.files.get(id);
     if (!json) throw new Error(`no map "${id}"`);
     const used = conditionsOf(json).filter((c) => holds.has(c));
@@ -83,14 +93,14 @@ export class MapRegistry {
     holds: ReadonlySet<string>,
     tier = 0,
   ): ReturnType<typeof marksAndFixtures> {
-    const json = this.files.get(id);
+    const json = this.files.get(baseMapId(id));
     if (!json) throw new Error(`no map "${id}"`);
     return marksAndFixtures(json, tier, holds);
   }
 
   /** The highest tier a map has. Zero for a map that does not grow. */
   maxTier(id: string): number {
-    const tiers = this.maps.get(id);
+    const tiers = this.maps.get(baseMapId(id));
     if (!tiers) throw new Error(`no map "${id}"`);
     return tiers.length - 1;
   }

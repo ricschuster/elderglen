@@ -13,8 +13,20 @@ import {
   type CabinBook,
   type CabinOrigin,
   type CabinSite,
+  type CabinStyle,
   type JoinResult,
 } from "./cabins";
+import { advanceCabinBuilds } from "./cabinhome";
+import {
+  applyBedMove,
+  homeData,
+  ownWakeSpot,
+  spotPixels,
+  wakeSpot,
+} from "./homes";
+import { HOUSE_UPGRADE_NAMES, isHouseMap } from "./house";
+import { isFarmMap, resolveMapId } from "./farmtypes";
+import { asPlayer } from "./asplayer";
 import { weddingBlock } from "./courtship";
 import {
   applyMarriageIntent,
@@ -39,7 +51,13 @@ import {
   type Standing,
 } from "./screens";
 import { offerIds, isShopStock } from "./shopoffers";
-import type { BedStatus, Notice, NightNews, RoomWorld } from "./room";
+import type {
+  BedStatus,
+  Notice,
+  NightNews,
+  Placement,
+  RoomWorld,
+} from "./room";
 import { serialize, START_MONEY, type GameState } from "./save";
 import { sleep, type SleepReport } from "./sleep";
 import { giveStartKit } from "./toolbar";
@@ -75,7 +93,19 @@ function passOutLoss(money: number): number {
 }
 
 export class GameRoomWorld implements RoomWorld {
-  cabins: CabinBook;
+  /** The cabin book lives in the game state, so it is saved and sent with the farm (note 110). */
+  get cabins(): CabinBook {
+    return this.g.cabins!;
+  }
+  set cabins(b: CabinBook) {
+    this.g.cabins = b;
+  }
+  /** The home each player went to bed in tonight, by instance id (note 110 rule 1). */
+  private readonly sleptIn = new Map<PlayerId, string>();
+  private readonly placements: Placement[] = [];
+  private readonly wakeNotices: Notice[] = [];
+  /** Cabin upgrades that landed this morning, by owner, for the report. */
+  lastCabinNews: Record<PlayerId, string> = {};
   /** Player marriages (note 12, two-player steps), kept on the host in the game state. */
   get marriages(): pm.PlayerMarriageBook {
     return this.g.playerMarriage;
@@ -114,7 +144,8 @@ export class GameRoomWorld implements RoomWorld {
     readonly g: GameState,
     opts: RoomWorldOptions = {},
   ) {
-    this.cabins = newCabinBook(opts.origin ?? "multiplayer-start");
+    // A hosted game keeps the book it was saved with; a first hosting starts one.
+    if (!g.cabins) g.cabins = newCabinBook(opts.origin ?? "multiplayer-start");
     this.o = {
       cabinArea: opts.cabinArea ?? { x: 0, y: 0, w: 60, h: 40 },
       blocked: opts.blocked ?? (() => false),
@@ -132,6 +163,8 @@ export class GameRoomWorld implements RoomWorld {
         return p !== "dropped" && p !== "asleep";
       },
       random: this.o.random,
+      home: (id) => ownWakeSpot(g, id),
+      place: (p) => this.placements.push(p),
     });
   }
 
@@ -186,19 +219,35 @@ export class GameRoomWorld implements RoomWorld {
     return c ? { x: c.x, y: c.y } : undefined;
   }
 
+  /** A joining or returning guest starts in their own cabin, by their bed (note 110). */
+  startOf(id: PlayerId): { map: string; x: number; y: number } | undefined {
+    return id === LOCAL_PLAYER ? undefined : ownWakeSpot(this.g, id);
+  }
+
+  takePlacements(): Placement[] {
+    return this.placements.splice(0);
+  }
+
+  /** A dropped guest counts as in bed and their character is put in their own cabin (note 53, note 110). */
   playerDropped(id: PlayerId): void {
     this.screens.release(id);
     this.tracker.drop(id);
+    this.sleptIn.delete(id);
+    const home = ownWakeSpot(this.g, id);
+    if (home) {
+      const s = spotPixels(home);
+      this.placements.push({ id, map: s.map, x: s.px, y: s.py });
+    }
   }
 
   playerRejoined(id: PlayerId): void {
     this.tracker.rejoin(id);
   }
 
-  /** The host buys a cabin (100 gold from the host's wallet), left free for the next guest. */
-  buyCabin(site: CabinSite): string | undefined {
+  /** The host buys a cabin (100 gold from the host's wallet), left free for the next guest. The style is picked here. */
+  buyCabin(site: CabinSite, style?: CabinStyle): string | undefined {
     const host = this.g.players.wallet(LOCAL_PLAYER);
-    const r = buyCabin(this.cabins, host.money, site, this.o.blocked);
+    const r = buyCabin(this.cabins, host.money, site, this.o.blocked, style);
     if (!r.ok) return r.reason;
     this.cabins = r.book;
     host.money = r.gold;
@@ -222,14 +271,23 @@ export class GameRoomWorld implements RoomWorld {
         players.pay(by, -amount);
         return undefined;
       }
-      case "sleep":
+      case "sleep": {
+        // Any bed in any home counts, and the player wakes in the home they slept in (note 110 rule 1).
+        const at = this.o.where?.(by);
+        const here = at && isHouseMap(at.map) ? at.map : undefined;
+        if (here && homeData(this.g, here)) this.sleptIn.set(by, here);
+        else this.sleptIn.delete(by);
         // A wed pair share a bed but each must get in it: the day ends when every player is
         // in bed, as in normal multiplayer (note 12 and 53, decided 2026-11-19).
         this.tracker.setAsleep(by);
         return undefined;
+      }
       case "wake":
+        this.sleptIn.delete(by);
         this.tracker.wake(by);
         return undefined;
+      case "bed-move":
+        return this.moveBed(by, intent);
       case "open": {
         const ref = parseRef(intent.screen);
         if (!ref) return "bad open";
@@ -243,7 +301,7 @@ export class GameRoomWorld implements RoomWorld {
         const x = intent.x;
         const y = intent.y;
         if (typeof x !== "number" || typeof y !== "number") return "bad site";
-        return this.buyCabin({ x, y });
+        return this.buyCabin({ x, y }, intent.style as CabinStyle | undefined);
       }
       default: {
         const need = screenNeed(intent);
@@ -268,6 +326,14 @@ export class GameRoomWorld implements RoomWorld {
         return r === null ? `unknown intent ${intent.kind}` : r;
       }
     }
+  }
+
+  /** Move the sender's bed: only in the home they live in, from where they stand (note 110 rule 1). */
+  private moveBed(by: PlayerId, intent: Intent): string | undefined {
+    const at = this.o.where?.(by);
+    if (at && by !== LOCAL_PLAYER && at.map !== intent.map)
+      return "There is no home here.";
+    return applyBedMove(this.g, by, intent);
   }
 
   /**
@@ -352,7 +418,7 @@ export class GameRoomWorld implements RoomWorld {
   }
 
   takeNotices(): Notice[] {
-    return this.play.takeNotices();
+    return [...this.play.takeNotices(), ...this.wakeNotices.splice(0)];
   }
 
   step(dtMs: number): void {
@@ -386,12 +452,14 @@ export class GameRoomWorld implements RoomWorld {
   guestLines(id: PlayerId): { lines: string[]; lost: number } {
     const lost = this.lastPassOuts[id] ?? 0;
     const out = id in this.lastPassOuts;
+    const built = this.lastCabinNews[id];
     const lines = [
       !out
         ? "You slept well."
         : lost > 0
           ? `You stayed up too late and passed out. Someone helped you home and kept ${lost}g for the trouble.`
           : "You stayed up too late and passed out. Someone helped you home. It cost you nothing.",
+      ...(built ? [built] : []),
       ...pm.marriageReportLines(
         this.marriages,
         id,
@@ -402,6 +470,45 @@ export class GameRoomWorld implements RoomWorld {
       ),
     ];
     return { lines, lost };
+  }
+
+  /**
+   * The new morning for the guests: cabin builds run for occupants who were not passed out away from the farm,
+   * each guest's mailbox gets what is due, and each wakes where they slept, or in their own home after a
+   * pass-out (note 110 rule 1, rule 3, note 108 rule 8).
+   */
+  private guestsWake(d: DayEndDecision): void {
+    const g = this.g;
+    const ft = g.farmType;
+    const counts = (owner: PlayerId): boolean => {
+      if (!d.passOut.includes(owner)) return true;
+      const at = this.o.where?.(owner);
+      return !at || isHouseMap(at.map) || isFarmMap(resolveMapId(at.map, ft));
+    };
+    this.lastCabinNews = {};
+    for (const c of advanceCabinBuilds(g, counts))
+      if (c.ownerKey !== null)
+        this.lastCabinNews[c.ownerKey] =
+          `The carpenter finished your cabin's ${HOUSE_UPGRADE_NAMES[c.tier - 1]!.toLowerCase()}.`;
+    const day = this.day();
+    for (const id of g.players.ids) {
+      if (id === LOCAL_PLAYER) continue;
+      asPlayer(g, id, () => g.mail.deliver(day));
+      if (this.tracker.presence(id) === "dropped") continue;
+      const slept = this.sleptIn.get(id);
+      const own = ownWakeSpot(g, id);
+      const spot =
+        (!d.passOut.includes(id) && slept ? wakeSpot(g, slept) : undefined) ??
+        own;
+      if (!spot) continue;
+      const s = spotPixels(spot);
+      this.placements.push({ id, map: s.map, x: s.px, y: s.py });
+      this.wakeNotices.push({
+        to: [id],
+        msg: { t: "wake", map: spot.map, x: spot.x, y: spot.y },
+      });
+    }
+    this.sleptIn.clear();
   }
 
   /** Day end: guests who pass out pay the single player cost, then the world sleeps. */
@@ -440,6 +547,7 @@ export class GameRoomWorld implements RoomWorld {
     );
     this.lastReport = report;
     this.hostNight = report;
+    this.guestsWake(d);
     // The new morning: filed divorces take effect, then due weddings play (no wait for the partner).
     this.lastDivorces = pm.divorceMorning(this.marriages);
     this.lastWeddings = pm.weddingMorning(

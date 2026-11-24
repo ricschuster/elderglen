@@ -6,6 +6,7 @@ import { Skills } from "./skills";
 import { SKILLS } from "./skills";
 import { MAX_TIER, UPGRADABLE, type ToolTiers } from "./upgrades";
 import { isObject } from "./guards";
+import { Mailbox, type MailEntry } from "./mail";
 
 /** A player's id within one world. Stable for the life of the save (note 53). */
 export type PlayerId = string;
@@ -37,6 +38,8 @@ export interface PlayerRecord {
   combat: Combat;
   /** The rings this player wears (note 109 rule 7: rings stay per player). */
   equipment: Equipment;
+  /** Letters sent to this player, delivered to the mailbox by their home (note 110 rule 3, note 53: mail is per player). */
+  mail: Mailbox;
 }
 
 export function newPlayer(
@@ -54,6 +57,7 @@ export function newPlayer(
     energy,
     combat: new Combat(),
     equipment: new Equipment(),
+    mail: new Mailbox(),
   };
 }
 
@@ -158,6 +162,7 @@ export function localView(players: Players): {
   canWater: number;
   combat: Combat;
   equipment: Equipment;
+  mail: Mailbox;
 } {
   return {
     get money() {
@@ -202,6 +207,12 @@ export function localView(players: Players): {
     set equipment(v: Equipment) {
       players.local.equipment = v;
     },
+    get mail() {
+      return players.local.mail;
+    },
+    set mail(v: Mailbox) {
+      players.local.mail = v;
+    },
   };
 }
 
@@ -222,6 +233,8 @@ export interface PlayerSave {
   /** Combat record and rings (optional: older saves lack them). */
   combat?: CombatSave;
   equipment?: unknown;
+  /** A guest's letters (the host's are the save's flat `mail`). Optional: older saves lack it. */
+  mail?: MailEntry[];
 }
 
 export function savePlayer(p: PlayerRecord): PlayerSave {
@@ -239,6 +252,7 @@ export function savePlayer(p: PlayerRecord): PlayerSave {
     ...(p.skills.levelledToday ? { levelled: true } : {}),
     combat: p.combat.save(),
     equipment: p.equipment.save(),
+    ...(p.id !== LOCAL_PLAYER ? { mail: p.mail.save() } : {}),
   };
 }
 
@@ -287,6 +301,7 @@ function fillPlayer(p: PlayerRecord, raw: Record<string, unknown>): void {
   p.skills.levelledToday = raw.levelled === true;
   p.combat.load(raw.combat, p.skills);
   p.equipment.load(raw.equipment);
+  if (raw.id !== LOCAL_PLAYER) p.mail.load(raw.mail);
 }
 
 /**

@@ -70,15 +70,22 @@ import {
   type Upgradable,
 } from "./upgrades";
 import { BUILD_RULES, type BuildRule } from "./buildrule";
+import {
+  applyMailIntent,
+  cabinFor,
+  cabinReno,
+  orderCabinUpgrade,
+  setCabinStyle,
+} from "./cabinhome";
 
 const isTile = (v: unknown): v is number =>
   typeof v === "number" && Number.isInteger(v) && v >= 0 && v < 4096;
 const isId = (v: unknown): v is string =>
   typeof v === "string" && v.length > 0 && v.length < 80;
 
-/** What a guest is told when they ask to upgrade a home that is not theirs (note 108 rule 8). */
+/** What a guest is told when they ask to upgrade a home and have no cabin of their own (note 108 rule 8, note 110). */
 export const HOME_LINE =
-  "A home is upgraded only by the one who lives in it. A cabin cannot be upgraded yet.";
+  "A home is upgraded only by the one who lives in it, and you have no cabin.";
 
 /** The intent kinds that need a screen open, and which screens serve them. */
 export const REST_SCREEN_INTENTS: Record<string, string[]> = {
@@ -93,6 +100,8 @@ export const REST_SCREEN_INTENTS: Record<string, string[]> = {
   "carp-pond": ["carpenter"],
   "carp-move": ["carpenter"],
   "carp-remove": ["carpenter"],
+  "carp-style": ["carpenter"],
+  "mail-read": ["mailbox"],
   "tailor-sew": ["tailor"],
   "tailor-boots": ["tailor"],
   "tailor-dye": ["tailor"],
@@ -160,6 +169,10 @@ export function applyRestIntent(
     case "carp-move":
     case "carp-remove":
       return applyCarpenter(g, by, intent);
+    case "carp-style":
+      return setCabinStyle(g, by, intent.style);
+    case "mail-read":
+      return applyMailIntent(g, by, intent);
     case "tailor-sew":
     case "tailor-boots":
     case "tailor-dye":
@@ -198,7 +211,11 @@ function applyCarpenter(
   return asPlayer(g, by, () => {
     switch (intent.kind) {
       case "carp-house": {
-        if (by !== LOCAL_PLAYER) return HOME_LINE;
+        if (by !== LOCAL_PLAYER) {
+          // A cabin's tiers are the occupant's own order, from their wallet and pack (note 110 step 5).
+          const c = cabinFor(g, by);
+          return c ? orderCabinUpgrade(g, c, by) : HOME_LINE;
+        }
         const why = houseOrderProblem(g);
         if (why !== undefined) return why;
         return houseOrderUpgrade(g)
@@ -206,8 +223,13 @@ function applyCarpenter(
           : "The carpenter cannot do that.";
       }
       case "carp-reno": {
-        if (by !== LOCAL_PLAYER) return HOME_LINE;
         if (!isId(intent.id)) return "bad carp-reno";
+        if (by !== LOCAL_PLAYER) {
+          const c = cabinFor(g, by);
+          return c
+            ? cabinReno(g, c, by, intent.id, intent.refund === true)
+            : HOME_LINE;
+        }
         if (intent.refund === true) {
           const why = renoRefundProblem(g, intent.id);
           if (why !== undefined) return why;
@@ -219,20 +241,20 @@ function applyCarpenter(
       }
       case "carp-furniture": {
         if (!isId(intent.id)) return "bad carp-furniture";
-        if (g.houseBuild) return "The carpenter is busy with your house.";
+        if (homeBuild(g, by)) return "The carpenter is busy with your house.";
         const why = furnitureProblem(g, intent.id);
         if (why !== undefined) return why;
         return buyFurniture(g, intent.id) ? undefined : "You cannot buy that.";
       }
       case "carp-decor": {
         if (!isId(intent.id)) return "bad carp-decor";
-        if (g.houseBuild) return "The carpenter is busy with your house.";
+        if (homeBuild(g, by)) return "The carpenter is busy with your house.";
         const why = decorProblem(g, intent.id);
         if (why !== undefined) return why;
         return buyDecor(g, intent.id) ? undefined : "You cannot buy that.";
       }
       case "carp-catalogue": {
-        if (g.houseBuild) return "The carpenter is busy with your house.";
+        if (homeBuild(g, by)) return "The carpenter is busy with your house.";
         const why = catalogueProblem(g);
         if (why !== undefined) return why;
         return buyCatalogue(g) ? undefined : "You cannot buy that.";
@@ -310,6 +332,11 @@ function applyCarpenter(
       }
     }
   });
+}
+
+/** The upgrade under way in the home a player lives in: the farmhouse's for the host, their cabin's for a guest. */
+function homeBuild(g: GameState, by: PlayerId): unknown {
+  return by === LOCAL_PLAYER ? g.houseBuild : cabinFor(g, by)?.build;
 }
 
 const isTailorKind = (v: unknown): v is TailorKind =>

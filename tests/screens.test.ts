@@ -1345,9 +1345,14 @@ describe("the rest: carpenter, tailor, smiths, gallery, shrine (note 108, group 
     );
   });
 
-  it("upgrades a home only for its occupant: a guest is refused, the host may", () => {
+  it("upgrades a home only for its occupant: a guest orders their own cabin, never the host's house", () => {
     const t = mk("separate");
     openAt(t, t.ann, carpenter());
+    // Ann's cabin, from her own wallet and pack (note 110 step 5).
+    expect(t.send(t.ann, { kind: "carp-house" })).toMatch(/You need/);
+    expect(t.g.houseBuild).toBeUndefined();
+    // A guest with no cabin is told so.
+    t.world.cabins = { ...t.world.cabins, cabins: [] };
     expect(t.send(t.ann, { kind: "carp-house" })).toBe(HOME_LINE);
     expect(t.send(t.ann, { kind: "carp-reno", id: "x" })).toBe(HOME_LINE);
     const host = t.g.players.get(LOCAL_PLAYER);

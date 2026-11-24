@@ -45,7 +45,8 @@ import { type Facing, move, type Vec } from "./movement";
 import { tileBlockedNoHorse } from "./blocking";
 import { LOCAL_PLAYER, savePlayer, type PlayerId } from "./players";
 import type { Intent } from "./protocol";
-import type { Notice } from "./room";
+import type { Notice, Placement } from "./room";
+import { spotPixels } from "./homes";
 import {
   TOO_FAR,
   floorOf,
@@ -75,6 +76,9 @@ export interface PlayEnv {
   /** False for a player who is dropped or in bed: they are not targets and pick nothing up. */
   active: (id: PlayerId) => boolean;
   random: () => number;
+  /** The tile a player wakes on in their own home, and the move to put their position there (note 110). */
+  home?: (id: PlayerId) => { map: string; x: number; y: number } | undefined;
+  place?: (p: Placement) => void;
 }
 
 interface Pending {
@@ -395,10 +399,20 @@ export class RoomPlay {
     rec.combat.effects.clear();
     rec.combat.defeatPending = false;
     this.burn.delete(id);
+    const at = this.env.home?.(id);
     this.notices.push({
       to: [id],
-      msg: { t: "faint", gold, lost: lost.map((l) => ({ ...l })) },
+      msg: {
+        t: "faint",
+        gold,
+        lost: lost.map((l) => ({ ...l })),
+        ...(at ? { at } : {}),
+      },
     });
+    if (at) {
+      const s = spotPixels(at);
+      this.env.place?.({ id, map: s.map, x: s.px, y: s.py });
+    }
     this.sendPlayer(id);
   }
 

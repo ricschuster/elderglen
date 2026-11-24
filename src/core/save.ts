@@ -68,7 +68,8 @@ import {
   type WalletMode,
 } from "./players";
 import { Furniture, migrateCatalogue, type FurnitureSave } from "./furniture";
-import { Mailbox, type MailEntry } from "./mail";
+import type { Mailbox, MailEntry } from "./mail";
+import { loadCabinBook, type CabinBook } from "./cabins";
 import { Friendship } from "./friendship";
 import { Marriage, exSpouses, type MarriageSave } from "./marriage";
 import { ELDERFRUIT_TOTAL, maxEnergyFor } from "./elderfruit";
@@ -232,7 +233,7 @@ export interface WorldState {
   summit: SummitCall;
   /** The ancestors' shrine: candles, the year 3 scene and the statue (note 83). */
   shrine: Shrine;
-  /** Letters sent, delivered and taken (note 51). */
+  /** Letters sent, delivered and taken (note 51). The local player's own (`players.local.mail`). */
   mail: Mailbox;
   /** Board requests taken and finished (note 50). */
   quests: Quests;
@@ -269,6 +270,11 @@ export interface GameState extends WorldState {
   players: Players;
   /** Player to player bonds (note 12, two-player steps), kept on the host and carried in the snapshot. */
   playerMarriage: PlayerMarriageBook;
+  /**
+   * Who owns which cabin, where, in which style and tier (note 110). Set when the world is hosted; absent in single
+   * player and in saves made before it (optional field within version 4).
+   */
+  cabins?: CabinBook;
   money: number;
   inventory: Inventory;
   skills: Skills;
@@ -348,7 +354,7 @@ export function newGame(
     achievements: new Achievements(),
     summit: new SummitCall(),
     shrine: new Shrine(),
-    mail: new Mailbox(),
+    mail: players.get(LOCAL_PLAYER).mail,
     friendship: new Friendship(),
     marriage: new Marriage(),
     playerMarriage: newPlayerMarriageBook(),
@@ -538,6 +544,8 @@ interface SaveData {
   marriage?: MarriageSave;
   /** Absent before two-player marriage (added within version 4): no bonds. */
   playerMarriage?: PlayerMarriageSave;
+  /** Absent before the guest's cabin (note 110, added within version 4): no cabins. */
+  cabins?: CabinBook;
   /** Absent in saves made before heart events: none seen. */
   heartEvents?: HeartEventsSave;
   /** Absent in saves made before the request board. */
@@ -803,6 +811,7 @@ export function serialize(
     ...(g.playerMarriage.bonds.length || g.playerMarriage.unseenWedding.length
       ? { playerMarriage: savePlayerMarriage(g.playerMarriage) }
       : {}),
+    ...(g.cabins && g.cabins.cabins.length ? { cabins: g.cabins } : {}),
     heartEvents: g.heartEvents.save(),
     quests: g.quests.save(),
     fishing: g.fishing.save(),
@@ -1340,6 +1349,7 @@ export function deserialize(text: string): GameState | undefined {
     g.players.has(id),
   );
   // The married cap must be known before friendship loads, or points above the bouquet cap are clamped.
+  g.cabins = loadCabinBook(raw.cabins);
   g.friendship.setSpouse(g.marriage.married ? g.marriage.spouse : null);
   g.friendship.setExes(exSpouses(g));
   g.friendship.load(raw.friendship);

@@ -101,7 +101,7 @@ import { MIXED_SEED } from "../core/weeds";
 import { reasonText } from "../core/tools";
 
 import { mapFiles, maps } from "../content/maps";
-import { START, safeSpawn } from "../core/maps";
+import { START, baseMapId, safeSpawn } from "../core/maps";
 import { HAT_KEY } from "./art-people";
 import { DEPTH, sortDepth } from "./depth";
 import {
@@ -509,7 +509,8 @@ export class FarmScene extends Phaser.Scene {
         x: data.x,
         y: data.y,
       },
-      (id) => mapFiles[id] !== undefined || mineFloorOf(id) !== undefined,
+      (id) =>
+        mapFiles[baseMapId(id)] !== undefined || mineFloorOf(id) !== undefined,
       resolveMapId(START.map, this.state.farmType),
     );
     // An old save may name a map that is gone: start at the farm instead.

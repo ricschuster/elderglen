@@ -32,6 +32,8 @@ export class GuestClient {
   farm = "";
   /** Top-left tile of this guest's cabin, from the host's hello. */
   home: { x: number; y: number } | undefined;
+  /** The tile to start on, by the guest's own bed (note 110), from the host's hello. */
+  start: { map: string; x: number; y: number } | undefined;
   players = new Map<PlayerId, PlayerInfo>();
   /** Latest position row of every connected player. */
   positions: Record<PlayerId, PosRow> = {};
@@ -101,6 +103,7 @@ export class GuestClient {
         this.id = m.id;
         this.day = m.day;
         this.home = m.home;
+        this.start = m.start;
         this.players = new Map(m.players.map((p) => [p.id, p]));
         break;
       case "farm":
