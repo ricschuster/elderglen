@@ -37,8 +37,16 @@ export interface RoomWorld {
   bedStatus?(): BedStatus;
   /** The night just ended, once, for the guests' reports. Optional. */
   takeNight?(): NightNews | undefined;
+  /** Messages the world wants sent since the last tick (map state, creatures, a player's record). Optional. */
+  takeNotices?(): Notice[];
   /** Top-left tile of a player's cabin, sent in `hello` so the guest spawns there. Optional. */
   homeOf?(id: PlayerId): { x: number; y: number } | undefined;
+}
+
+/** A message from the world to some players: `to` absent means every connected guest. */
+export interface Notice {
+  to?: PlayerId[];
+  msg: ServerMsg;
 }
 
 /** The bed state of a session, by player name. */
@@ -242,6 +250,10 @@ export class Room {
       for (const m of this.members.values())
         if (m.connected && m.id !== LOCAL_PLAYER)
           m.out.push({ t: "night", day: night.day, ...night.forGuest(m.id) });
+    for (const n of this.world.takeNotices?.() ?? [])
+      for (const m of this.members.values())
+        if (m.connected && (n.to ? n.to.includes(m.id) : m.id !== LOCAL_PLAYER))
+          m.out.push(n.msg);
     const day = this.world.day();
     if (day !== this.lastDay) {
       this.lastDay = day;

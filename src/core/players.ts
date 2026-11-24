@@ -255,6 +255,12 @@ export function loadPlayerInto(players: Players, raw: unknown): boolean {
     return false;
   if (raw.id === LOCAL_PLAYER || players.has(raw.id)) return false;
   const p = players.add(raw.id, isCount(raw.money) ? raw.money : 0);
+  fillPlayer(p, raw);
+  return true;
+}
+
+/** Read a saved record's fields into a player (`raw` already known to be an object with this player's id). */
+function fillPlayer(p: PlayerRecord, raw: Record<string, unknown>): void {
   if (Array.isArray(raw.inventory)) {
     const ok = raw.inventory.every(
       (s) =>
@@ -281,5 +287,19 @@ export function loadPlayerInto(players: Players, raw: unknown): boolean {
   p.skills.levelledToday = raw.levelled === true;
   p.combat.load(raw.combat, p.skills);
   p.equipment.load(raw.equipment);
+}
+
+/**
+ * Bring a guest's record in a copy of the world up to what the host holds for them (a hit, a kill or a catch the
+ * host resolved): the fields are replaced in place, so the scene's references stay good. The host's own record
+ * is never touched. Returns false for an unknown player or an unreadable record.
+ */
+export function syncPlayer(players: Players, raw: unknown): boolean {
+  if (!isObject(raw) || typeof raw.id !== "string" || raw.id === LOCAL_PLAYER)
+    return false;
+  if (!players.has(raw.id)) return false;
+  const p = players.get(raw.id);
+  if (isCount(raw.money)) p.money = raw.money;
+  fillPlayer(p, raw);
   return true;
 }

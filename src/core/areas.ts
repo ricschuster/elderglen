@@ -3,6 +3,7 @@ import { returnDebris, Twigs } from "./debris";
 import { ForageField, type Spot } from "./forage";
 import { ArtifactSpots, ARTIFACT_AREAS, rollAreaSpots } from "./artifacts";
 import { Farm } from "./farm";
+import { isFarmMap } from "./farmtypes";
 import type { Creature } from "./creatures";
 import { creatureSpawnsOf, placeMapCreatures } from "./mapcreatures";
 import { FruitTrees } from "./fruittrees";
@@ -132,6 +133,41 @@ export function enterArea(g: GameState, mapId: string): void {
   if (!w) return;
   g.away = { mapId, home: current(g) };
   apply(g, w);
+}
+
+/**
+ * Run `fn` with `w` in the state's fields, as the world of the area `away` (undefined for a world that is
+ * not an area's: the farm's, or a mine floor's), then put back what was there. This is how the host
+ * works on a map a guest stands on while its own player is somewhere else (note 109, "One world for
+ * everyone"). The fields swapped are objects changed in place, so the changes stay in `w`.
+ */
+export function withWorld<T>(
+  g: GameState,
+  w: World,
+  away: string | undefined,
+  fn: () => T,
+): T {
+  const keptAway = g.away;
+  const kept = current(g);
+  const home = homeWorld(g);
+  apply(g, w);
+  g.away = away === undefined ? undefined : { mapId: away, home };
+  try {
+    return fn();
+  } finally {
+    apply(g, kept);
+    g.away = keptAway;
+  }
+}
+
+/** The world of an outdoor map the state holds: the farm's, or an area's. Undefined for any other map. */
+export function worldOfMap(
+  g: GameState,
+  mapId: string,
+): { w: World; away: string | undefined } | undefined {
+  if (isFarmMap(mapId)) return { w: homeWorld(g), away: undefined };
+  const w = g.areas[mapId];
+  return w ? { w, away: mapId } : undefined;
 }
 
 /** Put the farm's world back in the state's fields. Safe to call when already home. */

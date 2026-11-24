@@ -118,6 +118,10 @@ export class GuestSession implements NetSession {
   onRejected?: (reason: string) => void;
   /** Called with the night's report lines when the host ends the day (note 53, shared day end). */
   onNight?: (n: { day: number; lines: string[]; lost: number }) => void;
+  /** Called with what bit after this guest's cast (the catch screen runs it, note 109). */
+  onBite?: (b: Extract<ServerMsg, { t: "bite" }>) => void;
+  /** Called when this guest fainted in a fight: they wake at home, this is the cost (note 109 rule 6). */
+  onFaint?: (f: Extract<ServerMsg, { t: "faint" }>) => void;
   /** The latest bed state from the host, and a callback when it changes. */
   beds: BedStatus = { asleep: [], waiting: [] };
   onBeds?: () => void;
@@ -141,6 +145,8 @@ export class GuestSession implements NetSession {
       cb?.(m.reason);
     } else if (m.t === "rejected") this.onRejected?.(m.reason);
     else if (m.t === "night") this.onNight?.(m);
+    else if (m.t === "bite") this.onBite?.(m);
+    else if (m.t === "faint") this.onFaint?.(m);
     else if (m.t === "beds") {
       this.beds = { asleep: m.asleep, waiting: m.waiting };
       this.onBeds?.();

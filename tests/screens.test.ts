@@ -416,7 +416,7 @@ describe("the camp chest", () => {
     floor: 10,
   };
 
-  it("gives its one gift to the first guest who takes it, then is empty for the rest", () => {
+  it("gives each player its one gift once, for themselves (note 109 rule 4)", () => {
     const t = mk();
     t.stand(t.ann, "mine-10", 3, 3);
     t.stand(t.bo, "mine-10", 3, 3);
@@ -428,6 +428,8 @@ describe("the camp chest", () => {
     );
     t.send(t.ann, { kind: "close" });
     expect(t.send(t.bo, { kind: "open", screen: ref })).toBeUndefined();
+    // Bo has not opened it yet: the chest is full for them, then empty.
+    expect(t.send(t.bo, { kind: "camp-take", floor: 10 })).toBeUndefined();
     expect(t.send(t.bo, { kind: "camp-take", floor: 10 })).toBe(
       "camp chest empty",
     );

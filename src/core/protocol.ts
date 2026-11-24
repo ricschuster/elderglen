@@ -1,6 +1,10 @@
 // Message shapes between a guest and the host Room (note 53, step 2). Plain JSON, no socket,
 // no Phaser, no DOM. src/net/protocol.ts re-exports these for the socket code.
-import type { PlayerId } from "./players";
+import type { CreatureSave } from "./creatures";
+import type { Pile } from "./ground";
+import type { Rock } from "./rocks";
+import type { PlayerId, PlayerSave } from "./players";
+import type { Spot } from "./forage";
 
 /** A change to the shared world, as the guest asks for it. The world adapter gives `kind` meaning. */
 export interface Intent {
@@ -64,6 +68,29 @@ export type ServerMsg =
   | { t: "beds"; asleep: string[]; waiting: string[] }
   | { t: "joined"; player: PlayerInfo }
   | { t: "left"; id: PlayerId }
+  /**
+   * The ground piles of a map, and for a mine floor its rocks and ladder, sent when they change and when a
+   * guest arrives on the map (note 109 rules 2 and 5). The guest's copy takes them as they are.
+   */
+  | {
+      t: "mapstate";
+      map: string;
+      ground: Pile[];
+      floor?: { rocks: Rock[]; ladder?: Spot };
+    }
+  /** The creatures of a mine floor or map, every tick, to the players on it (note 109 rule 7). */
+  | { t: "creatures"; map: string; rows: CreatureSave[] }
+  /** One player's own record after the host changed it (a hit, a kill, a catch, a faint): sent to that player. */
+  | { t: "player"; id: PlayerId; rec: PlayerSave }
+  /** What bit on a cast: the guest's catch screen runs it (note 109, "Fishing"). */
+  | {
+      t: "bite";
+      kind: "none" | "fish" | "lobster" | "trash" | "find";
+      /** The fish or item id. */
+      item?: string;
+    }
+  /** The player fainted in a fight: they wake at home, and this is what it cost (note 109 rule 6). */
+  | { t: "faint"; gold: number; lost: { id: string; count: number }[] }
   /** The join was turned down; the host then closes the socket. */
   | { t: "refused"; reason: "full" | "in-use" | "no-free-cabin" };
 

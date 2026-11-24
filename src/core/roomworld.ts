@@ -25,18 +25,21 @@ import { morningEnergy } from "./energyrules";
 import { PASS_OUT_MONEY_CAP, PASS_OUT_MONEY_SHARE } from "./day";
 import { LOCAL_PLAYER, type PlayerId } from "./players";
 import type { Intent } from "./protocol";
-import { applyFarmIntent } from "./roomintents";
+import { applyFarmIntent, mapOfIntent, MAPPED_KINDS } from "./roomintents";
+import { RoomPlay } from "./roomplay";
+import { reachProblem, TOO_FAR } from "./roommaps";
 import { applyScreenIntent, screenNeed, targetsScreen } from "./screenintents";
 import { farmTypeById } from "./farmtypes";
 import {
   inReach,
   parseRef,
   refProblem,
+  REACH_TILES,
   Screens,
   type Standing,
 } from "./screens";
 import { offerIds, isShopStock } from "./shopoffers";
-import type { BedStatus, NightNews, RoomWorld } from "./room";
+import type { BedStatus, Notice, NightNews, RoomWorld } from "./room";
 import { serialize, START_MONEY, type GameState } from "./save";
 import { sleep, type SleepReport } from "./sleep";
 import { giveStartKit } from "./toolbar";
@@ -104,6 +107,8 @@ export class GameRoomWorld implements RoomWorld {
     Pick<RoomWorldOptions, "where">;
   /** Open screens and their locks (note 108): the host's book, never saved. */
   readonly screens = new Screens();
+  /** Players off the farm: ground piles, map state, creatures, swings and fishing (note 109). Never saved. */
+  readonly play: RoomPlay;
 
   constructor(
     readonly g: GameState,
@@ -119,6 +124,15 @@ export class GameRoomWorld implements RoomWorld {
       where: opts.where,
     };
     this.tracker = new DayEndTracker(g.players.ids, (d) => this.endDay(d));
+    this.play = new RoomPlay({
+      g,
+      where: opts.where,
+      active: (id) => {
+        const p = this.tracker.presence(id);
+        return p !== "dropped" && p !== "asleep";
+      },
+      random: this.o.random,
+    });
   }
 
   day(): number {
@@ -238,9 +252,14 @@ export class GameRoomWorld implements RoomWorld {
           if (why !== undefined) return why;
         }
         if (this.o.where && by !== LOCAL_PLAYER) {
-          const why = this.machineGate(by, intent);
+          const why =
+            this.machineGate(by, intent) ?? this.worldGate(by, intent);
           if (why !== undefined) return why;
         }
+        if (intent.kind === "swing") return this.play.swing(by, intent);
+        if (intent.kind === "cast")
+          return this.play.cast(by, intent, this.o.where?.(by));
+        if (intent.kind === "catch") return this.play.land(by, intent);
         const m = applyMarriageIntent(this.g, by, intent);
         if (m !== null) return m;
         const sc = applyScreenIntent(this.g, by, intent);
@@ -308,7 +327,36 @@ export class GameRoomWorld implements RoomWorld {
     return at && inReach(this.g, at, ref) ? undefined : "too far away";
   }
 
+  /**
+   * A guest's tool or forage intent is taken only if they stand on the map it names and within reach of
+   * the tile (note 109, "Reach and map check"). Machine intents have their own gate above.
+   */
+  private worldGate(by: PlayerId, intent: Intent): string | undefined {
+    if (!MAPPED_KINDS.has(intent.kind) || this.isMachineKind(intent.kind))
+      return undefined;
+    const v = mapOfIntent(this.g, intent);
+    if (typeof v === "string") return v;
+    const { x, y } = intent;
+    if (typeof x !== "number" || typeof y !== "number") return undefined;
+    const at = this.o.where?.(by);
+    if (!at) return TOO_FAR;
+    return reachProblem(this.g, at, v, x, y, REACH_TILES);
+  }
+
+  private isMachineKind(kind: string): boolean {
+    return (
+      kind === "machine-load" ||
+      kind === "machine-collect" ||
+      kind === "pond-use"
+    );
+  }
+
+  takeNotices(): Notice[] {
+    return this.play.takeNotices();
+  }
+
   step(dtMs: number): void {
+    this.play.step(dtMs);
     const limit = this.g.day.clock.minutes >= CLOCK_END;
     this.tracker.check(dtMs, limit);
   }

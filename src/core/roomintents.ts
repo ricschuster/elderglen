@@ -2,7 +2,6 @@
 // same core function single player uses, as the sending player: their inventory, can, skills,
 // tool tiers, wallet and energy. Free of Phaser and the DOM.
 import * as actions from "./actions";
-import { farmMapOf, farmTypeById } from "./farmtypes";
 import { resolveAction, resolveUse } from "./interact";
 import { jobDone } from "./machines";
 import { pondCovering } from "./pond";
@@ -18,6 +17,7 @@ import { buy, sell } from "./shop";
 import { isShopStock, shopBuy } from "./shopoffers";
 import { findTool } from "./toolitems";
 import type { Held } from "./toolbar";
+import { contextOf, onMap, viewOf, type MapView } from "./roommaps";
 
 /** Most items one buy or sell intent may move. */
 const MAX_COUNT = 999;
@@ -28,32 +28,54 @@ const isCount = (v: unknown): v is number =>
   typeof v === "number" && Number.isInteger(v) && v >= 1 && v <= MAX_COUNT;
 
 /**
- * A guest's tool or seed on a farm tile: the host's own Use rule (`resolveUse`), as the sender,
- * so the farm has one copy of each tool's behaviour. Its intent is the outcome; the sounds and
- * messages are the sender's scene's to make.
+ * A guest's tool or seed on a tile: the host's own Use rule (`resolveUse`), as the sender, so the farm has
+ * one copy of each tool's behaviour. Its intent is the outcome; the sounds and messages are the sender's
+ * scene's to make. The map is the one the intent names (note 109), already swapped in by `onMap`.
  */
-function farmContext(g: GameState) {
-  return {
-    mapId: farmTypeById(g.farmType).map,
-    map: farmMapOf(g),
-    facing: "down" as const,
-    rockAt: () => false,
-    litBombAt: () => false,
-    personAt: () => false,
-  };
-}
-
 function useAs(
   g: GameState,
   by: PlayerId,
+  v: MapView,
   held: Held,
   x: number,
   y: number,
 ): string | undefined {
-  const r = resolveUse(g, by, farmContext(g), held, { x, y });
+  const r = resolveUse(g, by, contextOf(g, v), held, { x, y });
   return r.kind === "tool" || r.kind === "report"
     ? outcome(r.result)
     : "cannot do that here";
+}
+
+/** The intents that name a map (`map`, the farm when absent) and are worked on that map's world. */
+export const MAPPED_KINDS = new Set([
+  "till",
+  "water",
+  "harvest",
+  "axe",
+  "pickaxe",
+  "plant",
+  "forage",
+  "machine-load",
+  "machine-collect",
+  "pond-use",
+]);
+
+/** Of those, the ones that only mean something on the farm (its crops, machines and ponds). */
+const FARM_ONLY = new Set([
+  "harvest",
+  "machine-load",
+  "machine-collect",
+  "pond-use",
+]);
+
+/** The map an intent names, as the host sees it, or a reason it cannot be worked. */
+export function mapOfIntent(g: GameState, intent: Intent): MapView | string {
+  const name = intent.map ?? "farm";
+  if (typeof name !== "string" || name.length > 80) return `bad ${intent.kind}`;
+  const v = viewOf(g, name);
+  if (!v || (FARM_ONLY.has(intent.kind) && v.kind !== "farm"))
+    return "Nothing to do here.";
+  return v;
 }
 
 const outcome = (o: actions.Outcome): string | undefined =>
@@ -66,6 +88,19 @@ export function applyFarmIntent(
   intent: Intent,
   random: () => number,
 ): string | undefined | null {
+  if (!MAPPED_KINDS.has(intent.kind)) return applyOn(g, by, intent, random);
+  const v = mapOfIntent(g, intent);
+  if (typeof v === "string") return v;
+  return onMap(g, v, () => applyOn(g, by, intent, random, v));
+}
+
+function applyOn(
+  g: GameState,
+  by: PlayerId,
+  intent: Intent,
+  random: () => number,
+  v?: MapView,
+): string | undefined | null {
   switch (intent.kind) {
     case "till":
     case "water": {
@@ -74,6 +109,7 @@ export function applyFarmIntent(
       return useAs(
         g,
         by,
+        v!,
         { kind: "tool", tool: intent.kind === "till" ? "hoe" : "can" },
         x,
         y,
@@ -94,14 +130,14 @@ export function applyFarmIntent(
         return `no ${tool}`;
       // The farm map's stumps, logs, trees, boulders and rocks, as the host's tool: experience
       // (foraging for the axe, mining for the pickaxe), drops, tier and energy are the sender's.
-      return useAs(g, by, { kind: "tool", tool }, x, y);
+      return useAs(g, by, v!, { kind: "tool", tool }, x, y);
     }
     case "plant": {
       const { x, y, seed } = intent;
       if (!isTile(x) || !isTile(y) || typeof seed !== "string")
         return "bad plant";
       if (!cropOfSeed(seed) && seed !== MIXED_SEED) return "bad plant";
-      return useAs(g, by, { kind: "item", id: seed, count: 1 }, x, y);
+      return useAs(g, by, v!, { kind: "item", id: seed, count: 1 }, x, y);
     }
     case "machine-load": {
       // A held good put in the machine on a farm tile: the host's own Use rule, as the sender.
@@ -109,7 +145,7 @@ export function applyFarmIntent(
       if (!isTile(x) || !isTile(y) || typeof item !== "string")
         return "bad machine-load";
       if (!g.machines.at(x, y)) return "no machine here";
-      return useAs(g, by, { kind: "item", id: item, count: 1 }, x, y);
+      return useAs(g, by, v!, { kind: "item", id: item, count: 1 }, x, y);
     }
     case "machine-collect": {
       // A finished batch taken out: whoever collects gets the goods (note 108 rule 4). Only a
@@ -123,16 +159,29 @@ export function applyFarmIntent(
       const r = resolveAction(
         g,
         by,
-        {
-          ...farmContext(g),
-          ladderAt: () => false,
-        },
+        { ...contextOf(g, v!), ladderAt: () => false },
         { kind: "empty" },
         { x, y },
       );
       return r.kind === "report" || r.kind === "act"
         ? outcome(r.result)
         : "cannot do that here";
+    }
+    case "forage": {
+      // Wild goods lying on a map, picked by whoever gets there first (note 109 rule 1). The Action rule, as the sender.
+      const { x, y } = intent;
+      if (!isTile(x) || !isTile(y)) return "bad forage";
+      if (!g.forage.itemAt(x, y)) return "Nothing to pick here.";
+      const r = resolveAction(
+        g,
+        by,
+        { ...contextOf(g, v!), ladderAt: () => false },
+        { kind: "empty" },
+        { x, y },
+      );
+      return r.kind === "act" || r.kind === "report"
+        ? outcome(r.result)
+        : "Nothing to pick here.";
     }
     case "pond-use": {
       // The Action press on a pond with a held item (the quest item, a fish, or nothing to take a waiting
@@ -144,7 +193,7 @@ export function applyFarmIntent(
       const r = resolveAction(
         g,
         by,
-        { ...farmContext(g), ladderAt: () => false },
+        { ...contextOf(g, v!), ladderAt: () => false },
         item === undefined
           ? { kind: "empty" }
           : { kind: "item", id: item, count: 1 },
