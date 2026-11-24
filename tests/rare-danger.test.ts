@@ -145,7 +145,7 @@ describe("rare creatures", () => {
     const old = newGame();
     old.combat.load({ health: 50, trainerMet: false, kills: {}, counter: [] });
     expect(old.combat.rareFound).toEqual([]);
-    const full = deserialize(serialize(g));
+    const full = deserialize(serialize(g))!;
     expect(full?.combat.rareFound).toEqual(["golden-gloop"]);
   });
 
@@ -208,6 +208,63 @@ describe("dangerous mode", () => {
     expect(m.flipDangerous()).toBe(false);
   });
 
+  it("a flip has no effect today and applies when the day ends", () => {
+    const m = new Mines();
+    m.visit(LEVER_FLOOR, 5);
+    expect(m.flipDangerous()).toBe(true);
+    expect(m.dangerous).toBe(false);
+    expect(m.dangerousTomorrow).toBe(true);
+    // A floor made today, after the flip, is still calm.
+    expect(m.visit(60, 5).dangerous).toBe(false);
+    m.endDay();
+    expect(m.dangerous).toBe(true);
+    expect(m.visit(60, 6).dangerous).toBe(true);
+    expect(m.visit(61, 6).dangerous).toBe(true);
+  });
+
+  it("flipping back before the day ends cancels the flip", () => {
+    const m = new Mines();
+    m.visit(LEVER_FLOOR, 5);
+    m.flipDangerous();
+    m.flipDangerous();
+    m.endDay();
+    expect(m.dangerous).toBe(false);
+    expect(m.save().dangerousTomorrow).toBeUndefined();
+  });
+
+  it("a flip back to calm applies tomorrow too", () => {
+    const m = new Mines();
+    m.visit(LEVER_FLOOR, 5);
+    m.flipDangerous();
+    m.endDay();
+    expect(m.flipDangerous()).toBe(false);
+    expect(m.dangerous).toBe(true);
+    expect(m.visit(40, 6).dangerous).toBe(true);
+    m.endDay();
+    expect(m.dangerous).toBe(false);
+  });
+
+  it("a pending flip survives a save, through the whole game save too", () => {
+    const g = newGame();
+    g.mines.visit(LEVER_FLOOR, 1);
+    g.mines.flipDangerous();
+    const back = deserialize(serialize(g))!;
+    expect(back.mines.dangerous).toBe(false);
+    expect(back.mines.dangerousTomorrow).toBe(true);
+    back.mines.endDay();
+    expect(back.mines.dangerous).toBe(true);
+    // Active mode and a dangerous floor also come back.
+    const h = newGame();
+    h.mines.visit(LEVER_FLOOR, 1);
+    h.mines.flipDangerous();
+    h.mines.endDay();
+    h.mines.visit(50, 2);
+    const again = deserialize(serialize(h))!;
+    expect(again.mines.dangerous).toBe(true);
+    expect(again.mines.dangerousTomorrow).toBe(true);
+    expect(again.mines.today(50, 2)?.dangerous).toBe(true);
+  });
+
   it("floor 120 has the lever, no other floor does", () => {
     expect(floorLayout(120, 7).lever).toBeDefined();
     expect(floorLayout(119, 7).lever).toBeUndefined();
@@ -235,6 +292,7 @@ describe("dangerous mode", () => {
     const m = new Mines();
     m.visit(120, 5);
     m.flipDangerous();
+    m.endDay();
     const hard = m.visit(60, 5);
     expect(hard.dangerous).toBe(true);
     const calm = floorCreatures(60, 5, false);
@@ -251,6 +309,7 @@ describe("dangerous mode", () => {
     expect(back.today(60, 5)?.dangerous).toBe(true);
     expect(back.today(60, 5)?.creatures[0]!.hp).toBe(hard.creatures[0]!.hp);
     m.flipDangerous();
+    m.endDay();
     expect(m.visit(61, 5).dangerous).toBe(false);
   });
 
@@ -258,6 +317,7 @@ describe("dangerous mode", () => {
     const m = new Mines();
     m.visit(120, 1);
     m.flipDangerous();
+    m.endDay();
     let infested = 0;
     let geode = 0;
     for (let f = 10; f < 119; f++)
@@ -311,7 +371,10 @@ describe("dangerous mode", () => {
     const run = (dangerous: boolean) => {
       const g = newGame();
       g.mines.visit(120, g.day.clock.day);
-      if (dangerous) g.mines.flipDangerous();
+      if (dangerous) {
+        g.mines.flipDangerous();
+        g.mines.endDay();
+      }
       const f = g.mines.visit(40, g.day.clock.day);
       f.rocks.add(5, 5, "copper");
       const before = g.ground.count;

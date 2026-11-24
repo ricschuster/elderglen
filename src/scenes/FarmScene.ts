@@ -2462,8 +2462,8 @@ export class FarmScene extends Phaser.Scene {
         on === undefined
           ? "The lever will not move yet."
           : on
-            ? "Dangerous mode is on. Floors you dig from now on are harder, with richer rewards."
-            : "Dangerous mode is off. Floors you dig from now on are as before.";
+            ? "From tomorrow, the mine is dangerous: harder, with richer rewards."
+            : "From tomorrow, the mine is calm.";
       return this.render();
     }
     if (service?.kind === "ore-bin") return this.open("bin", { oreOnly: true });

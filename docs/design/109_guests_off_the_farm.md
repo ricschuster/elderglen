@@ -60,7 +60,7 @@ from the saved Multiplayer page (read 2026-11-24) unless marked "from memory".
 
 After note 108 group 1 (the dispatcher and locks), as one group per pull request step:
 
-1. The lever rule 9 (single player too; small, can go first).
+1. The lever rule 9 (single player too; small, can go first). **Built 2026-11-24:** `Mines.dangerousTomorrow`, applied by `Mines.endDay` from `sleep`; saved as `dangerousTomorrow` only while it differs from today's mode.
 2. Map and reach on the existing intents, and ground pickup for guests.
 3. Off-farm world intents: forage, axe and pickaxe on every map, fishing cast and catch.
 4. Mine floors with several players: shared floors kept loaded, creatures chasing the nearest player, swing

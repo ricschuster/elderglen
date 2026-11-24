@@ -473,6 +473,8 @@ export interface MinesSave {
   floors: Record<number, FloorSave>;
   /** True while dangerous mode is on. Absent in older saves and when off. */
   dangerous?: boolean;
+  /** The mode the lever set for tomorrow, saved only while it differs from `dangerous`. */
+  dangerousTomorrow?: boolean;
   /** Rare creature dry streaks, one per band (note 22). Absent in older saves. */
   rareMisses?: number[];
 }
@@ -487,8 +489,10 @@ export class Mines {
   copperHandedIn = false;
   /** True once Old Greencoat has brought the news at the farm door. */
   greeted = false;
-  /** Dangerous mode, flipped by the lever on floor 120. Floors made while it is on are harder. */
+  /** Dangerous mode today. Floors made while it is on are harder. The lever never changes it today (note 109, rule 9). */
   dangerous = false;
+  /** The mode the lever has set for tomorrow. Equals `dangerous` until a flip; applied by `endDay`. */
+  dangerousTomorrow = false;
   /** Creatures spawned without being the band's rare, by band 1 to 3 (index 0 is band 1). Resets on a rare. */
   rareMisses = [0, 0, 0];
   /** The day each camp chest was last emptied, by floor. */
@@ -570,11 +574,19 @@ export class Mines {
     return leverWorks(this.deepest);
   }
 
-  /** Flip dangerous mode. Returns the new state, or undefined while the lever is locked. */
+  /**
+   * Flip the mode for tomorrow (note 109, rule 9: the lever takes effect the next day, on every floor).
+   * Returns the mode tomorrow will have, or undefined while the lever is locked. Flipping twice cancels.
+   */
   flipDangerous(): boolean | undefined {
     if (!this.leverUnlocked) return undefined;
-    this.dangerous = !this.dangerous;
-    return this.dangerous;
+    this.dangerousTomorrow = !this.dangerousTomorrow;
+    return this.dangerousTomorrow;
+  }
+
+  /** The day ends: the mode the lever set takes over. */
+  endDay(): void {
+    this.dangerous = this.dangerousTomorrow;
   }
 
   /** True on an infested floor today (note 22, special floors). */
@@ -665,6 +677,9 @@ export class Mines {
       copperHandedIn: this.copperHandedIn,
       floors,
       ...(this.dangerous ? { dangerous: true } : {}),
+      ...(this.dangerousTomorrow !== this.dangerous
+        ? { dangerousTomorrow: this.dangerousTomorrow }
+        : {}),
       ...(this.rareMisses.some((n) => n > 0)
         ? { rareMisses: [...this.rareMisses] }
         : {}),
@@ -676,6 +691,11 @@ export class Mines {
     this.misses = saved.misses;
     this.copperHandedIn = saved.copperHandedIn;
     this.dangerous = saved.dangerous === true;
+    // Absent means no flip is pending: tomorrow is today's mode (older saves, and when never flipped).
+    this.dangerousTomorrow =
+      typeof saved.dangerousTomorrow === "boolean"
+        ? saved.dangerousTomorrow
+        : this.dangerous;
     this.rareMisses = [0, 1, 2].map((i) => {
       const n = saved.rareMisses?.[i];
       return Number.isInteger(n) && (n as number) > 0 ? (n as number) : 0;

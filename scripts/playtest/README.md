@@ -354,4 +354,4 @@ context window.
   so it cannot show a walk between two frames; watch in real time for movement.
 
 `npm run playtest:wall-lever` opens Maren's slayer wall list, claims and buys a reward, then flips the floor 120
-dangerous mode lever on and off (stage `mines-120`). About 15 seconds.
+dangerous mode lever (stage `mines-120`): a flip is pending until the day ends, flipping back cancels it. About 15 seconds.

@@ -1110,6 +1110,7 @@ export function deserialize(text: string): GameState | undefined {
             ? { ladder: { x: f.ladder.x, y: f.ladder.y } }
             : {}),
           ...(Array.isArray(f.ground) ? { ground: validPiles(f.ground) } : {}),
+          ...(f.dangerous === true ? { dangerous: true } : {}),
           // A save from before creatures has none, and the floor is given its own on load.
           ...(Array.isArray(f.creatures)
             ? {
@@ -1143,6 +1144,14 @@ export function deserialize(text: string): GameState | undefined {
         : undefined,
       campOpened: Array.isArray(mines.campOpened)
         ? mines.campOpened.filter(isCount).map(Math.floor)
+        : undefined,
+      dangerous: mines.dangerous === true ? true : undefined,
+      dangerousTomorrow:
+        typeof mines.dangerousTomorrow === "boolean"
+          ? mines.dangerousTomorrow
+          : undefined,
+      rareMisses: Array.isArray(mines.rareMisses)
+        ? mines.rareMisses.filter(isCount).map(Math.floor)
         : undefined,
       floors,
     });
