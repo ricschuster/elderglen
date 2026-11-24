@@ -242,6 +242,8 @@ not built in M4. The pros and cons, so the idea is not lost:
 
 ## Open
 
+- **The guest's cabin: settled 2026-11-24 in note 110** (wake where slept, three outside styles, own mailbox,
+  the cabin book in the save, one `house` instance per owner).
 - **Guests off the farm: settled 2026-11-24 in note 109** (one shared world, shared mine floors and progress,
   per-player mine chests, anyone picks up drops, per-player fainting, nearest-player creatures, lever next day).
 - **Guests using screens: settled 2026-11-24 in note 108** (every screen, chest lock, bundle items to the finisher,
