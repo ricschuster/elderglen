@@ -11,6 +11,15 @@ import {
   mineMapId,
 } from "../../src/core/mines";
 import type { GameState } from "../../src/core/save";
+import { enterArea, isAreaMap, leaveArea } from "../../src/core/areas";
+import {
+  BARN_BUILT,
+  BARN_MAP,
+  COOP_BUILT,
+  COOP_MAP,
+  barnVisibleTier,
+  coopVisibleTier,
+} from "../../src/core/animals";
 
 export interface Spot {
   x: number;
@@ -72,11 +81,7 @@ export class Walker {
   get map(): FarmMap {
     const floor = mineFloorOf(this.mapId);
     if (floor === undefined)
-      return maps.getWith(
-        this.mapId,
-        holdsOf(this.g),
-        isHouseMap(this.mapId) ? houseVisibleTier(this.g.houseTier) : 0,
-      );
+      return maps.getWith(this.mapId, this.holds(), this.tierOf(this.mapId));
     // A mine floor is made from the day and the floor, as the scene does.
     const day = this.g.day.clock.day;
     const key = `${floor}@${day}`;
@@ -88,9 +93,32 @@ export class Walker {
     return m;
   }
 
+  /** The holds the scene raises for the farm's buildings, on top of the world flags. */
+  private holds(): Set<string> {
+    const holds = holdsOf(this.g);
+    if (this.g.animals.coopBuilt) holds.add(COOP_BUILT);
+    if (this.g.animals.barnBuilt) holds.add(BARN_BUILT);
+    return holds;
+  }
+
+  /** The look of a building a map shows: the house, coop and barn grow with their tier. */
+  private tierOf(id: string): number {
+    if (isHouseMap(id)) return houseVisibleTier(this.g.houseTier);
+    if (id === COOP_MAP) return coopVisibleTier(this.g.animals.tier);
+    if (id === BARN_MAP) return barnVisibleTier(this.g.animals.barnTier);
+    return 0;
+  }
+
   /** The mine floor the player is on, if any. */
   get floor(): number | undefined {
     return mineFloorOf(this.mapId);
+  }
+
+  /** Change map, swapping an outdoor area's own world (trees, rocks, forage, spots) into the state as the scene does. */
+  private setMap(id: string): void {
+    this.mapId = id;
+    if (isAreaMap(id)) enterArea(this.g, id);
+    else leaveArea(this.g);
   }
 
   /** Walk to the stairs in the mine hall and go down to a floor. */
@@ -99,7 +127,7 @@ export class Walker {
     const day = this.g.day.clock.day;
     this.g.mines.visit(floor, day);
     this.spend(TIME.transition);
-    this.mapId = mineMapId(floor);
+    this.setMap(mineMapId(floor));
     this.pos = floorLayout(floor, day).arrive;
     return true;
   }
@@ -230,14 +258,14 @@ export class Walker {
     if (!best) throw new Error(`exit ${exitId} unreachable on ${this.mapId}`);
     this.minutesWalked += this.walkMinutes(best.tiles);
     this.spend(this.walkMinutes(best.tiles) + TIME.transition);
-    const entry = maps
-      .get(
-        exit.map,
-        isHouseMap(exit.map) ? houseVisibleTier(this.g.houseTier) : 0,
-      )
-      .entry(exit.entry);
+    // Climbing from one mine floor to the one above arrives at that floor's stair.
+    const above = mineFloorOf(exit.map);
+    const entry =
+      above !== undefined
+        ? floorLayout(above, this.g.day.clock.day).arrive
+        : maps.get(exit.map, this.tierOf(exit.map)).entry(exit.entry);
     if (!entry) throw new Error(`no entry ${exit.entry} on ${exit.map}`);
-    this.mapId = exit.map;
+    this.setMap(exit.map);
     this.pos = { x: entry.x, y: entry.y };
   }
 
@@ -273,11 +301,30 @@ export class Walker {
     for (const exit of route) this.through(exit);
   }
 
+  /** `enter` that stays where it is when a door is grown over with trees today. */
+  go(dest: string): void {
+    try {
+      this.enter(dest);
+    } catch (e) {
+      if (!String(e).includes("unreachable")) throw e;
+    }
+  }
+
+  /** `enter`, but false when a door is grown over with trees today. */
+  tryEnter(dest: string): boolean {
+    try {
+      this.enter(dest);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   /** Walk to a service tile (the shop counter, the bin, a bed) and face it. */
   goToService(mapId: string, id: string): boolean {
     try {
       this.enter(mapId);
-    } catch {
+    } catch (e) {
       // A door grown over with trees cannot be reached today.
       return false;
     }
@@ -287,6 +334,7 @@ export class Walker {
 
   /** Where the player wakes: beside the bed. Called when a day ends. */
   wake(): void {
+    leaveArea(this.g);
     this.mapId = HOUSE_MAP;
     this.pos = this.adjacentTo(this.map, bed(this.map));
   }

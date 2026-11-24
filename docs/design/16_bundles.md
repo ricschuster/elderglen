@@ -247,6 +247,149 @@ its room is finished, but the Stardew wiki was not checked for this note.
 - Stardew's room thresholds and reward lists come from guide sites and a forum
   reply, not the wiki, which blocked fetches.
 
+## Sim run for the Last Seat pacing (2026-11-24, #181)
+
+`npm run sim -- <persona> 40 112`, the three personas of note 98, 40 seeds each,
+112 days (the sim's year). The target is about 1.5 years for centre 1: 6
+seasons of 28 days, day 168 (note 00; a season is 28 days, note 07). The sim
+reports each room and a Last Seat line since this run.
+
+**Limit: the bot plays 11 of the 30 bundles.** It does not fish, keep animals,
+cook, keep bees, or weave, so it skips the whole Water room, the animal, cooking
+and weaving bundles, Fodder, and all four Last Seat bundles. The Last Seat opens
+only after all 26 others, so the sim cannot measure when it opens or finishes,
+and no day for "all 30" exists. What it gives is the day the played 11 are done,
+which is a floor for the Last Seat opening.
+
+| Persona | Foragers' Shelf (5 of 6 played) | Larder (4 of 6) | Hearth (1 of 3) | Guests' Board (1 of 5) | Water room, Last Seat | Played 11 all done |
+| --- | --- | --- | --- | --- | --- | --- |
+| Expert | day 94 (30 of 40 runs) | day 67 (32 of 40) | day 61 (40 of 40) | day 32 (40 of 40) | not played | day 94, range 86 to 111 (24 of 40) |
+| Intermediate | day 99 (14 of 40) | day 66 (36 of 40) | day 60 (40 of 40) | day 36 (40 of 40) | not played | day 99, range 90 to 111 (13 of 40) |
+| Casual | none finished | none | none | none | not played | none by day 112 |
+
+Medians over the runs that finished the room. Casual finished only the first
+two foraging bundles (3 and 6 of 40 runs): it forages 3 spots on a third of its
+days and sells what the hall wants. The earlier "55 of 100 by day 112" was a
+different mix and an older bot; this run does not reproduce it (24, 13 and 0 of
+40). Last Seat open and finish days: not measurable by the bot.
+
+**What gates the played 11.** Winter Foraging opens on day 85 and is the last
+one done (day 94 to 99), so the played set cannot finish before about day 86 in
+year 1. Autumn Foraging (median 68 to 75) and the Woodland bundle (65) follow the
+calendar too. The 15 unplayed others are on the same calendar: Water room fish
+and the Fodder, animal and cooking bundles all want gear, animals or a season
+the bot lacks, so a human player almost surely opens the Last Seat after day 99.
+
+**The Last Seat's long pole, from the data (not the sim).** Quantities are in
+`bundles.json`. Ore for a bar is 5 ore and 1 coal (`ore.ts`).
+
+- 30 bars across The Hearth Fire (10) and The Long Road (20): 150 ore and 30
+  coal, plus smelting time. With the Mountain mine and one furnace this is the
+  largest single stock.
+- 100 wood and 100 stone (Long Road): bulk gathering; the Woodland bundle asks
+  for 50 of each, so this is twice that again.
+- 15 cloth (5 Hearth Fire, 10 Long Road): wool from sheep, a loom, so it waits
+  on animals as well.
+- The Catch: four fish, each gold quality, one per water (stream, lake, sea,
+  night). Rod level and fishing skill gate gold, not the calendar.
+- Harvest Feast: 3 meals, 3 preserves, 3 cheese, 3 honey: cheese and honey wait
+  on a coop or barn and a bee house.
+
+The Long Road has no 5,000g now (the stand-in note at the top of this file).
+
+**Reading against the target.** If the played 11 finish near day 94 to 99 and the
+other 15 take until about day 120 to 140, the Last Seat opens in year 2 spring
+or summer, leaving about 30 to 50 days to the 168 day target for 30 bars,
+100 wood, 100 stone, 15 cloth and four gold fish. That is tight but not
+impossible for an expert. Casual play misses the target by a wide margin, as the
+casual does for the first 11 alone. This is a guess, not a measurement.
+
+**Number changes to choose from (none applied):**
+
+1. **Cut the Last Seat stock.** Long Road to 60 wood, 60 stone, 12 bars, 6 cloth,
+   and Hearth Fire to 6 bars. Total bars fall from 30 to 18, cutting the ore and
+   smelting pole by 40 percent. Recommended if the hand-play shows bars are the
+   wall.
+2. **Soften The Catch.** Require gold for two of the four fish and silver for
+   the other two. Keeps it the hardest bundle without tying the finish to
+   luck on night and sea fish.
+3. **Measure first.** Teach the bot to fish, keep two animals and run a bee
+   house, then rerun for a real "all 26 others" day before changing any number.
+   The sim cannot honestly answer the pacing question until it plays the Water
+   room and the animal bundles.
+
+### Rerun with the taught bot (2026-11-24, #181)
+
+The bot now plays all 30 bundles with the real core rules: fishing with the bar
+and the size roll (so quality is real), shellfish pots on the farm pond and the
+sea, a coop and barn ladder (coop, hens, barn, cow, kitchen, big coop and duck,
+deluxe coop and rabbits), hay by grazing, silo grass and bought bales, the
+kitchen and stove, cheese press, loom, oil maker, dye vat and bee house, wheat
+and root crops for the Fodder bundle, furnace bars for any metal, Forest trips
+(forage, dig spots, wood), the mailbox and a daily call on the innkeeper for her
+recipe, and the carpenter's lamps. `npm run sim -- <persona> 40 168`, 40 seeds,
+168 days (6 seasons, the 1.5 year target).
+
+**Result: no run of any persona finishes the hall, so the Last Seat never opens
+and there is still no measured open or finish day.** This is a bot limit as much
+as a pacing finding (below). What it measured:
+
+| Persona | Runs that finish a room (of 40), median day | Bundles done at day 168 (best, from the per bundle lines) | Last Seat open, finished, all 30 |
+| --- | --- | --- | --- |
+| Expert | Foragers' Shelf 36, day 119; Larder 1, day 153; Guests' Board 3, day 119; Hearth, Water room, Last Seat 0 | 24 of 30 done in at least one run each: all 4 foraging, crops, fodder, storytellers, dyers; weakest Smith's 8 runs, Cook's 6, Host's 9, Specialty Fish 1 | 0 of 40, 0 of 40, 0 of 40 |
+| Intermediate | Foragers' Shelf 28, day 96; Water room 1, day 84; the rest 0 | Smith's 19 runs, Animal Goods 7, Weaver's 3, Lamplighter's 1, Host's 1, Trap Catch 3 | 0, 0, 0 |
+| Casual | none | only the first foraging bundles (22 of 40 for Spring Foraging) | 0, 0, 0 |
+
+Bundles no run ever finished: expert, Lamplighter's, Trap Catch and all four Last
+Seat bundles; intermediate, Artisan Goods, Cook's and the Last Seat. Medians run
+to the 168 day cap, so a day near 168 means "barely".
+
+**The long pole is money, then the bot's own farming, not the Last Seat's stock.**
+
+- The herd ladder (coop 4,000, barn 4,000, kitchen 10,000 and 450 wood, big coop
+  10,000, deluxe coop 20,000, rabbits 8,000 each for the 23 wool of the Weaver's,
+  Hearth Fire and Long Road) is about 60,000g before any ore. The bot's money at
+  the end of each season sat at 3,000 to 8,000 (expert medians 3,772, 7,632,
+  7,045, 4,430), so it reached the big coop in some runs and the deluxe coop in
+  none. Without rabbits there is no wool, so Weaver's, the cloth of Hearth Fire
+  and Long Road, and Animal Goods (needs a duck egg or wool) stall.
+- Dishes that need a letter (Cook's wants a third dish) and Host's (honey, wheat,
+  egg, tea) are second: expert finished Cook's in 6 of 40 runs, Host's in 9.
+- Time is the bot's limit too: it lost a median of 584 crops per expert run to
+  watering skipped when fishing and Forest trips ran long, so income stayed low.
+  A human player with sprinklers and a better farm would earn far more, so the
+  money figure is a bot floor, not a measure of the design.
+- Water room: most single fish bundles finish by day 40 to 65 in 17 to 36 of 40
+  expert runs, but Specialty Fish (rare fish and the Pearl Lobster) and Trap
+  Catch (five shellfish, two of them salt) almost never finish. Storytellers
+  (digging) finished in 39 of 40 expert runs by about day 60.
+- Gold quality for The Catch was never reached because the room did not open, so
+  that bundle is still unmeasured.
+
+**What the bot still cannot do:** use sprinklers or a greenhouse, take up the
+villager gifts beyond the innkeeper, set more than five pots, fight in deeper
+mine floors for ore (it buys ore from the smith), use the Cove, candles for the
+Lamplighter's (it tries lamps and oil), hear the shop hours (it ignores them),
+or tune a day when the herd, the fish and the farm all want the same hours. The
+bundle gathering for the Last Seat starts only when 8 other bundles are left, as
+a player stocks up late.
+
+**Number changes to choose from (none applied; the numbers above do not yet say
+the Last Seat is too big, only that the herd money is the wall):**
+
+1. **Cheaper wool path.** Let the Weaver's and the cloth of the Last Seat take
+   wool from the barn's sheep at the big barn (tier 2, 10,000g) instead of the
+   deluxe tier, or cut wool needs from 23 to about 14 (Weaver's 5 wool, Hearth Fire
+   3 cloth, Long Road 6 cloth). This removes the 30,000g deluxe step from the long
+   pole. Recommended first, since the bot never got past the big coop.
+2. **Lower the Last Seat bulk as well** (Long Road 60 wood, 60 stone, 12 bars, Hearth
+   Fire 6 bars). It was never reached, so this is a hedge, not a response to data.
+3. **Teach the bot sprinklers and rerun before changing numbers.** The farm lost
+   hundreds of crops to missed watering; a bot with sprinklers would earn much
+   more and show whether the 60,000g herd is out of reach for a good player.
+   Recommended with option 1: the next run should measure the Last Seat, which
+   this one could not.
+
 ## Room rewards that did nothing (owner, 2026-11-12, #871)
 
 - **Guests' Board:** +500 friendship with everyone met (Stardew, recalled, the saved
