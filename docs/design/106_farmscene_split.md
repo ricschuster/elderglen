@@ -1,6 +1,6 @@
 # 106: FarmScene split and scene rules into core (issue #904)
 
-Status: steps 2 to 7 built 2026-11-19 (see "Built status" at the end); step 8 and the rest of #904 decided 2026-11-24 (last section). Issue #904 came from
+Status: steps 2 to 7 built 2026-11-19 (see "Built status" at the end); step 8 built 2026-11-24; the rest of #904 decided 2026-11-24 (last section). Issue #904 came from
 a code audit on 2026-11-12; this note re-measures it and settles the order.
 
 ## Current state (measured 2026-11-18)
@@ -179,3 +179,23 @@ fixes are in `tests/crashsafety.test.ts`. Already fixed: greenhouse plot filteri
 returned undefined for a missing floor (only the `!` in `beaten()` was left). No bad content data was found.
 Object-shaped content files are checked only for parsing and being non-empty. The save version chain is
 untouched (note 52).
+
+Step 8 built 2026-11-24: `FarmScene.ts` went from 3,224 to 2,874 lines. `src/core/interact.ts` now holds
+`resolveUse(g, by, ctx, held, aim)` and `resolveAction(g, by, ctx, held, aim)`. They run the rule as player `by`
+(`asPlayer`, now in `src/core/asplayer.ts` so `interact.ts` and `roomintents.ts` can both use it) and return a tagged
+intent: `UseIntent` (none, message, swing, cast, report with an optional lit bomb, tool with its sound) and
+`ActionIntent` (none, message, open a screen with its data, report, act with its sound, eat, and the scene-owned tags
+below). `UseContext` and `ActionContext` carry what the scene alone knows: the map, floor and facing, and callbacks for
+rocks, lit bombs, villagers and the mine ladder. `use()` and `action()` in the scene keep the guards (leaving, doors,
+guest, mounted, horse, villager talk, lantern line) and then `switch` on the intent; `applyAction` is the scene's side.
+Tests are in `tests/interact.test.ts` (one per tool and target, plus acting as a guest).
+`applyFarmIntent` now sends a guest's till, water, plant, axe and pickaxe through `resolveUse` as the sender, so the
+host's Use and a guest's intents share one copy of each tool rule. One visible change: a guest's hoe now respects
+tillable ground like the host's (before, it dug any tile). Not changed: the `harvest` intent still calls
+`actions.harvest` (it has its own "nothing ripe" refusal; a guest Action through `resolveAction` comes with the later
+guest groups), and `guestUse()` and the guest half of `action()` stay in the scene because they only choose which intent
+to send. Left in the scene as intent tags, because they move the player, run a minigame or read scene state: swing and
+cast (the attack and the fishing bar), `ride-cart`, `pier-keeper`, `pier-float`, `shrine`, `mend-bridge`, `treasure`,
+`stonekeeper` (reads the world holds), `festival`, `festival-action`, `camp-chest`, `cave`, `descend` and `stairs`,
+plus talk to a villager, mount and dismount, and the lantern launch, which run before the resolver. Pond rod take-out and
+pond menu are in the resolvers but have no unit test yet (a placed pond needs a longer setup).
