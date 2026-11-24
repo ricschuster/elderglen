@@ -323,6 +323,8 @@ export const GUEST_SCREENS = [
   "shrine",
   // Maren's slayer wall list: claim and buy intents against the sender's own kills (note 109).
   "walllist",
+  // A guest's catch bar after the host rolled the bite: it plays locally and sends `catch` (note 109).
+  "fishing",
   // The bed prompt sends a `sleep` intent and changes nothing locally.
   "bed",
   // A guest's own mailbox beside their cabin door: letters are read through the host (note 110 rule 3).

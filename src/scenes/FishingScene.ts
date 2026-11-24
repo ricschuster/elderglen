@@ -1,6 +1,8 @@
 import { ENERGY_FLOOR } from "../core/energy";
 import { audio } from "../audio/engine";
 import { itemById } from "../core/items";
+import { castFishById } from "../core/roomplay";
+import { currentSession, GuestSession } from "../net/session";
 import Phaser from "phaser";
 import { dateOf } from "../core/calendar";
 import {
@@ -18,6 +20,7 @@ import {
   type Assist,
   type Bite,
   type CatchResult,
+  type FishDef,
   type RodDef,
   legendGates,
 } from "../core/fishing";
@@ -68,7 +71,24 @@ export interface FishingData {
   ice?: IceFishing;
   /** A cast from the Night Market pier with a permit (note 14): market fish and a pearl. */
   pier?: boolean;
+  /**
+   * A guest's bar fight (note 109, "Fishing"): the host already cast and rolled the bite, so there is no aim,
+   * wait or tackle here. The scene plays the hook and the bar for what the host sent, then tells the host the
+   * result (`catch`). It lands nothing in the guest's copy: the pack changes when the host's answer arrives.
+   */
+  guest?: { kind: "fish" | "lobster" | "trash" | "find"; item?: string };
 }
+
+/** A guest fishes without bait or lures (note 109). */
+const PLAIN_RIG: Effects = {
+  wait: 1,
+  bar: 0,
+  rare: 1,
+  night: 1,
+  rain: 1,
+  treasure: false,
+  sounding: false,
+};
 
 type Phase = "aim" | "wait" | "hook" | "fight" | "result";
 
@@ -181,6 +201,38 @@ export class FishingScene extends Phaser.Scene {
     kb?.on("keydown-L", () => this.addLure());
     kb?.on("keydown-X", () => this.dropLure());
     this.showAim();
+    if (this.cfg.guest) this.startRemote(this.cfg.guest);
+  }
+
+  /** A guest's catch screen: go straight to the hook for the bite the host rolled. */
+  private startRemote(b: NonNullable<FishingData["guest"]>): void {
+    const fish = b.kind === "fish" && b.item ? castFishById(b.item) : undefined;
+    this.pending =
+      b.kind === "fish"
+        ? fish
+          ? { kind: "fish", fish }
+          : { kind: "none" }
+        : b.kind === "lobster"
+          ? { kind: "lobster" }
+          : { kind: b.kind, item: b.item ?? "" };
+    this.effects = PLAIN_RIG;
+    this.distance = 0.5;
+    this.tutorial = this.state.fishing.total === 0;
+    this.info.setText("");
+    this.biteArrives();
+    this.draw();
+  }
+
+  /** A guest's fish got away (hook window or bar): the host drops the line. */
+  private lostRemote(): void {
+    if (this.cfg.guest) this.report({ miss: true });
+  }
+
+  /** Tell the host how the fight ended (a guest's catch screen only). */
+  private report(result: { perfect?: boolean; miss?: boolean }): void {
+    const net = currentSession();
+    if (net instanceof GuestSession)
+      net.sendIntent({ kind: "catch", ...result });
   }
 
   private press(): void {
@@ -191,7 +243,10 @@ export class FishingScene extends Phaser.Scene {
       // With assist the cast needs no charge: a press casts.
       if (this.assist > 0) this.cast();
     } else if (this.phase === "hook") this.hooked();
-    else if (this.phase === "result") this.showAim();
+    else if (this.phase === "result") {
+      if (this.cfg.guest) this.close();
+      else this.showAim();
+    }
   }
 
   private release(): void {
@@ -263,7 +318,8 @@ export class FishingScene extends Phaser.Scene {
     }
     this.rigText.setText(lines.join("\n"));
     const slots = this.rod.bait;
-    for (const b of this.buttons) b.setVisible(slots && this.fitting);
+    for (const b of this.buttons)
+      b.setVisible(slots && this.fitting && !this.cfg.guest);
   }
 
   private fit(refusal: string | undefined, done: string): void {
@@ -390,6 +446,7 @@ export class FishingScene extends Phaser.Scene {
   private biteArrives(): void {
     if (this.pending.kind === "none") {
       this.text.setText("Nothing is biting. Cast again.");
+      this.lostRemote();
       return this.rest();
     }
     this.phase = "hook";
@@ -416,6 +473,7 @@ export class FishingScene extends Phaser.Scene {
   private hooked(): void {
     this.bang.setVisible(false);
     const b = this.pending;
+    if (this.cfg.guest) return this.hookedRemote(b);
     if (b.kind === "lobster") return this.landPearlLobster();
     if (b.kind === "trash") return this.landTrashCatch(b.item);
     if (b.kind === "find") return this.landFindCatch(b.item);
@@ -424,6 +482,29 @@ export class FishingScene extends Phaser.Scene {
       // The fight is skipped: no bar, and never a perfect catch.
       return this.land(b.fish.id, false);
     }
+    this.startFight(b.fish);
+  }
+
+  /** A guest's hook: only a fish has a bar; the rest are hauled in and the host lands them. */
+  private hookedRemote(b: Bite): void {
+    if (b.kind === "fish" && this.assist !== 2) return this.startFight(b.fish);
+    this.report({ perfect: false });
+    audio.sfx(b.kind === "fish" ? "fish.catch" : "item.pickup");
+    this.text.setText(
+      b.kind === "fish"
+        ? `You land a ${b.fish.name}.`
+        : b.kind === "lobster"
+          ? "A Pearl Lobster! A rare catch."
+          : b.kind === "none"
+            ? "Nothing is on the line."
+            : `You haul in ${itemById(b.item)?.name ?? b.item}.`,
+    );
+    this.info.setText("Press to go back to the bank.");
+    this.rest();
+  }
+
+  private startFight(fish: FishDef): void {
+    const b = { fish };
     this.phase = "fight";
     // One fight in five with the Magpie Hook shows a chest in the bar.
     this.chestPrize =
@@ -490,6 +571,16 @@ export class FishingScene extends Phaser.Scene {
   private land(id: string, perfect: boolean, chest = false): void {
     const b = this.pending;
     if (b.kind !== "fish" || b.fish.id !== id) return;
+    if (this.cfg.guest) {
+      // The host lands it; this screen only says how the fight went.
+      this.report({ perfect });
+      audio.sfx("fish.catch");
+      this.text.setText(
+        `You caught a ${b.fish.name}!${perfect ? "\nA perfect catch!" : ""}`,
+      );
+      this.info.setText("Press to go back to the bank.");
+      return this.rest();
+    }
     const g = this.state;
     audio.sfx("fish.catch");
     const r = landFish(g, b.fish, {
@@ -548,6 +639,7 @@ export class FishingScene extends Phaser.Scene {
         this.bang.setVisible(false);
         audio.sfx("fish.lost");
         this.text.setText("It got away. Cast again.");
+        this.lostRemote();
         this.rest();
       }
     } else if (this.phase === "fight" && this.fight) {
@@ -566,6 +658,7 @@ export class FishingScene extends Phaser.Scene {
       else if (this.fight.state === "lost") {
         audio.sfx("fish.lost");
         this.text.setText("It got away. Cast again.");
+        this.lostRemote();
         this.rest();
       }
     }

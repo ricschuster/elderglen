@@ -15,6 +15,7 @@ import { GameRoomWorld } from "../src/core/roomworld";
 import type { Standing } from "../src/core/screens";
 import { newGame } from "../src/core/save";
 import { TOO_FAR } from "../src/core/roommaps";
+import { DAYS_PER_SEASON } from "../src/core/calendar";
 
 const FARM = farmTypeById("standard").map;
 
@@ -373,5 +374,62 @@ describe("fishing on the host", () => {
     );
     stand("p2", "forest", tile.x + 15, tile.y + 5);
     expect(w.apply("p2", { ...cast, rod: "reed-pole" })).toBe(TOO_FAR);
+  });
+  it("a miss drops the line and lands nothing", () => {
+    const { g, w, stand, tile } = water();
+    const ann = g.players.get("p2");
+    ann.inventory.add("reed-pole", 1);
+    stand("p2", "forest", tile.x, tile.y + 1);
+    const cast = {
+      kind: "cast",
+      map: "forest",
+      x: tile.x,
+      y: tile.y,
+      rod: "reed-pole",
+    };
+    expect(w.apply("p2", cast)).toBeUndefined();
+    const before = JSON.stringify(ann.inventory.save());
+    expect(w.apply("p2", { kind: "catch", miss: true })).toBeUndefined();
+    expect(JSON.stringify(ann.inventory.save())).toBe(before);
+    expect(w.apply("p2", { kind: "catch", perfect: true })).toBe(
+      "Nothing is on the line.",
+    );
+  });
+
+  it("the Frostday lake is shut until the festival opens, and a hole cast can bring the Frostfin", () => {
+    const { g, w, stand, tile } = water();
+    const ann = g.players.get("p2");
+    ann.inventory.add("reed-pole", 1);
+    stand("p2", "forest", tile.x, tile.y + 1);
+    // Winter 8 is Frostday.
+    g.day.clock.day = 3 * DAYS_PER_SEASON + 8;
+    g.day.clock.minutes = 7 * 60;
+    const cast = {
+      kind: "cast",
+      map: "forest",
+      x: tile.x,
+      y: tile.y,
+      rod: "reed-pole",
+    };
+    expect(w.apply("p2", cast)).toBe("The lake opens at noon.");
+    g.day.clock.minutes = 14 * 60;
+    expect(w.apply("p2", cast)).toBeUndefined();
+  });
+
+  it("the pier is on Hearthwell, a town map the host does not run for guests, so a guest cannot cast there yet", () => {
+    const { g, w, stand } = mk();
+    g.players.get("p2").inventory.add("reed-pole", 1);
+    g.day.clock.day = 3 * DAYS_PER_SEASON + 16;
+    g.day.clock.minutes = 18 * 60;
+    stand("p2", "hearthwell", 63, 66);
+    expect(
+      w.apply("p2", {
+        kind: "cast",
+        map: "hearthwell",
+        x: 64,
+        y: 66,
+        rod: "reed-pole",
+      }),
+    ).toBe("Nothing to fish here.");
   });
 });

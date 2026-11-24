@@ -36,8 +36,20 @@ import {
   legendGates,
   rodById,
   type Bite,
+  type FishDef,
 } from "./fishing";
 import { landFind } from "./waterfinds";
+import { festivalDayToday } from "./festivals";
+import { FROSTFIN, iceBite, isHole, lakeShut } from "./icefishing";
+import {
+  MARKET_FISH,
+  PIER_NIGHT_MINUTES,
+  isPierCast,
+  luckRare,
+  pierBite,
+  pierCastProblem,
+  rollPearl,
+} from "./marketpier";
 import { landLobster, landTrash } from "./pots";
 import { pickupRadius } from "./ground";
 import { creatureSpawnsOf } from "./mapcreatures";
@@ -86,6 +98,8 @@ interface Pending {
   distance: number;
   at: { x: number; y: number };
   map: string;
+  /** A cast from the Night Market pier: a pearl may come with the fish. */
+  pier?: boolean;
 }
 
 /** The creatures of a map and what holds them: a mine floor, or a map with a spawn table. */
@@ -94,6 +108,11 @@ interface Fight {
   list: { creatures: Creature[] };
   dangerous: boolean;
 }
+
+/** A fish a cast can bring up: the river and sea roster, the Frostday Frostfin and the pier's market fish. */
+export const castFishById = (id: string): FishDef | undefined =>
+  fishById(id) ??
+  (id === FROSTFIN.id ? FROSTFIN : MARKET_FISH.find((f) => f.id === id));
 
 const isNum = (v: unknown): v is number =>
   typeof v === "number" && Number.isFinite(v);
@@ -536,22 +555,41 @@ export class RoomPlay {
     const rec = this.g.players.get(by);
     if (rec.inventory.count(rod.id) <= 0) return "no rod";
     const g = this.g;
+    // The Frostday lake is shut until the festival opens; a cast into a hole may bring a Frostfin (the
+    // contest count is the host's alone, a guest's catch does not add to it).
+    const fest = festivalDayToday(g.day.clock.day);
+    const iceDay = fest?.id === "frostday" && v.id === "forest";
+    if (iceDay && lakeShut(fest, g.day.clock.minutes))
+      return "The lake opens at noon.";
+    const hole = iceDay && isHole(fest, x, y);
+    // The pier is judged from the plank the sender stands on (the host's own rule).
+    const feet = at ? tileUnder(at, v.map.tileSize) : undefined;
+    if (feet) {
+      const gated = pierCastProblem(g, feet.x, feet.y);
+      if (gated) return gated;
+    }
+    const pier = feet ? isPierCast(g, feet.x, feet.y) : false;
     return asPlayer(g, by, () => {
       const cost = castEnergy(g.skills.level("fishing"));
       if (g.day.energy.current - cost <= ENERGY_FLOOR) return TOO_TIRED_TO_CAST;
       const kind = v.map.waterKindAt(x, y) ?? "river";
       const tutorial = g.fishing.total === 0;
-      const found = bite(
+      const luck = luckRare(g);
+      let found = bite(
         kind,
         {
           season: dateOf(g.day.clock.day).season,
-          minutes: g.day.clock.minutes,
+          // The pier draws the night odds from 17:00 to 23:00 (note 14).
+          minutes: pier ? PIER_NIGHT_MINUTES : g.day.clock.minutes,
           raining: isRaining(g.weather),
           ...legendGates(g, rod.id),
         },
         this.env.random,
         tutorial,
+        { rare: luck },
       );
+      if (hole) found = iceBite(found, tutorial, this.env.random);
+      if (pier) found = pierBite(found, tutorial, this.env.random, luck);
       g.day.energy.spend(cost);
       const share = isNum(intent.distance)
         ? Math.min(Math.max(intent.distance, 0), 1)
@@ -561,6 +599,7 @@ export class RoomPlay {
         distance: share,
         at: { x, y },
         map: v.id,
+        ...(pier ? { pier } : {}),
       });
       const msg =
         found.kind === "fish"
@@ -588,7 +627,7 @@ export class RoomPlay {
         const b = p.bite;
         const at = p.at;
         if (b.kind === "fish") {
-          const def = fishById(b.fish.id);
+          const def = castFishById(b.fish.id);
           if (def)
             landFish(g, def, {
               perfect,
@@ -596,6 +635,7 @@ export class RoomPlay {
               random: this.env.random,
               at,
             });
+          if (def && p.pier) rollPearl(g, at, this.env.random);
         } else if (b.kind === "lobster")
           landLobster(g, at, p.distance, this.env.random);
         else if (b.kind === "trash") landTrash(g, at, b.item);

@@ -95,7 +95,7 @@ import {
   YARD_EMPTY_LINE,
 } from "../core/quarry";
 import { FERRY_LINE, takeTreasure } from "../core/cove";
-import { cropOfSeed, itemById, itemLabel } from "../core/items";
+import { cropOfSeed, itemById } from "../core/items";
 import { distanceShare, rodById, waterAhead } from "../core/fishing";
 import { MIXED_SEED } from "../core/weeds";
 import { reasonText } from "../core/tools";
@@ -2295,8 +2295,8 @@ export class FarmScene extends Phaser.Scene {
   }
 
   /**
-   * A guest casts: the host rolls the bite and answers with `bite`; with no bar here yet the catch is landed as a
-   * plain one after a beat (note 109, "Fishing": the catch screen on the guest's device is still to come).
+   * A guest casts: the host rolls the bite and answers with `bite`; the guest then plays the catch bar on their
+   * own screen and sends `catch {perfect}` or `catch {miss}` (note 109, "Fishing").
    */
   private guestCast(rodId: string): void {
     const net = this.net;
@@ -2318,15 +2318,16 @@ export class FarmScene extends Phaser.Scene {
       return this.render();
     }
     net.onBite = (b) => {
-      this.message =
-        b.kind === "none"
-          ? "Nothing is biting."
-          : `Something bites: ${b.item ? itemLabel(b.item) : "a Pearl Lobster"}.`;
-      this.render();
-      if (b.kind !== "none")
-        this.time.delayedCall(1200, () =>
-          net.sendIntent({ kind: "catch", perfect: false }),
-        );
+      if (b.kind === "none") {
+        this.message = "Nothing is biting.";
+        return this.render();
+      }
+      this.open("fishing", {
+        rod: rodId,
+        water: [],
+        at: here,
+        guest: { kind: b.kind, ...(b.item ? { item: b.item } : {}) },
+      });
     };
     net.sendIntent({
       kind: "cast",
