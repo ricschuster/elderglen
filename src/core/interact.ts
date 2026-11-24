@@ -184,7 +184,8 @@ function useOn(
     return report(
       placeLight(g, map, mapId, x, y, held.id, (px, py) => ctx.rockAt(px, py)),
     );
-  if (lightAt(g, mapId, x, y)) return report(pickUpLight(g, mapId, x, y));
+  if (isLight(lightAt(g, mapId, x, y)?.id))
+    return report(pickUpLight(g, mapId, x, y));
   // A lightning rod is stood down from the backpack, and any tool or the empty hand lifts one.
   if (held.kind === "item" && held.id === LIGHTNING_ROD)
     return report(placeRod(g, map, mapId, x, y));
