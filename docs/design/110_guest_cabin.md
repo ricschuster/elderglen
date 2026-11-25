@@ -106,9 +106,17 @@ footprint; a visitor who sleeps in another home wakes in that home (the owner's 
 to the player's own home; a rejoining guest starts in their own cabin even if they dropped while in another home; a
 cabin upgrade by a guest does not need the host's carpenter to be free.
 
-Not done (needs the owner or a later pass): furniture and decor placing for guests, so a cabin's furniture and chests
-are structural only (the keys are per instance and tested for the lock and reach paths, but a guest cannot place
-anything yet); the spouse room and divorce chest in a cabin (a cabin never holds `spouse`); a guest's own
+- **Furniture and decor (owner 2026-11-25).** Any player may stand furniture and lay wallpaper or flooring in any
+  house they are standing in, the farmhouse or any cabin, not only their own, and whoever lifts a piece gets it in
+  their own pack (a placed piece keeps no owner). A guest sends `home-place {map, x, y, item}` or
+  `home-pickup {map, x, y}` (`src/core/homeplace.ts`); the host runs the host's own `placeFurniture`, `applyDecor`
+  and `pickUpFurniture` as the sender on that home's map at its owner's tier and renovations, and refuses a sender
+  not standing in that home within reach. The guests' copies run the same intent. Wallpaper and flooring are kept
+  per home (`decorKey`: the farmhouse's as before, a cabin's under `house@<id>|<room>`). A guest lifts with the axe
+  or pickaxe or the Action button (not a workbench or the catalogue, which a guest cannot open yet). The chest rules
+  are unchanged. Choices: there is no rotate (the host has none); a guest cannot place chests or lights in a house.
+
+Not done (needs the owner or a later pass): the spouse room and divorce chest in a cabin (a cabin never holds `spouse`); a guest's own
 achievement and friendship letters; guests' spouse walkers and children in the cabin; moving a cabin after placement
 and demolishing one from a screen (`demolishCabin` exists in core, no screen); the host's choice of site and style
 when it buys a cabin (the screen for `buy-cabin`); real names and art for the three styles; a browser run of any of

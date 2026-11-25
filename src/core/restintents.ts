@@ -81,6 +81,8 @@ import {
   setCabinStyle,
 } from "./cabinhome";
 
+import { applyHomePlace } from "./homeplace";
+
 const isTile = (v: unknown): v is number =>
   typeof v === "number" && Number.isInteger(v) && v >= 0 && v < 4096;
 const isId = (v: unknown): v is string =>
@@ -231,7 +233,7 @@ export function applyRestIntent(
         ? asPlayer(g, by, () => buyReward(g, intent.item as string))
         : "bad slayer-buy";
     default:
-      return null;
+      return applyHomePlace(g, by, intent);
   }
 }
 

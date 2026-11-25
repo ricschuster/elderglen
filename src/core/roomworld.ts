@@ -24,7 +24,9 @@ import {
   spotPixels,
   wakeSpot,
 } from "./homes";
-import { HOUSE_UPGRADE_NAMES, isHouseMap } from "./house";
+import { maps } from "../content/maps";
+import { HOME_PLACE_KINDS } from "./homeplace";
+import { HOUSE_MAP, HOUSE_UPGRADE_NAMES, isHouseMap } from "./house";
 import { isFarmMap, resolveMapId } from "./farmtypes";
 import { asPlayer } from "./asplayer";
 import { weddingBlock } from "./courtship";
@@ -392,7 +394,9 @@ export class GameRoomWorld implements RoomWorld {
         }
         if (this.o.where && by !== LOCAL_PLAYER) {
           const why =
-            this.machineGate(by, intent) ?? this.worldGate(by, intent);
+            this.machineGate(by, intent) ??
+            this.worldGate(by, intent) ??
+            this.homeGate(by, intent);
           if (why !== undefined) return why;
         }
         if (intent.kind === "swing") return this.play.swing(by, intent);
@@ -490,6 +494,19 @@ export class GameRoomWorld implements RoomWorld {
     const at = this.o.where?.(by);
     if (!at) return TOO_FAR;
     return reachProblem(this.g, at, v, x, y, REACH_TILES);
+  }
+
+  /** Furniture and decor go only in the home the sender stands in, within reach of the tile (note 110). */
+  private homeGate(by: PlayerId, intent: Intent): string | undefined {
+    if (!HOME_PLACE_KINDS.has(intent.kind)) return undefined;
+    const { x, y, map } = intent;
+    if (typeof x !== "number" || typeof y !== "number") return undefined;
+    const at = this.o.where?.(by);
+    if (!at || at.map !== map) return TOO_FAR;
+    const ts = maps.get(HOUSE_MAP).tileSize;
+    const dx = Math.abs(Math.floor(at.x / ts) - x);
+    const dy = Math.abs(Math.floor(at.y / ts) - y);
+    return Math.max(dx, dy) <= REACH_TILES ? undefined : TOO_FAR;
   }
 
   private isMachineKind(kind: string): boolean {
