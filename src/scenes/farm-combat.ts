@@ -359,7 +359,11 @@ export function updateCombat(farm: FarmScene, dt: number): void {
   syncCreatureSprites(farm, floor.creatures);
   // Guests on this map are chased too: each creature goes for its nearest player (note 109 rule 7).
   const net = farm.net instanceof HostSession ? farm.net : undefined;
-  const guests = (net?.remotes() ?? []).filter((r) => r.map === farm.mapId);
+  // A guest who turned creatures off is not chased here (note 109, their own setting).
+  const guests = (net?.remotes() ?? []).filter(
+    (r) =>
+      r.map === farm.mapId && !farm.state.players.get(r.id).combat.noCreatures,
+  );
   const view = net ? viewOf(farm.state, farm.mapId) : undefined;
   for (const c of [...floor.creatures]) {
     const mine = { id: LOCAL_PLAYER, x: farm.pos.x, y: farm.pos.y };
@@ -376,7 +380,11 @@ export function updateCombat(farm: FarmScene, dt: number): void {
           (x, y) => farm.tileBlockedNoHorse(x, y),
         ),
       random: Math.random,
-      assist: combat.assist,
+      // The windup widens for the player the creature goes for, by that player's own Assist.
+      assist:
+        chased.id === LOCAL_PLAYER
+          ? combat.assist
+          : farm.state.players.get(chased.id).combat.assist,
       tileSize: ts,
       calm: oilCalms(farm.state, c.kind),
     });

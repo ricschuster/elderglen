@@ -1,6 +1,7 @@
 // The real LobbyTransport (note 53): connects over a WebSocket. Hosting needs Node or
 // the Capacitor plugin, so it is injected; in a plain browser canHost is false.
 import { GuestClient, JoinFailed } from "./client";
+import type { GuestSettings } from "../core/protocol";
 import { parseAnnounce } from "./announce";
 import type { SocketPipe } from "./pipe";
 import type { ParsedAddress } from "./address";
@@ -16,6 +17,8 @@ export interface HostHandle {
 export class SocketTransport implements LobbyTransport {
   /** The joined client after a successful connect; the game takes it from here. */
   client: GuestClient | undefined;
+  /** Reads this device's combat settings for the join (set by the lobby). */
+  guestSettings: (() => GuestSettings) | undefined;
   private hosting: HostHandle | undefined;
 
   constructor(
@@ -77,6 +80,7 @@ export class SocketTransport implements LobbyTransport {
     try {
       this.client = await GuestClient.connect(address.url, {
         name: this.guestName,
+        settings: this.guestSettings?.(),
       });
       return { ok: true };
     } catch (e) {

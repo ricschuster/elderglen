@@ -156,6 +156,32 @@ fishing), `roomworld.ts` (the gates), `src/net/guestapply.ts` (the guest's copy)
 - **Sling aim.** A guest's sling shot sends `ax` and `ay` (the direction to the pointer or tapped spot); the host
   fires along it.
 
-Not done (needs the owner or a later pass): Assist and "no creatures" for guests (they stay a device setting the
-host does not know, so a guest is always hit at full strength); casks and the cellar; a browser run of any of it
+Not done (needs the owner or a later pass): casks and the cellar; a browser run of any of it
 (all scene edits are untested in a browser); the contest count per player; the host feeling a guest's bomb.
+
+### Guest Assist and "no creatures" (build, 2026-11-25)
+
+Owner ruling 2026-11-25: the guest's device sends its own combat Assist and "no creatures" settings to the host, and
+the host applies them to that guest only. Fishing Assist stays a device setting (it shapes the guest's own bar and
+needs no host rule).
+
+- **Protocol.** `GuestSettings {assist, noCreatures}`. The `join` message carries an optional `settings`, sent on every
+  join and rejoin (the lobby reads the device settings, `lobbyTransport.guestSettings`). A new client message
+  `settings {settings}` follows whenever the guest changes either (`GuestClient.sendSettings`, sent only on a change;
+  the Options screen calls it from its save when the session is a guest's). Malformed settings drop the message.
+- **Host.** `Room.join` and `Room.receive` hand them to `RoomWorld.setGuestSettings`, which writes them to that guest's
+  own `combat.assist` and `combat.noCreatures` (the per player combat record from the note's step 4, where both were
+  already "never saved"). The host's own record is never set by a message. A dropped guest's messages are not heard, and
+  a rejoin sends them again. A join with no settings leaves the record as it was.
+- **Effect.** A guest's Assist halves hits taken and keeps their items on defeat (already read from their record), and
+  now also widens the wind up of a creature going for them (`stepCreatures` and the host scene's step both use the
+  chased player's own Assist, not the host's). A guest with "no creatures" on is not a target, is not hurt, and is sent
+  an empty `creatures` list, so their copy draws none; other players on the floor are unchanged (creatures are shared,
+  rule 1). Their rocks and bombs already ran under their own record (`asPlayer`), so the no-creature rock drops follow
+  too.
+- **Choices where the note was silent.** Settings live on the combat record, not in a new store, as the other
+  per player combat state does; they are not saved with the farm (the guest resends on every join); creatures are
+  hidden per guest rather than removed from the floor; the host's "no creatures" still switches off the host's own
+  stepping as before.
+- **Tests.** `tests/guestsettings.test.ts` (per guest effect, host and other guest untouched, updates, rejoin, message
+  decoding, and a real host and guest over a socket).

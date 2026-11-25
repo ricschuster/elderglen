@@ -36,7 +36,7 @@ import * as pm from "./playermarriage";
 import { morningEnergy } from "./energyrules";
 import { PASS_OUT_MONEY_CAP, PASS_OUT_MONEY_SHARE } from "./day";
 import { LOCAL_PLAYER, type PlayerId } from "./players";
-import type { Intent } from "./protocol";
+import type { GuestSettings, Intent } from "./protocol";
 import { applyFarmIntent, mapOfIntent, MAPPED_KINDS } from "./roomintents";
 import { RoomPlay } from "./roomplay";
 import { WorldFxTracker } from "./worldfx";
@@ -295,6 +295,14 @@ export class GameRoomWorld implements RoomWorld {
       const s = spotPixels(home);
       this.placements.push({ id, map: s.map, x: s.px, y: s.py });
     }
+  }
+
+  /** A guest's own Assist and "no creatures" settings: kept on their combat record, used for them only (note 109). */
+  setGuestSettings(id: PlayerId, s: GuestSettings): void {
+    if (id === LOCAL_PLAYER || !this.g.players.has(id)) return;
+    const c = this.g.players.get(id).combat;
+    c.assist = s.assist;
+    c.noCreatures = s.noCreatures;
   }
 
   playerRejoined(id: PlayerId): void {

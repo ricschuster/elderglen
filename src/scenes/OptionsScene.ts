@@ -32,6 +32,7 @@ import {
 import { activeSlot, allSlots, deleteSlot, slotStores } from "../core/slots";
 import { browserKv, browserSettingsStore, loadDeviceSettings } from "./storage";
 import { audio } from "../audio/engine";
+import { currentSession, GuestSession } from "../net/session";
 import credits from "../content/audio-credits.json";
 
 export const PROFILE_NAMES: Record<Profile, string> = {
@@ -128,9 +129,20 @@ export class OptionsScene extends Phaser.Scene {
     return this.capturing !== undefined || this.clash !== undefined;
   }
 
+  /** Save the device settings and, for a guest, tell the host the combat ones (note 109). */
+  private persist(): void {
+    saveSettings(browserSettingsStore, this.settings);
+    const net = currentSession();
+    if (net instanceof GuestSession)
+      net.client.sendSettings({
+        assist: this.settings.combatAssist,
+        noCreatures: this.settings.noCreatures,
+      });
+  }
+
   /** The menu is closing: keep what was changed. */
   beforeMenuClose(): void {
-    saveSettings(browserSettingsStore, this.settings);
+    this.persist();
   }
 
   private escape(): void {
@@ -400,7 +412,7 @@ export class OptionsScene extends Phaser.Scene {
       const change = (dir: 1 | -1) => () => {
         a[key] = Math.min(100, Math.max(0, a[key] + dir * 10));
         audio.applySettings(a);
-        saveSettings(browserSettingsStore, this.settings);
+        this.persist();
         audio.sfx("ui.confirm");
         this.refresh();
       };
@@ -426,7 +438,7 @@ export class OptionsScene extends Phaser.Scene {
           run: () => {
             a.muted = m;
             audio.applySettings(a);
-            saveSettings(browserSettingsStore, this.settings);
+            this.persist();
             this.refresh();
           },
         })),
@@ -480,7 +492,7 @@ export class OptionsScene extends Phaser.Scene {
   }
 
   private close(): void {
-    saveSettings(browserSettingsStore, this.settings);
+    this.persist();
     // As a tab of the in-game menu it closes back to the farm, not the title.
     if (isHosted(this)) return closeWindow(this);
     this.scene.start("title");

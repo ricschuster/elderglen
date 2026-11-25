@@ -312,7 +312,12 @@ export class RoomPlay {
     const v = on[0]!.v;
     const fight = this.fightOf(v, on[0]!.at);
     if (!fight) return;
-    const targets = on.filter((p) => this.fainted.get(p.id) !== mapId);
+    // A guest with "no creatures" on is not chased or hurt (their own setting, note 109).
+    const targets = on.filter(
+      (p) =>
+        this.fainted.get(p.id) !== mapId &&
+        !this.g.players.get(p.id).combat.noCreatures,
+    );
     if (targets.length === 0) return;
     const ts = v.map.tileSize;
     const rocks =
@@ -338,7 +343,7 @@ export class RoomPlay {
               (x, y) => tileBlockedNoHorse(bw, x, y),
             ),
           random: this.env.random,
-          assist: false,
+          assist: this.g.players.get(near.id).combat.assist,
           tileSize: ts,
           calm: asPlayer(this.g, near.id, () => oilCalms(this.g, c.kind)),
         });
@@ -355,18 +360,22 @@ export class RoomPlay {
     on: { id: PlayerId }[],
     dangerous: boolean,
   ): void {
-    const to = on.map((p) => p.id).filter((id) => id !== LOCAL_PLAYER);
+    const guests = on.map((p) => p.id).filter((id) => id !== LOCAL_PLAYER);
+    // A guest with "no creatures" on is sent none, so their copy draws none (note 109).
+    const quiet = guests.filter(
+      (id) => this.g.players.get(id).combat.noCreatures,
+    );
+    const to = guests.filter((id) => !quiet.includes(id));
+    const rows = list.map((c) => ({
+      ...saveCreature(c),
+      max: creatureMax(c, dangerous),
+    }));
     if (to.length > 0)
+      this.notices.push({ to, msg: { t: "creatures", map, rows } });
+    if (quiet.length > 0)
       this.notices.push({
-        to,
-        msg: {
-          t: "creatures",
-          map,
-          rows: list.map((c) => ({
-            ...saveCreature(c),
-            max: creatureMax(c, dangerous),
-          })),
-        },
+        to: quiet,
+        msg: { t: "creatures", map, rows: [] },
       });
   }
 
