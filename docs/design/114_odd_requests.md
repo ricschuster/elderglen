@@ -60,8 +60,14 @@ Stardew claims are from the saved Special Orders and Qi's Walnut Room pages (rea
   (20), a town key (20), a final weapon upgrade item (40), a mushroom tree seed (5), magic bait (20 for
   5) and its recipe (20), a cooking seasoning (10 for 10), a heavy tapper recipe (20), a speed-gro
   recipe (30), a small shipping bin (60), a large bed (50), a house fish tank (20), her own hat (5).
-  All placeholders; each needs our own item name. A second way to earn marks (her shrine, or trading a
-  rare find) is open.
+  All placeholders; each needs our own item name.
+
+## Other ways to earn marks (owner, 2026-11-25)
+
+- **Both, like Qi (Stardew, saved Walnut Room page).** A challenge shrine near her door makes the mine
+  floors harder for a run and pays odd marks, as the Shrine of Challenge does for Qi Gems. Her shelf
+  also trades a rare find for marks, as Qi trades 1 Golden Walnut for 2 gems; which rare find stands in
+  for the walnut is open (placeholder). Both open with the board on ring 2 arrival (M5).
 
 ## Ring prices (owner, 2026-11-25)
 
