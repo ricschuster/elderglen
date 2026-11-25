@@ -28,6 +28,10 @@ import {
 import { clockText } from "../core/clock";
 import { frame, Menu } from "./panel";
 import { STATE_KEY } from "./state";
+import { currentSession } from "../net/session";
+import type { ScreenRef } from "../core/screens";
+import { closeWhenDone, openShared } from "./guestlive";
+import { festivalAsk, festivalView } from "./farm-festival-net";
 import { WINDOW_FILL } from "./panel";
 
 /**
@@ -45,6 +49,8 @@ import { WINDOW_FILL } from "./panel";
 export interface FestivalData {
   mode?: "ask" | "leave" | "panel";
   panel?: "showing" | "counter";
+  /** The display table's service, to take its lock in a session (one table for the farm, note 111). */
+  ref?: ScreenRef;
 }
 
 export class FestivalScene extends Phaser.Scene {
@@ -52,6 +58,7 @@ export class FestivalScene extends Phaser.Scene {
   private inside = false;
   private mode: NonNullable<FestivalData["mode"]> = "ask";
   private only: FestivalData["panel"];
+  private ref: ScreenRef | undefined;
   private message!: Phaser.GameObjects.Text;
 
   constructor() {
@@ -63,14 +70,28 @@ export class FestivalScene extends Phaser.Scene {
     this.inside = false;
     this.mode = data?.mode ?? "ask";
     this.only = data?.panel;
+    this.ref = data?.ref;
   }
 
   create(): void {
     const f = festivalDayToday(this.state.day.clock.day);
     if (!f || (this.mode === "ask" && enterProblem(this.state)))
       return this.close(false);
-    frame(this, f.name, () => this.close(this.inside && this.mode === "ask"));
-    if (this.mode === "panel") return this.enter();
+    const { message } = frame(this, f.name, () =>
+      this.close(this.inside && this.mode === "ask"),
+    );
+    if (this.mode === "panel") {
+      // The shared display is used by one player at a time: the host's book gives the lock (note 111).
+      if (this.only === "showing" && this.ref && currentSession()) {
+        closeWhenDone(this);
+        return openShared(
+          this.ref,
+          () => this.enter(),
+          (why) => message.setText(why),
+        );
+      }
+      return this.enter();
+    }
     const leaving = this.mode === "leave";
     this.add
       .text(
@@ -105,8 +126,27 @@ export class FestivalScene extends Phaser.Scene {
 
   private asking: Phaser.GameObjects.GameObject[] = [];
 
+  private say(text: string): void {
+    this.message?.setText(text);
+  }
+
+  /** Show what the host said about this player's last festival action, a moment after it answers. */
+  private hostSaid(): void {
+    this.time.delayedCall(350, () => {
+      const lines = currentSession()?.takeFestivalLines() ?? [];
+      if (lines.length > 0) this.say(lines.join(" "));
+    });
+  }
+
   /** Leave a festival map: the clock moves on and the player is back at the farm. */
   private goHome(): void {
+    // With other players the festival ends when every player has chosen to leave; the host sends everyone home.
+    const net = currentSession();
+    if (net)
+      return festivalAsk(net, { kind: "festival-leave" }, (why) => {
+        if (why !== undefined) return this.say(why);
+        this.close(false);
+      });
     this.close(true, { map: "farm", entry: FESTIVAL_RETURN });
   }
 
@@ -218,6 +258,26 @@ export class FestivalScene extends Phaser.Scene {
           {
             text: "Buy",
             run: () => {
+              const net = currentSession();
+              if (net) {
+                const entry = counterOf(
+                  f,
+                  dateOf(this.state.day.clock.day).year,
+                ).indexOf(e);
+                return festivalAsk(
+                  net,
+                  { kind: "festival-buy", entry },
+                  (why) => {
+                    this.message.setText(
+                      why ?? `You buy the ${counterName(e)}.`,
+                    );
+                    this.time.delayedCall(200, () => {
+                      menu.setRows(rows());
+                      this.tokensText?.setText(this.tokensLine());
+                    });
+                  },
+                );
+              }
               const why = counterProblem(this.state, f, e);
               if (why === undefined && buyAtCounter(this.state, f, e))
                 this.message.setText(`You buy the ${counterName(e)}.`);
@@ -242,7 +302,17 @@ export class FestivalScene extends Phaser.Scene {
   private tokensLine = () => `Show tokens: ${showTokens(this.state)}`;
 
   private showingPanel(): void {
-    const table: string[] = [];
+    const net = currentSession();
+    const day = this.state.day.clock.day;
+    // In a session the table is the farm's one: it starts as the host has it, and each change is sent.
+    const shared = () => festivalView(net, day)?.showing;
+    const table: string[] = net ? [...(shared()?.table ?? [])] : [];
+    const send = () => {
+      if (net)
+        festivalAsk(net, { kind: "showing-set", ids: [...table] }, (why) => {
+          if (why !== undefined) this.say(why);
+        });
+    };
     const summary = this.add.text(24, 196, "", {
       fontSize: "16px",
       color: "#ffe9a0",
@@ -266,10 +336,13 @@ export class FestivalScene extends Phaser.Scene {
           counts.set(slot.id, (counts.get(slot.id) ?? 0) + slot.count);
       }
       const on = (id: string) => table.filter((t) => t === id).length;
+      const placed = net ? shared()?.result : undefined;
       summary.setText(
-        judgedThisYear(this.state)
-          ? "The judge has scored your table this year."
-          : `Table ${table.length}/${TABLE_SIZE}   Points so far: ${scoreTable(table).total}`,
+        net && placed
+          ? `The judge scored the farm's table: place ${placed.place}, ${placed.points} points.`
+          : !net && judgedThisYear(this.state)
+            ? "The judge has scored your table this year."
+            : `Table ${table.length}/${TABLE_SIZE}   Points so far: ${scoreTable(table).total}`,
       );
       return [...counts].map(([id, have]) => ({
         label: itemById(id)?.name ?? id,
@@ -280,6 +353,7 @@ export class FestivalScene extends Phaser.Scene {
             enabled: table.length < TABLE_SIZE && on(id) < have,
             run: () => {
               table.push(id);
+              send();
               menu.setRows(rows());
             },
           },
@@ -288,6 +362,7 @@ export class FestivalScene extends Phaser.Scene {
             enabled: on(id) > 0,
             run: () => {
               table.splice(table.indexOf(id), 1);
+              send();
               menu.setRows(rows());
             },
           },
@@ -302,6 +377,12 @@ export class FestivalScene extends Phaser.Scene {
         "Judge",
         0x3f7d3a,
         () => {
+          if (net)
+            return festivalAsk(net, { kind: "showing-judge" }, (why) => {
+              if (why !== undefined) return this.say(why);
+              this.hostSaid();
+              this.time.delayedCall(400, () => menu.setRows(rows()));
+            });
           const why = judgeProblem(this.state, table);
           if (why !== undefined) return this.message.setText(why);
           const r = judge(this.state, table)!;
@@ -314,6 +395,23 @@ export class FestivalScene extends Phaser.Scene {
         50,
       ),
     );
+    // Each player collects the prize from the judge themselves (note 111 decision 6).
+    if (net)
+      this.panel.push(
+        ...this.button(
+          840,
+          370,
+          "Collect prize",
+          0x3f7d3a,
+          () =>
+            festivalAsk(net, { kind: "showing-collect" }, (why) => {
+              if (why !== undefined) return this.say(why);
+              this.hostSaid();
+            }),
+          200,
+          50,
+        ),
+      );
   }
 
   private sightsPanel(f: Festival): void {

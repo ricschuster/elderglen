@@ -61,6 +61,8 @@ function find(map: string, kind: string) {
 
 function mk(wallet: "shared" | "separate" = "separate") {
   const g = newGame("standard", wallet);
+  // Midday, so the shops keep their doors open.
+  g.day.clock.minutes = 12 * 60;
   // eslint-disable-next-line prefer-const
   let room!: Room;
   const world = new GameRoomWorld(g, {
@@ -184,6 +186,21 @@ describe("shops", () => {
       t.send(t.ann, { kind: "sell", id: "parsnip", n: 2 }),
     ).toBeUndefined();
     expect(t.g.players.get(t.ann).money).toBeGreaterThan(gold);
+  });
+
+  it("keeps the shop's hours on the host: no open before opening, no buy after closing", () => {
+    const t = mk();
+    const r = shopRef();
+    t.g.players.get(t.ann).money = 500;
+    t.stand(t.ann, "general-store", r.x, r.y + 1);
+    t.g.day.clock.minutes = 6 * 60;
+    expect(t.send(t.ann, { kind: "open", screen: r })).toMatch(/opens at/);
+    t.g.day.clock.minutes = 12 * 60;
+    expect(t.send(t.ann, { kind: "open", screen: r })).toBeUndefined();
+    t.g.day.clock.minutes = 23 * 60;
+    expect(t.send(t.ann, { kind: "buy", id: "parsnip-seed", n: 1 })).toMatch(
+      /shut/,
+    );
   });
 
   it("refuses an action from a player who walked away", () => {
@@ -399,7 +416,7 @@ describe("the camp chest", () => {
     floor: 10,
   };
 
-  it("gives its one gift to the first guest who takes it, then is empty for the rest", () => {
+  it("gives each player its one gift once, for themselves (note 109 rule 4)", () => {
     const t = mk();
     t.stand(t.ann, "mine-10", 3, 3);
     t.stand(t.bo, "mine-10", 3, 3);
@@ -411,6 +428,8 @@ describe("the camp chest", () => {
     );
     t.send(t.ann, { kind: "close" });
     expect(t.send(t.bo, { kind: "open", screen: ref })).toBeUndefined();
+    // Bo has not opened it yet: the chest is full for them, then empty.
+    expect(t.send(t.bo, { kind: "camp-take", floor: 10 })).toBeUndefined();
     expect(t.send(t.bo, { kind: "camp-take", floor: 10 })).toBe(
       "camp chest empty",
     );
@@ -1326,9 +1345,14 @@ describe("the rest: carpenter, tailor, smiths, gallery, shrine (note 108, group 
     );
   });
 
-  it("upgrades a home only for its occupant: a guest is refused, the host may", () => {
+  it("upgrades a home only for its occupant: a guest orders their own cabin, never the host's house", () => {
     const t = mk("separate");
     openAt(t, t.ann, carpenter());
+    // Ann's cabin, from her own wallet and pack (note 110 step 5).
+    expect(t.send(t.ann, { kind: "carp-house" })).toMatch(/You need/);
+    expect(t.g.houseBuild).toBeUndefined();
+    // A guest with no cabin is told so.
+    t.world.cabins = { ...t.world.cabins, cabins: [] };
     expect(t.send(t.ann, { kind: "carp-house" })).toBe(HOME_LINE);
     expect(t.send(t.ann, { kind: "carp-reno", id: "x" })).toBe(HOME_LINE);
     const host = t.g.players.get(LOCAL_PLAYER);
@@ -1622,6 +1646,42 @@ describe("the rest: carpenter, tailor, smiths, gallery, shrine (note 108, group 
     expect(g.shrine.statueDay).toBe(g.day.clock.day);
     expect(openAt(t, t.bo, ref)).toBeUndefined();
     expect(t.send(t.bo, { kind: "shrine-act" })).toMatch(/quiet/);
+  });
+
+  it("runs Maren's wall list for the sender against their own kills and purse (note 109)", () => {
+    const t = mk("separate");
+    const { g } = t;
+    const ref = refAt("mine", "walllist", "wall-list");
+    const dust = { kind: "slayer-claim", goal: "dustmoth" };
+    expect(t.send(t.ann, dust)).toBe("open the screen first");
+    expect(openAt(t, t.ann, ref)).toBeUndefined();
+    expect(openAt(t, t.bo, ref)).toBeUndefined();
+    expect(t.send(t.ann, dust)).toMatch(/not met/);
+    // Only Ann's kills count: Bo's copy of the list stays in progress.
+    g.players.get(t.ann).combat.kills["dustmoth"] = 500;
+    expect(t.send(t.bo, dust)).toMatch(/not met/);
+    expect(t.send(t.ann, dust)).toBeUndefined();
+    expect(g.players.get(t.ann).combat.slayerClaimed).toContain(
+      "goal:dustmoth",
+    );
+    expect(g.players.get(t.bo).combat.slayerClaimed).toHaveLength(0);
+    expect(t.send(t.ann, dust)).toMatch(/already/);
+    // The reward shop sells the ring again from Ann's purse alone.
+    const ann = g.players.get(t.ann);
+    ann.money = 100;
+    expect(t.send(t.ann, { kind: "slayer-buy", item: "burglar-ring" })).toMatch(
+      /already|enough/,
+    );
+    expect(t.send(t.bo, { kind: "slayer-buy", item: "burglar-ring" })).toBe(
+      "She does not sell that.",
+    );
+    expect(t.send(t.ann, { kind: "slayer-buy", item: 5 })).toBe(
+      "bad slayer-buy",
+    );
+    t.stand(t.ann, "mine", 0, 0);
+    expect(t.send(t.ann, { kind: "slayer-buy", item: "burglar-ring" })).toBe(
+      "too far away",
+    );
   });
 
   it("shows a guest copy the same carpenter order through applied", () => {

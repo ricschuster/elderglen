@@ -2,6 +2,7 @@ import type { Outcome } from "./actions";
 import { campItem, MINES_OPEN_DAY } from "./mines";
 import { absorbElderfruit } from "./elderfruit";
 import { ELDERFRUIT } from "./items";
+import { LOCAL_PLAYER } from "./players";
 import type { GameState } from "./save";
 
 /**
@@ -29,15 +30,31 @@ export function hearGreencoat(g: GameState): void {
 const fail = (reason: string): Outcome => ({ ok: false, reason });
 
 /**
+ * Whether the acting player has taken this camp's one item. Each player opens each chest once for
+ * themselves (note 109 rule 4): the host's list is the mine's, a guest's is on their combat record.
+ */
+function opened(g: GameState, floor: number): boolean {
+  return g.players.localId === LOCAL_PLAYER
+    ? g.mines.campOpenedOn(floor)
+    : g.combat.campOpened.includes(floor);
+}
+
+function markOpened(g: GameState, floor: number): void {
+  if (g.players.localId === LOCAL_PLAYER) g.mines.openCamp(floor);
+  else if (!g.combat.campOpened.includes(floor))
+    g.combat.campOpened.push(floor);
+}
+
+/**
  * Open a camp chest. The first open gives its one fixed item (`campItem`), after
  * that it is empty (owner, 2026-11-11, note 22). Floor 30 holds nothing. A full
  * backpack leaves the item for later.
  */
 export function takeCampGift(g: GameState, floor = 10): Outcome {
   const item = campItem(floor);
-  if (!item || g.mines.campOpenedOn(floor)) return fail("camp chest empty");
+  if (!item || opened(g, floor)) return fail("camp chest empty");
   if (!g.inventory.add(item, 1)) return fail("backpack full");
-  g.mines.openCamp(floor);
+  markOpened(g, floor);
   if (item === ELDERFRUIT) absorbElderfruit(g);
   return { ok: true, item };
 }
@@ -47,7 +64,7 @@ export function campChestContents(
   g: GameState,
   floor = 10,
 ): string | undefined {
-  return g.mines.campOpenedOn(floor) ? undefined : campItem(floor);
+  return opened(g, floor) ? undefined : campItem(floor);
 }
 
 /**

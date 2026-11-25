@@ -2,6 +2,10 @@ import { audio } from "../audio/engine";
 import Phaser from "phaser";
 import { festivalToday } from "../core/festivals";
 import type { GameState } from "../core/save";
+import { homeOwnerFor, homeOwnerOf } from "../core/homes";
+import { currentSession } from "../net/session";
+import type { FarmScene } from "./FarmScene";
+import { dispatch } from "./guestlive";
 import { STATE_KEY } from "./state";
 import { WINDOW_FILL } from "./panel";
 
@@ -30,6 +34,7 @@ export class BedScene extends Phaser.Scene {
       .setOrigin(0.5);
     this.button(340, 340, "Yes", 0x3f7d3a, () => this.close(true));
     this.button(620, 340, "No", 0xa0482e, () => this.close(false));
+    this.moveBedButton();
     this.add
       .text(480, 500, "Enter: yes   Esc: no", {
         fontSize: "13px",
@@ -39,6 +44,27 @@ export class BedScene extends Phaser.Scene {
     const kb = this.input.keyboard;
     kb?.on("keydown-ENTER", () => this.close(true));
     kb?.on("keydown-ESC", () => this.close(false));
+  }
+
+  /**
+   * In a session, the one who lives here can set their bed where they stand: it is the tile they wake on
+   * (note 110 rule 1). A visitor sees no button, and the host would refuse them anyway.
+   */
+  private moveBedButton(): void {
+    if (!currentSession()) return;
+    const g = this.registry.get(STATE_KEY) as GameState;
+    const farm = this.scene.get("farm") as FarmScene;
+    const at = farm.hereTile();
+    if (homeOwnerOf(at.map) !== homeOwnerFor(g, g.players.localId)) return;
+    const say = this.add
+      .text(480, 440, "", { fontSize: "16px", color: "#ffe9a0" })
+      .setOrigin(0.5);
+    this.button(480, 400, "Move my bed here", 0x4a5f7a, () => {
+      const why = dispatch(g, { kind: "bed-move", ...at });
+      say.setText(
+        why === "sent" ? "Asked the host." : (why ?? "Your bed is here now."),
+      );
+    });
   }
 
   /** Tomorrow's weather, as Stardew's TV forecast gives it. */

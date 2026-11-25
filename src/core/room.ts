@@ -37,8 +37,33 @@ export interface RoomWorld {
   bedStatus?(): BedStatus;
   /** The night just ended, once, for the guests' reports. Optional. */
   takeNight?(): NightNews | undefined;
-  /** Top-left tile of a player's cabin, sent in `hello` so the guest spawns there. Optional. */
+  /** Messages the world wants sent since the last tick (map state, creatures, a player's record). Optional. */
+  takeNotices?(): Notice[];
+  /**
+   * Messages the world made while applying the last intent (the changes it caused, the sender's record), taken by
+   * the Room right after `apply` and sent before the `applied` or `rejected`. Optional.
+   */
+  takeEffects?(): Notice[];
+  /** Top-left tile of a player's cabin, sent in `hello` so the guest can see where it stands. Optional. */
   homeOf?(id: PlayerId): { x: number; y: number } | undefined;
+  /** Moves the world made since the last tick: the Room takes them as the players' last known positions. Optional. */
+  takePlacements?(): Placement[];
+  /** The tile a player starts and rejoins on: their own home's bed (note 110). Sent in `hello`. Optional. */
+  startOf?(id: PlayerId): { map: string; x: number; y: number } | undefined;
+}
+
+/** A message from the world to some players: `to` absent means every connected guest. */
+export interface Notice {
+  to?: PlayerId[];
+  msg: ServerMsg;
+}
+
+/** The world moved a player (a dropped guest put in their cabin, one who woke in their bed): pixels (note 110). */
+export interface Placement {
+  id: PlayerId;
+  map: string;
+  x: number;
+  y: number;
 }
 
 /** The bed state of a session, by player name. */
@@ -159,6 +184,7 @@ export class Room {
       day: this.world.day(),
       players: this.info(),
       home: this.world.homeOf?.(m.id),
+      start: this.world.startOf?.(m.id),
     });
     const farm = this.world.snapshot();
     m.out.push({ t: "farm", day: this.world.day(), farm });
@@ -200,6 +226,7 @@ export class Room {
         break;
       case "intent": {
         const err = this.world.apply(id, msg.intent);
+        for (const n of this.world.takeEffects?.() ?? []) this.deliver(n);
         if (err !== undefined)
           m.out.push({ t: "rejected", seq: msg.seq, reason: err });
         else
@@ -242,6 +269,14 @@ export class Room {
       for (const m of this.members.values())
         if (m.connected && m.id !== LOCAL_PLAYER)
           m.out.push({ t: "night", day: night.day, ...night.forGuest(m.id) });
+    for (const p of this.world.takePlacements?.() ?? []) {
+      const at = this.members.get(p.id);
+      if (!at) continue;
+      at.map = p.map;
+      at.x = p.x;
+      at.y = p.y;
+    }
+    for (const n of this.world.takeNotices?.() ?? []) this.deliver(n);
     const day = this.world.day();
     if (day !== this.lastDay) {
       this.lastDay = day;
@@ -272,6 +307,13 @@ export class Room {
     const min = this.world.minutes?.();
     if (min !== undefined) snap.min = min;
     this.broadcast(snap);
+  }
+
+  /** Queue a world message for the guests it names, or every connected guest. */
+  private deliver(n: Notice): void {
+    for (const m of this.members.values())
+      if (m.connected && (n.to ? n.to.includes(m.id) : m.id !== LOCAL_PLAYER))
+        m.out.push(n.msg);
   }
 
   /** Messages queued for a player since the last drain, in order. */

@@ -1,9 +1,11 @@
 import Phaser from "phaser";
 import { dateOf } from "../core/calendar";
-import { letterOf, nextLetter, openLetter } from "../core/mail";
+import { letterOf, nextLetter, openLetter, type LetterDef } from "../core/mail";
 import type { GameState } from "../core/save";
 import { frame, Menu, TOUCH_ROW_H, type Row } from "./panel";
 import { STATE_KEY } from "./state";
+import { closeWhenDone } from "./guestlive";
+import { currentSession, GuestSession } from "../net/session";
 
 /**
  * The mailbox reader (note 51). Using the mailbox opens the oldest waiting
@@ -45,6 +47,8 @@ export class MailScene extends Phaser.Scene {
     kb?.on("keydown-ENTER", () => this.enter());
     kb?.on("keydown-SPACE", () => this.enter());
     this.menu.setFocus(true);
+    // A guest's mailbox is theirs on the host's books: reading is an intent, and the screen frees its slot on close.
+    closeWhenDone(this);
     const next = nextLetter(this.state);
     this.direct = next !== undefined;
     if (next) this.read(next);
@@ -79,14 +83,21 @@ export class MailScene extends Phaser.Scene {
   }
 
   private read(id: string): void {
+    const net = currentSession();
+    if (net instanceof GuestSession) return this.readAsGuest(net, id);
     const result = openLetter(this.state, id);
     this.clearCard();
     if (!result.ok) {
       this.message.setText(result.reason);
       return this.list();
     }
+    this.showCard(result.letter, result.gift, result.pending);
+  }
+
+  /** The letter as a card: its words, what came with it, and the Done and Letters buttons. */
+  private showCard(l: LetterDef, giftLines: string[], pending: boolean): void {
+    this.clearCard();
     this.menu.setRows([]);
-    const l = result.letter;
     this.card.push(
       this.add.text(40, 100, l.title, { fontSize: "28px", color: "#ffe9a0" }),
       this.add.text(40, 142, `From ${l.sender}`, {
@@ -101,12 +112,12 @@ export class MailScene extends Phaser.Scene {
       }),
     );
     const a = l.attachment;
-    const gift = result.gift.join("   ");
+    const gift = giftLines.join("   ");
     if (a || gift)
       this.card.push(
         this.add.text(40, 380, gift ? `With it: ${gift}` : "", {
           fontSize: "20px",
-          color: result.pending ? "#f2a08a" : "#f2d16b",
+          color: pending ? "#f2a08a" : "#f2d16b",
           wordWrap: { width: 840 },
         }),
       );
@@ -131,6 +142,24 @@ export class MailScene extends Phaser.Scene {
         .setOrigin(0.5),
     );
     this.message.setText("");
+  }
+
+  /** A guest reads through the host (`mail-read`): it opens the letter and moves the gift into their pack. */
+  private readAsGuest(net: GuestSession, id: string): void {
+    const e = this.state.mail.entry(id);
+    const l = e ? letterOf(e) : undefined;
+    if (!e || !l) return this.list();
+    net.ask({ kind: "mail-read", id }, (why) => {
+      if (why !== undefined) {
+        this.message.setText(`The host said no: ${why}.`);
+        return this.list();
+      }
+      this.showCard(
+        l,
+        l.attachment ? ["The gift is in your pack."] : [],
+        false,
+      );
+    });
   }
 
   private clearCard(): void {

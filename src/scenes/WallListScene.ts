@@ -1,8 +1,10 @@
 import Phaser from "phaser";
 import { itemById } from "../core/items";
-import { buyReward, claimGoal, rewardShop, wallList } from "../core/slayerlist";
+import { rewardShop, wallList } from "../core/slayerlist";
+import type { Intent } from "../core/protocol";
 import type { GameState } from "../core/save";
 import { frame, Menu, type Row } from "./panel";
+import { closeWhenDone, dispatch, followGuest } from "./guestlive";
 import { STATE_KEY } from "./state";
 
 const STATE_WORDS = {
@@ -49,6 +51,21 @@ export class WallListScene extends Phaser.Scene {
     kb?.on("keydown-DOWN", () => this.menu.move(1));
     kb?.on("keydown-ENTER", () => this.menu.press(0));
     this.menu.setFocus(true);
+    // A guest's claims and buys go to the host, which judges them against their own kills and purse
+    // (note 109); the list redraws when its answer reaches their copy.
+    followGuest(
+      this,
+      () => this.refresh(),
+      (text) => this.message.setText(text),
+    );
+    closeWhenDone(this);
+    this.refresh();
+  }
+
+  /** Send a claim or a buy through the dispatcher; `done` is the line when it worked (a guest's answer comes later). */
+  private act(intent: Intent, done: string): void {
+    const why = dispatch(this.state, intent);
+    if (why !== "sent") this.message.setText(why ?? done);
     this.refresh();
   }
 
@@ -91,11 +108,10 @@ export class WallListScene extends Phaser.Scene {
               {
                 text: "Claim",
                 run: () => {
-                  this.message.setText(
-                    claimGoal(g, goal.id) ??
-                      `Maren hands you ${reward?.name.toLowerCase() ?? "the reward"}.`,
+                  this.act(
+                    { kind: "slayer-claim", goal: goal.id },
+                    `Maren hands you ${reward?.name.toLowerCase() ?? "the reward"}.`,
                   );
-                  this.refresh();
                 },
               },
             ]
@@ -123,11 +139,10 @@ export class WallListScene extends Phaser.Scene {
         {
           text: "Buy",
           run: () => {
-            this.message.setText(
-              buyReward(g, r.id) ??
-                `Maren hands you the ${(itemById(r.id)?.name ?? r.name).toLowerCase()}.`,
+            this.act(
+              { kind: "slayer-buy", item: r.id },
+              `Maren hands you the ${(itemById(r.id)?.name ?? r.name).toLowerCase()}.`,
             );
-            this.refresh();
           },
         },
       ],

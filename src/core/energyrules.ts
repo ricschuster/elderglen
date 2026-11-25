@@ -1,6 +1,5 @@
 // Energy rules decided with the owner on 2026-10-31 (note 07, "Energy rules"). Pure, free of Phaser
 // and the DOM. Placeholder numbers except where the note says Stardew's.
-import { ENERGY_FLOOR } from "./energy";
 import { DAY_END } from "./clock";
 
 /** Minutes since midnight of the last bedtime that costs nothing (12:10 am, as Stardew). */
@@ -70,6 +69,3 @@ export function morningEnergy(m: MorningInput): number {
     return Math.round(m.max * HALF_MORNING);
   return Math.round((m.max * (100 - lateSleepLoss(m.minutes))) / 100);
 }
-
-/** True when `energy` is at the floor where the day ends. */
-export const atFloor = (energy: number): boolean => energy <= ENERGY_FLOOR;

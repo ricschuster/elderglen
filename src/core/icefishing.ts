@@ -9,6 +9,7 @@ import {
   type Tile,
 } from "./festivalroutes";
 import type { Bite, FishDef } from "./fishing";
+import type { PlayerId } from "./players";
 import type { GameState } from "./save";
 import { parseTime } from "./villagers";
 
@@ -136,6 +137,11 @@ export function awardIcePrize(
   s: IceFishing,
 ): IcePrize | undefined {
   if (s.status !== "won") return undefined;
+  return payIcePrize(g);
+}
+
+/** The prize of a won contest for the acting player. */
+export function payIcePrize(g: GameState): IcePrize | undefined {
   const out: IcePrize = { frostfin: false };
   if (!g.festivalsJoined.includes(HAT_KEY)) {
     g.festivalsJoined.push(HAT_KEY);
@@ -171,4 +177,77 @@ export function iceEndLine(s: IceFishing): string | undefined {
   return winner === "player"
     ? `${s.caught} fish at the holes. You win the contest!`
     : `Only ${s.caught} fish. ${winner[0]!.toUpperCase()}${winner.slice(1)} wins the contest.`;
+}
+
+// ---- several players (note 111 decision 5): every winner is rewarded
+
+/** One player's part in the contest. */
+export interface IceEntry {
+  caught: number;
+  status: IceStatus;
+}
+
+/** The contest for everyone on the ice: each player has their own count, judged on their own. */
+export interface IceContest {
+  festival: Festival;
+  win: number;
+  entries: Record<PlayerId, IceEntry>;
+}
+
+export function startIceContest(f: Festival): IceContest | undefined {
+  if (f.id !== "frostday") return undefined;
+  return { festival: f, win: data.win, entries: {} };
+}
+
+/** The player's entry, started at their first hole catch or first judging. */
+export function iceEntry(c: IceContest, id: PlayerId): IceEntry {
+  return (c.entries[id] ??= { caught: 0, status: "fishing" });
+}
+
+/** Count a landed fish for a player (as `noteHoleCatch`). Guests count too (note 111). True if it counted. */
+export function noteContestCatch(
+  c: IceContest,
+  id: PlayerId,
+  water: string | undefined,
+  atHole: boolean,
+): boolean {
+  if (!atHole || water !== "forest-lake") return false;
+  const e = iceEntry(c, id);
+  if (e.status !== "fishing") return false;
+  e.caught += 1;
+  return true;
+}
+
+/** Judge one player at a minute (as `judge`): reaching `win` wins any time, a short count loses from `judgeAt`. */
+export function judgeEntry(
+  c: IceContest,
+  id: PlayerId,
+  minutes: number,
+): IceStatus {
+  const e = iceEntry(c, id);
+  if (e.status !== "fishing") return e.status;
+  if (e.caught >= c.win) e.status = "won";
+  else if (minutes >= judgeAt) e.status = "lost";
+  return e.status;
+}
+
+/** Every player who beat the rival's count. */
+export const iceWinners = (c: IceContest): PlayerId[] =>
+  Object.entries(c.entries)
+    .filter(([, e]) => e.status === "won")
+    .map(([id]) => id);
+
+/** The contest is over when it has entrants and every one of them has been judged. */
+export const iceDone = (c: IceContest): boolean => {
+  const es = Object.values(c.entries);
+  return es.length > 0 && es.every((e) => e.status !== "fishing");
+};
+
+/** The line for one player's entry, or undefined while it runs. */
+export function iceEntryLine(c: IceContest, id: PlayerId): string | undefined {
+  const e = c.entries[id];
+  if (!e || e.status === "fishing") return undefined;
+  return e.status === "won"
+    ? `${e.caught} fish at the holes. You win the contest!`
+    : `Only ${e.caught} fish. ${RIVALS[c.festival.id]![0]!.toUpperCase()}${RIVALS[c.festival.id]!.slice(1)} wins the contest.`;
 }

@@ -1,6 +1,12 @@
 // Message shapes between a guest and the host Room (note 53, step 2). Plain JSON, no socket,
 // no Phaser, no DOM. src/net/protocol.ts re-exports these for the socket code.
-import type { PlayerId } from "./players";
+import type { CreatureSave } from "./creatures";
+import type { WorldFx } from "./worldfx";
+import type { Pile } from "./ground";
+import type { Rock } from "./rocks";
+import type { PlayerId, PlayerSave } from "./players";
+import type { Spot } from "./forage";
+import type { GateView } from "./festivalgate";
 
 /** A change to the shared world, as the guest asks for it. The world adapter gives `kind` meaning. */
 export interface Intent {
@@ -48,6 +54,8 @@ export type ServerMsg =
       players: PlayerInfo[];
       /** Top-left tile of this player's cabin, when the world has one (they spawn beside it). */
       home?: { x: number; y: number };
+      /** The tile to start on: the guest's own home, by their bed (note 110). A rejoin starts there too. */
+      start?: { map: string; x: number; y: number };
     }
   /** The whole farm. Sent on join and on a day change to a guest who was away, never per tick. */
   | { t: "farm"; day: number; farm: string }
@@ -64,8 +72,81 @@ export type ServerMsg =
   | { t: "beds"; asleep: string[]; waiting: string[] }
   | { t: "joined"; player: PlayerInfo }
   | { t: "left"; id: PlayerId }
+  /**
+   * The ground piles of a map, and for a mine floor its rocks and ladder, sent when they change and when a
+   * guest arrives on the map (note 109 rules 2 and 5). The guest's copy takes them as they are.
+   */
+  | {
+      t: "mapstate";
+      map: string;
+      ground: Pile[];
+      floor?: { rocks: Rock[]; ladder?: Spot };
+    }
+  /**
+   * What changed in the world of a map (trees, rocks, soil and crops, machines, pots) as the host has it now,
+   * sent to every guest before the `applied` of the intent that caused it and every few ticks for the host's
+   * own changes. The guest copy takes the entries instead of rolling the rules itself (note 53).
+   */
+  | { t: "worldfx"; map: string; fx: WorldFx }
+  /** The creatures of a mine floor or map, every tick, to the players on it (note 109 rule 7). */
+  | { t: "creatures"; map: string; rows: CreatureSave[] }
+  /** A bomb a guest lit, to the players on its map: it blinks for its fuse (note 109). */
+  | { t: "bomb"; map: string; x: number; y: number; id: string; fuse: number }
+  /** A bomb went off: the blast circle, and what it hurt is in the other messages (note 109). */
+  | { t: "blast"; map: string; x: number; y: number; id: string }
+  /** One player's own record after the host changed it (a hit, a kill, a catch, a faint): sent to that player. */
+  | { t: "player"; id: PlayerId; rec: PlayerSave }
+  /** What bit on a cast: the guest's catch screen runs it (note 109, "Fishing"). */
+  | {
+      t: "bite";
+      kind: "none" | "fish" | "lobster" | "trash" | "find";
+      /** The fish or item id. */
+      item?: string;
+    }
+  /** The player fainted in a fight: they wake at home, and this is what it cost (note 109 rule 6). */
+  | {
+      t: "faint";
+      gold: number;
+      lost: { id: string; count: number }[];
+      /** The tile they wake on, in their own home (note 110 rule 1). */
+      at?: { map: string; x: number; y: number };
+    }
+  /** The new morning: the tile the player wakes on, in the home they slept in or their own after a pass-out (note 110). */
+  | { t: "wake"; map: string; x: number; y: number }
+  /** Today's festival: the gate and the running event or display (note 111). To every player. */
+  | { t: "festival"; view: FestivalView }
+  /** A line the host has for one player about a festival result (a prize, a winner). */
+  | { t: "fline"; text: string }
   /** The join was turned down; the host then closes the socket. */
   | { t: "refused"; reason: "full" | "in-use" | "no-free-cabin" };
+
+/**
+ * What every player is told about today's festival (note 111): the gate, and the main event or display that is
+ * running. Sent to everyone whenever it changes; a guest keeps the latest.
+ */
+export interface FestivalView extends GateView {
+  /** The Seedswap hunt in progress or done: packets still lying, counts by player, the target and seconds left. */
+  hunt?: {
+    packets: [number, number][];
+    counts: Record<PlayerId, number>;
+    target: number;
+    left: number;
+    done: boolean;
+  };
+  /** The ice contest: each entrant's count and result. */
+  ice?: {
+    win: number;
+    entries: Record<PlayerId, { caught: number; status: string }>;
+  };
+  /** The Cake Day table: who has put a dish on, and the tasted quality. */
+  cake?: { given: PlayerId[]; tasted?: string };
+  /** The shared Harvest Showing display: the goods on it, who holds it, and the placing once judged. */
+  showing?: {
+    table: string[];
+    holder?: PlayerId;
+    result?: { place: number; points: number };
+  };
+}
 
 export interface PlayerInfo {
   id: PlayerId;

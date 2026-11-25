@@ -10,6 +10,7 @@ import { fishById } from "./fishing";
 import { BARS, COAL, ORES } from "./ore";
 import { QUALITIES, splitQuality } from "./quality";
 import type { GameState } from "./save";
+import { setFlag } from "./worldflags";
 
 /**
  * The Harvest Showing's display (`docs/design/66_fall_winter_festivals_and_farm_cave.md`).
@@ -205,4 +206,85 @@ export function judge(g: GameState, ids: string[]): Judged | undefined {
     g.inventory.add(PRIZE_MELON);
   }
   return { score, place };
+}
+
+// ---- one shared display for the farm (note 111 decision 6)
+
+const resultPrefix = (day: number) => `showing-result:${dateOf(day).year}:`;
+const collectedKey = (day: number) =>
+  `harvest-showing-collected:${dateOf(day).year}`;
+
+/**
+ * The year's placing, kept as a world flag so the farm has one (it is saved). `showing-result:<year>:<place>:<points>`.
+ * Undefined until the judge has scored the farm's table this year.
+ */
+export function sharedResult(
+  g: Pick<GameState, "flags" | "day">,
+): { place: Place; points: number } | undefined {
+  const prefix = resultPrefix(g.day.clock.day);
+  const flag = (g.flags ?? []).find((f) => f.startsWith(prefix));
+  if (!flag) return undefined;
+  const [place, points] = flag.slice(prefix.length).split(":").map(Number);
+  const found = PLACES.find((p) => p.place === place);
+  return found && Number.isFinite(points)
+    ? { place: found, points: points! }
+    : undefined;
+}
+
+/** Why the shared table cannot be judged, with the goods held by the acting player; as `judgeProblem` but one judging for the farm. */
+export function sharedJudgeProblem(
+  g: GameState,
+  ids: string[],
+): string | undefined {
+  if (sharedResult(g)) return "The judge has already scored the farm's table.";
+  const alone =
+    ids.length === 0 ? "Put something on the table first." : undefined;
+  if (alone) return alone;
+  if (ids.length > TABLE_SIZE) return "The table holds nine goods.";
+  const need = new Map<string, number>();
+  for (const id of ids) {
+    if (!groupOf(id)) return `${itemById(id)?.name ?? id} cannot be shown.`;
+    need.set(id, (need.get(id) ?? 0) + 1);
+  }
+  for (const [id, n] of need)
+    if (g.inventory.count(id) < n) return "You do not have all of those.";
+  return undefined;
+}
+
+/** Judge the farm's table once for everyone. Nothing is paid here: each player collects (`collectShowingPrize`). */
+export function judgeShared(g: GameState, ids: string[]): Judged | undefined {
+  if (sharedJudgeProblem(g, ids) !== undefined) return undefined;
+  const score = scoreTable(ids);
+  const place = placeOf(score.total);
+  setFlag(g, `${resultPrefix(g.day.clock.day)}${place.place}:${score.total}`);
+  return { score, place };
+}
+
+/** Why the acting player cannot collect their prize from the judge, or undefined if they can. */
+export function collectProblem(g: GameState): string | undefined {
+  if (!sharedResult(g)) return "The judge has not scored the table yet.";
+  if (g.festivalsJoined.includes(collectedKey(g.day.clock.day)))
+    return "You have collected your prize from the judge.";
+  return undefined;
+}
+
+export interface ShowPrize {
+  tokens: number;
+  place: Place;
+  /** First place only: the hat and the melon. */
+  rosette: boolean;
+}
+
+/** The acting player collects the same placing's prize: tokens, and for first place the Rosette Hat and the melon. */
+export function collectShowingPrize(g: GameState): ShowPrize | undefined {
+  if (collectProblem(g) !== undefined) return undefined;
+  const { place } = sharedResult(g)!;
+  const year = dateOf(g.day.clock.day).year;
+  g.festivalsJoined.push(collectedKey(g.day.clock.day));
+  g.showTokens = { year, count: showTokens(g) + place.tokens };
+  if (place.place === 1) {
+    g.wardrobe.add(ROSETTE_HAT);
+    g.inventory.add(PRIZE_MELON);
+  }
+  return { tokens: place.tokens, place, rosette: place.place === 1 };
 }

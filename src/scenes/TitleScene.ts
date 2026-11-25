@@ -183,7 +183,7 @@ export class TitleScene extends Phaser.Scene {
         0x3f7d3a,
         () => this.play(info.slot, info.game),
         110,
-        38,
+        40,
         16,
       );
     if (info.status === "used" && makeNativePipe)
@@ -194,7 +194,7 @@ export class TitleScene extends Phaser.Scene {
         0x4a5a7a,
         () => void this.host(info.slot, info.game),
         90,
-        38,
+        40,
         16,
       );
     if (info.status === "used" && info.resume && info.night)
@@ -210,7 +210,7 @@ export class TitleScene extends Phaser.Scene {
           this.scene.start("farm-choice");
         },
         130,
-        38,
+        40,
         16,
       );
     if (info.status !== "empty") this.deleteButton(info.slot, 880, y);
@@ -220,7 +220,7 @@ export class TitleScene extends Phaser.Scene {
   private restartButton(slot: number, x: number, y: number): void {
     let asked = false;
     this.add
-      .rectangle(x, y, 150, 38, 0x4a5a7a, 1)
+      .rectangle(x, y, 150, 40, 0x4a5a7a, 1)
       .setStrokeStyle(2, 0xffffff, 0.8)
       .setInteractive({ useHandCursor: true })
       .on("pointerdown", () => {
@@ -245,7 +245,7 @@ export class TitleScene extends Phaser.Scene {
   private deleteButton(slot: number, x: number, y: number): void {
     let asked = false;
     this.add
-      .rectangle(x, y, 90, 38, 0xa0482e, 1)
+      .rectangle(x, y, 90, 40, 0xa0482e, 1)
       .setStrokeStyle(2, 0xffffff, 0.8)
       .setInteractive({ useHandCursor: true })
       .on("pointerdown", () => {

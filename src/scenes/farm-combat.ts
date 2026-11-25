@@ -32,6 +32,7 @@ import {
 } from "../core/combat";
 import {
   creatureById,
+  creatureMax,
   floorHasCreatures,
   hurtCreature,
   splitOff,
@@ -51,6 +52,10 @@ import {
 } from "../core/bombs";
 import { dangerHit } from "../core/danger";
 import { mineFloorOf } from "../core/mines";
+import { LOCAL_PLAYER } from "../core/players";
+import { nearestPlayer } from "../core/roomplay";
+import { viewOf } from "../core/roommaps";
+import { HostSession } from "../net/session";
 import {
   defeatCreature,
   defeatMessage,
@@ -186,6 +191,14 @@ export function cast(farm: FarmScene, rodId: string): void {
 /** Tick the fuses, blink the lit bombs and set off the ones that are due. */
 export function updateBombs(farm: FarmScene, dt: number): void {
   farm.bombFx.clear();
+  const ts0 = farm.map.tileSize;
+  // A guest's bombs are the host's: blink until its blast message, or a few seconds past the fuse.
+  farm.guestLit = farm.guestLit.filter((b) => farm.time.now < b.until + 2000);
+  for (const b of farm.guestLit) {
+    const on = Math.floor(farm.time.now / 120) % 2 === 0;
+    farm.bombFx.fillStyle(on ? 0xffffff : 0xff6a3a, on ? 0.7 : 0.45);
+    farm.bombFx.fillRect(b.x * ts0 + 2, b.y * ts0 + 2, ts0 - 4, ts0 - 4);
+  }
   if (farm.litBombs.length === 0) return;
   const ts = farm.map.tileSize;
   for (const b of farm.litBombs) {
@@ -194,6 +207,25 @@ export function updateBombs(farm: FarmScene, dt: number): void {
     farm.bombFx.fillRect(b.x * ts + 2, b.y * ts + 2, ts - 4, ts - 4);
   }
   for (const b of tickBombs(farm.litBombs, dt)) detonate(farm, b, false);
+}
+
+/** The host's bomb went off on a guest's map: the boom, the shake and the blast circle (no rules here). */
+export function guestBlast(
+  farm: FarmScene,
+  m: { x: number; y: number; id: string },
+): void {
+  const def = bombById(m.id);
+  if (!def) return;
+  const ts = farm.map.tileSize;
+  audio.sfx("bomb.boom");
+  farm.cameras.main.shake(200, 0.01);
+  farm.swingFx.clear().fillStyle(0xffb040, 0.5);
+  farm.swingFx.fillCircle(
+    (m.x + 0.5) * ts,
+    (m.y + 0.5) * ts,
+    (def.radius + 0.5) * ts,
+  );
+  farm.time.delayedCall(220, () => farm.swingFx.clear());
 }
 
 /** Every lit bomb goes off at once (leaving the map or the day ending). */
@@ -304,6 +336,7 @@ export function syncCombatSettings(farm: FarmScene): void {
 export function updateCombat(farm: FarmScene, dt: number): void {
   const combat = farm.state.combat;
   const floor = fightState(farm);
+  farm.creatureBars.clear();
   farm.player.setAlpha(
     combat.health.grace > 0 && Math.floor(farm.time.now / 90) % 2 ? 0.4 : 1,
   );
@@ -323,9 +356,17 @@ export function updateCombat(farm: FarmScene, dt: number): void {
     }
   } else farm.burnDebt = 0;
   const ts = farm.map.tileSize;
-  for (const c of floor.creatures) {
+  syncCreatureSprites(farm, floor.creatures);
+  // Guests on this map are chased too: each creature goes for its nearest player (note 109 rule 7).
+  const net = farm.net instanceof HostSession ? farm.net : undefined;
+  const guests = (net?.remotes() ?? []).filter((r) => r.map === farm.mapId);
+  const view = net ? viewOf(farm.state, farm.mapId) : undefined;
+  for (const c of [...floor.creatures]) {
+    const mine = { id: LOCAL_PLAYER, x: farm.pos.x, y: farm.pos.y };
+    const chased =
+      nearestPlayer(c, [mine, ...guests.map((r) => ({ ...r }))]) ?? mine;
     const result = stepCreature(c, dt, {
-      player: farm.pos,
+      player: chased,
       walk: (cr, dx, dy) =>
         move(
           { x: cr.x, y: cr.y },
@@ -339,7 +380,14 @@ export function updateCombat(farm: FarmScene, dt: number): void {
       tileSize: ts,
       calm: oilCalms(farm.state, c.kind),
     });
-    if (result.hit) {
+    if (result.hit && chased.id !== LOCAL_PLAYER && net && view) {
+      // A guest took the hit: their own record pays for it, on the host (note 109 rule 6).
+      net.world.play.hurtPlayer(chased.id, c, result.hit, {
+        dangerous: !!farm.floorState?.dangerous,
+        view,
+        list: floor,
+      });
+    } else if (result.hit) {
       // Dangerous mode: hits take two and a half times the health, before Assist (note 22).
       const lost = combat.health.hurt(
         dangerHit(result.hit, !!farm.floorState?.dangerous),
@@ -376,6 +424,104 @@ export function updateCombat(farm: FarmScene, dt: number): void {
   if (combat.health.down && !combat.defeatPending) knockedOut(farm);
 }
 
+/**
+ * Make the sprites match the creatures on the floor: a guest's kill or a split removes or adds one the host's own
+ * loop did not (note 109).
+ */
+export function syncCreatureSprites(farm: FarmScene, list: Creature[]): void {
+  for (const [uid, sprite] of farm.creatureSprites)
+    if (!list.some((c) => c.uid === uid)) {
+      sprite.destroy();
+      farm.creatureSprites.delete(uid);
+    }
+  for (const c of list)
+    if (!farm.creatureSprites.has(c.uid)) {
+      const sprite = addCreatureSprite(farm, c);
+      farm.uiCamera.ignore(sprite);
+    }
+}
+
+/**
+ * A guest's creatures are the host's (the `creatures` messages put them in the copy): draw them, step nothing
+ * and take no hits here.
+ */
+export function guestCombatView(farm: FarmScene): void {
+  farm.creatureBars.clear();
+  const floor = fightState(farm);
+  if (!floor) return;
+  syncCreatureSprites(farm, floor.creatures);
+  for (const c of floor.creatures) drawCreature(farm, c);
+}
+
+/** A guest's swing: the cooldown and the arc are drawn here, the hit is the host's (note 109). */
+export function guestSwing(
+  farm: FarmScene,
+  net: { sendIntent(i: { kind: string; [k: string]: unknown }): number },
+  weapon: WeaponDef,
+): void {
+  if (farm.time.now < farm.swingReady) return;
+  farm.lastWeapon = weapon.id;
+  audio.sfx("combat.swing");
+  farm.swingReady =
+    farm.time.now +
+    cooldownFor(farm.state.skills, weapon.cooldown) *
+      farm.state.combat.effects.swingFactor() *
+      1000;
+  const ts = farm.map.tileSize;
+  // A sling shoots toward the pointer or the tapped spot, as for the host (the host aims the shot along it).
+  const aim = weapon.family === "sling" ? shotAim(farm) : undefined;
+  if (aim) farm.facing = facingFrom(aim, farm.facing);
+  const mid = { x: farm.pos.x, y: farm.pos.y - 6 };
+  const arc = swingArc(weapon.family, farm.facing);
+  if (aim) {
+    const len = weapon.reach * ts;
+    const n = Math.hypot(aim.x, aim.y);
+    farm.swingFx
+      .clear()
+      .lineStyle(3, 0xffffff, 0.35)
+      .lineBetween(
+        mid.x,
+        mid.y,
+        mid.x + (aim.x / n) * len,
+        mid.y + (aim.y / n) * len,
+      );
+    farm.time.delayedCall(90, () => farm.swingFx.clear());
+  } else if (arc) playSwingArc(farm, arc, mid, weapon.reach * ts * 0.8);
+  // The training dummy takes the hit on the guest's own screen; nothing is shared (it never hits back).
+  if (hitDummy(farm, weapon)) return;
+  net.sendIntent({
+    kind: "swing",
+    map: farm.mapId,
+    weapon: weapon.id,
+    facing: farm.facing,
+    x: farm.pos.x,
+    y: farm.pos.y,
+    ...(aim ? { ax: aim.x, ay: aim.y } : {}),
+  });
+}
+
+/** The dummy in front, as far as the weapon reaches: the number and the line. True when it was hit. */
+function hitDummy(farm: FarmScene, weapon: WeaponDef): boolean {
+  const ts = farm.map.tileSize;
+  const f = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] }[
+    farm.facing
+  ];
+  const here = tileOf(farm.pos, PLAYER, ts);
+  for (let i = 1; i <= Math.max(1, Math.floor(weapon.reach)); i++) {
+    const tx = here.x + f[0]! * i;
+    const ty = here.y + f[1]! * i;
+    if (farm.map.serviceAt(tx, ty)?.kind === "dummy") {
+      floatText(farm, (tx + 0.5) * ts, ty * ts, `${weapon.damage}`, "#ffffff");
+      audio.sfx("combat.hit");
+      farm.message = `The dummy takes ${weapon.damage}. Swing again in ${weapon.cooldown} seconds.`;
+      farm.render();
+      return true;
+    }
+    if (farm.tileBlocked(tx, ty)) break;
+  }
+  return false;
+}
+
 /** One painted sprite for a creature, kept in `creatureSprites`. */
 export function addCreatureSprite(
   farm: FarmScene,
@@ -390,9 +536,21 @@ export function addCreatureSprite(
   return block;
 }
 
+/** A thin health bar over a creature that has lost some (host and guests alike). */
+function drawCreatureBar(farm: FarmScene, c: Creature): void {
+  const max = creatureMax(c, farm.floorState?.dangerous === true);
+  if (c.hp >= max || c.hp <= 0) return;
+  const w = c.small ? 10 : 16;
+  const x = c.x - w / 2;
+  const y = c.y - (c.small ? 16 : 24);
+  farm.creatureBars.fillStyle(0x000000, 0.6).fillRect(x - 1, y - 1, w + 2, 4);
+  farm.creatureBars.fillStyle(0xd84a4a, 1).fillRect(x, y, w * (c.hp / max), 2);
+}
+
 export function drawCreature(farm: FarmScene, c: Creature): void {
   const block = farm.creatureSprites.get(c.uid);
   if (!block) return;
+  drawCreatureBar(farm, c);
   block.setPosition(c.x, c.y).setDepth(sortDepth(c.y));
   // The wind up is the warning: a swelling, blinking sprite (note 22).
   const winding = c.state === "windup";
@@ -518,19 +676,7 @@ export function swing(farm: FarmScene, weapon: WeaponDef): void {
   if (!arc) farm.time.delayedCall(90, () => farm.swingFx.clear());
 
   // The dummy: in front, as far as the weapon reaches.
-  const here = tileOf(farm.pos, PLAYER, ts);
-  for (let i = 1; i <= Math.max(1, Math.floor(weapon.reach)); i++) {
-    const tx = here.x + f[0]! * i;
-    const ty = here.y + f[1]! * i;
-    const kind = farm.map.serviceAt(tx, ty)?.kind;
-    if (kind === "dummy") {
-      floatText(farm, (tx + 0.5) * ts, ty * ts, `${weapon.damage}`, "#ffffff");
-      audio.sfx("combat.hit");
-      farm.message = `The dummy takes ${weapon.damage}. Swing again in ${weapon.cooldown} seconds.`;
-      return farm.render();
-    }
-    if (farm.tileBlocked(tx, ty)) break;
-  }
+  if (hitDummy(farm, weapon)) return;
 
   const floor = fightState(farm);
   if (!floor || farm.state.combat.noCreatures) return;

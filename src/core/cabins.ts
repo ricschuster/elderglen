@@ -15,6 +15,40 @@ export function cabinSpawnTile(site: CabinSite): { x: number; y: number } {
 
 export type CabinOrigin = "multiplayer-start" | "converted";
 
+/** The three outside looks of a cabin (note 110 rule 2). Names are placeholders until the art pass (M3d). */
+export const CABIN_STYLES = ["log", "stone", "plank"] as const;
+export type CabinStyle = (typeof CABIN_STYLES)[number];
+export const CABIN_STYLE_NAMES: Record<CabinStyle, string> = {
+  log: "Log",
+  stone: "Stone",
+  plank: "Plank",
+};
+export const isCabinStyle = (v: unknown): v is CabinStyle =>
+  typeof v === "string" && (CABIN_STYLES as readonly string[]).includes(v);
+
+/** An upgrade being built in a cabin: the tier it will reach and working nights left (as `HouseBuild`). */
+export interface CabinBuild {
+  tier: number;
+  daysLeft: number;
+}
+
+/** A cabin's door tile (on the farm, the bottom row of the footprint) and the tile its mailbox stands on. */
+export function cabinDoorTile(site: CabinSite): { x: number; y: number } {
+  return { x: site.x + 1, y: site.y + CABIN_HEIGHT - 1 };
+}
+export function cabinMailboxTile(site: CabinSite): { x: number; y: number } {
+  return { x: site.x + 3, y: site.y + CABIN_HEIGHT };
+}
+/** The footprint of a cabin in tiles. */
+export function cabinRect(site: CabinSite): {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+} {
+  return { x: site.x, y: site.y, w: CABIN_WIDTH, h: CABIN_HEIGHT };
+}
+
 export interface CabinSite {
   x: number;
   y: number;
@@ -26,12 +60,22 @@ export interface Cabin extends CabinSite {
   ownerKey: string | null;
   /** True for a cabin that cost nothing (built at a multiplayer start). */
   free: boolean;
+  /** The outside look, picked at placement and changed at the carpenter (note 110). */
+  style: CabinStyle;
+  /** House tier of this cabin's interior, upgraded by its occupant alone (note 85, note 108 rule 8). */
+  tier: number;
+  /** Renovations built, by id (`house-renos.json`). */
+  renos: string[];
+  /** An upgrade under way. */
+  build?: CabinBuild;
 }
 
 export interface CabinBook {
   origin: CabinOrigin;
   cabins: Cabin[];
   nextId: number;
+  /** Where each owner's bed stands in their home, when moved from the default (note 110 rule 1). Keyed by player id. */
+  beds?: Record<string, { x: number; y: number }>;
 }
 
 /** Tells the rules whether a tile cannot hold a building (water, cliff, house, other buildings). */
@@ -90,6 +134,7 @@ function withCabin(
   site: CabinSite,
   ownerKey: string | null,
   free: boolean,
+  style: CabinStyle,
 ) {
   const cabin: Cabin = {
     id: book.nextId,
@@ -97,6 +142,9 @@ function withCabin(
     y: site.y,
     ownerKey,
     free,
+    style,
+    tier: 0,
+    renos: [],
   };
   return {
     cabin,
@@ -110,11 +158,12 @@ export function buyCabin(
   gold: number,
   site: CabinSite,
   blocked: BlockedFn,
+  style: CabinStyle = "log",
 ): BuyResult {
   const fail = placementFailure(book, site, blocked);
   if (fail) return { ok: false, reason: fail };
   if (gold < CABIN_PRICE) return { ok: false, reason: "unaffordable" };
-  const made = withCabin(book, site, null, false);
+  const made = withCabin(book, site, null, false, style);
   return {
     ok: true,
     book: made.book,
@@ -149,6 +198,7 @@ export function joinNeedsCabin(
   key: string,
   area: { x: number; y: number; w: number; h: number },
   blocked: BlockedFn,
+  style: CabinStyle = "log",
 ): JoinResult {
   const own = cabinOf(book, key);
   if (own) return { kind: "returning", book, cabin: own };
@@ -163,7 +213,7 @@ export function joinNeedsCabin(
   if (book.origin === "multiplayer-start") {
     const site = defaultCabinSite(book, area, blocked);
     if (!site) return { kind: "refused", reason: "no-free-cabin" };
-    const made = withCabin(book, site, key, true);
+    const made = withCabin(book, site, key, true, style);
     return { kind: "assigned", book: made.book, cabin: made.cabin };
   }
   return { kind: "refused", reason: "no-free-cabin" };
@@ -180,5 +230,82 @@ export function demolishCabin(
   return {
     book: { ...book, cabins: book.cabins.filter((c) => c.id !== id) },
     evictedKey: cabin.ownerKey,
+  };
+}
+
+/**
+ * Change a cabin's outside look. Only the one who lives there may (note 110 rule 2, ours). Returns the new
+ * book, or a reason in words.
+ */
+export function restyleCabin(
+  book: CabinBook,
+  by: string,
+  style: unknown,
+): { ok: true; book: CabinBook } | { ok: false; reason: string } {
+  if (!isCabinStyle(style)) return { ok: false, reason: "bad style" };
+  const own = cabinOf(book, by);
+  if (!own) return { ok: false, reason: "You have no cabin." };
+  if (own.style === style)
+    return { ok: false, reason: "It already looks like that." };
+  return {
+    ok: true,
+    book: {
+      ...book,
+      cabins: book.cabins.map((c) => (c.id === own.id ? { ...c, style } : c)),
+    },
+  };
+}
+
+/** A saved cabin book, read with defaults for every field an older save lacks. Undefined if there is none. */
+export function loadCabinBook(raw: unknown): CabinBook | undefined {
+  if (typeof raw !== "object" || raw === null) return undefined;
+  const o = raw as Record<string, unknown>;
+  if (!Array.isArray(o.cabins)) return undefined;
+  const int = (v: unknown, min = 0) =>
+    typeof v === "number" && Number.isInteger(v) && v >= min ? v : undefined;
+  const cabins: Cabin[] = [];
+  for (const c of o.cabins) {
+    if (typeof c !== "object" || c === null) continue;
+    const r = c as Record<string, unknown>;
+    const id = int(r.id, 1);
+    const x = int(r.x);
+    const y = int(r.y);
+    if (id === undefined || x === undefined || y === undefined) continue;
+    if (cabins.some((k) => k.id === id)) continue;
+    const owner = typeof r.ownerKey === "string" ? r.ownerKey : null;
+    const cabin: Cabin = {
+      id,
+      x,
+      y,
+      ownerKey: owner,
+      free: r.free === true,
+      style: isCabinStyle(r.style) ? r.style : "log",
+      tier: Math.min(int(r.tier) ?? 0, 3),
+      renos: Array.isArray(r.renos)
+        ? r.renos.filter((v): v is string => typeof v === "string")
+        : [],
+    };
+    const b = r.build as Record<string, unknown> | undefined;
+    if (b && int(b.tier, 1) !== undefined && int(b.daysLeft, 1) !== undefined)
+      cabin.build = { tier: b.tier as number, daysLeft: b.daysLeft as number };
+    cabins.push(cabin);
+  }
+  const beds: Record<string, { x: number; y: number }> = {};
+  if (typeof o.beds === "object" && o.beds !== null)
+    for (const [k, v] of Object.entries(o.beds)) {
+      const bed = v as Record<string, unknown>;
+      const x = int(bed?.x);
+      const y = int(bed?.y);
+      if (x !== undefined && y !== undefined) beds[k] = { x, y };
+    }
+  const nextId = Math.max(
+    int(o.nextId, 1) ?? 1,
+    ...cabins.map((c) => c.id + 1),
+  );
+  return {
+    origin: o.origin === "converted" ? "converted" : "multiplayer-start",
+    cabins,
+    nextId,
+    ...(Object.keys(beds).length ? { beds } : {}),
   };
 }

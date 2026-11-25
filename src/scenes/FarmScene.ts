@@ -95,12 +95,14 @@ import {
   YARD_EMPTY_LINE,
 } from "../core/quarry";
 import { FERRY_LINE, takeTreasure } from "../core/cove";
+import { isBomb } from "../core/bombs";
 import { cropOfSeed, itemById } from "../core/items";
+import { distanceShare, rodById, waterAhead } from "../core/fishing";
 import { MIXED_SEED } from "../core/weeds";
 import { reasonText } from "../core/tools";
 
 import { mapFiles, maps } from "../content/maps";
-import { START, safeSpawn } from "../core/maps";
+import { START, baseMapId, safeSpawn } from "../core/maps";
 import { HAT_KEY } from "./art-people";
 import { DEPTH, sortDepth } from "./depth";
 import {
@@ -113,6 +115,9 @@ import { MAP_PASSES } from "./map-passes";
 
 import { storeOf } from "../core/mapstore";
 import { mapWithDoors } from "../core/placement";
+import { cabinOwnerOfId, mapWithCabins } from "../core/cabinmap";
+import { cabinSpawnTile } from "../core/cabins";
+import { cabinOfHome, homeHoldsOf, homeVisibleTier } from "../core/homes";
 import { farmMapOf, isFarmMap, resolveMapId } from "../core/farmtypes";
 import { pondCovering, pondStep } from "../core/pond";
 import {
@@ -159,6 +164,7 @@ import {
   facingTile,
   move,
   tileOf,
+  FACING_STEP,
   type Facing,
   type Vec,
 } from "../core/movement";
@@ -217,12 +223,7 @@ import { DECOR_ROOMS, decorById, roomTiles, zoneHolds } from "../core/decor";
 import { carryFurniture, furnitureById } from "../core/furniture";
 import { hatById } from "../core/hats";
 import { greenhouseHolds } from "../core/greenhouse";
-import {
-  houseHolds,
-  houseSpouse,
-  houseVisibleTier,
-  isHouseMap,
-} from "../core/house";
+import { houseHolds, houseSpouse, isHouseMap } from "../core/house";
 import { SELECTED_KEY, STATE_KEY } from "./state";
 import { placedChestTip } from "../core/itemtip";
 import {} from "./art";
@@ -263,6 +264,7 @@ import {
   HostSession,
   isGuest,
   noteHostLost,
+  playerNameOf,
   sendWorldIntent,
   type NetSession,
 } from "../net/session";
@@ -281,6 +283,7 @@ import {
   drawBuild,
   drawFurnace,
   drawShrine,
+  drawCabins,
   drawMailbox,
   drawRequestMark,
   drawGreenhouse,
@@ -305,6 +308,12 @@ import {
   TICK_MS,
 } from "./farm-consts";
 import {
+  enterFestivalNet,
+  festivalAsk,
+  pollFestivalNet,
+  updateHuntView,
+} from "./farm-festival-net";
+import {
   updateParade,
   festivalAction,
   pierKeeper,
@@ -325,6 +334,9 @@ import {
   showHealth,
   syncCombatSettings,
   updateCombat,
+  guestBlast,
+  guestCombatView,
+  guestSwing,
   addCreatureSprite,
   floatText,
   swing,
@@ -400,6 +412,10 @@ export class FarmScene extends Phaser.Scene {
   /** Bombs lit and counting down on this map. Never saved: they go off at once on leaving (note 89). */
   litBombs: LitBomb[] = [];
   bombFx!: Phaser.GameObjects.Graphics;
+  /** Health bars over hurt creatures, redrawn every frame (host and guests). */
+  creatureBars!: Phaser.GameObjects.Graphics;
+  /** Bombs the host is counting down for this guest, drawn blinking until the blast message (note 109). */
+  guestLit: { x: number; y: number; until: number }[] = [];
   wash!: Phaser.GameObjects.Graphics;
   /** Tracker arrows at the screen edge, on the UI camera (note 07). */
   trackerGfx!: Phaser.GameObjects.Graphics;
@@ -419,7 +435,7 @@ export class FarmScene extends Phaser.Scene {
   private readonly blocking = new PlayerBlocking();
   private passList: string[] = [];
   /** The multiplayer session, if any, and the other players it shows (note 53). */
-  private net: NetSession | undefined;
+  net: NetSession | undefined;
   /** Until this time (ms) no marriage card opens. */
   private cardQuiet = 0;
   private remote: RemotePlayerLayer | undefined;
@@ -505,7 +521,8 @@ export class FarmScene extends Phaser.Scene {
         x: data.x,
         y: data.y,
       },
-      (id) => mapFiles[id] !== undefined || mineFloorOf(id) !== undefined,
+      (id) =>
+        mapFiles[baseMapId(id)] !== undefined || mineFloorOf(id) !== undefined,
       resolveMapId(START.map, this.state.farmType),
     );
     // An old save may name a map that is gone: start at the farm instead.
@@ -581,12 +598,7 @@ export class FarmScene extends Phaser.Scene {
     // The house's spouse, renovation and corner stair layers bake into the map
     // (collision too), so its holds must be here and not only in `refreshHolds`.
     // A renovation is ordered at the carpenter's, so the house is rebuilt on entry.
-    for (const h of houseHolds(
-      this.state.houseTier,
-      houseSpouse(this.state),
-      this.state.houseRenos,
-    ))
-      holds.add(h);
+    for (const h of this.houseHoldsHere(id)) holds.add(h);
     // A festival day shows its layout on the map (note 82).
     for (const h of festivalHolds(day, hallRestored(this.state.hall)))
       holds.add(h);
@@ -596,7 +608,11 @@ export class FarmScene extends Phaser.Scene {
       ? FarmMap.fromTiled(json)
       : maps.getWith(id, holds, this.tier);
     // The coop and barn doors stand where the buildings were placed.
-    if (isFarmMap(id)) this.map = mapWithDoors(this.state, this.map, id);
+    if (isFarmMap(id)) {
+      this.map = mapWithDoors(this.state, this.map, id);
+      // Guests' cabins stand on the farm, each with a door to its owner's home (note 110).
+      this.map = mapWithCabins(this.state, this.map);
+    }
     if (isHouseMap(id)) carryFurniture(this.state, this.map, id);
     if (this.floor !== undefined)
       this.floorState = this.state.mines.visit(this.floor, day);
@@ -696,6 +712,21 @@ export class FarmScene extends Phaser.Scene {
         this.message = `The host said no: ${reason}.`;
         this.render();
       };
+      // Fainted in a fight: the host charged the cost, and they wake at home (note 109 rule 6).
+      this.net.onFaint = (f) => {
+        audio.sfx("player.die");
+        this.message = `You fainted and were carried home.${f.gold > 0 ? ` It cost ${f.gold}g.` : ""}`;
+        // Home is the guest's own cabin, by their bed (note 110 rule 1).
+        if (f.at) this.travel(f.at.map, "door", { x: f.at.x, y: f.at.y });
+        else this.travel("farm", "from_house");
+      };
+      // The new morning: wake where slept, or in their own home after a pass-out (note 110 rule 1).
+      this.net.onWake = (w) => {
+        this.inBed = false;
+        // The report screen is up: wait until it closes, then stand where they woke.
+        if (this.scene.isPaused()) this.pendingWake = w;
+        else this.applyWake(w);
+      };
     } else if (this.net instanceof HostSession) {
       // The typed-address fallback (a router that blocks broadcasts) needs the real port.
       const { address, port } = this.net.host;
@@ -706,6 +737,10 @@ export class FarmScene extends Phaser.Scene {
     this.litBombs = [];
     this.bombFx = this.add.graphics().setDepth(901);
     world.push(this.bombFx);
+    this.creatureBars = this.add.graphics().setDepth(902);
+    world.push(this.creatureBars);
+    this.guestLit = [];
+    this.watchBombs();
     this.events.once("shutdown", () => detonateAll(this, true));
     this.creatureSprites = new Map();
     syncCombatSettings(this);
@@ -913,8 +948,14 @@ export class FarmScene extends Phaser.Scene {
       delay: TICK_MS / DEV_SPEED,
       loop: true,
       callback: () => {
-        // Time stands still on a festival map, as in Stardew.
-        if (isFestivalMap(this.mapId)) return;
+        // Time stands still on a festival map, as in Stardew. In a session the host's gate holds it, once every
+        // player is in (note 111), whatever map the host stands on.
+        if (
+          this.net instanceof HostSession
+            ? this.net.world.festival.clockHeld()
+            : isFestivalMap(this.mapId)
+        )
+          return;
         // A guest's clock follows the host's day message, so it does not tick (note 53).
         if (this.net instanceof GuestSession) return;
         this.tickAt = this.time.now;
@@ -930,6 +971,11 @@ export class FarmScene extends Phaser.Scene {
       data?: { sleep?: boolean; goto?: { map: string; entry: string } },
     ) => {
       syncCombatSettings(this);
+      if (this.pendingWake) {
+        const w = this.pendingWake;
+        this.pendingWake = undefined;
+        return this.applyWake(w);
+      }
       if (data?.sleep) return this.endDay();
       if (data?.goto) return this.travel(data.goto.map, data.goto.entry);
       // Slept or passed out away from the farm: the night put the farm's world
@@ -1034,7 +1080,10 @@ export class FarmScene extends Phaser.Scene {
     this.drawGlow();
     updateBombs(this, dt);
     this.syncVillagers(undefined, dt);
-    updateHunt(this, dt);
+    if (this.net) {
+      pollFestivalNet(this);
+      updateHuntView(this);
+    } else updateHunt(this, dt);
     this.checkHeartEvent();
     this.checkWedding();
     const marching = updateParade(this, dt);
@@ -1131,7 +1180,7 @@ export class FarmScene extends Phaser.Scene {
       this.dragSoilWork();
       this.pickUp();
       updateCombat(this, dt);
-    }
+    } else guestCombatView(this);
 
     const mark = this.tapMark;
     if (mark && this.time.now > mark.until) this.tapMark = undefined;
@@ -1201,7 +1250,7 @@ export class FarmScene extends Phaser.Scene {
 
   /** The tier layers a growing building map shows: the house rooms or the coop size built so far. */
   private buildingTier(id: string): number {
-    if (isHouseMap(id)) return houseVisibleTier(this.state.houseTier);
+    if (isHouseMap(id)) return homeVisibleTier(this.state, id);
     if (id === COOP_MAP) return coopVisibleTier(this.state.animals.tier);
     if (id === BARN_MAP) return barnVisibleTier(this.state.animals.barnTier);
     return 0;
@@ -1357,31 +1406,35 @@ export class FarmScene extends Phaser.Scene {
         return true;
       }
     }
-    const offer = this.hunt
-      ? undefined
-      : huntOffer(
-          festivalDayToday(this.state.day.clock.day),
-          this.mapId,
-          who.id,
-          this.state.day.clock.day,
-          this.state.day.clock.minutes,
-        );
+    if (this.net && this.festivalTalkNet(who.id)) return true;
+    const offer =
+      this.hunt || this.net
+        ? undefined
+        : huntOffer(
+            festivalDayToday(this.state.day.clock.day),
+            this.mapId,
+            who.id,
+            this.state.day.clock.day,
+            this.state.day.clock.minutes,
+          );
     if (offer) {
       this.hunt = offer.state;
       this.message = offer.message ?? "";
       this.render();
       return true;
     }
-    if (this.iceTalk(who.id)) return true;
+    if (!this.net && this.iceTalk(who.id)) return true;
     const held = heldAt(this.state, this.selected);
     const hall = hallRestored(this.state.hall);
-    const feast = feastGive(
-      this.state,
-      this.mapId,
-      who.id,
-      held.kind === "item" ? held.id : undefined,
-      hall,
-    );
+    const feast = this.net
+      ? undefined
+      : feastGive(
+          this.state,
+          this.mapId,
+          who.id,
+          held.kind === "item" ? held.id : undefined,
+          hall,
+        );
     if (feast) {
       this.message = feast.message;
       if (feast.giver && feast.present)
@@ -1635,6 +1688,8 @@ export class FarmScene extends Phaser.Scene {
     if (f) {
       this.message = `You join the ${f.name}.`;
       this.render();
+      // The host's gate counts this player in; it shows "Waiting for ..." until every player is (note 111).
+      if (this.net) enterFestivalNet(this, () => undefined);
     }
   }
 
@@ -1664,6 +1719,13 @@ export class FarmScene extends Phaser.Scene {
   }
 
   private leave(exit: Exit): void {
+    // In a session the host's gate takes the player in first, and says "Waiting for ..." until all are in (note 111).
+    if (this.net && !isFestivalMap(this.mapId) && isFestivalMap(exit.map))
+      return enterFestivalNet(this, () => this.leaveInto(exit));
+    this.leaveInto(exit);
+  }
+
+  private leaveInto(exit: Exit): void {
     // Walking onto a festival map joins the festival (note 82 decision 11).
     if (!isFestivalMap(this.mapId)) {
       const problem = walkIntoFestival(this.state, exit.map);
@@ -1674,6 +1736,10 @@ export class FarmScene extends Phaser.Scene {
     }
     const door = doorSoundFor(this.mapId, exit.map);
     if (door) audio.sfx(door);
+    // The way out of a guest's cabin is its own door on the farm, not the farmhouse's (note 110).
+    const cabin = cabinOfHome(this.state, this.mapId);
+    if (cabin && exit.id === "door" && isFarmMap(exit.map))
+      return this.travel(exit.map, exit.entry, cabinSpawnTile(cabin));
     this.travel(exit.map, exit.entry);
   }
 
@@ -1787,8 +1853,22 @@ export class FarmScene extends Phaser.Scene {
     this.controls.setUiScale(scale);
   }
 
+  private pendingWake: { map: string; x: number; y: number } | undefined;
+
+  private applyWake(w: { map: string; x: number; y: number }): void {
+    if (w.map === this.mapId) this.placeAt(w.x, w.y);
+    else this.travel(w.map, "door", { x: w.x, y: w.y });
+  }
+
+  /** Stand the player on a tile of this map (the host moved them: a morning in bed). */
+  private placeAt(x: number, y: number): void {
+    const ts = this.map.tileSize;
+    this.pos = { x: (x + 0.5) * ts, y: (y + 1) * ts - 2 };
+    this.render();
+  }
+
   /** Fade out and restart the scene on another map. */
-  travel(map: string, entry: string): void {
+  travel(map: string, entry: string, at?: { x: number; y: number }): void {
     if (this.leaving) return;
     this.leaving = true;
     // Doors and the Mines dismount: the horse waits outside (note 59).
@@ -1806,7 +1886,7 @@ export class FarmScene extends Phaser.Scene {
       );
       this.saveResume();
     }
-    const data: SceneData = { map, entry };
+    const data: SceneData = { map, entry, ...at };
     this.cameras.main.fadeOut(FADE_MS);
     this.cameras.main.once("camerafadeoutcomplete", () =>
       this.scene.restart(data),
@@ -2103,6 +2183,16 @@ export class FarmScene extends Phaser.Scene {
         ref = { kind: "tailor", ...base, stock: mode };
         scene = "tailor";
         data = { mode };
+      } else if (service.kind === "mailbox") {
+        // Each player has a mailbox of their own beside their cabin door (note 110 rule 3).
+        if (cabinOwnerOfId(service.id) !== this.net?.localId)
+          return closed(this.mailboxLine(service.id));
+        ref = { kind: "mailbox", ...base };
+        scene = "mailbox";
+      } else if (service.kind === "wall-list") {
+        // Maren's slayer list: claims and buys run on the host against this player's own kills (note 109).
+        ref = { kind: "walllist", ...base };
+        scene = "walllist";
       } else if (service.kind === "shrine") {
         return this.guestShrine(base);
       } else if (service.kind === "camp-chest" && this.floor !== undefined) {
@@ -2152,6 +2242,14 @@ export class FarmScene extends Phaser.Scene {
       (why) => closed(why),
     );
     return true;
+  }
+
+  /** What a player is told at a mailbox that is not theirs. */
+  private mailboxLine(id: string): string {
+    const owner = cabinOwnerOfId(id);
+    return owner === undefined
+      ? "That is the host's mailbox."
+      : `That is ${playerNameOf(this.net, owner)}'s mailbox.`;
   }
 
   /**
@@ -2204,30 +2302,105 @@ export class FarmScene extends Phaser.Scene {
     if (!(net instanceof GuestSession)) return;
     const held = heldAt(this.state, this.selected);
     const front = this.aimTile();
-    if (!isFarmMap(this.mapId)) return;
+    // Every map the host runs for a guest (note 109): the farm, an area map or a mine floor.
+    const map = this.mapId;
+    if (!(isFarmMap(map) || isAreaMap(map) || this.floor !== undefined)) return;
+    const at = { map, x: front.x, y: front.y };
+    const weapon =
+      held.kind === "item" && isWeapon(held.id)
+        ? weaponById(held.id)
+        : undefined;
+    if (weapon) return guestSwing(this, net, weapon);
+    if (held.kind === "item" && rodById(held.id))
+      return this.guestCast(held.id);
+    // A bomb: the host places it, counts the fuse and blasts as this player (note 109).
+    if (held.kind === "item" && isBomb(held.id))
+      return void net.sendIntent({ kind: "bomb", ...at, item: held.id });
     if (held.kind === "tool" && held.tool === "hoe")
-      net.sendIntent({ kind: "till", x: front.x, y: front.y });
+      net.sendIntent({ kind: "till", ...at });
+    else if (held.kind === "tool" && held.tool === "can")
+      net.sendIntent({ kind: "water", ...at });
+    else if (isLiftTool(held)) net.sendIntent({ kind: held.tool, ...at });
     else if (
-      held.kind === "tool" &&
-      held.tool === "can" &&
-      !this.map.isWater(front.x, front.y)
+      isFarmMap(map) &&
+      held.kind === "item" &&
+      this.state.machines.at(front.x, front.y)
     )
-      net.sendIntent({ kind: "water", x: front.x, y: front.y });
-    else if (isLiftTool(held))
-      net.sendIntent({ kind: held.tool, x: front.x, y: front.y });
-    else if (held.kind === "item" && this.state.machines.at(front.x, front.y))
-      net.sendIntent({
-        kind: "machine-load",
-        x: front.x,
-        y: front.y,
-        item: held.id,
-      });
+      net.sendIntent({ kind: "machine-load", ...at, item: held.id });
     else if (held.kind === "item" && cropOfSeed(held.id))
-      net.sendIntent({ kind: "plant", x: front.x, y: front.y, seed: held.id });
+      net.sendIntent({ kind: "plant", ...at, seed: held.id });
     else {
       this.message = "Only the host can do that for now.";
       this.render();
     }
+  }
+
+  /**
+   * A guest casts: the host rolls the bite and answers with `bite`; the guest then plays the catch bar on their
+   * own screen and sends `catch {perfect}` or `catch {miss}` (note 109, "Fishing").
+   */
+  private guestCast(rodId: string): void {
+    const net = this.net;
+    if (!(net instanceof GuestSession)) return;
+    const rod = rodById(rodId)!;
+    const here = tileOf(this.pos, PLAYER, this.map.tileSize);
+    const step = FACING_STEP[this.facing];
+    const water = waterAhead(
+      this.map,
+      here.x,
+      here.y,
+      step.x,
+      step.y,
+      rod.range,
+    );
+    const first = water[0];
+    if (first === undefined) {
+      this.message = "Face the water to fish.";
+      return this.render();
+    }
+    net.onBite = (b) => {
+      if (b.kind === "none") {
+        this.message = "Nothing is biting.";
+        return this.render();
+      }
+      this.open("fishing", {
+        rod: rodId,
+        water: [],
+        at: here,
+        guest: { kind: b.kind, ...(b.item ? { item: b.item } : {}) },
+      });
+    };
+    net.sendIntent({
+      kind: "cast",
+      map: this.mapId,
+      x: here.x + step.x * first,
+      y: here.y + step.y * first,
+      rod: rodId,
+      distance: distanceShare(first, rod.range),
+    });
+  }
+
+  /** A guest sees the host's bombs on their map: blink for the fuse, then the blast (note 109). */
+  private watchBombs(): void {
+    const net = this.net;
+    if (!(net instanceof GuestSession)) return;
+    net.onBomb = (m) => {
+      if (m.map !== this.mapId) return;
+      if (m.t === "bomb") {
+        this.guestLit.push({
+          x: m.x,
+          y: m.y,
+          until: this.time.now + m.fuse * 1000,
+        });
+        audio.sfx("bomb.fuse");
+        return;
+      }
+      this.guestLit = this.guestLit.filter((b) => b.x !== m.x || b.y !== m.y);
+      guestBlast(this, m);
+    };
+    this.events.once("shutdown", () => {
+      if (net.onBomb) net.onBomb = undefined;
+    });
   }
 
   /** Use the held tool on the tile the player faces. Services are Action's. */
@@ -2291,6 +2464,43 @@ export class FarmScene extends Phaser.Scene {
     if (!isHole(f, x, y)) return undefined;
     this.ice ??= startIceFishing(f);
     return this.ice;
+  }
+
+  /**
+   * Talk to someone at a festival with other players (note 111): Cuthbert starts the hunt and judges the ice
+   * contest, and the lantern's recipient takes the gift. The host judges each; its words come back as festival lines.
+   */
+  private festivalTalkNet(who: string): boolean {
+    const f = festivalDayToday(this.state.day.clock.day);
+    if (!f) return false;
+    const say = (why?: string) => {
+      if (why === undefined) return;
+      this.message = why;
+      this.render();
+    };
+    if (
+      who === "cuthbert" &&
+      f.id === "seedswap-fair" &&
+      this.mapId === "forest"
+    ) {
+      festivalAsk(this.net, { kind: "hunt-start" }, say);
+      return true;
+    }
+    if (who === "cuthbert" && f.id === "frostday" && this.mapId === "forest") {
+      festivalAsk(this.net, { kind: "ice-judge" }, say);
+      return true;
+    }
+    const held = heldAt(this.state, this.selected);
+    const hall = hallRestored(this.state.hall);
+    if (held.kind === "item" && lanternOn(this.state, this.mapId, hall, who)) {
+      festivalAsk(
+        this.net,
+        { kind: "feast-give", map: this.mapId, id: who, held: held.id },
+        say,
+      );
+      return true;
+    }
+    return false;
   }
 
   /** Talk to Cuthbert at the contest: the count, or the judging, the prize and the end of the festival. */
@@ -2367,6 +2577,20 @@ export class FarmScene extends Phaser.Scene {
         }
         return;
       }
+      // Wild goods on any map are picked by the host for them (note 109), whoever gets there first.
+      if (
+        !kind &&
+        this.net instanceof GuestSession &&
+        this.state.forage.itemAt(at.x, at.y)
+      ) {
+        this.net.sendIntent({
+          kind: "forage",
+          map: this.mapId,
+          x: at.x,
+          y: at.y,
+        });
+        return;
+      }
       // A ripe crop on farm soil is picked by the host for them (an intent).
       if (
         !kind &&
@@ -2382,6 +2606,12 @@ export class FarmScene extends Phaser.Scene {
     const spot = this.horseSpot();
     if (spot && spot.x === front.x && spot.y === front.y) return this.getOn();
     if (this.meetVillager(front)) return;
+    // A guest's mailbox is theirs: the host reads only the farm's own (note 110).
+    const post = this.map.serviceAt(front.x, front.y);
+    if (post?.kind === "mailbox" && cabinOwnerOfId(post.id) !== undefined) {
+      this.message = this.mailboxLine(post.id);
+      return this.render();
+    }
     if (onLaunchLine(this, front)) return launchLanternAt(this);
     if (this.map.serviceAt(front.x, front.y)?.kind !== "tide-bridge")
       this.mendAsked = false;
@@ -2709,6 +2939,20 @@ export class FarmScene extends Phaser.Scene {
       this.message = "Could not save. Export from Options to keep your game.";
   }
 
+  /**
+   * The house conditions on a map: the farmhouse's own, or for a guest's cabin its owner's tier and renovations
+   * (note 110). On any other map the farmhouse's, as before (they only matter on a house map).
+   */
+  private houseHoldsHere(id: string): string[] {
+    if (id.startsWith("house@"))
+      return homeHoldsOf(this.state, id, houseSpouse(this.state));
+    return houseHolds(
+      this.state.houseTier,
+      houseSpouse(this.state),
+      this.state.houseRenos,
+    );
+  }
+
   /** The conditions that open doors. Rebuilt after sleeping, when a building may have landed overnight. */
   private refreshHolds(): void {
     this.holds = new Set(holdsOf(this.state));
@@ -2716,12 +2960,7 @@ export class FarmScene extends Phaser.Scene {
     if (this.state.cave.open) this.holds.add("cave-open");
     if (this.state.animals.coopBuilt) this.holds.add(COOP_BUILT);
     if (this.state.animals.barnBuilt) this.holds.add(BARN_BUILT);
-    for (const h of houseHolds(
-      this.state.houseTier,
-      houseSpouse(this.state),
-      this.state.houseRenos,
-    ))
-      this.holds.add(h);
+    for (const h of this.houseHoldsHere(this.mapId)) this.holds.add(h);
     for (const h of greenhouseHolds(this.state)) this.holds.add(h);
     for (const h of festivalHolds(
       this.state.day.clock.day,
@@ -2805,6 +3044,14 @@ export class FarmScene extends Phaser.Scene {
     else this.open(shipping ? "shipping" : "report", { report });
   }
 
+  /** The tag over a guest's cabin door or mailbox, with the occupant's name (note 110), or undefined for any other id. */
+  private cabinLabel(id: string): string | undefined {
+    const owner = cabinOwnerOfId(id);
+    if (owner === undefined) return undefined;
+    const name = playerNameOf(this.net, owner);
+    return id.startsWith("cabin-") ? `${name}'s cabin` : `${name}'s mailbox`;
+  }
+
   /**
    * Placeholder name tags over the doors and counters, so the owner can tell
    * what is what until the art pass (#58). Names come from `core/labels.ts`.
@@ -2819,13 +3066,13 @@ export class FarmScene extends Phaser.Scene {
         !exitOpen(e, this.holds)
       )
         continue;
-      const text = exitLabel(e.id);
+      const text = this.cabinLabel(e.id) ?? exitLabel(e.id);
       if (text) tags.push({ x: e.x + e.w / 2, y: e.y, text });
     }
     for (const s of this.map.services) {
       // The furnace is only there once the smith has given it.
       if (s.kind === "furnace" && !this.state.furnace.gifted) continue;
-      const text = serviceLabel(s.kind, s.id);
+      const text = this.cabinLabel(s.id) ?? serviceLabel(s.kind, s.id);
       if (text) tags.push({ x: s.x + 0.5, y: s.y, text });
     }
     this.labelTags = [];
@@ -3026,6 +3273,7 @@ export class FarmScene extends Phaser.Scene {
     drawCoopInside(this);
     drawFurnace(this);
     drawMailbox(this);
+    drawCabins(this);
     drawShrine(this);
     drawRequestMark(this);
     drawBuild(this);

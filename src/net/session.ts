@@ -8,7 +8,13 @@ import { cabinSpawnTile } from "../core/cabins";
 import { farmMapOf } from "../core/farmtypes";
 import { isHouseMap } from "../core/house";
 import { LOCAL_PLAYER, type PlayerId } from "../core/players";
-import type { Intent, PlayerInfo, PosRow, ServerMsg } from "../core/protocol";
+import type {
+  FestivalView,
+  Intent,
+  PlayerInfo,
+  PosRow,
+  ServerMsg,
+} from "../core/protocol";
 import type { BedStatus } from "../core/room";
 import { GameRoomWorld } from "../core/roomworld";
 import { deserialize, type GameState } from "../core/save";
@@ -45,6 +51,10 @@ export interface NetSession {
   readonly localId: PlayerId;
   /** False for a guest until intents exist: they can only walk and look. */
   readonly canAct: boolean;
+  /** The latest word on today's festival (the gate, the running event), or undefined (note 111). */
+  readonly festival: FestivalView | undefined;
+  /** Festival lines the host has sent this player since the last call (prizes, winners). */
+  takeFestivalLines(): string[];
   /** Everyone but this player. */
   remotes(): RemotePlayer[];
   /** Call every frame with `performance.now()`; the guest sends at most every POS_INTERVAL_MS. */
@@ -80,10 +90,26 @@ export class HostSession implements NetSession {
   readonly localId = LOCAL_PLAYER;
   readonly canAct = true;
 
+  /** The festival view and lines the Room queued for the host's own player (see `startHostSession`). */
+  festival: FestivalView | undefined;
+  private lines: string[] = [];
+
   constructor(
     readonly host: RoomHost,
     readonly world: GameRoomWorld,
   ) {}
+
+  /** The host's own messages from the Room, each tick. */
+  takeMessages(msgs: ServerMsg[]): void {
+    for (const m of msgs) {
+      if (m.t === "festival") this.festival = m.view;
+      else if (m.t === "fline") this.lines.push(m.text);
+    }
+  }
+
+  takeFestivalLines(): string[] {
+    return this.lines.splice(0);
+  }
 
   remotes(): RemotePlayer[] {
     const room = this.host.room;
@@ -118,6 +144,22 @@ export class GuestSession implements NetSession {
   onRejected?: (reason: string) => void;
   /** Called with the night's report lines when the host ends the day (note 53, shared day end). */
   onNight?: (n: { day: number; lines: string[]; lost: number }) => void;
+  /** Called with what bit after this guest's cast (the catch screen runs it, note 109). */
+  onBite?: (b: Extract<ServerMsg, { t: "bite" }>) => void;
+  /** Called when a bomb is lit or goes off on the map this guest stands on (note 109). */
+  onBomb?: (m: Extract<ServerMsg, { t: "bomb" | "blast" }>) => void;
+  /** Called when this guest fainted in a fight: they wake at home, this is the cost (note 109 rule 6). */
+  onFaint?: (f: Extract<ServerMsg, { t: "faint" }>) => void;
+  /** Called at the new morning with the tile this guest wakes on (note 110 rule 1). */
+  onWake?: (w: Extract<ServerMsg, { t: "wake" }>) => void;
+  /** The latest festival view from the host (note 111), and the lines waiting to be shown. */
+  festival: FestivalView | undefined;
+  private lines: string[] = [];
+  /** Called when the festival view or a festival line arrives. */
+  onFestival?: () => void;
+  takeFestivalLines(): string[] {
+    return this.lines.splice(0);
+  }
   /** The latest bed state from the host, and a callback when it changes. */
   beds: BedStatus = { asleep: [], waiting: [] };
   onBeds?: () => void;
@@ -141,7 +183,17 @@ export class GuestSession implements NetSession {
       cb?.(m.reason);
     } else if (m.t === "rejected") this.onRejected?.(m.reason);
     else if (m.t === "night") this.onNight?.(m);
-    else if (m.t === "beds") {
+    else if (m.t === "bite") this.onBite?.(m);
+    else if (m.t === "bomb" || m.t === "blast") this.onBomb?.(m);
+    else if (m.t === "faint") this.onFaint?.(m);
+    else if (m.t === "wake") this.onWake?.(m);
+    else if (m.t === "festival") {
+      this.festival = m.view;
+      this.onFestival?.();
+    } else if (m.t === "fline") {
+      this.lines.push(m.text);
+      this.onFestival?.();
+    } else if (m.t === "beds") {
       this.beds = { asleep: m.asleep, waiting: m.waiting };
       this.onBeds?.();
     } else if (m.t === "farm" && this.farm) this.refreshFarm(m.farm);
@@ -203,8 +255,13 @@ export class GuestSession implements NetSession {
     this.onChange?.();
   }
 
-  /** The tile to start on: beside the guest's cabin, else the map's entry (undefined). */
-  spawnTile(): { x: number; y: number } | undefined {
+  /**
+   * Where to start: in the guest's own home by their bed (note 110), else beside their cabin on the farm,
+   * else the map's entry (undefined).
+   */
+  spawnTile(): { map?: string; x: number; y: number } | undefined {
+    const at = this.client.start;
+    if (at) return { ...at };
     return this.client.home ? cabinSpawnTile(this.client.home) : undefined;
   }
 
@@ -262,7 +319,7 @@ export async function startHostSession(
   deps: HostSessionDeps,
 ): Promise<HostSession> {
   const map = farmMapOf(state);
-  const hosted: { host?: RoomHost } = {};
+  const hosted: { host?: RoomHost; session?: HostSession } = {};
   const world = new GameRoomWorld(state, {
     inside: (id) => isHouseMap(hosted.host?.room.position(id)?.map ?? ""),
     where: (id) => hosted.host?.room.position(id),
@@ -272,6 +329,7 @@ export async function startHostSession(
   });
   const host = await RoomHost.start({
     world,
+    onHostMessages: (msgs) => hosted.session?.takeMessages(msgs),
     pipe: deps.makePipe(),
     port: deps.port,
     tickHz: deps.tickHz,
@@ -279,7 +337,8 @@ export async function startHostSession(
     announceName: deps.announceName,
   });
   hosted.host = host;
-  return new HostSession(host, world);
+  hosted.session = new HostSession(host, world);
+  return hosted.session;
 }
 
 export const HOST_LOST_NOTICE = "The host left, so the game ended.";

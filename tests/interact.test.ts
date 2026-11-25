@@ -277,6 +277,18 @@ describe("resolveUse: placing and lifting", () => {
     });
     expect(g.inventory.count("lightning-rod")).toBe(0);
   });
+
+  it("lifts a placed lightning rod by hand", () => {
+    const g = newGame();
+    g.inventory.add("lightning-rod");
+    use(g, item("lightning-rod"));
+    expect(g.inventory.count("lightning-rod")).toBe(0);
+    expect(use(g, empty)).toMatchObject({
+      kind: "report",
+      result: { ok: true },
+    });
+    expect(g.inventory.count("lightning-rod")).toBe(1);
+  });
 });
 
 describe("resolveUse: as another player", () => {

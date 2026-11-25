@@ -112,13 +112,16 @@ describe("GuestSession", () => {
 });
 
 describe("host and guest session", () => {
-  it("shares positions both ways and spawns the guest at their cabin", async () => {
+  it("shares positions both ways and starts the guest in their own cabin by the bed (note 110)", async () => {
     const { host, guest, state } = await pair();
     expect(host.role).toBe("host");
     expect(guest.localId).toBe("p2");
-    expect(guest.spawnTile()).toEqual(
-      cabinSpawnTile(host.world.cabinOf("p2")!),
+    expect(guest.spawnTile()).toEqual({ map: "house@p2", x: 40, y: 31 });
+    // The cabin itself still stands on the farm, and its door tile is beside the old spawn tile.
+    expect(guest.client.home).toEqual(
+      expect.objectContaining({ x: host.world.cabinOf("p2")!.x }),
     );
+    expect(cabinSpawnTile(host.world.cabinOf("p2")!).y).toBeGreaterThan(0);
     const copy = guest.loadFarm()!;
     expect(copy.day.clock.day).toBe(state.day.clock.day);
     expect(copy.players.localId).toBe("p2");
@@ -197,22 +200,28 @@ describe("guest applies the host's intents", () => {
     const { host, guest, state } = await pair();
     const copy = guest.loadFarm()!;
     const soil = farmMapOf(state).tillableTiles()[0]!;
+    // The host takes a guest's tool use only from within reach of the tile (note 109).
+    const ts = farmMapOf(state).tileSize;
+    guest.client.sendPos((soil.x + 0.5) * ts, (soil.y + 1) * ts - 2, "farm", 1);
+    await new Promise((r) => setTimeout(r, 100));
     const rec = state.players.get(guest.localId);
     rec.inventory.load(new Inventory().save()); // drop the joiner's starting kit
     rec.inventory.add("parsnip-seed", 3);
     copy.players.get(guest.localId).inventory.load(new Inventory().save());
     copy.players.get(guest.localId).inventory.add("parsnip-seed", 3);
-    let changes = 0;
-    guest.onChange = () => (changes += 1);
+    // The host sends the result (a world change and the sender's record), not the intent to run again.
     guest.sendIntent({ kind: "till", x: soil.x, y: soil.y });
-    await until(() => changes >= 1);
+    await until(() => !!copy.farm.plotAt(soil.x, soil.y));
     guest.sendIntent({
       kind: "plant",
       x: soil.x,
       y: soil.y,
       seed: "parsnip-seed",
     });
-    await until(() => changes >= 2);
+    await until(
+      () =>
+        copy.players.get(guest.localId).inventory.count("parsnip-seed") === 2,
+    );
     expect(state.farm.plotAt(soil.x, soil.y)?.tilled).toBe(true);
     expect(copy.farm.plotAt(soil.x, soil.y)?.tilled).toBe(true);
     expect(
@@ -300,22 +309,28 @@ describe("guest applies the host's intents", () => {
     const { host, guest, state } = await pair();
     const copy = guest.loadFarm()!;
     const soil = farmMapOf(state).tillableTiles()[0]!;
+    // The host takes a guest's tool use only from within reach of the tile (note 109).
+    const ts = farmMapOf(state).tileSize;
+    guest.client.sendPos((soil.x + 0.5) * ts, (soil.y + 1) * ts - 2, "farm", 1);
+    await new Promise((r) => setTimeout(r, 100));
     const rec = state.players.get(guest.localId);
     rec.inventory.load(new Inventory().save()); // drop the joiner's starting kit
     rec.inventory.add("parsnip-seed", 3);
     copy.players.get(guest.localId).inventory.load(new Inventory().save());
     copy.players.get(guest.localId).inventory.add("parsnip-seed", 3);
-    let changes = 0;
-    guest.onChange = () => (changes += 1);
+    // The host sends the result (a world change and the sender's record), not the intent to run again.
     guest.sendIntent({ kind: "till", x: soil.x, y: soil.y });
-    await until(() => changes >= 1);
+    await until(() => !!copy.farm.plotAt(soil.x, soil.y));
     guest.sendIntent({
       kind: "plant",
       x: soil.x,
       y: soil.y,
       seed: "parsnip-seed",
     });
-    await until(() => changes >= 2);
+    await until(
+      () =>
+        copy.players.get(guest.localId).inventory.count("parsnip-seed") === 2,
+    );
     expect(state.farm.plotAt(soil.x, soil.y)?.tilled).toBe(true);
     expect(copy.farm.plotAt(soil.x, soil.y)?.tilled).toBe(true);
     expect(

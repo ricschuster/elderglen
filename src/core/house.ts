@@ -225,6 +225,7 @@ export function orderRenovation(g: RenoState, id: string): boolean {
 export function renoRefundProblem(
   g: RenoState,
   id: string,
+  map: string = HOUSE_MAP,
 ): string | undefined {
   if (!renovationById(id) || !g.houseRenos.includes(id))
     return "That is not built.";
@@ -235,16 +236,20 @@ export function renoRefundProblem(
     return `Take back the ${on.name.toLowerCase()} first, it is built on this.`;
   const area = renoArea(id);
   const full =
-    [...g.furniture.each(HOUSE_MAP)].some((f) => area.has(tileKey(f.x, f.y))) ||
-    [...g.chests.each(HOUSE_MAP)].some((c) => area.has(tileKey(c.x, c.y)));
+    [...g.furniture.each(map)].some((f) => area.has(tileKey(f.x, f.y))) ||
+    [...g.chests.each(map)].some((c) => area.has(tileKey(c.x, c.y)));
   return full
     ? "Clear your furniture and chests out of the new area first."
     : undefined;
 }
 
 /** Take a renovation back and pay its price in full. The walls go back up. False if it cannot. */
-export function refundRenovation(g: RenoState, id: string): boolean {
-  if (renoRefundProblem(g, id) !== undefined) return false;
+export function refundRenovation(
+  g: RenoState,
+  id: string,
+  map: string = HOUSE_MAP,
+): boolean {
+  if (renoRefundProblem(g, id, map) !== undefined) return false;
   g.money += renovationById(id)!.price;
   g.houseRenos = g.houseRenos.filter((x) => x !== id);
   return true;
@@ -278,7 +283,11 @@ export function resumeAt(g: {
 
 /** True for any of the house interior maps. */
 export function isHouseMap(id: string): boolean {
-  return id === HOUSE_MAP || id.startsWith(`${HOUSE_MAP}-`);
+  return (
+    id === HOUSE_MAP ||
+    id.startsWith(`${HOUSE_MAP}-`) ||
+    id.startsWith(`${HOUSE_MAP}@`)
+  );
 }
 
 /** What an upgrade costs, to reach the tier at the same index plus one. */

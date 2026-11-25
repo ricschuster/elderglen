@@ -68,7 +68,8 @@ import {
   type WalletMode,
 } from "./players";
 import { Furniture, migrateCatalogue, type FurnitureSave } from "./furniture";
-import { Mailbox, type MailEntry } from "./mail";
+import type { Mailbox, MailEntry } from "./mail";
+import { loadCabinBook, type CabinBook } from "./cabins";
 import { Friendship } from "./friendship";
 import { Marriage, exSpouses, type MarriageSave } from "./marriage";
 import { ELDERFRUIT_TOTAL, maxEnergyFor } from "./elderfruit";
@@ -232,7 +233,7 @@ export interface WorldState {
   summit: SummitCall;
   /** The ancestors' shrine: candles, the year 3 scene and the statue (note 83). */
   shrine: Shrine;
-  /** Letters sent, delivered and taken (note 51). */
+  /** Letters sent, delivered and taken (note 51). The local player's own (`players.local.mail`). */
   mail: Mailbox;
   /** Board requests taken and finished (note 50). */
   quests: Quests;
@@ -269,6 +270,11 @@ export interface GameState extends WorldState {
   players: Players;
   /** Player to player bonds (note 12, two-player steps), kept on the host and carried in the snapshot. */
   playerMarriage: PlayerMarriageBook;
+  /**
+   * Who owns which cabin, where, in which style and tier (note 110). Set when the world is hosted; absent in single
+   * player and in saves made before it (optional field within version 4).
+   */
+  cabins?: CabinBook;
   money: number;
   inventory: Inventory;
   skills: Skills;
@@ -341,14 +347,14 @@ export function newGame(
     showTokens: { year: 0, count: 0 },
     cave: new FarmCave(),
     wardrobe: new Wardrobe(),
-    equipment: new Equipment(),
+    equipment: players.get(LOCAL_PLAYER).equipment,
     furniture: new Furniture(),
     decor: new Decor(),
     chests: new Chests(),
     achievements: new Achievements(),
     summit: new SummitCall(),
     shrine: new Shrine(),
-    mail: new Mailbox(),
+    mail: players.get(LOCAL_PLAYER).mail,
     friendship: new Friendship(),
     marriage: new Marriage(),
     playerMarriage: newPlayerMarriageBook(),
@@ -358,7 +364,7 @@ export function newGame(
     guide: new Guide(),
     tackle: new Tackle(),
     pots: new Pots(),
-    combat: new Combat(),
+    combat: players.get(LOCAL_PLAYER).combat,
     forage: new ForageField(),
     spots: new ArtifactSpots(),
     areas: newAreas(),
@@ -538,6 +544,8 @@ interface SaveData {
   marriage?: MarriageSave;
   /** Absent before two-player marriage (added within version 4): no bonds. */
   playerMarriage?: PlayerMarriageSave;
+  /** Absent before the guest's cabin (note 110, added within version 4): no cabins. */
+  cabins?: CabinBook;
   /** Absent in saves made before heart events: none seen. */
   heartEvents?: HeartEventsSave;
   /** Absent in saves made before the request board. */
@@ -790,7 +798,7 @@ export function serialize(
     showTokens: { ...g.showTokens },
     cave: g.cave.save(),
     wardrobe: g.wardrobe.save(),
-    equipment: g.equipment.save(),
+    equipment: g.players.get(LOCAL_PLAYER).equipment.save(),
     houseLayout: HOUSE_LAYOUT,
     furniture: g.furniture.save(),
     decor: g.decor.save(),
@@ -803,6 +811,7 @@ export function serialize(
     ...(g.playerMarriage.bonds.length || g.playerMarriage.unseenWedding.length
       ? { playerMarriage: savePlayerMarriage(g.playerMarriage) }
       : {}),
+    ...(g.cabins && g.cabins.cabins.length ? { cabins: g.cabins } : {}),
     heartEvents: g.heartEvents.save(),
     quests: g.quests.save(),
     fishing: g.fishing.save(),
@@ -811,7 +820,7 @@ export function serialize(
     guideShops: g.guide.saveShops(),
     tackle: g.tackle.save(),
     pots: g.pots.save(),
-    combat: g.combat.save(),
+    combat: g.players.get(LOCAL_PLAYER).combat.save(),
   };
   return JSON.stringify(data);
 }
@@ -1324,7 +1333,7 @@ export function deserialize(text: string): GameState | undefined {
     g.showTokens = { year: tokens.year, count: tokens.count };
   g.cave.load(raw.cave as Partial<CaveSave> | undefined);
   g.wardrobe.load(raw.wardrobe);
-  g.equipment.load(raw.equipment);
+  g.players.get(LOCAL_PLAYER).equipment.load(raw.equipment);
   // Saves from an older house frame keep furniture and chests by that frame.
   const layout = isCount(raw.houseLayout) ? raw.houseLayout : 1;
   g.furniture.load(raw.furniture, layout);
@@ -1340,6 +1349,7 @@ export function deserialize(text: string): GameState | undefined {
     g.players.has(id),
   );
   // The married cap must be known before friendship loads, or points above the bouquet cap are clamped.
+  g.cabins = loadCabinBook(raw.cabins);
   g.friendship.setSpouse(g.marriage.married ? g.marriage.spouse : null);
   g.friendship.setExes(exSpouses(g));
   g.friendship.load(raw.friendship);
@@ -1350,7 +1360,9 @@ export function deserialize(text: string): GameState | undefined {
   g.guide.sweep(g);
   g.tackle.load(raw.tackle);
   g.pots.load(raw.pots);
-  g.combat.load(raw.combat, g.skills);
+  g.players
+    .get(LOCAL_PLAYER)
+    .combat.load(raw.combat, g.players.get(LOCAL_PLAYER).skills);
   // Loading rechecks, so a goal met under an older save is granted (note 38).
   checkAchievements(g);
   return g;

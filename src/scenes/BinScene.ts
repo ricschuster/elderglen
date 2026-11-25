@@ -3,6 +3,7 @@ import Phaser from "phaser";
 import { itemTip } from "../core/itemtip";
 import { itemById } from "../core/items";
 import { isOre } from "../core/ore";
+import { isToolId } from "../core/toolitems";
 import { sellMultiplier } from "../core/professions";
 import type { GameState } from "../core/save";
 import { frame, Menu, TOUCH_ROW_H, type Row } from "./panel";
@@ -186,7 +187,12 @@ export class BinScene extends Phaser.Scene {
     const ids: string[] = [];
     for (let i = 0; i < g.inventory.size; i++) {
       const slot = g.inventory.slot(i);
-      if (slot && !ids.includes(slot.id) && (!this.oreOnly || isOre(slot.id)))
+      if (
+        slot &&
+        !isToolId(slot.id) &&
+        !ids.includes(slot.id) &&
+        (!this.oreOnly || isOre(slot.id))
+      )
         ids.push(slot.id);
     }
     const packRows: Row[] = ids.map((id) => {

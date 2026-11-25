@@ -9,13 +9,17 @@ import {
   isClear,
   pickFruit,
   plant,
+  pickUpSprinkler,
+  placeSprinkler,
   plantFruitTree,
   till,
   water,
   forage,
 } from "../../src/core/actions";
+import { sprinklerById } from "../../src/core/sprinklers";
 import { categoryOf, produceOf } from "../../src/core/artisan";
 import { canCraft, craft, known, recipeById } from "../../src/core/crafting";
+import { fillCan } from "../../src/core/canwater";
 import { cropById, CROPS } from "../../src/core/crops";
 import {
   FRUIT_TREES,
@@ -178,6 +182,9 @@ const ORCHARD_RESERVE = Number(
   ).process.env.SIM_ORCHARD_RESERVE ?? 300,
 );
 
+/** Gold the bot holds before it builds a sprinkler (the bars cost about 400g of ore and coal). */
+const SPRINKLER_MONEY = 600;
+
 /** Machines the bot sets down on the farm as soon as it has crafted them. */
 const MACHINES_TO_RUN = [
   "preserves-jar",
@@ -223,6 +230,9 @@ export interface RunResult {
   /** Money at the end of each season's last day. */
   moneyAtSeasonEnd: number[];
   lastDay: number;
+  /** Sprinklers standing on the farm at the end, and the day the first went down (0 for none). */
+  sprinklers: number;
+  firstSprinklerDay: number;
   /** Game minutes spent on each part of the day over the run. */
   timeBy: Record<string, number>;
 }
@@ -239,6 +249,8 @@ export function playGame(
   const grassRandom = () =>
     (seed = (seed * 1664525 + 1013904223) >>> 0) / 2 ** 32;
   const g = startGame(undefined, grassRandom);
+  // Every rule that defaults to the state's RNG draws from the bot's stream (issue 977).
+  g.rng = random;
   // The five tools now fill pack slots (note 102): give the bot the room it had.
   g.inventory.grow(g.inventory.size + TOOLS.length);
   g.forage.respawn(dateOf(1).season, maps.get(START.map).forageSpots, random);
@@ -250,6 +262,8 @@ export function playGame(
     withered: 0,
     moneyAtSeasonEnd: [],
     lastDay: 1,
+    sprinklers: 0,
+    firstSprinklerDay: 0,
     timeBy: bot.timeBy,
   };
   while (g.day.clock.day <= maxDay && !playedDone(g)) {
@@ -263,6 +277,9 @@ export function playGame(
       result.allDay = day;
       break;
     }
+    result.sprinklers = g.sprinklers.count;
+    if (g.sprinklers.count > 0 && result.firstSprinklerDay === 0)
+      result.firstSprinklerDay = day;
     result.dayEnds.push(g.day.clock.minutes);
     const report = bot.endDay();
     if (report.passedOut) result.passOuts++;
@@ -389,6 +406,11 @@ class Bot {
     };
     t("harvest", () => this.harvestRipe());
     t("pack", () => this.packManage());
+    t("sprinklers", () => {
+      // Morning gold, before the seeds take it.
+      if (this.p.keepsForHall) this.tendSprinklers();
+      this.placeSprinklers();
+    });
     t("plant", () => this.plantWanted());
     t("water", () => {
       if (!isRaining(g.weather) && !this.lateNight) this.waterAll();
@@ -403,6 +425,7 @@ class Bot {
       t("furnace", () => this.tendFurnace());
       t("woodland", () => this.gatherWoodland());
       t("artisan", () => this.tendArtisan());
+      t("sprinklers", () => this.tendSprinklers());
     }
     t("cook", () => this.cookFor());
     t("herd", () => this.buyHerd());
@@ -471,6 +494,8 @@ class Bot {
     }
   }
 
+  private farmWater: Spot[] = [];
+
   private plots() {
     return [...this.g.farm.each()];
   }
@@ -488,7 +513,29 @@ class Bot {
     const dry = this.plots().filter(
       ({ plot }) => plot.crop && !plot.wateredToday,
     );
-    this.nearestFirst(dry, (s) => this.act(s, () => water(this.g, s.x, s.y)));
+    this.nearestFirst(dry, (s) => {
+      // The can holds 40 to 100 tiles (note 103): refill at the pond when it runs dry.
+      if (this.g.canWater < 1) this.refillCan();
+      this.act(s, () => water(this.g, s.x, s.y));
+    });
+  }
+
+  /** Walk to the nearest water on the farm and fill the can, as a player does. */
+  private refillCan(): void {
+    if (this.lateNight) return;
+    const map = maps.get(START.map);
+    if (this.farmWater.length === 0)
+      for (let y = 0; y < map.height; y++)
+        for (let x = 0; x < map.width; x++)
+          if (map.isWater(x, y)) this.farmWater.push({ x, y });
+    const costs = this.walker.costsNextTo(this.farmWater);
+    const best = Math.min(...costs);
+    const shore = this.farmWater[costs.indexOf(best)];
+    if (!shore || best === Infinity) return;
+    this.act(shore, () => {
+      fillCan(this.g);
+      return { ok: true };
+    });
   }
 
   private sweepForage(): void {
@@ -710,7 +757,25 @@ class Bot {
     }
     if (!g.furnace.gifted) return;
     if (g.furnace.job && !furnaceReady(g)) return;
-    const owed = this.barsOwed();
+    // A queued sprinkler's bars go first, and alone: it pays for itself, and the hall's whole bar bill would hold the furnace and the gold back.
+    const sprinklerNeed = new Map<string, number>();
+    for (const id of this.sprinklerQueue)
+      for (const i of recipeById(id)?.ingredients ?? [])
+        sprinklerNeed.set(i.item, (sprinklerNeed.get(i.item) ?? 0) + i.count);
+    const forSprinklers = this.barsOwed()
+      .map((o) => ({
+        bar: o.bar,
+        n: Math.min(
+          o.n,
+          (sprinklerNeed.get(o.bar.id) ?? 0) - g.inventory.count(o.bar.id),
+        ),
+      }))
+      .filter((o) => o.n > 0);
+    // Every other day, so the Smith's bars are not starved by a sprinkler a day for weeks.
+    const owed =
+      forSprinklers.length > 0 && this.day % 2 === 0
+        ? forSprinklers
+        : this.barsOwed();
     if (g.furnace.job || owed.length > 0) {
       if (!this.walker.goToService("farm", "furnace")) return;
       collect(g);
@@ -813,7 +878,11 @@ class Bot {
   /** Hand-ins that would be accepted now: bundle and stack id. */
   private handable(): { bundle: string; stack: string; room: string }[] {
     const out: { bundle: string; stack: string; room: string }[] = [];
+    // Bars queued for a sprinkler stay in the pack, whatever the hall asks.
     const taken = new Map<string, number>();
+    for (const id of this.sprinklerQueue)
+      for (const i of recipeById(id)?.ingredients ?? [])
+        taken.set(i.item, (taken.get(i.item) ?? 0) + i.count);
     for (const w of pickiestFirst(this.wanted())) {
       for (const s of this.stacks()) {
         if (!fillsWant(w, s.id)) continue;
@@ -900,11 +969,156 @@ class Bot {
   /** What the bot must gather to craft the machines it lacks, one entry a unit. */
   private craftWants(): Want[] {
     const out: Want[] = [];
-    for (const id of this.machineGaps())
+    for (const id of [...this.machineGaps(), ...this.sprinklerQueue])
       for (const i of recipeById(id)?.ingredients ?? [])
         for (let n = 0; n < i.count; n++)
           out.push({ bundle: "craft", item: i.item, room: "", min: "normal" });
     return out;
+  }
+
+  // ---- sprinklers (#181) ----
+
+  /** Sprinkler recipes to build now, set once a day by `tendSprinklers` so the furnace trips ask for their bars. */
+  private sprinklerQueue: string[] = [];
+
+  /** Gold held back from the herd while a queued sprinkler's bars are still to be bought, so the herd never starves it. */
+  private sprinklerReserve(): number {
+    const g = this.g;
+    const short = this.sprinklerQueue.some((id) => {
+      const r = recipeById(id);
+      return !!r && !canCraft(g, r);
+    });
+    return short ? SPRINKLER_MONEY : 0;
+  }
+
+  /** Tiles the placed sprinklers water, as "x,y" keys. */
+  private coveredTiles(): Set<string> {
+    const out = new Set<string>();
+    for (const s of this.g.sprinklers.each())
+      for (const [dx, dy] of sprinklerById(s.id)?.reach ?? [])
+        out.add(`${s.x + dx},${s.y + dy}`);
+    return out;
+  }
+
+  /**
+   * Decide what to build: a sprinkler for every four crops that stand or are
+   * about to stand out of reach of one, as soon as the recipe is known and the
+   * bot has spare gold. The bars come through the furnace and the smith's ore
+   * like the hall's. The quality tier needs a quartz crystal, which only a mine
+   * rock gives, so it is built only when the pack happens to hold one.
+   */
+  private tendSprinklers(): void {
+    const g = this.g;
+    if (this.lateNight || this.day < 3) return;
+    const held = (id: string) => g.inventory.count(id);
+    // Build what the pack's materials allow; a built one leaves the queue.
+    this.sprinklerQueue = this.sprinklerQueue.filter((id) => {
+      const r = recipeById(id);
+      return !(r && known(g, r) && canCraft(g, r) && !craft(g, id));
+    });
+    for (const id of ["quality-sprinkler", "sprinkler"]) {
+      const r = recipeById(id);
+      while (r && known(g, r) && canCraft(g, r) && held(id) < 4) {
+        if (craft(g, id)) break;
+      }
+    }
+    const covered = this.coveredTiles();
+    const uncovered = this.plots().filter(
+      ({ x, y, plot }) => plot.crop && !covered.has(`${x},${y}`),
+    ).length;
+    const demand =
+      uncovered +
+      this.cropPlan().length -
+      4 * (held("sprinkler") + held("quality-sprinkler")) -
+      4 * this.sprinklerQueue.length;
+    if (demand < 3 || g.money < SPRINKLER_MONEY) return;
+    const quality = recipeById("quality-sprinkler");
+    const basic = recipeById("sprinkler");
+    const room =
+      (g.money >= 3 * SPRINKLER_MONEY ? 2 : 1) - this.sprinklerQueue.length;
+    for (let i = 0; i < Math.min(room, Math.ceil(demand / 4)); i++) {
+      if (
+        quality &&
+        known(g, quality) &&
+        held("quartz-crystal") >
+          this.sprinklerQueue.filter((q) => q === quality.id).length
+      )
+        this.sprinklerQueue.push(quality.id);
+      else if (basic && known(g, basic)) this.sprinklerQueue.push(basic.id);
+    }
+  }
+
+  /** Worth of a site: tiles in reach that would be newly watered, crops weighing double. */
+  private siteScore(
+    map: ReturnType<typeof maps.get>,
+    s: Spot,
+    id: string,
+    covered: Set<string>,
+  ): number {
+    const g = this.g;
+    let score = 0;
+    for (const [dx, dy] of sprinklerById(id)?.reach ?? []) {
+      const x = s.x + dx;
+      const y = s.y + dy;
+      if (covered.has(`${x},${y}`) || !map.isTillable(x, y)) continue;
+      if (g.sprinklers.at(x, y) || g.trees.at(x, y)) continue;
+      score += g.farm.plotAt(x, y)?.crop ? 2 : 1;
+    }
+    return score;
+  }
+
+  /** Stand the sprinklers in the pack where they water the most uncovered soil near the house; swap a basic for a quality one when it gains. */
+  private placeSprinklers(): void {
+    const g = this.g;
+    if (this.lateNight) return;
+    const map = maps.get(START.map);
+    const have = () =>
+      g.inventory.count("sprinkler") + g.inventory.count("quality-sprinkler");
+    if (have() === 0) return;
+    this.walker.go("farm");
+    const sites = this.freeSoil(map, 400).filter(
+      (s) => isClear(g, map, s.x, s.y) && !g.farm.plotAt(s.x, s.y),
+    );
+    let guard = 0;
+    while (have() > 0 && guard++ < 12 && !this.lateNight) {
+      const id =
+        g.inventory.count("quality-sprinkler") > 0
+          ? "quality-sprinkler"
+          : "sprinkler";
+      const covered = this.coveredTiles();
+      let best: Spot | undefined;
+      let bestScore = 0;
+      for (const s of sites) {
+        if (g.sprinklers.at(s.x, s.y)) continue;
+        const sc = this.siteScore(map, s, id, covered);
+        if (sc > bestScore) {
+          best = s;
+          bestScore = sc;
+        }
+      }
+      if (!best || bestScore < 3) break;
+      const at = best;
+      if (!this.act(at, () => placeSprinkler(g, map, at.x, at.y, id))) break;
+    }
+    // Upgrade: a quality sprinkler in the pack and nowhere new to put it, so it replaces a basic one.
+    if (g.inventory.count("quality-sprinkler") > 0 && !this.lateNight) {
+      const covered = this.coveredTiles();
+      for (const b of [...g.sprinklers.each()].filter(
+        (x) => x.id === "sprinkler",
+      )) {
+        // Corners the basic one leaves dry that hold crops or open soil.
+        const gain = this.siteScore(map, b, "quality-sprinkler", covered);
+        if (gain < 3) continue;
+        if (!this.act(b, () => pickUpSprinkler(g, b.x, b.y))) break;
+        if (
+          !this.act(b, () =>
+            placeSprinkler(g, map, b.x, b.y, "quality-sprinkler"),
+          )
+        )
+          break;
+        break;
+      }
+    }
   }
 
   /** Fruit and vegetables to hold back from the bin for the jar's next two batches. */
@@ -1144,7 +1358,7 @@ class Bot {
         : 0;
     return {
       money: g.money,
-      reserve: HERD_RESERVE,
+      reserve: HERD_RESERVE + this.sprinklerReserve(),
       coopTier: g.animals.coopBuilt ? g.animals.tier : 0,
       barnTier: g.animals.barnBuilt ? g.animals.barnTier : 0,
       carpenterBusy: !!(
@@ -1806,15 +2020,17 @@ class Bot {
       for (let x = 0; x < map.width; x++) {
         if (!map.isTillable(x, y) || this.g.trees.at(x, y)) continue;
         // A weed on the tile is cut before planting (`plantWanted`), so it only costs a swing.
-        if (this.g.farm.plotAt(x, y)?.crop) continue;
+        if (this.g.farm.plotAt(x, y)?.crop || this.g.sprinklers.at(x, y))
+          continue;
         out.push({ x, y });
       }
-    out.sort(
-      (a, b) =>
-        Math.abs(a.x - door.x) +
-        Math.abs(a.y - door.y) -
-        (Math.abs(b.x - door.x) + Math.abs(b.y - door.y)),
-    );
+    // Soil a sprinkler waters comes first, so crops go where the water reaches.
+    const covered = this.coveredTiles();
+    const near = (s: Spot) =>
+      Math.abs(s.x - door.x) +
+      Math.abs(s.y - door.y) -
+      (covered.has(`${s.x},${s.y}`) ? 1000 : 0);
+    out.sort((a, b) => near(a) - near(b));
     return out.slice(0, n);
   }
 
@@ -1842,6 +2058,12 @@ class Bot {
       const seed = seedId(crop);
       if (!stock.has(seed)) continue;
       if (this.g.inventory.count(seed) >= plan.filter((c) => c === crop).length)
+        continue;
+      // A queued sprinkler's ore money is not spent on seeds.
+      if (
+        this.g.money - (itemById(seed)?.buyPrice ?? 0) <
+        this.sprinklerReserve()
+      )
         continue;
       buy(this.g.inventory, this.g, seed);
     }

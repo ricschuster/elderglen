@@ -16,6 +16,8 @@ import {
   galleryEntry,
   shelf,
 } from "../core/gallery";
+import { SOURCE_FLAGS } from "../core/elderfruit";
+import { hasFlag } from "../core/worldflags";
 import { splitQuality } from "../core/quality";
 import { itemTip, type ItemTip } from "../core/itemtip";
 import type { GameState } from "../core/save";
@@ -129,9 +131,10 @@ export class GalleryScene extends Phaser.Scene {
   }
 
   /** Send an action through the dispatcher. `done` is the line when it worked; a guest's answer comes later. */
-  private act(intent: Intent, done: string): void {
+  private act(intent: Intent, done: string | (() => string)): void {
     const why = dispatch(this.state, intent);
-    if (why !== "sent") this.note.setText(why ?? done);
+    if (why !== "sent")
+      this.note.setText(why ?? (typeof done === "function" ? done() : done));
     this.refresh();
   }
 
@@ -292,10 +295,16 @@ export class GalleryScene extends Phaser.Scene {
   private pressPack(i: number): void {
     const id = this.state.inventory.slot(i)?.id;
     if (!id) return;
-    this.act(
-      { kind: "gallery-donate", item: id },
-      donateLine(splitQuality(id).base),
-    );
+    // The extras read the state after the host's own donation lands (a guest's lands later).
+    const fruitBefore = hasFlag(this.state, SOURCE_FLAGS.gallery);
+    this.act({ kind: "gallery-donate", item: id }, () => {
+      const fruit = hasFlag(this.state, SOURCE_FLAGS.gallery) && !fruitBefore;
+      return (
+        donateLine(splitQuality(id).base) +
+        (fruit ? " You feel a warm gift settle in you." : "") +
+        (claimable(this.state).length > 0 ? " Rewards wait." : "")
+      );
+    });
   }
 
   private collect(): void {

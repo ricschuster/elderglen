@@ -1,9 +1,12 @@
+import { Combat, type CombatSave } from "./combat";
 import { Energy } from "./energy";
+import { Equipment } from "./equipment";
 import { Inventory } from "./inventory";
 import { Skills } from "./skills";
 import { SKILLS } from "./skills";
 import { MAX_TIER, UPGRADABLE, type ToolTiers } from "./upgrades";
 import { isObject } from "./guards";
+import { Mailbox, type MailEntry } from "./mail";
 
 /** A player's id within one world. Stable for the life of the save (note 53). */
 export type PlayerId = string;
@@ -31,6 +34,16 @@ export interface PlayerRecord {
   canWater: number;
   /** Energy and its ceiling. Single player shares this object with `Day.energy`. */
   energy: Energy;
+  /** Health, the trainer, kills and slayer claims of this player (note 109 rules 6, 7 and 10). */
+  combat: Combat;
+  /** The rings this player wears (note 109 rule 7: rings stay per player). */
+  equipment: Equipment;
+  /** Letters sent to this player, delivered to the mailbox by their home (note 110 rule 3, note 53: mail is per player). */
+  mail: Mailbox;
+  /** Festival keys this player has: went, claimed, drew, once a year (note 111 rule 9: rewards are per player). */
+  festivalsJoined: string[];
+  /** Harvest Showing tokens of this player for a year (note 111 rule 6: each collects their own prize). */
+  showTokens: { year: number; count: number };
 }
 
 export function newPlayer(
@@ -46,6 +59,11 @@ export function newPlayer(
     toolTiers: { hoe: 0, can: 0, pickaxe: 0, axe: 0 },
     canWater: START_CAN_WATER,
     energy,
+    combat: new Combat(),
+    equipment: new Equipment(),
+    mail: new Mailbox(),
+    festivalsJoined: [],
+    showTokens: { year: 0, count: 0 },
   };
 }
 
@@ -148,6 +166,11 @@ export function localView(players: Players): {
   skills: Skills;
   toolTiers: ToolTiers;
   canWater: number;
+  combat: Combat;
+  equipment: Equipment;
+  mail: Mailbox;
+  festivalsJoined: string[];
+  showTokens: { year: number; count: number };
 } {
   return {
     get money() {
@@ -180,6 +203,36 @@ export function localView(players: Players): {
     set canWater(v: number) {
       players.local.canWater = v;
     },
+    get combat() {
+      return players.local.combat;
+    },
+    set combat(v: Combat) {
+      players.local.combat = v;
+    },
+    get equipment() {
+      return players.local.equipment;
+    },
+    set equipment(v: Equipment) {
+      players.local.equipment = v;
+    },
+    get mail() {
+      return players.local.mail;
+    },
+    set mail(v: Mailbox) {
+      players.local.mail = v;
+    },
+    get festivalsJoined() {
+      return players.local.festivalsJoined;
+    },
+    set festivalsJoined(v: string[]) {
+      players.local.festivalsJoined = v;
+    },
+    get showTokens() {
+      return players.local.showTokens;
+    },
+    set showTokens(v: { year: number; count: number }) {
+      players.local.showTokens = v;
+    },
   };
 }
 
@@ -197,6 +250,14 @@ export interface PlayerSave {
   /** Energy hit 0 today, and a skill leveled up today (optional: older saves lack them). */
   exhausted?: boolean;
   levelled?: boolean;
+  /** Combat record and rings (optional: older saves lack them). */
+  combat?: CombatSave;
+  equipment?: unknown;
+  /** A guest's letters (the host's are the save's flat `mail`). Optional: older saves lack it. */
+  mail?: MailEntry[];
+  /** A guest's festival keys and show tokens (the host's are the save's flat fields). Optional: older saves lack them. */
+  festivals?: string[];
+  tokens?: { year: number; count: number };
 }
 
 export function savePlayer(p: PlayerRecord): PlayerSave {
@@ -212,6 +273,15 @@ export function savePlayer(p: PlayerRecord): PlayerSave {
     energy: p.energy.current,
     ...(p.energy.wasExhausted ? { exhausted: true } : {}),
     ...(p.skills.levelledToday ? { levelled: true } : {}),
+    combat: p.combat.save(),
+    equipment: p.equipment.save(),
+    ...(p.id !== LOCAL_PLAYER
+      ? {
+          mail: p.mail.save(),
+          festivals: [...p.festivalsJoined],
+          tokens: { ...p.showTokens },
+        }
+      : {}),
   };
 }
 
@@ -228,6 +298,12 @@ export function loadPlayerInto(players: Players, raw: unknown): boolean {
     return false;
   if (raw.id === LOCAL_PLAYER || players.has(raw.id)) return false;
   const p = players.add(raw.id, isCount(raw.money) ? raw.money : 0);
+  fillPlayer(p, raw);
+  return true;
+}
+
+/** Read a saved record's fields into a player (`raw` already known to be an object with this player's id). */
+function fillPlayer(p: PlayerRecord, raw: Record<string, unknown>): void {
   if (Array.isArray(raw.inventory)) {
     const ok = raw.inventory.every(
       (s) =>
@@ -252,5 +328,31 @@ export function loadPlayerInto(players: Players, raw: unknown): boolean {
     p.energy.current = Math.min(raw.energy, p.energy.max);
   p.energy.wasExhausted = raw.exhausted === true;
   p.skills.levelledToday = raw.levelled === true;
+  p.combat.load(raw.combat, p.skills);
+  p.equipment.load(raw.equipment);
+  if (raw.id !== LOCAL_PLAYER) {
+    p.mail.load(raw.mail);
+    if (Array.isArray(raw.festivals))
+      p.festivalsJoined = raw.festivals.filter(
+        (k): k is string => typeof k === "string",
+      );
+    const t = raw.tokens;
+    if (isObject(t) && isCount(t.year) && isCount(t.count))
+      p.showTokens = { year: t.year, count: t.count };
+  }
+}
+
+/**
+ * Bring a guest's record in a copy of the world up to what the host holds for them (a hit, a kill or a catch the
+ * host resolved): the fields are replaced in place, so the scene's references stay good. The host's own record
+ * is never touched. Returns false for an unknown player or an unreadable record.
+ */
+export function syncPlayer(players: Players, raw: unknown): boolean {
+  if (!isObject(raw) || typeof raw.id !== "string" || raw.id === LOCAL_PLAYER)
+    return false;
+  if (!players.has(raw.id)) return false;
+  const p = players.get(raw.id);
+  if (isCount(raw.money)) p.money = raw.money;
+  fillPlayer(p, raw);
   return true;
 }
