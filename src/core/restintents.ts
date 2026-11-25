@@ -56,6 +56,8 @@ import { ORES } from "./ore";
 import { buy, sell, sellAll } from "./shop";
 import { handOverCopper, SMITH_STOCK } from "./smith";
 import { buyPriceOn } from "./yeartwo";
+import { meet } from "./townfolk";
+import { villagerById } from "./villagers";
 import {
   POT_COLOURS,
   dyePiece,
@@ -181,6 +183,16 @@ export function applyRestIntent(
     case "tailor-dye":
     case "tailor-undye":
       return applyTailor(g, by, intent);
+    case "meet": {
+      // A talk or a gift to a villager, against the sender's own friendship (note 53). The guest's screen shows the line.
+      const { id, held } = intent;
+      if (typeof id !== "string" || !villagerById(id)) return "bad meet";
+      if (held !== undefined && !isId(held)) return "bad meet";
+      return asPlayer(g, by, () => {
+        meet(g, id, held as string | undefined);
+        return undefined;
+      });
+    }
     case "wardrobe-wear": {
       // Wear or store a hat, shirt or pants from the sender's own wardrobe (note 53). No id takes the piece off.
       const { piece: kind, id } = intent;

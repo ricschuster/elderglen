@@ -70,11 +70,11 @@ import {
 import { Furniture, migrateCatalogue, type FurnitureSave } from "./furniture";
 import type { Mailbox, MailEntry } from "./mail";
 import { loadCabinBook, type CabinBook } from "./cabins";
-import { Friendship } from "./friendship";
+import type { Friendship } from "./friendship";
 import { Marriage, exSpouses, type MarriageSave } from "./marriage";
 import { ELDERFRUIT_TOTAL, maxEnergyFor } from "./elderfruit";
 import { GALLERY_TOTAL, inGallery } from "./gallery";
-import { HeartEvents, type HeartEventsSave } from "./heartevents";
+import type { HeartEvents, HeartEventsSave } from "./heartevents";
 import { Quests, type QuestsSave } from "./quests";
 import { FishLog, type FishingSave } from "./fishing";
 import { Guide } from "./guide";
@@ -355,10 +355,10 @@ export function newGame(
     summit: new SummitCall(),
     shrine: new Shrine(),
     mail: players.get(LOCAL_PLAYER).mail,
-    friendship: new Friendship(),
+    friendship: players.get(LOCAL_PLAYER).friendship,
     marriage: new Marriage(),
     playerMarriage: newPlayerMarriageBook(),
-    heartEvents: new HeartEvents(),
+    heartEvents: players.get(LOCAL_PLAYER).heartEvents,
     quests: new Quests(),
     fishing: new FishLog(),
     guide: new Guide(),
@@ -806,13 +806,13 @@ export function serialize(
     summit: g.summit.save(),
     shrine: g.shrine.save(),
     mail: g.mail.save(),
-    friendship: g.friendship.save(),
+    friendship: g.players.get(LOCAL_PLAYER).friendship.save(),
     marriage: g.marriage.save(),
     ...(g.playerMarriage.bonds.length || g.playerMarriage.unseenWedding.length
       ? { playerMarriage: savePlayerMarriage(g.playerMarriage) }
       : {}),
     ...(g.cabins && g.cabins.cabins.length ? { cabins: g.cabins } : {}),
-    heartEvents: g.heartEvents.save(),
+    heartEvents: g.players.get(LOCAL_PLAYER).heartEvents.save(),
     quests: g.quests.save(),
     fishing: g.fishing.save(),
     guide: (g.guide.sweep(g), g.guide.save()),
@@ -1351,10 +1351,11 @@ export function deserialize(text: string): GameState | undefined {
   );
   // The married cap must be known before friendship loads, or points above the bouquet cap are clamped.
   g.cabins = loadCabinBook(raw.cabins);
-  g.friendship.setSpouse(g.marriage.married ? g.marriage.spouse : null);
-  g.friendship.setExes(exSpouses(g));
-  g.friendship.load(raw.friendship);
-  g.heartEvents.load(raw.heartEvents);
+  const hostFriends = g.players.get(LOCAL_PLAYER).friendship;
+  hostFriends.setSpouse(g.marriage.married ? g.marriage.spouse : null);
+  hostFriends.setExes(exSpouses(g));
+  hostFriends.load(raw.friendship);
+  g.players.get(LOCAL_PLAYER).heartEvents.load(raw.heartEvents);
   g.quests.load(raw.quests);
   g.fishing.load(raw.fishing);
   g.guide.load(raw.guide, raw.guidePlaces, raw.guideShops);

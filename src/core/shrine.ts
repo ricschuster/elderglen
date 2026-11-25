@@ -48,7 +48,10 @@ export function friendsAtHearts(g: GameState): number {
   return FRIEND_IDS.filter(
     (id) =>
       villagerById(id)?.ageBand !== "child" &&
-      g.friendship.hearts(id) >= data.friendHearts,
+      // Rows about one player use the best player (note 53): the best friend counts for the farm.
+      g.players
+        .each()
+        .some((p) => p.friendship.hearts(id) >= data.friendHearts),
   ).length;
 }
 

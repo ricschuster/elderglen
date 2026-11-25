@@ -8,12 +8,14 @@ import { MAX_TIER, UPGRADABLE, type ToolTiers } from "./upgrades";
 import { isObject } from "./guards";
 import { Mailbox, type MailEntry } from "./mail";
 import { Wardrobe, type WardrobeSave } from "./hats";
+import { LOCAL_PLAYER } from "./playerid";
+import { Friendship } from "./friendship";
+import { HeartEvents, type HeartEventsSave } from "./heartevents";
 
 /** A player's id within one world. Stable for the life of the save (note 53). */
 export type PlayerId = string;
 
-/** The id of the host, and of the only player in a single-player game. */
-export const LOCAL_PLAYER: PlayerId = "p1";
+export { LOCAL_PLAYER } from "./playerid";
 
 /** Water in a full can at the start (note 103). */
 const START_CAN_WATER = 40;
@@ -41,6 +43,10 @@ export interface PlayerRecord {
   equipment: Equipment;
   /** The hats, shirts and pants this player owns and wears, dyes included (note 53: look is per player). */
   wardrobe: Wardrobe;
+  /** This player's own friendship with each villager: points, talks, gifts, the weekly count, the gift log (note 53). */
+  friendship: Friendship;
+  /** Heart events this player has seen, with their choices' flags (note 53: each player sees their own). */
+  heartEvents: HeartEvents;
   /** Letters sent to this player, delivered to the mailbox by their home (note 110 rule 3, note 53: mail is per player). */
   mail: Mailbox;
   /** Festival keys this player has: went, claimed, drew, once a year (note 111 rule 9: rewards are per player). */
@@ -65,6 +71,8 @@ export function newPlayer(
     combat: new Combat(),
     equipment: new Equipment(),
     wardrobe: new Wardrobe(),
+    friendship: new Friendship(),
+    heartEvents: new HeartEvents(),
     mail: new Mailbox(),
     festivalsJoined: [],
     showTokens: { year: 0, count: 0 },
@@ -173,6 +181,8 @@ export function localView(players: Players): {
   combat: Combat;
   equipment: Equipment;
   wardrobe: Wardrobe;
+  friendship: Friendship;
+  heartEvents: HeartEvents;
   mail: Mailbox;
   festivalsJoined: string[];
   showTokens: { year: number; count: number };
@@ -226,6 +236,18 @@ export function localView(players: Players): {
     set wardrobe(v: Wardrobe) {
       players.local.wardrobe = v;
     },
+    get friendship() {
+      return players.local.friendship;
+    },
+    set friendship(v: Friendship) {
+      players.local.friendship = v;
+    },
+    get heartEvents() {
+      return players.local.heartEvents;
+    },
+    set heartEvents(v: HeartEvents) {
+      players.local.heartEvents = v;
+    },
     get mail() {
       return players.local.mail;
     },
@@ -266,6 +288,9 @@ export interface PlayerSave {
   equipment?: unknown;
   /** Hats and clothes owned and worn (optional: older saves lack it; the host's flat `wardrobe` is the one read for p1). */
   wardrobe?: WardrobeSave;
+  /** Friendship and heart events seen (optional: older saves lack them; the host's flat fields are the ones read for p1). */
+  friendship?: ReturnType<Friendship["save"]>;
+  heartEvents?: HeartEventsSave;
   /** A guest's letters (the host's are the save's flat `mail`). Optional: older saves lack it. */
   mail?: MailEntry[];
   /** A guest's festival keys and show tokens (the host's are the save's flat fields). Optional: older saves lack them. */
@@ -289,6 +314,8 @@ export function savePlayer(p: PlayerRecord): PlayerSave {
     combat: p.combat.save(),
     equipment: p.equipment.save(),
     wardrobe: p.wardrobe.save(),
+    friendship: p.friendship.save(),
+    heartEvents: p.heartEvents.save(),
     ...(p.id !== LOCAL_PLAYER
       ? {
           mail: p.mail.save(),
@@ -345,6 +372,11 @@ function fillPlayer(p: PlayerRecord, raw: Record<string, unknown>): void {
   p.combat.load(raw.combat, p.skills);
   p.equipment.load(raw.equipment);
   if (raw.wardrobe !== undefined) p.wardrobe.load(raw.wardrobe);
+  // The host's friendship loads from the flat part of the save, which knows the spouse and the exes.
+  if (raw.id !== LOCAL_PLAYER) {
+    p.friendship.load(raw.friendship);
+    p.heartEvents.load(raw.heartEvents);
+  }
   if (raw.id !== LOCAL_PLAYER) {
     p.mail.load(raw.mail);
     if (Array.isArray(raw.festivals))

@@ -1442,11 +1442,15 @@ export class FarmScene extends Phaser.Scene {
       this.render();
       return true;
     }
-    const r = meet(
-      this.state,
-      who.id,
-      held.kind === "item" ? held.id : undefined,
-    );
+    const heldItem = held.kind === "item" ? held.id : undefined;
+    const r = meet(this.state, who.id, heldItem);
+    // A guest's talk or gift counts on the host too, against their own friendship (note 53).
+    if (this.net instanceof GuestSession)
+      this.net.sendIntent({
+        kind: "meet",
+        id: who.id,
+        ...(heldItem ? { held: heldItem } : {}),
+      });
     this.message = r.message;
     if (r.consumed) audio.sfx(r.taste === "love" ? "gift.loved" : "gift.give");
     if (r.kiss) audio.sfx("heart.up");
