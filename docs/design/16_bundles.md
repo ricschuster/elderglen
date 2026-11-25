@@ -452,8 +452,65 @@ opens, and the sprinklers did not move the pacing.**
    6 bars). Still a hedge: the room has never opened.
 4. **Do not tune the bot further for pacing.** Two reruns now say the bot floor is
    near its limit, and the bot is not a good player at planning a day. Hand play
-   decides. The remaining bot work, if wanted, is to trace the 505 withered crops
-   (a season end planting cutoff), and to mine for quartz.
+   decides. The remaining bot work, if wanted, is to mine for quartz. The 505
+   withered crops are traced (next section).
+
+## Season-end crop losses (2026-11-24)
+
+**Cause: a bot bug, not a game rule.** `scripts/sim/withered.ts` (run with
+`node scripts/sim/run.mjs scripts/sim/withered.ts <persona> <seeds> <days>`) snapshots the
+farm on the last day of each season and sorts every crop that will wither by cause. Before the
+fix, for the expert on 2 seeds, 1,085 of 1,177 withered crops were unripe, 82 were regrowing
+crops that had already given harvests (corn, tomato, eggplant, cranberry), and 10 were ripe but
+unharvested. The unripe ones were not planted too late: most had 7 to 27 days left and grew only
+1 to 5 days of their 4 to 14. The planting cutoff (`growDays <= days left`) and the crop data
+match the rules.
+
+The watering can now holds 40 tiles (note 103, `CAN_CAPACITY`), and the bot never refilled it. It
+watered 40 crops a day out of 100 to 150 and the rest stood dry, so they did not grow. The
+expert's sprinklers covered some. This also explains the earlier "missed watering" reading of the
+505 figure, and part of why money did not move in the sprinkler rerun.
+
+**Fix:** `Bot.waterAll` now walks to the nearest farm water tile and fills the can when it is
+empty (`refillCan`, same rule as `useHeld` on water). On expert seed 1 to day 56 the unripe
+withered crops went from 237 to 0. The sim test seed for the early bundles moved from 2 to 6, since
+the fix shifts the random stream (the test's own note says to change the seed, not the bar).
+
+**What is left (3 seeds to day 168):** expert 359 crops, about 120 a run, of which 177 are
+regrowing crops (not a loss), 132 unripe and 50 ripe but unharvested. Intermediate 271, of which
+140 regrowing, 116 unripe, 15 ripe. The unripe are mostly 1 to 2 days short, planted on the last
+days the cutoff allows (cutoff day, not a rule fault: one missed night is enough to miss it). The
+ripe ones were ready after the morning harvest, so the bot never came back for them. Casual keeps
+77 by design: it skips watering on 30 percent of days and plays 75 percent of days.
+
+Rerun, 40 runs x 168 days, medians, with the refill (sprinkler rerun above in brackets):
+
+| | Expert | Intermediate | Casual |
+| --- | --- | --- | --- |
+| Withered crops a run | 105 (505) | 88 (216) | 77 (102) |
+| Sprinklers at day 168, first on day | 20, 31 (14, 39) | 16, 31 (6, 49) | 0 |
+| Money at season ends 1 to 6 | 5,137; 22,650; 43,730; 4,781; 22,487; 37,012 | 4,534; 7,528; 13,536; 4,182; 11,615; 15,424 | 3,244; 4,686; 9,007; 9,116; 13,838; 19,374 |
+| Runs finishing Smith's / Cook's / Host's (of 40) | 0 / 6 / 18 (3 / 3 / 5) | 1 / 4 / 7 (0 / 0 / 0) | 0 / 0 / 0 |
+| Hall finished, Last Seat open, Last Seat finished | 0, 0, 0 | 0, 0, 0 | 0, 0, 0 |
+
+- **Money rose a lot for the expert** (season 3 end 43,730 against 9,142; season 6 end 37,012
+  against 23,125), less for the others. The season 4 and 5 ends are low because the bot spends on
+  the herd ladder and seeds before the season turns (the bot's money at a turn is after spending).
+- **The hall still does not finish for any persona, and the Last Seat still never opens.** Money
+  is no longer the wall for the expert; the long poles are now the bundles the bot does not finish
+  at all (Artisan Goods, Smith's, Specialty Fish, Harvest Feast, The Catch, Hearth Fire: 40 of 40
+  runs short). Smith's fell from 3 runs to 0 for the expert. The bars and one furnace are the
+  likely cause; not traced.
+- **Casual is bounded by its own habits** (skipped days and forgotten watering), as designed.
+
+**Options (no numbers decided):**
+
+1. Leave the bot as is: this is the corrected baseline for any later tuning call.
+2. Plant only when `growDays < days left` (one night of margin) and sweep the field again before
+   bed on the last day of a season, to cut the remaining unripe and unharvested crops.
+3. Trace why Artisan Goods, Smith's and Specialty Fish are never finished now that money is not
+   the limit (furnace time, quartz, the specialty fish), before any further number change in
+   this note.
 
 ## Room rewards that did nothing (owner, 2026-11-12, #871)
 
