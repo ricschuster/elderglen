@@ -1,9 +1,9 @@
 import { HOUSE_MAP, DIVORCE_CHEST_TILE, spouseRoomArea } from "./house";
 import { childDivorceLine } from "./children";
-import { DIVORCE_FEE, exFlag, exSpouses } from "./marriage";
+import { DIVORCE_FEE } from "./marriage";
+import { LOCAL_PLAYER } from "./playerid";
 import type { GameState } from "./save";
 import { villagerById } from "./villagers";
-import { hasFlag, setFlag } from "./worldflags";
 import { tileKey } from "./tilekey";
 
 /**
@@ -20,24 +20,26 @@ export const DIVORCE_CHEST = "chest";
 
 const nameOf = (id: string): string => villagerById(id)?.name ?? id;
 
-export const isEx = (g: Pick<GameState, "flags">, id: string): boolean =>
-  hasFlag(g, exFlag(id));
+export const isEx = (g: Pick<GameState, "marriage">, id: string): boolean =>
+  g.marriage.isEx(id);
 
 /** Former spouses, in the order the flags were raised. */
-export const exesOf = (g: Pick<GameState, "flags">): string[] => exSpouses(g);
+export const exesOf = (g: Pick<GameState, "marriage">): string[] => [
+  ...g.marriage.exes,
+];
 
 /**
  * Former spouses come to the player's wedding as guests (owner, 2026-11-16;
  * Stardew's rule is unchecked, SC-203). The one being married is not a guest.
  */
 export const attendsWedding = (
-  g: Pick<GameState, "flags">,
+  g: Pick<GameState, "marriage">,
   id: string,
 ): boolean => isEx(g, id);
 
 /** The guests at a wedding to `spouse`: every ex, in the order divorced, bar the one marrying. */
 export const weddingGuests = (
-  g: Pick<GameState, "flags">,
+  g: Pick<GameState, "marriage">,
   spouse: string,
 ): string[] => exesOf(g).filter((id) => id !== spouse);
 
@@ -135,9 +137,10 @@ export function divorceMorning(g: GameState): DivorceNews | undefined {
   const children = m.children;
   m.end(); // the children stay
   g.friendship.setSpouse(null);
-  setFlag(g, exFlag(id));
-  g.friendship.setExes(exSpouses(g));
-  clearSpouseRoom(g);
+  m.setEx(id, true);
+  g.friendship.setExes(m.exes);
+  // Only the host's spouse had the farm house's spouse room; a guest's spouse has no drawn home yet (note 110).
+  if (g.players.localId === LOCAL_PLAYER) clearSpouseRoom(g);
   return {
     name: nameOf(id),
     hearts: g.friendship.hearts(id),

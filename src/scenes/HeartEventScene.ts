@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { audio } from "../audio/engine";
 import { isSfx } from "../core/audio";
 import { finishWedding, isWeddingId, weddingEvent } from "../core/courtship";
+import { GuestSession, currentSession } from "../net/session";
 import { weddingGuests } from "../core/divorce";
 import { actorName, SceneRun, worldOf } from "../core/eventrun";
 import {
@@ -685,7 +686,13 @@ export class HeartEventScene extends Phaser.Scene {
     this.token += 1;
     this.fadeRect.setFillStyle(0x000000, 0);
     if (this.replay) return this.close();
-    if (isWeddingId(this.event.id)) finishWedding(this.state);
+    if (isWeddingId(this.event.id)) {
+      finishWedding(this.state);
+      // A guest's wedding counts on the host too, against their own marriage (note 12).
+      const net = currentSession();
+      if (net instanceof GuestSession)
+        net.sendIntent({ kind: "villager-wedding" });
+    }
     const words = finishRun(
       this.state,
       this.event,

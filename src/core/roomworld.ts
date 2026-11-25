@@ -31,7 +31,9 @@ import { HOME_PLACE_KINDS } from "./homeplace";
 import { HOUSE_MAP, HOUSE_UPGRADE_NAMES, isHouseMap } from "./house";
 import { isFarmMap, resolveMapId } from "./farmtypes";
 import { asPlayer } from "./asplayer";
-import { weddingBlock } from "./courtship";
+import { weddingBlock, weddingMorning } from "./courtship";
+import { divorceMorning, divorceReportLines } from "./divorce";
+import { spouseMorning, spouseReportLines } from "./spouse";
 import {
   applyMarriageIntent,
   expireProposalsAndRefund,
@@ -116,6 +118,8 @@ export class GameRoomWorld implements RoomWorld {
   private readonly wakeNotices: Notice[] = [];
   /** Cabin upgrades that landed this morning, by owner, for the report. */
   lastCabinNews: Record<PlayerId, string> = {};
+  /** What each guest's villager spouse did and a filed divorce's end, for their report (note 12). */
+  lastVillagerNews: Record<PlayerId, string[]> = {};
   /** Player marriages (note 12, two-player steps), kept on the host in the game state. */
   get marriages(): pm.PlayerMarriageBook {
     return this.g.playerMarriage;
@@ -606,6 +610,7 @@ export class GameRoomWorld implements RoomWorld {
           ? `You stayed up too late and passed out. Someone helped you home and kept ${lost}g for the trouble.`
           : "You stayed up too late and passed out. Someone helped you home. It cost you nothing.",
       ...(built ? [built] : []),
+      ...(this.lastVillagerNews[id] ?? []),
       ...pm.marriageReportLines(
         this.marriages,
         id,
@@ -637,9 +642,11 @@ export class GameRoomWorld implements RoomWorld {
         this.lastCabinNews[c.ownerKey] =
           `The carpenter finished your cabin's ${HOUSE_UPGRADE_NAMES[c.tier - 1]!.toLowerCase()}.`;
     const day = this.day();
+    this.lastVillagerNews = {};
     for (const id of g.players.ids) {
       if (id === LOCAL_PLAYER) continue;
       asPlayer(g, id, () => g.mail.deliver(day));
+      this.villagerMorning(id);
       if (this.tracker.presence(id) === "dropped") continue;
       const slept = this.sleptIn.get(id);
       const own = ownWakeSpot(g, id);
@@ -655,6 +662,25 @@ export class GameRoomWorld implements RoomWorld {
       });
     }
     this.sleptIn.clear();
+  }
+
+  /**
+   * A guest's villager marriage for the new morning, as sleep() does the host's: a filed divorce takes
+   * effect, the spouse does the chores, and a wedding due today is put off a day for a festival or rain.
+   * A wedding the guest missed (they were away) is due again today, so it is never lost.
+   */
+  private villagerMorning(id: PlayerId): void {
+    const g = this.g;
+    const day = this.day();
+    const lines = asPlayer(g, id, () => {
+      const divorce = divorceMorning(g);
+      const spouse = spouseMorning(g, this.o.random);
+      const m = g.marriage;
+      if (m.stage === "engaged" && m.weddingDay < day) m.weddingDay = day;
+      weddingMorning(g);
+      return [...divorceReportLines(divorce), ...spouseReportLines(spouse)];
+    });
+    if (lines.length > 0) this.lastVillagerNews[id] = lines;
   }
 
   /** Day end: guests who pass out pay the single player cost, then the world sleeps. */

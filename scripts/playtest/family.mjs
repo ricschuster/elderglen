@@ -66,13 +66,13 @@ const after = await p.evaluate(() => {
   return {
     stage: s.marriage.stage,
     kids: s.marriage.children,
-    ex: s.flags.includes("ex-linnet"),
+    ex: s.marriage.isEx("linnet"),
     spouse: s.friendship.spouse ?? null,
   };
 });
 log("after divorce", JSON.stringify(after));
 expect("stage after divorce", after.stage, "none");
-expect("ex flag", after.ex, true);
+expect("ex mark", after.ex, true);
 log("children after divorce:", after.kids, "(was", dv.kids + ")");
 
 // Re-dating: court the ex again.

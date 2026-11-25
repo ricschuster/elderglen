@@ -180,7 +180,10 @@ export class Shrine {
     if (this.seen || this.pending) return false;
     const day = g.day.clock.day;
     if (dateOf(day).year < data.firstYear) return false;
-    if (festivalDayToday(day) !== undefined || g.marriage.weddingToday(day))
+    if (
+      festivalDayToday(day) !== undefined ||
+      g.players.each().some((p) => p.marriage.weddingToday(day))
+    )
       return false;
     this.pending = true;
     return true;

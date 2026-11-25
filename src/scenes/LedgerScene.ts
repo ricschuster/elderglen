@@ -6,6 +6,7 @@ import { villagerById } from "../core/villagers";
 import { ledgerRows } from "../core/marriagecard";
 import {
   currentSession,
+  GuestSession,
   isGuest,
   playerNameOf,
   sendWorldIntent,
@@ -88,7 +89,7 @@ export class LedgerScene extends Phaser.Scene {
             : [],
         });
     }
-    if (isGuest() || !m.married || !m.spouse) {
+    if (!m.married || !m.spouse) {
       if (rows.length) {
         this.menu.setRows(rows);
         return;
@@ -129,6 +130,13 @@ export class LedgerScene extends Phaser.Scene {
 
   private file(): void {
     const problem = divorceProblem(this.state);
+    // A guest asks the host, who files it against the guest's own marriage and purse (note 12).
+    const net = currentSession();
+    if (net instanceof GuestSession && !problem) {
+      net.sendIntent({ kind: "villager-divorce" });
+      this.message.setText("PLACEHOLDER TEXT: the clerk writes it in.");
+      return this.refresh();
+    }
     this.message.setText(
       problem ||
         (fileDivorce(this.state)
@@ -139,6 +147,12 @@ export class LedgerScene extends Phaser.Scene {
   }
 
   private cancel(): void {
+    const net = currentSession();
+    if (net instanceof GuestSession) {
+      net.sendIntent({ kind: "villager-divorce-cancel" });
+      this.message.setText("PLACEHOLDER TEXT: the page is struck through.");
+      return this.refresh();
+    }
     this.message.setText(
       cancelDivorce(this.state)
         ? "PLACEHOLDER TEXT: the page is struck through. Your fee is handed back."

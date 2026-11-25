@@ -73,7 +73,7 @@ import type { Mailbox, MailEntry } from "./mail";
 import { loadCabinBook, type CabinBook } from "./cabins";
 import { loadLostFound, saveLostFound, type LostFound } from "./lostfound";
 import type { Friendship } from "./friendship";
-import { Marriage, exSpouses, type MarriageSave } from "./marriage";
+import { exSpouses, type Marriage, type MarriageSave } from "./marriage";
 import { ELDERFRUIT_TOTAL, maxEnergyFor } from "./elderfruit";
 import { GALLERY_TOTAL, inGallery } from "./gallery";
 import type { HeartEvents, HeartEventsSave } from "./heartevents";
@@ -363,7 +363,7 @@ export function newGame(
     shrine: new Shrine(),
     mail: players.get(LOCAL_PLAYER).mail,
     friendship: players.get(LOCAL_PLAYER).friendship,
-    marriage: new Marriage(),
+    marriage: players.get(LOCAL_PLAYER).marriage,
     playerMarriage: newPlayerMarriageBook(),
     heartEvents: players.get(LOCAL_PLAYER).heartEvents,
     quests: new Quests(),
@@ -818,7 +818,7 @@ export function serialize(
     shrine: g.shrine.save(),
     mail: g.mail.save(),
     friendship: g.players.get(LOCAL_PLAYER).friendship.save(),
-    marriage: g.marriage.save(),
+    marriage: g.players.get(LOCAL_PLAYER).marriage.save(),
     ...(g.playerMarriage.bonds.length || g.playerMarriage.unseenWedding.length
       ? { playerMarriage: savePlayerMarriage(g.playerMarriage) }
       : {}),
@@ -1376,7 +1376,14 @@ export function deserialize(text: string): GameState | undefined {
   g.lostFound = loadLostFound(raw.lostFound);
   const hostFriends = g.players.get(LOCAL_PLAYER).friendship;
   hostFriends.setSpouse(g.marriage.married ? g.marriage.spouse : null);
-  hostFriends.setExes(exSpouses(g));
+  // An older save kept the exes as `ex-<id>` world flags: they are the host's, now kept on the marriage.
+  for (const id of exSpouses(g))
+    if (!g.marriage.isEx(id)) g.marriage.setEx(id, true);
+  if (g.flags?.some((f) => f.startsWith("ex-"))) {
+    g.flags = g.flags.filter((f) => !f.startsWith("ex-"));
+    if (g.flags.length === 0) delete g.flags;
+  }
+  hostFriends.setExes(g.marriage.exes);
   hostFriends.load(raw.friendship);
   g.players.get(LOCAL_PLAYER).heartEvents.load(raw.heartEvents);
   g.quests.load(raw.quests);

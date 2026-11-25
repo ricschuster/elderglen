@@ -7,16 +7,15 @@ import {
   MARRIAGE_HOUSE_TIER,
   PROPOSE_HEARTS,
   TOKEN_PRICE,
-  exFlag,
-  exSpouses,
 } from "./marriage";
+import { bondOf } from "./playermarriage";
 import { HEART, isCandidate } from "./friendship";
 import type { Cmd, HeartEvent } from "./heartevents";
 import type { GameState } from "./save";
 import type { Marriage } from "./marriage";
 import { parseTime, villagerById } from "./villagers";
 import { isRaining } from "./weather";
-import { hasFlag, setFlag } from "./worldflags";
+import { setFlag } from "./worldflags";
 
 /**
  * Courtship, the proposal and the wedding (note 12, slice 2, #935). Pure rules
@@ -75,6 +74,12 @@ export interface CourtResult {
 
 const nameOf = (id: string): string => villagerById(id)?.name ?? id;
 
+/** Whether another player than the one acting is engaged or married to `id` (note 12 step 7: off limits to the rest). */
+export function heldByAnother(g: GameState, id: string): boolean {
+  const me = g.players.localId;
+  return g.players.each().some((p) => p.id !== me && p.marriage.holds(id));
+}
+
 /**
  * Give the bouquet or the token to a villager. Returns undefined when `held` is
  * neither, so the caller goes on with an ordinary gift. A refusal keeps the
@@ -92,6 +97,14 @@ export function courtGift(
   if (g.inventory.count(held) < 1) return undefined;
   if (!isCandidate(id))
     return no(`${name} smiles kindly. This is not a gift for a friend.`);
+  // One spouse per villager (note 12 step 7): a villager promised or wed to another player is off limits.
+  // The hearts stay as they are, and a bouquet already given still counts for the cap.
+  if (heldByAnother(g, id))
+    return no(`${name} is promised to someone else, and smiles sadly.`);
+  // One spouse in all (the player bond book): a player promised or wed to a player is spoken for too.
+  const bond = bondOf(g.playerMarriage, g.players.localId);
+  if (bond && bond.stage !== "proposed")
+    return no(`${name} smiles, but your heart is spoken for.`);
   const points = g.friendship.points(id);
   if (held === BOUQUET) {
     if (m.isPartner(id))
@@ -110,9 +123,9 @@ export function courtGift(
     g.inventory.remove(held, 1);
     setFlag(g, `bouquet-${id}`);
     // An ex can be courted again (owner, 2026-11-16): hearts are as the divorce left them, the ex mark is lifted.
-    if (hasFlag(g, exFlag(id))) {
-      g.flags = (g.flags ?? []).filter((f) => f !== exFlag(id));
-      g.friendship.setExes(exSpouses(g));
+    if (m.isEx(id)) {
+      m.setEx(id, false);
+      g.friendship.setExes(m.exes);
     }
     return {
       message: `${name} takes the bouquet, blushing. PLACEHOLDER TEXT: you are courting.`,
@@ -130,6 +143,14 @@ export function courtGift(
       return no(`${name} cannot take it.`);
     g.inventory.remove(held, 1);
     setFlag(g, `token-${id}`);
+    // Others who were dating them keep their hearts but are free to court someone else.
+    for (const p of g.players.each())
+      if (
+        p.id !== g.players.localId &&
+        p.marriage.stage === "courting" &&
+        p.marriage.spouse === id
+      )
+        p.marriage.end();
     return {
       message: `${name} says yes. PLACEHOLDER TEXT: the wedding is in three days.`,
       consumed: true,

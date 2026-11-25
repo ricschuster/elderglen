@@ -3,7 +3,8 @@ import { HEART, isCandidate } from "./friendship";
 
 /**
  * Marriage state and stage transitions (note 12, slice 1, #934). Pure rules:
- * no UI and no scenes. State is per farm (ADR 0007), one spouse at a time.
+ * no UI and no scenes. State is per player (note 12 "As built, one spouse per
+ * villager"; the host's is the old farm marriage), one spouse at a time.
  * Numbers are placeholders in `07_tuning_numbers.md`. Later slices call these
  * helpers: courtship and wedding (2), spouse life (3), divorce (4), children (5).
  */
@@ -75,6 +76,8 @@ export interface MarriageSave {
   /** The day the wedding was last put off, and why ("festival" or "rain"). Absent for never. */
   putOffDay?: number;
   putOffWhy?: string;
+  /** Former spouses, in the order divorced (per player; an old save's `ex-<id>` flags become the host's). */
+  exes?: string[];
 }
 
 const STAGES: readonly Stage[] = ["none", "courting", "engaged", "married"];
@@ -144,6 +147,27 @@ export class Marriage {
   kissDay = 0;
   /** A divorce is filed at the hall ledger: it takes effect next morning unless cancelled. */
   divorcing = false;
+  /** Former spouses, in the order divorced. */
+  exes: string[] = [];
+
+  /** Whether `id` is a former spouse. */
+  isEx(id: string): boolean {
+    return this.exes.includes(id);
+  }
+
+  /** Mark `id` a former spouse (last in order), or lift the mark. */
+  setEx(id: string, ex: boolean): void {
+    this.exes = this.exes.filter((e) => e !== id);
+    if (ex) this.exes.push(id);
+  }
+
+  /** Whether this player is engaged or married to `id`: the villager is off limits to the others. */
+  holds(id: string): boolean {
+    return (
+      (this.stage === "engaged" || this.stage === "married") &&
+      this.spouse === id
+    );
+  }
 
   /** How many children the farm has. */
   get children(): number {
@@ -255,6 +279,7 @@ export class Marriage {
       ...(this.putOffDay > 0
         ? { putOffDay: this.putOffDay, putOffWhy: this.putOffWhy }
         : {}),
+      ...(this.exes.length > 0 ? { exes: [...this.exes] } : {}),
     };
   }
 
@@ -270,8 +295,13 @@ export class Marriage {
     this.askDay = 0;
     this.kissDay = 0;
     this.divorcing = false;
+    this.exes = [];
     if (typeof raw !== "object" || raw === null) return;
     const o = raw as Record<string, unknown>;
+    if (Array.isArray(o.exes))
+      for (const e of o.exes)
+        if (isCandidateId(e) && !this.exes.includes(e as string))
+          this.exes.push(e as string);
     const married = o.stage === "married" && isCandidateId(o.spouse);
     // The children outlive the marriage, so they load whatever the stage is.
     if (married || o.stage === "none" || o.kids !== undefined)

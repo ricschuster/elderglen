@@ -11,6 +11,7 @@ import { Wardrobe, type WardrobeSave } from "./hats";
 import { LOCAL_PLAYER } from "./playerid";
 import { Friendship } from "./friendship";
 import { HeartEvents, type HeartEventsSave } from "./heartevents";
+import { Marriage, type MarriageSave } from "./marriage";
 
 /** A player's id within one world. Stable for the life of the save (note 53). */
 export type PlayerId = string;
@@ -47,6 +48,8 @@ export interface PlayerRecord {
   friendship: Friendship;
   /** Heart events this player has seen, with their choices' flags (note 53: each player sees their own). */
   heartEvents: HeartEvents;
+  /** This player's own courtship and villager marriage, one spouse each (note 12, note 53). */
+  marriage: Marriage;
   /** Letters sent to this player, delivered to the mailbox by their home (note 110 rule 3, note 53: mail is per player). */
   mail: Mailbox;
   /** Festival keys this player has: went, claimed, drew, once a year (note 111 rule 9: rewards are per player). */
@@ -73,6 +76,7 @@ export function newPlayer(
     wardrobe: new Wardrobe(),
     friendship: new Friendship(),
     heartEvents: new HeartEvents(),
+    marriage: new Marriage(),
     mail: new Mailbox(),
     festivalsJoined: [],
     showTokens: { year: 0, count: 0 },
@@ -183,6 +187,7 @@ export function localView(players: Players): {
   wardrobe: Wardrobe;
   friendship: Friendship;
   heartEvents: HeartEvents;
+  marriage: Marriage;
   mail: Mailbox;
   festivalsJoined: string[];
   showTokens: { year: number; count: number };
@@ -248,6 +253,12 @@ export function localView(players: Players): {
     set heartEvents(v: HeartEvents) {
       players.local.heartEvents = v;
     },
+    get marriage() {
+      return players.local.marriage;
+    },
+    set marriage(v: Marriage) {
+      players.local.marriage = v;
+    },
     get mail() {
       return players.local.mail;
     },
@@ -291,6 +302,8 @@ export interface PlayerSave {
   /** Friendship and heart events seen (optional: older saves lack them; the host's flat fields are the ones read for p1). */
   friendship?: ReturnType<Friendship["save"]>;
   heartEvents?: HeartEventsSave;
+  /** Courtship and villager marriage (optional: older saves lack it; the host's flat `marriage` is the one read for p1). */
+  marriage?: MarriageSave;
   /** A guest's letters (the host's are the save's flat `mail`). Optional: older saves lack it. */
   mail?: MailEntry[];
   /** A guest's festival keys and show tokens (the host's are the save's flat fields). Optional: older saves lack them. */
@@ -316,6 +329,7 @@ export function savePlayer(p: PlayerRecord): PlayerSave {
     wardrobe: p.wardrobe.save(),
     friendship: p.friendship.save(),
     heartEvents: p.heartEvents.save(),
+    marriage: p.marriage.save(),
     ...(p.id !== LOCAL_PLAYER
       ? {
           mail: p.mail.save(),
@@ -374,6 +388,10 @@ function fillPlayer(p: PlayerRecord, raw: Record<string, unknown>): void {
   if (raw.wardrobe !== undefined) p.wardrobe.load(raw.wardrobe);
   // The host's friendship loads from the flat part of the save, which knows the spouse and the exes.
   if (raw.id !== LOCAL_PLAYER) {
+    // The spouse's cap and the exes are known before the points load, or points above the bouquet cap clamp.
+    p.marriage.load(raw.marriage);
+    p.friendship.setSpouse(p.marriage.married ? p.marriage.spouse : null);
+    p.friendship.setExes(p.marriage.exes);
     p.friendship.load(raw.friendship);
     p.heartEvents.load(raw.heartEvents);
   }

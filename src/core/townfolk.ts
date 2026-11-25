@@ -25,7 +25,6 @@ import {
   whereAt,
 } from "./villagers";
 import { tileKey } from "./tilekey";
-import { LOCAL_PLAYER } from "./players";
 
 /**
  * Villagers in the scenes (#599 slice 3, notes 79 and 80). Pure: who stands on
@@ -346,9 +345,8 @@ export function meet(
     f.talk(id, day);
     return { message: line("first", v.name) + tail() };
   }
-  // Courting and a spouse's ways are the farm's one marriage, the host's (note 12, note 53): a guest talks as to any friend.
-  const host = g.players.localId === LOCAL_PLAYER;
-  const court = host ? courtGift(g, id, held) : undefined;
+  // Courting and a spouse's ways are the acting player's own marriage (note 12, note 53).
+  const court = courtGift(g, id, held);
   if (court)
     return {
       message: court.message + tail(),
@@ -371,7 +369,7 @@ export function meet(
   }
   const t = f.talk(id, day);
   // The spouse has a line by heart level, and the first kiss of the day restores energy (note 12).
-  if (host && spouseId(g) === id) {
+  if (spouseId(g) === id) {
     const kissed = kiss(g, id) !== undefined;
     return {
       message:

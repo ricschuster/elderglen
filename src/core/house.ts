@@ -1,4 +1,5 @@
 import renoData from "../content/house-renos.json";
+import { hostMarriage } from "./playerid";
 import { mapFiles, maps } from "../content/maps";
 import { festivalDayToday } from "./festivals";
 import { HARDWOOD } from "./items";
@@ -98,9 +99,11 @@ export { DIVORCE_CHEST_HOLD, DIVORCE_CHEST_TILE } from "./divorcechest";
 export function houseSpouse(g: {
   flags?: string[];
   marriage?: { married: boolean };
+  players?: { get(id: string): { marriage: { married: boolean } } };
 }): boolean {
+  // The farm house is the host's, so its spouse room follows the host's marriage on every screen.
   return (
-    g.marriage?.married === true || g.flags?.includes(SPOUSE_HOLD) === true
+    hostMarriage(g)?.married === true || g.flags?.includes(SPOUSE_HOLD) === true
   );
 }
 

@@ -1,4 +1,5 @@
 import data from "../content/children.json";
+import { hostMarriage } from "./playerid";
 import { dateOf } from "./calendar";
 import { HEART, TALK_POINTS } from "./friendship";
 import { MAX_CHILDREN, type Child } from "./marriage";
@@ -104,10 +105,11 @@ export function childReportLines(n: ChildNews | undefined): string[] {
 
 // ---- The child -------------------------------------------------------------
 
+// The children live in the farm house, so they are the host's marriage's, whoever's screen it is (note 12, note 110).
 export const childById = (
-  g: Pick<GameState, "marriage">,
+  g: Pick<GameState, "marriage"> & Partial<Pick<GameState, "players">>,
   id: string,
-): Child | undefined => g.marriage.kids.find((k) => k.id === id);
+): Child | undefined => hostMarriage(g).kids.find((k) => k.id === id);
 
 /** Days since the child arrived. */
 export const ageOf = (c: Child, day: number): number =>
@@ -172,14 +174,15 @@ export function childWhere(
 
 /** Every child with their tile on `mapId` now: nobody asleep, none off the map. */
 export function childrenOn(
-  g: Pick<GameState, "weather" | "marriage" | "houseTier">,
+  g: Pick<GameState, "weather" | "marriage" | "houseTier"> &
+    Partial<Pick<GameState, "players">>,
   mapId: string,
   day: number,
   minutes: number,
 ): { id: string; name: string; x: number; y: number }[] {
   if (g.houseTier < NURSERY_TIER) return [];
   const out: { id: string; name: string; x: number; y: number }[] = [];
-  for (const c of g.marriage.kids) {
+  for (const c of hostMarriage(g).kids) {
     const w = childWhere(g, c, day, minutes);
     if (w.asleep || w.where.transit || w.where.map !== mapId) continue;
     out.push({ id: c.id, name: c.name, x: w.where.x, y: w.where.y });
