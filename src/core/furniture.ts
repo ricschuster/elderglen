@@ -157,7 +157,10 @@ export function canStand(
     !map.exitAt(x, y) &&
     !map.entries.some((e) => e.x === x && e.y === y) &&
     !map.serviceAt(x, y) &&
-    g.furniture.at(mapId, x, y) === undefined
+    g.furniture.at(mapId, x, y) === undefined &&
+    // A machine or cask on the floor (owner 2026-11-25) takes the tile.
+    g.indoorMachines.get(x, y, mapId) === undefined &&
+    !g.casks.at(x, y, mapId)
   );
 }
 

@@ -15,7 +15,8 @@ import {
 } from "./processing";
 import type { GameState } from "./save";
 import { isClear } from "./actions";
-import { mayPlaceOn, placeTag } from "./placeables";
+import { canStand } from "./furniture";
+import { isIndoorMachineMap, mayPlaceOn, placeTag } from "./placeables";
 import { tileKey } from "./tilekey";
 
 /** A batch in a machine: what it makes and when it is done, in machine minutes. */
@@ -31,6 +32,8 @@ export interface PlacedMachine {
   x: number;
   y: number;
   id: string;
+  /** Indoor machines only: the house or shed map it stands on. Absent on the farm. */
+  map?: string;
   job?: MachineJob;
 }
 
@@ -45,9 +48,13 @@ export function machineMinutes(g: GameState): number {
   );
 }
 
-/** The machines standing on the farm. */
+/** The machines standing on the farm, or (the indoor list) on house and shed floors, keyed by map and tile. */
 export class Machines {
   private placed = new Map<string, PlacedMachine>();
+
+  private key(x: number, y: number, mapId?: string): string {
+    return mapId === undefined ? tileKey(x, y) : `${mapId}|${tileKey(x, y)}`;
+  }
 
   save(): PlacedMachine[] {
     return [...this.placed.values()].map((m) => ({
@@ -59,7 +66,7 @@ export class Machines {
   load(saved: PlacedMachine[]): void {
     this.placed = new Map(
       saved.map((m) => [
-        tileKey(m.x, m.y),
+        this.key(m.x, m.y, m.map),
         { ...m, job: m.job ? { ...m.job } : undefined },
       ]),
     );
@@ -70,13 +77,13 @@ export class Machines {
   }
 
   /** The machine on a tile, if any. */
-  get(x: number, y: number): PlacedMachine | undefined {
-    return this.placed.get(tileKey(x, y));
+  get(x: number, y: number, mapId?: string): PlacedMachine | undefined {
+    return this.placed.get(this.key(x, y, mapId));
   }
 
   /** The machine id on a tile, if any. */
-  at(x: number, y: number): string | undefined {
-    return this.get(x, y)?.id;
+  at(x: number, y: number, mapId?: string): string | undefined {
+    return this.get(x, y, mapId)?.id;
   }
 
   get count(): number {
@@ -84,19 +91,30 @@ export class Machines {
   }
 
   add(m: PlacedMachine): boolean {
-    if (!machineById(m.id) || this.placed.has(tileKey(m.x, m.y))) return false;
-    this.placed.set(tileKey(m.x, m.y), m);
+    const k = this.key(m.x, m.y, m.map);
+    if (!machineById(m.id) || this.placed.has(k)) return false;
+    this.placed.set(k, m);
     return true;
   }
 
-  remove(x: number, y: number): PlacedMachine | undefined {
-    const m = this.get(x, y);
-    this.placed.delete(tileKey(x, y));
+  remove(x: number, y: number, mapId?: string): PlacedMachine | undefined {
+    const m = this.get(x, y, mapId);
+    this.placed.delete(this.key(x, y, mapId));
     return m;
   }
 }
 
 const fail = (reason: string): Outcome => ({ ok: false, reason });
+
+/**
+ * The list a map's machines live in: the indoor list for a house or shed floor (owner 2026-11-25, as
+ * Stardew), the farm world's list for everything else.
+ */
+export function machinesOn(g: GameState, mapId?: string): Machines {
+  return mapId !== undefined && isIndoorMachineMap(mapId)
+    ? g.indoorMachines
+    : g.machines;
+}
 
 const nameOf = (id: string) => itemById(id)?.name ?? id;
 
@@ -159,8 +177,13 @@ export function waitText(minutes: number): string {
 }
 
 /** What a machine is doing, for the message when the player uses it. */
-export function statusText(g: GameState, x: number, y: number): string {
-  const m = g.machines.get(x, y);
+export function statusText(
+  g: GameState,
+  x: number,
+  y: number,
+  mapId?: string,
+): string {
+  const m = machinesOn(g, mapId).get(x, y, mapId);
   if (!m) return "";
   const name = nameOf(m.id);
   if (!m.job || (machineById(m.id)?.bin && m.job.count === 0))
@@ -185,18 +208,27 @@ export function placeMachine(
   x: number,
   y: number,
   id: string,
+  mapId?: string,
 ): Outcome {
   if (g.day.over) return fail("exhausted");
   const def = machineById(id);
   if (!def) return fail("not a machine");
   if (def.cellar) return fail("not a machine");
   if (g.inventory.count(id) < 1) return fail("no machine");
-  if (!mayPlaceOn(id, placeTag(map)) || !isClear(g, map, x, y))
+  const indoor =
+    mapId !== undefined && isIndoorMachineMap(mapId) ? mapId : undefined;
+  // Indoors the tile is open floor (the furniture rule); outdoors it is clear ground.
+  const free =
+    indoor !== undefined
+      ? canStand(g, map, indoor, x, y)
+      : isClear(g, map, x, y);
+  if (!mayPlaceOn(id, placeTag(map, mapId)) || !free)
     return fail("cannot place here");
   g.inventory.remove(id);
-  g.machines.add({
+  machinesOn(g, mapId).add({
     x,
     y,
+    ...(indoor !== undefined ? { map: indoor } : {}),
     id,
     job: def.bin
       ? { output: def.bin.output, count: 0, doneAt: 0 }
@@ -218,9 +250,10 @@ export function loadMachine(
   y: number,
   item: string,
   random: () => number = rngOf(g),
+  mapId?: string,
 ): Outcome {
   if (g.day.over) return fail("exhausted");
-  const m = g.machines.get(x, y);
+  const m = machinesOn(g, mapId).get(x, y, mapId);
   if (!m) return fail("no machine here");
   const def = machineById(m.id);
   if (def?.auto || def?.bin) return fail("takes nothing");
@@ -246,7 +279,7 @@ export function loadMachine(
 
 /** Morning: each worm bin makes its day's goods, up to what it holds. */
 export function fillBins(g: GameState, random: () => number): void {
-  for (const m of g.machines.each()) {
+  for (const m of [...g.machines.each(), ...g.indoorMachines.each()]) {
     const bin = machineById(m.id)?.bin;
     if (!bin) continue;
     const made = bin.min + Math.floor(random() * (bin.max - bin.min + 1));
@@ -265,9 +298,10 @@ export function collectMachine(
   x: number,
   y: number,
   random: () => number = rngOf(g),
+  mapId?: string,
 ): Outcome {
   if (g.day.over) return fail("exhausted");
-  const m = g.machines.get(x, y);
+  const m = machinesOn(g, mapId).get(x, y, mapId);
   if (!m) return fail("no machine here");
   if (!m.job) return fail("machine empty");
   if (!jobDone(g, m)) return fail("machine busy");
@@ -315,10 +349,15 @@ export function collectMachine(
  * comes back (SC-50, SC-66). A bee house loses its batch. If the backpack
  * cannot hold the machine and its input, nothing changes.
  */
-export function handOnMachine(g: GameState, x: number, y: number): Outcome {
-  const m = g.machines.get(x, y);
+export function handOnMachine(
+  g: GameState,
+  x: number,
+  y: number,
+  mapId?: string,
+): Outcome {
+  const m = machinesOn(g, mapId).get(x, y, mapId);
   if (!m) return fail("no machine here");
-  if (jobDone(g, m)) return collectMachine(g, x, y);
+  if (jobDone(g, m)) return collectMachine(g, x, y, undefined, mapId);
   if (g.day.over) return fail("exhausted");
   const counts: Record<string, number> = { [m.id]: 1 };
   const input = m.job?.input;
@@ -336,6 +375,6 @@ export function handOnMachine(g: GameState, x: number, y: number): Outcome {
     }
     added.push([id, n]);
   }
-  g.machines.remove(x, y);
+  machinesOn(g, mapId).remove(x, y, mapId);
   return { ok: true, item: m.id };
 }

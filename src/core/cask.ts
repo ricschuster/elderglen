@@ -5,7 +5,8 @@ import { CELLAR_MAP } from "./house";
 import { itemById } from "./items";
 import type { FarmMap } from "./map";
 import { isClear } from "./actions";
-import { mayPlaceOn, placeTag } from "./placeables";
+import { canStand } from "./furniture";
+import { isIndoorMachineMap, mayPlaceOn, placeTag } from "./placeables";
 import { QUALITIES, splitQuality, withQuality, type Quality } from "./quality";
 import type { GameState } from "./save";
 import { tileKey } from "./tilekey";
@@ -211,7 +212,7 @@ export function caskStatus(
 }
 
 /**
- * Stand a cask from the backpack on a clear tile of the cellar or the farm.
+ * Stand a cask from the backpack on a clear tile of the cellar, the farm, a house or a shed.
  * Free. A cask off the cellar floor holds nothing (`loadCask` refuses).
  */
 export function placeCask(
@@ -233,9 +234,10 @@ export function placeCask(
     )
       return fail("cannot place here");
   } else if (
-    !isFarmMap(mapId) ||
     !mayPlaceOn(CASK, placeTag(map, mapId)) ||
-    !isClear(g, map, x, y) ||
+    !(isIndoorMachineMap(mapId)
+      ? canStand(g, map, mapId, x, y)
+      : isFarmMap(mapId) && isClear(g, map, x, y)) ||
     g.casks.at(x, y, mapId)
   )
     return fail("cannot place here");

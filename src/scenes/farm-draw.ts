@@ -154,6 +154,11 @@ export function drawGround(farm: FarmScene): void {
     put(c.x, c.y, machineKey(CASK));
     if (caskDone(farm.state, c)) put(c.x, c.y, MACHINE_READY_KEY);
   }
+  for (const m of farm.state.indoorMachines.each()) {
+    if (m.map !== farm.mapId) continue;
+    put(m.x, m.y, machineKey(m.id));
+    if (jobDone(farm.state, m)) put(m.x, m.y, MACHINE_READY_KEY);
+  }
   if (farm.mapId === CAVE_MAP) drawCave(farm, put);
   drawFeastProps(farm);
   drawFeastLantern(farm);

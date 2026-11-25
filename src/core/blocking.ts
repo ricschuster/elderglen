@@ -107,6 +107,7 @@ export function tileBlockedNoHorse(
     map.serviceAt(x, y)?.kind === LEVER_KIND ||
     !!store.sprinklers.at(x, y) ||
     !!potAt(state, map, x, y) ||
-    (outdoorSoil(map) && !!state.machines.at(x, y))
+    (outdoorSoil(map) && !!state.machines.at(x, y)) ||
+    !!state.indoorMachines.get(x, y, mapId)
   );
 }

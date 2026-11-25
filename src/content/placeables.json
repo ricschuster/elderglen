@@ -18,7 +18,7 @@
   {
     "id": "charcoal-kiln",
     "kind": "machine",
-    "places": ["farm"],
+    "places": ["farm", "house", "shed"],
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"
@@ -26,7 +26,7 @@
   {
     "id": "preserves-jar",
     "kind": "machine",
-    "places": ["farm"],
+    "places": ["farm", "house", "shed"],
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"
@@ -42,7 +42,7 @@
   {
     "id": "keg",
     "kind": "machine",
-    "places": ["farm"],
+    "places": ["farm", "house", "shed"],
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"
@@ -50,7 +50,7 @@
   {
     "id": "seed-maker",
     "kind": "machine",
-    "places": ["farm"],
+    "places": ["farm", "house", "shed"],
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"
@@ -58,7 +58,7 @@
   {
     "id": "dehydrator",
     "kind": "machine",
-    "places": ["farm"],
+    "places": ["farm", "house", "shed"],
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"
@@ -66,7 +66,7 @@
   {
     "id": "cheese-press",
     "kind": "machine",
-    "places": ["farm"],
+    "places": ["farm", "house", "shed"],
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"
@@ -74,7 +74,7 @@
   {
     "id": "mayonnaise-machine",
     "kind": "machine",
-    "places": ["farm"],
+    "places": ["farm", "house", "shed"],
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"
@@ -82,7 +82,7 @@
   {
     "id": "loom",
     "kind": "machine",
-    "places": ["farm"],
+    "places": ["farm", "house", "shed"],
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"
@@ -90,7 +90,7 @@
   {
     "id": "oil-maker",
     "kind": "machine",
-    "places": ["farm"],
+    "places": ["farm", "house", "shed"],
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"
@@ -98,7 +98,7 @@
   {
     "id": "dye-vat",
     "kind": "machine",
-    "places": ["farm"],
+    "places": ["farm", "house", "shed"],
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"
@@ -106,7 +106,7 @@
   {
     "id": "cask",
     "kind": "machine",
-    "places": ["farm", "cellar"],
+    "places": ["farm", "cellar", "house", "shed"],
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"
@@ -114,7 +114,7 @@
   {
     "id": "furnace",
     "kind": "machine",
-    "places": ["farm"],
+    "places": ["farm", "house", "shed"],
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"
@@ -122,7 +122,7 @@
   {
     "id": "recycler",
     "kind": "machine",
-    "places": ["farm"],
+    "places": ["farm", "house", "shed"],
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"
@@ -130,7 +130,7 @@
   {
     "id": "crystalarium",
     "kind": "machine",
-    "places": ["farm"],
+    "places": ["farm", "house", "shed"],
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"
@@ -290,7 +290,7 @@
   {
     "id": "geode-crusher",
     "kind": "machine",
-    "places": ["farm"],
+    "places": ["farm", "house", "shed"],
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"
@@ -298,7 +298,7 @@
   {
     "id": "worm-bin",
     "kind": "machine",
-    "places": ["farm"],
+    "places": ["farm", "house", "shed"],
     "footprint": [1, 1],
     "blocksWalking": true,
     "pickUp": "hand"

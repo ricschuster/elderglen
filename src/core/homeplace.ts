@@ -6,6 +6,9 @@ import { maps } from "../content/maps";
 import type { Outcome } from "./actions";
 import { asPlayer } from "./asplayer";
 import { chestById, pickUpChest, placeChest } from "./chests";
+import { CASK, handOnCask, placeCask } from "./cask";
+import { handOnMachine, placeMachine } from "./machines";
+import { machineById } from "./processing";
 import { applyDecor, decorById } from "./decor";
 import { furnitureById, pickUpFurniture, placeFurniture } from "./furniture";
 import {
@@ -42,7 +45,7 @@ const outcome = (o: Outcome): string | undefined =>
   o.ok ? undefined : o.reason;
 
 /**
- * Apply `home-place {map, x, y, item}` (a furniture piece, chest, light, or a wallpaper or flooring from the sender's pack) or
+ * Apply `home-place {map, x, y, item}` (a furniture piece, chest, light, machine, cask, or a wallpaper or flooring from the sender's pack) or
  * `home-pickup {map, x, y}` (a piece into the sender's pack). `null` when the kind is not one of these.
  */
 export function applyHomePlace(
@@ -63,6 +66,10 @@ export function applyHomePlace(
       if (isLight(lightAt(g, mapId, x, y)?.id))
         return outcome(pickUpLight(g, mapId, x, y));
       if (g.chests.at(mapId, x, y)) return outcome(pickUpChest(g, mapId, x, y));
+      // A machine (its batch is collected if done, else it is lifted with its input) or a cask (a good out, else the cask up).
+      if (g.indoorMachines.get(x, y, mapId))
+        return outcome(handOnMachine(g, x, y, mapId));
+      if (g.casks.at(x, y, mapId)) return outcome(handOnCask(g, x, y, mapId));
       return outcome(pickUpFurniture(g, mapId, x, y));
     });
   if (typeof item !== "string") return "bad home-place";
@@ -70,6 +77,9 @@ export function applyHomePlace(
     if (decorById(item)) return outcome(applyDecor(g, mapId, x, y, item));
     if (isLight(item)) return outcome(placeLight(g, map, mapId, x, y, item));
     if (chestById(item)) return outcome(placeChest(g, map, mapId, x, y, item));
+    if (item === CASK) return outcome(placeCask(g, map, x, y, mapId));
+    if (machineById(item))
+      return outcome(placeMachine(g, map, x, y, item, mapId));
     if (furnitureById(item))
       return outcome(placeFurniture(g, map, mapId, x, y, item));
     return "That cannot be placed.";

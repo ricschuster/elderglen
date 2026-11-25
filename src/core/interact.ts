@@ -3,6 +3,14 @@ import { asPlayer } from "./asplayer";
 import { depositHay, HAY, siloBlocks, siloCapacity } from "./animals";
 import { sfxForUse } from "./audio";
 import { isBomb, placeBomb, type LitBomb } from "./bombs";
+import {
+  collectMachine,
+  handOnMachine,
+  loadMachine,
+  placeMachine,
+} from "./machines";
+import { isIndoorMachineMap } from "./placeables";
+import { machineById } from "./processing";
 import { CASK, handOnCask, loadCask, placeCask } from "./cask";
 import { chestById, pickUpChest, placeChest, pushChest } from "./chests";
 import { isWeapon, weaponById, type WeaponDef } from "./combat";
@@ -202,8 +210,23 @@ function useOn(
     const step = FACING_STEP[ctx.facing];
     return report(pushChest(g, map, mapId, x, y, step.x, step.y));
   }
-  if (mapId === CELLAR_MAP || isFarmMap(mapId)) {
-    // Casks stand on the farm or in the cellar but take goods only in the
+  if (isIndoorMachineMap(mapId)) {
+    // On a house or shed floor (owner 2026-11-25, as Stardew) a held machine is stood down, a held good
+    // goes in, and the axe or pickaxe collects from it or takes it up. Casks follow below.
+    const here = g.indoorMachines.get(x, y, mapId);
+    if (
+      held.kind === "item" &&
+      machineById(held.id) &&
+      !here &&
+      held.id !== CASK
+    )
+      return report(placeMachine(g, map, x, y, held.id, mapId));
+    if (here && held.kind === "item")
+      return report(loadMachine(g, x, y, held.id, undefined, mapId));
+    if (here && isLiftTool(held)) return report(handOnMachine(g, x, y, mapId));
+  }
+  if (mapId === CELLAR_MAP || isFarmMap(mapId) || isIndoorMachineMap(mapId)) {
+    // Casks stand on the farm, in the cellar, a house or a shed but take goods only in the
     // cellar: a held cask is stood down, a held good goes in (the cellar only),
     // and the axe or pickaxe takes a good out, or an empty cask up.
     const cask = g.casks.at(x, y, mapId);
@@ -428,6 +451,8 @@ function actOn(
       service.kind,
       service.kind === "hall" ? { room: service.id } : undefined,
     );
+  if (g.indoorMachines.get(x, y, mapId))
+    return reported(collectMachine(g, x, y, undefined, mapId));
   if (g.casks.at(x, y, mapId)) {
     // Action reads a cask and takes a gold good out. Taking one out early is
     // the axe or pickaxe's job, so a stray press never resets the ageing.

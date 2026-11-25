@@ -35,6 +35,7 @@ import { Casks, caskTakes, type PlacedCask } from "./cask";
 import { Machines, type MachineJob, type PlacedMachine } from "./machines";
 import { FarmCave, type CaveSave } from "./cave";
 import { machineById } from "./processing";
+import { isIndoorMachineMap } from "./placeables";
 import { Furnace, type FurnaceSave } from "./furnace";
 import { Chests, type ChestSave } from "./chests";
 import {
@@ -183,6 +184,8 @@ export interface WorldState {
   greenhouse: Farm;
   /** The casks in the cellar (note 24). */
   casks: Casks;
+  /** The machines on house and shed floors, by map and tile (owner 2026-11-25). */
+  indoorMachines: Machines;
   /** The furnace the smith gives. */
   furnace: Furnace;
   /** Goods shipped today, paid when the day ends. */
@@ -333,6 +336,7 @@ export function newGame(
     placed: new PlacedStore(),
     machines: new Machines(),
     casks: new Casks(),
+    indoorMachines: new Machines(),
     furnace: new Furnace(),
     bin: new ShippingBin(),
     toolOrder: undefined,
@@ -472,6 +476,8 @@ interface SaveData {
   greenhouse?: ReturnType<Farm["save"]>;
   /** Absent in saves made before casks. */
   casks?: PlacedCask[];
+  /** Absent in saves made before machines could stand indoors. */
+  indoorMachines?: PlacedMachine[];
   /** Absent in saves made before the mines. */
   furnace?: FurnaceSave;
   /** Absent in saves made before the shipping bin. */
@@ -772,6 +778,7 @@ export function serialize(
       ]),
     ),
     casks: g.casks.save(),
+    indoorMachines: g.indoorMachines.save(),
     furnace: g.furnace.save(),
     bin: g.bin.save(),
     skills: g.skills.save(),
@@ -916,6 +923,41 @@ function validPlots(raw: Record<string, unknown>): ReturnType<Farm["save"]> {
           isCount(p.crop.harvests))),
   );
   return Object.fromEntries(plots) as ReturnType<Farm["save"]>;
+}
+
+/** The machines of a saved list that are well formed (an indoor one keeps its map). */
+function validMachines(rows: unknown[]): PlacedMachine[] {
+  const valid: PlacedMachine[] = [];
+  for (const m of rows) {
+    if (
+      !isObject(m) ||
+      !Number.isInteger(m.x) ||
+      !Number.isInteger(m.y) ||
+      typeof m.id !== "string" ||
+      !machineById(m.id)
+    )
+      continue;
+    const job = m.job;
+    valid.push({
+      x: m.x as number,
+      y: m.y as number,
+      id: m.id,
+      ...(typeof m.map === "string" ? { map: m.map } : {}),
+      job:
+        isObject(job) &&
+        typeof job.output === "string" &&
+        isCount(job.count) &&
+        isCount(job.doneAt)
+          ? {
+              output: job.output,
+              count: job.count,
+              doneAt: job.doneAt,
+              input: savedInput(job.input),
+            }
+          : undefined,
+    });
+  }
+  return valid;
 }
 
 /**
@@ -1083,38 +1125,13 @@ export function deserialize(text: string): GameState | undefined {
   }
   loadGallery(g, raw);
   const machineRows = placed ? placed.machines : raw.machines;
-  if (Array.isArray(machineRows)) {
-    const valid: PlacedMachine[] = [];
-    for (const m of machineRows) {
-      if (
-        !isObject(m) ||
-        !Number.isInteger(m.x) ||
-        !Number.isInteger(m.y) ||
-        typeof m.id !== "string" ||
-        !machineById(m.id)
-      )
-        continue;
-      const job = m.job;
-      valid.push({
-        x: m.x as number,
-        y: m.y as number,
-        id: m.id,
-        job:
-          isObject(job) &&
-          typeof job.output === "string" &&
-          isCount(job.count) &&
-          isCount(job.doneAt)
-            ? {
-                output: job.output,
-                count: job.count,
-                doneAt: job.doneAt,
-                input: savedInput(job.input),
-              }
-            : undefined,
-      });
-    }
-    g.machines.load(valid);
-  }
+  if (Array.isArray(machineRows)) g.machines.load(validMachines(machineRows));
+  if (Array.isArray(raw.indoorMachines))
+    g.indoorMachines.load(
+      validMachines(raw.indoorMachines).filter(
+        (m) => m.map !== undefined && isIndoorMachineMap(m.map),
+      ),
+    );
   if (Array.isArray(raw.casks)) {
     const valid: PlacedCask[] = [];
     for (const c of raw.casks) {
