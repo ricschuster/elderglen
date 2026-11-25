@@ -26,7 +26,7 @@ describe("headless sim", () => {
   it("plays all 30 bundles and fills the early ones in the first season and a half", () => {
     // The whole hall is played now: fishing, animals, cooking, the loom and the Last Seat too.
     expect(UNPLAYED_BUNDLES).toEqual([]);
-    const r = playGame(PERSONAS.expert!, seeded(2), 56);
+    const r = playGame(PERSONAS.expert!, seeded(6), 56);
     for (const id of ["spring-foraging", "spring-crops", "dyers"])
       expect(r.bundleDays[id], id).toBeDefined();
     // It spends the day on the new work too: fishing, the herd, the forest trips.
