@@ -512,6 +512,100 @@ Rerun, 40 runs x 168 days, medians, with the refill (sprinkler rerun above in br
    the limit (furnace time, quartz, the specialty fish), before any further number change in
    this note.
 
+## Trace (2026-11-25)
+
+The owner ruled: trace first, no tuning number changes. None were made, and nothing in `src/`
+changed. **The trace used 20 runs x 168 days per persona, not 40** (the machine could not carry
+more). Medians of 20 runs are rougher than medians of 40, so read the table below with that in
+mind. Tools: `scripts/sim/trace.ts` (which slots of each unfinished bundle are empty at day 168,
+plus the pack, the furnace and the specialty fish), `scripts/sim/bars.ts` (one run's furnace bars
+day by day), and shard and merge support in `scripts/sim/main.ts` (`SIM_SHARD=1-5 SIM_OUT=f.json`,
+then `SIM_MERGE=a.json,b.json`), so the runs fan out over cores.
+
+**The first finding is about the list itself.** Harvest Feast, The Catch and The Hearth Fire are
+Last Seat bundles. The Last Seat opens only after all 26 other bundles (`rooms.json`,
+`opensAfter: "all"`), and no bundle of a closed room can be handed in. So "40 of 40 short" for
+those three says nothing about their stock: they were locked behind Artisan Goods, Smith's and
+Specialty Fish (and, once those moved, behind Trap Catch, Cook's, Host's and Weaver's). Only three
+of the six were real blockers.
+
+### Bot fixes
+
+1. **Planting cutoff.** Plant only when `growDays < days left` (one night of margin). On the last
+   day of a season the bot sweeps the fields again before bed.
+2. **Smith's bars first.** The furnace order was copper, iron, gold, and every iron bar went
+   straight to a sprinkler (or a machine) the moment it left the furnace. In the day by day trace
+   of expert seed 1 the Smith's iron slot stayed at 0 of 5 until day 95, with 58 iron batches
+   smelted and 29 sprinklers built; gold was started 3 times in 168 days. Now the bot keeps the
+   bars the Smith's lacks out of crafting (`canSpare`), and the furnace takes the Smith's bars
+   first, slowest bar first, until the bundle is done.
+3. **Orchard.** The tree for the apple and cherry slots was planted in the far corner of the
+   yard. Two bot faults: wild trees closed in and cut the corner off, so the walker could not
+   reach the ripe fruit (a ripe tree with 3 apples sat unpicked from day 57 to 168), and a young
+   tree stops growing while a weed, wild sapling, crop or sprinkler stands in its 3x3 (a real rule,
+   `blocksGrowth`), which the bot's fields and sprinklers did to it. Now the tree goes within 30
+   tiles of the door on clear ground, the bot keeps crops and sprinklers off its 3x3, and it
+   cuts weeds and chops wild saplings around a young tree.
+4. **Dawn fish.** The Silverthread bites only before 8 am on the river. The bot did its farm
+   chores first, so no cast ever fell in the dawn (0 bites in 5 runs). Now a run that needs a dawn
+   fish fishes first, until 8 am.
+
+The sim test seed and bar did not change (all sim tests and the determinism test pass).
+
+### Cause per bundle
+
+| Bundle | Cause | Bot gap or pacing |
+| --- | --- | --- |
+| Artisan Goods | Jam, pickles and honey were done by day 36 in every run. The fourth slot (apple or cherry, `required` 4 of 5) never came: the orchard faults above. | Bot gap. Fixed: 0 of 20 to 20 of 20, median day 65. |
+| Smith's | Sprinklers ate every iron bar and the furnace order starved gold (above). The furnace was not the pole: the bars of the Smith's are 5 x 30 + 5 x 120 + 3 x 300 = 1,650 minutes, and the whole run smelted about 250 hours of bars in 168 days (123 copper, 83 iron and 6 gold batches). Iron ore also ran out for stretches while gold sat low, because the bot buys ore only with spare gold. Why 3 runs fell to 0 in the last rerun: the bot got richer and built more sprinklers (up to 29), so more iron went to them. | Bot gap. Fixed: 0 of 20 to 20 of 20, median day 46. |
+| Specialty Fish | Hermit Trout was landed 60 to 160 times per 5 runs. The Silverthread (dawn, river) was never fished for (bot gap, fixed: now 5 to 7 landed per 5 runs). What is left is the Crowned Tunny (sea, day, summer and fall, rarity rare) at 3 to 13 bites per 5 runs over 168 days, and the Pearl Lobster (a sea bite). Every bite was landed, so the bar is not the limit. | Fixed for the Silverthread (2 of 20 to 11 of 20, median day 40). The rest is pacing: a rare fish with weight 1 against commons. |
+| Harvest Feast, The Catch, Hearth Fire | Locked: the Last Seat is closed. Their own stock is not measured. | Neither. Blocked by the others. |
+
+Left in the way after these fixes, for the expert, and not among the six: **Trap Catch (0 of 20)**.
+The bot sets pots only on the farm pond and at the delta sea, so it never lands the river mussel,
+crayfish, ladle snail, marsh clam, spiny shrimp (river and lake shellfish). This is a bot gap, not
+cheap (pots on the river and lake maps need the walk and the tending), and it alone keeps the
+Water room shut and the Last Seat locked. Cook's (8 of 20) waits on dishes that need recipes from
+villagers; Host's (8 of 20) on tea; Weaver's (14 of 20) on wool and fiber; Lamplighter's (14 of 20)
+on candles. Intermediate, with the same bot, finishes Trap Catch in 2 of 20 runs.
+
+### Medians, 20 runs x 168 days (previous rerun, 40 runs, in brackets)
+
+| | Expert | Intermediate | Casual |
+| --- | --- | --- | --- |
+| Withered crops a run | 96 (105) | 70 (88) | 57 (77) |
+| Sprinklers at day 168, first on day | 18, 45 (20, 31) | 18, 67 (16, 31) | 0 |
+| Money at season ends 1 to 6 | 2,859; 48,333; 67,063; 70,586; 110,000; 145,189 | 2,669; 4,249; 14,896; 4,472; 14,603; 33,397 | 3,640; 4,819; 10,605; 13,105; 16,984; 23,449 |
+| Runs finishing Smith's / Cook's / Host's (of 20) | 20 / 8 / 8 (0 / 6 / 18 of 40) | 18 / 4 / 7 (1 / 4 / 7 of 40) | 0 / 0 / 0 |
+| Artisan Goods / Specialty Fish / Trap Catch (of 20) | 20 / 11 / 0 | 16 / 3 / 2 | 0 / 0 / 0 |
+| Hall finished, Last Seat open, Last Seat finished | 0, 0, 0 | 0, 0, 0 | 0, 0, 0 |
+
+- **The hall still does not finish for any persona and the Last Seat still never opens.** For the
+  expert the wall is now Trap Catch (a bot gap), then Cook's, Host's and Weaver's.
+- **Money is no longer a limit for the expert** (145,189 at the end, the herd ladder is about
+  60,000), and the Smith's bars show that the furnace is not a pole.
+- Host's fell from 18 of 40 to 8 of 20 for the expert: the cause is not traced (the bot's days
+  changed in several ways at once, and the 20 run medians are rough).
+- Casual stays bounded by its own habits, as designed.
+
+### Options (numbers proposed, none applied)
+
+1. **Do nothing to the numbers for Smith's, Artisan Goods and the furnace.** They were bot gaps
+   and are fixed; the sim now finishes them by day 46 and 65.
+2. **Specialty Fish pacing.** Raise the rare fish weight from 1 to 2 (`RARITY_WEIGHT.rare` in
+   `src/core/fishing.ts`), or give the Crowned Tunny the `any` time instead of `day`. Expect the
+   Crowned Tunny to bite about twice as often (about 1 to 5 bites per run now, so 2 to 10). Or
+   count the Specialty Fish as 3 of 4 (`required: 3`).
+3. **The Last Seat gate.** `opensAfter: "all"` is 26 bundles, so one stubborn bundle (today Trap
+   Catch) holds the whole Last Seat. Option: `opensAfter: 24` of 26. The Last Seat would then open
+   while the slow bundles finish.
+4. **Trap Catch.** Teach the bot river and lake pots (bot work, no game change) before judging
+   the bundle. If it still stalls, drop its needs from seven shellfish to five (`required: 5`).
+5. **Teach the bot the letters and tea** (Cook's, Host's) before any number change there.
+6. **Cheaper wool path** (from the earlier rerun, still open): wool from the big barn's sheep, or
+   fewer wool in the Weaver's, Hearth Fire and Long Road. Money is no longer the wall, so this is
+   a lower priority than it was.
+
 ## Room rewards that did nothing (owner, 2026-11-12, #871)
 
 - **Guests' Board:** +500 friendship with everyone met (Stardew, recalled, the saved
