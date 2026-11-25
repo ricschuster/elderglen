@@ -552,7 +552,7 @@ describe("guest screens, group 5, over real sockets", () => {
     expect(
       await ask(ann, { kind: "tailor-sew", item: "wool" }),
     ).toBeUndefined();
-    expect(g.wardrobe.hasPiece("shirt", "plain-shirt")).toBe(true);
+    expect(rec.wardrobe.hasPiece("shirt", "plain-shirt")).toBe(true);
     expect(rec.inventory.count("wool")).toBe(0);
     await ask(ann, { kind: "close" });
 

@@ -7,6 +7,7 @@ import { SKILLS } from "./skills";
 import { MAX_TIER, UPGRADABLE, type ToolTiers } from "./upgrades";
 import { isObject } from "./guards";
 import { Mailbox, type MailEntry } from "./mail";
+import { Wardrobe, type WardrobeSave } from "./hats";
 
 /** A player's id within one world. Stable for the life of the save (note 53). */
 export type PlayerId = string;
@@ -38,6 +39,8 @@ export interface PlayerRecord {
   combat: Combat;
   /** The rings this player wears (note 109 rule 7: rings stay per player). */
   equipment: Equipment;
+  /** The hats, shirts and pants this player owns and wears, dyes included (note 53: look is per player). */
+  wardrobe: Wardrobe;
   /** Letters sent to this player, delivered to the mailbox by their home (note 110 rule 3, note 53: mail is per player). */
   mail: Mailbox;
   /** Festival keys this player has: went, claimed, drew, once a year (note 111 rule 9: rewards are per player). */
@@ -61,6 +64,7 @@ export function newPlayer(
     energy,
     combat: new Combat(),
     equipment: new Equipment(),
+    wardrobe: new Wardrobe(),
     mail: new Mailbox(),
     festivalsJoined: [],
     showTokens: { year: 0, count: 0 },
@@ -168,6 +172,7 @@ export function localView(players: Players): {
   canWater: number;
   combat: Combat;
   equipment: Equipment;
+  wardrobe: Wardrobe;
   mail: Mailbox;
   festivalsJoined: string[];
   showTokens: { year: number; count: number };
@@ -215,6 +220,12 @@ export function localView(players: Players): {
     set equipment(v: Equipment) {
       players.local.equipment = v;
     },
+    get wardrobe() {
+      return players.local.wardrobe;
+    },
+    set wardrobe(v: Wardrobe) {
+      players.local.wardrobe = v;
+    },
     get mail() {
       return players.local.mail;
     },
@@ -253,6 +264,8 @@ export interface PlayerSave {
   /** Combat record and rings (optional: older saves lack them). */
   combat?: CombatSave;
   equipment?: unknown;
+  /** Hats and clothes owned and worn (optional: older saves lack it; the host's flat `wardrobe` is the one read for p1). */
+  wardrobe?: WardrobeSave;
   /** A guest's letters (the host's are the save's flat `mail`). Optional: older saves lack it. */
   mail?: MailEntry[];
   /** A guest's festival keys and show tokens (the host's are the save's flat fields). Optional: older saves lack them. */
@@ -275,6 +288,7 @@ export function savePlayer(p: PlayerRecord): PlayerSave {
     ...(p.skills.levelledToday ? { levelled: true } : {}),
     combat: p.combat.save(),
     equipment: p.equipment.save(),
+    wardrobe: p.wardrobe.save(),
     ...(p.id !== LOCAL_PLAYER
       ? {
           mail: p.mail.save(),
@@ -330,6 +344,7 @@ function fillPlayer(p: PlayerRecord, raw: Record<string, unknown>): void {
   p.skills.levelledToday = raw.levelled === true;
   p.combat.load(raw.combat, p.skills);
   p.equipment.load(raw.equipment);
+  if (raw.wardrobe !== undefined) p.wardrobe.load(raw.wardrobe);
   if (raw.id !== LOCAL_PLAYER) {
     p.mail.load(raw.mail);
     if (Array.isArray(raw.festivals))

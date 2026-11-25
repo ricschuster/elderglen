@@ -89,7 +89,7 @@ import {
   type PlayerMarriageSave,
 } from "./playermarriage";
 import { canCapacity } from "./canwater";
-import { Wardrobe, type WardrobeSave } from "./hats";
+import type { Wardrobe, WardrobeSave } from "./hats";
 import {
   BUILD_DAYS,
   HOUSE_LAYOUT,
@@ -217,7 +217,7 @@ export interface WorldState {
   showTokens: { year: number; count: number };
   /** The farm cave: earnings, the offer and what grows there. */
   cave: FarmCave;
-  /** Hats owned and worn. */
+  /** Hats and clothes owned and worn. The local player's own (`players.local.wardrobe`, note 53). */
   wardrobe: Wardrobe;
   /** Rings worn (note 37). */
   equipment: Equipment;
@@ -346,7 +346,7 @@ export function newGame(
     festivalsJoined: [],
     showTokens: { year: 0, count: 0 },
     cave: new FarmCave(),
-    wardrobe: new Wardrobe(),
+    wardrobe: players.get(LOCAL_PLAYER).wardrobe,
     equipment: players.get(LOCAL_PLAYER).equipment,
     furniture: new Furniture(),
     decor: new Decor(),
@@ -797,7 +797,7 @@ export function serialize(
     festivalsJoined: [...g.festivalsJoined],
     showTokens: { ...g.showTokens },
     cave: g.cave.save(),
-    wardrobe: g.wardrobe.save(),
+    wardrobe: g.players.get(LOCAL_PLAYER).wardrobe.save(),
     equipment: g.players.get(LOCAL_PLAYER).equipment.save(),
     houseLayout: HOUSE_LAYOUT,
     furniture: g.furniture.save(),
@@ -1333,7 +1333,7 @@ export function deserialize(text: string): GameState | undefined {
   if (isObject(tokens) && isCount(tokens.year) && isCount(tokens.count))
     g.showTokens = { year: tokens.year, count: tokens.count };
   g.cave.load(raw.cave as Partial<CaveSave> | undefined);
-  g.wardrobe.load(raw.wardrobe);
+  g.players.get(LOCAL_PLAYER).wardrobe.load(raw.wardrobe);
   g.players.get(LOCAL_PLAYER).equipment.load(raw.equipment);
   // Saves from an older house frame keep furniture and chests by that frame.
   const layout = isCount(raw.houseLayout) ? raw.houseLayout : 1;

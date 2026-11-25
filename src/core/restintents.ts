@@ -181,6 +181,20 @@ export function applyRestIntent(
     case "tailor-dye":
     case "tailor-undye":
       return applyTailor(g, by, intent);
+    case "wardrobe-wear": {
+      // Wear or store a hat, shirt or pants from the sender's own wardrobe (note 53). No id takes the piece off.
+      const { piece: kind, id } = intent;
+      if (!isTailorKind(kind) || (id !== undefined && !isId(id)))
+        return "bad wardrobe-wear";
+      return asPlayer(g, by, () => {
+        const w = g.wardrobe;
+        const ok =
+          kind === "hat"
+            ? w.wear(id as string | undefined)
+            : w.wearPiece(kind, id as string | undefined);
+        return ok ? undefined : "You do not have that.";
+      });
+    }
     case "smith-buy":
     case "smith-sell":
     case "smith-copper":
@@ -354,7 +368,7 @@ function homeBuild(g: GameState, by: PlayerId): unknown {
 const isTailorKind = (v: unknown): v is TailorKind =>
   v === "hat" || v === "shirt" || v === "pants";
 
-/** The sewing machine and the dye pots (note 96). Goods leave the sender's pack; the wardrobe is the one the farm has. */
+/** The sewing machine and the dye pots (note 96). Goods leave the sender's pack; pieces go to the sender's own wardrobe (note 53). */
 function applyTailor(
   g: GameState,
   by: PlayerId,

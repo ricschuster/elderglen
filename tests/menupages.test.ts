@@ -248,9 +248,9 @@ describe("guest read-only menus", () => {
     expect(guestMayOpen("shrine")).toBe(true);
     // The mailbox is a guest's own beside their cabin (note 110).
     expect(guestMayOpen("mailbox")).toBe(true);
-    // Still host only: the trainer, travel and the hat box.
-    for (const k of ["trainer", "cart", "hats"])
-      expect(guestMayOpen(k)).toBe(false);
+    // Still host only: the trainer, travel.
+    for (const k of ["trainer", "cart"]) expect(guestMayOpen(k)).toBe(false);
+    expect(guestMayOpen("hats")).toBe(true);
   });
 });
 

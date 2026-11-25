@@ -4,6 +4,8 @@ import { hatById } from "../core/hats";
 import type { GameState } from "../core/save";
 import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
+import { dispatch, followGuest } from "./guestlive";
+import type { TailorKind } from "../core/clothes";
 
 /**
  * The hat box: the hats the player owns, and which one is worn. Opened from
@@ -33,6 +35,17 @@ export class HatsScene extends Phaser.Scene {
     kb?.on("keydown-DOWN", () => this.menu.move(1));
     kb?.on("keydown-ENTER", () => this.menu.press(0));
     this.menu.setFocus(true);
+    followGuest(
+      this,
+      () => this.refresh(),
+      () => {},
+    );
+    this.refresh();
+  }
+
+  /** Wear or store a piece of the player's own wardrobe; a guest asks the host, who keeps it (note 53). */
+  private wear(kind: TailorKind, id: string | undefined): void {
+    dispatch(this.state, { kind: "wardrobe-wear", piece: kind, id });
     this.refresh();
   }
 
@@ -44,10 +57,7 @@ export class HatsScene extends Phaser.Scene {
       buttons: [
         {
           text: "Wear",
-          run: () => {
-            w.wear(id);
-            this.refresh();
-          },
+          run: () => this.wear("hat", id),
         },
       ],
     });
@@ -61,10 +71,8 @@ export class HatsScene extends Phaser.Scene {
           buttons: [
             {
               text: w.wornOf(kind) === id ? "Take off" : "Wear",
-              run: () => {
-                w.wearPiece(kind, w.wornOf(kind) === id ? undefined : id);
-                this.refresh();
-              },
+              run: () =>
+                this.wear(kind, w.wornOf(kind) === id ? undefined : id),
             },
           ],
         });
