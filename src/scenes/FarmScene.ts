@@ -2201,6 +2201,10 @@ export class FarmScene extends Phaser.Scene {
         // Maren's slayer list: claims and buys run on the host against this player's own kills (note 109).
         ref = { kind: "walllist", ...base };
         scene = "walllist";
+      } else if (service.kind === "lost-found") {
+        // The village hall's box for a demolished cabin's things: a take intent against this player's own box (note 110).
+        ref = { kind: "lostfound", ...base };
+        scene = "lostfound";
       } else if (service.kind === "shrine") {
         return this.guestShrine(base);
       } else if (service.kind === "camp-chest" && this.floor !== undefined) {

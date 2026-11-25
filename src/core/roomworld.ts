@@ -6,6 +6,7 @@ import { DayEndTracker, type DayEndDecision, type Presence } from "./dayend";
 import {
   CABIN_PRICE,
   buyCabin,
+  cabinDoorTile,
   joinNeedsCabin,
   newCabinBook,
   type BlockedFn,
@@ -20,6 +21,7 @@ import { advanceCabinBuilds } from "./cabinhome";
 import {
   applyBedMove,
   homeData,
+  homeMapId,
   ownWakeSpot,
   spotPixels,
   wakeSpot,
@@ -323,7 +325,29 @@ export class GameRoomWorld implements RoomWorld {
   }
 
   apply(by: PlayerId, intent: Intent): string | undefined {
+    // A cabin demolished with its occupant standing inside puts them out on the farm, at the old door.
+    const gone =
+      intent.kind === "carp-cabin-demolish" && by === LOCAL_PLAYER
+        ? this.cabins.cabins.find((c) => c.id === intent.id)
+        : undefined;
     const err = this.applyIntent(by, intent);
+    if (gone && err === undefined && gone.ownerKey !== null) {
+      const at = this.o.where?.(gone.ownerKey);
+      if (at && at.map === homeMapId(gone.ownerKey)) {
+        const door = cabinDoorTile(gone);
+        const s = spotPixels({
+          map: farmTypeById(this.g.farmType).map,
+          x: door.x,
+          y: door.y + 1,
+        });
+        this.placements.push({
+          id: gone.ownerKey,
+          map: s.map,
+          x: s.px,
+          y: s.py,
+        });
+      }
+    }
     // Whatever the intent changed goes out as the host has it, even for a refusal that changed something.
     if (MAPPED_KINDS.has(intent.kind))
       this.syncWorlds([typeof intent.map === "string" ? intent.map : "farm"]);

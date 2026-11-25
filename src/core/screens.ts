@@ -20,7 +20,7 @@ export interface ScreenRef {
    * "shop", "market", "bin", "chest", "camp-chest", "crafting" (a workbench), "cooking", "furnace", "keeper",
    * "coop-bench", "barn-bench", "pond" (x and y are then the pond's top left tile), "hall" (a hall room's scroll,
    * with `room`), "orders" or "requests", "carpenter", "tailor" (`stock` is "sew" or "dye"), "smith", "smithy",
-   * "gallery", "shrine", "walllist" (Maren's slayer list), "showing" (the Harvest Showing table, one lock for the farm) or "mailbox" (a cabin's own, note 110).
+   * "gallery", "shrine", "walllist" (Maren's slayer list), "lostfound" (the village hall's box for a demolished cabin's things), "showing" (the Harvest Showing table, one lock for the farm) or "mailbox" (a cabin's own, note 110).
    */
   kind: string;
   map: string;
@@ -73,6 +73,7 @@ const SERVICES: Record<string, string[]> = {
   gallery: ["counter-library"],
   shrine: ["shrine"],
   walllist: ["wall-list"],
+  lostfound: ["lost-found"],
   showing: ["showing"],
 };
 
@@ -172,6 +173,7 @@ export function refProblem(g: GameState, ref: ScreenRef): string | undefined {
     case "gallery":
     case "shrine":
     case "walllist":
+    case "lostfound":
     case "showing":
     case "bin": {
       let svc: { kind: string; id: string } | undefined;

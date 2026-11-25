@@ -70,6 +70,7 @@ import {
 import { Furniture, migrateCatalogue, type FurnitureSave } from "./furniture";
 import type { Mailbox, MailEntry } from "./mail";
 import { loadCabinBook, type CabinBook } from "./cabins";
+import { loadLostFound, saveLostFound, type LostFound } from "./lostfound";
 import type { Friendship } from "./friendship";
 import { Marriage, exSpouses, type MarriageSave } from "./marriage";
 import { ELDERFRUIT_TOTAL, maxEnergyFor } from "./elderfruit";
@@ -275,6 +276,8 @@ export interface GameState extends WorldState {
    * player and in saves made before it (optional field within version 4).
    */
   cabins?: CabinBook;
+  /** Things waiting at the village hall for a player whose cabin was demolished (note 110). Absent when empty. */
+  lostFound?: LostFound;
   money: number;
   inventory: Inventory;
   skills: Skills;
@@ -546,6 +549,7 @@ interface SaveData {
   playerMarriage?: PlayerMarriageSave;
   /** Absent before the guest's cabin (note 110, added within version 4): no cabins. */
   cabins?: CabinBook;
+  lostFound?: LostFound;
   /** Absent in saves made before heart events: none seen. */
   heartEvents?: HeartEventsSave;
   /** Absent in saves made before the request board. */
@@ -812,6 +816,7 @@ export function serialize(
       ? { playerMarriage: savePlayerMarriage(g.playerMarriage) }
       : {}),
     ...(g.cabins && g.cabins.cabins.length ? { cabins: g.cabins } : {}),
+    ...(saveLostFound(g) ? { lostFound: saveLostFound(g) } : {}),
     heartEvents: g.players.get(LOCAL_PLAYER).heartEvents.save(),
     quests: g.quests.save(),
     fishing: g.fishing.save(),
@@ -1351,6 +1356,7 @@ export function deserialize(text: string): GameState | undefined {
   );
   // The married cap must be known before friendship loads, or points above the bouquet cap are clamped.
   g.cabins = loadCabinBook(raw.cabins);
+  g.lostFound = loadLostFound(raw.lostFound);
   const hostFriends = g.players.get(LOCAL_PLAYER).friendship;
   hostFriends.setSpouse(g.marriage.married ? g.marriage.spouse : null);
   hostFriends.setExes(exSpouses(g));

@@ -220,16 +220,51 @@ export function joinNeedsCabin(
 }
 
 /** The host demolishes a cabin. Its occupant (if any) is returned so the caller can move their
- *  things to a chest (Stardew). The occupant loses the cabin and must be given another to rejoin. */
+ *  things to the lost and found box (Stardew). The occupant loses the cabin, its tier and renovations, and
+ *  their moved bed, and must be given another to rejoin. */
 export function demolishCabin(
   book: CabinBook,
   id: number,
 ): { book: CabinBook; evictedKey: string | null } | null {
   const cabin = book.cabins.find((c) => c.id === id);
   if (!cabin) return null;
+  const next: CabinBook = {
+    ...book,
+    cabins: book.cabins.filter((c) => c.id !== id),
+  };
+  if (cabin.ownerKey !== null && book.beds?.[cabin.ownerKey]) {
+    const beds = { ...book.beds };
+    delete beds[cabin.ownerKey];
+    if (Object.keys(beds).length) next.beds = beds;
+    else delete next.beds;
+  }
+  return { book: next, evictedKey: cabin.ownerKey };
+}
+
+/**
+ * Stand a cabin on a new site (free, at once). Only the footprint may not overlap another cabin; the
+ * ground is the caller's check. The cabin keeps its owner, style, tier and renovations: its home instance is
+ * kept by the owner's key, not by where the cabin stands.
+ */
+export function moveCabin(
+  book: CabinBook,
+  id: number,
+  site: CabinSite,
+): { ok: true; book: CabinBook } | { ok: false; reason: string } {
+  const cabin = book.cabins.find((c) => c.id === id);
+  if (!cabin) return { ok: false, reason: "There is no such cabin." };
+  if (cabin.x === site.x && cabin.y === site.y)
+    return { ok: false, reason: "It already stands there." };
+  if (book.cabins.some((c) => c.id !== id && overlaps(c, site)))
+    return { ok: false, reason: "Another cabin is in the way." };
   return {
-    book: { ...book, cabins: book.cabins.filter((c) => c.id !== id) },
-    evictedKey: cabin.ownerKey,
+    ok: true,
+    book: {
+      ...book,
+      cabins: book.cabins.map((c) =>
+        c.id === id ? { ...c, x: site.x, y: site.y } : c,
+      ),
+    },
   };
 }
 

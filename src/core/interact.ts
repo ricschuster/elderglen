@@ -389,6 +389,7 @@ function serviceAction(
   if (kind === "ore-bin") return open("bin", { oreOnly: true });
   if (kind === "trainer") return open("trainer");
   if (kind === "wall-list") return open("walllist");
+  if (kind === "lost-found") return open("lostfound");
   if (kind === "dummy")
     return say("The training dummy. Hold a weapon and swing at it.");
   if (kind === "stairs") return { kind: "stairs" };

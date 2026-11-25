@@ -242,6 +242,7 @@ describe("guest read-only menus", () => {
       "smithy",
       "gallery",
       "walllist",
+      "lostfound",
       "fishing",
     ])
       expect(guestMayOpen(k)).toBe(true);

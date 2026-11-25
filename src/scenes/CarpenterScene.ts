@@ -46,6 +46,9 @@ import { frame, Menu, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 import type { Intent } from "../core/protocol";
 import { closeWhenDone, dispatch, followGuest } from "./guestlive";
+import { currentSession, playerNameOf } from "../net/session";
+import { demolishLine } from "../core/cabinmove";
+import { LOCAL_PLAYER } from "../core/players";
 
 /**
  * The carpenter's counter, drawn over the sawmill. Orders the next house
@@ -59,6 +62,8 @@ export class CarpenterScene extends Phaser.Scene {
   private message!: Phaser.GameObjects.Text;
   /** The building the player pressed Remove on once, waiting for the second press. */
   private removing: Building | undefined;
+  /** The cabin the host pressed Demolish on once, waiting for the second press. */
+  private demolishing: number | undefined;
   /** Which tab shows: the house and furniture, or the renovations (note 85). */
   private tab: "main" | "renovations" = "main";
 
@@ -176,6 +181,33 @@ export class CarpenterScene extends Phaser.Scene {
           dim: h.cabin.style === style,
           buttons: [{ text: "Choose", run: () => this.restyle(style) }],
         });
+    // Any cabin is moved here by anyone, free; only the host demolishes one (note 110).
+    for (const c of g.cabins?.cabins ?? []) {
+      const who =
+        c.ownerKey === null
+          ? undefined
+          : playerNameOf(currentSession(), c.ownerKey);
+      const noun = who === undefined ? "empty cabin" : `${who}'s cabin`;
+      rows.push({
+        label: `Move the ${noun}`,
+        detail: "free, and everything in it comes along",
+        buttons: [{ text: "Move", run: () => this.placeCabin(c.id) }],
+      });
+      if (g.players.localId === LOCAL_PLAYER)
+        rows.push({
+          label: `Demolish the ${noun}`,
+          detail:
+            who === undefined
+              ? "free to take down"
+              : `${who} loses it, and their things except tools go to the lost and found`,
+          buttons: [
+            {
+              text: this.demolishing === c.id ? "Sure?" : "Demolish",
+              run: () => this.demolish(c.id, who),
+            },
+          ],
+        });
+    }
     // The coop and barn stand at the carpenter's. Young animals and hay are
     // the Forest farmstead keeper's (note 72).
     const have = `have ${g.inventory.count("wood")} wood and ${g.inventory.count("stone")} stone`;
@@ -344,6 +376,7 @@ export class CarpenterScene extends Phaser.Scene {
   /** Open the placement screen to put a new building down, or move the one that stands. */
   private place(id: Placeable, mode: "order" | "move"): void {
     this.removing = undefined;
+    this.demolishing = undefined;
     if (mode === "move") {
       const problem = moveProblem(this.state, id);
       if (problem !== undefined) {
@@ -353,6 +386,34 @@ export class CarpenterScene extends Phaser.Scene {
     }
     this.scene.launch("placement", { building: id, mode });
     this.scene.pause();
+  }
+
+  private placeCabin(id: number): void {
+    this.removing = undefined;
+    this.demolishing = undefined;
+    this.scene.launch("placement", {
+      building: "cabin",
+      cabinId: id,
+      mode: "move",
+    });
+    this.scene.pause();
+  }
+
+  /** Two presses, the first naming who loses the cabin; the second takes it down. */
+  private demolish(id: number, who: string | undefined): void {
+    if (this.demolishing !== id) {
+      this.demolishing = id;
+      this.removing = undefined;
+      this.message.setText(demolishLine(who));
+      return this.refresh();
+    }
+    this.demolishing = undefined;
+    this.act(
+      { kind: "carp-cabin-demolish", id },
+      who === undefined
+        ? "The empty cabin is down."
+        : `The cabin is down. ${who}'s things are in the lost and found at the village hall.`,
+    );
   }
 
   private placePond(): void {

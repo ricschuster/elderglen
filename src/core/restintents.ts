@@ -80,6 +80,8 @@ import {
   orderCabinUpgrade,
   setCabinStyle,
 } from "./cabinhome";
+import { applyCabinDemolish, applyCabinMove } from "./cabinmove";
+import { collectLost } from "./lostfound";
 
 import { applyHomePlace } from "./homeplace";
 
@@ -106,6 +108,9 @@ export const REST_SCREEN_INTENTS: Record<string, string[]> = {
   "carp-move": ["carpenter"],
   "carp-remove": ["carpenter"],
   "carp-style": ["carpenter"],
+  "carp-cabin-move": ["carpenter"],
+  "carp-cabin-demolish": ["carpenter"],
+  "lostfound-take": ["lostfound"],
   "mail-read": ["mailbox"],
   "tailor-sew": ["tailor"],
   "tailor-boots": ["tailor"],
@@ -178,6 +183,12 @@ export function applyRestIntent(
       return applyCarpenter(g, by, intent);
     case "carp-style":
       return setCabinStyle(g, by, intent.style);
+    case "carp-cabin-move":
+      return applyCabinMove(g, intent);
+    case "carp-cabin-demolish":
+      return applyCabinDemolish(g, by, intent);
+    case "lostfound-take":
+      return collectLost(g, by);
     case "mail-read":
       return applyMailIntent(g, by, intent);
     case "tailor-sew":
