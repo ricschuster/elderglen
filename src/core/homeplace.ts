@@ -5,6 +5,7 @@
 import { maps } from "../content/maps";
 import type { Outcome } from "./actions";
 import { asPlayer } from "./asplayer";
+import { chestById, pickUpChest, placeChest } from "./chests";
 import { applyDecor, decorById } from "./decor";
 import { furnitureById, pickUpFurniture, placeFurniture } from "./furniture";
 import {
@@ -14,6 +15,7 @@ import {
   houseVisibleTier,
   isHouseMap,
 } from "./house";
+import { isLight, lightAt, pickUpLight, placeLight } from "./lights";
 import type { FarmMap } from "./map";
 import type { Intent } from "./protocol";
 import { homeData } from "./homes";
@@ -40,7 +42,7 @@ const outcome = (o: Outcome): string | undefined =>
   o.ok ? undefined : o.reason;
 
 /**
- * Apply `home-place {map, x, y, item}` (a furniture piece or a wallpaper or flooring from the sender's pack) or
+ * Apply `home-place {map, x, y, item}` (a furniture piece, chest, light, or a wallpaper or flooring from the sender's pack) or
  * `home-pickup {map, x, y}` (a piece into the sender's pack). `null` when the kind is not one of these.
  */
 export function applyHomePlace(
@@ -56,10 +58,18 @@ export function applyHomePlace(
   const map = homeMapOf(g, mapId);
   if (!map) return "There is no home here.";
   if (intent.kind === "home-pickup")
-    return asPlayer(g, by, () => outcome(pickUpFurniture(g, mapId, x, y)));
+    return asPlayer(g, by, () => {
+      // A light, then a chest (the host's rule: empty only), then a furniture piece.
+      if (isLight(lightAt(g, mapId, x, y)?.id))
+        return outcome(pickUpLight(g, mapId, x, y));
+      if (g.chests.at(mapId, x, y)) return outcome(pickUpChest(g, mapId, x, y));
+      return outcome(pickUpFurniture(g, mapId, x, y));
+    });
   if (typeof item !== "string") return "bad home-place";
   return asPlayer(g, by, () => {
     if (decorById(item)) return outcome(applyDecor(g, mapId, x, y, item));
+    if (isLight(item)) return outcome(placeLight(g, map, mapId, x, y, item));
+    if (chestById(item)) return outcome(placeChest(g, map, mapId, x, y, item));
     if (furnitureById(item))
       return outcome(placeFurniture(g, map, mapId, x, y, item));
     return "That cannot be placed.";

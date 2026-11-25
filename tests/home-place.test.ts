@@ -4,6 +4,7 @@ import { decorKey, DECOR, roomAt } from "../src/core/decor";
 import { applyHomePlace } from "../src/core/homeplace";
 import { GameRoomWorld } from "../src/core/roomworld";
 import { Room } from "../src/core/room";
+import { lightAt } from "../src/core/lights";
 import { LOCAL_PLAYER } from "../src/core/players";
 import { newGame } from "../src/core/save";
 import { deserialize, serialize } from "../src/core/save";
@@ -150,5 +151,63 @@ describe("furniture and decor for any player in any house", () => {
     expect(g.furniture.at("house@p2", TILE.x, TILE.y)).toBe(CHAIR);
     expect(world.apply(ann, pick("house@p2"))).toBeUndefined();
     expect(g.players.get(ann).inventory.count(CHAIR)).toBe(1);
+  });
+});
+
+describe("chests and lights for any player in any house", () => {
+  it("a guest places a chest in the farmhouse and in another guest's cabin; a light follows the host's rule", () => {
+    const { g, ann, bo } = hosted();
+    const pack = g.players.get(ann).inventory;
+    pack.add("chest", 2);
+    pack.add("torch", 1);
+    for (const m of ["house", "house@p3"])
+      expect(applyHomePlace(g, ann, place(m, TILE, "chest"))).toBeUndefined();
+    expect(g.chests.at("house", TILE.x, TILE.y)).toBeDefined();
+    expect(g.chests.at("house@p3", TILE.x, TILE.y)).toBeDefined();
+    expect(g.chests.at("house@p2", TILE.x, TILE.y)).toBeUndefined();
+    expect(pack.count("chest")).toBe(0);
+    expect(g.players.get(bo).inventory.count("chest")).toBe(0);
+    // The host's own place table has no light for a house (note 89), so a guest's is refused and kept.
+    expect(applyHomePlace(g, ann, place("house", TILE2, "torch"))).toBe(
+      "cannot place here",
+    );
+    expect(pack.count("torch")).toBe(1);
+    expect(lightAt(g, "house", TILE2.x, TILE2.y)).toBeUndefined();
+  });
+
+  it("picking up goes to the picker's pack, and a non-empty chest stays", () => {
+    const { g, ann, bo } = hosted();
+    g.players.get(ann).inventory.add("chest");
+    applyHomePlace(g, ann, place("house@p3", TILE, "chest"));
+    g.placed.add("house@p3", { x: TILE2.x, y: TILE2.y, id: "torch" });
+    g.chests.get("house@p3", TILE.x, TILE.y)!.items.add("wood", 1);
+    expect(applyHomePlace(g, bo, pick("house@p3"))).toBe("chest not empty");
+    expect(g.chests.at("house@p3", TILE.x, TILE.y)).toBeDefined();
+    g.chests.get("house@p3", TILE.x, TILE.y)!.items.remove("wood", 1);
+    expect(applyHomePlace(g, bo, pick("house@p3"))).toBeUndefined();
+    expect(applyHomePlace(g, bo, pick("house@p3", TILE2))).toBeUndefined();
+    const bag = g.players.get(bo).inventory;
+    expect(bag.count("chest")).toBe(1);
+    expect(bag.count("torch")).toBe(1);
+    expect(g.chests.at("house@p3", TILE.x, TILE.y)).toBeUndefined();
+    expect(lightAt(g, "house@p3", TILE2.x, TILE2.y)).toBeUndefined();
+    expect(g.players.get(ann).inventory.count("chest")).toBe(0);
+  });
+
+  it("wrong instance is never touched, and a round trip keeps them", () => {
+    const { g, ann, bo } = hosted();
+    g.players.get(ann).inventory.add("chest");
+    applyHomePlace(g, ann, place("house@p2", TILE, "chest"));
+    g.placed.add("house@p2", { x: TILE2.x, y: TILE2.y, id: "torch" });
+    for (const m of ["house", "house@p3"]) {
+      expect(g.chests.at(m, TILE.x, TILE.y)).toBeUndefined();
+      expect(lightAt(g, m, TILE2.x, TILE2.y)).toBeUndefined();
+      expect(applyHomePlace(g, bo, pick(m))).toBe("nothing to act on");
+      expect(applyHomePlace(g, bo, pick(m, TILE2))).toBe("nothing to act on");
+    }
+    const back = deserialize(serialize(g))!;
+    expect(back.chests.at("house@p2", TILE.x, TILE.y)).toBeDefined();
+    expect(lightAt(back, "house@p2", TILE2.x, TILE2.y)?.id).toBe("torch");
+    expect(back.chests.at("house", TILE.x, TILE.y)).toBeUndefined();
   });
 });

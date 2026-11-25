@@ -192,7 +192,8 @@ import {} from "../core/creatures";
 import { jobDone, statusText } from "../core/machines";
 import { caskStatus } from "../core/cask";
 
-import { type Glow, lightLayer } from "../core/lights";
+import { chestById } from "../core/chests";
+import { type Glow, isLight, lightAt, lightLayer } from "../core/lights";
 import { drink, isDrink } from "../core/elixirs";
 
 import { type LitBomb } from "../core/bombs";
@@ -2321,12 +2322,17 @@ export class FarmScene extends Phaser.Scene {
       const home = { map, x: front.x, y: front.y };
       if (
         held.kind === "item" &&
-        (decorById(held.id) || furnitureById(held.id))
+        (decorById(held.id) ||
+          furnitureById(held.id) ||
+          chestById(held.id) ||
+          isLight(held.id))
       )
         net.sendIntent({ kind: "home-place", ...home, item: held.id });
       else if (
         isLiftTool(held) &&
-        this.state.furniture.at(map, front.x, front.y)
+        (this.state.furniture.at(map, front.x, front.y) ||
+          this.state.chests.at(map, front.x, front.y) ||
+          isLight(lightAt(this.state, map, front.x, front.y)?.id))
       )
         net.sendIntent({ kind: "home-pickup", ...home });
       else {

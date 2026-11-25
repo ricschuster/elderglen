@@ -112,9 +112,12 @@ cabin upgrade by a guest does not need the host's carpenter to be free.
   `home-pickup {map, x, y}` (`src/core/homeplace.ts`); the host runs the host's own `placeFurniture`, `applyDecor`
   and `pickUpFurniture` as the sender on that home's map at its owner's tier and renovations, and refuses a sender
   not standing in that home within reach. The guests' copies run the same intent. Wallpaper and flooring are kept
-  per home (`decorKey`: the farmhouse's as before, a cabin's under `house@<id>|<room>`). A guest lifts with the axe
+  per home (`decorKey`: the farmhouse's as before, a cabin's under `house@<id>|<room>`). A guest also places chests from their own pack and lifts a
+  chest or light with the same intents (light first, then chest, then furniture). A guest lifts with the axe
   or pickaxe or the Action button (not a workbench or the catalogue, which a guest cannot open yet). The chest rules
-  are unchanged. Choices: there is no rotate (the host has none); a guest cannot place chests or lights in a house.
+  are unchanged. Choices: there is no rotate (the host has none); a chest follows the host's rule (an empty one only is lifted; there is no chest lock in core to change), and a light
+  follows the host's place table, which has no light for a house (note 89), so a guest's torch in a house is refused
+  and stays in their pack, as the host's would; a light placed some other way is lifted into the picker's pack.
 
 - **Move and demolish a cabin (owner 2026-11-25, checked against Stardew).** The carpenter's building screen lists each
   cabin with Move and, for the host only, Demolish. Anyone moves any cabin, free and at once, whatever the host's
