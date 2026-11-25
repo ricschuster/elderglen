@@ -1493,6 +1493,18 @@ describe("the rest: carpenter, tailor, smiths, gallery, shrine (note 108, group 
     expect(t.send(t.ann, dye)).toBe("not the screen you opened");
   });
 
+  it("the smith's ore costs more from year two (note 112)", () => {
+    const t = mk("separate");
+    const { g } = t;
+    const ann = g.players.get(t.ann);
+    ann.money = 1000;
+    g.day.clock.day = 113;
+    expect(openAt(t, t.ann, refAt("forge", "smith"))).toBeUndefined();
+    const buy = { kind: "smith-buy", what: "ore", id: "iron-ore", n: 5 };
+    expect(t.send(t.ann, buy)).toBeUndefined();
+    expect(ann.money).toBe(1000 - 5 * 85);
+  });
+
   it("buys and sells ore at the smith and the smithy, from the sender's purse", () => {
     const t = mk("separate");
     const { g } = t;

@@ -3,6 +3,7 @@ import { ORES } from "../core/ore";
 import type { GameState } from "../core/save";
 import type { Intent } from "../core/protocol";
 import { SMITH_STOCK } from "../core/smith";
+import { buyPriceOn } from "../core/yeartwo";
 import type { Row } from "./panel";
 
 /**
@@ -16,7 +17,7 @@ export function oreRows(
 ): Row[] {
   const rows: Row[] = SMITH_STOCK.map((id) => {
     const def = itemById(id)!;
-    const price = def.buyPrice ?? 0;
+    const price = buyPriceOn(id, g.day.clock.day) ?? 0;
     const tryBuy = (n: number) => () =>
       act(
         { kind: "smith-buy", what: "ore", id, n },

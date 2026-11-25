@@ -8,6 +8,7 @@ import {
   progressOf,
 } from "../core/orders";
 import type { GameState } from "../core/save";
+import { afterLastSeat } from "../core/yeartwo";
 import type { Intent } from "../core/protocol";
 import { frame, Menu, type Row } from "./panel";
 import { itemById } from "../core/items";
@@ -114,7 +115,7 @@ export class OrdersScene extends Phaser.Scene {
     const day = g.day.clock.day;
     const o = g.orders;
     const rows: Row[] = [];
-    for (const def of o.board(day))
+    for (const def of o.board(day, afterLastSeat(g)))
       rows.push({
         label: `${def.title}${o.timesDone(def.id) > 0 ? "" : `\nFirst time also: ${def.firstReward.text}`}`,
         detail: `${askText(def)}. ${def.windowDays} days, ${def.gold}g`,

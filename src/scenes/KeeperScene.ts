@@ -15,7 +15,14 @@ import {
   tierOf,
 } from "../core/animals";
 import { farmDecorForSale, farmDecorProblem } from "../core/farmdecor";
-import { COOP_HEATER, HEATER_PRICE, itemById } from "../core/items";
+import {
+  ANIMAL_CATALOGUE,
+  ANIMAL_CATALOGUE_PRICE,
+  COOP_HEATER,
+  HEATER_PRICE,
+  itemById,
+} from "../core/items";
+import { catalogueProblem, rowOpen } from "../core/yeartwo";
 import { placeableById } from "../core/placeables";
 import { keeperAdvice } from "../core/forestfolk";
 import { closeWhenDone, dispatch, followGuest } from "./guestlive";
@@ -108,6 +115,13 @@ export class KeeperScene extends Phaser.Scene {
         dim: g.money < HEATER_PRICE,
         buttons: [{ text: "Buy", run: () => this.buyHeater() }],
       });
+    if (rowOpen(ANIMAL_CATALOGUE, g.day.clock.day))
+      rows.push({
+        label: "Animal Catalogue",
+        detail: `${ANIMAL_CATALOGUE_PRICE}g, bought once (${g.inventory.count(ANIMAL_CATALOGUE)} carried)`,
+        dim: catalogueProblem(g) !== undefined,
+        buttons: [{ text: "Buy", run: () => this.buyCatalogue() }],
+      });
     for (const id of farmDecorForSale()) {
       const def = placeableById(id)!;
       rows.push({
@@ -130,6 +144,13 @@ export class KeeperScene extends Phaser.Scene {
 
   private buyDecor(id: string): void {
     this.buy({ what: "decor", id }, "He wraps it up. It is in your pack.");
+  }
+
+  private buyCatalogue(): void {
+    this.buy(
+      { what: "catalogue" },
+      "He hands you the catalogue. It is in your pack.",
+    );
   }
 
   private buyHeater(): void {

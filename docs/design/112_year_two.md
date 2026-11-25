@@ -78,3 +78,29 @@ Rule 5 waits for the voice sheets (M3d).
 ## Open
 
 - SC-226: Stardew's play-on after the Community Center (ours chosen either way).
+
+## As built (build, 2026-11-25)
+
+Steps 1 to 5 are built. Data is `src/content/year-two.json` (gates, raw prices, request factor), rules are
+`src/core/yeartwo.ts`, tests are `tests/yeartwo.test.ts`.
+
+- **Gates.** `rowOpen(id, day)` reads a list of rows with `fromYear`. The general store's seed list takes the day
+  (`seedStock(season, day)`), so garlic, red cabbage and artichoke seeds show from Spring 1 of year 2. The Night
+  Market's seeds are not gated. Orders carry `afterLastSeat`; `weeklyPick`, `Orders.board`, `Orders.accept`, and the
+  request board take a `hard` flag that the scenes and intents set from `afterLastSeat(g)`.
+- **"The morning after" is simplified.** The flag is `g.hall.bridgeMended`, derived, so the harder orders and the x1.5
+  counts apply as soon as the Last Seat is done, not from the next morning. Nothing is saved.
+- **Price rise.** Item `buyPrice` stays the year one price. `buyPriceOn(id, day)` gives the year-two price, and the
+  smith's `smith-buy` ore intent and the ore rows use it. Stone and wood are in the table, but the carpenter does not
+  sell them yet (note 41), so nothing reads those two rows. The letter (`price-rise-letter`) uses a new `year` mail
+  trigger and arrives on Spring 1 of year 2 (a save already past that day gets it on its next morning).
+- **Deluxe speed-gro** is `deluxe-speed-fertilizer` (+25 percent growth, 150g, sells 40g, from year 2, general store).
+  The +25 percent is Stardew's, from memory (SC-47 family).
+- **Animal Catalogue.** An item bought once for 5,000g at the farmstead keeper from year 2 (`keeper-buy`, `catalogue`).
+  Its use, opening the animal shop when the keeper is away, is not built; it is only a kept item for now.
+- **Harder orders.** Six rows in `orders.json` with `afterLastSeat`. Places: smithy (8,8), library (23,21), sawmill (6,8).
+  Deep Patrol counts any floor, since the kill tally has no floor; the "from floor 81 down" condition is left out. The
+  first-reward text is "the thanks of the valley" (gold only). Request pay follows the x1.5 count.
+- **Play on.** The end screen's Keep playing now ends the day (`FarmScene.endDay`), so the player wakes the next
+  morning with the bridge mended, as a guest or host goes to bed. `endDue` still fires once (`endSeen`). The test sleeps
+  once the hall is full and checks the next day, no second end screen, and the bridge mended.

@@ -6,6 +6,7 @@ import { RODS } from "./fishing";
 import { POT_ITEM } from "./pots";
 import { BAITS, LURES } from "./tackle";
 import type { Inventory } from "./inventory";
+import { rowOpen } from "./yeartwo";
 
 export interface Wallet {
   money: number;
@@ -74,10 +75,15 @@ export function byName(ids: string[]): string[] {
   );
 }
 
-/** Seeds on sale in a season: those of crops that grow in it, cheapest first. */
-export function seedStock(season: Season): string[] {
+/**
+ * Seeds on sale in a season: those of crops that grow in it, cheapest first. With a `day`, the
+ * seeds held back to year two (garlic, red cabbage, artichoke) are left out until then (note 112).
+ */
+export function seedStock(season: Season, day?: number): string[] {
   return byPrice(
-    CROPS.filter((c) => c.seasons.includes(season)).map((c) => seedId(c.id)),
+    CROPS.filter((c) => c.seasons.includes(season))
+      .map((c) => seedId(c.id))
+      .filter((id) => day === undefined || rowOpen(id, day)),
   );
 }
 

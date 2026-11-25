@@ -507,6 +507,15 @@ items.set(COOP_HEATER, {
   buyPrice: HEATER_PRICE,
   keep: true,
 });
+/** The Animal Catalogue, sold at the farmstead from year two (note 112 rule 4). Bought once and kept. */
+export const ANIMAL_CATALOGUE = "animal-catalogue";
+export const ANIMAL_CATALOGUE_PRICE = 5000;
+items.set(ANIMAL_CATALOGUE, {
+  id: ANIMAL_CATALOGUE,
+  name: "Animal Catalogue",
+  sellPrice: 0,
+  keep: true,
+});
 items.set(ELF_LETTER, {
   id: ELF_LETTER,
   name: "Letter to the elves",
@@ -646,6 +655,7 @@ const GROUPS: [string, string[]][] = [
       WARP_TOTEM_BEACH,
       COOP_HEATER,
       ELF_LETTER,
+      ANIMAL_CATALOGUE,
       lanternFloat.lantern.id,
       lanternFloat.keepsake.id,
       HOLLOW_LANTERN,

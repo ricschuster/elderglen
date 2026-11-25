@@ -5,6 +5,7 @@ import { ORDINARY_FISH } from "./fishing";
 import { hatById } from "./hats";
 import { absorbElderfruit } from "./elderfruit";
 import { ELDERFRUIT, itemById } from "./items";
+import { dateOf } from "./calendar";
 import type { GameState } from "./save";
 
 /**
@@ -39,7 +40,9 @@ export type LetterTrigger =
   /** A heart event has been seen; the letter comes the next morning (note 97, SC-171). */
   | { kind: "event"; event: string }
   /** A village hall room is restored (note 97, the garden pot); the letter comes the next morning. */
-  | { kind: "room"; room: string };
+  | { kind: "room"; room: string }
+  /** It is this year of play (note 112: the price notice, queued in year 2 and sent once). */
+  | { kind: "year"; year: number };
 
 export interface LetterDef {
   id: string;
@@ -184,6 +187,7 @@ function triggered(g: GameState, t: LetterTrigger): boolean {
   if (t.kind === "hearts") return g.friendship.hearts(t.villager) >= t.hearts;
   if (t.kind === "event") return g.heartEvents.seen(t.event);
   if (t.kind === "room") return g.hall.roomComplete(t.room);
+  if (t.kind === "year") return dateOf(g.day.clock.day).year === t.year;
   if (t.kind === "fish-roster")
     return ORDINARY_FISH.every((f) => g.fishing.has(f.id));
   return t.kind === "first-achievement"

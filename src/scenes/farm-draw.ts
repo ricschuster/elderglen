@@ -86,6 +86,7 @@ import {
   drawFestivalProps,
 } from "./farm-festival";
 import { LEVER_KIND } from "../core/danger";
+import { afterLastSeat } from "../core/yeartwo";
 import type { FarmScene } from "./FarmScene";
 
 // Drawing methods of the farm scene, moved out of FarmScene.ts (note 106, step 5).
@@ -512,7 +513,13 @@ export function drawCabins(farm: FarmScene): void {
 /** A yellow mark over the request board while a request waits to be taken (note 50). */
 export function drawRequestMark(farm: FarmScene): void {
   const spot = farm.map.services.find((s) => s.kind === "requests");
-  if (!spot || farm.state.quests.posted(farm.state.day.clock.day).length === 0)
+  if (
+    !spot ||
+    farm.state.quests.posted(
+      farm.state.day.clock.day,
+      afterLastSeat(farm.state),
+    ).length === 0
+  )
     return;
   const ts = farm.map.tileSize;
   const x = spot.x * ts;

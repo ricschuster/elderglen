@@ -28,7 +28,6 @@ import {
   furnitureProblem,
 } from "./furniture";
 import { claimRewards, donate, placeOnShelf } from "./gallery";
-import { itemById } from "./items";
 import { crackGeode, GEODE_KINDS } from "./geodes";
 import {
   houseOrderProblem,
@@ -56,6 +55,7 @@ import { shrineAct } from "./shrine";
 import { ORES } from "./ore";
 import { buy, sell, sellAll } from "./shop";
 import { handOverCopper, SMITH_STOCK } from "./smith";
+import { buyPriceOn } from "./yeartwo";
 import {
   POT_COLOURS,
   dyePiece,
@@ -425,8 +425,9 @@ function applySmith(
           const n = intent.n;
           if (!SMITH_STOCK.includes(id) || (n !== 1 && n !== 5))
             return "She does not sell that.";
-          if (buy(g.inventory, g, id, n)) return undefined;
-          return g.money < (itemPrice(id) ?? 0) * n
+          const price = buyPriceOn(id, g.day.clock.day);
+          if (buy(g.inventory, g, id, n, price)) return undefined;
+          return g.money < (price ?? 0) * n
             ? "Not enough money."
             : "Your backpack is full.";
         }
@@ -499,8 +500,6 @@ function applySmith(
     }
   });
 }
-
-const itemPrice = (id: string): number | undefined => itemById(id)?.buyPrice;
 
 /** The gallery counter: the shelf is the farm's; a donation leaves the sender's pack and each player collects their own rewards (note 53). */
 function applyGallery(

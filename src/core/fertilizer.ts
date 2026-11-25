@@ -57,6 +57,15 @@ export const FERTILIZERS: readonly FertilizerDef[] = [
     shopFromDay: 15,
   },
   {
+    id: "deluxe-speed-fertilizer",
+    name: "Deluxe speed fertilizer",
+    line: "speed",
+    growthBonus: 0.25,
+    sellPrice: 40,
+    buyPrice: 150,
+    shopFromYear: 2,
+  },
+  {
     id: "basic-retaining-soil",
     name: "Basic retaining soil",
     line: "retaining",
