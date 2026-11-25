@@ -20,7 +20,7 @@ unfinished business, the haven elf, token and keepsake wait for ring 2 (M5).
   The mountain, island and ring 3 rings join her shop with M5.
 - **Beach ring price (owner, placeholder):** 400,000g, 5 Hearthsilver bars, 10 cockleshells and 10 spiral
   shells (Stardew's Water Obelisk is 500,000g, 5 iridium bars, 10 clams and 10 coral, saved Wizard's Tower
-  page). The "one item from her odd requests" (note 09) is added when odd requests are designed.
+  page). No odd-request part: ring 1 rings cost gold and items only (note 114, owner 2026-11-25).
 - **The witch art tests stay (owner):** `WitchTestScene` and `WitchWalkScene` are kept for the art pass
   (M3d) size checks.
 
@@ -44,5 +44,5 @@ unfinished business, the haven elf, token and keepsake wait for ring 2 (M5).
 
 ## Open (paused 2026-11-24)
 
-- The odd-request system that feeds the ring prices.
+- The odd-request system: designed in note 114 (2026-11-25), built with M5.
 - Build order (owner, 2026-11-24): after the M4 groups (#1014 to #1017).
