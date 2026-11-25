@@ -619,15 +619,20 @@ export class Bot {
       }
     }
     if (!best) throw new Error(`no stand tile for ${tx},${ty}`);
-    await this.walkTo(best.x, best.y);
-    await this.face(best.dir);
-    const f = await this.dbg();
-    if (f.target.x !== tx || f.target.y !== ty) {
-      log(
-        `facing mismatch: target ${JSON.stringify(f.target)} wanted ${tx},${ty}`,
-      );
+    // The turn is a short key hold that nudges the player a few pixels. On a
+    // slow frame (a loaded machine runs under 20 fps, and each frame moves up
+    // to 4 px) the nudge can cross into the next tile and the game then faces a
+    // tile too far. That is the playtest's timing, not a game bug (the farmer
+    // is 8 px from a tile edge when centred), so re-centre and turn again.
+    for (let attempt = 0; attempt < 4; attempt++) {
       await this.walkTo(best.x, best.y);
       await this.face(best.dir);
+      const f = await this.dbg();
+      if (f.target.x === tx && f.target.y === ty) break;
+      log(
+        `facing mismatch: target ${JSON.stringify(f.target)} wanted ${tx},${ty}; stood for ${best.x},${best.y} facing ${best.dir}, game has tile ${JSON.stringify(f.tile)} pos ${JSON.stringify(f.pos)} facing ${f.facing}`,
+      );
+      if (attempt === 3) finding(`could not face ${tx},${ty} after 4 turns`);
     }
     await this.key(key, 90);
     return best;
