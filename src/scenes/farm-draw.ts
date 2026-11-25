@@ -49,7 +49,7 @@ import {
   greenhouseRepaired,
   greenhouseSite,
 } from "../core/greenhouse";
-import { CELLAR_MAP, HOUSE_MAP, isHouseMap } from "../core/house";
+import { HOUSE_MAP, isHouseMap } from "../core/house";
 import {
   cropKey,
   fertKey,
@@ -150,11 +150,10 @@ export function drawGround(farm: FarmScene): void {
     put(p.x, p.y, POT_KEY);
     if (p.catch) put(p.x, p.y, POT_READY_KEY);
   }
-  if (farm.mapId === CELLAR_MAP)
-    for (const c of farm.state.casks.each()) {
-      put(c.x, c.y, machineKey(CASK));
-      if (caskDone(farm.state, c)) put(c.x, c.y, MACHINE_READY_KEY);
-    }
+  for (const c of farm.state.casks.each(farm.mapId)) {
+    put(c.x, c.y, machineKey(CASK));
+    if (caskDone(farm.state, c)) put(c.x, c.y, MACHINE_READY_KEY);
+  }
   if (farm.mapId === CAVE_MAP) drawCave(farm, put);
   drawFeastProps(farm);
   drawFeastLantern(farm);

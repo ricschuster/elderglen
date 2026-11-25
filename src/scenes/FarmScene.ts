@@ -2810,7 +2810,7 @@ export class FarmScene extends Phaser.Scene {
         result.reason === "machine busy"
           ? statusText(this.state, front.x, front.y)
           : result.reason === "cask busy"
-            ? caskStatus(this.state, front.x, front.y)
+            ? caskStatus(this.state, front.x, front.y, this.mapId)
             : result.reason === "tap busy"
               ? tapStatus(this.state, front.x, front.y)
               : reasonText(result.reason);

@@ -20,7 +20,6 @@ import { storeOf } from "./mapstore";
 import { pondBlocks } from "./pond";
 import type { Rocks } from "./rocks";
 import type { GameState } from "./save";
-import { CELLAR_MAP } from "./house";
 import { rodAt } from "./lightning";
 
 /** What the blocking rules read: the state, the map and two scene-held facts. */
@@ -100,7 +99,7 @@ export function tileBlockedNoHorse(
         (s) => s.x === x && s.y === y,
       )) ||
     state.furniture.blocks(mapId, x, y) ||
-    (mapId === CELLAR_MAP && !!state.casks.at(x, y)) ||
+    !!state.casks.at(x, y, mapId) ||
     !!state.chests.at(mapId, x, y) ||
     !!state.placed.covering(lightMapKey(mapId), x, y) ||
     (isFarmMap(mapId) && !!rodAt(state, x, y)) ||

@@ -202,14 +202,16 @@ function useOn(
     const step = FACING_STEP[ctx.facing];
     return report(pushChest(g, map, mapId, x, y, step.x, step.y));
   }
-  if (mapId === CELLAR_MAP) {
-    // Casks stand in the cellar: a held cask is stood down, a held good goes in,
+  if (mapId === CELLAR_MAP || isFarmMap(mapId)) {
+    // Casks stand on the farm or in the cellar but take goods only in the
+    // cellar: a held cask is stood down, a held good goes in (the cellar only),
     // and the axe or pickaxe takes a good out, or an empty cask up.
-    const cask = g.casks.at(x, y);
+    const cask = g.casks.at(x, y, mapId);
     if (held.kind === "item" && held.id === CASK && !cask)
-      return report(placeCask(g, map, x, y));
-    if (cask && held.kind === "item") return report(loadCask(g, x, y, held.id));
-    if (cask && isLiftTool(held)) return report(handOnCask(g, x, y));
+      return report(placeCask(g, map, x, y, mapId));
+    if (cask && held.kind === "item")
+      return report(loadCask(g, x, y, held.id, mapId));
+    if (cask && isLiftTool(held)) return report(handOnCask(g, x, y, mapId));
   }
   if (isHouseMap(mapId)) {
     // In the house the held piece is stood down, and the axe or pickaxe takes one up.
@@ -425,13 +427,13 @@ function actOn(
       service.kind,
       service.kind === "hall" ? { room: service.id } : undefined,
     );
-  if (mapId === CELLAR_MAP && g.casks.at(x, y)) {
+  if (g.casks.at(x, y, mapId)) {
     // Action reads a cask and takes a gold good out. Taking one out early is
     // the axe or pickaxe's job, so a stray press never resets the ageing.
-    const cask = g.casks.get(x, y)!;
+    const cask = g.casks.get(x, y, mapId)!;
     if (!cask.job) return reported({ ok: false, reason: "cask empty" });
-    if (!caskDone(g, cask)) return say(caskStatus(g, x, y));
-    return reported(collectCask(g, x, y));
+    if (!caskDone(g, cask)) return say(caskStatus(g, x, y, mapId));
+    return reported(collectCask(g, x, y, mapId));
   }
   if (isFarmMap(mapId) && packWaiting(g, x, y))
     return reported(takePack(g, x, y));

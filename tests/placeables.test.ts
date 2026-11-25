@@ -51,7 +51,7 @@ describe("placeables table", () => {
   });
 
   it("keeps the cask in the cellar and the rest where they stood", () => {
-    expect(placeableById("cask")?.places).toEqual(["cellar"]);
+    expect(placeableById("cask")?.places).toEqual(["farm", "cellar"]);
     expect(mayPlaceOn("keg", "farm")).toBe(true);
     expect(mayPlaceOn("keg", "greenhouse")).toBe(false);
     expect(mayPlaceOn("sprinkler", "greenhouse")).toBe(true);

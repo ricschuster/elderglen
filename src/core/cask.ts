@@ -1,15 +1,19 @@
 import type { Outcome } from "./actions";
 import { categoryOf, type ArtisanCategory } from "./artisan";
+import { isFarmMap } from "./farmtypes";
+import { CELLAR_MAP } from "./house";
 import { itemById } from "./items";
 import type { FarmMap } from "./map";
+import { isClear } from "./actions";
+import { mayPlaceOn, placeTag } from "./placeables";
 import { QUALITIES, splitQuality, withQuality, type Quality } from "./quality";
 import type { GameState } from "./save";
 import { tileKey } from "./tilekey";
 
 /**
  * Casks (`docs/design/24_processing_and_cooking.md`, "The cask"): they stand
- * only in the cellar, hold one good each and raise its quality as the days
- * pass. Wine, mead and cheese go in. Nothing is lost by taking a good out
+ * can stand on the farm or in the cellar but age goods only in the cellar (as
+ * in Stardew), hold one good each and raise its quality as the days pass. Wine, mead and cheese go in. Nothing is lost by taking a good out
  * early, it simply has the quality it has reached. Pure rules.
  */
 export const CASK = "cask";
@@ -64,12 +68,18 @@ export interface CaskJob {
 export interface PlacedCask {
   x: number;
   y: number;
+  /** Map it stands on. Absent in saves made when casks were cellar only: the cellar. */
+  map?: string;
   job?: CaskJob;
 }
 
-/** The casks standing in the cellar. */
+/** The casks standing on the farm and in the cellar. */
 export class Casks {
   private placed = new Map<string, PlacedCask>();
+
+  private key(x: number, y: number, mapId: string): string {
+    return `${mapId}|${tileKey(x, y)}`;
+  }
 
   save(): PlacedCask[] {
     return [...this.placed.values()].map((c) => ({
@@ -80,23 +90,28 @@ export class Casks {
 
   load(saved: PlacedCask[]): void {
     this.placed = new Map(
-      saved.map((c) => [
-        tileKey(c.x, c.y),
-        { ...c, job: c.job ? { ...c.job } : undefined },
-      ]),
+      saved.map((c) => {
+        const map = c.map ?? CELLAR_MAP;
+        return [
+          this.key(c.x, c.y, map),
+          { ...c, map, job: c.job ? { ...c.job } : undefined },
+        ];
+      }),
     );
   }
 
-  *each(): Generator<PlacedCask> {
-    yield* this.placed.values();
+  /** Every cask, or those on one map. */
+  *each(mapId?: string): Generator<PlacedCask> {
+    for (const c of this.placed.values())
+      if (mapId === undefined || c.map === mapId) yield c;
   }
 
-  get(x: number, y: number): PlacedCask | undefined {
-    return this.placed.get(tileKey(x, y));
+  get(x: number, y: number, mapId = CELLAR_MAP): PlacedCask | undefined {
+    return this.placed.get(this.key(x, y, mapId));
   }
 
-  at(x: number, y: number): boolean {
-    return this.placed.has(tileKey(x, y));
+  at(x: number, y: number, mapId = CELLAR_MAP): boolean {
+    return this.placed.has(this.key(x, y, mapId));
   }
 
   get count(): number {
@@ -104,14 +119,16 @@ export class Casks {
   }
 
   add(c: PlacedCask): boolean {
-    if (this.placed.has(tileKey(c.x, c.y))) return false;
-    this.placed.set(tileKey(c.x, c.y), c);
+    const map = c.map ?? CELLAR_MAP;
+    const k = this.key(c.x, c.y, map);
+    if (this.placed.has(k)) return false;
+    this.placed.set(k, { ...c, map });
     return true;
   }
 
-  remove(x: number, y: number): PlacedCask | undefined {
-    const c = this.get(x, y);
-    this.placed.delete(tileKey(x, y));
+  remove(x: number, y: number, mapId = CELLAR_MAP): PlacedCask | undefined {
+    const c = this.get(x, y, mapId);
+    this.placed.delete(this.key(x, y, mapId));
     return c;
   }
 }
@@ -173,9 +190,16 @@ export function caskDone(g: GameState, c: PlacedCask): boolean {
 }
 
 /** What a cask is doing, for the message when the player uses it. */
-export function caskStatus(g: GameState, x: number, y: number): string {
-  const c = g.casks.get(x, y);
+export function caskStatus(
+  g: GameState,
+  x: number,
+  y: number,
+  mapId = CELLAR_MAP,
+): string {
+  const c = g.casks.get(x, y, mapId);
   if (!c) return "";
+  if (mapId !== CELLAR_MAP && !c.job)
+    return "The cask is empty. It ages goods only in the cellar.";
   if (!c.job) return "The cask is empty.";
   const q = caskQuality(g, c.job);
   const name = nameOf(c.job.item);
@@ -186,25 +210,37 @@ export function caskStatus(g: GameState, x: number, y: number): string {
   return `${name}: ${q}, ${next} in ${left} day${left === 1 ? "" : "s"}.`;
 }
 
-/** Stand a cask from the backpack on a clear floor tile of the cellar. Free. */
+/**
+ * Stand a cask from the backpack on a clear tile of the cellar or the farm.
+ * Free. A cask off the cellar floor holds nothing (`loadCask` refuses).
+ */
 export function placeCask(
   g: GameState,
   map: FarmMap,
   x: number,
   y: number,
+  mapId = CELLAR_MAP,
 ): Outcome {
   if (g.day.over) return fail("exhausted");
   if (g.inventory.count(CASK) < 1) return fail("no cask");
-  if (
-    map.isBlocked(x, y) ||
-    map.exitAt(x, y) ||
-    map.entries.some((e) => e.x === x && e.y === y) ||
-    map.serviceAt(x, y) ||
-    g.casks.at(x, y)
+  if (mapId === CELLAR_MAP) {
+    if (
+      map.isBlocked(x, y) ||
+      map.exitAt(x, y) ||
+      map.entries.some((e) => e.x === x && e.y === y) ||
+      map.serviceAt(x, y) ||
+      g.casks.at(x, y, mapId)
+    )
+      return fail("cannot place here");
+  } else if (
+    !isFarmMap(mapId) ||
+    !mayPlaceOn(CASK, placeTag(map, mapId)) ||
+    !isClear(g, map, x, y) ||
+    g.casks.at(x, y, mapId)
   )
     return fail("cannot place here");
   g.inventory.remove(CASK);
-  g.casks.add({ x, y });
+  g.casks.add({ x, y, map: mapId });
   return { ok: true };
 }
 
@@ -214,10 +250,12 @@ export function loadCask(
   x: number,
   y: number,
   item: string,
+  mapId = CELLAR_MAP,
 ): Outcome {
   if (g.day.over) return fail("exhausted");
-  const c = g.casks.get(x, y);
+  const c = g.casks.get(x, y, mapId);
   if (!c) return fail("no cask here");
+  if (mapId !== CELLAR_MAP) return fail("cask outside cellar");
   if (c.job) return fail("cask busy");
   if (!caskTakes(item)) return fail("cask will not take that");
   if (g.inventory.count(item) < 1) return fail("not enough input");
@@ -228,9 +266,14 @@ export function loadCask(
 }
 
 /** Take the good out at the quality it has reached. */
-export function collectCask(g: GameState, x: number, y: number): Outcome {
+export function collectCask(
+  g: GameState,
+  x: number,
+  y: number,
+  mapId = CELLAR_MAP,
+): Outcome {
   if (g.day.over) return fail("exhausted");
-  const c = g.casks.get(x, y);
+  const c = g.casks.get(x, y, mapId);
   if (!c) return fail("no cask here");
   if (!c.job) return fail("cask empty");
   const out = withQuality(c.job.item, caskQuality(g, c.job));
@@ -241,13 +284,18 @@ export function collectCask(g: GameState, x: number, y: number): Outcome {
 }
 
 /** Take an empty cask up into the backpack. */
-export function pickUpCask(g: GameState, x: number, y: number): Outcome {
+export function pickUpCask(
+  g: GameState,
+  x: number,
+  y: number,
+  mapId = CELLAR_MAP,
+): Outcome {
   if (g.day.over) return fail("exhausted");
-  const c = g.casks.get(x, y);
+  const c = g.casks.get(x, y, mapId);
   if (!c) return fail("no cask here");
   if (c.job) return fail("cask not empty");
   if (g.inventory.room(CASK) < 1) return fail("backpack full");
-  g.casks.remove(x, y);
+  g.casks.remove(x, y, mapId);
   g.inventory.add(CASK);
   return { ok: true, item: CASK };
 }
@@ -256,8 +304,13 @@ export function pickUpCask(g: GameState, x: number, y: number): Outcome {
  * The hand or an axe or pickaxe on a cask: take a good out if there is one,
  * else take the empty cask up.
  */
-export function handOnCask(g: GameState, x: number, y: number): Outcome {
-  const c = g.casks.get(x, y);
+export function handOnCask(
+  g: GameState,
+  x: number,
+  y: number,
+  mapId = CELLAR_MAP,
+): Outcome {
+  const c = g.casks.get(x, y, mapId);
   if (!c) return fail("no cask here");
-  return c.job ? collectCask(g, x, y) : pickUpCask(g, x, y);
+  return c.job ? collectCask(g, x, y, mapId) : pickUpCask(g, x, y, mapId);
 }

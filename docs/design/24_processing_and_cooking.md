@@ -205,7 +205,7 @@ skills and rings gives each of them a second use.
 
 Settled where the notes left gaps. All numbers are placeholders (note 07).
 
-- **The cask stands only in the cellar.** It is a backpack item
+- **The cask ages goods only in the cellar** (placing superseded, see "As built" below). It is a backpack item
   (`cask`, crafted from 40 wood, wood standing in for Stardew's hardwood as in
   the house upgrade). The recipe is known once the cellar stairs are built
   (tier 3). A held cask is stood on a clear floor tile of the cellar, with no
@@ -224,6 +224,7 @@ Settled where the notes left gaps. All numbers are placeholders (note 07).
   or an empty cask up, so a stray press never resets the ageing. A Hearthsilver good
   shows the ready mark. Beer and pale ale are built (keg in `processing.ts`,
   cask days in `cask.ts`). Not built: cask count upgrades, a cask in the farm cave.
+- **As built (2026-11-25): casks can be placed anywhere a machine can, but take goods only in the cellar** (owner ruling, matching the saved Cask page: placed anywhere, ageing only in the cellar). A cask stands on the cellar floor or on clear farm ground (the same rule as other machines, `places` in `placeables.json`: farm and cellar; house and shed floors are not machine places, so not casks either). Off the cellar, a held good is refused with "Casks only age goods in the cellar." and nothing is taken; an empty farm cask lifts with the hand, axe or pickaxe. Each `PlacedCask` now records its `map`; saves without it load as cellar casks.
 - **The dye vat** is the Dyer's bundle (23) reward, a machine on the farm like
   the keg, and its recipe comes with the bundle only (40 wood, 10 stone, 10
   fiber). One flower, berry or crop in, one dye out after 1 day:

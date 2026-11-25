@@ -1119,6 +1119,7 @@ export function deserialize(text: string): GameState | undefined {
       valid.push({
         x: c.x as number,
         y: c.y as number,
+        map: typeof c.map === "string" ? c.map : CELLAR_MAP,
         job:
           isObject(job) &&
           typeof job.item === "string" &&
