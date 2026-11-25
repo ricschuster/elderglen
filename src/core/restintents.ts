@@ -28,7 +28,6 @@ import {
   furnitureProblem,
 } from "./furniture";
 import { claimRewards, donate, placeOnShelf } from "./gallery";
-import { itemById } from "./items";
 import { crackGeode, GEODE_KINDS } from "./geodes";
 import {
   houseOrderProblem,
@@ -56,6 +55,9 @@ import { shrineAct } from "./shrine";
 import { ORES } from "./ore";
 import { buy, sell, sellAll } from "./shop";
 import { handOverCopper, SMITH_STOCK } from "./smith";
+import { buyPriceOn } from "./yeartwo";
+import { meet } from "./townfolk";
+import { villagerById } from "./villagers";
 import {
   POT_COLOURS,
   dyePiece,
@@ -78,6 +80,10 @@ import {
   orderCabinUpgrade,
   setCabinStyle,
 } from "./cabinhome";
+import { applyCabinDemolish, applyCabinMove } from "./cabinmove";
+import { collectLost } from "./lostfound";
+
+import { applyHomePlace } from "./homeplace";
 
 const isTile = (v: unknown): v is number =>
   typeof v === "number" && Number.isInteger(v) && v >= 0 && v < 4096;
@@ -102,6 +108,9 @@ export const REST_SCREEN_INTENTS: Record<string, string[]> = {
   "carp-move": ["carpenter"],
   "carp-remove": ["carpenter"],
   "carp-style": ["carpenter"],
+  "carp-cabin-move": ["carpenter"],
+  "carp-cabin-demolish": ["carpenter"],
+  "lostfound-take": ["lostfound"],
   "mail-read": ["mailbox"],
   "tailor-sew": ["tailor"],
   "tailor-boots": ["tailor"],
@@ -174,6 +183,12 @@ export function applyRestIntent(
       return applyCarpenter(g, by, intent);
     case "carp-style":
       return setCabinStyle(g, by, intent.style);
+    case "carp-cabin-move":
+      return applyCabinMove(g, intent);
+    case "carp-cabin-demolish":
+      return applyCabinDemolish(g, by, intent);
+    case "lostfound-take":
+      return collectLost(g, by);
     case "mail-read":
       return applyMailIntent(g, by, intent);
     case "tailor-sew":
@@ -181,6 +196,30 @@ export function applyRestIntent(
     case "tailor-dye":
     case "tailor-undye":
       return applyTailor(g, by, intent);
+    case "meet": {
+      // A talk or a gift to a villager, against the sender's own friendship (note 53). The guest's screen shows the line.
+      const { id, held } = intent;
+      if (typeof id !== "string" || !villagerById(id)) return "bad meet";
+      if (held !== undefined && !isId(held)) return "bad meet";
+      return asPlayer(g, by, () => {
+        meet(g, id, held as string | undefined);
+        return undefined;
+      });
+    }
+    case "wardrobe-wear": {
+      // Wear or store a hat, shirt or pants from the sender's own wardrobe (note 53). No id takes the piece off.
+      const { piece: kind, id } = intent;
+      if (!isTailorKind(kind) || (id !== undefined && !isId(id)))
+        return "bad wardrobe-wear";
+      return asPlayer(g, by, () => {
+        const w = g.wardrobe;
+        const ok =
+          kind === "hat"
+            ? w.wear(id as string | undefined)
+            : w.wearPiece(kind, id as string | undefined);
+        return ok ? undefined : "You do not have that.";
+      });
+    }
     case "smith-buy":
     case "smith-sell":
     case "smith-copper":
@@ -205,7 +244,7 @@ export function applyRestIntent(
         ? asPlayer(g, by, () => buyReward(g, intent.item as string))
         : "bad slayer-buy";
     default:
-      return null;
+      return applyHomePlace(g, by, intent);
   }
 }
 
@@ -354,7 +393,7 @@ function homeBuild(g: GameState, by: PlayerId): unknown {
 const isTailorKind = (v: unknown): v is TailorKind =>
   v === "hat" || v === "shirt" || v === "pants";
 
-/** The sewing machine and the dye pots (note 96). Goods leave the sender's pack; the wardrobe is the one the farm has. */
+/** The sewing machine and the dye pots (note 96). Goods leave the sender's pack; pieces go to the sender's own wardrobe (note 53). */
 function applyTailor(
   g: GameState,
   by: PlayerId,
@@ -425,8 +464,9 @@ function applySmith(
           const n = intent.n;
           if (!SMITH_STOCK.includes(id) || (n !== 1 && n !== 5))
             return "She does not sell that.";
-          if (buy(g.inventory, g, id, n)) return undefined;
-          return g.money < (itemPrice(id) ?? 0) * n
+          const price = buyPriceOn(id, g.day.clock.day);
+          if (buy(g.inventory, g, id, n, price)) return undefined;
+          return g.money < (price ?? 0) * n
             ? "Not enough money."
             : "Your backpack is full.";
         }
@@ -499,8 +539,6 @@ function applySmith(
     }
   });
 }
-
-const itemPrice = (id: string): number | undefined => itemById(id)?.buyPrice;
 
 /** The gallery counter: the shelf is the farm's; a donation leaves the sender's pack and each player collects their own rewards (note 53). */
 function applyGallery(

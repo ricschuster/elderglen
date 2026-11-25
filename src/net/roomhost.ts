@@ -57,7 +57,7 @@ export class RoomHost {
           const id = ids.get(c);
           if (msg.t === "join") {
             if (id) return;
-            const joined = host.room.join(msg.name, msg.id);
+            const joined = host.room.join(msg.name, msg.id, msg.settings);
             if (!joined) {
               host.sendTo(
                 c,

@@ -205,7 +205,7 @@ skills and rings gives each of them a second use.
 
 Settled where the notes left gaps. All numbers are placeholders (note 07).
 
-- **The cask stands only in the cellar.** It is a backpack item
+- **The cask ages goods only in the cellar** (placing superseded, see "As built" below). It is a backpack item
   (`cask`, crafted from 40 wood, wood standing in for Stardew's hardwood as in
   the house upgrade). The recipe is known once the cellar stairs are built
   (tier 3). A held cask is stood on a clear floor tile of the cellar, with no
@@ -224,6 +224,8 @@ Settled where the notes left gaps. All numbers are placeholders (note 07).
   or an empty cask up, so a stray press never resets the ageing. A Hearthsilver good
   shows the ready mark. Beer and pale ale are built (keg in `processing.ts`,
   cask days in `cask.ts`). Not built: cask count upgrades, a cask in the farm cave.
+- **As built (2026-11-25): casks can be placed anywhere a machine can, but take goods only in the cellar** (owner ruling, matching the saved Cask page: placed anywhere, ageing only in the cellar). A cask stands on the cellar floor or on clear farm ground (the same rule as other machines, `places` in `placeables.json`: farm and cellar; (since extended to house and shed floors, see the next entry)). Off the cellar, a held good is refused with "Casks only age goods in the cellar." and nothing is taken; an empty farm cask lifts with the hand, axe or pickaxe. Each `PlacedCask` now records its `map`; saves without it load as cellar casks.
+- **As built (2026-11-25): machines and casks on house and shed floors** (owner ruling, Stardew; the saved Cask page says casks "can be placed anywhere"). Every processing machine can stand on a house floor (the farmhouse or any cabin) or a shed floor, working as on the farm (inputs, timers, outputs, any player collects). The exception is the bee house, which needs the flowers outside and stays on the farm; sprinklers, lightning rods, heaters, scarecrows and tappers are not machines and stay outdoors. A cask indoors still takes goods only in the cellar. Indoor machines live in `g.indoorMachines` (each records its `map`; saved as `indoorMachines`, absent in older saves, so farm machines load unchanged), block walking and the furniture tile rule, lift with the hand, axe or pickaxe, and guests place and lift them (and casks) through `home-place` and `home-pickup` (`src/core/homeplace.ts`). No shed map is built yet: the ids `shed`, `shed-...` and `shed@...` are reserved so a shed floor takes machines the day one exists.
 - **The dye vat** is the Dyer's bundle (23) reward, a machine on the farm like
   the keg, and its recipe comes with the bundle only (40 wood, 10 stone, 10
   fiber). One flower, berry or crop in, one dye out after 1 day:

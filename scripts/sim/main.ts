@@ -1,6 +1,7 @@
 // `npm run sim -- <expert|intermediate|casual> [runs] [maxDay]`
 // Plays the core rules headless over many seeds and prints how fast the hall
 // bundles get done (note 98). Not a gate, like the browser playtests.
+import { readFileSync, writeFileSync } from "node:fs";
 import { BUNDLES, LAST_ROOM } from "../../src/core/bundles";
 import { clockText } from "../../src/core/clock";
 import { playGame, UNPLAYED_BUNDLES, type RunResult } from "./bot";
@@ -53,9 +54,21 @@ export async function main(args: string[]): Promise<void> {
   const persona = PERSONAS[name];
   if (!persona) throw new Error(`unknown persona ${name}`);
 
+  // SIM_SHARD="from-to" with SIM_OUT=file plays only those seeds and saves the results as JSON;
+  // SIM_MERGE="a.json,b.json" reports from saved shards. Both let the 40 runs fan out over cores.
   const results: RunResult[] = [];
-  for (let seed = 1; seed <= runs; seed++)
-    results.push(playGame(persona, mulberry32(seed), maxDay));
+  if (env_.SIM_MERGE) {
+    for (const f of env_.SIM_MERGE.split(","))
+      results.push(...(JSON.parse(readFileSync(f, "utf8")) as RunResult[]));
+  } else {
+    const [from, to] = (env_.SIM_SHARD ?? `1-${runs}`).split("-").map(Number);
+    for (let seed = from as number; seed <= (to as number); seed++)
+      results.push(playGame(persona, mulberry32(seed), maxDay));
+    if (env_.SIM_OUT) {
+      writeFileSync(env_.SIM_OUT, JSON.stringify(results));
+      return;
+    }
+  }
 
   // SIM_VERBOSE=1 prints each seed's bundle days, to chase one odd run.
   if (env_.SIM_VERBOSE)

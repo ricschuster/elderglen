@@ -7,6 +7,8 @@ import {
   SILO_SITES,
 } from "../core/animals";
 import { farmTypeById } from "../core/farmtypes";
+import { cabinBlockers } from "../core/cabinmove";
+import { cabinDoorTile, cabinRect } from "../core/cabins";
 import { layersAtTier } from "../core/map";
 import {
   doorAt,
@@ -28,11 +30,13 @@ import type { Intent } from "../core/protocol";
 import { dispatch } from "./guestlive";
 import { TILES_KEY, TILESET_NAME } from "./placeholder-textures";
 
-/** What the screen places: a building, or the fish pond (note 93). */
-type Thing = Placeable | "pond";
+/** What the screen places: a building, the fish pond (note 93), or a guest's cabin to move (note 110). */
+type Thing = Placeable | "pond" | "cabin";
 
 export interface PlacementData {
   building: Thing;
+  /** The cabin to move (`building` "cabin" only; always a move). */
+  cabinId?: number;
   /** Order a new building on the spot, or move the one that stands. */
   mode: "order" | "move";
 }
@@ -42,6 +46,7 @@ const SCALE = 1.125;
 const PANEL_X = 730;
 const ROOF: Record<Thing, number> = {
   pond: 0x3f7fbf,
+  cabin: 0x5a3a1c,
   coop: 0xb5563c,
   barn: 0x8f3b2e,
   stable: 0x7a5a3a,
@@ -51,6 +56,7 @@ const ROOF: Record<Thing, number> = {
 /** The words for a placeable: the carpenter's sign and the noun in a sentence. */
 function wordsOf(b: Thing): { name: string; noun: string } {
   if (b === "pond") return { name: "Fish pond", noun: "pond" };
+  if (b === "cabin") return { name: "Cabin", noun: "cabin" };
   return b === "greenhouse"
     ? { name: "Greenhouse", noun: "greenhouse" }
     : BUILDINGS[b];
@@ -60,7 +66,9 @@ function wordsOf(b: Thing): { name: string; noun: string } {
 function footprint(b: Thing, x: number, y: number) {
   return b === "pond"
     ? { x, y, w: POND_FOOTPRINT.w, h: POND_FOOTPRINT.h }
-    : footprintAt(b, x, y);
+    : b === "cabin"
+      ? cabinRect({ x, y })
+      : footprintAt(b, x, y);
 }
 
 /**
@@ -74,6 +82,7 @@ export class PlacementScene extends Phaser.Scene {
   private state!: GameState;
   private building: Thing = "coop";
   private mode: PlacementData["mode"] = "order";
+  private cabinId = 0;
   private mapId = "";
   private gx = 0;
   private gy = 0;
@@ -90,6 +99,7 @@ export class PlacementScene extends Phaser.Scene {
     this.state = this.registry.get(STATE_KEY) as GameState;
     this.building = data.building;
     this.mode = data.mode;
+    this.cabinId = data.cabinId ?? 0;
     this.mapId = farmTypeById(this.state.farmType).map;
   }
 
@@ -136,10 +146,13 @@ export class PlacementScene extends Phaser.Scene {
     this.button(PANEL_X, 460, "Cancel", 0xa0482e, () => this.finish(""));
 
     // Start where the building stands, or in the middle of the farm.
+    const cabin = this.state.cabins?.cabins.find((c) => c.id === this.cabinId);
     const at =
       this.building === "pond"
         ? undefined
-        : placedFootprint(this.state, this.building, this.mapId);
+        : this.building === "cabin"
+          ? cabin && cabinRect(cabin)
+          : placedFootprint(this.state, this.building, this.mapId);
     const fp = footprint(this.building, 0, 0);
     const start =
       this.mode === "move" && at
@@ -228,6 +241,11 @@ export class PlacementScene extends Phaser.Scene {
       const why = dispatch(this.state, intent);
       this.finish(why === "sent" ? "Sent to the host." : (why ?? done));
     };
+    if (b === "cabin")
+      return send(
+        { kind: "carp-cabin-move", id: this.cabinId, ...at },
+        "The cabin now stands in its new place.",
+      );
     if (b === "pond")
       return send(
         { kind: "carp-pond", ...at },
@@ -286,6 +304,13 @@ export class PlacementScene extends Phaser.Scene {
         .fillStyle(ROOF.pond, 0.9)
         .fillRect(r.x * ts, r.y * ts, r.w * ts, r.h * ts);
     }
+    for (const c of g.cabins?.cabins ?? []) {
+      if (c.id === this.cabinId && this.building === "cabin") continue;
+      const r = cabinRect(c);
+      gfx
+        .fillStyle(ROOF.cabin, 0.9)
+        .fillRect(r.x * ts, r.y * ts, r.w * ts, r.h * ts);
+    }
     for (const b of ["coop", "barn", "stable", "greenhouse"] as const) {
       if (b === this.building) continue;
       const r = placedFootprint(g, b, this.mapId);
@@ -305,14 +330,16 @@ export class PlacementScene extends Phaser.Scene {
     const blockers =
       this.building === "pond"
         ? pondBlockers(g, map, this.mapId, this.gx, this.gy)
-        : placementBlockers(
-            g,
-            map,
-            this.mapId,
-            this.building,
-            this.gx,
-            this.gy,
-          );
+        : this.building === "cabin"
+          ? cabinBlockers(g, map, this.mapId, this.cabinId, this.gx, this.gy)
+          : placementBlockers(
+              g,
+              map,
+              this.mapId,
+              this.building,
+              this.gx,
+              this.gy,
+            );
     const pondWhy = this.building === "pond" ? pondOrderProblem(g) : undefined;
     // A pond also needs its price in hand, so a spot is not free without it.
     this.free = blockers.length === 0 && pondWhy === undefined;
@@ -320,7 +347,9 @@ export class PlacementScene extends Phaser.Scene {
     const door =
       this.building === "pond"
         ? { x: -1, y: -2 }
-        : doorAt(this.building, this.gx, this.gy);
+        : this.building === "cabin"
+          ? cabinDoorTile({ x: this.gx, y: this.gy })
+          : doorAt(this.building, this.gx, this.gy);
     const bad = new Set(blockers.map((b) => `${b.x},${b.y}`));
     const cells = [
       ...Array.from({ length: fp.w * fp.h }, (_, i) => ({
@@ -339,7 +368,9 @@ export class PlacementScene extends Phaser.Scene {
     }
     if (
       this.building !== "pond" &&
-      (this.building === "greenhouse" || FOOTPRINTS[this.building].door)
+      (this.building === "cabin" ||
+        this.building === "greenhouse" ||
+        FOOTPRINTS[this.building].door)
     )
       gfx
         .fillStyle(0x4a3220, 0.9)

@@ -1,4 +1,5 @@
 import spouseData from "../content/spouse.json";
+import { hostMarriage } from "./playerid";
 import { SPOUSE_PERK_HEARTS } from "./marriage";
 import { exVisitVillager } from "./exvisit";
 import { feedAll } from "./animals";
@@ -52,7 +53,8 @@ export const WATER_RADIUS = spouseData.chores.radius;
 
 // ---- Who is on the spouse route --------------------------------------------
 
-type Married = Pick<GameState, "marriage"> & Partial<Pick<GameState, "flags">>;
+type Married = Pick<GameState, "marriage"> &
+  Partial<Pick<GameState, "flags" | "players">>;
 
 /** The married person, or null. The spouse route runs from the wedding day, once the ceremony has made them married. */
 export function spouseId(g: Partial<Married>): string | null {
@@ -66,7 +68,9 @@ export function onSpouseRoute(
   id: string,
   day: number,
 ): boolean {
-  return spouseId(g) === id && day >= (g.marriage?.weddingDay ?? Infinity);
+  // The route is the farm house's: the host's spouse, whoever's screen it is (a guest's has no drawn home yet, note 110).
+  const m = g.players ? hostMarriage(g as Married) : g.marriage;
+  return !!m?.married && m.spouse === id && day >= m.weddingDay;
 }
 
 // ---- The spouse route ------------------------------------------------------

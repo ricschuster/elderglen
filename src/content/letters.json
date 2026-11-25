@@ -155,5 +155,15 @@
       "kind": "event",
       "event": "cuthbert-square-6"
     }
+  },
+  {
+    "id": "price-rise-letter",
+    "sender": "The carpenter and the smith",
+    "title": "A change in prices",
+    "body": "PLACEHOLDER TEXT. The price of raw materials at the carpenter's and the smith's has gone up.",
+    "trigger": {
+      "kind": "year",
+      "year": 2
+    }
   }
 ]

@@ -26,7 +26,14 @@ export type PlaceableKind =
 
 /** The kinds of place the table reads. A map says which it is (`placeTag`). */
 export type PlaceTag =
-  "farm" | "greenhouse" | "house" | "cellar" | "mine" | "camp" | "wild";
+  | "farm"
+  | "greenhouse"
+  | "house"
+  | "shed"
+  | "cellar"
+  | "mine"
+  | "camp"
+  | "wild";
 
 export interface PlaceableDef {
   id: string;
@@ -53,6 +60,19 @@ export function placeableById(
 }
 
 /**
+ * True for a shed interior map. There is no shed map yet; the id `shed`, `shed-...` or `shed@...` is reserved
+ * so a shed floor takes machines the moment one is built (owner 2026-11-25).
+ */
+export function isShedMap(id: string): boolean {
+  return id === "shed" || id.startsWith("shed-") || id.startsWith("shed@");
+}
+
+/** True for the maps whose machines live in the indoor list: house and shed floors. */
+export function isIndoorMachineMap(id: string): boolean {
+  return isHouseMap(id) || isShedMap(id);
+}
+
+/**
  * Which kind of place a map is. The greenhouse is the indoor growing room, a
  * house map is a home interior, and any other farm map is the farm. A map
  * outside these has no tag, so nothing may be placed there yet. A mine floor is
@@ -60,6 +80,7 @@ export function placeableById(
  */
 export function placeTag(map: FarmMap, mapId?: string): PlaceTag | undefined {
   if (mapId !== undefined && isHouseMap(mapId)) return "house";
+  if (mapId !== undefined && isShedMap(mapId)) return "shed";
   if (map.indoors) return "greenhouse";
   if (mapId === undefined || isFarmMap(mapId)) return "farm";
   const floor = mineFloorOf(mapId);

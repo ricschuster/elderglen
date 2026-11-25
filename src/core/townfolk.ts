@@ -345,6 +345,7 @@ export function meet(
     f.talk(id, day);
     return { message: line("first", v.name) + tail() };
   }
+  // Courting and a spouse's ways are the acting player's own marriage (note 12, note 53).
   const court = courtGift(g, id, held);
   if (court)
     return {

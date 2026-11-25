@@ -4,6 +4,7 @@
 import { LOCAL_PLAYER, type PlayerId } from "./players";
 import type {
   ClientMsg,
+  GuestSettings,
   Intent,
   PlayerInfo,
   PosRow,
@@ -31,6 +32,8 @@ export interface RoomWorld {
   addPlayer?(id: PlayerId, name: string): void;
   /** A guest dropped: count them as in bed and put their character in their cabin (note 53). Optional. */
   playerDropped?(id: PlayerId): void;
+  /** A guest's own combat settings (Assist, no creatures), on join and whenever they change them. Optional. */
+  setGuestSettings?(id: PlayerId, settings: GuestSettings): void;
   /** A dropped guest came back: their record is restored by id. Optional. */
   playerRejoined?(id: PlayerId): void;
   /** Who is in bed and who is up, by name, for the "who is left" notice. Optional. */
@@ -150,7 +153,11 @@ export class Room {
    * A guest joins, or rejoins with the id it was given. Returns the id, or undefined when the
    * room is full or the id is the host's or is in use by a connected guest.
    */
-  join(rawName: string, rejoinId?: PlayerId): PlayerId | undefined {
+  join(
+    rawName: string,
+    rejoinId?: PlayerId,
+    settings?: GuestSettings,
+  ): PlayerId | undefined {
     const name = this.uniqueName(rawName, rejoinId);
     let m = rejoinId ? this.members.get(rejoinId) : undefined;
     if (rejoinId && (rejoinId === LOCAL_PLAYER || m?.connected)) {
@@ -176,6 +183,7 @@ export class Room {
       this.members.set(id, m);
       this.world.addPlayer?.(id, name);
     }
+    if (settings) this.world.setGuestSettings?.(m.id, settings);
     m.away = false;
     m.seenDay = this.world.day();
     m.out.push({
@@ -240,6 +248,10 @@ export class Room {
       }
       case "away":
         m.away = msg.away;
+        break;
+      case "settings":
+        if (id !== LOCAL_PLAYER)
+          this.world.setGuestSettings?.(id, msg.settings);
         break;
       case "leave":
         this.disconnect(id);

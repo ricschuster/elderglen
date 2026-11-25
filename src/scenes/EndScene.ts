@@ -5,11 +5,12 @@ import { newGame, type GameState } from "../core/save";
 import { nightSave } from "./storage";
 import { STATE_KEY } from "./state";
 import { WINDOW_FILL } from "./panel";
+import type { FarmScene } from "./FarmScene";
 
 /**
  * Shown once, when the last bundle is handed in. Placeholder text: the feast
  * scene is settled in `09_story_and_lore.md` and comes with the cast in M3. The
- * player can keep playing or start over.
+ * player can keep playing, which closes the day into the next morning (note 112), or start over.
  */
 export class EndScene extends Phaser.Scene {
   private state!: GameState;
@@ -82,9 +83,12 @@ export class EndScene extends Phaser.Scene {
       .setOrigin(0.5);
   }
 
+  /** Play on (note 112 rule 1): the evening closes and the player wakes the next morning, the bridge mended. */
   private resume(): void {
     this.scene.stop();
+    const farm = this.scene.get("farm") as FarmScene;
     this.scene.resume("farm");
+    farm.endDay();
   }
 
   /** Replace the save with a new game and reload, so every scene resets. */

@@ -132,7 +132,7 @@ const BUILDING_EXITS: Record<string, Placeable> = {
  * so a building can never wall off a way out (note 60). The doors of the coop and barn are not counted: they
  * move with their building.
  */
-function reservedTiles(map: FarmMap): Map<string, string> {
+export function reservedTiles(map: FarmMap): Map<string, string> {
   const out = new Map<string, string>();
   const ring = (r: Rect, why: string, margin = 1) => {
     for (let y = r.y - margin; y < r.y + r.h + margin; y++)
@@ -154,7 +154,11 @@ function reservedTiles(map: FarmMap): Map<string, string> {
 }
 
 /** The clutter on a tile that the player must clear first, or undefined if it is bare. */
-function clutterAt(g: GameState, x: number, y: number): string | undefined {
+export function clutterAt(
+  g: GameState,
+  x: number,
+  y: number,
+): string | undefined {
   if (g.rocks.at(x, y)) return "a rock";
   const t = g.trees.at(x, y);
   if (t) return t.stump ? "a stump" : "a tree";

@@ -40,6 +40,12 @@
     "sellPrice": 140
   },
   {
+    "id": "animal-catalogue",
+    "name": "Animal Catalogue",
+    "sellPrice": 0,
+    "keep": true
+  },
+  {
     "id": "apple",
     "name": "Apple",
     "sellPrice": 100,
@@ -998,6 +1004,12 @@
     "id": "dehydrator",
     "name": "Dehydrator",
     "sellPrice": 300
+  },
+  {
+    "id": "deluxe-speed-fertilizer",
+    "name": "Deluxe speed fertilizer",
+    "sellPrice": 40,
+    "buyPrice": 150
   },
   {
     "id": "delvers-boots",

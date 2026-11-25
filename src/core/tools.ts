@@ -397,7 +397,7 @@ const REASONS: Record<string, string> = {
   "takes nothing": "It works on its own.",
   "machine busy": "It is still working.",
   "machine empty": "It is empty.",
-  "cellar only": "Casks stand in the cellar.",
+  "cask outside cellar": "Casks only age goods in the cellar.",
   "cask busy": "The cask is already ageing something.",
   "cask empty": "The cask is empty.",
   "cask not empty": "Take the good out of the cask first.",

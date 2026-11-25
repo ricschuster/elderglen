@@ -1,4 +1,5 @@
 import { coveHolds } from "./cove";
+import { hostMarriage } from "./playerid";
 import {
   DIVORCE_CHEST_HOLD,
   DIVORCE_CHEST_MAP,
@@ -34,8 +35,8 @@ export function holdsOf(g: GameState): Set<string> {
     ...coveHolds(g),
     ...(g.flags ?? []),
   ]);
-  // A married player has the spouse room and corner (note 85).
-  if (g.marriage?.married) holds.add("spouse");
+  // The host being married gives the farm house its spouse room and corner (note 85, note 110).
+  if (g.marriage && hostMarriage(g).married) holds.add("spouse");
   // The divorce chest shows once a divorce has made it (note 85, "Divorce").
   const c = DIVORCE_CHEST_TILE;
   if (g.chests?.get(DIVORCE_CHEST_MAP, c.x, c.y)) holds.add(DIVORCE_CHEST_HOLD);

@@ -4,6 +4,7 @@ import type { PlayerId } from "../core/players";
 import {
   encode,
   type ClientMsg,
+  type GuestSettings,
   type Intent,
   type PlayerInfo,
   type PosRow,
@@ -21,6 +22,8 @@ export interface ConnectOptions {
   name: string;
   /** The id from an earlier join, to come back as the same player. */
   rejoinId?: PlayerId;
+  /** The guest's combat settings, sent with the join so the host applies them from the first step. */
+  settings?: GuestSettings;
   timeoutMs?: number;
 }
 
@@ -45,6 +48,8 @@ export class GuestClient {
   onMessage?: (m: ServerMsg) => void;
   onClose?: () => void;
   private seq = 1;
+  /** The settings the host last heard from this client, so an unchanged value is not sent again. */
+  private lastSettings: GuestSettings | undefined;
   private ws: WebSocket | undefined;
 
   /** Connect and join. Resolves once the hello and the farm have arrived. */
@@ -68,7 +73,15 @@ export class GuestClient {
         return fail("unreachable");
       }
       g.ws = ws;
-      ws.onopen = () => g.send({ t: "join", name: o.name, id: o.rejoinId });
+      ws.onopen = () => {
+        g.lastSettings = o.settings;
+        g.send({
+          t: "join",
+          name: o.name,
+          id: o.rejoinId,
+          settings: o.settings,
+        });
+      };
       ws.onerror = () => fail("unreachable");
       ws.onclose = () => {
         g.closed = true;
@@ -152,6 +165,19 @@ export class GuestClient {
     const seq = this.seq++;
     this.send({ t: "intent", seq, intent });
     return seq;
+  }
+
+  /** Tell the host this guest's combat settings changed. Sends only a change. */
+  sendSettings(settings: GuestSettings): void {
+    const last = this.lastSettings;
+    if (
+      last &&
+      last.assist === settings.assist &&
+      last.noCreatures === settings.noCreatures
+    )
+      return;
+    this.lastSettings = settings;
+    this.send({ t: "settings", settings });
   }
 
   setAway(away: boolean): void {

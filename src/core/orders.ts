@@ -12,6 +12,7 @@ import { itemLabel } from "./items";
 import type { BinLine } from "./shipping";
 import { splitQuality, type Quality } from "./quality";
 import type { GameState } from "./save";
+import { afterLastSeat } from "./yeartwo";
 
 /**
  * Special Orders (`docs/design/65_special_orders_and_debris.md`). Bigger asks
@@ -70,6 +71,8 @@ export interface OrderDef {
   windowDays: number;
   /** True when it can be done again for gold alone. */
   repeat: boolean;
+  /** True for the harder set, posted only once the Last Seat is done (note 112 rule 6). */
+  afterLastSeat?: boolean;
   /** Seasons in which the order is not posted. */
   notSeasons: Season[];
   /** Gold on every completion. */
@@ -134,9 +137,15 @@ function weekRoll(week: number): number {
 }
 
 /** The order a week posts: seeded from the week, among those fit for its season. */
-export function weeklyPick(week: number): OrderDef | undefined {
+export function weeklyPick(
+  week: number,
+  /** True once the Last Seat is done: the harder set joins the pool. */
+  hard = false,
+): OrderDef | undefined {
   const { season } = dateOf(week * 7 + 1);
-  const fit = ORDERS.filter((o) => !o.notSeasons.includes(season));
+  const fit = ORDERS.filter(
+    (o) => !o.notSeasons.includes(season) && (hard || !o.afterLastSeat),
+  );
   return fit.length === 0 ? undefined : fit[weekRoll(week) % fit.length];
 }
 
@@ -172,12 +181,12 @@ export class Orders {
    * one stays until taken or replaced, so this walks back through recent weeks'
    * picks, keeps those still fit, and shows the newest few.
    */
-  board(day: number): OrderDef[] {
+  board(day: number, hard = false): OrderDef[] {
     if (!this.opened) return [];
     const { season } = dateOf(day);
     const seen: OrderDef[] = [];
     for (let w = weekOf(day); w >= 0 && w > weekOf(day) - POSTED_WEEKS; w--) {
-      const o = weeklyPick(w);
+      const o = weeklyPick(w, hard);
       if (!o || seen.includes(o)) continue;
       if (o.notSeasons.includes(season) || this.isActive(o.id)) continue;
       if (!o.repeat && this.timesDone(o.id) > 0) continue;
@@ -191,8 +200,9 @@ export class Orders {
     id: string,
     day: number,
     base?: OrderBase,
+    hard = false,
   ): "ok" | "not posted" | "one a week" {
-    if (!this.board(day).some((o) => o.id === id)) return "not posted";
+    if (!this.board(day, hard).some((o) => o.id === id)) return "not posted";
     if (this.lastAcceptedWeek === weekOf(day)) return "one a week";
     const def = orderById(id) as OrderDef;
     this.active.push({
@@ -504,10 +514,13 @@ export function acceptOrder(
   const ask = def?.ask;
   if (ask?.kind === "hand-in") {
     const { map, x, y } = ask.place;
-    if (g.chests.get(map, x, y) && g.orders.board(day).some((o) => o.id === id))
+    if (
+      g.chests.get(map, x, y) &&
+      g.orders.board(day, afterLastSeat(g)).some((o) => o.id === id)
+    )
       return "place taken";
   }
-  const r = g.orders.accept(id, day, orderBase(g));
+  const r = g.orders.accept(id, day, orderBase(g), afterLastSeat(g));
   if (r === "ok" && ask?.kind === "hand-in") {
     const { map, x, y } = ask.place;
     const c = g.chests.add(map, x, y, "chest");

@@ -6,6 +6,7 @@ import { DayEndTracker, type DayEndDecision, type Presence } from "./dayend";
 import {
   CABIN_PRICE,
   buyCabin,
+  cabinDoorTile,
   joinNeedsCabin,
   newCabinBook,
   type BlockedFn,
@@ -20,14 +21,19 @@ import { advanceCabinBuilds } from "./cabinhome";
 import {
   applyBedMove,
   homeData,
+  homeMapId,
   ownWakeSpot,
   spotPixels,
   wakeSpot,
 } from "./homes";
-import { HOUSE_UPGRADE_NAMES, isHouseMap } from "./house";
+import { maps } from "../content/maps";
+import { HOME_PLACE_KINDS } from "./homeplace";
+import { HOUSE_MAP, HOUSE_UPGRADE_NAMES, isHouseMap } from "./house";
 import { isFarmMap, resolveMapId } from "./farmtypes";
 import { asPlayer } from "./asplayer";
-import { weddingBlock } from "./courtship";
+import { weddingBlock, weddingMorning } from "./courtship";
+import { divorceMorning, divorceReportLines } from "./divorce";
+import { spouseMorning, spouseReportLines } from "./spouse";
 import {
   applyMarriageIntent,
   expireProposalsAndRefund,
@@ -36,7 +42,7 @@ import * as pm from "./playermarriage";
 import { morningEnergy } from "./energyrules";
 import { PASS_OUT_MONEY_CAP, PASS_OUT_MONEY_SHARE } from "./day";
 import { LOCAL_PLAYER, type PlayerId } from "./players";
-import type { Intent } from "./protocol";
+import type { GuestSettings, Intent } from "./protocol";
 import { applyFarmIntent, mapOfIntent, MAPPED_KINDS } from "./roomintents";
 import { RoomPlay } from "./roomplay";
 import { WorldFxTracker } from "./worldfx";
@@ -112,6 +118,8 @@ export class GameRoomWorld implements RoomWorld {
   private readonly wakeNotices: Notice[] = [];
   /** Cabin upgrades that landed this morning, by owner, for the report. */
   lastCabinNews: Record<PlayerId, string> = {};
+  /** What each guest's villager spouse did and a filed divorce's end, for their report (note 12). */
+  lastVillagerNews: Record<PlayerId, string[]> = {};
   /** Player marriages (note 12, two-player steps), kept on the host in the game state. */
   get marriages(): pm.PlayerMarriageBook {
     return this.g.playerMarriage;
@@ -297,6 +305,14 @@ export class GameRoomWorld implements RoomWorld {
     }
   }
 
+  /** A guest's own Assist and "no creatures" settings: kept on their combat record, used for them only (note 109). */
+  setGuestSettings(id: PlayerId, s: GuestSettings): void {
+    if (id === LOCAL_PLAYER || !this.g.players.has(id)) return;
+    const c = this.g.players.get(id).combat;
+    c.assist = s.assist;
+    c.noCreatures = s.noCreatures;
+  }
+
   playerRejoined(id: PlayerId): void {
     this.tracker.rejoin(id);
   }
@@ -313,7 +329,29 @@ export class GameRoomWorld implements RoomWorld {
   }
 
   apply(by: PlayerId, intent: Intent): string | undefined {
+    // A cabin demolished with its occupant standing inside puts them out on the farm, at the old door.
+    const gone =
+      intent.kind === "carp-cabin-demolish" && by === LOCAL_PLAYER
+        ? this.cabins.cabins.find((c) => c.id === intent.id)
+        : undefined;
     const err = this.applyIntent(by, intent);
+    if (gone && err === undefined && gone.ownerKey !== null) {
+      const at = this.o.where?.(gone.ownerKey);
+      if (at && at.map === homeMapId(gone.ownerKey)) {
+        const door = cabinDoorTile(gone);
+        const s = spotPixels({
+          map: farmTypeById(this.g.farmType).map,
+          x: door.x,
+          y: door.y + 1,
+        });
+        this.placements.push({
+          id: gone.ownerKey,
+          map: s.map,
+          x: s.px,
+          y: s.py,
+        });
+      }
+    }
     // Whatever the intent changed goes out as the host has it, even for a refusal that changed something.
     if (MAPPED_KINDS.has(intent.kind))
       this.syncWorlds([typeof intent.map === "string" ? intent.map : "farm"]);
@@ -384,7 +422,9 @@ export class GameRoomWorld implements RoomWorld {
         }
         if (this.o.where && by !== LOCAL_PLAYER) {
           const why =
-            this.machineGate(by, intent) ?? this.worldGate(by, intent);
+            this.machineGate(by, intent) ??
+            this.worldGate(by, intent) ??
+            this.homeGate(by, intent);
           if (why !== undefined) return why;
         }
         if (intent.kind === "swing") return this.play.swing(by, intent);
@@ -484,6 +524,19 @@ export class GameRoomWorld implements RoomWorld {
     return reachProblem(this.g, at, v, x, y, REACH_TILES);
   }
 
+  /** Furniture and decor go only in the home the sender stands in, within reach of the tile (note 110). */
+  private homeGate(by: PlayerId, intent: Intent): string | undefined {
+    if (!HOME_PLACE_KINDS.has(intent.kind)) return undefined;
+    const { x, y, map } = intent;
+    if (typeof x !== "number" || typeof y !== "number") return undefined;
+    const at = this.o.where?.(by);
+    if (!at || at.map !== map) return TOO_FAR;
+    const ts = maps.get(HOUSE_MAP).tileSize;
+    const dx = Math.abs(Math.floor(at.x / ts) - x);
+    const dy = Math.abs(Math.floor(at.y / ts) - y);
+    return Math.max(dx, dy) <= REACH_TILES ? undefined : TOO_FAR;
+  }
+
   private isMachineKind(kind: string): boolean {
     return (
       kind === "machine-load" ||
@@ -557,6 +610,7 @@ export class GameRoomWorld implements RoomWorld {
           ? `You stayed up too late and passed out. Someone helped you home and kept ${lost}g for the trouble.`
           : "You stayed up too late and passed out. Someone helped you home. It cost you nothing.",
       ...(built ? [built] : []),
+      ...(this.lastVillagerNews[id] ?? []),
       ...pm.marriageReportLines(
         this.marriages,
         id,
@@ -588,9 +642,11 @@ export class GameRoomWorld implements RoomWorld {
         this.lastCabinNews[c.ownerKey] =
           `The carpenter finished your cabin's ${HOUSE_UPGRADE_NAMES[c.tier - 1]!.toLowerCase()}.`;
     const day = this.day();
+    this.lastVillagerNews = {};
     for (const id of g.players.ids) {
       if (id === LOCAL_PLAYER) continue;
       asPlayer(g, id, () => g.mail.deliver(day));
+      this.villagerMorning(id);
       if (this.tracker.presence(id) === "dropped") continue;
       const slept = this.sleptIn.get(id);
       const own = ownWakeSpot(g, id);
@@ -606,6 +662,25 @@ export class GameRoomWorld implements RoomWorld {
       });
     }
     this.sleptIn.clear();
+  }
+
+  /**
+   * A guest's villager marriage for the new morning, as sleep() does the host's: a filed divorce takes
+   * effect, the spouse does the chores, and a wedding due today is put off a day for a festival or rain.
+   * A wedding the guest missed (they were away) is due again today, so it is never lost.
+   */
+  private villagerMorning(id: PlayerId): void {
+    const g = this.g;
+    const day = this.day();
+    const lines = asPlayer(g, id, () => {
+      const divorce = divorceMorning(g);
+      const spouse = spouseMorning(g, this.o.random);
+      const m = g.marriage;
+      if (m.stage === "engaged" && m.weddingDay < day) m.weddingDay = day;
+      weddingMorning(g);
+      return [...divorceReportLines(divorce), ...spouseReportLines(spouse)];
+    });
+    if (lines.length > 0) this.lastVillagerNews[id] = lines;
   }
 
   /** Day end: guests who pass out pay the single player cost, then the world sleeps. */

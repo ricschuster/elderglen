@@ -2,7 +2,9 @@
 // every guest copy, so the bond book stays equal. The promise token is held while a proposal is
 // open: used up on accept, handed back on decline, withdrawal and expiry (owner, 2026-11-19).
 // Free of Phaser and the DOM.
-import { TOKEN } from "./courtship";
+import { TOKEN, finishWedding } from "./courtship";
+import { asPlayer } from "./asplayer";
+import { cancelDivorce, divorceProblem, fileDivorce } from "./divorce";
 import { DIVORCE_FEE, TOKEN_PRICE } from "./marriage";
 import type { PlayerId } from "./players";
 import * as pm from "./playermarriage";
@@ -12,6 +14,12 @@ import type { GameState } from "./save";
 const reason = (
   r: { ok: true } | { ok: false; reason: string },
 ): string | undefined => (r.ok ? undefined : r.reason);
+
+/** Whether a player is engaged or married to a villager. */
+const villagerBound = (g: GameState, key: PlayerId): boolean => {
+  const m = g.players.has(key) ? g.players.get(key).marriage : undefined;
+  return m !== undefined && (m.stage === "engaged" || m.stage === "married");
+};
 
 /** Hand a token back to a player. A full pack gets its price in gold instead. */
 function refundToken(g: GameState, to: PlayerId): void {
@@ -35,6 +43,9 @@ export function applyMarriageIntent(
     case "propose": {
       const to = intent.to;
       if (typeof to !== "string" || !players.has(to)) return "unknown player";
+      // One spouse in all: a player promised or wed to a villager is spoken for (note 12).
+      if (villagerBound(g, by)) return "You are already promised or wed.";
+      if (villagerBound(g, to)) return "They are already promised or wed.";
       if (players.get(by).inventory.count(TOKEN) < 1)
         return "You need a promise token.";
       const r = pm.propose(b, by, to);
@@ -45,6 +56,8 @@ export function applyMarriageIntent(
     case "decline-proposal": {
       const accept = intent.kind === "accept-proposal";
       const open = pm.proposalFor(b, by);
+      if (accept && villagerBound(g, by))
+        return "You are already promised or wed.";
       const r = pm.respond(b, by, accept, g.day.clock.day);
       if (r.ok && open && !accept) refundToken(g, open.proposer);
       return reason(r);
@@ -66,6 +79,21 @@ export function applyMarriageIntent(
       if (r.ok) players.pay(by, DIVORCE_FEE);
       return reason(r);
     }
+    // A villager marriage, run as the sender so the guest's own marriage, purse and friendship change (note 12).
+    case "villager-divorce":
+      return asPlayer(g, by, () => {
+        const why = divorceProblem(g);
+        if (why) return why;
+        return fileDivorce(g) ? undefined : "It cannot be filed.";
+      });
+    case "villager-divorce-cancel":
+      return asPlayer(g, by, () =>
+        cancelDivorce(g) ? undefined : "Nothing is filed.",
+      );
+    case "villager-wedding":
+      return asPlayer(g, by, () =>
+        finishWedding(g) ? undefined : "There is no wedding to finish.",
+      );
     case "wedding-seen":
       pm.takeWeddingScene(b, by);
       return undefined;

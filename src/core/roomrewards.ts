@@ -152,5 +152,9 @@ export const GUESTS_PAID = "guests-board-paid";
 export function payGuestsBoard(g: GameState): string[] {
   if (!g.hall.roomComplete(GUESTS_ROOM) || hasFlag(g, GUESTS_PAID)) return [];
   setFlag(g, GUESTS_PAID);
-  return g.friendship.bundleBonus();
+  // Every player's own friendship gains it (note 53); the ids returned are the union.
+  const gained = new Set<string>();
+  for (const p of g.players.each())
+    for (const id of p.friendship.bundleBonus()) gained.add(id);
+  return [...gained];
 }

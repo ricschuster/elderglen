@@ -35,6 +35,7 @@ import { Casks, caskTakes, type PlacedCask } from "./cask";
 import { Machines, type MachineJob, type PlacedMachine } from "./machines";
 import { FarmCave, type CaveSave } from "./cave";
 import { machineById } from "./processing";
+import { isIndoorMachineMap } from "./placeables";
 import { Furnace, type FurnaceSave } from "./furnace";
 import { Chests, type ChestSave } from "./chests";
 import {
@@ -70,11 +71,12 @@ import {
 import { Furniture, migrateCatalogue, type FurnitureSave } from "./furniture";
 import type { Mailbox, MailEntry } from "./mail";
 import { loadCabinBook, type CabinBook } from "./cabins";
-import { Friendship } from "./friendship";
-import { Marriage, exSpouses, type MarriageSave } from "./marriage";
+import { loadLostFound, saveLostFound, type LostFound } from "./lostfound";
+import type { Friendship } from "./friendship";
+import { exSpouses, type Marriage, type MarriageSave } from "./marriage";
 import { ELDERFRUIT_TOTAL, maxEnergyFor } from "./elderfruit";
 import { GALLERY_TOTAL, inGallery } from "./gallery";
-import { HeartEvents, type HeartEventsSave } from "./heartevents";
+import type { HeartEvents, HeartEventsSave } from "./heartevents";
 import { Quests, type QuestsSave } from "./quests";
 import { FishLog, type FishingSave } from "./fishing";
 import { Guide } from "./guide";
@@ -89,7 +91,7 @@ import {
   type PlayerMarriageSave,
 } from "./playermarriage";
 import { canCapacity } from "./canwater";
-import { Wardrobe, type WardrobeSave } from "./hats";
+import type { Wardrobe, WardrobeSave } from "./hats";
 import {
   BUILD_DAYS,
   HOUSE_LAYOUT,
@@ -182,6 +184,8 @@ export interface WorldState {
   greenhouse: Farm;
   /** The casks in the cellar (note 24). */
   casks: Casks;
+  /** The machines on house and shed floors, by map and tile (owner 2026-11-25). */
+  indoorMachines: Machines;
   /** The furnace the smith gives. */
   furnace: Furnace;
   /** Goods shipped today, paid when the day ends. */
@@ -217,7 +221,7 @@ export interface WorldState {
   showTokens: { year: number; count: number };
   /** The farm cave: earnings, the offer and what grows there. */
   cave: FarmCave;
-  /** Hats owned and worn. */
+  /** Hats and clothes owned and worn. The local player's own (`players.local.wardrobe`, note 53). */
   wardrobe: Wardrobe;
   /** Rings worn (note 37). */
   equipment: Equipment;
@@ -275,6 +279,8 @@ export interface GameState extends WorldState {
    * player and in saves made before it (optional field within version 4).
    */
   cabins?: CabinBook;
+  /** Things waiting at the village hall for a player whose cabin was demolished (note 110). Absent when empty. */
+  lostFound?: LostFound;
   money: number;
   inventory: Inventory;
   skills: Skills;
@@ -330,6 +336,7 @@ export function newGame(
     placed: new PlacedStore(),
     machines: new Machines(),
     casks: new Casks(),
+    indoorMachines: new Machines(),
     furnace: new Furnace(),
     bin: new ShippingBin(),
     toolOrder: undefined,
@@ -346,7 +353,7 @@ export function newGame(
     festivalsJoined: [],
     showTokens: { year: 0, count: 0 },
     cave: new FarmCave(),
-    wardrobe: new Wardrobe(),
+    wardrobe: players.get(LOCAL_PLAYER).wardrobe,
     equipment: players.get(LOCAL_PLAYER).equipment,
     furniture: new Furniture(),
     decor: new Decor(),
@@ -355,10 +362,10 @@ export function newGame(
     summit: new SummitCall(),
     shrine: new Shrine(),
     mail: players.get(LOCAL_PLAYER).mail,
-    friendship: new Friendship(),
-    marriage: new Marriage(),
+    friendship: players.get(LOCAL_PLAYER).friendship,
+    marriage: players.get(LOCAL_PLAYER).marriage,
     playerMarriage: newPlayerMarriageBook(),
-    heartEvents: new HeartEvents(),
+    heartEvents: players.get(LOCAL_PLAYER).heartEvents,
     quests: new Quests(),
     fishing: new FishLog(),
     guide: new Guide(),
@@ -469,6 +476,8 @@ interface SaveData {
   greenhouse?: ReturnType<Farm["save"]>;
   /** Absent in saves made before casks. */
   casks?: PlacedCask[];
+  /** Absent in saves made before machines could stand indoors. */
+  indoorMachines?: PlacedMachine[];
   /** Absent in saves made before the mines. */
   furnace?: FurnaceSave;
   /** Absent in saves made before the shipping bin. */
@@ -546,6 +555,7 @@ interface SaveData {
   playerMarriage?: PlayerMarriageSave;
   /** Absent before the guest's cabin (note 110, added within version 4): no cabins. */
   cabins?: CabinBook;
+  lostFound?: LostFound;
   /** Absent in saves made before heart events: none seen. */
   heartEvents?: HeartEventsSave;
   /** Absent in saves made before the request board. */
@@ -768,6 +778,7 @@ export function serialize(
       ]),
     ),
     casks: g.casks.save(),
+    indoorMachines: g.indoorMachines.save(),
     furnace: g.furnace.save(),
     bin: g.bin.save(),
     skills: g.skills.save(),
@@ -797,7 +808,7 @@ export function serialize(
     festivalsJoined: [...g.festivalsJoined],
     showTokens: { ...g.showTokens },
     cave: g.cave.save(),
-    wardrobe: g.wardrobe.save(),
+    wardrobe: g.players.get(LOCAL_PLAYER).wardrobe.save(),
     equipment: g.players.get(LOCAL_PLAYER).equipment.save(),
     houseLayout: HOUSE_LAYOUT,
     furniture: g.furniture.save(),
@@ -806,13 +817,14 @@ export function serialize(
     summit: g.summit.save(),
     shrine: g.shrine.save(),
     mail: g.mail.save(),
-    friendship: g.friendship.save(),
-    marriage: g.marriage.save(),
+    friendship: g.players.get(LOCAL_PLAYER).friendship.save(),
+    marriage: g.players.get(LOCAL_PLAYER).marriage.save(),
     ...(g.playerMarriage.bonds.length || g.playerMarriage.unseenWedding.length
       ? { playerMarriage: savePlayerMarriage(g.playerMarriage) }
       : {}),
     ...(g.cabins && g.cabins.cabins.length ? { cabins: g.cabins } : {}),
-    heartEvents: g.heartEvents.save(),
+    ...(saveLostFound(g) ? { lostFound: saveLostFound(g) } : {}),
+    heartEvents: g.players.get(LOCAL_PLAYER).heartEvents.save(),
     quests: g.quests.save(),
     fishing: g.fishing.save(),
     guide: (g.guide.sweep(g), g.guide.save()),
@@ -911,6 +923,41 @@ function validPlots(raw: Record<string, unknown>): ReturnType<Farm["save"]> {
           isCount(p.crop.harvests))),
   );
   return Object.fromEntries(plots) as ReturnType<Farm["save"]>;
+}
+
+/** The machines of a saved list that are well formed (an indoor one keeps its map). */
+function validMachines(rows: unknown[]): PlacedMachine[] {
+  const valid: PlacedMachine[] = [];
+  for (const m of rows) {
+    if (
+      !isObject(m) ||
+      !Number.isInteger(m.x) ||
+      !Number.isInteger(m.y) ||
+      typeof m.id !== "string" ||
+      !machineById(m.id)
+    )
+      continue;
+    const job = m.job;
+    valid.push({
+      x: m.x as number,
+      y: m.y as number,
+      id: m.id,
+      ...(typeof m.map === "string" ? { map: m.map } : {}),
+      job:
+        isObject(job) &&
+        typeof job.output === "string" &&
+        isCount(job.count) &&
+        isCount(job.doneAt)
+          ? {
+              output: job.output,
+              count: job.count,
+              doneAt: job.doneAt,
+              input: savedInput(job.input),
+            }
+          : undefined,
+    });
+  }
+  return valid;
 }
 
 /**
@@ -1078,38 +1125,13 @@ export function deserialize(text: string): GameState | undefined {
   }
   loadGallery(g, raw);
   const machineRows = placed ? placed.machines : raw.machines;
-  if (Array.isArray(machineRows)) {
-    const valid: PlacedMachine[] = [];
-    for (const m of machineRows) {
-      if (
-        !isObject(m) ||
-        !Number.isInteger(m.x) ||
-        !Number.isInteger(m.y) ||
-        typeof m.id !== "string" ||
-        !machineById(m.id)
-      )
-        continue;
-      const job = m.job;
-      valid.push({
-        x: m.x as number,
-        y: m.y as number,
-        id: m.id,
-        job:
-          isObject(job) &&
-          typeof job.output === "string" &&
-          isCount(job.count) &&
-          isCount(job.doneAt)
-            ? {
-                output: job.output,
-                count: job.count,
-                doneAt: job.doneAt,
-                input: savedInput(job.input),
-              }
-            : undefined,
-      });
-    }
-    g.machines.load(valid);
-  }
+  if (Array.isArray(machineRows)) g.machines.load(validMachines(machineRows));
+  if (Array.isArray(raw.indoorMachines))
+    g.indoorMachines.load(
+      validMachines(raw.indoorMachines).filter(
+        (m) => m.map !== undefined && isIndoorMachineMap(m.map),
+      ),
+    );
   if (Array.isArray(raw.casks)) {
     const valid: PlacedCask[] = [];
     for (const c of raw.casks) {
@@ -1119,6 +1141,7 @@ export function deserialize(text: string): GameState | undefined {
       valid.push({
         x: c.x as number,
         y: c.y as number,
+        map: typeof c.map === "string" ? c.map : CELLAR_MAP,
         job:
           isObject(job) &&
           typeof job.item === "string" &&
@@ -1332,7 +1355,7 @@ export function deserialize(text: string): GameState | undefined {
   if (isObject(tokens) && isCount(tokens.year) && isCount(tokens.count))
     g.showTokens = { year: tokens.year, count: tokens.count };
   g.cave.load(raw.cave as Partial<CaveSave> | undefined);
-  g.wardrobe.load(raw.wardrobe);
+  g.players.get(LOCAL_PLAYER).wardrobe.load(raw.wardrobe);
   g.players.get(LOCAL_PLAYER).equipment.load(raw.equipment);
   // Saves from an older house frame keep furniture and chests by that frame.
   const layout = isCount(raw.houseLayout) ? raw.houseLayout : 1;
@@ -1350,10 +1373,19 @@ export function deserialize(text: string): GameState | undefined {
   );
   // The married cap must be known before friendship loads, or points above the bouquet cap are clamped.
   g.cabins = loadCabinBook(raw.cabins);
-  g.friendship.setSpouse(g.marriage.married ? g.marriage.spouse : null);
-  g.friendship.setExes(exSpouses(g));
-  g.friendship.load(raw.friendship);
-  g.heartEvents.load(raw.heartEvents);
+  g.lostFound = loadLostFound(raw.lostFound);
+  const hostFriends = g.players.get(LOCAL_PLAYER).friendship;
+  hostFriends.setSpouse(g.marriage.married ? g.marriage.spouse : null);
+  // An older save kept the exes as `ex-<id>` world flags: they are the host's, now kept on the marriage.
+  for (const id of exSpouses(g))
+    if (!g.marriage.isEx(id)) g.marriage.setEx(id, true);
+  if (g.flags?.some((f) => f.startsWith("ex-"))) {
+    g.flags = g.flags.filter((f) => !f.startsWith("ex-"));
+    if (g.flags.length === 0) delete g.flags;
+  }
+  hostFriends.setExes(g.marriage.exes);
+  hostFriends.load(raw.friendship);
+  g.players.get(LOCAL_PLAYER).heartEvents.load(raw.heartEvents);
   g.quests.load(raw.quests);
   g.fishing.load(raw.fishing);
   g.guide.load(raw.guide, raw.guidePlaces, raw.guideShops);

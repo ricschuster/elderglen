@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { daysLeft, ready, wantText, type Quest } from "../core/quests";
 import type { Intent } from "../core/protocol";
 import type { GameState } from "../core/save";
+import { afterLastSeat } from "../core/yeartwo";
 import { frame, Menu, TOUCH_ROW_H, type Row } from "./panel";
 import { STATE_KEY } from "./state";
 import { closeWhenDone, dispatch, followGuest } from "./guestlive";
@@ -86,7 +87,7 @@ export class RequestsScene extends Phaser.Scene {
     const day = g.day.clock.day;
     const rows: Row[] = [];
     if (!this.listOnly)
-      for (const q of g.quests.posted(day))
+      for (const q of g.quests.posted(day, afterLastSeat(g)))
         rows.push({
           label: wantText(q),
           detail: `${q.reward.gold}g. ${daysLeft(q, day)} day${daysLeft(q, day) === 1 ? "" : "s"} left.`,

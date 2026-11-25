@@ -32,7 +32,7 @@ import {
 } from "../net/hostworld";
 import { GuestSession, setSession, startHostSession } from "../net/session";
 import { START } from "../core/maps";
-import { browserKv, useSlot } from "./storage";
+import { browserKv, loadDeviceSettings, useSlot } from "./storage";
 import { STATE_KEY } from "./state";
 
 const OUR_VERSION = PROTOCOL_VERSION;
@@ -59,6 +59,11 @@ export const lobbyTransport = new SocketTransport(
   "Guest",
   makeNativePipe?.(),
 );
+// A guest's Assist and "no creatures" settings go to the host with the join (note 109 "As built").
+lobbyTransport.guestSettings = () => {
+  const s = loadDeviceSettings();
+  return { assist: s.combatAssist, noCreatures: s.noCreatures };
+};
 
 /**
  * Play together (note 53 step 4): host a game, or join from the list or by a

@@ -323,10 +323,14 @@ export const GUEST_SCREENS = [
   "shrine",
   // Maren's slayer wall list: claim and buy intents against the sender's own kills (note 109).
   "walllist",
+  // The lost and found box at the village hall: a take intent against the sender's own box (note 110).
+  "lostfound",
   // A guest's catch bar after the host rolled the bite: it plays locally and sends `catch` (note 109).
   "fishing",
   // The bed prompt sends a `sleep` intent and changes nothing locally.
   "bed",
+  // The hat box: wearing and storing is a `wardrobe-wear` intent against the sender's own wardrobe (note 53).
+  "hats",
   // A guest's own mailbox beside their cabin door: letters are read through the host (note 110 rule 3).
   "mailbox",
 ];

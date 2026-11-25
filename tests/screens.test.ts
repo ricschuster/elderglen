@@ -1079,7 +1079,7 @@ describe("the hall: bundles, orders and the request board (note 108, group 4)", 
     );
     finish(t.g, def.id);
     expect(t.send(t.ann, { ...hat, hat: hats.from[0]! })).toBeUndefined();
-    expect(t.g.wardrobe.has(hats.from[0]!)).toBe(true);
+    expect(t.g.players.get(t.ann).wardrobe.has(hats.from[0]!)).toBe(true);
     expect(t.send(t.ann, { ...hat, hat: "no-such-hat" })).toBe(
       "You cannot take that hat.",
     );
@@ -1453,7 +1453,9 @@ describe("the rest: carpenter, tailor, smiths, gallery, shrine (note 108, group 
     );
     expect(t.send(t.ann, { kind: "tailor-sew", item: "wool" })).toBeUndefined();
     expect(ann.inventory.count("wool")).toBe(0);
-    expect(g.wardrobe.hasPiece("shirt", "plain-shirt")).toBe(true);
+    expect(g.players.get(t.ann).wardrobe.hasPiece("shirt", "plain-shirt")).toBe(
+      true,
+    );
     expect(t.send(t.ann, { kind: "tailor-sew", item: "wool" })).toMatch(
       /cloth|none/,
     );
@@ -1463,8 +1465,8 @@ describe("the rest: carpenter, tailor, smiths, gallery, shrine (note 108, group 
     const t = mk();
     const { g } = t;
     setFlag(g, TAILORING_OPEN);
-    g.wardrobe.addPiece("shirt", "plain-shirt");
-    g.wardrobe.wearPiece("shirt", "plain-shirt");
+    g.players.get(t.ann).wardrobe.addPiece("shirt", "plain-shirt");
+    g.players.get(t.ann).wardrobe.wearPiece("shirt", "plain-shirt");
     const pots = refAt("hatter", "tailor", "dye-pots");
     expect(openAt(t, t.ann, { ...pots, stock: "dye" })).toBeUndefined();
     const dye = {
@@ -1491,6 +1493,18 @@ describe("the rest: carpenter, tailor, smiths, gallery, shrine (note 108, group 
       }),
     ).toBeUndefined();
     expect(t.send(t.ann, dye)).toBe("not the screen you opened");
+  });
+
+  it("the smith's ore costs more from year two (note 112)", () => {
+    const t = mk("separate");
+    const { g } = t;
+    const ann = g.players.get(t.ann);
+    ann.money = 1000;
+    g.day.clock.day = 113;
+    expect(openAt(t, t.ann, refAt("forge", "smith"))).toBeUndefined();
+    const buy = { kind: "smith-buy", what: "ore", id: "iron-ore", n: 5 };
+    expect(t.send(t.ann, buy)).toBeUndefined();
+    expect(ann.money).toBe(1000 - 5 * 85);
   });
 
   it("buys and sells ore at the smith and the smithy, from the sender's purse", () => {

@@ -140,7 +140,10 @@
     "notSeasons": [],
     "gold": 1500,
     "firstReward": {
-      "item": { "id": "keg", "count": 1 },
+      "item": {
+        "id": "keg",
+        "count": 1
+      },
       "text": "a keg"
     }
   },
@@ -214,16 +217,166 @@
     "ask": {
       "kind": "hand-in",
       "count": 6,
-      "goods": { "mode": "distinct", "group": "minerals" },
-      "place": { "map": "library", "x": 22, "y": 21, "name": "the library" }
+      "goods": {
+        "mode": "distinct",
+        "group": "minerals"
+      },
+      "place": {
+        "map": "library",
+        "x": 22,
+        "y": 21,
+        "name": "the library"
+      }
     },
     "windowDays": 14,
     "repeat": true,
     "notSeasons": [],
     "gold": 900,
     "firstReward": {
-      "item": { "id": "bookshelf", "count": 1 },
+      "item": {
+        "id": "bookshelf",
+        "count": 1
+      },
       "text": "A bookshelf from the scholar's own study."
+    }
+  },
+  {
+    "id": "deep-haul",
+    "title": "Deep Haul",
+    "poster": "The smith's supplier",
+    "text": "The smithy wants gold bars by the crate for a big job.",
+    "ask": {
+      "kind": "hand-in",
+      "count": 10,
+      "goods": {
+        "mode": "total",
+        "items": ["gold-bar"]
+      },
+      "place": {
+        "map": "smithy",
+        "x": 8,
+        "y": 8,
+        "name": "the smithy"
+      }
+    },
+    "windowDays": 14,
+    "repeat": true,
+    "afterLastSeat": true,
+    "notSeasons": [],
+    "gold": 3500,
+    "firstReward": {
+      "text": "the thanks of the valley"
+    }
+  },
+  {
+    "id": "fine-harvest-2",
+    "title": "The Finest Table",
+    "poster": "A buyer from the far market",
+    "text": "A great table wants vegetables of gold quality, sent through the shipping bin.",
+    "ask": {
+      "kind": "ship-quality-vegetables",
+      "count": 50,
+      "quality": "gold"
+    },
+    "windowDays": 28,
+    "repeat": true,
+    "afterLastSeat": true,
+    "notSeasons": [],
+    "gold": 3000,
+    "firstReward": {
+      "text": "the thanks of the valley"
+    }
+  },
+  {
+    "id": "long-lines",
+    "title": "Long Lines",
+    "poster": "A cook from the coast road",
+    "text": "A kitchen wants a great many fish from the sea, and soon.",
+    "ask": {
+      "kind": "catch-water",
+      "count": 40
+    },
+    "windowDays": 7,
+    "repeat": true,
+    "afterLastSeat": true,
+    "notSeasons": [],
+    "gold": 3000,
+    "firstReward": {
+      "text": "the thanks of the valley"
+    }
+  },
+  {
+    "id": "deep-patrol",
+    "title": "Deep Patrol",
+    "poster": "The mine warden",
+    "text": "The deep floors are crawling. Beat a great many of one creature in the caves.",
+    "ask": {
+      "kind": "slay-one",
+      "count": 100
+    },
+    "windowDays": 7,
+    "repeat": true,
+    "afterLastSeat": true,
+    "notSeasons": [],
+    "gold": 6000,
+    "firstReward": {
+      "text": "the thanks of the valley"
+    }
+  },
+  {
+    "id": "jewel-case",
+    "title": "The Jewel Case",
+    "poster": "The librarian",
+    "text": "The library wants a case of every kind of gem it can get.",
+    "ask": {
+      "kind": "hand-in",
+      "count": 10,
+      "goods": {
+        "mode": "distinct",
+        "group": "gems"
+      },
+      "place": {
+        "map": "library",
+        "x": 23,
+        "y": 21,
+        "name": "the library"
+      }
+    },
+    "windowDays": 14,
+    "repeat": true,
+    "afterLastSeat": true,
+    "notSeasons": [],
+    "gold": 3000,
+    "firstReward": {
+      "text": "the thanks of the valley"
+    }
+  },
+  {
+    "id": "timber-yard",
+    "title": "Timber Yard",
+    "poster": "Tilda at the sawmill",
+    "text": "The carpenter's yard wants hardwood by the stack.",
+    "ask": {
+      "kind": "hand-in",
+      "count": 100,
+      "goods": {
+        "mode": "total",
+        "items": ["hardwood"]
+      },
+      "place": {
+        "map": "sawmill",
+        "x": 6,
+        "y": 8,
+        "name": "the carpenter's"
+      }
+    },
+    "windowDays": 14,
+    "repeat": true,
+    "afterLastSeat": true,
+    "notSeasons": [],
+    "gold": 3000,
+    "firstReward": {
+      "text": "the thanks of the valley"
     }
   }
 ]

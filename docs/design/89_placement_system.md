@@ -60,7 +60,8 @@ full it stays. Exceptions:
 | Placeable | Where | Notes |
 | --- | --- | --- |
 | Sprinkler | The farm and the greenhouse | As built. Not on sand. Only tilled tiles are watered |
-| Machine | The farm, plus the processing rooms the note 24 lists | As built, per machine. Not in the mines |
+| Machine | The farm, and house and shed floors (owner 2026-11-25, Stardew). Not in the mines. The bee house stays on the farm | As built, per machine: every processing machine except the bee house (flowers around it); a machine on a floor blocks walking and is lifted by hand, axe or pickaxe like the farm's |
+| Cask | The farm, the cellar, and house and shed floors (owner 2026-11-25, Stardew) | A cask ages goods only in the cellar, wherever it stands (Cask page: "can be placed anywhere; ... only accept goods ... in the cellar") |
 | Chest | The farm, houses, camps | As built. Not in a shop or on a festival spot |
 | Torch | The farm, the mines floors, camps, the wilds | Not in Hearthwell, not indoors (owner, 2026-11-12) |
 | Campfire | The farm, the mines floors, camps, the wilds | Carries a small cook or warm rule later, not in this note |

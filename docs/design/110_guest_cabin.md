@@ -106,10 +106,36 @@ footprint; a visitor who sleeps in another home wakes in that home (the owner's 
 to the player's own home; a rejoining guest starts in their own cabin even if they dropped while in another home; a
 cabin upgrade by a guest does not need the host's carpenter to be free.
 
-Not done (needs the owner or a later pass): furniture and decor placing for guests, so a cabin's furniture and chests
-are structural only (the keys are per instance and tested for the lock and reach paths, but a guest cannot place
-anything yet); the spouse room and divorce chest in a cabin (a cabin never holds `spouse`); a guest's own
-achievement and friendship letters; guests' spouse walkers and children in the cabin; moving a cabin after placement
-and demolishing one from a screen (`demolishCabin` exists in core, no screen); the host's choice of site and style
+- **Furniture and decor (owner 2026-11-25).** Any player may stand furniture and lay wallpaper or flooring in any
+  house they are standing in, the farmhouse or any cabin, not only their own, and whoever lifts a piece gets it in
+  their own pack (a placed piece keeps no owner). A guest sends `home-place {map, x, y, item}` or
+  `home-pickup {map, x, y}` (`src/core/homeplace.ts`); the host runs the host's own `placeFurniture`, `applyDecor`
+  and `pickUpFurniture` as the sender on that home's map at its owner's tier and renovations, and refuses a sender
+  not standing in that home within reach. The guests' copies run the same intent. Wallpaper and flooring are kept
+  per home (`decorKey`: the farmhouse's as before, a cabin's under `house@<id>|<room>`). A guest also places chests from their own pack and lifts a
+  chest or light with the same intents (light first, then chest, then furniture). A guest lifts with the axe
+  or pickaxe or the Action button (not a workbench or the catalogue, which a guest cannot open yet). The chest rules
+  are unchanged. Choices: there is no rotate (the host has none); a chest follows the host's rule (an empty one only is lifted; there is no chest lock in core to change), and a light
+  follows the host's place table, which has no light for a house (note 89), so a guest's torch in a house is refused
+  and stays in their pack, as the host's would; a light placed some other way is lifted into the picker's pack.
+
+- **Move and demolish a cabin (owner 2026-11-25, checked against Stardew).** The carpenter's building screen lists each
+  cabin with Move and, for the host only, Demolish. Anyone moves any cabin, free and at once, whatever the host's
+  build rule says: `carp-cabin-move {id, x, y}` opens the placement screen (`cabinBlockers` in `src/core/cabinmove.ts`
+  checks the ground, the farm's buildings, ponds, chests, clutter and the other cabins), and the cabin keeps its owner,
+  style, tier, renovations, chests and furniture, since a home is kept by its owner's key, not by where the cabin
+  stands. The host demolishes any cabin at any time, occupied or not: `carp-cabin-demolish {id}` (a guest is refused
+  with "Only the host can demolish a cabin."), with a second press that names the occupant. The occupant's pack except
+  tools, the contents and the chests in their home, and the furniture placed there go to the lost and found box
+  (`src/core/lostfound.ts`, saved as `lostFound`, `LostFoundScene`, the `lost-found` service on the village hall map at
+  tile 17,6). The occupant takes everything that fits with `lostfound-take`; the rest stays. Tools, money, wardrobe
+  and friendship stay with them. Choices: the occupant then has no cabin, which is the existing behaviour for a guest
+  without one (they wake where they stand; on rejoining they get a free cabin, or a new free one in a game that started
+  as multiplayer, or the host is offered the 100g purchase in a converted game); one standing inside is put out at the
+  old door; wallpaper and flooring stay stored under their key; a spouse sharing the cabin loses the home too. Restyling
+  stays the occupant's alone.
+
+Not done (needs the owner or a later pass): the spouse room and divorce chest in a cabin (a cabin never holds `spouse`); a guest's own
+achievement and friendship letters; guests' spouse walkers and children in the cabin; the host's choice of site and style
 when it buys a cabin (the screen for `buy-cabin`); real names and art for the three styles; a browser run of any of
 the scene edits (all untested in a browser, only type-checked).

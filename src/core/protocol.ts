@@ -28,13 +28,27 @@ interface PosMsg {
   ts: number;
 }
 
+/**
+ * A guest's own combat settings, from their device (note 109 "As built", settings). The host keeps them per guest and
+ * applies them to that guest only.
+ */
+export interface GuestSettings {
+  /** Combat Assist: half damage, wider telegraphs, nothing lost on defeat (note 22). */
+  assist: boolean;
+  /** "No creatures": the guest is not chased or hurt and sees none. */
+  noCreatures: boolean;
+}
+
 export type ClientMsg =
   | {
       t: "join";
       name: string;
       /** The id given on a first join; sent again to rejoin as the same player. */
       id?: PlayerId;
+      /** The guest's combat settings, sent on every join and rejoin. */
+      settings?: GuestSettings;
     }
+  | { t: "settings"; settings: GuestSettings }
   | PosMsg
   | { t: "intent"; seq: number; intent: Intent }
   | { t: "away"; away: boolean }
@@ -157,6 +171,12 @@ export function encode(msg: ClientMsg | ServerMsg): string {
   return JSON.stringify(msg);
 }
 
+function validSettings(v: unknown): v is GuestSettings {
+  if (typeof v !== "object" || v === null) return false;
+  const s = v as Record<string, unknown>;
+  return typeof s.assist === "boolean" && typeof s.noCreatures === "boolean";
+}
+
 /** Parse a client message. Returns undefined for anything malformed. */
 export function decodeClient(text: string): ClientMsg | undefined {
   let m: unknown;
@@ -170,9 +190,12 @@ export function decodeClient(text: string): ClientMsg | undefined {
   switch (o.t) {
     case "join":
       return typeof o.name === "string" &&
-        (o.id === undefined || typeof o.id === "string")
+        (o.id === undefined || typeof o.id === "string") &&
+        (o.settings === undefined || validSettings(o.settings))
         ? (m as ClientMsg)
         : undefined;
+    case "settings":
+      return validSettings(o.settings) ? (m as ClientMsg) : undefined;
     case "pos":
       return Number.isFinite(o.x) &&
         Number.isFinite(o.y) &&

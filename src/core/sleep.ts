@@ -241,7 +241,7 @@ export function sleep(
     rainOnPots(g);
   }
   // The new day: last week's gifts pay the weekly friendship bonus (note 61).
-  g.friendship.startDay(g.day.clock.day);
+  for (const p of g.players.each()) p.friendship.startDay(g.day.clock.day);
   clearMineLights(g);
   g.sprinklers.water(g.farm);
   chargeRods(g);

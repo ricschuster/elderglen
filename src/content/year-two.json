@@ -1,0 +1,19 @@
+{
+  "_note": "Year two rules, note 112 (placeholders). gates: shop rows held back to a year of play. raw: the carpenter's and the smith's buy prices, year one then year two and later (Stardew's factors, rounded up to 5). Selling prices never change. Wood and stone are priced here for the carpenter's sale (note 41), which is not built yet.",
+  "gates": [
+    { "id": "garlic-seed", "fromYear": 2 },
+    { "id": "red-cabbage-seed", "fromYear": 2 },
+    { "id": "artichoke-seed", "fromYear": 2 },
+    { "id": "deluxe-speed-fertilizer", "fromYear": 2 },
+    { "id": "animal-catalogue", "fromYear": 2 }
+  ],
+  "raw": [
+    { "id": "wood", "year1": 10, "year2": 50 },
+    { "id": "stone", "year1": 20, "year2": 100 },
+    { "id": "copper-ore", "year1": 25, "year2": 50 },
+    { "id": "iron-ore", "year1": 50, "year2": 85 },
+    { "id": "coal", "year1": 50, "year2": 85 },
+    { "id": "gold-ore", "year1": 100, "year2": 190 }
+  ],
+  "requestFactor": 1.5
+}

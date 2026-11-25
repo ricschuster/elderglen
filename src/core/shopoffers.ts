@@ -65,7 +65,7 @@ export function offerIds(g: GameState, stock?: ShopStock): string[] {
       return fisherStock();
     default:
       return [
-        ...seedStock(dateOf(day).season),
+        ...seedStock(dateOf(day).season, day),
         ...saplingStock(),
         ...fertilizerStock(day),
         BOUQUET,

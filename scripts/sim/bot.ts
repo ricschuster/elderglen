@@ -60,7 +60,7 @@ import {
 } from "../../src/core/professions";
 import { buy, seedStock } from "../../src/core/shop";
 import { nextBackpack, upgradeBackpack } from "../../src/core/upgrades";
-import { sleep } from "../../src/core/sleep";
+import { blocksGrowth, sleep } from "../../src/core/sleep";
 import { startGame, TOOLS } from "../../src/core/toolbar";
 import type { GameState } from "../../src/core/save";
 import { START } from "../../src/core/maps";
@@ -114,6 +114,7 @@ import { cook, dishKnown, canCook, kitchenOpen } from "../../src/core/cooking";
 import { dishById } from "../../src/core/dishes";
 import {
   CAST_MINUTES,
+  DAWN_END,
   FISH,
   barWidth,
   bite,
@@ -235,6 +236,11 @@ export interface RunResult {
   firstSprinklerDay: number;
   /** Game minutes spent on each part of the day over the run. */
   timeBy: Record<string, number>;
+  /** Batches started in the furnace, by bar id. */
+  smelted: Record<string, number>;
+  /** Bites on the line, and fish landed, by fish id. */
+  bites: Record<string, number>;
+  landedFish: Record<string, number>;
 }
 
 export function playGame(
@@ -265,6 +271,9 @@ export function playGame(
     sprinklers: 0,
     firstSprinklerDay: 0,
     timeBy: bot.timeBy,
+    smelted: bot.smelted,
+    bites: bot.bites,
+    landedFish: bot.landedFish,
   };
   while (g.day.clock.day <= maxDay && !playedDone(g)) {
     const day = g.day.clock.day;
@@ -300,6 +309,9 @@ function playedDone(g: GameState): boolean {
 
 /** The Last Seat's goods are gathered once this many bundles of the other rooms are left. */
 const PREP_LEFT = 8;
+
+/** Farthest an orchard tree goes from the house door, in tiles, so it stays reachable through the wild growth. */
+const ORCHARD_REACH = 30;
 
 /** Gold kept back after buying a bigger backpack. */
 const PACK_RESERVE = 600;
@@ -348,6 +360,11 @@ const HOLD = new Set<string>([
 class Bot {
   /** Game minutes spent on each part of the day, over the whole run (a debugging aid for the sim). */
   readonly timeBy: Record<string, number> = {};
+  /** Batches started in the furnace, by bar id (a debugging aid for the pacing trace). */
+  readonly smelted: Record<string, number> = {};
+  /** Bites on the line by fish id, and how many were landed (a debugging aid for the pacing trace). */
+  readonly bites: Record<string, number> = {};
+  readonly landedFish: Record<string, number> = {};
   private wantsCache?: { key: string; wants: Want[] };
   /** Units owed by the hall for each good, with an any-metal slot counted as the cheapest metal. */
   private owedMap = new Map<string, number>();
@@ -404,6 +421,9 @@ class Bot {
       this.timeBy[name] =
         (this.timeBy[name] ?? 0) + (this.g.day.clock.minutes - from);
     };
+    // A dawn fish bites only before 8 am, so that trip comes before the chores.
+    if (this.p.keepsForHall && this.dawnNeeds().size > 0)
+      t("fish", () => this.fishTrips(true));
     t("harvest", () => this.harvestRipe());
     t("pack", () => this.packManage());
     t("sprinklers", () => {
@@ -446,6 +466,9 @@ class Bot {
       this.tidyGrass();
     });
     t("ship", () => this.shipSurplus());
+    // The last day of a season: sweep the fields again before bed, since anything left withers.
+    if (dateOf(this.day).dayOfSeason === DAYS_PER_SEASON)
+      t("harvest", () => this.harvestRipe());
   }
 
   private dueFor(every: number): boolean {
@@ -730,6 +753,24 @@ class Bot {
     }
   }
 
+  /** Bars of one kind the Smith's slots still lack. The bot keeps these for the hall: crafting and the furnace queue come second. */
+  private smithsLack(bar: string): number {
+    if (this.g.hall.complete("smiths")) return 0;
+    const slot = BUNDLES.find((b) => b.id === "smiths")?.items.find(
+      (i) => i.id === bar,
+    );
+    return slot ? Math.max(slot.count - this.g.hall.have("smiths", bar), 0) : 0;
+  }
+
+  /** True when the pack can pay for a recipe and still leave the Smith's the bars it lacks (trace 2026-11-25: sprinklers ate every iron bar). */
+  private canSpare(r: NonNullable<ReturnType<typeof recipeById>>): boolean {
+    if (!canCraft(this.g, r)) return false;
+    return r.ingredients.every(
+      (i) =>
+        this.g.inventory.count(i.item) - this.smithsLack(i.item) >= i.count,
+    );
+  }
+
   /** Bars the Smith's bundle still wants, as bar id and how many. */
   private barsOwed(): { bar: (typeof BARS)[number]; n: number }[] {
     return BARS.map((bar) => ({
@@ -772,8 +813,16 @@ class Bot {
       }))
       .filter((o) => o.n > 0);
     // Every other day, so the Smith's bars are not starved by a sprinkler a day for weeks.
-    const owed =
-      forSprinklers.length > 0 && this.day % 2 === 0
+    // The Smith's own bars go first, the slowest bar first (gold 300 minutes), so sprinkler bars do not starve it.
+    const hallFirst = BARS.some((b) => this.smithsLack(b.id) > 0);
+    const owed = hallFirst
+      ? this.barsOwed().sort(
+          (a, b) =>
+            Number(this.smithsLack(b.bar.id) > 0) -
+              Number(this.smithsLack(a.bar.id) > 0) ||
+            b.bar.minutes - a.bar.minutes,
+        )
+      : forSprinklers.length > 0 && this.day % 2 === 0
         ? forSprinklers
         : this.barsOwed();
     if (g.furnace.job || owed.length > 0) {
@@ -814,7 +863,11 @@ class Bot {
       this.walker.go("farm");
     }
     if (g.inventory.count(ore) < ORE_PER_BAR) return;
-    if (this.walker.goToService("farm", "furnace")) smelt(g, next.bar.id);
+    if (
+      this.walker.goToService("farm", "furnace") &&
+      smelt(g, next.bar.id) === undefined
+    )
+      this.smelted[next.bar.id] = (this.smelted[next.bar.id] ?? 0) + 1;
   }
 
   // ---- what the hall wants ----
@@ -986,7 +1039,7 @@ class Bot {
     const g = this.g;
     const short = this.sprinklerQueue.some((id) => {
       const r = recipeById(id);
-      return !!r && !canCraft(g, r);
+      return !!r && !this.canSpare(r);
     });
     return short ? SPRINKLER_MONEY : 0;
   }
@@ -1014,11 +1067,11 @@ class Bot {
     // Build what the pack's materials allow; a built one leaves the queue.
     this.sprinklerQueue = this.sprinklerQueue.filter((id) => {
       const r = recipeById(id);
-      return !(r && known(g, r) && canCraft(g, r) && !craft(g, id));
+      return !(r && known(g, r) && this.canSpare(r) && !craft(g, id));
     });
     for (const id of ["quality-sprinkler", "sprinkler"]) {
       const r = recipeById(id);
-      while (r && known(g, r) && canCraft(g, r) && held(id) < 4) {
+      while (r && known(g, r) && this.canSpare(r) && held(id) < 4) {
         if (craft(g, id)) break;
       }
     }
@@ -1077,7 +1130,10 @@ class Bot {
     if (have() === 0) return;
     this.walker.go("farm");
     const sites = this.freeSoil(map, 400).filter(
-      (s) => isClear(g, map, s.x, s.y) && !g.farm.plotAt(s.x, s.y),
+      (s) =>
+        isClear(g, map, s.x, s.y) &&
+        !g.farm.plotAt(s.x, s.y) &&
+        !this.nearYoungTree(s.x, s.y),
     );
     let guard = 0;
     while (have() > 0 && guard++ < 12 && !this.lateNight) {
@@ -1150,6 +1206,7 @@ class Bot {
     if (ARTISAN_MODE === "off" || this.lateNight) return;
     this.walker.go("farm");
     this.plantOrchard();
+    this.weedYoungTrees();
     // Coal for the machines: the furnace trip stops once the Smith's is done, so buy it here.
     const coalNeed = this.machineGaps().reduce(
       (t, id) =>
@@ -1170,7 +1227,7 @@ class Bot {
     // Craft what is in reach (at a workbench in the house, whose walk is ignored).
     for (const id of this.machineGaps()) {
       const r = recipeById(id);
-      if (r && canCraft(g, r)) craft(g, id);
+      if (r && this.canSpare(r)) craft(g, id);
     }
     for (const id of MACHINES_TO_RUN)
       while (g.inventory.count(id) > 0) {
@@ -1281,7 +1338,10 @@ class Bot {
         if (
           map.canPlantTree(x, y) &&
           isClear(g, map, x, y) &&
-          !g.farm.plotAt(x, y)
+          !g.farm.plotAt(x, y) &&
+          !blocksGrowth(g, x, y) &&
+          // Wild trees close in on the far yard and cut it off, so the fruit could not be picked (trace 2026-11-25).
+          Math.abs(x - door.x) + Math.abs(y - door.y) <= ORCHARD_REACH
         )
           spots.push({ x, y });
     spots.sort(
@@ -1544,6 +1604,14 @@ class Bot {
 
   // ---- fishing, pots ----
 
+  /** Wanted fish that bite only at dawn. They need the first hours of the day, before the farm chores (trace 2026-11-25: the silverthread was never reachable). */
+  private dawnNeeds(): Set<string> {
+    const out = new Set<string>();
+    for (const id of this.fishNeeds())
+      if (FISH.find((f) => f.id === id)?.time === "dawn") out.add(id);
+    return out;
+  }
+
   private fishNeeds(): Set<string> {
     const out = new Set<string>();
     for (const w of this.unmet())
@@ -1628,13 +1696,12 @@ class Bot {
   }
 
   /** One or two outings a day when a fish is wanted: pick the water and hour, wait for it, cast. */
-  private fishTrips(): void {
+  private fishTrips(dawn = false): void {
     const g = this.g;
-    if (!this.p.keepsForHall && this.random() >= this.p.fishChance) return;
-    if (this.p.keepsForHall && this.random() >= this.p.fishChance) return;
-    const trips = Math.ceil(this.p.fishChance * 2);
+    if (this.random() >= this.p.fishChance) return;
+    const trips = dawn ? 1 : Math.ceil(this.p.fishChance * 2);
     for (let trip = 0; trip < trips; trip++) {
-      const needs = this.fishNeeds();
+      const needs = dawn ? this.dawnNeeds() : this.fishNeeds();
       if (needs.size === 0 || this.lateNight) return;
       const { season } = dateOf(this.day);
       const plan = bestCast(
@@ -1664,6 +1731,8 @@ class Bot {
       while (casts < this.p.fishCasts && !this.lateNight) {
         // The hour may have moved the fish on: stop when nothing wanted can bite here.
         if (casts % 3 === 0 && this.fishNeeds().size === 0) break;
+        // The dawn trip ends when the dawn does (a dawn fish bites only before 8 am).
+        if (dawn && this.minutes >= DAWN_END) break;
         if (!this.cast(plan.water, rodId)) break;
         casts++;
       }
@@ -1703,6 +1772,7 @@ class Bot {
     else if (b.kind === "trash") landTrash(g, at, b.item);
     else if (b.kind === "find") landFind(g, at, b.item);
     else {
+      this.bites[b.fish.id] = (this.bites[b.fish.id] ?? 0) + 1;
       const setup = {
         behaviour: b.fish.behaviour,
         difficulty: b.fish.difficulty,
@@ -1717,13 +1787,15 @@ class Bot {
             { reaction: this.p.reaction, fumble: this.p.fumble },
             this.random,
           );
-      if (r.landed)
+      if (r.landed) {
+        this.landedFish[b.fish.id] = (this.landedFish[b.fish.id] ?? 0) + 1;
         landFish(g, b.fish as FishDef, {
           perfect: r.perfect,
           distance: this.p.castShare,
           random: this.random,
           at,
         });
+      }
     }
     this.pickUp(at);
     return true;
@@ -1908,7 +1980,8 @@ class Bot {
   /** Crops worth putting in the ground today, most needed first. */
   private cropPlan(): string[] {
     const { season, dayOfSeason } = dateOf(this.day);
-    const left = DAYS_PER_SEASON - dayOfSeason;
+    // One night of margin: a crop must be ripe a day before the season turns (growDays < days left).
+    const left = DAYS_PER_SEASON - dayOfSeason - 1;
     const inGround = new Map<string, number>();
     for (const { plot } of this.plots())
       if (plot.crop)
@@ -2012,6 +2085,35 @@ class Bot {
     }
   }
 
+  /** True when a young fruit tree stands within a tile: a crop, sprinkler or machine there would stop its growth (`blocksGrowth`). */
+  private nearYoungTree(x: number, y: number): boolean {
+    for (const t of this.g.fruitTrees.each())
+      if (
+        t.age < MATURE_DAYS &&
+        Math.abs(t.x - x) <= 1 &&
+        Math.abs(t.y - y) <= 1
+      )
+        return true;
+    return false;
+  }
+
+  /** Clear the weeds and wild saplings around a young fruit tree, so it keeps growing. */
+  private weedYoungTrees(): void {
+    const g = this.g;
+    for (const t of [...g.fruitTrees.each()]) {
+      if (t.age >= MATURE_DAYS) continue;
+      for (let dy = -1; dy <= 1; dy++)
+        for (let dx = -1; dx <= 1; dx++) {
+          const s = { x: t.x + dx, y: t.y + dy };
+          if (g.weeds.at(s.x, s.y) && !this.lateNight)
+            this.act(s, () => clearWeed(g, s.x, s.y, "hoe", this.random));
+          // A wild tree that seeded beside it stops it too: chop it down, a few swings if need be.
+          for (let n = 0; n < 8 && g.trees.at(s.x, s.y) && !this.lateNight; n++)
+            this.act(s, () => chop(g, s.x, s.y, this.random));
+        }
+    }
+  }
+
   /** The nearest open soil to the house door, as a player would lay out a field. */
   private freeSoil(map: ReturnType<typeof maps.get>, n: number): Spot[] {
     const door = map.entry("from_house") ?? { x: 0, y: 0 };
@@ -2022,6 +2124,7 @@ class Bot {
         // A weed on the tile is cut before planting (`plantWanted`), so it only costs a swing.
         if (this.g.farm.plotAt(x, y)?.crop || this.g.sprinklers.at(x, y))
           continue;
+        if (this.nearYoungTree(x, y)) continue;
         out.push({ x, y });
       }
     // Soil a sprinkler waters comes first, so crops go where the water reaches.

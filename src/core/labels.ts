@@ -64,6 +64,7 @@ const SERVICES: Record<string, string> = {
   smithy: "Smithy",
   trainer: "Trainer",
   "wall-list": "Wall List",
+  "lost-found": "Lost and Found",
   dummy: "Dummy",
   lift: "Lift",
   stairs: "Stairs",

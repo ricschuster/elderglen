@@ -10,7 +10,7 @@
   "tilewidth": 16,
   "tileheight": 16,
   "nextlayerid": 11,
-  "nextobjectid": 111,
+  "nextobjectid": 112,
   "properties": [
     {
       "name": "placeholder",
@@ -420,6 +420,26 @@
               "name": "kind",
               "type": "string",
               "value": "ledger"
+            }
+          ]
+        },
+        {
+          "id": 111,
+          "name": "lost-found",
+          "class": "service",
+          "type": "service",
+          "x": 280,
+          "y": 104,
+          "width": 0,
+          "height": 0,
+          "rotation": 0,
+          "visible": true,
+          "point": true,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "lost-found"
             }
           ]
         }

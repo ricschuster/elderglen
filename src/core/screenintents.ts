@@ -45,6 +45,7 @@ import type { GameState } from "./save";
 import type { PlayerId } from "./players";
 import { asPlayer } from "./asplayer";
 import { acceptLine, acceptOrder, collectOwed, dropOrder } from "./orders";
+import { afterLastSeat, buyCatalogue } from "./yeartwo";
 import { turnIn } from "./quests";
 import { payGuestsBoard } from "./roomrewards";
 import {
@@ -302,7 +303,9 @@ function applyHallIntent(
           ? undefined
           : "Nothing to collect, or your backpack is full.";
       case "request-accept":
-        return g.quests.accept(id, day) ? undefined : "That request is gone.";
+        return g.quests.accept(id, day, afterLastSeat(g))
+          ? undefined
+          : "That request is gone.";
       case "request-cancel":
         return g.quests.cancel(id) ? undefined : "No such request.";
       default: {
@@ -411,6 +414,8 @@ function applyKeeperBuy(
     }
     case "heater":
       return asPlayer(g, by, () => buyHeater(g));
+    case "catalogue":
+      return asPlayer(g, by, () => buyCatalogue(g));
     case "decor":
       if (typeof id !== "string") return "bad keeper-buy";
       return asPlayer(g, by, () => buyFarmDecor(g, id));

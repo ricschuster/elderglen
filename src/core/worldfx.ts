@@ -85,6 +85,11 @@ const GLOBAL_SECTIONS: GlobalSection[] = [
     write: (g, v) => g.casks.load(v),
   },
   {
+    name: "g:indoorMachines",
+    read: (g) => g.indoorMachines.save(),
+    write: (g, v) => g.indoorMachines.load(v),
+  },
+  {
     name: "g:teaBushes",
     read: (g) => g.teaBushes.save(),
     write: (g, v) => g.teaBushes.load(v),
@@ -101,10 +106,10 @@ function keyed(saved: unknown): Map<string, unknown> {
   const m = new Map<string, unknown>();
   if (Array.isArray(saved))
     saved.forEach((e, i) => {
-      const r = e as { x?: unknown; y?: unknown } | null;
+      const r = e as { x?: unknown; y?: unknown; map?: unknown } | null;
       const k =
         typeof r?.x === "number" && typeof r.y === "number"
-          ? `${r.x},${r.y}`
+          ? `${typeof r.map === "string" ? `${r.map}|` : ""}${r.x},${r.y}`
           : `#${i}`;
       m.set(k, e);
     });

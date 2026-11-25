@@ -192,7 +192,8 @@ import {} from "../core/creatures";
 import { jobDone, statusText } from "../core/machines";
 import { caskStatus } from "../core/cask";
 
-import { type Glow, lightLayer } from "../core/lights";
+import { chestById } from "../core/chests";
+import { type Glow, isLight, lightAt, lightLayer } from "../core/lights";
 import { drink, isDrink } from "../core/elixirs";
 
 import { type LitBomb } from "../core/bombs";
@@ -219,8 +220,12 @@ import {
 } from "../core/mines";
 
 import type { Rocks } from "../core/rocks";
-import { DECOR_ROOMS, decorById, roomTiles, zoneHolds } from "../core/decor";
-import { carryFurniture, furnitureById } from "../core/furniture";
+import { DECOR_ROOMS, decorById, decorKey, roomTiles } from "../core/decor";
+import {
+  carryFurniture,
+  CATALOGUE_ITEM,
+  furnitureById,
+} from "../core/furniture";
 import { hatById } from "../core/hats";
 import { greenhouseHolds } from "../core/greenhouse";
 import { houseHolds, houseSpouse, isHouseMap } from "../core/house";
@@ -1442,11 +1447,15 @@ export class FarmScene extends Phaser.Scene {
       this.render();
       return true;
     }
-    const r = meet(
-      this.state,
-      who.id,
-      held.kind === "item" ? held.id : undefined,
-    );
+    const heldItem = held.kind === "item" ? held.id : undefined;
+    const r = meet(this.state, who.id, heldItem);
+    // A guest's talk or gift counts on the host too, against their own friendship (note 53).
+    if (this.net instanceof GuestSession)
+      this.net.sendIntent({
+        kind: "meet",
+        id: who.id,
+        ...(heldItem ? { held: heldItem } : {}),
+      });
     this.message = r.message;
     if (r.consumed) audio.sfx(r.taste === "love" ? "gift.loved" : "gift.give");
     if (r.kiss) audio.sfx("heart.up");
@@ -2193,6 +2202,10 @@ export class FarmScene extends Phaser.Scene {
         // Maren's slayer list: claims and buys run on the host against this player's own kills (note 109).
         ref = { kind: "walllist", ...base };
         scene = "walllist";
+      } else if (service.kind === "lost-found") {
+        // The village hall's box for a demolished cabin's things: a take intent against this player's own box (note 110).
+        ref = { kind: "lostfound", ...base };
+        scene = "lostfound";
       } else if (service.kind === "shrine") {
         return this.guestShrine(base);
       } else if (service.kind === "camp-chest" && this.floor !== undefined) {
@@ -2304,6 +2317,30 @@ export class FarmScene extends Phaser.Scene {
     const front = this.aimTile();
     // Every map the host runs for a guest (note 109): the farm, an area map or a mine floor.
     const map = this.mapId;
+    // In any house a guest stands down furniture and paper and lifts a piece with the axe or pickaxe (note 110).
+    if (isHouseMap(map)) {
+      const home = { map, x: front.x, y: front.y };
+      if (
+        held.kind === "item" &&
+        (decorById(held.id) ||
+          furnitureById(held.id) ||
+          chestById(held.id) ||
+          isLight(held.id))
+      )
+        net.sendIntent({ kind: "home-place", ...home, item: held.id });
+      else if (
+        isLiftTool(held) &&
+        (this.state.furniture.at(map, front.x, front.y) ||
+          this.state.chests.at(map, front.x, front.y) ||
+          isLight(lightAt(this.state, map, front.x, front.y)?.id))
+      )
+        net.sendIntent({ kind: "home-pickup", ...home });
+      else {
+        this.message = "Only the host can do that for now.";
+        this.render();
+      }
+      return;
+    }
     if (!(isFarmMap(map) || isAreaMap(map) || this.floor !== undefined)) return;
     const at = { map, x: front.x, y: front.y };
     const weapon =
@@ -2565,6 +2602,25 @@ export class FarmScene extends Phaser.Scene {
       const kind = this.map.serviceAt(at.x, at.y)?.kind;
       if (this.guestSharedScreen(at)) return;
       if (kind && guestMayOpen(kind)) return this.open(kind);
+      // A plain piece of furniture is lifted into the guest's own pack by the host (note 110).
+      const piece = isHouseMap(this.mapId)
+        ? this.state.furniture.at(this.mapId, at.x, at.y)
+        : undefined;
+      const def = furnitureById(piece);
+      if (
+        piece &&
+        !def?.station &&
+        piece !== CATALOGUE_ITEM &&
+        this.net instanceof GuestSession
+      ) {
+        this.net.sendIntent({
+          kind: "home-pickup",
+          map: this.mapId,
+          x: at.x,
+          y: at.y,
+        });
+        return;
+      }
       // A finished batch in a machine is taken by the host for them (an intent, note 108 group 2).
       const machine =
         isFarmMap(this.mapId) && this.state.machines.get(at.x, at.y);
@@ -2810,7 +2866,7 @@ export class FarmScene extends Phaser.Scene {
         result.reason === "machine busy"
           ? statusText(this.state, front.x, front.y)
           : result.reason === "cask busy"
-            ? caskStatus(this.state, front.x, front.y)
+            ? caskStatus(this.state, front.x, front.y, this.mapId)
             : result.reason === "tap busy"
               ? tapStatus(this.state, front.x, front.y)
               : reasonText(result.reason);
@@ -3195,9 +3251,9 @@ export class FarmScene extends Phaser.Scene {
     const json = mapFiles[this.mapId];
     if (!json) return;
     const ts = this.map.tileSize;
-    const holds = zoneHolds(this.state);
+    const holds = new Set(this.houseHoldsHere(this.mapId));
     for (const room of DECOR_ROOMS) {
-      const cover = this.state.decor.get(room.id);
+      const cover = this.state.decor.get(decorKey(this.mapId, room.id));
       const floor = decorById(cover.floor);
       const wall = decorById(cover.wallpaper);
       if (!floor && !wall) continue;

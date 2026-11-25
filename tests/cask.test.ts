@@ -32,15 +32,51 @@ const game = () => {
 const FREE = { x: 8, y: 8 };
 
 describe("the cask", () => {
-  it("is a cellar-only item that the farm will not stand", () => {
+  it("is not stood as an ordinary machine", () => {
     expect(itemById(CASK)?.name).toBe("Cask");
     const g = game();
     const farm = maps.get("farm");
-    expect(placeMachine(g, farm, 5, 5, CASK)).toEqual({
-      ok: false,
-      reason: "cellar only",
-    });
+    expect(placeMachine(g, farm, 5, 5, CASK)).toMatchObject({ ok: false });
     expect(g.inventory.count(CASK)).toBe(3);
+  });
+
+  it("can stand off the cellar, but refuses goods there and takes none", () => {
+    const g = game();
+    const farm = maps.get("farm");
+    let spot: { x: number; y: number } | undefined;
+    for (let y = 0; y < farm.height && !spot; y++)
+      for (let x = 0; x < farm.width && !spot; x++)
+        if (placeCask(g, farm, x, y, "farm").ok) spot = { x, y };
+    expect(spot).toBeDefined();
+    const { x, y } = spot!;
+    expect(g.inventory.count(CASK)).toBe(2);
+    expect(g.casks.at(x, y, "farm")).toBe(true);
+    expect(g.casks.at(x, y)).toBe(false); // not the cellar tile
+    g.inventory.add("melon-wine");
+    expect(loadCask(g, x, y, "melon-wine", "farm")).toEqual({
+      ok: false,
+      reason: "cask outside cellar",
+    });
+    expect(g.inventory.count("melon-wine")).toBe(1);
+    expect(g.casks.get(x, y, "farm")!.job).toBeUndefined();
+    // Saved on the farm, and an empty farm cask lifts back into the pack.
+    const back = deserialize(serialize(g))!;
+    expect(back.casks.at(x, y, "farm")).toBe(true);
+    expect(pickUpCask(g, x, y, "farm").ok).toBe(true);
+    expect(g.inventory.count(CASK)).toBe(3);
+  });
+
+  it("loads a cask saved before maps were recorded as a cellar cask", () => {
+    const g = game();
+    g.casks.add({ x: 8, y: 8 });
+    const raw = JSON.parse(serialize(g));
+    for (const c of raw.casks) delete c.map;
+    const back = deserialize(JSON.stringify(raw))!;
+    expect(back.casks.at(8, 8)).toBe(true);
+    g.inventory.add("mead");
+    expect(loadCask(back, 8, 8, "mead").ok).toBe(false); // back has no mead
+    back.inventory.add("mead");
+    expect(loadCask(back, 8, 8, "mead").ok).toBe(true);
   });
 
   it("is placed on clear cellar floor, not on the stairs or twice", () => {

@@ -5,6 +5,7 @@ import { FORAGE } from "./forage";
 import { itemById } from "./items";
 import { QUALITIES, splitQuality, withQuality } from "./quality";
 import type { GameState } from "./save";
+import { hardCount } from "./yeartwo";
 
 /**
  * The request board and the quest record (`docs/design/50_request_board_and_quests.md`).
@@ -91,7 +92,7 @@ function rewardFor(type: QuestType, item: string, count: number): number {
 }
 
 /** The request a day posts, if any. The same day always draws the same request. */
-export function requestFor(day: number): Quest | undefined {
+export function requestFor(day: number, hard = false): Quest | undefined {
   if (day < FIRST_REQUEST_DAY || roll(day, 0) >= REQUEST_CHANCE)
     return undefined;
   const { season } = dateOf(day);
@@ -100,7 +101,10 @@ export function requestFor(day: number): Quest | undefined {
   const pool = REQUEST_POOLS[type].flatMap((s) => candidates(s, season));
   if (pool.length === 0) return undefined;
   const pick = pool[Math.floor(roll(day, 2) * pool.length)]!;
-  const count = pick.min + Math.floor(roll(day, 3) * (pick.max - pick.min + 1));
+  const rolled =
+    pick.min + Math.floor(roll(day, 3) * (pick.max - pick.min + 1));
+  // After the Last Seat the counts are x1.5, rounded up (note 112 rule 6), and the pay follows.
+  const count = hard ? hardCount(rolled) : rolled;
   return {
     id: `board-${day}`,
     source: "board",
@@ -139,18 +143,18 @@ export class Quests {
   }
 
   /** The board's offers today: today's and yesterday's, if not yet taken. Newest first. */
-  posted(day: number): Quest[] {
+  posted(day: number, hard = false): Quest[] {
     const out: Quest[] = [];
     for (let d = day; d > day - REQUEST_DAYS; d--) {
-      const q = requestFor(d);
+      const q = requestFor(d, hard);
       if (q && q.deadline >= day && !this.get(q.id)) out.push(q);
     }
     return out;
   }
 
   /** Take a posted request. There is no cap on how many are open. */
-  accept(id: string, day: number): Quest | undefined {
-    const q = this.posted(day).find((p) => p.id === id);
+  accept(id: string, day: number, hard = false): Quest | undefined {
+    const q = this.posted(day, hard).find((p) => p.id === id);
     if (!q) return undefined;
     this.log.push(q);
     return q;

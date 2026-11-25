@@ -1,7 +1,7 @@
 import { fillCan } from "./canwater";
 import { BACKPACK_SIZES, type Inventory } from "./inventory";
 import { itemLabel } from "./items";
-import { LOCAL_PLAYER } from "./players";
+import { LOCAL_PLAYER } from "./playerid";
 import type { GameState } from "./save";
 import type { Wallet } from "./shop";
 

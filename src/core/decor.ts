@@ -9,6 +9,8 @@ import {
   layersAtTier,
   type TiledMapJson,
 } from "./map";
+import { homeData, homeOwnerOf } from "./homes";
+import { LOCAL_PLAYER } from "./playerid";
 import type { GameState } from "./save";
 
 /**
@@ -130,6 +132,17 @@ export interface RoomCovering {
 }
 export type DecorSave = Record<string, RoomCovering>;
 
+/**
+ * The key a room's covering is kept under. The farmhouse's is the room id as before; a guest's cabin keeps its
+ * own, `<instance>|<room>` (note 110: every home holds its own), so one cabin's paper never shows in another.
+ */
+export function decorKey(mapId: string, room: string): string {
+  const owner = homeOwnerOf(mapId);
+  return owner === undefined || owner === LOCAL_PLAYER
+    ? room
+    : `${mapId}|${room}`;
+}
+
 /** What covers each room. A room with nothing keeps the bare tiles. */
 export class Decor {
   private rooms = new Map<string, RoomCovering>();
@@ -155,7 +168,12 @@ export class Decor {
     this.rooms.clear();
     if (typeof raw !== "object" || raw === null) return;
     for (const [room, c] of Object.entries(raw)) {
-      if (!roomById(room) || typeof c !== "object" || c === null) continue;
+      if (
+        !roomById(room.slice(room.indexOf("|") + 1)) ||
+        typeof c !== "object" ||
+        c === null
+      )
+        continue;
       const cover = c as RoomCovering;
       const wallpaper = decorById(cover.wallpaper);
       const floor = decorById(cover.floor);
@@ -204,15 +222,21 @@ export function applyDecor(
   const def = decorById(id);
   if (!def) return fail("not wallpaper or flooring");
   if (g.inventory.count(id) < 1) return fail("none to use");
-  const holds = zoneHolds(g);
-  const room = roomAt(g.houseTier, x, y, holds);
+  const d = homeData(g, mapId);
+  if (!d) return fail("no home here");
+  const holds =
+    d.owner === LOCAL_PLAYER
+      ? zoneHolds(g)
+      : new Set(houseHolds(d.tier, false, d.renos));
+  const room = roomAt(d.tier, x, y, holds);
   if (!room) return fail("not in a room");
   const slot = def.kind === "floor" ? "floor" : "wallpaper";
   const group = zoneGroup(room.id, holds);
-  if (group.every((z) => g.decor.get(z)[slot] === id))
+  const keyOf = (z: string) => decorKey(mapId, z);
+  if (group.every((z) => g.decor.get(keyOf(z))[slot] === id))
     return fail("already covered with that");
   g.inventory.remove(id);
-  for (const z of group) g.decor.set(z, def);
+  for (const z of group) g.decor.set(keyOf(z), def);
   return { ok: true };
 }
 

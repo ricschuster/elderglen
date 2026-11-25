@@ -49,7 +49,7 @@ import {
   greenhouseRepaired,
   greenhouseSite,
 } from "../core/greenhouse";
-import { CELLAR_MAP, HOUSE_MAP, isHouseMap } from "../core/house";
+import { HOUSE_MAP, isHouseMap } from "../core/house";
 import {
   cropKey,
   fertKey,
@@ -86,6 +86,7 @@ import {
   drawFestivalProps,
 } from "./farm-festival";
 import { LEVER_KIND } from "../core/danger";
+import { afterLastSeat } from "../core/yeartwo";
 import type { FarmScene } from "./FarmScene";
 
 // Drawing methods of the farm scene, moved out of FarmScene.ts (note 106, step 5).
@@ -149,11 +150,15 @@ export function drawGround(farm: FarmScene): void {
     put(p.x, p.y, POT_KEY);
     if (p.catch) put(p.x, p.y, POT_READY_KEY);
   }
-  if (farm.mapId === CELLAR_MAP)
-    for (const c of farm.state.casks.each()) {
-      put(c.x, c.y, machineKey(CASK));
-      if (caskDone(farm.state, c)) put(c.x, c.y, MACHINE_READY_KEY);
-    }
+  for (const c of farm.state.casks.each(farm.mapId)) {
+    put(c.x, c.y, machineKey(CASK));
+    if (caskDone(farm.state, c)) put(c.x, c.y, MACHINE_READY_KEY);
+  }
+  for (const m of farm.state.indoorMachines.each()) {
+    if (m.map !== farm.mapId) continue;
+    put(m.x, m.y, machineKey(m.id));
+    if (jobDone(farm.state, m)) put(m.x, m.y, MACHINE_READY_KEY);
+  }
   if (farm.mapId === CAVE_MAP) drawCave(farm, put);
   drawFeastProps(farm);
   drawFeastLantern(farm);
@@ -512,7 +517,13 @@ export function drawCabins(farm: FarmScene): void {
 /** A yellow mark over the request board while a request waits to be taken (note 50). */
 export function drawRequestMark(farm: FarmScene): void {
   const spot = farm.map.services.find((s) => s.kind === "requests");
-  if (!spot || farm.state.quests.posted(farm.state.day.clock.day).length === 0)
+  if (
+    !spot ||
+    farm.state.quests.posted(
+      farm.state.day.clock.day,
+      afterLastSeat(farm.state),
+    ).length === 0
+  )
     return;
   const ts = farm.map.tileSize;
   const x = spot.x * ts;
